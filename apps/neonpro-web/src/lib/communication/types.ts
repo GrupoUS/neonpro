@@ -3,9 +3,9 @@
  * Story 2.3: Automated Communication System
  */
 
-export type CommunicationChannel = 'sms' | 'email' | 'whatsapp';
-export type MessageType = 'reminder' | 'confirmation' | 'followup' | 'waitlist' | 'cancellation';
-export type MessageStatus = 'pending' | 'sent' | 'delivered' | 'failed' | 'responded';
+export type CommunicationChannel = "sms" | "email" | "whatsapp";
+export type MessageType = "reminder" | "confirmation" | "followup" | "waitlist" | "cancellation";
+export type MessageStatus = "pending" | "sent" | "delivered" | "failed" | "responded";
 export type ReminderTiming = 24 | 2 | 0.5; // hours before appointment
 
 /**
@@ -114,7 +114,7 @@ export interface WaitlistEntry {
   notification_sent: boolean;
   last_notification_at?: Date;
   expires_at: Date;
-  status: 'active' | 'notified' | 'booked' | 'expired' | 'cancelled';
+  status: "active" | "notified" | "booked" | "expired" | "cancelled";
   created_at: Date;
   updated_at: Date;
 }
@@ -141,7 +141,7 @@ export interface CommunicationCampaign {
     };
   };
   scheduled_at: Date;
-  status: 'draft' | 'scheduled' | 'running' | 'completed' | 'cancelled';
+  status: "draft" | "scheduled" | "running" | "completed" | "cancelled";
   total_recipients: number;
   sent_count: number;
   delivered_count: number;
@@ -230,7 +230,7 @@ export interface ProviderConfig {
  */
 export interface CommunicationJob {
   id: string;
-  type: 'send_reminder' | 'send_confirmation' | 'send_followup' | 'process_campaign';
+  type: "send_reminder" | "send_confirmation" | "send_followup" | "process_campaign";
   data: {
     appointment_id?: string;
     patient_id: string;
@@ -240,7 +240,7 @@ export interface CommunicationJob {
     variables: TemplateVariables;
     retry_count?: number;
   };
-  status: 'pending' | 'processing' | 'completed' | 'failed';
+  status: "pending" | "processing" | "completed" | "failed";
   created_at: Date;
   processed_at?: Date;
   error?: string;

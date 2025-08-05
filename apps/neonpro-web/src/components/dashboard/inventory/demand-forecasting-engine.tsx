@@ -1,21 +1,21 @@
 "use client";
 
-import { useDemandForecasting } from "@/app/hooks/useDemandForecasting";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
-import {
+import type { useDemandForecasting } from "@/app/hooks/useDemandForecasting";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
   Activity,
   BarChart3,
   Brain,
@@ -26,7 +26,7 @@ import {
   TrendingUp,
   Zap,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import type { useEffect, useState } from "react";
 
 interface DemandForecastingEngineProps {
   clinicId: string;
@@ -200,9 +200,7 @@ export function DemandForecastingEngine({
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="forecast-period">
-                    Forecast Period (days)
-                  </Label>
+                  <Label htmlFor="forecast-period">Forecast Period (days)</Label>
                   <Select
                     value={forecastPeriod.toString()}
                     onValueChange={(value) => setForecastPeriod(Number(value))}
@@ -265,9 +263,7 @@ export function DemandForecastingEngine({
                   <span>Forecast Results: {forecast.itemName}</span>
                   <div className="flex items-center gap-2">
                     {getModelIcon(forecast.modelUsed)}
-                    <Badge variant="secondary">
-                      {getModelName(forecast.modelUsed)}
-                    </Badge>
+                    <Badge variant="secondary">{getModelName(forecast.modelUsed)}</Badge>
                   </div>
                 </CardTitle>
               </CardHeader>
@@ -281,8 +277,7 @@ export function DemandForecastingEngine({
                           {forecast.predictedDemand}
                         </div>
                         <div className="text-sm text-muted-foreground">
-                          Predicted Demand (
-                          {formatPeriod(forecast.forecastPeriod)})
+                          Predicted Demand ({formatPeriod(forecast.forecastPeriod)})
                         </div>
                       </div>
                     </CardContent>
@@ -292,12 +287,10 @@ export function DemandForecastingEngine({
                     <CardContent className="p-4">
                       <div className="text-center">
                         <div className="text-lg font-semibold">
-                          {forecast.confidenceInterval.lower} -{" "}
-                          {forecast.confidenceInterval.upper}
+                          {forecast.confidenceInterval.lower} - {forecast.confidenceInterval.upper}
                         </div>
                         <div className="text-sm text-muted-foreground">
-                          {Math.round(forecast.confidenceInterval.level * 100)}%
-                          Confidence Interval
+                          {Math.round(forecast.confidenceInterval.level * 100)}% Confidence Interval
                         </div>
                       </div>
                     </CardContent>
@@ -311,15 +304,10 @@ export function DemandForecastingEngine({
                             className={`w-3 h-3 rounded-full ${getConfidenceColor(calculateConfidenceScore(forecast))}`}
                           />
                           <span className="text-lg font-semibold">
-                            {Math.round(
-                              calculateConfidenceScore(forecast) * 100
-                            )}
-                            %
+                            {Math.round(calculateConfidenceScore(forecast) * 100)}%
                           </span>
                         </div>
-                        <div className="text-sm text-muted-foreground">
-                          Forecast Confidence
-                        </div>
+                        <div className="text-sm text-muted-foreground">Forecast Confidence</div>
                       </div>
                     </CardContent>
                   </Card>
@@ -334,32 +322,21 @@ export function DemandForecastingEngine({
                         <span>MAPE</span>
                         <span>{Math.round(forecast.accuracy.mape * 100)}%</span>
                       </div>
-                      <Progress
-                        value={Math.max(0, 100 - forecast.accuracy.mape * 100)}
-                      />
+                      <Progress value={Math.max(0, 100 - forecast.accuracy.mape * 100)} />
                     </div>
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span>RMSE</span>
                         <span>{forecast.accuracy.rmse.toFixed(2)}</span>
                       </div>
-                      <Progress
-                        value={Math.max(0, 100 - forecast.accuracy.rmse)}
-                      />
+                      <Progress value={Math.max(0, 100 - forecast.accuracy.rmse)} />
                     </div>
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span>Last Period Accuracy</span>
-                        <span>
-                          {Math.round(
-                            forecast.accuracy.lastPeriodAccuracy * 100
-                          )}
-                          %
-                        </span>
+                        <span>{Math.round(forecast.accuracy.lastPeriodAccuracy * 100)}%</span>
                       </div>
-                      <Progress
-                        value={forecast.accuracy.lastPeriodAccuracy * 100}
-                      />
+                      <Progress value={forecast.accuracy.lastPeriodAccuracy * 100} />
                     </div>
                   </div>
                 </div>
@@ -375,12 +352,8 @@ export function DemandForecastingEngine({
                         <TrendingDown className="h-5 w-5 text-red-600" />
                       )}
                       <span className="text-sm">
-                        {forecast.trendComponent > 0
-                          ? "Increasing"
-                          : "Decreasing"}{" "}
-                        trend detected (
-                        {Math.abs(forecast.trendComponent * 100).toFixed(1)}%
-                        change)
+                        {forecast.trendComponent > 0 ? "Increasing" : "Decreasing"} trend detected (
+                        {Math.abs(forecast.trendComponent * 100).toFixed(1)}% change)
                       </span>
                     </div>
                   </div>
@@ -391,15 +364,14 @@ export function DemandForecastingEngine({
                   <div>
                     <h4 className="font-semibold mb-3">Recommendations</h4>
                     <div className="space-y-2">
-                      {getForecastRecommendations(
-                        forecast,
-                        seasonalAnalysis || undefined
-                      ).map((rec, index) => (
-                        <Alert key={index}>
-                          <CheckCircle className="h-4 w-4" />
-                          <AlertDescription>{rec}</AlertDescription>
-                        </Alert>
-                      ))}
+                      {getForecastRecommendations(forecast, seasonalAnalysis || undefined).map(
+                        (rec, index) => (
+                          <Alert key={index}>
+                            <CheckCircle className="h-4 w-4" />
+                            <AlertDescription>{rec}</AlertDescription>
+                          </Alert>
+                        ),
+                      )}
                     </div>
                   </div>
                 )}
@@ -423,10 +395,7 @@ export function DemandForecastingEngine({
                   <Label>Select Items (hold Ctrl for multiple)</Label>
                   <div className="max-h-40 overflow-y-auto border rounded p-2 space-y-1">
                     {inventoryItems.map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex items-center space-x-2"
-                      >
+                      <div key={item.id} className="flex items-center space-x-2">
                         <input
                           type="checkbox"
                           id={`bulk-${item.id}`}
@@ -435,9 +404,7 @@ export function DemandForecastingEngine({
                             if (e.target.checked) {
                               setBulkItems([...bulkItems, item.id]);
                             } else {
-                              setBulkItems(
-                                bulkItems.filter((id) => id !== item.id)
-                              );
+                              setBulkItems(bulkItems.filter((id) => id !== item.id));
                             }
                           }}
                         />
@@ -454,9 +421,7 @@ export function DemandForecastingEngine({
                     <Label htmlFor="bulk-period">Forecast Period</Label>
                     <Select
                       value={forecastPeriod.toString()}
-                      onValueChange={(value) =>
-                        setForecastPeriod(Number(value))
-                      }
+                      onValueChange={(value) => setForecastPeriod(Number(value))}
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -475,9 +440,7 @@ export function DemandForecastingEngine({
                     <Label htmlFor="bulk-confidence">Confidence Level</Label>
                     <Select
                       value={confidenceLevel.toString()}
-                      onValueChange={(value) =>
-                        setConfidenceLevel(Number(value))
-                      }
+                      onValueChange={(value) => setConfidenceLevel(Number(value))}
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -515,65 +478,47 @@ export function DemandForecastingEngine({
           {bulkForecasts.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>
-                  Bulk Forecast Results ({bulkForecasts.length} items)
-                </CardTitle>
+                <CardTitle>Bulk Forecast Results ({bulkForecasts.length} items)</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {bulkForecasts.map((forecast) => (
-                    <div
-                      key={forecast.itemId}
-                      className="border rounded-lg p-4"
-                    >
+                    <div key={forecast.itemId} className="border rounded-lg p-4">
                       <div className="flex items-center justify-between mb-2">
                         <h4 className="font-semibold">{forecast.itemName}</h4>
                         <div className="flex items-center gap-2">
                           {getModelIcon(forecast.modelUsed)}
-                          <Badge variant="outline">
-                            {getModelName(forecast.modelUsed)}
-                          </Badge>
+                          <Badge variant="outline">{getModelName(forecast.modelUsed)}</Badge>
                         </div>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
                         <div>
-                          <span className="text-muted-foreground">
-                            Predicted Demand:
-                          </span>
+                          <span className="text-muted-foreground">Predicted Demand:</span>
                           <div className="font-semibold text-blue-600">
                             {forecast.predictedDemand}
                           </div>
                         </div>
                         <div>
-                          <span className="text-muted-foreground">
-                            Confidence Range:
-                          </span>
+                          <span className="text-muted-foreground">Confidence Range:</span>
                           <div className="font-semibold">
                             {forecast.confidenceInterval.lower} -{" "}
                             {forecast.confidenceInterval.upper}
                           </div>
                         </div>
                         <div>
-                          <span className="text-muted-foreground">
-                            Model Accuracy:
-                          </span>
+                          <span className="text-muted-foreground">Model Accuracy:</span>
                           <div className="font-semibold">
                             {Math.round((1 - forecast.accuracy.mape) * 100)}%
                           </div>
                         </div>
                         <div>
-                          <span className="text-muted-foreground">
-                            Confidence Score:
-                          </span>
+                          <span className="text-muted-foreground">Confidence Score:</span>
                           <div className="flex items-center gap-2">
                             <div
                               className={`w-2 h-2 rounded-full ${getConfidenceColor(calculateConfidenceScore(forecast))}`}
                             />
                             <span className="font-semibold">
-                              {Math.round(
-                                calculateConfidenceScore(forecast) * 100
-                              )}
-                              %
+                              {Math.round(calculateConfidenceScore(forecast) * 100)}%
                             </span>
                           </div>
                         </div>
@@ -665,39 +610,25 @@ export function DemandForecastingEngine({
                       <div className="text-2xl font-bold text-blue-600">
                         {seasonalAnalysis.statistics.totalConsumption}
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        Total Consumption
-                      </div>
+                      <div className="text-sm text-muted-foreground">Total Consumption</div>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-green-600">
-                        {seasonalAnalysis.statistics.averageDailyConsumption.toFixed(
-                          1
-                        )}
+                        {seasonalAnalysis.statistics.averageDailyConsumption.toFixed(1)}
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        Daily Average
-                      </div>
+                      <div className="text-sm text-muted-foreground">Daily Average</div>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-orange-600">
-                        {(
-                          seasonalAnalysis.statistics.coefficientOfVariation *
-                          100
-                        ).toFixed(1)}
-                        %
+                        {(seasonalAnalysis.statistics.coefficientOfVariation * 100).toFixed(1)}%
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        Variability
-                      </div>
+                      <div className="text-sm text-muted-foreground">Variability</div>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-purple-600">
                         {seasonalAnalysis.dataPoints}
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        Data Points
-                      </div>
+                      <div className="text-sm text-muted-foreground">Data Points</div>
                     </div>
                   </div>
                 </div>
@@ -707,40 +638,34 @@ export function DemandForecastingEngine({
                   <div>
                     <h4 className="font-semibold mb-3">Detected Patterns</h4>
                     <div className="space-y-3">
-                      {seasonalAnalysis.seasonalPatterns.map(
-                        (pattern, index) => (
-                          <div key={index} className="border rounded-lg p-4">
-                            <div className="flex items-center justify-between mb-2">
-                              <span className="font-semibold capitalize">
-                                {pattern.pattern} Pattern
-                              </span>
-                              <Badge
-                                variant={
-                                  pattern.strength > 0.7
-                                    ? "default"
-                                    : pattern.strength > 0.4
-                                      ? "secondary"
-                                      : "outline"
-                                }
-                              >
-                                {Math.round(pattern.strength * 100)}% strength
-                              </Badge>
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                              {pattern.peaks.length > 0 && (
-                                <div>
-                                  Peak periods: {pattern.peaks.join(", ")}
-                                </div>
-                              )}
-                              {pattern.valleys.length > 0 && (
-                                <div>
-                                  Low periods: {pattern.valleys.join(", ")}
-                                </div>
-                              )}
-                            </div>
+                      {seasonalAnalysis.seasonalPatterns.map((pattern, index) => (
+                        <div key={index} className="border rounded-lg p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-semibold capitalize">
+                              {pattern.pattern} Pattern
+                            </span>
+                            <Badge
+                              variant={
+                                pattern.strength > 0.7
+                                  ? "default"
+                                  : pattern.strength > 0.4
+                                    ? "secondary"
+                                    : "outline"
+                              }
+                            >
+                              {Math.round(pattern.strength * 100)}% strength
+                            </Badge>
                           </div>
-                        )
-                      )}
+                          <div className="text-sm text-muted-foreground">
+                            {pattern.peaks.length > 0 && (
+                              <div>Peak periods: {pattern.peaks.join(", ")}</div>
+                            )}
+                            {pattern.valleys.length > 0 && (
+                              <div>Low periods: {pattern.valleys.join(", ")}</div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}
@@ -779,9 +704,7 @@ export function DemandForecastingEngine({
                 {/* Recommendations */}
                 {seasonalAnalysis.recommendations.length > 0 && (
                   <div>
-                    <h4 className="font-semibold mb-3">
-                      Analysis Recommendations
-                    </h4>
+                    <h4 className="font-semibold mb-3">Analysis Recommendations</h4>
                     <div className="space-y-2">
                       {seasonalAnalysis.recommendations.map((rec, index) => (
                         <Alert key={index}>
@@ -808,28 +731,16 @@ export function DemandForecastingEngine({
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex gap-2">
-                <Button
-                  onClick={() => handleAccuracyAnalysis("7d")}
-                  disabled={isLoading}
-                >
+                <Button onClick={() => handleAccuracyAnalysis("7d")} disabled={isLoading}>
                   Last 7 Days
                 </Button>
-                <Button
-                  onClick={() => handleAccuracyAnalysis("30d")}
-                  disabled={isLoading}
-                >
+                <Button onClick={() => handleAccuracyAnalysis("30d")} disabled={isLoading}>
                   Last 30 Days
                 </Button>
-                <Button
-                  onClick={() => handleAccuracyAnalysis("90d")}
-                  disabled={isLoading}
-                >
+                <Button onClick={() => handleAccuracyAnalysis("90d")} disabled={isLoading}>
                   Last 90 Days
                 </Button>
-                <Button
-                  onClick={() => handleAccuracyAnalysis("1y")}
-                  disabled={isLoading}
-                >
+                <Button onClick={() => handleAccuracyAnalysis("1y")} disabled={isLoading}>
                   Last Year
                 </Button>
               </div>
@@ -840,9 +751,7 @@ export function DemandForecastingEngine({
           {accuracyAnalysis && (
             <Card>
               <CardHeader>
-                <CardTitle>
-                  Accuracy Analysis - {accuracyAnalysis.period}
-                </CardTitle>
+                <CardTitle>Accuracy Analysis - {accuracyAnalysis.period}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Overall Statistics */}
@@ -851,46 +760,30 @@ export function DemandForecastingEngine({
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div className="text-center">
                       <div className="text-2xl font-bold text-blue-600">
-                        {Math.round(
-                          accuracyAnalysis.overallStatistics.averageAccuracy *
-                            100
-                        )}
-                        %
+                        {Math.round(accuracyAnalysis.overallStatistics.averageAccuracy * 100)}%
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        Average Accuracy
-                      </div>
+                      <div className="text-sm text-muted-foreground">Average Accuracy</div>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-green-600">
                         {Math.round(
-                          accuracyAnalysis.overallStatistics
-                            .confidenceIntervalHitRate * 100
+                          accuracyAnalysis.overallStatistics.confidenceIntervalHitRate * 100,
                         )}
                         %
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        CI Hit Rate
-                      </div>
+                      <div className="text-sm text-muted-foreground">CI Hit Rate</div>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-orange-600">
-                        {(
-                          accuracyAnalysis.overallStatistics.averageMAPE * 100
-                        ).toFixed(1)}
-                        %
+                        {(accuracyAnalysis.overallStatistics.averageMAPE * 100).toFixed(1)}%
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        Average MAPE
-                      </div>
+                      <div className="text-sm text-muted-foreground">Average MAPE</div>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-purple-600">
                         {accuracyAnalysis.totalForecasts}
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        Total Forecasts
-                      </div>
+                      <div className="text-sm text-muted-foreground">Total Forecasts</div>
                     </div>
                   </div>
                 </div>
@@ -905,50 +798,32 @@ export function DemandForecastingEngine({
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-2">
                               {getModelIcon(model)}
-                              <span className="font-semibold">
-                                {getModelName(model)}
-                              </span>
+                              <span className="font-semibold">{getModelName(model)}</span>
                             </div>
-                            <Badge variant="outline">
-                              {data.usage} forecasts
-                            </Badge>
+                            <Badge variant="outline">{data.usage} forecasts</Badge>
                           </div>
                           <div className="grid grid-cols-3 gap-4 text-sm">
                             <div>
-                              <span className="text-muted-foreground">
-                                Accuracy:
-                              </span>
+                              <span className="text-muted-foreground">Accuracy:</span>
                               <div className="font-semibold">
-                                {Math.round(
-                                  data.statistics.averageAccuracy * 100
-                                )}
-                                %
+                                {Math.round(data.statistics.averageAccuracy * 100)}%
                               </div>
                             </div>
                             <div>
-                              <span className="text-muted-foreground">
-                                MAPE:
-                              </span>
+                              <span className="text-muted-foreground">MAPE:</span>
                               <div className="font-semibold">
-                                {(data.statistics.averageMAPE * 100).toFixed(1)}
-                                %
+                                {(data.statistics.averageMAPE * 100).toFixed(1)}%
                               </div>
                             </div>
                             <div>
-                              <span className="text-muted-foreground">
-                                CI Hit Rate:
-                              </span>
+                              <span className="text-muted-foreground">CI Hit Rate:</span>
                               <div className="font-semibold">
-                                {Math.round(
-                                  data.statistics.confidenceIntervalHitRate *
-                                    100
-                                )}
-                                %
+                                {Math.round(data.statistics.confidenceIntervalHitRate * 100)}%
                               </div>
                             </div>
                           </div>
                         </div>
-                      )
+                      ),
                     )}
                   </div>
                 </div>
@@ -958,8 +833,7 @@ export function DemandForecastingEngine({
                   <div>
                     <h4 className="font-semibold mb-3">Accuracy Trends</h4>
                     <div className="flex items-center gap-2 mb-4">
-                      {accuracyAnalysis.trends.trend.direction ===
-                      "improving" ? (
+                      {accuracyAnalysis.trends.trend.direction === "improving" ? (
                         <TrendingUp className="h-5 w-5 text-green-600" />
                       ) : (
                         <TrendingDown className="h-5 w-5 text-red-600" />
@@ -979,9 +853,7 @@ export function DemandForecastingEngine({
                 {/* Recommendations */}
                 {accuracyAnalysis.recommendations.length > 0 && (
                   <div>
-                    <h4 className="font-semibold mb-3">
-                      Improvement Recommendations
-                    </h4>
+                    <h4 className="font-semibold mb-3">Improvement Recommendations</h4>
                     <div className="space-y-2">
                       {accuracyAnalysis.recommendations.map((rec, index) => (
                         <Alert key={index}>

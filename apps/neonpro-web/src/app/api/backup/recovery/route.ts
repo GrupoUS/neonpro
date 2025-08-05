@@ -3,10 +3,10 @@
  * Story 1.8: Sistema de Backup e Recovery
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { BackupManager } from '@/lib/backup/backup-manager';
-import { createClient } from '@/lib/supabase/server';
-import { z } from 'zod';
+import type { NextRequest, NextResponse } from "next/server";
+import type { BackupManager } from "@/lib/backup/backup-manager";
+import type { createClient } from "@/lib/supabase/server";
+import type { z } from "zod";
 
 // Initialize BackupManager only if Supabase is configured
 let backupManager: BackupManager | null = null;
@@ -15,13 +15,13 @@ try {
     backupManager = new BackupManager();
   }
 } catch (error) {
-  console.warn('BackupManager initialization failed:', error);
+  console.warn("BackupManager initialization failed:", error);
 }
 
 // Schema para operação de recovery
 const recoverySchema = z.object({
-  backup_id: z.string().uuid('ID de backup inválido'),
-  type: z.enum(['FULL_RESTORE', 'PARTIAL_RESTORE', 'POINT_IN_TIME', 'VERIFICATION']),
+  backup_id: z.string().uuid("ID de backup inválido"),
+  type: z.enum(["FULL_RESTORE", "PARTIAL_RESTORE", "POINT_IN_TIME", "VERIFICATION"]),
   target_location: z.string().optional(),
   files_to_restore: z.array(z.string()).optional(),
   point_in_time: z.string().datetime().optional(),
@@ -37,24 +37,23 @@ const recoverySchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     if (!backupManager) {
-      return NextResponse.json(
-        { error: 'Backup service not configured' },
-        { status: 503 }
-      );
+      return NextResponse.json({ error: "Backup service not configured" }, { status: 503 });
     }
 
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
-    const status = searchParams.get('status');
-    const type = searchParams.get('type');
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
+    const status = searchParams.get("status");
+    const type = searchParams.get("type");
 
     const filters = {
       ...(status && { status }),
@@ -68,11 +67,8 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error('Erro ao buscar operações de recovery:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    console.error("Erro ao buscar operações de recovery:", error);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
 }
 
@@ -83,17 +79,16 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     if (!backupManager) {
-      return NextResponse.json(
-        { error: 'Backup service not configured' },
-        { status: 503 }
-      );
+      return NextResponse.json({ error: "Backup service not configured" }, { status: 503 });
     }
 
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     const body = await request.json();
@@ -105,24 +100,20 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(result, {
-      status: result.success ? 201 : 400
+      status: result.success ? 201 : 400,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
-          error: 'Dados inválidos', 
-          details: error.errors 
+        {
+          error: "Dados inválidos",
+          details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    console.error('Erro ao iniciar recovery:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    console.error("Erro ao iniciar recovery:", error);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
 }
-

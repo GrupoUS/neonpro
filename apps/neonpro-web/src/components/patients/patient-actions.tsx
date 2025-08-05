@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { 
-  Download, 
-  Archive, 
-  MessageSquare, 
-  Mail, 
-  Phone, 
+import React, { useState } from "react";
+import type {
+  Download,
+  Archive,
+  MessageSquare,
+  Mail,
+  Phone,
   Calendar,
   FileText,
   Shield,
@@ -14,22 +14,28 @@ import {
   Users,
   AlertTriangle,
   CheckCircle,
-  ExternalLink
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import {
+  ExternalLink,
+} from "lucide-react";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -37,13 +43,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from '@/components/ui/alert';
-import { toast } from 'sonner';
+} from "@/components/ui/dialog";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { toast } from "sonner";
 
 interface PatientActionsProps {
   selectedCount: number;
@@ -54,32 +56,32 @@ interface PatientActionsProps {
 export default function PatientActions({
   selectedCount,
   onBulkAction,
-  onClearSelection
+  onClearSelection,
 }: PatientActionsProps) {
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [showMessageDialog, setShowMessageDialog] = useState(false);
   const [showArchiveDialog, setShowArchiveDialog] = useState(false);
-  
+
   // Export settings
-  const [exportFormat, setExportFormat] = useState('csv');
+  const [exportFormat, setExportFormat] = useState("csv");
   const [exportFields, setExportFields] = useState({
     personal: true,
     contact: true,
     medical: false,
-    lgpd_sensitive: false
+    lgpd_sensitive: false,
   });
   const [anonymizeData, setAnonymizeData] = useState(true);
-  
+
   // Message settings
-  const [messageType, setMessageType] = useState('email');
-  const [messageContent, setMessageContent] = useState('');
-  const [messageTemplate, setMessageTemplate] = useState('');
+  const [messageType, setMessageType] = useState("email");
+  const [messageContent, setMessageContent] = useState("");
+  const [messageTemplate, setMessageTemplate] = useState("");
 
   const handleExport = () => {
     // LGPD compliance validation
     if (exportFields.medical || exportFields.lgpd_sensitive) {
       if (!anonymizeData) {
-        toast.error('Dados médicos e sensíveis devem ser anonimizados para conformidade LGPD');
+        toast.error("Dados médicos e sensíveis devem ser anonimizados para conformidade LGPD");
         return;
       }
     }
@@ -91,47 +93,49 @@ export default function PatientActions({
       anonymize: anonymizeData,
       selectedCount,
       timestamp: new Date().toISOString(),
-      lgpdCompliant: true
+      lgpdCompliant: true,
     };
 
-    console.log('LGPD Compliant Export:', exportData);
-    onBulkAction('export');
+    console.log("LGPD Compliant Export:", exportData);
+    onBulkAction("export");
     setShowExportDialog(false);
-    
+
     // Log LGPD audit
-    logLGPDAudit('data_export', {
+    logLGPDAudit("data_export", {
       patients_count: selectedCount,
       anonymized: anonymizeData,
-      fields_exported: Object.keys(exportFields).filter(key => exportFields[key as keyof typeof exportFields])
+      fields_exported: Object.keys(exportFields).filter(
+        (key) => exportFields[key as keyof typeof exportFields],
+      ),
     });
   };
 
   const handleSendMessage = () => {
     if (!messageContent.trim()) {
-      toast.error('Digite o conteúdo da mensagem');
+      toast.error("Digite o conteúdo da mensagem");
       return;
     }
 
     // Log communication for LGPD compliance
-    logLGPDAudit('communication_sent', {
+    logLGPDAudit("communication_sent", {
       patients_count: selectedCount,
       message_type: messageType,
-      content_length: messageContent.length
+      content_length: messageContent.length,
     });
 
-    onBulkAction('send_message');
+    onBulkAction("send_message");
     setShowMessageDialog(false);
-    setMessageContent('');
+    setMessageContent("");
   };
 
   const handleArchive = () => {
     // Simulate archive with LGPD compliance
-    logLGPDAudit('patients_archived', {
+    logLGPDAudit("patients_archived", {
       patients_count: selectedCount,
-      reason: 'bulk_action'
+      reason: "bulk_action",
     });
 
-    onBulkAction('archive');
+    onBulkAction("archive");
     setShowArchiveDialog(false);
   };
 
@@ -141,18 +145,21 @@ export default function PatientActions({
       action,
       details,
       user_agent: navigator.userAgent,
-      lgpd_compliant: true
+      lgpd_compliant: true,
     };
-    
-    console.log('LGPD Audit Log:', auditLog);
+
+    console.log("LGPD Audit Log:", auditLog);
     // In production, this would be sent to audit logging system
   };
 
   const messageTemplates = {
-    appointment_reminder: 'Lembrete: Você tem uma consulta agendada para {date} às {time}. Por favor, confirme sua presença.',
-    follow_up: 'Olá! Como você está se sentindo após sua última consulta? Entre em contato se precisar de alguma coisa.',
-    wellness_check: 'Esperamos que você esteja bem! Lembre-se de manter seus cuidados de saúde em dia.',
-    custom: ''
+    appointment_reminder:
+      "Lembrete: Você tem uma consulta agendada para {date} às {time}. Por favor, confirme sua presença.",
+    follow_up:
+      "Olá! Como você está se sentindo após sua última consulta? Entre em contato se precisar de alguma coisa.",
+    wellness_check:
+      "Esperamos que você esteja bem! Lembre-se de manter seus cuidados de saúde em dia.",
+    custom: "",
   };
 
   const populateTemplate = (template: string) => {
@@ -166,11 +173,9 @@ export default function PatientActions({
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Users className="h-5 w-5 text-blue-600" />
-            <CardTitle className="text-lg text-blue-900">
-              Ações em Lote
-            </CardTitle>
+            <CardTitle className="text-lg text-blue-900">Ações em Lote</CardTitle>
             <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-              {selectedCount} selecionado{selectedCount !== 1 ? 's' : ''}
+              {selectedCount} selecionado{selectedCount !== 1 ? "s" : ""}
             </Badge>
           </div>
           <Button
@@ -184,7 +189,7 @@ export default function PatientActions({
           </Button>
         </div>
       </CardHeader>
-      
+
       <CardContent>
         <div className="flex flex-wrap gap-2">
           {/* Export Data Button */}
@@ -205,7 +210,7 @@ export default function PatientActions({
                   Configure as opções de exportação respeitando as diretrizes da LGPD
                 </DialogDescription>
               </DialogHeader>
-              
+
               <div className="space-y-4">
                 {/* Format Selection */}
                 <div className="space-y-2">
@@ -230,8 +235,8 @@ export default function PatientActions({
                       <Checkbox
                         id="personal"
                         checked={exportFields.personal}
-                        onCheckedChange={(checked) => 
-                          setExportFields({...exportFields, personal: !!checked})
+                        onCheckedChange={(checked) =>
+                          setExportFields({ ...exportFields, personal: !!checked })
                         }
                       />
                       <Label htmlFor="personal" className="text-sm">
@@ -242,8 +247,8 @@ export default function PatientActions({
                       <Checkbox
                         id="contact"
                         checked={exportFields.contact}
-                        onCheckedChange={(checked) => 
-                          setExportFields({...exportFields, contact: !!checked})
+                        onCheckedChange={(checked) =>
+                          setExportFields({ ...exportFields, contact: !!checked })
                         }
                       />
                       <Label htmlFor="contact" className="text-sm">
@@ -254,8 +259,8 @@ export default function PatientActions({
                       <Checkbox
                         id="medical"
                         checked={exportFields.medical}
-                        onCheckedChange={(checked) => 
-                          setExportFields({...exportFields, medical: !!checked})
+                        onCheckedChange={(checked) =>
+                          setExportFields({ ...exportFields, medical: !!checked })
                         }
                       />
                       <Label htmlFor="medical" className="text-sm text-orange-600">
@@ -266,8 +271,8 @@ export default function PatientActions({
                       <Checkbox
                         id="lgpd_sensitive"
                         checked={exportFields.lgpd_sensitive}
-                        onCheckedChange={(checked) => 
-                          setExportFields({...exportFields, lgpd_sensitive: !!checked})
+                        onCheckedChange={(checked) =>
+                          setExportFields({ ...exportFields, lgpd_sensitive: !!checked })
                         }
                       />
                       <Label htmlFor="lgpd_sensitive" className="text-sm text-red-600">
@@ -294,7 +299,8 @@ export default function PatientActions({
                       <AlertTriangle className="h-4 w-4" />
                       <AlertTitle>Atenção LGPD</AlertTitle>
                       <AlertDescription>
-                        Exportar dados sensíveis sem anonimização requer justificativa legal específica
+                        Exportar dados sensíveis sem anonimização requer justificativa legal
+                        específica
                       </AlertDescription>
                     </Alert>
                   )}
@@ -305,7 +311,8 @@ export default function PatientActions({
                   <CheckCircle className="h-4 w-4" />
                   <AlertTitle>Conformidade LGPD</AlertTitle>
                   <AlertDescription>
-                    Esta exportação será registrada no log de auditoria para conformidade com a LGPD.
+                    Esta exportação será registrada no log de auditoria para conformidade com a
+                    LGPD.
                     <a href="/lgpd/privacy-policy" className="text-blue-600 hover:underline ml-1">
                       Saiba mais <ExternalLink className="h-3 w-3 inline" />
                     </a>
@@ -337,10 +344,11 @@ export default function PatientActions({
               <DialogHeader>
                 <DialogTitle>Enviar Mensagem em Lote</DialogTitle>
                 <DialogDescription>
-                  Envie uma mensagem para {selectedCount} paciente{selectedCount !== 1 ? 's' : ''} selecionado{selectedCount !== 1 ? 's' : ''}
+                  Envie uma mensagem para {selectedCount} paciente{selectedCount !== 1 ? "s" : ""}{" "}
+                  selecionado{selectedCount !== 1 ? "s" : ""}
                 </DialogDescription>
               </DialogHeader>
-              
+
               <div className="space-y-4">
                 {/* Message Type */}
                 <div className="space-y-2">
@@ -375,10 +383,13 @@ export default function PatientActions({
                 {/* Message Template */}
                 <div className="space-y-2">
                   <Label>Template de mensagem</Label>
-                  <Select value={messageTemplate} onValueChange={(value) => {
-                    setMessageTemplate(value);
-                    populateTemplate(value);
-                  }}>
+                  <Select
+                    value={messageTemplate}
+                    onValueChange={(value) => {
+                      setMessageTemplate(value);
+                      populateTemplate(value);
+                    }}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione um template" />
                     </SelectTrigger>
@@ -410,7 +421,8 @@ export default function PatientActions({
                   <Shield className="h-4 w-4" />
                   <AlertTitle>Política de Comunicação</AlertTitle>
                   <AlertDescription>
-                    Apenas pacientes que consentiram receber comunicações promocionais receberão esta mensagem.
+                    Apenas pacientes que consentiram receber comunicações promocionais receberão
+                    esta mensagem.
                   </AlertDescription>
                 </Alert>
               </div>
@@ -439,17 +451,18 @@ export default function PatientActions({
               <DialogHeader>
                 <DialogTitle>Arquivar Pacientes</DialogTitle>
                 <DialogDescription>
-                  Tem certeza que deseja arquivar {selectedCount} paciente{selectedCount !== 1 ? 's' : ''}? 
-                  Esta ação pode ser revertida posteriormente.
+                  Tem certeza que deseja arquivar {selectedCount} paciente
+                  {selectedCount !== 1 ? "s" : ""}? Esta ação pode ser revertida posteriormente.
                 </DialogDescription>
               </DialogHeader>
-              
+
               <Alert>
                 <AlertTriangle className="h-4 w-4" />
                 <AlertTitle>Atenção</AlertTitle>
                 <AlertDescription>
-                  Pacientes arquivados não aparecerão nas listas padrão, mas seus dados serão mantidos 
-                  para conformidade com os prazos de retenção da LGPD (20 anos para dados médicos).
+                  Pacientes arquivados não aparecerão nas listas padrão, mas seus dados serão
+                  mantidos para conformidade com os prazos de retenção da LGPD (20 anos para dados
+                  médicos).
                 </AlertDescription>
               </Alert>
 
@@ -459,17 +472,17 @@ export default function PatientActions({
                 </Button>
                 <Button variant="destructive" onClick={handleArchive}>
                   <Archive className="h-4 w-4 mr-1" />
-                  Arquivar {selectedCount} paciente{selectedCount !== 1 ? 's' : ''}
+                  Arquivar {selectedCount} paciente{selectedCount !== 1 ? "s" : ""}
                 </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
 
           {/* Schedule Appointments */}
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => onBulkAction('schedule_bulk')}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onBulkAction("schedule_bulk")}
             className="flex items-center"
           >
             <Calendar className="h-4 w-4 mr-1" />

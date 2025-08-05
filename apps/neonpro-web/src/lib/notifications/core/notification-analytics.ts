@@ -1,5 +1,5 @@
-import { createClient } from '@supabase/supabase-js';
-import { AuditLogger } from '../../auth/audit/audit-logger';
+import type { createClient } from "@supabase/supabase-js";
+import type { AuditLogger } from "../../auth/audit/audit-logger";
 
 export interface NotificationMetrics {
   total_sent: number;
@@ -50,7 +50,7 @@ export interface TemplateMetrics {
   a_b_test_results?: {
     variant_a: NotificationMetrics;
     variant_b: NotificationMetrics;
-    winner: 'a' | 'b' | 'tie';
+    winner: "a" | "b" | "tie";
     confidence_level: number;
   };
 }
@@ -73,7 +73,7 @@ export interface RealTimeMetrics {
   error_rate_last_hour: number;
   average_response_time_ms: number;
   active_channels: string[];
-  system_health: 'healthy' | 'warning' | 'critical';
+  system_health: "healthy" | "warning" | "critical";
   last_updated: Date;
 }
 
@@ -95,10 +95,7 @@ export class NotificationAnalytics {
   private cacheTimeout = 300000; // 5 minutos
 
   constructor() {
-    this.supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    this.supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
     this.auditLogger = new AuditLogger();
   }
 
@@ -111,14 +108,14 @@ export class NotificationAnalytics {
     if (cached) return cached;
 
     try {
-      const query = this.buildBaseQuery('notification_logs', filters);
+      const query = this.buildBaseQuery("notification_logs", filters);
       const { data, error } = await query;
 
       if (error) throw error;
 
       const metrics = this.calculateMetrics(data);
       this.setCache(cacheKey, metrics);
-      
+
       return metrics;
     } catch (error) {
       throw new Error(`Erro ao obter métricas gerais: ${error}`);
@@ -134,23 +131,23 @@ export class NotificationAnalytics {
     if (cached) return cached;
 
     try {
-      const channels = ['email', 'sms', 'push', 'whatsapp', 'in_app'];
+      const channels = ["email", "sms", "push", "whatsapp", "in_app"];
       const channelMetrics: ChannelMetrics[] = [];
 
       for (const channel of channels) {
         const channelFilters = { ...filters, channels: [channel] };
-        
+
         // Métricas do canal
-        const query = this.buildBaseQuery('notification_logs', channelFilters);
+        const query = this.buildBaseQuery("notification_logs", channelFilters);
         const { data, error } = await query;
-        
+
         if (error) throw error;
 
         const metrics = this.calculateMetrics(data);
-        
+
         // Tendência de volume
         const volumeTrend = await this.getVolumeTrend(channel, filters);
-        
+
         // Tendência de performance
         const performanceTrend = await this.getPerformanceTrend(channel, filters);
 
@@ -158,7 +155,7 @@ export class NotificationAnalytics {
           channel,
           metrics,
           volume_trend: volumeTrend,
-          performance_trend: performanceTrend
+          performance_trend: performanceTrend,
         });
       }
 
@@ -174,12 +171,10 @@ export class NotificationAnalytics {
    */
   async getUserEngagementMetrics(
     userId?: string,
-    filters?: AnalyticsFilters
+    filters?: AnalyticsFilters,
   ): Promise<UserEngagementMetrics[]> {
     try {
-      let query = this.supabase
-        .from('notification_logs')
-        .select(`
+      let query = this.supabase.from("notification_logs").select(`
           user_id,
           channel,
           status,
@@ -190,29 +185,32 @@ export class NotificationAnalytics {
         `);
 
       if (userId) {
-        query = query.eq('user_id', userId);
+        query = query.eq("user_id", userId);
       }
 
       if (filters?.start_date) {
-        query = query.gte('sent_at', filters.start_date.toISOString());
+        query = query.gte("sent_at", filters.start_date.toISOString());
       }
 
       if (filters?.end_date) {
-        query = query.lte('sent_at', filters.end_date.toISOString());
+        query = query.lte("sent_at", filters.end_date.toISOString());
       }
 
       const { data, error } = await query;
       if (error) throw error;
 
       // Agrupar por usuário
-      const userGroups = data.reduce((groups, notification) => {
-        const userId = notification.user_id;
-        if (!groups[userId]) {
-          groups[userId] = [];
-        }
-        groups[userId].push(notification);
-        return groups;
-      }, {} as Record<string, any[]>);
+      const userGroups = data.reduce(
+        (groups, notification) => {
+          const userId = notification.user_id;
+          if (!groups[userId]) {
+            groups[userId] = [];
+          }
+          groups[userId].push(notification);
+          return groups;
+        },
+        {} as Record<string, any[]>,
+      );
 
       const userMetrics: UserEngagementMetrics[] = [];
 
@@ -233,7 +231,7 @@ export class NotificationAnalytics {
   async getTemplateMetrics(filters?: AnalyticsFilters): Promise<TemplateMetrics[]> {
     try {
       let query = this.supabase
-        .from('notification_logs')
+        .from("notification_logs")
         .select(`
           template_id,
           template_name,
@@ -244,46 +242,49 @@ export class NotificationAnalytics {
           clicked_at,
           cost
         `)
-        .not('template_id', 'is', null);
+        .not("template_id", "is", null);
 
       if (filters?.start_date) {
-        query = query.gte('sent_at', filters.start_date.toISOString());
+        query = query.gte("sent_at", filters.start_date.toISOString());
       }
 
       if (filters?.end_date) {
-        query = query.lte('sent_at', filters.end_date.toISOString());
+        query = query.lte("sent_at", filters.end_date.toISOString());
       }
 
       if (filters?.template_ids) {
-        query = query.in('template_id', filters.template_ids);
+        query = query.in("template_id", filters.template_ids);
       }
 
       const { data, error } = await query;
       if (error) throw error;
 
       // Agrupar por template
-      const templateGroups = data.reduce((groups, notification) => {
-        const templateId = notification.template_id;
-        if (!groups[templateId]) {
-          groups[templateId] = {
-            template_name: notification.template_name,
-            notifications: []
-          };
-        }
-        groups[templateId].notifications.push(notification);
-        return groups;
-      }, {} as Record<string, any>);
+      const templateGroups = data.reduce(
+        (groups, notification) => {
+          const templateId = notification.template_id;
+          if (!groups[templateId]) {
+            groups[templateId] = {
+              template_name: notification.template_name,
+              notifications: [],
+            };
+          }
+          groups[templateId].notifications.push(notification);
+          return groups;
+        },
+        {} as Record<string, any>,
+      );
 
       const templateMetrics: TemplateMetrics[] = [];
 
       for (const [templateId, group] of Object.entries(templateGroups)) {
         const metrics = this.calculateMetrics(group.notifications);
-        
+
         templateMetrics.push({
           template_id: templateId,
           template_name: group.template_name,
           usage_count: group.notifications.length,
-          metrics
+          metrics,
         });
       }
 
@@ -298,11 +299,11 @@ export class NotificationAnalytics {
    */
   async getCampaignMetrics(
     campaignId?: string,
-    filters?: AnalyticsFilters
+    filters?: AnalyticsFilters,
   ): Promise<CampaignMetrics[]> {
     try {
       let query = this.supabase
-        .from('notification_logs')
+        .from("notification_logs")
         .select(`
           campaign_id,
           campaign_name,
@@ -315,53 +316,56 @@ export class NotificationAnalytics {
           cost,
           user_metadata
         `)
-        .not('campaign_id', 'is', null);
+        .not("campaign_id", "is", null);
 
       if (campaignId) {
-        query = query.eq('campaign_id', campaignId);
+        query = query.eq("campaign_id", campaignId);
       }
 
       if (filters?.start_date) {
-        query = query.gte('sent_at', filters.start_date.toISOString());
+        query = query.gte("sent_at", filters.start_date.toISOString());
       }
 
       if (filters?.end_date) {
-        query = query.lte('sent_at', filters.end_date.toISOString());
+        query = query.lte("sent_at", filters.end_date.toISOString());
       }
 
       const { data, error } = await query;
       if (error) throw error;
 
       // Agrupar por campanha
-      const campaignGroups = data.reduce((groups, notification) => {
-        const campaignId = notification.campaign_id;
-        if (!groups[campaignId]) {
-          groups[campaignId] = {
-            campaign_name: notification.campaign_name,
-            notifications: []
-          };
-        }
-        groups[campaignId].notifications.push(notification);
-        return groups;
-      }, {} as Record<string, any>);
+      const campaignGroups = data.reduce(
+        (groups, notification) => {
+          const campaignId = notification.campaign_id;
+          if (!groups[campaignId]) {
+            groups[campaignId] = {
+              campaign_name: notification.campaign_name,
+              notifications: [],
+            };
+          }
+          groups[campaignId].notifications.push(notification);
+          return groups;
+        },
+        {} as Record<string, any>,
+      );
 
       const campaignMetrics: CampaignMetrics[] = [];
 
       for (const [campaignId, group] of Object.entries(campaignGroups)) {
         const notifications = group.notifications;
         const metrics = this.calculateMetrics(notifications);
-        
+
         // Breakdown por canal
         const channelBreakdown = this.calculateChannelBreakdown(notifications);
-        
+
         // Breakdown geográfico
         const geographicBreakdown = this.calculateGeographicBreakdown(notifications);
-        
+
         // Breakdown demográfico
         const demographicBreakdown = this.calculateDemographicBreakdown(notifications);
 
         // Datas da campanha
-        const dates = notifications.map(n => new Date(n.sent_at)).sort();
+        const dates = notifications.map((n) => new Date(n.sent_at)).sort();
         const startDate = dates[0];
         const endDate = dates[dates.length - 1];
 
@@ -370,11 +374,11 @@ export class NotificationAnalytics {
           campaign_name: group.campaign_name,
           start_date: startDate,
           end_date: endDate,
-          total_recipients: new Set(notifications.map(n => n.user_id)).size,
+          total_recipients: new Set(notifications.map((n) => n.user_id)).size,
           metrics,
           channel_breakdown: channelBreakdown,
           geographic_breakdown: geographicBreakdown,
-          demographic_breakdown: demographicBreakdown
+          demographic_breakdown: demographicBreakdown,
         });
       }
 
@@ -395,42 +399,43 @@ export class NotificationAnalytics {
 
       // Tamanho da fila
       const { data: queueData } = await this.supabase
-        .from('scheduled_notifications')
-        .select('id')
-        .eq('status', 'pending');
+        .from("scheduled_notifications")
+        .select("id")
+        .eq("status", "pending");
 
       // Taxa de processamento
       const { data: recentData } = await this.supabase
-        .from('notification_logs')
-        .select('sent_at')
-        .gte('sent_at', oneMinuteAgo.toISOString());
+        .from("notification_logs")
+        .select("sent_at")
+        .gte("sent_at", oneMinuteAgo.toISOString());
 
       // Taxa de erro na última hora
       const { data: errorData } = await this.supabase
-        .from('notification_logs')
-        .select('status')
-        .gte('sent_at', oneHourAgo.toISOString())
-        .eq('status', 'failed');
+        .from("notification_logs")
+        .select("status")
+        .gte("sent_at", oneHourAgo.toISOString())
+        .eq("status", "failed");
 
       const { data: totalHourData } = await this.supabase
-        .from('notification_logs')
-        .select('status')
-        .gte('sent_at', oneHourAgo.toISOString());
+        .from("notification_logs")
+        .select("status")
+        .gte("sent_at", oneHourAgo.toISOString());
 
       // Canais ativos
       const { data: activeChannels } = await this.supabase
-        .from('notification_logs')
-        .select('channel')
-        .gte('sent_at', oneHourAgo.toISOString())
-        .not('channel', 'is', null);
+        .from("notification_logs")
+        .select("channel")
+        .gte("sent_at", oneHourAgo.toISOString())
+        .not("channel", "is", null);
 
-      const uniqueChannels = [...new Set(activeChannels?.map(c => c.channel) || [])];
-      
-      const errorRate = totalHourData?.length ? 
-        (errorData?.length || 0) / totalHourData.length * 100 : 0;
+      const uniqueChannels = [...new Set(activeChannels?.map((c) => c.channel) || [])];
 
-      const systemHealth: 'healthy' | 'warning' | 'critical' = 
-        errorRate > 10 ? 'critical' : errorRate > 5 ? 'warning' : 'healthy';
+      const errorRate = totalHourData?.length
+        ? ((errorData?.length || 0) / totalHourData.length) * 100
+        : 0;
+
+      const systemHealth: "healthy" | "warning" | "critical" =
+        errorRate > 10 ? "critical" : errorRate > 5 ? "warning" : "healthy";
 
       return {
         current_queue_size: queueData?.length || 0,
@@ -439,7 +444,7 @@ export class NotificationAnalytics {
         average_response_time_ms: 150, // Simulado
         active_channels: uniqueChannels,
         system_health: systemHealth,
-        last_updated: now
+        last_updated: now,
       };
     } catch (error) {
       throw new Error(`Erro ao obter métricas em tempo real: ${error}`);
@@ -465,7 +470,7 @@ export class NotificationAnalytics {
         this.getOverallMetrics(filters),
         this.getChannelMetrics(filters),
         this.getTemplateMetrics(filters),
-        this.getUserEngagementMetrics(undefined, filters)
+        this.getUserEngagementMetrics(undefined, filters),
       ]);
 
       const trends = await this.getMetricsTrends(filters);
@@ -477,7 +482,7 @@ export class NotificationAnalytics {
         top_templates: templates.slice(0, 10),
         user_engagement: userEngagement.slice(0, 100),
         trends,
-        recommendations
+        recommendations,
       };
     } catch (error) {
       throw new Error(`Erro ao gerar relatório: ${error}`);
@@ -486,28 +491,26 @@ export class NotificationAnalytics {
 
   // Métodos privados
   private buildBaseQuery(table: string, filters?: AnalyticsFilters) {
-    let query = this.supabase
-      .from(table)
-      .select('*');
+    let query = this.supabase.from(table).select("*");
 
     if (filters?.start_date) {
-      query = query.gte('sent_at', filters.start_date.toISOString());
+      query = query.gte("sent_at", filters.start_date.toISOString());
     }
 
     if (filters?.end_date) {
-      query = query.lte('sent_at', filters.end_date.toISOString());
+      query = query.lte("sent_at", filters.end_date.toISOString());
     }
 
     if (filters?.channels) {
-      query = query.in('channel', filters.channels);
+      query = query.in("channel", filters.channels);
     }
 
     if (filters?.user_ids) {
-      query = query.in('user_id', filters.user_ids);
+      query = query.in("user_id", filters.user_ids);
     }
 
     if (filters?.status) {
-      query = query.in('status', filters.status);
+      query = query.in("status", filters.status);
     }
 
     return query;
@@ -515,30 +518,31 @@ export class NotificationAnalytics {
 
   private calculateMetrics(data: any[]): NotificationMetrics {
     const total_sent = data.length;
-    const total_delivered = data.filter(n => n.delivered_at).length;
-    const total_opened = data.filter(n => n.opened_at).length;
-    const total_clicked = data.filter(n => n.clicked_at).length;
-    const total_failed = data.filter(n => n.status === 'failed').length;
-    
+    const total_delivered = data.filter((n) => n.delivered_at).length;
+    const total_opened = data.filter((n) => n.opened_at).length;
+    const total_clicked = data.filter((n) => n.clicked_at).length;
+    const total_failed = data.filter((n) => n.status === "failed").length;
+
     const delivery_rate = total_sent > 0 ? (total_delivered / total_sent) * 100 : 0;
     const open_rate = total_delivered > 0 ? (total_opened / total_delivered) * 100 : 0;
     const click_rate = total_opened > 0 ? (total_clicked / total_opened) * 100 : 0;
     const failure_rate = total_sent > 0 ? (total_failed / total_sent) * 100 : 0;
-    
+
     // Tempo médio de entrega
-    const deliveredNotifications = data.filter(n => n.sent_at && n.delivered_at);
+    const deliveredNotifications = data.filter((n) => n.sent_at && n.delivered_at);
     let average_delivery_time_minutes = 0;
-    
+
     if (deliveredNotifications.length > 0) {
       const totalDeliveryTime = deliveredNotifications.reduce((sum, n) => {
         const sentTime = new Date(n.sent_at).getTime();
         const deliveredTime = new Date(n.delivered_at).getTime();
         return sum + (deliveredTime - sentTime);
       }, 0);
-      
-      average_delivery_time_minutes = (totalDeliveryTime / deliveredNotifications.length) / (1000 * 60);
+
+      average_delivery_time_minutes =
+        totalDeliveryTime / deliveredNotifications.length / (1000 * 60);
     }
-    
+
     // Custo
     const total_cost = data.reduce((sum, n) => sum + (n.cost || 0), 0);
     const cost_per_notification = total_sent > 0 ? total_cost / total_sent : 0;
@@ -555,38 +559,41 @@ export class NotificationAnalytics {
       failure_rate,
       average_delivery_time_minutes,
       total_cost,
-      cost_per_notification
+      cost_per_notification,
     };
   }
 
   private calculateUserEngagement(userId: string, notifications: any[]): UserEngagementMetrics {
     const total_received = notifications.length;
-    const total_opened = notifications.filter(n => n.opened_at).length;
-    const total_clicked = notifications.filter(n => n.clicked_at).length;
-    
+    const total_opened = notifications.filter((n) => n.opened_at).length;
+    const total_clicked = notifications.filter((n) => n.clicked_at).length;
+
     // Score de engajamento (0-100)
-    const engagement_score = total_received > 0 ? 
-      ((total_opened * 0.6 + total_clicked * 0.4) / total_received) * 100 : 0;
-    
+    const engagement_score =
+      total_received > 0 ? ((total_opened * 0.6 + total_clicked * 0.4) / total_received) * 100 : 0;
+
     // Canal preferido
     const channelCounts = notifications.reduce((counts, n) => {
       counts[n.channel] = (counts[n.channel] || 0) + 1;
       return counts;
     }, {});
-    
-    const preferred_channel = Object.entries(channelCounts)
-      .sort(([,a], [,b]) => (b as number) - (a as number))[0]?.[0] || 'email';
-    
+
+    const preferred_channel =
+      Object.entries(channelCounts).sort(([, a], [, b]) => (b as number) - (a as number))[0]?.[0] ||
+      "email";
+
     // Horário preferido (simulado)
-    const preferred_time = '14:00';
-    
+    const preferred_time = "14:00";
+
     // Última interação
-    const interactions = notifications.filter(n => n.opened_at || n.clicked_at);
-    const last_interaction = interactions.length > 0 ? 
-      new Date(Math.max(...interactions.map(n => 
-        new Date(n.clicked_at || n.opened_at).getTime()
-      ))) : new Date(0);
-    
+    const interactions = notifications.filter((n) => n.opened_at || n.clicked_at);
+    const last_interaction =
+      interactions.length > 0
+        ? new Date(
+            Math.max(...interactions.map((n) => new Date(n.clicked_at || n.opened_at).getTime())),
+          )
+        : new Date(0);
+
     return {
       user_id: userId,
       total_received,
@@ -596,85 +603,100 @@ export class NotificationAnalytics {
       preferred_channel,
       preferred_time,
       last_interaction,
-      opt_out_channels: [] // Seria obtido de outra tabela
+      opt_out_channels: [], // Seria obtido de outra tabela
     };
   }
 
-  private async getVolumeTrend(channel: string, filters?: AnalyticsFilters): Promise<Array<{ date: string; count: number }>> {
+  private async getVolumeTrend(
+    channel: string,
+    filters?: AnalyticsFilters,
+  ): Promise<Array<{ date: string; count: number }>> {
     // Implementação simplificada - retorna dados dos últimos 30 dias
     const trend = [];
     const now = new Date();
-    
+
     for (let i = 29; i >= 0; i--) {
       const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
-      const dateStr = date.toISOString().split('T')[0];
-      
+      const dateStr = date.toISOString().split("T")[0];
+
       // Simular dados
       const count = Math.floor(Math.random() * 100) + 50;
       trend.push({ date: dateStr, count });
     }
-    
+
     return trend;
   }
 
-  private async getPerformanceTrend(channel: string, filters?: AnalyticsFilters): Promise<Array<{ date: string; delivery_rate: number; open_rate: number }>> {
+  private async getPerformanceTrend(
+    channel: string,
+    filters?: AnalyticsFilters,
+  ): Promise<Array<{ date: string; delivery_rate: number; open_rate: number }>> {
     // Implementação simplificada
     const trend = [];
     const now = new Date();
-    
+
     for (let i = 29; i >= 0; i--) {
       const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
-      const dateStr = date.toISOString().split('T')[0];
-      
+      const dateStr = date.toISOString().split("T")[0];
+
       // Simular dados
       const delivery_rate = 85 + Math.random() * 10;
       const open_rate = 20 + Math.random() * 15;
-      
+
       trend.push({ date: dateStr, delivery_rate, open_rate });
     }
-    
+
     return trend;
   }
 
   private calculateChannelBreakdown(notifications: any[]): Record<string, NotificationMetrics> {
     const breakdown: Record<string, NotificationMetrics> = {};
-    
-    const channels = [...new Set(notifications.map(n => n.channel))];
-    
+
+    const channels = [...new Set(notifications.map((n) => n.channel))];
+
     for (const channel of channels) {
-      const channelNotifications = notifications.filter(n => n.channel === channel);
+      const channelNotifications = notifications.filter((n) => n.channel === channel);
       breakdown[channel] = this.calculateMetrics(channelNotifications);
     }
-    
+
     return breakdown;
   }
 
   private calculateGeographicBreakdown(notifications: any[]): Record<string, NotificationMetrics> {
     // Implementação simplificada - seria baseada em dados do usuário
     return {
-      'BR': this.calculateMetrics(notifications.slice(0, Math.floor(notifications.length * 0.8))),
-      'US': this.calculateMetrics(notifications.slice(Math.floor(notifications.length * 0.8)))
+      BR: this.calculateMetrics(notifications.slice(0, Math.floor(notifications.length * 0.8))),
+      US: this.calculateMetrics(notifications.slice(Math.floor(notifications.length * 0.8))),
     };
   }
 
   private calculateDemographicBreakdown(notifications: any[]): Record<string, NotificationMetrics> {
     // Implementação simplificada - seria baseada em dados do usuário
     return {
-      '18-25': this.calculateMetrics(notifications.slice(0, Math.floor(notifications.length * 0.3))),
-      '26-35': this.calculateMetrics(notifications.slice(Math.floor(notifications.length * 0.3), Math.floor(notifications.length * 0.7))),
-      '36+': this.calculateMetrics(notifications.slice(Math.floor(notifications.length * 0.7)))
+      "18-25": this.calculateMetrics(
+        notifications.slice(0, Math.floor(notifications.length * 0.3)),
+      ),
+      "26-35": this.calculateMetrics(
+        notifications.slice(
+          Math.floor(notifications.length * 0.3),
+          Math.floor(notifications.length * 0.7),
+        ),
+      ),
+      "36+": this.calculateMetrics(notifications.slice(Math.floor(notifications.length * 0.7))),
     };
   }
 
-  private async getMetricsTrends(filters?: AnalyticsFilters): Promise<Array<{ date: string; metrics: NotificationMetrics }>> {
+  private async getMetricsTrends(
+    filters?: AnalyticsFilters,
+  ): Promise<Array<{ date: string; metrics: NotificationMetrics }>> {
     // Implementação simplificada
     const trends = [];
     const now = new Date();
-    
+
     for (let i = 29; i >= 0; i--) {
       const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
-      const dateStr = date.toISOString().split('T')[0];
-      
+      const dateStr = date.toISOString().split("T")[0];
+
       // Simular métricas
       const metrics: NotificationMetrics = {
         total_sent: Math.floor(Math.random() * 1000) + 500,
@@ -688,39 +710,46 @@ export class NotificationAnalytics {
         failure_rate: Math.random() * 5,
         average_delivery_time_minutes: 2 + Math.random() * 3,
         total_cost: Math.random() * 100,
-        cost_per_notification: 0.05 + Math.random() * 0.05
+        cost_per_notification: 0.05 + Math.random() * 0.05,
       };
-      
+
       trends.push({ date: dateStr, metrics });
     }
-    
+
     return trends;
   }
 
-  private generateRecommendations(summary: NotificationMetrics, channels: ChannelMetrics[]): string[] {
+  private generateRecommendations(
+    summary: NotificationMetrics,
+    channels: ChannelMetrics[],
+  ): string[] {
     const recommendations: string[] = [];
-    
+
     if (summary.delivery_rate < 90) {
-      recommendations.push('Taxa de entrega baixa. Verifique a qualidade das listas de contatos.');
+      recommendations.push("Taxa de entrega baixa. Verifique a qualidade das listas de contatos.");
     }
-    
+
     if (summary.open_rate < 20) {
-      recommendations.push('Taxa de abertura baixa. Considere melhorar os assuntos das mensagens.');
+      recommendations.push("Taxa de abertura baixa. Considere melhorar os assuntos das mensagens.");
     }
-    
+
     if (summary.click_rate < 5) {
-      recommendations.push('Taxa de clique baixa. Revise o conteúdo e calls-to-action.');
+      recommendations.push("Taxa de clique baixa. Revise o conteúdo e calls-to-action.");
     }
-    
+
     const bestChannel = channels.sort((a, b) => b.metrics.open_rate - a.metrics.open_rate)[0];
     if (bestChannel) {
-      recommendations.push(`Canal ${bestChannel.channel} tem melhor performance. Considere aumentar seu uso.`);
+      recommendations.push(
+        `Canal ${bestChannel.channel} tem melhor performance. Considere aumentar seu uso.`,
+      );
     }
-    
-    if (summary.cost_per_notification > 0.10) {
-      recommendations.push('Custo por notificação alto. Avalie otimizações de canal e segmentação.');
+
+    if (summary.cost_per_notification > 0.1) {
+      recommendations.push(
+        "Custo por notificação alto. Avalie otimizações de canal e segmentação.",
+      );
     }
-    
+
     return recommendations;
   }
 
@@ -735,10 +764,9 @@ export class NotificationAnalytics {
   private setCache(key: string, data: any): void {
     this.metricsCache.set(key, {
       data,
-      expires: Date.now() + this.cacheTimeout
+      expires: Date.now() + this.cacheTimeout,
     });
   }
 }
 
 export default NotificationAnalytics;
-

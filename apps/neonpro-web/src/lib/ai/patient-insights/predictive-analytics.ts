@@ -1,41 +1,41 @@
-﻿// AI-Powered Predictive Analytics Engine
+// AI-Powered Predictive Analytics Engine
 // Story 3.2: Task 3 - Predictive Analytics Engine
 
-import { createClient } from '@/lib/supabase/client'
-import { HealthPrediction, PatientOutcome, PatientRiskAssessment } from './types'
+import type { createClient } from "@/lib/supabase/client";
+import type { HealthPrediction, PatientOutcome, PatientRiskAssessment } from "./types";
 
 export class createpredictiveAnalyticsEngine {
-  private supabase = createClient()
-  private models: Map<string, PredictiveModel> = new Map()
+  private supabase = createClient();
+  private models: Map<string, PredictiveModel> = new Map();
 
   constructor() {
-    this.initializePredictiveModels()
+    this.initializePredictiveModels();
   }
 
   async predictTreatmentOutcome(
     patientId: string,
     treatmentId: string,
-    riskAssessment: PatientRiskAssessment
+    riskAssessment: PatientRiskAssessment,
   ): Promise<TreatmentOutcomePrediction> {
     try {
       // 1. Get patient and treatment data
       const [patientData, treatmentData, historicalData] = await Promise.all([
         this.getPatientData(patientId),
         this.getTreatmentData(treatmentId),
-        this.getHistoricalOutcomes(treatmentId)
-      ])
+        this.getHistoricalOutcomes(treatmentId),
+      ]);
 
       // 2. Feature engineering - prepare data for prediction
-      const features = this.extractFeatures(patientData, treatmentData, riskAssessment)
+      const features = this.extractFeatures(patientData, treatmentData, riskAssessment);
 
       // 3. Run predictions using multiple models
-      const predictions = await this.runPredictionModels(features, treatmentData.category)
+      const predictions = await this.runPredictionModels(features, treatmentData.category);
 
       // 4. Calculate composite predictions
-      const compositePrediction = this.calculateCompositePrediction(predictions)
+      const compositePrediction = this.calculateCompositePrediction(predictions);
 
       // 5. Add confidence intervals and uncertainty measures
-      const uncertaintyAnalysis = this.analyzeUncertainty(predictions, historicalData)
+      const uncertaintyAnalysis = this.analyzeUncertainty(predictions, historicalData);
 
       return {
         patientId,
@@ -46,45 +46,46 @@ export class createpredictiveAnalyticsEngine {
         baselineComparison: this.calculateBaselineComparison(compositePrediction, historicalData),
         recommendedMonitoring: this.generateMonitoringRecommendations(compositePrediction),
         predictionDate: new Date(),
-        modelVersions: this.getCurrentModelVersions()
-      }
-
+        modelVersions: this.getCurrentModelVersions(),
+      };
     } catch (error) {
-      console.error('Prediction error:', error)
-      throw new Error(`Failed to predict treatment outcome: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      console.error("Prediction error:", error);
+      throw new Error(
+        `Failed to predict treatment outcome: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }
 
   async predictComplicationRisk(
     patientId: string,
     treatmentId: string,
-    riskAssessment: PatientRiskAssessment
+    riskAssessment: PatientRiskAssessment,
   ): Promise<ComplicationRiskPrediction> {
     try {
-      const patientData = await this.getPatientData(patientId)
-      const treatmentData = await this.getTreatmentData(treatmentId)
-      
+      const patientData = await this.getPatientData(patientId);
+      const treatmentData = await this.getTreatmentData(treatmentId);
+
       // Get complication-specific features
       const complicationFeatures = this.extractComplicationFeatures(
-        patientData, 
-        treatmentData, 
-        riskAssessment
-      )
+        patientData,
+        treatmentData,
+        riskAssessment,
+      );
 
       // Predict specific complication types
       const complicationPredictions = await this.predictSpecificComplications(
         complicationFeatures,
-        treatmentData
-      )
+        treatmentData,
+      );
 
       // Calculate overall complication risk
-      const overallRisk = this.calculateOverallComplicationRisk(complicationPredictions)
+      const overallRisk = this.calculateOverallComplicationRisk(complicationPredictions);
 
       // Generate prevention strategies
       const preventionStrategies = this.generatePreventionStrategies(
         complicationPredictions,
-        patientData
-      )
+        patientData,
+      );
 
       return {
         patientId,
@@ -95,42 +96,40 @@ export class createpredictiveAnalyticsEngine {
         riskFactors: this.identifyPrimaryRiskFactors(complicationFeatures),
         recommendedPrecautions: this.generatePrecautionRecommendations(complicationPredictions),
         monitoringSchedule: this.generateMonitoringSchedule(overallRisk),
-        predictionDate: new Date()
-      }
-
+        predictionDate: new Date(),
+      };
     } catch (error) {
-      console.error('Complication prediction error:', error)
-      throw new Error(`Failed to predict complications: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      console.error("Complication prediction error:", error);
+      throw new Error(
+        `Failed to predict complications: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }
 
   async predictRecoveryTrajectory(
     patientId: string,
     treatmentId: string,
-    riskAssessment: PatientRiskAssessment
+    riskAssessment: PatientRiskAssessment,
   ): Promise<RecoveryTrajectoryPrediction> {
     try {
-      const patientData = await this.getPatientData(patientId)
-      const treatmentData = await this.getTreatmentData(treatmentId)
+      const patientData = await this.getPatientData(patientId);
+      const treatmentData = await this.getTreatmentData(treatmentId);
 
       // Extract recovery-specific features
       const recoveryFeatures = this.extractRecoveryFeatures(
         patientData,
         treatmentData,
-        riskAssessment
-      )
+        riskAssessment,
+      );
 
       // Predict recovery phases
-      const recoveryPhases = await this.predictRecoveryPhases(recoveryFeatures, treatmentData)
+      const recoveryPhases = await this.predictRecoveryPhases(recoveryFeatures, treatmentData);
 
       // Calculate expected milestones
-      const milestones = this.calculateRecoveryMilestones(recoveryPhases, treatmentData)
+      const milestones = this.calculateRecoveryMilestones(recoveryPhases, treatmentData);
 
       // Predict potential delays or accelerations
-      const trajectoryVariations = this.predictTrajectoryVariations(
-        recoveryFeatures,
-        patientData
-      )
+      const trajectoryVariations = this.predictTrajectoryVariations(recoveryFeatures, patientData);
 
       return {
         patientId,
@@ -142,54 +141,52 @@ export class createpredictiveAnalyticsEngine {
         optimizationRecommendations: this.generateRecoveryOptimization(recoveryFeatures),
         followUpSchedule: this.generateFollowUpSchedule(recoveryPhases),
         redFlags: this.identifyRecoveryRedFlags(treatmentData, riskAssessment),
-        predictionDate: new Date()
-      }
-
+        predictionDate: new Date(),
+      };
     } catch (error) {
-      console.error('Recovery prediction error:', error)
-      throw new Error(`Failed to predict recovery: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      console.error("Recovery prediction error:", error);
+      throw new Error(
+        `Failed to predict recovery: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }
 
   async predictPatientSatisfaction(
     patientId: string,
     treatmentId: string,
-    riskAssessment: PatientRiskAssessment
+    riskAssessment: PatientRiskAssessment,
   ): Promise<SatisfactionPrediction> {
     try {
       const [patientData, treatmentData, historicalSatisfaction] = await Promise.all([
         this.getPatientData(patientId),
         this.getTreatmentData(treatmentId),
-        this.getHistoricalSatisfactionData(patientId, treatmentId)
-      ])
+        this.getHistoricalSatisfactionData(patientId, treatmentId),
+      ]);
 
       // Extract satisfaction-related features
       const satisfactionFeatures = this.extractSatisfactionFeatures(
         patientData,
         treatmentData,
-        riskAssessment
-      )
+        riskAssessment,
+      );
 
       // Predict satisfaction across different dimensions
       const satisfactionDimensions = await this.predictSatisfactionDimensions(
         satisfactionFeatures,
-        treatmentData
-      )
+        treatmentData,
+      );
 
       // Calculate overall satisfaction score
-      const overallSatisfaction = this.calculateOverallSatisfaction(satisfactionDimensions)
+      const overallSatisfaction = this.calculateOverallSatisfaction(satisfactionDimensions);
 
       // Identify satisfaction risk factors
-      const satisfactionRisks = this.identifySatisfactionRisks(
-        satisfactionFeatures,
-        patientData
-      )
+      const satisfactionRisks = this.identifySatisfactionRisks(satisfactionFeatures, patientData);
 
       // Generate satisfaction optimization strategies
       const optimizationStrategies = this.generateSatisfactionOptimization(
         satisfactionDimensions,
-        satisfactionRisks
-      )
+        satisfactionRisks,
+      );
 
       return {
         patientId,
@@ -198,26 +195,26 @@ export class createpredictiveAnalyticsEngine {
         satisfactionDimensions,
         satisfactionRisks,
         optimizationStrategies,
-        communicationRecommendations: this.generateCommunicationRecommendations(
-          satisfactionFeatures
-        ),
+        communicationRecommendations:
+          this.generateCommunicationRecommendations(satisfactionFeatures),
         expectationManagement: this.generateExpectationManagement(
           satisfactionDimensions,
-          treatmentData
+          treatmentData,
         ),
-        predictionDate: new Date()
-      }
-
+        predictionDate: new Date(),
+      };
     } catch (error) {
-      console.error('Satisfaction prediction error:', error)
-      throw new Error(`Failed to predict satisfaction: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      console.error("Satisfaction prediction error:", error);
+      throw new Error(
+        `Failed to predict satisfaction: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }
 
   // Helper methods for data extraction
   private async getPatientData(patientId: string) {
     const { data } = await this.supabase
-      .from('patients')
+      .from("patients")
       .select(`
         *,
         medical_history (*),
@@ -228,46 +225,50 @@ export class createpredictiveAnalyticsEngine {
         allergies (*),
         medications (*)
       `)
-      .eq('id', patientId)
-      .single()
+      .eq("id", patientId)
+      .single();
 
-    return data
+    return data;
   }
 
   private async getTreatmentData(treatmentId: string) {
     const { data } = await this.supabase
-      .from('treatment_types')
-      .select('*')
-      .eq('id', treatmentId)
-      .single()
+      .from("treatment_types")
+      .select("*")
+      .eq("id", treatmentId)
+      .single();
 
-    return data
+    return data;
   }
 
   private async getHistoricalOutcomes(treatmentId: string) {
     const { data } = await this.supabase
-      .from('treatment_outcomes')
-      .select('*')
-      .eq('treatment_type_id', treatmentId)
-      .order('created_at', { ascending: false })
-      .limit(100)
+      .from("treatment_outcomes")
+      .select("*")
+      .eq("treatment_type_id", treatmentId)
+      .order("created_at", { ascending: false })
+      .limit(100);
 
-    return data || []
+    return data || [];
   }
 
   private async getHistoricalSatisfactionData(patientId: string, treatmentId: string) {
     const { data } = await this.supabase
-      .from('satisfaction_scores')
-      .select('*')
-      .eq('patient_id', patientId)
-      .order('created_at', { ascending: false })
-      .limit(10)
+      .from("satisfaction_scores")
+      .select("*")
+      .eq("patient_id", patientId)
+      .order("created_at", { ascending: false })
+      .limit(10);
 
-    return data || []
+    return data || [];
   }
 
   // Feature extraction methods
-  private extractFeatures(patientData: any, treatmentData: any, riskAssessment: PatientRiskAssessment): PredictionFeatures {
+  private extractFeatures(
+    patientData: any,
+    treatmentData: any,
+    riskAssessment: PatientRiskAssessment,
+  ): PredictionFeatures {
     return {
       // Patient demographics
       age: this.calculateAge(patientData.date_of_birth),
@@ -281,25 +282,29 @@ export class createpredictiveAnalyticsEngine {
       allergyCount: patientData.allergies?.length || 0,
 
       // Lifestyle factors
-      smokingStatus: patientData.lifestyle_data?.smoking_status || 'unknown',
-      exerciseLevel: patientData.lifestyle_data?.exercise_level || 'unknown',
-      stressLevel: patientData.lifestyle_data?.stress_level || 'unknown',
+      smokingStatus: patientData.lifestyle_data?.smoking_status || "unknown",
+      exerciseLevel: patientData.lifestyle_data?.exercise_level || "unknown",
+      stressLevel: patientData.lifestyle_data?.stress_level || "unknown",
 
       // Treatment factors
       treatmentComplexity: treatmentData.complexity_score || 1,
       treatmentDuration: treatmentData.typical_duration || 30,
-      invasiveness: treatmentData.invasiveness || 'low',
+      invasiveness: treatmentData.invasiveness || "low",
 
       // Historical factors
       previousTreatmentCount: patientData.previous_treatments?.length || 0,
       previousSuccessRate: this.calculatePreviousSuccessRate(patientData.previous_treatments),
-      averageSatisfaction: this.calculateAverageSatisfaction(patientData.satisfaction_scores)
-    }
+      averageSatisfaction: this.calculateAverageSatisfaction(patientData.satisfaction_scores),
+    };
   }
 
-  private extractComplicationFeatures(patientData: any, treatmentData: any, riskAssessment: PatientRiskAssessment) {
-    const baseFeatures = this.extractFeatures(patientData, treatmentData, riskAssessment)
-    
+  private extractComplicationFeatures(
+    patientData: any,
+    treatmentData: any,
+    riskAssessment: PatientRiskAssessment,
+  ) {
+    const baseFeatures = this.extractFeatures(patientData, treatmentData, riskAssessment);
+
     return {
       ...baseFeatures,
       // Complication-specific features
@@ -307,47 +312,58 @@ export class createpredictiveAnalyticsEngine {
       infectionRisk: this.assessInfectionRisk(patientData),
       healingCapacity: this.assessHealingCapacity(patientData),
       immuneStatus: this.assessImmuneStatus(patientData),
-      cardiovascularRisk: this.assessCardiovascularRisk(patientData)
-    }
+      cardiovascularRisk: this.assessCardiovascularRisk(patientData),
+    };
   }
 
-  private extractRecoveryFeatures(patientData: any, treatmentData: any, riskAssessment: PatientRiskAssessment) {
-    const baseFeatures = this.extractFeatures(patientData, treatmentData, riskAssessment)
-    
+  private extractRecoveryFeatures(
+    patientData: any,
+    treatmentData: any,
+    riskAssessment: PatientRiskAssessment,
+  ) {
+    const baseFeatures = this.extractFeatures(patientData, treatmentData, riskAssessment);
+
     return {
       ...baseFeatures,
       // Recovery-specific features
       healingHistory: this.analyzeHealingHistory(patientData),
       supportSystem: patientData.support_system_score || 5,
       complianceHistory: this.analyzeComplianceHistory(patientData),
-      nutritionalStatus: patientData.nutritional_status || 'unknown'
-    }
+      nutritionalStatus: patientData.nutritional_status || "unknown",
+    };
   }
 
-  private extractSatisfactionFeatures(patientData: any, treatmentData: any, riskAssessment: PatientRiskAssessment) {
-    const baseFeatures = this.extractFeatures(patientData, treatmentData, riskAssessment)
-    
+  private extractSatisfactionFeatures(
+    patientData: any,
+    treatmentData: any,
+    riskAssessment: PatientRiskAssessment,
+  ) {
+    const baseFeatures = this.extractFeatures(patientData, treatmentData, riskAssessment);
+
     return {
       ...baseFeatures,
       // Satisfaction-specific features
-      expectationLevel: patientData.expectation_level || 'moderate',
-      communicationPreference: patientData.communication_preference || 'balanced',
-      decisionMakingStyle: patientData.decision_making_style || 'collaborative',
-      anxietyLevel: patientData.anxiety_level || 'moderate',
-      previousSatisfactionPattern: this.analyzeSatisfactionPattern(patientData.satisfaction_scores)
-    }
+      expectationLevel: patientData.expectation_level || "moderate",
+      communicationPreference: patientData.communication_preference || "balanced",
+      decisionMakingStyle: patientData.decision_making_style || "collaborative",
+      anxietyLevel: patientData.anxiety_level || "moderate",
+      previousSatisfactionPattern: this.analyzeSatisfactionPattern(patientData.satisfaction_scores),
+    };
   }
 
   // Prediction calculation methods
-  private async runPredictionModels(features: PredictionFeatures, treatmentCategory: string): Promise<ModelPredictions> {
-    const models = this.models.get(treatmentCategory) || this.models.get('default')!
-    
+  private async runPredictionModels(
+    features: PredictionFeatures,
+    treatmentCategory: string,
+  ): Promise<ModelPredictions> {
+    const models = this.models.get(treatmentCategory) || this.models.get("default")!;
+
     return {
       successProbability: models.successModel.predict(features),
       complicationRisk: models.complicationModel.predict(features),
       recoveryTime: models.recoveryModel.predict(features),
-      satisfactionScore: models.satisfactionModel.predict(features)
-    }
+      satisfactionScore: models.satisfactionModel.predict(features),
+    };
   }
 
   private calculateCompositePrediction(predictions: ModelPredictions): CompositePrediction {
@@ -358,408 +374,442 @@ export class createpredictiveAnalyticsEngine {
       expectedSatisfaction: Math.max(1, Math.min(10, predictions.satisfactionScore)),
       confidenceInterval: {
         lower: predictions.successProbability * 0.85,
-        upper: Math.min(1, predictions.successProbability * 1.15)
-      }
-    }
+        upper: Math.min(1, predictions.successProbability * 1.15),
+      },
+    };
   }
 
-  private analyzeUncertainty(predictions: ModelPredictions, historicalData: any[]): UncertaintyAnalysis {
+  private analyzeUncertainty(
+    predictions: ModelPredictions,
+    historicalData: any[],
+  ): UncertaintyAnalysis {
     // Calculate prediction confidence based on model agreement and historical variance
-    const modelVariance = this.calculateModelVariance(predictions)
-    const historicalVariance = this.calculateHistoricalVariance(historicalData)
-    
-    const confidence = Math.max(0.5, 1 - (modelVariance + historicalVariance) / 2)
-    
+    const modelVariance = this.calculateModelVariance(predictions);
+    const historicalVariance = this.calculateHistoricalVariance(historicalData);
+
+    const confidence = Math.max(0.5, 1 - (modelVariance + historicalVariance) / 2);
+
     return {
       confidence,
       factors: this.identifyUncertaintyFactors(modelVariance, historicalVariance),
-      recommendedValidation: confidence < 0.7 ? 'Additional assessment recommended' : 'Standard monitoring sufficient'
-    }
+      recommendedValidation:
+        confidence < 0.7 ? "Additional assessment recommended" : "Standard monitoring sufficient",
+    };
   }
 
   // Utility methods
   private calculateAge(birthDate: string): number {
-    const today = new Date()
-    const birth = new Date(birthDate)
-    let age = today.getFullYear() - birth.getFullYear()
-    const monthDiff = today.getMonth() - birth.getMonth()
-    
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-      age--
+      age--;
     }
-    
-    return age
+
+    return age;
   }
 
   private calculateBMI(patientData: any): number {
-    if (!patientData.weight || !patientData.height) return 25 // Default BMI
-    const heightM = patientData.height / 100
-    return patientData.weight / (heightM * heightM)
+    if (!patientData.weight || !patientData.height) return 25; // Default BMI
+    const heightM = patientData.height / 100;
+    return patientData.weight / (heightM * heightM);
   }
 
   private calculatePreviousSuccessRate(treatments: any[]): number {
-    if (!treatments || treatments.length === 0) return 0.75 // Default rate
-    
-    const successful = treatments.filter(t => t.outcome === 'successful').length
-    return successful / treatments.length
+    if (!treatments || treatments.length === 0) return 0.75; // Default rate
+
+    const successful = treatments.filter((t) => t.outcome === "successful").length;
+    return successful / treatments.length;
   }
 
   private calculateAverageSatisfaction(satisfactionScores: any[]): number {
-    if (!satisfactionScores || satisfactionScores.length === 0) return 7.5 // Default
-    
-    const average = satisfactionScores.reduce((sum, score) => sum + score.score, 0) / satisfactionScores.length
-    return average
+    if (!satisfactionScores || satisfactionScores.length === 0) return 7.5; // Default
+
+    const average =
+      satisfactionScores.reduce((sum, score) => sum + score.score, 0) / satisfactionScores.length;
+    return average;
   }
 
   // Initialize prediction models
   private initializePredictiveModels(): void {
     // Create mock models - in production, these would be trained ML models
     const defaultModel = {
-      successModel: new MockPredictionModel('success', 0.8),
-      complicationModel: new MockPredictionModel('complication', 0.15),
-      recoveryModel: new MockPredictionModel('recovery', 14),
-      satisfactionModel: new MockPredictionModel('satisfaction', 8.2)
-    }
+      successModel: new MockPredictionModel("success", 0.8),
+      complicationModel: new MockPredictionModel("complication", 0.15),
+      recoveryModel: new MockPredictionModel("recovery", 14),
+      satisfactionModel: new MockPredictionModel("satisfaction", 8.2),
+    };
 
-    this.models.set('default', defaultModel)
-    this.models.set('botox', {
+    this.models.set("default", defaultModel);
+    this.models.set("botox", {
       ...defaultModel,
-      successModel: new MockPredictionModel('success', 0.92),
-      complicationModel: new MockPredictionModel('complication', 0.05)
-    })
-    this.models.set('dermal_fillers', {
+      successModel: new MockPredictionModel("success", 0.92),
+      complicationModel: new MockPredictionModel("complication", 0.05),
+    });
+    this.models.set("dermal_fillers", {
       ...defaultModel,
-      successModel: new MockPredictionModel('success', 0.88),
-      complicationModel: new MockPredictionModel('complication', 0.08)
-    })
+      successModel: new MockPredictionModel("success", 0.88),
+      complicationModel: new MockPredictionModel("complication", 0.08),
+    });
   }
 
   private getCurrentModelVersions(): Record<string, string> {
     return {
-      successModel: '1.2.0',
-      complicationModel: '1.1.0',
-      recoveryModel: '1.0.0',
-      satisfactionModel: '1.0.0'
-    }
+      successModel: "1.2.0",
+      complicationModel: "1.1.0",
+      recoveryModel: "1.0.0",
+      satisfactionModel: "1.0.0",
+    };
   }
 
   // Additional helper methods (simplified implementations)
   private assessBleedingRisk(patientData: any): number {
     // Implementation would analyze medications, medical history, etc.
-    return 0.1 // Mock value
+    return 0.1; // Mock value
   }
 
   private assessInfectionRisk(patientData: any): number {
-    return 0.05 // Mock value
+    return 0.05; // Mock value
   }
 
   private assessHealingCapacity(patientData: any): number {
-    return 0.8 // Mock value
+    return 0.8; // Mock value
   }
 
   private assessImmuneStatus(patientData: any): number {
-    return 0.9 // Mock value
+    return 0.9; // Mock value
   }
 
   private assessCardiovascularRisk(patientData: any): number {
-    return 0.2 // Mock value
+    return 0.2; // Mock value
   }
 
   private analyzeHealingHistory(patientData: any): string {
-    return 'normal' // Mock value
+    return "normal"; // Mock value
   }
 
   private analyzeComplianceHistory(patientData: any): number {
-    return 0.85 // Mock value
+    return 0.85; // Mock value
   }
 
   private analyzeSatisfactionPattern(satisfactionScores: any[]): string {
-    return 'stable' // Mock value
+    return "stable"; // Mock value
   }
 
   private calculateModelVariance(predictions: ModelPredictions): number {
-    return 0.1 // Mock variance
+    return 0.1; // Mock variance
   }
 
   private calculateHistoricalVariance(historicalData: any[]): number {
-    return 0.15 // Mock variance
+    return 0.15; // Mock variance
   }
 
   private identifyUncertaintyFactors(modelVariance: number, historicalVariance: number): string[] {
-    return ['Limited historical data', 'Patient complexity'] // Mock factors
+    return ["Limited historical data", "Patient complexity"]; // Mock factors
   }
 
   // Additional prediction methods (simplified for brevity)
-  private async predictSpecificComplications(features: any, treatmentData: any): Promise<SpecificComplication[]> {
-    return [] // Mock implementation
+  private async predictSpecificComplications(
+    features: any,
+    treatmentData: any,
+  ): Promise<SpecificComplication[]> {
+    return []; // Mock implementation
   }
 
   private calculateOverallComplicationRisk(complications: SpecificComplication[]): number {
-    return 0.1 // Mock implementation
+    return 0.1; // Mock implementation
   }
 
-  private generatePreventionStrategies(complications: SpecificComplication[], patientData: any): string[] {
-    return ['Standard precautions'] // Mock implementation
+  private generatePreventionStrategies(
+    complications: SpecificComplication[],
+    patientData: any,
+  ): string[] {
+    return ["Standard precautions"]; // Mock implementation
   }
 
   private identifyPrimaryRiskFactors(features: any): string[] {
-    return ['Age', 'Medical history'] // Mock implementation
+    return ["Age", "Medical history"]; // Mock implementation
   }
 
   private generatePrecautionRecommendations(complications: SpecificComplication[]): string[] {
-    return ['Standard monitoring'] // Mock implementation
+    return ["Standard monitoring"]; // Mock implementation
   }
 
   private generateMonitoringSchedule(risk: number): string[] {
-    return ['Day 1', 'Day 7', 'Day 14'] // Mock implementation
+    return ["Day 1", "Day 7", "Day 14"]; // Mock implementation
   }
 
   private async predictRecoveryPhases(features: any, treatmentData: any): Promise<RecoveryPhases> {
     return {
-      immediate: { expectedDays: 3, description: 'Initial recovery' },
-      shortTerm: { expectedDays: 7, description: 'Early healing' },
-      longTerm: { expectedDays: 14, description: 'Complete recovery' },
-      total: { expectedDays: 14, description: 'Full recovery' }
-    } // Mock implementation
+      immediate: { expectedDays: 3, description: "Initial recovery" },
+      shortTerm: { expectedDays: 7, description: "Early healing" },
+      longTerm: { expectedDays: 14, description: "Complete recovery" },
+      total: { expectedDays: 14, description: "Full recovery" },
+    }; // Mock implementation
   }
 
-  private calculateRecoveryMilestones(phases: RecoveryPhases, treatmentData: any): RecoveryMilestone[] {
-    return [] // Mock implementation
+  private calculateRecoveryMilestones(
+    phases: RecoveryPhases,
+    treatmentData: any,
+  ): RecoveryMilestone[] {
+    return []; // Mock implementation
   }
 
   private predictTrajectoryVariations(features: any, patientData: any): TrajectoryVariation[] {
-    return [] // Mock implementation
+    return []; // Mock implementation
   }
 
   private generateRecoveryOptimization(features: any): string[] {
-    return ['Follow post-care instructions'] // Mock implementation
+    return ["Follow post-care instructions"]; // Mock implementation
   }
 
   private generateFollowUpSchedule(phases: RecoveryPhases): string[] {
-    return ['1 week', '2 weeks'] // Mock implementation
+    return ["1 week", "2 weeks"]; // Mock implementation
   }
 
-  private identifyRecoveryRedFlags(treatmentData: any, riskAssessment: PatientRiskAssessment): string[] {
-    return ['Severe pain', 'Signs of infection'] // Mock implementation
+  private identifyRecoveryRedFlags(
+    treatmentData: any,
+    riskAssessment: PatientRiskAssessment,
+  ): string[] {
+    return ["Severe pain", "Signs of infection"]; // Mock implementation
   }
 
-  private async predictSatisfactionDimensions(features: any, treatmentData: any): Promise<SatisfactionDimensions> {
+  private async predictSatisfactionDimensions(
+    features: any,
+    treatmentData: any,
+  ): Promise<SatisfactionDimensions> {
     return {
       procedureExperience: 8.5,
       resultQuality: 8.0,
       staffCommunication: 9.0,
       facilityEnvironment: 8.5,
       costValue: 7.5,
-      overallExperience: 8.3
-    } // Mock implementation
+      overallExperience: 8.3,
+    }; // Mock implementation
   }
 
   private calculateOverallSatisfaction(dimensions: SatisfactionDimensions): number {
-    return Object.values(dimensions).reduce((sum, score) => sum + score, 0) / Object.keys(dimensions).length
+    return (
+      Object.values(dimensions).reduce((sum, score) => sum + score, 0) /
+      Object.keys(dimensions).length
+    );
   }
 
   private identifySatisfactionRisks(features: any, patientData: any): SatisfactionRisk[] {
-    return [] // Mock implementation
+    return []; // Mock implementation
   }
 
-  private generateSatisfactionOptimization(dimensions: SatisfactionDimensions, risks: SatisfactionRisk[]): string[] {
-    return ['Clear communication', 'Manage expectations'] // Mock implementation
+  private generateSatisfactionOptimization(
+    dimensions: SatisfactionDimensions,
+    risks: SatisfactionRisk[],
+  ): string[] {
+    return ["Clear communication", "Manage expectations"]; // Mock implementation
   }
 
   private generateCommunicationRecommendations(features: any): string[] {
-    return ['Regular updates', 'Clear instructions'] // Mock implementation
+    return ["Regular updates", "Clear instructions"]; // Mock implementation
   }
 
-  private generateExpectationManagement(dimensions: SatisfactionDimensions, treatmentData: any): string[] {
-    return ['Set realistic expectations', 'Explain process'] // Mock implementation
+  private generateExpectationManagement(
+    dimensions: SatisfactionDimensions,
+    treatmentData: any,
+  ): string[] {
+    return ["Set realistic expectations", "Explain process"]; // Mock implementation
   }
 
-  private calculateBaselineComparison(prediction: CompositePrediction, historicalData: any[]): BaselineComparison {
+  private calculateBaselineComparison(
+    prediction: CompositePrediction,
+    historicalData: any[],
+  ): BaselineComparison {
     return {
       betterThanAverage: prediction.successProbability > 0.8,
       percentilRank: 75,
-      comparison: 'Above average success probability'
-    } // Mock implementation
+      comparison: "Above average success probability",
+    }; // Mock implementation
   }
 
   private generateMonitoringRecommendations(prediction: CompositePrediction): string[] {
-    return ['Standard monitoring protocol'] // Mock implementation
+    return ["Standard monitoring protocol"]; // Mock implementation
   }
 }
 
 // Mock prediction model class
 class MockPredictionModel {
-  constructor(private type: string, private baseline: number) {}
+  constructor(
+    private type: string,
+    private baseline: number,
+  ) {}
 
   predict(features: PredictionFeatures): number {
     // Simplified prediction logic - in production would use trained ML models
-    let prediction = this.baseline
+    let prediction = this.baseline;
 
     // Age adjustments
-    if (features.age > 65) prediction *= 0.9
-    if (features.age < 25) prediction *= 0.95
+    if (features.age > 65) prediction *= 0.9;
+    if (features.age < 25) prediction *= 0.95;
 
     // Risk adjustments
-    prediction *= (1 - features.overallRiskScore / 200)
+    prediction *= 1 - features.overallRiskScore / 200;
 
     // Medical complexity adjustments
-    prediction *= (1 - features.comorbidityCount * 0.05)
+    prediction *= 1 - features.comorbidityCount * 0.05;
 
     // Add some randomness to simulate model uncertainty
-    const variance = 0.1
-    prediction += (Math.random() - 0.5) * variance
+    const variance = 0.1;
+    prediction += (Math.random() - 0.5) * variance;
 
-    return Math.max(0, prediction)
+    return Math.max(0, prediction);
   }
 }
 
 // Type definitions for internal use
 interface PredictionFeatures {
-  age: number
-  gender: string
-  bmi: number
-  overallRiskScore: number
-  comorbidityCount: number
-  medicationCount: number
-  allergyCount: number
-  smokingStatus: string
-  exerciseLevel: string
-  stressLevel: string
-  treatmentComplexity: number
-  treatmentDuration: number
-  invasiveness: string
-  previousTreatmentCount: number
-  previousSuccessRate: number
-  averageSatisfaction: number
+  age: number;
+  gender: string;
+  bmi: number;
+  overallRiskScore: number;
+  comorbidityCount: number;
+  medicationCount: number;
+  allergyCount: number;
+  smokingStatus: string;
+  exerciseLevel: string;
+  stressLevel: string;
+  treatmentComplexity: number;
+  treatmentDuration: number;
+  invasiveness: string;
+  previousTreatmentCount: number;
+  previousSuccessRate: number;
+  averageSatisfaction: number;
 }
 
 interface ModelPredictions {
-  successProbability: number
-  complicationRisk: number
-  recoveryTime: number
-  satisfactionScore: number
+  successProbability: number;
+  complicationRisk: number;
+  recoveryTime: number;
+  satisfactionScore: number;
 }
 
 interface CompositePrediction {
-  successProbability: number
-  complicationRisk: number
-  expectedRecoveryDays: number
-  expectedSatisfaction: number
+  successProbability: number;
+  complicationRisk: number;
+  expectedRecoveryDays: number;
+  expectedSatisfaction: number;
   confidenceInterval: {
-    lower: number
-    upper: number
-  }
+    lower: number;
+    upper: number;
+  };
 }
 
 interface UncertaintyAnalysis {
-  confidence: number
-  factors: string[]
-  recommendedValidation: string
+  confidence: number;
+  factors: string[];
+  recommendedValidation: string;
 }
 
 interface PredictiveModel {
-  successModel: MockPredictionModel
-  complicationModel: MockPredictionModel
-  recoveryModel: MockPredictionModel
-  satisfactionModel: MockPredictionModel
+  successModel: MockPredictionModel;
+  complicationModel: MockPredictionModel;
+  recoveryModel: MockPredictionModel;
+  satisfactionModel: MockPredictionModel;
 }
 
 // Export types
 export interface TreatmentOutcomePrediction {
-  patientId: string
-  treatmentId: string
-  predictions: CompositePrediction
-  confidence: number
-  uncertaintyFactors: string[]
-  baselineComparison: BaselineComparison
-  recommendedMonitoring: string[]
-  predictionDate: Date
-  modelVersions: Record<string, string>
+  patientId: string;
+  treatmentId: string;
+  predictions: CompositePrediction;
+  confidence: number;
+  uncertaintyFactors: string[];
+  baselineComparison: BaselineComparison;
+  recommendedMonitoring: string[];
+  predictionDate: Date;
+  modelVersions: Record<string, string>;
 }
 
 export interface ComplicationRiskPrediction {
-  patientId: string
-  treatmentId: string
-  overallRisk: number
-  specificComplications: SpecificComplication[]
-  preventionStrategies: string[]
-  riskFactors: string[]
-  recommendedPrecautions: string[]
-  monitoringSchedule: string[]
-  predictionDate: Date
+  patientId: string;
+  treatmentId: string;
+  overallRisk: number;
+  specificComplications: SpecificComplication[];
+  preventionStrategies: string[];
+  riskFactors: string[];
+  recommendedPrecautions: string[];
+  monitoringSchedule: string[];
+  predictionDate: Date;
 }
 
 export interface RecoveryTrajectoryPrediction {
-  patientId: string
-  treatmentId: string
-  expectedDuration: number
-  recoveryPhases: RecoveryPhases
-  milestones: RecoveryMilestone[]
-  trajectoryVariations: TrajectoryVariation[]
-  optimizationRecommendations: string[]
-  followUpSchedule: string[]
-  redFlags: string[]
-  predictionDate: Date
+  patientId: string;
+  treatmentId: string;
+  expectedDuration: number;
+  recoveryPhases: RecoveryPhases;
+  milestones: RecoveryMilestone[];
+  trajectoryVariations: TrajectoryVariation[];
+  optimizationRecommendations: string[];
+  followUpSchedule: string[];
+  redFlags: string[];
+  predictionDate: Date;
 }
 
 export interface SatisfactionPrediction {
-  patientId: string
-  treatmentId: string
-  overallSatisfaction: number
-  satisfactionDimensions: SatisfactionDimensions
-  satisfactionRisks: SatisfactionRisk[]
-  optimizationStrategies: string[]
-  communicationRecommendations: string[]
-  expectationManagement: string[]
-  predictionDate: Date
+  patientId: string;
+  treatmentId: string;
+  overallSatisfaction: number;
+  satisfactionDimensions: SatisfactionDimensions;
+  satisfactionRisks: SatisfactionRisk[];
+  optimizationStrategies: string[];
+  communicationRecommendations: string[];
+  expectationManagement: string[];
+  predictionDate: Date;
 }
 
 // Additional supporting types
 interface BaselineComparison {
-  betterThanAverage: boolean
-  percentilRank: number
-  comparison: string
+  betterThanAverage: boolean;
+  percentilRank: number;
+  comparison: string;
 }
 
 interface SpecificComplication {
-  type: string
-  probability: number
-  severity: string
-  description: string
+  type: string;
+  probability: number;
+  severity: string;
+  description: string;
 }
 
 interface RecoveryPhases {
-  immediate: { expectedDays: number; description: string }
-  shortTerm: { expectedDays: number; description: string }
-  longTerm: { expectedDays: number; description: string }
-  total: { expectedDays: number; description: string }
+  immediate: { expectedDays: number; description: string };
+  shortTerm: { expectedDays: number; description: string };
+  longTerm: { expectedDays: number; description: string };
+  total: { expectedDays: number; description: string };
 }
 
 interface RecoveryMilestone {
-  day: number
-  milestone: string
-  expectedStatus: string
+  day: number;
+  milestone: string;
+  expectedStatus: string;
 }
 
 interface TrajectoryVariation {
-  scenario: string
-  probability: number
-  impactDays: number
-  description: string
+  scenario: string;
+  probability: number;
+  impactDays: number;
+  description: string;
 }
 
 interface SatisfactionDimensions {
-  procedureExperience: number
-  resultQuality: number
-  staffCommunication: number
-  facilityEnvironment: number
-  costValue: number
-  overallExperience: number
+  procedureExperience: number;
+  resultQuality: number;
+  staffCommunication: number;
+  facilityEnvironment: number;
+  costValue: number;
+  overallExperience: number;
 }
 
 interface SatisfactionRisk {
-  factor: string
-  impact: number
-  mitigation: string
+  factor: string;
+  impact: number;
+  mitigation: string;
 }
-

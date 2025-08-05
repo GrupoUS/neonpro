@@ -1,144 +1,152 @@
 // components/auth/mfa/email-mfa-setup.tsx
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Loader2, Mail, MessageSquare } from 'lucide-react'
-import { EmailMFAService, validateEmail } from '@/lib/auth/mfa'
-import { toast } from 'sonner'
+import type { useState } from "react";
+import type { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type { z } from "zod";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Loader2, Mail, MessageSquare } from "lucide-react";
+import type { EmailMFAService, validateEmail } from "@/lib/auth/mfa";
+import type { toast } from "sonner";
 
 const emailSchema = z.object({
-  email: z.string()
-    .email('Please enter a valid email address')
-    .refine(validateEmail, 'Please enter a valid email address')
-})
+  email: z
+    .string()
+    .email("Please enter a valid email address")
+    .refine(validateEmail, "Please enter a valid email address"),
+});
 
 const verificationSchema = z.object({
-  code: z.string()
-    .length(6, 'Verification code must be 6 digits')
-    .regex(/^\d+$/, 'Verification code must contain only numbers')
-})
+  code: z
+    .string()
+    .length(6, "Verification code must be 6 digits")
+    .regex(/^\d+$/, "Verification code must contain only numbers"),
+});
 
-type EmailFormData = z.infer<typeof emailSchema>
-type VerificationFormData = z.infer<typeof verificationSchema>
+type EmailFormData = z.infer<typeof emailSchema>;
+type VerificationFormData = z.infer<typeof verificationSchema>;
 
 interface EmailMFASetupProps {
-  userId: string
-  onSuccess: () => void
-  onCancel: () => void
+  userId: string;
+  onSuccess: () => void;
+  onCancel: () => void;
 }
 
 export function EmailMFASetup({ userId, onSuccess, onCancel }: EmailMFASetupProps) {
-  const [step, setStep] = useState<'email' | 'verification'>('email')
-  const [email, setEmail] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [resendCount, setResendCount] = useState(0)
-  const [canResend, setCanResend] = useState(true)
+  const [step, setStep] = useState<"email" | "verification">("email");
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [resendCount, setResendCount] = useState(0);
+  const [canResend, setCanResend] = useState(true);
 
   const emailForm = useForm<EmailFormData>({
     resolver: zodResolver(emailSchema),
     defaultValues: {
-      email: ''
-    }
-  })
+      email: "",
+    },
+  });
 
   const verificationForm = useForm<VerificationFormData>({
     resolver: zodResolver(verificationSchema),
     defaultValues: {
-      code: ''
-    }
-  })
+      code: "",
+    },
+  });
 
-  const emailService = EmailMFAService.getInstance()
+  const emailService = EmailMFAService.getInstance();
 
   const handleEmailSubmit = async (data: EmailFormData) => {
-    setIsLoading(true)
-    setError('')
+    setIsLoading(true);
+    setError("");
 
     try {
-      const result = await emailService.sendEmailCode(data.email, userId)
+      const result = await emailService.sendEmailCode(data.email, userId);
 
       if (result.success) {
-        setEmail(data.email)
-        setStep('verification')
-        toast.success('Verification code sent to your email')
+        setEmail(data.email);
+        setStep("verification");
+        toast.success("Verification code sent to your email");
       } else {
-        setError(result.error || 'Failed to send verification code')
+        setError(result.error || "Failed to send verification code");
       }
     } catch (err) {
-      setError('Failed to send verification code')
-      console.error('Email sending error:', err)
+      setError("Failed to send verification code");
+      console.error("Email sending error:", err);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleVerificationSubmit = async (data: VerificationFormData) => {
-    setIsLoading(true)
-    setError('')
+    setIsLoading(true);
+    setError("");
 
     try {
-      const verifyResult = await emailService.verifyEmailCode(email, data.code, userId)
+      const verifyResult = await emailService.verifyEmailCode(email, data.code, userId);
 
       if (verifyResult.success) {
-        const enableResult = await emailService.enableEmailMFA(userId, email)
-        
+        const enableResult = await emailService.enableEmailMFA(userId, email);
+
         if (enableResult.success) {
-          toast.success('Email MFA enabled successfully')
-          onSuccess()
+          toast.success("Email MFA enabled successfully");
+          onSuccess();
         } else {
-          setError(enableResult.error || 'Failed to enable Email MFA')
+          setError(enableResult.error || "Failed to enable Email MFA");
         }
       } else {
-        setError(verifyResult.error || 'Invalid verification code')
+        setError(verifyResult.error || "Invalid verification code");
       }
     } catch (err) {
-      setError('Verification failed')
-      console.error('Email verification error:', err)
+      setError("Verification failed");
+      console.error("Email verification error:", err);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleResendCode = async () => {
     if (!canResend || resendCount >= 3) {
-      return
+      return;
     }
 
-    setIsLoading(true)
-    setError('')
+    setIsLoading(true);
+    setError("");
 
     try {
-      const result = await emailService.sendEmailCode(email, userId)
+      const result = await emailService.sendEmailCode(email, userId);
 
       if (result.success) {
-        setResendCount(prev => prev + 1)
-        setCanResend(false)
-        
+        setResendCount((prev) => prev + 1);
+        setCanResend(false);
+
         // Allow resend after 60 seconds
-        setTimeout(() => setCanResend(true), 60000)
-        
-        toast.success('New verification code sent')
+        setTimeout(() => setCanResend(true), 60000);
+
+        toast.success("New verification code sent");
       } else {
-        setError(result.error || 'Failed to resend code')
+        setError(result.error || "Failed to resend code");
       }
     } catch (err) {
-      setError('Failed to resend code')
-      console.error('Email resend error:', err)
+      setError("Failed to resend code");
+      console.error("Email resend error:", err);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
-  if (step === 'email') {
+  if (step === "email") {
     return (
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
@@ -146,9 +154,7 @@ export function EmailMFASetup({ userId, onSuccess, onCancel }: EmailMFASetupProp
             <Mail className="w-6 h-6 text-purple-600" />
           </div>
           <CardTitle>Setup Email Authentication</CardTitle>
-          <CardDescription>
-            Enter your email address to receive verification codes
-          </CardDescription>
+          <CardDescription>Enter your email address to receive verification codes</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={emailForm.handleSubmit(handleEmailSubmit)} className="space-y-4">
@@ -158,13 +164,11 @@ export function EmailMFASetup({ userId, onSuccess, onCancel }: EmailMFASetupProp
                 id="email"
                 type="email"
                 placeholder="your.email@example.com"
-                {...emailForm.register('email')}
-                className={emailForm.formState.errors.email ? 'border-red-500' : ''}
+                {...emailForm.register("email")}
+                className={emailForm.formState.errors.email ? "border-red-500" : ""}
               />
               {emailForm.formState.errors.email && (
-                <p className="text-sm text-red-500">
-                  {emailForm.formState.errors.email.message}
-                </p>
+                <p className="text-sm text-red-500">{emailForm.formState.errors.email.message}</p>
               )}
             </div>
 
@@ -175,19 +179,10 @@ export function EmailMFASetup({ userId, onSuccess, onCancel }: EmailMFASetupProp
             )}
 
             <div className="flex gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onCancel}
-                className="flex-1"
-              >
+              <Button type="button" variant="outline" onClick={onCancel} className="flex-1">
                 Cancel
               </Button>
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="flex-1"
-              >
+              <Button type="submit" disabled={isLoading} className="flex-1">
                 {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                 Send Code
               </Button>
@@ -195,7 +190,7 @@ export function EmailMFASetup({ userId, onSuccess, onCancel }: EmailMFASetupProp
           </form>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -205,12 +200,13 @@ export function EmailMFASetup({ userId, onSuccess, onCancel }: EmailMFASetupProp
           <MessageSquare className="w-6 h-6 text-green-600" />
         </div>
         <CardTitle>Enter Verification Code</CardTitle>
-        <CardDescription>
-          We sent a 6-digit code to {email}
-        </CardDescription>
+        <CardDescription>We sent a 6-digit code to {email}</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={verificationForm.handleSubmit(handleVerificationSubmit)} className="space-y-4">
+        <form
+          onSubmit={verificationForm.handleSubmit(handleVerificationSubmit)}
+          className="space-y-4"
+        >
           <div className="space-y-2">
             <Label htmlFor="code">Verification Code</Label>
             <Input
@@ -219,9 +215,9 @@ export function EmailMFASetup({ userId, onSuccess, onCancel }: EmailMFASetupProp
               placeholder="123456"
               maxLength={6}
               className={`text-center text-lg tracking-widest ${
-                verificationForm.formState.errors.code ? 'border-red-500' : ''
+                verificationForm.formState.errors.code ? "border-red-500" : ""
               }`}
-              {...verificationForm.register('code')}
+              {...verificationForm.register("code")}
             />
             {verificationForm.formState.errors.code && (
               <p className="text-sm text-red-500">
@@ -244,12 +240,11 @@ export function EmailMFASetup({ userId, onSuccess, onCancel }: EmailMFASetupProp
               disabled={!canResend || resendCount >= 3 || isLoading}
               className="text-sm"
             >
-              {resendCount >= 3 
-                ? 'Maximum resend attempts reached' 
-                : canResend 
-                  ? `Resend code (${3 - resendCount} left)` 
-                  : 'Resend available in 60s'
-              }
+              {resendCount >= 3
+                ? "Maximum resend attempts reached"
+                : canResend
+                  ? `Resend code (${3 - resendCount} left)`
+                  : "Resend available in 60s"}
             </Button>
           </div>
 
@@ -257,16 +252,12 @@ export function EmailMFASetup({ userId, onSuccess, onCancel }: EmailMFASetupProp
             <Button
               type="button"
               variant="outline"
-              onClick={() => setStep('email')}
+              onClick={() => setStep("email")}
               className="flex-1"
             >
               Back
             </Button>
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="flex-1"
-            >
+            <Button type="submit" disabled={isLoading} className="flex-1">
               {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               Verify
             </Button>
@@ -274,5 +265,5 @@ export function EmailMFASetup({ userId, onSuccess, onCancel }: EmailMFASetupProp
         </form>
       </CardContent>
     </Card>
-  )
+  );
 }

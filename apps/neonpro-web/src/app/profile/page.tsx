@@ -1,7 +1,7 @@
-import { ProfileSyncManager } from "@/components/profile/profile-sync-manager";
-import { Card, CardContent } from "@/components/ui/card";
-import { RefreshCw } from "lucide-react";
-import { Suspense } from "react";
+import type { ProfileSyncManager } from "@/components/profile/profile-sync-manager";
+import type { Card, CardContent } from "@/components/ui/card";
+import type { RefreshCw } from "lucide-react";
+import type { Suspense } from "react";
 
 function ProfileLoading() {
   return (
@@ -21,12 +21,9 @@ export default function ProfilePage() {
     <div className="container mx-auto py-8 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Gerenciar Perfil
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Gerenciar Perfil</h1>
           <p className="text-gray-600">
-            Configure suas informações pessoais e profissionais com
-            sincronização Google.
+            Configure suas informações pessoais e profissionais com sincronização Google.
           </p>
         </div>
 

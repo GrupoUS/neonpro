@@ -3,9 +3,9 @@
 // Epic 6 - Story 6.3: Comprehensive supplier management with performance tracking
 // =====================================================================================
 
-import { SupplierManagementService } from '@/app/lib/services/supplier-management-service';
-import { createEvaluationSchema } from '@/app/lib/validations/suppliers';
-import { NextRequest, NextResponse } from 'next/server';
+import type { SupplierManagementService } from "@/app/lib/services/supplier-management-service";
+import type { createEvaluationSchema } from "@/app/lib/validations/suppliers";
+import type { NextRequest, NextResponse } from "next/server";
 
 const supplierService = new SupplierManagementService();
 
@@ -15,23 +15,17 @@ const supplierService = new SupplierManagementService();
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const supplierId = searchParams.get('supplier_id');
-    
+    const supplierId = searchParams.get("supplier_id");
+
     if (!supplierId) {
-      return NextResponse.json(
-        { error: 'supplier_id é obrigatório' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "supplier_id é obrigatório" }, { status: 400 });
     }
 
     const evaluations = await supplierService.getSupplierEvaluations(supplierId);
     return NextResponse.json({ evaluations });
   } catch (error) {
-    console.error('Erro ao buscar avaliações:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    console.error("Erro ao buscar avaliações:", error);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
 }
 
@@ -46,8 +40,8 @@ export async function POST(request: NextRequest) {
     const validationResult = createEvaluationSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
-        { error: 'Dados inválidos', details: validationResult.error.issues },
-        { status: 400 }
+        { error: "Dados inválidos", details: validationResult.error.issues },
+        { status: 400 },
       );
     }
 
@@ -55,10 +49,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(evaluation, { status: 201 });
   } catch (error) {
-    console.error('Erro ao criar avaliação:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    console.error("Erro ao criar avaliação:", error);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
 }

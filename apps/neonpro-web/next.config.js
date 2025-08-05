@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Turborepo optimizations
-  transpilePackages: ['@neonpro/ui', '@neonpro/utils', '@neonpro/types'],
-  
+  transpilePackages: ["@neonpro/ui", "@neonpro/utils", "@neonpro/types"],
+
   // Build configuration - ignore linting and type checking during build
   eslint: {
     ignoreDuringBuilds: true,
@@ -10,18 +10,18 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  
+
   // Performance optimizations
   experimental: {
     optimizeCss: true,
-    optimizePackageImports: ['@neonpro/ui'],
+    optimizePackageImports: ["@neonpro/ui"],
   },
-  
+
   // Build optimizations
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
+    removeConsole: process.env.NODE_ENV === "production",
   },
-  
+
   // Bundle analyzer for monitoring
   webpack: (config, { dev, isServer }) => {
     if (!dev && !isServer) {
@@ -29,33 +29,33 @@ const nextConfig = {
         ...config.optimization.splitChunks.cacheGroups,
         neonpro: {
           test: /[\\/]packages[\\/]/,
-          name: 'neonpro-packages',
-          chunks: 'all',
+          name: "neonpro-packages",
+          chunks: "all",
           priority: 10,
         },
       };
     }
     return config;
   },
-  
+
   // Environment variables
   env: {
-    TURBO_BUILD: 'true',
+    TURBO_BUILD: "true",
   },
-  
+
   // Headers for security
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: "/(.*)",
         headers: [
           {
-            key: 'X-Frame-Options',
-            value: 'DENY',
+            key: "X-Frame-Options",
+            value: "DENY",
           },
           {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
+            key: "X-Content-Type-Options",
+            value: "nosniff",
           },
         ],
       },

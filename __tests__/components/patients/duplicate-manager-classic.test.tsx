@@ -41,7 +41,7 @@ describe("DuplicateManagerClassic", () => {
         duplicates={mockDuplicates}
         onMerge={mockOnMerge}
         onDismiss={mockOnDismiss}
-      />
+      />,
     );
 
     expect(screen.getByText("Found 1 potential duplicate")).toBeInTheDocument();
@@ -54,7 +54,7 @@ describe("DuplicateManagerClassic", () => {
         duplicates={mockDuplicates}
         onMerge={mockOnMerge}
         onDismiss={mockOnDismiss}
-      />
+      />,
     );
 
     expect(screen.getByText("85% confidence")).toBeInTheDocument();
@@ -66,7 +66,7 @@ describe("DuplicateManagerClassic", () => {
         duplicates={mockDuplicates}
         onMerge={mockOnMerge}
         onDismiss={mockOnDismiss}
-      />
+      />,
     );
 
     expect(screen.getByText("John Doe")).toBeInTheDocument();

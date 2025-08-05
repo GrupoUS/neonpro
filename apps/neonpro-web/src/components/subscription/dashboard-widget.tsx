@@ -1,1 +1,3 @@
-﻿export default function SubscriptionDashboardWidget() { return <div>Dashboard Widget</div>; }
+﻿export default function SubscriptionDashboardWidget() {
+  return <div>Dashboard Widget</div>;
+}

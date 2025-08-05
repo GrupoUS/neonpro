@@ -4,20 +4,20 @@
  */
 
 // Core management classes
-export { StockOutputManager } from './stock-output-management';
-export { FIFOManager, fifoManager } from './fifo-management';
-export { ConsumptionAnalyzer, consumptionAnalyzer } from './consumption-analytics';
+export { StockOutputManager } from "./stock-output-management";
+export { FIFOManager, fifoManager } from "./fifo-management";
+export { ConsumptionAnalyzer, consumptionAnalyzer } from "./consumption-analytics";
 
 // Configuration and utilities
-export { 
+export {
   InventoryConfigManager,
   InventoryDashboardProvider,
   InventoryIntegrationManager,
   InventoryUtils,
   inventoryConfigManager,
   inventoryDashboardProvider,
-  inventoryIntegrationManager
-} from './config';
+  inventoryIntegrationManager,
+} from "./config";
 
 // Types
 export type {
@@ -38,7 +38,6 @@ export type {
   StockMovement,
   QualityCheck,
   RegulatoryCompliance,
-  
   // FIFO management types
   FIFOAnalysis,
   FIFORecommendation,
@@ -46,7 +45,6 @@ export type {
   ExpiryAction,
   BatchMovement,
   FIFOOptimizationConfig,
-  
   // Consumption analytics types
   ConsumptionAnalytics,
   ProductConsumption,
@@ -58,7 +56,6 @@ export type {
   PurchaseRecommendation,
   ConsumptionPattern,
   ProductCorrelation,
-  
   // Configuration types
   InventoryConfig,
   InventoryDashboardSummary,
@@ -67,13 +64,12 @@ export type {
   SystemIntegration,
   InventoryMetrics,
   InventoryAuditLog,
-  
   // Utility types
   DateRange,
   ValueWithChange,
   PaginatedResponse,
-  ApiResponse
-} from './types';
+  ApiResponse,
+} from "./types";
 
 // Constants and enums
 export {
@@ -81,8 +77,8 @@ export {
   StockOutputStatus,
   BatchStatus,
   AlertType,
-  TransferStatus
-} from './types';
+  TransferStatus,
+} from "./types";
 
 // Default instances for easy access
 export const inventoryManagers = {
@@ -91,5 +87,5 @@ export const inventoryManagers = {
   consumption: consumptionAnalyzer,
   config: inventoryConfigManager,
   dashboard: inventoryDashboardProvider,
-  integration: inventoryIntegrationManager
+  integration: inventoryIntegrationManager,
 } as const;

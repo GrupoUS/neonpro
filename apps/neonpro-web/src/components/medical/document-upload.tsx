@@ -1,50 +1,69 @@
 "use client";
 
-import React, { useState, useCallback, useRef } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { 
-  Upload, 
-  File, 
-  Image, 
-  FileText, 
-  X, 
-  Eye, 
-  Download, 
-  Trash2, 
-  Camera, 
-  Scan, 
-  Shield, 
-  Lock, 
-  CheckCircle, 
-  AlertTriangle, 
-  Clock, 
-  Tag, 
-  Calendar, 
-  User, 
-  FileImage, 
-  FilePdf, 
-  FileSpreadsheet, 
-  FileVideo, 
-  FileAudio, 
-  Archive, 
-  Plus, 
-  Search, 
-  Filter, 
-  Grid, 
-  List, 
-  MoreVertical
-} from 'lucide-react';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import React, { useState, useCallback, useRef } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Badge } from "@/components/ui/badge";
+import type { Progress } from "@/components/ui/progress";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type {
+  Upload,
+  File,
+  Image,
+  FileText,
+  X,
+  Eye,
+  Download,
+  Trash2,
+  Camera,
+  Scan,
+  Shield,
+  Lock,
+  CheckCircle,
+  AlertTriangle,
+  Clock,
+  Tag,
+  Calendar,
+  User,
+  FileImage,
+  FilePdf,
+  FileSpreadsheet,
+  FileVideo,
+  FileAudio,
+  Archive,
+  Plus,
+  Search,
+  Filter,
+  Grid,
+  List,
+  MoreVertical,
+} from "lucide-react";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
 
 // Types
 interface MedicalDocument {
@@ -61,7 +80,7 @@ interface MedicalDocument {
   tags: string[];
   isBeforeAfter: boolean;
   beforeAfterPairId?: string;
-  position?: 'before' | 'after';
+  position?: "before" | "after";
   captureDate?: Date;
   uploadDate: Date;
   uploadedBy: string;
@@ -87,81 +106,142 @@ interface DocumentUploadProps {
 }
 
 const DOCUMENT_CATEGORIES = [
-  { value: 'exam_results', label: 'Resultados de Exames', icon: <FileText className="w-4 h-4" />, color: 'bg-blue-100 text-blue-800' },
-  { value: 'prescriptions', label: 'Receitas Médicas', icon: <FileText className="w-4 h-4" />, color: 'bg-green-100 text-green-800' },
-  { value: 'reports', label: 'Relatórios Médicos', icon: <FileText className="w-4 h-4" />, color: 'bg-purple-100 text-purple-800' },
-  { value: 'images', label: 'Imagens Médicas', icon: <FileImage className="w-4 h-4" />, color: 'bg-orange-100 text-orange-800' },
-  { value: 'before_after', label: 'Antes e Depois', icon: <Camera className="w-4 h-4" />, color: 'bg-pink-100 text-pink-800' },
-  { value: 'consent_forms', label: 'Termos de Consentimento', icon: <Shield className="w-4 h-4" />, color: 'bg-gray-100 text-gray-800' },
-  { value: 'insurance', label: 'Documentos do Convênio', icon: <FileText className="w-4 h-4" />, color: 'bg-indigo-100 text-indigo-800' },
-  { value: 'identification', label: 'Documentos de Identificação', icon: <User className="w-4 h-4" />, color: 'bg-yellow-100 text-yellow-800' },
-  { value: 'other', label: 'Outros', icon: <File className="w-4 h-4" />, color: 'bg-gray-100 text-gray-800' }
+  {
+    value: "exam_results",
+    label: "Resultados de Exames",
+    icon: <FileText className="w-4 h-4" />,
+    color: "bg-blue-100 text-blue-800",
+  },
+  {
+    value: "prescriptions",
+    label: "Receitas Médicas",
+    icon: <FileText className="w-4 h-4" />,
+    color: "bg-green-100 text-green-800",
+  },
+  {
+    value: "reports",
+    label: "Relatórios Médicos",
+    icon: <FileText className="w-4 h-4" />,
+    color: "bg-purple-100 text-purple-800",
+  },
+  {
+    value: "images",
+    label: "Imagens Médicas",
+    icon: <FileImage className="w-4 h-4" />,
+    color: "bg-orange-100 text-orange-800",
+  },
+  {
+    value: "before_after",
+    label: "Antes e Depois",
+    icon: <Camera className="w-4 h-4" />,
+    color: "bg-pink-100 text-pink-800",
+  },
+  {
+    value: "consent_forms",
+    label: "Termos de Consentimento",
+    icon: <Shield className="w-4 h-4" />,
+    color: "bg-gray-100 text-gray-800",
+  },
+  {
+    value: "insurance",
+    label: "Documentos do Convênio",
+    icon: <FileText className="w-4 h-4" />,
+    color: "bg-indigo-100 text-indigo-800",
+  },
+  {
+    value: "identification",
+    label: "Documentos de Identificação",
+    icon: <User className="w-4 h-4" />,
+    color: "bg-yellow-100 text-yellow-800",
+  },
+  {
+    value: "other",
+    label: "Outros",
+    icon: <File className="w-4 h-4" />,
+    color: "bg-gray-100 text-gray-800",
+  },
 ];
 
 const ACCESS_LEVELS = [
-  { value: 'public', label: 'Público', description: 'Visível para toda a equipe' },
-  { value: 'restricted', label: 'Restrito', description: 'Apenas médicos responsáveis' },
-  { value: 'private', label: 'Privado', description: 'Apenas o médico que enviou' },
-  { value: 'patient', label: 'Paciente', description: 'Visível para o paciente' }
+  { value: "public", label: "Público", description: "Visível para toda a equipe" },
+  { value: "restricted", label: "Restrito", description: "Apenas médicos responsáveis" },
+  { value: "private", label: "Privado", description: "Apenas o médico que enviou" },
+  { value: "patient", label: "Paciente", description: "Visível para o paciente" },
 ];
 
 const FILE_TYPES = {
-  'image/jpeg': { icon: <FileImage className="w-4 h-4" />, color: 'text-green-600' },
-  'image/png': { icon: <FileImage className="w-4 h-4" />, color: 'text-green-600' },
-  'image/gif': { icon: <FileImage className="w-4 h-4" />, color: 'text-green-600' },
-  'image/webp': { icon: <FileImage className="w-4 h-4" />, color: 'text-green-600' },
-  'application/pdf': { icon: <FilePdf className="w-4 h-4" />, color: 'text-red-600' },
-  'application/msword': { icon: <FileText className="w-4 h-4" />, color: 'text-blue-600' },
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': { icon: <FileText className="w-4 h-4" />, color: 'text-blue-600' },
-  'application/vnd.ms-excel': { icon: <FileSpreadsheet className="w-4 h-4" />, color: 'text-green-600' },
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': { icon: <FileSpreadsheet className="w-4 h-4" />, color: 'text-green-600' },
-  'video/mp4': { icon: <FileVideo className="w-4 h-4" />, color: 'text-purple-600' },
-  'video/avi': { icon: <FileVideo className="w-4 h-4" />, color: 'text-purple-600' },
-  'audio/mp3': { icon: <FileAudio className="w-4 h-4" />, color: 'text-orange-600' },
-  'audio/wav': { icon: <FileAudio className="w-4 h-4" />, color: 'text-orange-600' },
-  'application/zip': { icon: <Archive className="w-4 h-4" />, color: 'text-gray-600' },
-  'application/rar': { icon: <Archive className="w-4 h-4" />, color: 'text-gray-600' }
+  "image/jpeg": { icon: <FileImage className="w-4 h-4" />, color: "text-green-600" },
+  "image/png": { icon: <FileImage className="w-4 h-4" />, color: "text-green-600" },
+  "image/gif": { icon: <FileImage className="w-4 h-4" />, color: "text-green-600" },
+  "image/webp": { icon: <FileImage className="w-4 h-4" />, color: "text-green-600" },
+  "application/pdf": { icon: <FilePdf className="w-4 h-4" />, color: "text-red-600" },
+  "application/msword": { icon: <FileText className="w-4 h-4" />, color: "text-blue-600" },
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": {
+    icon: <FileText className="w-4 h-4" />,
+    color: "text-blue-600",
+  },
+  "application/vnd.ms-excel": {
+    icon: <FileSpreadsheet className="w-4 h-4" />,
+    color: "text-green-600",
+  },
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
+    icon: <FileSpreadsheet className="w-4 h-4" />,
+    color: "text-green-600",
+  },
+  "video/mp4": { icon: <FileVideo className="w-4 h-4" />, color: "text-purple-600" },
+  "video/avi": { icon: <FileVideo className="w-4 h-4" />, color: "text-purple-600" },
+  "audio/mp3": { icon: <FileAudio className="w-4 h-4" />, color: "text-orange-600" },
+  "audio/wav": { icon: <FileAudio className="w-4 h-4" />, color: "text-orange-600" },
+  "application/zip": { icon: <Archive className="w-4 h-4" />, color: "text-gray-600" },
+  "application/rar": { icon: <Archive className="w-4 h-4" />, color: "text-gray-600" },
 };
 
 const DEFAULT_ALLOWED_TYPES = [
-  'image/jpeg', 'image/png', 'image/gif', 'image/webp',
-  'application/pdf',
-  'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  'video/mp4', 'video/avi',
-  'audio/mp3', 'audio/wav'
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/vnd.ms-excel",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "video/mp4",
+  "video/avi",
+  "audio/mp3",
+  "audio/wav",
 ];
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 
-export function DocumentUpload({ 
-  patientId, 
-  clinicId, 
-  onDocumentUploaded, 
+export function DocumentUpload({
+  patientId,
+  clinicId,
+  onDocumentUploaded,
   allowedTypes = DEFAULT_ALLOWED_TYPES,
   maxFileSize = MAX_FILE_SIZE,
   category,
-  isBeforeAfter = false
+  isBeforeAfter = false,
 }: DocumentUploadProps) {
   const [documents, setDocuments] = useState<MedicalDocument[]>([]);
   const [uploadingFiles, setUploadingFiles] = useState<File[]>([]);
   const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
   const [dragActive, setDragActive] = useState(false);
   const [showUploadDialog, setShowUploadDialog] = useState(false);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedDocument, setSelectedDocument] = useState<MedicalDocument | null>(null);
   const [newDocumentData, setNewDocumentData] = useState({
-    category: category || '',
-    subcategory: '',
-    description: '',
+    category: category || "",
+    subcategory: "",
+    description: "",
     tags: [] as string[],
-    accessLevel: 'restricted',
+    accessLevel: "restricted",
     captureDate: new Date(),
-    isEncrypted: false
+    isEncrypted: false,
   });
-  const [tagInput, setTagInput] = useState('');
+  const [tagInput, setTagInput] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
@@ -175,65 +255,65 @@ export function DocumentUpload({
       // Mock data - replace with actual API call
       const mockDocuments: MedicalDocument[] = [
         {
-          id: '1',
+          id: "1",
           patientId,
           clinicId,
-          fileName: 'exame_sangue_2024.pdf',
-          originalName: 'Exame de Sangue - Janeiro 2024.pdf',
-          fileType: 'application/pdf',
+          fileName: "exame_sangue_2024.pdf",
+          originalName: "Exame de Sangue - Janeiro 2024.pdf",
+          fileType: "application/pdf",
           fileSize: 2048576,
-          category: 'exam_results',
-          description: 'Exame de sangue completo - hemograma',
-          tags: ['hemograma', 'sangue', 'rotina'],
+          category: "exam_results",
+          description: "Exame de sangue completo - hemograma",
+          tags: ["hemograma", "sangue", "rotina"],
           isBeforeAfter: false,
-          uploadDate: new Date('2024-01-15'),
-          uploadedBy: 'dr-silva',
-          accessLevel: 'restricted',
+          uploadDate: new Date("2024-01-15"),
+          uploadedBy: "dr-silva",
+          accessLevel: "restricted",
           isEncrypted: true,
-          downloadUrl: '/api/documents/1/download',
-          metadata: { laboratory: 'Lab Central' },
+          downloadUrl: "/api/documents/1/download",
+          metadata: { laboratory: "Lab Central" },
           version: 1,
-          status: 'active'
+          status: "active",
         },
         {
-          id: '2',
+          id: "2",
           patientId,
           clinicId,
-          fileName: 'antes_tratamento.jpg',
-          originalName: 'Foto Antes do Tratamento.jpg',
-          fileType: 'image/jpeg',
+          fileName: "antes_tratamento.jpg",
+          originalName: "Foto Antes do Tratamento.jpg",
+          fileType: "image/jpeg",
           fileSize: 1024000,
-          category: 'before_after',
-          description: 'Foto antes do início do tratamento',
-          tags: ['antes', 'tratamento', 'facial'],
+          category: "before_after",
+          description: "Foto antes do início do tratamento",
+          tags: ["antes", "tratamento", "facial"],
           isBeforeAfter: true,
-          beforeAfterPairId: 'pair-1',
-          position: 'before',
-          captureDate: new Date('2024-01-10'),
-          uploadDate: new Date('2024-01-10'),
-          uploadedBy: 'dr-silva',
-          accessLevel: 'patient',
+          beforeAfterPairId: "pair-1",
+          position: "before",
+          captureDate: new Date("2024-01-10"),
+          uploadDate: new Date("2024-01-10"),
+          uploadedBy: "dr-silva",
+          accessLevel: "patient",
           isEncrypted: false,
-          thumbnailUrl: '/api/documents/2/thumbnail',
-          downloadUrl: '/api/documents/2/download',
-          metadata: { camera: 'Canon EOS', resolution: '4000x3000' },
+          thumbnailUrl: "/api/documents/2/thumbnail",
+          downloadUrl: "/api/documents/2/download",
+          metadata: { camera: "Canon EOS", resolution: "4000x3000" },
           version: 1,
-          status: 'active'
-        }
+          status: "active",
+        },
       ];
-      
+
       setDocuments(mockDocuments);
     } catch (error) {
-      console.error('Erro ao carregar documentos:', error);
+      console.error("Erro ao carregar documentos:", error);
     }
   };
 
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
+    if (e.type === "dragenter" || e.type === "dragover") {
       setDragActive(true);
-    } else if (e.type === 'dragleave') {
+    } else if (e.type === "dragleave") {
       setDragActive(false);
     }
   }, []);
@@ -242,7 +322,7 @@ export function DocumentUpload({
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       handleFiles(Array.from(e.dataTransfer.files));
     }
@@ -255,13 +335,15 @@ export function DocumentUpload({
   };
 
   const handleFiles = (files: File[]) => {
-    const validFiles = files.filter(file => {
+    const validFiles = files.filter((file) => {
       if (!allowedTypes.includes(file.type)) {
         alert(`Tipo de arquivo não permitido: ${file.type}`);
         return false;
       }
       if (file.size > maxFileSize) {
-        alert(`Arquivo muito grande: ${file.name}. Máximo permitido: ${formatFileSize(maxFileSize)}`);
+        alert(
+          `Arquivo muito grande: ${file.name}. Máximo permitido: ${formatFileSize(maxFileSize)}`,
+        );
         return false;
       }
       return true;
@@ -276,11 +358,11 @@ export function DocumentUpload({
   const uploadFiles = async () => {
     for (const file of uploadingFiles) {
       try {
-        setUploadProgress(prev => ({ ...prev, [file.name]: 0 }));
-        
+        setUploadProgress((prev) => ({ ...prev, [file.name]: 0 }));
+
         // Simulate upload progress
         const uploadInterval = setInterval(() => {
-          setUploadProgress(prev => {
+          setUploadProgress((prev) => {
             const currentProgress = prev[file.name] || 0;
             if (currentProgress >= 100) {
               clearInterval(uploadInterval);
@@ -291,8 +373,8 @@ export function DocumentUpload({
         }, 200);
 
         // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
         const newDocument: MedicalDocument = {
           id: crypto.randomUUID(),
           patientId,
@@ -308,25 +390,25 @@ export function DocumentUpload({
           isBeforeAfter,
           captureDate: newDocumentData.captureDate,
           uploadDate: new Date(),
-          uploadedBy: 'current-user',
+          uploadedBy: "current-user",
           accessLevel: newDocumentData.accessLevel,
           isEncrypted: newDocumentData.isEncrypted,
           downloadUrl: `/api/documents/${crypto.randomUUID()}/download`,
           metadata: {
             originalSize: file.size,
-            uploadedAt: new Date().toISOString()
+            uploadedAt: new Date().toISOString(),
           },
           version: 1,
-          status: 'active'
+          status: "active",
         };
 
-        setDocuments(prev => [...prev, newDocument]);
+        setDocuments((prev) => [...prev, newDocument]);
         onDocumentUploaded?.(newDocument);
-        
-        setUploadProgress(prev => ({ ...prev, [file.name]: 100 }));
+
+        setUploadProgress((prev) => ({ ...prev, [file.name]: 100 }));
       } catch (error) {
-        console.error('Erro ao fazer upload:', error);
-        setUploadProgress(prev => ({ ...prev, [file.name]: -1 }));
+        console.error("Erro ao fazer upload:", error);
+        setUploadProgress((prev) => ({ ...prev, [file.name]: -1 }));
       }
     }
 
@@ -336,58 +418,67 @@ export function DocumentUpload({
       setUploadProgress({});
       setShowUploadDialog(false);
       setNewDocumentData({
-        category: category || '',
-        subcategory: '',
-        description: '',
+        category: category || "",
+        subcategory: "",
+        description: "",
         tags: [],
-        accessLevel: 'restricted',
+        accessLevel: "restricted",
         captureDate: new Date(),
-        isEncrypted: false
+        isEncrypted: false,
       });
     }, 1000);
   };
 
   const addTag = () => {
     if (tagInput.trim() && !newDocumentData.tags.includes(tagInput.trim())) {
-      setNewDocumentData(prev => ({
+      setNewDocumentData((prev) => ({
         ...prev,
-        tags: [...prev.tags, tagInput.trim()]
+        tags: [...prev.tags, tagInput.trim()],
       }));
-      setTagInput('');
+      setTagInput("");
     }
   };
 
   const removeTag = (tagToRemove: string) => {
-    setNewDocumentData(prev => ({
+    setNewDocumentData((prev) => ({
       ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
+      tags: prev.tags.filter((tag) => tag !== tagToRemove),
     }));
   };
 
   const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
   const getFileIcon = (fileType: string) => {
-    return FILE_TYPES[fileType as keyof typeof FILE_TYPES] || { icon: <File className="w-4 h-4" />, color: 'text-gray-600' };
+    return (
+      FILE_TYPES[fileType as keyof typeof FILE_TYPES] || {
+        icon: <File className="w-4 h-4" />,
+        color: "text-gray-600",
+      }
+    );
   };
 
   const getCategoryInfo = (categoryValue: string) => {
-    return DOCUMENT_CATEGORIES.find(cat => cat.value === categoryValue) || DOCUMENT_CATEGORIES[DOCUMENT_CATEGORIES.length - 1];
+    return (
+      DOCUMENT_CATEGORIES.find((cat) => cat.value === categoryValue) ||
+      DOCUMENT_CATEGORIES[DOCUMENT_CATEGORIES.length - 1]
+    );
   };
 
-  const filteredDocuments = documents.filter(doc => {
-    const matchesSearch = searchTerm === '' || 
+  const filteredDocuments = documents.filter((doc) => {
+    const matchesSearch =
+      searchTerm === "" ||
       doc.originalName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       doc.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      doc.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-    
-    const matchesCategory = selectedCategory === 'all' || doc.category === selectedCategory;
-    
+      doc.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    const matchesCategory = selectedCategory === "all" || doc.category === selectedCategory;
+
     return matchesSearch && matchesCategory;
   });
 
@@ -399,10 +490,7 @@ export function DocumentUpload({
           <p className="text-gray-600">Gerencie exames, receitas e outros documentos do paciente</p>
         </div>
         <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            onClick={() => cameraInputRef.current?.click()}
-          >
+          <Button variant="outline" onClick={() => cameraInputRef.current?.click()}>
             <Camera className="w-4 h-4 mr-2" />
             Câmera
           </Button>
@@ -418,7 +506,7 @@ export function DocumentUpload({
         ref={fileInputRef}
         type="file"
         multiple
-        accept={allowedTypes.join(',')}
+        accept={allowedTypes.join(",")}
         onChange={handleFileInput}
         className="hidden"
       />
@@ -440,7 +528,7 @@ export function DocumentUpload({
               Configure as informações dos documentos antes do upload
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             {/* Files to upload */}
             <div className="space-y-2">
@@ -451,22 +539,14 @@ export function DocumentUpload({
                   const progress = uploadProgress[file.name] || 0;
                   return (
                     <div key={index} className="flex items-center space-x-3 p-3 border rounded-lg">
-                      <div className={fileIcon.color}>
-                        {fileIcon.icon}
-                      </div>
+                      <div className={fileIcon.color}>{fileIcon.icon}</div>
                       <div className="flex-1">
                         <div className="font-medium">{file.name}</div>
                         <div className="text-sm text-gray-500">{formatFileSize(file.size)}</div>
-                        {progress > 0 && (
-                          <Progress value={progress} className="mt-1" />
-                        )}
+                        {progress > 0 && <Progress value={progress} className="mt-1" />}
                       </div>
-                      {progress === -1 && (
-                        <AlertTriangle className="w-5 h-5 text-red-500" />
-                      )}
-                      {progress === 100 && (
-                        <CheckCircle className="w-5 h-5 text-green-500" />
-                      )}
+                      {progress === -1 && <AlertTriangle className="w-5 h-5 text-red-500" />}
+                      {progress === 100 && <CheckCircle className="w-5 h-5 text-green-500" />}
                     </div>
                   );
                 })}
@@ -479,13 +559,15 @@ export function DocumentUpload({
                 <Label htmlFor="category">Categoria *</Label>
                 <Select
                   value={newDocumentData.category}
-                  onValueChange={(value) => setNewDocumentData(prev => ({ ...prev, category: value }))}
+                  onValueChange={(value) =>
+                    setNewDocumentData((prev) => ({ ...prev, category: value }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione a categoria" />
                   </SelectTrigger>
                   <SelectContent>
-                    {DOCUMENT_CATEGORIES.map(category => (
+                    {DOCUMENT_CATEGORIES.map((category) => (
                       <SelectItem key={category.value} value={category.value}>
                         <div className="flex items-center space-x-2">
                           {category.icon}
@@ -501,13 +583,15 @@ export function DocumentUpload({
                 <Label htmlFor="accessLevel">Nível de Acesso</Label>
                 <Select
                   value={newDocumentData.accessLevel}
-                  onValueChange={(value) => setNewDocumentData(prev => ({ ...prev, accessLevel: value }))}
+                  onValueChange={(value) =>
+                    setNewDocumentData((prev) => ({ ...prev, accessLevel: value }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {ACCESS_LEVELS.map(level => (
+                    {ACCESS_LEVELS.map((level) => (
                       <SelectItem key={level.value} value={level.value}>
                         <div>
                           <div className="font-medium">{level.label}</div>
@@ -525,7 +609,9 @@ export function DocumentUpload({
               <Input
                 id="subcategory"
                 value={newDocumentData.subcategory}
-                onChange={(e) => setNewDocumentData(prev => ({ ...prev, subcategory: e.target.value }))}
+                onChange={(e) =>
+                  setNewDocumentData((prev) => ({ ...prev, subcategory: e.target.value }))
+                }
                 placeholder="Subcategoria específica"
               />
             </div>
@@ -535,7 +621,9 @@ export function DocumentUpload({
               <Textarea
                 id="description"
                 value={newDocumentData.description}
-                onChange={(e) => setNewDocumentData(prev => ({ ...prev, description: e.target.value }))}
+                onChange={(e) =>
+                  setNewDocumentData((prev) => ({ ...prev, description: e.target.value }))
+                }
                 placeholder="Descrição do documento"
                 rows={3}
               />
@@ -548,7 +636,7 @@ export function DocumentUpload({
                   value={tagInput}
                   onChange={(e) => setTagInput(e.target.value)}
                   placeholder="Adicionar tag"
-                  onKeyPress={(e) => e.key === 'Enter' && addTag()}
+                  onKeyPress={(e) => e.key === "Enter" && addTag()}
                 />
                 <Button type="button" onClick={addTag} size="sm">
                   <Plus className="w-4 h-4" />
@@ -578,11 +666,13 @@ export function DocumentUpload({
                 <Input
                   id="captureDate"
                   type="date"
-                  value={format(newDocumentData.captureDate, 'yyyy-MM-dd')}
-                  onChange={(e) => setNewDocumentData(prev => ({ 
-                    ...prev, 
-                    captureDate: new Date(e.target.value) 
-                  }))}
+                  value={format(newDocumentData.captureDate, "yyyy-MM-dd")}
+                  onChange={(e) =>
+                    setNewDocumentData((prev) => ({
+                      ...prev,
+                      captureDate: new Date(e.target.value),
+                    }))
+                  }
                 />
               </div>
 
@@ -591,7 +681,9 @@ export function DocumentUpload({
                   type="checkbox"
                   id="isEncrypted"
                   checked={newDocumentData.isEncrypted}
-                  onChange={(e) => setNewDocumentData(prev => ({ ...prev, isEncrypted: e.target.checked }))}
+                  onChange={(e) =>
+                    setNewDocumentData((prev) => ({ ...prev, isEncrypted: e.target.checked }))
+                  }
                   className="rounded"
                 />
                 <Label htmlFor="isEncrypted" className="flex items-center space-x-1">
@@ -627,7 +719,7 @@ export function DocumentUpload({
       {/* Drag and Drop Area */}
       <Card
         className={`border-2 border-dashed transition-colors ${
-          dragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
+          dragActive ? "border-blue-500 bg-blue-50" : "border-gray-300"
         }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
@@ -644,17 +736,11 @@ export function DocumentUpload({
               Suporte para imagens, PDFs, documentos do Office e mais
             </p>
             <div className="flex items-center justify-center space-x-4">
-              <Button
-                variant="outline"
-                onClick={() => fileInputRef.current?.click()}
-              >
+              <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
                 <File className="w-4 h-4 mr-2" />
                 Selecionar Arquivos
               </Button>
-              <Button
-                variant="outline"
-                onClick={() => cameraInputRef.current?.click()}
-              >
+              <Button variant="outline" onClick={() => cameraInputRef.current?.click()}>
                 <Camera className="w-4 h-4 mr-2" />
                 Usar Câmera
               </Button>
@@ -685,7 +771,7 @@ export function DocumentUpload({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todas as categorias</SelectItem>
-                  {DOCUMENT_CATEGORIES.map(category => (
+                  {DOCUMENT_CATEGORIES.map((category) => (
                     <SelectItem key={category.value} value={category.value}>
                       <div className="flex items-center space-x-2">
                         {category.icon}
@@ -695,20 +781,20 @@ export function DocumentUpload({
                   ))}
                 </SelectContent>
               </Select>
-              
+
               <div className="flex items-center border rounded-lg">
                 <Button
-                  variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                  variant={viewMode === "grid" ? "default" : "ghost"}
                   size="sm"
-                  onClick={() => setViewMode('grid')}
+                  onClick={() => setViewMode("grid")}
                   className="rounded-r-none"
                 >
                   <Grid className="w-4 h-4" />
                 </Button>
                 <Button
-                  variant={viewMode === 'list' ? 'default' : 'ghost'}
+                  variant={viewMode === "list" ? "default" : "ghost"}
                   size="sm"
-                  onClick={() => setViewMode('list')}
+                  onClick={() => setViewMode("list")}
                   className="rounded-l-none"
                 >
                   <List className="w-4 h-4" />
@@ -727,18 +813,16 @@ export function DocumentUpload({
               <div className="text-center py-8">
                 <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  {searchTerm || selectedCategory !== 'all' 
-                    ? 'Nenhum documento encontrado' 
-                    : 'Nenhum documento enviado'
-                  }
+                  {searchTerm || selectedCategory !== "all"
+                    ? "Nenhum documento encontrado"
+                    : "Nenhum documento enviado"}
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  {searchTerm || selectedCategory !== 'all'
-                    ? 'Tente ajustar os filtros de busca'
-                    : 'Faça upload de exames, receitas e outros documentos médicos'
-                  }
+                  {searchTerm || selectedCategory !== "all"
+                    ? "Tente ajustar os filtros de busca"
+                    : "Faça upload de exames, receitas e outros documentos médicos"}
                 </p>
-                {!searchTerm && selectedCategory === 'all' && (
+                {!searchTerm && selectedCategory === "all" && (
                   <Button onClick={() => fileInputRef.current?.click()}>
                     <Upload className="w-4 h-4 mr-2" />
                     Fazer Primeiro Upload
@@ -747,7 +831,7 @@ export function DocumentUpload({
               </div>
             </CardContent>
           </Card>
-        ) : viewMode === 'grid' ? (
+        ) : viewMode === "grid" ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredDocuments.map((document) => {
               const categoryInfo = getCategoryInfo(document.category);
@@ -757,14 +841,12 @@ export function DocumentUpload({
                   <CardContent className="pt-6">
                     <div className="space-y-3">
                       <div className="flex items-start justify-between">
-                        <div className={fileIcon.color}>
-                          {fileIcon.icon}
-                        </div>
+                        <div className={fileIcon.color}>{fileIcon.icon}</div>
                         <Button variant="ghost" size="sm">
                           <MoreVertical className="w-4 h-4" />
                         </Button>
                       </div>
-                      
+
                       <div>
                         <h3 className="font-medium text-gray-900 truncate">
                           {document.originalName}
@@ -773,7 +855,7 @@ export function DocumentUpload({
                           {formatFileSize(document.fileSize)}
                         </p>
                       </div>
-                      
+
                       <div className="flex flex-wrap gap-1">
                         <Badge className={categoryInfo.color} variant="secondary">
                           {categoryInfo.label}
@@ -785,7 +867,7 @@ export function DocumentUpload({
                           </Badge>
                         )}
                       </div>
-                      
+
                       {document.tags.length > 0 && (
                         <div className="flex flex-wrap gap-1">
                           {document.tags.slice(0, 3).map((tag, index) => (
@@ -800,11 +882,11 @@ export function DocumentUpload({
                           )}
                         </div>
                       )}
-                      
+
                       <div className="text-xs text-gray-500">
-                        {format(document.uploadDate, 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+                        {format(document.uploadDate, "dd/MM/yyyy HH:mm", { locale: ptBR })}
                       </div>
-                      
+
                       <div className="flex items-center space-x-2">
                         <Button variant="outline" size="sm" className="flex-1">
                           <Eye className="w-4 h-4 mr-1" />
@@ -818,8 +900,7 @@ export function DocumentUpload({
                   </CardContent>
                 </Card>
               );
-            })
-          }
+            })}
           </div>
         ) : (
           <Card>
@@ -829,16 +910,15 @@ export function DocumentUpload({
                   const categoryInfo = getCategoryInfo(document.category);
                   const fileIcon = getFileIcon(document.fileType);
                   return (
-                    <div key={document.id} className="flex items-center space-x-4 p-4 border rounded-lg hover:bg-gray-50">
-                      <div className={fileIcon.color}>
-                        {fileIcon.icon}
-                      </div>
-                      
+                    <div
+                      key={document.id}
+                      className="flex items-center space-x-4 p-4 border rounded-lg hover:bg-gray-50"
+                    >
+                      <div className={fileIcon.color}>{fileIcon.icon}</div>
+
                       <div className="flex-1">
                         <div className="flex items-center space-x-2">
-                          <h3 className="font-medium text-gray-900">
-                            {document.originalName}
-                          </h3>
+                          <h3 className="font-medium text-gray-900">{document.originalName}</h3>
                           <Badge className={categoryInfo.color} variant="secondary">
                             {categoryInfo.label}
                           </Badge>
@@ -849,25 +929,25 @@ export function DocumentUpload({
                             </Badge>
                           )}
                         </div>
-                        
+
                         {document.description && (
-                          <p className="text-sm text-gray-600 mt-1">
-                            {document.description}
-                          </p>
+                          <p className="text-sm text-gray-600 mt-1">{document.description}</p>
                         )}
-                        
+
                         <div className="flex items-center space-x-4 text-xs text-gray-500 mt-2">
                           <span>{formatFileSize(document.fileSize)}</span>
-                          <span>{format(document.uploadDate, 'dd/MM/yyyy HH:mm', { locale: ptBR })}</span>
+                          <span>
+                            {format(document.uploadDate, "dd/MM/yyyy HH:mm", { locale: ptBR })}
+                          </span>
                           {document.tags.length > 0 && (
                             <div className="flex items-center space-x-1">
                               <Tag className="w-3 h-3" />
-                              <span>{document.tags.join(', ')}</span>
+                              <span>{document.tags.join(", ")}</span>
                             </div>
                           )}
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center space-x-2">
                         <Button variant="outline" size="sm">
                           <Eye className="w-4 h-4" />
@@ -900,26 +980,24 @@ export function DocumentUpload({
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">
-                  {filteredDocuments.length}
-                </div>
+                <div className="text-2xl font-bold text-blue-600">{filteredDocuments.length}</div>
                 <div className="text-sm text-gray-600">Total de Documentos</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-green-600">
-                  {filteredDocuments.filter(d => d.fileType.startsWith('image/')).length}
+                  {filteredDocuments.filter((d) => d.fileType.startsWith("image/")).length}
                 </div>
                 <div className="text-sm text-gray-600">Imagens</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-red-600">
-                  {filteredDocuments.filter(d => d.fileType === 'application/pdf').length}
+                  {filteredDocuments.filter((d) => d.fileType === "application/pdf").length}
                 </div>
                 <div className="text-sm text-gray-600">PDFs</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-purple-600">
-                  {filteredDocuments.filter(d => d.isEncrypted).length}
+                  {filteredDocuments.filter((d) => d.isEncrypted).length}
                 </div>
                 <div className="text-sm text-gray-600">Criptografados</div>
               </div>

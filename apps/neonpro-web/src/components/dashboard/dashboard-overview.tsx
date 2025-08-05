@@ -1,6 +1,6 @@
 "use client";
 
-import {
+import type {
   Activity,
   AlertCircle,
   Calendar,
@@ -14,26 +14,26 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
-import { useState } from "react";
+import type { useState } from "react";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import {
+import type { Progress } from "@/components/ui/progress";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import type { formatCurrency, formatDate } from "@/lib/utils";
 
 interface KPICardProps {
   title: string;
@@ -47,13 +47,7 @@ interface KPICardProps {
   description?: string;
 }
 
-function KPICard({
-  title,
-  value,
-  change,
-  icon: Icon,
-  description,
-}: KPICardProps) {
+function KPICard({ title, value, change, icon: Icon, description }: KPICardProps) {
   return (
     <Card className="medical-card">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -69,19 +63,13 @@ function KPICard({
             ) : (
               <TrendingDown className="h-3 w-3 text-red-500" />
             )}
-            <span
-              className={
-                change.type === "increase" ? "text-green-600" : "text-red-600"
-              }
-            >
+            <span className={change.type === "increase" ? "text-green-600" : "text-red-600"}>
               {change.value}
             </span>
             {change.period}
           </p>
         )}
-        {description && (
-          <p className="text-xs text-muted-foreground mt-1">{description}</p>
-        )}
+        {description && <p className="text-xs text-muted-foreground mt-1">{description}</p>}
       </CardContent>
     </Card>
   );
@@ -302,9 +290,7 @@ export function DashboardOverview() {
             <CardTitle className="text-sm font-medium">Ticket Médio</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {formatCurrency(kpiData.averageTicket)}
-            </div>
+            <div className="text-2xl font-bold">{formatCurrency(kpiData.averageTicket)}</div>
             <div className="mt-2">
               <Progress value={72} className="h-2" />
               <p className="text-xs text-muted-foreground mt-1">
@@ -316,34 +302,26 @@ export function DashboardOverview() {
 
         <Card className="medical-card">
           <CardHeader>
-            <CardTitle className="text-sm font-medium">
-              Taxa de Conversão
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Taxa de Conversão</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{kpiData.conversionRate}%</div>
             <div className="mt-2">
               <Progress value={kpiData.conversionRate} className="h-2" />
-              <p className="text-xs text-muted-foreground mt-1">
-                Consultas → Procedimentos
-              </p>
+              <p className="text-xs text-muted-foreground mt-1">Consultas → Procedimentos</p>
             </div>
           </CardContent>
         </Card>
 
         <Card className="medical-card">
           <CardHeader>
-            <CardTitle className="text-sm font-medium">
-              Ocupação Agenda
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Ocupação Agenda</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">85%</div>
             <div className="mt-2">
               <Progress value={85} className="h-2" />
-              <p className="text-xs text-muted-foreground mt-1">
-                Horários preenchidos esta semana
-              </p>
+              <p className="text-xs text-muted-foreground mt-1">Horários preenchidos esta semana</p>
             </div>
           </CardContent>
         </Card>
@@ -357,9 +335,7 @@ export function DashboardOverview() {
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
                 <CardTitle>Atividades Recentes</CardTitle>
-                <CardDescription>
-                  Últimas movimentações da clínica
-                </CardDescription>
+                <CardDescription>Últimas movimentações da clínica</CardDescription>
               </div>
               <Button variant="outline" size="sm">
                 <Filter className="w-4 h-4 mr-2" />
@@ -368,10 +344,7 @@ export function DashboardOverview() {
             </CardHeader>
             <CardContent className="space-y-4">
               {recentActivities.map((activity) => {
-                const IconComponent = getActivityIcon(
-                  activity.type,
-                  activity.status
-                );
+                const IconComponent = getActivityIcon(activity.type, activity.status);
                 return (
                   <div
                     key={activity.id}
@@ -381,20 +354,12 @@ export function DashboardOverview() {
                       <IconComponent className="w-4 h-4 text-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground">
-                        {activity.title}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {activity.description}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {activity.time}
-                      </p>
+                      <p className="text-sm font-medium text-foreground">{activity.title}</p>
+                      <p className="text-sm text-muted-foreground">{activity.description}</p>
+                      <p className="text-xs text-muted-foreground mt-1">{activity.time}</p>
                     </div>
                     {activity.status && (
-                      <div className="flex-shrink-0">
-                        {getStatusBadge(activity.status)}
-                      </div>
+                      <div className="flex-shrink-0">{getStatusBadge(activity.status)}</div>
                     )}
                   </div>
                 );
@@ -412,9 +377,7 @@ export function DashboardOverview() {
                   <Clock className="w-4 h-4" />
                   Agenda de Hoje
                 </CardTitle>
-                <CardDescription>
-                  {upcomingAppointments.length} agendamentos
-                </CardDescription>
+                <CardDescription>{upcomingAppointments.length} agendamentos</CardDescription>
               </div>
               <Button variant="outline" size="sm">
                 Ver Todos
@@ -438,16 +401,10 @@ export function DashboardOverview() {
                         </Badge>
                       )}
                     </div>
-                    <p className="text-sm text-muted-foreground">
-                      {appointment.service}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {appointment.time}
-                    </p>
+                    <p className="text-sm text-muted-foreground">{appointment.service}</p>
+                    <p className="text-xs text-muted-foreground">{appointment.time}</p>
                   </div>
-                  <div className="flex-shrink-0">
-                    {getStatusBadge(appointment.status)}
-                  </div>
+                  <div className="flex-shrink-0">{getStatusBadge(appointment.status)}</div>
                 </div>
               ))}
 
@@ -466,9 +423,7 @@ export function DashboardOverview() {
       <Card className="medical-card">
         <CardHeader>
           <CardTitle>Ações Rápidas</CardTitle>
-          <CardDescription>
-            Acesso rápido às funcionalidades mais utilizadas
-          </CardDescription>
+          <CardDescription>Acesso rápido às funcionalidades mais utilizadas</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

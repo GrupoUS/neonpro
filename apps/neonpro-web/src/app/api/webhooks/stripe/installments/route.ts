@@ -1,14 +1,14 @@
-// NeonPro - Stripe Installments Webhook
+﻿// NeonPro - Stripe Installments Webhook
 // Story 6.1 - Task 3: Installment Management System
 // Webhook handler for Stripe installment payment events
 
-import { NextRequest, NextResponse } from 'next/server';
-import { headers } from 'next/headers';
-import Stripe from 'stripe';
-import { getInstallmentProcessor } from '@/lib/payments/installments/installment-processor';
+import type { NextRequest, NextResponse } from "next/server";
+import type { headers } from "next/headers";
+import Stripe from "stripe";
+import type { getInstallmentProcessor } from "@/lib/payments/installments/installment-processor";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16'
+  apiVersion: "2023-10-16",
 });
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
@@ -21,14 +21,11 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.text();
     const headersList = headers();
-    const signature = headersList.get('stripe-signature');
+    const signature = headersList.get("stripe-signature");
 
     if (!signature) {
-      console.error('Missing Stripe signature');
-      return NextResponse.json(
-        { error: 'Missing signature' },
-        { status: 400 }
-      );
+      console.error("Missing Stripe signature");
+      return NextResponse.json({ error: "Missing signature" }, { status: 400 });
     }
 
     let event: Stripe.Event;
@@ -36,11 +33,8 @@ export async function POST(request: NextRequest) {
     try {
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
     } catch (err) {
-      console.error('Webhook signature verification failed:', err);
-      return NextResponse.json(
-        { error: 'Invalid signature' },
-        { status: 400 }
-      );
+      console.error("Webhook signature verification failed:", err);
+      return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
     }
 
     console.log(`Received Stripe webhook event: ${event.type}`);
@@ -50,39 +44,39 @@ export async function POST(request: NextRequest) {
 
     // Handle the event
     switch (event.type) {
-      case 'payment_intent.succeeded':
+      case "payment_intent.succeeded":
         await handlePaymentIntentSucceeded(event.data.object as Stripe.PaymentIntent);
         break;
 
-      case 'payment_intent.payment_failed':
+      case "payment_intent.payment_failed":
         await handlePaymentIntentFailed(event.data.object as Stripe.PaymentIntent);
         break;
 
-      case 'payment_intent.canceled':
+      case "payment_intent.canceled":
         await handlePaymentIntentCanceled(event.data.object as Stripe.PaymentIntent);
         break;
 
-      case 'payment_intent.requires_action':
+      case "payment_intent.requires_action":
         await handlePaymentIntentRequiresAction(event.data.object as Stripe.PaymentIntent);
         break;
 
-      case 'payment_intent.processing':
+      case "payment_intent.processing":
         await handlePaymentIntentProcessing(event.data.object as Stripe.PaymentIntent);
         break;
 
-      case 'payment_method.attached':
+      case "payment_method.attached":
         await handlePaymentMethodAttached(event.data.object as Stripe.PaymentMethod);
         break;
 
-      case 'customer.updated':
+      case "customer.updated":
         await handleCustomerUpdated(event.data.object as Stripe.Customer);
         break;
 
-      case 'invoice.payment_succeeded':
+      case "invoice.payment_succeeded":
         await handleInvoicePaymentSucceeded(event.data.object as Stripe.Invoice);
         break;
 
-      case 'invoice.payment_failed':
+      case "invoice.payment_failed":
         await handleInvoicePaymentFailed(event.data.object as Stripe.Invoice);
         break;
 
@@ -94,13 +88,9 @@ export async function POST(request: NextRequest) {
     await installmentProcessor.handleWebhookEvent(event);
 
     return NextResponse.json({ received: true });
-
   } catch (error) {
-    console.error('Error processing webhook:', error);
-    return NextResponse.json(
-      { error: 'Webhook processing failed' },
-      { status: 500 }
-    );
+    console.error("Error processing webhook:", error);
+    return NextResponse.json({ error: "Webhook processing failed" }, { status: 500 });
   }
 }
 
@@ -112,10 +102,10 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
     const installmentId = paymentIntent.metadata.installment_id;
     const paymentPlanId = paymentIntent.metadata.payment_plan_id;
     const customerId = paymentIntent.metadata.customer_id;
-    const lateFee = parseFloat(paymentIntent.metadata.late_fee || '0');
+    const lateFee = parseFloat(paymentIntent.metadata.late_fee || "0");
 
     if (!installmentId) {
-      console.warn('Payment intent succeeded but no installment_id in metadata');
+      console.warn("Payment intent succeeded but no installment_id in metadata");
       return;
     }
 
@@ -126,18 +116,17 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
 
     // Log the successful payment
     console.log({
-      event: 'installment_payment_succeeded',
+      event: "installment_payment_succeeded",
       installmentId,
       paymentPlanId,
       customerId,
       amount: paymentIntent.amount / 100, // Convert from cents
       lateFee,
       paymentIntentId: paymentIntent.id,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
-    console.error('Error handling payment intent succeeded:', error);
+    console.error("Error handling payment intent succeeded:", error);
     throw error;
   }
 }
@@ -150,10 +139,10 @@ async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
     const installmentId = paymentIntent.metadata.installment_id;
     const paymentPlanId = paymentIntent.metadata.payment_plan_id;
     const customerId = paymentIntent.metadata.customer_id;
-    const errorMessage = paymentIntent.last_payment_error?.message || 'Payment failed';
+    const errorMessage = paymentIntent.last_payment_error?.message || "Payment failed";
 
     if (!installmentId) {
-      console.warn('Payment intent failed but no installment_id in metadata');
+      console.warn("Payment intent failed but no installment_id in metadata");
       return;
     }
 
@@ -161,7 +150,7 @@ async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
 
     // Log the failed payment
     console.log({
-      event: 'installment_payment_failed',
+      event: "installment_payment_failed",
       installmentId,
       paymentPlanId,
       customerId,
@@ -169,7 +158,7 @@ async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
       error: errorMessage,
       errorCode: paymentIntent.last_payment_error?.code,
       paymentIntentId: paymentIntent.id,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     // TODO: Implement retry logic or notification system
@@ -177,9 +166,8 @@ async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
     // - Automatic retry after a delay
     // - Customer notification
     // - Escalation to collections
-
   } catch (error) {
-    console.error('Error handling payment intent failed:', error);
+    console.error("Error handling payment intent failed:", error);
     throw error;
   }
 }
@@ -194,7 +182,7 @@ async function handlePaymentIntentCanceled(paymentIntent: Stripe.PaymentIntent) 
     const customerId = paymentIntent.metadata.customer_id;
 
     if (!installmentId) {
-      console.warn('Payment intent canceled but no installment_id in metadata');
+      console.warn("Payment intent canceled but no installment_id in metadata");
       return;
     }
 
@@ -202,17 +190,16 @@ async function handlePaymentIntentCanceled(paymentIntent: Stripe.PaymentIntent) 
 
     // Log the canceled payment
     console.log({
-      event: 'installment_payment_canceled',
+      event: "installment_payment_canceled",
       installmentId,
       paymentPlanId,
       customerId,
       amount: paymentIntent.amount / 100,
       paymentIntentId: paymentIntent.id,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
-    console.error('Error handling payment intent canceled:', error);
+    console.error("Error handling payment intent canceled:", error);
     throw error;
   }
 }
@@ -227,7 +214,7 @@ async function handlePaymentIntentRequiresAction(paymentIntent: Stripe.PaymentIn
     const customerId = paymentIntent.metadata.customer_id;
 
     if (!installmentId) {
-      console.warn('Payment intent requires action but no installment_id in metadata');
+      console.warn("Payment intent requires action but no installment_id in metadata");
       return;
     }
 
@@ -235,14 +222,14 @@ async function handlePaymentIntentRequiresAction(paymentIntent: Stripe.PaymentIn
 
     // Log the action required
     console.log({
-      event: 'installment_payment_requires_action',
+      event: "installment_payment_requires_action",
       installmentId,
       paymentPlanId,
       customerId,
       amount: paymentIntent.amount / 100,
       paymentIntentId: paymentIntent.id,
       nextAction: paymentIntent.next_action?.type,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     // TODO: Implement customer notification for required action
@@ -250,9 +237,8 @@ async function handlePaymentIntentRequiresAction(paymentIntent: Stripe.PaymentIn
     // - Email with payment link
     // - SMS notification
     // - In-app notification
-
   } catch (error) {
-    console.error('Error handling payment intent requires action:', error);
+    console.error("Error handling payment intent requires action:", error);
     throw error;
   }
 }
@@ -267,7 +253,7 @@ async function handlePaymentIntentProcessing(paymentIntent: Stripe.PaymentIntent
     const customerId = paymentIntent.metadata.customer_id;
 
     if (!installmentId) {
-      console.warn('Payment intent processing but no installment_id in metadata');
+      console.warn("Payment intent processing but no installment_id in metadata");
       return;
     }
 
@@ -275,17 +261,16 @@ async function handlePaymentIntentProcessing(paymentIntent: Stripe.PaymentIntent
 
     // Log the processing status
     console.log({
-      event: 'installment_payment_processing',
+      event: "installment_payment_processing",
       installmentId,
       paymentPlanId,
       customerId,
       amount: paymentIntent.amount / 100,
       paymentIntentId: paymentIntent.id,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
-    console.error('Error handling payment intent processing:', error);
+    console.error("Error handling payment intent processing:", error);
     throw error;
   }
 }
@@ -295,27 +280,30 @@ async function handlePaymentIntentProcessing(paymentIntent: Stripe.PaymentIntent
  */
 async function handlePaymentMethodAttached(paymentMethod: Stripe.PaymentMethod) {
   try {
-    console.log(`Payment method ${paymentMethod.id} attached to customer ${paymentMethod.customer}`);
+    console.log(
+      `Payment method ${paymentMethod.id} attached to customer ${paymentMethod.customer}`,
+    );
 
     // Log the payment method attachment
     console.log({
-      event: 'payment_method_attached',
+      event: "payment_method_attached",
       paymentMethodId: paymentMethod.id,
       customerId: paymentMethod.customer,
       type: paymentMethod.type,
-      card: paymentMethod.card ? {
-        brand: paymentMethod.card.brand,
-        last4: paymentMethod.card.last4,
-        expMonth: paymentMethod.card.exp_month,
-        expYear: paymentMethod.card.exp_year
-      } : null,
-      timestamp: new Date().toISOString()
+      card: paymentMethod.card
+        ? {
+            brand: paymentMethod.card.brand,
+            last4: paymentMethod.card.last4,
+            expMonth: paymentMethod.card.exp_month,
+            expYear: paymentMethod.card.exp_year,
+          }
+        : null,
+      timestamp: new Date().toISOString(),
     });
 
     // TODO: Update customer payment methods in database if needed
-
   } catch (error) {
-    console.error('Error handling payment method attached:', error);
+    console.error("Error handling payment method attached:", error);
     throw error;
   }
 }
@@ -334,17 +322,16 @@ async function handleCustomerUpdated(customer: Stripe.Customer) {
 
     // Log the customer update
     console.log({
-      event: 'customer_updated',
+      event: "customer_updated",
       customerId: customer.id,
       email: customer.email,
       name: customer.name,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     // TODO: Sync customer data with local database if needed
-
   } catch (error) {
-    console.error('Error handling customer updated:', error);
+    console.error("Error handling customer updated:", error);
     throw error;
   }
 }
@@ -361,13 +348,13 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
 
     // Log the invoice payment
     console.log({
-      event: 'invoice_payment_succeeded',
+      event: "invoice_payment_succeeded",
       invoiceId: invoice.id,
       installmentId,
       paymentPlanId,
       customerId: invoice.customer,
       amount: invoice.amount_paid / 100,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     // If this invoice is related to an installment, handle accordingly
@@ -375,9 +362,8 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
       // The payment intent handler will take care of marking as paid
       console.log(`Invoice payment for installment ${installmentId}`);
     }
-
   } catch (error) {
-    console.error('Error handling invoice payment succeeded:', error);
+    console.error("Error handling invoice payment succeeded:", error);
     throw error;
   }
 }
@@ -394,13 +380,13 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
 
     // Log the invoice payment failure
     console.log({
-      event: 'invoice_payment_failed',
+      event: "invoice_payment_failed",
       invoiceId: invoice.id,
       installmentId,
       paymentPlanId,
       customerId: invoice.customer,
       amount: invoice.amount_due / 100,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     // If this invoice is related to an installment, handle accordingly
@@ -408,22 +394,10 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
       console.log(`Invoice payment failed for installment ${installmentId}`);
       // TODO: Implement retry logic or escalation
     }
-
   } catch (error) {
-    console.error('Error handling invoice payment failed:', error);
+    console.error("Error handling invoice payment failed:", error);
     throw error;
   }
 }
 
 // Export for testing
-export {
-  handlePaymentIntentSucceeded,
-  handlePaymentIntentFailed,
-  handlePaymentIntentCanceled,
-  handlePaymentIntentRequiresAction,
-  handlePaymentIntentProcessing,
-  handlePaymentMethodAttached,
-  handleCustomerUpdated,
-  handleInvoicePaymentSucceeded,
-  handleInvoicePaymentFailed
-};

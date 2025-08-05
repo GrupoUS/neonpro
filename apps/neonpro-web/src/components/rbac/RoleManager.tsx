@@ -1,26 +1,63 @@
 /**
  * Role Manager Component for RBAC Administration
  * Story 1.2: Role-Based Access Control Implementation
- * 
+ *
  * This component provides role and permission management interface for administrators
  */
 
-import React, { useState, useEffect } from 'react';
-import { UserRole, Permission, DEFAULT_ROLES } from '@/types/rbac';
-import { usePermissions } from '@/hooks/usePermissions';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Shield, Users, Settings, Plus, Edit, Trash2, Save, X, AlertTriangle } from 'lucide-react';
-import { PermissionGuard } from './PermissionGuard';
+import React, { useState, useEffect } from "react";
+import type { UserRole, Permission, DEFAULT_ROLES } from "@/types/rbac";
+import type { usePermissions } from "@/hooks/usePermissions";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type {
+  Shield,
+  Users,
+  Settings,
+  Plus,
+  Edit,
+  Trash2,
+  Save,
+  X,
+  AlertTriangle,
+} from "lucide-react";
+import type { PermissionGuard } from "./PermissionGuard";
 
 /**
  * User with role assignment
@@ -52,9 +89,9 @@ export const RoleManager: React.FC = () => {
   const [users, setUsers] = useState<UserWithRole[]>([]);
   const [selectedUser, setSelectedUser] = useState<UserWithRole | null>(null);
   const [roleForm, setRoleForm] = useState<RoleAssignmentForm>({
-    userId: '',
-    newRole: 'staff',
-    reason: ''
+    userId: "",
+    newRole: "staff",
+    reason: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -67,43 +104,43 @@ export const RoleManager: React.FC = () => {
   const loadUsers = async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       // In a real implementation, this would fetch from API
       // For now, we'll simulate with mock data
       const mockUsers: UserWithRole[] = [
         {
-          id: '1',
-          email: 'admin@clinic.com',
-          name: 'Admin User',
-          role: 'owner',
-          clinicId: 'clinic-1',
-          createdAt: '2024-01-01T00:00:00Z',
-          lastLogin: '2024-01-27T10:00:00Z'
+          id: "1",
+          email: "admin@clinic.com",
+          name: "Admin User",
+          role: "owner",
+          clinicId: "clinic-1",
+          createdAt: "2024-01-01T00:00:00Z",
+          lastLogin: "2024-01-27T10:00:00Z",
         },
         {
-          id: '2',
-          email: 'manager@clinic.com',
-          name: 'Manager User',
-          role: 'manager',
-          clinicId: 'clinic-1',
-          createdAt: '2024-01-02T00:00:00Z',
-          lastLogin: '2024-01-27T09:30:00Z'
+          id: "2",
+          email: "manager@clinic.com",
+          name: "Manager User",
+          role: "manager",
+          clinicId: "clinic-1",
+          createdAt: "2024-01-02T00:00:00Z",
+          lastLogin: "2024-01-27T09:30:00Z",
         },
         {
-          id: '3',
-          email: 'staff@clinic.com',
-          name: 'Staff User',
-          role: 'staff',
-          clinicId: 'clinic-1',
-          createdAt: '2024-01-03T00:00:00Z',
-          lastLogin: '2024-01-27T08:00:00Z'
-        }
+          id: "3",
+          email: "staff@clinic.com",
+          name: "Staff User",
+          role: "staff",
+          clinicId: "clinic-1",
+          createdAt: "2024-01-03T00:00:00Z",
+          lastLogin: "2024-01-27T08:00:00Z",
+        },
       ];
-      
+
       setUsers(mockUsers);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load users');
+      setError(err instanceof Error ? err.message : "Failed to load users");
     } finally {
       setIsLoading(false);
     }
@@ -114,36 +151,35 @@ export const RoleManager: React.FC = () => {
    */
   const handleRoleAssignment = async () => {
     if (!selectedUser || !roleForm.newRole || !roleForm.reason.trim()) {
-      setError('Please fill in all required fields');
+      setError("Please fill in all required fields");
       return;
     }
 
     setIsLoading(true);
     setError(null);
-    
+
     try {
       // In a real implementation, this would call the API
-      console.log('Assigning role:', {
+      console.log("Assigning role:", {
         userId: selectedUser.id,
         oldRole: selectedUser.role,
         newRole: roleForm.newRole,
-        reason: roleForm.reason
+        reason: roleForm.reason,
       });
-      
+
       // Update local state
-      setUsers(prev => prev.map(user => 
-        user.id === selectedUser.id 
-          ? { ...user, role: roleForm.newRole }
-          : user
-      ));
-      
+      setUsers((prev) =>
+        prev.map((user) =>
+          user.id === selectedUser.id ? { ...user, role: roleForm.newRole } : user,
+        ),
+      );
+
       setSuccess(`Role updated successfully for ${selectedUser.name}`);
       setShowRoleDialog(false);
       setSelectedUser(null);
-      setRoleForm({ userId: '', newRole: 'staff', reason: '' });
-      
+      setRoleForm({ userId: "", newRole: "staff", reason: "" });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to assign role');
+      setError(err instanceof Error ? err.message : "Failed to assign role");
     } finally {
       setIsLoading(false);
     }
@@ -157,7 +193,7 @@ export const RoleManager: React.FC = () => {
     setRoleForm({
       userId: user.id,
       newRole: user.role,
-      reason: ''
+      reason: "",
     });
     setShowRoleDialog(true);
   };
@@ -167,11 +203,16 @@ export const RoleManager: React.FC = () => {
    */
   const getRoleBadgeVariant = (role: UserRole) => {
     switch (role) {
-      case 'owner': return 'default';
-      case 'manager': return 'secondary';
-      case 'staff': return 'outline';
-      case 'patient': return 'destructive';
-      default: return 'outline';
+      case "owner":
+        return "default";
+      case "manager":
+        return "secondary";
+      case "staff":
+        return "outline";
+      case "patient":
+        return "destructive";
+      default:
+        return "outline";
     }
   };
 
@@ -179,8 +220,8 @@ export const RoleManager: React.FC = () => {
    * Check if current user can modify target user's role
    */
   const canModifyRole = (targetUser: UserWithRole): boolean => {
-    if (currentUserRole === 'owner') return true;
-    if (currentUserRole === 'manager' && targetUser.role !== 'owner') return true;
+    if (currentUserRole === "owner") return true;
+    if (currentUserRole === "manager" && targetUser.role !== "owner") return true;
     return false;
   };
 
@@ -202,7 +243,7 @@ export const RoleManager: React.FC = () => {
   }, [success]);
 
   return (
-    <PermissionGuard requiredPermissions={['users.manage']}>
+    <PermissionGuard requiredPermissions={["users.manage"]}>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -225,7 +266,7 @@ export const RoleManager: React.FC = () => {
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
-        
+
         {success && (
           <Alert className="border-green-200 bg-green-50">
             <Shield className="h-4 w-4" />
@@ -244,9 +285,7 @@ export const RoleManager: React.FC = () => {
             <Card>
               <CardHeader>
                 <CardTitle>User Role Assignments</CardTitle>
-                <CardDescription>
-                  View and modify user roles within your clinic
-                </CardDescription>
+                <CardDescription>View and modify user roles within your clinic</CardDescription>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -270,10 +309,7 @@ export const RoleManager: React.FC = () => {
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          {user.lastLogin 
-                            ? new Date(user.lastLogin).toLocaleDateString()
-                            : 'Never'
-                          }
+                          {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : "Never"}
                         </TableCell>
                         <TableCell>
                           {canModifyRole(user) && (
@@ -339,23 +375,19 @@ export const RoleManager: React.FC = () => {
                 Modify the role for {selectedUser?.name} ({selectedUser?.email})
               </DialogDescription>
             </DialogHeader>
-            
+
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="current-role">Current Role</Label>
-                <Input
-                  id="current-role"
-                  value={selectedUser?.role.toUpperCase() || ''}
-                  disabled
-                />
+                <Input id="current-role" value={selectedUser?.role.toUpperCase() || ""} disabled />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="new-role">New Role</Label>
                 <Select
                   value={roleForm.newRole}
-                  onValueChange={(value) => 
-                    setRoleForm(prev => ({ ...prev, newRole: value as UserRole }))
+                  onValueChange={(value) =>
+                    setRoleForm((prev) => ({ ...prev, newRole: value as UserRole }))
                   }
                 >
                   <SelectTrigger>
@@ -363,40 +395,34 @@ export const RoleManager: React.FC = () => {
                   </SelectTrigger>
                   <SelectContent>
                     {Object.keys(DEFAULT_ROLES)
-                      .filter(role => {
+                      .filter((role) => {
                         // Filter roles based on current user's permissions
-                        if (currentUserRole === 'owner') return true;
-                        if (currentUserRole === 'manager') return role !== 'owner';
+                        if (currentUserRole === "owner") return true;
+                        if (currentUserRole === "manager") return role !== "owner";
                         return false;
                       })
                       .map((role) => (
                         <SelectItem key={role} value={role}>
                           {role.toUpperCase()}
                         </SelectItem>
-                      ))
-                    }
+                      ))}
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="reason">Reason for Change *</Label>
                 <Input
                   id="reason"
                   placeholder="Enter reason for role change..."
                   value={roleForm.reason}
-                  onChange={(e) => 
-                    setRoleForm(prev => ({ ...prev, reason: e.target.value }))
-                  }
+                  onChange={(e) => setRoleForm((prev) => ({ ...prev, reason: e.target.value }))}
                 />
               </div>
             </div>
-            
+
             <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setShowRoleDialog(false)}
-              >
+              <Button variant="outline" onClick={() => setShowRoleDialog(false)}>
                 <X className="mr-2 h-4 w-4" />
                 Cancel
               </Button>

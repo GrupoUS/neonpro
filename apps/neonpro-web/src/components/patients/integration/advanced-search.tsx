@@ -1,17 +1,23 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { Search, Filter, Users, Clock, AlertTriangle, Star } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { toast } from 'sonner';
-import { debounce } from 'lodash';
+import React, { useState, useEffect, useCallback } from "react";
+import type { Search, Filter, Users, Clock, AlertTriangle, Star } from "lucide-react";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type { Label } from "@/components/ui/label";
+import type { Separator } from "@/components/ui/separator";
+import type { toast } from "sonner";
+import type { debounce } from "lodash";
 
 interface Patient {
   id: string;
@@ -21,7 +27,7 @@ interface Patient {
   cpf: string;
   gender: string;
   age: number;
-  riskLevel: 'low' | 'medium' | 'high';
+  riskLevel: "low" | "medium" | "high";
   lastVisit: string;
   appointmentStatus: string;
   treatmentType: string;
@@ -61,7 +67,7 @@ interface AdvancedSearchProps {
 }
 
 export function AdvancedSearch({ onPatientSelect, onCreateSegment }: AdvancedSearchProps) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<SearchFilters>({});
   const [results, setResults] = useState<SearchResults | null>(null);
   const [selectedPatients, setSelectedPatients] = useState<string[]>([]);
@@ -80,18 +86,18 @@ export function AdvancedSearch({ onPatientSelect, onCreateSegment }: AdvancedSea
       setIsLoading(true);
       try {
         const params = new URLSearchParams();
-        if (searchQuery.trim()) params.append('q', searchQuery);
-        
+        if (searchQuery.trim()) params.append("q", searchQuery);
+
         Object.entries(searchFilters).forEach(([key, value]) => {
-          if (value !== undefined && value !== null && value !== '') {
-            if (key === 'ageRange' && typeof value === 'object') {
-              params.append('minAge', value.min.toString());
-              params.append('maxAge', value.max.toString());
-            } else if (key === 'lastVisit' && typeof value === 'object') {
-              params.append('lastVisitFrom', value.from.toISOString());
-              params.append('lastVisitTo', value.to.toISOString());
-            } else if (key === 'tags' && Array.isArray(value)) {
-              params.append('tags', value.join(','));
+          if (value !== undefined && value !== null && value !== "") {
+            if (key === "ageRange" && typeof value === "object") {
+              params.append("minAge", value.min.toString());
+              params.append("maxAge", value.max.toString());
+            } else if (key === "lastVisit" && typeof value === "object") {
+              params.append("lastVisitFrom", value.from.toISOString());
+              params.append("lastVisitTo", value.to.toISOString());
+            } else if (key === "tags" && Array.isArray(value)) {
+              params.append("tags", value.join(","));
             } else {
               params.append(key, value.toString());
             }
@@ -105,16 +111,16 @@ export function AdvancedSearch({ onPatientSelect, onCreateSegment }: AdvancedSea
           setResults(data.data);
           setSuggestions(data.data.suggestions || []);
         } else {
-          toast.error(data.error || 'Erro na busca');
+          toast.error(data.error || "Erro na busca");
         }
       } catch (error) {
-        console.error('Search error:', error);
-        toast.error('Erro ao realizar busca');
+        console.error("Search error:", error);
+        toast.error("Erro ao realizar busca");
       } finally {
         setIsLoading(false);
       }
     }, 300),
-    []
+    [],
   );
 
   // Effect to trigger search when query or filters change
@@ -123,29 +129,27 @@ export function AdvancedSearch({ onPatientSelect, onCreateSegment }: AdvancedSea
   }, [query, filters, debouncedSearch]);
 
   const handleFilterChange = (key: keyof SearchFilters, value: any) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
-      [key]: value
+      [key]: value,
     }));
   };
 
   const clearFilters = () => {
     setFilters({});
-    setQuery('');
+    setQuery("");
     setResults(null);
   };
 
   const togglePatientSelection = (patientId: string) => {
-    setSelectedPatients(prev => 
-      prev.includes(patientId)
-        ? prev.filter(id => id !== patientId)
-        : [...prev, patientId]
+    setSelectedPatients((prev) =>
+      prev.includes(patientId) ? prev.filter((id) => id !== patientId) : [...prev, patientId],
     );
   };
 
   const selectAllPatients = () => {
     if (!results) return;
-    setSelectedPatients(results.patients.map(p => p.id));
+    setSelectedPatients(results.patients.map((p) => p.id));
   };
 
   const clearSelection = () => {
@@ -154,20 +158,22 @@ export function AdvancedSearch({ onPatientSelect, onCreateSegment }: AdvancedSea
 
   const handleCreateSegment = () => {
     if (!results || selectedPatients.length === 0) return;
-    
-    const selectedPatientData = results.patients.filter(p => 
-      selectedPatients.includes(p.id)
-    );
-    
+
+    const selectedPatientData = results.patients.filter((p) => selectedPatients.includes(p.id));
+
     onCreateSegment?.(selectedPatientData);
   };
 
   const getRiskLevelColor = (level: string) => {
     switch (level) {
-      case 'high': return 'bg-red-100 text-red-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'low': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "high":
+        return "bg-red-100 text-red-800";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800";
+      case "low":
+        return "bg-green-100 text-green-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -230,8 +236,8 @@ export function AdvancedSearch({ onPatientSelect, onCreateSegment }: AdvancedSea
               <div>
                 <Label>Gênero</Label>
                 <Select
-                  value={filters.gender || ''}
-                  onValueChange={(value) => handleFilterChange('gender', value)}
+                  value={filters.gender || ""}
+                  onValueChange={(value) => handleFilterChange("gender", value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecionar gênero" />
@@ -248,8 +254,8 @@ export function AdvancedSearch({ onPatientSelect, onCreateSegment }: AdvancedSea
               <div>
                 <Label>Nível de Risco</Label>
                 <Select
-                  value={filters.riskLevel || ''}
-                  onValueChange={(value) => handleFilterChange('riskLevel', value)}
+                  value={filters.riskLevel || ""}
+                  onValueChange={(value) => handleFilterChange("riskLevel", value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecionar risco" />
@@ -266,8 +272,8 @@ export function AdvancedSearch({ onPatientSelect, onCreateSegment }: AdvancedSea
               <div>
                 <Label>Tipo de Tratamento</Label>
                 <Select
-                  value={filters.treatmentType || ''}
-                  onValueChange={(value) => handleFilterChange('treatmentType', value)}
+                  value={filters.treatmentType || ""}
+                  onValueChange={(value) => handleFilterChange("treatmentType", value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecionar tratamento" />
@@ -287,8 +293,10 @@ export function AdvancedSearch({ onPatientSelect, onCreateSegment }: AdvancedSea
                 <Input
                   type="number"
                   placeholder="Ex: 18"
-                  value={filters.minAge || ''}
-                  onChange={(e) => handleFilterChange('minAge', parseInt(e.target.value) || undefined)}
+                  value={filters.minAge || ""}
+                  onChange={(e) =>
+                    handleFilterChange("minAge", parseInt(e.target.value) || undefined)
+                  }
                 />
               </div>
 
@@ -297,8 +305,10 @@ export function AdvancedSearch({ onPatientSelect, onCreateSegment }: AdvancedSea
                 <Input
                   type="number"
                   placeholder="Ex: 65"
-                  value={filters.maxAge || ''}
-                  onChange={(e) => handleFilterChange('maxAge', parseInt(e.target.value) || undefined)}
+                  value={filters.maxAge || ""}
+                  onChange={(e) =>
+                    handleFilterChange("maxAge", parseInt(e.target.value) || undefined)
+                  }
                 />
               </div>
             </div>
@@ -309,7 +319,7 @@ export function AdvancedSearch({ onPatientSelect, onCreateSegment }: AdvancedSea
                 <Checkbox
                   id="hasPhotos"
                   checked={filters.hasPhotos || false}
-                  onCheckedChange={(checked) => handleFilterChange('hasPhotos', checked)}
+                  onCheckedChange={(checked) => handleFilterChange("hasPhotos", checked)}
                 />
                 <Label htmlFor="hasPhotos">Possui fotos</Label>
               </div>
@@ -318,7 +328,7 @@ export function AdvancedSearch({ onPatientSelect, onCreateSegment }: AdvancedSea
                 <Checkbox
                   id="consentStatus"
                   checked={filters.consentStatus || false}
-                  onCheckedChange={(checked) => handleFilterChange('consentStatus', checked)}
+                  onCheckedChange={(checked) => handleFilterChange("consentStatus", checked)}
                 />
                 <Label htmlFor="consentStatus">Consentimento LGPD</Label>
               </div>
@@ -355,30 +365,19 @@ export function AdvancedSearch({ onPatientSelect, onCreateSegment }: AdvancedSea
                 </span>
               )}
             </div>
-            
+
             {results.patients.length > 0 && (
               <div className="flex space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={selectAllPatients}
-                >
+                <Button variant="outline" size="sm" onClick={selectAllPatients}>
                   Selecionar Todos
                 </Button>
                 {selectedPatients.length > 0 && (
                   <>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={clearSelection}
-                    >
+                    <Button variant="outline" size="sm" onClick={clearSelection}>
                       Limpar Seleção
                     </Button>
                     {onCreateSegment && (
-                      <Button
-                        size="sm"
-                        onClick={handleCreateSegment}
-                      >
+                      <Button size="sm" onClick={handleCreateSegment}>
                         Criar Segmento ({selectedPatients.length})
                       </Button>
                     )}
@@ -395,8 +394,8 @@ export function AdvancedSearch({ onPatientSelect, onCreateSegment }: AdvancedSea
                 key={patient.id}
                 className={`cursor-pointer transition-colors ${
                   selectedPatients.includes(patient.id)
-                    ? 'ring-2 ring-blue-500 bg-blue-50'
-                    : 'hover:bg-gray-50'
+                    ? "ring-2 ring-blue-500 bg-blue-50"
+                    : "hover:bg-gray-50"
                 }`}
                 onClick={() => togglePatientSelection(patient.id)}
               >
@@ -418,26 +417,21 @@ export function AdvancedSearch({ onPatientSelect, onCreateSegment }: AdvancedSea
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center space-x-2">
                       <Badge className={getRiskLevelColor(patient.riskLevel)}>
-                        {patient.riskLevel === 'high' && <AlertTriangle className="h-3 w-3 mr-1" />}
-                        {patient.riskLevel === 'high' ? 'Alto Risco' : 
-                         patient.riskLevel === 'medium' ? 'Médio Risco' : 'Baixo Risco'}
+                        {patient.riskLevel === "high" && <AlertTriangle className="h-3 w-3 mr-1" />}
+                        {patient.riskLevel === "high"
+                          ? "Alto Risco"
+                          : patient.riskLevel === "medium"
+                            ? "Médio Risco"
+                            : "Baixo Risco"}
                       </Badge>
-                      
-                      {patient.hasPhotos && (
-                        <Badge variant="outline">
-                          📸 Fotos
-                        </Badge>
-                      )}
-                      
-                      {patient.consentStatus && (
-                        <Badge variant="outline">
-                          ✓ LGPD
-                        </Badge>
-                      )}
-                      
+
+                      {patient.hasPhotos && <Badge variant="outline">📸 Fotos</Badge>}
+
+                      {patient.consentStatus && <Badge variant="outline">✓ LGPD</Badge>}
+
                       <Button
                         variant="ghost"
                         size="sm"
@@ -450,7 +444,7 @@ export function AdvancedSearch({ onPatientSelect, onCreateSegment }: AdvancedSea
                       </Button>
                     </div>
                   </div>
-                  
+
                   {patient.tags.length > 0 && (
                     <div className="mt-2 flex flex-wrap gap-1">
                       {patient.tags.map((tag, index) => (

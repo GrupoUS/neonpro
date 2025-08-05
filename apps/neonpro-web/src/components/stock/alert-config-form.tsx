@@ -4,28 +4,34 @@
 
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { 
-  AlertTriangle, 
-  Save, 
-  X,
-  Bell,
-  Mail,
-  MessageSquare,
-  Smartphone
-} from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { AlertTriangle, Save, X, Bell, Mail, MessageSquare, Smartphone } from "lucide-react";
 import {
   StockAlertConfigSchema,
   CreateStockAlertConfigRequest,
@@ -37,8 +43,8 @@ import {
   ALERT_TYPE_LABELS,
   SEVERITY_LABELS,
   THRESHOLD_UNIT_LABELS,
-  NOTIFICATION_CHANNEL_LABELS
-} from '@/app/lib/types/stock';
+  NOTIFICATION_CHANNEL_LABELS,
+} from "@/app/lib/types/stock";
 
 // =====================================================
 // TYPES AND INTERFACES
@@ -73,13 +79,13 @@ interface AlertConfigFormProps {
 const getNotificationIcon = (channel: NotificationChannel) => {
   const iconProps = { className: "h-4 w-4" };
   switch (channel) {
-    case 'in_app':
+    case "in_app":
       return <Bell {...iconProps} />;
-    case 'email':
+    case "email":
       return <Mail {...iconProps} />;
-    case 'whatsapp':
+    case "whatsapp":
       return <MessageSquare {...iconProps} />;
-    case 'sms':
+    case "sms":
       return <Smartphone {...iconProps} />;
     default:
       return <Bell {...iconProps} />;
@@ -96,22 +102,24 @@ const AlertConfigForm: React.FC<AlertConfigFormProps> = ({
   initialData,
   products = [],
   categories = [],
-  loading = false
+  loading = false,
 }) => {
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [selectedScope, setSelectedScope] = useState<'global' | 'product' | 'category'>('global');
+  const [selectedScope, setSelectedScope] = useState<"global" | "product" | "category">("global");
 
   const form = useForm<CreateStockAlertConfigRequest>({
-    resolver: zodResolver(StockAlertConfigSchema.omit({ id: true, clinicId: true, createdAt: true, updatedAt: true })),
+    resolver: zodResolver(
+      StockAlertConfigSchema.omit({ id: true, clinicId: true, createdAt: true, updatedAt: true }),
+    ),
     defaultValues: {
-      alertType: 'low_stock',
+      alertType: "low_stock",
       thresholdValue: 10,
-      thresholdUnit: 'quantity',
-      severityLevel: 'medium',
+      thresholdUnit: "quantity",
+      severityLevel: "medium",
       isActive: true,
-      notificationChannels: ['in_app'],
-      ...initialData
-    }
+      notificationChannels: ["in_app"],
+      ...initialData,
+    },
   });
 
   // =====================================================
@@ -120,23 +128,23 @@ const AlertConfigForm: React.FC<AlertConfigFormProps> = ({
 
   useEffect(() => {
     if (initialData?.productId) {
-      setSelectedScope('product');
+      setSelectedScope("product");
     } else if (initialData?.categoryId) {
-      setSelectedScope('category');
+      setSelectedScope("category");
     } else {
-      setSelectedScope('global');
+      setSelectedScope("global");
     }
   }, [initialData]);
 
   // Reset product/category fields when scope changes
   useEffect(() => {
-    if (selectedScope === 'global') {
-      form.setValue('productId', undefined);
-      form.setValue('categoryId', undefined);
-    } else if (selectedScope === 'product') {
-      form.setValue('categoryId', undefined);
-    } else if (selectedScope === 'category') {
-      form.setValue('productId', undefined);
+    if (selectedScope === "global") {
+      form.setValue("productId", undefined);
+      form.setValue("categoryId", undefined);
+    } else if (selectedScope === "product") {
+      form.setValue("categoryId", undefined);
+    } else if (selectedScope === "category") {
+      form.setValue("productId", undefined);
     }
   }, [selectedScope, form]);
 
@@ -154,20 +162,23 @@ const AlertConfigForm: React.FC<AlertConfigFormProps> = ({
       } else if (error instanceof Error) {
         setSubmitError(error.message);
       } else {
-        setSubmitError('Falha ao salvar configuração de alerta');
+        setSubmitError("Falha ao salvar configuração de alerta");
       }
     }
   };
 
   const handleNotificationChannelChange = (channel: NotificationChannel, checked: boolean) => {
-    const currentChannels = form.getValues('notificationChannels') || [];
-    
+    const currentChannels = form.getValues("notificationChannels") || [];
+
     if (checked) {
       if (!currentChannels.includes(channel)) {
-        form.setValue('notificationChannels', [...currentChannels, channel]);
+        form.setValue("notificationChannels", [...currentChannels, channel]);
       }
     } else {
-      form.setValue('notificationChannels', currentChannels.filter(c => c !== channel));
+      form.setValue(
+        "notificationChannels",
+        currentChannels.filter((c) => c !== channel),
+      );
     }
   };
 
@@ -180,7 +191,7 @@ const AlertConfigForm: React.FC<AlertConfigFormProps> = ({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <AlertTriangle className="h-5 w-5" />
-          {initialData ? 'Editar Configuração de Alerta' : 'Nova Configuração de Alerta'}
+          {initialData ? "Editar Configuração de Alerta" : "Nova Configuração de Alerta"}
         </CardTitle>
         <CardDescription>
           Configure alertas automáticos para monitorar níveis de estoque e vencimentos
@@ -206,8 +217,8 @@ const AlertConfigForm: React.FC<AlertConfigFormProps> = ({
                     id="scope-global"
                     name="scope"
                     value="global"
-                    checked={selectedScope === 'global'}
-                    onChange={(e) => e.target.checked && setSelectedScope('global')}
+                    checked={selectedScope === "global"}
+                    onChange={(e) => e.target.checked && setSelectedScope("global")}
                     className="radio"
                   />
                   <Label htmlFor="scope-global" className="cursor-pointer">
@@ -220,8 +231,8 @@ const AlertConfigForm: React.FC<AlertConfigFormProps> = ({
                     id="scope-product"
                     name="scope"
                     value="product"
-                    checked={selectedScope === 'product'}
-                    onChange={(e) => e.target.checked && setSelectedScope('product')}
+                    checked={selectedScope === "product"}
+                    onChange={(e) => e.target.checked && setSelectedScope("product")}
                     className="radio"
                   />
                   <Label htmlFor="scope-product" className="cursor-pointer">
@@ -234,8 +245,8 @@ const AlertConfigForm: React.FC<AlertConfigFormProps> = ({
                     id="scope-category"
                     name="scope"
                     value="category"
-                    checked={selectedScope === 'category'}
-                    onChange={(e) => e.target.checked && setSelectedScope('category')}
+                    checked={selectedScope === "category"}
+                    onChange={(e) => e.target.checked && setSelectedScope("category")}
                     className="radio"
                   />
                   <Label htmlFor="scope-category" className="cursor-pointer">
@@ -246,7 +257,7 @@ const AlertConfigForm: React.FC<AlertConfigFormProps> = ({
             </div>
 
             {/* Product Selection */}
-            {selectedScope === 'product' && (
+            {selectedScope === "product" && (
               <FormField
                 control={form.control}
                 name="productId"
@@ -274,7 +285,7 @@ const AlertConfigForm: React.FC<AlertConfigFormProps> = ({
             )}
 
             {/* Category Selection */}
-            {selectedScope === 'category' && (
+            {selectedScope === "category" && (
               <FormField
                 control={form.control}
                 name="categoryId"
@@ -409,12 +420,17 @@ const AlertConfigForm: React.FC<AlertConfigFormProps> = ({
                   <div key={channel} className="flex items-center space-x-2">
                     <Checkbox
                       id={`channel-${channel}`}
-                      checked={form.getValues('notificationChannels')?.includes(channel as NotificationChannel)}
-                      onCheckedChange={(checked) => 
+                      checked={form
+                        .getValues("notificationChannels")
+                        ?.includes(channel as NotificationChannel)}
+                      onCheckedChange={(checked) =>
                         handleNotificationChannelChange(channel as NotificationChannel, !!checked)
                       }
                     />
-                    <Label htmlFor={`channel-${channel}`} className="flex items-center gap-2 cursor-pointer">
+                    <Label
+                      htmlFor={`channel-${channel}`}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
                       {getNotificationIcon(channel as NotificationChannel)}
                       {label}
                     </Label>
@@ -441,10 +457,7 @@ const AlertConfigForm: React.FC<AlertConfigFormProps> = ({
                     </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
+                    <Switch checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
                 </FormItem>
               )}
@@ -458,7 +471,7 @@ const AlertConfigForm: React.FC<AlertConfigFormProps> = ({
               </Button>
               <Button type="submit" disabled={loading}>
                 <Save className="h-4 w-4 mr-2" />
-                {loading ? 'Salvando...' : 'Salvar Configuração'}
+                {loading ? "Salvando..." : "Salvar Configuração"}
               </Button>
             </div>
           </form>

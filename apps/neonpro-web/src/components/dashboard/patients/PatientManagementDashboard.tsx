@@ -1,31 +1,52 @@
-'use client';
+"use client";
 
 /**
  * Patient Management Dashboard Component
- * 
+ *
  * Main dashboard for patient management with search, filtering,
  * and FHIR-compliant patient records display.
  */
 
-import { useState, useEffect, useCallback } from 'react';
-import { Plus, Search, Filter, Download, Users, UserPlus, Calendar, FileText } from 'lucide-react';
-import { toast } from 'sonner';
+import type { useState, useEffect, useCallback } from "react";
+import type {
+  Plus,
+  Search,
+  Filter,
+  Download,
+  Users,
+  UserPlus,
+  Calendar,
+  FileText,
+} from "lucide-react";
+import type { toast } from "sonner";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
-import { PatientRegistrationForm } from './PatientRegistrationForm';
-import { PatientSearch } from './PatientSearch';
-import { PatientTable } from './PatientTable';
-import { PatientStatsCards } from './PatientStatsCards';
-import { useAuth } from '@/contexts/auth-context';
-import { searchPatients } from '@/lib/supabase/patients';
-import type { PatientSearchParams } from '@/lib/validations/patient';
-import type { PatientDB } from '@/lib/types/fhir';
+import type { PatientRegistrationForm } from "./PatientRegistrationForm";
+import type { PatientSearch } from "./PatientSearch";
+import type { PatientTable } from "./PatientTable";
+import type { PatientStatsCards } from "./PatientStatsCards";
+import type { useAuth } from "@/contexts/auth-context";
+import type { searchPatients } from "@/lib/supabase/patients";
+import type { PatientSearchParams } from "@/lib/validations/patient";
+import type { PatientDB } from "@/lib/types/fhir";
 
 export function PatientManagementDashboard() {
   const { user } = useAuth();
@@ -37,27 +58,30 @@ export function PatientManagementDashboard() {
   const [searchParams, setSearchParams] = useState<PatientSearchParams>({
     limit: 25,
     offset: 0,
-    sort_by: 'created_at',
-    sort_order: 'desc'
+    sort_by: "created_at",
+    sort_order: "desc",
   });
 
   // Load patients data
-  const loadPatients = useCallback(async (params: PatientSearchParams) => {
-    if (!user?.id) return;
+  const loadPatients = useCallback(
+    async (params: PatientSearchParams) => {
+      if (!user?.id) return;
 
-    setIsLoading(true);
-    try {
-      const result = await searchPatients(params, user.id);
-      setPatients(result.patients);
-      setTotalCount(result.total_count);
-      setHasNextPage(result.has_next_page);
-    } catch (error) {
-      console.error('Error loading patients:', error);
-      toast.error('Failed to load patients');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [user?.id]);
+      setIsLoading(true);
+      try {
+        const result = await searchPatients(params, user.id);
+        setPatients(result.patients);
+        setTotalCount(result.total_count);
+        setHasNextPage(result.has_next_page);
+      } catch (error) {
+        console.error("Error loading patients:", error);
+        toast.error("Failed to load patients");
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [user?.id],
+  );
 
   // Initial load
   useEffect(() => {
@@ -66,10 +90,10 @@ export function PatientManagementDashboard() {
 
   // Handle search
   const handleSearch = (newParams: Partial<PatientSearchParams>) => {
-    const updatedParams = { 
-      ...searchParams, 
-      ...newParams, 
-      offset: 0 // Reset to first page when searching
+    const updatedParams = {
+      ...searchParams,
+      ...newParams,
+      offset: 0, // Reset to first page when searching
     };
     setSearchParams(updatedParams);
   };
@@ -84,20 +108,20 @@ export function PatientManagementDashboard() {
   const handleRegistrationSuccess = (patientId: string) => {
     setIsRegistrationOpen(false);
     loadPatients(searchParams); // Reload patients list
-    toast.success('Patient registered successfully');
+    toast.success("Patient registered successfully");
   };
 
   // Stats data (calculated from current patients)
   const stats = {
     total_patients: totalCount,
-    active_patients: patients.filter(p => p.active).length,
-    new_this_month: patients.filter(p => {
+    active_patients: patients.filter((p) => p.active).length,
+    new_this_month: patients.filter((p) => {
       const createdDate = new Date(p.created_at);
       const now = new Date();
       const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
       return createdDate >= firstOfMonth;
     }).length,
-    with_consents: patients.filter(p => p.consents_count > 0).length
+    with_consents: patients.filter((p) => p.consents_count > 0).length,
   };
 
   return (
@@ -159,7 +183,7 @@ export function PatientManagementDashboard() {
 
         <TabsContent value="patients" className="space-y-6">
           {/* Search and Filters */}
-          <PatientSearch 
+          <PatientSearch
             onSearch={handleSearch}
             searchParams={searchParams}
             isLoading={isLoading}
@@ -190,7 +214,9 @@ export function PatientManagementDashboard() {
                 <div className="text-center space-y-2">
                   <Calendar className="h-12 w-12 mx-auto" />
                   <p>Appointment management coming soon</p>
-                  <p className="text-sm">This will integrate with the existing appointment system</p>
+                  <p className="text-sm">
+                    This will integrate with the existing appointment system
+                  </p>
                 </div>
               </div>
             </CardContent>

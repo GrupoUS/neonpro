@@ -1,5 +1,10 @@
-﻿import { createClient } from '@/lib/supabase/client';
-import { ConsentForm, PatientConsent, ConsentFormData, DigitalSignature } from '@/app/types/compliance';
+import type { createClient } from "@/lib/supabase/client";
+import type {
+  ConsentForm,
+  PatientConsent,
+  ConsentFormData,
+  DigitalSignature,
+} from "@/app/types/compliance";
 
 export class ConsentService {
   private supabase = createClient();
@@ -7,15 +12,15 @@ export class ConsentService {
   // Consent Form Management
   async getConsentForms(clinicId: string): Promise<ConsentForm[]> {
     const { data, error } = await this.supabase
-      .from('consent_forms')
-      .select('*')
-      .eq('clinic_id', clinicId)
-      .eq('is_active', true)
-      .order('created_at', { ascending: false });
+      .from("consent_forms")
+      .select("*")
+      .eq("clinic_id", clinicId)
+      .eq("is_active", true)
+      .order("created_at", { ascending: false });
 
     if (error) {
-      console.error('Error fetching consent forms:', error);
-      throw new Error('Failed to fetch consent forms');
+      console.error("Error fetching consent forms:", error);
+      throw new Error("Failed to fetch consent forms");
     }
 
     return data || [];
@@ -23,28 +28,25 @@ export class ConsentService {
 
   async getConsentForm(id: string): Promise<ConsentForm | null> {
     const { data, error } = await this.supabase
-      .from('consent_forms')
-      .select('*')
-      .eq('id', id)
+      .from("consent_forms")
+      .select("*")
+      .eq("id", id)
       .single();
 
     if (error) {
-      console.error('Error fetching consent form:', error);
-      throw new Error('Failed to fetch consent form');
+      console.error("Error fetching consent form:", error);
+      throw new Error("Failed to fetch consent form");
     }
 
     return data;
   }
 
   async createConsentForm(form: Partial<ConsentForm>): Promise<ConsentForm> {
-    const { data, error } = await this.supabase
-      .from('consent_forms')
-      .insert([form])
-      .select();
+    const { data, error } = await this.supabase.from("consent_forms").insert([form]).select();
 
     if (error) {
-      console.error('Error creating consent form:', error);
-      throw new Error('Failed to create consent form');
+      console.error("Error creating consent form:", error);
+      throw new Error("Failed to create consent form");
     }
 
     return data[0];
@@ -52,15 +54,15 @@ export class ConsentService {
 
   async updateConsentForm(id: string, updates: Partial<ConsentForm>): Promise<ConsentForm> {
     const { data, error } = await this.supabase
-      .from('consent_forms')
+      .from("consent_forms")
       .update(updates)
-      .eq('id', id)
+      .eq("id", id)
       .select()
       .single();
 
     if (error) {
-      console.error('Error updating consent form:', error);
-      throw new Error('Failed to update consent form');
+      console.error("Error updating consent form:", error);
+      throw new Error("Failed to update consent form");
     }
 
     return data;
@@ -68,30 +70,30 @@ export class ConsentService {
 
   async deactivateConsentForm(id: string): Promise<void> {
     const { error } = await this.supabase
-      .from('consent_forms')
+      .from("consent_forms")
       .update({ is_active: false })
-      .eq('id', id);
+      .eq("id", id);
 
     if (error) {
-      console.error('Error deactivating consent form:', error);
-      throw new Error('Failed to deactivate consent form');
+      console.error("Error deactivating consent form:", error);
+      throw new Error("Failed to deactivate consent form");
     }
   }
 
   // Patient Consent Management
   async getPatientConsents(patientId: string): Promise<PatientConsent[]> {
     const { data, error } = await this.supabase
-      .from('patient_consents')
+      .from("patient_consents")
       .select(`
         *,
         consent_form:consent_forms(*)
       `)
-      .eq('patient_id', patientId)
-      .order('created_at', { ascending: false });
+      .eq("patient_id", patientId)
+      .order("created_at", { ascending: false });
 
     if (error) {
-      console.error('Error fetching patient consents:', error);
-      throw new Error('Failed to fetch patient consents');
+      console.error("Error fetching patient consents:", error);
+      throw new Error("Failed to fetch patient consents");
     }
 
     return data || [];
@@ -99,23 +101,28 @@ export class ConsentService {
 
   async getActiveConsents(patientId: string): Promise<PatientConsent[]> {
     const { data, error } = await this.supabase
-      .from('patient_consents')
+      .from("patient_consents")
       .select(`
         *,
         consent_form:consent_forms(*)
       `)
-      .eq('patient_id', patientId)
-      .eq('status', 'active')
-      .or('expires_at.is.null,expires_at.gt.now()')
-      .order('created_at', { ascending: false });
+      .eq("patient_id", patientId)
+      .eq("status", "active")
+      .or("expires_at.is.null,expires_at.gt.now()")
+      .order("created_at", { ascending: false });
 
     if (error) {
-      console.error('Error fetching active consents:', error);
-      throw new Error('Failed to fetch active consents');
+      console.error("Error fetching active consents:", error);
+      throw new Error("Failed to fetch active consents");
     }
 
     return data || [];
-  }  async createPatientConsent(consentData: ConsentFormData, formId: string, patientId: string): Promise<PatientConsent> {
+  }
+  async createPatientConsent(
+    consentData: ConsentFormData,
+    formId: string,
+    patientId: string,
+  ): Promise<PatientConsent> {
     const consentRecord: Partial<PatientConsent> = {
       patient_id: patientId,
       consent_form_id: formId,
@@ -128,29 +135,29 @@ export class ConsentService {
         cpf: consentData.cpf,
         email: consentData.email,
         phone: consentData.phone,
-        form_data: consentData
+        form_data: consentData,
       },
       signature_data: {
         signature: consentData.signature,
         timestamp: consentData.date,
         ip_address: consentData.ip_address,
-        user_agent: consentData.user_agent
+        user_agent: consentData.user_agent,
       },
       ip_address: consentData.ip_address,
       user_agent: consentData.user_agent,
       processing_categories: consentData.processing_categories,
-      status: 'active'
+      status: "active",
     };
 
     const { data, error } = await this.supabase
-      .from('patient_consents')
+      .from("patient_consents")
       .insert([consentRecord])
       .select()
       .single();
 
     if (error) {
-      console.error('Error creating patient consent:', error);
-      throw new Error('Failed to create patient consent');
+      console.error("Error creating patient consent:", error);
+      throw new Error("Failed to create patient consent");
     }
 
     return data;
@@ -158,19 +165,19 @@ export class ConsentService {
 
   async withdrawConsent(consentId: string, reason: string): Promise<PatientConsent> {
     const { data, error } = await this.supabase
-      .from('patient_consents')
+      .from("patient_consents")
       .update({
-        status: 'withdrawn',
+        status: "withdrawn",
         withdrawal_date: new Date().toISOString(),
-        withdrawal_reason: reason
+        withdrawal_reason: reason,
       })
-      .eq('id', consentId)
+      .eq("id", consentId)
       .select()
       .single();
 
     if (error) {
-      console.error('Error withdrawing consent:', error);
-      throw new Error('Failed to withdraw consent');
+      console.error("Error withdrawing consent:", error);
+      throw new Error("Failed to withdraw consent");
     }
 
     return data;
@@ -178,15 +185,15 @@ export class ConsentService {
 
   async updateConsentExpiry(consentId: string, expiryDate: string): Promise<PatientConsent> {
     const { data, error } = await this.supabase
-      .from('patient_consents')
+      .from("patient_consents")
       .update({ expires_at: expiryDate })
-      .eq('id', consentId)
+      .eq("id", consentId)
       .select()
       .single();
 
     if (error) {
-      console.error('Error updating consent expiry:', error);
-      throw new Error('Failed to update consent expiry');
+      console.error("Error updating consent expiry:", error);
+      throw new Error("Failed to update consent expiry");
     }
 
     return data;
@@ -194,14 +201,11 @@ export class ConsentService {
 
   // Patient Consent Management
   async recordPatientConsent(consent: Partial<PatientConsent>): Promise<PatientConsent> {
-    const { data, error } = await this.supabase
-      .from('patient_consent')
-      .insert([consent])
-      .select();
+    const { data, error } = await this.supabase.from("patient_consent").insert([consent]).select();
 
     if (error) {
-      console.error('Error recording patient consent:', error);
-      throw new Error('Failed to record patient consent');
+      console.error("Error recording patient consent:", error);
+      throw new Error("Failed to record patient consent");
     }
 
     return data[0];
@@ -212,19 +216,19 @@ export class ConsentService {
     const consentData = {
       patient_id: patientId,
       consent_form_id: formId,
-      status: 'granted',
+      status: "granted",
       consented_at: new Date().toISOString(),
-      signature_method: 'digital'
+      signature_method: "digital",
     };
 
     const { data, error } = await this.supabase
-      .from('patient_consent')
+      .from("patient_consent")
       .insert([consentData])
       .select();
 
     if (error) {
-      console.error('Error granting patient consent:', error);
-      throw new Error('Failed to grant patient consent');
+      console.error("Error granting patient consent:", error);
+      throw new Error("Failed to grant patient consent");
     }
 
     return data[0];
@@ -232,18 +236,18 @@ export class ConsentService {
 
   async revokePatientConsent(consentId: string, reason?: string): Promise<PatientConsent> {
     const { data, error } = await this.supabase
-      .from('patient_consent')
+      .from("patient_consent")
       .update({
-        status: 'revoked',
+        status: "revoked",
         withdrawal_date: new Date().toISOString(),
-        withdrawal_reason: reason || 'User requested'
+        withdrawal_reason: reason || "User requested",
       })
-      .eq('id', consentId)
+      .eq("id", consentId)
       .select();
 
     if (error) {
-      console.error('Error revoking patient consent:', error);
-      throw new Error('Failed to revoke patient consent');
+      console.error("Error revoking patient consent:", error);
+      throw new Error("Failed to revoke patient consent");
     }
 
     return data[0];
@@ -265,20 +269,20 @@ export class ConsentService {
   // Consent Form Templates
   renderConsentTemplate(template: string, data: ConsentFormData): string {
     let rendered = template;
-    
+
     // Replace template variables
     const replacements: Record<string, string> = {
-      '{{patient_name}}': data.patient_name || '',
-      '{{cpf}}': data.cpf || '',
-      '{{email}}': data.email || '',
-      '{{phone}}': data.phone || '',
-      '{{date}}': data.date || new Date().toLocaleDateString('pt-BR'),
-      '{{consent_type}}': data.consent_type || '',
-      '{{purpose}}': data.purpose || ''
+      "{{patient_name}}": data.patient_name || "",
+      "{{cpf}}": data.cpf || "",
+      "{{email}}": data.email || "",
+      "{{phone}}": data.phone || "",
+      "{{date}}": data.date || new Date().toLocaleDateString("pt-BR"),
+      "{{consent_type}}": data.consent_type || "",
+      "{{purpose}}": data.purpose || "",
     };
 
     Object.entries(replacements).forEach(([key, value]) => {
-      rendered = rendered.replace(new RegExp(key, 'g'), value);
+      rendered = rendered.replace(new RegExp(key, "g"), value);
     });
 
     return rendered;
@@ -290,21 +294,21 @@ export class ConsentService {
     futureDate.setDate(futureDate.getDate() + daysAhead);
 
     const { data, error } = await this.supabase
-      .from('patient_consents')
+      .from("patient_consents")
       .select(`
         *,
         consent_form:consent_forms(*),
         patient:patients(id, name, email)
       `)
-      .eq('clinic_id', clinicId)
-      .eq('status', 'active')
-      .not('expires_at', 'is', null)
-      .lte('expires_at', futureDate.toISOString())
-      .order('expires_at', { ascending: true });
+      .eq("clinic_id", clinicId)
+      .eq("status", "active")
+      .not("expires_at", "is", null)
+      .lte("expires_at", futureDate.toISOString())
+      .order("expires_at", { ascending: true });
 
     if (error) {
-      console.error('Error fetching expiring consents:', error);
-      throw new Error('Failed to fetch expiring consents');
+      console.error("Error fetching expiring consents:", error);
+      throw new Error("Failed to fetch expiring consents");
     }
 
     return data || [];
@@ -318,13 +322,13 @@ export class ConsentService {
     pending: number;
   }> {
     const { data, error } = await this.supabase
-      .from('patient_consents')
-      .select('status')
-      .eq('clinic_id', clinicId);
+      .from("patient_consents")
+      .select("status")
+      .eq("clinic_id", clinicId);
 
     if (error) {
-      console.error('Error fetching consent stats:', error);
-      throw new Error('Failed to fetch consent stats');
+      console.error("Error fetching consent stats:", error);
+      throw new Error("Failed to fetch consent stats");
     }
 
     const stats = {
@@ -332,21 +336,21 @@ export class ConsentService {
       active: 0,
       expired: 0,
       withdrawn: 0,
-      pending: 0
+      pending: 0,
     };
 
-    data?.forEach(consent => {
+    data?.forEach((consent) => {
       switch (consent.status) {
-        case 'active':
+        case "active":
           stats.active++;
           break;
-        case 'expired':
+        case "expired":
           stats.expired++;
           break;
-        case 'withdrawn':
+        case "withdrawn":
           stats.withdrawn++;
           break;
-        case 'pending':
+        case "pending":
           stats.pending++;
           break;
       }
@@ -358,14 +362,14 @@ export class ConsentService {
   // Get all patient consents for a clinic
   async getClinicConsents(clinicId: string): Promise<PatientConsent[]> {
     const { data, error } = await this.supabase
-      .from('patient_consents')
+      .from("patient_consents")
       .select(`
         *,
         consent_form:consent_forms(*),
         patient:patients(*)
       `)
-      .eq('clinic_id', clinicId)
-      .order('created_at', { ascending: false });
+      .eq("clinic_id", clinicId)
+      .order("created_at", { ascending: false });
 
     if (error) {
       throw new Error(`Failed to fetch clinic consents: ${error.message}`);
@@ -376,17 +380,16 @@ export class ConsentService {
 
   // Audit Trail for Consent Operations
   async logConsentOperation(
-    operation: string, 
-    consentId: string, 
-    details: Record<string, any>
+    operation: string,
+    consentId: string,
+    details: Record<string, any>,
   ): Promise<void> {
     // This would integrate with the audit system
-    console.log('Consent operation logged:', {
+    console.log("Consent operation logged:", {
       operation,
       consent_id: consentId,
       timestamp: new Date().toISOString(),
-      details
+      details,
     });
   }
 }
-

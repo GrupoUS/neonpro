@@ -5,33 +5,33 @@
 
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
-import {
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
   MilestoneTracking,
   TimelineEvent,
   TimelineFilter,
 } from "@/lib/patients/medical-timeline";
-import { cn } from "@/lib/utils";
-import {
+import type { cn } from "@/lib/utils";
+import type {
   Activity,
   AlertCircle,
   Calendar,
@@ -49,7 +49,7 @@ import {
   TrendingUp,
   User,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import type { useEffect, useState } from "react";
 
 interface MedicalTimelineProps {
   patientId: string;
@@ -60,19 +60,14 @@ interface TimelineEventWithExpanded extends TimelineEvent {
   expanded?: boolean;
 }
 
-export function MedicalTimeline({
-  patientId,
-  className,
-}: MedicalTimelineProps) {
+export function MedicalTimeline({ patientId, className }: MedicalTimelineProps) {
   const [events, setEvents] = useState<TimelineEventWithExpanded[]>([]);
   const [milestones, setMilestones] = useState<MilestoneTracking[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<TimelineFilter>({});
   const [activeTab, setActiveTab] = useState("timeline");
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(
-    null
-  );
+  const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
 
   useEffect(() => {
     loadTimeline();
@@ -133,8 +128,8 @@ export function MedicalTimeline({
   const toggleEventExpansion = (eventId: string) => {
     setEvents(
       events.map((event) =>
-        event.id === eventId ? { ...event, expanded: !event.expanded } : event
-      )
+        event.id === eventId ? { ...event, expanded: !event.expanded } : event,
+      ),
     );
   };
 
@@ -216,25 +211,20 @@ export function MedicalTimeline({
     return `${Math.floor(days / 365)} anos atrás`;
   };
 
-  const renderTimelineEvent = (
-    event: TimelineEventWithExpanded,
-    index: number
-  ) => {
+  const renderTimelineEvent = (event: TimelineEventWithExpanded, index: number) => {
     const isLast = index === events.length - 1;
 
     return (
       <div key={event.id} className="relative">
         {/* Timeline line */}
-        {!isLast && (
-          <div className="absolute left-6 top-12 w-0.5 h-full bg-gray-200 -ml-px" />
-        )}
+        {!isLast && <div className="absolute left-6 top-12 w-0.5 h-full bg-gray-200 -ml-px" />}
 
         {/* Event marker */}
         <div className="relative flex items-start space-x-4">
           <div
             className={cn(
               "flex items-center justify-center w-12 h-12 rounded-full border-4 border-white shadow-sm",
-              getSeverityColor(event.severity) || "bg-blue-500"
+              getSeverityColor(event.severity) || "bg-blue-500",
             )}
           >
             <div className="text-white">{getEventIcon(event.eventType)}</div>
@@ -245,7 +235,7 @@ export function MedicalTimeline({
             <Card
               className={cn(
                 "cursor-pointer transition-all hover:shadow-md",
-                event.expanded && "shadow-lg"
+                event.expanded && "shadow-lg",
               )}
               onClick={() => toggleEventExpansion(event.id)}
             >
@@ -269,9 +259,7 @@ export function MedicalTimeline({
                     </CardDescription>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Badge className={getCategoryColor(event.category)}>
-                      {event.category}
-                    </Badge>
+                    <Badge className={getCategoryColor(event.category)}>{event.category}</Badge>
                     {event.severity && (
                       <Badge variant="outline" className="text-xs">
                         {event.severity}
@@ -287,65 +275,50 @@ export function MedicalTimeline({
                   {event.description && (
                     <div>
                       <h4 className="text-sm font-medium mb-2">Descrição</h4>
-                      <p className="text-sm text-gray-600">
-                        {event.description}
-                      </p>
+                      <p className="text-sm text-gray-600">{event.description}</p>
                     </div>
                   )}
 
                   {/* Before/After Photos */}
-                  {event.beforeAfterPhotos &&
-                    event.beforeAfterPhotos.length > 0 && (
-                      <div>
-                        <h4 className="text-sm font-medium mb-2">
-                          Fotos Antes/Depois
-                        </h4>
-                        <div className="grid grid-cols-2 gap-4">
-                          {event.beforeAfterPhotos.map((photo) => (
-                            <div key={photo.id} className="space-y-2">
-                              <div className="grid grid-cols-2 gap-2">
-                                {photo.beforePhoto && (
-                                  <div className="space-y-1">
-                                    <p className="text-xs text-gray-500">
-                                      Antes
-                                    </p>
-                                    <img
-                                      src={photo.beforePhoto.thumbnailUrl}
-                                      alt="Antes"
-                                      className="w-full h-24 object-cover rounded"
-                                    />
-                                  </div>
-                                )}
-                                {photo.afterPhoto && (
-                                  <div className="space-y-1">
-                                    <p className="text-xs text-gray-500">
-                                      Depois
-                                    </p>
-                                    <img
-                                      src={photo.afterPhoto.thumbnailUrl}
-                                      alt="Depois"
-                                      className="w-full h-24 object-cover rounded"
-                                    />
-                                  </div>
-                                )}
-                              </div>
-                              {photo.notes && (
-                                <p className="text-xs text-gray-600">
-                                  {photo.notes}
-                                </p>
+                  {event.beforeAfterPhotos && event.beforeAfterPhotos.length > 0 && (
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">Fotos Antes/Depois</h4>
+                      <div className="grid grid-cols-2 gap-4">
+                        {event.beforeAfterPhotos.map((photo) => (
+                          <div key={photo.id} className="space-y-2">
+                            <div className="grid grid-cols-2 gap-2">
+                              {photo.beforePhoto && (
+                                <div className="space-y-1">
+                                  <p className="text-xs text-gray-500">Antes</p>
+                                  <img
+                                    src={photo.beforePhoto.thumbnailUrl}
+                                    alt="Antes"
+                                    className="w-full h-24 object-cover rounded"
+                                  />
+                                </div>
+                              )}
+                              {photo.afterPhoto && (
+                                <div className="space-y-1">
+                                  <p className="text-xs text-gray-500">Depois</p>
+                                  <img
+                                    src={photo.afterPhoto.thumbnailUrl}
+                                    alt="Depois"
+                                    className="w-full h-24 object-cover rounded"
+                                  />
+                                </div>
                               )}
                             </div>
-                          ))}
-                        </div>
+                            {photo.notes && <p className="text-xs text-gray-600">{photo.notes}</p>}
+                          </div>
+                        ))}
                       </div>
-                    )}
+                    </div>
+                  )}
 
                   {/* Treatment Outcome */}
                   {event.outcome && (
                     <div>
-                      <h4 className="text-sm font-medium mb-2">
-                        Resultado do Tratamento
-                      </h4>
+                      <h4 className="text-sm font-medium mb-2">Resultado do Tratamento</h4>
                       <div className="space-y-2">
                         <div className="flex items-center space-x-2">
                           {event.outcome.success ? (
@@ -354,35 +327,23 @@ export function MedicalTimeline({
                             <AlertCircle className="h-4 w-4 text-red-500" />
                           )}
                           <span className="text-sm">
-                            {event.outcome.success
-                              ? "Sucesso"
-                              : "Intercorrências"}
+                            {event.outcome.success ? "Sucesso" : "Intercorrências"}
                           </span>
                           <div className="flex items-center space-x-1">
                             <Star className="h-3 w-3 text-yellow-500" />
-                            <span className="text-xs">
-                              {event.outcome.satisfactionScore}/10
-                            </span>
+                            <span className="text-xs">{event.outcome.satisfactionScore}/10</span>
                           </div>
                         </div>
                         {event.outcome.patientFeedback && (
                           <div>
-                            <p className="text-xs text-gray-500">
-                              Feedback do Paciente:
-                            </p>
-                            <p className="text-sm">
-                              {event.outcome.patientFeedback}
-                            </p>
+                            <p className="text-xs text-gray-500">Feedback do Paciente:</p>
+                            <p className="text-sm">{event.outcome.patientFeedback}</p>
                           </div>
                         )}
                         {event.outcome.professionalAssessment && (
                           <div>
-                            <p className="text-xs text-gray-500">
-                              Avaliação Profissional:
-                            </p>
-                            <p className="text-sm">
-                              {event.outcome.professionalAssessment}
-                            </p>
+                            <p className="text-xs text-gray-500">Avaliação Profissional:</p>
+                            <p className="text-sm">{event.outcome.professionalAssessment}</p>
                           </div>
                         )}
                       </div>
@@ -395,17 +356,10 @@ export function MedicalTimeline({
                       <h4 className="text-sm font-medium mb-2">Observações</h4>
                       <div className="space-y-2">
                         {event.notes.map((note) => (
-                          <div
-                            key={note.id}
-                            className="border-l-2 border-gray-200 pl-3"
-                          >
+                          <div key={note.id} className="border-l-2 border-gray-200 pl-3">
                             <div className="flex items-center justify-between">
-                              <span className="text-xs text-gray-500">
-                                {note.author}
-                              </span>
-                              <span className="text-xs text-gray-400">
-                                {formatDate(note.date)}
-                              </span>
+                              <span className="text-xs text-gray-500">{note.author}</span>
+                              <span className="text-xs text-gray-400">{formatDate(note.date)}</span>
                             </div>
                             <p className="text-sm mt-1">{note.note}</p>
                           </div>
@@ -420,10 +374,7 @@ export function MedicalTimeline({
                       <h4 className="text-sm font-medium mb-2">Anexos</h4>
                       <div className="space-y-1">
                         {event.attachments.map((attachment) => (
-                          <div
-                            key={attachment.id}
-                            className="flex items-center space-x-2 text-sm"
-                          >
+                          <div key={attachment.id} className="flex items-center space-x-2 text-sm">
                             <FileText className="h-4 w-4 text-gray-400" />
                             <span>{attachment.name}</span>
                             <Badge variant="outline" className="text-xs">
@@ -452,14 +403,11 @@ export function MedicalTimeline({
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle>{tracking.treatmentPlan}</CardTitle>
-                  <CardDescription>
-                    Progresso geral: {tracking.overallProgress}%
-                  </CardDescription>
+                  <CardDescription>Progresso geral: {tracking.overallProgress}%</CardDescription>
                 </div>
                 <div className="text-right">
                   <p className="text-sm text-gray-500">
-                    Conclusão estimada:{" "}
-                    {formatDate(tracking.estimatedCompletion)}
+                    Conclusão estimada: {formatDate(tracking.estimatedCompletion)}
                   </p>
                 </div>
               </div>
@@ -468,10 +416,7 @@ export function MedicalTimeline({
             <CardContent>
               <div className="space-y-4">
                 {tracking.milestones.map((milestone) => (
-                  <div
-                    key={milestone.id}
-                    className="flex items-start space-x-4"
-                  >
+                  <div key={milestone.id} className="flex items-start space-x-4">
                     <div className="flex-shrink-0">
                       {milestone.status === "completed" ? (
                         <CheckCircle className="h-5 w-5 text-green-500" />
@@ -485,19 +430,13 @@ export function MedicalTimeline({
                       <div className="flex items-center justify-between">
                         <h4 className="font-medium">{milestone.title}</h4>
                         <Badge
-                          variant={
-                            milestone.status === "completed"
-                              ? "default"
-                              : "outline"
-                          }
+                          variant={milestone.status === "completed" ? "default" : "outline"}
                           className="text-xs"
                         >
                           {milestone.status}
                         </Badge>
                       </div>
-                      <p className="text-sm text-gray-600 mt-1">
-                        {milestone.description}
-                      </p>
+                      <p className="text-sm text-gray-600 mt-1">{milestone.description}</p>
                       <div className="flex items-center justify-between mt-2">
                         <span className="text-xs text-gray-500">
                           Meta: {formatDate(milestone.targetDate)}
@@ -506,10 +445,7 @@ export function MedicalTimeline({
                           {milestone.progress}% completo
                         </span>
                       </div>
-                      <Progress
-                        value={milestone.progress}
-                        className="w-full mt-1"
-                      />
+                      <Progress value={milestone.progress} className="w-full mt-1" />
                     </div>
                   </div>
                 ))}
@@ -526,19 +462,13 @@ export function MedicalTimeline({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">
-            Histórico Médico
-          </h2>
+          <h2 className="text-2xl font-bold tracking-tight">Histórico Médico</h2>
           <p className="text-muted-foreground">
             Timeline completo de eventos médicos e tratamentos
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowFilters(!showFilters)}
-          >
+          <Button variant="outline" size="sm" onClick={() => setShowFilters(!showFilters)}>
             <Filter className="h-4 w-4 mr-2" />
             Filtros
           </Button>

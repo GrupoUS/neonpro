@@ -3,72 +3,85 @@
 // Based on research: Recharts patterns + SaaS conversion best practices
 // Created: 2025-01-22
 
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { 
-  LineChart, 
-  Line, 
-  AreaChart, 
-  Area, 
-  BarChart, 
-  Bar, 
-  PieChart, 
-  Pie, 
+import type { useState, useEffect } from "react";
+import type {
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
   Cell,
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Legend, 
-  ResponsiveContainer 
-} from 'recharts'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Badge } from '@/components/ui/badge'
-import { TrendingUp, TrendingDown, Calendar, Filter } from 'lucide-react'
-import { cn } from '@/lib/utils'
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Badge } from "@/components/ui/badge";
+import type { TrendingUp, TrendingDown, Calendar, Filter } from "lucide-react";
+import type { cn } from "@/lib/utils";
 
 // Chart color palette following shadcn/ui theme
 const CHART_COLORS = {
-  primary: 'hsl(var(--primary))',
-  secondary: 'hsl(var(--secondary))',
-  success: 'hsl(142, 76%, 36%)',
-  warning: 'hsl(38, 92%, 50%)',
-  error: 'hsl(0, 84%, 60%)',
-  chart1: 'hsl(var(--chart-1))',
-  chart2: 'hsl(var(--chart-2))',
-  chart3: 'hsl(var(--chart-3))',
-  chart4: 'hsl(var(--chart-4))',
-  chart5: 'hsl(var(--chart-5))'
-}
+  primary: "hsl(var(--primary))",
+  secondary: "hsl(var(--secondary))",
+  success: "hsl(142, 76%, 36%)",
+  warning: "hsl(38, 92%, 50%)",
+  error: "hsl(0, 84%, 60%)",
+  chart1: "hsl(var(--chart-1))",
+  chart2: "hsl(var(--chart-2))",
+  chart3: "hsl(var(--chart-3))",
+  chart4: "hsl(var(--chart-4))",
+  chart5: "hsl(var(--chart-5))",
+};
 
 // Types for chart data
 interface ConversionData {
-  period: string
-  trials: number
-  conversions: number
-  conversionRate: number
-  revenue: number
-}interface FunnelData {
-  stage: string
-  users: number
-  percentage: number
-  dropOff: number
+  period: string;
+  trials: number;
+  conversions: number;
+  conversionRate: number;
+  revenue: number;
+}
+interface FunnelData {
+  stage: string;
+  users: number;
+  percentage: number;
+  dropOff: number;
 }
 
 interface SourceData {
-  source: string
-  trials: number
-  conversions: number
-  conversionRate: number
-  fill: string
+  source: string;
+  trials: number;
+  conversions: number;
+  conversionRate: number;
+  fill: string;
 }
 
 interface ConversionChartsProps {
-  className?: string
-  timeRange?: '7d' | '30d' | '90d' | '1y'
+  className?: string;
+  timeRange?: "7d" | "30d" | "90d" | "1y";
 }
 
 // Custom tooltip component following shadcn/ui patterns
@@ -79,72 +92,93 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         <p className="font-medium text-sm mb-2">{label}</p>
         {payload.map((entry: any, index: number) => (
           <div key={index} className="flex items-center gap-2 text-xs">
-            <div 
-              className="w-3 h-3 rounded-full" 
-              style={{ backgroundColor: entry.color }}
-            />
+            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
             <span className="text-muted-foreground">{entry.dataKey}:</span>
             <span className="font-medium">{entry.value}</span>
           </div>
         ))}
       </div>
-    )
+    );
   }
-  return null
-}
+  return null;
+};
 
-export function ConversionCharts({ className, timeRange = '30d' }: ConversionChartsProps) {
+export function ConversionCharts({ className, timeRange = "30d" }: ConversionChartsProps) {
   const [data, setData] = useState<{
-    conversionTrend: ConversionData[]
-    funnelData: FunnelData[]
-    sourceData: SourceData[]
-  } | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [selectedTimeRange, setSelectedTimeRange] = useState(timeRange)  // Fetch chart data
+    conversionTrend: ConversionData[];
+    funnelData: FunnelData[];
+    sourceData: SourceData[];
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [selectedTimeRange, setSelectedTimeRange] = useState(timeRange); // Fetch chart data
   useEffect(() => {
     const fetchChartData = async () => {
       try {
-        setLoading(true)
-        const response = await fetch(`/api/analytics/charts?timeRange=${selectedTimeRange}`)
-        const chartData = await response.json()
-        setData(chartData)
+        setLoading(true);
+        const response = await fetch(`/api/analytics/charts?timeRange=${selectedTimeRange}`);
+        const chartData = await response.json();
+        setData(chartData);
       } catch (error) {
-        console.error('Failed to fetch chart data:', error)
+        console.error("Failed to fetch chart data:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchChartData()
-  }, [selectedTimeRange])
+    fetchChartData();
+  }, [selectedTimeRange]);
 
   // Mock data for demonstration (will be replaced by API)
   const mockConversionTrend: ConversionData[] = [
-    { period: 'Week 1', trials: 125, conversions: 31, conversionRate: 24.8, revenue: 15500 },
-    { period: 'Week 2', trials: 142, conversions: 38, conversionRate: 26.8, revenue: 19000 },
-    { period: 'Week 3', trials: 158, conversions: 45, conversionRate: 28.5, revenue: 22500 },
-    { period: 'Week 4', trials: 134, conversions: 35, conversionRate: 26.1, revenue: 17500 }
-  ]
+    { period: "Week 1", trials: 125, conversions: 31, conversionRate: 24.8, revenue: 15500 },
+    { period: "Week 2", trials: 142, conversions: 38, conversionRate: 26.8, revenue: 19000 },
+    { period: "Week 3", trials: 158, conversions: 45, conversionRate: 28.5, revenue: 22500 },
+    { period: "Week 4", trials: 134, conversions: 35, conversionRate: 26.1, revenue: 17500 },
+  ];
 
   const mockFunnelData: FunnelData[] = [
-    { stage: 'Visitors', users: 1000, percentage: 100, dropOff: 0 },
-    { stage: 'Sign Ups', users: 150, percentage: 15, dropOff: 85 },
-    { stage: 'Trial Started', users: 120, percentage: 12, dropOff: 3 },
-    { stage: 'Engaged', users: 85, percentage: 8.5, dropOff: 3.5 },
-    { stage: 'Converted', users: 32, percentage: 3.2, dropOff: 5.3 }
-  ]
+    { stage: "Visitors", users: 1000, percentage: 100, dropOff: 0 },
+    { stage: "Sign Ups", users: 150, percentage: 15, dropOff: 85 },
+    { stage: "Trial Started", users: 120, percentage: 12, dropOff: 3 },
+    { stage: "Engaged", users: 85, percentage: 8.5, dropOff: 3.5 },
+    { stage: "Converted", users: 32, percentage: 3.2, dropOff: 5.3 },
+  ];
 
   const mockSourceData: SourceData[] = [
-    { source: 'Organic', trials: 45, conversions: 18, conversionRate: 40, fill: CHART_COLORS.chart1 },
-    { source: 'Google Ads', trials: 32, conversions: 8, conversionRate: 25, fill: CHART_COLORS.chart2 },
-    { source: 'Social Media', trials: 28, conversions: 6, conversionRate: 21, fill: CHART_COLORS.chart3 },
-    { source: 'Referral', trials: 22, conversions: 9, conversionRate: 41, fill: CHART_COLORS.chart4 },
-    { source: 'Direct', trials: 18, conversions: 7, conversionRate: 39, fill: CHART_COLORS.chart5 }
-  ]
+    {
+      source: "Organic",
+      trials: 45,
+      conversions: 18,
+      conversionRate: 40,
+      fill: CHART_COLORS.chart1,
+    },
+    {
+      source: "Google Ads",
+      trials: 32,
+      conversions: 8,
+      conversionRate: 25,
+      fill: CHART_COLORS.chart2,
+    },
+    {
+      source: "Social Media",
+      trials: 28,
+      conversions: 6,
+      conversionRate: 21,
+      fill: CHART_COLORS.chart3,
+    },
+    {
+      source: "Referral",
+      trials: 22,
+      conversions: 9,
+      conversionRate: 41,
+      fill: CHART_COLORS.chart4,
+    },
+    { source: "Direct", trials: 18, conversions: 7, conversionRate: 39, fill: CHART_COLORS.chart5 },
+  ];
 
   if (loading) {
     return (
-      <div className={cn('space-y-6', className)}>
+      <div className={cn("space-y-6", className)}>
         <div className="grid gap-4 md:grid-cols-2">
           {Array.from({ length: 4 }).map((_, i) => (
             <Card key={i} className="animate-pulse">
@@ -159,9 +193,10 @@ export function ConversionCharts({ className, timeRange = '30d' }: ConversionCha
           ))}
         </div>
       </div>
-    )
-  }  return (
-    <div className={cn('space-y-6', className)}>
+    );
+  }
+  return (
+    <div className={cn("space-y-6", className)}>
       {/* Header with time range selector */}
       <div className="flex items-center justify-between">
         <div>
@@ -190,30 +225,20 @@ export function ConversionCharts({ className, timeRange = '30d' }: ConversionCha
           <TabsTrigger value="funnel">Conversion Funnel</TabsTrigger>
           <TabsTrigger value="sources">Traffic Sources</TabsTrigger>
         </TabsList>
-
         {/* Conversion Trend Chart */}
         <TabsContent value="trend" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <Card>
               <CardHeader>
                 <CardTitle className="text-base">Conversion Rate Trend</CardTitle>
-                <CardDescription>
-                  Weekly conversion rate performance
-                </CardDescription>
+                <CardDescription>Weekly conversion rate performance</CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={mockConversionTrend}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
-                    <XAxis 
-                      dataKey="period" 
-                      stroke="hsl(var(--muted-foreground))"
-                      fontSize={12}
-                    />
-                    <YAxis 
-                      stroke="hsl(var(--muted-foreground))"
-                      fontSize={12}
-                    />
+                    <XAxis dataKey="period" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
                     <Tooltip content={<CustomTooltip />} />
                     <Line
                       type="monotone"
@@ -225,26 +250,18 @@ export function ConversionCharts({ className, timeRange = '30d' }: ConversionCha
                   </LineChart>
                 </ResponsiveContainer>
               </CardContent>
-            </Card>            <Card>
+            </Card>{" "}
+            <Card>
               <CardHeader>
                 <CardTitle className="text-base">Revenue Trend</CardTitle>
-                <CardDescription>
-                  Weekly revenue from trial conversions
-                </CardDescription>
+                <CardDescription>Weekly revenue from trial conversions</CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <AreaChart data={mockConversionTrend}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
-                    <XAxis 
-                      dataKey="period" 
-                      stroke="hsl(var(--muted-foreground))"
-                      fontSize={12}
-                    />
-                    <YAxis 
-                      stroke="hsl(var(--muted-foreground))"
-                      fontSize={12}
-                    />
+                    <XAxis dataKey="period" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
                     <Tooltip content={<CustomTooltip />} />
                     <Area
                       type="monotone"
@@ -259,15 +276,12 @@ export function ConversionCharts({ className, timeRange = '30d' }: ConversionCha
             </Card>
           </div>
         </TabsContent>
-
         {/* Conversion Funnel */}
         <TabsContent value="funnel" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Conversion Funnel</CardTitle>
-              <CardDescription>
-                User journey from visitor to paying customer
-              </CardDescription>
+              <CardDescription>User journey from visitor to paying customer</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -282,9 +296,7 @@ export function ConversionCharts({ className, timeRange = '30d' }: ConversionCha
                       </div>
                       <div className="flex items-center gap-4 text-sm">
                         <span>{stage.users.toLocaleString()} users</span>
-                        <span className="text-muted-foreground">
-                          {stage.percentage}%
-                        </span>
+                        <span className="text-muted-foreground">{stage.percentage}%</span>
                         {index > 0 && (
                           <div className="flex items-center text-red-600">
                             <TrendingDown className="mr-1 h-3 w-3" />
@@ -298,7 +310,7 @@ export function ConversionCharts({ className, timeRange = '30d' }: ConversionCha
                         className="bg-gradient-to-r from-chart-1 to-chart-2 h-3 rounded-full transition-all duration-500"
                         style={{
                           width: `${stage.percentage}%`,
-                          background: `linear-gradient(to right, ${CHART_COLORS.chart1}, ${CHART_COLORS.chart2})`
+                          background: `linear-gradient(to right, ${CHART_COLORS.chart1}, ${CHART_COLORS.chart2})`,
                         }}
                       />
                     </div>
@@ -307,15 +319,14 @@ export function ConversionCharts({ className, timeRange = '30d' }: ConversionCha
               </div>
             </CardContent>
           </Card>
-        </TabsContent>        {/* Traffic Sources */}
+        </TabsContent>{" "}
+        {/* Traffic Sources */}
         <TabsContent value="sources" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <Card>
               <CardHeader>
                 <CardTitle className="text-base">Conversion by Source</CardTitle>
-                <CardDescription>
-                  Performance breakdown by traffic source
-                </CardDescription>
+                <CardDescription>Performance breakdown by traffic source</CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -326,7 +337,7 @@ export function ConversionCharts({ className, timeRange = '30d' }: ConversionCha
                       cy="50%"
                       outerRadius={80}
                       dataKey="conversions"
-                      label={({ name, value, percent }) => 
+                      label={({ name, value, percent }) =>
                         `${name}: ${value} (${(percent * 100).toFixed(1)}%)`
                       }
                     >
@@ -343,29 +354,24 @@ export function ConversionCharts({ className, timeRange = '30d' }: ConversionCha
             <Card>
               <CardHeader>
                 <CardTitle className="text-base">Source Performance</CardTitle>
-                <CardDescription>
-                  Conversion rates by traffic source
-                </CardDescription>
+                <CardDescription>Conversion rates by traffic source</CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={mockSourceData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
-                    <XAxis 
-                      dataKey="source" 
+                    <XAxis
+                      dataKey="source"
                       stroke="hsl(var(--muted-foreground))"
                       fontSize={12}
                       angle={-45}
                       textAnchor="end"
                       height={80}
                     />
-                    <YAxis 
-                      stroke="hsl(var(--muted-foreground))"
-                      fontSize={12}
-                    />
+                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
                     <Tooltip content={<CustomTooltip />} />
-                    <Bar 
-                      dataKey="conversionRate" 
+                    <Bar
+                      dataKey="conversionRate"
                       fill={CHART_COLORS.chart3}
                       radius={[4, 4, 0, 0]}
                     />
@@ -377,5 +383,5 @@ export function ConversionCharts({ className, timeRange = '30d' }: ConversionCha
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }

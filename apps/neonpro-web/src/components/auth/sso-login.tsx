@@ -1,16 +1,22 @@
-'use client';
+"use client";
 
 // SSO Login Component
 // Story 1.3: SSO Integration - Frontend Login Interface
 
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, AlertCircle, ExternalLink } from 'lucide-react';
-import { useSSO } from '@/hooks/use-sso';
-import { SSOProvider } from '@/types/sso';
-import { cn } from '@/lib/utils';
+import React, { useState, useEffect } from "react";
+import type { Button } from "@/components/ui/button";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Loader2, AlertCircle, ExternalLink } from "lucide-react";
+import type { useSSO } from "@/hooks/use-sso";
+import type { SSOProvider } from "@/types/sso";
+import type { cn } from "@/lib/utils";
 
 interface SSOLoginProps {
   redirectTo?: string;
@@ -31,7 +37,7 @@ interface ProviderButtonProps {
 function ProviderButton({ provider, isLoading, onClick, disabled }: ProviderButtonProps) {
   const getProviderIcon = (providerId: string) => {
     switch (providerId) {
-      case 'google':
+      case "google":
         return (
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path
@@ -52,7 +58,7 @@ function ProviderButton({ provider, isLoading, onClick, disabled }: ProviderButt
             />
           </svg>
         );
-      case 'microsoft':
+      case "microsoft":
         return (
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path fill="#f25022" d="M1 1h10v10H1z" />
@@ -61,7 +67,7 @@ function ProviderButton({ provider, isLoading, onClick, disabled }: ProviderButt
             <path fill="#ffb900" d="M13 13h10v10H13z" />
           </svg>
         );
-      case 'facebook':
+      case "facebook":
         return (
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path
@@ -70,7 +76,7 @@ function ProviderButton({ provider, isLoading, onClick, disabled }: ProviderButt
             />
           </svg>
         );
-      case 'apple':
+      case "apple":
         return (
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path
@@ -85,9 +91,9 @@ function ProviderButton({ provider, isLoading, onClick, disabled }: ProviderButt
   };
 
   const buttonStyle = {
-    backgroundColor: provider.metadata?.buttonColor || '#ffffff',
-    color: provider.metadata?.textColor || '#000000',
-    borderColor: provider.metadata?.buttonColor || '#e5e7eb',
+    backgroundColor: provider.metadata?.buttonColor || "#ffffff",
+    color: provider.metadata?.textColor || "#000000",
+    borderColor: provider.metadata?.buttonColor || "#e5e7eb",
   };
 
   return (
@@ -96,19 +102,15 @@ function ProviderButton({ provider, isLoading, onClick, disabled }: ProviderButt
       className={cn(
         "w-full justify-start gap-3 h-12 text-left font-medium transition-all duration-200",
         "hover:shadow-md hover:scale-[1.02] active:scale-[0.98]",
-        disabled && "opacity-50 cursor-not-allowed"
+        disabled && "opacity-50 cursor-not-allowed",
       )}
       style={buttonStyle}
       onClick={onClick}
       disabled={disabled || isLoading}
     >
-      {isLoading ? (
-        <Loader2 className="w-5 h-5 animate-spin" />
-      ) : (
-        getProviderIcon(provider.id)
-      )}
+      {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : getProviderIcon(provider.id)}
       <span className="flex-1">
-        {isLoading ? 'Connecting...' : `Continue with ${provider.displayName || provider.name}`}
+        {isLoading ? "Connecting..." : `Continue with ${provider.displayName || provider.name}`}
       </span>
     </Button>
   );
@@ -122,13 +124,7 @@ export function SSOLogin({
   onSuccess,
   onError,
 }: SSOLoginProps) {
-  const {
-    providers,
-    isLoading: ssoLoading,
-    error: ssoError,
-    login,
-    getProviders,
-  } = useSSO();
+  const { providers, isLoading: ssoLoading, error: ssoError, login, getProviders } = useSSO();
 
   const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
   const [localError, setLocalError] = useState<string | null>(null);
@@ -151,12 +147,12 @@ export function SSOLogin({
 
       await login(provider.id, {
         redirectTo,
-        prompt: 'select_account', // Always show account selection
+        prompt: "select_account", // Always show account selection
       });
 
       onSuccess?.(provider.id, null); // User info will be available after redirect
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Login failed';
+      const errorMessage = error instanceof Error ? error.message : "Login failed";
       setLocalError(errorMessage);
       onError?.(errorMessage, provider.id);
     } finally {
@@ -164,7 +160,7 @@ export function SSOLogin({
     }
   };
 
-  const enabledProviders = providers.filter(p => p.enabled);
+  const enabledProviders = providers.filter((p) => p.enabled);
   const hasProviders = enabledProviders.length > 0;
   const isLoading = ssoLoading || loadingProvider !== null;
   const error = localError || ssoError;
@@ -173,14 +169,10 @@ export function SSOLogin({
     <Card className={cn("w-full max-w-md mx-auto", className)}>
       <CardHeader className="space-y-1">
         {showTitle && (
-          <CardTitle className="text-2xl font-bold text-center">
-            Sign in to your account
-          </CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">Sign in to your account</CardTitle>
         )}
         {showDescription && (
-          <CardDescription className="text-center">
-            {showDescription}
-          </CardDescription>
+          <CardDescription className="text-center">{showDescription}</CardDescription>
         )}
       </CardHeader>
       <CardContent className="space-y-4">
@@ -222,11 +214,11 @@ export function SSOLogin({
         {hasProviders && (
           <div className="text-center">
             <p className="text-xs text-muted-foreground">
-              By continuing, you agree to our{' '}
+              By continuing, you agree to our{" "}
               <a href="/terms" className="underline hover:text-primary">
                 Terms of Service
-              </a>{' '}
-              and{' '}
+              </a>{" "}
+              and{" "}
               <a href="/privacy" className="underline hover:text-primary">
                 Privacy Policy
               </a>

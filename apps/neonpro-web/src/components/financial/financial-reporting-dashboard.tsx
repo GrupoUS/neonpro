@@ -5,28 +5,34 @@
 // Author: VoidBeast V4.0 (BMad Method Implementation)
 // =====================================================================================
 
-'use client';
+"use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
-import {
+import React, { useState, useEffect, useCallback } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Progress } from "@/components/ui/progress";
+import type { Separator } from "@/components/ui/separator";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import {
-  TrendingUp, 
-  TrendingDown, 
-  DollarSign, 
-  PieChart, 
+} from "@/components/ui/select";
+import type {
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  PieChart,
   BarChart3,
   Users,
   Calendar,
@@ -37,35 +43,35 @@ import {
   Filter,
   Settings,
   Target,
-  Activity
-} from 'lucide-react';
-import { toast } from 'sonner';
-import {
+  Activity,
+} from "lucide-react";
+import type { toast } from "sonner";
+import type {
   FinancialDashboardData,
   KPICalculation,
   PerformanceMetrics,
   ReportParameters,
-  DASHBOARD_REFRESH_INTERVALS
-} from '@/lib/types/financial-reporting';
-import { FinancialAnalyticsCore } from '@/lib/financial/analytics-core';
+  DASHBOARD_REFRESH_INTERVALS,
+} from "@/lib/types/financial-reporting";
+import type { FinancialAnalyticsCore } from "@/lib/financial/analytics-core";
 
 interface FinancialReportingDashboardProps {
   clinicId: string;
   className?: string;
 }
 
-export default function FinancialReportingDashboard({ 
-  clinicId, 
-  className = '' 
+export default function FinancialReportingDashboard({
+  clinicId,
+  className = "",
 }: FinancialReportingDashboardProps) {
   // =====================================================================================
   // STATE MANAGEMENT
   // =====================================================================================
-  
+
   const [dashboardData, setDashboardData] = useState<FinancialDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [selectedPeriod, setSelectedPeriod] = useState('current_month');
+  const [selectedPeriod, setSelectedPeriod] = useState("current_month");
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [analyticsCore] = useState(() => new FinancialAnalyticsCore());
@@ -74,26 +80,29 @@ export default function FinancialReportingDashboard({
   // DATA FETCHING AND REFRESH LOGIC
   // =====================================================================================
 
-  const fetchDashboardData = useCallback(async (showLoading = true) => {
-    try {
-      if (showLoading) setLoading(true);
-      setRefreshing(true);
+  const fetchDashboardData = useCallback(
+    async (showLoading = true) => {
+      try {
+        if (showLoading) setLoading(true);
+        setRefreshing(true);
 
-      const data = await analyticsCore.generateDashboardData(clinicId);
-      setDashboardData(data);
-      setLastUpdated(new Date());
+        const data = await analyticsCore.generateDashboardData(clinicId);
+        setDashboardData(data);
+        setLastUpdated(new Date());
 
-      if (!showLoading) {
-        toast.success('Dashboard atualizado com sucesso');
+        if (!showLoading) {
+          toast.success("Dashboard atualizado com sucesso");
+        }
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+        toast.error("Erro ao carregar dados do dashboard");
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
       }
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error);
-      toast.error('Erro ao carregar dados do dashboard');
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [clinicId, analyticsCore]);
+    },
+    [clinicId, analyticsCore],
+  );
 
   // Auto-refresh effect
   useEffect(() => {
@@ -113,9 +122,9 @@ export default function FinancialReportingDashboard({
   // =====================================================================================
 
   const formatCurrency = (value: number): string => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(value);
   };
 
@@ -123,20 +132,20 @@ export default function FinancialReportingDashboard({
     return `${value.toFixed(2)}%`;
   };
 
-  const getTrendIcon = (trend: 'up' | 'down' | 'stable') => {
+  const getTrendIcon = (trend: "up" | "down" | "stable") => {
     switch (trend) {
-      case 'up':
+      case "up":
         return <TrendingUp className="h-4 w-4" />;
-      case 'down':
+      case "down":
         return <TrendingDown className="h-4 w-4" />;
       default:
         return <Activity className="h-4 w-4" />;
     }
   };
 
-  const getTrendColor = (trend: 'up' | 'down' | 'stable', color: string) => {
-    if (trend === 'stable') return 'text-muted-foreground';
-    return color === 'green' ? 'text-green-600' : 'text-red-600';
+  const getTrendColor = (trend: "up" | "down" | "stable", color: string) => {
+    if (trend === "stable") return "text-muted-foreground";
+    return color === "green" ? "text-green-600" : "text-red-600";
   };
 
   // =====================================================================================
@@ -149,9 +158,7 @@ export default function FinancialReportingDashboard({
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Relatórios Financeiros</h1>
-            <p className="text-muted-foreground">
-              Análise avançada e insights em tempo real
-            </p>
+            <p className="text-muted-foreground">Análise avançada e insights em tempo real</p>
           </div>
           <div className="flex items-center space-x-2">
             <RefreshCw className="h-4 w-4 animate-spin" />
@@ -205,12 +212,12 @@ export default function FinancialReportingDashboard({
             Análise avançada e insights em tempo real
             {lastUpdated && (
               <span className="ml-2 text-xs">
-                • Atualizado em {lastUpdated.toLocaleTimeString('pt-BR')}
+                • Atualizado em {lastUpdated.toLocaleTimeString("pt-BR")}
               </span>
             )}
           </p>
         </div>
-        
+
         <div className="flex items-center space-x-2">
           <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
             <SelectTrigger className="w-[180px]">
@@ -224,12 +231,10 @@ export default function FinancialReportingDashboard({
             </SelectContent>
           </Select>
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setAutoRefresh(!autoRefresh)}
-          >
-            <Activity className={`mr-2 h-4 w-4 ${autoRefresh ? 'text-green-600' : 'text-muted-foreground'}`} />
+          <Button variant="outline" size="sm" onClick={() => setAutoRefresh(!autoRefresh)}>
+            <Activity
+              className={`mr-2 h-4 w-4 ${autoRefresh ? "text-green-600" : "text-muted-foreground"}`}
+            />
             Auto
           </Button>
 
@@ -239,8 +244,8 @@ export default function FinancialReportingDashboard({
             onClick={() => fetchDashboardData(false)}
             disabled={refreshing}
           >
-            <RefreshCw className={`mr-2 h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-            {refreshing ? 'Atualizando...' : 'Atualizar'}
+            <RefreshCw className={`mr-2 h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
+            {refreshing ? "Atualizando..." : "Atualizar"}
           </Button>
 
           <Button variant="outline" size="sm">
@@ -254,10 +259,7 @@ export default function FinancialReportingDashboard({
       {dashboardData.alerts && dashboardData.alerts.length > 0 && (
         <div className="space-y-2">
           {dashboardData.alerts.map((alert, index) => (
-            <Alert 
-              key={index} 
-              variant={alert.type === 'danger' ? 'destructive' : 'default'}
-            >
+            <Alert key={index} variant={alert.type === "danger" ? "destructive" : "default"}>
               <AlertTriangle className="h-4 w-4" />
               <AlertTitle>{alert.title}</AlertTitle>
               <AlertDescription>{alert.message}</AlertDescription>
@@ -278,13 +280,18 @@ export default function FinancialReportingDashboard({
             <div className="text-2xl font-bold">
               {formatCurrency(dashboardData.summary_cards.total_revenue.value)}
             </div>
-            <div className={`flex items-center text-xs ${getTrendColor(
-              dashboardData.summary_cards.total_revenue.trend,
-              dashboardData.summary_cards.total_revenue.color
-            )}`}>
+            <div
+              className={`flex items-center text-xs ${getTrendColor(
+                dashboardData.summary_cards.total_revenue.trend,
+                dashboardData.summary_cards.total_revenue.color,
+              )}`}
+            >
               {getTrendIcon(dashboardData.summary_cards.total_revenue.trend)}
               <span className="ml-1">
-                {formatCurrency(Math.abs(dashboardData.summary_cards.total_revenue.change_from_previous))} vs mês anterior
+                {formatCurrency(
+                  Math.abs(dashboardData.summary_cards.total_revenue.change_from_previous),
+                )}{" "}
+                vs mês anterior
               </span>
             </div>
           </CardContent>
@@ -300,13 +307,18 @@ export default function FinancialReportingDashboard({
             <div className="text-2xl font-bold">
               {formatCurrency(dashboardData.summary_cards.total_expenses.value)}
             </div>
-            <div className={`flex items-center text-xs ${getTrendColor(
-              dashboardData.summary_cards.total_expenses.trend,
-              dashboardData.summary_cards.total_expenses.color
-            )}`}>
+            <div
+              className={`flex items-center text-xs ${getTrendColor(
+                dashboardData.summary_cards.total_expenses.trend,
+                dashboardData.summary_cards.total_expenses.color,
+              )}`}
+            >
               {getTrendIcon(dashboardData.summary_cards.total_expenses.trend)}
               <span className="ml-1">
-                {formatCurrency(Math.abs(dashboardData.summary_cards.total_expenses.change_from_previous))} vs mês anterior
+                {formatCurrency(
+                  Math.abs(dashboardData.summary_cards.total_expenses.change_from_previous),
+                )}{" "}
+                vs mês anterior
               </span>
             </div>
           </CardContent>
@@ -322,13 +334,18 @@ export default function FinancialReportingDashboard({
             <div className="text-2xl font-bold">
               {formatCurrency(dashboardData.summary_cards.net_profit.value)}
             </div>
-            <div className={`flex items-center text-xs ${getTrendColor(
-              dashboardData.summary_cards.net_profit.trend,
-              dashboardData.summary_cards.net_profit.color
-            )}`}>
+            <div
+              className={`flex items-center text-xs ${getTrendColor(
+                dashboardData.summary_cards.net_profit.trend,
+                dashboardData.summary_cards.net_profit.color,
+              )}`}
+            >
               {getTrendIcon(dashboardData.summary_cards.net_profit.trend)}
               <span className="ml-1">
-                {formatCurrency(Math.abs(dashboardData.summary_cards.net_profit.change_from_previous))} vs mês anterior
+                {formatCurrency(
+                  Math.abs(dashboardData.summary_cards.net_profit.change_from_previous),
+                )}{" "}
+                vs mês anterior
               </span>
             </div>
           </CardContent>
@@ -344,13 +361,18 @@ export default function FinancialReportingDashboard({
             <div className="text-2xl font-bold">
               {formatCurrency(dashboardData.summary_cards.cash_flow.value)}
             </div>
-            <div className={`flex items-center text-xs ${getTrendColor(
-              dashboardData.summary_cards.cash_flow.trend,
-              dashboardData.summary_cards.cash_flow.color
-            )}`}>
+            <div
+              className={`flex items-center text-xs ${getTrendColor(
+                dashboardData.summary_cards.cash_flow.trend,
+                dashboardData.summary_cards.cash_flow.color,
+              )}`}
+            >
               {getTrendIcon(dashboardData.summary_cards.cash_flow.trend)}
               <span className="ml-1">
-                {formatCurrency(Math.abs(dashboardData.summary_cards.cash_flow.change_from_previous))} vs mês anterior
+                {formatCurrency(
+                  Math.abs(dashboardData.summary_cards.cash_flow.change_from_previous),
+                )}{" "}
+                vs mês anterior
               </span>
             </div>
           </CardContent>
@@ -395,9 +417,7 @@ export default function FinancialReportingDashboard({
       <Card>
         <CardHeader>
           <CardTitle>Indicadores de Performance (KPIs)</CardTitle>
-          <CardDescription>
-            Principais métricas financeiras e operacionais
-          </CardDescription>
+          <CardDescription>Principais métricas financeiras e operacionais</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Profitability KPIs */}
@@ -420,7 +440,9 @@ export default function FinancialReportingDashboard({
                     {formatPercentage(dashboardData.charts_data.kpi_dashboard.operating_margin)}
                   </span>
                 </div>
-                <Progress value={Math.max(0, dashboardData.charts_data.kpi_dashboard.operating_margin)} />
+                <Progress
+                  value={Math.max(0, dashboardData.charts_data.kpi_dashboard.operating_margin)}
+                />
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between">
@@ -447,7 +469,9 @@ export default function FinancialReportingDashboard({
                     {dashboardData.charts_data.kpi_dashboard.current_ratio.toFixed(2)}
                   </span>
                 </div>
-                <Progress value={Math.min(100, dashboardData.charts_data.kpi_dashboard.current_ratio * 50)} />
+                <Progress
+                  value={Math.min(100, dashboardData.charts_data.kpi_dashboard.current_ratio * 50)}
+                />
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between">
@@ -468,17 +492,27 @@ export default function FinancialReportingDashboard({
         <Card>
           <CardHeader>
             <CardTitle>Recomendações</CardTitle>
-            <CardDescription>
-              Sugestões baseadas em análise financeira avançada
-            </CardDescription>
+            <CardDescription>Sugestões baseadas em análise financeira avançada</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {dashboardData.recommendations.map((rec, index) => (
               <div key={index} className="border rounded-lg p-4 space-y-2">
                 <div className="flex items-center justify-between">
                   <h4 className="text-sm font-medium">{rec.title}</h4>
-                  <Badge variant={rec.priority === 'high' ? 'destructive' : rec.priority === 'medium' ? 'default' : 'secondary'}>
-                    {rec.priority === 'high' ? 'Alta' : rec.priority === 'medium' ? 'Média' : 'Baixa'}
+                  <Badge
+                    variant={
+                      rec.priority === "high"
+                        ? "destructive"
+                        : rec.priority === "medium"
+                          ? "default"
+                          : "secondary"
+                    }
+                  >
+                    {rec.priority === "high"
+                      ? "Alta"
+                      : rec.priority === "medium"
+                        ? "Média"
+                        : "Baixa"}
                   </Badge>
                 </div>
                 <p className="text-xs text-muted-foreground">{rec.description}</p>

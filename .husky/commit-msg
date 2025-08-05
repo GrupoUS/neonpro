@@ -1,0 +1,26 @@
+#!/usr/bin/env sh
+# 🛡️ NEONPRO COMMIT MESSAGE VALIDATION
+# Conventional Commits enforcement for better change tracking
+
+echo "📝 Validando formato da mensagem de commit..."
+
+# Executa commitlint para validar a mensagem
+npx --no-install commitlint --edit "$1"
+
+if [ $? -eq 0 ]; then
+  echo "✅ Mensagem de commit aprovada!"
+else
+  echo "❌ COMMIT BLOQUEADO: Formato de mensagem inválido"
+  echo ""
+  echo "📋 Formato esperado (Conventional Commits):"
+  echo "   feat: nova funcionalidade"
+  echo "   fix: correção de bug"
+  echo "   docs: atualização de documentação"
+  echo "   style: mudanças de formatação"
+  echo "   refactor: refatoração de código"
+  echo "   test: testes"
+  echo "   chore: tarefas de manutenção"
+  echo ""
+  echo "💡 Exemplo: 'feat: implementar dashboard de analytics'"
+  exit 1
+fi

@@ -1,30 +1,30 @@
-'use client'
+"use client";
 
-import React, { useState, useEffect } from 'react'
-import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Checkbox } from '@/components/ui/checkbox'
-import { 
+import React, { useState, useEffect } from "react";
+import type { Card, CardContent } from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { 
+} from "@/components/ui/dialog";
+import type {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion'
-import { 
-  Shield, 
-  Cookie, 
-  Eye, 
-  Settings, 
-  X, 
+} from "@/components/ui/accordion";
+import type {
+  Shield,
+  Cookie,
+  Eye,
+  Settings,
+  X,
   Check,
   Info,
   ExternalLink,
@@ -33,27 +33,27 @@ import {
   Users,
   BarChart3,
   Mail,
-  Globe
-} from 'lucide-react'
-import { useConsentBanner } from '@/hooks/useLGPD'
-import { ConsentPurpose } from '@/types/lgpd'
+  Globe,
+} from "lucide-react";
+import type { useConsentBanner } from "@/hooks/useLGPD";
+import type { ConsentPurpose } from "@/types/lgpd";
 
 interface ConsentBannerProps {
-  position?: 'top' | 'bottom'
-  theme?: 'light' | 'dark'
-  showLogo?: boolean
-  companyName?: string
-  privacyPolicyUrl?: string
-  termsOfServiceUrl?: string
+  position?: "top" | "bottom";
+  theme?: "light" | "dark";
+  showLogo?: boolean;
+  companyName?: string;
+  privacyPolicyUrl?: string;
+  termsOfServiceUrl?: string;
 }
 
-export function ConsentBanner({ 
-  position = 'bottom',
-  theme = 'light',
+export function ConsentBanner({
+  position = "bottom",
+  theme = "light",
   showLogo = true,
-  companyName = 'NeonPro',
-  privacyPolicyUrl = '/privacy-policy',
-  termsOfServiceUrl = '/terms-of-service'
+  companyName = "NeonPro",
+  privacyPolicyUrl = "/privacy-policy",
+  termsOfServiceUrl = "/terms-of-service",
 }: ConsentBannerProps) {
   const {
     purposes,
@@ -64,117 +64,115 @@ export function ConsentBanner({
     withdrawConsent,
     acceptAll,
     rejectAll,
-    hideConsentBanner
-  } = useConsentBanner()
+    hideConsentBanner,
+  } = useConsentBanner();
 
-  const [selectedPurposes, setSelectedPurposes] = useState<Record<string, boolean>>({})
-  const [showDetails, setShowDetails] = useState(false)
+  const [selectedPurposes, setSelectedPurposes] = useState<Record<string, boolean>>({});
+  const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
     // Inicializar com consentimentos existentes
-    const initialConsents: Record<string, boolean> = {}
-    purposes?.forEach(purpose => {
-      const existingConsent = userConsents?.find(c => c.purpose_id === purpose.id)
-      initialConsents[purpose.id] = existingConsent?.status === 'given'
-    })
-    setSelectedPurposes(initialConsents)
-  }, [purposes, userConsents])
+    const initialConsents: Record<string, boolean> = {};
+    purposes?.forEach((purpose) => {
+      const existingConsent = userConsents?.find((c) => c.purpose_id === purpose.id);
+      initialConsents[purpose.id] = existingConsent?.status === "given";
+    });
+    setSelectedPurposes(initialConsents);
+  }, [purposes, userConsents]);
 
   const handlePurposeToggle = (purposeId: string, checked: boolean) => {
-    setSelectedPurposes(prev => ({
+    setSelectedPurposes((prev) => ({
       ...prev,
-      [purposeId]: checked
-    }))
-  }
+      [purposeId]: checked,
+    }));
+  };
 
   const handleSavePreferences = async () => {
     try {
       for (const [purposeId, granted] of Object.entries(selectedPurposes)) {
         if (granted) {
-          await giveConsent(purposeId)
+          await giveConsent(purposeId);
         } else {
-          await withdrawConsent(purposeId)
+          await withdrawConsent(purposeId);
         }
       }
-      hideConsentBanner()
+      hideConsentBanner();
     } catch (error) {
-      console.error('Erro ao salvar preferências:', error)
+      console.error("Erro ao salvar preferências:", error);
     }
-  }
+  };
 
   const handleAcceptAll = async () => {
     try {
-      await acceptAll()
-      hideConsentBanner()
+      await acceptAll();
+      hideConsentBanner();
     } catch (error) {
-      console.error('Erro ao aceitar todos:', error)
+      console.error("Erro ao aceitar todos:", error);
     }
-  }
+  };
 
   const handleRejectAll = async () => {
     try {
-      await rejectAll()
-      hideConsentBanner()
+      await rejectAll();
+      hideConsentBanner();
     } catch (error) {
-      console.error('Erro ao rejeitar todos:', error)
+      console.error("Erro ao rejeitar todos:", error);
     }
-  }
+  };
 
   const getPurposeIcon = (category: string) => {
     switch (category) {
-      case 'essential':
-        return <Shield className="h-4 w-4" />
-      case 'analytics':
-        return <BarChart3 className="h-4 w-4" />
-      case 'marketing':
-        return <Mail className="h-4 w-4" />
-      case 'personalization':
-        return <Users className="h-4 w-4" />
-      case 'advertising':
-        return <Globe className="h-4 w-4" />
+      case "essential":
+        return <Shield className="h-4 w-4" />;
+      case "analytics":
+        return <BarChart3 className="h-4 w-4" />;
+      case "marketing":
+        return <Mail className="h-4 w-4" />;
+      case "personalization":
+        return <Users className="h-4 w-4" />;
+      case "advertising":
+        return <Globe className="h-4 w-4" />;
       default:
-        return <Cookie className="h-4 w-4" />
+        return <Cookie className="h-4 w-4" />;
     }
-  }
+  };
 
   const getPurposeColor = (category: string) => {
     switch (category) {
-      case 'essential':
-        return 'bg-green-100 text-green-800'
-      case 'analytics':
-        return 'bg-blue-100 text-blue-800'
-      case 'marketing':
-        return 'bg-purple-100 text-purple-800'
-      case 'personalization':
-        return 'bg-orange-100 text-orange-800'
-      case 'advertising':
-        return 'bg-red-100 text-red-800'
+      case "essential":
+        return "bg-green-100 text-green-800";
+      case "analytics":
+        return "bg-blue-100 text-blue-800";
+      case "marketing":
+        return "bg-purple-100 text-purple-800";
+      case "personalization":
+        return "bg-orange-100 text-orange-800";
+      case "advertising":
+        return "bg-red-100 text-red-800";
       default:
-        return 'bg-gray-100 text-gray-800'
+        return "bg-gray-100 text-gray-800";
     }
-  }
+  };
 
   if (!isVisible || isLoading) {
-    return null
+    return null;
   }
 
-  const essentialPurposes = purposes?.filter(p => p.category === 'essential') || []
-  const optionalPurposes = purposes?.filter(p => p.category !== 'essential') || []
+  const essentialPurposes = purposes?.filter((p) => p.category === "essential") || [];
+  const optionalPurposes = purposes?.filter((p) => p.category !== "essential") || [];
 
   return (
     <>
       {/* Overlay */}
       <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40" />
-      
+
       {/* Banner */}
-      <div className={`fixed left-0 right-0 z-50 ${
-        position === 'top' ? 'top-0' : 'bottom-0'
-      }`}>
-        <Card className={`mx-4 mb-4 shadow-lg border-2 ${
-          theme === 'dark' 
-            ? 'bg-gray-900 border-gray-700 text-white' 
-            : 'bg-white border-gray-200'
-        }`}>
+      <div className={`fixed left-0 right-0 z-50 ${position === "top" ? "top-0" : "bottom-0"}`}>
+        <Card
+          className={`mx-4 mb-4 shadow-lg border-2 ${
+            theme === "dark" ? "bg-gray-900 border-gray-700 text-white" : "bg-white border-gray-200"
+          }`}
+        >
           <CardContent className="p-6">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
@@ -188,14 +186,12 @@ export function ConsentBanner({
                     <Cookie className="h-5 w-5" />
                     Suas Preferências de Privacidade
                   </h3>
-                  <p className={`text-sm ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-                  }`}>
+                  <p className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}>
                     Respeitamos sua privacidade e seguimos a LGPD
                   </p>
                 </div>
               </div>
-              
+
               <Button
                 variant="ghost"
                 size="sm"
@@ -208,15 +204,15 @@ export function ConsentBanner({
 
             <div className="space-y-4">
               {/* Resumo */}
-              <div className={`p-4 rounded-lg border ${
-                theme === 'dark' 
-                  ? 'bg-gray-800 border-gray-600' 
-                  : 'bg-gray-50 border-gray-200'
-              }`}>
+              <div
+                className={`p-4 rounded-lg border ${
+                  theme === "dark" ? "bg-gray-800 border-gray-600" : "bg-gray-50 border-gray-200"
+                }`}
+              >
                 <p className="text-sm leading-relaxed">
-                  Utilizamos cookies e tecnologias similares para melhorar sua experiência, 
-                  personalizar conteúdo e analisar nosso tráfego. Você pode escolher quais 
-                  tipos de dados deseja compartilhar conosco.
+                  Utilizamos cookies e tecnologias similares para melhorar sua experiência,
+                  personalizar conteúdo e analisar nosso tráfego. Você pode escolher quais tipos de
+                  dados deseja compartilhar conosco.
                 </p>
               </div>
 
@@ -243,36 +239,31 @@ export function ConsentBanner({
                     <Settings className="h-4 w-4 text-blue-600" />
                     <span className="text-sm font-medium">Cookies Opcionais</span>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 ml-6">
                     {optionalPurposes.map((purpose) => (
                       <div key={purpose.id} className="flex items-center space-x-3">
                         <Checkbox
                           id={purpose.id}
                           checked={selectedPurposes[purpose.id] || false}
-                          onCheckedChange={(checked) => 
+                          onCheckedChange={(checked) =>
                             handlePurposeToggle(purpose.id, checked as boolean)
                           }
                         />
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
                             {getPurposeIcon(purpose.category)}
-                            <label 
-                              htmlFor={purpose.id} 
+                            <label
+                              htmlFor={purpose.id}
                               className="text-sm font-medium cursor-pointer"
                             >
                               {purpose.name}
                             </label>
-                            <Badge 
-                              variant="outline" 
-                              className={getPurposeColor(purpose.category)}
-                            >
+                            <Badge variant="outline" className={getPurposeColor(purpose.category)}>
                               {purpose.category}
                             </Badge>
                           </div>
-                          <p className="text-xs text-gray-600 mt-1">
-                            {purpose.description}
-                          </p>
+                          <p className="text-xs text-gray-600 mt-1">{purpose.description}</p>
                         </div>
                       </div>
                     ))}
@@ -282,8 +273,8 @@ export function ConsentBanner({
 
               {/* Links legais */}
               <div className="flex items-center gap-4 text-xs text-gray-600">
-                <a 
-                  href={privacyPolicyUrl} 
+                <a
+                  href={privacyPolicyUrl}
                   className="flex items-center gap-1 hover:text-blue-600 transition-colors"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -292,8 +283,8 @@ export function ConsentBanner({
                   Política de Privacidade
                   <ExternalLink className="h-3 w-3" />
                 </a>
-                <a 
-                  href={termsOfServiceUrl} 
+                <a
+                  href={termsOfServiceUrl}
                   className="flex items-center gap-1 hover:text-blue-600 transition-colors"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -307,7 +298,7 @@ export function ConsentBanner({
               {/* Botões de ação */}
               <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t">
                 <div className="flex gap-2 flex-1">
-                  <Button 
+                  <Button
                     onClick={handleAcceptAll}
                     className="flex-1 bg-blue-600 hover:bg-blue-700"
                     disabled={isLoading}
@@ -315,26 +306,18 @@ export function ConsentBanner({
                     <Check className="h-4 w-4 mr-2" />
                     Aceitar Todos
                   </Button>
-                  
-                  <Button 
-                    variant="outline" 
-                    onClick={handleRejectAll}
-                    disabled={isLoading}
-                  >
+
+                  <Button variant="outline" onClick={handleRejectAll} disabled={isLoading}>
                     Rejeitar Opcionais
                   </Button>
                 </div>
-                
+
                 <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
-                    onClick={handleSavePreferences}
-                    disabled={isLoading}
-                  >
+                  <Button variant="outline" onClick={handleSavePreferences} disabled={isLoading}>
                     <Settings className="h-4 w-4 mr-2" />
                     Salvar Preferências
                   </Button>
-                  
+
                   <Dialog open={showDetails} onOpenChange={setShowDetails}>
                     <DialogTrigger asChild>
                       <Button variant="ghost" size="sm">
@@ -352,7 +335,7 @@ export function ConsentBanner({
                           Informações detalhadas sobre como utilizamos seus dados
                         </DialogDescription>
                       </DialogHeader>
-                      
+
                       <div className="space-y-6">
                         <Accordion type="single" collapsible className="w-full">
                           {purposes?.map((purpose) => (
@@ -362,8 +345,8 @@ export function ConsentBanner({
                                   {getPurposeIcon(purpose.category)}
                                   <div>
                                     <div className="font-medium">{purpose.name}</div>
-                                    <Badge 
-                                      variant="outline" 
+                                    <Badge
+                                      variant="outline"
                                       className={`${getPurposeColor(purpose.category)} text-xs`}
                                     >
                                       {purpose.category}
@@ -372,17 +355,15 @@ export function ConsentBanner({
                                 </div>
                               </AccordionTrigger>
                               <AccordionContent className="space-y-3">
-                                <p className="text-sm text-gray-600">
-                                  {purpose.description}
-                                </p>
-                                
+                                <p className="text-sm text-gray-600">{purpose.description}</p>
+
                                 {purpose.legal_basis && (
                                   <div>
                                     <h5 className="text-sm font-medium mb-1">Base Legal:</h5>
                                     <p className="text-sm text-gray-600">{purpose.legal_basis}</p>
                                   </div>
                                 )}
-                                
+
                                 {purpose.data_retention_days && (
                                   <div>
                                     <h5 className="text-sm font-medium mb-1">Retenção de Dados:</h5>
@@ -391,17 +372,19 @@ export function ConsentBanner({
                                     </p>
                                   </div>
                                 )}
-                                
+
                                 <div className="flex items-center gap-2 pt-2">
                                   <span className="text-sm font-medium">Status:</span>
-                                  {purpose.category === 'essential' ? (
+                                  {purpose.category === "essential" ? (
                                     <Badge className="bg-green-100 text-green-800">
                                       <Shield className="h-3 w-3 mr-1" />
                                       Sempre Ativo
                                     </Badge>
                                   ) : (
-                                    <Badge variant={selectedPurposes[purpose.id] ? "default" : "outline"}>
-                                      {selectedPurposes[purpose.id] ? 'Ativo' : 'Inativo'}
+                                    <Badge
+                                      variant={selectedPurposes[purpose.id] ? "default" : "outline"}
+                                    >
+                                      {selectedPurposes[purpose.id] ? "Ativo" : "Inativo"}
                                     </Badge>
                                   )}
                                 </div>
@@ -409,7 +392,7 @@ export function ConsentBanner({
                             </AccordionItem>
                           ))}
                         </Accordion>
-                        
+
                         <div className="bg-blue-50 p-4 rounded-lg">
                           <h4 className="font-medium text-blue-900 mb-2 flex items-center gap-2">
                             <Info className="h-4 w-4" />
@@ -424,7 +407,8 @@ export function ConsentBanner({
                             <li>• Informações sobre compartilhamento</li>
                           </ul>
                           <p className="text-xs text-blue-700 mt-2">
-                            Para exercer seus direitos, entre em contato conosco através da página de privacidade.
+                            Para exercer seus direitos, entre em contato conosco através da página
+                            de privacidade.
                           </p>
                         </div>
                       </div>
@@ -437,5 +421,5 @@ export function ConsentBanner({
         </Card>
       </div>
     </>
-  )
+  );
 }

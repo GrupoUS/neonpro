@@ -1,35 +1,35 @@
-'use client';
+"use client";
 
-import React, { useState, useCallback, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { AlertCircle, Check, ArrowLeft, ArrowRight } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { useTranslation } from '@/app/lib/i18n/use-translation';
-import type { 
-  BookingWizardState, 
-  BookingStep, 
-  Service, 
-  Professional, 
+import React, { useState, useCallback, useMemo } from "react";
+import type { motion, AnimatePresence } from "framer-motion";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Progress } from "@/components/ui/progress";
+import type { AlertCircle, Check, ArrowLeft, ArrowRight } from "lucide-react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { useTranslation } from "@/app/lib/i18n/use-translation";
+import type {
+  BookingWizardState,
+  BookingStep,
+  Service,
+  Professional,
   AvailableTimeSlot,
-  BookingResponse 
-} from '@/app/types/appointments';
+  BookingResponse,
+} from "@/app/types/appointments";
 
 // Step components (to be imported)
-import ServiceSelection from './service-selection';
-import ProfessionalSelection from './professional-selection'; 
-import TimeSlotPicker from './time-slot-picker';
-import AppointmentNotes from './appointment-notes';
-import BookingConfirmation from './booking-confirmation';
+import ServiceSelection from "./service-selection";
+import ProfessionalSelection from "./professional-selection";
+import TimeSlotPicker from "./time-slot-picker";
+import AppointmentNotes from "./appointment-notes";
+import BookingConfirmation from "./booking-confirmation";
 
 // Import real-time availability components
-import { RealTimeAvailability } from '@/components/dashboard/real-time-availability';
-import { BookingConflictPrevention } from '@/components/dashboard/booking-conflict-prevention';
-import { useAvailabilityManager } from '@/hooks/use-availability-manager';
-import type { TimeSlot } from '@/hooks/use-realtime-availability';
+import type { RealTimeAvailability } from "@/components/dashboard/real-time-availability";
+import type { BookingConflictPrevention } from "@/components/dashboard/booking-conflict-prevention";
+import type { useAvailabilityManager } from "@/hooks/use-availability-manager";
+import type { TimeSlot } from "@/hooks/use-realtime-availability";
 
 interface AppointmentBookingWizardProps {
   patientId: string;
@@ -40,19 +40,19 @@ interface AppointmentBookingWizardProps {
 export default function AppointmentBookingWizard({
   patientId,
   onBookingComplete,
-  className = ''
+  className = "",
 }: AppointmentBookingWizardProps) {
   const { t } = useTranslation();
-  
+
   // Wizard state management
   const [state, setState] = useState<BookingWizardState>({
     currentStep: 1,
     selectedService: undefined,
     selectedProfessional: undefined,
     selectedTimeSlot: undefined,
-    patientNotes: '',
+    patientNotes: "",
     isLoading: false,
-    error: undefined
+    error: undefined,
   });
 
   // Real-time availability manager
@@ -60,111 +60,123 @@ export default function AppointmentBookingWizard({
   const [selectedRealtimeSlot, setSelectedRealtimeSlot] = useState<TimeSlot | null>(null);
 
   // Define booking steps
-  const steps: BookingStep[] = useMemo(() => [
-    {
-      id: 1,
-      title: t('booking.steps.service.title'),
-      description: t('booking.steps.service.description'),
-      isCompleted: !!state.selectedService,
-      isActive: state.currentStep === 1
-    },
-    {
-      id: 2, 
-      title: t('booking.steps.professional.title'),
-      description: t('booking.steps.professional.description'),
-      isCompleted: !!state.selectedProfessional,
-      isActive: state.currentStep === 2
-    },
-    {
-      id: 3,
-      title: t('booking.steps.time.title'), 
-      description: t('booking.steps.time.description'),
-      isCompleted: !!state.selectedTimeSlot,
-      isActive: state.currentStep === 3
-    },
-    {
-      id: 4,
-      title: t('booking.steps.notes.title'),
-      description: t('booking.steps.notes.description'), 
-      isCompleted: state.patientNotes.length >= 0,
-      isActive: state.currentStep === 4
-    },
-    {
-      id: 5,
-      title: t('booking.steps.confirmation.title'),
-      description: t('booking.steps.confirmation.description'),
-      isCompleted: false,
-      isActive: state.currentStep === 5
-    }
-  ], [state, t]);
+  const steps: BookingStep[] = useMemo(
+    () => [
+      {
+        id: 1,
+        title: t("booking.steps.service.title"),
+        description: t("booking.steps.service.description"),
+        isCompleted: !!state.selectedService,
+        isActive: state.currentStep === 1,
+      },
+      {
+        id: 2,
+        title: t("booking.steps.professional.title"),
+        description: t("booking.steps.professional.description"),
+        isCompleted: !!state.selectedProfessional,
+        isActive: state.currentStep === 2,
+      },
+      {
+        id: 3,
+        title: t("booking.steps.time.title"),
+        description: t("booking.steps.time.description"),
+        isCompleted: !!state.selectedTimeSlot,
+        isActive: state.currentStep === 3,
+      },
+      {
+        id: 4,
+        title: t("booking.steps.notes.title"),
+        description: t("booking.steps.notes.description"),
+        isCompleted: state.patientNotes.length >= 0,
+        isActive: state.currentStep === 4,
+      },
+      {
+        id: 5,
+        title: t("booking.steps.confirmation.title"),
+        description: t("booking.steps.confirmation.description"),
+        isCompleted: false,
+        isActive: state.currentStep === 5,
+      },
+    ],
+    [state, t],
+  );
 
   // Calculate progress percentage
   const progressPercentage = useMemo(() => {
-    const completedSteps = steps.filter(step => step.isCompleted).length;
+    const completedSteps = steps.filter((step) => step.isCompleted).length;
     return (completedSteps / steps.length) * 100;
   }, [steps]);
 
   // Navigation functions
   const goToNextStep = useCallback(() => {
     if (state.currentStep < steps.length) {
-      setState(prev => ({ ...prev, currentStep: prev.currentStep + 1 }));
+      setState((prev) => ({ ...prev, currentStep: prev.currentStep + 1 }));
     }
   }, [state.currentStep, steps.length]);
 
   const goToPreviousStep = useCallback(() => {
     if (state.currentStep > 1) {
-      setState(prev => ({ ...prev, currentStep: prev.currentStep - 1 }));
+      setState((prev) => ({ ...prev, currentStep: prev.currentStep - 1 }));
     }
   }, [state.currentStep]);
 
   // Selection handlers
-  const handleServiceSelection = useCallback((service: Service) => {
-    setState(prev => ({ 
-      ...prev, 
-      selectedService: service,
-      selectedProfessional: undefined, // Reset dependent selections
-      selectedTimeSlot: undefined,
-      error: undefined
-    }));
-    goToNextStep();
-  }, [goToNextStep]);
+  const handleServiceSelection = useCallback(
+    (service: Service) => {
+      setState((prev) => ({
+        ...prev,
+        selectedService: service,
+        selectedProfessional: undefined, // Reset dependent selections
+        selectedTimeSlot: undefined,
+        error: undefined,
+      }));
+      goToNextStep();
+    },
+    [goToNextStep],
+  );
 
-  const handleProfessionalSelection = useCallback((professional: Professional) => {
-    setState(prev => ({ 
-      ...prev, 
-      selectedProfessional: professional,
-      selectedTimeSlot: undefined, // Reset dependent selections
-      error: undefined
-    }));
-    goToNextStep();
-  }, [goToNextStep]);
+  const handleProfessionalSelection = useCallback(
+    (professional: Professional) => {
+      setState((prev) => ({
+        ...prev,
+        selectedProfessional: professional,
+        selectedTimeSlot: undefined, // Reset dependent selections
+        error: undefined,
+      }));
+      goToNextStep();
+    },
+    [goToNextStep],
+  );
 
-  const handleTimeSlotSelection = useCallback((timeSlot: AvailableTimeSlot) => {
-    setState(prev => ({ 
-      ...prev, 
-      selectedTimeSlot: timeSlot,
-      error: undefined
-    }));
-    goToNextStep();
-  }, [goToNextStep]);
+  const handleTimeSlotSelection = useCallback(
+    (timeSlot: AvailableTimeSlot) => {
+      setState((prev) => ({
+        ...prev,
+        selectedTimeSlot: timeSlot,
+        error: undefined,
+      }));
+      goToNextStep();
+    },
+    [goToNextStep],
+  );
 
   const handleNotesChange = useCallback((notes: string) => {
-    setState(prev => ({ ...prev, patientNotes: notes }));
+    setState((prev) => ({ ...prev, patientNotes: notes }));
   }, []);
 
   // Data validation utility
   const validateBookingData = useCallback((bookingData: any): string | null => {
-    if (!bookingData.patient_id) return 'ID do paciente é obrigatório';
-    if (!bookingData.professional_id) return 'Profissional é obrigatório';
-    if (!bookingData.service_type_id) return 'Tipo de serviço é obrigatório';
-    if (!bookingData.start_time) return 'Horário de início é obrigatório';
-    if (!bookingData.end_time) return 'Horário de término é obrigatório';
-    
+    if (!bookingData.patient_id) return "ID do paciente é obrigatório";
+    if (!bookingData.professional_id) return "Profissional é obrigatório";
+    if (!bookingData.service_type_id) return "Tipo de serviço é obrigatório";
+    if (!bookingData.start_time) return "Horário de início é obrigatório";
+    if (!bookingData.end_time) return "Horário de término é obrigatório";
+
     // Validate that end_time is after start_time
     if (new Date(bookingData.start_time) >= new Date(bookingData.end_time)) {
-      return 'Horário de término deve ser após o início';
+      return "Horário de término deve ser após o início";
     }
-    
+
     return null; // No validation errors
   }, []);
 
@@ -173,16 +185,18 @@ export default function AppointmentBookingWizard({
   // validation, timeout handling, and authentication
   const handleBookingSubmit = useCallback(async () => {
     if (!state.selectedService || !state.selectedProfessional || !state.selectedTimeSlot) {
-      setState(prev => ({ ...prev, error: t('booking.errors.incomplete') }));
+      setState((prev) => ({ ...prev, error: t("booking.errors.incomplete") }));
       return;
     }
 
-    setState(prev => ({ ...prev, isLoading: true, error: undefined }));
+    setState((prev) => ({ ...prev, isLoading: true, error: undefined }));
 
     try {
       // Calculate end time based on service duration
       const startTime = new Date(state.selectedTimeSlot.start_time);
-      const endTime = new Date(startTime.getTime() + (state.selectedService.duration_minutes * 60 * 1000));
+      const endTime = new Date(
+        startTime.getTime() + state.selectedService.duration_minutes * 60 * 1000,
+      );
 
       // Prepare booking data according to API requirements
       const bookingData = {
@@ -192,22 +206,22 @@ export default function AppointmentBookingWizard({
         start_time: startTime,
         end_time: endTime,
         notes: state.patientNotes || null,
-        internal_notes: null
+        internal_notes: null,
       };
 
       // Validate booking data before sending
       const validationError = validateBookingData(bookingData);
       if (validationError) {
-        setState(prev => ({ ...prev, error: validationError }));
+        setState((prev) => ({ ...prev, error: validationError }));
         return;
       }
 
       // Make API call to create appointment
-      const response = await fetch('/api/appointments', {
-        method: 'POST',
+      const response = await fetch("/api/appointments", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
+          "Content-Type": "application/json",
+          Accept: "application/json",
         },
         body: JSON.stringify(bookingData),
         signal: AbortSignal.timeout(30000), // 30 second timeout
@@ -216,15 +230,19 @@ export default function AppointmentBookingWizard({
       if (!response.ok) {
         // Handle HTTP errors
         const errorData = await response.json().catch(() => ({}));
-        
+
         if (response.status === 401) {
-          throw new Error(t('booking.errors.unauthorized') || 'Não autorizado');
+          throw new Error(t("booking.errors.unauthorized") || "Não autorizado");
         } else if (response.status === 409) {
-          throw new Error(errorData.error_message || t('booking.errors.conflict') || 'Conflito de horário');
+          throw new Error(
+            errorData.error_message || t("booking.errors.conflict") || "Conflito de horário",
+          );
         } else if (response.status === 400) {
-          throw new Error(errorData.error_message || t('booking.errors.validation') || 'Dados inválidos');
+          throw new Error(
+            errorData.error_message || t("booking.errors.validation") || "Dados inválidos",
+          );
         } else {
-          throw new Error(errorData.error_message || t('booking.errors.network') || 'Erro de rede');
+          throw new Error(errorData.error_message || t("booking.errors.network") || "Erro de rede");
         }
       }
 
@@ -235,51 +253,57 @@ export default function AppointmentBookingWizard({
         // The API returns appointment_id which we map to confirmation_code for UI consistency
         const successResponse: BookingResponse = {
           success: true,
-          confirmation_code: result.appointment_id || 'N/A',
-          appointment: result.appointment
+          confirmation_code: result.appointment_id || "N/A",
+          appointment: result.appointment,
         };
-        
+
         onBookingComplete?.(successResponse);
       } else {
         // API returned success: false
-        setState(prev => ({ 
-          ...prev, 
-          error: result.error_message || result.error_details || t('booking.errors.generic') 
+        setState((prev) => ({
+          ...prev,
+          error: result.error_message || result.error_details || t("booking.errors.generic"),
         }));
       }
     } catch (error) {
-      console.error('Booking submission error:', error);
-      
+      console.error("Booking submission error:", error);
+
       // Handle different error types
       let errorMessage: string;
-      
-      if (error instanceof DOMException && error.name === 'TimeoutError') {
-        errorMessage = t('booking.errors.timeout') || 'Tempo limite excedido. Tente novamente.';
-      } else if (error instanceof DOMException && error.name === 'AbortError') {
-        errorMessage = t('booking.errors.aborted') || 'Operação cancelada.';
-      } else if (error instanceof TypeError && error.message.includes('fetch')) {
-        errorMessage = t('booking.errors.network') || 'Erro de conexão. Verifique sua internet.';
+
+      if (error instanceof DOMException && error.name === "TimeoutError") {
+        errorMessage = t("booking.errors.timeout") || "Tempo limite excedido. Tente novamente.";
+      } else if (error instanceof DOMException && error.name === "AbortError") {
+        errorMessage = t("booking.errors.aborted") || "Operação cancelada.";
+      } else if (error instanceof TypeError && error.message.includes("fetch")) {
+        errorMessage = t("booking.errors.network") || "Erro de conexão. Verifique sua internet.";
       } else if (error instanceof Error) {
         errorMessage = error.message;
       } else {
-        errorMessage = t('booking.errors.generic') || 'Erro inesperado ao agendar';
+        errorMessage = t("booking.errors.generic") || "Erro inesperado ao agendar";
       }
-      
-      setState(prev => ({ ...prev, error: errorMessage }));
+
+      setState((prev) => ({ ...prev, error: errorMessage }));
     } finally {
-      setState(prev => ({ ...prev, isLoading: false }));
+      setState((prev) => ({ ...prev, isLoading: false }));
     }
   }, [state, patientId, onBookingComplete, t, validateBookingData]);
 
   // Check if current step can proceed
   const canProceed = useMemo(() => {
     switch (state.currentStep) {
-      case 1: return !!state.selectedService;
-      case 2: return !!state.selectedProfessional;
-      case 3: return !!state.selectedTimeSlot;
-      case 4: return true; // Notes are optional
-      case 5: return false; // Final step
-      default: return false;
+      case 1:
+        return !!state.selectedService;
+      case 2:
+        return !!state.selectedProfessional;
+      case 3:
+        return !!state.selectedTimeSlot;
+      case 4:
+        return true; // Notes are optional
+      case 5:
+        return false; // Final step
+      default:
+        return false;
     }
   }, [state]);
 
@@ -289,9 +313,9 @@ export default function AppointmentBookingWizard({
       <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center justify-between">
-            <span className="text-lg font-medium">{t('booking.wizard.title')}</span>
+            <span className="text-lg font-medium">{t("booking.wizard.title")}</span>
             <Badge variant="outline" className="text-xs">
-              {t('booking.wizard.step', { current: state.currentStep, total: steps.length })}
+              {t("booking.wizard.step", { current: state.currentStep, total: steps.length })}
             </Badge>
           </CardTitle>
           <div className="space-y-2">
@@ -301,14 +325,14 @@ export default function AppointmentBookingWizard({
             </p>
           </div>
         </CardHeader>
-      </Card>      {/* Error Alert */}
+      </Card>{" "}
+      {/* Error Alert */}
       {state.error && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>{state.error}</AlertDescription>
         </Alert>
       )}
-
       {/* Step Content */}
       <Card>
         <CardContent className="p-6">
@@ -372,7 +396,6 @@ export default function AppointmentBookingWizard({
           </AnimatePresence>
         </CardContent>
       </Card>
-
       {/* Navigation Footer */}
       <Card>
         <CardContent className="p-4">
@@ -384,7 +407,7 @@ export default function AppointmentBookingWizard({
               className="flex items-center gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
-              {t('common.previous')}
+              {t("common.previous")}
             </Button>
 
             <div className="flex items-center gap-2">
@@ -393,10 +416,10 @@ export default function AppointmentBookingWizard({
                   key={step.id}
                   className={`w-3 h-3 rounded-full transition-colors ${
                     step.isCompleted
-                      ? 'bg-green-500'
+                      ? "bg-green-500"
                       : step.isActive
-                      ? 'bg-blue-500'
-                      : 'bg-gray-300 dark:bg-gray-600'
+                        ? "bg-blue-500"
+                        : "bg-gray-300 dark:bg-gray-600"
                   }`}
                   title={step.title}
                 />
@@ -412,7 +435,7 @@ export default function AppointmentBookingWizard({
                 <Check className="h-4 w-4" />
               ) : (
                 <>
-                  {t('common.next')}
+                  {t("common.next")}
                   <ArrowRight className="h-4 w-4" />
                 </>
               )}
@@ -420,39 +443,38 @@ export default function AppointmentBookingWizard({
           </div>
         </CardContent>
       </Card>
-
       {/* Summary Sidebar for Mobile */}
       <div className="md:hidden">
         {(state.selectedService || state.selectedProfessional || state.selectedTimeSlot) && (
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">{t('booking.summary.title')}</CardTitle>
+              <CardTitle className="text-base">{t("booking.summary.title")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               {state.selectedService && (
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">{t('booking.summary.service')}</span>
+                  <span className="text-muted-foreground">{t("booking.summary.service")}</span>
                   <span className="font-medium">{state.selectedService.name}</span>
                 </div>
               )}
-              
+
               {state.selectedProfessional && (
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">{t('booking.summary.professional')}</span>
+                  <span className="text-muted-foreground">{t("booking.summary.professional")}</span>
                   <span className="font-medium">{state.selectedProfessional.name}</span>
                 </div>
               )}
-              
+
               {state.selectedTimeSlot && (
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">{t('booking.summary.time')}</span>
+                  <span className="text-muted-foreground">{t("booking.summary.time")}</span>
                   <span className="font-medium">
-                    {new Date(state.selectedTimeSlot.start_time).toLocaleDateString('pt-BR', {
-                      day: '2-digit',
-                      month: '2-digit',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
+                    {new Date(state.selectedTimeSlot.start_time).toLocaleDateString("pt-BR", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
                     })}
                   </span>
                 </div>

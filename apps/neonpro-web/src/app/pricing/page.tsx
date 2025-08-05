@@ -1,8 +1,8 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
@@ -10,11 +10,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { NEONPRO_PLANS } from "@/lib/constants/plans";
-import { Check, Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { toast } from "sonner";
+import type { NEONPRO_PLANS } from "@/lib/constants/plans";
+import type { Check, Loader2 } from "lucide-react";
+import type { useRouter } from "next/navigation";
+import type { useState } from "react";
+import type { toast } from "sonner";
 
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
@@ -72,8 +72,8 @@ export default function PricingPage() {
             Escolha o Plano Ideal para sua Clínica
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Todos os planos incluem suporte técnico e atualizações gratuitas.
-            Comece sua avaliação gratuita de 14 dias hoje mesmo.
+            Todos os planos incluem suporte técnico e atualizações gratuitas. Comece sua avaliação
+            gratuita de 14 dias hoje mesmo.
           </p>
         </div>
 
@@ -82,9 +82,7 @@ export default function PricingPage() {
             <Card
               key={planId}
               className={`relative overflow-hidden transition-all duration-300 hover:shadow-xl ${
-                index === 1
-                  ? "border-2 border-blue-500 scale-105"
-                  : "border hover:border-blue-300"
+                index === 1 ? "border-2 border-blue-500 scale-105" : "border hover:border-blue-300"
               }`}
             >
               {index === 1 && (
@@ -94,12 +92,8 @@ export default function PricingPage() {
               )}
 
               <CardHeader className="text-center">
-                <CardTitle className="text-2xl font-bold">
-                  {plan.name}
-                </CardTitle>
-                <CardDescription className="text-gray-600">
-                  {plan.description}
-                </CardDescription>
+                <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
+                <CardDescription className="text-gray-600">{plan.description}</CardDescription>
                 <div className="mt-4">
                   <span className="text-4xl font-bold text-gray-900">
                     {formatPrice(plan.price)}
@@ -122,9 +116,7 @@ export default function PricingPage() {
               <CardFooter>
                 <Button
                   className={`w-full ${
-                    index === 1
-                      ? "bg-blue-600 hover:bg-blue-700"
-                      : "bg-gray-900 hover:bg-gray-800"
+                    index === 1 ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-900 hover:bg-gray-800"
                   }`}
                   onClick={() => handleSelectPlan(planId)}
                   disabled={loading !== null}
@@ -148,9 +140,7 @@ export default function PricingPage() {
 
         <div className="mt-12 text-center">
           <div className="bg-white rounded-lg shadow-md p-8 max-w-4xl mx-auto">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Por que escolher o NeonPro?
-            </h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Por que escolher o NeonPro?</h2>
             <div className="grid md:grid-cols-3 gap-6 mt-6">
               <div className="text-center">
                 <div className="bg-blue-100 rounded-full p-3 w-16 h-16 mx-auto mb-3 flex items-center justify-center">
@@ -175,9 +165,7 @@ export default function PricingPage() {
                   <span className="text-2xl">🚀</span>
                 </div>
                 <h3 className="font-semibold text-gray-900">Suporte 24/7</h3>
-                <p className="text-gray-600 text-sm mt-1">
-                  Equipe especializada sempre disponível
-                </p>
+                <p className="text-gray-600 text-sm mt-1">Equipe especializada sempre disponível</p>
               </div>
             </div>
           </div>
@@ -186,17 +174,11 @@ export default function PricingPage() {
         <div className="mt-8 text-center">
           <p className="text-gray-600">
             Dúvidas? Entre em contato conosco:{" "}
-            <a
-              href="mailto:suporte@neonpro.com"
-              className="text-blue-600 hover:underline"
-            >
+            <a href="mailto:suporte@neonpro.com" className="text-blue-600 hover:underline">
               suporte@neonpro.com
             </a>{" "}
             ou{" "}
-            <a
-              href="tel:+551199999999"
-              className="text-blue-600 hover:underline"
-            >
+            <a href="tel:+551199999999" className="text-blue-600 hover:underline">
               (11) 99999-9999
             </a>
           </p>

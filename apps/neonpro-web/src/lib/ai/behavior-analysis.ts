@@ -1,7 +1,7 @@
 /**
  * AI-powered Behavior Pattern Analysis Engine
  * Analyzes patient behavior patterns to optimize treatment outcomes and engagement
- * 
+ *
  * Features:
  * - Patient engagement pattern analysis
  * - Appointment adherence behavior modeling
@@ -11,10 +11,10 @@
  * - Personalized engagement strategy recommendations
  */
 
-import { Patient } from '@/types/patient';
-import { Appointment } from '@/types/appointment';
-import { TreatmentHistory, Treatment } from '@/types/treatment';
-import { CommunicationLog } from '@/types/communication';
+import type { Patient } from "@/types/patient";
+import type { Appointment } from "@/types/appointment";
+import type { TreatmentHistory, Treatment } from "@/types/treatment";
+import type { CommunicationLog } from "@/types/communication";
 
 // Behavior Analysis Types
 export interface BehaviorAnalysis {
@@ -30,7 +30,7 @@ export interface BehaviorAnalysis {
 }
 
 export interface BehaviorProfile {
-  engagement_level: 'low' | 'moderate' | 'high' | 'very_high';
+  engagement_level: "low" | "moderate" | "high" | "very_high";
   communication_style: CommunicationStyle;
   appointment_behavior: AppointmentBehavior;
   treatment_compliance: TreatmentCompliance;
@@ -41,44 +41,44 @@ export interface BehaviorProfile {
 
 export interface CommunicationStyle {
   preferred_channels: string[];
-  response_time_pattern: 'immediate' | 'same_day' | 'delayed' | 'inconsistent';
-  communication_frequency: 'minimal' | 'moderate' | 'frequent' | 'excessive';
-  tone_preference: 'formal' | 'casual' | 'technical' | 'empathetic';
-  information_depth: 'brief' | 'detailed' | 'comprehensive';
-  question_asking_tendency: 'low' | 'moderate' | 'high';
+  response_time_pattern: "immediate" | "same_day" | "delayed" | "inconsistent";
+  communication_frequency: "minimal" | "moderate" | "frequent" | "excessive";
+  tone_preference: "formal" | "casual" | "technical" | "empathetic";
+  information_depth: "brief" | "detailed" | "comprehensive";
+  question_asking_tendency: "low" | "moderate" | "high";
 }
 
 export interface AppointmentBehavior {
-  scheduling_pattern: 'advance_planner' | 'last_minute' | 'flexible' | 'rigid';
-  cancellation_tendency: 'rare' | 'occasional' | 'frequent' | 'chronic';
-  rescheduling_pattern: 'minimal' | 'moderate' | 'frequent';
-  punctuality: 'early' | 'on_time' | 'slightly_late' | 'chronically_late';
-  no_show_risk: 'low' | 'moderate' | 'high' | 'critical';
+  scheduling_pattern: "advance_planner" | "last_minute" | "flexible" | "rigid";
+  cancellation_tendency: "rare" | "occasional" | "frequent" | "chronic";
+  rescheduling_pattern: "minimal" | "moderate" | "frequent";
+  punctuality: "early" | "on_time" | "slightly_late" | "chronically_late";
+  no_show_risk: "low" | "moderate" | "high" | "critical";
   preferred_times: TimePreference[];
 }
 
 export interface TreatmentCompliance {
-  adherence_level: 'poor' | 'fair' | 'good' | 'excellent';
-  follow_up_compliance: 'poor' | 'fair' | 'good' | 'excellent';
-  aftercare_adherence: 'poor' | 'fair' | 'good' | 'excellent';
-  medication_compliance: 'poor' | 'fair' | 'good' | 'excellent';
-  lifestyle_modification: 'resistant' | 'selective' | 'cooperative' | 'proactive';
+  adherence_level: "poor" | "fair" | "good" | "excellent";
+  follow_up_compliance: "poor" | "fair" | "good" | "excellent";
+  aftercare_adherence: "poor" | "fair" | "good" | "excellent";
+  medication_compliance: "poor" | "fair" | "good" | "excellent";
+  lifestyle_modification: "resistant" | "selective" | "cooperative" | "proactive";
   compliance_barriers: ComplianceBarrier[];
 }
 
 export interface DecisionMakingPattern {
-  decision_speed: 'impulsive' | 'quick' | 'deliberate' | 'prolonged';
-  research_tendency: 'minimal' | 'moderate' | 'extensive' | 'obsessive';
-  consultation_seeking: 'independent' | 'moderate' | 'dependent';
-  price_sensitivity: 'low' | 'moderate' | 'high' | 'extreme';
-  risk_tolerance: 'risk_averse' | 'cautious' | 'moderate' | 'risk_taking';
+  decision_speed: "impulsive" | "quick" | "deliberate" | "prolonged";
+  research_tendency: "minimal" | "moderate" | "extensive" | "obsessive";
+  consultation_seeking: "independent" | "moderate" | "dependent";
+  price_sensitivity: "low" | "moderate" | "high" | "extreme";
+  risk_tolerance: "risk_averse" | "cautious" | "moderate" | "risk_taking";
   influence_factors: InfluenceFactor[];
 }
 
 export interface EngagementPattern {
   pattern_type: string;
   frequency: number;
-  trend: 'increasing' | 'stable' | 'decreasing';
+  trend: "increasing" | "stable" | "decreasing";
   seasonal_variation: boolean;
   trigger_events: string[];
   impact_on_outcomes: number;
@@ -86,7 +86,7 @@ export interface EngagementPattern {
 
 export interface BehaviorRiskIndicator {
   risk_type: string;
-  severity: 'low' | 'moderate' | 'high' | 'critical';
+  severity: "low" | "moderate" | "high" | "critical";
   probability: number;
   contributing_factors: string[];
   early_warning_signs: string[];
@@ -94,8 +94,8 @@ export interface BehaviorRiskIndicator {
 }
 
 export interface BehaviorRecommendation {
-  recommendation_type: 'communication' | 'scheduling' | 'treatment' | 'engagement';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
+  recommendation_type: "communication" | "scheduling" | "treatment" | "engagement";
+  priority: "low" | "medium" | "high" | "urgent";
   description: string;
   implementation_steps: string[];
   expected_impact: string;
@@ -105,7 +105,7 @@ export interface BehaviorRecommendation {
 
 export interface TimePreference {
   day_of_week: string;
-  time_of_day: 'morning' | 'afternoon' | 'evening';
+  time_of_day: "morning" | "afternoon" | "evening";
   preference_strength: number;
 }
 
@@ -176,7 +176,7 @@ export class AIBehaviorAnalysisEngine {
     patient: Patient,
     appointments: Appointment[],
     treatments: TreatmentHistory[],
-    communications: CommunicationLog[]
+    communications: CommunicationLog[],
   ): Promise<BehaviorAnalysis> {
     try {
       // Build comprehensive behavior profile
@@ -184,42 +184,35 @@ export class AIBehaviorAnalysisEngine {
         patient,
         appointments,
         treatments,
-        communications
+        communications,
       );
 
       // Identify engagement patterns
       const engagementPatterns = this.identifyEngagementPatterns(
         appointments,
         treatments,
-        communications
+        communications,
       );
 
       // Assess behavioral risk indicators
-      const riskIndicators = this.assessBehaviorRisks(
-        behaviorProfile,
-        engagementPatterns,
-        patient
-      );
+      const riskIndicators = this.assessBehaviorRisks(behaviorProfile, engagementPatterns, patient);
 
       // Generate personalized recommendations
       const recommendations = this.generateBehaviorRecommendations(
         behaviorProfile,
         riskIndicators,
-        patient
+        patient,
       );
 
       // Calculate analysis confidence
       const confidenceScore = this.calculateAnalysisConfidence(
         appointments,
         treatments,
-        communications
+        communications,
       );
 
       // Determine next analysis date
-      const nextAnalysisDate = this.calculateNextAnalysisDate(
-        behaviorProfile,
-        riskIndicators
-      );
+      const nextAnalysisDate = this.calculateNextAnalysisDate(behaviorProfile, riskIndicators);
 
       const analysis: BehaviorAnalysis = {
         analysis_id: `behavior_${Date.now()}_${patient.id}`,
@@ -230,7 +223,7 @@ export class AIBehaviorAnalysisEngine {
         risk_indicators: riskIndicators,
         recommendations: recommendations,
         confidence_score: confidenceScore,
-        next_analysis_date: nextAnalysisDate
+        next_analysis_date: nextAnalysisDate,
       };
 
       // Store analysis for future reference
@@ -238,8 +231,8 @@ export class AIBehaviorAnalysisEngine {
 
       return analysis;
     } catch (error) {
-      console.error('Behavior analysis failed:', error);
-      throw new Error('Failed to analyze behavior patterns');
+      console.error("Behavior analysis failed:", error);
+      throw new Error("Failed to analyze behavior patterns");
     }
   }
 
@@ -249,34 +242,34 @@ export class AIBehaviorAnalysisEngine {
   async predictBehavior(
     patient: Patient,
     scenario: string,
-    context: any
+    context: any,
   ): Promise<BehaviorPrediction[]> {
     const behaviorHistory = this.behaviorHistory.get(patient.id) || [];
     const latestAnalysis = behaviorHistory[behaviorHistory.length - 1];
-    
+
     if (!latestAnalysis) {
-      throw new Error('No behavior analysis available for prediction');
+      throw new Error("No behavior analysis available for prediction");
     }
 
     const predictions: BehaviorPrediction[] = [];
 
     // Predict appointment adherence
-    if (scenario === 'appointment_scheduling' || scenario === 'all') {
+    if (scenario === "appointment_scheduling" || scenario === "all") {
       predictions.push(await this.predictAppointmentBehavior(latestAnalysis, context));
     }
 
     // Predict treatment compliance
-    if (scenario === 'treatment_compliance' || scenario === 'all') {
+    if (scenario === "treatment_compliance" || scenario === "all") {
       predictions.push(await this.predictTreatmentCompliance(latestAnalysis, context));
     }
 
     // Predict communication responsiveness
-    if (scenario === 'communication' || scenario === 'all') {
+    if (scenario === "communication" || scenario === "all") {
       predictions.push(await this.predictCommunicationBehavior(latestAnalysis, context));
     }
 
     // Predict satisfaction outcomes
-    if (scenario === 'satisfaction' || scenario === 'all') {
+    if (scenario === "satisfaction" || scenario === "all") {
       predictions.push(await this.predictSatisfactionBehavior(latestAnalysis, context));
     }
 
@@ -286,9 +279,12 @@ export class AIBehaviorAnalysisEngine {
   /**
    * Segment patient based on behavior patterns
    */
-  async segmentPatient(patient: Patient, behaviorAnalysis: BehaviorAnalysis): Promise<PatientSegment> {
+  async segmentPatient(
+    patient: Patient,
+    behaviorAnalysis: BehaviorAnalysis,
+  ): Promise<PatientSegment> {
     const profile = behaviorAnalysis.behavior_profile;
-    
+
     // Analyze key behavioral dimensions
     const engagementScore = this.calculateEngagementScore(profile);
     const complianceScore = this.calculateComplianceScore(profile);
@@ -300,7 +296,7 @@ export class AIBehaviorAnalysisEngine {
       engagementScore,
       complianceScore,
       communicationScore,
-      riskScore
+      riskScore,
     );
 
     return this.segmentationModels.get(segmentId) || this.getDefaultSegment();
@@ -312,17 +308,17 @@ export class AIBehaviorAnalysisEngine {
   async generateEngagementStrategy(
     patient: Patient,
     behaviorAnalysis: BehaviorAnalysis,
-    segment: PatientSegment
+    segment: PatientSegment,
   ): Promise<any> {
     const profile = behaviorAnalysis.behavior_profile;
-    
+
     return {
       communication_strategy: this.buildCommunicationStrategy(profile.communication_style),
       appointment_strategy: this.buildAppointmentStrategy(profile.appointment_behavior),
       treatment_strategy: this.buildTreatmentStrategy(profile.treatment_compliance),
       engagement_tactics: this.selectEngagementTactics(segment, profile),
       monitoring_plan: this.createMonitoringPlan(behaviorAnalysis.risk_indicators),
-      success_metrics: this.defineSuccessMetrics(segment, profile)
+      success_metrics: this.defineSuccessMetrics(segment, profile),
     };
   }
 
@@ -332,7 +328,7 @@ export class AIBehaviorAnalysisEngine {
   async analyzeCommunicationEffectiveness(
     patient: Patient,
     communications: CommunicationLog[],
-    outcomes: any[]
+    outcomes: any[],
   ): Promise<any> {
     const communicationAnalysis = {
       response_rates: this.calculateResponseRates(communications),
@@ -340,7 +336,7 @@ export class AIBehaviorAnalysisEngine {
       channel_effectiveness: this.analyzeChannelEffectiveness(communications, outcomes),
       timing_optimization: this.analyzeOptimalTiming(communications),
       content_effectiveness: this.analyzeContentEffectiveness(communications, outcomes),
-      recommendations: this.generateCommunicationRecommendations(communications)
+      recommendations: this.generateCommunicationRecommendations(communications),
     };
 
     return communicationAnalysis;
@@ -352,20 +348,23 @@ export class AIBehaviorAnalysisEngine {
   async detectBehaviorAnomalies(
     patient: Patient,
     recentBehavior: any,
-    historicalPattern: BehaviorAnalysis[]
+    historicalPattern: BehaviorAnalysis[],
   ): Promise<any[]> {
     const anomalies = [];
 
     // Check for significant deviations from historical patterns
     const baselineEngagement = this.calculateBaselineEngagement(historicalPattern);
     const currentEngagement = this.calculateCurrentEngagement(recentBehavior);
-    
+
     if (Math.abs(currentEngagement - baselineEngagement) > 0.3) {
       anomalies.push({
-        type: 'engagement_deviation',
+        type: "engagement_deviation",
         severity: this.calculateAnomalySeverity(currentEngagement, baselineEngagement),
-        description: 'Significant change in engagement pattern detected',
-        recommendations: this.getEngagementAnomalyRecommendations(currentEngagement, baselineEngagement)
+        description: "Significant change in engagement pattern detected",
+        recommendations: this.getEngagementAnomalyRecommendations(
+          currentEngagement,
+          baselineEngagement,
+        ),
       });
     }
 
@@ -374,7 +373,10 @@ export class AIBehaviorAnalysisEngine {
     anomalies.push(...appointmentAnomalies);
 
     // Check for communication pattern changes
-    const communicationAnomalies = this.detectCommunicationAnomalies(recentBehavior, historicalPattern);
+    const communicationAnomalies = this.detectCommunicationAnomalies(
+      recentBehavior,
+      historicalPattern,
+    );
     anomalies.push(...communicationAnomalies);
 
     return anomalies;
@@ -386,31 +388,31 @@ export class AIBehaviorAnalysisEngine {
     patient: Patient,
     appointments: Appointment[],
     treatments: TreatmentHistory[],
-    communications: CommunicationLog[]
+    communications: CommunicationLog[],
   ): Promise<BehaviorProfile> {
     // Analyze communication style
     const communicationStyle = this.analyzeCommunicationStyle(communications);
-    
+
     // Analyze appointment behavior
     const appointmentBehavior = this.analyzeAppointmentBehavior(appointments);
-    
+
     // Analyze treatment compliance
     const treatmentCompliance = this.analyzeTreatmentCompliance(treatments);
-    
+
     // Analyze decision making patterns
     const decisionMakingPattern = this.analyzeDecisionMaking(patient, appointments, treatments);
-    
+
     // Identify satisfaction drivers
     const satisfactionDrivers = this.identifySatisfactionDrivers(treatments, communications);
-    
+
     // Identify behavioral triggers
     const behavioralTriggers = this.identifyBehavioralTriggers(appointments, communications);
-    
+
     // Calculate overall engagement level
     const engagementLevel = this.calculateOverallEngagement(
       communicationStyle,
       appointmentBehavior,
-      treatmentCompliance
+      treatmentCompliance,
     );
 
     return {
@@ -420,7 +422,7 @@ export class AIBehaviorAnalysisEngine {
       treatment_compliance: treatmentCompliance,
       decision_making_pattern: decisionMakingPattern,
       satisfaction_drivers: satisfactionDrivers,
-      behavioral_triggers: behavioralTriggers
+      behavioral_triggers: behavioralTriggers,
     };
   }
 
@@ -430,22 +432,26 @@ export class AIBehaviorAnalysisEngine {
     }
 
     // Analyze preferred channels
-    const channelCounts = communications.reduce((acc, comm) => {
-      acc[comm.channel] = (acc[comm.channel] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-    
+    const channelCounts = communications.reduce(
+      (acc, comm) => {
+        acc[comm.channel] = (acc[comm.channel] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
+
     const preferredChannels = Object.entries(channelCounts)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 3)
       .map(([channel]) => channel);
 
     // Analyze response time pattern
     const responseTimes = communications
-      .filter(comm => comm.response_time)
-      .map(comm => comm.response_time!);
-    
-    const avgResponseTime = responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length;
+      .filter((comm) => comm.response_time)
+      .map((comm) => comm.response_time!);
+
+    const avgResponseTime =
+      responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length;
     const responseTimePattern = this.categorizeResponseTime(avgResponseTime);
 
     // Analyze communication frequency
@@ -462,7 +468,7 @@ export class AIBehaviorAnalysisEngine {
       communication_frequency: communicationFrequency,
       tone_preference: tonePreference,
       information_depth: informationDepth,
-      question_asking_tendency: questionAskingTendency
+      question_asking_tendency: questionAskingTendency,
     };
   }
 
@@ -472,20 +478,21 @@ export class AIBehaviorAnalysisEngine {
     }
 
     // Analyze scheduling patterns
-    const schedulingAdvance = appointments.map(apt => {
+    const schedulingAdvance = appointments.map((apt) => {
       const scheduled = new Date(apt.created_at);
       const appointment = new Date(apt.date);
       return (appointment.getTime() - scheduled.getTime()) / (1000 * 60 * 60 * 24); // days
     });
-    
-    const avgAdvance = schedulingAdvance.reduce((sum, days) => sum + days, 0) / schedulingAdvance.length;
+
+    const avgAdvance =
+      schedulingAdvance.reduce((sum, days) => sum + days, 0) / schedulingAdvance.length;
     const schedulingPattern = this.categorizeSchedulingPattern(avgAdvance);
 
     // Analyze cancellation and rescheduling
-    const cancellations = appointments.filter(apt => apt.status === 'cancelled').length;
-    const reschedules = appointments.filter(apt => apt.status === 'rescheduled').length;
+    const cancellations = appointments.filter((apt) => apt.status === "cancelled").length;
+    const reschedules = appointments.filter((apt) => apt.status === "rescheduled").length;
     const total = appointments.length;
-    
+
     const cancellationTendency = this.categorizeCancellationTendency(cancellations / total);
     const reschedulingPattern = this.categorizeReschedulingPattern(reschedules / total);
 
@@ -493,7 +500,7 @@ export class AIBehaviorAnalysisEngine {
     const punctuality = this.analyzePunctuality(appointments);
 
     // Calculate no-show risk
-    const noShows = appointments.filter(apt => apt.status === 'no_show').length;
+    const noShows = appointments.filter((apt) => apt.status === "no_show").length;
     const noShowRisk = this.categorizeNoShowRisk(noShows / total);
 
     // Analyze preferred times
@@ -505,7 +512,7 @@ export class AIBehaviorAnalysisEngine {
       rescheduling_pattern: reschedulingPattern,
       punctuality: punctuality,
       no_show_risk: noShowRisk,
-      preferred_times: preferredTimes
+      preferred_times: preferredTimes,
     };
   }
 
@@ -515,7 +522,7 @@ export class AIBehaviorAnalysisEngine {
     }
 
     // Analyze adherence levels
-    const completedTreatments = treatments.filter(t => t.status === 'completed').length;
+    const completedTreatments = treatments.filter((t) => t.status === "completed").length;
     const adherenceLevel = this.categorizeAdherence(completedTreatments / treatments.length);
 
     // Analyze follow-up compliance
@@ -539,14 +546,14 @@ export class AIBehaviorAnalysisEngine {
       aftercare_adherence: aftercareAdherence,
       medication_compliance: medicationCompliance,
       lifestyle_modification: lifestyleModification,
-      compliance_barriers: complianceBarriers
+      compliance_barriers: complianceBarriers,
     };
   }
 
   private identifyEngagementPatterns(
     appointments: Appointment[],
     treatments: TreatmentHistory[],
-    communications: CommunicationLog[]
+    communications: CommunicationLog[],
   ): EngagementPattern[] {
     const patterns: EngagementPattern[] = [];
 
@@ -568,43 +575,60 @@ export class AIBehaviorAnalysisEngine {
   private assessBehaviorRisks(
     profile: BehaviorProfile,
     patterns: EngagementPattern[],
-    patient: Patient
+    patient: Patient,
   ): BehaviorRiskIndicator[] {
     const risks: BehaviorRiskIndicator[] = [];
 
     // Assess no-show risk
-    if (profile.appointment_behavior.no_show_risk === 'high' || profile.appointment_behavior.no_show_risk === 'critical') {
+    if (
+      profile.appointment_behavior.no_show_risk === "high" ||
+      profile.appointment_behavior.no_show_risk === "critical"
+    ) {
       risks.push({
-        risk_type: 'appointment_no_show',
-        severity: profile.appointment_behavior.no_show_risk === 'critical' ? 'critical' : 'high',
-        probability: profile.appointment_behavior.no_show_risk === 'critical' ? 0.8 : 0.6,
-        contributing_factors: ['Historical no-show pattern', 'Poor scheduling behavior'],
-        early_warning_signs: ['Last-minute cancellations', 'Delayed responses'],
-        intervention_strategies: ['Confirmation calls', 'Flexible scheduling', 'Incentive programs']
+        risk_type: "appointment_no_show",
+        severity: profile.appointment_behavior.no_show_risk === "critical" ? "critical" : "high",
+        probability: profile.appointment_behavior.no_show_risk === "critical" ? 0.8 : 0.6,
+        contributing_factors: ["Historical no-show pattern", "Poor scheduling behavior"],
+        early_warning_signs: ["Last-minute cancellations", "Delayed responses"],
+        intervention_strategies: [
+          "Confirmation calls",
+          "Flexible scheduling",
+          "Incentive programs",
+        ],
       });
     }
 
     // Assess compliance risk
-    if (profile.treatment_compliance.adherence_level === 'poor' || profile.treatment_compliance.adherence_level === 'fair') {
+    if (
+      profile.treatment_compliance.adherence_level === "poor" ||
+      profile.treatment_compliance.adherence_level === "fair"
+    ) {
       risks.push({
-        risk_type: 'treatment_non_compliance',
-        severity: profile.treatment_compliance.adherence_level === 'poor' ? 'high' : 'moderate',
-        probability: profile.treatment_compliance.adherence_level === 'poor' ? 0.7 : 0.5,
-        contributing_factors: ['Poor historical compliance', 'Identified barriers'],
-        early_warning_signs: ['Missed appointments', 'Incomplete treatments'],
-        intervention_strategies: ['Enhanced education', 'Barrier removal', 'Support programs']
+        risk_type: "treatment_non_compliance",
+        severity: profile.treatment_compliance.adherence_level === "poor" ? "high" : "moderate",
+        probability: profile.treatment_compliance.adherence_level === "poor" ? 0.7 : 0.5,
+        contributing_factors: ["Poor historical compliance", "Identified barriers"],
+        early_warning_signs: ["Missed appointments", "Incomplete treatments"],
+        intervention_strategies: ["Enhanced education", "Barrier removal", "Support programs"],
       });
     }
 
     // Assess communication risk
-    if (profile.communication_style.response_time_pattern === 'delayed' || profile.communication_style.response_time_pattern === 'inconsistent') {
+    if (
+      profile.communication_style.response_time_pattern === "delayed" ||
+      profile.communication_style.response_time_pattern === "inconsistent"
+    ) {
       risks.push({
-        risk_type: 'communication_breakdown',
-        severity: 'moderate',
+        risk_type: "communication_breakdown",
+        severity: "moderate",
         probability: 0.4,
-        contributing_factors: ['Poor communication patterns', 'Low engagement'],
-        early_warning_signs: ['Delayed responses', 'Missed communications'],
-        intervention_strategies: ['Multi-channel approach', 'Simplified messaging', 'Personal outreach']
+        contributing_factors: ["Poor communication patterns", "Low engagement"],
+        early_warning_signs: ["Delayed responses", "Missed communications"],
+        intervention_strategies: [
+          "Multi-channel approach",
+          "Simplified messaging",
+          "Personal outreach",
+        ],
       });
     }
 
@@ -614,58 +638,58 @@ export class AIBehaviorAnalysisEngine {
   private generateBehaviorRecommendations(
     profile: BehaviorProfile,
     risks: BehaviorRiskIndicator[],
-    patient: Patient
+    patient: Patient,
   ): BehaviorRecommendation[] {
     const recommendations: BehaviorRecommendation[] = [];
 
     // Communication recommendations
-    if (profile.communication_style.response_time_pattern === 'delayed') {
+    if (profile.communication_style.response_time_pattern === "delayed") {
       recommendations.push({
-        recommendation_type: 'communication',
-        priority: 'medium',
-        description: 'Implement multi-channel communication strategy',
+        recommendation_type: "communication",
+        priority: "medium",
+        description: "Implement multi-channel communication strategy",
         implementation_steps: [
-          'Use preferred communication channels',
-          'Send reminders via multiple channels',
-          'Simplify message content'
+          "Use preferred communication channels",
+          "Send reminders via multiple channels",
+          "Simplify message content",
         ],
-        expected_impact: 'Improved response rates and engagement',
-        success_metrics: ['Response time reduction', 'Engagement increase'],
-        timeline: '2-4 weeks'
+        expected_impact: "Improved response rates and engagement",
+        success_metrics: ["Response time reduction", "Engagement increase"],
+        timeline: "2-4 weeks",
       });
     }
 
     // Appointment recommendations
-    if (profile.appointment_behavior.no_show_risk === 'high') {
+    if (profile.appointment_behavior.no_show_risk === "high") {
       recommendations.push({
-        recommendation_type: 'scheduling',
-        priority: 'high',
-        description: 'Implement no-show prevention protocol',
+        recommendation_type: "scheduling",
+        priority: "high",
+        description: "Implement no-show prevention protocol",
         implementation_steps: [
-          'Send confirmation calls 24-48 hours before',
-          'Offer flexible rescheduling options',
-          'Implement waitlist system'
+          "Send confirmation calls 24-48 hours before",
+          "Offer flexible rescheduling options",
+          "Implement waitlist system",
         ],
-        expected_impact: 'Reduced no-show rates',
-        success_metrics: ['No-show rate reduction', 'Schedule efficiency'],
-        timeline: '1-2 weeks'
+        expected_impact: "Reduced no-show rates",
+        success_metrics: ["No-show rate reduction", "Schedule efficiency"],
+        timeline: "1-2 weeks",
       });
     }
 
     // Treatment recommendations
-    if (profile.treatment_compliance.adherence_level === 'poor') {
+    if (profile.treatment_compliance.adherence_level === "poor") {
       recommendations.push({
-        recommendation_type: 'treatment',
-        priority: 'high',
-        description: 'Enhance treatment compliance support',
+        recommendation_type: "treatment",
+        priority: "high",
+        description: "Enhance treatment compliance support",
         implementation_steps: [
-          'Provide detailed treatment education',
-          'Address identified barriers',
-          'Implement progress tracking'
+          "Provide detailed treatment education",
+          "Address identified barriers",
+          "Implement progress tracking",
         ],
-        expected_impact: 'Improved treatment outcomes',
-        success_metrics: ['Compliance rate increase', 'Treatment completion'],
-        timeline: '4-8 weeks'
+        expected_impact: "Improved treatment outcomes",
+        success_metrics: ["Compliance rate increase", "Treatment completion"],
+        timeline: "4-8 weeks",
       });
     }
 
@@ -674,360 +698,428 @@ export class AIBehaviorAnalysisEngine {
 
   // Utility methods for categorization and analysis
 
-  private categorizeResponseTime(avgHours: number): 'immediate' | 'same_day' | 'delayed' | 'inconsistent' {
-    if (avgHours <= 1) return 'immediate';
-    if (avgHours <= 24) return 'same_day';
-    if (avgHours <= 72) return 'delayed';
-    return 'inconsistent';
+  private categorizeResponseTime(
+    avgHours: number,
+  ): "immediate" | "same_day" | "delayed" | "inconsistent" {
+    if (avgHours <= 1) return "immediate";
+    if (avgHours <= 24) return "same_day";
+    if (avgHours <= 72) return "delayed";
+    return "inconsistent";
   }
 
-  private categorizeCommunicationFrequency(count: number): 'minimal' | 'moderate' | 'frequent' | 'excessive' {
-    if (count <= 5) return 'minimal';
-    if (count <= 15) return 'moderate';
-    if (count <= 30) return 'frequent';
-    return 'excessive';
+  private categorizeCommunicationFrequency(
+    count: number,
+  ): "minimal" | "moderate" | "frequent" | "excessive" {
+    if (count <= 5) return "minimal";
+    if (count <= 15) return "moderate";
+    if (count <= 30) return "frequent";
+    return "excessive";
   }
 
-  private categorizeSchedulingPattern(avgDays: number): 'advance_planner' | 'last_minute' | 'flexible' | 'rigid' {
-    if (avgDays >= 14) return 'advance_planner';
-    if (avgDays <= 3) return 'last_minute';
-    if (avgDays >= 7) return 'flexible';
-    return 'rigid';
+  private categorizeSchedulingPattern(
+    avgDays: number,
+  ): "advance_planner" | "last_minute" | "flexible" | "rigid" {
+    if (avgDays >= 14) return "advance_planner";
+    if (avgDays <= 3) return "last_minute";
+    if (avgDays >= 7) return "flexible";
+    return "rigid";
   }
 
-  private categorizeCancellationTendency(rate: number): 'rare' | 'occasional' | 'frequent' | 'chronic' {
-    if (rate <= 0.1) return 'rare';
-    if (rate <= 0.25) return 'occasional';
-    if (rate <= 0.5) return 'frequent';
-    return 'chronic';
+  private categorizeCancellationTendency(
+    rate: number,
+  ): "rare" | "occasional" | "frequent" | "chronic" {
+    if (rate <= 0.1) return "rare";
+    if (rate <= 0.25) return "occasional";
+    if (rate <= 0.5) return "frequent";
+    return "chronic";
   }
 
-  private categorizeReschedulingPattern(rate: number): 'minimal' | 'moderate' | 'frequent' {
-    if (rate <= 0.15) return 'minimal';
-    if (rate <= 0.35) return 'moderate';
-    return 'frequent';
+  private categorizeReschedulingPattern(rate: number): "minimal" | "moderate" | "frequent" {
+    if (rate <= 0.15) return "minimal";
+    if (rate <= 0.35) return "moderate";
+    return "frequent";
   }
 
-  private categorizeNoShowRisk(rate: number): 'low' | 'moderate' | 'high' | 'critical' {
-    if (rate <= 0.05) return 'low';
-    if (rate <= 0.15) return 'moderate';
-    if (rate <= 0.3) return 'high';
-    return 'critical';
+  private categorizeNoShowRisk(rate: number): "low" | "moderate" | "high" | "critical" {
+    if (rate <= 0.05) return "low";
+    if (rate <= 0.15) return "moderate";
+    if (rate <= 0.3) return "high";
+    return "critical";
   }
 
-  private categorizeAdherence(rate: number): 'poor' | 'fair' | 'good' | 'excellent' {
-    if (rate <= 0.5) return 'poor';
-    if (rate <= 0.7) return 'fair';
-    if (rate <= 0.9) return 'good';
-    return 'excellent';
+  private categorizeAdherence(rate: number): "poor" | "fair" | "good" | "excellent" {
+    if (rate <= 0.5) return "poor";
+    if (rate <= 0.7) return "fair";
+    if (rate <= 0.9) return "good";
+    return "excellent";
   }
 
   private calculateOverallEngagement(
     communication: CommunicationStyle,
     appointment: AppointmentBehavior,
-    treatment: TreatmentCompliance
-  ): 'low' | 'moderate' | 'high' | 'very_high' {
+    treatment: TreatmentCompliance,
+  ): "low" | "moderate" | "high" | "very_high" {
     // Simplified engagement calculation
     let score = 0;
-    
+
     // Communication engagement
-    if (communication.response_time_pattern === 'immediate') score += 3;
-    else if (communication.response_time_pattern === 'same_day') score += 2;
-    else if (communication.response_time_pattern === 'delayed') score += 1;
-    
+    if (communication.response_time_pattern === "immediate") score += 3;
+    else if (communication.response_time_pattern === "same_day") score += 2;
+    else if (communication.response_time_pattern === "delayed") score += 1;
+
     // Appointment engagement
-    if (appointment.no_show_risk === 'low') score += 3;
-    else if (appointment.no_show_risk === 'moderate') score += 2;
-    else if (appointment.no_show_risk === 'high') score += 1;
-    
+    if (appointment.no_show_risk === "low") score += 3;
+    else if (appointment.no_show_risk === "moderate") score += 2;
+    else if (appointment.no_show_risk === "high") score += 1;
+
     // Treatment engagement
-    if (treatment.adherence_level === 'excellent') score += 3;
-    else if (treatment.adherence_level === 'good') score += 2;
-    else if (treatment.adherence_level === 'fair') score += 1;
-    
-    if (score >= 8) return 'very_high';
-    if (score >= 6) return 'high';
-    if (score >= 4) return 'moderate';
-    return 'low';
+    if (treatment.adherence_level === "excellent") score += 3;
+    else if (treatment.adherence_level === "good") score += 2;
+    else if (treatment.adherence_level === "fair") score += 1;
+
+    if (score >= 8) return "very_high";
+    if (score >= 6) return "high";
+    if (score >= 4) return "moderate";
+    return "low";
   }
 
   // Mock implementations for demonstration
   private initializeBehaviorModels(): void {
-    console.log('Initializing behavior analysis models...');
+    console.log("Initializing behavior analysis models...");
   }
 
   private loadPatientSegments(): void {
     // Load predefined patient segments
-    this.segmentationModels.set('high_engagement', {
-      segment_id: 'high_engagement',
-      segment_name: 'High Engagement Patients',
-      characteristics: ['Excellent compliance', 'Proactive communication', 'Regular appointments'],
-      typical_behaviors: ['Early scheduling', 'Quick responses', 'Follow instructions'],
-      engagement_strategies: ['Maintain current approach', 'Offer advanced services'],
-      success_metrics: ['Satisfaction scores', 'Referral rates']
+    this.segmentationModels.set("high_engagement", {
+      segment_id: "high_engagement",
+      segment_name: "High Engagement Patients",
+      characteristics: ["Excellent compliance", "Proactive communication", "Regular appointments"],
+      typical_behaviors: ["Early scheduling", "Quick responses", "Follow instructions"],
+      engagement_strategies: ["Maintain current approach", "Offer advanced services"],
+      success_metrics: ["Satisfaction scores", "Referral rates"],
     });
-    
-    this.segmentationModels.set('moderate_engagement', {
-      segment_id: 'moderate_engagement',
-      segment_name: 'Moderate Engagement Patients',
-      characteristics: ['Average compliance', 'Responsive communication', 'Regular attendance'],
-      typical_behaviors: ['Standard scheduling', 'Moderate responses', 'Generally compliant'],
-      engagement_strategies: ['Gentle encouragement', 'Clear communication'],
-      success_metrics: ['Compliance rates', 'Appointment adherence']
+
+    this.segmentationModels.set("moderate_engagement", {
+      segment_id: "moderate_engagement",
+      segment_name: "Moderate Engagement Patients",
+      characteristics: ["Average compliance", "Responsive communication", "Regular attendance"],
+      typical_behaviors: ["Standard scheduling", "Moderate responses", "Generally compliant"],
+      engagement_strategies: ["Gentle encouragement", "Clear communication"],
+      success_metrics: ["Compliance rates", "Appointment adherence"],
     });
-    
-    this.segmentationModels.set('low_engagement', {
-      segment_id: 'low_engagement',
-      segment_name: 'Low Engagement Patients',
-      characteristics: ['Poor compliance', 'Delayed communication', 'Irregular attendance'],
-      typical_behaviors: ['Last-minute scheduling', 'Slow responses', 'Frequent cancellations'],
-      engagement_strategies: ['Intensive support', 'Multi-channel communication', 'Barrier removal'],
-      success_metrics: ['Engagement improvement', 'Compliance increase']
+
+    this.segmentationModels.set("low_engagement", {
+      segment_id: "low_engagement",
+      segment_name: "Low Engagement Patients",
+      characteristics: ["Poor compliance", "Delayed communication", "Irregular attendance"],
+      typical_behaviors: ["Last-minute scheduling", "Slow responses", "Frequent cancellations"],
+      engagement_strategies: [
+        "Intensive support",
+        "Multi-channel communication",
+        "Barrier removal",
+      ],
+      success_metrics: ["Engagement improvement", "Compliance increase"],
     });
   }
 
   private setupEngagementStrategies(): void {
-    console.log('Setting up engagement strategies...');
+    console.log("Setting up engagement strategies...");
   }
 
   // Additional helper methods with simplified implementations
   private getDefaultCommunicationStyle(): CommunicationStyle {
     return {
-      preferred_channels: ['email'],
-      response_time_pattern: 'same_day',
-      communication_frequency: 'moderate',
-      tone_preference: 'formal',
-      information_depth: 'detailed',
-      question_asking_tendency: 'moderate'
+      preferred_channels: ["email"],
+      response_time_pattern: "same_day",
+      communication_frequency: "moderate",
+      tone_preference: "formal",
+      information_depth: "detailed",
+      question_asking_tendency: "moderate",
     };
   }
 
   private getDefaultAppointmentBehavior(): AppointmentBehavior {
     return {
-      scheduling_pattern: 'flexible',
-      cancellation_tendency: 'occasional',
-      rescheduling_pattern: 'minimal',
-      punctuality: 'on_time',
-      no_show_risk: 'moderate',
-      preferred_times: []
+      scheduling_pattern: "flexible",
+      cancellation_tendency: "occasional",
+      rescheduling_pattern: "minimal",
+      punctuality: "on_time",
+      no_show_risk: "moderate",
+      preferred_times: [],
     };
   }
 
   private getDefaultTreatmentCompliance(): TreatmentCompliance {
     return {
-      adherence_level: 'good',
-      follow_up_compliance: 'good',
-      aftercare_adherence: 'good',
-      medication_compliance: 'good',
-      lifestyle_modification: 'cooperative',
-      compliance_barriers: []
+      adherence_level: "good",
+      follow_up_compliance: "good",
+      aftercare_adherence: "good",
+      medication_compliance: "good",
+      lifestyle_modification: "cooperative",
+      compliance_barriers: [],
     };
   }
 
   private getDefaultSegment(): PatientSegment {
-    return this.segmentationModels.get('moderate_engagement')!;
+    return this.segmentationModels.get("moderate_engagement")!;
   }
 
   // Simplified implementations for complex analysis methods
-  private analyzeTonePreference(communications: CommunicationLog[]): 'formal' | 'casual' | 'technical' | 'empathetic' {
-    return 'formal'; // Simplified
+  private analyzeTonePreference(
+    communications: CommunicationLog[],
+  ): "formal" | "casual" | "technical" | "empathetic" {
+    return "formal"; // Simplified
   }
 
-  private analyzeInformationDepth(communications: CommunicationLog[]): 'brief' | 'detailed' | 'comprehensive' {
-    return 'detailed'; // Simplified
+  private analyzeInformationDepth(
+    communications: CommunicationLog[],
+  ): "brief" | "detailed" | "comprehensive" {
+    return "detailed"; // Simplified
   }
 
-  private analyzeQuestionTendency(communications: CommunicationLog[]): 'low' | 'moderate' | 'high' {
-    return 'moderate'; // Simplified
+  private analyzeQuestionTendency(communications: CommunicationLog[]): "low" | "moderate" | "high" {
+    return "moderate"; // Simplified
   }
 
-  private analyzePunctuality(appointments: Appointment[]): 'early' | 'on_time' | 'slightly_late' | 'chronically_late' {
-    return 'on_time'; // Simplified
+  private analyzePunctuality(
+    appointments: Appointment[],
+  ): "early" | "on_time" | "slightly_late" | "chronically_late" {
+    return "on_time"; // Simplified
   }
 
   private analyzePreferredTimes(appointments: Appointment[]): TimePreference[] {
     return []; // Simplified
   }
 
-  private analyzeFollowUpCompliance(treatments: TreatmentHistory[]): 'poor' | 'fair' | 'good' | 'excellent' {
-    return 'good'; // Simplified
+  private analyzeFollowUpCompliance(
+    treatments: TreatmentHistory[],
+  ): "poor" | "fair" | "good" | "excellent" {
+    return "good"; // Simplified
   }
 
-  private analyzeAftercareAdherence(treatments: TreatmentHistory[]): 'poor' | 'fair' | 'good' | 'excellent' {
-    return 'good'; // Simplified
+  private analyzeAftercareAdherence(
+    treatments: TreatmentHistory[],
+  ): "poor" | "fair" | "good" | "excellent" {
+    return "good"; // Simplified
   }
 
-  private analyzeMedicationCompliance(treatments: TreatmentHistory[]): 'poor' | 'fair' | 'good' | 'excellent' {
-    return 'good'; // Simplified
+  private analyzeMedicationCompliance(
+    treatments: TreatmentHistory[],
+  ): "poor" | "fair" | "good" | "excellent" {
+    return "good"; // Simplified
   }
 
-  private analyzeLifestyleModification(treatments: TreatmentHistory[]): 'resistant' | 'selective' | 'cooperative' | 'proactive' {
-    return 'cooperative'; // Simplified
+  private analyzeLifestyleModification(
+    treatments: TreatmentHistory[],
+  ): "resistant" | "selective" | "cooperative" | "proactive" {
+    return "cooperative"; // Simplified
   }
 
   private identifyComplianceBarriers(treatments: TreatmentHistory[]): ComplianceBarrier[] {
     return []; // Simplified
   }
 
-  private analyzeDecisionMaking(patient: Patient, appointments: Appointment[], treatments: TreatmentHistory[]): DecisionMakingPattern {
+  private analyzeDecisionMaking(
+    patient: Patient,
+    appointments: Appointment[],
+    treatments: TreatmentHistory[],
+  ): DecisionMakingPattern {
     return {
-      decision_speed: 'deliberate',
-      research_tendency: 'moderate',
-      consultation_seeking: 'moderate',
-      price_sensitivity: 'moderate',
-      risk_tolerance: 'moderate',
-      influence_factors: []
+      decision_speed: "deliberate",
+      research_tendency: "moderate",
+      consultation_seeking: "moderate",
+      price_sensitivity: "moderate",
+      risk_tolerance: "moderate",
+      influence_factors: [],
     };
   }
 
-  private identifySatisfactionDrivers(treatments: TreatmentHistory[], communications: CommunicationLog[]): SatisfactionDriver[] {
+  private identifySatisfactionDrivers(
+    treatments: TreatmentHistory[],
+    communications: CommunicationLog[],
+  ): SatisfactionDriver[] {
     return [];
   }
 
-  private identifyBehavioralTriggers(appointments: Appointment[], communications: CommunicationLog[]): BehaviorTrigger[] {
+  private identifyBehavioralTriggers(
+    appointments: Appointment[],
+    communications: CommunicationLog[],
+  ): BehaviorTrigger[] {
     return [];
   }
 
-  private analyzeAppointmentEngagementPattern(appointments: Appointment[]): EngagementPattern | null {
+  private analyzeAppointmentEngagementPattern(
+    appointments: Appointment[],
+  ): EngagementPattern | null {
     return null; // Simplified
   }
 
-  private analyzeTreatmentEngagementPattern(treatments: TreatmentHistory[]): EngagementPattern | null {
+  private analyzeTreatmentEngagementPattern(
+    treatments: TreatmentHistory[],
+  ): EngagementPattern | null {
     return null; // Simplified
   }
 
-  private analyzeCommunicationEngagementPattern(communications: CommunicationLog[]): EngagementPattern | null {
+  private analyzeCommunicationEngagementPattern(
+    communications: CommunicationLog[],
+  ): EngagementPattern | null {
     return null; // Simplified
   }
 
-  private calculateAnalysisConfidence(appointments: Appointment[], treatments: TreatmentHistory[], communications: CommunicationLog[]): number {
+  private calculateAnalysisConfidence(
+    appointments: Appointment[],
+    treatments: TreatmentHistory[],
+    communications: CommunicationLog[],
+  ): number {
     // Calculate confidence based on data availability
     const dataPoints = appointments.length + treatments.length + communications.length;
-    return Math.min(0.95, 0.5 + (dataPoints * 0.02));
+    return Math.min(0.95, 0.5 + dataPoints * 0.02);
   }
 
-  private calculateNextAnalysisDate(profile: BehaviorProfile, risks: BehaviorRiskIndicator[]): Date {
+  private calculateNextAnalysisDate(
+    profile: BehaviorProfile,
+    risks: BehaviorRiskIndicator[],
+  ): Date {
     const nextDate = new Date();
-    
+
     // Determine analysis frequency based on risk level
-    const highRisks = risks.filter(r => r.severity === 'high' || r.severity === 'critical').length;
-    
+    const highRisks = risks.filter(
+      (r) => r.severity === "high" || r.severity === "critical",
+    ).length;
+
     if (highRisks > 0) {
       nextDate.setMonth(nextDate.getMonth() + 1); // Monthly for high risk
-    } else if (profile.engagement_level === 'low') {
+    } else if (profile.engagement_level === "low") {
       nextDate.setMonth(nextDate.getMonth() + 2); // Bi-monthly for low engagement
     } else {
       nextDate.setMonth(nextDate.getMonth() + 3); // Quarterly for stable patients
     }
-    
+
     return nextDate;
   }
 
   private storeBehaviorAnalysis(patientId: string, analysis: BehaviorAnalysis): void {
     const history = this.behaviorHistory.get(patientId) || [];
     history.push(analysis);
-    
+
     // Keep only last 12 analyses
     if (history.length > 12) {
       history.splice(0, history.length - 12);
     }
-    
+
     this.behaviorHistory.set(patientId, history);
   }
 
   // Additional prediction methods (simplified implementations)
-  private async predictAppointmentBehavior(analysis: BehaviorAnalysis, context: any): Promise<BehaviorPrediction> {
+  private async predictAppointmentBehavior(
+    analysis: BehaviorAnalysis,
+    context: any,
+  ): Promise<BehaviorPrediction> {
     return {
-      prediction_type: 'appointment_adherence',
+      prediction_type: "appointment_adherence",
       probability: 0.8,
-      timeframe: '30 days',
+      timeframe: "30 days",
       confidence_level: 0.85,
-      influencing_factors: ['Historical patterns', 'Current engagement'],
-      prevention_strategies: ['Confirmation calls', 'Flexible scheduling']
+      influencing_factors: ["Historical patterns", "Current engagement"],
+      prevention_strategies: ["Confirmation calls", "Flexible scheduling"],
     };
   }
 
-  private async predictTreatmentCompliance(analysis: BehaviorAnalysis, context: any): Promise<BehaviorPrediction> {
+  private async predictTreatmentCompliance(
+    analysis: BehaviorAnalysis,
+    context: any,
+  ): Promise<BehaviorPrediction> {
     return {
-      prediction_type: 'treatment_compliance',
+      prediction_type: "treatment_compliance",
       probability: 0.75,
-      timeframe: '60 days',
+      timeframe: "60 days",
       confidence_level: 0.8,
-      influencing_factors: ['Compliance history', 'Treatment complexity'],
-      prevention_strategies: ['Enhanced education', 'Support programs']
+      influencing_factors: ["Compliance history", "Treatment complexity"],
+      prevention_strategies: ["Enhanced education", "Support programs"],
     };
   }
 
-  private async predictCommunicationBehavior(analysis: BehaviorAnalysis, context: any): Promise<BehaviorPrediction> {
+  private async predictCommunicationBehavior(
+    analysis: BehaviorAnalysis,
+    context: any,
+  ): Promise<BehaviorPrediction> {
     return {
-      prediction_type: 'communication_responsiveness',
+      prediction_type: "communication_responsiveness",
       probability: 0.7,
-      timeframe: '14 days',
+      timeframe: "14 days",
       confidence_level: 0.75,
-      influencing_factors: ['Communication style', 'Channel preferences'],
-      prevention_strategies: ['Multi-channel approach', 'Personalized messaging']
+      influencing_factors: ["Communication style", "Channel preferences"],
+      prevention_strategies: ["Multi-channel approach", "Personalized messaging"],
     };
   }
 
-  private async predictSatisfactionBehavior(analysis: BehaviorAnalysis, context: any): Promise<BehaviorPrediction> {
+  private async predictSatisfactionBehavior(
+    analysis: BehaviorAnalysis,
+    context: any,
+  ): Promise<BehaviorPrediction> {
     return {
-      prediction_type: 'satisfaction_outcome',
+      prediction_type: "satisfaction_outcome",
       probability: 0.85,
-      timeframe: '90 days',
+      timeframe: "90 days",
       confidence_level: 0.9,
-      influencing_factors: ['Satisfaction drivers', 'Treatment outcomes'],
-      prevention_strategies: ['Proactive communication', 'Expectation management']
+      influencing_factors: ["Satisfaction drivers", "Treatment outcomes"],
+      prevention_strategies: ["Proactive communication", "Expectation management"],
     };
   }
 
   // Scoring methods
   private calculateEngagementScore(profile: BehaviorProfile): number {
     const scores = {
-      'low': 0.25,
-      'moderate': 0.5,
-      'high': 0.75,
-      'very_high': 1.0
+      low: 0.25,
+      moderate: 0.5,
+      high: 0.75,
+      very_high: 1.0,
     };
     return scores[profile.engagement_level];
   }
 
   private calculateComplianceScore(profile: BehaviorProfile): number {
     const scores = {
-      'poor': 0.25,
-      'fair': 0.5,
-      'good': 0.75,
-      'excellent': 1.0
+      poor: 0.25,
+      fair: 0.5,
+      good: 0.75,
+      excellent: 1.0,
     };
     return scores[profile.treatment_compliance.adherence_level];
   }
 
   private calculateCommunicationScore(profile: BehaviorProfile): number {
     const scores = {
-      'delayed': 0.25,
-      'inconsistent': 0.25,
-      'same_day': 0.75,
-      'immediate': 1.0
+      delayed: 0.25,
+      inconsistent: 0.25,
+      same_day: 0.75,
+      immediate: 1.0,
     };
     return scores[profile.communication_style.response_time_pattern] || 0.5;
   }
 
   private calculateBehaviorRiskScore(risks: BehaviorRiskIndicator[]): number {
     if (risks.length === 0) return 0;
-    
+
     const totalRisk = risks.reduce((sum, risk) => {
-      const severityScores = { 'low': 0.25, 'moderate': 0.5, 'high': 0.75, 'critical': 1.0 };
-      return sum + (severityScores[risk.severity] * risk.probability);
+      const severityScores = { low: 0.25, moderate: 0.5, high: 0.75, critical: 1.0 };
+      return sum + severityScores[risk.severity] * risk.probability;
     }, 0);
-    
+
     return totalRisk / risks.length;
   }
 
-  private determineSegment(engagement: number, compliance: number, communication: number, risk: number): string {
+  private determineSegment(
+    engagement: number,
+    compliance: number,
+    communication: number,
+    risk: number,
+  ): string {
     const overallScore = (engagement + compliance + communication - risk) / 3;
-    
-    if (overallScore >= 0.75) return 'high_engagement';
-    if (overallScore >= 0.5) return 'moderate_engagement';
-    return 'low_engagement';
+
+    if (overallScore >= 0.75) return "high_engagement";
+    if (overallScore >= 0.5) return "moderate_engagement";
+    return "low_engagement";
   }
 
   // Strategy building methods (simplified)
@@ -1036,23 +1128,23 @@ export class AIBehaviorAnalysisEngine {
       channels: style.preferred_channels,
       frequency: style.communication_frequency,
       tone: style.tone_preference,
-      timing: 'optimal_based_on_response_pattern'
+      timing: "optimal_based_on_response_pattern",
     };
   }
 
   private buildAppointmentStrategy(behavior: AppointmentBehavior): any {
     return {
       scheduling_approach: behavior.scheduling_pattern,
-      reminder_frequency: behavior.no_show_risk === 'high' ? 'intensive' : 'standard',
-      flexibility_level: 'high'
+      reminder_frequency: behavior.no_show_risk === "high" ? "intensive" : "standard",
+      flexibility_level: "high",
     };
   }
 
   private buildTreatmentStrategy(compliance: TreatmentCompliance): any {
     return {
-      education_level: compliance.adherence_level === 'poor' ? 'comprehensive' : 'standard',
-      support_intensity: compliance.adherence_level === 'poor' ? 'high' : 'moderate',
-      monitoring_frequency: 'based_on_compliance_level'
+      education_level: compliance.adherence_level === "poor" ? "comprehensive" : "standard",
+      support_intensity: compliance.adherence_level === "poor" ? "high" : "moderate",
+      monitoring_frequency: "based_on_compliance_level",
     };
   }
 
@@ -1062,9 +1154,9 @@ export class AIBehaviorAnalysisEngine {
 
   private createMonitoringPlan(risks: BehaviorRiskIndicator[]): any {
     return {
-      frequency: risks.length > 0 ? 'weekly' : 'monthly',
-      metrics: ['engagement_level', 'compliance_rate', 'satisfaction_score'],
-      alerts: risks.map(r => r.risk_type)
+      frequency: risks.length > 0 ? "weekly" : "monthly",
+      metrics: ["engagement_level", "compliance_rate", "satisfaction_score"],
+      alerts: risks.map((r) => r.risk_type),
     };
   }
 
@@ -1078,34 +1170,34 @@ export class AIBehaviorAnalysisEngine {
   }
 
   private calculateEngagementMetrics(communications: CommunicationLog[]): any {
-    return { engagement_score: 0.75, interaction_frequency: 'moderate' };
+    return { engagement_score: 0.75, interaction_frequency: "moderate" };
   }
 
   private analyzeChannelEffectiveness(communications: CommunicationLog[], outcomes: any[]): any {
-    return { most_effective: 'email', least_effective: 'sms' };
+    return { most_effective: "email", least_effective: "sms" };
   }
 
   private analyzeOptimalTiming(communications: CommunicationLog[]): any {
-    return { best_time: '10:00 AM', best_day: 'Tuesday' };
+    return { best_time: "10:00 AM", best_day: "Tuesday" };
   }
 
   private analyzeContentEffectiveness(communications: CommunicationLog[], outcomes: any[]): any {
-    return { effective_content_types: ['educational', 'reminder'] };
+    return { effective_content_types: ["educational", "reminder"] };
   }
 
   private generateCommunicationRecommendations(communications: CommunicationLog[]): string[] {
-    return ['Use preferred channels', 'Optimize timing', 'Personalize content'];
+    return ["Use preferred channels", "Optimize timing", "Personalize content"];
   }
 
   // Anomaly detection methods
   private calculateBaselineEngagement(history: BehaviorAnalysis[]): number {
     if (history.length === 0) return 0.5;
-    
-    const scores = history.map(h => {
-      const scores = { 'low': 0.25, 'moderate': 0.5, 'high': 0.75, 'very_high': 1.0 };
+
+    const scores = history.map((h) => {
+      const scores = { low: 0.25, moderate: 0.5, high: 0.75, very_high: 1.0 };
       return scores[h.behavior_profile.engagement_level];
     });
-    
+
     return scores.reduce((sum, score) => sum + score, 0) / scores.length;
   }
 
@@ -1113,18 +1205,18 @@ export class AIBehaviorAnalysisEngine {
     return 0.6; // Simplified
   }
 
-  private calculateAnomalySeverity(current: number, baseline: number): 'low' | 'moderate' | 'high' {
+  private calculateAnomalySeverity(current: number, baseline: number): "low" | "moderate" | "high" {
     const deviation = Math.abs(current - baseline);
-    if (deviation > 0.4) return 'high';
-    if (deviation > 0.2) return 'moderate';
-    return 'low';
+    if (deviation > 0.4) return "high";
+    if (deviation > 0.2) return "moderate";
+    return "low";
   }
 
   private getEngagementAnomalyRecommendations(current: number, baseline: number): string[] {
     if (current < baseline) {
-      return ['Increase engagement efforts', 'Investigate causes', 'Implement intervention'];
+      return ["Increase engagement efforts", "Investigate causes", "Implement intervention"];
     }
-    return ['Maintain current approach', 'Monitor for sustainability'];
+    return ["Maintain current approach", "Monitor for sustainability"];
   }
 
   private detectAppointmentAnomalies(recent: any, history: BehaviorAnalysis[]): any[] {

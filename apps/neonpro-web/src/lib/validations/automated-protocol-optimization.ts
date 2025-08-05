@@ -1,4 +1,4 @@
-﻿import { z } from 'zod';
+import type { z } from "zod";
 
 export const createProtocolExperimentSchema = z.object({
   name: z.string().min(1),
@@ -7,7 +7,7 @@ export const createProtocolExperimentSchema = z.object({
   parameters: z.record(z.any()),
   targetMetrics: z.array(z.string()),
   duration: z.number().positive(),
-  active: z.boolean().default(true)
+  active: z.boolean().default(true),
 });
 
 export const updateProtocolExperimentSchema = createProtocolExperimentSchema.partial();
@@ -18,7 +18,7 @@ export const createProtocolFeedbackSchema = z.object({
   rating: z.number().min(1).max(5),
   comment: z.string().optional(),
   metrics: z.record(z.number()),
-  timestamp: z.date().default(() => new Date())
+  timestamp: z.date().default(() => new Date()),
 });
 
 export const updateProtocolFeedbackSchema = createProtocolFeedbackSchema.partial();
@@ -29,7 +29,7 @@ export const createProtocolOutcomeSchema = z.object({
   success: z.boolean(),
   analysis: z.string(),
   recommendations: z.array(z.string()),
-  timestamp: z.date().default(() => new Date())
+  timestamp: z.date().default(() => new Date()),
 });
 
 export const createProtocolVersionSchema = z.object({
@@ -38,7 +38,7 @@ export const createProtocolVersionSchema = z.object({
   changes: z.string(),
   parameters: z.record(z.any()),
   active: z.boolean().default(false),
-  createdBy: z.string().uuid()
+  createdBy: z.string().uuid(),
 });
 
 export const updateProtocolVersionSchema = createProtocolVersionSchema.partial();

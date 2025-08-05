@@ -1,14 +1,20 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Skeleton } from '@/components/ui/skeleton';
-import {
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Progress } from "@/components/ui/progress";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Skeleton } from "@/components/ui/skeleton";
+import type {
   TrendingUp,
   TrendingDown,
   AlertTriangle,
@@ -26,26 +32,26 @@ import {
   Star,
   Activity,
   PieChart,
-  LineChart
-} from 'lucide-react';
+  LineChart,
+} from "lucide-react";
 
 interface FinancialInsightsProps {
   insights?: any;
   analytics?: any;
   loading?: boolean;
-  timeframe?: 'week' | 'month' | 'quarter' | 'year';
+  timeframe?: "week" | "month" | "quarter" | "year";
   className?: string;
 }
 
 interface Insight {
   id: string;
-  type: 'opportunity' | 'risk' | 'trend' | 'recommendation' | 'alert';
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  type: "opportunity" | "risk" | "trend" | "recommendation" | "alert";
+  priority: "low" | "medium" | "high" | "critical";
   title: string;
   description: string;
   impact: number; // 1-10 scale
   confidence: number; // 0-100 percentage
-  category: 'revenue' | 'expenses' | 'efficiency' | 'growth' | 'risk';
+  category: "revenue" | "expenses" | "efficiency" | "growth" | "risk";
   actionable: boolean;
   actions?: string[];
   metrics?: Record<string, any>;
@@ -55,10 +61,10 @@ interface Insight {
 interface Trend {
   id: string;
   metric: string;
-  direction: 'up' | 'down' | 'stable';
+  direction: "up" | "down" | "stable";
   change: number;
   period: string;
-  significance: 'low' | 'medium' | 'high';
+  significance: "low" | "medium" | "high";
   forecast?: {
     nextPeriod: number;
     confidence: number;
@@ -70,9 +76,9 @@ interface Recommendation {
   title: string;
   description: string;
   category: string;
-  priority: 'low' | 'medium' | 'high';
-  effort: 'low' | 'medium' | 'high';
-  impact: 'low' | 'medium' | 'high';
+  priority: "low" | "medium" | "high";
+  effort: "low" | "medium" | "high";
+  impact: "low" | "medium" | "high";
   timeline: string;
   steps: string[];
   expectedOutcome: string;
@@ -82,211 +88,218 @@ export function FinancialInsights({
   insights,
   analytics,
   loading = false,
-  timeframe = 'month',
-  className = ''
+  timeframe = "month",
+  className = "",
 }: FinancialInsightsProps) {
-  const [activeTab, setActiveTab] = useState<'overview' | 'trends' | 'recommendations' | 'alerts'>('overview');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [activeTab, setActiveTab] = useState<"overview" | "trends" | "recommendations" | "alerts">(
+    "overview",
+  );
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   // Mock data for demonstration
   const mockInsights: Insight[] = [
     {
-      id: '1',
-      type: 'opportunity',
-      priority: 'high',
-      title: 'Oportunidade de Crescimento em Ortodontia',
-      description: 'Análise mostra 35% de aumento na demanda por tratamentos ortodônticos. Considere expandir este serviço.',
+      id: "1",
+      type: "opportunity",
+      priority: "high",
+      title: "Oportunidade de Crescimento em Ortodontia",
+      description:
+        "Análise mostra 35% de aumento na demanda por tratamentos ortodônticos. Considere expandir este serviço.",
       impact: 8,
       confidence: 87,
-      category: 'revenue',
+      category: "revenue",
       actionable: true,
       actions: [
-        'Contratar ortodontista especializado',
-        'Investir em equipamentos ortodônticos',
-        'Criar campanha de marketing direcionada'
+        "Contratar ortodontista especializado",
+        "Investir em equipamentos ortodônticos",
+        "Criar campanha de marketing direcionada",
       ],
       metrics: {
         potentialRevenue: 45000,
         demandIncrease: 35,
-        marketShare: 12
+        marketShare: 12,
       },
-      createdAt: '2024-01-25T10:00:00Z'
+      createdAt: "2024-01-25T10:00:00Z",
     },
     {
-      id: '2',
-      type: 'risk',
-      priority: 'medium',
-      title: 'Aumento nos Custos Operacionais',
-      description: 'Custos operacionais aumentaram 18% nos últimos 3 meses. Revisar fornecedores e processos.',
+      id: "2",
+      type: "risk",
+      priority: "medium",
+      title: "Aumento nos Custos Operacionais",
+      description:
+        "Custos operacionais aumentaram 18% nos últimos 3 meses. Revisar fornecedores e processos.",
       impact: 6,
       confidence: 92,
-      category: 'expenses',
+      category: "expenses",
       actionable: true,
       actions: [
-        'Renegociar contratos com fornecedores',
-        'Otimizar processos operacionais',
-        'Implementar controle de custos mais rigoroso'
+        "Renegociar contratos com fornecedores",
+        "Otimizar processos operacionais",
+        "Implementar controle de custos mais rigoroso",
       ],
       metrics: {
         costIncrease: 18,
-        affectedCategories: ['materiais', 'energia', 'manutenção']
+        affectedCategories: ["materiais", "energia", "manutenção"],
       },
-      createdAt: '2024-01-24T14:30:00Z'
+      createdAt: "2024-01-24T14:30:00Z",
     },
     {
-      id: '3',
-      type: 'trend',
-      priority: 'medium',
-      title: 'Tendência de Crescimento na Satisfação',
-      description: 'Satisfação do paciente aumentou consistentemente, atingindo 4.7/5. Manter padrão de qualidade.',
+      id: "3",
+      type: "trend",
+      priority: "medium",
+      title: "Tendência de Crescimento na Satisfação",
+      description:
+        "Satisfação do paciente aumentou consistentemente, atingindo 4.7/5. Manter padrão de qualidade.",
       impact: 7,
       confidence: 95,
-      category: 'growth',
+      category: "growth",
       actionable: false,
       metrics: {
         currentRating: 4.7,
         improvement: 0.3,
-        period: '3 meses'
+        period: "3 meses",
       },
-      createdAt: '2024-01-23T09:15:00Z'
+      createdAt: "2024-01-23T09:15:00Z",
     },
     {
-      id: '4',
-      type: 'alert',
-      priority: 'critical',
-      title: 'Queda na Taxa de Conversão',
-      description: 'Taxa de conversão de consultas para tratamentos caiu 22% este mês. Ação imediata necessária.',
+      id: "4",
+      type: "alert",
+      priority: "critical",
+      title: "Queda na Taxa de Conversão",
+      description:
+        "Taxa de conversão de consultas para tratamentos caiu 22% este mês. Ação imediata necessária.",
       impact: 9,
       confidence: 88,
-      category: 'revenue',
+      category: "revenue",
       actionable: true,
       actions: [
-        'Revisar processo de consulta',
-        'Treinar equipe em técnicas de conversão',
-        'Analisar feedback dos pacientes'
+        "Revisar processo de consulta",
+        "Treinar equipe em técnicas de conversão",
+        "Analisar feedback dos pacientes",
       ],
       metrics: {
         conversionRate: 68,
         previousRate: 87,
-        decline: 22
+        decline: 22,
       },
-      createdAt: '2024-01-25T16:45:00Z'
-    }
+      createdAt: "2024-01-25T16:45:00Z",
+    },
   ];
 
   const mockTrends: Trend[] = [
     {
-      id: '1',
-      metric: 'Receita Mensal',
-      direction: 'up',
+      id: "1",
+      metric: "Receita Mensal",
+      direction: "up",
       change: 12.5,
-      period: 'últimos 3 meses',
-      significance: 'high',
+      period: "últimos 3 meses",
+      significance: "high",
       forecast: {
         nextPeriod: 15.2,
-        confidence: 85
-      }
+        confidence: 85,
+      },
     },
     {
-      id: '2',
-      metric: 'Número de Pacientes',
-      direction: 'up',
+      id: "2",
+      metric: "Número de Pacientes",
+      direction: "up",
       change: 8.3,
-      period: 'último mês',
-      significance: 'medium',
+      period: "último mês",
+      significance: "medium",
       forecast: {
         nextPeriod: 6.7,
-        confidence: 78
-      }
+        confidence: 78,
+      },
     },
     {
-      id: '3',
-      metric: 'Ticket Médio',
-      direction: 'down',
+      id: "3",
+      metric: "Ticket Médio",
+      direction: "down",
       change: -3.2,
-      period: 'últimas 2 semanas',
-      significance: 'low',
+      period: "últimas 2 semanas",
+      significance: "low",
       forecast: {
         nextPeriod: -1.8,
-        confidence: 65
-      }
+        confidence: 65,
+      },
     },
     {
-      id: '4',
-      metric: 'Taxa de Cancelamento',
-      direction: 'stable',
+      id: "4",
+      metric: "Taxa de Cancelamento",
+      direction: "stable",
       change: 0.5,
-      period: 'último trimestre',
-      significance: 'low'
-    }
+      period: "último trimestre",
+      significance: "low",
+    },
   ];
 
   const mockRecommendations: Recommendation[] = [
     {
-      id: '1',
-      title: 'Implementar Sistema de Fidelidade',
-      description: 'Criar programa de pontos para incentivar retorno e indicações de pacientes.',
-      category: 'Retenção',
-      priority: 'high',
-      effort: 'medium',
-      impact: 'high',
-      timeline: '2-3 meses',
+      id: "1",
+      title: "Implementar Sistema de Fidelidade",
+      description: "Criar programa de pontos para incentivar retorno e indicações de pacientes.",
+      category: "Retenção",
+      priority: "high",
+      effort: "medium",
+      impact: "high",
+      timeline: "2-3 meses",
       steps: [
-        'Definir estrutura de pontos e recompensas',
-        'Desenvolver sistema de tracking',
-        'Criar campanha de lançamento',
-        'Treinar equipe no novo programa'
+        "Definir estrutura de pontos e recompensas",
+        "Desenvolver sistema de tracking",
+        "Criar campanha de lançamento",
+        "Treinar equipe no novo programa",
       ],
-      expectedOutcome: 'Aumento de 25% na retenção de pacientes'
+      expectedOutcome: "Aumento de 25% na retenção de pacientes",
     },
     {
-      id: '2',
-      title: 'Otimizar Agendamento Online',
-      description: 'Melhorar interface e processo de agendamento para reduzir abandono.',
-      category: 'Eficiência',
-      priority: 'medium',
-      effort: 'low',
-      impact: 'medium',
-      timeline: '3-4 semanas',
+      id: "2",
+      title: "Otimizar Agendamento Online",
+      description: "Melhorar interface e processo de agendamento para reduzir abandono.",
+      category: "Eficiência",
+      priority: "medium",
+      effort: "low",
+      impact: "medium",
+      timeline: "3-4 semanas",
       steps: [
-        'Analisar pontos de abandono atual',
-        'Redesenhar fluxo de agendamento',
-        'Implementar confirmação automática',
-        'Adicionar lembretes por WhatsApp'
+        "Analisar pontos de abandono atual",
+        "Redesenhar fluxo de agendamento",
+        "Implementar confirmação automática",
+        "Adicionar lembretes por WhatsApp",
       ],
-      expectedOutcome: 'Redução de 40% no abandono de agendamento'
+      expectedOutcome: "Redução de 40% no abandono de agendamento",
     },
     {
-      id: '3',
-      title: 'Expandir Horários de Atendimento',
-      description: 'Oferecer horários noturnos e fins de semana para aumentar capacidade.',
-      category: 'Crescimento',
-      priority: 'medium',
-      effort: 'high',
-      impact: 'high',
-      timeline: '1-2 meses',
+      id: "3",
+      title: "Expandir Horários de Atendimento",
+      description: "Oferecer horários noturnos e fins de semana para aumentar capacidade.",
+      category: "Crescimento",
+      priority: "medium",
+      effort: "high",
+      impact: "high",
+      timeline: "1-2 meses",
       steps: [
-        'Pesquisar demanda por horários alternativos',
-        'Contratar profissionais adicionais',
-        'Ajustar infraestrutura e segurança',
-        'Lançar novos horários gradualmente'
+        "Pesquisar demanda por horários alternativos",
+        "Contratar profissionais adicionais",
+        "Ajustar infraestrutura e segurança",
+        "Lançar novos horários gradualmente",
       ],
-      expectedOutcome: 'Aumento de 30% na capacidade de atendimento'
-    }
+      expectedOutcome: "Aumento de 30% na capacidade de atendimento",
+    },
   ];
 
   // Filter insights by category
-  const filteredInsights = selectedCategory === 'all' 
-    ? mockInsights 
-    : mockInsights.filter(insight => insight.category === selectedCategory);
+  const filteredInsights =
+    selectedCategory === "all"
+      ? mockInsights
+      : mockInsights.filter((insight) => insight.category === selectedCategory);
 
   // Get priority color
   const getPriorityColor = (priority: string) => {
     const colors = {
-      low: 'text-green-600 bg-green-50 border-green-200',
-      medium: 'text-yellow-600 bg-yellow-50 border-yellow-200',
-      high: 'text-orange-600 bg-orange-50 border-orange-200',
-      critical: 'text-red-600 bg-red-50 border-red-200'
+      low: "text-green-600 bg-green-50 border-green-200",
+      medium: "text-yellow-600 bg-yellow-50 border-yellow-200",
+      high: "text-orange-600 bg-orange-50 border-orange-200",
+      critical: "text-red-600 bg-red-50 border-red-200",
     };
     return colors[priority as keyof typeof colors] || colors.medium;
   };
@@ -298,37 +311,37 @@ export function FinancialInsights({
       risk: AlertTriangle,
       trend: TrendingUp,
       recommendation: Target,
-      alert: Zap
+      alert: Zap,
     };
     return icons[type as keyof typeof icons] || Info;
   };
 
   // Get trend icon and color
   const getTrendDisplay = (direction: string, change: number) => {
-    if (direction === 'up') {
+    if (direction === "up") {
       return {
         icon: TrendingUp,
-        color: 'text-green-600',
-        prefix: '+'
+        color: "text-green-600",
+        prefix: "+",
       };
-    } else if (direction === 'down') {
+    } else if (direction === "down") {
       return {
         icon: TrendingDown,
-        color: 'text-red-600',
-        prefix: ''
+        color: "text-red-600",
+        prefix: "",
       };
     } else {
       return {
         icon: Activity,
-        color: 'text-gray-600',
-        prefix: ''
+        color: "text-gray-600",
+        prefix: "",
       };
     }
   };
 
   // Format percentage
   const formatPercentage = (value: number): string => {
-    return `${value > 0 ? '+' : ''}${value.toFixed(1)}%`;
+    return `${value > 0 ? "+" : ""}${value.toFixed(1)}%`;
   };
 
   // Render loading state
@@ -365,7 +378,7 @@ export function FinancialInsights({
             Análises inteligentes e recomendações baseadas em IA
           </p>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="flex items-center gap-1">
             <Zap className="h-3 w-3" />
@@ -387,7 +400,7 @@ export function FinancialInsights({
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
@@ -399,7 +412,7 @@ export function FinancialInsights({
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
@@ -411,7 +424,7 @@ export function FinancialInsights({
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
@@ -442,9 +455,9 @@ export function FinancialInsights({
               <Zap className="h-5 w-5 text-red-600" />
               Alertas Críticos
             </h3>
-            
+
             {mockInsights
-              .filter(insight => insight.priority === 'critical')
+              .filter((insight) => insight.priority === "critical")
               .map((insight) => {
                 const Icon = getInsightIcon(insight.type);
                 return (
@@ -458,7 +471,9 @@ export function FinancialInsights({
                           <strong>Ações recomendadas:</strong>
                           <ul className="list-disc list-inside mt-1">
                             {insight.actions.slice(0, 2).map((action, index) => (
-                              <li key={index} className="text-sm">{action}</li>
+                              <li key={index} className="text-sm">
+                                {action}
+                              </li>
                             ))}
                           </ul>
                         </div>
@@ -466,17 +481,16 @@ export function FinancialInsights({
                     </AlertDescription>
                   </Alert>
                 );
-              })
-            }
+              })}
           </div>
 
           {/* Top Insights */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Principais Insights</h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {mockInsights
-                .filter(insight => insight.priority !== 'critical')
+                .filter((insight) => insight.priority !== "critical")
                 .slice(0, 4)
                 .map((insight) => {
                   const Icon = getInsightIcon(insight.type);
@@ -495,7 +509,7 @@ export function FinancialInsights({
                       </CardHeader>
                       <CardContent>
                         <p className="text-muted-foreground mb-4">{insight.description}</p>
-                        
+
                         <div className="space-y-3">
                           <div className="flex items-center justify-between text-sm">
                             <span>Impacto:</span>
@@ -504,12 +518,12 @@ export function FinancialInsights({
                               <span>{insight.impact}/10</span>
                             </div>
                           </div>
-                          
+
                           <div className="flex items-center justify-between text-sm">
                             <span>Confiança:</span>
                             <span>{insight.confidence}%</span>
                           </div>
-                          
+
                           {insight.actionable && (
                             <Button size="sm" className="w-full">
                               Ver Ações
@@ -520,8 +534,7 @@ export function FinancialInsights({
                       </CardContent>
                     </Card>
                   );
-                })
-              }
+                })}
             </div>
           </div>
         </TabsContent>
@@ -530,13 +543,17 @@ export function FinancialInsights({
         <TabsContent value="trends" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {mockTrends.map((trend) => {
-              const { icon: TrendIcon, color, prefix } = getTrendDisplay(trend.direction, trend.change);
+              const {
+                icon: TrendIcon,
+                color,
+                prefix,
+              } = getTrendDisplay(trend.direction, trend.change);
               return (
                 <Card key={trend.id}>
                   <CardHeader>
                     <CardTitle className="flex items-center justify-between">
                       <span>{trend.metric}</span>
-                      <Badge variant={trend.significance === 'high' ? 'default' : 'outline'}>
+                      <Badge variant={trend.significance === "high" ? "default" : "outline"}>
                         {trend.significance}
                       </Badge>
                     </CardTitle>
@@ -547,14 +564,13 @@ export function FinancialInsights({
                         <TrendIcon className={`h-6 w-6 ${color}`} />
                         <div>
                           <div className={`text-2xl font-bold ${color}`}>
-                            {prefix}{Math.abs(trend.change).toFixed(1)}%
+                            {prefix}
+                            {Math.abs(trend.change).toFixed(1)}%
                           </div>
-                          <div className="text-sm text-muted-foreground">
-                            {trend.period}
-                          </div>
+                          <div className="text-sm text-muted-foreground">{trend.period}</div>
                         </div>
                       </div>
-                      
+
                       {trend.forecast && (
                         <div className="border-t pt-3">
                           <div className="text-sm font-medium mb-2">Previsão próximo período:</div>
@@ -593,9 +609,7 @@ export function FinancialInsights({
                     </div>
                     <div className="flex gap-2">
                       <Badge variant="outline">{rec.category}</Badge>
-                      <Badge className={getPriorityColor(rec.priority)}>
-                        {rec.priority}
-                      </Badge>
+                      <Badge className={getPriorityColor(rec.priority)}>{rec.priority}</Badge>
                     </div>
                   </div>
                 </CardHeader>
@@ -615,7 +629,7 @@ export function FinancialInsights({
                         <div className="text-muted-foreground">{rec.timeline}</div>
                       </div>
                     </div>
-                    
+
                     <div>
                       <div className="font-medium mb-2">Passos de implementação:</div>
                       <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground">
@@ -624,15 +638,13 @@ export function FinancialInsights({
                         ))}
                       </ol>
                     </div>
-                    
+
                     <div className="bg-green-50 border border-green-200 rounded-lg p-3">
                       <div className="font-medium text-green-800 mb-1">Resultado esperado:</div>
                       <div className="text-green-700 text-sm">{rec.expectedOutcome}</div>
                     </div>
-                    
-                    <Button className="w-full">
-                      Implementar Recomendação
-                    </Button>
+
+                    <Button className="w-full">Implementar Recomendação</Button>
                   </div>
                 </CardContent>
               </Card>
@@ -644,47 +656,54 @@ export function FinancialInsights({
         <TabsContent value="alerts" className="space-y-6">
           <div className="space-y-4">
             {mockInsights
-              .filter(insight => insight.type === 'alert' || insight.priority === 'critical')
+              .filter((insight) => insight.type === "alert" || insight.priority === "critical")
               .map((insight) => {
                 const Icon = getInsightIcon(insight.type);
                 return (
-                  <Alert key={insight.id} className={`border-l-4 ${
-                    insight.priority === 'critical' ? 'border-l-red-500 bg-red-50' :
-                    insight.priority === 'high' ? 'border-l-orange-500 bg-orange-50' :
-                    'border-l-yellow-500 bg-yellow-50'
-                  }`}>
+                  <Alert
+                    key={insight.id}
+                    className={`border-l-4 ${
+                      insight.priority === "critical"
+                        ? "border-l-red-500 bg-red-50"
+                        : insight.priority === "high"
+                          ? "border-l-orange-500 bg-orange-50"
+                          : "border-l-yellow-500 bg-yellow-50"
+                    }`}
+                  >
                     <Icon className="h-4 w-4" />
                     <AlertTitle>{insight.title}</AlertTitle>
                     <AlertDescription>
                       <div className="space-y-3">
                         <p>{insight.description}</p>
-                        
+
                         {insight.metrics && (
                           <div className="grid grid-cols-2 gap-4 text-sm">
                             {Object.entries(insight.metrics).map(([key, value]) => (
                               <div key={key}>
                                 <span className="font-medium">{key}: </span>
-                                <span>{typeof value === 'number' ? value.toLocaleString() : value}</span>
+                                <span>
+                                  {typeof value === "number" ? value.toLocaleString() : value}
+                                </span>
                               </div>
                             ))}
                           </div>
                         )}
-                        
+
                         {insight.actionable && insight.actions && (
                           <div>
                             <div className="font-medium mb-2">Ações recomendadas:</div>
                             <ul className="list-disc list-inside space-y-1">
                               {insight.actions.map((action, index) => (
-                                <li key={index} className="text-sm">{action}</li>
+                                <li key={index} className="text-sm">
+                                  {action}
+                                </li>
                               ))}
                             </ul>
                           </div>
                         )}
-                        
+
                         <div className="flex gap-2 pt-2">
-                          <Button size="sm">
-                            Tomar Ação
-                          </Button>
+                          <Button size="sm">Tomar Ação</Button>
                           <Button size="sm" variant="outline">
                             Marcar como Resolvido
                           </Button>
@@ -693,8 +712,7 @@ export function FinancialInsights({
                     </AlertDescription>
                   </Alert>
                 );
-              })
-            }
+              })}
           </div>
         </TabsContent>
       </Tabs>

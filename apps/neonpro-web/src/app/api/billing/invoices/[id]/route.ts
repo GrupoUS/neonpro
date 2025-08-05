@@ -3,18 +3,13 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 const UpdateInvoiceSchema = z.object({
-  status: z
-    .enum(["draft", "pending", "paid", "overdue", "cancelled"])
-    .optional(),
+  status: z.enum(["draft", "pending", "paid", "overdue", "cancelled"]).optional(),
   due_date: z.string().optional(),
   notes: z.string().optional(),
   payment_terms: z.string().optional(),
 });
 
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const supabase = await createClient();
 
@@ -64,7 +59,7 @@ export async function GET(
           transaction_id,
           notes
         )
-      `
+      `,
       )
       .eq("id", resolvedParams.id)
       .single();
@@ -76,17 +71,11 @@ export async function GET(
     return NextResponse.json({ invoice });
   } catch (error) {
     console.error("API Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const supabase = await createClient();
 
@@ -126,16 +115,13 @@ export async function PUT(
           total_amount,
           service:services(name)
         )
-      `
+      `,
       )
       .single();
 
     if (error) {
       console.error("Error updating invoice:", error);
-      return NextResponse.json(
-        { error: "Failed to update invoice" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to update invoice" }, { status: 500 });
     }
 
     return NextResponse.json({ invoice });
@@ -143,22 +129,16 @@ export async function PUT(
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Validation failed", details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error("API Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const supabase = await createClient();
 
@@ -180,10 +160,7 @@ export async function DELETE(
 
     if (paymentError) {
       console.error("Error checking invoice payments:", paymentError);
-      return NextResponse.json(
-        { error: "Failed to check invoice payments" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to check invoice payments" }, { status: 500 });
     }
 
     if (payments && payments.length > 0) {
@@ -197,10 +174,7 @@ export async function DELETE(
 
       if (error) {
         console.error("Error cancelling invoice:", error);
-        return NextResponse.json(
-          { error: "Failed to cancel invoice" },
-          { status: 500 }
-        );
+        return NextResponse.json({ error: "Failed to cancel invoice" }, { status: 500 });
       }
 
       return NextResponse.json({
@@ -217,32 +191,20 @@ export async function DELETE(
 
     if (itemsError) {
       console.error("Error deleting invoice items:", itemsError);
-      return NextResponse.json(
-        { error: "Failed to delete invoice items" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to delete invoice items" }, { status: 500 });
     }
 
     // Then delete invoice
-    const { error } = await supabase
-      .from("invoices")
-      .delete()
-      .eq("id", resolvedParams.id);
+    const { error } = await supabase.from("invoices").delete().eq("id", resolvedParams.id);
 
     if (error) {
       console.error("Error deleting invoice:", error);
-      return NextResponse.json(
-        { error: "Failed to delete invoice" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to delete invoice" }, { status: 500 });
     }
 
     return NextResponse.json({ message: "Invoice deleted successfully" });
   } catch (error) {
     console.error("API Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

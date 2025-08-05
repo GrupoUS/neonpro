@@ -4,12 +4,12 @@
  */
 
 class BarcodeService {
-  static async generateBarcode(data: string, type: string = 'CODE128') {
+  static async generateBarcode(data: string, type: string = "CODE128") {
     // Implementar geração de código de barras
     return {
       barcode: data,
       type,
-      image: null // Placeholder para imagem do código de barras
+      image: null, // Placeholder para imagem do código de barras
     };
   }
 
@@ -18,7 +18,7 @@ class BarcodeService {
     return {
       data: null,
       type: null,
-      success: false
+      success: false,
     };
   }
 
@@ -27,7 +27,7 @@ class BarcodeService {
     return {
       valid: false,
       type: null,
-      data: null
+      data: null,
     };
   }
 }

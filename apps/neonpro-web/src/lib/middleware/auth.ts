@@ -1,11 +1,11 @@
-﻿/**
+/**
  * Authentication Middleware for NeonPro API Routes
  * Handles JWT token verification and user role validation
  */
 
-import { NextRequest } from 'next/server';
-import { jwtVerify } from 'jose';
-import { createClient } from '@/lib/supabase/client';
+import type { NextRequest } from "next/server";
+import type { jwtVerify } from "jose";
+import type { createClient } from "@/lib/supabase/client";
 
 export interface AuthUser {
   id: string;
@@ -25,25 +25,25 @@ export interface AuthResult {
  * JWT secret key for token verification
  */
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'fallback-secret-key-change-in-production'
+  process.env.JWT_SECRET || "fallback-secret-key-change-in-production",
 );
 
 /**
  * Extract JWT token from request headers
  */
 function extractToken(request: NextRequest): string | null {
-  const authHeader = request.headers.get('Authorization');
-  
+  const authHeader = request.headers.get("Authorization");
+
   if (!authHeader) {
     return null;
   }
-  
+
   // Check for Bearer token format
   const bearerMatch = authHeader.match(/^Bearer\s+(.+)$/);
   if (bearerMatch) {
     return bearerMatch[1];
   }
-  
+
   return null;
 }
 
@@ -53,21 +53,21 @@ function extractToken(request: NextRequest): string | null {
 export async function verifyAuthToken(token: string): Promise<AuthUser | null> {
   try {
     const { payload } = await jwtVerify(token, JWT_SECRET);
-    
+
     // Validate required fields
     if (!payload.sub || !payload.email) {
       return null;
     }
-    
+
     return {
       id: payload.sub as string,
       email: payload.email as string,
-      role: (payload.role as string) || 'patient',
+      role: (payload.role as string) || "patient",
       clinicId: payload.clinicId as string | undefined,
       permissions: (payload.permissions as string[]) || [],
     };
   } catch (error) {
-    console.error('JWT verification failed:', error);
+    console.error("JWT verification failed:", error);
     return null;
   }
 }
@@ -78,28 +78,30 @@ export async function verifyAuthToken(token: string): Promise<AuthUser | null> {
 export async function getSupabaseUser(request: NextRequest): Promise<AuthUser | null> {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       return null;
     }
-    
+
     // Get user profile for role and clinic information
     const { data: profile } = await supabase
-      .from('profiles')
-      .select('role, clinic_id, permissions')
-      .eq('id', user.id)
+      .from("profiles")
+      .select("role, clinic_id, permissions")
+      .eq("id", user.id)
       .single();
-    
+
     return {
       id: user.id,
-      email: user.email || '',
-      role: profile?.role || 'patient',
+      email: user.email || "",
+      role: profile?.role || "patient",
       clinicId: profile?.clinic_id,
       permissions: profile?.permissions || [],
     };
   } catch (error) {
-    console.error('Supabase user verification failed:', error);
+    console.error("Supabase user verification failed:", error);
     return null;
   }
 }
@@ -116,14 +118,14 @@ export async function authenticateRequest(request: NextRequest): Promise<AuthRes
       return { success: true, user };
     }
   }
-  
+
   // Fallback to Supabase session
   const supabaseUser = await getSupabaseUser(request);
   if (supabaseUser) {
     return { success: true, user: supabaseUser };
   }
-  
-  return { success: false, error: 'Authentication required' };
+
+  return { success: false, error: "Authentication required" };
 }
 
 /**
@@ -133,7 +135,7 @@ export function hasRole(user: AuthUser, requiredRole: string | string[]): boolea
   if (Array.isArray(requiredRole)) {
     return requiredRole.includes(user.role);
   }
-  
+
   return user.role === requiredRole;
 }
 
@@ -144,8 +146,8 @@ export function hasPermission(user: AuthUser, permission: string): boolean {
   if (!user.permissions) {
     return false;
   }
-  
-  return user.permissions.includes(permission) || user.permissions.includes('*');
+
+  return user.permissions.includes(permission) || user.permissions.includes("*");
 }
 
 /**
@@ -166,7 +168,7 @@ const ROLE_HIERARCHY = {
 export function hasRoleLevel(user: AuthUser, minimumRole: string): boolean {
   const userLevel = ROLE_HIERARCHY[user.role as keyof typeof ROLE_HIERARCHY] ?? 0;
   const requiredLevel = ROLE_HIERARCHY[minimumRole as keyof typeof ROLE_HIERARCHY] ?? 0;
-  
+
   return userLevel >= requiredLevel;
 }
 
@@ -175,10 +177,10 @@ export function hasRoleLevel(user: AuthUser, minimumRole: string): boolean {
  */
 export function canAccessClinic(user: AuthUser, clinicId: string): boolean {
   // Admin can access all clinics
-  if (user.role === 'admin') {
+  if (user.role === "admin") {
     return true;
   }
-  
+
   // User must belong to the clinic
   return user.clinicId === clinicId;
 }
@@ -186,45 +188,41 @@ export function canAccessClinic(user: AuthUser, clinicId: string): boolean {
 /**
  * Middleware function to authenticate API routes
  */
-export function requireAuth(
-  requiredRole?: string | string[],
-  requiredPermission?: string
-) {
+export function requireAuth(requiredRole?: string | string[], requiredPermission?: string) {
   return async (request: NextRequest) => {
     const authResult = await authenticateRequest(request);
-    
+
     if (!authResult.success || !authResult.user) {
       return {
         authenticated: false,
-        error: authResult.error || 'Authentication failed',
+        error: authResult.error || "Authentication failed",
         status: 401,
       };
     }
-    
+
     const user = authResult.user;
-    
+
     // Check role requirement
     if (requiredRole && !hasRole(user, requiredRole)) {
       return {
         authenticated: false,
-        error: 'Insufficient permissions',
+        error: "Insufficient permissions",
         status: 403,
       };
     }
-    
+
     // Check permission requirement
     if (requiredPermission && !hasPermission(user, requiredPermission)) {
       return {
         authenticated: false,
-        error: 'Required permission not found',
+        error: "Required permission not found",
         status: 403,
       };
     }
-    
+
     return {
       authenticated: true,
       user,
     };
   };
 }
-

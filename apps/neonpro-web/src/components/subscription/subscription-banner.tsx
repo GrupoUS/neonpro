@@ -10,13 +10,13 @@
 
 "use client";
 
-import { cn } from "@/lib/utils";
-import { AlertTriangle, Clock, Crown, Sparkles, X, Zap } from "lucide-react";
-import { useState } from "react";
-import { useSubscriptionStatus } from "../../hooks/use-subscription-status";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import { Progress } from "../ui/progress";
+import type { cn } from "@/lib/utils";
+import type { AlertTriangle, Clock, Crown, Sparkles, X, Zap } from "lucide-react";
+import type { useState } from "react";
+import type { useSubscriptionStatus } from "../../hooks/use-subscription-status";
+import type { Badge } from "../ui/badge";
+import type { Button } from "../ui/button";
+import type { Progress } from "../ui/progress";
 
 export interface SubscriptionBannerProps {
   className?: string;
@@ -36,8 +36,7 @@ export function SubscriptionBanner({
   compact = false,
 }: SubscriptionBannerProps) {
   const [dismissed, setDismissed] = useState(false);
-  const { status, tier, gracePeriodEnd, nextBilling, isLoading } =
-    useSubscriptionStatus();
+  const { status, tier, gracePeriodEnd, nextBilling, isLoading } = useSubscriptionStatus();
 
   const handleDismiss = () => {
     setDismissed(true);
@@ -56,12 +55,7 @@ export function SubscriptionBanner({
       case "trialing": {
         const trialEnd = nextBilling ? new Date(nextBilling) : null;
         const daysRemaining = trialEnd
-          ? Math.max(
-              0,
-              Math.ceil(
-                (trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
-              )
-            )
+          ? Math.max(0, Math.ceil((trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)))
           : 0;
 
         return {
@@ -74,21 +68,14 @@ export function SubscriptionBanner({
               : "Your free trial expires today",
           badge: `${daysRemaining} days left`,
           ctaText: "Choose Plan",
-          progress: trialEnd
-            ? Math.max(0, 100 - (daysRemaining / 14) * 100)
-            : 100,
+          progress: trialEnd ? Math.max(0, 100 - (daysRemaining / 14) * 100) : 100,
         };
       }
 
       case "past_due": {
         const graceEnd = gracePeriodEnd ? new Date(gracePeriodEnd) : null;
         const daysRemaining = graceEnd
-          ? Math.max(
-              0,
-              Math.ceil(
-                (graceEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
-              )
-            )
+          ? Math.max(0, Math.ceil((graceEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)))
           : 0;
 
         return {
@@ -101,9 +88,7 @@ export function SubscriptionBanner({
               : "Update your payment method immediately to restore access",
           badge: "Action Required",
           ctaText: "Update Payment",
-          progress: graceEnd
-            ? Math.max(0, 100 - (daysRemaining / 7) * 100)
-            : 100,
+          progress: graceEnd ? Math.max(0, 100 - (daysRemaining / 7) * 100) : 100,
         };
       }
 
@@ -111,12 +96,7 @@ export function SubscriptionBanner({
       case "canceled": {
         const graceEnd = gracePeriodEnd ? new Date(gracePeriodEnd) : null;
         const daysRemaining = graceEnd
-          ? Math.max(
-              0,
-              Math.ceil(
-                (graceEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
-              )
-            )
+          ? Math.max(0, Math.ceil((graceEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)))
           : 0;
 
         return {
@@ -129,9 +109,7 @@ export function SubscriptionBanner({
               : "Your subscription has ended. Reactivate to restore access",
           badge: "Cancelled",
           ctaText: "Reactivate",
-          progress: graceEnd
-            ? Math.max(0, 100 - (daysRemaining / 30) * 100)
-            : 100,
+          progress: graceEnd ? Math.max(0, 100 - (daysRemaining / 30) * 100) : 100,
         };
       }
 
@@ -196,7 +174,7 @@ export function SubscriptionBanner({
         className={cn(
           "flex items-center justify-between px-4 py-2 border rounded-lg",
           styles.container,
-          className
+          className,
         )}
       >
         <div className="flex items-center space-x-3">
@@ -207,11 +185,7 @@ export function SubscriptionBanner({
           </Badge>
         </div>
         <div className="flex items-center space-x-2">
-          <Button
-            size="sm"
-            onClick={onUpgrade}
-            className={cn("text-xs", styles.button)}
-          >
+          <Button size="sm" onClick={onUpgrade} className={cn("text-xs", styles.button)}>
             {config.ctaText}
           </Button>
           {dismissible && (
@@ -230,13 +204,7 @@ export function SubscriptionBanner({
   }
 
   return (
-    <div
-      className={cn(
-        "relative border rounded-lg p-4",
-        styles.container,
-        className
-      )}
-    >
+    <div className={cn("relative border rounded-lg p-4", styles.container, className)}>
       <div className="flex items-start space-x-4">
         <div className="flex-shrink-0 p-2 rounded-lg bg-white/50">
           <Icon className="h-6 w-6" />

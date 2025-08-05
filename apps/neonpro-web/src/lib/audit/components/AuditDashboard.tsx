@@ -1,100 +1,91 @@
 /**
  * NeonPro Audit Dashboard Component
- * 
+ *
  * Componente principal para visualização e gestão do sistema
  * de auditoria, incluindo logs, alertas, relatórios e estatísticas.
- * 
+ *
  * Features:
  * - Visualização de logs com filtros avançados
  * - Monitoramento de alertas de segurança
  * - Geração e gestão de relatórios
  * - Dashboard de estatísticas
  * - Exportação de dados
- * 
+ *
  * @author APEX Master Developer
  * @version 1.0.0
  */
 
-'use client'
+"use client";
 
-import React, { useState, useMemo } from 'react'
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
-} from '@/components/ui/card'
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from '@/components/ui/tabs'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { 
+import React, { useState, useMemo } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Badge } from '@/components/ui/badge'
-import { 
+} from "@/components/ui/select";
+import type { Badge } from "@/components/ui/badge";
+import type {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { 
+} from "@/components/ui/table";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { 
-  AlertTriangle, 
-  Shield, 
-  FileText, 
-  BarChart3, 
-  Download, 
-  Filter, 
-  RefreshCw, 
-  Eye, 
-  Clock, 
-  User, 
+} from "@/components/ui/dialog";
+import type {
+  AlertTriangle,
+  Shield,
+  FileText,
+  BarChart3,
+  Download,
+  Filter,
+  RefreshCw,
+  Eye,
+  Clock,
+  User,
   Globe,
   AlertCircle,
   CheckCircle,
-  XCircle
-} from 'lucide-react'
-import { 
-  useAuditLogs, 
-  useSecurityAlerts, 
-  useAuditReports, 
+  XCircle,
+} from "lucide-react";
+import type {
+  useAuditLogs,
+  useSecurityAlerts,
+  useAuditReports,
   useAuditStatistics,
-  useAuditLogger
-} from '../hooks/useAuditSystem'
-import { 
-  AuditEventType, 
-  AuditSeverity, 
-  AuditQueryFilters 
-} from '../audit-system'
-import { formatDistanceToNow } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+  useAuditLogger,
+} from "../hooks/useAuditSystem";
+import type { AuditEventType, AuditSeverity, AuditQueryFilters } from "../audit-system";
+import type { formatDistanceToNow } from "date-fns";
+import type { ptBR } from "date-fns/locale";
 
 // =====================================================
 // TYPES E INTERFACES
 // =====================================================
 
 interface AuditDashboardProps {
-  className?: string
+  className?: string;
 }
 
 // =====================================================
@@ -102,31 +93,31 @@ interface AuditDashboardProps {
 // =====================================================
 
 export function AuditDashboard({ className }: AuditDashboardProps) {
-  const [activeTab, setActiveTab] = useState('logs')
-  const [selectedLogId, setSelectedLogId] = useState<string | null>(null)
-  
+  const [activeTab, setActiveTab] = useState("logs");
+  const [selectedLogId, setSelectedLogId] = useState<string | null>(null);
+
   // Hooks do sistema de auditoria
-  const logs = useAuditLogs({ autoRefresh: true, refreshInterval: 30000 })
-  const alerts = useSecurityAlerts()
-  const reports = useAuditReports()
-  const statistics = useAuditStatistics()
-  const logger = useAuditLogger()
+  const logs = useAuditLogs({ autoRefresh: true, refreshInterval: 30000 });
+  const alerts = useSecurityAlerts();
+  const reports = useAuditReports();
+  const statistics = useAuditStatistics();
+  const logger = useAuditLogger();
 
   // Estado para filtros
-  const [logFilters, setLogFilters] = useState<AuditQueryFilters>({})
+  const [logFilters, setLogFilters] = useState<AuditQueryFilters>({});
 
   // Estatísticas resumidas
   const summaryStats = useMemo(() => {
-    if (!statistics.statistics) return null
-    
+    if (!statistics.statistics) return null;
+
     return {
       totalEvents: statistics.statistics.total_events,
       criticalEvents: statistics.statistics.events_by_severity.CRITICAL || 0,
       highEvents: statistics.statistics.events_by_severity.HIGH || 0,
       activeAlerts: alerts.unreadCount,
-      recentReports: reports.reports.length
-    }
-  }, [statistics.statistics, alerts.unreadCount, reports.reports.length])
+      recentReports: reports.reports.length,
+    };
+  }, [statistics.statistics, alerts.unreadCount, reports.reports.length]);
 
   return (
     <div className={`space-y-6 ${className}`}>
@@ -134,19 +125,17 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Sistema de Auditoria</h1>
-          <p className="text-muted-foreground">
-            Monitoramento e análise de eventos de segurança
-          </p>
+          <p className="text-muted-foreground">Monitoramento e análise de eventos de segurança</p>
         </div>
         <div className="flex items-center space-x-2">
           <Button
             variant="outline"
             size="sm"
             onClick={() => {
-              logs.refresh()
-              alerts.refresh()
-              reports.refresh()
-              statistics.refresh()
+              logs.refresh();
+              alerts.refresh();
+              reports.refresh();
+              statistics.refresh();
             }}
           >
             <RefreshCw className="h-4 w-4 mr-2" />
@@ -167,7 +156,7 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
               <div className="text-2xl font-bold">{summaryStats.totalEvents.toLocaleString()}</div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Eventos Críticos</CardTitle>
@@ -177,7 +166,7 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
               <div className="text-2xl font-bold text-red-600">{summaryStats.criticalEvents}</div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Eventos de Alta Prioridade</CardTitle>
@@ -187,7 +176,7 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
               <div className="text-2xl font-bold text-orange-600">{summaryStats.highEvents}</div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Alertas Ativos</CardTitle>
@@ -197,7 +186,7 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
               <div className="text-2xl font-bold text-yellow-600">{summaryStats.activeAlerts}</div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Relatórios</CardTitle>
@@ -226,24 +215,14 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle>Logs de Auditoria</CardTitle>
-                  <CardDescription>
-                    Visualização e análise de eventos do sistema
-                  </CardDescription>
+                  <CardDescription>Visualização e análise de eventos do sistema</CardDescription>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => logs.exportLogs('csv')}
-                  >
+                  <Button variant="outline" size="sm" onClick={() => logs.exportLogs("csv")}>
                     <Download className="h-4 w-4 mr-2" />
                     Exportar CSV
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => logs.exportLogs('json')}
-                  >
+                  <Button variant="outline" size="sm" onClick={() => logs.exportLogs("json")}>
                     <Download className="h-4 w-4 mr-2" />
                     Exportar JSON
                   </Button>
@@ -256,11 +235,11 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
                 <div className="space-y-2">
                   <Label htmlFor="event-type">Tipo de Evento</Label>
                   <Select
-                    value={logFilters.event_type || ''}
-                    onValueChange={(value) => 
-                      setLogFilters(prev => ({ 
-                        ...prev, 
-                        event_type: value as AuditEventType 
+                    value={logFilters.event_type || ""}
+                    onValueChange={(value) =>
+                      setLogFilters((prev) => ({
+                        ...prev,
+                        event_type: value as AuditEventType,
                       }))
                     }
                   >
@@ -273,19 +252,21 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
                       <SelectItem value="user.logout">Logout</SelectItem>
                       <SelectItem value="user.create">Criação de Usuário</SelectItem>
                       <SelectItem value="security.failed_login">Login Falhado</SelectItem>
-                      <SelectItem value="security.suspicious_activity">Atividade Suspeita</SelectItem>
+                      <SelectItem value="security.suspicious_activity">
+                        Atividade Suspeita
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="severity">Severidade</Label>
                   <Select
-                    value={logFilters.severity || ''}
-                    onValueChange={(value) => 
-                      setLogFilters(prev => ({ 
-                        ...prev, 
-                        severity: value as AuditSeverity 
+                    value={logFilters.severity || ""}
+                    onValueChange={(value) =>
+                      setLogFilters((prev) => ({
+                        ...prev,
+                        severity: value as AuditSeverity,
                       }))
                     }
                   >
@@ -301,44 +282,40 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="user-id">ID do Usuário</Label>
                   <Input
                     id="user-id"
                     placeholder="Filtrar por usuário"
-                    value={logFilters.user_id || ''}
-                    onChange={(e) => 
-                      setLogFilters(prev => ({ 
-                        ...prev, 
-                        user_id: e.target.value 
+                    value={logFilters.user_id || ""}
+                    onChange={(e) =>
+                      setLogFilters((prev) => ({
+                        ...prev,
+                        user_id: e.target.value,
                       }))
                     }
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="ip-address">Endereço IP</Label>
                   <Input
                     id="ip-address"
                     placeholder="Filtrar por IP"
-                    value={logFilters.ip_address || ''}
-                    onChange={(e) => 
-                      setLogFilters(prev => ({ 
-                        ...prev, 
-                        ip_address: e.target.value 
+                    value={logFilters.ip_address || ""}
+                    onChange={(e) =>
+                      setLogFilters((prev) => ({
+                        ...prev,
+                        ip_address: e.target.value,
                       }))
                     }
                   />
                 </div>
               </div>
-              
+
               <div className="flex items-center justify-between mb-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => logs.setFilters(logFilters)}
-                >
+                <Button variant="outline" size="sm" onClick={() => logs.setFilters(logFilters)}>
                   <Filter className="h-4 w-4 mr-2" />
                   Aplicar Filtros
                 </Button>
@@ -346,8 +323,8 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
                   variant="ghost"
                   size="sm"
                   onClick={() => {
-                    setLogFilters({})
-                    logs.setFilters({})
+                    setLogFilters({});
+                    logs.setFilters({});
                   }}
                 >
                   Limpar Filtros
@@ -385,34 +362,28 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
                       logs.logs.map((log) => (
                         <TableRow key={log.id}>
                           <TableCell className="font-mono text-sm">
-                            {formatDistanceToNow(log.timestamp, { 
-                              addSuffix: true, 
-                              locale: ptBR 
+                            {formatDistanceToNow(log.timestamp, {
+                              addSuffix: true,
+                              locale: ptBR,
                             })}
                           </TableCell>
                           <TableCell>
                             <Badge variant="outline">{log.event_type}</Badge>
                           </TableCell>
                           <TableCell>
-                            <Badge 
-                              variant={getSeverityVariant(log.severity)}
-                            >
-                              {log.severity}
-                            </Badge>
+                            <Badge variant={getSeverityVariant(log.severity)}>{log.severity}</Badge>
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center">
                               <User className="h-4 w-4 mr-2" />
-                              {log.user_id || 'Sistema'}
+                              {log.user_id || "Sistema"}
                             </div>
                           </TableCell>
-                          <TableCell className="max-w-xs truncate">
-                            {log.description}
-                          </TableCell>
+                          <TableCell className="max-w-xs truncate">{log.description}</TableCell>
                           <TableCell>
                             <div className="flex items-center">
                               <Globe className="h-4 w-4 mr-2" />
-                              {log.ip_address || 'N/A'}
+                              {log.ip_address || "N/A"}
                             </div>
                           </TableCell>
                           <TableCell>
@@ -439,7 +410,7 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
                   </TableBody>
                 </Table>
               </div>
-              
+
               {logs.totalCount > 0 && (
                 <div className="flex items-center justify-between mt-4">
                   <p className="text-sm text-muted-foreground">
@@ -490,15 +461,13 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
                               variant="outline"
                               size="sm"
                               onClick={() => alerts.markAsRead(alert.id)}
-                              disabled={alert.status !== 'open'}
+                              disabled={alert.status !== "open"}
                             >
                               Marcar como Lido
                             </Button>
                             <Select
                               value={alert.status}
-                              onValueChange={(value) => 
-                                alerts.updateStatus(alert.id, value as any)
-                              }
+                              onValueChange={(value) => alerts.updateStatus(alert.id, value as any)}
                             >
                               <SelectTrigger className="w-40">
                                 <SelectValue />
@@ -516,9 +485,9 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
                           <div className="flex items-center space-x-4 text-sm">
                             <span className="flex items-center">
                               <Clock className="h-4 w-4 mr-1" />
-                              {formatDistanceToNow(alert.created_at, { 
-                                addSuffix: true, 
-                                locale: ptBR 
+                              {formatDistanceToNow(alert.created_at, {
+                                addSuffix: true,
+                                locale: ptBR,
                               })}
                             </span>
                             {alert.user_id && (
@@ -564,14 +533,12 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle>Relatórios de Auditoria</CardTitle>
-                  <CardDescription>
-                    Geração e gestão de relatórios personalizados
-                  </CardDescription>
+                  <CardDescription>Geração e gestão de relatórios personalizados</CardDescription>
                 </div>
                 <Button
                   onClick={() => {
                     // TODO: Implementar modal de criação de relatório
-                    logger.logUserAction('generate_report', 'audit_report')
+                    logger.logUserAction("generate_report", "audit_report");
                   }}
                 >
                   <FileText className="h-4 w-4 mr-2" />
@@ -603,8 +570,8 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
                               <Download className="h-4 w-4 mr-2" />
                               Exportar
                             </Button>
-                            <Button 
-                              variant="ghost" 
+                            <Button
+                              variant="ghost"
                               size="sm"
                               onClick={() => reports.deleteReport(report.id)}
                             >
@@ -617,9 +584,9 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
                         <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                           <span className="flex items-center">
                             <Clock className="h-4 w-4 mr-1" />
-                            {formatDistanceToNow(report.generated_at, { 
-                              addSuffix: true, 
-                              locale: ptBR 
+                            {formatDistanceToNow(report.generated_at, {
+                              addSuffix: true,
+                              locale: ptBR,
                             })}
                           </span>
                           <span className="flex items-center">
@@ -642,9 +609,7 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
           <Card>
             <CardHeader>
               <CardTitle>Estatísticas do Sistema</CardTitle>
-              <CardDescription>
-                Análise e métricas do sistema de auditoria
-              </CardDescription>
+              <CardDescription>Análise e métricas do sistema de auditoria</CardDescription>
             </CardHeader>
             <CardContent>
               {statistics.loading ? (
@@ -653,10 +618,7 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
                 <div className="text-center py-8">
                   <BarChart3 className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                   <p className="text-lg font-medium">Nenhuma estatística disponível</p>
-                  <Button 
-                    className="mt-4"
-                    onClick={() => statistics.refresh()}
-                  >
+                  <Button className="mt-4" onClick={() => statistics.refresh()}>
                     Gerar Estatísticas
                   </Button>
                 </div>
@@ -666,45 +628,53 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
                   <div>
                     <h3 className="text-lg font-medium mb-4">Eventos por Severidade</h3>
                     <div className="grid gap-4 md:grid-cols-4">
-                      {Object.entries(statistics.statistics.events_by_severity).map(([severity, count]) => (
-                        <Card key={severity}>
-                          <CardContent className="pt-6">
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <p className="text-sm font-medium text-muted-foreground">
+                      {Object.entries(statistics.statistics.events_by_severity).map(
+                        ([severity, count]) => (
+                          <Card key={severity}>
+                            <CardContent className="pt-6">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <p className="text-sm font-medium text-muted-foreground">
+                                    {severity}
+                                  </p>
+                                  <p className="text-2xl font-bold">{count}</p>
+                                </div>
+                                <Badge variant={getSeverityVariant(severity as AuditSeverity)}>
                                   {severity}
-                                </p>
-                                <p className="text-2xl font-bold">{count}</p>
+                                </Badge>
                               </div>
-                              <Badge variant={getSeverityVariant(severity as AuditSeverity)}>
-                                {severity}
-                              </Badge>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
+                            </CardContent>
+                          </Card>
+                        ),
+                      )}
                     </div>
                   </div>
-                  
+
                   {/* Estatísticas por Tipo */}
                   <div>
                     <h3 className="text-lg font-medium mb-4">Eventos por Tipo</h3>
                     <div className="space-y-2">
                       {Object.entries(statistics.statistics.events_by_type).map(([type, count]) => (
-                        <div key={type} className="flex items-center justify-between p-3 border rounded">
+                        <div
+                          key={type}
+                          className="flex items-center justify-between p-3 border rounded"
+                        >
                           <span className="font-medium">{type}</span>
                           <Badge variant="outline">{count}</Badge>
                         </div>
                       ))}
                     </div>
                   </div>
-                  
+
                   {/* Usuários Mais Ativos */}
                   <div>
                     <h3 className="text-lg font-medium mb-4">Usuários Mais Ativos</h3>
                     <div className="space-y-2">
                       {Object.entries(statistics.statistics.top_users).map(([userId, count]) => (
-                        <div key={userId} className="flex items-center justify-between p-3 border rounded">
+                        <div
+                          key={userId}
+                          className="flex items-center justify-between p-3 border rounded"
+                        >
                           <div className="flex items-center">
                             <User className="h-4 w-4 mr-2" />
                             <span className="font-medium">{userId}</span>
@@ -721,7 +691,7 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
 
 // =====================================================
@@ -741,7 +711,7 @@ function LogDetailsView({ log }: { log: any }) {
         </div>
         <div>
           <Label className="text-sm font-medium">Timestamp</Label>
-          <p className="text-sm">{log.timestamp.toLocaleString('pt-BR')}</p>
+          <p className="text-sm">{log.timestamp.toLocaleString("pt-BR")}</p>
         </div>
         <div>
           <Label className="text-sm font-medium">Tipo de Evento</Label>
@@ -753,33 +723,35 @@ function LogDetailsView({ log }: { log: any }) {
         </div>
         <div>
           <Label className="text-sm font-medium">Usuário</Label>
-          <p className="text-sm">{log.user_id || 'Sistema'}</p>
+          <p className="text-sm">{log.user_id || "Sistema"}</p>
         </div>
         <div>
           <Label className="text-sm font-medium">Endereço IP</Label>
-          <p className="text-sm">{log.ip_address || 'N/A'}</p>
+          <p className="text-sm">{log.ip_address || "N/A"}</p>
         </div>
       </div>
-      
+
       <div>
         <Label className="text-sm font-medium">Descrição</Label>
         <p className="text-sm mt-1">{log.description}</p>
       </div>
-      
+
       {log.resource_type && (
         <div>
           <Label className="text-sm font-medium">Recurso</Label>
-          <p className="text-sm mt-1">{log.resource_type}: {log.resource_id}</p>
+          <p className="text-sm mt-1">
+            {log.resource_type}: {log.resource_id}
+          </p>
         </div>
       )}
-      
+
       {log.user_agent && (
         <div>
           <Label className="text-sm font-medium">User Agent</Label>
           <p className="text-sm mt-1 font-mono break-all">{log.user_agent}</p>
         </div>
       )}
-      
+
       {log.metadata && Object.keys(log.metadata).length > 0 && (
         <div>
           <Label className="text-sm font-medium">Metadados</Label>
@@ -788,7 +760,7 @@ function LogDetailsView({ log }: { log: any }) {
           </pre>
         </div>
       )}
-      
+
       {log.checksum && (
         <div>
           <Label className="text-sm font-medium">Checksum (Integridade)</Label>
@@ -796,7 +768,7 @@ function LogDetailsView({ log }: { log: any }) {
         </div>
       )}
     </div>
-  )
+  );
 }
 
 // =====================================================
@@ -806,18 +778,20 @@ function LogDetailsView({ log }: { log: any }) {
 /**
  * Retorna a variante do badge baseada na severidade
  */
-function getSeverityVariant(severity: AuditSeverity): "default" | "secondary" | "destructive" | "outline" {
+function getSeverityVariant(
+  severity: AuditSeverity,
+): "default" | "secondary" | "destructive" | "outline" {
   switch (severity) {
     case AuditSeverity.CRITICAL:
-      return 'destructive'
+      return "destructive";
     case AuditSeverity.HIGH:
-      return 'destructive'
+      return "destructive";
     case AuditSeverity.MEDIUM:
-      return 'secondary'
+      return "secondary";
     case AuditSeverity.LOW:
-      return 'outline'
+      return "outline";
     default:
-      return 'default'
+      return "default";
   }
 }
 
@@ -826,16 +800,16 @@ function getSeverityVariant(severity: AuditSeverity): "default" | "secondary" | 
  */
 function getStatusVariant(status: string): "default" | "secondary" | "destructive" | "outline" {
   switch (status) {
-    case 'open':
-      return 'destructive'
-    case 'investigating':
-      return 'secondary'
-    case 'resolved':
-      return 'outline'
-    case 'false_positive':
-      return 'outline'
+    case "open":
+      return "destructive";
+    case "investigating":
+      return "secondary";
+    case "resolved":
+      return "outline";
+    case "false_positive":
+      return "outline";
     default:
-      return 'default'
+      return "default";
   }
 }
 
@@ -844,17 +818,17 @@ function getStatusVariant(status: string): "default" | "secondary" | "destructiv
  */
 function getStatusLabel(status: string): string {
   switch (status) {
-    case 'open':
-      return 'Aberto'
-    case 'investigating':
-      return 'Investigando'
-    case 'resolved':
-      return 'Resolvido'
-    case 'false_positive':
-      return 'Falso Positivo'
+    case "open":
+      return "Aberto";
+    case "investigating":
+      return "Investigando";
+    case "resolved":
+      return "Resolvido";
+    case "false_positive":
+      return "Falso Positivo";
     default:
-      return status
+      return status;
   }
 }
 
-export default AuditDashboard
+export default AuditDashboard;

@@ -2,34 +2,34 @@
  * Treatment Plan Form Component
  * FHIR R4 compliant form for creating and editing treatment plans
  * Includes LGPD compliance and Brazilian healthcare validation
- * 
+ *
  * Created: January 26, 2025
  * Story: 3.2 - Treatment & Procedure Documentation
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { CalendarIcon, Plus, X, Save, ArrowLeft } from 'lucide-react';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import type { useState, useEffect } from "react";
+import type { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type { CalendarIcon, Plus, X, Save, ArrowLeft } from "lucide-react";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import {
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Calendar } from "@/components/ui/calendar";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import {
+} from "@/components/ui/select";
+import type {
   Form,
   FormControl,
   FormDescription,
@@ -37,24 +37,30 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { useToast } from '@/hooks/use-toast';
+} from "@/components/ui/form";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Separator } from "@/components/ui/separator";
+import type { useToast } from "@/hooks/use-toast";
 
-import { 
-  TreatmentPlan, 
-  TreatmentPlanStatus, 
+import type {
+  TreatmentPlan,
+  TreatmentPlanStatus,
   TreatmentPlanIntent,
   TreatmentPlanActivity,
   createTreatmentPlanSchema,
-  CreateTreatmentPlanData
-} from '@/lib/types/treatment';
-import { Patient } from '@/lib/types/fhir';
-import { createTreatmentPlan, updateTreatmentPlan } from '@/lib/supabase/treatments';
-import { searchPatients } from '@/lib/supabase/patients';
-import { cn } from '@/lib/utils';
+  CreateTreatmentPlanData,
+} from "@/lib/types/treatment";
+import type { Patient } from "@/lib/types/fhir";
+import type { createTreatmentPlan, updateTreatmentPlan } from "@/lib/supabase/treatments";
+import type { searchPatients } from "@/lib/supabase/patients";
+import type { cn } from "@/lib/utils";
 
 interface TreatmentPlanFormProps {
   treatmentPlan?: TreatmentPlan;
@@ -64,58 +70,58 @@ interface TreatmentPlanFormProps {
 }
 
 const statusOptions: { value: TreatmentPlanStatus; label: string }[] = [
-  { value: 'draft', label: 'Rascunho' },
-  { value: 'active', label: 'Ativo' },
-  { value: 'on-hold', label: 'Em Pausa' },
-  { value: 'completed', label: 'Concluído' },
-  { value: 'revoked', label: 'Cancelado' },
+  { value: "draft", label: "Rascunho" },
+  { value: "active", label: "Ativo" },
+  { value: "on-hold", label: "Em Pausa" },
+  { value: "completed", label: "Concluído" },
+  { value: "revoked", label: "Cancelado" },
 ];
 
 const intentOptions: { value: TreatmentPlanIntent; label: string }[] = [
-  { value: 'proposal', label: 'Proposta' },
-  { value: 'plan', label: 'Plano' },
-  { value: 'order', label: 'Ordem' },
-  { value: 'directive', label: 'Diretiva' },
+  { value: "proposal", label: "Proposta" },
+  { value: "plan", label: "Plano" },
+  { value: "order", label: "Ordem" },
+  { value: "directive", label: "Diretiva" },
 ];
 
 const commonActivities = [
-  'Consulta inicial',
-  'Avaliação estética',
-  'Procedimento de limpeza de pele',
-  'Aplicação de botox',
-  'Preenchimento facial',
-  'Peeling químico',
-  'Tratamento a laser',
-  'Massagem relaxante',
-  'Drenagem linfática',
-  'Consulta de retorno',
-  'Avaliação de resultados',
+  "Consulta inicial",
+  "Avaliação estética",
+  "Procedimento de limpeza de pele",
+  "Aplicação de botox",
+  "Preenchimento facial",
+  "Peeling químico",
+  "Tratamento a laser",
+  "Massagem relaxante",
+  "Drenagem linfática",
+  "Consulta de retorno",
+  "Avaliação de resultados",
 ];
 
-export function TreatmentPlanForm({ 
-  treatmentPlan, 
+export function TreatmentPlanForm({
+  treatmentPlan,
   patientId: initialPatientId,
-  onSuccess, 
-  onCancel 
+  onSuccess,
+  onCancel,
 }: TreatmentPlanFormProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [activities, setActivities] = useState<TreatmentPlanActivity[]>(
-    treatmentPlan?.activities || []
+    treatmentPlan?.activities || [],
   );
 
   // Form setup
   const form = useForm<CreateTreatmentPlanData>({
     resolver: zodResolver(createTreatmentPlanSchema),
     defaultValues: {
-      patient_id: treatmentPlan?.patient_id || initialPatientId || '',
-      title: treatmentPlan?.title || '',
-      description: treatmentPlan?.description || '',
-      status: treatmentPlan?.status || 'draft',
-      intent: treatmentPlan?.intent || 'plan',
-      period_start: treatmentPlan?.period_start || '',
-      period_end: treatmentPlan?.period_end || '',
+      patient_id: treatmentPlan?.patient_id || initialPatientId || "",
+      title: treatmentPlan?.title || "",
+      description: treatmentPlan?.description || "",
+      status: treatmentPlan?.status || "draft",
+      intent: treatmentPlan?.intent || "plan",
+      period_start: treatmentPlan?.period_start || "",
+      period_end: treatmentPlan?.period_end || "",
       goals: treatmentPlan?.goals || [],
     },
   });
@@ -130,11 +136,11 @@ export function TreatmentPlanForm({
       const response = await searchPatients({}, 1, 100);
       setPatients(response.patients);
     } catch (error) {
-      console.error('Erro ao carregar pacientes:', error);
+      console.error("Erro ao carregar pacientes:", error);
       toast({
-        title: 'Erro',
-        description: 'Não foi possível carregar a lista de pacientes.',
-        variant: 'destructive',
+        title: "Erro",
+        description: "Não foi possível carregar a lista de pacientes.",
+        variant: "destructive",
       });
     }
   };
@@ -149,28 +155,28 @@ export function TreatmentPlanForm({
       };
 
       let result: TreatmentPlan;
-      
+
       if (treatmentPlan) {
         result = await updateTreatmentPlan(treatmentPlan.id, treatmentPlanData);
         toast({
-          title: 'Sucesso',
-          description: 'Plano de tratamento atualizado com sucesso.',
+          title: "Sucesso",
+          description: "Plano de tratamento atualizado com sucesso.",
         });
       } else {
         result = await createTreatmentPlan(treatmentPlanData);
         toast({
-          title: 'Sucesso',
-          description: 'Plano de tratamento criado com sucesso.',
+          title: "Sucesso",
+          description: "Plano de tratamento criado com sucesso.",
         });
       }
 
       onSuccess?.(result);
     } catch (error) {
-      console.error('Erro ao salvar plano de tratamento:', error);
+      console.error("Erro ao salvar plano de tratamento:", error);
       toast({
-        title: 'Erro',
-        description: 'Não foi possível salvar o plano de tratamento.',
-        variant: 'destructive',
+        title: "Erro",
+        description: "Não foi possível salvar o plano de tratamento.",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -181,43 +187,44 @@ export function TreatmentPlanForm({
     const newActivity: TreatmentPlanActivity = {
       id: crypto.randomUUID(),
       title: activityName,
-      description: '',
-      status: 'not-started',
-      scheduled_date: '',
+      description: "",
+      status: "not-started",
+      scheduled_date: "",
     };
-    setActivities(prev => [...prev, newActivity]);
+    setActivities((prev) => [...prev, newActivity]);
   };
 
   const updateActivity = (id: string, updates: Partial<TreatmentPlanActivity>) => {
-    setActivities(prev => 
-      prev.map(activity => 
-        activity.id === id ? { ...activity, ...updates } : activity
-      )
+    setActivities((prev) =>
+      prev.map((activity) => (activity.id === id ? { ...activity, ...updates } : activity)),
     );
   };
 
   const removeActivity = (id: string) => {
-    setActivities(prev => prev.filter(activity => activity.id !== id));
+    setActivities((prev) => prev.filter((activity) => activity.id !== id));
   };
 
   const addGoal = () => {
-    const currentGoals = form.getValues('goals');
-    form.setValue('goals', [...currentGoals, '']);
+    const currentGoals = form.getValues("goals");
+    form.setValue("goals", [...currentGoals, ""]);
   };
 
   const updateGoal = (index: number, value: string) => {
-    const currentGoals = form.getValues('goals');
+    const currentGoals = form.getValues("goals");
     const newGoals = [...currentGoals];
     newGoals[index] = value;
-    form.setValue('goals', newGoals);
+    form.setValue("goals", newGoals);
   };
 
   const removeGoal = (index: number) => {
-    const currentGoals = form.getValues('goals');
-    form.setValue('goals', currentGoals.filter((_, i) => i !== index));
+    const currentGoals = form.getValues("goals");
+    form.setValue(
+      "goals",
+      currentGoals.filter((_, i) => i !== index),
+    );
   };
 
-  const selectedPatient = patients.find(p => p.id === form.watch('patient_id'));
+  const selectedPatient = patients.find((p) => p.id === form.watch("patient_id"));
 
   return (
     <div className="space-y-6">
@@ -225,13 +232,13 @@ export function TreatmentPlanForm({
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <h2 className="text-2xl font-bold tracking-tight">
-            {treatmentPlan ? 'Editar Plano de Tratamento' : 'Novo Plano de Tratamento'}
+            {treatmentPlan ? "Editar Plano de Tratamento" : "Novo Plano de Tratamento"}
           </h2>
           <p className="text-muted-foreground">
             Crie um plano de tratamento seguindo padrões HL7 FHIR R4
           </p>
         </div>
-        
+
         {onCancel && (
           <Button variant="outline" onClick={onCancel}>
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -246,9 +253,7 @@ export function TreatmentPlanForm({
           <Card>
             <CardHeader>
               <CardTitle>Paciente</CardTitle>
-              <CardDescription>
-                Selecione o paciente para este plano de tratamento
-              </CardDescription>
+              <CardDescription>Selecione o paciente para este plano de tratamento</CardDescription>
             </CardHeader>
             <CardContent>
               <FormField
@@ -272,9 +277,7 @@ export function TreatmentPlanForm({
                           <SelectItem key={patient.id} value={patient.id}>
                             {patient.given_name?.[0]} {patient.family_name}
                             {patient.email && (
-                              <span className="text-muted-foreground ml-2">
-                                ({patient.email})
-                              </span>
+                              <span className="text-muted-foreground ml-2">({patient.email})</span>
                             )}
                           </SelectItem>
                         ))}
@@ -284,7 +287,7 @@ export function TreatmentPlanForm({
                   </FormItem>
                 )}
               />
-              
+
               {selectedPatient && (
                 <div className="mt-4 p-4 bg-muted rounded-lg">
                   <h4 className="font-medium">Paciente Selecionado</h4>
@@ -292,22 +295,17 @@ export function TreatmentPlanForm({
                     {selectedPatient.given_name?.[0]} {selectedPatient.family_name}
                   </p>
                   {selectedPatient.email && (
-                    <p className="text-sm text-muted-foreground">
-                      {selectedPatient.email}
-                    </p>
+                    <p className="text-sm text-muted-foreground">{selectedPatient.email}</p>
                   )}
                 </div>
               )}
             </CardContent>
           </Card>
-
           {/* Basic Information */}
           <Card>
             <CardHeader>
               <CardTitle>Informações Básicas</CardTitle>
-              <CardDescription>
-                Defina o título, descrição e configurações do plano
-              </CardDescription>
+              <CardDescription>Defina o título, descrição e configurações do plano</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField
@@ -317,10 +315,7 @@ export function TreatmentPlanForm({
                   <FormItem>
                     <FormLabel>Título *</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Ex: Tratamento estético facial completo"
-                        {...field}
-                      />
+                      <Input placeholder="Ex: Tratamento estético facial completo" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -400,13 +395,12 @@ export function TreatmentPlanForm({
                 />
               </div>
             </CardContent>
-          </Card>          {/* Period/Schedule */}
+          </Card>{" "}
+          {/* Period/Schedule */}
           <Card>
             <CardHeader>
               <CardTitle>Período de Tratamento</CardTitle>
-              <CardDescription>
-                Defina o período de duração do tratamento
-              </CardDescription>
+              <CardDescription>Defina o período de duração do tratamento</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -423,7 +417,7 @@ export function TreatmentPlanForm({
                               variant="outline"
                               className={cn(
                                 "w-full pl-3 text-left font-normal",
-                                !field.value && "text-muted-foreground"
+                                !field.value && "text-muted-foreground",
                               )}
                             >
                               {field.value ? (
@@ -439,7 +433,7 @@ export function TreatmentPlanForm({
                           <Calendar
                             mode="single"
                             selected={field.value ? new Date(field.value) : undefined}
-                            onSelect={(date) => field.onChange(date?.toISOString().split('T')[0])}
+                            onSelect={(date) => field.onChange(date?.toISOString().split("T")[0])}
                             disabled={(date) => date < new Date()}
                             initialFocus
                           />
@@ -463,7 +457,7 @@ export function TreatmentPlanForm({
                               variant="outline"
                               className={cn(
                                 "w-full pl-3 text-left font-normal",
-                                !field.value && "text-muted-foreground"
+                                !field.value && "text-muted-foreground",
                               )}
                             >
                               {field.value ? (
@@ -479,9 +473,9 @@ export function TreatmentPlanForm({
                           <Calendar
                             mode="single"
                             selected={field.value ? new Date(field.value) : undefined}
-                            onSelect={(date) => field.onChange(date?.toISOString().split('T')[0])}
+                            onSelect={(date) => field.onChange(date?.toISOString().split("T")[0])}
                             disabled={(date) => {
-                              const startDate = form.getValues('period_start');
+                              const startDate = form.getValues("period_start");
                               return startDate ? date < new Date(startDate) : date < new Date();
                             }}
                             initialFocus
@@ -498,7 +492,6 @@ export function TreatmentPlanForm({
               </div>
             </CardContent>
           </Card>
-
           {/* Treatment Goals */}
           <Card>
             <CardHeader>
@@ -508,7 +501,7 @@ export function TreatmentPlanForm({
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {form.watch('goals').map((goal, index) => (
+              {form.watch("goals").map((goal, index) => (
                 <div key={index} className="flex items-center space-x-2">
                   <div className="flex-1">
                     <Input
@@ -527,19 +520,13 @@ export function TreatmentPlanForm({
                   </Button>
                 </div>
               ))}
-              
-              <Button
-                type="button"
-                variant="outline"
-                onClick={addGoal}
-                className="w-full"
-              >
+
+              <Button type="button" variant="outline" onClick={addGoal} className="w-full">
                 <Plus className="mr-2 h-4 w-4" />
                 Adicionar Objetivo
               </Button>
             </CardContent>
           </Card>
-
           {/* Activities Management */}
           <Card>
             <CardHeader>
@@ -592,20 +579,24 @@ export function TreatmentPlanForm({
                             <X className="h-4 w-4" />
                           </Button>
                         </div>
-                        
+
                         <Textarea
                           placeholder="Descrição da atividade (opcional)"
                           value={activity.description}
-                          onChange={(e) => updateActivity(activity.id, { description: e.target.value })}
+                          onChange={(e) =>
+                            updateActivity(activity.id, { description: e.target.value })
+                          }
                           rows={2}
                         />
-                        
+
                         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                           <div>
                             <Label className="text-sm">Status</Label>
                             <Select
                               value={activity.status}
-                              onValueChange={(value) => updateActivity(activity.id, { status: value as any })}
+                              onValueChange={(value) =>
+                                updateActivity(activity.id, { status: value as any })
+                              }
                             >
                               <SelectTrigger>
                                 <SelectValue />
@@ -619,13 +610,15 @@ export function TreatmentPlanForm({
                               </SelectContent>
                             </Select>
                           </div>
-                          
+
                           <div>
                             <Label className="text-sm">Data Agendada (Opcional)</Label>
                             <Input
                               type="date"
                               value={activity.scheduled_date}
-                              onChange={(e) => updateActivity(activity.id, { scheduled_date: e.target.value })}
+                              onChange={(e) =>
+                                updateActivity(activity.id, { scheduled_date: e.target.value })
+                              }
                             />
                           </div>
                         </div>
@@ -639,7 +632,7 @@ export function TreatmentPlanForm({
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => addActivity('Nova atividade')}
+                onClick={() => addActivity("Nova atividade")}
                 className="w-full"
               >
                 <Plus className="mr-2 h-4 w-4" />
@@ -647,7 +640,6 @@ export function TreatmentPlanForm({
               </Button>
             </CardContent>
           </Card>
-
           {/* Form Actions */}
           <div className="flex justify-end space-x-2">
             {onCancel && (
@@ -664,7 +656,7 @@ export function TreatmentPlanForm({
               ) : (
                 <>
                   <Save className="mr-2 h-4 w-4" />
-                  {treatmentPlan ? 'Atualizar' : 'Criar'} Plano
+                  {treatmentPlan ? "Atualizar" : "Criar"} Plano
                 </>
               )}
             </Button>

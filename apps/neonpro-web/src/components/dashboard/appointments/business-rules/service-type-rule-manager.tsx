@@ -5,14 +5,11 @@
 // Story 1.2: Business rules configuration
 // =============================================
 
+import type { ServiceTypeRule, ServiceTypeRuleConfig } from "@/app/lib/types/conflict-prevention";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
-  ServiceTypeRule,
-  ServiceTypeRuleConfig,
-} from "@/app/lib/types/conflict-prevention";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -21,18 +18,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
-import {
+import type { Switch } from "@/components/ui/switch";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
   AlertCircle,
   Clock,
   Edit,
@@ -43,26 +40,19 @@ import {
   UserCheck,
   Users,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 
 interface ServiceTypeRuleManagerProps {
   clinicId: string;
   onRulesChange?: (rules: ServiceTypeRule[]) => void;
 }
 
-export function ServiceTypeRuleManager({
-  clinicId,
-  onRulesChange,
-}: ServiceTypeRuleManagerProps) {
+export function ServiceTypeRuleManager({ clinicId, onRulesChange }: ServiceTypeRuleManagerProps) {
   // State management
   const [rules, setRules] = useState<ServiceTypeRule[]>([]);
-  const [services, setServices] = useState<Array<{ id: string; name: string }>>(
-    []
-  );
-  const [professionals, setProfessionals] = useState<
-    Array<{ id: string; name: string }>
-  >([]);
+  const [services, setServices] = useState<Array<{ id: string; name: string }>>([]);
+  const [professionals, setProfessionals] = useState<Array<{ id: string; name: string }>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingRule, setEditingRule] = useState<ServiceTypeRule | null>(null);
@@ -189,7 +179,7 @@ export function ServiceTypeRuleManager({
         formData.allowed_professional_ids.length === 0
       ) {
         toast.error(
-          'Selecione pelo menos um profissional quando "Requer profissional específico" está ativo'
+          'Selecione pelo menos um profissional quando "Requer profissional específico" está ativo',
         );
         return;
       }
@@ -214,9 +204,7 @@ export function ServiceTypeRuleManager({
       const savedRule = await response.json();
 
       if (editingRule) {
-        setRules((prev) =>
-          prev.map((r) => (r.id === editingRule.id ? savedRule : r))
-        );
+        setRules((prev) => prev.map((r) => (r.id === editingRule.id ? savedRule : r)));
         toast.success("Regra atualizada com sucesso!");
       } else {
         setRules((prev) => [...prev, savedRule]);
@@ -232,12 +220,9 @@ export function ServiceTypeRuleManager({
 
   const deleteRule = async (ruleId: string) => {
     try {
-      const response = await fetch(
-        `/api/clinic/${clinicId}/service-rules/${ruleId}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const response = await fetch(`/api/clinic/${clinicId}/service-rules/${ruleId}`, {
+        method: "DELETE",
+      });
 
       if (!response.ok) {
         throw new Error("Failed to delete rule");
@@ -253,28 +238,21 @@ export function ServiceTypeRuleManager({
 
   const toggleRuleStatus = async (ruleId: string, isActive: boolean) => {
     try {
-      const response = await fetch(
-        `/api/clinic/${clinicId}/service-rules/${ruleId}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ is_active: isActive }),
-        }
-      );
+      const response = await fetch(`/api/clinic/${clinicId}/service-rules/${ruleId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ is_active: isActive }),
+      });
 
       if (!response.ok) {
         throw new Error("Failed to update rule status");
       }
 
-      setRules((prev) =>
-        prev.map((r) => (r.id === ruleId ? { ...r, is_active: isActive } : r))
-      );
+      setRules((prev) => prev.map((r) => (r.id === ruleId ? { ...r, is_active: isActive } : r)));
 
-      toast.success(
-        `Regra ${isActive ? "ativada" : "desativada"} com sucesso!`
-      );
+      toast.success(`Regra ${isActive ? "ativada" : "desativada"} com sucesso!`);
     } catch (error) {
       console.error("Error updating rule status:", error);
       toast.error("Erro ao atualizar status da regra");
@@ -347,12 +325,9 @@ export function ServiceTypeRuleManager({
             </DialogTrigger>
             <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>
-                  {editingRule ? "Editar" : "Criar"} Regra de Serviço
-                </DialogTitle>
+                <DialogTitle>{editingRule ? "Editar" : "Criar"} Regra de Serviço</DialogTitle>
                 <DialogDescription>
-                  Configure restrições e parâmetros específicos para tipos de
-                  serviços.
+                  Configure restrições e parâmetros específicos para tipos de serviços.
                 </DialogDescription>
               </DialogHeader>
 
@@ -470,9 +445,7 @@ export function ServiceTypeRuleManager({
                       onChange={(e) =>
                         setFormData((prev) => ({
                           ...prev,
-                          max_daily_bookings: e.target.value
-                            ? parseInt(e.target.value)
-                            : undefined,
+                          max_daily_bookings: e.target.value ? parseInt(e.target.value) : undefined,
                         }))
                       }
                       placeholder="Deixe vazio para sem limite"
@@ -494,9 +467,7 @@ export function ServiceTypeRuleManager({
                         setFormData((prev) => ({
                           ...prev,
                           requires_specific_professional: checked,
-                          allowed_professional_ids: checked
-                            ? prev.allowed_professional_ids
-                            : [],
+                          allowed_professional_ids: checked ? prev.allowed_professional_ids : [],
                         }))
                       }
                     />
@@ -509,11 +480,7 @@ export function ServiceTypeRuleManager({
                       <Select
                         value=""
                         onValueChange={(professionalId) => {
-                          if (
-                            !formData.allowed_professional_ids.includes(
-                              professionalId
-                            )
-                          ) {
+                          if (!formData.allowed_professional_ids.includes(professionalId)) {
                             setFormData((prev) => ({
                               ...prev,
                               allowed_professional_ids: [
@@ -529,17 +496,9 @@ export function ServiceTypeRuleManager({
                         </SelectTrigger>
                         <SelectContent>
                           {professionals
-                            .filter(
-                              (p) =>
-                                !formData.allowed_professional_ids.includes(
-                                  p.id
-                                )
-                            )
+                            .filter((p) => !formData.allowed_professional_ids.includes(p.id))
                             .map((professional) => (
-                              <SelectItem
-                                key={professional.id}
-                                value={professional.id}
-                              >
+                              <SelectItem key={professional.id} value={professional.id}>
                                 {professional.name}
                               </SelectItem>
                             ))}
@@ -548,28 +507,26 @@ export function ServiceTypeRuleManager({
 
                       {formData.allowed_professional_ids.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-2">
-                          {getProfessionalNames(
-                            formData.allowed_professional_ids
-                          ).map((name, index) => (
-                            <Badge
-                              key={index}
-                              variant="secondary"
-                              className="cursor-pointer"
-                              onClick={() => {
-                                const professionalId =
-                                  formData.allowed_professional_ids[index];
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  allowed_professional_ids:
-                                    prev.allowed_professional_ids.filter(
-                                      (id) => id !== professionalId
+                          {getProfessionalNames(formData.allowed_professional_ids).map(
+                            (name, index) => (
+                              <Badge
+                                key={index}
+                                variant="secondary"
+                                className="cursor-pointer"
+                                onClick={() => {
+                                  const professionalId = formData.allowed_professional_ids[index];
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    allowed_professional_ids: prev.allowed_professional_ids.filter(
+                                      (id) => id !== professionalId,
                                     ),
-                                }));
-                              }}
-                            >
-                              {name} ×
-                            </Badge>
-                          ))}
+                                  }));
+                                }}
+                              >
+                                {name} ×
+                              </Badge>
+                            ),
+                          )}
                         </div>
                       )}
                     </div>
@@ -578,9 +535,7 @@ export function ServiceTypeRuleManager({
 
                 {/* Advance Booking */}
                 <div className="space-y-4">
-                  <h4 className="text-sm font-medium">
-                    Agendamento Antecipado
-                  </h4>
+                  <h4 className="text-sm font-medium">Agendamento Antecipado</h4>
 
                   <div className="flex items-center space-x-2">
                     <Switch
@@ -589,9 +544,7 @@ export function ServiceTypeRuleManager({
                         setFormData((prev) => ({
                           ...prev,
                           allow_same_day: checked,
-                          minimum_advance_hours: checked
-                            ? prev.minimum_advance_hours
-                            : 24,
+                          minimum_advance_hours: checked ? prev.minimum_advance_hours : 24,
                         }))
                       }
                     />
@@ -608,14 +561,10 @@ export function ServiceTypeRuleManager({
                         onChange={(e) =>
                           setFormData((prev) => ({
                             ...prev,
-                            minimum_advance_hours:
-                              parseInt(e.target.value) || 0,
+                            minimum_advance_hours: parseInt(e.target.value) || 0,
                           }))
                         }
-                        disabled={
-                          !formData.allow_same_day &&
-                          formData.minimum_advance_hours < 24
-                        }
+                        disabled={!formData.allow_same_day && formData.minimum_advance_hours < 24}
                       />
                     </div>
                     <div>
@@ -627,8 +576,7 @@ export function ServiceTypeRuleManager({
                         onChange={(e) =>
                           setFormData((prev) => ({
                             ...prev,
-                            maximum_advance_days:
-                              parseInt(e.target.value) || 90,
+                            maximum_advance_days: parseInt(e.target.value) || 90,
                           }))
                         }
                       />
@@ -673,22 +621,16 @@ export function ServiceTypeRuleManager({
               <Settings className="h-8 w-8 mx-auto mb-2 opacity-50" />
               <p>Nenhuma regra configurada</p>
               <p className="text-sm">
-                Clique em "Nova Regra" para criar restrições específicas por
-                tipo de serviço
+                Clique em "Nova Regra" para criar restrições específicas por tipo de serviço
               </p>
             </div>
           ) : (
             rules.map((rule) => {
               const serviceName = getServiceName(rule.service_type_id);
-              const professionalNames = getProfessionalNames(
-                rule.allowed_professional_ids || []
-              );
+              const professionalNames = getProfessionalNames(rule.allowed_professional_ids || []);
 
               return (
-                <Card
-                  key={rule.id}
-                  className={!rule.is_active ? "opacity-60" : ""}
-                >
+                <Card key={rule.id} className={!rule.is_active ? "opacity-60" : ""}>
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -705,15 +647,12 @@ export function ServiceTypeRuleManager({
                           <div className="space-y-1">
                             <div className="flex items-center gap-1">
                               <Clock className="h-3 w-3" />
-                              Duração: {formatDuration(
-                                rule.minimum_duration
-                              )} - {formatDuration(rule.maximum_duration)}
+                              Duração: {formatDuration(rule.minimum_duration)} -{" "}
+                              {formatDuration(rule.maximum_duration)}
                             </div>
-                            {(rule.buffer_before > 0 ||
-                              rule.buffer_after > 0) && (
+                            {(rule.buffer_before > 0 || rule.buffer_after > 0) && (
                               <div className="text-xs">
-                                Buffer: {rule.buffer_before}min antes,{" "}
-                                {rule.buffer_after}min depois
+                                Buffer: {rule.buffer_before}min antes, {rule.buffer_after}min depois
                               </div>
                             )}
                             {rule.max_daily_bookings && (
@@ -727,14 +666,12 @@ export function ServiceTypeRuleManager({
                           <div className="space-y-1">
                             <div>{formatAdvanceTime(rule)}</div>
                             <div className="text-xs">
-                              Máx: {rule.maximum_advance_days} dias de
-                              antecedência
+                              Máx: {rule.maximum_advance_days} dias de antecedência
                             </div>
                             {rule.requires_specific_professional && (
                               <div className="text-xs">
                                 <UserCheck className="h-3 w-3 inline mr-1" />
-                                Profissionais:{" "}
-                                {professionalNames.join(", ") || "Nenhum"}
+                                Profissionais: {professionalNames.join(", ") || "Nenhum"}
                               </div>
                             )}
                           </div>
@@ -750,15 +687,9 @@ export function ServiceTypeRuleManager({
                       <div className="flex items-center gap-1">
                         <Switch
                           checked={rule.is_active}
-                          onCheckedChange={(checked) =>
-                            toggleRuleStatus(rule.id, checked)
-                          }
+                          onCheckedChange={(checked) => toggleRuleStatus(rule.id, checked)}
                         />
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => openDialog(rule)}
-                        >
+                        <Button variant="ghost" size="sm" onClick={() => openDialog(rule)}>
                           <Edit className="h-3 w-3" />
                         </Button>
                         <Button
@@ -786,24 +717,20 @@ export function ServiceTypeRuleManager({
                 <p className="font-medium mb-1">Como funcionam as regras:</p>
                 <ul className="space-y-1 list-disc list-inside">
                   <li>
-                    <strong>Duração:</strong> Define limites mín/máx para o
+                    <strong>Duração:</strong> Define limites mín/máx para o serviço
+                  </li>
+                  <li>
+                    <strong>Buffer:</strong> Tempo adicional antes/depois do agendamento
+                  </li>
+                  <li>
+                    <strong>Limites diários:</strong> Controla quantidade de agendamentos por dia
+                  </li>
+                  <li>
+                    <strong>Profissionais específicos:</strong> Restringe quem pode executar o
                     serviço
                   </li>
                   <li>
-                    <strong>Buffer:</strong> Tempo adicional antes/depois do
-                    agendamento
-                  </li>
-                  <li>
-                    <strong>Limites diários:</strong> Controla quantidade de
-                    agendamentos por dia
-                  </li>
-                  <li>
-                    <strong>Profissionais específicos:</strong> Restringe quem
-                    pode executar o serviço
-                  </li>
-                  <li>
-                    <strong>Antecedência:</strong> Define quando é possível
-                    agendar
+                    <strong>Antecedência:</strong> Define quando é possível agendar
                   </li>
                   <li>Regras inativas não são aplicadas na validação</li>
                 </ul>

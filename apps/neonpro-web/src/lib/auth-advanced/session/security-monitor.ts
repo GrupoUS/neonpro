@@ -1,13 +1,13 @@
 /**
  * Security Monitor - Advanced Security Monitoring
- * 
+ *
  * Provides real-time security monitoring, threat detection, and anomaly analysis
  * for session management with intelligent risk assessment and automated responses.
  */
 
-import { SupabaseClient } from '@supabase/supabase-js';
-import { EventEmitter } from 'events';
-import {
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { EventEmitter } from "events";
+import type {
   UserSession,
   SecurityConfig,
   SessionSecurityEvent,
@@ -22,8 +22,8 @@ import {
   BehaviorRisk,
   SessionLocation,
   DeviceFingerprint,
-  SessionError
-} from './types';
+  SessionError,
+} from "./types";
 
 interface SecurityValidationParams {
   userId: string;
@@ -67,7 +67,9 @@ export class SecurityMonitor extends EventEmitter {
   /**
    * Validate session creation security
    */
-  async validateSessionCreation(params: SecurityValidationParams): Promise<SecurityValidationResult> {
+  async validateSessionCreation(
+    params: SecurityValidationParams,
+  ): Promise<SecurityValidationResult> {
     try {
       const reasons: string[] = [];
       const events: SessionSecurityEvent[] = [];
@@ -76,15 +78,15 @@ export class SecurityMonitor extends EventEmitter {
       // IP reputation check
       const ipReputation = await this.checkIPReputation(params.ipAddress);
       if (ipReputation.isMalicious) {
-        reasons.push('Malicious IP detected');
+        reasons.push("Malicious IP detected");
         securityScore -= 50;
       }
       if (ipReputation.isProxy || ipReputation.isVPN) {
-        reasons.push('Proxy/VPN detected');
+        reasons.push("Proxy/VPN detected");
         securityScore -= 20;
       }
       if (ipReputation.isTor) {
-        reasons.push('Tor network detected');
+        reasons.push("Tor network detected");
         securityScore -= 30;
       }
 
@@ -92,7 +94,7 @@ export class SecurityMonitor extends EventEmitter {
       if (params.location) {
         const geoRisk = await this.assessGeographicRisk(params.location, params.userId);
         if (geoRisk.isHighRisk) {
-          reasons.push(`High-risk location: ${geoRisk.reasons.join(', ')}`);
+          reasons.push(`High-risk location: ${geoRisk.reasons.join(", ")}`);
           securityScore -= geoRisk.riskScore;
         }
       }
@@ -100,7 +102,7 @@ export class SecurityMonitor extends EventEmitter {
       // Device fingerprint analysis
       const deviceRisk = await this.analyzeDeviceRisk(params.deviceFingerprint, params.userId);
       if (deviceRisk.isCompromised) {
-        reasons.push(`Device risk detected: ${deviceRisk.indicators.join(', ')}`);
+        reasons.push(`Device risk detected: ${deviceRisk.indicators.join(", ")}`);
         securityScore -= deviceRisk.riskScore;
       }
 
@@ -108,48 +110,51 @@ export class SecurityMonitor extends EventEmitter {
       const behaviorRisk = await this.analyzeBehaviorRisk(params.userId, {
         ipAddress: params.ipAddress,
         location: params.location,
-        deviceFingerprint: params.deviceFingerprint
+        deviceFingerprint: params.deviceFingerprint,
       });
       if (behaviorRisk.isAnomalous) {
-        reasons.push(`Behavioral anomaly: ${behaviorRisk.patterns.join(', ')}`);
+        reasons.push(`Behavioral anomaly: ${behaviorRisk.patterns.join(", ")}`);
         securityScore -= behaviorRisk.riskScore;
       }
 
       // Rate limiting check
       const rateLimitViolation = await this.checkRateLimit(params.userId, params.ipAddress);
       if (rateLimitViolation) {
-        reasons.push('Rate limit exceeded');
+        reasons.push("Rate limit exceeded");
         securityScore -= 25;
       }
 
       // Concurrent session check
       const concurrentViolation = await this.checkConcurrentSessions(params.userId);
       if (concurrentViolation) {
-        reasons.push('Concurrent session limit exceeded');
+        reasons.push("Concurrent session limit exceeded");
         securityScore -= 15;
       }
 
       // Determine if session creation is allowed
-      const allowed = securityScore >= this.config.suspiciousActivityThreshold && 
-                     !this.blockedIPs.has(params.ipAddress);
+      const allowed =
+        securityScore >= this.config.suspiciousActivityThreshold &&
+        !this.blockedIPs.has(params.ipAddress);
 
       // Log security events if needed
       if (!allowed || reasons.length > 0) {
         const event = await this.createSecurityEvent({
           userId: params.userId,
-          eventType: 'suspicious_login',
+          eventType: "suspicious_login",
           severity: this.calculateSeverity(securityScore),
           description: `Session creation security validation: Score ${securityScore}`,
           details: {
             reasons,
             securityScore,
             ipReputation,
-            geoRisk: params.location ? await this.assessGeographicRisk(params.location, params.userId) : null,
+            geoRisk: params.location
+              ? await this.assessGeographicRisk(params.location, params.userId)
+              : null,
             deviceRisk,
-            behaviorRisk
+            behaviorRisk,
           },
           ipAddress: params.ipAddress,
-          location: params.location
+          location: params.location,
         });
         events.push(event);
       }
@@ -158,16 +163,15 @@ export class SecurityMonitor extends EventEmitter {
         allowed,
         securityScore: Math.max(0, securityScore),
         reasons,
-        events
+        events,
       };
-
     } catch (error) {
-      console.error('Security validation failed:', error);
+      console.error("Security validation failed:", error);
       return {
         allowed: false,
         securityScore: 0,
-        reasons: ['Security validation error'],
-        events: []
+        reasons: ["Security validation error"],
+        events: [],
       };
     }
   }
@@ -183,17 +187,17 @@ export class SecurityMonitor extends EventEmitter {
       // Check for session hijacking indicators
       const hijackingRisk = await this.detectSessionHijacking(session);
       if (hijackingRisk.detected) {
-        reasons.push(`Session hijacking detected: ${hijackingRisk.indicators.join(', ')}`);
-        
+        reasons.push(`Session hijacking detected: ${hijackingRisk.indicators.join(", ")}`);
+
         const event = await this.createSecurityEvent({
           sessionId: session.id,
           userId: session.userId,
-          eventType: 'session_hijack_attempt',
-          severity: 'critical',
-          description: 'Potential session hijacking detected',
+          eventType: "session_hijack_attempt",
+          severity: "critical",
+          description: "Potential session hijacking detected",
           details: hijackingRisk,
           ipAddress: session.ipAddress,
-          location: session.location
+          location: session.location,
         });
         events.push(event);
       }
@@ -201,17 +205,17 @@ export class SecurityMonitor extends EventEmitter {
       // Check for unusual activity patterns
       const activityAnomaly = await this.detectActivityAnomalies(session);
       if (activityAnomaly.detected) {
-        reasons.push(`Activity anomaly: ${activityAnomaly.patterns.join(', ')}`);
-        
+        reasons.push(`Activity anomaly: ${activityAnomaly.patterns.join(", ")}`);
+
         const event = await this.createSecurityEvent({
           sessionId: session.id,
           userId: session.userId,
-          eventType: 'data_access_anomaly',
-          severity: 'medium',
-          description: 'Unusual activity pattern detected',
+          eventType: "data_access_anomaly",
+          severity: "medium",
+          description: "Unusual activity pattern detected",
           details: activityAnomaly,
           ipAddress: session.ipAddress,
-          location: session.location
+          location: session.location,
         });
         events.push(event);
       }
@@ -219,17 +223,17 @@ export class SecurityMonitor extends EventEmitter {
       // Check for privilege escalation attempts
       const privilegeEscalation = await this.detectPrivilegeEscalation(session);
       if (privilegeEscalation.detected) {
-        reasons.push(`Privilege escalation attempt: ${privilegeEscalation.attempts.join(', ')}`);
-        
+        reasons.push(`Privilege escalation attempt: ${privilegeEscalation.attempts.join(", ")}`);
+
         const event = await this.createSecurityEvent({
           sessionId: session.id,
           userId: session.userId,
-          eventType: 'privilege_escalation',
-          severity: 'high',
-          description: 'Privilege escalation attempt detected',
+          eventType: "privilege_escalation",
+          severity: "high",
+          description: "Privilege escalation attempt detected",
           details: privilegeEscalation,
           ipAddress: session.ipAddress,
-          location: session.location
+          location: session.location,
         });
         events.push(event);
       }
@@ -239,15 +243,14 @@ export class SecurityMonitor extends EventEmitter {
       return {
         allowed,
         reasons,
-        events
+        events,
       };
-
     } catch (error) {
-      console.error('Session activity validation failed:', error);
+      console.error("Session activity validation failed:", error);
       return {
         allowed: false,
-        reasons: ['Activity validation error'],
-        events: []
+        reasons: ["Activity validation error"],
+        events: [],
       };
     }
   }
@@ -263,7 +266,8 @@ export class SecurityMonitor extends EventEmitter {
     try {
       // Check cache first
       const cached = this.threatIntelCache.get(ipAddress);
-      if (cached && Date.now() - cached.timestamp < 3600000) { // 1 hour cache
+      if (cached && Date.now() - cached.timestamp < 3600000) {
+        // 1 hour cache
         return cached.ipReputation;
       }
 
@@ -275,15 +279,15 @@ export class SecurityMonitor extends EventEmitter {
           isVPN: false,
           isTor: false,
           riskScore: 100,
-          sources: ['internal_blacklist']
+          sources: ["internal_blacklist"],
         };
       }
 
       // Check database for known malicious IPs
       const { data: maliciousIP } = await this.supabase
-        .from('malicious_ips')
-        .select('*')
-        .eq('ip_address', ipAddress)
+        .from("malicious_ips")
+        .select("*")
+        .eq("ip_address", ipAddress)
         .single();
 
       if (maliciousIP) {
@@ -293,30 +297,29 @@ export class SecurityMonitor extends EventEmitter {
           isVPN: maliciousIP.is_vpn || false,
           isTor: maliciousIP.is_tor || false,
           riskScore: maliciousIP.risk_score || 100,
-          sources: ['database']
+          sources: ["database"],
         };
       }
 
       // External threat intelligence (placeholder for real implementation)
       const reputation = await this.queryExternalThreatIntel(ipAddress);
-      
+
       // Cache result
       this.threatIntelCache.set(ipAddress, {
         ipReputation: reputation,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       return reputation;
-
     } catch (error) {
-      console.error('IP reputation check failed:', error);
+      console.error("IP reputation check failed:", error);
       return {
         isMalicious: false,
         isProxy: false,
         isVPN: false,
         isTor: false,
         riskScore: 0,
-        sources: []
+        sources: [],
       };
     }
   }
@@ -330,37 +333,35 @@ export class SecurityMonitor extends EventEmitter {
       let riskScore = 0;
 
       // Check high-risk countries
-      const highRiskCountries = ['CN', 'RU', 'KP', 'IR']; // Example list
+      const highRiskCountries = ["CN", "RU", "KP", "IR"]; // Example list
       if (highRiskCountries.includes(location.country)) {
-        reasons.push('High-risk country');
+        reasons.push("High-risk country");
         riskScore += 30;
       }
 
       // Check user's typical locations
       const { data: userLocations } = await this.supabase
-        .from('user_sessions')
-        .select('location')
-        .eq('user_id', userId)
-        .not('location', 'is', null)
-        .order('created_at', { ascending: false })
+        .from("user_sessions")
+        .select("location")
+        .eq("user_id", userId)
+        .not("location", "is", null)
+        .order("created_at", { ascending: false })
         .limit(10);
 
       if (userLocations && userLocations.length > 0) {
         const typicalCountries = new Set(
-          userLocations
-            .map(s => s.location?.country)
-            .filter(Boolean)
+          userLocations.map((s) => s.location?.country).filter(Boolean),
         );
 
         if (!typicalCountries.has(location.country)) {
-          reasons.push('Unusual country for user');
+          reasons.push("Unusual country for user");
           riskScore += 20;
         }
 
         // Check for impossible travel
         const lastLocation = userLocations[0]?.location;
         if (lastLocation && this.isImpossibleTravel(lastLocation, location)) {
-          reasons.push('Impossible travel detected');
+          reasons.push("Impossible travel detected");
           riskScore += 40;
         }
       }
@@ -368,15 +369,14 @@ export class SecurityMonitor extends EventEmitter {
       return {
         isHighRisk: riskScore > 25,
         riskScore,
-        reasons
+        reasons,
       };
-
     } catch (error) {
-      console.error('Geographic risk assessment failed:', error);
+      console.error("Geographic risk assessment failed:", error);
       return {
         isHighRisk: false,
         riskScore: 0,
-        reasons: []
+        reasons: [],
       };
     }
   }
@@ -384,37 +384,40 @@ export class SecurityMonitor extends EventEmitter {
   /**
    * Analyze device risk based on fingerprint and history
    */
-  private async analyzeDeviceRisk(fingerprint: DeviceFingerprint, userId: string): Promise<DeviceRisk> {
+  private async analyzeDeviceRisk(
+    fingerprint: DeviceFingerprint,
+    userId: string,
+  ): Promise<DeviceRisk> {
     try {
       const indicators: string[] = [];
       let riskScore = 0;
 
       // Check for suspicious user agent patterns
       if (this.isSuspiciousUserAgent(fingerprint.userAgent)) {
-        indicators.push('Suspicious user agent');
+        indicators.push("Suspicious user agent");
         riskScore += 15;
       }
 
       // Check for automation indicators
       if (this.hasAutomationIndicators(fingerprint)) {
-        indicators.push('Automation detected');
+        indicators.push("Automation detected");
         riskScore += 25;
       }
 
       // Check device consistency
       const { data: userDevices } = await this.supabase
-        .from('device_registrations')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('is_trusted', true);
+        .from("device_registrations")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("is_trusted", true);
 
       if (userDevices && userDevices.length > 0) {
-        const isKnownDevice = userDevices.some(device => 
-          this.compareDeviceFingerprints(device.device_fingerprint, fingerprint)
+        const isKnownDevice = userDevices.some((device) =>
+          this.compareDeviceFingerprints(device.device_fingerprint, fingerprint),
         );
 
         if (!isKnownDevice) {
-          indicators.push('Unknown device');
+          indicators.push("Unknown device");
           riskScore += 10;
         }
       }
@@ -422,15 +425,14 @@ export class SecurityMonitor extends EventEmitter {
       return {
         isCompromised: riskScore > 20,
         riskScore,
-        indicators
+        indicators,
       };
-
     } catch (error) {
-      console.error('Device risk analysis failed:', error);
+      console.error("Device risk analysis failed:", error);
       return {
         isCompromised: false,
         riskScore: 0,
-        indicators: []
+        indicators: [],
       };
     }
   }
@@ -438,11 +440,14 @@ export class SecurityMonitor extends EventEmitter {
   /**
    * Analyze user behavior for anomalies
    */
-  private async analyzeBehaviorRisk(userId: string, currentContext: {
-    ipAddress: string;
-    location?: SessionLocation;
-    deviceFingerprint: DeviceFingerprint;
-  }): Promise<BehaviorRisk> {
+  private async analyzeBehaviorRisk(
+    userId: string,
+    currentContext: {
+      ipAddress: string;
+      location?: SessionLocation;
+      deviceFingerprint: DeviceFingerprint;
+    },
+  ): Promise<BehaviorRisk> {
     try {
       const patterns: string[] = [];
       let riskScore = 0;
@@ -457,41 +462,40 @@ export class SecurityMonitor extends EventEmitter {
       // Check login time patterns
       const currentHour = new Date().getHours();
       if (!profile.typicalLoginHours.includes(currentHour)) {
-        patterns.push('Unusual login time');
+        patterns.push("Unusual login time");
         riskScore += 10;
       }
 
       // Check IP address patterns
       if (!profile.knownIPs.has(currentContext.ipAddress)) {
-        patterns.push('New IP address');
+        patterns.push("New IP address");
         riskScore += 15;
       }
 
       // Check location patterns
       if (currentContext.location && !this.isTypicalLocation(profile, currentContext.location)) {
-        patterns.push('Unusual location');
+        patterns.push("Unusual location");
         riskScore += 20;
       }
 
       // Check rapid login attempts
       const recentAttempts = await this.getRecentLoginAttempts(userId);
       if (recentAttempts > 5) {
-        patterns.push('Rapid login attempts');
+        patterns.push("Rapid login attempts");
         riskScore += 25;
       }
 
       return {
         isAnomalous: riskScore > 15,
         riskScore,
-        patterns
+        patterns,
       };
-
     } catch (error) {
-      console.error('Behavior risk analysis failed:', error);
+      console.error("Behavior risk analysis failed:", error);
       return {
         isAnomalous: false,
         riskScore: 0,
-        patterns: []
+        patterns: [],
       };
     }
   }
@@ -514,32 +518,32 @@ export class SecurityMonitor extends EventEmitter {
     try {
       // Check for IP address changes
       const { data: sessionHistory } = await this.supabase
-        .from('session_activities')
-        .select('ip_address, timestamp')
-        .eq('session_id', session.id)
-        .order('timestamp', { ascending: false })
+        .from("session_activities")
+        .select("ip_address, timestamp")
+        .eq("session_id", session.id)
+        .order("timestamp", { ascending: false })
         .limit(10);
 
       if (sessionHistory && sessionHistory.length > 1) {
-        const uniqueIPs = new Set(sessionHistory.map(h => h.ip_address));
+        const uniqueIPs = new Set(sessionHistory.map((h) => h.ip_address));
         if (uniqueIPs.size > 1) {
-          indicators.push('IP address changed during session');
+          indicators.push("IP address changed during session");
           confidence += 40;
         }
       }
 
       // Check for user agent changes
       const { data: userAgentHistory } = await this.supabase
-        .from('session_activities')
-        .select('user_agent, timestamp')
-        .eq('session_id', session.id)
-        .order('timestamp', { ascending: false })
+        .from("session_activities")
+        .select("user_agent, timestamp")
+        .eq("session_id", session.id)
+        .order("timestamp", { ascending: false })
         .limit(5);
 
       if (userAgentHistory && userAgentHistory.length > 1) {
-        const uniqueUserAgents = new Set(userAgentHistory.map(h => h.user_agent));
+        const uniqueUserAgents = new Set(userAgentHistory.map((h) => h.user_agent));
         if (uniqueUserAgents.size > 1) {
-          indicators.push('User agent changed during session');
+          indicators.push("User agent changed during session");
           confidence += 30;
         }
       }
@@ -547,22 +551,21 @@ export class SecurityMonitor extends EventEmitter {
       // Check for impossible activity patterns
       const activityPattern = await this.analyzeActivityPattern(session.id);
       if (activityPattern.isImpossible) {
-        indicators.push('Impossible activity pattern');
+        indicators.push("Impossible activity pattern");
         confidence += 50;
       }
 
       return {
         detected: confidence > 50,
         indicators,
-        confidence
+        confidence,
       };
-
     } catch (error) {
-      console.error('Session hijacking detection failed:', error);
+      console.error("Session hijacking detection failed:", error);
       return {
         detected: false,
         indicators: [],
-        confidence: 0
+        confidence: 0,
       };
     }
   }
@@ -576,54 +579,53 @@ export class SecurityMonitor extends EventEmitter {
     severity: SecuritySeverity;
   }> {
     const patterns: string[] = [];
-    let severity: SecuritySeverity = 'low';
+    let severity: SecuritySeverity = "low";
 
     try {
       // Check for rapid requests
       const { data: recentActivity } = await this.supabase
-        .from('session_activities')
-        .select('timestamp, action')
-        .eq('session_id', session.id)
-        .gte('timestamp', new Date(Date.now() - 60000).toISOString()) // Last minute
-        .order('timestamp', { ascending: false });
+        .from("session_activities")
+        .select("timestamp, action")
+        .eq("session_id", session.id)
+        .gte("timestamp", new Date(Date.now() - 60000).toISOString()) // Last minute
+        .order("timestamp", { ascending: false });
 
       if (recentActivity && recentActivity.length > 100) {
-        patterns.push('Excessive request rate');
-        severity = 'high';
+        patterns.push("Excessive request rate");
+        severity = "high";
       }
 
       // Check for unusual data access patterns
       const dataAccessPattern = await this.analyzeDataAccessPattern(session.userId);
       if (dataAccessPattern.isUnusual) {
-        patterns.push('Unusual data access pattern');
-        severity = 'medium';
+        patterns.push("Unusual data access pattern");
+        severity = "medium";
       }
 
       // Check for privilege escalation attempts
       const { data: privilegeAttempts } = await this.supabase
-        .from('session_activities')
-        .select('action, success')
-        .eq('session_id', session.id)
-        .like('action', '%admin%')
-        .eq('success', false);
+        .from("session_activities")
+        .select("action, success")
+        .eq("session_id", session.id)
+        .like("action", "%admin%")
+        .eq("success", false);
 
       if (privilegeAttempts && privilegeAttempts.length > 3) {
-        patterns.push('Multiple privilege escalation attempts');
-        severity = 'high';
+        patterns.push("Multiple privilege escalation attempts");
+        severity = "high";
       }
 
       return {
         detected: patterns.length > 0,
         patterns,
-        severity
+        severity,
       };
-
     } catch (error) {
-      console.error('Activity anomaly detection failed:', error);
+      console.error("Activity anomaly detection failed:", error);
       return {
         detected: false,
         patterns: [],
-        severity: 'low'
+        severity: "low",
       };
     }
   }
@@ -642,59 +644,58 @@ export class SecurityMonitor extends EventEmitter {
     try {
       // Check for unauthorized admin access attempts
       const { data: adminAttempts } = await this.supabase
-        .from('session_activities')
-        .select('action, resource, success, timestamp')
-        .eq('session_id', session.id)
-        .or('action.like.%admin%,resource.like.%admin%')
-        .order('timestamp', { ascending: false })
+        .from("session_activities")
+        .select("action, resource, success, timestamp")
+        .eq("session_id", session.id)
+        .or("action.like.%admin%,resource.like.%admin%")
+        .order("timestamp", { ascending: false })
         .limit(10);
 
       if (adminAttempts && adminAttempts.length > 0) {
-        const failedAttempts = adminAttempts.filter(a => !a.success);
+        const failedAttempts = adminAttempts.filter((a) => !a.success);
         if (failedAttempts.length > 2) {
-          attempts.push('Multiple failed admin access attempts');
+          attempts.push("Multiple failed admin access attempts");
           riskLevel += 30;
         }
       }
 
       // Check for role manipulation attempts
       const { data: roleAttempts } = await this.supabase
-        .from('session_activities')
-        .select('action, details')
-        .eq('session_id', session.id)
-        .like('action', '%role%')
-        .order('timestamp', { ascending: false });
+        .from("session_activities")
+        .select("action, details")
+        .eq("session_id", session.id)
+        .like("action", "%role%")
+        .order("timestamp", { ascending: false });
 
       if (roleAttempts && roleAttempts.length > 0) {
-        attempts.push('Role manipulation attempts');
+        attempts.push("Role manipulation attempts");
         riskLevel += 25;
       }
 
       // Check for permission bypass attempts
       const { data: permissionAttempts } = await this.supabase
-        .from('session_activities')
-        .select('action, success')
-        .eq('session_id', session.id)
-        .eq('success', false)
-        .like('action', '%unauthorized%');
+        .from("session_activities")
+        .select("action, success")
+        .eq("session_id", session.id)
+        .eq("success", false)
+        .like("action", "%unauthorized%");
 
       if (permissionAttempts && permissionAttempts.length > 5) {
-        attempts.push('Multiple unauthorized access attempts');
+        attempts.push("Multiple unauthorized access attempts");
         riskLevel += 20;
       }
 
       return {
         detected: riskLevel > 25,
         attempts,
-        riskLevel
+        riskLevel,
       };
-
     } catch (error) {
-      console.error('Privilege escalation detection failed:', error);
+      console.error("Privilege escalation detection failed:", error);
       return {
         detected: false,
         attempts: [],
-        riskLevel: 0
+        riskLevel: 0,
       };
     }
   }
@@ -706,14 +707,14 @@ export class SecurityMonitor extends EventEmitter {
   private async checkRateLimit(userId: string, ipAddress: string): Promise<boolean> {
     try {
       const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-      
+
       const { data: recentAttempts } = await this.supabase
-        .from('session_audit_logs')
-        .select('id')
-        .eq('user_id', userId)
-        .eq('ip_address', ipAddress)
-        .eq('action', 'session_created')
-        .gte('timestamp', fiveMinutesAgo.toISOString());
+        .from("session_audit_logs")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("ip_address", ipAddress)
+        .eq("action", "session_created")
+        .gte("timestamp", fiveMinutesAgo.toISOString());
 
       return (recentAttempts?.length || 0) > 10;
     } catch (error) {
@@ -724,11 +725,11 @@ export class SecurityMonitor extends EventEmitter {
   private async checkConcurrentSessions(userId: string): Promise<boolean> {
     try {
       const { data: activeSessions } = await this.supabase
-        .from('user_sessions')
-        .select('id')
-        .eq('user_id', userId)
-        .eq('is_active', true)
-        .gte('expires_at', new Date().toISOString());
+        .from("user_sessions")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("is_active", true)
+        .gte("expires_at", new Date().toISOString());
 
       return (activeSessions?.length || 0) >= this.config.maxConcurrentSessions;
     } catch (error) {
@@ -737,10 +738,10 @@ export class SecurityMonitor extends EventEmitter {
   }
 
   private calculateSeverity(securityScore: number): SecuritySeverity {
-    if (securityScore < 25) return 'critical';
-    if (securityScore < 50) return 'high';
-    if (securityScore < 75) return 'medium';
-    return 'low';
+    if (securityScore < 25) return "critical";
+    if (securityScore < 50) return "high";
+    if (securityScore < 75) return "medium";
+    return "low";
   }
 
   private async createSecurityEvent(params: {
@@ -755,54 +756,52 @@ export class SecurityMonitor extends EventEmitter {
   }): Promise<SessionSecurityEvent> {
     const event: SessionSecurityEvent = {
       id: `sec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      sessionId: params.sessionId || '',
+      sessionId: params.sessionId || "",
       userId: params.userId,
-      clinicId: '', // Will be filled from user data
+      clinicId: "", // Will be filled from user data
       eventType: params.eventType,
       severity: params.severity,
       description: params.description,
       details: params.details,
       ipAddress: params.ipAddress,
-      userAgent: '',
+      userAgent: "",
       location: params.location,
       timestamp: new Date(),
       resolved: false,
-      actions: this.determineSecurityActions(params.severity)
+      actions: this.determineSecurityActions(params.severity),
     };
 
     // Store in database
-    await this.supabase
-      .from('session_security_events')
-      .insert({
-        id: event.id,
-        session_id: event.sessionId,
-        user_id: event.userId,
-        event_type: event.eventType,
-        severity: event.severity,
-        description: event.description,
-        details: event.details,
-        ip_address: event.ipAddress,
-        location: event.location,
-        timestamp: event.timestamp.toISOString(),
-        resolved: event.resolved,
-        actions: event.actions
-      });
+    await this.supabase.from("session_security_events").insert({
+      id: event.id,
+      session_id: event.sessionId,
+      user_id: event.userId,
+      event_type: event.eventType,
+      severity: event.severity,
+      description: event.description,
+      details: event.details,
+      ip_address: event.ipAddress,
+      location: event.location,
+      timestamp: event.timestamp.toISOString(),
+      resolved: event.resolved,
+      actions: event.actions,
+    });
 
-    this.emit('security_event', event);
+    this.emit("security_event", event);
     return event;
   }
 
   private determineSecurityActions(severity: SecuritySeverity): SecurityAction[] {
     switch (severity) {
-      case 'critical':
-        return ['terminate_session', 'block_device', 'notify_admin', 'escalate_incident'];
-      case 'high':
-        return ['require_mfa', 'send_alert', 'notify_admin'];
-      case 'medium':
-        return ['send_alert', 'log_event'];
-      case 'low':
+      case "critical":
+        return ["terminate_session", "block_device", "notify_admin", "escalate_incident"];
+      case "high":
+        return ["require_mfa", "send_alert", "notify_admin"];
+      case "medium":
+        return ["send_alert", "log_event"];
+      case "low":
       default:
-        return ['log_event'];
+        return ["log_event"];
     }
   }
 
@@ -813,27 +812,36 @@ export class SecurityMonitor extends EventEmitter {
     // - AbuseIPDB
     // - Shodan
     // - Custom threat feeds
-    
+
     return {
       isMalicious: false,
       isProxy: false,
       isVPN: false,
       isTor: false,
       riskScore: 0,
-      sources: ['external_api']
+      sources: ["external_api"],
     };
   }
 
-  private isImpossibleTravel(lastLocation: SessionLocation, currentLocation: SessionLocation): boolean {
-    if (!lastLocation.latitude || !lastLocation.longitude || 
-        !currentLocation.latitude || !currentLocation.longitude) {
+  private isImpossibleTravel(
+    lastLocation: SessionLocation,
+    currentLocation: SessionLocation,
+  ): boolean {
+    if (
+      !lastLocation.latitude ||
+      !lastLocation.longitude ||
+      !currentLocation.latitude ||
+      !currentLocation.longitude
+    ) {
       return false;
     }
 
     // Calculate distance between locations
     const distance = this.calculateDistance(
-      lastLocation.latitude, lastLocation.longitude,
-      currentLocation.latitude, currentLocation.longitude
+      lastLocation.latitude,
+      lastLocation.longitude,
+      currentLocation.latitude,
+      currentLocation.longitude,
     );
 
     // Assume maximum travel speed of 1000 km/h (commercial flight)
@@ -848,9 +856,12 @@ export class SecurityMonitor extends EventEmitter {
     const R = 6371; // Earth's radius in kilometers
     const dLat = this.toRadians(lat2 - lat1);
     const dLon = this.toRadians(lon2 - lon1);
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-              Math.cos(this.toRadians(lat1)) * Math.cos(this.toRadians(lat2)) *
-              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(this.toRadians(lat1)) *
+        Math.cos(this.toRadians(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   }
@@ -868,10 +879,10 @@ export class SecurityMonitor extends EventEmitter {
       /curl/i,
       /wget/i,
       /python/i,
-      /java/i
+      /java/i,
     ];
 
-    return suspiciousPatterns.some(pattern => pattern.test(userAgent));
+    return suspiciousPatterns.some((pattern) => pattern.test(userAgent));
   }
 
   private hasAutomationIndicators(fingerprint: DeviceFingerprint): boolean {
@@ -897,10 +908,10 @@ export class SecurityMonitor extends EventEmitter {
   private async buildUserBehaviorProfile(userId: string): Promise<UserBehaviorProfile> {
     try {
       const { data: sessions } = await this.supabase
-        .from('user_sessions')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
+        .from("user_sessions")
+        .select("*")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
         .limit(50);
 
       const profile: UserBehaviorProfile = {
@@ -909,42 +920,42 @@ export class SecurityMonitor extends EventEmitter {
         knownIPs: new Set(),
         typicalLocations: [],
         averageSessionDuration: 0,
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
       };
 
       if (sessions && sessions.length > 0) {
         // Extract typical login hours
-        const loginHours = sessions.map(s => new Date(s.created_at).getHours());
+        const loginHours = sessions.map((s) => new Date(s.created_at).getHours());
         profile.typicalLoginHours = [...new Set(loginHours)];
 
         // Extract known IPs
-        sessions.forEach(s => profile.knownIPs.add(s.ip_address));
+        sessions.forEach((s) => profile.knownIPs.add(s.ip_address));
 
         // Extract typical locations
         const locations = sessions
-          .map(s => s.location)
+          .map((s) => s.location)
           .filter(Boolean)
-          .map(l => `${l.country}-${l.region}`);
+          .map((l) => `${l.country}-${l.region}`);
         profile.typicalLocations = [...new Set(locations)];
 
         // Calculate average session duration
         const durations = sessions
-          .filter(s => s.terminated_at)
-          .map(s => new Date(s.terminated_at).getTime() - new Date(s.created_at).getTime());
-        profile.averageSessionDuration = durations.length > 0 ?
-          durations.reduce((a, b) => a + b, 0) / durations.length : 0;
+          .filter((s) => s.terminated_at)
+          .map((s) => new Date(s.terminated_at).getTime() - new Date(s.created_at).getTime());
+        profile.averageSessionDuration =
+          durations.length > 0 ? durations.reduce((a, b) => a + b, 0) / durations.length : 0;
       }
 
       return profile;
     } catch (error) {
-      console.error('Failed to build user behavior profile:', error);
+      console.error("Failed to build user behavior profile:", error);
       return {
         userId,
         typicalLoginHours: [],
         knownIPs: new Set(),
         typicalLocations: [],
         averageSessionDuration: 0,
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
       };
     }
   }
@@ -957,13 +968,13 @@ export class SecurityMonitor extends EventEmitter {
   private async getRecentLoginAttempts(userId: string): Promise<number> {
     try {
       const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-      
+
       const { data: attempts } = await this.supabase
-        .from('session_audit_logs')
-        .select('id')
-        .eq('user_id', userId)
-        .eq('action', 'session_created')
-        .gte('timestamp', fiveMinutesAgo.toISOString());
+        .from("session_audit_logs")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("action", "session_created")
+        .gte("timestamp", fiveMinutesAgo.toISOString());
 
       return attempts?.length || 0;
     } catch (error) {
@@ -978,7 +989,7 @@ export class SecurityMonitor extends EventEmitter {
     // Placeholder for activity pattern analysis
     return {
       isImpossible: false,
-      reasons: []
+      reasons: [],
     };
   }
 
@@ -989,31 +1000,29 @@ export class SecurityMonitor extends EventEmitter {
     // Placeholder for data access pattern analysis
     return {
       isUnusual: false,
-      patterns: []
+      patterns: [],
     };
   }
 
   private async initializeSecurityData(): Promise<void> {
     try {
       // Load blocked IPs
-      const { data: blockedIPs } = await this.supabase
-        .from('blocked_ips')
-        .select('ip_address');
-      
+      const { data: blockedIPs } = await this.supabase.from("blocked_ips").select("ip_address");
+
       if (blockedIPs) {
-        blockedIPs.forEach(ip => this.blockedIPs.add(ip.ip_address));
+        blockedIPs.forEach((ip) => this.blockedIPs.add(ip.ip_address));
       }
 
       // Load suspicious IPs
       const { data: suspiciousIPs } = await this.supabase
-        .from('suspicious_ips')
-        .select('ip_address');
-      
+        .from("suspicious_ips")
+        .select("ip_address");
+
       if (suspiciousIPs) {
-        suspiciousIPs.forEach(ip => this.suspiciousIPs.add(ip.ip_address));
+        suspiciousIPs.forEach((ip) => this.suspiciousIPs.add(ip.ip_address));
       }
     } catch (error) {
-      console.error('Failed to initialize security data:', error);
+      console.error("Failed to initialize security data:", error);
     }
   }
 
@@ -1022,14 +1031,12 @@ export class SecurityMonitor extends EventEmitter {
    */
   async blockIP(ipAddress: string, reason: string): Promise<void> {
     this.blockedIPs.add(ipAddress);
-    
-    await this.supabase
-      .from('blocked_ips')
-      .upsert({
-        ip_address: ipAddress,
-        reason,
-        blocked_at: new Date().toISOString()
-      });
+
+    await this.supabase.from("blocked_ips").upsert({
+      ip_address: ipAddress,
+      reason,
+      blocked_at: new Date().toISOString(),
+    });
   }
 
   /**
@@ -1037,11 +1044,8 @@ export class SecurityMonitor extends EventEmitter {
    */
   async unblockIP(ipAddress: string): Promise<void> {
     this.blockedIPs.delete(ipAddress);
-    
-    await this.supabase
-      .from('blocked_ips')
-      .delete()
-      .eq('ip_address', ipAddress);
+
+    await this.supabase.from("blocked_ips").delete().eq("ip_address", ipAddress);
   }
 }
 

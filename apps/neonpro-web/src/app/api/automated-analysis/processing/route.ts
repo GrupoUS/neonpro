@@ -1,71 +1,80 @@
-﻿// app/api/automated-analysis/processing/route.ts
+// app/api/automated-analysis/processing/route.ts
 // API endpoints for analysis processing and comparison operations
 
-import { createautomatedBeforeAfterAnalysisService } from '@/app/lib/services/automated-before-after-analysis';
-import { validationSchemas } from '@/app/lib/validations/automated-before-after-analysis';
-import { cookies } from 'next/headers';
-import { createClient } from '@/lib/supabase/server'
-import { NextRequest, NextResponse } from 'next/server';
+import type { createautomatedBeforeAfterAnalysisService } from "@/app/lib/services/automated-before-after-analysis";
+import type { validationSchemas } from "@/app/lib/validations/automated-before-after-analysis";
+import type { cookies } from "next/headers";
+import type { createClient } from "@/lib/supabase/server";
+import type { NextRequest, NextResponse } from "next/server";
 
 // POST /api/automated-analysis/processing - Start analysis processing
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
     const { action, ...data } = body;
 
     switch (action) {
-      case 'start_analysis': {
+      case "start_analysis": {
         // Validate start analysis request
         const validatedData = validationSchemas.startAnalysis.parse(data);
-        const progress = await createautomatedBeforeAfterAnalysisService().startAnalysis(validatedData);
+        const progress =
+          await createautomatedBeforeAfterAnalysisService().startAnalysis(validatedData);
 
         return NextResponse.json({
           success: true,
           data: progress,
-          message: 'Analysis started successfully',
+          message: "Analysis started successfully",
         });
       }
 
-      case 'comparison_analysis': {
+      case "comparison_analysis": {
         // Validate comparison analysis request
         const validatedData = validationSchemas.comparisonAnalysis.parse(data);
-        const result = await createautomatedBeforeAfterAnalysisService().performComparisonAnalysis(validatedData);
+        const result =
+          await createautomatedBeforeAfterAnalysisService().performComparisonAnalysis(
+            validatedData,
+          );
 
         return NextResponse.json({
           success: true,
           data: result,
-          message: 'Comparison analysis completed successfully',
+          message: "Comparison analysis completed successfully",
         });
       }
 
-      case 'batch_analysis': {
+      case "batch_analysis": {
         // Validate batch analysis request
         const validatedData = validationSchemas.batchAnalysis.parse(data);
-        const results = await createautomatedBeforeAfterAnalysisService().batchAnalysis(validatedData);
+        const results =
+          await createautomatedBeforeAfterAnalysisService().batchAnalysis(validatedData);
 
         return NextResponse.json({
           success: true,
           data: results,
-          message: 'Batch analysis started successfully',
+          message: "Batch analysis started successfully",
         });
       }
 
       default:
-        return NextResponse.json({ error: 'Invalid action specified' }, { status: 400 });
+        return NextResponse.json({ error: "Invalid action specified" }, { status: 400 });
     }
-
   } catch (error) {
-    console.error('Error processing analysis request:', error);
+    console.error("Error processing analysis request:", error);
     return NextResponse.json(
-      { error: 'Failed to process analysis request', details: error instanceof Error ? error.message : 'Unknown error' },
-      { status: 500 }
+      {
+        error: "Failed to process analysis request",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 },
     );
   }
 }
@@ -74,32 +83,36 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const searchParams = request.nextUrl.searchParams;
-    const sessionId = searchParams.get('session_id');
+    const sessionId = searchParams.get("session_id");
 
     if (!sessionId) {
-      return NextResponse.json({ error: 'Session ID is required' }, { status: 400 });
+      return NextResponse.json({ error: "Session ID is required" }, { status: 400 });
     }
 
-    const progress = await createautomatedBeforeAfterAnalysisService().getAnalysisProgress(sessionId);
+    const progress =
+      await createautomatedBeforeAfterAnalysisService().getAnalysisProgress(sessionId);
 
     return NextResponse.json({
       success: true,
       data: progress,
     });
-
   } catch (error) {
-    console.error('Error fetching analysis progress:', error);
+    console.error("Error fetching analysis progress:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch analysis progress', details: error instanceof Error ? error.message : 'Unknown error' },
-      { status: 500 }
+      {
+        error: "Failed to fetch analysis progress",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 },
     );
   }
 }
-

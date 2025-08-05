@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { motion } from 'framer-motion';
-import { 
-  Users, 
-  Calendar, 
-  DollarSign, 
+import React from "react";
+import type { motion } from "framer-motion";
+import type {
+  Users,
+  Calendar,
+  DollarSign,
   Activity,
   TrendingUp,
   Clock,
   UserCheck,
-  AlertCircle
-} from 'lucide-react';
-import { NeonGradientCard } from '@/components/ui/NeonGradientCard';
-import { CosmicGlowButton } from '@/components/ui/CosmicGlowButton';
-import { formatCurrency } from '@/lib/utils';
+  AlertCircle,
+} from "lucide-react";
+import type { NeonGradientCard } from "@/components/ui/NeonGradientCard";
+import type { CosmicGlowButton } from "@/components/ui/CosmicGlowButton";
+import type { formatCurrency } from "@/lib/utils";
 
 // Dados mock para o dashboard
 const dashboardData = {
@@ -25,13 +25,13 @@ const dashboardData = {
     completedAppointments: 18,
   },
   recentAppointments: [
-    { id: 1, patient: 'Maria Silva', time: '09:00', type: 'Consulta' },
-    { id: 2, patient: 'João Santos', time: '10:30', type: 'Retorno' },
-    { id: 3, patient: 'Ana Costa', time: '14:00', type: 'Exame' },
+    { id: 1, patient: "Maria Silva", time: "09:00", type: "Consulta" },
+    { id: 2, patient: "João Santos", time: "10:30", type: "Retorno" },
+    { id: 3, patient: "Ana Costa", time: "14:00", type: "Exame" },
   ],
   alerts: [
-    { id: 1, message: '3 consultas pendentes de confirmação', type: 'warning' },
-    { id: 2, message: '2 pacientes em atraso', type: 'danger' },
+    { id: 1, message: "3 consultas pendentes de confirmação", type: "warning" },
+    { id: 2, message: "2 pacientes em atraso", type: "danger" },
   ],
 };
 
@@ -39,13 +39,14 @@ const MetricCard = ({ icon: Icon, title, value, change, gradient }) => (
   <NeonGradientCard gradient={gradient} className="group">
     <div className="flex items-center justify-between">
       <div className="space-y-2">
-        <p className="text-gray-400 text-sm font-medium">{title}</p>        <motion.p 
+        <p className="text-gray-400 text-sm font-medium">{title}</p>{" "}
+        <motion.p
           className="text-3xl font-bold text-white"
           initial={{ scale: 0.8 }}
           animate={{ scale: 1 }}
           transition={{ delay: 0.2 }}
         >
-          {typeof value === 'number' && value > 1000 ? formatCurrency(value) : value}
+          {typeof value === "number" && value > 1000 ? formatCurrency(value) : value}
         </motion.p>
         {change && (
           <div className="flex items-center space-x-1">
@@ -71,12 +72,8 @@ export default function Dashboard() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-4xl font-bold text-white mb-2">
-            Dashboard NEONPROV1
-          </h1>
-          <p className="text-gray-400">
-            Visão geral do seu sistema de saúde
-          </p>
+          <h1 className="text-4xl font-bold text-white mb-2">Dashboard NEONPROV1</h1>
+          <p className="text-gray-400">Visão geral do seu sistema de saúde</p>
         </motion.div>
 
         {/* Métricas principais */}
@@ -168,9 +165,9 @@ export default function Dashboard() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: index * 0.1 }}
                     className={`p-3 rounded-lg border ${
-                      alert.type === 'warning' 
-                        ? 'bg-warning/10 border-warning/30 text-warning' 
-                        : 'bg-danger/10 border-danger/30 text-danger'
+                      alert.type === "warning"
+                        ? "bg-warning/10 border-warning/30 text-warning"
+                        : "bg-danger/10 border-danger/30 text-danger"
                     }`}
                   >
                     <p className="text-sm font-medium">{alert.message}</p>

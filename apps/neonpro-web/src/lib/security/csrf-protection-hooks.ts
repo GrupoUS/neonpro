@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
 /**
  * Client-side CSRF hooks for React components
  */
 
-import { useState, useEffect } from 'react';
+import type { useState, useEffect } from "react";
 
 /**
  * React hook for CSRF protection
@@ -12,25 +12,25 @@ import { useState, useEffect } from 'react';
 export function useCSRFToken() {
   const [csrfToken, setCSRFToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     async function fetchCSRFToken() {
       try {
-        const response = await fetch('/api/auth/csrf-token');
+        const response = await fetch("/api/auth/csrf-token");
         if (response.ok) {
           const data = await response.json();
           setCSRFToken(data.token);
         }
       } catch (error) {
-        console.error('Failed to fetch CSRF token:', error);
+        console.error("Failed to fetch CSRF token:", error);
       } finally {
         setLoading(false);
       }
     }
-    
+
     fetchCSRFToken();
   }, []);
-  
+
   return { csrfToken, loading };
 }
 

@@ -1,7 +1,7 @@
 // Predictive Analytics Validation Schemas
 // Generated to fix missing validation exports
 
-import { z } from 'zod';
+import type { z } from "zod";
 
 // Create Alert Schema
 export const createAlertSchema = z.object({
@@ -9,7 +9,7 @@ export const createAlertSchema = z.object({
   description: z.string().optional(),
   metric: z.string(),
   threshold: z.number(),
-  comparison: z.enum(['greater_than', 'less_than', 'equals']),
+  comparison: z.enum(["greater_than", "less_than", "equals"]),
   enabled: z.boolean().default(true),
   notification_channels: z.array(z.string()),
 });
@@ -18,7 +18,7 @@ export const createAlertSchema = z.object({
 export const createForecastingModelSchema = z.object({
   name: z.string().min(1),
   description: z.string().optional(),
-  model_type: z.enum(['arima', 'lstm', 'prophet', 'linear_regression']),
+  model_type: z.enum(["arima", "lstm", "prophet", "linear_regression"]),
   target_metric: z.string(),
   features: z.array(z.string()),
   training_period_days: z.number().positive(),

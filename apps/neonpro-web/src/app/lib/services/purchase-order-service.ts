@@ -7,11 +7,11 @@ export class PurchaseOrderService {
   static async createPurchaseOrder(orderData: any) {
     // Implementar criação de ordem de compra
     return {
-      id: 'po-id',
+      id: "po-id",
       supplierId: orderData.supplierId,
       items: orderData.items,
       total: 0,
-      status: 'draft'
+      status: "draft",
     };
   }
 
@@ -19,9 +19,9 @@ export class PurchaseOrderService {
     // Implementar aprovação de ordem de compra
     return {
       orderId,
-      status: 'approved',
+      status: "approved",
       approvedBy: approverId,
-      approvedAt: new Date()
+      approvedAt: new Date(),
     };
   }
 
@@ -29,9 +29,9 @@ export class PurchaseOrderService {
     // Implementar rastreamento de entrega
     return {
       orderId,
-      status: 'in_transit',
+      status: "in_transit",
       estimatedDelivery: new Date(),
-      trackingNumber: null
+      trackingNumber: null,
     };
   }
 }

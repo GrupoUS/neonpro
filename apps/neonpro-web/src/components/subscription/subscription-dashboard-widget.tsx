@@ -10,29 +10,16 @@
 
 "use client";
 
-import { cn } from "@/lib/utils";
-import { format, formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import {
-  Activity,
-  Calendar,
-  Crown,
-  DollarSign,
-  TrendingUp,
-  Zap,
-} from "lucide-react";
-import { useSubscriptionStatus } from "../../hooks/use-subscription-status";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
-import { Progress } from "../ui/progress";
-import { Skeleton } from "../ui/skeleton";
+import type { cn } from "@/lib/utils";
+import type { format, formatDistanceToNow } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { Activity, Calendar, Crown, DollarSign, TrendingUp, Zap } from "lucide-react";
+import type { useSubscriptionStatus } from "../../hooks/use-subscription-status";
+import type { Badge } from "../ui/badge";
+import type { Button } from "../ui/button";
+import type { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import type { Progress } from "../ui/progress";
+import type { Skeleton } from "../ui/skeleton";
 
 export interface SubscriptionDashboardWidgetProps {
   className?: string;
@@ -51,15 +38,8 @@ export function SubscriptionDashboardWidget({
   onManage,
   onUpgrade,
 }: SubscriptionDashboardWidgetProps) {
-  const {
-    status,
-    tier,
-    gracePeriodEnd,
-    nextBilling,
-    features,
-    isLoading,
-    metrics,
-  } = useSubscriptionStatus();
+  const { status, tier, gracePeriodEnd, nextBilling, features, isLoading, metrics } =
+    useSubscriptionStatus();
 
   // Loading skeleton
   if (isLoading) {
@@ -128,8 +108,7 @@ export function SubscriptionDashboardWidget({
     },
   } as const;
 
-  const config =
-    statusConfig[status as keyof typeof statusConfig] || statusConfig.cancelled;
+  const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.cancelled;
 
   // Calculate trial progress
   const getTrialProgress = () => {
@@ -142,9 +121,7 @@ export function SubscriptionDashboardWidget({
     const total = end.getTime() - start.getTime();
     const elapsed = now.getTime() - start.getTime();
     const progress = Math.max(0, Math.min(100, (elapsed / total) * 100));
-    const daysLeft = Math.ceil(
-      (end.getTime() - now.getTime()) / (24 * 60 * 60 * 1000)
-    );
+    const daysLeft = Math.ceil((end.getTime() - now.getTime()) / (24 * 60 * 60 * 1000));
 
     return { progress, daysLeft };
   };
@@ -197,9 +174,7 @@ export function SubscriptionDashboardWidget({
               <CardTitle className="text-sm font-medium">
                 Assinatura
                 {tier && (
-                  <span className="text-xs font-normal text-muted-foreground ml-1">
-                    {tier}
-                  </span>
+                  <span className="text-xs font-normal text-muted-foreground ml-1">{tier}</span>
                 )}
               </CardTitle>
               {variant !== "compact" && (
@@ -232,9 +207,7 @@ export function SubscriptionDashboardWidget({
           <div className="grid grid-cols-3 gap-2">
             {keyMetrics.map((metric, index) => (
               <div key={index} className="text-center">
-                <div className={cn("text-lg font-semibold", metric.color)}>
-                  {metric.value}
-                </div>
+                <div className={cn("text-lg font-semibold", metric.color)}>{metric.value}</div>
                 <div className="text-xs text-muted-foreground flex items-center justify-center gap-1">
                   {metric.icon}
                   {metric.label}
@@ -289,19 +262,10 @@ export function SubscriptionDashboardWidget({
 
             {status === "active" && (
               <>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={onManage}
-                  className="flex-1 text-xs"
-                >
+                <Button size="sm" variant="outline" onClick={onManage} className="flex-1 text-xs">
                   Gerenciar
                 </Button>
-                <Button
-                  size="sm"
-                  onClick={onUpgrade}
-                  className="flex-1 text-xs"
-                >
+                <Button size="sm" onClick={onUpgrade} className="flex-1 text-xs">
                   <TrendingUp className="h-3 w-3 mr-1" />
                   Upgrade
                 </Button>
@@ -309,12 +273,7 @@ export function SubscriptionDashboardWidget({
             )}
 
             {(status === "past_due" || status === "incomplete") && (
-              <Button
-                size="sm"
-                variant="destructive"
-                onClick={onManage}
-                className="flex-1 text-xs"
-              >
+              <Button size="sm" variant="destructive" onClick={onManage} className="flex-1 text-xs">
                 <DollarSign className="h-3 w-3 mr-1" />
                 Pagar Agora
               </Button>
@@ -335,14 +294,14 @@ export function SubscriptionDashboardWidget({
 
 // Compact variant for sidebars
 export function CompactSubscriptionWidget(
-  props: Omit<SubscriptionDashboardWidgetProps, "variant">
+  props: Omit<SubscriptionDashboardWidgetProps, "variant">,
 ) {
   return <SubscriptionDashboardWidget {...props} variant="compact" />;
 }
 
 // Detailed variant for main dashboard
 export function DetailedSubscriptionWidget(
-  props: Omit<SubscriptionDashboardWidgetProps, "variant">
+  props: Omit<SubscriptionDashboardWidgetProps, "variant">,
 ) {
   return <SubscriptionDashboardWidget {...props} variant="detailed" />;
 }

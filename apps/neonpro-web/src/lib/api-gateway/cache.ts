@@ -1,13 +1,13 @@
 /**
  * NeonPro - API Gateway Cache System
  * High-performance caching system for API responses and data
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  * @created 2025-01-27
  */
 
-import { ApiGatewayCache, ApiGatewayLogger } from './types';
+import type { ApiGatewayCache, ApiGatewayLogger } from "./types";
 
 /**
  * Memory Cache Implementation
@@ -23,18 +23,18 @@ export class MemoryApiGatewayCache implements ApiGatewayCache {
     misses: 0,
     sets: 0,
     deletes: 0,
-    evictions: 0
+    evictions: 0,
   };
 
   constructor(
     maxSize: number = 1000,
     defaultTtl: number = 300000, // 5 minutes
-    logger?: ApiGatewayLogger
+    logger?: ApiGatewayLogger,
   ) {
     this.maxSize = maxSize;
     this.defaultTtl = defaultTtl;
     this.logger = logger;
-    
+
     // Cleanup expired entries every minute
     setInterval(() => this.cleanup(), 60000);
   }
@@ -44,23 +44,23 @@ export class MemoryApiGatewayCache implements ApiGatewayCache {
    */
   async get<T>(key: string): Promise<T | null> {
     const entry = this.cache.get(key);
-    
+
     if (!entry) {
       this.stats.misses++;
       return null;
     }
-    
+
     // Check if expired
     if (Date.now() > entry.expiry) {
       this.cache.delete(key);
       this.stats.misses++;
       return null;
     }
-    
+
     // Update access time for LRU
     entry.accessTime = Date.now();
     this.cache.set(key, entry);
-    
+
     this.stats.hits++;
     return entry.value as T;
   }
@@ -71,16 +71,16 @@ export class MemoryApiGatewayCache implements ApiGatewayCache {
   async set<T>(key: string, value: T, ttl?: number): Promise<void> {
     const expiry = Date.now() + (ttl || this.defaultTtl);
     const accessTime = Date.now();
-    
+
     // Check if we need to evict entries
     if (this.cache.size >= this.maxSize && !this.cache.has(key)) {
       this.evictLRU();
     }
-    
+
     this.cache.set(key, { value, expiry, accessTime });
     this.stats.sets++;
-    
-    this.logger?.debug('Cache set', { key, ttl: ttl || this.defaultTtl });
+
+    this.logger?.debug("Cache set", { key, ttl: ttl || this.defaultTtl });
   }
 
   /**
@@ -88,12 +88,12 @@ export class MemoryApiGatewayCache implements ApiGatewayCache {
    */
   async delete(key: string): Promise<boolean> {
     const deleted = this.cache.delete(key);
-    
+
     if (deleted) {
       this.stats.deletes++;
-      this.logger?.debug('Cache delete', { key });
+      this.logger?.debug("Cache delete", { key });
     }
-    
+
     return deleted;
   }
 
@@ -103,8 +103,8 @@ export class MemoryApiGatewayCache implements ApiGatewayCache {
   async clear(): Promise<void> {
     const size = this.cache.size;
     this.cache.clear();
-    
-    this.logger?.info('Cache cleared', { entriesRemoved: size });
+
+    this.logger?.info("Cache cleared", { entriesRemoved: size });
   }
 
   /**
@@ -112,17 +112,17 @@ export class MemoryApiGatewayCache implements ApiGatewayCache {
    */
   async has(key: string): Promise<boolean> {
     const entry = this.cache.get(key);
-    
+
     if (!entry) {
       return false;
     }
-    
+
     // Check if expired
     if (Date.now() > entry.expiry) {
       this.cache.delete(key);
       return false;
     }
-    
+
     return true;
   }
 
@@ -140,11 +140,11 @@ export class MemoryApiGatewayCache implements ApiGatewayCache {
   }> {
     const totalRequests = this.stats.hits + this.stats.misses;
     const hitRate = totalRequests > 0 ? (this.stats.hits / totalRequests) * 100 : 0;
-    
+
     return {
       ...this.stats,
       size: this.cache.size,
-      hitRate
+      hitRate,
     };
   }
 
@@ -154,19 +154,19 @@ export class MemoryApiGatewayCache implements ApiGatewayCache {
   private evictLRU(): void {
     let oldestKey: string | null = null;
     let oldestTime = Date.now();
-    
+
     for (const [key, entry] of this.cache.entries()) {
       if (entry.accessTime < oldestTime) {
         oldestTime = entry.accessTime;
         oldestKey = key;
       }
     }
-    
+
     if (oldestKey) {
       this.cache.delete(oldestKey);
       this.stats.evictions++;
-      
-      this.logger?.debug('Cache LRU eviction', { key: oldestKey });
+
+      this.logger?.debug("Cache LRU eviction", { key: oldestKey });
     }
   }
 
@@ -176,16 +176,16 @@ export class MemoryApiGatewayCache implements ApiGatewayCache {
   private cleanup(): void {
     const now = Date.now();
     let cleaned = 0;
-    
+
     for (const [key, entry] of this.cache.entries()) {
       if (now > entry.expiry) {
         this.cache.delete(key);
         cleaned++;
       }
     }
-    
+
     if (cleaned > 0) {
-      this.logger?.debug('Cache cleanup', { entriesRemoved: cleaned });
+      this.logger?.debug("Cache cleanup", { entriesRemoved: cleaned });
     }
   }
 }
@@ -204,14 +204,14 @@ export class RedisApiGatewayCache implements ApiGatewayCache {
     misses: 0,
     sets: 0,
     deletes: 0,
-    errors: 0
+    errors: 0,
   };
 
   constructor(
     redisClient: any,
     defaultTtl: number = 300, // 5 minutes in seconds
-    keyPrefix: string = 'neonpro:api:',
-    logger?: ApiGatewayLogger
+    keyPrefix: string = "neonpro:api:",
+    logger?: ApiGatewayLogger,
   ) {
     this.redis = redisClient;
     this.defaultTtl = defaultTtl;
@@ -226,17 +226,17 @@ export class RedisApiGatewayCache implements ApiGatewayCache {
     try {
       const fullKey = this.keyPrefix + key;
       const value = await this.redis.get(fullKey);
-      
+
       if (value === null) {
         this.stats.misses++;
         return null;
       }
-      
+
       this.stats.hits++;
       return JSON.parse(value) as T;
     } catch (error) {
       this.stats.errors++;
-      this.logger?.error('Redis cache get error', error as Error, { key });
+      this.logger?.error("Redis cache get error", error as Error, { key });
       return null;
     }
   }
@@ -249,14 +249,14 @@ export class RedisApiGatewayCache implements ApiGatewayCache {
       const fullKey = this.keyPrefix + key;
       const serialized = JSON.stringify(value);
       const expiry = ttl || this.defaultTtl;
-      
+
       await this.redis.setex(fullKey, expiry, serialized);
-      
+
       this.stats.sets++;
-      this.logger?.debug('Redis cache set', { key, ttl: expiry });
+      this.logger?.debug("Redis cache set", { key, ttl: expiry });
     } catch (error) {
       this.stats.errors++;
-      this.logger?.error('Redis cache set error', error as Error, { key });
+      this.logger?.error("Redis cache set error", error as Error, { key });
       throw error;
     }
   }
@@ -268,18 +268,18 @@ export class RedisApiGatewayCache implements ApiGatewayCache {
     try {
       const fullKey = this.keyPrefix + key;
       const result = await this.redis.del(fullKey);
-      
+
       const deleted = result > 0;
-      
+
       if (deleted) {
         this.stats.deletes++;
-        this.logger?.debug('Redis cache delete', { key });
+        this.logger?.debug("Redis cache delete", { key });
       }
-      
+
       return deleted;
     } catch (error) {
       this.stats.errors++;
-      this.logger?.error('Redis cache delete error', error as Error, { key });
+      this.logger?.error("Redis cache delete error", error as Error, { key });
       return false;
     }
   }
@@ -289,15 +289,15 @@ export class RedisApiGatewayCache implements ApiGatewayCache {
    */
   async clear(): Promise<void> {
     try {
-      const keys = await this.redis.keys(this.keyPrefix + '*');
-      
+      const keys = await this.redis.keys(this.keyPrefix + "*");
+
       if (keys.length > 0) {
         await this.redis.del(...keys);
-        this.logger?.info('Redis cache cleared', { entriesRemoved: keys.length });
+        this.logger?.info("Redis cache cleared", { entriesRemoved: keys.length });
       }
     } catch (error) {
       this.stats.errors++;
-      this.logger?.error('Redis cache clear error', error as Error);
+      this.logger?.error("Redis cache clear error", error as Error);
       throw error;
     }
   }
@@ -312,7 +312,7 @@ export class RedisApiGatewayCache implements ApiGatewayCache {
       return exists === 1;
     } catch (error) {
       this.stats.errors++;
-      this.logger?.error('Redis cache exists error', error as Error, { key });
+      this.logger?.error("Redis cache exists error", error as Error, { key });
       return false;
     }
   }
@@ -331,18 +331,18 @@ export class RedisApiGatewayCache implements ApiGatewayCache {
   }> {
     const totalRequests = this.stats.hits + this.stats.misses;
     const hitRate = totalRequests > 0 ? (this.stats.hits / totalRequests) * 100 : 0;
-    
+
     let redisInfo;
     try {
-      redisInfo = await this.redis.info('memory');
+      redisInfo = await this.redis.info("memory");
     } catch (error) {
-      this.logger?.error('Redis info error', error as Error);
+      this.logger?.error("Redis info error", error as Error);
     }
-    
+
     return {
       ...this.stats,
       hitRate,
-      redisInfo
+      redisInfo,
     };
   }
 }
@@ -363,20 +363,20 @@ export class SupabaseApiGatewayCache implements ApiGatewayCache {
     deletes: 0,
     errors: 0,
     memoryHits: 0,
-    dbHits: 0
+    dbHits: 0,
   };
 
   constructor(
     supabaseClient: any,
-    tableName: string = 'api_cache',
+    tableName: string = "api_cache",
     memoryMaxSize: number = 500,
-    logger?: ApiGatewayLogger
+    logger?: ApiGatewayLogger,
   ) {
     this.supabase = supabaseClient;
     this.tableName = tableName;
     this.memoryCache = new MemoryApiGatewayCache(memoryMaxSize, 300000, logger);
     this.logger = logger;
-    
+
     // Cleanup expired entries every 5 minutes
     setInterval(() => this.cleanupExpired(), 300000);
   }
@@ -388,25 +388,25 @@ export class SupabaseApiGatewayCache implements ApiGatewayCache {
     try {
       // Try memory cache first
       const memoryValue = await this.memoryCache.get<T>(key);
-      
+
       if (memoryValue !== null) {
         this.stats.hits++;
         this.stats.memoryHits++;
         return memoryValue;
       }
-      
+
       // Try database cache
       const { data, error } = await this.supabase
         .from(this.tableName)
-        .select('value, expires_at')
-        .eq('key', key)
+        .select("value, expires_at")
+        .eq("key", key)
         .single();
-      
+
       if (error || !data) {
         this.stats.misses++;
         return null;
       }
-      
+
       // Check if expired
       if (new Date(data.expires_at) < new Date()) {
         // Delete expired entry
@@ -414,21 +414,21 @@ export class SupabaseApiGatewayCache implements ApiGatewayCache {
         this.stats.misses++;
         return null;
       }
-      
+
       const value = JSON.parse(data.value) as T;
-      
+
       // Store in memory cache for faster access
       const ttl = new Date(data.expires_at).getTime() - Date.now();
       if (ttl > 0) {
         await this.memoryCache.set(key, value, ttl);
       }
-      
+
       this.stats.hits++;
       this.stats.dbHits++;
       return value;
     } catch (error) {
       this.stats.errors++;
-      this.logger?.error('Supabase cache get error', error as Error, { key });
+      this.logger?.error("Supabase cache get error", error as Error, { key });
       return null;
     }
   }
@@ -440,30 +440,28 @@ export class SupabaseApiGatewayCache implements ApiGatewayCache {
     try {
       const expiresAt = new Date(Date.now() + ttl);
       const serializedValue = JSON.stringify(value);
-      
+
       // Store in memory cache
       await this.memoryCache.set(key, value, ttl);
-      
+
       // Store in database
-      const { error } = await this.supabase
-        .from(this.tableName)
-        .upsert({
-          key,
-          value: serializedValue,
-          expires_at: expiresAt.toISOString(),
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        });
-      
+      const { error } = await this.supabase.from(this.tableName).upsert({
+        key,
+        value: serializedValue,
+        expires_at: expiresAt.toISOString(),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+
       if (error) {
         throw error;
       }
-      
+
       this.stats.sets++;
-      this.logger?.debug('Supabase cache set', { key, ttl });
+      this.logger?.debug("Supabase cache set", { key, ttl });
     } catch (error) {
       this.stats.errors++;
-      this.logger?.error('Supabase cache set error', error as Error, { key });
+      this.logger?.error("Supabase cache set error", error as Error, { key });
       throw error;
     }
   }
@@ -475,23 +473,20 @@ export class SupabaseApiGatewayCache implements ApiGatewayCache {
     try {
       // Delete from memory cache
       await this.memoryCache.delete(key);
-      
+
       // Delete from database
-      const { error } = await this.supabase
-        .from(this.tableName)
-        .delete()
-        .eq('key', key);
-      
+      const { error } = await this.supabase.from(this.tableName).delete().eq("key", key);
+
       if (error) {
         throw error;
       }
-      
+
       this.stats.deletes++;
-      this.logger?.debug('Supabase cache delete', { key });
+      this.logger?.debug("Supabase cache delete", { key });
       return true;
     } catch (error) {
       this.stats.errors++;
-      this.logger?.error('Supabase cache delete error', error as Error, { key });
+      this.logger?.error("Supabase cache delete error", error as Error, { key });
       return false;
     }
   }
@@ -503,21 +498,18 @@ export class SupabaseApiGatewayCache implements ApiGatewayCache {
     try {
       // Clear memory cache
       await this.memoryCache.clear();
-      
+
       // Clear database cache
-      const { error } = await this.supabase
-        .from(this.tableName)
-        .delete()
-        .neq('key', ''); // Delete all entries
-      
+      const { error } = await this.supabase.from(this.tableName).delete().neq("key", ""); // Delete all entries
+
       if (error) {
         throw error;
       }
-      
-      this.logger?.info('Supabase cache cleared');
+
+      this.logger?.info("Supabase cache cleared");
     } catch (error) {
       this.stats.errors++;
-      this.logger?.error('Supabase cache clear error', error as Error);
+      this.logger?.error("Supabase cache clear error", error as Error);
       throw error;
     }
   }
@@ -529,27 +521,27 @@ export class SupabaseApiGatewayCache implements ApiGatewayCache {
     try {
       // Check memory cache first
       const memoryHas = await this.memoryCache.has(key);
-      
+
       if (memoryHas) {
         return true;
       }
-      
+
       // Check database cache
       const { data, error } = await this.supabase
         .from(this.tableName)
-        .select('expires_at')
-        .eq('key', key)
+        .select("expires_at")
+        .eq("key", key)
         .single();
-      
+
       if (error || !data) {
         return false;
       }
-      
+
       // Check if expired
       return new Date(data.expires_at) >= new Date();
     } catch (error) {
       this.stats.errors++;
-      this.logger?.error('Supabase cache exists error', error as Error, { key });
+      this.logger?.error("Supabase cache exists error", error as Error, { key });
       return false;
     }
   }
@@ -571,11 +563,11 @@ export class SupabaseApiGatewayCache implements ApiGatewayCache {
     const totalRequests = this.stats.hits + this.stats.misses;
     const hitRate = totalRequests > 0 ? (this.stats.hits / totalRequests) * 100 : 0;
     const memoryStats = await this.memoryCache.getStats();
-    
+
     return {
       ...this.stats,
       hitRate,
-      memoryStats
+      memoryStats,
     };
   }
 
@@ -587,15 +579,15 @@ export class SupabaseApiGatewayCache implements ApiGatewayCache {
       const { error } = await this.supabase
         .from(this.tableName)
         .delete()
-        .lt('expires_at', new Date().toISOString());
-      
+        .lt("expires_at", new Date().toISOString());
+
       if (error) {
         throw error;
       }
-      
-      this.logger?.debug('Supabase cache cleanup completed');
+
+      this.logger?.debug("Supabase cache cleanup completed");
     } catch (error) {
-      this.logger?.error('Supabase cache cleanup error', error as Error);
+      this.logger?.error("Supabase cache cleanup error", error as Error);
     }
   }
 }
@@ -611,7 +603,7 @@ export class ApiGatewayCacheFactory {
   static createMemoryCache(
     maxSize: number = 1000,
     defaultTtl: number = 300000,
-    logger?: ApiGatewayLogger
+    logger?: ApiGatewayLogger,
   ): MemoryApiGatewayCache {
     return new MemoryApiGatewayCache(maxSize, defaultTtl, logger);
   }
@@ -622,8 +614,8 @@ export class ApiGatewayCacheFactory {
   static createRedisCache(
     redisClient: any,
     defaultTtl: number = 300,
-    keyPrefix: string = 'neonpro:api:',
-    logger?: ApiGatewayLogger
+    keyPrefix: string = "neonpro:api:",
+    logger?: ApiGatewayLogger,
   ): RedisApiGatewayCache {
     return new RedisApiGatewayCache(redisClient, defaultTtl, keyPrefix, logger);
   }
@@ -633,9 +625,9 @@ export class ApiGatewayCacheFactory {
    */
   static createSupabaseCache(
     supabaseClient: any,
-    tableName: string = 'api_cache',
+    tableName: string = "api_cache",
     memoryMaxSize: number = 500,
-    logger?: ApiGatewayLogger
+    logger?: ApiGatewayLogger,
   ): SupabaseApiGatewayCache {
     return new SupabaseApiGatewayCache(supabaseClient, tableName, memoryMaxSize, logger);
   }
@@ -644,34 +636,30 @@ export class ApiGatewayCacheFactory {
    * Create cache based on configuration
    */
   static createCache(
-    type: 'memory' | 'redis' | 'supabase',
+    type: "memory" | "redis" | "supabase",
     config: any,
-    logger?: ApiGatewayLogger
+    logger?: ApiGatewayLogger,
   ): ApiGatewayCache {
     switch (type) {
-      case 'memory':
-        return ApiGatewayCacheFactory.createMemoryCache(
-          config.maxSize,
-          config.defaultTtl,
-          logger
-        );
-      
-      case 'redis':
+      case "memory":
+        return ApiGatewayCacheFactory.createMemoryCache(config.maxSize, config.defaultTtl, logger);
+
+      case "redis":
         return ApiGatewayCacheFactory.createRedisCache(
           config.client,
           config.defaultTtl,
           config.keyPrefix,
-          logger
+          logger,
         );
-      
-      case 'supabase':
+
+      case "supabase":
         return ApiGatewayCacheFactory.createSupabaseCache(
           config.client,
           config.tableName,
           config.memoryMaxSize,
-          logger
+          logger,
         );
-      
+
       default:
         throw new Error(`Unsupported cache type: ${type}`);
     }
@@ -692,44 +680,44 @@ export class CacheMiddleware {
     shouldCache?: (context: any) => boolean;
   }): any {
     return {
-      name: 'cache',
+      name: "cache",
       order: 10,
       enabled: true,
       config,
       handler: async (context: any, next: () => Promise<void>) => {
         const method = context.method.toUpperCase();
-        
+
         // Only cache GET requests by default
         if (!config.cacheableMethods.includes(method)) {
           await next();
           return;
         }
-        
+
         // Generate cache key
-        const cacheKey = config.keyGenerator 
+        const cacheKey = config.keyGenerator
           ? config.keyGenerator(context)
           : CacheMiddleware.generateDefaultKey(context);
-        
+
         // Try to get from cache
         const cachedResponse = await config.cache.get(cacheKey);
-        
+
         if (cachedResponse) {
           context.response = cachedResponse;
-          context.headers['X-Cache'] = 'HIT';
+          context.headers["X-Cache"] = "HIT";
           return;
         }
-        
+
         // Execute request
         await next();
-        
+
         // Cache response if conditions are met
         if (CacheMiddleware.shouldCacheResponse(context, config)) {
           await config.cache.set(cacheKey, context.response, config.defaultTtl);
-          context.headers['X-Cache'] = 'MISS';
+          context.headers["X-Cache"] = "MISS";
         } else {
-          context.headers['X-Cache'] = 'SKIP';
+          context.headers["X-Cache"] = "SKIP";
         }
-      }
+      },
     };
   }
 
@@ -737,22 +725,18 @@ export class CacheMiddleware {
    * Generate default cache key
    */
   private static generateDefaultKey(context: any): string {
-    const parts = [
-      context.method,
-      context.path,
-      context.clientId || 'anonymous'
-    ];
-    
+    const parts = [context.method, context.path, context.clientId || "anonymous"];
+
     // Include query parameters in key
     if (context.query && Object.keys(context.query).length > 0) {
       const sortedQuery = Object.keys(context.query)
         .sort()
-        .map(key => `${key}=${context.query[key]}`)
-        .join('&');
+        .map((key) => `${key}=${context.query[key]}`)
+        .join("&");
       parts.push(sortedQuery);
     }
-    
-    return parts.join(':');
+
+    return parts.join(":");
   }
 
   /**
@@ -763,19 +747,19 @@ export class CacheMiddleware {
     if (config.shouldCache && !config.shouldCache(context)) {
       return false;
     }
-    
+
     // Check status code
-    const statusCode = context.headers['status-code'] || 200;
+    const statusCode = context.headers["status-code"] || 200;
     if (!config.cacheableStatusCodes.includes(statusCode)) {
       return false;
     }
-    
+
     // Don't cache if response has cache-control: no-cache
-    const cacheControl = context.headers['cache-control'];
-    if (cacheControl && cacheControl.includes('no-cache')) {
+    const cacheControl = context.headers["cache-control"];
+    if (cacheControl && cacheControl.includes("no-cache")) {
       return false;
     }
-    
+
     return true;
   }
 }

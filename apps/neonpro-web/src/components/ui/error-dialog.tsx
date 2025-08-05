@@ -1,34 +1,38 @@
 // Progressive Disclosure Error Dialog Component
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import {
+import React, { useState } from "react";
+import type {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { 
-  AlertTriangle, 
-  Info, 
-  CheckCircle, 
-  XCircle, 
-  ChevronDown, 
+} from "@/components/ui/dialog";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import type {
+  AlertTriangle,
+  Info,
+  CheckCircle,
+  XCircle,
+  ChevronDown,
   ChevronRight,
   RotateCcw,
   ExternalLink,
   Eye,
   EyeOff,
   Shield,
-  Clock
-} from 'lucide-react';
-import type { AppError } from '@/hooks/use-error-handling';
+  Clock,
+} from "lucide-react";
+import type { AppError } from "@/hooks/use-error-handling";
 
 interface ErrorDialogProps {
   error: AppError | null;
@@ -41,25 +45,25 @@ interface ErrorDialogProps {
 
 const SEVERITY_ICONS = {
   low: Info,
-  medium: AlertTriangle, 
+  medium: AlertTriangle,
   high: XCircle,
-  critical: XCircle
+  critical: XCircle,
 } as const;
 
 const SEVERITY_COLORS = {
-  low: 'bg-blue-50 text-blue-700 border-blue-200',
-  medium: 'bg-yellow-50 text-yellow-700 border-yellow-200',
-  high: 'bg-red-50 text-red-700 border-red-200', 
-  critical: 'bg-red-100 text-red-800 border-red-300'
+  low: "bg-blue-50 text-blue-700 border-blue-200",
+  medium: "bg-yellow-50 text-yellow-700 border-yellow-200",
+  high: "bg-red-50 text-red-700 border-red-200",
+  critical: "bg-red-100 text-red-800 border-red-300",
 } as const;
 
-export function ErrorDialog({ 
-  error, 
-  isOpen, 
-  onOpenChange, 
+export function ErrorDialog({
+  error,
+  isOpen,
+  onOpenChange,
   onRetry,
   onContactSupport,
-  showTechnicalDetails = false 
+  showTechnicalDetails = false,
 }: ErrorDialogProps) {
   const [showDetails, setShowDetails] = useState(false);
   const [showContext, setShowContext] = useState(false);
@@ -74,22 +78,19 @@ export function ErrorDialog({
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-full ${severityColorClass.replace('text-', 'bg-').replace('-700', '-100').replace('-800', '-100')}`}>
+            <div
+              className={`p-2 rounded-full ${severityColorClass.replace("text-", "bg-").replace("-700", "-100").replace("-800", "-100")}`}
+            >
               <SeverityIcon className="w-5 h-5" />
             </div>
             <div className="flex-1">
-              <DialogTitle className="text-lg font-semibold text-left">
-                {error.title}
-              </DialogTitle>
+              <DialogTitle className="text-lg font-semibold text-left">{error.title}</DialogTitle>
               <div className="flex items-center gap-2 mt-1">
-                <Badge 
-                  variant="outline" 
-                  className={severityColorClass}
-                >
-                  {error.severity === 'low' && 'Informação'}
-                  {error.severity === 'medium' && 'Atenção'}
-                  {error.severity === 'high' && 'Erro'}
-                  {error.severity === 'critical' && 'Crítico'}
+                <Badge variant="outline" className={severityColorClass}>
+                  {error.severity === "low" && "Informação"}
+                  {error.severity === "medium" && "Atenção"}
+                  {error.severity === "high" && "Erro"}
+                  {error.severity === "critical" && "Crítico"}
                 </Badge>
                 <Badge variant="secondary" className="text-xs">
                   {error.code}
@@ -97,9 +98,7 @@ export function ErrorDialog({
               </div>
             </div>
           </div>
-          <DialogDescription className="text-left pt-3">
-            {error.message}
-          </DialogDescription>
+          <DialogDescription className="text-left pt-3">{error.message}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -115,7 +114,8 @@ export function ErrorDialog({
             </CardHeader>
             <CardContent className="pt-0">
               <p className="text-xs text-blue-700">
-                Seus dados pessoais estão protegidos. Este erro foi registrado de forma anônima para melhorar nosso sistema, sem exposição de informações sensíveis.
+                Seus dados pessoais estão protegidos. Este erro foi registrado de forma anônima para
+                melhorar nosso sistema, sem exposição de informações sensíveis.
               </p>
             </CardContent>
           </Card>
@@ -124,8 +124,7 @@ export function ErrorDialog({
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-green-600" />
-                O que você pode fazer
+                <CheckCircle className="w-4 h-4 text-green-600" />O que você pode fazer
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
@@ -148,7 +147,7 @@ export function ErrorDialog({
                   <div className="flex items-center gap-2">
                     {showDetails ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     <span className="font-medium">
-                      {showDetails ? 'Ocultar detalhes' : 'Ver mais detalhes'}
+                      {showDetails ? "Ocultar detalhes" : "Ver mais detalhes"}
                     </span>
                   </div>
                   {showDetails ? (
@@ -172,11 +171,14 @@ export function ErrorDialog({
           {showTechnicalDetails && error.technicalDetails && (
             <Collapsible open={showContext} onOpenChange={setShowContext}>
               <CollapsibleTrigger asChild>
-                <Button variant="ghost" className="w-full justify-between p-3 h-auto text-orange-600">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-between p-3 h-auto text-orange-600"
+                >
                   <div className="flex items-center gap-2">
                     <Info className="w-4 h-4" />
                     <span className="font-medium">
-                      {showContext ? 'Ocultar informações técnicas' : 'Ver informações técnicas'}
+                      {showContext ? "Ocultar informações técnicas" : "Ver informações técnicas"}
                     </span>
                   </div>
                   {showContext ? (
@@ -217,7 +219,7 @@ export function ErrorDialog({
                         <Clock className="w-3 h-3 text-gray-500" />
                         <span className="font-medium text-gray-600">Timestamp:</span>
                         <span className="text-gray-700">
-                          {new Date(error.context.timestamp).toLocaleString('pt-BR')}
+                          {new Date(error.context.timestamp).toLocaleString("pt-BR")}
                         </span>
                       </div>
                       {error.technicalDetails && (
@@ -246,11 +248,11 @@ export function ErrorDialog({
                       Precisa de ajuda adicional?
                     </span>
                   </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  <Button
+                    variant="outline"
+                    size="sm"
                     className="text-green-700 border-green-300 hover:bg-green-100"
-                    onClick={() => window.open(error.helpUrl, '_blank')}
+                    onClick={() => window.open(error.helpUrl, "_blank")}
                   >
                     <ExternalLink className="w-3 h-3 mr-1" />
                     Ver Guia
@@ -265,7 +267,7 @@ export function ErrorDialog({
           <div className="flex gap-2 w-full sm:w-auto">
             {/* Retry Button */}
             {error.canRetry && onRetry && (
-              <Button 
+              <Button
                 onClick={() => {
                   onRetry();
                   onOpenChange(false);
@@ -274,14 +276,14 @@ export function ErrorDialog({
                 disabled={error.retryDelay ? true : false}
               >
                 <RotateCcw className="w-4 h-4 mr-2" />
-                {error.retryDelay ? 'Aguarde...' : 'Tentar Novamente'}
+                {error.retryDelay ? "Aguarde..." : "Tentar Novamente"}
               </Button>
             )}
 
             {/* Contact Support Button */}
             {error.requiresSupport && onContactSupport && (
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => {
                   onContactSupport();
                   onOpenChange(false);
@@ -294,11 +296,7 @@ export function ErrorDialog({
           </div>
 
           {/* Close Button */}
-          <Button 
-            variant="ghost" 
-            onClick={() => onOpenChange(false)}
-            className="w-full sm:w-auto"
-          >
+          <Button variant="ghost" onClick={() => onOpenChange(false)} className="w-full sm:w-auto">
             Fechar
           </Button>
         </DialogFooter>

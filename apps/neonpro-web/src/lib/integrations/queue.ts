@@ -1,22 +1,22 @@
 /**
  * NeonPro - Integration Queue System
  * Asynchronous job processing system for third-party integrations
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  * @created 2025-01-27
  */
 
-import crypto from 'crypto';
-import { createClient } from '@supabase/supabase-js';
-import {
+import crypto from "crypto";
+import type { createClient } from "@supabase/supabase-js";
+import type {
   IntegrationQueue,
   IntegrationJob,
   JobStatus,
   JobProcessor,
   QueueConfig,
-  QueueStats
-} from './types';
+  QueueStats,
+} from "./types";
 
 /**
  * Memory Queue Implementation
@@ -34,7 +34,7 @@ export class MemoryIntegrationQueue implements IntegrationQueue {
     processing: 0,
     completed: 0,
     failed: 0,
-    retries: 0
+    retries: 0,
   };
 
   constructor(config: QueueConfig) {
@@ -43,7 +43,7 @@ export class MemoryIntegrationQueue implements IntegrationQueue {
       retryDelay: 5000,
       maxRetries: 3,
       processInterval: 1000,
-      ...config
+      ...config,
     };
 
     // Start processing loop
@@ -56,19 +56,19 @@ export class MemoryIntegrationQueue implements IntegrationQueue {
   async enqueue(job: IntegrationJob): Promise<string> {
     // Set default values
     job.id = job.id || crypto.randomUUID();
-    job.status = 'pending';
+    job.status = "pending";
     job.createdAt = job.createdAt || new Date();
     job.attempts = job.attempts || 0;
     job.maxAttempts = job.maxAttempts || this.config.maxRetries + 1;
 
     // Store job
     this.jobs.set(job.id, job);
-    
+
     // Add to pending queue with priority sorting
     this.insertJobByPriority(job);
-    
+
     this.updateStats();
-    
+
     return job.id;
   }
 
@@ -90,7 +90,7 @@ export class MemoryIntegrationQueue implements IntegrationQueue {
 
     Object.assign(job, updates);
     job.updatedAt = new Date();
-    
+
     this.updateStats();
   }
 
@@ -105,18 +105,18 @@ export class MemoryIntegrationQueue implements IntegrationQueue {
 
     // Remove from jobs map
     this.jobs.delete(id);
-    
+
     // Remove from pending queue
-    const pendingIndex = this.pendingJobs.findIndex(j => j.id === id);
+    const pendingIndex = this.pendingJobs.findIndex((j) => j.id === id);
     if (pendingIndex > -1) {
       this.pendingJobs.splice(pendingIndex, 1);
     }
-    
+
     // Remove from processing set
     this.processingJobs.delete(id);
-    
+
     this.updateStats();
-    
+
     return true;
   }
 
@@ -139,7 +139,7 @@ export class MemoryIntegrationQueue implements IntegrationQueue {
    */
   async getPendingJobs(limit?: number): Promise<IntegrationJob[]> {
     const jobs = this.pendingJobs.slice(0, limit);
-    return jobs.map(job => ({ ...job }));
+    return jobs.map((job) => ({ ...job }));
   }
 
   /**
@@ -188,7 +188,7 @@ export class MemoryIntegrationQueue implements IntegrationQueue {
   private insertJobByPriority(job: IntegrationJob): void {
     const priority = job.priority || 0;
     let insertIndex = this.pendingJobs.length;
-    
+
     // Find insertion point (higher priority first)
     for (let i = 0; i < this.pendingJobs.length; i++) {
       if ((this.pendingJobs[i].priority || 0) < priority) {
@@ -196,7 +196,7 @@ export class MemoryIntegrationQueue implements IntegrationQueue {
         break;
       }
     }
-    
+
     this.pendingJobs.splice(insertIndex, 0, job);
   }
 
@@ -216,13 +216,13 @@ export class MemoryIntegrationQueue implements IntegrationQueue {
    */
   private async processJobs(): Promise<void> {
     const availableSlots = this.config.maxConcurrency - this.processingJobs.size;
-    
+
     if (availableSlots <= 0 || this.pendingJobs.length === 0) {
       return;
     }
 
     const jobsToProcess = this.pendingJobs.splice(0, availableSlots);
-    
+
     for (const job of jobsToProcess) {
       this.processJob(job);
     }
@@ -234,7 +234,7 @@ export class MemoryIntegrationQueue implements IntegrationQueue {
   private async processJob(job: IntegrationJob): Promise<void> {
     try {
       // Mark as processing
-      job.status = 'processing';
+      job.status = "processing";
       job.startedAt = new Date();
       job.attempts++;
       this.processingJobs.add(job.id);
@@ -248,18 +248,17 @@ export class MemoryIntegrationQueue implements IntegrationQueue {
 
       // Process job
       const result = await processor(job);
-      
+
       // Mark as completed
-      job.status = 'completed';
+      job.status = "completed";
       job.completedAt = new Date();
       job.result = result;
-      
     } catch (error) {
       // Handle job failure
-      job.status = 'failed';
+      job.status = "failed";
       job.error = error instanceof Error ? error.message : String(error);
       job.failedAt = new Date();
-      
+
       // Retry if attempts remaining
       if (job.attempts < job.maxAttempts) {
         await this.scheduleRetry(job);
@@ -276,14 +275,14 @@ export class MemoryIntegrationQueue implements IntegrationQueue {
    */
   private async scheduleRetry(job: IntegrationJob): Promise<void> {
     const delay = this.calculateRetryDelay(job.attempts);
-    
+
     setTimeout(() => {
-      job.status = 'pending';
+      job.status = "pending";
       job.scheduledAt = new Date();
       this.insertJobByPriority(job);
       this.updateStats();
     }, delay);
-    
+
     this.stats.retries++;
   }
 
@@ -301,15 +300,15 @@ export class MemoryIntegrationQueue implements IntegrationQueue {
   private updateStats(): void {
     this.stats.pending = this.pendingJobs.length;
     this.stats.processing = this.processingJobs.size;
-    
+
     let completed = 0;
     let failed = 0;
-    
+
     for (const job of this.jobs.values()) {
-      if (job.status === 'completed') completed++;
-      else if (job.status === 'failed') failed++;
+      if (job.status === "completed") completed++;
+      else if (job.status === "failed") failed++;
     }
-    
+
     this.stats.completed = completed;
     this.stats.failed = failed;
   }
@@ -326,18 +325,14 @@ export class SupabaseIntegrationQueue implements IntegrationQueue {
   private isProcessing = false;
   private processingJobs: Set<string> = new Set();
 
-  constructor(
-    supabaseUrl: string,
-    supabaseKey: string,
-    config: QueueConfig
-  ) {
+  constructor(supabaseUrl: string, supabaseKey: string, config: QueueConfig) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.config = {
       maxConcurrency: 5,
       retryDelay: 5000,
       maxRetries: 3,
       processInterval: 5000,
-      ...config
+      ...config,
     };
 
     // Start processing loop
@@ -351,27 +346,25 @@ export class SupabaseIntegrationQueue implements IntegrationQueue {
     try {
       // Set default values
       job.id = job.id || crypto.randomUUID();
-      job.status = 'pending';
+      job.status = "pending";
       job.createdAt = job.createdAt || new Date();
       job.attempts = job.attempts || 0;
       job.maxAttempts = job.maxAttempts || this.config.maxRetries + 1;
 
       // Insert into database
-      const { error } = await this.supabase
-        .from('integration_jobs')
-        .insert({
-          id: job.id,
-          type: job.type,
-          integration_id: job.integrationId,
-          payload: job.payload,
-          priority: job.priority || 0,
-          attempts: job.attempts,
-          max_attempts: job.maxAttempts,
-          delay: job.delay || 0,
-          status: job.status,
-          created_at: job.createdAt,
-          scheduled_at: job.scheduledAt
-        });
+      const { error } = await this.supabase.from("integration_jobs").insert({
+        id: job.id,
+        type: job.type,
+        integration_id: job.integrationId,
+        payload: job.payload,
+        priority: job.priority || 0,
+        attempts: job.attempts,
+        max_attempts: job.maxAttempts,
+        delay: job.delay || 0,
+        status: job.status,
+        created_at: job.createdAt,
+        scheduled_at: job.scheduledAt,
+      });
 
       if (error) {
         throw new Error(`Failed to enqueue job: ${error.message}`);
@@ -379,7 +372,7 @@ export class SupabaseIntegrationQueue implements IntegrationQueue {
 
       return job.id;
     } catch (error) {
-      console.error('Failed to enqueue job:', error);
+      console.error("Failed to enqueue job:", error);
       throw error;
     }
   }
@@ -390,9 +383,9 @@ export class SupabaseIntegrationQueue implements IntegrationQueue {
   async getJob(id: string): Promise<IntegrationJob | null> {
     try {
       const { data, error } = await this.supabase
-        .from('integration_jobs')
-        .select('*')
-        .eq('id', id)
+        .from("integration_jobs")
+        .select("*")
+        .eq("id", id)
         .single();
 
       if (error || !data) {
@@ -401,7 +394,7 @@ export class SupabaseIntegrationQueue implements IntegrationQueue {
 
       return this.mapDatabaseToJob(data);
     } catch (error) {
-      console.error('Failed to get job:', error);
+      console.error("Failed to get job:", error);
       return null;
     }
   }
@@ -412,7 +405,7 @@ export class SupabaseIntegrationQueue implements IntegrationQueue {
   async updateJob(id: string, updates: Partial<IntegrationJob>): Promise<void> {
     try {
       const updateData: any = {
-        updated_at: new Date()
+        updated_at: new Date(),
       };
 
       if (updates.status) updateData.status = updates.status;
@@ -425,15 +418,15 @@ export class SupabaseIntegrationQueue implements IntegrationQueue {
       if (updates.scheduledAt) updateData.scheduled_at = updates.scheduledAt;
 
       const { error } = await this.supabase
-        .from('integration_jobs')
+        .from("integration_jobs")
         .update(updateData)
-        .eq('id', id);
+        .eq("id", id);
 
       if (error) {
         throw new Error(`Failed to update job: ${error.message}`);
       }
     } catch (error) {
-      console.error('Failed to update job:', error);
+      console.error("Failed to update job:", error);
       throw error;
     }
   }
@@ -443,20 +436,17 @@ export class SupabaseIntegrationQueue implements IntegrationQueue {
    */
   async removeJob(id: string): Promise<boolean> {
     try {
-      const { error } = await this.supabase
-        .from('integration_jobs')
-        .delete()
-        .eq('id', id);
+      const { error } = await this.supabase.from("integration_jobs").delete().eq("id", id);
 
       if (error) {
-        console.error('Failed to remove job:', error);
+        console.error("Failed to remove job:", error);
         return false;
       }
 
       this.processingJobs.delete(id);
       return true;
     } catch (error) {
-      console.error('Failed to remove job:', error);
+      console.error("Failed to remove job:", error);
       return false;
     }
   }
@@ -474,9 +464,9 @@ export class SupabaseIntegrationQueue implements IntegrationQueue {
   async getStats(): Promise<QueueStats> {
     try {
       const { data, error } = await this.supabase
-        .from('integration_jobs')
-        .select('status')
-        .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
+        .from("integration_jobs")
+        .select("status")
+        .gte("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
 
       if (error) {
         throw new Error(`Failed to get stats: ${error.message}`);
@@ -487,21 +477,21 @@ export class SupabaseIntegrationQueue implements IntegrationQueue {
         processing: 0,
         completed: 0,
         failed: 0,
-        retries: 0
+        retries: 0,
       };
 
       for (const job of data || []) {
         switch (job.status) {
-          case 'pending':
+          case "pending":
             stats.pending++;
             break;
-          case 'processing':
+          case "processing":
             stats.processing++;
             break;
-          case 'completed':
+          case "completed":
             stats.completed++;
             break;
-          case 'failed':
+          case "failed":
             stats.failed++;
             break;
         }
@@ -509,13 +499,13 @@ export class SupabaseIntegrationQueue implements IntegrationQueue {
 
       return stats;
     } catch (error) {
-      console.error('Failed to get stats:', error);
+      console.error("Failed to get stats:", error);
       return {
         pending: 0,
         processing: 0,
         completed: 0,
         failed: 0,
-        retries: 0
+        retries: 0,
       };
     }
   }
@@ -526,12 +516,12 @@ export class SupabaseIntegrationQueue implements IntegrationQueue {
   async getPendingJobs(limit: number = 10): Promise<IntegrationJob[]> {
     try {
       const { data, error } = await this.supabase
-        .from('integration_jobs')
-        .select('*')
-        .eq('status', 'pending')
+        .from("integration_jobs")
+        .select("*")
+        .eq("status", "pending")
         .or(`scheduled_at.is.null,scheduled_at.lte.${new Date().toISOString()}`)
-        .order('priority', { ascending: false })
-        .order('created_at', { ascending: true })
+        .order("priority", { ascending: false })
+        .order("created_at", { ascending: true })
         .limit(limit);
 
       if (error) {
@@ -540,7 +530,7 @@ export class SupabaseIntegrationQueue implements IntegrationQueue {
 
       return (data || []).map(this.mapDatabaseToJob);
     } catch (error) {
-      console.error('Failed to get pending jobs:', error);
+      console.error("Failed to get pending jobs:", error);
       return [];
     }
   }
@@ -551,9 +541,9 @@ export class SupabaseIntegrationQueue implements IntegrationQueue {
   async getProcessingJobs(): Promise<IntegrationJob[]> {
     try {
       const { data, error } = await this.supabase
-        .from('integration_jobs')
-        .select('*')
-        .eq('status', 'processing');
+        .from("integration_jobs")
+        .select("*")
+        .eq("status", "processing");
 
       if (error) {
         throw new Error(`Failed to get processing jobs: ${error.message}`);
@@ -561,7 +551,7 @@ export class SupabaseIntegrationQueue implements IntegrationQueue {
 
       return (data || []).map(this.mapDatabaseToJob);
     } catch (error) {
-      console.error('Failed to get processing jobs:', error);
+      console.error("Failed to get processing jobs:", error);
       return [];
     }
   }
@@ -572,16 +562,16 @@ export class SupabaseIntegrationQueue implements IntegrationQueue {
   async clear(): Promise<void> {
     try {
       const { error } = await this.supabase
-        .from('integration_jobs')
+        .from("integration_jobs")
         .delete()
-        .in('status', ['completed', 'failed'])
-        .lt('updated_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
+        .in("status", ["completed", "failed"])
+        .lt("updated_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
 
       if (error) {
         throw new Error(`Failed to clear jobs: ${error.message}`);
       }
     } catch (error) {
-      console.error('Failed to clear jobs:', error);
+      console.error("Failed to clear jobs:", error);
       throw error;
     }
   }
@@ -607,7 +597,7 @@ export class SupabaseIntegrationQueue implements IntegrationQueue {
    */
   private startProcessing(): void {
     this.isProcessing = true;
-    
+
     setInterval(() => {
       if (this.isProcessing) {
         this.processJobs();
@@ -621,22 +611,22 @@ export class SupabaseIntegrationQueue implements IntegrationQueue {
   private async processJobs(): Promise<void> {
     try {
       const availableSlots = this.config.maxConcurrency - this.processingJobs.size;
-      
+
       if (availableSlots <= 0) {
         return;
       }
 
       const jobs = await this.getPendingJobs(availableSlots);
-      
+
       for (const job of jobs) {
         if (this.processingJobs.size >= this.config.maxConcurrency) {
           break;
         }
-        
+
         this.processJob(job);
       }
     } catch (error) {
-      console.error('Failed to process jobs:', error);
+      console.error("Failed to process jobs:", error);
     }
   }
 
@@ -647,11 +637,11 @@ export class SupabaseIntegrationQueue implements IntegrationQueue {
     try {
       // Mark as processing
       this.processingJobs.add(job.id);
-      
+
       await this.updateJob(job.id, {
-        status: 'processing',
+        status: "processing",
         startedAt: new Date(),
-        attempts: job.attempts + 1
+        attempts: job.attempts + 1,
       });
 
       // Get processor
@@ -662,24 +652,23 @@ export class SupabaseIntegrationQueue implements IntegrationQueue {
 
       // Process job
       const result = await processor(job);
-      
+
       // Mark as completed
       await this.updateJob(job.id, {
-        status: 'completed',
+        status: "completed",
         completedAt: new Date(),
-        result
+        result,
       });
-      
     } catch (error) {
       // Handle job failure
       const errorMessage = error instanceof Error ? error.message : String(error);
-      
+
       await this.updateJob(job.id, {
-        status: 'failed',
+        status: "failed",
         error: errorMessage,
-        failedAt: new Date()
+        failedAt: new Date(),
       });
-      
+
       // Retry if attempts remaining
       if (job.attempts + 1 < job.maxAttempts) {
         await this.scheduleRetry(job);
@@ -696,10 +685,10 @@ export class SupabaseIntegrationQueue implements IntegrationQueue {
   private async scheduleRetry(job: IntegrationJob): Promise<void> {
     const delay = this.calculateRetryDelay(job.attempts + 1);
     const scheduledAt = new Date(Date.now() + delay);
-    
+
     await this.updateJob(job.id, {
-      status: 'pending',
-      scheduledAt
+      status: "pending",
+      scheduledAt,
     });
   }
 
@@ -732,7 +721,7 @@ export class SupabaseIntegrationQueue implements IntegrationQueue {
       startedAt: data.started_at ? new Date(data.started_at) : undefined,
       completedAt: data.completed_at ? new Date(data.completed_at) : undefined,
       failedAt: data.failed_at ? new Date(data.failed_at) : undefined,
-      scheduledAt: data.scheduled_at ? new Date(data.scheduled_at) : undefined
+      scheduledAt: data.scheduled_at ? new Date(data.scheduled_at) : undefined,
     };
   }
 }
@@ -746,24 +735,20 @@ export class QueueFactory {
    * Create queue instance based on type
    */
   static createQueue(
-    type: 'memory' | 'supabase',
+    type: "memory" | "supabase",
     config: QueueConfig,
-    options?: any
+    options?: any,
   ): IntegrationQueue {
     switch (type) {
-      case 'memory':
+      case "memory":
         return new MemoryIntegrationQueue(config);
-      
-      case 'supabase':
+
+      case "supabase":
         if (!options?.supabaseUrl || !options?.supabaseKey) {
-          throw new Error('Supabase URL and key are required for Supabase queue');
+          throw new Error("Supabase URL and key are required for Supabase queue");
         }
-        return new SupabaseIntegrationQueue(
-          options.supabaseUrl,
-          options.supabaseKey,
-          config
-        );
-      
+        return new SupabaseIntegrationQueue(options.supabaseUrl, options.supabaseKey, config);
+
       default:
         throw new Error(`Unsupported queue type: ${type}`);
     }

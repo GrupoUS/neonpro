@@ -1,7 +1,7 @@
 // Component Types
 // Story 1.4: Session Management & Security Implementation
 
-import type { SecurityEventType } from '../types';
+import type { SecurityEventType } from "../types";
 
 // SessionStatus Component Props
 export interface SessionStatusProps {
@@ -37,7 +37,7 @@ export interface DeviceManagerProps {
 // SessionMetrics Component Props
 export interface SessionMetricsProps {
   className?: string;
-  timeRange?: '1h' | '24h' | '7d' | '30d';
+  timeRange?: "1h" | "24h" | "7d" | "30d";
   showExport?: boolean;
   compact?: boolean;
 }
@@ -49,7 +49,7 @@ export interface BaseComponentProps {
 }
 
 // Alert Severity Levels
-export type AlertSeverity = 'low' | 'medium' | 'high' | 'critical';
+export type AlertSeverity = "low" | "medium" | "high" | "critical";
 
 // Component State Types
 export interface ComponentLoadingState {

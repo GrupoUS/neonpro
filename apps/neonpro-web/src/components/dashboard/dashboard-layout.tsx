@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { DashboardSidebar } from "./dashboard-sidebar";
-import { DashboardHeader } from "./dashboard-header";
-import { ErrorBoundary } from "@/components/ui/error-boundary";
-import { cn } from "@/lib/utils";
+import type { useState } from "react";
+import type { DashboardSidebar } from "./dashboard-sidebar";
+import type { DashboardHeader } from "./dashboard-header";
+import type { ErrorBoundary } from "@/components/ui/error-boundary";
+import type { cn } from "@/lib/utils";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -18,55 +18,48 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
     <div className="min-h-screen bg-background">
       {/* Sidebar */}
       <ErrorBoundary
-        onError={(error) => console.error('Dashboard Sidebar Error:', error)}
+        onError={(error) => console.error("Dashboard Sidebar Error:", error)}
         fallback={
           <div className="w-64 h-screen bg-muted flex items-center justify-center">
             <p className="text-sm text-muted-foreground">Erro no menu lateral</p>
           </div>
         }
       >
-        <DashboardSidebar 
-          open={sidebarOpen} 
-          onOpenChange={setSidebarOpen}
-          user={user}
-        />
+        <DashboardSidebar open={sidebarOpen} onOpenChange={setSidebarOpen} user={user} />
       </ErrorBoundary>
-      
+
       {/* Main content */}
-      <div className={cn(
-        "transition-all duration-300 ease-in-out",
-        "lg:ml-64" // Always show sidebar on large screens
-      )}>
+      <div
+        className={cn(
+          "transition-all duration-300 ease-in-out",
+          "lg:ml-64", // Always show sidebar on large screens
+        )}
+      >
         {/* Header */}
         <ErrorBoundary
-          onError={(error) => console.error('Dashboard Header Error:', error)}
+          onError={(error) => console.error("Dashboard Header Error:", error)}
           fallback={
             <div className="h-16 bg-muted border-b flex items-center px-6">
               <p className="text-sm text-muted-foreground">Erro no cabeçalho</p>
             </div>
           }
         >
-          <DashboardHeader 
-            onMenuClick={() => setSidebarOpen(true)}
-            user={user}
-          />
+          <DashboardHeader onMenuClick={() => setSidebarOpen(true)} user={user} />
         </ErrorBoundary>
-        
+
         {/* Page content */}
         <ErrorBoundary
-          onError={(error) => console.error('Dashboard Content Error:', error)}
+          onError={(error) => console.error("Dashboard Content Error:", error)}
           className="m-6"
-          showDetails={process.env.NODE_ENV === 'development'}
+          showDetails={process.env.NODE_ENV === "development"}
         >
-          <main className="p-6">
-            {children}
-          </main>
+          <main className="p-6">{children}</main>
         </ErrorBoundary>
       </div>
-      
+
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />

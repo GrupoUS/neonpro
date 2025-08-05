@@ -4,8 +4,8 @@
  * Task 2: Processing Performance - Story 10.1
  */
 
-import * as tf from '@tensorflow/tfjs';
-import { createWorker } from 'tesseract.js';
+import * as tf from "@tensorflow/tfjs";
+import type { createWorker } from "tesseract.js";
 
 // Performance monitoring interfaces
 export interface ProcessingMetrics {
@@ -64,13 +64,13 @@ export class HighPerformanceImageProcessor {
       compressionLevel: 0.8,
       targetProcessingTime: 30000, // 30 seconds
       memoryLimit: 2048, // 2GB
-      ...config
+      ...config,
     };
 
     this.performanceMonitor = new PerformanceMonitor();
     this.gpuAccelerator = new GPUAccelerator(this.config.enableGPU);
     this.memoryManager = new MemoryManager(this.config.memoryLimit);
-    
+
     this.initializeWorkerPool();
     this.initializeGPU();
   }
@@ -81,11 +81,11 @@ export class HighPerformanceImageProcessor {
    */
   async processImage(
     imageInput: string | HTMLImageElement | ImageData,
-    options: ImageProcessingOptions = {}
+    options: ImageProcessingOptions = {},
   ): Promise<ImageProcessingResult> {
     const startTime = performance.now();
     const cacheKey = this.generateCacheKey(imageInput, options);
-    
+
     try {
       // Check cache first
       if (this.config.enableCaching) {
@@ -95,7 +95,7 @@ export class HighPerformanceImageProcessor {
             processedImage: cached.tensor.clone() as tf.Tensor3D,
             metrics: this.createMetrics(performance.now() - startTime, true),
             cacheKey,
-            optimizations: ['cache-hit']
+            optimizations: ["cache-hit"],
           };
         }
       }
@@ -108,28 +108,19 @@ export class HighPerformanceImageProcessor {
       const preprocessingStart = performance.now();
 
       // Parallel preprocessing pipeline
-      const preprocessedImage = await this.parallelPreprocessing(
-        rawImage,
-        options
-      );
-      
+      const preprocessedImage = await this.parallelPreprocessing(rawImage, options);
+
       const preprocessingTime = performance.now() - preprocessingStart;
       const analysisStart = performance.now();
 
       // GPU-accelerated analysis
-      const analyzedImage = await this.gpuAcceleratedAnalysis(
-        preprocessedImage,
-        options
-      );
+      const analyzedImage = await this.gpuAcceleratedAnalysis(preprocessedImage, options);
 
       const analysisTime = performance.now() - analysisStart;
       const postprocessingStart = performance.now();
 
       // Post-processing optimizations
-      const finalImage = await this.optimizedPostprocessing(
-        analyzedImage,
-        options
-      );
+      const finalImage = await this.optimizedPostprocessing(analyzedImage, options);
 
       const postprocessingTime = performance.now() - postprocessingStart;
       const totalTime = performance.now() - startTime;
@@ -147,12 +138,14 @@ export class HighPerformanceImageProcessor {
         preprocessingTime,
         analysisTime,
         postprocessingTime,
-        false
+        false,
       );
 
       // Performance validation
       if (totalTime > this.config.targetProcessingTime) {
-        console.warn(`Processing time ${totalTime}ms exceeded target ${this.config.targetProcessingTime}ms`);
+        console.warn(
+          `Processing time ${totalTime}ms exceeded target ${this.config.targetProcessingTime}ms`,
+        );
         await this.optimizeForNextRun(metrics);
       }
 
@@ -160,12 +153,13 @@ export class HighPerformanceImageProcessor {
         processedImage: finalImage,
         metrics,
         cacheKey,
-        optimizations: this.getAppliedOptimizations()
+        optimizations: this.getAppliedOptimizations(),
       };
-
     } catch (error) {
-      console.error('Image processing failed:', error);
-      throw new Error(`Processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error("Image processing failed:", error);
+      throw new Error(
+        `Processing failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }
 
@@ -174,10 +168,10 @@ export class HighPerformanceImageProcessor {
    */
   private async parallelPreprocessing(
     image: tf.Tensor3D,
-    options: ImageProcessingOptions
+    options: ImageProcessingOptions,
   ): Promise<tf.Tensor3D> {
     const tasks: Promise<tf.Tensor3D>[] = [];
-    
+
     // Create processing pipeline
     let currentImage = image;
 
@@ -189,15 +183,15 @@ export class HighPerformanceImageProcessor {
 
     // Parallel enhancement tasks
     const enhancementTasks = [];
-    
+
     if (options.enhanceContrast) {
       enhancementTasks.push(this.fastContrastEnhancement(currentImage));
     }
-    
+
     if (options.normalizeColors) {
       enhancementTasks.push(this.acceleratedColorNormalization(currentImage));
     }
-    
+
     if (options.removeNoise) {
       enhancementTasks.push(this.efficientNoiseReduction(currentImage));
     }
@@ -207,9 +201,9 @@ export class HighPerformanceImageProcessor {
       const results = await Promise.all(enhancementTasks);
       // Combine results using weighted average
       currentImage = this.combineEnhancements(results);
-      
+
       // Cleanup intermediate results
-      results.forEach(tensor => tensor.dispose());
+      results.forEach((tensor) => tensor.dispose());
     } else if (enhancementTasks.length === 1) {
       currentImage = await enhancementTasks[0];
     }
@@ -222,7 +216,7 @@ export class HighPerformanceImageProcessor {
    */
   private async gpuAcceleratedAnalysis(
     image: tf.Tensor3D,
-    options: ImageProcessingOptions
+    options: ImageProcessingOptions,
   ): Promise<tf.Tensor3D> {
     if (!this.config.enableGPU || !this.gpuAccelerator.isAvailable()) {
       return this.cpuFallbackAnalysis(image, options);
@@ -233,10 +227,10 @@ export class HighPerformanceImageProcessor {
       return await this.gpuAccelerator.processImage(image, {
         edgeDetection: options.detectEdges || false,
         featureExtraction: options.extractFeatures || false,
-        textureAnalysis: options.analyzeTexture || false
+        textureAnalysis: options.analyzeTexture || false,
       });
     } catch (error) {
-      console.warn('GPU processing failed, falling back to CPU:', error);
+      console.warn("GPU processing failed, falling back to CPU:", error);
       return this.cpuFallbackAnalysis(image, options);
     }
   }
@@ -246,7 +240,7 @@ export class HighPerformanceImageProcessor {
    */
   private async optimizedPostprocessing(
     image: tf.Tensor3D,
-    options: ImageProcessingOptions
+    options: ImageProcessingOptions,
   ): Promise<tf.Tensor3D> {
     let result = image;
 
@@ -273,13 +267,10 @@ export class HighPerformanceImageProcessor {
   // Optimized processing methods
   private async optimizedResize(
     image: tf.Tensor3D,
-    targetSize: { width: number; height: number }
+    targetSize: { width: number; height: number },
   ): Promise<tf.Tensor3D> {
     // Use bilinear interpolation for speed vs quality balance
-    return tf.image.resizeBilinear(
-      image,
-      [targetSize.height, targetSize.width]
-    ) as tf.Tensor3D;
+    return tf.image.resizeBilinear(image, [targetSize.height, targetSize.width]) as tf.Tensor3D;
   }
 
   private fastContrastEnhancement(image: tf.Tensor3D): tf.Tensor3D {
@@ -290,7 +281,7 @@ export class HighPerformanceImageProcessor {
       const scaled = tf.mul(centered, 1.2);
       return tf.add(scaled, mean);
     });
-    
+
     return tf.clipByValue(enhanced, 0, 1) as tf.Tensor3D;
   }
 
@@ -299,52 +290,49 @@ export class HighPerformanceImageProcessor {
       const { mean, variance } = tf.moments(image, [0, 1]);
       const std = tf.sqrt(tf.add(variance, 1e-8));
       const normalized = tf.div(tf.sub(image, mean), std);
-      
+
       // Scale to [0, 1] range
       const min = tf.min(normalized);
       const max = tf.max(normalized);
       const range = tf.sub(max, min);
-      
+
       return tf.div(tf.sub(normalized, min), range);
     }) as tf.Tensor3D;
   }
 
   private efficientNoiseReduction(image: tf.Tensor3D): tf.Tensor3D {
     // Fast noise reduction using average pooling
-    return tf.avgPool(image, 3, 1, 'same') as tf.Tensor3D;
+    return tf.avgPool(image, 3, 1, "same") as tf.Tensor3D;
   }
 
   private combineEnhancements(enhancements: tf.Tensor3D[]): tf.Tensor3D {
     if (enhancements.length === 1) return enhancements[0];
-    
+
     // Weighted average of enhancements
     const weights = enhancements.map(() => 1 / enhancements.length);
-    
+
     return tf.tidy(() => {
       let combined = tf.zerosLike(enhancements[0]);
-      
+
       enhancements.forEach((enhancement, index) => {
         const weighted = tf.mul(enhancement, weights[index]);
         combined = tf.add(combined, weighted);
       });
-      
+
       return combined;
     }) as tf.Tensor3D;
   }
 
-  private cpuFallbackAnalysis(
-    image: tf.Tensor3D,
-    options: ImageProcessingOptions
-  ): tf.Tensor3D {
+  private cpuFallbackAnalysis(image: tf.Tensor3D, options: ImageProcessingOptions): tf.Tensor3D {
     // CPU-optimized analysis when GPU is not available
     let result = image;
-    
+
     if (options.detectEdges) {
       const edges = this.cpuEdgeDetection(result);
       if (result !== image) result.dispose();
       result = edges;
     }
-    
+
     return result;
   }
 
@@ -354,17 +342,31 @@ export class HighPerformanceImageProcessor {
       const gray = tf.mean(image, 2, true);
       const sobelX = tf.conv2d(
         gray.expandDims(0),
-        tf.tensor4d([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]], [3, 3, 1, 1]),
+        tf.tensor4d(
+          [
+            [-1, 0, 1],
+            [-2, 0, 2],
+            [-1, 0, 1],
+          ],
+          [3, 3, 1, 1],
+        ),
         1,
-        'same'
+        "same",
       );
       const sobelY = tf.conv2d(
         gray.expandDims(0),
-        tf.tensor4d([[-1, -2, -1], [0, 0, 0], [1, 2, 1]], [3, 3, 1, 1]),
+        tf.tensor4d(
+          [
+            [-1, -2, -1],
+            [0, 0, 0],
+            [1, 2, 1],
+          ],
+          [3, 3, 1, 1],
+        ),
         1,
-        'same'
+        "same",
       );
-      
+
       const magnitude = tf.sqrt(tf.add(tf.square(sobelX), tf.square(sobelY)));
       return magnitude.squeeze([0, 3]).expandDims(2);
     }) as tf.Tensor3D;
@@ -372,28 +374,32 @@ export class HighPerformanceImageProcessor {
 
   private efficientSmoothing(image: tf.Tensor3D): tf.Tensor3D {
     // Gaussian blur approximation using separable filters
-    return tf.avgPool(image, 3, 1, 'same') as tf.Tensor3D;
+    return tf.avgPool(image, 3, 1, "same") as tf.Tensor3D;
   }
 
   private fastEdgeSharpening(image: tf.Tensor3D): tf.Tensor3D {
     return tf.tidy(() => {
       const kernel = tf.tensor4d(
-        [[0, -1, 0], [-1, 5, -1], [0, -1, 0]],
-        [3, 3, 1, 1]
+        [
+          [0, -1, 0],
+          [-1, 5, -1],
+          [0, -1, 0],
+        ],
+        [3, 3, 1, 1],
       );
-      
+
       const channels = tf.split(image, 3, 2);
-      const sharpened = channels.map(channel => 
-        tf.conv2d(channel.expandDims(0), kernel, 1, 'same').squeeze([0])
+      const sharpened = channels.map((channel) =>
+        tf.conv2d(channel.expandDims(0), kernel, 1, "same").squeeze([0]),
       );
-      
+
       return tf.concat(sharpened, 2);
     }) as tf.Tensor3D;
   }
 
   // Cache management
   private generateCacheKey(input: any, options: ImageProcessingOptions): string {
-    const inputHash = typeof input === 'string' ? input : this.hashImageData(input);
+    const inputHash = typeof input === "string" ? input : this.hashImageData(input);
     const optionsHash = JSON.stringify(options);
     return `${inputHash}_${btoa(optionsHash)}`;
   }
@@ -406,7 +412,7 @@ export class HighPerformanceImageProcessor {
   private getFromCache(key: string): CacheEntry | null {
     const entry = this.cache.get(key);
     if (!entry) return null;
-    
+
     // Check if cache entry is still valid (24 hours)
     const maxAge = 24 * 60 * 60 * 1000;
     if (Date.now() - entry.timestamp > maxAge) {
@@ -414,7 +420,7 @@ export class HighPerformanceImageProcessor {
       entry.tensor.dispose();
       return null;
     }
-    
+
     entry.accessCount++;
     return entry;
   }
@@ -425,12 +431,12 @@ export class HighPerformanceImageProcessor {
     if (this.getCacheSize() + tensorSize > this.config.memoryLimit * 1024 * 1024) {
       this.evictLeastUsed();
     }
-    
+
     this.cache.set(key, {
       tensor: tensor.clone() as tf.Tensor3D,
       timestamp: Date.now(),
       accessCount: 1,
-      size: tensorSize
+      size: tensorSize,
     });
   }
 
@@ -440,21 +446,20 @@ export class HighPerformanceImageProcessor {
   }
 
   private getCacheSize(): number {
-    return Array.from(this.cache.values())
-      .reduce((total, entry) => total + entry.size, 0);
+    return Array.from(this.cache.values()).reduce((total, entry) => total + entry.size, 0);
   }
 
   private evictLeastUsed(): void {
     let leastUsed: string | null = null;
     let minAccess = Infinity;
-    
+
     for (const [key, entry] of this.cache.entries()) {
       if (entry.accessCount < minAccess) {
         minAccess = entry.accessCount;
         leastUsed = key;
       }
     }
-    
+
     if (leastUsed) {
       const entry = this.cache.get(leastUsed)!;
       entry.tensor.dispose();
@@ -471,7 +476,7 @@ export class HighPerformanceImageProcessor {
       postprocessingTime: 0,
       memoryUsage: this.getMemoryUsage(),
       cacheHits: fromCache ? 1 : 0,
-      parallelTasks: this.config.maxParallelTasks
+      parallelTasks: this.config.maxParallelTasks,
     };
   }
 
@@ -480,7 +485,7 @@ export class HighPerformanceImageProcessor {
     preprocessingTime: number,
     analysisTime: number,
     postprocessingTime: number,
-    fromCache: boolean
+    fromCache: boolean,
   ): ProcessingMetrics {
     return {
       totalTime,
@@ -490,7 +495,7 @@ export class HighPerformanceImageProcessor {
       memoryUsage: this.getMemoryUsage(),
       gpuUtilization: this.gpuAccelerator.getUtilization(),
       cacheHits: fromCache ? 1 : 0,
-      parallelTasks: this.config.maxParallelTasks
+      parallelTasks: this.config.maxParallelTasks,
     };
   }
 
@@ -500,14 +505,14 @@ export class HighPerformanceImageProcessor {
 
   private getAppliedOptimizations(): string[] {
     const optimizations = [];
-    
-    if (this.config.enableGPU) optimizations.push('gpu-acceleration');
-    if (this.config.useWebWorkers) optimizations.push('web-workers');
-    if (this.config.enableCaching) optimizations.push('intelligent-caching');
-    
-    optimizations.push('parallel-processing');
-    optimizations.push('memory-optimization');
-    
+
+    if (this.config.enableGPU) optimizations.push("gpu-acceleration");
+    if (this.config.useWebWorkers) optimizations.push("web-workers");
+    if (this.config.enableCaching) optimizations.push("intelligent-caching");
+
+    optimizations.push("parallel-processing");
+    optimizations.push("memory-optimization");
+
     return optimizations;
   }
 
@@ -517,7 +522,7 @@ export class HighPerformanceImageProcessor {
       // Reduce quality for speed
       this.config.compressionLevel = Math.max(0.5, this.config.compressionLevel - 0.1);
     }
-    
+
     if (metrics.memoryUsage > this.config.memoryLimit * 0.8) {
       // Reduce cache size
       this.evictLeastUsed();
@@ -527,13 +532,13 @@ export class HighPerformanceImageProcessor {
   // Worker pool management
   private initializeWorkerPool(): void {
     if (!this.config.useWebWorkers) return;
-    
+
     for (let i = 0; i < this.config.maxParallelTasks; i++) {
       try {
-        const worker = new Worker('/workers/image-processing-worker.js');
+        const worker = new Worker("/workers/image-processing-worker.js");
         this.workerPool.push(worker);
       } catch (error) {
-        console.warn('Failed to create worker:', error);
+        console.warn("Failed to create worker:", error);
       }
     }
   }
@@ -545,7 +550,7 @@ export class HighPerformanceImageProcessor {
   }
 
   private async loadImage(input: string | HTMLImageElement | ImageData): Promise<tf.Tensor3D> {
-    if (typeof input === 'string') {
+    if (typeof input === "string") {
       const img = await this.loadImageFromUrl(input);
       return tf.browser.fromPixels(img) as tf.Tensor3D;
     } else if (input instanceof HTMLImageElement) {
@@ -558,7 +563,7 @@ export class HighPerformanceImageProcessor {
   private loadImageFromUrl(url: string): Promise<HTMLImageElement> {
     return new Promise((resolve, reject) => {
       const img = new Image();
-      img.crossOrigin = 'anonymous';
+      img.crossOrigin = "anonymous";
       img.onload = () => resolve(img);
       img.onerror = reject;
       img.src = url;
@@ -580,7 +585,7 @@ export class HighPerformanceImageProcessor {
       cacheHitRate: this.performanceMonitor.getCacheHitRate(),
       memoryUsage: this.getMemoryUsage(),
       gpuUtilization: this.gpuAccelerator.getUtilization(),
-      optimizationsActive: this.getAppliedOptimizations()
+      optimizationsActive: this.getAppliedOptimizations(),
     };
   }
 
@@ -589,13 +594,13 @@ export class HighPerformanceImageProcessor {
    */
   dispose(): void {
     // Dispose cache tensors
-    this.cache.forEach(entry => entry.tensor.dispose());
+    this.cache.forEach((entry) => entry.tensor.dispose());
     this.cache.clear();
-    
+
     // Terminate workers
-    this.workerPool.forEach(worker => worker.terminate());
+    this.workerPool.forEach((worker) => worker.terminate());
     this.workerPool = [];
-    
+
     // Cleanup GPU resources
     this.gpuAccelerator.dispose();
   }
@@ -616,12 +621,12 @@ class PerformanceMonitor {
   recordTime(key: string, time: number): void {
     const times = this.metrics.get(key) || [];
     times.push(time);
-    
+
     // Keep only last 100 measurements
     if (times.length > 100) {
       times.shift();
     }
-    
+
     this.metrics.set(key, times);
     this.totalRequests++;
   }
@@ -649,20 +654,20 @@ class GPUAccelerator {
 
   async initialize(): Promise<void> {
     if (!this.enabled) return;
-    
+
     try {
       // Check for WebGL support
       await tf.ready();
       const backend = tf.getBackend();
-      this.isGPUAvailable = backend === 'webgl';
-      
+      this.isGPUAvailable = backend === "webgl";
+
       if (this.isGPUAvailable) {
-        console.log('GPU acceleration enabled');
+        console.log("GPU acceleration enabled");
       } else {
-        console.warn('GPU acceleration not available, using CPU');
+        console.warn("GPU acceleration not available, using CPU");
       }
     } catch (error) {
-      console.error('GPU initialization failed:', error);
+      console.error("GPU initialization failed:", error);
       this.isGPUAvailable = false;
     }
   }
@@ -673,47 +678,50 @@ class GPUAccelerator {
 
   async processImage(
     image: tf.Tensor3D,
-    options: { edgeDetection?: boolean; featureExtraction?: boolean; textureAnalysis?: boolean }
+    options: { edgeDetection?: boolean; featureExtraction?: boolean; textureAnalysis?: boolean },
   ): Promise<tf.Tensor3D> {
     if (!this.isGPUAvailable) {
-      throw new Error('GPU not available');
+      throw new Error("GPU not available");
     }
 
     this.utilization = 0.8; // Simulated GPU utilization
-    
+
     // GPU-optimized processing
     return tf.tidy(() => {
       let result = image;
-      
+
       if (options.edgeDetection) {
         result = this.gpuEdgeDetection(result);
       }
-      
+
       if (options.featureExtraction) {
         result = this.gpuFeatureExtraction(result);
       }
-      
+
       if (options.textureAnalysis) {
         result = this.gpuTextureAnalysis(result);
       }
-      
+
       return result;
     }) as tf.Tensor3D;
   }
 
   private gpuEdgeDetection(image: tf.Tensor3D): tf.Tensor3D {
     // GPU-optimized edge detection
-    return tf.image.sobel(image.mean(2, true).expandDims(0)).squeeze([0, 3]).expandDims(2) as tf.Tensor3D;
+    return tf.image
+      .sobel(image.mean(2, true).expandDims(0))
+      .squeeze([0, 3])
+      .expandDims(2) as tf.Tensor3D;
   }
 
   private gpuFeatureExtraction(image: tf.Tensor3D): tf.Tensor3D {
     // GPU-optimized feature extraction
-    return tf.avgPool(image, 2, 2, 'same') as tf.Tensor3D;
+    return tf.avgPool(image, 2, 2, "same") as tf.Tensor3D;
   }
 
   private gpuTextureAnalysis(image: tf.Tensor3D): tf.Tensor3D {
     // GPU-optimized texture analysis
-    return tf.maxPool(image, 3, 1, 'same') as tf.Tensor3D;
+    return tf.maxPool(image, 3, 1, "same") as tf.Tensor3D;
   }
 
   getUtilization(): number {
@@ -729,7 +737,7 @@ class MemoryManager {
   constructor(private memoryLimit: number) {}
 
   cleanup(tensors: tf.Tensor[]): void {
-    tensors.forEach(tensor => {
+    tensors.forEach((tensor) => {
       if (tensor && !tensor.isDisposed) {
         tensor.dispose();
       }

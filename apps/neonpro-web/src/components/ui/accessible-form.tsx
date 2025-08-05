@@ -1,7 +1,7 @@
 /**
  * NeonPro - Accessible Form Components
  * WCAG 2.1 AA compliant form components with healthcare-specific patterns
- * 
+ *
  * Features:
  * - ARIA attributes and screen reader support
  * - Keyboard navigation
@@ -10,32 +10,41 @@
  * - Integration with React Hook Form and Zod
  */
 
-'use client'
+"use client";
 
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
-import { useTranslation } from '@/hooks/use-translation'
-import { announceToScreenReader, generateAriaId } from '@/lib/accessibility/accessibility-utils'
-import { cn } from '@/lib/utils'
-import { AlertTriangle, CheckCircle, Info } from 'lucide-react'
-import React, { forwardRef, ReactNode, useEffect, useId, useState } from 'react'
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Textarea } from "@/components/ui/textarea";
+import type { useTranslation } from "@/hooks/use-translation";
+import type {
+  announceToScreenReader,
+  generateAriaId,
+} from "@/lib/accessibility/accessibility-utils";
+import type { cn } from "@/lib/utils";
+import type { AlertTriangle, CheckCircle, Info } from "lucide-react";
+import React, { forwardRef, ReactNode, useEffect, useId, useState } from "react";
 
 // Form field props with accessibility features
 interface AccessibleFieldProps {
-  id?: string
-  name: string
-  label: string
-  description?: string
-  error?: string
-  required?: boolean
-  disabled?: boolean
-  className?: string
-  children?: ReactNode
+  id?: string;
+  name: string;
+  label: string;
+  description?: string;
+  error?: string;
+  required?: boolean;
+  disabled?: boolean;
+  className?: string;
+  children?: ReactNode;
 }
 
 /**
@@ -53,60 +62,57 @@ export function AccessibleFormField({
   className,
   children,
 }: AccessibleFieldProps) {
-  const fieldId = id || useId()
-  const labelId = generateAriaId('label')
-  const descriptionId = description ? generateAriaId('desc') : undefined
-  const errorId = error ? generateAriaId('error') : undefined
-  
-  const { t } = useTranslation()
+  const fieldId = id || useId();
+  const labelId = generateAriaId("label");
+  const descriptionId = description ? generateAriaId("desc") : undefined;
+  const errorId = error ? generateAriaId("error") : undefined;
+
+  const { t } = useTranslation();
 
   return (
-    <div className={cn('space-y-2', className)}>
-      <Label 
+    <div className={cn("space-y-2", className)}>
+      <Label
         id={labelId}
         htmlFor={fieldId}
         className={cn(
-          'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
+          "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
           required && 'after:content-["*"] after:ml-1 after:text-destructive',
-          error && 'text-destructive'
+          error && "text-destructive",
         )}
       >
         {label}
-        {required && <span className="sr-only">{t('common.required')}</span>}
+        {required && <span className="sr-only">{t("common.required")}</span>}
       </Label>
-      
+
       {description && (
-        <p 
-          id={descriptionId}
-          className="text-sm text-muted-foreground"
-        >
+        <p id={descriptionId} className="text-sm text-muted-foreground">
           {description}
         </p>
       )}
 
       <div className="relative">
-        {React.Children.map(children, child => {
+        {React.Children.map(children, (child) => {
           if (React.isValidElement(child)) {
             return React.cloneElement(child, {
               id: fieldId,
               name,
-              'aria-required': required,
-              'aria-invalid': !!error,
-              'aria-labelledby': labelId,
-              'aria-describedby': [descriptionId, errorId].filter(Boolean).join(' ') || undefined,
+              "aria-required": required,
+              "aria-invalid": !!error,
+              "aria-labelledby": labelId,
+              "aria-describedby": [descriptionId, errorId].filter(Boolean).join(" ") || undefined,
               disabled,
               className: cn(
                 child.props.className,
-                error && 'border-destructive focus:ring-destructive'
+                error && "border-destructive focus:ring-destructive",
               ),
-            })
+            });
           }
-          return child
+          return child;
         })}
       </div>
 
       {error && (
-        <Alert 
+        <Alert
           id={errorId}
           variant="destructive"
           className="py-2 px-3"
@@ -114,13 +120,11 @@ export function AccessibleFormField({
           aria-live="polite"
         >
           <AlertTriangle className="h-4 w-4" />
-          <AlertDescription className="text-sm">
-            {error}
-          </AlertDescription>
+          <AlertDescription className="text-sm">{error}</AlertDescription>
         </Alert>
       )}
     </div>
-  )
+  );
 }
 
 /**
@@ -128,82 +132,77 @@ export function AccessibleFormField({
  * Enhanced input with healthcare-specific validation
  */
 interface AccessibleInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label: string
-  description?: string
-  error?: string
-  format?: 'cpf' | 'phone' | 'cep' | 'rg' | 'default'
+  label: string;
+  description?: string;
+  error?: string;
+  format?: "cpf" | "phone" | "cep" | "rg" | "default";
 }
 
 export const AccessibleInput = forwardRef<HTMLInputElement, AccessibleInputProps>(
-  ({ label, description, error, required, format = 'default', onChange, ...props }, ref) => {
-    const [value, setValue] = useState(props.value || '')
-    
+  ({ label, description, error, required, format = "default", onChange, ...props }, ref) => {
+    const [value, setValue] = useState(props.value || "");
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      let formattedValue = e.target.value
+      let formattedValue = e.target.value;
 
       // Apply Brazilian formatting
       switch (format) {
-        case 'cpf':
-          formattedValue = formatCPF(formattedValue)
-          break
-        case 'phone':
-          formattedValue = formatPhone(formattedValue)
-          break
-        case 'cep':
-          formattedValue = formatCEP(formattedValue)
-          break
-        case 'rg':
-          formattedValue = formatRG(formattedValue)
-          break
+        case "cpf":
+          formattedValue = formatCPF(formattedValue);
+          break;
+        case "phone":
+          formattedValue = formatPhone(formattedValue);
+          break;
+        case "cep":
+          formattedValue = formatCEP(formattedValue);
+          break;
+        case "rg":
+          formattedValue = formatRG(formattedValue);
+          break;
       }
 
-      setValue(formattedValue)
-      
+      setValue(formattedValue);
+
       if (onChange) {
         const syntheticEvent = {
           ...e,
-          target: { ...e.target, value: formattedValue }
-        }
-        onChange(syntheticEvent as React.ChangeEvent<HTMLInputElement>)
+          target: { ...e.target, value: formattedValue },
+        };
+        onChange(syntheticEvent as React.ChangeEvent<HTMLInputElement>);
       }
-    }
+    };
 
     return (
       <AccessibleFormField
-        name={props.name || ''}
+        name={props.name || ""}
         label={label}
         description={description}
         error={error}
         required={required}
       >
-        <Input
-          ref={ref}
-          value={value}
-          onChange={handleChange}
-          {...props}
-        />
+        <Input ref={ref} value={value} onChange={handleChange} {...props} />
       </AccessibleFormField>
-    )
-  }
-)
+    );
+  },
+);
 
-AccessibleInput.displayName = 'AccessibleInput'
+AccessibleInput.displayName = "AccessibleInput";
 
 /**
  * Accessible Select Component
  * Enhanced select with keyboard navigation and screen reader support
  */
 interface AccessibleSelectProps {
-  name: string
-  label: string
-  description?: string
-  error?: string
-  required?: boolean
-  disabled?: boolean
-  placeholder?: string
-  options: Array<{ value: string; label: string; disabled?: boolean }>
-  value?: string
-  onValueChange?: (value: string) => void
+  name: string;
+  label: string;
+  description?: string;
+  error?: string;
+  required?: boolean;
+  disabled?: boolean;
+  placeholder?: string;
+  options: Array<{ value: string; label: string; disabled?: boolean }>;
+  value?: string;
+  onValueChange?: (value: string) => void;
 }
 
 export function AccessibleSelect({
@@ -218,8 +217,8 @@ export function AccessibleSelect({
   value,
   onValueChange,
 }: AccessibleSelectProps) {
-  const { t } = useTranslation()
-  
+  const { t } = useTranslation();
+
   return (
     <AccessibleFormField
       name={name}
@@ -230,27 +229,19 @@ export function AccessibleSelect({
       disabled={disabled}
     >
       <Select value={value} onValueChange={onValueChange} disabled={disabled}>
-        <SelectTrigger
-          className={cn(
-            error && 'border-destructive focus:ring-destructive'
-          )}
-        >
-          <SelectValue placeholder={placeholder || t('common.select')} />
+        <SelectTrigger className={cn(error && "border-destructive focus:ring-destructive")}>
+          <SelectValue placeholder={placeholder || t("common.select")} />
         </SelectTrigger>
         <SelectContent>
           {options.map((option) => (
-            <SelectItem
-              key={option.value}
-              value={option.value}
-              disabled={option.disabled}
-            >
+            <SelectItem key={option.value} value={option.value} disabled={option.disabled}>
               {option.label}
             </SelectItem>
           ))}
         </SelectContent>
       </Select>
     </AccessibleFormField>
-  )
+  );
 }
 
 /**
@@ -258,29 +249,29 @@ export function AccessibleSelect({
  * Enhanced textarea with character counting and screen reader support
  */
 interface AccessibleTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-  label: string
-  description?: string
-  error?: string
-  maxLength?: number
-  showCharCount?: boolean
+  label: string;
+  description?: string;
+  error?: string;
+  maxLength?: number;
+  showCharCount?: boolean;
 }
 
 export const AccessibleTextarea = forwardRef<HTMLTextAreaElement, AccessibleTextareaProps>(
   ({ label, description, error, required, maxLength, showCharCount, ...props }, ref) => {
-    const [value, setValue] = useState(props.value?.toString() || '')
-    const { t } = useTranslation()
+    const [value, setValue] = useState(props.value?.toString() || "");
+    const { t } = useTranslation();
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      setValue(e.target.value)
-      props.onChange?.(e)
-    }
+      setValue(e.target.value);
+      props.onChange?.(e);
+    };
 
-    const charCount = value.length
-    const isNearLimit = maxLength && charCount > maxLength * 0.8
+    const charCount = value.length;
+    const isNearLimit = maxLength && charCount > maxLength * 0.8;
 
     return (
       <AccessibleFormField
-        name={props.name || ''}
+        name={props.name || ""}
         label={label}
         description={description}
         error={error}
@@ -294,11 +285,11 @@ export const AccessibleTextarea = forwardRef<HTMLTextAreaElement, AccessibleText
           {...props}
         />
         {showCharCount && maxLength && (
-          <div 
+          <div
             className={cn(
-              'text-xs text-muted-foreground text-right',
-              isNearLimit && 'text-warning',
-              charCount >= maxLength && 'text-destructive'
+              "text-xs text-muted-foreground text-right",
+              isNearLimit && "text-warning",
+              charCount >= maxLength && "text-destructive",
             )}
             aria-live="polite"
           >
@@ -306,26 +297,26 @@ export const AccessibleTextarea = forwardRef<HTMLTextAreaElement, AccessibleText
           </div>
         )}
       </AccessibleFormField>
-    )
-  }
-)
+    );
+  },
+);
 
-AccessibleTextarea.displayName = 'AccessibleTextarea'
+AccessibleTextarea.displayName = "AccessibleTextarea";
 
 /**
  * Accessible Checkbox Group
  * Screen reader friendly checkbox group with fieldset/legend
  */
 interface AccessibleCheckboxGroupProps {
-  name: string
-  legend: string
-  description?: string
-  error?: string
-  required?: boolean
-  disabled?: boolean
-  options: Array<{ value: string; label: string; disabled?: boolean }>
-  value?: string[]
-  onChange?: (value: string[]) => void
+  name: string;
+  legend: string;
+  description?: string;
+  error?: string;
+  required?: boolean;
+  disabled?: boolean;
+  options: Array<{ value: string; label: string; disabled?: boolean }>;
+  value?: string[];
+  onChange?: (value: string[]) => void;
 }
 
 export function AccessibleCheckboxGroup({
@@ -339,19 +330,17 @@ export function AccessibleCheckboxGroup({
   value = [],
   onChange,
 }: AccessibleCheckboxGroupProps) {
-  const fieldsetId = useId()
-  const legendId = generateAriaId('legend')
-  const descriptionId = description ? generateAriaId('desc') : undefined
-  const errorId = error ? generateAriaId('error') : undefined
+  const fieldsetId = useId();
+  const legendId = generateAriaId("legend");
+  const descriptionId = description ? generateAriaId("desc") : undefined;
+  const errorId = error ? generateAriaId("error") : undefined;
 
   const handleCheckedChange = (optionValue: string) => (checked: boolean) => {
     if (onChange) {
-      const newValue = checked
-        ? [...value, optionValue]
-        : value.filter(v => v !== optionValue)
-      onChange(newValue)
+      const newValue = checked ? [...value, optionValue] : value.filter((v) => v !== optionValue);
+      onChange(newValue);
     }
-  }
+  };
 
   return (
     <fieldset
@@ -359,14 +348,14 @@ export function AccessibleCheckboxGroup({
       className="space-y-3"
       disabled={disabled}
       aria-labelledby={legendId}
-      aria-describedby={[descriptionId, errorId].filter(Boolean).join(' ') || undefined}
+      aria-describedby={[descriptionId, errorId].filter(Boolean).join(" ") || undefined}
     >
       <legend
         id={legendId}
         className={cn(
-          'text-sm font-medium leading-none',
+          "text-sm font-medium leading-none",
           required && 'after:content-["*"] after:ml-1 after:text-destructive',
-          error && 'text-destructive'
+          error && "text-destructive",
         )}
       >
         {legend}
@@ -380,7 +369,7 @@ export function AccessibleCheckboxGroup({
 
       <div className="space-y-2">
         {options.map((option) => {
-          const optionId = generateAriaId('checkbox')
+          const optionId = generateAriaId("checkbox");
           return (
             <div key={option.value} className="flex items-center space-x-2">
               <Checkbox
@@ -396,7 +385,7 @@ export function AccessibleCheckboxGroup({
                 {option.label}
               </Label>
             </div>
-          )
+          );
         })}
       </div>
 
@@ -409,13 +398,11 @@ export function AccessibleCheckboxGroup({
           aria-live="polite"
         >
           <AlertTriangle className="h-4 w-4" />
-          <AlertDescription className="text-sm">
-            {error}
-          </AlertDescription>
+          <AlertDescription className="text-sm">{error}</AlertDescription>
         </Alert>
       )}
     </fieldset>
-  )
+  );
 }
 
 /**
@@ -423,15 +410,15 @@ export function AccessibleCheckboxGroup({
  * Screen reader friendly radio group with fieldset/legend
  */
 interface AccessibleRadioGroupProps {
-  name: string
-  legend: string
-  description?: string
-  error?: string
-  required?: boolean
-  disabled?: boolean
-  options: Array<{ value: string; label: string; disabled?: boolean }>
-  value?: string
-  onValueChange?: (value: string) => void
+  name: string;
+  legend: string;
+  description?: string;
+  error?: string;
+  required?: boolean;
+  disabled?: boolean;
+  options: Array<{ value: string; label: string; disabled?: boolean }>;
+  value?: string;
+  onValueChange?: (value: string) => void;
 }
 
 export function AccessibleRadioGroup({
@@ -445,10 +432,10 @@ export function AccessibleRadioGroup({
   value,
   onValueChange,
 }: AccessibleRadioGroupProps) {
-  const fieldsetId = useId()
-  const legendId = generateAriaId('legend')
-  const descriptionId = description ? generateAriaId('desc') : undefined
-  const errorId = error ? generateAriaId('error') : undefined
+  const fieldsetId = useId();
+  const legendId = generateAriaId("legend");
+  const descriptionId = description ? generateAriaId("desc") : undefined;
+  const errorId = error ? generateAriaId("error") : undefined;
 
   return (
     <fieldset
@@ -456,14 +443,14 @@ export function AccessibleRadioGroup({
       className="space-y-3"
       disabled={disabled}
       aria-labelledby={legendId}
-      aria-describedby={[descriptionId, errorId].filter(Boolean).join(' ') || undefined}
+      aria-describedby={[descriptionId, errorId].filter(Boolean).join(" ") || undefined}
     >
       <legend
         id={legendId}
         className={cn(
-          'text-sm font-medium leading-none',
+          "text-sm font-medium leading-none",
           required && 'after:content-["*"] after:ml-1 after:text-destructive',
-          error && 'text-destructive'
+          error && "text-destructive",
         )}
       >
         {legend}
@@ -484,7 +471,7 @@ export function AccessibleRadioGroup({
         aria-describedby={error ? errorId : undefined}
       >
         {options.map((option) => {
-          const optionId = generateAriaId('radio')
+          const optionId = generateAriaId("radio");
           return (
             <div key={option.value} className="flex items-center space-x-2">
               <RadioGroupItem
@@ -496,7 +483,7 @@ export function AccessibleRadioGroup({
                 {option.label}
               </Label>
             </div>
-          )
+          );
         })}
       </RadioGroup>
 
@@ -509,13 +496,11 @@ export function AccessibleRadioGroup({
           aria-live="polite"
         >
           <AlertTriangle className="h-4 w-4" />
-          <AlertDescription className="text-sm">
-            {error}
-          </AlertDescription>
+          <AlertDescription className="text-sm">{error}</AlertDescription>
         </Alert>
       )}
     </fieldset>
-  )
+  );
 }
 
 /**
@@ -523,43 +508,42 @@ export function AccessibleRadioGroup({
  * WCAG compliant error summary for form validation
  */
 interface FormErrorSummaryProps {
-  errors: Record<string, string>
-  title?: string
-  className?: string
+  errors: Record<string, string>;
+  title?: string;
+  className?: string;
 }
 
 export function FormErrorSummary({ errors, title, className }: FormErrorSummaryProps) {
-  const { t } = useTranslation()
-  const summaryId = useId()
-  const titleId = generateAriaId('error-title')
-  
-  const errorCount = Object.keys(errors).length
-  
-  if (errorCount === 0) return null
+  const { t } = useTranslation();
+  const summaryId = useId();
+  const titleId = generateAriaId("error-title");
+
+  const errorCount = Object.keys(errors).length;
+
+  if (errorCount === 0) return null;
 
   // Announce errors to screen readers
   useEffect(() => {
-    const message = errorCount === 1 
-      ? t('errors.validationError')
-      : `${errorCount} erros encontrados no formulário`
-    announceToScreenReader(message, 'assertive')
-  }, [errors, errorCount, t])
+    const message =
+      errorCount === 1
+        ? t("errors.validationError")
+        : `${errorCount} erros encontrados no formulário`;
+    announceToScreenReader(message, "assertive");
+  }, [errors, errorCount, t]);
 
   return (
     <Alert
       id={summaryId}
       variant="destructive"
-      className={cn('mb-6', className)}
+      className={cn("mb-6", className)}
       role="alert"
       tabIndex={-1}
     >
       <AlertTriangle className="h-4 w-4" />
       <div className="ml-2">
-        <h2
-          id={titleId}
-          className="text-sm font-medium text-destructive mb-2"
-        >
-          {title || (errorCount === 1 ? t('errors.validationError') : `${errorCount} erros encontrados`)}
+        <h2 id={titleId} className="text-sm font-medium text-destructive mb-2">
+          {title ||
+            (errorCount === 1 ? t("errors.validationError") : `${errorCount} erros encontrados`)}
         </h2>
         <ul className="space-y-1">
           {Object.entries(errors).map(([field, message]) => (
@@ -568,9 +552,9 @@ export function FormErrorSummary({ errors, title, className }: FormErrorSummaryP
                 type="button"
                 className="text-sm text-destructive underline hover:no-underline focus:ring-2 focus:ring-destructive focus:ring-offset-2 rounded"
                 onClick={() => {
-                  const element = document.getElementById(field)
-                  element?.focus()
-                  element?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                  const element = document.getElementById(field);
+                  element?.focus();
+                  element?.scrollIntoView({ behavior: "smooth", block: "center" });
                 }}
               >
                 {message}
@@ -580,7 +564,7 @@ export function FormErrorSummary({ errors, title, className }: FormErrorSummaryP
         </ul>
       </div>
     </Alert>
-  )
+  );
 }
 
 /**
@@ -588,10 +572,10 @@ export function FormErrorSummary({ errors, title, className }: FormErrorSummaryP
  * Accessible success and status notifications
  */
 interface StatusMessageProps {
-  type: 'success' | 'info' | 'warning' | 'error'
-  title?: string
-  message: string
-  className?: string
+  type: "success" | "info" | "warning" | "error";
+  title?: string;
+  message: string;
+  className?: string;
 }
 
 export function StatusMessage({ type, title, message, className }: StatusMessageProps) {
@@ -600,63 +584,59 @@ export function StatusMessage({ type, title, message, className }: StatusMessage
     info: Info,
     warning: AlertTriangle,
     error: AlertTriangle,
-  }
+  };
 
-  const Icon = iconMap[type]
+  const Icon = iconMap[type];
 
   return (
     <Alert
-      variant={type === 'error' ? 'destructive' : 'default'}
-      className={cn('mb-4', className)}
+      variant={type === "error" ? "destructive" : "default"}
+      className={cn("mb-4", className)}
       role="alert"
       aria-live="polite"
     >
       <Icon className="h-4 w-4" />
       <div className="ml-2">
-        {title && (
-          <h3 className="text-sm font-medium mb-1">{title}</h3>
-        )}
-        <AlertDescription className="text-sm">
-          {message}
-        </AlertDescription>
+        {title && <h3 className="text-sm font-medium mb-1">{title}</h3>}
+        <AlertDescription className="text-sm">{message}</AlertDescription>
       </div>
     </Alert>
-  )
+  );
 }
 
 /**
  * Brazilian formatting utilities
  */
 function formatCPF(value: string): string {
-  const numbers = value.replace(/\D/g, '')
+  const numbers = value.replace(/\D/g, "");
   if (numbers.length <= 11) {
-    return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
+    return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
   }
-  return value
+  return value;
 }
 
 function formatPhone(value: string): string {
-  const numbers = value.replace(/\D/g, '')
+  const numbers = value.replace(/\D/g, "");
   if (numbers.length <= 10) {
-    return numbers.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3')
+    return numbers.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
   } else if (numbers.length === 11) {
-    return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3')
+    return numbers.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
   }
-  return value
+  return value;
 }
 
 function formatCEP(value: string): string {
-  const numbers = value.replace(/\D/g, '')
+  const numbers = value.replace(/\D/g, "");
   if (numbers.length <= 8) {
-    return numbers.replace(/(\d{5})(\d{3})/, '$1-$2')
+    return numbers.replace(/(\d{5})(\d{3})/, "$1-$2");
   }
-  return value
+  return value;
 }
 
 function formatRG(value: string): string {
-  const numbers = value.replace(/\D/g, '')
+  const numbers = value.replace(/\D/g, "");
   if (numbers.length <= 9) {
-    return numbers.replace(/(\d{2})(\d{3})(\d{3})(\d{1})/, '$1.$2.$3-$4')
+    return numbers.replace(/(\d{2})(\d{3})(\d{3})(\d{1})/, "$1.$2.$3-$4");
   }
-  return value
+  return value;
 }

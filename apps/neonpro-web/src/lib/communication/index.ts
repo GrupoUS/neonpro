@@ -1,34 +1,34 @@
 /**
  * Communication System - Automated Communication Hub
  * Story 2.3: Automated Communication System
- * 
+ *
  * This module provides a comprehensive automated communication system for NeonPro,
  * including multi-channel messaging, appointment reminders, no-show prediction,
  * waitlist management, and detailed analytics.
  */
 
 // Core types
-export * from './types';
+export * from "./types";
 
 // Main communication service
-export { CommunicationService } from './communication-service';
+export { CommunicationService } from "./communication-service";
 
 // Communication providers
-export { SMSProvider } from './providers/sms-provider';
-export { EmailProvider } from './providers/email-provider';
-export { WhatsAppProvider } from './providers/whatsapp-provider';
+export { SMSProvider } from "./providers/sms-provider";
+export { EmailProvider } from "./providers/email-provider";
+export { WhatsAppProvider } from "./providers/whatsapp-provider";
 
 // Template engine
-export { TemplateEngine } from './template-engine';
+export { TemplateEngine } from "./template-engine";
 
 // No-show prediction
-export { NoShowPredictor } from './no-show-predictor';
+export { NoShowPredictor } from "./no-show-predictor";
 
 // Waitlist management
-export { WaitlistManager } from './waitlist-manager';
+export { WaitlistManager } from "./waitlist-manager";
 
 // Analytics and insights
-export { CommunicationAnalytics } from './analytics';
+export { CommunicationAnalytics } from "./analytics";
 
 // Re-export specific types for convenience
 export type {
@@ -43,19 +43,17 @@ export type {
   CommunicationAnalytics as CommunicationAnalyticsType,
   TemplateVariables,
   ProviderConfig,
-  CommunicationJob
-} from './types';
+  CommunicationJob,
+} from "./types";
 
 export type {
   CommunicationMetrics,
   ChannelPerformance,
   CampaignAnalytics,
-  PatientEngagementScore
-} from './analytics';
+  PatientEngagementScore,
+} from "./analytics";
 
-export type {
-  WaitlistNotificationResult
-} from './waitlist-manager';
+export type { WaitlistNotificationResult } from "./waitlist-manager";
 
 /**
  * Main communication system factory
@@ -84,10 +82,10 @@ export class CommunicationSystem {
     try {
       // Initialize template engine with default templates
       await this.templateEngine.initializeDefaultTemplates();
-      
-      console.log('Communication system initialized successfully');
+
+      console.log("Communication system initialized successfully");
     } catch (error) {
-      console.error('Failed to initialize communication system:', error);
+      console.error("Failed to initialize communication system:", error);
       throw error;
     }
   }
@@ -96,7 +94,7 @@ export class CommunicationSystem {
    * Get system health status
    */
   async getHealthStatus(): Promise<{
-    status: 'healthy' | 'degraded' | 'unhealthy';
+    status: "healthy" | "degraded" | "unhealthy";
     providers: Record<string, boolean>;
     lastProcessed: Date;
     errors: string[];
@@ -111,20 +109,20 @@ export class CommunicationSystem {
       providers.whatsapp = true; // Would check WhatsApp API
 
       const allProvidersHealthy = Object.values(providers).every(Boolean);
-      const status = allProvidersHealthy ? 'healthy' : 'degraded';
+      const status = allProvidersHealthy ? "healthy" : "degraded";
 
       return {
         status,
         providers,
         lastProcessed: new Date(),
-        errors
+        errors,
       };
     } catch (error) {
       return {
-        status: 'unhealthy',
+        status: "unhealthy",
         providers: {},
         lastProcessed: new Date(),
-        errors: [error.message]
+        errors: [error.message],
       };
     }
   }
@@ -142,15 +140,15 @@ export class CommunicationSystem {
       const results = await this.service.processScheduledJobs();
       return {
         processed: results.length,
-        failed: results.filter(r => !r.success).length,
-        errors: results.filter(r => !r.success).map(r => r.error || 'Unknown error')
+        failed: results.filter((r) => !r.success).length,
+        errors: results.filter((r) => !r.success).map((r) => r.error || "Unknown error"),
       };
     } catch (error) {
-      console.error('Error processing scheduled communications:', error);
+      console.error("Error processing scheduled communications:", error);
       return {
         processed: 0,
         failed: 1,
-        errors: [error.message]
+        errors: [error.message],
       };
     }
   }
@@ -167,16 +165,16 @@ export class CommunicationSystem {
     try {
       const results = await this.waitlistManager.processNotifications();
       return {
-        notified: results.filter(r => r.notification_sent).length,
-        failed: results.filter(r => !r.notification_sent).length,
-        errors: results.filter(r => !r.notification_sent).map(r => r.error || 'Unknown error')
+        notified: results.filter((r) => r.notification_sent).length,
+        failed: results.filter((r) => !r.notification_sent).length,
+        errors: results.filter((r) => !r.notification_sent).map((r) => r.error || "Unknown error"),
       };
     } catch (error) {
-      console.error('Error processing waitlist notifications:', error);
+      console.error("Error processing waitlist notifications:", error);
       return {
         notified: 0,
         failed: 1,
-        errors: [error.message]
+        errors: [error.message],
       };
     }
   }
@@ -196,18 +194,18 @@ export class CommunicationSystem {
 
       const results = await this.noShowPredictor.batchPredict({
         startDate: new Date(),
-        endDate: sevenDaysFromNow
+        endDate: sevenDaysFromNow,
       });
 
       return {
         updated: results.length,
-        errors: []
+        errors: [],
       };
     } catch (error) {
-      console.error('Error updating no-show predictions:', error);
+      console.error("Error updating no-show predictions:", error);
       return {
         updated: 0,
-        errors: [error.message]
+        errors: [error.message],
       };
     }
   }

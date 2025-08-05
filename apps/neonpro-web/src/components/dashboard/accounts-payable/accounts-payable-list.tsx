@@ -1,9 +1,9 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent } from "@/components/ui/card";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -11,21 +11,21 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
+import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import {
+import type { Input } from "@/components/ui/input";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
+import type {
   Table,
   TableBody,
   TableCell,
@@ -33,17 +33,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { AccountsPayableService } from "@/lib/services/accounts-payable";
-import { ExpenseCategoryService } from "@/lib/services/expense-categories";
-import { VendorService } from "@/lib/services/vendors";
-import {
-  AccountsPayable,
-  AccountsPayableFilters,
-} from "@/lib/types/accounts-payable";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import {
+import type { AccountsPayableService } from "@/lib/services/accounts-payable";
+import type { ExpenseCategoryService } from "@/lib/services/expense-categories";
+import type { VendorService } from "@/lib/services/vendors";
+import type { AccountsPayable, AccountsPayableFilters } from "@/lib/types/accounts-payable";
+import type { cn } from "@/lib/utils";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
   AlertTriangle,
   Calendar,
   CheckCircle,
@@ -56,9 +53,9 @@ import {
   Search,
   Trash2,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { AccountsPayableForm } from "./accounts-payable-form";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
+import type { AccountsPayableForm } from "./accounts-payable-form";
 
 export function AccountsPayableList() {
   const [accountsPayable, setAccountsPayable] = useState<AccountsPayable[]>([]);
@@ -75,12 +72,8 @@ export function AccountsPayableList() {
   const [deleteLoading, setDeleteLoading] = useState(false);
 
   // Filter options
-  const [vendors, setVendors] = useState<
-    { id: string; label: string; value: string }[]
-  >([]);
-  const [categories, setCategories] = useState<
-    { id: string; label: string; value: string }[]
-  >([]);
+  const [vendors, setVendors] = useState<{ id: string; label: string; value: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: string; label: string; value: string }[]>([]);
 
   // Filters
   const [filters, setFilters] = useState<AccountsPayableFilters>({
@@ -105,7 +98,7 @@ export function AccountsPayableList() {
       const response = await AccountsPayableService.getAccountsPayable(
         filters,
         currentPage,
-        pageSize
+        pageSize,
       );
       setAccountsPayable(response.accounts_payable);
       setTotalAP(response.total);
@@ -135,10 +128,7 @@ export function AccountsPayableList() {
     setCurrentPage(1);
   };
 
-  const handleFilterChange = (
-    key: keyof AccountsPayableFilters,
-    value: any
-  ) => {
+  const handleFilterChange = (key: keyof AccountsPayableFilters, value: any) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
     setCurrentPage(1);
   };
@@ -153,10 +143,7 @@ export function AccountsPayableList() {
 
     setDeleteLoading(true);
     try {
-      await AccountsPayableService.deleteAccountsPayable(
-        apToDelete.id,
-        "Deletado pelo usuário"
-      );
+      await AccountsPayableService.deleteAccountsPayable(apToDelete.id, "Deletado pelo usuário");
       toast.success("Conta a pagar deletada com sucesso!");
       loadAccountsPayable();
     } catch (error: any) {
@@ -242,8 +229,7 @@ export function AccountsPayableList() {
       },
     };
 
-    const statusInfo =
-      statusMap[status as keyof typeof statusMap] || statusMap.pending;
+    const statusInfo = statusMap[status as keyof typeof statusMap] || statusMap.pending;
     const Icon = statusInfo.icon;
 
     return (
@@ -262,8 +248,7 @@ export function AccountsPayableList() {
       urgent: { label: "Urgente", variant: "destructive" as const },
     };
 
-    const priorityInfo =
-      priorityMap[priority as keyof typeof priorityMap] || priorityMap.normal;
+    const priorityInfo = priorityMap[priority as keyof typeof priorityMap] || priorityMap.normal;
     return <Badge variant={priorityInfo.variant}>{priorityInfo.label}</Badge>;
   };
 
@@ -281,9 +266,7 @@ export function AccountsPayableList() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Contas a Pagar</h2>
-          <p className="text-muted-foreground">
-            Gerencie todas as contas a pagar
-          </p>
+          <p className="text-muted-foreground">Gerencie todas as contas a pagar</p>
         </div>
         <Button onClick={() => setShowForm(true)}>
           <Plus className="mr-2 h-4 w-4" />
@@ -311,10 +294,7 @@ export function AccountsPayableList() {
               <Select
                 value={filters.vendor_id || "all"}
                 onValueChange={(value) =>
-                  handleFilterChange(
-                    "vendor_id",
-                    value === "all" ? undefined : value
-                  )
+                  handleFilterChange("vendor_id", value === "all" ? undefined : value)
                 }
               >
                 <SelectTrigger className="w-[180px]">
@@ -333,10 +313,7 @@ export function AccountsPayableList() {
               <Select
                 value={filters.status || "all"}
                 onValueChange={(value) =>
-                  handleFilterChange(
-                    "status",
-                    value === "all" ? undefined : value
-                  )
+                  handleFilterChange("status", value === "all" ? undefined : value)
                 }
               >
                 <SelectTrigger className="w-[140px]">
@@ -356,10 +333,7 @@ export function AccountsPayableList() {
               <Select
                 value={filters.priority || "all"}
                 onValueChange={(value) =>
-                  handleFilterChange(
-                    "priority",
-                    value === "all" ? undefined : value
-                  )
+                  handleFilterChange("priority", value === "all" ? undefined : value)
                 }
               >
                 <SelectTrigger className="w-[120px]">
@@ -377,10 +351,7 @@ export function AccountsPayableList() {
               <Select
                 value={filters.expense_category_id || "all"}
                 onValueChange={(value) =>
-                  handleFilterChange(
-                    "expense_category_id",
-                    value === "all" ? undefined : value
-                  )
+                  handleFilterChange("expense_category_id", value === "all" ? undefined : value)
                 }
               >
                 <SelectTrigger className="w-[160px]">
@@ -430,9 +401,7 @@ export function AccountsPayableList() {
                   <TableCell colSpan={7} className="text-center py-8">
                     <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                     <p className="text-sm text-muted-foreground">
-                      {Object.values(filters).some(
-                        (v) => v !== undefined && v !== ""
-                      )
+                      {Object.values(filters).some((v) => v !== undefined && v !== "")
                         ? "Nenhuma conta a pagar encontrada com os filtros aplicados"
                         : "Nenhuma conta a pagar cadastrada"}
                     </p>
@@ -454,9 +423,7 @@ export function AccountsPayableList() {
 
                     <TableCell>
                       <div>
-                        <div className="font-medium">
-                          {ap.vendor?.company_name}
-                        </div>
+                        <div className="font-medium">{ap.vendor?.company_name}</div>
                         <div className="text-sm text-muted-foreground">
                           {ap.expense_category?.category_name}
                         </div>
@@ -467,8 +434,7 @@ export function AccountsPayableList() {
                       <div
                         className={cn(
                           "text-sm",
-                          isOverdue(ap.due_date, ap.status) &&
-                            "text-destructive font-medium"
+                          isOverdue(ap.due_date, ap.status) && "text-destructive font-medium",
                         )}
                       >
                         {formatDate(ap.due_date)}
@@ -483,9 +449,7 @@ export function AccountsPayableList() {
 
                     <TableCell>
                       <div>
-                        <div className="font-medium">
-                          {formatCurrency(ap.balance_amount)}
-                        </div>
+                        <div className="font-medium">{formatCurrency(ap.balance_amount)}</div>
                         {ap.balance_amount < ap.net_amount && (
                           <div className="text-sm text-muted-foreground">
                             de {formatCurrency(ap.net_amount)}
@@ -512,9 +476,7 @@ export function AccountsPayableList() {
                           </DropdownMenuItem>
 
                           {ap.status === "pending" && (
-                            <DropdownMenuItem
-                              onClick={() => handleStatusUpdate(ap, "approved")}
-                            >
+                            <DropdownMenuItem onClick={() => handleStatusUpdate(ap, "approved")}>
                               <CheckCircle className="mr-2 h-4 w-4" />
                               Aprovar
                             </DropdownMenuItem>
@@ -546,8 +508,7 @@ export function AccountsPayableList() {
         <div className="flex items-center justify-between">
           <div className="text-sm text-muted-foreground">
             Mostrando {(currentPage - 1) * pageSize + 1} a{" "}
-            {Math.min(currentPage * pageSize, totalAP)} de {totalAP} contas a
-            pagar
+            {Math.min(currentPage * pageSize, totalAP)} de {totalAP} contas a pagar
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -560,10 +521,7 @@ export function AccountsPayableList() {
             </Button>
             <div className="flex items-center gap-1">
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                const pageNum = Math.max(
-                  1,
-                  Math.min(totalPages, currentPage - 2 + i)
-                );
+                const pageNum = Math.max(1, Math.min(totalPages, currentPage - 2 + i));
                 return (
                   <Button
                     key={pageNum}
@@ -579,9 +537,7 @@ export function AccountsPayableList() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(totalPages, prev + 1))
-              }
+              onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
               disabled={currentPage === totalPages}
             >
               Próximo
@@ -607,25 +563,16 @@ export function AccountsPayableList() {
           <DialogHeader>
             <DialogTitle>Confirmar Exclusão</DialogTitle>
             <DialogDescription>
-              Tem certeza de que deseja deletar a conta a pagar "
-              {apToDelete?.ap_number}"? Esta ação não pode ser desfeita.
+              Tem certeza de que deseja deletar a conta a pagar "{apToDelete?.ap_number}"? Esta ação
+              não pode ser desfeita.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setShowDeleteDialog(false)}
-            >
+            <Button variant="outline" onClick={() => setShowDeleteDialog(false)}>
               Cancelar
             </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDelete}
-              disabled={deleteLoading}
-            >
-              {deleteLoading && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
+            <Button variant="destructive" onClick={handleDelete} disabled={deleteLoading}>
+              {deleteLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Deletar
             </Button>
           </DialogFooter>

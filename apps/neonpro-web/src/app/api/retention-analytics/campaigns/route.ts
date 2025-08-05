@@ -3,28 +3,28 @@
 // API endpoint for integrating retention interventions with CRM campaigns
 // =====================================================================================
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { z } from 'zod';
+import type { NextRequest, NextResponse } from "next/server";
+import type { createClient } from "@/lib/supabase/server";
+import type { z } from "zod";
 
 // =====================================================================================
 // VALIDATION SCHEMAS
 // =====================================================================================
 
 const CreateRetentionCampaignSchema = z.object({
-  clinicId: z.string().uuid('Invalid clinic ID format'),
-  name: z.string().min(1, 'Campaign name is required'),
+  clinicId: z.string().uuid("Invalid clinic ID format"),
+  name: z.string().min(1, "Campaign name is required"),
   description: z.string().optional(),
-  targetSegments: z.array(z.string()).min(1, 'At least one target segment required'),
+  targetSegments: z.array(z.string()).min(1, "At least one target segment required"),
   triggerConditions: z.object({
     churnProbabilityThreshold: z.number().min(0).max(1),
     daysSinceLastVisit: z.number().min(1),
     minimumLTV: z.number().min(0).optional(),
-    riskLevel: z.enum(['low', 'medium', 'high']),
+    riskLevel: z.enum(["low", "medium", "high"]),
   }),
   interventionStrategy: z.object({
-    type: z.enum(['email', 'sms', 'phone_call', 'in_app', 'multi_channel']),
-    template: z.string().min(1, 'Template is required'),
+    type: z.enum(["email", "sms", "phone_call", "in_app", "multi_channel"]),
+    template: z.string().min(1, "Template is required"),
     scheduling: z.object({
       immediate: z.boolean().default(false),
       delayHours: z.number().min(0).optional(),
@@ -39,7 +39,9 @@ const CreateRetentionCampaignSchema = z.object({
     }),
   }),
   measurementCriteria: z.object({
-    successMetrics: z.array(z.enum(['return_visit', 'booking_scheduled', 'payment_made', 'engagement_rate'])),
+    successMetrics: z.array(
+      z.enum(["return_visit", "booking_scheduled", "payment_made", "engagement_rate"]),
+    ),
     trackingPeriodDays: z.number().min(1).max(365).default(30),
     abtestEnabled: z.boolean().default(false),
     abtestSplitPercentage: z.number().min(10).max(90).optional(),
@@ -68,22 +70,19 @@ const UpdateCampaignMetricsSchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const clinicId = searchParams.get('clinic_id');
-    const status = searchParams.get('status');
-    const segment = searchParams.get('segment');
+    const clinicId = searchParams.get("clinic_id");
+    const status = searchParams.get("status");
+    const segment = searchParams.get("segment");
 
     if (!clinicId) {
-      return NextResponse.json(
-        { error: 'Clinic ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Clinic ID is required" }, { status: 400 });
     }
 
     const supabase = await createClient();
 
     // Build the query
     let query = supabase
-      .from('retention_campaigns')
+      .from("retention_campaigns")
       .select(`
         *,
         campaign_metrics:retention_campaign_metrics(*),
@@ -91,16 +90,16 @@ export async function GET(request: NextRequest) {
           count
         )
       `)
-      .eq('clinic_id', clinicId)
-      .order('created_at', { ascending: false });
+      .eq("clinic_id", clinicId)
+      .order("created_at", { ascending: false });
 
     // Apply filters
     if (status) {
-      query = query.eq('status', status);
+      query = query.eq("status", status);
     }
 
     if (segment) {
-      query = query.contains('target_segments', [segment]);
+      query = query.contains("target_segments", [segment]);
     }
 
     const { data: campaigns, error } = await query;
@@ -110,10 +109,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Calculate campaign performance metrics
-    const enrichedCampaigns = campaigns.map(campaign => {
+    const enrichedCampaigns = campaigns.map((campaign) => {
       const metrics = campaign.campaign_metrics[0] || {};
       const executions = campaign.executions[0]?.count || 0;
-      
+
       return {
         ...campaign,
         performance: {
@@ -133,16 +132,15 @@ export async function GET(request: NextRequest) {
       data: enrichedCampaigns,
       total: enrichedCampaigns.length,
     });
-
   } catch (error) {
-    console.error('GET /api/retention-analytics/campaigns error:', error);
+    console.error("GET /api/retention-analytics/campaigns error:", error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to fetch retention campaigns',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      }, 
-      { status: 500 }
+      {
+        success: false,
+        error: "Failed to fetch retention campaigns",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 },
     );
   }
 }
@@ -158,11 +156,11 @@ export async function POST(request: NextRequest) {
 
     if (!validation.success) {
       return NextResponse.json(
-        { 
-          error: 'Invalid campaign data', 
-          details: validation.error.issues 
+        {
+          error: "Invalid campaign data",
+          details: validation.error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -171,21 +169,18 @@ export async function POST(request: NextRequest) {
 
     // Verify clinic exists and user has access
     const { data: clinic, error: clinicError } = await supabase
-      .from('clinics')
-      .select('id, name')
-      .eq('id', data.clinicId)
+      .from("clinics")
+      .select("id, name")
+      .eq("id", data.clinicId)
       .single();
 
     if (clinicError || !clinic) {
-      return NextResponse.json(
-        { error: 'Clinic not found or access denied' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Clinic not found or access denied" }, { status: 404 });
     }
 
     // Create retention campaign
     const { data: campaign, error: campaignError } = await supabase
-      .from('retention_campaigns')
+      .from("retention_campaigns")
       .insert({
         clinic_id: data.clinicId,
         name: data.name,
@@ -195,7 +190,7 @@ export async function POST(request: NextRequest) {
         intervention_strategy: data.interventionStrategy,
         measurement_criteria: data.measurementCriteria,
         is_active: data.isActive,
-        status: 'draft',
+        status: "draft",
         created_at: new Date().toISOString(),
       })
       .select()
@@ -206,40 +201,40 @@ export async function POST(request: NextRequest) {
     }
 
     // Initialize campaign metrics
-    const { error: metricsError } = await supabase
-      .from('retention_campaign_metrics')
-      .insert({
-        campaign_id: campaign.id,
-        clinic_id: data.clinicId,
-        sent: 0,
-        delivered: 0,
-        opened: 0,
-        clicked: 0,
-        conversions: 0,
-        revenue: 0,
-        costs: 0,
-        created_at: new Date().toISOString(),
-      });
+    const { error: metricsError } = await supabase.from("retention_campaign_metrics").insert({
+      campaign_id: campaign.id,
+      clinic_id: data.clinicId,
+      sent: 0,
+      delivered: 0,
+      opened: 0,
+      clicked: 0,
+      conversions: 0,
+      revenue: 0,
+      costs: 0,
+      created_at: new Date().toISOString(),
+    });
 
     if (metricsError) {
-      console.error('Failed to initialize campaign metrics:', metricsError);
+      console.error("Failed to initialize campaign metrics:", metricsError);
     }
 
-    return NextResponse.json({
-      success: true,
-      data: campaign,
-      message: 'Retention campaign created successfully',
-    }, { status: 201 });
-
-  } catch (error) {
-    console.error('POST /api/retention-analytics/campaigns error:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to create retention campaign',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      }, 
-      { status: 500 }
+      {
+        success: true,
+        data: campaign,
+        message: "Retention campaign created successfully",
+      },
+      { status: 201 },
+    );
+  } catch (error) {
+    console.error("POST /api/retention-analytics/campaigns error:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Failed to create retention campaign",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 },
     );
   }
 }
@@ -255,11 +250,11 @@ export async function PATCH(request: NextRequest) {
 
     if (!validation.success) {
       return NextResponse.json(
-        { 
-          error: 'Invalid metrics data', 
-          details: validation.error.issues 
+        {
+          error: "Invalid metrics data",
+          details: validation.error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -268,12 +263,12 @@ export async function PATCH(request: NextRequest) {
 
     // Update campaign metrics
     const { data: updatedMetrics, error } = await supabase
-      .from('retention_campaign_metrics')
+      .from("retention_campaign_metrics")
       .update({
         ...metrics,
         updated_at: timestamp || new Date().toISOString(),
       })
-      .eq('campaign_id', campaignId)
+      .eq("campaign_id", campaignId)
       .select()
       .single();
 
@@ -284,18 +279,17 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: updatedMetrics,
-      message: 'Campaign metrics updated successfully',
+      message: "Campaign metrics updated successfully",
     });
-
   } catch (error) {
-    console.error('PATCH /api/retention-analytics/campaigns error:', error);
+    console.error("PATCH /api/retention-analytics/campaigns error:", error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to update campaign metrics',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      }, 
-      { status: 500 }
+      {
+        success: false,
+        error: "Failed to update campaign metrics",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 },
     );
   }
 }

@@ -3,35 +3,47 @@
  * Automated intervention strategies and proactive patient engagement
  */
 
-'use client';
+"use client";
 
-import React, { useState, useMemo } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Progress } from '@/components/ui/progress';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import React, { useState, useMemo } from "react";
+import type { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Input } from "@/components/ui/input";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Switch } from "@/components/ui/switch";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Progress } from "@/components/ui/progress";
+import type {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   LineChart,
   Line,
   PieChart,
   Pie,
-  Cell
-} from 'recharts';
-import { 
+  Cell,
+} from "recharts";
+import type {
   MessageSquare,
   Phone,
   Mail,
@@ -53,15 +65,15 @@ import {
   RotateCcw,
   Zap,
   Heart,
-  Shield
-} from 'lucide-react';
-import type { 
+  Shield,
+} from "lucide-react";
+import type {
   InterventionStrategy,
   InterventionTrigger,
   InterventionOutcome,
   InterventionType,
-  CommunicationChannel
-} from '@/lib/analytics/intervention-engine';
+  CommunicationChannel,
+} from "@/lib/analytics/intervention-engine";
 
 interface InterventionManagementProps {
   interventions: InterventionStrategy[];
@@ -118,33 +130,34 @@ interface InterventionAnalytics {
   }>;
 }
 
-const INTERVENTION_TYPES: Array<{ value: InterventionType; label: string; icon: React.ReactNode }> = [
-  { value: 'SMS_REMINDER', label: 'SMS Reminder', icon: <MessageSquare className="h-4 w-4" /> },
-  { value: 'PHONE_CALL', label: 'Phone Call', icon: <Phone className="h-4 w-4" /> },
-  { value: 'EMAIL_REMINDER', label: 'Email Reminder', icon: <Mail className="h-4 w-4" /> },
-  { value: 'PUSH_NOTIFICATION', label: 'Push Notification', icon: <Bell className="h-4 w-4" /> },
-  { value: 'PERSONAL_OUTREACH', label: 'Personal Outreach', icon: <Users className="h-4 w-4" /> },
-  { value: 'AUTOMATED_SEQUENCE', label: 'Automated Sequence', icon: <Zap className="h-4 w-4" /> }
-];
+const INTERVENTION_TYPES: Array<{ value: InterventionType; label: string; icon: React.ReactNode }> =
+  [
+    { value: "SMS_REMINDER", label: "SMS Reminder", icon: <MessageSquare className="h-4 w-4" /> },
+    { value: "PHONE_CALL", label: "Phone Call", icon: <Phone className="h-4 w-4" /> },
+    { value: "EMAIL_REMINDER", label: "Email Reminder", icon: <Mail className="h-4 w-4" /> },
+    { value: "PUSH_NOTIFICATION", label: "Push Notification", icon: <Bell className="h-4 w-4" /> },
+    { value: "PERSONAL_OUTREACH", label: "Personal Outreach", icon: <Users className="h-4 w-4" /> },
+    { value: "AUTOMATED_SEQUENCE", label: "Automated Sequence", icon: <Zap className="h-4 w-4" /> },
+  ];
 
 const COMMUNICATION_CHANNELS: Array<{ value: CommunicationChannel; label: string }> = [
-  { value: 'SMS', label: 'SMS' },
-  { value: 'EMAIL', label: 'Email' },
-  { value: 'PHONE', label: 'Phone' },
-  { value: 'WHATSAPP', label: 'WhatsApp' },
-  { value: 'PUSH', label: 'Push Notification' },
-  { value: 'IN_APP', label: 'In-App Message' }
+  { value: "SMS", label: "SMS" },
+  { value: "EMAIL", label: "Email" },
+  { value: "PHONE", label: "Phone" },
+  { value: "WHATSAPP", label: "WhatsApp" },
+  { value: "PUSH", label: "Push Notification" },
+  { value: "IN_APP", label: "In-App Message" },
 ];
 
 const TRIGGER_CONDITIONS = [
-  { value: 'HIGH_RISK_SCORE', label: 'High Risk Score (≥70%)' },
-  { value: 'HISTORICAL_NO_SHOW', label: 'Historical No-Show Pattern' },
-  { value: 'SHORT_NOTICE_BOOKING', label: 'Short Notice Booking (<24h)' },
-  { value: 'FIRST_TIME_PATIENT', label: 'First Time Patient' },
-  { value: 'MISSED_LAST_APPOINTMENT', label: 'Missed Last Appointment' },
-  { value: 'COMMUNICATION_DECLINE', label: 'Communication Response Decline' },
-  { value: 'WEATHER_ALERT', label: 'Weather Alert' },
-  { value: 'APPOINTMENT_CHANGE', label: 'Appointment Change' }
+  { value: "HIGH_RISK_SCORE", label: "High Risk Score (≥70%)" },
+  { value: "HISTORICAL_NO_SHOW", label: "Historical No-Show Pattern" },
+  { value: "SHORT_NOTICE_BOOKING", label: "Short Notice Booking (<24h)" },
+  { value: "FIRST_TIME_PATIENT", label: "First Time Patient" },
+  { value: "MISSED_LAST_APPOINTMENT", label: "Missed Last Appointment" },
+  { value: "COMMUNICATION_DECLINE", label: "Communication Response Decline" },
+  { value: "WEATHER_ALERT", label: "Weather Alert" },
+  { value: "APPOINTMENT_CHANGE", label: "Appointment Change" },
 ];
 
 export function InterventionManagement({
@@ -152,28 +165,32 @@ export function InterventionManagement({
   outcomes,
   onCreateIntervention,
   onUpdateIntervention,
-  onDeleteIntervention
+  onDeleteIntervention,
 }: InterventionManagementProps) {
-  const [selectedIntervention, setSelectedIntervention] = useState<InterventionStrategy | null>(null);
+  const [selectedIntervention, setSelectedIntervention] = useState<InterventionStrategy | null>(
+    null,
+  );
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [activeTab, setActiveTab] = useState<'active' | 'analytics' | 'templates' | 'settings'>('active');
+  const [activeTab, setActiveTab] = useState<"active" | "analytics" | "templates" | "settings">(
+    "active",
+  );
   const [interventionForm, setInterventionForm] = useState<InterventionForm>({
-    name: '',
-    type: 'SMS_REMINDER',
+    name: "",
+    type: "SMS_REMINDER",
     triggers: [],
-    channels: ['SMS'],
-    template: '',
+    channels: ["SMS"],
+    template: "",
     timing: {
       delay: 24,
       followUp: 2,
-      maxAttempts: 3
+      maxAttempts: 3,
     },
     conditions: {
       riskThreshold: 50,
       timeWindow: 7,
-      excludeRecent: true
+      excludeRecent: true,
     },
-    active: true
+    active: true,
   });
 
   /**
@@ -181,69 +198,96 @@ export function InterventionManagement({
    */
   const interventionAnalytics = useMemo((): InterventionAnalytics => {
     // Group outcomes by intervention
-    const interventionGroups = outcomes.reduce((acc, outcome) => {
-      if (!acc[outcome.interventionId]) {
-        acc[outcome.interventionId] = [];
-      }
-      acc[outcome.interventionId].push(outcome);
-      return acc;
-    }, {} as Record<string, InterventionOutcome[]>);
+    const interventionGroups = outcomes.reduce(
+      (acc, outcome) => {
+        if (!acc[outcome.interventionId]) {
+          acc[outcome.interventionId] = [];
+        }
+        acc[outcome.interventionId].push(outcome);
+        return acc;
+      },
+      {} as Record<string, InterventionOutcome[]>,
+    );
 
     // Calculate effectiveness metrics
     const effectiveness = Object.entries(interventionGroups).map(([interventionId, outcomes]) => {
-      const intervention = interventions.find(i => i.id === interventionId);
-      const successfulOutcomes = outcomes.filter(o => o.success);
-      const noShowReduction = outcomes.filter(o => o.noShowPrevented).length;
-      
+      const intervention = interventions.find((i) => i.id === interventionId);
+      const successfulOutcomes = outcomes.filter((o) => o.success);
+      const noShowReduction = outcomes.filter((o) => o.noShowPrevented).length;
+
       return {
-        intervention: intervention?.name || 'Unknown',
+        intervention: intervention?.name || "Unknown",
         successRate: (successfulOutcomes.length / outcomes.length) * 100,
         totalSent: outcomes.length,
-        responseRate: (outcomes.filter(o => o.patientEngaged).length / outcomes.length) * 100,
-        noShowReduction: (noShowReduction / outcomes.length) * 100
+        responseRate: (outcomes.filter((o) => o.patientEngaged).length / outcomes.length) * 100,
+        noShowReduction: (noShowReduction / outcomes.length) * 100,
       };
     });
 
     // Channel performance analysis
-    const channelGroups = outcomes.reduce((acc, outcome) => {
-      const channel = outcome.channel;
-      if (!acc[channel]) {
-        acc[channel] = [];
-      }
-      acc[channel].push(outcome);
-      return acc;
-    }, {} as Record<string, InterventionOutcome[]>);
+    const channelGroups = outcomes.reduce(
+      (acc, outcome) => {
+        const channel = outcome.channel;
+        if (!acc[channel]) {
+          acc[channel] = [];
+        }
+        acc[channel].push(outcome);
+        return acc;
+      },
+      {} as Record<string, InterventionOutcome[]>,
+    );
 
     const channelPerformance = Object.entries(channelGroups).map(([channel, outcomes]) => ({
       channel: channel.charAt(0) + channel.slice(1).toLowerCase(),
-      deliveryRate: (outcomes.filter(o => o.delivered).length / outcomes.length) * 100,
-      responseRate: (outcomes.filter(o => o.patientEngaged).length / outcomes.length) * 100,
+      deliveryRate: (outcomes.filter((o) => o.delivered).length / outcomes.length) * 100,
+      responseRate: (outcomes.filter((o) => o.patientEngaged).length / outcomes.length) * 100,
       cost: outcomes.reduce((sum, o) => sum + (o.cost || 0), 0) / outcomes.length,
-      satisfaction: outcomes.reduce((sum, o) => sum + (o.satisfactionScore || 0), 0) / outcomes.length
+      satisfaction:
+        outcomes.reduce((sum, o) => sum + (o.satisfactionScore || 0), 0) / outcomes.length,
     }));
 
     // Timing analysis (mock data for now)
     const timingAnalysis = [
-      { timing: '24h before', effectiveness: 85, volume: 1240 },
-      { timing: '2h before', effectiveness: 92, volume: 890 },
-      { timing: '30min before', effectiveness: 78, volume: 450 },
-      { timing: 'Day after booking', effectiveness: 65, volume: 2100 },
-      { timing: 'Weekly reminder', effectiveness: 70, volume: 1800 }
+      { timing: "24h before", effectiveness: 85, volume: 1240 },
+      { timing: "2h before", effectiveness: 92, volume: 890 },
+      { timing: "30min before", effectiveness: 78, volume: 450 },
+      { timing: "Day after booking", effectiveness: 65, volume: 2100 },
+      { timing: "Weekly reminder", effectiveness: 70, volume: 1800 },
     ];
 
     // Patient segments (mock data)
     const patientSegments = [
-      { segment: 'Young Adults (18-30)', preferredChannel: 'SMS', bestTiming: '2h before', responseRate: 78 },
-      { segment: 'Working Adults (31-50)', preferredChannel: 'Email', bestTiming: '24h before', responseRate: 85 },
-      { segment: 'Seniors (51+)', preferredChannel: 'Phone', bestTiming: '24h before', responseRate: 92 },
-      { segment: 'First-time Patients', preferredChannel: 'SMS + Email', bestTiming: 'Day after booking', responseRate: 68 }
+      {
+        segment: "Young Adults (18-30)",
+        preferredChannel: "SMS",
+        bestTiming: "2h before",
+        responseRate: 78,
+      },
+      {
+        segment: "Working Adults (31-50)",
+        preferredChannel: "Email",
+        bestTiming: "24h before",
+        responseRate: 85,
+      },
+      {
+        segment: "Seniors (51+)",
+        preferredChannel: "Phone",
+        bestTiming: "24h before",
+        responseRate: 92,
+      },
+      {
+        segment: "First-time Patients",
+        preferredChannel: "SMS + Email",
+        bestTiming: "Day after booking",
+        responseRate: 68,
+      },
     ];
 
     return {
       effectiveness,
       channelPerformance,
       timingAnalysis,
-      patientSegments
+      patientSegments,
     };
   }, [interventions, outcomes]);
 
@@ -261,22 +305,22 @@ export function InterventionManagement({
       conditions: {
         riskThreshold: interventionForm.conditions.riskThreshold,
         timeWindow: interventionForm.conditions.timeWindow,
-        excludeRecent: interventionForm.conditions.excludeRecent
+        excludeRecent: interventionForm.conditions.excludeRecent,
       },
-      active: interventionForm.active
+      active: interventionForm.active,
     };
 
     onCreateIntervention(newIntervention);
     setShowCreateForm(false);
     setInterventionForm({
-      name: '',
-      type: 'SMS_REMINDER',
+      name: "",
+      type: "SMS_REMINDER",
       triggers: [],
-      channels: ['SMS'],
-      template: '',
+      channels: ["SMS"],
+      template: "",
       timing: { delay: 24, followUp: 2, maxAttempts: 3 },
       conditions: { riskThreshold: 50, timeWindow: 7, excludeRecent: true },
-      active: true
+      active: true,
     });
   };
 
@@ -291,16 +335,16 @@ export function InterventionManagement({
    * Get intervention type icon and label
    */
   const getInterventionTypeInfo = (type: InterventionType) => {
-    return INTERVENTION_TYPES.find(t => t.value === type) || INTERVENTION_TYPES[0];
+    return INTERVENTION_TYPES.find((t) => t.value === type) || INTERVENTION_TYPES[0];
   };
 
   /**
    * Get effectiveness color based on percentage
    */
   const getEffectivenessColor = (percentage: number): string => {
-    if (percentage >= 80) return 'text-green-600';
-    if (percentage >= 60) return 'text-yellow-600';
-    return 'text-red-600';
+    if (percentage >= 80) return "text-green-600";
+    if (percentage >= 60) return "text-yellow-600";
+    return "text-red-600";
   };
 
   return (
@@ -336,24 +380,26 @@ export function InterventionManagement({
                     <label className="text-sm font-medium">Intervention Name</label>
                     <Input
                       value={interventionForm.name}
-                      onChange={(e) => setInterventionForm(prev => ({ ...prev, name: e.target.value }))}
+                      onChange={(e) =>
+                        setInterventionForm((prev) => ({ ...prev, name: e.target.value }))
+                      }
                       placeholder="e.g., High Risk SMS Reminder"
                     />
                   </div>
 
                   <div>
                     <label className="text-sm font-medium">Type</label>
-                    <Select 
+                    <Select
                       value={interventionForm.type}
-                      onValueChange={(value: InterventionType) => 
-                        setInterventionForm(prev => ({ ...prev, type: value }))
+                      onValueChange={(value: InterventionType) =>
+                        setInterventionForm((prev) => ({ ...prev, type: value }))
                       }
                     >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {INTERVENTION_TYPES.map(type => (
+                        {INTERVENTION_TYPES.map((type) => (
                           <SelectItem key={type.value} value={type.value}>
                             <div className="flex items-center gap-2">
                               {type.icon}
@@ -368,21 +414,21 @@ export function InterventionManagement({
                   <div>
                     <label className="text-sm font-medium">Communication Channels</label>
                     <div className="grid grid-cols-3 gap-2 mt-2">
-                      {COMMUNICATION_CHANNELS.map(channel => (
+                      {COMMUNICATION_CHANNELS.map((channel) => (
                         <label key={channel.value} className="flex items-center space-x-2">
                           <input
                             type="checkbox"
                             checked={interventionForm.channels.includes(channel.value)}
                             onChange={(e) => {
                               if (e.target.checked) {
-                                setInterventionForm(prev => ({
+                                setInterventionForm((prev) => ({
                                   ...prev,
-                                  channels: [...prev.channels, channel.value]
+                                  channels: [...prev.channels, channel.value],
                                 }));
                               } else {
-                                setInterventionForm(prev => ({
+                                setInterventionForm((prev) => ({
                                   ...prev,
-                                  channels: prev.channels.filter(c => c !== channel.value)
+                                  channels: prev.channels.filter((c) => c !== channel.value),
                                 }));
                               }
                             }}
@@ -398,21 +444,23 @@ export function InterventionManagement({
                 <div className="space-y-4">
                   <h4 className="font-medium">Trigger Conditions</h4>
                   <div className="grid grid-cols-2 gap-2">
-                    {TRIGGER_CONDITIONS.map(trigger => (
+                    {TRIGGER_CONDITIONS.map((trigger) => (
                       <label key={trigger.value} className="flex items-center space-x-2">
                         <input
                           type="checkbox"
-                          checked={interventionForm.triggers.includes(trigger.value as InterventionTrigger)}
+                          checked={interventionForm.triggers.includes(
+                            trigger.value as InterventionTrigger,
+                          )}
                           onChange={(e) => {
                             if (e.target.checked) {
-                              setInterventionForm(prev => ({
+                              setInterventionForm((prev) => ({
                                 ...prev,
-                                triggers: [...prev.triggers, trigger.value as InterventionTrigger]
+                                triggers: [...prev.triggers, trigger.value as InterventionTrigger],
                               }));
                             } else {
-                              setInterventionForm(prev => ({
+                              setInterventionForm((prev) => ({
                                 ...prev,
-                                triggers: prev.triggers.filter(t => t !== trigger.value)
+                                triggers: prev.triggers.filter((t) => t !== trigger.value),
                               }));
                             }
                           }}
@@ -428,12 +476,15 @@ export function InterventionManagement({
                   <label className="text-sm font-medium">Message Template</label>
                   <Textarea
                     value={interventionForm.template}
-                    onChange={(e) => setInterventionForm(prev => ({ ...prev, template: e.target.value }))}
+                    onChange={(e) =>
+                      setInterventionForm((prev) => ({ ...prev, template: e.target.value }))
+                    }
                     placeholder="Olá {patientName}, você tem uma consulta agendada para {appointmentDate} às {appointmentTime}. Para confirmar, responda SIM."
                     rows={3}
                   />
                   <div className="text-xs text-muted-foreground mt-1">
-                    Available variables: {'{patientName}'}, {'{appointmentDate}'}, {'{appointmentTime}'}, {'{doctorName}'}
+                    Available variables: {"{patientName}"}, {"{appointmentDate}"},{" "}
+                    {"{appointmentTime}"}, {"{doctorName}"}
                   </div>
                 </div>
 
@@ -446,10 +497,12 @@ export function InterventionManagement({
                       <Input
                         type="number"
                         value={interventionForm.timing.delay}
-                        onChange={(e) => setInterventionForm(prev => ({
-                          ...prev,
-                          timing: { ...prev.timing, delay: parseInt(e.target.value) }
-                        }))}
+                        onChange={(e) =>
+                          setInterventionForm((prev) => ({
+                            ...prev,
+                            timing: { ...prev.timing, delay: parseInt(e.target.value) },
+                          }))
+                        }
                       />
                     </div>
                     <div>
@@ -457,10 +510,12 @@ export function InterventionManagement({
                       <Input
                         type="number"
                         value={interventionForm.timing.followUp}
-                        onChange={(e) => setInterventionForm(prev => ({
-                          ...prev,
-                          timing: { ...prev.timing, followUp: parseInt(e.target.value) }
-                        }))}
+                        onChange={(e) =>
+                          setInterventionForm((prev) => ({
+                            ...prev,
+                            timing: { ...prev.timing, followUp: parseInt(e.target.value) },
+                          }))
+                        }
                       />
                     </div>
                     <div>
@@ -468,10 +523,12 @@ export function InterventionManagement({
                       <Input
                         type="number"
                         value={interventionForm.timing.maxAttempts}
-                        onChange={(e) => setInterventionForm(prev => ({
-                          ...prev,
-                          timing: { ...prev.timing, maxAttempts: parseInt(e.target.value) }
-                        }))}
+                        onChange={(e) =>
+                          setInterventionForm((prev) => ({
+                            ...prev,
+                            timing: { ...prev.timing, maxAttempts: parseInt(e.target.value) },
+                          }))
+                        }
                       />
                     </div>
                   </div>
@@ -486,10 +543,15 @@ export function InterventionManagement({
                       <Input
                         type="number"
                         value={interventionForm.conditions.riskThreshold}
-                        onChange={(e) => setInterventionForm(prev => ({
-                          ...prev,
-                          conditions: { ...prev.conditions, riskThreshold: parseInt(e.target.value) }
-                        }))}
+                        onChange={(e) =>
+                          setInterventionForm((prev) => ({
+                            ...prev,
+                            conditions: {
+                              ...prev.conditions,
+                              riskThreshold: parseInt(e.target.value),
+                            },
+                          }))
+                        }
                       />
                     </div>
                     <div>
@@ -497,20 +559,27 @@ export function InterventionManagement({
                       <Input
                         type="number"
                         value={interventionForm.conditions.timeWindow}
-                        onChange={(e) => setInterventionForm(prev => ({
-                          ...prev,
-                          conditions: { ...prev.conditions, timeWindow: parseInt(e.target.value) }
-                        }))}
+                        onChange={(e) =>
+                          setInterventionForm((prev) => ({
+                            ...prev,
+                            conditions: {
+                              ...prev.conditions,
+                              timeWindow: parseInt(e.target.value),
+                            },
+                          }))
+                        }
                       />
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Switch
                       checked={interventionForm.conditions.excludeRecent}
-                      onCheckedChange={(checked) => setInterventionForm(prev => ({
-                        ...prev,
-                        conditions: { ...prev.conditions, excludeRecent: checked }
-                      }))}
+                      onCheckedChange={(checked) =>
+                        setInterventionForm((prev) => ({
+                          ...prev,
+                          conditions: { ...prev.conditions, excludeRecent: checked },
+                        }))
+                      }
                     />
                     <label className="text-sm">Exclude patients contacted in last 24h</label>
                   </div>
@@ -520,7 +589,9 @@ export function InterventionManagement({
                   <div className="flex items-center space-x-2">
                     <Switch
                       checked={interventionForm.active}
-                      onCheckedChange={(checked) => setInterventionForm(prev => ({ ...prev, active: checked }))}
+                      onCheckedChange={(checked) =>
+                        setInterventionForm((prev) => ({ ...prev, active: checked }))
+                      }
                     />
                     <label className="text-sm font-medium">Active</label>
                   </div>
@@ -528,9 +599,7 @@ export function InterventionManagement({
                     <Button variant="outline" onClick={() => setShowCreateForm(false)}>
                       Cancel
                     </Button>
-                    <Button onClick={handleSubmitIntervention}>
-                      Create Intervention
-                    </Button>
+                    <Button onClick={handleSubmitIntervention}>Create Intervention</Button>
                   </div>
                 </div>
               </div>
@@ -560,11 +629,9 @@ export function InterventionManagement({
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {interventions.filter(i => i.active).length}
+                  {interventions.filter((i) => i.active).length}
                 </div>
-                <div className="text-xs text-muted-foreground">
-                  Of {interventions.length} total
-                </div>
+                <div className="text-xs text-muted-foreground">Of {interventions.length} total</div>
               </CardContent>
             </Card>
 
@@ -576,12 +643,8 @@ export function InterventionManagement({
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-blue-600">
-                  {outcomes.length}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  This month
-                </div>
+                <div className="text-2xl font-bold text-blue-600">{outcomes.length}</div>
+                <div className="text-xs text-muted-foreground">This month</div>
               </CardContent>
             </Card>
 
@@ -594,14 +657,12 @@ export function InterventionManagement({
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-green-600">
-                  {outcomes.length > 0 ? 
-                    Math.round((outcomes.filter(o => o.success).length / outcomes.length) * 100)
-                    : 0
-                  }%
+                  {outcomes.length > 0
+                    ? Math.round((outcomes.filter((o) => o.success).length / outcomes.length) * 100)
+                    : 0}
+                  %
                 </div>
-                <div className="text-xs text-muted-foreground">
-                  Overall effectiveness
-                </div>
+                <div className="text-xs text-muted-foreground">Overall effectiveness</div>
               </CardContent>
             </Card>
 
@@ -614,11 +675,9 @@ export function InterventionManagement({
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-green-600">
-                  {outcomes.filter(o => o.noShowPrevented).length}
+                  {outcomes.filter((o) => o.noShowPrevented).length}
                 </div>
-                <div className="text-xs text-muted-foreground">
-                  This month
-                </div>
+                <div className="text-xs text-muted-foreground">This month</div>
               </CardContent>
             </Card>
           </div>
@@ -635,20 +694,29 @@ export function InterventionManagement({
               <div className="space-y-4">
                 {interventions.length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground">
-                    No interventions configured yet. Create your first intervention to start preventing no-shows.
+                    No interventions configured yet. Create your first intervention to start
+                    preventing no-shows.
                   </div>
                 ) : (
                   interventions.map((intervention) => {
                     const typeInfo = getInterventionTypeInfo(intervention.type);
-                    const interventionOutcomes = outcomes.filter(o => o.interventionId === intervention.id);
-                    const successRate = interventionOutcomes.length > 0 ? 
-                      (interventionOutcomes.filter(o => o.success).length / interventionOutcomes.length) * 100 : 0;
+                    const interventionOutcomes = outcomes.filter(
+                      (o) => o.interventionId === intervention.id,
+                    );
+                    const successRate =
+                      interventionOutcomes.length > 0
+                        ? (interventionOutcomes.filter((o) => o.success).length /
+                            interventionOutcomes.length) *
+                          100
+                        : 0;
 
                     return (
-                      <Card 
+                      <Card
                         key={intervention.id}
                         className={`cursor-pointer transition-colors ${
-                          intervention.active ? 'border-green-200 bg-green-50/50' : 'border-gray-200 bg-gray-50/50'
+                          intervention.active
+                            ? "border-green-200 bg-green-50/50"
+                            : "border-gray-200 bg-gray-50/50"
                         }`}
                         onClick={() => setSelectedIntervention(intervention)}
                       >
@@ -659,8 +727,8 @@ export function InterventionManagement({
                                 {typeInfo.icon}
                                 <span className="font-medium">{intervention.name}</span>
                               </div>
-                              <Badge variant={intervention.active ? 'default' : 'secondary'}>
-                                {intervention.active ? 'Active' : 'Inactive'}
+                              <Badge variant={intervention.active ? "default" : "secondary"}>
+                                {intervention.active ? "Active" : "Inactive"}
                               </Badge>
                             </div>
                             <div className="flex items-center gap-2">
@@ -699,18 +767,22 @@ export function InterventionManagement({
                             <div>
                               <div className="text-xs text-muted-foreground">Channels</div>
                               <div className="text-sm font-medium">
-                                {intervention.channels.join(', ')}
+                                {intervention.channels.join(", ")}
                               </div>
                             </div>
                             <div>
                               <div className="text-xs text-muted-foreground">Success Rate</div>
-                              <div className={`text-sm font-medium ${getEffectivenessColor(successRate)}`}>
+                              <div
+                                className={`text-sm font-medium ${getEffectivenessColor(successRate)}`}
+                              >
                                 {successRate.toFixed(0)}%
                               </div>
                             </div>
                             <div>
                               <div className="text-xs text-muted-foreground">Messages Sent</div>
-                              <div className="text-sm font-medium">{interventionOutcomes.length}</div>
+                              <div className="text-sm font-medium">
+                                {interventionOutcomes.length}
+                              </div>
                             </div>
                           </div>
 
@@ -749,10 +821,10 @@ export function InterventionManagement({
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="intervention" />
                   <YAxis />
-                  <Tooltip 
+                  <Tooltip
                     formatter={(value, name) => [
-                      `${value}${name.includes('Rate') || name.includes('Reduction') ? '%' : ''}`,
-                      name
+                      `${value}${name.includes("Rate") || name.includes("Reduction") ? "%" : ""}`,
+                      name,
                     ]}
                   />
                   <Bar dataKey="successRate" name="Success Rate" fill="#10B981" />
@@ -848,7 +920,9 @@ export function InterventionManagement({
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Response Rate:</span>
-                        <span className={`font-medium ${getEffectivenessColor(segment.responseRate)}`}>
+                        <span
+                          className={`font-medium ${getEffectivenessColor(segment.responseRate)}`}
+                        >
                           {segment.responseRate}%
                         </span>
                       </div>
@@ -911,12 +985,12 @@ export function InterventionManagement({
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Channels:</span>
-                        <span>{selectedIntervention.channels.join(', ')}</span>
+                        <span>{selectedIntervention.channels.join(", ")}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Status:</span>
-                        <Badge variant={selectedIntervention.active ? 'default' : 'secondary'}>
-                          {selectedIntervention.active ? 'Active' : 'Inactive'}
+                        <Badge variant={selectedIntervention.active ? "default" : "secondary"}>
+                          {selectedIntervention.active ? "Active" : "Inactive"}
                         </Badge>
                       </div>
                     </div>
@@ -955,7 +1029,7 @@ export function InterventionManagement({
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Exclude Recent:</span>
-                        <span>{selectedIntervention.conditions.excludeRecent ? 'Yes' : 'No'}</span>
+                        <span>{selectedIntervention.conditions.excludeRecent ? "Yes" : "No"}</span>
                       </div>
                     </div>
                   </div>
@@ -965,7 +1039,7 @@ export function InterventionManagement({
                     <div className="space-y-1">
                       {selectedIntervention.triggers.map((trigger, index) => (
                         <Badge key={index} variant="outline" className="mr-1 mb-1">
-                          {trigger.replace(/_/g, ' ').toLowerCase()}
+                          {trigger.replace(/_/g, " ").toLowerCase()}
                         </Badge>
                       ))}
                     </div>
@@ -985,10 +1059,16 @@ export function InterventionManagement({
               <div>
                 <h4 className="font-medium mb-2">Recent Performance</h4>
                 {(() => {
-                  const interventionOutcomes = outcomes.filter(o => o.interventionId === selectedIntervention.id);
-                  const successRate = interventionOutcomes.length > 0 ? 
-                    (interventionOutcomes.filter(o => o.success).length / interventionOutcomes.length) * 100 : 0;
-                  
+                  const interventionOutcomes = outcomes.filter(
+                    (o) => o.interventionId === selectedIntervention.id,
+                  );
+                  const successRate =
+                    interventionOutcomes.length > 0
+                      ? (interventionOutcomes.filter((o) => o.success).length /
+                          interventionOutcomes.length) *
+                        100
+                      : 0;
+
                   return (
                     <div className="grid grid-cols-4 gap-4">
                       <div className="text-center">
@@ -1003,13 +1083,13 @@ export function InterventionManagement({
                       </div>
                       <div className="text-center">
                         <div className="text-2xl font-bold text-green-600">
-                          {interventionOutcomes.filter(o => o.noShowPrevented).length}
+                          {interventionOutcomes.filter((o) => o.noShowPrevented).length}
                         </div>
                         <div className="text-xs text-muted-foreground">No-Shows Prevented</div>
                       </div>
                       <div className="text-center">
                         <div className="text-2xl font-bold text-blue-600">
-                          {interventionOutcomes.filter(o => o.patientEngaged).length}
+                          {interventionOutcomes.filter((o) => o.patientEngaged).length}
                         </div>
                         <div className="text-xs text-muted-foreground">Patient Engaged</div>
                       </div>
@@ -1022,9 +1102,7 @@ export function InterventionManagement({
                 <Button variant="outline" onClick={() => setSelectedIntervention(null)}>
                   Close
                 </Button>
-                <Button>
-                  Edit Intervention
-                </Button>
+                <Button>Edit Intervention</Button>
               </div>
             </div>
           </DialogContent>

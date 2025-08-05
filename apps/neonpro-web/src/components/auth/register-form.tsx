@@ -1,53 +1,55 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/contexts/auth-context";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Separator } from "@/components/ui/separator";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Eye, EyeOff, Lock, Mail, User, X, Heart, Phone, Calendar } from "lucide-react";
+import type { useState } from "react";
+import type { useRouter } from "next/navigation";
+import type { useAuth } from "@/contexts/auth-context";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type { Separator } from "@/components/ui/separator";
+import type { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type { z } from "zod";
+import type { Eye, EyeOff, Lock, Mail, User, X, Heart, Phone, Calendar } from "lucide-react";
 
-const registerSchema = z.object({
-  name: z
-    .string()
-    .min(2, "Nome deve ter pelo menos 2 caracteres")
-    .max(100, "Nome muito longo"),
-  email: z
-    .string()
-    .min(1, "Email é obrigatório")
-    .email("Email inválido"),
-  phone: z
-    .string()
-    .min(10, "Telefone inválido")
-    .regex(/^\(\d{2}\)\s\d{4,5}-\d{4}$/, "Formato: (11) 99999-9999"),
-  birthDate: z
-    .string()
-    .min(1, "Data de nascimento é obrigatória")
-    .regex(/^\d{2}\/\d{2}\/\d{4}$/, "Formato: DD/MM/AAAA"),
-  password: z
-    .string()
-    .min(8, "Senha deve ter pelo menos 8 caracteres")
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "Senha deve conter pelo menos: 1 letra minúscula, 1 maiúscula e 1 número"),
-  confirmPassword: z
-    .string()
-    .min(1, "Confirmação de senha é obrigatória"),
-  lgpdConsent: z
-    .boolean()
-    .refine((val) => val === true, "Você deve aceitar os termos de privacidade"),
-  marketingConsent: z
-    .boolean()
-    .optional(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Senhas não coincidem",
-  path: ["confirmPassword"],
-});
+const registerSchema = z
+  .object({
+    name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres").max(100, "Nome muito longo"),
+    email: z.string().min(1, "Email é obrigatório").email("Email inválido"),
+    phone: z
+      .string()
+      .min(10, "Telefone inválido")
+      .regex(/^\(\d{2}\)\s\d{4,5}-\d{4}$/, "Formato: (11) 99999-9999"),
+    birthDate: z
+      .string()
+      .min(1, "Data de nascimento é obrigatória")
+      .regex(/^\d{2}\/\d{2}\/\d{4}$/, "Formato: DD/MM/AAAA"),
+    password: z
+      .string()
+      .min(8, "Senha deve ter pelo menos 8 caracteres")
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+        "Senha deve conter pelo menos: 1 letra minúscula, 1 maiúscula e 1 número",
+      ),
+    confirmPassword: z.string().min(1, "Confirmação de senha é obrigatória"),
+    lgpdConsent: z
+      .boolean()
+      .refine((val) => val === true, "Você deve aceitar os termos de privacidade"),
+    marketingConsent: z.boolean().optional(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Senhas não coincidem",
+    path: ["confirmPassword"],
+  });
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
@@ -99,25 +101,25 @@ export function RegisterForm({ onSwitchToLogin, onClose }: RegisterFormProps) {
 
   const onSubmit = async (data: RegisterFormData) => {
     setIsLoading(true);
-    
+
     try {
       // Convert birth date to ISO format
-      const [day, month, year] = data.birthDate.split('/');
-      const birthDateISO = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-      
+      const [day, month, year] = data.birthDate.split("/");
+      const birthDateISO = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+
       const { data: authData, error } = await signUp(data.email, data.password, {
         full_name: data.name,
         phone: data.phone,
         birth_date: birthDateISO,
-        role: 'patient',
+        role: "patient",
         lgpd_consent: true,
         lgpd_consent_date: new Date().toISOString(),
         marketing_consent: data.marketingConsent || false,
         marketing_consent_date: data.marketingConsent ? new Date().toISOString() : null,
       });
-      
+
       if (error) {
-        if (error.message.includes('already registered')) {
+        if (error.message.includes("already registered")) {
           form.setError("email", {
             type: "manual",
             message: "Este email já está cadastrado. Tente fazer login.",
@@ -133,7 +135,7 @@ export function RegisterForm({ onSwitchToLogin, onClose }: RegisterFormProps) {
 
       if (authData?.user) {
         // Show success message and redirect to patient portal
-        router.push('/patient-portal?welcome=true');
+        router.push("/patient-portal?welcome=true");
         onClose?.();
       }
     } catch (error) {
@@ -184,9 +186,7 @@ export function RegisterForm({ onSwitchToLogin, onClose }: RegisterFormProps) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-700 font-medium">
-                    Nome Completo *
-                  </FormLabel>
+                  <FormLabel className="text-slate-700 font-medium">Nome Completo *</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <User className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
@@ -209,9 +209,7 @@ export function RegisterForm({ onSwitchToLogin, onClose }: RegisterFormProps) {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-700 font-medium">
-                    Email *
-                  </FormLabel>
+                  <FormLabel className="text-slate-700 font-medium">Email *</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Mail className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
@@ -234,9 +232,7 @@ export function RegisterForm({ onSwitchToLogin, onClose }: RegisterFormProps) {
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-700 font-medium">
-                    Telefone *
-                  </FormLabel>
+                  <FormLabel className="text-slate-700 font-medium">Telefone *</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Phone className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
@@ -263,9 +259,7 @@ export function RegisterForm({ onSwitchToLogin, onClose }: RegisterFormProps) {
               name="birthDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-700 font-medium">
-                    Data de Nascimento *
-                  </FormLabel>
+                  <FormLabel className="text-slate-700 font-medium">Data de Nascimento *</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Calendar className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
@@ -292,9 +286,7 @@ export function RegisterForm({ onSwitchToLogin, onClose }: RegisterFormProps) {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-700 font-medium">
-                    Senha *
-                  </FormLabel>
+                  <FormLabel className="text-slate-700 font-medium">Senha *</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Lock className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
@@ -331,9 +323,7 @@ export function RegisterForm({ onSwitchToLogin, onClose }: RegisterFormProps) {
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-700 font-medium">
-                    Confirmar Senha *
-                  </FormLabel>
+                  <FormLabel className="text-slate-700 font-medium">Confirmar Senha *</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Lock className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
@@ -370,7 +360,7 @@ export function RegisterForm({ onSwitchToLogin, onClose }: RegisterFormProps) {
               <h4 className="font-medium text-slate-900 text-sm">
                 Consentimento para Tratamento de Dados (LGPD)
               </h4>
-              
+
               <FormField
                 control={form.control}
                 name="lgpdConsent"
@@ -386,8 +376,8 @@ export function RegisterForm({ onSwitchToLogin, onClose }: RegisterFormProps) {
                     </FormControl>
                     <div className="space-y-1 leading-none">
                       <FormLabel className="text-xs text-slate-700 font-normal cursor-pointer">
-                        Autorizo o tratamento dos meus dados pessoais para prestação de serviços médicos, 
-                        conforme{" "}
+                        Autorizo o tratamento dos meus dados pessoais para prestação de serviços
+                        médicos, conforme{" "}
                         <a href="/privacy" className="text-[#6366f1] hover:underline font-medium">
                           Política de Privacidade
                         </a>{" "}
@@ -418,8 +408,8 @@ export function RegisterForm({ onSwitchToLogin, onClose }: RegisterFormProps) {
                     </FormControl>
                     <div className="space-y-1 leading-none">
                       <FormLabel className="text-xs text-slate-700 font-normal cursor-pointer">
-                        Desejo receber comunicações sobre novos tratamentos, promoções e 
-                        conteúdos relacionados ao bem-estar e estética (opcional).
+                        Desejo receber comunicações sobre novos tratamentos, promoções e conteúdos
+                        relacionados ao bem-estar e estética (opcional).
                       </FormLabel>
                     </div>
                   </FormItem>
@@ -456,9 +446,7 @@ export function RegisterForm({ onSwitchToLogin, onClose }: RegisterFormProps) {
           <>
             <Separator className="bg-slate-200" />
             <div className="text-center space-y-3">
-              <p className="text-sm text-slate-600">
-                Já possui uma conta?
-              </p>
+              <p className="text-sm text-slate-600">Já possui uma conta?</p>
               <Button
                 variant="outline"
                 onClick={onSwitchToLogin}

@@ -1,64 +1,71 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server'
-import { cookies } from 'next/headers';
-import { z } from 'zod';
+import type { NextRequest, NextResponse } from "next/server";
+import type { createClient } from "@/lib/supabase/server";
+import type { cookies } from "next/headers";
+import type { z } from "zod";
 
 // Schema para criação de alertas
 const CreateAlertSchema = z.object({
   title: z.string().min(1).max(200),
   description: z.string().min(1).max(1000),
-  severity: z.enum(['low', 'medium', 'high', 'critical']),
-  category: z.enum(['consent', 'data_subject_rights', 'audit', 'security', 'retention', 'anonymization']),
+  severity: z.enum(["low", "medium", "high", "critical"]),
+  category: z.enum([
+    "consent",
+    "data_subject_rights",
+    "audit",
+    "security",
+    "retention",
+    "anonymization",
+  ]),
   metadata: z.record(z.any()).optional(),
   auto_resolve: z.boolean().default(false),
-  resolve_after_hours: z.number().min(1).max(8760).optional() // máximo 1 ano
+  resolve_after_hours: z.number().min(1).max(8760).optional(), // máximo 1 ano
 });
 
 // Schema para atualização de alertas
 const UpdateAlertSchema = z.object({
-  status: z.enum(['active', 'resolved', 'dismissed']).optional(),
+  status: z.enum(["active", "resolved", "dismissed"]).optional(),
   resolution_notes: z.string().max(1000).optional(),
-  resolved_by: z.string().optional()
+  resolved_by: z.string().optional(),
 });
 
 // GET - Listar alertas
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verificar autenticação
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const status = searchParams.get('status');
-    const severity = searchParams.get('severity');
-    const category = searchParams.get('category');
-    const limit = parseInt(searchParams.get('limit') || '50');
-    const offset = parseInt(searchParams.get('offset') || '0');
+    const status = searchParams.get("status");
+    const severity = searchParams.get("severity");
+    const category = searchParams.get("category");
+    const limit = parseInt(searchParams.get("limit") || "50");
+    const offset = parseInt(searchParams.get("offset") || "0");
 
     const clinicId = session.user.user_metadata.clinic_id;
 
     let query = supabase
-      .from('lgpd_compliance_alerts')
-      .select('*')
-      .eq('clinic_id', clinicId)
-      .order('created_at', { ascending: false })
+      .from("lgpd_compliance_alerts")
+      .select("*")
+      .eq("clinic_id", clinicId)
+      .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
     if (status) {
-      query = query.eq('status', status);
+      query = query.eq("status", status);
     }
     if (severity) {
-      query = query.eq('severity', severity);
+      query = query.eq("severity", severity);
     }
     if (category) {
-      query = query.eq('category', category);
+      query = query.eq("category", category);
     }
 
     const { data: alerts, error } = await query;
@@ -69,13 +76,13 @@ export async function GET(request: NextRequest) {
 
     // Contar total para paginação
     let countQuery = supabase
-      .from('lgpd_compliance_alerts')
-      .select('id', { count: 'exact', head: true })
-      .eq('clinic_id', clinicId);
+      .from("lgpd_compliance_alerts")
+      .select("id", { count: "exact", head: true })
+      .eq("clinic_id", clinicId);
 
-    if (status) countQuery = countQuery.eq('status', status);
-    if (severity) countQuery = countQuery.eq('severity', severity);
-    if (category) countQuery = countQuery.eq('category', category);
+    if (status) countQuery = countQuery.eq("status", status);
+    if (severity) countQuery = countQuery.eq("severity", severity);
+    if (category) countQuery = countQuery.eq("category", category);
 
     const { count } = await countQuery;
 
@@ -87,19 +94,18 @@ export async function GET(request: NextRequest) {
           total: count || 0,
           limit,
           offset,
-          hasMore: (count || 0) > offset + limit
-        }
-      }
-    });
-    
-  } catch (error) {
-    console.error('Erro ao listar alertas:', error);
-    return NextResponse.json(
-      { 
-        error: 'Erro interno do servidor',
-        details: error instanceof Error ? error.message : 'Erro desconhecido'
+          hasMore: (count || 0) > offset + limit,
+        },
       },
-      { status: 500 }
+    });
+  } catch (error) {
+    console.error("Erro ao listar alertas:", error);
+    return NextResponse.json(
+      {
+        error: "Erro interno do servidor",
+        details: error instanceof Error ? error.message : "Erro desconhecido",
+      },
+      { status: 500 },
     );
   }
 }
@@ -107,27 +113,27 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verificar autenticação
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
-    
+
     // Validar dados
     const validationResult = CreateAlertSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
-          error: 'Dados inválidos',
-          details: validationResult.error.errors
+        {
+          error: "Dados inválidos",
+          details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -138,24 +144,24 @@ export async function POST(request: NextRequest) {
     let autoResolveAt = null;
     if (alertData.auto_resolve && alertData.resolve_after_hours) {
       autoResolveAt = new Date(
-        Date.now() + alertData.resolve_after_hours * 60 * 60 * 1000
+        Date.now() + alertData.resolve_after_hours * 60 * 60 * 1000,
       ).toISOString();
     }
 
     // Criar alerta
     const { data: alert, error } = await supabase
-      .from('lgpd_compliance_alerts')
+      .from("lgpd_compliance_alerts")
       .insert({
         clinic_id: clinicId,
         title: alertData.title,
         description: alertData.description,
         severity: alertData.severity,
         category: alertData.category,
-        status: 'active',
+        status: "active",
         metadata: alertData.metadata || {},
         auto_resolve: alertData.auto_resolve,
         auto_resolve_at: autoResolveAt,
-        created_by: session.user.id
+        created_by: session.user.id,
       })
       .select()
       .single();
@@ -165,35 +171,32 @@ export async function POST(request: NextRequest) {
     }
 
     // Registrar evento de auditoria
-    await supabase
-      .from('lgpd_audit_trail')
-      .insert({
-        clinic_id: clinicId,
-        event_type: 'system',
-        action: 'compliance_alert_created',
-        user_id: session.user.id,
-        details: {
-          alertId: alert.id,
-          severity: alertData.severity,
-          category: alertData.category
-        },
-        severity: 'info'
-      });
+    await supabase.from("lgpd_audit_trail").insert({
+      clinic_id: clinicId,
+      event_type: "system",
+      action: "compliance_alert_created",
+      user_id: session.user.id,
+      details: {
+        alertId: alert.id,
+        severity: alertData.severity,
+        category: alertData.category,
+      },
+      severity: "info",
+    });
 
     return NextResponse.json({
       success: true,
       data: alert,
-      message: 'Alerta criado com sucesso'
+      message: "Alerta criado com sucesso",
     });
-    
   } catch (error) {
-    console.error('Erro ao criar alerta:', error);
+    console.error("Erro ao criar alerta:", error);
     return NextResponse.json(
-      { 
-        error: 'Erro interno do servidor',
-        details: error instanceof Error ? error.message : 'Erro desconhecido'
+      {
+        error: "Erro interno do servidor",
+        details: error instanceof Error ? error.message : "Erro desconhecido",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -201,37 +204,34 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verificar autenticação
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const alertId = searchParams.get('id');
-    
+    const alertId = searchParams.get("id");
+
     if (!alertId) {
-      return NextResponse.json(
-        { error: 'ID do alerta é obrigatório' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "ID do alerta é obrigatório" }, { status: 400 });
     }
 
     const body = await request.json();
-    
+
     // Validar dados
     const validationResult = UpdateAlertSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
-          error: 'Dados inválidos',
-          details: validationResult.error.errors
+        {
+          error: "Dados inválidos",
+          details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -240,28 +240,25 @@ export async function PUT(request: NextRequest) {
 
     // Verificar se o alerta existe e pertence à clínica
     const { data: existingAlert, error: fetchError } = await supabase
-      .from('lgpd_compliance_alerts')
-      .select('*')
-      .eq('id', alertId)
-      .eq('clinic_id', clinicId)
+      .from("lgpd_compliance_alerts")
+      .select("*")
+      .eq("id", alertId)
+      .eq("clinic_id", clinicId)
       .single();
 
     if (fetchError || !existingAlert) {
-      return NextResponse.json(
-        { error: 'Alerta não encontrado' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Alerta não encontrado" }, { status: 404 });
     }
 
     // Preparar dados de atualização
     const updatePayload: any = {
       updated_at: new Date().toISOString(),
-      updated_by: session.user.id
+      updated_by: session.user.id,
     };
 
     if (updateData.status) {
       updatePayload.status = updateData.status;
-      if (updateData.status === 'resolved') {
+      if (updateData.status === "resolved") {
         updatePayload.resolved_at = new Date().toISOString();
         updatePayload.resolved_by = session.user.id;
       }
@@ -273,10 +270,10 @@ export async function PUT(request: NextRequest) {
 
     // Atualizar alerta
     const { data: updatedAlert, error } = await supabase
-      .from('lgpd_compliance_alerts')
+      .from("lgpd_compliance_alerts")
       .update(updatePayload)
-      .eq('id', alertId)
-      .eq('clinic_id', clinicId)
+      .eq("id", alertId)
+      .eq("clinic_id", clinicId)
       .select()
       .single();
 
@@ -285,37 +282,33 @@ export async function PUT(request: NextRequest) {
     }
 
     // Registrar evento de auditoria
-    await supabase
-      .from('lgpd_audit_trail')
-      .insert({
-        clinic_id: clinicId,
-        event_type: 'system',
-        action: 'compliance_alert_updated',
-        user_id: session.user.id,
-        details: {
-          alertId: alertId,
-          previousStatus: existingAlert.status,
-          newStatus: updateData.status,
-          changes: updateData
-        },
-        severity: 'info'
-      });
+    await supabase.from("lgpd_audit_trail").insert({
+      clinic_id: clinicId,
+      event_type: "system",
+      action: "compliance_alert_updated",
+      user_id: session.user.id,
+      details: {
+        alertId: alertId,
+        previousStatus: existingAlert.status,
+        newStatus: updateData.status,
+        changes: updateData,
+      },
+      severity: "info",
+    });
 
     return NextResponse.json({
       success: true,
       data: updatedAlert,
-      message: 'Alerta atualizado com sucesso'
+      message: "Alerta atualizado com sucesso",
     });
-    
   } catch (error) {
-    console.error('Erro ao atualizar alerta:', error);
+    console.error("Erro ao atualizar alerta:", error);
     return NextResponse.json(
-      { 
-        error: 'Erro interno do servidor',
-        details: error instanceof Error ? error.message : 'Erro desconhecido'
+      {
+        error: "Erro interno do servidor",
+        details: error instanceof Error ? error.message : "Erro desconhecido",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-

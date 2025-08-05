@@ -1,8 +1,8 @@
-import { SupabaseClient } from '@supabase/supabase-js';
-import { AuditLogger } from '../../audit/audit-logger';
-import { LGPDManager } from '../../lgpd/lgpd-manager';
-import { SessionManager } from '../auth/session-manager';
-import { EncryptionService } from '../../security/encryption-service';
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { AuditLogger } from "../../audit/audit-logger";
+import type { LGPDManager } from "../../lgpd/lgpd-manager";
+import type { SessionManager } from "../auth/session-manager";
+import type { EncryptionService } from "../../security/encryption-service";
 
 /**
  * Configuration for upload manager
@@ -25,7 +25,7 @@ export interface UploadConfig {
 export interface UploadRequest {
   patientId: string;
   files: File[];
-  category: 'medical_records' | 'insurance' | 'identification' | 'treatment_photos' | 'other';
+  category: "medical_records" | "insurance" | "identification" | "treatment_photos" | "other";
   description?: string;
   isPrivate: boolean;
   tags?: string[];
@@ -54,8 +54,8 @@ export interface UploadedFile {
   mimeType: string;
   category: string;
   uploadDate: Date;
-  status: 'uploading' | 'processing' | 'completed' | 'failed' | 'quarantined';
-  virusScanResult?: 'clean' | 'infected' | 'pending';
+  status: "uploading" | "processing" | "completed" | "failed" | "quarantined";
+  virusScanResult?: "clean" | "infected" | "pending";
   thumbnailUrl?: string;
   downloadUrl?: string;
   metadata?: Record<string, any>;
@@ -78,7 +78,7 @@ export interface ProcessingStatus {
   totalFiles: number;
   processedFiles: number;
   failedFiles: number;
-  status: 'pending' | 'processing' | 'completed' | 'failed';
+  status: "pending" | "processing" | "completed" | "failed";
   progress: number;
   estimatedTimeRemaining?: number;
 }
@@ -99,7 +99,7 @@ export interface UploadStats {
  */
 export interface UploadActivity {
   id: string;
-  action: 'uploaded' | 'downloaded' | 'deleted' | 'shared';
+  action: "uploaded" | "downloaded" | "deleted" | "shared";
   fileName: string;
   timestamp: Date;
   userAgent?: string;
@@ -123,7 +123,7 @@ export class UploadManager {
     lgpdManager: LGPDManager,
     sessionManager: SessionManager,
     encryptionService: EncryptionService,
-    config: UploadConfig
+    config: UploadConfig,
   ) {
     this.supabase = supabase;
     this.auditLogger = auditLogger;
@@ -136,15 +136,15 @@ export class UploadManager {
   /**
    * Upload files for a patient
    */
-  async uploadFiles(
-    request: UploadRequest,
-    sessionToken: string
-  ): Promise<UploadResult> {
+  async uploadFiles(request: UploadRequest, sessionToken: string): Promise<UploadResult> {
     try {
       // Validate session
       const sessionValidation = await this.sessionManager.validateSession(sessionToken);
-      if (!sessionValidation.isValid || sessionValidation.session?.patientId !== request.patientId) {
-        throw new Error('Invalid session or unauthorized access');
+      if (
+        !sessionValidation.isValid ||
+        sessionValidation.session?.patientId !== request.patientId
+      ) {
+        throw new Error("Invalid session or unauthorized access");
       }
 
       // Validate upload request
@@ -153,13 +153,13 @@ export class UploadManager {
         return {
           success: false,
           message: validationResult.message,
-          errors: validationResult.errors
+          errors: validationResult.errors,
         };
       }
 
       // Create upload record
       const { data: uploadRecord, error: uploadError } = await this.supabase
-        .from('patient_uploads')
+        .from("patient_uploads")
         .insert({
           patient_id: request.patientId,
           category: request.category,
@@ -167,9 +167,9 @@ export class UploadManager {
           is_private: request.isPrivate,
           tags: request.tags,
           expiration_date: request.expirationDate?.toISOString(),
-          status: 'uploading',
+          status: "uploading",
           total_files: request.files.length,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -188,68 +188,73 @@ export class UploadManager {
           errors.push({
             fileName: file.name,
             error: error.message,
-            code: 'PROCESSING_FAILED'
+            code: "PROCESSING_FAILED",
           });
         }
       }
 
       // Update upload record status
-      const finalStatus = errors.length === 0 ? 'completed' : 
-                         errors.length === request.files.length ? 'failed' : 'partial';
+      const finalStatus =
+        errors.length === 0
+          ? "completed"
+          : errors.length === request.files.length
+            ? "failed"
+            : "partial";
 
       await this.supabase
-        .from('patient_uploads')
+        .from("patient_uploads")
         .update({
           status: finalStatus,
           processed_files: uploadedFiles.length,
           failed_files: errors.length,
-          completed_at: new Date().toISOString()
+          completed_at: new Date().toISOString(),
         })
-        .eq('id', uploadRecord.id);
+        .eq("id", uploadRecord.id);
 
       // Log upload activity
       await this.auditLogger.log({
-        action: 'files_uploaded',
+        action: "files_uploaded",
         userId: request.patientId,
-        userType: 'patient',
+        userType: "patient",
         details: {
           uploadId: uploadRecord.id,
           category: request.category,
           totalFiles: request.files.length,
           successfulFiles: uploadedFiles.length,
-          failedFiles: errors.length
-        }
+          failedFiles: errors.length,
+        },
       });
 
       return {
         success: errors.length < request.files.length,
         uploadId: uploadRecord.id,
         files: uploadedFiles,
-        message: errors.length === 0 ? 
-          'Todos os arquivos foram enviados com sucesso!' :
-          `${uploadedFiles.length} de ${request.files.length} arquivos enviados com sucesso.`,
-        errors: errors.length > 0 ? errors : undefined
+        message:
+          errors.length === 0
+            ? "Todos os arquivos foram enviados com sucesso!"
+            : `${uploadedFiles.length} de ${request.files.length} arquivos enviados com sucesso.`,
+        errors: errors.length > 0 ? errors : undefined,
       };
     } catch (error) {
       await this.auditLogger.log({
-        action: 'upload_failed',
+        action: "upload_failed",
         userId: request.patientId,
-        userType: 'patient',
-        details: { error: error.message }
+        userType: "patient",
+        details: { error: error.message },
       });
       throw error;
     }
-  }  
+  }
   /**
    * Process individual file
    */
   private async processFile(
     file: File,
     uploadId: string,
-    request: UploadRequest
+    request: UploadRequest,
   ): Promise<UploadedFile> {
     // Generate unique file name
-    const fileExtension = file.name.split('.').pop();
+    const fileExtension = file.name.split(".").pop();
     const storedName = `${uploadId}_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExtension}`;
     const filePath = `uploads/${request.patientId}/${request.category}/${storedName}`;
 
@@ -264,7 +269,7 @@ export class UploadManager {
 
     // Upload to Supabase Storage
     const { data: uploadData, error: uploadError } = await this.supabase.storage
-      .from('patient-files')
+      .from("patient-files")
       .upload(filePath, processedBuffer, {
         contentType: file.type,
         metadata: {
@@ -272,15 +277,15 @@ export class UploadManager {
           uploadId: uploadId,
           category: request.category,
           patientId: request.patientId,
-          encrypted: this.config.encryptionEnabled
-        }
+          encrypted: this.config.encryptionEnabled,
+        },
       });
 
     if (uploadError) throw uploadError;
 
     // Create file record
     const { data: fileRecord, error: fileError } = await this.supabase
-      .from('patient_files')
+      .from("patient_files")
       .insert({
         upload_id: uploadId,
         patient_id: request.patientId,
@@ -290,9 +295,9 @@ export class UploadManager {
         size: file.size,
         mime_type: file.type,
         category: request.category,
-        status: 'processing',
+        status: "processing",
         is_encrypted: this.config.encryptionEnabled,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       })
       .select()
       .single();
@@ -312,9 +317,9 @@ export class UploadManager {
       mimeType: file.type,
       category: request.category,
       uploadDate: new Date(),
-      status: 'processing'
+      status: "processing",
     };
-  }  
+  }
   /**
    * Validate upload request
    */
@@ -329,7 +334,7 @@ export class UploadManager {
     if (request.files.length > this.config.maxFilesPerUpload) {
       return {
         isValid: false,
-        message: `Máximo de ${this.config.maxFilesPerUpload} arquivos por upload.`
+        message: `Máximo de ${this.config.maxFilesPerUpload} arquivos por upload.`,
       };
     }
 
@@ -340,7 +345,7 @@ export class UploadManager {
         errors.push({
           fileName: file.name,
           error: `Arquivo excede o tamanho máximo de ${this.formatFileSize(this.config.maxFileSize)}.`,
-          code: 'FILE_TOO_LARGE'
+          code: "FILE_TOO_LARGE",
         });
       }
 
@@ -348,77 +353,79 @@ export class UploadManager {
       if (!this.config.allowedFileTypes.includes(file.type)) {
         errors.push({
           fileName: file.name,
-          error: 'Tipo de arquivo não permitido.',
-          code: 'INVALID_FILE_TYPE'
+          error: "Tipo de arquivo não permitido.",
+          code: "INVALID_FILE_TYPE",
         });
       }
     }
 
     return {
       isValid: errors.length === 0,
-      message: errors.length === 0 ? 'Validação bem-sucedida' : 'Alguns arquivos não passaram na validação.',
-      errors: errors.length > 0 ? errors : undefined
+      message:
+        errors.length === 0
+          ? "Validação bem-sucedida"
+          : "Alguns arquivos não passaram na validação.",
+      errors: errors.length > 0 ? errors : undefined,
     };
-  }  
+  }
   /**
    * Process file in background
    */
   private async processFileBackground(
     fileId: string,
     filePath: string,
-    mimeType: string
+    mimeType: string,
   ): Promise<void> {
     try {
-      let virusScanResult: 'clean' | 'infected' | 'pending' = 'pending';
+      let virusScanResult: "clean" | "infected" | "pending" = "pending";
       let thumbnailUrl: string | undefined;
 
       // Virus scan if enabled
       if (this.config.virusScanEnabled) {
         virusScanResult = await this.performVirusScan(filePath);
-        
-        if (virusScanResult === 'infected') {
+
+        if (virusScanResult === "infected") {
           await this.quarantineFile(fileId);
           return;
         }
       } else {
-        virusScanResult = 'clean';
+        virusScanResult = "clean";
       }
 
       // Generate thumbnail for images
-      if (this.config.thumbnailGeneration && mimeType.startsWith('image/')) {
+      if (this.config.thumbnailGeneration && mimeType.startsWith("image/")) {
         thumbnailUrl = await this.generateThumbnail(filePath);
       }
 
       // Update file status
       await this.supabase
-        .from('patient_files')
+        .from("patient_files")
         .update({
-          status: 'completed',
+          status: "completed",
           virus_scan_result: virusScanResult,
           thumbnail_url: thumbnailUrl,
-          processed_at: new Date().toISOString()
+          processed_at: new Date().toISOString(),
         })
-        .eq('id', fileId);
-
+        .eq("id", fileId);
     } catch (error) {
       // Mark file as failed
       await this.supabase
-        .from('patient_files')
+        .from("patient_files")
         .update({
-          status: 'failed',
+          status: "failed",
           error_message: error.message,
-          processed_at: new Date().toISOString()
+          processed_at: new Date().toISOString(),
         })
-        .eq('id', fileId);
+        .eq("id", fileId);
     }
-  }  
+  }
   /**
    * Perform virus scan (placeholder - integrate with actual antivirus service)
    */
-  private async performVirusScan(filePath: string): Promise<'clean' | 'infected' | 'pending'> {
+  private async performVirusScan(filePath: string): Promise<"clean" | "infected" | "pending"> {
     // This would integrate with an actual antivirus service
     // For now, return clean as placeholder
-    return 'clean';
+    return "clean";
   }
 
   /**
@@ -435,45 +442,42 @@ export class UploadManager {
    */
   private async quarantineFile(fileId: string): Promise<void> {
     await this.supabase
-      .from('patient_files')
+      .from("patient_files")
       .update({
-        status: 'quarantined',
-        virus_scan_result: 'infected',
-        processed_at: new Date().toISOString()
+        status: "quarantined",
+        virus_scan_result: "infected",
+        processed_at: new Date().toISOString(),
       })
-      .eq('id', fileId);
+      .eq("id", fileId);
   }
 
   /**
    * Format file size for display
    */
   private formatFileSize(bytes: number): string {
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    if (bytes === 0) return '0 Bytes';
+    const sizes = ["Bytes", "KB", "MB", "GB"];
+    if (bytes === 0) return "0 Bytes";
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+    return Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + " " + sizes[i];
   }
 
   /**
    * Get upload statistics for a patient
    */
-  async getUploadStats(
-    patientId: string,
-    sessionToken: string
-  ): Promise<UploadStats> {
+  async getUploadStats(patientId: string, sessionToken: string): Promise<UploadStats> {
     // Validate session
     const sessionValidation = await this.sessionManager.validateSession(sessionToken);
     if (!sessionValidation.isValid || sessionValidation.session?.patientId !== patientId) {
-      throw new Error('Invalid session or unauthorized access');
+      throw new Error("Invalid session or unauthorized access");
     }
 
     const { data: uploads, error } = await this.supabase
-      .from('patient_uploads')
+      .from("patient_uploads")
       .select(`
         *,
         patient_files(*)
       `)
-      .eq('patient_id', patientId);
+      .eq("patient_id", patientId);
 
     if (error) throw error;
 
@@ -482,16 +486,16 @@ export class UploadManager {
       totalSize: 0,
       byCategory: {},
       byStatus: {},
-      recentActivity: []
+      recentActivity: [],
     };
 
-    uploads.forEach(upload => {
+    uploads.forEach((upload) => {
       // Count by category
       stats.byCategory[upload.category] = (stats.byCategory[upload.category] || 0) + 1;
-      
+
       // Count by status
       stats.byStatus[upload.status] = (stats.byStatus[upload.status] || 0) + 1;
-      
+
       // Calculate total size
       if (upload.patient_files) {
         upload.patient_files.forEach((file: any) => {

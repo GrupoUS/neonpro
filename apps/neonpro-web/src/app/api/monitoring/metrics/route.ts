@@ -1,28 +1,30 @@
 /**
  * TASK-001: Foundation Setup & Baseline
  * Metrics Collection API
- * 
+ *
  * Provides comprehensive metrics collection for baseline establishment
  * and ongoing performance monitoring across all epic functionality.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { recordPerformanceMetric, getPerformanceMetrics } from '@/lib/monitoring/performance';
+import type { NextRequest, NextResponse } from "next/server";
+import type { createClient } from "@/lib/supabase/server";
+import type { recordPerformanceMetric, getPerformanceMetrics } from "@/lib/monitoring/performance";
 
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const searchParams = request.nextUrl.searchParams;
-    const metric_type = searchParams.get('type');
-    const timeframe = searchParams.get('timeframe') || '24h';
-    const limit = parseInt(searchParams.get('limit') || '100');
+    const metric_type = searchParams.get("type");
+    const timeframe = searchParams.get("timeframe") || "24h";
+    const limit = parseInt(searchParams.get("limit") || "100");
 
     // Get performance metrics based on filters
     const metrics = await getPerformanceMetrics({
@@ -49,40 +51,31 @@ export async function GET(request: NextRequest) {
         total_count: metrics.length,
       },
     });
-
   } catch (error) {
-    console.error('Error fetching metrics:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch metrics' },
-      { status: 500 }
-    );
+    console.error("Error fetching metrics:", error);
+    return NextResponse.json({ error: "Failed to fetch metrics" }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
-    const {
-      route_path,
-      metric_type,
-      duration_ms,
-      status_code,
-      error_message,
-      metadata
-    } = body;
+    const { route_path, metric_type, duration_ms, status_code, error_message, metadata } = body;
 
     // Validate required fields
     if (!route_path || !metric_type || duration_ms === undefined) {
       return NextResponse.json(
-        { error: 'Missing required fields: route_path, metric_type, duration_ms' },
-        { status: 400 }
+        { error: "Missing required fields: route_path, metric_type, duration_ms" },
+        { status: 400 },
       );
     }
 
@@ -99,15 +92,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: { metric },
-      message: 'Metric recorded successfully',
+      message: "Metric recorded successfully",
     });
-
   } catch (error) {
-    console.error('Error recording metric:', error);
-    return NextResponse.json(
-      { error: 'Failed to record metric' },
-      { status: 500 }
-    );
+    console.error("Error recording metric:", error);
+    return NextResponse.json({ error: "Failed to record metric" }, { status: 500 });
   }
 }
 
@@ -123,8 +112,8 @@ function calculateMetricStats(metrics: any[]) {
     };
   }
 
-  const durations = metrics.map(m => m.duration_ms).sort((a, b) => a - b);
-  const errorCount = metrics.filter(m => m.error_message).length;
+  const durations = metrics.map((m) => m.duration_ms).sort((a, b) => a - b);
+  const errorCount = metrics.filter((m) => m.error_message).length;
 
   return {
     count: metrics.length,

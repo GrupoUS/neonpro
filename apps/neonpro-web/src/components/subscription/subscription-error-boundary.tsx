@@ -1,140 +1,144 @@
 /**
  * Subscription Error Boundary Component
- * 
+ *
  * React Error Boundary specifically designed for subscription-related components:
  * - Catches JavaScript errors in subscription components
  * - Provides user-friendly error messages
  * - Integrates with centralized error handling
  * - Supports error recovery and retry mechanisms
  * - Performance monitoring integration
- * 
+ *
  * @author NeonPro Development Team
  * @version 2.0.0 - Error Handling Enhanced
  */
 
-'use client'
+"use client";
 
-import React, { Component, ErrorInfo, ReactNode } from 'react'
-import { Button } from '@/components/ui/button'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { AlertCircle, RefreshCw, AlertTriangle } from 'lucide-react'
-import { subscriptionErrorHandler } from '@/lib/subscription-error-handler'
-import { SubscriptionErrorFactory, ErrorSeverity } from '@/types/subscription-errors'
+import React, { Component, ErrorInfo, ReactNode } from "react";
+import type { Button } from "@/components/ui/button";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { AlertCircle, RefreshCw, AlertTriangle } from "lucide-react";
+import type { subscriptionErrorHandler } from "@/lib/subscription-error-handler";
+import type { SubscriptionErrorFactory, ErrorSeverity } from "@/types/subscription-errors";
 
 interface SubscriptionErrorBoundaryState {
-  hasError: boolean
-  error?: Error
-  errorInfo?: ErrorInfo
-  retryCount: number
-  isRecovering: boolean
-  userMessage: string
-  canRetry: boolean
-}interface SubscriptionErrorBoundaryProps {
-  children: ReactNode
-  fallback?: ReactNode
-  onError?: (error: Error, errorInfo: ErrorInfo) => void
-  maxRetries?: number
-  showDetails?: boolean
-  componentName?: string
-  enableRecovery?: boolean
-  customErrorMessage?: string
+  hasError: boolean;
+  error?: Error;
+  errorInfo?: ErrorInfo;
+  retryCount: number;
+  isRecovering: boolean;
+  userMessage: string;
+  canRetry: boolean;
+}
+interface SubscriptionErrorBoundaryProps {
+  children: ReactNode;
+  fallback?: ReactNode;
+  onError?: (error: Error, errorInfo: ErrorInfo) => void;
+  maxRetries?: number;
+  showDetails?: boolean;
+  componentName?: string;
+  enableRecovery?: boolean;
+  customErrorMessage?: string;
 }
 
 export class SubscriptionErrorBoundary extends Component<
   SubscriptionErrorBoundaryProps,
   SubscriptionErrorBoundaryState
 > {
-  private retryTimeouts: NodeJS.Timeout[] = []
+  private retryTimeouts: NodeJS.Timeout[] = [];
 
   constructor(props: SubscriptionErrorBoundaryProps) {
-    super(props)
+    super(props);
     this.state = {
       hasError: false,
       retryCount: 0,
       isRecovering: false,
-      userMessage: '',
-      canRetry: true
-    }
+      userMessage: "",
+      canRetry: true,
+    };
   }
 
   static getDerivedStateFromError(error: Error): Partial<SubscriptionErrorBoundaryState> {
     return {
       hasError: true,
       error,
-      userMessage: 'Something went wrong with the subscription system.',
-      canRetry: true
-    }
-  }  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+      userMessage: "Something went wrong with the subscription system.",
+      canRetry: true,
+    };
+  }
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log error using centralized error handler
     const subscriptionError = SubscriptionErrorFactory.createError(
-      'validation',
+      "validation",
       `React Error Boundary: ${error.message}`,
       {
         additionalContext: {
-          componentName: this.props.componentName || 'SubscriptionComponent',
+          componentName: this.props.componentName || "SubscriptionComponent",
           errorInfo: errorInfo.componentStack,
-          retryCount: this.state.retryCount
-        }
-      }
-    )
+          retryCount: this.state.retryCount,
+        },
+      },
+    );
 
     // Handle error through centralized system
     subscriptionErrorHandler.handleError(subscriptionError, async () => {
       // This is just for logging, no recovery operation
-      return Promise.resolve()
-    })
+      return Promise.resolve();
+    });
 
     // Update state
     this.setState({
       error,
       errorInfo,
       userMessage: this.getUserFriendlyMessage(error),
-      canRetry: this.canRetryError(error)
-    })
+      canRetry: this.canRetryError(error),
+    });
 
     // Call custom error handler if provided
     if (this.props.onError) {
-      this.props.onError(error, errorInfo)
+      this.props.onError(error, errorInfo);
     }
-  }  private getUserFriendlyMessage(error: Error): string {
-    const message = error.message.toLowerCase()
-    
-    if (message.includes('network') || message.includes('fetch')) {
-      return 'Connection issue detected. Please check your internet connection.'
+  }
+  private getUserFriendlyMessage(error: Error): string {
+    const message = error.message.toLowerCase();
+
+    if (message.includes("network") || message.includes("fetch")) {
+      return "Connection issue detected. Please check your internet connection.";
     }
-    
-    if (message.includes('auth') || message.includes('unauthorized')) {
-      return 'Authentication required. Please log in to continue.'
+
+    if (message.includes("auth") || message.includes("unauthorized")) {
+      return "Authentication required. Please log in to continue.";
     }
-    
-    if (message.includes('subscription') || message.includes('payment')) {
-      return 'Issue with subscription service. Please try again shortly.'
+
+    if (message.includes("subscription") || message.includes("payment")) {
+      return "Issue with subscription service. Please try again shortly.";
     }
-    
-    return this.props.customErrorMessage || 'An unexpected error occurred. Please try again.'
+
+    return this.props.customErrorMessage || "An unexpected error occurred. Please try again.";
   }
 
   private canRetryError(error: Error): boolean {
-    const message = error.message.toLowerCase()
-    
+    const message = error.message.toLowerCase();
+
     // Don't retry auth errors or critical system errors
-    if (message.includes('auth') || message.includes('critical')) {
-      return false
-    }
-    
-    return this.state.retryCount < (this.props.maxRetries || 3)
-  }  private handleRetry = async (): Promise<void> => {
-    if (!this.state.canRetry || this.state.isRecovering) {
-      return
+    if (message.includes("auth") || message.includes("critical")) {
+      return false;
     }
 
-    this.setState({ isRecovering: true })
+    return this.state.retryCount < (this.props.maxRetries || 3);
+  }
+  private handleRetry = async (): Promise<void> => {
+    if (!this.state.canRetry || this.state.isRecovering) {
+      return;
+    }
+
+    this.setState({ isRecovering: true });
 
     try {
       // Wait a bit before retrying
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       // Reset error state to trigger re-render
       this.setState({
         hasError: false,
@@ -142,27 +146,27 @@ export class SubscriptionErrorBoundary extends Component<
         errorInfo: undefined,
         retryCount: this.state.retryCount + 1,
         isRecovering: false,
-        userMessage: '',
-        canRetry: true
-      })
+        userMessage: "",
+        canRetry: true,
+      });
     } catch (retryError) {
       this.setState({
         isRecovering: false,
-        userMessage: 'Retry failed. Please refresh the page.',
-        canRetry: false
-      })
+        userMessage: "Retry failed. Please refresh the page.",
+        canRetry: false,
+      });
     }
-  }
+  };
 
   private handleRefresh = (): void => {
-    window.location.reload()
-  }
+    window.location.reload();
+  };
 
   render(): ReactNode {
     if (this.state.hasError) {
       // Show custom fallback if provided
       if (this.props.fallback) {
-        return this.props.fallback
+        return this.props.fallback;
       }
 
       // Default error UI
@@ -178,22 +182,18 @@ export class SubscriptionErrorBoundary extends Component<
             <Alert>
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Something went wrong</AlertTitle>
-              <AlertDescription className="mt-2">
-                {this.state.userMessage}
-              </AlertDescription>
+              <AlertDescription className="mt-2">{this.state.userMessage}</AlertDescription>
             </Alert>
-
             {this.props.showDetails && this.state.error && (
               <details className="text-sm text-muted-foreground">
-                <summary className="cursor-pointer font-medium">
-                  Technical Details
-                </summary>
+                <summary className="cursor-pointer font-medium">Technical Details</summary>
                 <pre className="mt-2 p-2 bg-muted rounded text-xs overflow-auto">
                   {this.state.error.message}
                   {this.state.errorInfo?.componentStack}
                 </pre>
               </details>
-            )}            <div className="flex flex-col gap-2">
+            )}{" "}
+            <div className="flex flex-col gap-2">
               {this.state.canRetry && (
                 <Button
                   onClick={this.handleRetry}
@@ -214,30 +214,26 @@ export class SubscriptionErrorBoundary extends Component<
                   )}
                 </Button>
               )}
-              
-              <Button
-                onClick={this.handleRefresh}
-                variant="outline"
-                className="w-full"
-              >
+
+              <Button onClick={this.handleRefresh} variant="outline" className="w-full">
                 Refresh Page
               </Button>
             </div>
           </CardContent>
         </Card>
-      )
+      );
     }
 
-    return this.props.children
+    return this.props.children;
   }
 
   componentWillUnmount() {
     // Clean up any retry timeouts
-    this.retryTimeouts.forEach(timeout => clearTimeout(timeout))
+    this.retryTimeouts.forEach((timeout) => clearTimeout(timeout));
   }
-}// Specialized Error Boundary for different subscription contexts
+} // Specialized Error Boundary for different subscription contexts
 export const SubscriptionStatusErrorBoundary: React.FC<{
-  children: ReactNode
+  children: ReactNode;
 }> = ({ children }) => (
   <SubscriptionErrorBoundary
     componentName="SubscriptionStatus"
@@ -247,10 +243,10 @@ export const SubscriptionStatusErrorBoundary: React.FC<{
   >
     {children}
   </SubscriptionErrorBoundary>
-)
+);
 
 export const SubscriptionPaymentErrorBoundary: React.FC<{
-  children: ReactNode
+  children: ReactNode;
 }> = ({ children }) => (
   <SubscriptionErrorBoundary
     componentName="SubscriptionPayment"
@@ -261,21 +257,20 @@ export const SubscriptionPaymentErrorBoundary: React.FC<{
   >
     {children}
   </SubscriptionErrorBoundary>
-)
+);
 
 // Higher-order component for easy wrapping
 export function withSubscriptionErrorBoundary<P extends object>(
   WrappedComponent: React.ComponentType<P>,
-  options?: Partial<SubscriptionErrorBoundaryProps>
+  options?: Partial<SubscriptionErrorBoundaryProps>,
 ) {
   const ComponentWithErrorBoundary = (props: P) => (
     <SubscriptionErrorBoundary {...options}>
       <WrappedComponent {...props} />
     </SubscriptionErrorBoundary>
-  )
+  );
 
-  ComponentWithErrorBoundary.displayName = 
-    `withSubscriptionErrorBoundary(${WrappedComponent.displayName || WrappedComponent.name})`
+  ComponentWithErrorBoundary.displayName = `withSubscriptionErrorBoundary(${WrappedComponent.displayName || WrappedComponent.name})`;
 
-  return ComponentWithErrorBoundary
+  return ComponentWithErrorBoundary;
 }

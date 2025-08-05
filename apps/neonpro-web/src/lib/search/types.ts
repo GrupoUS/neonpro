@@ -18,24 +18,24 @@ export interface SearchQuery {
     limit?: number;
     offset?: number;
     sortBy?: string;
-    sortOrder?: 'asc' | 'desc';
+    sortOrder?: "asc" | "desc";
     fuzzy?: boolean;
     highlight?: boolean;
     useNLP?: boolean;
   };
 }
 
-export type SearchType = 
-  | 'patients' 
-  | 'appointments' 
-  | 'medical_records' 
-  | 'lab_results' 
-  | 'medications' 
-  | 'documents' 
-  | 'insights' 
-  | 'timeline_events'
-  | 'duplicates'
-  | 'photos';
+export type SearchType =
+  | "patients"
+  | "appointments"
+  | "medical_records"
+  | "lab_results"
+  | "medications"
+  | "documents"
+  | "insights"
+  | "timeline_events"
+  | "duplicates"
+  | "photos";
 
 export interface SearchResult {
   id: string;
@@ -68,7 +68,7 @@ export interface NLPSearchQuery {
     value: string;
     confidence: number;
   }[];
-  sentiment: 'positive' | 'negative' | 'neutral';
+  sentiment: "positive" | "negative" | "neutral";
   confidence: number;
 }
 
@@ -81,7 +81,7 @@ export interface SearchContext {
 }
 
 export interface NLPInsights {
-  queryComplexity: 'simple' | 'moderate' | 'complex';
+  queryComplexity: "simple" | "moderate" | "complex";
   suggestedFilters: string[];
   relatedQueries: string[];
   confidence: number;
@@ -107,7 +107,7 @@ export interface GlobalSearchStats {
   totalIndexedItems: number;
   searchTrends: Array<{
     query: string;
-    trend: 'up' | 'down' | 'stable';
+    trend: "up" | "down" | "stable";
     changePercent: number;
   }>;
 }

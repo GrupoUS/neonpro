@@ -4,32 +4,44 @@
  * Created: January 24, 2025
  */
 
-'use client';
+"use client";
 
-import { useState, useMemo } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Progress } from '@/components/ui/progress';
-import { 
-  User, 
-  Phone, 
-  Mail, 
-  Calendar, 
-  DollarSign, 
-  TrendingUp, 
+import type { useState, useMemo } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import type { Progress } from "@/components/ui/progress";
+import type {
+  User,
+  Phone,
+  Mail,
+  Calendar,
+  DollarSign,
+  TrendingUp,
   AlertTriangle,
   Heart,
   MessageSquare,
   Clock,
-  Star
-} from 'lucide-react';
-import {
+  Star,
+} from "lucide-react";
+import type {
   Customer,
   Appointment,
   LeadScore,
@@ -39,8 +51,8 @@ import {
   predictChurnRisk,
   calculateCustomerLifetimeValue,
   determineNextFollowUpDate,
-  generateFollowUpMessage
-} from './utils';
+  generateFollowUpMessage,
+} from "./utils";
 
 interface CustomerManagementProps {
   customers?: Customer[];
@@ -55,25 +67,26 @@ export function CustomerManagement({
   appointments = [],
   onCustomerSelect,
   onFollowUpSchedule,
-  className = ''
+  className = "",
 }: CustomerManagementProps) {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState<string>('all');
-  const [filterLifecycle, setFilterLifecycle] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [filterLifecycle, setFilterLifecycle] = useState<string>("all");
 
   // Filter and search customers
   const filteredCustomers = useMemo(() => {
-    return customers.filter(customer => {
-      const matchesSearch = customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           customer.phone.includes(searchTerm);
-      
-      const matchesStatus = filterStatus === 'all' || customer.status === filterStatus;
-      
+    return customers.filter((customer) => {
+      const matchesSearch =
+        customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        customer.phone.includes(searchTerm);
+
+      const matchesStatus = filterStatus === "all" || customer.status === filterStatus;
+
       const lifecycle = determineCustomerLifecycle(customer);
-      const matchesLifecycle = filterLifecycle === 'all' || lifecycle === filterLifecycle;
-      
+      const matchesLifecycle = filterLifecycle === "all" || lifecycle === filterLifecycle;
+
       return matchesSearch && matchesStatus && matchesLifecycle;
     });
   }, [customers, searchTerm, filterStatus, filterLifecycle]);
@@ -81,25 +94,27 @@ export function CustomerManagement({
   // Calculate customer analytics
   const customerAnalytics = useMemo(() => {
     const totalCustomers = customers.length;
-    const activeCustomers = customers.filter(c => c.status === 'active').length;
-    const averageLifetimeValue = customers.reduce((sum, c) => sum + c.totalSpent, 0) / totalCustomers;
-    const averageSatisfaction = customers
-      .filter(c => c.satisfactionRating)
-      .reduce((sum, c) => sum + (c.satisfactionRating || 0), 0) / 
-      customers.filter(c => c.satisfactionRating).length;
+    const activeCustomers = customers.filter((c) => c.status === "active").length;
+    const averageLifetimeValue =
+      customers.reduce((sum, c) => sum + c.totalSpent, 0) / totalCustomers;
+    const averageSatisfaction =
+      customers
+        .filter((c) => c.satisfactionRating)
+        .reduce((sum, c) => sum + (c.satisfactionRating || 0), 0) /
+      customers.filter((c) => c.satisfactionRating).length;
 
     return {
       totalCustomers,
       activeCustomers,
       averageLifetimeValue: averageLifetimeValue || 0,
       averageSatisfaction: averageSatisfaction || 0,
-      retentionRate: totalCustomers > 0 ? (activeCustomers / totalCustomers) * 100 : 0
+      retentionRate: totalCustomers > 0 ? (activeCustomers / totalCustomers) * 100 : 0,
     };
   }, [customers]);
 
   // Get customer appointments
   const getCustomerAppointments = (customerId: string) => {
-    return appointments.filter(apt => apt.customerId === customerId);
+    return appointments.filter((apt) => apt.customerId === customerId);
   };
 
   // Handle customer selection
@@ -114,7 +129,7 @@ export function CustomerManagement({
     const lastContactDate = customer.lastVisitDate || customer.registrationDate;
     const followUpDate = determineNextFollowUpDate(lastContactDate, lifecycle);
     const message = generateFollowUpMessage(customer, context);
-    
+
     onFollowUpSchedule?.(customer.id, followUpDate, message);
   };
 
@@ -125,33 +140,42 @@ export function CustomerManagement({
     const lifecycle = determineCustomerLifecycle(customer);
     const churnRisk = predictChurnRisk(customer);
     const lifetimeValue = calculateCustomerLifetimeValue(customerAppointments);
-    
-    const daysSinceLastVisit = customer.lastVisitDate 
+
+    const daysSinceLastVisit = customer.lastVisitDate
       ? calculateDaysSinceLastVisit(customer.lastVisitDate)
       : null;
 
     const getLifecycleColor = (lifecycle: string) => {
       switch (lifecycle) {
-        case 'new': return 'bg-blue-100 text-blue-800';
-        case 'active': return 'bg-green-100 text-green-800';
-        case 'at-risk': return 'bg-yellow-100 text-yellow-800';
-        case 'churned': return 'bg-red-100 text-red-800';
-        default: return 'bg-gray-100 text-gray-800';
+        case "new":
+          return "bg-blue-100 text-blue-800";
+        case "active":
+          return "bg-green-100 text-green-800";
+        case "at-risk":
+          return "bg-yellow-100 text-yellow-800";
+        case "churned":
+          return "bg-red-100 text-red-800";
+        default:
+          return "bg-gray-100 text-gray-800";
       }
     };
 
     const getPriorityColor = (priority: string) => {
       switch (priority) {
-        case 'high': return 'bg-red-100 text-red-800';
-        case 'medium': return 'bg-yellow-100 text-yellow-800';
-        case 'low': return 'bg-green-100 text-green-800';
-        default: return 'bg-gray-100 text-gray-800';
+        case "high":
+          return "bg-red-100 text-red-800";
+        case "medium":
+          return "bg-yellow-100 text-yellow-800";
+        case "low":
+          return "bg-green-100 text-green-800";
+        default:
+          return "bg-gray-100 text-gray-800";
       }
     };
 
     return (
-      <Card 
-        key={customer.id} 
+      <Card
+        key={customer.id}
         className="cursor-pointer hover:shadow-md transition-shadow"
         onClick={() => handleCustomerSelect(customer)}
       >
@@ -159,7 +183,12 @@ export function CustomerManagement({
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Avatar>
-                <AvatarFallback>{customer.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                <AvatarFallback>
+                  {customer.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")}
+                </AvatarFallback>
               </Avatar>
               <div>
                 <CardTitle className="text-lg">{customer.name}</CardTitle>
@@ -202,13 +231,13 @@ export function CustomerManagement({
               <span>{churnRisk.toFixed(0)}% risk</span>
             </div>
           </div>
-          
+
           {daysSinceLastVisit !== null && (
             <div className="mt-3 text-xs text-gray-500">
               Last visit: {daysSinceLastVisit} days ago
             </div>
           )}
-          
+
           {customer.satisfactionRating && (
             <div className="mt-2 flex items-center space-x-1">
               {[1, 2, 3, 4, 5].map((star) => (
@@ -216,14 +245,12 @@ export function CustomerManagement({
                   key={star}
                   className={`h-3 w-3 ${
                     star <= customer.satisfactionRating!
-                      ? 'text-yellow-400 fill-current'
-                      : 'text-gray-300'
+                      ? "text-yellow-400 fill-current"
+                      : "text-gray-300"
                   }`}
                 />
               ))}
-              <span className="text-xs text-gray-500 ml-1">
-                ({customer.satisfactionRating}/5)
-              </span>
+              <span className="text-xs text-gray-500 ml-1">({customer.satisfactionRating}/5)</span>
             </div>
           )}
         </CardContent>
@@ -247,18 +274,18 @@ export function CustomerManagement({
             <p className="text-gray-600">{customer.email}</p>
           </div>
           <div className="flex space-x-2">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="sm"
-              onClick={() => handleScheduleFollowUp(customer, 'appointment')}
+              onClick={() => handleScheduleFollowUp(customer, "appointment")}
             >
               <MessageSquare className="h-4 w-4 mr-2" />
               Schedule Follow-up
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="sm"
-              onClick={() => handleScheduleFollowUp(customer, 'satisfaction')}
+              onClick={() => handleScheduleFollowUp(customer, "satisfaction")}
             >
               <Star className="h-4 w-4 mr-2" />
               Request Feedback
@@ -295,10 +322,9 @@ export function CustomerManagement({
             <CardContent>
               <div className="text-lg font-semibold capitalize">{lifecycle}</div>
               <p className="text-xs text-gray-500">
-                {customer.lastVisitDate 
+                {customer.lastVisitDate
                   ? `Last visit: ${calculateDaysSinceLastVisit(customer.lastVisitDate)} days ago`
-                  : 'No visits yet'
-                }
+                  : "No visits yet"}
               </p>
             </CardContent>
           </Card>
@@ -309,12 +335,13 @@ export function CustomerManagement({
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{churnRisk.toFixed(0)}%</div>
-              <Progress 
-                value={churnRisk} 
+              <Progress
+                value={churnRisk}
                 className="mt-2"
                 // @ts-ignore
                 style={{
-                  '--progress-background': churnRisk > 60 ? '#ef4444' : churnRisk > 30 ? '#f59e0b' : '#10b981'
+                  "--progress-background":
+                    churnRisk > 60 ? "#ef4444" : churnRisk > 30 ? "#f59e0b" : "#10b981",
                 }}
               />
             </CardContent>
@@ -348,7 +375,9 @@ export function CustomerManagement({
                   </div>
                   <div>
                     <Label>Registration Date</Label>
-                    <div className="mt-1">{new Date(customer.registrationDate).toLocaleDateString()}</div>
+                    <div className="mt-1">
+                      {new Date(customer.registrationDate).toLocaleDateString()}
+                    </div>
                   </div>
                   <div>
                     <Label>Lead Source</Label>
@@ -360,7 +389,9 @@ export function CustomerManagement({
                     <Label>Tags</Label>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {customer.tags.map((tag, index) => (
-                        <Badge key={index} variant="secondary">{tag}</Badge>
+                        <Badge key={index} variant="secondary">
+                          {tag}
+                        </Badge>
                       ))}
                     </div>
                   </div>
@@ -379,7 +410,9 @@ export function CustomerManagement({
             <Card>
               <CardHeader>
                 <CardTitle>Lead Score Breakdown</CardTitle>
-                <CardDescription>Score factors contributing to overall lead quality</CardDescription>
+                <CardDescription>
+                  Score factors contributing to overall lead quality
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-3">
@@ -428,7 +461,10 @@ export function CustomerManagement({
                     <p className="text-gray-500 text-center py-4">No appointments found</p>
                   ) : (
                     customerAppointments.slice(0, 5).map((appointment) => (
-                      <div key={appointment.id} className="flex items-center justify-between p-3 border rounded">
+                      <div
+                        key={appointment.id}
+                        className="flex items-center justify-between p-3 border rounded"
+                      >
                         <div>
                           <div className="font-medium">{appointment.service}</div>
                           <div className="text-sm text-gray-500">
@@ -437,10 +473,15 @@ export function CustomerManagement({
                         </div>
                         <div className="text-right">
                           <div className="font-medium">${appointment.cost.toFixed(2)}</div>
-                          <Badge variant={
-                            appointment.status === 'completed' ? 'default' :
-                            appointment.status === 'cancelled' ? 'destructive' : 'secondary'
-                          }>
+                          <Badge
+                            variant={
+                              appointment.status === "completed"
+                                ? "default"
+                                : appointment.status === "cancelled"
+                                  ? "destructive"
+                                  : "secondary"
+                            }
+                          >
                             {appointment.status}
                           </Badge>
                         </div>
@@ -481,7 +522,9 @@ export function CustomerManagement({
             <CardTitle className="text-sm">Avg Lifetime Value</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${customerAnalytics.averageLifetimeValue.toFixed(2)}</div>
+            <div className="text-2xl font-bold">
+              ${customerAnalytics.averageLifetimeValue.toFixed(2)}
+            </div>
           </CardContent>
         </Card>
         <Card>
@@ -497,7 +540,9 @@ export function CustomerManagement({
             <CardTitle className="text-sm">Avg Satisfaction</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{customerAnalytics.averageSatisfaction.toFixed(1)}/5</div>
+            <div className="text-2xl font-bold">
+              {customerAnalytics.averageSatisfaction.toFixed(1)}/5
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -551,11 +596,7 @@ export function CustomerManagement({
       {/* Customer Details or Customer List */}
       {selectedCustomer ? (
         <div>
-          <Button 
-            variant="outline" 
-            onClick={() => setSelectedCustomer(null)}
-            className="mb-4"
-          >
+          <Button variant="outline" onClick={() => setSelectedCustomer(null)} className="mb-4">
             ← Back to Customer List
           </Button>
           {renderCustomerDetails(selectedCustomer)}
@@ -563,9 +604,7 @@ export function CustomerManagement({
       ) : (
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold">
-              Customers ({filteredCustomers.length})
-            </h3>
+            <h3 className="text-lg font-semibold">Customers ({filteredCustomers.length})</h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredCustomers.map(renderCustomerCard)}

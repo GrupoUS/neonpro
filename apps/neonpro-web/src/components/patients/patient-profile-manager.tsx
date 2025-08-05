@@ -1,345 +1,364 @@
-'use client'
+"use client";
 
-import React, { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Progress } from '@/components/ui/progress'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Separator } from '@/components/ui/separator'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { cn } from '@/lib/utils'
-import { format } from 'date-fns'
-import { 
-  User, 
-  Phone, 
-  Mail, 
-  MapPin, 
-  Calendar, 
-  Clock, 
-  Heart, 
-  Activity, 
-  FileText, 
-  Camera, 
-  Stethoscope, 
-  Pill, 
-  AlertTriangle, 
-  CheckCircle, 
-  XCircle, 
-  Info, 
-  Star, 
-  Target, 
-  TrendingUp, 
-  TrendingDown, 
-  Edit, 
-  Save, 
-  X, 
-  Plus, 
-  Eye, 
-  Download, 
-  Print, 
-  Share2, 
-  Settings, 
-  Shield, 
-  Lock, 
-  Unlock, 
-  UserCheck, 
-  UserX, 
-  AlertCircle, 
-  Bell, 
-  BellOff, 
-  Bookmark, 
-  BookmarkCheck, 
-  Flag, 
-  MessageSquare, 
-  Phone as PhoneIcon, 
-  Video, 
-  Calendar as CalendarIcon, 
-  Clock as ClockIcon, 
-  History, 
-  BarChart3, 
-  PieChart, 
-  LineChart, 
-  Filter, 
-  Search, 
-  RefreshCw, 
-  MoreHorizontal, 
-  ChevronRight, 
-  ChevronDown, 
-  ExternalLink
-} from 'lucide-react'
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Badge } from "@/components/ui/badge";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Progress } from "@/components/ui/progress";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Separator } from "@/components/ui/separator";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { cn } from "@/lib/utils";
+import type { format } from "date-fns";
+import type {
+  User,
+  Phone,
+  Mail,
+  MapPin,
+  Calendar,
+  Clock,
+  Heart,
+  Activity,
+  FileText,
+  Camera,
+  Stethoscope,
+  Pill,
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  Info,
+  Star,
+  Target,
+  TrendingUp,
+  TrendingDown,
+  Edit,
+  Save,
+  X,
+  Plus,
+  Eye,
+  Download,
+  Print,
+  Share2,
+  Settings,
+  Shield,
+  Lock,
+  Unlock,
+  UserCheck,
+  UserX,
+  AlertCircle,
+  Bell,
+  BellOff,
+  Bookmark,
+  BookmarkCheck,
+  Flag,
+  MessageSquare,
+  Phone as PhoneIcon,
+  Video,
+  Calendar as CalendarIcon,
+  Clock as ClockIcon,
+  History,
+  BarChart3,
+  PieChart,
+  LineChart,
+  Filter,
+  Search,
+  RefreshCw,
+  MoreHorizontal,
+  ChevronRight,
+  ChevronDown,
+  ExternalLink,
+} from "lucide-react";
 
 // Import our custom components
-import MedicalHistoryManager from './medical-history/medical-history-manager'
-import TreatmentPlanManager from './treatment-plans/treatment-plan-manager'
-import ProgressTrackingManager from './progress-tracking/progress-tracking-manager'
+import MedicalHistoryManager from "./medical-history/medical-history-manager";
+import TreatmentPlanManager from "./treatment-plans/treatment-plan-manager";
+import ProgressTrackingManager from "./progress-tracking/progress-tracking-manager";
 
 // Types based on FHIR R4 and existing schemas
 interface PatientProfile {
-  id: string
+  id: string;
   // Basic Demographics (FHIR Patient)
   identifier: {
-    system: string
-    value: string
-    type: 'CPF' | 'RG' | 'CNS' | 'passport' | 'medical_record'
-  }[]
-  active: boolean
+    system: string;
+    value: string;
+    type: "CPF" | "RG" | "CNS" | "passport" | "medical_record";
+  }[];
+  active: boolean;
   name: {
-    use: 'official' | 'usual' | 'nickname' | 'maiden'
-    family: string
-    given: string[]
-    prefix?: string[]
-    suffix?: string[]
-  }[]
+    use: "official" | "usual" | "nickname" | "maiden";
+    family: string;
+    given: string[];
+    prefix?: string[];
+    suffix?: string[];
+  }[];
   telecom: {
-    system: 'phone' | 'email' | 'fax' | 'pager' | 'url' | 'sms' | 'other'
-    value: string
-    use: 'home' | 'work' | 'temp' | 'old' | 'mobile'
-    rank?: number
-  }[]
-  gender: 'male' | 'female' | 'other' | 'unknown'
-  birthDate: Date
-  deceased?: boolean | Date
+    system: "phone" | "email" | "fax" | "pager" | "url" | "sms" | "other";
+    value: string;
+    use: "home" | "work" | "temp" | "old" | "mobile";
+    rank?: number;
+  }[];
+  gender: "male" | "female" | "other" | "unknown";
+  birthDate: Date;
+  deceased?: boolean | Date;
   address: {
-    use: 'home' | 'work' | 'temp' | 'old' | 'billing'
-    type: 'postal' | 'physical' | 'both'
-    text?: string
-    line: string[]
-    city: string
-    district?: string
-    state: string
-    postalCode: string
-    country: string
-    period?: { start?: Date; end?: Date }
-  }[]
+    use: "home" | "work" | "temp" | "old" | "billing";
+    type: "postal" | "physical" | "both";
+    text?: string;
+    line: string[];
+    city: string;
+    district?: string;
+    state: string;
+    postalCode: string;
+    country: string;
+    period?: { start?: Date; end?: Date };
+  }[];
   maritalStatus?: {
     coding: {
-      system: string
-      code: string
-      display: string
-    }[]
-  }
-  
+      system: string;
+      code: string;
+      display: string;
+    }[];
+  };
+
   // Extended Profile Information
   photo?: {
-    contentType: string
-    data: string
-    url?: string
-    title?: string
-    creation?: Date
-  }[]
-  
+    contentType: string;
+    data: string;
+    url?: string;
+    title?: string;
+    creation?: Date;
+  }[];
+
   // Emergency Contacts
   contact: {
     relationship: {
       coding: {
-        system: string
-        code: string
-        display: string
-      }[]
-    }[]
+        system: string;
+        code: string;
+        display: string;
+      }[];
+    }[];
     name: {
-      family: string
-      given: string[]
-    }
+      family: string;
+      given: string[];
+    };
     telecom: {
-      system: 'phone' | 'email'
-      value: string
-      use: 'home' | 'work' | 'mobile'
-    }[]
+      system: "phone" | "email";
+      value: string;
+      use: "home" | "work" | "mobile";
+    }[];
     address?: {
-      line: string[]
-      city: string
-      state: string
-      postalCode: string
-      country: string
-    }
-    gender?: 'male' | 'female' | 'other' | 'unknown'
-    period?: { start?: Date; end?: Date }
-  }[]
-  
+      line: string[];
+      city: string;
+      state: string;
+      postalCode: string;
+      country: string;
+    };
+    gender?: "male" | "female" | "other" | "unknown";
+    period?: { start?: Date; end?: Date };
+  }[];
+
   // Communication Preferences
   communication: {
     language: {
       coding: {
-        system: string
-        code: string
-        display: string
-      }[]
-    }
-    preferred?: boolean
-  }[]
-  
+        system: string;
+        code: string;
+        display: string;
+      }[];
+    };
+    preferred?: boolean;
+  }[];
+
   // Healthcare Provider Information
   generalPractitioner?: {
-    reference: string
-    display: string
-  }[]
-  
+    reference: string;
+    display: string;
+  }[];
+
   managingOrganization?: {
-    reference: string
-    display: string
-  }
-  
+    reference: string;
+    display: string;
+  };
+
   // Clinical Summary
   clinicalSummary: {
-    riskLevel: 'low' | 'medium' | 'high' | 'critical'
-    chronicConditions: string[]
-    allergies: string[]
-    currentMedications: string[]
-    lastVisit?: Date
-    nextAppointment?: Date
-    treatmentStatus: 'active' | 'completed' | 'on_hold' | 'cancelled'
-    progressPercentage: number
-  }
-  
+    riskLevel: "low" | "medium" | "high" | "critical";
+    chronicConditions: string[];
+    allergies: string[];
+    currentMedications: string[];
+    lastVisit?: Date;
+    nextAppointment?: Date;
+    treatmentStatus: "active" | "completed" | "on_hold" | "cancelled";
+    progressPercentage: number;
+  };
+
   // Insurance and Financial
   insurance: {
-    sequence: number
-    focal: boolean
+    sequence: number;
+    focal: boolean;
     coverage: {
-      reference: string
-      display: string
-    }
-    businessArrangement?: string
-    preAuthRef?: string[]
-  }[]
-  
+      reference: string;
+      display: string;
+    };
+    businessArrangement?: string;
+    preAuthRef?: string[];
+  }[];
+
   // Preferences and Consent
   preferences: {
-    communicationMethod: 'email' | 'sms' | 'phone' | 'mail' | 'portal'
-    appointmentReminders: boolean
-    marketingCommunications: boolean
-    dataSharing: boolean
-    researchParticipation: boolean
-  }
-  
+    communicationMethod: "email" | "sms" | "phone" | "mail" | "portal";
+    appointmentReminders: boolean;
+    marketingCommunications: boolean;
+    dataSharing: boolean;
+    researchParticipation: boolean;
+  };
+
   // LGPD Compliance
   lgpdConsent: {
-    consentGiven: boolean
-    consentDate: Date
-    consentVersion: string
-    dataProcessingPurposes: string[]
-    dataRetentionPeriod: number // months
-    rightToWithdraw: boolean
-    rightToPortability: boolean
-    rightToErasure: boolean
-    consentWithdrawalDate?: Date
-  }
-  
+    consentGiven: boolean;
+    consentDate: Date;
+    consentVersion: string;
+    dataProcessingPurposes: string[];
+    dataRetentionPeriod: number; // months
+    rightToWithdraw: boolean;
+    rightToPortability: boolean;
+    rightToErasure: boolean;
+    consentWithdrawalDate?: Date;
+  };
+
   // Audit Trail
   meta: {
-    versionId: string
-    lastUpdated: Date
-    source?: string
-    profile?: string[]
+    versionId: string;
+    lastUpdated: Date;
+    source?: string;
+    profile?: string[];
     security?: {
-      system: string
-      code: string
-      display: string
-    }[]
+      system: string;
+      code: string;
+      display: string;
+    }[];
     tag?: {
-      system: string
-      code: string
-      display: string
-    }[]
-  }
-  
+      system: string;
+      code: string;
+      display: string;
+    }[];
+  };
+
   // System Fields
-  createdAt: Date
-  updatedAt: Date
-  createdBy: string
-  updatedBy: string
-  isArchived: boolean
-  archiveReason?: string
-  archiveDate?: Date
+  createdAt: Date;
+  updatedAt: Date;
+  createdBy: string;
+  updatedBy: string;
+  isArchived: boolean;
+  archiveReason?: string;
+  archiveDate?: Date;
 }
 
 interface PatientStats {
-  totalAppointments: number
-  completedTreatments: number
-  activeTreatments: number
-  averageSatisfaction: number
-  lastVisit: Date
-  nextAppointment?: Date
-  totalSpent: number
-  outstandingBalance: number
-  loyaltyPoints: number
-  referrals: number
+  totalAppointments: number;
+  completedTreatments: number;
+  activeTreatments: number;
+  averageSatisfaction: number;
+  lastVisit: Date;
+  nextAppointment?: Date;
+  totalSpent: number;
+  outstandingBalance: number;
+  loyaltyPoints: number;
+  referrals: number;
 }
 
 interface PatientActivity {
-  id: string
-  type: 'appointment' | 'treatment' | 'payment' | 'communication' | 'document' | 'progress'
-  title: string
-  description: string
-  timestamp: Date
-  status: 'completed' | 'pending' | 'cancelled' | 'in_progress'
-  priority: 'low' | 'medium' | 'high' | 'urgent'
-  category: 'clinical' | 'administrative' | 'financial' | 'communication'
-  relatedId?: string
-  performedBy: string
-  notes?: string
+  id: string;
+  type: "appointment" | "treatment" | "payment" | "communication" | "document" | "progress";
+  title: string;
+  description: string;
+  timestamp: Date;
+  status: "completed" | "pending" | "cancelled" | "in_progress";
+  priority: "low" | "medium" | "high" | "urgent";
+  category: "clinical" | "administrative" | "financial" | "communication";
+  relatedId?: string;
+  performedBy: string;
+  notes?: string;
 }
 
 // Mock data generator
 const generateMockPatientProfile = (): PatientProfile => {
   return {
-    id: 'patient_001',
+    id: "patient_001",
     identifier: [
       {
-        system: 'http://www.saude.gov.br/fhir/r4/NamingSystem/cpf',
-        value: '123.456.789-00',
-        type: 'CPF'
+        system: "http://www.saude.gov.br/fhir/r4/NamingSystem/cpf",
+        value: "123.456.789-00",
+        type: "CPF",
       },
       {
-        system: 'http://clinic.example.com/fhir/r4/NamingSystem/medical-record',
-        value: 'MR-2024-001',
-        type: 'medical_record'
-      }
+        system: "http://clinic.example.com/fhir/r4/NamingSystem/medical-record",
+        value: "MR-2024-001",
+        type: "medical_record",
+      },
     ],
     active: true,
     name: [
       {
-        use: 'official',
-        family: 'Silva',
-        given: ['Maria', 'José'],
-        prefix: ['Sra.']
-      }
+        use: "official",
+        family: "Silva",
+        given: ["Maria", "José"],
+        prefix: ["Sra."],
+      },
     ],
     telecom: [
       {
-        system: 'phone',
-        value: '+55 11 99999-9999',
-        use: 'mobile',
-        rank: 1
+        system: "phone",
+        value: "+55 11 99999-9999",
+        use: "mobile",
+        rank: 1,
       },
       {
-        system: 'email',
-        value: 'maria.silva@email.com',
-        use: 'home',
-        rank: 2
-      }
+        system: "email",
+        value: "maria.silva@email.com",
+        use: "home",
+        rank: 2,
+      },
     ],
-    gender: 'female',
-    birthDate: new Date('1985-03-15'),
+    gender: "female",
+    birthDate: new Date("1985-03-15"),
     address: [
       {
-        use: 'home',
-        type: 'physical',
-        line: ['Rua das Flores, 123', 'Apto 45'],
-        city: 'São Paulo',
-        district: 'Vila Madalena',
-        state: 'SP',
-        postalCode: '05435-000',
-        country: 'BR'
-      }
+        use: "home",
+        type: "physical",
+        line: ["Rua das Flores, 123", "Apto 45"],
+        city: "São Paulo",
+        district: "Vila Madalena",
+        state: "SP",
+        postalCode: "05435-000",
+        country: "BR",
+      },
     ],
     contact: [
       {
@@ -347,90 +366,90 @@ const generateMockPatientProfile = (): PatientProfile => {
           {
             coding: [
               {
-                system: 'http://terminology.hl7.org/CodeSystem/v2-0131',
-                code: 'C',
-                display: 'Emergency Contact'
-              }
-            ]
-          }
+                system: "http://terminology.hl7.org/CodeSystem/v2-0131",
+                code: "C",
+                display: "Emergency Contact",
+              },
+            ],
+          },
         ],
         name: {
-          family: 'Silva',
-          given: ['João']
+          family: "Silva",
+          given: ["João"],
         },
         telecom: [
           {
-            system: 'phone',
-            value: '+55 11 88888-8888',
-            use: 'mobile'
-          }
+            system: "phone",
+            value: "+55 11 88888-8888",
+            use: "mobile",
+          },
         ],
-        gender: 'male'
-      }
+        gender: "male",
+      },
     ],
     communication: [
       {
         language: {
           coding: [
             {
-              system: 'urn:ietf:bcp:47',
-              code: 'pt-BR',
-              display: 'Portuguese (Brazil)'
-            }
-          ]
+              system: "urn:ietf:bcp:47",
+              code: "pt-BR",
+              display: "Portuguese (Brazil)",
+            },
+          ],
         },
-        preferred: true
-      }
+        preferred: true,
+      },
     ],
     clinicalSummary: {
-      riskLevel: 'medium',
-      chronicConditions: ['Diabetes Type 2', 'Hypertension'],
-      allergies: ['Penicillin', 'Latex'],
-      currentMedications: ['Metformin 500mg', 'Lisinopril 10mg'],
-      lastVisit: new Date('2024-01-15'),
-      nextAppointment: new Date('2024-02-15'),
-      treatmentStatus: 'active',
-      progressPercentage: 75
+      riskLevel: "medium",
+      chronicConditions: ["Diabetes Type 2", "Hypertension"],
+      allergies: ["Penicillin", "Latex"],
+      currentMedications: ["Metformin 500mg", "Lisinopril 10mg"],
+      lastVisit: new Date("2024-01-15"),
+      nextAppointment: new Date("2024-02-15"),
+      treatmentStatus: "active",
+      progressPercentage: 75,
     },
     insurance: [
       {
         sequence: 1,
         focal: true,
         coverage: {
-          reference: 'Coverage/insurance-001',
-          display: 'Unimed São Paulo'
-        }
-      }
+          reference: "Coverage/insurance-001",
+          display: "Unimed São Paulo",
+        },
+      },
     ],
     preferences: {
-      communicationMethod: 'email',
+      communicationMethod: "email",
       appointmentReminders: true,
       marketingCommunications: false,
       dataSharing: true,
-      researchParticipation: false
+      researchParticipation: false,
     },
     lgpdConsent: {
       consentGiven: true,
-      consentDate: new Date('2024-01-01'),
-      consentVersion: '1.0',
-      dataProcessingPurposes: ['Healthcare delivery', 'Treatment planning', 'Quality improvement'],
+      consentDate: new Date("2024-01-01"),
+      consentVersion: "1.0",
+      dataProcessingPurposes: ["Healthcare delivery", "Treatment planning", "Quality improvement"],
       dataRetentionPeriod: 60,
       rightToWithdraw: true,
       rightToPortability: true,
-      rightToErasure: true
+      rightToErasure: true,
     },
     meta: {
-      versionId: '1',
+      versionId: "1",
       lastUpdated: new Date(),
-      profile: ['http://hl7.org/fhir/StructureDefinition/Patient']
+      profile: ["http://hl7.org/fhir/StructureDefinition/Patient"],
     },
-    createdAt: new Date('2024-01-01'),
+    createdAt: new Date("2024-01-01"),
     updatedAt: new Date(),
-    createdBy: 'system',
-    updatedBy: 'Dr. Silva',
-    isArchived: false
-  }
-}
+    createdBy: "system",
+    updatedBy: "Dr. Silva",
+    isArchived: false,
+  };
+};
 
 const generateMockPatientStats = (): PatientStats => {
   return {
@@ -438,25 +457,37 @@ const generateMockPatientStats = (): PatientStats => {
     completedTreatments: 3,
     activeTreatments: 2,
     averageSatisfaction: 8.5,
-    lastVisit: new Date('2024-01-15'),
-    nextAppointment: new Date('2024-02-15'),
-    totalSpent: 15750.00,
-    outstandingBalance: 2500.00,
+    lastVisit: new Date("2024-01-15"),
+    nextAppointment: new Date("2024-02-15"),
+    totalSpent: 15750.0,
+    outstandingBalance: 2500.0,
     loyaltyPoints: 1250,
-    referrals: 3
-  }
-}
+    referrals: 3,
+  };
+};
 
 const generateMockPatientActivity = (): PatientActivity[] => {
-  const activities: PatientActivity[] = []
-  const types: PatientActivity['type'][] = ['appointment', 'treatment', 'payment', 'communication', 'document', 'progress']
-  const statuses: PatientActivity['status'][] = ['completed', 'pending', 'in_progress']
-  const categories: PatientActivity['category'][] = ['clinical', 'administrative', 'financial', 'communication']
-  
+  const activities: PatientActivity[] = [];
+  const types: PatientActivity["type"][] = [
+    "appointment",
+    "treatment",
+    "payment",
+    "communication",
+    "document",
+    "progress",
+  ];
+  const statuses: PatientActivity["status"][] = ["completed", "pending", "in_progress"];
+  const categories: PatientActivity["category"][] = [
+    "clinical",
+    "administrative",
+    "financial",
+    "communication",
+  ];
+
   for (let i = 0; i < 10; i++) {
-    const timestamp = new Date()
-    timestamp.setDate(timestamp.getDate() - Math.floor(Math.random() * 30))
-    
+    const timestamp = new Date();
+    timestamp.setDate(timestamp.getDate() - Math.floor(Math.random() * 30));
+
     activities.push({
       id: `activity_${i + 1}`,
       type: types[Math.floor(Math.random() * types.length)],
@@ -464,32 +495,32 @@ const generateMockPatientActivity = (): PatientActivity[] => {
       description: `Description for activity ${i + 1}`,
       timestamp,
       status: statuses[Math.floor(Math.random() * statuses.length)],
-      priority: 'medium',
+      priority: "medium",
       category: categories[Math.floor(Math.random() * categories.length)],
-      performedBy: 'Dr. Silva',
-      notes: `Notes for activity ${i + 1}`
-    })
+      performedBy: "Dr. Silva",
+      notes: `Notes for activity ${i + 1}`,
+    });
   }
-  
-  return activities.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
-}
+
+  return activities.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+};
 
 export default function PatientProfileManager() {
-  const [patientProfile, setPatientProfile] = useState<PatientProfile | null>(null)
-  const [patientStats, setPatientStats] = useState<PatientStats | null>(null)
-  const [patientActivity, setPatientActivity] = useState<PatientActivity[]>([])
-  const [activeTab, setActiveTab] = useState('overview')
-  const [isEditing, setIsEditing] = useState(false)
-  const [editedProfile, setEditedProfile] = useState<Partial<PatientProfile>>({})
-  const [showLGPDDialog, setShowLGPDDialog] = useState(false)
-  const [showContactDialog, setShowContactDialog] = useState(false)
-  
+  const [patientProfile, setPatientProfile] = useState<PatientProfile | null>(null);
+  const [patientStats, setPatientStats] = useState<PatientStats | null>(null);
+  const [patientActivity, setPatientActivity] = useState<PatientActivity[]>([]);
+  const [activeTab, setActiveTab] = useState("overview");
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedProfile, setEditedProfile] = useState<Partial<PatientProfile>>({});
+  const [showLGPDDialog, setShowLGPDDialog] = useState(false);
+  const [showContactDialog, setShowContactDialog] = useState(false);
+
   useEffect(() => {
     // Load mock data
-    setPatientProfile(generateMockPatientProfile())
-    setPatientStats(generateMockPatientStats())
-    setPatientActivity(generateMockPatientActivity())
-  }, [])
+    setPatientProfile(generateMockPatientProfile());
+    setPatientStats(generateMockPatientStats());
+    setPatientActivity(generateMockPatientActivity());
+  }, []);
 
   const handleSaveProfile = () => {
     if (patientProfile && editedProfile) {
@@ -497,45 +528,62 @@ export default function PatientProfileManager() {
         ...patientProfile,
         ...editedProfile,
         updatedAt: new Date(),
-        updatedBy: 'Current User'
-      }
-      setPatientProfile(updatedProfile)
-      setIsEditing(false)
-      setEditedProfile({})
+        updatedBy: "Current User",
+      };
+      setPatientProfile(updatedProfile);
+      setIsEditing(false);
+      setEditedProfile({});
     }
-  }
+  };
 
   const getRiskLevelColor = (riskLevel: string) => {
     switch (riskLevel) {
-      case 'critical': return 'bg-red-100 text-red-800'
-      case 'high': return 'bg-orange-100 text-orange-800'
-      case 'medium': return 'bg-yellow-100 text-yellow-800'
-      case 'low': return 'bg-green-100 text-green-800'
-      default: return 'bg-gray-100 text-gray-800'
+      case "critical":
+        return "bg-red-100 text-red-800";
+      case "high":
+        return "bg-orange-100 text-orange-800";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800";
+      case "low":
+        return "bg-green-100 text-green-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
-  }
+  };
 
-  const getActivityIcon = (type: PatientActivity['type']) => {
+  const getActivityIcon = (type: PatientActivity["type"]) => {
     switch (type) {
-      case 'appointment': return <CalendarIcon className="h-4 w-4" />
-      case 'treatment': return <Stethoscope className="h-4 w-4" />
-      case 'payment': return <Target className="h-4 w-4" />
-      case 'communication': return <MessageSquare className="h-4 w-4" />
-      case 'document': return <FileText className="h-4 w-4" />
-      case 'progress': return <TrendingUp className="h-4 w-4" />
-      default: return <Info className="h-4 w-4" />
+      case "appointment":
+        return <CalendarIcon className="h-4 w-4" />;
+      case "treatment":
+        return <Stethoscope className="h-4 w-4" />;
+      case "payment":
+        return <Target className="h-4 w-4" />;
+      case "communication":
+        return <MessageSquare className="h-4 w-4" />;
+      case "document":
+        return <FileText className="h-4 w-4" />;
+      case "progress":
+        return <TrendingUp className="h-4 w-4" />;
+      default:
+        return <Info className="h-4 w-4" />;
     }
-  }
+  };
 
-  const getStatusIcon = (status: PatientActivity['status']) => {
+  const getStatusIcon = (status: PatientActivity["status"]) => {
     switch (status) {
-      case 'completed': return <CheckCircle className="h-4 w-4 text-green-500" />
-      case 'in_progress': return <Activity className="h-4 w-4 text-blue-500" />
-      case 'pending': return <Clock className="h-4 w-4 text-yellow-500" />
-      case 'cancelled': return <XCircle className="h-4 w-4 text-red-500" />
-      default: return <Info className="h-4 w-4 text-gray-500" />
+      case "completed":
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
+      case "in_progress":
+        return <Activity className="h-4 w-4 text-blue-500" />;
+      case "pending":
+        return <Clock className="h-4 w-4 text-yellow-500" />;
+      case "cancelled":
+        return <XCircle className="h-4 w-4 text-red-500" />;
+      default:
+        return <Info className="h-4 w-4 text-gray-500" />;
     }
-  }
+  };
 
   if (!patientProfile || !patientStats) {
     return (
@@ -545,13 +593,17 @@ export default function PatientProfileManager() {
           <p className="text-muted-foreground">Loading patient profile...</p>
         </div>
       </div>
-    )
+    );
   }
 
-  const primaryName = patientProfile.name.find(n => n.use === 'official') || patientProfile.name[0]
-  const primaryPhone = patientProfile.telecom.find(t => t.system === 'phone' && t.use === 'mobile')
-  const primaryEmail = patientProfile.telecom.find(t => t.system === 'email')
-  const primaryAddress = patientProfile.address.find(a => a.use === 'home') || patientProfile.address[0]
+  const primaryName =
+    patientProfile.name.find((n) => n.use === "official") || patientProfile.name[0];
+  const primaryPhone = patientProfile.telecom.find(
+    (t) => t.system === "phone" && t.use === "mobile",
+  );
+  const primaryEmail = patientProfile.telecom.find((t) => t.system === "email");
+  const primaryAddress =
+    patientProfile.address.find((a) => a.use === "home") || patientProfile.address[0];
 
   return (
     <div className="space-y-6">
@@ -561,21 +613,22 @@ export default function PatientProfileManager() {
           <Avatar className="h-16 w-16">
             <AvatarImage src={patientProfile.photo?.[0]?.url} />
             <AvatarFallback>
-              {primaryName.given[0]?.[0]}{primaryName.family[0]}
+              {primaryName.given[0]?.[0]}
+              {primaryName.family[0]}
             </AvatarFallback>
           </Avatar>
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
-              {primaryName.prefix?.[0]} {primaryName.given.join(' ')} {primaryName.family}
+              {primaryName.prefix?.[0]} {primaryName.given.join(" ")} {primaryName.family}
             </h1>
             <div className="flex items-center space-x-4 text-muted-foreground">
               <span className="flex items-center">
                 <User className="h-4 w-4 mr-1" />
-                {patientProfile.identifier.find(i => i.type === 'medical_record')?.value}
+                {patientProfile.identifier.find((i) => i.type === "medical_record")?.value}
               </span>
               <span className="flex items-center">
                 <Calendar className="h-4 w-4 mr-1" />
-                {format(patientProfile.birthDate, 'MMM dd, yyyy')}
+                {format(patientProfile.birthDate, "MMM dd, yyyy")}
               </span>
               <Badge className={getRiskLevelColor(patientProfile.clinicalSummary.riskLevel)}>
                 {patientProfile.clinicalSummary.riskLevel} risk
@@ -600,22 +653,32 @@ export default function PatientProfileManager() {
             <Shield className="h-4 w-4 mr-2" />
             Privacy
           </Button>
-          <Button 
-            variant={isEditing ? "default" : "outline"} 
-            size="sm" 
+          <Button
+            variant={isEditing ? "default" : "outline"}
+            size="sm"
             onClick={isEditing ? handleSaveProfile : () => setIsEditing(true)}
           >
             {isEditing ? (
-              <><Save className="h-4 w-4 mr-2" />Save</>
+              <>
+                <Save className="h-4 w-4 mr-2" />
+                Save
+              </>
             ) : (
-              <><Edit className="h-4 w-4 mr-2" />Edit</>
+              <>
+                <Edit className="h-4 w-4 mr-2" />
+                Edit
+              </>
             )}
           </Button>
           {isEditing && (
-            <Button variant="ghost" size="sm" onClick={() => {
-              setIsEditing(false)
-              setEditedProfile({})
-            }}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setIsEditing(false);
+                setEditedProfile({});
+              }}
+            >
               <X className="h-4 w-4" />
             </Button>
           )}
@@ -662,7 +725,9 @@ export default function PatientProfileManager() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Progress</p>
-                <p className="text-2xl font-bold">{patientProfile.clinicalSummary.progressPercentage}%</p>
+                <p className="text-2xl font-bold">
+                  {patientProfile.clinicalSummary.progressPercentage}%
+                </p>
               </div>
               <TrendingUp className="h-8 w-8 text-purple-500" />
             </div>
@@ -688,9 +753,7 @@ export default function PatientProfileManager() {
               <Card>
                 <CardHeader>
                   <CardTitle>Patient Information</CardTitle>
-                  <CardDescription>
-                    Basic demographic and contact information
-                  </CardDescription>
+                  <CardDescription>Basic demographic and contact information</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -698,23 +761,29 @@ export default function PatientProfileManager() {
                       <Label className="text-sm font-medium">Full Name</Label>
                       {isEditing ? (
                         <Input
-                          value={editedProfile.name?.[0]?.given.join(' ') + ' ' + editedProfile.name?.[0]?.family || 
-                                 primaryName.given.join(' ') + ' ' + primaryName.family}
+                          value={
+                            editedProfile.name?.[0]?.given.join(" ") +
+                              " " +
+                              editedProfile.name?.[0]?.family ||
+                            primaryName.given.join(" ") + " " + primaryName.family
+                          }
                           onChange={(e) => {
-                            const [given, ...family] = e.target.value.split(' ')
+                            const [given, ...family] = e.target.value.split(" ");
                             setEditedProfile({
                               ...editedProfile,
-                              name: [{
-                                ...primaryName,
-                                given: [given],
-                                family: family.join(' ') || primaryName.family
-                              }]
-                            })
+                              name: [
+                                {
+                                  ...primaryName,
+                                  given: [given],
+                                  family: family.join(" ") || primaryName.family,
+                                },
+                              ],
+                            });
                           }}
                         />
                       ) : (
                         <p className="text-sm text-muted-foreground">
-                          {primaryName.given.join(' ')} {primaryName.family}
+                          {primaryName.given.join(" ")} {primaryName.family}
                         </p>
                       )}
                     </div>
@@ -727,19 +796,19 @@ export default function PatientProfileManager() {
                     <div>
                       <Label className="text-sm font-medium">Date of Birth</Label>
                       <p className="text-sm text-muted-foreground">
-                        {format(patientProfile.birthDate, 'MMMM dd, yyyy')}
+                        {format(patientProfile.birthDate, "MMMM dd, yyyy")}
                       </p>
                     </div>
                     <div>
                       <Label className="text-sm font-medium">CPF</Label>
                       <p className="text-sm text-muted-foreground">
-                        {patientProfile.identifier.find(i => i.type === 'CPF')?.value}
+                        {patientProfile.identifier.find((i) => i.type === "CPF")?.value}
                       </p>
                     </div>
                   </div>
-                  
+
                   <Separator />
-                  
+
                   <div className="space-y-3">
                     <h4 className="font-medium">Contact Information</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -763,28 +832,30 @@ export default function PatientProfileManager() {
                       <p className="text-sm text-muted-foreground flex items-start">
                         <MapPin className="h-4 w-4 mr-2 mt-0.5" />
                         <span>
-                          {primaryAddress?.line.join(', ')}<br />
-                          {primaryAddress?.city}, {primaryAddress?.state} {primaryAddress?.postalCode}
+                          {primaryAddress?.line.join(", ")}
+                          <br />
+                          {primaryAddress?.city}, {primaryAddress?.state}{" "}
+                          {primaryAddress?.postalCode}
                         </span>
                       </p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-              
+
               {/* Clinical Summary */}
               <Card>
                 <CardHeader>
                   <CardTitle>Clinical Summary</CardTitle>
-                  <CardDescription>
-                    Current health status and treatment overview
-                  </CardDescription>
+                  <CardDescription>Current health status and treatment overview</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label className="text-sm font-medium">Risk Level</Label>
-                      <Badge className={getRiskLevelColor(patientProfile.clinicalSummary.riskLevel)}>
+                      <Badge
+                        className={getRiskLevelColor(patientProfile.clinicalSummary.riskLevel)}
+                      >
                         {patientProfile.clinicalSummary.riskLevel}
                       </Badge>
                     </div>
@@ -795,17 +866,20 @@ export default function PatientProfileManager() {
                       </Badge>
                     </div>
                   </div>
-                  
+
                   <div>
                     <Label className="text-sm font-medium">Treatment Progress</Label>
                     <div className="flex items-center space-x-2 mt-1">
-                      <Progress value={patientProfile.clinicalSummary.progressPercentage} className="flex-1" />
+                      <Progress
+                        value={patientProfile.clinicalSummary.progressPercentage}
+                        className="flex-1"
+                      />
                       <span className="text-sm font-medium">
                         {patientProfile.clinicalSummary.progressPercentage}%
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label className="text-sm font-medium">Chronic Conditions</Label>
@@ -832,7 +906,7 @@ export default function PatientProfileManager() {
                 </CardContent>
               </Card>
             </div>
-            
+
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Recent Activity */}
@@ -850,7 +924,7 @@ export default function PatientProfileManager() {
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium truncate">{activity.title}</p>
                           <p className="text-xs text-muted-foreground">
-                            {format(activity.timestamp, 'MMM dd, HH:mm')}
+                            {format(activity.timestamp, "MMM dd, HH:mm")}
                           </p>
                         </div>
                         {getStatusIcon(activity.status)}
@@ -863,7 +937,7 @@ export default function PatientProfileManager() {
                   </Button>
                 </CardContent>
               </Card>
-              
+
               {/* Quick Actions */}
               <Card>
                 <CardHeader>
@@ -914,14 +988,14 @@ export default function PatientProfileManager() {
           <Card>
             <CardHeader>
               <CardTitle>Documents & Files</CardTitle>
-              <CardDescription>
-                Patient documents, reports, and attachments
-              </CardDescription>
+              <CardDescription>Patient documents, reports, and attachments</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8">
                 <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-muted-foreground">Document management will be implemented here</p>
+                <p className="text-muted-foreground">
+                  Document management will be implemented here
+                </p>
                 <Button variant="outline" className="mt-4">
                   <Plus className="h-4 w-4 mr-2" />
                   Upload Document
@@ -935,14 +1009,15 @@ export default function PatientProfileManager() {
           <Card>
             <CardHeader>
               <CardTitle>Activity Timeline</CardTitle>
-              <CardDescription>
-                Complete history of patient interactions and events
-              </CardDescription>
+              <CardDescription>Complete history of patient interactions and events</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {patientActivity.map((activity) => (
-                  <div key={activity.id} className="flex items-start space-x-4 p-4 border rounded-lg">
+                  <div
+                    key={activity.id}
+                    className="flex items-start space-x-4 p-4 border rounded-lg"
+                  >
                     <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
                       {getActivityIcon(activity.type)}
                     </div>
@@ -952,7 +1027,7 @@ export default function PatientProfileManager() {
                         <div className="flex items-center space-x-2">
                           {getStatusIcon(activity.status)}
                           <span className="text-xs text-muted-foreground">
-                            {format(activity.timestamp, 'MMM dd, yyyy HH:mm')}
+                            {format(activity.timestamp, "MMM dd, yyyy HH:mm")}
                           </span>
                         </div>
                       </div>
@@ -982,9 +1057,7 @@ export default function PatientProfileManager() {
               <Shield className="h-5 w-5 mr-2" />
               Privacy & Data Protection (LGPD)
             </DialogTitle>
-            <DialogDescription>
-              Patient data protection and consent management
-            </DialogDescription>
+            <DialogDescription>Patient data protection and consent management</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <Alert>
@@ -994,12 +1067,12 @@ export default function PatientProfileManager() {
                 This patient has provided consent for data processing under LGPD regulations.
               </AlertDescription>
             </Alert>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label className="text-sm font-medium">Consent Date</Label>
                 <p className="text-sm text-muted-foreground">
-                  {format(patientProfile.lgpdConsent.consentDate, 'MMMM dd, yyyy')}
+                  {format(patientProfile.lgpdConsent.consentDate, "MMMM dd, yyyy")}
                 </p>
               </div>
               <div>
@@ -1032,7 +1105,7 @@ export default function PatientProfileManager() {
                 </div>
               </div>
             </div>
-            
+
             <div>
               <Label className="text-sm font-medium">Data Processing Purposes</Label>
               <div className="flex flex-wrap gap-1 mt-1">
@@ -1043,7 +1116,7 @@ export default function PatientProfileManager() {
                 ))}
               </div>
             </div>
-            
+
             <div className="flex justify-end space-x-2">
               <Button variant="outline" onClick={() => setShowLGPDDialog(false)}>
                 Close
@@ -1066,9 +1139,7 @@ export default function PatientProfileManager() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Contact Patient</DialogTitle>
-            <DialogDescription>
-              Choose a communication method
-            </DialogDescription>
+            <DialogDescription>Choose a communication method</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <Button variant="outline" className="w-full justify-start">
@@ -1091,5 +1162,5 @@ export default function PatientProfileManager() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

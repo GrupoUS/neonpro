@@ -1,8 +1,8 @@
 // React Hooks for Session Management
 // Story 1.4: Session Management & Security Implementation
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import {
+import type { useState, useEffect, useCallback, useRef } from "react";
+import type {
   UserSession,
   SessionState,
   UseSessionReturn,
@@ -11,11 +11,11 @@ import {
   SessionSecurityEvent,
   DeviceRegistration,
   SessionMetrics,
-} from './types';
-import { SessionManager } from './session-manager';
-import { SecurityMonitor } from './security-monitor';
-import { DeviceManager } from './device-manager';
-import { createClient } from '@supabase/supabase-js';
+} from "./types";
+import type { SessionManager } from "./session-manager";
+import type { SecurityMonitor } from "./security-monitor";
+import type { DeviceManager } from "./device-manager";
+import type { createClient } from "@supabase/supabase-js";
 
 // Global instances (would be provided via context in real app)
 let sessionManager: SessionManager;
@@ -25,11 +25,8 @@ let deviceManager: DeviceManager;
 // Initialize services
 const initializeServices = () => {
   if (!sessionManager) {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_ANON_KEY!
-    );
-    
+    const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
+
     sessionManager = new SessionManager(supabase);
     securityMonitor = new SecurityMonitor(supabase);
     deviceManager = new DeviceManager(supabase);
@@ -41,7 +38,7 @@ export function useSession(): UseSessionReturn {
   const [session, setSession] = useState<UserSession | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [sessionState, setSessionState] = useState<SessionState>('idle');
+  const [sessionState, setSessionState] = useState<SessionState>("idle");
   const heartbeatRef = useRef<NodeJS.Timeout | null>(null);
   const activityRef = useRef<Date>(new Date());
 
@@ -65,13 +62,13 @@ export function useSession(): UseSessionReturn {
     };
 
     // Track user activity
-    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
-    events.forEach(event => {
+    const events = ["mousedown", "mousemove", "keypress", "scroll", "touchstart"];
+    events.forEach((event) => {
       document.addEventListener(event, trackActivity, true);
     });
 
     return () => {
-      events.forEach(event => {
+      events.forEach((event) => {
         document.removeEventListener(event, trackActivity, true);
       });
     };
@@ -79,7 +76,7 @@ export function useSession(): UseSessionReturn {
 
   // Session heartbeat
   useEffect(() => {
-    if (session && sessionState === 'active') {
+    if (session && sessionState === "active") {
       startHeartbeat();
     } else {
       stopHeartbeat();
@@ -92,21 +89,21 @@ export function useSession(): UseSessionReturn {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       const currentSession = await sessionManager.getCurrentSession();
-      
+
       if (currentSession) {
         setSession(currentSession);
-        setSessionState('active');
-        
+        setSessionState("active");
+
         // Start security monitoring
         await securityMonitor.startMonitoring(currentSession);
       } else {
-        setSessionState('idle');
+        setSessionState("idle");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load session');
-      setSessionState('error');
+      setError(err instanceof Error ? err.message : "Failed to load session");
+      setSessionState("error");
     } finally {
       setIsLoading(false);
     }
@@ -115,30 +112,30 @@ export function useSession(): UseSessionReturn {
   const createSession = async (
     userId: string,
     deviceInfo: any,
-    location?: any
+    location?: any,
   ): Promise<UserSession> => {
     try {
       setIsLoading(true);
       setError(null);
-      setSessionState('creating');
+      setSessionState("creating");
 
       // Register device first
       await deviceManager.registerDevice(userId, deviceInfo, location);
 
       // Create session
       const newSession = await sessionManager.createSession(userId, deviceInfo, location);
-      
+
       setSession(newSession);
-      setSessionState('active');
-      
+      setSessionState("active");
+
       // Start security monitoring
       await securityMonitor.startMonitoring(newSession);
-      
+
       return newSession;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to create session';
+      const errorMessage = err instanceof Error ? err.message : "Failed to create session";
       setError(errorMessage);
-      setSessionState('error');
+      setSessionState("error");
       throw new Error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -153,7 +150,7 @@ export function useSession(): UseSessionReturn {
       const extendedSession = await sessionManager.extendSession(session.id);
       setSession(extendedSession);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to extend session');
+      setError(err instanceof Error ? err.message : "Failed to extend session");
     }
   };
 
@@ -163,18 +160,18 @@ export function useSession(): UseSessionReturn {
     try {
       setIsLoading(true);
       setError(null);
-      setSessionState('terminating');
+      setSessionState("terminating");
 
-      await sessionManager.terminateSession(session.id, 'user_logout');
-      
+      await sessionManager.terminateSession(session.id, "user_logout");
+
       // Stop security monitoring
       securityMonitor.stopMonitoring(session.id);
-      
+
       setSession(null);
-      setSessionState('idle');
+      setSessionState("idle");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to terminate session');
-      setSessionState('error');
+      setError(err instanceof Error ? err.message : "Failed to terminate session");
+      setSessionState("error");
     } finally {
       setIsLoading(false);
     }
@@ -186,9 +183,9 @@ export function useSession(): UseSessionReturn {
     try {
       await sessionManager.updateActivity(session.id);
       // Update local session object
-      setSession(prev => prev ? { ...prev, last_activity: new Date() } : null);
+      setSession((prev) => (prev ? { ...prev, last_activity: new Date() } : null));
     } catch (err) {
-      console.error('Failed to update activity:', err);
+      console.error("Failed to update activity:", err);
     }
   };
 
@@ -197,23 +194,23 @@ export function useSession(): UseSessionReturn {
 
     try {
       const isValid = await sessionManager.validateSession(session.id);
-      
+
       if (!isValid) {
         setSession(null);
-        setSessionState('expired');
+        setSessionState("expired");
         securityMonitor.stopMonitoring(session.id);
       }
-      
+
       return isValid;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to validate session');
+      setError(err instanceof Error ? err.message : "Failed to validate session");
       return false;
     }
   };
 
   const startHeartbeat = () => {
     stopHeartbeat(); // Clear any existing heartbeat
-    
+
     heartbeatRef.current = setInterval(async () => {
       try {
         const isValid = await validateSession();
@@ -221,7 +218,7 @@ export function useSession(): UseSessionReturn {
           stopHeartbeat();
         }
       } catch (err) {
-        console.error('Heartbeat error:', err);
+        console.error("Heartbeat error:", err);
       }
     }, 30000); // Check every 30 seconds
   };
@@ -259,16 +256,16 @@ export function useSessionSecurity(): UseSessionSecurityReturn {
   useEffect(() => {
     initializeServices();
     setupSecurityEventListeners();
-    
+
     return () => {
       cleanupSecurityEventListeners();
     };
   }, []);
 
   const setupSecurityEventListeners = () => {
-    securityMonitor.on('security_event', handleSecurityEvent);
-    securityMonitor.on('monitoring_started', () => setIsMonitoring(true));
-    securityMonitor.on('monitoring_stopped', () => setIsMonitoring(false));
+    securityMonitor.on("security_event", handleSecurityEvent);
+    securityMonitor.on("monitoring_started", () => setIsMonitoring(true));
+    securityMonitor.on("monitoring_stopped", () => setIsMonitoring(false));
   };
 
   const cleanupSecurityEventListeners = () => {
@@ -276,11 +273,11 @@ export function useSessionSecurity(): UseSessionSecurityReturn {
   };
 
   const handleSecurityEvent = (alert: any) => {
-    setAlerts(prev => [alert, ...prev.slice(0, 49)]); // Keep last 50 alerts
-    
-    if (alert.severity === 'critical' || alert.severity === 'high') {
+    setAlerts((prev) => [alert, ...prev.slice(0, 49)]); // Keep last 50 alerts
+
+    if (alert.severity === "critical" || alert.severity === "high") {
       // Could trigger notifications here
-      console.warn('High severity security event:', alert);
+      console.warn("High severity security event:", alert);
     }
   };
 
@@ -288,12 +285,12 @@ export function useSessionSecurity(): UseSessionSecurityReturn {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       // This would fetch from the database
       // For now, we'll use the current alerts
       setSecurityEvents(alerts.slice(0, limit));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch security events');
+      setError(err instanceof Error ? err.message : "Failed to fetch security events");
     } finally {
       setIsLoading(false);
     }
@@ -306,7 +303,7 @@ export function useSessionSecurity(): UseSessionSecurityReturn {
       const mockRiskScore = Math.floor(Math.random() * 100);
       setRiskScore(mockRiskScore);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to calculate risk score');
+      setError(err instanceof Error ? err.message : "Failed to calculate risk score");
     }
   };
 
@@ -314,21 +311,21 @@ export function useSessionSecurity(): UseSessionSecurityReturn {
     try {
       setIsLoading(true);
       await sessionManager.terminateSession(sessionId, reason);
-      
+
       // Add security event
       const event: Partial<SessionSecurityEvent> = {
         session_id: sessionId,
-        event_type: 'session_blocked',
-        event_category: 'security',
-        severity: 'high',
+        event_type: "session_blocked",
+        event_category: "security",
+        severity: "high",
         description: `Session blocked: ${reason}`,
         is_blocked: true,
-        resolution_status: 'resolved',
+        resolution_status: "resolved",
       };
-      
+
       await securityMonitor.handleSecurityEvent(event);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to block session');
+      setError(err instanceof Error ? err.message : "Failed to block session");
     } finally {
       setIsLoading(false);
     }
@@ -379,7 +376,7 @@ export function useSessionMetrics(): UseSessionMetricsReturn {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       // Mock metrics for now
       const mockMetrics: SessionMetrics = {
         totalSessions: Math.floor(Math.random() * 1000),
@@ -397,35 +394,35 @@ export function useSessionMetrics(): UseSessionMetricsReturn {
           tablet: Math.floor(Math.random() * 100),
         },
         sessionsByLocation: {
-          'United States': Math.floor(Math.random() * 400),
-          'Canada': Math.floor(Math.random() * 200),
-          'United Kingdom': Math.floor(Math.random() * 150),
+          "United States": Math.floor(Math.random() * 400),
+          Canada: Math.floor(Math.random() * 200),
+          "United Kingdom": Math.floor(Math.random() * 150),
         },
         peakHours: Array.from({ length: 24 }, (_, i) => ({
           hour: i,
           count: Math.floor(Math.random() * 50),
         })),
       };
-      
+
       setMetrics(mockMetrics);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch metrics');
+      setError(err instanceof Error ? err.message : "Failed to fetch metrics");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const exportMetrics = async (format: 'json' | 'csv' = 'json'): Promise<string> => {
+  const exportMetrics = async (format: "json" | "csv" = "json"): Promise<string> => {
     if (!metrics) {
-      throw new Error('No metrics available to export');
+      throw new Error("No metrics available to export");
     }
 
-    if (format === 'json') {
+    if (format === "json") {
       return JSON.stringify(metrics, null, 2);
     } else {
       // Convert to CSV format
       const csvRows = [
-        'Metric,Value',
+        "Metric,Value",
         `Total Sessions,${metrics.totalSessions}`,
         `Active Sessions,${metrics.activeSessions}`,
         `Expired Sessions,${metrics.expiredSessions}`,
@@ -436,8 +433,8 @@ export function useSessionMetrics(): UseSessionMetricsReturn {
         `Device Registrations,${metrics.deviceRegistrations}`,
         `Concurrent Session Violations,${metrics.concurrentSessionViolations}`,
       ];
-      
-      return csvRows.join('\n');
+
+      return csvRows.join("\n");
     }
   };
 
@@ -456,7 +453,7 @@ export function useSessionMetrics(): UseSessionMetricsReturn {
   };
 
   const toggleAutoRefresh = () => {
-    setAutoRefresh(prev => !prev);
+    setAutoRefresh((prev) => !prev);
   };
 
   return {
@@ -485,11 +482,11 @@ export function useDeviceManagement() {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       const userDevices = await deviceManager.getUserDevices(userId);
       setDevices(userDevices);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch devices');
+      setError(err instanceof Error ? err.message : "Failed to fetch devices");
     } finally {
       setIsLoading(false);
     }
@@ -499,15 +496,15 @@ export function useDeviceManagement() {
     try {
       setIsLoading(true);
       await deviceManager.blockDevice(deviceId, reason);
-      
+
       // Update local state
-      setDevices(prev => prev.map(device => 
-        device.id === deviceId 
-          ? { ...device, is_blocked: true, is_trusted: false }
-          : device
-      ));
+      setDevices((prev) =>
+        prev.map((device) =>
+          device.id === deviceId ? { ...device, is_blocked: true, is_trusted: false } : device,
+        ),
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to block device');
+      setError(err instanceof Error ? err.message : "Failed to block device");
     } finally {
       setIsLoading(false);
     }
@@ -517,41 +514,41 @@ export function useDeviceManagement() {
     try {
       setIsLoading(true);
       await deviceManager.unblockDevice(deviceId, reason);
-      
+
       // Update local state
-      setDevices(prev => prev.map(device => 
-        device.id === deviceId 
-          ? { ...device, is_blocked: false }
-          : device
-      ));
+      setDevices((prev) =>
+        prev.map((device) => (device.id === deviceId ? { ...device, is_blocked: false } : device)),
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to unblock device');
+      setError(err instanceof Error ? err.message : "Failed to unblock device");
     } finally {
       setIsLoading(false);
     }
   };
 
   const updateDeviceTrust = async (
-    deviceId: string, 
-    trustScore: number, 
-    reason: string
+    deviceId: string,
+    trustScore: number,
+    reason: string,
   ): Promise<void> => {
     try {
       setIsLoading(true);
       await deviceManager.updateDeviceTrust(deviceId, trustScore, reason);
-      
+
       // Update local state
-      setDevices(prev => prev.map(device => 
-        device.id === deviceId 
-          ? { 
-              ...device, 
-              trust_score: trustScore,
-              is_trusted: trustScore >= 60 // Assuming 60 is the threshold
-            }
-          : device
-      ));
+      setDevices((prev) =>
+        prev.map((device) =>
+          device.id === deviceId
+            ? {
+                ...device,
+                trust_score: trustScore,
+                is_trusted: trustScore >= 60, // Assuming 60 is the threshold
+              }
+            : device,
+        ),
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update device trust');
+      setError(err instanceof Error ? err.message : "Failed to update device trust");
     } finally {
       setIsLoading(false);
     }
@@ -583,4 +580,3 @@ export function useSessionContext() {
     devices,
   };
 }
-

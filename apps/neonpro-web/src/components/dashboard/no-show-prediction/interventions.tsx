@@ -1,26 +1,38 @@
 // Story 11.2: No-Show Prediction Interventions Component
 // Manage and track intervention strategies
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Icons } from '@/components/ui/icons';
-import { useToast } from '@/hooks/use-toast';
-import {
+import type { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Icons } from "@/components/ui/icons";
+import type { useToast } from "@/hooks/use-toast";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+} from "@/components/ui/dialog";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
 
 interface Intervention {
   id: string;
@@ -43,9 +55,10 @@ interface Intervention {
 export default function NoShowPredictionInterventions() {
   const [interventions, setInterventions] = useState<Intervention[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState("all");
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const { toast } = useToast();  useEffect(() => {
+  const { toast } = useToast();
+  useEffect(() => {
     fetchInterventions();
   }, [filter]);
 
@@ -53,24 +66,24 @@ export default function NoShowPredictionInterventions() {
     try {
       setLoading(true);
       const params = new URLSearchParams();
-      if (filter !== 'all') {
-        params.append('status', filter);
+      if (filter !== "all") {
+        params.append("status", filter);
       }
 
       const response = await fetch(`/api/no-show-prediction/interventions?${params}`);
-      
+
       if (!response.ok) {
-        throw new Error('Failed to fetch interventions');
+        throw new Error("Failed to fetch interventions");
       }
-      
+
       const data = await response.json();
       setInterventions(data.interventions || []);
     } catch (error) {
-      console.error('Error fetching interventions:', error);
+      console.error("Error fetching interventions:", error);
       toast({
-        title: 'Error',
-        description: 'Failed to load interventions',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to load interventions",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -79,29 +92,36 @@ export default function NoShowPredictionInterventions() {
 
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
-      case 'completed': return 'default';
-      case 'pending': return 'secondary';
-      case 'failed': return 'destructive';
-      default: return 'outline';
+      case "completed":
+        return "default";
+      case "pending":
+        return "secondary";
+      case "failed":
+        return "destructive";
+      default:
+        return "outline";
     }
   };
 
   const getOutcomeBadgeVariant = (outcome: string | null) => {
     switch (outcome) {
-      case 'successful': return 'default';
-      case 'partially_successful': return 'secondary';
-      case 'unsuccessful': return 'destructive';
-      default: return 'outline';
+      case "successful":
+        return "default";
+      case "partially_successful":
+        return "secondary";
+      case "unsuccessful":
+        return "destructive";
+      default:
+        return "outline";
     }
-  };  return (
+  };
+  return (
     <div className="space-y-6">
       {/* Header with Actions */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">Interventions</h2>
-          <p className="text-muted-foreground">
-            Manage proactive intervention strategies
-          </p>
+          <p className="text-muted-foreground">Manage proactive intervention strategies</p>
         </div>
         <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
           <DialogTrigger asChild>
@@ -150,7 +170,8 @@ export default function NoShowPredictionInterventions() {
             </div>
           </DialogContent>
         </Dialog>
-      </div>      {/* Filters */}
+      </div>{" "}
+      {/* Filters */}
       <Card>
         <CardContent className="pt-6">
           <div className="flex items-center space-x-4">
@@ -174,14 +195,11 @@ export default function NoShowPredictionInterventions() {
           </div>
         </CardContent>
       </Card>
-
       {/* Interventions List */}
       <Card>
         <CardHeader>
           <CardTitle>Recent Interventions</CardTitle>
-          <CardDescription>
-            Track the effectiveness of intervention strategies
-          </CardDescription>
+          <CardDescription>Track the effectiveness of intervention strategies</CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -193,13 +211,16 @@ export default function NoShowPredictionInterventions() {
           ) : (
             <div className="space-y-4">
               {interventions.map((intervention) => (
-                <div key={intervention.id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div
+                  key={intervention.id}
+                  className="flex items-center justify-between p-4 border rounded-lg"
+                >
                   <div className="flex items-center space-x-4">
                     <div className="w-2 h-2 rounded-full bg-blue-500" />
                     <div>
                       <p className="font-medium">{intervention.patient.name}</p>
                       <p className="text-sm text-muted-foreground">
-                        {intervention.intervention_type.replace('_', ' ')} • 
+                        {intervention.intervention_type.replace("_", " ")} •
                         {new Date(intervention.scheduled_at).toLocaleDateString()}
                       </p>
                     </div>
@@ -210,7 +231,7 @@ export default function NoShowPredictionInterventions() {
                     </Badge>
                     {intervention.outcome && (
                       <Badge variant={getOutcomeBadgeVariant(intervention.outcome)}>
-                        {intervention.outcome.replace('_', ' ')}
+                        {intervention.outcome.replace("_", " ")}
                       </Badge>
                     )}
                     {intervention.effectiveness_score && (
@@ -221,11 +242,9 @@ export default function NoShowPredictionInterventions() {
                   </div>
                 </div>
               ))}
-              
+
               {interventions.length === 0 && (
-                <div className="text-center py-8 text-muted-foreground">
-                  No interventions found
-                </div>
+                <div className="text-center py-8 text-muted-foreground">No interventions found</div>
               )}
             </div>
           )}

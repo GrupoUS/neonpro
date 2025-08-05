@@ -3,125 +3,74 @@
 // Epic 6 - Story 6.4: Comprehensive equipment maintenance types and interfaces
 // =====================================================================================
 
-export type EquipmentType = 
-  | 'medical_device'
-  | 'diagnostic' 
-  | 'surgical'
-  | 'laboratory'
-  | 'office'
-  | 'it';
+export type EquipmentType =
+  | "medical_device"
+  | "diagnostic"
+  | "surgical"
+  | "laboratory"
+  | "office"
+  | "it";
 
-export type EquipmentCategory = 
-  | 'x_ray'
-  | 'ultrasound'
-  | 'ct_scan'
-  | 'mri'
-  | 'lab_analyzer'
-  | 'autoclave'
-  | 'surgical_table'
-  | 'anesthesia_machine'
-  | 'ventilator'
-  | 'defibrillator'
-  | 'ecg_machine'
-  | 'blood_pressure_monitor'
-  | 'infusion_pump'
-  | 'centrifuge'
-  | 'microscope'
-  | 'refrigerator'
-  | 'computer'
-  | 'printer'
-  | 'other';
+export type EquipmentCategory =
+  | "x_ray"
+  | "ultrasound"
+  | "ct_scan"
+  | "mri"
+  | "lab_analyzer"
+  | "autoclave"
+  | "surgical_table"
+  | "anesthesia_machine"
+  | "ventilator"
+  | "defibrillator"
+  | "ecg_machine"
+  | "blood_pressure_monitor"
+  | "infusion_pump"
+  | "centrifuge"
+  | "microscope"
+  | "refrigerator"
+  | "computer"
+  | "printer"
+  | "other";
 
-export type EquipmentStatus = 
-  | 'active'
-  | 'maintenance'
-  | 'out_of_service'
-  | 'decommissioned';
+export type EquipmentStatus = "active" | "maintenance" | "out_of_service" | "decommissioned";
 
-export type CriticalityLevel = 
-  | 'critical'
-  | 'high'
-  | 'medium'
-  | 'low';
+export type CriticalityLevel = "critical" | "high" | "medium" | "low";
 
-export type MaintenanceType = 
-  | 'preventive'
-  | 'predictive'
-  | 'corrective'
-  | 'emergency'
-  | 'calibration';
+export type MaintenanceType =
+  | "preventive"
+  | "predictive"
+  | "corrective"
+  | "emergency"
+  | "calibration";
 
-export type FrequencyType = 
-  | 'fixed_interval'
-  | 'usage_based'
-  | 'condition_based';
+export type FrequencyType = "fixed_interval" | "usage_based" | "condition_based";
 
-export type WorkOrderStatus = 
-  | 'scheduled'
-  | 'in_progress'
-  | 'completed'
-  | 'cancelled'
-  | 'on_hold';
+export type WorkOrderStatus = "scheduled" | "in_progress" | "completed" | "cancelled" | "on_hold";
 
-export type WorkOrderPriority = 
-  | 'emergency'
-  | 'high'
-  | 'medium'
-  | 'low';
+export type WorkOrderPriority = "emergency" | "high" | "medium" | "low";
 
-export type AlertType = 
-  | 'scheduled_maintenance'
-  | 'overdue_maintenance'
-  | 'emergency'
-  | 'calibration_due'
-  | 'warranty_expiring';
+export type AlertType =
+  | "scheduled_maintenance"
+  | "overdue_maintenance"
+  | "emergency"
+  | "calibration_due"
+  | "warranty_expiring";
 
-export type AlertSeverity = 
-  | 'critical'
-  | 'high'
-  | 'medium'
-  | 'low'
-  | 'info';
+export type AlertSeverity = "critical" | "high" | "medium" | "low" | "info";
 
-export type ContractType = 
-  | 'warranty'
-  | 'service_agreement'
-  | 'maintenance_contract';
+export type ContractType = "warranty" | "service_agreement" | "maintenance_contract";
 
-export type ServiceLevel = 
-  | 'basic'
-  | 'standard'
-  | 'premium'
-  | 'full_service';
+export type ServiceLevel = "basic" | "standard" | "premium" | "full_service";
 
-export type CoverageType = 
-  | 'parts_only'
-  | 'labor_only'
-  | 'parts_and_labor'
-  | 'full_coverage';
+export type CoverageType = "parts_only" | "labor_only" | "parts_and_labor" | "full_coverage";
 
-export type ComplianceStatus = 
-  | 'compliant'
-  | 'non_compliant'
-  | 'pending'
-  | 'expired';
+export type ComplianceStatus = "compliant" | "non_compliant" | "pending" | "expired";
 
-export type RequirementType = 
-  | 'calibration'
-  | 'inspection'
-  | 'testing'
-  | 'certification';
+export type RequirementType = "calibration" | "inspection" | "testing" | "certification";
 
-export type ConditionTrend = 
-  | 'improving'
-  | 'stable'
-  | 'degrading';
+export type ConditionTrend = "improving" | "stable" | "degrading";
 
-export type ReportingPeriod = 
-  | 'daily'
-  | 'weekly'
-  | 'monthly'
-  | 'quarterly';
+export type ReportingPeriod = "daily" | "weekly" | "monthly" | "quarterly";
 
 // =====================================================================================
 // CORE EQUIPMENT INTERFACE
@@ -130,7 +79,7 @@ export type ReportingPeriod =
 export interface Equipment {
   id: string;
   clinic_id: string;
-  
+
   // Basic information
   name: string;
   model?: string;
@@ -138,46 +87,46 @@ export interface Equipment {
   serial_number?: string;
   equipment_type: EquipmentType;
   category?: EquipmentCategory;
-  
+
   // Location
   location?: string;
   department?: string;
   room_number?: string;
-  
+
   // Purchase and warranty
   purchase_date?: string;
   purchase_cost?: number;
   warranty_start_date?: string;
   warranty_end_date?: string;
   vendor_id?: string;
-  
+
   // Status
   status: EquipmentStatus;
   condition_rating?: number; // 1-10
   criticality_level: CriticalityLevel;
-  
+
   // Usage tracking
   usage_hours?: number;
   usage_cycles?: number;
   last_usage_date?: string;
   estimated_lifespan_years?: number;
-  
+
   // Maintenance specifications
   maintenance_frequency_days?: number;
   usage_based_maintenance?: boolean;
   usage_threshold_hours?: number;
   usage_threshold_cycles?: number;
-  
+
   // Regulatory
   requires_calibration?: boolean;
   calibration_frequency_days?: number;
   regulatory_requirements?: string[];
-  
+
   // Documentation
   manual_url?: string;
   specifications?: Record<string, any>;
   notes?: string;
-  
+
   // Audit
   created_at: string;
   updated_at: string;
@@ -193,44 +142,44 @@ export interface MaintenanceSchedule {
   id: string;
   equipment_id: string;
   clinic_id: string;
-  
+
   // Schedule information
   maintenance_type: MaintenanceType;
   schedule_name: string;
   description?: string;
-  
+
   // Frequency
   frequency_type: FrequencyType;
   frequency_days?: number;
   frequency_hours?: number;
   frequency_cycles?: number;
-  
+
   // Next scheduled maintenance
   next_due_date?: string;
   next_due_usage_hours?: number;
   next_due_cycles?: number;
-  
+
   // Preferences
   preferred_time_slot?: string;
   estimated_duration_minutes?: number;
   required_skills?: string[];
   required_tools?: string[];
   required_parts?: string[];
-  
+
   // Cost
   estimated_cost?: number;
   budget_code?: string;
-  
+
   // Notifications
   alert_days_before?: number;
   critical_alert_days_before?: number;
   notification_recipients?: string[];
-  
+
   // Status
   is_active: boolean;
   last_completed_date?: string;
   times_completed: number;
-  
+
   // Audit
   created_at: string;
   updated_at: string;
@@ -247,30 +196,30 @@ export interface MaintenanceWorkOrder {
   equipment_id: string;
   schedule_id?: string;
   clinic_id: string;
-  
+
   // Work order information
   work_order_number: string;
   title: string;
   description?: string;
   maintenance_type: MaintenanceType;
   priority: WorkOrderPriority;
-  
+
   // Scheduling
   scheduled_date?: string;
   scheduled_start_time?: string;
   estimated_duration_minutes?: number;
-  
+
   // Assignment
   assigned_technician_id?: string;
   assigned_team_ids?: string[];
   external_vendor_id?: string;
-  
+
   // Status
   status: WorkOrderStatus;
   actual_start_time?: string;
   actual_end_time?: string;
   actual_duration_minutes?: number;
-  
+
   // Completion
   completion_notes?: string;
   issues_found?: string;
@@ -279,22 +228,22 @@ export interface MaintenanceWorkOrder {
   materials_cost?: number;
   labor_hours?: number;
   total_cost?: number;
-  
+
   // Quality
   quality_check_passed?: boolean;
   calibration_performed?: boolean;
   calibration_results?: Record<string, any>;
   certification_updated?: boolean;
-  
+
   // Follow-up
   requires_follow_up?: boolean;
   follow_up_date?: string;
   follow_up_notes?: string;
-  
+
   // Documentation
   photos_urls?: string[];
   documents_urls?: string[];
-  
+
   // Audit
   created_at: string;
   updated_at: string;
@@ -313,36 +262,36 @@ export interface MaintenanceAlert {
   schedule_id?: string;
   work_order_id?: string;
   clinic_id: string;
-  
+
   // Alert information
   alert_type: AlertType;
   severity: AlertSeverity;
   title: string;
   message: string;
-  
+
   // Timing
   trigger_date: string;
   due_date?: string;
   days_until_due?: number;
-  
+
   // Status
   is_active: boolean;
   is_acknowledged: boolean;
   acknowledged_by?: string;
   acknowledged_at?: string;
-  
+
   // Notification
   notification_sent: boolean;
   notification_sent_at?: string;
   notification_recipients?: string[];
   delivery_methods?: string[];
-  
+
   // Resolution
   is_resolved: boolean;
   resolved_by?: string;
   resolved_at?: string;
   resolution_notes?: string;
-  
+
   // Audit
   created_at: string;
   updated_at: string;
@@ -356,38 +305,38 @@ export interface EquipmentUsageLog {
   id: string;
   equipment_id: string;
   clinic_id: string;
-  
+
   // Usage session
   session_start: string;
   session_end?: string;
   duration_minutes?: number;
   usage_type?: string;
-  
+
   // Metrics
   cycles_performed?: number;
   power_consumption_kwh?: number;
   performance_metrics?: Record<string, any>;
-  
+
   // Operator
   operated_by?: string;
   department?: string;
   patient_id?: string;
   procedure_type?: string;
-  
+
   // Environment
   ambient_temperature?: number;
   humidity_percentage?: number;
   environmental_conditions?: Record<string, any>;
-  
+
   // Performance
   performance_rating?: number; // 1-10
   issues_reported?: string;
   anomalies_detected?: Record<string, any>;
-  
+
   // Tracking
   auto_logged: boolean;
   data_source?: string;
-  
+
   // Audit
   created_at: string;
 }
@@ -401,49 +350,49 @@ export interface MaintenanceHistory {
   equipment_id: string;
   work_order_id?: string;
   clinic_id: string;
-  
+
   // Event
   maintenance_date: string;
   maintenance_type: MaintenanceType;
   description: string;
-  
+
   // Personnel
   performed_by?: string;
   technician_id?: string;
   vendor_name?: string;
   vendor_id?: string;
-  
+
   // Work
   work_performed?: string;
   parts_replaced?: Record<string, any>;
   adjustments_made?: string;
   issues_resolved?: string;
-  
+
   // Results
   pre_maintenance_condition?: number; // 1-10
   post_maintenance_condition?: number; // 1-10
   performance_improvement?: number;
   downtime_hours?: number;
-  
+
   // Costs
   labor_cost?: number;
   parts_cost?: number;
   total_cost?: number;
-  
+
   // Compliance
   compliance_standards_met?: string[];
   certifications_updated?: string[];
   calibration_certificates_urls?: string[];
-  
+
   // Documentation
   maintenance_report_url?: string;
   photos_urls?: string[];
   documentation_urls?: string[];
-  
+
   // Next maintenance
   next_maintenance_recommended_date?: string;
   recommendations?: string;
-  
+
   // Audit
   created_at: string;
   created_by?: string;
@@ -457,45 +406,45 @@ export interface EquipmentPerformanceMetrics {
   id: string;
   equipment_id: string;
   clinic_id: string;
-  
+
   // Period
   metric_date: string;
   reporting_period: ReportingPeriod;
-  
+
   // Availability
   total_scheduled_hours?: number;
   actual_operational_hours?: number;
   downtime_hours?: number;
   availability_percentage?: number;
-  
+
   // Reliability
   mean_time_between_failures?: number; // MTBF
   mean_time_to_repair?: number; // MTTR
   failure_rate?: number;
   reliability_score?: number;
-  
+
   // Performance
   performance_efficiency?: number;
   throughput_metrics?: Record<string, any>;
   quality_metrics?: Record<string, any>;
   energy_efficiency?: number;
-  
+
   // Maintenance
   scheduled_maintenance_hours?: number;
   unscheduled_maintenance_hours?: number;
   maintenance_cost?: number;
   cost_per_operational_hour?: number;
-  
+
   // Usage
   peak_usage_hours?: string[];
   utilization_rate?: number;
   usage_pattern_analysis?: Record<string, any>;
-  
+
   // Predictive
   condition_trend?: ConditionTrend;
   predicted_failure_risk?: number;
   recommended_actions?: string[];
-  
+
   // Audit
   created_at: string;
   calculated_at: string;
@@ -510,47 +459,47 @@ export interface VendorServiceContract {
   equipment_id: string;
   vendor_id: string;
   clinic_id: string;
-  
+
   // Contract
   contract_number?: string;
   contract_type: ContractType;
   service_level?: ServiceLevel;
-  
+
   // Coverage
   coverage_type: CoverageType;
   covered_services?: string[];
   excluded_services?: string[];
   response_time_hours?: number;
   resolution_time_hours?: number;
-  
+
   // Terms
   start_date: string;
   end_date: string;
   auto_renewal?: boolean;
   contract_value?: number;
   payment_schedule?: string;
-  
+
   // Performance
   uptime_guarantee_percentage?: number;
   performance_penalties?: Record<string, any>;
   service_credits?: Record<string, any>;
-  
+
   // Contact
   vendor_contact_name?: string;
   vendor_contact_phone?: string;
   vendor_contact_email?: string;
   emergency_contact_phone?: string;
-  
+
   // Status
   contract_status?: string;
   last_service_date?: string;
   service_calls_used?: number;
   service_calls_remaining?: number;
-  
+
   // Documentation
   contract_document_url?: string;
   terms_and_conditions_url?: string;
-  
+
   // Audit
   created_at: string;
   updated_at: string;
@@ -566,35 +515,35 @@ export interface EquipmentComplianceRecord {
   id: string;
   equipment_id: string;
   clinic_id: string;
-  
+
   // Requirement
   regulation_name: string;
   regulation_body?: string;
   requirement_type: RequirementType;
   compliance_standard?: string;
-  
+
   // Status
   compliance_status: ComplianceStatus;
   last_compliance_date?: string;
   next_compliance_due_date?: string;
   compliance_frequency_days?: number;
-  
+
   // Documentation
   certificate_number?: string;
   certificate_url?: string;
   compliance_report_url?: string;
   test_results?: Record<string, any>;
-  
+
   // Responsible parties
   compliance_officer_id?: string;
   testing_organization?: string;
   certified_by?: string;
-  
+
   // Notifications
   reminder_days_before?: number;
   critical_reminder_days_before?: number;
   notification_recipients?: string[];
-  
+
   // Audit
   created_at: string;
   updated_at: string;
@@ -812,7 +761,7 @@ export interface MaintenanceAnalytics {
     equipmentType: EquipmentType;
     totalCost: number;
     averageCostPerUnit: number;
-    trend: 'increasing' | 'decreasing' | 'stable';
+    trend: "increasing" | "decreasing" | "stable";
   }>;
   complianceMetrics: {
     overallComplianceRate: number;

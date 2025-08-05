@@ -4,45 +4,40 @@
 // =====================================================================================
 
 // Core Follow-up Types
-export type FollowupType = 
-  | 'post_treatment' 
-  | 'progress_check' 
-  | 'satisfaction' 
-  | 'maintenance' 
-  | 'care_instructions' 
-  | 'warning_check';
+export type FollowupType =
+  | "post_treatment"
+  | "progress_check"
+  | "satisfaction"
+  | "maintenance"
+  | "care_instructions"
+  | "warning_check";
 
-export type CommunicationMethod = 
-  | 'sms' 
-  | 'email' 
-  | 'whatsapp' 
-  | 'call' 
-  | 'in_person';
+export type CommunicationMethod = "sms" | "email" | "whatsapp" | "call" | "in_person";
 
-export type FollowupStatus = 
-  | 'pending' 
-  | 'sent' 
-  | 'completed' 
-  | 'failed' 
-  | 'cancelled' 
-  | 'rescheduled';
+export type FollowupStatus =
+  | "pending"
+  | "sent"
+  | "completed"
+  | "failed"
+  | "cancelled"
+  | "rescheduled";
 
-export type ResponseType = 
-  | 'satisfaction_rating' 
-  | 'yes_no' 
-  | 'text' 
-  | 'photo' 
-  | 'scale_1_10' 
-  | 'multiple_choice';
+export type ResponseType =
+  | "satisfaction_rating"
+  | "yes_no"
+  | "text"
+  | "photo"
+  | "scale_1_10"
+  | "multiple_choice";
 
-export type Priority = 'low' | 'normal' | 'high' | 'urgent';
+export type Priority = "low" | "normal" | "high" | "urgent";
 
-export type AttachmentType = 
-  | 'before_photo' 
-  | 'after_photo' 
-  | 'progress_photo' 
-  | 'document' 
-  | 'report';
+export type AttachmentType =
+  | "before_photo"
+  | "after_photo"
+  | "progress_photo"
+  | "document"
+  | "report";
 
 // Follow-up Template Interface
 export interface FollowupTemplate {
@@ -111,7 +106,7 @@ export interface TreatmentFollowup {
   notes?: string;
   created_at: string;
   updated_at: string;
-  
+
   // Relationships
   template?: FollowupTemplate;
   patient?: {
@@ -276,7 +271,7 @@ export interface AutomationRule {
   name: string;
   description?: string;
   trigger_condition: string; // JSON rule
-  action_type: 'create_followup' | 'send_reminder' | 'escalate' | 'schedule_appointment';
+  action_type: "create_followup" | "send_reminder" | "escalate" | "schedule_appointment";
   action_config: Record<string, any>;
   active: boolean;
   clinic_id: string;
@@ -287,7 +282,7 @@ export interface AutomationRule {
 
 // Bulk Operations
 export interface BulkFollowupOperation {
-  operation: 'create' | 'update' | 'delete' | 'reschedule';
+  operation: "create" | "update" | "delete" | "reschedule";
   filters: FollowupFilters;
   data?: Partial<TreatmentFollowup>;
   scheduled_date?: string;
@@ -357,7 +352,7 @@ export interface FollowupDashboardSummary {
   automation_success_rate: number;
   recent_activities: Array<{
     id: string;
-    type: 'followup_sent' | 'response_received' | 'template_created';
+    type: "followup_sent" | "response_received" | "template_created";
     description: string;
     timestamp: string;
   }>;

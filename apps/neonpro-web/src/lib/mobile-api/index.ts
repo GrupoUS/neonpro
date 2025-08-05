@@ -3,12 +3,12 @@
  * Unified mobile API system with offline sync, push notifications, caching, and optimization
  */
 
-import { MobileApiSystem } from './mobile-api-system';
-import { CacheManager } from './cache-manager';
-import { OfflineSyncManager } from './offline-sync';
-import { PushNotificationsManager } from './push-notifications';
-import { MobileApiUtils } from './utils';
-import {
+import type { MobileApiSystem } from "./mobile-api-system";
+import type { CacheManager } from "./cache-manager";
+import type { OfflineSyncManager } from "./offline-sync";
+import type { PushNotificationsManager } from "./push-notifications";
+import type { MobileApiUtils } from "./utils";
+import type {
   MobileApiConfig,
   MobileApiRequest,
   MobileApiResponse,
@@ -21,8 +21,8 @@ import {
   NotificationStatus,
   SystemHealth,
   PerformanceMetrics,
-  MobileApiStats
-} from './types';
+  MobileApiStats,
+} from "./types";
 
 /**
  * Unified Mobile API Manager
@@ -41,28 +41,28 @@ export class UnifiedMobileApiManager {
 
   constructor(config: MobileApiConfig) {
     this.config = config;
-    
+
     // Initialize subsystems
     this.apiSystem = new MobileApiSystem(config.api);
     this.cacheManager = new CacheManager(config.cache);
     this.syncManager = new OfflineSyncManager(config.offlineSync);
     this.notificationsManager = new PushNotificationsManager(config.pushNotifications);
-    
+
     // Initialize health status
     this.healthStatus = {
-      overall: 'healthy',
-      api: 'healthy',
-      cache: 'healthy',
-      sync: 'healthy',
-      notifications: 'healthy',
+      overall: "healthy",
+      api: "healthy",
+      cache: "healthy",
+      sync: "healthy",
+      notifications: "healthy",
       lastCheck: new Date(),
       uptime: 0,
-      errors: []
+      errors: [],
     };
-    
+
     // Initialize performance metrics
     this.performanceMetrics = {
-      operationId: 'system',
+      operationId: "system",
       startTime: Date.now(),
       endTime: 0,
       duration: 0,
@@ -70,9 +70,9 @@ export class UnifiedMobileApiManager {
       networkLatency: 0,
       cacheHitRate: 0,
       errorRate: 0,
-      throughput: 0
+      throughput: 0,
     };
-    
+
     // Initialize stats
     this.stats = {
       totalRequests: 0,
@@ -84,7 +84,7 @@ export class UnifiedMobileApiManager {
       notificationsSent: 0,
       averageResponseTime: 0,
       dataTransferred: 0,
-      offlineOperations: 0
+      offlineOperations: 0,
     };
   }
 
@@ -93,25 +93,25 @@ export class UnifiedMobileApiManager {
    */
   async initialize(): Promise<void> {
     try {
-      console.log('Initializing Unified Mobile API System...');
-      
+      console.log("Initializing Unified Mobile API System...");
+
       // Initialize subsystems in order
       await this.cacheManager.initialize();
       await this.apiSystem.initialize();
       await this.syncManager.initialize();
       await this.notificationsManager.initialize();
-      
+
       // Setup cross-system integrations
       this.setupIntegrations();
-      
+
       // Start monitoring and health checks
       this.startHealthMonitoring();
       this.startPerformanceMonitoring();
-      
+
       this.isInitialized = true;
-      console.log('Unified Mobile API System initialized successfully');
+      console.log("Unified Mobile API System initialized successfully");
     } catch (error) {
-      console.error('Failed to initialize Unified Mobile API System:', error);
+      console.error("Failed to initialize Unified Mobile API System:", error);
       throw error;
     }
   }
@@ -121,7 +121,7 @@ export class UnifiedMobileApiManager {
    */
   async request(request: MobileApiRequest): Promise<MobileApiResponse> {
     if (!this.isInitialized) {
-      throw new Error('Mobile API system not initialized');
+      throw new Error("Mobile API system not initialized");
     }
 
     const startTime = Date.now();
@@ -130,8 +130,11 @@ export class UnifiedMobileApiManager {
     try {
       // Detect network condition and optimize request
       const networkCondition = MobileApiUtils.NetworkUtils.detectNetworkCondition();
-      const optimizedRequest = MobileApiUtils.NetworkUtils.optimizeRequest(request, networkCondition);
-      
+      const optimizedRequest = MobileApiUtils.NetworkUtils.optimizeRequest(
+        request,
+        networkCondition,
+      );
+
       // Try cache first if enabled
       if (optimizedRequest.cache?.enabled) {
         const cachedResponse = await this.cacheManager.get(this.generateCacheKey(optimizedRequest));
@@ -141,41 +144,41 @@ export class UnifiedMobileApiManager {
         }
         this.stats.cacheMisses++;
       }
-      
+
       // Make API request
       const response = await this.apiSystem.request(optimizedRequest);
-      
+
       // Cache successful responses
       if (response.success && optimizedRequest.cache?.enabled) {
         await this.cacheManager.set(
           this.generateCacheKey(optimizedRequest),
           response,
-          optimizedRequest.cache.ttl
+          optimizedRequest.cache.ttl,
         );
       }
-      
+
       // Queue for offline sync if needed
       if (this.shouldQueueForSync(optimizedRequest, response)) {
         await this.syncManager.queueOperation({
           id: `req_${Date.now()}`,
-          type: 'api_request',
+          type: "api_request",
           data: optimizedRequest,
           timestamp: new Date(),
-          priority: 'medium',
+          priority: "medium",
           retryCount: 0,
-          maxRetries: 3
+          maxRetries: 3,
         });
       }
-      
+
       // Update stats
       this.stats.successfulRequests++;
       this.stats.averageResponseTime = this.calculateAverageResponseTime(Date.now() - startTime);
       this.stats.dataTransferred += this.calculateDataSize(response);
-      
+
       return response;
     } catch (error) {
       this.stats.failedRequests++;
-      
+
       // Try offline fallback
       if (this.config.offlineSync.enabled) {
         const offlineResponse = await this.syncManager.getOfflineData(request.endpoint);
@@ -188,11 +191,11 @@ export class UnifiedMobileApiManager {
             headers: {},
             responseTime: Date.now() - startTime,
             fromCache: false,
-            fromOffline: true
+            fromOffline: true,
           };
         }
       }
-      
+
       throw error;
     }
   }
@@ -200,10 +203,7 @@ export class UnifiedMobileApiManager {
   /**
    * Send push notification
    */
-  async sendNotification(
-    deviceId: string,
-    payload: any
-  ): Promise<boolean> {
+  async sendNotification(deviceId: string, payload: any): Promise<boolean> {
     try {
       const result = await this.notificationsManager.sendNotification(deviceId, payload);
       if (result.success) {
@@ -211,7 +211,7 @@ export class UnifiedMobileApiManager {
       }
       return result.success;
     } catch (error) {
-      console.error('Failed to send notification:', error);
+      console.error("Failed to send notification:", error);
       return false;
     }
   }
@@ -223,7 +223,7 @@ export class UnifiedMobileApiManager {
     try {
       return await this.notificationsManager.registerDevice(registration);
     } catch (error) {
-      console.error('Failed to register device:', error);
+      console.error("Failed to register device:", error);
       return false;
     }
   }
@@ -237,13 +237,13 @@ export class UnifiedMobileApiManager {
       this.stats.syncOperations++;
       return status;
     } catch (error) {
-      console.error('Force sync failed:', error);
+      console.error("Force sync failed:", error);
       return {
-        status: 'error',
+        status: "error",
         lastSync: new Date(),
         pendingOperations: 0,
         conflictsResolved: 0,
-        errors: [error.message]
+        errors: [error.message],
       };
     }
   }
@@ -309,20 +309,20 @@ export class UnifiedMobileApiManager {
    */
   async shutdown(): Promise<void> {
     try {
-      console.log('Shutting down Unified Mobile API System...');
-      
+      console.log("Shutting down Unified Mobile API System...");
+
       // Stop monitoring
       this.stopHealthMonitoring();
       this.stopPerformanceMonitoring();
-      
+
       // Shutdown subsystems
       await this.syncManager.shutdown();
       await this.cacheManager.shutdown();
-      
+
       this.isInitialized = false;
-      console.log('Unified Mobile API System shutdown complete');
+      console.log("Unified Mobile API System shutdown complete");
     } catch (error) {
-      console.error('Error during shutdown:', error);
+      console.error("Error during shutdown:", error);
     }
   }
 
@@ -331,19 +331,19 @@ export class UnifiedMobileApiManager {
    */
   private setupIntegrations(): void {
     // Cache invalidation on sync
-    this.syncManager.on('dataUpdated', async (data: any) => {
+    this.syncManager.on("dataUpdated", async (data: any) => {
       await this.cacheManager.invalidatePattern(data.pattern);
     });
-    
+
     // Notification on sync completion
-    this.syncManager.on('syncCompleted', async (status: SyncStatus) => {
+    this.syncManager.on("syncCompleted", async (status: SyncStatus) => {
       if (this.config.pushNotifications.syncNotifications) {
         // Send sync completion notification
       }
     });
-    
+
     // Performance monitoring integration
-    this.apiSystem.on('requestCompleted', (metrics: any) => {
+    this.apiSystem.on("requestCompleted", (metrics: any) => {
       this.updatePerformanceMetrics(metrics);
     });
   }
@@ -356,7 +356,7 @@ export class UnifiedMobileApiManager {
       endpoint: request.endpoint,
       method: request.method,
       params: request.params,
-      body: request.body
+      body: request.body,
     };
     return MobileApiUtils.SecurityUtils.generateHash(JSON.stringify(keyData));
   }
@@ -366,7 +366,7 @@ export class UnifiedMobileApiManager {
    */
   private shouldQueueForSync(request: MobileApiRequest, response: MobileApiResponse): boolean {
     // Queue write operations for sync
-    const writeMethods = ['POST', 'PUT', 'PATCH', 'DELETE'];
+    const writeMethods = ["POST", "PUT", "PATCH", "DELETE"];
     return writeMethods.includes(request.method) && response.success;
   }
 
@@ -376,7 +376,7 @@ export class UnifiedMobileApiManager {
   private calculateAverageResponseTime(currentTime: number): number {
     const totalRequests = this.stats.totalRequests;
     const currentAverage = this.stats.averageResponseTime;
-    return ((currentAverage * (totalRequests - 1)) + currentTime) / totalRequests;
+    return (currentAverage * (totalRequests - 1) + currentTime) / totalRequests;
   }
 
   /**
@@ -424,43 +424,43 @@ export class UnifiedMobileApiManager {
   private async checkSystemHealth(): Promise<void> {
     try {
       const errors: string[] = [];
-      
+
       // Check API system
       const apiHealth = await this.apiSystem.healthCheck();
       if (!apiHealth.healthy) {
-        errors.push('API system unhealthy');
-        this.healthStatus.api = 'unhealthy';
+        errors.push("API system unhealthy");
+        this.healthStatus.api = "unhealthy";
       } else {
-        this.healthStatus.api = 'healthy';
+        this.healthStatus.api = "healthy";
       }
-      
+
       // Check cache system
       const cacheHealth = await this.cacheManager.healthCheck();
       if (!cacheHealth.healthy) {
-        errors.push('Cache system unhealthy');
-        this.healthStatus.cache = 'unhealthy';
+        errors.push("Cache system unhealthy");
+        this.healthStatus.cache = "unhealthy";
       } else {
-        this.healthStatus.cache = 'healthy';
+        this.healthStatus.cache = "healthy";
       }
-      
+
       // Check sync system
       const syncHealth = await this.syncManager.healthCheck();
       if (!syncHealth.healthy) {
-        errors.push('Sync system unhealthy');
-        this.healthStatus.sync = 'unhealthy';
+        errors.push("Sync system unhealthy");
+        this.healthStatus.sync = "unhealthy";
       } else {
-        this.healthStatus.sync = 'healthy';
+        this.healthStatus.sync = "healthy";
       }
-      
+
       // Update overall health
-      this.healthStatus.overall = errors.length === 0 ? 'healthy' : 'unhealthy';
+      this.healthStatus.overall = errors.length === 0 ? "healthy" : "unhealthy";
       this.healthStatus.errors = errors;
       this.healthStatus.lastCheck = new Date();
       this.healthStatus.uptime = Date.now() - this.performanceMetrics.startTime;
     } catch (error) {
-      console.error('Health check failed:', error);
-      this.healthStatus.overall = 'unhealthy';
-      this.healthStatus.errors = ['Health check failed'];
+      console.error("Health check failed:", error);
+      this.healthStatus.overall = "unhealthy";
+      this.healthStatus.errors = ["Health check failed"];
     }
   }
 
@@ -471,27 +471,28 @@ export class UnifiedMobileApiManager {
     try {
       // Update memory usage
       this.performanceMetrics.memoryUsage = MobileApiUtils.PerformanceUtils.getMemoryUsage();
-      
+
       // Calculate cache hit rate
       const totalCacheRequests = this.stats.cacheHits + this.stats.cacheMisses;
       this.performanceMetrics.cacheHitRate = MobileApiUtils.PerformanceUtils.calculateCacheHitRate(
         this.stats.cacheHits,
-        totalCacheRequests
+        totalCacheRequests,
       );
-      
+
       // Calculate error rate
-      this.performanceMetrics.errorRate = this.stats.totalRequests > 0 
-        ? (this.stats.failedRequests / this.stats.totalRequests) * 100 
-        : 0;
-      
+      this.performanceMetrics.errorRate =
+        this.stats.totalRequests > 0
+          ? (this.stats.failedRequests / this.stats.totalRequests) * 100
+          : 0;
+
       // Calculate throughput
       const duration = Date.now() - this.performanceMetrics.startTime;
       this.performanceMetrics.throughput = MobileApiUtils.PerformanceUtils.calculateThroughput(
         this.stats.totalRequests,
-        duration
+        duration,
       );
     } catch (error) {
-      console.error('Performance metrics collection failed:', error);
+      console.error("Performance metrics collection failed:", error);
     }
   }
 
@@ -519,62 +520,62 @@ export const defaultMobileApiConfig: Partial<MobileApiConfig> = {
   healthCheckInterval: 30000,
   metricsInterval: 60000,
   api: {
-    baseUrl: '',
+    baseUrl: "",
     timeout: 30000,
     retryAttempts: 3,
     retryDelay: 1000,
     compression: {
       enabled: true,
-      algorithm: 'gzip',
-      level: 6
+      algorithm: "gzip",
+      level: 6,
     },
     security: {
-      encryptionKey: '',
+      encryptionKey: "",
       signatureValidation: true,
       rateLimiting: {
         enabled: true,
         maxRequests: 100,
-        windowMs: 60000
-      }
-    }
+        windowMs: 60000,
+      },
+    },
   },
   cache: {
     enabled: true,
-    strategy: 'lru',
+    strategy: "lru",
     maxSize: 100 * 1024 * 1024, // 100MB
     defaultTtl: 3600000, // 1 hour
     compression: {
       enabled: true,
-      algorithm: 'gzip',
-      level: 6
-    }
+      algorithm: "gzip",
+      level: 6,
+    },
   },
   offlineSync: {
     enabled: true,
     syncInterval: 300000, // 5 minutes
     maxRetries: 3,
-    conflictResolution: 'server-wins',
-    batchSize: 50
+    conflictResolution: "server-wins",
+    batchSize: 50,
   },
   pushNotifications: {
-    supabaseUrl: '',
-    supabaseKey: '',
-    fcmServerKey: '',
+    supabaseUrl: "",
+    supabaseKey: "",
+    fcmServerKey: "",
     apnsConfig: {},
     batchSize: 100,
     rateLimitDelay: 100,
     processingInterval: 5000,
     analyticsInterval: 60000,
-    syncNotifications: true
-  }
+    syncNotifications: true,
+  },
 };
 
 // Export all types and utilities
-export * from './types';
-export * from './mobile-api-system';
-export * from './cache-manager';
-export * from './offline-sync';
-export * from './push-notifications';
-export * from './utils';
+export * from "./types";
+export * from "./mobile-api-system";
+export * from "./cache-manager";
+export * from "./offline-sync";
+export * from "./push-notifications";
+export * from "./utils";
 
 export default UnifiedMobileApiManager;

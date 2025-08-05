@@ -1,13 +1,13 @@
 /**
  * NeonPro Notification System - Core Manager
  * Story 1.7: Sistema de Notificações
- * 
+ *
  * Gerenciador central do sistema de notificações
  * Coordena envio, templates, canais e automação
  */
 
-import { createClient } from '@supabase/supabase-js';
-import {
+import type { createClient } from "@supabase/supabase-js";
+import type {
   BaseNotification,
   DeliveryNotification,
   NotificationRecipient,
@@ -25,13 +25,13 @@ import {
   NotificationSystemConfig,
   ChannelConfig,
   NotificationMetrics,
-  NotificationEvent
-} from './types';
-import { TemplateEngine } from './template-engine';
-import { ChannelOrchestrator } from './channels/channel-orchestrator';
-// import { RuleEngine } from './rule-engine';
-// import { MetricsCollector } from './metrics-collector';
-import { auditLogger } from '../auth/audit/audit-logger';
+  NotificationEvent,
+} from "./types";
+import type { TemplateEngine } from "./template-engine";
+import type { ChannelOrchestrator } from "./channels/channel-orchestrator";
+// import type { RuleEngine } from "./rule-engine";
+// import type { MetricsCollector } from "./metrics-collector";
+import type { auditLogger } from "../auth/audit/audit-logger";
 
 // ============================================================================
 // NOTIFICATION MANAGER CLASS
@@ -81,22 +81,21 @@ class NotificationManager {
       this.isInitialized = true;
 
       await auditLogger.log({
-        action: 'notification_system_initialized',
-        category: 'system',
-        severity: 'info',
+        action: "notification_system_initialized",
+        category: "system",
+        severity: "info",
         details: {
-          channelsEnabled: config.channels.filter(c => c.isEnabled).length,
+          channelsEnabled: config.channels.filter((c) => c.isEnabled).length,
           analyticsEnabled: config.analytics.enabled,
-          lgpdCompliance: config.compliance.lgpd.enabled
-        }
+          lgpdCompliance: config.compliance.lgpd.enabled,
+        },
       });
-
     } catch (error) {
       await auditLogger.log({
-        action: 'notification_system_init_failed',
-        category: 'system',
-        severity: 'error',
-        details: { error: error.message }
+        action: "notification_system_init_failed",
+        category: "system",
+        severity: "error",
+        details: { error: error.message },
       });
       throw error;
     }
@@ -107,7 +106,7 @@ class NotificationManager {
    */
   private ensureInitialized(): void {
     if (!this.isInitialized) {
-      throw new Error('NotificationManager não foi inicializado. Chame initialize() primeiro.');
+      throw new Error("NotificationManager não foi inicializado. Chame initialize() primeiro.");
     }
   }
 
@@ -127,60 +126,59 @@ class NotificationManager {
       channels?: NotificationChannel[];
       scheduledFor?: Date;
       template?: string;
-    }
+    },
   ): Promise<DeliveryResult[]> {
     this.ensureInitialized();
 
     try {
       // Criar notificação base
       const notification = await this.createNotification(type, data, options?.priority);
-      
+
       // Determinar canais de entrega
       const channels = this.determineChannels(recipient, type, options?.channels);
-      
+
       // Verificar rate limiting
       await this.checkRateLimit(recipient, channels);
-      
+
       // Criar notificações de entrega para cada canal
       const deliveryNotifications = await Promise.all(
-        channels.map(channel => 
-          this.createDeliveryNotification(notification, recipient, channel, options)
-        )
+        channels.map((channel) =>
+          this.createDeliveryNotification(notification, recipient, channel, options),
+        ),
       );
-      
+
       // Enviar notificações
       const results = await Promise.all(
-        deliveryNotifications.map(dn => this.deliverNotification(dn))
+        deliveryNotifications.map((dn) => this.deliverNotification(dn)),
       );
-      
+
       // Registrar métricas
       // await this.metricsCollector.recordDelivery(deliveryNotifications, results);
-      
+
       // Log de auditoria
       await auditLogger.log({
-        action: 'notification_sent',
-        category: 'notification',
-        severity: 'info',
+        action: "notification_sent",
+        category: "notification",
+        severity: "info",
         details: {
           type,
           recipientId: recipient.id,
           channels: channels.length,
-          success: results.filter(r => r.success).length
-        }
+          success: results.filter((r) => r.success).length,
+        },
       });
-      
+
       return results;
-      
     } catch (error) {
       await auditLogger.log({
-        action: 'notification_send_failed',
-        category: 'notification',
-        severity: 'error',
+        action: "notification_send_failed",
+        category: "notification",
+        severity: "error",
         details: {
           type,
           recipientId: recipient.id,
-          error: error.message
-        }
+          error: error.message,
+        },
       });
       throw error;
     }
@@ -197,31 +195,29 @@ class NotificationManager {
       priority?: NotificationPriority;
       channels?: NotificationChannel[];
       batchSize?: number;
-    }
+    },
   ): Promise<DeliveryResult[][]> {
     this.ensureInitialized();
-    
+
     const batchSize = options?.batchSize || 100;
     const results: DeliveryResult[][] = [];
-    
+
     // Processar em lotes
     for (let i = 0; i < recipients.length; i += batchSize) {
       const batch = recipients.slice(i, i + batchSize);
-      
+
       const batchResults = await Promise.all(
-        batch.map(recipient => 
-          this.sendNotification(type, recipient, data, options)
-        )
+        batch.map((recipient) => this.sendNotification(type, recipient, data, options)),
       );
-      
+
       results.push(...batchResults);
-      
+
       // Delay entre lotes para evitar sobrecarga
       if (i + batchSize < recipients.length) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
-    
+
     return results;
   }
 
@@ -235,36 +231,34 @@ class NotificationManager {
   private async createNotification(
     type: NotificationType,
     data: Record<string, any>,
-    priority: NotificationPriority = NotificationPriority.NORMAL
+    priority: NotificationPriority = NotificationPriority.NORMAL,
   ): Promise<BaseNotification> {
     const category = this.getNotificationCategory(type);
-    
+
     const notification: BaseNotification = {
       id: crypto.randomUUID(),
       type,
       category,
       priority,
       title: data.title || this.getDefaultTitle(type),
-      message: data.message || '',
+      message: data.message || "",
       data,
       metadata: {
-        source: 'notification-manager',
-        version: '1.0.0',
-        correlationId: data.correlationId || crypto.randomUUID()
+        source: "notification-manager",
+        version: "1.0.0",
+        correlationId: data.correlationId || crypto.randomUUID(),
       },
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
-    
+
     // Salvar no banco
-    const { error } = await this.supabase
-      .from('notifications')
-      .insert(notification);
-    
+    const { error } = await this.supabase.from("notifications").insert(notification);
+
     if (error) {
       throw new Error(`Erro ao salvar notificação: ${error.message}`);
     }
-    
+
     return notification;
   }
 
@@ -278,22 +272,22 @@ class NotificationManager {
     options?: {
       scheduledFor?: Date;
       template?: string;
-    }
+    },
   ): Promise<DeliveryNotification> {
     // Buscar template
     const template = await this.getTemplate(notification.type, channel, options?.template);
-    
+
     // Renderizar conteúdo
     const context: NotificationContext = {
       recipient,
       clinic: await this.getClinicInfo(recipient.id),
       data: notification.data || {},
       timestamp: new Date(),
-      locale: recipient.language || 'pt-BR'
+      locale: recipient.language || "pt-BR",
     };
-    
+
     const renderedContent = await this.templateEngine.render(template, context);
-    
+
     const deliveryNotification: DeliveryNotification = {
       ...notification,
       title: renderedContent.title,
@@ -303,27 +297,25 @@ class NotificationManager {
       template,
       scheduledFor: options?.scheduledFor,
       attempts: [],
-      status: NotificationStatus.PENDING
+      status: NotificationStatus.PENDING,
     };
-    
+
     // Salvar no banco
-    const { error } = await this.supabase
-      .from('notification_deliveries')
-      .insert({
-        id: crypto.randomUUID(),
-        notification_id: notification.id,
-        recipient_id: recipient.id,
-        channel,
-        template_id: template?.id,
-        scheduled_for: options?.scheduledFor,
-        status: NotificationStatus.PENDING,
-        created_at: new Date()
-      });
-    
+    const { error } = await this.supabase.from("notification_deliveries").insert({
+      id: crypto.randomUUID(),
+      notification_id: notification.id,
+      recipient_id: recipient.id,
+      channel,
+      template_id: template?.id,
+      scheduled_for: options?.scheduledFor,
+      status: NotificationStatus.PENDING,
+      created_at: new Date(),
+    });
+
     if (error) {
       throw new Error(`Erro ao salvar delivery: ${error.message}`);
     }
-    
+
     return deliveryNotification;
   }
 
@@ -334,9 +326,7 @@ class NotificationManager {
   /**
    * Entrega uma notificação
    */
-  private async deliverNotification(
-    notification: DeliveryNotification
-  ): Promise<DeliveryResult> {
+  private async deliverNotification(notification: DeliveryNotification): Promise<DeliveryResult> {
     try {
       // Verificar se deve ser agendada
       if (notification.scheduledFor && notification.scheduledFor > new Date()) {
@@ -344,36 +334,35 @@ class NotificationManager {
         return {
           success: true,
           status: NotificationStatus.PENDING,
-          messageId: `scheduled_${notification.id}`
+          messageId: `scheduled_${notification.id}`,
         };
       }
-      
+
       // Entregar através do canal
       const result = await this.channelManager.deliver(notification);
-      
+
       // Atualizar status
       await this.updateDeliveryStatus(notification.id, result);
-      
+
       // Registrar evento
-      await this.recordNotificationEvent(notification.id, 'sent', {
+      await this.recordNotificationEvent(notification.id, "sent", {
         channel: notification.channel,
-        messageId: result.messageId
+        messageId: result.messageId,
       });
-      
+
       return result;
-      
     } catch (error) {
       const result: DeliveryResult = {
         success: false,
         status: NotificationStatus.FAILED,
-        error: error.message
+        error: error.message,
       };
-      
+
       await this.updateDeliveryStatus(notification.id, result);
-      await this.recordNotificationEvent(notification.id, 'failed', {
-        error: error.message
+      await this.recordNotificationEvent(notification.id, "failed", {
+        error: error.message,
       });
-      
+
       return result;
     }
   }
@@ -388,12 +377,12 @@ class NotificationManager {
   private async getTemplate(
     type: NotificationType,
     channel: NotificationChannel,
-    templateId?: string
+    templateId?: string,
   ): Promise<NotificationTemplate | undefined> {
     if (templateId) {
       return await this.templateEngine.getTemplate(templateId);
     }
-    
+
     return await this.templateEngine.getTemplateByType(type, channel);
   }
 
@@ -402,14 +391,14 @@ class NotificationManager {
    */
   private async loadTemplates(): Promise<void> {
     const { data: templates, error } = await this.supabase
-      .from('notification_templates')
-      .select('*')
-      .eq('is_active', true);
-    
+      .from("notification_templates")
+      .select("*")
+      .eq("is_active", true);
+
     if (error) {
       throw new Error(`Erro ao carregar templates: ${error.message}`);
     }
-    
+
     for (const template of templates || []) {
       await this.templateEngine.addTemplate(template);
     }
@@ -425,19 +414,20 @@ class NotificationManager {
   private determineChannels(
     recipient: NotificationRecipient,
     type: NotificationType,
-    requestedChannels?: NotificationChannel[]
+    requestedChannels?: NotificationChannel[],
   ): NotificationChannel[] {
     const category = this.getNotificationCategory(type);
     const preferences = recipient.preferences;
-    
+
     if (requestedChannels) {
       // Filtrar apenas canais habilitados nas preferências
-      return requestedChannels.filter(channel => 
-        preferences.channels[channel] && 
-        preferences.categories[category]?.channels.includes(channel)
+      return requestedChannels.filter(
+        (channel) =>
+          preferences.channels[channel] &&
+          preferences.categories[category]?.channels.includes(channel),
       );
     }
-    
+
     // Usar preferências do usuário
     return preferences.categories[category]?.channels || [this.config.defaultChannel];
   }
@@ -447,23 +437,23 @@ class NotificationManager {
    */
   private getNotificationCategory(type: NotificationType): NotificationCategory {
     const categoryMap: Record<string, NotificationCategory> = {
-      'appointment_': NotificationCategory.APPOINTMENT,
-      'patient_': NotificationCategory.PATIENT,
-      'system_': NotificationCategory.SYSTEM,
-      'security_': NotificationCategory.SECURITY,
-      'payment_': NotificationCategory.PAYMENT,
-      'promotional_': NotificationCategory.MARKETING,
-      'newsletter': NotificationCategory.MARKETING,
-      'campaign_': NotificationCategory.MARKETING,
-      'staff_': NotificationCategory.STAFF
+      appointment_: NotificationCategory.APPOINTMENT,
+      patient_: NotificationCategory.PATIENT,
+      system_: NotificationCategory.SYSTEM,
+      security_: NotificationCategory.SECURITY,
+      payment_: NotificationCategory.PAYMENT,
+      promotional_: NotificationCategory.MARKETING,
+      newsletter: NotificationCategory.MARKETING,
+      campaign_: NotificationCategory.MARKETING,
+      staff_: NotificationCategory.STAFF,
     };
-    
+
     for (const [prefix, category] of Object.entries(categoryMap)) {
       if (type.startsWith(prefix)) {
         return category;
       }
     }
-    
+
     return NotificationCategory.SYSTEM;
   }
 
@@ -472,32 +462,32 @@ class NotificationManager {
    */
   private getDefaultTitle(type: NotificationType): string {
     const titles: Record<NotificationType, string> = {
-      [NotificationType.APPOINTMENT_CREATED]: 'Agendamento Criado',
-      [NotificationType.APPOINTMENT_UPDATED]: 'Agendamento Atualizado',
-      [NotificationType.APPOINTMENT_CANCELLED]: 'Agendamento Cancelado',
-      [NotificationType.APPOINTMENT_REMINDER]: 'Lembrete de Consulta',
-      [NotificationType.APPOINTMENT_CONFIRMATION]: 'Confirmação de Consulta',
-      [NotificationType.PATIENT_REGISTERED]: 'Cadastro Realizado',
-      [NotificationType.PATIENT_UPDATED]: 'Dados Atualizados',
-      [NotificationType.PATIENT_BIRTHDAY]: 'Feliz Aniversário!',
-      [NotificationType.PATIENT_FOLLOW_UP]: 'Acompanhamento',
-      [NotificationType.SYSTEM_MAINTENANCE]: 'Manutenção do Sistema',
-      [NotificationType.SYSTEM_UPDATE]: 'Atualização do Sistema',
-      [NotificationType.SYSTEM_ALERT]: 'Alerta do Sistema',
-      [NotificationType.SECURITY_ALERT]: 'Alerta de Segurança',
-      [NotificationType.PAYMENT_RECEIVED]: 'Pagamento Recebido',
-      [NotificationType.PAYMENT_FAILED]: 'Falha no Pagamento',
-      [NotificationType.PAYMENT_REMINDER]: 'Lembrete de Pagamento',
-      [NotificationType.INVOICE_GENERATED]: 'Fatura Gerada',
-      [NotificationType.PROMOTIONAL_OFFER]: 'Oferta Especial',
-      [NotificationType.NEWSLETTER]: 'Newsletter',
-      [NotificationType.CAMPAIGN_MESSAGE]: 'Mensagem da Campanha',
-      [NotificationType.STAFF_SCHEDULE_CHANGE]: 'Mudança de Horário',
-      [NotificationType.STAFF_TASK_ASSIGNED]: 'Nova Tarefa',
-      [NotificationType.STAFF_PERFORMANCE_REPORT]: 'Relatório de Performance'
+      [NotificationType.APPOINTMENT_CREATED]: "Agendamento Criado",
+      [NotificationType.APPOINTMENT_UPDATED]: "Agendamento Atualizado",
+      [NotificationType.APPOINTMENT_CANCELLED]: "Agendamento Cancelado",
+      [NotificationType.APPOINTMENT_REMINDER]: "Lembrete de Consulta",
+      [NotificationType.APPOINTMENT_CONFIRMATION]: "Confirmação de Consulta",
+      [NotificationType.PATIENT_REGISTERED]: "Cadastro Realizado",
+      [NotificationType.PATIENT_UPDATED]: "Dados Atualizados",
+      [NotificationType.PATIENT_BIRTHDAY]: "Feliz Aniversário!",
+      [NotificationType.PATIENT_FOLLOW_UP]: "Acompanhamento",
+      [NotificationType.SYSTEM_MAINTENANCE]: "Manutenção do Sistema",
+      [NotificationType.SYSTEM_UPDATE]: "Atualização do Sistema",
+      [NotificationType.SYSTEM_ALERT]: "Alerta do Sistema",
+      [NotificationType.SECURITY_ALERT]: "Alerta de Segurança",
+      [NotificationType.PAYMENT_RECEIVED]: "Pagamento Recebido",
+      [NotificationType.PAYMENT_FAILED]: "Falha no Pagamento",
+      [NotificationType.PAYMENT_REMINDER]: "Lembrete de Pagamento",
+      [NotificationType.INVOICE_GENERATED]: "Fatura Gerada",
+      [NotificationType.PROMOTIONAL_OFFER]: "Oferta Especial",
+      [NotificationType.NEWSLETTER]: "Newsletter",
+      [NotificationType.CAMPAIGN_MESSAGE]: "Mensagem da Campanha",
+      [NotificationType.STAFF_SCHEDULE_CHANGE]: "Mudança de Horário",
+      [NotificationType.STAFF_TASK_ASSIGNED]: "Nova Tarefa",
+      [NotificationType.STAFF_PERFORMANCE_REPORT]: "Relatório de Performance",
     };
-    
-    return titles[type] || 'Notificação';
+
+    return titles[type] || "Notificação";
   }
 
   /**
@@ -505,20 +495,22 @@ class NotificationManager {
    */
   private async getClinicInfo(userId: string): Promise<any> {
     const { data } = await this.supabase
-      .from('clinics')
-      .select('*')
-      .eq('owner_id', userId)
+      .from("clinics")
+      .select("*")
+      .eq("owner_id", userId)
       .single();
-    
-    return data || {
-      id: 'default',
-      name: 'NeonPro Clinic',
-      contact: {
-        phone: '(11) 99999-9999',
-        email: 'contato@neonpro.com',
-        address: 'São Paulo, SP'
+
+    return (
+      data || {
+        id: "default",
+        name: "NeonPro Clinic",
+        contact: {
+          phone: "(11) 99999-9999",
+          email: "contato@neonpro.com",
+          address: "São Paulo, SP",
+        },
       }
-    };
+    );
   }
 
   /**
@@ -526,38 +518,36 @@ class NotificationManager {
    */
   private async checkRateLimit(
     recipient: NotificationRecipient,
-    channels: NotificationChannel[]
+    channels: NotificationChannel[],
   ): Promise<void> {
     if (!this.config.rateLimiting.enabled) return;
-    
+
     // Implementar verificação de rate limiting
     // Por simplicidade, apenas log por enquanto
     await auditLogger.log({
-      action: 'rate_limit_check',
-      category: 'notification',
-      severity: 'info',
+      action: "rate_limit_check",
+      category: "notification",
+      severity: "info",
       details: {
         recipientId: recipient.id,
-        channels: channels.length
-      }
+        channels: channels.length,
+      },
     });
   }
 
   /**
    * Agenda notificação
    */
-  private async scheduleNotification(
-    notification: DeliveryNotification
-  ): Promise<void> {
+  private async scheduleNotification(notification: DeliveryNotification): Promise<void> {
     // Implementar agendamento (pode usar cron jobs, queue, etc.)
     await auditLogger.log({
-      action: 'notification_scheduled',
-      category: 'notification',
-      severity: 'info',
+      action: "notification_scheduled",
+      category: "notification",
+      severity: "info",
       details: {
         notificationId: notification.id,
-        scheduledFor: notification.scheduledFor
-      }
+        scheduledFor: notification.scheduledFor,
+      },
     });
   }
 
@@ -566,21 +556,21 @@ class NotificationManager {
    */
   private async updateDeliveryStatus(
     notificationId: string,
-    result: DeliveryResult
+    result: DeliveryResult,
   ): Promise<void> {
     const { error } = await this.supabase
-      .from('notification_deliveries')
+      .from("notification_deliveries")
       .update({
         status: result.status,
         message_id: result.messageId,
         error_message: result.error,
         delivered_at: result.success ? new Date() : null,
-        updated_at: new Date()
+        updated_at: new Date(),
       })
-      .eq('id', notificationId);
-    
+      .eq("id", notificationId);
+
     if (error) {
-      console.error('Erro ao atualizar status:', error);
+      console.error("Erro ao atualizar status:", error);
     }
   }
 
@@ -590,22 +580,20 @@ class NotificationManager {
   private async recordNotificationEvent(
     notificationId: string,
     event: string,
-    data?: Record<string, any>
+    data?: Record<string, any>,
   ): Promise<void> {
     const notificationEvent: NotificationEvent = {
       id: crypto.randomUUID(),
       notificationId,
       event: event as any,
       timestamp: new Date(),
-      data
+      data,
     };
-    
-    const { error } = await this.supabase
-      .from('notification_events')
-      .insert(notificationEvent);
-    
+
+    const { error } = await this.supabase.from("notification_events").insert(notificationEvent);
+
     if (error) {
-      console.error('Erro ao registrar evento:', error);
+      console.error("Erro ao registrar evento:", error);
     }
   }
 
@@ -614,14 +602,14 @@ class NotificationManager {
    */
   private async loadRules(): Promise<void> {
     const { data: rules, error } = await this.supabase
-      .from('notification_rules')
-      .select('*')
-      .eq('is_active', true);
-    
+      .from("notification_rules")
+      .select("*")
+      .eq("is_active", true);
+
     if (error) {
       throw new Error(`Erro ao carregar regras: ${error.message}`);
     }
-    
+
     for (const rule of rules || []) {
       // await this.ruleEngine.addRule(rule);
     }
@@ -636,51 +624,49 @@ class NotificationManager {
    */
   async getNotifications(
     filters: NotificationFilters,
-    pagination: PaginationOptions
+    pagination: PaginationOptions,
   ): Promise<PaginatedResult<DeliveryNotification>> {
     this.ensureInitialized();
-    
-    let query = this.supabase
-      .from('notification_deliveries')
-      .select(`
+
+    let query = this.supabase.from("notification_deliveries").select(`
         *,
         notification:notifications(*),
         recipient:recipients(*)
       `);
-    
+
     // Aplicar filtros
     if (filters.types?.length) {
-      query = query.in('notification.type', filters.types);
+      query = query.in("notification.type", filters.types);
     }
-    
+
     if (filters.statuses?.length) {
-      query = query.in('status', filters.statuses);
+      query = query.in("status", filters.statuses);
     }
-    
+
     if (filters.recipientId) {
-      query = query.eq('recipient_id', filters.recipientId);
+      query = query.eq("recipient_id", filters.recipientId);
     }
-    
+
     if (filters.dateRange) {
       query = query
-        .gte('created_at', filters.dateRange.start.toISOString())
-        .lte('created_at', filters.dateRange.end.toISOString());
+        .gte("created_at", filters.dateRange.start.toISOString())
+        .lte("created_at", filters.dateRange.end.toISOString());
     }
-    
+
     // Paginação
     const offset = (pagination.page - 1) * pagination.limit;
     query = query
       .range(offset, offset + pagination.limit - 1)
-      .order(pagination.sortBy || 'created_at', {
-        ascending: pagination.sortOrder === 'asc'
+      .order(pagination.sortBy || "created_at", {
+        ascending: pagination.sortOrder === "asc",
       });
-    
+
     const { data, error, count } = await query;
-    
+
     if (error) {
       throw new Error(`Erro ao buscar notificações: ${error.message}`);
     }
-    
+
     return {
       data: data || [],
       pagination: {
@@ -689,8 +675,8 @@ class NotificationManager {
         total: count || 0,
         totalPages: Math.ceil((count || 0) / pagination.limit),
         hasNext: offset + pagination.limit < (count || 0),
-        hasPrev: pagination.page > 1
-      }
+        hasPrev: pagination.page > 1,
+      },
     };
   }
 
@@ -700,7 +686,7 @@ class NotificationManager {
   async getMetrics(
     startDate: Date,
     endDate: Date,
-    filters?: NotificationFilters
+    filters?: NotificationFilters,
   ): Promise<NotificationMetrics> {
     this.ensureInitialized();
     // return await this.metricsCollector.getMetrics(startDate, endDate, filters);
@@ -710,7 +696,7 @@ class NotificationManager {
       totalFailed: 0,
       deliveryRate: 0,
       channels: {},
-      trends: []
+      trends: [],
     };
   }
 
@@ -719,22 +705,22 @@ class NotificationManager {
    */
   async markAsRead(notificationId: string, userId: string): Promise<void> {
     this.ensureInitialized();
-    
+
     const { error } = await this.supabase
-      .from('notification_deliveries')
+      .from("notification_deliveries")
       .update({
         status: NotificationStatus.READ,
         read_at: new Date(),
-        updated_at: new Date()
+        updated_at: new Date(),
       })
-      .eq('id', notificationId)
-      .eq('recipient_id', userId);
-    
+      .eq("id", notificationId)
+      .eq("recipient_id", userId);
+
     if (error) {
       throw new Error(`Erro ao marcar como lida: ${error.message}`);
     }
-    
-    await this.recordNotificationEvent(notificationId, 'read', { userId });
+
+    await this.recordNotificationEvent(notificationId, "read", { userId });
   }
 }
 
@@ -760,7 +746,7 @@ export function getNotificationManager(): NotificationManager {
  * Inicializa o sistema de notificações
  */
 export async function initializeNotificationSystem(
-  config: NotificationSystemConfig
+  config: NotificationSystemConfig,
 ): Promise<NotificationManager> {
   const manager = getNotificationManager();
   await manager.initialize(config);
@@ -768,4 +754,3 @@ export async function initializeNotificationSystem(
 }
 
 export { NotificationManager };
-

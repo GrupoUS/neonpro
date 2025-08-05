@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
-import { SessionManager } from '@/lib/auth/session-manager';
-import { SecurityEventType } from '@/types/session';
+import { NextRequest, NextResponse } from "next/server";
+import { createServerClient } from "@supabase/ssr";
+import { SessionManager } from "@/lib/auth/session-manager";
+import { SecurityEventType } from "@/types/session";
 
 /**
  * Session Authentication Middleware
@@ -48,91 +48,80 @@ export class SessionAuthMiddleware {
               response.cookies.delete(name);
             },
           },
-        }
+        },
       );
 
       // Get session token from cookie
-      const sessionToken = request.cookies.get('session-token')?.value;
-      
+      const sessionToken = request.cookies.get("session-token")?.value;
+
       if (!sessionToken) {
         return this.redirectToLogin(request);
       }
 
       // Validate session
-      const sessionValidation = await this.sessionManager.validateSession(
-        sessionToken,
-        {
-          ipAddress: this.getClientIP(request),
-          userAgent: request.headers.get('user-agent') || 'Unknown',
-          requestPath: pathname
-        }
-      );
+      const sessionValidation = await this.sessionManager.validateSession(sessionToken, {
+        ipAddress: this.getClientIP(request),
+        userAgent: request.headers.get("user-agent") || "Unknown",
+        requestPath: pathname,
+      });
 
       if (!sessionValidation.isValid) {
         // Log security event
         await this.logSecurityEvent(
-          sessionValidation.userId || 'unknown',
+          sessionValidation.userId || "unknown",
           SecurityEventType.SESSION_VALIDATION_FAILED,
           {
             reason: sessionValidation.reason,
             ipAddress: this.getClientIP(request),
-            userAgent: request.headers.get('user-agent') || 'Unknown',
-            requestPath: pathname
-          }
+            userAgent: request.headers.get("user-agent") || "Unknown",
+            requestPath: pathname,
+          },
         );
 
         // Clear invalid session cookie
-        response.cookies.delete('session-token');
+        response.cookies.delete("session-token");
         return this.redirectToLogin(request);
       }
 
       // Check if session needs refresh
       if (sessionValidation.needsRefresh) {
-        const refreshResult = await this.sessionManager.refreshSession(
-          sessionToken,
-          {
-            ipAddress: this.getClientIP(request),
-            userAgent: request.headers.get('user-agent') || 'Unknown'
-          }
-        );
+        const refreshResult = await this.sessionManager.refreshSession(sessionToken, {
+          ipAddress: this.getClientIP(request),
+          userAgent: request.headers.get("user-agent") || "Unknown",
+        });
 
         if (refreshResult.success && refreshResult.newToken) {
           // Set new session token
-          response.cookies.set('session-token', refreshResult.newToken, {
+          response.cookies.set("session-token", refreshResult.newToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
             maxAge: 60 * 60 * 24 * 7, // 7 days
-            path: '/'
+            path: "/",
           });
         }
       }
 
       // Add user info to request headers for downstream use
       if (sessionValidation.userId) {
-        response.headers.set('x-user-id', sessionValidation.userId);
-        response.headers.set('x-session-id', sessionValidation.sessionId || '');
+        response.headers.set("x-user-id", sessionValidation.userId);
+        response.headers.set("x-session-id", sessionValidation.sessionId || "");
       }
 
       // Check for suspicious activity
       await this.checkSuspiciousActivity(request, sessionValidation.userId!);
 
       return response;
-
     } catch (error) {
-      console.error('Session middleware error:', error);
-      
+      console.error("Session middleware error:", error);
+
       // Log error as security event
-      await this.logSecurityEvent(
-        'unknown',
-        SecurityEventType.SYSTEM_ERROR,
-        {
-          error: error instanceof Error ? error.message : 'Unknown error',
-          ipAddress: this.getClientIP(request),
-          userAgent: request.headers.get('user-agent') || 'Unknown',
-          requestPath: pathname
-        }
-      );
+      await this.logSecurityEvent("unknown", SecurityEventType.SYSTEM_ERROR, {
+        error: error instanceof Error ? error.message : "Unknown error",
+        ipAddress: this.getClientIP(request),
+        userAgent: request.headers.get("user-agent") || "Unknown",
+        requestPath: pathname,
+      });
 
       return this.redirectToLogin(request);
     }
@@ -143,22 +132,20 @@ export class SessionAuthMiddleware {
    */
   private isPublicRoute(pathname: string): boolean {
     const publicRoutes = [
-      '/login',
-      '/register',
-      '/forgot-password',
-      '/reset-password',
-      '/verify-email',
-      '/privacy',
-      '/terms',
-      '/about',
-      '/contact',
-      '/',
-      '/public'
+      "/login",
+      "/register",
+      "/forgot-password",
+      "/reset-password",
+      "/verify-email",
+      "/privacy",
+      "/terms",
+      "/about",
+      "/contact",
+      "/",
+      "/public",
     ];
 
-    return publicRoutes.some(route => 
-      pathname === route || pathname.startsWith(`${route}/`)
-    );
+    return publicRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
   }
 
   /**
@@ -166,44 +153,42 @@ export class SessionAuthMiddleware {
    */
   private isPublicApiRoute(pathname: string): boolean {
     const publicApiRoutes = [
-      '/api/auth/login',
-      '/api/auth/register',
-      '/api/auth/forgot-password',
-      '/api/auth/reset-password',
-      '/api/auth/verify-email',
-      '/api/health',
-      '/api/public'
+      "/api/auth/login",
+      "/api/auth/register",
+      "/api/auth/forgot-password",
+      "/api/auth/reset-password",
+      "/api/auth/verify-email",
+      "/api/health",
+      "/api/public",
     ];
 
-    return publicApiRoutes.some(route => 
-      pathname === route || pathname.startsWith(`${route}/`)
-    );
+    return publicApiRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
   }
 
   /**
    * Get client IP address from request
    */
   private getClientIP(request: NextRequest): string {
-    const forwarded = request.headers.get('x-forwarded-for');
-    const realIP = request.headers.get('x-real-ip');
-    const remoteAddr = request.headers.get('x-remote-addr');
-    
+    const forwarded = request.headers.get("x-forwarded-for");
+    const realIP = request.headers.get("x-real-ip");
+    const remoteAddr = request.headers.get("x-remote-addr");
+
     if (forwarded) {
-      return forwarded.split(',')[0].trim();
+      return forwarded.split(",")[0].trim();
     }
-    
-    return realIP || remoteAddr || '0.0.0.0';
+
+    return realIP || remoteAddr || "0.0.0.0";
   }
 
   /**
    * Redirect to login page
    */
   private redirectToLogin(request: NextRequest): NextResponse {
-    const loginUrl = new URL('/login', request.url);
-    
+    const loginUrl = new URL("/login", request.url);
+
     // Add return URL for redirect after login
-    if (request.nextUrl.pathname !== '/login') {
-      loginUrl.searchParams.set('returnUrl', request.nextUrl.pathname);
+    if (request.nextUrl.pathname !== "/login") {
+      loginUrl.searchParams.set("returnUrl", request.nextUrl.pathname);
     }
 
     return NextResponse.redirect(loginUrl);
@@ -215,7 +200,7 @@ export class SessionAuthMiddleware {
   private async logSecurityEvent(
     userId: string,
     eventType: SecurityEventType,
-    details: Record<string, any>
+    details: Record<string, any>,
   ): Promise<void> {
     try {
       await this.sessionManager.logSecurityEvent({
@@ -223,91 +208,76 @@ export class SessionAuthMiddleware {
         eventType,
         severity: this.getEventSeverity(eventType),
         details,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     } catch (error) {
-      console.error('Failed to log security event:', error);
+      console.error("Failed to log security event:", error);
     }
   }
 
   /**
    * Get event severity based on type
    */
-  private getEventSeverity(eventType: SecurityEventType): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
+  private getEventSeverity(eventType: SecurityEventType): "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" {
     switch (eventType) {
       case SecurityEventType.FAILED_LOGIN:
       case SecurityEventType.SESSION_VALIDATION_FAILED:
-        return 'MEDIUM';
-      
+        return "MEDIUM";
+
       case SecurityEventType.SUSPICIOUS_ACTIVITY:
       case SecurityEventType.MULTIPLE_FAILED_ATTEMPTS:
-        return 'HIGH';
-      
+        return "HIGH";
+
       case SecurityEventType.ACCOUNT_LOCKED:
       case SecurityEventType.SECURITY_BREACH:
-        return 'CRITICAL';
-      
+        return "CRITICAL";
+
       default:
-        return 'LOW';
+        return "LOW";
     }
   }
 
   /**
    * Check for suspicious activity patterns
    */
-  private async checkSuspiciousActivity(
-    request: NextRequest,
-    userId: string
-  ): Promise<void> {
+  private async checkSuspiciousActivity(request: NextRequest, userId: string): Promise<void> {
     try {
       const ipAddress = this.getClientIP(request);
-      const userAgent = request.headers.get('user-agent') || 'Unknown';
-      
+      const userAgent = request.headers.get("user-agent") || "Unknown";
+
       // Check for rapid requests from same IP
       const recentRequests = await this.getRecentRequests(ipAddress);
-      if (recentRequests > 100) { // More than 100 requests in last minute
-        await this.logSecurityEvent(
-          userId,
-          SecurityEventType.SUSPICIOUS_ACTIVITY,
-          {
-            reason: 'Rapid requests detected',
-            requestCount: recentRequests,
-            ipAddress,
-            userAgent,
-            timeWindow: '1 minute'
-          }
-        );
+      if (recentRequests > 100) {
+        // More than 100 requests in last minute
+        await this.logSecurityEvent(userId, SecurityEventType.SUSPICIOUS_ACTIVITY, {
+          reason: "Rapid requests detected",
+          requestCount: recentRequests,
+          ipAddress,
+          userAgent,
+          timeWindow: "1 minute",
+        });
       }
 
       // Check for unusual user agent
       if (this.isUnusualUserAgent(userAgent)) {
-        await this.logSecurityEvent(
-          userId,
-          SecurityEventType.SUSPICIOUS_ACTIVITY,
-          {
-            reason: 'Unusual user agent detected',
-            userAgent,
-            ipAddress
-          }
-        );
+        await this.logSecurityEvent(userId, SecurityEventType.SUSPICIOUS_ACTIVITY, {
+          reason: "Unusual user agent detected",
+          userAgent,
+          ipAddress,
+        });
       }
 
       // Check for geographic anomalies (simplified)
       const isUnusualLocation = await this.checkUnusualLocation(userId, ipAddress);
       if (isUnusualLocation) {
-        await this.logSecurityEvent(
-          userId,
-          SecurityEventType.SUSPICIOUS_ACTIVITY,
-          {
-            reason: 'Unusual geographic location',
-            ipAddress,
-            userAgent
-          }
-        );
+        await this.logSecurityEvent(userId, SecurityEventType.SUSPICIOUS_ACTIVITY, {
+          reason: "Unusual geographic location",
+          ipAddress,
+          userAgent,
+        });
       }
-
     } catch (error) {
-      console.error('Error checking suspicious activity:', error);
+      console.error("Error checking suspicious activity:", error);
     }
   }
 
@@ -332,24 +302,21 @@ export class SessionAuthMiddleware {
       /curl/i,
       /wget/i,
       /python/i,
-      /java/i
+      /java/i,
     ];
 
-    return suspiciousPatterns.some(pattern => pattern.test(userAgent));
+    return suspiciousPatterns.some((pattern) => pattern.test(userAgent));
   }
 
   /**
    * Check for unusual geographic location (simplified)
    */
-  private async checkUnusualLocation(
-    userId: string,
-    ipAddress: string
-  ): Promise<boolean> {
+  private async checkUnusualLocation(userId: string, ipAddress: string): Promise<boolean> {
     // In a real implementation, this would:
     // 1. Get IP geolocation
     // 2. Compare with user's typical locations
     // 3. Flag if significantly different
-    
+
     // For now, return false to avoid false positives
     return false;
   }
@@ -370,7 +337,7 @@ export const config = {
      * - favicon.ico (favicon file)
      * - public folder
      */
-    '/((?!_next/static|_next/image|favicon.ico|public/).*)',
+    "/((?!_next/static|_next/image|favicon.ico|public/).*)",
   ],
 };
 

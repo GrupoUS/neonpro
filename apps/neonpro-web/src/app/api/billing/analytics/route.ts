@@ -1,5 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
-import { NextResponse } from "next/server";
+import type { createClient } from "@/lib/supabase/server";
+import type { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   try {
@@ -16,11 +16,8 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const startDate =
       searchParams.get("start_date") ||
-      new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-        .toISOString()
-        .split("T")[0];
-    const endDate =
-      searchParams.get("end_date") || new Date().toISOString().split("T")[0];
+      new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
+    const endDate = searchParams.get("end_date") || new Date().toISOString().split("T")[0];
     const period = searchParams.get("period") || "daily"; // daily, weekly, monthly
 
     // Financial Summary
@@ -29,7 +26,7 @@ export async function GET(request: Request) {
       {
         start_date: startDate,
         end_date: endDate,
-      }
+      },
     );
 
     if (summaryError) {
@@ -43,7 +40,7 @@ export async function GET(request: Request) {
         start_date: startDate,
         end_date: endDate,
         period_type: period,
-      }
+      },
     );
 
     if (revenueError) {
@@ -51,36 +48,40 @@ export async function GET(request: Request) {
     }
 
     // Revenue by Service
-    const { data: revenueByService, error: serviceRevenueError } =
-      await supabase.rpc("get_revenue_by_service", {
+    const { data: revenueByService, error: serviceRevenueError } = await supabase.rpc(
+      "get_revenue_by_service",
+      {
         start_date: startDate,
         end_date: endDate,
-      });
+      },
+    );
 
     if (serviceRevenueError) {
       console.error("Error fetching revenue by service:", serviceRevenueError);
     }
 
     // Payment Method Statistics
-    const { data: paymentMethodStats, error: paymentStatsError } =
-      await supabase
-        .from("payments")
-        .select("method, amount, status")
-        .gte("payment_date", startDate)
-        .lte("payment_date", endDate)
-        .eq("status", "completed");
+    const { data: paymentMethodStats, error: paymentStatsError } = await supabase
+      .from("payments")
+      .select("method, amount, status")
+      .gte("payment_date", startDate)
+      .lte("payment_date", endDate)
+      .eq("status", "completed");
 
     let methodStats = {};
     if (!paymentStatsError && paymentMethodStats) {
-      methodStats = paymentMethodStats.reduce((acc, payment) => {
-        const method = payment.method;
-        if (!acc[method]) {
-          acc[method] = { count: 0, total_amount: 0 };
-        }
-        acc[method].count += 1;
-        acc[method].total_amount += payment.amount;
-        return acc;
-      }, {} as Record<string, { count: number; total_amount: number }>);
+      methodStats = paymentMethodStats.reduce(
+        (acc, payment) => {
+          const method = payment.method;
+          if (!acc[method]) {
+            acc[method] = { count: 0, total_amount: 0 };
+          }
+          acc[method].count += 1;
+          acc[method].total_amount += payment.amount;
+          return acc;
+        },
+        {} as Record<string, { count: number; total_amount: number }>,
+      );
     }
 
     // Top Patients by Revenue
@@ -97,7 +98,7 @@ export async function GET(request: Request) {
             email
           )
         )
-      `
+      `,
       )
       .gte("payment_date", startDate)
       .lte("payment_date", endDate)
@@ -105,24 +106,25 @@ export async function GET(request: Request) {
 
     let patientRevenue = {};
     if (!patientsError && topPatients) {
-      patientRevenue = topPatients.reduce((acc, payment) => {
-        const invoice = payment.invoice as any;
-        const patientId = invoice?.patient_id;
-        if (patientId && invoice?.patient) {
-          if (!acc[patientId]) {
-            acc[patientId] = {
-              patient: Array.isArray(invoice.patient)
-                ? invoice.patient[0]
-                : invoice.patient,
-              total_revenue: 0,
-              payments_count: 0,
-            };
+      patientRevenue = topPatients.reduce(
+        (acc, payment) => {
+          const invoice = payment.invoice as any;
+          const patientId = invoice?.patient_id;
+          if (patientId && invoice?.patient) {
+            if (!acc[patientId]) {
+              acc[patientId] = {
+                patient: Array.isArray(invoice.patient) ? invoice.patient[0] : invoice.patient,
+                total_revenue: 0,
+                payments_count: 0,
+              };
+            }
+            acc[patientId].total_revenue += payment.amount;
+            acc[patientId].payments_count += 1;
           }
-          acc[patientId].total_revenue += payment.amount;
-          acc[patientId].payments_count += 1;
-        }
-        return acc;
-      }, {} as Record<string, any>);
+          return acc;
+        },
+        {} as Record<string, any>,
+      );
     }
 
     const topPatientsArray = Object.values(patientRevenue)
@@ -130,11 +132,10 @@ export async function GET(request: Request) {
       .slice(0, 10);
 
     // Outstanding Invoices Analysis
-    const { data: outstandingInvoices, error: outstandingError } =
-      await supabase
-        .from("invoices")
-        .select(
-          `
+    const { data: outstandingInvoices, error: outstandingError } = await supabase
+      .from("invoices")
+      .select(
+        `
         id,
         invoice_number,
         total_amount,
@@ -146,10 +147,10 @@ export async function GET(request: Request) {
           email
         ),
         payments:payments!inner(amount)
-      `
-        )
-        .in("status", ["pending", "overdue"])
-        .order("due_date", { ascending: true });
+      `,
+      )
+      .in("status", ["pending", "overdue"])
+      .order("due_date", { ascending: true });
 
     const outstandingAnalysis = {
       total_outstanding: 0,
@@ -169,10 +170,7 @@ export async function GET(request: Request) {
       const now = new Date();
       outstandingInvoices.forEach((invoice) => {
         const paidAmount =
-          invoice.payments?.reduce(
-            (sum: number, p: any) => sum + p.amount,
-            0
-          ) || 0;
+          invoice.payments?.reduce((sum: number, p: any) => sum + p.amount, 0) || 0;
         const remainingAmount = invoice.total_amount - paidAmount;
 
         if (remainingAmount > 0) {
@@ -180,7 +178,7 @@ export async function GET(request: Request) {
 
           const dueDate = new Date(invoice.due_date);
           const daysPastDue = Math.floor(
-            (now.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24)
+            (now.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24),
           );
 
           if (daysPastDue > 0) {
@@ -224,7 +222,7 @@ export async function GET(request: Request) {
         start_date: monthlyTrendsStartDate.toISOString().split("T")[0],
         end_date: endDate,
         period_type: "monthly",
-      }
+      },
     );
 
     return NextResponse.json({
@@ -252,9 +250,6 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     console.error("API Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

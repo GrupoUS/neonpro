@@ -7,6 +7,6 @@ exports.default = HomePage;
  */
 var navigation_1 = require("next/navigation");
 function HomePage() {
-    // Redirect to dashboard - main entry point for NEONPROV1
-    (0, navigation_1.redirect)('/dashboard');
+  // Redirect to dashboard - main entry point for NEONPROV1
+  (0, navigation_1.redirect)("/dashboard");
 }

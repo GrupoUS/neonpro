@@ -1,29 +1,25 @@
 "use client";
 
-import {
-  Alert,
-  ForecastingModel,
-  Prediction,
-} from "@/app/types/predictive-analytics";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { Alert, ForecastingModel, Prediction } from "@/app/types/predictive-analytics";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import {
+import type { Input } from "@/components/ui/input";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
   Activity,
   AlertTriangle,
   BarChart3,
@@ -36,7 +32,7 @@ import {
   TrendingUp,
   Zap,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import type { useEffect, useState } from "react";
 
 export default function PredictiveAnalyticsPage() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -57,33 +53,23 @@ export default function PredictiveAnalyticsPage() {
   const loadData = async () => {
     setIsLoading(true);
     try {
-      const [
-        modelsRes,
-        predictionsRes,
-        alertsRes,
-        accuracyRes,
-        recommendationsRes,
-      ] = await Promise.all([
-        fetch("/api/predictive-analytics/models"),
-        fetch("/api/predictive-analytics/predictions"),
-        fetch("/api/predictive-analytics/alerts"),
-        fetch("/api/predictive-analytics/accuracy/stats"),
-        fetch("/api/predictive-analytics/recommendations"),
-      ]);
+      const [modelsRes, predictionsRes, alertsRes, accuracyRes, recommendationsRes] =
+        await Promise.all([
+          fetch("/api/predictive-analytics/models"),
+          fetch("/api/predictive-analytics/predictions"),
+          fetch("/api/predictive-analytics/alerts"),
+          fetch("/api/predictive-analytics/accuracy/stats"),
+          fetch("/api/predictive-analytics/recommendations"),
+        ]);
 
-      const [
-        modelsData,
-        predictionsData,
-        alertsData,
-        accuracyData,
-        recommendationsData,
-      ] = await Promise.all([
-        modelsRes.json(),
-        predictionsRes.json(),
-        alertsRes.json(),
-        accuracyRes.json(),
-        recommendationsRes.json(),
-      ]);
+      const [modelsData, predictionsData, alertsData, accuracyData, recommendationsData] =
+        await Promise.all([
+          modelsRes.json(),
+          predictionsRes.json(),
+          alertsRes.json(),
+          accuracyRes.json(),
+          recommendationsRes.json(),
+        ]);
 
       setModels(modelsData.data || []);
       setPredictions(predictionsData.data || []);
@@ -138,9 +124,7 @@ export default function PredictiveAnalyticsPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Análise Preditiva
-          </h1>
+          <h1 className="text-3xl font-bold tracking-tight">Análise Preditiva</h1>
           <p className="text-muted-foreground">
             Forecasting de demanda com IA para otimização de recursos
           </p>
@@ -161,26 +145,20 @@ export default function PredictiveAnalyticsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Modelos Ativos
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Modelos Ativos</CardTitle>
             <Brain className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {models.filter((m) => m.status === "active").length}
             </div>
-            <p className="text-xs text-muted-foreground">
-              Total de modelos treinados
-            </p>
+            <p className="text-xs text-muted-foreground">Total de modelos treinados</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Precisão Média
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Precisão Média</CardTitle>
             <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -193,9 +171,7 @@ export default function PredictiveAnalyticsPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Alertas Ativos
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Alertas Ativos</CardTitle>
             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -208,34 +184,24 @@ export default function PredictiveAnalyticsPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Predições Hoje
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Predições Hoje</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {
                 predictions.filter(
-                  (p) =>
-                    new Date(p.prediction_date).toDateString() ===
-                    new Date().toDateString()
+                  (p) => new Date(p.prediction_date).toDateString() === new Date().toDateString(),
                 ).length
               }
             </div>
-            <p className="text-xs text-muted-foreground">
-              Geradas automaticamente
-            </p>
+            <p className="text-xs text-muted-foreground">Geradas automaticamente</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Tabs principais */}
-      <Tabs
-        value={activeTab}
-        onValueChange={setActiveTab}
-        className="space-y-4"
-      >
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList>
           <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
           <TabsTrigger value="models">Modelos</TabsTrigger>
@@ -253,35 +219,22 @@ export default function PredictiveAnalyticsPage() {
                   <Zap className="h-5 w-5" />
                   Recomendações de Otimização
                 </CardTitle>
-                <CardDescription>
-                  Sugestões para melhorar a performance dos modelos
-                </CardDescription>
+                <CardDescription>Sugestões para melhorar a performance dos modelos</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
                   {recommendations.slice(0, 3).map((rec, index) => (
-                    <div
-                      key={index}
-                      className="flex items-start gap-3 p-3 border rounded-lg"
-                    >
-                      <Badge variant={getPriorityColor(rec.priority)}>
-                        {rec.priority}
-                      </Badge>
+                    <div key={index} className="flex items-start gap-3 p-3 border rounded-lg">
+                      <Badge variant={getPriorityColor(rec.priority)}>{rec.priority}</Badge>
                       <div className="flex-1">
                         <h4 className="font-medium">{rec.title}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          {rec.description}
-                        </p>
+                        <p className="text-sm text-muted-foreground">{rec.description}</p>
                         <div className="mt-2">
-                          <p className="text-xs font-medium mb-1">
-                            Ações sugeridas:
-                          </p>
+                          <p className="text-xs font-medium mb-1">Ações sugeridas:</p>
                           <ul className="text-xs text-muted-foreground list-disc list-inside">
-                            {rec.suggested_actions?.map(
-                              (action: string, i: number) => (
-                                <li key={i}>{action}</li>
-                              )
-                            )}
+                            {rec.suggested_actions?.map((action: string, i: number) => (
+                              <li key={i}>{action}</li>
+                            ))}
                           </ul>
                         </div>
                       </div>
@@ -309,14 +262,10 @@ export default function PredictiveAnalyticsPage() {
                   >
                     <div>
                       <h4 className="font-medium">{model.name}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        {model.description}
-                      </p>
+                      <p className="text-sm text-muted-foreground">{model.description}</p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant={getStatusColor(model.status)}>
-                        {model.status}
-                      </Badge>
+                      <Badge variant={getStatusColor(model.status)}>{model.status}</Badge>
                       <span className="text-xs text-muted-foreground">
                         {model.accuracy_score
                           ? `${(model.accuracy_score * 100).toFixed(1)}%`
@@ -360,7 +309,7 @@ export default function PredictiveAnalyticsPage() {
               .filter(
                 (model) =>
                   (statusFilter === "all" || model.status === statusFilter) &&
-                  model.name.toLowerCase().includes(searchTerm.toLowerCase())
+                  model.name.toLowerCase().includes(searchTerm.toLowerCase()),
               )
               .map((model) => (
                 <Card key={model.id}>
@@ -370,9 +319,7 @@ export default function PredictiveAnalyticsPage() {
                         <CardTitle className="text-lg">{model.name}</CardTitle>
                         <CardDescription>{model.description}</CardDescription>
                       </div>
-                      <Badge variant={getStatusColor(model.status)}>
-                        {model.status}
-                      </Badge>
+                      <Badge variant={getStatusColor(model.status)}>{model.status}</Badge>
                     </div>
                   </CardHeader>
                   <CardContent>
@@ -390,9 +337,7 @@ export default function PredictiveAnalyticsPage() {
                         </p>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">
-                          Última Atualização:
-                        </span>
+                        <span className="text-muted-foreground">Última Atualização:</span>
                         <p className="font-medium">
                           {new Date(model.updated_at).toLocaleDateString()}
                         </p>
@@ -422,9 +367,7 @@ export default function PredictiveAnalyticsPage() {
           <Card>
             <CardHeader>
               <CardTitle>Predições Recentes</CardTitle>
-              <CardDescription>
-                Últimas predições geradas pelos modelos de IA
-              </CardDescription>
+              <CardDescription>Últimas predições geradas pelos modelos de IA</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -434,23 +377,15 @@ export default function PredictiveAnalyticsPage() {
                     className="flex items-center justify-between p-3 border rounded-lg"
                   >
                     <div>
-                      <h4 className="font-medium">
-                        Predição #{prediction.id.slice(0, 8)}
-                      </h4>
+                      <h4 className="font-medium">Predição #{prediction.id.slice(0, 8)}</h4>
                       <p className="text-sm text-muted-foreground">
-                        Data:{" "}
-                        {new Date(
-                          prediction.prediction_date
-                        ).toLocaleDateString()}
+                        Data: {new Date(prediction.prediction_date).toLocaleDateString()}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium">
-                        {prediction.predicted_value}
-                      </p>
+                      <p className="font-medium">{prediction.predicted_value}</p>
                       <p className="text-sm text-muted-foreground">
-                        Confiança:{" "}
-                        {(prediction.confidence_score * 100).toFixed(0)}%
+                        Confiança: {(prediction.confidence_score * 100).toFixed(0)}%
                       </p>
                     </div>
                   </div>
@@ -464,28 +399,19 @@ export default function PredictiveAnalyticsPage() {
           <Card>
             <CardHeader>
               <CardTitle>Alertas do Sistema</CardTitle>
-              <CardDescription>
-                Alertas de performance e qualidade dos modelos
-              </CardDescription>
+              <CardDescription>Alertas de performance e qualidade dos modelos</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 {alerts.map((alert) => (
-                  <div
-                    key={alert.id}
-                    className="flex items-start gap-3 p-3 border rounded-lg"
-                  >
+                  <div key={alert.id} className="flex items-start gap-3 p-3 border rounded-lg">
                     <AlertTriangle className="h-5 w-5 text-orange-500 mt-0.5" />
                     <div className="flex-1">
                       <div className="flex justify-between items-start">
                         <h4 className="font-medium">{alert.title}</h4>
-                        <Badge variant={getPriorityColor(alert.severity)}>
-                          {alert.severity}
-                        </Badge>
+                        <Badge variant={getPriorityColor(alert.severity)}>{alert.severity}</Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {alert.message}
-                      </p>
+                      <p className="text-sm text-muted-foreground mt-1">{alert.message}</p>
                       <p className="text-xs text-muted-foreground mt-2">
                         {new Date(alert.created_at).toLocaleString()}
                       </p>
@@ -518,9 +444,7 @@ export default function PredictiveAnalyticsPage() {
                     </div>
                     <div className="flex justify-between">
                       <span>Total de Avaliações:</span>
-                      <span className="font-medium">
-                        {accuracyStats.total_evaluations}
-                      </span>
+                      <span className="font-medium">{accuracyStats.total_evaluations}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Melhor Precisão:</span>

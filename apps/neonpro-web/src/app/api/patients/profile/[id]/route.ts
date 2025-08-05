@@ -1,8 +1,8 @@
-import { createClient } from '@/app/utils/supabase/server';
-import { PatientInsightsEngine } from '@/lib/ai/patient-insights';
-import { ProfileManager } from '@/lib/patients/profile-manager';
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
+import { createClient } from "@/app/utils/supabase/server";
+import { PatientInsightsEngine } from "@/lib/ai/patient-insights";
+import { ProfileManager } from "@/lib/patients/profile-manager";
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
 // Initialize services
 const profileManager = new ProfileManager();
@@ -10,52 +10,59 @@ const patientInsights = new PatientInsightsEngine();
 
 // Validation schema for updates
 const UpdateProfileSchema = z.object({
-  demographics: z.object({
-    name: z.string().optional(),
-    phone: z.string().optional(),
-    email: z.string().email().optional(),
-    address: z.string().optional()
-  }).optional(),
-  medical_history: z.object({
-    allergies: z.array(z.string()).optional(),
-    conditions: z.array(z.string()).optional(),
-    medications: z.array(z.string()).optional(),
-    surgeries: z.array(z.string()).optional()
-  }).optional(),
-  preferences: z.object({
-    language: z.string().optional(),
-    timezone: z.string().optional(),
-    communication_method: z.enum(['email', 'sms', 'phone', 'in_app']).optional(),
-    appointment_reminders: z.boolean().optional()
-  }).optional(),
-  emergency_contact: z.object({
-    name: z.string().optional(),
-    relationship: z.string().optional(),
-    phone: z.string().optional()
-  }).optional()
+  demographics: z
+    .object({
+      name: z.string().optional(),
+      phone: z.string().optional(),
+      email: z.string().email().optional(),
+      address: z.string().optional(),
+    })
+    .optional(),
+  medical_history: z
+    .object({
+      allergies: z.array(z.string()).optional(),
+      conditions: z.array(z.string()).optional(),
+      medications: z.array(z.string()).optional(),
+      surgeries: z.array(z.string()).optional(),
+    })
+    .optional(),
+  preferences: z
+    .object({
+      language: z.string().optional(),
+      timezone: z.string().optional(),
+      communication_method: z.enum(["email", "sms", "phone", "in_app"]).optional(),
+      appointment_reminders: z.boolean().optional(),
+    })
+    .optional(),
+  emergency_contact: z
+    .object({
+      name: z.string().optional(),
+      relationship: z.string().optional(),
+      phone: z.string().optional(),
+    })
+    .optional(),
 });
 
 /**
  * GET /api/patients/profile/[id] - Get specific patient profile
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const supabase = await createClient();
     const { id: patientId } = await params;
 
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get patient profile
     const profile = await profileManager.getPatientProfile(patientId);
     if (!profile) {
-      return NextResponse.json({ error: 'Patient not found' }, { status: 404 });
+      return NextResponse.json({ error: "Patient not found" }, { status: 404 });
     }
 
     // Generate AI insights for the profile
@@ -63,94 +70,87 @@ export async function GET(
       const riskAssessment = await patientInsights.generateRiskAssessment(patientId);
       const behaviorAnalysis = await patientInsights.analyzeBehaviorPatterns(patientId);
       const recommendations = await patientInsights.generateTreatmentRecommendations(patientId);
-      
+
       const profileWithInsights = {
         ...profile,
         ai_insights: {
           risk_assessment: riskAssessment,
           behavior_analysis: behaviorAnalysis,
-          recommendations: recommendations.slice(0, 3) // Top 3 recommendations
-        }
+          recommendations: recommendations.slice(0, 3), // Top 3 recommendations
+        },
       };
 
       return NextResponse.json(profileWithInsights);
     } catch (insightsError) {
-      console.error('Error generating AI insights:', insightsError);
+      console.error("Error generating AI insights:", insightsError);
       // Return profile without insights if AI fails
       return NextResponse.json(profile);
     }
   } catch (error) {
-    console.error('Error fetching patient profile:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch patient profile' },
-      { status: 500 }
-    );
+    console.error("Error fetching patient profile:", error);
+    return NextResponse.json({ error: "Failed to fetch patient profile" }, { status: 500 });
   }
 }
 
 /**
  * PUT /api/patients/profile/[id] - Update patient profile
  */
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const supabase = await createClient();
     const { id: patientId } = await params;
 
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Parse and validate request body
     const body = await request.json();
     const validation = UpdateProfileSchema.safeParse(body);
-    
+
     if (!validation.success) {
       return NextResponse.json(
-        { error: 'Invalid request data', details: validation.error.issues },
-        { status: 400 }
+        { error: "Invalid request data", details: validation.error.issues },
+        { status: 400 },
       );
     }
 
     // Check if patient exists
     const existingProfile = await profileManager.getPatientProfile(patientId);
     if (!existingProfile) {
-      return NextResponse.json({ error: 'Patient not found' }, { status: 404 });
+      return NextResponse.json({ error: "Patient not found" }, { status: 404 });
     }
 
     // Update profile
     const updatedProfile = await profileManager.updatePatientProfile(patientId, validation.data);
-    
+
     // Generate updated AI insights
     try {
       const riskAssessment = await patientInsights.generateRiskAssessment(patientId);
       const behaviorAnalysis = await patientInsights.analyzeBehaviorPatterns(patientId);
-      
+
       const profileWithInsights = {
         ...updatedProfile,
         ai_insights: {
           risk_assessment: riskAssessment,
           behavior_analysis: behaviorAnalysis,
-          last_updated: new Date().toISOString()
-        }
+          last_updated: new Date().toISOString(),
+        },
       };
 
       return NextResponse.json(profileWithInsights);
     } catch (insightsError) {
-      console.error('Error generating updated AI insights:', insightsError);
+      console.error("Error generating updated AI insights:", insightsError);
       // Return updated profile without insights if AI fails
       return NextResponse.json(updatedProfile);
     }
   } catch (error) {
-    console.error('Error updating patient profile:', error);
-    return NextResponse.json(
-      { error: 'Failed to update patient profile' },
-      { status: 500 }
-    );
+    console.error("Error updating patient profile:", error);
+    return NextResponse.json({ error: "Failed to update patient profile" }, { status: 500 });
   }
 }
 
@@ -159,36 +159,35 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
     const { id: patientId } = await params;
 
     // Verify authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Check if patient exists
     const existingProfile = await profileManager.getPatientProfile(patientId);
     if (!existingProfile) {
-      return NextResponse.json({ error: 'Patient not found' }, { status: 404 });
+      return NextResponse.json({ error: "Patient not found" }, { status: 404 });
     }
 
     // Archive patient (soft delete)
     await profileManager.archivePatient(patientId);
 
-    return NextResponse.json({ 
-      message: 'Patient profile archived successfully',
-      archived_at: new Date().toISOString()
+    return NextResponse.json({
+      message: "Patient profile archived successfully",
+      archived_at: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Error archiving patient profile:', error);
-    return NextResponse.json(
-      { error: 'Failed to archive patient profile' },
-      { status: 500 }
-    );
+    console.error("Error archiving patient profile:", error);
+    return NextResponse.json({ error: "Failed to archive patient profile" }, { status: 500 });
   }
 }

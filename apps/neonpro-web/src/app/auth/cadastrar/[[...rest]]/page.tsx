@@ -1,4 +1,4 @@
-import { SignUp } from '@clerk/nextjs'
+import { SignUp } from "@clerk/nextjs";
 
 export default function CadastrarPage() {
   return (
@@ -7,13 +7,21 @@ export default function CadastrarPage() {
         {/* Healthcare branding header */}
         <div className="text-center">
           <div className="mx-auto h-12 w-12 bg-sky-500 rounded-xl flex items-center justify-center">
-            <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+            <svg
+              className="h-6 w-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
+              />
             </svg>
           </div>
-          <h2 className="mt-6 text-3xl font-bold text-slate-900">
-            Criar Conta - NeonPro
-          </h2>
+          <h2 className="mt-6 text-3xl font-bold text-slate-900">Criar Conta - NeonPro</h2>
           <p className="mt-2 text-sm text-slate-600">
             Junte-se à plataforma de gestão de saúde mais segura
           </p>
@@ -24,7 +32,7 @@ export default function CadastrarPage() {
 
         {/* Clerk SignUp Component */}
         <div className="mt-8">
-          <SignUp 
+          <SignUp
             path="/auth/cadastrar"
             routing="path"
             signInUrl="/auth/entrar"
@@ -42,7 +50,7 @@ export default function CadastrarPage() {
                 formFieldSuccessText: "text-emerald-600",
                 formFieldErrorText: "text-red-600",
                 identityPreviewText: "text-slate-700",
-                identityPreviewEditButton: "text-sky-600 hover:text-sky-700"
+                identityPreviewEditButton: "text-sky-600 hover:text-sky-700",
               },
               variables: {
                 colorPrimary: "#0ea5e9",
@@ -50,8 +58,8 @@ export default function CadastrarPage() {
                 colorInputBackground: "#f8fafc",
                 borderRadius: "0.75rem",
                 colorSuccess: "#10b981",
-                colorDanger: "#ef4444"
-              }
+                colorDanger: "#ef4444",
+              },
             }}
           />
         </div>
@@ -61,16 +69,16 @@ export default function CadastrarPage() {
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-amber-800">
             <p className="font-medium">⚠️ Importante - Profissionais de Saúde</p>
             <p className="mt-1">
-              Este sistema é destinado exclusivamente a profissionais de saúde licenciados.
-              Ao criar sua conta, você confirma possuir registro profissional válido.
+              Este sistema é destinado exclusivamente a profissionais de saúde licenciados. Ao criar
+              sua conta, você confirma possuir registro profissional válido.
             </p>
           </div>
-          
+
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-blue-800">
             <p className="font-medium">🔒 Proteção de Dados LGPD</p>
             <p className="mt-1">
-              Seus dados pessoais e de saúde são tratados com máxima segurança,
-              em conformidade com a Lei Geral de Proteção de Dados (LGPD).
+              Seus dados pessoais e de saúde são tratados com máxima segurança, em conformidade com
+              a Lei Geral de Proteção de Dados (LGPD).
             </p>
           </div>
 
@@ -79,7 +87,7 @@ export default function CadastrarPage() {
               Política de Privacidade
             </a>
             <span className="text-slate-300">•</span>
-            <a href="/terms" className="text-sky-600 hover:text-sky-700">  
+            <a href="/terms" className="text-sky-600 hover:text-sky-700">
               Termos de Uso
             </a>
             <span className="text-slate-300">•</span>
@@ -90,12 +98,13 @@ export default function CadastrarPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 // SEO and accessibility metadata
 export const metadata = {
-  title: 'Criar Conta - NeonPro Saúde',
-  description: 'Registre-se na plataforma de gestão de saúde mais segura do Brasil com conformidade LGPD',
-  robots: 'noindex, nofollow', // Prevent indexing of auth pages
-}
+  title: "Criar Conta - NeonPro Saúde",
+  description:
+    "Registre-se na plataforma de gestão de saúde mais segura do Brasil com conformidade LGPD",
+  robots: "noindex, nofollow", // Prevent indexing of auth pages
+};

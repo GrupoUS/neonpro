@@ -3,11 +3,20 @@
  * Comprehensive logging for notification activities and compliance tracking
  */
 
-import { supabase } from '@/lib/supabase/client';
-import { NotificationType, NotificationChannel } from './config';
+import type { supabase } from "@/lib/supabase/client";
+import type { NotificationType, NotificationChannel } from "./config";
 
 interface AuditLogEntry {
-  action: 'notification_sent' | 'notification_scheduled' | 'notification_cancelled' | 'notification_failed' | 'notification_blocked' | 'preferences_updated' | 'consent_granted' | 'consent_revoked' | 'notification_error';
+  action:
+    | "notification_sent"
+    | "notification_scheduled"
+    | "notification_cancelled"
+    | "notification_failed"
+    | "notification_blocked"
+    | "preferences_updated"
+    | "consent_granted"
+    | "consent_revoked"
+    | "notification_error";
   recipientId?: string;
   notificationId?: string;
   notificationType?: NotificationType;
@@ -45,24 +54,21 @@ export class AuditService {
         ip_address: entry.ipAddress,
         user_agent: entry.userAgent,
         session_id: entry.sessionId,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       // Insert into audit log table
-      const { error } = await supabase
-        .from('notification_audit_log')
-        .insert(auditData);
+      const { error } = await supabase.from("notification_audit_log").insert(auditData);
 
       if (error) {
-        console.error('Failed to write audit log:', error);
+        console.error("Failed to write audit log:", error);
         // Don't throw error - logging failure shouldn't break notification flow
         return false;
       }
 
       return true;
-
     } catch (error) {
-      console.error('Audit service error:', error);
+      console.error("Audit service error:", error);
       return false;
     }
   }
@@ -75,16 +81,16 @@ export class AuditService {
     recipientId: string,
     channel: NotificationChannel,
     type: NotificationType,
-    deliveredAt?: Date
+    deliveredAt?: Date,
   ): Promise<void> {
     await this.log({
-      action: 'notification_sent',
+      action: "notification_sent",
       notificationId,
       recipientId,
       channel,
       notificationType: type,
       success: true,
-      deliveredAt: deliveredAt || new Date()
+      deliveredAt: deliveredAt || new Date(),
     });
   }
 
@@ -96,16 +102,16 @@ export class AuditService {
     recipientId: string,
     channel: NotificationChannel,
     type: NotificationType,
-    error: string
+    error: string,
   ): Promise<void> {
     await this.log({
-      action: 'notification_failed',
+      action: "notification_failed",
       notificationId,
       recipientId,
       channel,
       notificationType: type,
       success: false,
-      error
+      error,
     });
   }
 
@@ -117,15 +123,15 @@ export class AuditService {
     recipientId: string,
     channel: NotificationChannel,
     type: NotificationType,
-    scheduledFor: Date
+    scheduledFor: Date,
   ): Promise<void> {
     await this.log({
-      action: 'notification_scheduled',
+      action: "notification_scheduled",
       notificationId,
       recipientId,
       channel,
       notificationType: type,
-      scheduledFor
+      scheduledFor,
     });
   }
 
@@ -135,13 +141,13 @@ export class AuditService {
   async logCancellation(
     notificationId: string,
     recipientId?: string,
-    reason?: string
+    reason?: string,
   ): Promise<void> {
     await this.log({
-      action: 'notification_cancelled',
+      action: "notification_cancelled",
       notificationId,
       recipientId,
-      reason
+      reason,
     });
   }
 
@@ -150,48 +156,44 @@ export class AuditService {
    */
   async logConsentChange(
     recipientId: string,
-    action: 'consent_granted' | 'consent_revoked',
-    metadata?: Record<string, any>
+    action: "consent_granted" | "consent_revoked",
+    metadata?: Record<string, any>,
   ): Promise<void> {
     await this.log({
       action,
       recipientId,
-      metadata
+      metadata,
     });
   }
 
   /**
    * Log preferences update
    */
-  async logPreferencesUpdate(
-    recipientId: string,
-    metadata?: Record<string, any>
-  ): Promise<void> {
+  async logPreferencesUpdate(recipientId: string, metadata?: Record<string, any>): Promise<void> {
     await this.log({
-      action: 'preferences_updated',
+      action: "preferences_updated",
       recipientId,
-      metadata
+      metadata,
     });
-  }  /**
+  } /**
    * Get audit trail for specific notification
    */
   async getNotificationAuditTrail(notificationId: string): Promise<any[]> {
     try {
       const { data, error } = await supabase
-        .from('notification_audit_log')
-        .select('*')
-        .eq('notification_id', notificationId)
-        .order('timestamp', { ascending: true });
+        .from("notification_audit_log")
+        .select("*")
+        .eq("notification_id", notificationId)
+        .order("timestamp", { ascending: true });
 
       if (error) {
-        console.error('Failed to get audit trail:', error);
+        console.error("Failed to get audit trail:", error);
         return [];
       }
 
       return data || [];
-
     } catch (error) {
-      console.error('Error getting audit trail:', error);
+      console.error("Error getting audit trail:", error);
       return [];
     }
   }
@@ -200,38 +202,35 @@ export class AuditService {
    * Get audit trail for specific recipient (with HIPAA access controls)
    */
   async getRecipientAuditTrail(
-    recipientId: string, 
-    startDate?: Date, 
+    recipientId: string,
+    startDate?: Date,
     endDate?: Date,
-    limit: number = 100
+    limit: number = 100,
   ): Promise<any[]> {
     try {
       let query = supabase
-        .from('notification_audit_log')
-        .select('*')
-        .eq('recipient_id', recipientId);
+        .from("notification_audit_log")
+        .select("*")
+        .eq("recipient_id", recipientId);
 
       if (startDate) {
-        query = query.gte('timestamp', startDate.toISOString());
+        query = query.gte("timestamp", startDate.toISOString());
       }
 
       if (endDate) {
-        query = query.lte('timestamp', endDate.toISOString());
+        query = query.lte("timestamp", endDate.toISOString());
       }
 
-      const { data, error } = await query
-        .order('timestamp', { ascending: false })
-        .limit(limit);
+      const { data, error } = await query.order("timestamp", { ascending: false }).limit(limit);
 
       if (error) {
-        console.error('Failed to get recipient audit trail:', error);
+        console.error("Failed to get recipient audit trail:", error);
         return [];
       }
 
       return data || [];
-
     } catch (error) {
-      console.error('Error getting recipient audit trail:', error);
+      console.error("Error getting recipient audit trail:", error);
       return [];
     }
   }
@@ -239,7 +238,10 @@ export class AuditService {
   /**
    * Generate compliance report for specific time period
    */
-  async generateComplianceReport(startDate: Date, endDate: Date): Promise<{
+  async generateComplianceReport(
+    startDate: Date,
+    endDate: Date,
+  ): Promise<{
     totalNotifications: number;
     successfulDeliveries: number;
     failedDeliveries: number;
@@ -251,30 +253,30 @@ export class AuditService {
   }> {
     try {
       const { data, error } = await supabase
-        .from('notification_audit_log')
-        .select('action, channel, notification_type, success')
-        .gte('timestamp', startDate.toISOString())
-        .lte('timestamp', endDate.toISOString());
+        .from("notification_audit_log")
+        .select("action, channel, notification_type, success")
+        .gte("timestamp", startDate.toISOString())
+        .lte("timestamp", endDate.toISOString());
 
       if (error) {
-        console.error('Failed to generate compliance report:', error);
+        console.error("Failed to generate compliance report:", error);
         return this.getEmptyReport();
       }
 
       const logs = data || [];
-      
+
       // Calculate metrics
-      const sent = logs.filter(l => l.action === 'notification_sent');
-      const successful = sent.filter(l => l.success === true).length;
-      const failed = sent.filter(l => l.success === false).length;
-      const cancelled = logs.filter(l => l.action === 'notification_cancelled').length;
-      const consentChanges = logs.filter(l => 
-        l.action === 'consent_granted' || l.action === 'consent_revoked'
+      const sent = logs.filter((l) => l.action === "notification_sent");
+      const successful = sent.filter((l) => l.success === true).length;
+      const failed = sent.filter((l) => l.success === false).length;
+      const cancelled = logs.filter((l) => l.action === "notification_cancelled").length;
+      const consentChanges = logs.filter(
+        (l) => l.action === "consent_granted" || l.action === "consent_revoked",
       ).length;
 
       // Channel breakdown
       const channelBreakdown: Record<string, number> = {};
-      sent.forEach(log => {
+      sent.forEach((log) => {
         if (log.channel) {
           channelBreakdown[log.channel] = (channelBreakdown[log.channel] || 0) + 1;
         }
@@ -282,7 +284,7 @@ export class AuditService {
 
       // Type breakdown
       const typeBreakdown: Record<string, number> = {};
-      sent.forEach(log => {
+      sent.forEach((log) => {
         if (log.notification_type) {
           typeBreakdown[log.notification_type] = (typeBreakdown[log.notification_type] || 0) + 1;
         }
@@ -296,11 +298,10 @@ export class AuditService {
         consentChanges,
         deliveryRate: sent.length > 0 ? (successful / sent.length) * 100 : 0,
         channelBreakdown,
-        typeBreakdown
+        typeBreakdown,
       };
-
     } catch (error) {
-      console.error('Error generating compliance report:', error);
+      console.error("Error generating compliance report:", error);
       return this.getEmptyReport();
     }
   }
@@ -316,24 +317,23 @@ export class AuditService {
       // In a real implementation, you would move to cold storage rather than delete
       // For now, we'll just mark as archived
       const { data, error } = await supabase
-        .from('notification_audit_log')
-        .update({ 
+        .from("notification_audit_log")
+        .update({
           archived: true,
-          archived_at: new Date().toISOString()
+          archived_at: new Date().toISOString(),
         })
-        .lt('timestamp', cutoffDate.toISOString())
-        .is('archived', false)
-        .select('id');
+        .lt("timestamp", cutoffDate.toISOString())
+        .is("archived", false)
+        .select("id");
 
       if (error) {
-        console.error('Failed to archive old logs:', error);
+        console.error("Failed to archive old logs:", error);
         return 0;
       }
 
       return data?.length || 0;
-
     } catch (error) {
-      console.error('Error archiving old logs:', error);
+      console.error("Error archiving old logs:", error);
       return 0;
     }
   }
@@ -348,37 +348,40 @@ export class AuditService {
       delivered: number;
       failed: number;
     }>;
-    channelStats: Record<string, {
-      sent: number;
-      delivered: number;
-      deliveryRate: number;
-    }>;
+    channelStats: Record<
+      string,
+      {
+        sent: number;
+        delivered: number;
+        deliveryRate: number;
+      }
+    >;
   }> {
     try {
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - days);
 
       const { data, error } = await supabase
-        .from('notification_audit_log')
-        .select('timestamp, action, channel, success')
-        .eq('action', 'notification_sent')
-        .gte('timestamp', startDate.toISOString())
-        .order('timestamp', { ascending: true });
+        .from("notification_audit_log")
+        .select("timestamp, action, channel, success")
+        .eq("action", "notification_sent")
+        .gte("timestamp", startDate.toISOString())
+        .order("timestamp", { ascending: true });
 
       if (error) {
-        console.error('Failed to get delivery statistics:', error);
+        console.error("Failed to get delivery statistics:", error);
         return { dailyStats: [], channelStats: {} };
       }
 
       const logs = data || [];
-      
+
       // Group by date
       const dailyGroups: Record<string, any[]> = {};
       const channelGroups: Record<string, any[]> = {};
 
-      logs.forEach(log => {
-        const date = new Date(log.timestamp).toISOString().split('T')[0];
-        
+      logs.forEach((log) => {
+        const date = new Date(log.timestamp).toISOString().split("T")[0];
+
         // Daily stats
         if (!dailyGroups[date]) dailyGroups[date] = [];
         dailyGroups[date].push(log);
@@ -394,25 +397,24 @@ export class AuditService {
       const dailyStats = Object.entries(dailyGroups).map(([date, logs]) => ({
         date,
         sent: logs.length,
-        delivered: logs.filter(l => l.success === true).length,
-        failed: logs.filter(l => l.success === false).length
+        delivered: logs.filter((l) => l.success === true).length,
+        failed: logs.filter((l) => l.success === false).length,
       }));
 
       // Calculate channel stats
       const channelStats: Record<string, any> = {};
       Object.entries(channelGroups).forEach(([channel, logs]) => {
-        const delivered = logs.filter(l => l.success === true).length;
+        const delivered = logs.filter((l) => l.success === true).length;
         channelStats[channel] = {
           sent: logs.length,
           delivered,
-          deliveryRate: logs.length > 0 ? (delivered / logs.length) * 100 : 0
+          deliveryRate: logs.length > 0 ? (delivered / logs.length) * 100 : 0,
         };
       });
 
       return { dailyStats, channelStats };
-
     } catch (error) {
-      console.error('Error getting delivery statistics:', error);
+      console.error("Error getting delivery statistics:", error);
       return { dailyStats: [], channelStats: {} };
     }
   }
@@ -426,7 +428,7 @@ export class AuditService {
       consentChanges: 0,
       deliveryRate: 0,
       channelBreakdown: {},
-      typeBreakdown: {}
+      typeBreakdown: {},
     };
   }
 }

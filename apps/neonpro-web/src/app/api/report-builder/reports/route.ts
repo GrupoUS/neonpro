@@ -1,11 +1,9 @@
 // Custom Reports API Route
 // Story 8.2: Custom Report Builder (Drag-Drop Interface)
 
-import { ReportBuilderService } from '@/app/lib/services/report-builder';
-import {
-    CreateReportRequest
-} from '@/app/lib/validations/report-builder';
-import { NextRequest, NextResponse } from 'next/server';
+import { ReportBuilderService } from "@/app/lib/services/report-builder";
+import { CreateReportRequest } from "@/app/lib/validations/report-builder";
+import { NextRequest, NextResponse } from "next/server";
 
 const reportService = new ReportBuilderService();
 
@@ -13,33 +11,37 @@ const reportService = new ReportBuilderService();
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const perPage = parseInt(searchParams.get('per_page') || '10');
-    const search = searchParams.get('search') || undefined;
-    const visualizationType = searchParams.get('visualization_type') || undefined;
-    const isTemplate = searchParams.get('is_template') === 'true' ? true : 
-                      searchParams.get('is_template') === 'false' ? false : undefined;
+    const page = parseInt(searchParams.get("page") || "1");
+    const perPage = parseInt(searchParams.get("per_page") || "10");
+    const search = searchParams.get("search") || undefined;
+    const visualizationType = searchParams.get("visualization_type") || undefined;
+    const isTemplate =
+      searchParams.get("is_template") === "true"
+        ? true
+        : searchParams.get("is_template") === "false"
+          ? false
+          : undefined;
 
     const filters = {
       search,
       visualization_type: visualizationType,
-      is_template: isTemplate
+      is_template: isTemplate,
     };
 
     const result = await reportService.getReports(page, perPage, filters);
 
     return NextResponse.json({
       success: true,
-      data: result
+      data: result,
     });
   } catch (error) {
-    console.error('Error fetching reports:', error);
+    console.error("Error fetching reports:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to fetch reports'
+        error: error instanceof Error ? error.message : "Failed to fetch reports",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -55,27 +57,30 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid request data',
-          details: validationResult.error.errors
+          error: "Invalid request data",
+          details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const report = await reportService.createReport(validationResult.data);
 
-    return NextResponse.json({
-      success: true,
-      data: report
-    }, { status: 201 });
+    return NextResponse.json(
+      {
+        success: true,
+        data: report,
+      },
+      { status: 201 },
+    );
   } catch (error) {
-    console.error('Error creating report:', error);
+    console.error("Error creating report:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to create report'
+        error: error instanceof Error ? error.message : "Failed to create report",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

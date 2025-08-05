@@ -156,16 +156,14 @@ function crmReducer(state: CRMState, action: CRMAction): CRMState {
       return {
         ...state,
         customers: state.customers.map((customer) =>
-          customer.id === action.payload.id ? action.payload : customer
+          customer.id === action.payload.id ? action.payload : customer,
         ),
       };
 
     case "DELETE_CUSTOMER":
       return {
         ...state,
-        customers: state.customers.filter(
-          (customer) => customer.id !== action.payload
-        ),
+        customers: state.customers.filter((customer) => customer.id !== action.payload),
       };
 
     case "SET_SEGMENTS":
@@ -178,16 +176,14 @@ function crmReducer(state: CRMState, action: CRMAction): CRMState {
       return {
         ...state,
         segments: state.segments.map((segment) =>
-          segment.id === action.payload.id ? action.payload : segment
+          segment.id === action.payload.id ? action.payload : segment,
         ),
       };
 
     case "DELETE_SEGMENT":
       return {
         ...state,
-        segments: state.segments.filter(
-          (segment) => segment.id !== action.payload
-        ),
+        segments: state.segments.filter((segment) => segment.id !== action.payload),
       };
 
     case "SET_CAMPAIGNS":
@@ -200,16 +196,14 @@ function crmReducer(state: CRMState, action: CRMAction): CRMState {
       return {
         ...state,
         campaigns: state.campaigns.map((campaign) =>
-          campaign.id === action.payload.id ? action.payload : campaign
+          campaign.id === action.payload.id ? action.payload : campaign,
         ),
       };
 
     case "DELETE_CAMPAIGN":
       return {
         ...state,
-        campaigns: state.campaigns.filter(
-          (campaign) => campaign.id !== action.payload
-        ),
+        campaigns: state.campaigns.filter((campaign) => campaign.id !== action.payload),
       };
 
     case "SET_FILTER":
@@ -283,21 +277,16 @@ export function CRMProvider({ children }: CRMProviderProps) {
       customer.profile?.full_name
         ?.toLowerCase()
         .includes(state.filters.customer_search.toLowerCase()) ||
-      customer.profile?.email
-        ?.toLowerCase()
-        .includes(state.filters.customer_search.toLowerCase());
+      customer.profile?.email?.toLowerCase().includes(state.filters.customer_search.toLowerCase());
 
     const matchesStatus =
-      !state.filters.customer_status ||
-      customer.status === state.filters.customer_status;
+      !state.filters.customer_status || customer.status === state.filters.customer_status;
 
     return matchesSearch && matchesStatus;
   });
 
   const totalCustomers = state.customers.length;
-  const activeCustomers = state.customers.filter(
-    (c) => c.status === "active"
-  ).length;
+  const activeCustomers = state.customers.filter((c) => c.status === "active").length;
   const vipCustomers = state.customers.filter((c) => c.status === "vip").length;
 
   const contextValue: CRMContextType = {
@@ -313,9 +302,7 @@ export function CRMProvider({ children }: CRMProviderProps) {
     vipCustomers,
   };
 
-  return (
-    <CRMContext.Provider value={contextValue}>{children}</CRMContext.Provider>
-  );
+  return <CRMContext.Provider value={contextValue}>{children}</CRMContext.Provider>;
 }
 
 // Hook to use CRM context

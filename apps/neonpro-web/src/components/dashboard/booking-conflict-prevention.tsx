@@ -1,136 +1,135 @@
-'use client'
+"use client";
 
-import { useState, useRef } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
-import { 
-  Shield, 
-  AlertTriangle, 
-  CheckCircle, 
-  Clock,
-  Users,
-  RefreshCw
-} from 'lucide-react'
-import { format } from 'date-fns'
-import { pt } from 'date-fns/locale'
-import { useToast } from '@/hooks/use-toast'
-import { createClient } from '@/app/utils/supabase/client'
-import type { TimeSlot } from '@/hooks/use-realtime-availability'
+import type { useState, useRef } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Separator } from "@/components/ui/separator";
+import type { Shield, AlertTriangle, CheckCircle, Clock, Users, RefreshCw } from "lucide-react";
+import type { format } from "date-fns";
+import type { pt } from "date-fns/locale";
+import type { useToast } from "@/hooks/use-toast";
+import type { createClient } from "@/app/utils/supabase/client";
+import type { TimeSlot } from "@/hooks/use-realtime-availability";
 
 interface ConflictDetector {
-  hasConflict: boolean
-  conflictType: 'time_overlap' | 'double_booking' | 'professional_unavailable' | null
-  conflictingSlots: TimeSlot[]
-  message: string
+  hasConflict: boolean;
+  conflictType: "time_overlap" | "double_booking" | "professional_unavailable" | null;
+  conflictingSlots: TimeSlot[];
+  message: string;
 }
 
 interface BookingConflictPreventionProps {
-  selectedSlot: TimeSlot | null
-  patientId: string
-  onConflictResolved?: () => void
+  selectedSlot: TimeSlot | null;
+  patientId: string;
+  onConflictResolved?: () => void;
 }
 
 export function BookingConflictPrevention({
   selectedSlot,
   patientId,
-  onConflictResolved
+  onConflictResolved,
 }: BookingConflictPreventionProps) {
-  const [isChecking, setIsChecking] = useState(false)
-  const [conflictDetector, setConflictDetector] = useState<ConflictDetector | null>(null)
-  const [lastCheckedAt, setLastCheckedAt] = useState<Date | null>(null)
-  
-  const supabase = createClient()
-  const { toast } = useToast()
-  const checkIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const [isChecking, setIsChecking] = useState(false);
+  const [conflictDetector, setConflictDetector] = useState<ConflictDetector | null>(null);
+  const [lastCheckedAt, setLastCheckedAt] = useState<Date | null>(null);
+
+  const supabase = createClient();
+  const { toast } = useToast();
+  const checkIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Função para verificar conflitos
   const checkForConflicts = async (slot: TimeSlot): Promise<ConflictDetector> => {
     try {
       // 1. Verificar se o slot ainda está disponível
       const { data: currentSlot, error: slotError } = await supabase
-        .from('time_slots')
-        .select('*')
-        .eq('id', slot.id)
-        .single()
+        .from("time_slots")
+        .select("*")
+        .eq("id", slot.id)
+        .single();
 
       if (slotError) {
-        throw new Error(`Erro ao verificar slot: ${slotError.message}`)
+        throw new Error(`Erro ao verificar slot: ${slotError.message}`);
       }
 
       if (!currentSlot.is_available) {
         return {
           hasConflict: true,
-          conflictType: 'double_booking',
+          conflictType: "double_booking",
           conflictingSlots: [currentSlot],
-          message: 'Este horário foi reservado por outro paciente'
-        }
+          message: "Este horário foi reservado por outro paciente",
+        };
       }
 
       // 2. Verificar se o profissional tem outros compromissos no mesmo horário
       const { data: professionalSlots, error: profError } = await supabase
-        .from('time_slots')
+        .from("time_slots")
         .select(`
           *,
           appointments!inner(*)
         `)
-        .eq('professional_id', slot.professional_id)
-        .eq('date', slot.date)
-        .neq('id', slot.id)
+        .eq("professional_id", slot.professional_id)
+        .eq("date", slot.date)
+        .neq("id", slot.id);
 
       if (profError) {
-        throw new Error(`Erro ao verificar profissional: ${profError.message}`)
+        throw new Error(`Erro ao verificar profissional: ${profError.message}`);
       }
 
       // Verificar sobreposição de horários
-      const conflictingSlots = professionalSlots.filter(profSlot => {
-        const slotStart = new Date(`${slot.date}T${slot.start_time}`)
-        const slotEnd = new Date(`${slot.date}T${slot.end_time}`)
-        const profStart = new Date(`${profSlot.date}T${profSlot.start_time}`)
-        const profEnd = new Date(`${profSlot.date}T${profSlot.end_time}`)
+      const conflictingSlots = professionalSlots.filter((profSlot) => {
+        const slotStart = new Date(`${slot.date}T${slot.start_time}`);
+        const slotEnd = new Date(`${slot.date}T${slot.end_time}`);
+        const profStart = new Date(`${profSlot.date}T${profSlot.start_time}`);
+        const profEnd = new Date(`${profSlot.date}T${profSlot.end_time}`);
 
         return (
           (slotStart < profEnd && slotEnd > profStart) ||
           (profStart < slotEnd && profEnd > slotStart)
-        )
-      })
+        );
+      });
 
       if (conflictingSlots.length > 0) {
         return {
           hasConflict: true,
-          conflictType: 'time_overlap',
+          conflictType: "time_overlap",
           conflictingSlots,
-          message: 'O profissional possui outro compromisso neste horário'
-        }
+          message: "O profissional possui outro compromisso neste horário",
+        };
       }
 
       // 3. Verificar se o paciente já tem agendamento no mesmo dia
       const { data: patientAppointments, error: patientError } = await supabase
-        .from('appointments')
+        .from("appointments")
         .select(`
           *,
           time_slot:time_slots(*)
         `)
-        .eq('patient_id', patientId)
-        .eq('status', 'confirmed')
+        .eq("patient_id", patientId)
+        .eq("status", "confirmed");
 
       if (patientError) {
-        throw new Error(`Erro ao verificar paciente: ${patientError.message}`)
+        throw new Error(`Erro ao verificar paciente: ${patientError.message}`);
       }
 
-      const sameDayAppointments = patientAppointments.filter(apt => 
-        apt.time_slot?.date === slot.date
-      )
+      const sameDayAppointments = patientAppointments.filter(
+        (apt) => apt.time_slot?.date === slot.date,
+      );
 
       if (sameDayAppointments.length > 0) {
         return {
           hasConflict: true,
-          conflictType: 'double_booking',
-          conflictingSlots: sameDayAppointments.map(apt => apt.time_slot),
-          message: 'Você já possui um agendamento neste dia'
-        }
+          conflictType: "double_booking",
+          conflictingSlots: sameDayAppointments.map((apt) => apt.time_slot),
+          message: "Você já possui um agendamento neste dia",
+        };
       }
 
       // Nenhum conflito encontrado
@@ -138,77 +137,76 @@ export function BookingConflictPrevention({
         hasConflict: false,
         conflictType: null,
         conflictingSlots: [],
-        message: 'Nenhum conflito detectado'
-      }
-
+        message: "Nenhum conflito detectado",
+      };
     } catch (error) {
-      console.error('Erro na verificação de conflitos:', error)
+      console.error("Erro na verificação de conflitos:", error);
       return {
         hasConflict: true,
-        conflictType: 'professional_unavailable',
+        conflictType: "professional_unavailable",
         conflictingSlots: [],
-        message: error instanceof Error ? error.message : 'Erro desconhecido'
-      }
+        message: error instanceof Error ? error.message : "Erro desconhecido",
+      };
     }
-  }
+  };
 
   // Função para executar verificação
   const runConflictCheck = async () => {
-    if (!selectedSlot) return
+    if (!selectedSlot) return;
 
-    setIsChecking(true)
+    setIsChecking(true);
     try {
-      const detector = await checkForConflicts(selectedSlot)
-      setConflictDetector(detector)
-      setLastCheckedAt(new Date())
+      const detector = await checkForConflicts(selectedSlot);
+      setConflictDetector(detector);
+      setLastCheckedAt(new Date());
 
       // Notificar sobre conflitos
       if (detector.hasConflict) {
         toast({
-          title: 'Conflito detectado',
+          title: "Conflito detectado",
           description: detector.message,
-          variant: 'destructive'
-        })
+          variant: "destructive",
+        });
       } else {
         toast({
-          title: 'Verificação concluída',
-          description: 'Nenhum conflito encontrado',
-          duration: 2000
-        })
+          title: "Verificação concluída",
+          description: "Nenhum conflito encontrado",
+          duration: 2000,
+        });
       }
     } catch (error) {
-      console.error('Erro na verificação:', error)
+      console.error("Erro na verificação:", error);
       toast({
-        title: 'Erro na verificação',
-        description: 'Não foi possível verificar conflitos',
-        variant: 'destructive'
-      })
+        title: "Erro na verificação",
+        description: "Não foi possível verificar conflitos",
+        variant: "destructive",
+      });
     } finally {
-      setIsChecking(false)
+      setIsChecking(false);
     }
-  }
+  };
 
   // Função para resolver conflito
   const resolveConflict = async () => {
-    if (!conflictDetector?.hasConflict) return
+    if (!conflictDetector?.hasConflict) return;
 
     switch (conflictDetector.conflictType) {
-      case 'double_booking':
-      case 'time_overlap':
+      case "double_booking":
+      case "time_overlap":
         // Sugerir horários alternativos
         toast({
-          title: 'Sugestão',
-          description: 'Selecione outro horário disponível',
-        })
-        onConflictResolved?.()
-        break
+          title: "Sugestão",
+          description: "Selecione outro horário disponível",
+        });
+        onConflictResolved?.();
+        break;
 
-      case 'professional_unavailable':
+      case "professional_unavailable":
         // Atualizar dados
-        await runConflictCheck()
-        break
+        await runConflictCheck();
+        break;
     }
-  }
+  };
 
   if (!selectedSlot) {
     return (
@@ -223,7 +221,7 @@ export function BookingConflictPrevention({
           </CardDescription>
         </CardHeader>
       </Card>
-    )
+    );
   }
 
   return (
@@ -239,14 +237,9 @@ export function BookingConflictPrevention({
               Verificação automática de disponibilidade
             </CardDescription>
           </div>
-          
-          <Button 
-            size="sm" 
-            variant="outline"
-            onClick={runConflictCheck}
-            disabled={isChecking}
-          >
-            <RefreshCw className={`h-3 w-3 mr-1 ${isChecking ? 'animate-spin' : ''}`} />
+
+          <Button size="sm" variant="outline" onClick={runConflictCheck} disabled={isChecking}>
+            <RefreshCw className={`h-3 w-3 mr-1 ${isChecking ? "animate-spin" : ""}`} />
             Verificar
           </Button>
         </div>
@@ -259,16 +252,16 @@ export function BookingConflictPrevention({
             <span className="text-muted-foreground">Horário selecionado:</span>
             <Badge variant="outline">
               <Clock className="h-3 w-3 mr-1" />
-              {format(new Date(selectedSlot.date + 'T00:00:00'), 'dd/MM/yyyy', { locale: pt })}
-              {' às '}
-              {format(new Date(`2000-01-01T${selectedSlot.start_time}`), 'HH:mm')}
+              {format(new Date(selectedSlot.date + "T00:00:00"), "dd/MM/yyyy", { locale: pt })}
+              {" às "}
+              {format(new Date(`2000-01-01T${selectedSlot.start_time}`), "HH:mm")}
             </Badge>
           </div>
-          
+
           {lastCheckedAt && (
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>Última verificação:</span>
-              <span>{format(lastCheckedAt, 'HH:mm:ss')}</span>
+              <span>{format(lastCheckedAt, "HH:mm:ss")}</span>
             </div>
           )}
         </div>
@@ -304,11 +297,12 @@ export function BookingConflictPrevention({
             {/* Detalhes dos conflitos */}
             {conflictDetector.conflictingSlots.length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs font-medium text-muted-foreground">
-                  Horários conflitantes:
-                </p>
+                <p className="text-xs font-medium text-muted-foreground">Horários conflitantes:</p>
                 {conflictDetector.conflictingSlots.map((slot, index) => (
-                  <div key={index} className="flex items-center justify-between text-xs p-2 bg-muted rounded">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between text-xs p-2 bg-muted rounded"
+                  >
                     <div className="flex items-center gap-2">
                       <Users className="h-3 w-3" />
                       <span>
@@ -316,7 +310,7 @@ export function BookingConflictPrevention({
                       </span>
                     </div>
                     <Badge variant="secondary" className="text-xs">
-                      {slot.is_available ? 'Disponível' : 'Ocupado'}
+                      {slot.is_available ? "Disponível" : "Ocupado"}
                     </Badge>
                   </div>
                 ))}
@@ -325,12 +319,7 @@ export function BookingConflictPrevention({
 
             {/* Ações de resolução */}
             {conflictDetector.hasConflict && (
-              <Button 
-                size="sm" 
-                variant="outline" 
-                onClick={resolveConflict}
-                className="w-full"
-              >
+              <Button size="sm" variant="outline" onClick={resolveConflict} className="w-full">
                 Resolver Conflito
               </Button>
             )}
@@ -338,5 +327,5 @@ export function BookingConflictPrevention({
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

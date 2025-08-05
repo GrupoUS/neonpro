@@ -6,8 +6,8 @@ export {
   createAuthMiddleware,
   recordSuspiciousActivity,
   clearSuspiciousActivity,
-} from './auth-middleware';
-export type { AuthMiddlewareConfig } from './auth-middleware';
+} from "./auth-middleware";
+export type { AuthMiddlewareConfig } from "./auth-middleware";
 
 // Security Middleware
 export {
@@ -15,16 +15,16 @@ export {
   getMonitoringStats,
   clearBlockedIP,
   blockIP,
-} from './security-middleware';
-export type { SecurityMiddlewareConfig } from './security-middleware';
+} from "./security-middleware";
+export type { SecurityMiddlewareConfig } from "./security-middleware";
 
 // Combined Middleware Factory
-import { NextRequest, NextResponse } from 'next/server';
-import { createAuthMiddleware, AuthMiddlewareConfig } from './auth-middleware';
-import { createSecurityMiddleware, SecurityMiddlewareConfig } from './security-middleware';
-import { SessionManager } from '../session-manager';
-import { SecurityMonitor } from '../security-monitor';
-import { DeviceManager } from '../device-manager';
+import type { NextRequest, NextResponse } from "next/server";
+import type { createAuthMiddleware, AuthMiddlewareConfig } from "./auth-middleware";
+import type { createSecurityMiddleware, SecurityMiddlewareConfig } from "./security-middleware";
+import type { SessionManager } from "../session-manager";
+import type { SecurityMonitor } from "../security-monitor";
+import type { DeviceManager } from "../device-manager";
 
 /**
  * Combined middleware configuration
@@ -43,7 +43,7 @@ export function createCombinedMiddleware(
   sessionManager: SessionManager,
   securityMonitor: SecurityMonitor,
   deviceManager: DeviceManager,
-  config: CombinedMiddlewareConfig = {}
+  config: CombinedMiddlewareConfig = {},
 ) {
   const {
     auth: authConfig = {},
@@ -51,52 +51,41 @@ export function createCombinedMiddleware(
     enableAuth = true,
     enableSecurity = true,
   } = config;
-  
-  const authMiddleware = enableAuth
-    ? createAuthMiddleware(authConfig)
-    : null;
-    
-  const securityMiddleware = enableSecurity
-    ? createSecurityMiddleware(securityConfig)
-    : null;
-  
-  return async function combinedMiddleware(
-    request: NextRequest
-  ): Promise<NextResponse> {
+
+  const authMiddleware = enableAuth ? createAuthMiddleware(authConfig) : null;
+
+  const securityMiddleware = enableSecurity ? createSecurityMiddleware(securityConfig) : null;
+
+  return async function combinedMiddleware(request: NextRequest): Promise<NextResponse> {
     try {
       // Run security middleware first
       if (securityMiddleware) {
-        const securityResult = await securityMiddleware(
-          request,
-          securityMonitor,
-          sessionManager
-        );
-        
+        const securityResult = await securityMiddleware(request, securityMonitor, sessionManager);
+
         if (securityResult && securityResult.status !== 200) {
           return securityResult;
         }
       }
-      
+
       // Run authentication middleware
       if (authMiddleware) {
         const authResult = await authMiddleware(
           request,
           sessionManager,
           securityMonitor,
-          deviceManager
+          deviceManager,
         );
-        
+
         if (authResult && authResult.status !== 200) {
           return authResult;
         }
       }
-      
+
       // Continue to the next middleware or route handler
       return NextResponse.next();
-      
     } catch (error) {
-      console.error('Combined middleware error:', error);
-      return new NextResponse('Middleware error', { status: 500 });
+      console.error("Combined middleware error:", error);
+      return new NextResponse("Middleware error", { status: 500 });
     }
   };
 }
@@ -109,69 +98,67 @@ export const MiddlewareUtils = {
    * Extract client IP from request
    */
   getClientIP(request: NextRequest): string {
-    const forwarded = request.headers.get('x-forwarded-for');
-    const realIP = request.headers.get('x-real-ip');
-    const remoteAddr = request.headers.get('x-remote-addr');
-    
+    const forwarded = request.headers.get("x-forwarded-for");
+    const realIP = request.headers.get("x-real-ip");
+    const remoteAddr = request.headers.get("x-remote-addr");
+
     if (forwarded) {
-      return forwarded.split(',')[0].trim();
+      return forwarded.split(",")[0].trim();
     }
-    
-    return realIP || remoteAddr || 'unknown';
+
+    return realIP || remoteAddr || "unknown";
   },
-  
+
   /**
    * Extract session token from request
    */
   getSessionToken(request: NextRequest): string | null {
-    const authHeader = request.headers.get('authorization');
-    if (authHeader && authHeader.startsWith('Bearer ')) {
+    const authHeader = request.headers.get("authorization");
+    if (authHeader && authHeader.startsWith("Bearer ")) {
       return authHeader.substring(7);
     }
-    
-    const sessionCookie = request.cookies.get('session_token');
+
+    const sessionCookie = request.cookies.get("session_token");
     if (sessionCookie) {
       return sessionCookie.value;
     }
-    
+
     return null;
   },
-  
+
   /**
    * Check if request is from API route
    */
   isAPIRoute(request: NextRequest): boolean {
-    return request.nextUrl.pathname.startsWith('/api/');
+    return request.nextUrl.pathname.startsWith("/api/");
   },
-  
+
   /**
    * Check if request is for static assets
    */
   isStaticAsset(request: NextRequest): boolean {
     const pathname = request.nextUrl.pathname;
     return (
-      pathname.startsWith('/_next/') ||
-      pathname.startsWith('/static/') ||
-      pathname.includes('.') // Files with extensions
+      pathname.startsWith("/_next/") || pathname.startsWith("/static/") || pathname.includes(".") // Files with extensions
     );
   },
-  
+
   /**
    * Check if request is for public routes
    */
   isPublicRoute(request: NextRequest, publicRoutes: string[] = []): boolean {
     const pathname = request.nextUrl.pathname;
     const defaultPublicRoutes = [
-      '/login',
-      '/register',
-      '/forgot-password',
-      '/reset-password',
-      '/verify-email',
-      '/',
+      "/login",
+      "/register",
+      "/forgot-password",
+      "/reset-password",
+      "/verify-email",
+      "/",
     ];
-    
+
     const allPublicRoutes = [...defaultPublicRoutes, ...publicRoutes];
-    return allPublicRoutes.some(route => pathname === route || pathname.startsWith(route + '/'));
+    return allPublicRoutes.some((route) => pathname === route || pathname.startsWith(route + "/"));
   },
 };
 
@@ -207,7 +194,7 @@ export const MiddlewarePresets = {
       },
     },
   } as CombinedMiddlewareConfig,
-  
+
   /**
    * Standard security configuration
    */
@@ -236,7 +223,7 @@ export const MiddlewarePresets = {
       },
     },
   } as CombinedMiddlewareConfig,
-  
+
   /**
    * Development configuration (less restrictive)
    */

@@ -1,26 +1,38 @@
-// Tax Calculator Component  
+// Tax Calculator Component
 // Story 5.5: Interactive tax calculation tool
 
 "use client";
 
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { 
+import type { useState } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Badge } from "@/components/ui/badge";
+import type { Separator } from "@/components/ui/separator";
+import type {
   Calculator,
   AlertCircle,
   CheckCircle,
   Info,
   DollarSign,
   Percent,
-  RefreshCw
-} from 'lucide-react';
-import { formatCurrency, formatPercentage } from '@/lib/utils';
+  RefreshCw,
+} from "lucide-react";
+import type { formatCurrency, formatPercentage } from "@/lib/utils";
 
 interface TaxCalculatorProps {
   clinicId: string;
@@ -50,33 +62,33 @@ interface TaxCalculation {
 
 export default function TaxCalculator({ clinicId }: TaxCalculatorProps) {
   const [formData, setFormData] = useState({
-    valor_base: '',
-    tipo_servico: '',
-    codigo_servico: '',
-    regime_tributario: ''
+    valor_base: "",
+    tipo_servico: "",
+    codigo_servico: "",
+    regime_tributario: "",
   });
   const [calculation, setCalculation] = useState<TaxCalculation | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const serviceTypes = [
-    'Consulta Médica',
-    'Exame Laboratorial',
-    'Procedimento Cirúrgico',
-    'Fisioterapia',
-    'Psicologia',
-    'Nutrição',
-    'Outros'
+    "Consulta Médica",
+    "Exame Laboratorial",
+    "Procedimento Cirúrgico",
+    "Fisioterapia",
+    "Psicologia",
+    "Nutrição",
+    "Outros",
   ];
 
   const taxRegimes = [
-    { value: 'simples_nacional', label: 'Simples Nacional' },
-    { value: 'lucro_presumido', label: 'Lucro Presumido' },
-    { value: 'lucro_real', label: 'Lucro Real' }
+    { value: "simples_nacional", label: "Simples Nacional" },
+    { value: "lucro_presumido", label: "Lucro Presumido" },
+    { value: "lucro_real", label: "Lucro Real" },
   ];
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     setError(null);
   };
 
@@ -88,11 +100,11 @@ export default function TaxCalculator({ clinicId }: TaxCalculatorProps) {
       // Validate inputs
       const valorBase = parseFloat(formData.valor_base);
       if (isNaN(valorBase) || valorBase <= 0) {
-        throw new Error('Valor base deve ser um número positivo');
+        throw new Error("Valor base deve ser um número positivo");
       }
 
       if (!formData.tipo_servico) {
-        throw new Error('Tipo de serviço é obrigatório');
+        throw new Error("Tipo de serviço é obrigatório");
       }
 
       const requestData = {
@@ -100,27 +112,27 @@ export default function TaxCalculator({ clinicId }: TaxCalculatorProps) {
         valor_base: valorBase,
         tipo_servico: formData.tipo_servico,
         codigo_servico: formData.codigo_servico || undefined,
-        regime_tributario: formData.regime_tributario || undefined
+        regime_tributario: formData.regime_tributario || undefined,
       };
 
-      const response = await fetch('/api/tax/calculate', {
-        method: 'POST',
+      const response = await fetch("/api/tax/calculate", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(requestData)
+        body: JSON.stringify(requestData),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Erro no cálculo');
+        throw new Error(errorData.error || "Erro no cálculo");
       }
 
       const data = await response.json();
       setCalculation(data.data);
     } catch (err) {
-      console.error('Error calculating taxes:', err);
-      setError(err instanceof Error ? err.message : 'Erro desconhecido');
+      console.error("Error calculating taxes:", err);
+      setError(err instanceof Error ? err.message : "Erro desconhecido");
     } finally {
       setLoading(false);
     }
@@ -133,10 +145,10 @@ export default function TaxCalculator({ clinicId }: TaxCalculatorProps) {
 
   const resetForm = () => {
     setFormData({
-      valor_base: '',
-      tipo_servico: '',
-      codigo_servico: '',
-      regime_tributario: ''
+      valor_base: "",
+      tipo_servico: "",
+      codigo_servico: "",
+      regime_tributario: "",
     });
     setCalculation(null);
     setError(null);
@@ -166,19 +178,19 @@ export default function TaxCalculator({ clinicId }: TaxCalculatorProps) {
                   min="0"
                   placeholder="0,00"
                   value={formData.valor_base}
-                  onChange={(e) => handleInputChange('valor_base', e.target.value)}
+                  onChange={(e) => handleInputChange("valor_base", e.target.value)}
                   required
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="tipo_servico">Tipo de Serviço</Label>
-                <Select onValueChange={(value) => handleInputChange('tipo_servico', value)}>
+                <Select onValueChange={(value) => handleInputChange("tipo_servico", value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione o serviço" />
                   </SelectTrigger>
                   <SelectContent>
-                    {serviceTypes.map(service => (
+                    {serviceTypes.map((service) => (
                       <SelectItem key={service} value={service}>
                         {service}
                       </SelectItem>
@@ -193,18 +205,18 @@ export default function TaxCalculator({ clinicId }: TaxCalculatorProps) {
                   id="codigo_servico"
                   placeholder="Ex: 04.01"
                   value={formData.codigo_servico}
-                  onChange={(e) => handleInputChange('codigo_servico', e.target.value)}
+                  onChange={(e) => handleInputChange("codigo_servico", e.target.value)}
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="regime_tributario">Regime Tributário (opcional)</Label>
-                <Select onValueChange={(value) => handleInputChange('regime_tributario', value)}>
+                <Select onValueChange={(value) => handleInputChange("regime_tributario", value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Usar configuração da clínica" />
                   </SelectTrigger>
                   <SelectContent>
-                    {taxRegimes.map(regime => (
+                    {taxRegimes.map((regime) => (
                       <SelectItem key={regime.value} value={regime.value}>
                         {regime.label}
                       </SelectItem>
@@ -297,7 +309,9 @@ export default function TaxCalculator({ clinicId }: TaxCalculatorProps) {
                   .map(([tax, value]) => (
                     <div key={tax} className="p-3 border rounded-lg">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm font-medium uppercase">{tax.replace('_', ' ')}</span>
+                        <span className="text-sm font-medium uppercase">
+                          {tax.replace("_", " ")}
+                        </span>
                         <Badge variant="secondary">
                           {formatPercentage((value / calculation.valor_base) * 100)}
                         </Badge>
@@ -315,12 +329,17 @@ export default function TaxCalculator({ clinicId }: TaxCalculatorProps) {
                 <div>
                   <p className="text-sm font-medium text-blue-600 mb-1">Informações Adicionais</p>
                   <ul className="text-sm text-blue-700 space-y-1">
-                    <li>• Regime tributário: {calculation.regime_tributario.replace('_', ' ').toUpperCase()}</li>
+                    <li>
+                      • Regime tributário:{" "}
+                      {calculation.regime_tributario.replace("_", " ").toUpperCase()}
+                    </li>
                     <li>• Tipo de serviço: {calculation.service_type}</li>
                     {calculation.service_code && (
                       <li>• Código do serviço: {calculation.service_code}</li>
                     )}
-                    <li>• Carga tributária efetiva: {formatPercentage(calculation.effective_rate)}</li>
+                    <li>
+                      • Carga tributária efetiva: {formatPercentage(calculation.effective_rate)}
+                    </li>
                   </ul>
                 </div>
               </div>

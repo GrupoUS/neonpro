@@ -24,35 +24,35 @@ export const RATE_LIMIT_CONFIGS: RateLimitConfigs = {
     maxRequests: 100, // 100 requests per minute
     skipSuccessfulRequests: false,
   },
-  
+
   // Trial management - moderate limits
-  'trial-management': {
+  "trial-management": {
     windowMs: 60 * 1000, // 1 minute
     maxRequests: 50, // 50 requests per minute
     skipSuccessfulRequests: false,
   },
-  
+
   // Auth endpoints - strict limits to prevent brute force
   auth: {
     windowMs: 15 * 60 * 1000, // 15 minutes
     maxRequests: 5, // 5 attempts per 15 minutes
     skipSuccessfulRequests: true,
   },
-  
+
   // WebSocket connection attempts - prevent connection flooding
   websocket: {
     windowMs: 60 * 1000, // 1 minute
     maxRequests: 10, // 10 connection attempts per minute
     skipSuccessfulRequests: true,
   },
-  
+
   // General API endpoints
   default: {
     windowMs: 60 * 1000, // 1 minute
     maxRequests: 60, // 60 requests per minute
     skipSuccessfulRequests: false,
   },
-  
+
   // Admin endpoints - higher limits for management operations
   admin: {
     windowMs: 60 * 1000, // 1 minute
@@ -74,15 +74,15 @@ export interface UserRoleLimits {
 export const USER_ROLE_LIMITS: UserRoleLimits = {
   admin: {
     multiplier: 3, // 3x the base limits
-    additionalEndpoints: ['admin', 'analytics', 'trial-management'],
+    additionalEndpoints: ["admin", "analytics", "trial-management"],
   },
   clinic_owner: {
     multiplier: 2, // 2x the base limits
-    additionalEndpoints: ['analytics', 'trial-management'],
+    additionalEndpoints: ["analytics", "trial-management"],
   },
   staff: {
     multiplier: 1.5, // 1.5x the base limits
-    additionalEndpoints: ['analytics'],
+    additionalEndpoints: ["analytics"],
   },
   patient: {
     multiplier: 1, // Base limits
@@ -98,8 +98,8 @@ export const USER_ROLE_LIMITS: UserRoleLimits = {
  * IP whitelist for rate limiting exemptions
  */
 export const RATE_LIMIT_WHITELIST = [
-  '127.0.0.1',
-  '::1',
+  "127.0.0.1",
+  "::1",
   // Add trusted IPs here
 ];
 
@@ -107,18 +107,18 @@ export const RATE_LIMIT_WHITELIST = [
  * Response messages for rate limiting
  */
 export const RATE_LIMIT_MESSAGES = {
-  EXCEEDED: 'Rate limit exceeded. Please try again later.',
-  BLOCKED: 'Too many requests from this IP. Access temporarily blocked.',
-  INVALID_TOKEN: 'Invalid or expired authentication token.',
-  UNAUTHORIZED: 'Authentication required for this endpoint.',
+  EXCEEDED: "Rate limit exceeded. Please try again later.",
+  BLOCKED: "Too many requests from this IP. Access temporarily blocked.",
+  INVALID_TOKEN: "Invalid or expired authentication token.",
+  UNAUTHORIZED: "Authentication required for this endpoint.",
 } as const;
 
 /**
  * Headers to include in rate limit responses
  */
 export const RATE_LIMIT_HEADERS = {
-  LIMIT: 'X-RateLimit-Limit',
-  REMAINING: 'X-RateLimit-Remaining',
-  RESET: 'X-RateLimit-Reset',
-  RETRY_AFTER: 'Retry-After',
+  LIMIT: "X-RateLimit-Limit",
+  REMAINING: "X-RateLimit-Remaining",
+  RESET: "X-RateLimit-Reset",
+  RETRY_AFTER: "Retry-After",
 } as const;

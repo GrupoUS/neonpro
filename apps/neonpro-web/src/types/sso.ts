@@ -2,7 +2,7 @@
 export interface SSOProvider {
   id: string;
   name: string;
-  type: 'saml' | 'oauth';
+  type: "saml" | "oauth";
   enabled: boolean;
   config: Record<string, any>;
 }
@@ -54,9 +54,9 @@ export interface SSOAuditLog {
 }
 
 export enum SSOErrorCode {
-  INVALID_PROVIDER = 'INVALID_PROVIDER',
-  AUTH_FAILED = 'AUTH_FAILED',
-  TOKEN_EXPIRED = 'TOKEN_EXPIRED'
+  INVALID_PROVIDER = "INVALID_PROVIDER",
+  AUTH_FAILED = "AUTH_FAILED",
+  TOKEN_EXPIRED = "TOKEN_EXPIRED",
 }
 
 export interface SSOError {
@@ -72,25 +72,25 @@ export interface SSOConfiguration {
 // Default SSO providers configuration
 export const DEFAULT_SSO_PROVIDERS: SSOProvider[] = [
   {
-    id: 'google',
-    name: 'Google',
-    type: 'oauth',
+    id: "google",
+    name: "Google",
+    type: "oauth",
     enabled: true,
     config: {
-      clientId: process.env.GOOGLE_CLIENT_ID || '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-      scope: 'openid email profile'
-    }
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      scope: "openid email profile",
+    },
   },
   {
-    id: 'microsoft',
-    name: 'Microsoft',
-    type: 'oauth',
+    id: "microsoft",
+    name: "Microsoft",
+    type: "oauth",
     enabled: true,
     config: {
-      clientId: process.env.MICROSOFT_CLIENT_ID || '',
-      clientSecret: process.env.MICROSOFT_CLIENT_SECRET || '',
-      scope: 'openid email profile'
-    }
-  }
+      clientId: process.env.MICROSOFT_CLIENT_ID || "",
+      clientSecret: process.env.MICROSOFT_CLIENT_SECRET || "",
+      scope: "openid email profile",
+    },
+  },
 ];

@@ -3,9 +3,9 @@
  * Healthcare staff management with scheduling
  */
 
-import { z } from 'zod';
-import { createTRPCRouter, protectedProcedure, adminProcedure } from '../trpc';
-import { TRPCError } from '@trpc/server';
+import { z } from "zod";
+import { createTRPCRouter, protectedProcedure, adminProcedure } from "../trpc";
+import { TRPCError } from "@trpc/server";
 
 const doctorSchema = z.object({
   name: z.string().min(2).max(100),
@@ -28,47 +28,49 @@ const doctorSchema = z.object({
 export const doctorsRouter = createTRPCRouter({
   // List doctors with filtering
   list: protectedProcedure
-    .input(z.object({
-      limit: z.number().min(1).max(100).default(20),
-      offset: z.number().min(0).default(0),
-      specialty: z.string().optional(),
-      department: z.string().optional(),
-      available_today: z.boolean().optional(),
-      status: z.enum(['active', 'inactive', 'all']).default('active'),
-    }))
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).default(20),
+        offset: z.number().min(0).default(0),
+        specialty: z.string().optional(),
+        department: z.string().optional(),
+        available_today: z.boolean().optional(),
+        status: z.enum(["active", "inactive", "all"]).default("active"),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       const { supabase } = ctx;
-      
+
       let query = supabase
-        .from('doctors')
-        .select('*', { count: 'exact' })
+        .from("doctors")
+        .select("*", { count: "exact" })
         .range(input.offset, input.offset + input.limit - 1);
 
       if (input.specialty) {
-        query = query.eq('specialty', input.specialty);
+        query = query.eq("specialty", input.specialty);
       }
 
       if (input.department) {
-        query = query.eq('department', input.department);
+        query = query.eq("department", input.department);
       }
 
-      if (input.status !== 'all') {
-        query = query.eq('status', input.status);
+      if (input.status !== "all") {
+        query = query.eq("status", input.status);
       }
 
       const { data, error, count } = await query;
 
       if (error) {
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to fetch doctors',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch doctors",
         });
       }
 
       return {
         doctors: data || [],
         total: count || 0,
-        hasMore: (input.offset + input.limit) < (count || 0),
+        hasMore: input.offset + input.limit < (count || 0),
       };
     }),
 
@@ -77,9 +79,9 @@ export const doctorsRouter = createTRPCRouter({
     .input(z.object({ id: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
       const { supabase } = ctx;
-      
+
       const { data, error } = await supabase
-        .from('doctors')
+        .from("doctors")
         .select(`
           *,
           appointments!inner(
@@ -90,13 +92,13 @@ export const doctorsRouter = createTRPCRouter({
             patients!inner(name)
           )
         `)
-        .eq('id', input.id)
+        .eq("id", input.id)
         .single();
 
       if (error) {
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Doctor not found',
+          code: "NOT_FOUND",
+          message: "Doctor not found",
         });
       }
 
@@ -105,16 +107,18 @@ export const doctorsRouter = createTRPCRouter({
 
   // Get doctor schedule for date range
   getSchedule: protectedProcedure
-    .input(z.object({
-      doctor_id: z.string().uuid(),
-      date_from: z.string().date(),
-      date_to: z.string().date(),
-    }))
+    .input(
+      z.object({
+        doctor_id: z.string().uuid(),
+        date_from: z.string().date(),
+        date_to: z.string().date(),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       const { supabase } = ctx;
-      
+
       const { data: appointments, error } = await supabase
-        .from('appointments')
+        .from("appointments")
         .select(`
           id,
           appointment_date,
@@ -123,15 +127,15 @@ export const doctorsRouter = createTRPCRouter({
           status,
           patients!inner(id, name)
         `)
-        .eq('doctor_id', input.doctor_id)
-        .gte('appointment_date', `${input.date_from}T00:00:00.000Z`)
-        .lte('appointment_date', `${input.date_to}T23:59:59.999Z`)
-        .order('appointment_date');
+        .eq("doctor_id", input.doctor_id)
+        .gte("appointment_date", `${input.date_from}T00:00:00.000Z`)
+        .lte("appointment_date", `${input.date_to}T23:59:59.999Z`)
+        .order("appointment_date");
 
       if (error) {
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to fetch doctor schedule',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch doctor schedule",
         });
       }
 
@@ -139,70 +143,70 @@ export const doctorsRouter = createTRPCRouter({
     }),
 
   // Create new doctor
-  create: adminProcedure
-    .input(doctorSchema)
-    .mutation(async ({ ctx, input }) => {
-      const { supabase, user } = ctx;
-      
-      // Check if CRM already exists
-      const { data: existingDoctor } = await supabase
-        .from('doctors')
-        .select('id')
-        .eq('crm', input.crm)
-        .single();
+  create: adminProcedure.input(doctorSchema).mutation(async ({ ctx, input }) => {
+    const { supabase, user } = ctx;
 
-      if (existingDoctor) {
-        throw new TRPCError({
-          code: 'CONFLICT',
-          message: 'Doctor with this CRM already exists',
-        });
-      }
+    // Check if CRM already exists
+    const { data: existingDoctor } = await supabase
+      .from("doctors")
+      .select("id")
+      .eq("crm", input.crm)
+      .single();
 
-      const { data, error } = await supabase
-        .from('doctors')
-        .insert({
-          ...input,
-          status: 'active',
-          created_by: user.id,
-          created_at: new Date().toISOString(),
-        })
-        .select()
-        .single();
+    if (existingDoctor) {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: "Doctor with this CRM already exists",
+      });
+    }
 
-      if (error) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to create doctor',
-        });
-      }
+    const { data, error } = await supabase
+      .from("doctors")
+      .insert({
+        ...input,
+        status: "active",
+        created_by: user.id,
+        created_at: new Date().toISOString(),
+      })
+      .select()
+      .single();
 
-      return data;
-    }),
+    if (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to create doctor",
+      });
+    }
+
+    return data;
+  }),
 
   // Update doctor
   update: adminProcedure
-    .input(doctorSchema.partial().extend({
-      id: z.string().uuid(),
-    }))
+    .input(
+      doctorSchema.partial().extend({
+        id: z.string().uuid(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       const { supabase, user } = ctx;
       const { id, ...updateData } = input;
-      
+
       const { data, error } = await supabase
-        .from('doctors')
+        .from("doctors")
         .update({
           ...updateData,
           updated_by: user.id,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', id)
+        .eq("id", id)
         .select()
         .single();
 
       if (error) {
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to update doctor',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to update doctor",
         });
       }
 
@@ -210,44 +214,42 @@ export const doctorsRouter = createTRPCRouter({
     }),
 
   // Get specialties list
-  getSpecialties: protectedProcedure
-    .query(async ({ ctx }) => {
-      const { supabase } = ctx;
-      
-      const { data, error } = await supabase
-        .from('doctors')
-        .select('specialty')
-        .eq('status', 'active');
+  getSpecialties: protectedProcedure.query(async ({ ctx }) => {
+    const { supabase } = ctx;
 
-      if (error) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to fetch specialties',
-        });
-      }
+    const { data, error } = await supabase
+      .from("doctors")
+      .select("specialty")
+      .eq("status", "active");
 
-      const specialties = [...new Set(data?.map(d => d.specialty) || [])];
-      return { specialties };
-    }),
+    if (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to fetch specialties",
+      });
+    }
+
+    const specialties = [...new Set(data?.map((d) => d.specialty) || [])];
+    return { specialties };
+  }),
 
   // Get departments list
-  getDepartments: protectedProcedure
-    .query(async ({ ctx }) => {
-      const { supabase } = ctx;
-      
-      const { data, error } = await supabase
-        .from('doctors')
-        .select('department')
-        .eq('status', 'active');
+  getDepartments: protectedProcedure.query(async ({ ctx }) => {
+    const { supabase } = ctx;
 
-      if (error) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to fetch departments',
-        });
-      }
+    const { data, error } = await supabase
+      .from("doctors")
+      .select("department")
+      .eq("status", "active");
 
-      const departments = [...new Set(data?.map(d => d.department) || [])];
-      return { departments };
-    }),
+    if (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to fetch departments",
+      });
+    }
+
+    const departments = [...new Set(data?.map((d) => d.department) || [])];
+    return { departments };
+  }),
 });

@@ -1,53 +1,21 @@
 // Story 11.2: No-Show Prediction Overview Component
 // Key metrics and real-time dashboard overview
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Icons } from '@/components/ui/icons';
-import { cn } from '@/lib/utils';
-import { useToast } from '@/hooks/use-toast';
-
-interface OverviewMetrics {
-  total_predictions: number;
-  accuracy_rate: number;
-  high_risk_patients: number;
-  interventions_today: number;
-  revenue_protected: number;
-  cost_savings: number;
-  recent_predictions: Array<{
-    id: string;
-    patient_name: string;
-    appointment_date: string;
-    risk_score: number;
-    intervention_status: string;
-  }>;
-}
-
-export default function NoShowPredictionOverview() {
-  const [metrics, setMetrics] = useState<OverviewMetrics | null>(null);
-  const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    fetchOverviewMetrics();
-  }, []);
-
-  const fetchOverviewMetrics = async () => {// Story 11.2: No-Show Prediction Overview Component
-// Key metrics and real-time dashboard overview
-
-'use client';
-
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Icons } from '@/components/ui/icons';
-import { cn } from '@/lib/utils';
-import { useToast } from '@/hooks/use-toast';
+import type { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Icons } from "@/components/ui/icons";
+import type { cn } from "@/lib/utils";
+import type { useToast } from "@/hooks/use-toast";
 
 interface OverviewMetrics {
   total_predictions: number;
@@ -71,212 +39,187 @@ export default function NoShowPredictionOverview() {
   const { toast } = useToast();
 
   useEffect(() => {
-    fetchOverviewMetrics();
-  }, []);
+    async function fetchMetrics() {
+      try {
+        const response = await fetch("/api/no-show-prediction/overview");
+        if (!response.ok) throw new Error("Failed to fetch metrics");
 
-  const fetchOverviewMetrics = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch('/api/no-show-prediction?dashboard=overview');
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch overview metrics');
+        const data = await response.json();
+        setMetrics(data);
+      } catch (error) {
+        console.error("Error fetching overview metrics:", error);
+        toast({
+          title: "Erro ao carregar métricas",
+          description: "Não foi possível carregar as métricas de predição.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
       }
-      
-      const data = await response.json();
-      setMetrics(data);
-    } catch (error) {
-      console.error('Error fetching overview metrics:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load overview metrics',
-        variant: 'destructive',
-      });
-    } finally {
-      setLoading(false);
     }
-  };
+
+    fetchMetrics();
+  }, [toast]);
 
   if (loading) {
-    return <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <Card key={i}>
-          <CardHeader className="pb-2">
-            <div className="h-4 bg-muted animate-pulse rounded" />
-          </CardHeader>
-          <CardContent>
-            <div className="h-8 bg-muted animate-pulse rounded mb-2" />
-            <div className="h-3 bg-muted animate-pulse rounded w-2/3" />
-          </CardContent>
-        </Card>
-      ))}
-    </div>;
+    return (
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {[...Array(6)].map((_, i) => (
+          <Card key={i} className="animate-pulse">
+            <CardHeader>
+              <div className="h-4 bg-gray-200 rounded w-3/4" />
+              <div className="h-3 bg-gray-200 rounded w-1/2" />
+            </CardHeader>
+            <CardContent>
+              <div className="h-8 bg-gray-200 rounded" />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
   }
 
   if (!metrics) {
-    return <div>No data available</div>;
+    return (
+      <div className="text-center py-8">
+        <p className="text-muted-foreground">Nenhuma métrica disponível</p>
+      </div>
+    );
   }
 
   return (
     <div className="space-y-6">
-      {/* Key Metrics Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {/* Key Metrics Grid */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Predictions</CardTitle>
-            <Icons.activity className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Total de Predições</CardTitle>
+            <Icons.calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{metrics.total_predictions.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">
-              Active prediction models
-            </p>
+            <p className="text-xs text-muted-foreground">Predições realizadas</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Accuracy Rate</CardTitle>
+            <CardTitle className="text-sm font-medium">Taxa de Acurácia</CardTitle>
             <Icons.target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {(metrics.accuracy_rate * 100).toFixed(1)}%
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Model prediction accuracy
-            </p>
+            <div className="text-2xl font-bold">{(metrics.accuracy_rate * 100).toFixed(1)}%</div>
+            <p className="text-xs text-muted-foreground">Precisão das predições</p>
           </CardContent>
-        </Card>        <Card>
+        </Card>
+
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">High Risk Patients</CardTitle>
+            <CardTitle className="text-sm font-medium">Alto Risco</CardTitle>
             <Icons.alertTriangle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-destructive">
-              {metrics.high_risk_patients}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Requiring intervention
-            </p>
+            <div className="text-2xl font-bold text-destructive">{metrics.high_risk_patients}</div>
+            <p className="text-xs text-muted-foreground">Pacientes em risco</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Interventions Today</CardTitle>
-            <Icons.bell className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Intervenções Hoje</CardTitle>
+            <Icons.users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{metrics.interventions_today}</div>
-            <p className="text-xs text-muted-foreground">
-              Proactive actions taken
-            </p>
+            <div className="text-2xl font-bold text-green-600">{metrics.interventions_today}</div>
+            <p className="text-xs text-muted-foreground">Ações realizadas</p>
           </CardContent>
         </Card>
+      </div>
 
+      {/* Financial Impact */}
+      <div className="grid gap-4 md:grid-cols-2">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Revenue Protected</CardTitle>
-            <Icons.dollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              R$ {metrics.revenue_protected.toLocaleString()}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              This month
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Cost Savings</CardTitle>
-            <Icons.trendingUp className="h-4 w-4 text-muted-foreground" />
+          <CardHeader>
+            <CardTitle>Receita Protegida</CardTitle>
+            <CardDescription>
+              Valor estimado de receita protegida através das intervenções
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              R$ {metrics.cost_savings.toLocaleString()}
+              R${" "}
+              {metrics.revenue_protected.toLocaleString("pt-BR", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </div>
-            <p className="text-xs text-muted-foreground">
-              Operational efficiency
-            </p>
           </CardContent>
         </Card>
-      </div>      {/* Recent Predictions */}
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Economia de Custos</CardTitle>
+            <CardDescription>Redução de custos operacionais através da otimização</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-600">
+              R${" "}
+              {metrics.cost_savings.toLocaleString("pt-BR", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Recent Predictions */}
       <Card>
         <CardHeader>
-          <CardTitle>Recent High-Risk Predictions</CardTitle>
-          <CardDescription>
-            Latest patients identified as high-risk for no-shows
-          </CardDescription>
+          <CardTitle>Predições Recentes</CardTitle>
+          <CardDescription>Últimas predições de não comparecimento realizadas</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {metrics.recent_predictions.map((prediction) => (
-              <div key={prediction.id} className="flex items-center justify-between p-3 border rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 rounded-full bg-red-500" />
-                  <div>
-                    <p className="font-medium">{prediction.patient_name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      Appointment: {new Date(prediction.appointment_date).toLocaleDateString()}
-                    </p>
-                  </div>
+              <div key={prediction.id} className="flex items-center justify-between border-b pb-2">
+                <div className="space-y-1">
+                  <p className="font-medium">{prediction.patient_name}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {new Date(prediction.appointment_date).toLocaleDateString("pt-BR")}
+                  </p>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Badge 
-                    variant={prediction.risk_score > 0.7 ? "destructive" : "secondary"}
-                  >
-                    {(prediction.risk_score * 100).toFixed(0)}% risk
-                  </Badge>
-                  <Badge 
+                  <Badge
                     variant={
-                      prediction.intervention_status === 'completed' ? 'default' :
-                      prediction.intervention_status === 'pending' ? 'secondary' : 'outline'
+                      prediction.risk_score >= 0.7
+                        ? "destructive"
+                        : prediction.risk_score >= 0.4
+                          ? "default"
+                          : "secondary"
                     }
                   >
-                    {prediction.intervention_status}
+                    {(prediction.risk_score * 100).toFixed(0)}% risco
+                  </Badge>
+                  <Badge
+                    variant={
+                      prediction.intervention_status === "completed"
+                        ? "default"
+                        : prediction.intervention_status === "pending"
+                          ? "secondary"
+                          : "outline"
+                    }
+                  >
+                    {prediction.intervention_status === "completed"
+                      ? "Intervenção realizada"
+                      : prediction.intervention_status === "pending"
+                        ? "Pendente"
+                        : "Não iniciada"}
                   </Badge>
                 </div>
               </div>
             ))}
           </div>
-          
-          {metrics.recent_predictions.length === 0 && (
-            <div className="text-center py-6 text-muted-foreground">
-              No high-risk predictions found
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-          <CardDescription>
-            Common tasks for no-show prediction management
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-2 md:grid-cols-2 lg:grid-cols-4">
-          <Button variant="outline" className="justify-start">
-            <Icons.plus className="mr-2 h-4 w-4" />
-            Run New Prediction
-          </Button>
-          <Button variant="outline" className="justify-start">
-            <Icons.settings className="mr-2 h-4 w-4" />
-            Model Settings
-          </Button>
-          <Button variant="outline" className="justify-start">
-            <Icons.download className="mr-2 h-4 w-4" />
-            Export Report
-          </Button>
-          <Button variant="outline" className="justify-start">
-            <Icons.calendar className="mr-2 h-4 w-4" />
-            Schedule Analysis
-          </Button>
         </CardContent>
       </Card>
     </div>

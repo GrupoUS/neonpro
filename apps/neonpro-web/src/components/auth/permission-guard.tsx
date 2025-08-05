@@ -1,7 +1,7 @@
 /**
  * NeonPro Healthcare Permission Guard Component
  * AUTH-02 Implementation - React Permission Guard with Healthcare Context
- * 
+ *
  * Features:
  * - React component for UI permission enforcement
  * - Healthcare-specific permission validation
@@ -11,19 +11,25 @@
  * - Real-time permission updates
  */
 
-'use client';
+"use client";
 
-import React, { ReactNode, useEffect, useState, useCallback } from 'react';
-import { AlertTriangle, Shield, ShieldAlert, Clock, User, Building } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { usePermissions } from '@/hooks/use-permissions';
-import { HealthcareRole, MedicalSpecialty } from '@/lib/auth/permissions';
-import { PermissionCheckResult } from '@/lib/auth/rbac';
-import { cn } from '@/lib/utils';
+import React, { ReactNode, useEffect, useState, useCallback } from "react";
+import type { AlertTriangle, Shield, ShieldAlert, Clock, User, Building } from "lucide-react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Button } from "@/components/ui/button";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Skeleton } from "@/components/ui/skeleton";
+import type { usePermissions } from "@/hooks/use-permissions";
+import type { HealthcareRole, MedicalSpecialty } from "@/lib/auth/permissions";
+import type { PermissionCheckResult } from "@/lib/auth/rbac";
+import type { cn } from "@/lib/utils";
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -32,39 +38,39 @@ import { cn } from '@/lib/utils';
 interface PermissionGuardProps {
   /** Permission(s) required to show content */
   permissions: string | string[];
-  
+
   /** Child components to render when permission is granted */
   children: ReactNode;
-  
+
   /** Fallback component when permission is denied */
   fallback?: ReactNode;
-  
+
   /** Show loading state while checking permissions */
   showLoading?: boolean;
-  
+
   /** Allow emergency override for clinical staff */
   allowEmergencyOverride?: boolean;
-  
+
   /** Additional context for permission checking */
   context?: {
     clinicId?: string;
     patientId?: string;
     resourceId?: string;
   };
-  
+
   /** Accessibility props */
-  'aria-label'?: string;
-  'aria-describedby'?: string;
-  
+  "aria-label"?: string;
+  "aria-describedby"?: string;
+
   /** Custom styling */
   className?: string;
-  
+
   /** Show detailed permission information for admins */
   showDetails?: boolean;
-  
+
   /** Require all permissions (AND logic) or any permission (OR logic) */
   requireAll?: boolean;
-  
+
   /** Custom error messages */
   errorMessages?: {
     denied?: string;
@@ -72,10 +78,10 @@ interface PermissionGuardProps {
     specialty?: string;
     emergency?: string;
   };
-  
+
   /** Callback when permission check completes */
   onPermissionCheck?: (results: PermissionCheckResult[]) => void;
-  
+
   /** Callback when emergency override is used */
   onEmergencyOverride?: (permission: string) => void;
 }
@@ -108,29 +114,24 @@ export function PermissionGuard({
   showLoading = true,
   allowEmergencyOverride = false,
   context,
-  'aria-label': ariaLabel,
-  'aria-describedby': ariaDescribedby,
+  "aria-label": ariaLabel,
+  "aria-describedby": ariaDescribedby,
   className,
   showDetails = false,
   requireAll = true,
   errorMessages = {},
   onPermissionCheck,
-  onEmergencyOverride
+  onEmergencyOverride,
 }: PermissionGuardProps) {
   const [showEmergencyDialog, setShowEmergencyDialog] = useState(false);
-  const [emergencyPermission, setEmergencyPermission] = useState<string>('');
-  
+  const [emergencyPermission, setEmergencyPermission] = useState<string>("");
+
   // Normalize permissions to array
   const permissionArray = Array.isArray(permissions) ? permissions : [permissions];
-  
+
   // Use permissions hook
-  const {
-    checkPermissions,
-    userRole,
-    isLoading,
-    hasEmergencyOverride,
-    requestEmergencyOverride
-  } = usePermissions();
+  const { checkPermissions, userRole, isLoading, hasEmergencyOverride, requestEmergencyOverride } =
+    usePermissions();
 
   const [permissionResults, setPermissionResults] = useState<PermissionCheckResult[]>([]);
   const [isCheckingPermissions, setIsCheckingPermissions] = useState(true);
@@ -148,7 +149,7 @@ export function PermissionGuard({
       setPermissionResults(results);
       onPermissionCheck?.(results);
     } catch (error) {
-      console.error('Permission check error:', error);
+      console.error("Permission check error:", error);
       setPermissionResults([]);
     } finally {
       setIsCheckingPermissions(false);
@@ -162,39 +163,45 @@ export function PermissionGuard({
   // Determine if access is granted
   const isAccessGranted = useCallback(() => {
     if (permissionResults.length === 0) return false;
-    
-    return requireAll 
-      ? permissionResults.every(result => result.granted)
-      : permissionResults.some(result => result.granted);
+
+    return requireAll
+      ? permissionResults.every((result) => result.granted)
+      : permissionResults.some((result) => result.granted);
   }, [permissionResults, requireAll]);
 
   // Handle emergency override request
-  const handleEmergencyOverrideRequest = useCallback((permission: string) => {
-    if (!allowEmergencyOverride || !hasEmergencyOverride) return;
-    
-    setEmergencyPermission(permission);
-    setShowEmergencyDialog(true);
-  }, [allowEmergencyOverride, hasEmergencyOverride]);
+  const handleEmergencyOverrideRequest = useCallback(
+    (permission: string) => {
+      if (!allowEmergencyOverride || !hasEmergencyOverride) return;
+
+      setEmergencyPermission(permission);
+      setShowEmergencyDialog(true);
+    },
+    [allowEmergencyOverride, hasEmergencyOverride],
+  );
 
   // Handle emergency override confirmation
-  const handleEmergencyOverrideConfirm = useCallback(async (reason: string) => {
-    try {
-      await requestEmergencyOverride(emergencyPermission, reason);
-      setShowEmergencyDialog(false);
-      setEmergencyPermission('');
-      onEmergencyOverride?.(emergencyPermission);
-      
-      // Recheck permissions after override
-      await checkPermissionsAsync();
-    } catch (error) {
-      console.error('Emergency override error:', error);
-    }
-  }, [emergencyPermission, requestEmergencyOverride, onEmergencyOverride, checkPermissionsAsync]);
+  const handleEmergencyOverrideConfirm = useCallback(
+    async (reason: string) => {
+      try {
+        await requestEmergencyOverride(emergencyPermission, reason);
+        setShowEmergencyDialog(false);
+        setEmergencyPermission("");
+        onEmergencyOverride?.(emergencyPermission);
+
+        // Recheck permissions after override
+        await checkPermissionsAsync();
+      } catch (error) {
+        console.error("Emergency override error:", error);
+      }
+    },
+    [emergencyPermission, requestEmergencyOverride, onEmergencyOverride, checkPermissionsAsync],
+  );
 
   // Loading state
   if (isLoading || isCheckingPermissions) {
     return showLoading ? (
-      <div 
+      <div
         className={cn("space-y-3", className)}
         aria-label={ariaLabel || "Checking permissions"}
         aria-describedby={ariaDescribedby}
@@ -209,44 +216,32 @@ export function PermissionGuard({
   // Permission granted - show content
   if (isAccessGranted()) {
     return (
-      <div 
-        className={className}
-        aria-label={ariaLabel}
-        aria-describedby={ariaDescribedby}
-      >
+      <div className={className} aria-label={ariaLabel} aria-describedby={ariaDescribedby}>
         {children}
         {showDetails && (
-          <PermissionDetails 
-            results={permissionResults} 
-            userRole={userRole} 
-            className="mt-4"
-          />
+          <PermissionDetails results={permissionResults} userRole={userRole} className="mt-4" />
         )}
       </div>
     );
   }
 
   // Permission denied - show fallback or default error
-  const deniedResults = permissionResults.filter(result => !result.granted);
-  const hasLicenseIssue = deniedResults.some(result => !result.license_valid);
-  const hasSpecialtyIssue = deniedResults.some(result => !result.specialty_match);
-  const hasCFMIssue = deniedResults.some(result => !result.cfm_compliant);
+  const deniedResults = permissionResults.filter((result) => !result.granted);
+  const hasLicenseIssue = deniedResults.some((result) => !result.license_valid);
+  const hasSpecialtyIssue = deniedResults.some((result) => !result.specialty_match);
+  const hasCFMIssue = deniedResults.some((result) => !result.cfm_compliant);
 
   // Custom fallback provided
   if (fallback) {
     return (
-      <div 
+      <div
         className={className}
         aria-label={ariaLabel || "Access denied"}
         aria-describedby={ariaDescribedby}
       >
         {fallback}
         {showDetails && (
-          <PermissionDetails 
-            results={permissionResults} 
-            userRole={userRole} 
-            className="mt-4"
-          />
+          <PermissionDetails results={permissionResults} userRole={userRole} className="mt-4" />
         )}
       </div>
     );
@@ -254,7 +249,7 @@ export function PermissionGuard({
 
   // Default permission denied UI
   return (
-    <div 
+    <div
       className={cn("max-w-md mx-auto", className)}
       aria-label={ariaLabel || "Access denied"}
       aria-describedby={ariaDescribedby}
@@ -267,11 +262,13 @@ export function PermissionGuard({
           <CardTitle className="text-destructive">Acesso Negado</CardTitle>
           <CardDescription>
             {hasLicenseIssue && (errorMessages.license || "Licença médica requerida ou inválida")}
-            {hasSpecialtyIssue && (errorMessages.specialty || "Especialidade médica não autorizada")}
+            {hasSpecialtyIssue &&
+              (errorMessages.specialty || "Especialidade médica não autorizada")}
             {hasCFMIssue && "Registro CFM requerido"}
-            {!hasLicenseIssue && !hasSpecialtyIssue && !hasCFMIssue && 
-              (errorMessages.denied || "Você não tem permissão para acessar este recurso")
-            }
+            {!hasLicenseIssue &&
+              !hasSpecialtyIssue &&
+              !hasCFMIssue &&
+              (errorMessages.denied || "Você não tem permissão para acessar este recurso")}
           </CardDescription>
         </CardHeader>
 
@@ -308,9 +305,8 @@ export function PermissionGuard({
               <AlertDescription>
                 <div className="space-y-2">
                   <p className="text-sm">
-                    {errorMessages.emergency || 
-                      "Em caso de emergência médica, você pode solicitar acesso temporário."
-                    }
+                    {errorMessages.emergency ||
+                      "Em caso de emergência médica, você pode solicitar acesso temporário."}
                   </p>
                   <Button
                     variant="outline"
@@ -327,12 +323,7 @@ export function PermissionGuard({
           )}
 
           {/* Permission details for debugging */}
-          {showDetails && (
-            <PermissionDetails 
-              results={permissionResults} 
-              userRole={userRole} 
-            />
-          )}
+          {showDetails && <PermissionDetails results={permissionResults} userRole={userRole} />}
         </CardContent>
       </Card>
 
@@ -352,23 +343,23 @@ export function PermissionGuard({
 // EMERGENCY OVERRIDE DIALOG
 // ============================================================================
 
-function EmergencyOverrideDialog({ 
-  isOpen, 
-  onClose, 
-  onConfirm, 
+function EmergencyOverrideDialog({
+  isOpen,
+  onClose,
+  onConfirm,
   permission,
-  userRole 
+  userRole,
 }: EmergencyOverrideDialogProps) {
-  const [reason, setReason] = useState('');
+  const [reason, setReason] = useState("");
   const [isConfirming, setIsConfirming] = useState(false);
 
   const handleConfirm = async () => {
     if (!reason.trim()) return;
-    
+
     setIsConfirming(true);
     try {
       await onConfirm(reason);
-      setReason('');
+      setReason("");
     } finally {
       setIsConfirming(false);
     }
@@ -413,11 +404,7 @@ function EmergencyOverrideDialog({
           </Alert>
 
           <div className="flex gap-2 justify-end">
-            <Button
-              variant="outline"
-              onClick={onClose}
-              disabled={isConfirming}
-            >
+            <Button variant="outline" onClick={onClose} disabled={isConfirming}>
               Cancelar
             </Button>
             <Button
@@ -446,10 +433,14 @@ function PermissionDetails({ results, userRole, className }: PermissionDetailsPr
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="text-xs space-y-1">
-          <p><strong>Papel do Usuário:</strong> {getRoleDisplayName(userRole)}</p>
-          <p><strong>Verificações Realizadas:</strong> {results.length}</p>
+          <p>
+            <strong>Papel do Usuário:</strong> {getRoleDisplayName(userRole)}
+          </p>
+          <p>
+            <strong>Verificações Realizadas:</strong> {results.length}
+          </p>
         </div>
-        
+
         <div className="space-y-2">
           {results.map((result, index) => (
             <div key={index} className="border rounded p-2 text-xs space-y-1">
@@ -459,17 +450,26 @@ function PermissionDetails({ results, userRole, className }: PermissionDetailsPr
                   {result.granted ? "Concedida" : "Negada"}
                 </Badge>
               </div>
-              
+
               <p className="text-muted-foreground">{result.reason}</p>
-              
+
               <div className="flex gap-2 flex-wrap">
-                <Badge variant={result.license_valid ? "success" : "destructive"} className="text-xs">
+                <Badge
+                  variant={result.license_valid ? "success" : "destructive"}
+                  className="text-xs"
+                >
                   Licença: {result.license_valid ? "Válida" : "Inválida"}
                 </Badge>
-                <Badge variant={result.specialty_match ? "success" : "destructive"} className="text-xs">
+                <Badge
+                  variant={result.specialty_match ? "success" : "destructive"}
+                  className="text-xs"
+                >
                   Especialidade: {result.specialty_match ? "OK" : "Incompatível"}
                 </Badge>
-                <Badge variant={result.cfm_compliant ? "success" : "destructive"} className="text-xs">
+                <Badge
+                  variant={result.cfm_compliant ? "success" : "destructive"}
+                  className="text-xs"
+                >
                   CFM: {result.cfm_compliant ? "Conforme" : "Não conforme"}
                 </Badge>
               </div>
@@ -493,34 +493,34 @@ function PermissionDetails({ results, userRole, className }: PermissionDetailsPr
 
 function getRoleDisplayName(role: HealthcareRole): string {
   const roleNames: Record<HealthcareRole, string> = {
-    [HealthcareRole.SUPER_ADMIN]: 'Super Administrador',
-    [HealthcareRole.SYSTEM_ADMIN]: 'Administrador do Sistema',
-    [HealthcareRole.MEDICAL_DIRECTOR]: 'Diretor Médico',
-    [HealthcareRole.CLINICAL_COORDINATOR]: 'Coordenador Clínico',
-    [HealthcareRole.DOCTOR_SPECIALIST]: 'Médico Especialista',
-    [HealthcareRole.DOCTOR_GENERAL]: 'Médico Clínico Geral',
-    [HealthcareRole.RESIDENT_DOCTOR]: 'Médico Residente',
-    [HealthcareRole.NURSE_MANAGER]: 'Coordenador de Enfermagem',
-    [HealthcareRole.REGISTERED_NURSE]: 'Enfermeiro',
-    [HealthcareRole.NURSING_TECHNICIAN]: 'Técnico de Enfermagem',
-    [HealthcareRole.PHYSIOTHERAPIST]: 'Fisioterapeuta',
-    [HealthcareRole.PSYCHOLOGIST]: 'Psicólogo',
-    [HealthcareRole.NUTRITIONIST]: 'Nutricionista',
-    [HealthcareRole.PHARMACIST]: 'Farmacêutico',
-    [HealthcareRole.RADIOLOGY_TECHNICIAN]: 'Técnico em Radiologia',
-    [HealthcareRole.LAB_TECHNICIAN]: 'Técnico de Laboratório',
-    [HealthcareRole.EQUIPMENT_TECHNICIAN]: 'Técnico de Equipamentos',
-    [HealthcareRole.ADMIN_MANAGER]: 'Gerente Administrativo',
-    [HealthcareRole.RECEPTIONIST]: 'Recepcionista',
-    [HealthcareRole.BILLING_SPECIALIST]: 'Especialista em Faturamento',
-    [HealthcareRole.SECRETARY]: 'Secretária',
-    [HealthcareRole.COMPLIANCE_OFFICER]: 'Oficial de Compliance',
-    [HealthcareRole.AUDITOR]: 'Auditor',
-    [HealthcareRole.QUALITY_MANAGER]: 'Gerente de Qualidade',
-    [HealthcareRole.PATIENT]: 'Paciente',
-    [HealthcareRole.PATIENT_FAMILY]: 'Familiar do Paciente',
-    [HealthcareRole.GUEST]: 'Visitante',
-    [HealthcareRole.VENDOR]: 'Fornecedor'
+    [HealthcareRole.SUPER_ADMIN]: "Super Administrador",
+    [HealthcareRole.SYSTEM_ADMIN]: "Administrador do Sistema",
+    [HealthcareRole.MEDICAL_DIRECTOR]: "Diretor Médico",
+    [HealthcareRole.CLINICAL_COORDINATOR]: "Coordenador Clínico",
+    [HealthcareRole.DOCTOR_SPECIALIST]: "Médico Especialista",
+    [HealthcareRole.DOCTOR_GENERAL]: "Médico Clínico Geral",
+    [HealthcareRole.RESIDENT_DOCTOR]: "Médico Residente",
+    [HealthcareRole.NURSE_MANAGER]: "Coordenador de Enfermagem",
+    [HealthcareRole.REGISTERED_NURSE]: "Enfermeiro",
+    [HealthcareRole.NURSING_TECHNICIAN]: "Técnico de Enfermagem",
+    [HealthcareRole.PHYSIOTHERAPIST]: "Fisioterapeuta",
+    [HealthcareRole.PSYCHOLOGIST]: "Psicólogo",
+    [HealthcareRole.NUTRITIONIST]: "Nutricionista",
+    [HealthcareRole.PHARMACIST]: "Farmacêutico",
+    [HealthcareRole.RADIOLOGY_TECHNICIAN]: "Técnico em Radiologia",
+    [HealthcareRole.LAB_TECHNICIAN]: "Técnico de Laboratório",
+    [HealthcareRole.EQUIPMENT_TECHNICIAN]: "Técnico de Equipamentos",
+    [HealthcareRole.ADMIN_MANAGER]: "Gerente Administrativo",
+    [HealthcareRole.RECEPTIONIST]: "Recepcionista",
+    [HealthcareRole.BILLING_SPECIALIST]: "Especialista em Faturamento",
+    [HealthcareRole.SECRETARY]: "Secretária",
+    [HealthcareRole.COMPLIANCE_OFFICER]: "Oficial de Compliance",
+    [HealthcareRole.AUDITOR]: "Auditor",
+    [HealthcareRole.QUALITY_MANAGER]: "Gerente de Qualidade",
+    [HealthcareRole.PATIENT]: "Paciente",
+    [HealthcareRole.PATIENT_FAMILY]: "Familiar do Paciente",
+    [HealthcareRole.GUEST]: "Visitante",
+    [HealthcareRole.VENDOR]: "Fornecedor",
   };
 
   return roleNames[role] || role;
@@ -533,25 +533,25 @@ function getRoleDisplayName(role: HealthcareRole): string {
 /**
  * Clinical Permission Guard - For medical procedures and patient care
  */
-export function ClinicalPermissionGuard({ 
-  children, 
-  patientId, 
+export function ClinicalPermissionGuard({
+  children,
+  patientId,
   allowEmergencyOverride = true,
-  ...props 
-}: Omit<PermissionGuardProps, 'permissions'> & { 
+  ...props
+}: Omit<PermissionGuardProps, "permissions"> & {
   patientId?: string;
   permissions?: string[];
 }) {
   return (
     <PermissionGuard
-      permissions={props.permissions || ['patient.read.own', 'procedure.perform.general']}
+      permissions={props.permissions || ["patient.read.own", "procedure.perform.general"]}
       allowEmergencyOverride={allowEmergencyOverride}
       context={{ patientId, ...props.context }}
       errorMessages={{
         denied: "Acesso negado para informações clínicas",
         license: "Licença médica válida requerida para acesso clínico",
         specialty: "Especialidade médica não autorizada para este procedimento",
-        emergency: "Em emergências médicas, solicite acesso temporário para atendimento"
+        emergency: "Em emergências médicas, solicite acesso temporário para atendimento",
       }}
       {...props}
     >
@@ -563,21 +563,21 @@ export function ClinicalPermissionGuard({
 /**
  * Administrative Permission Guard - For non-clinical operations
  */
-export function AdministrativePermissionGuard({ 
-  children, 
-  ...props 
-}: Omit<PermissionGuardProps, 'permissions'> & { 
+export function AdministrativePermissionGuard({
+  children,
+  ...props
+}: Omit<PermissionGuardProps, "permissions"> & {
   permissions?: string[];
 }) {
   return (
     <PermissionGuard
-      permissions={props.permissions || ['scheduling.manage.clinic', 'billing.process.standard']}
+      permissions={props.permissions || ["scheduling.manage.clinic", "billing.process.standard"]}
       allowEmergencyOverride={false}
       errorMessages={{
         denied: "Acesso negado para operações administrativas",
         license: "Credenciais administrativas requeridas",
         specialty: "Papel administrativo não autorizado",
-        emergency: "Contate seu supervisor para acesso administrativo"
+        emergency: "Contate seu supervisor para acesso administrativo",
       }}
       {...props}
     >
@@ -589,21 +589,21 @@ export function AdministrativePermissionGuard({
 /**
  * Compliance Permission Guard - For audit and compliance access
  */
-export function CompliancePermissionGuard({ 
-  children, 
-  ...props 
-}: Omit<PermissionGuardProps, 'permissions'> & { 
+export function CompliancePermissionGuard({
+  children,
+  ...props
+}: Omit<PermissionGuardProps, "permissions"> & {
   permissions?: string[];
 }) {
   return (
     <PermissionGuard
-      permissions={props.permissions || ['audit.access.clinic', 'compliance.report.cfm']}
+      permissions={props.permissions || ["audit.access.clinic", "compliance.report.cfm"]}
       allowEmergencyOverride={false}
       errorMessages={{
         denied: "Acesso negado para informações de compliance",
         license: "Autorização de compliance requerida",
         specialty: "Papel de compliance não autorizado",
-        emergency: "Acesso de emergência não disponível para compliance"
+        emergency: "Acesso de emergência não disponível para compliance",
       }}
       showDetails={true}
       {...props}

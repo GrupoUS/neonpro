@@ -1,6 +1,6 @@
 /**
  * 🔭 OpenTelemetry Integration (Opcional)
- * 
+ *
  * Setup minimalista de OpenTelemetry para observability avançada
  * Ativa apenas se ENABLE_OTEL=true no ambiente
  */
@@ -16,9 +16,9 @@ let telemetryInitialized = false;
 
 export class SimpleTelemetry {
   private static config: TelemetryConfig = {
-    enabled: process.env.ENABLE_OTEL === 'true',
-    serviceName: 'neonpro-clinic',
-    environment: process.env.NODE_ENV || 'development',
+    enabled: process.env.ENABLE_OTEL === "true",
+    serviceName: "neonpro-clinic",
+    environment: process.env.NODE_ENV || "development",
     exporterEndpoint: process.env.OTEL_EXPORTER_OTLP_ENDPOINT,
   };
 
@@ -32,32 +32,33 @@ export class SimpleTelemetry {
 
     try {
       // Dynamic import to avoid loading when disabled
-      const { NodeSDK } = await import('@opentelemetry/sdk-node');
-      const { getNodeAutoInstrumentations } = await import('@opentelemetry/auto-instrumentations-node');
-      const { OTLPTraceExporter } = await import('@opentelemetry/exporter-otlp-http');
-      
+      const { NodeSDK } = await import("@opentelemetry/sdk-node");
+      const { getNodeAutoInstrumentations } = await import(
+        "@opentelemetry/auto-instrumentations-node"
+      );
+      const { OTLPTraceExporter } = await import("@opentelemetry/exporter-otlp-http");
+
       const sdk = new NodeSDK({
         serviceName: this.config.serviceName,
         environment: this.config.environment,
-        traceExporter: this.config.exporterEndpoint 
+        traceExporter: this.config.exporterEndpoint
           ? new OTLPTraceExporter({ url: this.config.exporterEndpoint })
           : undefined,
         instrumentations: [
           getNodeAutoInstrumentations({
             // Disable noisy instrumentations
-            '@opentelemetry/instrumentation-fs': { enabled: false },
-            '@opentelemetry/instrumentation-dns': { enabled: false },
+            "@opentelemetry/instrumentation-fs": { enabled: false },
+            "@opentelemetry/instrumentation-dns": { enabled: false },
           }),
         ],
       });
 
       sdk.start();
       telemetryInitialized = true;
-      
-      console.log('📡 OpenTelemetry initialized successfully');
 
+      console.log("📡 OpenTelemetry initialized successfully");
     } catch (error) {
-      console.warn('⚠️ OpenTelemetry initialization failed:', error);
+      console.warn("⚠️ OpenTelemetry initialization failed:", error);
       // Don't fail the app if telemetry fails
     }
   }
@@ -72,7 +73,7 @@ export class SimpleTelemetry {
     }
 
     const startTime = Date.now();
-    
+
     return fn()
       .then((result) => {
         const duration = Date.now() - startTime;
@@ -91,7 +92,7 @@ export class SimpleTelemetry {
    */
   static addAttribute(key: string, value: string | number | boolean): void {
     if (!this.config.enabled) return;
-    
+
     // Simple logging fallback
     console.log(`📋 Attribute: ${key} = ${value}`);
   }

@@ -1,19 +1,38 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Progress } from "@/components/ui/progress";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { 
-  DollarSign, 
-  TrendingUp, 
+import type { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { Progress } from "@/components/ui/progress";
+import type { LoadingSpinner } from "@/components/ui/loading-spinner";
+import type {
+  DollarSign,
+  TrendingUp,
   TrendingDown,
   Calendar,
   CreditCard,
@@ -29,7 +48,7 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  AlertTriangle
+  AlertTriangle,
 } from "lucide-react";
 
 interface FinancialStats {
@@ -81,9 +100,9 @@ export default function FinancialPage() {
     privatePayments: 0,
     totalExpenses: 0,
     netProfit: 0,
-    profitMargin: 0
+    profitMargin: 0,
   });
-  
+
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [monthlyData, setMonthlyData] = useState<MonthlyData[]>([]);
   const [selectedPeriod, setSelectedPeriod] = useState("this-month");
@@ -94,10 +113,10 @@ export default function FinancialPage() {
   useEffect(() => {
     const loadFinancialData = async () => {
       setIsLoading(true);
-      
+
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       setStats({
         totalRevenue: 284350,
         monthlyRevenue: 85420,
@@ -109,7 +128,7 @@ export default function FinancialPage() {
         privatePayments: 32620,
         totalExpenses: 45200,
         netProfit: 40220,
-        profitMargin: 47.1
+        profitMargin: 47.1,
       });
 
       setTransactions([
@@ -123,7 +142,7 @@ export default function FinancialPage() {
           amount: 280,
           paymentMethod: "convenio",
           status: "pago",
-          paymentDate: "2024-08-05"
+          paymentDate: "2024-08-05",
         },
         {
           id: "2",
@@ -135,7 +154,7 @@ export default function FinancialPage() {
           amount: 150,
           paymentMethod: "cartao",
           status: "pago",
-          paymentDate: "2024-08-05"
+          paymentDate: "2024-08-05",
         },
         {
           id: "3",
@@ -147,7 +166,7 @@ export default function FinancialPage() {
           amount: 200,
           paymentMethod: "pix",
           status: "pendente",
-          dueDate: "2024-08-10"
+          dueDate: "2024-08-10",
         },
         {
           id: "4",
@@ -159,7 +178,7 @@ export default function FinancialPage() {
           amount: 1200,
           paymentMethod: "convenio",
           status: "pago",
-          paymentDate: "2024-08-03"
+          paymentDate: "2024-08-03",
         },
         {
           id: "5",
@@ -171,8 +190,8 @@ export default function FinancialPage() {
           amount: 2500,
           paymentMethod: "transferencia",
           status: "pago",
-          paymentDate: "2024-08-01"
-        }
+          paymentDate: "2024-08-01",
+        },
       ]);
 
       setMonthlyData([
@@ -180,49 +199,61 @@ export default function FinancialPage() {
         { month: "Fev", revenue: 68900, expenses: 39800, profit: 29100, consultations: 142 },
         { month: "Mar", revenue: 79200, expenses: 41500, profit: 37700, consultations: 168 },
         { month: "Abr", revenue: 83100, expenses: 43200, profit: 39900, consultations: 174 },
-        { month: "Mai", revenue: 85420, expenses: 45200, profit: 40220, consultations: 181 }
+        { month: "Mai", revenue: 85420, expenses: 45200, profit: 40220, consultations: 181 },
       ]);
-      
+
       setIsLoading(false);
     };
 
     loadFinancialData();
   }, []);
 
-  const filteredTransactions = transactions.filter(transaction => {
-    const matchesSearch = transaction.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         transaction.description.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredTransactions = transactions.filter((transaction) => {
+    const matchesSearch =
+      transaction.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      transaction.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "all" || transaction.status === statusFilter;
     const matchesType = typeFilter === "all" || transaction.type === typeFilter;
-    
+
     return matchesSearch && matchesStatus && matchesType;
   });
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "pago": return "bg-green-100 text-green-800 border-green-200";
-      case "pendente": return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case "vencido": return "bg-red-100 text-red-800 border-red-200";
-      case "cancelado": return "bg-gray-100 text-gray-800 border-gray-200";
-      default: return "bg-gray-100 text-gray-800 border-gray-200";
+      case "pago":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "pendente":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "vencido":
+        return "bg-red-100 text-red-800 border-red-200";
+      case "cancelado":
+        return "bg-gray-100 text-gray-800 border-gray-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
   const getPaymentMethodIcon = (method: string) => {
     switch (method) {
-      case "cartao": return <CreditCard className="w-4 h-4" />;
-      case "pix": return <DollarSign className="w-4 h-4" />;
-      case "dinheiro": return <Receipt className="w-4 h-4" />;
-      case "convenio": return <FileText className="w-4 h-4" />;
-      case "transferencia": return <ArrowUpRight className="w-4 h-4" />;
-      default: return <DollarSign className="w-4 h-4" />;
+      case "cartao":
+        return <CreditCard className="w-4 h-4" />;
+      case "pix":
+        return <DollarSign className="w-4 h-4" />;
+      case "dinheiro":
+        return <Receipt className="w-4 h-4" />;
+      case "convenio":
+        return <FileText className="w-4 h-4" />;
+      case "transferencia":
+        return <ArrowUpRight className="w-4 h-4" />;
+      default:
+        return <DollarSign className="w-4 h-4" />;
     }
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(amount);
   };
 
@@ -235,7 +266,8 @@ export default function FinancialPage() {
         </div>
       </div>
     );
-  }  return (
+  }
+  return (
     <main className="flex-1 space-y-6 p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
@@ -297,9 +329,7 @@ export default function FinancialPage() {
             <div className="text-2xl font-bold text-blue-600">
               {formatCurrency(stats.netProfit)}
             </div>
-            <p className="text-xs text-muted-foreground">
-              Margem: {stats.profitMargin}%
-            </p>
+            <p className="text-xs text-muted-foreground">Margem: {stats.profitMargin}%</p>
           </CardContent>
         </Card>
 
@@ -312,9 +342,7 @@ export default function FinancialPage() {
             <div className="text-2xl font-bold text-yellow-600">
               {formatCurrency(stats.pendingPayments)}
             </div>
-            <p className="text-xs text-muted-foreground">
-              12 faturas pendentes
-            </p>
+            <p className="text-xs text-muted-foreground">12 faturas pendentes</p>
           </CardContent>
         </Card>
 
@@ -327,9 +355,7 @@ export default function FinancialPage() {
             <div className="text-2xl font-bold text-red-600">
               {formatCurrency(stats.overduePayments)}
             </div>
-            <p className="text-xs text-muted-foreground">
-              3 faturas vencidas
-            </p>
+            <p className="text-xs text-muted-foreground">3 faturas vencidas</p>
           </CardContent>
         </Card>
       </div>
@@ -343,9 +369,7 @@ export default function FinancialPage() {
               <PieChart className="w-5 h-5 mr-2 text-neon-500" />
               Distribuição de Receita
             </CardTitle>
-            <CardDescription>
-              Breakdown por tipo de serviço
-            </CardDescription>
+            <CardDescription>Breakdown por tipo de serviço</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
@@ -356,7 +380,7 @@ export default function FinancialPage() {
               <Progress value={80} className="h-2" />
               <p className="text-xs text-muted-foreground mt-1">80% da receita total</p>
             </div>
-            
+
             <div>
               <div className="flex justify-between text-sm mb-2">
                 <span>Procedimentos</span>
@@ -386,9 +410,7 @@ export default function FinancialPage() {
               <BarChart3 className="w-5 h-5 mr-2 text-neon-500" />
               Evolução Mensal
             </CardTitle>
-            <CardDescription>
-              Receita vs Despesas dos últimos 5 meses
-            </CardDescription>
+            <CardDescription>Receita vs Despesas dos últimos 5 meses</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[300px]">
@@ -396,14 +418,18 @@ export default function FinancialPage() {
               <div className="w-full h-full bg-gradient-to-br from-neon-50 to-green-50 rounded-lg flex items-center justify-center border-2 border-dashed border-neon-200">
                 <div className="text-center">
                   <BarChart3 className="w-16 h-16 mx-auto mb-4 text-neon-500" />
-                  <p className="text-lg font-medium text-neon-700">Gráfico de Receita vs Despesas</p>
+                  <p className="text-lg font-medium text-neon-700">
+                    Gráfico de Receita vs Despesas
+                  </p>
                   <div className="mt-4 space-y-2">
                     {monthlyData.map((data, index) => (
                       <div key={index} className="flex justify-between text-sm">
                         <span>{data.month}</span>
                         <span className="text-green-600">{formatCurrency(data.revenue)}</span>
                         <span className="text-red-600">{formatCurrency(data.expenses)}</span>
-                        <span className="text-blue-600 font-medium">{formatCurrency(data.profit)}</span>
+                        <span className="text-blue-600 font-medium">
+                          {formatCurrency(data.profit)}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -423,11 +449,9 @@ export default function FinancialPage() {
                 <Receipt className="w-5 h-5 mr-2 text-neon-500" />
                 Transações Recentes
               </CardTitle>
-              <CardDescription>
-                Histórico de receitas e despesas
-              </CardDescription>
+              <CardDescription>Histórico de receitas e despesas</CardDescription>
             </div>
-            
+
             <div className="flex items-center space-x-2">
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -438,7 +462,7 @@ export default function FinancialPage() {
                   className="pl-10 w-[200px]"
                 />
               </div>
-              
+
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="w-[130px]">
                   <SelectValue />
@@ -450,7 +474,7 @@ export default function FinancialPage() {
                   <SelectItem value="vencido">Vencido</SelectItem>
                 </SelectContent>
               </Select>
-              
+
               <Select value={typeFilter} onValueChange={setTypeFilter}>
                 <SelectTrigger className="w-[130px]">
                   <SelectValue />
@@ -482,12 +506,8 @@ export default function FinancialPage() {
               <TableBody>
                 {filteredTransactions.map((transaction) => (
                   <TableRow key={transaction.id} className="hover:bg-muted/50">
-                    <TableCell>
-                      {new Date(transaction.date).toLocaleDateString('pt-BR')}
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {transaction.patientName}
-                    </TableCell>
+                    <TableCell>{new Date(transaction.date).toLocaleDateString("pt-BR")}</TableCell>
+                    <TableCell className="font-medium">{transaction.patientName}</TableCell>
                     <TableCell>{transaction.description}</TableCell>
                     <TableCell>
                       <Badge
@@ -510,7 +530,7 @@ export default function FinancialPage() {
                       <div className="flex items-center">
                         {getPaymentMethodIcon(transaction.paymentMethod)}
                         <span className="ml-2 capitalize">
-                          {transaction.paymentMethod.replace('-', ' ')}
+                          {transaction.paymentMethod.replace("-", " ")}
                         </span>
                       </div>
                     </TableCell>
@@ -530,17 +550,27 @@ export default function FinancialPage() {
                       <Badge variant="outline" className={getStatusColor(transaction.status)}>
                         {transaction.status === "pago" && <CheckCircle className="w-3 h-3 mr-1" />}
                         {transaction.status === "pendente" && <Clock className="w-3 h-3 mr-1" />}
-                        {transaction.status === "vencido" && <AlertTriangle className="w-3 h-3 mr-1" />}
+                        {transaction.status === "vencido" && (
+                          <AlertTriangle className="w-3 h-3 mr-1" />
+                        )}
                         {transaction.status === "cancelado" && <XCircle className="w-3 h-3 mr-1" />}
                         {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">
-                        <Button variant="ghost" size="sm" className="text-neon-600 hover:bg-neon-50">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-neon-600 hover:bg-neon-50"
+                        >
                           <FileText className="w-4 h-4" />
                         </Button>
-                        <Button variant="ghost" size="sm" className="text-blue-600 hover:bg-blue-50">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-blue-600 hover:bg-blue-50"
+                        >
                           <Download className="w-4 h-4" />
                         </Button>
                       </div>

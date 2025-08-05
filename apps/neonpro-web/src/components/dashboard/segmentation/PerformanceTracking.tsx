@@ -1,16 +1,16 @@
 "use client";
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import {
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import {
+import type { Progress } from "@/components/ui/progress";
+import type {
   Table,
   TableBody,
   TableCell,
@@ -18,8 +18,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
   Activity,
   AlertTriangle,
   BarChart3,
@@ -28,7 +28,7 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import type { useEffect, useState } from "react";
 
 interface SegmentPerformance {
   id: string;
@@ -70,12 +70,8 @@ interface ComparisonData {
 }
 
 export default function PerformanceTracking() {
-  const [performanceData, setPerformanceData] = useState<SegmentPerformance[]>(
-    []
-  );
-  const [comparisonData, setComparisonData] = useState<ComparisonData | null>(
-    null
-  );
+  const [performanceData, setPerformanceData] = useState<SegmentPerformance[]>([]);
+  const [comparisonData, setComparisonData] = useState<ComparisonData | null>(null);
   const [selectedSegment, setSelectedSegment] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
 
@@ -199,9 +195,7 @@ export default function PerformanceTracking() {
     }
   };
 
-  const selectedSegmentData = performanceData.find(
-    (s) => s.id === selectedSegment
-  );
+  const selectedSegmentData = performanceData.find((s) => s.id === selectedSegment);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("pt-BR", {
@@ -251,13 +245,9 @@ export default function PerformanceTracking() {
             <div className="flex items-center">
               <Users className="h-4 w-4 text-muted-foreground" />
               <div className="ml-2">
-                <p className="text-sm font-medium text-muted-foreground">
-                  Total Segments
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Total Segments</p>
                 <div className="flex items-center">
-                  <div className="text-2xl font-bold">
-                    {performanceData.length}
-                  </div>
+                  <div className="text-2xl font-bold">{performanceData.length}</div>
                 </div>
               </div>
             </div>
@@ -269,16 +259,12 @@ export default function PerformanceTracking() {
             <div className="flex items-center">
               <Target className="h-4 w-4 text-muted-foreground" />
               <div className="ml-2">
-                <p className="text-sm font-medium text-muted-foreground">
-                  Avg Engagement
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Avg Engagement</p>
                 <div className="flex items-center">
                   <div className="text-2xl font-bold">
                     {formatPercentage(
-                      performanceData.reduce(
-                        (acc, s) => acc + s.metrics.engagementRate,
-                        0
-                      ) / performanceData.length
+                      performanceData.reduce((acc, s) => acc + s.metrics.engagementRate, 0) /
+                        performanceData.length,
                     )}
                   </div>
                 </div>
@@ -292,16 +278,12 @@ export default function PerformanceTracking() {
             <div className="flex items-center">
               <Activity className="h-4 w-4 text-muted-foreground" />
               <div className="ml-2">
-                <p className="text-sm font-medium text-muted-foreground">
-                  Avg Conversion
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Avg Conversion</p>
                 <div className="flex items-center">
                   <div className="text-2xl font-bold">
                     {formatPercentage(
-                      performanceData.reduce(
-                        (acc, s) => acc + s.metrics.conversionRate,
-                        0
-                      ) / performanceData.length
+                      performanceData.reduce((acc, s) => acc + s.metrics.conversionRate, 0) /
+                        performanceData.length,
                     )}
                   </div>
                 </div>
@@ -315,16 +297,12 @@ export default function PerformanceTracking() {
             <div className="flex items-center">
               <BarChart3 className="h-4 w-4 text-muted-foreground" />
               <div className="ml-2">
-                <p className="text-sm font-medium text-muted-foreground">
-                  Total ROI
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Total ROI</p>
                 <div className="flex items-center">
                   <div className="text-2xl font-bold">
                     {formatPercentage(
-                      performanceData.reduce(
-                        (acc, s) => acc + s.campaigns.totalROI,
-                        0
-                      ) / performanceData.length
+                      performanceData.reduce((acc, s) => acc + s.campaigns.totalROI, 0) /
+                        performanceData.length,
                     )}
                   </div>
                 </div>
@@ -357,9 +335,7 @@ export default function PerformanceTracking() {
                 {performanceData.map((segment) => (
                   <Button
                     key={segment.id}
-                    variant={
-                      selectedSegment === segment.id ? "default" : "outline"
-                    }
+                    variant={selectedSegment === segment.id ? "default" : "outline"}
                     onClick={() => setSelectedSegment(segment.id)}
                   >
                     {segment.name}
@@ -375,9 +351,7 @@ export default function PerformanceTracking() {
                       {selectedSegmentData.alerts.map((alert, index) => (
                         <Alert
                           key={index}
-                          variant={
-                            alert.type === "warning" ? "destructive" : "default"
-                          }
+                          variant={alert.type === "warning" ? "destructive" : "default"}
                         >
                           <AlertTriangle className="h-4 w-4" />
                           <AlertDescription>{alert.message}</AlertDescription>
@@ -401,10 +375,7 @@ export default function PerformanceTracking() {
                             <div className="flex items-center text-sm">
                               <TrendingUp className="h-3 w-3 text-green-600 mr-1" />
                               <span className="text-green-600">
-                                +
-                                {formatPercentage(
-                                  selectedSegmentData.metrics.growthRate
-                                )}
+                                +{formatPercentage(selectedSegmentData.metrics.growthRate)}
                               </span>
                             </div>
                           </div>
@@ -421,9 +392,7 @@ export default function PerformanceTracking() {
                               Engagement Rate
                             </p>
                             <div className="text-2xl font-bold">
-                              {formatPercentage(
-                                selectedSegmentData.metrics.engagementRate
-                              )}
+                              {formatPercentage(selectedSegmentData.metrics.engagementRate)}
                             </div>
                             <Progress
                               value={selectedSegmentData.metrics.engagementRate}
@@ -443,9 +412,7 @@ export default function PerformanceTracking() {
                               Conversion Rate
                             </p>
                             <div className="text-2xl font-bold">
-                              {formatPercentage(
-                                selectedSegmentData.metrics.conversionRate
-                              )}
+                              {formatPercentage(selectedSegmentData.metrics.conversionRate)}
                             </div>
                             <Progress
                               value={selectedSegmentData.metrics.conversionRate}
@@ -465,9 +432,7 @@ export default function PerformanceTracking() {
                               Average Revenue
                             </p>
                             <div className="text-2xl font-bold">
-                              {formatCurrency(
-                                selectedSegmentData.metrics.averageRevenue
-                              )}
+                              {formatCurrency(selectedSegmentData.metrics.averageRevenue)}
                             </div>
                           </div>
                           <BarChart3 className="h-8 w-8 text-muted-foreground" />
@@ -483,9 +448,7 @@ export default function PerformanceTracking() {
                               Retention Rate
                             </p>
                             <div className="text-2xl font-bold">
-                              {formatPercentage(
-                                selectedSegmentData.metrics.retentionRate
-                              )}
+                              {formatPercentage(selectedSegmentData.metrics.retentionRate)}
                             </div>
                             <Progress
                               value={selectedSegmentData.metrics.retentionRate}
@@ -505,14 +468,11 @@ export default function PerformanceTracking() {
                               Campaign ROI
                             </p>
                             <div className="text-2xl font-bold">
-                              {formatPercentage(
-                                selectedSegmentData.campaigns.totalROI
-                              )}
+                              {formatPercentage(selectedSegmentData.campaigns.totalROI)}
                             </div>
                             <div className="text-sm text-muted-foreground">
                               {selectedSegmentData.campaigns.active} active,{" "}
-                              {selectedSegmentData.campaigns.completed}{" "}
-                              completed
+                              {selectedSegmentData.campaigns.completed} completed
                             </div>
                           </div>
                           <TrendingUp className="h-8 w-8 text-muted-foreground" />
@@ -530,26 +490,20 @@ export default function PerformanceTracking() {
                       <div className="space-y-4">
                         <div className="grid grid-cols-3 gap-4 text-center">
                           <div>
-                            <div className="text-sm font-medium">
-                              Engagement
-                            </div>
+                            <div className="text-sm font-medium">Engagement</div>
                             <div className="text-lg font-bold">
                               {formatPercentage(
-                                selectedSegmentData.trends[
-                                  selectedSegmentData.trends.length - 1
-                                ]?.engagement || 0
+                                selectedSegmentData.trends[selectedSegmentData.trends.length - 1]
+                                  ?.engagement || 0,
                               )}
                             </div>
                           </div>
                           <div>
-                            <div className="text-sm font-medium">
-                              Conversion
-                            </div>
+                            <div className="text-sm font-medium">Conversion</div>
                             <div className="text-lg font-bold">
                               {formatPercentage(
-                                selectedSegmentData.trends[
-                                  selectedSegmentData.trends.length - 1
-                                ]?.conversion || 0
+                                selectedSegmentData.trends[selectedSegmentData.trends.length - 1]
+                                  ?.conversion || 0,
                               )}
                             </div>
                           </div>
@@ -557,9 +511,8 @@ export default function PerformanceTracking() {
                             <div className="text-sm font-medium">Revenue</div>
                             <div className="text-lg font-bold">
                               {formatCurrency(
-                                selectedSegmentData.trends[
-                                  selectedSegmentData.trends.length - 1
-                                ]?.revenue || 0
+                                selectedSegmentData.trends[selectedSegmentData.trends.length - 1]
+                                  ?.revenue || 0,
                               )}
                             </div>
                           </div>
@@ -596,22 +549,12 @@ export default function PerformanceTracking() {
                 <TableBody>
                   {performanceData.map((segment) => (
                     <TableRow key={segment.id}>
-                      <TableCell className="font-medium">
-                        {segment.name}
-                      </TableCell>
+                      <TableCell className="font-medium">{segment.name}</TableCell>
                       <TableCell>{segment.metrics.size}</TableCell>
-                      <TableCell>
-                        {formatPercentage(segment.metrics.engagementRate)}
-                      </TableCell>
-                      <TableCell>
-                        {formatPercentage(segment.metrics.conversionRate)}
-                      </TableCell>
-                      <TableCell>
-                        {formatCurrency(segment.metrics.averageRevenue)}
-                      </TableCell>
-                      <TableCell>
-                        {formatPercentage(segment.campaigns.totalROI)}
-                      </TableCell>
+                      <TableCell>{formatPercentage(segment.metrics.engagementRate)}</TableCell>
+                      <TableCell>{formatPercentage(segment.metrics.conversionRate)}</TableCell>
+                      <TableCell>{formatCurrency(segment.metrics.averageRevenue)}</TableCell>
+                      <TableCell>{formatPercentage(segment.campaigns.totalROI)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -631,9 +574,7 @@ export default function PerformanceTracking() {
             <CardContent>
               <div className="text-center py-8">
                 <BarChart3 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold">
-                  Advanced Analytics Dashboard
-                </h3>
+                <h3 className="text-lg font-semibold">Advanced Analytics Dashboard</h3>
                 <p className="text-muted-foreground">
                   Detailed analytics and predictions will be displayed here
                 </p>

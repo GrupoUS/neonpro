@@ -1,120 +1,123 @@
-﻿/**
+/**
  * Advanced Statistical Insights Hook for NeonPro
- * 
+ *
  * Custom hook providing advanced statistical analysis capabilities including:
  * - Correlation analysis between different metrics
  * - Anomaly detection with automated alerts
  * - Predictive insights using statistical models
  * - Comparative analysis across time periods
  * - Statistical significance testing for A/B experiments
- * 
+ *
  * Uses statistical functions from SQL backend and provides UI-ready insights.
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { createClient } from '@/lib/supabase/client'
+import type { useState, useEffect, useCallback, useMemo } from "react";
+import type { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import type { createClient } from "@/lib/supabase/client";
 
 // Types for statistical analysis
 export interface StatisticalInsightsConfig {
-  metrics: string[]
-  timeRange: string
-  analysisType: 'correlation' | 'anomaly' | 'prediction' | 'comparison' | 'significance'
-  confidenceLevel: 90 | 95 | 99
-  anomalyThreshold: number
-  includeSeasonality: boolean
+  metrics: string[];
+  timeRange: string;
+  analysisType: "correlation" | "anomaly" | "prediction" | "comparison" | "significance";
+  confidenceLevel: 90 | 95 | 99;
+  anomalyThreshold: number;
+  includeSeasonality: boolean;
 }
 
 export interface CorrelationAnalysis {
-  metric1: string
-  metric2: string
-  correlation: number
-  significance: number
-  interpretation: string
-  strength: 'weak' | 'moderate' | 'strong'
+  metric1: string;
+  metric2: string;
+  correlation: number;
+  significance: number;
+  interpretation: string;
+  strength: "weak" | "moderate" | "strong";
 }
 
 export interface AnomalyDetection {
-  metric: string
-  timestamp: string
-  value: number
-  expectedValue: number
-  deviation: number
-  severity: 'low' | 'medium' | 'high'
-  explanation: string
+  metric: string;
+  timestamp: string;
+  value: number;
+  expectedValue: number;
+  deviation: number;
+  severity: "low" | "medium" | "high";
+  explanation: string;
 }
 
 export interface PredictiveInsight {
-  metric: string
-  prediction: number
-  confidence: number
-  timeframe: string
-  factors: string[]
-  reasoning: string
+  metric: string;
+  prediction: number;
+  confidence: number;
+  timeframe: string;
+  factors: string[];
+  reasoning: string;
 }
 
 export interface StatisticalInsightsState {
-  correlations: CorrelationAnalysis[]
-  anomalies: AnomalyDetection[]
-  predictions: PredictiveInsight[]
-  comparisons: any[]
-  significance: any[]
-  insights: string[]
-  recommendations: string[]
-  isLoading: boolean
-  error: string | null
-  lastAnalysis: Date | null
+  correlations: CorrelationAnalysis[];
+  anomalies: AnomalyDetection[];
+  predictions: PredictiveInsight[];
+  comparisons: any[];
+  significance: any[];
+  insights: string[];
+  recommendations: string[];
+  isLoading: boolean;
+  error: string | null;
+  lastAnalysis: Date | null;
 }
 
 export interface StatisticalInsightsActions {
-  runAnalysis: (config: StatisticalInsightsConfig) => Promise<void>
-  detectAnomalies: (metric: string, threshold: number) => Promise<void>
-  analyzeCorrelations: (metrics: string[]) => Promise<void>
-  generatePredictions: (metric: string, timeframe: string) => Promise<void>
-  refreshInsights: () => Promise<void>
-  exportAnalysis: (format: 'csv' | 'pdf') => Promise<void>
+  runAnalysis: (config: StatisticalInsightsConfig) => Promise<void>;
+  detectAnomalies: (metric: string, threshold: number) => Promise<void>;
+  analyzeCorrelations: (metrics: string[]) => Promise<void>;
+  generatePredictions: (metric: string, timeframe: string) => Promise<void>;
+  refreshInsights: () => Promise<void>;
+  exportAnalysis: (format: "csv" | "pdf") => Promise<void>;
 }
 
 /**
  * Main statistical insights hook
  */
 export function useStatisticalInsights(
-  initialConfig: StatisticalInsightsConfig
+  initialConfig: StatisticalInsightsConfig,
 ): StatisticalInsightsState & StatisticalInsightsActions {
-  const queryClient = useQueryClient()
-  const supabase = await createClient()
-  const [config, setConfig] = useState<StatisticalInsightsConfig>(initialConfig)
-  const [error, setError] = useState<string | null>(null)
+  const queryClient = useQueryClient();
+  const supabase = await createClient();
+  const [config, setConfig] = useState<StatisticalInsightsConfig>(initialConfig);
+  const [error, setError] = useState<string | null>(null);
 
   // Query key for caching
-  const queryKey = useMemo(() => [
-    'statistical-insights',
-    config.metrics,
-    config.timeRange,
-    config.analysisType,
-    config.confidenceLevel
-  ], [config])
+  const queryKey = useMemo(
+    () => [
+      "statistical-insights",
+      config.metrics,
+      config.timeRange,
+      config.analysisType,
+      config.confidenceLevel,
+    ],
+    [config],
+  );
 
   // Main insights query
   const {
     data: insightsData,
     isLoading,
-    refetch: refreshInsights
+    refetch: refreshInsights,
   } = useQuery({
     queryKey,
     queryFn: async () => {
       try {
-        const response = await fetch('/api/analytics/insights', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        const response = await fetch("/api/analytics/insights", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             config,
-            analysisDepth: 'comprehensive'
-          })
-        })
+            analysisDepth: "comprehensive",
+          }),
+        });
 
-        if (!response.ok) throw new Error('Failed to generate insights')
-        const data = await response.json()
+        if (!response.ok) throw new Error("Failed to generate insights");
+        const data = await response.json();
 
         return {
           correlations: data.correlations || [],
@@ -123,186 +126,201 @@ export function useStatisticalInsights(
           comparisons: data.comparisons || [],
           significance: data.significance || [],
           insights: data.insights || [],
-          recommendations: data.recommendations || []
-        }
+          recommendations: data.recommendations || [],
+        };
       } catch (err) {
-        console.error('Statistical insights error:', err)
-        throw err
+        console.error("Statistical insights error:", err);
+        throw err;
       }
     },
     staleTime: 15 * 60 * 1000, // 15 minutes
     cacheTime: 60 * 60 * 1000, // 1 hour
     retry: 2,
-    enabled: config.metrics.length > 0
-  })
+    enabled: config.metrics.length > 0,
+  });
 
   // Run comprehensive analysis mutation
   const runAnalysisMutation = useMutation({
     mutationFn: async (analysisConfig: StatisticalInsightsConfig) => {
-      const response = await fetch('/api/analytics/statistical-analysis', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(analysisConfig)
-      })
+      const response = await fetch("/api/analytics/statistical-analysis", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(analysisConfig),
+      });
 
-      if (!response.ok) throw new Error('Analysis failed')
-      return response.json()
+      if (!response.ok) throw new Error("Analysis failed");
+      return response.json();
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(queryKey, data)
-      setError(null)
+      queryClient.setQueryData(queryKey, data);
+      setError(null);
     },
     onError: (err) => {
-      setError(err instanceof Error ? err.message : 'Analysis failed')
-    }
-  })
+      setError(err instanceof Error ? err.message : "Analysis failed");
+    },
+  });
 
   // Anomaly detection mutation
   const anomalyDetectionMutation = useMutation({
-    mutationFn: async ({ metric, threshold }: { metric: string, threshold: number }) => {
-      const response = await fetch('/api/analytics/anomaly-detection', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+    mutationFn: async ({ metric, threshold }: { metric: string; threshold: number }) => {
+      const response = await fetch("/api/analytics/anomaly-detection", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           metric,
           threshold,
           timeRange: config.timeRange,
-          includeContext: true
-        })
-      })
+          includeContext: true,
+        }),
+      });
 
-      if (!response.ok) throw new Error('Anomaly detection failed')
-      return response.json()
+      if (!response.ok) throw new Error("Anomaly detection failed");
+      return response.json();
     },
     onSuccess: (data) => {
       // Update anomalies in current data
       queryClient.setQueryData(queryKey, (old: any) => ({
         ...old,
-        anomalies: [...(old?.anomalies || []), ...data.anomalies]
-      }))
-      setError(null)
+        anomalies: [...(old?.anomalies || []), ...data.anomalies],
+      }));
+      setError(null);
     },
     onError: (err) => {
-      setError(err instanceof Error ? err.message : 'Anomaly detection failed')
-    }
-  })
+      setError(err instanceof Error ? err.message : "Anomaly detection failed");
+    },
+  });
 
   // Correlation analysis mutation
   const correlationAnalysisMutation = useMutation({
     mutationFn: async (metrics: string[]) => {
       if (metrics.length < 2) {
-        throw new Error('At least 2 metrics required for correlation analysis')
+        throw new Error("At least 2 metrics required for correlation analysis");
       }
 
-      const response = await fetch('/api/analytics/correlation-analysis', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/analytics/correlation-analysis", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           metrics,
           timeRange: config.timeRange,
-          confidenceLevel: config.confidenceLevel
-        })
-      })
+          confidenceLevel: config.confidenceLevel,
+        }),
+      });
 
-      if (!response.ok) throw new Error('Correlation analysis failed')
-      return response.json()
+      if (!response.ok) throw new Error("Correlation analysis failed");
+      return response.json();
     },
     onSuccess: (data) => {
       queryClient.setQueryData(queryKey, (old: any) => ({
         ...old,
         correlations: data.correlations,
-        insights: [...(old?.insights || []), ...data.insights]
-      }))
-      setError(null)
+        insights: [...(old?.insights || []), ...data.insights],
+      }));
+      setError(null);
     },
     onError: (err) => {
-      setError(err instanceof Error ? err.message : 'Correlation analysis failed')
-    }
-  })
+      setError(err instanceof Error ? err.message : "Correlation analysis failed");
+    },
+  });
 
   // Prediction generation mutation
   const predictionMutation = useMutation({
-    mutationFn: async ({ metric, timeframe }: { metric: string, timeframe: string }) => {
-      const response = await fetch('/api/analytics/predictions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+    mutationFn: async ({ metric, timeframe }: { metric: string; timeframe: string }) => {
+      const response = await fetch("/api/analytics/predictions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           metric,
           timeframe,
           confidenceLevel: config.confidenceLevel,
-          includeFactors: true
-        })
-      })
+          includeFactors: true,
+        }),
+      });
 
-      if (!response.ok) throw new Error('Prediction generation failed')
-      return response.json()
+      if (!response.ok) throw new Error("Prediction generation failed");
+      return response.json();
     },
     onSuccess: (data) => {
       queryClient.setQueryData(queryKey, (old: any) => ({
         ...old,
         predictions: [...(old?.predictions || []), data.prediction],
-        recommendations: [...(old?.recommendations || []), ...data.recommendations]
-      }))
-      setError(null)
+        recommendations: [...(old?.recommendations || []), ...data.recommendations],
+      }));
+      setError(null);
     },
     onError: (err) => {
-      setError(err instanceof Error ? err.message : 'Prediction generation failed')
-    }
-  })
+      setError(err instanceof Error ? err.message : "Prediction generation failed");
+    },
+  });
 
   // Export analysis mutation
   const exportAnalysisMutation = useMutation({
-    mutationFn: async (format: 'csv' | 'pdf') => {
-      if (!insightsData) throw new Error('No analysis data to export')
+    mutationFn: async (format: "csv" | "pdf") => {
+      if (!insightsData) throw new Error("No analysis data to export");
 
-      const response = await fetch('/api/analytics/export', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/analytics/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          type: 'statistical-insights',
+          type: "statistical-insights",
           format,
-          data: insightsData
-        })
-      })
+          data: insightsData,
+        }),
+      });
 
-      if (!response.ok) throw new Error('Export failed')
+      if (!response.ok) throw new Error("Export failed");
 
-      const blob = await response.blob()
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `statistical-insights-${new Date().toISOString().split('T')[0]}.${format}`
-      document.body.appendChild(a)
-      a.click()
-      window.URL.revokeObjectURL(url)
-      document.body.removeChild(a)
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `statistical-insights-${new Date().toISOString().split("T")[0]}.${format}`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
     },
     onError: (err) => {
-      setError(err instanceof Error ? err.message : 'Export failed')
-    }
-  })
+      setError(err instanceof Error ? err.message : "Export failed");
+    },
+  });
 
   // Actions
-  const runAnalysis = useCallback(async (analysisConfig: StatisticalInsightsConfig) => {
-    setConfig(analysisConfig)
-    await runAnalysisMutation.mutateAsync(analysisConfig)
-  }, [runAnalysisMutation])
+  const runAnalysis = useCallback(
+    async (analysisConfig: StatisticalInsightsConfig) => {
+      setConfig(analysisConfig);
+      await runAnalysisMutation.mutateAsync(analysisConfig);
+    },
+    [runAnalysisMutation],
+  );
 
-  const detectAnomalies = useCallback(async (metric: string, threshold: number) => {
-    await anomalyDetectionMutation.mutateAsync({ metric, threshold })
-  }, [anomalyDetectionMutation])
+  const detectAnomalies = useCallback(
+    async (metric: string, threshold: number) => {
+      await anomalyDetectionMutation.mutateAsync({ metric, threshold });
+    },
+    [anomalyDetectionMutation],
+  );
 
-  const analyzeCorrelations = useCallback(async (metrics: string[]) => {
-    await correlationAnalysisMutation.mutateAsync(metrics)
-  }, [correlationAnalysisMutation])
+  const analyzeCorrelations = useCallback(
+    async (metrics: string[]) => {
+      await correlationAnalysisMutation.mutateAsync(metrics);
+    },
+    [correlationAnalysisMutation],
+  );
 
-  const generatePredictions = useCallback(async (metric: string, timeframe: string) => {
-    await predictionMutation.mutateAsync({ metric, timeframe })
-  }, [predictionMutation])
+  const generatePredictions = useCallback(
+    async (metric: string, timeframe: string) => {
+      await predictionMutation.mutateAsync({ metric, timeframe });
+    },
+    [predictionMutation],
+  );
 
-  const exportAnalysis = useCallback(async (format: 'csv' | 'pdf') => {
-    await exportAnalysisMutation.mutateAsync(format)
-  }, [exportAnalysisMutation])
+  const exportAnalysis = useCallback(
+    async (format: "csv" | "pdf") => {
+      await exportAnalysisMutation.mutateAsync(format);
+    },
+    [exportAnalysisMutation],
+  );
 
   return {
     // State
@@ -323,8 +341,8 @@ export function useStatisticalInsights(
     analyzeCorrelations,
     generatePredictions,
     refreshInsights,
-    exportAnalysis
-  }
+    exportAnalysis,
+  };
 }
 
 /**
@@ -332,20 +350,20 @@ export function useStatisticalInsights(
  */
 export function useABTestAnalysis(testId: string) {
   return useQuery({
-    queryKey: ['ab-test-analysis', testId],
+    queryKey: ["ab-test-analysis", testId],
     queryFn: async () => {
-      const response = await fetch('/api/analytics/ab-test-analysis', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ testId })
-      })
+      const response = await fetch("/api/analytics/ab-test-analysis", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ testId }),
+      });
 
-      if (!response.ok) throw new Error('A/B test analysis failed')
-      return response.json()
+      if (!response.ok) throw new Error("A/B test analysis failed");
+      return response.json();
     },
     enabled: !!testId,
-    staleTime: 5 * 60 * 1000 // 5 minutes
-  })
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
 }
 
 /**
@@ -353,80 +371,89 @@ export function useABTestAnalysis(testId: string) {
  */
 export function useMetricBenchmarking(metrics: string[]) {
   return useQuery({
-    queryKey: ['metric-benchmarking', metrics],
+    queryKey: ["metric-benchmarking", metrics],
     queryFn: async () => {
-      const response = await fetch('/api/analytics/benchmarking', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/analytics/benchmarking", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           metrics,
           includePeerComparison: true,
-          includeIndustryStandards: true
-        })
-      })
+          includeIndustryStandards: true,
+        }),
+      });
 
-      if (!response.ok) throw new Error('Benchmarking analysis failed')
-      return response.json()
+      if (!response.ok) throw new Error("Benchmarking analysis failed");
+      return response.json();
     },
     enabled: metrics.length > 0,
-    staleTime: 24 * 60 * 60 * 1000 // 24 hours
-  })
+    staleTime: 24 * 60 * 60 * 1000, // 24 hours
+  });
 }
 
 /**
  * Utility hook for statistical formatting
  */
 export function useStatisticalFormatters() {
-  return useMemo(() => ({
-    formatCorrelation: (correlation: number): string => {
-      return correlation >= 0 ? `+${correlation.toFixed(3)}` : correlation.toFixed(3)
-    },
-    
-    getCorrelationStrength: (correlation: number): string => {
-      const abs = Math.abs(correlation)
-      if (abs >= 0.7) return 'Strong'
-      if (abs >= 0.4) return 'Moderate'
-      return 'Weak'
-    },
-    
-    getCorrelationColor: (correlation: number): string => {
-      const abs = Math.abs(correlation)
-      if (abs >= 0.7) return 'text-green-600'
-      if (abs >= 0.4) return 'text-yellow-600'
-      return 'text-red-600'
-    },
-    
-    formatSignificance: (pValue: number): string => {
-      if (pValue < 0.001) return 'p < 0.001 (***)'
-      if (pValue < 0.01) return `p = ${pValue.toFixed(3)} (**)`
-      if (pValue < 0.05) return `p = ${pValue.toFixed(3)} (*)`
-      return `p = ${pValue.toFixed(3)} (ns)`
-    },
-    
-    formatConfidence: (confidence: number): string => {
-      return `${Math.round(confidence)}%`
-    },
-    
-    formatDeviation: (deviation: number): string => {
-      return `${deviation >= 0 ? '+' : ''}${deviation.toFixed(2)}σ`
-    },
-    
-    getAnomalySeverityColor: (severity: string): string => {
-      switch (severity) {
-        case 'high': return 'text-red-600'
-        case 'medium': return 'text-yellow-600'
-        case 'low': return 'text-blue-600'
-        default: return 'text-gray-600'
-      }
-    },
-    
-    getAnomalySeverityBadge: (severity: string): 'destructive' | 'secondary' | 'default' => {
-      switch (severity) {
-        case 'high': return 'destructive'
-        case 'medium': return 'secondary'
-        default: return 'default'
-      }
-    }
-  }), [])
-}
+  return useMemo(
+    () => ({
+      formatCorrelation: (correlation: number): string => {
+        return correlation >= 0 ? `+${correlation.toFixed(3)}` : correlation.toFixed(3);
+      },
 
+      getCorrelationStrength: (correlation: number): string => {
+        const abs = Math.abs(correlation);
+        if (abs >= 0.7) return "Strong";
+        if (abs >= 0.4) return "Moderate";
+        return "Weak";
+      },
+
+      getCorrelationColor: (correlation: number): string => {
+        const abs = Math.abs(correlation);
+        if (abs >= 0.7) return "text-green-600";
+        if (abs >= 0.4) return "text-yellow-600";
+        return "text-red-600";
+      },
+
+      formatSignificance: (pValue: number): string => {
+        if (pValue < 0.001) return "p < 0.001 (***)";
+        if (pValue < 0.01) return `p = ${pValue.toFixed(3)} (**)`;
+        if (pValue < 0.05) return `p = ${pValue.toFixed(3)} (*)`;
+        return `p = ${pValue.toFixed(3)} (ns)`;
+      },
+
+      formatConfidence: (confidence: number): string => {
+        return `${Math.round(confidence)}%`;
+      },
+
+      formatDeviation: (deviation: number): string => {
+        return `${deviation >= 0 ? "+" : ""}${deviation.toFixed(2)}σ`;
+      },
+
+      getAnomalySeverityColor: (severity: string): string => {
+        switch (severity) {
+          case "high":
+            return "text-red-600";
+          case "medium":
+            return "text-yellow-600";
+          case "low":
+            return "text-blue-600";
+          default:
+            return "text-gray-600";
+        }
+      },
+
+      getAnomalySeverityBadge: (severity: string): "destructive" | "secondary" | "default" => {
+        switch (severity) {
+          case "high":
+            return "destructive";
+          case "medium":
+            return "secondary";
+          default:
+            return "default";
+        }
+      },
+    }),
+    [],
+  );
+}

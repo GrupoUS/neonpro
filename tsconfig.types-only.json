@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "lib": ["es2017"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": false,
+    "isolatedModules": true,
+    "incremental": false,
+    "baseUrl": ".",
+    "paths": {
+      "@/types/*": ["./types/*"]
+    },
+    "types": []
+  },
+  "include": ["types/**/*", "type-validation-test.ts"],
+  "exclude": ["node_modules", "**/*.test.*", "**/*.spec.*", ".next", "dist"]
+}

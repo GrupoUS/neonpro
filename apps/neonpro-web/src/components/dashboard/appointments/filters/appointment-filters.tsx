@@ -4,41 +4,30 @@
 
 "use client";
 
-import {
+import type {
   AppointmentFilters as AppointmentFiltersType,
   AppointmentStatus,
   FilterOptionsData,
 } from "@/app/lib/types/appointments";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Calendar } from "@/components/ui/calendar";
+import type { Card, CardContent } from "@/components/ui/card";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { useAppointmentFilters } from "@/hooks/appointments/use-appointment-filters";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import {
-  Briefcase,
-  CalendarIcon,
-  ChevronDown,
-  RotateCcw,
-  User,
-  X,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+import type { Separator } from "@/components/ui/separator";
+import type { useAppointmentFilters } from "@/hooks/appointments/use-appointment-filters";
+import type { cn } from "@/lib/utils";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { Briefcase, CalendarIcon, ChevronDown, RotateCcw, User, X } from "lucide-react";
+import type { useEffect, useState } from "react";
 import AppointmentSearch from "./appointment-search";
 
 // Status options with colors
@@ -65,16 +54,13 @@ export default function AppointmentFilters({
   onFiltersChange,
   onClearFilters,
 }: AppointmentFiltersProps) {
-  const { hasActiveFilters, activeFilterCount, updateFilter } =
-    useAppointmentFilters();
+  const { hasActiveFilters, activeFilterCount, updateFilter } = useAppointmentFilters();
 
-  const [filterOptionsData, setFilterOptionsData] = useState<FilterOptionsData>(
-    {
-      professionals: [],
-      services: [],
-      statuses: [],
-    }
-  );
+  const [filterOptionsData, setFilterOptionsData] = useState<FilterOptionsData>({
+    professionals: [],
+    services: [],
+    statuses: [],
+  });
   const [loading, setLoading] = useState(true);
 
   // Load filter options from API
@@ -88,9 +74,7 @@ export default function AppointmentFilters({
           fetch("/api/services"),
         ]);
 
-        const professionals = professionalsRes.ok
-          ? await professionalsRes.json()
-          : [];
+        const professionals = professionalsRes.ok ? await professionalsRes.json() : [];
         const services = servicesRes.ok ? await servicesRes.json() : [];
 
         setFilterOptionsData({
@@ -173,9 +157,7 @@ export default function AppointmentFilters({
               <User className="h-4 w-4 text-muted-foreground" />
               <Select
                 value={filters.professional_id || ""}
-                onValueChange={(value) =>
-                  updateFilter("professional_id", value || undefined)
-                }
+                onValueChange={(value) => updateFilter("professional_id", value || undefined)}
               >
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Profissional" />
@@ -183,10 +165,7 @@ export default function AppointmentFilters({
                 <SelectContent>
                   <SelectItem value="">Todos os profissionais</SelectItem>
                   {filterOptionsData.professionals.map((professional) => (
-                    <SelectItem
-                      key={professional.value}
-                      value={professional.value}
-                    >
+                    <SelectItem key={professional.value} value={professional.value}>
                       {professional.label}
                     </SelectItem>
                   ))}
@@ -198,9 +177,7 @@ export default function AppointmentFilters({
               <Briefcase className="h-4 w-4 text-muted-foreground" />
               <Select
                 value={filters.service_type_id || ""}
-                onValueChange={(value) =>
-                  updateFilter("service_type_id", value || undefined)
-                }
+                onValueChange={(value) => updateFilter("service_type_id", value || undefined)}
               >
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Serviço" />
@@ -218,20 +195,11 @@ export default function AppointmentFilters({
             {/* Status Filter - Multi-select with Popover */}
             <Popover>
               <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="justify-between min-w-[150px]"
-                >
+                <Button variant="outline" className="justify-between min-w-[150px]">
                   <span>
                     {filters.status &&
-                    (Array.isArray(filters.status)
-                      ? filters.status.length
-                      : 1) > 0
-                      ? `Status (${
-                          Array.isArray(filters.status)
-                            ? filters.status.length
-                            : 1
-                        })`
+                    (Array.isArray(filters.status) ? filters.status.length : 1) > 0
+                      ? `Status (${Array.isArray(filters.status) ? filters.status.length : 1})`
                       : "Status"}
                   </span>
                   <ChevronDown className="h-4 w-4 opacity-50" />
@@ -244,17 +212,13 @@ export default function AppointmentFilters({
                       key={status.value}
                       className={cn(
                         "flex items-center gap-3 p-2 rounded-md cursor-pointer hover:bg-muted transition-colors",
-                        isStatusSelected(status.value) && "bg-muted"
+                        isStatusSelected(status.value) && "bg-muted",
                       )}
                       onClick={() => handleStatusChange(status.value)}
                     >
-                      <div
-                        className={cn("w-3 h-3 rounded-full", status.color)}
-                      />
+                      <div className={cn("w-3 h-3 rounded-full", status.color)} />
                       <span className="text-sm">{status.label}</span>
-                      {isStatusSelected(status.value) && (
-                        <X className="h-3 w-3 ml-auto" />
-                      )}
+                      {isStatusSelected(status.value) && <X className="h-3 w-3 ml-auto" />}
                     </div>
                   ))}
                 </div>
@@ -265,10 +229,7 @@ export default function AppointmentFilters({
               <CalendarIcon className="h-4 w-4 text-muted-foreground" />
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="justify-between min-w-[200px]"
-                  >
+                  <Button variant="outline" className="justify-between min-w-[200px]">
                     <span>
                       {filters.date_from || filters.date_to
                         ? `${
@@ -293,9 +254,7 @@ export default function AppointmentFilters({
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm font-medium">
-                          Data Inicial
-                        </label>
+                        <label className="text-sm font-medium">Data Inicial</label>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button
@@ -316,9 +275,7 @@ export default function AppointmentFilters({
                             <Calendar
                               mode="single"
                               selected={filters.date_from}
-                              onSelect={(date) =>
-                                updateFilter("date_from", date)
-                              }
+                              onSelect={(date) => updateFilter("date_from", date)}
                               initialFocus
                             />
                           </PopoverContent>
@@ -326,9 +283,7 @@ export default function AppointmentFilters({
                       </div>
 
                       <div>
-                        <label className="text-sm font-medium">
-                          Data Final
-                        </label>
+                        <label className="text-sm font-medium">Data Final</label>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button
@@ -375,10 +330,10 @@ export default function AppointmentFilters({
                         onClick={() => {
                           const today = new Date();
                           const weekStart = new Date(
-                            today.setDate(today.getDate() - today.getDay())
+                            today.setDate(today.getDate() - today.getDay()),
                           );
                           const weekEnd = new Date(
-                            today.setDate(today.getDate() - today.getDay() + 6)
+                            today.setDate(today.getDate() - today.getDay() + 6),
                           );
                           updateFilter("date_from", weekStart);
                           updateFilter("date_to", weekEnd);
@@ -415,9 +370,8 @@ export default function AppointmentFilters({
                 <Badge variant="secondary" className="gap-1">
                   Profissional:{" "}
                   {
-                    filterOptionsData.professionals.find(
-                      (p) => p.value === filters.professional_id
-                    )?.label
+                    filterOptionsData.professionals.find((p) => p.value === filters.professional_id)
+                      ?.label
                   }
                   <X
                     className="h-3 w-3 cursor-pointer"
@@ -429,9 +383,8 @@ export default function AppointmentFilters({
                 <Badge variant="secondary" className="gap-1">
                   Serviço:{" "}
                   {
-                    filterOptionsData.services.find(
-                      (s) => s.value === filters.service_type_id
-                    )?.label
+                    filterOptionsData.services.find((s) => s.value === filters.service_type_id)
+                      ?.label
                   }
                   <X
                     className="h-3 w-3 cursor-pointer"
@@ -444,8 +397,7 @@ export default function AppointmentFilters({
                   {Array.isArray(filters.status) ? (
                     filters.status.map((status) => (
                       <Badge key={status} variant="secondary" className="gap-1">
-                        Status:{" "}
-                        {statusOptions.find((s) => s.value === status)?.label}
+                        Status: {statusOptions.find((s) => s.value === status)?.label}
                         <X
                           className="h-3 w-3 cursor-pointer"
                           onClick={() => handleStatusChange(status)}
@@ -454,11 +406,7 @@ export default function AppointmentFilters({
                     ))
                   ) : (
                     <Badge variant="secondary" className="gap-1">
-                      Status:{" "}
-                      {
-                        statusOptions.find((s) => s.value === filters.status)
-                          ?.label
-                      }
+                      Status: {statusOptions.find((s) => s.value === filters.status)?.label}
                       <X
                         className="h-3 w-3 cursor-pointer"
                         onClick={() => updateFilter("status", undefined)}
@@ -469,8 +417,7 @@ export default function AppointmentFilters({
               )}
               {filters.date_from && (
                 <Badge variant="secondary" className="gap-1">
-                  Início:{" "}
-                  {format(filters.date_from, "dd/MM/yyyy", { locale: ptBR })}
+                  Início: {format(filters.date_from, "dd/MM/yyyy", { locale: ptBR })}
                   <X
                     className="h-3 w-3 cursor-pointer"
                     onClick={() => updateFilter("date_from", undefined)}

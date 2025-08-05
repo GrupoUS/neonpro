@@ -20,8 +20,8 @@ export type {
   ConsumptionPattern as BaseConsumptionPattern,
   StockMovement,
   QualityCheck,
-  RegulatoryCompliance
-} from './stock-output-management';
+  RegulatoryCompliance,
+} from "./stock-output-management";
 
 export type {
   FIFOAnalysis,
@@ -29,8 +29,8 @@ export type {
   ExpiryAlert,
   ExpiryAction,
   BatchMovement,
-  FIFOOptimizationConfig
-} from './fifo-management';
+  FIFOOptimizationConfig,
+} from "./fifo-management";
 
 export type {
   ConsumptionAnalytics,
@@ -42,8 +42,8 @@ export type {
   ConsumptionForecast,
   PurchaseRecommendation,
   ConsumptionPattern,
-  ProductCorrelation
-} from './consumption-analytics';
+  ProductCorrelation,
+} from "./consumption-analytics";
 
 // Main inventory management configuration
 export interface InventoryConfig {
@@ -56,7 +56,7 @@ export interface InventoryConfig {
     enable_expiry_blocking: boolean;
     default_consumption_center: string;
   };
-  
+
   fifo_management: {
     days_before_expiry_alert: number;
     days_before_expiry_block: number;
@@ -65,7 +65,7 @@ export interface InventoryConfig {
     require_justification_override: boolean;
     enable_transfer_suggestions: boolean;
   };
-  
+
   consumption_analytics: {
     default_analysis_period_days: number;
     enable_anomaly_detection: boolean;
@@ -74,15 +74,15 @@ export interface InventoryConfig {
     enable_demand_forecasting: boolean;
     forecast_confidence_threshold: number;
   };
-  
+
   notifications: {
     enable_low_stock_alerts: boolean;
     enable_expiry_alerts: boolean;
     enable_consumption_alerts: boolean;
-    alert_channels: ('email' | 'system' | 'sms')[];
+    alert_channels: ("email" | "system" | "sms")[];
     escalation_hours: number;
   };
-  
+
   compliance: {
     enable_anvisa_tracking: boolean;
     enable_lgpd_compliance: boolean;
@@ -101,21 +101,21 @@ export interface InventoryDashboardSummary {
     expiring_soon_products: number;
     total_value: number;
   };
-  
+
   recent_activity: {
     outputs_today: number;
     value_consumed_today: number;
     pending_requests: number;
     alerts_active: number;
   };
-  
+
   fifo_status: {
     batches_expiring_7_days: number;
     batches_expiring_30_days: number;
     fifo_compliance_score: number;
     waste_prevented_value: number;
   };
-  
+
   cost_efficiency: {
     monthly_consumption_value: number;
     cost_per_procedure: number;
@@ -127,9 +127,9 @@ export interface InventoryDashboardSummary {
 // Integrated workflow types
 export interface InventoryWorkflow {
   id: string;
-  type: 'stock_request' | 'transfer' | 'fifo_optimization' | 'cost_analysis';
-  status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  type: "stock_request" | "transfer" | "fifo_optimization" | "cost_analysis";
+  status: "pending" | "in_progress" | "completed" | "cancelled";
+  priority: "low" | "medium" | "high" | "critical";
   centro_custo_id: string;
   created_by: string;
   created_at: Date;
@@ -141,7 +141,7 @@ export interface InventoryWorkflow {
 export interface WorkflowStep {
   id: string;
   name: string;
-  status: 'pending' | 'in_progress' | 'completed' | 'skipped' | 'failed';
+  status: "pending" | "in_progress" | "completed" | "skipped" | "failed";
   assigned_to?: string;
   started_at?: Date;
   completed_at?: Date;
@@ -157,21 +157,21 @@ export interface SystemIntegration {
     last_sync: Date | null;
     auto_create_purchase_orders: boolean;
   };
-  
+
   financial: {
     enabled: boolean;
     cost_center_mapping: Record<string, string>;
     auto_post_transactions: boolean;
     chart_of_accounts_mapping: Record<string, string>;
   };
-  
+
   clinical: {
     enabled: boolean;
     procedure_cost_tracking: boolean;
     patient_charge_integration: boolean;
     insurance_claim_tracking: boolean;
   };
-  
+
   quality: {
     enabled: boolean;
     batch_testing_integration: boolean;
@@ -197,7 +197,7 @@ export interface InventoryAuditLog {
   id: string;
   table_name: string;
   record_id: string;
-  action: 'create' | 'update' | 'delete';
+  action: "create" | "update" | "delete";
   old_values?: Record<string, any>;
   new_values?: Record<string, any>;
   user_id: string;
@@ -218,77 +218,77 @@ export const DEFAULT_INVENTORY_CONFIG: InventoryConfig = {
     supervisor_approval_limit: 1000,
     enable_fifo_enforcement: true,
     enable_expiry_blocking: true,
-    default_consumption_center: ''
+    default_consumption_center: "",
   },
-  
+
   fifo_management: {
     days_before_expiry_alert: 30,
     days_before_expiry_block: 7,
     auto_prioritize_expiring: true,
     allow_fifo_override: false,
     require_justification_override: true,
-    enable_transfer_suggestions: true
+    enable_transfer_suggestions: true,
   },
-  
+
   consumption_analytics: {
     default_analysis_period_days: 90,
     enable_anomaly_detection: true,
     anomaly_threshold_percentage: 20,
     enable_cost_optimization: true,
     enable_demand_forecasting: true,
-    forecast_confidence_threshold: 75
+    forecast_confidence_threshold: 75,
   },
-  
+
   notifications: {
     enable_low_stock_alerts: true,
     enable_expiry_alerts: true,
     enable_consumption_alerts: true,
-    alert_channels: ['system', 'email'],
-    escalation_hours: 24
+    alert_channels: ["system", "email"],
+    escalation_hours: 24,
   },
-  
+
   compliance: {
     enable_anvisa_tracking: true,
     enable_lgpd_compliance: true,
     require_batch_traceability: true,
     enable_regulatory_reporting: true,
-    audit_retention_days: 2555 // 7 years
-  }
+    audit_retention_days: 2555, // 7 years
+  },
 };
 
 // Status enums
 export enum StockOutputStatus {
-  DRAFT = 'rascunho',
-  PENDING = 'pendente',
-  APPROVED = 'aprovada',
-  IN_PROGRESS = 'em_processamento',
-  COMPLETED = 'concluida',
-  CANCELLED = 'cancelada'
+  DRAFT = "rascunho",
+  PENDING = "pendente",
+  APPROVED = "aprovada",
+  IN_PROGRESS = "em_processamento",
+  COMPLETED = "concluida",
+  CANCELLED = "cancelada",
 }
 
 export enum BatchStatus {
-  AVAILABLE = 'disponivel',
-  RESERVED = 'reservado',
-  BLOCKED = 'bloqueado',
-  EXPIRED = 'vencido',
-  CONSUMED = 'consumido'
+  AVAILABLE = "disponivel",
+  RESERVED = "reservado",
+  BLOCKED = "bloqueado",
+  EXPIRED = "vencido",
+  CONSUMED = "consumido",
 }
 
 export enum AlertType {
-  LOW_STOCK = 'estoque_baixo',
-  EXPIRY_WARNING = 'alerta_vencimento',
-  EXPIRED = 'vencido',
-  CONSUMPTION_ANOMALY = 'anomalia_consumo',
-  COST_ALERT = 'alerta_custo',
-  FIFO_VIOLATION = 'violacao_fifo'
+  LOW_STOCK = "estoque_baixo",
+  EXPIRY_WARNING = "alerta_vencimento",
+  EXPIRED = "vencido",
+  CONSUMPTION_ANOMALY = "anomalia_consumo",
+  COST_ALERT = "alerta_custo",
+  FIFO_VIOLATION = "violacao_fifo",
 }
 
 export enum TransferStatus {
-  PENDING = 'pendente',
-  APPROVED = 'aprovada',
-  IN_TRANSIT = 'em_transito',
-  RECEIVED = 'recebida',
-  CANCELLED = 'cancelada'
+  PENDING = "pendente",
+  APPROVED = "aprovada",
+  IN_TRANSIT = "em_transito",
+  RECEIVED = "recebida",
+  CANCELLED = "cancelada",
 }
 
 // Utility types

@@ -1,20 +1,9 @@
 // Types for NeonPro Billing and Payment System
 // Task 7: Sistema de Faturamento e Pagamentos
 
-export type ServiceType =
-  | "consultation"
-  | "treatment"
-  | "procedure"
-  | "package"
-  | "maintenance";
+export type ServiceType = "consultation" | "treatment" | "procedure" | "package" | "maintenance";
 
-export type InvoiceStatus =
-  | "draft"
-  | "pending"
-  | "paid"
-  | "overdue"
-  | "cancelled"
-  | "refunded";
+export type InvoiceStatus = "draft" | "pending" | "paid" | "overdue" | "cancelled" | "refunded";
 
 export type PaymentMethod =
   | "cash"
@@ -271,9 +260,7 @@ export interface FinancialSettings {
 }
 
 export interface UpdateFinancialSettingsData
-  extends Partial<
-    Omit<FinancialSettings, "id" | "created_at" | "updated_at">
-  > {
+  extends Partial<Omit<FinancialSettings, "id" | "created_at" | "updated_at">> {
   // Minimal interface for financial settings updates
   clinic_id?: string;
 }
@@ -417,12 +404,7 @@ export interface InvoiceFilters {
   search?: string;
   page?: number;
   limit?: number;
-  sort_by?:
-    | "invoice_number"
-    | "issue_date"
-    | "due_date"
-    | "total_amount"
-    | "status";
+  sort_by?: "invoice_number" | "issue_date" | "due_date" | "total_amount" | "status";
   sort_order?: "asc" | "desc";
 }
 

@@ -1,10 +1,10 @@
 // components/landing/feature-highlights.tsx
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { 
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Separator } from "@/components/ui/separator";
+import type {
   ShieldCheck,
   Zap,
   Brain,
@@ -16,7 +16,7 @@ import {
   Shield,
   Award,
   Database,
-  Smartphone
+  Smartphone,
 } from "lucide-react";
 
 export function FeatureHighlights() {
@@ -29,9 +29,9 @@ export function FeatureHighlights() {
         "Consentimento digital automático",
         "Relatórios de auditoria em tempo real",
         "Criptografia end-to-end",
-        "Direito ao esquecimento"
+        "Direito ao esquecimento",
       ],
-      badge: "LGPD 2020"
+      badge: "LGPD 2020",
     },
     {
       icon: Award,
@@ -41,9 +41,9 @@ export function FeatureHighlights() {
         "Classificação de risco automática",
         "Relatórios regulatórios",
         "Controle de qualidade integrado",
-        "Rastreabilidade completa"
+        "Rastreabilidade completa",
       ],
-      badge: "ANVISA"
+      badge: "ANVISA",
     },
     {
       icon: FileCheck,
@@ -53,10 +53,10 @@ export function FeatureHighlights() {
         "Consultas virtuais certificadas",
         "Assinatura digital médica",
         "Prescrição eletrônica",
-        "Histórico médico seguro"
+        "Histórico médico seguro",
       ],
-      badge: "CFM"
-    }
+      badge: "CFM",
+    },
   ];
 
   const intelligentFeatures = [
@@ -64,49 +64,49 @@ export function FeatureHighlights() {
       icon: Brain,
       title: "IA Preditiva Avançada",
       description: "Algoritmos proprietários para otimização de resultados",
-      stats: "85% redução em conflitos de agenda"
+      stats: "85% redução em conflitos de agenda",
     },
     {
       icon: Zap,
       title: "Automação Inteligente",
       description: "Fluxos de trabalho automatizados com IA",
-      stats: "40% aumento na eficiência operacional"
+      stats: "40% aumento na eficiência operacional",
     },
     {
       icon: TrendingUp,
       title: "Analytics Preditivo",
       description: "Insights de negócio com machine learning",
-      stats: "95% precisão em previsões de demanda"
+      stats: "95% precisão em previsões de demanda",
     },
     {
       icon: Heart,
       title: "Wellness Intelligence",
       description: "Acompanhamento holístico do bem-estar",
-      stats: "92% satisfação dos pacientes"
-    }
+      stats: "92% satisfação dos pacientes",
+    },
   ];
 
   const coreFeatures = [
     {
       icon: Clock,
       title: "Agendamento Inteligente",
-      description: "IA otimiza automaticamente sua agenda"
+      description: "IA otimiza automaticamente sua agenda",
     },
     {
       icon: Users,
       title: "Gestão de Pacientes",
-      description: "Prontuário digital completo e seguro"
+      description: "Prontuário digital completo e seguro",
     },
     {
       icon: Database,
       title: "Business Intelligence",
-      description: "Dashboards avançados em tempo real"
+      description: "Dashboards avançados em tempo real",
     },
     {
       icon: Smartphone,
       title: "Mobile-First",
-      description: "Acesso total via smartphone e tablet"
-    }
+      description: "Acesso total via smartphone e tablet",
+    },
   ];
 
   return (
@@ -122,8 +122,8 @@ export function FeatureHighlights() {
             <span className="block text-sky-600">Clínicas Estéticas Brasileiras</span>
           </h2>
           <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed">
-            Sistema integrado com IA, compliance automático e ferramentas especializadas 
-            para maximizar resultados e satisfação dos pacientes.
+            Sistema integrado com IA, compliance automático e ferramentas especializadas para
+            maximizar resultados e satisfação dos pacientes.
           </p>
         </div>
 
@@ -140,7 +140,10 @@ export function FeatureHighlights() {
 
           <div className="grid lg:grid-cols-3 gap-8">
             {complianceFeatures.map((feature, index) => (
-              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800">
+              <Card
+                key={index}
+                className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800"
+              >
                 <CardHeader className="pb-4">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-600">
@@ -161,7 +164,10 @@ export function FeatureHighlights() {
                   <Separator className="mb-4" />
                   <ul className="space-y-2">
                     {feature.details.map((detail, idx) => (
-                      <li key={idx} className="flex items-center text-sm text-slate-600 dark:text-slate-400">
+                      <li
+                        key={idx}
+                        className="flex items-center text-sm text-slate-600 dark:text-slate-400"
+                      >
                         <div className="w-1.5 h-1.5 bg-sky-600 rounded-full mr-3 flex-shrink-0"></div>
                         {detail}
                       </li>
@@ -186,14 +192,15 @@ export function FeatureHighlights() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {intelligentFeatures.map((feature, index) => (
-              <Card key={index} className="text-center border-0 shadow-md hover:shadow-lg transition-shadow">
+              <Card
+                key={index}
+                className="text-center border-0 shadow-md hover:shadow-lg transition-shadow"
+              >
                 <CardContent className="pt-6">
                   <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 mx-auto mb-4">
                     <feature.icon className="h-8 w-8 text-white" />
                   </div>
-                  <h4 className="font-bold text-slate-900 dark:text-white mb-2">
-                    {feature.title}
-                  </h4>
+                  <h4 className="font-bold text-slate-900 dark:text-white mb-2">{feature.title}</h4>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">
                     {feature.description}
                   </p>

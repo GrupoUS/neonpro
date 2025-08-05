@@ -1,20 +1,20 @@
 /**
  * NeonPro - API Gateway Documentation System
  * Automatic OpenAPI documentation generation and management
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  * @created 2025-01-27
  */
 
-import {
+import type {
   ApiDocumentation,
   ApiRoute,
   ApiParameter,
   ApiResponse,
   ApiExample,
-  ApiGatewayConfig
-} from './types';
+  ApiGatewayConfig,
+} from "./types";
 
 /**
  * OpenAPI Documentation Generator
@@ -35,143 +35,156 @@ export class OpenApiDocumentationGenerator {
    */
   private setupDefaultSchemas(): void {
     // Error response schema
-    this.customSchemas.set('ErrorResponse', {
-      type: 'object',
+    this.customSchemas.set("ErrorResponse", {
+      type: "object",
       properties: {
         error: {
-          type: 'object',
+          type: "object",
           properties: {
-            code: { type: 'string', description: 'Error code' },
-            message: { type: 'string', description: 'Error message' },
-            details: { type: 'object', description: 'Additional error details' },
-            timestamp: { type: 'string', format: 'date-time', description: 'Error timestamp' },
-            requestId: { type: 'string', description: 'Request ID for tracking' }
+            code: { type: "string", description: "Error code" },
+            message: { type: "string", description: "Error message" },
+            details: { type: "object", description: "Additional error details" },
+            timestamp: { type: "string", format: "date-time", description: "Error timestamp" },
+            requestId: { type: "string", description: "Request ID for tracking" },
           },
-          required: ['code', 'message', 'timestamp']
-        }
+          required: ["code", "message", "timestamp"],
+        },
       },
-      required: ['error']
+      required: ["error"],
     });
 
     // Success response schema
-    this.customSchemas.set('SuccessResponse', {
-      type: 'object',
+    this.customSchemas.set("SuccessResponse", {
+      type: "object",
       properties: {
-        success: { type: 'boolean', description: 'Operation success status' },
-        data: { type: 'object', description: 'Response data' },
+        success: { type: "boolean", description: "Operation success status" },
+        data: { type: "object", description: "Response data" },
         meta: {
-          type: 'object',
+          type: "object",
           properties: {
-            timestamp: { type: 'string', format: 'date-time' },
-            requestId: { type: 'string' },
-            version: { type: 'string' }
-          }
-        }
+            timestamp: { type: "string", format: "date-time" },
+            requestId: { type: "string" },
+            version: { type: "string" },
+          },
+        },
       },
-      required: ['success']
+      required: ["success"],
     });
 
     // Pagination schema
-    this.customSchemas.set('PaginationMeta', {
-      type: 'object',
+    this.customSchemas.set("PaginationMeta", {
+      type: "object",
       properties: {
-        page: { type: 'integer', minimum: 1, description: 'Current page number' },
-        limit: { type: 'integer', minimum: 1, maximum: 100, description: 'Items per page' },
-        total: { type: 'integer', minimum: 0, description: 'Total number of items' },
-        totalPages: { type: 'integer', minimum: 0, description: 'Total number of pages' },
-        hasNext: { type: 'boolean', description: 'Whether there is a next page' },
-        hasPrev: { type: 'boolean', description: 'Whether there is a previous page' }
+        page: { type: "integer", minimum: 1, description: "Current page number" },
+        limit: { type: "integer", minimum: 1, maximum: 100, description: "Items per page" },
+        total: { type: "integer", minimum: 0, description: "Total number of items" },
+        totalPages: { type: "integer", minimum: 0, description: "Total number of pages" },
+        hasNext: { type: "boolean", description: "Whether there is a next page" },
+        hasPrev: { type: "boolean", description: "Whether there is a previous page" },
       },
-      required: ['page', 'limit', 'total', 'totalPages', 'hasNext', 'hasPrev']
+      required: ["page", "limit", "total", "totalPages", "hasNext", "hasPrev"],
     });
 
     // Patient schema (NeonPro specific)
-    this.customSchemas.set('Patient', {
-      type: 'object',
+    this.customSchemas.set("Patient", {
+      type: "object",
       properties: {
-        id: { type: 'string', description: 'Patient unique identifier' },
-        name: { type: 'string', description: 'Patient full name' },
-        email: { type: 'string', format: 'email', description: 'Patient email address' },
-        phone: { type: 'string', description: 'Patient phone number' },
-        cpf: { type: 'string', pattern: '^\\d{11}$', description: 'Patient CPF (11 digits)' },
-        birthDate: { type: 'string', format: 'date', description: 'Patient birth date' },
-        gender: { type: 'string', enum: ['M', 'F', 'O'], description: 'Patient gender' },
+        id: { type: "string", description: "Patient unique identifier" },
+        name: { type: "string", description: "Patient full name" },
+        email: { type: "string", format: "email", description: "Patient email address" },
+        phone: { type: "string", description: "Patient phone number" },
+        cpf: { type: "string", pattern: "^\\d{11}$", description: "Patient CPF (11 digits)" },
+        birthDate: { type: "string", format: "date", description: "Patient birth date" },
+        gender: { type: "string", enum: ["M", "F", "O"], description: "Patient gender" },
         address: {
-          type: 'object',
+          type: "object",
           properties: {
-            street: { type: 'string' },
-            number: { type: 'string' },
-            complement: { type: 'string' },
-            neighborhood: { type: 'string' },
-            city: { type: 'string' },
-            state: { type: 'string' },
-            zipCode: { type: 'string', pattern: '^\\d{8}$' }
+            street: { type: "string" },
+            number: { type: "string" },
+            complement: { type: "string" },
+            neighborhood: { type: "string" },
+            city: { type: "string" },
+            state: { type: "string" },
+            zipCode: { type: "string", pattern: "^\\d{8}$" },
           },
-          required: ['street', 'city', 'state', 'zipCode']
+          required: ["street", "city", "state", "zipCode"],
         },
-        createdAt: { type: 'string', format: 'date-time' },
-        updatedAt: { type: 'string', format: 'date-time' }
+        createdAt: { type: "string", format: "date-time" },
+        updatedAt: { type: "string", format: "date-time" },
       },
-      required: ['id', 'name', 'email', 'phone', 'cpf', 'birthDate']
+      required: ["id", "name", "email", "phone", "cpf", "birthDate"],
     });
 
     // Appointment schema (NeonPro specific)
-    this.customSchemas.set('Appointment', {
-      type: 'object',
+    this.customSchemas.set("Appointment", {
+      type: "object",
       properties: {
-        id: { type: 'string', description: 'Appointment unique identifier' },
-        patientId: { type: 'string', description: 'Patient ID' },
-        doctorId: { type: 'string', description: 'Doctor ID' },
-        clinicId: { type: 'string', description: 'Clinic ID' },
-        serviceId: { type: 'string', description: 'Service ID' },
-        scheduledAt: { type: 'string', format: 'date-time', description: 'Appointment date and time' },
-        duration: { type: 'integer', minimum: 15, description: 'Appointment duration in minutes' },
+        id: { type: "string", description: "Appointment unique identifier" },
+        patientId: { type: "string", description: "Patient ID" },
+        doctorId: { type: "string", description: "Doctor ID" },
+        clinicId: { type: "string", description: "Clinic ID" },
+        serviceId: { type: "string", description: "Service ID" },
+        scheduledAt: {
+          type: "string",
+          format: "date-time",
+          description: "Appointment date and time",
+        },
+        duration: { type: "integer", minimum: 15, description: "Appointment duration in minutes" },
         status: {
-          type: 'string',
-          enum: ['scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show'],
-          description: 'Appointment status'
+          type: "string",
+          enum: ["scheduled", "confirmed", "in_progress", "completed", "cancelled", "no_show"],
+          description: "Appointment status",
         },
-        notes: { type: 'string', description: 'Appointment notes' },
-        price: { type: 'number', minimum: 0, description: 'Appointment price' },
+        notes: { type: "string", description: "Appointment notes" },
+        price: { type: "number", minimum: 0, description: "Appointment price" },
         paymentStatus: {
-          type: 'string',
-          enum: ['pending', 'paid', 'cancelled', 'refunded'],
-          description: 'Payment status'
+          type: "string",
+          enum: ["pending", "paid", "cancelled", "refunded"],
+          description: "Payment status",
         },
-        createdAt: { type: 'string', format: 'date-time' },
-        updatedAt: { type: 'string', format: 'date-time' }
+        createdAt: { type: "string", format: "date-time" },
+        updatedAt: { type: "string", format: "date-time" },
       },
-      required: ['id', 'patientId', 'doctorId', 'clinicId', 'serviceId', 'scheduledAt', 'duration', 'status']
+      required: [
+        "id",
+        "patientId",
+        "doctorId",
+        "clinicId",
+        "serviceId",
+        "scheduledAt",
+        "duration",
+        "status",
+      ],
     });
 
     // Doctor schema (NeonPro specific)
-    this.customSchemas.set('Doctor', {
-      type: 'object',
+    this.customSchemas.set("Doctor", {
+      type: "object",
       properties: {
-        id: { type: 'string', description: 'Doctor unique identifier' },
-        name: { type: 'string', description: 'Doctor full name' },
-        email: { type: 'string', format: 'email', description: 'Doctor email address' },
-        phone: { type: 'string', description: 'Doctor phone number' },
-        crm: { type: 'string', description: 'Doctor CRM number' },
+        id: { type: "string", description: "Doctor unique identifier" },
+        name: { type: "string", description: "Doctor full name" },
+        email: { type: "string", format: "email", description: "Doctor email address" },
+        phone: { type: "string", description: "Doctor phone number" },
+        crm: { type: "string", description: "Doctor CRM number" },
         specialties: {
-          type: 'array',
-          items: { type: 'string' },
-          description: 'Doctor specialties'
+          type: "array",
+          items: { type: "string" },
+          description: "Doctor specialties",
         },
         clinics: {
-          type: 'array',
-          items: { type: 'string' },
-          description: 'Clinic IDs where doctor works'
+          type: "array",
+          items: { type: "string" },
+          description: "Clinic IDs where doctor works",
         },
         availability: {
-          type: 'object',
-          description: 'Doctor availability schedule'
+          type: "object",
+          description: "Doctor availability schedule",
         },
-        active: { type: 'boolean', description: 'Whether doctor is active' },
-        createdAt: { type: 'string', format: 'date-time' },
-        updatedAt: { type: 'string', format: 'date-time' }
+        active: { type: "boolean", description: "Whether doctor is active" },
+        createdAt: { type: "string", format: "date-time" },
+        updatedAt: { type: "string", format: "date-time" },
       },
-      required: ['id', 'name', 'email', 'crm', 'specialties', 'active']
+      required: ["id", "name", "email", "crm", "specialties", "active"],
     });
   }
 
@@ -185,21 +198,21 @@ export class OpenApiDocumentationGenerator {
     const security = this.generateSecurity();
 
     return {
-      openapi: '3.0.3',
+      openapi: "3.0.3",
       info: {
-        title: 'NeonPro API',
+        title: "NeonPro API",
         description: this.generateApiDescription(),
         version: this.config.version,
         contact: {
-          name: 'NeonPro Support Team',
-          email: 'support@neonpro.com.br',
-          url: 'https://neonpro.com.br/support'
+          name: "NeonPro Support Team",
+          email: "support@neonpro.com.br",
+          url: "https://neonpro.com.br/support",
         },
         license: {
-          name: 'MIT',
-          url: 'https://opensource.org/licenses/MIT'
+          name: "MIT",
+          url: "https://opensource.org/licenses/MIT",
         },
-        termsOfService: 'https://neonpro.com.br/terms'
+        termsOfService: "https://neonpro.com.br/terms",
       },
       servers: this.generateServers(),
       paths,
@@ -207,9 +220,9 @@ export class OpenApiDocumentationGenerator {
       security,
       tags,
       externalDocs: {
-        description: 'NeonPro Documentation',
-        url: 'https://docs.neonpro.com.br'
-      }
+        description: "NeonPro Documentation",
+        url: "https://docs.neonpro.com.br",
+      },
     };
   }
 
@@ -278,22 +291,22 @@ The API supports webhooks for real-time notifications. Configure webhook endpoin
     const servers = [
       {
         url: this.config.baseUrl,
-        description: `${this.config.environment} server`
-      }
+        description: `${this.config.environment} server`,
+      },
     ];
 
     // Add additional servers based on environment
-    if (this.config.environment === 'development') {
+    if (this.config.environment === "development") {
       servers.push({
-        url: 'http://localhost:3000/api',
-        description: 'Local development server'
+        url: "http://localhost:3000/api",
+        description: "Local development server",
       });
     }
 
-    if (this.config.environment === 'staging') {
+    if (this.config.environment === "staging") {
       servers.push({
-        url: 'https://staging-api.neonpro.com.br',
-        description: 'Staging server'
+        url: "https://staging-api.neonpro.com.br",
+        description: "Staging server",
       });
     }
 
@@ -324,7 +337,7 @@ The API supports webhooks for real-time notifications. Configure webhook endpoin
    * Convert path parameters to OpenAPI format
    */
   private convertPathToOpenApi(path: string): string {
-    return path.replace(/:([^/]+)/g, '{$1}');
+    return path.replace(/:([^/]+)/g, "{$1}");
   }
 
   /**
@@ -338,11 +351,11 @@ The API supports webhooks for real-time notifications. Configure webhook endpoin
       tags: route.documentation.tags,
       parameters: this.generateParameters(route.documentation.parameters),
       responses: this.generateResponses(route.documentation.responses),
-      security: route.authentication.required ? [{ ApiKeyAuth: [] }] : []
+      security: route.authentication.required ? [{ ApiKeyAuth: [] }] : [],
     };
 
     // Add request body for POST/PUT/PATCH methods
-    if (['post', 'put', 'patch'].includes(route.method.toLowerCase())) {
+    if (["post", "put", "patch"].includes(route.method.toLowerCase())) {
       operation.requestBody = this.generateRequestBody(route);
     }
 
@@ -359,9 +372,9 @@ The API supports webhooks for real-time notifications. Configure webhook endpoin
    */
   private generateOperationId(route: ApiRoute): string {
     const method = route.method.toLowerCase();
-    const pathParts = route.path.split('/').filter(part => part && !part.startsWith(':'));
-    const resource = pathParts[pathParts.length - 1] || 'root';
-    
+    const pathParts = route.path.split("/").filter((part) => part && !part.startsWith(":"));
+    const resource = pathParts[pathParts.length - 1] || "root";
+
     return `${method}${this.capitalize(resource)}`;
   }
 
@@ -369,13 +382,13 @@ The API supports webhooks for real-time notifications. Configure webhook endpoin
    * Generate parameters
    */
   private generateParameters(parameters: ApiParameter[]): any[] {
-    return parameters.map(param => ({
+    return parameters.map((param) => ({
       name: param.name,
       in: param.in,
       description: param.description,
       required: param.required,
       schema: param.schema,
-      example: param.example
+      example: param.example,
     }));
   }
 
@@ -383,19 +396,19 @@ The API supports webhooks for real-time notifications. Configure webhook endpoin
    * Generate request body
    */
   private generateRequestBody(route: ApiRoute): any {
-    const requestBodyParam = route.documentation.parameters.find(p => p.in === 'body');
-    
+    const requestBodyParam = route.documentation.parameters.find((p) => p.in === "body");
+
     if (!requestBodyParam) {
       return {
         required: true,
         content: {
-          'application/json': {
+          "application/json": {
             schema: {
-              type: 'object',
-              description: 'Request body'
-            }
-          }
-        }
+              type: "object",
+              description: "Request body",
+            },
+          },
+        },
       };
     }
 
@@ -403,11 +416,11 @@ The API supports webhooks for real-time notifications. Configure webhook endpoin
       description: requestBodyParam.description,
       required: requestBodyParam.required,
       content: {
-        'application/json': {
+        "application/json": {
           schema: requestBodyParam.schema,
-          example: requestBodyParam.example
-        }
-      }
+          example: requestBodyParam.example,
+        },
+      },
     };
   }
 
@@ -420,47 +433,49 @@ The API supports webhooks for real-time notifications. Configure webhook endpoin
     for (const response of responses) {
       formattedResponses[response.statusCode.toString()] = {
         description: response.description,
-        content: response.schema ? {
-          'application/json': {
-            schema: response.schema,
-            example: response.example
-          }
-        } : undefined,
-        headers: response.headers
+        content: response.schema
+          ? {
+              "application/json": {
+                schema: response.schema,
+                example: response.example,
+              },
+            }
+          : undefined,
+        headers: response.headers,
       };
     }
 
     // Add default error responses if not present
-    if (!formattedResponses['400']) {
-      formattedResponses['400'] = {
-        description: 'Bad Request',
+    if (!formattedResponses["400"]) {
+      formattedResponses["400"] = {
+        description: "Bad Request",
         content: {
-          'application/json': {
-            schema: { $ref: '#/components/schemas/ErrorResponse' }
-          }
-        }
+          "application/json": {
+            schema: { $ref: "#/components/schemas/ErrorResponse" },
+          },
+        },
       };
     }
 
-    if (!formattedResponses['401']) {
-      formattedResponses['401'] = {
-        description: 'Unauthorized',
+    if (!formattedResponses["401"]) {
+      formattedResponses["401"] = {
+        description: "Unauthorized",
         content: {
-          'application/json': {
-            schema: { $ref: '#/components/schemas/ErrorResponse' }
-          }
-        }
+          "application/json": {
+            schema: { $ref: "#/components/schemas/ErrorResponse" },
+          },
+        },
       };
     }
 
-    if (!formattedResponses['500']) {
-      formattedResponses['500'] = {
-        description: 'Internal Server Error',
+    if (!formattedResponses["500"]) {
+      formattedResponses["500"] = {
+        description: "Internal Server Error",
         content: {
-          'application/json': {
-            schema: { $ref: '#/components/schemas/ErrorResponse' }
-          }
-        }
+          "application/json": {
+            schema: { $ref: "#/components/schemas/ErrorResponse" },
+          },
+        },
       };
     }
 
@@ -475,102 +490,102 @@ The API supports webhooks for real-time notifications. Configure webhook endpoin
       schemas: Object.fromEntries(this.customSchemas),
       securitySchemes: {
         ApiKeyAuth: {
-          type: 'apiKey',
-          in: 'header',
-          name: 'X-API-Key',
-          description: 'API key for authentication'
+          type: "apiKey",
+          in: "header",
+          name: "X-API-Key",
+          description: "API key for authentication",
         },
         BearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
-          description: 'JWT token for authentication'
-        }
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+          description: "JWT token for authentication",
+        },
       },
       parameters: {
         PageParam: {
-          name: 'page',
-          in: 'query',
-          description: 'Page number for pagination',
+          name: "page",
+          in: "query",
+          description: "Page number for pagination",
           required: false,
           schema: {
-            type: 'integer',
+            type: "integer",
             minimum: 1,
-            default: 1
-          }
+            default: 1,
+          },
         },
         LimitParam: {
-          name: 'limit',
-          in: 'query',
-          description: 'Number of items per page',
+          name: "limit",
+          in: "query",
+          description: "Number of items per page",
           required: false,
           schema: {
-            type: 'integer',
+            type: "integer",
             minimum: 1,
             maximum: 100,
-            default: 20
-          }
+            default: 20,
+          },
         },
         SortParam: {
-          name: 'sort',
-          in: 'query',
-          description: 'Sort field and direction (e.g., name:asc, createdAt:desc)',
+          name: "sort",
+          in: "query",
+          description: "Sort field and direction (e.g., name:asc, createdAt:desc)",
           required: false,
           schema: {
-            type: 'string',
-            pattern: '^[a-zA-Z_][a-zA-Z0-9_]*:(asc|desc)$'
-          }
-        }
+            type: "string",
+            pattern: "^[a-zA-Z_][a-zA-Z0-9_]*:(asc|desc)$",
+          },
+        },
       },
       responses: {
         NotFound: {
-          description: 'Resource not found',
+          description: "Resource not found",
           content: {
-            'application/json': {
-              schema: { $ref: '#/components/schemas/ErrorResponse' }
-            }
-          }
+            "application/json": {
+              schema: { $ref: "#/components/schemas/ErrorResponse" },
+            },
+          },
         },
         Unauthorized: {
-          description: 'Authentication required',
+          description: "Authentication required",
           content: {
-            'application/json': {
-              schema: { $ref: '#/components/schemas/ErrorResponse' }
-            }
-          }
+            "application/json": {
+              schema: { $ref: "#/components/schemas/ErrorResponse" },
+            },
+          },
         },
         Forbidden: {
-          description: 'Insufficient permissions',
+          description: "Insufficient permissions",
           content: {
-            'application/json': {
-              schema: { $ref: '#/components/schemas/ErrorResponse' }
-            }
-          }
+            "application/json": {
+              schema: { $ref: "#/components/schemas/ErrorResponse" },
+            },
+          },
         },
         RateLimitExceeded: {
-          description: 'Rate limit exceeded',
+          description: "Rate limit exceeded",
           content: {
-            'application/json': {
-              schema: { $ref: '#/components/schemas/ErrorResponse' }
-            }
+            "application/json": {
+              schema: { $ref: "#/components/schemas/ErrorResponse" },
+            },
           },
           headers: {
-            'X-RateLimit-Limit': {
-              description: 'Request limit per time window',
-              schema: { type: 'integer' }
+            "X-RateLimit-Limit": {
+              description: "Request limit per time window",
+              schema: { type: "integer" },
             },
-            'X-RateLimit-Remaining': {
-              description: 'Remaining requests in current window',
-              schema: { type: 'integer' }
+            "X-RateLimit-Remaining": {
+              description: "Remaining requests in current window",
+              schema: { type: "integer" },
             },
-            'X-RateLimit-Reset': {
-              description: 'Time when rate limit resets',
-              schema: { type: 'integer' }
-            }
-          }
-        }
+            "X-RateLimit-Reset": {
+              description: "Time when rate limit resets",
+              schema: { type: "integer" },
+            },
+          },
+        },
       },
-      examples: Object.fromEntries(this.customExamples)
+      examples: Object.fromEntries(this.customExamples),
     };
   }
 
@@ -591,7 +606,7 @@ The API supports webhooks for real-time notifications. Configure webhook endpoin
 
     return Array.from(tagMap.entries()).map(([name, description]) => ({
       name,
-      description
+      description,
     }));
   }
 
@@ -600,19 +615,19 @@ The API supports webhooks for real-time notifications. Configure webhook endpoin
    */
   private generateTagDescription(tag: string): string {
     const descriptions: Record<string, string> = {
-      'patients': 'Patient management operations',
-      'appointments': 'Appointment scheduling and management',
-      'doctors': 'Doctor profile and availability management',
-      'clinics': 'Clinic and location management',
-      'services': 'Medical service definitions',
-      'payments': 'Payment processing and billing',
-      'communications': 'Patient communication and notifications',
-      'integrations': 'Third-party integrations',
-      'analytics': 'Analytics and reporting',
-      'admin': 'Administrative operations',
-      'auth': 'Authentication and authorization',
-      'webhooks': 'Webhook management',
-      'health': 'System health and monitoring'
+      patients: "Patient management operations",
+      appointments: "Appointment scheduling and management",
+      doctors: "Doctor profile and availability management",
+      clinics: "Clinic and location management",
+      services: "Medical service definitions",
+      payments: "Payment processing and billing",
+      communications: "Patient communication and notifications",
+      integrations: "Third-party integrations",
+      analytics: "Analytics and reporting",
+      admin: "Administrative operations",
+      auth: "Authentication and authorization",
+      webhooks: "Webhook management",
+      health: "System health and monitoring",
     };
 
     return descriptions[tag.toLowerCase()] || `${this.capitalize(tag)} operations`;
@@ -622,9 +637,7 @@ The API supports webhooks for real-time notifications. Configure webhook endpoin
    * Generate security schemes
    */
   private generateSecurity(): any[] {
-    return [
-      { ApiKeyAuth: [] }
-    ];
+    return [{ ApiKeyAuth: [] }];
   }
 
   /**
@@ -637,7 +650,7 @@ The API supports webhooks for real-time notifications. Configure webhook endpoin
       formatted[example.name] = {
         summary: example.summary,
         description: example.description,
-        value: example.value
+        value: example.value,
       };
     }
 
@@ -712,26 +725,26 @@ export class DocumentationMiddleware {
    * Simple JSON to YAML converter
    */
   private jsonToYaml(obj: any, indent = 0): string {
-    const spaces = '  '.repeat(indent);
-    let yaml = '';
+    const spaces = "  ".repeat(indent);
+    let yaml = "";
 
     for (const [key, value] of Object.entries(obj)) {
       if (value === null || value === undefined) {
         yaml += `${spaces}${key}: null\n`;
-      } else if (typeof value === 'object' && !Array.isArray(value)) {
+      } else if (typeof value === "object" && !Array.isArray(value)) {
         yaml += `${spaces}${key}:\n`;
         yaml += this.jsonToYaml(value, indent + 1);
       } else if (Array.isArray(value)) {
         yaml += `${spaces}${key}:\n`;
         for (const item of value) {
-          if (typeof item === 'object') {
+          if (typeof item === "object") {
             yaml += `${spaces}  -\n`;
             yaml += this.jsonToYaml(item, indent + 2);
           } else {
             yaml += `${spaces}  - ${item}\n`;
           }
         }
-      } else if (typeof value === 'string') {
+      } else if (typeof value === "string") {
         yaml += `${spaces}${key}: "${value}"\n`;
       } else {
         yaml += `${spaces}${key}: ${value}\n`;
@@ -749,13 +762,13 @@ export class DocumentationMiddleware {
 export class DocumentationRouteBuilder {
   private route: Partial<ApiRoute> = {
     documentation: {
-      summary: '',
-      description: '',
+      summary: "",
+      description: "",
       tags: [],
       parameters: [],
       responses: [],
-      examples: []
-    }
+      examples: [],
+    },
   };
 
   /**
@@ -823,7 +836,7 @@ export class DocumentationRouteBuilder {
     this.route.authentication = {
       required,
       roles: roles || [],
-      permissions: permissions || []
+      permissions: permissions || [],
     };
     return this;
   }
@@ -834,7 +847,7 @@ export class DocumentationRouteBuilder {
   setRateLimit(maxRequests: number, windowMs: number): this {
     this.route.rateLimit = {
       maxRequests,
-      windowMs
+      windowMs,
     };
     return this;
   }
@@ -844,7 +857,7 @@ export class DocumentationRouteBuilder {
    */
   build(): ApiRoute {
     if (!this.route.id || !this.route.path || !this.route.method) {
-      throw new Error('Route id, path, and method are required');
+      throw new Error("Route id, path, and method are required");
     }
 
     return this.route as ApiRoute;

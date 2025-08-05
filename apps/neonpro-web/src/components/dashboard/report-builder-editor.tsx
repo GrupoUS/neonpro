@@ -133,9 +133,7 @@ export function ReportBuilderEditor({ reportId }: ReportBuilderEditorProps) {
   const [reportDescription, setReportDescription] = useState("");
   const [selectedDataSource, setSelectedDataSource] = useState("");
   const [components, setComponents] = useState<ReportComponent[]>([]);
-  const [selectedComponent, setSelectedComponent] = useState<string | null>(
-    null
-  );
+  const [selectedComponent, setSelectedComponent] = useState<string | null>(null);
   const [canvasSize, setCanvasSize] = useState({ width: 1200, height: 800 });
   const [showPreview, setShowPreview] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -145,9 +143,7 @@ export function ReportBuilderEditor({ reportId }: ReportBuilderEditorProps) {
     if (reportId && reportId !== "new") {
       // Load existing report data
       setReportName("Relatório de Receita Mensal");
-      setReportDescription(
-        "Análise detalhada da receita por mês e procedimento"
-      );
+      setReportDescription("Análise detalhada da receita por mês e procedimento");
       setSelectedDataSource("financial");
 
       // Mock components
@@ -203,7 +199,7 @@ export function ReportBuilderEditor({ reportId }: ReportBuilderEditorProps) {
       setComponents((prev) => [...prev, newComponent]);
       setSelectedComponent(newComponent.id);
     },
-    [selectedDataSource]
+    [selectedDataSource],
   );
 
   const handleComponentSelect = useCallback((id: string) => {
@@ -217,17 +213,12 @@ export function ReportBuilderEditor({ reportId }: ReportBuilderEditorProps) {
         setSelectedComponent(null);
       }
     },
-    [selectedComponent]
+    [selectedComponent],
   );
 
-  const handleComponentUpdate = useCallback(
-    (id: string, updates: Partial<ReportComponent>) => {
-      setComponents((prev) =>
-        prev.map((comp) => (comp.id === id ? { ...comp, ...updates } : comp))
-      );
-    },
-    []
-  );
+  const handleComponentUpdate = useCallback((id: string, updates: Partial<ReportComponent>) => {
+    setComponents((prev) => prev.map((comp) => (comp.id === id ? { ...comp, ...updates } : comp)));
+  }, []);
 
   const handleSave = useCallback(async () => {
     // Implement save logic
@@ -266,11 +257,7 @@ export function ReportBuilderEditor({ reportId }: ReportBuilderEditorProps) {
           </div>
 
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowPreview(!showPreview)}
-            >
+            <Button variant="outline" size="sm" onClick={() => setShowPreview(!showPreview)}>
               <Eye className="w-4 h-4 mr-2" />
               {showPreview ? "Editor" : "Preview"}
             </Button>
@@ -329,9 +316,7 @@ export function ReportBuilderEditor({ reportId }: ReportBuilderEditorProps) {
 
                 <TabsContent value="components" className="space-y-4">
                   <div>
-                    <h3 className="text-sm font-medium mb-3">
-                      Biblioteca de Componentes
-                    </h3>
+                    <h3 className="text-sm font-medium mb-3">Biblioteca de Componentes</h3>
                     <div className="space-y-2">
                       {componentLibrary.map((component) => {
                         const IconComponent = component.icon;
@@ -345,9 +330,7 @@ export function ReportBuilderEditor({ reportId }: ReportBuilderEditorProps) {
                               <div className="flex items-center gap-2">
                                 <IconComponent className="w-4 h-4 text-primary" />
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium">
-                                    {component.name}
-                                  </p>
+                                  <p className="text-sm font-medium">{component.name}</p>
                                   <p className="text-xs text-muted-foreground truncate">
                                     {component.description}
                                   </p>
@@ -367,10 +350,7 @@ export function ReportBuilderEditor({ reportId }: ReportBuilderEditorProps) {
                                         className="h-6 px-2"
                                         onClick={(e) => {
                                           e.stopPropagation();
-                                          handleAddComponent(
-                                            component.type,
-                                            variant.id
-                                          );
+                                          handleAddComponent(component.type, variant.id);
                                         }}
                                       >
                                         <VariantIcon className="w-3 h-3" />
@@ -389,9 +369,7 @@ export function ReportBuilderEditor({ reportId }: ReportBuilderEditorProps) {
 
                 <TabsContent value="data" className="space-y-4">
                   <div>
-                    <h3 className="text-sm font-medium mb-3">
-                      Fontes de Dados
-                    </h3>
+                    <h3 className="text-sm font-medium mb-3">Fontes de Dados</h3>
                     <div className="space-y-2">
                       {dataSources.map((source) => {
                         const IconComponent = source.icon;
@@ -409,9 +387,7 @@ export function ReportBuilderEditor({ reportId }: ReportBuilderEditorProps) {
                               <div className="flex items-center gap-2">
                                 <IconComponent className="w-4 h-4 text-primary" />
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium">
-                                    {source.name}
-                                  </p>
+                                  <p className="text-sm font-medium">{source.name}</p>
                                   <p className="text-xs text-muted-foreground">
                                     {source.description}
                                   </p>
@@ -420,11 +396,7 @@ export function ReportBuilderEditor({ reportId }: ReportBuilderEditorProps) {
 
                               <div className="mt-2 flex flex-wrap gap-1">
                                 {source.tables.map((table) => (
-                                  <Badge
-                                    key={table}
-                                    variant="secondary"
-                                    className="text-xs"
-                                  >
+                                  <Badge key={table} variant="secondary" className="text-xs">
                                     {table}
                                   </Badge>
                                 ))}
@@ -443,16 +415,12 @@ export function ReportBuilderEditor({ reportId }: ReportBuilderEditorProps) {
 
         {/* Main Canvas */}
         <div className="flex-1 bg-background overflow-auto">
-          <div
-            className="relative"
-            style={{ width: canvasSize.width, height: canvasSize.height }}
-          >
+          <div className="relative" style={{ width: canvasSize.width, height: canvasSize.height }}>
             {/* Grid Background */}
             <div
               className="absolute inset-0 opacity-30"
               style={{
-                backgroundImage:
-                  "radial-gradient(circle, #e5e7eb 1px, transparent 1px)",
+                backgroundImage: "radial-gradient(circle, #e5e7eb 1px, transparent 1px)",
                 backgroundSize: "20px 20px",
               }}
             />
@@ -494,24 +462,12 @@ export function ReportBuilderEditor({ reportId }: ReportBuilderEditorProps) {
 
                   <div className="flex-1 bg-muted/30 rounded flex items-center justify-center">
                     <div className="text-center text-muted-foreground">
-                      {component.type === "chart" && (
-                        <BarChart3 className="w-8 h-8 mx-auto mb-2" />
-                      )}
-                      {component.type === "table" && (
-                        <Table className="w-8 h-8 mx-auto mb-2" />
-                      )}
-                      {component.type === "kpi" && (
-                        <Grid3X3 className="w-8 h-8 mx-auto mb-2" />
-                      )}
-                      {component.type === "filter" && (
-                        <Filter className="w-8 h-8 mx-auto mb-2" />
-                      )}
-                      {component.type === "text" && (
-                        <Type className="w-8 h-8 mx-auto mb-2" />
-                      )}
-                      {component.type === "image" && (
-                        <Image className="w-8 h-8 mx-auto mb-2" />
-                      )}
+                      {component.type === "chart" && <BarChart3 className="w-8 h-8 mx-auto mb-2" />}
+                      {component.type === "table" && <Table className="w-8 h-8 mx-auto mb-2" />}
+                      {component.type === "kpi" && <Grid3X3 className="w-8 h-8 mx-auto mb-2" />}
+                      {component.type === "filter" && <Filter className="w-8 h-8 mx-auto mb-2" />}
+                      {component.type === "text" && <Type className="w-8 h-8 mx-auto mb-2" />}
+                      {component.type === "image" && <Image className="w-8 h-8 mx-auto mb-2" />}
                       <p className="text-xs capitalize">{component.type}</p>
                     </div>
                   </div>
@@ -524,16 +480,9 @@ export function ReportBuilderEditor({ reportId }: ReportBuilderEditorProps) {
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center text-muted-foreground">
                   <BarChart3 className="w-12 h-12 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium mb-2">
-                    Comece criando seu relatório
-                  </h3>
-                  <p className="text-sm mb-4">
-                    Arraste componentes da barra lateral para começar
-                  </p>
-                  <Button
-                    variant="outline"
-                    onClick={() => handleAddComponent("chart")}
-                  >
+                  <h3 className="text-lg font-medium mb-2">Comece criando seu relatório</h3>
+                  <p className="text-sm mb-4">Arraste componentes da barra lateral para começar</p>
+                  <Button variant="outline" onClick={() => handleAddComponent("chart")}>
                     <Plus className="w-4 h-4 mr-2" />
                     Adicionar Primeiro Componente
                   </Button>
@@ -548,9 +497,7 @@ export function ReportBuilderEditor({ reportId }: ReportBuilderEditorProps) {
           <div className="w-80 border-l bg-muted/30 p-4">
             <div className="space-y-4">
               <div>
-                <h3 className="text-sm font-medium mb-3">
-                  Propriedades do Componente
-                </h3>
+                <h3 className="text-sm font-medium mb-3">Propriedades do Componente</h3>
 
                 <div className="space-y-3">
                   <div>
@@ -671,19 +618,11 @@ export function ReportBuilderEditor({ reportId }: ReportBuilderEditorProps) {
               <div>
                 <h4 className="text-sm font-medium mb-3">Ações</h4>
                 <div className="space-y-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full justify-start"
-                  >
+                  <Button variant="outline" size="sm" className="w-full justify-start">
                     <Copy className="w-4 h-4 mr-2" />
                     Duplicar
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full justify-start"
-                  >
+                  <Button variant="outline" size="sm" className="w-full justify-start">
                     <Move className="w-4 h-4 mr-2" />
                     Mover para Frente
                   </Button>
@@ -691,9 +630,7 @@ export function ReportBuilderEditor({ reportId }: ReportBuilderEditorProps) {
                     variant="destructive"
                     size="sm"
                     className="w-full justify-start"
-                    onClick={() =>
-                      handleComponentDelete(selectedComponentData.id)
-                    }
+                    onClick={() => handleComponentDelete(selectedComponentData.id)}
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
                     Remover

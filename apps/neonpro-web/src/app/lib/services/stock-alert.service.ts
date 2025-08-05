@@ -7,12 +7,12 @@ export class StockAlertService {
   static async createAlert(itemId: string, alertType: string, threshold: number) {
     // Implementar criação de alerta de estoque
     return {
-      id: 'alert-id',
+      id: "alert-id",
       itemId,
       alertType,
       threshold,
-      status: 'active',
-      createdAt: new Date()
+      status: "active",
+      createdAt: new Date(),
     };
   }
 
@@ -23,7 +23,7 @@ export class StockAlertService {
       alerts: [],
       lowStockItems: [],
       outOfStockItems: [],
-      checkedAt: new Date()
+      checkedAt: new Date(),
     };
   }
 
@@ -33,7 +33,7 @@ export class StockAlertService {
       alertId,
       acknowledgedBy: userId,
       acknowledgedAt: new Date(),
-      status: 'acknowledged'
+      status: "acknowledged",
     };
   }
 }

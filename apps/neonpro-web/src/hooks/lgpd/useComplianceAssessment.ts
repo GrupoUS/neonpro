@@ -1,9 +1,13 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { LGPDComplianceManager } from '@/lib/lgpd/LGPDComplianceManager';
-import { ComplianceAssessment, ComplianceAssessmentFilters, PaginatedResponse } from '@/types/lgpd';
-import { useToast } from '@/hooks/use-toast';
+import type { useState, useEffect, useCallback } from "react";
+import type { LGPDComplianceManager } from "@/lib/lgpd/LGPDComplianceManager";
+import type {
+  ComplianceAssessment,
+  ComplianceAssessmentFilters,
+  PaginatedResponse,
+} from "@/types/lgpd";
+import type { useToast } from "@/hooks/use-toast";
 
 interface UseComplianceAssessmentReturn {
   // Data
@@ -17,25 +21,27 @@ interface UseComplianceAssessmentReturn {
     averageScore: number;
   };
   latestAssessment: ComplianceAssessment | null;
-  
+
   // Loading states
   isLoading: boolean;
   isCreating: boolean;
   isRunning: boolean;
-  
+
   // Filters
   filters: ComplianceAssessmentFilters;
   setFilters: (filters: ComplianceAssessmentFilters) => void;
-  
+
   // Actions
   loadAssessments: () => Promise<void>;
-  createAssessment: (assessment: Omit<ComplianceAssessment, 'id' | 'created_at' | 'updated_at'>) => Promise<void>;
+  createAssessment: (
+    assessment: Omit<ComplianceAssessment, "id" | "created_at" | "updated_at">,
+  ) => Promise<void>;
   runAutomatedAssessment: () => Promise<void>;
   exportAssessments: () => Promise<void>;
-  
+
   // Pagination
   goToPage: (page: number) => void;
-  
+
   // Error handling
   error: string | null;
 }
@@ -48,150 +54,157 @@ export function useComplianceAssessment(): UseComplianceAssessmentReturn {
     total: 0,
     completed: 0,
     pending: 0,
-    averageScore: 0
+    averageScore: 0,
   });
   const [latestAssessment, setLatestAssessment] = useState<ComplianceAssessment | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [filters, setFilters] = useState<ComplianceAssessmentFilters>({
     limit: 20,
     offset: 0,
-    sortBy: 'created_at',
-    sortOrder: 'desc'
+    sortBy: "created_at",
+    sortOrder: "desc",
   });
-  
+
   const { toast } = useToast();
   const complianceManager = new LGPDComplianceManager();
 
   const loadAssessments = useCallback(async () => {
     try {
       setError(null);
-      const response: PaginatedResponse<ComplianceAssessment> = await complianceManager.getComplianceAssessments({
-        ...filters,
-        offset: (currentPage - 1) * (filters.limit || 20)
-      });
-      
+      const response: PaginatedResponse<ComplianceAssessment> =
+        await complianceManager.getComplianceAssessments({
+          ...filters,
+          offset: (currentPage - 1) * (filters.limit || 20),
+        });
+
       setAssessments(response.data);
       setTotalCount(response.total);
-      
+
       // Calculate statistics
-      const completed = response.data.filter(a => a.status === 'completed');
-      const pending = response.data.filter(a => a.status === 'pending');
-      const averageScore = completed.length > 0 
-        ? completed.reduce((sum, a) => sum + (a.score || 0), 0) / completed.length
-        : 0;
-      
+      const completed = response.data.filter((a) => a.status === "completed");
+      const pending = response.data.filter((a) => a.status === "pending");
+      const averageScore =
+        completed.length > 0
+          ? completed.reduce((sum, a) => sum + (a.score || 0), 0) / completed.length
+          : 0;
+
       setStatistics({
         total: response.total,
         completed: completed.length,
         pending: pending.length,
-        averageScore: Math.round(averageScore * 100) / 100
+        averageScore: Math.round(averageScore * 100) / 100,
       });
-      
+
       // Set latest assessment
       if (response.data.length > 0) {
         setLatestAssessment(response.data[0]);
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao carregar avaliações';
+      const errorMessage = err instanceof Error ? err.message : "Erro ao carregar avaliações";
       setError(errorMessage);
       toast({
-        title: 'Erro',
+        title: "Erro",
         description: errorMessage,
-        variant: 'destructive'
+        variant: "destructive",
       });
     }
   }, [filters, currentPage, complianceManager, toast]);
 
-  const createAssessment = useCallback(async (assessment: Omit<ComplianceAssessment, 'id' | 'created_at' | 'updated_at'>) => {
-    setIsCreating(true);
-    try {
-      setError(null);
-      
-      const newAssessment = await complianceManager.createComplianceAssessment(assessment);
-      
-      // Update local state
-      setAssessments(prev => [newAssessment, ...prev]);
-      setTotalCount(prev => prev + 1);
-      
-      // Update statistics
-      setStatistics(prev => ({
-        ...prev,
-        total: prev.total + 1,
-        pending: prev.pending + 1
-      }));
-      
-      toast({
-        title: 'Avaliação criada',
-        description: `Avaliação "${assessment.title}" foi criada com sucesso.`
-      });
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao criar avaliação';
-      setError(errorMessage);
-      toast({
-        title: 'Erro',
-        description: errorMessage,
-        variant: 'destructive'
-      });
-    } finally {
-      setIsCreating(false);
-    }
-  }, [complianceManager, toast]);
+  const createAssessment = useCallback(
+    async (assessment: Omit<ComplianceAssessment, "id" | "created_at" | "updated_at">) => {
+      setIsCreating(true);
+      try {
+        setError(null);
+
+        const newAssessment = await complianceManager.createComplianceAssessment(assessment);
+
+        // Update local state
+        setAssessments((prev) => [newAssessment, ...prev]);
+        setTotalCount((prev) => prev + 1);
+
+        // Update statistics
+        setStatistics((prev) => ({
+          ...prev,
+          total: prev.total + 1,
+          pending: prev.pending + 1,
+        }));
+
+        toast({
+          title: "Avaliação criada",
+          description: `Avaliação "${assessment.title}" foi criada com sucesso.`,
+        });
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Erro ao criar avaliação";
+        setError(errorMessage);
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      } finally {
+        setIsCreating(false);
+      }
+    },
+    [complianceManager, toast],
+  );
 
   const runAutomatedAssessment = useCallback(async () => {
     setIsRunning(true);
     try {
       setError(null);
-      
+
       // Create automated assessment
-      const automatedAssessment: Omit<ComplianceAssessment, 'id' | 'created_at' | 'updated_at'> = {
-        title: `Avaliação Automatizada - ${new Date().toLocaleDateString('pt-BR')}`,
-        description: 'Avaliação automatizada de conformidade LGPD',
-        assessment_type: 'automated',
-        status: 'pending',
+      const automatedAssessment: Omit<ComplianceAssessment, "id" | "created_at" | "updated_at"> = {
+        title: `Avaliação Automatizada - ${new Date().toLocaleDateString("pt-BR")}`,
+        description: "Avaliação automatizada de conformidade LGPD",
+        assessment_type: "automated",
+        status: "pending",
         score: null,
         findings: [],
         recommendations: [],
-        assessor_id: 'system'
+        assessor_id: "system",
       };
-      
+
       const newAssessment = await complianceManager.createComplianceAssessment(automatedAssessment);
-      
+
       // Run automated assessment
       const result = await complianceManager.runAutomatedAssessment(newAssessment.id);
-      
+
       // Update local state with results
-      setAssessments(prev => prev.map(assessment => 
-        assessment.id === newAssessment.id ? result : assessment
-      ));
-      
+      setAssessments((prev) =>
+        prev.map((assessment) => (assessment.id === newAssessment.id ? result : assessment)),
+      );
+
       // Update statistics
-      setStatistics(prev => ({
+      setStatistics((prev) => ({
         ...prev,
         completed: prev.completed + 1,
         pending: Math.max(0, prev.pending - 1),
-        averageScore: prev.completed > 0 
-          ? ((prev.averageScore * (prev.completed - 1)) + (result.score || 0)) / prev.completed
-          : result.score || 0
+        averageScore:
+          prev.completed > 0
+            ? (prev.averageScore * (prev.completed - 1) + (result.score || 0)) / prev.completed
+            : result.score || 0,
       }));
-      
+
       // Update latest assessment
       setLatestAssessment(result);
-      
+
       toast({
-        title: 'Avaliação concluída',
-        description: `Avaliação automatizada concluída com pontuação: ${result.score}/100`
+        title: "Avaliação concluída",
+        description: `Avaliação automatizada concluída com pontuação: ${result.score}/100`,
       });
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao executar avaliação automatizada';
+      const errorMessage =
+        err instanceof Error ? err.message : "Erro ao executar avaliação automatizada";
       setError(errorMessage);
       toast({
-        title: 'Erro',
+        title: "Erro",
         description: errorMessage,
-        variant: 'destructive'
+        variant: "destructive",
       });
     } finally {
       setIsRunning(false);
@@ -201,58 +214,61 @@ export function useComplianceAssessment(): UseComplianceAssessmentReturn {
   const exportAssessments = useCallback(async () => {
     try {
       setError(null);
-      
+
       // Create CSV content
       const csvHeaders = [
-        'ID',
-        'Título',
-        'Tipo',
-        'Status',
-        'Pontuação',
-        'Avaliador',
-        'Data de Criação',
-        'Data de Atualização',
-        'Descrição'
+        "ID",
+        "Título",
+        "Tipo",
+        "Status",
+        "Pontuação",
+        "Avaliador",
+        "Data de Criação",
+        "Data de Atualização",
+        "Descrição",
       ];
-      
-      const csvRows = assessments.map(assessment => [
+
+      const csvRows = assessments.map((assessment) => [
         assessment.id,
         assessment.title,
         assessment.assessment_type,
         assessment.status,
-        assessment.score?.toString() || '',
-        assessment.assessor_id || '',
+        assessment.score?.toString() || "",
+        assessment.assessor_id || "",
         assessment.created_at,
         assessment.updated_at,
-        assessment.description || ''
+        assessment.description || "",
       ]);
-      
+
       const csvContent = [csvHeaders, ...csvRows]
-        .map(row => row.map(cell => `"${cell}"`).join(','))
-        .join('\n');
-      
+        .map((row) => row.map((cell) => `"${cell}"`).join(","))
+        .join("\n");
+
       // Create and download file
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
       const url = URL.createObjectURL(blob);
-      link.setAttribute('href', url);
-      link.setAttribute('download', `lgpd-assessments-${new Date().toISOString().split('T')[0]}.csv`);
-      link.style.visibility = 'hidden';
+      link.setAttribute("href", url);
+      link.setAttribute(
+        "download",
+        `lgpd-assessments-${new Date().toISOString().split("T")[0]}.csv`,
+      );
+      link.style.visibility = "hidden";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
+
       toast({
-        title: 'Exportação concluída',
-        description: 'Avaliações exportadas com sucesso.'
+        title: "Exportação concluída",
+        description: "Avaliações exportadas com sucesso.",
       });
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao exportar avaliações';
+      const errorMessage = err instanceof Error ? err.message : "Erro ao exportar avaliações";
       setError(errorMessage);
       toast({
-        title: 'Erro na exportação',
+        title: "Erro na exportação",
         description: errorMessage,
-        variant: 'destructive'
+        variant: "destructive",
       });
     }
   }, [assessments, toast]);
@@ -268,7 +284,7 @@ export function useComplianceAssessment(): UseComplianceAssessmentReturn {
       await loadAssessments();
       setIsLoading(false);
     };
-    
+
     loadData();
   }, [loadAssessments]);
 
@@ -279,26 +295,26 @@ export function useComplianceAssessment(): UseComplianceAssessmentReturn {
     currentPage,
     statistics,
     latestAssessment,
-    
+
     // Loading states
     isLoading,
     isCreating,
     isRunning,
-    
+
     // Filters
     filters,
     setFilters,
-    
+
     // Actions
     loadAssessments,
     createAssessment,
     runAutomatedAssessment,
     exportAssessments,
-    
+
     // Pagination
     goToPage,
-    
+
     // Error handling
-    error
+    error,
   };
 }

@@ -1,32 +1,38 @@
 /**
  * LGPD Compliance Dashboard Component
  * Dashboard para monitoramento de compliance LGPD
- * 
+ *
  * @author APEX Master Developer
  * @version 1.0.0
  * @compliance LGPD Art. 37, 38, 39 (Relatórios e Monitoramento)
  */
 
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
-import { 
-  Shield, 
-  AlertTriangle, 
-  CheckCircle, 
-  XCircle, 
-  Eye, 
-  Download, 
-  Users, 
-  FileText, 
-  Clock, 
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Progress } from "@/components/ui/progress";
+import type { Separator } from "@/components/ui/separator";
+import type {
+  Shield,
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  Eye,
+  Download,
+  Users,
+  FileText,
+  Clock,
   TrendingUp,
   BarChart3,
   Activity,
@@ -35,12 +41,12 @@ import {
   Database,
   Calendar,
   Filter,
-  RefreshCw
-} from 'lucide-react';
-import { format, subDays, startOfDay, endOfDay } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { useLGPD } from '@/lib/compliance/useLGPD';
-import { AuditEventType, AuditSeverity, AuditStatus } from '@/lib/compliance/audit-trail';
+  RefreshCw,
+} from "lucide-react";
+import type { format, subDays, startOfDay, endOfDay } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { useLGPD } from "@/lib/compliance/useLGPD";
+import type { AuditEventType, AuditSeverity, AuditStatus } from "@/lib/compliance/audit-trail";
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -61,12 +67,12 @@ interface EventSummary {
   type: AuditEventType;
   count: number;
   severity: AuditSeverity;
-  trend: 'up' | 'down' | 'stable';
+  trend: "up" | "down" | "stable";
 }
 
 interface ComplianceAlert {
   id: string;
-  type: 'critical' | 'warning' | 'info';
+  type: "critical" | "warning" | "info";
   title: string;
   description: string;
   timestamp: Date;
@@ -82,20 +88,14 @@ export default function ComplianceDashboard() {
   // STATE MANAGEMENT
   // ============================================================================
 
-  const [selectedPeriod, setSelectedPeriod] = useState<'7d' | '30d' | '90d'>('30d');
+  const [selectedPeriod, setSelectedPeriod] = useState<"7d" | "30d" | "90d">("30d");
   const [isLoading, setIsLoading] = useState(true);
   const [metrics, setMetrics] = useState<ComplianceMetrics | null>(null);
   const [events, setEvents] = useState<EventSummary[]>([]);
   const [alerts, setAlerts] = useState<ComplianceAlert[]>([]);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
-  const { 
-    auditEvents, 
-    complianceReport, 
-    isLoading: lgpdLoading,
-    error,
-    refreshData 
-  } = useLGPD();
+  const { auditEvents, complianceReport, isLoading: lgpdLoading, error, refreshData } = useLGPD();
 
   // ============================================================================
   // EFFECTS
@@ -121,7 +121,7 @@ export default function ComplianceDashboard() {
       await refreshData();
       setLastUpdated(new Date());
     } catch (error) {
-      console.error('Failed to load dashboard data:', error);
+      console.error("Failed to load dashboard data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -132,14 +132,14 @@ export default function ComplianceDashboard() {
 
     // Calculate metrics
     const totalEvents = auditEvents.length;
-    const dataAccesses = auditEvents.filter(e => 
-      [AuditEventType.DATA_ACCESS, AuditEventType.DATA_VIEW].includes(e.eventType)
+    const dataAccesses = auditEvents.filter((e) =>
+      [AuditEventType.DATA_ACCESS, AuditEventType.DATA_VIEW].includes(e.eventType),
     ).length;
-    const consentChanges = auditEvents.filter(e => 
-      [AuditEventType.CONSENT_GRANTED, AuditEventType.CONSENT_WITHDRAWN].includes(e.eventType)
+    const consentChanges = auditEvents.filter((e) =>
+      [AuditEventType.CONSENT_GRANTED, AuditEventType.CONSENT_WITHDRAWN].includes(e.eventType),
     ).length;
-    const securityEvents = auditEvents.filter(e => 
-      [AuditEventType.UNAUTHORIZED_ACCESS, AuditEventType.DATA_BREACH].includes(e.eventType)
+    const securityEvents = auditEvents.filter((e) =>
+      [AuditEventType.UNAUTHORIZED_ACCESS, AuditEventType.DATA_BREACH].includes(e.eventType),
     ).length;
 
     // Calculate compliance score
@@ -154,7 +154,7 @@ export default function ComplianceDashboard() {
       complianceScore,
       criticalIssues,
       pendingRequests: 0, // Would come from API
-      activeConsents: 0   // Would come from API
+      activeConsents: 0, // Would come from API
     });
 
     // Process event summaries
@@ -170,9 +170,9 @@ export default function ComplianceDashboard() {
     if (events.length === 0) return 100;
 
     const totalEvents = events.length;
-    const failedEvents = events.filter(e => e.status === AuditStatus.FAILURE).length;
-    const securityEvents = events.filter(e => 
-      [AuditEventType.UNAUTHORIZED_ACCESS, AuditEventType.DATA_BREACH].includes(e.eventType)
+    const failedEvents = events.filter((e) => e.status === AuditStatus.FAILURE).length;
+    const securityEvents = events.filter((e) =>
+      [AuditEventType.UNAUTHORIZED_ACCESS, AuditEventType.DATA_BREACH].includes(e.eventType),
     ).length;
 
     // Calculate score based on success rate and security events
@@ -183,16 +183,19 @@ export default function ComplianceDashboard() {
   };
 
   const processEventSummaries = (events: any[]): EventSummary[] => {
-    const eventCounts = events.reduce((acc, event) => {
-      acc[event.eventType] = (acc[event.eventType] || 0) + 1;
-      return acc;
-    }, {} as Record<AuditEventType, number>);
+    const eventCounts = events.reduce(
+      (acc, event) => {
+        acc[event.eventType] = (acc[event.eventType] || 0) + 1;
+        return acc;
+      },
+      {} as Record<AuditEventType, number>,
+    );
 
     return Object.entries(eventCounts).map(([type, count]) => ({
       type: type as AuditEventType,
       count,
       severity: getSeverityForEventType(type as AuditEventType),
-      trend: 'stable' as const // Would calculate based on historical data
+      trend: "stable" as const, // Would calculate based on historical data
     }));
   };
 
@@ -200,30 +203,28 @@ export default function ComplianceDashboard() {
     const alerts: ComplianceAlert[] = [];
 
     // Critical security events
-    const criticalEvents = events.filter(e => 
-      e.severity === AuditSeverity.CRITICAL
-    );
+    const criticalEvents = events.filter((e) => e.severity === AuditSeverity.CRITICAL);
 
     if (criticalEvents.length > 0) {
       alerts.push({
-        id: 'critical-events',
-        type: 'critical',
-        title: 'Eventos Críticos Detectados',
+        id: "critical-events",
+        type: "critical",
+        title: "Eventos Críticos Detectados",
         description: `${criticalEvents.length} eventos críticos foram registrados`,
         timestamp: new Date(),
-        resolved: false
+        resolved: false,
       });
     }
 
     // Compliance issues
     if (report.compliance.issues.length > 0) {
       alerts.push({
-        id: 'compliance-issues',
-        type: 'warning',
-        title: 'Problemas de Compliance',
+        id: "compliance-issues",
+        type: "warning",
+        title: "Problemas de Compliance",
         description: `${report.compliance.issues.length} problemas de compliance identificados`,
         timestamp: new Date(),
-        resolved: false
+        resolved: false,
       });
     }
 
@@ -247,10 +248,9 @@ export default function ComplianceDashboard() {
 
   const getPeriodDates = () => {
     const end = endOfDay(new Date());
-    const start = startOfDay(subDays(end, 
-      selectedPeriod === '7d' ? 7 : 
-      selectedPeriod === '30d' ? 30 : 90
-    ));
+    const start = startOfDay(
+      subDays(end, selectedPeriod === "7d" ? 7 : selectedPeriod === "30d" ? 30 : 90),
+    );
     return { start, end };
   };
 
@@ -262,8 +262,8 @@ export default function ComplianceDashboard() {
     title: string,
     value: number | string,
     icon: React.ReactNode,
-    trend?: 'up' | 'down' | 'stable',
-    color?: 'default' | 'success' | 'warning' | 'destructive'
+    trend?: "up" | "down" | "stable",
+    color?: "default" | "success" | "warning" | "destructive",
   ) => (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -275,7 +275,10 @@ export default function ComplianceDashboard() {
         {trend && (
           <div className="flex items-center text-xs text-muted-foreground">
             <TrendingUp className="mr-1 h-3 w-3" />
-            <span>Tendência: {trend === 'up' ? 'Crescente' : trend === 'down' ? 'Decrescente' : 'Estável'}</span>
+            <span>
+              Tendência:{" "}
+              {trend === "up" ? "Crescente" : trend === "down" ? "Decrescente" : "Estável"}
+            </span>
           </div>
         )}
       </CardContent>
@@ -284,8 +287,8 @@ export default function ComplianceDashboard() {
 
   const renderComplianceScore = () => {
     const score = metrics?.complianceScore || 0;
-    const color = score >= 90 ? 'text-green-600' : score >= 70 ? 'text-yellow-600' : 'text-red-600';
-    const bgColor = score >= 90 ? 'bg-green-100' : score >= 70 ? 'bg-yellow-100' : 'bg-red-100';
+    const color = score >= 90 ? "text-green-600" : score >= 70 ? "text-yellow-600" : "text-red-600";
+    const bgColor = score >= 90 ? "bg-green-100" : score >= 70 ? "bg-yellow-100" : "bg-red-100";
 
     return (
       <Card>
@@ -298,13 +301,21 @@ export default function ComplianceDashboard() {
         <CardContent>
           <div className={`text-4xl font-bold ${color} mb-2`}>{score}%</div>
           <Progress value={score} className="mb-4" />
-          <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${bgColor} ${color}`}>
+          <div
+            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${bgColor} ${color}`}
+          >
             {score >= 90 ? (
-              <><CheckCircle className="mr-1 h-3 w-3" /> Excelente</>
+              <>
+                <CheckCircle className="mr-1 h-3 w-3" /> Excelente
+              </>
             ) : score >= 70 ? (
-              <><AlertTriangle className="mr-1 h-3 w-3" /> Atenção</>
+              <>
+                <AlertTriangle className="mr-1 h-3 w-3" /> Atenção
+              </>
             ) : (
-              <><XCircle className="mr-1 h-3 w-3" /> Crítico</>
+              <>
+                <XCircle className="mr-1 h-3 w-3" /> Crítico
+              </>
             )}
           </div>
         </CardContent>
@@ -329,13 +340,13 @@ export default function ComplianceDashboard() {
         ) : (
           <div className="space-y-3">
             {alerts.map((alert) => (
-              <Alert key={alert.id} variant={alert.type === 'critical' ? 'destructive' : 'default'}>
+              <Alert key={alert.id} variant={alert.type === "critical" ? "destructive" : "default"}>
                 <AlertTriangle className="h-4 w-4" />
                 <AlertTitle>{alert.title}</AlertTitle>
                 <AlertDescription>
                   {alert.description}
                   <div className="text-xs text-muted-foreground mt-1">
-                    {format(alert.timestamp, 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+                    {format(alert.timestamp, "dd/MM/yyyy HH:mm", { locale: ptBR })}
                   </div>
                 </AlertDescription>
               </Alert>
@@ -359,8 +370,10 @@ export default function ComplianceDashboard() {
           {events.slice(0, 5).map((event) => (
             <div key={event.type} className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Badge variant={event.severity === AuditSeverity.CRITICAL ? 'destructive' : 'secondary'}>
-                  {event.type.replace('_', ' ')}
+                <Badge
+                  variant={event.severity === AuditSeverity.CRITICAL ? "destructive" : "secondary"}
+                >
+                  {event.type.replace("_", " ")}
                 </Badge>
               </div>
               <div className="text-sm font-medium">{event.count}</div>
@@ -400,14 +413,12 @@ export default function ComplianceDashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Dashboard LGPD</h1>
-          <p className="text-muted-foreground">
-            Monitoramento de compliance e auditoria
-          </p>
+          <p className="text-muted-foreground">Monitoramento de compliance e auditoria</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Clock className="h-4 w-4" />
-            Atualizado: {format(lastUpdated, 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+            Atualizado: {format(lastUpdated, "dd/MM/yyyy HH:mm", { locale: ptBR })}
           </div>
           <Button variant="outline" size="sm" onClick={loadDashboardData}>
             <RefreshCw className="h-4 w-4 mr-2" />
@@ -421,14 +432,14 @@ export default function ComplianceDashboard() {
         <Filter className="h-4 w-4" />
         <span className="text-sm font-medium">Período:</span>
         <div className="flex gap-1">
-          {(['7d', '30d', '90d'] as const).map((period) => (
+          {(["7d", "30d", "90d"] as const).map((period) => (
             <Button
               key={period}
-              variant={selectedPeriod === period ? 'default' : 'outline'}
+              variant={selectedPeriod === period ? "default" : "outline"}
               size="sm"
               onClick={() => setSelectedPeriod(period)}
             >
-              {period === '7d' ? '7 dias' : period === '30d' ? '30 dias' : '90 dias'}
+              {period === "7d" ? "7 dias" : period === "30d" ? "30 dias" : "90 dias"}
             </Button>
           ))}
         </div>
@@ -437,26 +448,26 @@ export default function ComplianceDashboard() {
       {/* Metrics Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {renderMetricCard(
-          'Total de Eventos',
+          "Total de Eventos",
           metrics?.totalEvents || 0,
-          <Activity className="h-4 w-4 text-muted-foreground" />
+          <Activity className="h-4 w-4 text-muted-foreground" />,
         )}
         {renderMetricCard(
-          'Acessos a Dados',
+          "Acessos a Dados",
           metrics?.dataAccesses || 0,
-          <Eye className="h-4 w-4 text-muted-foreground" />
+          <Eye className="h-4 w-4 text-muted-foreground" />,
         )}
         {renderMetricCard(
-          'Mudanças de Consentimento',
+          "Mudanças de Consentimento",
           metrics?.consentChanges || 0,
-          <UserCheck className="h-4 w-4 text-muted-foreground" />
+          <UserCheck className="h-4 w-4 text-muted-foreground" />,
         )}
         {renderMetricCard(
-          'Eventos de Segurança',
+          "Eventos de Segurança",
           metrics?.securityEvents || 0,
           <Shield className="h-4 w-4 text-muted-foreground" />,
-          'stable',
-          metrics?.securityEvents && metrics.securityEvents > 0 ? 'destructive' : 'success'
+          "stable",
+          metrics?.securityEvents && metrics.securityEvents > 0 ? "destructive" : "success",
         )}
       </div>
 
@@ -486,7 +497,12 @@ export default function ComplianceDashboard() {
             <CardHeader>
               <CardTitle>Resumo do Período</CardTitle>
               <CardDescription>
-                Análise de compliance para os últimos {selectedPeriod === '7d' ? '7 dias' : selectedPeriod === '30d' ? '30 dias' : '90 dias'}
+                Análise de compliance para os últimos{" "}
+                {selectedPeriod === "7d"
+                  ? "7 dias"
+                  : selectedPeriod === "30d"
+                    ? "30 dias"
+                    : "90 dias"}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -536,9 +552,7 @@ export default function ComplianceDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Log de Auditoria</CardTitle>
-              <CardDescription>
-                Eventos de auditoria registrados no sistema
-              </CardDescription>
+              <CardDescription>Eventos de auditoria registrados no sistema</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8 text-muted-foreground">
@@ -553,9 +567,7 @@ export default function ComplianceDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Gerenciamento de Consentimentos</CardTitle>
-              <CardDescription>
-                Status e histórico de consentimentos dos usuários
-              </CardDescription>
+              <CardDescription>Status e histórico de consentimentos dos usuários</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8 text-muted-foreground">
@@ -570,9 +582,7 @@ export default function ComplianceDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Relatórios de Compliance</CardTitle>
-              <CardDescription>
-                Relatórios automáticos e exportação de dados
-              </CardDescription>
+              <CardDescription>Relatórios automáticos e exportação de dados</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8 text-muted-foreground">

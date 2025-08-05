@@ -3,39 +3,45 @@
  * Comprehensive session management interface with security monitoring
  */
 
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
-import {
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Progress } from "@/components/ui/progress";
+import type { Separator } from "@/components/ui/separator";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import {
+} from "@/components/ui/dialog";
+import type {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import {
+} from "@/components/ui/table";
+import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
+} from "@/components/ui/dropdown-menu";
+import type {
   Shield,
   Clock,
   Smartphone,
@@ -51,18 +57,18 @@ import {
   EyeOff,
   MapPin,
   Wifi,
-  WifiOff
-} from 'lucide-react';
-import { useSession, useSessionSecurity, useDeviceManagement } from '@/hooks/use-session';
-import {
+  WifiOff,
+} from "lucide-react";
+import type { useSession, useSessionSecurity, useDeviceManagement } from "@/hooks/use-session";
+import type {
   UserSession,
   SessionSecurityEvent,
   DeviceRegistration,
   SecuritySeverity,
-  DeviceType
-} from '@/types/session';
-import { formatDistanceToNow, format } from 'date-fns';
-import { toast } from 'sonner';
+  DeviceType,
+} from "@/types/session";
+import type { formatDistanceToNow, format } from "date-fns";
+import type { toast } from "sonner";
 
 interface SessionDashboardProps {
   className?: string;
@@ -77,12 +83,12 @@ export function SessionDashboard({ className }: SessionDashboardProps) {
     terminate,
     extend,
     getActiveSessions,
-    terminateSession
+    terminateSession,
   } = useSession();
-  
+
   const { securityEvents } = useSessionSecurity();
   const { devices, trustDevice, revokeDevice } = useDeviceManagement();
-  
+
   const [activeSessions, setActiveSessions] = useState<UserSession[]>([]);
   const [showSecurityDetails, setShowSecurityDetails] = useState(false);
   const [selectedSession, setSelectedSession] = useState<UserSession | null>(null);
@@ -95,7 +101,7 @@ export function SessionDashboard({ className }: SessionDashboardProps) {
       const sessions = await getActiveSessions();
       setActiveSessions(sessions);
     } catch (error) {
-      toast.error('Failed to load active sessions');
+      toast.error("Failed to load active sessions");
     } finally {
       setIsRefreshing(false);
     }
@@ -110,26 +116,27 @@ export function SessionDashboard({ className }: SessionDashboardProps) {
   // Calculate session health score
   const calculateHealthScore = (sessionData: UserSession): number => {
     let score = 100;
-    
+
     // Deduct points for security issues
     const recentEvents = securityEvents.filter(
-      event => event.session_id === sessionData.id &&
-      new Date(event.timestamp) > new Date(Date.now() - 24 * 60 * 60 * 1000)
+      (event) =>
+        event.session_id === sessionData.id &&
+        new Date(event.timestamp) > new Date(Date.now() - 24 * 60 * 60 * 1000),
     );
-    
+
     score -= recentEvents.length * 10;
-    
+
     // Deduct points for old sessions
     const sessionAge = Date.now() - new Date(sessionData.created_at).getTime();
     const hoursOld = sessionAge / (1000 * 60 * 60);
     if (hoursOld > 24) score -= 20;
     if (hoursOld > 48) score -= 30;
-    
+
     // Deduct points for suspicious activity
     if (sessionData.security_flags && sessionData.security_flags.length > 0) {
       score -= sessionData.security_flags.length * 15;
     }
-    
+
     return Math.max(0, Math.min(100, score));
   };
 
@@ -151,15 +158,15 @@ export function SessionDashboard({ className }: SessionDashboardProps) {
   const getSeverityColor = (severity: SecuritySeverity) => {
     switch (severity) {
       case SecuritySeverity.LOW:
-        return 'text-green-600 bg-green-100';
+        return "text-green-600 bg-green-100";
       case SecuritySeverity.MEDIUM:
-        return 'text-yellow-600 bg-yellow-100';
+        return "text-yellow-600 bg-yellow-100";
       case SecuritySeverity.HIGH:
-        return 'text-red-600 bg-red-100';
+        return "text-red-600 bg-red-100";
       case SecuritySeverity.CRITICAL:
-        return 'text-red-800 bg-red-200';
+        return "text-red-800 bg-red-200";
       default:
-        return 'text-gray-600 bg-gray-100';
+        return "text-gray-600 bg-gray-100";
     }
   };
 
@@ -176,9 +183,7 @@ export function SessionDashboard({ className }: SessionDashboardProps) {
     return (
       <Alert className="m-4">
         <AlertTriangle className="h-4 w-4" />
-        <AlertDescription>
-          Failed to load session data: {error.message}
-        </AlertDescription>
+        <AlertDescription>Failed to load session data: {error.message}</AlertDescription>
       </Alert>
     );
   }
@@ -187,9 +192,7 @@ export function SessionDashboard({ className }: SessionDashboardProps) {
     return (
       <Alert className="m-4">
         <XCircle className="h-4 w-4" />
-        <AlertDescription>
-          No active session found. Please log in to continue.
-        </AlertDescription>
+        <AlertDescription>No active session found. Please log in to continue.</AlertDescription>
       </Alert>
     );
   }
@@ -209,21 +212,18 @@ export function SessionDashboard({ className }: SessionDashboardProps) {
                 <Shield className="h-5 w-5" />
                 Current Session
               </CardTitle>
-              <CardDescription>
-                Session ID: {session.id}
-              </CardDescription>
+              <CardDescription>Session ID: {session.id}</CardDescription>
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant={healthScore >= 80 ? 'default' : healthScore >= 60 ? 'secondary' : 'destructive'}>
+              <Badge
+                variant={
+                  healthScore >= 80 ? "default" : healthScore >= 60 ? "secondary" : "destructive"
+                }
+              >
                 Health: {healthScore}%
               </Badge>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={refresh}
-                disabled={isRefreshing}
-              >
-                <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+              <Button variant="outline" size="sm" onClick={refresh} disabled={isRefreshing}>
+                <RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} />
               </Button>
             </div>
           </div>
@@ -246,11 +246,11 @@ export function SessionDashboard({ className }: SessionDashboardProps) {
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4" />
                 <span className="text-sm font-medium">
-                  {minutesUntilExpiry > 0 ? `${minutesUntilExpiry}m remaining` : 'Expired'}
+                  {minutesUntilExpiry > 0 ? `${minutesUntilExpiry}m remaining` : "Expired"}
                 </span>
               </div>
-              <Progress 
-                value={Math.max(0, (minutesUntilExpiry / (session.timeout_minutes || 30)) * 100)} 
+              <Progress
+                value={Math.max(0, (minutesUntilExpiry / (session.timeout_minutes || 30)) * 100)}
                 className="h-2"
               />
             </div>
@@ -272,27 +272,15 @@ export function SessionDashboard({ className }: SessionDashboardProps) {
 
           {/* Session Actions */}
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => extend(30)}
-            >
+            <Button variant="outline" size="sm" onClick={() => extend(30)}>
               <Plus className="h-4 w-4 mr-1" />
               Extend 30min
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => extend(60)}
-            >
+            <Button variant="outline" size="sm" onClick={() => extend(60)}>
               <Plus className="h-4 w-4 mr-1" />
               Extend 1hr
             </Button>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={terminate}
-            >
+            <Button variant="destructive" size="sm" onClick={terminate}>
               <LogOut className="h-4 w-4 mr-1" />
               End Session
             </Button>
@@ -320,7 +308,7 @@ export function SessionDashboard({ className }: SessionDashboardProps) {
                   onClick={loadActiveSessions}
                   disabled={isRefreshing}
                 >
-                  <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  <RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} />
                 </Button>
               </div>
             </CardHeader>
@@ -344,7 +332,7 @@ export function SessionDashboard({ className }: SessionDashboardProps) {
                           <div>
                             <p className="font-medium">{activeSession.device_name}</p>
                             <p className="text-xs text-muted-foreground">
-                              {activeSession.user_agent?.split(' ')[0]}
+                              {activeSession.user_agent?.split(" ")[0]}
                             </p>
                           </div>
                         </div>
@@ -355,15 +343,13 @@ export function SessionDashboard({ className }: SessionDashboardProps) {
                           <span className="text-sm">{activeSession.ip_address}</span>
                         </div>
                         {activeSession.location && (
-                          <p className="text-xs text-muted-foreground">
-                            {activeSession.location}
-                          </p>
+                          <p className="text-xs text-muted-foreground">{activeSession.location}</p>
                         )}
                       </TableCell>
                       <TableCell>
                         <div>
                           <p className="text-sm">
-                            {format(new Date(activeSession.created_at), 'MMM dd, HH:mm')}
+                            {format(new Date(activeSession.created_at), "MMM dd, HH:mm")}
                           </p>
                           <p className="text-xs text-muted-foreground">
                             {formatDistanceToNow(new Date(activeSession.created_at))} ago
@@ -390,9 +376,7 @@ export function SessionDashboard({ className }: SessionDashboardProps) {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent>
-                            <DropdownMenuItem
-                              onClick={() => setSelectedSession(activeSession)}
-                            >
+                            <DropdownMenuItem onClick={() => setSelectedSession(activeSession)}>
                               <Eye className="h-4 w-4 mr-2" />
                               View Details
                             </DropdownMenuItem>
@@ -421,31 +405,30 @@ export function SessionDashboard({ className }: SessionDashboardProps) {
           <Card>
             <CardHeader>
               <CardTitle>Recent Security Events</CardTitle>
-              <CardDescription>
-                Security events from the last 30 days
-              </CardDescription>
+              <CardDescription>Security events from the last 30 days</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 {securityEvents.slice(0, 10).map((event) => (
                   <div key={event.id} className="flex items-start gap-3 p-3 border rounded-lg">
-                    <AlertTriangle className={`h-4 w-4 mt-0.5 ${
-                      event.severity === SecuritySeverity.HIGH || event.severity === SecuritySeverity.CRITICAL
-                        ? 'text-red-600'
-                        : event.severity === SecuritySeverity.MEDIUM
-                        ? 'text-yellow-600'
-                        : 'text-blue-600'
-                    }`} />
+                    <AlertTriangle
+                      className={`h-4 w-4 mt-0.5 ${
+                        event.severity === SecuritySeverity.HIGH ||
+                        event.severity === SecuritySeverity.CRITICAL
+                          ? "text-red-600"
+                          : event.severity === SecuritySeverity.MEDIUM
+                            ? "text-yellow-600"
+                            : "text-blue-600"
+                      }`}
+                    />
                     <div className="flex-1 space-y-1">
                       <div className="flex items-center gap-2">
                         <p className="font-medium">{event.event_type}</p>
-                        <Badge className={getSeverityColor(event.severity)}>
-                          {event.severity}
-                        </Badge>
+                        <Badge className={getSeverityColor(event.severity)}>{event.severity}</Badge>
                       </div>
                       <p className="text-sm text-muted-foreground">{event.description}</p>
                       <p className="text-xs text-muted-foreground">
-                        {format(new Date(event.timestamp), 'MMM dd, yyyy HH:mm:ss')}
+                        {format(new Date(event.timestamp), "MMM dd, yyyy HH:mm:ss")}
                       </p>
                     </div>
                   </div>
@@ -466,14 +449,15 @@ export function SessionDashboard({ className }: SessionDashboardProps) {
           <Card>
             <CardHeader>
               <CardTitle>Trusted Devices</CardTitle>
-              <CardDescription>
-                Manage devices that can access your account
-              </CardDescription>
+              <CardDescription>Manage devices that can access your account</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 {devices.map((device) => (
-                  <div key={device.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div
+                    key={device.id}
+                    className="flex items-center justify-between p-3 border rounded-lg"
+                  >
                     <div className="flex items-center gap-3">
                       {getDeviceIcon(device.device_type)}
                       <div>
@@ -497,9 +481,7 @@ export function SessionDashboard({ className }: SessionDashboardProps) {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
                           {!device.is_trusted && (
-                            <DropdownMenuItem
-                              onClick={() => trustDevice(device.id)}
-                            >
+                            <DropdownMenuItem onClick={() => trustDevice(device.id)}>
                               <CheckCircle className="h-4 w-4 mr-2" />
                               Trust Device
                             </DropdownMenuItem>
@@ -559,13 +541,13 @@ export function SessionDashboard({ className }: SessionDashboardProps) {
                 <div>
                   <label className="text-sm font-medium">Created</label>
                   <p className="text-sm text-muted-foreground">
-                    {format(new Date(selectedSession.created_at), 'MMM dd, yyyy HH:mm:ss')}
+                    {format(new Date(selectedSession.created_at), "MMM dd, yyyy HH:mm:ss")}
                   </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">Expires</label>
                   <p className="text-sm text-muted-foreground">
-                    {format(new Date(selectedSession.expires_at), 'MMM dd, yyyy HH:mm:ss')}
+                    {format(new Date(selectedSession.expires_at), "MMM dd, yyyy HH:mm:ss")}
                   </p>
                 </div>
               </div>

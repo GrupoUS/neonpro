@@ -5,32 +5,32 @@
 
 "use client";
 
-import {
+import type {
   AlertSeverity,
   Equipment,
   EquipmentStatus,
   MaintenanceAlert,
 } from "@/app/types/maintenance";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import {
+import type { Input } from "@/components/ui/input";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { toast } from "@/components/ui/use-toast";
-import {
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { toast } from "@/components/ui/use-toast";
+import type {
   Activity,
   AlertCircle,
   AlertTriangle,
@@ -60,9 +60,7 @@ interface SummaryMetrics {
   alertsBySeverity: Record<string, number>;
 }
 
-const SummaryCards: React.FC<{ summary: SummaryMetrics | null }> = ({
-  summary,
-}) => {
+const SummaryCards: React.FC<{ summary: SummaryMetrics | null }> = ({ summary }) => {
   if (!summary) {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -87,9 +85,7 @@ const SummaryCards: React.FC<{ summary: SummaryMetrics | null }> = ({
       {/* Total Equipment */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
-            Total de Equipamentos
-          </CardTitle>
+          <CardTitle className="text-sm font-medium">Total de Equipamentos</CardTitle>
           <Settings className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
@@ -107,9 +103,7 @@ const SummaryCards: React.FC<{ summary: SummaryMetrics | null }> = ({
           <AlertTriangle className="h-4 w-4 text-destructive" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-destructive">
-            {summary.activeAlerts}
-          </div>
+          <div className="text-2xl font-bold text-destructive">{summary.activeAlerts}</div>
           <p className="text-xs text-muted-foreground">
             Críticos: {summary.alertsBySeverity.critical || 0}
           </p>
@@ -119,33 +113,23 @@ const SummaryCards: React.FC<{ summary: SummaryMetrics | null }> = ({
       {/* Overdue Maintenances */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
-            Manutenções Atrasadas
-          </CardTitle>
+          <CardTitle className="text-sm font-medium">Manutenções Atrasadas</CardTitle>
           <Clock className="h-4 w-4 text-warning" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-warning">
-            {summary.overdueMaintenances}
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Requer atenção imediata
-          </p>
+          <div className="text-2xl font-bold text-warning">{summary.overdueMaintenances}</div>
+          <p className="text-xs text-muted-foreground">Requer atenção imediata</p>
         </CardContent>
       </Card>
 
       {/* Upcoming Maintenances */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
-            Próximas Manutenções
-          </CardTitle>
+          <CardTitle className="text-sm font-medium">Próximas Manutenções</CardTitle>
           <Calendar className="h-4 w-4 text-blue-600" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-blue-600">
-            {summary.upcomingMaintenances}
-          </div>
+          <div className="text-2xl font-bold text-blue-600">{summary.upcomingMaintenances}</div>
           <p className="text-xs text-muted-foreground">Próximos 30 dias</p>
         </CardContent>
       </Card>
@@ -340,8 +324,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ clinicId }) => {
       {total > 20 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            Mostrando {(page - 1) * 20 + 1} a {Math.min(page * 20, total)} de{" "}
-            {total} equipamentos
+            Mostrando {(page - 1) * 20 + 1} a {Math.min(page * 20, total)} de {total} equipamentos
           </p>
           <div className="flex space-x-2">
             <Button
@@ -381,9 +364,7 @@ const AlertsList: React.FC<AlertsListProps> = ({ clinicId }) => {
   const fetchAlerts = async () => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `/api/maintenance/alerts/active?clinic_id=${clinicId}`
-      );
+      const response = await fetch(`/api/maintenance/alerts/active?clinic_id=${clinicId}`);
       if (!response.ok) throw new Error("Failed to fetch alerts");
 
       const data = await response.json();
@@ -443,7 +424,7 @@ const AlertsList: React.FC<AlertsListProps> = ({ clinicId }) => {
             acknowledged_by: "current_user", // TODO: Get from auth context
             notes: "Alerta reconhecido via dashboard",
           }),
-        }
+        },
       );
 
       if (!response.ok) throw new Error("Failed to acknowledge alert");
@@ -485,9 +466,7 @@ const AlertsList: React.FC<AlertsListProps> = ({ clinicId }) => {
         <Card>
           <CardContent className="p-8 text-center">
             <CheckCircle className="mx-auto h-12 w-12 text-green-500" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">
-              Nenhum alerta ativo
-            </h3>
+            <h3 className="mt-2 text-sm font-medium text-gray-900">Nenhum alerta ativo</h3>
             <p className="mt-1 text-sm text-gray-500">
               Todos os equipamentos estão funcionando normalmente.
             </p>
@@ -501,12 +480,8 @@ const AlertsList: React.FC<AlertsListProps> = ({ clinicId }) => {
                 <div className="flex items-start space-x-3">
                   {getSeverityIcon(alert.severity)}
                   <div className="flex-1">
-                    <h4 className="text-sm font-medium text-gray-900">
-                      {alert.title}
-                    </h4>
-                    <p className="text-sm text-gray-600 mt-1">
-                      {alert.message}
-                    </p>
+                    <h4 className="text-sm font-medium text-gray-900">{alert.title}</h4>
+                    <p className="text-sm text-gray-600 mt-1">{alert.message}</p>
                     <div className="flex items-center mt-2 text-xs text-gray-500">
                       <Calendar className="mr-1 h-3 w-3" />
                       {new Date(alert.created_at).toLocaleDateString("pt-BR")}
@@ -516,11 +491,7 @@ const AlertsList: React.FC<AlertsListProps> = ({ clinicId }) => {
                 <div className="flex items-center space-x-2">
                   {getSeverityBadge(alert.severity)}
                   {!alert.is_acknowledged && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleAcknowledge(alert.id)}
-                    >
+                    <Button variant="outline" size="sm" onClick={() => handleAcknowledge(alert.id)}>
                       Reconhecer
                     </Button>
                   )}
@@ -541,18 +512,14 @@ interface MaintenanceDashboardProps {
   clinicId: string;
 }
 
-const MaintenanceDashboard: React.FC<MaintenanceDashboardProps> = ({
-  clinicId,
-}) => {
+const MaintenanceDashboard: React.FC<MaintenanceDashboardProps> = ({ clinicId }) => {
   const [summary, setSummary] = useState<SummaryMetrics | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchSummary = async () => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `/api/maintenance/summary?clinic_id=${clinicId}`
-      );
+      const response = await fetch(`/api/maintenance/summary?clinic_id=${clinicId}`);
       if (!response.ok) throw new Error("Failed to fetch summary");
 
       const data = await response.json();
@@ -578,12 +545,9 @@ const MaintenanceDashboard: React.FC<MaintenanceDashboardProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Manutenção de Equipamentos
-          </h1>
+          <h1 className="text-2xl font-bold text-gray-900">Manutenção de Equipamentos</h1>
           <p className="text-gray-600">
-            Gerencie cronogramas de manutenção e monitore alertas de
-            equipamentos
+            Gerencie cronogramas de manutenção e monitore alertas de equipamentos
           </p>
         </div>
         <div className="flex space-x-2">
@@ -616,9 +580,7 @@ const MaintenanceDashboard: React.FC<MaintenanceDashboardProps> = ({
             <AlertTriangle className="mr-2 h-4 w-4" />
             Alertas
             {summary && summary.activeAlerts > 0 && (
-              <Badge className="ml-2 bg-red-100 text-red-800">
-                {summary.activeAlerts}
-              </Badge>
+              <Badge className="ml-2 bg-red-100 text-red-800">{summary.activeAlerts}</Badge>
             )}
           </TabsTrigger>
           <TabsTrigger value="analytics">
@@ -635,16 +597,12 @@ const MaintenanceDashboard: React.FC<MaintenanceDashboardProps> = ({
           <Card>
             <CardHeader>
               <CardTitle>Cronogramas de Manutenção</CardTitle>
-              <CardDescription>
-                Gerencie cronogramas preventivos e preditivos
-              </CardDescription>
+              <CardDescription>Gerencie cronogramas preventivos e preditivos</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8">
                 <Calendar className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 text-sm font-medium text-gray-900">
-                  Em desenvolvimento
-                </h3>
+                <h3 className="mt-2 text-sm font-medium text-gray-900">Em desenvolvimento</h3>
                 <p className="mt-1 text-sm text-gray-500">
                   Interface de cronogramas será implementada em breve.
                 </p>
@@ -661,16 +619,12 @@ const MaintenanceDashboard: React.FC<MaintenanceDashboardProps> = ({
           <Card>
             <CardHeader>
               <CardTitle>Análises e Relatórios</CardTitle>
-              <CardDescription>
-                Métricas de performance e custos de manutenção
-              </CardDescription>
+              <CardDescription>Métricas de performance e custos de manutenção</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8">
                 <TrendingUp className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 text-sm font-medium text-gray-900">
-                  Em desenvolvimento
-                </h3>
+                <h3 className="mt-2 text-sm font-medium text-gray-900">Em desenvolvimento</h3>
                 <p className="mt-1 text-sm text-gray-500">
                   Dashboard de análises será implementado em breve.
                 </p>

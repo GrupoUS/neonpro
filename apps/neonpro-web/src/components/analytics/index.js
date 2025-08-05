@@ -7,7 +7,7 @@
  *
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
-'use client';
+"use client";
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OutcomeAnalyticsPanel = OutcomeAnalyticsPanel;
@@ -20,23 +20,29 @@ var lucide_react_1 = require("lucide-react");
  * Outcome Analytics Panel - Patient outcomes and clinical results
  */
 function OutcomeAnalyticsPanel(_a) {
-    var data = _a.data, isLoading = _a.isLoading, timeframe = _a.timeframe, clinicId = _a.clinicId;
-    if (isLoading) {
-        return (<card_1.Card>
+  var data = _a.data,
+    isLoading = _a.isLoading,
+    timeframe = _a.timeframe,
+    clinicId = _a.clinicId;
+  if (isLoading) {
+    return (
+      <card_1.Card>
         <card_1.CardContent className="p-6">
           <div className="animate-pulse space-y-4">
             <div className="h-8 bg-gray-200 rounded w-1/3"></div>
             <div className="h-64 bg-gray-200 rounded"></div>
           </div>
         </card_1.CardContent>
-      </card_1.Card>);
-    }
-    return (<div className="space-y-6">
+      </card_1.Card>
+    );
+  }
+  return (
+    <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <card_1.Card>
           <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <card_1.CardTitle className="text-sm font-medium">Success Rate</card_1.CardTitle>
-            <lucide_react_1.TrendingUp className="h-4 w-4 text-green-600"/>
+            <lucide_react_1.TrendingUp className="h-4 w-4 text-green-600" />
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="text-2xl font-bold">94.2%</div>
@@ -46,8 +52,10 @@ function OutcomeAnalyticsPanel(_a) {
 
         <card_1.Card>
           <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <card_1.CardTitle className="text-sm font-medium">Patient Satisfaction</card_1.CardTitle>
-            <lucide_react_1.Activity className="h-4 w-4 text-blue-600"/>
+            <card_1.CardTitle className="text-sm font-medium">
+              Patient Satisfaction
+            </card_1.CardTitle>
+            <lucide_react_1.Activity className="h-4 w-4 text-blue-600" />
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="text-2xl font-bold">4.8/5</div>
@@ -58,7 +66,7 @@ function OutcomeAnalyticsPanel(_a) {
         <card_1.Card>
           <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <card_1.CardTitle className="text-sm font-medium">Complications</card_1.CardTitle>
-            <lucide_react_1.AlertTriangle className="h-4 w-4 text-amber-600"/>
+            <lucide_react_1.AlertTriangle className="h-4 w-4 text-amber-600" />
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="text-2xl font-bold">1.2%</div>
@@ -76,7 +84,7 @@ function OutcomeAnalyticsPanel(_a) {
         </card_1.CardHeader>
         <card_1.CardContent>
           <div className="text-center py-12">
-            <lucide_react_1.BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4"/>
+            <lucide_react_1.BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Outcome Analytics</h3>
             <p className="text-gray-600">
               Comprehensive outcome analysis dashboard will be available here.
@@ -84,29 +92,36 @@ function OutcomeAnalyticsPanel(_a) {
           </div>
         </card_1.CardContent>
       </card_1.Card>
-    </div>);
+    </div>
+  );
 }
 /**
  * Predictive Insights Panel - AI predictions and forecasting
  */
 function PredictiveInsightsPanel(_a) {
-    var data = _a.data, isLoading = _a.isLoading, timeframe = _a.timeframe, clinicId = _a.clinicId;
-    if (isLoading) {
-        return (<card_1.Card>
+  var data = _a.data,
+    isLoading = _a.isLoading,
+    timeframe = _a.timeframe,
+    clinicId = _a.clinicId;
+  if (isLoading) {
+    return (
+      <card_1.Card>
         <card_1.CardContent className="p-6">
           <div className="animate-pulse space-y-4">
             <div className="h-8 bg-gray-200 rounded w-1/3"></div>
             <div className="h-64 bg-gray-200 rounded"></div>
           </div>
         </card_1.CardContent>
-      </card_1.Card>);
-    }
-    return (<div className="space-y-6">
+      </card_1.Card>
+    );
+  }
+  return (
+    <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <card_1.Card>
           <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <card_1.CardTitle className="text-sm font-medium">Prediction Accuracy</card_1.CardTitle>
-            <lucide_react_1.Brain className="h-4 w-4 text-purple-600"/>
+            <lucide_react_1.Brain className="h-4 w-4 text-purple-600" />
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="text-2xl font-bold">91.3%</div>
@@ -117,7 +132,7 @@ function PredictiveInsightsPanel(_a) {
         <card_1.Card>
           <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <card_1.CardTitle className="text-sm font-medium">Risk Predictions</card_1.CardTitle>
-            <lucide_react_1.AlertTriangle className="h-4 w-4 text-amber-600"/>
+            <lucide_react_1.AlertTriangle className="h-4 w-4 text-amber-600" />
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="text-2xl font-bold">23</div>
@@ -128,7 +143,7 @@ function PredictiveInsightsPanel(_a) {
         <card_1.Card>
           <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <card_1.CardTitle className="text-sm font-medium">Revenue Forecast</card_1.CardTitle>
-            <lucide_react_1.TrendingUp className="h-4 w-4 text-green-600"/>
+            <lucide_react_1.TrendingUp className="h-4 w-4 text-green-600" />
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="text-2xl font-bold">+18%</div>
@@ -146,7 +161,7 @@ function PredictiveInsightsPanel(_a) {
         </card_1.CardHeader>
         <card_1.CardContent>
           <div className="text-center py-12">
-            <lucide_react_1.Brain className="h-12 w-12 text-gray-400 mx-auto mb-4"/>
+            <lucide_react_1.Brain className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Predictive Insights</h3>
             <p className="text-gray-600">
               Advanced AI predictions and business forecasting will be displayed here.
@@ -154,29 +169,35 @@ function PredictiveInsightsPanel(_a) {
           </div>
         </card_1.CardContent>
       </card_1.Card>
-    </div>);
+    </div>
+  );
 }
 /**
  * Compliance Dashboard - Regulatory compliance monitoring
  */
 function ComplianceDashboard(_a) {
-    var isLoading = _a.isLoading, timeframe = _a.timeframe, clinicId = _a.clinicId;
-    if (isLoading) {
-        return (<card_1.Card>
+  var isLoading = _a.isLoading,
+    timeframe = _a.timeframe,
+    clinicId = _a.clinicId;
+  if (isLoading) {
+    return (
+      <card_1.Card>
         <card_1.CardContent className="p-6">
           <div className="animate-pulse space-y-4">
             <div className="h-8 bg-gray-200 rounded w-1/3"></div>
             <div className="h-64 bg-gray-200 rounded"></div>
           </div>
         </card_1.CardContent>
-      </card_1.Card>);
-    }
-    return (<div className="space-y-6">
+      </card_1.Card>
+    );
+  }
+  return (
+    <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <card_1.Card>
           <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <card_1.CardTitle className="text-sm font-medium">LGPD Compliance</card_1.CardTitle>
-            <lucide_react_1.Shield className="h-4 w-4 text-green-600"/>
+            <lucide_react_1.Shield className="h-4 w-4 text-green-600" />
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="text-2xl font-bold">100%</div>
@@ -187,7 +208,7 @@ function ComplianceDashboard(_a) {
         <card_1.Card>
           <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <card_1.CardTitle className="text-sm font-medium">ANVISA Status</card_1.CardTitle>
-            <lucide_react_1.CheckCircle className="h-4 w-4 text-green-600"/>
+            <lucide_react_1.CheckCircle className="h-4 w-4 text-green-600" />
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="text-2xl font-bold">Active</div>
@@ -198,7 +219,7 @@ function ComplianceDashboard(_a) {
         <card_1.Card>
           <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <card_1.CardTitle className="text-sm font-medium">Security Score</card_1.CardTitle>
-            <lucide_react_1.Shield className="h-4 w-4 text-blue-600"/>
+            <lucide_react_1.Shield className="h-4 w-4 text-blue-600" />
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="text-2xl font-bold">A+</div>
@@ -216,7 +237,7 @@ function ComplianceDashboard(_a) {
         </card_1.CardHeader>
         <card_1.CardContent>
           <div className="text-center py-12">
-            <lucide_react_1.Shield className="h-12 w-12 text-gray-400 mx-auto mb-4"/>
+            <lucide_react_1.Shield className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Compliance Dashboard</h3>
             <p className="text-gray-600">
               Comprehensive compliance monitoring and reporting will be shown here.
@@ -224,29 +245,35 @@ function ComplianceDashboard(_a) {
           </div>
         </card_1.CardContent>
       </card_1.Card>
-    </div>);
+    </div>
+  );
 }
 /**
  * Vision Model Performance - AI model metrics and monitoring
  */
 function VisionModelPerformance(_a) {
-    var isLoading = _a.isLoading, timeframe = _a.timeframe, clinicId = _a.clinicId;
-    if (isLoading) {
-        return (<card_1.Card>
+  var isLoading = _a.isLoading,
+    timeframe = _a.timeframe,
+    clinicId = _a.clinicId;
+  if (isLoading) {
+    return (
+      <card_1.Card>
         <card_1.CardContent className="p-6">
           <div className="animate-pulse space-y-4">
             <div className="h-8 bg-gray-200 rounded w-1/3"></div>
             <div className="h-64 bg-gray-200 rounded"></div>
           </div>
         </card_1.CardContent>
-      </card_1.Card>);
-    }
-    return (<div className="space-y-6">
+      </card_1.Card>
+    );
+  }
+  return (
+    <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <card_1.Card>
           <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <card_1.CardTitle className="text-sm font-medium">Face Detection</card_1.CardTitle>
-            <lucide_react_1.Brain className="h-4 w-4 text-blue-600"/>
+            <lucide_react_1.Brain className="h-4 w-4 text-blue-600" />
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="text-2xl font-bold">97.2%</div>
@@ -257,7 +284,7 @@ function VisionModelPerformance(_a) {
         <card_1.Card>
           <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <card_1.CardTitle className="text-sm font-medium">Aesthetic Analysis</card_1.CardTitle>
-            <lucide_react_1.Brain className="h-4 w-4 text-purple-600"/>
+            <lucide_react_1.Brain className="h-4 w-4 text-purple-600" />
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="text-2xl font-bold">94.8%</div>
@@ -267,8 +294,10 @@ function VisionModelPerformance(_a) {
 
         <card_1.Card>
           <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <card_1.CardTitle className="text-sm font-medium">Complication Detection</card_1.CardTitle>
-            <lucide_react_1.Brain className="h-4 w-4 text-amber-600"/>
+            <card_1.CardTitle className="text-sm font-medium">
+              Complication Detection
+            </card_1.CardTitle>
+            <lucide_react_1.Brain className="h-4 w-4 text-amber-600" />
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="text-2xl font-bold">96.5%</div>
@@ -279,7 +308,7 @@ function VisionModelPerformance(_a) {
         <card_1.Card>
           <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <card_1.CardTitle className="text-sm font-medium">Processing Speed</card_1.CardTitle>
-            <lucide_react_1.Activity className="h-4 w-4 text-green-600"/>
+            <lucide_react_1.Activity className="h-4 w-4 text-green-600" />
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="text-2xl font-bold">480ms</div>
@@ -297,7 +326,7 @@ function VisionModelPerformance(_a) {
         </card_1.CardHeader>
         <card_1.CardContent>
           <div className="text-center py-12">
-            <lucide_react_1.Brain className="h-12 w-12 text-gray-400 mx-auto mb-4"/>
+            <lucide_react_1.Brain className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Model Performance</h3>
             <p className="text-gray-600">
               Detailed AI model performance metrics and analysis will be displayed here.
@@ -305,5 +334,6 @@ function VisionModelPerformance(_a) {
           </div>
         </card_1.CardContent>
       </card_1.Card>
-    </div>);
+    </div>
+  );
 }

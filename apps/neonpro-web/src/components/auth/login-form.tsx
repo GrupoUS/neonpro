@@ -1,32 +1,34 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/contexts/auth-context";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Eye, EyeOff, Lock, Mail, User, X, Heart } from "lucide-react";
+import type { useState } from "react";
+import type { useRouter } from "next/navigation";
+import type { useAuth } from "@/contexts/auth-context";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
+import type { Separator } from "@/components/ui/separator";
+import type { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type { z } from "zod";
+import type { Eye, EyeOff, Lock, Mail, User, X, Heart } from "lucide-react";
 
 const loginSchema = z.object({
-  email: z
-    .string()
-    .min(1, "Email é obrigatório")
-    .email("Email inválido"),
-  password: z
-    .string()
-    .min(6, "Senha deve ter pelo menos 6 caracteres"),
+  email: z.string().min(1, "Email é obrigatório").email("Email inválido"),
+  password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
 interface LoginFormProps {
-  type: 'professional' | 'patient';
+  type: "professional" | "patient";
   onSwitchToRegister?: () => void;
   onClose?: () => void;
 }
@@ -47,10 +49,10 @@ export function LoginForm({ type, onSwitchToRegister, onClose }: LoginFormProps)
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
-    
+
     try {
       const { data: authData, error } = await signIn(data.email, data.password);
-      
+
       if (error) {
         form.setError("root", {
           type: "manual",
@@ -61,12 +63,12 @@ export function LoginForm({ type, onSwitchToRegister, onClose }: LoginFormProps)
 
       if (authData?.user) {
         // Role-based routing
-        const userRole = authData.user.user_metadata?.role || 'patient';
-        
-        if (type === 'professional' && userRole !== 'patient') {
-          router.push('/dashboard');
-        } else if (type === 'patient' && userRole === 'patient') {
-          router.push('/patient-portal');
+        const userRole = authData.user.user_metadata?.role || "patient";
+
+        if (type === "professional" && userRole !== "patient") {
+          router.push("/dashboard");
+        } else if (type === "patient" && userRole === "patient") {
+          router.push("/patient-portal");
         } else {
           // Mismatch between expected type and actual role
           form.setError("root", {
@@ -75,7 +77,7 @@ export function LoginForm({ type, onSwitchToRegister, onClose }: LoginFormProps)
           });
           return;
         }
-        
+
         onClose?.();
       }
     } catch (error) {
@@ -98,7 +100,7 @@ export function LoginForm({ type, onSwitchToRegister, onClose }: LoginFormProps)
             </div>
             <div>
               <CardTitle className="text-2xl font-bold text-slate-900">
-                {type === 'professional' ? 'Acesso Profissional' : 'Portal do Paciente'}
+                {type === "professional" ? "Acesso Profissional" : "Portal do Paciente"}
               </CardTitle>
               <p className="text-sm text-slate-600 mt-1">
                 Entre com suas credenciais para acessar o sistema
@@ -126,9 +128,7 @@ export function LoginForm({ type, onSwitchToRegister, onClose }: LoginFormProps)
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-700 font-medium">
-                    Email
-                  </FormLabel>
+                  <FormLabel className="text-slate-700 font-medium">Email</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Mail className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
@@ -151,9 +151,7 @@ export function LoginForm({ type, onSwitchToRegister, onClose }: LoginFormProps)
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-700 font-medium">
-                    Senha
-                  </FormLabel>
+                  <FormLabel className="text-slate-700 font-medium">Senha</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Lock className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
@@ -204,19 +202,17 @@ export function LoginForm({ type, onSwitchToRegister, onClose }: LoginFormProps)
                   <span>Entrando...</span>
                 </div>
               ) : (
-                `Entrar ${type === 'professional' ? 'no Sistema' : 'no Portal'}`
+                `Entrar ${type === "professional" ? "no Sistema" : "no Portal"}`
               )}
             </Button>
           </form>
         </Form>
 
-        {type === 'patient' && onSwitchToRegister && (
+        {type === "patient" && onSwitchToRegister && (
           <>
             <Separator className="bg-slate-200" />
             <div className="text-center space-y-3">
-              <p className="text-sm text-slate-600">
-                Primeira vez no NeonPro?
-              </p>
+              <p className="text-sm text-slate-600">Primeira vez no NeonPro?</p>
               <Button
                 variant="outline"
                 onClick={onSwitchToRegister}

@@ -1,8 +1,8 @@
 // Data Sources API Route
 // Story 8.2: Custom Report Builder (Drag-Drop Interface)
 
-import { ReportBuilderService } from '@/app/lib/services/report-builder';
-import { NextRequest, NextResponse } from 'next/server';
+import { ReportBuilderService } from "@/app/lib/services/report-builder";
+import { NextRequest, NextResponse } from "next/server";
 
 const reportService = new ReportBuilderService();
 
@@ -13,16 +13,16 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: dataSources
+      data: dataSources,
     });
   } catch (error) {
-    console.error('Error fetching data sources:', error);
+    console.error("Error fetching data sources:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to fetch data sources'
+        error: error instanceof Error ? error.message : "Failed to fetch data sources",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import {
+import React, { useState, useEffect } from "react";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { useSessionAnalytics } from '@/hooks/use-session';
-import {
+} from "@/components/ui/select";
+import type { useSessionAnalytics } from "@/hooks/use-session";
+import type {
   BarChart,
   Bar,
   XAxis,
@@ -25,9 +25,9 @@ import {
   Line,
   PieChart,
   Pie,
-  Cell
-} from 'recharts';
-import {
+  Cell,
+} from "recharts";
+import type {
   Activity,
   Users,
   Shield,
@@ -39,47 +39,40 @@ import {
   BarChart3,
   PieChart as PieChartIcon,
   Calendar,
-  RefreshCw
-} from 'lucide-react';
-import {
-  SessionAnalytics,
-  SecurityEventType,
-  DeviceType
-} from '@/types/session';
+  RefreshCw,
+} from "lucide-react";
+import type { SessionAnalytics, SecurityEventType, DeviceType } from "@/types/session";
 
 interface SessionAnalyticsProps {
   userId?: string;
   className?: string;
 }
 
-type TimeFrame = '24h' | '7d' | '30d' | '90d';
+type TimeFrame = "24h" | "7d" | "30d" | "90d";
 
-const SessionAnalyticsComponent: React.FC<SessionAnalyticsProps> = ({ 
-  userId, 
-  className = '' 
-}) => {
-  const [timeframe, setTimeframe] = useState<TimeFrame>('7d');
+const SessionAnalyticsComponent: React.FC<SessionAnalyticsProps> = ({ userId, className = "" }) => {
+  const [timeframe, setTimeframe] = useState<TimeFrame>("7d");
   const [refreshKey, setRefreshKey] = useState(0);
-  
-  const {
-    analytics,
-    loading,
-    error,
-    refreshAnalytics
-  } = useSessionAnalytics(userId, timeframe);
+
+  const { analytics, loading, error, refreshAnalytics } = useSessionAnalytics(userId, timeframe);
 
   const handleRefresh = () => {
-    setRefreshKey(prev => prev + 1);
+    setRefreshKey((prev) => prev + 1);
     refreshAnalytics();
   };
 
   const getTimeframeLabel = (tf: TimeFrame) => {
     switch (tf) {
-      case '24h': return 'Last 24 Hours';
-      case '7d': return 'Last 7 Days';
-      case '30d': return 'Last 30 Days';
-      case '90d': return 'Last 90 Days';
-      default: return 'Last 7 Days';
+      case "24h":
+        return "Last 24 Hours";
+      case "7d":
+        return "Last 7 Days";
+      case "30d":
+        return "Last 30 Days";
+      case "90d":
+        return "Last 90 Days";
+      default:
+        return "Last 7 Days";
     }
   };
 
@@ -93,19 +86,29 @@ const SessionAnalyticsComponent: React.FC<SessionAnalyticsProps> = ({
   };
 
   const getHealthScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 80) return "text-green-600";
+    if (score >= 60) return "text-yellow-600";
+    return "text-red-600";
   };
 
   const getHealthScoreBadge = (score: number) => {
-    if (score >= 80) return { variant: 'default' as const, label: 'Excellent', color: 'bg-green-100 text-green-800' };
-    if (score >= 60) return { variant: 'secondary' as const, label: 'Good', color: 'bg-yellow-100 text-yellow-800' };
-    return { variant: 'destructive' as const, label: 'Poor', color: 'bg-red-100 text-red-800' };
+    if (score >= 80)
+      return {
+        variant: "default" as const,
+        label: "Excellent",
+        color: "bg-green-100 text-green-800",
+      };
+    if (score >= 60)
+      return {
+        variant: "secondary" as const,
+        label: "Good",
+        color: "bg-yellow-100 text-yellow-800",
+      };
+    return { variant: "destructive" as const, label: "Poor", color: "bg-red-100 text-red-800" };
   };
 
   // Chart colors
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"];
 
   if (loading) {
     return (
@@ -120,7 +123,7 @@ const SessionAnalyticsComponent: React.FC<SessionAnalyticsProps> = ({
           <CardContent>
             <div className="animate-pulse space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {[1, 2, 3, 4].map(i => (
+                {[1, 2, 3, 4].map((i) => (
                   <div key={i} className="h-24 bg-muted rounded" />
                 ))}
               </div>
@@ -144,9 +147,7 @@ const SessionAnalyticsComponent: React.FC<SessionAnalyticsProps> = ({
         <CardContent>
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
-            <AlertDescription>
-              Failed to load analytics: {error}
-            </AlertDescription>
+            <AlertDescription>Failed to load analytics: {error}</AlertDescription>
           </Alert>
         </CardContent>
       </Card>
@@ -172,15 +173,19 @@ const SessionAnalyticsComponent: React.FC<SessionAnalyticsProps> = ({
     );
   }
 
-  const deviceData = analytics.deviceBreakdown ? Object.entries(analytics.deviceBreakdown).map(([type, count]) => ({
-    name: type,
-    value: count
-  })) : [];
+  const deviceData = analytics.deviceBreakdown
+    ? Object.entries(analytics.deviceBreakdown).map(([type, count]) => ({
+        name: type,
+        value: count,
+      }))
+    : [];
 
-  const securityData = analytics.securityEvents ? Object.entries(analytics.securityEvents).map(([type, count]) => ({
-    name: type.replace('_', ' '),
-    value: count
-  })) : [];
+  const securityData = analytics.securityEvents
+    ? Object.entries(analytics.securityEvents).map(([type, count]) => ({
+        name: type.replace("_", " "),
+        value: count,
+      }))
+    : [];
 
   const healthBadge = getHealthScoreBadge(analytics.healthScore || 0);
 
@@ -260,7 +265,9 @@ const SessionAnalyticsComponent: React.FC<SessionAnalyticsProps> = ({
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Health Score</p>
                 <div className="flex items-center gap-2">
-                  <p className={`text-2xl font-bold ${getHealthScoreColor(analytics.healthScore || 0)}`}>
+                  <p
+                    className={`text-2xl font-bold ${getHealthScoreColor(analytics.healthScore || 0)}`}
+                  >
                     {analytics.healthScore || 0}%
                   </p>
                   <Badge className={healthBadge.color} variant="secondary">
@@ -326,12 +333,7 @@ const SessionAnalyticsComponent: React.FC<SessionAnalyticsProps> = ({
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={securityData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="name" 
-                    angle={-45}
-                    textAnchor="end"
-                    height={80}
-                  />
+                  <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} />
                   <YAxis />
                   <Tooltip />
                   <Bar dataKey="value" fill="#8884d8" />
@@ -356,9 +358,7 @@ const SessionAnalyticsComponent: React.FC<SessionAnalyticsProps> = ({
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Failed Logins</span>
-                <Badge variant="destructive">
-                  {analytics.securityEvents?.FAILED_LOGIN || 0}
-                </Badge>
+                <Badge variant="destructive">{analytics.securityEvents?.FAILED_LOGIN || 0}</Badge>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Suspicious Activity</span>
@@ -368,9 +368,7 @@ const SessionAnalyticsComponent: React.FC<SessionAnalyticsProps> = ({
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">IP Changes</span>
-                <Badge variant="outline">
-                  {analytics.securityEvents?.IP_CHANGE || 0}
-                </Badge>
+                <Badge variant="outline">{analytics.securityEvents?.IP_CHANGE || 0}</Badge>
               </div>
             </div>
           </CardContent>
@@ -384,20 +382,16 @@ const SessionAnalyticsComponent: React.FC<SessionAnalyticsProps> = ({
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Expired Sessions</span>
-                <span className="font-medium">
-                  {analytics.expiredSessions || 0}
-                </span>
+                <span className="font-medium">{analytics.expiredSessions || 0}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Force Terminated</span>
-                <span className="font-medium">
-                  {analytics.terminatedSessions || 0}
-                </span>
+                <span className="font-medium">{analytics.terminatedSessions || 0}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Success Rate</span>
                 <span className="font-medium text-green-600">
-                  {analytics.successRate ? `${analytics.successRate.toFixed(1)}%` : 'N/A'}
+                  {analytics.successRate ? `${analytics.successRate.toFixed(1)}%` : "N/A"}
                 </span>
               </div>
             </div>
@@ -412,21 +406,15 @@ const SessionAnalyticsComponent: React.FC<SessionAnalyticsProps> = ({
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Peak Concurrent</span>
-                <span className="font-medium">
-                  {analytics.peakConcurrentSessions || 0}
-                </span>
+                <span className="font-medium">{analytics.peakConcurrentSessions || 0}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Unique Devices</span>
-                <span className="font-medium">
-                  {analytics.uniqueDevices || 0}
-                </span>
+                <span className="font-medium">{analytics.uniqueDevices || 0}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Data Period</span>
-                <span className="font-medium">
-                  {getTimeframeLabel(timeframe)}
-                </span>
+                <span className="font-medium">{getTimeframeLabel(timeframe)}</span>
               </div>
             </div>
           </CardContent>

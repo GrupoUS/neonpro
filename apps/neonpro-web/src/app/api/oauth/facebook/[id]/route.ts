@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
-import { FacebookOAuthHandler } from '@/lib/oauth/platforms/facebook-handler';
-import { TokenEncryptionService } from '@/lib/oauth/token-encryption';
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/app/utils/supabase/server";
+import { FacebookOAuthHandler } from "@/lib/oauth/platforms/facebook-handler";
+import { TokenEncryptionService } from "@/lib/oauth/token-encryption";
 
 /**
  * Facebook OAuth Account Management Endpoint
  * Handles individual Facebook account operations
- * 
+ *
  * Features:
  * - Account status retrieval
  * - Token validation and refresh
@@ -14,19 +14,18 @@ import { TokenEncryptionService } from '@/lib/oauth/token-encryption';
  * - Comprehensive error handling
  */
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const supabase = await createClient();
-    
+
     // Verify user authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session?.user) {
       return NextResponse.json(
-        { error: 'Unauthorized - Please log in to access account information' },
-        { status: 401 }
+        { error: "Unauthorized - Please log in to access account information" },
+        { status: 401 },
       );
     }
 
@@ -35,7 +34,7 @@ export async function GET(
 
     // Get Facebook account details
     const { data: account, error: accountError } = await supabase
-      .from('social_media_accounts')
+      .from("social_media_accounts")
       .select(`
         id,
         platform_user_id,
@@ -50,15 +49,15 @@ export async function GET(
         last_sync_at,
         created_at
       `)
-      .eq('id', accountId)
-      .eq('user_id', session.user.id)
-      .eq('platform_id', 'facebook')
+      .eq("id", accountId)
+      .eq("user_id", session.user.id)
+      .eq("platform_id", "facebook")
       .single();
 
     if (accountError || !account) {
       return NextResponse.json(
-        { error: 'Facebook account not found or access denied' },
-        { status: 404 }
+        { error: "Facebook account not found or access denied" },
+        { status: 404 },
       );
     }
 
@@ -88,37 +87,38 @@ export async function GET(
           hoursUntilExpiry: Math.max(0, hoursUntilExpiry),
           isExpired,
           isExpiringSoon,
-          needsRefresh: isExpiringSoon
-        }
-      }
-    });
-
-  } catch (error) {
-    console.error('Facebook account retrieval error:', error);
-    
-    return NextResponse.json(
-      { 
-        error: 'Failed to retrieve Facebook account information',
-        details: error instanceof Error ? error.message : 'Unknown error'
+          needsRefresh: isExpiringSoon,
+        },
       },
-      { status: 500 }
+    });
+  } catch (error) {
+    console.error("Facebook account retrieval error:", error);
+
+    return NextResponse.json(
+      {
+        error: "Failed to retrieve Facebook account information",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
-    
+
     // Verify user authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session?.user) {
       return NextResponse.json(
-        { error: 'Unauthorized - Please log in to disconnect account' },
-        { status: 401 }
+        { error: "Unauthorized - Please log in to disconnect account" },
+        { status: 401 },
       );
     }
 
@@ -127,17 +127,17 @@ export async function DELETE(
 
     // Get account with encrypted tokens for revocation
     const { data: account, error: accountError } = await supabase
-      .from('social_media_accounts')
-      .select('encrypted_access_token, platform_username')
-      .eq('id', accountId)
-      .eq('user_id', session.user.id)
-      .eq('platform_id', 'facebook')
+      .from("social_media_accounts")
+      .select("encrypted_access_token, platform_username")
+      .eq("id", accountId)
+      .eq("user_id", session.user.id)
+      .eq("platform_id", "facebook")
       .single();
 
     if (accountError || !account) {
       return NextResponse.json(
-        { error: 'Facebook account not found or access denied' },
-        { status: 404 }
+        { error: "Facebook account not found or access denied" },
+        { status: 404 },
       );
     }
 
@@ -147,7 +147,7 @@ export async function DELETE(
       const encryptedAccessToken = JSON.parse(account.encrypted_access_token);
       accessToken = TokenEncryptionService.decryptToken(encryptedAccessToken);
     } catch (decryptError) {
-      console.warn('Could not decrypt access token for revocation:', decryptError);
+      console.warn("Could not decrypt access token for revocation:", decryptError);
       // Continue with disconnection even if token decryption fails
     }
 
@@ -158,19 +158,19 @@ export async function DELETE(
         await facebookHandler.revokeTokens(accessToken);
         console.log(`Facebook tokens revoked for account ${accountId}`);
       } catch (revokeError) {
-        console.warn('Failed to revoke Facebook tokens:', revokeError);
+        console.warn("Failed to revoke Facebook tokens:", revokeError);
         // Continue with local disconnection even if remote revocation fails
       }
     }
 
     // Deactivate the account (soft delete)
     const { error: deactivateError } = await supabase
-      .from('social_media_accounts')
+      .from("social_media_accounts")
       .update({
         is_active: false,
-        disconnected_at: new Date().toISOString()
+        disconnected_at: new Date().toISOString(),
       })
-      .eq('id', accountId);
+      .eq("id", accountId);
 
     if (deactivateError) {
       throw new Error(`Failed to disconnect account: ${deactivateError.message}`);
@@ -181,18 +181,17 @@ export async function DELETE(
 
     return NextResponse.json({
       success: true,
-      message: 'Facebook account disconnected successfully'
+      message: "Facebook account disconnected successfully",
     });
-
   } catch (error) {
-    console.error('Facebook account disconnection error:', error);
-    
+    console.error("Facebook account disconnection error:", error);
+
     return NextResponse.json(
-      { 
-        error: 'Failed to disconnect Facebook account',
-        details: error instanceof Error ? error.message : 'Unknown error'
+      {
+        error: "Failed to disconnect Facebook account",
+        details: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

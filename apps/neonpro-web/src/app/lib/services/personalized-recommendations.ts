@@ -1,30 +1,30 @@
-﻿// Story 9.2: Personalized Treatment Recommendations - Backend Service
+// Story 9.2: Personalized Treatment Recommendations - Backend Service
 // AI-powered personalized treatment recommendation engine
 
 import type {
-    ApproveRecommendationRequest,
-    CreatePersonalizationFactorRequest,
-    CreateRecommendationFeedbackRequest,
-    CreateRecommendationProfileRequest,
-    CreateTreatmentRecommendationRequest,
-    PersonalizationFactor,
-    PersonalizationInsights,
-    PersonalizedRecommendationResult,
-    RecommendationAnalytics,
-    RecommendationFeedback,
-    RecommendationPerformance,
-    RecommendationProfile,
-    RecommendationWithDetails,
-    RecordPerformanceRequest,
-    RiskAssessment,
-    SafetyProfile,
-    TreatmentAlternative,
-    TreatmentOption,
-    TreatmentRecommendation,
-    UpdateRecommendationProfileRequest,
-    UpdateSafetyProfileRequest
-} from '../../types/personalized-recommendations';
-import { createClient } from '../../utils/supabase/server';
+  ApproveRecommendationRequest,
+  CreatePersonalizationFactorRequest,
+  CreateRecommendationFeedbackRequest,
+  CreateRecommendationProfileRequest,
+  CreateTreatmentRecommendationRequest,
+  PersonalizationFactor,
+  PersonalizationInsights,
+  PersonalizedRecommendationResult,
+  RecommendationAnalytics,
+  RecommendationFeedback,
+  RecommendationPerformance,
+  RecommendationProfile,
+  RecommendationWithDetails,
+  RecordPerformanceRequest,
+  RiskAssessment,
+  SafetyProfile,
+  TreatmentAlternative,
+  TreatmentOption,
+  TreatmentRecommendation,
+  UpdateRecommendationProfileRequest,
+  UpdateSafetyProfileRequest,
+} from "../../types/personalized-recommendations";
+import type { createClient } from "../../utils/supabase/server";
 
 // Query interfaces for this service
 interface RecommendationQuery {
@@ -35,7 +35,7 @@ interface RecommendationQuery {
   limit: number;
   offset: number;
   sort_by: string;
-  sort_order: 'asc' | 'desc';
+  sort_order: "asc" | "desc";
 }
 
 interface FeedbackQuery {
@@ -46,7 +46,7 @@ interface FeedbackQuery {
   limit: number;
   offset: number;
   sort_by: string;
-  sort_order: 'asc' | 'desc';
+  sort_order: "asc" | "desc";
 }
 
 interface PerformanceQuery {
@@ -61,12 +61,13 @@ interface PerformanceQuery {
 }
 
 export class PersonalizedRecommendationService {
-
   // Recommendation Profile Management
-  async createRecommendationProfile(data: CreateRecommendationProfileRequest): Promise<RecommendationProfile> {
+  async createRecommendationProfile(
+    data: CreateRecommendationProfileRequest,
+  ): Promise<RecommendationProfile> {
     const supabase = await createClient();
     const { data: profile, error } = await supabase
-      .from('recommendation_profiles')
+      .from("recommendation_profiles")
       .insert({
         patient_id: data.patient_id,
         profile_data: data.profile_data,
@@ -85,12 +86,12 @@ export class PersonalizedRecommendationService {
   async getRecommendationProfile(patientId: string): Promise<RecommendationProfile | null> {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from('recommendation_profiles')
-      .select('*')
-      .eq('patient_id', patientId)
+      .from("recommendation_profiles")
+      .select("*")
+      .eq("patient_id", patientId)
       .single();
 
-    if (error && error.code !== 'PGRST116') {
+    if (error && error.code !== "PGRST116") {
       throw new Error(`Failed to get recommendation profile: ${error.message}`);
     }
 
@@ -99,13 +100,13 @@ export class PersonalizedRecommendationService {
 
   async updateRecommendationProfile(
     patientId: string,
-    updates: UpdateRecommendationProfileRequest
+    updates: UpdateRecommendationProfileRequest,
   ): Promise<RecommendationProfile> {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from('recommendation_profiles')
+      .from("recommendation_profiles")
       .update(updates)
-      .eq('patient_id', patientId)
+      .eq("patient_id", patientId)
       .select()
       .single();
 
@@ -116,7 +117,7 @@ export class PersonalizedRecommendationService {
   // AI-Powered Recommendation Generation
   async generatePersonalizedRecommendations(
     patientId: string,
-    treatmentCategory?: string
+    treatmentCategory?: string,
   ): Promise<PersonalizedRecommendationResult> {
     // Get patient profile and personalization factors
     const profile = await this.getRecommendationProfile(patientId);
@@ -124,12 +125,18 @@ export class PersonalizedRecommendationService {
     const safetyProfile = await this.getSafetyProfile(patientId);
 
     // AI-powered recommendation engine (simplified simulation)
-    const recommendations = await this.runRecommendationEngine(patientId, profile, factors, safetyProfile, treatmentCategory);
-    
+    const recommendations = await this.runRecommendationEngine(
+      patientId,
+      profile,
+      factors,
+      safetyProfile,
+      treatmentCategory,
+    );
+
     return {
       recommendations: recommendations.primary,
       personalization_score: recommendations.personalization_score,
-      safety_assessment: safetyProfile || await this.createDefaultSafetyProfile(patientId),
+      safety_assessment: safetyProfile || (await this.createDefaultSafetyProfile(patientId)),
       confidence_level: recommendations.confidence_level,
       explanation: recommendations.explanation,
       alternative_options: recommendations.alternatives,
@@ -141,7 +148,7 @@ export class PersonalizedRecommendationService {
     profile: RecommendationProfile | null,
     factors: PersonalizationFactor[],
     safetyProfile: SafetyProfile | null,
-    category?: string
+    category?: string,
   ): Promise<{
     primary: TreatmentRecommendation[];
     alternatives: TreatmentAlternative[];
@@ -153,14 +160,14 @@ export class PersonalizedRecommendationService {
     const baseRecommendations = await this.getBaseTreatmentOptions(category);
     const personalizedOptions = this.applyPersonalizationFactors(baseRecommendations, factors);
     const safeOptions = this.applySafetyFiltering(personalizedOptions, safetyProfile);
-    
+
     const recommendations = await Promise.all(
       safeOptions.slice(0, 3).map(async (option, index) => {
         const recommendation: TreatmentRecommendation = {
-          id: '', // Will be set by database
+          id: "", // Will be set by database
           patient_id: patientId,
-          provider_id: '', // Will be set by API
-          recommendation_type: 'primary_treatment',
+          provider_id: "", // Will be set by API
+          recommendation_type: "primary_treatment",
           treatment_options: [option],
           ranking_scores: { [option.id]: option.success_probability },
           rationale: `Personalized recommendation based on patient factors and safety profile. Success probability: ${(option.success_probability * 100).toFixed(1)}%`,
@@ -168,22 +175,28 @@ export class PersonalizedRecommendationService {
           risk_assessments: { [option.id]: this.generateRiskAssessment(option, safetyProfile) },
           contraindications: safetyProfile?.contraindications || [],
           alternatives: [],
-          status: 'pending',
+          status: "pending",
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         };
         return recommendation;
-      })
+      }),
     );
 
-    const alternatives = safeOptions.slice(3, 6).map((option): TreatmentAlternative => ({
-      option,
-      ranking_score: option.success_probability * 0.8, // Slightly lower than primary
-      comparison_rationale: `Alternative option with good suitability for patient profile`,
-      pros: [`${option.intensity} intensity`, 'Good success rate', 'Suitable for patient profile'],
-      cons: ['Lower ranking than primary options', 'May require longer duration'],
-      suitability_score: option.success_probability * 0.85,
-    }));
+    const alternatives = safeOptions.slice(3, 6).map(
+      (option): TreatmentAlternative => ({
+        option,
+        ranking_score: option.success_probability * 0.8, // Slightly lower than primary
+        comparison_rationale: `Alternative option with good suitability for patient profile`,
+        pros: [
+          `${option.intensity} intensity`,
+          "Good success rate",
+          "Suitable for patient profile",
+        ],
+        cons: ["Lower ranking than primary options", "May require longer duration"],
+        suitability_score: option.success_probability * 0.85,
+      }),
+    );
 
     return {
       primary: recommendations,
@@ -198,97 +211,102 @@ export class PersonalizedRecommendationService {
     // Simulated base treatment options
     const options: TreatmentOption[] = [
       {
-        id: 'treatment_1',
-        name: 'Laser Facial Rejuvenation',
-        type: 'aesthetic',
-        description: 'Advanced laser treatment for skin rejuvenation and anti-aging',
-        duration: '4-6 sessions',
-        intensity: 'moderate',
+        id: "treatment_1",
+        name: "Laser Facial Rejuvenation",
+        type: "aesthetic",
+        description: "Advanced laser treatment for skin rejuvenation and anti-aging",
+        duration: "4-6 sessions",
+        intensity: "moderate",
         cost_estimate: 1500,
         success_probability: 0.85,
-        risk_level: 'low',
-        contraindications: ['pregnancy', 'recent_sun_exposure'],
-        requirements: ['consultation', 'patch_test'],
-        alternatives: ['chemical_peel', 'microneedling'],
+        risk_level: "low",
+        contraindications: ["pregnancy", "recent_sun_exposure"],
+        requirements: ["consultation", "patch_test"],
+        alternatives: ["chemical_peel", "microneedling"],
       },
       {
-        id: 'treatment_2',
-        name: 'Botox Anti-Aging Treatment',
-        type: 'aesthetic',
-        description: 'Injectable treatment for wrinkle reduction and prevention',
-        duration: '1 session, 3-4 month duration',
-        intensity: 'minimal',
+        id: "treatment_2",
+        name: "Botox Anti-Aging Treatment",
+        type: "aesthetic",
+        description: "Injectable treatment for wrinkle reduction and prevention",
+        duration: "1 session, 3-4 month duration",
+        intensity: "minimal",
         cost_estimate: 800,
         success_probability: 0.92,
-        risk_level: 'very_low',
-        contraindications: ['neuromuscular_disorders', 'pregnancy'],
-        requirements: ['medical_clearance'],
-        alternatives: ['dermal_fillers', 'laser_treatment'],
+        risk_level: "very_low",
+        contraindications: ["neuromuscular_disorders", "pregnancy"],
+        requirements: ["medical_clearance"],
+        alternatives: ["dermal_fillers", "laser_treatment"],
       },
       {
-        id: 'treatment_3',
-        name: 'Chemical Peel Treatment',
-        type: 'dermatological',
-        description: 'Chemical exfoliation for skin texture improvement',
-        duration: '2-4 sessions',
-        intensity: 'mild',
+        id: "treatment_3",
+        name: "Chemical Peel Treatment",
+        type: "dermatological",
+        description: "Chemical exfoliation for skin texture improvement",
+        duration: "2-4 sessions",
+        intensity: "mild",
         cost_estimate: 600,
         success_probability: 0.78,
-        risk_level: 'low',
-        contraindications: ['sensitive_skin', 'recent_laser'],
-        requirements: ['skin_preparation'],
-        alternatives: ['microdermabrasion', 'laser_resurfacing'],
+        risk_level: "low",
+        contraindications: ["sensitive_skin", "recent_laser"],
+        requirements: ["skin_preparation"],
+        alternatives: ["microdermabrasion", "laser_resurfacing"],
       },
       {
-        id: 'treatment_4',
-        name: 'Dermal Filler Enhancement',
-        type: 'cosmetic',
-        description: 'Injectable volume enhancement for facial contouring',
-        duration: '1-2 sessions',
-        intensity: 'moderate',
+        id: "treatment_4",
+        name: "Dermal Filler Enhancement",
+        type: "cosmetic",
+        description: "Injectable volume enhancement for facial contouring",
+        duration: "1-2 sessions",
+        intensity: "moderate",
         cost_estimate: 1200,
         success_probability: 0.88,
-        risk_level: 'low',
-        contraindications: ['autoimmune_disorders', 'blood_thinners'],
-        requirements: ['consultation', 'medical_history'],
-        alternatives: ['fat_transfer', 'thread_lift'],
+        risk_level: "low",
+        contraindications: ["autoimmune_disorders", "blood_thinners"],
+        requirements: ["consultation", "medical_history"],
+        alternatives: ["fat_transfer", "thread_lift"],
       },
       {
-        id: 'treatment_5',
-        name: 'Microneedling Therapy',
-        type: 'therapeutic',
-        description: 'Collagen induction therapy for skin improvement',
-        duration: '3-6 sessions',
-        intensity: 'mild',
+        id: "treatment_5",
+        name: "Microneedling Therapy",
+        type: "therapeutic",
+        description: "Collagen induction therapy for skin improvement",
+        duration: "3-6 sessions",
+        intensity: "mild",
         cost_estimate: 400,
         success_probability: 0.75,
-        risk_level: 'very_low',
-        contraindications: ['active_acne', 'blood_disorders'],
-        requirements: ['consultation'],
-        alternatives: ['laser_therapy', 'chemical_peel'],
+        risk_level: "very_low",
+        contraindications: ["active_acne", "blood_disorders"],
+        requirements: ["consultation"],
+        alternatives: ["laser_therapy", "chemical_peel"],
       },
     ];
 
-    return category ? options.filter(opt => opt.type === category) : options;
+    return category ? options.filter((opt) => opt.type === category) : options;
   }
 
   private applyPersonalizationFactors(
     options: TreatmentOption[],
-    factors: PersonalizationFactor[]
+    factors: PersonalizationFactor[],
   ): TreatmentOption[] {
-    return options.map(option => {
+    return options.map((option) => {
       let adjustedProbability = option.success_probability;
-      
+
       // Apply age factor
-      const ageFactor = factors.find(f => f.factor_type === 'demographic' && f.factor_category === 'age_related');
+      const ageFactor = factors.find(
+        (f) => f.factor_type === "demographic" && f.factor_category === "age_related",
+      );
       if (ageFactor) {
         const age = ageFactor.factor_value.age;
-        if (age < 30) adjustedProbability *= 1.1; // Better results for younger patients
+        if (age < 30)
+          adjustedProbability *= 1.1; // Better results for younger patients
         else if (age > 60) adjustedProbability *= 0.95; // Slightly lower for older patients
       }
 
       // Apply treatment history factor
-      const historyFactor = factors.find(f => f.factor_type === 'medical_history' && f.factor_category === 'treatment_history');
+      const historyFactor = factors.find(
+        (f) => f.factor_type === "medical_history" && f.factor_category === "treatment_history",
+      );
       if (historyFactor) {
         const previousTreatments = historyFactor.factor_value.previous_treatments || [];
         if (previousTreatments.includes(option.type)) {
@@ -297,10 +315,10 @@ export class PersonalizedRecommendationService {
       }
 
       // Apply lifestyle factors
-      const lifestyleFactor = factors.find(f => f.factor_type === 'lifestyle');
+      const lifestyleFactor = factors.find((f) => f.factor_type === "lifestyle");
       if (lifestyleFactor) {
         const sunExposure = lifestyleFactor.factor_value.sun_exposure;
-        if (sunExposure === 'high' && option.type === 'aesthetic') {
+        if (sunExposure === "high" && option.type === "aesthetic") {
           adjustedProbability *= 0.9; // Lower success for high sun exposure
         }
       }
@@ -314,31 +332,34 @@ export class PersonalizedRecommendationService {
 
   private applySafetyFiltering(
     options: TreatmentOption[],
-    safetyProfile: SafetyProfile | null
+    safetyProfile: SafetyProfile | null,
   ): TreatmentOption[] {
     if (!safetyProfile) return options;
 
-    return options.filter(option => {
+    return options.filter((option) => {
       // Check contraindications
-      const hasContraindication = safetyProfile.contraindications.some(
-        contraindication => option.contraindications.includes(contraindication.description)
+      const hasContraindication = safetyProfile.contraindications.some((contraindication) =>
+        option.contraindications.includes(contraindication.description),
       );
 
       // Check allergies
-      const hasAllergy = safetyProfile.allergies.some(
-        allergy => option.contraindications.includes(allergy.allergen)
+      const hasAllergy = safetyProfile.allergies.some((allergy) =>
+        option.contraindications.includes(allergy.allergen),
       );
 
       return !hasContraindication && !hasAllergy;
     });
   }
 
-  private generateRiskAssessment(option: TreatmentOption, safetyProfile: SafetyProfile | null): RiskAssessment {
+  private generateRiskAssessment(
+    option: TreatmentOption,
+    safetyProfile: SafetyProfile | null,
+  ): RiskAssessment {
     const riskFactors = safetyProfile?.risk_factors || [];
-    
+
     return {
       risk_level: option.risk_level,
-      risk_factors: riskFactors.map(rf => ({
+      risk_factors: riskFactors.map((rf) => ({
         id: rf.id,
         factor_name: rf.factor_name,
         factor_type: rf.factor_type,
@@ -347,78 +368,87 @@ export class PersonalizedRecommendationService {
         mitigation_strategies: rf.mitigation_strategies,
       })),
       mitigation_strategies: [
-        'Follow pre-treatment instructions',
-        'Monitor for adverse reactions',
-        'Schedule follow-up appointments',
+        "Follow pre-treatment instructions",
+        "Monitor for adverse reactions",
+        "Schedule follow-up appointments",
       ],
       monitoring_requirements: [
-        'Post-treatment observation',
-        'Regular progress assessments',
-        'Side effect monitoring',
+        "Post-treatment observation",
+        "Regular progress assessments",
+        "Side effect monitoring",
       ],
       safety_precautions: [
-        'Proper patient preparation',
-        'Sterile technique',
-        'Emergency protocols ready',
+        "Proper patient preparation",
+        "Sterile technique",
+        "Emergency protocols ready",
       ],
     };
   }
 
-  private calculatePersonalizationScore(factors: PersonalizationFactor[], profile: RecommendationProfile | null): number {
+  private calculatePersonalizationScore(
+    factors: PersonalizationFactor[],
+    profile: RecommendationProfile | null,
+  ): number {
     const factorCount = factors.length;
     const profileCompleteness = profile ? Object.keys(profile.profile_data).length / 10 : 0; // Assume 10 key fields
-    
-    return Math.min(1.0, (factorCount * 0.1) + (profileCompleteness * 0.5));
+
+    return Math.min(1.0, factorCount * 0.1 + profileCompleteness * 0.5);
   }
 
-  private calculateConfidenceLevel(factors: PersonalizationFactor[], safetyProfile: SafetyProfile | null): number {
-    const factorConfidence = factors.reduce((sum, f) => sum + f.confidence_score, 0) / Math.max(factors.length, 1);
+  private calculateConfidenceLevel(
+    factors: PersonalizationFactor[],
+    safetyProfile: SafetyProfile | null,
+  ): number {
+    const factorConfidence =
+      factors.reduce((sum, f) => sum + f.confidence_score, 0) / Math.max(factors.length, 1);
     const safetyCompleteness = safetyProfile ? 0.9 : 0.5; // Higher confidence with complete safety profile
-    
-    return (factorConfidence * 0.7) + (safetyCompleteness * 0.3);
+
+    return factorConfidence * 0.7 + safetyCompleteness * 0.3;
   }
 
   private generateExplanation(
     factors: PersonalizationFactor[],
     safetyProfile: SafetyProfile | null,
-    recommendationCount: number
+    recommendationCount: number,
   ): string {
-    const factorTypes = Array.from(new Set(factors.map(f => f.factor_type)));
-    const hasCommonFactors = factorTypes.includes('demographic') && factorTypes.includes('medical_history');
-    
+    const factorTypes = Array.from(new Set(factors.map((f) => f.factor_type)));
+    const hasCommonFactors =
+      factorTypes.includes("demographic") && factorTypes.includes("medical_history");
+
     let explanation = `Generated ${recommendationCount} personalized recommendations based on `;
-    
+
     if (hasCommonFactors) {
-      explanation += 'comprehensive patient analysis including demographics, medical history, and preferences. ';
+      explanation +=
+        "comprehensive patient analysis including demographics, medical history, and preferences. ";
     } else {
-      explanation += 'available patient data and clinical guidelines. ';
+      explanation += "available patient data and clinical guidelines. ";
     }
 
     if (safetyProfile) {
-      explanation += 'Safety profile reviewed for contraindications and risk factors. ';
+      explanation += "Safety profile reviewed for contraindications and risk factors. ";
     } else {
-      explanation += 'Standard safety precautions applied. ';
+      explanation += "Standard safety precautions applied. ";
     }
 
-    explanation += 'Recommendations are ranked by success probability and patient suitability.';
-    
+    explanation += "Recommendations are ranked by success probability and patient suitability.";
+
     return explanation;
   }
 
   // Treatment Recommendation Management
   async createTreatmentRecommendation(
-    data: CreateTreatmentRecommendationRequest & { provider_id: string }
+    data: CreateTreatmentRecommendationRequest & { provider_id: string },
   ): Promise<TreatmentRecommendation> {
     const supabase = await createClient();
     const { data: recommendation, error } = await supabase
-      .from('treatment_recommendations')
+      .from("treatment_recommendations")
       .insert({
         patient_id: data.patient_id,
         provider_id: data.provider_id,
         recommendation_type: data.recommendation_type,
         treatment_options: data.treatment_options,
         ranking_scores: {},
-        rationale: data.rationale || 'AI-generated personalized recommendation',
+        rationale: data.rationale || "AI-generated personalized recommendation",
         success_probabilities: {},
         risk_assessments: {},
         contraindications: [],
@@ -437,21 +467,23 @@ export class PersonalizedRecommendationService {
     total: number;
   }> {
     const supabase = await createClient();
-    let queryBuilder = supabase
-      .from('treatment_recommendations')
-      .select(`
+    let queryBuilder = supabase.from("treatment_recommendations").select(
+      `
         *,
         patient:patient_id(id, email, raw_user_meta_data),
         provider:provider_id(id, email, raw_user_meta_data)
-      `, { count: 'exact' });
+      `,
+      { count: "exact" },
+    );
 
-    if (query.patient_id) queryBuilder = queryBuilder.eq('patient_id', query.patient_id);
-    if (query.provider_id) queryBuilder = queryBuilder.eq('provider_id', query.provider_id);
-    if (query.status) queryBuilder = queryBuilder.eq('status', query.status);
-    if (query.recommendation_type) queryBuilder = queryBuilder.eq('recommendation_type', query.recommendation_type);
+    if (query.patient_id) queryBuilder = queryBuilder.eq("patient_id", query.patient_id);
+    if (query.provider_id) queryBuilder = queryBuilder.eq("provider_id", query.provider_id);
+    if (query.status) queryBuilder = queryBuilder.eq("status", query.status);
+    if (query.recommendation_type)
+      queryBuilder = queryBuilder.eq("recommendation_type", query.recommendation_type);
 
     const { data, count, error } = await queryBuilder
-      .order(query.sort_by, { ascending: query.sort_order === 'asc' })
+      .order(query.sort_by, { ascending: query.sort_order === "asc" })
       .range(query.offset, query.offset + query.limit - 1);
 
     if (error) throw new Error(`Failed to get treatment recommendations: ${error.message}`);
@@ -465,16 +497,16 @@ export class PersonalizedRecommendationService {
   async getTreatmentRecommendation(id: string): Promise<RecommendationWithDetails | null> {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from('treatment_recommendations')
+      .from("treatment_recommendations")
       .select(`
         *,
         patient:patient_id(id, email, raw_user_meta_data),
         provider:provider_id(id, email, raw_user_meta_data)
       `)
-      .eq('id', id)
+      .eq("id", id)
       .single();
 
-    if (error && error.code !== 'PGRST116') {
+    if (error && error.code !== "PGRST116") {
       throw new Error(`Failed to get treatment recommendation: ${error.message}`);
     }
 
@@ -483,17 +515,17 @@ export class PersonalizedRecommendationService {
 
   async approveRecommendation(
     id: string,
-    approval: ApproveRecommendationRequest
+    approval: ApproveRecommendationRequest,
   ): Promise<TreatmentRecommendation> {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from('treatment_recommendations')
+      .from("treatment_recommendations")
       .update({
-        status: 'approved',
+        status: "approved",
         approved_by: approval.approved_by,
         approved_at: new Date().toISOString(),
       })
-      .eq('id', id)
+      .eq("id", id)
       .select()
       .single();
 
@@ -504,13 +536,13 @@ export class PersonalizedRecommendationService {
   async rejectRecommendation(id: string, rejectedBy: string): Promise<TreatmentRecommendation> {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from('treatment_recommendations')
+      .from("treatment_recommendations")
       .update({
-        status: 'rejected',
+        status: "rejected",
         approved_by: rejectedBy,
         approved_at: new Date().toISOString(),
       })
-      .eq('id', id)
+      .eq("id", id)
       .select()
       .single();
 
@@ -520,11 +552,11 @@ export class PersonalizedRecommendationService {
 
   // Feedback Management
   async createRecommendationFeedback(
-    data: CreateRecommendationFeedbackRequest & { provider_id: string }
+    data: CreateRecommendationFeedbackRequest & { provider_id: string },
   ): Promise<RecommendationFeedback> {
     const supabase = await createClient();
     const { data: feedback, error } = await supabase
-      .from('recommendation_feedback')
+      .from("recommendation_feedback")
       .insert({
         recommendation_id: data.recommendation_id,
         provider_id: data.provider_id,
@@ -549,17 +581,17 @@ export class PersonalizedRecommendationService {
     total: number;
   }> {
     const supabase = await createClient();
-    let queryBuilder = supabase
-      .from('recommendation_feedback')
-      .select('*', { count: 'exact' });
+    let queryBuilder = supabase.from("recommendation_feedback").select("*", { count: "exact" });
 
-    if (query.recommendation_id) queryBuilder = queryBuilder.eq('recommendation_id', query.recommendation_id);
-    if (query.provider_id) queryBuilder = queryBuilder.eq('provider_id', query.provider_id);
-    if (query.feedback_type) queryBuilder = queryBuilder.eq('feedback_type', query.feedback_type);
-    if (query.adoption_status) queryBuilder = queryBuilder.eq('adoption_status', query.adoption_status);
+    if (query.recommendation_id)
+      queryBuilder = queryBuilder.eq("recommendation_id", query.recommendation_id);
+    if (query.provider_id) queryBuilder = queryBuilder.eq("provider_id", query.provider_id);
+    if (query.feedback_type) queryBuilder = queryBuilder.eq("feedback_type", query.feedback_type);
+    if (query.adoption_status)
+      queryBuilder = queryBuilder.eq("adoption_status", query.adoption_status);
 
     const { data, count, error } = await queryBuilder
-      .order(query.sort_by, { ascending: query.sort_order === 'asc' })
+      .order(query.sort_by, { ascending: query.sort_order === "asc" })
       .range(query.offset, query.offset + query.limit - 1);
 
     if (error) throw new Error(`Failed to get recommendation feedback: ${error.message}`);
@@ -572,11 +604,11 @@ export class PersonalizedRecommendationService {
 
   // Personalization Factor Management
   async createPersonalizationFactor(
-    data: CreatePersonalizationFactorRequest
+    data: CreatePersonalizationFactorRequest,
   ): Promise<PersonalizationFactor> {
     const supabase = await createClient();
     const { data: factor, error } = await supabase
-      .from('personalization_factors')
+      .from("personalization_factors")
       .insert({
         patient_id: data.patient_id,
         factor_type: data.factor_type,
@@ -596,10 +628,10 @@ export class PersonalizedRecommendationService {
   async getPersonalizationFactors(patientId: string): Promise<PersonalizationFactor[]> {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from('personalization_factors')
-      .select('*')
-      .eq('patient_id', patientId)
-      .order('created_at', { ascending: false });
+      .from("personalization_factors")
+      .select("*")
+      .eq("patient_id", patientId)
+      .order("created_at", { ascending: false });
 
     if (error) throw new Error(`Failed to get personalization factors: ${error.message}`);
     return (data || []) as PersonalizationFactor[];
@@ -609,7 +641,7 @@ export class PersonalizedRecommendationService {
   async createDefaultSafetyProfile(patientId: string): Promise<SafetyProfile> {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from('safety_profiles')
+      .from("safety_profiles")
       .insert({
         patient_id: patientId,
         allergies: [],
@@ -629,12 +661,12 @@ export class PersonalizedRecommendationService {
   async getSafetyProfile(patientId: string): Promise<SafetyProfile | null> {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from('safety_profiles')
-      .select('*')
-      .eq('patient_id', patientId)
+      .from("safety_profiles")
+      .select("*")
+      .eq("patient_id", patientId)
       .single();
 
-    if (error && error.code !== 'PGRST116') {
+    if (error && error.code !== "PGRST116") {
       throw new Error(`Failed to get safety profile: ${error.message}`);
     }
 
@@ -643,16 +675,16 @@ export class PersonalizedRecommendationService {
 
   async updateSafetyProfile(
     patientId: string,
-    updates: UpdateSafetyProfileRequest
+    updates: UpdateSafetyProfileRequest,
   ): Promise<SafetyProfile> {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from('safety_profiles')
+      .from("safety_profiles")
       .update({
         ...updates,
         last_reviewed: new Date().toISOString(),
       })
-      .eq('patient_id', patientId)
+      .eq("patient_id", patientId)
       .select()
       .single();
 
@@ -662,11 +694,11 @@ export class PersonalizedRecommendationService {
 
   // Performance Tracking
   async recordRecommendationPerformance(
-    data: RecordPerformanceRequest
+    data: RecordPerformanceRequest,
   ): Promise<RecommendationPerformance> {
     const supabase = await createClient();
     const { data: performance, error } = await supabase
-      .from('recommendation_performance')
+      .from("recommendation_performance")
       .insert({
         recommendation_id: data.recommendation_id,
         patient_id: data.patient_id,
@@ -690,19 +722,20 @@ export class PersonalizedRecommendationService {
     total: number;
   }> {
     const supabase = await createClient();
-    let queryBuilder = supabase
-      .from('recommendation_performance')
-      .select('*', { count: 'exact' });
+    let queryBuilder = supabase.from("recommendation_performance").select("*", { count: "exact" });
 
-    if (query.recommendation_id) queryBuilder = queryBuilder.eq('recommendation_id', query.recommendation_id);
-    if (query.patient_id) queryBuilder = queryBuilder.eq('patient_id', query.patient_id);
-    if (query.date_from) queryBuilder = queryBuilder.gte('measured_at', query.date_from);
-    if (query.date_to) queryBuilder = queryBuilder.lte('measured_at', query.date_to);
-    if (query.min_adoption_rate) queryBuilder = queryBuilder.gte('adoption_rate', query.min_adoption_rate);
-    if (query.min_effectiveness) queryBuilder = queryBuilder.gte('effectiveness_score', query.min_effectiveness);
+    if (query.recommendation_id)
+      queryBuilder = queryBuilder.eq("recommendation_id", query.recommendation_id);
+    if (query.patient_id) queryBuilder = queryBuilder.eq("patient_id", query.patient_id);
+    if (query.date_from) queryBuilder = queryBuilder.gte("measured_at", query.date_from);
+    if (query.date_to) queryBuilder = queryBuilder.lte("measured_at", query.date_to);
+    if (query.min_adoption_rate)
+      queryBuilder = queryBuilder.gte("adoption_rate", query.min_adoption_rate);
+    if (query.min_effectiveness)
+      queryBuilder = queryBuilder.gte("effectiveness_score", query.min_effectiveness);
 
     const { data, count, error } = await queryBuilder
-      .order('measured_at', { ascending: false })
+      .order("measured_at", { ascending: false })
       .range(query.offset, query.offset + query.limit - 1);
 
     if (error) throw new Error(`Failed to get recommendation performance: ${error.message}`);
@@ -714,39 +747,51 @@ export class PersonalizedRecommendationService {
   }
 
   // Analytics and Insights
-  async getRecommendationAnalytics(dateFrom?: string, dateTo?: string): Promise<RecommendationAnalytics> {
+  async getRecommendationAnalytics(
+    dateFrom?: string,
+    dateTo?: string,
+  ): Promise<RecommendationAnalytics> {
     const supabase = await createClient();
-    const query = supabase
-      .from('treatment_recommendations')
-      .select('*');
+    const query = supabase.from("treatment_recommendations").select("*");
 
-    if (dateFrom) query.gte('created_at', dateFrom);
-    if (dateTo) query.lte('created_at', dateTo);
+    if (dateFrom) query.gte("created_at", dateFrom);
+    if (dateTo) query.lte("created_at", dateTo);
 
     const { data: recommendations, error } = await query;
     if (error) throw new Error(`Failed to get recommendation analytics: ${error.message}`);
 
-    const feedbackQuery = supabase
-      .from('recommendation_feedback')
-      .select('*');
+    const feedbackQuery = supabase.from("recommendation_feedback").select("*");
 
-    if (dateFrom) feedbackQuery.gte('created_at', dateFrom);
-    if (dateTo) feedbackQuery.lte('created_at', dateTo);
+    if (dateFrom) feedbackQuery.gte("created_at", dateFrom);
+    if (dateTo) feedbackQuery.lte("created_at", dateTo);
 
     const { data: feedback } = await feedbackQuery;
 
     // Calculate analytics
     const totalRecommendations = recommendations?.length || 0;
-    const adoptedFeedback = feedback?.filter((f: any) => f.adoption_status === 'adopted') || [];
-    const adoptionRate = totalRecommendations > 0 ? (adoptedFeedback.length / totalRecommendations) * 100 : 0;
+    const adoptedFeedback = feedback?.filter((f: any) => f.adoption_status === "adopted") || [];
+    const adoptionRate =
+      totalRecommendations > 0 ? (adoptedFeedback.length / totalRecommendations) * 100 : 0;
 
     const qualityRatings = feedback?.map((f: any) => f.quality_rating).filter((r: any) => r) || [];
-    const usefulnessRatings = feedback?.map((f: any) => f.usefulness_rating).filter((r: any) => r) || [];
-    const accuracyRatings = feedback?.map((f: any) => f.accuracy_rating).filter((r: any) => r) || [];
+    const usefulnessRatings =
+      feedback?.map((f: any) => f.usefulness_rating).filter((r: any) => r) || [];
+    const accuracyRatings =
+      feedback?.map((f: any) => f.accuracy_rating).filter((r: any) => r) || [];
 
-    const avgQuality = qualityRatings.length > 0 ? qualityRatings.reduce((sum: number, r: number) => sum + r, 0) / qualityRatings.length : 0;
-    const avgUsefulness = usefulnessRatings.length > 0 ? usefulnessRatings.reduce((sum: number, r: number) => sum + r, 0) / usefulnessRatings.length : 0;
-    const avgAccuracy = accuracyRatings.length > 0 ? accuracyRatings.reduce((sum: number, r: number) => sum + r, 0) / accuracyRatings.length : 0;
+    const avgQuality =
+      qualityRatings.length > 0
+        ? qualityRatings.reduce((sum: number, r: number) => sum + r, 0) / qualityRatings.length
+        : 0;
+    const avgUsefulness =
+      usefulnessRatings.length > 0
+        ? usefulnessRatings.reduce((sum: number, r: number) => sum + r, 0) /
+          usefulnessRatings.length
+        : 0;
+    const avgAccuracy =
+      accuracyRatings.length > 0
+        ? accuracyRatings.reduce((sum: number, r: number) => sum + r, 0) / accuracyRatings.length
+        : 0;
 
     return {
       total_recommendations: totalRecommendations,
@@ -763,17 +808,15 @@ export class PersonalizedRecommendationService {
 
   async getPersonalizationInsights(patientId?: string): Promise<PersonalizationInsights> {
     const supabase = await createClient();
-    let factorsQuery = supabase
-      .from('personalization_factors')
-      .select('*');
+    let factorsQuery = supabase.from("personalization_factors").select("*");
 
-    if (patientId) factorsQuery = factorsQuery.eq('patient_id', patientId);
+    if (patientId) factorsQuery = factorsQuery.eq("patient_id", patientId);
 
     const { data: factors } = await factorsQuery;
 
     // Calculate insights
     const mostInfluential = (factors || [])
-      .sort((a: any, b: any) => (b.weight * b.confidence_score) - (a.weight * a.confidence_score))
+      .sort((a: any, b: any) => b.weight * b.confidence_score - a.weight * a.confidence_score)
       .slice(0, 10);
 
     return {
@@ -786,5 +829,5 @@ export class PersonalizedRecommendationService {
 }
 
 // Export service instance
-export const createpersonalizedRecommendationsService = () => new PersonalizedRecommendationService();
-
+export const createpersonalizedRecommendationsService = () =>
+  new PersonalizedRecommendationService();

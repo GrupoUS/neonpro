@@ -1,17 +1,17 @@
-﻿'use client'
+"use client";
 
-import { createClient } from '@/lib/supabase/client'
-import { useCallback, useEffect, useState } from 'react'
-import { toast } from 'sonner'
+import type { createClient } from "@/lib/supabase/client";
+import type { useCallback, useEffect, useState } from "react";
+import type { toast } from "sonner";
 
 /**
  * Patient Appointments Management Hook for NeonPro
- * 
+ *
  * Based on VIBECODE MCP research synthesis:
  * - Context7: React calendar patterns and state management
  * - Tavily: Healthcare no-show statistics (27% avg, $150B annual cost)
  * - Exa: Advanced cancellation policies (24-48h standard, 60% reduction with reminders)
- * 
+ *
  * Features:
  * - Upcoming/past appointments management
  * - Cancellation with policy enforcement (24-48h rule)
@@ -21,65 +21,72 @@ import { toast } from 'sonner'
  */
 
 export interface PatientAppointment {
-  id: string
-  service_id: string
-  service_name: string
-  service_duration: number
-  professional_id?: string
-  professional_name?: string
-  appointment_date: string
-  appointment_time: string
-  notes?: string
-  status: 'confirmed' | 'cancelled' | 'completed' | 'no_show' | 'rescheduled'
-  cancellation_reason?: string
-  cancellation_date?: string
-  created_at: string
-  updated_at: string
-  can_cancel: boolean
-  can_reschedule: boolean
-  hours_until_appointment: number
+  id: string;
+  service_id: string;
+  service_name: string;
+  service_duration: number;
+  professional_id?: string;
+  professional_name?: string;
+  appointment_date: string;
+  appointment_time: string;
+  notes?: string;
+  status: "confirmed" | "cancelled" | "completed" | "no_show" | "rescheduled";
+  cancellation_reason?: string;
+  cancellation_date?: string;
+  created_at: string;
+  updated_at: string;
+  can_cancel: boolean;
+  can_reschedule: boolean;
+  hours_until_appointment: number;
 }
 
 export interface CancellationPolicies {
-  minimum_hours: number
-  fee_amount: number
-  fee_applies: boolean
-  emergency_exceptions: string[]
+  minimum_hours: number;
+  fee_amount: number;
+  fee_applies: boolean;
+  emergency_exceptions: string[];
 }
 
 export interface RescheduleRequest {
-  appointment_id: string
-  requested_date: string
-  requested_time: string
-  reason: string
-  status: 'pending' | 'approved' | 'denied'
+  appointment_id: string;
+  requested_date: string;
+  requested_time: string;
+  reason: string;
+  status: "pending" | "approved" | "denied";
 }
 
 interface UsePatientAppointmentsResult {
-  upcomingAppointments: PatientAppointment[]
-  pastAppointments: PatientAppointment[]
-  loading: boolean
-  error: string | null
-  cancellationPolicies: CancellationPolicies | null
-  
+  upcomingAppointments: PatientAppointment[];
+  pastAppointments: PatientAppointment[];
+  loading: boolean;
+  error: string | null;
+  cancellationPolicies: CancellationPolicies | null;
+
   // Actions
-  cancelAppointment: (appointmentId: string, reason: string) => Promise<boolean>
-  requestReschedule: (appointmentId: string, newDate: string, newTime: string, reason: string) => Promise<boolean>
-  refreshAppointments: () => Promise<void>
-  
+  cancelAppointment: (appointmentId: string, reason: string) => Promise<boolean>;
+  requestReschedule: (
+    appointmentId: string,
+    newDate: string,
+    newTime: string,
+    reason: string,
+  ) => Promise<boolean>;
+  refreshAppointments: () => Promise<void>;
+
   // Analytics
-  getNoShowPattern: () => { rate: number; commonReasons: string[] }
-  getCancellationStats: () => { rate: number; reasonBreakdown: Record<string, number> }
+  getNoShowPattern: () => { rate: number; commonReasons: string[] };
+  getCancellationStats: () => { rate: number; reasonBreakdown: Record<string, number> };
 }
 
 export function usePatientAppointments(): UsePatientAppointmentsResult {
-  const [upcomingAppointments, setUpcomingAppointments] = useState<PatientAppointment[]>([])
-  const [pastAppointments, setPastAppointments] = useState<PatientAppointment[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [cancellationPolicies, setCancellationPolicies] = useState<CancellationPolicies | null>(null)
+  const [upcomingAppointments, setUpcomingAppointments] = useState<PatientAppointment[]>([]);
+  const [pastAppointments, setPastAppointments] = useState<PatientAppointment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [cancellationPolicies, setCancellationPolicies] = useState<CancellationPolicies | null>(
+    null,
+  );
 
-  const supabase = await createClient()
+  const supabase = await createClient();
 
   /**
    * Load appointments and policies
@@ -87,22 +94,25 @@ export function usePatientAppointments(): UsePatientAppointmentsResult {
    */
   const loadAppointments = useCallback(async () => {
     try {
-      setLoading(true)
-      setError(null)
+      setLoading(true);
+      setError(null);
 
       // Get current user
-      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
       if (authError || !user) {
-        throw new Error('User not authenticated')
+        throw new Error("User not authenticated");
       }
 
-      const now = new Date()
-      const todayDate = now.toISOString().split('T')[0]
-      const currentTime = now.toTimeString().split(' ')[0]
+      const now = new Date();
+      const todayDate = now.toISOString().split("T")[0];
+      const currentTime = now.toTimeString().split(" ")[0];
 
       // Fetch all appointments with related data
       const { data: appointments, error: appointmentsError } = await supabase
-        .from('appointments')
+        .from("appointments")
         .select(`
           id,
           service_id,
@@ -126,24 +136,26 @@ export function usePatientAppointments(): UsePatientAppointmentsResult {
             name
           )
         `)
-        .eq('patient_id', user.id)
-        .order('appointment_date', { ascending: true })
-        .order('appointment_time', { ascending: true })
+        .eq("patient_id", user.id)
+        .order("appointment_date", { ascending: true })
+        .order("appointment_time", { ascending: true });
 
-      if (appointmentsError) throw appointmentsError
+      if (appointmentsError) throw appointmentsError;
 
       // Process appointments and calculate permissions
-      const processedAppointments = (appointments || []).map(apt => {
-        const appointmentDateTime = new Date(`${apt.appointment_date}T${apt.appointment_time}`)
-        const hoursUntil = Math.floor((appointmentDateTime.getTime() - now.getTime()) / (1000 * 60 * 60))
-        
+      const processedAppointments = (appointments || []).map((apt) => {
+        const appointmentDateTime = new Date(`${apt.appointment_date}T${apt.appointment_time}`);
+        const hoursUntil = Math.floor(
+          (appointmentDateTime.getTime() - now.getTime()) / (1000 * 60 * 60),
+        );
+
         return {
           id: apt.id,
           service_id: apt.service_id,
-          service_name: apt.services?.name || 'Unknown Service',
+          service_name: apt.services?.name || "Unknown Service",
           service_duration: apt.services?.duration_minutes || apt.duration || 60,
           professional_id: apt.professional_id,
-          professional_name: apt.professionals?.name || 'Any Professional',
+          professional_name: apt.professionals?.name || "Any Professional",
           appointment_date: apt.appointment_date,
           appointment_time: apt.appointment_time,
           notes: apt.notes,
@@ -154,192 +166,201 @@ export function usePatientAppointments(): UsePatientAppointmentsResult {
           updated_at: apt.updated_at,
           hours_until_appointment: hoursUntil,
           // Policy enforcement: 24h minimum for cancellation (Exa research standard)
-          can_cancel: hoursUntil >= 24 && apt.status === 'confirmed',
-          can_reschedule: hoursUntil >= 48 && apt.status === 'confirmed'
-        } as PatientAppointment
-      })
+          can_cancel: hoursUntil >= 24 && apt.status === "confirmed",
+          can_reschedule: hoursUntil >= 48 && apt.status === "confirmed",
+        } as PatientAppointment;
+      });
 
       // Split upcoming and past appointments
-      const upcoming = processedAppointments.filter(apt => {
-        const aptDate = `${apt.appointment_date}T${apt.appointment_time}`
-        return aptDate > now.toISOString() && apt.status !== 'cancelled'
-      })
+      const upcoming = processedAppointments.filter((apt) => {
+        const aptDate = `${apt.appointment_date}T${apt.appointment_time}`;
+        return aptDate > now.toISOString() && apt.status !== "cancelled";
+      });
 
-      const past = processedAppointments.filter(apt => {
-        const aptDate = `${apt.appointment_date}T${apt.appointment_time}`
-        return aptDate <= now.toISOString() || apt.status === 'cancelled'
-      })
+      const past = processedAppointments.filter((apt) => {
+        const aptDate = `${apt.appointment_date}T${apt.appointment_time}`;
+        return aptDate <= now.toISOString() || apt.status === "cancelled";
+      });
 
-      setUpcomingAppointments(upcoming)
-      setPastAppointments(past)
+      setUpcomingAppointments(upcoming);
+      setPastAppointments(past);
 
       // Load cancellation policies
       const { data: policies } = await supabase
-        .from('clinic_policies')
-        .select('*')
-        .eq('policy_type', 'appointment_cancellation')
-        .single()
+        .from("clinic_policies")
+        .select("*")
+        .eq("policy_type", "appointment_cancellation")
+        .single();
 
       if (policies) {
         setCancellationPolicies({
           minimum_hours: policies.config?.minimum_hours || 24,
           fee_amount: policies.config?.fee_amount || 0,
           fee_applies: policies.config?.fee_applies || false,
-          emergency_exceptions: policies.config?.emergency_exceptions || ['medical_emergency', 'family_emergency']
-        })
+          emergency_exceptions: policies.config?.emergency_exceptions || [
+            "medical_emergency",
+            "family_emergency",
+          ],
+        });
       } else {
         // Default policy based on Exa research findings
         setCancellationPolicies({
           minimum_hours: 24,
           fee_amount: 0,
           fee_applies: false,
-          emergency_exceptions: ['medical_emergency', 'family_emergency', 'illness']
-        })
+          emergency_exceptions: ["medical_emergency", "family_emergency", "illness"],
+        });
       }
-
     } catch (err) {
-      console.error('Error loading appointments:', err)
-      setError(err instanceof Error ? err.message : 'Failed to load appointments')
+      console.error("Error loading appointments:", err);
+      setError(err instanceof Error ? err.message : "Failed to load appointments");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [supabase])
+  }, [supabase]);
 
   /**
    * Cancel appointment with policy validation
    * Implements 24-48h rule from Exa research on cancellation policies
    */
-  const cancelAppointment = useCallback(async (
-    appointmentId: string, 
-    reason: string
-  ): Promise<boolean> => {
-    try {
-      const appointment = upcomingAppointments.find(apt => apt.id === appointmentId)
-      if (!appointment) {
-        toast.error('Agendamento não encontrado')
-        return false
+  const cancelAppointment = useCallback(
+    async (appointmentId: string, reason: string): Promise<boolean> => {
+      try {
+        const appointment = upcomingAppointments.find((apt) => apt.id === appointmentId);
+        if (!appointment) {
+          toast.error("Agendamento não encontrado");
+          return false;
+        }
+
+        // Validate cancellation policy
+        if (!appointment.can_cancel) {
+          const hoursRemaining = appointment.hours_until_appointment;
+          const requiredHours = cancellationPolicies?.minimum_hours || 24;
+
+          toast.error(
+            `Cancelamento deve ser feito com pelo menos ${requiredHours}h de antecedência. Restam ${hoursRemaining}h.`,
+          );
+          return false;
+        }
+
+        // Check for emergency exceptions
+        const isEmergency = cancellationPolicies?.emergency_exceptions.includes(reason);
+
+        const { error } = await supabase.rpc("cancel_patient_appointment", {
+          appointment_id: appointmentId,
+          cancellation_reason: reason,
+          is_emergency: isEmergency,
+        });
+
+        if (error) {
+          console.error("Error cancelling appointment:", error);
+          toast.error("Erro ao cancelar agendamento");
+          return false;
+        }
+
+        // Update local state
+        setUpcomingAppointments((prev) => prev.filter((apt) => apt.id !== appointmentId));
+
+        // Add to past appointments with cancelled status
+        const cancelledAppointment = {
+          ...appointment,
+          status: "cancelled" as const,
+          cancellation_reason: reason,
+          cancellation_date: new Date().toISOString(),
+        };
+        setPastAppointments((prev) => [cancelledAppointment, ...prev]);
+
+        toast.success("Agendamento cancelado com sucesso");
+        return true;
+      } catch (err) {
+        console.error("Error in cancelAppointment:", err);
+        toast.error("Erro inesperado ao cancelar agendamento");
+        return false;
       }
-
-      // Validate cancellation policy
-      if (!appointment.can_cancel) {
-        const hoursRemaining = appointment.hours_until_appointment
-        const requiredHours = cancellationPolicies?.minimum_hours || 24
-        
-        toast.error(`Cancelamento deve ser feito com pelo menos ${requiredHours}h de antecedência. Restam ${hoursRemaining}h.`)
-        return false
-      }
-
-      // Check for emergency exceptions
-      const isEmergency = cancellationPolicies?.emergency_exceptions.includes(reason)
-      
-      const { error } = await supabase.rpc('cancel_patient_appointment', {
-        appointment_id: appointmentId,
-        cancellation_reason: reason,
-        is_emergency: isEmergency
-      })
-
-      if (error) {
-        console.error('Error cancelling appointment:', error)
-        toast.error('Erro ao cancelar agendamento')
-        return false
-      }
-
-      // Update local state
-      setUpcomingAppointments(prev => prev.filter(apt => apt.id !== appointmentId))
-      
-      // Add to past appointments with cancelled status
-      const cancelledAppointment = {
-        ...appointment,
-        status: 'cancelled' as const,
-        cancellation_reason: reason,
-        cancellation_date: new Date().toISOString()
-      }
-      setPastAppointments(prev => [cancelledAppointment, ...prev])
-
-      toast.success('Agendamento cancelado com sucesso')
-      return true
-
-    } catch (err) {
-      console.error('Error in cancelAppointment:', err)
-      toast.error('Erro inesperado ao cancelar agendamento')
-      return false
-    }
-  }, [upcomingAppointments, cancellationPolicies, supabase])
+    },
+    [upcomingAppointments, cancellationPolicies, supabase],
+  );
 
   /**
    * Request rescheduling
    * Based on Exa research: 48h minimum for rescheduling requests
    */
-  const requestReschedule = useCallback(async (
-    appointmentId: string,
-    newDate: string,
-    newTime: string,
-    reason: string
-  ): Promise<boolean> => {
-    try {
-      const appointment = upcomingAppointments.find(apt => apt.id === appointmentId)
-      if (!appointment) {
-        toast.error('Agendamento não encontrado')
-        return false
-      }
+  const requestReschedule = useCallback(
+    async (
+      appointmentId: string,
+      newDate: string,
+      newTime: string,
+      reason: string,
+    ): Promise<boolean> => {
+      try {
+        const appointment = upcomingAppointments.find((apt) => apt.id === appointmentId);
+        if (!appointment) {
+          toast.error("Agendamento não encontrado");
+          return false;
+        }
 
-      if (!appointment.can_reschedule) {
-        toast.error('Reagendamento deve ser solicitado com pelo menos 48h de antecedência')
-        return false
-      }
+        if (!appointment.can_reschedule) {
+          toast.error("Reagendamento deve ser solicitado com pelo menos 48h de antecedência");
+          return false;
+        }
 
-      const { error } = await supabase
-        .from('reschedule_requests')
-        .insert({
+        const { error } = await supabase.from("reschedule_requests").insert({
           appointment_id: appointmentId,
           requested_date: newDate,
           requested_time: newTime,
           reason: reason,
-          status: 'pending'
-        })
+          status: "pending",
+        });
 
-      if (error) {
-        console.error('Error requesting reschedule:', error)
-        toast.error('Erro ao solicitar reagendamento')
-        return false
+        if (error) {
+          console.error("Error requesting reschedule:", error);
+          toast.error("Erro ao solicitar reagendamento");
+          return false;
+        }
+
+        toast.success("Solicitação de reagendamento enviada! Você será notificado da resposta.");
+        return true;
+      } catch (err) {
+        console.error("Error in requestReschedule:", err);
+        toast.error("Erro inesperado ao solicitar reagendamento");
+        return false;
       }
-
-      toast.success('Solicitação de reagendamento enviada! Você será notificado da resposta.')
-      return true
-
-    } catch (err) {
-      console.error('Error in requestReschedule:', err)
-      toast.error('Erro inesperado ao solicitar reagendamento')
-      return false
-    }
-  }, [upcomingAppointments, supabase])
+    },
+    [upcomingAppointments, supabase],
+  );
 
   /**
    * Get no-show pattern analysis
    * Based on Tavily research: 27% average no-show rate
    */
   const getNoShowPattern = useCallback(() => {
-    const totalAppointments = pastAppointments.length
-    const noShows = pastAppointments.filter(apt => apt.status === 'no_show')
-    const noShowRate = totalAppointments > 0 ? (noShows.length / totalAppointments) * 100 : 0
+    const totalAppointments = pastAppointments.length;
+    const noShows = pastAppointments.filter((apt) => apt.status === "no_show");
+    const noShowRate = totalAppointments > 0 ? (noShows.length / totalAppointments) * 100 : 0;
 
     // Common reasons from Exa research
-    const commonReasons = ['work_conflict', 'illness', 'transportation', 'forgot', 'family_emergency']
+    const commonReasons = [
+      "work_conflict",
+      "illness",
+      "transportation",
+      "forgot",
+      "family_emergency",
+    ];
 
     return {
       rate: Math.round(noShowRate * 10) / 10,
-      commonReasons
-    }
-  }, [pastAppointments])
+      commonReasons,
+    };
+  }, [pastAppointments]);
 
   /**
    * Get cancellation statistics
    * Based on Tavily research: 35% work, 32% illness, 28% transport
    */
   const getCancellationStats = useCallback(() => {
-    const cancelled = pastAppointments.filter(apt => apt.status === 'cancelled')
-    const totalPast = pastAppointments.length
-    const cancellationRate = totalPast > 0 ? (cancelled.length / totalPast) * 100 : 0
+    const cancelled = pastAppointments.filter((apt) => apt.status === "cancelled");
+    const totalPast = pastAppointments.length;
+    const cancellationRate = totalPast > 0 ? (cancelled.length / totalPast) * 100 : 0;
 
     // Reason breakdown based on research findings
     const reasonBreakdown: Record<string, number> = {
@@ -347,19 +368,19 @@ export function usePatientAppointments(): UsePatientAppointmentsResult {
       illness: 32,
       transportation: 28,
       family_emergency: 15,
-      other: 10
-    }
+      other: 10,
+    };
 
     return {
       rate: Math.round(cancellationRate * 10) / 10,
-      reasonBreakdown
-    }
-  }, [pastAppointments])
+      reasonBreakdown,
+    };
+  }, [pastAppointments]);
 
   // Initialize on mount
   useEffect(() => {
-    loadAppointments()
-  }, [loadAppointments])
+    loadAppointments();
+  }, [loadAppointments]);
 
   return {
     upcomingAppointments,
@@ -371,7 +392,6 @@ export function usePatientAppointments(): UsePatientAppointmentsResult {
     requestReschedule,
     refreshAppointments: loadAppointments,
     getNoShowPattern,
-    getCancellationStats
-  }
+    getCancellationStats,
+  };
 }
-

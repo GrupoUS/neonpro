@@ -3,8 +3,8 @@
 
 module.exports = async () => {
   // Force UTC timezone for all date operations
-  process.env.TZ = 'UTC';
-  
+  process.env.TZ = "UTC";
+
   // Additional global setup if needed
-  console.log('Jest global setup: Timezone set to UTC');
+  console.log("Jest global setup: Timezone set to UTC");
 };

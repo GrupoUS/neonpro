@@ -26,268 +26,352 @@ var react_hot_toast_1 = require("react-hot-toast");
 var inventoryService = new multi_location_inventory_service_1.MultiLocationInventoryService();
 // ===== INVENTORY ITEMS HOOKS =====
 function useInventoryItems(filters) {
-    if (filters === void 0) { filters = {}; }
-    return (0, react_query_1.useQuery)({
-        queryKey: ['inventory-items', filters],
-        queryFn: function () { return inventoryService.getInventoryItems(filters); },
-        staleTime: 5 * 60 * 1000, // 5 minutes
-    });
+  if (filters === void 0) {
+    filters = {};
+  }
+  return (0, react_query_1.useQuery)({
+    queryKey: ["inventory-items", filters],
+    queryFn: function () {
+      return inventoryService.getInventoryItems(filters);
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
 }
 function useInventoryItem(id) {
-    return (0, react_query_1.useQuery)({
-        queryKey: ['inventory-item', id],
-        queryFn: function () { return inventoryService.getInventoryItem(id); },
-        enabled: !!id,
-    });
+  return (0, react_query_1.useQuery)({
+    queryKey: ["inventory-item", id],
+    queryFn: function () {
+      return inventoryService.getInventoryItem(id);
+    },
+    enabled: !!id,
+  });
 }
 function useCreateInventoryItem() {
-    var queryClient = (0, react_query_1.useQueryClient)();
-    return (0, react_query_1.useMutation)({
-        mutationFn: function (item) { return inventoryService.createInventoryItem(item); },
-        onSuccess: function (data) {
-            queryClient.invalidateQueries({ queryKey: ['inventory-items'] });
-            react_hot_toast_1.toast.success("Item \"".concat(data.name, "\" criado com sucesso!"));
-        },
-        onError: function (error) {
-            console.error('Error creating inventory item:', error);
-            react_hot_toast_1.toast.error('Erro ao criar item do inventário');
-        },
-    });
+  var queryClient = (0, react_query_1.useQueryClient)();
+  return (0, react_query_1.useMutation)({
+    mutationFn: function (item) {
+      return inventoryService.createInventoryItem(item);
+    },
+    onSuccess: function (data) {
+      queryClient.invalidateQueries({ queryKey: ["inventory-items"] });
+      react_hot_toast_1.toast.success('Item "'.concat(data.name, '" criado com sucesso!'));
+    },
+    onError: function (error) {
+      console.error("Error creating inventory item:", error);
+      react_hot_toast_1.toast.error("Erro ao criar item do inventário");
+    },
+  });
 }
 function useUpdateInventoryItem() {
-    var queryClient = (0, react_query_1.useQueryClient)();
-    return (0, react_query_1.useMutation)({
-        mutationFn: function (item) { return inventoryService.updateInventoryItem(item); },
-        onSuccess: function (data) {
-            queryClient.invalidateQueries({ queryKey: ['inventory-items'] });
-            queryClient.invalidateQueries({ queryKey: ['inventory-item', data.id] });
-            react_hot_toast_1.toast.success("Item \"".concat(data.name, "\" atualizado com sucesso!"));
-        },
-        onError: function (error) {
-            console.error('Error updating inventory item:', error);
-            react_hot_toast_1.toast.error('Erro ao atualizar item do inventário');
-        },
-    });
+  var queryClient = (0, react_query_1.useQueryClient)();
+  return (0, react_query_1.useMutation)({
+    mutationFn: function (item) {
+      return inventoryService.updateInventoryItem(item);
+    },
+    onSuccess: function (data) {
+      queryClient.invalidateQueries({ queryKey: ["inventory-items"] });
+      queryClient.invalidateQueries({ queryKey: ["inventory-item", data.id] });
+      react_hot_toast_1.toast.success('Item "'.concat(data.name, '" atualizado com sucesso!'));
+    },
+    onError: function (error) {
+      console.error("Error updating inventory item:", error);
+      react_hot_toast_1.toast.error("Erro ao atualizar item do inventário");
+    },
+  });
 }
 function useDeleteInventoryItem() {
-    var queryClient = (0, react_query_1.useQueryClient)();
-    return (0, react_query_1.useMutation)({
-        mutationFn: function (id) { return inventoryService.deleteInventoryItem(id); },
-        onSuccess: function () {
-            queryClient.invalidateQueries({ queryKey: ['inventory-items'] });
-            react_hot_toast_1.toast.success('Item removido com sucesso!');
-        },
-        onError: function (error) {
-            console.error('Error deleting inventory item:', error);
-            react_hot_toast_1.toast.error('Erro ao remover item do inventário');
-        },
-    });
+  var queryClient = (0, react_query_1.useQueryClient)();
+  return (0, react_query_1.useMutation)({
+    mutationFn: function (id) {
+      return inventoryService.deleteInventoryItem(id);
+    },
+    onSuccess: function () {
+      queryClient.invalidateQueries({ queryKey: ["inventory-items"] });
+      react_hot_toast_1.toast.success("Item removido com sucesso!");
+    },
+    onError: function (error) {
+      console.error("Error deleting inventory item:", error);
+      react_hot_toast_1.toast.error("Erro ao remover item do inventário");
+    },
+  });
 }
 // ===== INVENTORY STOCK HOOKS =====
 function useInventoryStock(filters) {
-    if (filters === void 0) { filters = {}; }
-    return (0, react_query_1.useQuery)({
-        queryKey: ['inventory-stock', filters],
-        queryFn: function () { return inventoryService.getInventoryStock(filters); },
-        staleTime: 2 * 60 * 1000, // 2 minutes
-    });
+  if (filters === void 0) {
+    filters = {};
+  }
+  return (0, react_query_1.useQuery)({
+    queryKey: ["inventory-stock", filters],
+    queryFn: function () {
+      return inventoryService.getInventoryStock(filters);
+    },
+    staleTime: 2 * 60 * 1000, // 2 minutes
+  });
 }
 function useStockByLocation(clinic_id, room_id) {
-    return (0, react_query_1.useQuery)({
-        queryKey: ['stock-by-location', clinic_id, room_id],
-        queryFn: function () { return inventoryService.getStockByLocation(clinic_id, room_id); },
-        enabled: !!clinic_id,
-        staleTime: 2 * 60 * 1000,
-    });
+  return (0, react_query_1.useQuery)({
+    queryKey: ["stock-by-location", clinic_id, room_id],
+    queryFn: function () {
+      return inventoryService.getStockByLocation(clinic_id, room_id);
+    },
+    enabled: !!clinic_id,
+    staleTime: 2 * 60 * 1000,
+  });
 }
 function useUpdateStock() {
-    var queryClient = (0, react_query_1.useQueryClient)();
-    return (0, react_query_1.useMutation)({
-        mutationFn: function (stock) { return inventoryService.updateStock(stock); },
-        onSuccess: function (data) {
-            queryClient.invalidateQueries({ queryKey: ['inventory-stock'] });
-            queryClient.invalidateQueries({ queryKey: ['stock-by-location'] });
-            queryClient.invalidateQueries({ queryKey: ['low-stock-alerts'] });
-            react_hot_toast_1.toast.success('Estoque atualizado com sucesso!');
-        },
-        onError: function (error) {
-            console.error('Error updating stock:', error);
-            react_hot_toast_1.toast.error('Erro ao atualizar estoque');
-        },
-    });
+  var queryClient = (0, react_query_1.useQueryClient)();
+  return (0, react_query_1.useMutation)({
+    mutationFn: function (stock) {
+      return inventoryService.updateStock(stock);
+    },
+    onSuccess: function (data) {
+      queryClient.invalidateQueries({ queryKey: ["inventory-stock"] });
+      queryClient.invalidateQueries({ queryKey: ["stock-by-location"] });
+      queryClient.invalidateQueries({ queryKey: ["low-stock-alerts"] });
+      react_hot_toast_1.toast.success("Estoque atualizado com sucesso!");
+    },
+    onError: function (error) {
+      console.error("Error updating stock:", error);
+      react_hot_toast_1.toast.error("Erro ao atualizar estoque");
+    },
+  });
 }
 function useBulkUpdateStock() {
-    var queryClient = (0, react_query_1.useQueryClient)();
-    return (0, react_query_1.useMutation)({
-        mutationFn: function (updates) { return inventoryService.bulkUpdateStock(updates); },
-        onSuccess: function () {
-            queryClient.invalidateQueries({ queryKey: ['inventory-stock'] });
-            queryClient.invalidateQueries({ queryKey: ['stock-by-location'] });
-            queryClient.invalidateQueries({ queryKey: ['low-stock-alerts'] });
-            react_hot_toast_1.toast.success('Estoque atualizado em lote com sucesso!');
-        },
-        onError: function (error) {
-            console.error('Error bulk updating stock:', error);
-            react_hot_toast_1.toast.error('Erro ao atualizar estoque em lote');
-        },
-    });
+  var queryClient = (0, react_query_1.useQueryClient)();
+  return (0, react_query_1.useMutation)({
+    mutationFn: function (updates) {
+      return inventoryService.bulkUpdateStock(updates);
+    },
+    onSuccess: function () {
+      queryClient.invalidateQueries({ queryKey: ["inventory-stock"] });
+      queryClient.invalidateQueries({ queryKey: ["stock-by-location"] });
+      queryClient.invalidateQueries({ queryKey: ["low-stock-alerts"] });
+      react_hot_toast_1.toast.success("Estoque atualizado em lote com sucesso!");
+    },
+    onError: function (error) {
+      console.error("Error bulk updating stock:", error);
+      react_hot_toast_1.toast.error("Erro ao atualizar estoque em lote");
+    },
+  });
 } // ===== STOCK TRANSFERS HOOKS =====
 function useStockTransfers(filters) {
-    if (filters === void 0) { filters = {}; }
-    return (0, react_query_1.useQuery)({
-        queryKey: ['stock-transfers', filters],
-        queryFn: function () { return inventoryService.getStockTransfers(filters); },
-        staleTime: 2 * 60 * 1000,
-    });
+  if (filters === void 0) {
+    filters = {};
+  }
+  return (0, react_query_1.useQuery)({
+    queryKey: ["stock-transfers", filters],
+    queryFn: function () {
+      return inventoryService.getStockTransfers(filters);
+    },
+    staleTime: 2 * 60 * 1000,
+  });
 }
 function useCreateStockTransfer() {
-    var queryClient = (0, react_query_1.useQueryClient)();
-    return (0, react_query_1.useMutation)({
-        mutationFn: function (transfer) { return inventoryService.createStockTransfer(transfer); },
-        onSuccess: function (data) {
-            queryClient.invalidateQueries({ queryKey: ['stock-transfers'] });
-            queryClient.invalidateQueries({ queryKey: ['inventory-stock'] });
-            react_hot_toast_1.toast.success("Transfer\u00EAncia ".concat(data.transfer_number, " criada com sucesso!"));
-        },
-        onError: function (error) {
-            console.error('Error creating stock transfer:', error);
-            react_hot_toast_1.toast.error('Erro ao criar transferência de estoque');
-        },
-    });
+  var queryClient = (0, react_query_1.useQueryClient)();
+  return (0, react_query_1.useMutation)({
+    mutationFn: function (transfer) {
+      return inventoryService.createStockTransfer(transfer);
+    },
+    onSuccess: function (data) {
+      queryClient.invalidateQueries({ queryKey: ["stock-transfers"] });
+      queryClient.invalidateQueries({ queryKey: ["inventory-stock"] });
+      react_hot_toast_1.toast.success(
+        "Transfer\u00EAncia ".concat(data.transfer_number, " criada com sucesso!"),
+      );
+    },
+    onError: function (error) {
+      console.error("Error creating stock transfer:", error);
+      react_hot_toast_1.toast.error("Erro ao criar transferência de estoque");
+    },
+  });
 }
 function useUpdateStockTransfer() {
-    var queryClient = (0, react_query_1.useQueryClient)();
-    return (0, react_query_1.useMutation)({
-        mutationFn: function (transfer) { return inventoryService.updateStockTransfer(transfer); },
-        onSuccess: function (data) {
-            queryClient.invalidateQueries({ queryKey: ['stock-transfers'] });
-            queryClient.invalidateQueries({ queryKey: ['inventory-stock'] });
-            queryClient.invalidateQueries({ queryKey: ['stock-transactions'] });
-            var statusMessages = {
-                approved: 'Transferência aprovada!',
-                in_transit: 'Transferência em trânsito!',
-                completed: 'Transferência concluída!',
-                cancelled: 'Transferência cancelada!'
-            };
-            react_hot_toast_1.toast.success(statusMessages[data.status] || 'Transferência atualizada!');
-        },
-        onError: function (error) {
-            console.error('Error updating stock transfer:', error);
-            react_hot_toast_1.toast.error('Erro ao atualizar transferência');
-        },
-    });
+  var queryClient = (0, react_query_1.useQueryClient)();
+  return (0, react_query_1.useMutation)({
+    mutationFn: function (transfer) {
+      return inventoryService.updateStockTransfer(transfer);
+    },
+    onSuccess: function (data) {
+      queryClient.invalidateQueries({ queryKey: ["stock-transfers"] });
+      queryClient.invalidateQueries({ queryKey: ["inventory-stock"] });
+      queryClient.invalidateQueries({ queryKey: ["stock-transactions"] });
+      var statusMessages = {
+        approved: "Transferência aprovada!",
+        in_transit: "Transferência em trânsito!",
+        completed: "Transferência concluída!",
+        cancelled: "Transferência cancelada!",
+      };
+      react_hot_toast_1.toast.success(statusMessages[data.status] || "Transferência atualizada!");
+    },
+    onError: function (error) {
+      console.error("Error updating stock transfer:", error);
+      react_hot_toast_1.toast.error("Erro ao atualizar transferência");
+    },
+  });
 }
 function useTransferStock() {
-    var queryClient = (0, react_query_1.useQueryClient)();
-    return (0, react_query_1.useMutation)({
-        mutationFn: function (params) { return inventoryService.transferStock(params.inventory_item_id, params.from_clinic_id, params.to_clinic_id, params.quantity, params.from_room_id, params.to_room_id, params.notes); },
-        onSuccess: function (data) {
-            queryClient.invalidateQueries({ queryKey: ['stock-transfers'] });
-            queryClient.invalidateQueries({ queryKey: ['inventory-stock'] });
-            react_hot_toast_1.toast.success("Transfer\u00EAncia ".concat(data.transfer_number, " iniciada!"));
-        },
-        onError: function (error) {
-            console.error('Error transferring stock:', error);
-            react_hot_toast_1.toast.error('Erro ao transferir estoque');
-        },
-    });
+  var queryClient = (0, react_query_1.useQueryClient)();
+  return (0, react_query_1.useMutation)({
+    mutationFn: function (params) {
+      return inventoryService.transferStock(
+        params.inventory_item_id,
+        params.from_clinic_id,
+        params.to_clinic_id,
+        params.quantity,
+        params.from_room_id,
+        params.to_room_id,
+        params.notes,
+      );
+    },
+    onSuccess: function (data) {
+      queryClient.invalidateQueries({ queryKey: ["stock-transfers"] });
+      queryClient.invalidateQueries({ queryKey: ["inventory-stock"] });
+      react_hot_toast_1.toast.success(
+        "Transfer\u00EAncia ".concat(data.transfer_number, " iniciada!"),
+      );
+    },
+    onError: function (error) {
+      console.error("Error transferring stock:", error);
+      react_hot_toast_1.toast.error("Erro ao transferir estoque");
+    },
+  });
 }
 // ===== STOCK TRANSACTIONS HOOKS =====
 function useStockTransactions(filters) {
-    if (filters === void 0) { filters = {}; }
-    return (0, react_query_1.useQuery)({
-        queryKey: ['stock-transactions', filters],
-        queryFn: function () { return inventoryService.getStockTransactions(filters); },
-        staleTime: 5 * 60 * 1000,
-    });
+  if (filters === void 0) {
+    filters = {};
+  }
+  return (0, react_query_1.useQuery)({
+    queryKey: ["stock-transactions", filters],
+    queryFn: function () {
+      return inventoryService.getStockTransactions(filters);
+    },
+    staleTime: 5 * 60 * 1000,
+  });
 }
 // ===== DASHBOARD & ANALYTICS HOOKS =====
 function useLocationStockSummary(clinic_id) {
-    return (0, react_query_1.useQuery)({
-        queryKey: ['location-stock-summary', clinic_id],
-        queryFn: function () { return inventoryService.getLocationStockSummary(clinic_id); },
-        staleTime: 10 * 60 * 1000, // 10 minutes
-    });
+  return (0, react_query_1.useQuery)({
+    queryKey: ["location-stock-summary", clinic_id],
+    queryFn: function () {
+      return inventoryService.getLocationStockSummary(clinic_id);
+    },
+    staleTime: 10 * 60 * 1000, // 10 minutes
+  });
 }
 function useInventoryMovementSummary(clinic_id, days) {
-    if (days === void 0) { days = 30; }
-    return (0, react_query_1.useQuery)({
-        queryKey: ['inventory-movement-summary', clinic_id, days],
-        queryFn: function () { return inventoryService.getInventoryMovementSummary(clinic_id, days); },
-        staleTime: 15 * 60 * 1000, // 15 minutes
-    });
+  if (days === void 0) {
+    days = 30;
+  }
+  return (0, react_query_1.useQuery)({
+    queryKey: ["inventory-movement-summary", clinic_id, days],
+    queryFn: function () {
+      return inventoryService.getInventoryMovementSummary(clinic_id, days);
+    },
+    staleTime: 15 * 60 * 1000, // 15 minutes
+  });
 }
 function useLowStockAlerts(clinic_id) {
-    return (0, react_query_1.useQuery)({
-        queryKey: ['low-stock-alerts', clinic_id],
-        queryFn: function () { return inventoryService.getLowStockAlerts(clinic_id); },
-        staleTime: 5 * 60 * 1000,
-    });
+  return (0, react_query_1.useQuery)({
+    queryKey: ["low-stock-alerts", clinic_id],
+    queryFn: function () {
+      return inventoryService.getLowStockAlerts(clinic_id);
+    },
+    staleTime: 5 * 60 * 1000,
+  });
 }
 function useExpiringItems(clinic_id, days) {
-    if (days === void 0) { days = 30; }
-    return (0, react_query_1.useQuery)({
-        queryKey: ['expiring-items', clinic_id, days],
-        queryFn: function () { return inventoryService.getExpiringItems(clinic_id, days); },
-        staleTime: 10 * 60 * 1000,
-    });
+  if (days === void 0) {
+    days = 30;
+  }
+  return (0, react_query_1.useQuery)({
+    queryKey: ["expiring-items", clinic_id, days],
+    queryFn: function () {
+      return inventoryService.getExpiringItems(clinic_id, days);
+    },
+    staleTime: 10 * 60 * 1000,
+  });
 }
 // ===== REAL-TIME SUBSCRIPTIONS =====
 function useRealtimeInventoryStock(clinic_id) {
-    var queryClient = (0, react_query_1.useQueryClient)();
-    React.useEffect(function () {
-        var channel = inventoryService['supabase']
-            .channel('inventory-stock-changes')
-            .on('postgres_changes', {
-            event: '*',
-            schema: 'public',
-            table: 'inventory_stock',
+  var queryClient = (0, react_query_1.useQueryClient)();
+  React.useEffect(
+    function () {
+      var channel = inventoryService["supabase"]
+        .channel("inventory-stock-changes")
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "inventory_stock",
             filter: clinic_id ? "clinic_id=eq.".concat(clinic_id) : undefined,
-        }, function (payload) {
-            console.log('Stock change detected:', payload);
+          },
+          function (payload) {
+            console.log("Stock change detected:", payload);
             // Invalidate relevant queries
-            queryClient.invalidateQueries({ queryKey: ['inventory-stock'] });
-            queryClient.invalidateQueries({ queryKey: ['stock-by-location'] });
-            queryClient.invalidateQueries({ queryKey: ['low-stock-alerts'] });
-        })
-            .subscribe();
-        return function () {
-            inventoryService['supabase'].removeChannel(channel);
-        };
-    }, [clinic_id, queryClient]);
+            queryClient.invalidateQueries({ queryKey: ["inventory-stock"] });
+            queryClient.invalidateQueries({ queryKey: ["stock-by-location"] });
+            queryClient.invalidateQueries({ queryKey: ["low-stock-alerts"] });
+          },
+        )
+        .subscribe();
+      return function () {
+        inventoryService["supabase"].removeChannel(channel);
+      };
+    },
+    [clinic_id, queryClient],
+  );
 }
 function useRealtimeStockTransfers(clinic_id) {
-    var queryClient = (0, react_query_1.useQueryClient)();
-    React.useEffect(function () {
-        var channel = inventoryService['supabase']
-            .channel('stock-transfers-changes')
-            .on('postgres_changes', {
-            event: '*',
-            schema: 'public',
-            table: 'stock_transfers',
-            filter: clinic_id ? "or(from_clinic_id.eq.".concat(clinic_id, ",to_clinic_id.eq.").concat(clinic_id, ")") : undefined,
-        }, function (payload) {
+  var queryClient = (0, react_query_1.useQueryClient)();
+  React.useEffect(
+    function () {
+      var channel = inventoryService["supabase"]
+        .channel("stock-transfers-changes")
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "stock_transfers",
+            filter: clinic_id
+              ? "or(from_clinic_id.eq."
+                  .concat(clinic_id, ",to_clinic_id.eq.")
+                  .concat(clinic_id, ")")
+              : undefined,
+          },
+          function (payload) {
             var _a;
-            console.log('Transfer change detected:', payload);
-            queryClient.invalidateQueries({ queryKey: ['stock-transfers'] });
+            console.log("Transfer change detected:", payload);
+            queryClient.invalidateQueries({ queryKey: ["stock-transfers"] });
             // Show real-time notifications for status changes
-            if (payload.eventType === 'UPDATE' && ((_a = payload.new) === null || _a === void 0 ? void 0 : _a.status)) {
-                var status_1 = payload.new.status;
-                var transferNumber = payload.new.transfer_number;
-                var statusMessages = {
-                    approved: "Transfer\u00EAncia ".concat(transferNumber, " foi aprovada"),
-                    in_transit: "Transfer\u00EAncia ".concat(transferNumber, " est\u00E1 em tr\u00E2nsito"),
-                    completed: "Transfer\u00EAncia ".concat(transferNumber, " foi conclu\u00EDda"),
-                    cancelled: "Transfer\u00EAncia ".concat(transferNumber, " foi cancelada")
-                };
-                if (statusMessages[status_1]) {
-                    react_hot_toast_1.toast.info(statusMessages[status_1]);
-                }
+            if (
+              payload.eventType === "UPDATE" &&
+              ((_a = payload.new) === null || _a === void 0 ? void 0 : _a.status)
+            ) {
+              var status_1 = payload.new.status;
+              var transferNumber = payload.new.transfer_number;
+              var statusMessages = {
+                approved: "Transfer\u00EAncia ".concat(transferNumber, " foi aprovada"),
+                in_transit: "Transfer\u00EAncia ".concat(
+                  transferNumber,
+                  " est\u00E1 em tr\u00E2nsito",
+                ),
+                completed: "Transfer\u00EAncia ".concat(transferNumber, " foi conclu\u00EDda"),
+                cancelled: "Transfer\u00EAncia ".concat(transferNumber, " foi cancelada"),
+              };
+              if (statusMessages[status_1]) {
+                react_hot_toast_1.toast.info(statusMessages[status_1]);
+              }
             }
-        })
-            .subscribe();
-        return function () {
-            inventoryService['supabase'].removeChannel(channel);
-        };
-    }, [clinic_id, queryClient]);
+          },
+        )
+        .subscribe();
+      return function () {
+        inventoryService["supabase"].removeChannel(channel);
+      };
+    },
+    [clinic_id, queryClient],
+  );
 }

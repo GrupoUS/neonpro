@@ -4,8 +4,8 @@
 
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import type { useRouter } from "next/navigation";
+import type { useCallback, useEffect, useState } from "react";
 
 export interface KeyboardShortcut {
   key: string;
@@ -113,7 +113,7 @@ export function useKeyboardShortcuts({
         matchingShortcut.action();
       }
     },
-    [isEnabled, shortcuts]
+    [isEnabled, shortcuts],
   );
 
   // Set up event listeners

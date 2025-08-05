@@ -1,17 +1,17 @@
 // Main Components
-export { default as FinancialKPIDashboard } from './FinancialKPIDashboard';
-export { default as KPIFilters } from './KPIFilters';
-export { default as KPIDrillDown } from './KPIDrillDown';
+export { default as FinancialKPIDashboard } from "./FinancialKPIDashboard";
+export { default as KPIFilters } from "./KPIFilters";
+export { default as KPIDrillDown } from "./KPIDrillDown";
 
 // Hooks
-export { default as useFinancialKPIs } from './hooks/useFinancialKPIs';
+export { default as useFinancialKPIs } from "./hooks/useFinancialKPIs";
 
 // Services
 export {
   FinancialKPIService,
   SupabaseKPIService,
-  PerformanceService
-} from './services';
+  PerformanceService,
+} from "./services";
 
 // Types
 export type {
@@ -64,8 +64,8 @@ export type {
   HookReturnTypes,
   ComponentProps,
   ErrorTypes,
-  ConfigTypes
-} from './types';
+  ConfigTypes,
+} from "./types";
 
 // Utilities
 export {
@@ -88,8 +88,8 @@ export {
   generateMockTimeSeries,
   calculateStatistics,
   detectAnomalies,
-  calculateCorrelation
-} from './utils';
+  calculateCorrelation,
+} from "./utils";
 
 // Configuration
 export {
@@ -111,12 +111,12 @@ export {
   API_ENDPOINTS,
   CACHE_KEYS,
   STORAGE_KEYS,
-  ANIMATIONS
-} from './config';
+  ANIMATIONS,
+} from "./config";
 
 // Re-export default configuration
-export { default as config } from './config';
-export { default as services } from './services';
+export { default as config } from "./config";
+export { default as services } from "./services";
 
 // Component Props Types for easier importing
 export type FinancialKPIDashboardProps = {
@@ -166,7 +166,7 @@ export const createKPIDashboard = ({
   enableRealtime = true,
   enableExport = true,
   enableSharing = true,
-  customConfig = {}
+  customConfig = {},
 }: {
   containerId: string;
   initialFilters?: Partial<KPIFilter>;
@@ -178,7 +178,7 @@ export const createKPIDashboard = ({
   // Merge custom configuration
   const config = {
     ...DASHBOARD_CONFIG,
-    ...customConfig
+    ...customConfig,
   };
 
   return {
@@ -188,15 +188,15 @@ export const createKPIDashboard = ({
       initialFilters,
       enableRealtime,
       enableExport,
-      enableSharing
-    }
+      enableSharing,
+    },
   };
 };
 
 // Utility function to validate KPI configuration
 export const validateKPIConfig = (config: Partial<KPIConfiguration>): boolean => {
-  const required = ['id', 'name', 'formula', 'dataSource'];
-  return required.every(field => field in config && config[field as keyof KPIConfiguration]);
+  const required = ["id", "name", "formula", "dataSource"];
+  return required.every((field) => field in config && config[field as keyof KPIConfiguration]);
 };
 
 // Utility function to create custom alert rules
@@ -204,14 +204,14 @@ export const createAlertRule = ({
   kpiId,
   name,
   condition,
-  severity = 'warning',
-  notifications = { email: true, sms: false, push: true }
+  severity = "warning",
+  notifications = { email: true, sms: false, push: true },
 }: {
   kpiId: string;
   name: string;
-  condition: AlertRule['condition'];
+  condition: AlertRule["condition"];
   severity?: AlertSeverity;
-  notifications?: AlertRule['notifications'];
+  notifications?: AlertRule["notifications"];
 }): AlertRule => {
   return {
     id: `alert-${Date.now()}`,
@@ -222,7 +222,7 @@ export const createAlertRule = ({
     notifications,
     isActive: true,
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   };
 };
 
@@ -234,14 +234,14 @@ export const createChartConfig = ({
   xAxisLabel,
   yAxisLabel,
   series,
-  colors = CHART_COLORS
+  colors = CHART_COLORS,
 }: {
   type: ChartType;
   title: string;
   subtitle?: string;
   xAxisLabel: string;
   yAxisLabel: string;
-  series: ChartConfiguration['series'];
+  series: ChartConfiguration["series"];
   colors?: typeof CHART_COLORS;
 }): ChartConfiguration => {
   return {
@@ -250,33 +250,36 @@ export const createChartConfig = ({
     subtitle,
     xAxis: {
       label: xAxisLabel,
-      type: type === 'pie' ? 'category' : 'datetime'
+      type: type === "pie" ? "category" : "datetime",
     },
     yAxis: {
       label: yAxisLabel,
-      format: yAxisLabel.includes('R$') ? 'currency' : 
-              yAxisLabel.includes('%') ? 'percentage' : 'number'
+      format: yAxisLabel.includes("R$")
+        ? "currency"
+        : yAxisLabel.includes("%")
+          ? "percentage"
+          : "number",
     },
     series,
     legend: true,
-    grid: type !== 'pie',
+    grid: type !== "pie",
     tooltip: true,
-    zoom: type === 'line',
-    responsive: true
+    zoom: type === "line",
+    responsive: true,
   };
 };
 
 // Version information
-export const VERSION = '1.0.0';
+export const VERSION = "1.0.0";
 export const BUILD_DATE = new Date().toISOString();
 
 // Feature detection
 export const FEATURES = {
-  REALTIME_UPDATES: typeof WebSocket !== 'undefined',
-  LOCAL_STORAGE: typeof localStorage !== 'undefined',
-  NOTIFICATIONS: typeof Notification !== 'undefined',
-  PERFORMANCE_API: typeof performance !== 'undefined',
-  INTERSECTION_OBSERVER: typeof IntersectionObserver !== 'undefined'
+  REALTIME_UPDATES: typeof WebSocket !== "undefined",
+  LOCAL_STORAGE: typeof localStorage !== "undefined",
+  NOTIFICATIONS: typeof Notification !== "undefined",
+  PERFORMANCE_API: typeof performance !== "undefined",
+  INTERSECTION_OBSERVER: typeof IntersectionObserver !== "undefined",
 };
 
 // Browser compatibility check
@@ -285,10 +288,10 @@ export const checkBrowserCompatibility = (): {
   missingFeatures: string[];
 } => {
   const requiredFeatures = {
-    'ES6 Modules': typeof import !== 'undefined',
-    'Fetch API': typeof fetch !== 'undefined',
-    'Promise': typeof Promise !== 'undefined',
-    'Local Storage': typeof localStorage !== 'undefined'
+    "ES6 Modules": typeof window !== "undefined" && "modules" in HTMLScriptElement.prototype,
+    "Fetch API": typeof fetch !== "undefined",
+    Promise: typeof Promise !== "undefined",
+    "Local Storage": typeof localStorage !== "undefined",
   };
 
   const missingFeatures = Object.entries(requiredFeatures)
@@ -297,18 +300,18 @@ export const checkBrowserCompatibility = (): {
 
   return {
     isCompatible: missingFeatures.length === 0,
-    missingFeatures
+    missingFeatures,
   };
 };
 
 // Debug utilities (only in development)
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === "development") {
   (window as any).KPIDashboardDebug = {
     config: DASHBOARD_CONFIG,
     services: { FinancialKPIService, SupabaseKPIService, PerformanceService },
     utils: { formatCurrency, formatPercentage, calculateTrend },
     features: FEATURES,
-    version: VERSION
+    version: VERSION,
   };
 }
 
@@ -322,5 +325,5 @@ export default {
   SupabaseKPIService,
   PerformanceService,
   config: DASHBOARD_CONFIG,
-  version: VERSION
+  version: VERSION,
 };

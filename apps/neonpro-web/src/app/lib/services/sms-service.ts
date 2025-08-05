@@ -7,22 +7,22 @@ export class SMSService {
   static async sendSMS(phoneNumber: string, message: string) {
     // Implementar envio de SMS
     return {
-      messageId: 'sms-id',
+      messageId: "sms-id",
       phoneNumber,
       message,
-      status: 'sent',
-      sentAt: new Date()
+      status: "sent",
+      sentAt: new Date(),
     };
   }
 
   static async sendBulkSMS(phoneNumbers: string[], message: string) {
     // Implementar envio em massa de SMS
     return {
-      batchId: 'batch-id',
+      batchId: "batch-id",
       totalMessages: phoneNumbers.length,
       successCount: 0,
       failureCount: 0,
-      status: 'processing'
+      status: "processing",
     };
   }
 
@@ -31,8 +31,8 @@ export class SMSService {
     return {
       phoneNumber,
       isValid: false,
-      format: 'international',
-      carrier: null
+      format: "international",
+      carrier: null,
     };
   }
 }

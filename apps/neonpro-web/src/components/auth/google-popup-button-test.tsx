@@ -1,6 +1,6 @@
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { useState } from "react";
-import { toast } from "sonner";
+import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import type { useState } from "react";
+import type { toast } from "sonner";
 
 // Test Mode for Google OAuth - Mock Implementation
 export function SignInWithGooglePopupButton() {
@@ -31,9 +31,7 @@ export function SignInWithGooglePopupButton() {
 
       // For now, just show success message
       toast.success(`✅ Mock Login: ${mockUserData.email}`);
-      toast.info(
-        "ℹ️ Para login real, configure as credenciais do Google OAuth no .env.local"
-      );
+      toast.info("ℹ️ Para login real, configure as credenciais do Google OAuth no .env.local");
     } catch (error) {
       console.error("Test login error:", error);
       toast.error("Erro no teste de login");

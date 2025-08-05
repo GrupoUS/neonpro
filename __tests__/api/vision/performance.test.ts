@@ -1,21 +1,21 @@
 /**
  * Vision Performance API Tests
- * 
+ *
  * Test suite for the vision analysis performance monitoring API endpoints.
  * Tests GET and POST operations for performance metrics and monitoring.
  */
 
-import { createMocks } from 'node-mocks-http';
-import handler from '@/app/api/vision/performance/route';
-import { createClient } from '@/lib/supabase/server';
+import { createMocks } from "node-mocks-http";
+import handler from "@/app/api/vision/performance/route";
+import { createClient } from "@/lib/supabase/server";
 
 // Mock dependencies
-jest.mock('@/lib/supabase/server');
-jest.mock('@/lib/monitoring/error-tracking');
+jest.mock("@/lib/supabase/server");
+jest.mock("@/lib/monitoring/error-tracking");
 
 const mockSupabase = {
   auth: {
-    getUser: jest.fn()
+    getUser: jest.fn(),
   },
   from: jest.fn(() => ({
     select: jest.fn(),
@@ -23,43 +23,43 @@ const mockSupabase = {
     eq: jest.fn(),
     gte: jest.fn(),
     lte: jest.fn(),
-    order: jest.fn()
+    order: jest.fn(),
   })),
-  rpc: jest.fn()
+  rpc: jest.fn(),
 };
 
 (createClient as jest.Mock).mockReturnValue(mockSupabase);
 
-describe('/api/vision/performance', () => {
+describe("/api/vision/performance", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Default successful auth
     mockSupabase.auth.getUser.mockResolvedValue({
-      data: { user: { id: 'test-user-id' } },
-      error: null
+      data: { user: { id: "test-user-id" } },
+      error: null,
     });
   });
 
-  describe('GET /api/vision/performance', () => {
-    it('should retrieve aggregated performance metrics', async () => {
+  describe("GET /api/vision/performance", () => {
+    it("should retrieve aggregated performance metrics", async () => {
       const mockMetrics = {
         totalAnalyses: 150,
         averageAccuracy: 0.94,
         averageProcessingTime: 18500,
         averageConfidence: 0.91,
         accuracyTargetCompliance: 0.87,
-        processingTimeTargetCompliance: 0.92
+        processingTimeTargetCompliance: 0.92,
       };
 
       mockSupabase.rpc.mockResolvedValue({ data: [mockMetrics], error: null });
 
       const { req, res } = createMocks({
-        method: 'GET',
+        method: "GET",
         query: {
-          timeRange: '30d',
-          groupBy: 'day'
-        }
+          timeRange: "30d",
+          groupBy: "day",
+        },
       });
 
       const response = await handler.GET(req as any);
@@ -70,40 +70,40 @@ describe('/api/vision/performance', () => {
       expect(data.metrics.totalAnalyses).toBe(150);
       expect(data.metrics.averageAccuracy).toBe(0.94);
       expect(mockSupabase.rpc).toHaveBeenCalledWith(
-        'get_vision_performance_metrics',
+        "get_vision_performance_metrics",
         expect.objectContaining({
-          user_id: 'test-user-id',
-          time_range: '30d',
-          group_by: 'day'
-        })
+          user_id: "test-user-id",
+          time_range: "30d",
+          group_by: "day",
+        }),
       );
     });
 
-    it('should handle time series data request', async () => {
+    it("should handle time series data request", async () => {
       const mockTimeSeriesData = [
         {
-          date: '2024-01-01',
+          date: "2024-01-01",
           totalAnalyses: 10,
           averageAccuracy: 0.95,
-          averageProcessingTime: 15000
+          averageProcessingTime: 15000,
         },
         {
-          date: '2024-01-02',
+          date: "2024-01-02",
           totalAnalyses: 12,
           averageAccuracy: 0.93,
-          averageProcessingTime: 17000
-        }
+          averageProcessingTime: 17000,
+        },
       ];
 
       mockSupabase.rpc.mockResolvedValue({ data: mockTimeSeriesData, error: null });
 
       const { req, res } = createMocks({
-        method: 'GET',
+        method: "GET",
         query: {
-          timeRange: '7d',
-          groupBy: 'day',
-          includeTimeSeries: 'true'
-        }
+          timeRange: "7d",
+          groupBy: "day",
+          includeTimeSeries: "true",
+        },
       });
 
       const response = await handler.GET(req as any);
@@ -114,12 +114,12 @@ describe('/api/vision/performance', () => {
       expect(data.timeSeries).toHaveLength(2);
     });
 
-    it('should validate time range parameter', async () => {
+    it("should validate time range parameter", async () => {
       const { req, res } = createMocks({
-        method: 'GET',
+        method: "GET",
         query: {
-          timeRange: 'invalid-range'
-        }
+          timeRange: "invalid-range",
+        },
       });
 
       const response = await handler.GET(req as any);
@@ -127,15 +127,15 @@ describe('/api/vision/performance', () => {
       expect(response.status).toBe(400);
     });
 
-    it('should handle authentication errors', async () => {
+    it("should handle authentication errors", async () => {
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: null },
-        error: new Error('Unauthorized')
+        error: new Error("Unauthorized"),
       });
 
       const { req, res } = createMocks({
-        method: 'GET',
-        query: { timeRange: '7d' }
+        method: "GET",
+        query: { timeRange: "7d" },
       });
 
       const response = await handler.GET(req as any);
@@ -143,15 +143,15 @@ describe('/api/vision/performance', () => {
       expect(response.status).toBe(401);
     });
 
-    it('should handle database errors', async () => {
+    it("should handle database errors", async () => {
       mockSupabase.rpc.mockResolvedValue({
         data: null,
-        error: new Error('Database error')
+        error: new Error("Database error"),
       });
 
       const { req, res } = createMocks({
-        method: 'GET',
-        query: { timeRange: '7d' }
+        method: "GET",
+        query: { timeRange: "7d" },
       });
 
       const response = await handler.GET(req as any);
@@ -159,50 +159,50 @@ describe('/api/vision/performance', () => {
       expect(response.status).toBe(500);
     });
 
-    it('should apply default parameters when not provided', async () => {
+    it("should apply default parameters when not provided", async () => {
       mockSupabase.rpc.mockResolvedValue({ data: [], error: null });
 
       const { req, res } = createMocks({
-        method: 'GET',
-        query: {} // No parameters
+        method: "GET",
+        query: {}, // No parameters
       });
 
       await handler.GET(req as any);
 
       expect(mockSupabase.rpc).toHaveBeenCalledWith(
-        'get_vision_performance_metrics',
+        "get_vision_performance_metrics",
         expect.objectContaining({
-          time_range: '7d', // Default
-          group_by: 'day' // Default
-        })
+          time_range: "7d", // Default
+          group_by: "day", // Default
+        }),
       );
     });
   });
 
-  describe('POST /api/vision/performance', () => {
-    it('should record performance metrics successfully', async () => {
+  describe("POST /api/vision/performance", () => {
+    it("should record performance metrics successfully", async () => {
       const performanceData = {
-        analysisId: 'analysis-123',
+        analysisId: "analysis-123",
         processingTime: 15000,
         accuracyScore: 0.96,
         confidenceScore: 0.94,
         memoryUsage: 512,
         errorCount: 0,
         metadata: {
-          modelVersion: '2.1.0',
-          imageSize: '1024x768',
-          processingSteps: 5
-        }
+          modelVersion: "2.1.0",
+          imageSize: "1024x768",
+          processingSteps: 5,
+        },
       };
 
       mockSupabase.from().insert.mockResolvedValue({
-        data: [{ id: 'perf-123', ...performanceData }],
-        error: null
+        data: [{ id: "perf-123", ...performanceData }],
+        error: null,
       });
 
       const { req, res } = createMocks({
-        method: 'POST',
-        body: performanceData
+        method: "POST",
+        body: performanceData,
       });
 
       const response = await handler.POST(req as any);
@@ -210,27 +210,27 @@ describe('/api/vision/performance', () => {
 
       expect(response.status).toBe(201);
       expect(data.success).toBe(true);
-      expect(mockSupabase.from).toHaveBeenCalledWith('vision_performance_metrics');
+      expect(mockSupabase.from).toHaveBeenCalledWith("vision_performance_metrics");
       expect(mockSupabase.from().insert).toHaveBeenCalledWith(
         expect.objectContaining({
-          analysis_id: 'analysis-123',
+          analysis_id: "analysis-123",
           processing_time: 15000,
           accuracy_score: 0.96,
           confidence_score: 0.94,
           memory_usage: 512,
           error_count: 0,
-          user_id: 'test-user-id'
-        })
+          user_id: "test-user-id",
+        }),
       );
     });
 
-    it('should validate required fields', async () => {
+    it("should validate required fields", async () => {
       const { req, res } = createMocks({
-        method: 'POST',
+        method: "POST",
         body: {
-          analysisId: 'analysis-123'
+          analysisId: "analysis-123",
           // Missing required fields
-        }
+        },
       });
 
       const response = await handler.POST(req as any);
@@ -238,15 +238,15 @@ describe('/api/vision/performance', () => {
       expect(response.status).toBe(400);
     });
 
-    it('should validate numeric ranges', async () => {
+    it("should validate numeric ranges", async () => {
       const { req, res } = createMocks({
-        method: 'POST',
+        method: "POST",
         body: {
-          analysisId: 'analysis-123',
+          analysisId: "analysis-123",
           processingTime: 15000,
           accuracyScore: 1.5, // Invalid: > 1.0
-          confidenceScore: 0.94
-        }
+          confidenceScore: 0.94,
+        },
       });
 
       const response = await handler.POST(req as any);
@@ -254,20 +254,20 @@ describe('/api/vision/performance', () => {
       expect(response.status).toBe(400);
     });
 
-    it('should handle database insertion errors', async () => {
+    it("should handle database insertion errors", async () => {
       mockSupabase.from().insert.mockResolvedValue({
         data: null,
-        error: new Error('Insertion failed')
+        error: new Error("Insertion failed"),
       });
 
       const { req, res } = createMocks({
-        method: 'POST',
+        method: "POST",
         body: {
-          analysisId: 'analysis-123',
+          analysisId: "analysis-123",
           processingTime: 15000,
           accuracyScore: 0.96,
-          confidenceScore: 0.94
-        }
+          confidenceScore: 0.94,
+        },
       });
 
       const response = await handler.POST(req as any);
@@ -275,22 +275,22 @@ describe('/api/vision/performance', () => {
       expect(response.status).toBe(500);
     });
 
-    it('should include performance thresholds in response', async () => {
+    it("should include performance thresholds in response", async () => {
       const performanceData = {
-        analysisId: 'analysis-123',
+        analysisId: "analysis-123",
         processingTime: 15000,
         accuracyScore: 0.96,
-        confidenceScore: 0.94
+        confidenceScore: 0.94,
       };
 
       mockSupabase.from().insert.mockResolvedValue({
-        data: [{ id: 'perf-123', ...performanceData }],
-        error: null
+        data: [{ id: "perf-123", ...performanceData }],
+        error: null,
       });
 
       const { req, res } = createMocks({
-        method: 'POST',
-        body: performanceData
+        method: "POST",
+        body: performanceData,
       });
 
       const response = await handler.POST(req as any);
@@ -300,28 +300,28 @@ describe('/api/vision/performance', () => {
       expect(data.meetsProcessingTimeTarget).toBe(true); // 15000 < 30000
     });
 
-    it('should handle optional metadata', async () => {
+    it("should handle optional metadata", async () => {
       const performanceData = {
-        analysisId: 'analysis-123',
+        analysisId: "analysis-123",
         processingTime: 15000,
         accuracyScore: 0.96,
         confidenceScore: 0.94,
         metadata: {
-          customField: 'customValue',
+          customField: "customValue",
           nestedObject: {
-            key: 'value'
-          }
-        }
+            key: "value",
+          },
+        },
       };
 
       mockSupabase.from().insert.mockResolvedValue({
-        data: [{ id: 'perf-123', ...performanceData }],
-        error: null
+        data: [{ id: "perf-123", ...performanceData }],
+        error: null,
       });
 
       const { req, res } = createMocks({
-        method: 'POST',
-        body: performanceData
+        method: "POST",
+        body: performanceData,
       });
 
       const response = await handler.POST(req as any);
@@ -329,49 +329,49 @@ describe('/api/vision/performance', () => {
       expect(response.status).toBe(201);
       expect(mockSupabase.from().insert).toHaveBeenCalledWith(
         expect.objectContaining({
-          metadata: performanceData.metadata
-        })
+          metadata: performanceData.metadata,
+        }),
       );
     });
   });
 
-  describe('Performance Thresholds', () => {
-    it('should correctly identify when targets are met', async () => {
+  describe("Performance Thresholds", () => {
+    it("should correctly identify when targets are met", async () => {
       const testCases = [
         {
-          accuracy: 0.90,
+          accuracy: 0.9,
           time: 20000,
           expectedAccuracy: true,
-          expectedTime: true
+          expectedTime: true,
         },
         {
-          accuracy: 0.80,
+          accuracy: 0.8,
           time: 35000,
           expectedAccuracy: false,
-          expectedTime: false
+          expectedTime: false,
         },
         {
           accuracy: 0.95,
           time: 35000,
           expectedAccuracy: true,
-          expectedTime: false
-        }
+          expectedTime: false,
+        },
       ];
 
       for (const testCase of testCases) {
         mockSupabase.from().insert.mockResolvedValue({
-          data: [{ id: 'perf-test' }],
-          error: null
+          data: [{ id: "perf-test" }],
+          error: null,
         });
 
         const { req, res } = createMocks({
-          method: 'POST',
+          method: "POST",
           body: {
-            analysisId: 'analysis-test',
+            analysisId: "analysis-test",
             processingTime: testCase.time,
             accuracyScore: testCase.accuracy,
-            confidenceScore: 0.90
-          }
+            confidenceScore: 0.9,
+          },
         });
 
         const response = await handler.POST(req as any);

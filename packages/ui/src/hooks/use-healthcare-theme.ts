@@ -1,6 +1,6 @@
 // Healthcare theme hook placeholder
 export const useHealthcareTheme = () => ({
-  theme: 'light',
+  theme: "light",
   setTheme: () => null,
-  colors: {}
+  colors: {},
 });

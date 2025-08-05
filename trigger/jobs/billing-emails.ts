@@ -19,17 +19,17 @@ export const invoiceEmailDelivery = task({
     maxTimeoutInMs: 10000,
   },
   run: async (payload: InvoiceJobPayload) => {
-    logger.info("💰 Sending invoice email", { 
+    logger.info("💰 Sending invoice email", {
       invoiceId: payload.invoiceId,
-      recipientEmail: payload.recipientEmail 
+      recipientEmail: payload.recipientEmail,
     });
 
     try {
       const supabase = await createClient();
-      
+
       // Buscar detalhes da fatura no sistema existente
       const { data: invoice, error } = await supabase
-        .from('billing_invoices')
+        .from("billing_invoices")
         .select(`
           id,
           invoice_number,
@@ -50,7 +50,7 @@ export const invoiceEmailDelivery = task({
             total_price
           )
         `)
-        .eq('id', payload.invoiceId)
+        .eq("id", payload.invoiceId)
         .single();
 
       if (error || !invoice) {
@@ -60,8 +60,8 @@ export const invoiceEmailDelivery = task({
       // Calcular informações da fatura
       const services = invoice.billing_services || [];
       const subtotal = services.reduce((sum, service) => sum + service.total_price, 0);
-      const dueDate = new Date(invoice.due_date).toLocaleDateString('pt-BR');
-      const invoiceDate = new Date(invoice.created_at).toLocaleDateString('pt-BR');
+      const dueDate = new Date(invoice.due_date).toLocaleDateString("pt-BR");
+      const invoiceDate = new Date(invoice.created_at).toLocaleDateString("pt-BR");
 
       // Template de email profissional para fatura
       const invoiceHtml = `
@@ -105,14 +105,18 @@ export const invoiceEmailDelivery = task({
                     </tr>
                   </thead>
                   <tbody>
-                    ${services.map(service => `
+                    ${services
+                      .map(
+                        (service) => `
                       <tr>
                         <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">${service.service_name}</td>
                         <td style="padding: 12px; text-align: center; border-bottom: 1px solid #f0f0f0;">${service.quantity}</td>
                         <td style="padding: 12px; text-align: right; border-bottom: 1px solid #f0f0f0;">R$ ${service.unit_price.toFixed(2)}</td>
                         <td style="padding: 12px; text-align: right; border-bottom: 1px solid #f0f0f0;">R$ ${service.total_price.toFixed(2)}</td>
                       </tr>
-                    `).join('')}
+                    `,
+                      )
+                      .join("")}
                   </tbody>
                   <tfoot>
                     <tr style="background: #f8fafc; font-weight: bold;">
@@ -129,9 +133,10 @@ export const invoiceEmailDelivery = task({
               <div style="flex: 1; background: #fef3c7; border: 1px solid #f59e0b; border-radius: 6px; padding: 15px;">
                 <h4 style="color: #92400e; margin-top: 0;">📅 Vencimento</h4>
                 <p style="color: #92400e; font-size: 18px; font-weight: bold; margin: 5px 0;">${dueDate}</p>
-                ${invoice.status === 'overdue' ? 
-                  '<p style="color: #dc2626; font-size: 14px; margin: 0;"><strong>⚠️ Fatura em atraso</strong></p>' : 
-                  '<p style="color: #92400e; font-size: 14px; margin: 0;">Pagamento até esta data</p>'
+                ${
+                  invoice.status === "overdue"
+                    ? '<p style="color: #dc2626; font-size: 14px; margin: 0;"><strong>⚠️ Fatura em atraso</strong></p>'
+                    : '<p style="color: #92400e; font-size: 14px; margin: 0;">Pagamento até esta data</p>'
                 }
               </div>
               <div style="flex: 1; background: #d1fae5; border: 1px solid #10b981; border-radius: 6px; padding: 15px;">
@@ -148,15 +153,19 @@ export const invoiceEmailDelivery = task({
             <div style="text-align: center; margin: 30px 0; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; color: white;">
               <h3 style="margin: 0 0 10px 0;">Pagar Agora</h3>
               <p style="margin: 0 0 15px 0; opacity: 0.9;">Clique no botão abaixo para acessar suas opções de pagamento</p>
-              ${payload.invoiceUrl ? `
+              ${
+                payload.invoiceUrl
+                  ? `
                 <a href="${payload.invoiceUrl}" style="display: inline-block; background: #10b981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold;">
                   💳 Pagar Fatura
                 </a>
-              ` : `
+              `
+                  : `
                 <p style="background: rgba(255,255,255,0.2); border-radius: 6px; padding: 10px; margin: 0;">
                   Entre em contato para pagamento: WhatsApp ou visite a clínica
                 </p>
-              `}
+              `
+              }
             </div>
             
             <div style="background: #f3f4f6; border-radius: 6px; padding: 15px; margin: 20px 0;">
@@ -165,7 +174,7 @@ export const invoiceEmailDelivery = task({
                 <li>Guarde este email como comprovante de serviços</li>
                 <li>Para esclarecimentos sobre a fatura, entre em contato conosco</li>
                 <li>Pagamentos após o vencimento podem ter juros aplicados</li>
-                ${invoice.description ? `<li>Observação: ${invoice.description}</li>` : ''}
+                ${invoice.description ? `<li>Observação: ${invoice.description}</li>` : ""}
               </ul>
             </div>
             
@@ -185,20 +194,20 @@ export const invoiceEmailDelivery = task({
         subject: `💰 Fatura #${invoice.invoice_number} - R$ ${payload.amount.toFixed(2)} - Venc: ${dueDate}`,
         html: invoiceHtml,
         headers: {
-          'X-Invoice-ID': payload.invoiceId,
-          'X-Clinic-ID': payload.clinicId,
-          'X-Email-Type': 'invoice',
+          "X-Invoice-ID": payload.invoiceId,
+          "X-Clinic-ID": payload.clinicId,
+          "X-Email-Type": "invoice",
         },
       });
 
       // Atualizar fatura para marcar que foi enviada por email
       await supabase
-        .from('billing_invoices')
-        .update({ 
+        .from("billing_invoices")
+        .update({
           email_sent_at: new Date().toISOString(),
-          email_sent_to: payload.recipientEmail
+          email_sent_to: payload.recipientEmail,
         })
-        .eq('id', payload.invoiceId);
+        .eq("id", payload.invoiceId);
 
       logger.info("✅ Invoice email sent successfully", {
         emailId: emailResult.data?.id,
@@ -213,13 +222,12 @@ export const invoiceEmailDelivery = task({
         amount: payload.amount,
         sentAt: new Date().toISOString(),
       };
-
     } catch (error) {
-      logger.error("❌ Failed to send invoice email", { 
+      logger.error("❌ Failed to send invoice email", {
         error: error instanceof Error ? error.message : error,
         invoiceId: payload.invoiceId,
       });
-      
+
       throw error;
     }
   },
@@ -238,25 +246,25 @@ export const paymentReminderEmail = task({
     maxTimeoutInMs: 15000,
   },
   run: async (payload: InvoiceJobPayload) => {
-    logger.info("📱 Sending payment reminder", { 
-      invoiceId: payload.invoiceId 
+    logger.info("📱 Sending payment reminder", {
+      invoiceId: payload.invoiceId,
     });
 
     try {
       const supabase = await createClient();
-      
+
       // Verificar status atual da fatura
       const { data: invoice } = await supabase
-        .from('billing_invoices')
-        .select('status, due_date, amount, last_reminder_sent')
-        .eq('id', payload.invoiceId)
+        .from("billing_invoices")
+        .select("status, due_date, amount, last_reminder_sent")
+        .eq("id", payload.invoiceId)
         .single();
 
-      if (invoice?.status === 'paid') {
-        logger.info("⚠️ Invoice already paid, skipping reminder", { 
-          invoiceId: payload.invoiceId 
+      if (invoice?.status === "paid") {
+        logger.info("⚠️ Invoice already paid, skipping reminder", {
+          invoiceId: payload.invoiceId,
         });
-        return { success: true, skipped: true, reason: 'already_paid' };
+        return { success: true, skipped: true, reason: "already_paid" };
       }
 
       // Verificar se lembrete foi enviado recentemente (último 3 dias)
@@ -264,13 +272,13 @@ export const paymentReminderEmail = task({
         const lastReminder = new Date(invoice.last_reminder_sent);
         const threeDaysAgo = new Date();
         threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-        
+
         if (lastReminder > threeDaysAgo) {
-          logger.info("⚠️ Reminder sent recently, skipping", { 
+          logger.info("⚠️ Reminder sent recently, skipping", {
             invoiceId: payload.invoiceId,
-            lastSent: invoice.last_reminder_sent 
+            lastSent: invoice.last_reminder_sent,
           });
-          return { success: true, skipped: true, reason: 'recent_reminder' };
+          return { success: true, skipped: true, reason: "recent_reminder" };
         }
       }
 
@@ -297,15 +305,19 @@ export const paymentReminderEmail = task({
             <div style="background: #f8fafc; padding: 25px; border-radius: 8px; text-align: center;">
               <h2 style="color: #1e40af; margin-top: 0;">Olá, ${payload.recipientName}! 👋</h2>
               
-              ${daysOverdue > 0 ? `
+              ${
+                daysOverdue > 0
+                  ? `
                 <div style="background: #fee2e2; border: 1px solid #f87171; border-radius: 6px; padding: 15px; margin: 20px 0;">
                   <p style="color: #dc2626; margin: 0; font-weight: bold;">
-                    ⚠️ Sua fatura está em atraso há ${daysOverdue} dia${daysOverdue > 1 ? 's' : ''}
+                    ⚠️ Sua fatura está em atraso há ${daysOverdue} dia${daysOverdue > 1 ? "s" : ""}
                   </p>
                 </div>
-              ` : `
+              `
+                  : `
                 <p style="color: #f59e0b; font-weight: bold;">Sua fatura vence hoje!</p>
-              `}
+              `
+              }
               
               <div style="background: white; padding: 20px; border-radius: 6px; border-left: 4px solid #f59e0b; text-align: left; margin: 20px 0;">
                 <p style="margin: 5px 0;"><strong>💰 Valor:</strong> R$ ${payload.amount.toFixed(2)}</p>
@@ -320,13 +332,17 @@ export const paymentReminderEmail = task({
                 </p>
               </div>
               
-              ${payload.invoiceUrl ? `
+              ${
+                payload.invoiceUrl
+                  ? `
                 <div style="margin: 25px 0;">
                   <a href="${payload.invoiceUrl}" style="display: inline-block; background: #059669; color: white; padding: 15px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">
                     💳 Pagar Agora
                   </a>
                 </div>
-              ` : ''}
+              `
+                  : ""
+              }
               
               <p style="color: #666; font-size: 14px; margin-top: 20px;">
                 Precisa renegociar? Entre em contato conosco.<br>
@@ -345,22 +361,23 @@ export const paymentReminderEmail = task({
       const emailResult = await resend.emails.send({
         from: `${payload.clinicName} Financeiro <billing@neonpro.app>`,
         to: [payload.recipientEmail],
-        subject: daysOverdue > 0 ? 
-          `⚠️ Pagamento em Atraso - R$ ${payload.amount.toFixed(2)} (${daysOverdue} dia${daysOverdue > 1 ? 's' : ''})` :
-          `💰 Lembrete: Fatura vence hoje - R$ ${payload.amount.toFixed(2)}`,
+        subject:
+          daysOverdue > 0
+            ? `⚠️ Pagamento em Atraso - R$ ${payload.amount.toFixed(2)} (${daysOverdue} dia${daysOverdue > 1 ? "s" : ""})`
+            : `💰 Lembrete: Fatura vence hoje - R$ ${payload.amount.toFixed(2)}`,
         html: reminderHtml,
         headers: {
-          'X-Invoice-ID': payload.invoiceId,
-          'X-Clinic-ID': payload.clinicId,
-          'X-Email-Type': 'payment-reminder',
+          "X-Invoice-ID": payload.invoiceId,
+          "X-Clinic-ID": payload.clinicId,
+          "X-Email-Type": "payment-reminder",
         },
       });
 
       // Atualizar última data de lembrete
       await supabase
-        .from('billing_invoices')
+        .from("billing_invoices")
         .update({ last_reminder_sent: new Date().toISOString() })
-        .eq('id', payload.invoiceId);
+        .eq("id", payload.invoiceId);
 
       logger.info("✅ Payment reminder sent successfully", {
         emailId: emailResult.data?.id,
@@ -375,13 +392,12 @@ export const paymentReminderEmail = task({
         daysOverdue,
         sentAt: new Date().toISOString(),
       };
-
     } catch (error) {
-      logger.error("❌ Failed to send payment reminder", { 
+      logger.error("❌ Failed to send payment reminder", {
         error: error instanceof Error ? error.message : error,
         invoiceId: payload.invoiceId,
       });
-      
+
       throw error;
     }
   },

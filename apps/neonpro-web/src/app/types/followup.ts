@@ -10,32 +10,32 @@ export interface TreatmentFollowupProtocol {
   specialty: string;
   protocol_version: string;
   is_active: boolean;
-  evidence_level: 'A' | 'B' | 'C' | 'D';
+  evidence_level: "A" | "B" | "C" | "D";
   protocol_source?: string;
-  
+
   // Follow-up scheduling rules
   initial_followup_days: number;
   subsequent_intervals: number[];
   max_followups: number;
   urgent_threshold_hours: number;
-  
+
   // Automation settings
   automation_level: number;
   auto_schedule_enabled: boolean;
   auto_reminders_enabled: boolean;
   escalation_enabled: boolean;
-  
+
   // Content templates
   sms_template?: string;
   whatsapp_template?: string;
   email_template?: string;
   phone_script?: string;
-  
+
   // Compliance tracking
   lgpd_compliant: boolean;
   consent_required: boolean;
   data_retention_days: number;
-  
+
   created_at: string;
   updated_at: string;
   created_by?: string;
@@ -47,43 +47,43 @@ export interface PatientTreatmentFollowup {
   patient_id: string;
   treatment_id?: string;
   protocol_id: string;
-  
+
   // Follow-up details
-  followup_type: 'initial' | 'routine' | 'urgent' | 'outcome_check';
+  followup_type: "initial" | "routine" | "urgent" | "outcome_check";
   sequence_number: number;
   scheduled_date: string;
   scheduled_time?: string;
   optimal_time_calculated: boolean;
-  
+
   // Communication preferences
-  preferred_channel: 'sms' | 'whatsapp' | 'email' | 'phone';
+  preferred_channel: "sms" | "whatsapp" | "email" | "phone";
   backup_channels: string[];
   language_preference: string;
-  
+
   // Status tracking
-  status: 'scheduled' | 'sent' | 'completed' | 'missed' | 'cancelled' | 'escalated';
+  status: "scheduled" | "sent" | "completed" | "missed" | "cancelled" | "escalated";
   attempts_count: number;
   last_attempt_at?: string;
   completed_at?: string;
-  
+
   // Response tracking
   patient_responded: boolean;
   response_channel?: string;
   response_content?: string;
   satisfaction_score?: number;
-  
+
   // Outcome tracking
   treatment_compliance_score?: number;
   symptoms_improved?: boolean;
   side_effects_reported?: boolean;
   additional_care_needed?: boolean;
   notes?: string;
-  
+
   // Automation metadata
   auto_generated: boolean;
   ai_optimized_timing: boolean;
   shadow_test_variant?: string;
-  
+
   created_at: string;
   updated_at: string;
   created_by?: string;
@@ -93,28 +93,28 @@ export interface PatientTreatmentFollowup {
 export interface FollowupCommunication {
   id: string;
   followup_id: string;
-  
+
   // Communication details
-  channel: 'sms' | 'whatsapp' | 'email' | 'phone';
+  channel: "sms" | "whatsapp" | "email" | "phone";
   message_content?: string;
   sent_at: string;
-  delivery_status: 'pending' | 'sent' | 'delivered' | 'failed' | 'read';
+  delivery_status: "pending" | "sent" | "delivered" | "failed" | "read";
   delivery_confirmed_at?: string;
-  
+
   // Response tracking
   response_received: boolean;
   response_time_minutes?: number;
   response_content?: string;
-  
+
   // Performance metrics
   engagement_score?: number;
   conversion_achieved: boolean;
-  
+
   // Technical metadata
   message_id?: string;
   provider?: string;
   cost_cents?: number;
-  
+
   created_at: string;
 }
 
@@ -123,41 +123,41 @@ export interface TreatmentOutcome {
   patient_id: string;
   treatment_id?: string;
   followup_id?: string;
-  
+
   // Outcome measurements
   outcome_date: string;
   measurement_type: string;
   value_numeric?: number;
   value_text?: string;
-  scale_type: '1_to_10' | 'percentage' | 'yes_no' | 'custom';
-  
+  scale_type: "1_to_10" | "percentage" | "yes_no" | "custom";
+
   // Clinical assessment
   clinical_improvement?: boolean;
   meets_treatment_goals?: boolean;
   requires_additional_treatment?: boolean;
-  
+
   // Patient reported outcomes
   patient_satisfaction?: number;
   quality_of_life_score?: number;
   pain_level?: number;
   mobility_score?: number;
-  
+
   // Follow-up recommendations
   next_followup_recommended: boolean;
   followup_interval_days?: number;
   escalation_required: boolean;
   referral_needed: boolean;
   specialist_type?: string;
-  
+
   // Data source
-  data_source: 'patient_report' | 'clinical_exam' | 'automated_assessment';
+  data_source: "patient_report" | "clinical_exam" | "automated_assessment";
   reliability_score: number;
-  
+
   // AI analysis
   ai_analyzed: boolean;
   ai_confidence_score?: number;
   ai_recommendations?: string;
-  
+
   created_at: string;
   updated_at: string;
   recorded_by?: string;
@@ -166,23 +166,23 @@ export interface TreatmentOutcome {
 export interface FollowupEscalationRule {
   id: string;
   protocol_id: string;
-  
+
   // Escalation conditions
-  condition_type: 'no_response' | 'poor_outcome' | 'urgent_symptoms' | 'compliance_issue';
+  condition_type: "no_response" | "poor_outcome" | "urgent_symptoms" | "compliance_issue";
   threshold_value?: number;
   time_threshold_hours?: number;
   attempts_threshold?: number;
-  
+
   // Escalation actions
-  escalation_level: 'low' | 'medium' | 'high' | 'critical';
+  escalation_level: "low" | "medium" | "high" | "critical";
   notify_roles: string[];
   auto_schedule_appointment: boolean;
-  priority_level: 'low' | 'normal' | 'high' | 'urgent';
-  
+  priority_level: "low" | "normal" | "high" | "urgent";
+
   // Templates and scripts
   escalation_message_template?: string;
   internal_alert_template?: string;
-  
+
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -190,41 +190,41 @@ export interface FollowupEscalationRule {
 
 export interface FollowupPerformanceAnalytics {
   id: string;
-  
+
   // Time period
   analysis_date: string;
-  period_type: 'daily' | 'weekly' | 'monthly';
-  
+  period_type: "daily" | "weekly" | "monthly";
+
   // Volume metrics
   total_followups_scheduled: number;
   total_followups_completed: number;
   total_followups_missed: number;
   total_escalations: number;
-  
+
   // Performance metrics
   completion_rate: number;
   response_rate: number;
   satisfaction_average: number;
   escalation_rate: number;
-  
+
   // Channel performance
   sms_success_rate: number;
   whatsapp_success_rate: number;
   email_success_rate: number;
   phone_success_rate: number;
-  
+
   // Timing optimization
   optimal_time_accuracy: number;
   avg_response_time_minutes: number;
-  
+
   // Treatment outcomes
   treatment_improvement_rate: number;
   goal_achievement_rate: number;
-  
+
   // AI performance
   ai_prediction_accuracy: number;
   automation_success_rate: number;
-  
+
   created_at: string;
 }
 
@@ -234,7 +234,7 @@ export interface CreateFollowupProtocolRequest {
   description: string;
   treatment_type: string;
   specialty: string;
-  evidence_level: 'A' | 'B' | 'C' | 'D';
+  evidence_level: "A" | "B" | "C" | "D";
   protocol_source?: string;
   initial_followup_days: number;
   subsequent_intervals: number[];
@@ -257,17 +257,17 @@ export interface CreatePatientFollowupRequest {
   patient_id: string;
   treatment_id?: string;
   protocol_id: string;
-  followup_type: 'initial' | 'routine' | 'urgent' | 'outcome_check';
+  followup_type: "initial" | "routine" | "urgent" | "outcome_check";
   scheduled_date: string;
   scheduled_time?: string;
-  preferred_channel: 'sms' | 'whatsapp' | 'email' | 'phone';
+  preferred_channel: "sms" | "whatsapp" | "email" | "phone";
   backup_channels: string[];
   language_preference: string;
   shadow_test_variant?: string;
 }
 
 export interface UpdateFollowupStatusRequest {
-  status: 'scheduled' | 'sent' | 'completed' | 'missed' | 'cancelled' | 'escalated';
+  status: "scheduled" | "sent" | "completed" | "missed" | "cancelled" | "escalated";
   patient_responded?: boolean;
   response_channel?: string;
   response_content?: string;
@@ -287,7 +287,7 @@ export interface CreateTreatmentOutcomeRequest {
   measurement_type: string;
   value_numeric?: number;
   value_text?: string;
-  scale_type: '1_to_10' | 'percentage' | 'yes_no' | 'custom';
+  scale_type: "1_to_10" | "percentage" | "yes_no" | "custom";
   clinical_improvement?: boolean;
   meets_treatment_goals?: boolean;
   requires_additional_treatment?: boolean;
@@ -300,7 +300,7 @@ export interface CreateTreatmentOutcomeRequest {
   escalation_required: boolean;
   referral_needed: boolean;
   specialist_type?: string;
-  data_source: 'patient_report' | 'clinical_exam' | 'automated_assessment';
+  data_source: "patient_report" | "clinical_exam" | "automated_assessment";
   reliability_score: number;
 }
 
@@ -368,10 +368,10 @@ export interface AITimingOptimization {
 }
 
 export interface AIPersonalizationSuggestions {
-  message_tone: 'formal' | 'casual' | 'empathetic' | 'urgent';
+  message_tone: "formal" | "casual" | "empathetic" | "urgent";
   content_focus: string[];
-  channel_preference: 'sms' | 'whatsapp' | 'email' | 'phone';
-  frequency_adjustment: 'increase' | 'decrease' | 'maintain';
+  channel_preference: "sms" | "whatsapp" | "email" | "phone";
+  frequency_adjustment: "increase" | "decrease" | "maintain";
   escalation_threshold: number;
   personalization_confidence: number;
 }

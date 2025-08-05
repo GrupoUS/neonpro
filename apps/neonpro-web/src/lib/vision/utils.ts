@@ -2,12 +2,12 @@
  * Vision Analysis System Utilities
  * Helper functions and utilities for NeonPro Computer Vision System
  * Epic 10 - Story 10.1: Automated Before/After Analysis
- * 
+ *
  * VOIDBEAST V4.0 APEX ENHANCED - Quality ≥9.5/10
  */
 
-import { VISION_CONFIG, QUALITY_THRESHOLDS, validateVoidBeastCompliance } from './config';
-import {
+import type { VISION_CONFIG, QUALITY_THRESHOLDS, validateVoidBeastCompliance } from "./config";
+import type {
   ImageData,
   ImageMetadata,
   ProcessingMetrics,
@@ -23,8 +23,8 @@ import {
   RegionOfInterest,
   AnnotationData,
   MeasurementType,
-  ObjectiveMeasurement
-} from './types';
+  ObjectiveMeasurement,
+} from "./types";
 
 /**
  * Image Processing Utilities
@@ -40,43 +40,43 @@ export class ImageUtils {
     // Check file size
     const maxSizeMB = VISION_CONFIG.IMAGE_PROCESSING.MAX_IMAGE_SIZE_MB;
     const fileSizeMB = file.size / (1024 * 1024);
-    
+
     if (fileSizeMB > maxSizeMB) {
       errors.push({
-        field: 'file.size',
-        code: 'FILE_TOO_LARGE',
+        field: "file.size",
+        code: "FILE_TOO_LARGE",
         message: `Arquivo muito grande: ${fileSizeMB.toFixed(1)}MB. Máximo permitido: ${maxSizeMB}MB`,
-        value: fileSizeMB
+        value: fileSizeMB,
       });
     }
 
     // Check file format
-    const fileExtension = file.name.split('.').pop()?.toLowerCase();
+    const fileExtension = file.name.split(".").pop()?.toLowerCase();
     const supportedFormats = VISION_CONFIG.IMAGE_PROCESSING.SUPPORTED_FORMATS;
-    
+
     if (!fileExtension || !supportedFormats.includes(fileExtension)) {
       errors.push({
-        field: 'file.format',
-        code: 'INVALID_FORMAT',
-        message: `Formato não suportado: ${fileExtension}. Formatos aceitos: ${supportedFormats.join(', ')}`,
-        value: fileExtension
+        field: "file.format",
+        code: "INVALID_FORMAT",
+        message: `Formato não suportado: ${fileExtension}. Formatos aceitos: ${supportedFormats.join(", ")}`,
+        value: fileExtension,
       });
     }
 
     // Check file name
     if (file.name.length > 255) {
       warnings.push({
-        field: 'file.name',
-        code: 'LONG_FILENAME',
-        message: 'Nome do arquivo muito longo, será truncado',
-        value: file.name.length
+        field: "file.name",
+        code: "LONG_FILENAME",
+        message: "Nome do arquivo muito longo, será truncado",
+        value: file.name.length,
       });
     }
 
     return {
       valid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     };
   }
 
@@ -86,35 +86,35 @@ export class ImageUtils {
   static async extractImageMetadata(file: File): Promise<ImageMetadata> {
     return new Promise((resolve) => {
       const img = new Image();
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
       img.onload = () => {
         canvas.width = img.width;
         canvas.height = img.height;
-        
+
         if (ctx) {
           ctx.drawImage(img, 0, 0);
-          
+
           const metadata: ImageMetadata = {
             // Basic metadata that can be extracted in browser
-            colorProfile: 'sRGB', // Default assumption
-            quality: this.estimateImageQuality(ctx, img.width, img.height)
+            colorProfile: "sRGB", // Default assumption
+            quality: this.estimateImageQuality(ctx, img.width, img.height),
           };
-          
+
           resolve(metadata);
         } else {
           resolve({});
         }
-        
+
         URL.revokeObjectURL(img.src);
       };
-      
+
       img.onerror = () => {
         resolve({});
         URL.revokeObjectURL(img.src);
       };
-      
+
       img.src = URL.createObjectURL(file);
     });
   }
@@ -122,39 +122,42 @@ export class ImageUtils {
   /**
    * Estimate image quality based on various factors
    */
-  private static estimateImageQuality(ctx: CanvasRenderingContext2D, width: number, height: number): number {
+  private static estimateImageQuality(
+    ctx: CanvasRenderingContext2D,
+    width: number,
+    height: number,
+  ): number {
     try {
       const imageData = ctx.getImageData(0, 0, Math.min(width, 100), Math.min(height, 100));
       const data = imageData.data;
-      
+
       // Calculate basic quality metrics
       let totalVariance = 0;
       let pixelCount = 0;
-      
+
       for (let i = 0; i < data.length; i += 4) {
         const r = data[i];
         const g = data[i + 1];
         const b = data[i + 2];
-        
+
         // Calculate luminance
         const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
-        
+
         // Simple variance calculation for sharpness estimation
         if (i > 0) {
           const prevLuminance = 0.299 * data[i - 4] + 0.587 * data[i - 3] + 0.114 * data[i - 2];
           totalVariance += Math.abs(luminance - prevLuminance);
         }
-        
+
         pixelCount++;
       }
-      
+
       const averageVariance = totalVariance / pixelCount;
-      
+
       // Normalize to 0-1 scale (this is a simplified estimation)
       return Math.min(1, averageVariance / 50);
-      
     } catch (error) {
-      console.warn('Failed to estimate image quality:', error);
+      console.warn("Failed to estimate image quality:", error);
       return 0.5; // Default quality estimate
     }
   }
@@ -162,43 +165,54 @@ export class ImageUtils {
   /**
    * Generate thumbnail from image file
    */
-  static async generateThumbnail(file: File, maxWidth: number = 200, maxHeight: number = 200): Promise<Blob> {
+  static async generateThumbnail(
+    file: File,
+    maxWidth: number = 200,
+    maxHeight: number = 200,
+  ): Promise<Blob> {
     return new Promise((resolve, reject) => {
       const img = new Image();
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
       img.onload = () => {
         // Calculate thumbnail dimensions
         const { width, height } = this.calculateThumbnailDimensions(
-          img.width, img.height, maxWidth, maxHeight
+          img.width,
+          img.height,
+          maxWidth,
+          maxHeight,
         );
-        
+
         canvas.width = width;
         canvas.height = height;
-        
+
         if (ctx) {
           ctx.drawImage(img, 0, 0, width, height);
-          
-          canvas.toBlob((blob) => {
-            if (blob) {
-              resolve(blob);
-            } else {
-              reject(new Error('Failed to generate thumbnail'));
-            }
-          }, 'image/jpeg', 0.8);
+
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                resolve(blob);
+              } else {
+                reject(new Error("Failed to generate thumbnail"));
+              }
+            },
+            "image/jpeg",
+            0.8,
+          );
         } else {
-          reject(new Error('Failed to get canvas context'));
+          reject(new Error("Failed to get canvas context"));
         }
-        
+
         URL.revokeObjectURL(img.src);
       };
-      
+
       img.onerror = () => {
-        reject(new Error('Failed to load image'));
+        reject(new Error("Failed to load image"));
         URL.revokeObjectURL(img.src);
       };
-      
+
       img.src = URL.createObjectURL(file);
     });
   }
@@ -210,13 +224,13 @@ export class ImageUtils {
     originalWidth: number,
     originalHeight: number,
     maxWidth: number,
-    maxHeight: number
+    maxHeight: number,
   ): { width: number; height: number } {
     const aspectRatio = originalWidth / originalHeight;
-    
+
     let width = maxWidth;
     let height = maxHeight;
-    
+
     if (aspectRatio > 1) {
       // Landscape
       height = width / aspectRatio;
@@ -232,7 +246,7 @@ export class ImageUtils {
         height = width / aspectRatio;
       }
     }
-    
+
     return { width: Math.round(width), height: Math.round(height) };
   }
 }
@@ -245,10 +259,10 @@ export class AnalysisUtils {
    * Calculate overall improvement score from change metrics
    */
   static calculateOverallImprovement(changeMetrics: Record<string, number>): number {
-    const values = Object.values(changeMetrics).filter(v => typeof v === 'number' && !isNaN(v));
-    
+    const values = Object.values(changeMetrics).filter((v) => typeof v === "number" && !isNaN(v));
+
     if (values.length === 0) return 0;
-    
+
     // Calculate weighted average (can be customized based on treatment type)
     const sum = values.reduce((acc, val) => acc + val, 0);
     return Math.max(0, Math.min(100, sum / values.length));
@@ -258,10 +272,10 @@ export class AnalysisUtils {
    * Determine quality level based on score
    */
   static getQualityLevel(score: number): string {
-    if (score >= QUALITY_THRESHOLDS.EXCELLENT) return 'Excelente';
-    if (score >= QUALITY_THRESHOLDS.GOOD) return 'Bom';
-    if (score >= QUALITY_THRESHOLDS.FAIR) return 'Regular';
-    return 'Insatisfatório';
+    if (score >= QUALITY_THRESHOLDS.EXCELLENT) return "Excelente";
+    if (score >= QUALITY_THRESHOLDS.GOOD) return "Bom";
+    if (score >= QUALITY_THRESHOLDS.FAIR) return "Regular";
+    return "Insatisfatório";
   }
 
   /**
@@ -297,19 +311,19 @@ export class AnalysisUtils {
    * Calculate confidence color for UI display
    */
   static getConfidenceColor(confidence: number): string {
-    if (confidence >= 0.9) return '#10B981'; // Green
-    if (confidence >= 0.7) return '#F59E0B'; // Yellow
-    if (confidence >= 0.5) return '#EF4444'; // Red
-    return '#6B7280'; // Gray
+    if (confidence >= 0.9) return "#10B981"; // Green
+    if (confidence >= 0.7) return "#F59E0B"; // Yellow
+    if (confidence >= 0.5) return "#EF4444"; // Red
+    return "#6B7280"; // Gray
   }
 
   /**
    * Calculate accuracy color for UI display
    */
   static getAccuracyColor(accuracy: number): string {
-    if (accuracy >= VISION_CONFIG.PERFORMANCE.TARGET_ACCURACY) return '#10B981'; // Green
-    if (accuracy >= VISION_CONFIG.PERFORMANCE.MIN_ACCURACY_THRESHOLD) return '#F59E0B'; // Yellow
-    return '#EF4444'; // Red
+    if (accuracy >= VISION_CONFIG.PERFORMANCE.TARGET_ACCURACY) return "#10B981"; // Green
+    if (accuracy >= VISION_CONFIG.PERFORMANCE.MIN_ACCURACY_THRESHOLD) return "#F59E0B"; // Yellow
+    return "#EF4444"; // Red
   }
 
   /**
@@ -322,37 +336,37 @@ export class AnalysisUtils {
     // Required fields validation
     if (!result.id) {
       errors.push({
-        field: 'id',
-        code: 'MISSING_REQUIRED_FIELD',
-        message: 'ID da análise é obrigatório'
+        field: "id",
+        code: "MISSING_REQUIRED_FIELD",
+        message: "ID da análise é obrigatório",
       });
     }
 
     if (!result.analysisData) {
       errors.push({
-        field: 'analysisData',
-        code: 'MISSING_REQUIRED_FIELD',
-        message: 'Dados da análise são obrigatórios'
+        field: "analysisData",
+        code: "MISSING_REQUIRED_FIELD",
+        message: "Dados da análise são obrigatórios",
       });
     } else {
       // Validate analysis data quality
       const analysisData = result.analysisData;
-      
+
       if (analysisData.accuracyScore < VISION_CONFIG.PERFORMANCE.MIN_ACCURACY_THRESHOLD) {
         warnings.push({
-          field: 'analysisData.accuracyScore',
-          code: 'LOW_ACCURACY',
+          field: "analysisData.accuracyScore",
+          code: "LOW_ACCURACY",
           message: `Precisão baixa: ${(analysisData.accuracyScore * 100).toFixed(1)}%`,
-          value: analysisData.accuracyScore
+          value: analysisData.accuracyScore,
         });
       }
 
       if (analysisData.confidence < VISION_CONFIG.PERFORMANCE.MIN_CONFIDENCE_THRESHOLD) {
         warnings.push({
-          field: 'analysisData.confidence',
-          code: 'LOW_CONFIDENCE',
+          field: "analysisData.confidence",
+          code: "LOW_CONFIDENCE",
           message: `Confiança baixa: ${(analysisData.confidence * 100).toFixed(1)}%`,
-          value: analysisData.confidence
+          value: analysisData.confidence,
         });
       }
     }
@@ -361,10 +375,10 @@ export class AnalysisUtils {
       const processingTime = result.processingMetrics.processingTimeMs;
       if (processingTime > VISION_CONFIG.PERFORMANCE.MAX_PROCESSING_TIME_MS) {
         warnings.push({
-          field: 'processingMetrics.processingTimeMs',
-          code: 'SLOW_PROCESSING',
+          field: "processingMetrics.processingTimeMs",
+          code: "SLOW_PROCESSING",
           message: `Processamento lento: ${this.formatProcessingTime(processingTime)}`,
-          value: processingTime
+          value: processingTime,
         });
       }
     }
@@ -372,7 +386,7 @@ export class AnalysisUtils {
     return {
       valid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     };
   }
 }
@@ -395,7 +409,7 @@ export class MeasurementUtils {
    */
   static calculatePolygonArea(points: Coordinates[]): number {
     if (points.length < 3) return 0;
-    
+
     let area = 0;
     for (let i = 0; i < points.length; i++) {
       const j = (i + 1) % points.length;
@@ -410,7 +424,7 @@ export class MeasurementUtils {
    */
   static calculatePolygonPerimeter(points: Coordinates[]): number {
     if (points.length < 2) return 0;
-    
+
     let perimeter = 0;
     for (let i = 0; i < points.length; i++) {
       const j = (i + 1) % points.length;
@@ -425,14 +439,14 @@ export class MeasurementUtils {
   static calculateAngle(point1: Coordinates, vertex: Coordinates, point2: Coordinates): number {
     const vector1 = { x: point1.x - vertex.x, y: point1.y - vertex.y };
     const vector2 = { x: point2.x - vertex.x, y: point2.y - vertex.y };
-    
+
     const dot = vector1.x * vector2.x + vector1.y * vector2.y;
     const mag1 = Math.sqrt(vector1.x * vector1.x + vector1.y * vector1.y);
     const mag2 = Math.sqrt(vector2.x * vector2.x + vector2.y * vector2.y);
-    
+
     const cosAngle = dot / (mag1 * mag2);
     const angleRad = Math.acos(Math.max(-1, Math.min(1, cosAngle)));
-    
+
     return (angleRad * 180) / Math.PI;
   }
 
@@ -463,10 +477,10 @@ export class MeasurementUtils {
    */
   static determineClinicalSignificance(
     changePercentage: number,
-    measurementType: MeasurementType
+    measurementType: MeasurementType,
   ): string {
     const absChange = Math.abs(changePercentage);
-    
+
     // Different thresholds for different measurement types
     const thresholds = {
       area: { minimal: 5, moderate: 15, significant: 30 },
@@ -476,15 +490,15 @@ export class MeasurementUtils {
       intensity: { minimal: 10, moderate: 20, significant: 40 },
       texture: { minimal: 15, moderate: 30, significant: 60 },
       color: { minimal: 5, moderate: 15, significant: 30 },
-      default: { minimal: 10, moderate: 20, significant: 40 }
+      default: { minimal: 10, moderate: 20, significant: 40 },
     };
-    
+
     const threshold = thresholds[measurementType] || thresholds.default;
-    
-    if (absChange >= threshold.significant) return 'highly_significant';
-    if (absChange >= threshold.moderate) return 'significant';
-    if (absChange >= threshold.minimal) return 'moderate';
-    return 'minimal';
+
+    if (absChange >= threshold.significant) return "highly_significant";
+    if (absChange >= threshold.moderate) return "significant";
+    if (absChange >= threshold.minimal) return "moderate";
+    return "minimal";
   }
 }
 
@@ -502,10 +516,16 @@ export class AnnotationUtils {
   /**
    * Validate annotation coordinates
    */
-  static validateCoordinates(coordinates: Coordinates, imageWidth: number, imageHeight: number): boolean {
+  static validateCoordinates(
+    coordinates: Coordinates,
+    imageWidth: number,
+    imageHeight: number,
+  ): boolean {
     return (
-      coordinates.x >= 0 && coordinates.x <= imageWidth &&
-      coordinates.y >= 0 && coordinates.y <= imageHeight
+      coordinates.x >= 0 &&
+      coordinates.x <= imageWidth &&
+      coordinates.y >= 0 &&
+      coordinates.y <= imageHeight
     );
   }
 
@@ -516,17 +536,17 @@ export class AnnotationUtils {
     if (coordinates.length === 0) {
       return { x: 0, y: 0, width: 0, height: 0 };
     }
-    
-    const minX = Math.min(...coordinates.map(c => c.x));
-    const maxX = Math.max(...coordinates.map(c => c.x));
-    const minY = Math.min(...coordinates.map(c => c.y));
-    const maxY = Math.max(...coordinates.map(c => c.y));
-    
+
+    const minX = Math.min(...coordinates.map((c) => c.x));
+    const maxX = Math.max(...coordinates.map((c) => c.x));
+    const minY = Math.min(...coordinates.map((c) => c.y));
+    const maxY = Math.max(...coordinates.map((c) => c.y));
+
     return {
       x: minX,
       y: minY,
       width: maxX - minX,
-      height: maxY - minY
+      height: maxY - minY,
     };
   }
 
@@ -535,7 +555,7 @@ export class AnnotationUtils {
    */
   static isPointInRegion(point: Coordinates, region: RegionOfInterest): boolean {
     switch (region.type) {
-      case 'rectangle':
+      case "rectangle":
         const rect = region.coordinates[0];
         return (
           point.x >= rect.x &&
@@ -543,16 +563,16 @@ export class AnnotationUtils {
           point.y >= rect.y &&
           point.y <= rect.y + (rect.height || 0)
         );
-        
-      case 'circle':
+
+      case "circle":
         const center = region.coordinates[0];
         const radius = center.radius || 0;
         const distance = MeasurementUtils.calculateDistance(point, center);
         return distance <= radius;
-        
-      case 'polygon':
+
+      case "polygon":
         return this.isPointInPolygon(point, region.coordinates);
-        
+
       default:
         return false;
     }
@@ -563,19 +583,21 @@ export class AnnotationUtils {
    */
   private static isPointInPolygon(point: Coordinates, polygon: Coordinates[]): boolean {
     let inside = false;
-    
+
     for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
       const xi = polygon[i].x;
       const yi = polygon[i].y;
       const xj = polygon[j].x;
       const yj = polygon[j].y;
-      
-      if (((yi > point.y) !== (yj > point.y)) &&
-          (point.x < (xj - xi) * (point.y - yi) / (yj - yi) + xi)) {
+
+      if (
+        yi > point.y !== yj > point.y &&
+        point.x < ((xj - xi) * (point.y - yi)) / (yj - yi) + xi
+      ) {
         inside = !inside;
       }
     }
-    
+
     return inside;
   }
 }
@@ -590,7 +612,7 @@ export class PerformanceUtils {
   static createTimer(): { start: () => void; stop: () => number; elapsed: () => number } {
     let startTime = 0;
     let endTime = 0;
-    
+
     return {
       start: () => {
         startTime = performance.now();
@@ -601,7 +623,7 @@ export class PerformanceUtils {
       },
       elapsed: () => {
         return (endTime || performance.now()) - startTime;
-      }
+      },
     };
   }
 
@@ -609,11 +631,11 @@ export class PerformanceUtils {
    * Monitor memory usage (if available)
    */
   static getMemoryUsage(): { used: number; total: number } | null {
-    if ('memory' in performance) {
+    if ("memory" in performance) {
       const memory = (performance as any).memory;
       return {
         used: memory.usedJSHeapSize / (1024 * 1024), // MB
-        total: memory.totalJSHeapSize / (1024 * 1024) // MB
+        total: memory.totalJSHeapSize / (1024 * 1024), // MB
       };
     }
     return null;
@@ -624,23 +646,26 @@ export class PerformanceUtils {
    */
   static throttle<T extends (...args: any[]) => any>(
     func: T,
-    delay: number
+    delay: number,
   ): (...args: Parameters<T>) => void {
     let timeoutId: NodeJS.Timeout | null = null;
     let lastExecTime = 0;
-    
+
     return (...args: Parameters<T>) => {
       const currentTime = Date.now();
-      
+
       if (currentTime - lastExecTime > delay) {
         func(...args);
         lastExecTime = currentTime;
       } else {
         if (timeoutId) clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          func(...args);
-          lastExecTime = Date.now();
-        }, delay - (currentTime - lastExecTime));
+        timeoutId = setTimeout(
+          () => {
+            func(...args);
+            lastExecTime = Date.now();
+          },
+          delay - (currentTime - lastExecTime),
+        );
       }
     };
   }
@@ -650,10 +675,10 @@ export class PerformanceUtils {
    */
   static debounce<T extends (...args: any[]) => any>(
     func: T,
-    delay: number
+    delay: number,
   ): (...args: Parameters<T>) => void {
     let timeoutId: NodeJS.Timeout | null = null;
-    
+
     return (...args: Parameters<T>) => {
       if (timeoutId) clearTimeout(timeoutId);
       timeoutId = setTimeout(() => func(...args), delay);
@@ -669,7 +694,7 @@ export class ExportUtils {
    * Generate export filename with timestamp
    */
   static generateExportFilename(prefix: string, format: string): string {
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, -5);
     return `${prefix}-${timestamp}.${format}`;
   }
 
@@ -677,15 +702,15 @@ export class ExportUtils {
    * Format file size for display
    */
   static formatFileSize(bytes: number): string {
-    const units = ['B', 'KB', 'MB', 'GB'];
+    const units = ["B", "KB", "MB", "GB"];
     let size = bytes;
     let unitIndex = 0;
-    
+
     while (size >= 1024 && unitIndex < units.length - 1) {
       size /= 1024;
       unitIndex++;
     }
-    
+
     return `${size.toFixed(1)} ${units[unitIndex]}`;
   }
 
@@ -698,26 +723,26 @@ export class ExportUtils {
 
     if (!options.format) {
       errors.push({
-        field: 'format',
-        code: 'MISSING_REQUIRED_FIELD',
-        message: 'Formato de exportação é obrigatório'
+        field: "format",
+        code: "MISSING_REQUIRED_FIELD",
+        message: "Formato de exportação é obrigatório",
       });
     }
 
     const supportedFormats = VISION_CONFIG.EXPORT.SUPPORTED_FORMATS;
     if (options.format && !supportedFormats.includes(options.format)) {
       errors.push({
-        field: 'format',
-        code: 'INVALID_FORMAT',
-        message: `Formato não suportado: ${options.format}. Formatos aceitos: ${supportedFormats.join(', ')}`,
-        value: options.format
+        field: "format",
+        code: "INVALID_FORMAT",
+        message: `Formato não suportado: ${options.format}. Formatos aceitos: ${supportedFormats.join(", ")}`,
+        value: options.format,
       });
     }
 
     return {
       valid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     };
   }
 }
@@ -730,46 +755,50 @@ export class DateUtils {
    * Format date for Brazilian locale
    */
   static formatDate(date: string | Date): string {
-    const d = typeof date === 'string' ? new Date(date) : date;
-    return d.toLocaleDateString('pt-BR');
+    const d = typeof date === "string" ? new Date(date) : date;
+    return d.toLocaleDateString("pt-BR");
   }
 
   /**
    * Format date and time for Brazilian locale
    */
   static formatDateTime(date: string | Date): string {
-    const d = typeof date === 'string' ? new Date(date) : date;
-    return d.toLocaleString('pt-BR');
+    const d = typeof date === "string" ? new Date(date) : date;
+    return d.toLocaleString("pt-BR");
   }
 
   /**
    * Calculate time difference in human-readable format
    */
   static getTimeAgo(date: string | Date): string {
-    const d = typeof date === 'string' ? new Date(date) : date;
+    const d = typeof date === "string" ? new Date(date) : date;
     const now = new Date();
     const diffMs = now.getTime() - d.getTime();
-    
+
     const diffMinutes = Math.floor(diffMs / (1000 * 60));
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    
-    if (diffMinutes < 1) return 'agora mesmo';
-    if (diffMinutes < 60) return `${diffMinutes} minuto${diffMinutes > 1 ? 's' : ''} atrás`;
-    if (diffHours < 24) return `${diffHours} hora${diffHours > 1 ? 's' : ''} atrás`;
-    if (diffDays < 30) return `${diffDays} dia${diffDays > 1 ? 's' : ''} atrás`;
-    
+
+    if (diffMinutes < 1) return "agora mesmo";
+    if (diffMinutes < 60) return `${diffMinutes} minuto${diffMinutes > 1 ? "s" : ""} atrás`;
+    if (diffHours < 24) return `${diffHours} hora${diffHours > 1 ? "s" : ""} atrás`;
+    if (diffDays < 30) return `${diffDays} dia${diffDays > 1 ? "s" : ""} atrás`;
+
     return this.formatDate(d);
   }
 
   /**
    * Check if date is within range
    */
-  static isDateInRange(date: string | Date, startDate: string | Date, endDate: string | Date): boolean {
-    const d = typeof date === 'string' ? new Date(date) : date;
-    const start = typeof startDate === 'string' ? new Date(startDate) : startDate;
-    const end = typeof endDate === 'string' ? new Date(endDate) : endDate;
-    
+  static isDateInRange(
+    date: string | Date,
+    startDate: string | Date,
+    endDate: string | Date,
+  ): boolean {
+    const d = typeof date === "string" ? new Date(date) : date;
+    const start = typeof startDate === "string" ? new Date(startDate) : startDate;
+    const end = typeof endDate === "string" ? new Date(endDate) : endDate;
+
     return d >= start && d <= end;
   }
 }
@@ -793,12 +822,8 @@ export class ErrorUtils {
    * Check if error is recoverable
    */
   static isRecoverableError(error: any): boolean {
-    const recoverableCodes = [
-      'PROCESSING_TIMEOUT',
-      'MODEL_LOAD_FAILED',
-      'STORAGE_ERROR'
-    ];
-    
+    const recoverableCodes = ["PROCESSING_TIMEOUT", "MODEL_LOAD_FAILED", "STORAGE_ERROR"];
+
     return recoverableCodes.includes(error.code);
   }
 
@@ -807,19 +832,19 @@ export class ErrorUtils {
    */
   static getUserFriendlyMessage(error: any): string {
     const errorMessages: Record<string, string> = {
-      INVALID_IMAGE_FORMAT: 'Formato de imagem não suportado',
-      IMAGE_TOO_LARGE: 'Imagem muito grande',
-      IMAGE_TOO_SMALL: 'Imagem muito pequena',
-      PROCESSING_TIMEOUT: 'Tempo limite de processamento excedido',
-      MODEL_LOAD_FAILED: 'Falha ao carregar modelo de análise',
-      INSUFFICIENT_QUALITY: 'Qualidade da imagem insuficiente',
-      ANALYSIS_FAILED: 'Falha na análise da imagem',
-      STORAGE_ERROR: 'Erro de armazenamento',
-      AUTHENTICATION_ERROR: 'Erro de autenticação',
-      RATE_LIMIT_EXCEEDED: 'Limite de requisições excedido'
+      INVALID_IMAGE_FORMAT: "Formato de imagem não suportado",
+      IMAGE_TOO_LARGE: "Imagem muito grande",
+      IMAGE_TOO_SMALL: "Imagem muito pequena",
+      PROCESSING_TIMEOUT: "Tempo limite de processamento excedido",
+      MODEL_LOAD_FAILED: "Falha ao carregar modelo de análise",
+      INSUFFICIENT_QUALITY: "Qualidade da imagem insuficiente",
+      ANALYSIS_FAILED: "Falha na análise da imagem",
+      STORAGE_ERROR: "Erro de armazenamento",
+      AUTHENTICATION_ERROR: "Erro de autenticação",
+      RATE_LIMIT_EXCEEDED: "Limite de requisições excedido",
     };
-    
-    return errorMessages[error.code] || error.message || 'Erro desconhecido';
+
+    return errorMessages[error.code] || error.message || "Erro desconhecido";
   }
 }
 
@@ -832,7 +857,7 @@ export const VisionUtils = {
   Performance: PerformanceUtils,
   Export: ExportUtils,
   Date: DateUtils,
-  Error: ErrorUtils
+  Error: ErrorUtils,
 };
 
 export default VisionUtils;

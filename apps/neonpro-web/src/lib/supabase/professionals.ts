@@ -1,9 +1,9 @@
-﻿// Professional Management Supabase Functions
+// Professional Management Supabase Functions
 // FHIR-compliant healthcare professional data management with modern automation
 
-import { createClient } from '@/lib/supabase/client';
+import type { createClient } from "@/lib/supabase/client";
 const supabase = await createClient();
-import type { Database } from '@/types/supabase';
+import type { Database } from "@/types/supabase";
 import type {
   Professional,
   MedicalSpecialty,
@@ -13,8 +13,8 @@ import type {
   PerformanceMetric,
   ProfessionalDevelopment,
   CredentialingWorkflow,
-  CredentialingAlert
-} from '@/lib/types/professional';
+  CredentialingAlert,
+} from "@/lib/types/professional";
 import type {
   ProfessionalCreateInput,
   ProfessionalUpdateInput,
@@ -27,8 +27,8 @@ import type {
   MetricCreateInput,
   DevelopmentCreateInput,
   WorkflowCreateInput,
-  AlertCreateInput
-} from '@/lib/validations/professional';
+  AlertCreateInput,
+} from "@/lib/validations/professional";
 
 // ============================================
 // PROFESSIONAL MANAGEMENT
@@ -40,11 +40,11 @@ import type {
  */
 export async function createProfessional(data: ProfessionalCreateInput): Promise<Professional> {
   const { data: professional, error } = await supabase
-    .from('professionals')
+    .from("professionals")
     .insert({
       ...data,
       fhir_practitioner_id: data.fhir_practitioner_id || crypto.randomUUID(),
-      status: data.status || 'pending_verification'
+      status: data.status || "pending_verification",
     })
     .select(`
       *,
@@ -64,16 +64,16 @@ export async function createProfessional(data: ProfessionalCreateInput): Promise
  * Includes automated audit trail and compliance tracking
  */
 export async function updateProfessional(
-  id: string, 
-  data: ProfessionalUpdateInput
+  id: string,
+  data: ProfessionalUpdateInput,
 ): Promise<Professional> {
   const { data: professional, error } = await supabase
-    .from('professionals')
+    .from("professionals")
     .update({
       ...data,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     })
-    .eq('id', id)
+    .eq("id", id)
     .select(`
       *,
       supervisor:professionals!supervisor_id(id, first_name, last_name)
@@ -92,7 +92,7 @@ export async function updateProfessional(
  */
 export async function getProfessional(id: string): Promise<Professional | null> {
   const { data: professional, error } = await supabase
-    .from('professionals')
+    .from("professionals")
     .select(`
       *,
       supervisor:professionals!supervisor_id(id, first_name, last_name),
@@ -107,11 +107,11 @@ export async function getProfessional(id: string): Promise<Professional | null> 
       workflows:credentialing_workflow(*),
       alerts:credentialing_alerts(*)
     `)
-    .eq('id', id)
+    .eq("id", id)
     .single();
 
   if (error) {
-    if (error.code === 'PGRST116') return null; // Not found
+    if (error.code === "PGRST116") return null; // Not found
     throw new Error(`Failed to get professional: ${error.message}`);
   }
 
@@ -123,63 +123,66 @@ export async function getProfessional(id: string): Promise<Professional | null> 
  * Supports full-text search, specialty filtering, and status management
  */
 export async function searchProfessionals(filters: ProfessionalSearchInput) {
-  let query = supabase
-    .from('professionals')
-    .select(`
+  let query = supabase.from("professionals").select(
+    `
       *,
       supervisor:professionals!supervisor_id(id, first_name, last_name),
       specialties:professional_specialties(
         is_primary,
         specialty:medical_specialties(name, code, category)
       )
-    `, { count: 'exact' });
+    `,
+    { count: "exact" },
+  );
 
   // Text search across name fields
   if (filters.search) {
-    query = query.or(`first_name.ilike.%${filters.search}%,last_name.ilike.%${filters.search}%,email.ilike.%${filters.search}%`);
+    query = query.or(
+      `first_name.ilike.%${filters.search}%,last_name.ilike.%${filters.search}%,email.ilike.%${filters.search}%`,
+    );
   }
 
   // Status filters
   if (filters.status && filters.status.length > 0) {
-    query = query.in('status', filters.status);
+    query = query.in("status", filters.status);
   }
 
   if (filters.employment_status && filters.employment_status.length > 0) {
-    query = query.in('employment_status', filters.employment_status);
+    query = query.in("employment_status", filters.employment_status);
   }
 
   // Specialty filter
   if (filters.primary_specialty && filters.primary_specialty.length > 0) {
-    query = query.in('primary_specialty', filters.primary_specialty);
+    query = query.in("primary_specialty", filters.primary_specialty);
   }
 
   // Department filter
   if (filters.department && filters.department.length > 0) {
-    query = query.in('department', filters.department);
+    query = query.in("department", filters.department);
   }
 
   // Date range filters
   if (filters.hire_date_from) {
-    query = query.gte('hire_date', filters.hire_date_from);
+    query = query.gte("hire_date", filters.hire_date_from);
   }
   if (filters.hire_date_to) {
-    query = query.lte('hire_date', filters.hire_date_to);
+    query = query.lte("hire_date", filters.hire_date_to);
   }
 
   // License state filter
   if (filters.license_state && filters.license_state.length > 0) {
-    query = query.in('license_state', filters.license_state);
+    query = query.in("license_state", filters.license_state);
   }
 
   // License expiration warning
   if (filters.license_expiring_within_days) {
     const futureDate = new Date();
     futureDate.setDate(futureDate.getDate() + filters.license_expiring_within_days);
-    query = query.lte('license_expiration', futureDate.toISOString());
+    query = query.lte("license_expiration", futureDate.toISOString());
   }
 
   // Sorting
-  query = query.order(filters.sort_by || 'last_name', { ascending: filters.sort_order === 'asc' });
+  query = query.order(filters.sort_by || "last_name", { ascending: filters.sort_order === "asc" });
 
   // Pagination
   const from = (filters.page - 1) * filters.limit;
@@ -197,7 +200,7 @@ export async function searchProfessionals(filters: ProfessionalSearchInput) {
     count: count || 0,
     page: filters.page,
     limit: filters.limit,
-    totalPages: Math.ceil((count || 0) / filters.limit)
+    totalPages: Math.ceil((count || 0) / filters.limit),
   };
 }
 
@@ -210,7 +213,7 @@ export async function getProfessionalsWithExpiringLicenses(daysAhead: number = 3
   futureDate.setDate(futureDate.getDate() + daysAhead);
 
   const { data: professionals, error } = await supabase
-    .from('professionals')
+    .from("professionals")
     .select(`
       id,
       first_name,
@@ -221,9 +224,9 @@ export async function getProfessionalsWithExpiringLicenses(daysAhead: number = 3
       license_expiration,
       status
     `)
-    .lte('license_expiration', futureDate.toISOString())
-    .eq('status', 'active')
-    .order('license_expiration');
+    .lte("license_expiration", futureDate.toISOString())
+    .eq("status", "active")
+    .order("license_expiration");
 
   if (error) {
     throw new Error(`Failed to get professionals with expiring licenses: ${error.message}`);
@@ -241,10 +244,10 @@ export async function getProfessionalsWithExpiringLicenses(daysAhead: number = 3
  */
 export async function getMedicalSpecialties(): Promise<MedicalSpecialty[]> {
   const { data: specialties, error } = await supabase
-    .from('medical_specialties')
-    .select('*')
-    .eq('is_active', true)
-    .order('name');
+    .from("medical_specialties")
+    .select("*")
+    .eq("is_active", true)
+    .order("name");
 
   if (error) {
     throw new Error(`Failed to get medical specialties: ${error.message}`);
@@ -258,11 +261,11 @@ export async function getMedicalSpecialties(): Promise<MedicalSpecialty[]> {
  */
 export async function getSpecialtiesByCategory(category: string): Promise<MedicalSpecialty[]> {
   const { data: specialties, error } = await supabase
-    .from('medical_specialties')
-    .select('*')
-    .eq('category', category)
-    .eq('is_active', true)
-    .order('name');
+    .from("medical_specialties")
+    .select("*")
+    .eq("category", category)
+    .eq("is_active", true)
+    .order("name");
 
   if (error) {
     throw new Error(`Failed to get specialties by category: ${error.message}`);
@@ -282,7 +285,7 @@ export async function addProfessionalSpecialty(data: {
   board_certified?: boolean;
 }): Promise<ProfessionalSpecialty> {
   const { data: specialty, error } = await supabase
-    .from('professional_specialties')
+    .from("professional_specialties")
     .insert(data)
     .select(`
       *,
@@ -306,12 +309,14 @@ export async function addProfessionalSpecialty(data: {
  * Create professional credential
  * Includes automatic verification workflow initiation
  */
-export async function createCredential(data: CredentialCreateInput): Promise<ProfessionalCredential> {
+export async function createCredential(
+  data: CredentialCreateInput,
+): Promise<ProfessionalCredential> {
   const { data: credential, error } = await supabase
-    .from('professional_credentials')
+    .from("professional_credentials")
     .insert({
       ...data,
-      verification_status: data.verification_status || 'pending'
+      verification_status: data.verification_status || "pending",
     })
     .select(`
       *,
@@ -330,16 +335,16 @@ export async function createCredential(data: CredentialCreateInput): Promise<Pro
  * Update credential information
  */
 export async function updateCredential(
-  id: string, 
-  data: CredentialUpdateInput
+  id: string,
+  data: CredentialUpdateInput,
 ): Promise<ProfessionalCredential> {
   const { data: credential, error } = await supabase
-    .from('professional_credentials')
+    .from("professional_credentials")
     .update({
       ...data,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     })
-    .eq('id', id)
+    .eq("id", id)
     .select(`
       *,
       professional:professionals(id, first_name, last_name, email)
@@ -357,57 +362,60 @@ export async function updateCredential(
  * Search credentials with filtering
  */
 export async function searchCredentials(filters: CredentialSearchInput) {
-  let query = supabase
-    .from('professional_credentials')
-    .select(`
+  let query = supabase.from("professional_credentials").select(
+    `
       *,
       professional:professionals(id, first_name, last_name, email, npi_number)
-    `, { count: 'exact' });
+    `,
+    { count: "exact" },
+  );
 
   // Professional filter
   if (filters.professional_id) {
-    query = query.eq('professional_id', filters.professional_id);
+    query = query.eq("professional_id", filters.professional_id);
   }
 
   // Credential type filter
   if (filters.credential_type && filters.credential_type.length > 0) {
-    query = query.in('credential_type', filters.credential_type);
+    query = query.in("credential_type", filters.credential_type);
   }
 
   // Verification status filter
   if (filters.verification_status && filters.verification_status.length > 0) {
-    query = query.in('verification_status', filters.verification_status);
+    query = query.in("verification_status", filters.verification_status);
   }
 
   // Issuing organization filter
   if (filters.issuing_organization && filters.issuing_organization.length > 0) {
-    query = query.in('issuing_organization', filters.issuing_organization);
+    query = query.in("issuing_organization", filters.issuing_organization);
   }
 
   // Expiring credentials
   if (filters.expiring_within_days) {
     const futureDate = new Date();
     futureDate.setDate(futureDate.getDate() + filters.expiring_within_days);
-    query = query.lte('expiration_date', futureDate.toISOString());
+    query = query.lte("expiration_date", futureDate.toISOString());
   }
 
   // Expired credentials
   if (filters.expired === true) {
-    query = query.lt('expiration_date', new Date().toISOString());
+    query = query.lt("expiration_date", new Date().toISOString());
   } else if (filters.expired === false) {
-    query = query.or('expiration_date.is.null,expiration_date.gt.' + new Date().toISOString());
+    query = query.or("expiration_date.is.null,expiration_date.gt." + new Date().toISOString());
   }
 
   // Date range filters
   if (filters.issued_after) {
-    query = query.gte('issue_date', filters.issued_after);
+    query = query.gte("issue_date", filters.issued_after);
   }
   if (filters.issued_before) {
-    query = query.lte('issue_date', filters.issued_before);
+    query = query.lte("issue_date", filters.issued_before);
   }
 
   // Sorting
-  query = query.order(filters.sort_by || 'expiration_date', { ascending: filters.sort_order === 'asc' });
+  query = query.order(filters.sort_by || "expiration_date", {
+    ascending: filters.sort_order === "asc",
+  });
 
   // Pagination
   const from = (filters.page - 1) * filters.limit;
@@ -425,9 +433,9 @@ export async function searchCredentials(filters: CredentialSearchInput) {
     count: count || 0,
     page: filters.page,
     limit: filters.limit,
-    totalPages: Math.ceil((count || 0) / filters.limit)
+    totalPages: Math.ceil((count || 0) / filters.limit),
   };
-}/**
+} /**
  * Get credentials expiring within specified timeframe
  * Used for automated alert generation and compliance monitoring
  */
@@ -436,14 +444,14 @@ export async function getExpiringCredentials(daysAhead: number = 30) {
   futureDate.setDate(futureDate.getDate() + daysAhead);
 
   const { data: credentials, error } = await supabase
-    .from('professional_credentials')
+    .from("professional_credentials")
     .select(`
       *,
       professional:professionals(id, first_name, last_name, email, phone)
     `)
-    .lte('expiration_date', futureDate.toISOString())
-    .eq('verification_status', 'verified')
-    .order('expiration_date');
+    .lte("expiration_date", futureDate.toISOString())
+    .eq("verification_status", "verified")
+    .order("expiration_date");
 
   if (error) {
     throw new Error(`Failed to get expiring credentials: ${error.message}`);
@@ -461,7 +469,7 @@ export async function getExpiringCredentials(daysAhead: number = 30) {
  */
 export async function createService(data: ServiceCreateInput): Promise<ProfessionalService> {
   const { data: service, error } = await supabase
-    .from('professional_services')
+    .from("professional_services")
     .insert(data)
     .select(`
       *,
@@ -481,16 +489,16 @@ export async function createService(data: ServiceCreateInput): Promise<Professio
  * Update professional service
  */
 export async function updateService(
-  id: string, 
-  data: ServiceUpdateInput
+  id: string,
+  data: ServiceUpdateInput,
 ): Promise<ProfessionalService> {
   const { data: service, error } = await supabase
-    .from('professional_services')
+    .from("professional_services")
     .update({
       ...data,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     })
-    .eq('id', id)
+    .eq("id", id)
     .select(`
       *,
       professional:professionals(id, first_name, last_name),
@@ -508,16 +516,18 @@ export async function updateService(
 /**
  * Get services by professional
  */
-export async function getServicesByProfessional(professionalId: string): Promise<ProfessionalService[]> {
+export async function getServicesByProfessional(
+  professionalId: string,
+): Promise<ProfessionalService[]> {
   const { data: services, error } = await supabase
-    .from('professional_services')
+    .from("professional_services")
     .select(`
       *,
       specialty:medical_specialties(name, code, category)
     `)
-    .eq('professional_id', professionalId)
-    .eq('is_active', true)
-    .order('service_name');
+    .eq("professional_id", professionalId)
+    .eq("is_active", true)
+    .order("service_name");
 
   if (error) {
     throw new Error(`Failed to get services by professional: ${error.message}`);
@@ -538,38 +548,38 @@ export async function searchAvailableServices(filters: {
   emergency_only?: boolean;
 }) {
   let query = supabase
-    .from('professional_services')
+    .from("professional_services")
     .select(`
       *,
       professional:professionals(id, first_name, last_name, status),
       specialty:medical_specialties(name, code, category)
     `)
-    .eq('is_active', true);
+    .eq("is_active", true);
 
   // Join with professionals to ensure only active professionals
-  query = query.eq('professional.status', 'active');
+  query = query.eq("professional.status", "active");
 
   if (filters.specialty_id) {
-    query = query.eq('specialty_id', filters.specialty_id);
+    query = query.eq("specialty_id", filters.specialty_id);
   }
 
   if (filters.service_type) {
-    query = query.eq('service_type', filters.service_type);
+    query = query.eq("service_type", filters.service_type);
   }
 
   if (filters.location) {
-    query = query.ilike('location', `%${filters.location}%`);
+    query = query.ilike("location", `%${filters.location}%`);
   }
 
   if (filters.telemedicine_only) {
-    query = query.eq('telemedicine_available', true);
+    query = query.eq("telemedicine_available", true);
   }
 
   if (filters.emergency_only) {
-    query = query.eq('emergency_service', true);
+    query = query.eq("emergency_service", true);
   }
 
-  const { data: services, error } = await query.order('service_name');
+  const { data: services, error } = await query.order("service_name");
 
   if (error) {
     throw new Error(`Failed to search available services: ${error.message}`);
@@ -587,7 +597,7 @@ export async function searchAvailableServices(filters: {
  */
 export async function createMetric(data: MetricCreateInput): Promise<PerformanceMetric> {
   const { data: metric, error } = await supabase
-    .from('performance_metrics')
+    .from("performance_metrics")
     .insert(data)
     .select(`
       *,
@@ -608,24 +618,24 @@ export async function createMetric(data: MetricCreateInput): Promise<Performance
 export async function getMetricsByProfessional(
   professionalId: string,
   timeframe?: { start: string; end: string },
-  metricTypes?: string[]
+  metricTypes?: string[],
 ): Promise<PerformanceMetric[]> {
   let query = supabase
-    .from('performance_metrics')
-    .select('*')
-    .eq('professional_id', professionalId);
+    .from("performance_metrics")
+    .select("*")
+    .eq("professional_id", professionalId);
 
   if (timeframe) {
     query = query
-      .gte('measurement_period_start', timeframe.start)
-      .lte('measurement_period_end', timeframe.end);
+      .gte("measurement_period_start", timeframe.start)
+      .lte("measurement_period_end", timeframe.end);
   }
 
   if (metricTypes && metricTypes.length > 0) {
-    query = query.in('metric_type', metricTypes);
+    query = query.in("metric_type", metricTypes);
   }
 
-  query = query.order('measurement_period_start', { ascending: false });
+  query = query.order("measurement_period_start", { ascending: false });
 
   const { data: metrics, error } = await query;
 
@@ -644,25 +654,23 @@ export async function getPerformanceDashboardData(filters?: {
   metric_types?: string[];
   timeframe?: { start: string; end: string };
 }) {
-  let query = supabase
-    .from('performance_metrics')
-    .select(`
+  let query = supabase.from("performance_metrics").select(`
       *,
       professional:professionals(id, first_name, last_name, department, primary_specialty)
     `);
 
   if (filters?.professional_ids && filters.professional_ids.length > 0) {
-    query = query.in('professional_id', filters.professional_ids);
+    query = query.in("professional_id", filters.professional_ids);
   }
 
   if (filters?.metric_types && filters.metric_types.length > 0) {
-    query = query.in('metric_type', filters.metric_types);
+    query = query.in("metric_type", filters.metric_types);
   }
 
   if (filters?.timeframe) {
     query = query
-      .gte('measurement_period_start', filters.timeframe.start)
-      .lte('measurement_period_end', filters.timeframe.end);
+      .gte("measurement_period_start", filters.timeframe.start)
+      .lte("measurement_period_end", filters.timeframe.end);
   }
 
   const { data: metrics, error } = await query;
@@ -681,9 +689,11 @@ export async function getPerformanceDashboardData(filters?: {
 /**
  * Create professional development activity
  */
-export async function createDevelopmentActivity(data: DevelopmentCreateInput): Promise<ProfessionalDevelopment> {
+export async function createDevelopmentActivity(
+  data: DevelopmentCreateInput,
+): Promise<ProfessionalDevelopment> {
   const { data: activity, error } = await supabase
-    .from('professional_development')
+    .from("professional_development")
     .insert(data)
     .select(`
       *,
@@ -703,22 +713,20 @@ export async function createDevelopmentActivity(data: DevelopmentCreateInput): P
  */
 export async function getDevelopmentByProfessional(
   professionalId: string,
-  year?: number
+  year?: number,
 ): Promise<ProfessionalDevelopment[]> {
   let query = supabase
-    .from('professional_development')
-    .select('*')
-    .eq('professional_id', professionalId);
+    .from("professional_development")
+    .select("*")
+    .eq("professional_id", professionalId);
 
   if (year) {
     const startOfYear = new Date(year, 0, 1).toISOString();
     const endOfYear = new Date(year, 11, 31, 23, 59, 59).toISOString();
-    query = query
-      .gte('start_date', startOfYear)
-      .lte('start_date', endOfYear);
+    query = query.gte("start_date", startOfYear).lte("start_date", endOfYear);
   }
 
-  query = query.order('start_date', { ascending: false });
+  query = query.order("start_date", { ascending: false });
 
   const { data: activities, error } = await query;
 
@@ -737,13 +745,13 @@ export async function getCMECreditsSummary(professionalId: string, year: number)
   const endOfYear = new Date(year, 11, 31, 23, 59, 59).toISOString();
 
   const { data: activities, error } = await supabase
-    .from('professional_development')
-    .select('cme_credits, activity_type, completion_status')
-    .eq('professional_id', professionalId)
-    .eq('completion_status', 'completed')
-    .gte('completion_date', startOfYear)
-    .lte('completion_date', endOfYear)
-    .not('cme_credits', 'is', null);
+    .from("professional_development")
+    .select("cme_credits, activity_type, completion_status")
+    .eq("professional_id", professionalId)
+    .eq("completion_status", "completed")
+    .gte("completion_date", startOfYear)
+    .lte("completion_date", endOfYear)
+    .not("cme_credits", "is", null);
 
   if (error) {
     throw new Error(`Failed to get CME credits summary: ${error.message}`);
@@ -756,7 +764,7 @@ export async function getCMECreditsSummary(professionalId: string, year: number)
   return {
     totalCredits,
     activities: activities || [],
-    year
+    year,
   };
 }
 
@@ -769,7 +777,7 @@ export async function getCMECreditsSummary(professionalId: string, year: number)
  */
 export async function createWorkflow(data: WorkflowCreateInput): Promise<CredentialingWorkflow> {
   const { data: workflow, error } = await supabase
-    .from('credentialing_workflow')
+    .from("credentialing_workflow")
     .insert(data)
     .select(`
       *,
@@ -790,16 +798,16 @@ export async function createWorkflow(data: WorkflowCreateInput): Promise<Credent
 export async function updateWorkflowStatus(
   id: string,
   status: string,
-  updates?: Partial<CredentialingWorkflow>
+  updates?: Partial<CredentialingWorkflow>,
 ): Promise<CredentialingWorkflow> {
   const { data: workflow, error } = await supabase
-    .from('credentialing_workflow')
+    .from("credentialing_workflow")
     .update({
       status,
       ...updates,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     })
-    .eq('id', id)
+    .eq("id", id)
     .select(`
       *,
       professional:professionals(id, first_name, last_name, email)
@@ -818,18 +826,18 @@ export async function updateWorkflowStatus(
  */
 export async function getActiveWorkflows(assignedTo?: string): Promise<CredentialingWorkflow[]> {
   let query = supabase
-    .from('credentialing_workflow')
+    .from("credentialing_workflow")
     .select(`
       *,
       professional:professionals(id, first_name, last_name, email, npi_number)
     `)
-    .in('status', ['pending', 'in_progress', 'requires_documents', 'under_review']);
+    .in("status", ["pending", "in_progress", "requires_documents", "under_review"]);
 
   if (assignedTo) {
-    query = query.eq('assigned_to', assignedTo);
+    query = query.eq("assigned_to", assignedTo);
   }
 
-  query = query.order('due_date', { ascending: true });
+  query = query.order("due_date", { ascending: true });
 
   const { data: workflows, error } = await query;
 
@@ -849,7 +857,7 @@ export async function getActiveWorkflows(assignedTo?: string): Promise<Credentia
  */
 export async function createAlert(data: AlertCreateInput): Promise<CredentialingAlert> {
   const { data: alert, error } = await supabase
-    .from('credentialing_alerts')
+    .from("credentialing_alerts")
     .insert(data)
     .select(`
       *,
@@ -871,29 +879,28 @@ export async function createAlert(data: AlertCreateInput): Promise<Credentialing
  */
 export async function getActiveAlerts(
   professionalId?: string,
-  severity?: string[]
+  severity?: string[],
 ): Promise<CredentialingAlert[]> {
   let query = supabase
-    .from('credentialing_alerts')
+    .from("credentialing_alerts")
     .select(`
       *,
       professional:professionals(id, first_name, last_name, email),
       related_credential:professional_credentials(credential_name, expiration_date),
       related_workflow:credentialing_workflow(workflow_name, status)
     `)
-    .eq('is_active', true)
-    .eq('resolved', false);
+    .eq("is_active", true)
+    .eq("resolved", false);
 
   if (professionalId) {
-    query = query.eq('professional_id', professionalId);
+    query = query.eq("professional_id", professionalId);
   }
 
   if (severity && severity.length > 0) {
-    query = query.in('severity', severity);
+    query = query.in("severity", severity);
   }
 
-  query = query.order('severity', { ascending: false })
-                .order('due_date', { ascending: true });
+  query = query.order("severity", { ascending: false }).order("due_date", { ascending: true });
 
   const { data: alerts, error } = await query;
 
@@ -907,17 +914,20 @@ export async function getActiveAlerts(
 /**
  * Acknowledge alert
  */
-export async function acknowledgeAlert(id: string, acknowledgedBy: string): Promise<CredentialingAlert> {
+export async function acknowledgeAlert(
+  id: string,
+  acknowledgedBy: string,
+): Promise<CredentialingAlert> {
   const { data: alert, error } = await supabase
-    .from('credentialing_alerts')
+    .from("credentialing_alerts")
     .update({
       acknowledged: true,
       acknowledged_by: acknowledgedBy,
       acknowledged_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     })
-    .eq('id', id)
-    .select('*')
+    .eq("id", id)
+    .select("*")
     .single();
 
   if (error) {
@@ -931,21 +941,21 @@ export async function acknowledgeAlert(id: string, acknowledgedBy: string): Prom
  * Resolve alert
  */
 export async function resolveAlert(
-  id: string, 
-  resolvedBy: string, 
-  actionTaken?: string
+  id: string,
+  resolvedBy: string,
+  actionTaken?: string,
 ): Promise<CredentialingAlert> {
   const { data: alert, error } = await supabase
-    .from('credentialing_alerts')
+    .from("credentialing_alerts")
     .update({
       resolved: true,
       resolved_by: resolvedBy,
       resolved_at: new Date().toISOString(),
       action_taken: actionTaken,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     })
-    .eq('id', id)
-    .select('*')
+    .eq("id", id)
+    .select("*")
     .single();
 
   if (error) {
@@ -965,17 +975,17 @@ export async function resolveAlert(
 export async function bulkUpdateProfessionalStatus(
   professionalIds: string[],
   status: string,
-  statusReason?: string
+  statusReason?: string,
 ) {
   const { data: professionals, error } = await supabase
-    .from('professionals')
+    .from("professionals")
     .update({
       status,
       status_reason: statusReason,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     })
-    .in('id', professionalIds)
-    .select('id, first_name, last_name, status');
+    .in("id", professionalIds)
+    .select("id, first_name, last_name, status");
 
   if (error) {
     throw new Error(`Failed to bulk update professional status: ${error.message}`);
@@ -990,27 +1000,27 @@ export async function bulkUpdateProfessionalStatus(
  */
 export async function generateExpirationAlerts(daysAhead: number = 30) {
   const expiringCredentials = await getExpiringCredentials(daysAhead);
-  
+
   const alerts = [];
   for (const credential of expiringCredentials) {
     try {
       const alert = await createAlert({
         professional_id: credential.professional_id,
-        alert_type: 'expiration',
+        alert_type: "expiration",
         title: `${credential.credential_name} Expiring Soon`,
         message: `Your ${credential.credential_name} will expire on ${credential.expiration_date}. Please renew before expiration.`,
-        severity: daysAhead <= 30 ? 'high' : 'medium',
+        severity: daysAhead <= 30 ? "high" : "medium",
         due_date: credential.expiration_date,
         auto_generated: true,
         related_credential_id: credential.id,
-        action_required: true
+        action_required: true,
       });
       alerts.push(alert);
     } catch (error) {
       console.error(`Failed to create alert for credential ${credential.id}:`, error);
     }
   }
-  
+
   return alerts;
 }
 
@@ -1028,17 +1038,17 @@ export async function getComprehensiveProfessionalProfile(id: string) {
     currentServices,
     recentDevelopment,
     activeWorkflows,
-    activeAlerts
+    activeAlerts,
   ] = await Promise.all([
     getMetricsByProfessional(id, {
       start: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(), // Last 90 days
-      end: new Date().toISOString()
+      end: new Date().toISOString(),
     }),
     searchCredentials({ professional_id: id, expired: false, limit: 50 }),
     getServicesByProfessional(id),
     getDevelopmentByProfessional(id, new Date().getFullYear()),
     getActiveWorkflows(),
-    getActiveAlerts(id)
+    getActiveAlerts(id),
   ]);
 
   return {
@@ -1047,8 +1057,7 @@ export async function getComprehensiveProfessionalProfile(id: string) {
     activeCredentials: activeCredentials.data,
     currentServices,
     recentDevelopment,
-    activeWorkflows: activeWorkflows.filter(w => w.professional_id === id),
-    activeAlerts
+    activeWorkflows: activeWorkflows.filter((w) => w.professional_id === id),
+    activeAlerts,
   };
 }
-

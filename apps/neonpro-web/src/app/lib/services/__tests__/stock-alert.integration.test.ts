@@ -2,69 +2,69 @@
 // Story 11.4: Alertas e Relatórios de Estoque
 // Integration tests for complete stock alert workflow
 
-import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
-import { createClient } from '@supabase/supabase-js';
-import { StockAlertService } from '../stock-alert.service';
-import {
+import type { describe, it, expect, beforeEach, afterEach, jest } from "@jest/globals";
+import type { createClient } from "@supabase/supabase-js";
+import type { StockAlertService } from "../stock-alert.service";
+import type {
   CreateStockAlertConfigRequest,
   StockAlertConfig,
   StockAlert,
   AlertType,
   SeverityLevel,
-  StockAlertError
-} from '../../types/stock';
+  StockAlertError,
+} from "../../types/stock";
 
 // =====================================================
 // TEST SETUP AND CONFIGURATION
 // =====================================================
 
-const supabaseUrl = process.env.SUPABASE_URL || 'http://localhost:54321';
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || 'test-key';
+const supabaseUrl = process.env.SUPABASE_URL || "http://localhost:54321";
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || "test-key";
 
 // Mock Supabase client for testing
 const mockSupabaseClient = {
   from: jest.fn(),
   auth: {
-    getSession: jest.fn()
-  }
+    getSession: jest.fn(),
+  },
 };
 
 // Mock data
-const mockClinicId = '123e4567-e89b-12d3-a456-426614174000';
-const mockUserId = '123e4567-e89b-12d3-a456-426614174001';
-const mockProductId = '123e4567-e89b-12d3-a456-426614174002';
+const mockClinicId = "123e4567-e89b-12d3-a456-426614174000";
+const mockUserId = "123e4567-e89b-12d3-a456-426614174001";
+const mockProductId = "123e4567-e89b-12d3-a456-426614174002";
 
 const mockAlertConfig: CreateStockAlertConfigRequest = {
-  alertType: 'low_stock' as AlertType,
+  alertType: "low_stock" as AlertType,
   thresholdValue: 10,
-  thresholdUnit: 'quantity',
-  severityLevel: 'medium' as SeverityLevel,
+  thresholdUnit: "quantity",
+  severityLevel: "medium" as SeverityLevel,
   isActive: true,
-  notificationChannels: ['in_app', 'email'],
-  productId: mockProductId
+  notificationChannels: ["in_app", "email"],
+  productId: mockProductId,
 };
 
 const mockProduct = {
   id: mockProductId,
-  name: 'Test Product',
+  name: "Test Product",
   current_stock: 5,
   min_stock: 10,
   unit_cost: 100,
-  clinic_id: mockClinicId
+  clinic_id: mockClinicId,
 };
 
 // =====================================================
 // TEST SUITE
 // =====================================================
 
-describe('Stock Alert Integration Tests', () => {
+describe("Stock Alert Integration Tests", () => {
   let service: StockAlertService;
   let mockQuery: any;
 
   beforeEach(() => {
     // Reset all mocks
     jest.clearAllMocks();
-    
+
     // Setup mock query chain
     mockQuery = {
       select: jest.fn().mockReturnThis(),
@@ -79,7 +79,7 @@ describe('Stock Alert Integration Tests', () => {
       is: jest.fn().mockReturnThis(),
       order: jest.fn().mockReturnThis(),
       single: jest.fn(),
-      then: jest.fn()
+      then: jest.fn(),
     };
 
     // Setup mock Supabase
@@ -97,15 +97,15 @@ describe('Stock Alert Integration Tests', () => {
   // ALERT CONFIGURATION TESTS
   // =====================================================
 
-  describe('Alert Configuration Management', () => {
-    it('should create alert configuration successfully', async () => {
+  describe("Alert Configuration Management", () => {
+    it("should create alert configuration successfully", async () => {
       // Arrange
       const expectedConfig: StockAlertConfig = {
-        id: '123e4567-e89b-12d3-a456-426614174003',
+        id: "123e4567-e89b-12d3-a456-426614174003",
         clinicId: mockClinicId,
         ...mockAlertConfig,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       mockQuery.single.mockResolvedValue({ data: expectedConfig, error: null });
@@ -115,42 +115,42 @@ describe('Stock Alert Integration Tests', () => {
 
       // Assert
       expect(result).toEqual(expectedConfig);
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith('stock_alert_configs');
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith("stock_alert_configs");
       expect(mockQuery.insert).toHaveBeenCalledWith(
         expect.objectContaining({
           clinic_id: mockClinicId,
           created_by: mockUserId,
-          ...mockAlertConfig
-        })
+          ...mockAlertConfig,
+        }),
       );
     });
 
-    it('should handle configuration creation errors', async () => {
+    it("should handle configuration creation errors", async () => {
       // Arrange
-      const errorMessage = 'Duplicate configuration';
-      mockQuery.single.mockResolvedValue({ 
-        data: null, 
-        error: { message: errorMessage, code: '23505' } 
+      const errorMessage = "Duplicate configuration";
+      mockQuery.single.mockResolvedValue({
+        data: null,
+        error: { message: errorMessage, code: "23505" },
       });
 
       // Act & Assert
-      await expect(
-        service.createAlertConfig(mockAlertConfig, mockUserId)
-      ).rejects.toThrow(StockAlertError);
+      await expect(service.createAlertConfig(mockAlertConfig, mockUserId)).rejects.toThrow(
+        StockAlertError,
+      );
     });
 
-    it('should update alert configuration', async () => {
+    it("should update alert configuration", async () => {
       // Arrange
-      const configId = '123e4567-e89b-12d3-a456-426614174003';
+      const configId = "123e4567-e89b-12d3-a456-426614174003";
       const updateData = { isActive: false };
-      
+
       const updatedConfig: StockAlertConfig = {
         id: configId,
         clinicId: mockClinicId,
         ...mockAlertConfig,
         isActive: false,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       mockQuery.single.mockResolvedValue({ data: updatedConfig, error: null });
@@ -163,14 +163,14 @@ describe('Stock Alert Integration Tests', () => {
       expect(mockQuery.update).toHaveBeenCalledWith(
         expect.objectContaining({
           ...updateData,
-          updated_at: expect.any(String)
-        })
+          updated_at: expect.any(String),
+        }),
       );
     });
 
-    it('should delete alert configuration', async () => {
+    it("should delete alert configuration", async () => {
       // Arrange
-      const configId = '123e4567-e89b-12d3-a456-426614174003';
+      const configId = "123e4567-e89b-12d3-a456-426614174003";
       mockQuery.single.mockResolvedValue({ data: { id: configId }, error: null });
 
       // Act
@@ -178,7 +178,7 @@ describe('Stock Alert Integration Tests', () => {
 
       // Assert
       expect(mockQuery.delete).toHaveBeenCalled();
-      expect(mockQuery.eq).toHaveBeenCalledWith('id', configId);
+      expect(mockQuery.eq).toHaveBeenCalledWith("id", configId);
     });
   });
 
@@ -186,44 +186,46 @@ describe('Stock Alert Integration Tests', () => {
   // ALERT EVALUATION TESTS
   // =====================================================
 
-  describe('Alert Evaluation and Generation', () => {
-    it('should evaluate and generate low stock alerts', async () => {
+  describe("Alert Evaluation and Generation", () => {
+    it("should evaluate and generate low stock alerts", async () => {
       // Arrange
-      const mockConfigs = [{
-        id: '123e4567-e89b-12d3-a456-426614174003',
-        clinic_id: mockClinicId,
-        alert_type: 'low_stock',
-        threshold_value: 10,
-        threshold_unit: 'quantity',
-        severity_level: 'medium',
-        is_active: true,
-        product_id: mockProductId
-      }];
+      const mockConfigs = [
+        {
+          id: "123e4567-e89b-12d3-a456-426614174003",
+          clinic_id: mockClinicId,
+          alert_type: "low_stock",
+          threshold_value: 10,
+          threshold_unit: "quantity",
+          severity_level: "medium",
+          is_active: true,
+          product_id: mockProductId,
+        },
+      ];
 
       const mockProducts = [mockProduct];
 
       // Mock configurations query
       mockQuery.single.mockResolvedValueOnce({ data: mockConfigs, error: null });
-      
+
       // Mock products query
       mockQuery.single.mockResolvedValueOnce({ data: mockProducts, error: null });
 
       // Mock alert insertion
       const expectedAlert: StockAlert = {
-        id: '123e4567-e89b-12d3-a456-426614174004',
+        id: "123e4567-e89b-12d3-a456-426614174004",
         clinicId: mockClinicId,
         alertConfigId: mockConfigs[0].id,
         productId: mockProductId,
-        alertType: 'low_stock',
-        severityLevel: 'medium',
+        alertType: "low_stock",
+        severityLevel: "medium",
         currentValue: 5,
         thresholdValue: 10,
-        message: 'Low stock detected for Test Product',
-        status: 'active',
+        message: "Low stock detected for Test Product",
+        status: "active",
         metadata: {},
         triggeredAt: new Date(),
         acknowledgedAt: null,
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       mockQuery.single.mockResolvedValueOnce({ data: [expectedAlert], error: null });
@@ -234,18 +236,18 @@ describe('Stock Alert Integration Tests', () => {
       // Assert
       expect(alerts).toHaveLength(1);
       expect(alerts[0]).toMatchObject({
-        alertType: 'low_stock',
-        severityLevel: 'medium',
+        alertType: "low_stock",
+        severityLevel: "medium",
         currentValue: 5,
-        thresholdValue: 10
+        thresholdValue: 10,
       });
     });
 
-    it('should not generate alerts for inactive configurations', async () => {
+    it("should not generate alerts for inactive configurations", async () => {
       // Arrange
       const inactiveConfig = {
         ...mockAlertConfig,
-        is_active: false
+        is_active: false,
       };
 
       mockQuery.single.mockResolvedValue({ data: [inactiveConfig], error: null });
@@ -257,34 +259,34 @@ describe('Stock Alert Integration Tests', () => {
       expect(alerts).toHaveLength(0);
     });
 
-    it('should handle multiple alert types correctly', async () => {
+    it("should handle multiple alert types correctly", async () => {
       // Arrange
       const multipleConfigs = [
         {
-          id: '1',
+          id: "1",
           clinic_id: mockClinicId,
-          alert_type: 'low_stock',
+          alert_type: "low_stock",
           threshold_value: 10,
-          threshold_unit: 'quantity',
-          severity_level: 'medium',
+          threshold_unit: "quantity",
+          severity_level: "medium",
           is_active: true,
-          product_id: mockProductId
+          product_id: mockProductId,
         },
         {
-          id: '2',
+          id: "2",
           clinic_id: mockClinicId,
-          alert_type: 'expiring',
+          alert_type: "expiring",
           threshold_value: 7,
-          threshold_unit: 'days',
-          severity_level: 'high',
+          threshold_unit: "days",
+          severity_level: "high",
           is_active: true,
-          product_id: mockProductId
-        }
+          product_id: mockProductId,
+        },
       ];
 
       const mockProductWithExpiration = {
         ...mockProduct,
-        expiration_date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000) // 5 days from now
+        expiration_date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days from now
       };
 
       // Setup mock responses
@@ -297,8 +299,8 @@ describe('Stock Alert Integration Tests', () => {
       const alerts = await service.evaluateAndGenerateAlerts();
 
       // Assert
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith('stock_alert_configs');
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith('products');
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith("stock_alert_configs");
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith("products");
       // Would expect multiple alerts to be generated
     });
   });
@@ -307,30 +309,30 @@ describe('Stock Alert Integration Tests', () => {
   // ALERT ACKNOWLEDGMENT TESTS
   // =====================================================
 
-  describe('Alert Acknowledgment', () => {
-    it('should acknowledge alert successfully', async () => {
+  describe("Alert Acknowledgment", () => {
+    it("should acknowledge alert successfully", async () => {
       // Arrange
-      const alertId = '123e4567-e89b-12d3-a456-426614174004';
+      const alertId = "123e4567-e89b-12d3-a456-426614174004";
       const request = {
         alertId,
-        notes: 'Issue resolved by restocking'
+        notes: "Issue resolved by restocking",
       };
 
       const acknowledgedAlert: StockAlert = {
         id: alertId,
         clinicId: mockClinicId,
-        alertConfigId: '123e4567-e89b-12d3-a456-426614174003',
+        alertConfigId: "123e4567-e89b-12d3-a456-426614174003",
         productId: mockProductId,
-        alertType: 'low_stock',
-        severityLevel: 'medium',
+        alertType: "low_stock",
+        severityLevel: "medium",
         currentValue: 5,
         thresholdValue: 10,
-        message: 'Low stock detected',
-        status: 'acknowledged',
-        metadata: { acknowledgmentNotes: 'Issue resolved by restocking' },
+        message: "Low stock detected",
+        status: "acknowledged",
+        metadata: { acknowledgmentNotes: "Issue resolved by restocking" },
         triggeredAt: new Date(),
         acknowledgedAt: new Date(),
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       mockQuery.single.mockResolvedValue({ data: acknowledgedAlert, error: null });
@@ -342,31 +344,29 @@ describe('Stock Alert Integration Tests', () => {
       expect(result).toEqual(acknowledgedAlert);
       expect(mockQuery.update).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: 'acknowledged',
+          status: "acknowledged",
           acknowledged_at: expect.any(String),
           acknowledged_by: mockUserId,
           metadata: expect.objectContaining({
-            acknowledgmentNotes: 'Issue resolved by restocking'
-          })
-        })
+            acknowledgmentNotes: "Issue resolved by restocking",
+          }),
+        }),
       );
     });
 
-    it('should handle acknowledgment of non-existent alert', async () => {
+    it("should handle acknowledgment of non-existent alert", async () => {
       // Arrange
       const request = {
-        alertId: 'non-existent-id'
+        alertId: "non-existent-id",
       };
 
-      mockQuery.single.mockResolvedValue({ 
-        data: null, 
-        error: { message: 'No rows returned', code: 'PGRST116' } 
+      mockQuery.single.mockResolvedValue({
+        data: null,
+        error: { message: "No rows returned", code: "PGRST116" },
       });
 
       // Act & Assert
-      await expect(
-        service.acknowledgeAlert(request, mockUserId)
-      ).rejects.toThrow(StockAlertError);
+      await expect(service.acknowledgeAlert(request, mockUserId)).rejects.toThrow(StockAlertError);
     });
   });
 
@@ -374,18 +374,18 @@ describe('Stock Alert Integration Tests', () => {
   // PERFORMANCE AND EDGE CASE TESTS
   // =====================================================
 
-  describe('Performance and Edge Cases', () => {
-    it('should handle large number of configurations efficiently', async () => {
+  describe("Performance and Edge Cases", () => {
+    it("should handle large number of configurations efficiently", async () => {
       // Arrange
       const manyConfigs = Array.from({ length: 1000 }, (_, i) => ({
         id: `config-${i}`,
         clinic_id: mockClinicId,
-        alert_type: 'low_stock',
+        alert_type: "low_stock",
         threshold_value: 10,
-        threshold_unit: 'quantity',
-        severity_level: 'medium',
+        threshold_unit: "quantity",
+        severity_level: "medium",
         is_active: true,
-        product_id: `product-${i}`
+        product_id: `product-${i}`,
       }));
 
       mockQuery.single.mockResolvedValue({ data: manyConfigs, error: null });
@@ -399,34 +399,30 @@ describe('Stock Alert Integration Tests', () => {
       expect(duration).toBeLessThan(5000); // Should complete within 5 seconds
     });
 
-    it('should handle database connection errors gracefully', async () => {
+    it("should handle database connection errors gracefully", async () => {
       // Arrange
-      mockQuery.single.mockRejectedValue(new Error('Database connection failed'));
+      mockQuery.single.mockRejectedValue(new Error("Database connection failed"));
 
       // Act & Assert
-      await expect(
-        service.evaluateAndGenerateAlerts()
-      ).rejects.toThrow(StockAlertError);
+      await expect(service.evaluateAndGenerateAlerts()).rejects.toThrow(StockAlertError);
     });
 
-    it('should handle malformed data gracefully', async () => {
+    it("should handle malformed data gracefully", async () => {
       // Arrange
       const malformedConfig = {
-        id: 'test-id',
+        id: "test-id",
         clinic_id: mockClinicId,
-        alert_type: 'invalid_type', // Invalid alert type
+        alert_type: "invalid_type", // Invalid alert type
         threshold_value: -5, // Invalid negative value
-        threshold_unit: 'invalid_unit',
-        severity_level: 'invalid_severity',
-        is_active: true
+        threshold_unit: "invalid_unit",
+        severity_level: "invalid_severity",
+        is_active: true,
       };
 
       mockQuery.single.mockResolvedValue({ data: [malformedConfig], error: null });
 
       // Act & Assert
-      await expect(
-        service.evaluateAndGenerateAlerts()
-      ).rejects.toThrow(StockAlertError);
+      await expect(service.evaluateAndGenerateAlerts()).rejects.toThrow(StockAlertError);
     });
   });
 
@@ -434,64 +430,64 @@ describe('Stock Alert Integration Tests', () => {
   // EVENT SOURCING TESTS
   // =====================================================
 
-  describe('Event Sourcing and Audit Trail', () => {
-    it('should create event log for alert configuration creation', async () => {
+  describe("Event Sourcing and Audit Trail", () => {
+    it("should create event log for alert configuration creation", async () => {
       // Arrange
       const expectedConfig: StockAlertConfig = {
-        id: '123e4567-e89b-12d3-a456-426614174003',
+        id: "123e4567-e89b-12d3-a456-426614174003",
         clinicId: mockClinicId,
         ...mockAlertConfig,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       // Mock successful config creation
       mockQuery.single
         .mockResolvedValueOnce({ data: expectedConfig, error: null })
-        .mockResolvedValueOnce({ data: { id: 'event-id' }, error: null });
+        .mockResolvedValueOnce({ data: { id: "event-id" }, error: null });
 
       // Act
       await service.createAlertConfig(mockAlertConfig, mockUserId);
 
       // Assert
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith('stock_alert_events');
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith("stock_alert_events");
       expect(mockQuery.insert).toHaveBeenCalledWith(
         expect.objectContaining({
-          event_type: 'config_created',
+          event_type: "config_created",
           entity_id: expectedConfig.id,
           user_id: mockUserId,
           clinic_id: mockClinicId,
-          event_data: expect.any(Object)
-        })
+          event_data: expect.any(Object),
+        }),
       );
     });
 
-    it('should create event log for alert acknowledgment', async () => {
+    it("should create event log for alert acknowledgment", async () => {
       // Arrange
-      const alertId = '123e4567-e89b-12d3-a456-426614174004';
+      const alertId = "123e4567-e89b-12d3-a456-426614174004";
       const request = { alertId };
 
       const acknowledgedAlert: StockAlert = {
         id: alertId,
         clinicId: mockClinicId,
-        alertConfigId: '123e4567-e89b-12d3-a456-426614174003',
+        alertConfigId: "123e4567-e89b-12d3-a456-426614174003",
         productId: mockProductId,
-        alertType: 'low_stock',
-        severityLevel: 'medium',
+        alertType: "low_stock",
+        severityLevel: "medium",
         currentValue: 5,
         thresholdValue: 10,
-        message: 'Low stock detected',
-        status: 'acknowledged',
+        message: "Low stock detected",
+        status: "acknowledged",
         metadata: {},
         triggeredAt: new Date(),
         acknowledgedAt: new Date(),
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       // Mock successful acknowledgment
       mockQuery.single
         .mockResolvedValueOnce({ data: acknowledgedAlert, error: null })
-        .mockResolvedValueOnce({ data: { id: 'event-id' }, error: null });
+        .mockResolvedValueOnce({ data: { id: "event-id" }, error: null });
 
       // Act
       await service.acknowledgeAlert(request, mockUserId);
@@ -499,11 +495,11 @@ describe('Stock Alert Integration Tests', () => {
       // Assert
       expect(mockQuery.insert).toHaveBeenCalledWith(
         expect.objectContaining({
-          event_type: 'alert_acknowledged',
+          event_type: "alert_acknowledged",
           entity_id: alertId,
           user_id: mockUserId,
-          clinic_id: mockClinicId
-        })
+          clinic_id: mockClinicId,
+        }),
       );
     });
   });
@@ -512,28 +508,30 @@ describe('Stock Alert Integration Tests', () => {
   // INTEGRATION WITH OTHER SYSTEMS
   // =====================================================
 
-  describe('Integration with Other Systems', () => {
-    it('should trigger notification service when alert is generated', async () => {
+  describe("Integration with Other Systems", () => {
+    it("should trigger notification service when alert is generated", async () => {
       // This would test integration with notification service
       // For now, we'll mock the notification service calls
-      
+
       // Arrange
       const mockNotificationService = {
-        sendNotification: jest.fn().mockResolvedValue({ success: true })
+        sendNotification: jest.fn().mockResolvedValue({ success: true }),
       };
 
       // Mock alert generation that should trigger notifications
-      const mockConfigs = [{
-        id: '123e4567-e89b-12d3-a456-426614174003',
-        clinic_id: mockClinicId,
-        alert_type: 'low_stock',
-        threshold_value: 10,
-        threshold_unit: 'quantity',
-        severity_level: 'critical', // Critical alert should trigger immediate notification
-        is_active: true,
-        product_id: mockProductId,
-        notification_channels: ['email', 'in_app']
-      }];
+      const mockConfigs = [
+        {
+          id: "123e4567-e89b-12d3-a456-426614174003",
+          clinic_id: mockClinicId,
+          alert_type: "low_stock",
+          threshold_value: 10,
+          threshold_unit: "quantity",
+          severity_level: "critical", // Critical alert should trigger immediate notification
+          is_active: true,
+          product_id: mockProductId,
+          notification_channels: ["email", "in_app"],
+        },
+      ];
 
       mockQuery.single
         .mockResolvedValueOnce({ data: mockConfigs, error: null })
@@ -545,8 +543,7 @@ describe('Stock Alert Integration Tests', () => {
 
       // Assert
       // In a real implementation, we would verify that the notification service was called
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith('stock_alert_configs');
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith("stock_alert_configs");
     });
   });
 });
-

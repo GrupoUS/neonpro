@@ -1,6 +1,6 @@
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import type { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import type { cookies } from "next/headers";
+import type { redirect } from "next/navigation";
 
 interface SubscriptionGuardProps {
   children: React.ReactNode;
@@ -39,10 +39,7 @@ export async function SubscriptionGuard({
     }
 
     // If specific plans are required, check if user's plan matches
-    if (
-      requiredPlan.length > 0 &&
-      !requiredPlan.includes(subscription.plan_id)
-    ) {
+    if (requiredPlan.length > 0 && !requiredPlan.includes(subscription.plan_id)) {
       redirect("/dashboard/subscription/upgrade");
     }
 

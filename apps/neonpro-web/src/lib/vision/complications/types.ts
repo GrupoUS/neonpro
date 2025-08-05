@@ -1,34 +1,34 @@
 /**
  * Complication Detection Types
  * Epic 10 - Story 10.3: Automated Complication Detection + Alerts (≥90% Accuracy)
- * 
+ *
  * Comprehensive TypeScript type definitions for the complication detection system
  * Supports ≥90% accuracy requirements with immediate alerts and emergency protocols
- * 
+ *
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 
-import { z } from 'zod';
-import type { TreatmentType } from '../types';
+import type { z } from "zod";
+import type { TreatmentType } from "../types";
 
 // Core Types
-export type ComplicationCategory = 
-  | 'infection'
-  | 'adverse_reaction' 
-  | 'healing_issue'
-  | 'procedural_complication'
-  | 'allergic_reaction'
-  | 'medication_reaction'
-  | 'device_malfunction'
-  | 'other';
+export type ComplicationCategory =
+  | "infection"
+  | "adverse_reaction"
+  | "healing_issue"
+  | "procedural_complication"
+  | "allergic_reaction"
+  | "medication_reaction"
+  | "device_malfunction"
+  | "other";
 
-export type ComplicationSeverity = 'low' | 'moderate' | 'high' | 'critical';
+export type ComplicationSeverity = "low" | "moderate" | "high" | "critical";
 
-export type AlertLevel = 'none' | 'low' | 'medium' | 'high' | 'critical';
+export type AlertLevel = "none" | "low" | "medium" | "high" | "critical";
 
 export type DetectionConfidence = number; // 0.0 to 1.0
 
-export type EmergencyProtocolLevel = 'routine' | 'urgent' | 'emergency';
+export type EmergencyProtocolLevel = "routine" | "urgent" | "emergency";
 
 // Request/Response Interfaces
 export interface ComplicationDetectionRequest {
@@ -37,11 +37,11 @@ export interface ComplicationDetectionRequest {
   treatmentType: TreatmentType;
   previousAnalysisId?: string;
   clinicianId: string;
-  urgencyLevel?: 'routine' | 'urgent' | 'emergency';
+  urgencyLevel?: "routine" | "urgent" | "emergency";
   metadata?: {
     captureDate: string;
     deviceInfo?: string;
-    lighting?: 'natural' | 'artificial' | 'mixed';
+    lighting?: "natural" | "artificial" | "mixed";
     angle?: string;
     distance?: string;
   };
@@ -72,7 +72,7 @@ export interface DetectedComplication {
   affectedArea?: BoundingBox;
   modelSource: string;
   detected_at: string;
-  clinicalSignificance?: 'high' | 'medium' | 'low';
+  clinicalSignificance?: "high" | "medium" | "low";
   recommendedAction?: string;
   timeToResolution?: string;
   followUpRequired?: boolean;
@@ -96,14 +96,14 @@ export interface EmergencyProtocol {
   contactInformation?: EmergencyContact[];
 }
 
-export type NotificationTarget = 
-  | 'attending_physician'
-  | 'supervising_physician'
-  | 'clinic_manager'
-  | 'emergency_contact'
-  | 'patient'
-  | 'emergency_services'
-  | 'specialist_consultant';
+export type NotificationTarget =
+  | "attending_physician"
+  | "supervising_physician"
+  | "clinic_manager"
+  | "emergency_contact"
+  | "patient"
+  | "emergency_services"
+  | "specialist_consultant";
 
 export interface EmergencyContact {
   role: string;
@@ -152,7 +152,7 @@ export interface ProcessingMetadata {
 export interface ValidationResult {
   validator: string;
   validated_at: string;
-  result: 'confirmed' | 'rejected' | 'uncertain';
+  result: "confirmed" | "rejected" | "uncertain";
   confidence: number;
   notes?: string;
 }
@@ -176,22 +176,22 @@ export interface ComplicationAlert {
   status: AlertStatus;
 }
 
-export type AlertStatus = 
-  | 'pending'
-  | 'acknowledged'
-  | 'in_progress'
-  | 'resolved'
-  | 'escalated'
-  | 'dismissed';
+export type AlertStatus =
+  | "pending"
+  | "acknowledged"
+  | "in_progress"
+  | "resolved"
+  | "escalated"
+  | "dismissed";
 
 export interface AlertNotification {
   id: string;
   target: NotificationTarget;
-  method: 'email' | 'sms' | 'push' | 'call' | 'pager';
+  method: "email" | "sms" | "push" | "call" | "pager";
   sentAt: string;
   deliveredAt?: string;
   readAt?: string;
-  status: 'sent' | 'delivered' | 'read' | 'failed';
+  status: "sent" | "delivered" | "read" | "failed";
   retryCount: number;
 }
 
@@ -199,7 +199,7 @@ export interface AlertNotification {
 export interface ValidationRequest {
   detectionResultId: string;
   validatorId: string;
-  validationType: 'expert_review' | 'automated_check' | 'peer_review';
+  validationType: "expert_review" | "automated_check" | "peer_review";
   validationData: {
     actualDiagnosis?: string;
     clinicalNotes?: string;
@@ -348,7 +348,7 @@ export interface PatientComplicationHistory {
   allergies: string[];
   medications: string[];
   lastAssessment: string;
-  riskProfile: 'low' | 'medium' | 'high';
+  riskProfile: "low" | "medium" | "high";
 }
 
 export interface TreatmentRecord {
@@ -356,13 +356,13 @@ export interface TreatmentRecord {
   treatmentType: TreatmentType;
   date: string;
   complications: DetectedComplication[];
-  outcome: 'successful' | 'complications' | 'adverse_reaction';
+  outcome: "successful" | "complications" | "adverse_reaction";
   notes: string;
 }
 
 // Real-time Monitoring Types
 export interface RealtimeDetectionEvent {
-  type: 'detection_started' | 'detection_completed' | 'alert_triggered' | 'validation_completed';
+  type: "detection_started" | "detection_completed" | "alert_triggered" | "validation_completed";
   timestamp: string;
   patientId: string;
   detectionId?: string;
@@ -372,8 +372,8 @@ export interface RealtimeDetectionEvent {
 
 export interface SystemHealthMetrics {
   timestamp: string;
-  systemStatus: 'healthy' | 'degraded' | 'critical';
-  modelStatus: Record<string, 'online' | 'offline' | 'degraded'>;
+  systemStatus: "healthy" | "degraded" | "critical";
+  modelStatus: Record<string, "online" | "offline" | "degraded">;
   processingQueue: {
     pending: number;
     processing: number;
@@ -418,45 +418,52 @@ export type HealthResponse = ApiResponse<SystemHealthMetrics>;
 
 // Zod Schemas for Runtime Validation
 export const ComplicationDetectionRequestSchema = z.object({
-  imageId: z.string().uuid('Invalid image ID format'),
-  patientId: z.string().uuid('Invalid patient ID format'),
-  treatmentType: z.string().min(1, 'Treatment type is required'),
+  imageId: z.string().uuid("Invalid image ID format"),
+  patientId: z.string().uuid("Invalid patient ID format"),
+  treatmentType: z.string().min(1, "Treatment type is required"),
   previousAnalysisId: z.string().uuid().optional(),
-  clinicianId: z.string().uuid('Invalid clinician ID format'),
-  urgencyLevel: z.enum(['routine', 'urgent', 'emergency']).default('routine'),
-  metadata: z.object({
-    captureDate: z.string().datetime('Invalid capture date format'),
-    deviceInfo: z.string().optional(),
-    lighting: z.enum(['natural', 'artificial', 'mixed']).optional(),
-    angle: z.string().optional(),
-    distance: z.string().optional()
-  }).optional()
+  clinicianId: z.string().uuid("Invalid clinician ID format"),
+  urgencyLevel: z.enum(["routine", "urgent", "emergency"]).default("routine"),
+  metadata: z
+    .object({
+      captureDate: z.string().datetime("Invalid capture date format"),
+      deviceInfo: z.string().optional(),
+      lighting: z.enum(["natural", "artificial", "mixed"]).optional(),
+      angle: z.string().optional(),
+      distance: z.string().optional(),
+    })
+    .optional(),
 });
 
 export const ValidationRequestSchema = z.object({
-  detectionResultId: z.string().uuid('Invalid detection result ID'),
-  validatorId: z.string().uuid('Invalid validator ID'),
-  validationType: z.enum(['expert_review', 'automated_check', 'peer_review']),
+  detectionResultId: z.string().uuid("Invalid detection result ID"),
+  validatorId: z.string().uuid("Invalid validator ID"),
+  validationType: z.enum(["expert_review", "automated_check", "peer_review"]),
   validationData: z.object({
     actualDiagnosis: z.string().optional(),
     clinicalNotes: z.string().optional(),
     imageQualityAssessment: z.number().min(0).max(10).optional(),
     treatmentOutcome: z.string().optional(),
-    followUpResults: z.string().optional()
-  })
+    followUpResults: z.string().optional(),
+  }),
 });
 
 export const AlertAcknowledgmentSchema = z.object({
-  alertId: z.string().uuid('Invalid alert ID'),
-  acknowledgedBy: z.string().uuid('Invalid user ID'),
+  alertId: z.string().uuid("Invalid alert ID"),
+  acknowledgedBy: z.string().uuid("Invalid user ID"),
   notes: z.string().optional(),
   escalate: z.boolean().default(false),
-  escalateTo: z.string().optional()
+  escalateTo: z.string().optional(),
 });
 
 // Error Types
 export interface ComplicationDetectionError extends Error {
-  code: 'INVALID_IMAGE' | 'PROCESSING_TIMEOUT' | 'MODEL_ERROR' | 'STORAGE_ERROR' | 'VALIDATION_ERROR';
+  code:
+    | "INVALID_IMAGE"
+    | "PROCESSING_TIMEOUT"
+    | "MODEL_ERROR"
+    | "STORAGE_ERROR"
+    | "VALIDATION_ERROR";
   patientId?: string;
   imageId?: string;
   timestamp: string;
@@ -470,23 +477,23 @@ export type {
 
 // Constants
 export const COMPLICATION_DETECTION_CONSTANTS = {
-  MIN_ACCURACY_THRESHOLD: 0.90, // Story requirement: ≥90% accuracy
+  MIN_ACCURACY_THRESHOLD: 0.9, // Story requirement: ≥90% accuracy
   MIN_CONFIDENCE_THRESHOLD: 0.85,
   MAX_PROCESSING_TIME_MS: 30000, // 30 seconds max
   QUALITY_THRESHOLD: 9.8, // VOIDBEAST V6.0 standard
-  
+
   ALERT_TIMEFRAMES: {
-    critical: 'immediate', // < 5 minutes
-    high: '1_hour',
-    medium: '4_hours', 
-    low: '24_hours',
-    none: 'routine'
+    critical: "immediate", // < 5 minutes
+    high: "1_hour",
+    medium: "4_hours",
+    low: "24_hours",
+    none: "routine",
   },
-  
+
   DEFAULT_MODEL_TYPES: [
-    'infection_detector',
-    'adverse_reaction_detector',
-    'healing_issue_detector', 
-    'procedural_complication_detector'
-  ]
+    "infection_detector",
+    "adverse_reaction_detector",
+    "healing_issue_detector",
+    "procedural_complication_detector",
+  ],
 } as const;

@@ -6,18 +6,18 @@
 
 "use client";
 
-import { useInventoryAlerts } from "@/app/hooks/useInventoryAlerts";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { useInventoryAlerts } from "@/app/hooks/useInventoryAlerts";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
   AlertTriangle,
   Barcode,
   Clock,
@@ -27,10 +27,10 @@ import {
   QrCode,
   TrendingUp,
 } from "lucide-react";
-import { useState } from "react";
-import { BudgetApprovalWorkflow } from "./budget-approval-workflow";
-import { DemandForecastingEngine } from "./demand-forecasting-engine";
-import { IntelligentThresholdManager } from "./intelligent-threshold-manager";
+import type { useState } from "react";
+import type { BudgetApprovalWorkflow } from "./budget-approval-workflow";
+import type { DemandForecastingEngine } from "./demand-forecasting-engine";
+import type { IntelligentThresholdManager } from "./intelligent-threshold-manager";
 import InventoryAlerts from "./inventory-alerts";
 import InventoryOverview from "./inventory-overview";
 
@@ -46,9 +46,7 @@ interface InventoryDashboardProps {
 // MAIN COMPONENT
 // =====================================================================================
 
-export default function InventoryDashboard({
-  defaultTab = "overview",
-}: InventoryDashboardProps) {
+export default function InventoryDashboard({ defaultTab = "overview" }: InventoryDashboardProps) {
   const [activeTab, setActiveTab] = useState(defaultTab);
   const { unreadCount, criticalCount } = useInventoryAlerts();
 
@@ -71,16 +69,12 @@ export default function InventoryDashboard({
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
-            Low Stock Alerts
-          </CardTitle>
+          <CardTitle className="text-sm font-medium">Low Stock Alerts</CardTitle>
           <AlertTriangle className="h-4 w-4 text-orange-500" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{criticalCount}</div>
-          <p className="text-xs text-muted-foreground">
-            Requires immediate attention
-          </p>
+          <p className="text-xs text-muted-foreground">Requires immediate attention</p>
         </CardContent>
       </Card>
 
@@ -102,9 +96,7 @@ export default function InventoryDashboard({
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">4</div>
-          <p className="text-xs text-muted-foreground">
-            Active storage locations
-          </p>
+          <p className="text-xs text-muted-foreground">Active storage locations</p>
         </CardContent>
       </Card>
     </div>
@@ -159,20 +151,13 @@ export default function InventoryDashboard({
       <QuickActions />
 
       {/* Main Tabs */}
-      <Tabs
-        value={activeTab}
-        onValueChange={setActiveTab}
-        className="space-y-4"
-      >
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="alerts" className="relative">
             Alerts
             {unreadCount > 0 && (
-              <Badge
-                variant="destructive"
-                className="absolute -top-2 -right-2 h-5 w-5 p-0 text-xs"
-              >
+              <Badge variant="destructive" className="absolute -top-2 -right-2 h-5 w-5 p-0 text-xs">
                 {unreadCount > 9 ? "9+" : unreadCount}
               </Badge>
             )}
@@ -262,8 +247,7 @@ export default function InventoryDashboard({
                 <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-lg font-medium mb-2">Items Management</h3>
                 <p className="text-muted-foreground mb-4">
-                  This section will contain the complete inventory items
-                  management interface.
+                  This section will contain the complete inventory items management interface.
                 </p>
                 <Button>
                   <Plus className="h-4 w-4 mr-2" />
@@ -278,19 +262,14 @@ export default function InventoryDashboard({
           <Card>
             <CardHeader>
               <CardTitle>Storage Locations</CardTitle>
-              <CardDescription>
-                Manage storage locations and inventory distribution
-              </CardDescription>
+              <CardDescription>Manage storage locations and inventory distribution</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center py-12">
                 <MapPin className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">
-                  Locations Management
-                </h3>
+                <h3 className="text-lg font-medium mb-2">Locations Management</h3>
                 <p className="text-muted-foreground mb-4">
-                  This section will contain the complete locations management
-                  interface.
+                  This section will contain the complete locations management interface.
                 </p>
                 <Button>
                   <Plus className="h-4 w-4 mr-2" />
@@ -312,12 +291,9 @@ export default function InventoryDashboard({
             <CardContent>
               <div className="text-center py-12">
                 <TrendingUp className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">
-                  Reports & Analytics
-                </h3>
+                <h3 className="text-lg font-medium mb-2">Reports & Analytics</h3>
                 <p className="text-muted-foreground mb-4">
-                  This section will contain comprehensive reporting and
-                  analytics features.
+                  This section will contain comprehensive reporting and analytics features.
                 </p>
                 <Button>
                   <Plus className="h-4 w-4 mr-2" />

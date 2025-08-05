@@ -1,6 +1,6 @@
 /**
  * Session Management & Security Types
- * 
+ *
  * Comprehensive TypeScript definitions for the NeonPro session management system.
  * Includes session tracking, security monitoring, device management, and audit trails.
  */
@@ -28,7 +28,7 @@ export interface UserSession {
 }
 
 export interface SessionMetadata {
-  loginMethod: 'password' | 'sso' | 'mfa' | 'biometric';
+  loginMethod: "password" | "sso" | "mfa" | "biometric";
   mfaVerified: boolean;
   ssoProvider?: string;
   roleId: string;
@@ -56,7 +56,7 @@ export interface SessionLocation {
 }
 
 export interface UserPreferences {
-  theme: 'light' | 'dark' | 'auto';
+  theme: "light" | "dark" | "auto";
   language: string;
   notifications: NotificationPreferences;
   accessibility: AccessibilityPreferences;
@@ -100,7 +100,7 @@ export interface DeviceRegistration {
   metadata?: DeviceMetadata;
 }
 
-export type DeviceType = 'desktop' | 'laptop' | 'tablet' | 'mobile' | 'unknown';
+export type DeviceType = "desktop" | "laptop" | "tablet" | "mobile" | "unknown";
 
 export interface DeviceMetadata {
   os: string;
@@ -154,31 +154,31 @@ export interface SessionSecurityEvent {
 }
 
 export type SecurityEventType =
-  | 'suspicious_login'
-  | 'unusual_location'
-  | 'rapid_requests'
-  | 'session_hijack_attempt'
-  | 'concurrent_limit_exceeded'
-  | 'device_change'
-  | 'ip_change'
-  | 'privilege_escalation'
-  | 'data_access_anomaly'
-  | 'failed_authentication'
-  | 'session_timeout'
-  | 'forced_logout'
-  | 'emergency_termination';
+  | "suspicious_login"
+  | "unusual_location"
+  | "rapid_requests"
+  | "session_hijack_attempt"
+  | "concurrent_limit_exceeded"
+  | "device_change"
+  | "ip_change"
+  | "privilege_escalation"
+  | "data_access_anomaly"
+  | "failed_authentication"
+  | "session_timeout"
+  | "forced_logout"
+  | "emergency_termination";
 
-export type SecuritySeverity = 'low' | 'medium' | 'high' | 'critical';
+export type SecuritySeverity = "low" | "medium" | "high" | "critical";
 
 export type SecurityAction =
-  | 'log_event'
-  | 'send_alert'
-  | 'require_mfa'
-  | 'terminate_session'
-  | 'block_device'
-  | 'notify_admin'
-  | 'escalate_incident'
-  | 'lock_account';
+  | "log_event"
+  | "send_alert"
+  | "require_mfa"
+  | "terminate_session"
+  | "block_device"
+  | "notify_admin"
+  | "escalate_incident"
+  | "lock_account";
 
 export interface SuspiciousActivityDetection {
   ipAnomalyScore: number;
@@ -246,7 +246,7 @@ export interface SessionPolicy {
   isActive: boolean;
 }
 
-export type SecurityLevel = 'basic' | 'standard' | 'high' | 'maximum';
+export type SecurityLevel = "basic" | "standard" | "high" | "maximum";
 
 export interface SessionRestrictions {
   ipWhitelist?: string[];
@@ -298,18 +298,18 @@ export interface SessionAuditLog {
 }
 
 export type SessionAction =
-  | 'session_created'
-  | 'session_renewed'
-  | 'session_expired'
-  | 'session_terminated'
-  | 'session_extended'
-  | 'device_registered'
-  | 'device_trusted'
-  | 'device_blocked'
-  | 'security_event'
-  | 'policy_violation'
-  | 'emergency_access'
-  | 'admin_override';
+  | "session_created"
+  | "session_renewed"
+  | "session_expired"
+  | "session_terminated"
+  | "session_extended"
+  | "device_registered"
+  | "device_trusted"
+  | "device_blocked"
+  | "security_event"
+  | "policy_violation"
+  | "emergency_access"
+  | "admin_override";
 
 export interface AuditMetadata {
   requestId: string;
@@ -425,14 +425,14 @@ export interface SessionEvent {
 }
 
 export type SessionEventType =
-  | 'session_created'
-  | 'session_activity'
-  | 'session_warning'
-  | 'session_expired'
-  | 'session_terminated'
-  | 'security_alert'
-  | 'device_change'
-  | 'location_change';
+  | "session_created"
+  | "session_activity"
+  | "session_warning"
+  | "session_expired"
+  | "session_terminated"
+  | "security_alert"
+  | "device_change"
+  | "location_change";
 
 // ============================================================================
 // CONFIGURATION TYPES
@@ -538,34 +538,34 @@ export class SessionError extends Error {
   constructor(
     message: string,
     public code: SessionErrorCode,
-    public details?: Record<string, any>
+    public details?: Record<string, any>,
   ) {
     super(message);
-    this.name = 'SessionError';
+    this.name = "SessionError";
   }
 }
 
 export type SessionErrorCode =
-  | 'SESSION_NOT_FOUND'
-  | 'SESSION_EXPIRED'
-  | 'SESSION_INVALID'
-  | 'SESSION_LIMIT_EXCEEDED'
-  | 'DEVICE_NOT_TRUSTED'
-  | 'SUSPICIOUS_ACTIVITY'
-  | 'SECURITY_VIOLATION'
-  | 'POLICY_VIOLATION'
-  | 'AUTHENTICATION_REQUIRED'
-  | 'AUTHORIZATION_FAILED'
-  | 'RATE_LIMIT_EXCEEDED'
-  | 'SYSTEM_ERROR';
+  | "SESSION_NOT_FOUND"
+  | "SESSION_EXPIRED"
+  | "SESSION_INVALID"
+  | "SESSION_LIMIT_EXCEEDED"
+  | "DEVICE_NOT_TRUSTED"
+  | "SUSPICIOUS_ACTIVITY"
+  | "SECURITY_VIOLATION"
+  | "POLICY_VIOLATION"
+  | "AUTHENTICATION_REQUIRED"
+  | "AUTHORIZATION_FAILED"
+  | "RATE_LIMIT_EXCEEDED"
+  | "SYSTEM_ERROR";
 
 // ============================================================================
 // UTILITY TYPES
 // ============================================================================
 
-export type SessionStatus = 'active' | 'expired' | 'terminated' | 'suspended';
+export type SessionStatus = "active" | "expired" | "terminated" | "suspended";
 
-export type SessionSource = 'web' | 'mobile' | 'api' | 'admin' | 'system';
+export type SessionSource = "web" | "mobile" | "api" | "admin" | "system";
 
 export interface SessionFilter {
   userId?: string;
@@ -582,7 +582,7 @@ export interface SessionFilter {
 
 export interface SessionSort {
   field: keyof UserSession;
-  direction: 'asc' | 'desc';
+  direction: "asc" | "desc";
 }
 
 export interface PaginationParams {
@@ -596,4 +596,4 @@ export interface PaginationParams {
 // EXPORT ALL TYPES
 // ============================================================================
 
-export * from './types';
+export * from "./types";

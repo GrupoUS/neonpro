@@ -6,10 +6,10 @@ export interface KPIMetric {
   value: number;
   target?: number;
   change: number;
-  trend: 'up' | 'down' | 'stable';
-  status: 'good' | 'warning' | 'critical';
-  format: 'currency' | 'percentage' | 'number';
-  category: 'revenue' | 'profitability' | 'efficiency' | 'growth';
+  trend: "up" | "down" | "stable";
+  status: "good" | "warning" | "critical";
+  format: "currency" | "percentage" | "number";
+  category: "revenue" | "profitability" | "efficiency" | "growth";
   description?: string;
   unit?: string;
   precision?: number;
@@ -18,8 +18,8 @@ export interface KPIMetric {
 export interface KPIAlert {
   id: string;
   kpiId: string;
-  type: 'target_missed' | 'trend_negative' | 'threshold_exceeded' | 'anomaly_detected';
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  type: "target_missed" | "trend_negative" | "threshold_exceeded" | "anomaly_detected";
+  severity: "low" | "medium" | "high" | "critical";
   title: string;
   message: string;
   timestamp: Date;
@@ -44,7 +44,7 @@ export interface KPIBenchmark {
 export interface KPIForecast {
   id: string;
   kpiId: string;
-  period: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly';
+  period: "daily" | "weekly" | "monthly" | "quarterly" | "yearly";
   predictions: {
     date: Date;
     value: number;
@@ -76,8 +76,8 @@ export interface KPIFilter {
 export interface KPIWidget {
   id: string;
   kpiId: string;
-  type: 'metric' | 'chart' | 'table' | 'gauge';
-  size: 'small' | 'medium' | 'large';
+  type: "metric" | "chart" | "table" | "gauge";
+  size: "small" | "medium" | "large";
   position: {
     x: number;
     y: number;
@@ -88,7 +88,7 @@ export interface KPIWidget {
     showTrend?: boolean;
     showTarget?: boolean;
     showComparison?: boolean;
-    chartType?: 'line' | 'bar' | 'area' | 'pie';
+    chartType?: "line" | "bar" | "area" | "pie";
     timeframe?: string;
     customTitle?: string;
   };
@@ -115,7 +115,7 @@ export interface FinancialData {
   averageTicket: number;
   revenuePerProvider: number;
   revenuePerLocation: number;
-  
+
   // Profitability metrics
   grossProfit: number;
   grossMargin: number;
@@ -123,25 +123,25 @@ export interface FinancialData {
   netMargin: number;
   ebitda: number;
   ebitdaMargin: number;
-  
+
   // Cash flow metrics
   operatingCashFlow: number;
   freeCashFlow: number;
   cashPosition: number;
   accountsReceivable: number;
   accountsPayable: number;
-  
+
   // Efficiency metrics
   costPerAcquisition: number;
   lifetimeValue: number;
   paybackPeriod: number;
   utilizationRate: number;
-  
+
   // Growth metrics
   revenueGrowthRate: number;
   patientGrowthRate: number;
   marketShare: number;
-  
+
   // Operational metrics
   appointmentValue: number;
   conversionRate: number;
@@ -202,7 +202,7 @@ export interface PatientSegmentMetrics {
 export interface FinancialReport {
   id: string;
   name: string;
-  type: 'summary' | 'detailed' | 'comparative' | 'forecast';
+  type: "summary" | "detailed" | "comparative" | "forecast";
   period: DateRange;
   data: FinancialData;
   services: ServiceMetrics[];
@@ -214,7 +214,7 @@ export interface FinancialReport {
 }
 
 export interface ExportOptions {
-  format: 'pdf' | 'excel' | 'csv' | 'json';
+  format: "pdf" | "excel" | "csv" | "json";
   includeCharts: boolean;
   includeRawData: boolean;
   includeComparisons: boolean;
@@ -227,7 +227,7 @@ export interface ShareOptions {
   message?: string;
   includeLink: boolean;
   expiresAt?: Date;
-  permissions: 'view' | 'comment' | 'edit';
+  permissions: "view" | "comment" | "edit";
 }
 
 export interface KPIConfiguration {
@@ -235,7 +235,7 @@ export interface KPIConfiguration {
   name: string;
   formula: string;
   dataSource: string;
-  updateFrequency: 'realtime' | 'hourly' | 'daily' | 'weekly';
+  updateFrequency: "realtime" | "hourly" | "daily" | "weekly";
   thresholds: {
     critical: number;
     warning: number;
@@ -258,7 +258,7 @@ export interface DrillDownData {
   label: string;
   value: number;
   change: number;
-  trend: 'up' | 'down' | 'stable';
+  trend: "up" | "down" | "stable";
   category: string;
   subcategory?: string;
   details: Record<string, any>;
@@ -275,17 +275,17 @@ export interface TimeSeriesPoint {
 }
 
 export interface ChartConfiguration {
-  type: 'line' | 'bar' | 'area' | 'pie' | 'gauge' | 'table';
+  type: "line" | "bar" | "area" | "pie" | "gauge" | "table";
   title: string;
   subtitle?: string;
   xAxis: {
     label: string;
-    type: 'category' | 'datetime' | 'numeric';
+    type: "category" | "datetime" | "numeric";
     format?: string;
   };
   yAxis: {
     label: string;
-    format: 'currency' | 'percentage' | 'number';
+    format: "currency" | "percentage" | "number";
     min?: number;
     max?: number;
   };
@@ -293,7 +293,7 @@ export interface ChartConfiguration {
     name: string;
     dataKey: string;
     color: string;
-    type?: 'line' | 'bar' | 'area';
+    type?: "line" | "bar" | "area";
   }[];
   legend: boolean;
   grid: boolean;
@@ -307,11 +307,11 @@ export interface AlertRule {
   name: string;
   kpiId: string;
   condition: {
-    operator: 'gt' | 'lt' | 'eq' | 'gte' | 'lte' | 'between';
+    operator: "gt" | "lt" | "eq" | "gte" | "lte" | "between";
     value: number | [number, number];
     duration?: number; // minutes
   };
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   notifications: {
     email: boolean;
     sms: boolean;
@@ -331,7 +331,7 @@ export interface UserPreferences {
   alertSettings: {
     email: boolean;
     push: boolean;
-    frequency: 'immediate' | 'hourly' | 'daily';
+    frequency: "immediate" | "hourly" | "daily";
   };
   displaySettings: {
     currency: string;
@@ -382,18 +382,18 @@ export interface ReportResponse {
 }
 
 // Utility Types
-export type KPIStatus = 'good' | 'warning' | 'critical';
-export type TrendDirection = 'up' | 'down' | 'stable';
-export type AlertSeverity = 'low' | 'medium' | 'high' | 'critical';
-export type ChartType = 'line' | 'bar' | 'area' | 'pie' | 'gauge' | 'table';
-export type WidgetSize = 'small' | 'medium' | 'large';
-export type ExportFormat = 'pdf' | 'excel' | 'csv' | 'json';
-export type UpdateFrequency = 'realtime' | 'hourly' | 'daily' | 'weekly';
-export type TimePeriod = 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly';
+export type KPIStatus = "good" | "warning" | "critical";
+export type TrendDirection = "up" | "down" | "stable";
+export type AlertSeverity = "low" | "medium" | "high" | "critical";
+export type ChartType = "line" | "bar" | "area" | "pie" | "gauge" | "table";
+export type WidgetSize = "small" | "medium" | "large";
+export type ExportFormat = "pdf" | "excel" | "csv" | "json";
+export type UpdateFrequency = "realtime" | "hourly" | "daily" | "weekly";
+export type TimePeriod = "daily" | "weekly" | "monthly" | "quarterly" | "yearly";
 
 // Event Types
 export interface KPIEvent {
-  type: 'kpi_updated' | 'alert_triggered' | 'threshold_exceeded' | 'target_achieved';
+  type: "kpi_updated" | "alert_triggered" | "threshold_exceeded" | "target_achieved";
   kpiId: string;
   timestamp: Date;
   data: any;
@@ -401,7 +401,7 @@ export interface KPIEvent {
 }
 
 export interface DashboardEvent {
-  type: 'layout_changed' | 'filter_applied' | 'widget_added' | 'widget_removed';
+  type: "layout_changed" | "filter_applied" | "widget_added" | "widget_removed";
   dashboardId: string;
   timestamp: Date;
   data: any;
@@ -430,7 +430,7 @@ export interface UseDashboardLayoutReturn {
   isLoading: boolean;
   error: string | null;
   updateLayout: (layout: Partial<DashboardLayout>) => void;
-  addWidget: (widget: Omit<KPIWidget, 'id'>) => void;
+  addWidget: (widget: Omit<KPIWidget, "id">) => void;
   removeWidget: (widgetId: string) => void;
   updateWidget: (widgetId: string, updates: Partial<KPIWidget>) => void;
   saveLayout: () => Promise<void>;
@@ -513,7 +513,7 @@ export interface DashboardConfig {
   defaultDateRange: string;
   enableRealtime: boolean;
   enableNotifications: boolean;
-  theme: 'light' | 'dark' | 'auto';
+  theme: "light" | "dark" | "auto";
   locale: string;
   currency: string;
 }

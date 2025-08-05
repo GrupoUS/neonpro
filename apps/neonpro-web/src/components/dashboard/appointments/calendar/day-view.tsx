@@ -1,11 +1,11 @@
 "use client";
 
 import React from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
-import { format, isSameDay, startOfDay, endOfDay } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { AppointmentCard } from "./appointment-card";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type { cn } from "@/lib/utils";
+import type { format, isSameDay, startOfDay, endOfDay } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { AppointmentCard } from "./appointment-card";
 import type { AppointmentWithRelations } from "@/app/lib/types/appointments";
 
 interface DayViewProps {
@@ -30,8 +30,8 @@ export function DayView({
   className,
 }: DayViewProps) {
   // Filter appointments for the specific date
-  const dayAppointments = appointments.filter(appointment =>
-    isSameDay(new Date(appointment.start_time), date)
+  const dayAppointments = appointments.filter((appointment) =>
+    isSameDay(new Date(appointment.start_time), date),
   );
 
   // Generate time slots from 8 AM to 6 PM
@@ -39,7 +39,7 @@ export function DayView({
     const slots = [];
     const startHour = 8;
     const endHour = 18;
-    
+
     for (let hour = startHour; hour < endHour; hour++) {
       for (const minutes of [0, 15, 30, 45]) {
         const time = new Date(date);
@@ -47,7 +47,7 @@ export function DayView({
         slots.push(time);
       }
     }
-    
+
     return slots;
   };
 
@@ -55,7 +55,7 @@ export function DayView({
 
   // Function to get appointments for a specific time slot
   const getAppointmentsForSlot = (slotTime: Date) => {
-    return dayAppointments.filter(appointment => {
+    return dayAppointments.filter((appointment) => {
       const appointmentStart = new Date(appointment.start_time);
       const appointmentEnd = new Date(appointment.end_time);
       const slotEnd = new Date(slotTime.getTime() + 15 * 60 * 1000); // 15 minutes later
@@ -90,7 +90,7 @@ export function DayView({
           {format(date, "EEEE, d 'de' MMMM 'de' yyyy", { locale: ptBR })}
         </h2>
         <p className="text-sm text-muted-foreground">
-          {dayAppointments.length} agendamento{dayAppointments.length !== 1 ? 's' : ''}
+          {dayAppointments.length} agendamento{dayAppointments.length !== 1 ? "s" : ""}
         </p>
       </div>
 
@@ -102,14 +102,14 @@ export function DayView({
             {timeSlots.map((slotTime, index) => {
               const slotAppointments = getAppointmentsForSlot(slotTime);
               const isHourMark = slotTime.getMinutes() === 0;
-              
+
               return (
                 <div
                   key={index}
                   className={cn(
                     "relative bg-background border-r border-border",
                     isHourMark && "border-t-2 border-t-border/50",
-                    "hover:bg-muted/50 cursor-pointer transition-colors"
+                    "hover:bg-muted/50 cursor-pointer transition-colors",
                   )}
                   style={{ minHeight: "48px" }}
                   onClick={() => handleTimeSlotClick(slotTime)}
@@ -181,7 +181,7 @@ function CurrentTimeIndicator({ date }: { date: Date }) {
   React.useEffect(() => {
     // Set initial time only on client side to avoid hydration mismatch
     setCurrentTime(new Date());
-    
+
     const interval = setInterval(() => {
       setCurrentTime(new Date());
     }, 60000); // Update every minute
@@ -203,7 +203,7 @@ function CurrentTimeIndicator({ date }: { date: Date }) {
   const startHour = 8;
   const currentHour = currentTime.getHours();
   const currentMinute = currentTime.getMinutes();
-  
+
   if (currentHour < startHour || currentHour >= 18) {
     return null;
   }
@@ -218,9 +218,7 @@ function CurrentTimeIndicator({ date }: { date: Date }) {
     >
       <div className="w-2 h-2 bg-red-500 rounded-full mr-2" />
       <div className="flex-1 h-px bg-red-500" />
-      <div className="text-xs text-red-500 ml-2">
-        {format(currentTime, "HH:mm")}
-      </div>
+      <div className="text-xs text-red-500 ml-2">{format(currentTime, "HH:mm")}</div>
     </div>
   );
 }

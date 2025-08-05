@@ -1,35 +1,36 @@
-﻿// Story 9.2: Personalized Treatment Recommendations - API Factors Route
+// Story 9.2: Personalized Treatment Recommendations - API Factors Route
 // Personalization factors API endpoint
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createpersonalizedRecommendationsService } from '../../../lib/services/personalized-recommendations';
-import { createPersonalizationFactorRequestSchema } from '../../../lib/validations/personalized-recommendations';
-import { CreatePersonalizationFactorRequest } from '../../../types/personalized-recommendations';
+import type { NextRequest, NextResponse } from "next/server";
+import type { createpersonalizedRecommendationsService } from "../../../lib/services/personalized-recommendations";
+import type { createPersonalizationFactorRequestSchema } from "../../../lib/validations/personalized-recommendations";
+import type { CreatePersonalizationFactorRequest } from "../../../types/personalized-recommendations";
 
 // Get personalization factors
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const patientId = searchParams.get('patient_id');
-    
+    const patientId = searchParams.get("patient_id");
+
     if (!patientId) {
       return NextResponse.json(
-        { error: 'Patient ID is required', success: false },
-        { status: 400 }
+        { error: "Patient ID is required", success: false },
+        { status: 400 },
       );
     }
 
-    const factors = await createpersonalizedRecommendationsService().getPersonalizationFactors(patientId);
-    
+    const factors =
+      await createpersonalizedRecommendationsService().getPersonalizationFactors(patientId);
+
     return NextResponse.json({
       factors,
-      success: true
+      success: true,
     });
   } catch (error) {
-    console.error('Error fetching personalization factors:', error);
+    console.error("Error fetching personalization factors:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch personalization factors', success: false },
-      { status: 500 }
+      { error: "Failed to fetch personalization factors", success: false },
+      { status: 500 },
     );
   }
 }
@@ -38,32 +39,36 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     // Validate request body
     const validationResult = createPersonalizationFactorRequestSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
-          error: 'Invalid personalization factor data', 
+        {
+          error: "Invalid personalization factor data",
           details: validationResult.error.issues,
-          success: false 
+          success: false,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const factorData: CreatePersonalizationFactorRequest = validationResult.data;
-    const factor = await createpersonalizedRecommendationsService().createPersonalizationFactor(factorData);
-    
-    return NextResponse.json({
-      factor,
-      success: true
-    }, { status: 201 });
-  } catch (error) {
-    console.error('Error creating personalization factor:', error);
+    const factor =
+      await createpersonalizedRecommendationsService().createPersonalizationFactor(factorData);
+
     return NextResponse.json(
-      { error: 'Failed to create personalization factor', success: false },
-      { status: 500 }
+      {
+        factor,
+        success: true,
+      },
+      { status: 201 },
+    );
+  } catch (error) {
+    console.error("Error creating personalization factor:", error);
+    return NextResponse.json(
+      { error: "Failed to create personalization factor", success: false },
+      { status: 500 },
     );
   }
 }

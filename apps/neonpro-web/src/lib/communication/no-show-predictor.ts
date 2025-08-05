@@ -6,7 +6,7 @@
 export interface NoShowPrediction {
   probability: number;
   factors: string[];
-  riskLevel: 'low' | 'medium' | 'high';
+  riskLevel: "low" | "medium" | "high";
   interventionRecommended: boolean;
 }
 
@@ -19,13 +19,16 @@ export class NoShowPredictor {
     // Mock implementation for testing
     return {
       probability: 0.3,
-      factors: ['historical_attendance', 'appointment_distance'],
-      riskLevel: 'low',
-      interventionRecommended: false
-    }
+      factors: ["historical_attendance", "appointment_distance"],
+      riskLevel: "low",
+      interventionRecommended: false,
+    };
   }
 
-  async updatePrediction(appointmentId: string, actualOutcome: 'attended' | 'no_show'): Promise<void> {
+  async updatePrediction(
+    appointmentId: string,
+    actualOutcome: "attended" | "no_show",
+  ): Promise<void> {
     // Mock implementation for learning
   }
 }

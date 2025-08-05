@@ -1,2 +1,4 @@
 // Patient portal validation
-export function validatePatientSession() { return true; }
+export function validatePatientSession() {
+  return true;
+}

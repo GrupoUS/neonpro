@@ -1,66 +1,101 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { format, startOfDay, endOfDay, subDays, subWeeks, subMonths, subYears } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import {
-  DollarSign, TrendingUp, TrendingDown, BarChart3, RefreshCw, Settings, Plus,
-  Calendar, Filter, Wallet, Clock, AlertTriangle, CheckCircle
-} from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+import React, { useState, useEffect, useMemo } from "react";
+import type {
+  format,
+  startOfDay,
+  endOfDay,
+  subDays,
+  subWeeks,
+  subMonths,
+  subYears,
+} from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  DollarSign,
+  TrendingUp,
+  TrendingDown,
+  BarChart3,
+  RefreshCw,
+  Settings,
+  Plus,
+  Calendar,
+  Filter,
+  Wallet,
+  Clock,
+  AlertTriangle,
+  CheckCircle,
+} from "lucide-react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Button } from "@/components/ui/button";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Badge } from "@/components/ui/badge";
+import type { Progress } from "@/components/ui/progress";
 
 // Hooks para dados
-import { useCashFlowEntries, useCashRegisters, useCashFlowAnalytics } from '../hooks/useCashFlow';
+import type {
+  useCashFlowEntries,
+  useCashRegisters,
+  useCashFlowAnalytics,
+} from "../hooks/useCashFlow";
 
 // Utilitários
-import { formatCurrency, getCashFlowSummary } from '../utils/calculations';
+import type { formatCurrency, getCashFlowSummary } from "../utils/calculations";
 
 // Tipos
-import { CashFlowEntry, CashRegister, CashFlowAnalytics, CashFlowFilters } from '../types';
+import type { CashFlowEntry, CashRegister, CashFlowAnalytics, CashFlowFilters } from "../types";
 
 // Componentes
-import { TransactionEntryForm } from './transaction-entry-form';
-import { TransactionsList } from './transactions-list';
+import type { TransactionEntryForm } from "./transaction-entry-form";
+import type { TransactionsList } from "./transactions-list";
 
 // Helper functions for dashboard calculations and formatting
 const formatDate = (date: string | Date): string => {
-  const d = typeof date === 'string' ? new Date(date) : date;
-  return d.toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
+  const d = typeof date === "string" ? new Date(date) : date;
+  return d.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
   });
 };
 
-const getDateRange = (period: 'today' | 'week' | 'month' | 'year') => {
+const getDateRange = (period: "today" | "week" | "month" | "year") => {
   const now = new Date();
   let start: Date;
-  
+
   switch (period) {
-    case 'today':
+    case "today":
       start = startOfDay(now);
       break;
-    case 'week':
+    case "week":
       start = subWeeks(startOfDay(now), 1);
       break;
-    case 'month':
+    case "month":
       start = subMonths(startOfDay(now), 1);
       break;
-    case 'year':
+    case "year":
       start = subYears(startOfDay(now), 1);
       break;
     default:
       start = startOfDay(now);
   }
-  
+
   return {
-    start: format(start, 'yyyy-MM-dd'),
-    end: format(endOfDay(now), 'yyyy-MM-dd')
+    start: format(start, "yyyy-MM-dd"),
+    end: format(endOfDay(now), "yyyy-MM-dd"),
   };
 };
 
@@ -70,46 +105,61 @@ interface CashFlowDashboardProps {
 }
 
 export function CashFlowDashboard({ clinicId, userId }: CashFlowDashboardProps) {
-  const [selectedPeriod, setSelectedPeriod] = useState<'today' | 'week' | 'month' | 'year'>('today');
+  const [selectedPeriod, setSelectedPeriod] = useState<"today" | "week" | "month" | "year">(
+    "today",
+  );
   const [selectedRegisterId, setSelectedRegisterId] = useState<string | undefined>();
   const [showNewTransaction, setShowNewTransaction] = useState(false);
-  const [activeTab, setActiveTab] = useState('overview');
-  
+  const [activeTab, setActiveTab] = useState("overview");
+
   // Get date range for current period
   const { start, end } = getDateRange(selectedPeriod);
-  
+
   // Create filters for current selection
-  const filters: CashFlowFilters = useMemo(() => ({
-    dateFrom: start,
-    dateTo: end,
-    registerId: selectedRegisterId
-  }), [start, end, selectedRegisterId]);
-  
+  const filters: CashFlowFilters = useMemo(
+    () => ({
+      dateFrom: start,
+      dateTo: end,
+      registerId: selectedRegisterId,
+    }),
+    [start, end, selectedRegisterId],
+  );
+
   // Fetch data using hooks
-  const { registers, loading: registersLoading, refetch: refetchRegisters } = useCashRegisters(clinicId);
-  const { entries, loading: entriesLoading, refetch: refetchEntries } = useCashFlowEntries(clinicId, filters);
-  const { analytics, loading: analyticsLoading, refetch: refetchAnalytics } = useCashFlowAnalytics(clinicId, filters);
+  const {
+    registers,
+    loading: registersLoading,
+    refetch: refetchRegisters,
+  } = useCashRegisters(clinicId);
+  const {
+    entries,
+    loading: entriesLoading,
+    refetch: refetchEntries,
+  } = useCashFlowEntries(clinicId, filters);
+  const {
+    analytics,
+    loading: analyticsLoading,
+    refetch: refetchAnalytics,
+  } = useCashFlowAnalytics(clinicId, filters);
 
   const loading = registersLoading || entriesLoading || analyticsLoading;
 
   // Handle refresh of all data
   const handleRefresh = async () => {
-    await Promise.all([
-      refetchRegisters(),
-      refetchEntries(),
-      refetchAnalytics()
-    ]);
+    await Promise.all([refetchRegisters(), refetchEntries(), refetchAnalytics()]);
   };
 
   // Calculate derived data
   const totalBalance = registers.reduce((sum, register) => sum + register.current_balance, 0);
-  const activeRegisters = registers.filter(r => r.is_active).length;
-  const lowBalanceRegisters = registers.filter(r => r.is_active && r.current_balance < 500).length;
+  const activeRegisters = registers.filter((r) => r.is_active).length;
+  const lowBalanceRegisters = registers.filter(
+    (r) => r.is_active && r.current_balance < 500,
+  ).length;
 
   // Recent transactions for overview
-  const recentTransactions = entries.slice(0, 10).map(t => ({
+  const recentTransactions = entries.slice(0, 10).map((t) => ({
     ...t,
-    registerName: registers.find(r => r.id === t.register_id)?.register_name || 'Desconhecido'
+    registerName: registers.find((r) => r.id === t.register_id)?.register_name || "Desconhecido",
   }));
 
   return (
@@ -124,7 +174,7 @@ export function CashFlowDashboard({ clinicId, userId }: CashFlowDashboardProps) 
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={handleRefresh} disabled={loading}>
-            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
             Atualizar
           </Button>
           <Button variant="outline" size="sm">
@@ -142,7 +192,10 @@ export function CashFlowDashboard({ clinicId, userId }: CashFlowDashboardProps) 
       <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg">
         <div className="flex items-center gap-2">
           <Calendar className="h-4 w-4" />
-          <Select value={selectedPeriod} onValueChange={(value: typeof selectedPeriod) => setSelectedPeriod(value)}>
+          <Select
+            value={selectedPeriod}
+            onValueChange={(value: typeof selectedPeriod) => setSelectedPeriod(value)}
+          >
             <SelectTrigger className="w-32">
               <SelectValue />
             </SelectTrigger>
@@ -157,7 +210,10 @@ export function CashFlowDashboard({ clinicId, userId }: CashFlowDashboardProps) 
 
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4" />
-          <Select value={selectedRegisterId || 'all'} onValueChange={(value) => setSelectedRegisterId(value === 'all' ? undefined : value)}>
+          <Select
+            value={selectedRegisterId || "all"}
+            onValueChange={(value) => setSelectedRegisterId(value === "all" ? undefined : value)}
+          >
             <SelectTrigger className="w-48">
               <SelectValue placeholder="Todos os caixas" />
             </SelectTrigger>
@@ -188,15 +244,14 @@ export function CashFlowDashboard({ clinicId, userId }: CashFlowDashboardProps) 
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {formatCurrency(totalBalance)}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Em {activeRegisters} caixa(s) ativo(s)
-            </p>
+            <div className="text-2xl font-bold">{formatCurrency(totalBalance)}</div>
+            <p className="text-xs text-muted-foreground">Em {activeRegisters} caixa(s) ativo(s)</p>
             {lowBalanceRegisters > 0 && (
               <div className="mt-2">
-                <Progress value={(activeRegisters - lowBalanceRegisters) / activeRegisters * 100} className="h-1" />
+                <Progress
+                  value={((activeRegisters - lowBalanceRegisters) / activeRegisters) * 100}
+                  className="h-1"
+                />
                 <p className="text-xs text-yellow-600 mt-1">
                   {lowBalanceRegisters} caixa(s) com saldo baixo
                 </p>
@@ -212,14 +267,18 @@ export function CashFlowDashboard({ clinicId, userId }: CashFlowDashboardProps) 
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {analytics ? formatCurrency(analytics.totalIncome) : '—'}
+              {analytics ? formatCurrency(analytics.totalIncome) : "—"}
             </div>
             <p className="text-xs text-muted-foreground">
-              {entries.filter(e => e.transaction_type === 'receipt').length} transações
+              {entries.filter((e) => e.transaction_type === "receipt").length} transações
             </p>
             {analytics && analytics.totalIncome > 0 && (
               <p className="text-xs text-green-600">
-                Média: {formatCurrency(analytics.totalIncome / Math.max(1, entries.filter(e => e.transaction_type === 'receipt').length))}
+                Média:{" "}
+                {formatCurrency(
+                  analytics.totalIncome /
+                    Math.max(1, entries.filter((e) => e.transaction_type === "receipt").length),
+                )}
               </p>
             )}
           </CardContent>
@@ -232,14 +291,18 @@ export function CashFlowDashboard({ clinicId, userId }: CashFlowDashboardProps) 
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">
-              {analytics ? formatCurrency(analytics.totalExpenses) : '—'}
+              {analytics ? formatCurrency(analytics.totalExpenses) : "—"}
             </div>
             <p className="text-xs text-muted-foreground">
-              {entries.filter(e => e.transaction_type === 'payment').length} transações
+              {entries.filter((e) => e.transaction_type === "payment").length} transações
             </p>
             {analytics && analytics.totalExpenses > 0 && (
               <p className="text-xs text-red-600">
-                Média: {formatCurrency(analytics.totalExpenses / Math.max(1, entries.filter(e => e.transaction_type === 'payment').length))}
+                Média:{" "}
+                {formatCurrency(
+                  analytics.totalExpenses /
+                    Math.max(1, entries.filter((e) => e.transaction_type === "payment").length),
+                )}
               </p>
             )}
           </CardContent>
@@ -251,20 +314,22 @@ export function CashFlowDashboard({ clinicId, userId }: CashFlowDashboardProps) 
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className={`text-2xl font-bold ${analytics && analytics.netCashFlow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {analytics ? formatCurrency(analytics.netCashFlow) : '—'}
+            <div
+              className={`text-2xl font-bold ${analytics && analytics.netCashFlow >= 0 ? "text-green-600" : "text-red-600"}`}
+            >
+              {analytics ? formatCurrency(analytics.netCashFlow) : "—"}
             </div>
-            <p className="text-xs text-muted-foreground">
-              No período selecionado
-            </p>
+            <p className="text-xs text-muted-foreground">No período selecionado</p>
             <div className="flex items-center mt-2">
               {analytics && analytics.netCashFlow >= 0 ? (
                 <CheckCircle className="h-3 w-3 text-green-600 mr-1" />
               ) : (
                 <AlertTriangle className="h-3 w-3 text-red-600 mr-1" />
               )}
-              <span className={`text-xs ${analytics && analytics.netCashFlow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {analytics && analytics.netCashFlow >= 0 ? 'Positivo' : 'Negativo'}
+              <span
+                className={`text-xs ${analytics && analytics.netCashFlow >= 0 ? "text-green-600" : "text-red-600"}`}
+              >
+                {analytics && analytics.netCashFlow >= 0 ? "Positivo" : "Negativo"}
               </span>
             </div>
           </CardContent>
@@ -290,18 +355,20 @@ export function CashFlowDashboard({ clinicId, userId }: CashFlowDashboardProps) 
                   <Clock className="h-4 w-4" />
                   Transações Recentes
                 </CardTitle>
-                <CardDescription>
-                  Últimas 10 transações registradas
-                </CardDescription>
+                <CardDescription>Últimas 10 transações registradas</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
                   {recentTransactions.map((transaction) => (
                     <div key={transaction.id} className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className={`h-2 w-2 rounded-full ${
-                          transaction.transaction_type === 'receipt' ? 'bg-green-500' : 'bg-red-500'
-                        }`} />
+                        <div
+                          className={`h-2 w-2 rounded-full ${
+                            transaction.transaction_type === "receipt"
+                              ? "bg-green-500"
+                              : "bg-red-500"
+                          }`}
+                        />
                         <div>
                           <p className="text-sm font-medium">{transaction.description}</p>
                           <p className="text-xs text-muted-foreground">
@@ -309,10 +376,14 @@ export function CashFlowDashboard({ clinicId, userId }: CashFlowDashboardProps) 
                           </p>
                         </div>
                       </div>
-                      <div className={`text-sm font-medium ${
-                        transaction.transaction_type === 'receipt' ? 'text-green-600' : 'text-red-600'
-                      }`}>
-                        {transaction.transaction_type === 'receipt' ? '+' : '-'}
+                      <div
+                        className={`text-sm font-medium ${
+                          transaction.transaction_type === "receipt"
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }`}
+                      >
+                        {transaction.transaction_type === "receipt" ? "+" : "-"}
                         {formatCurrency(transaction.amount)}
                       </div>
                     </div>
@@ -337,22 +408,22 @@ export function CashFlowDashboard({ clinicId, userId }: CashFlowDashboardProps) 
                   <Wallet className="h-4 w-4" />
                   Status dos Caixas
                 </CardTitle>
-                <CardDescription>
-                  Saldos atuais de todos os caixas
-                </CardDescription>
+                <CardDescription>Saldos atuais de todos os caixas</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
                   {registers.map((register) => (
                     <div key={register.id} className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className={`h-2 w-2 rounded-full ${
-                          register.is_active ? 'bg-green-500' : 'bg-gray-400'
-                        }`} />
+                        <div
+                          className={`h-2 w-2 rounded-full ${
+                            register.is_active ? "bg-green-500" : "bg-gray-400"
+                          }`}
+                        />
                         <div>
                           <p className="text-sm font-medium">{register.register_name}</p>
                           <p className="text-xs text-muted-foreground">
-                            {register.is_active ? 'Ativo' : 'Inativo'}
+                            {register.is_active ? "Ativo" : "Inativo"}
                           </p>
                         </div>
                       </div>
@@ -380,9 +451,7 @@ export function CashFlowDashboard({ clinicId, userId }: CashFlowDashboardProps) 
           <Card>
             <CardHeader>
               <CardTitle>Transações Recentes</CardTitle>
-              <CardDescription>
-                Gerencie todas as transações de entrada e saída
-              </CardDescription>
+              <CardDescription>Gerencie todas as transações de entrada e saída</CardDescription>
             </CardHeader>
             <CardContent>
               {/* TransactionsList component will be implemented next */}
@@ -397,9 +466,7 @@ export function CashFlowDashboard({ clinicId, userId }: CashFlowDashboardProps) 
           <Card>
             <CardHeader>
               <CardTitle>Gestão de Caixas</CardTitle>
-              <CardDescription>
-                Configure e monitore os caixas da clínica
-              </CardDescription>
+              <CardDescription>Configure e monitore os caixas da clínica</CardDescription>
             </CardHeader>
             <CardContent>
               {/* Cash register management will be implemented */}
@@ -414,9 +481,7 @@ export function CashFlowDashboard({ clinicId, userId }: CashFlowDashboardProps) 
           <Card>
             <CardHeader>
               <CardTitle>Análises e Relatórios</CardTitle>
-              <CardDescription>
-                Análises detalhadas do fluxo de caixa
-              </CardDescription>
+              <CardDescription>Análises detalhadas do fluxo de caixa</CardDescription>
             </CardHeader>
             <CardContent>
               {/* Analytics charts will be implemented */}
@@ -431,9 +496,7 @@ export function CashFlowDashboard({ clinicId, userId }: CashFlowDashboardProps) 
           <Card>
             <CardHeader>
               <CardTitle>Conciliação de Pagamentos</CardTitle>
-              <CardDescription>
-                Reconcilie pagamentos com gateways externos
-              </CardDescription>
+              <CardDescription>Reconcilie pagamentos com gateways externos</CardDescription>
             </CardHeader>
             <CardContent>
               {/* Reconciliation tools will be implemented */}

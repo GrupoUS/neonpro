@@ -1,58 +1,58 @@
 // Session types for authentication and security
 export enum SessionAction {
-  LOGIN = 'login',
-  LOGOUT = 'logout',
-  REFRESH = 'refresh',
-  EXTEND = 'extend',
-  VALIDATE = 'validate',
-  TERMINATE = 'terminate'
+  LOGIN = "login",
+  LOGOUT = "logout",
+  REFRESH = "refresh",
+  EXTEND = "extend",
+  VALIDATE = "validate",
+  TERMINATE = "terminate",
 }
 
 export enum DeviceType {
-  DESKTOP = 'desktop',
-  MOBILE = 'mobile',
-  TABLET = 'tablet',
-  UNKNOWN = 'unknown'
+  DESKTOP = "desktop",
+  MOBILE = "mobile",
+  TABLET = "tablet",
+  UNKNOWN = "unknown",
 }
 
 export enum SecurityLevel {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  CRITICAL = 'critical'
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
+  CRITICAL = "critical",
 }
 
 export enum SecurityEventType {
-  SUCCESSFUL_LOGIN = 'successful_login',
-  FAILED_LOGIN = 'failed_login',
-  PASSWORD_CHANGE = 'password_change',
-  MFA_ENABLED = 'mfa_enabled',
-  MFA_DISABLED = 'mfa_disabled',
-  SUSPICIOUS_ACTIVITY = 'suspicious_activity',
-  DEVICE_REGISTERED = 'device_registered',
-  DEVICE_REMOVED = 'device_removed',
-  SESSION_CREATED = 'session_created',
-  SESSION_EXTENDED = 'session_extended',
-  SESSION_TERMINATED = 'session_terminated',
-  PRIVILEGE_ESCALATION = 'privilege_escalation',
-  UNAUTHORIZED_ACCESS = 'unauthorized_access',
-  DATA_ACCESS = 'data_access',
-  ADMIN_ACTION = 'admin_action'
+  SUCCESSFUL_LOGIN = "successful_login",
+  FAILED_LOGIN = "failed_login",
+  PASSWORD_CHANGE = "password_change",
+  MFA_ENABLED = "mfa_enabled",
+  MFA_DISABLED = "mfa_disabled",
+  SUSPICIOUS_ACTIVITY = "suspicious_activity",
+  DEVICE_REGISTERED = "device_registered",
+  DEVICE_REMOVED = "device_removed",
+  SESSION_CREATED = "session_created",
+  SESSION_EXTENDED = "session_extended",
+  SESSION_TERMINATED = "session_terminated",
+  PRIVILEGE_ESCALATION = "privilege_escalation",
+  UNAUTHORIZED_ACCESS = "unauthorized_access",
+  DATA_ACCESS = "data_access",
+  ADMIN_ACTION = "admin_action",
 }
 
 export enum SecuritySeverity {
-  INFO = 'info',
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  CRITICAL = 'critical'
+  INFO = "info",
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
+  CRITICAL = "critical",
 }
 
 export enum SessionStatus {
-  ACTIVE = 'active',
-  EXPIRED = 'expired',
-  TERMINATED = 'terminated',
-  INVALID = 'invalid'
+  ACTIVE = "active",
+  EXPIRED = "expired",
+  TERMINATED = "terminated",
+  INVALID = "invalid",
 }
 
 export interface SessionInfo {
@@ -187,12 +187,15 @@ export function isHighRiskEvent(eventType: SecurityEventType): boolean {
   return highRiskEvents.includes(eventType);
 }
 
-export function shouldAuditEvent(eventType: SecurityEventType, severity: SecuritySeverity): boolean {
+export function shouldAuditEvent(
+  eventType: SecurityEventType,
+  severity: SecuritySeverity,
+): boolean {
   // Always audit high and critical severity events
   if (severity === SecuritySeverity.HIGH || severity === SecuritySeverity.CRITICAL) {
     return true;
   }
-  
+
   // Audit specific event types regardless of severity
   const alwaysAuditEvents = [
     SecurityEventType.PASSWORD_CHANGE,
@@ -200,6 +203,6 @@ export function shouldAuditEvent(eventType: SecurityEventType, severity: Securit
     SecurityEventType.MFA_DISABLED,
     SecurityEventType.ADMIN_ACTION,
   ];
-  
+
   return alwaysAuditEvents.includes(eventType);
 }

@@ -1,37 +1,43 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import {
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import {
+} from "@/components/ui/select";
+import type {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import {
+} from "@/components/ui/table";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import {
+} from "@/components/ui/dialog";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type {
   Shield,
   FileText,
   Download,
@@ -50,16 +56,16 @@ import {
   Lock,
   Globe,
   Archive,
-} from 'lucide-react';
-import { formatDate, formatBytes } from '@/lib/utils';
-import { toast } from 'sonner';
+} from "lucide-react";
+import type { formatDate, formatBytes } from "@/lib/utils";
+import type { toast } from "sonner";
 
 // Types
 interface ComplianceReport {
   id: string;
   title: string;
-  type: 'LGPD' | 'ANVISA' | 'CFM' | 'ISO27001' | 'CUSTOM';
-  status: 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED';
+  type: "LGPD" | "ANVISA" | "CFM" | "ISO27001" | "CUSTOM";
+  status: "DRAFT" | "PENDING" | "APPROVED" | "REJECTED";
   created_at: Date;
   updated_at: Date;
   period_start: Date;
@@ -69,7 +75,7 @@ interface ComplianceReport {
   approval_date?: Date;
   findings: Array<{
     category: string;
-    severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+    severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
     description: string;
     recommendation?: string;
   }>;
@@ -89,7 +95,7 @@ interface ComplianceTemplate {
   type: string;
   description: string;
   requirements: string[];
-  frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'QUARTERLY' | 'YEARLY';
+  frequency: "DAILY" | "WEEKLY" | "MONTHLY" | "QUARTERLY" | "YEARLY";
 }
 
 interface ComplianceMetrics {
@@ -112,19 +118,19 @@ const ComplianceReports: React.FC = () => {
   const [selectedReport, setSelectedReport] = useState<ComplianceReport | null>(null);
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   const [filters, setFilters] = useState({
-    type: '',
-    status: '',
-    dateFrom: '',
-    dateTo: '',
-    searchTerm: '',
+    type: "",
+    status: "",
+    dateFrom: "",
+    dateTo: "",
+    searchTerm: "",
   });
   const [newReport, setNewReport] = useState({
-    title: '',
-    type: 'LGPD' as const,
-    template_id: '',
-    period_start: '',
-    period_end: '',
-    description: '',
+    title: "",
+    type: "LGPD" as const,
+    template_id: "",
+    period_start: "",
+    period_end: "",
+    description: "",
   });
 
   useEffect(() => {
@@ -138,21 +144,17 @@ const ComplianceReports: React.FC = () => {
   const loadData = async () => {
     try {
       setLoading(true);
-      await Promise.all([
-        loadReports(),
-        loadTemplates(),
-        loadMetrics(),
-      ]);
+      await Promise.all([loadReports(), loadTemplates(), loadMetrics()]);
     } catch (error) {
-      console.error('Erro ao carregar dados:', error);
-      toast.error('Erro ao carregar dados de compliance');
+      console.error("Erro ao carregar dados:", error);
+      toast.error("Erro ao carregar dados de compliance");
     } finally {
       setLoading(false);
     }
   };
 
   const loadReports = async () => {
-    const response = await fetch('/api/backup/compliance/reports');
+    const response = await fetch("/api/backup/compliance/reports");
     if (response.ok) {
       const data = await response.json();
       setReports(data.data || []);
@@ -160,7 +162,7 @@ const ComplianceReports: React.FC = () => {
   };
 
   const loadTemplates = async () => {
-    const response = await fetch('/api/backup/compliance/templates');
+    const response = await fetch("/api/backup/compliance/templates");
     if (response.ok) {
       const data = await response.json();
       setTemplates(data.data || []);
@@ -168,7 +170,7 @@ const ComplianceReports: React.FC = () => {
   };
 
   const loadMetrics = async () => {
-    const response = await fetch('/api/backup/compliance/metrics');
+    const response = await fetch("/api/backup/compliance/metrics");
     if (response.ok) {
       const data = await response.json();
       setMetrics(data.data);
@@ -179,28 +181,28 @@ const ComplianceReports: React.FC = () => {
     let filtered = [...reports];
 
     if (filters.type) {
-      filtered = filtered.filter(report => report.type === filters.type);
+      filtered = filtered.filter((report) => report.type === filters.type);
     }
 
     if (filters.status) {
-      filtered = filtered.filter(report => report.status === filters.status);
+      filtered = filtered.filter((report) => report.status === filters.status);
     }
 
     if (filters.dateFrom) {
       const fromDate = new Date(filters.dateFrom);
-      filtered = filtered.filter(report => new Date(report.created_at) >= fromDate);
+      filtered = filtered.filter((report) => new Date(report.created_at) >= fromDate);
     }
 
     if (filters.dateTo) {
       const toDate = new Date(filters.dateTo);
-      filtered = filtered.filter(report => new Date(report.created_at) <= toDate);
+      filtered = filtered.filter((report) => new Date(report.created_at) <= toDate);
     }
 
     if (filters.searchTerm) {
       const term = filters.searchTerm.toLowerCase();
-      filtered = filtered.filter(report => 
-        report.title.toLowerCase().includes(term) ||
-        report.id.toLowerCase().includes(term)
+      filtered = filtered.filter(
+        (report) =>
+          report.title.toLowerCase().includes(term) || report.id.toLowerCase().includes(term),
       );
     }
 
@@ -209,87 +211,89 @@ const ComplianceReports: React.FC = () => {
 
   const handleCreateReport = async () => {
     try {
-      const response = await fetch('/api/backup/compliance/reports', {
-        method: 'POST',
+      const response = await fetch("/api/backup/compliance/reports", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(newReport),
       });
 
       if (response.ok) {
-        toast.success('Relatório criado com sucesso');
+        toast.success("Relatório criado com sucesso");
         setShowCreateDialog(false);
         setNewReport({
-          title: '',
-          type: 'LGPD',
-          template_id: '',
-          period_start: '',
-          period_end: '',
-          description: '',
+          title: "",
+          type: "LGPD",
+          template_id: "",
+          period_start: "",
+          period_end: "",
+          description: "",
         });
         loadReports();
       } else {
-        toast.error('Erro ao criar relatório');
+        toast.error("Erro ao criar relatório");
       }
     } catch (error) {
-      console.error('Erro ao criar relatório:', error);
-      toast.error('Erro ao criar relatório');
+      console.error("Erro ao criar relatório:", error);
+      toast.error("Erro ao criar relatório");
     }
   };
 
   const handleGenerateReport = async (reportId: string) => {
     try {
-      toast.info('Gerando relatório...');
+      toast.info("Gerando relatório...");
       const response = await fetch(`/api/backup/compliance/reports/${reportId}/generate`, {
-        method: 'POST',
+        method: "POST",
       });
 
       if (response.ok) {
-        toast.success('Relatório gerado com sucesso');
+        toast.success("Relatório gerado com sucesso");
         loadReports();
       } else {
-        toast.error('Erro ao gerar relatório');
+        toast.error("Erro ao gerar relatório");
       }
     } catch (error) {
-      console.error('Erro ao gerar relatório:', error);
-      toast.error('Erro ao gerar relatório');
+      console.error("Erro ao gerar relatório:", error);
+      toast.error("Erro ao gerar relatório");
     }
   };
 
-  const handleDownloadReport = async (reportId: string, format: 'PDF' | 'XLSX' = 'PDF') => {
+  const handleDownloadReport = async (reportId: string, format: "PDF" | "XLSX" = "PDF") => {
     try {
-      const response = await fetch(`/api/backup/compliance/reports/${reportId}/download?format=${format}`);
-      
+      const response = await fetch(
+        `/api/backup/compliance/reports/${reportId}/download?format=${format}`,
+      );
+
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.style.display = 'none';
+        const a = document.createElement("a");
+        a.style.display = "none";
         a.href = url;
         a.download = `compliance-report-${reportId}.${format.toLowerCase()}`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
-        toast.success('Download iniciado');
+        toast.success("Download iniciado");
       } else {
-        toast.error('Erro ao baixar relatório');
+        toast.error("Erro ao baixar relatório");
       }
     } catch (error) {
-      console.error('Erro ao baixar relatório:', error);
-      toast.error('Erro ao baixar relatório');
+      console.error("Erro ao baixar relatório:", error);
+      toast.error("Erro ao baixar relatório");
     }
   };
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'LGPD':
+      case "LGPD":
         return <Shield className="h-4 w-4" />;
-      case 'ANVISA':
+      case "ANVISA":
         return <Users className="h-4 w-4" />;
-      case 'CFM':
+      case "CFM":
         return <Lock className="h-4 w-4" />;
-      case 'ISO27001':
+      case "ISO27001":
         return <Globe className="h-4 w-4" />;
       default:
         return <FileText className="h-4 w-4" />;
@@ -298,13 +302,13 @@ const ComplianceReports: React.FC = () => {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'APPROVED':
+      case "APPROVED":
         return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case 'REJECTED':
+      case "REJECTED":
         return <XCircle className="h-4 w-4 text-red-500" />;
-      case 'PENDING':
+      case "PENDING":
         return <Clock className="h-4 w-4 text-yellow-500" />;
-      case 'DRAFT':
+      case "DRAFT":
         return <FileText className="h-4 w-4 text-gray-500" />;
       default:
         return <Clock className="h-4 w-4 text-gray-500" />;
@@ -313,38 +317,38 @@ const ComplianceReports: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'APPROVED':
-        return 'default';
-      case 'REJECTED':
-        return 'destructive';
-      case 'PENDING':
-        return 'secondary';
-      case 'DRAFT':
-        return 'outline';
+      case "APPROVED":
+        return "default";
+      case "REJECTED":
+        return "destructive";
+      case "PENDING":
+        return "secondary";
+      case "DRAFT":
+        return "outline";
       default:
-        return 'outline';
+        return "outline";
     }
   };
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'CRITICAL':
-        return 'text-red-600 bg-red-50';
-      case 'HIGH':
-        return 'text-orange-600 bg-orange-50';
-      case 'MEDIUM':
-        return 'text-yellow-600 bg-yellow-50';
-      case 'LOW':
-        return 'text-blue-600 bg-blue-50';
+      case "CRITICAL":
+        return "text-red-600 bg-red-50";
+      case "HIGH":
+        return "text-orange-600 bg-orange-50";
+      case "MEDIUM":
+        return "text-yellow-600 bg-yellow-50";
+      case "LOW":
+        return "text-blue-600 bg-blue-50";
       default:
-        return 'text-gray-600 bg-gray-50';
+        return "text-gray-600 bg-gray-50";
     }
   };
 
   const getComplianceScoreColor = (score: number) => {
-    if (score >= 90) return 'text-green-600';
-    if (score >= 70) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 90) return "text-green-600";
+    if (score >= 70) return "text-yellow-600";
+    return "text-red-600";
   };
 
   return (
@@ -352,9 +356,7 @@ const ComplianceReports: React.FC = () => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold">Relatórios de Compliance</h2>
-          <p className="text-muted-foreground">
-            Gerencie relatórios de conformidade e auditoria
-          </p>
+          <p className="text-muted-foreground">Gerencie relatórios de conformidade e auditoria</p>
         </div>
         <div className="flex space-x-2">
           <Button onClick={loadData} variant="outline">
@@ -371,9 +373,7 @@ const ComplianceReports: React.FC = () => {
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Criar Relatório de Compliance</DialogTitle>
-                <DialogDescription>
-                  Configure um novo relatório de conformidade
-                </DialogDescription>
+                <DialogDescription>Configure um novo relatório de conformidade</DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <div className="space-y-2">
@@ -460,9 +460,7 @@ const ComplianceReports: React.FC = () => {
                   <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
                     Cancelar
                   </Button>
-                  <Button onClick={handleCreateReport}>
-                    Criar Relatório
-                  </Button>
+                  <Button onClick={handleCreateReport}>Criar Relatório</Button>
                 </div>
               </div>
             </DialogContent>
@@ -477,7 +475,9 @@ const ComplianceReports: React.FC = () => {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className={`text-2xl font-bold ${getComplianceScoreColor(metrics.overall_score)}`}>
+                  <p
+                    className={`text-2xl font-bold ${getComplianceScoreColor(metrics.overall_score)}`}
+                  >
                     {metrics.overall_score}%
                   </p>
                   <p className="text-sm text-muted-foreground">Score Geral</p>
@@ -614,9 +614,7 @@ const ComplianceReports: React.FC = () => {
       {/* Lista de Relatórios */}
       <Card>
         <CardHeader>
-          <CardTitle>
-            Relatórios ({filteredReports.length})
-          </CardTitle>
+          <CardTitle>Relatórios ({filteredReports.length})</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -669,19 +667,19 @@ const ComplianceReports: React.FC = () => {
                     </TableCell>
                     <TableCell>
                       <div className="text-sm">
-                        {formatDate(new Date(report.period_start))} -{' '}
+                        {formatDate(new Date(report.period_start))} -{" "}
                         {formatDate(new Date(report.period_end))}
                       </div>
                     </TableCell>
                     <TableCell>
-                      <span className={`font-medium ${getComplianceScoreColor(report.metrics.compliance_score)}`}>
+                      <span
+                        className={`font-medium ${getComplianceScoreColor(report.metrics.compliance_score)}`}
+                      >
                         {report.metrics.compliance_score}%
                       </span>
                     </TableCell>
                     <TableCell>
-                      <div className="text-sm">
-                        {formatDate(new Date(report.created_at))}
-                      </div>
+                      <div className="text-sm">{formatDate(new Date(report.created_at))}</div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">
@@ -702,7 +700,7 @@ const ComplianceReports: React.FC = () => {
                         >
                           <Download className="h-4 w-4" />
                         </Button>
-                        {report.status === 'DRAFT' && (
+                        {report.status === "DRAFT" && (
                           <Button
                             variant="ghost"
                             size="sm"
@@ -741,7 +739,7 @@ const ComplianceReports: React.FC = () => {
                 <div>
                   <Label className="text-sm font-medium">Período</Label>
                   <p className="text-sm text-muted-foreground">
-                    {formatDate(new Date(selectedReport.period_start))} -{' '}
+                    {formatDate(new Date(selectedReport.period_start))} -{" "}
                     {formatDate(new Date(selectedReport.period_end))}
                   </p>
                 </div>
@@ -755,7 +753,9 @@ const ComplianceReports: React.FC = () => {
                 <Card>
                   <CardContent className="pt-4">
                     <div className="text-center">
-                      <p className={`text-2xl font-bold ${getComplianceScoreColor(selectedReport.metrics.compliance_score)}`}>
+                      <p
+                        className={`text-2xl font-bold ${getComplianceScoreColor(selectedReport.metrics.compliance_score)}`}
+                      >
                         {selectedReport.metrics.compliance_score}%
                       </p>
                       <p className="text-sm text-muted-foreground">Compliance</p>
@@ -765,7 +765,9 @@ const ComplianceReports: React.FC = () => {
                 <Card>
                   <CardContent className="pt-4">
                     <div className="text-center">
-                      <p className={`text-2xl font-bold ${getComplianceScoreColor(selectedReport.metrics.data_protection_score)}`}>
+                      <p
+                        className={`text-2xl font-bold ${getComplianceScoreColor(selectedReport.metrics.data_protection_score)}`}
+                      >
                         {selectedReport.metrics.data_protection_score}%
                       </p>
                       <p className="text-sm text-muted-foreground">Proteção</p>
@@ -775,7 +777,9 @@ const ComplianceReports: React.FC = () => {
                 <Card>
                   <CardContent className="pt-4">
                     <div className="text-center">
-                      <p className={`text-2xl font-bold ${getComplianceScoreColor(selectedReport.metrics.availability_score)}`}>
+                      <p
+                        className={`text-2xl font-bold ${getComplianceScoreColor(selectedReport.metrics.availability_score)}`}
+                      >
                         {selectedReport.metrics.availability_score}%
                       </p>
                       <p className="text-sm text-muted-foreground">Disponibilidade</p>

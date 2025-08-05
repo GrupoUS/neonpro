@@ -2,103 +2,109 @@
  * Treatment Plan Management Dashboard
  * FHIR-compliant treatment plan creation and management interface
  * Includes LGPD compliance and Brazilian healthcare standards
- * 
+ *
  * Created: January 26, 2025
  * Story: 3.2 - Treatment & Procedure Documentation
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Plus, Search, Filter, Calendar, User, FileText, MoreHorizontal } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
+import type { useState, useEffect } from "react";
+import type { Plus, Search, Filter, Calendar, User, FileText, MoreHorizontal } from "lucide-react";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Badge } from "@/components/ui/badge";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import {
+} from "@/components/ui/table";
+import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
+} from "@/components/ui/dropdown-menu";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { useToast } from '@/hooks/use-toast';
-import { 
-  TreatmentPlan, 
-  TreatmentPlanStatus, 
+} from "@/components/ui/select";
+import type { useToast } from "@/hooks/use-toast";
+import type {
+  TreatmentPlan,
+  TreatmentPlanStatus,
   TreatmentPlanIntent,
   TreatmentPlanSearchFilters,
-  TreatmentStatistics
-} from '@/lib/types/treatment';
-import { Patient } from '@/lib/types/fhir';
-import { 
-  searchTreatmentPlans, 
+  TreatmentStatistics,
+} from "@/lib/types/treatment";
+import type { Patient } from "@/lib/types/fhir";
+import type {
+  searchTreatmentPlans,
   getTreatmentStatistics,
-  deleteTreatmentPlan 
-} from '@/lib/supabase/treatments';
-import { searchPatients } from '@/lib/supabase/patients';
+  deleteTreatmentPlan,
+} from "@/lib/supabase/treatments";
+import type { searchPatients } from "@/lib/supabase/patients";
 
 interface TreatmentPlanManagementProps {
   onSelectTreatmentPlan?: (treatmentPlan: TreatmentPlan) => void;
 }
 
 const statusColors: Record<TreatmentPlanStatus, string> = {
-  'draft': 'bg-gray-100 text-gray-800',
-  'active': 'bg-green-100 text-green-800',
-  'on-hold': 'bg-yellow-100 text-yellow-800',
-  'revoked': 'bg-red-100 text-red-800',
-  'completed': 'bg-blue-100 text-blue-800',
-  'entered-in-error': 'bg-gray-100 text-gray-600',
-  'unknown': 'bg-gray-100 text-gray-600',
+  draft: "bg-gray-100 text-gray-800",
+  active: "bg-green-100 text-green-800",
+  "on-hold": "bg-yellow-100 text-yellow-800",
+  revoked: "bg-red-100 text-red-800",
+  completed: "bg-blue-100 text-blue-800",
+  "entered-in-error": "bg-gray-100 text-gray-600",
+  unknown: "bg-gray-100 text-gray-600",
 };
 
 const statusLabels: Record<TreatmentPlanStatus, string> = {
-  'draft': 'Rascunho',
-  'active': 'Ativo',
-  'on-hold': 'Em Pausa',
-  'revoked': 'Cancelado',
-  'completed': 'Concluído',
-  'entered-in-error': 'Erro',
-  'unknown': 'Desconhecido',
+  draft: "Rascunho",
+  active: "Ativo",
+  "on-hold": "Em Pausa",
+  revoked: "Cancelado",
+  completed: "Concluído",
+  "entered-in-error": "Erro",
+  unknown: "Desconhecido",
 };
 
 const intentLabels: Record<TreatmentPlanIntent, string> = {
-  'proposal': 'Proposta',
-  'plan': 'Plano',
-  'order': 'Ordem',
-  'option': 'Opção',
-  'directive': 'Diretiva',
+  proposal: "Proposta",
+  plan: "Plano",
+  order: "Ordem",
+  option: "Opção",
+  directive: "Diretiva",
 };
 
 export function TreatmentPlanManagement({ onSelectTreatmentPlan }: TreatmentPlanManagementProps) {
   const { toast } = useToast();
-  
+
   // State management
   const [treatmentPlans, setTreatmentPlans] = useState<TreatmentPlan[]>([]);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [statistics, setStatistics] = useState<TreatmentStatistics | null>(null);
   const [loading, setLoading] = useState(true);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [filters, setFilters] = useState<TreatmentPlanSearchFilters>({});
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  
+
   const perPage = 10;
 
   // Load data on component mount
@@ -114,10 +120,7 @@ export function TreatmentPlanManagement({ onSelectTreatmentPlan }: TreatmentPlan
   }, [filters, currentPage, searchText]);
 
   const loadData = async () => {
-    await Promise.all([
-      loadTreatmentPlans(),
-      loadStatistics(),
-    ]);
+    await Promise.all([loadTreatmentPlans(), loadStatistics()]);
   };
 
   const loadTreatmentPlans = async () => {
@@ -127,16 +130,16 @@ export function TreatmentPlanManagement({ onSelectTreatmentPlan }: TreatmentPlan
         ...filters,
         search_text: searchText || undefined,
       };
-      
+
       const response = await searchTreatmentPlans(searchFilters, currentPage, perPage);
       setTreatmentPlans(response.treatment_plans);
       setTotalCount(response.total_count);
     } catch (error) {
-      console.error('Erro ao carregar planos de tratamento:', error);
+      console.error("Erro ao carregar planos de tratamento:", error);
       toast({
-        title: 'Erro',
-        description: 'Não foi possível carregar os planos de tratamento.',
-        variant: 'destructive',
+        title: "Erro",
+        description: "Não foi possível carregar os planos de tratamento.",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -148,7 +151,7 @@ export function TreatmentPlanManagement({ onSelectTreatmentPlan }: TreatmentPlan
       const response = await searchPatients({}, 1, 100);
       setPatients(response.patients);
     } catch (error) {
-      console.error('Erro ao carregar pacientes:', error);
+      console.error("Erro ao carregar pacientes:", error);
     }
   };
 
@@ -157,7 +160,7 @@ export function TreatmentPlanManagement({ onSelectTreatmentPlan }: TreatmentPlan
       const stats = await getTreatmentStatistics();
       setStatistics(stats);
     } catch (error) {
-      console.error('Erro ao carregar estatísticas:', error);
+      console.error("Erro ao carregar estatísticas:", error);
     }
   };
 
@@ -167,7 +170,7 @@ export function TreatmentPlanManagement({ onSelectTreatmentPlan }: TreatmentPlan
   };
 
   const handleFilterChange = (key: keyof TreatmentPlanSearchFilters, value: any) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
       [key]: value,
     }));
@@ -178,23 +181,23 @@ export function TreatmentPlanManagement({ onSelectTreatmentPlan }: TreatmentPlan
     try {
       await deleteTreatmentPlan(treatmentPlan.id);
       toast({
-        title: 'Sucesso',
-        description: 'Plano de tratamento excluído com sucesso.',
+        title: "Sucesso",
+        description: "Plano de tratamento excluído com sucesso.",
       });
       loadTreatmentPlans();
       loadStatistics();
     } catch (error) {
-      console.error('Erro ao excluir plano de tratamento:', error);
+      console.error("Erro ao excluir plano de tratamento:", error);
       toast({
-        title: 'Erro',
-        description: 'Não foi possível excluir o plano de tratamento.',
-        variant: 'destructive',
+        title: "Erro",
+        description: "Não foi possível excluir o plano de tratamento.",
+        variant: "destructive",
       });
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
+    return new Date(dateString).toLocaleDateString("pt-BR");
   };
 
   const totalPages = Math.ceil(totalCount / perPage);
@@ -224,9 +227,7 @@ export function TreatmentPlanManagement({ onSelectTreatmentPlan }: TreatmentPlan
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{statistics.completed_treatment_plans}</div>
-              <p className="text-xs text-muted-foreground">
-                Finalizados com sucesso
-              </p>
+              <p className="text-xs text-muted-foreground">Finalizados com sucesso</p>
             </CardContent>
           </Card>
 
@@ -250,9 +251,7 @@ export function TreatmentPlanManagement({ onSelectTreatmentPlan }: TreatmentPlan
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{statistics.average_treatment_duration_days}</div>
-              <p className="text-xs text-muted-foreground">
-                dias por tratamento
-              </p>
+              <p className="text-xs text-muted-foreground">dias por tratamento</p>
             </CardContent>
           </Card>
         </div>
@@ -266,7 +265,7 @@ export function TreatmentPlanManagement({ onSelectTreatmentPlan }: TreatmentPlan
             Gerencie planos de tratamento seguindo padrões HL7 FHIR R4
           </p>
         </div>
-        
+
         <Button>
           <Plus className="mr-2 h-4 w-4" />
           Novo Plano
@@ -284,12 +283,12 @@ export function TreatmentPlanManagement({ onSelectTreatmentPlan }: TreatmentPlan
             className="pl-9"
           />
         </div>
-        
+
         <div className="flex gap-2">
           <Select
-            value={filters.patient_id || 'all'}
-            onValueChange={(value) => 
-              handleFilterChange('patient_id', value === 'all' ? undefined : value)
+            value={filters.patient_id || "all"}
+            onValueChange={(value) =>
+              handleFilterChange("patient_id", value === "all" ? undefined : value)
             }
           >
             <SelectTrigger className="w-[200px]">
@@ -306,9 +305,12 @@ export function TreatmentPlanManagement({ onSelectTreatmentPlan }: TreatmentPlan
           </Select>
 
           <Select
-            value={filters.status?.[0] || 'all'}
-            onValueChange={(value) => 
-              handleFilterChange('status', value === 'all' ? undefined : [value as TreatmentPlanStatus])
+            value={filters.status?.[0] || "all"}
+            onValueChange={(value) =>
+              handleFilterChange(
+                "status",
+                value === "all" ? undefined : [value as TreatmentPlanStatus],
+              )
             }
           >
             <SelectTrigger className="w-[150px]">
@@ -330,9 +332,7 @@ export function TreatmentPlanManagement({ onSelectTreatmentPlan }: TreatmentPlan
       <Card>
         <CardHeader>
           <CardTitle>Planos de Tratamento</CardTitle>
-          <CardDescription>
-            Lista de todos os planos de tratamento criados
-          </CardDescription>
+          <CardDescription>Lista de todos os planos de tratamento criados</CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -344,9 +344,7 @@ export function TreatmentPlanManagement({ onSelectTreatmentPlan }: TreatmentPlan
               <div className="text-center">
                 <FileText className="mx-auto h-12 w-12 text-muted-foreground" />
                 <h3 className="mt-4 text-lg font-semibold">Nenhum plano encontrado</h3>
-                <p className="text-muted-foreground">
-                  Comece criando um novo plano de tratamento.
-                </p>
+                <p className="text-muted-foreground">Comece criando um novo plano de tratamento.</p>
               </div>
             </div>
           ) : (
@@ -364,7 +362,7 @@ export function TreatmentPlanManagement({ onSelectTreatmentPlan }: TreatmentPlan
               </TableHeader>
               <TableBody>
                 {treatmentPlans.map((treatmentPlan) => (
-                  <TableRow 
+                  <TableRow
                     key={treatmentPlan.id}
                     className="cursor-pointer hover:bg-muted/50"
                     onClick={() => onSelectTreatmentPlan?.(treatmentPlan)}
@@ -372,7 +370,8 @@ export function TreatmentPlanManagement({ onSelectTreatmentPlan }: TreatmentPlan
                     <TableCell>
                       <div className="font-medium">
                         {/* @ts-ignore - patient relation from Supabase */}
-                        {treatmentPlan.patient?.given_name?.[0]} {treatmentPlan.patient?.family_name}
+                        {treatmentPlan.patient?.given_name?.[0]}{" "}
+                        {treatmentPlan.patient?.family_name}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -390,9 +389,7 @@ export function TreatmentPlanManagement({ onSelectTreatmentPlan }: TreatmentPlan
                         {statusLabels[treatmentPlan.status]}
                       </Badge>
                     </TableCell>
-                    <TableCell>
-                      {intentLabels[treatmentPlan.intent]}
-                    </TableCell>
+                    <TableCell>{intentLabels[treatmentPlan.intent]}</TableCell>
                     <TableCell>
                       {treatmentPlan.period_start && treatmentPlan.period_end ? (
                         <div className="text-sm">
@@ -463,13 +460,14 @@ export function TreatmentPlanManagement({ onSelectTreatmentPlan }: TreatmentPlan
           {totalPages > 1 && (
             <div className="flex items-center justify-between px-2 py-4">
               <div className="text-sm text-muted-foreground">
-                Mostrando {((currentPage - 1) * perPage) + 1} a {Math.min(currentPage * perPage, totalCount)} de {totalCount} resultados
+                Mostrando {(currentPage - 1) * perPage + 1} a{" "}
+                {Math.min(currentPage * perPage, totalCount)} de {totalCount} resultados
               </div>
               <div className="flex items-center space-x-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                   disabled={currentPage === 1}
                 >
                   Anterior
@@ -480,7 +478,7 @@ export function TreatmentPlanManagement({ onSelectTreatmentPlan }: TreatmentPlan
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                   disabled={currentPage === totalPages}
                 >
                   Próxima

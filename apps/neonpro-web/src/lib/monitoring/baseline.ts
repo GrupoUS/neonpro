@@ -1,18 +1,18 @@
-﻿/**
+/**
  * TASK-001: Foundation Setup & Baseline
  * Baseline Metrics System
- * 
+ *
  * Establishes baseline performance, user engagement, and system health
  * metrics for measuring enhancement impact and detecting regressions.
  */
 
-import { createClient } from '@/lib/supabase/client';
+import type { createClient } from "@/lib/supabase/client";
 
 export interface BaselineMetric {
   metric_name: string;
   metric_value: number;
   metric_unit: string;
-  measurement_period: 'daily' | 'weekly' | 'monthly';
+  measurement_period: "daily" | "weekly" | "monthly";
   baseline_date: string;
   confidence_level: number;
   sample_size: number;
@@ -24,8 +24,8 @@ export interface BaselineComparison {
   baseline_value: number;
   current_value: number;
   change_percentage: number;
-  change_direction: 'improvement' | 'regression' | 'neutral';
-  significance_level: 'low' | 'medium' | 'high';
+  change_direction: "improvement" | "regression" | "neutral";
+  significance_level: "low" | "medium" | "high";
   measurement_date: string;
 }
 
@@ -49,31 +49,31 @@ class BaselineManager {
   // Core metrics to establish baselines for
   private coreMetrics = [
     // Performance metrics
-    { name: 'page_load_time', unit: 'ms', threshold: 2000 },
-    { name: 'first_contentful_paint', unit: 'ms', threshold: 1500 },
-    { name: 'largest_contentful_paint', unit: 'ms', threshold: 2500 },
-    { name: 'cumulative_layout_shift', unit: 'score', threshold: 0.1 },
-    { name: 'time_to_interactive', unit: 'ms', threshold: 3000 },
-    
+    { name: "page_load_time", unit: "ms", threshold: 2000 },
+    { name: "first_contentful_paint", unit: "ms", threshold: 1500 },
+    { name: "largest_contentful_paint", unit: "ms", threshold: 2500 },
+    { name: "cumulative_layout_shift", unit: "score", threshold: 0.1 },
+    { name: "time_to_interactive", unit: "ms", threshold: 3000 },
+
     // User engagement metrics
-    { name: 'session_duration', unit: 'seconds', threshold: 300 },
-    { name: 'pages_per_session', unit: 'count', threshold: 3 },
-    { name: 'bounce_rate', unit: 'percentage', threshold: 60 },
-    { name: 'user_retention_rate', unit: 'percentage', threshold: 40 },
-    { name: 'feature_adoption_rate', unit: 'percentage', threshold: 25 },
-    
+    { name: "session_duration", unit: "seconds", threshold: 300 },
+    { name: "pages_per_session", unit: "count", threshold: 3 },
+    { name: "bounce_rate", unit: "percentage", threshold: 60 },
+    { name: "user_retention_rate", unit: "percentage", threshold: 40 },
+    { name: "feature_adoption_rate", unit: "percentage", threshold: 25 },
+
     // System health metrics
-    { name: 'api_response_time', unit: 'ms', threshold: 500 },
-    { name: 'database_query_time', unit: 'ms', threshold: 100 },
-    { name: 'error_rate', unit: 'percentage', threshold: 1 },
-    { name: 'uptime_percentage', unit: 'percentage', threshold: 99.9 },
-    { name: 'memory_usage', unit: 'mb', threshold: 512 },
-    
+    { name: "api_response_time", unit: "ms", threshold: 500 },
+    { name: "database_query_time", unit: "ms", threshold: 100 },
+    { name: "error_rate", unit: "percentage", threshold: 1 },
+    { name: "uptime_percentage", unit: "percentage", threshold: 99.9 },
+    { name: "memory_usage", unit: "mb", threshold: 512 },
+
     // Business metrics
-    { name: 'daily_active_users', unit: 'count', threshold: 10 },
-    { name: 'feature_usage_rate', unit: 'percentage', threshold: 30 },
-    { name: 'conversion_rate', unit: 'percentage', threshold: 5 },
-    { name: 'user_satisfaction_score', unit: 'rating', threshold: 4.0 }
+    { name: "daily_active_users", unit: "count", threshold: 10 },
+    { name: "feature_usage_rate", unit: "percentage", threshold: 30 },
+    { name: "conversion_rate", unit: "percentage", threshold: 5 },
+    { name: "user_satisfaction_score", unit: "rating", threshold: 4.0 },
   ];
 
   constructor() {
@@ -88,13 +88,13 @@ class BaselineManager {
     try {
       // Load existing baselines from database
       await this.loadExistingBaselines();
-      
+
       // Establish new baselines if needed
       await this.establishMissingBaselines();
-      
-      console.log('✅ Baseline system initialized');
+
+      console.log("✅ Baseline system initialized");
     } catch (error) {
-      console.error('Error initializing baselines:', error);
+      console.error("Error initializing baselines:", error);
     }
   }
 
@@ -104,20 +104,20 @@ class BaselineManager {
   private async loadExistingBaselines(): Promise<void> {
     try {
       const { data, error } = await this.supabase
-        .from('system_metrics')
-        .select('*')
-        .eq('metric_type', 'baseline')
-        .order('timestamp', { ascending: false });
+        .from("system_metrics")
+        .select("*")
+        .eq("metric_type", "baseline")
+        .order("timestamp", { ascending: false });
 
       if (error) {
-        console.error('Error loading baselines:', error);
+        console.error("Error loading baselines:", error);
         return;
       }
 
       // Group by metric name and take latest baseline for each
       const latestBaselines = new Map<string, any>();
-      
-      data?.forEach(record => {
+
+      data?.forEach((record) => {
         const metricName = record.metric_name;
         if (!latestBaselines.has(metricName)) {
           latestBaselines.set(metricName, record);
@@ -130,19 +130,19 @@ class BaselineManager {
           metric_name: metricName,
           metric_value: record.metric_value,
           metric_unit: record.metric_unit,
-          measurement_period: record.metadata?.measurement_period || 'daily',
+          measurement_period: record.metadata?.measurement_period || "daily",
           baseline_date: record.timestamp,
           confidence_level: record.metadata?.confidence_level || 0.8,
           sample_size: record.metadata?.sample_size || 100,
-          metadata: record.metadata
+          metadata: record.metadata,
         };
-        
+
         this.baselineMetrics.set(metricName, baseline);
       });
 
       console.log(`Loaded ${this.baselineMetrics.size} existing baselines`);
     } catch (error) {
-      console.error('Error loading existing baselines:', error);
+      console.error("Error loading existing baselines:", error);
     }
   }
 
@@ -163,14 +163,14 @@ class BaselineManager {
   async establishBaseline(
     metricName: string,
     metricUnit: string,
-    measurementPeriod: 'daily' | 'weekly' | 'monthly' = 'daily'
+    measurementPeriod: "daily" | "weekly" | "monthly" = "daily",
   ): Promise<BaselineMetric | null> {
     try {
       console.log(`📊 Establishing baseline for ${metricName}...`);
 
       // Collect current measurements for baseline calculation
       const measurements = await this.collectCurrentMeasurements(metricName, measurementPeriod);
-      
+
       if (measurements.length === 0) {
         console.warn(`No measurements available for ${metricName}, using default value`);
         return await this.createDefaultBaseline(metricName, metricUnit, measurementPeriod);
@@ -181,7 +181,7 @@ class BaselineManager {
         metricName,
         metricUnit,
         measurementPeriod,
-        measurements
+        measurements,
       );
 
       // Store baseline in database
@@ -190,8 +190,10 @@ class BaselineManager {
       // Cache baseline
       this.baselineMetrics.set(metricName, baseline);
 
-      console.log(`✅ Baseline established for ${metricName}: ${baseline.metric_value} ${baseline.metric_unit}`);
-      
+      console.log(
+        `✅ Baseline established for ${metricName}: ${baseline.metric_value} ${baseline.metric_unit}`,
+      );
+
       return baseline;
     } catch (error) {
       console.error(`Error establishing baseline for ${metricName}:`, error);
@@ -204,29 +206,29 @@ class BaselineManager {
    */
   private async collectCurrentMeasurements(
     metricName: string,
-    measurementPeriod: string
+    measurementPeriod: string,
   ): Promise<number[]> {
     try {
       // Define collection period based on measurement period
-      const periodDays = measurementPeriod === 'daily' ? 7 : 
-                        measurementPeriod === 'weekly' ? 30 : 90;
-      
+      const periodDays =
+        measurementPeriod === "daily" ? 7 : measurementPeriod === "weekly" ? 30 : 90;
+
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - periodDays);
 
       const { data, error } = await this.supabase
-        .from('system_metrics')
-        .select('metric_value')
-        .eq('metric_name', metricName)
-        .gte('timestamp', startDate.toISOString())
-        .not('metric_type', 'eq', 'baseline');
+        .from("system_metrics")
+        .select("metric_value")
+        .eq("metric_name", metricName)
+        .gte("timestamp", startDate.toISOString())
+        .not("metric_type", "eq", "baseline");
 
       if (error || !data) {
         console.warn(`No existing data for ${metricName}:`, error);
         return [];
       }
 
-      return data.map(record => record.metric_value).filter(val => val !== null);
+      return data.map((record) => record.metric_value).filter((val) => val !== null);
     } catch (error) {
       console.error(`Error collecting measurements for ${metricName}:`, error);
       return [];
@@ -240,33 +242,36 @@ class BaselineManager {
     metricName: string,
     metricUnit: string,
     measurementPeriod: string,
-    measurements: number[]
+    measurements: number[],
   ): BaselineMetric {
     // Calculate statistical measures
     const sorted = [...measurements].sort((a, b) => a - b);
     const mean = measurements.reduce((sum, val) => sum + val, 0) / measurements.length;
-    const median = sorted.length % 2 === 0 
-      ? (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2
-      : sorted[Math.floor(sorted.length / 2)];
-    
+    const median =
+      sorted.length % 2 === 0
+        ? (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2
+        : sorted[Math.floor(sorted.length / 2)];
+
     // Use median for more stable baseline (less affected by outliers)
     const baselineValue = median;
-    
+
     // Calculate confidence level based on sample size and variance
-    const variance = measurements.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / measurements.length;
+    const variance =
+      measurements.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / measurements.length;
     const standardDeviation = Math.sqrt(variance);
     const coefficientOfVariation = standardDeviation / mean;
-    
+
     // Higher confidence for larger samples and lower variance
-    const confidenceLevel = Math.min(0.95, Math.max(0.5, 
-      (measurements.length / 100) * (1 - Math.min(1, coefficientOfVariation))
-    ));
+    const confidenceLevel = Math.min(
+      0.95,
+      Math.max(0.5, (measurements.length / 100) * (1 - Math.min(1, coefficientOfVariation))),
+    );
 
     return {
       metric_name: metricName,
       metric_value: Number(baselineValue.toFixed(2)),
       metric_unit: metricUnit,
-      measurement_period: measurementPeriod as 'daily' | 'weekly' | 'monthly',
+      measurement_period: measurementPeriod as "daily" | "weekly" | "monthly",
       baseline_date: new Date().toISOString(),
       confidence_level: Number(confidenceLevel.toFixed(2)),
       sample_size: measurements.length,
@@ -277,8 +282,8 @@ class BaselineManager {
         min_value: Math.min(...measurements),
         max_value: Math.max(...measurements),
         percentile_95: sorted[Math.floor(sorted.length * 0.95)],
-        percentile_5: sorted[Math.floor(sorted.length * 0.05)]
-      }
+        percentile_5: sorted[Math.floor(sorted.length * 0.05)],
+      },
     };
   }
 
@@ -288,28 +293,28 @@ class BaselineManager {
   private async createDefaultBaseline(
     metricName: string,
     metricUnit: string,
-    measurementPeriod: string
+    measurementPeriod: string,
   ): Promise<BaselineMetric> {
     const defaultValues: Record<string, number> = {
-      'page_load_time': 1000,
-      'first_contentful_paint': 800,
-      'largest_contentful_paint': 1500,
-      'cumulative_layout_shift': 0.05,
-      'time_to_interactive': 2000,
-      'session_duration': 180,
-      'pages_per_session': 2.5,
-      'bounce_rate': 50,
-      'user_retention_rate': 35,
-      'feature_adoption_rate': 20,
-      'api_response_time': 200,
-      'database_query_time': 50,
-      'error_rate': 0.5,
-      'uptime_percentage': 99.95,
-      'memory_usage': 256,
-      'daily_active_users': 5,
-      'feature_usage_rate': 25,
-      'conversion_rate': 3,
-      'user_satisfaction_score': 4.2
+      page_load_time: 1000,
+      first_contentful_paint: 800,
+      largest_contentful_paint: 1500,
+      cumulative_layout_shift: 0.05,
+      time_to_interactive: 2000,
+      session_duration: 180,
+      pages_per_session: 2.5,
+      bounce_rate: 50,
+      user_retention_rate: 35,
+      feature_adoption_rate: 20,
+      api_response_time: 200,
+      database_query_time: 50,
+      error_rate: 0.5,
+      uptime_percentage: 99.95,
+      memory_usage: 256,
+      daily_active_users: 5,
+      feature_usage_rate: 25,
+      conversion_rate: 3,
+      user_satisfaction_score: 4.2,
     };
 
     const defaultValue = defaultValues[metricName] || 100;
@@ -318,14 +323,14 @@ class BaselineManager {
       metric_name: metricName,
       metric_value: defaultValue,
       metric_unit: metricUnit,
-      measurement_period: measurementPeriod as 'daily' | 'weekly' | 'monthly',
+      measurement_period: measurementPeriod as "daily" | "weekly" | "monthly",
       baseline_date: new Date().toISOString(),
       confidence_level: 0.3, // Low confidence for default values
       sample_size: 0,
       metadata: {
-        source: 'default_value',
-        note: 'Baseline established using default value due to lack of historical data'
-      }
+        source: "default_value",
+        note: "Baseline established using default value due to lack of historical data",
+      },
     };
 
     await this.storeBaseline(baseline);
@@ -337,33 +342,34 @@ class BaselineManager {
    */
   private async storeBaseline(baseline: BaselineMetric): Promise<void> {
     try {
-      const { error } = await this.supabase
-        .from('system_metrics')
-        .insert({
-          metric_type: 'baseline',
-          metric_name: baseline.metric_name,
-          metric_value: baseline.metric_value,
-          metric_unit: baseline.metric_unit,
-          metadata: {
-            measurement_period: baseline.measurement_period,
-            confidence_level: baseline.confidence_level,
-            sample_size: baseline.sample_size,
-            ...baseline.metadata
-          }
-        });
+      const { error } = await this.supabase.from("system_metrics").insert({
+        metric_type: "baseline",
+        metric_name: baseline.metric_name,
+        metric_value: baseline.metric_value,
+        metric_unit: baseline.metric_unit,
+        metadata: {
+          measurement_period: baseline.measurement_period,
+          confidence_level: baseline.confidence_level,
+          sample_size: baseline.sample_size,
+          ...baseline.metadata,
+        },
+      });
 
       if (error) {
-        console.error('Error storing baseline:', error);
+        console.error("Error storing baseline:", error);
       }
     } catch (error) {
-      console.error('Error storing baseline:', error);
+      console.error("Error storing baseline:", error);
     }
   }
 
   /**
    * Compare current metrics against baselines
    */
-  async compareToBaseline(metricName: string, currentValue: number): Promise<BaselineComparison | null> {
+  async compareToBaseline(
+    metricName: string,
+    currentValue: number,
+  ): Promise<BaselineComparison | null> {
     const baseline = this.baselineMetrics.get(metricName);
     if (!baseline) {
       console.warn(`No baseline found for ${metricName}`);
@@ -371,12 +377,15 @@ class BaselineManager {
     }
 
     const changePercentage = ((currentValue - baseline.metric_value) / baseline.metric_value) * 100;
-    
+
     // Determine change direction based on metric type
     const changeDirection = this.determineChangeDirection(metricName, changePercentage);
-    
+
     // Determine significance level
-    const significanceLevel = this.determineSignificanceLevel(Math.abs(changePercentage), baseline.confidence_level);
+    const significanceLevel = this.determineSignificanceLevel(
+      Math.abs(changePercentage),
+      baseline.confidence_level,
+    );
 
     const comparison: BaselineComparison = {
       metric_name: metricName,
@@ -385,13 +394,15 @@ class BaselineManager {
       change_percentage: Number(changePercentage.toFixed(2)),
       change_direction: changeDirection,
       significance_level: significanceLevel,
-      measurement_date: new Date().toISOString()
+      measurement_date: new Date().toISOString(),
     };
 
     // Log significant changes
-    if (significanceLevel === 'high') {
-      console.log(`🚨 Significant ${changeDirection} detected in ${metricName}: ${changePercentage.toFixed(1)}%`);
-      
+    if (significanceLevel === "high") {
+      console.log(
+        `🚨 Significant ${changeDirection} detected in ${metricName}: ${changePercentage.toFixed(1)}%`,
+      );
+
       // Store comparison in database
       await this.storeComparison(comparison);
     }
@@ -402,28 +413,38 @@ class BaselineManager {
   /**
    * Determine if change is improvement or regression
    */
-  private determineChangeDirection(metricName: string, changePercentage: number): 'improvement' | 'regression' | 'neutral' {
+  private determineChangeDirection(
+    metricName: string,
+    changePercentage: number,
+  ): "improvement" | "regression" | "neutral" {
     // Define metrics where lower values are better
     const lowerIsBetter = [
-      'page_load_time', 'first_contentful_paint', 'largest_contentful_paint',
-      'cumulative_layout_shift', 'time_to_interactive', 'bounce_rate',
-      'api_response_time', 'database_query_time', 'error_rate', 'memory_usage'
+      "page_load_time",
+      "first_contentful_paint",
+      "largest_contentful_paint",
+      "cumulative_layout_shift",
+      "time_to_interactive",
+      "bounce_rate",
+      "api_response_time",
+      "database_query_time",
+      "error_rate",
+      "memory_usage",
     ];
 
     // Define neutral threshold
     const neutralThreshold = 5; // 5% change considered neutral
 
     if (Math.abs(changePercentage) < neutralThreshold) {
-      return 'neutral';
+      return "neutral";
     }
 
     const isLowerBetter = lowerIsBetter.includes(metricName);
     const isDecrease = changePercentage < 0;
 
     if ((isLowerBetter && isDecrease) || (!isLowerBetter && !isDecrease)) {
-      return 'improvement';
+      return "improvement";
     } else {
-      return 'regression';
+      return "regression";
     }
   }
 
@@ -432,20 +453,20 @@ class BaselineManager {
    */
   private determineSignificanceLevel(
     absoluteChangePercentage: number,
-    confidenceLevel: number
-  ): 'low' | 'medium' | 'high' {
+    confidenceLevel: number,
+  ): "low" | "medium" | "high" {
     // Adjust significance thresholds based on confidence level
     const confidenceMultiplier = Math.max(0.5, confidenceLevel);
-    
+
     const highThreshold = 20 * confidenceMultiplier;
     const mediumThreshold = 10 * confidenceMultiplier;
 
     if (absoluteChangePercentage >= highThreshold) {
-      return 'high';
+      return "high";
     } else if (absoluteChangePercentage >= mediumThreshold) {
-      return 'medium';
+      return "medium";
     } else {
-      return 'low';
+      return "low";
     }
   }
 
@@ -454,22 +475,20 @@ class BaselineManager {
    */
   private async storeComparison(comparison: BaselineComparison): Promise<void> {
     try {
-      await this.supabase
-        .from('system_metrics')
-        .insert({
-          metric_type: 'baseline_comparison',
-          metric_name: comparison.metric_name,
-          metric_value: comparison.change_percentage,
-          metric_unit: 'percentage',
-          metadata: {
-            baseline_value: comparison.baseline_value,
-            current_value: comparison.current_value,
-            change_direction: comparison.change_direction,
-            significance_level: comparison.significance_level
-          }
-        });
+      await this.supabase.from("system_metrics").insert({
+        metric_type: "baseline_comparison",
+        metric_name: comparison.metric_name,
+        metric_value: comparison.change_percentage,
+        metric_unit: "percentage",
+        metadata: {
+          baseline_value: comparison.baseline_value,
+          current_value: comparison.current_value,
+          change_direction: comparison.change_direction,
+          significance_level: comparison.significance_level,
+        },
+      });
     } catch (error) {
-      console.error('Error storing comparison:', error);
+      console.error("Error storing comparison:", error);
     }
   }
 
@@ -477,7 +496,7 @@ class BaselineManager {
    * Generate comprehensive baseline report
    */
   async generateBaselineReport(
-    measurementPeriod: 'daily' | 'weekly' | 'monthly' = 'daily'
+    measurementPeriod: "daily" | "weekly" | "monthly" = "daily",
   ): Promise<BaselineReport> {
     try {
       const comparisons: BaselineComparison[] = [];
@@ -488,14 +507,17 @@ class BaselineManager {
         if (baseline.measurement_period === measurementPeriod) {
           // Get latest measurement for this metric
           const currentValue = await this.getCurrentMetricValue(metricName);
-          
+
           if (currentValue !== null) {
             const comparison = await this.compareToBaseline(metricName, currentValue);
             if (comparison) {
               comparisons.push(comparison);
-              
+
               // Generate recommendations for regressions
-              if (comparison.change_direction === 'regression' && comparison.significance_level === 'high') {
+              if (
+                comparison.change_direction === "regression" &&
+                comparison.significance_level === "high"
+              ) {
                 recommendations.push(this.generateRecommendation(comparison));
               }
             }
@@ -504,10 +526,10 @@ class BaselineManager {
       }
 
       // Calculate summary statistics
-      const significantChanges = comparisons.filter(c => c.significance_level === 'high').length;
-      const regressions = comparisons.filter(c => c.change_direction === 'regression').length;
-      const improvements = comparisons.filter(c => c.change_direction === 'improvement').length;
-      const neutralChanges = comparisons.filter(c => c.change_direction === 'neutral').length;
+      const significantChanges = comparisons.filter((c) => c.significance_level === "high").length;
+      const regressions = comparisons.filter((c) => c.change_direction === "regression").length;
+      const improvements = comparisons.filter((c) => c.change_direction === "improvement").length;
+      const neutralChanges = comparisons.filter((c) => c.change_direction === "neutral").length;
 
       const report: BaselineReport = {
         report_date: new Date().toISOString(),
@@ -518,7 +540,7 @@ class BaselineManager {
         improvements,
         neutral_changes: neutralChanges,
         comparisons,
-        recommendations
+        recommendations,
       };
 
       // Store report in database
@@ -526,7 +548,7 @@ class BaselineManager {
 
       return report;
     } catch (error) {
-      console.error('Error generating baseline report:', error);
+      console.error("Error generating baseline report:", error);
       throw error;
     }
   }
@@ -537,12 +559,12 @@ class BaselineManager {
   private async getCurrentMetricValue(metricName: string): Promise<number | null> {
     try {
       const { data, error } = await this.supabase
-        .from('system_metrics')
-        .select('metric_value')
-        .eq('metric_name', metricName)
-        .not('metric_type', 'eq', 'baseline')
-        .not('metric_type', 'eq', 'baseline_comparison')
-        .order('timestamp', { ascending: false })
+        .from("system_metrics")
+        .select("metric_value")
+        .eq("metric_name", metricName)
+        .not("metric_type", "eq", "baseline")
+        .not("metric_type", "eq", "baseline_comparison")
+        .order("timestamp", { ascending: false })
         .limit(1);
 
       if (error || !data || data.length === 0) {
@@ -564,15 +586,17 @@ class BaselineManager {
     const changePercentage = comparison.change_percentage;
 
     const recommendations: Record<string, string> = {
-      'page_load_time': `Page load time increased by ${Math.abs(changePercentage).toFixed(1)}%. Consider optimizing images, reducing bundle size, or implementing caching.`,
-      'error_rate': `Error rate increased by ${Math.abs(changePercentage).toFixed(1)}%. Review recent deployments and check error logs for patterns.`,
-      'api_response_time': `API response time increased by ${Math.abs(changePercentage).toFixed(1)}%. Check database performance and API endpoint optimization.`,
-      'bounce_rate': `Bounce rate increased by ${Math.abs(changePercentage).toFixed(1)}%. Review landing page performance and user experience.`,
-      'memory_usage': `Memory usage increased by ${Math.abs(changePercentage).toFixed(1)}%. Check for memory leaks and optimize resource usage.`
+      page_load_time: `Page load time increased by ${Math.abs(changePercentage).toFixed(1)}%. Consider optimizing images, reducing bundle size, or implementing caching.`,
+      error_rate: `Error rate increased by ${Math.abs(changePercentage).toFixed(1)}%. Review recent deployments and check error logs for patterns.`,
+      api_response_time: `API response time increased by ${Math.abs(changePercentage).toFixed(1)}%. Check database performance and API endpoint optimization.`,
+      bounce_rate: `Bounce rate increased by ${Math.abs(changePercentage).toFixed(1)}%. Review landing page performance and user experience.`,
+      memory_usage: `Memory usage increased by ${Math.abs(changePercentage).toFixed(1)}%. Check for memory leaks and optimize resource usage.`,
     };
 
-    return recommendations[metricName] || 
-      `${metricName} shows regression of ${Math.abs(changePercentage).toFixed(1)}%. Investigation recommended.`;
+    return (
+      recommendations[metricName] ||
+      `${metricName} shows regression of ${Math.abs(changePercentage).toFixed(1)}%. Investigation recommended.`
+    );
   }
 
   /**
@@ -580,17 +604,15 @@ class BaselineManager {
    */
   private async storeReport(report: BaselineReport): Promise<void> {
     try {
-      await this.supabase
-        .from('system_metrics')
-        .insert({
-          metric_type: 'baseline_report',
-          metric_name: 'comprehensive_report',
-          metric_value: report.total_metrics,
-          metric_unit: 'count',
-          metadata: report
-        });
+      await this.supabase.from("system_metrics").insert({
+        metric_type: "baseline_report",
+        metric_name: "comprehensive_report",
+        metric_value: report.total_metrics,
+        metric_unit: "count",
+        metadata: report,
+      });
     } catch (error) {
-      console.error('Error storing report:', error);
+      console.error("Error storing report:", error);
     }
   }
 
@@ -599,32 +621,35 @@ class BaselineManager {
    */
   private startPeriodicMeasurement(): void {
     // Run baseline comparison every hour
-    this.measurementInterval = setInterval(async () => {
-      try {
-        await this.runPeriodicMeasurement();
-      } catch (error) {
-        console.error('Error in periodic measurement:', error);
-      }
-    }, 60 * 60 * 1000); // Every hour
+    this.measurementInterval = setInterval(
+      async () => {
+        try {
+          await this.runPeriodicMeasurement();
+        } catch (error) {
+          console.error("Error in periodic measurement:", error);
+        }
+      },
+      60 * 60 * 1000,
+    ); // Every hour
   }
 
   /**
    * Run periodic measurement and comparison
    */
   private async runPeriodicMeasurement(): Promise<void> {
-    console.log('🔄 Running periodic baseline measurement...');
-    
+    console.log("🔄 Running periodic baseline measurement...");
+
     // Collect current performance metrics
     const currentMetrics = await this.collectCurrentMetrics();
-    
+
     // Compare against baselines
     for (const [metricName, currentValue] of Object.entries(currentMetrics)) {
-      if (typeof currentValue === 'number') {
+      if (typeof currentValue === "number") {
         await this.compareToBaseline(metricName, currentValue);
       }
     }
-    
-    console.log('✅ Periodic baseline measurement completed');
+
+    console.log("✅ Periodic baseline measurement completed");
   }
 
   /**
@@ -639,7 +664,7 @@ class BaselineManager {
       metrics.memory_usage = (performance as any).memory?.usedJSHeapSize / (1024 * 1024) || 0;
 
       // Get basic analytics metrics
-      const sessionStart = sessionStorage.getItem('neonpro_session_start');
+      const sessionStart = sessionStorage.getItem("neonpro_session_start");
       if (sessionStart) {
         const sessionDuration = (Date.now() - parseInt(sessionStart)) / 1000;
         metrics.session_duration = sessionDuration;
@@ -651,7 +676,7 @@ class BaselineManager {
 
       return metrics;
     } catch (error) {
-      console.error('Error collecting current metrics:', error);
+      console.error("Error collecting current metrics:", error);
       return {};
     }
   }
@@ -676,7 +701,7 @@ class BaselineManager {
     return await this.establishBaseline(
       metricName,
       existingBaseline.metric_unit,
-      existingBaseline.measurement_period
+      existingBaseline.measurement_period,
     );
   }
 
@@ -697,21 +722,20 @@ export const createbaselineManager = () => new BaselineManager();
 export async function establishBaseline(
   metricName: string,
   metricUnit: string,
-  measurementPeriod?: 'daily' | 'weekly' | 'monthly'
+  measurementPeriod?: "daily" | "weekly" | "monthly",
 ): Promise<BaselineMetric | null> {
   return baselineManager.establishBaseline(metricName, metricUnit, measurementPeriod);
 }
 
 export async function compareToBaseline(
   metricName: string,
-  currentValue: number
+  currentValue: number,
 ): Promise<BaselineComparison | null> {
   return baselineManager.compareToBaseline(metricName, currentValue);
 }
 
 export async function generateBaselineReport(
-  measurementPeriod?: 'daily' | 'weekly' | 'monthly'
+  measurementPeriod?: "daily" | "weekly" | "monthly",
 ): Promise<BaselineReport> {
   return baselineManager.generateBaselineReport(measurementPeriod);
 }
-

@@ -5,20 +5,17 @@
 // Story 1.2: Business rules configuration
 // =============================================
 
-import type {
-  ProfessionalSchedule,
-  WorkingHoursConfig,
-} from "@/app/lib/types/conflict-prevention";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertTriangle, Clock, Plus, Save, Settings, User } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import type { ProfessionalSchedule, WorkingHoursConfig } from "@/app/lib/types/conflict-prevention";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Switch } from "@/components/ui/switch";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { AlertTriangle, Clock, Plus, Save, Settings, User } from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 
 interface ProfessionalScheduleManagerProps {
   professionalId: string;
@@ -65,34 +62,30 @@ export function ProfessionalScheduleManager({
       setIsLoading(true);
 
       // Try to fetch existing schedules
-      const response = await fetch(
-        `/api/professionals/${professionalId}/schedules`
-      );
+      const response = await fetch(`/api/professionals/${professionalId}/schedules`);
 
       if (response.ok) {
         const existingSchedules = await response.json();
         setSchedules(existingSchedules);
       } else {
         // Create default schedules for weekdays (Monday-Friday)
-        const defaultSchedules: ProfessionalSchedule[] = DAYS_OF_WEEK.map(
-          (day) => ({
-            id: `temp-${day.value}`,
-            professional_id: professionalId,
-            clinic_id: clinicId,
-            day_of_week: day.value,
-            start_time: day.value >= 1 && day.value <= 5 ? "08:00" : "09:00", // Earlier start on weekdays
-            end_time: day.value >= 1 && day.value <= 5 ? "18:00" : "17:00",
-            break_start_time: "12:00",
-            break_end_time: "13:00",
-            is_available: day.value >= 1 && day.value <= 5, // Only weekdays available by default
-            max_appointments_per_hour: 4,
-            buffer_minutes_between: 15,
-            min_booking_notice_hours: 2,
-            max_booking_days_ahead: 90,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          })
-        );
+        const defaultSchedules: ProfessionalSchedule[] = DAYS_OF_WEEK.map((day) => ({
+          id: `temp-${day.value}`,
+          professional_id: professionalId,
+          clinic_id: clinicId,
+          day_of_week: day.value,
+          start_time: day.value >= 1 && day.value <= 5 ? "08:00" : "09:00", // Earlier start on weekdays
+          end_time: day.value >= 1 && day.value <= 5 ? "18:00" : "17:00",
+          break_start_time: "12:00",
+          break_end_time: "13:00",
+          is_available: day.value >= 1 && day.value <= 5, // Only weekdays available by default
+          max_appointments_per_hour: 4,
+          buffer_minutes_between: 15,
+          min_booking_notice_hours: 2,
+          max_booking_days_ahead: 90,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }));
 
         setSchedules(defaultSchedules);
       }
@@ -104,16 +97,13 @@ export function ProfessionalScheduleManager({
     }
   };
 
-  const updateSchedule = (
-    dayOfWeek: number,
-    updates: Partial<ProfessionalSchedule>
-  ) => {
+  const updateSchedule = (dayOfWeek: number, updates: Partial<ProfessionalSchedule>) => {
     setSchedules((prev) =>
       prev.map((schedule) =>
         schedule.day_of_week === dayOfWeek
           ? { ...schedule, ...updates, updated_at: new Date().toISOString() }
-          : schedule
-      )
+          : schedule,
+      ),
     );
   };
 
@@ -136,16 +126,13 @@ export function ProfessionalScheduleManager({
         default_settings: globalSettings,
       };
 
-      const response = await fetch(
-        `/api/professionals/${professionalId}/schedules`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(config),
-        }
-      );
+      const response = await fetch(`/api/professionals/${professionalId}/schedules`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(config),
+      });
 
       if (!response.ok) {
         throw new Error("Failed to save schedules");
@@ -175,7 +162,7 @@ export function ProfessionalScheduleManager({
         max_appointments_per_hour: sourceSchedule.max_appointments_per_hour,
         buffer_minutes_between: sourceSchedule.buffer_minutes_between,
         updated_at: new Date().toISOString(),
-      }))
+      })),
     );
 
     toast.success("Horário copiado para todos os dias");
@@ -212,24 +199,15 @@ export function ProfessionalScheduleManager({
           <TabsContent value="schedule" className="space-y-4">
             <div className="grid gap-4">
               {DAYS_OF_WEEK.map((day) => {
-                const schedule = schedules.find(
-                  (s) => s.day_of_week === day.value
-                );
+                const schedule = schedules.find((s) => s.day_of_week === day.value);
                 if (!schedule) return null;
 
                 return (
-                  <Card
-                    key={day.value}
-                    className={schedule.is_available ? "" : "opacity-60"}
-                  >
+                  <Card key={day.value} className={schedule.is_available ? "" : "opacity-60"}>
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">
-                          <Badge
-                            variant={
-                              schedule.is_available ? "default" : "secondary"
-                            }
-                          >
+                          <Badge variant={schedule.is_available ? "default" : "secondary"}>
                             {day.short}
                           </Badge>
                           <span className="font-medium">{day.label}</span>
@@ -283,9 +261,7 @@ export function ProfessionalScheduleManager({
                             />
                           </div>
                           <div>
-                            <Label htmlFor={`break-start-${day.value}`}>
-                              Pausa início
-                            </Label>
+                            <Label htmlFor={`break-start-${day.value}`}>Pausa início</Label>
                             <Input
                               id={`break-start-${day.value}`}
                               type="time"
@@ -298,9 +274,7 @@ export function ProfessionalScheduleManager({
                             />
                           </div>
                           <div>
-                            <Label htmlFor={`break-end-${day.value}`}>
-                              Pausa fim
-                            </Label>
+                            <Label htmlFor={`break-end-${day.value}`}>Pausa fim</Label>
                             <Input
                               id={`break-end-${day.value}`}
                               type="time"
@@ -343,16 +317,13 @@ export function ProfessionalScheduleManager({
                         onChange={(e) =>
                           setGlobalSettings((prev) => ({
                             ...prev,
-                            min_booking_notice_hours:
-                              parseInt(e.target.value) || 0,
+                            min_booking_notice_hours: parseInt(e.target.value) || 0,
                           }))
                         }
                       />
                     </div>
                     <div>
-                      <Label htmlFor="max-days">
-                        Máximo de dias antecedência
-                      </Label>
+                      <Label htmlFor="max-days">Máximo de dias antecedência</Label>
                       <Input
                         id="max-days"
                         type="number"
@@ -362,16 +333,13 @@ export function ProfessionalScheduleManager({
                         onChange={(e) =>
                           setGlobalSettings((prev) => ({
                             ...prev,
-                            max_booking_days_ahead:
-                              parseInt(e.target.value) || 1,
+                            max_booking_days_ahead: parseInt(e.target.value) || 1,
                           }))
                         }
                       />
                     </div>
                     <div>
-                      <Label htmlFor="buffer-minutes">
-                        Buffer entre consultas (min)
-                      </Label>
+                      <Label htmlFor="buffer-minutes">Buffer entre consultas (min)</Label>
                       <Input
                         id="buffer-minutes"
                         type="number"
@@ -381,16 +349,13 @@ export function ProfessionalScheduleManager({
                         onChange={(e) =>
                           setGlobalSettings((prev) => ({
                             ...prev,
-                            buffer_minutes_between:
-                              parseInt(e.target.value) || 0,
+                            buffer_minutes_between: parseInt(e.target.value) || 0,
                           }))
                         }
                       />
                     </div>
                     <div>
-                      <Label htmlFor="max-per-hour">
-                        Máx. consultas por hora
-                      </Label>
+                      <Label htmlFor="max-per-hour">Máx. consultas por hora</Label>
                       <Input
                         id="max-per-hour"
                         type="number"
@@ -400,8 +365,7 @@ export function ProfessionalScheduleManager({
                         onChange={(e) =>
                           setGlobalSettings((prev) => ({
                             ...prev,
-                            max_appointments_per_hour:
-                              parseInt(e.target.value) || 1,
+                            max_appointments_per_hour: parseInt(e.target.value) || 1,
                           }))
                         }
                       />
@@ -424,12 +388,11 @@ export function ProfessionalScheduleManager({
                       {schedules.filter((s) => s.is_available).length} de 7
                     </p>
                     <p>
-                      <strong>Aviso mínimo:</strong>{" "}
-                      {globalSettings.min_booking_notice_hours} horas
+                      <strong>Aviso mínimo:</strong> {globalSettings.min_booking_notice_hours} horas
                     </p>
                     <p>
-                      <strong>Antecedência máxima:</strong>{" "}
-                      {globalSettings.max_booking_days_ahead} dias
+                      <strong>Antecedência máxima:</strong> {globalSettings.max_booking_days_ahead}{" "}
+                      dias
                     </p>
                     <p>
                       <strong>Buffer entre consultas:</strong>{" "}
@@ -447,11 +410,7 @@ export function ProfessionalScheduleManager({
         </Tabs>
 
         <div className="flex justify-end gap-2 mt-6">
-          <Button
-            onClick={saveSchedules}
-            disabled={isSaving}
-            className="min-w-[120px]"
-          >
+          <Button onClick={saveSchedules} disabled={isSaving} className="min-w-[120px]">
             {isSaving ? (
               <Clock className="h-4 w-4 animate-spin mr-2" />
             ) : (

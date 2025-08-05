@@ -1,27 +1,33 @@
 /**
  * Session Dashboard Component
  * Story 1.4: Session Management & Security
- * 
+ *
  * Comprehensive dashboard for session management, security monitoring,
  * and device tracking with real-time updates.
  */
 
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Progress } from '@/components/ui/progress';
-import { 
-  Shield, 
-  Monitor, 
-  Smartphone, 
-  AlertTriangle, 
-  Clock, 
-  MapPin, 
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Progress } from "@/components/ui/progress";
+import type {
+  Shield,
+  Monitor,
+  Smartphone,
+  AlertTriangle,
+  Clock,
+  MapPin,
   Activity,
   Users,
   Lock,
@@ -33,19 +39,19 @@ import {
   EyeOff,
   RefreshCw,
   LogOut,
-  Settings
-} from 'lucide-react';
-import { useSession, useSecurityEvents } from '@/hooks/useSession';
-import { 
-  UserSession, 
-  SessionSecurityEvent, 
+  Settings,
+} from "lucide-react";
+import type { useSession, useSecurityEvents } from "@/hooks/useSession";
+import type {
+  UserSession,
+  SessionSecurityEvent,
   DeviceRegistration,
   SecurityEventType,
   SecuritySeverity,
-  DeviceType
-} from '@/types/session';
-import { formatDistanceToNow, format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+  DeviceType,
+} from "@/types/session";
+import type { formatDistanceToNow, format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
 
 // ============================================================================
 // MAIN DASHBOARD COMPONENT
@@ -64,10 +70,10 @@ export default function SessionDashboard() {
     reportSuspiciousActivity,
     trustDevice,
     blockDevice,
-    error
+    error,
   } = useSession();
 
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
   const [showSensitiveData, setShowSensitiveData] = useState(false);
 
   if (isLoading) {
@@ -84,9 +90,7 @@ export default function SessionDashboard() {
       <Alert>
         <AlertTriangle className="h-4 w-4" />
         <AlertTitle>Sessão não encontrada</AlertTitle>
-        <AlertDescription>
-          Não foi possível carregar os dados da sessão atual.
-        </AlertDescription>
+        <AlertDescription>Não foi possível carregar os dados da sessão atual.</AlertDescription>
       </Alert>
     );
   }
@@ -102,20 +106,11 @@ export default function SessionDashboard() {
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={refreshSession}
-            disabled={isLoading}
-          >
-            <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+          <Button variant="outline" size="sm" onClick={refreshSession} disabled={isLoading}>
+            <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? "animate-spin" : ""}`} />
             Atualizar
           </Button>
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => terminateSession('user_logout')}
-          >
+          <Button variant="destructive" size="sm" onClick={() => terminateSession("user_logout")}>
             <LogOut className="h-4 w-4 mr-2" />
             Encerrar Sessão
           </Button>
@@ -137,8 +132,8 @@ export default function SessionDashboard() {
           <Shield className="h-4 w-4" />
           <AlertTitle>Alerta de Segurança</AlertTitle>
           <AlertDescription>
-            Sua pontuação de segurança está baixa ({session.security_score}/100). 
-            Verifique as atividades suspeitas e considere encerrar outras sessões.
+            Sua pontuação de segurança está baixa ({session.security_score}/100). Verifique as
+            atividades suspeitas e considere encerrar outras sessões.
           </AlertDescription>
         </Alert>
       )}
@@ -162,13 +157,13 @@ export default function SessionDashboard() {
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            <CurrentSessionCard 
-              session={session} 
+            <CurrentSessionCard
+              session={session}
               showSensitiveData={showSensitiveData}
               onToggleSensitiveData={() => setShowSensitiveData(!showSensitiveData)}
             />
-            <RecentSecurityEventsCard 
-              events={securityEvents.slice(0, 5)} 
+            <RecentSecurityEventsCard
+              events={securityEvents.slice(0, 5)}
               onReportActivity={reportSuspiciousActivity}
             />
           </div>
@@ -176,7 +171,7 @@ export default function SessionDashboard() {
 
         {/* Security Tab */}
         <TabsContent value="security" className="space-y-4">
-          <SecurityEventsTable 
+          <SecurityEventsTable
             events={securityEvents}
             onReportActivity={reportSuspiciousActivity}
           />
@@ -184,7 +179,7 @@ export default function SessionDashboard() {
 
         {/* Devices Tab */}
         <TabsContent value="devices" className="space-y-4">
-          <DeviceManagementTable 
+          <DeviceManagementTable
             devices={devices}
             currentDeviceFingerprint={session.device_fingerprint}
             onTrustDevice={trustDevice}
@@ -217,9 +212,7 @@ function SessionStatusCard({ session }: { session: UserSession }) {
         <Clock className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">
-          {session.is_active ? 'Ativa' : 'Inativa'}
-        </div>
+        <div className="text-2xl font-bold">{session.is_active ? "Ativa" : "Inativa"}</div>
         <div className="space-y-2 mt-2">
           <div className="flex justify-between text-sm">
             <span>Tempo restante:</span>
@@ -234,9 +227,9 @@ function SessionStatusCard({ session }: { session: UserSession }) {
 
 function SecurityScoreCard({ score }: { score: number }) {
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 80) return "text-green-600";
+    if (score >= 60) return "text-yellow-600";
+    return "text-red-600";
   };
 
   const getScoreIcon = (score: number) => {
@@ -252,11 +245,9 @@ function SecurityScoreCard({ score }: { score: number }) {
         {getScoreIcon(score)}
       </CardHeader>
       <CardContent>
-        <div className={`text-2xl font-bold ${getScoreColor(score)}`}>
-          {score}/100
-        </div>
+        <div className={`text-2xl font-bold ${getScoreColor(score)}`}>{score}/100</div>
         <p className="text-xs text-muted-foreground mt-1">
-          {score >= 80 ? 'Excelente' : score >= 60 ? 'Boa' : 'Requer atenção'}
+          {score >= 80 ? "Excelente" : score >= 60 ? "Boa" : "Requer atenção"}
         </p>
       </CardContent>
     </Card>
@@ -264,8 +255,8 @@ function SecurityScoreCard({ score }: { score: number }) {
 }
 
 function ActiveDevicesCard({ devices }: { devices: DeviceRegistration[] }) {
-  const activeDevices = devices.filter(d => !d.blocked);
-  const trustedDevices = activeDevices.filter(d => d.trusted);
+  const activeDevices = devices.filter((d) => !d.blocked);
+  const trustedDevices = activeDevices.filter((d) => d.trusted);
 
   return (
     <Card>
@@ -275,17 +266,15 @@ function ActiveDevicesCard({ devices }: { devices: DeviceRegistration[] }) {
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{activeDevices.length}</div>
-        <p className="text-xs text-muted-foreground">
-          {trustedDevices.length} confiáveis
-        </p>
+        <p className="text-xs text-muted-foreground">{trustedDevices.length} confiáveis</p>
       </CardContent>
     </Card>
   );
 }
 
 function SecurityEventsCard({ events }: { events: SessionSecurityEvent[] }) {
-  const unresolvedEvents = events.filter(e => !e.resolved);
-  const criticalEvents = unresolvedEvents.filter(e => e.severity === 'critical');
+  const unresolvedEvents = events.filter((e) => !e.resolved);
+  const criticalEvents = unresolvedEvents.filter((e) => e.severity === "critical");
 
   return (
     <Card>
@@ -295,9 +284,7 @@ function SecurityEventsCard({ events }: { events: SessionSecurityEvent[] }) {
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{unresolvedEvents.length}</div>
-        <p className="text-xs text-muted-foreground">
-          {criticalEvents.length} críticos
-        </p>
+        <p className="text-xs text-muted-foreground">{criticalEvents.length} críticos</p>
       </CardContent>
     </Card>
   );
@@ -307,18 +294,18 @@ function SecurityEventsCard({ events }: { events: SessionSecurityEvent[] }) {
 // DETAILED CARDS
 // ============================================================================
 
-function CurrentSessionCard({ 
-  session, 
-  showSensitiveData, 
-  onToggleSensitiveData 
-}: { 
+function CurrentSessionCard({
+  session,
+  showSensitiveData,
+  onToggleSensitiveData,
+}: {
   session: UserSession;
   showSensitiveData: boolean;
   onToggleSensitiveData: () => void;
 }) {
   const maskData = (data: string) => {
     if (showSensitiveData) return data;
-    return data.replace(/./g, '•');
+    return data.replace(/./g, "•");
   };
 
   return (
@@ -326,11 +313,7 @@ function CurrentSessionCard({
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>Sessão Atual</CardTitle>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onToggleSensitiveData}
-          >
+          <Button variant="ghost" size="sm" onClick={onToggleSensitiveData}>
             {showSensitiveData ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </Button>
         </div>
@@ -343,7 +326,7 @@ function CurrentSessionCard({
           </div>
           <div>
             <span className="font-medium">Dispositivo:</span>
-            <p className="text-muted-foreground">{session.device_name || 'Desconhecido'}</p>
+            <p className="text-muted-foreground">{session.device_name || "Desconhecido"}</p>
           </div>
           <div>
             <span className="font-medium">IP:</span>
@@ -352,21 +335,23 @@ function CurrentSessionCard({
           <div>
             <span className="font-medium">Localização:</span>
             <p className="text-muted-foreground">
-              {session.location ? `${session.location.city}, ${session.location.country}` : 'Desconhecida'}
+              {session.location
+                ? `${session.location.city}, ${session.location.country}`
+                : "Desconhecida"}
             </p>
           </div>
           <div>
             <span className="font-medium">Criada em:</span>
             <p className="text-muted-foreground">
-              {format(new Date(session.created_at), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+              {format(new Date(session.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}
             </p>
           </div>
           <div>
             <span className="font-medium">Última atividade:</span>
             <p className="text-muted-foreground">
-              {formatDistanceToNow(new Date(session.last_activity), { 
-                addSuffix: true, 
-                locale: ptBR 
+              {formatDistanceToNow(new Date(session.last_activity), {
+                addSuffix: true,
+                locale: ptBR,
               })}
             </p>
           </div>
@@ -376,38 +361,34 @@ function CurrentSessionCard({
   );
 }
 
-function RecentSecurityEventsCard({ 
-  events, 
-  onReportActivity 
-}: { 
+function RecentSecurityEventsCard({
+  events,
+  onReportActivity,
+}: {
   events: SessionSecurityEvent[];
   onReportActivity: (eventType: SecurityEventType, details?: any) => Promise<void>;
 }) {
   const getSeverityBadge = (severity: SecuritySeverity) => {
     const variants = {
-      low: 'secondary',
-      medium: 'default',
-      high: 'destructive',
-      critical: 'destructive'
+      low: "secondary",
+      medium: "default",
+      high: "destructive",
+      critical: "destructive",
     } as const;
 
-    return (
-      <Badge variant={variants[severity] || 'default'}>
-        {severity.toUpperCase()}
-      </Badge>
-    );
+    return <Badge variant={variants[severity] || "default"}>{severity.toUpperCase()}</Badge>;
   };
 
   const getEventTypeLabel = (eventType: SecurityEventType) => {
     const labels = {
-      [SecurityEventType.UNUSUAL_LOCATION]: 'Localização Incomum',
-      [SecurityEventType.DEVICE_CHANGE]: 'Mudança de Dispositivo',
-      [SecurityEventType.RAPID_REQUESTS]: 'Requisições Rápidas',
-      [SecurityEventType.SESSION_HIJACK_ATTEMPT]: 'Tentativa de Sequestro',
-      [SecurityEventType.SUSPICIOUS_USER_AGENT]: 'User Agent Suspeito',
-      [SecurityEventType.CONCURRENT_SESSION_LIMIT]: 'Limite de Sessões',
-      [SecurityEventType.FAILED_AUTHENTICATION]: 'Falha na Autenticação',
-      [SecurityEventType.PRIVILEGE_ESCALATION]: 'Escalação de Privilégios'
+      [SecurityEventType.UNUSUAL_LOCATION]: "Localização Incomum",
+      [SecurityEventType.DEVICE_CHANGE]: "Mudança de Dispositivo",
+      [SecurityEventType.RAPID_REQUESTS]: "Requisições Rápidas",
+      [SecurityEventType.SESSION_HIJACK_ATTEMPT]: "Tentativa de Sequestro",
+      [SecurityEventType.SUSPICIOUS_USER_AGENT]: "User Agent Suspeito",
+      [SecurityEventType.CONCURRENT_SESSION_LIMIT]: "Limite de Sessões",
+      [SecurityEventType.FAILED_AUTHENTICATION]: "Falha na Autenticação",
+      [SecurityEventType.PRIVILEGE_ESCALATION]: "Escalação de Privilégios",
     };
 
     return labels[eventType] || eventType;
@@ -421,10 +402,12 @@ function RecentSecurityEventsCard({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => onReportActivity(SecurityEventType.SUSPICIOUS_USER_AGENT, {
-              manual_report: true,
-              description: 'Atividade suspeita reportada pelo usuário'
-            })}
+            onClick={() =>
+              onReportActivity(SecurityEventType.SUSPICIOUS_USER_AGENT, {
+                manual_report: true,
+                description: "Atividade suspeita reportada pelo usuário",
+              })
+            }
           >
             <AlertTriangle className="h-4 w-4 mr-2" />
             Reportar
@@ -439,16 +422,19 @@ function RecentSecurityEventsCard({
         ) : (
           <div className="space-y-3">
             {events.map((event) => (
-              <div key={event.id} className="flex items-center justify-between p-3 border rounded-lg">
+              <div
+                key={event.id}
+                className="flex items-center justify-between p-3 border rounded-lg"
+              >
                 <div className="flex-1">
                   <div className="flex items-center space-x-2">
                     <span className="font-medium">{getEventTypeLabel(event.event_type)}</span>
                     {getSeverityBadge(event.severity)}
                   </div>
                   <p className="text-sm text-muted-foreground mt-1">
-                    {formatDistanceToNow(new Date(event.timestamp), { 
-                      addSuffix: true, 
-                      locale: ptBR 
+                    {formatDistanceToNow(new Date(event.timestamp), {
+                      addSuffix: true,
+                      locale: ptBR,
                     })}
                   </p>
                 </div>

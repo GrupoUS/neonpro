@@ -1,10 +1,10 @@
 "use client";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
+import type { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -12,13 +12,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
-import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import {
+import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
+import type { Textarea } from "@/components/ui/textarea";
+import type { cn } from "@/lib/utils";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
   AlertTriangle,
   CheckCircle,
   Clock,
@@ -30,8 +30,8 @@ import {
   ThumbsUp,
   XCircle,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 
 export interface ApprovalRequest {
   id: string;
@@ -161,9 +161,7 @@ export default function ApprovalRequestTracker({
         accounts_payable_id: "ap_001",
         requester_id: "user_req",
         requester_name: "Ana Silva",
-        request_date: new Date(
-          Date.now() - 2 * 24 * 60 * 60 * 1000
-        ).toISOString(),
+        request_date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
         amount: 15000,
         current_level: 2,
         status: "pending",
@@ -172,9 +170,7 @@ export default function ApprovalRequestTracker({
         justification:
           "Equipamento necessário para expansão do atendimento. Orçamento já aprovado no planejamento anual.",
         due_date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-        created_at: new Date(
-          Date.now() - 2 * 24 * 60 * 60 * 1000
-        ).toISOString(),
+        created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
         updated_at: new Date().toISOString(),
         vendor_name: "MedEquip Ltda",
         invoice_number: "INV-2024-001",
@@ -188,15 +184,9 @@ export default function ApprovalRequestTracker({
             required_approvers: 1,
             approved_count: 1,
             status: "approved",
-            deadline: new Date(
-              Date.now() - 1 * 24 * 60 * 60 * 1000
-            ).toISOString(),
-            created_at: new Date(
-              Date.now() - 2 * 24 * 60 * 60 * 1000
-            ).toISOString(),
-            completed_at: new Date(
-              Date.now() - 1 * 24 * 60 * 60 * 1000
-            ).toISOString(),
+            deadline: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+            created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+            completed_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
             approvers: [
               {
                 id: "action_1",
@@ -205,11 +195,8 @@ export default function ApprovalRequestTracker({
                 approver_name: "João Santos",
                 approver_email: "joao@neonpro.com",
                 action: "approve",
-                comments:
-                  "Aprovado. Equipamento necessário conforme solicitado.",
-                action_date: new Date(
-                  Date.now() - 1 * 24 * 60 * 60 * 1000
-                ).toISOString(),
+                comments: "Aprovado. Equipamento necessário conforme solicitado.",
+                action_date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
               },
             ],
           },
@@ -221,12 +208,8 @@ export default function ApprovalRequestTracker({
             required_approvers: 1,
             approved_count: 0,
             status: "pending",
-            deadline: new Date(
-              Date.now() + 1 * 24 * 60 * 60 * 1000
-            ).toISOString(),
-            created_at: new Date(
-              Date.now() - 1 * 24 * 60 * 60 * 1000
-            ).toISOString(),
+            deadline: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(),
+            created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
             approvers: [],
           },
           {
@@ -237,12 +220,8 @@ export default function ApprovalRequestTracker({
             required_approvers: 2,
             approved_count: 0,
             status: "pending",
-            deadline: new Date(
-              Date.now() + 3 * 24 * 60 * 60 * 1000
-            ).toISOString(),
-            created_at: new Date(
-              Date.now() - 1 * 24 * 60 * 60 * 1000
-            ).toISOString(),
+            deadline: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+            created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
             approvers: [],
           },
         ],
@@ -281,50 +260,41 @@ export default function ApprovalRequestTracker({
 
         const updatedChain = prevRequest.approval_chain.map((step) => {
           if (step.id === currentStepId) {
-            const newApprovers = [
-              ...step.approvers,
-              actionData as ApprovalAction,
-            ];
+            const newApprovers = [...step.approvers, actionData as ApprovalAction];
             const approvedCount =
-              selectedAction === "approve"
-                ? step.approved_count + 1
-                : step.approved_count;
+              selectedAction === "approve" ? step.approved_count + 1 : step.approved_count;
 
             const stepStatus: ApprovalStep["status"] =
               selectedAction === "reject"
                 ? "rejected"
                 : approvedCount >= step.required_approvers
-                ? "approved"
-                : "pending";
+                  ? "approved"
+                  : "pending";
 
             return {
               ...step,
               approvers: newApprovers,
               approved_count: approvedCount,
               status: stepStatus,
-              completed_at:
-                stepStatus !== "pending" ? new Date().toISOString() : undefined,
+              completed_at: stepStatus !== "pending" ? new Date().toISOString() : undefined,
             };
           }
           return step;
         });
 
         // Update request status based on chain
-        const currentStep = updatedChain.find(
-          (s) => s.level_order === prevRequest.current_level
-        );
+        const currentStep = updatedChain.find((s) => s.level_order === prevRequest.current_level);
         const newStatus =
           currentStep?.status === "approved"
             ? prevRequest.current_level < updatedChain.length
               ? "pending"
               : "approved"
             : currentStep?.status === "rejected"
-            ? "rejected"
-            : "pending";
+              ? "rejected"
+              : "pending";
 
         const newCurrentLevel =
-          currentStep?.status === "approved" &&
-          prevRequest.current_level < updatedChain.length
+          currentStep?.status === "approved" && prevRequest.current_level < updatedChain.length
             ? prevRequest.current_level + 1
             : prevRequest.current_level;
 
@@ -351,23 +321,17 @@ export default function ApprovalRequestTracker({
   const getProgressPercentage = () => {
     if (!request) return 0;
     const totalSteps = request.approval_chain.length;
-    const completedSteps = request.approval_chain.filter(
-      (s) => s.status === "approved"
-    ).length;
+    const completedSteps = request.approval_chain.filter((s) => s.status === "approved").length;
     return Math.round((completedSteps / totalSteps) * 100);
   };
 
   const getCurrentStep = () => {
-    return request?.approval_chain.find(
-      (s) => s.level_order === request.current_level
-    );
+    return request?.approval_chain.find((s) => s.level_order === request.current_level);
   };
 
   const canTakeAction = (step: ApprovalStep) => {
     // In real implementation, this would check user permissions
-    return (
-      step.status === "pending" && step.level_order === request?.current_level
-    );
+    return step.status === "pending" && step.level_order === request?.current_level;
   };
 
   const formatCurrency = (amount: number) => {
@@ -389,16 +353,12 @@ export default function ApprovalRequestTracker({
 
     if (days > 0) {
       return {
-        text: `${days} dia${days > 1 ? "s" : ""} restante${
-          days > 1 ? "s" : ""
-        }`,
+        text: `${days} dia${days > 1 ? "s" : ""} restante${days > 1 ? "s" : ""}`,
         isOverdue: false,
       };
     } else {
       return {
-        text: `${hours} hora${hours > 1 ? "s" : ""} restante${
-          hours > 1 ? "s" : ""
-        }`,
+        text: `${hours} hora${hours > 1 ? "s" : ""} restante${hours > 1 ? "s" : ""}`,
         isOverdue: false,
       };
     }
@@ -442,20 +402,10 @@ export default function ApprovalRequestTracker({
               <CardTitle className="text-sm flex items-center justify-between">
                 Resumo da Solicitação
                 <div className="flex items-center gap-2">
-                  <Badge
-                    className={cn(
-                      "text-xs",
-                      priorityConfig[request.priority].color
-                    )}
-                  >
+                  <Badge className={cn("text-xs", priorityConfig[request.priority].color)}>
                     {priorityConfig[request.priority].label}
                   </Badge>
-                  <Badge
-                    className={cn(
-                      "text-xs",
-                      statusConfig[request.status].color
-                    )}
-                  >
+                  <Badge className={cn("text-xs", statusConfig[request.status].color)}>
                     <StatusIcon className="h-3 w-3 mr-1" />
                     {statusConfig[request.status].label}
                   </Badge>
@@ -465,35 +415,21 @@ export default function ApprovalRequestTracker({
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
                 <div>
-                  <p className="font-medium text-muted-foreground">
-                    Solicitante
-                  </p>
+                  <p className="font-medium text-muted-foreground">Solicitante</p>
                   <p>{request.requester_name}</p>
                   <p className="text-xs text-muted-foreground">
-                    {format(
-                      new Date(request.request_date),
-                      "dd/MM/yyyy HH:mm",
-                      { locale: ptBR }
-                    )}
+                    {format(new Date(request.request_date), "dd/MM/yyyy HH:mm", { locale: ptBR })}
                   </p>
                 </div>
                 <div>
-                  <p className="font-medium text-muted-foreground">
-                    Fornecedor
-                  </p>
+                  <p className="font-medium text-muted-foreground">Fornecedor</p>
                   <p>{request.vendor_name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {request.invoice_number}
-                  </p>
+                  <p className="text-xs text-muted-foreground">{request.invoice_number}</p>
                 </div>
                 <div>
                   <p className="font-medium text-muted-foreground">Valor</p>
-                  <p className="font-semibold text-lg">
-                    {formatCurrency(request.amount)}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {request.category}
-                  </p>
+                  <p className="font-semibold text-lg">{formatCurrency(request.amount)}</p>
+                  <p className="text-xs text-muted-foreground">{request.category}</p>
                 </div>
                 <div>
                   <p className="font-medium text-muted-foreground">Prazo</p>
@@ -507,7 +443,7 @@ export default function ApprovalRequestTracker({
                       "text-xs",
                       getTimeRemaining(request.due_date).isOverdue
                         ? "text-red-600"
-                        : "text-muted-foreground"
+                        : "text-muted-foreground",
                     )}
                   >
                     {getTimeRemaining(request.due_date).text}
@@ -524,23 +460,16 @@ export default function ApprovalRequestTracker({
                 <Progress value={progressPercentage} className="h-2" />
                 <div className="flex justify-between text-xs text-muted-foreground">
                   <span>
-                    Nível {request.current_level} de{" "}
-                    {request.approval_chain.length}
+                    Nível {request.current_level} de {request.approval_chain.length}
                   </span>
-                  <span>
-                    {currentStep
-                      ? `Aguardando: ${currentStep.level_name}`
-                      : "Concluído"}
-                  </span>
+                  <span>{currentStep ? `Aguardando: ${currentStep.level_name}` : "Concluído"}</span>
                 </div>
               </div>
 
               {/* Justification */}
               {request.justification && (
                 <div className="p-3 bg-muted rounded-lg">
-                  <p className="font-medium text-sm text-muted-foreground mb-1">
-                    Justificativa:
-                  </p>
+                  <p className="font-medium text-sm text-muted-foreground mb-1">Justificativa:</p>
                   <p className="text-sm">{request.justification}</p>
                 </div>
               )}
@@ -555,8 +484,7 @@ export default function ApprovalRequestTracker({
             <CardContent>
               <div className="space-y-4">
                 {request.approval_chain.map((step, index) => {
-                  const StepStatusIcon =
-                    statusConfig[step.status]?.icon || Clock;
+                  const StepStatusIcon = statusConfig[step.status]?.icon || Clock;
                   const isActive = step.level_order === request.current_level;
                   const canAction = canTakeAction(step);
                   const timeInfo = getTimeRemaining(step.deadline);
@@ -572,10 +500,8 @@ export default function ApprovalRequestTracker({
                         className={cn(
                           "flex items-start gap-4 p-4 rounded-lg border",
                           isActive && "bg-blue-50 border-blue-200",
-                          step.status === "approved" &&
-                            "bg-green-50 border-green-200",
-                          step.status === "rejected" &&
-                            "bg-red-50 border-red-200"
+                          step.status === "approved" && "bg-green-50 border-green-200",
+                          step.status === "rejected" && "bg-red-50 border-red-200",
                         )}
                       >
                         {/* Step Icon */}
@@ -584,12 +510,8 @@ export default function ApprovalRequestTracker({
                             "w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium",
                             step.status === "approved" && "bg-green-500",
                             step.status === "rejected" && "bg-red-500",
-                            step.status === "pending" &&
-                              isActive &&
-                              "bg-blue-500",
-                            step.status === "pending" &&
-                              !isActive &&
-                              "bg-gray-400"
+                            step.status === "pending" && isActive && "bg-blue-500",
+                            step.status === "pending" && !isActive && "bg-gray-400",
                           )}
                         >
                           {step.status === "pending" ? (
@@ -605,10 +527,8 @@ export default function ApprovalRequestTracker({
                             <div>
                               <h4 className="font-medium">{step.level_name}</h4>
                               <p className="text-sm text-muted-foreground">
-                                Nível {step.level_order} •{" "}
-                                {step.required_approvers} aprovador
-                                {step.required_approvers > 1 ? "es" : ""}{" "}
-                                necessário
+                                Nível {step.level_order} • {step.required_approvers} aprovador
+                                {step.required_approvers > 1 ? "es" : ""} necessário
                                 {step.required_approvers > 1 ? "s" : ""}
                               </p>
                             </div>
@@ -617,25 +537,19 @@ export default function ApprovalRequestTracker({
                                 <Badge
                                   className={cn(
                                     "text-xs",
-                                    step.status === "approved" &&
-                                      "bg-green-100 text-green-800",
-                                    step.status === "rejected" &&
-                                      "bg-red-100 text-red-800",
-                                    step.status === "pending" &&
-                                      "bg-yellow-100 text-yellow-800"
+                                    step.status === "approved" && "bg-green-100 text-green-800",
+                                    step.status === "rejected" && "bg-red-100 text-red-800",
+                                    step.status === "pending" && "bg-yellow-100 text-yellow-800",
                                   )}
                                 >
-                                  {statusConfig[step.status]?.label ||
-                                    step.status}
+                                  {statusConfig[step.status]?.label || step.status}
                                 </Badge>
                               </div>
                               {step.status === "pending" && (
                                 <p
                                   className={cn(
                                     "text-xs mt-1",
-                                    timeInfo.isOverdue
-                                      ? "text-red-600"
-                                      : "text-muted-foreground"
+                                    timeInfo.isOverdue ? "text-red-600" : "text-muted-foreground",
                                   )}
                                 >
                                   {timeInfo.text}
@@ -646,20 +560,14 @@ export default function ApprovalRequestTracker({
 
                           {/* Progress */}
                           <div className="flex items-center gap-2 text-sm">
-                            <span className="text-muted-foreground">
-                              Progresso:
-                            </span>
+                            <span className="text-muted-foreground">Progresso:</span>
                             <span className="font-medium">
                               {step.approved_count}/{step.required_approvers}
                             </span>
                             {step.approved_count > 0 && (
                               <div className="flex-1 max-w-24">
                                 <Progress
-                                  value={
-                                    (step.approved_count /
-                                      step.required_approvers) *
-                                    100
-                                  }
+                                  value={(step.approved_count / step.required_approvers) * 100}
                                   className="h-1.5"
                                 />
                               </div>
@@ -679,17 +587,14 @@ export default function ApprovalRequestTracker({
                               </Avatar>
                               <div className="flex-1 text-sm">
                                 <div className="flex items-center gap-2">
-                                  <span className="font-medium">
-                                    {action.approver_name}
-                                  </span>
+                                  <span className="font-medium">{action.approver_name}</span>
                                   <Badge
                                     variant="outline"
                                     className={cn(
                                       "text-xs",
                                       action.action === "approve" &&
                                         "text-green-600 border-green-200",
-                                      action.action === "reject" &&
-                                        "text-red-600 border-red-200"
+                                      action.action === "reject" && "text-red-600 border-red-200",
                                     )}
                                   >
                                     {action.action === "approve" && (
@@ -698,17 +603,13 @@ export default function ApprovalRequestTracker({
                                     {action.action === "reject" && (
                                       <ThumbsDown className="h-2.5 w-2.5 mr-1" />
                                     )}
-                                    {action.action === "approve"
-                                      ? "Aprovado"
-                                      : "Rejeitado"}
+                                    {action.action === "approve" ? "Aprovado" : "Rejeitado"}
                                   </Badge>
                                 </div>
                                 <p className="text-xs text-muted-foreground">
-                                  {format(
-                                    new Date(action.action_date),
-                                    "dd/MM/yyyy HH:mm",
-                                    { locale: ptBR }
-                                  )}
+                                  {format(new Date(action.action_date), "dd/MM/yyyy HH:mm", {
+                                    locale: ptBR,
+                                  })}
                                 </p>
                                 {action.comments && (
                                   <p className="text-xs mt-1 p-2 bg-muted rounded">
@@ -786,11 +687,7 @@ export default function ApprovalRequestTracker({
         </div>
 
         <DialogFooter>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-          >
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             Fechar
           </Button>
         </DialogFooter>
@@ -820,9 +717,7 @@ export default function ApprovalRequestTracker({
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="comments">
-                  {selectedAction === "reject"
-                    ? "Motivo da Rejeição *"
-                    : "Comentários"}
+                  {selectedAction === "reject" ? "Motivo da Rejeição *" : "Comentários"}
                 </Label>
                 <Textarea
                   id="comments"
@@ -832,8 +727,8 @@ export default function ApprovalRequestTracker({
                     selectedAction === "approve"
                       ? "Comentários sobre a aprovação..."
                       : selectedAction === "reject"
-                      ? "Explique o motivo da rejeição..."
-                      : "Descreva que informações são necessárias..."
+                        ? "Explique o motivo da rejeição..."
+                        : "Descreva que informações são necessárias..."
                   }
                   rows={3}
                   required={selectedAction === "reject"}
@@ -842,32 +737,22 @@ export default function ApprovalRequestTracker({
             </div>
 
             <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setShowActionModal(false)}
-              >
+              <Button type="button" variant="outline" onClick={() => setShowActionModal(false)}>
                 Cancelar
               </Button>
               <Button
                 onClick={handleApprovalAction}
-                disabled={
-                  loading ||
-                  (selectedAction === "reject" && !actionComments.trim())
-                }
+                disabled={loading || (selectedAction === "reject" && !actionComments.trim())}
                 className={cn(
-                  selectedAction === "approve" &&
-                    "bg-green-600 hover:bg-green-700",
-                  selectedAction === "reject" && "bg-red-600 hover:bg-red-700"
+                  selectedAction === "approve" && "bg-green-600 hover:bg-green-700",
+                  selectedAction === "reject" && "bg-red-600 hover:bg-red-700",
                 )}
               >
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {!loading && selectedAction === "approve" && (
                   <CheckCircle className="mr-2 h-4 w-4" />
                 )}
-                {!loading && selectedAction === "reject" && (
-                  <XCircle className="mr-2 h-4 w-4" />
-                )}
+                {!loading && selectedAction === "reject" && <XCircle className="mr-2 h-4 w-4" />}
                 {!loading && selectedAction === "request_info" && (
                   <MessageSquare className="mr-2 h-4 w-4" />
                 )}

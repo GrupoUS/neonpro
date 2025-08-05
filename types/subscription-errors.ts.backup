@@ -1,0 +1,333 @@
+/**
+ * Advanced Subscription Error Types
+ *
+ * Comprehensive error type system for subscription middleware with:
+ * - Structured error classification
+ * - Recovery strategy hints
+ * - Monitoring metadata
+ * - User-friendly messaging
+ *
+ * @author NeonPro Development Team
+ * @version 2.0.0 - Error Handling Enhanced
+ */
+
+import type { SubscriptionStatus } from "../lib/subscription-status";
+
+// Base error severity levels
+export enum ErrorSeverity {
+  LOW = "low", // Minor issues, system continues
+  MEDIUM = "medium", // Important issues, some degradation
+  HIGH = "high", // Serious issues, major degradation
+  CRITICAL = "critical", // System-breaking issues
+}
+
+// Error categories for better classification
+export enum ErrorCategory {
+  AUTHENTICATION = "authentication",
+  AUTHORIZATION = "authorization",
+  NETWORK = "network",
+  DATABASE = "database",
+  CACHE = "cache",
+  VALIDATION = "validation",
+  EXTERNAL_SERVICE = "external_service",
+  RATE_LIMIT = "rate_limit",
+  TIMEOUT = "timeout",
+  UNKNOWN = "unknown",
+}
+
+// Recovery strategies
+export enum RecoveryStrategy {
+  RETRY = "retry",
+  FALLBACK = "fallback",
+  CIRCUIT_BREAK = "circuit_break",
+  GRACEFUL_DEGRADE = "graceful_degrade",
+  USER_INTERVENTION = "user_intervention",
+  SYSTEM_RESTART = "system_restart",
+}
+
+// Base subscription error interface
+export interface SubscriptionError extends Error {
+  code: string;
+  severity: ErrorSeverity;
+  category: ErrorCategory;
+  recoveryStrategy: RecoveryStrategy;
+  metadata: Record<string, any>;
+  timestamp: Date;
+  userId?: string;
+  requestId?: string;
+  userMessage: string;
+  technicalMessage: string;
+  retryable: boolean;
+  shouldLog: boolean;
+  shouldAlert: boolean;
+}
+
+// Specific error types
+export class SubscriptionAuthError extends Error implements SubscriptionError {
+  code = "SUB_AUTH_ERROR";
+  severity = ErrorSeverity.HIGH;
+  category = ErrorCategory.AUTHENTICATION;
+  recoveryStrategy = RecoveryStrategy.USER_INTERVENTION;
+  metadata: Record<string, any> = {};
+  timestamp = new Date();
+  userId?: string;
+  requestId?: string;
+  userMessage = "Authentication required. Please log in to continue.";
+  technicalMessage: string;
+  retryable = false;
+  shouldLog = true;
+  shouldAlert = false;
+
+  constructor(technicalMessage: string, metadata?: Record<string, any>) {
+    super(technicalMessage);
+    this.name = "SubscriptionAuthError";
+    this.technicalMessage = technicalMessage;
+    this.metadata = metadata || {};
+  }
+}
+
+export class SubscriptionValidationError extends Error implements SubscriptionError {
+  code = "SUB_VALIDATION_ERROR";
+  severity = ErrorSeverity.MEDIUM;
+  category = ErrorCategory.VALIDATION;
+  recoveryStrategy = RecoveryStrategy.FALLBACK;
+  metadata: Record<string, any> = {};
+  timestamp = new Date();
+  userId?: string;
+  requestId?: string;
+  userMessage = "Unable to verify subscription status. Using cached data.";
+  technicalMessage: string;
+  retryable = true;
+  shouldLog = true;
+  shouldAlert = false;
+
+  constructor(technicalMessage: string, metadata?: Record<string, any>) {
+    super(technicalMessage);
+    this.name = "SubscriptionValidationError";
+    this.technicalMessage = technicalMessage;
+    this.metadata = metadata || {};
+  }
+}
+
+export class SubscriptionNetworkError extends Error implements SubscriptionError {
+  code = "SUB_NETWORK_ERROR";
+  severity = ErrorSeverity.MEDIUM;
+  category = ErrorCategory.NETWORK;
+  recoveryStrategy = RecoveryStrategy.RETRY;
+  metadata: Record<string, any> = {};
+  timestamp = new Date();
+  userId?: string;
+  requestId?: string;
+  userMessage = "Connection issue detected. Retrying...";
+  technicalMessage: string;
+  retryable = true;
+  shouldLog = true;
+  shouldAlert = false;
+
+  constructor(technicalMessage: string, metadata?: Record<string, any>) {
+    super(technicalMessage);
+    this.name = "SubscriptionNetworkError";
+    this.technicalMessage = technicalMessage;
+    this.metadata = metadata || {};
+  }
+}
+
+export class SubscriptionDatabaseError extends Error implements SubscriptionError {
+  code = "SUB_DATABASE_ERROR";
+  severity = ErrorSeverity.HIGH;
+  category = ErrorCategory.DATABASE;
+  recoveryStrategy = RecoveryStrategy.CIRCUIT_BREAK;
+  metadata: Record<string, any> = {};
+  timestamp = new Date();
+  userId?: string;
+  requestId?: string;
+  userMessage = "System temporarily unavailable. Please try again shortly.";
+  technicalMessage: string;
+  retryable = true;
+  shouldLog = true;
+  shouldAlert = true;
+
+  constructor(technicalMessage: string, metadata?: Record<string, any>) {
+    super(technicalMessage);
+    this.name = "SubscriptionDatabaseError";
+    this.technicalMessage = technicalMessage;
+    this.metadata = metadata || {};
+  }
+}
+
+export class SubscriptionCacheError extends Error implements SubscriptionError {
+  code = "SUB_CACHE_ERROR";
+  severity = ErrorSeverity.LOW;
+  category = ErrorCategory.CACHE;
+  recoveryStrategy = RecoveryStrategy.FALLBACK;
+  metadata: Record<string, any> = {};
+  timestamp = new Date();
+  userId?: string;
+  requestId?: string;
+  userMessage = "Performance may be affected. System is working normally.";
+  technicalMessage: string;
+  retryable = true;
+  shouldLog = true;
+  shouldAlert = false;
+
+  constructor(technicalMessage: string, metadata?: Record<string, any>) {
+    super(technicalMessage);
+    this.name = "SubscriptionCacheError";
+    this.technicalMessage = technicalMessage;
+    this.metadata = metadata || {};
+  }
+}
+
+export class SubscriptionRateLimitError extends Error implements SubscriptionError {
+  code = "SUB_RATE_LIMIT_ERROR";
+  severity = ErrorSeverity.MEDIUM;
+  category = ErrorCategory.RATE_LIMIT;
+  recoveryStrategy = RecoveryStrategy.RETRY;
+  metadata: Record<string, any> = {};
+  timestamp = new Date();
+  userId?: string;
+  requestId?: string;
+  userMessage = "Too many requests. Please wait a moment.";
+  technicalMessage: string;
+  retryable = true;
+  shouldLog = true;
+  shouldAlert = false;
+
+  constructor(technicalMessage: string, metadata?: Record<string, any>) {
+    super(technicalMessage);
+    this.name = "SubscriptionRateLimitError";
+    this.technicalMessage = technicalMessage;
+    this.metadata = metadata || {};
+  }
+}
+
+export class SubscriptionTimeoutError extends Error implements SubscriptionError {
+  code = "SUB_TIMEOUT_ERROR";
+  severity = ErrorSeverity.MEDIUM;
+  category = ErrorCategory.TIMEOUT;
+  recoveryStrategy = RecoveryStrategy.RETRY;
+  metadata: Record<string, any> = {};
+  timestamp = new Date();
+  userId?: string;
+  requestId?: string;
+  userMessage = "Request timeout. Retrying...";
+  technicalMessage: string;
+  retryable = true;
+  shouldLog = true;
+  shouldAlert = false;
+
+  constructor(technicalMessage: string, metadata?: Record<string, any>) {
+    super(technicalMessage);
+    this.name = "SubscriptionTimeoutError";
+    this.technicalMessage = technicalMessage;
+    this.metadata = metadata || {};
+  }
+}
+
+export class SubscriptionExternalServiceError extends Error implements SubscriptionError {
+  code = "SUB_EXTERNAL_SERVICE_ERROR";
+  severity = ErrorSeverity.HIGH;
+  category = ErrorCategory.EXTERNAL_SERVICE;
+  recoveryStrategy = RecoveryStrategy.FALLBACK;
+  metadata: Record<string, any> = {};
+  timestamp = new Date();
+  userId?: string;
+  requestId?: string;
+  userMessage = "External service unavailable. Using backup method.";
+  technicalMessage: string;
+  retryable = true;
+  shouldLog = true;
+  shouldAlert = true;
+
+  constructor(technicalMessage: string, metadata?: Record<string, any>) {
+    super(technicalMessage);
+    this.name = "SubscriptionExternalServiceError";
+    this.technicalMessage = technicalMessage;
+    this.metadata = metadata || {};
+  }
+}
+
+// Error context for enriched error reporting
+export interface ErrorContext {
+  userId?: string;
+  sessionId?: string;
+  requestId?: string;
+  userAgent?: string;
+  ipAddress?: string;
+  route?: string;
+  method?: string;
+  subscriptionStatus?: SubscriptionStatus;
+  cacheStatus?: "hit" | "miss" | "error";
+  retryAttempt?: number;
+  totalRetries?: number;
+  startTime?: Date;
+  duration?: number;
+  additionalContext?: Record<string, any>;
+}
+
+// Error factory for creating typed errors
+export class SubscriptionErrorFactory {
+  static createError(
+    type:
+      | "auth"
+      | "validation"
+      | "network"
+      | "database"
+      | "cache"
+      | "rate_limit"
+      | "timeout"
+      | "external_service",
+    technicalMessage: string,
+    context?: ErrorContext,
+  ): SubscriptionError {
+    const metadata = context ? { ...context } : {};
+
+    switch (type) {
+      case "auth":
+        return new SubscriptionAuthError(technicalMessage, metadata);
+      case "validation":
+        return new SubscriptionValidationError(technicalMessage, metadata);
+      case "network":
+        return new SubscriptionNetworkError(technicalMessage, metadata);
+      case "database":
+        return new SubscriptionDatabaseError(technicalMessage, metadata);
+      case "cache":
+        return new SubscriptionCacheError(technicalMessage, metadata);
+      case "rate_limit":
+        return new SubscriptionRateLimitError(technicalMessage, metadata);
+      case "timeout":
+        return new SubscriptionTimeoutError(technicalMessage, metadata);
+      case "external_service":
+        return new SubscriptionExternalServiceError(technicalMessage, metadata);
+      default:
+        // Default to validation error for unknown types
+        return new SubscriptionValidationError(technicalMessage, metadata);
+    }
+  }
+
+  static enrichError(error: SubscriptionError, context: ErrorContext): SubscriptionError {
+    error.userId = context.userId;
+    error.requestId = context.requestId;
+    error.metadata = { ...error.metadata, ...context };
+    return error;
+  }
+}
+
+// Error statistics for monitoring
+export interface ErrorStats {
+  total: number;
+  byCategory: Record<ErrorCategory, number>;
+  bySeverity: Record<ErrorSeverity, number>;
+  byCode: Record<string, number>;
+  timeWindow: {
+    start: Date;
+    end: Date;
+  };
+  trends: {
+    increasing: boolean;
+    rate: number;
+    pattern: "normal" | "spike" | "sustained";
+  };
+}
+
+// All types and classes exported above

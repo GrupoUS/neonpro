@@ -1,32 +1,51 @@
-'use client'
+"use client";
 
-import React, { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Progress } from '@/components/ui/progress'
-import { Calendar } from '@/components/ui/calendar'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { cn } from '@/lib/utils'
-import { format } from 'date-fns'
-import { 
-  Camera, 
-  Upload, 
-  Download, 
-  Calendar as CalendarIcon, 
-  Clock, 
-  TrendingUp, 
-  TrendingDown, 
-  Minus, 
-  Eye, 
-  Edit, 
-  Trash2, 
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Badge } from "@/components/ui/badge";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Progress } from "@/components/ui/progress";
+import type { Calendar } from "@/components/ui/calendar";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type { cn } from "@/lib/utils";
+import type { format } from "date-fns";
+import type {
+  Camera,
+  Upload,
+  Download,
+  Calendar as CalendarIcon,
+  Clock,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  Eye,
+  Edit,
+  Trash2,
   Plus,
   FileText,
   Image as ImageIcon,
@@ -48,164 +67,169 @@ import {
   Share2,
   Print,
   Save,
-  Settings
-} from 'lucide-react'
+  Settings,
+} from "lucide-react";
 
 // Types based on FHIR R4 and existing schemas
 interface ProgressEntry {
-  id: string
-  patientId: string
-  treatmentPlanId: string
-  entryDate: Date
-  entryType: 'photo' | 'measurement' | 'note' | 'video' | 'audio' | 'document'
-  title: string
-  description?: string
-  status: 'draft' | 'active' | 'completed' | 'cancelled'
-  priority: 'low' | 'medium' | 'high' | 'urgent'
-  category: 'clinical' | 'aesthetic' | 'functional' | 'patient_reported' | 'objective'
-  
+  id: string;
+  patientId: string;
+  treatmentPlanId: string;
+  entryDate: Date;
+  entryType: "photo" | "measurement" | "note" | "video" | "audio" | "document";
+  title: string;
+  description?: string;
+  status: "draft" | "active" | "completed" | "cancelled";
+  priority: "low" | "medium" | "high" | "urgent";
+  category: "clinical" | "aesthetic" | "functional" | "patient_reported" | "objective";
+
   // Media and attachments
-  attachments: ProgressAttachment[]
-  
+  attachments: ProgressAttachment[];
+
   // Measurements and metrics
-  measurements: ProgressMeasurement[]
-  
+  measurements: ProgressMeasurement[];
+
   // Clinical assessment
-  clinicalNotes: string
-  painLevel?: number // 0-10 scale
-  satisfactionLevel?: number // 0-10 scale
-  functionalScore?: number // 0-100 scale
-  
+  clinicalNotes: string;
+  painLevel?: number; // 0-10 scale
+  satisfactionLevel?: number; // 0-10 scale
+  functionalScore?: number; // 0-100 scale
+
   // Progress indicators
-  progressPercentage: number
-  milestoneAchieved?: boolean
-  nextSteps: string[]
-  
+  progressPercentage: number;
+  milestoneAchieved?: boolean;
+  nextSteps: string[];
+
   // Metadata
-  createdBy: string
-  createdAt: Date
-  updatedAt: Date
-  tags: string[]
-  isPrivate: boolean
-  
+  createdBy: string;
+  createdAt: Date;
+  updatedAt: Date;
+  tags: string[];
+  isPrivate: boolean;
+
   // LGPD compliance
-  consentGiven: boolean
-  dataRetentionDate?: Date
-  anonymizationLevel: 'none' | 'partial' | 'full'
+  consentGiven: boolean;
+  dataRetentionDate?: Date;
+  anonymizationLevel: "none" | "partial" | "full";
 }
 
 interface ProgressAttachment {
-  id: string
-  type: 'photo' | 'video' | 'audio' | 'document'
-  filename: string
-  url: string
-  thumbnailUrl?: string
-  size: number
-  mimeType: string
+  id: string;
+  type: "photo" | "video" | "audio" | "document";
+  filename: string;
+  url: string;
+  thumbnailUrl?: string;
+  size: number;
+  mimeType: string;
   metadata: {
-    width?: number
-    height?: number
-    duration?: number // for video/audio
-    captureDevice?: string
-    gpsLocation?: { lat: number; lng: number }
-    timestamp: Date
-  }
-  annotations: ProgressAnnotation[]
-  isBeforeAfter: boolean
-  comparisonGroup?: string
+    width?: number;
+    height?: number;
+    duration?: number; // for video/audio
+    captureDevice?: string;
+    gpsLocation?: { lat: number; lng: number };
+    timestamp: Date;
+  };
+  annotations: ProgressAnnotation[];
+  isBeforeAfter: boolean;
+  comparisonGroup?: string;
 }
 
 interface ProgressAnnotation {
-  id: string
-  type: 'point' | 'area' | 'line' | 'text'
-  coordinates: { x: number; y: number; width?: number; height?: number }
-  content: string
-  color: string
-  createdBy: string
-  createdAt: Date
+  id: string;
+  type: "point" | "area" | "line" | "text";
+  coordinates: { x: number; y: number; width?: number; height?: number };
+  content: string;
+  color: string;
+  createdBy: string;
+  createdAt: Date;
 }
 
 interface ProgressMeasurement {
-  id: string
-  type: 'linear' | 'angular' | 'area' | 'volume' | 'weight' | 'temperature' | 'pressure'
-  name: string
-  value: number
-  unit: string
-  referenceRange?: { min: number; max: number }
-  method: string
-  accuracy: number
-  notes?: string
+  id: string;
+  type: "linear" | "angular" | "area" | "volume" | "weight" | "temperature" | "pressure";
+  name: string;
+  value: number;
+  unit: string;
+  referenceRange?: { min: number; max: number };
+  method: string;
+  accuracy: number;
+  notes?: string;
 }
 
 interface ProgressComparison {
-  id: string
-  name: string
-  baselineEntry: ProgressEntry
-  currentEntry: ProgressEntry
-  comparisonType: 'before_after' | 'timeline' | 'milestone'
+  id: string;
+  name: string;
+  baselineEntry: ProgressEntry;
+  currentEntry: ProgressEntry;
+  comparisonType: "before_after" | "timeline" | "milestone";
   metrics: {
-    improvementPercentage: number
-    significantChanges: string[]
-    concerns: string[]
-    recommendations: string[]
-  }
-  generatedAt: Date
+    improvementPercentage: number;
+    significantChanges: string[];
+    concerns: string[];
+    recommendations: string[];
+  };
+  generatedAt: Date;
 }
 
 interface ProgressReport {
-  id: string
-  patientId: string
-  treatmentPlanId: string
-  reportType: 'weekly' | 'monthly' | 'milestone' | 'final' | 'custom'
-  title: string
-  period: { start: Date; end: Date }
-  
+  id: string;
+  patientId: string;
+  treatmentPlanId: string;
+  reportType: "weekly" | "monthly" | "milestone" | "final" | "custom";
+  title: string;
+  period: { start: Date; end: Date };
+
   summary: {
-    totalEntries: number
-    progressPercentage: number
-    milestonesAchieved: number
-    totalMilestones: number
-    averagePainLevel: number
-    averageSatisfaction: number
-    keyAchievements: string[]
-    concerns: string[]
-  }
-  
+    totalEntries: number;
+    progressPercentage: number;
+    milestonesAchieved: number;
+    totalMilestones: number;
+    averagePainLevel: number;
+    averageSatisfaction: number;
+    keyAchievements: string[];
+    concerns: string[];
+  };
+
   sections: {
-    clinicalProgress: string
-    patientFeedback: string
-    objectiveMeasurements: string
-    visualDocumentation: string
-    recommendations: string
-    nextSteps: string[]
-  }
-  
-  attachments: string[] // URLs to generated charts, comparisons
-  generatedAt: Date
-  generatedBy: string
+    clinicalProgress: string;
+    patientFeedback: string;
+    objectiveMeasurements: string;
+    visualDocumentation: string;
+    recommendations: string;
+    nextSteps: string[];
+  };
+
+  attachments: string[]; // URLs to generated charts, comparisons
+  generatedAt: Date;
+  generatedBy: string;
 }
 
 // Mock data generator
 const generateMockProgressEntries = (): ProgressEntry[] => {
-  const entries: ProgressEntry[] = []
-  const entryTypes: ProgressEntry['entryType'][] = ['photo', 'measurement', 'note', 'video']
-  const categories: ProgressEntry['category'][] = ['clinical', 'aesthetic', 'functional', 'patient_reported']
-  const statuses: ProgressEntry['status'][] = ['active', 'completed']
-  
+  const entries: ProgressEntry[] = [];
+  const entryTypes: ProgressEntry["entryType"][] = ["photo", "measurement", "note", "video"];
+  const categories: ProgressEntry["category"][] = [
+    "clinical",
+    "aesthetic",
+    "functional",
+    "patient_reported",
+  ];
+  const statuses: ProgressEntry["status"][] = ["active", "completed"];
+
   for (let i = 0; i < 15; i++) {
-    const entryDate = new Date()
-    entryDate.setDate(entryDate.getDate() - Math.floor(Math.random() * 30))
-    
+    const entryDate = new Date();
+    entryDate.setDate(entryDate.getDate() - Math.floor(Math.random() * 30));
+
     entries.push({
       id: `progress_${i + 1}`,
-      patientId: 'patient_001',
-      treatmentPlanId: 'treatment_001',
+      patientId: "patient_001",
+      treatmentPlanId: "treatment_001",
       entryDate,
       entryType: entryTypes[Math.floor(Math.random() * entryTypes.length)],
       title: `Progress Entry ${i + 1}`,
       description: `Detailed description of progress entry ${i + 1}`,
       status: statuses[Math.floor(Math.random() * statuses.length)],
-      priority: 'medium',
+      priority: "medium",
       category: categories[Math.floor(Math.random() * categories.length)],
       attachments: [],
       measurements: [],
@@ -216,169 +240,186 @@ const generateMockProgressEntries = (): ProgressEntry[] => {
       progressPercentage: Math.floor(Math.random() * 101),
       milestoneAchieved: Math.random() > 0.7,
       nextSteps: [`Next step ${i + 1}A`, `Next step ${i + 1}B`],
-      createdBy: 'Dr. Silva',
+      createdBy: "Dr. Silva",
       createdAt: entryDate,
       updatedAt: entryDate,
-      tags: [`tag${i % 3 + 1}`, `category${i % 2 + 1}`],
+      tags: [`tag${(i % 3) + 1}`, `category${(i % 2) + 1}`],
       isPrivate: false,
       consentGiven: true,
-      anonymizationLevel: 'none'
-    })
+      anonymizationLevel: "none",
+    });
   }
-  
-  return entries
-}
+
+  return entries;
+};
 
 const generateMockComparisons = (): ProgressComparison[] => {
   return [
     {
-      id: 'comp_1',
-      name: 'Before vs After Treatment',
+      id: "comp_1",
+      name: "Before vs After Treatment",
       baselineEntry: generateMockProgressEntries()[0],
       currentEntry: generateMockProgressEntries()[1],
-      comparisonType: 'before_after',
+      comparisonType: "before_after",
       metrics: {
         improvementPercentage: 75,
-        significantChanges: ['Reduced swelling', 'Improved alignment'],
-        concerns: ['Minor discomfort'],
-        recommendations: ['Continue current protocol', 'Monitor progress weekly']
+        significantChanges: ["Reduced swelling", "Improved alignment"],
+        concerns: ["Minor discomfort"],
+        recommendations: ["Continue current protocol", "Monitor progress weekly"],
       },
-      generatedAt: new Date()
-    }
-  ]
-}
+      generatedAt: new Date(),
+    },
+  ];
+};
 
 export default function ProgressTrackingManager() {
-  const [progressEntries, setProgressEntries] = useState<ProgressEntry[]>([])
-  const [comparisons, setComparisons] = useState<ProgressComparison[]>([])
-  const [selectedEntry, setSelectedEntry] = useState<ProgressEntry | null>(null)
-  const [isAddingEntry, setIsAddingEntry] = useState(false)
-  const [activeTab, setActiveTab] = useState('timeline')
-  const [filterCategory, setFilterCategory] = useState<string>('all')
-  const [filterStatus, setFilterStatus] = useState<string>('all')
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
-  
+  const [progressEntries, setProgressEntries] = useState<ProgressEntry[]>([]);
+  const [comparisons, setComparisons] = useState<ProgressComparison[]>([]);
+  const [selectedEntry, setSelectedEntry] = useState<ProgressEntry | null>(null);
+  const [isAddingEntry, setIsAddingEntry] = useState(false);
+  const [activeTab, setActiveTab] = useState("timeline");
+  const [filterCategory, setFilterCategory] = useState<string>("all");
+  const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+
   // Form state for new entry
   const [newEntry, setNewEntry] = useState<Partial<ProgressEntry>>({
-    entryType: 'photo',
-    title: '',
-    description: '',
-    category: 'clinical',
-    priority: 'medium',
-    status: 'active',
+    entryType: "photo",
+    title: "",
+    description: "",
+    category: "clinical",
+    priority: "medium",
+    status: "active",
     painLevel: 0,
     satisfactionLevel: 0,
     functionalScore: 0,
     progressPercentage: 0,
-    clinicalNotes: '',
+    clinicalNotes: "",
     nextSteps: [],
     tags: [],
     isPrivate: false,
     consentGiven: true,
-    anonymizationLevel: 'none'
-  })
+    anonymizationLevel: "none",
+  });
 
   useEffect(() => {
     // Load mock data
-    setProgressEntries(generateMockProgressEntries())
-    setComparisons(generateMockComparisons())
-  }, [])
+    setProgressEntries(generateMockProgressEntries());
+    setComparisons(generateMockComparisons());
+  }, []);
 
-  const filteredEntries = progressEntries.filter(entry => {
-    const matchesCategory = filterCategory === 'all' || entry.category === filterCategory
-    const matchesStatus = filterStatus === 'all' || entry.status === filterStatus
-    const matchesSearch = searchTerm === '' || 
+  const filteredEntries = progressEntries.filter((entry) => {
+    const matchesCategory = filterCategory === "all" || entry.category === filterCategory;
+    const matchesStatus = filterStatus === "all" || entry.status === filterStatus;
+    const matchesSearch =
+      searchTerm === "" ||
       entry.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      entry.description?.toLowerCase().includes(searchTerm.toLowerCase())
-    
-    return matchesCategory && matchesStatus && matchesSearch
-  })
+      entry.description?.toLowerCase().includes(searchTerm.toLowerCase());
+
+    return matchesCategory && matchesStatus && matchesSearch;
+  });
 
   const handleAddEntry = () => {
-    if (!newEntry.title) return
-    
+    if (!newEntry.title) return;
+
     const entry: ProgressEntry = {
       id: `progress_${Date.now()}`,
-      patientId: 'patient_001',
-      treatmentPlanId: 'treatment_001',
+      patientId: "patient_001",
+      treatmentPlanId: "treatment_001",
       entryDate: selectedDate || new Date(),
-      entryType: newEntry.entryType || 'photo',
+      entryType: newEntry.entryType || "photo",
       title: newEntry.title,
       description: newEntry.description,
-      status: newEntry.status || 'active',
-      priority: newEntry.priority || 'medium',
-      category: newEntry.category || 'clinical',
+      status: newEntry.status || "active",
+      priority: newEntry.priority || "medium",
+      category: newEntry.category || "clinical",
       attachments: [],
       measurements: [],
-      clinicalNotes: newEntry.clinicalNotes || '',
+      clinicalNotes: newEntry.clinicalNotes || "",
       painLevel: newEntry.painLevel,
       satisfactionLevel: newEntry.satisfactionLevel,
       functionalScore: newEntry.functionalScore,
       progressPercentage: newEntry.progressPercentage || 0,
       milestoneAchieved: false,
       nextSteps: newEntry.nextSteps || [],
-      createdBy: 'Current User',
+      createdBy: "Current User",
       createdAt: new Date(),
       updatedAt: new Date(),
       tags: newEntry.tags || [],
       isPrivate: newEntry.isPrivate || false,
       consentGiven: newEntry.consentGiven || true,
-      anonymizationLevel: newEntry.anonymizationLevel || 'none'
-    }
-    
-    setProgressEntries([entry, ...progressEntries])
-    setIsAddingEntry(false)
+      anonymizationLevel: newEntry.anonymizationLevel || "none",
+    };
+
+    setProgressEntries([entry, ...progressEntries]);
+    setIsAddingEntry(false);
     setNewEntry({
-      entryType: 'photo',
-      title: '',
-      description: '',
-      category: 'clinical',
-      priority: 'medium',
-      status: 'active',
+      entryType: "photo",
+      title: "",
+      description: "",
+      category: "clinical",
+      priority: "medium",
+      status: "active",
       painLevel: 0,
       satisfactionLevel: 0,
       functionalScore: 0,
       progressPercentage: 0,
-      clinicalNotes: '',
+      clinicalNotes: "",
       nextSteps: [],
       tags: [],
       isPrivate: false,
       consentGiven: true,
-      anonymizationLevel: 'none'
-    })
-  }
+      anonymizationLevel: "none",
+    });
+  };
 
-  const getEntryIcon = (type: ProgressEntry['entryType']) => {
+  const getEntryIcon = (type: ProgressEntry["entryType"]) => {
     switch (type) {
-      case 'photo': return <Camera className="h-4 w-4" />
-      case 'video': return <Video className="h-4 w-4" />
-      case 'audio': return <Mic className="h-4 w-4" />
-      case 'measurement': return <BarChart3 className="h-4 w-4" />
-      case 'note': return <FileText className="h-4 w-4" />
-      case 'document': return <FileText className="h-4 w-4" />
-      default: return <FileText className="h-4 w-4" />
+      case "photo":
+        return <Camera className="h-4 w-4" />;
+      case "video":
+        return <Video className="h-4 w-4" />;
+      case "audio":
+        return <Mic className="h-4 w-4" />;
+      case "measurement":
+        return <BarChart3 className="h-4 w-4" />;
+      case "note":
+        return <FileText className="h-4 w-4" />;
+      case "document":
+        return <FileText className="h-4 w-4" />;
+      default:
+        return <FileText className="h-4 w-4" />;
     }
-  }
+  };
 
-  const getStatusIcon = (status: ProgressEntry['status']) => {
+  const getStatusIcon = (status: ProgressEntry["status"]) => {
     switch (status) {
-      case 'completed': return <CheckCircle className="h-4 w-4 text-green-500" />
-      case 'active': return <Activity className="h-4 w-4 text-blue-500" />
-      case 'cancelled': return <XCircle className="h-4 w-4 text-red-500" />
-      default: return <Info className="h-4 w-4 text-gray-500" />
+      case "completed":
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
+      case "active":
+        return <Activity className="h-4 w-4 text-blue-500" />;
+      case "cancelled":
+        return <XCircle className="h-4 w-4 text-red-500" />;
+      default:
+        return <Info className="h-4 w-4 text-gray-500" />;
     }
-  }
+  };
 
-  const getPriorityColor = (priority: ProgressEntry['priority']) => {
+  const getPriorityColor = (priority: ProgressEntry["priority"]) => {
     switch (priority) {
-      case 'urgent': return 'bg-red-100 text-red-800'
-      case 'high': return 'bg-orange-100 text-orange-800'
-      case 'medium': return 'bg-yellow-100 text-yellow-800'
-      case 'low': return 'bg-green-100 text-green-800'
-      default: return 'bg-gray-100 text-gray-800'
+      case "urgent":
+        return "bg-red-100 text-red-800";
+      case "high":
+        return "bg-orange-100 text-orange-800";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800";
+      case "low":
+        return "bg-green-100 text-green-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -417,9 +458,9 @@ export default function ProgressTrackingManager() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="entry-type">Entry Type</Label>
-                    <Select 
-                      value={newEntry.entryType} 
-                      onValueChange={(value: ProgressEntry['entryType']) => 
+                    <Select
+                      value={newEntry.entryType}
+                      onValueChange={(value: ProgressEntry["entryType"]) =>
                         setNewEntry({ ...newEntry, entryType: value })
                       }
                     >
@@ -438,9 +479,9 @@ export default function ProgressTrackingManager() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="category">Category</Label>
-                    <Select 
-                      value={newEntry.category} 
-                      onValueChange={(value: ProgressEntry['category']) => 
+                    <Select
+                      value={newEntry.category}
+                      onValueChange={(value: ProgressEntry["category"]) =>
                         setNewEntry({ ...newEntry, category: value })
                       }
                     >
@@ -457,7 +498,7 @@ export default function ProgressTrackingManager() {
                     </Select>
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="title">Title</Label>
                   <Input
@@ -467,7 +508,7 @@ export default function ProgressTrackingManager() {
                     placeholder="Enter entry title"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="description">Description</Label>
                   <Textarea
@@ -478,7 +519,7 @@ export default function ProgressTrackingManager() {
                     rows={3}
                   />
                 </div>
-                
+
                 <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="pain-level">Pain Level (0-10)</Label>
@@ -488,7 +529,9 @@ export default function ProgressTrackingManager() {
                       min="0"
                       max="10"
                       value={newEntry.painLevel}
-                      onChange={(e) => setNewEntry({ ...newEntry, painLevel: parseInt(e.target.value) })}
+                      onChange={(e) =>
+                        setNewEntry({ ...newEntry, painLevel: parseInt(e.target.value) })
+                      }
                     />
                   </div>
                   <div className="space-y-2">
@@ -499,7 +542,9 @@ export default function ProgressTrackingManager() {
                       min="0"
                       max="10"
                       value={newEntry.satisfactionLevel}
-                      onChange={(e) => setNewEntry({ ...newEntry, satisfactionLevel: parseInt(e.target.value) })}
+                      onChange={(e) =>
+                        setNewEntry({ ...newEntry, satisfactionLevel: parseInt(e.target.value) })
+                      }
                     />
                   </div>
                   <div className="space-y-2">
@@ -510,11 +555,13 @@ export default function ProgressTrackingManager() {
                       min="0"
                       max="100"
                       value={newEntry.progressPercentage}
-                      onChange={(e) => setNewEntry({ ...newEntry, progressPercentage: parseInt(e.target.value) })}
+                      onChange={(e) =>
+                        setNewEntry({ ...newEntry, progressPercentage: parseInt(e.target.value) })
+                      }
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="clinical-notes">Clinical Notes</Label>
                   <Textarea
@@ -525,14 +572,12 @@ export default function ProgressTrackingManager() {
                     rows={4}
                   />
                 </div>
-                
+
                 <div className="flex justify-end space-x-2">
                   <Button variant="outline" onClick={() => setIsAddingEntry(false)}>
                     Cancel
                   </Button>
-                  <Button onClick={handleAddEntry}>
-                    Add Entry
-                  </Button>
+                  <Button onClick={handleAddEntry}>Add Entry</Button>
                 </div>
               </div>
             </DialogContent>
@@ -599,8 +644,11 @@ export default function ProgressTrackingManager() {
         <TabsContent value="timeline" className="space-y-4">
           <div className="grid gap-4">
             {filteredEntries.map((entry) => (
-              <Card key={entry.id} className="cursor-pointer hover:shadow-md transition-shadow"
-                    onClick={() => setSelectedEntry(entry)}>
+              <Card
+                key={entry.id}
+                className="cursor-pointer hover:shadow-md transition-shadow"
+                onClick={() => setSelectedEntry(entry)}
+              >
                 <CardContent className="pt-6">
                   <div className="flex items-start justify-between">
                     <div className="flex items-start space-x-4">
@@ -614,21 +662,17 @@ export default function ProgressTrackingManager() {
                           <Badge className={getPriorityColor(entry.priority)}>
                             {entry.priority}
                           </Badge>
-                          <Badge variant="outline">
-                            {entry.category}
-                          </Badge>
+                          <Badge variant="outline">{entry.category}</Badge>
                         </div>
-                        <p className="text-sm text-muted-foreground mb-2">
-                          {entry.description}
-                        </p>
+                        <p className="text-sm text-muted-foreground mb-2">{entry.description}</p>
                         <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                           <span className="flex items-center">
                             <CalendarIcon className="h-4 w-4 mr-1" />
-                            {format(entry.entryDate, 'MMM dd, yyyy')}
+                            {format(entry.entryDate, "MMM dd, yyyy")}
                           </span>
                           <span className="flex items-center">
                             <Clock className="h-4 w-4 mr-1" />
-                            {format(entry.entryDate, 'HH:mm')}
+                            {format(entry.entryDate, "HH:mm")}
                           </span>
                           <span className="flex items-center">
                             <Target className="h-4 w-4 mr-1" />
@@ -646,7 +690,7 @@ export default function ProgressTrackingManager() {
                       </Button>
                     </div>
                   </div>
-                  
+
                   {entry.progressPercentage > 0 && (
                     <div className="mt-4">
                       <div className="flex items-center justify-between text-sm mb-2">
@@ -656,7 +700,7 @@ export default function ProgressTrackingManager() {
                       <Progress value={entry.progressPercentage} className="h-2" />
                     </div>
                   )}
-                  
+
                   {entry.tags.length > 0 && (
                     <div className="flex items-center space-x-2 mt-3">
                       {entry.tags.map((tag) => (
@@ -675,12 +719,12 @@ export default function ProgressTrackingManager() {
         <TabsContent value="gallery" className="space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filteredEntries
-              .filter(entry => entry.entryType === 'photo' || entry.entryType === 'video')
+              .filter((entry) => entry.entryType === "photo" || entry.entryType === "video")
               .map((entry) => (
                 <Card key={entry.id} className="cursor-pointer hover:shadow-md transition-shadow">
                   <CardContent className="p-4">
                     <div className="aspect-square bg-gray-100 rounded-lg mb-3 flex items-center justify-center">
-                      {entry.entryType === 'photo' ? (
+                      {entry.entryType === "photo" ? (
                         <ImageIcon className="h-8 w-8 text-gray-400" />
                       ) : (
                         <Video className="h-8 w-8 text-gray-400" />
@@ -688,12 +732,11 @@ export default function ProgressTrackingManager() {
                     </div>
                     <h4 className="font-medium text-sm mb-1">{entry.title}</h4>
                     <p className="text-xs text-muted-foreground">
-                      {format(entry.entryDate, 'MMM dd, yyyy')}
+                      {format(entry.entryDate, "MMM dd, yyyy")}
                     </p>
                   </CardContent>
                 </Card>
-              ))
-            }
+              ))}
           </div>
         </TabsContent>
 
@@ -701,9 +744,7 @@ export default function ProgressTrackingManager() {
           <Card>
             <CardHeader>
               <CardTitle>Measurement Tracking</CardTitle>
-              <CardDescription>
-                Track quantitative progress metrics over time
-              </CardDescription>
+              <CardDescription>Track quantitative progress metrics over time</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -712,7 +753,9 @@ export default function ProgressTrackingManager() {
                     <CardContent className="pt-6">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm font-medium text-muted-foreground">Avg Pain Level</p>
+                          <p className="text-sm font-medium text-muted-foreground">
+                            Avg Pain Level
+                          </p>
                           <p className="text-2xl font-bold">3.2/10</p>
                         </div>
                         <TrendingDown className="h-8 w-8 text-green-500" />
@@ -734,7 +777,9 @@ export default function ProgressTrackingManager() {
                     <CardContent className="pt-6">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm font-medium text-muted-foreground">Functional Score</p>
+                          <p className="text-sm font-medium text-muted-foreground">
+                            Functional Score
+                          </p>
                           <p className="text-2xl font-bold">85/100</p>
                         </div>
                         <TrendingUp className="h-8 w-8 text-green-500" />
@@ -742,11 +787,13 @@ export default function ProgressTrackingManager() {
                     </CardContent>
                   </Card>
                 </div>
-                
+
                 <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
                   <div className="text-center">
                     <LineChart className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground">Measurement charts will be displayed here</p>
+                    <p className="text-sm text-muted-foreground">
+                      Measurement charts will be displayed here
+                    </p>
                   </div>
                 </div>
               </div>
@@ -761,7 +808,7 @@ export default function ProgressTrackingManager() {
                 <CardHeader>
                   <CardTitle>{comparison.name}</CardTitle>
                   <CardDescription>
-                    {comparison.comparisonType.replace('_', ' ')} comparison
+                    {comparison.comparisonType.replace("_", " ")} comparison
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -772,7 +819,7 @@ export default function ProgressTrackingManager() {
                         <ImageIcon className="h-12 w-12 text-gray-400" />
                       </div>
                       <p className="text-sm text-muted-foreground mt-2">
-                        {format(comparison.baselineEntry.entryDate, 'MMM dd, yyyy')}
+                        {format(comparison.baselineEntry.entryDate, "MMM dd, yyyy")}
                       </p>
                     </div>
                     <div>
@@ -781,22 +828,25 @@ export default function ProgressTrackingManager() {
                         <ImageIcon className="h-12 w-12 text-gray-400" />
                       </div>
                       <p className="text-sm text-muted-foreground mt-2">
-                        {format(comparison.currentEntry.entryDate, 'MMM dd, yyyy')}
+                        {format(comparison.currentEntry.entryDate, "MMM dd, yyyy")}
                       </p>
                     </div>
                   </div>
-                  
+
                   <div className="mt-6 space-y-4">
                     <div>
                       <h4 className="font-medium mb-2">Improvement</h4>
                       <div className="flex items-center space-x-2">
-                        <Progress value={comparison.metrics.improvementPercentage} className="flex-1" />
+                        <Progress
+                          value={comparison.metrics.improvementPercentage}
+                          className="flex-1"
+                        />
                         <span className="text-sm font-medium">
                           {comparison.metrics.improvementPercentage}%
                         </span>
                       </div>
                     </div>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <h5 className="font-medium text-sm mb-2">Significant Changes</h5>
@@ -852,13 +902,15 @@ export default function ProgressTrackingManager() {
                     <span>Final Report</span>
                   </Button>
                 </div>
-                
+
                 <div className="border rounded-lg p-4">
                   <h4 className="font-medium mb-2">Recent Reports</h4>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
                       <div>
-                        <p className="font-medium text-sm">Monthly Progress Report - January 2024</p>
+                        <p className="font-medium text-sm">
+                          Monthly Progress Report - January 2024
+                        </p>
                         <p className="text-xs text-muted-foreground">Generated on Jan 31, 2024</p>
                       </div>
                       <div className="flex items-center space-x-2">
@@ -887,31 +939,25 @@ export default function ProgressTrackingManager() {
                 {getEntryIcon(selectedEntry.entryType)}
                 <span>{selectedEntry.title}</span>
               </DialogTitle>
-              <DialogDescription>
-                {selectedEntry.description}
-              </DialogDescription>
+              <DialogDescription>{selectedEntry.description}</DialogDescription>
             </DialogHeader>
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label className="text-sm font-medium">Entry Date</Label>
                   <p className="text-sm text-muted-foreground">
-                    {format(selectedEntry.entryDate, 'MMMM dd, yyyy HH:mm')}
+                    {format(selectedEntry.entryDate, "MMMM dd, yyyy HH:mm")}
                   </p>
                 </div>
                 <div>
                   <Label className="text-sm font-medium">Category</Label>
-                  <p className="text-sm text-muted-foreground">
-                    {selectedEntry.category}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{selectedEntry.category}</p>
                 </div>
                 <div>
                   <Label className="text-sm font-medium">Status</Label>
                   <div className="flex items-center space-x-2">
                     {getStatusIcon(selectedEntry.status)}
-                    <span className="text-sm text-muted-foreground">
-                      {selectedEntry.status}
-                    </span>
+                    <span className="text-sm text-muted-foreground">{selectedEntry.status}</span>
                   </div>
                 </div>
                 <div>
@@ -921,7 +967,7 @@ export default function ProgressTrackingManager() {
                   </Badge>
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <Label className="text-sm font-medium">Pain Level</Label>
@@ -936,7 +982,7 @@ export default function ProgressTrackingManager() {
                   <p className="text-2xl font-bold">{selectedEntry.progressPercentage}%</p>
                 </div>
               </div>
-              
+
               {selectedEntry.clinicalNotes && (
                 <div>
                   <Label className="text-sm font-medium">Clinical Notes</Label>
@@ -945,7 +991,7 @@ export default function ProgressTrackingManager() {
                   </p>
                 </div>
               )}
-              
+
               {selectedEntry.nextSteps.length > 0 && (
                 <div>
                   <Label className="text-sm font-medium">Next Steps</Label>
@@ -964,5 +1010,5 @@ export default function ProgressTrackingManager() {
         </Dialog>
       )}
     </div>
-  )
+  );
 }

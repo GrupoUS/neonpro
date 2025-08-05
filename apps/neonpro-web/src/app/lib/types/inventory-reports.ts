@@ -1,26 +1,26 @@
-import { z } from 'zod';
+import type { z } from "zod";
 
 // =============================================================================
 // REPORT TYPES & ENUMS
 // =============================================================================
 
-export type ReportType = 
-  | 'stock_movement'
-  | 'stock_valuation' 
-  | 'expiring_items'
-  | 'low_stock'
-  | 'transfers'
-  | 'location_performance'
-  | 'supplier_analysis'
-  | 'category_analysis';
+export type ReportType =
+  | "stock_movement"
+  | "stock_valuation"
+  | "expiring_items"
+  | "low_stock"
+  | "transfers"
+  | "location_performance"
+  | "supplier_analysis"
+  | "category_analysis";
 
-export type ReportFormat = 'pdf' | 'excel' | 'csv' | 'json';
+export type ReportFormat = "pdf" | "excel" | "csv" | "json";
 
-export type ReportPeriod = 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly' | 'custom';
+export type ReportPeriod = "daily" | "weekly" | "monthly" | "quarterly" | "yearly" | "custom";
 
-export type MovementType = 'in' | 'out' | 'transfer' | 'adjustment' | 'return' | 'waste';
+export type MovementType = "in" | "out" | "transfer" | "adjustment" | "return" | "waste";
 
-export type ReportStatus = 'pending' | 'generating' | 'completed' | 'failed' | 'scheduled';
+export type ReportStatus = "pending" | "generating" | "completed" | "failed" | "scheduled";
 
 // =============================================================================
 // REPORT FILTERS & PARAMETERS
@@ -47,7 +47,7 @@ export interface ReportParameters {
   format: ReportFormat;
   groupBy?: string[];
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
   includeCharts?: boolean;
   includeSummary?: boolean;
   customFields?: string[];
@@ -85,21 +85,30 @@ export interface StockMovementSummary {
   total_value_out: number;
   net_movement: number;
   net_value: number;
-  by_type: Record<MovementType, {
-    count: number;
-    quantity: number;
-    value: number;
-  }>;
-  by_category: Record<string, {
-    count: number;
-    quantity: number;
-    value: number;
-  }>;
-  by_location: Record<string, {
-    count: number;
-    quantity: number;
-    value: number;
-  }>;
+  by_type: Record<
+    MovementType,
+    {
+      count: number;
+      quantity: number;
+      value: number;
+    }
+  >;
+  by_category: Record<
+    string,
+    {
+      count: number;
+      quantity: number;
+      value: number;
+    }
+  >;
+  by_location: Record<
+    string,
+    {
+      count: number;
+      quantity: number;
+      value: number;
+    }
+  >;
 }
 
 // =============================================================================
@@ -120,7 +129,7 @@ export interface StockValuationReportData {
   days_since_movement?: number;
   turnover_rate?: number;
   safety_stock?: number;
-  stock_status: 'adequate' | 'low' | 'critical' | 'overstock';
+  stock_status: "adequate" | "low" | "critical" | "overstock";
 }
 
 export interface StockValuationSummary {
@@ -128,24 +137,33 @@ export interface StockValuationSummary {
   total_quantity: number;
   total_value: number;
   average_unit_cost: number;
-  by_category: Record<string, {
-    items: number;
-    quantity: number;
-    value: number;
-    percentage: number;
-  }>;
-  by_location: Record<string, {
-    items: number;
-    quantity: number;
-    value: number;
-    percentage: number;
-  }>;
-  by_status: Record<string, {
-    items: number;
-    quantity: number;
-    value: number;
-    percentage: number;
-  }>;
+  by_category: Record<
+    string,
+    {
+      items: number;
+      quantity: number;
+      value: number;
+      percentage: number;
+    }
+  >;
+  by_location: Record<
+    string,
+    {
+      items: number;
+      quantity: number;
+      value: number;
+      percentage: number;
+    }
+  >;
+  by_status: Record<
+    string,
+    {
+      items: number;
+      quantity: number;
+      value: number;
+      percentage: number;
+    }
+  >;
 }
 
 // =============================================================================
@@ -165,28 +183,37 @@ export interface ExpiringItemsReportData {
   current_quantity: number;
   unit_cost: number;
   total_value: number;
-  urgency_level: 'immediate' | 'urgent' | 'warning' | 'watch';
-  suggested_action: 'use_immediately' | 'transfer' | 'discount' | 'dispose';
+  urgency_level: "immediate" | "urgent" | "warning" | "watch";
+  suggested_action: "use_immediately" | "transfer" | "discount" | "dispose";
 }
 
 export interface ExpiringItemsSummary {
   total_expiring_items: number;
   total_expiring_value: number;
-  by_urgency: Record<string, {
-    items: number;
-    quantity: number;
-    value: number;
-  }>;
-  by_category: Record<string, {
-    items: number;
-    quantity: number;
-    value: number;
-  }>;
-  by_location: Record<string, {
-    items: number;
-    quantity: number;
-    value: number;
-  }>;
+  by_urgency: Record<
+    string,
+    {
+      items: number;
+      quantity: number;
+      value: number;
+    }
+  >;
+  by_category: Record<
+    string,
+    {
+      items: number;
+      quantity: number;
+      value: number;
+    }
+  >;
+  by_location: Record<
+    string,
+    {
+      items: number;
+      quantity: number;
+      value: number;
+    }
+  >;
   upcoming_expirations_30_days: number;
   upcoming_expirations_60_days: number;
   upcoming_expirations_90_days: number;
@@ -210,7 +237,7 @@ export interface TransferReportData {
   unit_cost: number;
   total_value: number;
   transfer_date: string;
-  status: 'pending' | 'in_transit' | 'completed' | 'cancelled';
+  status: "pending" | "in_transit" | "completed" | "cancelled";
   reason: string;
   initiated_by?: string;
   completed_by?: string;
@@ -223,19 +250,28 @@ export interface TransferReportSummary {
   pending_transfers: number;
   total_value_transferred: number;
   average_transfer_value: number;
-  by_status: Record<string, {
-    count: number;
-    value: number;
-  }>;
-  by_route: Record<string, {
-    count: number;
-    value: number;
-    avg_time: number;
-  }>;
-  by_category: Record<string, {
-    count: number;
-    value: number;
-  }>;
+  by_status: Record<
+    string,
+    {
+      count: number;
+      value: number;
+    }
+  >;
+  by_route: Record<
+    string,
+    {
+      count: number;
+      value: number;
+      avg_time: number;
+    }
+  >;
+  by_category: Record<
+    string,
+    {
+      count: number;
+      value: number;
+    }
+  >;
   most_transferred_items: Array<{
     item_name: string;
     count: number;
@@ -327,9 +363,9 @@ export interface ReportTemplate {
     footer_text?: string;
     include_summary: boolean;
     include_charts: boolean;
-    color_scheme: 'default' | 'blue' | 'green' | 'purple';
-    page_orientation: 'portrait' | 'landscape';
-    font_size: 'small' | 'medium' | 'large';
+    color_scheme: "default" | "blue" | "green" | "purple";
+    page_orientation: "portrait" | "landscape";
+    font_size: "small" | "medium" | "large";
   };
   is_default: boolean;
   created_by: string;
@@ -409,7 +445,7 @@ export const ReportFiltersSchema = z.object({
   category: z.string().optional(),
   item_id: z.string().optional(),
   supplier_id: z.string().optional(),
-  movement_type: z.enum(['in', 'out', 'transfer', 'adjustment', 'return', 'waste']).optional(),
+  movement_type: z.enum(["in", "out", "transfer", "adjustment", "return", "waste"]).optional(),
   min_value: z.number().min(0).optional(),
   max_value: z.number().min(0).optional(),
   include_zero_stock: z.boolean().optional(),
@@ -417,12 +453,21 @@ export const ReportFiltersSchema = z.object({
 });
 
 export const ReportParametersSchema = z.object({
-  type: z.enum(['stock_movement', 'stock_valuation', 'expiring_items', 'low_stock', 'transfers', 'location_performance', 'supplier_analysis', 'category_analysis']),
+  type: z.enum([
+    "stock_movement",
+    "stock_valuation",
+    "expiring_items",
+    "low_stock",
+    "transfers",
+    "location_performance",
+    "supplier_analysis",
+    "category_analysis",
+  ]),
   filters: ReportFiltersSchema,
-  format: z.enum(['pdf', 'excel', 'csv', 'json']),
+  format: z.enum(["pdf", "excel", "csv", "json"]),
   groupBy: z.array(z.string()).optional(),
   sortBy: z.string().optional(),
-  sortOrder: z.enum(['asc', 'desc']).optional(),
+  sortOrder: z.enum(["asc", "desc"]).optional(),
   includeCharts: z.boolean().optional(),
   includeSummary: z.boolean().optional(),
   customFields: z.array(z.string()).optional(),

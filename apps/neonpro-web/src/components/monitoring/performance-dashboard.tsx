@@ -3,14 +3,20 @@
  * Real-time monitoring dashboard for subscription middleware
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Activity, Database, Zap, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
+import type { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Progress } from "@/components/ui/progress";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Activity, Database, Zap, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 
 interface PerformanceMetrics {
   responseTime: number;
@@ -21,7 +27,7 @@ interface PerformanceMetrics {
 }
 
 interface SystemHealth {
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status: "healthy" | "degraded" | "unhealthy";
   timestamp: string;
   checks: {
     database: { status: string; responseTime: number };
@@ -38,28 +44,25 @@ export function PerformanceDashboard() {
   useEffect(() => {
     fetchMetrics();
     const interval = setInterval(fetchMetrics, 5000); // Update every 5s
-    
+
     return () => clearInterval(interval);
   }, []);
 
   const fetchMetrics = async () => {
     try {
       const [metricsRes, healthRes] = await Promise.all([
-        fetch('/api/monitoring/metrics'),
-        fetch('/api/health')
+        fetch("/api/monitoring/metrics"),
+        fetch("/api/health"),
       ]);
-      
+
       if (metricsRes.ok && healthRes.ok) {
-        const [metricsData, healthData] = await Promise.all([
-          metricsRes.json(),
-          healthRes.json()
-        ]);
-        
+        const [metricsData, healthData] = await Promise.all([metricsRes.json(), healthRes.json()]);
+
         setMetrics(metricsData);
         setHealth(healthData);
       }
     } catch (error) {
-      console.error('Failed to fetch monitoring data:', error);
+      console.error("Failed to fetch monitoring data:", error);
     } finally {
       setLoading(false);
     }
@@ -67,19 +70,27 @@ export function PerformanceDashboard() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'healthy': return 'bg-green-500';
-      case 'degraded': return 'bg-yellow-500';
-      case 'unhealthy': return 'bg-red-500';
-      default: return 'bg-gray-500';
+      case "healthy":
+        return "bg-green-500";
+      case "degraded":
+        return "bg-yellow-500";
+      case "unhealthy":
+        return "bg-red-500";
+      default:
+        return "bg-gray-500";
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'healthy': return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case 'degraded': return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
-      case 'unhealthy': return <XCircle className="h-4 w-4 text-red-500" />;
-      default: return <Activity className="h-4 w-4 text-gray-500" />;
+      case "healthy":
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
+      case "degraded":
+        return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
+      case "unhealthy":
+        return <XCircle className="h-4 w-4 text-red-500" />;
+      default:
+        return <Activity className="h-4 w-4 text-gray-500" />;
     }
   };
 
@@ -109,17 +120,14 @@ export function PerformanceDashboard() {
           <CardTitle className="flex items-center gap-2">
             System Health
             {health && (
-              <Badge 
-                variant="outline" 
-                className={`${getStatusColor(health.status)} text-white`}
-              >
+              <Badge variant="outline" className={`${getStatusColor(health.status)} text-white`}>
                 {health.status.toUpperCase()}
               </Badge>
             )}
           </CardTitle>
           <CardDescription>
-            Last updated: {health?.timestamp ? 
-              new Date(health.timestamp).toLocaleString() : 'Never'}
+            Last updated:{" "}
+            {health?.timestamp ? new Date(health.timestamp).toLocaleString() : "Never"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -160,85 +168,63 @@ export function PerformanceDashboard() {
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="detailed">Detailed</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="overview">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Response Time */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Response Time
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Response Time</CardTitle>
                 <Activity className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
-                  {metrics?.responseTime || 0}ms
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Average response time
-                </p>
+                <div className="text-2xl font-bold">{metrics?.responseTime || 0}ms</div>
+                <p className="text-xs text-muted-foreground">Average response time</p>
               </CardContent>
             </Card>
 
             {/* Throughput */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Throughput
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Throughput</CardTitle>
                 <Zap className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
-                  {metrics?.throughput || 0}/s
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Requests per second
-                </p>
+                <div className="text-2xl font-bold">{metrics?.throughput || 0}/s</div>
+                <p className="text-xs text-muted-foreground">Requests per second</p>
               </CardContent>
             </Card>
 
             {/* Memory Usage */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Memory Usage
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Memory Usage</CardTitle>
                 <Database className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
-                  {metrics?.memoryUsage || 0}%
-                </div>
+                <div className="text-2xl font-bold">{metrics?.memoryUsage || 0}%</div>
                 <Progress value={metrics?.memoryUsage || 0} className="mt-2" />
-                <p className="text-xs text-muted-foreground mt-2">
-                  System memory usage
-                </p>
+                <p className="text-xs text-muted-foreground mt-2">System memory usage</p>
               </CardContent>
             </Card>
 
             {/* Error Rate */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Error Rate
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Error Rate</CardTitle>
                 <AlertTriangle className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
-                  {metrics?.errorRate || 0}%
-                </div>
-                <Progress 
-                  value={metrics?.errorRate || 0} 
+                <div className="text-2xl font-bold">{metrics?.errorRate || 0}%</div>
+                <Progress
+                  value={metrics?.errorRate || 0}
                   className="mt-2"
                   // @ts-ignore
-                  indicatorClassName={metrics?.errorRate && metrics.errorRate > 5 ? "bg-red-500" : "bg-green-500"}
+                  indicatorClassName={
+                    metrics?.errorRate && metrics.errorRate > 5 ? "bg-red-500" : "bg-green-500"
+                  }
                 />
-                <p className="text-xs text-muted-foreground mt-2">
-                  Request error rate
-                </p>
+                <p className="text-xs text-muted-foreground mt-2">Request error rate</p>
               </CardContent>
             </Card>
           </div>
@@ -250,9 +236,7 @@ export function PerformanceDashboard() {
             <Card>
               <CardHeader>
                 <CardTitle>Cache Performance</CardTitle>
-                <CardDescription>
-                  Cache hit rate and efficiency metrics
-                </CardDescription>
+                <CardDescription>Cache hit rate and efficiency metrics</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -274,9 +258,7 @@ export function PerformanceDashboard() {
             <Card>
               <CardHeader>
                 <CardTitle>System Resources</CardTitle>
-                <CardDescription>
-                  Current system resource utilization
-                </CardDescription>
+                <CardDescription>Current system resource utilization</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">

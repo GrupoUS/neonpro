@@ -11,13 +11,17 @@ var separator_1 = require("@/components/ui/separator");
 var use_keyboard_shortcuts_1 = require("@/hooks/appointments/use-keyboard-shortcuts");
 var lucide_react_1 = require("lucide-react");
 function KeyboardShortcutsHelp(_a) {
-    var isOpen = _a.isOpen, onClose = _a.onClose;
-    var _b = (0, use_keyboard_shortcuts_1.useKeyboardShortcuts)(), shortcuts = _b.shortcuts, formatShortcut = _b.formatShortcut;
-    return (<dialog_1.Dialog open={isOpen} onOpenChange={onClose}>
+  var isOpen = _a.isOpen,
+    onClose = _a.onClose;
+  var _b = (0, use_keyboard_shortcuts_1.useKeyboardShortcuts)(),
+    shortcuts = _b.shortcuts,
+    formatShortcut = _b.formatShortcut;
+  return (
+    <dialog_1.Dialog open={isOpen} onOpenChange={onClose}>
       <dialog_1.DialogContent className="max-w-lg">
         <dialog_1.DialogHeader>
           <dialog_1.DialogTitle className="flex items-center gap-2">
-            <lucide_react_1.Keyboard className="h-5 w-5"/>
+            <lucide_react_1.Keyboard className="h-5 w-5" />
             Atalhos de Teclado
           </dialog_1.DialogTitle>
           <dialog_1.DialogDescription>
@@ -27,19 +31,23 @@ function KeyboardShortcutsHelp(_a) {
 
         <div className="space-y-4">
           <div className="grid gap-3">
-            {shortcuts.map(function (shortcut, index) { return (<div key={index} className="flex items-center justify-between">
-                <span className="text-sm">{shortcut.description}</span>
-                <badge_1.Badge variant="secondary" className="font-mono">
-                  {formatShortcut(shortcut)}
-                </badge_1.Badge>
-              </div>); })}
+            {shortcuts.map(function (shortcut, index) {
+              return (
+                <div key={index} className="flex items-center justify-between">
+                  <span className="text-sm">{shortcut.description}</span>
+                  <badge_1.Badge variant="secondary" className="font-mono">
+                    {formatShortcut(shortcut)}
+                  </badge_1.Badge>
+                </div>
+              );
+            })}
           </div>
 
           <separator_1.Separator />
 
           <div className="space-y-2">
             <h4 className="text-sm font-semibold flex items-center gap-2">
-              <lucide_react_1.Info className="h-4 w-4"/>
+              <lucide_react_1.Info className="h-4 w-4" />
               Navegação do Calendário
             </h4>
             <div className="grid gap-2 text-sm text-muted-foreground">
@@ -83,5 +91,6 @@ function KeyboardShortcutsHelp(_a) {
           </div>
         </div>
       </dialog_1.DialogContent>
-    </dialog_1.Dialog>);
+    </dialog_1.Dialog>
+  );
 }

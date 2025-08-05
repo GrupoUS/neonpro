@@ -1,29 +1,26 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Search, X, Filter, User, Phone, Mail, FileText } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
+import React, { useState, useEffect } from "react";
+import type { Search, X, Filter, User, Phone, Mail, FileText } from "lucide-react";
+import type { Input } from "@/components/ui/input";
+import type { Button } from "@/components/ui/button";
+import type { Label } from "@/components/ui/label";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Badge } from "@/components/ui/badge";
 
 interface PatientSearchProps {
   searchTerm: string;
   onSearchChange: (term: string) => void;
 }
 
-export default function PatientSearch({
-  searchTerm,
-  onSearchChange
-}: PatientSearchProps) {
-  const [searchType, setSearchType] = useState<'name' | 'phone' | 'email' | 'cpf'>('name');
+export default function PatientSearch({ searchTerm, onSearchChange }: PatientSearchProps) {
+  const [searchType, setSearchType] = useState<"name" | "phone" | "email" | "cpf">("name");
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
 
   // Optimized debounce search to avoid excessive API calls
@@ -39,34 +36,34 @@ export default function PatientSearch({
   }, [localSearchTerm, onSearchChange]);
 
   const handleClearSearch = () => {
-    setLocalSearchTerm('');
-    onSearchChange('');
+    setLocalSearchTerm("");
+    onSearchChange("");
   };
 
   const getSearchPlaceholder = () => {
     switch (searchType) {
-      case 'name':
-        return 'Digite o nome do paciente...';
-      case 'phone':
-        return 'Digite o telefone (ex: 11999999999)...';
-      case 'email':
-        return 'Digite o email do paciente...';
-      case 'cpf':
-        return 'Digite o CPF (ex: 123.456.789-00)...';
+      case "name":
+        return "Digite o nome do paciente...";
+      case "phone":
+        return "Digite o telefone (ex: 11999999999)...";
+      case "email":
+        return "Digite o email do paciente...";
+      case "cpf":
+        return "Digite o CPF (ex: 123.456.789-00)...";
       default:
-        return 'Digite para buscar...';
+        return "Digite para buscar...";
     }
   };
 
   const getSearchIcon = () => {
     switch (searchType) {
-      case 'name':
+      case "name":
         return <User className="h-4 w-4" />;
-      case 'phone':
+      case "phone":
         return <Phone className="h-4 w-4" />;
-      case 'email':
+      case "email":
         return <Mail className="h-4 w-4" />;
-      case 'cpf':
+      case "cpf":
         return <FileText className="h-4 w-4" />;
       default:
         return <Search className="h-4 w-4" />;
@@ -75,22 +72,22 @@ export default function PatientSearch({
 
   const formatSearchInput = (value: string) => {
     switch (searchType) {
-      case 'cpf':
+      case "cpf":
         // Format CPF as user types
         return value
-          .replace(/\D/g, '')
-          .replace(/(\d{3})(\d)/, '$1.$2')
-          .replace(/(\d{3})(\d)/, '$1.$2')
-          .replace(/(\d{3})(\d{1,2})/, '$1-$2')
-          .replace(/(-\d{2})\d+?$/, '$1');
-      case 'phone':
+          .replace(/\D/g, "")
+          .replace(/(\d{3})(\d)/, "$1.$2")
+          .replace(/(\d{3})(\d)/, "$1.$2")
+          .replace(/(\d{3})(\d{1,2})/, "$1-$2")
+          .replace(/(-\d{2})\d+?$/, "$1");
+      case "phone":
         // Format phone as user types
         return value
-          .replace(/\D/g, '')
-          .replace(/(\d{2})(\d)/, '($1) $2')
-          .replace(/(\d{4})(\d)/, '$1-$2')
-          .replace(/(\d{4})-(\d)(\d{4})/, '$1$2-$3')
-          .replace(/(-\d{4})\d+?$/, '$1');
+          .replace(/\D/g, "")
+          .replace(/(\d{2})(\d)/, "($1) $2")
+          .replace(/(\d{4})(\d)/, "$1-$2")
+          .replace(/(\d{4})-(\d)(\d{4})/, "$1$2-$3")
+          .replace(/(-\d{4})\d+?$/, "$1");
       default:
         return value;
     }
@@ -106,41 +103,39 @@ export default function PatientSearch({
     <div className="space-y-4">
       {/* Search Type Selector */}
       <div className="flex flex-wrap gap-2">
-        <Label className="text-sm font-medium flex items-center">
-          Buscar por:
-        </Label>
+        <Label className="text-sm font-medium flex items-center">Buscar por:</Label>
         <div className="flex flex-wrap gap-2">
           <Button
-            variant={searchType === 'name' ? 'default' : 'outline'}
+            variant={searchType === "name" ? "default" : "outline"}
             size="sm"
-            onClick={() => setSearchType('name')}
+            onClick={() => setSearchType("name")}
             className="h-8"
           >
             <User className="h-3 w-3 mr-1" />
             Nome
           </Button>
           <Button
-            variant={searchType === 'phone' ? 'default' : 'outline'}
+            variant={searchType === "phone" ? "default" : "outline"}
             size="sm"
-            onClick={() => setSearchType('phone')}
+            onClick={() => setSearchType("phone")}
             className="h-8"
           >
             <Phone className="h-3 w-3 mr-1" />
             Telefone
           </Button>
           <Button
-            variant={searchType === 'email' ? 'default' : 'outline'}
+            variant={searchType === "email" ? "default" : "outline"}
             size="sm"
-            onClick={() => setSearchType('email')}
+            onClick={() => setSearchType("email")}
             className="h-8"
           >
             <Mail className="h-3 w-3 mr-1" />
             Email
           </Button>
           <Button
-            variant={searchType === 'cpf' ? 'default' : 'outline'}
+            variant={searchType === "cpf" ? "default" : "outline"}
             size="sm"
-            onClick={() => setSearchType('cpf')}
+            onClick={() => setSearchType("cpf")}
             className="h-8"
           >
             <FileText className="h-3 w-3 mr-1" />
@@ -160,7 +155,7 @@ export default function PatientSearch({
           value={localSearchTerm}
           onChange={handleInputChange}
           className="pl-10 pr-10"
-          maxLength={searchType === 'cpf' ? 14 : searchType === 'phone' ? 15 : undefined}
+          maxLength={searchType === "cpf" ? 14 : searchType === "phone" ? 15 : undefined}
         />
         {localSearchTerm && (
           <Button
@@ -192,10 +187,15 @@ export default function PatientSearch({
         <div className="flex items-center gap-2">
           <Badge variant="secondary" className="flex items-center gap-1">
             <Search className="h-3 w-3" />
-            Buscando por {searchType === 'name' ? 'nome' : 
-                         searchType === 'phone' ? 'telefone' : 
-                         searchType === 'email' ? 'email' : 'CPF'}: 
-            <span className="font-medium ml-1">{localSearchTerm}</span>
+            Buscando por{" "}
+            {searchType === "name"
+              ? "nome"
+              : searchType === "phone"
+                ? "telefone"
+                : searchType === "email"
+                  ? "email"
+                  : "CPF"}
+            :<span className="font-medium ml-1">{localSearchTerm}</span>
           </Badge>
           <Button
             variant="ghost"

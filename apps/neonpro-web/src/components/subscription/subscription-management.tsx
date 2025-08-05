@@ -1,19 +1,19 @@
 "use client";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { useSubscription } from "@/hooks/use-subscription";
-import { useSubscriptionStatus } from "@/hooks/use-subscription-status";
-import {
+import type { Separator } from "@/components/ui/separator";
+import type { useSubscription } from "@/hooks/use-subscription";
+import type { useSubscriptionStatus } from "@/hooks/use-subscription-status";
+import type {
   AlertCircle,
   BarChart3,
   Calendar,
@@ -23,8 +23,8 @@ import {
   Shield,
   Users,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { SubscriptionStatusIndicator } from "./status-indicator";
+import type { useEffect, useState } from "react";
+import type { SubscriptionStatusIndicator } from "./status-indicator";
 
 const plans = [
   {
@@ -164,9 +164,7 @@ export function SubscriptionManagement() {
     }
   }, [refreshSubscription]);
 
-  const currentPlan = plans.find(
-    (plan) => plan.priceId === subscription.priceId
-  );
+  const currentPlan = plans.find((plan) => plan.priceId === subscription.priceId);
 
   return (
     <div className="space-y-6">
@@ -188,13 +186,9 @@ export function SubscriptionManagement() {
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="font-semibold">{currentPlan.name}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        ${currentPlan.price}/month
-                      </p>
+                      <p className="text-sm text-muted-foreground">${currentPlan.price}/month</p>
                     </div>
-                    {currentPlan.popular && (
-                      <Badge variant="default">Popular</Badge>
-                    )}
+                    {currentPlan.popular && <Badge variant="default">Popular</Badge>}
                   </div>
 
                   {currentPeriodEnd && (
@@ -208,9 +202,7 @@ export function SubscriptionManagement() {
                   )}
                 </>
               ) : (
-                <p className="text-sm text-muted-foreground">
-                  Plan details not available
-                </p>
+                <p className="text-sm text-muted-foreground">Plan details not available</p>
               )}
 
               <Button
@@ -232,14 +224,9 @@ export function SubscriptionManagement() {
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Payment Required</AlertTitle>
           <AlertDescription>
-            Your subscription payment is overdue. Please update your payment
-            method to continue accessing premium features.
-            <Button
-              onClick={handleManageBilling}
-              size="sm"
-              variant="outline"
-              className="ml-2"
-            >
+            Your subscription payment is overdue. Please update your payment method to continue
+            accessing premium features.
+            <Button onClick={handleManageBilling} size="sm" variant="outline" className="ml-2">
               Update Payment
             </Button>
           </AlertDescription>
@@ -254,14 +241,9 @@ export function SubscriptionManagement() {
           <AlertDescription>
             You're currently on a free trial.
             {currentPeriodEnd && (
-              <>
-                {" "}
-                Your trial expires on{" "}
-                {currentPeriodEnd.toLocaleDateString("pt-BR")}.
-              </>
+              <> Your trial expires on {currentPeriodEnd.toLocaleDateString("pt-BR")}.</>
             )}{" "}
-            Upgrade now to continue accessing all features after your trial
-            ends.
+            Upgrade now to continue accessing all features after your trial ends.
           </AlertDescription>
         </Alert>
       )}
@@ -282,10 +264,7 @@ export function SubscriptionManagement() {
             const isCurrentPlan = plan.priceId === subscription.priceId;
 
             return (
-              <Card
-                key={plan.id}
-                className={`relative ${plan.popular ? "border-primary" : ""}`}
-              >
+              <Card key={plan.id} className={`relative ${plan.popular ? "border-primary" : ""}`}>
                 {plan.popular && (
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                     <Badge variant="default">Most Popular</Badge>
@@ -295,9 +274,7 @@ export function SubscriptionManagement() {
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
                     {plan.name}
-                    {isCurrentPlan && (
-                      <Badge variant="secondary">Current</Badge>
-                    )}
+                    {isCurrentPlan && <Badge variant="secondary">Current</Badge>}
                   </CardTitle>
                   <CardDescription>{plan.description}</CardDescription>
                   <div className="mt-4">
@@ -309,10 +286,7 @@ export function SubscriptionManagement() {
                 <CardContent className="space-y-4">
                   <ul className="space-y-2">
                     {plan.features.map((feature, index) => (
-                      <li
-                        key={index}
-                        className="flex items-center gap-2 text-sm"
-                      >
+                      <li key={index} className="flex items-center gap-2 text-sm">
                         <CheckCircle className="h-4 w-4 text-green-600" />
                         {feature}
                       </li>
@@ -327,11 +301,7 @@ export function SubscriptionManagement() {
                     className="w-full"
                     variant={plan.popular ? "default" : "outline"}
                   >
-                    {isCurrentPlan
-                      ? "Current Plan"
-                      : hasAccess
-                        ? "Switch Plan"
-                        : "Get Started"}
+                    {isCurrentPlan ? "Current Plan" : hasAccess ? "Switch Plan" : "Get Started"}
                   </Button>
                 </CardContent>
               </Card>
@@ -353,8 +323,7 @@ export function SubscriptionManagement() {
                 <h3 className="font-semibold">Patient Management</h3>
               </div>
               <p className="text-sm text-muted-foreground">
-                Complete patient records, appointment history, and treatment
-                tracking.
+                Complete patient records, appointment history, and treatment tracking.
               </p>
             </CardContent>
           </Card>

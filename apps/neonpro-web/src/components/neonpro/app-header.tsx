@@ -2,31 +2,22 @@
  * NEONPROV1 Design System - AppHeader Component
  * Main header with breadcrumbs and user menu
  */
-'use client';
+"use client";
 
-import React from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { cn } from '@/lib/utils';
-import { 
-  Menu,
-  Bell,
-  Search,
-  User,
-  Settings,
-  LogOut,
-  ChevronRight,
-  Home
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { 
+import React from "react";
+import Link from "next/link";
+import type { usePathname } from "next/navigation";
+import type { cn } from "@/lib/utils";
+import type { Menu, Bell, Search, User, Settings, LogOut, ChevronRight, Home } from "lucide-react";
+import type { Button } from "@/components/ui/button";
+import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/dropdown-menu";
+import type { Input } from "@/components/ui/input";
 
 interface AppHeaderProps {
   onMenuToggle?: () => void;
@@ -40,31 +31,26 @@ interface BreadcrumbItem {
 }
 
 const routeLabels: Record<string, string> = {
-  dashboard: 'Dashboard',
-  agenda: 'Agenda',
-  pacientes: 'Pacientes',
-  financeiro: 'Financeiro',
-  profile: 'Perfil',
-  settings: 'Configurações',
+  dashboard: "Dashboard",
+  agenda: "Agenda",
+  pacientes: "Pacientes",
+  financeiro: "Financeiro",
+  profile: "Perfil",
+  settings: "Configurações",
 };
 
-export const AppHeader: React.FC<AppHeaderProps> = ({
-  onMenuToggle,
-  className,
-}) => {
+export const AppHeader: React.FC<AppHeaderProps> = ({ onMenuToggle, className }) => {
   const pathname = usePathname();
-  
+
   const generateBreadcrumbs = (pathname: string): BreadcrumbItem[] => {
-    const segments = pathname.split('/').filter(Boolean);
-    const breadcrumbs: BreadcrumbItem[] = [
-      { label: 'Home', href: '/dashboard' }
-    ];
+    const segments = pathname.split("/").filter(Boolean);
+    const breadcrumbs: BreadcrumbItem[] = [{ label: "Home", href: "/dashboard" }];
 
     segments.forEach((segment, index) => {
-      const href = '/' + segments.slice(0, index + 1).join('/');
+      const href = "/" + segments.slice(0, index + 1).join("/");
       const label = routeLabels[segment] || segment.charAt(0).toUpperCase() + segment.slice(1);
       const isActive = index === segments.length - 1;
-      
+
       breadcrumbs.push({
         label,
         href: isActive ? undefined : href,
@@ -78,21 +64,18 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   const breadcrumbs = generateBreadcrumbs(pathname);
 
   return (
-    <header className={cn(
-      'sticky top-0 z-30 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700',
-      'backdrop-blur-sm bg-white/95 dark:bg-slate-900/95',
-      className
-    )}>
+    <header
+      className={cn(
+        "sticky top-0 z-30 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700",
+        "backdrop-blur-sm bg-white/95 dark:bg-slate-900/95",
+        className,
+      )}
+    >
       <div className="flex items-center justify-between px-4 py-3">
         {/* Left Section */}
         <div className="flex items-center gap-4">
           {/* Mobile Menu Button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onMenuToggle}
-            className="lg:hidden p-2"
-          >
+          <Button variant="ghost" size="sm" onClick={onMenuToggle} className="lg:hidden p-2">
             <Menu className="w-5 h-5" />
           </Button>
 
@@ -100,9 +83,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           <nav className="hidden sm:flex items-center space-x-2 text-sm">
             {breadcrumbs.map((item, index) => (
               <React.Fragment key={index}>
-                {index > 0 && (
-                  <ChevronRight className="w-4 h-4 text-slate-400" />
-                )}
+                {index > 0 && <ChevronRight className="w-4 h-4 text-slate-400" />}
                 {item.href && !item.isActive ? (
                   <Link
                     href={item.href}
@@ -111,12 +92,14 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                     {item.label}
                   </Link>
                 ) : (
-                  <span className={cn(
-                    'font-medium',
-                    item.isActive 
-                      ? 'text-neon-primary dark:text-neon-accent' 
-                      : 'text-slate-600 dark:text-slate-400'
-                  )}>
+                  <span
+                    className={cn(
+                      "font-medium",
+                      item.isActive
+                        ? "text-neon-primary dark:text-neon-accent"
+                        : "text-slate-600 dark:text-slate-400",
+                    )}
+                  >
                     {item.label}
                   </span>
                 )}
@@ -130,10 +113,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           {/* Search */}
           <div className="hidden md:block relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <Input
-              placeholder="Buscar..."
-              className="pl-10 w-64 neon-input"
-            />
+            <Input placeholder="Buscar..." className="pl-10 w-64 neon-input" />
           </div>
 
           {/* Notifications */}

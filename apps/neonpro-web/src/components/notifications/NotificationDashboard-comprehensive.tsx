@@ -1,9 +1,9 @@
 /**
  * NeonPro Notification Management Dashboard
- * 
+ *
  * Dashboard completo de configuração e monitoramento de notificações
  * para clínicas estéticas com analytics em tempo real e gestão de templates.
- * 
+ *
  * Features:
  * - Dashboard de configuração de notificações
  * - Visualização de performance em tempo real
@@ -11,35 +11,54 @@
  * - Configuração de escalação e workflows
  * - Análise de efetividade por canal
  * - Real-time metrics e KPIs
- * 
+ *
  * @author BMad Method - NeonPro Development Team
  * @version 1.0.0
  * @since 2025-01-30
  */
 
-'use client';
+"use client";
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { toast } from 'sonner';
-import { createClient } from '@/app/utils/supabase/client';
-import { Database } from '@/lib/database.types';
-import { 
-  Bell, 
-  Send, 
-  MessageSquare, 
-  Mail, 
-  Smartphone, 
+import React, { useState, useEffect, useMemo } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Switch } from "@/components/ui/switch";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { toast } from "sonner";
+import type { createClient } from "@/app/utils/supabase/client";
+import type { Database } from "@/lib/database.types";
+import type {
+  Bell,
+  Send,
+  MessageSquare,
+  Mail,
+  Smartphone,
   Settings,
   TrendingUp,
   TrendingDown,
@@ -66,9 +85,9 @@ import {
   Upload,
   Share,
   Settings2,
-  Sliders
-} from 'lucide-react';
-import {
+  Sliders,
+} from "lucide-react";
+import type {
   LineChart,
   Line,
   AreaChart,
@@ -83,15 +102,15 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  ResponsiveContainer
-} from 'recharts';
+  ResponsiveContainer,
+} from "recharts";
 
 // Types e Interfaces
 interface NotificationTemplate {
   id: string;
   name: string;
-  type: 'reminder' | 'confirmation' | 'escalation' | 'marketing';
-  channel: 'sms' | 'email' | 'whatsapp' | 'push';
+  type: "reminder" | "confirmation" | "escalation" | "marketing";
+  channel: "sms" | "email" | "whatsapp" | "push";
   subject?: string;
   content: string;
   variables: string[];
@@ -118,7 +137,7 @@ interface NotificationRule {
 }
 
 interface NotificationStats {
-  period: 'today' | 'week' | 'month';
+  period: "today" | "week" | "month";
   totalSent: number;
   totalDelivered: number;
   totalRead: number;
@@ -192,12 +211,12 @@ export default function NotificationDashboard() {
   const [channelPerformance, setChannelPerformance] = useState<ChannelPerformance[]>([]);
   const [patientEngagement, setPatientEngagement] = useState<PatientEngagement[]>([]);
   const [escalationRules, setEscalationRules] = useState<EscalationRule[]>([]);
-  const [selectedPeriod, setSelectedPeriod] = useState<'today' | 'week' | 'month'>('week');
+  const [selectedPeriod, setSelectedPeriod] = useState<"today" | "week" | "month">("week");
   const [selectedTemplate, setSelectedTemplate] = useState<NotificationTemplate | null>(null);
   const [isTemplateDialogOpen, setIsTemplateDialogOpen] = useState(false);
   const [isRuleDialogOpen, setIsRuleDialogOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterChannel, setFilterChannel] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterChannel, setFilterChannel] = useState<string>("all");
   const [refreshing, setRefreshing] = useState(false);
 
   const supabase = createClient();
@@ -220,11 +239,11 @@ export default function NotificationDashboard() {
         loadPerformanceMetrics(),
         loadChannelPerformance(),
         loadPatientEngagement(),
-        loadEscalationRules()
+        loadEscalationRules(),
       ]);
     } catch (error) {
-      console.error('Erro ao carregar dados do dashboard:', error);
-      toast.error('Erro ao carregar dados do dashboard');
+      console.error("Erro ao carregar dados do dashboard:", error);
+      toast.error("Erro ao carregar dados do dashboard");
     } finally {
       setLoading(false);
     }
@@ -235,12 +254,12 @@ export default function NotificationDashboard() {
    */
   const loadTemplates = async () => {
     const { data, error } = await supabase
-      .from('notification_templates')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .from("notification_templates")
+      .select("*")
+      .order("created_at", { ascending: false });
 
     if (error) {
-      console.error('Erro ao carregar templates:', error);
+      console.error("Erro ao carregar templates:", error);
       return;
     }
 
@@ -248,22 +267,22 @@ export default function NotificationDashboard() {
     const templatesWithStats = await Promise.all(
       data.map(async (template) => {
         const { count: usageCount } = await supabase
-          .from('notification_queue')
-          .select('*', { count: 'exact', head: true })
-          .eq('template_id', template.id);
+          .from("notification_queue")
+          .select("*", { count: "exact", head: true })
+          .eq("template_id", template.id);
 
         const { count: successCount } = await supabase
-          .from('notification_queue')
-          .select('*', { count: 'exact', head: true })
-          .eq('template_id', template.id)
-          .eq('status', 'delivered');
+          .from("notification_queue")
+          .select("*", { count: "exact", head: true })
+          .eq("template_id", template.id)
+          .eq("status", "delivered");
 
         return {
           ...template,
           usageCount: usageCount || 0,
-          successRate: usageCount ? ((successCount || 0) / usageCount) * 100 : 0
+          successRate: usageCount ? ((successCount || 0) / usageCount) * 100 : 0,
         };
-      })
+      }),
     );
 
     setTemplates(templatesWithStats);
@@ -274,15 +293,15 @@ export default function NotificationDashboard() {
    */
   const loadRules = async () => {
     const { data, error } = await supabase
-      .from('notification_rules')
+      .from("notification_rules")
       .select(`
         *,
         template:notification_templates(*)
       `)
-      .order('created_at', { ascending: false });
+      .order("created_at", { ascending: false });
 
     if (error) {
-      console.error('Erro ao carregar regras:', error);
+      console.error("Erro ao carregar regras:", error);
       return;
     }
 
@@ -297,81 +316,80 @@ export default function NotificationDashboard() {
     let startDate: Date;
 
     switch (selectedPeriod) {
-      case 'today':
+      case "today":
         startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         break;
-      case 'week':
+      case "week":
         startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         break;
-      case 'month':
+      case "month":
         startDate = new Date(now.getFullYear(), now.getMonth(), 1);
         break;
     }
 
     const { data, error } = await supabase
-      .from('notification_analytics')
-      .select('*')
-      .gte('date', startDate.toISOString().split('T')[0]);
+      .from("notification_analytics")
+      .select("*")
+      .gte("date", startDate.toISOString().split("T")[0]);
 
     if (error) {
-      console.error('Erro ao carregar estatísticas:', error);
+      console.error("Erro ao carregar estatísticas:", error);
       return;
     }
 
     // Agrega dados
-    const aggregated = data.reduce((acc, record) => {
-      acc.totalSent += record.total_sent;
-      acc.totalDelivered += record.total_delivered;
-      acc.totalRead += record.total_read;
-      acc.totalClicked += record.total_clicked;
-      acc.totalReplied += record.total_replied;
-      acc.totalFailed += record.total_failed;
+    const aggregated = data.reduce(
+      (acc, record) => {
+        acc.totalSent += record.total_sent;
+        acc.totalDelivered += record.total_delivered;
+        acc.totalRead += record.total_read;
+        acc.totalClicked += record.total_clicked;
+        acc.totalReplied += record.total_replied;
+        acc.totalFailed += record.total_failed;
 
-      // Agrega por canal
-      if (!acc.channels[record.channel]) {
-        acc.channels[record.channel] = {
-          sent: 0,
-          delivered: 0,
-          failed: 0,
-          rate: 0
-        };
-      }
-      acc.channels[record.channel].sent += record.total_sent;
-      acc.channels[record.channel].delivered += record.total_delivered;
-      acc.channels[record.channel].failed += record.total_failed;
+        // Agrega por canal
+        if (!acc.channels[record.channel]) {
+          acc.channels[record.channel] = {
+            sent: 0,
+            delivered: 0,
+            failed: 0,
+            rate: 0,
+          };
+        }
+        acc.channels[record.channel].sent += record.total_sent;
+        acc.channels[record.channel].delivered += record.total_delivered;
+        acc.channels[record.channel].failed += record.total_failed;
 
-      return acc;
-    }, {
-      period: selectedPeriod,
-      totalSent: 0,
-      totalDelivered: 0,
-      totalRead: 0,
-      totalClicked: 0,
-      totalReplied: 0,
-      totalFailed: 0,
-      deliveryRate: 0,
-      readRate: 0,
-      responseRate: 0,
-      channels: {} as Record<string, any>
-    });
+        return acc;
+      },
+      {
+        period: selectedPeriod,
+        totalSent: 0,
+        totalDelivered: 0,
+        totalRead: 0,
+        totalClicked: 0,
+        totalReplied: 0,
+        totalFailed: 0,
+        deliveryRate: 0,
+        readRate: 0,
+        responseRate: 0,
+        channels: {} as Record<string, any>,
+      },
+    );
 
     // Calcula taxas
-    aggregated.deliveryRate = aggregated.totalSent > 0 
-      ? (aggregated.totalDelivered / aggregated.totalSent) * 100 
-      : 0;
-    aggregated.readRate = aggregated.totalDelivered > 0 
-      ? (aggregated.totalRead / aggregated.totalDelivered) * 100 
-      : 0;
-    aggregated.responseRate = aggregated.totalSent > 0 
-      ? (aggregated.totalReplied / aggregated.totalSent) * 100 
-      : 0;
+    aggregated.deliveryRate =
+      aggregated.totalSent > 0 ? (aggregated.totalDelivered / aggregated.totalSent) * 100 : 0;
+    aggregated.readRate =
+      aggregated.totalDelivered > 0 ? (aggregated.totalRead / aggregated.totalDelivered) * 100 : 0;
+    aggregated.responseRate =
+      aggregated.totalSent > 0 ? (aggregated.totalReplied / aggregated.totalSent) * 100 : 0;
 
     // Calcula taxas por canal
-    Object.keys(aggregated.channels).forEach(channel => {
+    Object.keys(aggregated.channels).forEach((channel) => {
       const channelData = aggregated.channels[channel];
-      channelData.rate = channelData.sent > 0 
-        ? (channelData.delivered / channelData.sent) * 100 
-        : 0;
+      channelData.rate =
+        channelData.sent > 0 ? (channelData.delivered / channelData.sent) * 100 : 0;
     });
 
     setStats(aggregated);
@@ -386,45 +404,48 @@ export default function NotificationDashboard() {
     startDate.setDate(endDate.getDate() - 30); // Últimos 30 dias
 
     const { data, error } = await supabase
-      .from('notification_analytics')
-      .select('*')
-      .gte('date', startDate.toISOString().split('T')[0])
-      .lte('date', endDate.toISOString().split('T')[0])
-      .order('date', { ascending: true });
+      .from("notification_analytics")
+      .select("*")
+      .gte("date", startDate.toISOString().split("T")[0])
+      .lte("date", endDate.toISOString().split("T")[0])
+      .order("date", { ascending: true });
 
     if (error) {
-      console.error('Erro ao carregar métricas de performance:', error);
+      console.error("Erro ao carregar métricas de performance:", error);
       return;
     }
 
     // Agrega por data
-    const metricsMap = data.reduce((acc, record) => {
-      const date = record.date;
-      if (!acc[date]) {
-        acc[date] = {
-          date,
-          sent: 0,
-          delivered: 0,
-          read: 0,
-          failed: 0,
-          responseTime: 0,
-          count: 0
-        };
-      }
-      acc[date].sent += record.total_sent;
-      acc[date].delivered += record.total_delivered;
-      acc[date].read += record.total_read;
-      acc[date].failed += record.total_failed;
-      if (record.avg_delivery_time_seconds) {
-        acc[date].responseTime += record.avg_delivery_time_seconds;
-        acc[date].count++;
-      }
-      return acc;
-    }, {} as Record<string, any>);
+    const metricsMap = data.reduce(
+      (acc, record) => {
+        const date = record.date;
+        if (!acc[date]) {
+          acc[date] = {
+            date,
+            sent: 0,
+            delivered: 0,
+            read: 0,
+            failed: 0,
+            responseTime: 0,
+            count: 0,
+          };
+        }
+        acc[date].sent += record.total_sent;
+        acc[date].delivered += record.total_delivered;
+        acc[date].read += record.total_read;
+        acc[date].failed += record.total_failed;
+        if (record.avg_delivery_time_seconds) {
+          acc[date].responseTime += record.avg_delivery_time_seconds;
+          acc[date].count++;
+        }
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
 
-    const metricsArray = Object.values(metricsMap).map(metric => ({
+    const metricsArray = Object.values(metricsMap).map((metric) => ({
       ...metric,
-      responseTime: metric.count > 0 ? metric.responseTime / metric.count : 0
+      responseTime: metric.count > 0 ? metric.responseTime / metric.count : 0,
     }));
 
     setMetrics(metricsArray);
@@ -435,45 +456,48 @@ export default function NotificationDashboard() {
    */
   const loadChannelPerformance = async () => {
     const { data, error } = await supabase
-      .from('notification_analytics')
-      .select('*')
-      .gte('date', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
+      .from("notification_analytics")
+      .select("*")
+      .gte("date", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]);
 
     if (error) {
-      console.error('Erro ao carregar performance por canal:', error);
+      console.error("Erro ao carregar performance por canal:", error);
       return;
     }
 
     // Agrega por canal
-    const channelMap = data.reduce((acc, record) => {
-      const channel = record.channel;
-      if (!acc[channel]) {
-        acc[channel] = {
-          channel,
-          sent: 0,
-          delivered: 0,
-          failed: 0,
-          rate: 0,
-          avgDeliveryTime: 0,
-          cost: 0,
-          count: 0
-        };
-      }
-      acc[channel].sent += record.total_sent;
-      acc[channel].delivered += record.total_delivered;
-      acc[channel].failed += record.total_failed;
-      if (record.avg_delivery_time_seconds) {
-        acc[channel].avgDeliveryTime += record.avg_delivery_time_seconds;
-        acc[channel].count++;
-      }
-      return acc;
-    }, {} as Record<string, any>);
+    const channelMap = data.reduce(
+      (acc, record) => {
+        const channel = record.channel;
+        if (!acc[channel]) {
+          acc[channel] = {
+            channel,
+            sent: 0,
+            delivered: 0,
+            failed: 0,
+            rate: 0,
+            avgDeliveryTime: 0,
+            cost: 0,
+            count: 0,
+          };
+        }
+        acc[channel].sent += record.total_sent;
+        acc[channel].delivered += record.total_delivered;
+        acc[channel].failed += record.total_failed;
+        if (record.avg_delivery_time_seconds) {
+          acc[channel].avgDeliveryTime += record.avg_delivery_time_seconds;
+          acc[channel].count++;
+        }
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
 
-    const channelArray = Object.values(channelMap).map(channel => ({
+    const channelArray = Object.values(channelMap).map((channel) => ({
       ...channel,
       rate: channel.sent > 0 ? (channel.delivered / channel.sent) * 100 : 0,
       avgDeliveryTime: channel.count > 0 ? channel.avgDeliveryTime / channel.count : 0,
-      cost: calculateChannelCost(channel.channel, channel.sent)
+      cost: calculateChannelCost(channel.channel, channel.sent),
     }));
 
     setChannelPerformance(channelArray);
@@ -484,28 +508,28 @@ export default function NotificationDashboard() {
    */
   const loadPatientEngagement = async () => {
     const { data, error } = await supabase
-      .from('patient_notification_preferences')
+      .from("patient_notification_preferences")
       .select(`
         *,
         patient:patients(*)
       `)
-      .order('response_score', { ascending: false })
+      .order("response_score", { ascending: false })
       .limit(20);
 
     if (error) {
-      console.error('Erro ao carregar engajamento de pacientes:', error);
+      console.error("Erro ao carregar engajamento de pacientes:", error);
       return;
     }
 
-    const engagement = data.map(record => ({
+    const engagement = data.map((record) => ({
       patientId: record.patient_id,
-      patientName: record.patient?.name || 'N/A',
-      preferredChannel: record.preferred_channels[0] || 'whatsapp',
+      patientName: record.patient?.name || "N/A",
+      preferredChannel: record.preferred_channels[0] || "whatsapp",
       responseScore: record.response_score || 0,
       totalNotifications: 0, // Será calculado
       totalResponses: 0, // Será calculado
-      lastResponse: record.last_response_at || 'Nunca',
-      averageResponseTime: 0 // Será calculado
+      lastResponse: record.last_response_at || "Nunca",
+      averageResponseTime: 0, // Será calculado
     }));
 
     setPatientEngagement(engagement);
@@ -516,21 +540,21 @@ export default function NotificationDashboard() {
    */
   const loadEscalationRules = async () => {
     const { data, error } = await supabase
-      .from('escalation_rules')
+      .from("escalation_rules")
       .select(`
         *,
         target_user:auth.users(*)
       `)
-      .order('created_at', { ascending: false });
+      .order("created_at", { ascending: false });
 
     if (error) {
-      console.error('Erro ao carregar regras de escalação:', error);
+      console.error("Erro ao carregar regras de escalação:", error);
       return;
     }
 
-    const rules = data.map(rule => ({
+    const rules = data.map((rule) => ({
       ...rule,
-      targetUserName: rule.target_user?.email || 'N/A'
+      targetUserName: rule.target_user?.email || "N/A",
     }));
 
     setEscalationRules(rules);
@@ -544,7 +568,7 @@ export default function NotificationDashboard() {
       sms: 0.05, // R$ 0,05 por SMS
       whatsapp: 0.02, // R$ 0,02 por mensagem
       email: 0.001, // R$ 0,001 por email
-      push: 0 // Gratuito
+      push: 0, // Gratuito
     };
     return (costs[channel as keyof typeof costs] || 0) * sent;
   };
@@ -556,17 +580,18 @@ export default function NotificationDashboard() {
     setRefreshing(true);
     await loadDashboardData();
     setRefreshing(false);
-    toast.success('Dados atualizados');
+    toast.success("Dados atualizados");
   };
 
   /**
    * Filtra templates baseado na busca e filtros
    */
   const filteredTemplates = useMemo(() => {
-    return templates.filter(template => {
-      const matchesSearch = template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          template.type.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesChannel = filterChannel === 'all' || template.channel === filterChannel;
+    return templates.filter((template) => {
+      const matchesSearch =
+        template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        template.type.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesChannel = filterChannel === "all" || template.channel === filterChannel;
       return matchesSearch && matchesChannel;
     });
   }, [templates, searchQuery, filterChannel]);
@@ -575,12 +600,12 @@ export default function NotificationDashboard() {
    * Cores para gráficos
    */
   const chartColors = {
-    primary: '#3b82f6',
-    success: '#10b981',
-    warning: '#f59e0b',
-    danger: '#ef4444',
-    info: '#6366f1',
-    secondary: '#8b5cf6'
+    primary: "#3b82f6",
+    success: "#10b981",
+    warning: "#f59e0b",
+    danger: "#ef4444",
+    info: "#6366f1",
+    secondary: "#8b5cf6",
   };
 
   /**
@@ -588,11 +613,16 @@ export default function NotificationDashboard() {
    */
   const getChannelIcon = (channel: string) => {
     switch (channel) {
-      case 'sms': return <Smartphone className="h-4 w-4" />;
-      case 'email': return <Mail className="h-4 w-4" />;
-      case 'whatsapp': return <MessageSquare className="h-4 w-4" />;
-      case 'push': return <Bell className="h-4 w-4" />;
-      default: return <Send className="h-4 w-4" />;
+      case "sms":
+        return <Smartphone className="h-4 w-4" />;
+      case "email":
+        return <Mail className="h-4 w-4" />;
+      case "whatsapp":
+        return <MessageSquare className="h-4 w-4" />;
+      case "push":
+        return <Bell className="h-4 w-4" />;
+      default:
+        return <Send className="h-4 w-4" />;
     }
   };
 
@@ -600,20 +630,31 @@ export default function NotificationDashboard() {
    * Badge de status para templates
    */
   const getStatusBadge = (active: boolean) => {
-    return (
-      <Badge variant={active ? 'default' : 'secondary'}>
-        {active ? 'Ativo' : 'Inativo'}
-      </Badge>
-    );
+    return <Badge variant={active ? "default" : "secondary"}>{active ? "Ativo" : "Inativo"}</Badge>;
   };
 
   /**
    * Badge de performance
    */
   const getPerformanceBadge = (rate: number) => {
-    if (rate >= 90) return <Badge variant="default" className="bg-green-500">Excelente</Badge>;
-    if (rate >= 75) return <Badge variant="default" className="bg-blue-500">Bom</Badge>;
-    if (rate >= 50) return <Badge variant="default" className="bg-yellow-500">Regular</Badge>;
+    if (rate >= 90)
+      return (
+        <Badge variant="default" className="bg-green-500">
+          Excelente
+        </Badge>
+      );
+    if (rate >= 75)
+      return (
+        <Badge variant="default" className="bg-blue-500">
+          Bom
+        </Badge>
+      );
+    if (rate >= 50)
+      return (
+        <Badge variant="default" className="bg-yellow-500">
+          Regular
+        </Badge>
+      );
     return <Badge variant="destructive">Baixo</Badge>;
   };
 
@@ -631,18 +672,16 @@ export default function NotificationDashboard() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">Notificações</h1>
-          <p className="text-muted-foreground">
-            Gerencie templates, regras e monitore performance
-          </p>
+          <p className="text-muted-foreground">Gerencie templates, regras e monitore performance</p>
         </div>
         <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            onClick={refreshData} 
+          <Button
+            variant="outline"
+            onClick={refreshData}
             disabled={refreshing}
             className="flex items-center gap-2"
           >
-            <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
             Atualizar
           </Button>
           <Select value={selectedPeriod} onValueChange={(value: any) => setSelectedPeriod(value)}>
@@ -668,9 +707,7 @@ export default function NotificationDashboard() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats.totalSent.toLocaleString()}</div>
-              <p className="text-xs text-muted-foreground">
-                Total de notificações enviadas
-              </p>
+              <p className="text-xs text-muted-foreground">Total de notificações enviadas</p>
             </CardContent>
           </Card>
 
@@ -733,9 +770,7 @@ export default function NotificationDashboard() {
             <Card>
               <CardHeader>
                 <CardTitle>Performance por Canal</CardTitle>
-                <CardDescription>
-                  Taxa de entrega dos últimos 7 dias
-                </CardDescription>
+                <CardDescription>Taxa de entrega dos últimos 7 dias</CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={200}>
@@ -754,9 +789,7 @@ export default function NotificationDashboard() {
             <Card>
               <CardHeader>
                 <CardTitle>Tendência de Envios</CardTitle>
-                <CardDescription>
-                  Últimos 30 dias
-                </CardDescription>
+                <CardDescription>Últimos 30 dias</CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={200}>
@@ -765,16 +798,16 @@ export default function NotificationDashboard() {
                     <XAxis dataKey="date" />
                     <YAxis />
                     <Tooltip />
-                    <Line 
-                      type="monotone" 
-                      dataKey="sent" 
-                      stroke={chartColors.primary} 
+                    <Line
+                      type="monotone"
+                      dataKey="sent"
+                      stroke={chartColors.primary}
                       strokeWidth={2}
                     />
-                    <Line 
-                      type="monotone" 
-                      dataKey="delivered" 
-                      stroke={chartColors.success} 
+                    <Line
+                      type="monotone"
+                      dataKey="delivered"
+                      stroke={chartColors.success}
                       strokeWidth={2}
                     />
                   </LineChart>
@@ -787,14 +820,15 @@ export default function NotificationDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Resumo por Canal</CardTitle>
-              <CardDescription>
-                Performance detalhada de cada canal
-              </CardDescription>
+              <CardDescription>Performance detalhada de cada canal</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {channelPerformance.map((channel) => (
-                  <div key={channel.channel} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div
+                    key={channel.channel}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div className="flex items-center gap-3">
                       {getChannelIcon(channel.channel)}
                       <div>
@@ -862,7 +896,8 @@ export default function NotificationDashboard() {
                         {template.name}
                       </CardTitle>
                       <CardDescription>
-                        {template.type} • {template.usageCount} usos • {template.successRate?.toFixed(1)}% sucesso
+                        {template.type} • {template.usageCount} usos •{" "}
+                        {template.successRate?.toFixed(1)}% sucesso
                       </CardDescription>
                     </div>
                     <div className="flex items-center gap-2">
@@ -874,7 +909,9 @@ export default function NotificationDashboard() {
                 <CardContent>
                   <div className="space-y-2">
                     {template.subject && (
-                      <p className="text-sm"><strong>Assunto:</strong> {template.subject}</p>
+                      <p className="text-sm">
+                        <strong>Assunto:</strong> {template.subject}
+                      </p>
                     )}
                     <p className="text-sm text-muted-foreground">
                       {template.content.substring(0, 150)}...
@@ -934,10 +971,10 @@ export default function NotificationDashboard() {
                 <CardContent>
                   <div className="space-y-2">
                     <p className="text-sm">
-                      <strong>Template:</strong> {rule.template?.name || 'N/A'}
+                      <strong>Template:</strong> {rule.template?.name || "N/A"}
                     </p>
                     <p className="text-sm">
-                      <strong>Canais:</strong> {rule.channelPriority.join(', ')}
+                      <strong>Canais:</strong> {rule.channelPriority.join(", ")}
                     </p>
                     <p className="text-sm">
                       <strong>Intervalo de retry:</strong> {rule.retryInterval} minutos
@@ -975,19 +1012,19 @@ export default function NotificationDashboard() {
                     <XAxis dataKey="date" />
                     <YAxis />
                     <Tooltip />
-                    <Area 
-                      type="monotone" 
-                      dataKey="delivered" 
+                    <Area
+                      type="monotone"
+                      dataKey="delivered"
                       stackId="1"
-                      stroke={chartColors.success} 
+                      stroke={chartColors.success}
                       fill={chartColors.success}
                       fillOpacity={0.6}
                     />
-                    <Area 
-                      type="monotone" 
-                      dataKey="failed" 
+                    <Area
+                      type="monotone"
+                      dataKey="failed"
                       stackId="1"
-                      stroke={chartColors.danger} 
+                      stroke={chartColors.danger}
                       fill={chartColors.danger}
                       fillOpacity={0.6}
                     />
@@ -1015,9 +1052,11 @@ export default function NotificationDashboard() {
                       label={({ channel, sent }) => `${channel}: ${sent}`}
                     >
                       {channelPerformance.map((entry, index) => (
-                        <Cell 
-                          key={`cell-${index}`} 
-                          fill={Object.values(chartColors)[index % Object.values(chartColors).length]} 
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={
+                            Object.values(chartColors)[index % Object.values(chartColors).length]
+                          }
                         />
                       ))}
                     </Pie>
@@ -1032,9 +1071,7 @@ export default function NotificationDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Métricas Detalhadas</CardTitle>
-              <CardDescription>
-                Performance detalhada por canal e período
-              </CardDescription>
+              <CardDescription>Performance detalhada por canal e período</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
@@ -1077,26 +1114,27 @@ export default function NotificationDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Engajamento de Pacientes</CardTitle>
-              <CardDescription>
-                Top 20 pacientes por score de resposta
-              </CardDescription>
+              <CardDescription>Top 20 pacientes por score de resposta</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {patientEngagement.map((patient) => (
-                  <div key={patient.patientId} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div
+                    key={patient.patientId}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div>
                       <p className="font-medium">{patient.patientName}</p>
                       <p className="text-sm text-muted-foreground">
-                        Prefere: {patient.preferredChannel} • 
-                        Última resposta: {patient.lastResponse}
+                        Prefere: {patient.preferredChannel} • Última resposta:{" "}
+                        {patient.lastResponse}
                       </p>
                     </div>
                     <div className="text-right">
                       <div className="flex items-center gap-2">
                         <div className="w-16 h-2 bg-gray-200 rounded-full">
-                          <div 
-                            className="h-2 bg-blue-500 rounded-full" 
+                          <div
+                            className="h-2 bg-blue-500 rounded-full"
                             style={{ width: `${patient.responseScore}%` }}
                           />
                         </div>
@@ -1117,14 +1155,15 @@ export default function NotificationDashboard() {
             <Card>
               <CardHeader>
                 <CardTitle>Regras de Escalação</CardTitle>
-                <CardDescription>
-                  Configure escalação automática para não-resposta
-                </CardDescription>
+                <CardDescription>Configure escalação automática para não-resposta</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {escalationRules.map((rule) => (
-                    <div key={rule.id} className="flex items-center justify-between p-3 border rounded">
+                    <div
+                      key={rule.id}
+                      className="flex items-center justify-between p-3 border rounded"
+                    >
                       <div>
                         <p className="font-medium">{rule.name}</p>
                         <p className="text-sm text-muted-foreground">
@@ -1151,18 +1190,14 @@ export default function NotificationDashboard() {
             <Card>
               <CardHeader>
                 <CardTitle>Configurações Gerais</CardTitle>
-                <CardDescription>
-                  Configurações globais do sistema
-                </CardDescription>
+                <CardDescription>Configurações globais do sistema</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">Auto-envio de lembretes</p>
-                      <p className="text-sm text-muted-foreground">
-                        Enviar lembretes automáticos
-                      </p>
+                      <p className="text-sm text-muted-foreground">Enviar lembretes automáticos</p>
                     </div>
                     <Switch defaultChecked />
                   </div>
@@ -1178,9 +1213,7 @@ export default function NotificationDashboard() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">Analytics avançado</p>
-                      <p className="text-sm text-muted-foreground">
-                        Coletar métricas detalhadas
-                      </p>
+                      <p className="text-sm text-muted-foreground">Coletar métricas detalhadas</p>
                     </div>
                     <Switch defaultChecked />
                   </div>
@@ -1246,8 +1279,8 @@ export default function NotificationDashboard() {
             </div>
             <div>
               <Label htmlFor="template-content">Conteúdo</Label>
-              <Textarea 
-                id="template-content" 
+              <Textarea
+                id="template-content"
                 placeholder="Olá {patient_name}, sua consulta está agendada para {appointment_date}..."
                 rows={4}
               />
@@ -1256,9 +1289,7 @@ export default function NotificationDashboard() {
               <Button variant="outline" onClick={() => setIsTemplateDialogOpen(false)}>
                 Cancelar
               </Button>
-              <Button onClick={() => setIsTemplateDialogOpen(false)}>
-                Criar Template
-              </Button>
+              <Button onClick={() => setIsTemplateDialogOpen(false)}>Criar Template</Button>
             </div>
           </div>
         </DialogContent>

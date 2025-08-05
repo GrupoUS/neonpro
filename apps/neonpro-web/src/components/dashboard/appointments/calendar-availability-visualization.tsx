@@ -5,17 +5,17 @@
 // Story 1.2: Heat map availability display
 // =============================================
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card } from "@/components/ui/card";
+import type {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
-import {
+import type { cn } from "@/lib/utils";
+import type {
   addDays,
   endOfDay,
   endOfWeek,
@@ -25,8 +25,8 @@ import {
   startOfDay,
   startOfWeek,
 } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import {
+import type { ptBR } from "date-fns/locale";
+import type {
   AlertCircle,
   Calendar,
   CheckCircle,
@@ -36,7 +36,7 @@ import {
   Loader2,
   XCircle,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import type { useEffect, useMemo, useState } from "react";
 
 interface AvailabilitySlot {
   time: string;
@@ -105,18 +105,10 @@ export function CalendarAvailabilityVisualization({
       case "month":
         return {
           start: startOfWeek(
-            startOfDay(
-              new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1)
-            )
+            startOfDay(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1)),
           ),
           end: endOfWeek(
-            endOfDay(
-              new Date(
-                selectedDate.getFullYear(),
-                selectedDate.getMonth() + 1,
-                0
-              )
-            )
+            endOfDay(new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0)),
           ),
         };
     }
@@ -139,9 +131,7 @@ export function CalendarAvailabilityVisualization({
         ...(serviceTypeId && { service_type_id: serviceTypeId }),
       });
 
-      const response = await fetch(
-        `/api/appointments/availability-heatmap?${params}`
-      );
+      const response = await fetch(`/api/appointments/availability-heatmap?${params}`);
 
       if (response.ok) {
         const data = await response.json();
@@ -217,15 +207,13 @@ export function CalendarAvailabilityVisualization({
       case "low":
         content += `Pouco disponível (${slot.capacity.used}/${slot.capacity.maximum})`;
         if (slot.conflicts.length > 0) {
-          content +=
-            "\nAvisos: " + slot.conflicts.map((c) => c.message).join(", ");
+          content += "\nAvisos: " + slot.conflicts.map((c) => c.message).join(", ");
         }
         break;
       case "blocked":
         content += "Indisponível";
         if (slot.conflicts.length > 0) {
-          content +=
-            "\nMotivo: " + slot.conflicts.map((c) => c.message).join(", ");
+          content += "\nMotivo: " + slot.conflicts.map((c) => c.message).join(", ");
         }
         break;
       case "none":
@@ -236,11 +224,9 @@ export function CalendarAvailabilityVisualization({
     return content;
   };
 
-  const getDaySummary = (
-    day: DayAvailability
-  ): { percent: number; level: AvailabilityLevel } => {
+  const getDaySummary = (day: DayAvailability): { percent: number; level: AvailabilityLevel } => {
     const availablePercent = Math.round(
-      (day.summary.available_slots / day.summary.total_slots) * 100
+      (day.summary.available_slots / day.summary.total_slots) * 100,
     );
     let level: AvailabilityLevel;
 
@@ -253,9 +239,7 @@ export function CalendarAvailabilityVisualization({
   };
 
   const renderDayView = () => {
-    const dayData = availability.find((d) =>
-      isSameDay(parseISO(d.date), selectedDate)
-    );
+    const dayData = availability.find((d) => isSameDay(parseISO(d.date), selectedDate));
     if (!dayData) return null;
 
     return (
@@ -265,8 +249,7 @@ export function CalendarAvailabilityVisualization({
             {format(selectedDate, "EEEE, dd/MM/yyyy", { locale: ptBR })}
           </h3>
           <Badge variant="secondary">
-            {dayData.summary.available_slots} de {dayData.summary.total_slots}{" "}
-            disponíveis
+            {dayData.summary.available_slots} de {dayData.summary.total_slots} disponíveis
           </Badge>
         </div>
 
@@ -280,7 +263,7 @@ export function CalendarAvailabilityVisualization({
                     <div
                       className={cn(
                         "h-8 rounded border cursor-pointer transition-all",
-                        getAvailabilityColor(level)
+                        getAvailabilityColor(level),
                       )}
                       onClick={() => onSlotClick?.(slot)}
                       onMouseEnter={() => setHoveredSlot(slot)}
@@ -292,9 +275,7 @@ export function CalendarAvailabilityVisualization({
                     </div>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <div className="text-xs whitespace-pre-line">
-                      {getSlotTooltipContent(slot)}
-                    </div>
+                    <div className="text-xs whitespace-pre-line">{getSlotTooltipContent(slot)}</div>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -320,9 +301,7 @@ export function CalendarAvailabilityVisualization({
     const weekDays = [];
     for (let i = 0; i < 7; i++) {
       const day = addDays(dateRange.start, i);
-      const dayData = availability.find((d) =>
-        isSameDay(parseISO(d.date), day)
-      );
+      const dayData = availability.find((d) => isSameDay(parseISO(d.date), day));
       weekDays.push({ date: day, data: dayData });
     }
 
@@ -337,12 +316,8 @@ export function CalendarAvailabilityVisualization({
             return (
               <div key={dayIndex} className="space-y-2">
                 <div className="text-center">
-                  <div className="text-xs font-medium">
-                    {format(date, "EEE", { locale: ptBR })}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {format(date, "dd")}
-                  </div>
+                  <div className="text-xs font-medium">{format(date, "EEE", { locale: ptBR })}</div>
+                  <div className="text-xs text-muted-foreground">{format(date, "dd")}</div>
                   <Badge variant="secondary" className="text-xs mt-1">
                     {summary.percent}%
                   </Badge>
@@ -359,7 +334,7 @@ export function CalendarAvailabilityVisualization({
                               <div
                                 className={cn(
                                   "h-4 rounded border cursor-pointer transition-all",
-                                  getAvailabilityColor(level)
+                                  getAvailabilityColor(level),
                                 )}
                                 onClick={() => onSlotClick?.(slot)}
                               />
@@ -388,14 +363,8 @@ export function CalendarAvailabilityVisualization({
     const weeks = [];
     let currentWeek = [];
 
-    for (
-      let day = new Date(dateRange.start);
-      day <= dateRange.end;
-      day = addDays(day, 1)
-    ) {
-      const dayData = availability.find((d) =>
-        isSameDay(parseISO(d.date), day)
-      );
+    for (let day = new Date(dateRange.start); day <= dateRange.end; day = addDays(day, 1)) {
+      const dayData = availability.find((d) => isSameDay(parseISO(d.date), day));
       currentWeek.push({ date: new Date(day), data: dayData });
 
       if (currentWeek.length === 7) {
@@ -416,8 +385,7 @@ export function CalendarAvailabilityVisualization({
               const summary = data
                 ? getDaySummary(data)
                 : { percent: 0, level: "none" as AvailabilityLevel };
-              const isCurrentMonth =
-                date.getMonth() === selectedDate.getMonth();
+              const isCurrentMonth = date.getMonth() === selectedDate.getMonth();
 
               return (
                 <TooltipProvider key={dayIndex}>
@@ -427,15 +395,11 @@ export function CalendarAvailabilityVisualization({
                         className={cn(
                           "h-12 rounded border flex flex-col items-center justify-center cursor-pointer transition-all",
                           getAvailabilityColor(summary.level),
-                          !isCurrentMonth && "opacity-50"
+                          !isCurrentMonth && "opacity-50",
                         )}
                       >
-                        <div className="text-xs font-medium">
-                          {format(date, "d")}
-                        </div>
-                        {showDetails && (
-                          <div className="text-xs">{summary.percent}%</div>
-                        )}
+                        <div className="text-xs font-medium">{format(date, "d")}</div>
+                        {showDetails && <div className="text-xs">{summary.percent}%</div>}
                       </div>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -499,16 +463,8 @@ export function CalendarAvailabilityVisualization({
             <h3 className="font-medium">Mapa de Disponibilidade</h3>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowDetails(!showDetails)}
-            >
-              {showDetails ? (
-                <Eye className="h-4 w-4" />
-              ) : (
-                <EyeOff className="h-4 w-4" />
-              )}
+            <Button variant="ghost" size="sm" onClick={() => setShowDetails(!showDetails)}>
+              {showDetails ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
             </Button>
           </div>
         </div>
@@ -527,11 +483,9 @@ export function CalendarAvailabilityVisualization({
         {hoveredSlot && (
           <div className="border-t pt-4">
             <div className="text-sm">
-              <strong>Horário selecionado:</strong>{" "}
-              {format(parseISO(hoveredSlot.time), "HH:mm")}
+              <strong>Horário selecionado:</strong> {format(parseISO(hoveredSlot.time), "HH:mm")}
               <br />
-              <strong>Status:</strong>{" "}
-              {hoveredSlot.available ? "Disponível" : "Indisponível"}
+              <strong>Status:</strong> {hoveredSlot.available ? "Disponível" : "Indisponível"}
               <br />
               <strong>Capacidade:</strong> {hoveredSlot.capacity.used}/
               {hoveredSlot.capacity.maximum}

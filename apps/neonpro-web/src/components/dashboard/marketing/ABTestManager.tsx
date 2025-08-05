@@ -4,30 +4,30 @@
 
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
-import {
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
-import { BarChart3, Pause, Play, TestTube, Trophy } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import type { Separator } from "@/components/ui/separator";
+import type { Textarea } from "@/components/ui/textarea";
+import type { BarChart3, Pause, Play, TestTube, Trophy } from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 
 interface ABTest {
   id: string;
@@ -52,10 +52,7 @@ interface ABTestManagerProps {
   onTestCreated?: (test: ABTest) => void;
 }
 
-export default function ABTestManager({
-  campaignId,
-  onTestCreated,
-}: ABTestManagerProps) {
+export default function ABTestManager({ campaignId, onTestCreated }: ABTestManagerProps) {
   const [tests, setTests] = useState<ABTest[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
@@ -134,7 +131,7 @@ export default function ABTestManager({
             acc[key] = formData.variations[key].percentage / 100;
             return acc;
           },
-          {} as Record<string, number>
+          {} as Record<string, number>,
         ),
         success_metric: formData.success_metric,
         confidence_level: formData.confidence_level,
@@ -183,10 +180,7 @@ export default function ABTestManager({
     }
   };
 
-  const updateVariationPercentage = (
-    variationKey: string,
-    percentage: number
-  ) => {
+  const updateVariationPercentage = (variationKey: string, percentage: number) => {
     const variations = { ...formData.variations };
     const variationKeys = Object.keys(variations);
     const otherKey = variationKeys.find((key) => key !== variationKey);
@@ -208,12 +202,9 @@ export default function ABTestManager({
       cancelled: { color: "bg-red-500", text: "Cancelado" },
     };
 
-    const config =
-      statusConfig[status as keyof typeof statusConfig] || statusConfig.draft;
+    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.draft;
 
-    return (
-      <Badge className={`${config.color} text-white`}>{config.text}</Badge>
-    );
+    return <Badge className={`${config.color} text-white`}>{config.text}</Badge>;
   };
 
   const getSuccessMetricLabel = (metric: string) => {
@@ -247,9 +238,7 @@ export default function ABTestManager({
       <Card>
         <CardHeader>
           <CardTitle>Criar Novo Teste A/B</CardTitle>
-          <CardDescription>
-            Configure um teste para otimizar sua campanha
-          </CardDescription>
+          <CardDescription>Configure um teste para otimizar sua campanha</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
@@ -282,9 +271,7 @@ export default function ABTestManager({
                 <SelectContent>
                   <SelectItem value="open_rate">Taxa de Abertura</SelectItem>
                   <SelectItem value="click_rate">Taxa de Clique</SelectItem>
-                  <SelectItem value="conversion_rate">
-                    Taxa de Conversão
-                  </SelectItem>
+                  <SelectItem value="conversion_rate">Taxa de Conversão</SelectItem>
                   <SelectItem value="revenue">Receita</SelectItem>
                 </SelectContent>
               </Select>
@@ -296,9 +283,7 @@ export default function ABTestManager({
             <Textarea
               id="hypothesis"
               value={formData.hypothesis}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, hypothesis: e.target.value }))
-              }
+              onChange={(e) => setFormData((prev) => ({ ...prev, hypothesis: e.target.value }))}
               placeholder="Ex: Assuntos mais personalizados aumentam a taxa de abertura em 15%"
               rows={2}
             />
@@ -308,45 +293,40 @@ export default function ABTestManager({
           <div className="space-y-4">
             <Label>Configuração das Variações</Label>
 
-            {Object.entries(formData.variations).map(
-              ([key, variation], index) => (
-                <Card key={key} className="p-4">
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium">{variation.name}</h4>
-                      <div className="flex items-center space-x-2">
-                        <Label className="text-sm">Tráfego:</Label>
-                        <Input
-                          type="number"
-                          min="10"
-                          max="90"
-                          value={variation.percentage}
-                          onChange={(e) =>
-                            updateVariationPercentage(
-                              key,
-                              parseInt(e.target.value) || 0
-                            )
-                          }
-                          className="w-20"
-                        />
-                        <span className="text-sm">%</span>
-                      </div>
+            {Object.entries(formData.variations).map(([key, variation], index) => (
+              <Card key={key} className="p-4">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-medium">{variation.name}</h4>
+                    <div className="flex items-center space-x-2">
+                      <Label className="text-sm">Tráfego:</Label>
+                      <Input
+                        type="number"
+                        min="10"
+                        max="90"
+                        value={variation.percentage}
+                        onChange={(e) =>
+                          updateVariationPercentage(key, parseInt(e.target.value) || 0)
+                        }
+                        className="w-20"
+                      />
+                      <span className="text-sm">%</span>
                     </div>
-
-                    <Textarea
-                      value={variation.content}
-                      onChange={(e) => {
-                        const variations = { ...formData.variations };
-                        variations[key].content = e.target.value;
-                        setFormData((prev) => ({ ...prev, variations }));
-                      }}
-                      placeholder="Conteúdo da variação..."
-                      rows={2}
-                    />
                   </div>
-                </Card>
-              )
-            )}
+
+                  <Textarea
+                    value={variation.content}
+                    onChange={(e) => {
+                      const variations = { ...formData.variations };
+                      variations[key].content = e.target.value;
+                      setFormData((prev) => ({ ...prev, variations }));
+                    }}
+                    placeholder="Conteúdo da variação..."
+                    rows={2}
+                  />
+                </div>
+              </Card>
+            ))}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -417,13 +397,11 @@ export default function ABTestManager({
                 </div>
                 <div className="flex items-center space-x-2">
                   {getStatusBadge(test.status)}
-                  {test.status === "running" &&
-                    test.statistical_significance && (
-                      <Badge variant="outline">
-                        {Math.round(test.statistical_significance * 100)}%
-                        confiança
-                      </Badge>
-                    )}
+                  {test.status === "running" && test.statistical_significance && (
+                    <Badge variant="outline">
+                      {Math.round(test.statistical_significance * 100)}% confiança
+                    </Badge>
+                  )}
                 </div>
               </div>
             </CardHeader>
@@ -454,9 +432,7 @@ export default function ABTestManager({
                   {Object.entries(test.variations).map(([key, variation]) => (
                     <div key={key} className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">
-                          {variation.name}
-                        </span>
+                        <span className="text-sm font-medium">{variation.name}</span>
                         <div className="flex items-center space-x-2">
                           <span className="text-sm">
                             {Math.round(test.traffic_split[key] * 100)}% tráfego
@@ -479,21 +455,15 @@ export default function ABTestManager({
                           </div>
                           <div>
                             <div className="font-medium">387</div>
-                            <div className="text-muted-foreground">
-                              Aberturas
-                            </div>
+                            <div className="text-muted-foreground">Aberturas</div>
                           </div>
                           <div>
                             <div className="font-medium">31.0%</div>
                             <div className="text-muted-foreground">Taxa</div>
                           </div>
                           <div>
-                            <div className="font-medium text-green-600">
-                              +5.2%
-                            </div>
-                            <div className="text-muted-foreground">
-                              vs. Controle
-                            </div>
+                            <div className="font-medium text-green-600">+5.2%</div>
+                            <div className="text-muted-foreground">vs. Controle</div>
                           </div>
                         </div>
                       </div>
@@ -514,13 +484,11 @@ export default function ABTestManager({
 
                     {test.statistical_significance >= 0.95 ? (
                       <p className="text-sm text-green-600">
-                        ✓ Resultado estatisticamente significativo! Pode
-                        declarar vencedor.
+                        ✓ Resultado estatisticamente significativo! Pode declarar vencedor.
                       </p>
                     ) : (
                       <p className="text-sm text-yellow-600">
-                        ⏳ Aguardando mais dados para significância
-                        estatística...
+                        ⏳ Aguardando mais dados para significância estatística...
                       </p>
                     )}
                   </div>
@@ -540,13 +508,12 @@ export default function ABTestManager({
                         Pausar
                       </Button>
 
-                      {test.statistical_significance &&
-                        test.statistical_significance >= 0.95 && (
-                          <Button size="sm">
-                            <Trophy className="h-4 w-4 mr-2" />
-                            Declarar Vencedor
-                          </Button>
-                        )}
+                      {test.statistical_significance && test.statistical_significance >= 0.95 && (
+                        <Button size="sm">
+                          <Trophy className="h-4 w-4 mr-2" />
+                          Declarar Vencedor
+                        </Button>
+                      )}
                     </>
                   )}
 
@@ -566,9 +533,7 @@ export default function ABTestManager({
           <Card>
             <CardContent className="text-center py-8">
               <TestTube className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium mb-2">
-                Nenhum teste A/B configurado
-              </h3>
+              <h3 className="text-lg font-medium mb-2">Nenhum teste A/B configurado</h3>
               <p className="text-muted-foreground">
                 Crie seu primeiro teste para otimizar sua campanha
               </p>

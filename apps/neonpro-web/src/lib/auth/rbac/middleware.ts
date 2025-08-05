@@ -1,14 +1,14 @@
 /**
  * RBAC Authorization Middleware for NeonPro
  * Story 1.2: Role-Based Access Control Implementation
- * 
+ *
  * This middleware provides route-level authorization based on roles and permissions
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { UserRole, Permission } from '@/types/rbac';
-import { authenticateRequest, AuthUser } from '@/lib/middleware/auth';
-import { hasPermission, hasAnyPermission, hasAllPermissions } from './permissions';
+import type { NextRequest, NextResponse } from "next/server";
+import type { UserRole, Permission } from "@/types/rbac";
+import type { authenticateRequest, AuthUser } from "@/lib/middleware/auth";
+import type { hasPermission, hasAnyPermission, hasAllPermissions } from "./permissions";
 
 /**
  * Authorization configuration for routes
@@ -45,7 +45,7 @@ const ROLE_HIERARCHY: Record<UserRole, number> = {
   patient: 1,
   staff: 2,
   manager: 3,
-  owner: 4
+  owner: 4,
 };
 
 /**
@@ -60,7 +60,7 @@ function hasMinimumRole(userRole: UserRole, requiredRole: UserRole): boolean {
  */
 export async function authorize(
   req: NextRequest,
-  config: AuthorizationConfig
+  config: AuthorizationConfig,
 ): Promise<AuthorizationResult> {
   try {
     // Skip authorization if condition is met
@@ -73,17 +73,17 @@ export async function authorize(
     if (!authResult.authenticated || !authResult.user) {
       return {
         authorized: false,
-        reason: 'Authentication required',
-        statusCode: 401
+        reason: "Authentication required",
+        statusCode: 401,
       };
     }
 
     const user = authResult.user;
     const context = {
       ipAddress: getClientIP(req),
-      userAgent: req.headers.get('user-agent') || 'unknown',
+      userAgent: req.headers.get("user-agent") || "unknown",
       path: req.nextUrl.pathname,
-      method: req.method
+      method: req.method,
     };
 
     // Check minimum role requirement
@@ -92,7 +92,7 @@ export async function authorize(
         authorized: false,
         user,
         reason: `Minimum role '${config.requiredRole}' required, user has '${user.role}'`,
-        statusCode: 403
+        statusCode: 403,
       };
     }
 
@@ -105,15 +105,15 @@ export async function authorize(
         user,
         config.requiredPermissions,
         resourceId,
-        context
+        context,
       );
 
       if (!permissionResult.granted) {
         return {
           authorized: false,
           user,
-          reason: permissionResult.reason || 'Required permissions not met',
-          statusCode: 403
+          reason: permissionResult.reason || "Required permissions not met",
+          statusCode: 403,
         };
       }
     }
@@ -124,15 +124,15 @@ export async function authorize(
         user,
         config.anyPermissions,
         resourceId,
-        context
+        context,
       );
 
       if (!permissionResult.granted) {
         return {
           authorized: false,
           user,
-          reason: permissionResult.reason || 'None of the alternative permissions met',
-          statusCode: 403
+          reason: permissionResult.reason || "None of the alternative permissions met",
+          statusCode: 403,
         };
       }
     }
@@ -144,23 +144,22 @@ export async function authorize(
         return {
           authorized: false,
           user,
-          reason: 'Custom authorization check failed',
-          statusCode: 403
+          reason: "Custom authorization check failed",
+          statusCode: 403,
         };
       }
     }
 
     return {
       authorized: true,
-      user
+      user,
     };
-
   } catch (error) {
-    console.error('Authorization middleware error:', error);
+    console.error("Authorization middleware error:", error);
     return {
       authorized: false,
-      reason: 'Authorization check failed',
-      statusCode: 500
+      reason: "Authorization check failed",
+      statusCode: 500,
     };
   }
 }
@@ -171,24 +170,24 @@ export async function authorize(
 export function createAuthorizationMiddleware(config: AuthorizationConfig) {
   return async (req: NextRequest): Promise<NextResponse | null> => {
     const result = await authorize(req, config);
-    
+
     if (!result.authorized) {
       return NextResponse.json(
         {
-          error: 'Authorization failed',
-          message: result.reason || 'Access denied',
-          code: result.statusCode || 403
+          error: "Authorization failed",
+          message: result.reason || "Access denied",
+          code: result.statusCode || 403,
         },
-        { status: result.statusCode || 403 }
+        { status: result.statusCode || 403 },
       );
     }
 
     // Add user info to request headers for downstream handlers
     if (result.user) {
       const response = NextResponse.next();
-      response.headers.set('x-user-id', result.user.id);
-      response.headers.set('x-user-role', result.user.role);
-      response.headers.set('x-clinic-id', result.user.clinicId || '');
+      response.headers.set("x-user-id", result.user.id);
+      response.headers.set("x-user-role", result.user.role);
+      response.headers.set("x-clinic-id", result.user.clinicId || "");
       return response;
     }
 
@@ -236,15 +235,15 @@ export function extractUserId(req: NextRequest): string | undefined {
  * Get client IP address from request
  */
 function getClientIP(req: NextRequest): string {
-  const forwarded = req.headers.get('x-forwarded-for');
-  const realIP = req.headers.get('x-real-ip');
-  const remoteAddr = req.headers.get('x-remote-addr');
-  
+  const forwarded = req.headers.get("x-forwarded-for");
+  const realIP = req.headers.get("x-real-ip");
+  const remoteAddr = req.headers.get("x-remote-addr");
+
   if (forwarded) {
-    return forwarded.split(',')[0].trim();
+    return forwarded.split(",")[0].trim();
   }
-  
-  return realIP || remoteAddr || 'unknown';
+
+  return realIP || remoteAddr || "unknown";
 }
 
 /**
@@ -255,76 +254,76 @@ export const AuthMiddlewares = {
    * Require owner role
    */
   requireOwner: createAuthorizationMiddleware({
-    requiredRole: 'owner'
+    requiredRole: "owner",
   }),
 
   /**
    * Require manager role or higher
    */
   requireManager: createAuthorizationMiddleware({
-    requiredRole: 'manager'
+    requiredRole: "manager",
   }),
 
   /**
    * Require staff role or higher
    */
   requireStaff: createAuthorizationMiddleware({
-    requiredRole: 'staff'
+    requiredRole: "staff",
   }),
 
   /**
    * Patient data access (read)
    */
   patientRead: createAuthorizationMiddleware({
-    anyPermissions: ['patients.read', 'patients.manage'],
-    resourceIdExtractor: extractPatientId
+    anyPermissions: ["patients.read", "patients.manage"],
+    resourceIdExtractor: extractPatientId,
   }),
 
   /**
    * Patient data management
    */
   patientManage: createAuthorizationMiddleware({
-    requiredPermissions: ['patients.manage'],
-    resourceIdExtractor: extractPatientId
+    requiredPermissions: ["patients.manage"],
+    resourceIdExtractor: extractPatientId,
   }),
 
   /**
    * Appointment access
    */
   appointmentAccess: createAuthorizationMiddleware({
-    anyPermissions: ['appointments.read', 'appointments.manage'],
-    resourceIdExtractor: extractAppointmentId
+    anyPermissions: ["appointments.read", "appointments.manage"],
+    resourceIdExtractor: extractAppointmentId,
   }),
 
   /**
    * Financial data access
    */
   financialAccess: createAuthorizationMiddleware({
-    anyPermissions: ['billing.read', 'billing.manage', 'payments.read', 'payments.manage']
+    anyPermissions: ["billing.read", "billing.manage", "payments.read", "payments.manage"],
   }),
 
   /**
    * System administration
    */
   systemAdmin: createAuthorizationMiddleware({
-    requiredPermissions: ['system.admin']
+    requiredPermissions: ["system.admin"],
   }),
 
   /**
    * Clinic management
    */
   clinicManage: createAuthorizationMiddleware({
-    requiredPermissions: ['clinic.manage'],
-    resourceIdExtractor: extractClinicId
+    requiredPermissions: ["clinic.manage"],
+    resourceIdExtractor: extractClinicId,
   }),
 
   /**
    * User management
    */
   userManage: createAuthorizationMiddleware({
-    requiredPermissions: ['users.manage'],
-    resourceIdExtractor: extractUserId
-  })
+    requiredPermissions: ["users.manage"],
+    resourceIdExtractor: extractUserId,
+  }),
 };
 
 /**
@@ -334,21 +333,21 @@ export function withAuthorization(config: AuthorizationConfig) {
   return function (handler: (req: NextRequest, context: any) => Promise<NextResponse>) {
     return async (req: NextRequest, context: any): Promise<NextResponse> => {
       const authResult = await authorize(req, config);
-      
+
       if (!authResult.authorized) {
         return NextResponse.json(
           {
-            error: 'Authorization failed',
-            message: authResult.reason || 'Access denied',
-            code: authResult.statusCode || 403
+            error: "Authorization failed",
+            message: authResult.reason || "Access denied",
+            code: authResult.statusCode || 403,
           },
-          { status: authResult.statusCode || 403 }
+          { status: authResult.statusCode || 403 },
         );
       }
 
       // Add user to context
       context.user = authResult.user;
-      
+
       return handler(req, context);
     };
   };
@@ -359,26 +358,26 @@ export function withAuthorization(config: AuthorizationConfig) {
  */
 export async function checkAuthorization(
   req: NextRequest,
-  config: AuthorizationConfig
+  config: AuthorizationConfig,
 ): Promise<{ authorized: boolean; user?: AuthUser; error?: NextResponse }> {
   const result = await authorize(req, config);
-  
+
   if (!result.authorized) {
     return {
       authorized: false,
       error: NextResponse.json(
         {
-          error: 'Authorization failed',
-          message: result.reason || 'Access denied',
-          code: result.statusCode || 403
+          error: "Authorization failed",
+          message: result.reason || "Access denied",
+          code: result.statusCode || 403,
         },
-        { status: result.statusCode || 403 }
-      )
+        { status: result.statusCode || 403 },
+      ),
     };
   }
 
   return {
     authorized: true,
-    user: result.user
+    user: result.user,
   };
 }

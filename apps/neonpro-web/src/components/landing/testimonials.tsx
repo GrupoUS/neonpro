@@ -1,17 +1,10 @@
 // components/landing/testimonials.tsx
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { 
-  Star,
-  Quote,
-  TrendingUp,
-  Users,
-  Clock,
-  Heart
-} from "lucide-react";
+import type { Card, CardContent } from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Star, Quote, TrendingUp, Users, Clock, Heart } from "lucide-react";
 
 export function Testimonials() {
   const testimonials = [
@@ -22,13 +15,14 @@ export function Testimonials() {
       avatar: "/avatars/dr-marina.jpg",
       fallback: "MS",
       rating: 5,
-      quote: "O NeonPro revolucionou nossa operação. Reduzimos 85% dos conflitos de agenda e aumentamos 40% nossa eficiência. A IA realmente funciona!",
+      quote:
+        "O NeonPro revolucionou nossa operação. Reduzimos 85% dos conflitos de agenda e aumentamos 40% nossa eficiência. A IA realmente funciona!",
       metrics: {
         improvement: "+40% eficiência",
         reduction: "-85% conflitos",
-        satisfaction: "98% pacientes"
+        satisfaction: "98% pacientes",
       },
-      verified: true
+      verified: true,
     },
     {
       name: "Carla Santos",
@@ -37,13 +31,14 @@ export function Testimonials() {
       avatar: "/avatars/carla-santos.jpg",
       fallback: "CS",
       rating: 5,
-      quote: "Como recepcionista, posso dizer que nunca foi tão fácil gerenciar a agenda. O sistema antecipa tudo e os pacientes adoram o portal deles!",
+      quote:
+        "Como recepcionista, posso dizer que nunca foi tão fácil gerenciar a agenda. O sistema antecipa tudo e os pacientes adoram o portal deles!",
       metrics: {
         improvement: "+60% produtividade",
         reduction: "-90% no-shows",
-        satisfaction: "95% equipe"
+        satisfaction: "95% equipe",
       },
-      verified: true
+      verified: true,
     },
     {
       name: "Dr. Roberto Lima",
@@ -52,13 +47,14 @@ export function Testimonials() {
       avatar: "/avatars/dr-roberto.jpg",
       fallback: "RL",
       rating: 5,
-      quote: "A conformidade automática com ANVISA e CFM me dá total tranquilidade. Foco no que importa: cuidar dos meus pacientes.",
+      quote:
+        "A conformidade automática com ANVISA e CFM me dá total tranquilidade. Foco no que importa: cuidar dos meus pacientes.",
       metrics: {
         improvement: "+30% pacientes",
         reduction: "0 multas compliance",
-        satisfaction: "100% auditoria"
+        satisfaction: "100% auditoria",
       },
-      verified: true
+      verified: true,
     },
     {
       name: "Ana Costa",
@@ -67,13 +63,14 @@ export function Testimonials() {
       avatar: "/avatars/ana-costa.jpg",
       fallback: "AC",
       rating: 5,
-      quote: "Acompanho meu tratamento pelo app, vejo meu progresso e me sinto muito mais segura. A transparência é total!",
+      quote:
+        "Acompanho meu tratamento pelo app, vejo meu progresso e me sinto muito mais segura. A transparência é total!",
       metrics: {
         improvement: "+50% confiança",
         reduction: "-70% ansiedade",
-        satisfaction: "Recomendo 100%"
+        satisfaction: "Recomendo 100%",
       },
-      verified: false
+      verified: false,
     },
     {
       name: "Dr. Fernanda Oliveira",
@@ -82,13 +79,14 @@ export function Testimonials() {
       avatar: "/avatars/dr-fernanda.jpg",
       fallback: "FO",
       rating: 5,
-      quote: "Os analytics são impressionantes. Consigo prever a demanda e otimizar meu tempo. Meu faturamento cresceu 35% em 6 meses.",
+      quote:
+        "Os analytics são impressionantes. Consigo prever a demanda e otimizar meu tempo. Meu faturamento cresceu 35% em 6 meses.",
       metrics: {
         improvement: "+35% faturamento",
         reduction: "+25% margem",
-        satisfaction: "92% retenção"
+        satisfaction: "92% retenção",
       },
-      verified: true
+      verified: true,
     },
     {
       name: "Lucas Pereira",
@@ -97,14 +95,15 @@ export function Testimonials() {
       avatar: "/avatars/lucas-pereira.jpg",
       fallback: "LP",
       rating: 5,
-      quote: "Implementamos em 12 clínicas simultaneamente. Zero problemas, compliance total e ROI positivo em 3 meses. Excepcional!",
+      quote:
+        "Implementamos em 12 clínicas simultaneamente. Zero problemas, compliance total e ROI positivo em 3 meses. Excepcional!",
       metrics: {
         improvement: "12 clínicas",
         reduction: "ROI 3 meses",
-        satisfaction: "100% uptime"
+        satisfaction: "100% uptime",
       },
-      verified: true
-    }
+      verified: true,
+    },
   ];
 
   const stats = [
@@ -112,26 +111,26 @@ export function Testimonials() {
       icon: Users,
       value: "500+",
       label: "Clínicas Ativas",
-      description: "Em todo o Brasil"
+      description: "Em todo o Brasil",
     },
     {
       icon: Heart,
       value: "50k+",
       label: "Pacientes Atendidos",
-      description: "Mensalmente"
+      description: "Mensalmente",
     },
     {
       icon: TrendingUp,
       value: "40%",
       label: "Aumento Médio",
-      description: "Na eficiência"
+      description: "Na eficiência",
     },
     {
       icon: Clock,
       value: "99.9%",
       label: "Uptime",
-      description: "Disponibilidade"
-    }
+      description: "Disponibilidade",
+    },
   ];
 
   return (
@@ -147,8 +146,8 @@ export function Testimonials() {
             <span className="block text-sky-600">Todo o Brasil</span>
           </h2>
           <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed">
-            Veja como profissionais e pacientes estão alcançando resultados excepcionais 
-            com nossa plataforma de saúde digital.
+            Veja como profissionais e pacientes estão alcançando resultados excepcionais com nossa
+            plataforma de saúde digital.
           </p>
         </div>
 
@@ -165,9 +164,7 @@ export function Testimonials() {
               <div className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">
                 {stat.label}
               </div>
-              <div className="text-xs text-slate-500 dark:text-slate-400">
-                {stat.description}
-              </div>
+              <div className="text-xs text-slate-500 dark:text-slate-400">{stat.description}</div>
             </div>
           ))}
         </div>
@@ -175,7 +172,10 @@ export function Testimonials() {
         {/* Testimonials Grid */}
         <div className="grid lg:grid-cols-2 gap-8 mb-16">
           {testimonials.map((testimonial, index) => (
-            <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800">
+            <Card
+              key={index}
+              className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800"
+            >
               <CardContent className="p-6">
                 {/* Quote Icon */}
                 <div className="flex items-start justify-between mb-4">
@@ -195,12 +195,15 @@ export function Testimonials() {
                 {/* Metrics */}
                 <div className="grid grid-cols-3 gap-3 mb-6">
                   {Object.entries(testimonial.metrics).map(([key, value], idx) => (
-                    <div key={idx} className="text-center p-2 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                    <div
+                      key={idx}
+                      className="text-center p-2 bg-slate-50 dark:bg-slate-800 rounded-lg"
+                    >
                       <div className="text-sm font-bold text-slate-900 dark:text-white">
                         {value}
                       </div>
                       <div className="text-xs text-slate-500 dark:text-slate-400 capitalize">
-                        {key.replace('_', ' ')}
+                        {key.replace("_", " ")}
                       </div>
                     </div>
                   ))}
@@ -225,9 +228,7 @@ export function Testimonials() {
                         </Badge>
                       )}
                     </div>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
-                      {testimonial.role}
-                    </p>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">{testimonial.role}</p>
                     <p className="text-xs text-slate-500 dark:text-slate-400">
                       {testimonial.clinic}
                     </p>
@@ -240,17 +241,15 @@ export function Testimonials() {
 
         {/* Video Testimonial Section */}
         <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-8 lg:p-12 text-center">
-          <Badge className="mb-4 bg-white/20 text-white">
-            Depoimento em Vídeo
-          </Badge>
+          <Badge className="mb-4 bg-white/20 text-white">Depoimento em Vídeo</Badge>
           <h3 className="text-2xl lg:text-3xl font-bold text-white mb-4">
             "Como o NeonPro Transformou Nossa Clínica"
           </h3>
           <p className="text-slate-300 text-lg mb-8 max-w-2xl mx-auto">
-            Assista ao depoimento completo da Dr. Marina Silva, proprietária da Clínica Bella Vita, 
+            Assista ao depoimento completo da Dr. Marina Silva, proprietária da Clínica Bella Vita,
             sobre como nossa plataforma revolucionou sua operação.
           </p>
-          
+
           {/* Video Placeholder */}
           <div className="relative bg-slate-700 rounded-xl overflow-hidden max-w-4xl mx-auto mb-8">
             <div className="aspect-video flex items-center justify-center">
@@ -265,9 +264,7 @@ export function Testimonials() {
               <div className="text-xs opacity-75">Clínica Bella Vita</div>
             </div>
             <div className="absolute top-4 right-4">
-              <Badge className="bg-red-600 text-white text-xs">
-                AO VIVO
-              </Badge>
+              <Badge className="bg-red-600 text-white text-xs">AO VIVO</Badge>
             </div>
           </div>
 

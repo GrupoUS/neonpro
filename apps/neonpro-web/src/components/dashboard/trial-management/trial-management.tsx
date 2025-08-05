@@ -3,23 +3,29 @@
 // Based on research: SaaS trial management best practices + shadcn/ui patterns
 // Created: 2025-01-22
 
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Progress } from '@/components/ui/progress'
-import { 
-  Search, 
-  Filter, 
-  Users, 
-  Clock, 
-  AlertTriangle, 
-  CheckCircle, 
+import type { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Progress } from "@/components/ui/progress";
+import type {
+  Search,
+  Filter,
+  Users,
+  Clock,
+  AlertTriangle,
+  CheckCircle,
   XCircle,
   TrendingUp,
   Mail,
@@ -27,193 +33,206 @@ import {
   MessageSquare,
   Zap,
   Target,
-  Calendar
-} from 'lucide-react'
-import { cn } from '@/lib/utils'
+  Calendar,
+} from "lucide-react";
+import type { cn } from "@/lib/utils";
 
 // Types from our trial management system
 interface TrialUser {
-  id: string
-  userId: string
-  email: string
-  name: string
-  avatar?: string
-  stage: 'onboarding' | 'exploring' | 'engaged' | 'converting' | 'churning'
-  startDate: Date
-  endDate: Date
-  daysRemaining: number
-  conversionProbability: number
-  lastActivity: Date
-  features: string[]
-  source: string
-  plan: string
-}interface TrialAction {
-  id: string
-  type: 'email' | 'call' | 'message' | 'feature-highlight'
-  title: string
-  description: string
-  priority: 'high' | 'medium' | 'low'
-  impact: number
+  id: string;
+  userId: string;
+  email: string;
+  name: string;
+  avatar?: string;
+  stage: "onboarding" | "exploring" | "engaged" | "converting" | "churning";
+  startDate: Date;
+  endDate: Date;
+  daysRemaining: number;
+  conversionProbability: number;
+  lastActivity: Date;
+  features: string[];
+  source: string;
+  plan: string;
+}
+interface TrialAction {
+  id: string;
+  type: "email" | "call" | "message" | "feature-highlight";
+  title: string;
+  description: string;
+  priority: "high" | "medium" | "low";
+  impact: number;
 }
 
 interface TrialManagementProps {
-  className?: string
+  className?: string;
 }
 
 // Stage color mapping
 const STAGE_COLORS = {
-  onboarding: 'bg-blue-100 text-blue-800 border-blue-200',
-  exploring: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  engaged: 'bg-green-100 text-green-800 border-green-200',
-  converting: 'bg-purple-100 text-purple-800 border-purple-200',
-  churning: 'bg-red-100 text-red-800 border-red-200'
-}
+  onboarding: "bg-blue-100 text-blue-800 border-blue-200",
+  exploring: "bg-yellow-100 text-yellow-800 border-yellow-200",
+  engaged: "bg-green-100 text-green-800 border-green-200",
+  converting: "bg-purple-100 text-purple-800 border-purple-200",
+  churning: "bg-red-100 text-red-800 border-red-200",
+};
 
 // Priority colors
 const PRIORITY_COLORS = {
-  high: 'bg-red-100 text-red-800 border-red-200',
-  medium: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  low: 'bg-green-100 text-green-800 border-green-200'
-}
+  high: "bg-red-100 text-red-800 border-red-200",
+  medium: "bg-yellow-100 text-yellow-800 border-yellow-200",
+  low: "bg-green-100 text-green-800 border-green-200",
+};
 
 export function TrialManagement({ className }: TrialManagementProps) {
-  const [trials, setTrials] = useState<TrialUser[]>([])
-  const [actions, setActions] = useState<TrialAction[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [stageFilter, setStageFilter] = useState<string>('all')
+  const [trials, setTrials] = useState<TrialUser[]>([]);
+  const [actions, setActions] = useState<TrialAction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [stageFilter, setStageFilter] = useState<string>("all");
 
   // Fetch trial data
   useEffect(() => {
     const fetchTrialData = async () => {
       try {
-        setLoading(true)
+        setLoading(true);
         const [trialsResponse, actionsResponse] = await Promise.all([
-          fetch('/api/trial-management/active-trials'),
-          fetch('/api/trial-management/recommended-actions')
-        ])
-        
-        const trialsData = await trialsResponse.json()
-        const actionsData = await actionsResponse.json()
-        
-        setTrials(trialsData)
-        setActions(actionsData)
-      } catch (error) {
-        console.error('Failed to fetch trial data:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
+          fetch("/api/trial-management/active-trials"),
+          fetch("/api/trial-management/recommended-actions"),
+        ]);
 
-    fetchTrialData()
-  }, [])  // Mock data for demonstration
+        const trialsData = await trialsResponse.json();
+        const actionsData = await actionsResponse.json();
+
+        setTrials(trialsData);
+        setActions(actionsData);
+      } catch (error) {
+        console.error("Failed to fetch trial data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTrialData();
+  }, []); // Mock data for demonstration
   const mockTrials: TrialUser[] = [
     {
-      id: '1',
-      userId: 'usr_123',
-      email: 'john.doe@company.com',
-      name: 'John Doe',
-      stage: 'engaged',
-      startDate: new Date('2025-01-15'),
-      endDate: new Date('2025-01-29'),
+      id: "1",
+      userId: "usr_123",
+      email: "john.doe@company.com",
+      name: "John Doe",
+      stage: "engaged",
+      startDate: new Date("2025-01-15"),
+      endDate: new Date("2025-01-29"),
       daysRemaining: 7,
       conversionProbability: 78,
-      lastActivity: new Date('2025-01-21'),
-      features: ['Analytics', 'Reports', 'Integrations'],
-      source: 'Google Ads',
-      plan: 'Professional'
+      lastActivity: new Date("2025-01-21"),
+      features: ["Analytics", "Reports", "Integrations"],
+      source: "Google Ads",
+      plan: "Professional",
     },
     {
-      id: '2',
-      userId: 'usr_124',
-      email: 'sarah.wilson@startup.com',
-      name: 'Sarah Wilson',
-      stage: 'churning',
-      startDate: new Date('2025-01-10'),
-      endDate: new Date('2025-01-24'),
+      id: "2",
+      userId: "usr_124",
+      email: "sarah.wilson@startup.com",
+      name: "Sarah Wilson",
+      stage: "churning",
+      startDate: new Date("2025-01-10"),
+      endDate: new Date("2025-01-24"),
       daysRemaining: 2,
       conversionProbability: 23,
-      lastActivity: new Date('2025-01-18'),
-      features: ['Basic Features'],
-      source: 'Organic',
-      plan: 'Starter'
+      lastActivity: new Date("2025-01-18"),
+      features: ["Basic Features"],
+      source: "Organic",
+      plan: "Starter",
     },
     {
-      id: '3',
-      userId: 'usr_125',
-      email: 'mike.chen@enterprise.com',
-      name: 'Mike Chen',
-      stage: 'converting',
-      startDate: new Date('2025-01-12'),
-      endDate: new Date('2025-01-26'),
+      id: "3",
+      userId: "usr_125",
+      email: "mike.chen@enterprise.com",
+      name: "Mike Chen",
+      stage: "converting",
+      startDate: new Date("2025-01-12"),
+      endDate: new Date("2025-01-26"),
       daysRemaining: 4,
       conversionProbability: 92,
-      lastActivity: new Date('2025-01-22'),
-      features: ['All Features', 'Custom Integrations', 'Premium Support'],
-      source: 'Referral',
-      plan: 'Enterprise'
-    }
-  ]
+      lastActivity: new Date("2025-01-22"),
+      features: ["All Features", "Custom Integrations", "Premium Support"],
+      source: "Referral",
+      plan: "Enterprise",
+    },
+  ];
 
   const mockActions: TrialAction[] = [
     {
-      id: '1',
-      type: 'email',
-      title: 'Send feature discovery email',
-      description: 'Help Sarah discover key features she hasn\'t used yet',
-      priority: 'high',
-      impact: 85
+      id: "1",
+      type: "email",
+      title: "Send feature discovery email",
+      description: "Help Sarah discover key features she hasn't used yet",
+      priority: "high",
+      impact: 85,
     },
     {
-      id: '2',
-      type: 'call',
-      title: 'Schedule conversion call',
-      description: 'Mike shows high conversion probability - time for sales call',
-      priority: 'high',
-      impact: 92
+      id: "2",
+      type: "call",
+      title: "Schedule conversion call",
+      description: "Mike shows high conversion probability - time for sales call",
+      priority: "high",
+      impact: 92,
     },
     {
-      id: '3',
-      type: 'feature-highlight',
-      title: 'Highlight advanced analytics',
-      description: 'John is engaged but hasn\'t explored analytics yet',
-      priority: 'medium',
-      impact: 67
-    }
-  ]
+      id: "3",
+      type: "feature-highlight",
+      title: "Highlight advanced analytics",
+      description: "John is engaged but hasn't explored analytics yet",
+      priority: "medium",
+      impact: 67,
+    },
+  ];
 
   // Filter trials based on search and stage
-  const filteredTrials = mockTrials.filter(trial => {
-    const matchesSearch = trial.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         trial.email.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStage = stageFilter === 'all' || trial.stage === stageFilter
-    return matchesSearch && matchesStage
-  })  // Get stage icon
-  const getStageIcon = (stage: TrialUser['stage']) => {
+  const filteredTrials = mockTrials.filter((trial) => {
+    const matchesSearch =
+      trial.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      trial.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStage = stageFilter === "all" || trial.stage === stageFilter;
+    return matchesSearch && matchesStage;
+  }); // Get stage icon
+  const getStageIcon = (stage: TrialUser["stage"]) => {
     switch (stage) {
-      case 'onboarding': return <Users className="h-4 w-4" />
-      case 'exploring': return <Search className="h-4 w-4" />
-      case 'engaged': return <CheckCircle className="h-4 w-4" />
-      case 'converting': return <TrendingUp className="h-4 w-4" />
-      case 'churning': return <AlertTriangle className="h-4 w-4" />
-      default: return <Clock className="h-4 w-4" />
+      case "onboarding":
+        return <Users className="h-4 w-4" />;
+      case "exploring":
+        return <Search className="h-4 w-4" />;
+      case "engaged":
+        return <CheckCircle className="h-4 w-4" />;
+      case "converting":
+        return <TrendingUp className="h-4 w-4" />;
+      case "churning":
+        return <AlertTriangle className="h-4 w-4" />;
+      default:
+        return <Clock className="h-4 w-4" />;
     }
-  }
+  };
 
   // Get action icon
-  const getActionIcon = (type: TrialAction['type']) => {
+  const getActionIcon = (type: TrialAction["type"]) => {
     switch (type) {
-      case 'email': return <Mail className="h-4 w-4" />
-      case 'call': return <Phone className="h-4 w-4" />
-      case 'message': return <MessageSquare className="h-4 w-4" />
-      case 'feature-highlight': return <Zap className="h-4 w-4" />
-      default: return <Target className="h-4 w-4" />
+      case "email":
+        return <Mail className="h-4 w-4" />;
+      case "call":
+        return <Phone className="h-4 w-4" />;
+      case "message":
+        return <MessageSquare className="h-4 w-4" />;
+      case "feature-highlight":
+        return <Zap className="h-4 w-4" />;
+      default:
+        return <Target className="h-4 w-4" />;
     }
-  }
+  };
 
   if (loading) {
     return (
-      <div className={cn('space-y-6', className)}>
+      <div className={cn("space-y-6", className)}>
         <div className="animate-pulse space-y-4">
           <div className="h-8 w-48 bg-muted rounded"></div>
           <div className="h-32 bg-muted rounded"></div>
@@ -224,26 +243,21 @@ export function TrialManagement({ className }: TrialManagementProps) {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn("space-y-6", className)}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Trial Management</h2>
-          <p className="text-muted-foreground">
-            Monitor and optimize active trial users
-          </p>
+          <p className="text-muted-foreground">Monitor and optimize active trial users</p>
         </div>
         <div className="flex items-center space-x-2">
-          <Badge variant="outline">
-            {mockTrials.length} Active Trials
-          </Badge>
+          <Badge variant="outline">{mockTrials.length} Active Trials</Badge>
         </div>
       </div>
-
       {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
@@ -267,12 +281,12 @@ export function TrialManagement({ className }: TrialManagementProps) {
           <option value="converting">Converting</option>
           <option value="churning">At Risk</option>
         </select>
-      </div>      <Tabs defaultValue="trials" className="space-y-4">
+      </div>{" "}
+      <Tabs defaultValue="trials" className="space-y-4">
         <TabsList>
           <TabsTrigger value="trials">Active Trials</TabsTrigger>
           <TabsTrigger value="actions">Recommended Actions</TabsTrigger>
         </TabsList>
-
         {/* Active Trials Tab */}
         <TabsContent value="trials" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -287,22 +301,21 @@ export function TrialManagement({ className }: TrialManagementProps) {
                     </Badge>
                   </div>
                 )}
-                
+
                 <CardHeader className="pb-3">
                   <div className="flex items-center space-x-3">
                     <Avatar className="h-10 w-10">
                       <AvatarImage src={trial.avatar} />
                       <AvatarFallback>
-                        {trial.name.split(' ').map(n => n[0]).join('')}
+                        {trial.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                      <CardTitle className="text-sm font-medium truncate">
-                        {trial.name}
-                      </CardTitle>
-                      <CardDescription className="text-xs truncate">
-                        {trial.email}
-                      </CardDescription>
+                      <CardTitle className="text-sm font-medium truncate">{trial.name}</CardTitle>
+                      <CardDescription className="text-xs truncate">{trial.email}</CardDescription>
                     </div>
                   </div>
                 </CardHeader>
@@ -310,10 +323,7 @@ export function TrialManagement({ className }: TrialManagementProps) {
                 <CardContent className="space-y-3">
                   {/* Stage Badge */}
                   <div className="flex items-center justify-between">
-                    <Badge 
-                      variant="outline" 
-                      className={cn('text-xs', STAGE_COLORS[trial.stage])}
-                    >
+                    <Badge variant="outline" className={cn("text-xs", STAGE_COLORS[trial.stage])}>
                       {getStageIcon(trial.stage)}
                       <span className="ml-1 capitalize">{trial.stage}</span>
                     </Badge>
@@ -328,10 +338,7 @@ export function TrialManagement({ className }: TrialManagementProps) {
                       <span className="text-muted-foreground">Conversion Probability</span>
                       <span className="font-medium">{trial.conversionProbability}%</span>
                     </div>
-                    <Progress 
-                      value={trial.conversionProbability} 
-                      className="h-2"
-                    />
+                    <Progress value={trial.conversionProbability} className="h-2" />
                   </div>
 
                   {/* Features Used */}
@@ -366,23 +373,22 @@ export function TrialManagement({ className }: TrialManagementProps) {
               </Card>
             ))}
           </div>
-        </TabsContent>        {/* Recommended Actions Tab */}
+        </TabsContent>{" "}
+        {/* Recommended Actions Tab */}
         <TabsContent value="actions" className="space-y-4">
           <div className="grid gap-4">
             {mockActions.map((action) => (
               <Card key={action.id}>
                 <CardContent className="pt-6">
                   <div className="flex items-start space-x-4">
-                    <div className="p-2 rounded-lg bg-muted">
-                      {getActionIcon(action.type)}
-                    </div>
+                    <div className="p-2 rounded-lg bg-muted">{getActionIcon(action.type)}</div>
                     <div className="flex-1 space-y-2">
                       <div className="flex items-center justify-between">
                         <h4 className="font-medium">{action.title}</h4>
                         <div className="flex items-center space-x-2">
-                          <Badge 
+                          <Badge
                             variant="outline"
-                            className={cn('text-xs', PRIORITY_COLORS[action.priority])}
+                            className={cn("text-xs", PRIORITY_COLORS[action.priority])}
                           >
                             {action.priority} priority
                           </Badge>
@@ -391,9 +397,7 @@ export function TrialManagement({ className }: TrialManagementProps) {
                           </Badge>
                         </div>
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        {action.description}
-                      </p>
+                      <p className="text-sm text-muted-foreground">{action.description}</p>
                       <div className="flex items-center space-x-2 pt-2">
                         <Button size="sm" className="text-xs">
                           Execute Action
@@ -414,5 +418,5 @@ export function TrialManagement({ className }: TrialManagementProps) {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }

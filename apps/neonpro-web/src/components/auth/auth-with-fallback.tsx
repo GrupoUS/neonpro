@@ -1,14 +1,14 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { useAuth } from "@/contexts/auth-context";
-import { Eye, EyeOff, Mail } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { SignInWithGooglePopupButton } from "./google-popup-button";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Separator } from "@/components/ui/separator";
+import type { useAuth } from "@/contexts/auth-context";
+import type { Eye, EyeOff, Mail } from "lucide-react";
+import type { useState } from "react";
+import type { toast } from "sonner";
+import type { SignInWithGooglePopupButton } from "./google-popup-button";
 
 interface AuthWithFallbackProps {
   onSuccess?: () => void;
@@ -54,9 +54,7 @@ export function AuthWithFallback({
       const startTime = Date.now();
 
       const { error } =
-        authMode === "signup"
-          ? await signUp(email, password)
-          : await signIn(email, password);
+        authMode === "signup" ? await signUp(email, password) : await signIn(email, password);
 
       const totalTime = Date.now() - startTime;
 
@@ -82,11 +80,7 @@ export function AuthWithFallback({
 
       // Success feedback
       const action = authMode === "signup" ? "cadastro" : "login";
-      toast.success(
-        `${
-          action.charAt(0).toUpperCase() + action.slice(1)
-        } realizado com sucesso!`
-      );
+      toast.success(`${action.charAt(0).toUpperCase() + action.slice(1)} realizado com sucesso!`);
 
       // Performance feedback
       if (totalTime <= 2000) {
@@ -97,8 +91,7 @@ export function AuthWithFallback({
 
       onSuccess?.();
     } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Erro inesperado";
+      const errorMessage = error instanceof Error ? error.message : "Erro inesperado";
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -118,9 +111,7 @@ export function AuthWithFallback({
       <div className="space-y-3">
         <div className="text-center">
           <h3 className="text-lg font-semibold text-gray-900">Acesso Rápido</h3>
-          <p className="text-sm text-gray-600">
-            Recomendado para melhor experiência
-          </p>
+          <p className="text-sm text-gray-600">Recomendado para melhor experiência</p>
         </div>
 
         <SignInWithGooglePopupButton
@@ -136,9 +127,7 @@ export function AuthWithFallback({
           <Separator className="w-full" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-white px-2 text-gray-500">
-            Ou continue com email
-          </span>
+          <span className="bg-white px-2 text-gray-500">Ou continue com email</span>
         </div>
       </div>
 
@@ -170,9 +159,7 @@ export function AuthWithFallback({
               disabled={isLoading}
               required
               minLength={6}
-              autoComplete={
-                authMode === "signup" ? "new-password" : "current-password"
-              }
+              autoComplete={authMode === "signup" ? "new-password" : "current-password"}
             />
             <Button
               type="button"
@@ -182,11 +169,7 @@ export function AuthWithFallback({
               onClick={() => setShowPassword(!showPassword)}
               disabled={isLoading}
             >
-              {showPassword ? (
-                <EyeOff className="h-4 w-4" />
-              ) : (
-                <Eye className="h-4 w-4" />
-              )}
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </Button>
           </div>
         </div>
@@ -208,11 +191,7 @@ export function AuthWithFallback({
           </div>
         )}
 
-        <Button
-          type="submit"
-          className="w-full h-12 text-base font-medium"
-          disabled={isLoading}
-        >
+        <Button type="submit" className="w-full h-12 text-base font-medium" disabled={isLoading}>
           {isLoading ? (
             <>
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
@@ -239,8 +218,8 @@ export function AuthWithFallback({
           {authMode === "signup"
             ? "Já tem uma conta? Fazer login"
             : showSignUp
-            ? "Não tem uma conta? Criar conta"
-            : ""}
+              ? "Não tem uma conta? Criar conta"
+              : ""}
         </Button>
       </div>
 

@@ -1,27 +1,27 @@
 /**
  * PERF-01 FIX: Patient Search Hook with Proper Cleanup
- * 
+ *
  * This custom hook provides optimized patient search functionality with:
  * - Debounced search to prevent excessive API calls
  * - Proper cleanup of timers and event listeners
  * - Memory leak prevention through proper useEffect cleanup
  * - Performance optimization through memoization
- * 
+ *
  * Key performance improvements:
  * - Reduces API calls by 80% through debouncing
  * - Prevents memory leaks from abandoned timers
  * - Optimizes re-renders through proper dependency management
  * - Implements fuzzy search with healthcare-specific logic
- * 
+ *
  * LGPD/ANVISA Compliance:
  * - Respects patient data privacy during search
  * - Implements secure search patterns
  * - Maintains audit trail for search operations
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import type { useState, useEffect, useMemo, useCallback, useRef } from "react";
 
 // Types for enhanced type safety
 interface Patient {
@@ -32,7 +32,7 @@ interface Patient {
   cpf: string;
   date_of_birth: string;
   gender: string;
-  status: 'active' | 'inactive' | 'pending';
+  status: "active" | "inactive" | "pending";
   health_plan?: string;
   medical_conditions?: string[];
   allergies?: string[];
@@ -77,19 +77,19 @@ interface UsePatientSearchReturn {
  */
 export const usePatientSearch = (
   patients: Patient[],
-  options: UsePatientSearchOptions = {}
+  options: UsePatientSearchOptions = {},
 ): UsePatientSearchReturn => {
   const {
     debounceMs = 300,
     minSearchLength = 2,
     enableFuzzySearch = true,
     maxResults = 100,
-    caseSensitive = false
+    caseSensitive = false,
   } = options;
 
   // State management
-  const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [searchTime, setSearchTime] = useState(0);
 
   // Refs for cleanup
@@ -111,14 +111,16 @@ export const usePatientSearch = (
     // Set new timeout for debounced search
     debounceTimeoutRef.current = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
-      
+
       // Calculate and store search time for performance monitoring
       const searchDuration = Date.now() - searchStartTimeRef.current;
       setSearchTime(searchDuration);
-      
+
       // LGPD audit log for search operations
       if (searchTerm.length >= minSearchLength) {
-        console.log(`[LGPD Audit] Patient search performed: "${searchTerm.length > 3 ? searchTerm.substring(0, 3) + '***' : '***'}" - Duration: ${searchDuration}ms`);
+        console.log(
+          `[LGPD Audit] Patient search performed: "${searchTerm.length > 3 ? searchTerm.substring(0, 3) + "***" : "***"}" - Duration: ${searchDuration}ms`,
+        );
       }
     }, debounceMs);
 
@@ -134,37 +136,42 @@ export const usePatientSearch = (
   /**
    * Fuzzy search implementation for better UX
    */
-  const fuzzyMatch = useCallback((text: string, searchTerm: string): boolean => {
-    if (!enableFuzzySearch) {
-      return caseSensitive 
-        ? text.includes(searchTerm)
-        : text.toLowerCase().includes(searchTerm.toLowerCase());
-    }
+  const fuzzyMatch = useCallback(
+    (text: string, searchTerm: string): boolean => {
+      if (!enableFuzzySearch) {
+        return caseSensitive
+          ? text.includes(searchTerm)
+          : text.toLowerCase().includes(searchTerm.toLowerCase());
+      }
 
-    const textToSearch = caseSensitive ? text : text.toLowerCase();
-    const termToMatch = caseSensitive ? searchTerm : searchTerm.toLowerCase();
-    
-    // Simple fuzzy search - allows for one character difference per 4 characters
-    const maxDistance = Math.floor(termToMatch.length / 4);
-    
-    // Direct match first (fastest)
-    if (textToSearch.includes(termToMatch)) {
-      return true;
-    }
-    
-    // Fuzzy match for typos (only for longer terms to prevent false positives)
-    if (termToMatch.length >= 4) {
-      return levenshteinDistance(textToSearch, termToMatch) <= maxDistance;
-    }
-    
-    return false;
-  }, [enableFuzzySearch, caseSensitive]);
+      const textToSearch = caseSensitive ? text : text.toLowerCase();
+      const termToMatch = caseSensitive ? searchTerm : searchTerm.toLowerCase();
+
+      // Simple fuzzy search - allows for one character difference per 4 characters
+      const maxDistance = Math.floor(termToMatch.length / 4);
+
+      // Direct match first (fastest)
+      if (textToSearch.includes(termToMatch)) {
+        return true;
+      }
+
+      // Fuzzy match for typos (only for longer terms to prevent false positives)
+      if (termToMatch.length >= 4) {
+        return levenshteinDistance(textToSearch, termToMatch) <= maxDistance;
+      }
+
+      return false;
+    },
+    [enableFuzzySearch, caseSensitive],
+  );
 
   /**
    * Levenshtein distance for fuzzy matching
    */
   const levenshteinDistance = useCallback((a: string, b: string): number => {
-    const matrix = Array(b.length + 1).fill(null).map(() => Array(a.length + 1).fill(null));
+    const matrix = Array(b.length + 1)
+      .fill(null)
+      .map(() => Array(a.length + 1).fill(null));
 
     for (let i = 0; i <= a.length; i++) matrix[0][i] = i;
     for (let j = 0; j <= b.length; j++) matrix[j][0] = j;
@@ -175,7 +182,7 @@ export const usePatientSearch = (
         matrix[j][i] = Math.min(
           matrix[j][i - 1] + 1, // deletion
           matrix[j - 1][i] + 1, // insertion
-          matrix[j - 1][i - 1] + indicator // substitution
+          matrix[j - 1][i - 1] + indicator, // substitution
         );
       }
     }
@@ -193,42 +200,42 @@ export const usePatientSearch = (
     }
 
     const startTime = Date.now();
-    
-    const filtered = patients.filter(patient => {
-      // Basic patient information search
-      const basicFields = [
-        patient.name,
-        patient.email,
-        patient.phone,
-        patient.cpf,
-        patient.health_plan || ''
-      ];
 
-      // Check basic fields
-      const basicMatch = basicFields.some(field => 
-        fuzzyMatch(field, debouncedSearchTerm)
-      );
+    const filtered = patients
+      .filter((patient) => {
+        // Basic patient information search
+        const basicFields = [
+          patient.name,
+          patient.email,
+          patient.phone,
+          patient.cpf,
+          patient.health_plan || "",
+        ];
 
-      if (basicMatch) return true;
+        // Check basic fields
+        const basicMatch = basicFields.some((field) => fuzzyMatch(field, debouncedSearchTerm));
 
-      // Healthcare-specific search (medical conditions, allergies, medications)
-      const medicalFields = [
-        ...(patient.medical_conditions || []),
-        ...(patient.allergies || []),
-        ...(patient.medications || [])
-      ];
+        if (basicMatch) return true;
 
-      const medicalMatch = medicalFields.some(field => 
-        fuzzyMatch(field, debouncedSearchTerm)
-      );
+        // Healthcare-specific search (medical conditions, allergies, medications)
+        const medicalFields = [
+          ...(patient.medical_conditions || []),
+          ...(patient.allergies || []),
+          ...(patient.medications || []),
+        ];
 
-      return medicalMatch;
-    }).slice(0, maxResults);
+        const medicalMatch = medicalFields.some((field) => fuzzyMatch(field, debouncedSearchTerm));
+
+        return medicalMatch;
+      })
+      .slice(0, maxResults);
 
     // Log performance for monitoring
     const filteringTime = Date.now() - startTime;
     if (filteringTime > 100) {
-      console.warn(`[Performance] Patient search took ${filteringTime}ms for ${patients.length} patients`);
+      console.warn(
+        `[Performance] Patient search took ${filteringTime}ms for ${patients.length} patients`,
+      );
     }
 
     return filtered;
@@ -238,19 +245,22 @@ export const usePatientSearch = (
    * Clear search function
    */
   const clearSearch = useCallback(() => {
-    setSearchTerm('');
-    setDebouncedSearchTerm('');
+    setSearchTerm("");
+    setDebouncedSearchTerm("");
     setSearchTime(0);
   }, []);
 
   /**
    * Search statistics for analytics
    */
-  const searchStats = useMemo(() => ({
-    totalPatients: patients.length,
-    filteredCount: filteredPatients.length,
-    searchTime
-  }), [patients.length, filteredPatients.length, searchTime]);
+  const searchStats = useMemo(
+    () => ({
+      totalPatients: patients.length,
+      filteredCount: filteredPatients.length,
+      searchTime,
+    }),
+    [patients.length, filteredPatients.length, searchTime],
+  );
 
   return {
     searchTerm,
@@ -258,7 +268,7 @@ export const usePatientSearch = (
     filteredPatients,
     isSearching: searchTerm !== debouncedSearchTerm,
     clearSearch,
-    searchStats
+    searchStats,
   };
 };
 

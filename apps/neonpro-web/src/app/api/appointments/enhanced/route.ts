@@ -1,20 +1,17 @@
-import type {
-  BookingResponse,
-  CreateAppointmentFormData,
-} from "@/app/lib/types/appointments";
-import { createClient } from "@/lib/supabase/server";
+﻿import type { BookingResponse, CreateAppointmentFormData } from "@/app/lib/types/appointments";
+import type { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
-import { NeonProAutomation } from "@/lib/automation/trigger-jobs";
+import type { NeonProAutomation } from "@/lib/automation/trigger-jobs";
 
 /**
- * 🚀 ENHANCED APPOINTMENTS API with Background Jobs
- * 
- * Versão melhorada da API de appointments que automaticamente:
- * - Envia email de confirmação
+ * ðŸš€ ENHANCED APPOINTMENTS API with Background Jobs
+ *
+ * VersÃ£o melhorada da API de appointments que automaticamente:
+ * - Envia email de confirmaÃ§Ã£o
  * - Agenda lembrete 24h antes
  * - Integra com sistema Trigger.dev
- * 
- * Mantém 100% compatibilidade com API existente
+ *
+ * MantÃ©m 100% compatibilidade com API existente
  */
 
 export async function POST(request: Request) {
@@ -27,10 +24,7 @@ export async function POST(request: Request) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json(
-        { success: false, error_message: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error_message: "Unauthorized" }, { status: 401 });
     }
 
     // Get the appointment data from request body
@@ -47,9 +41,9 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           success: false,
-          error_message: "Dados obrigatórios não fornecidos",
+          error_message: "Dados obrigatÃ³rios nÃ£o fornecidos",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -62,12 +56,12 @@ export async function POST(request: Request) {
 
     if (profileError || !profile) {
       return NextResponse.json(
-        { success: false, error_message: "Perfil do usuário não encontrado" },
-        { status: 400 }
+        { success: false, error_message: "Perfil do usuÃ¡rio nÃ£o encontrado" },
+        { status: 400 },
       );
     }
 
-    // ✨ ENHANCED: Get additional data for automation
+    // âœ¨ ENHANCED: Get additional data for automation
     const [patientResult, professionalResult, serviceResult, clinicResult] = await Promise.all([
       supabase.from("patients").select("full_name, email").eq("id", body.patient_id).single(),
       supabase.from("professionals").select("name").eq("id", body.professional_id).single(),
@@ -75,7 +69,7 @@ export async function POST(request: Request) {
       supabase.from("clinics").select("name").eq("id", profile.clinic_id).single(),
     ]);
 
-    // Create the appointment (manter lógica original)
+    // Create the appointment (manter lÃ³gica original)
     const { data: appointment, error: appointmentError } = await supabase
       .from("appointments")
       .insert({
@@ -85,7 +79,7 @@ export async function POST(request: Request) {
         appointment_date: body.start_time.split("T")[0], // Extract date
         appointment_time: body.start_time.split("T")[1]?.split("Z")[0] || body.start_time,
         end_time: body.end_time,
-        status: "confirmed", // ✨ ENHANCED: Auto-confirm with email
+        status: "confirmed", // âœ¨ ENHANCED: Auto-confirm with email
         notes: body.notes,
         clinic_id: profile.clinic_id,
         created_by: user.id,
@@ -101,21 +95,22 @@ export async function POST(request: Request) {
           error_message: "Erro ao criar consulta",
           details: appointmentError.message,
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
-    // ✨ ENHANCED: Trigger background jobs automaticamente
+    // âœ¨ ENHANCED: Trigger background jobs automaticamente
     let automationResults = null;
-    
+
     try {
-      if (patientResult.data?.email && 
-          professionalResult.data?.name && 
-          serviceResult.data?.name &&
-          clinicResult.data?.name) {
-        
-        console.log("🤖 Triggering appointment automation...");
-        
+      if (
+        patientResult.data?.email &&
+        professionalResult.data?.name &&
+        serviceResult.data?.name &&
+        clinicResult.data?.name
+      ) {
+        console.log("ðŸ¤– Triggering appointment automation...");
+
         automationResults = await NeonProAutomation.onNewAppointmentCreated({
           appointmentId: appointment.id,
           patientEmail: patientResult.data.email,
@@ -128,7 +123,7 @@ export async function POST(request: Request) {
           serviceName: serviceResult.data.name,
         });
 
-        console.log("✅ Appointment automation triggered successfully", {
+        console.log("âœ… Appointment automation triggered successfully", {
           appointmentId: appointment.id,
           confirmationJobId: automationResults?.confirmation?.jobId,
           reminderJobId: automationResults?.reminder?.jobId,
@@ -136,13 +131,13 @@ export async function POST(request: Request) {
       }
     } catch (automationError) {
       // Log error but don't fail the appointment creation
-      console.error("⚠️ Automation failed, but appointment was created", {
+      console.error("âš ï¸ Automation failed, but appointment was created", {
         appointmentId: appointment.id,
         error: automationError instanceof Error ? automationError.message : automationError,
       });
     }
 
-    // Prepare response (compatível com API original)
+    // Prepare response (compatÃ­vel com API original)
     const response: BookingResponse = {
       success: true,
       appointment: {
@@ -156,19 +151,20 @@ export async function POST(request: Request) {
         notes: appointment.notes,
         created_at: appointment.created_at,
       },
-      // ✨ ENHANCED: Include automation status
-      automation: automationResults ? {
-        confirmation_job_id: automationResults.confirmation?.jobId,
-        reminder_job_id: automationResults.reminder?.jobId,
-        status: "triggered",
-      } : {
-        status: "skipped",
-        reason: "missing_data_or_email",
-      },
+      // âœ¨ ENHANCED: Include automation status
+      automation: automationResults
+        ? {
+            confirmation_job_id: automationResults.confirmation?.jobId,
+            reminder_job_id: automationResults.reminder?.jobId,
+            status: "triggered",
+          }
+        : {
+            status: "skipped",
+            reason: "missing_data_or_email",
+          },
     };
 
     return NextResponse.json(response, { status: 201 });
-
   } catch (error) {
     console.error("Error in enhanced appointments API:", error);
     return NextResponse.json(
@@ -177,29 +173,26 @@ export async function POST(request: Request) {
         error_message: "Erro interno do servidor",
         details: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 /**
  * GET: List appointments with automation status
- * ✨ ENHANCED: Inclui status dos jobs de automação
+ * âœ¨ ENHANCED: Inclui status dos jobs de automaÃ§Ã£o
  */
 export async function GET(request: Request) {
   try {
     const supabase = await createClient();
     const { searchParams } = new URL(request.url);
-    
+
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json(
-        { success: false, error_message: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error_message: "Unauthorized" }, { status: 401 });
     }
 
     // Get clinic_id from user's profile
@@ -211,8 +204,8 @@ export async function GET(request: Request) {
 
     if (profileError || !profile) {
       return NextResponse.json(
-        { success: false, error_message: "Perfil do usuário não encontrado" },
-        { status: 400 }
+        { success: false, error_message: "Perfil do usuÃ¡rio nÃ£o encontrado" },
+        { status: 400 },
       );
     }
 
@@ -269,12 +262,12 @@ export async function GET(request: Request) {
     if (appointmentsError) {
       return NextResponse.json(
         { success: false, error_message: "Erro ao buscar consultas" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
-    // ✨ ENHANCED: Add automation status to each appointment
-    const enhancedAppointments = appointments?.map(appointment => ({
+    // âœ¨ ENHANCED: Add automation status to each appointment
+    const enhancedAppointments = appointments?.map((appointment) => ({
       ...appointment,
       automation_status: {
         confirmation_sent: !!appointment.confirmation_sent_at,
@@ -288,9 +281,8 @@ export async function GET(request: Request) {
       success: true,
       appointments: enhancedAppointments,
       total: enhancedAppointments?.length || 0,
-      has_automation: true, // ✨ Flag indicating enhanced API
+      has_automation: true, // âœ¨ Flag indicating enhanced API
     });
-
   } catch (error) {
     console.error("Error in enhanced appointments GET:", error);
     return NextResponse.json(
@@ -298,7 +290,7 @@ export async function GET(request: Request) {
         success: false,
         error_message: "Erro interno do servidor",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

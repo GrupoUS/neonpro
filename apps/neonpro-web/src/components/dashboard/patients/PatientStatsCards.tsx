@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
 /**
  * Patient Statistics Cards Component
- * 
+ *
  * Displays key metrics for patient management dashboard
  */
 
-import { Users, UserPlus, Calendar, Activity } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import type { Users, UserPlus, Calendar, Activity } from "lucide-react";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface StatsCardProps {
   title: string;
@@ -29,11 +29,9 @@ function StatsCard({ title, value, description, icon, trend }: StatsCardProps) {
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{value}</div>
-        {description && (
-          <p className="text-xs text-muted-foreground">{description}</p>
-        )}
+        {description && <p className="text-xs text-muted-foreground">{description}</p>}
         {trend && (
-          <p className={`text-xs ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}>
+          <p className={`text-xs ${trend.isPositive ? "text-green-600" : "text-red-600"}`}>
             {trend.value}
           </p>
         )}

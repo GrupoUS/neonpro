@@ -1,41 +1,56 @@
-'use client';
+"use client";
 
 /**
  * Patient Registration Form Component
- * 
+ *
  * FHIR-compliant patient registration with LGPD consent management.
  * Implements HL7 FHIR R4 Patient resource structure and Brazilian
  * data protection requirements.
  */
 
-import { useState } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2, Plus, Trash2, Shield, FileText, AlertCircle } from 'lucide-react';
-import { toast } from 'sonner';
+import type { useState } from "react";
+import type { useForm, useFieldArray } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type { Loader2, Plus, Trash2, Shield, FileText, AlertCircle } from "lucide-react";
+import type { toast } from "sonner";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Separator } from '@/components/ui/separator';
-import { 
-  Form, 
-  FormControl, 
-  FormDescription, 
-  FormField, 
-  FormItem, 
-  FormLabel, 
-  FormMessage 
-} from '@/components/ui/form';
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Separator } from "@/components/ui/separator";
+import type {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
-import { PatientRegistrationSchema, type PatientRegistrationData } from '@/lib/validations/patient';
-import { createPatient } from '@/lib/supabase/patients';
-import { useAuth } from '@/contexts/auth-context';
+import type {
+  PatientRegistrationSchema,
+  type PatientRegistrationData,
+} from "@/lib/validations/patient";
+import type { createPatient } from "@/lib/supabase/patients";
+import type { useAuth } from "@/contexts/auth-context";
 
 interface PatientRegistrationFormProps {
   onSuccess?: (patientId: string) => void;
@@ -49,21 +64,21 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
   const form = useForm<PatientRegistrationData>({
     resolver: zodResolver(PatientRegistrationSchema),
     defaultValues: {
-      given_names: [''],
-      family_name: '',
-      medical_record_number: '',
-      gender: 'unknown',
-      birth_date: '',
-      phone_primary: '',
-      address_line1: '',
-      city: '',
-      state: '',
-      postal_code: '',
-      country: 'BR',
-      emergency_contact_name: '',
-      emergency_contact_relationship: '',
-      emergency_contact_phone: '',
-      preferred_language: 'pt-BR',
+      given_names: [""],
+      family_name: "",
+      medical_record_number: "",
+      gender: "unknown",
+      birth_date: "",
+      phone_primary: "",
+      address_line1: "",
+      city: "",
+      state: "",
+      postal_code: "",
+      country: "BR",
+      emergency_contact_name: "",
+      emergency_contact_relationship: "",
+      emergency_contact_phone: "",
+      preferred_language: "pt-BR",
       lgpd_consent_general: false,
       lgpd_consent_marketing: false,
       lgpd_consent_research: false,
@@ -71,29 +86,33 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
     },
   });
 
-  const { fields: givenNameFields, append: appendGivenName, remove: removeGivenName } = useFieldArray({
+  const {
+    fields: givenNameFields,
+    append: appendGivenName,
+    remove: removeGivenName,
+  } = useFieldArray({
     control: form.control,
-    name: 'given_names',
+    name: "given_names",
   });
 
   const onSubmit = async (data: PatientRegistrationData) => {
     if (!user?.id) {
-      toast.error('User not authenticated');
+      toast.error("User not authenticated");
       return;
     }
 
     setIsSubmitting(true);
     try {
       const result = await createPatient(data, user.id);
-      toast.success('Patient registered successfully');
+      toast.success("Patient registered successfully");
       form.reset();
       onSuccess?.(result.patient.id);
     } catch (error) {
-      console.error('Error creating patient:', error);
+      console.error("Error creating patient:", error);
       if (error instanceof Error) {
         toast.error(error.message);
       } else {
-        toast.error('Failed to register patient');
+        toast.error("Failed to register patient");
       }
     } finally {
       setIsSubmitting(false);
@@ -110,7 +129,6 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
             Register a new patient with FHIR-compliant data structure and LGPD consent management.
           </p>
         </div>
-
         {/* Medical Record Information */}
         <Card>
           <CardHeader>
@@ -141,14 +159,11 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
             />
           </CardContent>
         </Card>
-
         {/* Personal Information */}
         <Card>
           <CardHeader>
             <CardTitle>Personal Information</CardTitle>
-            <CardDescription>
-              Patient demographics and contact information.
-            </CardDescription>
+            <CardDescription>Patient demographics and contact information.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Name Fields */}
@@ -177,10 +192,7 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
                       render={({ field }) => (
                         <FormItem className="flex-1">
                           <FormControl>
-                            <Input 
-                              placeholder={index === 0 ? "João" : "Middle name"} 
-                              {...field} 
-                            />
+                            <Input placeholder={index === 0 ? "João" : "Middle name"} {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -202,7 +214,7 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => appendGivenName('')}
+                  onClick={() => appendGivenName("")}
                   className="w-full"
                 >
                   <Plus className="h-4 w-4 mr-2" />
@@ -238,9 +250,7 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
                     <FormControl>
                       <Input placeholder="000.000.000-00" {...field} />
                     </FormControl>
-                    <FormDescription>
-                      Brazilian individual taxpayer registry
-                    </FormDescription>
+                    <FormDescription>Brazilian individual taxpayer registry</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -255,9 +265,7 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
                     <FormControl>
                       <Input placeholder="00.000.000-0" {...field} />
                     </FormControl>
-                    <FormDescription>
-                      Brazilian general registry
-                    </FormDescription>
+                    <FormDescription>Brazilian general registry</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -334,7 +342,8 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
               />
             </div>
           </CardContent>
-        </Card>        {/* Contact Information */}
+        </Card>{" "}
+        {/* Contact Information */}
         <Card>
           <CardHeader>
             <CardTitle>Contact Information</CardTitle>
@@ -353,9 +362,7 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
                     <FormControl>
                       <Input placeholder="+55 (11) 99999-9999" {...field} />
                     </FormControl>
-                    <FormDescription>
-                      Main contact number with area code
-                    </FormDescription>
+                    <FormDescription>Main contact number with area code</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -370,9 +377,7 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
                     <FormControl>
                       <Input placeholder="+55 (11) 3333-4444" {...field} />
                     </FormControl>
-                    <FormDescription>
-                      Alternative contact number
-                    </FormDescription>
+                    <FormDescription>Alternative contact number</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -397,7 +402,6 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
             />
           </CardContent>
         </Card>
-
         {/* Address Information */}
         <Card>
           <CardHeader>
@@ -433,9 +437,7 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
                   <FormControl>
                     <Input placeholder="Apartment 45, Building B" {...field} />
                   </FormControl>
-                  <FormDescription>
-                    Additional address information (optional)
-                  </FormDescription>
+                  <FormDescription>Additional address information (optional)</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -465,9 +467,7 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
                     <FormControl>
                       <Input placeholder="SP" maxLength={2} {...field} />
                     </FormControl>
-                    <FormDescription>
-                      Two-letter state code
-                    </FormDescription>
+                    <FormDescription>Two-letter state code</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -482,9 +482,7 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
                     <FormControl>
                       <Input placeholder="01234-567" {...field} />
                     </FormControl>
-                    <FormDescription>
-                      Brazilian postal code
-                    </FormDescription>
+                    <FormDescription>Brazilian postal code</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -492,7 +490,6 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
             </div>
           </CardContent>
         </Card>
-
         {/* Emergency Contact */}
         <Card>
           <CardHeader>
@@ -563,7 +560,6 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
             </div>
           </CardContent>
         </Card>
-
         {/* Insurance Information */}
         <Card>
           <CardHeader>
@@ -634,7 +630,6 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
             </div>
           </CardContent>
         </Card>
-
         {/* Medical History */}
         <Card>
           <CardHeader>
@@ -651,10 +646,10 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
                 <FormItem>
                   <FormLabel>Known Allergies</FormLabel>
                   <FormControl>
-                    <Textarea 
+                    <Textarea
                       placeholder="List any known allergies to medications, foods, or materials..."
                       rows={3}
-                      {...field} 
+                      {...field}
                     />
                   </FormControl>
                   <FormDescription>
@@ -672,10 +667,10 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
                 <FormItem>
                   <FormLabel>Current Medications</FormLabel>
                   <FormControl>
-                    <Textarea 
+                    <Textarea
                       placeholder="List current medications, dosages, and frequency..."
                       rows={3}
-                      {...field} 
+                      {...field}
                     />
                   </FormControl>
                   <FormDescription>
@@ -693,10 +688,10 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
                 <FormItem>
                   <FormLabel>Medical Conditions</FormLabel>
                   <FormControl>
-                    <Textarea 
+                    <Textarea
                       placeholder="List any chronic conditions, previous surgeries, or significant medical history..."
                       rows={3}
-                      {...field} 
+                      {...field}
                     />
                   </FormControl>
                   <FormDescription>
@@ -707,7 +702,8 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
               )}
             />
           </CardContent>
-        </Card>        {/* LGPD Consent Management */}
+        </Card>{" "}
+        {/* LGPD Consent Management */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -715,15 +711,17 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
               LGPD Consent Management
             </CardTitle>
             <CardDescription>
-              Data processing consent in compliance with Brazilian General Data Protection Law (LGPD).
+              Data processing consent in compliance with Brazilian General Data Protection Law
+              (LGPD).
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <Alert>
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                <strong>LGPD Compliance:</strong> As required by Brazilian law, we need your explicit consent 
-                for processing your health data. You can withdraw consent at any time by contacting our clinic.
+                <strong>LGPD Compliance:</strong> As required by Brazilian law, we need your
+                explicit consent for processing your health data. You can withdraw consent at any
+                time by contacting our clinic.
               </AlertDescription>
             </Alert>
 
@@ -736,19 +734,17 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                     <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                     <div className="space-y-1 leading-none">
                       <FormLabel className="text-sm font-medium">
                         Healthcare Service Provision *
                       </FormLabel>
                       <FormDescription className="text-xs">
-                        I consent to the processing of my personal health data for healthcare service provision, 
-                        medical record management, appointment scheduling, and emergency contact purposes. 
-                        <strong>Legal basis:</strong> LGPD Article 11, Item I. 
+                        I consent to the processing of my personal health data for healthcare
+                        service provision, medical record management, appointment scheduling, and
+                        emergency contact purposes.
+                        <strong>Legal basis:</strong> LGPD Article 11, Item I.
                         <strong>Retention:</strong> 20 years minimum for medical records.
                       </FormDescription>
                     </div>
@@ -761,25 +757,23 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
             {/* Optional Consents */}
             <div className="space-y-4">
               <h4 className="font-semibold">Optional Consents</h4>
-              
+
               <FormField
                 control={form.control}
                 name="lgpd_consent_marketing"
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                     <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                     <div className="space-y-1 leading-none">
                       <FormLabel className="text-sm font-medium">
                         Marketing Communications
                       </FormLabel>
                       <FormDescription className="text-xs">
-                        I consent to receive marketing communications, promotional materials, and service updates. 
-                        <strong>Legal basis:</strong> LGPD Article 7, Item I. 
+                        I consent to receive marketing communications, promotional materials, and
+                        service updates.
+                        <strong>Legal basis:</strong> LGPD Article 7, Item I.
                         <strong>Retention:</strong> 5 years or until consent withdrawal.
                       </FormDescription>
                     </div>
@@ -793,19 +787,16 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                     <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                     <div className="space-y-1 leading-none">
                       <FormLabel className="text-sm font-medium">
                         Medical Research (Anonymized)
                       </FormLabel>
                       <FormDescription className="text-xs">
-                        I consent to the use of my anonymized health data for medical research and clinical studies 
-                        to improve healthcare services. 
-                        <strong>Legal basis:</strong> LGPD Article 7, Item I. 
+                        I consent to the use of my anonymized health data for medical research and
+                        clinical studies to improve healthcare services.
+                        <strong>Legal basis:</strong> LGPD Article 7, Item I.
                         <strong>Retention:</strong> 10 years.
                       </FormDescription>
                     </div>
@@ -819,19 +810,14 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                     <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                     <div className="space-y-1 leading-none">
-                      <FormLabel className="text-sm font-medium">
-                        Third-Party Sharing
-                      </FormLabel>
+                      <FormLabel className="text-sm font-medium">Third-Party Sharing</FormLabel>
                       <FormDescription className="text-xs">
-                        I consent to sharing my data with healthcare partners, insurance providers, and authorized 
-                        third parties for care coordination. 
-                        <strong>Legal basis:</strong> LGPD Article 7, Item I. 
+                        I consent to sharing my data with healthcare partners, insurance providers,
+                        and authorized third parties for care coordination.
+                        <strong>Legal basis:</strong> LGPD Article 7, Item I.
                         <strong>Retention:</strong> 5 years.
                       </FormDescription>
                     </div>
@@ -843,14 +829,14 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
             <Alert>
               <AlertCircle className="h-4 w-4" />
               <AlertDescription className="text-xs">
-                <strong>Your Rights:</strong> You have the right to access, correct, delete, or request portability 
-                of your data. You can also withdraw consent at any time by contacting our Data Protection Officer. 
-                For more information, please review our Privacy Policy.
+                <strong>Your Rights:</strong> You have the right to access, correct, delete, or
+                request portability of your data. You can also withdraw consent at any time by
+                contacting our Data Protection Officer. For more information, please review our
+                Privacy Policy.
               </AlertDescription>
             </Alert>
           </CardContent>
         </Card>
-
         {/* Language Preference */}
         <Card>
           <CardHeader>
@@ -890,18 +876,13 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
             />
           </CardContent>
         </Card>
-
         {/* Form Actions */}
         <div className="flex flex-col sm:flex-row gap-4 pt-6">
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="flex-1"
-          >
+          <Button type="submit" disabled={isSubmitting} className="flex-1">
             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isSubmitting ? 'Registering Patient...' : 'Register Patient'}
+            {isSubmitting ? "Registering Patient..." : "Register Patient"}
           </Button>
-          
+
           {onCancel && (
             <Button
               type="button"
@@ -914,7 +895,6 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
             </Button>
           )}
         </div>
-
         {/* Form Validation Summary */}
         {Object.keys(form.formState.errors).length > 0 && (
           <Alert variant="destructive">
@@ -924,7 +904,7 @@ export function PatientRegistrationForm({ onSuccess, onCancel }: PatientRegistra
               <ul className="mt-2 list-disc list-inside space-y-1">
                 {Object.entries(form.formState.errors).map(([field, error]) => (
                   <li key={field} className="text-xs">
-                    <strong>{field.replace(/_/g, ' ')}:</strong> {error?.message}
+                    <strong>{field.replace(/_/g, " ")}:</strong> {error?.message}
                   </li>
                 ))}
               </ul>

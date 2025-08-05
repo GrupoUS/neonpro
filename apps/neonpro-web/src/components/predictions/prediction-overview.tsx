@@ -3,24 +3,37 @@
  * Comprehensive overview of no-show predictions with risk visualization and insights
  */
 
-'use client';
+"use client";
 
-import React, { useState, useMemo } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import React, { useState, useMemo } from "react";
+import type { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Input } from "@/components/ui/input";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { Progress } from "@/components/ui/progress";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   PieChart,
   Pie,
@@ -28,9 +41,9 @@ import {
   LineChart,
   Line,
   Area,
-  AreaChart
-} from 'recharts';
-import { 
+  AreaChart,
+} from "recharts";
+import type {
   Search,
   Filter,
   TrendingUp,
@@ -42,26 +55,26 @@ import {
   Phone,
   MessageSquare,
   Target,
-  Activity
-} from 'lucide-react';
-import type { 
-  NoShowPrediction, 
+  Activity,
+} from "lucide-react";
+import type {
+  NoShowPrediction,
   PatientRiskProfile,
-  RiskFactor
-} from '@/lib/analytics/no-show-prediction';
-import { 
-  formatRiskScore, 
-  getRiskColor, 
-  getRiskBadgeColor 
-} from '@/lib/analytics/no-show-prediction';
+  RiskFactor,
+} from "@/lib/analytics/no-show-prediction";
+import type {
+  formatRiskScore,
+  getRiskColor,
+  getRiskBadgeColor,
+} from "@/lib/analytics/no-show-prediction";
 
 interface PredictionOverviewProps {
   predictions: NoShowPrediction[];
   riskProfiles: PatientRiskProfile[];
-  timeRange: '24h' | '7d' | '30d' | '90d';
-  onTimeRangeChange: (range: '24h' | '7d' | '30d' | '90d') => void;
-  riskLevelFilter: 'ALL' | 'HIGH' | 'CRITICAL';
-  onRiskLevelChange: (level: 'ALL' | 'HIGH' | 'CRITICAL') => void;
+  timeRange: "24h" | "7d" | "30d" | "90d";
+  onTimeRangeChange: (range: "24h" | "7d" | "30d" | "90d") => void;
+  riskLevelFilter: "ALL" | "HIGH" | "CRITICAL";
+  onRiskLevelChange: (level: "ALL" | "HIGH" | "CRITICAL") => void;
 }
 
 interface PredictionSummaryData {
@@ -77,11 +90,11 @@ export function PredictionOverview({
   timeRange,
   onTimeRangeChange,
   riskLevelFilter,
-  onRiskLevelChange
+  onRiskLevelChange,
 }: PredictionOverviewProps) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState<'riskScore' | 'predictedAt' | 'patientName'>('riskScore');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState<"riskScore" | "predictedAt" | "patientName">("riskScore");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [selectedPrediction, setSelectedPrediction] = useState<NoShowPrediction | null>(null);
 
   /**
@@ -91,35 +104,36 @@ export function PredictionOverview({
     let filtered = predictions;
 
     // Apply risk level filter
-    if (riskLevelFilter !== 'ALL') {
-      filtered = filtered.filter(p => p.riskLevel === riskLevelFilter);
+    if (riskLevelFilter !== "ALL") {
+      filtered = filtered.filter((p) => p.riskLevel === riskLevelFilter);
     }
 
     // Apply search filter
     if (searchTerm) {
-      filtered = filtered.filter(p => 
-        p.patientId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.appointmentId.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        (p) =>
+          p.patientId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          p.appointmentId.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
     // Apply sorting
     filtered.sort((a, b) => {
       let comparison = 0;
-      
+
       switch (sortBy) {
-        case 'riskScore':
+        case "riskScore":
           comparison = a.riskScore - b.riskScore;
           break;
-        case 'predictedAt':
+        case "predictedAt":
           comparison = new Date(a.predictedAt).getTime() - new Date(b.predictedAt).getTime();
           break;
-        case 'patientName':
+        case "patientName":
           comparison = a.patientId.localeCompare(b.patientId);
           break;
       }
-      
-      return sortOrder === 'desc' ? -comparison : comparison;
+
+      return sortOrder === "desc" ? -comparison : comparison;
     });
 
     return filtered;
@@ -131,43 +145,44 @@ export function PredictionOverview({
   const summaryData = useMemo((): PredictionSummaryData => {
     // Risk level distribution
     const riskDistribution = [
-      { 
-        level: 'LOW', 
-        count: predictions.filter(p => p.riskLevel === 'LOW').length,
-        color: '#10B981'
+      {
+        level: "LOW",
+        count: predictions.filter((p) => p.riskLevel === "LOW").length,
+        color: "#10B981",
       },
-      { 
-        level: 'MEDIUM', 
-        count: predictions.filter(p => p.riskLevel === 'MEDIUM').length,
-        color: '#F59E0B'
+      {
+        level: "MEDIUM",
+        count: predictions.filter((p) => p.riskLevel === "MEDIUM").length,
+        color: "#F59E0B",
       },
-      { 
-        level: 'HIGH', 
-        count: predictions.filter(p => p.riskLevel === 'HIGH').length,
-        color: '#F97316'
+      {
+        level: "HIGH",
+        count: predictions.filter((p) => p.riskLevel === "HIGH").length,
+        color: "#F97316",
       },
-      { 
-        level: 'CRITICAL', 
-        count: predictions.filter(p => p.riskLevel === 'CRITICAL').length,
-        color: '#EF4444'
-      }
+      {
+        level: "CRITICAL",
+        count: predictions.filter((p) => p.riskLevel === "CRITICAL").length,
+        color: "#EF4444",
+      },
     ];
 
     // Time-based distribution (hourly)
     const timeDistribution = Array.from({ length: 24 }, (_, hour) => {
-      const hourPredictions = predictions.filter(p => {
+      const hourPredictions = predictions.filter((p) => {
         const predHour = new Date(p.predictedAt).getHours();
         return predHour === hour;
       });
 
-      const avgRisk = hourPredictions.length > 0
-        ? hourPredictions.reduce((sum, p) => sum + p.riskScore, 0) / hourPredictions.length
-        : 0;
+      const avgRisk =
+        hourPredictions.length > 0
+          ? hourPredictions.reduce((sum, p) => sum + p.riskScore, 0) / hourPredictions.length
+          : 0;
 
       return {
-        hour: `${hour.toString().padStart(2, '0')}:00`,
+        hour: `${hour.toString().padStart(2, "0")}:00`,
         predictions: hourPredictions.length,
-        avgRisk: Math.round(avgRisk)
+        avgRisk: Math.round(avgRisk),
       };
     });
 
@@ -175,28 +190,29 @@ export function PredictionOverview({
     const riskTrends = Array.from({ length: 7 }, (_, dayIndex) => {
       const date = new Date();
       date.setDate(date.getDate() - (6 - dayIndex));
-      
-      const dayPredictions = predictions.filter(p => {
+
+      const dayPredictions = predictions.filter((p) => {
         const predDate = new Date(p.predictedAt);
         return predDate.toDateString() === date.toDateString();
       });
 
-      const avgRisk = dayPredictions.length > 0
-        ? dayPredictions.reduce((sum, p) => sum + p.riskScore, 0) / dayPredictions.length
-        : 0;
+      const avgRisk =
+        dayPredictions.length > 0
+          ? dayPredictions.reduce((sum, p) => sum + p.riskScore, 0) / dayPredictions.length
+          : 0;
 
       return {
-        date: date.toLocaleDateString('pt-BR', { month: 'short', day: 'numeric' }),
+        date: date.toLocaleDateString("pt-BR", { month: "short", day: "numeric" }),
         avgRisk: Math.round(avgRisk),
-        count: dayPredictions.length
+        count: dayPredictions.length,
       };
     });
 
     // Top risk factors analysis
     const factorImpacts: Record<string, { impact: number; frequency: number }> = {};
-    
-    predictions.forEach(prediction => {
-      prediction.factors.forEach(factor => {
+
+    predictions.forEach((prediction) => {
+      prediction.factors.forEach((factor) => {
         if (!factorImpacts[factor.factorName]) {
           factorImpacts[factor.factorName] = { impact: 0, frequency: 0 };
         }
@@ -209,7 +225,7 @@ export function PredictionOverview({
       .map(([factor, data]) => ({
         factor,
         impact: Math.round(data.impact / data.frequency), // Average impact
-        frequency: data.frequency
+        frequency: data.frequency,
       }))
       .sort((a, b) => b.impact - a.impact)
       .slice(0, 10);
@@ -218,7 +234,7 @@ export function PredictionOverview({
       riskDistribution,
       timeDistribution,
       riskTrends,
-      topRiskFactors
+      topRiskFactors,
     };
   }, [predictions]);
 
@@ -227,10 +243,10 @@ export function PredictionOverview({
    */
   const getRecommendation = (prediction: NoShowPrediction): string => {
     const recommendations = prediction.interventionRecommendations;
-    if (recommendations.length === 0) return 'No specific intervention required';
-    
+    if (recommendations.length === 0) return "No specific intervention required";
+
     const highestPriority = recommendations.sort((a, b) => {
-      const priorityOrder = { 'URGENT': 4, 'HIGH': 3, 'MEDIUM': 2, 'LOW': 1 };
+      const priorityOrder = { URGENT: 4, HIGH: 3, MEDIUM: 2, LOW: 1 };
       return priorityOrder[b.priority] - priorityOrder[a.priority];
     })[0];
 
@@ -242,10 +258,10 @@ export function PredictionOverview({
    */
   const formatConfidence = (confidence: number): string => {
     const percentage = Math.round(confidence * 100);
-    if (percentage >= 90) return 'Very High';
-    if (percentage >= 70) return 'High';
-    if (percentage >= 50) return 'Medium';
-    return 'Low';
+    if (percentage >= 90) return "Very High";
+    if (percentage >= 70) return "High";
+    if (percentage >= 50) return "Medium";
+    return "Low";
   };
 
   return (
@@ -270,13 +286,14 @@ export function PredictionOverview({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {predictions.length > 0 
-                ? Math.round(predictions.reduce((sum, p) => sum + p.riskScore, 0) / predictions.length)
-                : 0}%
+              {predictions.length > 0
+                ? Math.round(
+                    predictions.reduce((sum, p) => sum + p.riskScore, 0) / predictions.length,
+                  )
+                : 0}
+              %
             </div>
-            <div className="text-xs text-muted-foreground">
-              Across all patients
-            </div>
+            <div className="text-xs text-muted-foreground">Across all patients</div>
           </CardContent>
         </Card>
 
@@ -286,11 +303,12 @@ export function PredictionOverview({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-orange-600">
-              {predictions.filter(p => p.riskLevel === 'HIGH' || p.riskLevel === 'CRITICAL').length}
+              {
+                predictions.filter((p) => p.riskLevel === "HIGH" || p.riskLevel === "CRITICAL")
+                  .length
+              }
             </div>
-            <div className="text-xs text-muted-foreground">
-              Requiring intervention
-            </div>
+            <div className="text-xs text-muted-foreground">Requiring intervention</div>
           </CardContent>
         </Card>
 
@@ -300,13 +318,15 @@ export function PredictionOverview({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">
-              {predictions.length > 0 
-                ? Math.round((predictions.reduce((sum, p) => sum + p.confidence, 0) / predictions.length) * 100)
-                : 0}%
+              {predictions.length > 0
+                ? Math.round(
+                    (predictions.reduce((sum, p) => sum + p.confidence, 0) / predictions.length) *
+                      100,
+                  )
+                : 0}
+              %
             </div>
-            <div className="text-xs text-muted-foreground">
-              Average confidence
-            </div>
+            <div className="text-xs text-muted-foreground">Average confidence</div>
           </CardContent>
         </Card>
       </div>
@@ -330,7 +350,7 @@ export function PredictionOverview({
                   cy="50%"
                   outerRadius={80}
                   dataKey="count"
-                  label={({ level, count, percent }) => 
+                  label={({ level, count, percent }) =>
                     `${level}: ${count} (${(percent * 100).toFixed(0)}%)`
                   }
                 >
@@ -358,26 +378,21 @@ export function PredictionOverview({
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="hour" />
                 <YAxis />
-                <Tooltip 
+                <Tooltip
                   labelFormatter={(hour) => `Time: ${hour}`}
                   formatter={(value, name) => [
                     value,
-                    name === 'predictions' ? 'Predictions' : 'Avg Risk %'
+                    name === "predictions" ? "Predictions" : "Avg Risk %",
                   ]}
                 />
-                <Area 
-                  type="monotone" 
-                  dataKey="predictions" 
-                  stroke="#3B82F6" 
-                  fill="#3B82F6" 
+                <Area
+                  type="monotone"
+                  dataKey="predictions"
+                  stroke="#3B82F6"
+                  fill="#3B82F6"
                   fillOpacity={0.3}
                 />
-                <Line 
-                  type="monotone" 
-                  dataKey="avgRisk" 
-                  stroke="#EF4444" 
-                  strokeWidth={2}
-                />
+                <Line type="monotone" dataKey="avgRisk" stroke="#EF4444" strokeWidth={2} />
               </AreaChart>
             </ResponsiveContainer>
           </CardContent>
@@ -400,18 +415,10 @@ export function PredictionOverview({
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
                 <YAxis />
-                <Tooltip 
-                  formatter={(value, name) => [
-                    value,
-                    name === 'avgRisk' ? 'Avg Risk %' : 'Count'
-                  ]}
+                <Tooltip
+                  formatter={(value, name) => [value, name === "avgRisk" ? "Avg Risk %" : "Count"]}
                 />
-                <Line 
-                  type="monotone" 
-                  dataKey="avgRisk" 
-                  stroke="#EF4444" 
-                  strokeWidth={3}
-                />
+                <Line type="monotone" dataKey="avgRisk" stroke="#EF4444" strokeWidth={3} />
                 <Bar dataKey="count" fill="#3B82F6" opacity={0.3} />
               </LineChart>
             </ResponsiveContainer>
@@ -463,7 +470,7 @@ export function PredictionOverview({
                 className="w-full"
               />
             </div>
-            
+
             <Select value={riskLevelFilter} onValueChange={onRiskLevelChange}>
               <SelectTrigger className="w-full sm:w-48">
                 <SelectValue placeholder="Filter by risk level" />
@@ -488,9 +495,9 @@ export function PredictionOverview({
 
             <Button
               variant="outline"
-              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+              onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
             >
-              {sortOrder === 'asc' ? '↑' : '↓'}
+              {sortOrder === "asc" ? "↑" : "↓"}
             </Button>
           </div>
         </CardHeader>
@@ -511,10 +518,12 @@ export function PredictionOverview({
               </TableHeader>
               <TableBody>
                 {filteredPredictions.slice(0, 20).map((prediction) => {
-                  const topFactor = prediction.factors.sort((a, b) => b.contribution - a.contribution)[0];
-                  
+                  const topFactor = prediction.factors.sort(
+                    (a, b) => b.contribution - a.contribution,
+                  )[0];
+
                   return (
-                    <TableRow 
+                    <TableRow
                       key={prediction.appointmentId}
                       className="cursor-pointer hover:bg-muted/50"
                       onClick={() => setSelectedPrediction(prediction)}
@@ -525,43 +534,37 @@ export function PredictionOverview({
                           {prediction.patientId.slice(-8)}
                         </div>
                       </TableCell>
-                      
+
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Progress value={prediction.riskScore} className="w-16 h-2" />
                           <span className="font-medium">{prediction.riskScore}%</span>
                         </div>
                       </TableCell>
-                      
+
                       <TableCell>
                         <Badge className={getRiskBadgeColor(prediction.riskLevel)}>
                           {prediction.riskLevel}
                         </Badge>
                       </TableCell>
-                      
+
                       <TableCell>
-                        <Badge variant="outline">
-                          {formatConfidence(prediction.confidence)}
-                        </Badge>
+                        <Badge variant="outline">{formatConfidence(prediction.confidence)}</Badge>
                       </TableCell>
-                      
+
                       <TableCell>
-                        <div className="text-sm">
-                          {topFactor ? topFactor.factorName : 'None'}
-                        </div>
+                        <div className="text-sm">{topFactor ? topFactor.factorName : "None"}</div>
                         {topFactor && (
                           <div className="text-xs text-muted-foreground">
                             +{topFactor.contribution.toFixed(1)}% impact
                           </div>
                         )}
                       </TableCell>
-                      
+
                       <TableCell className="max-w-xs">
-                        <div className="text-sm truncate">
-                          {getRecommendation(prediction)}
-                        </div>
+                        <div className="text-sm truncate">{getRecommendation(prediction)}</div>
                       </TableCell>
-                      
+
                       <TableCell className="text-sm text-muted-foreground">
                         {new Date(prediction.predictedAt).toLocaleString()}
                       </TableCell>
@@ -576,17 +579,15 @@ export function PredictionOverview({
             <div className="text-center py-8">
               <Activity className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-medium">No predictions found</h3>
-              <p className="text-muted-foreground">
-                Try adjusting your filters or search criteria
-              </p>
+              <p className="text-muted-foreground">Try adjusting your filters or search criteria</p>
             </div>
           )}
 
           {filteredPredictions.length > 20 && (
             <div className="text-center mt-4">
               <p className="text-sm text-muted-foreground">
-                Showing 20 of {filteredPredictions.length} predictions.
-                Use filters to narrow down results.
+                Showing 20 of {filteredPredictions.length} predictions. Use filters to narrow down
+                results.
               </p>
             </div>
           )}
@@ -599,11 +600,7 @@ export function PredictionOverview({
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               <span>Prediction Details</span>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setSelectedPrediction(null)}
-              >
+              <Button variant="outline" size="sm" onClick={() => setSelectedPrediction(null)}>
                 Close
               </Button>
             </CardTitle>
@@ -645,9 +642,7 @@ export function PredictionOverview({
                     <div key={index} className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="text-sm font-medium">{factor.factorName}</div>
-                        <div className="text-xs text-muted-foreground">
-                          {factor.description}
-                        </div>
+                        <div className="text-xs text-muted-foreground">{factor.description}</div>
                       </div>
                       <div className="text-right">
                         <div className="text-sm font-medium">
@@ -681,10 +676,15 @@ export function PredictionOverview({
                             </div>
                           </div>
                           <div className="text-right">
-                            <Badge variant={
-                              intervention.priority === 'URGENT' ? 'destructive' :
-                              intervention.priority === 'HIGH' ? 'default' : 'secondary'
-                            }>
+                            <Badge
+                              variant={
+                                intervention.priority === "URGENT"
+                                  ? "destructive"
+                                  : intervention.priority === "HIGH"
+                                    ? "default"
+                                    : "secondary"
+                              }
+                            >
                               {intervention.priority}
                             </Badge>
                             <div className="text-xs text-muted-foreground mt-1">

@@ -208,152 +208,113 @@ export interface ProtocolModification {
 }
 
 // Enums and Unions
-export type RecommendationType = 
-  | 'primary_treatment'
-  | 'alternative_therapy'
-  | 'combination_therapy'
-  | 'preventive_care'
-  | 'maintenance_therapy'
-  | 'adjuvant_treatment';
+export type RecommendationType =
+  | "primary_treatment"
+  | "alternative_therapy"
+  | "combination_therapy"
+  | "preventive_care"
+  | "maintenance_therapy"
+  | "adjuvant_treatment";
 
-export type RecommendationStatus = 
-  | 'pending'
-  | 'approved'
-  | 'rejected'
-  | 'implemented'
-  | 'completed'
-  | 'expired';
+export type RecommendationStatus =
+  | "pending"
+  | "approved"
+  | "rejected"
+  | "implemented"
+  | "completed"
+  | "expired";
 
-export type TreatmentType = 
-  | 'aesthetic'
-  | 'dermatological'
-  | 'cosmetic'
-  | 'therapeutic'
-  | 'preventive'
-  | 'maintenance';
+export type TreatmentType =
+  | "aesthetic"
+  | "dermatological"
+  | "cosmetic"
+  | "therapeutic"
+  | "preventive"
+  | "maintenance";
 
-export type TreatmentIntensity = 
-  | 'minimal'
-  | 'mild'
-  | 'moderate'
-  | 'intensive'
-  | 'aggressive';
+export type TreatmentIntensity = "minimal" | "mild" | "moderate" | "intensive" | "aggressive";
 
-export type RiskLevel = 
-  | 'very_low'
-  | 'low'
-  | 'moderate'
-  | 'high'
-  | 'very_high';
+export type RiskLevel = "very_low" | "low" | "moderate" | "high" | "very_high";
 
-export type FeedbackType = 
-  | 'accuracy'
-  | 'usefulness'
-  | 'adoption'
-  | 'quality'
-  | 'improvement'
-  | 'general';
+export type FeedbackType =
+  | "accuracy"
+  | "usefulness"
+  | "adoption"
+  | "quality"
+  | "improvement"
+  | "general";
 
-export type AdoptionStatus = 
-  | 'adopted'
-  | 'modified'
-  | 'rejected'
-  | 'pending'
-  | 'partially_adopted';
+export type AdoptionStatus = "adopted" | "modified" | "rejected" | "pending" | "partially_adopted";
 
-export type FactorType = 
-  | 'demographic'
-  | 'medical_history'
-  | 'lifestyle'
-  | 'preference'
-  | 'behavioral'
-  | 'genetic'
-  | 'environmental';
+export type FactorType =
+  | "demographic"
+  | "medical_history"
+  | "lifestyle"
+  | "preference"
+  | "behavioral"
+  | "genetic"
+  | "environmental";
 
-export type FactorCategory = 
-  | 'age_related'
-  | 'gender_specific'
-  | 'medical_condition'
-  | 'treatment_history'
-  | 'lifestyle_choice'
-  | 'patient_preference'
-  | 'risk_factor'
-  | 'compliance_indicator';
+export type FactorCategory =
+  | "age_related"
+  | "gender_specific"
+  | "medical_condition"
+  | "treatment_history"
+  | "lifestyle_choice"
+  | "patient_preference"
+  | "risk_factor"
+  | "compliance_indicator";
 
-export type DataSource = 
-  | 'medical_record'
-  | 'patient_survey'
-  | 'clinical_assessment'
-  | 'lab_results'
-  | 'imaging_study'
-  | 'family_history'
-  | 'lifestyle_assessment'
-  | 'behavioral_analysis';
+export type DataSource =
+  | "medical_record"
+  | "patient_survey"
+  | "clinical_assessment"
+  | "lab_results"
+  | "imaging_study"
+  | "family_history"
+  | "lifestyle_assessment"
+  | "behavioral_analysis";
 
-export type ContraindicationType = 
-  | 'absolute'
-  | 'relative'
-  | 'temporary'
-  | 'conditional';
+export type ContraindicationType = "absolute" | "relative" | "temporary" | "conditional";
 
-export type SeverityLevel = 
-  | 'mild'
-  | 'moderate'
-  | 'severe'
-  | 'critical';
+export type SeverityLevel = "mild" | "moderate" | "severe" | "critical";
 
-export type AllergyType = 
-  | 'drug'
-  | 'environmental'
-  | 'food'
-  | 'contact'
-  | 'seasonal';
+export type AllergyType = "drug" | "environmental" | "food" | "contact" | "seasonal";
 
-export type InteractionType = 
-  | 'antagonistic'
-  | 'synergistic'
-  | 'additive'
-  | 'competitive'
-  | 'incompatible';
+export type InteractionType =
+  | "antagonistic"
+  | "synergistic"
+  | "additive"
+  | "competitive"
+  | "incompatible";
 
-export type ConditionStatus = 
-  | 'active'
-  | 'inactive'
-  | 'resolved'
-  | 'chronic'
-  | 'acute'
-  | 'managed';
+export type ConditionStatus = "active" | "inactive" | "resolved" | "chronic" | "acute" | "managed";
 
-export type RiskFactorType = 
-  | 'genetic'
-  | 'environmental'
-  | 'behavioral'
-  | 'medical'
-  | 'social'
-  | 'occupational';
+export type RiskFactorType =
+  | "genetic"
+  | "environmental"
+  | "behavioral"
+  | "medical"
+  | "social"
+  | "occupational";
 
-export type AlertType = 
-  | 'contraindication'
-  | 'allergy'
-  | 'interaction'
-  | 'safety'
-  | 'monitoring'
-  | 'dose_adjustment';
+export type AlertType =
+  | "contraindication"
+  | "allergy"
+  | "interaction"
+  | "safety"
+  | "monitoring"
+  | "dose_adjustment";
 
-export type ApprovalStatus = 
-  | 'pending'
-  | 'approved'
-  | 'rejected'
-  | 'requires_review'
-  | 'expired';
+export type ApprovalStatus = "pending" | "approved" | "rejected" | "requires_review" | "expired";
 
-export type ModificationType = 
-  | 'dose_adjustment'
-  | 'frequency_change'
-  | 'duration_modification'
-  | 'technique_alteration'
-  | 'timing_adjustment'
-  | 'intensity_modification';
+export type ModificationType =
+  | "dose_adjustment"
+  | "frequency_change"
+  | "duration_modification"
+  | "technique_alteration"
+  | "timing_adjustment"
+  | "intensity_modification";
 
 // Request/Response Types
 export interface CreateRecommendationProfileRequest {

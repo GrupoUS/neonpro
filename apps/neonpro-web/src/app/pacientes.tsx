@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Users, 
-  Search, 
+import React, { useState } from "react";
+import type { motion, AnimatePresence } from "framer-motion";
+import type {
+  Users,
+  Search,
   Filter,
   Plus,
   User,
@@ -17,101 +17,101 @@ import {
   Trash2,
   Eye,
   UserPlus,
-  Activity
-} from 'lucide-react';
-import { NeonGradientCard } from '@/components/ui/NeonGradientCard';
-import { CosmicGlowButton } from '@/components/ui/CosmicGlowButton';
-import { formatDate } from '@/lib/utils';
+  Activity,
+} from "lucide-react";
+import type { NeonGradientCard } from "@/components/ui/NeonGradientCard";
+import type { CosmicGlowButton } from "@/components/ui/CosmicGlowButton";
+import type { formatDate } from "@/lib/utils";
 
 // Dados mock para pacientes
 const pacientesData = {
   patients: [
     {
       id: 1,
-      name: 'Maria Silva Santos',
-      email: 'maria.silva@email.com',
-      phone: '(11) 99999-9999',
-      cpf: '123.456.789-00',
-      birthDate: new Date('1985-03-15'),
-      address: 'Rua das Flores, 123 - São Paulo, SP',
-      lastVisit: new Date('2024-01-10'),
-      status: 'ativo',
-      plan: 'Premium',
+      name: "Maria Silva Santos",
+      email: "maria.silva@email.com",
+      phone: "(11) 99999-9999",
+      cpf: "123.456.789-00",
+      birthDate: new Date("1985-03-15"),
+      address: "Rua das Flores, 123 - São Paulo, SP",
+      lastVisit: new Date("2024-01-10"),
+      status: "ativo",
+      plan: "Premium",
       consultations: 15,
-      gender: 'Feminino'
+      gender: "Feminino",
     },
     {
       id: 2,
-      name: 'João Carlos Oliveira',
-      email: 'joao.oliveira@email.com',
-      phone: '(11) 88888-8888',
-      cpf: '987.654.321-00',
-      birthDate: new Date('1978-07-22'),
-      address: 'Av. Paulista, 456 - São Paulo, SP',
-      lastVisit: new Date('2024-01-08'),
-      status: 'ativo',
-      plan: 'Básico',
+      name: "João Carlos Oliveira",
+      email: "joao.oliveira@email.com",
+      phone: "(11) 88888-8888",
+      cpf: "987.654.321-00",
+      birthDate: new Date("1978-07-22"),
+      address: "Av. Paulista, 456 - São Paulo, SP",
+      lastVisit: new Date("2024-01-08"),
+      status: "ativo",
+      plan: "Básico",
       consultations: 8,
-      gender: 'Masculino'
+      gender: "Masculino",
     },
     {
       id: 3,
-      name: 'Ana Paula Costa',
-      email: 'ana.costa@email.com',
-      phone: '(11) 77777-7777',
-      cpf: '456.789.123-00',
-      birthDate: new Date('1992-11-30'),
-      address: 'Rua Augusta, 789 - São Paulo, SP',
-      lastVisit: new Date('2023-12-20'),
-      status: 'inativo',
-      plan: 'Standard',
+      name: "Ana Paula Costa",
+      email: "ana.costa@email.com",
+      phone: "(11) 77777-7777",
+      cpf: "456.789.123-00",
+      birthDate: new Date("1992-11-30"),
+      address: "Rua Augusta, 789 - São Paulo, SP",
+      lastVisit: new Date("2023-12-20"),
+      status: "inativo",
+      plan: "Standard",
       consultations: 3,
-      gender: 'Feminino'
+      gender: "Feminino",
     },
     {
       id: 4,
-      name: 'Pedro Henrique Lima',
-      email: 'pedro.lima@email.com',
-      phone: '(11) 66666-6666',
-      cpf: '789.123.456-00',
-      birthDate: new Date('1988-09-12'),
-      address: 'Rua Oscar Freire, 321 - São Paulo, SP',
-      lastVisit: new Date('2024-01-12'),
-      status: 'ativo',
-      plan: 'Premium',
+      name: "Pedro Henrique Lima",
+      email: "pedro.lima@email.com",
+      phone: "(11) 66666-6666",
+      cpf: "789.123.456-00",
+      birthDate: new Date("1988-09-12"),
+      address: "Rua Oscar Freire, 321 - São Paulo, SP",
+      lastVisit: new Date("2024-01-12"),
+      status: "ativo",
+      plan: "Premium",
       consultations: 22,
-      gender: 'Masculino'
-    }
+      gender: "Masculino",
+    },
   ],
   stats: {
     total: 1247,
     active: 1156,
     inactive: 91,
-    newThisMonth: 23
-  }
+    newThisMonth: 23,
+  },
 };
 
 const statusConfig = {
   ativo: {
-    color: 'success',
-    label: 'Ativo',
-    bgColor: 'bg-success/10',
-    borderColor: 'border-success/30',
-    textColor: 'text-success'
+    color: "success",
+    label: "Ativo",
+    bgColor: "bg-success/10",
+    borderColor: "border-success/30",
+    textColor: "text-success",
   },
   inativo: {
-    color: 'danger',
-    label: 'Inativo',
-    bgColor: 'bg-danger/10',
-    borderColor: 'border-danger/30',
-    textColor: 'text-danger'
-  }
+    color: "danger",
+    label: "Inativo",
+    bgColor: "bg-danger/10",
+    borderColor: "border-danger/30",
+    textColor: "text-danger",
+  },
 };
 
 const planConfig = {
-  'Básico': { color: 'secondary', gradient: 'secondary' },
-  'Standard': { color: 'accent', gradient: 'accent' },
-  'Premium': { color: 'warning', gradient: 'warning' }
+  Básico: { color: "secondary", gradient: "secondary" },
+  Standard: { color: "accent", gradient: "accent" },
+  Premium: { color: "warning", gradient: "warning" },
 };
 
 const PatientCard = ({ patient, index }) => {
@@ -124,15 +124,15 @@ const PatientCard = ({ patient, index }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
-      whileHover={{ 
-        scale: 1.02, 
+      whileHover={{
+        scale: 1.02,
         y: -5,
-        transition: { 
-          duration: 0.2, 
-          type: 'spring', 
-          stiffness: 400, 
-          damping: 17 
-        }
+        transition: {
+          duration: 0.2,
+          type: "spring",
+          stiffness: 400,
+          damping: 17,
+        },
       }}
     >
       <NeonGradientCard gradient={planInfo.gradient} className="group">
@@ -143,16 +143,20 @@ const PatientCard = ({ patient, index }) => {
             </div>
             <div>
               <h3 className="text-xl font-semibold text-white">{patient.name}</h3>
-              <p className="text-gray-400 text-sm">{patient.gender} • {age} anos</p>
-              <div className={`inline-flex px-2 py-1 rounded-full text-xs font-medium mt-1 ${statusInfo.bgColor} ${statusInfo.borderColor} border`}>
+              <p className="text-gray-400 text-sm">
+                {patient.gender} • {age} anos
+              </p>
+              <div
+                className={`inline-flex px-2 py-1 rounded-full text-xs font-medium mt-1 ${statusInfo.bgColor} ${statusInfo.borderColor} border`}
+              >
                 <span className={statusInfo.textColor}>{statusInfo.label}</span>
               </div>
             </div>
           </div>
-          <div className={`px-3 py-1 rounded-full bg-${planInfo.color}/20 border border-${planInfo.color}/30`}>
-            <span className={`text-sm font-medium text-${planInfo.color}`}>
-              {patient.plan}
-            </span>
+          <div
+            className={`px-3 py-1 rounded-full bg-${planInfo.color}/20 border border-${planInfo.color}/30`}
+          >
+            <span className={`text-sm font-medium text-${planInfo.color}`}>{patient.plan}</span>
           </div>
         </div>
 
@@ -188,15 +192,27 @@ const PatientCard = ({ patient, index }) => {
         </div>
 
         <div className="flex space-x-2">
-          <CosmicGlowButton variant="primary" size="sm" className="flex-1 flex items-center justify-center">
+          <CosmicGlowButton
+            variant="primary"
+            size="sm"
+            className="flex-1 flex items-center justify-center"
+          >
             <Eye className="h-4 w-4 mr-1" />
             Visualizar
           </CosmicGlowButton>
-          <CosmicGlowButton variant="secondary" size="sm" className="flex-1 flex items-center justify-center">
+          <CosmicGlowButton
+            variant="secondary"
+            size="sm"
+            className="flex-1 flex items-center justify-center"
+          >
             <Edit className="h-4 w-4 mr-1" />
             Editar
           </CosmicGlowButton>
-          <CosmicGlowButton variant="success" size="sm" className="flex-1 flex items-center justify-center">
+          <CosmicGlowButton
+            variant="success"
+            size="sm"
+            className="flex-1 flex items-center justify-center"
+          >
             <Calendar className="h-4 w-4 mr-1" />
             Agendar
           </CosmicGlowButton>
@@ -211,7 +227,7 @@ const StatCard = ({ icon: Icon, title, value, gradient, subtitle }) => (
     <div className="flex items-center justify-between">
       <div className="space-y-2">
         <p className="text-gray-400 text-sm font-medium">{title}</p>
-        <motion.p 
+        <motion.p
           className="text-3xl font-bold text-white"
           initial={{ scale: 0.8 }}
           animate={{ scale: 1 }}
@@ -219,9 +235,7 @@ const StatCard = ({ icon: Icon, title, value, gradient, subtitle }) => (
         >
           {value}
         </motion.p>
-        {subtitle && (
-          <p className="text-gray-400 text-xs">{subtitle}</p>
-        )}
+        {subtitle && <p className="text-gray-400 text-xs">{subtitle}</p>}
       </div>
       <div className="p-3 rounded-lg bg-white/10 backdrop-blur-sm">
         <Icon className="h-8 w-8 text-accent" />
@@ -231,16 +245,17 @@ const StatCard = ({ icon: Icon, title, value, gradient, subtitle }) => (
 );
 
 export default function Pacientes() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('todos');
-  const [filterPlan, setFilterPlan] = useState('todos');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("todos");
+  const [filterPlan, setFilterPlan] = useState("todos");
 
-  const filteredPatients = pacientesData.patients.filter(patient => {
-    const matchesSearch = patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         patient.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         patient.phone.includes(searchTerm);
-    const matchesStatus = filterStatus === 'todos' || patient.status === filterStatus;
-    const matchesPlan = filterPlan === 'todos' || patient.plan === filterPlan;
+  const filteredPatients = pacientesData.patients.filter((patient) => {
+    const matchesSearch =
+      patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      patient.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      patient.phone.includes(searchTerm);
+    const matchesStatus = filterStatus === "todos" || patient.status === filterStatus;
+    const matchesPlan = filterPlan === "todos" || patient.plan === filterPlan;
     return matchesSearch && matchesStatus && matchesPlan;
   });
 
@@ -252,12 +267,8 @@ export default function Pacientes() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-4xl font-bold text-white mb-2">
-            Pacientes NEONPROV1
-          </h1>
-          <p className="text-gray-400">
-            Gerencie informações dos pacientes
-          </p>
+          <h1 className="text-4xl font-bold text-white mb-2">Pacientes NEONPROV1</h1>
+          <p className="text-gray-400">Gerencie informações dos pacientes</p>
         </motion.div>
 
         {/* Estatísticas */}
@@ -350,11 +361,7 @@ export default function Pacientes() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <AnimatePresence>
             {filteredPatients.map((patient, index) => (
-              <PatientCard
-                key={patient.id}
-                patient={patient}
-                index={index}
-              />
+              <PatientCard key={patient.id} patient={patient} index={index} />
             ))}
           </AnimatePresence>
         </div>
@@ -367,15 +374,11 @@ export default function Pacientes() {
           >
             <NeonGradientCard gradient="primary" className="max-w-md mx-auto">
               <Users className="h-16 w-16 text-accent mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">
-                Nenhum paciente encontrado
-              </h3>
+              <h3 className="text-xl font-semibold text-white mb-2">Nenhum paciente encontrado</h3>
               <p className="text-gray-400 mb-4">
                 Não há pacientes que correspondam aos filtros selecionados.
               </p>
-              <CosmicGlowButton variant="primary">
-                Cadastrar Novo Paciente
-              </CosmicGlowButton>
+              <CosmicGlowButton variant="primary">Cadastrar Novo Paciente</CosmicGlowButton>
             </NeonGradientCard>
           </motion.div>
         )}

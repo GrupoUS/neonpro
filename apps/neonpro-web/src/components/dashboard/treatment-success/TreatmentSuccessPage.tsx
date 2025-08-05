@@ -1,6 +1,6 @@
 "use client";
 
-import {
+import type {
   ComplianceReport,
   ComplianceStats,
   ProtocolOptimization,
@@ -12,72 +12,46 @@ import {
   TreatmentOutcome,
   TreatmentTypeStats,
 } from "@/app/types/treatment-success";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
-import {
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Award,
-  CheckCircle,
-  Target,
-  TrendingDown,
-  TrendingUp,
-  Users,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Award, CheckCircle, Target, TrendingDown, TrendingUp, Users } from "lucide-react";
+import type { useEffect, useState } from "react";
 
 interface TreatmentSuccessPageProps {
   className?: string;
 }
 
-export default function TreatmentSuccessPage({
-  className,
-}: TreatmentSuccessPageProps) {
+export default function TreatmentSuccessPage({ className }: TreatmentSuccessPageProps) {
   const [activeTab, setActiveTab] = useState("overview");
-  const [successStats, setSuccessStats] = useState<SuccessRateStats | null>(
-    null
-  );
-  const [providerStats, setProviderStats] = useState<ProviderStats | null>(
-    null
-  );
-  const [treatmentTypeStats, setTreatmentTypeStats] = useState<
-    TreatmentTypeStats[]
-  >([]);
-  const [complianceStats, setComplianceStats] =
-    useState<ComplianceStats | null>(null);
-  const [treatmentOutcomes, setTreatmentOutcomes] = useState<
-    TreatmentOutcome[]
-  >([]);
+  const [successStats, setSuccessStats] = useState<SuccessRateStats | null>(null);
+  const [providerStats, setProviderStats] = useState<ProviderStats | null>(null);
+  const [treatmentTypeStats, setTreatmentTypeStats] = useState<TreatmentTypeStats[]>([]);
+  const [complianceStats, setComplianceStats] = useState<ComplianceStats | null>(null);
+  const [treatmentOutcomes, setTreatmentOutcomes] = useState<TreatmentOutcome[]>([]);
   const [successMetrics, setSuccessMetrics] = useState<SuccessMetrics[]>([]);
-  const [providerPerformance, setProviderPerformance] = useState<
-    ProviderPerformance[]
-  >([]);
-  const [protocolOptimizations, setProtocolOptimizations] = useState<
-    ProtocolOptimization[]
-  >([]);
-  const [qualityBenchmarks, setQualityBenchmarks] = useState<
-    QualityBenchmark[]
-  >([]);
-  const [complianceReports, setComplianceReports] = useState<
-    ComplianceReport[]
-  >([]);
+  const [providerPerformance, setProviderPerformance] = useState<ProviderPerformance[]>([]);
+  const [protocolOptimizations, setProtocolOptimizations] = useState<ProtocolOptimization[]>([]);
+  const [qualityBenchmarks, setQualityBenchmarks] = useState<QualityBenchmark[]>([]);
+  const [complianceReports, setComplianceReports] = useState<ComplianceReport[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -152,9 +126,7 @@ export default function TreatmentSuccessPage({
 
   const loadProviderStats = async () => {
     try {
-      const response = await fetch(
-        "/api/treatment-success/stats/provider-stats"
-      );
+      const response = await fetch("/api/treatment-success/stats/provider-stats");
       if (!response.ok) throw new Error("Failed to fetch provider stats");
       const data = await response.json();
       setProviderStats(data.data);
@@ -165,9 +137,7 @@ export default function TreatmentSuccessPage({
 
   const loadTreatmentTypeStats = async () => {
     try {
-      const response = await fetch(
-        "/api/treatment-success/stats/treatment-type"
-      );
+      const response = await fetch("/api/treatment-success/stats/treatment-type");
       if (!response.ok) throw new Error("Failed to fetch treatment type stats");
       const data = await response.json();
       setTreatmentTypeStats(data.data);
@@ -211,9 +181,7 @@ export default function TreatmentSuccessPage({
 
   const loadProviderPerformance = async () => {
     try {
-      const response = await fetch(
-        "/api/treatment-success/provider-performance?limit=10"
-      );
+      const response = await fetch("/api/treatment-success/provider-performance?limit=10");
       if (!response.ok) throw new Error("Failed to fetch provider performance");
       const data = await response.json();
       setProviderPerformance(data.data);
@@ -224,11 +192,8 @@ export default function TreatmentSuccessPage({
 
   const loadProtocolOptimizations = async () => {
     try {
-      const response = await fetch(
-        "/api/treatment-success/protocol-optimizations?limit=10"
-      );
-      if (!response.ok)
-        throw new Error("Failed to fetch protocol optimizations");
+      const response = await fetch("/api/treatment-success/protocol-optimizations?limit=10");
+      if (!response.ok) throw new Error("Failed to fetch protocol optimizations");
       const data = await response.json();
       setProtocolOptimizations(data.data);
     } catch (err) {
@@ -238,9 +203,7 @@ export default function TreatmentSuccessPage({
 
   const loadQualityBenchmarks = async () => {
     try {
-      const response = await fetch(
-        "/api/treatment-success/quality-benchmarks?limit=10"
-      );
+      const response = await fetch("/api/treatment-success/quality-benchmarks?limit=10");
       if (!response.ok) throw new Error("Failed to fetch quality benchmarks");
       const data = await response.json();
       setQualityBenchmarks(data.data);
@@ -251,9 +214,7 @@ export default function TreatmentSuccessPage({
 
   const loadComplianceReports = async () => {
     try {
-      const response = await fetch(
-        "/api/treatment-success/compliance-reports?limit=10"
-      );
+      const response = await fetch("/api/treatment-success/compliance-reports?limit=10");
       if (!response.ok) throw new Error("Failed to fetch compliance reports");
       const data = await response.json();
       setComplianceReports(data.data);
@@ -294,14 +255,11 @@ export default function TreatmentSuccessPage({
 
   const handleCreateOptimization = async () => {
     try {
-      const response = await fetch(
-        "/api/treatment-success/protocol-optimizations",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(optimizationForm),
-        }
-      );
+      const response = await fetch("/api/treatment-success/protocol-optimizations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(optimizationForm),
+      });
 
       if (!response.ok) throw new Error("Failed to create optimization");
 
@@ -323,14 +281,11 @@ export default function TreatmentSuccessPage({
 
   const handleCreateBenchmark = async () => {
     try {
-      const response = await fetch(
-        "/api/treatment-success/quality-benchmarks",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(benchmarkForm),
-        }
-      );
+      const response = await fetch("/api/treatment-success/quality-benchmarks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(benchmarkForm),
+      });
 
       if (!response.ok) throw new Error("Failed to create benchmark");
 
@@ -358,9 +313,7 @@ export default function TreatmentSuccessPage({
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">
-            Carregando rastreamento de sucesso...
-          </p>
+          <p className="mt-4 text-gray-600">Carregando rastreamento de sucesso...</p>
         </div>
       </div>
     );
@@ -370,9 +323,7 @@ export default function TreatmentSuccessPage({
     <div className={`space-y-6 ${className}`}>
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">
-          Rastreamento de Sucesso de Tratamento
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-900">Rastreamento de Sucesso de Tratamento</h1>
         <p className="text-gray-600">
           Monitore e otimize as taxas de sucesso dos tratamentos da clínica
         </p>
@@ -388,16 +339,12 @@ export default function TreatmentSuccessPage({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Taxa de Sucesso Geral
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Taxa de Sucesso Geral</CardTitle>
             <Target className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {successStats
-                ? formatPercentage(successStats.overall_success_rate)
-                : "0%"}
+              {successStats ? formatPercentage(successStats.overall_success_rate) : "0%"}
             </div>
             <p className="text-xs text-gray-600">
               {successStats?.trend_direction === "up" ? (
@@ -417,9 +364,7 @@ export default function TreatmentSuccessPage({
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total de Tratamentos
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Total de Tratamentos</CardTitle>
             <Users className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
@@ -428,18 +373,14 @@ export default function TreatmentSuccessPage({
             </div>
             <p className="text-xs text-gray-600">
               Avaliação de satisfação:{" "}
-              {successStats
-                ? formatScore(successStats.average_satisfaction)
-                : "0"}
+              {successStats ? formatScore(successStats.average_satisfaction) : "0"}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Profissionais Ativos
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Profissionais Ativos</CardTitle>
             <Award className="h-4 w-4 text-purple-600" />
           </CardHeader>
           <CardContent>
@@ -459,9 +400,7 @@ export default function TreatmentSuccessPage({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-orange-600">
-              {complianceStats
-                ? formatPercentage(complianceStats.overall_compliance)
-                : "0%"}
+              {complianceStats ? formatPercentage(complianceStats.overall_compliance) : "0%"}
             </div>
             <p className="text-xs text-gray-600">
               {complianceStats?.pending_reports || 0} relatórios pendentes
@@ -471,11 +410,7 @@ export default function TreatmentSuccessPage({
       </div>
 
       {/* Main Content */}
-      <Tabs
-        value={activeTab}
-        onValueChange={setActiveTab}
-        className="space-y-6"
-      >
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid grid-cols-7 w-full">
           <TabsTrigger value="overview">Visão Geral</TabsTrigger>
           <TabsTrigger value="outcomes">Resultados</TabsTrigger>
@@ -492,21 +427,15 @@ export default function TreatmentSuccessPage({
             <Card>
               <CardHeader>
                 <CardTitle>Sucesso por Tipo de Tratamento</CardTitle>
-                <CardDescription>
-                  Taxa de sucesso e satisfação por categoria
-                </CardDescription>
+                <CardDescription>Taxa de sucesso e satisfação por categoria</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {treatmentTypeStats.map((stat, index) => (
                   <div key={index} className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-sm font-medium">
-                        {stat.treatment_type}
-                      </span>
+                      <span className="text-sm font-medium">{stat.treatment_type}</span>
                       <div className="flex items-center space-x-2">
-                        <span className="text-sm">
-                          {formatPercentage(stat.success_rate)}
-                        </span>
+                        <span className="text-sm">{formatPercentage(stat.success_rate)}</span>
                         <Badge
                           variant={
                             stat.benchmark_status === "above"
@@ -538,22 +467,13 @@ export default function TreatmentSuccessPage({
             <Card>
               <CardHeader>
                 <CardTitle>Otimizações Recentes</CardTitle>
-                <CardDescription>
-                  Melhorias nos protocolos de tratamento
-                </CardDescription>
+                <CardDescription>Melhorias nos protocolos de tratamento</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {protocolOptimizations.slice(0, 5).map((optimization) => (
-                  <div
-                    key={optimization.id}
-                    className="border-l-4 border-blue-500 pl-4"
-                  >
-                    <h4 className="font-medium">
-                      {optimization.treatment_type}
-                    </h4>
-                    <p className="text-sm text-gray-600">
-                      {optimization.suggested_improvements}
-                    </p>
+                  <div key={optimization.id} className="border-l-4 border-blue-500 pl-4">
+                    <h4 className="font-medium">{optimization.treatment_type}</h4>
+                    <p className="text-sm text-gray-600">{optimization.suggested_improvements}</p>
                     <div className="flex items-center justify-between mt-2">
                       <Badge
                         variant={
@@ -571,11 +491,7 @@ export default function TreatmentSuccessPage({
                             : "Baixa"}
                       </Badge>
                       <span className="text-xs text-gray-500">
-                        +
-                        {formatPercentage(
-                          optimization.success_rate_improvement
-                        )}{" "}
-                        sucesso
+                        +{formatPercentage(optimization.success_rate_improvement)} sucesso
                       </span>
                     </div>
                   </div>
@@ -591,9 +507,7 @@ export default function TreatmentSuccessPage({
             <Card>
               <CardHeader>
                 <CardTitle>Registrar Resultado de Tratamento</CardTitle>
-                <CardDescription>
-                  Documente o resultado de um tratamento realizado
-                </CardDescription>
+                <CardDescription>Documente o resultado de um tratamento realizado</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -651,9 +565,7 @@ export default function TreatmentSuccessPage({
                     />
                   </div>
                   <div>
-                    <Label htmlFor="success_score">
-                      Score de Sucesso (0-1)
-                    </Label>
+                    <Label htmlFor="success_score">Score de Sucesso (0-1)</Label>
                     <Input
                       id="success_score"
                       type="number"
@@ -670,9 +582,7 @@ export default function TreatmentSuccessPage({
                     />
                   </div>
                   <div>
-                    <Label htmlFor="satisfaction_score">
-                      Satisfação do Paciente (0-10)
-                    </Label>
+                    <Label htmlFor="satisfaction_score">Satisfação do Paciente (0-10)</Label>
                     <Input
                       id="satisfaction_score"
                       type="number"
@@ -682,9 +592,7 @@ export default function TreatmentSuccessPage({
                       onChange={(e) =>
                         setOutcomeForm({
                           ...outcomeForm,
-                          patient_satisfaction_score: parseFloat(
-                            e.target.value
-                          ),
+                          patient_satisfaction_score: parseFloat(e.target.value),
                         })
                       }
                     />
@@ -704,9 +612,7 @@ export default function TreatmentSuccessPage({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="follow_up_notes">
-                    Notas de Acompanhamento
-                  </Label>
+                  <Label htmlFor="follow_up_notes">Notas de Acompanhamento</Label>
                   <Textarea
                     id="follow_up_notes"
                     value={outcomeForm.follow_up_notes}
@@ -728,9 +634,7 @@ export default function TreatmentSuccessPage({
             <Card>
               <CardHeader>
                 <CardTitle>Resultados Recentes</CardTitle>
-                <CardDescription>
-                  Últimos resultados de tratamento registrados
-                </CardDescription>
+                <CardDescription>Últimos resultados de tratamento registrados</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -738,18 +642,12 @@ export default function TreatmentSuccessPage({
                     <div key={outcome.id} className="border rounded-lg p-4">
                       <div className="flex justify-between items-start">
                         <div>
-                          <h4 className="font-medium">
-                            {outcome.treatment_type}
-                          </h4>
+                          <h4 className="font-medium">{outcome.treatment_type}</h4>
                           <p className="text-sm text-gray-600">
-                            Paciente: {outcome.patient_id} • Profissional:{" "}
-                            {outcome.provider_id}
+                            Paciente: {outcome.patient_id} • Profissional: {outcome.provider_id}
                           </p>
                           <p className="text-sm text-gray-600">
-                            Data:{" "}
-                            {new Date(
-                              outcome.treatment_date
-                            ).toLocaleDateString("pt-BR")}
+                            Data: {new Date(outcome.treatment_date).toLocaleDateString("pt-BR")}
                           </p>
                         </div>
                         <div className="text-right">
@@ -759,13 +657,7 @@ export default function TreatmentSuccessPage({
                           <div className="text-sm text-gray-600">
                             Satisfação: {outcome.patient_satisfaction_score}/10
                           </div>
-                          <Badge
-                            variant={
-                              outcome.status === "completed"
-                                ? "default"
-                                : "secondary"
-                            }
-                          >
+                          <Badge variant={outcome.status === "completed" ? "default" : "secondary"}>
                             {outcome.status === "completed"
                               ? "Concluído"
                               : outcome.status === "in_progress"
@@ -803,18 +695,12 @@ export default function TreatmentSuccessPage({
                       <div>
                         <h4 className="font-medium">{metric.treatment_type}</h4>
                         <p className="text-sm text-gray-600">
-                          Período:{" "}
-                          {new Date(metric.period_start).toLocaleDateString(
-                            "pt-BR"
-                          )}{" "}
-                          -{" "}
-                          {new Date(metric.period_end).toLocaleDateString(
-                            "pt-BR"
-                          )}
+                          Período: {new Date(metric.period_start).toLocaleDateString("pt-BR")} -{" "}
+                          {new Date(metric.period_end).toLocaleDateString("pt-BR")}
                         </p>
                         <p className="text-sm text-gray-600">
-                          {metric.total_treatments} tratamentos •{" "}
-                          {metric.successful_treatments} sucessos
+                          {metric.total_treatments} tratamentos • {metric.successful_treatments}{" "}
+                          sucessos
                         </p>
                       </div>
                       <div className="text-right">
@@ -822,12 +708,10 @@ export default function TreatmentSuccessPage({
                           {formatPercentage(metric.success_rate)}
                         </div>
                         <div className="text-sm text-gray-600">
-                          Satisfação:{" "}
-                          {formatScore(metric.average_satisfaction || 0)}
+                          Satisfação: {formatScore(metric.average_satisfaction || 0)}
                         </div>
                         <div className="text-sm text-red-600">
-                          Complicações:{" "}
-                          {formatPercentage(metric.complication_rate || 0)}
+                          Complicações: {formatPercentage(metric.complication_rate || 0)}
                         </div>
                       </div>
                     </div>
@@ -852,18 +736,10 @@ export default function TreatmentSuccessPage({
                   <div key={performance.id} className="border rounded-lg p-4">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h4 className="font-medium">
-                          Profissional: {performance.provider_id}
-                        </h4>
+                        <h4 className="font-medium">Profissional: {performance.provider_id}</h4>
                         <p className="text-sm text-gray-600">
-                          Período:{" "}
-                          {new Date(
-                            performance.period_start
-                          ).toLocaleDateString("pt-BR")}{" "}
-                          -{" "}
-                          {new Date(performance.period_end).toLocaleDateString(
-                            "pt-BR"
-                          )}
+                          Período: {new Date(performance.period_start).toLocaleDateString("pt-BR")}{" "}
+                          - {new Date(performance.period_end).toLocaleDateString("pt-BR")}
                         </p>
                         <p className="text-sm text-gray-600">
                           Avaliação: {performance.evaluation_period}
@@ -874,8 +750,7 @@ export default function TreatmentSuccessPage({
                           {formatPercentage(performance.overall_success_rate)}
                         </div>
                         <div className="text-sm text-gray-600">
-                          Score:{" "}
-                          {formatScore(performance.performance_score || 0)}
+                          Score: {formatScore(performance.performance_score || 0)}
                         </div>
                       </div>
                     </div>
@@ -892,16 +767,12 @@ export default function TreatmentSuccessPage({
             <Card>
               <CardHeader>
                 <CardTitle>Propor Otimização de Protocolo</CardTitle>
-                <CardDescription>
-                  Sugira melhorias nos protocolos de tratamento
-                </CardDescription>
+                <CardDescription>Sugira melhorias nos protocolos de tratamento</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="opt_treatment_type">
-                      Tipo de Tratamento
-                    </Label>
+                    <Label htmlFor="opt_treatment_type">Tipo de Tratamento</Label>
                     <Input
                       id="opt_treatment_type"
                       value={optimizationForm.treatment_type}
@@ -949,9 +820,7 @@ export default function TreatmentSuccessPage({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="suggested_improvements">
-                    Melhorias Sugeridas
-                  </Label>
+                  <Label htmlFor="suggested_improvements">Melhorias Sugeridas</Label>
                   <Textarea
                     id="suggested_improvements"
                     value={optimizationForm.suggested_improvements}
@@ -977,9 +846,7 @@ export default function TreatmentSuccessPage({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="success_improvement">
-                    Melhoria Esperada (0-1)
-                  </Label>
+                  <Label htmlFor="success_improvement">Melhoria Esperada (0-1)</Label>
                   <Input
                     id="success_improvement"
                     type="number"
@@ -1005,29 +872,21 @@ export default function TreatmentSuccessPage({
             <Card>
               <CardHeader>
                 <CardTitle>Otimizações Propostas</CardTitle>
-                <CardDescription>
-                  Lista de melhorias de protocolo sugeridas
-                </CardDescription>
+                <CardDescription>Lista de melhorias de protocolo sugeridas</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {protocolOptimizations.map((optimization) => (
-                    <div
-                      key={optimization.id}
-                      className="border rounded-lg p-4"
-                    >
+                    <div key={optimization.id} className="border rounded-lg p-4">
                       <div className="flex justify-between items-start">
                         <div>
-                          <h4 className="font-medium">
-                            {optimization.treatment_type}
-                          </h4>
+                          <h4 className="font-medium">{optimization.treatment_type}</h4>
                           <p className="text-sm text-gray-600">
                             {optimization.suggested_improvements}
                           </p>
                           {optimization.rationale && (
                             <p className="text-sm text-gray-500 mt-1">
-                              <strong>Justificativa:</strong>{" "}
-                              {optimization.rationale}
+                              <strong>Justificativa:</strong> {optimization.rationale}
                             </p>
                           )}
                         </div>
@@ -1036,24 +895,19 @@ export default function TreatmentSuccessPage({
                             variant={
                               optimization.implementation_priority === "high"
                                 ? "destructive"
-                                : optimization.implementation_priority ===
-                                    "medium"
+                                : optimization.implementation_priority === "medium"
                                   ? "default"
                                   : "secondary"
                             }
                           >
                             {optimization.implementation_priority === "high"
                               ? "Alta"
-                              : optimization.implementation_priority ===
-                                  "medium"
+                              : optimization.implementation_priority === "medium"
                                 ? "Média"
                                 : "Baixa"}
                           </Badge>
                           <div className="text-sm text-green-600 mt-1">
-                            +
-                            {formatPercentage(
-                              optimization.success_rate_improvement
-                            )}
+                            +{formatPercentage(optimization.success_rate_improvement)}
                           </div>
                           <Badge
                             variant={
@@ -1095,9 +949,7 @@ export default function TreatmentSuccessPage({
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="bench_treatment_type">
-                      Tipo de Tratamento
-                    </Label>
+                    <Label htmlFor="bench_treatment_type">Tipo de Tratamento</Label>
                     <Input
                       id="bench_treatment_type"
                       value={benchmarkForm.treatment_type}
@@ -1110,9 +962,7 @@ export default function TreatmentSuccessPage({
                     />
                   </div>
                   <div>
-                    <Label htmlFor="target_success_rate">
-                      Meta de Sucesso (0-1)
-                    </Label>
+                    <Label htmlFor="target_success_rate">Meta de Sucesso (0-1)</Label>
                     <Input
                       id="target_success_rate"
                       type="number"
@@ -1129,9 +979,7 @@ export default function TreatmentSuccessPage({
                     />
                   </div>
                   <div>
-                    <Label htmlFor="minimum_satisfaction">
-                      Satisfação Mínima (0-10)
-                    </Label>
+                    <Label htmlFor="minimum_satisfaction">Satisfação Mínima (0-10)</Label>
                     <Input
                       id="minimum_satisfaction"
                       type="number"
@@ -1147,9 +995,7 @@ export default function TreatmentSuccessPage({
                     />
                   </div>
                   <div>
-                    <Label htmlFor="max_complication_rate">
-                      Taxa Máx. Complicações (0-1)
-                    </Label>
+                    <Label htmlFor="max_complication_rate">Taxa Máx. Complicações (0-1)</Label>
                     <Input
                       id="max_complication_rate"
                       type="number"
@@ -1166,9 +1012,7 @@ export default function TreatmentSuccessPage({
                     />
                   </div>
                   <div>
-                    <Label htmlFor="industry_standard">
-                      Padrão da Indústria (0-1)
-                    </Label>
+                    <Label htmlFor="industry_standard">Padrão da Indústria (0-1)</Label>
                     <Input
                       id="industry_standard"
                       type="number"
@@ -1185,9 +1029,7 @@ export default function TreatmentSuccessPage({
                     />
                   </div>
                   <div>
-                    <Label htmlFor="certification_requirement">
-                      Requisito de Certificação
-                    </Label>
+                    <Label htmlFor="certification_requirement">Requisito de Certificação</Label>
                     <Input
                       id="certification_requirement"
                       value={benchmarkForm.certification_requirement}
@@ -1220,23 +1062,16 @@ export default function TreatmentSuccessPage({
                     <div key={benchmark.id} className="border rounded-lg p-4">
                       <div className="flex justify-between items-start">
                         <div>
-                          <h4 className="font-medium">
-                            {benchmark.treatment_type}
-                          </h4>
+                          <h4 className="font-medium">{benchmark.treatment_type}</h4>
                           <div className="text-sm text-gray-600 space-y-1">
                             <p>
                               Taxa de sucesso alvo:{" "}
                               {formatPercentage(benchmark.target_success_rate)}
                             </p>
-                            <p>
-                              Satisfação mínima:{" "}
-                              {benchmark.minimum_satisfaction}/10
-                            </p>
+                            <p>Satisfação mínima: {benchmark.minimum_satisfaction}/10</p>
                             <p>
                               Taxa máx. complicações:{" "}
-                              {formatPercentage(
-                                benchmark.maximum_complication_rate
-                              )}
+                              {formatPercentage(benchmark.maximum_complication_rate)}
                             </p>
                           </div>
                         </div>
@@ -1244,9 +1079,7 @@ export default function TreatmentSuccessPage({
                           <div className="text-lg font-bold text-blue-600">
                             {formatPercentage(benchmark.industry_standard)}
                           </div>
-                          <div className="text-xs text-gray-500">
-                            Padrão da indústria
-                          </div>
+                          <div className="text-xs text-gray-500">Padrão da indústria</div>
                           {benchmark.certification_requirement && (
                             <Badge variant="outline" className="mt-1">
                               {benchmark.certification_requirement}
@@ -1279,19 +1112,11 @@ export default function TreatmentSuccessPage({
                         <h4 className="font-medium">{report.report_type}</h4>
                         <p className="text-sm text-gray-600">
                           Período:{" "}
-                          {new Date(
-                            report.reporting_period_start
-                          ).toLocaleDateString("pt-BR")}{" "}
-                          -{" "}
-                          {new Date(
-                            report.reporting_period_end
-                          ).toLocaleDateString("pt-BR")}
+                          {new Date(report.reporting_period_start).toLocaleDateString("pt-BR")} -{" "}
+                          {new Date(report.reporting_period_end).toLocaleDateString("pt-BR")}
                         </p>
                         <p className="text-sm text-gray-600">
-                          Criado em:{" "}
-                          {new Date(report.created_at).toLocaleDateString(
-                            "pt-BR"
-                          )}
+                          Criado em: {new Date(report.created_at).toLocaleDateString("pt-BR")}
                         </p>
                       </div>
                       <div className="text-right">

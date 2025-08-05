@@ -10,24 +10,29 @@
 }
 
 export class AuditLogger {
-  async log(event: Omit<AuditEvent, 'id' | 'timestamp'>) {
+  async log(event: Omit<AuditEvent, "id" | "timestamp">) {
     const auditEvent: AuditEvent = {
       ...event,
-      id: 'audit-' + Date.now(),
-      timestamp: new Date()
+      id: "audit-" + Date.now(),
+      timestamp: new Date(),
     };
-    
+
     // Implementation would save to database
-    console.log('Audit Event:', auditEvent);
+    console.log("Audit Event:", auditEvent);
     return auditEvent;
   }
 
-  async logDataAccess(userId: string, resource: string, action: string, details?: Record<string, any>) {
+  async logDataAccess(
+    userId: string,
+    resource: string,
+    action: string,
+    details?: Record<string, any>,
+  ) {
     return this.log({
       userId,
       action: `data_access:${action}`,
       resource,
-      details: details || {}
+      details: details || {},
     });
   }
 
@@ -35,8 +40,8 @@ export class AuditLogger {
     return this.log({
       userId,
       action: `security:${event}`,
-      resource: 'security',
-      details: details || {}
+      resource: "security",
+      details: details || {},
     });
   }
 
@@ -44,8 +49,8 @@ export class AuditLogger {
     return this.log({
       userId,
       action: `compliance:${event}`,
-      resource: 'compliance',
-      details: details || {}
+      resource: "compliance",
+      details: details || {},
     });
   }
 }

@@ -5,16 +5,16 @@
 // Performance optimized with dayjs and KPI tracking
 // =============================================
 
-import { useState, useCallback } from 'react';
-import { toast } from 'sonner';
-import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
-import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
-import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import type { useState, useCallback } from "react";
+import type { toast } from "sonner";
+import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 
 // Performance optimization with dayjs plugins (research-based)
 dayjs.extend(duration);
-dayjs.extend(isSameOrBefore); 
+dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
 
 export interface AlternativeSlot {
@@ -75,7 +75,7 @@ export interface UseAlternativeSlotsResult {
   clearSuggestions: () => void;
   selectSuggestion: (suggestion: AlternativeSlot) => void;
   selectedSuggestion: AlternativeSlot | null;
-  searchMetadata: AlternativeSlotsResponse['metadata'] | null;
+  searchMetadata: AlternativeSlotsResponse["metadata"] | null;
   // Research-based KPI tracking
   performanceMetrics: PerformanceMetrics | null;
 }
@@ -94,7 +94,9 @@ export function useAlternativeSlots(): UseAlternativeSlotsResult {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedSuggestion, setSelectedSuggestion] = useState<AlternativeSlot | null>(null);
-  const [searchMetadata, setSearchMetadata] = useState<AlternativeSlotsResponse['metadata'] | null>(null);
+  const [searchMetadata, setSearchMetadata] = useState<AlternativeSlotsResponse["metadata"] | null>(
+    null,
+  );
   const [performanceMetrics, setPerformanceMetrics] = useState<PerformanceMetrics | null>(null);
 
   // Enhanced suggestion retrieval with performance tracking
@@ -106,10 +108,10 @@ export function useAlternativeSlots(): UseAlternativeSlotsResult {
     setSearchMetadata(null);
 
     try {
-      const response = await fetch('/api/appointments/suggest-alternatives', {
-        method: 'POST',
+      const response = await fetch("/api/appointments/suggest-alternatives", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           ...request,
@@ -120,13 +122,15 @@ export function useAlternativeSlots(): UseAlternativeSlotsResult {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.details || errorData.error || 'Failed to get alternative suggestions');
+        throw new Error(
+          errorData.details || errorData.error || "Failed to get alternative suggestions",
+        );
       }
 
       const data: AlternativeSlotsResponse = await response.json();
 
       if (!data.success) {
-        throw new Error('Server returned unsuccessful response');
+        throw new Error("Server returned unsuccessful response");
       }
 
       setSuggestions(data.suggestions);
@@ -135,33 +139,27 @@ export function useAlternativeSlots(): UseAlternativeSlotsResult {
       // Show success message if we found suggestions
       if (data.suggestions.length > 0) {
         toast.success(
-          `Encontrei ${data.suggestions.length} horário${data.suggestions.length > 1 ? 's' : ''} alternativo${data.suggestions.length > 1 ? 's' : ''} disponível${data.suggestions.length > 1 ? 'is' : ''}`,
+          `Encontrei ${data.suggestions.length} horário${data.suggestions.length > 1 ? "s" : ""} alternativo${data.suggestions.length > 1 ? "s" : ""} disponível${data.suggestions.length > 1 ? "is" : ""}`,
           {
             description: `Tempo de busca: ${data.performance.generation_time_ms}ms`,
             duration: 3000,
-          }
+          },
         );
       } else {
-        toast.warning(
-          'Nenhum horário alternativo encontrado',
-          {
-            description: 'Tente expandir a janela de busca ou escolher outro profissional',
-            duration: 4000,
-          }
-        );
+        toast.warning("Nenhum horário alternativo encontrado", {
+          description: "Tente expandir a janela de busca ou escolher outro profissional",
+          duration: 4000,
+        });
       }
-
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido ao buscar horários alternativos';
+      const errorMessage =
+        err instanceof Error ? err.message : "Erro desconhecido ao buscar horários alternativos";
       setError(errorMessage);
-      
-      toast.error(
-        'Erro ao buscar horários alternativos',
-        {
-          description: errorMessage,
-          duration: 5000,
-        }
-      );
+
+      toast.error("Erro ao buscar horários alternativos", {
+        description: errorMessage,
+        duration: 5000,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -176,14 +174,11 @@ export function useAlternativeSlots(): UseAlternativeSlotsResult {
 
   const selectSuggestion = useCallback((suggestion: AlternativeSlot) => {
     setSelectedSuggestion(suggestion);
-    
-    toast.success(
-      'Horário alternativo selecionado',
-      {
-        description: `${suggestion.formatted_date} às ${suggestion.formatted_time}`,
-        duration: 3000,
-      }
-    );
+
+    toast.success("Horário alternativo selecionado", {
+      description: `${suggestion.formatted_date} às ${suggestion.formatted_time}`,
+      duration: 3000,
+    });
   }, []);
 
   return {
@@ -200,44 +195,60 @@ export function useAlternativeSlots(): UseAlternativeSlotsResult {
 
 // Utility function to format alternative slot for display
 export function formatAlternativeSlot(slot: AlternativeSlot): string {
-  const dayName = new Intl.DateTimeFormat('pt-BR', { weekday: 'long' }).format(new Date(slot.start_time));
-  const formattedDate = new Intl.DateTimeFormat('pt-BR', { 
-    day: '2-digit', 
-    month: '2-digit' 
+  const dayName = new Intl.DateTimeFormat("pt-BR", { weekday: "long" }).format(
+    new Date(slot.start_time),
+  );
+  const formattedDate = new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
   }).format(new Date(slot.start_time));
-  
+
   return `${dayName}, ${formattedDate} às ${slot.formatted_time}`;
 }
 
 // Utility function to get suggestion quality indicator
-export function getSuggestionQuality(slot: AlternativeSlot): 'excellent' | 'good' | 'fair' | 'poor' {
-  if (slot.score >= 90) return 'excellent';
-  if (slot.score >= 75) return 'good';
-  if (slot.score >= 60) return 'fair';
-  return 'poor';
+export function getSuggestionQuality(
+  slot: AlternativeSlot,
+): "excellent" | "good" | "fair" | "poor" {
+  if (slot.score >= 90) return "excellent";
+  if (slot.score >= 75) return "good";
+  if (slot.score >= 60) return "fair";
+  return "poor";
 }
 
 // Utility function to get quality color class
-export function getSuggestionQualityColor(quality: ReturnType<typeof getSuggestionQuality>): string {
+export function getSuggestionQualityColor(
+  quality: ReturnType<typeof getSuggestionQuality>,
+): string {
   switch (quality) {
-    case 'excellent': return 'text-green-600 bg-green-50 border-green-200';
-    case 'good': return 'text-blue-600 bg-blue-50 border-blue-200';
-    case 'fair': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-    case 'poor': return 'text-red-600 bg-red-50 border-red-200';
-    default: return 'text-gray-600 bg-gray-50 border-gray-200';
+    case "excellent":
+      return "text-green-600 bg-green-50 border-green-200";
+    case "good":
+      return "text-blue-600 bg-blue-50 border-blue-200";
+    case "fair":
+      return "text-yellow-600 bg-yellow-50 border-yellow-200";
+    case "poor":
+      return "text-red-600 bg-red-50 border-red-200";
+    default:
+      return "text-gray-600 bg-gray-50 border-gray-200";
   }
 }
 
 // Utility function to group suggestions by day
-export function groupSuggestionsByDay(suggestions: AlternativeSlot[]): Record<string, AlternativeSlot[]> {
-  return suggestions.reduce((groups, suggestion) => {
-    const date = new Date(suggestion.start_time).toDateString();
-    if (!groups[date]) {
-      groups[date] = [];
-    }
-    groups[date].push(suggestion);
-    return groups;
-  }, {} as Record<string, AlternativeSlot[]>);
+export function groupSuggestionsByDay(
+  suggestions: AlternativeSlot[],
+): Record<string, AlternativeSlot[]> {
+  return suggestions.reduce(
+    (groups, suggestion) => {
+      const date = new Date(suggestion.start_time).toDateString();
+      if (!groups[date]) {
+        groups[date] = [];
+      }
+      groups[date].push(suggestion);
+      return groups;
+    },
+    {} as Record<string, AlternativeSlot[]>,
+  );
 }
 // =============================================
 // Research-based optimization functions
@@ -246,35 +257,38 @@ export function groupSuggestionsByDay(suggestions: AlternativeSlot[]): Record<st
 
 // PSO-based preference matching (from research findings)
 function calculatePreferenceMatch(
-  suggestion: AlternativeSlot, 
-  request: AlternativeSlotsRequest
+  suggestion: AlternativeSlot,
+  request: AlternativeSlotsRequest,
 ): number {
   let score = 0.5; // Base score
-  
+
   // Time preference matching using dayjs optimization
   if (request.preferred_times && request.preferred_times.length > 0) {
-    const suggestionTime = dayjs(suggestion.start_time).format('HH:mm');
-    const timeMatch = request.preferred_times.some(pref => 
-      Math.abs(dayjs(`1970-01-01 ${suggestionTime}`).diff(dayjs(`1970-01-01 ${pref}`), 'minutes')) <= 30
+    const suggestionTime = dayjs(suggestion.start_time).format("HH:mm");
+    const timeMatch = request.preferred_times.some(
+      (pref) =>
+        Math.abs(
+          dayjs(`1970-01-01 ${suggestionTime}`).diff(dayjs(`1970-01-01 ${pref}`), "minutes"),
+        ) <= 30,
     );
     if (timeMatch) score += 0.3;
   }
-  
+
   // Same day preference (higher score)
   if (suggestion.is_same_day) {
     score += 0.2;
   }
-  
+
   return Math.min(1, score);
 }
 
 // KPI calculation for user satisfaction (industry metric)
 function calculateAvgSatisfaction(suggestions: AlternativeSlot[]): number {
   if (suggestions.length === 0) return 0;
-  
+
   const totalScore = suggestions.reduce((sum, s) => sum + s.score, 0);
   const avgScore = totalScore / suggestions.length;
-  
+
   // Convert score to satisfaction percentage (research-based formula)
   return Math.max(0.3, avgScore / 100);
 }
@@ -287,35 +301,35 @@ export function filterSuggestionsWithDayjs(
     maxTime?: string;
     excludeDays?: number[];
     onlyWorkingHours?: boolean;
-  }
+  },
 ): AlternativeSlot[] {
-  return suggestions.filter(suggestion => {
+  return suggestions.filter((suggestion) => {
     const suggestionDayjs = suggestion.dayjs_instance || dayjs(suggestion.start_time);
-    
+
     // Time range filtering
     if (filters.minTime) {
       const minTime = dayjs(`1970-01-01 ${filters.minTime}`);
-      const suggestionTime = dayjs(`1970-01-01 ${suggestionDayjs.format('HH:mm')}`);
+      const suggestionTime = dayjs(`1970-01-01 ${suggestionDayjs.format("HH:mm")}`);
       if (suggestionTime.isBefore(minTime)) return false;
     }
-    
+
     if (filters.maxTime) {
       const maxTime = dayjs(`1970-01-01 ${filters.maxTime}`);
-      const suggestionTime = dayjs(`1970-01-01 ${suggestionDayjs.format('HH:mm')}`);
+      const suggestionTime = dayjs(`1970-01-01 ${suggestionDayjs.format("HH:mm")}`);
       if (suggestionTime.isAfter(maxTime)) return false;
     }
-    
+
     // Day exclusion
     if (filters.excludeDays && filters.excludeDays.includes(suggestionDayjs.day())) {
       return false;
     }
-    
+
     // Working hours only (8:00 - 18:00)
     if (filters.onlyWorkingHours) {
       const hour = suggestionDayjs.hour();
       if (hour < 8 || hour >= 18) return false;
     }
-    
+
     return true;
   });
 }
@@ -324,20 +338,21 @@ export function filterSuggestionsWithDayjs(
 export function trackAlgorithmPerformance(
   startTime: number,
   suggestionCount: number,
-  userAction: 'accepted' | 'rejected' | 'modified'
+  userAction: "accepted" | "rejected" | "modified",
 ): void {
   const endTime = performance.now();
   const processingTime = endTime - startTime;
-  
+
   // Log performance metrics for analysis
-  console.log('Alternative Slots Algorithm Performance:', {
+  console.log("Alternative Slots Algorithm Performance:", {
     processing_time_ms: processingTime,
     suggestions_generated: suggestionCount,
     user_action: userAction,
-    efficiency_score: processingTime < 200 ? 'excellent' : processingTime < 500 ? 'good' : 'needs_optimization',
+    efficiency_score:
+      processingTime < 200 ? "excellent" : processingTime < 500 ? "good" : "needs_optimization",
     timestamp: new Date().toISOString(),
   });
-  
+
   // Could send to analytics service for continuous improvement
   // analytics.track('alternative_slots_performance', { ... });
 }

@@ -1,17 +1,23 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Progress } from '@/components/ui/progress';
-import { 
-  User, 
-  Phone, 
-  Mail, 
-  MapPin, 
+import React, { useState } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Progress } from "@/components/ui/progress";
+import type {
+  User,
+  Phone,
+  Mail,
+  MapPin,
   Calendar,
   Heart,
   Brain,
@@ -20,8 +26,8 @@ import {
   Star,
   Clock,
   FileText,
-  TrendingUp
-} from 'lucide-react';
+  TrendingUp,
+} from "lucide-react";
 
 interface PatientProfileProps {
   selectedPatient?: any;
@@ -62,28 +68,28 @@ export default function PatientProfile({ selectedPatient }: PatientProfileProps)
     const birthDate = new Date(dateOfBirth);
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-    
+
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
-    
+
     return age;
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
+    return new Date(dateString).toLocaleDateString("pt-BR");
   };
 
   const getCompletenessColor = (score: number) => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 80) return "text-green-600";
+    if (score >= 60) return "text-yellow-600";
+    return "text-red-600";
   };
 
   const getCompletenessStatus = (score: number) => {
-    if (score >= 80) return 'Completo';
-    if (score >= 60) return 'Parcial';
-    return 'Incompleto';
+    if (score >= 80) return "Completo";
+    if (score >= 60) return "Parcial";
+    return "Incompleto";
   };
 
   const loadPatientInsights = async () => {
@@ -97,7 +103,7 @@ export default function PatientProfile({ selectedPatient }: PatientProfileProps)
         setInsights(data);
       }
     } catch (error) {
-      console.error('Error loading insights:', error);
+      console.error("Error loading insights:", error);
     } finally {
       setLoadingInsights(false);
     }
@@ -129,7 +135,7 @@ export default function PatientProfile({ selectedPatient }: PatientProfileProps)
           <div className="h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center">
             <User className="h-8 w-8 text-blue-600" />
           </div>
-          
+
           <div>
             <h2 className="text-2xl font-bold">{patient.demographics.name}</h2>
             <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
@@ -137,12 +143,15 @@ export default function PatientProfile({ selectedPatient }: PatientProfileProps)
               <span>{patient.demographics.gender}</span>
               <span>Nascimento: {formatDate(patient.demographics.date_of_birth)}</span>
             </div>
-            
+
             <div className="flex items-center gap-2 mt-2">
               <Badge variant={patient.is_active ? "default" : "secondary"}>
                 {patient.is_active ? "Ativo" : "Inativo"}
               </Badge>
-              <Badge variant="outline" className={getCompletenessColor(patient.profile_completeness_score)}>
+              <Badge
+                variant="outline"
+                className={getCompletenessColor(patient.profile_completeness_score)}
+              >
                 {getCompletenessStatus(patient.profile_completeness_score)}
               </Badge>
             </div>
@@ -152,7 +161,9 @@ export default function PatientProfile({ selectedPatient }: PatientProfileProps)
         <div className="text-right">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-sm font-medium">Completude do Perfil:</span>
-            <span className={`font-bold ${getCompletenessColor(patient.profile_completeness_score)}`}>
+            <span
+              className={`font-bold ${getCompletenessColor(patient.profile_completeness_score)}`}
+            >
               {Math.round(patient.profile_completeness_score)}%
             </span>
           </div>
@@ -185,14 +196,14 @@ export default function PatientProfile({ selectedPatient }: PatientProfileProps)
                   <span>{patient.demographics.phone}</span>
                 </div>
               )}
-              
+
               {patient.demographics.email && (
                 <div className="flex items-center gap-2">
                   <Mail className="h-4 w-4 text-muted-foreground" />
                   <span>{patient.demographics.email}</span>
                 </div>
               )}
-              
+
               {patient.demographics.address && (
                 <div className="flex items-center gap-2">
                   <MapPin className="h-4 w-4 text-muted-foreground" />
@@ -299,25 +310,26 @@ export default function PatientProfile({ selectedPatient }: PatientProfileProps)
           )}
 
           {/* Current Medications */}
-          {patient.medical_history?.current_medications && patient.medical_history.current_medications.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Activity className="h-5 w-5" />
-                  Medicações Atuais
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {patient.medical_history.current_medications.map((medication, index) => (
-                    <Badge key={index} variant="secondary">
-                      {medication}
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          {patient.medical_history?.current_medications &&
+            patient.medical_history.current_medications.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Activity className="h-5 w-5" />
+                    Medicações Atuais
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {patient.medical_history.current_medications.map((medication, index) => (
+                      <Badge key={index} variant="secondary">
+                        {medication}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
         </TabsContent>
 
         <TabsContent value="insights" className="space-y-4">
@@ -329,7 +341,7 @@ export default function PatientProfile({ selectedPatient }: PatientProfileProps)
               ) : (
                 <TrendingUp className="h-4 w-4 mr-2" />
               )}
-              {loadingInsights ? 'Analisando...' : 'Atualizar Insights'}
+              {loadingInsights ? "Analisando..." : "Atualizar Insights"}
             </Button>
           </div>
 
@@ -400,9 +412,7 @@ export default function PatientProfile({ selectedPatient }: PatientProfileProps)
                 <Clock className="h-5 w-5" />
                 Linha do Tempo
               </CardTitle>
-              <CardDescription>
-                Histórico de atividades e interações
-              </CardDescription>
+              <CardDescription>Histórico de atividades e interações</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8 text-muted-foreground">

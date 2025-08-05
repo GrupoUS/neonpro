@@ -1,7 +1,7 @@
 import type { AppointmentWithRelations } from "@/app/lib/types/appointments";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import {
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Button } from "@/components/ui/button";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -9,20 +9,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { differenceInHours, format, isAfter } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import {
-  AlertTriangle,
-  Calendar,
-  Clock,
-  Loader2,
-  Stethoscope,
-  User,
-} from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type { differenceInHours, format, isAfter } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { AlertTriangle, Calendar, Clock, Loader2, Stethoscope, User } from "lucide-react";
+import type { useState } from "react";
+import type { toast } from "sonner";
 
 interface DeleteAppointmentDialogProps {
   appointment: AppointmentWithRelations | null;
@@ -57,11 +50,9 @@ export default function DeleteAppointmentDialog({
   if (isFutureAppointment) {
     warnings.push({
       icon: Calendar,
-      message: `Este é um agendamento futuro (${format(
-        appointmentDate,
-        "dd/MM/yyyy 'às' HH:mm",
-        { locale: ptBR }
-      )})`,
+      message: `Este é um agendamento futuro (${format(appointmentDate, "dd/MM/yyyy 'às' HH:mm", {
+        locale: ptBR,
+      })})`,
       severity: "warning" as const,
     });
   }
@@ -85,8 +76,7 @@ export default function DeleteAppointmentDialog({
   if (isToday) {
     warnings.push({
       icon: AlertTriangle,
-      message:
-        "Agendamento para hoje - considere reagendar ao invés de cancelar",
+      message: "Agendamento para hoje - considere reagendar ao invés de cancelar",
       severity: "warning" as const,
     });
   }
@@ -139,8 +129,8 @@ export default function DeleteAppointmentDialog({
             Cancelar Agendamento
           </DialogTitle>
           <DialogDescription>
-            Esta ação não pode ser desfeita. O agendamento será marcado como
-            cancelado e permanecerá no histórico para auditoria.
+            Esta ação não pode ser desfeita. O agendamento será marcado como cancelado e permanecerá
+            no histórico para auditoria.
           </DialogDescription>
         </DialogHeader>
 
@@ -156,10 +146,7 @@ export default function DeleteAppointmentDialog({
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <Stethoscope className="h-4 w-4" />
-                <span>
-                  {appointment.professional?.full_name ||
-                    "Profissional não informado"}
-                </span>
+                <span>{appointment.professional?.full_name || "Profissional não informado"}</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <Calendar className="h-4 w-4" />
@@ -183,9 +170,7 @@ export default function DeleteAppointmentDialog({
                 return (
                   <Alert
                     key={index}
-                    variant={
-                      warning.severity === "error" ? "destructive" : "default"
-                    }
+                    variant={warning.severity === "error" ? "destructive" : "default"}
                   >
                     <IconComponent className="h-4 w-4" />
                     <AlertDescription>{warning.message}</AlertDescription>

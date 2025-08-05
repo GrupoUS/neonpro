@@ -2,59 +2,65 @@
  * Clinical Notes Management Component
  * FHIR R4 compliant component for clinical documentation and notes
  * Follows Brazilian healthcare standards and LGPD compliance
- * 
+ *
  * Created: January 26, 2025
  * Story: 3.2 - Treatment & Procedure Documentation
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { 
-  FileText, 
-  Plus, 
-  Search, 
+import type { useState, useEffect } from "react";
+import type { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type {
+  FileText,
+  Plus,
+  Search,
   Calendar,
   User,
   Clock,
   Edit,
   Trash,
-  MoreHorizontal
-} from 'lucide-react';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+  MoreHorizontal,
+} from "lucide-react";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Badge } from "@/components/ui/badge";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import {
+} from "@/components/ui/select";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import {
+} from "@/components/ui/dialog";
+import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
+} from "@/components/ui/dropdown-menu";
+import type {
   Form,
   FormControl,
   FormDescription,
@@ -62,23 +68,23 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { useToast } from '@/hooks/use-toast';
+} from "@/components/ui/form";
+import type { useToast } from "@/hooks/use-toast";
 
-import { 
-  ClinicalNote, 
+import type {
+  ClinicalNote,
   ClinicalNoteSearchFilters,
   CreateClinicalNoteData,
-  createClinicalNoteSchema
-} from '@/lib/types/treatment';
-import { Patient } from '@/lib/types/fhir';
-import { 
-  searchClinicalNotes, 
-  createClinicalNote, 
-  updateClinicalNote, 
-  deleteClinicalNote 
-} from '@/lib/supabase/treatments';
-import { searchPatients } from '@/lib/supabase/patients';
+  createClinicalNoteSchema,
+} from "@/lib/types/treatment";
+import type { Patient } from "@/lib/types/fhir";
+import type {
+  searchClinicalNotes,
+  createClinicalNote,
+  updateClinicalNote,
+  deleteClinicalNote,
+} from "@/lib/supabase/treatments";
+import type { searchPatients } from "@/lib/supabase/patients";
 
 interface ClinicalNotesManagementProps {
   treatmentPlanId?: string;
@@ -87,43 +93,46 @@ interface ClinicalNotesManagementProps {
 }
 
 const noteTypes = [
-  { value: 'progress', label: 'Evolução', color: 'bg-blue-100 text-blue-800' },
-  { value: 'assessment', label: 'Avaliação', color: 'bg-green-100 text-green-800' },
-  { value: 'plan', label: 'Plano', color: 'bg-purple-100 text-purple-800' },
-  { value: 'consultation', label: 'Consulta', color: 'bg-orange-100 text-orange-800' },
-  { value: 'procedure', label: 'Procedimento', color: 'bg-pink-100 text-pink-800' },
-  { value: 'follow-up', label: 'Acompanhamento', color: 'bg-teal-100 text-teal-800' },
-  { value: 'adverse-event', label: 'Evento Adverso', color: 'bg-red-100 text-red-800' },
-  { value: 'education', label: 'Orientação', color: 'bg-yellow-100 text-yellow-800' },
+  { value: "progress", label: "Evolução", color: "bg-blue-100 text-blue-800" },
+  { value: "assessment", label: "Avaliação", color: "bg-green-100 text-green-800" },
+  { value: "plan", label: "Plano", color: "bg-purple-100 text-purple-800" },
+  { value: "consultation", label: "Consulta", color: "bg-orange-100 text-orange-800" },
+  { value: "procedure", label: "Procedimento", color: "bg-pink-100 text-pink-800" },
+  { value: "follow-up", label: "Acompanhamento", color: "bg-teal-100 text-teal-800" },
+  { value: "adverse-event", label: "Evento Adverso", color: "bg-red-100 text-red-800" },
+  { value: "education", label: "Orientação", color: "bg-yellow-100 text-yellow-800" },
 ];
 
 const commonTemplates = [
   {
-    title: 'Evolução pós-procedimento',
-    content: 'Paciente retorna para avaliação pós-procedimento. Apresenta:\n- Estado geral:\n- Área tratada:\n- Sintomas/reações:\n- Orientações fornecidas:\n- Próximos passos:'
+    title: "Evolução pós-procedimento",
+    content:
+      "Paciente retorna para avaliação pós-procedimento. Apresenta:\n- Estado geral:\n- Área tratada:\n- Sintomas/reações:\n- Orientações fornecidas:\n- Próximos passos:",
   },
   {
-    title: 'Avaliação inicial',
-    content: 'Primeira consulta para avaliação estética:\n- Queixa principal:\n- Histórico:\n- Exame físico:\n- Hipótese diagnóstica:\n- Plano proposto:'
+    title: "Avaliação inicial",
+    content:
+      "Primeira consulta para avaliação estética:\n- Queixa principal:\n- Histórico:\n- Exame físico:\n- Hipótese diagnóstica:\n- Plano proposto:",
   },
   {
-    title: 'Consulta de retorno',
-    content: 'Retorno para acompanhamento:\n- Evolução desde último atendimento:\n- Satisfação com resultados:\n- Necessidade de ajustes:\n- Planejamento futuro:'
+    title: "Consulta de retorno",
+    content:
+      "Retorno para acompanhamento:\n- Evolução desde último atendimento:\n- Satisfação com resultados:\n- Necessidade de ajustes:\n- Planejamento futuro:",
   },
 ];
 
-export function ClinicalNotesManagement({ 
-  treatmentPlanId, 
-  patientId, 
-  onSelectNote 
+export function ClinicalNotesManagement({
+  treatmentPlanId,
+  patientId,
+  onSelectNote,
 }: ClinicalNotesManagementProps) {
   const { toast } = useToast();
-  
+
   // State management
   const [notes, setNotes] = useState<ClinicalNote[]>([]);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [filters, setFilters] = useState<ClinicalNoteSearchFilters>({
     treatment_plan_id: treatmentPlanId,
     patient_id: patientId,
@@ -139,13 +148,13 @@ export function ClinicalNotesManagement({
   const form = useForm<CreateClinicalNoteData>({
     resolver: zodResolver(createClinicalNoteSchema),
     defaultValues: {
-      treatment_plan_id: treatmentPlanId || '',
-      patient_id: patientId || '',
-      title: '',
-      content: '',
-      note_type: 'progress',
-      created_date: new Date().toISOString().split('T')[0],
-      author_id: '',
+      treatment_plan_id: treatmentPlanId || "",
+      patient_id: patientId || "",
+      title: "",
+      content: "",
+      note_type: "progress",
+      created_date: new Date().toISOString().split("T")[0],
+      author_id: "",
       tags: [],
     },
   });
@@ -172,16 +181,16 @@ export function ClinicalNotesManagement({
         ...filters,
         search_text: searchText || undefined,
       };
-      
+
       const response = await searchClinicalNotes(searchFilters, currentPage, perPage);
       setNotes(response.clinical_notes);
       setTotalCount(response.total_count);
     } catch (error) {
-      console.error('Erro ao carregar notas clínicas:', error);
+      console.error("Erro ao carregar notas clínicas:", error);
       toast({
-        title: 'Erro',
-        description: 'Não foi possível carregar as notas clínicas.',
-        variant: 'destructive',
+        title: "Erro",
+        description: "Não foi possível carregar as notas clínicas.",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -193,7 +202,7 @@ export function ClinicalNotesManagement({
       const response = await searchPatients({}, 1, 100);
       setPatients(response.patients);
     } catch (error) {
-      console.error('Erro ao carregar pacientes:', error);
+      console.error("Erro ao carregar pacientes:", error);
     }
   };
 
@@ -203,7 +212,7 @@ export function ClinicalNotesManagement({
   };
 
   const handleFilterChange = (key: keyof ClinicalNoteSearchFilters, value: any) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
       [key]: value,
     }));
@@ -213,13 +222,13 @@ export function ClinicalNotesManagement({
   const openCreateDialog = () => {
     setEditingNote(null);
     form.reset({
-      treatment_plan_id: treatmentPlanId || '',
-      patient_id: patientId || '',
-      title: '',
-      content: '',
-      note_type: 'progress',
-      created_date: new Date().toISOString().split('T')[0],
-      author_id: '',
+      treatment_plan_id: treatmentPlanId || "",
+      patient_id: patientId || "",
+      title: "",
+      content: "",
+      note_type: "progress",
+      created_date: new Date().toISOString().split("T")[0],
+      author_id: "",
       tags: [],
     });
     setIsDialogOpen(true);
@@ -234,7 +243,7 @@ export function ClinicalNotesManagement({
       content: note.content,
       note_type: note.note_type,
       created_date: note.created_date,
-      author_id: note.author_id || '',
+      author_id: note.author_id || "",
       tags: note.tags || [],
     });
     setIsDialogOpen(true);
@@ -245,25 +254,25 @@ export function ClinicalNotesManagement({
       if (editingNote) {
         await updateClinicalNote(editingNote.id, data);
         toast({
-          title: 'Sucesso',
-          description: 'Nota clínica atualizada com sucesso.',
+          title: "Sucesso",
+          description: "Nota clínica atualizada com sucesso.",
         });
       } else {
         await createClinicalNote(data);
         toast({
-          title: 'Sucesso',
-          description: 'Nota clínica criada com sucesso.',
+          title: "Sucesso",
+          description: "Nota clínica criada com sucesso.",
         });
       }
 
       setIsDialogOpen(false);
       loadClinicalNotes();
     } catch (error) {
-      console.error('Erro ao salvar nota clínica:', error);
+      console.error("Erro ao salvar nota clínica:", error);
       toast({
-        title: 'Erro',
-        description: 'Não foi possível salvar a nota clínica.',
-        variant: 'destructive',
+        title: "Erro",
+        description: "Não foi possível salvar a nota clínica.",
+        variant: "destructive",
       });
     }
   };
@@ -272,23 +281,23 @@ export function ClinicalNotesManagement({
     try {
       await deleteClinicalNote(note.id);
       toast({
-        title: 'Sucesso',
-        description: 'Nota clínica excluída com sucesso.',
+        title: "Sucesso",
+        description: "Nota clínica excluída com sucesso.",
       });
       loadClinicalNotes();
     } catch (error) {
-      console.error('Erro ao excluir nota clínica:', error);
+      console.error("Erro ao excluir nota clínica:", error);
       toast({
-        title: 'Erro',
-        description: 'Não foi possível excluir a nota clínica.',
-        variant: 'destructive',
+        title: "Erro",
+        description: "Não foi possível excluir a nota clínica.",
+        variant: "destructive",
       });
     }
   };
 
   const applyTemplate = (template: { title: string; content: string }) => {
-    form.setValue('title', template.title);
-    form.setValue('content', template.content);
+    form.setValue("title", template.title);
+    form.setValue("content", template.content);
   };
 
   const formatDate = (dateString: string) => {
@@ -296,7 +305,7 @@ export function ClinicalNotesManagement({
   };
 
   const getNoteType = (type: string) => {
-    return noteTypes.find(nt => nt.value === type);
+    return noteTypes.find((nt) => nt.value === type);
   };
 
   const totalPages = Math.ceil(totalCount / perPage);
@@ -307,17 +316,14 @@ export function ClinicalNotesManagement({
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Notas Clínicas</h1>
-          <p className="text-muted-foreground">
-            Documentação clínica seguindo padrões HL7 FHIR R4
-          </p>
+          <p className="text-muted-foreground">Documentação clínica seguindo padrões HL7 FHIR R4</p>
         </div>
-        
+
         <Button onClick={openCreateDialog}>
           <Plus className="mr-2 h-4 w-4" />
           Nova Nota
         </Button>
       </div>
-
       {/* Search and Filters */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center">
         <div className="relative flex-1">
@@ -329,13 +335,13 @@ export function ClinicalNotesManagement({
             className="pl-9"
           />
         </div>
-        
+
         <div className="flex gap-2">
           {!patientId && (
             <Select
-              value={filters.patient_id || 'all'}
-              onValueChange={(value) => 
-                handleFilterChange('patient_id', value === 'all' ? undefined : value)
+              value={filters.patient_id || "all"}
+              onValueChange={(value) =>
+                handleFilterChange("patient_id", value === "all" ? undefined : value)
               }
             >
               <SelectTrigger className="w-[200px]">
@@ -353,9 +359,9 @@ export function ClinicalNotesManagement({
           )}
 
           <Select
-            value={filters.note_type || 'all'}
-            onValueChange={(value) => 
-              handleFilterChange('note_type', value === 'all' ? undefined : value)
+            value={filters.note_type || "all"}
+            onValueChange={(value) =>
+              handleFilterChange("note_type", value === "all" ? undefined : value)
             }
           >
             <SelectTrigger className="w-[150px]">
@@ -371,7 +377,8 @@ export function ClinicalNotesManagement({
             </SelectContent>
           </Select>
         </div>
-      </div>      {/* Clinical Notes Grid */}
+      </div>{" "}
+      {/* Clinical Notes Grid */}
       <div className="grid gap-4">
         {loading ? (
           <div className="flex items-center justify-center py-8">
@@ -382,17 +389,15 @@ export function ClinicalNotesManagement({
             <div className="text-center">
               <FileText className="mx-auto h-12 w-12 text-muted-foreground" />
               <h3 className="mt-4 text-lg font-semibold">Nenhuma nota encontrada</h3>
-              <p className="text-muted-foreground">
-                Comece criando uma nova nota clínica.
-              </p>
+              <p className="text-muted-foreground">Comece criando uma nova nota clínica.</p>
             </div>
           </div>
         ) : (
           notes.map((note) => {
             const noteType = getNoteType(note.note_type);
             return (
-              <Card 
-                key={note.id} 
+              <Card
+                key={note.id}
                 className="cursor-pointer hover:shadow-md transition-shadow"
                 onClick={() => onSelectNote?.(note)}
               >
@@ -401,11 +406,7 @@ export function ClinicalNotesManagement({
                     <div className="space-y-1 flex-1">
                       <div className="flex items-center gap-2">
                         <CardTitle className="text-lg">{note.title}</CardTitle>
-                        {noteType && (
-                          <Badge className={noteType.color}>
-                            {noteType.label}
-                          </Badge>
-                        )}
+                        {noteType && <Badge className={noteType.color}>{noteType.label}</Badge>}
                       </div>
                       <CardDescription className="flex items-center gap-4 text-sm">
                         <span className="flex items-center gap-1">
@@ -423,7 +424,7 @@ export function ClinicalNotesManagement({
                         </span>
                       </CardDescription>
                     </div>
-                    
+
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
@@ -467,9 +468,7 @@ export function ClinicalNotesManagement({
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <p className="text-sm text-muted-foreground line-clamp-3">
-                    {note.content}
-                  </p>
+                  <p className="text-sm text-muted-foreground line-clamp-3">{note.content}</p>
                   {note.tags && note.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-3">
                       {note.tags.map((tag, index) => (
@@ -485,18 +484,18 @@ export function ClinicalNotesManagement({
           })
         )}
       </div>
-
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
           <div className="text-sm text-muted-foreground">
-            Mostrando {((currentPage - 1) * perPage) + 1} a {Math.min(currentPage * perPage, totalCount)} de {totalCount} resultados
+            Mostrando {(currentPage - 1) * perPage + 1} a{" "}
+            {Math.min(currentPage * perPage, totalCount)} de {totalCount} resultados
           </div>
           <div className="flex items-center space-x-2">
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
             >
               Anterior
@@ -507,7 +506,7 @@ export function ClinicalNotesManagement({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
               disabled={currentPage === totalPages}
             >
               Próxima
@@ -515,14 +514,11 @@ export function ClinicalNotesManagement({
           </div>
         </div>
       )}
-
       {/* Create/Edit Clinical Note Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>
-              {editingNote ? 'Editar Nota Clínica' : 'Nova Nota Clínica'}
-            </DialogTitle>
+            <DialogTitle>{editingNote ? "Editar Nota Clínica" : "Nova Nota Clínica"}</DialogTitle>
             <DialogDescription>
               Documente observações clínicas seguindo padrões HL7 FHIR R4
             </DialogDescription>
@@ -557,10 +553,7 @@ export function ClinicalNotesManagement({
                     <FormItem>
                       <FormLabel>Título da Nota *</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Ex: Evolução pós-procedimento"
-                          {...field}
-                        />
+                        <Input placeholder="Ex: Evolução pós-procedimento" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -629,14 +622,9 @@ export function ClinicalNotesManagement({
                   <FormItem>
                     <FormLabel>Data *</FormLabel>
                     <FormControl>
-                      <Input
-                        type="date"
-                        {...field}
-                      />
+                      <Input type="date" {...field} />
                     </FormControl>
-                    <FormDescription>
-                      Data da observação clínica
-                    </FormDescription>
+                    <FormDescription>Data da observação clínica</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -657,7 +645,8 @@ export function ClinicalNotesManagement({
                       />
                     </FormControl>
                     <FormDescription>
-                      Inclua observações detalhadas sobre o estado do paciente, evolução, procedimentos realizados, etc.
+                      Inclua observações detalhadas sobre o estado do paciente, evolução,
+                      procedimentos realizados, etc.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -674,12 +663,12 @@ export function ClinicalNotesManagement({
                     <FormControl>
                       <Input
                         placeholder="Ex: botox, preenchimento, pós-operatório (separadas por vírgula)"
-                        value={field.value?.join(', ') || ''}
+                        value={field.value?.join(", ") || ""}
                         onChange={(e) => {
                           const tags = e.target.value
-                            .split(',')
-                            .map(tag => tag.trim())
-                            .filter(tag => tag.length > 0);
+                            .split(",")
+                            .map((tag) => tag.trim())
+                            .filter((tag) => tag.length > 0);
                           field.onChange(tags);
                         }}
                       />
@@ -694,16 +683,10 @@ export function ClinicalNotesManagement({
 
               {/* Form Actions */}
               <div className="flex justify-end space-x-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsDialogOpen(false)}
-                >
+                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                   Cancelar
                 </Button>
-                <Button type="submit">
-                  {editingNote ? 'Atualizar' : 'Criar'} Nota
-                </Button>
+                <Button type="submit">{editingNote ? "Atualizar" : "Criar"} Nota</Button>
               </div>
             </form>
           </Form>

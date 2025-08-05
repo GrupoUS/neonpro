@@ -1,241 +1,233 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react'
-import {
+import React, { useState } from "react";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Separator } from '@/components/ui/separator'
-import {
-  Filter,
-  User,
-  Briefcase,
-  Calendar,
-  Clock,
-  X,
-  RotateCcw,
-  Search
-} from 'lucide-react'
-import { CalendarFilters as CalendarFiltersType, Professional } from '@/app/appointments/page'
-import { cn } from '@/lib/utils'
-import moment from 'moment'
-import 'moment/locale/pt-br'
+  DialogTitle,
+} from "@/components/ui/dialog";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Separator } from "@/components/ui/separator";
+import type { Filter, User, Briefcase, Calendar, Clock, X, RotateCcw, Search } from "lucide-react";
+import type { CalendarFilters as CalendarFiltersType, Professional } from "@/app/appointments/page";
+import type { cn } from "@/lib/utils";
+import moment from "moment";
+import "moment/locale/pt-br";
 
-moment.locale('pt-br')
+moment.locale("pt-br");
 
 interface CalendarFiltersProps {
-  isOpen: boolean
-  onClose: () => void
-  filters: CalendarFiltersType
-  onFiltersChange: (filters: CalendarFiltersType) => void
-  professionals: Professional[]
+  isOpen: boolean;
+  onClose: () => void;
+  filters: CalendarFiltersType;
+  onFiltersChange: (filters: CalendarFiltersType) => void;
+  professionals: Professional[];
 }
 
 // Service type configurations
 const serviceTypes = [
   {
-    value: 'consultation',
-    label: 'Consulta',
-    color: 'bg-blue-500',
-    lightColor: 'bg-blue-100 text-blue-800',
-    count: 0 // This would be populated from actual data
+    value: "consultation",
+    label: "Consulta",
+    color: "bg-blue-500",
+    lightColor: "bg-blue-100 text-blue-800",
+    count: 0, // This would be populated from actual data
   },
   {
-    value: 'botox',
-    label: 'Aplicação de Botox',
-    color: 'bg-violet-500',
-    lightColor: 'bg-violet-100 text-violet-800',
-    count: 0
+    value: "botox",
+    label: "Aplicação de Botox",
+    color: "bg-violet-500",
+    lightColor: "bg-violet-100 text-violet-800",
+    count: 0,
   },
   {
-    value: 'fillers',
-    label: 'Preenchimento',
-    color: 'bg-emerald-500',
-    lightColor: 'bg-emerald-100 text-emerald-800',
-    count: 0
+    value: "fillers",
+    label: "Preenchimento",
+    color: "bg-emerald-500",
+    lightColor: "bg-emerald-100 text-emerald-800",
+    count: 0,
   },
   {
-    value: 'procedure',
-    label: 'Procedimento',
-    color: 'bg-amber-500',
-    lightColor: 'bg-amber-100 text-amber-800',
-    count: 0
-  }
-]
+    value: "procedure",
+    label: "Procedimento",
+    color: "bg-amber-500",
+    lightColor: "bg-amber-100 text-amber-800",
+    count: 0,
+  },
+];
 
 // Status configurations
 const statusTypes = [
   {
-    value: 'scheduled',
-    label: 'Agendado',
-    color: 'bg-blue-500',
-    lightColor: 'bg-blue-100 text-blue-800',
-    count: 0
+    value: "scheduled",
+    label: "Agendado",
+    color: "bg-blue-500",
+    lightColor: "bg-blue-100 text-blue-800",
+    count: 0,
   },
   {
-    value: 'confirmed',
-    label: 'Confirmado',
-    color: 'bg-green-500',
-    lightColor: 'bg-green-100 text-green-800',
-    count: 0
+    value: "confirmed",
+    label: "Confirmado",
+    color: "bg-green-500",
+    lightColor: "bg-green-100 text-green-800",
+    count: 0,
   },
   {
-    value: 'in-progress',
-    label: 'Em Atendimento',
-    color: 'bg-orange-500',
-    lightColor: 'bg-orange-100 text-orange-800',
-    count: 0
+    value: "in-progress",
+    label: "Em Atendimento",
+    color: "bg-orange-500",
+    lightColor: "bg-orange-100 text-orange-800",
+    count: 0,
   },
   {
-    value: 'completed',
-    label: 'Concluído',
-    color: 'bg-gray-500',
-    lightColor: 'bg-gray-100 text-gray-800',
-    count: 0
+    value: "completed",
+    label: "Concluído",
+    color: "bg-gray-500",
+    lightColor: "bg-gray-100 text-gray-800",
+    count: 0,
   },
   {
-    value: 'cancelled',
-    label: 'Cancelado',
-    color: 'bg-red-500',
-    lightColor: 'bg-red-100 text-red-800',
-    count: 0
+    value: "cancelled",
+    label: "Cancelado",
+    color: "bg-red-500",
+    lightColor: "bg-red-100 text-red-800",
+    count: 0,
   },
   {
-    value: 'no-show',
-    label: 'Faltou',
-    color: 'bg-gray-400',
-    lightColor: 'bg-gray-100 text-gray-600',
-    count: 0
-  }
-]
+    value: "no-show",
+    label: "Faltou",
+    color: "bg-gray-400",
+    lightColor: "bg-gray-100 text-gray-600",
+    count: 0,
+  },
+];
 
 // Quick date range presets
 const datePresets = [
   {
-    label: 'Hoje',
+    label: "Hoje",
     getValue: () => ({
-      start: moment().startOf('day').toDate(),
-      end: moment().endOf('day').toDate()
-    })
+      start: moment().startOf("day").toDate(),
+      end: moment().endOf("day").toDate(),
+    }),
   },
   {
-    label: 'Esta Semana',
+    label: "Esta Semana",
     getValue: () => ({
-      start: moment().startOf('week').toDate(),
-      end: moment().endOf('week').toDate()
-    })
+      start: moment().startOf("week").toDate(),
+      end: moment().endOf("week").toDate(),
+    }),
   },
   {
-    label: 'Este Mês',
+    label: "Este Mês",
     getValue: () => ({
-      start: moment().startOf('month').toDate(),
-      end: moment().endOf('month').toDate()
-    })
+      start: moment().startOf("month").toDate(),
+      end: moment().endOf("month").toDate(),
+    }),
   },
   {
-    label: 'Próxima Semana',
+    label: "Próxima Semana",
     getValue: () => ({
-      start: moment().add(1, 'week').startOf('week').toDate(),
-      end: moment().add(1, 'week').endOf('week').toDate()
-    })
+      start: moment().add(1, "week").startOf("week").toDate(),
+      end: moment().add(1, "week").endOf("week").toDate(),
+    }),
   },
   {
-    label: 'Próximo Mês',
+    label: "Próximo Mês",
     getValue: () => ({
-      start: moment().add(1, 'month').startOf('month').toDate(),
-      end: moment().add(1, 'month').endOf('month').toDate()
-    })
-  }
-]
+      start: moment().add(1, "month").startOf("month").toDate(),
+      end: moment().add(1, "month").endOf("month").toDate(),
+    }),
+  },
+];
 
 export function CalendarFilters({
   isOpen,
   onClose,
   filters,
   onFiltersChange,
-  professionals
+  professionals,
 }: CalendarFiltersProps) {
-  const [localFilters, setLocalFilters] = useState<CalendarFiltersType>(filters)
-  const [searchQuery, setSearchQuery] = useState('')
+  const [localFilters, setLocalFilters] = useState<CalendarFiltersType>(filters);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Update local filters when props change
   React.useEffect(() => {
-    setLocalFilters(filters)
-  }, [filters])
+    setLocalFilters(filters);
+  }, [filters]);
 
   // Filter professionals based on search
-  const filteredProfessionals = professionals.filter(prof =>
-    prof.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    prof.specialization.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredProfessionals = professionals.filter(
+    (prof) =>
+      prof.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      prof.specialization.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   // Toggle service type filter
   const toggleServiceType = (serviceType: string) => {
-    setLocalFilters(prev => ({
+    setLocalFilters((prev) => ({
       ...prev,
       serviceTypes: prev.serviceTypes.includes(serviceType)
-        ? prev.serviceTypes.filter(s => s !== serviceType)
-        : [...prev.serviceTypes, serviceType]
-    }))
-  }
+        ? prev.serviceTypes.filter((s) => s !== serviceType)
+        : [...prev.serviceTypes, serviceType],
+    }));
+  };
 
   // Toggle status filter
   const toggleStatus = (status: string) => {
-    setLocalFilters(prev => ({
+    setLocalFilters((prev) => ({
       ...prev,
       statuses: prev.statuses.includes(status)
-        ? prev.statuses.filter(s => s !== status)
-        : [...prev.statuses, status]
-    }))
-  }
+        ? prev.statuses.filter((s) => s !== status)
+        : [...prev.statuses, status],
+    }));
+  };
 
   // Toggle professional filter
   const toggleProfessional = (professionalId: string) => {
-    setLocalFilters(prev => ({
+    setLocalFilters((prev) => ({
       ...prev,
       professionals: prev.professionals.includes(professionalId)
-        ? prev.professionals.filter(p => p !== professionalId)
-        : [...prev.professionals, professionalId]
-    }))
-  }
+        ? prev.professionals.filter((p) => p !== professionalId)
+        : [...prev.professionals, professionalId],
+    }));
+  };
 
   // Set date range
   const setDateRange = (range: { start: Date; end: Date }) => {
-    setLocalFilters(prev => ({
+    setLocalFilters((prev) => ({
       ...prev,
-      dateRange: range
-    }))
-  }
+      dateRange: range,
+    }));
+  };
 
   // Clear specific filter
   const clearServiceTypes = () => {
-    setLocalFilters(prev => ({ ...prev, serviceTypes: [] }))
-  }
+    setLocalFilters((prev) => ({ ...prev, serviceTypes: [] }));
+  };
 
   const clearStatuses = () => {
-    setLocalFilters(prev => ({ ...prev, statuses: [] }))
-  }
+    setLocalFilters((prev) => ({ ...prev, statuses: [] }));
+  };
 
   const clearProfessionals = () => {
-    setLocalFilters(prev => ({ ...prev, professionals: [] }))
-  }
+    setLocalFilters((prev) => ({ ...prev, professionals: [] }));
+  };
 
   const clearDateRange = () => {
-    setLocalFilters(prev => ({
+    setLocalFilters((prev) => ({
       ...prev,
-      dateRange: { start: null, end: null }
-    }))
-  }
+      dateRange: { start: null, end: null },
+    }));
+  };
 
   // Clear all filters
   const clearAllFilters = () => {
@@ -243,23 +235,23 @@ export function CalendarFilters({
       serviceTypes: [],
       statuses: [],
       professionals: [],
-      dateRange: { start: null, end: null }
-    }
-    setLocalFilters(emptyFilters)
-  }
+      dateRange: { start: null, end: null },
+    };
+    setLocalFilters(emptyFilters);
+  };
 
   // Apply filters
   const applyFilters = () => {
-    onFiltersChange(localFilters)
-    onClose()
-  }
+    onFiltersChange(localFilters);
+    onClose();
+  };
 
   // Count active filters
-  const activeFiltersCount = 
+  const activeFiltersCount =
     localFilters.serviceTypes.length +
-    localFilters.statuses.length + 
+    localFilters.statuses.length +
     localFilters.professionals.length +
-    (localFilters.dateRange.start || localFilters.dateRange.end ? 1 : 0)
+    (localFilters.dateRange.start || localFilters.dateRange.end ? 1 : 0);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -271,7 +263,7 @@ export function CalendarFilters({
               <span>Filtros da Agenda</span>
               {activeFiltersCount > 0 && (
                 <Badge variant="secondary">
-                  {activeFiltersCount} ativo{activeFiltersCount > 1 ? 's' : ''}
+                  {activeFiltersCount} ativo{activeFiltersCount > 1 ? "s" : ""}
                 </Badge>
               )}
             </div>
@@ -318,10 +310,10 @@ export function CalendarFilters({
                   <div
                     key={service.value}
                     className={cn(
-                      'flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-colors',
+                      "flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-colors",
                       localFilters.serviceTypes.includes(service.value)
-                        ? 'border-primary bg-primary/5'
-                        : 'border-border hover:bg-muted/50'
+                        ? "border-primary bg-primary/5"
+                        : "border-border hover:bg-muted/50",
                     )}
                     onClick={() => toggleServiceType(service.value)}
                   >
@@ -331,7 +323,7 @@ export function CalendarFilters({
                     />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center space-x-2">
-                        <div className={cn('w-3 h-3 rounded-full', service.color)} />
+                        <div className={cn("w-3 h-3 rounded-full", service.color)} />
                         <span className="font-medium text-sm">{service.label}</span>
                       </div>
                     </div>
@@ -368,20 +360,17 @@ export function CalendarFilters({
                   <div
                     key={status.value}
                     className={cn(
-                      'flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-colors',
+                      "flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-colors",
                       localFilters.statuses.includes(status.value)
-                        ? 'border-primary bg-primary/5'
-                        : 'border-border hover:bg-muted/50'
+                        ? "border-primary bg-primary/5"
+                        : "border-border hover:bg-muted/50",
                     )}
                     onClick={() => toggleStatus(status.value)}
                   >
-                    <Checkbox
-                      checked={localFilters.statuses.includes(status.value)}
-                      readOnly
-                    />
+                    <Checkbox checked={localFilters.statuses.includes(status.value)} readOnly />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center space-x-2">
-                        <div className={cn('w-3 h-3 rounded-full', status.color)} />
+                        <div className={cn("w-3 h-3 rounded-full", status.color)} />
                         <span className="font-medium text-sm">{status.label}</span>
                       </div>
                     </div>
@@ -430,10 +419,10 @@ export function CalendarFilters({
                   <div
                     key={professional.id}
                     className={cn(
-                      'flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-colors',
+                      "flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-colors",
                       localFilters.professionals.includes(professional.id)
-                        ? 'border-primary bg-primary/5'
-                        : 'border-border hover:bg-muted/50'
+                        ? "border-primary bg-primary/5"
+                        : "border-border hover:bg-muted/50",
                     )}
                     onClick={() => toggleProfessional(professional.id)}
                   >
@@ -443,25 +432,23 @@ export function CalendarFilters({
                     />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center space-x-2">
-                        <div 
+                        <div
                           className="w-3 h-3 rounded-full flex-shrink-0"
                           style={{ backgroundColor: professional.color }}
                         />
                         <div className="min-w-0">
-                          <p className="font-medium text-sm truncate">
-                            {professional.name}
-                          </p>
+                          <p className="font-medium text-sm truncate">{professional.name}</p>
                           <p className="text-xs text-muted-foreground truncate">
                             {professional.specialization}
                           </p>
                         </div>
                       </div>
                     </div>
-                    <Badge 
-                      variant={professional.availability ? 'default' : 'secondary'}
+                    <Badge
+                      variant={professional.availability ? "default" : "secondary"}
                       className="text-xs"
                     >
-                      {professional.availability ? 'Ativo' : 'Inativo'}
+                      {professional.availability ? "Ativo" : "Inativo"}
                     </Badge>
                   </div>
                 ))}
@@ -514,16 +501,17 @@ export function CalendarFilters({
                   <Label className="text-sm">Data Início</Label>
                   <Input
                     type="date"
-                    value={localFilters.dateRange.start 
-                      ? moment(localFilters.dateRange.start).format('YYYY-MM-DD')
-                      : ''
+                    value={
+                      localFilters.dateRange.start
+                        ? moment(localFilters.dateRange.start).format("YYYY-MM-DD")
+                        : ""
                     }
                     onChange={(e) => {
-                      const startDate = e.target.value ? new Date(e.target.value) : null
-                      setLocalFilters(prev => ({
+                      const startDate = e.target.value ? new Date(e.target.value) : null;
+                      setLocalFilters((prev) => ({
                         ...prev,
-                        dateRange: { ...prev.dateRange, start: startDate }
-                      }))
+                        dateRange: { ...prev.dateRange, start: startDate },
+                      }));
                     }}
                   />
                 </div>
@@ -531,20 +519,22 @@ export function CalendarFilters({
                   <Label className="text-sm">Data Fim</Label>
                   <Input
                     type="date"
-                    value={localFilters.dateRange.end
-                      ? moment(localFilters.dateRange.end).format('YYYY-MM-DD')
-                      : ''
+                    value={
+                      localFilters.dateRange.end
+                        ? moment(localFilters.dateRange.end).format("YYYY-MM-DD")
+                        : ""
                     }
                     onChange={(e) => {
-                      const endDate = e.target.value ? new Date(e.target.value) : null
-                      setLocalFilters(prev => ({
+                      const endDate = e.target.value ? new Date(e.target.value) : null;
+                      setLocalFilters((prev) => ({
                         ...prev,
-                        dateRange: { ...prev.dateRange, end: endDate }
-                      }))
+                        dateRange: { ...prev.dateRange, end: endDate },
+                      }));
                     }}
-                    min={localFilters.dateRange.start 
-                      ? moment(localFilters.dateRange.start).format('YYYY-MM-DD')
-                      : undefined
+                    min={
+                      localFilters.dateRange.start
+                        ? moment(localFilters.dateRange.start).format("YYYY-MM-DD")
+                        : undefined
                     }
                   />
                 </div>
@@ -553,17 +543,15 @@ export function CalendarFilters({
               {/* Selected Range Display */}
               {(localFilters.dateRange.start || localFilters.dateRange.end) && (
                 <div className="p-3 bg-muted/50 rounded-lg">
-                  <p className="text-sm text-muted-foreground">
-                    Período selecionado:
-                  </p>
+                  <p className="text-sm text-muted-foreground">Período selecionado:</p>
                   <p className="font-medium">
-                    {localFilters.dateRange.start 
-                      ? moment(localFilters.dateRange.start).format('DD/MM/YYYY')
-                      : '...'
-                    } até {localFilters.dateRange.end
-                      ? moment(localFilters.dateRange.end).format('DD/MM/YYYY')
-                      : '...'
-                    }
+                    {localFilters.dateRange.start
+                      ? moment(localFilters.dateRange.start).format("DD/MM/YYYY")
+                      : "..."}{" "}
+                    até{" "}
+                    {localFilters.dateRange.end
+                      ? moment(localFilters.dateRange.end).format("DD/MM/YYYY")
+                      : "..."}
                   </p>
                 </div>
               )}
@@ -586,5 +574,5 @@ export function CalendarFilters({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

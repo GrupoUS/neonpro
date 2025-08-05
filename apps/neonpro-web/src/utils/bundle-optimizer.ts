@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useCallback, useRef, useState } from 'react';
+import type { useEffect, useCallback, useRef, useState } from "react";
 
 // =====================================================================================
 // BUNDLE OPTIMIZATION SYSTEM
@@ -22,7 +22,7 @@ interface ChunkInfo {
   loadTime: number;
   dependencies: string[];
   isAsync: boolean;
-  priority: 'high' | 'medium' | 'low';
+  priority: "high" | "medium" | "low";
 }
 
 interface OptimizationConfig {
@@ -32,7 +32,7 @@ interface OptimizationConfig {
   enablePreloading: boolean;
   chunkSizeLimit: number;
   preloadThreshold: number;
-  cacheStrategy: 'aggressive' | 'conservative' | 'custom';
+  cacheStrategy: "aggressive" | "conservative" | "custom";
 }
 
 // =====================================================================================
@@ -55,8 +55,8 @@ export class BundleOptimizer {
       enablePreloading: true,
       chunkSizeLimit: 250000, // 250KB
       preloadThreshold: 0.8,
-      cacheStrategy: 'aggressive',
-      ...config
+      cacheStrategy: "aggressive",
+      ...config,
     };
 
     this.metrics = {
@@ -65,7 +65,7 @@ export class BundleOptimizer {
       chunkCount: 0,
       loadTime: 0,
       cacheHitRate: 0,
-      unusedCode: 0
+      unusedCode: 0,
     };
 
     this.chunks = new Map();
@@ -77,7 +77,7 @@ export class BundleOptimizer {
   }
 
   private initialize() {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       this.setupPerformanceObserver();
       this.analyzeExistingResources();
       this.setupResourceObserver();
@@ -85,45 +85,45 @@ export class BundleOptimizer {
   }
 
   private setupPerformanceObserver() {
-    if ('PerformanceObserver' in window) {
+    if ("PerformanceObserver" in window) {
       const observer = new PerformanceObserver((list) => {
         const entries = list.getEntries();
         this.performanceEntries.push(...entries);
         this.updateMetrics();
       });
 
-      observer.observe({ entryTypes: ['navigation', 'resource', 'measure'] });
+      observer.observe({ entryTypes: ["navigation", "resource", "measure"] });
     }
   }
 
   private analyzeExistingResources() {
     if (performance.getEntriesByType) {
-      const resources = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
-      this.resourceTimings = resources.filter(resource => 
-        resource.name.includes('.js') || resource.name.includes('.css')
+      const resources = performance.getEntriesByType("resource") as PerformanceResourceTiming[];
+      this.resourceTimings = resources.filter(
+        (resource) => resource.name.includes(".js") || resource.name.includes(".css"),
       );
       this.updateMetrics();
     }
   }
 
   private setupResourceObserver() {
-    if ('PerformanceObserver' in window) {
+    if ("PerformanceObserver" in window) {
       const observer = new PerformanceObserver((list) => {
         const entries = list.getEntries() as PerformanceResourceTiming[];
-        const jsResources = entries.filter(entry => 
-          entry.name.includes('.js') || entry.name.includes('.css')
+        const jsResources = entries.filter(
+          (entry) => entry.name.includes(".js") || entry.name.includes(".css"),
         );
         this.resourceTimings.push(...jsResources);
         this.updateMetrics();
       });
 
-      observer.observe({ entryTypes: ['resource'] });
+      observer.observe({ entryTypes: ["resource"] });
     }
   }
 
   private updateMetrics() {
-    const jsResources = this.resourceTimings.filter(r => r.name.includes('.js'));
-    const cssResources = this.resourceTimings.filter(r => r.name.includes('.css'));
+    const jsResources = this.resourceTimings.filter((r) => r.name.includes(".js"));
+    const cssResources = this.resourceTimings.filter((r) => r.name.includes(".css"));
 
     // Calculate total size (estimated from transfer size)
     const totalTransferSize = this.resourceTimings.reduce((sum, resource) => {
@@ -131,15 +131,15 @@ export class BundleOptimizer {
     }, 0);
 
     // Calculate load times
-    const avgLoadTime = this.resourceTimings.reduce((sum, resource) => {
-      return sum + (resource.responseEnd - resource.requestStart);
-    }, 0) / this.resourceTimings.length || 0;
+    const avgLoadTime =
+      this.resourceTimings.reduce((sum, resource) => {
+        return sum + (resource.responseEnd - resource.requestStart);
+      }, 0) / this.resourceTimings.length || 0;
 
     // Calculate cache hit rate
-    const cachedResources = this.resourceTimings.filter(r => r.transferSize === 0);
-    const cacheHitRate = this.resourceTimings.length > 0 
-      ? cachedResources.length / this.resourceTimings.length 
-      : 0;
+    const cachedResources = this.resourceTimings.filter((r) => r.transferSize === 0);
+    const cacheHitRate =
+      this.resourceTimings.length > 0 ? cachedResources.length / this.resourceTimings.length : 0;
 
     this.metrics = {
       totalSize: totalTransferSize,
@@ -147,7 +147,7 @@ export class BundleOptimizer {
       chunkCount: jsResources.length,
       loadTime: avgLoadTime,
       cacheHitRate,
-      unusedCode: this.calculateUnusedCode()
+      unusedCode: this.calculateUnusedCode(),
     };
 
     this.notifyObservers();
@@ -155,22 +155,23 @@ export class BundleOptimizer {
 
   private calculateUnusedCode(): number {
     // Estimate unused code based on coverage API if available
-    if ('coverage' in window && (window as any).coverage) {
+    if ("coverage" in window && (window as any).coverage) {
       try {
         const coverage = (window as any).coverage;
         let totalLines = 0;
         let usedLines = 0;
 
         Object.values(coverage).forEach((file: any) => {
-          if (file.s) { // Statement coverage
+          if (file.s) {
+            // Statement coverage
             totalLines += Object.keys(file.s).length;
-            usedLines += Object.values(file.s).filter(count => count > 0).length;
+            usedLines += Object.values(file.s).filter((count) => count > 0).length;
           }
         });
 
         return totalLines > 0 ? ((totalLines - usedLines) / totalLines) * 100 : 0;
       } catch (error) {
-        console.warn('Failed to calculate code coverage:', error);
+        console.warn("Failed to calculate code coverage:", error);
       }
     }
 
@@ -179,7 +180,7 @@ export class BundleOptimizer {
   }
 
   private notifyObservers() {
-    this.observers.forEach(observer => observer(this.metrics));
+    this.observers.forEach((observer) => observer(this.metrics));
   }
 
   // =====================================================================================
@@ -206,37 +207,37 @@ export class BundleOptimizer {
 
     // Analyze current bundle
     const analysis = this.analyzeBundleHealth();
-    
+
     // Generate recommendations
     if (this.metrics.totalSize > this.config.chunkSizeLimit * 3) {
-      recommendations.push('Consider implementing code splitting for large bundles');
-      actions.push('Implement dynamic imports for route-based splitting');
+      recommendations.push("Consider implementing code splitting for large bundles");
+      actions.push("Implement dynamic imports for route-based splitting");
     }
 
     if (this.metrics.unusedCode > 20) {
-      recommendations.push('High amount of unused code detected');
-      actions.push('Enable tree shaking and remove unused dependencies');
+      recommendations.push("High amount of unused code detected");
+      actions.push("Enable tree shaking and remove unused dependencies");
     }
 
     if (this.metrics.cacheHitRate < 0.5) {
-      recommendations.push('Low cache hit rate detected');
-      actions.push('Implement better caching strategies');
+      recommendations.push("Low cache hit rate detected");
+      actions.push("Implement better caching strategies");
     }
 
     if (this.metrics.loadTime > 3000) {
-      recommendations.push('Slow loading times detected');
-      actions.push('Implement resource preloading and compression');
+      recommendations.push("Slow loading times detected");
+      actions.push("Implement resource preloading and compression");
     }
 
     // Apply optimizations
     if (this.config.enablePreloading) {
       await this.implementPreloading();
-      actions.push('Implemented critical resource preloading');
+      actions.push("Implemented critical resource preloading");
     }
 
     if (this.config.enableCodeSplitting) {
       await this.implementCodeSplitting();
-      actions.push('Implemented dynamic code splitting');
+      actions.push("Implemented dynamic code splitting");
     }
 
     const endTime = performance.now();
@@ -249,40 +250,40 @@ export class BundleOptimizer {
       actions,
       beforeMetrics: analysis.before,
       afterMetrics: this.getMetrics(),
-      improvement: this.calculateImprovement(analysis.before, this.getMetrics())
+      improvement: this.calculateImprovement(analysis.before, this.getMetrics()),
     };
   }
 
   private analyzeBundleHealth() {
     const before = { ...this.metrics };
-    
+
     return {
       before,
       health: {
-        size: this.metrics.totalSize < this.config.chunkSizeLimit ? 'good' : 'poor',
-        loadTime: this.metrics.loadTime < 2000 ? 'good' : 'poor',
-        cacheRate: this.metrics.cacheHitRate > 0.7 ? 'good' : 'poor',
-        unusedCode: this.metrics.unusedCode < 15 ? 'good' : 'poor'
-      }
+        size: this.metrics.totalSize < this.config.chunkSizeLimit ? "good" : "poor",
+        loadTime: this.metrics.loadTime < 2000 ? "good" : "poor",
+        cacheRate: this.metrics.cacheHitRate > 0.7 ? "good" : "poor",
+        unusedCode: this.metrics.unusedCode < 15 ? "good" : "poor",
+      },
     };
   }
 
   private async implementPreloading(): Promise<void> {
     // Identify critical resources
     const criticalResources = this.resourceTimings
-      .filter(resource => {
+      .filter((resource) => {
         const loadTime = resource.responseEnd - resource.requestStart;
         return loadTime > this.config.preloadThreshold * this.metrics.loadTime;
       })
       .slice(0, 3); // Limit to top 3 critical resources
 
     // Create preload links
-    criticalResources.forEach(resource => {
+    criticalResources.forEach((resource) => {
       if (!document.querySelector(`link[href="${resource.name}"]`)) {
-        const link = document.createElement('link');
-        link.rel = 'preload';
+        const link = document.createElement("link");
+        link.rel = "preload";
         link.href = resource.name;
-        link.as = resource.name.includes('.js') ? 'script' : 'style';
+        link.as = resource.name.includes(".js") ? "script" : "style";
         document.head.appendChild(link);
       }
     });
@@ -291,13 +292,14 @@ export class BundleOptimizer {
   private async implementCodeSplitting(): Promise<void> {
     // This would typically be handled at build time
     // Here we simulate the effect by marking chunks as split
-    const largeChunks = Array.from(this.chunks.values())
-      .filter(chunk => chunk.size > this.config.chunkSizeLimit);
+    const largeChunks = Array.from(this.chunks.values()).filter(
+      (chunk) => chunk.size > this.config.chunkSizeLimit,
+    );
 
-    largeChunks.forEach(chunk => {
+    largeChunks.forEach((chunk) => {
       // Mark for splitting
       chunk.isAsync = true;
-      chunk.priority = 'low';
+      chunk.priority = "low";
     });
   }
 
@@ -306,14 +308,14 @@ export class BundleOptimizer {
       sizeReduction: ((before.totalSize - after.totalSize) / before.totalSize) * 100,
       loadTimeImprovement: ((before.loadTime - after.loadTime) / before.loadTime) * 100,
       cacheImprovement: ((after.cacheHitRate - before.cacheHitRate) / before.cacheHitRate) * 100,
-      unusedCodeReduction: ((before.unusedCode - after.unusedCode) / before.unusedCode) * 100
+      unusedCodeReduction: ((before.unusedCode - after.unusedCode) / before.unusedCode) * 100,
     };
   }
 
   public generateReport(): BundleReport {
     const chunks = this.getChunks();
     const metrics = this.getMetrics();
-    
+
     return {
       summary: {
         totalSize: this.formatBytes(metrics.totalSize),
@@ -321,27 +323,27 @@ export class BundleOptimizer {
         chunkCount: metrics.chunkCount,
         avgLoadTime: `${metrics.loadTime.toFixed(0)}ms`,
         cacheHitRate: `${(metrics.cacheHitRate * 100).toFixed(1)}%`,
-        unusedCode: `${metrics.unusedCode.toFixed(1)}%`
+        unusedCode: `${metrics.unusedCode.toFixed(1)}%`,
       },
-      chunks: chunks.map(chunk => ({
+      chunks: chunks.map((chunk) => ({
         name: chunk.name,
         size: this.formatBytes(chunk.size),
         loadTime: `${chunk.loadTime.toFixed(0)}ms`,
         priority: chunk.priority,
-        isAsync: chunk.isAsync
+        isAsync: chunk.isAsync,
       })),
       recommendations: this.generateRecommendations(),
       performance: {
         score: this.calculatePerformanceScore(),
-        grade: this.getPerformanceGrade()
-      }
+        grade: this.getPerformanceGrade(),
+      },
     };
   }
 
   private formatBytes(bytes: number): string {
-    if (bytes === 0) return '0 B';
+    if (bytes === 0) return "0 B";
     const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const sizes = ["B", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
   }
@@ -350,24 +352,25 @@ export class BundleOptimizer {
     const recommendations: string[] = [];
     const metrics = this.metrics;
 
-    if (metrics.totalSize > 1000000) { // > 1MB
-      recommendations.push('Bundle size is large. Consider code splitting.');
+    if (metrics.totalSize > 1000000) {
+      // > 1MB
+      recommendations.push("Bundle size is large. Consider code splitting.");
     }
 
     if (metrics.loadTime > 3000) {
-      recommendations.push('Load time is slow. Implement preloading and compression.');
+      recommendations.push("Load time is slow. Implement preloading and compression.");
     }
 
     if (metrics.cacheHitRate < 0.6) {
-      recommendations.push('Cache hit rate is low. Improve caching strategy.');
+      recommendations.push("Cache hit rate is low. Improve caching strategy.");
     }
 
     if (metrics.unusedCode > 25) {
-      recommendations.push('High unused code detected. Enable tree shaking.');
+      recommendations.push("High unused code detected. Enable tree shaking.");
     }
 
     if (metrics.chunkCount > 20) {
-      recommendations.push('Too many chunks. Consider chunk consolidation.');
+      recommendations.push("Too many chunks. Consider chunk consolidation.");
     }
 
     return recommendations;
@@ -396,11 +399,11 @@ export class BundleOptimizer {
 
   private getPerformanceGrade(): string {
     const score = this.calculatePerformanceScore();
-    if (score >= 90) return 'A';
-    if (score >= 80) return 'B';
-    if (score >= 70) return 'C';
-    if (score >= 60) return 'D';
-    return 'F';
+    if (score >= 90) return "A";
+    if (score >= 80) return "B";
+    if (score >= 70) return "C";
+    if (score >= 60) return "D";
+    return "F";
   }
 }
 
@@ -482,7 +485,7 @@ export function useBundleOptimizer(config?: Partial<OptimizationConfig>) {
     lastOptimization,
     optimize,
     generateReport,
-    chunks: optimizer.getChunks()
+    chunks: optimizer.getChunks(),
   };
 }
 
@@ -493,7 +496,7 @@ export function useBundleMetrics() {
     chunkCount: 0,
     loadTime: 0,
     cacheHitRate: 0,
-    unusedCode: 0
+    unusedCode: 0,
   });
 
   useEffect(() => {
@@ -510,14 +513,13 @@ export function useBundleMetrics() {
 // =====================================================================================
 
 export function preloadCriticalResources(resources: string[]) {
-  resources.forEach(resource => {
+  resources.forEach((resource) => {
     if (!document.querySelector(`link[href="${resource}"]`)) {
-      const link = document.createElement('link');
-      link.rel = 'preload';
+      const link = document.createElement("link");
+      link.rel = "preload";
       link.href = resource;
-      link.as = resource.includes('.js') ? 'script' : 
-                resource.includes('.css') ? 'style' : 'fetch';
-      link.crossOrigin = 'anonymous';
+      link.as = resource.includes(".js") ? "script" : resource.includes(".css") ? "style" : "fetch";
+      link.crossOrigin = "anonymous";
       document.head.appendChild(link);
     }
   });
@@ -525,11 +527,11 @@ export function preloadCriticalResources(resources: string[]) {
 
 export function createChunkPreloader(chunkMap: Record<string, () => Promise<any>>) {
   const preloadedChunks = new Set<string>();
-  
+
   return {
     preload: async (chunkName: string) => {
       if (preloadedChunks.has(chunkName)) return;
-      
+
       const loader = chunkMap[chunkName];
       if (loader) {
         try {
@@ -540,35 +542,35 @@ export function createChunkPreloader(chunkMap: Record<string, () => Promise<any>
         }
       }
     },
-    
+
     preloadAll: async (chunkNames: string[]) => {
       await Promise.allSettled(
-        chunkNames.map(name => {
+        chunkNames.map((name) => {
           const loader = chunkMap[name];
           return loader ? loader() : Promise.resolve();
-        })
+        }),
       );
-      chunkNames.forEach(name => preloadedChunks.add(name));
+      chunkNames.forEach((name) => preloadedChunks.add(name));
     },
-    
-    isPreloaded: (chunkName: string) => preloadedChunks.has(chunkName)
+
+    isPreloaded: (chunkName: string) => preloadedChunks.has(chunkName),
   };
 }
 
 export function measureBundleImpact<T>(fn: () => T, label: string): T {
   const start = performance.now();
   const startMemory = (performance as any).memory?.usedJSHeapSize || 0;
-  
+
   const result = fn();
-  
+
   const end = performance.now();
   const endMemory = (performance as any).memory?.usedJSHeapSize || 0;
-  
+
   console.log(`Bundle Impact [${label}]:`, {
     executionTime: `${(end - start).toFixed(2)}ms`,
-    memoryDelta: `${((endMemory - startMemory) / 1024 / 1024).toFixed(2)}MB`
+    memoryDelta: `${((endMemory - startMemory) / 1024 / 1024).toFixed(2)}MB`,
   });
-  
+
   return result;
 }
 

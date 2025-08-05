@@ -1,71 +1,71 @@
-'use client'
+"use client";
 
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Label } from '@/components/ui/label'
-import { Separator } from '@/components/ui/separator'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
-import {
-    AlertCircle,
-    Calendar,
-    CheckCircle2,
-    Clock,
-    DollarSign,
-    FileText,
-    Loader2,
-    Mail,
-    MessageSquare,
-    Smartphone,
-    User
-} from 'lucide-react'
-import { useState } from 'react'
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type { Label } from "@/components/ui/label";
+import type { Separator } from "@/components/ui/separator";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  AlertCircle,
+  Calendar,
+  CheckCircle2,
+  Clock,
+  DollarSign,
+  FileText,
+  Loader2,
+  Mail,
+  MessageSquare,
+  Smartphone,
+  User,
+} from "lucide-react";
+import type { useState } from "react";
 
 interface Service {
-  id: string
-  name: string
-  duration_minutes: number
-  price: number
-  category: string
+  id: string;
+  name: string;
+  duration_minutes: number;
+  price: number;
+  category: string;
 }
 
 interface Professional {
-  id: string
-  name: string
-  email: string
-  specialties: string[]
-  avatar_url: string | null
+  id: string;
+  name: string;
+  email: string;
+  specialties: string[];
+  avatar_url: string | null;
 }
 
 interface TimeSlot {
-  datetime: string
-  professional_id?: string
-  professional_name?: string
+  datetime: string;
+  professional_id?: string;
+  professional_name?: string;
 }
 
 interface BookingConfirmationProps {
-  service: Service
-  professional: Professional | null
-  timeSlot: TimeSlot
-  notes: string
-  specialRequests: string[]
-  onConfirm: () => Promise<void>
-  onBack: () => void
-  className?: string
+  service: Service;
+  professional: Professional | null;
+  timeSlot: TimeSlot;
+  notes: string;
+  specialRequests: string[];
+  onConfirm: () => Promise<void>;
+  onBack: () => void;
+  className?: string;
 }
 
 interface NotificationPreferences {
-  emailConfirmation: boolean
-  smsConfirmation: boolean
-  emailReminder: boolean
-  smsReminder: boolean
+  emailConfirmation: boolean;
+  smsConfirmation: boolean;
+  emailReminder: boolean;
+  smsReminder: boolean;
 }
 
-export function BookingConfirmation({ 
+export function BookingConfirmation({
   service,
   professional,
   timeSlot,
@@ -73,72 +73,68 @@ export function BookingConfirmation({
   specialRequests,
   onConfirm,
   onBack,
-  className = ""
+  className = "",
 }: BookingConfirmationProps) {
-  const [isConfirming, setIsConfirming] = useState(false)
-  const [confirmationError, setConfirmationError] = useState<string>('')
-  const [agreedToTerms, setAgreedToTerms] = useState(false)
+  const [isConfirming, setIsConfirming] = useState(false);
+  const [confirmationError, setConfirmationError] = useState<string>("");
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [notificationPrefs, setNotificationPrefs] = useState<NotificationPreferences>({
     emailConfirmation: true,
     smsConfirmation: false,
     emailReminder: true,
-    smsReminder: false
-  })
+    smsReminder: false,
+  });
 
   const formatAppointmentDate = () => {
-    const date = new Date(timeSlot.datetime)
-    return format(date, "EEEE, d 'de' MMMM 'de' yyyy", { locale: ptBR })
-  }
+    const date = new Date(timeSlot.datetime);
+    return format(date, "EEEE, d 'de' MMMM 'de' yyyy", { locale: ptBR });
+  };
 
   const formatAppointmentTime = () => {
-    const date = new Date(timeSlot.datetime)
-    return format(date, 'HH:mm', { locale: ptBR })
-  }
+    const date = new Date(timeSlot.datetime);
+    return format(date, "HH:mm", { locale: ptBR });
+  };
 
   const getInitials = (name: string) => {
     return name
-      .split(' ')
-      .map(n => n[0])
-      .join('')
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
       .toUpperCase()
-      .slice(0, 2)
-  }
+      .slice(0, 2);
+  };
 
   const handleConfirm = async () => {
     if (!agreedToTerms) {
-      setConfirmationError('Você deve aceitar os termos e condições para prosseguir.')
-      return
+      setConfirmationError("Você deve aceitar os termos e condições para prosseguir.");
+      return;
     }
 
-    setIsConfirming(true)
-    setConfirmationError('')
+    setIsConfirming(true);
+    setConfirmationError("");
 
     try {
-      await onConfirm()
+      await onConfirm();
     } catch (error) {
-      console.error('Error confirming booking:', error)
-      setConfirmationError('Erro ao confirmar agendamento. Tente novamente.')
+      console.error("Error confirming booking:", error);
+      setConfirmationError("Erro ao confirmar agendamento. Tente novamente.");
     } finally {
-      setIsConfirming(false)
+      setIsConfirming(false);
     }
-  }
+  };
 
   const handleNotificationChange = (key: keyof NotificationPreferences, value: boolean) => {
-    setNotificationPrefs(prev => ({
+    setNotificationPrefs((prev) => ({
       ...prev,
-      [key]: value
-    }))
-  }
+      [key]: value,
+    }));
+  };
 
   return (
     <div className={`space-y-6 ${className}`}>
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">
-          Confirmar Agendamento
-        </h2>
-        <p className="text-gray-600">
-          Revise os detalhes do seu agendamento antes de confirmar
-        </p>
+        <h2 className="text-xl font-semibold text-gray-900 mb-2">Confirmar Agendamento</h2>
+        <p className="text-gray-600">Revise os detalhes do seu agendamento antes de confirmar</p>
       </div>
 
       {/* Appointment Summary */}
@@ -180,8 +176,8 @@ export function BookingConfirmation({
             <div className="flex items-center justify-center w-12 h-12 rounded-full">
               {professional ? (
                 <Avatar className="w-12 h-12">
-                  <AvatarImage 
-                    src={professional.avatar_url || undefined} 
+                  <AvatarImage
+                    src={professional.avatar_url || undefined}
                     alt={`Foto de ${professional.name}`}
                   />
                   <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
@@ -196,7 +192,7 @@ export function BookingConfirmation({
             </div>
             <div className="flex-1">
               <h3 className="font-semibold text-gray-900">
-                {professional ? professional.name : 'Qualquer profissional disponível'}
+                {professional ? professional.name : "Qualquer profissional disponível"}
               </h3>
               {professional && professional.specialties.length > 0 && (
                 <div className="flex flex-wrap gap-1 mt-1">
@@ -223,9 +219,7 @@ export function BookingConfirmation({
               <Calendar className="h-6 w-6" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-gray-900 capitalize">
-                {formatAppointmentDate()}
-              </h3>
+              <h3 className="font-semibold text-gray-900 capitalize">{formatAppointmentDate()}</h3>
               <div className="flex items-center gap-1 mt-1 text-lg font-medium text-green-600">
                 <Clock className="h-5 w-5" />
                 <span>{formatAppointmentTime()}</span>
@@ -242,9 +236,7 @@ export function BookingConfirmation({
                   <MessageSquare className="h-6 w-6" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900 mb-2">
-                    Observações e Solicitações
-                  </h3>
+                  <h3 className="font-semibold text-gray-900 mb-2">Observações e Solicitações</h3>
                   {specialRequests.length > 0 && (
                     <div className="space-y-1 mb-3">
                       {specialRequests.map((request, index) => (
@@ -256,7 +248,7 @@ export function BookingConfirmation({
                   )}
                   {notes.trim() && (
                     <div className="bg-gray-50 p-3 rounded-md text-sm text-gray-700">
-                      {notes.split('\n').map((line, index) => (
+                      {notes.split("\n").map((line, index) => (
                         <div key={index}>{line || <br />}</div>
                       ))}
                     </div>
@@ -285,7 +277,9 @@ export function BookingConfirmation({
                   <Checkbox
                     id="email-confirmation"
                     checked={notificationPrefs.emailConfirmation}
-                    onCheckedChange={(checked) => handleNotificationChange('emailConfirmation', checked as boolean)}
+                    onCheckedChange={(checked) =>
+                      handleNotificationChange("emailConfirmation", checked as boolean)
+                    }
                   />
                   <Label htmlFor="email-confirmation" className="flex items-center gap-2 text-sm">
                     <Mail className="h-4 w-4" />
@@ -296,7 +290,9 @@ export function BookingConfirmation({
                   <Checkbox
                     id="sms-confirmation"
                     checked={notificationPrefs.smsConfirmation}
-                    onCheckedChange={(checked) => handleNotificationChange('smsConfirmation', checked as boolean)}
+                    onCheckedChange={(checked) =>
+                      handleNotificationChange("smsConfirmation", checked as boolean)
+                    }
                   />
                   <Label htmlFor="sms-confirmation" className="flex items-center gap-2 text-sm">
                     <Smartphone className="h-4 w-4" />
@@ -316,7 +312,9 @@ export function BookingConfirmation({
                   <Checkbox
                     id="email-reminder"
                     checked={notificationPrefs.emailReminder}
-                    onCheckedChange={(checked) => handleNotificationChange('emailReminder', checked as boolean)}
+                    onCheckedChange={(checked) =>
+                      handleNotificationChange("emailReminder", checked as boolean)
+                    }
                   />
                   <Label htmlFor="email-reminder" className="flex items-center gap-2 text-sm">
                     <Mail className="h-4 w-4" />
@@ -327,7 +325,9 @@ export function BookingConfirmation({
                   <Checkbox
                     id="sms-reminder"
                     checked={notificationPrefs.smsReminder}
-                    onCheckedChange={(checked) => handleNotificationChange('smsReminder', checked as boolean)}
+                    onCheckedChange={(checked) =>
+                      handleNotificationChange("smsReminder", checked as boolean)
+                    }
                   />
                   <Label htmlFor="sms-reminder" className="flex items-center gap-2 text-sm">
                     <Smartphone className="h-4 w-4" />
@@ -351,16 +351,16 @@ export function BookingConfirmation({
               className="mt-1"
             />
             <Label htmlFor="terms-agreement" className="text-sm text-gray-700 cursor-pointer">
-              Li e aceito os{' '}
+              Li e aceito os{" "}
               <button className="text-blue-600 hover:underline font-medium">
                 termos e condições
-              </button>
-              {' '}e a{' '}
+              </button>{" "}
+              e a{" "}
               <button className="text-blue-600 hover:underline font-medium">
                 política de privacidade
-              </button>
-              {' '}da clínica. Autorizo o tratamento dos meus dados pessoais 
-              conforme a Lei Geral de Proteção de Dados (LGPD).
+              </button>{" "}
+              da clínica. Autorizo o tratamento dos meus dados pessoais conforme a Lei Geral de
+              Proteção de Dados (LGPD).
             </Label>
           </div>
         </CardContent>
@@ -370,9 +370,7 @@ export function BookingConfirmation({
       {confirmationError && (
         <Alert className="border-red-200 bg-red-50">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription className="text-red-700">
-            {confirmationError}
-          </AlertDescription>
+          <AlertDescription className="text-red-700">{confirmationError}</AlertDescription>
         </Alert>
       )}
 
@@ -409,11 +407,11 @@ export function BookingConfirmation({
       <Alert className="border-blue-200 bg-blue-50">
         <AlertCircle className="h-4 w-4" />
         <AlertDescription className="text-blue-700">
-          <strong>Importante:</strong> Após a confirmação, você receberá as notificações 
-          selecionadas. Para cancelar ou reagendar, entre em contato conosco com pelo 
-          menos 24 horas de antecedência.
+          <strong>Importante:</strong> Após a confirmação, você receberá as notificações
+          selecionadas. Para cancelar ou reagendar, entre em contato conosco com pelo menos 24 horas
+          de antecedência.
         </AlertDescription>
       </Alert>
     </div>
-  )
+  );
 }

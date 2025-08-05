@@ -1,9 +1,9 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -11,15 +11,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import {
+import type { Input } from "@/components/ui/input";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
+import type {
   Table,
   TableBody,
   TableCell,
@@ -27,10 +27,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Customer, useCRM } from "@/contexts/crm-context";
-import { formatCurrency, formatDate } from "@/lib/utils";
-import { Download, MoreHorizontal, Plus, Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import type { Customer, useCRM } from "@/contexts/crm-context";
+import type { formatCurrency, formatDate } from "@/lib/utils";
+import type { Download, MoreHorizontal, Plus, Search } from "lucide-react";
+import type { useEffect, useState } from "react";
 
 interface CustomerListProps {
   onCustomerSelect?: (customer: Customer) => void;
@@ -81,8 +81,7 @@ export default function CustomerList({
             last_visit: "2024-12-20",
             total_visits: 8,
             preferred_contact_method: "whatsapp",
-            notes:
-              "Prefere horários pela manhã. Alérgica a produtos com parabenos.",
+            notes: "Prefere horários pela manhã. Alérgica a produtos com parabenos.",
             tags: ["vip", "fidelizada"],
             status: "vip",
             created_at: "2024-01-15T10:00:00Z",
@@ -227,7 +226,7 @@ export default function CustomerList({
           customer.lifetime_value.toString(),
           customer.last_visit ? formatDate(customer.last_visit) : "",
           customer.total_visits.toString(),
-        ].join(",")
+        ].join(","),
       ),
     ].join("\n");
 
@@ -275,9 +274,7 @@ export default function CustomerList({
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Total de Clientes
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Total de Clientes</p>
                 <p className="text-2xl font-bold">{totalCustomers}</p>
               </div>
               <div className="h-8 w-8 bg-primary/10 rounded-full flex items-center justify-center">
@@ -291,9 +288,7 @@ export default function CustomerList({
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Clientes Ativos
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Clientes Ativos</p>
                 <p className="text-2xl font-bold">{activeCustomers}</p>
               </div>
               <div className="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center">
@@ -307,9 +302,7 @@ export default function CustomerList({
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Clientes VIP
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Clientes VIP</p>
                 <p className="text-2xl font-bold">{vipCustomers}</p>
               </div>
               <div className="h-8 w-8 bg-yellow-100 rounded-full flex items-center justify-center">
@@ -327,11 +320,7 @@ export default function CustomerList({
             <CardTitle>Clientes</CardTitle>
 
             <div className="flex items-center gap-2">
-              <Button
-                onClick={handleExportCustomers}
-                variant="outline"
-                size="sm"
-              >
+              <Button onClick={handleExportCustomers} variant="outline" size="sm">
                 <Download className="h-4 w-4 mr-2" />
                 Exportar
               </Button>
@@ -372,8 +361,7 @@ export default function CustomerList({
               </SelectContent>
             </Select>
 
-            {(state.filters.customer_search ||
-              state.filters.customer_status) && (
+            {(state.filters.customer_search || state.filters.customer_status) && (
               <Button onClick={resetFilters} variant="outline" size="sm">
                 Limpar Filtros
               </Button>
@@ -410,11 +398,8 @@ export default function CustomerList({
                   <TableRow>
                     <TableCell colSpan={7} className="text-center py-8">
                       <div className="text-muted-foreground">
-                        {state.filters.customer_search ||
-                        state.filters.customer_status ? (
-                          <>
-                            Nenhum cliente encontrado com os filtros aplicados.
-                          </>
+                        {state.filters.customer_search || state.filters.customer_status ? (
+                          <>Nenhum cliente encontrado com os filtros aplicados.</>
                         ) : (
                           <>Nenhum cliente cadastrado ainda.</>
                         )}
@@ -438,15 +423,9 @@ export default function CustomerList({
                       </TableCell>
                       <TableCell>
                         <div className="space-y-1">
-                          <p className="font-medium">
-                            {customer.profile?.full_name}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {customer.profile?.email}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {customer.profile?.phone}
-                          </p>
+                          <p className="font-medium">{customer.profile?.full_name}</p>
+                          <p className="text-sm text-muted-foreground">{customer.profile?.email}</p>
+                          <p className="text-sm text-muted-foreground">{customer.profile?.phone}</p>
                         </div>
                       </TableCell>
                       <TableCell>{getStatusBadge(customer.status)}</TableCell>
@@ -454,9 +433,7 @@ export default function CustomerList({
                         {formatCurrency(customer.lifetime_value)}
                       </TableCell>
                       <TableCell>
-                        {customer.last_visit
-                          ? formatDate(customer.last_visit)
-                          : "-"}
+                        {customer.last_visit ? formatDate(customer.last_visit) : "-"}
                       </TableCell>
                       <TableCell>{customer.total_visits}</TableCell>
                       <TableCell onClick={(e) => e.stopPropagation()}>
@@ -469,22 +446,16 @@ export default function CustomerList({
                           <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Ações</DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                              onClick={() => onCustomerSelect?.(customer)}
-                            >
+                            <DropdownMenuItem onClick={() => onCustomerSelect?.(customer)}>
                               Ver Detalhes
                             </DropdownMenuItem>
                             {onEditCustomer && (
-                              <DropdownMenuItem
-                                onClick={() => onEditCustomer(customer)}
-                              >
+                              <DropdownMenuItem onClick={() => onEditCustomer(customer)}>
                                 Editar
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-red-600">
-                              Excluir
-                            </DropdownMenuItem>
+                            <DropdownMenuItem className="text-red-600">Excluir</DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>

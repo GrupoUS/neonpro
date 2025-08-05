@@ -33,8 +33,8 @@ export type {
   ABTestMetric,
   FeatureRecommendation,
   RecommendedFeature,
-  TrialFactory
-} from './types'
+  TrialFactory,
+} from "./types";
 
 // Validation Schemas
 export {
@@ -42,47 +42,51 @@ export {
   ConversionStrategySchema,
   UserSegmentSchema,
   EngagementLevelSchema,
-  TrialSchema
-} from './types'
+  TrialSchema,
+} from "./types";
 
 // Core System Components
-export { TrialManagementEngine } from './engine'
-export { CampaignManager } from './campaigns'
+export { TrialManagementEngine } from "./engine";
+export { CampaignManager } from "./campaigns";
 
 // Main Trial Management Class
 export class TrialManager {
-  static engine = new TrialManagementEngine()
-  static campaigns = new CampaignManager()
+  static engine = new TrialManagementEngine();
+  static campaigns = new CampaignManager();
 
   // Quick access methods for common operations
-  static async createTrial(userId: string, source: string = 'website') {
-    return TrialManager.engine.createTrial(userId, source)
+  static async createTrial(userId: string, source: string = "website") {
+    return TrialManager.engine.createTrial(userId, source);
   }
 
   static async getUserTrial(userId: string) {
-    return TrialManager.engine.getUserActiveTrial(userId)
+    return TrialManager.engine.getUserActiveTrial(userId);
   }
 
   static async predictConversion(trialId: string) {
-    return TrialManager.engine.predictConversion(trialId)
+    return TrialManager.engine.predictConversion(trialId);
   }
 
-  static async trackActivity(trialId: string, eventType: JourneyEvent['type'], data: Record<string, any>) {
-    return TrialManager.engine.trackEvent(trialId, eventType, data)
+  static async trackActivity(
+    trialId: string,
+    eventType: JourneyEvent["type"],
+    data: Record<string, any>,
+  ) {
+    return TrialManager.engine.trackEvent(trialId, eventType, data);
   }
 
   static async getUserJourney(trialId: string) {
-    return TrialManager.engine.getUserJourney(trialId)
+    return TrialManager.engine.getUserJourney(trialId);
   }
 
   static async createCampaign(campaignData: Partial<TrialCampaign>) {
-    return TrialManager.campaigns.createCampaign(campaignData)
+    return TrialManager.campaigns.createCampaign(campaignData);
   }
 
   static async launchCampaign(campaignId: string) {
-    return TrialManager.campaigns.launchCampaign(campaignId)
+    return TrialManager.campaigns.launchCampaign(campaignId);
   }
 }
 
 // Default export
-export default TrialManager
+export default TrialManager;

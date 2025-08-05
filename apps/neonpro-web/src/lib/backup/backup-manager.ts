@@ -1,17 +1,17 @@
 /**
  * NeonPro Backup Manager
  * Story 1.8: Sistema de Backup e Recovery
- * 
+ *
  * Gerenciador principal do sistema de backup automático,
  * coordenando backups, recovery e monitoramento.
  */
 
-import { createClient } from '@supabase/supabase-js';
-import { 
-  BackupConfig, 
-  BackupRecord, 
-  BackupProgress, 
-  BackupStatus, 
+import type { createClient } from "@supabase/supabase-js";
+import type {
+  BackupConfig,
+  BackupRecord,
+  BackupProgress,
+  BackupStatus,
   BackupType,
   RecoveryRequest,
   RecoveryProgress,
@@ -24,13 +24,13 @@ import {
   BackupEvent,
   DataType,
   StorageType,
-  BackupPriority
-} from './types';
-import { StorageProvider } from './storage';
-import { SchedulerService } from './scheduler';
-import { MonitoringService } from './monitoring';
-// import { SecurityService } from './security';
-import { auditLogger } from '../auth/audit/audit-logger';
+  BackupPriority,
+} from "./types";
+import type { StorageProvider } from "./storage";
+import type { SchedulerService } from "./scheduler";
+import type { MonitoringService } from "./monitoring";
+// import type { SecurityService } from "./security";
+import type { auditLogger } from "../auth/audit/audit-logger";
 
 /**
  * Gerenciador principal do sistema de backup
@@ -47,9 +47,9 @@ export class BackupManager {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     );
-    
+
     this.storageProvider = new StorageProvider();
     this.scheduler = new SchedulerService(this);
     this.monitoring = new MonitoringService(this);
@@ -63,7 +63,9 @@ export class BackupManager {
   /**
    * Criar nova configuração de backup
    */
-  async createBackupConfig(config: Omit<BackupConfig, 'id' | 'createdAt' | 'updatedAt'>): Promise<ApiResponse<BackupConfig>> {
+  async createBackupConfig(
+    config: Omit<BackupConfig, "id" | "createdAt" | "updatedAt">,
+  ): Promise<ApiResponse<BackupConfig>> {
     try {
       // Validar configuração
       await this.validateBackupConfig(config);
@@ -72,12 +74,12 @@ export class BackupManager {
         ...config,
         id: crypto.randomUUID(),
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       // Salvar no banco
       const { data, error } = await this.supabase
-        .from('backup_configs')
+        .from("backup_configs")
         .insert(newConfig)
         .select()
         .single();
@@ -91,40 +93,43 @@ export class BackupManager {
 
       // Log de auditoria
       await auditLogger.log({
-        action: 'BACKUP_CONFIG_CREATED',
-        entityType: 'BACKUP_CONFIG',
+        action: "BACKUP_CONFIG_CREATED",
+        entityType: "BACKUP_CONFIG",
         entityId: newConfig.id,
         details: { name: newConfig.name, type: newConfig.type },
-        userId: newConfig.createdBy
+        userId: newConfig.createdBy,
       });
 
       return {
         success: true,
         data: data as BackupConfig,
-        message: 'Configuração de backup criada com sucesso',
+        message: "Configuração de backup criada com sucesso",
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
-      return this.handleError('Erro ao criar configuração de backup', error);
+      return this.handleError("Erro ao criar configuração de backup", error);
     }
   }
 
   /**
    * Atualizar configuração de backup
    */
-  async updateBackupConfig(id: string, updates: Partial<BackupConfig>): Promise<ApiResponse<BackupConfig>> {
+  async updateBackupConfig(
+    id: string,
+    updates: Partial<BackupConfig>,
+  ): Promise<ApiResponse<BackupConfig>> {
     try {
       const updatedConfig = {
         ...updates,
         id,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       const { data, error } = await this.supabase
-        .from('backup_configs')
+        .from("backup_configs")
         .update(updatedConfig)
-        .eq('id', id)
+        .eq("id", id)
         .select()
         .single();
 
@@ -136,37 +141,39 @@ export class BackupManager {
       }
 
       await auditLogger.log({
-        action: 'BACKUP_CONFIG_UPDATED',
-        entityType: 'BACKUP_CONFIG',
+        action: "BACKUP_CONFIG_UPDATED",
+        entityType: "BACKUP_CONFIG",
         entityId: id,
         details: updates,
-        userId: updates.createdBy || 'system'
+        userId: updates.createdBy || "system",
       });
 
       return {
         success: true,
         data: data as BackupConfig,
-        message: 'Configuração atualizada com sucesso',
+        message: "Configuração atualizada com sucesso",
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
-      return this.handleError('Erro ao atualizar configuração', error);
+      return this.handleError("Erro ao atualizar configuração", error);
     }
   }
 
   /**
    * Listar configurações de backup
    */
-  async listBackupConfigs(options?: PaginationOptions): Promise<ApiResponse<PaginatedResult<BackupConfig>>> {
+  async listBackupConfigs(
+    options?: PaginationOptions,
+  ): Promise<ApiResponse<PaginatedResult<BackupConfig>>> {
     try {
-      const { page = 1, limit = 20, sortBy = 'createdAt', sortOrder = 'DESC' } = options || {};
+      const { page = 1, limit = 20, sortBy = "createdAt", sortOrder = "DESC" } = options || {};
       const offset = (page - 1) * limit;
 
       const { data, error, count } = await this.supabase
-        .from('backup_configs')
-        .select('*', { count: 'exact' })
-        .order(sortBy, { ascending: sortOrder === 'ASC' })
+        .from("backup_configs")
+        .select("*", { count: "exact" })
+        .order(sortBy, { ascending: sortOrder === "ASC" })
         .range(offset, offset + limit - 1);
 
       if (error) throw error;
@@ -182,13 +189,13 @@ export class BackupManager {
           limit,
           totalPages,
           hasNext: page < totalPages,
-          hasPrev: page > 1
+          hasPrev: page > 1,
         },
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
-      return this.handleError('Erro ao listar configurações', error);
+      return this.handleError("Erro ao listar configurações", error);
     }
   }
 
@@ -203,47 +210,47 @@ export class BackupManager {
     try {
       // Buscar configuração
       const { data: config } = await this.supabase
-        .from('backup_configs')
-        .select('*')
-        .eq('id', configId)
+        .from("backup_configs")
+        .select("*")
+        .eq("id", configId)
         .single();
 
       if (!config) {
-        throw new Error('Configuração de backup não encontrada');
+        throw new Error("Configuração de backup não encontrada");
       }
 
       // Verificar se já existe backup em execução
       if (this.activeBackups.has(configId)) {
-        throw new Error('Backup já está em execução para esta configuração');
+        throw new Error("Backup já está em execução para esta configuração");
       }
 
       // Criar registro de backup
-      const backupRecord: Omit<BackupRecord, 'id'> = {
+      const backupRecord: Omit<BackupRecord, "id"> = {
         configId,
         type: config.type,
         status: BackupStatus.PENDING,
         startTime: new Date(),
         size: 0,
         filesCount: 0,
-        checksum: '',
-        path: '',
+        checksum: "",
+        path: "",
         metadata: {
-          version: '1.0',
-          source: 'manual',
+          version: "1.0",
+          source: "manual",
           dataTypes: config.dataTypes,
-          environment: process.env.NODE_ENV || 'development',
-          hostname: process.env.HOSTNAME || 'localhost',
+          environment: process.env.NODE_ENV || "development",
+          hostname: process.env.HOSTNAME || "localhost",
           userId,
-          clientVersion: '1.0.0',
-          dependencies: []
+          clientVersion: "1.0.0",
+          dependencies: [],
         },
         warnings: [],
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       const { data: record, error } = await this.supabase
-        .from('backup_records')
+        .from("backup_records")
         .insert(backupRecord)
         .select()
         .single();
@@ -254,22 +261,22 @@ export class BackupManager {
       this.performBackup(record as BackupRecord, config as BackupConfig);
 
       await auditLogger.log({
-        action: 'BACKUP_STARTED',
-        entityType: 'BACKUP',
+        action: "BACKUP_STARTED",
+        entityType: "BACKUP",
         entityId: record.id,
         details: { configId, type: config.type },
-        userId
+        userId,
       });
 
       return {
         success: true,
         data: record as BackupRecord,
-        message: 'Backup iniciado com sucesso',
+        message: "Backup iniciado com sucesso",
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
-      return this.handleError('Erro ao executar backup', error);
+      return this.handleError("Erro ao executar backup", error);
     }
   }
 
@@ -288,7 +295,7 @@ export class BackupManager {
       speed: 0,
       eta: 0,
       startTime: new Date(),
-      lastUpdate: new Date()
+      lastUpdate: new Date(),
     };
 
     this.activeBackups.set(record.configId, progress);
@@ -305,7 +312,7 @@ export class BackupManager {
 
       // Atualizar registro com sucesso
       await this.supabase
-        .from('backup_records')
+        .from("backup_records")
         .update({
           status: BackupStatus.COMPLETED,
           endTime: new Date(),
@@ -315,9 +322,9 @@ export class BackupManager {
           filesCount: backupResult.filesCount,
           checksum,
           path: backupResult.path,
-          updatedAt: new Date()
+          updatedAt: new Date(),
         })
-        .eq('id', record.id);
+        .eq("id", record.id);
 
       // Enviar para storage remoto se configurado
       if (config.storage.type !== StorageType.LOCAL) {
@@ -331,30 +338,29 @@ export class BackupManager {
       await this.monitoring.notifyBackupSuccess(record.id, config);
 
       await auditLogger.log({
-        action: 'BACKUP_COMPLETED',
-        entityType: 'BACKUP',
+        action: "BACKUP_COMPLETED",
+        entityType: "BACKUP",
         entityId: record.id,
-        details: { 
-          size: backupResult.size, 
+        details: {
+          size: backupResult.size,
           duration: Math.floor((Date.now() - record.startTime.getTime()) / 1000),
-          filesCount: backupResult.filesCount
+          filesCount: backupResult.filesCount,
         },
-        userId: record.metadata.userId
+        userId: record.metadata.userId,
       });
-
     } catch (error) {
       // Atualizar status para FAILED
       await this.updateBackupStatus(record.id, BackupStatus.FAILED, error.message);
-      
+
       // Notificar falha
       await this.monitoring.notifyBackupFailure(record.id, config, error.message);
 
       await auditLogger.log({
-        action: 'BACKUP_FAILED',
-        entityType: 'BACKUP',
+        action: "BACKUP_FAILED",
+        entityType: "BACKUP",
         entityId: record.id,
         details: { error: error.message },
-        userId: record.metadata.userId
+        userId: record.metadata.userId,
       });
     } finally {
       this.activeBackups.delete(record.configId);
@@ -364,17 +370,20 @@ export class BackupManager {
   /**
    * Executar backup por tipo de dados
    */
-  private async executeBackupByType(config: BackupConfig, progress: BackupProgress): Promise<{
+  private async executeBackupByType(
+    config: BackupConfig,
+    progress: BackupProgress,
+  ): Promise<{
     path: string;
     size: number;
     compressedSize?: number;
     filesCount: number;
   }> {
     const results = {
-      path: '',
+      path: "",
       size: 0,
       compressedSize: 0,
-      filesCount: 0
+      filesCount: 0,
     };
 
     for (const dataType of config.dataTypes) {
@@ -475,17 +484,19 @@ export class BackupManager {
   /**
    * Solicitar recuperação
    */
-  async requestRecovery(request: Omit<RecoveryRequest, 'id' | 'requestedAt' | 'status'>): Promise<ApiResponse<RecoveryRequest>> {
+  async requestRecovery(
+    request: Omit<RecoveryRequest, "id" | "requestedAt" | "status">,
+  ): Promise<ApiResponse<RecoveryRequest>> {
     try {
       const recoveryRequest: RecoveryRequest = {
         ...request,
         id: crypto.randomUUID(),
         requestedAt: new Date(),
-        status: 'NOT_STARTED'
+        status: "NOT_STARTED",
       };
 
       const { data, error } = await this.supabase
-        .from('recovery_requests')
+        .from("recovery_requests")
         .insert(recoveryRequest)
         .select()
         .single();
@@ -493,22 +504,22 @@ export class BackupManager {
       if (error) throw error;
 
       await auditLogger.log({
-        action: 'RECOVERY_REQUESTED',
-        entityType: 'RECOVERY',
+        action: "RECOVERY_REQUESTED",
+        entityType: "RECOVERY",
         entityId: recoveryRequest.id,
         details: { backupId: request.backupId, type: request.type },
-        userId: request.requestedBy
+        userId: request.requestedBy,
       });
 
       return {
         success: true,
         data: data as RecoveryRequest,
-        message: 'Solicitação de recuperação criada',
+        message: "Solicitação de recuperação criada",
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
-      return this.handleError('Erro ao solicitar recuperação', error);
+      return this.handleError("Erro ao solicitar recuperação", error);
     }
   }
 
@@ -522,41 +533,42 @@ export class BackupManager {
   async getBackupMetrics(startDate?: Date, endDate?: Date): Promise<ApiResponse<BackupMetrics>> {
     try {
       const metrics = await this.monitoring.calculateMetrics(startDate, endDate);
-      
+
       return {
         success: true,
         data: metrics,
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
-      return this.handleError('Erro ao obter métricas', error);
+      return this.handleError("Erro ao obter métricas", error);
     }
   }
 
   /**
    * Listar backups com filtros
    */
-  async listBackups(filter?: BackupFilter, options?: PaginationOptions): Promise<ApiResponse<PaginatedResult<BackupRecord>>> {
+  async listBackups(
+    filter?: BackupFilter,
+    options?: PaginationOptions,
+  ): Promise<ApiResponse<PaginatedResult<BackupRecord>>> {
     try {
-      const { page = 1, limit = 20, sortBy = 'startTime', sortOrder = 'DESC' } = options || {};
+      const { page = 1, limit = 20, sortBy = "startTime", sortOrder = "DESC" } = options || {};
       const offset = (page - 1) * limit;
 
-      let query = this.supabase
-        .from('backup_records')
-        .select('*', { count: 'exact' });
+      let query = this.supabase.from("backup_records").select("*", { count: "exact" });
 
       // Aplicar filtros
-      if (filter?.configId) query = query.eq('configId', filter.configId);
-      if (filter?.type) query = query.eq('type', filter.type);
-      if (filter?.status) query = query.eq('status', filter.status);
-      if (filter?.startDate) query = query.gte('startTime', filter.startDate.toISOString());
-      if (filter?.endDate) query = query.lte('startTime', filter.endDate.toISOString());
-      if (filter?.minSize) query = query.gte('size', filter.minSize);
-      if (filter?.maxSize) query = query.lte('size', filter.maxSize);
+      if (filter?.configId) query = query.eq("configId", filter.configId);
+      if (filter?.type) query = query.eq("type", filter.type);
+      if (filter?.status) query = query.eq("status", filter.status);
+      if (filter?.startDate) query = query.gte("startTime", filter.startDate.toISOString());
+      if (filter?.endDate) query = query.lte("startTime", filter.endDate.toISOString());
+      if (filter?.minSize) query = query.gte("size", filter.minSize);
+      if (filter?.maxSize) query = query.lte("size", filter.maxSize);
 
       const { data, error, count } = await query
-        .order(sortBy, { ascending: sortOrder === 'ASC' })
+        .order(sortBy, { ascending: sortOrder === "ASC" })
         .range(offset, offset + limit - 1);
 
       if (error) throw error;
@@ -572,13 +584,13 @@ export class BackupManager {
           limit,
           totalPages,
           hasNext: page < totalPages,
-          hasPrev: page > 1
+          hasPrev: page > 1,
         },
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
-      return this.handleError('Erro ao listar backups', error);
+      return this.handleError("Erro ao listar backups", error);
     }
   }
 
@@ -588,26 +600,30 @@ export class BackupManager {
 
   private async validateBackupConfig(config: any): Promise<void> {
     if (!config.name || config.name.trim().length === 0) {
-      throw new Error('Nome da configuração é obrigatório');
+      throw new Error("Nome da configuração é obrigatório");
     }
 
     if (!config.dataTypes || config.dataTypes.length === 0) {
-      throw new Error('Pelo menos um tipo de dados deve ser selecionado');
+      throw new Error("Pelo menos um tipo de dados deve ser selecionado");
     }
 
     if (!config.schedule) {
-      throw new Error('Agendamento é obrigatório');
+      throw new Error("Agendamento é obrigatório");
     }
 
     if (!config.storage) {
-      throw new Error('Configuração de storage é obrigatória');
+      throw new Error("Configuração de storage é obrigatória");
     }
   }
 
-  private async updateBackupStatus(backupId: string, status: BackupStatus, error?: string): Promise<void> {
+  private async updateBackupStatus(
+    backupId: string,
+    status: BackupStatus,
+    error?: string,
+  ): Promise<void> {
     const updates: any = {
       status,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     if (error) {
@@ -618,46 +634,41 @@ export class BackupManager {
       updates.endTime = new Date();
     }
 
-    await this.supabase
-      .from('backup_records')
-      .update(updates)
-      .eq('id', backupId);
+    await this.supabase.from("backup_records").update(updates).eq("id", backupId);
   }
 
   private async calculateChecksum(filePath: string): Promise<string> {
     // Implementar cálculo de checksum
-    return 'sha256-checksum';
+    return "sha256-checksum";
   }
 
   private async compressBackup(path: string, config: any) {
     // Implementar compressão
-    return { path: path + '.gz', size: 0 };
+    return { path: path + ".gz", size: 0 };
   }
 
   private async encryptBackup(path: string, config: any) {
     // Implementar criptografia
-    return { path: path + '.enc' };
+    return { path: path + ".enc" };
   }
 
   private async applyRetentionPolicy(config: BackupConfig): Promise<void> {
     // Implementar política de retenção
     const { data: oldBackups } = await this.supabase
-      .from('backup_records')
-      .select('*')
-      .eq('configId', config.id)
-      .eq('status', BackupStatus.COMPLETED)
-      .order('startTime', { ascending: true });
+      .from("backup_records")
+      .select("*")
+      .eq("configId", config.id)
+      .eq("status", BackupStatus.COMPLETED)
+      .order("startTime", { ascending: true });
 
     if (!oldBackups) return;
 
     const retention = config.retention;
     const now = new Date();
-    const cutoffDate = new Date(now.getTime() - (retention.maxAge * 24 * 60 * 60 * 1000));
+    const cutoffDate = new Date(now.getTime() - retention.maxAge * 24 * 60 * 60 * 1000);
 
     // Remover backups antigos
-    const toDelete = oldBackups.filter(backup => 
-      new Date(backup.startTime) < cutoffDate
-    );
+    const toDelete = oldBackups.filter((backup) => new Date(backup.startTime) < cutoffDate);
 
     for (const backup of toDelete) {
       await this.deleteBackup(backup.id);
@@ -667,19 +678,19 @@ export class BackupManager {
   private async deleteBackup(backupId: string): Promise<void> {
     // Implementar exclusão de backup
     await this.supabase
-      .from('backup_records')
+      .from("backup_records")
       .update({ status: BackupStatus.EXPIRED })
-      .eq('id', backupId);
+      .eq("id", backupId);
   }
 
   private handleError(message: string, error: any): ApiResponse {
     console.error(message, error);
     return {
       success: false,
-      error: error.message || 'Erro interno do servidor',
+      error: error.message || "Erro interno do servidor",
       message,
       timestamp: new Date(),
-      requestId: crypto.randomUUID()
+      requestId: crypto.randomUUID(),
     };
   }
 
@@ -697,31 +708,31 @@ export class BackupManager {
     try {
       const progress = this.activeBackups.get(configId);
       if (!progress) {
-        throw new Error('Nenhum backup ativo encontrado para esta configuração');
+        throw new Error("Nenhum backup ativo encontrado para esta configuração");
       }
 
       // Atualizar status para CANCELLED
       await this.updateBackupStatus(progress.backupId, BackupStatus.CANCELLED);
-      
+
       // Remover da lista de ativos
       this.activeBackups.delete(configId);
 
       await auditLogger.log({
-        action: 'BACKUP_CANCELLED',
-        entityType: 'BACKUP',
+        action: "BACKUP_CANCELLED",
+        entityType: "BACKUP",
         entityId: progress.backupId,
         details: { configId },
-        userId
+        userId,
       });
 
       return {
         success: true,
-        message: 'Backup cancelado com sucesso',
+        message: "Backup cancelado com sucesso",
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
-      return this.handleError('Erro ao cancelar backup', error);
+      return this.handleError("Erro ao cancelar backup", error);
     }
   }
 }

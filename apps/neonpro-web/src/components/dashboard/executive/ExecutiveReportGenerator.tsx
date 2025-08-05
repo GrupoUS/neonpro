@@ -1,20 +1,20 @@
 /**
  * Executive Report Generator Component
- * 
+ *
  * Advanced report generation system for executive dashboard with
  * customizable templates, automated scheduling, and multiple export formats.
  * Implements Story 7.1 reporting requirements.
  */
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import {
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import {
+} from "@/components/ui/card";
+import type {
   Button,
   Badge,
   Tabs,
@@ -42,16 +42,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui';
-import {
+} from "@/components/ui";
+import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
+} from "@/components/ui/dropdown-menu";
+import type {
   Calendar,
   CalendarDays,
   Download,
@@ -76,10 +76,10 @@ import {
   Plus,
   RefreshCw,
   Save,
-  Send
-} from 'lucide-react';
+  Send,
+} from "lucide-react";
 
-import {
+import type {
   KPIMetric,
   DateRangeFilter,
   DashboardAlert,
@@ -88,10 +88,10 @@ import {
   ReportSchedule,
   ReportFormat,
   ReportStatus,
-  KPICategory
-} from '@/lib/dashboard/types';
-import { executiveDashboardEngine } from '@/lib/dashboard/executive-dashboard-engine';
-import { formatters } from '@/lib/dashboard/utils';
+  KPICategory,
+} from "@/lib/dashboard/types";
+import type { executiveDashboardEngine } from "@/lib/dashboard/executive-dashboard-engine";
+import type { formatters } from "@/lib/dashboard/utils";
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -138,7 +138,7 @@ interface CustomSection {
   id: string;
   title: string;
   content: string;
-  type: 'text' | 'chart' | 'table' | 'kpi';
+  type: "text" | "chart" | "table" | "kpi";
   order: number;
   enabled: boolean;
 }
@@ -161,7 +161,7 @@ interface ReportTemplate {
   id: string;
   name: string;
   description: string;
-  category: 'executive' | 'financial' | 'operational' | 'clinical';
+  category: "executive" | "financial" | "operational" | "clinical";
   sections: TemplateSection[];
   defaultFormat: ReportFormat;
   isCustom: boolean;
@@ -172,7 +172,7 @@ interface ReportTemplate {
 interface TemplateSection {
   id: string;
   title: string;
-  type: 'summary' | 'kpis' | 'charts' | 'alerts' | 'recommendations' | 'custom';
+  type: "summary" | "kpis" | "charts" | "alerts" | "recommendations" | "custom";
   required: boolean;
   order: number;
   config: any;
@@ -190,26 +190,28 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
   summary,
   onReportGenerated,
   onScheduleCreated,
-  className
+  className,
 }) => {
   // ============================================================================
   // STATE MANAGEMENT
   // ============================================================================
 
-  const [activeTab, setActiveTab] = useState<'generate' | 'templates' | 'schedules' | 'history'>('generate');
+  const [activeTab, setActiveTab] = useState<"generate" | "templates" | "schedules" | "history">(
+    "generate",
+  );
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationProgress, setGenerationProgress] = useState(0);
   const [generatedReports, setGeneratedReports] = useState<GeneratedReport[]>([]);
   const [reportSchedules, setReportSchedules] = useState<ReportSchedule[]>([]);
   const [reportTemplates, setReportTemplates] = useState<ReportTemplate[]>([]);
-  
+
   // Generation configuration state
   const [config, setConfig] = useState<ReportGenerationConfig>({
     template: null as any,
-    format: 'pdf',
+    format: "pdf",
     dateRange: {
       start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-      end: new Date()
+      end: new Date(),
     },
     includeKPIs: [],
     includeCharts: true,
@@ -218,19 +220,19 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
     includeRecommendations: true,
     customSections: [],
     branding: {
-      logo: '',
+      logo: "",
       colors: {
-        primary: '#2563eb',
-        secondary: '#64748b',
-        accent: '#059669'
+        primary: "#2563eb",
+        secondary: "#64748b",
+        accent: "#059669",
       },
       fonts: {
-        heading: 'Inter',
-        body: 'Inter'
+        heading: "Inter",
+        body: "Inter",
       },
-      footer: '© 2024 NeonPro Healthcare. All rights reserved.'
+      footer: "© 2024 NeonPro Healthcare. All rights reserved.",
     },
-    recipients: []
+    recipients: [],
   });
 
   // Dialog states
@@ -255,9 +257,9 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
 
   useEffect(() => {
     if (reportTemplates.length > 0 && !config.template) {
-      setConfig(prev => ({
+      setConfig((prev) => ({
         ...prev,
-        template: reportTemplates.find(t => t.category === 'executive') || reportTemplates[0]
+        template: reportTemplates.find((t) => t.category === "executive") || reportTemplates[0],
       }));
     }
   }, [reportTemplates]);
@@ -271,57 +273,134 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
       // Mock data - in real implementation, this would fetch from API
       const templates: ReportTemplate[] = [
         {
-          id: 'exec-summary',
-          name: 'Executive Summary',
-          description: 'Comprehensive executive dashboard summary with key metrics and insights',
-          category: 'executive',
+          id: "exec-summary",
+          name: "Executive Summary",
+          description: "Comprehensive executive dashboard summary with key metrics and insights",
+          category: "executive",
           sections: [
-            { id: 'summary', title: 'Executive Summary', type: 'summary', required: true, order: 1, config: {} },
-            { id: 'kpis', title: 'Key Performance Indicators', type: 'kpis', required: true, order: 2, config: {} },
-            { id: 'charts', title: 'Performance Charts', type: 'charts', required: false, order: 3, config: {} },
-            { id: 'alerts', title: 'Active Alerts', type: 'alerts', required: false, order: 4, config: {} },
-            { id: 'recommendations', title: 'Recommendations', type: 'recommendations', required: false, order: 5, config: {} }
+            {
+              id: "summary",
+              title: "Executive Summary",
+              type: "summary",
+              required: true,
+              order: 1,
+              config: {},
+            },
+            {
+              id: "kpis",
+              title: "Key Performance Indicators",
+              type: "kpis",
+              required: true,
+              order: 2,
+              config: {},
+            },
+            {
+              id: "charts",
+              title: "Performance Charts",
+              type: "charts",
+              required: false,
+              order: 3,
+              config: {},
+            },
+            {
+              id: "alerts",
+              title: "Active Alerts",
+              type: "alerts",
+              required: false,
+              order: 4,
+              config: {},
+            },
+            {
+              id: "recommendations",
+              title: "Recommendations",
+              type: "recommendations",
+              required: false,
+              order: 5,
+              config: {},
+            },
           ],
-          defaultFormat: 'pdf',
+          defaultFormat: "pdf",
           isCustom: false,
-          createdBy: 'system',
-          createdAt: new Date()
+          createdBy: "system",
+          createdAt: new Date(),
         },
         {
-          id: 'financial-report',
-          name: 'Financial Performance Report',
-          description: 'Detailed financial analysis with revenue, costs, and profitability metrics',
-          category: 'financial',
+          id: "financial-report",
+          name: "Financial Performance Report",
+          description: "Detailed financial analysis with revenue, costs, and profitability metrics",
+          category: "financial",
           sections: [
-            { id: 'financial-summary', title: 'Financial Summary', type: 'summary', required: true, order: 1, config: {} },
-            { id: 'revenue-kpis', title: 'Revenue Metrics', type: 'kpis', required: true, order: 2, config: { category: 'financial' } },
-            { id: 'financial-charts', title: 'Financial Charts', type: 'charts', required: true, order: 3, config: {} }
+            {
+              id: "financial-summary",
+              title: "Financial Summary",
+              type: "summary",
+              required: true,
+              order: 1,
+              config: {},
+            },
+            {
+              id: "revenue-kpis",
+              title: "Revenue Metrics",
+              type: "kpis",
+              required: true,
+              order: 2,
+              config: { category: "financial" },
+            },
+            {
+              id: "financial-charts",
+              title: "Financial Charts",
+              type: "charts",
+              required: true,
+              order: 3,
+              config: {},
+            },
           ],
-          defaultFormat: 'excel',
+          defaultFormat: "excel",
           isCustom: false,
-          createdBy: 'system',
-          createdAt: new Date()
+          createdBy: "system",
+          createdAt: new Date(),
         },
         {
-          id: 'operational-report',
-          name: 'Operational Efficiency Report',
-          description: 'Operational metrics including utilization, productivity, and efficiency',
-          category: 'operational',
+          id: "operational-report",
+          name: "Operational Efficiency Report",
+          description: "Operational metrics including utilization, productivity, and efficiency",
+          category: "operational",
           sections: [
-            { id: 'operational-summary', title: 'Operational Overview', type: 'summary', required: true, order: 1, config: {} },
-            { id: 'operational-kpis', title: 'Operational KPIs', type: 'kpis', required: true, order: 2, config: { category: 'operational' } },
-            { id: 'efficiency-charts', title: 'Efficiency Trends', type: 'charts', required: false, order: 3, config: {} }
+            {
+              id: "operational-summary",
+              title: "Operational Overview",
+              type: "summary",
+              required: true,
+              order: 1,
+              config: {},
+            },
+            {
+              id: "operational-kpis",
+              title: "Operational KPIs",
+              type: "kpis",
+              required: true,
+              order: 2,
+              config: { category: "operational" },
+            },
+            {
+              id: "efficiency-charts",
+              title: "Efficiency Trends",
+              type: "charts",
+              required: false,
+              order: 3,
+              config: {},
+            },
           ],
-          defaultFormat: 'pdf',
+          defaultFormat: "pdf",
           isCustom: false,
-          createdBy: 'system',
-          createdAt: new Date()
-        }
+          createdBy: "system",
+          createdAt: new Date(),
+        },
       ];
-      
+
       setReportTemplates(templates);
     } catch (error) {
-      console.error('Failed to load report templates:', error);
+      console.error("Failed to load report templates:", error);
     }
   }, []);
 
@@ -330,26 +409,26 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
       // Mock data - in real implementation, this would fetch from API
       const schedules: ReportSchedule[] = [
         {
-          id: 'weekly-exec',
-          name: 'Weekly Executive Summary',
-          frequency: 'weekly',
-          template: 'exec-summary',
-          recipients: ['ceo@clinic.com', 'cfo@clinic.com'],
-          enabled: true
+          id: "weekly-exec",
+          name: "Weekly Executive Summary",
+          frequency: "weekly",
+          template: "exec-summary",
+          recipients: ["ceo@clinic.com", "cfo@clinic.com"],
+          enabled: true,
         },
         {
-          id: 'monthly-financial',
-          name: 'Monthly Financial Report',
-          frequency: 'monthly',
-          template: 'financial-report',
-          recipients: ['finance@clinic.com'],
-          enabled: true
-        }
+          id: "monthly-financial",
+          name: "Monthly Financial Report",
+          frequency: "monthly",
+          template: "financial-report",
+          recipients: ["finance@clinic.com"],
+          enabled: true,
+        },
       ];
-      
+
       setReportSchedules(schedules);
     } catch (error) {
-      console.error('Failed to load report schedules:', error);
+      console.error("Failed to load report schedules:", error);
     }
   }, []);
 
@@ -358,32 +437,32 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
       // Mock data - in real implementation, this would fetch from API
       const reports: GeneratedReport[] = [
         {
-          id: 'report-1',
-          name: 'Executive Summary - December 2024',
+          id: "report-1",
+          name: "Executive Summary - December 2024",
           template: reportTemplates[0],
-          format: 'pdf',
+          format: "pdf",
           data: {},
           generatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
           size: 2.5 * 1024 * 1024, // 2.5 MB
-          downloadUrl: '/reports/exec-summary-dec-2024.pdf',
-          status: 'completed'
+          downloadUrl: "/reports/exec-summary-dec-2024.pdf",
+          status: "completed",
         },
         {
-          id: 'report-2',
-          name: 'Financial Report - November 2024',
+          id: "report-2",
+          name: "Financial Report - November 2024",
           template: reportTemplates[1],
-          format: 'excel',
+          format: "excel",
           data: {},
           generatedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
           size: 1.8 * 1024 * 1024, // 1.8 MB
-          downloadUrl: '/reports/financial-nov-2024.xlsx',
-          status: 'completed'
-        }
+          downloadUrl: "/reports/financial-nov-2024.xlsx",
+          status: "completed",
+        },
       ];
-      
+
       setGeneratedReports(reports);
     } catch (error) {
-      console.error('Failed to load report history:', error);
+      console.error("Failed to load report history:", error);
     }
   }, [reportTemplates]);
 
@@ -393,7 +472,7 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
 
   const generateReport = useCallback(async () => {
     if (!config.template) {
-      alert('Please select a report template');
+      alert("Please select a report template");
       return;
     }
 
@@ -403,15 +482,15 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
     try {
       // Simulate report generation progress
       const progressSteps = [
-        { step: 'Collecting data...', progress: 20 },
-        { step: 'Processing KPIs...', progress: 40 },
-        { step: 'Generating charts...', progress: 60 },
-        { step: 'Formatting report...', progress: 80 },
-        { step: 'Finalizing...', progress: 100 }
+        { step: "Collecting data...", progress: 20 },
+        { step: "Processing KPIs...", progress: 40 },
+        { step: "Generating charts...", progress: 60 },
+        { step: "Formatting report...", progress: 80 },
+        { step: "Finalizing...", progress: 100 },
       ];
 
       for (const { step, progress } of progressSteps) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         setGenerationProgress(progress);
       }
 
@@ -422,31 +501,31 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
         template: config.template,
         format: config.format,
         data: {
-          kpis: config.includeKPIs.length > 0 
-            ? kpis.filter(kpi => config.includeKPIs.includes(kpi.id))
-            : kpis,
+          kpis:
+            config.includeKPIs.length > 0
+              ? kpis.filter((kpi) => config.includeKPIs.includes(kpi.id))
+              : kpis,
           alerts: config.includeAlerts ? alerts : [],
           summary: config.includeSummary ? summary : null,
           dateRange: config.dateRange,
-          customSections: config.customSections
+          customSections: config.customSections,
         },
         generatedAt: new Date(),
         size: Math.random() * 3 * 1024 * 1024, // Random size between 0-3MB
         downloadUrl: `/reports/${config.template.id}-${Date.now()}.${config.format}`,
-        status: 'completed'
+        status: "completed",
       };
 
-      setGeneratedReports(prev => [newReport, ...prev]);
+      setGeneratedReports((prev) => [newReport, ...prev]);
       onReportGenerated?.(newReport);
 
       // Send email if recipients are specified
       if (config.recipients.length > 0) {
         await sendReportEmail(newReport, config.recipients);
       }
-
     } catch (error) {
-      console.error('Failed to generate report:', error);
-      alert('Failed to generate report. Please try again.');
+      console.error("Failed to generate report:", error);
+      alert("Failed to generate report. Please try again.");
     } finally {
       setIsGenerating(false);
       setGenerationProgress(0);
@@ -457,9 +536,9 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
     try {
       // Mock email sending - in real implementation, this would call an API
       console.log(`Sending report ${report.name} to:`, recipients);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     } catch (error) {
-      console.error('Failed to send report email:', error);
+      console.error("Failed to send report email:", error);
     }
   };
 
@@ -469,7 +548,7 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
 
   const createTemplate = useCallback(async () => {
     if (!templateForm.name || !templateForm.description) {
-      alert('Please fill in all required fields');
+      alert("Please fill in all required fields");
       return;
     }
 
@@ -478,20 +557,20 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
         id: `template-${Date.now()}`,
         name: templateForm.name,
         description: templateForm.description,
-        category: templateForm.category || 'executive',
+        category: templateForm.category || "executive",
         sections: templateForm.sections || [],
-        defaultFormat: templateForm.defaultFormat || 'pdf',
+        defaultFormat: templateForm.defaultFormat || "pdf",
         isCustom: true,
         createdBy: userId,
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
-      setReportTemplates(prev => [...prev, newTemplate]);
+      setReportTemplates((prev) => [...prev, newTemplate]);
       setTemplateForm({});
       setShowTemplateDialog(false);
     } catch (error) {
-      console.error('Failed to create template:', error);
-      alert('Failed to create template. Please try again.');
+      console.error("Failed to create template:", error);
+      alert("Failed to create template. Please try again.");
     }
   }, [templateForm, userId]);
 
@@ -501,7 +580,7 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
 
   const createSchedule = useCallback(async () => {
     if (!scheduleForm.name || !scheduleForm.template || !scheduleForm.frequency) {
-      alert('Please fill in all required fields');
+      alert("Please fill in all required fields");
       return;
     }
 
@@ -512,30 +591,28 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
         frequency: scheduleForm.frequency,
         template: scheduleForm.template,
         recipients: scheduleForm.recipients || [],
-        enabled: scheduleForm.enabled !== false
+        enabled: scheduleForm.enabled !== false,
       };
 
-      setReportSchedules(prev => [...prev, newSchedule]);
+      setReportSchedules((prev) => [...prev, newSchedule]);
       setScheduleForm({});
       setShowScheduleDialog(false);
       onScheduleCreated?.(newSchedule);
     } catch (error) {
-      console.error('Failed to create schedule:', error);
-      alert('Failed to create schedule. Please try again.');
+      console.error("Failed to create schedule:", error);
+      alert("Failed to create schedule. Please try again.");
     }
   }, [scheduleForm, onScheduleCreated]);
 
   const toggleSchedule = useCallback(async (scheduleId: string) => {
     try {
-      setReportSchedules(prev => 
-        prev.map(schedule => 
-          schedule.id === scheduleId 
-            ? { ...schedule, enabled: !schedule.enabled }
-            : schedule
-        )
+      setReportSchedules((prev) =>
+        prev.map((schedule) =>
+          schedule.id === scheduleId ? { ...schedule, enabled: !schedule.enabled } : schedule,
+        ),
       );
     } catch (error) {
-      console.error('Failed to toggle schedule:', error);
+      console.error("Failed to toggle schedule:", error);
     }
   }, []);
 
@@ -544,20 +621,20 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
   // ============================================================================
 
   const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
   const getStatusIcon = (status: ReportStatus) => {
     switch (status) {
-      case 'completed':
+      case "completed":
         return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case 'failed':
+      case "failed":
         return <XCircle className="h-4 w-4 text-red-500" />;
-      case 'generating':
+      case "generating":
         return <RefreshCw className="h-4 w-4 text-blue-500 animate-spin" />;
       default:
         return <Clock className="h-4 w-4 text-gray-500" />;
@@ -566,14 +643,14 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
 
   const getFrequencyBadge = (frequency: string) => {
     const colors = {
-      daily: 'bg-blue-100 text-blue-800',
-      weekly: 'bg-green-100 text-green-800',
-      monthly: 'bg-purple-100 text-purple-800',
-      quarterly: 'bg-orange-100 text-orange-800'
+      daily: "bg-blue-100 text-blue-800",
+      weekly: "bg-green-100 text-green-800",
+      monthly: "bg-purple-100 text-purple-800",
+      quarterly: "bg-orange-100 text-orange-800",
     };
-    
+
     return (
-      <Badge className={colors[frequency as keyof typeof colors] || 'bg-gray-100 text-gray-800'}>
+      <Badge className={colors[frequency as keyof typeof colors] || "bg-gray-100 text-gray-800"}>
         {frequency.charAt(0).toUpperCase() + frequency.slice(1)}
       </Badge>
     );
@@ -584,16 +661,16 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
   // ============================================================================
 
   const availableKPIs = useMemo(() => {
-    return kpis.map(kpi => ({
+    return kpis.map((kpi) => ({
       id: kpi.id,
       name: kpi.name,
-      category: kpi.category
+      category: kpi.category,
     }));
   }, [kpis]);
 
   const filteredTemplates = useMemo(() => {
-    return reportTemplates.filter(template => 
-      template.category === 'executive' || template.isCustom
+    return reportTemplates.filter(
+      (template) => template.category === "executive" || template.isCustom,
     );
   }, [reportTemplates]);
 
@@ -607,7 +684,8 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Report Generator</h2>
           <p className="text-muted-foreground">
-            Generate comprehensive executive reports with customizable templates and automated scheduling.
+            Generate comprehensive executive reports with customizable templates and automated
+            scheduling.
           </p>
         </div>
         <div className="flex items-center space-x-2">
@@ -670,11 +748,11 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
                 <div className="space-y-2">
                   <Label>Report Template</Label>
                   <Select
-                    value={config.template?.id || ''}
+                    value={config.template?.id || ""}
                     onValueChange={(value) => {
-                      const template = reportTemplates.find(t => t.id === value);
+                      const template = reportTemplates.find((t) => t.id === value);
                       if (template) {
-                        setConfig(prev => ({ ...prev, template }));
+                        setConfig((prev) => ({ ...prev, template }));
                       }
                     }}
                   >
@@ -703,8 +781,8 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
                   <Label>Export Format</Label>
                   <Select
                     value={config.format}
-                    onValueChange={(value: ReportFormat) => 
-                      setConfig(prev => ({ ...prev, format: value }))
+                    onValueChange={(value: ReportFormat) =>
+                      setConfig((prev) => ({ ...prev, format: value }))
                     }
                   >
                     <SelectTrigger>
@@ -725,23 +803,23 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
                   <div className="grid grid-cols-2 gap-2">
                     <Input
                       type="date"
-                      value={config.dateRange.start.toISOString().split('T')[0]}
+                      value={config.dateRange.start.toISOString().split("T")[0]}
                       onChange={(e) => {
                         const date = new Date(e.target.value);
-                        setConfig(prev => ({
+                        setConfig((prev) => ({
                           ...prev,
-                          dateRange: { ...prev.dateRange, start: date }
+                          dateRange: { ...prev.dateRange, start: date },
                         }));
                       }}
                     />
                     <Input
                       type="date"
-                      value={config.dateRange.end.toISOString().split('T')[0]}
+                      value={config.dateRange.end.toISOString().split("T")[0]}
                       onChange={(e) => {
                         const date = new Date(e.target.value);
-                        setConfig(prev => ({
+                        setConfig((prev) => ({
                           ...prev,
-                          dateRange: { ...prev.dateRange, end: date }
+                          dateRange: { ...prev.dateRange, end: date },
                         }));
                       }}
                     />
@@ -759,8 +837,8 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
                       <Switch
                         id="include-charts"
                         checked={config.includeCharts}
-                        onCheckedChange={(checked) => 
-                          setConfig(prev => ({ ...prev, includeCharts: checked }))
+                        onCheckedChange={(checked) =>
+                          setConfig((prev) => ({ ...prev, includeCharts: checked }))
                         }
                       />
                     </div>
@@ -771,8 +849,8 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
                       <Switch
                         id="include-alerts"
                         checked={config.includeAlerts}
-                        onCheckedChange={(checked) => 
-                          setConfig(prev => ({ ...prev, includeAlerts: checked }))
+                        onCheckedChange={(checked) =>
+                          setConfig((prev) => ({ ...prev, includeAlerts: checked }))
                         }
                       />
                     </div>
@@ -783,8 +861,8 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
                       <Switch
                         id="include-summary"
                         checked={config.includeSummary}
-                        onCheckedChange={(checked) => 
-                          setConfig(prev => ({ ...prev, includeSummary: checked }))
+                        onCheckedChange={(checked) =>
+                          setConfig((prev) => ({ ...prev, includeSummary: checked }))
                         }
                       />
                     </div>
@@ -795,8 +873,8 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
                       <Switch
                         id="include-recommendations"
                         checked={config.includeRecommendations}
-                        onCheckedChange={(checked) => 
-                          setConfig(prev => ({ ...prev, includeRecommendations: checked }))
+                        onCheckedChange={(checked) =>
+                          setConfig((prev) => ({ ...prev, includeRecommendations: checked }))
                         }
                       />
                     </div>
@@ -808,13 +886,13 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
                   <Label>Email Recipients (Optional)</Label>
                   <Textarea
                     placeholder="Enter email addresses separated by commas"
-                    value={config.recipients.join(', ')}
+                    value={config.recipients.join(", ")}
                     onChange={(e) => {
                       const emails = e.target.value
-                        .split(',')
-                        .map(email => email.trim())
-                        .filter(email => email.length > 0);
-                      setConfig(prev => ({ ...prev, recipients: emails }));
+                        .split(",")
+                        .map((email) => email.trim())
+                        .filter((email) => email.length > 0);
+                      setConfig((prev) => ({ ...prev, recipients: emails }));
                     }}
                     rows={2}
                   />
@@ -857,7 +935,7 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
                         <span className="font-medium">Format:</span>
@@ -920,18 +998,18 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
                       <Label>Template Name</Label>
                       <Input
                         placeholder="Enter template name"
-                        value={templateForm.name || ''}
-                        onChange={(e) => 
-                          setTemplateForm(prev => ({ ...prev, name: e.target.value }))
+                        value={templateForm.name || ""}
+                        onChange={(e) =>
+                          setTemplateForm((prev) => ({ ...prev, name: e.target.value }))
                         }
                       />
                     </div>
                     <div className="space-y-2">
                       <Label>Category</Label>
                       <Select
-                        value={templateForm.category || 'executive'}
-                        onValueChange={(value: any) => 
-                          setTemplateForm(prev => ({ ...prev, category: value }))
+                        value={templateForm.category || "executive"}
+                        onValueChange={(value: any) =>
+                          setTemplateForm((prev) => ({ ...prev, category: value }))
                         }
                       >
                         <SelectTrigger>
@@ -950,9 +1028,9 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
                     <Label>Description</Label>
                     <Textarea
                       placeholder="Describe the purpose and content of this template"
-                      value={templateForm.description || ''}
-                      onChange={(e) => 
-                        setTemplateForm(prev => ({ ...prev, description: e.target.value }))
+                      value={templateForm.description || ""}
+                      onChange={(e) =>
+                        setTemplateForm((prev) => ({ ...prev, description: e.target.value }))
                       }
                       rows={3}
                     />
@@ -962,9 +1040,7 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
                   <Button variant="outline" onClick={() => setShowTemplateDialog(false)}>
                     Cancel
                   </Button>
-                  <Button onClick={createTemplate}>
-                    Create Template
-                  </Button>
+                  <Button onClick={createTemplate}>Create Template</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
@@ -977,9 +1053,7 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
                   <div className="flex items-start justify-between">
                     <div>
                       <CardTitle className="text-base">{template.name}</CardTitle>
-                      <CardDescription className="text-sm">
-                        {template.description}
-                      </CardDescription>
+                      <CardDescription className="text-sm">{template.description}</CardDescription>
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -1030,9 +1104,7 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
                       <span className="uppercase">{template.defaultFormat}</span>
                     </div>
                     {template.isCustom && (
-                      <Badge className="w-full justify-center">
-                        Custom Template
-                      </Badge>
+                      <Badge className="w-full justify-center">Custom Template</Badge>
                     )}
                   </div>
                 </CardContent>
@@ -1069,9 +1141,9 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
                     <Label>Schedule Name</Label>
                     <Input
                       placeholder="Enter schedule name"
-                      value={scheduleForm.name || ''}
-                      onChange={(e) => 
-                        setScheduleForm(prev => ({ ...prev, name: e.target.value }))
+                      value={scheduleForm.name || ""}
+                      onChange={(e) =>
+                        setScheduleForm((prev) => ({ ...prev, name: e.target.value }))
                       }
                     />
                   </div>
@@ -1079,9 +1151,9 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
                     <div className="space-y-2">
                       <Label>Template</Label>
                       <Select
-                        value={scheduleForm.template || ''}
-                        onValueChange={(value) => 
-                          setScheduleForm(prev => ({ ...prev, template: value }))
+                        value={scheduleForm.template || ""}
+                        onValueChange={(value) =>
+                          setScheduleForm((prev) => ({ ...prev, template: value }))
                         }
                       >
                         <SelectTrigger>
@@ -1099,9 +1171,9 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
                     <div className="space-y-2">
                       <Label>Frequency</Label>
                       <Select
-                        value={scheduleForm.frequency || ''}
-                        onValueChange={(value: any) => 
-                          setScheduleForm(prev => ({ ...prev, frequency: value }))
+                        value={scheduleForm.frequency || ""}
+                        onValueChange={(value: any) =>
+                          setScheduleForm((prev) => ({ ...prev, frequency: value }))
                         }
                       >
                         <SelectTrigger>
@@ -1120,13 +1192,13 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
                     <Label>Recipients</Label>
                     <Textarea
                       placeholder="Enter email addresses separated by commas"
-                      value={scheduleForm.recipients?.join(', ') || ''}
+                      value={scheduleForm.recipients?.join(", ") || ""}
                       onChange={(e) => {
                         const emails = e.target.value
-                          .split(',')
-                          .map(email => email.trim())
-                          .filter(email => email.length > 0);
-                        setScheduleForm(prev => ({ ...prev, recipients: emails }));
+                          .split(",")
+                          .map((email) => email.trim())
+                          .filter((email) => email.length > 0);
+                        setScheduleForm((prev) => ({ ...prev, recipients: emails }));
                       }}
                       rows={2}
                     />
@@ -1135,8 +1207,8 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
                     <Switch
                       id="schedule-enabled"
                       checked={scheduleForm.enabled !== false}
-                      onCheckedChange={(checked) => 
-                        setScheduleForm(prev => ({ ...prev, enabled: checked }))
+                      onCheckedChange={(checked) =>
+                        setScheduleForm((prev) => ({ ...prev, enabled: checked }))
                       }
                     />
                     <Label htmlFor="schedule-enabled">Enable schedule</Label>
@@ -1146,9 +1218,7 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
                   <Button variant="outline" onClick={() => setShowScheduleDialog(false)}>
                     Cancel
                   </Button>
-                  <Button onClick={createSchedule}>
-                    Create Schedule
-                  </Button>
+                  <Button onClick={createSchedule}>Create Schedule</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
@@ -1163,15 +1233,17 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
                       <div className="flex items-center space-x-2">
                         <h4 className="font-semibold">{schedule.name}</h4>
                         {getFrequencyBadge(schedule.frequency)}
-                        <Badge 
+                        <Badge
                           variant={schedule.enabled ? "default" : "secondary"}
                           className={schedule.enabled ? "bg-green-100 text-green-800" : ""}
                         >
-                          {schedule.enabled ? 'Active' : 'Inactive'}
+                          {schedule.enabled ? "Active" : "Inactive"}
                         </Badge>
                       </div>
                       <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                        <span>Template: {reportTemplates.find(t => t.id === schedule.template)?.name}</span>
+                        <span>
+                          Template: {reportTemplates.find((t) => t.id === schedule.template)?.name}
+                        </span>
                         <span>Recipients: {schedule.recipients.length}</span>
                       </div>
                     </div>
@@ -1253,9 +1325,7 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
                       <div className="flex items-center space-x-2">
                         {getStatusIcon(report.status)}
                         <h4 className="font-semibold">{report.name}</h4>
-                        <Badge variant="outline">
-                          {report.format.toUpperCase()}
-                        </Badge>
+                        <Badge variant="outline">{report.format.toUpperCase()}</Badge>
                       </div>
                       <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                         <span>Generated: {formatters.dateTime(report.generatedAt)}</span>

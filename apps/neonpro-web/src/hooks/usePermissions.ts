@@ -1,14 +1,14 @@
 /**
  * React Hook for RBAC Permissions Management
  * Story 1.2: Role-Based Access Control Implementation
- * 
+ *
  * This hook provides permission checking and role management for React components
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { UserRole, Permission, PermissionResult } from '@/types/rbac';
-import { useAuth } from '@/contexts/auth-context';
-import { createClient } from '@/lib/supabase/client';
+import type { useState, useEffect, useCallback, useMemo } from "react";
+import type { UserRole, Permission, PermissionResult } from "@/types/rbac";
+import type { useAuth } from "@/contexts/auth-context";
+import type { createClient } from "@/lib/supabase/client";
 
 /**
  * Permission check cache for frontend optimization
@@ -33,18 +33,18 @@ export interface UsePermissionsReturn {
   hasAllPermissions: (permissions: Permission[], resourceId?: string) => Promise<boolean>;
   hasRole: (role: UserRole) => boolean;
   hasMinimumRole: (minimumRole: UserRole) => boolean;
-  
+
   // Permission state
   permissions: Permission[];
   role: UserRole | null;
   isLoading: boolean;
   error: string | null;
-  
+
   // Utility functions
   canAccess: (feature: string) => boolean;
   canManage: (resource: string) => boolean;
   canView: (resource: string) => boolean;
-  
+
   // Cache management
   clearCache: () => void;
   refreshPermissions: () => Promise<void>;
@@ -57,22 +57,22 @@ const ROLE_HIERARCHY: Record<UserRole, number> = {
   patient: 1,
   staff: 2,
   manager: 3,
-  owner: 4
+  owner: 4,
 };
 
 /**
  * Feature permission mapping
  */
 const FEATURE_PERMISSIONS: Record<string, Permission[]> = {
-  patients: ['patients.read', 'patients.manage'],
-  appointments: ['appointments.read', 'appointments.manage'],
-  billing: ['billing.read', 'billing.manage'],
-  payments: ['payments.read', 'payments.manage'],
-  users: ['users.read', 'users.manage'],
-  clinic: ['clinic.read', 'clinic.manage'],
-  system: ['system.admin'],
-  reports: ['reports.read', 'reports.generate'],
-  audit: ['audit.read']
+  patients: ["patients.read", "patients.manage"],
+  appointments: ["appointments.read", "appointments.manage"],
+  billing: ["billing.read", "billing.manage"],
+  payments: ["payments.read", "payments.manage"],
+  users: ["users.read", "users.manage"],
+  clinic: ["clinic.read", "clinic.manage"],
+  system: ["system.admin"],
+  reports: ["reports.read", "reports.generate"],
+  audit: ["audit.read"],
 };
 
 /**
@@ -88,7 +88,7 @@ export function usePermissions(): UsePermissionsReturn {
    * Get user's role
    */
   const role = useMemo(() => {
-    return user?.role as UserRole || null;
+    return (user?.role as UserRole) || null;
   }, [user?.role]);
 
   /**
@@ -96,51 +96,64 @@ export function usePermissions(): UsePermissionsReturn {
    */
   const permissions = useMemo(() => {
     if (!role || !user) return [];
-    
+
     // Import DEFAULT_ROLES from types (would need to be imported)
     // For now, we'll define basic permissions here
     const rolePermissions: Record<UserRole, Permission[]> = {
-      patient: ['patients.read'],
-      staff: [
-        'patients.read', 'patients.manage',
-        'appointments.read', 'appointments.manage'
-      ],
+      patient: ["patients.read"],
+      staff: ["patients.read", "patients.manage", "appointments.read", "appointments.manage"],
       manager: [
-        'patients.read', 'patients.manage',
-        'appointments.read', 'appointments.manage',
-        'billing.read', 'billing.manage',
-        'payments.read', 'payments.manage',
-        'users.read', 'users.manage',
-        'reports.read', 'reports.generate'
+        "patients.read",
+        "patients.manage",
+        "appointments.read",
+        "appointments.manage",
+        "billing.read",
+        "billing.manage",
+        "payments.read",
+        "payments.manage",
+        "users.read",
+        "users.manage",
+        "reports.read",
+        "reports.generate",
       ],
       owner: [
-        'patients.read', 'patients.manage',
-        'appointments.read', 'appointments.manage',
-        'billing.read', 'billing.manage',
-        'payments.read', 'payments.manage',
-        'users.read', 'users.manage',
-        'clinic.read', 'clinic.manage',
-        'reports.read', 'reports.generate',
-        'audit.read'
-      ]
+        "patients.read",
+        "patients.manage",
+        "appointments.read",
+        "appointments.manage",
+        "billing.read",
+        "billing.manage",
+        "payments.read",
+        "payments.manage",
+        "users.read",
+        "users.manage",
+        "clinic.read",
+        "clinic.manage",
+        "reports.read",
+        "reports.generate",
+        "audit.read",
+      ],
     };
-    
+
     return rolePermissions[role] || [];
   }, [role, user]);
 
   /**
    * Generate cache key
    */
-  const getCacheKey = useCallback((permission: Permission, resourceId?: string): string => {
-    return `${user?.id}:${permission}:${resourceId || 'global'}:${user?.clinicId}`;
-  }, [user?.id, user?.clinicId]);
+  const getCacheKey = useCallback(
+    (permission: Permission, resourceId?: string): string => {
+      return `${user?.id}:${permission}:${resourceId || "global"}:${user?.clinicId}`;
+    },
+    [user?.id, user?.clinicId],
+  );
 
   /**
    * Clear expired cache entries
    */
   const clearExpiredCache = useCallback(() => {
     const now = Date.now();
-    Object.keys(permissionCache).forEach(key => {
+    Object.keys(permissionCache).forEach((key) => {
       if (now - permissionCache[key].timestamp > CACHE_TTL) {
         delete permissionCache[key];
       }
@@ -150,140 +163,154 @@ export function usePermissions(): UsePermissionsReturn {
   /**
    * Check if user has specific permission
    */
-  const hasPermission = useCallback(async (
-    permission: Permission,
-    resourceId?: string
-  ): Promise<boolean> => {
-    if (!user || !role) return false;
+  const hasPermission = useCallback(
+    async (permission: Permission, resourceId?: string): Promise<boolean> => {
+      if (!user || !role) return false;
 
-    // Check cache first
-    const cacheKey = getCacheKey(permission, resourceId);
-    const cached = permissionCache[cacheKey];
-    if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
-      return cached.result.granted;
-    }
-
-    try {
-      setError(null);
-      
-      // For frontend, we'll do basic role-based checking
-      // In a real implementation, this would call the backend API
-      const hasRolePermission = permissions.includes(permission);
-      
-      if (!hasRolePermission) {
-        const result: PermissionResult = {
-          granted: false,
-          reason: `Role '${role}' does not have permission '${permission}'`,
-          roleUsed: role
-        };
-        
-        permissionCache[cacheKey] = {
-          result,
-          timestamp: Date.now()
-        };
-        
-        return false;
+      // Check cache first
+      const cacheKey = getCacheKey(permission, resourceId);
+      const cached = permissionCache[cacheKey];
+      if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+        return cached.result.granted;
       }
 
-      // Additional resource-specific checks would go here
-      // For now, we'll assume permission is granted if role has it
-      const result: PermissionResult = {
-        granted: true,
-        roleUsed: role
-      };
-      
-      permissionCache[cacheKey] = {
-        result,
-        timestamp: Date.now()
-      };
-      
-      return true;
-      
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Permission check failed';
-      setError(errorMessage);
-      console.error('Permission check error:', err);
-      return false;
-    }
-  }, [user, role, permissions, getCacheKey]);
+      try {
+        setError(null);
+
+        // For frontend, we'll do basic role-based checking
+        // In a real implementation, this would call the backend API
+        const hasRolePermission = permissions.includes(permission);
+
+        if (!hasRolePermission) {
+          const result: PermissionResult = {
+            granted: false,
+            reason: `Role '${role}' does not have permission '${permission}'`,
+            roleUsed: role,
+          };
+
+          permissionCache[cacheKey] = {
+            result,
+            timestamp: Date.now(),
+          };
+
+          return false;
+        }
+
+        // Additional resource-specific checks would go here
+        // For now, we'll assume permission is granted if role has it
+        const result: PermissionResult = {
+          granted: true,
+          roleUsed: role,
+        };
+
+        permissionCache[cacheKey] = {
+          result,
+          timestamp: Date.now(),
+        };
+
+        return true;
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Permission check failed";
+        setError(errorMessage);
+        console.error("Permission check error:", err);
+        return false;
+      }
+    },
+    [user, role, permissions, getCacheKey],
+  );
 
   /**
    * Check if user has any of the specified permissions
    */
-  const hasAnyPermission = useCallback(async (
-    permissionList: Permission[],
-    resourceId?: string
-  ): Promise<boolean> => {
-    for (const permission of permissionList) {
-      if (await hasPermission(permission, resourceId)) {
-        return true;
+  const hasAnyPermission = useCallback(
+    async (permissionList: Permission[], resourceId?: string): Promise<boolean> => {
+      for (const permission of permissionList) {
+        if (await hasPermission(permission, resourceId)) {
+          return true;
+        }
       }
-    }
-    return false;
-  }, [hasPermission]);
+      return false;
+    },
+    [hasPermission],
+  );
 
   /**
    * Check if user has all specified permissions
    */
-  const hasAllPermissions = useCallback(async (
-    permissionList: Permission[],
-    resourceId?: string
-  ): Promise<boolean> => {
-    for (const permission of permissionList) {
-      if (!(await hasPermission(permission, resourceId))) {
-        return false;
+  const hasAllPermissions = useCallback(
+    async (permissionList: Permission[], resourceId?: string): Promise<boolean> => {
+      for (const permission of permissionList) {
+        if (!(await hasPermission(permission, resourceId))) {
+          return false;
+        }
       }
-    }
-    return true;
-  }, [hasPermission]);
+      return true;
+    },
+    [hasPermission],
+  );
 
   /**
    * Check if user has specific role
    */
-  const hasRole = useCallback((targetRole: UserRole): boolean => {
-    return role === targetRole;
-  }, [role]);
+  const hasRole = useCallback(
+    (targetRole: UserRole): boolean => {
+      return role === targetRole;
+    },
+    [role],
+  );
 
   /**
    * Check if user has minimum role level
    */
-  const hasMinimumRole = useCallback((minimumRole: UserRole): boolean => {
-    if (!role) return false;
-    return ROLE_HIERARCHY[role] >= ROLE_HIERARCHY[minimumRole];
-  }, [role]);
+  const hasMinimumRole = useCallback(
+    (minimumRole: UserRole): boolean => {
+      if (!role) return false;
+      return ROLE_HIERARCHY[role] >= ROLE_HIERARCHY[minimumRole];
+    },
+    [role],
+  );
 
   /**
    * Check if user can access a feature
    */
-  const canAccess = useCallback((feature: string): boolean => {
-    const featurePermissions = FEATURE_PERMISSIONS[feature];
-    if (!featurePermissions) return false;
-    
-    return featurePermissions.some(permission => permissions.includes(permission));
-  }, [permissions]);
+  const canAccess = useCallback(
+    (feature: string): boolean => {
+      const featurePermissions = FEATURE_PERMISSIONS[feature];
+      if (!featurePermissions) return false;
+
+      return featurePermissions.some((permission) => permissions.includes(permission));
+    },
+    [permissions],
+  );
 
   /**
    * Check if user can manage a resource
    */
-  const canManage = useCallback((resource: string): boolean => {
-    const managePermission = `${resource}.manage` as Permission;
-    return permissions.includes(managePermission);
-  }, [permissions]);
+  const canManage = useCallback(
+    (resource: string): boolean => {
+      const managePermission = `${resource}.manage` as Permission;
+      return permissions.includes(managePermission);
+    },
+    [permissions],
+  );
 
   /**
    * Check if user can view a resource
    */
-  const canView = useCallback((resource: string): boolean => {
-    const readPermission = `${resource}.read` as Permission;
-    const managePermission = `${resource}.manage` as Permission;
-    return permissions.includes(readPermission) || permissions.includes(managePermission);
-  }, [permissions]);
+  const canView = useCallback(
+    (resource: string): boolean => {
+      const readPermission = `${resource}.read` as Permission;
+      const managePermission = `${resource}.manage` as Permission;
+      return permissions.includes(readPermission) || permissions.includes(managePermission);
+    },
+    [permissions],
+  );
 
   /**
    * Clear permission cache
    */
   const clearCache = useCallback(() => {
-    Object.keys(permissionCache).forEach(key => {
+    Object.keys(permissionCache).forEach((key) => {
       if (key.startsWith(`${user?.id}:`)) {
         delete permissionCache[key];
       }
@@ -295,24 +322,23 @@ export function usePermissions(): UsePermissionsReturn {
    */
   const refreshPermissions = useCallback(async () => {
     if (!user) return;
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
       // Clear cache for this user
       clearCache();
-      
+
       // In a real implementation, this would fetch fresh permissions from the backend
       // For now, we'll just clear the cache and let the next permission check refresh
-      
+
       // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
+      await new Promise((resolve) => setTimeout(resolve, 100));
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to refresh permissions';
+      const errorMessage = err instanceof Error ? err.message : "Failed to refresh permissions";
       setError(errorMessage);
-      console.error('Permission refresh error:', err);
+      console.error("Permission refresh error:", err);
     } finally {
       setIsLoading(false);
     }
@@ -349,7 +375,7 @@ export function usePermissions(): UsePermissionsReturn {
     canManage,
     canView,
     clearCache,
-    refreshPermissions
+    refreshPermissions,
   };
 }
 
@@ -363,10 +389,10 @@ export function usePermission(permission: Permission, resourceId?: string) {
 
   useEffect(() => {
     let mounted = true;
-    
+
     const checkPermission = async () => {
       if (isLoading) return;
-      
+
       setChecking(true);
       try {
         const result = await hasPermission(permission, resourceId);
@@ -374,7 +400,7 @@ export function usePermission(permission: Permission, resourceId?: string) {
           setAllowed(result);
         }
       } catch (err) {
-        console.error('Permission check failed:', err);
+        console.error("Permission check failed:", err);
         if (mounted) {
           setAllowed(false);
         }
@@ -386,7 +412,7 @@ export function usePermission(permission: Permission, resourceId?: string) {
     };
 
     checkPermission();
-    
+
     return () => {
       mounted = false;
     };
@@ -395,7 +421,7 @@ export function usePermission(permission: Permission, resourceId?: string) {
   return {
     allowed,
     isLoading: isLoading || checking,
-    error
+    error,
   };
 }
 
@@ -404,16 +430,16 @@ export function usePermission(permission: Permission, resourceId?: string) {
  */
 export function useRole() {
   const { role, hasRole, hasMinimumRole, isLoading, error } = usePermissions();
-  
+
   return {
     role,
     hasRole,
     hasMinimumRole,
-    isOwner: hasRole('owner'),
-    isManager: hasMinimumRole('manager'),
-    isStaff: hasMinimumRole('staff'),
-    isPatient: hasRole('patient'),
+    isOwner: hasRole("owner"),
+    isManager: hasMinimumRole("manager"),
+    isStaff: hasMinimumRole("staff"),
+    isPatient: hasRole("patient"),
     isLoading,
-    error
+    error,
   };
 }

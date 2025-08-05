@@ -3,31 +3,31 @@
  * Comprehensive testing for performance monitoring system
  */
 
-import React from 'react'
-import { render, screen, fireEvent, waitFor, act, cleanup } from '@testing-library/react'
-import '@testing-library/jest-dom'
+import React from "react";
+import { render, screen, fireEvent, waitFor, act, cleanup } from "@testing-library/react";
+import "@testing-library/jest-dom";
 
 // Mock web-vitals with proper function references
-jest.mock('web-vitals', () => ({
+jest.mock("web-vitals", () => ({
   getCLS: jest.fn(),
   getFID: jest.fn(),
   getFCP: jest.fn(),
   getLCP: jest.fn(),
   getTTFB: jest.fn(),
   getINP: jest.fn(),
-}))
+}));
 
 // Import components after mocking
-import { PerformanceMonitor } from '@/lib/performance/integration'
-import PerformanceDashboard from '@/components/dashboard/performance-dashboard'
-import { getCLS, getFID, getFCP, getLCP, getTTFB, getINP } from 'web-vitals'
+import { PerformanceMonitor } from "@/lib/performance/integration";
+import PerformanceDashboard from "@/components/dashboard/performance-dashboard";
+import { getCLS, getFID, getFCP, getLCP, getTTFB, getINP } from "web-vitals";
 
 // Mock fetch globally
-const mockFetch = jest.fn()
-global.fetch = mockFetch
+const mockFetch = jest.fn();
+global.fetch = mockFetch;
 
 // Mock performance API
-Object.defineProperty(global, 'performance', {
+Object.defineProperty(global, "performance", {
   value: {
     now: jest.fn(() => Date.now()),
     memory: {
@@ -40,329 +40,342 @@ Object.defineProperty(global, 'performance', {
     measure: jest.fn(),
   },
   writable: true,
-})
+});
 
 // Mock navigator
-Object.defineProperty(global, 'navigator', {
+Object.defineProperty(global, "navigator", {
   value: {
     connection: {
-      effectiveType: '4g',
+      effectiveType: "4g",
       downlink: 10,
       rtt: 100,
     },
-    userAgent: 'Jest test environment',
+    userAgent: "Jest test environment",
     hardwareConcurrency: 4,
   },
   writable: true,
-})
+});
 
-describe('Performance Monitoring Integration', () => {
+describe("Performance Monitoring Integration", () => {
   beforeEach(() => {
-    jest.clearAllMocks()
-    
+    jest.clearAllMocks();
+
     // Set environment variable to enable performance tracking in tests
-    process.env.NEXT_PUBLIC_ENABLE_PERFORMANCE_TRACKING = 'true'
-    
+    process.env.NEXT_PUBLIC_ENABLE_PERFORMANCE_TRACKING = "true";
+
     // Setup default fetch mock
     mockFetch.mockResolvedValue({
       ok: true,
-      json: () => Promise.resolve({
-        success: true,
-        current: {
-          lcp: 2.1,
-          fid: 80,
-          cls: 0.05,
-          fcp: 1.5,
-          ttfb: 600,
-          score: 95,
-          timestamp: new Date().toISOString(),
-          page: '/dashboard'
-        },
-        history: [],
-        averages: {
-          lcp: 2.1,
-          fid: 80,
-          cls: 0.05,
-          fcp: 1.5,
-          ttfb: 600,
-          score: 95
-        },
-        insights: {
-          trends: {},
-          recommendations: [],
-          alerts: []
-        }
-      })
-    })
+      json: () =>
+        Promise.resolve({
+          success: true,
+          current: {
+            lcp: 2.1,
+            fid: 80,
+            cls: 0.05,
+            fcp: 1.5,
+            ttfb: 600,
+            score: 95,
+            timestamp: new Date().toISOString(),
+            page: "/dashboard",
+          },
+          history: [],
+          averages: {
+            lcp: 2.1,
+            fid: 80,
+            cls: 0.05,
+            fcp: 1.5,
+            ttfb: 600,
+            score: 95,
+          },
+          insights: {
+            trends: {},
+            recommendations: [],
+            alerts: [],
+          },
+        }),
+    });
 
     // Setup web-vitals mocks to call callbacks
-    ;(getCLS as jest.Mock).mockImplementation((callback) => {
-      setTimeout(() => callback({ value: 0.1 }), 0)
-    })
-    ;(getFID as jest.Mock).mockImplementation((callback) => {
-      setTimeout(() => callback({ value: 100 }), 0)
-    })
-    ;(getFCP as jest.Mock).mockImplementation((callback) => {
-      setTimeout(() => callback({ value: 1500 }), 0)
-    })
-    ;(getLCP as jest.Mock).mockImplementation((callback) => {
-      setTimeout(() => callback({ value: 2500 }), 0)
-    })
-    ;(getTTFB as jest.Mock).mockImplementation((callback) => {
-      setTimeout(() => callback({ value: 200 }), 0)
-    })
-    ;(getINP as jest.Mock).mockImplementation((callback) => {
-      setTimeout(() => callback({ value: 150 }), 0)
-    })
-  })
+    (getCLS as jest.Mock).mockImplementation((callback) => {
+      setTimeout(() => callback({ value: 0.1 }), 0);
+    });
+    (getFID as jest.Mock).mockImplementation((callback) => {
+      setTimeout(() => callback({ value: 100 }), 0);
+    });
+    (getFCP as jest.Mock).mockImplementation((callback) => {
+      setTimeout(() => callback({ value: 1500 }), 0);
+    });
+    (getLCP as jest.Mock).mockImplementation((callback) => {
+      setTimeout(() => callback({ value: 2500 }), 0);
+    });
+    (getTTFB as jest.Mock).mockImplementation((callback) => {
+      setTimeout(() => callback({ value: 200 }), 0);
+    });
+    (getINP as jest.Mock).mockImplementation((callback) => {
+      setTimeout(() => callback({ value: 150 }), 0);
+    });
+  });
 
   afterEach(() => {
     // Clean up environment variable
-    delete process.env.NEXT_PUBLIC_ENABLE_PERFORMANCE_TRACKING
-    cleanup()
-  })
+    delete process.env.NEXT_PUBLIC_ENABLE_PERFORMANCE_TRACKING;
+    cleanup();
+  });
 
-  describe('Performance Monitoring Hook', () => {
-    it('should collect and send Core Web Vitals metrics', async () => {
+  describe("Performance Monitoring Hook", () => {
+    it("should collect and send Core Web Vitals metrics", async () => {
       const TestComponent = () => {
         return (
           <PerformanceMonitor>
             <div>Test Content</div>
           </PerformanceMonitor>
-        )
-      }
+        );
+      };
 
-      render(<TestComponent />)
+      render(<TestComponent />);
 
       // Wait for web-vitals to be called
       await waitFor(() => {
-        expect(getCLS).toHaveBeenCalled()
-        expect(getFID).toHaveBeenCalled()
-        expect(getFCP).toHaveBeenCalled()
-        expect(getLCP).toHaveBeenCalled()
-        expect(getTTFB).toHaveBeenCalled()
-      })
+        expect(getCLS).toHaveBeenCalled();
+        expect(getFID).toHaveBeenCalled();
+        expect(getFCP).toHaveBeenCalled();
+        expect(getLCP).toHaveBeenCalled();
+        expect(getTTFB).toHaveBeenCalled();
+      });
 
       // Wait for potential API call
-      await waitFor(() => {
-        expect(mockFetch).toHaveBeenCalledWith(
-          '/api/analytics/performance',
-          expect.objectContaining({
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          })
-        )
-      }, { timeout: 3000 })
-    })
+      await waitFor(
+        () => {
+          expect(mockFetch).toHaveBeenCalledWith(
+            "/api/analytics/performance",
+            expect.objectContaining({
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }),
+          );
+        },
+        { timeout: 3000 },
+      );
+    });
 
-    it('should calculate performance score correctly', async () => {
+    it("should calculate performance score correctly", async () => {
       const TestComponent = () => {
         return (
           <PerformanceMonitor>
             <div>Test Content</div>
           </PerformanceMonitor>
-        )
-      }
+        );
+      };
 
-      render(<TestComponent />)
+      render(<TestComponent />);
 
       // Wait for metrics collection
       await waitFor(() => {
-        expect(getCLS).toHaveBeenCalled()
-      })
+        expect(getCLS).toHaveBeenCalled();
+      });
 
       // Wait for API call with performance data
-      await waitFor(() => {
-        const fetchCall = mockFetch.mock.calls.find(call => 
-          call[0] === '/api/analytics/performance'
-        )
-        expect(fetchCall).toBeDefined()
-        
-        if (fetchCall) {
-          const body = JSON.parse(fetchCall[1].body)
-          expect(body).toHaveProperty('cls')
-          expect(body).toHaveProperty('fid')
-          expect(body).toHaveProperty('fcp')
-          expect(body).toHaveProperty('lcp')
-          expect(body).toHaveProperty('score')
-          expect(typeof body.score).toBe('number')
-        }
-      }, { timeout: 3000 })
-    })
+      await waitFor(
+        () => {
+          const fetchCall = mockFetch.mock.calls.find(
+            (call) => call[0] === "/api/analytics/performance",
+          );
+          expect(fetchCall).toBeDefined();
 
-    it('should detect device type correctly', async () => {
+          if (fetchCall) {
+            const body = JSON.parse(fetchCall[1].body);
+            expect(body).toHaveProperty("cls");
+            expect(body).toHaveProperty("fid");
+            expect(body).toHaveProperty("fcp");
+            expect(body).toHaveProperty("lcp");
+            expect(body).toHaveProperty("score");
+            expect(typeof body.score).toBe("number");
+          }
+        },
+        { timeout: 3000 },
+      );
+    });
+
+    it("should detect device type correctly", async () => {
       const TestComponent = () => {
         return (
           <PerformanceMonitor>
             <div>Test Content</div>
           </PerformanceMonitor>
-        )
-      }
+        );
+      };
 
-      render(<TestComponent />)
+      render(<TestComponent />);
+
+      await waitFor(
+        () => {
+          const fetchCall = mockFetch.mock.calls.find(
+            (call) => call[0] === "/api/analytics/performance",
+          );
+
+          if (fetchCall) {
+            const body = JSON.parse(fetchCall[1].body);
+            expect(body).toHaveProperty("deviceType");
+            expect(["mobile", "tablet", "desktop"]).toContain(body.deviceType);
+          }
+        },
+        { timeout: 3000 },
+      );
+    });
+  });
+
+  describe("Performance Dashboard Component", () => {
+    it("should render performance metrics", async () => {
+      await act(async () => {
+        render(<PerformanceDashboard />);
+      });
+
+      expect(screen.getByText("Performance Dashboard")).toBeInTheDocument();
+      expect(screen.getByText("Core Web Vitals")).toBeInTheDocument();
+    });
+
+    it("should display performance score with correct color coding", async () => {
+      await act(async () => {
+        render(<PerformanceDashboard />);
+      });
 
       await waitFor(() => {
-        const fetchCall = mockFetch.mock.calls.find(call => 
-          call[0] === '/api/analytics/performance'
-        )
-        
-        if (fetchCall) {
-          const body = JSON.parse(fetchCall[1].body)
-          expect(body).toHaveProperty('deviceType')
-          expect(['mobile', 'tablet', 'desktop']).toContain(body.deviceType)
-        }
-      }, { timeout: 3000 })
-    })
-  })
-
-  describe('Performance Dashboard Component', () => {
-    it('should render performance metrics', async () => {
-      await act(async () => {
-        render(<PerformanceDashboard />)
-      })
-
-      expect(screen.getByText('Performance Dashboard')).toBeInTheDocument()
-      expect(screen.getByText('Core Web Vitals')).toBeInTheDocument()
-    })
-
-    it('should display performance score with correct color coding', async () => {
-      await act(async () => {
-        render(<PerformanceDashboard />)
-      })
-
-      await waitFor(() => {
-        expect(screen.getByText('Performance Score')).toBeInTheDocument()
-      })
+        expect(screen.getByText("Performance Score")).toBeInTheDocument();
+      });
 
       // Test score display
-      const scoreElement = screen.getByText(/95/)
-      expect(scoreElement).toBeInTheDocument()
-    })
+      const scoreElement = screen.getByText(/95/);
+      expect(scoreElement).toBeInTheDocument();
+    });
 
-    it('should show performance badges correctly', async () => {
+    it("should show performance badges correctly", async () => {
       await act(async () => {
-        render(<PerformanceDashboard />)
-      })
+        render(<PerformanceDashboard />);
+      });
 
       await waitFor(() => {
         // Check for performance badges - look for specific metric labels
-        expect(screen.getByText('Largest Contentful Paint')).toBeInTheDocument()
-        expect(screen.getByText('First Input Delay')).toBeInTheDocument()
-        expect(screen.getByText('Cumulative Layout Shift')).toBeInTheDocument()
-      })
-    })
+        expect(screen.getByText("Largest Contentful Paint")).toBeInTheDocument();
+        expect(screen.getByText("First Input Delay")).toBeInTheDocument();
+        expect(screen.getByText("Cumulative Layout Shift")).toBeInTheDocument();
+      });
+    });
 
-    it('should handle loading state', () => {
-      render(<PerformanceDashboard />)
-      
+    it("should handle loading state", () => {
+      render(<PerformanceDashboard />);
+
       // Initially should show loading
-      expect(screen.getByText('Loading performance metrics...')).toBeInTheDocument()
-    })
+      expect(screen.getByText("Loading performance metrics...")).toBeInTheDocument();
+    });
 
-    it('should refresh metrics when button is clicked', async () => {
+    it("should refresh metrics when button is clicked", async () => {
       await act(async () => {
-        render(<PerformanceDashboard />)
-      })
+        render(<PerformanceDashboard />);
+      });
 
       // Wait for initial load
       await waitFor(() => {
-        expect(screen.queryByText('Loading performance data...')).not.toBeInTheDocument()
-      })
+        expect(screen.queryByText("Loading performance data...")).not.toBeInTheDocument();
+      });
 
       // Find and click refresh button
-      const refreshButton = screen.getByText('Refresh')
+      const refreshButton = screen.getByText("Refresh");
       await act(async () => {
-        fireEvent.click(refreshButton)
-      })
+        fireEvent.click(refreshButton);
+      });
 
       // Should make another API call
       await waitFor(() => {
-        expect(mockFetch).toHaveBeenCalledTimes(2)
-      })
-    })
-  })
+        expect(mockFetch).toHaveBeenCalledTimes(2);
+      });
+    });
+  });
 
-  describe('Performance API Integration', () => {
-    it('should handle API errors gracefully', async () => {
+  describe("Performance API Integration", () => {
+    it("should handle API errors gracefully", async () => {
       // Mock API error
-      mockFetch.mockRejectedValueOnce(new Error('API Error'))
+      mockFetch.mockRejectedValueOnce(new Error("API Error"));
 
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
+      const consoleSpy = jest.spyOn(console, "error").mockImplementation();
 
       const TestComponent = () => {
         return (
           <PerformanceMonitor>
             <div>Test Content</div>
           </PerformanceMonitor>
-        )
-      }
+        );
+      };
 
-      render(<TestComponent />)
+      render(<TestComponent />);
 
-      await waitFor(() => {
-        expect(consoleSpy).toHaveBeenCalledWith(
-          '❌ Failed to send performance metrics:',
-          expect.any(Error)
-        )
-      }, { timeout: 3000 })
+      await waitFor(
+        () => {
+          expect(consoleSpy).toHaveBeenCalledWith(
+            "❌ Failed to send performance metrics:",
+            expect.any(Error),
+          );
+        },
+        { timeout: 3000 },
+      );
 
-      consoleSpy.mockRestore()
-    })
+      consoleSpy.mockRestore();
+    });
 
-    it('should respect environment configuration', async () => {
+    it("should respect environment configuration", async () => {
       // Mock production environment
-      const originalEnv = process.env.NODE_ENV
-      process.env.NODE_ENV = 'production'
+      const originalEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = "production";
 
       const TestComponent = () => {
         return (
           <PerformanceMonitor>
             <div>Test Content</div>
           </PerformanceMonitor>
-        )
-      }
+        );
+      };
 
-      render(<TestComponent />)
+      render(<TestComponent />);
 
       // Restore environment
-      process.env.NODE_ENV = originalEnv
+      process.env.NODE_ENV = originalEnv;
 
       // Should still collect metrics in production
       await waitFor(() => {
-        expect(getCLS).toHaveBeenCalled()
-      })
-    })
-  })
+        expect(getCLS).toHaveBeenCalled();
+      });
+    });
+  });
 
-  describe('Performance Calculations', () => {
-    it('should calculate correct performance scores for different metric combinations', () => {
+  describe("Performance Calculations", () => {
+    it("should calculate correct performance scores for different metric combinations", () => {
       // Test performance score calculation logic
       const testCases = [
-        { lcp: 2.5, fid: 100, cls: 0.1, fcp: 1.8, expected: 'good' },
-        { lcp: 4.0, fid: 300, cls: 0.25, fcp: 3.0, expected: 'poor' },
-        { lcp: 3.0, fid: 200, cls: 0.15, fcp: 2.5, expected: 'poor' }, // Corrigido: resultado deveria ser 'poor'
-      ]
+        { lcp: 2.5, fid: 100, cls: 0.1, fcp: 1.8, expected: "good" },
+        { lcp: 4.0, fid: 300, cls: 0.25, fcp: 3.0, expected: "poor" },
+        { lcp: 3.0, fid: 200, cls: 0.15, fcp: 2.5, expected: "poor" }, // Corrigido: resultado deveria ser 'poor'
+      ];
 
       testCases.forEach(({ lcp, fid, cls, fcp, expected }) => {
         // Calculate score based on thresholds (fixed calculation)
-        let score = 100
-        if (lcp > 4.0) score -= 30
-        else if (lcp > 2.5) score -= 15
-        
-        if (fid > 300) score -= 30
-        else if (fid > 100) score -= 15
-        
-        if (cls > 0.25) score -= 30  
-        else if (cls > 0.1) score -= 15
-        
-        if (fcp > 3.0) score -= 10
-        else if (fcp > 1.8) score -= 5
+        let score = 100;
+        if (lcp > 4.0) score -= 30;
+        else if (lcp > 2.5) score -= 15;
 
-        const category = score >= 90 ? 'good' : score >= 70 ? 'needs-improvement' : 'poor'
-        expect(category).toBe(expected)
-      })
-    })
-  })
-})
+        if (fid > 300) score -= 30;
+        else if (fid > 100) score -= 15;
+
+        if (cls > 0.25) score -= 30;
+        else if (cls > 0.1) score -= 15;
+
+        if (fcp > 3.0) score -= 10;
+        else if (fcp > 1.8) score -= 5;
+
+        const category = score >= 90 ? "good" : score >= 70 ? "needs-improvement" : "poor";
+        expect(category).toBe(expected);
+      });
+    });
+  });
+});

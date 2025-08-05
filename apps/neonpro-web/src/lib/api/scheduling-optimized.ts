@@ -4,14 +4,14 @@
  * LGPD/ANVISA/CFM compliant with intelligent caching and batching
  */
 
-import { createClient } from '@supabase/supabase-js';
-import { cache } from 'react';
+import type { createClient } from "@supabase/supabase-js";
+import type { cache } from "react";
 
 // Types
 interface ConflictData {
   id: string;
-  type: 'scheduling' | 'resource' | 'professional' | 'patient';
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  type: "scheduling" | "resource" | "professional" | "patient";
+  severity: "low" | "medium" | "high" | "critical";
   appointmentId: string;
   patientId: string;
   professionalId: string;
@@ -27,11 +27,11 @@ interface ConflictData {
 
 interface Resolution {
   id: string;
-  type: 'reschedule' | 'reassign' | 'cancel' | 'override';
+  type: "reschedule" | "reassign" | "cancel" | "override";
   description: string;
   impact: string;
   estimatedTime: number;
-  complianceImpact: 'none' | 'low' | 'medium' | 'high';
+  complianceImpact: "none" | "low" | "medium" | "high";
 }
 
 interface CacheEntry<T> {
@@ -78,13 +78,13 @@ class OptimizedCacheManager {
       data,
       timestamp: Date.now(),
       ttl,
-      key
+      key,
     });
   }
 
   get<T>(key: string): T | null {
     const entry = this.cache.get(key);
-    
+
     if (!entry) {
       return null;
     }
@@ -114,7 +114,7 @@ class OptimizedCacheManager {
     return {
       size: this.cache.size,
       maxSize: this.maxSize,
-      entries: Array.from(this.cache.keys())
+      entries: Array.from(this.cache.keys()),
     };
   }
 }
@@ -131,7 +131,7 @@ class BatchRequestManager {
       this.batchQueue.push({
         ...request,
         resolve,
-        reject
+        reject,
       } as any);
 
       if (this.batchTimer) {
@@ -148,15 +148,15 @@ class BatchRequestManager {
     if (this.batchQueue.length === 0) return;
 
     const batch = this.batchQueue.splice(0, this.batchSize);
-    
+
     try {
       const batchResults = await this.executeBatchRequest(batch);
-      
+
       batch.forEach((request: any, index) => {
         if (batchResults[index]) {
           request.resolve(batchResults[index]);
         } else {
-          request.reject(new Error('Batch request failed'));
+          request.reject(new Error("Batch request failed"));
         }
       });
     } catch (error) {
@@ -169,30 +169,33 @@ class BatchRequestManager {
   private async executeBatchRequest(batch: BatchRequest[]): Promise<any[]> {
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     // Group requests by type for optimal batching
-    const groupedRequests = batch.reduce((acc, req) => {
-      if (!acc[req.type]) acc[req.type] = [];
-      acc[req.type].push(req);
-      return acc;
-    }, {} as Record<string, BatchRequest[]>);
+    const groupedRequests = batch.reduce(
+      (acc, req) => {
+        if (!acc[req.type]) acc[req.type] = [];
+        acc[req.type].push(req);
+        return acc;
+      },
+      {} as Record<string, BatchRequest[]>,
+    );
 
     const results: any[] = [];
 
     for (const [type, requests] of Object.entries(groupedRequests)) {
       switch (type) {
-        case 'conflict-check':
+        case "conflict-check":
           const conflictResults = await this.batchConflictCheck(supabase, requests);
           results.push(...conflictResults);
           break;
-        
-        case 'resolution-validation':
+
+        case "resolution-validation":
           const validationResults = await this.batchResolutionValidation(supabase, requests);
           results.push(...validationResults);
           break;
-        
+
         default:
           results.push(...requests.map(() => null));
       }
@@ -202,43 +205,43 @@ class BatchRequestManager {
   }
 
   private async batchConflictCheck(supabase: any, requests: BatchRequest[]): Promise<any[]> {
-    const appointmentIds = requests.map(req => req.params.appointmentId);
-    
+    const appointmentIds = requests.map((req) => req.params.appointmentId);
+
     const { data, error } = await supabase
-      .from('schedule_conflicts')
+      .from("schedule_conflicts")
       .select(`
         *,
         appointments!inner(*),
         professionals!inner(*),
         patients!inner(*)
       `)
-      .in('appointment_id', appointmentIds)
-      .eq('status', 'active');
+      .in("appointment_id", appointmentIds)
+      .eq("status", "active");
 
     if (error) throw error;
 
-    return requests.map(req => {
-      return data.find((conflict: any) => 
-        conflict.appointment_id === req.params.appointmentId
-      ) || null;
+    return requests.map((req) => {
+      return (
+        data.find((conflict: any) => conflict.appointment_id === req.params.appointmentId) || null
+      );
     });
   }
 
   private async batchResolutionValidation(supabase: any, requests: BatchRequest[]): Promise<any[]> {
-    const conflictIds = requests.map(req => req.params.conflictId);
-    
+    const conflictIds = requests.map((req) => req.params.conflictId);
+
     const { data, error } = await supabase
-      .from('conflict_resolutions')
-      .select('*')
-      .in('conflict_id', conflictIds)
-      .eq('status', 'pending');
+      .from("conflict_resolutions")
+      .select("*")
+      .in("conflict_id", conflictIds)
+      .eq("status", "pending");
 
     if (error) throw error;
 
-    return requests.map(req => {
-      return data.find((resolution: any) => 
-        resolution.conflict_id === req.params.conflictId
-      ) || null;
+    return requests.map((req) => {
+      return (
+        data.find((resolution: any) => resolution.conflict_id === req.params.conflictId) || null
+      );
     });
   }
 }
@@ -263,7 +266,7 @@ class RequestDeduplicationManager {
   getActiveRequestsCount(): number {
     return this.activeRequests.size;
   }
-}// Main Optimized Scheduling API Class
+} // Main Optimized Scheduling API Class
 export class OptimizedSchedulingAPI {
   private cache = new OptimizedCacheManager();
   private batchManager = new BatchRequestManager();
@@ -273,36 +276,31 @@ export class OptimizedSchedulingAPI {
     totalRequests: 0,
     cachedResponses: 0,
     batchedRequests: 0,
-    apiCallsReduced: 0
+    apiCallsReduced: 0,
   };
 
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
   }
 
   // Optimized conflict fetching with caching and deduplication
   async getConflicts(
-    filters: {
-      search?: string;
-      severity?: string;
-      type?: string;
-      dateRange?: string;
-    } = {}
+    filters: { search?: string; severity?: string; type?: string; dateRange?: string } = {},
   ): Promise<ApiResponse<ConflictData[]>> {
     const startTime = Date.now();
     this.performanceMetrics.totalRequests++;
 
     const cacheKey = `conflicts-${JSON.stringify(filters)}`;
-    
+
     // Check cache first
     const cachedData = this.cache.get<ConflictData[]>(cacheKey);
     if (cachedData) {
       this.performanceMetrics.cachedResponses++;
       this.performanceMetrics.apiCallsReduced++;
-      
+
       return {
         success: true,
         data: cachedData,
@@ -311,17 +309,17 @@ export class OptimizedSchedulingAPI {
         performance: {
           queryTime: Date.now() - startTime,
           cacheHit: true,
-          apiCallsReduced: this.performanceMetrics.apiCallsReduced
-        }
+          apiCallsReduced: this.performanceMetrics.apiCallsReduced,
+        },
       };
     }
 
     // Use request deduplication
     const requestKey = `get-conflicts-${cacheKey}`;
-    
+
     const data = await this.deduplicationManager.deduplicate(requestKey, async () => {
       let query = this.supabase
-        .from('schedule_conflicts')
+        .from("schedule_conflicts")
         .select(`
           *,
           appointments!inner(
@@ -331,16 +329,16 @@ export class OptimizedSchedulingAPI {
           ),
           conflict_resolutions(*)
         `)
-        .eq('status', 'active')
-        .order('created_at', { ascending: false });
+        .eq("status", "active")
+        .order("created_at", { ascending: false });
 
       // Apply filters efficiently
-      if (filters.severity && filters.severity !== 'all') {
-        query = query.eq('severity', filters.severity);
+      if (filters.severity && filters.severity !== "all") {
+        query = query.eq("severity", filters.severity);
       }
 
-      if (filters.type && filters.type !== 'all') {
-        query = query.eq('type', filters.type);
+      if (filters.type && filters.type !== "all") {
+        query = query.eq("type", filters.type);
       }
 
       if (filters.search) {
@@ -352,25 +350,25 @@ export class OptimizedSchedulingAPI {
       }
 
       // Date range filtering
-      if (filters.dateRange && filters.dateRange !== 'all') {
+      if (filters.dateRange && filters.dateRange !== "all") {
         const now = new Date();
         let startDate: Date;
-        
+
         switch (filters.dateRange) {
-          case 'today':
+          case "today":
             startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
             break;
-          case 'week':
+          case "week":
             startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
             break;
-          case 'month':
+          case "month":
             startDate = new Date(now.getFullYear(), now.getMonth(), 1);
             break;
           default:
             startDate = new Date(0);
         }
-        
-        query = query.gte('created_at', startDate.toISOString());
+
+        query = query.gte("created_at", startDate.toISOString());
       }
 
       const { data, error } = await query;
@@ -395,13 +393,13 @@ export class OptimizedSchedulingAPI {
           description: res.description,
           impact: res.impact_description,
           estimatedTime: res.estimated_time_minutes,
-          complianceImpact: res.compliance_impact
+          complianceImpact: res.compliance_impact,
         })),
         metadata: {
           lgpdConsent: conflict.lgpd_consent || false,
           clinicalPriority: conflict.clinical_priority || 0,
-          emergencyFlag: conflict.emergency_flag || false
-        }
+          emergencyFlag: conflict.emergency_flag || false,
+        },
       }));
 
       return transformedData;
@@ -419,8 +417,8 @@ export class OptimizedSchedulingAPI {
       performance: {
         queryTime: Date.now() - startTime,
         cacheHit: false,
-        apiCallsReduced: this.performanceMetrics.apiCallsReduced
-      }
+        apiCallsReduced: this.performanceMetrics.apiCallsReduced,
+      },
     };
   }
 
@@ -428,7 +426,7 @@ export class OptimizedSchedulingAPI {
   async resolveConflictsBatch(
     conflictIds: string[],
     resolutionType: string,
-    metadata: any
+    metadata: any,
   ): Promise<ApiResponse<any>> {
     const startTime = Date.now();
     this.performanceMetrics.totalRequests++;
@@ -436,15 +434,15 @@ export class OptimizedSchedulingAPI {
 
     // Validate LGPD compliance for batch operations
     if (!metadata.lgpdCompliant) {
-      throw new Error('LGPD compliance required for batch operations');
+      throw new Error("LGPD compliance required for batch operations");
     }
 
     try {
-      const { data, error } = await this.supabase.rpc('resolve_conflicts_batch', {
+      const { data, error } = await this.supabase.rpc("resolve_conflicts_batch", {
         p_conflict_ids: conflictIds,
         p_resolution_type: resolutionType,
         p_metadata: metadata,
-        p_batch_timestamp: new Date().toISOString()
+        p_batch_timestamp: new Date().toISOString(),
       });
 
       if (error) {
@@ -452,8 +450,8 @@ export class OptimizedSchedulingAPI {
       }
 
       // Invalidate relevant caches
-      this.cache.invalidate('conflicts');
-      this.cache.invalidate('appointments');
+      this.cache.invalidate("conflicts");
+      this.cache.invalidate("appointments");
 
       // Track API call reduction
       this.performanceMetrics.apiCallsReduced += Math.max(0, conflictIds.length - 1);
@@ -464,14 +462,14 @@ export class OptimizedSchedulingAPI {
           resolvedCount: data.resolved_count,
           rescheduled: data.rescheduled_count,
           cancelled: data.cancelled_count,
-          errors: data.errors || []
+          errors: data.errors || [],
         },
         timestamp: new Date().toISOString(),
         performance: {
           queryTime: Date.now() - startTime,
           cacheHit: false,
-          apiCallsReduced: this.performanceMetrics.apiCallsReduced
-        }
+          apiCallsReduced: this.performanceMetrics.apiCallsReduced,
+        },
       };
     } catch (error) {
       throw new Error(`Batch resolution error: ${error}`);
@@ -484,13 +482,13 @@ export class OptimizedSchedulingAPI {
     this.performanceMetrics.totalRequests++;
 
     const cacheKey = `conflict-check-${appointmentId}`;
-    
+
     // Check cache first
     const cachedResult = this.cache.get<ConflictData | null>(cacheKey);
     if (cachedResult !== null) {
       this.performanceMetrics.cachedResponses++;
       this.performanceMetrics.apiCallsReduced++;
-      
+
       return {
         success: true,
         data: cachedResult,
@@ -499,8 +497,8 @@ export class OptimizedSchedulingAPI {
         performance: {
           queryTime: Date.now() - startTime,
           cacheHit: true,
-          apiCallsReduced: this.performanceMetrics.apiCallsReduced
-        }
+          apiCallsReduced: this.performanceMetrics.apiCallsReduced,
+        },
       };
     }
 
@@ -508,9 +506,9 @@ export class OptimizedSchedulingAPI {
     try {
       const result = await this.batchManager.addToBatch({
         id: appointmentId,
-        type: 'conflict-check',
+        type: "conflict-check",
         params: { appointmentId },
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       this.performanceMetrics.batchedRequests++;
@@ -526,8 +524,8 @@ export class OptimizedSchedulingAPI {
         performance: {
           queryTime: Date.now() - startTime,
           cacheHit: false,
-          apiCallsReduced: this.performanceMetrics.apiCallsReduced
-        }
+          apiCallsReduced: this.performanceMetrics.apiCallsReduced,
+        },
       };
     } catch (error) {
       throw new Error(`Conflict check failed: ${error}`);
@@ -538,45 +536,49 @@ export class OptimizedSchedulingAPI {
   createConflictStream(
     filters: any = {},
     onConflict: (conflict: ConflictData) => void,
-    onError: (error: Error) => void
+    onError: (error: Error) => void,
   ): () => void {
     const channel = this.supabase
-      .channel('schedule_conflicts')
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'schedule_conflicts',
-        filter: 'status=eq.active'
-      }, (payload: any) => {
-        // Transform and emit new conflicts
-        const conflict: ConflictData = {
-          id: payload.new.id,
-          type: payload.new.type,
-          severity: payload.new.severity,
-          appointmentId: payload.new.appointment_id,
-          patientId: payload.new.patient_id,
-          professionalId: payload.new.professional_id,
-          conflictTime: payload.new.conflict_time,
-          description: payload.new.description,
-          suggestedResolutions: [],
-          metadata: {
-            lgpdConsent: payload.new.lgpd_consent || false,
-            clinicalPriority: payload.new.clinical_priority || 0,
-            emergencyFlag: payload.new.emergency_flag || false
-          }
-        };
+      .channel("schedule_conflicts")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "schedule_conflicts",
+          filter: "status=eq.active",
+        },
+        (payload: any) => {
+          // Transform and emit new conflicts
+          const conflict: ConflictData = {
+            id: payload.new.id,
+            type: payload.new.type,
+            severity: payload.new.severity,
+            appointmentId: payload.new.appointment_id,
+            patientId: payload.new.patient_id,
+            professionalId: payload.new.professional_id,
+            conflictTime: payload.new.conflict_time,
+            description: payload.new.description,
+            suggestedResolutions: [],
+            metadata: {
+              lgpdConsent: payload.new.lgpd_consent || false,
+              clinicalPriority: payload.new.clinical_priority || 0,
+              emergencyFlag: payload.new.emergency_flag || false,
+            },
+          };
 
-        // Invalidate relevant caches
-        this.cache.invalidate(`conflicts`);
-        this.cache.invalidate(`conflict-check-${conflict.appointmentId}`);
+          // Invalidate relevant caches
+          this.cache.invalidate(`conflicts`);
+          this.cache.invalidate(`conflict-check-${conflict.appointmentId}`);
 
-        onConflict(conflict);
-      })
+          onConflict(conflict);
+        },
+      )
       .subscribe((status: string) => {
-        if (status === 'SUBSCRIBED') {
-          console.log('Conflict stream connected');
-        } else if (status === 'CHANNEL_ERROR') {
-          onError(new Error('Real-time connection failed'));
+        if (status === "SUBSCRIBED") {
+          console.log("Conflict stream connected");
+        } else if (status === "CHANNEL_ERROR") {
+          onError(new Error("Real-time connection failed"));
         }
       });
 
@@ -592,12 +594,20 @@ export class OptimizedSchedulingAPI {
       ...this.performanceMetrics,
       cacheStats: this.cache.getStats(),
       activeRequests: this.deduplicationManager.getActiveRequestsCount(),
-      cacheHitRate: this.performanceMetrics.totalRequests > 0 
-        ? (this.performanceMetrics.cachedResponses / this.performanceMetrics.totalRequests * 100).toFixed(2) + '%'
-        : '0%',
-      apiCallReduction: this.performanceMetrics.totalRequests > 0
-        ? (this.performanceMetrics.apiCallsReduced / this.performanceMetrics.totalRequests * 100).toFixed(2) + '%'
-        : '0%'
+      cacheHitRate:
+        this.performanceMetrics.totalRequests > 0
+          ? (
+              (this.performanceMetrics.cachedResponses / this.performanceMetrics.totalRequests) *
+              100
+            ).toFixed(2) + "%"
+          : "0%",
+      apiCallReduction:
+        this.performanceMetrics.totalRequests > 0
+          ? (
+              (this.performanceMetrics.apiCallsReduced / this.performanceMetrics.totalRequests) *
+              100
+            ).toFixed(2) + "%"
+          : "0%",
     };
   }
 
@@ -612,40 +622,40 @@ export class OptimizedSchedulingAPI {
 
   // Health check for API optimization
   async healthCheck(): Promise<{
-    status: 'healthy' | 'degraded' | 'unhealthy';
+    status: "healthy" | "degraded" | "unhealthy";
     metrics: any;
     recommendations: string[];
   }> {
     const metrics = this.getPerformanceMetrics();
-    const cacheHitRate = parseFloat(metrics.cacheHitRate.replace('%', ''));
-    const apiReductionRate = parseFloat(metrics.apiCallReduction.replace('%', ''));
-    
-    let status: 'healthy' | 'degraded' | 'unhealthy' = 'healthy';
+    const cacheHitRate = parseFloat(metrics.cacheHitRate.replace("%", ""));
+    const apiReductionRate = parseFloat(metrics.apiCallReduction.replace("%", ""));
+
+    let status: "healthy" | "degraded" | "unhealthy" = "healthy";
     const recommendations: string[] = [];
 
     if (cacheHitRate < 30) {
-      status = 'degraded';
-      recommendations.push('Cache hit rate is low. Consider adjusting TTL values.');
+      status = "degraded";
+      recommendations.push("Cache hit rate is low. Consider adjusting TTL values.");
     }
 
     if (apiReductionRate < 50) {
-      status = 'degraded';
-      recommendations.push('API call reduction target not met. Review batching strategy.');
+      status = "degraded";
+      recommendations.push("API call reduction target not met. Review batching strategy.");
     }
 
     if (metrics.cacheStats.size > 800) {
-      recommendations.push('Cache size is high. Consider implementing more aggressive eviction.');
+      recommendations.push("Cache size is high. Consider implementing more aggressive eviction.");
     }
 
     if (metrics.activeRequests > 50) {
-      status = 'unhealthy';
-      recommendations.push('High number of active requests. Check for request loops.');
+      status = "unhealthy";
+      recommendations.push("High number of active requests. Check for request loops.");
     }
 
     return {
       status,
       metrics,
-      recommendations
+      recommendations,
     };
   }
 }
@@ -661,7 +671,7 @@ export const useOptimizedConflicts = (filters: any = {}) => {
 export const useConflictStream = (
   filters: any = {},
   onConflict: (conflict: ConflictData) => void,
-  onError: (error: Error) => void = console.error
+  onError: (error: Error) => void = console.error,
 ) => {
   return optimizedSchedulingAPI.createConflictStream(filters, onConflict, onError);
 };

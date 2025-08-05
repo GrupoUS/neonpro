@@ -1,93 +1,93 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { format } from 'date-fns'
-import { pt } from 'date-fns/locale'
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Card, CardContent } from '@/components/ui/card'
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
-} from '@/components/ui/dropdown-menu'
-import { 
-  MoreHorizontal, 
-  Edit, 
-  Trash2, 
-  CheckCircle, 
-  XCircle, 
-  Clock, 
+import type { useState } from "react";
+import type { format } from "date-fns";
+import type { pt } from "date-fns/locale";
+import type {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Card, CardContent } from "@/components/ui/card";
+import type {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import type {
+  MoreHorizontal,
+  Edit,
+  Trash2,
+  CheckCircle,
+  XCircle,
+  Clock,
   UserCheck,
   Phone,
   MessageCircle,
-  Calendar as CalendarIcon
-} from 'lucide-react'
-import { cn } from '@/lib/utils'
-import type { Appointment } from '@/hooks/use-appointments-manager'
+  Calendar as CalendarIcon,
+} from "lucide-react";
+import type { cn } from "@/lib/utils";
+import type { Appointment } from "@/hooks/use-appointments-manager";
 
 interface AppointmentListViewProps {
-  appointments: Appointment[]
-  onEdit?: (appointment: Appointment) => void
-  onCancel?: (appointmentId: string, reason?: string) => void
-  onConfirm?: (appointmentId: string) => void
-  onReschedule?: (appointment: Appointment) => void
-  onMarkCompleted?: (appointmentId: string) => void
-  onMarkNoShow?: (appointmentId: string) => void
-  onContact?: (appointment: Appointment) => void
-  loading?: boolean
-  className?: string
+  appointments: Appointment[];
+  onEdit?: (appointment: Appointment) => void;
+  onCancel?: (appointmentId: string, reason?: string) => void;
+  onConfirm?: (appointmentId: string) => void;
+  onReschedule?: (appointment: Appointment) => void;
+  onMarkCompleted?: (appointmentId: string) => void;
+  onMarkNoShow?: (appointmentId: string) => void;
+  onContact?: (appointment: Appointment) => void;
+  loading?: boolean;
+  className?: string;
 }
 
 const statusConfig = {
   pending: {
-    label: 'Pendente',
-    variant: 'secondary' as const,
+    label: "Pendente",
+    variant: "secondary" as const,
     icon: Clock,
-    className: 'text-yellow-600 bg-yellow-50 border-yellow-200'
+    className: "text-yellow-600 bg-yellow-50 border-yellow-200",
   },
   confirmed: {
-    label: 'Confirmado',
-    variant: 'default' as const,
+    label: "Confirmado",
+    variant: "default" as const,
     icon: CheckCircle,
-    className: 'text-blue-600 bg-blue-50 border-blue-200'
+    className: "text-blue-600 bg-blue-50 border-blue-200",
   },
   cancelled: {
-    label: 'Cancelado',
-    variant: 'destructive' as const,
+    label: "Cancelado",
+    variant: "destructive" as const,
     icon: XCircle,
-    className: 'text-red-600 bg-red-50 border-red-200'
+    className: "text-red-600 bg-red-50 border-red-200",
   },
   completed: {
-    label: 'Concluído',
-    variant: 'default' as const,
+    label: "Concluído",
+    variant: "default" as const,
     icon: CheckCircle,
-    className: 'text-green-600 bg-green-50 border-green-200'
+    className: "text-green-600 bg-green-50 border-green-200",
   },
   no_show: {
-    label: 'Não Compareceu',
-    variant: 'destructive' as const,
+    label: "Não Compareceu",
+    variant: "destructive" as const,
     icon: XCircle,
-    className: 'text-red-600 bg-red-50 border-red-200'
+    className: "text-red-600 bg-red-50 border-red-200",
   },
   rescheduled: {
-    label: 'Reagendado',
-    variant: 'secondary' as const,
+    label: "Reagendado",
+    variant: "secondary" as const,
     icon: CalendarIcon,
-    className: 'text-purple-600 bg-purple-50 border-purple-200'
-  }
-}
+    className: "text-purple-600 bg-purple-50 border-purple-200",
+  },
+};
 
 export function AppointmentListView({
   appointments,
@@ -99,37 +99,37 @@ export function AppointmentListView({
   onMarkNoShow,
   onContact,
   loading = false,
-  className
+  className,
 }: AppointmentListViewProps) {
-  const [loadingActions, setLoadingActions] = useState<Record<string, boolean>>({})
+  const [loadingActions, setLoadingActions] = useState<Record<string, boolean>>({});
 
   const handleAction = async (actionId: string, action: () => Promise<void> | void) => {
-    setLoadingActions(prev => ({ ...prev, [actionId]: true }))
+    setLoadingActions((prev) => ({ ...prev, [actionId]: true }));
     try {
-      await action()
+      await action();
     } catch (error) {
-      console.error('Error executing action:', error)
+      console.error("Error executing action:", error);
     } finally {
-      setLoadingActions(prev => ({ ...prev, [actionId]: false }))
+      setLoadingActions((prev) => ({ ...prev, [actionId]: false }));
     }
-  }
+  };
 
   const getInitials = (name: string) => {
     return name
-      .split(' ')
-      .map(word => word.charAt(0))
-      .join('')
+      .split(" ")
+      .map((word) => word.charAt(0))
+      .join("")
       .toUpperCase()
-      .slice(0, 2)
-  }
+      .slice(0, 2);
+  };
 
   const formatTime = (dateTime: string) => {
-    return format(new Date(dateTime), 'HH:mm', { locale: pt })
-  }
+    return format(new Date(dateTime), "HH:mm", { locale: pt });
+  };
 
   const formatDate = (dateTime: string) => {
-    return format(new Date(dateTime), 'dd/MM/yyyy', { locale: pt })
-  }
+    return format(new Date(dateTime), "dd/MM/yyyy", { locale: pt });
+  };
 
   if (loading) {
     return (
@@ -148,7 +148,7 @@ export function AppointmentListView({
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   if (appointments.length === 0) {
@@ -166,7 +166,7 @@ export function AppointmentListView({
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -186,8 +186,8 @@ export function AppointmentListView({
           </TableHeader>
           <TableBody>
             {appointments.map((appointment) => {
-              const statusInfo = statusConfig[appointment.status]
-              const StatusIcon = statusInfo.icon
+              const statusInfo = statusConfig[appointment.status];
+              const StatusIcon = statusInfo.icon;
 
               return (
                 <TableRow key={appointment.id} className="group hover:bg-muted/50">
@@ -195,8 +195,8 @@ export function AppointmentListView({
                   <TableCell className="font-medium">
                     <div className="flex items-center space-x-3">
                       <Avatar className="h-8 w-8">
-                        <AvatarImage 
-                          src={appointment.patient.avatar_url} 
+                        <AvatarImage
+                          src={appointment.patient.avatar_url}
                           alt={appointment.patient.full_name}
                         />
                         <AvatarFallback className="text-xs">
@@ -215,9 +215,7 @@ export function AppointmentListView({
                   </TableCell>
 
                   {/* Date */}
-                  <TableCell>
-                    {formatDate(appointment.date_time)}
-                  </TableCell>
+                  <TableCell>{formatDate(appointment.date_time)}</TableCell>
 
                   {/* Time */}
                   <TableCell>
@@ -241,25 +239,27 @@ export function AppointmentListView({
                   <TableCell>
                     <div className="flex items-center space-x-2">
                       <Avatar className="h-6 w-6">
-                        <AvatarImage 
-                          src={appointment.professional?.avatar_url} 
+                        <AvatarImage
+                          src={appointment.professional?.avatar_url}
                           alt={appointment.professional?.full_name}
                         />
                         <AvatarFallback className="text-xs">
-                          {appointment.professional?.full_name ? getInitials(appointment.professional.full_name) : 'N/A'}
+                          {appointment.professional?.full_name
+                            ? getInitials(appointment.professional.full_name)
+                            : "N/A"}
                         </AvatarFallback>
                       </Avatar>
                       <span className="text-sm">
-                        {appointment.professional?.full_name || 'Não atribuído'}
+                        {appointment.professional?.full_name || "Não atribuído"}
                       </span>
                     </div>
                   </TableCell>
 
                   {/* Status */}
                   <TableCell>
-                    <Badge 
+                    <Badge
                       variant={statusInfo.variant}
-                      className={cn('flex items-center gap-1', statusInfo.className)}
+                      className={cn("flex items-center gap-1", statusInfo.className)}
                     >
                       <StatusIcon className="h-3 w-3" />
                       {statusInfo.label}
@@ -270,9 +270,9 @@ export function AppointmentListView({
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           className="opacity-0 group-hover:opacity-100 transition-opacity"
                         >
                           <MoreHorizontal className="h-4 w-4" />
@@ -280,7 +280,7 @@ export function AppointmentListView({
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-48">
                         {/* Edit */}
-                        <DropdownMenuItem 
+                        <DropdownMenuItem
                           onClick={() => onEdit?.(appointment)}
                           disabled={loadingActions[`edit-${appointment.id}`]}
                         >
@@ -289,16 +289,20 @@ export function AppointmentListView({
                         </DropdownMenuItem>
 
                         {/* Quick Actions based on status */}
-                        {appointment.status === 'pending' && (
+                        {appointment.status === "pending" && (
                           <>
-                            <DropdownMenuItem 
-                              onClick={() => handleAction(`confirm-${appointment.id}`, () => onConfirm?.(appointment.id))}
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleAction(`confirm-${appointment.id}`, () =>
+                                  onConfirm?.(appointment.id),
+                                )
+                              }
                               disabled={loadingActions[`confirm-${appointment.id}`]}
                             >
                               <UserCheck className="h-4 w-4 mr-2" />
                               Confirmar
                             </DropdownMenuItem>
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               onClick={() => onReschedule?.(appointment)}
                               disabled={loadingActions[`reschedule-${appointment.id}`]}
                             >
@@ -308,17 +312,25 @@ export function AppointmentListView({
                           </>
                         )}
 
-                        {appointment.status === 'confirmed' && (
+                        {appointment.status === "confirmed" && (
                           <>
-                            <DropdownMenuItem 
-                              onClick={() => handleAction(`complete-${appointment.id}`, () => onMarkCompleted?.(appointment.id))}
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleAction(`complete-${appointment.id}`, () =>
+                                  onMarkCompleted?.(appointment.id),
+                                )
+                              }
                               disabled={loadingActions[`complete-${appointment.id}`]}
                             >
                               <CheckCircle className="h-4 w-4 mr-2" />
                               Marcar Concluído
                             </DropdownMenuItem>
-                            <DropdownMenuItem 
-                              onClick={() => handleAction(`no-show-${appointment.id}`, () => onMarkNoShow?.(appointment.id))}
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleAction(`no-show-${appointment.id}`, () =>
+                                  onMarkNoShow?.(appointment.id),
+                                )
+                              }
                               disabled={loadingActions[`no-show-${appointment.id}`]}
                             >
                               <XCircle className="h-4 w-4 mr-2" />
@@ -331,17 +343,13 @@ export function AppointmentListView({
 
                         {/* Contact Actions */}
                         {appointment.patient.phone && (
-                          <DropdownMenuItem 
-                            onClick={() => onContact?.(appointment)}
-                          >
+                          <DropdownMenuItem onClick={() => onContact?.(appointment)}>
                             <Phone className="h-4 w-4 mr-2" />
                             Contatar
                           </DropdownMenuItem>
                         )}
 
-                        <DropdownMenuItem 
-                          onClick={() => onContact?.(appointment)}
-                        >
+                        <DropdownMenuItem onClick={() => onContact?.(appointment)}>
                           <MessageCircle className="h-4 w-4 mr-2" />
                           Enviar Mensagem
                         </DropdownMenuItem>
@@ -349,9 +357,13 @@ export function AppointmentListView({
                         <DropdownMenuSeparator />
 
                         {/* Cancel */}
-                        {!['cancelled', 'completed', 'no_show'].includes(appointment.status) && (
-                          <DropdownMenuItem 
-                            onClick={() => handleAction(`cancel-${appointment.id}`, () => onCancel?.(appointment.id))}
+                        {!["cancelled", "completed", "no_show"].includes(appointment.status) && (
+                          <DropdownMenuItem
+                            onClick={() =>
+                              handleAction(`cancel-${appointment.id}`, () =>
+                                onCancel?.(appointment.id),
+                              )
+                            }
                             disabled={loadingActions[`cancel-${appointment.id}`]}
                             className="text-red-600"
                           >
@@ -363,11 +375,11 @@ export function AppointmentListView({
                     </DropdownMenu>
                   </TableCell>
                 </TableRow>
-              )
+              );
             })}
           </TableBody>
         </Table>
       </CardContent>
     </Card>
-  )
+  );
 }

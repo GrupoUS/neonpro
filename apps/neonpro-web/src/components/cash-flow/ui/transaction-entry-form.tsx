@@ -1,28 +1,47 @@
 // Transaction Entry Form - Add/Edit cash flow transactions
 // Following financial dashboard patterns from Context7 research
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CashFlowEntrySchema, type CashFlowEntryInput } from '../utils/validation';
-import { useCashFlow } from '../hooks/use-cash-flow';
-import { useCashRegisters } from '../hooks/use-cash-registers';
-import { 
-  formatCurrency, 
+import type { useState } from "react";
+import type { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type { toast } from "sonner";
+import type { Button } from "@/components/ui/button";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { CashFlowEntrySchema, type CashFlowEntryInput } from "../utils/validation";
+import type { useCashFlow } from "../hooks/use-cash-flow";
+import type { useCashRegisters } from "../hooks/use-cash-registers";
+import type {
+  formatCurrency,
   getTransactionTypeDisplayName,
   getCategoryDisplayName,
   getPaymentMethodDisplayName,
-  generateReferenceNumber
-} from '../utils/calculations';
+  generateReferenceNumber,
+} from "../utils/calculations";
 
 interface TransactionEntryFormProps {
   clinicId: string;
@@ -31,11 +50,11 @@ interface TransactionEntryFormProps {
   onCancel?: () => void;
 }
 
-export function TransactionEntryForm({ 
-  clinicId, 
-  userId, 
-  onSuccess, 
-  onCancel 
+export function TransactionEntryForm({
+  clinicId,
+  userId,
+  onSuccess,
+  onCancel,
 }: TransactionEntryFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { createEntry } = useCashFlow(clinicId);
@@ -46,40 +65,39 @@ export function TransactionEntryForm({
     defaultValues: {
       clinic_id: clinicId,
       created_by: userId,
-      currency: 'BRL',
-      transaction_type: 'receipt',
-      category: 'service_payment',
-      payment_method: 'cash'
-    }
+      currency: "BRL",
+      transaction_type: "receipt",
+      category: "service_payment",
+      payment_method: "cash",
+    },
   });
 
   const onSubmit = async (data: CashFlowEntryInput) => {
     try {
       setIsSubmitting(true);
-      
+
       // Generate reference number if not provided
       const entryData = {
         ...data,
-        reference_number: data.reference_number || generateReferenceNumber(data.transaction_type)
+        reference_number: data.reference_number || generateReferenceNumber(data.transaction_type),
       };
 
       await createEntry(entryData);
-      toast.success('Transação criada com sucesso!');
+      toast.success("Transação criada com sucesso!");
       form.reset();
       onSuccess?.();
     } catch (error) {
-      console.error('Error creating transaction:', error);
-      toast.error('Erro ao criar transação');
+      console.error("Error creating transaction:", error);
+      toast.error("Erro ao criar transação");
     } finally {
       setIsSubmitting(false);
     }
-  };  return (
+  };
+  return (
     <Card className="w-full max-w-2xl">
       <CardHeader>
         <CardTitle>Nova Transação</CardTitle>
-        <CardDescription>
-          Registre uma nova movimentação financeira
-        </CardDescription>
+        <CardDescription>Registre uma nova movimentação financeira</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -138,7 +156,6 @@ export function TransactionEntryForm({
                 )}
               />
             </div>
-
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -152,7 +169,7 @@ export function TransactionEntryForm({
                         step="0.01"
                         placeholder="0,00"
                         {...field}
-                        onChange={e => field.onChange(parseFloat(e.target.value))}
+                        onChange={(e) => field.onChange(parseFloat(e.target.value))}
                       />
                     </FormControl>
                     <FormMessage />
@@ -186,7 +203,8 @@ export function TransactionEntryForm({
                   </FormItem>
                 )}
               />
-            </div>            <FormField
+            </div>{" "}
+            <FormField
               control={form.control}
               name="register_id"
               render={({ field }) => (
@@ -210,7 +228,6 @@ export function TransactionEntryForm({
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="description"
@@ -228,7 +245,6 @@ export function TransactionEntryForm({
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="reference_number"
@@ -236,30 +252,18 @@ export function TransactionEntryForm({
                 <FormItem>
                   <FormLabel>Número de Referência (Opcional)</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Ex: NF-123456, REC-789"
-                      {...field}
-                    />
+                    <Input placeholder="Ex: NF-123456, REC-789" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
             <div className="flex justify-end gap-3 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onCancel}
-                disabled={isSubmitting}
-              >
+              <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
                 Cancelar
               </Button>
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Criando...' : 'Criar Transação'}
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Criando..." : "Criar Transação"}
               </Button>
             </div>
           </form>

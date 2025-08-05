@@ -1,19 +1,19 @@
 "use client";
 
 import type { AppointmentWithRelations } from "@/app/lib/types/appointments";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent } from "@/components/ui/card";
+import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import {
+import type { cn } from "@/lib/utils";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
   Clock,
   Mail,
   MapPin,
@@ -77,23 +77,15 @@ export function AppointmentCard({
   // Create comprehensive ARIA label
   const ariaLabel = [
     `Agendamento ${status.label}`,
-    appointment.patient?.full_name
-      ? `para ${appointment.patient.full_name}`
-      : "",
-    appointment.service_type?.name
-      ? `serviço: ${appointment.service_type.name}`
-      : "",
-    appointment.professional?.full_name
-      ? `com ${appointment.professional.full_name}`
-      : "",
+    appointment.patient?.full_name ? `para ${appointment.patient.full_name}` : "",
+    appointment.service_type?.name ? `serviço: ${appointment.service_type.name}` : "",
+    appointment.professional?.full_name ? `com ${appointment.professional.full_name}` : "",
     `às ${format(startTime, "HH:mm", { locale: ptBR })}`,
     `até ${format(endTime, "HH:mm", { locale: ptBR })}`,
   ]
     .filter(Boolean)
     .join(", ");
-  const duration = Math.round(
-    (endTime.getTime() - startTime.getTime()) / (1000 * 60)
-  );
+  const duration = Math.round((endTime.getTime() - startTime.getTime()) / (1000 * 60));
 
   const handleCardClick = (e: React.MouseEvent) => {
     if (onClick && !e.defaultPrevented) {
@@ -115,7 +107,7 @@ export function AppointmentCard({
         aria-label={ariaLabel}
         className={cn(
           "p-2 rounded-md border-l-4 cursor-pointer hover:shadow-sm transition-shadow focus:outline-none focus:ring-2 focus:ring-primary/20",
-          status.color.replace("bg-", "border-l-").replace("text-white", "")
+          status.color.replace("bg-", "border-l-").replace("text-white", ""),
         )}
         onClick={handleCardClick}
         onKeyDown={(e) => {
@@ -138,9 +130,7 @@ export function AppointmentCard({
           <div className="flex items-start gap-2">
             <User2 className="h-3 w-3 mt-0.5 text-muted-foreground flex-shrink-0" />
             {showPatient && appointment.patient && (
-              <span className="text-sm font-medium truncate">
-                {appointment.patient.full_name}
-              </span>
+              <span className="text-sm font-medium truncate">{appointment.patient.full_name}</span>
             )}
           </div>
 
@@ -162,9 +152,7 @@ export function AppointmentCard({
       <Card
         className={cn(
           "p-3 cursor-pointer hover:shadow-md transition-shadow focus-within:ring-2 focus-within:ring-primary/20",
-          status.color
-            .replace("bg-", "border-l-4 border-l-")
-            .replace("text-white", "")
+          status.color.replace("bg-", "border-l-4 border-l-").replace("text-white", ""),
         )}
         role="button"
         tabIndex={0}
@@ -183,15 +171,11 @@ export function AppointmentCard({
               {format(startTime, "HH:mm", { locale: ptBR })} -{" "}
               {format(endTime, "HH:mm", { locale: ptBR })}
             </span>
-            <Badge className={cn("text-xs", status.color)}>
-              {status.label}
-            </Badge>
+            <Badge className={cn("text-xs", status.color)}>{status.label}</Badge>
           </div>
 
           {showPatient && appointment.patient && (
-            <p className="font-medium text-sm truncate">
-              {appointment.patient.full_name}
-            </p>
+            <p className="font-medium text-sm truncate">{appointment.patient.full_name}</p>
           )}
 
           {appointment.service_type && (
@@ -222,23 +206,17 @@ export function AppointmentCard({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   {onEdit && (
-                    <DropdownMenuItem
-                      onClick={(e) => handleActionClick(e, onEdit)}
-                    >
+                    <DropdownMenuItem onClick={(e) => handleActionClick(e, onEdit)}>
                       Editar
                     </DropdownMenuItem>
                   )}
                   {onConfirm && appointment.status === "scheduled" && (
-                    <DropdownMenuItem
-                      onClick={(e) => handleActionClick(e, onConfirm)}
-                    >
+                    <DropdownMenuItem onClick={(e) => handleActionClick(e, onConfirm)}>
                       Confirmar
                     </DropdownMenuItem>
                   )}
                   {onComplete && appointment.status === "confirmed" && (
-                    <DropdownMenuItem
-                      onClick={(e) => handleActionClick(e, onComplete)}
-                    >
+                    <DropdownMenuItem onClick={(e) => handleActionClick(e, onComplete)}>
                       Concluir
                     </DropdownMenuItem>
                   )}
@@ -270,9 +248,7 @@ export function AppointmentCard({
     <Card
       className={cn(
         "cursor-pointer hover:shadow-md transition-shadow focus-within:ring-2 focus-within:ring-primary/20",
-        status.color
-          .replace("bg-", "border-l-4 border-l-")
-          .replace("text-white", "")
+        status.color.replace("bg-", "border-l-4 border-l-").replace("text-white", ""),
       )}
       role="button"
       tabIndex={0}
@@ -295,9 +271,7 @@ export function AppointmentCard({
                 {format(startTime, "HH:mm", { locale: ptBR })} -{" "}
                 {format(endTime, "HH:mm", { locale: ptBR })}
               </span>
-              <span className="text-sm text-muted-foreground">
-                ({duration} min)
-              </span>
+              <span className="text-sm text-muted-foreground">({duration} min)</span>
             </div>
 
             {showActions && (
@@ -316,23 +290,17 @@ export function AppointmentCard({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   {onEdit && (
-                    <DropdownMenuItem
-                      onClick={(e) => handleActionClick(e, onEdit)}
-                    >
+                    <DropdownMenuItem onClick={(e) => handleActionClick(e, onEdit)}>
                       Editar
                     </DropdownMenuItem>
                   )}
                   {onConfirm && appointment.status === "scheduled" && (
-                    <DropdownMenuItem
-                      onClick={(e) => handleActionClick(e, onConfirm)}
-                    >
+                    <DropdownMenuItem onClick={(e) => handleActionClick(e, onConfirm)}>
                       Confirmar
                     </DropdownMenuItem>
                   )}
                   {onComplete && appointment.status === "confirmed" && (
-                    <DropdownMenuItem
-                      onClick={(e) => handleActionClick(e, onComplete)}
-                    >
+                    <DropdownMenuItem onClick={(e) => handleActionClick(e, onComplete)}>
                       Concluir
                     </DropdownMenuItem>
                   )}
@@ -362,9 +330,7 @@ export function AppointmentCard({
             <div className="flex items-center gap-2">
               <User className="h-4 w-4 text-muted-foreground" />
               <div className="flex-1 min-w-0">
-                <p className="font-medium truncate">
-                  {appointment.patient.full_name}
-                </p>
+                <p className="font-medium truncate">{appointment.patient.full_name}</p>
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
                   {appointment.patient.phone && (
                     <span className="flex items-center gap-1">
@@ -388,9 +354,7 @@ export function AppointmentCard({
             <div className="flex items-center gap-2">
               <Stethoscope className="h-4 w-4 text-muted-foreground" />
               <div>
-                <p className="font-medium">
-                  {appointment.professional.full_name}
-                </p>
+                <p className="font-medium">{appointment.professional.full_name}</p>
                 {appointment.professional.specialization && (
                   <p className="text-sm text-muted-foreground">
                     {appointment.professional.specialization}
@@ -424,9 +388,7 @@ export function AppointmentCard({
 
           {/* Status */}
           <div className="flex justify-between items-center">
-            <Badge className={cn("text-xs", status.color)}>
-              {status.label}
-            </Badge>
+            <Badge className={cn("text-xs", status.color)}>{status.label}</Badge>
             {appointment.service_type?.price && (
               <span className="text-sm font-medium">
                 R$ {appointment.service_type.price.toFixed(2)}

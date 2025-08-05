@@ -10,27 +10,23 @@
 
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { SearchResponse, SearchResult, SearchType } from "@/lib/search/types";
 import type {
-  SearchResponse,
-  SearchResult,
-  SearchType,
-} from "@/lib/search/types";
-import {
   Activity,
   Calendar,
   Clock,
@@ -82,9 +78,7 @@ export function SmartSearchInterface({
 }: SmartSearchProps) {
   const [query, setQuery] = useState(initialQuery);
   const [isSearching, setIsSearching] = useState(false);
-  const [searchResponse, setSearchResponse] = useState<SearchResponse | null>(
-    null
-  );
+  const [searchResponse, setSearchResponse] = useState<SearchResponse | null>(null);
   const [filters, setFilters] = useState<SearchFilters>(DEFAULT_FILTERS);
   const [showFilters, setShowFilters] = useState(false);
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
@@ -108,31 +102,31 @@ export function SmartSearchInterface({
 
         if (enableNLP) {
           // Use conversational search for NLP processing via API
-          const apiResponse = await fetch('/api/search/conversational', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-              term: searchTerm, 
-              userId, 
-              userRole 
-            })
+          const apiResponse = await fetch("/api/search/conversational", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              term: searchTerm,
+              userId,
+              userRole,
+            }),
           });
           response = await apiResponse.json();
         } else {
           // Use traditional search via API
-          const apiResponse = await fetch('/api/search', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+          const apiResponse = await fetch("/api/search", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               term: searchTerm,
               filters: {
                 types: searchFilters.types,
                 dateRange: searchFilters.dateRange
-                ? {
-                    start: new Date(searchFilters.dateRange.start),
-                    end: new Date(searchFilters.dateRange.end),
-                  }
-                : undefined,
+                  ? {
+                      start: new Date(searchFilters.dateRange.start),
+                      end: new Date(searchFilters.dateRange.end),
+                    }
+                  : undefined,
               },
               options: {
                 useNLP: false,
@@ -157,7 +151,7 @@ export function SmartSearchInterface({
         setIsSearching(false);
       }
     },
-    [userId, userRole, enableNLP, maxResults, filters, searchHistory]
+    [userId, userRole, enableNLP, maxResults, filters, searchHistory],
   );
 
   // Handle search input change with debouncing
@@ -290,12 +284,7 @@ export function SmartSearchInterface({
             {enableFilters && (
               <Dialog open={showFilters} onOpenChange={setShowFilters}>
                 <DialogTrigger asChild>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="px-2"
-                  >
+                  <Button type="button" variant="ghost" size="sm" className="px-2">
                     <Filter className="w-4 h-4" />
                   </Button>
                 </DialogTrigger>
@@ -316,10 +305,7 @@ export function SmartSearchInterface({
                             "insights",
                           ] as SearchType[]
                         ).map((type) => (
-                          <div
-                            key={type}
-                            className="flex items-center space-x-2"
-                          >
+                          <div key={type} className="flex items-center space-x-2">
                             <Checkbox
                               id={type}
                               checked={filters.types.includes(type)}
@@ -346,10 +332,7 @@ export function SmartSearchInterface({
                           { value: "date", label: "Data" },
                           { value: "name", label: "Nome" },
                         ].map((option) => (
-                          <div
-                            key={option.value}
-                            className="flex items-center space-x-2"
-                          >
+                          <div key={option.value} className="flex items-center space-x-2">
                             <Checkbox
                               id={option.value}
                               checked={filters.sortBy === option.value}
@@ -377,16 +360,11 @@ export function SmartSearchInterface({
                           }));
                         }}
                       />
-                      <Label htmlFor="includeInactive">
-                        Incluir registros inativos
-                      </Label>
+                      <Label htmlFor="includeInactive">Incluir registros inativos</Label>
                     </div>
 
                     <div className="flex justify-end space-x-2">
-                      <Button
-                        variant="outline"
-                        onClick={() => setShowFilters(false)}
-                      >
+                      <Button variant="outline" onClick={() => setShowFilters(false)}>
                         Cancelar
                       </Button>
                       <Button
@@ -403,12 +381,7 @@ export function SmartSearchInterface({
               </Dialog>
             )}
 
-            <Button
-              type="submit"
-              size="sm"
-              className="px-3"
-              disabled={isSearching}
-            >
+            <Button type="submit" size="sm" className="px-3" disabled={isSearching}>
               {isSearching ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
@@ -480,8 +453,7 @@ export function SmartSearchInterface({
           {/* Search Stats */}
           <div className="flex items-center justify-between text-sm text-muted-foreground">
             <span>
-              {searchResponse.totalCount} resultados em{" "}
-              {searchResponse.executionTime.toFixed(0)}ms
+              {searchResponse.totalCount} resultados em {searchResponse.executionTime.toFixed(0)}ms
             </span>
             {enableNLP && searchResponse.nlpAnalysis && (
               <Badge variant="secondary" className="text-xs">
@@ -491,10 +463,7 @@ export function SmartSearchInterface({
           </div>
 
           {/* Results Tabs */}
-          <Tabs
-            value={selectedTab}
-            onValueChange={(value) => setSelectedTab(value as any)}
-          >
+          <Tabs value={selectedTab} onValueChange={(value) => setSelectedTab(value as any)}>
             <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="all" className="flex items-center space-x-1">
                 <span>Todos</span>
@@ -518,15 +487,9 @@ export function SmartSearchInterface({
                 if (count === 0) return null;
 
                 return (
-                  <TabsTrigger
-                    key={type}
-                    value={type}
-                    className="flex items-center space-x-1"
-                  >
+                  <TabsTrigger key={type} value={type} className="flex items-center space-x-1">
                     {getTypeIcon(type)}
-                    <span className="hidden sm:inline">
-                      {getTypeLabel(type)}
-                    </span>
+                    <span className="hidden sm:inline">{getTypeLabel(type)}</span>
                     <Badge variant="secondary" className="ml-1 text-xs">
                       {count}
                     </Badge>
@@ -554,34 +517,26 @@ export function SmartSearchInterface({
                                 {getTypeLabel(result.type)}
                               </Badge>
                               <Badge variant="secondary" className="text-xs">
-                                {Math.round(result.relevanceScore * 100)}%
-                                relevante
+                                {Math.round(result.relevanceScore * 100)}% relevante
                               </Badge>
                             </div>
 
-                            <h3 className="font-semibold text-sm mb-1">
-                              {result.title}
-                            </h3>
+                            <h3 className="font-semibold text-sm mb-1">{result.title}</h3>
 
                             <p className="text-sm text-muted-foreground mb-2">
                               {result.description}
                             </p>
 
                             {/* Highlights */}
-                            {result.highlights &&
-                              result.highlights.length > 0 && (
-                                <div className="flex flex-wrap gap-1 mb-2">
-                                  {result.highlights.map((highlight, i) => (
-                                    <Badge
-                                      key={i}
-                                      variant="secondary"
-                                      className="text-xs"
-                                    >
-                                      {highlight}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              )}
+                            {result.highlights && result.highlights.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mb-2">
+                                {result.highlights.map((highlight, i) => (
+                                  <Badge key={i} variant="secondary" className="text-xs">
+                                    {highlight}
+                                  </Badge>
+                                ))}
+                              </div>
+                            )}
 
                             {/* Actions */}
                             {result.actions && result.actions.length > 0 && (
@@ -615,31 +570,30 @@ export function SmartSearchInterface({
           </Tabs>
 
           {/* Suggestions */}
-          {searchResponse.suggestions &&
-            searchResponse.suggestions.length > 0 && (
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm">Sugestões</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {searchResponse.suggestions.map((suggestion, index) => (
-                      <Badge
-                        key={index}
-                        variant="outline"
-                        className="cursor-pointer hover:bg-secondary/80"
-                        onClick={() => {
-                          setQuery(suggestion);
-                          performSearch(suggestion);
-                        }}
-                      >
-                        {suggestion}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+          {searchResponse.suggestions && searchResponse.suggestions.length > 0 && (
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm">Sugestões</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-2">
+                  {searchResponse.suggestions.map((suggestion, index) => (
+                    <Badge
+                      key={index}
+                      variant="outline"
+                      className="cursor-pointer hover:bg-secondary/80"
+                      onClick={() => {
+                        setQuery(suggestion);
+                        performSearch(suggestion);
+                      }}
+                    >
+                      {suggestion}
+                    </Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       )}
 
@@ -652,27 +606,26 @@ export function SmartSearchInterface({
             <p className="text-sm text-muted-foreground mb-4">
               Tente ajustar sua busca ou usar termos diferentes.
             </p>
-            {searchResponse.suggestions &&
-              searchResponse.suggestions.length > 0 && (
-                <div>
-                  <p className="text-sm font-medium mb-2">Que tal tentar:</p>
-                  <div className="flex flex-wrap justify-center gap-2">
-                    {searchResponse.suggestions.map((suggestion, index) => (
-                      <Badge
-                        key={index}
-                        variant="secondary"
-                        className="cursor-pointer hover:bg-secondary/80"
-                        onClick={() => {
-                          setQuery(suggestion);
-                          performSearch(suggestion);
-                        }}
-                      >
-                        {suggestion}
-                      </Badge>
-                    ))}
-                  </div>
+            {searchResponse.suggestions && searchResponse.suggestions.length > 0 && (
+              <div>
+                <p className="text-sm font-medium mb-2">Que tal tentar:</p>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {searchResponse.suggestions.map((suggestion, index) => (
+                    <Badge
+                      key={index}
+                      variant="secondary"
+                      className="cursor-pointer hover:bg-secondary/80"
+                      onClick={() => {
+                        setQuery(suggestion);
+                        performSearch(suggestion);
+                      }}
+                    >
+                      {suggestion}
+                    </Badge>
+                  ))}
                 </div>
-              )}
+              </div>
+            )}
           </CardContent>
         </Card>
       )}

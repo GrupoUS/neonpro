@@ -5,14 +5,11 @@
 // Story 1.2: Business rules configuration
 // =============================================
 
+import type { ClinicHoliday, HolidayConfig } from "@/app/lib/types/conflict-prevention";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
-  ClinicHoliday,
-  HolidayConfig,
-} from "@/app/lib/types/conflict-prevention";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -21,20 +18,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
-import { format, parseISO } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import {
+import type { Switch } from "@/components/ui/switch";
+import type { Textarea } from "@/components/ui/textarea";
+import type { format, parseISO } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
   AlertCircle,
   Calendar,
   Clock,
@@ -44,25 +41,20 @@ import {
   Save,
   Trash2,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 
 interface ClinicHolidayManagerProps {
   clinicId: string;
   onHolidaysChange?: (holidays: ClinicHoliday[]) => void;
 }
 
-export function ClinicHolidayManager({
-  clinicId,
-  onHolidaysChange,
-}: ClinicHolidayManagerProps) {
+export function ClinicHolidayManager({ clinicId, onHolidaysChange }: ClinicHolidayManagerProps) {
   // State management
   const [holidays, setHolidays] = useState<ClinicHoliday[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingHoliday, setEditingHoliday] = useState<ClinicHoliday | null>(
-    null
-  );
+  const [editingHoliday, setEditingHoliday] = useState<ClinicHoliday | null>(null);
   const [formData, setFormData] = useState<HolidayConfig>({
     name: "",
     description: "",
@@ -155,11 +147,7 @@ export function ClinicHolidayManager({
         return;
       }
 
-      if (
-        formData.start_time &&
-        formData.end_time &&
-        formData.start_time >= formData.end_time
-      ) {
+      if (formData.start_time && formData.end_time && formData.start_time >= formData.end_time) {
         toast.error("Horário inicial deve ser anterior ao horário final");
         return;
       }
@@ -184,9 +172,7 @@ export function ClinicHolidayManager({
       const savedHoliday = await response.json();
 
       if (editingHoliday) {
-        setHolidays((prev) =>
-          prev.map((h) => (h.id === editingHoliday.id ? savedHoliday : h))
-        );
+        setHolidays((prev) => prev.map((h) => (h.id === editingHoliday.id ? savedHoliday : h)));
         toast.success("Feriado atualizado com sucesso!");
       } else {
         setHolidays((prev) => [...prev, savedHoliday]);
@@ -202,12 +188,9 @@ export function ClinicHolidayManager({
 
   const deleteHoliday = async (holidayId: string) => {
     try {
-      const response = await fetch(
-        `/api/clinic/${clinicId}/holidays/${holidayId}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const response = await fetch(`/api/clinic/${clinicId}/holidays/${holidayId}`, {
+        method: "DELETE",
+      });
 
       if (!response.ok) {
         throw new Error("Failed to delete holiday");
@@ -223,30 +206,23 @@ export function ClinicHolidayManager({
 
   const toggleHolidayStatus = async (holidayId: string, isActive: boolean) => {
     try {
-      const response = await fetch(
-        `/api/clinic/${clinicId}/holidays/${holidayId}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ is_active: isActive }),
-        }
-      );
+      const response = await fetch(`/api/clinic/${clinicId}/holidays/${holidayId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ is_active: isActive }),
+      });
 
       if (!response.ok) {
         throw new Error("Failed to update holiday status");
       }
 
       setHolidays((prev) =>
-        prev.map((h) =>
-          h.id === holidayId ? { ...h, is_active: isActive } : h
-        )
+        prev.map((h) => (h.id === holidayId ? { ...h, is_active: isActive } : h)),
       );
 
-      toast.success(
-        `Feriado ${isActive ? "ativado" : "desativado"} com sucesso!`
-      );
+      toast.success(`Feriado ${isActive ? "ativado" : "desativado"} com sucesso!`);
     } catch (error) {
       console.error("Error updating holiday status:", error);
       toast.error("Erro ao atualizar status do feriado");
@@ -261,11 +237,9 @@ export function ClinicHolidayManager({
       return format(startDate, "dd/MM/yyyy", { locale: ptBR });
     }
 
-    return `${format(startDate, "dd/MM/yyyy", { locale: ptBR })} - ${format(
-      endDate,
-      "dd/MM/yyyy",
-      { locale: ptBR }
-    )}`;
+    return `${format(startDate, "dd/MM/yyyy", { locale: ptBR })} - ${format(endDate, "dd/MM/yyyy", {
+      locale: ptBR,
+    })}`;
   };
 
   const getHolidayTimeRange = (holiday: ClinicHoliday): string => {
@@ -317,9 +291,7 @@ export function ClinicHolidayManager({
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
-                <DialogTitle>
-                  {editingHoliday ? "Editar" : "Adicionar"} Feriado
-                </DialogTitle>
+                <DialogTitle>{editingHoliday ? "Editar" : "Adicionar"} Feriado</DialogTitle>
                 <DialogDescription>
                   Configure um período de fechamento ou feriado para a clínica.
                 </DialogDescription>
@@ -331,9 +303,7 @@ export function ClinicHolidayManager({
                   <Input
                     id="holiday-name"
                     value={formData.name}
-                    onChange={(e) =>
-                      setFormData((prev) => ({ ...prev, name: e.target.value }))
-                    }
+                    onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
                     placeholder="Ex: Natal, Fechamento para reformas..."
                   />
                 </div>
@@ -474,16 +444,11 @@ export function ClinicHolidayManager({
             <div className="text-center py-8 text-muted-foreground">
               <Calendar className="h-8 w-8 mx-auto mb-2 opacity-50" />
               <p>Nenhum feriado configurado</p>
-              <p className="text-sm">
-                Clique em "Adicionar" para criar um novo feriado
-              </p>
+              <p className="text-sm">Clique em "Adicionar" para criar um novo feriado</p>
             </div>
           ) : (
             holidays.map((holiday) => (
-              <Card
-                key={holiday.id}
-                className={!holiday.is_active ? "opacity-60" : ""}
-              >
+              <Card key={holiday.id} className={!holiday.is_active ? "opacity-60" : ""}>
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -511,24 +476,16 @@ export function ClinicHolidayManager({
                           <Clock className="h-3 w-3" />
                           {getHolidayTimeRange(holiday)}
                         </div>
-                        {holiday.description && (
-                          <p className="text-xs">{holiday.description}</p>
-                        )}
+                        {holiday.description && <p className="text-xs">{holiday.description}</p>}
                       </div>
                     </div>
 
                     <div className="flex items-center gap-1">
                       <Switch
                         checked={holiday.is_active}
-                        onCheckedChange={(checked) =>
-                          toggleHolidayStatus(holiday.id, checked)
-                        }
+                        onCheckedChange={(checked) => toggleHolidayStatus(holiday.id, checked)}
                       />
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openDialog(holiday)}
-                      >
+                      <Button variant="ghost" size="sm" onClick={() => openDialog(holiday)}>
                         <Edit className="h-3 w-3" />
                       </Button>
                       <Button
@@ -554,15 +511,10 @@ export function ClinicHolidayManager({
               <div className="text-xs text-blue-700">
                 <p className="font-medium mb-1">Informações importantes:</p>
                 <ul className="space-y-1 list-disc list-inside">
-                  <li>
-                    Feriados ativos bloqueiam automaticamente agendamentos
-                  </li>
+                  <li>Feriados ativos bloqueiam automaticamente agendamentos</li>
                   <li>Horários específicos permitem fechamentos parciais</li>
                   <li>Feriados recorrentes se repetem automaticamente</li>
-                  <li>
-                    Agendamentos existentes em feriados precisam ser reagendados
-                    manualmente
-                  </li>
+                  <li>Agendamentos existentes em feriados precisam ser reagendados manualmente</li>
                 </ul>
               </div>
             </div>

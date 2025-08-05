@@ -6,20 +6,25 @@ export interface PaymentProcessorConfig {
 
 export class PaymentProcessor {
   constructor(private config: PaymentProcessorConfig) {}
-  
-  async processPayment(amount: number, paymentMethodId: string): Promise<{ success: boolean; paymentId?: string; error?: string }> {
+
+  async processPayment(
+    amount: number,
+    paymentMethodId: string,
+  ): Promise<{ success: boolean; paymentId?: string; error?: string }> {
     // Mock implementation for build
     return {
       success: true,
-      paymentId: `payment_${Math.random().toString(36)}`
+      paymentId: `payment_${Math.random().toString(36)}`,
     };
   }
 
-  async refundPayment(paymentId: string): Promise<{ success: boolean; refundId?: string; error?: string }> {
+  async refundPayment(
+    paymentId: string,
+  ): Promise<{ success: boolean; refundId?: string; error?: string }> {
     // Mock implementation for build
     return {
       success: true,
-      refundId: `refund_${Math.random().toString(36)}`
+      refundId: `refund_${Math.random().toString(36)}`,
     };
   }
 }

@@ -1,20 +1,30 @@
 // Conflict Override Dialog Component with Manager Approval Workflow
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
-import { AlertTriangle, Clock, User, CheckCircle, XCircle, Bell } from 'lucide-react';
-import { useConflictOverride, type OverrideRequest, type OverrideReason } from '@/hooks/use-conflict-override';
-import { useToast } from '@/hooks/use-toast';
-import dayjs from 'dayjs';
+import type { useState, useEffect } from "react";
+import type { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Separator } from "@/components/ui/separator";
+import type { AlertTriangle, Clock, User, CheckCircle, XCircle, Bell } from "lucide-react";
+import type {
+  useConflictOverride,
+  type OverrideRequest,
+  type OverrideReason,
+} from "@/hooks/use-conflict-override";
+import type { useToast } from "@/hooks/use-toast";
+import dayjs from "dayjs";
 
 interface ConflictOverrideDialogProps {
   open: boolean;
@@ -36,54 +46,50 @@ interface ConflictOverrideDialogProps {
 
 const OVERRIDE_REASONS: { value: OverrideReason; label: string; description: string }[] = [
   {
-    value: 'emergency_appointment',
-    label: 'Emergência Médica',
-    description: 'Situação de emergência que requer atendimento imediato'
+    value: "emergency_appointment",
+    label: "Emergência Médica",
+    description: "Situação de emergência que requer atendimento imediato",
   },
   {
-    value: 'medical_priority',
-    label: 'Prioridade Médica',
-    description: 'Paciente com condição que requer priorização médica'
+    value: "medical_priority",
+    label: "Prioridade Médica",
+    description: "Paciente com condição que requer priorização médica",
   },
   {
-    value: 'patient_preference',
-    label: 'Preferência do Paciente',
-    description: 'Solicitação específica do paciente por motivos pessoais'
+    value: "patient_preference",
+    label: "Preferência do Paciente",
+    description: "Solicitação específica do paciente por motivos pessoais",
   },
   {
-    value: 'schedule_optimization',
-    label: 'Otimização de Agenda',
-    description: 'Melhoria na eficiência da agenda clínica'
+    value: "schedule_optimization",
+    label: "Otimização de Agenda",
+    description: "Melhoria na eficiência da agenda clínica",
   },
   {
-    value: 'special_circumstances',
-    label: 'Circunstâncias Especiais',
-    description: 'Situação única que justifica o override'
+    value: "special_circumstances",
+    label: "Circunstâncias Especiais",
+    description: "Situação única que justifica o override",
   },
   {
-    value: 'administrative_decision',
-    label: 'Decisão Administrativa',
-    description: 'Decisão da gestão clínica'
-  }
+    value: "administrative_decision",
+    label: "Decisão Administrativa",
+    description: "Decisão da gestão clínica",
+  },
 ];
 
 export function ConflictOverrideDialog({
   open,
   onOpenChange,
   conflictDetails,
-  onOverrideComplete
+  onOverrideComplete,
 }: ConflictOverrideDialogProps) {
-  const [selectedReason, setSelectedReason] = useState<OverrideReason>('emergency_appointment');
-  const [reasonText, setReasonText] = useState('');
-  const [activeTab, setActiveTab] = useState('request');
-  
-  const {
-    loading,
-    userPermissions,
-    requestConflictOverride,
-    checkOverridePermissions
-  } = useConflictOverride();
-  
+  const [selectedReason, setSelectedReason] = useState<OverrideReason>("emergency_appointment");
+  const [reasonText, setReasonText] = useState("");
+  const [activeTab, setActiveTab] = useState("request");
+
+  const { loading, userPermissions, requestConflictOverride, checkOverridePermissions } =
+    useConflictOverride();
+
   const { toast } = useToast();
 
   useEffect(() => {
@@ -94,12 +100,12 @@ export function ConflictOverrideDialog({
 
   const handleSubmitOverride = async () => {
     if (!conflictDetails) return;
-    
+
     if (!reasonText.trim()) {
       toast({
-        variant: 'destructive',
-        title: 'Justificativa Obrigatória',
-        description: 'Por favor, forneça uma justificativa detalhada para o override.'
+        variant: "destructive",
+        title: "Justificativa Obrigatória",
+        description: "Por favor, forneça uma justificativa detalhada para o override.",
       });
       return;
     }
@@ -111,35 +117,36 @@ export function ConflictOverrideDialog({
         conflict_details: conflictDetails.conflict_description,
         override_reason: selectedReason,
         override_reason_text: reasonText,
-        requested_by: '', // Will be filled by the hook
+        requested_by: "", // Will be filled by the hook
         impact_assessment: {
           affected_appointments: conflictDetails.affected_appointments,
           estimated_delay_minutes: conflictDetails.estimated_impact_minutes,
-          notification_required: conflictDetails.affected_appointments.length > 0
-        }
+          notification_required: conflictDetails.affected_appointments.length > 0,
+        },
       });
 
       onOverrideComplete?.(overrideRequest);
       onOpenChange(false);
-      
+
       // Reset form
-      setSelectedReason('emergency_appointment');
-      setReasonText('');
-      
+      setSelectedReason("emergency_appointment");
+      setReasonText("");
     } catch (error) {
       // Error handling is done in the hook
     }
   };
 
   const getImpactSeverity = (minutes: number) => {
-    if (minutes <= 30) return { level: 'low', color: 'bg-green-100 text-green-800' };
-    if (minutes <= 120) return { level: 'medium', color: 'bg-yellow-100 text-yellow-800' };
-    return { level: 'high', color: 'bg-red-100 text-red-800' };
+    if (minutes <= 30) return { level: "low", color: "bg-green-100 text-green-800" };
+    if (minutes <= 120) return { level: "medium", color: "bg-yellow-100 text-yellow-800" };
+    return { level: "high", color: "bg-red-100 text-red-800" };
   };
 
   const canRequestOverride = userPermissions?.can_override_conflicts;
   const requiresApproval = userPermissions?.requires_approval;
-  const impactSeverity = conflictDetails ? getImpactSeverity(conflictDetails.estimated_impact_minutes) : null;
+  const impactSeverity = conflictDetails
+    ? getImpactSeverity(conflictDetails.estimated_impact_minutes)
+    : null;
 
   if (!conflictDetails) return null;
 
@@ -207,7 +214,7 @@ export function ConflictOverrideDialog({
                         </div>
                         <div className="text-right">
                           <p className="text-sm font-medium">
-                            {dayjs(appointment.original_time).format('DD/MM/YYYY HH:mm')}
+                            {dayjs(appointment.original_time).format("DD/MM/YYYY HH:mm")}
                           </p>
                           <Badge variant="secondary" className="text-xs">
                             Reagendamento Necessário
@@ -231,8 +238,8 @@ export function ConflictOverrideDialog({
                       Permissão Insuficiente
                     </h3>
                     <p className="text-orange-600">
-                      Você não tem permissão para solicitar override de conflitos. 
-                      Entre em contato com um supervisor ou gerente da clínica.
+                      Você não tem permissão para solicitar override de conflitos. Entre em contato
+                      com um supervisor ou gerente da clínica.
                     </p>
                   </div>
                 </CardContent>
@@ -246,7 +253,10 @@ export function ConflictOverrideDialog({
                   <CardContent className="space-y-4">
                     <div>
                       <Label htmlFor="reason">Motivo Principal</Label>
-                      <Select value={selectedReason} onValueChange={(value) => setSelectedReason(value as OverrideReason)}>
+                      <Select
+                        value={selectedReason}
+                        onValueChange={(value) => setSelectedReason(value as OverrideReason)}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione o motivo" />
                         </SelectTrigger>
@@ -274,7 +284,8 @@ export function ConflictOverrideDialog({
                         className="mt-1"
                       />
                       <p className="text-xs text-gray-500 mt-1">
-                        Esta justificativa será registrada no audit log e pode ser revisada durante auditorias.
+                        Esta justificativa será registrada no audit log e pode ser revisada durante
+                        auditorias.
                       </p>
                     </div>
                   </CardContent>
@@ -288,8 +299,8 @@ export function ConflictOverrideDialog({
                         <div>
                           <h4 className="font-medium text-blue-700">Aprovação Necessária</h4>
                           <p className="text-sm text-blue-600 mt-1">
-                            Sua solicitação de override será enviada para aprovação de um supervisor ou gerente. 
-                            Você será notificado sobre o status da aprovação.
+                            Sua solicitação de override será enviada para aprovação de um supervisor
+                            ou gerente. Você será notificado sobre o status da aprovação.
                           </p>
                         </div>
                       </div>
@@ -314,7 +325,7 @@ export function ConflictOverrideDialog({
                     </p>
                     <p className="text-sm text-gray-600">Minutos de Impacto</p>
                   </div>
-                  
+
                   <div className="text-center p-4 bg-gray-50 rounded-lg">
                     <User className="h-8 w-8 text-gray-600 mx-auto mb-2" />
                     <p className="text-2xl font-bold text-gray-800">
@@ -325,9 +336,9 @@ export function ConflictOverrideDialog({
 
                   <div className="text-center p-4 bg-gray-50 rounded-lg">
                     <Badge className={`${impactSeverity?.color} text-lg px-3 py-1`}>
-                      {impactSeverity?.level === 'low' && 'Baixo'}
-                      {impactSeverity?.level === 'medium' && 'Médio'}
-                      {impactSeverity?.level === 'high' && 'Alto'}
+                      {impactSeverity?.level === "low" && "Baixo"}
+                      {impactSeverity?.level === "medium" && "Médio"}
+                      {impactSeverity?.level === "high" && "Alto"}
                     </Badge>
                     <p className="text-sm text-gray-600 mt-2">Nível de Impacto</p>
                   </div>
@@ -340,11 +351,15 @@ export function ConflictOverrideDialog({
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <CheckCircle className="h-4 w-4 text-green-600" />
-                      <span className="text-sm">Notificações automáticas enviadas aos pacientes afetados</span>
+                      <span className="text-sm">
+                        Notificações automáticas enviadas aos pacientes afetados
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle className="h-4 w-4 text-green-600" />
-                      <span className="text-sm">Registro completo no audit log para compliance</span>
+                      <span className="text-sm">
+                        Registro completo no audit log para compliance
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle className="h-4 w-4 text-green-600" />
@@ -352,7 +367,9 @@ export function ConflictOverrideDialog({
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle className="h-4 w-4 text-green-600" />
-                      <span className="text-sm">Alertas para a equipe sobre mudanças na agenda</span>
+                      <span className="text-sm">
+                        Alertas para a equipe sobre mudanças na agenda
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -365,20 +382,18 @@ export function ConflictOverrideDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
-          
-          {canRequestOverride && activeTab === 'request' && (
+
+          {canRequestOverride && activeTab === "request" && (
             <Button
               onClick={handleSubmitOverride}
               disabled={loading || !reasonText.trim()}
               className="min-w-[140px]"
             >
-              {loading ? (
-                'Processando...'
-              ) : requiresApproval ? (
-                'Solicitar Aprovação'
-              ) : (
-                'Aplicar Override'
-              )}
+              {loading
+                ? "Processando..."
+                : requiresApproval
+                  ? "Solicitar Aprovação"
+                  : "Aplicar Override"}
             </Button>
           )}
         </div>

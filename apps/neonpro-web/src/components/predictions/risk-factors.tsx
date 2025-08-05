@@ -3,22 +3,22 @@
  * Multi-factor risk analysis with patient behavior patterns and demographic insights
  */
 
-'use client';
+"use client";
 
-import React, { useState, useMemo } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import React, { useState, useMemo } from "react";
+import type { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Progress } from "@/components/ui/progress";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   RadarChart,
   PolarGrid,
@@ -29,9 +29,9 @@ import {
   Scatter,
   LineChart,
   Line,
-  Cell
-} from 'recharts';
-import { 
+  Cell,
+} from "recharts";
+import type {
   TrendingUp,
   TrendingDown,
   AlertTriangle,
@@ -48,19 +48,19 @@ import {
   Activity,
   Target,
   Zap,
-  Eye
-} from 'lucide-react';
-import type { 
-  NoShowPrediction, 
+  Eye,
+} from "lucide-react";
+import type {
+  NoShowPrediction,
   PatientRiskProfile,
   RiskFactor,
-  RiskFactorCategory
-} from '@/lib/analytics/no-show-prediction';
-import { 
+  RiskFactorCategory,
+} from "@/lib/analytics/no-show-prediction";
+import type {
   getRiskTrendIcon,
   getRiskLevelColor,
-  formatRiskScore 
-} from '@/lib/analytics/risk-scoring';
+  formatRiskScore,
+} from "@/lib/analytics/risk-scoring";
 
 interface RiskFactorsProps {
   riskProfiles: PatientRiskProfile[];
@@ -80,7 +80,7 @@ interface RiskAnalysisData {
     factor: string;
     correlation: number;
     significance: number;
-    trend: 'UP' | 'DOWN' | 'STABLE';
+    trend: "UP" | "DOWN" | "STABLE";
   }>;
   patientSegments: Array<{
     segment: string;
@@ -100,14 +100,12 @@ interface RiskAnalysisData {
   }>;
 }
 
-export function RiskFactors({
-  riskProfiles,
-  predictions,
-  onProfileUpdate
-}: RiskFactorsProps) {
+export function RiskFactors({ riskProfiles, predictions, onProfileUpdate }: RiskFactorsProps) {
   const [selectedProfile, setSelectedProfile] = useState<PatientRiskProfile | null>(null);
-  const [analysisView, setAnalysisView] = useState<'overview' | 'categories' | 'correlations' | 'segments'>('overview');
-  const [timeWindow, setTimeWindow] = useState<'7d' | '30d' | '90d'>('30d');
+  const [analysisView, setAnalysisView] = useState<
+    "overview" | "categories" | "correlations" | "segments"
+  >("overview");
+  const [timeWindow, setTimeWindow] = useState<"7d" | "30d" | "90d">("30d");
 
   /**
    * Analyze risk factors across all profiles and predictions
@@ -115,9 +113,9 @@ export function RiskFactors({
   const riskAnalysis = useMemo((): RiskAnalysisData => {
     // Category breakdown analysis
     const categoryData: Record<string, { risks: number[]; count: number }> = {};
-    
-    predictions.forEach(prediction => {
-      prediction.factors.forEach(factor => {
+
+    predictions.forEach((prediction) => {
+      prediction.factors.forEach((factor) => {
         if (!categoryData[factor.category]) {
           categoryData[factor.category] = { risks: [], count: 0 };
         }
@@ -128,92 +126,128 @@ export function RiskFactors({
 
     const categoryBreakdown = Object.entries(categoryData).map(([category, data]) => {
       const avgRisk = data.risks.reduce((sum, risk) => sum + risk, 0) / data.risks.length;
-      
+
       const categoryConfig = {
-        [RiskFactorCategory.PATIENT_HISTORY]: { 
-          color: '#EF4444', 
-          icon: <Activity className="h-4 w-4" /> 
+        [RiskFactorCategory.PATIENT_HISTORY]: {
+          color: "#EF4444",
+          icon: <Activity className="h-4 w-4" />,
         },
-        [RiskFactorCategory.APPOINTMENT_CHARACTERISTICS]: { 
-          color: '#F97316', 
-          icon: <Calendar className="h-4 w-4" /> 
+        [RiskFactorCategory.APPOINTMENT_CHARACTERISTICS]: {
+          color: "#F97316",
+          icon: <Calendar className="h-4 w-4" />,
         },
-        [RiskFactorCategory.DEMOGRAPHICS]: { 
-          color: '#8B5CF6', 
-          icon: <Users className="h-4 w-4" /> 
+        [RiskFactorCategory.DEMOGRAPHICS]: {
+          color: "#8B5CF6",
+          icon: <Users className="h-4 w-4" />,
         },
-        [RiskFactorCategory.EXTERNAL_FACTORS]: { 
-          color: '#06B6D4', 
-          icon: <MapPin className="h-4 w-4" /> 
+        [RiskFactorCategory.EXTERNAL_FACTORS]: {
+          color: "#06B6D4",
+          icon: <MapPin className="h-4 w-4" />,
         },
-        [RiskFactorCategory.COMMUNICATION_PATTERNS]: { 
-          color: '#10B981', 
-          icon: <MessageSquare className="h-4 w-4" /> 
-        }
+        [RiskFactorCategory.COMMUNICATION_PATTERNS]: {
+          color: "#10B981",
+          icon: <MessageSquare className="h-4 w-4" />,
+        },
       };
 
       return {
-        category: category.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase()),
+        category: category
+          .replace(/_/g, " ")
+          .toLowerCase()
+          .replace(/\b\w/g, (l) => l.toUpperCase()),
         avgRisk: Math.round(avgRisk),
         count: data.count,
-        color: categoryConfig[category as RiskFactorCategory]?.color || '#6B7280',
-        icon: categoryConfig[category as RiskFactorCategory]?.icon || <Target className="h-4 w-4" />
+        color: categoryConfig[category as RiskFactorCategory]?.color || "#6B7280",
+        icon: categoryConfig[category as RiskFactorCategory]?.icon || (
+          <Target className="h-4 w-4" />
+        ),
       };
     });
 
     // Factor correlations (mock analysis for now)
     const factorCorrelations = [
-      { factor: 'Historical No-Show Rate', correlation: 0.85, significance: 0.95, trend: 'UP' as const },
-      { factor: 'Booking Advance Time', correlation: 0.72, significance: 0.88, trend: 'STABLE' as const },
-      { factor: 'Communication Response Rate', correlation: -0.68, significance: 0.82, trend: 'DOWN' as const },
-      { factor: 'Weekend Appointment', correlation: 0.45, significance: 0.75, trend: 'UP' as const },
-      { factor: 'Distance from Clinic', correlation: 0.38, significance: 0.68, trend: 'STABLE' as const }
+      {
+        factor: "Historical No-Show Rate",
+        correlation: 0.85,
+        significance: 0.95,
+        trend: "UP" as const,
+      },
+      {
+        factor: "Booking Advance Time",
+        correlation: 0.72,
+        significance: 0.88,
+        trend: "STABLE" as const,
+      },
+      {
+        factor: "Communication Response Rate",
+        correlation: -0.68,
+        significance: 0.82,
+        trend: "DOWN" as const,
+      },
+      {
+        factor: "Weekend Appointment",
+        correlation: 0.45,
+        significance: 0.75,
+        trend: "UP" as const,
+      },
+      {
+        factor: "Distance from Clinic",
+        correlation: 0.38,
+        significance: 0.68,
+        trend: "STABLE" as const,
+      },
     ];
 
     // Patient segments based on risk profiles
     const patientSegments = [
       {
-        segment: 'Reliable Patients',
-        count: riskProfiles.filter(p => p.overallRiskScore < 25).length,
+        segment: "Reliable Patients",
+        count: riskProfiles.filter((p) => p.overallRiskScore < 25).length,
         avgRisk: 15,
-        characteristics: ['High communication response', 'Consistent attendance', 'Long relationship']
+        characteristics: [
+          "High communication response",
+          "Consistent attendance",
+          "Long relationship",
+        ],
       },
       {
-        segment: 'Moderate Risk',
-        count: riskProfiles.filter(p => p.overallRiskScore >= 25 && p.overallRiskScore < 50).length,
+        segment: "Moderate Risk",
+        count: riskProfiles.filter((p) => p.overallRiskScore >= 25 && p.overallRiskScore < 50)
+          .length,
         avgRisk: 35,
-        characteristics: ['Occasional no-shows', 'Variable communication', 'Standard patterns']
+        characteristics: ["Occasional no-shows", "Variable communication", "Standard patterns"],
       },
       {
-        segment: 'High Risk',
-        count: riskProfiles.filter(p => p.overallRiskScore >= 50 && p.overallRiskScore < 75).length,
+        segment: "High Risk",
+        count: riskProfiles.filter((p) => p.overallRiskScore >= 50 && p.overallRiskScore < 75)
+          .length,
         avgRisk: 62,
-        characteristics: ['Frequent no-shows', 'Poor communication', 'Multiple risk factors']
+        characteristics: ["Frequent no-shows", "Poor communication", "Multiple risk factors"],
       },
       {
-        segment: 'Critical Risk',
-        count: riskProfiles.filter(p => p.overallRiskScore >= 75).length,
+        segment: "Critical Risk",
+        count: riskProfiles.filter((p) => p.overallRiskScore >= 75).length,
         avgRisk: 85,
-        characteristics: ['Very high no-show rate', 'Non-responsive', 'Complex circumstances']
-      }
+        characteristics: ["Very high no-show rate", "Non-responsive", "Complex circumstances"],
+      },
     ];
 
     // Time-based risk patterns
     const timePatterns = [
-      { timeframe: 'Monday Morning', riskIncrease: 25, frequency: 85 },
-      { timeframe: 'Friday Afternoon', riskIncrease: 35, frequency: 78 },
-      { timeframe: 'Day After Holiday', riskIncrease: 45, frequency: 65 },
-      { timeframe: 'Winter Months', riskIncrease: 20, frequency: 92 },
-      { timeframe: 'End of Month', riskIncrease: 15, frequency: 70 }
+      { timeframe: "Monday Morning", riskIncrease: 25, frequency: 85 },
+      { timeframe: "Friday Afternoon", riskIncrease: 35, frequency: 78 },
+      { timeframe: "Day After Holiday", riskIncrease: 45, frequency: 65 },
+      { timeframe: "Winter Months", riskIncrease: 20, frequency: 92 },
+      { timeframe: "End of Month", riskIncrease: 15, frequency: 70 },
     ];
 
     // Protective factors
     const protectiveFactors = [
-      { factor: 'High Communication Response', riskReduction: 35, prevalence: 68 },
-      { factor: 'Consistent Appointment Times', riskReduction: 28, prevalence: 45 },
-      { factor: 'Family Support', riskReduction: 22, prevalence: 52 },
-      { factor: 'Close to Clinic', riskReduction: 18, prevalence: 38 },
-      { factor: 'Insurance Coverage', riskReduction: 15, prevalence: 82 }
+      { factor: "High Communication Response", riskReduction: 35, prevalence: 68 },
+      { factor: "Consistent Appointment Times", riskReduction: 28, prevalence: 45 },
+      { factor: "Family Support", riskReduction: 22, prevalence: 52 },
+      { factor: "Close to Clinic", riskReduction: 18, prevalence: 38 },
+      { factor: "Insurance Coverage", riskReduction: 15, prevalence: 82 },
     ];
 
     return {
@@ -221,7 +255,7 @@ export function RiskFactors({
       factorCorrelations,
       patientSegments,
       timePatterns,
-      protectiveFactors
+      protectiveFactors,
     };
   }, [riskProfiles, predictions]);
 
@@ -230,11 +264,11 @@ export function RiskFactors({
    */
   const getProfileRadarData = (profile: PatientRiskProfile) => {
     return [
-      { factor: 'Historical', score: profile.historicalRisk, fullMark: 100 },
-      { factor: 'Behavioral', score: profile.behavioralRisk, fullMark: 100 },
-      { factor: 'Demographic', score: profile.demographicRisk, fullMark: 100 },
-      { factor: 'Communication', score: profile.communicationRisk, fullMark: 100 },
-      { factor: 'Contextual', score: profile.contextualRisk, fullMark: 100 }
+      { factor: "Historical", score: profile.historicalRisk, fullMark: 100 },
+      { factor: "Behavioral", score: profile.behavioralRisk, fullMark: 100 },
+      { factor: "Demographic", score: profile.demographicRisk, fullMark: 100 },
+      { factor: "Communication", score: profile.communicationRisk, fullMark: 100 },
+      { factor: "Contextual", score: profile.contextualRisk, fullMark: 100 },
     ];
   };
 
@@ -243,12 +277,12 @@ export function RiskFactors({
    */
   const formatTrend = (trend: string): { icon: React.ReactNode; color: string } => {
     switch (trend) {
-      case 'IMPROVING':
-        return { icon: <TrendingDown className="h-4 w-4" />, color: 'text-green-600' };
-      case 'DETERIORATING':
-        return { icon: <TrendingUp className="h-4 w-4" />, color: 'text-red-600' };
+      case "IMPROVING":
+        return { icon: <TrendingDown className="h-4 w-4" />, color: "text-green-600" };
+      case "DETERIORATING":
+        return { icon: <TrendingUp className="h-4 w-4" />, color: "text-red-600" };
       default:
-        return { icon: <Target className="h-4 w-4" />, color: 'text-gray-600' };
+        return { icon: <Target className="h-4 w-4" />, color: "text-gray-600" };
     }
   };
 
@@ -265,9 +299,7 @@ export function RiskFactors({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{riskProfiles.length}</div>
-            <div className="text-xs text-muted-foreground">
-              Analyzed patients
-            </div>
+            <div className="text-xs text-muted-foreground">Analyzed patients</div>
           </CardContent>
         </Card>
 
@@ -280,11 +312,9 @@ export function RiskFactors({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {riskProfiles.filter(p => p.riskTrend === 'IMPROVING').length}
+              {riskProfiles.filter((p) => p.riskTrend === "IMPROVING").length}
             </div>
-            <div className="text-xs text-muted-foreground">
-              Patients getting better
-            </div>
+            <div className="text-xs text-muted-foreground">Patients getting better</div>
           </CardContent>
         </Card>
 
@@ -297,11 +327,9 @@ export function RiskFactors({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-orange-600">
-              {riskAnalysis.factorCorrelations.filter(f => f.correlation > 0.7).length}
+              {riskAnalysis.factorCorrelations.filter((f) => f.correlation > 0.7).length}
             </div>
-            <div className="text-xs text-muted-foreground">
-              Strong correlations
-            </div>
+            <div className="text-xs text-muted-foreground">Strong correlations</div>
           </CardContent>
         </Card>
 
@@ -316,9 +344,7 @@ export function RiskFactors({
             <div className="text-2xl font-bold text-blue-600">
               {riskAnalysis.protectiveFactors.length}
             </div>
-            <div className="text-xs text-muted-foreground">
-              Risk reduction factors
-            </div>
+            <div className="text-xs text-muted-foreground">Risk reduction factors</div>
           </CardContent>
         </Card>
       </div>
@@ -346,17 +372,12 @@ export function RiskFactors({
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={riskAnalysis.categoryBreakdown}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis 
-                      dataKey="category" 
-                      angle={-45}
-                      textAnchor="end"
-                      height={80}
-                    />
+                    <XAxis dataKey="category" angle={-45} textAnchor="end" height={80} />
                     <YAxis />
-                    <Tooltip 
+                    <Tooltip
                       formatter={(value, name) => [
                         `${value}%`,
-                        name === 'avgRisk' ? 'Average Risk' : 'Count'
+                        name === "avgRisk" ? "Average Risk" : "Count",
                       ]}
                     />
                     <Bar dataKey="avgRisk" name="Average Risk">
@@ -383,11 +404,17 @@ export function RiskFactors({
                     <div key={segment.segment} className="space-y-2">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <Badge variant={
-                            segment.avgRisk >= 75 ? 'destructive' :
-                            segment.avgRisk >= 50 ? 'default' :
-                            segment.avgRisk >= 25 ? 'secondary' : 'outline'
-                          }>
+                          <Badge
+                            variant={
+                              segment.avgRisk >= 75
+                                ? "destructive"
+                                : segment.avgRisk >= 50
+                                  ? "default"
+                                  : segment.avgRisk >= 25
+                                    ? "secondary"
+                                    : "outline"
+                            }
+                          >
                             {segment.segment}
                           </Badge>
                           <span className="text-sm text-muted-foreground">
@@ -398,7 +425,7 @@ export function RiskFactors({
                       </div>
                       <Progress value={segment.avgRisk} className="h-2" />
                       <div className="text-xs text-muted-foreground">
-                        {segment.characteristics.join(' • ')}
+                        {segment.characteristics.join(" • ")}
                       </div>
                     </div>
                   ))}
@@ -430,9 +457,7 @@ export function RiskFactors({
                         <div className="text-sm font-medium text-green-600">
                           -{factor.riskReduction}%
                         </div>
-                        <div className="text-xs text-muted-foreground">
-                          Risk reduction
-                        </div>
+                        <div className="text-xs text-muted-foreground">Risk reduction</div>
                       </div>
                     </div>
                   ))}
@@ -507,7 +532,7 @@ export function RiskFactors({
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={400}>
-                <BarChart 
+                <BarChart
                   data={riskAnalysis.categoryBreakdown}
                   layout="horizontal"
                   margin={{ left: 100 }}
@@ -515,9 +540,7 @@ export function RiskFactors({
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis type="number" />
                   <YAxis dataKey="category" type="category" />
-                  <Tooltip 
-                    formatter={(value) => [`${value}%`, 'Average Risk']}
-                  />
+                  <Tooltip formatter={(value) => [`${value}%`, "Average Risk"]} />
                   <Bar dataKey="avgRisk">
                     {riskAnalysis.categoryBreakdown.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
@@ -543,7 +566,7 @@ export function RiskFactors({
                 {riskAnalysis.factorCorrelations.map((correlation, index) => {
                   const trendDisplay = formatTrend(correlation.trend);
                   const isPositive = correlation.correlation > 0;
-                  
+
                   return (
                     <div key={correlation.factor} className="space-y-2">
                       <div className="flex items-center justify-between">
@@ -554,18 +577,18 @@ export function RiskFactors({
                           </div>
                         </div>
                         <div className="text-right">
-                          <span className={`font-medium ${isPositive ? 'text-red-600' : 'text-green-600'}`}>
-                            {correlation.correlation > 0 ? '+' : ''}{(correlation.correlation * 100).toFixed(0)}%
+                          <span
+                            className={`font-medium ${isPositive ? "text-red-600" : "text-green-600"}`}
+                          >
+                            {correlation.correlation > 0 ? "+" : ""}
+                            {(correlation.correlation * 100).toFixed(0)}%
                           </span>
                           <div className="text-xs text-muted-foreground">
                             {(correlation.significance * 100).toFixed(0)}% significant
                           </div>
                         </div>
                       </div>
-                      <Progress 
-                        value={Math.abs(correlation.correlation) * 100} 
-                        className="h-2"
-                      />
+                      <Progress value={Math.abs(correlation.correlation) * 100} className="h-2" />
                     </div>
                   );
                 })}
@@ -582,26 +605,25 @@ export function RiskFactors({
               <ResponsiveContainer width="100%" height={400}>
                 <ScatterChart>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="correlation" 
+                  <XAxis
+                    dataKey="correlation"
                     domain={[-1, 1]}
                     tickFormatter={(value) => `${(value * 100).toFixed(0)}%`}
                   />
-                  <YAxis 
+                  <YAxis
                     dataKey="significance"
                     domain={[0, 1]}
                     tickFormatter={(value) => `${(value * 100).toFixed(0)}%`}
                   />
-                  <Tooltip 
+                  <Tooltip
                     formatter={(value, name) => [
-                      name === 'correlation' ? `${(value * 100).toFixed(1)}%` : `${(value * 100).toFixed(1)}%`,
-                      name === 'correlation' ? 'Correlation' : 'Significance'
+                      name === "correlation"
+                        ? `${(value * 100).toFixed(1)}%`
+                        : `${(value * 100).toFixed(1)}%`,
+                      name === "correlation" ? "Correlation" : "Significance",
                     ]}
                   />
-                  <Scatter 
-                    data={riskAnalysis.factorCorrelations} 
-                    fill="#3B82F6"
-                  />
+                  <Scatter data={riskAnalysis.factorCorrelations} fill="#3B82F6" />
                 </ScatterChart>
               </ResponsiveContainer>
             </CardContent>
@@ -620,8 +642,8 @@ export function RiskFactors({
             <CardContent>
               <div className="space-y-4">
                 {riskProfiles.slice(0, 10).map((profile) => (
-                  <Card 
-                    key={profile.patientId} 
+                  <Card
+                    key={profile.patientId}
                     className="cursor-pointer hover:bg-muted/50"
                     onClick={() => setSelectedProfile(profile)}
                   >
@@ -631,21 +653,17 @@ export function RiskFactors({
                           <Badge className={getRiskLevelColor(profile.riskLevel)}>
                             {profile.riskLevel}
                           </Badge>
-                          <span className="font-medium">
-                            Patient {profile.patientId.slice(-8)}
-                          </span>
+                          <span className="font-medium">Patient {profile.patientId.slice(-8)}</span>
                         </div>
                         <div className="text-right">
-                          <div className="font-bold text-lg">
-                            {profile.overallRiskScore}%
-                          </div>
+                          <div className="font-bold text-lg">{profile.overallRiskScore}%</div>
                           <div className="text-xs text-muted-foreground flex items-center gap-1">
                             {getRiskTrendIcon(profile.riskTrend)}
                             {profile.riskTrend.toLowerCase()}
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="grid grid-cols-5 gap-2 mb-3">
                         <div className="text-center">
                           <div className="text-xs text-muted-foreground">Historical</div>
@@ -670,10 +688,14 @@ export function RiskFactors({
                       </div>
 
                       <Progress value={profile.overallRiskScore} className="h-2" />
-                      
+
                       {profile.topRiskFactors.length > 0 && (
                         <div className="mt-3 text-xs text-muted-foreground">
-                          Top risks: {profile.topRiskFactors.slice(0, 3).map(f => f.factorName).join(', ')}
+                          Top risks:{" "}
+                          {profile.topRiskFactors
+                            .slice(0, 3)
+                            .map((f) => f.factorName)
+                            .join(", ")}
                         </div>
                       )}
                     </CardContent>
@@ -691,11 +713,7 @@ export function RiskFactors({
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               <span>Risk Profile Details</span>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setSelectedProfile(null)}
-              >
+              <Button variant="outline" size="sm" onClick={() => setSelectedProfile(null)}>
                 Close
               </Button>
             </CardTitle>
@@ -705,9 +723,7 @@ export function RiskFactors({
               {/* Profile Overview */}
               <div className="space-y-4">
                 <div className="text-center">
-                  <div className="text-3xl font-bold mb-2">
-                    {selectedProfile.overallRiskScore}%
-                  </div>
+                  <div className="text-3xl font-bold mb-2">{selectedProfile.overallRiskScore}%</div>
                   <Badge className={getRiskLevelColor(selectedProfile.riskLevel)} size="lg">
                     {selectedProfile.riskLevel} RISK
                   </Badge>
@@ -777,9 +793,7 @@ export function RiskFactors({
                             </div>
                           </div>
                           <div className="text-right">
-                            <div className="font-medium">
-                              +{factor.contribution.toFixed(1)}%
-                            </div>
+                            <div className="font-medium">+{factor.contribution.toFixed(1)}%</div>
                             <div className="text-xs text-muted-foreground">
                               Weight: {(factor.weight * 100).toFixed(0)}%
                             </div>
@@ -798,8 +812,8 @@ export function RiskFactors({
                 <h4 className="font-medium mb-4">Recommended Interventions</h4>
                 <div className="space-y-2">
                   {selectedProfile.recommendedInterventions.map((intervention, index) => (
-                    <div 
-                      key={index} 
+                    <div
+                      key={index}
                       className="flex items-center justify-between p-3 bg-muted rounded-lg"
                     >
                       <span className="text-sm">{intervention}</span>

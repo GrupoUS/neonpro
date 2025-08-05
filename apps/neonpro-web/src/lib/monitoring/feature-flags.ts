@@ -1,14 +1,14 @@
-﻿/**
+/**
  * TASK-001: Foundation Setup & Baseline
  * Feature Flag Management System
- * 
+ *
  * Provides safe rollout capability with gradual deployment, A/B testing,
  * and emergency rollback functionality for enhancement phases.
  */
 
-import { createClient } from '@/lib/supabase/client';
-import { createClient as createServerClient } from '@/lib/supabase/server';
-import { useEffect, useState } from 'react';
+import type { createClient } from "@/lib/supabase/client";
+import type { createClient as createServerClient } from "@/lib/supabase/server";
+import type { useEffect, useState } from "react";
 
 export interface FeatureFlag {
   id: string;
@@ -24,7 +24,7 @@ export interface FeatureFlag {
 export interface FeatureFlagEvaluation {
   flagName: string;
   isEnabled: boolean;
-  reason: 'enabled' | 'disabled' | 'percentage_rollout' | 'target_audience' | 'not_found';
+  reason: "enabled" | "disabled" | "percentage_rollout" | "target_audience" | "not_found";
   metadata?: Record<string, any>;
 }
 
@@ -50,7 +50,7 @@ class FeatureFlagManager {
   async isFeatureEnabled(
     flagName: string,
     userId?: string,
-    context?: Record<string, any>
+    context?: Record<string, any>,
   ): Promise<FeatureFlagEvaluation> {
     try {
       // Check cache first
@@ -60,16 +60,16 @@ class FeatureFlagManager {
       // Fetch from database if not cached or expired
       if (!flag) {
         const { data, error } = await this.supabase
-          .from('feature_flags')
-          .select('*')
-          .eq('flag_name', flagName)
+          .from("feature_flags")
+          .select("*")
+          .eq("flag_name", flagName)
           .single();
 
         if (error || !data) {
           return {
             flagName,
             isEnabled: false,
-            reason: 'not_found'
+            reason: "not_found",
           };
         }
 
@@ -84,7 +84,7 @@ class FeatureFlagManager {
       return {
         flagName,
         isEnabled: false,
-        reason: 'not_found'
+        reason: "not_found",
       };
     }
   }
@@ -95,14 +95,14 @@ class FeatureFlagManager {
   private evaluateFlag(
     flag: FeatureFlag,
     userId?: string,
-    context?: Record<string, any>
+    context?: Record<string, any>,
   ): FeatureFlagEvaluation {
     // If flag is globally disabled
     if (!flag.is_enabled) {
       return {
         flagName: flag.flag_name,
         isEnabled: false,
-        reason: 'disabled'
+        reason: "disabled",
       };
     }
 
@@ -113,8 +113,8 @@ class FeatureFlagManager {
         return {
           flagName: flag.flag_name,
           isEnabled: isTargeted,
-          reason: 'target_audience',
-          metadata: { target_audience: flag.target_audience }
+          reason: "target_audience",
+          metadata: { target_audience: flag.target_audience },
         };
       }
     }
@@ -124,14 +124,14 @@ class FeatureFlagManager {
       const isInRollout = this.evaluatePercentageRollout(
         flag.flag_name,
         flag.rollout_percentage,
-        userId
+        userId,
       );
-      
+
       return {
         flagName: flag.flag_name,
         isEnabled: isInRollout,
-        reason: 'percentage_rollout',
-        metadata: { rollout_percentage: flag.rollout_percentage }
+        reason: "percentage_rollout",
+        metadata: { rollout_percentage: flag.rollout_percentage },
       };
     }
 
@@ -139,7 +139,7 @@ class FeatureFlagManager {
     return {
       flagName: flag.flag_name,
       isEnabled: true,
-      reason: 'enabled'
+      reason: "enabled",
     };
   }
 
@@ -149,7 +149,7 @@ class FeatureFlagManager {
   private evaluateTargetAudience(
     targetAudience: Record<string, any>,
     userId: string,
-    context?: Record<string, any>
+    context?: Record<string, any>,
   ): boolean | null {
     // Check user ID targeting
     if (targetAudience.userIds && Array.isArray(targetAudience.userIds)) {
@@ -185,16 +185,16 @@ class FeatureFlagManager {
   private evaluatePercentageRollout(
     flagName: string,
     percentage: number,
-    userId?: string
+    userId?: string,
   ): boolean {
     if (percentage <= 0) return false;
     if (percentage >= 100) return true;
 
     // Use consistent hashing to determine if user is in rollout
-    const hashInput = `${flagName}_${userId || 'anonymous'}`;
+    const hashInput = `${flagName}_${userId || "anonymous"}`;
     const hash = this.simpleHash(hashInput);
     const bucket = hash % 100;
-    
+
     return bucket < percentage;
   }
 
@@ -205,7 +205,7 @@ class FeatureFlagManager {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return Math.abs(hash);
@@ -221,35 +221,38 @@ class FeatureFlagManager {
       rolloutPercentage?: number;
       targetAudience?: Record<string, any>;
       description?: string;
-    }
+    },
   ): Promise<FeatureFlag | null> {
     try {
       const { data, error } = await this.supabase
-        .from('feature_flags')
-        .upsert({
-          flag_name: flagName,
-          is_enabled: config.isEnabled ?? false,
-          rollout_percentage: config.rolloutPercentage ?? 0,
-          target_audience: config.targetAudience,
-          description: config.description,
-          updated_at: new Date().toISOString()
-        }, {
-          onConflict: 'flag_name'
-        })
+        .from("feature_flags")
+        .upsert(
+          {
+            flag_name: flagName,
+            is_enabled: config.isEnabled ?? false,
+            rollout_percentage: config.rolloutPercentage ?? 0,
+            target_audience: config.targetAudience,
+            description: config.description,
+            updated_at: new Date().toISOString(),
+          },
+          {
+            onConflict: "flag_name",
+          },
+        )
         .select()
         .single();
 
       if (error) {
-        console.error('Error upserting feature flag:', error);
+        console.error("Error upserting feature flag:", error);
         return null;
       }
 
       // Update cache
       this.setCachedFlag(flagName, data);
-      
+
       return data;
     } catch (error) {
-      console.error('Error upserting feature flag:', error);
+      console.error("Error upserting feature flag:", error);
       return null;
     }
   }
@@ -261,7 +264,7 @@ class FeatureFlagManager {
     flagName: string,
     targetPercentage: number,
     incrementStep: number = 10,
-    intervalMinutes: number = 15
+    intervalMinutes: number = 15,
   ): Promise<void> {
     const flag = await this.getFeatureFlag(flagName);
     if (!flag) {
@@ -269,23 +272,26 @@ class FeatureFlagManager {
     }
 
     const currentPercentage = flag.rollout_percentage;
-    
+
     if (currentPercentage >= targetPercentage) {
       console.log(`Flag ${flagName} already at or above target percentage`);
       return;
     }
 
     const nextPercentage = Math.min(currentPercentage + incrementStep, targetPercentage);
-    
+
     await this.updateFeatureFlagPercentage(flagName, nextPercentage);
-    
+
     console.log(`Rolled out ${flagName} to ${nextPercentage}%`);
 
     // Schedule next increment if not at target
     if (nextPercentage < targetPercentage) {
-      setTimeout(() => {
-        this.gradualRollout(flagName, targetPercentage, incrementStep, intervalMinutes);
-      }, intervalMinutes * 60 * 1000);
+      setTimeout(
+        () => {
+          this.gradualRollout(flagName, targetPercentage, incrementStep, intervalMinutes);
+        },
+        intervalMinutes * 60 * 1000,
+      );
     }
   }
 
@@ -295,13 +301,13 @@ class FeatureFlagManager {
   async emergencyRollback(flagName: string, reason?: string): Promise<boolean> {
     try {
       const { error } = await this.supabase
-        .from('feature_flags')
+        .from("feature_flags")
         .update({
           is_enabled: false,
           rollout_percentage: 0,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
-        .eq('flag_name', flagName);
+        .eq("flag_name", flagName);
 
       if (error) {
         console.error(`Emergency rollback failed for ${flagName}:`, error);
@@ -311,8 +317,11 @@ class FeatureFlagManager {
       // Clear cache to force immediate re-fetch
       this.clearCachedFlag(flagName);
 
-      console.log(`Emergency rollback completed for ${flagName}`, reason ? `Reason: ${reason}` : '');
-      
+      console.log(
+        `Emergency rollback completed for ${flagName}`,
+        reason ? `Reason: ${reason}` : "",
+      );
+
       return true;
     } catch (error) {
       console.error(`Emergency rollback error for ${flagName}:`, error);
@@ -326,18 +335,18 @@ class FeatureFlagManager {
   async getAllFeatureFlags(): Promise<FeatureFlag[]> {
     try {
       const { data, error } = await this.supabase
-        .from('feature_flags')
-        .select('*')
-        .order('flag_name');
+        .from("feature_flags")
+        .select("*")
+        .order("flag_name");
 
       if (error) {
-        console.error('Error fetching feature flags:', error);
+        console.error("Error fetching feature flags:", error);
         return [];
       }
 
       return data || [];
     } catch (error) {
-      console.error('Error fetching feature flags:', error);
+      console.error("Error fetching feature flags:", error);
       return [];
     }
   }
@@ -348,9 +357,9 @@ class FeatureFlagManager {
   async getFeatureFlag(flagName: string): Promise<FeatureFlag | null> {
     try {
       const { data, error } = await this.supabase
-        .from('feature_flags')
-        .select('*')
-        .eq('flag_name', flagName)
+        .from("feature_flags")
+        .select("*")
+        .eq("flag_name", flagName)
         .single();
 
       if (error || !data) {
@@ -370,12 +379,12 @@ class FeatureFlagManager {
   async updateFeatureFlagPercentage(flagName: string, percentage: number): Promise<boolean> {
     try {
       const { error } = await this.supabase
-        .from('feature_flags')
+        .from("feature_flags")
         .update({
           rollout_percentage: Math.max(0, Math.min(100, percentage)),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
-        .eq('flag_name', flagName);
+        .eq("flag_name", flagName);
 
       if (error) {
         console.error(`Error updating percentage for ${flagName}:`, error);
@@ -384,7 +393,7 @@ class FeatureFlagManager {
 
       // Clear cache to force re-fetch
       this.clearCachedFlag(flagName);
-      
+
       return true;
     } catch (error) {
       console.error(`Error updating percentage for ${flagName}:`, error);
@@ -431,7 +440,7 @@ export function useFeatureFlag(flagName: string, context?: Record<string, any>) 
   const [evaluation, setEvaluation] = useState<FeatureFlagEvaluation>({
     flagName,
     isEnabled: false,
-    reason: 'not_found'
+    reason: "not_found",
   });
   const [loading, setLoading] = useState(true);
 
@@ -451,7 +460,7 @@ export function useFeatureFlag(flagName: string, context?: Record<string, any>) 
   return {
     isEnabled: evaluation.isEnabled,
     evaluation,
-    loading
+    loading,
   };
 }
 
@@ -459,14 +468,13 @@ export function useFeatureFlag(flagName: string, context?: Record<string, any>) 
 export async function checkFeatureFlagServer(
   flagName: string,
   userId?: string,
-  context?: Record<string, any>
+  context?: Record<string, any>,
 ): Promise<FeatureFlagEvaluation> {
   const supabase = createServerClient();
   const manager = new FeatureFlagManager();
-  
+
   // Override the client instance for server-side usage
   (manager as any).supabase = supabase;
-  
+
   return manager.isFeatureEnabled(flagName, userId, context);
 }
-

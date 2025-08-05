@@ -20,7 +20,7 @@ export interface PerformanceAlert {
   metric: string;
   value: number;
   threshold: number;
-  severity: 'warning' | 'critical';
+  severity: "warning" | "critical";
   timestamp: number;
 }
 
@@ -36,10 +36,10 @@ export class PerformanceMonitorUtils {
    * Initialize default performance thresholds
    */
   private initializeDefaultThresholds(): void {
-    this.setThreshold('response_time', { metric: 'response_time', warning: 1000, critical: 3000 });
-    this.setThreshold('memory_usage', { metric: 'memory_usage', warning: 80, critical: 95 });
-    this.setThreshold('cpu_usage', { metric: 'cpu_usage', warning: 70, critical: 90 });
-    this.setThreshold('error_rate', { metric: 'error_rate', warning: 5, critical: 10 });
+    this.setThreshold("response_time", { metric: "response_time", warning: 1000, critical: 3000 });
+    this.setThreshold("memory_usage", { metric: "memory_usage", warning: 80, critical: 95 });
+    this.setThreshold("cpu_usage", { metric: "cpu_usage", warning: 70, critical: 90 });
+    this.setThreshold("error_rate", { metric: "error_rate", warning: 5, critical: 10 });
   }
 
   /**
@@ -64,16 +64,16 @@ export class PerformanceMonitorUtils {
           metric: metric.name,
           value: metric.value,
           threshold: threshold.critical,
-          severity: 'critical',
-          timestamp: metric.timestamp
+          severity: "critical",
+          timestamp: metric.timestamp,
         });
       } else if (metric.value >= threshold.warning) {
         newAlerts.push({
           metric: metric.name,
           value: metric.value,
           threshold: threshold.warning,
-          severity: 'warning',
-          timestamp: metric.timestamp
+          severity: "warning",
+          timestamp: metric.timestamp,
         });
       }
     }
@@ -100,7 +100,7 @@ export class PerformanceMonitorUtils {
       if (bucketMetrics.length > 0) {
         const avgValue = bucketMetrics.reduce((sum, m) => sum + m.value, 0) / bucketMetrics.length;
         const timestamp = bucketMetrics[Math.floor(bucketMetrics.length / 2)].timestamp;
-        
+
         trends.push({
           timestamp,
           value: Math.round(avgValue),
@@ -120,7 +120,7 @@ export class PerformanceMonitorUtils {
       return { count: 0, avg: 0, p50: 0, p90: 0, p95: 0, p99: 0, min: 0, max: 0 };
     }
 
-    const values = metrics.map(m => m.value).sort((a, b) => a - b);
+    const values = metrics.map((m) => m.value).sort((a, b) => a - b);
     const sum = values.reduce((a, b) => a + b, 0);
 
     return {
@@ -140,15 +140,15 @@ export class PerformanceMonitorUtils {
    */
   private percentile(values: number[], p: number): number {
     if (values.length === 0) return 0;
-    
+
     const index = (p / 100) * (values.length - 1);
     const lower = Math.floor(index);
     const upper = Math.ceil(index);
-    
+
     if (lower === upper) {
       return values[lower];
     }
-    
+
     const weight = index - lower;
     return Math.round(values[lower] * (1 - weight) + values[upper] * weight);
   }
@@ -163,9 +163,10 @@ export class PerformanceMonitorUtils {
   /**
    * Clear old alerts
    */
-  clearOldAlerts(maxAge: number = 3600000): void { // 1 hour default
+  clearOldAlerts(maxAge: number = 3600000): void {
+    // 1 hour default
     const cutoff = Date.now() - maxAge;
-    this.alerts = this.alerts.filter(alert => alert.timestamp > cutoff);
+    this.alerts = this.alerts.filter((alert) => alert.timestamp > cutoff);
   }
 
   /**
@@ -175,15 +176,15 @@ export class PerformanceMonitorUtils {
     if (metrics.length === 0) return 100;
 
     let score = 100;
-    const recentAlerts = this.alerts.filter(alert => 
-      Date.now() - alert.timestamp < 300000 // Last 5 minutes
+    const recentAlerts = this.alerts.filter(
+      (alert) => Date.now() - alert.timestamp < 300000, // Last 5 minutes
     );
 
     // Deduct points for alerts
     for (const alert of recentAlerts) {
-      if (alert.severity === 'critical') {
+      if (alert.severity === "critical") {
         score -= 20;
-      } else if (alert.severity === 'warning') {
+      } else if (alert.severity === "warning") {
         score -= 10;
       }
     }
@@ -197,8 +198,8 @@ export class PerformanceMonitorUtils {
   generateReport(metrics: PerformanceMetric[]): any {
     const aggregated = this.aggregateMetrics(metrics);
     const trends = this.generateTrends(metrics);
-    const recentAlerts = this.alerts.filter(alert => 
-      Date.now() - alert.timestamp < 3600000 // Last hour
+    const recentAlerts = this.alerts.filter(
+      (alert) => Date.now() - alert.timestamp < 3600000, // Last hour
     );
     const score = this.calculatePerformanceScore(metrics);
 
@@ -206,12 +207,12 @@ export class PerformanceMonitorUtils {
       summary: {
         totalMetrics: metrics.length,
         performanceScore: score,
-        alertCount: recentAlerts.length
+        alertCount: recentAlerts.length,
       },
       aggregated,
       trends,
       alerts: recentAlerts,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
   }
 }

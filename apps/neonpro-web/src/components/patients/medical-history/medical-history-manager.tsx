@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { 
-  Calendar, 
-  FileText, 
-  Heart, 
-  AlertTriangle, 
-  Plus, 
-  Edit, 
-  Trash2, 
+import React, { useState, useEffect } from "react";
+import type {
+  Calendar,
+  FileText,
+  Heart,
+  AlertTriangle,
+  Plus,
+  Edit,
+  Trash2,
   Download,
   Upload,
   Search,
@@ -17,21 +17,40 @@ import {
   User,
   Stethoscope,
   Pill,
-  Activity
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { toast } from 'sonner';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+  Activity,
+} from "lucide-react";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type { toast } from "sonner";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
 
 // HIPAA-compliant medical history types
 interface MedicalCondition {
@@ -39,8 +58,8 @@ interface MedicalCondition {
   patient_id: string;
   condition_name: string;
   icd_10_code?: string;
-  severity: 'mild' | 'moderate' | 'severe' | 'critical';
-  status: 'active' | 'resolved' | 'chronic' | 'in_remission';
+  severity: "mild" | "moderate" | "severe" | "critical";
+  status: "active" | "resolved" | "chronic" | "in_remission";
   onset_date: string;
   resolution_date?: string;
   description: string;
@@ -59,8 +78,8 @@ interface MedicalAllergy {
   id: string;
   patient_id: string;
   allergen: string;
-  allergen_type: 'medication' | 'food' | 'environmental' | 'contact' | 'other';
-  severity: 'mild' | 'moderate' | 'severe' | 'life_threatening';
+  allergen_type: "medication" | "food" | "environmental" | "contact" | "other";
+  severity: "mild" | "moderate" | "severe" | "life_threatening";
   reaction_type: string[];
   symptoms: string[];
   onset_date?: string;
@@ -80,12 +99,12 @@ interface MedicalMedication {
   generic_name?: string;
   dosage: string;
   frequency: string;
-  route: 'oral' | 'topical' | 'injection' | 'inhalation' | 'other';
+  route: "oral" | "topical" | "injection" | "inhalation" | "other";
   indication: string;
   prescribing_doctor: string;
   start_date: string;
   end_date?: string;
-  status: 'active' | 'discontinued' | 'completed' | 'on_hold';
+  status: "active" | "discontinued" | "completed" | "on_hold";
   side_effects?: string[];
   interactions?: string[];
   adherence_notes: string;
@@ -97,7 +116,7 @@ interface MedicalMedication {
 interface FamilyHistory {
   id: string;
   patient_id: string;
-  relationship: 'father' | 'mother' | 'sibling' | 'grandparent' | 'aunt_uncle' | 'cousin' | 'other';
+  relationship: "father" | "mother" | "sibling" | "grandparent" | "aunt_uncle" | "cousin" | "other";
   condition: string;
   age_of_onset?: number;
   age_of_death?: number;
@@ -111,18 +130,18 @@ interface FamilyHistory {
 interface SocialHistory {
   id: string;
   patient_id: string;
-  smoking_status: 'never' | 'former' | 'current';
+  smoking_status: "never" | "former" | "current";
   smoking_details?: {
     packs_per_day?: number;
     years_smoked?: number;
     quit_date?: string;
   };
-  alcohol_use: 'never' | 'occasional' | 'moderate' | 'heavy';
+  alcohol_use: "never" | "occasional" | "moderate" | "heavy";
   alcohol_details?: {
     drinks_per_week?: number;
     type_preferred?: string[];
   };
-  exercise_frequency: 'none' | 'light' | 'moderate' | 'intense';
+  exercise_frequency: "none" | "light" | "moderate" | "intense";
   exercise_details?: string;
   occupation: string;
   occupational_hazards?: string[];
@@ -146,10 +165,10 @@ interface MedicalHistoryManagerProps {
   onHistoryUpdate?: () => void;
 }
 
-export default function MedicalHistoryManager({ 
-  patientId, 
-  readOnly = false, 
-  onHistoryUpdate 
+export default function MedicalHistoryManager({
+  patientId,
+  readOnly = false,
+  onHistoryUpdate,
 }: MedicalHistoryManagerProps) {
   // State management
   const [conditions, setConditions] = useState<MedicalCondition[]>([]);
@@ -157,19 +176,19 @@ export default function MedicalHistoryManager({
   const [medications, setMedications] = useState<MedicalMedication[]>([]);
   const [familyHistory, setFamilyHistory] = useState<FamilyHistory[]>([]);
   const [socialHistory, setSocialHistory] = useState<SocialHistory | null>(null);
-  
+
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('conditions');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
-  
+  const [activeTab, setActiveTab] = useState("conditions");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
+
   // Dialog states
   const [showConditionDialog, setShowConditionDialog] = useState(false);
   const [showAllergyDialog, setShowAllergyDialog] = useState(false);
   const [showMedicationDialog, setShowMedicationDialog] = useState(false);
   const [showFamilyDialog, setShowFamilyDialog] = useState(false);
   const [showSocialDialog, setShowSocialDialog] = useState(false);
-  
+
   const [editingItem, setEditingItem] = useState<any>(null);
 
   useEffect(() => {
@@ -185,17 +204,16 @@ export default function MedicalHistoryManager({
       //   .select('*')
       //   .eq('patient_id', patientId)
       //   .order('created_at', { ascending: false });
-      
+
       // Mock data for demonstration
       setConditions(generateMockConditions());
       setAllergies(generateMockAllergies());
       setMedications(generateMockMedications());
       setFamilyHistory(generateMockFamilyHistory());
       setSocialHistory(generateMockSocialHistory());
-      
     } catch (error) {
-      console.error('Error loading medical history:', error);
-      toast.error('Erro ao carregar histórico médico');
+      console.error("Error loading medical history:", error);
+      toast.error("Erro ao carregar histórico médico");
     } finally {
       setLoading(false);
     }
@@ -210,19 +228,19 @@ export default function MedicalHistoryManager({
         ...conditionData,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        created_by: 'current_user_id', // TODO: Get from auth
-        updated_by: 'current_user_id',
+        created_by: "current_user_id", // TODO: Get from auth
+        updated_by: "current_user_id",
         lgpd_consent: true,
-        data_retention_date: new Date(Date.now() + 7 * 365 * 24 * 60 * 60 * 1000).toISOString() // 7 years
+        data_retention_date: new Date(Date.now() + 7 * 365 * 24 * 60 * 60 * 1000).toISOString(), // 7 years
       } as MedicalCondition;
-      
-      setConditions(prev => [newCondition, ...prev]);
+
+      setConditions((prev) => [newCondition, ...prev]);
       setShowConditionDialog(false);
-      toast.success('Condição médica adicionada com sucesso');
+      toast.success("Condição médica adicionada com sucesso");
       onHistoryUpdate?.();
     } catch (error) {
-      console.error('Error adding condition:', error);
-      toast.error('Erro ao adicionar condição médica');
+      console.error("Error adding condition:", error);
+      toast.error("Erro ao adicionar condição médica");
     }
   };
 
@@ -234,16 +252,16 @@ export default function MedicalHistoryManager({
         ...allergyData,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        lgpd_consent: true
+        lgpd_consent: true,
       } as MedicalAllergy;
-      
-      setAllergies(prev => [newAllergy, ...prev]);
+
+      setAllergies((prev) => [newAllergy, ...prev]);
       setShowAllergyDialog(false);
-      toast.success('Alergia adicionada com sucesso');
+      toast.success("Alergia adicionada com sucesso");
       onHistoryUpdate?.();
     } catch (error) {
-      console.error('Error adding allergy:', error);
-      toast.error('Erro ao adicionar alergia');
+      console.error("Error adding allergy:", error);
+      toast.error("Erro ao adicionar alergia");
     }
   };
 
@@ -255,16 +273,16 @@ export default function MedicalHistoryManager({
         ...medicationData,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        lgpd_consent: true
+        lgpd_consent: true,
       } as MedicalMedication;
-      
-      setMedications(prev => [newMedication, ...prev]);
+
+      setMedications((prev) => [newMedication, ...prev]);
       setShowMedicationDialog(false);
-      toast.success('Medicação adicionada com sucesso');
+      toast.success("Medicação adicionada com sucesso");
       onHistoryUpdate?.();
     } catch (error) {
-      console.error('Error adding medication:', error);
-      toast.error('Erro ao adicionar medicação');
+      console.error("Error adding medication:", error);
+      toast.error("Erro ao adicionar medicação");
     }
   };
 
@@ -281,35 +299,46 @@ export default function MedicalHistoryManager({
       lgpd_compliance: {
         consent_verified: true,
         data_minimization: true,
-        purpose_limitation: 'medical_care',
-        retention_period: '7_years'
-      }
+        purpose_limitation: "medical_care",
+        retention_period: "7_years",
+      },
     };
-    
+
     // TODO: Implement actual export with audit logging
-    console.log('Exporting medical history:', exportData);
-    toast.success('Histórico médico exportado com conformidade LGPD');
+    console.log("Exporting medical history:", exportData);
+    toast.success("Histórico médico exportado com conformidade LGPD");
   };
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'mild': return 'bg-green-100 text-green-800';
-      case 'moderate': return 'bg-yellow-100 text-yellow-800';
-      case 'severe': return 'bg-orange-100 text-orange-800';
-      case 'critical':
-      case 'life_threatening': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "mild":
+        return "bg-green-100 text-green-800";
+      case "moderate":
+        return "bg-yellow-100 text-yellow-800";
+      case "severe":
+        return "bg-orange-100 text-orange-800";
+      case "critical":
+      case "life_threatening":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-red-100 text-red-800';
-      case 'resolved': return 'bg-green-100 text-green-800';
-      case 'chronic': return 'bg-orange-100 text-orange-800';
-      case 'in_remission': return 'bg-blue-100 text-blue-800';
-      case 'discontinued': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-blue-100 text-blue-800';
+      case "active":
+        return "bg-red-100 text-red-800";
+      case "resolved":
+        return "bg-green-100 text-green-800";
+      case "chronic":
+        return "bg-orange-100 text-orange-800";
+      case "in_remission":
+        return "bg-blue-100 text-blue-800";
+      case "discontinued":
+        return "bg-gray-100 text-gray-800";
+      default:
+        return "bg-blue-100 text-blue-800";
     }
   };
 
@@ -332,11 +361,7 @@ export default function MedicalHistoryManager({
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            onClick={handleExportHistory}
-            className="hidden sm:flex"
-          >
+          <Button variant="outline" onClick={handleExportHistory} className="hidden sm:flex">
             <Download className="mr-2 h-4 w-4" />
             Exportar
           </Button>
@@ -425,7 +450,7 @@ export default function MedicalHistoryManager({
               </Dialog>
             )}
           </div>
-          
+
           <div className="grid gap-4">
             {conditions.map((condition) => (
               <Card key={condition.id} className="p-4">
@@ -439,15 +464,21 @@ export default function MedicalHistoryManager({
                       <Badge className={getSeverityColor(condition.severity)}>
                         {condition.severity}
                       </Badge>
-                      <Badge className={getStatusColor(condition.status)}>
-                        {condition.status}
-                      </Badge>
+                      <Badge className={getStatusColor(condition.status)}>{condition.status}</Badge>
                     </div>
                     <p className="text-sm text-muted-foreground">{condition.description}</p>
                     <div className="flex items-center space-x-4 text-xs text-muted-foreground">
-                      <span>Início: {format(new Date(condition.onset_date), 'dd/MM/yyyy', { locale: ptBR })}</span>
+                      <span>
+                        Início:{" "}
+                        {format(new Date(condition.onset_date), "dd/MM/yyyy", { locale: ptBR })}
+                      </span>
                       {condition.resolution_date && (
-                        <span>Resolução: {format(new Date(condition.resolution_date), 'dd/MM/yyyy', { locale: ptBR })}</span>
+                        <span>
+                          Resolução:{" "}
+                          {format(new Date(condition.resolution_date), "dd/MM/yyyy", {
+                            locale: ptBR,
+                          })}
+                        </span>
                       )}
                     </div>
                   </div>
@@ -494,7 +525,7 @@ export default function MedicalHistoryManager({
               </Dialog>
             )}
           </div>
-          
+
           <div className="grid gap-4">
             {allergies.map((allergy) => (
               <Card key={allergy.id} className="p-4">
@@ -559,7 +590,7 @@ export default function MedicalHistoryManager({
               </Dialog>
             )}
           </div>
-          
+
           <div className="grid gap-4">
             {medications.map((medication) => (
               <Card key={medication.id} className="p-4">
@@ -575,15 +606,29 @@ export default function MedicalHistoryManager({
                       </Badge>
                     </div>
                     <div className="text-sm space-y-1">
-                      <p><strong>Dosagem:</strong> {medication.dosage}</p>
-                      <p><strong>Frequência:</strong> {medication.frequency}</p>
-                      <p><strong>Via:</strong> {medication.route}</p>
-                      <p><strong>Indicação:</strong> {medication.indication}</p>
+                      <p>
+                        <strong>Dosagem:</strong> {medication.dosage}
+                      </p>
+                      <p>
+                        <strong>Frequência:</strong> {medication.frequency}
+                      </p>
+                      <p>
+                        <strong>Via:</strong> {medication.route}
+                      </p>
+                      <p>
+                        <strong>Indicação:</strong> {medication.indication}
+                      </p>
                     </div>
                     <div className="flex items-center space-x-4 text-xs text-muted-foreground">
-                      <span>Início: {format(new Date(medication.start_date), 'dd/MM/yyyy', { locale: ptBR })}</span>
+                      <span>
+                        Início:{" "}
+                        {format(new Date(medication.start_date), "dd/MM/yyyy", { locale: ptBR })}
+                      </span>
                       {medication.end_date && (
-                        <span>Fim: {format(new Date(medication.end_date), 'dd/MM/yyyy', { locale: ptBR })}</span>
+                        <span>
+                          Fim:{" "}
+                          {format(new Date(medication.end_date), "dd/MM/yyyy", { locale: ptBR })}
+                        </span>
                       )}
                     </div>
                   </div>
@@ -618,15 +663,13 @@ export default function MedicalHistoryManager({
                 <DialogContent className="max-w-2xl">
                   <DialogHeader>
                     <DialogTitle>Adicionar Histórico Familiar</DialogTitle>
-                    <DialogDescription>
-                      Registre condições médicas na família
-                    </DialogDescription>
+                    <DialogDescription>Registre condições médicas na família</DialogDescription>
                   </DialogHeader>
                   <FamilyHistoryForm
                     onSubmit={(data) => {
                       // Handle family history submission
                       setShowFamilyDialog(false);
-                      toast.success('Histórico familiar adicionado');
+                      toast.success("Histórico familiar adicionado");
                     }}
                     onCancel={() => setShowFamilyDialog(false)}
                   />
@@ -634,7 +677,7 @@ export default function MedicalHistoryManager({
               </Dialog>
             )}
           </div>
-          
+
           <div className="grid gap-4">
             {familyHistory.map((history) => (
               <Card key={history.id} className="p-4">
@@ -694,7 +737,7 @@ export default function MedicalHistoryManager({
                     onSubmit={(data) => {
                       setSocialHistory(data);
                       setShowSocialDialog(false);
-                      toast.success('Histórico social atualizado');
+                      toast.success("Histórico social atualizado");
                     }}
                     onCancel={() => setShowSocialDialog(false)}
                   />
@@ -702,14 +745,20 @@ export default function MedicalHistoryManager({
               </Dialog>
             )}
           </div>
-          
+
           {socialHistory && (
             <Card className="p-6">
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-4">
                   <div>
                     <h4 className="font-semibold mb-2">Tabagismo</h4>
-                    <Badge className={socialHistory.smoking_status === 'current' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}>
+                    <Badge
+                      className={
+                        socialHistory.smoking_status === "current"
+                          ? "bg-red-100 text-red-800"
+                          : "bg-green-100 text-green-800"
+                      }
+                    >
                       {socialHistory.smoking_status}
                     </Badge>
                     {socialHistory.smoking_details && (
@@ -723,7 +772,7 @@ export default function MedicalHistoryManager({
                       </div>
                     )}
                   </div>
-                  
+
                   <div>
                     <h4 className="font-semibold mb-2">Álcool</h4>
                     <Badge variant="outline">{socialHistory.alcohol_use}</Badge>
@@ -735,52 +784,55 @@ export default function MedicalHistoryManager({
                       </div>
                     )}
                   </div>
-                  
+
                   <div>
                     <h4 className="font-semibold mb-2">Exercício</h4>
                     <Badge variant="outline">{socialHistory.exercise_frequency}</Badge>
                     {socialHistory.exercise_details && (
-                      <p className="text-sm text-muted-foreground mt-1">{socialHistory.exercise_details}</p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {socialHistory.exercise_details}
+                      </p>
                     )}
                   </div>
                 </div>
-                
+
                 <div className="space-y-4">
                   <div>
                     <h4 className="font-semibold mb-2">Ocupação</h4>
                     <p className="text-sm">{socialHistory.occupation}</p>
-                    {socialHistory.occupational_hazards && socialHistory.occupational_hazards.length > 0 && (
-                      <div className="mt-1">
-                        <p className="text-xs text-muted-foreground">Riscos ocupacionais:</p>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {socialHistory.occupational_hazards.map((hazard, index) => (
-                            <Badge key={index} variant="secondary" className="text-xs">
-                              {hazard}
-                            </Badge>
-                          ))}
+                    {socialHistory.occupational_hazards &&
+                      socialHistory.occupational_hazards.length > 0 && (
+                        <div className="mt-1">
+                          <p className="text-xs text-muted-foreground">Riscos ocupacionais:</p>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {socialHistory.occupational_hazards.map((hazard, index) => (
+                              <Badge key={index} variant="secondary" className="text-xs">
+                                {hazard}
+                              </Badge>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </div>
-                  
+
                   <div>
                     <h4 className="font-semibold mb-2">Nível de Estresse</h4>
                     <div className="flex items-center space-x-2">
                       <Badge variant="outline">{socialHistory.stress_level}/10</Badge>
                       <div className="flex-1 bg-gray-200 rounded-full h-2">
-                        <div 
-                          className="bg-blue-600 h-2 rounded-full" 
+                        <div
+                          className="bg-blue-600 h-2 rounded-full"
                           style={{ width: `${(socialHistory.stress_level / 10) * 100}%` }}
                         ></div>
                       </div>
                     </div>
                   </div>
-                  
+
                   <div>
                     <h4 className="font-semibold mb-2">Situação de Moradia</h4>
                     <p className="text-sm">{socialHistory.living_situation}</p>
                   </div>
-                  
+
                   <div>
                     <h4 className="font-semibold mb-2">Rede de Apoio</h4>
                     <p className="text-sm">{socialHistory.support_system}</p>
@@ -796,27 +848,39 @@ export default function MedicalHistoryManager({
 }
 
 // Form Components (simplified for brevity)
-function ConditionForm({ onSubmit, onCancel }: { onSubmit: (data: any) => void; onCancel: () => void }) {
+function ConditionForm({
+  onSubmit,
+  onCancel,
+}: {
+  onSubmit: (data: any) => void;
+  onCancel: () => void;
+}) {
   const [formData, setFormData] = useState({
-    condition_name: '',
-    icd_10_code: '',
-    severity: 'mild',
-    status: 'active',
-    onset_date: '',
-    description: '',
+    condition_name: "",
+    icd_10_code: "",
+    severity: "mild",
+    status: "active",
+    onset_date: "",
+    description: "",
     symptoms: [],
-    treatment_notes: ''
+    treatment_notes: "",
   });
 
   return (
-    <form onSubmit={(e) => { e.preventDefault(); onSubmit(formData); }} className="space-y-4">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit(formData);
+      }}
+      className="space-y-4"
+    >
       <div className="grid gap-4 md:grid-cols-2">
         <div>
           <Label htmlFor="condition_name">Nome da Condição *</Label>
           <Input
             id="condition_name"
             value={formData.condition_name}
-            onChange={(e) => setFormData(prev => ({ ...prev, condition_name: e.target.value }))}
+            onChange={(e) => setFormData((prev) => ({ ...prev, condition_name: e.target.value }))}
             required
           />
         </div>
@@ -825,15 +889,18 @@ function ConditionForm({ onSubmit, onCancel }: { onSubmit: (data: any) => void; 
           <Input
             id="icd_10_code"
             value={formData.icd_10_code}
-            onChange={(e) => setFormData(prev => ({ ...prev, icd_10_code: e.target.value }))}
+            onChange={(e) => setFormData((prev) => ({ ...prev, icd_10_code: e.target.value }))}
           />
         </div>
       </div>
-      
+
       <div className="grid gap-4 md:grid-cols-3">
         <div>
           <Label htmlFor="severity">Severidade</Label>
-          <Select value={formData.severity} onValueChange={(value) => setFormData(prev => ({ ...prev, severity: value }))}>
+          <Select
+            value={formData.severity}
+            onValueChange={(value) => setFormData((prev) => ({ ...prev, severity: value }))}
+          >
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
@@ -847,7 +914,10 @@ function ConditionForm({ onSubmit, onCancel }: { onSubmit: (data: any) => void; 
         </div>
         <div>
           <Label htmlFor="status">Status</Label>
-          <Select value={formData.status} onValueChange={(value) => setFormData(prev => ({ ...prev, status: value }))}>
+          <Select
+            value={formData.status}
+            onValueChange={(value) => setFormData((prev) => ({ ...prev, status: value }))}
+          >
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
@@ -865,66 +935,90 @@ function ConditionForm({ onSubmit, onCancel }: { onSubmit: (data: any) => void; 
             id="onset_date"
             type="date"
             value={formData.onset_date}
-            onChange={(e) => setFormData(prev => ({ ...prev, onset_date: e.target.value }))}
+            onChange={(e) => setFormData((prev) => ({ ...prev, onset_date: e.target.value }))}
           />
         </div>
       </div>
-      
+
       <div>
         <Label htmlFor="description">Descrição</Label>
         <Textarea
           id="description"
           value={formData.description}
-          onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+          onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
           rows={3}
         />
       </div>
-      
+
       <div>
         <Label htmlFor="treatment_notes">Notas de Tratamento</Label>
         <Textarea
           id="treatment_notes"
           value={formData.treatment_notes}
-          onChange={(e) => setFormData(prev => ({ ...prev, treatment_notes: e.target.value }))}
+          onChange={(e) => setFormData((prev) => ({ ...prev, treatment_notes: e.target.value }))}
           rows={3}
         />
       </div>
-      
+
       <div className="flex items-center space-x-2">
         <Checkbox id="lgpd_consent" required />
         <Label htmlFor="lgpd_consent" className="text-sm">
           Confirmo o consentimento LGPD para armazenamento destes dados médicos
         </Label>
       </div>
-      
+
       <div className="flex justify-end space-x-2">
         <Button type="button" variant="outline" onClick={onCancel}>
           Cancelar
         </Button>
-        <Button type="submit">
-          Salvar Condição
-        </Button>
+        <Button type="submit">Salvar Condição</Button>
       </div>
     </form>
   );
 }
 
-function AllergyForm({ onSubmit, onCancel }: { onSubmit: (data: any) => void; onCancel: () => void }) {
+function AllergyForm({
+  onSubmit,
+  onCancel,
+}: {
+  onSubmit: (data: any) => void;
+  onCancel: () => void;
+}) {
   // Similar form structure for allergies
   return <div>Allergy Form Component</div>;
 }
 
-function MedicationForm({ onSubmit, onCancel }: { onSubmit: (data: any) => void; onCancel: () => void }) {
+function MedicationForm({
+  onSubmit,
+  onCancel,
+}: {
+  onSubmit: (data: any) => void;
+  onCancel: () => void;
+}) {
   // Similar form structure for medications
   return <div>Medication Form Component</div>;
 }
 
-function FamilyHistoryForm({ onSubmit, onCancel }: { onSubmit: (data: any) => void; onCancel: () => void }) {
+function FamilyHistoryForm({
+  onSubmit,
+  onCancel,
+}: {
+  onSubmit: (data: any) => void;
+  onCancel: () => void;
+}) {
   // Similar form structure for family history
   return <div>Family History Form Component</div>;
 }
 
-function SocialHistoryForm({ initialData, onSubmit, onCancel }: { initialData: any; onSubmit: (data: any) => void; onCancel: () => void }) {
+function SocialHistoryForm({
+  initialData,
+  onSubmit,
+  onCancel,
+}: {
+  initialData: any;
+  onSubmit: (data: any) => void;
+  onCancel: () => void;
+}) {
   // Similar form structure for social history
   return <div>Social History Form Component</div>;
 }
@@ -933,114 +1027,114 @@ function SocialHistoryForm({ initialData, onSubmit, onCancel }: { initialData: a
 function generateMockConditions(): MedicalCondition[] {
   return [
     {
-      id: 'condition_1',
-      patient_id: 'patient_1',
-      condition_name: 'Hipertensão Arterial',
-      icd_10_code: 'I10',
-      severity: 'moderate',
-      status: 'active',
-      onset_date: '2020-03-15',
-      description: 'Hipertensão arterial sistêmica controlada com medicação',
-      symptoms: ['Dor de cabeça', 'Tontura'],
-      triggers: ['Estresse', 'Sal em excesso'],
-      treatment_notes: 'Paciente responde bem ao tratamento com Losartana 50mg',
-      created_at: '2024-01-15T10:00:00Z',
-      updated_at: '2024-01-15T10:00:00Z',
-      created_by: 'doctor_1',
-      updated_by: 'doctor_1',
+      id: "condition_1",
+      patient_id: "patient_1",
+      condition_name: "Hipertensão Arterial",
+      icd_10_code: "I10",
+      severity: "moderate",
+      status: "active",
+      onset_date: "2020-03-15",
+      description: "Hipertensão arterial sistêmica controlada com medicação",
+      symptoms: ["Dor de cabeça", "Tontura"],
+      triggers: ["Estresse", "Sal em excesso"],
+      treatment_notes: "Paciente responde bem ao tratamento com Losartana 50mg",
+      created_at: "2024-01-15T10:00:00Z",
+      updated_at: "2024-01-15T10:00:00Z",
+      created_by: "doctor_1",
+      updated_by: "doctor_1",
       lgpd_consent: true,
-      data_retention_date: '2031-01-15T10:00:00Z'
-    }
+      data_retention_date: "2031-01-15T10:00:00Z",
+    },
   ];
 }
 
 function generateMockAllergies(): MedicalAllergy[] {
   return [
     {
-      id: 'allergy_1',
-      patient_id: 'patient_1',
-      allergen: 'Penicilina',
-      allergen_type: 'medication',
-      severity: 'severe',
-      reaction_type: ['Anafilaxia'],
-      symptoms: ['Urticária', 'Dificuldade respiratória', 'Inchaço'],
-      verified_date: '2023-05-10',
-      verified_by: 'doctor_1',
-      notes: 'Reação severa documentada em 2023. Evitar penicilina e derivados.',
-      emergency_action_plan: 'Administrar epinefrina e procurar atendimento médico imediato',
-      created_at: '2024-01-15T10:00:00Z',
-      updated_at: '2024-01-15T10:00:00Z',
-      lgpd_consent: true
-    }
+      id: "allergy_1",
+      patient_id: "patient_1",
+      allergen: "Penicilina",
+      allergen_type: "medication",
+      severity: "severe",
+      reaction_type: ["Anafilaxia"],
+      symptoms: ["Urticária", "Dificuldade respiratória", "Inchaço"],
+      verified_date: "2023-05-10",
+      verified_by: "doctor_1",
+      notes: "Reação severa documentada em 2023. Evitar penicilina e derivados.",
+      emergency_action_plan: "Administrar epinefrina e procurar atendimento médico imediato",
+      created_at: "2024-01-15T10:00:00Z",
+      updated_at: "2024-01-15T10:00:00Z",
+      lgpd_consent: true,
+    },
   ];
 }
 
 function generateMockMedications(): MedicalMedication[] {
   return [
     {
-      id: 'medication_1',
-      patient_id: 'patient_1',
-      medication_name: 'Losartana Potássica',
-      generic_name: 'Losartana',
-      dosage: '50mg',
-      frequency: '1x ao dia',
-      route: 'oral',
-      indication: 'Hipertensão arterial',
-      prescribing_doctor: 'Dr. João Silva',
-      start_date: '2023-03-15',
-      status: 'active',
+      id: "medication_1",
+      patient_id: "patient_1",
+      medication_name: "Losartana Potássica",
+      generic_name: "Losartana",
+      dosage: "50mg",
+      frequency: "1x ao dia",
+      route: "oral",
+      indication: "Hipertensão arterial",
+      prescribing_doctor: "Dr. João Silva",
+      start_date: "2023-03-15",
+      status: "active",
       side_effects: [],
       interactions: [],
-      adherence_notes: 'Paciente aderente ao tratamento',
-      created_at: '2024-01-15T10:00:00Z',
-      updated_at: '2024-01-15T10:00:00Z',
-      lgpd_consent: true
-    }
+      adherence_notes: "Paciente aderente ao tratamento",
+      created_at: "2024-01-15T10:00:00Z",
+      updated_at: "2024-01-15T10:00:00Z",
+      lgpd_consent: true,
+    },
   ];
 }
 
 function generateMockFamilyHistory(): FamilyHistory[] {
   return [
     {
-      id: 'family_1',
-      patient_id: 'patient_1',
-      relationship: 'father',
-      condition: 'Diabetes Tipo 2',
+      id: "family_1",
+      patient_id: "patient_1",
+      relationship: "father",
+      condition: "Diabetes Tipo 2",
       age_of_onset: 55,
-      notes: 'Diabetes diagnosticado aos 55 anos, controlado com medicação',
-      created_at: '2024-01-15T10:00:00Z',
-      updated_at: '2024-01-15T10:00:00Z',
-      lgpd_consent: true
-    }
+      notes: "Diabetes diagnosticado aos 55 anos, controlado com medicação",
+      created_at: "2024-01-15T10:00:00Z",
+      updated_at: "2024-01-15T10:00:00Z",
+      lgpd_consent: true,
+    },
   ];
 }
 
 function generateMockSocialHistory(): SocialHistory {
   return {
-    id: 'social_1',
-    patient_id: 'patient_1',
-    smoking_status: 'former',
+    id: "social_1",
+    patient_id: "patient_1",
+    smoking_status: "former",
     smoking_details: {
       packs_per_day: 1,
       years_smoked: 10,
-      quit_date: '2020-01-01'
+      quit_date: "2020-01-01",
     },
-    alcohol_use: 'occasional',
+    alcohol_use: "occasional",
     alcohol_details: {
       drinks_per_week: 2,
-      type_preferred: ['Vinho', 'Cerveja']
+      type_preferred: ["Vinho", "Cerveja"],
     },
-    exercise_frequency: 'moderate',
-    exercise_details: 'Caminhada 3x por semana, 30 minutos',
-    occupation: 'Engenheiro de Software',
-    occupational_hazards: ['Sedentarismo', 'Estresse'],
-    living_situation: 'Mora com família',
-    support_system: 'Família presente e apoiadora',
+    exercise_frequency: "moderate",
+    exercise_details: "Caminhada 3x por semana, 30 minutos",
+    occupation: "Engenheiro de Software",
+    occupational_hazards: ["Sedentarismo", "Estresse"],
+    living_situation: "Mora com família",
+    support_system: "Família presente e apoiadora",
     stress_level: 6,
-    sleep_patterns: 'Dorme 7-8 horas por noite, qualidade boa',
-    diet_description: 'Dieta balanceada, evita sal em excesso',
-    created_at: '2024-01-15T10:00:00Z',
-    updated_at: '2024-01-15T10:00:00Z',
-    lgpd_consent: true
+    sleep_patterns: "Dorme 7-8 horas por noite, qualidade boa",
+    diet_description: "Dieta balanceada, evita sal em excesso",
+    created_at: "2024-01-15T10:00:00Z",
+    updated_at: "2024-01-15T10:00:00Z",
+    lgpd_consent: true,
   };
 }

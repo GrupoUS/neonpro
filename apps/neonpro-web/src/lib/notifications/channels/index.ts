@@ -1,18 +1,18 @@
 /**
  * NeonPro Notification System - Channels
  * Story 1.7: Sistema de Notificações
- * 
+ *
  * Sistema de canais de entrega de notificações
  * Suporte a Email, SMS, Push e In-App
  */
 
-import {
+import type {
   NotificationChannel,
   NotificationDelivery,
   NotificationContext,
   ChannelConfig,
-  DeliveryStatus
-} from '../types';
+  DeliveryStatus,
+} from "../types";
 
 // ============================================================================
 // INTERFACES
@@ -22,7 +22,7 @@ export interface ChannelProvider {
   readonly name: string;
   readonly channel: NotificationChannel;
   readonly isEnabled: boolean;
-  
+
   initialize(config: ChannelConfig): Promise<void>;
   send(context: NotificationContext, content: any): Promise<NotificationDelivery>;
   validateConfig(config: ChannelConfig): string[];
@@ -32,7 +32,11 @@ export interface ChannelProvider {
 export interface ChannelManager {
   registerProvider(provider: ChannelProvider): void;
   getProvider(channel: NotificationChannel): ChannelProvider | undefined;
-  send(channel: NotificationChannel, context: NotificationContext, content: any): Promise<NotificationDelivery>;
+  send(
+    channel: NotificationChannel,
+    context: NotificationContext,
+    content: any,
+  ): Promise<NotificationDelivery>;
   getAvailableChannels(): NotificationChannel[];
   validateChannelConfig(channel: NotificationChannel, config: ChannelConfig): string[];
 }
@@ -58,7 +62,7 @@ export class NotificationChannelManager implements ChannelManager {
   async initialize(): Promise<void> {
     // Registrar provedores padrão
     await this.registerDefaultProviders();
-    
+
     // Inicializar provedores
     for (const provider of this.providers.values()) {
       try {
@@ -70,7 +74,7 @@ export class NotificationChannelManager implements ChannelManager {
         console.error(`Erro ao inicializar provedor ${provider.name}:`, error);
       }
     }
-    
+
     this.isInitialized = true;
   }
 
@@ -78,11 +82,11 @@ export class NotificationChannelManager implements ChannelManager {
    * Registra provedores padrão
    */
   private async registerDefaultProviders(): Promise<void> {
-    const { EmailProvider } = await import('./email-provider');
-    const { SMSProvider } = await import('./sms-provider');
-    const { PushProvider } = await import('./push-provider');
-    const { InAppProvider } = await import('./in-app-provider');
-    
+    const { EmailProvider } = await import("./email-provider");
+    const { SMSProvider } = await import("./sms-provider");
+    const { PushProvider } = await import("./push-provider");
+    const { InAppProvider } = await import("./in-app-provider");
+
     this.registerProvider(new EmailProvider());
     this.registerProvider(new SMSProvider());
     this.registerProvider(new PushProvider());
@@ -111,7 +115,7 @@ export class NotificationChannelManager implements ChannelManager {
    * Lista canais disponíveis
    */
   getAvailableChannels(): NotificationChannel[] {
-    return Array.from(this.providers.keys()).filter(channel => {
+    return Array.from(this.providers.keys()).filter((channel) => {
       const provider = this.providers.get(channel);
       return provider?.isEnabled ?? false;
     });
@@ -127,14 +131,14 @@ export class NotificationChannelManager implements ChannelManager {
   async send(
     channel: NotificationChannel,
     context: NotificationContext,
-    content: any
+    content: any,
   ): Promise<NotificationDelivery> {
     const provider = this.getProvider(channel);
-    
+
     if (!provider) {
       return {
         id: this.generateDeliveryId(),
-        notificationId: context.notificationId || '',
+        notificationId: context.notificationId || "",
         channel,
         recipient: context.recipient,
         status: DeliveryStatus.FAILED,
@@ -142,14 +146,14 @@ export class NotificationChannelManager implements ChannelManager {
         attempts: 1,
         sentAt: new Date(),
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
     }
-    
+
     if (!provider.isEnabled) {
       return {
         id: this.generateDeliveryId(),
-        notificationId: context.notificationId || '',
+        notificationId: context.notificationId || "",
         channel,
         recipient: context.recipient,
         status: DeliveryStatus.FAILED,
@@ -157,26 +161,26 @@ export class NotificationChannelManager implements ChannelManager {
         attempts: 1,
         sentAt: new Date(),
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
     }
-    
+
     try {
       return await provider.send(context, content);
     } catch (error) {
       console.error(`Erro ao enviar notificação via ${channel}:`, error);
-      
+
       return {
         id: this.generateDeliveryId(),
-        notificationId: context.notificationId || '',
+        notificationId: context.notificationId || "",
         channel,
         recipient: context.recipient,
         status: DeliveryStatus.FAILED,
-        error: error instanceof Error ? error.message : 'Erro desconhecido',
+        error: error instanceof Error ? error.message : "Erro desconhecido",
         attempts: 1,
         sentAt: new Date(),
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
     }
   }
@@ -190,11 +194,11 @@ export class NotificationChannelManager implements ChannelManager {
    */
   validateChannelConfig(channel: NotificationChannel, config: ChannelConfig): string[] {
     const provider = this.getProvider(channel);
-    
+
     if (!provider) {
       return [`Provedor não encontrado para canal: ${channel}`];
     }
-    
+
     return provider.validateConfig(config);
   }
 
@@ -205,20 +209,22 @@ export class NotificationChannelManager implements ChannelManager {
   /**
    * Verifica status de todos os canais
    */
-  async getChannelsStatus(): Promise<Record<NotificationChannel, { healthy: boolean; message?: string }>> {
+  async getChannelsStatus(): Promise<
+    Record<NotificationChannel, { healthy: boolean; message?: string }>
+  > {
     const status: Record<string, { healthy: boolean; message?: string }> = {};
-    
+
     for (const [channel, provider] of this.providers.entries()) {
       try {
         status[channel] = await provider.getStatus();
       } catch (error) {
         status[channel] = {
           healthy: false,
-          message: error instanceof Error ? error.message : 'Erro desconhecido'
+          message: error instanceof Error ? error.message : "Erro desconhecido",
         };
       }
     }
-    
+
     return status as Record<NotificationChannel, { healthy: boolean; message?: string }>;
   }
 
@@ -227,11 +233,11 @@ export class NotificationChannelManager implements ChannelManager {
    */
   async isChannelHealthy(channel: NotificationChannel): Promise<boolean> {
     const provider = this.getProvider(channel);
-    
+
     if (!provider || !provider.isEnabled) {
       return false;
     }
-    
+
     try {
       const status = await provider.getStatus();
       return status.healthy;
@@ -257,50 +263,50 @@ export class NotificationChannelManager implements ChannelManager {
   private async getChannelConfig(channel: NotificationChannel): Promise<ChannelConfig | undefined> {
     // Em uma implementação real, isso viria do banco de dados
     // Por enquanto, retornamos configurações padrão baseadas em variáveis de ambiente
-    
+
     switch (channel) {
       case NotificationChannel.EMAIL:
         return {
-          provider: 'resend',
+          provider: "resend",
           settings: {
             apiKey: process.env.RESEND_API_KEY,
-            fromEmail: process.env.RESEND_FROM_EMAIL || 'noreply@neonpro.com',
-            fromName: process.env.RESEND_FROM_NAME || 'NeonPro'
+            fromEmail: process.env.RESEND_FROM_EMAIL || "noreply@neonpro.com",
+            fromName: process.env.RESEND_FROM_NAME || "NeonPro",
           },
-          isEnabled: !!process.env.RESEND_API_KEY
+          isEnabled: !!process.env.RESEND_API_KEY,
         };
-        
+
       case NotificationChannel.SMS:
         return {
-          provider: 'twilio',
+          provider: "twilio",
           settings: {
             accountSid: process.env.TWILIO_ACCOUNT_SID,
             authToken: process.env.TWILIO_AUTH_TOKEN,
-            fromNumber: process.env.TWILIO_FROM_NUMBER
+            fromNumber: process.env.TWILIO_FROM_NUMBER,
           },
-          isEnabled: !!process.env.TWILIO_ACCOUNT_SID
+          isEnabled: !!process.env.TWILIO_ACCOUNT_SID,
         };
-        
+
       case NotificationChannel.PUSH:
         return {
-          provider: 'firebase',
+          provider: "firebase",
           settings: {
             serverKey: process.env.FIREBASE_SERVER_KEY,
-            projectId: process.env.FIREBASE_PROJECT_ID
+            projectId: process.env.FIREBASE_PROJECT_ID,
           },
-          isEnabled: !!process.env.FIREBASE_SERVER_KEY
+          isEnabled: !!process.env.FIREBASE_SERVER_KEY,
         };
-        
+
       case NotificationChannel.IN_APP:
         return {
-          provider: 'supabase',
+          provider: "supabase",
           settings: {
             url: process.env.SUPABASE_URL,
-            anonKey: process.env.SUPABASE_ANON_KEY
+            anonKey: process.env.SUPABASE_ANON_KEY,
           },
-          isEnabled: true // Sempre habilitado
+          isEnabled: true, // Sempre habilitado
         };
-        
+
       default:
         return undefined;
     }
@@ -312,8 +318,7 @@ export class NotificationChannelManager implements ChannelManager {
 // ============================================================================
 
 export default NotificationChannelManager;
-export * from './email-provider';
-export * from './sms-provider';
-export * from './push-provider';
-export * from './in-app-provider';
-
+export * from "./email-provider";
+export * from "./sms-provider";
+export * from "./push-provider";
+export * from "./in-app-provider";

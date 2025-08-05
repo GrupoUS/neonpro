@@ -3,25 +3,40 @@
  * Manages email, SMS, and in-app notifications with HIPAA compliance
  */
 
-import { supabase } from '@/lib/supabase/client';
-import { NOTIFICATION_CONFIG, type NotificationType, type NotificationChannel, type NotificationPriority, type NotificationPreferences } from './config';
-import { EmailService } from './email-service';
-import { SMSService } from './sms-service';
-import { SchedulingService } from './scheduling-service';
-import { AuditService } from './audit-service';
-import { z } from 'zod';
+import type { supabase } from "@/lib/supabase/client";
+import type {
+  NOTIFICATION_CONFIG,
+  type NotificationType,
+  type NotificationChannel,
+  type NotificationPriority,
+  type NotificationPreferences,
+} from "./config";
+import type { EmailService } from "./email-service";
+import type { SMSService } from "./sms-service";
+import type { SchedulingService } from "./scheduling-service";
+import type { AuditService } from "./audit-service";
+import type { z } from "zod";
 
 // Notification payload schema
 const NotificationPayloadSchema = z.object({
   recipientId: z.string().uuid(),
-  type: z.enum(['appointment_reminder', 'appointment_confirmation', 'appointment_cancellation', 'reschedule_request', 'treatment_reminder', 'follow_up_reminder', 'emergency_alert', 'billing_reminder']),
-  channel: z.enum(['email', 'sms', 'in_app']).optional(),
-  priority: z.enum(['low', 'normal', 'high', 'urgent']).default('normal'),
+  type: z.enum([
+    "appointment_reminder",
+    "appointment_confirmation",
+    "appointment_cancellation",
+    "reschedule_request",
+    "treatment_reminder",
+    "follow_up_reminder",
+    "emergency_alert",
+    "billing_reminder",
+  ]),
+  channel: z.enum(["email", "sms", "in_app"]).optional(),
+  priority: z.enum(["low", "normal", "high", "urgent"]).default("normal"),
   subject: z.string().min(1).max(200),
   content: z.string().min(1),
   templateData: z.record(z.any()).optional(),
   scheduledFor: z.date().optional(),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.any()).optional(),
 });
 
 export type NotificationPayload = z.infer<typeof NotificationPayloadSchema>;
@@ -32,7 +47,8 @@ export interface NotificationResult {
   channel: NotificationChannel;
   error?: string;
   deliveredAt?: Date;
-}export class NotificationService {
+}
+export class NotificationService {
   private emailService: EmailService;
   private smsService: SMSService;
   private schedulingService: SchedulingService;
@@ -53,42 +69,46 @@ export interface NotificationResult {
     try {
       // Validate payload
       const validPayload = NotificationPayloadSchema.parse(payload);
-      
+
       // Get user preferences
       const preferences = await this.getUserPreferences(validPayload.recipientId);
       if (!preferences) {
-        throw new Error('User preferences not found');
+        throw new Error("User preferences not found");
       }
 
       // Check if user has consented to receive notifications
       if (!preferences.consentGranted) {
         await this.auditService.log({
-          action: 'notification_blocked',
+          action: "notification_blocked",
           recipientId: validPayload.recipientId,
-          reason: 'consent_not_granted',
-          notificationType: validPayload.type
+          reason: "consent_not_granted",
+          notificationType: validPayload.type,
         });
-        return [{
-          success: false,
-          channel: 'email',
-          error: 'User has not granted consent for notifications'
-        }];
+        return [
+          {
+            success: false,
+            channel: "email",
+            error: "User has not granted consent for notifications",
+          },
+        ];
       }
 
       // Determine channels to use
       const channels = this.determineChannels(validPayload, preferences);
       if (channels.length === 0) {
         await this.auditService.log({
-          action: 'notification_blocked',
+          action: "notification_blocked",
           recipientId: validPayload.recipientId,
-          reason: 'no_enabled_channels',
-          notificationType: validPayload.type
+          reason: "no_enabled_channels",
+          notificationType: validPayload.type,
         });
-        return [{
-          success: false,
-          channel: 'email',
-          error: 'No enabled notification channels for user'
-        }];
+        return [
+          {
+            success: false,
+            channel: "email",
+            error: "No enabled notification channels for user",
+          },
+        ];
       }
 
       // Schedule or send immediately
@@ -97,28 +117,29 @@ export interface NotificationResult {
       }
 
       return await this.sendImmediately(validPayload, channels, preferences);
-
     } catch (error) {
       await this.auditService.log({
-        action: 'notification_error',
+        action: "notification_error",
         recipientId: payload.recipientId,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        notificationType: payload.type
+        error: error instanceof Error ? error.message : "Unknown error",
+        notificationType: payload.type,
       });
-      
-      return [{
-        success: false,
-        channel: 'email',
-        error: error instanceof Error ? error.message : 'Failed to send notification'
-      }];
+
+      return [
+        {
+          success: false,
+          channel: "email",
+          error: error instanceof Error ? error.message : "Failed to send notification",
+        },
+      ];
     }
-  }  /**
+  } /**
    * Schedule notification for future delivery
    */
   private async scheduleNotification(
-    payload: NotificationPayload, 
-    channels: NotificationChannel[], 
-    preferences: NotificationPreferences
+    payload: NotificationPayload,
+    channels: NotificationChannel[],
+    preferences: NotificationPreferences,
   ): Promise<NotificationResult[]> {
     const results: NotificationResult[] = [];
 
@@ -130,29 +151,28 @@ export interface NotificationResult {
           channel,
           payload,
           scheduledFor: payload.scheduledFor!,
-          preferences
+          preferences,
         });
 
         results.push({
           success: true,
           notificationId: scheduledId,
-          channel
+          channel,
         });
 
         await this.auditService.log({
-          action: 'notification_scheduled',
+          action: "notification_scheduled",
           recipientId: payload.recipientId,
           notificationId: scheduledId,
           channel,
           scheduledFor: payload.scheduledFor,
-          notificationType: payload.type
+          notificationType: payload.type,
         });
-
       } catch (error) {
         results.push({
           success: false,
           channel,
-          error: error instanceof Error ? error.message : 'Failed to schedule notification'
+          error: error instanceof Error ? error.message : "Failed to schedule notification",
         });
       }
     }
@@ -164,9 +184,9 @@ export interface NotificationResult {
    * Send notification immediately through specified channels
    */
   private async sendImmediately(
-    payload: NotificationPayload, 
-    channels: NotificationChannel[], 
-    preferences: NotificationPreferences
+    payload: NotificationPayload,
+    channels: NotificationChannel[],
+    preferences: NotificationPreferences,
   ): Promise<NotificationResult[]> {
     const results: NotificationResult[] = [];
 
@@ -175,26 +195,26 @@ export interface NotificationResult {
         let result: NotificationResult;
 
         switch (channel) {
-          case 'email':
+          case "email":
             result = await this.emailService.send({
               ...payload,
               recipientEmail: preferences.email,
-              timezone: preferences.timezone
+              timezone: preferences.timezone,
             });
             break;
-            
-          case 'sms':
+
+          case "sms":
             result = await this.smsService.send({
               ...payload,
               recipientPhone: preferences.phone,
-              timezone: preferences.timezone
+              timezone: preferences.timezone,
             });
             break;
-            
-          case 'in_app':
+
+          case "in_app":
             result = await this.sendInAppNotification(payload);
             break;
-            
+
           default:
             throw new Error(`Unsupported channel: ${channel}`);
         }
@@ -202,44 +222,43 @@ export interface NotificationResult {
         results.push(result);
 
         await this.auditService.log({
-          action: 'notification_sent',
+          action: "notification_sent",
           recipientId: payload.recipientId,
           notificationId: result.notificationId,
           channel,
           success: result.success,
           deliveredAt: result.deliveredAt,
-          notificationType: payload.type
+          notificationType: payload.type,
         });
-
       } catch (error) {
         results.push({
           success: false,
           channel,
-          error: error instanceof Error ? error.message : 'Failed to send notification'
+          error: error instanceof Error ? error.message : "Failed to send notification",
         });
       }
     }
 
     return results;
-  }  /**
+  } /**
    * Get user notification preferences from database
    */
   private async getUserPreferences(userId: string): Promise<NotificationPreferences | null> {
     try {
       const { data, error } = await supabase
-        .from('notification_preferences')
-        .select('*')
-        .eq('user_id', userId)
+        .from("notification_preferences")
+        .select("*")
+        .eq("user_id", userId)
         .single();
 
       if (error) {
-        console.error('Error fetching user preferences:', error);
+        console.error("Error fetching user preferences:", error);
         return null;
       }
 
       return data;
     } catch (error) {
-      console.error('Error in getUserPreferences:', error);
+      console.error("Error in getUserPreferences:", error);
       return null;
     }
   }
@@ -248,8 +267,8 @@ export interface NotificationResult {
    * Determine which channels to use based on payload and user preferences
    */
   private determineChannels(
-    payload: NotificationPayload, 
-    preferences: NotificationPreferences
+    payload: NotificationPayload,
+    preferences: NotificationPreferences,
   ): NotificationChannel[] {
     const channels: NotificationChannel[] = [];
 
@@ -265,10 +284,13 @@ export interface NotificationResult {
     // Otherwise, use all enabled channels based on priority and type
     const priorityChannels = this.getChannelsForPriority(payload.priority);
     const typeChannels = this.getChannelsForType(payload.type, preferences);
-    
+
     // Intersect priority and type channels
     for (const channel of priorityChannels) {
-      if (typeChannels.includes(channel) && this.isChannelEnabled(channel, payload.type, preferences)) {
+      if (
+        typeChannels.includes(channel) &&
+        this.isChannelEnabled(channel, payload.type, preferences)
+      ) {
         channels.push(channel);
       }
     }
@@ -280,9 +302,9 @@ export interface NotificationResult {
    * Check if a specific channel is enabled for a notification type
    */
   private isChannelEnabled(
-    channel: NotificationChannel, 
-    type: NotificationType, 
-    preferences: NotificationPreferences
+    channel: NotificationChannel,
+    type: NotificationType,
+    preferences: NotificationPreferences,
   ): boolean {
     const channelPrefs = preferences.channels[channel];
     if (!channelPrefs?.enabled) return false;
@@ -296,23 +318,23 @@ export interface NotificationResult {
    */
   private getChannelsForPriority(priority: NotificationPriority): NotificationChannel[] {
     switch (priority) {
-      case 'urgent':
-        return ['sms', 'in_app', 'email'];
-      case 'high':
-        return ['sms', 'email', 'in_app'];
-      case 'normal':
-        return ['email', 'in_app'];
-      case 'low':
-        return ['in_app', 'email'];
+      case "urgent":
+        return ["sms", "in_app", "email"];
+      case "high":
+        return ["sms", "email", "in_app"];
+      case "normal":
+        return ["email", "in_app"];
+      case "low":
+        return ["in_app", "email"];
       default:
-        return ['email'];
+        return ["email"];
     }
-  }  /**
+  } /**
    * Get channels enabled for specific notification type
    */
   private getChannelsForType(
-    type: NotificationType, 
-    preferences: NotificationPreferences
+    type: NotificationType,
+    preferences: NotificationPreferences,
   ): NotificationChannel[] {
     const channels: NotificationChannel[] = [];
 
@@ -333,7 +355,7 @@ export interface NotificationResult {
     try {
       // Store notification in database for in-app display
       const { data, error } = await supabase
-        .from('in_app_notifications')
+        .from("in_app_notifications")
         .insert({
           user_id: payload.recipientId,
           type: payload.type,
@@ -341,9 +363,9 @@ export interface NotificationResult {
           content: payload.content,
           priority: payload.priority,
           metadata: payload.metadata,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         })
-        .select('id')
+        .select("id")
         .single();
 
       if (error) {
@@ -353,15 +375,14 @@ export interface NotificationResult {
       return {
         success: true,
         notificationId: data.id,
-        channel: 'in_app',
-        deliveredAt: new Date()
+        channel: "in_app",
+        deliveredAt: new Date(),
       };
-
     } catch (error) {
       return {
         success: false,
-        channel: 'in_app',
-        error: error instanceof Error ? error.message : 'Failed to send in-app notification'
+        channel: "in_app",
+        error: error instanceof Error ? error.message : "Failed to send in-app notification",
       };
     }
   }
@@ -372,17 +393,17 @@ export interface NotificationResult {
   async cancelScheduledNotification(notificationId: string): Promise<boolean> {
     try {
       const success = await this.schedulingService.cancelNotification(notificationId);
-      
+
       if (success) {
         await this.auditService.log({
-          action: 'notification_cancelled',
-          notificationId
+          action: "notification_cancelled",
+          notificationId,
         });
       }
 
       return success;
     } catch (error) {
-      console.error('Error cancelling scheduled notification:', error);
+      console.error("Error cancelling scheduled notification:", error);
       return false;
     }
   }
@@ -391,7 +412,7 @@ export interface NotificationResult {
    * Get notification delivery status
    */
   async getNotificationStatus(notificationId: string): Promise<{
-    status: 'pending' | 'sent' | 'delivered' | 'failed' | 'cancelled';
+    status: "pending" | "sent" | "delivered" | "failed" | "cancelled";
     deliveredAt?: Date;
     error?: string;
   } | null> {
@@ -409,7 +430,7 @@ export interface NotificationResult {
 
       return null;
     } catch (error) {
-      console.error('Error getting notification status:', error);
+      console.error("Error getting notification status:", error);
       return null;
     }
   }
@@ -418,31 +439,29 @@ export interface NotificationResult {
    * Update user notification preferences
    */
   async updateUserPreferences(
-    userId: string, 
-    preferences: Partial<NotificationPreferences>
+    userId: string,
+    preferences: Partial<NotificationPreferences>,
   ): Promise<boolean> {
     try {
-      const { error } = await supabase
-        .from('notification_preferences')
-        .upsert({
-          user_id: userId,
-          ...preferences,
-          updated_at: new Date().toISOString()
-        });
+      const { error } = await supabase.from("notification_preferences").upsert({
+        user_id: userId,
+        ...preferences,
+        updated_at: new Date().toISOString(),
+      });
 
       if (error) {
         throw new Error(`Failed to update preferences: ${error.message}`);
       }
 
       await this.auditService.log({
-        action: 'preferences_updated',
+        action: "preferences_updated",
         recipientId: userId,
-        metadata: { preferences }
+        metadata: { preferences },
       });
 
       return true;
     } catch (error) {
-      console.error('Error updating user preferences:', error);
+      console.error("Error updating user preferences:", error);
       return false;
     }
   }

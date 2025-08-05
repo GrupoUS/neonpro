@@ -1,47 +1,42 @@
-const nextJest = require('next/jest');
+const nextJest = require("next/jest");
 
 const createJestConfig = nextJest({
   // Provide the path to your Next.js app to load next.config.js and .env files
-  dir: './',
+  dir: "./",
 });
 
 // Add any custom config to be passed to Jest
 const customJestConfig = {
-  setupFilesAfterEnv: [
-    '<rootDir>/jest.setup.js'
-  ],
-  testEnvironment: 'jest-environment-jsdom',
-  testMatch: [
-    '**/__tests__/**/*.(test|spec).(js|jsx|ts|tsx)',
-    '**/*.(test|spec).(js|jsx|ts|tsx)'
-  ],
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
+  testEnvironment: "jest-environment-jsdom",
+  testMatch: ["**/__tests__/**/*.(test|spec).(js|jsx|ts|tsx)", "**/*.(test|spec).(js|jsx|ts|tsx)"],
   testPathIgnorePatterns: [
-    '<rootDir>/.next/',
-    '<rootDir>/node_modules/',
-    '<rootDir>/__tests__/setup.ts'
+    "<rootDir>/.next/",
+    "<rootDir>/node_modules/",
+    "<rootDir>/__tests__/setup.ts",
   ],
   transformIgnorePatterns: [
-    'node_modules/(?!(isows|@supabase|ws|jose|@supabase/auth-helpers-.*)/)',
+    "node_modules/(?!(isows|@supabase|ws|jose|@supabase/auth-helpers-.*)/)",
   ],
   // Critical fix: Add moduleNameMapper to handle @/ imports
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/$1',
+    "^@/(.*)$": "<rootDir>/$1",
   },
-  coverageDirectory: 'coverage',
+  coverageDirectory: "coverage",
   collectCoverageFrom: [
-    'app/**/*.{js,jsx,ts,tsx}',
-    'lib/**/*.{js,jsx,ts,tsx}',
-    'components/**/*.{js,jsx,ts,tsx}',
-    '!app/**/*.d.ts',
-    '!app/globals.css',
-    '!app/layout.tsx',
-    '!app/not-found.tsx',
-    '!app/loading.tsx',
-    '!app/error.tsx',
-    '!app/**/layout.tsx',
-    '!app/**/page.tsx',
-    '!app/**/route.ts',
-    '!app/api/**/*',
+    "app/**/*.{js,jsx,ts,tsx}",
+    "lib/**/*.{js,jsx,ts,tsx}",
+    "components/**/*.{js,jsx,ts,tsx}",
+    "!app/**/*.d.ts",
+    "!app/globals.css",
+    "!app/layout.tsx",
+    "!app/not-found.tsx",
+    "!app/loading.tsx",
+    "!app/error.tsx",
+    "!app/**/layout.tsx",
+    "!app/**/page.tsx",
+    "!app/**/route.ts",
+    "!app/api/**/*",
   ],
   coverageThreshold: {
     global: {
@@ -51,7 +46,7 @@ const customJestConfig = {
       statements: 70,
     },
   },
-  moduleDirectories: ['node_modules', '<rootDir>/'],
+  moduleDirectories: ["node_modules", "<rootDir>/"],
   testTimeout: 30000,
 };
 

@@ -2,12 +2,12 @@
 
 import type React from "react";
 
-import { createClient } from "@/app/utils/supabase/client";
-import { createContext, useContext, useEffect, useState } from "react";
-import { sessionManager } from "@/lib/auth/session/SessionManager";
-import { oauthErrorHandler } from "@/lib/auth/oauth-error-handler";
-import { securityAuditLogger } from "@/lib/auth/security-audit-logger";
-import { permissionValidator } from "@/lib/auth/permission-validator";
+import type { createClient } from "@/app/utils/supabase/client";
+import type { createContext, useContext, useEffect, useState } from "react";
+import type { sessionManager } from "@/lib/auth/session/SessionManager";
+import type { oauthErrorHandler } from "@/lib/auth/oauth-error-handler";
+import type { securityAuditLogger } from "@/lib/auth/security-audit-logger";
+import type { permissionValidator } from "@/lib/auth/permission-validator";
 
 // Supabase Auth types for strict TypeScript compliance
 interface User {
@@ -44,15 +44,8 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signIn: (
-    email: string,
-    password: string
-  ) => Promise<{ error: AuthError | null }>;
-  signUp: (
-    email: string,
-    password: string,
-    name?: string
-  ) => Promise<{ error: AuthError | null }>;
+  signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
+  signUp: (email: string, password: string, name?: string) => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<void>;
   signInWithGoogle: () => Promise<{ error: AuthError | null }>;
   refreshSession: () => Promise<{ error: AuthError | null }>;
@@ -114,25 +107,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Set up real auth state listener
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(
-      async (event: string, session: Session | null) => {
-        console.log("🔄 Auth state change:", event, !!session);
+    } = supabase.auth.onAuthStateChange(async (event: string, session: Session | null) => {
+      console.log("🔄 Auth state change:", event, !!session);
 
-        if (session) {
-          console.log(
-            "✅ Session detected, setting user:",
-            session.user?.email
-          );
-          setSession(session as Session);
-          setUser(session.user as User);
-        } else {
-          console.log("❌ No session, clearing user");
-          setSession(null);
-          setUser(null);
-        }
-        setLoading(false);
+      if (session) {
+        console.log("✅ Session detected, setting user:", session.user?.email);
+        setSession(session as Session);
+        setUser(session.user as User);
+      } else {
+        console.log("❌ No session, clearing user");
+        setSession(null);
+        setUser(null);
       }
-    );
+      setLoading(false);
+    });
 
     return () => subscription.unsubscribe();
   }, []);
@@ -191,23 +179,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       // Log logout attempt
       if (user) {
-        await securityAuditLogger.logSessionEvent(
-          'session_logout',
-          user.id,
-          { method: 'manual' }
-        );
+        await securityAuditLogger.logSessionEvent("session_logout", user.id, { method: "manual" });
       }
-      
+
       // Enhanced secure logout
       if (session) {
-        await sessionManager.terminateSession(session.access_token, 'user_logout');
+        await sessionManager.terminateSession(session.access_token, "user_logout");
       }
-      
+
       await supabase.auth.signOut();
       setSession(null);
       setUser(null);
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.error("Error during logout:", error);
       // Force logout even if enhanced logout fails
       await supabase.auth.signOut();
       setSession(null);
@@ -219,14 +203,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log("=== Initiating Enhanced Google OAuth (Popup) ===");
       const startTime = Date.now();
-      
+
       // Log OAuth attempt
-      await securityAuditLogger.logOAuthEvent(
-        'oauth_attempt',
-        'google',
-        null,
-        { method: 'popup', userAgent: navigator.userAgent }
-      );
+      await securityAuditLogger.logOAuthEvent("oauth_attempt", "google", null, {
+        method: "popup",
+        userAgent: navigator.userAgent,
+      });
 
       // Optimized OAuth call with faster settings
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -243,22 +225,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) {
         console.error("Error initiating OAuth:", error);
-        
+
         // Log OAuth error
-        await securityAuditLogger.logOAuthEvent(
-          'oauth_error',
-          'google',
-          null,
-          { error: error.message, step: 'initiation' }
-        );
-        
+        await securityAuditLogger.logOAuthEvent("oauth_error", "google", null, {
+          error: error.message,
+          step: "initiation",
+        });
+
         // Handle OAuth error with enhanced error handler
         const handledError = await oauthErrorHandler.handleOAuthError(error, {
-          provider: 'google',
-          method: 'popup',
-          step: 'initiation'
+          provider: "google",
+          method: "popup",
+          step: "initiation",
         });
-        
+
         return { error: handledError };
       }
 
@@ -273,14 +253,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const popup = window.open(
           data.url,
           "neonpro-google-oauth",
-          `popup=yes,width=${width},height=${height},left=${left},top=${top},scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no`
+          `popup=yes,width=${width},height=${height},left=${left},top=${top},scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no`,
         );
 
         if (!popup) {
           console.error("Popup blocked by browser");
           const authError: AuthError = {
-            message:
-              "Por favor, permita popups para este site fazer login com Google",
+            message: "Por favor, permita popups para este site fazer login com Google",
             __isAuthError: true,
           };
           return { error: authError };
@@ -330,9 +309,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 if (session && !resolved) {
                   clearInterval(checkInterval);
                   const totalTime = Date.now() - startTime;
-                  console.log(
-                    `✅ Auth successful in ${totalTime}ms, closing popup`
-                  );
+                  console.log(`✅ Auth successful in ${totalTime}ms, closing popup`);
 
                   // Immediate close for faster completion
                   popup.close();
@@ -373,8 +350,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error: unknown) {
       console.error("Unexpected Google OAuth error:", error);
       const authError: AuthError = {
-        message:
-          error instanceof Error ? error.message : "Unknown Google OAuth error",
+        message: error instanceof Error ? error.message : "Unknown Google OAuth error",
         __isAuthError: true,
       };
       return { error: authError };
@@ -403,10 +379,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error: unknown) {
       console.error("Unexpected session refresh error:", error);
       const authError: AuthError = {
-        message:
-          error instanceof Error
-            ? error.message
-            : "Unknown session refresh error",
+        message: error instanceof Error ? error.message : "Unknown session refresh error",
         __isAuthError: true,
       };
       return { error: authError };
@@ -463,10 +436,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error: unknown) {
       console.error("Unexpected error checking session validity:", error);
       const authError: AuthError = {
-        message:
-          error instanceof Error
-            ? error.message
-            : "Unknown session validation error",
+        message: error instanceof Error ? error.message : "Unknown session validation error",
         __isAuthError: true,
       };
       return { session: null, error: authError };
@@ -476,39 +446,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Permission validation methods
   const checkPermission = async (resource: string, action: string): Promise<boolean> => {
     if (!user) return false;
-    
+
     try {
-      const result = await permissionValidator.checkPermission(
-        user.id,
-        resource,
-        action
-      );
+      const result = await permissionValidator.checkPermission(user.id, resource, action);
       return result.granted;
     } catch (error) {
-      console.error('Error checking permission:', error);
+      console.error("Error checking permission:", error);
       return false;
     }
   };
 
   const getUserPermissions = async () => {
     if (!user) return null;
-    
+
     try {
       return await permissionValidator.getUserPermissions(user.id);
     } catch (error) {
-      console.error('Error getting user permissions:', error);
+      console.error("Error getting user permissions:", error);
       return null;
     }
   };
 
   const hasRole = async (role: string): Promise<boolean> => {
     if (!user) return false;
-    
+
     try {
       const permissions = await permissionValidator.getUserPermissions(user.id);
       return permissions?.roles?.some((r: any) => r.name === role) || false;
     } catch (error) {
-      console.error('Error checking role:', error);
+      console.error("Error checking role:", error);
       return false;
     }
   };

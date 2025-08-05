@@ -1,7 +1,7 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
-import { createsystemIntegrationManager } from '@/lib/patients/integration/system-integration-manager';
-import { createClient } from '@/lib/supabase/server';
-import { AuditLogger } from '@/lib/audit/audit-logger';
+import type { NextRequest, NextResponse } from "next/server";
+import type { createsystemIntegrationManager } from "@/lib/patients/integration/system-integration-manager";
+import type { createClient } from "@/lib/supabase/server";
+import type { AuditLogger } from "@/lib/audit/audit-logger";
 
 const auditLogger = new AuditLogger();
 
@@ -12,101 +12,98 @@ const auditLogger = new AuditLogger();
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     // Check user permissions
     const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
       .single();
 
-    if (!profile || !['admin', 'manager', 'staff'].includes(profile.role)) {
+    if (!profile || !["admin", "manager", "staff"].includes(profile.role)) {
       return NextResponse.json(
-        { error: 'Acesso negado: permissões insuficientes' },
-        { status: 403 }
+        { error: "Acesso negado: permissões insuficientes" },
+        { status: 403 },
       );
     }
 
     const searchParams = request.nextUrl.searchParams;
-    const listType = searchParams.get('type') || 'recent';
-    const limit = parseInt(searchParams.get('limit') || '20');
+    const listType = searchParams.get("type") || "recent";
+    const limit = parseInt(searchParams.get("limit") || "20");
 
     let quickAccessData;
 
     switch (listType) {
-      case 'recent':
+      case "recent":
         quickAccessData = await createsystemIntegrationManager().getQuickAccessPatients(
-          'recent',
+          "recent",
           user.id,
-          limit
+          limit,
         );
         break;
 
-      case 'favorites':
+      case "favorites":
         quickAccessData = await createsystemIntegrationManager().getQuickAccessPatients(
-          'favorites',
+          "favorites",
           user.id,
-          limit
+          limit,
         );
         break;
 
-      case 'high-risk':
+      case "high-risk":
         quickAccessData = await createsystemIntegrationManager().getQuickAccessPatients(
-          'high-risk',
+          "high-risk",
           user.id,
-          limit
+          limit,
         );
         break;
 
-      case 'upcoming-appointments':
+      case "upcoming-appointments":
         quickAccessData = await createsystemIntegrationManager().getQuickAccessPatients(
-          'upcoming-appointments',
+          "upcoming-appointments",
           user.id,
-          limit
+          limit,
         );
         break;
 
-      case 'pending-verification':
+      case "pending-verification":
         quickAccessData = await createsystemIntegrationManager().getQuickAccessPatients(
-          'pending-verification',
+          "pending-verification",
           user.id,
-          limit
+          limit,
         );
         break;
 
-      case 'frequent':
+      case "frequent":
         quickAccessData = await createsystemIntegrationManager().getQuickAccessPatients(
-          'frequent',
+          "frequent",
           user.id,
-          limit
+          limit,
         );
         break;
 
       default:
-        return NextResponse.json(
-          { error: 'Tipo de lista inválido' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "Tipo de lista inválido" }, { status: 400 });
     }
 
     // Log quick access activity
     await auditLogger.log({
-      action: 'quick_access_patients',
+      action: "quick_access_patients",
       userId: user.id,
       details: {
         listType,
         patientCount: quickAccessData.patients.length,
-        limit
+        limit,
       },
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     return NextResponse.json({
@@ -115,25 +112,25 @@ export async function GET(request: NextRequest) {
         patients: quickAccessData.patients,
         listType,
         totalCount: quickAccessData.totalCount,
-        lastUpdated: quickAccessData.lastUpdated
-      }
+        lastUpdated: quickAccessData.lastUpdated,
+      },
     });
   } catch (error) {
-    console.error('Error in quick access patients:', error);
-    
+    console.error("Error in quick access patients:", error);
+
     await auditLogger.log({
-      action: 'quick_access_patients_error',
-      userId: 'system',
-      details: { error: error instanceof Error ? error.message : 'Unknown error' },
-      timestamp: new Date()
+      action: "quick_access_patients_error",
+      userId: "system",
+      details: { error: error instanceof Error ? error.message : "Unknown error" },
+      timestamp: new Date(),
     });
 
     return NextResponse.json(
-      { 
-        error: 'Erro interno do servidor',
-        details: error instanceof Error ? error.message : 'Erro desconhecido'
+      {
+        error: "Erro interno do servidor",
+        details: error instanceof Error ? error.message : "Erro desconhecido",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -145,26 +142,26 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     // Check user permissions
     const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
       .single();
 
-    if (!profile || !['admin', 'manager', 'staff'].includes(profile.role)) {
+    if (!profile || !["admin", "manager", "staff"].includes(profile.role)) {
       return NextResponse.json(
-        { error: 'Acesso negado: permissões insuficientes' },
-        { status: 403 }
+        { error: "Acesso negado: permissões insuficientes" },
+        { status: 403 },
       );
     }
 
@@ -174,61 +171,56 @@ export async function POST(request: NextRequest) {
     // Validate required fields
     if (!patientId || !action) {
       return NextResponse.json(
-        { error: 'Campos obrigatórios: patientId, action' },
-        { status: 400 }
+        { error: "Campos obrigatórios: patientId, action" },
+        { status: 400 },
       );
     }
 
-    if (!['add', 'remove'].includes(action)) {
+    if (!["add", "remove"].includes(action)) {
       return NextResponse.json(
         { error: 'Ação inválida: deve ser "add" ou "remove"' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Verify patient exists
     const { data: patient, error: patientError } = await supabase
-      .from('patients')
-      .select('id, name')
-      .eq('id', patientId)
+      .from("patients")
+      .select("id, name")
+      .eq("id", patientId)
       .single();
 
     if (patientError || !patient) {
-      return NextResponse.json(
-        { error: 'Paciente não encontrado' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Paciente não encontrado" }, { status: 404 });
     }
 
     let result;
-    if (action === 'add') {
+    if (action === "add") {
       // Add to favorites
-      const { error: insertError } = await supabase
-        .from('user_favorite_patients')
-        .insert({
-          user_id: user.id,
-          patient_id: patientId,
-          created_at: new Date().toISOString()
-        });
+      const { error: insertError } = await supabase.from("user_favorite_patients").insert({
+        user_id: user.id,
+        patient_id: patientId,
+        created_at: new Date().toISOString(),
+      });
 
-      if (insertError && !insertError.message.includes('duplicate')) {
+      if (insertError && !insertError.message.includes("duplicate")) {
         throw insertError;
       }
 
-      result = { action: 'added', patientId, patientName: patient.name };
+      result = { action: "added", patientId, patientName: patient.name };
     } else {
       // Remove from favorites
       const { error: deleteError } = await supabase
-        .from('user_favorite_patients')
+        .from("user_favorite_patients")
         .delete()
-        .eq('user_id', user.id)
-        .eq('patient_id', patientId);
+        .eq("user_id", user.id)
+        .eq("patient_id", patientId);
 
       if (deleteError) {
         throw deleteError;
       }
 
-      result = { action: 'removed', patientId, patientName: patient.name };
+      result = { action: "removed", patientId, patientName: patient.name };
     }
 
     // Log favorite action
@@ -237,32 +229,31 @@ export async function POST(request: NextRequest) {
       userId: user.id,
       details: {
         patientId,
-        patientName: patient.name
+        patientName: patient.name,
       },
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     return NextResponse.json({
       success: true,
-      data: result
+      data: result,
     });
   } catch (error) {
-    console.error('Error managing patient favorites:', error);
-    
+    console.error("Error managing patient favorites:", error);
+
     await auditLogger.log({
-      action: 'patient_favorite_error',
-      userId: 'system',
-      details: { error: error instanceof Error ? error.message : 'Unknown error' },
-      timestamp: new Date()
+      action: "patient_favorite_error",
+      userId: "system",
+      details: { error: error instanceof Error ? error.message : "Unknown error" },
+      timestamp: new Date(),
     });
 
     return NextResponse.json(
-      { 
-        error: 'Erro interno do servidor',
-        details: error instanceof Error ? error.message : 'Erro desconhecido'
+      {
+        error: "Erro interno do servidor",
+        details: error instanceof Error ? error.message : "Erro desconhecido",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-

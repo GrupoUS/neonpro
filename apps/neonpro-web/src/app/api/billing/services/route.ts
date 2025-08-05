@@ -1,6 +1,6 @@
-import { createClient } from "@/lib/supabase/server";
-import { NextResponse } from "next/server";
-import { z } from "zod";
+import type { createClient } from "@/lib/supabase/server";
+import type { NextResponse } from "next/server";
+import type { z } from "zod";
 
 // Validation schemas
 const CreateServiceSchema = z.object({
@@ -32,10 +32,7 @@ export async function GET(request: Request) {
     const isActive = searchParams.get("active");
     const category = searchParams.get("category");
 
-    let query = supabase
-      .from("services")
-      .select("*")
-      .order("created_at", { ascending: false });
+    let query = supabase.from("services").select("*").order("created_at", { ascending: false });
 
     if (isActive !== null) {
       query = query.eq("is_active", isActive === "true");
@@ -49,19 +46,13 @@ export async function GET(request: Request) {
 
     if (error) {
       console.error("Error fetching services:", error);
-      return NextResponse.json(
-        { error: "Failed to fetch services" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to fetch services" }, { status: 500 });
     }
 
     return NextResponse.json({ services });
   } catch (error) {
     console.error("API Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
@@ -91,10 +82,7 @@ export async function POST(request: Request) {
 
     if (error) {
       console.error("Error creating service:", error);
-      return NextResponse.json(
-        { error: "Failed to create service" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to create service" }, { status: 500 });
     }
 
     return NextResponse.json({ service }, { status: 201 });
@@ -102,14 +90,11 @@ export async function POST(request: Request) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Validation failed", details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error("API Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

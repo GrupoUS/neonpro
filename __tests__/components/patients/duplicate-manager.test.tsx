@@ -197,18 +197,14 @@ describe("DuplicateManager", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (duplicateDetectionSystem.detectDuplicates as jest.Mock).mockResolvedValue(
-      mockDuplicates
-    );
+    (duplicateDetectionSystem.detectDuplicates as jest.Mock).mockResolvedValue(mockDuplicates);
   });
 
   test("renderiza componente corretamente", async () => {
     render(<DuplicateManager />);
 
     await waitFor(() => {
-      expect(
-        screen.getByText("Duplicatas Pendentes de Revisão")
-      ).toBeInTheDocument();
+      expect(screen.getByText("Duplicatas Pendentes de Revisão")).toBeInTheDocument();
     });
 
     // Verifica se os cards de summary são renderizados
@@ -230,7 +226,7 @@ describe("DuplicateManager", () => {
 
   test("exibe estado de loading", () => {
     (duplicateDetectionSystem.detectDuplicates as jest.Mock).mockReturnValue(
-      new Promise(() => {}) // Promise que nunca resolve para simular loading
+      new Promise(() => {}), // Promise que nunca resolve para simular loading
     );
 
     render(<DuplicateManager />);
@@ -240,23 +236,17 @@ describe("DuplicateManager", () => {
   });
 
   test("exibe alerta quando não há duplicatas pendentes", async () => {
-    (duplicateDetectionSystem.detectDuplicates as jest.Mock).mockResolvedValue(
-      []
-    );
+    (duplicateDetectionSystem.detectDuplicates as jest.Mock).mockResolvedValue([]);
 
     render(<DuplicateManager />);
 
     await waitFor(() => {
-      expect(
-        screen.getByText("Nenhuma duplicata pendente encontrada!")
-      ).toBeInTheDocument();
+      expect(screen.getByText("Nenhuma duplicata pendente encontrada!")).toBeInTheDocument();
     });
   });
 
   test("abre dialog de comparação", async () => {
-    (duplicateDetectionSystem.comparePatients as jest.Mock).mockResolvedValue(
-      mockComparisons
-    );
+    (duplicateDetectionSystem.comparePatients as jest.Mock).mockResolvedValue(mockComparisons);
 
     render(<DuplicateManager />);
 
@@ -271,16 +261,14 @@ describe("DuplicateManager", () => {
     await waitFor(() => {
       expect(duplicateDetectionSystem.comparePatients).toHaveBeenCalledWith(
         "patient-1",
-        "patient-2"
+        "patient-2",
       );
       expect(screen.getByText("Comparação Detalhada")).toBeInTheDocument();
     });
   });
 
   test("confirma duplicata", async () => {
-    (duplicateDetectionSystem.confirmDuplicate as jest.Mock).mockResolvedValue(
-      {}
-    );
+    (duplicateDetectionSystem.confirmDuplicate as jest.Mock).mockResolvedValue({});
     (duplicateDetectionSystem.detectDuplicates as jest.Mock)
       .mockResolvedValueOnce(mockDuplicates)
       .mockResolvedValueOnce([]); // Após confirmação, não há mais duplicatas
@@ -298,18 +286,14 @@ describe("DuplicateManager", () => {
     await waitFor(() => {
       expect(duplicateDetectionSystem.confirmDuplicate).toHaveBeenCalledWith(
         "dup-1",
-        "current_user"
+        "current_user",
       );
-      expect(duplicateDetectionSystem.detectDuplicates).toHaveBeenCalledTimes(
-        2
-      ); // Mount + reload
+      expect(duplicateDetectionSystem.detectDuplicates).toHaveBeenCalledTimes(2); // Mount + reload
     });
   });
 
   test("rejeita duplicata", async () => {
-    (duplicateDetectionSystem.rejectDuplicate as jest.Mock).mockResolvedValue(
-      {}
-    );
+    (duplicateDetectionSystem.rejectDuplicate as jest.Mock).mockResolvedValue({});
     (duplicateDetectionSystem.detectDuplicates as jest.Mock)
       .mockResolvedValueOnce(mockDuplicates)
       .mockResolvedValueOnce([]); // Após rejeição, não há mais duplicatas
@@ -328,18 +312,14 @@ describe("DuplicateManager", () => {
       expect(duplicateDetectionSystem.rejectDuplicate).toHaveBeenCalledWith(
         "dup-1",
         "current_user",
-        "Não são o mesmo paciente"
+        "Não são o mesmo paciente",
       );
-      expect(duplicateDetectionSystem.detectDuplicates).toHaveBeenCalledTimes(
-        2
-      ); // Mount + reload
+      expect(duplicateDetectionSystem.detectDuplicates).toHaveBeenCalledTimes(2); // Mount + reload
     });
   });
 
   test("abre preview de merge", async () => {
-    (duplicateDetectionSystem.previewMerge as jest.Mock).mockResolvedValue(
-      mockMergePreview
-    );
+    (duplicateDetectionSystem.previewMerge as jest.Mock).mockResolvedValue(mockMergePreview);
 
     render(<DuplicateManager />);
 
@@ -352,26 +332,20 @@ describe("DuplicateManager", () => {
     await user.click(mergePreviewButton);
 
     await waitFor(() => {
-      expect(duplicateDetectionSystem.previewMerge).toHaveBeenCalledWith(
-        "patient-1",
-        "patient-2",
-        {
-          patientData: "merge_intelligent",
-          medicalHistory: "combine",
-          appointments: "combine",
-          documents: "combine",
-          financialData: "keep_primary",
-        }
-      );
+      expect(duplicateDetectionSystem.previewMerge).toHaveBeenCalledWith("patient-1", "patient-2", {
+        patientData: "merge_intelligent",
+        medicalHistory: "combine",
+        appointments: "combine",
+        documents: "combine",
+        financialData: "keep_primary",
+      });
       expect(screen.getByText("Preview do Merge")).toBeInTheDocument();
     });
   });
 
   test("executa merge", async () => {
     const mockOnMergeComplete = jest.fn();
-    (duplicateDetectionSystem.previewMerge as jest.Mock).mockResolvedValue(
-      mockMergePreview
-    );
+    (duplicateDetectionSystem.previewMerge as jest.Mock).mockResolvedValue(mockMergePreview);
     (duplicateDetectionSystem.mergePatients as jest.Mock).mockResolvedValue({
       success: true,
     });
@@ -408,7 +382,7 @@ describe("DuplicateManager", () => {
           documents: "combine",
           financialData: "keep_primary",
         },
-        "current_user"
+        "current_user",
       );
       expect(mockOnMergeComplete).toHaveBeenCalledWith({ success: true });
     });
@@ -437,16 +411,13 @@ describe("DuplicateManager", () => {
   test("trata erros ao carregar duplicatas", async () => {
     const consoleSpy = jest.spyOn(console, "error").mockImplementation();
     (duplicateDetectionSystem.detectDuplicates as jest.Mock).mockRejectedValue(
-      new Error("API Error")
+      new Error("API Error"),
     );
 
     render(<DuplicateManager />);
 
     await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalledWith(
-        "Erro ao carregar duplicatas:",
-        expect.any(Error)
-      );
+      expect(consoleSpy).toHaveBeenCalledWith("Erro ao carregar duplicatas:", expect.any(Error));
     });
 
     consoleSpy.mockRestore();
@@ -455,7 +426,7 @@ describe("DuplicateManager", () => {
   test("trata erros na comparação de pacientes", async () => {
     const consoleSpy = jest.spyOn(console, "error").mockImplementation();
     (duplicateDetectionSystem.comparePatients as jest.Mock).mockRejectedValue(
-      new Error("Compare Error")
+      new Error("Compare Error"),
     );
 
     render(<DuplicateManager />);
@@ -468,10 +439,7 @@ describe("DuplicateManager", () => {
     await user.click(compareButton);
 
     await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalledWith(
-        "Erro ao comparar pacientes:",
-        expect.any(Error)
-      );
+      expect(consoleSpy).toHaveBeenCalledWith("Erro ao comparar pacientes:", expect.any(Error));
     });
 
     consoleSpy.mockRestore();

@@ -1,7 +1,7 @@
 // No-Show Prediction Validation Schemas
 // Generated to fix missing validation exports
 
-import { z } from 'zod';
+import type { z } from "zod";
 
 // Create Prediction Input Schema
 export const CreatePredictionInputSchema = z.object({
@@ -22,10 +22,10 @@ export const UpdatePredictionInputSchema = CreatePredictionInputSchema.partial()
 // Intervention Create Schema
 export const InterventionCreateSchema = z.object({
   prediction_id: z.string(),
-  intervention_type: z.enum(['sms', 'email', 'call', 'push_notification']),
+  intervention_type: z.enum(["sms", "email", "call", "push_notification"]),
   scheduled_time: z.string(),
   message_template: z.string(),
-  priority: z.enum(['low', 'medium', 'high']),
+  priority: z.enum(["low", "medium", "high"]),
   auto_trigger: z.boolean().default(false),
 });
 
@@ -40,12 +40,12 @@ export const GetAnalyticsQuerySchema = z.object({
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   clinicId: z.string().optional(),
-  providerId: z.string().optional()
+  providerId: z.string().optional(),
 });
 
 export const GetPredictionsQuerySchema = z.object({
   page: z.coerce.number().min(1).default(1),
   limit: z.coerce.number().min(1).max(100).default(20),
-  riskLevel: z.enum(['low', 'medium', 'high']).optional(),
-  clinicId: z.string().optional()
+  riskLevel: z.enum(["low", "medium", "high"]).optional(),
+  clinicId: z.string().optional(),
 });

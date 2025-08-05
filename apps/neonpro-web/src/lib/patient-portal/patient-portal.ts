@@ -1,15 +1,18 @@
-import { SupabaseClient } from '@supabase/supabase-js';
-import { AuditLogger } from '../audit/audit-logger';
-import { LGPDManager } from '../lgpd/lgpd-manager';
-import { EncryptionService } from '../security/encryption-service';
-import { NotificationService } from '../notifications/notification-service';
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { AuditLogger } from "../audit/audit-logger";
+import type { LGPDManager } from "../lgpd/lgpd-manager";
+import type { EncryptionService } from "../security/encryption-service";
+import type { NotificationService } from "../notifications/notification-service";
 
 // Import patient portal components
-import { SessionManager, SessionConfig } from './auth/session-manager';
-import { PortalDashboard, DashboardConfig } from './dashboard/portal-dashboard';
-import { AppointmentManager, AppointmentConfig } from './appointments/appointment-manager';
-import { UploadManager, UploadConfig } from './uploads/upload-manager';
-import { CommunicationManager, CommunicationConfig } from './communication/communication-manager';
+import type { SessionManager, SessionConfig } from "./auth/session-manager";
+import type { PortalDashboard, DashboardConfig } from "./dashboard/portal-dashboard";
+import type { AppointmentManager, AppointmentConfig } from "./appointments/appointment-manager";
+import type { UploadManager, UploadConfig } from "./uploads/upload-manager";
+import type {
+  CommunicationManager,
+  CommunicationConfig,
+} from "./communication/communication-manager";
 
 /**
  * Main patient portal configuration
@@ -35,7 +38,7 @@ export interface PatientPortalConfig {
     passwordComplexity: boolean;
   };
   ui: {
-    theme: 'light' | 'dark' | 'auto';
+    theme: "light" | "dark" | "auto";
     language: string;
     accessibility: boolean;
     mobileOptimized: boolean;
@@ -57,12 +60,12 @@ export interface PortalInitResult {
  * Patient portal health check
  */
 export interface PortalHealthCheck {
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status: "healthy" | "degraded" | "unhealthy";
   components: {
-    database: 'up' | 'down';
-    storage: 'up' | 'down';
-    notifications: 'up' | 'down';
-    encryption: 'up' | 'down';
+    database: "up" | "down";
+    storage: "up" | "down";
+    notifications: "up" | "down";
+    encryption: "up" | "down";
   };
   responseTime: number;
   lastCheck: Date;
@@ -95,7 +98,7 @@ export class PatientPortal {
     lgpdManager: LGPDManager,
     encryptionService: EncryptionService,
     notificationService: NotificationService,
-    config: PatientPortalConfig
+    config: PatientPortalConfig,
   ) {
     this.supabase = supabase;
     this.auditLogger = auditLogger;
@@ -119,7 +122,7 @@ export class PatientPortal {
       this.auditLogger,
       this.lgpdManager,
       this.encryptionService,
-      this.config.session
+      this.config.session,
     );
 
     // Initialize dashboard
@@ -128,7 +131,7 @@ export class PatientPortal {
       this.auditLogger,
       this.lgpdManager,
       this.sessionManager,
-      this.config.dashboard
+      this.config.dashboard,
     );
 
     // Initialize appointment manager
@@ -137,7 +140,7 @@ export class PatientPortal {
       this.auditLogger,
       this.lgpdManager,
       this.sessionManager,
-      this.config.appointments
+      this.config.appointments,
     );
 
     // Initialize upload manager
@@ -147,7 +150,7 @@ export class PatientPortal {
       this.lgpdManager,
       this.sessionManager,
       this.encryptionService,
-      this.config.uploads
+      this.config.uploads,
     );
 
     // Initialize communication manager
@@ -157,9 +160,9 @@ export class PatientPortal {
       this.lgpdManager,
       this.sessionManager,
       this.notificationService,
-      this.config.communication
+      this.config.communication,
     );
-  }  
+  }
   /**
    * Initialize the patient portal
    */
@@ -167,13 +170,13 @@ export class PatientPortal {
     try {
       // Perform health check
       const healthCheck = await this.performHealthCheck();
-      if (healthCheck.status === 'unhealthy') {
+      if (healthCheck.status === "unhealthy") {
         return {
           success: false,
           portalId: this.portalId,
-          message: 'Portal não pode ser inicializado devido a problemas de sistema.',
+          message: "Portal não pode ser inicializado devido a problemas de sistema.",
           availableFeatures: [],
-          maintenanceMode: true
+          maintenanceMode: true,
         };
       }
 
@@ -194,29 +197,29 @@ export class PatientPortal {
 
       // Log portal initialization
       await this.auditLogger.log({
-        action: 'portal_initialized',
-        userId: 'system',
-        userType: 'system',
+        action: "portal_initialized",
+        userId: "system",
+        userType: "system",
         details: {
           portalId: this.portalId,
           features: this.getAvailableFeatures(),
-          healthStatus: healthCheck.status
-        }
+          healthStatus: healthCheck.status,
+        },
       });
 
       return {
         success: true,
         portalId: this.portalId,
-        message: 'Portal do paciente inicializado com sucesso!',
+        message: "Portal do paciente inicializado com sucesso!",
         availableFeatures: this.getAvailableFeatures(),
-        maintenanceMode: false
+        maintenanceMode: false,
       };
     } catch (error) {
       await this.auditLogger.log({
-        action: 'portal_initialization_failed',
-        userId: 'system',
-        userType: 'system',
-        details: { error: error.message }
+        action: "portal_initialization_failed",
+        userId: "system",
+        userType: "system",
+        details: { error: error.message },
       });
       throw error;
     }
@@ -228,54 +231,50 @@ export class PatientPortal {
   async performHealthCheck(): Promise<PortalHealthCheck> {
     const startTime = Date.now();
     const healthCheck: PortalHealthCheck = {
-      status: 'healthy',
+      status: "healthy",
       components: {
-        database: 'up',
-        storage: 'up',
-        notifications: 'up',
-        encryption: 'up'
+        database: "up",
+        storage: "up",
+        notifications: "up",
+        encryption: "up",
       },
       responseTime: 0,
-      lastCheck: new Date()
+      lastCheck: new Date(),
     };
 
     try {
       // Test database connection
-      const { error: dbError } = await this.supabase
-        .from('patients')
-        .select('id')
-        .limit(1);
-      
+      const { error: dbError } = await this.supabase.from("patients").select("id").limit(1);
+
       if (dbError) {
-        healthCheck.components.database = 'down';
-        healthCheck.status = 'unhealthy';
+        healthCheck.components.database = "down";
+        healthCheck.status = "unhealthy";
       }
 
       // Test storage
       const { error: storageError } = await this.supabase.storage
-        .from('patient-files')
-        .list('', { limit: 1 });
-      
+        .from("patient-files")
+        .list("", { limit: 1 });
+
       if (storageError) {
-        healthCheck.components.storage = 'down';
-        healthCheck.status = healthCheck.status === 'healthy' ? 'degraded' : 'unhealthy';
+        healthCheck.components.storage = "down";
+        healthCheck.status = healthCheck.status === "healthy" ? "degraded" : "unhealthy";
       }
 
       // Test encryption service
       try {
-        await this.encryptionService.encrypt('test');
+        await this.encryptionService.encrypt("test");
       } catch {
-        healthCheck.components.encryption = 'down';
-        healthCheck.status = healthCheck.status === 'healthy' ? 'degraded' : 'unhealthy';
+        healthCheck.components.encryption = "down";
+        healthCheck.status = healthCheck.status === "healthy" ? "degraded" : "unhealthy";
       }
-
     } catch (error) {
-      healthCheck.status = 'unhealthy';
+      healthCheck.status = "unhealthy";
     }
 
     healthCheck.responseTime = Date.now() - startTime;
     return healthCheck;
-  }  
+  }
   /**
    * Validate portal configuration
    */
@@ -284,15 +283,16 @@ export class PatientPortal {
     if (!this.config.session.secretKey || this.config.session.secretKey.length < 32) {
       return {
         isValid: false,
-        message: 'Chave secreta da sessão deve ter pelo menos 32 caracteres'
+        message: "Chave secreta da sessão deve ter pelo menos 32 caracteres",
       };
     }
 
     // Validate security settings
-    if (this.config.security.sessionTimeout < 300) { // 5 minutes minimum
+    if (this.config.security.sessionTimeout < 300) {
+      // 5 minutes minimum
       return {
         isValid: false,
-        message: 'Timeout de sessão deve ser pelo menos 5 minutos'
+        message: "Timeout de sessão deve ser pelo menos 5 minutos",
       };
     }
 
@@ -300,11 +300,11 @@ export class PatientPortal {
     if (this.config.uploads.maxFileSize <= 0) {
       return {
         isValid: false,
-        message: 'Tamanho máximo de arquivo deve ser maior que zero'
+        message: "Tamanho máximo de arquivo deve ser maior que zero",
       };
     }
 
-    return { isValid: true, message: 'Configuração válida' };
+    return { isValid: true, message: "Configuração válida" };
   }
 
   /**
@@ -312,23 +312,20 @@ export class PatientPortal {
    */
   private async verifyDatabaseSchema(): Promise<void> {
     const requiredTables = [
-      'patients',
-      'appointments',
-      'services',
-      'staff',
-      'patient_uploads',
-      'patient_files',
-      'messages',
-      'conversations',
-      'patient_sessions'
+      "patients",
+      "appointments",
+      "services",
+      "staff",
+      "patient_uploads",
+      "patient_files",
+      "messages",
+      "conversations",
+      "patient_sessions",
     ];
 
     for (const table of requiredTables) {
-      const { error } = await this.supabase
-        .from(table)
-        .select('*')
-        .limit(1);
-      
+      const { error } = await this.supabase.from(table).select("*").limit(1);
+
       if (error) {
         throw new Error(`Tabela requerida '${table}' não encontrada ou inacessível`);
       }
@@ -341,17 +338,21 @@ export class PatientPortal {
   private setupEventListeners(): void {
     // Set up real-time subscriptions for patient data updates
     // This would include listening for appointment updates, new messages, etc.
-    
+
     // Example: Listen for new messages
     this.supabase
-      .channel('patient-messages')
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'messages'
-      }, (payload) => {
-        this.handleNewMessage(payload.new);
-      })
+      .channel("patient-messages")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "messages",
+        },
+        (payload) => {
+          this.handleNewMessage(payload.new);
+        },
+      )
       .subscribe();
   }
 
@@ -368,14 +369,14 @@ export class PatientPortal {
    */
   private getAvailableFeatures(): string[] {
     const features: string[] = [];
-    
-    if (this.config.features.appointmentBooking) features.push('appointment_booking');
-    if (this.config.features.documentUpload) features.push('document_upload');
-    if (this.config.features.messaging) features.push('messaging');
-    if (this.config.features.treatmentTracking) features.push('treatment_tracking');
-    if (this.config.features.billingAccess) features.push('billing_access');
-    if (this.config.features.telehealth) features.push('telehealth');
-    
+
+    if (this.config.features.appointmentBooking) features.push("appointment_booking");
+    if (this.config.features.documentUpload) features.push("document_upload");
+    if (this.config.features.messaging) features.push("messaging");
+    if (this.config.features.treatmentTracking) features.push("treatment_tracking");
+    if (this.config.features.billingAccess) features.push("billing_access");
+    if (this.config.features.telehealth) features.push("telehealth");
+
     return features;
   }
 
@@ -386,25 +387,25 @@ export class PatientPortal {
     try {
       // Close all active sessions
       await this.sessionManager.terminateAllSessions();
-      
+
       // Unsubscribe from real-time channels
       await this.supabase.removeAllChannels();
-      
+
       // Log shutdown
       await this.auditLogger.log({
-        action: 'portal_shutdown',
-        userId: 'system',
-        userType: 'system',
-        details: { portalId: this.portalId }
+        action: "portal_shutdown",
+        userId: "system",
+        userType: "system",
+        details: { portalId: this.portalId },
       });
-      
+
       this.isInitialized = false;
     } catch (error) {
       await this.auditLogger.log({
-        action: 'portal_shutdown_failed',
-        userId: 'system',
-        userType: 'system',
-        details: { error: error.message }
+        action: "portal_shutdown_failed",
+        userId: "system",
+        userType: "system",
+        details: { error: error.message },
       });
       throw error;
     }

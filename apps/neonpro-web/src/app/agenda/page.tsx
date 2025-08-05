@@ -7,27 +7,56 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar } from "@/components/ui/calendar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { 
-  Calendar as CalendarIcon, 
-  Clock, 
-  Plus, 
-  Search, 
-  Filter,
-  Edit,
-  Trash2,
+import {
+  Calendar as CalendarIcon,
+  Clock,
+  User,
   Phone,
   Video,
   MapPin,
   AlertCircle,
   CheckCircle,
-  XCircle
+  XCircle,
 } from "lucide-react";
+
+// Helper function for type configuration
+function getTypeConfig(type: string) {
+  const typeConfigs = {
+    consulta: { icon: "User", color: "blue" },
+    exame: { icon: "FileText", color: "green" },
+    retorno: { icon: "RotateCcw", color: "orange" },
+    emergencia: { icon: "AlertTriangle", color: "red" },
+  };
+  return typeConfigs[type as keyof typeof typeConfigs] || typeConfigs.consulta;
+}
+
+// Status configuration
+const statusConfig = {
+  confirmado: { color: "success", icon: CheckCircle, label: "Confirmado" },
+  pendente: { color: "warning", icon: AlertCircle, label: "Pendente" },
+  cancelado: { color: "danger", icon: XCircle, label: "Cancelado" },
+};
+
+import { Plus, Search, Filter, Edit, Trash2 } from "lucide-react";
 
 interface Appointment {
   id: string;
@@ -50,16 +79,16 @@ const appointmentTypes = [
   { value: "consulta", label: "Consulta Geral", color: "bg-blue-100 text-blue-800" },
   { value: "retorno", label: "Retorno", color: "bg-green-100 text-green-800" },
   { value: "exame", label: "Exames", color: "bg-purple-100 text-purple-800" },
-  { value: "cirurgia", label: "Cirurgia", color: "bg-red-100 text-red-800" }
+  { value: "cirurgia", label: "Cirurgia", color: "bg-red-100 text-red-800" },
 ];
 
 const statusConfig = {
-  "agendado": { label: "Agendado", color: "bg-yellow-100 text-yellow-800", icon: Clock },
-  "confirmado": { label: "Confirmado", color: "bg-blue-100 text-blue-800", icon: CheckCircle },
+  agendado: { label: "Agendado", color: "bg-yellow-100 text-yellow-800", icon: Clock },
+  confirmado: { label: "Confirmado", color: "bg-blue-100 text-blue-800", icon: CheckCircle },
   "em-andamento": { label: "Em Andamento", color: "bg-green-100 text-green-800", icon: Clock },
-  "concluido": { label: "Concluído", color: "bg-gray-100 text-gray-800", icon: CheckCircle },
-  "cancelado": { label: "Cancelado", color: "bg-red-100 text-red-800", icon: XCircle },
-  "faltou": { label: "Faltou", color: "bg-red-100 text-red-800", icon: AlertCircle }
+  concluido: { label: "Concluído", color: "bg-gray-100 text-gray-800", icon: CheckCircle },
+  cancelado: { label: "Cancelado", color: "bg-red-100 text-red-800", icon: XCircle },
+  faltou: { label: "Faltou", color: "bg-red-100 text-red-800", icon: AlertCircle },
 };
 
 export default function AppointmentsPage() {
@@ -74,10 +103,10 @@ export default function AppointmentsPage() {
   useEffect(() => {
     const loadAppointments = async () => {
       setIsLoading(true);
-      
+
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       setAppointments([
         {
           id: "1",
@@ -91,7 +120,7 @@ export default function AppointmentsPage() {
           consultationType: "presencial",
           doctor: "Dr. João Medeiros",
           room: "Sala 102",
-          symptoms: "Dor de cabeça frequente, tontura"
+          symptoms: "Dor de cabeça frequente, tontura",
         },
         {
           id: "2",
@@ -104,7 +133,7 @@ export default function AppointmentsPage() {
           status: "agendado",
           consultationType: "telemedicina",
           doctor: "Dr. João Medeiros",
-          notes: "Retorno para acompanhamento de tratamento"
+          notes: "Retorno para acompanhamento de tratamento",
         },
         {
           id: "3",
@@ -118,7 +147,7 @@ export default function AppointmentsPage() {
           consultationType: "presencial",
           doctor: "Dr. Ana Beatriz",
           room: "Sala 201",
-          symptoms: "Exames de rotina, check-up completo"
+          symptoms: "Exames de rotina, check-up completo",
         },
         {
           id: "4",
@@ -132,28 +161,29 @@ export default function AppointmentsPage() {
           consultationType: "presencial",
           doctor: "Dr. Roberto Santos",
           room: "Sala 103",
-          symptoms: "Dores articulares, fadiga"
-        }
+          symptoms: "Dores articulares, fadiga",
+        },
       ]);
-      
+
       setIsLoading(false);
     };
 
     loadAppointments();
   }, []);
 
-  const filteredAppointments = appointments.filter(appointment => {
-    const matchesSearch = appointment.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         appointment.doctor.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredAppointments = appointments.filter((appointment) => {
+    const matchesSearch =
+      appointment.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      appointment.doctor.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "all" || appointment.status === statusFilter;
     const matchesType = typeFilter === "all" || appointment.type === typeFilter;
-    const matchesDate = appointment.date === selectedDate.toISOString().split('T')[0];
-    
+    const matchesDate = appointment.date === selectedDate.toISOString().split("T")[0];
+
     return matchesSearch && matchesStatus && matchesType && matchesDate;
   });
 
   const getTypeConfig = (type: string) => {
-    return appointmentTypes.find(t => t.value === type) || appointmentTypes[0];
+    return appointmentTypes.find((t) => t.value === type) || appointmentTypes[0];
   };
 
   const StatusIcon = ({ status }: { status: string }) => {
@@ -172,18 +202,14 @@ export default function AppointmentsPage() {
       </div>
     );
   }
-  
+
   return (
     <main className="flex-1 space-y-6 p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-            Agenda Médica
-          </h1>
-          <p className="text-muted-foreground">
-            Gerencie suas consultas e agendamentos
-          </p>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Agenda Médica</h1>
+          <p className="text-muted-foreground">Gerencie suas consultas e agendamentos</p>
         </div>
         <div className="flex items-center space-x-2">
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -211,9 +237,7 @@ export default function AppointmentsPage() {
         <Card className="lg:col-span-1">
           <CardHeader>
             <CardTitle className="text-lg">Calendário</CardTitle>
-            <CardDescription>
-              Selecione uma data para visualizar
-            </CardDescription>
+            <CardDescription>Selecione uma data para visualizar</CardDescription>
           </CardHeader>
           <CardContent>
             <Calendar
@@ -222,7 +246,7 @@ export default function AppointmentsPage() {
               onSelect={(date) => date && setSelectedDate(date)}
               className="rounded-md border w-full"
             />
-            
+
             {/* Quick Stats */}
             <div className="mt-6 space-y-3">
               <div className="flex justify-between text-sm">
@@ -232,13 +256,13 @@ export default function AppointmentsPage() {
               <div className="flex justify-between text-sm">
                 <span>Confirmados:</span>
                 <span className="font-medium text-green-600">
-                  {filteredAppointments.filter(a => a.status === "confirmado").length}
+                  {filteredAppointments.filter((a) => a.status === "confirmado").length}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span>Pendentes:</span>
                 <span className="font-medium text-yellow-600">
-                  {filteredAppointments.filter(a => a.status === "agendado").length}
+                  {filteredAppointments.filter((a) => a.status === "agendado").length}
                 </span>
               </div>
             </div>
@@ -262,7 +286,7 @@ export default function AppointmentsPage() {
                     />
                   </div>
                 </div>
-                
+
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Status" />
@@ -276,7 +300,7 @@ export default function AppointmentsPage() {
                     ))}
                   </SelectContent>
                 </Select>
-                
+
                 <Select value={typeFilter} onValueChange={setTypeFilter}>
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Tipo" />
@@ -299,7 +323,7 @@ export default function AppointmentsPage() {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <CalendarIcon className="w-5 h-5 mr-2 text-neon-500" />
-                Consultas - {selectedDate.toLocaleDateString('pt-BR')}
+                Consultas - {selectedDate.toLocaleDateString("pt-BR")}
               </CardTitle>
               <CardDescription>
                 {filteredAppointments.length} consulta(s) para este dia
@@ -319,11 +343,11 @@ export default function AppointmentsPage() {
               ) : (
                 <div className="space-y-4">
                   {filteredAppointments.map((appointment) => (
-                    <AppointmentCard 
-                      key={appointment.id} 
+                    <AppointmentCard
+                      key={appointment.id}
                       appointment={appointment}
-                      onEdit={(id) => console.log('Edit', id)}
-                      onCancel={(id) => console.log('Cancel', id)}
+                      onEdit={(id) => console.log("Edit", id)}
+                      onCancel={(id) => console.log("Cancel", id)}
                     />
                   ))}
                 </div>
@@ -334,19 +358,20 @@ export default function AppointmentsPage() {
       </div>
     </main>
   );
-}// Appointment Card Component
-function AppointmentCard({ 
-  appointment, 
-  onEdit, 
-  onCancel 
-}: { 
+} // Appointment Card Component
+function AppointmentCard({
+  appointment,
+  onEdit,
+  onCancel,
+}: {
   appointment: Appointment;
   onEdit: (id: string) => void;
   onCancel: (id: string) => void;
 }) {
   const typeConfig = getTypeConfig(appointment.type);
-  const statusConfig = statusConfig[appointment.status as keyof typeof statusConfig];
-  
+  const currentStatusConfig = statusConfig[appointment.status as keyof typeof statusConfig];
+  const StatusIcon = currentStatusConfig?.icon;
+
   return (
     <div className="p-4 rounded-lg border bg-card hover:shadow-md transition-all duration-200">
       <div className="flex items-start justify-between">
@@ -354,10 +379,13 @@ function AppointmentCard({
           <Avatar className="w-12 h-12">
             <AvatarImage src={appointment.patientAvatar} />
             <AvatarFallback className="bg-neon-100 text-neon-700">
-              {appointment.patientName.split(' ').map(n => n[0]).join('')}
+              {appointment.patientName
+                .split(" ")
+                .map((n) => n[0])
+                .join("")}
             </AvatarFallback>
           </Avatar>
-          
+
           <div className="flex-1 space-y-2">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-lg">{appointment.patientName}</h3>
@@ -371,7 +399,7 @@ function AppointmentCard({
                 </Badge>
               </div>
             </div>
-            
+
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-muted-foreground">
               <div className="flex items-center">
                 <Clock className="w-4 h-4 mr-1" />
@@ -387,13 +415,15 @@ function AppointmentCard({
                 ) : (
                   <MapPin className="w-4 h-4 mr-1" />
                 )}
-                {appointment.consultationType === "telemedicina" ? "Telemedicina" : appointment.room}
+                {appointment.consultationType === "telemedicina"
+                  ? "Telemedicina"
+                  : appointment.room}
               </div>
               <div className="flex items-center">
                 <span>Dr(a). {appointment.doctor}</span>
               </div>
             </div>
-            
+
             {(appointment.symptoms || appointment.notes) && (
               <div className="mt-3 p-3 bg-muted/50 rounded-md">
                 <p className="text-sm">
@@ -403,7 +433,7 @@ function AppointmentCard({
             )}
           </div>
         </div>
-        
+
         <div className="flex items-center space-x-2 ml-4">
           <Button
             variant="ghost"
@@ -439,7 +469,7 @@ function NewAppointmentForm({ onClose }: { onClose: () => void }) {
     consultationType: "presencial",
     doctor: "",
     room: "",
-    symptoms: ""
+    symptoms: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -457,7 +487,7 @@ function NewAppointmentForm({ onClose }: { onClose: () => void }) {
           <Input
             id="patientName"
             value={formData.patientName}
-            onChange={(e) => setFormData({...formData, patientName: e.target.value})}
+            onChange={(e) => setFormData({ ...formData, patientName: e.target.value })}
             required
           />
         </div>
@@ -466,12 +496,12 @@ function NewAppointmentForm({ onClose }: { onClose: () => void }) {
           <Input
             id="patientPhone"
             value={formData.patientPhone}
-            onChange={(e) => setFormData({...formData, patientPhone: e.target.value})}
+            onChange={(e) => setFormData({ ...formData, patientPhone: e.target.value })}
             required
           />
         </div>
       </div>
-      
+
       <div className="grid grid-cols-3 gap-4">
         <div>
           <Label htmlFor="date">Data</Label>
@@ -479,7 +509,7 @@ function NewAppointmentForm({ onClose }: { onClose: () => void }) {
             id="date"
             type="date"
             value={formData.date}
-            onChange={(e) => setFormData({...formData, date: e.target.value})}
+            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
             required
           />
         </div>
@@ -489,13 +519,16 @@ function NewAppointmentForm({ onClose }: { onClose: () => void }) {
             id="time"
             type="time"
             value={formData.time}
-            onChange={(e) => setFormData({...formData, time: e.target.value})}
+            onChange={(e) => setFormData({ ...formData, time: e.target.value })}
             required
           />
         </div>
         <div>
           <Label htmlFor="duration">Duração (min)</Label>
-          <Select value={formData.duration} onValueChange={(value) => setFormData({...formData, duration: value})}>
+          <Select
+            value={formData.duration}
+            onValueChange={(value) => setFormData({ ...formData, duration: value })}
+          >
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
@@ -508,17 +541,17 @@ function NewAppointmentForm({ onClose }: { onClose: () => void }) {
           </Select>
         </div>
       </div>
-      
+
       <div>
         <Label htmlFor="symptoms">Sintomas/Motivo da Consulta</Label>
         <Textarea
           id="symptoms"
           value={formData.symptoms}
-          onChange={(e) => setFormData({...formData, symptoms: e.target.value})}
+          onChange={(e) => setFormData({ ...formData, symptoms: e.target.value })}
           placeholder="Descreva os sintomas ou motivo da consulta..."
         />
       </div>
-      
+
       <div className="flex justify-end space-x-2">
         <Button type="button" variant="outline" onClick={onClose}>
           Cancelar

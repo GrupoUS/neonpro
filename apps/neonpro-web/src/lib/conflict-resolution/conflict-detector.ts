@@ -3,8 +3,8 @@
  * Advanced system for detecting scheduling conflicts, resource conflicts, and optimization opportunities
  */
 
-import { createClient } from '@supabase/supabase-js';
-import {
+import type { createClient } from "@supabase/supabase-js";
+import type {
   ConflictDetails,
   ConflictType,
   ConflictSeverity,
@@ -13,14 +13,14 @@ import {
   ResourceAvailability,
   WorkloadMetrics,
   ConflictPrediction,
-  PatternAnalysis
-} from './types';
-import { Database } from '@/types/supabase';
+  PatternAnalysis,
+} from "./types";
+import type { Database } from "@/types/supabase";
 
-type Appointment = Database['public']['Tables']['appointments']['Row'];
-type Staff = Database['public']['Tables']['staff']['Row'];
-type Room = Database['public']['Tables']['rooms']['Row'];
-type Equipment = Database['public']['Tables']['equipment']['Row'];
+type Appointment = Database["public"]["Tables"]["appointments"]["Row"];
+type Staff = Database["public"]["Tables"]["staff"]["Row"];
+type Room = Database["public"]["Tables"]["rooms"]["Row"];
+type Equipment = Database["public"]["Tables"]["equipment"]["Row"];
 
 export class ConflictDetectionEngine {
   private supabase;
@@ -31,9 +31,9 @@ export class ConflictDetectionEngine {
   constructor(
     supabaseUrl: string,
     supabaseKey: string,
-    config: Partial<ConflictDetectionConfig> = {}
+    config: Partial<ConflictDetectionConfig> = {},
   ) {
-    this.const supabase = createClient(<Database>(supabaseUrl, supabaseKey);
+    this.supabase = createClient<Database>(supabaseUrl, supabaseKey);
     this.config = {
       enableTimeOverlapDetection: true,
       enableResourceConflictDetection: true,
@@ -43,7 +43,7 @@ export class ConflictDetectionEngine {
       bufferTimeMinutes: 15,
       maxLookaheadDays: 30,
       conflictSeverityThreshold: ConflictSeverity.MEDIUM,
-      ...config
+      ...config,
     };
   }
 
@@ -53,8 +53,8 @@ export class ConflictDetectionEngine {
   async detectConflicts(params: ConflictDetectionParams): Promise<ConflictDetails[]> {
     try {
       const conflicts: ConflictDetails[] = [];
-      const cacheKey = this.generateCacheKey('conflicts', params);
-      
+      const cacheKey = this.generateCacheKey("conflicts", params);
+
       // Check cache first
       if (this.cache.has(cacheKey)) {
         return this.cache.get(cacheKey);
@@ -63,46 +63,48 @@ export class ConflictDetectionEngine {
       // Get appointments in date range
       const appointments = await this.getAppointmentsInRange(
         params.dateRange.start,
-        params.dateRange.end
+        params.dateRange.end,
       );
 
       // Get resources
       const [staff, rooms, equipment] = await Promise.all([
         this.getStaff(),
         this.getRooms(),
-        this.getEquipment()
+        this.getEquipment(),
       ]);
 
       // Detect different types of conflicts
       if (this.config.enableTimeOverlapDetection) {
-        conflicts.push(...await this.detectTimeOverlapConflicts(appointments));
+        conflicts.push(...(await this.detectTimeOverlapConflicts(appointments)));
       }
 
       if (this.config.enableStaffConflictDetection) {
-        conflicts.push(...await this.detectStaffConflicts(appointments, staff));
+        conflicts.push(...(await this.detectStaffConflicts(appointments, staff)));
       }
 
       if (this.config.enableRoomConflictDetection) {
-        conflicts.push(...await this.detectRoomConflicts(appointments, rooms));
+        conflicts.push(...(await this.detectRoomConflicts(appointments, rooms)));
       }
 
       if (this.config.enableEquipmentConflictDetection) {
-        conflicts.push(...await this.detectEquipmentConflicts(appointments, equipment));
+        conflicts.push(...(await this.detectEquipmentConflicts(appointments, equipment)));
       }
 
       if (this.config.enableResourceConflictDetection) {
-        conflicts.push(...await this.detectResourceOverbooking(appointments, staff, rooms, equipment));
+        conflicts.push(
+          ...(await this.detectResourceOverbooking(appointments, staff, rooms, equipment)),
+        );
       }
 
       // Filter by severity and type
       const filteredConflicts = this.filterConflicts(conflicts, params);
-      
+
       // Cache results
       this.cache.set(cacheKey, filteredConflicts);
-      
+
       return filteredConflicts;
     } catch (error) {
-      console.error('Error detecting conflicts:', error);
+      console.error("Error detecting conflicts:", error);
       throw new Error(`Conflict detection failed: ${error.message}`);
     }
   }
@@ -110,10 +112,12 @@ export class ConflictDetectionEngine {
   /**
    * Detect time overlap conflicts between appointments
    */
-  private async detectTimeOverlapConflicts(appointments: Appointment[]): Promise<ConflictDetails[]> {
+  private async detectTimeOverlapConflicts(
+    appointments: Appointment[],
+  ): Promise<ConflictDetails[]> {
     const conflicts: ConflictDetails[] = [];
-    const sortedAppointments = appointments.sort((a, b) => 
-      new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
+    const sortedAppointments = appointments.sort(
+      (a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime(),
     );
 
     for (let i = 0; i < sortedAppointments.length - 1; i++) {
@@ -127,7 +131,7 @@ export class ConflictDetectionEngine {
       // Check for overlap or insufficient buffer time
       if (currentEnd.getTime() + bufferTime > nextStart.getTime()) {
         const overlapMinutes = Math.ceil(
-          (currentEnd.getTime() + bufferTime - nextStart.getTime()) / (1000 * 60)
+          (currentEnd.getTime() + bufferTime - nextStart.getTime()) / (1000 * 60),
         );
 
         conflicts.push({
@@ -138,19 +142,19 @@ export class ConflictDetectionEngine {
           affectedAppointments: [current.id, next.id],
           affectedResources: {
             staff: [current.staff_id, next.staff_id].filter(Boolean),
-            rooms: [current.room_id, next.room_id].filter(Boolean)
+            rooms: [current.room_id, next.room_id].filter(Boolean),
           },
           conflictTime: {
             start: new Date(current.start_time),
-            end: new Date(next.end_time)
+            end: new Date(next.end_time),
           },
           detectedAt: new Date(),
           metadata: {
             overlapMinutes,
             bufferTimeRequired: this.config.bufferTimeMinutes,
             currentAppointment: current,
-            nextAppointment: next
-          }
+            nextAppointment: next,
+          },
         });
       }
     }
@@ -161,13 +165,16 @@ export class ConflictDetectionEngine {
   /**
    * Detect staff conflicts and overloading
    */
-  private async detectStaffConflicts(appointments: Appointment[], staff: Staff[]): Promise<ConflictDetails[]> {
+  private async detectStaffConflicts(
+    appointments: Appointment[],
+    staff: Staff[],
+  ): Promise<ConflictDetails[]> {
     const conflicts: ConflictDetails[] = [];
-    const staffMap = new Map(staff.map(s => [s.id, s]));
+    const staffMap = new Map(staff.map((s) => [s.id, s]));
 
     // Group appointments by staff
     const staffAppointments = new Map<string, Appointment[]>();
-    appointments.forEach(apt => {
+    appointments.forEach((apt) => {
       if (apt.staff_id) {
         if (!staffAppointments.has(apt.staff_id)) {
           staffAppointments.set(apt.staff_id, []);
@@ -182,8 +189,8 @@ export class ConflictDetectionEngine {
       if (!staffMember) continue;
 
       // Sort appointments by time
-      const sortedApts = staffApts.sort((a, b) => 
-        new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
+      const sortedApts = staffApts.sort(
+        (a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime(),
       );
 
       // Check for double booking
@@ -201,13 +208,13 @@ export class ConflictDetectionEngine {
             affectedResources: { staff: [staffId] },
             conflictTime: {
               start: new Date(next.start_time),
-              end: new Date(current.end_time)
+              end: new Date(current.end_time),
             },
             detectedAt: new Date(),
             metadata: {
               staffMember,
-              conflictingAppointments: [current, next]
-            }
+              conflictingAppointments: [current, next],
+            },
           });
         }
       }
@@ -220,32 +227,37 @@ export class ConflictDetectionEngine {
           type: ConflictType.RESOURCE_OVERBOOKED,
           severity: ConflictSeverity.MEDIUM,
           description: `Staff member ${staffMember.name} overloaded (${Math.round(workloadMetrics.currentLoad * 100)}%)`,
-          affectedAppointments: staffApts.map(apt => apt.id),
+          affectedAppointments: staffApts.map((apt) => apt.id),
           affectedResources: { staff: [staffId] },
           conflictTime: {
-            start: new Date(Math.min(...staffApts.map(apt => new Date(apt.start_time).getTime()))),
-            end: new Date(Math.max(...staffApts.map(apt => new Date(apt.end_time).getTime())))
+            start: new Date(
+              Math.min(...staffApts.map((apt) => new Date(apt.start_time).getTime())),
+            ),
+            end: new Date(Math.max(...staffApts.map((apt) => new Date(apt.end_time).getTime()))),
           },
           detectedAt: new Date(),
           metadata: {
             workloadMetrics,
-            staffMember
-          }
+            staffMember,
+          },
         });
       }
     }
 
     return conflicts;
-  }  /**
+  } /**
    * Detect room conflicts and capacity issues
    */
-  private async detectRoomConflicts(appointments: Appointment[], rooms: Room[]): Promise<ConflictDetails[]> {
+  private async detectRoomConflicts(
+    appointments: Appointment[],
+    rooms: Room[],
+  ): Promise<ConflictDetails[]> {
     const conflicts: ConflictDetails[] = [];
-    const roomMap = new Map(rooms.map(r => [r.id, r]));
+    const roomMap = new Map(rooms.map((r) => [r.id, r]));
 
     // Group appointments by room
     const roomAppointments = new Map<string, Appointment[]>();
-    appointments.forEach(apt => {
+    appointments.forEach((apt) => {
       if (apt.room_id) {
         if (!roomAppointments.has(apt.room_id)) {
           roomAppointments.set(apt.room_id, []);
@@ -260,8 +272,8 @@ export class ConflictDetectionEngine {
       if (!room) continue;
 
       // Sort appointments by time
-      const sortedApts = roomApts.sort((a, b) => 
-        new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
+      const sortedApts = roomApts.sort(
+        (a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime(),
       );
 
       // Check for overlapping appointments
@@ -279,13 +291,13 @@ export class ConflictDetectionEngine {
             affectedResources: { rooms: [roomId] },
             conflictTime: {
               start: new Date(next.start_time),
-              end: new Date(current.end_time)
+              end: new Date(current.end_time),
             },
             detectedAt: new Date(),
             metadata: {
               room,
-              conflictingAppointments: [current, next]
-            }
+              conflictingAppointments: [current, next],
+            },
           });
         }
       }
@@ -293,7 +305,7 @@ export class ConflictDetectionEngine {
       // Check capacity
       const maxCapacity = room.capacity || 1;
       const simultaneousAppointments = this.findSimultaneousAppointments(roomApts);
-      
+
       for (const group of simultaneousAppointments) {
         if (group.length > maxCapacity) {
           conflicts.push({
@@ -301,19 +313,19 @@ export class ConflictDetectionEngine {
             type: ConflictType.CAPACITY_EXCEEDED,
             severity: ConflictSeverity.MEDIUM,
             description: `Room ${room.name} capacity exceeded (${group.length}/${maxCapacity})`,
-            affectedAppointments: group.map(apt => apt.id),
+            affectedAppointments: group.map((apt) => apt.id),
             affectedResources: { rooms: [roomId] },
             conflictTime: {
-              start: new Date(Math.min(...group.map(apt => new Date(apt.start_time).getTime()))),
-              end: new Date(Math.max(...group.map(apt => new Date(apt.end_time).getTime())))
+              start: new Date(Math.min(...group.map((apt) => new Date(apt.start_time).getTime()))),
+              end: new Date(Math.max(...group.map((apt) => new Date(apt.end_time).getTime()))),
             },
             detectedAt: new Date(),
             metadata: {
               room,
               capacity: maxCapacity,
               actualUsage: group.length,
-              appointments: group
-            }
+              appointments: group,
+            },
           });
         }
       }
@@ -325,18 +337,26 @@ export class ConflictDetectionEngine {
   /**
    * Detect equipment conflicts and availability issues
    */
-  private async detectEquipmentConflicts(appointments: Appointment[], equipment: Equipment[]): Promise<ConflictDetails[]> {
+  private async detectEquipmentConflicts(
+    appointments: Appointment[],
+    equipment: Equipment[],
+  ): Promise<ConflictDetails[]> {
     const conflicts: ConflictDetails[] = [];
-    const equipmentMap = new Map(equipment.map(e => [e.id, e]));
+    const equipmentMap = new Map(equipment.map((e) => [e.id, e]));
 
     // Get equipment assignments from appointments
-    const equipmentAssignments = await this.getEquipmentAssignments(appointments.map(apt => apt.id));
-    
+    const equipmentAssignments = await this.getEquipmentAssignments(
+      appointments.map((apt) => apt.id),
+    );
+
     // Group assignments by equipment
-    const equipmentAppointments = new Map<string, { appointment: Appointment; assignment: any }[]>();
-    
+    const equipmentAppointments = new Map<
+      string,
+      { appointment: Appointment; assignment: any }[]
+    >();
+
     for (const assignment of equipmentAssignments) {
-      const appointment = appointments.find(apt => apt.id === assignment.appointment_id);
+      const appointment = appointments.find((apt) => apt.id === assignment.appointment_id);
       if (!appointment) continue;
 
       if (!equipmentAppointments.has(assignment.equipment_id)) {
@@ -351,8 +371,10 @@ export class ConflictDetectionEngine {
       if (!equipmentItem) continue;
 
       // Sort by appointment time
-      const sortedAssignments = assignments.sort((a, b) => 
-        new Date(a.appointment.start_time).getTime() - new Date(b.appointment.start_time).getTime()
+      const sortedAssignments = assignments.sort(
+        (a, b) =>
+          new Date(a.appointment.start_time).getTime() -
+          new Date(b.appointment.start_time).getTime(),
       );
 
       // Check for overlapping usage
@@ -376,7 +398,7 @@ export class ConflictDetectionEngine {
             affectedResources: { equipment: [equipmentId] },
             conflictTime: {
               start: nextStart,
-              end: new Date(currentEnd.getTime() + requiredGap)
+              end: new Date(currentEnd.getTime() + requiredGap),
             },
             detectedAt: new Date(),
             metadata: {
@@ -384,8 +406,8 @@ export class ConflictDetectionEngine {
               setupTime,
               cleanupTime,
               requiredGap: requiredGap / (1000 * 60),
-              conflictingAppointments: [current.appointment, next.appointment]
-            }
+              conflictingAppointments: [current.appointment, next.appointment],
+            },
           });
         }
       }
@@ -399,7 +421,7 @@ export class ConflictDetectionEngine {
           const maintStart = new Date(maintenance.start_time);
           const maintEnd = new Date(maintenance.end_time);
 
-          return (aptStart < maintEnd && aptEnd > maintStart);
+          return aptStart < maintEnd && aptEnd > maintStart;
         });
 
         if (conflictingAssignments.length > 0) {
@@ -412,14 +434,14 @@ export class ConflictDetectionEngine {
             affectedResources: { equipment: [equipmentId] },
             conflictTime: {
               start: new Date(maintenance.start_time),
-              end: new Date(maintenance.end_time)
+              end: new Date(maintenance.end_time),
             },
             detectedAt: new Date(),
             metadata: {
               equipment: equipmentItem,
               maintenance,
-              conflictingAppointments: conflictingAssignments.map(({ appointment }) => appointment)
-            }
+              conflictingAppointments: conflictingAssignments.map(({ appointment }) => appointment),
+            },
           });
         }
       }
@@ -435,13 +457,18 @@ export class ConflictDetectionEngine {
     appointments: Appointment[],
     staff: Staff[],
     rooms: Room[],
-    equipment: Equipment[]
+    equipment: Equipment[],
   ): Promise<ConflictDetails[]> {
     const conflicts: ConflictDetails[] = [];
 
     // Analyze resource utilization patterns
-    const utilizationAnalysis = await this.analyzeResourceUtilization(appointments, staff, rooms, equipment);
-    
+    const utilizationAnalysis = await this.analyzeResourceUtilization(
+      appointments,
+      staff,
+      rooms,
+      equipment,
+    );
+
     // Check for critical utilization levels
     for (const analysis of utilizationAnalysis) {
       if (analysis.utilizationRate > 0.95) {
@@ -452,19 +479,19 @@ export class ConflictDetectionEngine {
           description: `${analysis.resourceType} ${analysis.resourceName} critically overbooked (${Math.round(analysis.utilizationRate * 100)}%)`,
           affectedAppointments: analysis.affectedAppointments,
           affectedResources: {
-            [analysis.resourceType]: [analysis.resourceId]
+            [analysis.resourceType]: [analysis.resourceId],
           },
           conflictTime: {
             start: analysis.periodStart,
-            end: analysis.periodEnd
+            end: analysis.periodEnd,
           },
           detectedAt: new Date(),
           metadata: {
             utilizationRate: analysis.utilizationRate,
             capacity: analysis.capacity,
             demand: analysis.demand,
-            recommendations: analysis.recommendations
-          }
+            recommendations: analysis.recommendations,
+          },
         });
       }
     }
@@ -475,7 +502,10 @@ export class ConflictDetectionEngine {
   /**
    * Calculate staff workload metrics
    */
-  private async calculateStaffWorkload(staffId: string, appointments: Appointment[]): Promise<WorkloadMetrics> {
+  private async calculateStaffWorkload(
+    staffId: string,
+    appointments: Appointment[],
+  ): Promise<WorkloadMetrics> {
     const staff = await this.getStaffById(staffId);
     if (!staff) {
       throw new Error(`Staff member not found: ${staffId}`);
@@ -483,13 +513,13 @@ export class ConflictDetectionEngine {
 
     const totalWorkMinutes = appointments.reduce((total, apt) => {
       const duration = new Date(apt.end_time).getTime() - new Date(apt.start_time).getTime();
-      return total + (duration / (1000 * 60));
+      return total + duration / (1000 * 60);
     }, 0);
 
     const workingHoursPerDay = 8 * 60; // 8 hours in minutes
     const daysInPeriod = this.calculateDaysInPeriod(appointments);
     const maxPossibleMinutes = workingHoursPerDay * daysInPeriod;
-    
+
     const currentLoad = Math.min(totalWorkMinutes / maxPossibleMinutes, 1);
     const efficiency = await this.calculateStaffEfficiency(staffId);
     const satisfaction = await this.getStaffSatisfactionScore(staffId);
@@ -504,7 +534,7 @@ export class ConflictDetectionEngine {
       satisfaction,
       specializations: staff.specializations || [],
       availability,
-      preferences
+      preferences,
     };
   }
 
@@ -552,8 +582,11 @@ export class ConflictDetectionEngine {
     return groups;
   }
 
-  private filterConflicts(conflicts: ConflictDetails[], params: ConflictDetectionParams): ConflictDetails[] {
-    return conflicts.filter(conflict => {
+  private filterConflicts(
+    conflicts: ConflictDetails[],
+    params: ConflictDetectionParams,
+  ): ConflictDetails[] {
+    return conflicts.filter((conflict) => {
       // Filter by type
       if (params.includeTypes && !params.includeTypes.includes(conflict.type)) {
         return false;
@@ -567,19 +600,23 @@ export class ConflictDetectionEngine {
       // Filter by resources
       if (params.resourceFilter) {
         const { staff, rooms, equipment } = params.resourceFilter;
-        
+
         if (staff && conflict.affectedResources.staff) {
-          const hasMatchingStaff = conflict.affectedResources.staff.some(id => staff.includes(id));
+          const hasMatchingStaff = conflict.affectedResources.staff.some((id) =>
+            staff.includes(id),
+          );
           if (!hasMatchingStaff) return false;
         }
 
         if (rooms && conflict.affectedResources.rooms) {
-          const hasMatchingRoom = conflict.affectedResources.rooms.some(id => rooms.includes(id));
+          const hasMatchingRoom = conflict.affectedResources.rooms.some((id) => rooms.includes(id));
           if (!hasMatchingRoom) return false;
         }
 
         if (equipment && conflict.affectedResources.equipment) {
-          const hasMatchingEquipment = conflict.affectedResources.equipment.some(id => equipment.includes(id));
+          const hasMatchingEquipment = conflict.affectedResources.equipment.some((id) =>
+            equipment.includes(id),
+          );
           if (!hasMatchingEquipment) return false;
         }
       }
@@ -597,41 +634,32 @@ export class ConflictDetectionEngine {
    */
   private async getAppointmentsInRange(start: Date, end: Date): Promise<Appointment[]> {
     const { data, error } = await this.supabase
-      .from('appointments')
-      .select('*')
-      .gte('start_time', start.toISOString())
-      .lte('end_time', end.toISOString())
-      .eq('status', 'scheduled');
+      .from("appointments")
+      .select("*")
+      .gte("start_time", start.toISOString())
+      .lte("end_time", end.toISOString())
+      .eq("status", "scheduled");
 
     if (error) throw error;
     return data || [];
   }
 
   private async getStaff(): Promise<Staff[]> {
-    const { data, error } = await this.supabase
-      .from('staff')
-      .select('*')
-      .eq('active', true);
+    const { data, error } = await this.supabase.from("staff").select("*").eq("active", true);
 
     if (error) throw error;
     return data || [];
   }
 
   private async getRooms(): Promise<Room[]> {
-    const { data, error } = await this.supabase
-      .from('rooms')
-      .select('*')
-      .eq('active', true);
+    const { data, error } = await this.supabase.from("rooms").select("*").eq("active", true);
 
     if (error) throw error;
     return data || [];
   }
 
   private async getEquipment(): Promise<Equipment[]> {
-    const { data, error } = await this.supabase
-      .from('equipment')
-      .select('*')
-      .eq('active', true);
+    const { data, error } = await this.supabase.from("equipment").select("*").eq("active", true);
 
     if (error) throw error;
     return data || [];
@@ -639,9 +667,9 @@ export class ConflictDetectionEngine {
 
   private async getStaffById(staffId: string): Promise<Staff | null> {
     const { data, error } = await this.supabase
-      .from('staff')
-      .select('*')
-      .eq('id', staffId)
+      .from("staff")
+      .select("*")
+      .eq("id", staffId)
       .single();
 
     if (error) return null;
@@ -650,9 +678,9 @@ export class ConflictDetectionEngine {
 
   private async getEquipmentAssignments(appointmentIds: string[]): Promise<any[]> {
     const { data, error } = await this.supabase
-      .from('appointment_equipment')
-      .select('*')
-      .in('appointment_id', appointmentIds);
+      .from("appointment_equipment")
+      .select("*")
+      .in("appointment_id", appointmentIds);
 
     if (error) throw error;
     return data || [];
@@ -660,25 +688,30 @@ export class ConflictDetectionEngine {
 
   private async getEquipmentMaintenance(equipmentId: string): Promise<any[]> {
     const { data, error } = await this.supabase
-      .from('equipment_maintenance')
-      .select('*')
-      .eq('equipment_id', equipmentId)
-      .gte('end_time', new Date().toISOString());
+      .from("equipment_maintenance")
+      .select("*")
+      .eq("equipment_id", equipmentId)
+      .gte("end_time", new Date().toISOString());
 
     if (error) throw error;
     return data || [];
   }
 
   // Placeholder methods for advanced features
-  private async analyzeResourceUtilization(appointments: Appointment[], staff: Staff[], rooms: Room[], equipment: Equipment[]): Promise<any[]> {
+  private async analyzeResourceUtilization(
+    appointments: Appointment[],
+    staff: Staff[],
+    rooms: Room[],
+    equipment: Equipment[],
+  ): Promise<any[]> {
     // Implementation for resource utilization analysis
     return [];
   }
 
   private calculateDaysInPeriod(appointments: Appointment[]): number {
     if (appointments.length === 0) return 1;
-    
-    const dates = appointments.map(apt => new Date(apt.start_time).toDateString());
+
+    const dates = appointments.map((apt) => new Date(apt.start_time).toDateString());
     const uniqueDates = new Set(dates);
     return uniqueDates.size;
   }
@@ -701,12 +734,12 @@ export class ConflictDetectionEngine {
   private async getStaffPreferences(staffId: string): Promise<any> {
     // Placeholder for staff preferences
     return {
-      preferredHours: { start: '09:00', end: '17:00' },
-      preferredDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
+      preferredHours: { start: "09:00", end: "17:00" },
+      preferredDays: ["monday", "tuesday", "wednesday", "thursday", "friday"],
       avoidedTasks: [],
       preferredTasks: [],
       maxConsecutiveHours: 8,
-      minBreakBetweenAppointments: 15
+      minBreakBetweenAppointments: 15,
     };
   }
 

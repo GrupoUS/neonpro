@@ -1,27 +1,27 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent } from "@/components/ui/card";
+import type { Input } from "@/components/ui/input";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useRegulatoryCategories } from "@/hooks/use-regulatory-categories";
-import { useRegulatoryDocuments } from "@/hooks/use-regulatory-documents";
-import {
+import type { useRegulatoryCategories } from "@/hooks/use-regulatory-categories";
+import type { useRegulatoryDocuments } from "@/hooks/use-regulatory-documents";
+import type {
   DocumentStatusLabels,
   isDocumentExpired,
   isDocumentExpiring,
 } from "@/types/regulatory-documents";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { AlertTriangle, Calendar, FileText, Plus, Search } from "lucide-react";
-import { useState } from "react";
+import type { formatDistanceToNow } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { AlertTriangle, Calendar, FileText, Plus, Search } from "lucide-react";
+import type { useState } from "react";
 
 interface RegulatoryDocumentsListProps {
   onCreateDocument?: () => void;
@@ -83,9 +83,7 @@ export function RegulatoryDocumentsList({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">
-            Documentação Regulatória
-          </h2>
+          <h2 className="text-2xl font-bold tracking-tight">Documentação Regulatória</h2>
           <p className="text-muted-foreground">
             Gerencie documentos de compliance e certificações da clínica
           </p>
@@ -148,18 +146,14 @@ export function RegulatoryDocumentsList({
         {loading && documents.length === 0 ? (
           <div className="text-center py-8">
             <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-muted-foreground">
-              Carregando documentos...
-            </p>
+            <p className="mt-4 text-muted-foreground">Carregando documentos...</p>
           </div>
         ) : documents.length === 0 ? (
           <Card>
             <CardContent className="pt-6">
               <div className="text-center py-8">
                 <FileText className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">
-                  Nenhum documento encontrado
-                </h3>
+                <h3 className="text-lg font-semibold mb-2">Nenhum documento encontrado</h3>
                 <p className="text-muted-foreground mb-4">
                   {search || statusFilter || categoryFilter
                     ? "Tente alterar os filtros para encontrar documentos."
@@ -177,43 +171,31 @@ export function RegulatoryDocumentsList({
         ) : (
           <>
             {documents.map((document) => {
-              const daysUntilExpiration = getDaysUntilExpiration(
-                document.expiration_date
-              );
+              const daysUntilExpiration = getDaysUntilExpiration(document.expiration_date);
               const isExpiring = isDocumentExpiring(document);
               const isExpired = isDocumentExpired(document);
 
               return (
-                <Card
-                  key={document.id}
-                  className="hover:shadow-md transition-shadow"
-                >
+                <Card key={document.id} className="hover:shadow-md transition-shadow">
                   <CardContent className="pt-6">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <h3 className="font-semibold text-lg">
-                            {document.document_type}
-                          </h3>
-                          <Badge
-                            variant={getStatusBadgeVariant(document.status)}
-                          >
+                          <h3 className="font-semibold text-lg">{document.document_type}</h3>
+                          <Badge variant={getStatusBadgeVariant(document.status)}>
                             {DocumentStatusLabels[document.status]}
                           </Badge>
                           {(isExpiring || isExpired) && (
                             <Badge variant="destructive" className="gap-1">
                               <AlertTriangle className="h-3 w-3" />
-                              {isExpired
-                                ? "Expirado"
-                                : `${daysUntilExpiration} dias`}
+                              {isExpired ? "Expirado" : `${daysUntilExpiration} dias`}
                             </Badge>
                           )}
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-muted-foreground">
                           <div>
-                            <span className="font-medium">Autoridade:</span>{" "}
-                            {document.authority}
+                            <span className="font-medium">Autoridade:</span> {document.authority}
                           </div>
                           <div>
                             <span className="font-medium">Categoria:</span>{" "}
@@ -231,33 +213,26 @@ export function RegulatoryDocumentsList({
                           <div className="flex items-center gap-1">
                             <Calendar className="h-3 w-3" />
                             <span className="font-medium">Emissão:</span>
-                            {formatDistanceToNow(
-                              new Date(document.issue_date),
-                              {
-                                addSuffix: true,
-                                locale: ptBR,
-                              }
-                            )}
+                            {formatDistanceToNow(new Date(document.issue_date), {
+                              addSuffix: true,
+                              locale: ptBR,
+                            })}
                           </div>
                           {document.expiration_date && (
                             <div className="flex items-center gap-1">
                               <Calendar className="h-3 w-3" />
                               <span className="font-medium">Validade:</span>
-                              {formatDistanceToNow(
-                                new Date(document.expiration_date),
-                                {
-                                  addSuffix: true,
-                                  locale: ptBR,
-                                }
-                              )}
+                              {formatDistanceToNow(new Date(document.expiration_date), {
+                                addSuffix: true,
+                                locale: ptBR,
+                              })}
                             </div>
                           )}
                         </div>
 
                         {document.file_name && (
                           <div className="mt-2 text-sm text-muted-foreground">
-                            <span className="font-medium">Arquivo:</span>{" "}
-                            {document.file_name}
+                            <span className="font-medium">Arquivo:</span> {document.file_name}
                           </div>
                         )}
                       </div>

@@ -4,5 +4,5 @@ export const validateCSRF = () => {
 };
 
 export const generateCSRFToken = () => {
-  return 'csrf-token-stub';
+  return "csrf-token-stub";
 };

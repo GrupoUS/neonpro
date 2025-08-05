@@ -1,1 +1,3 @@
-﻿export default function SubscriptionAlert() { return <div>Subscription Alert</div>; }
+﻿export default function SubscriptionAlert() {
+  return <div>Subscription Alert</div>;
+}

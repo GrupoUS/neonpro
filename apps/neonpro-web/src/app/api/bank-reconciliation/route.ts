@@ -1,12 +1,12 @@
-﻿// NeonPro - Bank Reconciliation API Routes
+// NeonPro - Bank Reconciliation API Routes
 // Story 6.1 - Task 4: Bank Reconciliation System
 // Main API endpoints for bank reconciliation management
 
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
-import { createClient } from '@/lib/supabase/server';
-import { BankReconciliationManager } from '@/lib/payments/reconciliation/bank-reconciliation-manager';
-import { BankStatementProcessor } from '@/lib/payments/reconciliation/bank-statement-processor';
+import type { NextRequest, NextResponse } from "next/server";
+import type { z } from "zod";
+import type { createClient } from "@/lib/supabase/server";
+import type { BankReconciliationManager } from "@/lib/payments/reconciliation/bank-reconciliation-manager";
+import type { BankStatementProcessor } from "@/lib/payments/reconciliation/bank-statement-processor";
 
 // Validation schemas
 const GetReconciliationQuerySchema = z.object({
@@ -15,27 +15,29 @@ const GetReconciliationQuerySchema = z.object({
   accountNumber: z.string().optional(),
   dateFrom: z.string().datetime().optional(),
   dateTo: z.string().datetime().optional(),
-  status: z.enum(['pending', 'processing', 'completed', 'failed']).optional(),
+  status: z.enum(["pending", "processing", "completed", "failed"]).optional(),
   page: z.coerce.number().min(1).default(1),
   limit: z.coerce.number().min(1).max(100).default(20),
 });
 
 const ImportStatementSchema = z.object({
-  bankName: z.string().min(1, 'Bank name is required'),
-  accountNumber: z.string().min(1, 'Account number is required'),
+  bankName: z.string().min(1, "Bank name is required"),
+  accountNumber: z.string().min(1, "Account number is required"),
   statementDate: z.string().datetime(),
   openingBalance: z.number(),
   closingBalance: z.number(),
   statementPeriodStart: z.string().datetime(),
   statementPeriodEnd: z.string().datetime(),
-  processingOptions: z.object({
-    skipDuplicates: z.boolean().default(true),
-    autoMatch: z.boolean().default(true),
-    dateFormat: z.string().default('YYYY-MM-DD'),
-    encoding: z.string().default('utf-8'),
-    delimiter: z.string().default(','),
-    hasHeader: z.boolean().default(true),
-  }).optional(),
+  processingOptions: z
+    .object({
+      skipDuplicates: z.boolean().default(true),
+      autoMatch: z.boolean().default(true),
+      dateFormat: z.string().default("YYYY-MM-DD"),
+      encoding: z.string().default("utf-8"),
+      delimiter: z.string().default(","),
+      hasHeader: z.boolean().default(true),
+    })
+    .optional(),
 });
 
 const ReconcileTransactionsSchema = z.object({
@@ -58,14 +60,14 @@ const ManualMatchSchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Parse and validate query parameters
@@ -86,7 +88,7 @@ export async function GET(request: NextRequest) {
 
     // Get bank statements with pagination
     const { data: statements, error: statementsError } = await supabase
-      .from('bank_statements')
+      .from("bank_statements")
       .select(`
         *,
         bank_transactions(
@@ -100,10 +102,10 @@ export async function GET(request: NextRequest) {
         )
       `)
       .match(filters)
-      .order('statement_date', { ascending: false })
+      .order("statement_date", { ascending: false })
       .range(
         (validatedQuery.page - 1) * validatedQuery.limit,
-        validatedQuery.page * validatedQuery.limit - 1
+        validatedQuery.page * validatedQuery.limit - 1,
       );
 
     if (statementsError) {
@@ -112,8 +114,8 @@ export async function GET(request: NextRequest) {
 
     // Get total count for pagination
     const { count, error: countError } = await supabase
-      .from('bank_statements')
-      .select('*', { count: 'exact', head: true })
+      .from("bank_statements")
+      .select("*", { count: "exact", head: true })
       .match(filters);
 
     if (countError) {
@@ -144,13 +146,13 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error fetching reconciliation data:', error);
+    console.error("Error fetching reconciliation data:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error',
+        error: error instanceof Error ? error.message : "Internal server error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -162,75 +164,66 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const contentType = request.headers.get('content-type') || '';
-    
+    const contentType = request.headers.get("content-type") || "";
+
     // Handle file upload for statement import
-    if (contentType.includes('multipart/form-data')) {
+    if (contentType.includes("multipart/form-data")) {
       const formData = await request.formData();
-      const file = formData.get('file') as File;
-      const metadata = formData.get('metadata') as string;
-      
+      const file = formData.get("file") as File;
+      const metadata = formData.get("metadata") as string;
+
       if (!file) {
-        return NextResponse.json(
-          { error: 'No file provided' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "No file provided" }, { status: 400 });
       }
 
       let statementData;
       try {
         statementData = metadata ? JSON.parse(metadata) : {};
       } catch {
-        return NextResponse.json(
-          { error: 'Invalid metadata JSON' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "Invalid metadata JSON" }, { status: 400 });
       }
 
       const validatedData = ImportStatementSchema.parse(statementData);
       const processor = new BankStatementProcessor();
-      
+
       const result = await processor.processStatementFile(
         file,
         file.name,
-        validatedData.processingOptions
+        validatedData.processingOptions,
       );
 
       return NextResponse.json({
         success: result.success,
         data: result,
-        message: result.success 
+        message: result.success
           ? `Successfully processed ${result.processedTransactions} transactions`
-          : 'Failed to process statement file',
+          : "Failed to process statement file",
       });
     }
-    
+
     // Handle JSON requests for reconciliation operations
     const body = await request.json();
     const action = body.action;
 
     switch (action) {
-      case 'reconcile': {
+      case "reconcile": {
         const validatedData = ReconcileTransactionsSchema.parse(body);
         const reconciliationManager = new BankReconciliationManager();
-        
-        const result = await reconciliationManager.performAutoMatching(
-          validatedData.statementId,
-          {
-            confidenceThreshold: validatedData.confidenceThreshold,
-            autoMatchOnly: validatedData.autoMatchOnly,
-          }
-        );
+
+        const result = await reconciliationManager.performAutoMatching(validatedData.statementId, {
+          confidenceThreshold: validatedData.confidenceThreshold,
+          autoMatchOnly: validatedData.autoMatchOnly,
+        });
 
         return NextResponse.json({
           success: true,
@@ -239,52 +232,49 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      case 'manual_match': {
+      case "manual_match": {
         const validatedData = ManualMatchSchema.parse(body);
         const reconciliationManager = new BankReconciliationManager();
-        
+
         const result = await reconciliationManager.performManualMatching(
           validatedData.transactionId,
           validatedData.paymentId,
           validatedData.confidence,
-          validatedData.notes
+          validatedData.notes,
         );
 
         return NextResponse.json({
           success: result.success,
           data: result,
-          message: result.success 
-            ? 'Transaction matched successfully'
-            : 'Failed to match transaction',
+          message: result.success
+            ? "Transaction matched successfully"
+            : "Failed to match transaction",
         });
       }
 
       default:
-        return NextResponse.json(
-          { error: 'Invalid action' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "Invalid action" }, { status: 400 });
     }
   } catch (error) {
-    console.error('Error in bank reconciliation POST:', error);
-    
+    console.error("Error in bank reconciliation POST:", error);
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Validation error',
+          error: "Validation error",
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error',
+        error: error instanceof Error ? error.message : "Internal server error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -296,35 +286,32 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
     const action = body.action;
 
     switch (action) {
-      case 'update_rule': {
+      case "update_rule": {
         const { ruleId, ...ruleData } = body;
-        
+
         if (!ruleId) {
-          return NextResponse.json(
-            { error: 'Rule ID is required' },
-            { status: 400 }
-          );
+          return NextResponse.json({ error: "Rule ID is required" }, { status: 400 });
         }
 
         const { data: rule, error: updateError } = await supabase
-          .from('reconciliation_rules')
+          .from("reconciliation_rules")
           .update(ruleData)
-          .eq('id', ruleId)
-          .eq('created_by', user.id)
+          .eq("id", ruleId)
+          .eq("created_by", user.id)
           .select()
           .single();
 
@@ -335,25 +322,25 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json({
           success: true,
           data: rule,
-          message: 'Reconciliation rule updated successfully',
+          message: "Reconciliation rule updated successfully",
         });
       }
 
-      case 'update_statement_status': {
+      case "update_statement_status": {
         const { statementId, status } = body;
-        
+
         if (!statementId || !status) {
           return NextResponse.json(
-            { error: 'Statement ID and status are required' },
-            { status: 400 }
+            { error: "Statement ID and status are required" },
+            { status: 400 },
           );
         }
 
         const { data: statement, error: updateError } = await supabase
-          .from('bank_statements')
+          .from("bank_statements")
           .update({ import_status: status })
-          .eq('id', statementId)
-          .eq('created_by', user.id)
+          .eq("id", statementId)
+          .eq("created_by", user.id)
           .select()
           .single();
 
@@ -364,24 +351,21 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json({
           success: true,
           data: statement,
-          message: 'Statement status updated successfully',
+          message: "Statement status updated successfully",
         });
       }
 
       default:
-        return NextResponse.json(
-          { error: 'Invalid action' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "Invalid action" }, { status: 400 });
     }
   } catch (error) {
-    console.error('Error in bank reconciliation PUT:', error);
+    console.error("Error in bank reconciliation PUT:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error',
+        error: error instanceof Error ? error.message : "Internal server error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -393,33 +377,30 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
     const { action, ids } = body;
 
     if (!action || !ids || !Array.isArray(ids)) {
-      return NextResponse.json(
-        { error: 'Action and IDs array are required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Action and IDs array are required" }, { status: 400 });
     }
 
     switch (action) {
-      case 'delete_statements': {
+      case "delete_statements": {
         const { error: deleteError } = await supabase
-          .from('bank_statements')
+          .from("bank_statements")
           .delete()
-          .in('id', ids)
-          .eq('created_by', user.id);
+          .in("id", ids)
+          .eq("created_by", user.id);
 
         if (deleteError) {
           throw new Error(`Failed to delete statements: ${deleteError.message}`);
@@ -431,12 +412,12 @@ export async function DELETE(request: NextRequest) {
         });
       }
 
-      case 'delete_rules': {
+      case "delete_rules": {
         const { error: deleteError } = await supabase
-          .from('reconciliation_rules')
+          .from("reconciliation_rules")
           .delete()
-          .in('id', ids)
-          .eq('created_by', user.id);
+          .in("id", ids)
+          .eq("created_by", user.id);
 
         if (deleteError) {
           throw new Error(`Failed to delete rules: ${deleteError.message}`);
@@ -449,20 +430,16 @@ export async function DELETE(request: NextRequest) {
       }
 
       default:
-        return NextResponse.json(
-          { error: 'Invalid action' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "Invalid action" }, { status: 400 });
     }
   } catch (error) {
-    console.error('Error in bank reconciliation DELETE:', error);
+    console.error("Error in bank reconciliation DELETE:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error',
+        error: error instanceof Error ? error.message : "Internal server error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-

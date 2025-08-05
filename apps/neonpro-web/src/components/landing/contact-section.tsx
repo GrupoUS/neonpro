@@ -1,21 +1,34 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useState } from "react";
-import { 
-  Phone, 
-  Mail, 
-  MapPin, 
-  Clock, 
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type { z } from "zod";
+import type { useState } from "react";
+import type {
+  Phone,
+  Mail,
+  MapPin,
+  Clock,
   MessageCircle,
   Calendar,
   Users,
@@ -25,7 +38,7 @@ import {
   Headphones,
   Video,
   FileText,
-  Send
+  Send,
 } from "lucide-react";
 
 const contactSchema = z.object({
@@ -49,7 +62,7 @@ const specialties = [
   "Fisioterapia Dermato-Funcional",
   "Biomedicina Estética",
   "Odontologia Estética",
-  "Outro"
+  "Outro",
 ];
 
 const contactMethods = [
@@ -59,7 +72,7 @@ const contactMethods = [
     value: "(11) 3000-4000",
     description: "Seg-Sex, 8h às 18h",
     action: "tel:+551130004000",
-    actionText: "Ligar Agora"
+    actionText: "Ligar Agora",
   },
   {
     icon: MessageCircle,
@@ -67,7 +80,7 @@ const contactMethods = [
     value: "(11) 99999-8888",
     description: "Atendimento 24/7",
     action: "https://wa.me/5511999998888",
-    actionText: "Conversar"
+    actionText: "Conversar",
   },
   {
     icon: Mail,
@@ -75,7 +88,7 @@ const contactMethods = [
     value: "vendas@neonpro.com.br",
     description: "Resposta em até 2 horas",
     action: "mailto:vendas@neonpro.com.br",
-    actionText: "Enviar Email"
+    actionText: "Enviar Email",
   },
   {
     icon: Video,
@@ -83,8 +96,8 @@ const contactMethods = [
     value: "Agende uma demo",
     description: "30 minutos personalizados",
     action: "#demo",
-    actionText: "Agendar Demo"
-  }
+    actionText: "Agendar Demo",
+  },
 ];
 
 const offices = [
@@ -92,43 +105,44 @@ const offices = [
     city: "São Paulo - Matriz",
     address: "Av. Paulista, 1000 - 15º andar\nBela Vista, São Paulo - SP\nCEP: 01310-100",
     phone: "(11) 3000-4000",
-    hours: "Seg-Sex: 8h às 18h"
+    hours: "Seg-Sex: 8h às 18h",
   },
   {
     city: "Rio de Janeiro",
     address: "Av. Copacabana, 500 - 8º andar\nCopacabana, Rio de Janeiro - RJ\nCEP: 22070-001",
     phone: "(21) 3000-4000",
-    hours: "Seg-Sex: 9h às 17h"
+    hours: "Seg-Sex: 9h às 17h",
   },
   {
     city: "Belo Horizonte",
-    address: "Av. do Contorno, 300 - 12º andar\nSanto Agostinho, Belo Horizonte - MG\nCEP: 30112-000",
+    address:
+      "Av. do Contorno, 300 - 12º andar\nSanto Agostinho, Belo Horizonte - MG\nCEP: 30112-000",
     phone: "(31) 3000-4000",
-    hours: "Seg-Sex: 8h às 17h"
-  }
+    hours: "Seg-Sex: 8h às 17h",
+  },
 ];
 
 const supportServices = [
   {
     icon: Headphones,
     title: "Suporte Técnico 24/7",
-    description: "Equipe especializada sempre disponível"
+    description: "Equipe especializada sempre disponível",
   },
   {
     icon: Users,
     title: "Treinamento Completo",
-    description: "Capacitação da sua equipe inclusa"
+    description: "Capacitação da sua equipe inclusa",
   },
   {
     icon: FileText,
     title: "Migração de Dados",
-    description: "Transferência gratuita do seu sistema atual"
+    description: "Transferência gratuita do seu sistema atual",
   },
   {
     icon: Shield,
     title: "Garantia de Compliance",
-    description: "100% conforme LGPD, ANVISA e CFM"
-  }
+    description: "100% conforme LGPD, ANVISA e CFM",
+  },
 ];
 
 export function ContactSection() {
@@ -149,19 +163,19 @@ export function ContactSection() {
 
   const onSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true);
-    
+
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       setSubmitSuccess(true);
       form.reset();
-      
+
       // Reset success message after 5 seconds
       setTimeout(() => setSubmitSuccess(false), 5000);
     } catch (error) {
-      form.setError("root", { 
-        message: "Erro ao enviar mensagem. Tente novamente." 
+      form.setError("root", {
+        message: "Erro ao enviar mensagem. Tente novamente.",
       });
     } finally {
       setIsSubmitting(false);
@@ -176,17 +190,17 @@ export function ContactSection() {
           <Heart className="h-3 w-3 mr-1" />
           Entre em Contato
         </Badge>
-        
+
         <h2 className="text-4xl font-bold text-slate-900 mb-6">
           Vamos Revolucionar sua{" "}
           <span className="bg-gradient-to-r from-[#6366f1] to-purple-600 bg-clip-text text-transparent">
             Clínica Estética Juntos
           </span>
         </h2>
-        
+
         <p className="text-xl text-slate-700 max-w-3xl mx-auto leading-relaxed">
-          Nossa equipe de especialistas está pronta para desenhar a solução perfeita 
-          para sua clínica. Fale conosco e descubra como podemos transformar seus resultados.
+          Nossa equipe de especialistas está pronta para desenhar a solução perfeita para sua
+          clínica. Fale conosco e descubra como podemos transformar seus resultados.
         </p>
       </div>
 
@@ -202,7 +216,7 @@ export function ContactSection() {
               Preencha o formulário e receba uma proposta sob medida para sua clínica
             </p>
           </CardHeader>
-          
+
           <CardContent>
             {submitSuccess ? (
               <div className="text-center py-12 space-y-4">
@@ -227,7 +241,7 @@ export function ContactSection() {
                         <FormItem>
                           <FormLabel>Nome Completo *</FormLabel>
                           <FormControl>
-                            <Input 
+                            <Input
                               {...field}
                               placeholder="Dr(a). Seu Nome"
                               className="h-12"
@@ -238,7 +252,7 @@ export function ContactSection() {
                         </FormItem>
                       )}
                     />
-                    
+
                     <FormField
                       control={form.control}
                       name="email"
@@ -246,7 +260,7 @@ export function ContactSection() {
                         <FormItem>
                           <FormLabel>Email Profissional *</FormLabel>
                           <FormControl>
-                            <Input 
+                            <Input
                               {...field}
                               type="email"
                               placeholder="seu@email.com"
@@ -268,7 +282,7 @@ export function ContactSection() {
                         <FormItem>
                           <FormLabel>Telefone *</FormLabel>
                           <FormControl>
-                            <Input 
+                            <Input
                               {...field}
                               type="tel"
                               placeholder="(11) 99999-9999"
@@ -280,7 +294,7 @@ export function ContactSection() {
                         </FormItem>
                       )}
                     />
-                    
+
                     <FormField
                       control={form.control}
                       name="clinic"
@@ -288,7 +302,7 @@ export function ContactSection() {
                         <FormItem>
                           <FormLabel>Nome da Clínica *</FormLabel>
                           <FormControl>
-                            <Input 
+                            <Input
                               {...field}
                               placeholder="Clínica Estética..."
                               className="h-12"
@@ -333,7 +347,7 @@ export function ContactSection() {
                       <FormItem>
                         <FormLabel>Conte-nos sobre sua clínica *</FormLabel>
                         <FormControl>
-                          <Textarea 
+                          <Textarea
                             {...field}
                             placeholder="Descreva sua clínica, principais desafios e objetivos..."
                             className="min-h-[120px] resize-none"
@@ -382,30 +396,25 @@ export function ContactSection() {
           {/* Contact Methods */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {contactMethods.map((method, index) => (
-              <Card key={index} className="group hover:shadow-lg transition-all duration-300 border-slate-200 hover:border-[#6366f1]/30">
+              <Card
+                key={index}
+                className="group hover:shadow-lg transition-all duration-300 border-slate-200 hover:border-[#6366f1]/30"
+              >
                 <CardContent className="p-6 text-center space-y-4">
                   <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-[#6366f1] to-purple-600 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
                     <method.icon className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-slate-900 mb-1">
-                      {method.title}
-                    </h4>
-                    <p className="text-lg font-medium text-[#6366f1] mb-1">
-                      {method.value}
-                    </p>
-                    <p className="text-sm text-slate-600 mb-3">
-                      {method.description}
-                    </p>
+                    <h4 className="font-semibold text-slate-900 mb-1">{method.title}</h4>
+                    <p className="text-lg font-medium text-[#6366f1] mb-1">{method.value}</p>
+                    <p className="text-sm text-slate-600 mb-3">{method.description}</p>
                     <Button
                       size="sm"
                       variant="outline"
                       className="w-full border-[#6366f1] text-[#6366f1] hover:bg-[#6366f1] hover:text-white"
                       asChild
                     >
-                      <a href={method.action}>
-                        {method.actionText}
-                      </a>
+                      <a href={method.action}>{method.actionText}</a>
                     </Button>
                   </div>
                 </CardContent>
@@ -427,12 +436,8 @@ export function ContactSection() {
                     <service.icon className="h-4 w-4 text-white" />
                   </div>
                   <div>
-                    <h5 className="font-semibold text-slate-900">
-                      {service.title}
-                    </h5>
-                    <p className="text-sm text-slate-600">
-                      {service.description}
-                    </p>
+                    <h5 className="font-semibold text-slate-900">{service.title}</h5>
+                    <p className="text-sm text-slate-600">{service.description}</p>
                   </div>
                 </div>
               ))}
@@ -443,10 +448,8 @@ export function ContactSection() {
 
       {/* Office Locations */}
       <div className="mb-16">
-        <h3 className="text-2xl font-bold text-slate-900 text-center mb-8">
-          Nossos Escritórios
-        </h3>
-        
+        <h3 className="text-2xl font-bold text-slate-900 text-center mb-8">Nossos Escritórios</h3>
+
         <div className="grid md:grid-cols-3 gap-6">
           {offices.map((office, index) => (
             <Card key={index} className="text-center hover:shadow-lg transition-shadow">
@@ -454,11 +457,9 @@ export function ContactSection() {
                 <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-[#6366f1] to-purple-600 flex items-center justify-center mx-auto">
                   <MapPin className="h-6 w-6 text-white" />
                 </div>
-                
+
                 <div>
-                  <h4 className="font-semibold text-slate-900 mb-2">
-                    {office.city}
-                  </h4>
+                  <h4 className="font-semibold text-slate-900 mb-2">{office.city}</h4>
                   <p className="text-sm text-slate-600 mb-3 whitespace-pre-line">
                     {office.address}
                   </p>
@@ -481,9 +482,7 @@ export function ContactSection() {
 
       {/* Emergency Contact */}
       <div className="text-center bg-slate-50 rounded-2xl p-8">
-        <h3 className="text-xl font-bold text-slate-900 mb-4">
-          Suporte de Emergência 24/7
-        </h3>
+        <h3 className="text-xl font-bold text-slate-900 mb-4">Suporte de Emergência 24/7</h3>
         <p className="text-slate-700 mb-6">
           Para questões técnicas urgentes fora do horário comercial
         </p>

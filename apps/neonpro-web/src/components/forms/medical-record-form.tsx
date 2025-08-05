@@ -1,17 +1,23 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useForm, useFieldArray } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { FileText, Plus, Trash2, Save, AlertTriangle } from 'lucide-react'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import type { useState } from "react";
+import type { useForm, useFieldArray } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type { FileText, Plus, Trash2, Save, AlertTriangle } from "lucide-react";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import {
+import type { Button } from "@/components/ui/button";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Input } from "@/components/ui/input";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
   Form,
   FormControl,
   FormDescription,
@@ -19,24 +25,24 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import {
+} from "@/components/ui/form";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { medicalRecordSchema, type MedicalRecordFormData } from '@/lib/healthcare/schemas'
-import { toast } from 'sonner'
+} from "@/components/ui/select";
+import type { medicalRecordSchema, type MedicalRecordFormData } from "@/lib/healthcare/schemas";
+import type { toast } from "sonner";
 
 interface MedicalRecordFormProps {
-  patientId: string
-  appointmentId: string
-  patientName: string
-  patientAge: number
-  onSubmit: (data: MedicalRecordFormData) => Promise<void>
-  isLoading?: boolean
+  patientId: string;
+  appointmentId: string;
+  patientName: string;
+  patientAge: number;
+  onSubmit: (data: MedicalRecordFormData) => Promise<void>;
+  isLoading?: boolean;
 }
 
 export function MedicalRecordForm({
@@ -45,72 +51,76 @@ export function MedicalRecordForm({
   patientName,
   patientAge,
   onSubmit,
-  isLoading = false
+  isLoading = false,
 }: MedicalRecordFormProps) {
-  const [currentSection, setCurrentSection] = useState(1)
-  const totalSections = 4
+  const [currentSection, setCurrentSection] = useState(1);
+  const totalSections = 4;
 
   const form = useForm<MedicalRecordFormData>({
     resolver: zodResolver(medicalRecordSchema),
     defaultValues: {
       patient_id: patientId,
       appointment_id: appointmentId,
-      chief_complaint: '',
-      diagnosis: '',
-      treatment_plan: '',
+      chief_complaint: "",
+      diagnosis: "",
+      treatment_plan: "",
       medications_prescribed: [],
-      follow_up_instructions: '',
-      notes: '',
+      follow_up_instructions: "",
+      notes: "",
       vital_signs: {
-        blood_pressure: '',
+        blood_pressure: "",
         weight: undefined,
         height: undefined,
-        temperature: undefined
-      }
-    }
-  })
+        temperature: undefined,
+      },
+    },
+  });
 
-  const { fields: medicationFields, append: addMedication, remove: removeMedication } = useFieldArray({
+  const {
+    fields: medicationFields,
+    append: addMedication,
+    remove: removeMedication,
+  } = useFieldArray({
     control: form.control,
-    name: 'medications_prescribed'
-  })
+    name: "medications_prescribed",
+  });
 
   const handleSubmitForm = async (data: MedicalRecordFormData) => {
     try {
-      await onSubmit(data)
-      toast.success('Prontuário salvo com sucesso!', {
-        description: 'As informações médicas foram registradas de forma segura.'
-      })
-      form.reset()
-      setCurrentSection(1)
+      await onSubmit(data);
+      toast.success("Prontuário salvo com sucesso!", {
+        description: "As informações médicas foram registradas de forma segura.",
+      });
+      form.reset();
+      setCurrentSection(1);
     } catch (error) {
-      toast.error('Erro ao salvar prontuário', {
-        description: 'Verifique os dados e tente novamente.'
-      })
+      toast.error("Erro ao salvar prontuário", {
+        description: "Verifique os dados e tente novamente.",
+      });
     }
-  }
+  };
 
   const nextSection = () => {
     if (currentSection < totalSections) {
-      setCurrentSection(currentSection + 1)
+      setCurrentSection(currentSection + 1);
     }
-  }
+  };
 
   const prevSection = () => {
     if (currentSection > 1) {
-      setCurrentSection(currentSection - 1)
+      setCurrentSection(currentSection - 1);
     }
-  }
+  };
 
   const addNewMedication = () => {
     addMedication({
-      medication_name: '',
-      dosage: '',
-      frequency: '',
-      duration: '',
-      instructions: ''
-    })
-  }
+      medication_name: "",
+      dosage: "",
+      frequency: "",
+      duration: "",
+      instructions: "",
+    });
+  };
 
   return (
     <Card className="w-full max-w-5xl mx-auto medical-card">
@@ -122,18 +132,19 @@ export function MedicalRecordForm({
           <div>
             <CardTitle className="text-2xl">Prontuário Médico</CardTitle>
             <CardDescription>
-              Paciente: {patientName} • {patientAge} anos • {format(new Date(), 'dd/MM/yyyy', { locale: ptBR })}
+              Paciente: {patientName} • {patientAge} anos •{" "}
+              {format(new Date(), "dd/MM/yyyy", { locale: ptBR })}
             </CardDescription>
           </div>
         </div>
-        
+
         {/* Progress indicator */}
         <div className="flex items-center gap-2">
           {Array.from({ length: totalSections }, (_, i) => (
             <div
               key={i}
               className={`flex-1 h-2 rounded-full transition-colors ${
-                i + 1 <= currentSection ? 'bg-primary' : 'bg-muted'
+                i + 1 <= currentSection ? "bg-primary" : "bg-muted"
               }`}
             />
           ))}
@@ -146,15 +157,12 @@ export function MedicalRecordForm({
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmitForm)} className="space-y-6">
-            
             {/* Section 1: Chief Complaint & Diagnosis */}
             {currentSection === 1 && (
               <div className="space-y-6">
                 <div className="border-l-4 border-primary pl-4">
                   <h3 className="font-semibold text-lg">Avaliação Inicial</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Queixa principal e diagnóstico
-                  </p>
+                  <p className="text-sm text-muted-foreground">Queixa principal e diagnóstico</p>
                 </div>
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -163,7 +171,8 @@ export function MedicalRecordForm({
                     <div>
                       <h4 className="font-medium text-blue-800">Atenção</h4>
                       <p className="text-sm text-blue-700">
-                        Este prontuário deve seguir as diretrizes CFM e será mantido por no mínimo 20 anos conforme legislação.
+                        Este prontuário deve seguir as diretrizes CFM e será mantido por no mínimo
+                        20 anos conforme legislação.
                       </p>
                     </div>
                   </div>
@@ -182,9 +191,7 @@ export function MedicalRecordForm({
                           className="bg-background min-h-[100px]"
                         />
                       </FormControl>
-                      <FormDescription>
-                        Motivo da consulta relatado pelo paciente
-                      </FormDescription>
+                      <FormDescription>Motivo da consulta relatado pelo paciente</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -217,14 +224,13 @@ export function MedicalRecordForm({
                   </Button>
                 </div>
               </div>
-            )}            {/* Section 2: Treatment Plan */}
+            )}{" "}
+            {/* Section 2: Treatment Plan */}
             {currentSection === 2 && (
               <div className="space-y-6">
                 <div className="border-l-4 border-primary pl-4">
                   <h3 className="font-semibold text-lg">Plano de Tratamento</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Detalhes do tratamento prescrito
-                  </p>
+                  <p className="text-sm text-muted-foreground">Detalhes do tratamento prescrito</p>
                 </div>
 
                 <FormField
@@ -261,11 +267,7 @@ export function MedicalRecordForm({
                         <FormItem>
                           <FormLabel>Pressão Arterial</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="120/80"
-                              {...field}
-                              className="bg-background"
-                            />
+                            <Input placeholder="120/80" {...field} className="bg-background" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -284,7 +286,11 @@ export function MedicalRecordForm({
                               step="0.1"
                               placeholder="70.5"
                               {...field}
-                              onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                              onChange={(e) =>
+                                field.onChange(
+                                  e.target.value ? parseFloat(e.target.value) : undefined,
+                                )
+                              }
                               className="bg-background"
                             />
                           </FormControl>
@@ -305,7 +311,11 @@ export function MedicalRecordForm({
                               step="0.1"
                               placeholder="170"
                               {...field}
-                              onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                              onChange={(e) =>
+                                field.onChange(
+                                  e.target.value ? parseFloat(e.target.value) : undefined,
+                                )
+                              }
                               className="bg-background"
                             />
                           </FormControl>
@@ -326,7 +336,11 @@ export function MedicalRecordForm({
                               step="0.1"
                               placeholder="36.5"
                               {...field}
-                              onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                              onChange={(e) =>
+                                field.onChange(
+                                  e.target.value ? parseFloat(e.target.value) : undefined,
+                                )
+                              }
                               className="bg-background"
                             />
                           </FormControl>
@@ -346,7 +360,8 @@ export function MedicalRecordForm({
                   </Button>
                 </div>
               </div>
-            )}            {/* Section 3: Medications */}
+            )}{" "}
+            {/* Section 3: Medications */}
             {currentSection === 3 && (
               <div className="space-y-6">
                 <div className="border-l-4 border-primary pl-4">
@@ -501,7 +516,8 @@ export function MedicalRecordForm({
                   </Button>
                 </div>
               </div>
-            )}            {/* Section 4: Follow-up & Notes */}
+            )}{" "}
+            {/* Section 4: Follow-up & Notes */}
             {currentSection === 4 && (
               <div className="space-y-6">
                 <div className="border-l-4 border-primary pl-4">
@@ -521,10 +537,10 @@ export function MedicalRecordForm({
                         <Input
                           type="date"
                           {...field}
-                          value={field.value ? format(field.value, 'yyyy-MM-dd') : ''}
+                          value={field.value ? format(field.value, "yyyy-MM-dd") : ""}
                           onChange={(e) => {
-                            const date = e.target.value ? new Date(e.target.value) : undefined
-                            field.onChange(date)
+                            const date = e.target.value ? new Date(e.target.value) : undefined;
+                            field.onChange(date);
                           }}
                           className="bg-background"
                         />
@@ -585,8 +601,9 @@ export function MedicalRecordForm({
                     <div>
                       <h4 className="font-medium text-amber-800">Importante</h4>
                       <p className="text-sm text-amber-700">
-                        Este prontuário será armazenado de forma segura e confidencial conforme a Lei 13.787/2018 
-                        e resolução CFM nº 1.821/2007. Os dados serão mantidos por no mínimo 20 anos.
+                        Este prontuário será armazenado de forma segura e confidencial conforme a
+                        Lei 13.787/2018 e resolução CFM nº 1.821/2007. Os dados serão mantidos por
+                        no mínimo 20 anos.
                       </p>
                     </div>
                   </div>
@@ -596,13 +613,9 @@ export function MedicalRecordForm({
                   <Button type="button" variant="outline" onClick={prevSection}>
                     Seção Anterior
                   </Button>
-                  <Button 
-                    type="submit" 
-                    disabled={isLoading}
-                    className="flex items-center gap-2"
-                  >
+                  <Button type="submit" disabled={isLoading} className="flex items-center gap-2">
                     <Save className="w-4 h-4" />
-                    {isLoading ? 'Salvando...' : 'Salvar Prontuário'}
+                    {isLoading ? "Salvando..." : "Salvar Prontuário"}
                   </Button>
                 </div>
               </div>
@@ -611,5 +624,5 @@ export function MedicalRecordForm({
         </Form>
       </CardContent>
     </Card>
-  )
+  );
 }

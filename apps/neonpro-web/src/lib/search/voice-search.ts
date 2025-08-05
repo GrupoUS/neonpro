@@ -4,11 +4,11 @@
  * Advanced voice search with speech recognition, NLP processing, and voice commands
  */
 
-import { nlpEngine } from './nlp-engine';
-import { comprehensiveSearch } from './comprehensive-search';
-import { searchSuggestions } from './search-suggestions';
-import type { SearchResult, ComprehensiveSearchResponse } from './comprehensive-search';
-import type { SuggestionContext } from './search-suggestions';
+import type { nlpEngine } from "./nlp-engine";
+import type { comprehensiveSearch } from "./comprehensive-search";
+import type { searchSuggestions } from "./search-suggestions";
+import type { SearchResult, ComprehensiveSearchResponse } from "./comprehensive-search";
+import type { SuggestionContext } from "./search-suggestions";
 
 // Voice search types
 export interface VoiceSearchOptions {
@@ -40,7 +40,7 @@ export interface VoiceCommand {
   parameters?: Record<string, any>;
   description: string;
   examples: string[];
-  category: 'search' | 'navigation' | 'action' | 'filter' | 'system';
+  category: "search" | "navigation" | "action" | "filter" | "system";
 }
 
 export interface VoiceSearchSession {
@@ -74,7 +74,7 @@ export interface VoiceQuery {
 }
 
 export interface VoiceError {
-  type: 'recognition' | 'processing' | 'network' | 'permission' | 'timeout';
+  type: "recognition" | "processing" | "network" | "permission" | "timeout";
   message: string;
   timestamp: number;
   context?: Record<string, any>;
@@ -121,10 +121,10 @@ export class VoiceSearch {
   private audioChunks: Blob[] = [];
   private silenceTimer: NodeJS.Timeout | null = null;
   private options: VoiceSearchOptions;
-  
+
   constructor(options: VoiceSearchOptions = {}) {
     this.options = {
-      language: 'pt-BR',
+      language: "pt-BR",
       continuous: true,
       interimResults: true,
       maxAlternatives: 3,
@@ -132,129 +132,129 @@ export class VoiceSearch {
       autoStop: true,
       timeout: 30000,
       confidenceThreshold: 0.5,
-      ...options
+      ...options,
     };
-    
+
     this.initializeRecognition();
     this.initializeCommands();
   }
-  
+
   /**
    * Initialize speech recognition
    */
   private initializeRecognition(): void {
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      console.warn('Speech recognition not supported in this browser');
+    if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
+      console.warn("Speech recognition not supported in this browser");
       return;
     }
-    
+
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     this.recognition = new SpeechRecognition();
-    
+
     // Configure recognition
     this.recognition.continuous = this.options.continuous!;
     this.recognition.interimResults = this.options.interimResults!;
     this.recognition.lang = this.options.language!;
     this.recognition.maxAlternatives = this.options.maxAlternatives!;
-    
+
     // Event handlers
     this.recognition.onstart = () => {
       this.isListening = true;
-      this.emit('start');
+      this.emit("start");
     };
-    
+
     this.recognition.onresult = (event) => {
       this.handleRecognitionResult(event);
     };
-    
+
     this.recognition.onerror = (event) => {
       this.handleRecognitionError(event);
     };
-    
+
     this.recognition.onend = () => {
       this.isListening = false;
-      this.emit('end');
+      this.emit("end");
     };
   }
-  
+
   /**
    * Initialize voice commands
    */
   private initializeCommands(): void {
     const defaultCommands: VoiceCommand[] = [
       {
-        id: 'search_patients',
-        patterns: ['buscar paciente', 'procurar paciente', 'encontrar paciente'],
-        action: 'search',
-        parameters: { type: 'patient' },
-        description: 'Buscar pacientes',
-        examples: ['Buscar paciente João Silva', 'Procurar paciente com diabetes'],
-        category: 'search'
+        id: "search_patients",
+        patterns: ["buscar paciente", "procurar paciente", "encontrar paciente"],
+        action: "search",
+        parameters: { type: "patient" },
+        description: "Buscar pacientes",
+        examples: ["Buscar paciente João Silva", "Procurar paciente com diabetes"],
+        category: "search",
       },
       {
-        id: 'search_appointments',
-        patterns: ['buscar consulta', 'procurar agendamento', 'encontrar consulta'],
-        action: 'search',
-        parameters: { type: 'appointment' },
-        description: 'Buscar consultas e agendamentos',
-        examples: ['Buscar consulta hoje', 'Procurar agendamento Dr. Silva'],
-        category: 'search'
+        id: "search_appointments",
+        patterns: ["buscar consulta", "procurar agendamento", "encontrar consulta"],
+        action: "search",
+        parameters: { type: "appointment" },
+        description: "Buscar consultas e agendamentos",
+        examples: ["Buscar consulta hoje", "Procurar agendamento Dr. Silva"],
+        category: "search",
       },
       {
-        id: 'filter_by_date',
-        patterns: ['filtrar por data', 'mostrar de hoje', 'mostrar desta semana'],
-        action: 'filter',
-        parameters: { filterType: 'date' },
-        description: 'Filtrar resultados por data',
-        examples: ['Filtrar por data hoje', 'Mostrar consultas desta semana'],
-        category: 'filter'
+        id: "filter_by_date",
+        patterns: ["filtrar por data", "mostrar de hoje", "mostrar desta semana"],
+        action: "filter",
+        parameters: { filterType: "date" },
+        description: "Filtrar resultados por data",
+        examples: ["Filtrar por data hoje", "Mostrar consultas desta semana"],
+        category: "filter",
       },
       {
-        id: 'clear_search',
-        patterns: ['limpar busca', 'limpar pesquisa', 'resetar filtros'],
-        action: 'clear',
-        description: 'Limpar busca e filtros',
-        examples: ['Limpar busca', 'Resetar filtros'],
-        category: 'action'
+        id: "clear_search",
+        patterns: ["limpar busca", "limpar pesquisa", "resetar filtros"],
+        action: "clear",
+        description: "Limpar busca e filtros",
+        examples: ["Limpar busca", "Resetar filtros"],
+        category: "action",
       },
       {
-        id: 'help_voice',
-        patterns: ['ajuda', 'comandos de voz', 'o que posso falar'],
-        action: 'help',
-        description: 'Mostrar comandos de voz disponíveis',
-        examples: ['Ajuda', 'Quais comandos posso usar?'],
-        category: 'system'
+        id: "help_voice",
+        patterns: ["ajuda", "comandos de voz", "o que posso falar"],
+        action: "help",
+        description: "Mostrar comandos de voz disponíveis",
+        examples: ["Ajuda", "Quais comandos posso usar?"],
+        category: "system",
       },
       {
-        id: 'stop_listening',
-        patterns: ['parar', 'parar de escutar', 'cancelar'],
-        action: 'stop',
-        description: 'Parar reconhecimento de voz',
-        examples: ['Parar', 'Cancelar escuta'],
-        category: 'system'
-      }
+        id: "stop_listening",
+        patterns: ["parar", "parar de escutar", "cancelar"],
+        action: "stop",
+        description: "Parar reconhecimento de voz",
+        examples: ["Parar", "Cancelar escuta"],
+        category: "system",
+      },
     ];
-    
-    defaultCommands.forEach(command => {
+
+    defaultCommands.forEach((command) => {
       this.commands.set(command.id, command);
     });
   }
-  
+
   /**
    * Start voice search session
    */
   async startSession(userId?: string): Promise<string> {
     if (this.currentSession) {
-      throw new Error('Voice search session already active');
+      throw new Error("Voice search session already active");
     }
-    
+
     // Check permissions
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
     } catch (error) {
-      throw new Error('Microphone permission denied');
+      throw new Error("Microphone permission denied");
     }
-    
+
     // Create new session
     this.currentSession = {
       id: `voice_session_${Date.now()}`,
@@ -265,13 +265,13 @@ export class VoiceSearch {
       successRate: 0,
       averageConfidence: 0,
       commandsUsed: [],
-      errors: []
+      errors: [],
     };
-    
-    this.emit('sessionStart', this.currentSession);
+
+    this.emit("sessionStart", this.currentSession);
     return this.currentSession.id;
   }
-  
+
   /**
    * End voice search session
    */
@@ -279,50 +279,50 @@ export class VoiceSearch {
     if (!this.currentSession) {
       return null;
     }
-    
+
     // Stop listening if active
     if (this.isListening) {
       this.stopListening();
     }
-    
+
     // Calculate session metrics
     const session = this.currentSession;
     session.endTime = Date.now();
     session.totalDuration = session.endTime - session.startTime;
-    
+
     if (session.queries.length > 0) {
-      const successfulQueries = session.queries.filter(q => q.success).length;
+      const successfulQueries = session.queries.filter((q) => q.success).length;
       session.successRate = successfulQueries / session.queries.length;
-      
+
       const totalConfidence = session.queries.reduce((sum, q) => sum + q.confidence, 0);
       session.averageConfidence = totalConfidence / session.queries.length;
     }
-    
+
     // Save session to database
     await this.saveSession(session);
-    
+
     const completedSession = { ...session };
     this.currentSession = null;
-    
-    this.emit('sessionEnd', completedSession);
+
+    this.emit("sessionEnd", completedSession);
     return completedSession;
   }
-  
+
   /**
    * Start listening for voice input
    */
   async startListening(): Promise<void> {
     if (!this.recognition) {
-      throw new Error('Speech recognition not available');
+      throw new Error("Speech recognition not available");
     }
-    
+
     if (this.isListening) {
       return;
     }
-    
+
     try {
       this.recognition.start();
-      
+
       // Set timeout if configured
       if (this.options.timeout) {
         setTimeout(() => {
@@ -335,7 +335,7 @@ export class VoiceSearch {
       throw new Error(`Failed to start voice recognition: ${error}`);
     }
   }
-  
+
   /**
    * Stop listening for voice input
    */
@@ -343,13 +343,13 @@ export class VoiceSearch {
     if (this.recognition && this.isListening) {
       this.recognition.stop();
     }
-    
+
     if (this.silenceTimer) {
       clearTimeout(this.silenceTimer);
       this.silenceTimer = null;
     }
   }
-  
+
   /**
    * Handle speech recognition result
    */
@@ -358,31 +358,35 @@ export class VoiceSearch {
     const transcript = result[0].transcript.trim();
     const confidence = result[0].confidence;
     const isFinal = result.isFinal;
-    
+
     // Get alternatives
     const alternatives: Array<{ transcript: string; confidence: number }> = [];
     for (let i = 0; i < result.length; i++) {
       alternatives.push({
         transcript: result[i].transcript.trim(),
-        confidence: result[i].confidence
+        confidence: result[i].confidence,
       });
     }
-    
+
     const recognitionResult: VoiceRecognitionResult = {
       transcript,
       confidence,
       alternatives,
       isFinal,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
-    
-    this.emit('recognition', recognitionResult);
-    
+
+    this.emit("recognition", recognitionResult);
+
     // Process final results
     if (isFinal && confidence >= this.options.confidenceThreshold!) {
-      await this.processVoiceInput(transcript, confidence, alternatives.map(a => a.transcript));
+      await this.processVoiceInput(
+        transcript,
+        confidence,
+        alternatives.map((a) => a.transcript),
+      );
     }
-    
+
     // Handle silence detection for auto-stop
     if (this.options.autoStop && isFinal) {
       this.silenceTimer = setTimeout(() => {
@@ -390,7 +394,7 @@ export class VoiceSearch {
       }, 2000); // Stop after 2 seconds of silence
     }
   }
-  
+
   /**
    * Handle speech recognition error
    */
@@ -399,49 +403,49 @@ export class VoiceSearch {
       type: this.mapErrorType(event.error),
       message: event.error,
       timestamp: Date.now(),
-      context: { event: event.error }
+      context: { event: event.error },
     };
-    
+
     if (this.currentSession) {
       this.currentSession.errors.push(error);
     }
-    
-    this.emit('error', error);
+
+    this.emit("error", error);
   }
-  
+
   /**
    * Map speech recognition error to our error types
    */
-  private mapErrorType(error: string): VoiceError['type'] {
+  private mapErrorType(error: string): VoiceError["type"] {
     switch (error) {
-      case 'network':
-        return 'network';
-      case 'not-allowed':
-      case 'service-not-allowed':
-        return 'permission';
-      case 'aborted':
-      case 'audio-capture':
-        return 'recognition';
+      case "network":
+        return "network";
+      case "not-allowed":
+      case "service-not-allowed":
+        return "permission";
+      case "aborted":
+      case "audio-capture":
+        return "recognition";
       default:
-        return 'processing';
+        return "processing";
     }
   }
-  
+
   /**
    * Process voice input (transcript)
    */
   private async processVoiceInput(
     transcript: string,
     confidence: number,
-    alternatives: string[]
+    alternatives: string[],
   ): Promise<void> {
     if (!this.currentSession) {
-      throw new Error('No active voice search session');
+      throw new Error("No active voice search session");
     }
-    
+
     this.isProcessing = true;
     const startTime = Date.now();
-    
+
     try {
       // Create voice query
       const query: VoiceQuery = {
@@ -453,9 +457,9 @@ export class VoiceSearch {
         processedQuery: transcript,
         timestamp: startTime,
         duration: 0,
-        success: false
+        success: false,
       };
-      
+
       // Check for voice commands first
       const command = this.detectCommand(transcript);
       if (command) {
@@ -465,18 +469,18 @@ export class VoiceSearch {
         // Process as search query
         await this.executeSearch(transcript, query);
       }
-      
+
       // Update query duration and success
       query.duration = Date.now() - startTime;
       query.success = !query.errorMessage;
-      
+
       // Add to session
       this.currentSession.queries.push(query);
-      
-      this.emit('queryProcessed', query);
+
+      this.emit("queryProcessed", query);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+
       const query: VoiceQuery = {
         id: `voice_query_${Date.now()}`,
         sessionId: this.currentSession.id,
@@ -487,22 +491,22 @@ export class VoiceSearch {
         timestamp: startTime,
         duration: Date.now() - startTime,
         success: false,
-        errorMessage
+        errorMessage,
       };
-      
+
       this.currentSession.queries.push(query);
-      this.emit('queryError', { query, error: errorMessage });
+      this.emit("queryError", { query, error: errorMessage });
     } finally {
       this.isProcessing = false;
     }
   }
-  
+
   /**
    * Detect voice command in transcript
    */
   private detectCommand(transcript: string): VoiceCommand | null {
     const normalizedTranscript = transcript.toLowerCase().trim();
-    
+
     for (const command of this.commands.values()) {
       for (const pattern of command.patterns) {
         if (normalizedTranscript.includes(pattern.toLowerCase())) {
@@ -510,25 +514,25 @@ export class VoiceSearch {
         }
       }
     }
-    
+
     return null;
   }
-  
+
   /**
    * Execute voice command
    */
   private async executeCommand(
     command: VoiceCommand,
     transcript: string,
-    query: VoiceQuery
+    query: VoiceQuery,
   ): Promise<void> {
     // Track command usage
     if (this.currentSession && !this.currentSession.commandsUsed.includes(command.id)) {
       this.currentSession.commandsUsed.push(command.id);
     }
-    
+
     switch (command.action) {
-      case 'search':
+      case "search":
         // Extract search terms after command pattern
         const searchTerms = this.extractSearchTerms(transcript, command.patterns);
         if (searchTerms) {
@@ -536,63 +540,61 @@ export class VoiceSearch {
           await this.executeSearch(searchTerms, query, command.parameters);
         }
         break;
-        
-      case 'filter':
-        this.emit('filterCommand', { command, transcript, parameters: command.parameters });
+
+      case "filter":
+        this.emit("filterCommand", { command, transcript, parameters: command.parameters });
         break;
-        
-      case 'clear':
-        this.emit('clearCommand', { command });
+
+      case "clear":
+        this.emit("clearCommand", { command });
         break;
-        
-      case 'help':
-        this.emit('helpCommand', { commands: Array.from(this.commands.values()) });
+
+      case "help":
+        this.emit("helpCommand", { commands: Array.from(this.commands.values()) });
         break;
-        
-      case 'stop':
+
+      case "stop":
         this.stopListening();
         break;
-        
+
       default:
-        this.emit('customCommand', { command, transcript });
+        this.emit("customCommand", { command, transcript });
     }
   }
-  
+
   /**
    * Extract search terms from transcript after removing command patterns
    */
   private extractSearchTerms(transcript: string, patterns: string[]): string | null {
     const normalizedTranscript = transcript.toLowerCase();
-    
+
     for (const pattern of patterns) {
       const patternIndex = normalizedTranscript.indexOf(pattern.toLowerCase());
       if (patternIndex !== -1) {
-        const searchTerms = transcript
-          .substring(patternIndex + pattern.length)
-          .trim();
-        
+        const searchTerms = transcript.substring(patternIndex + pattern.length).trim();
+
         if (searchTerms.length > 0) {
           return searchTerms;
         }
       }
     }
-    
+
     return null;
   }
-  
+
   /**
    * Execute search with voice input
    */
   private async executeSearch(
     searchQuery: string,
     query: VoiceQuery,
-    parameters?: Record<string, any>
+    parameters?: Record<string, any>,
   ): Promise<void> {
     try {
       // Process with NLP
       const nlpResults = await nlpEngine.processQuery(searchQuery);
       query.nlpResults = nlpResults;
-      
+
       // Perform comprehensive search
       const searchOptions = {
         query: searchQuery,
@@ -600,75 +602,75 @@ export class VoiceSearch {
         dataTypes: parameters?.type ? [parameters.type] : undefined,
         limit: 10,
         includeHighlights: true,
-        includeRelated: true
+        includeRelated: true,
       };
-      
+
       const searchResults = await comprehensiveSearch.search(searchOptions);
       query.searchResults = searchResults;
-      
-      this.emit('searchResults', { query, results: searchResults });
+
+      this.emit("searchResults", { query, results: searchResults });
     } catch (error) {
-      query.errorMessage = error instanceof Error ? error.message : 'Search failed';
+      query.errorMessage = error instanceof Error ? error.message : "Search failed";
       throw error;
     }
   }
-  
+
   /**
    * Add custom voice command
    */
   addCommand(command: VoiceCommand): void {
     this.commands.set(command.id, command);
   }
-  
+
   /**
    * Remove voice command
    */
   removeCommand(commandId: string): boolean {
     return this.commands.delete(commandId);
   }
-  
+
   /**
    * Get all available commands
    */
   getCommands(): VoiceCommand[] {
     return Array.from(this.commands.values());
   }
-  
+
   /**
    * Get commands by category
    */
-  getCommandsByCategory(category: VoiceCommand['category']): VoiceCommand[] {
-    return Array.from(this.commands.values()).filter(cmd => cmd.category === category);
+  getCommandsByCategory(category: VoiceCommand["category"]): VoiceCommand[] {
+    return Array.from(this.commands.values()).filter((cmd) => cmd.category === category);
   }
-  
+
   /**
    * Check if speech recognition is supported
    */
   isSupported(): boolean {
-    return 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
+    return "webkitSpeechRecognition" in window || "SpeechRecognition" in window;
   }
-  
+
   /**
    * Check if currently listening
    */
   getIsListening(): boolean {
     return this.isListening;
   }
-  
+
   /**
    * Check if currently processing
    */
   getIsProcessing(): boolean {
     return this.isProcessing;
   }
-  
+
   /**
    * Get current session
    */
   getCurrentSession(): VoiceSearchSession | null {
     return this.currentSession;
   }
-  
+
   /**
    * Save session to database
    */
@@ -676,16 +678,19 @@ export class VoiceSearch {
     try {
       // This would typically save to Supabase
       // Implementation depends on your database schema
-      console.log('Saving voice search session:', session.id);
+      console.log("Saving voice search session:", session.id);
     } catch (error) {
-      console.error('Failed to save voice search session:', error);
+      console.error("Failed to save voice search session:", error);
     }
   }
-  
+
   /**
    * Get voice search analytics
    */
-  async getAnalytics(userId?: string, dateRange?: { start: Date; end: Date }): Promise<VoiceSearchAnalytics> {
+  async getAnalytics(
+    userId?: string,
+    dateRange?: { start: Date; end: Date },
+  ): Promise<VoiceSearchAnalytics> {
     // This would typically query from Supabase
     // Placeholder implementation
     return {
@@ -699,11 +704,11 @@ export class VoiceSearch {
       confidenceDistribution: {
         high: 0,
         medium: 0,
-        low: 0
-      }
+        low: 0,
+      },
     };
   }
-  
+
   /**
    * Event system
    */
@@ -713,7 +718,7 @@ export class VoiceSearch {
     }
     this.eventListeners.get(event)!.push(callback);
   }
-  
+
   off(event: string, callback: Function): void {
     const listeners = this.eventListeners.get(event);
     if (listeners) {
@@ -723,28 +728,28 @@ export class VoiceSearch {
       }
     }
   }
-  
+
   private emit(event: string, data?: any): void {
     const listeners = this.eventListeners.get(event);
     if (listeners) {
-      listeners.forEach(callback => callback(data));
+      listeners.forEach((callback) => callback(data));
     }
   }
-  
+
   /**
    * Cleanup resources
    */
   destroy(): void {
     this.stopListening();
-    
+
     if (this.currentSession) {
       this.endSession();
     }
-    
+
     if (this.audioContext) {
       this.audioContext.close();
     }
-    
+
     this.eventListeners.clear();
     this.commands.clear();
   }
@@ -805,5 +810,5 @@ interface SpeechRecognitionAlternative {
 
 declare var SpeechRecognition: {
   prototype: SpeechRecognition;
-  new(): SpeechRecognition;
+  new (): SpeechRecognition;
 };

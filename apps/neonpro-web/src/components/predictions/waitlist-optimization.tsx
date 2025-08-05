@@ -3,34 +3,46 @@
  * Intelligent waitlist management with demand forecasting and slot optimization
  */
 
-'use client';
+"use client";
 
-import React, { useState, useMemo } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Progress } from '@/components/ui/progress';
-import { Switch } from '@/components/ui/switch';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import React, { useState, useMemo } from "react";
+import type { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Input } from "@/components/ui/input";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Progress } from "@/components/ui/progress";
+import type { Switch } from "@/components/ui/switch";
+import type {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   LineChart,
   Line,
   AreaChart,
   Area,
-  Cell
-} from 'recharts';
-import { 
+  Cell,
+} from "recharts";
+import type {
   Clock,
   Users,
   TrendingUp,
@@ -49,14 +61,14 @@ import {
   Phone,
   MessageSquare,
   Mail,
-  Bell
-} from 'lucide-react';
+  Bell,
+} from "lucide-react";
 
 interface WaitlistEntry {
   id: string;
   patientId: string;
   patientName: string;
-  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+  priority: "LOW" | "MEDIUM" | "HIGH" | "URGENT";
   requestedDate: Date;
   preferredTimeSlots: string[];
   specialty: string;
@@ -65,14 +77,18 @@ interface WaitlistEntry {
   noShowRisk: number;
   contactAttempts: number;
   lastContact: Date | null;
-  status: 'WAITING' | 'CONTACTED' | 'SCHEDULED' | 'CANCELLED';
+  status: "WAITING" | "CONTACTED" | "SCHEDULED" | "CANCELLED";
   createdAt: Date;
 }
 
 interface OptimizationSuggestion {
-  type: 'SLOT_REALLOCATION' | 'PRIORITY_ADJUSTMENT' | 'PROACTIVE_CONTACT' | 'CANCELLATION_PREDICTION';
+  type:
+    | "SLOT_REALLOCATION"
+    | "PRIORITY_ADJUSTMENT"
+    | "PROACTIVE_CONTACT"
+    | "CANCELLATION_PREDICTION";
   description: string;
-  impact: 'HIGH' | 'MEDIUM' | 'LOW';
+  impact: "HIGH" | "MEDIUM" | "LOW";
   estimatedReduction: number; // days
   affectedPatients: number;
   confidence: number;
@@ -112,77 +128,89 @@ interface WaitlistAnalytics {
 interface WaitlistOptimizationProps {
   waitlistEntries: WaitlistEntry[];
   onUpdateEntry: (id: string, updates: Partial<WaitlistEntry>) => void;
-  onContactPatient: (patientId: string, method: 'SMS' | 'PHONE' | 'EMAIL') => void;
+  onContactPatient: (patientId: string, method: "SMS" | "PHONE" | "EMAIL") => void;
   onScheduleAppointment: (entryId: string, appointmentData: any) => void;
 }
 
 const PRIORITY_COLORS = {
-  LOW: '#10B981',
-  MEDIUM: '#F59E0B', 
-  HIGH: '#EF4444',
-  URGENT: '#DC2626'
+  LOW: "#10B981",
+  MEDIUM: "#F59E0B",
+  HIGH: "#EF4444",
+  URGENT: "#DC2626",
 };
 
 const PRIORITY_LABELS = {
-  LOW: 'Low',
-  MEDIUM: 'Medium',
-  HIGH: 'High',
-  URGENT: 'Urgent'
+  LOW: "Low",
+  MEDIUM: "Medium",
+  HIGH: "High",
+  URGENT: "Urgent",
 };
 
 export function WaitlistOptimization({
   waitlistEntries,
   onUpdateEntry,
   onContactPatient,
-  onScheduleAppointment
+  onScheduleAppointment,
 }: WaitlistOptimizationProps) {
   const [selectedEntry, setSelectedEntry] = useState<WaitlistEntry | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'optimization' | 'analytics' | 'settings'>('overview');
-  const [priorityFilter, setPriorityFilter] = useState<string>('ALL');
-  const [specialtyFilter, setSpecialtyFilter] = useState<string>('ALL');
-  const [sortBy, setSortBy] = useState<'waitTime' | 'priority' | 'risk' | 'date'>('waitTime');
+  const [activeTab, setActiveTab] = useState<
+    "overview" | "optimization" | "analytics" | "settings"
+  >("overview");
+  const [priorityFilter, setPriorityFilter] = useState<string>("ALL");
+  const [specialtyFilter, setSpecialtyFilter] = useState<string>("ALL");
+  const [sortBy, setSortBy] = useState<"waitTime" | "priority" | "risk" | "date">("waitTime");
   const [showOptimizations, setShowOptimizations] = useState(false);
 
   /**
    * Calculate waitlist analytics
    */
   const analytics = useMemo((): WaitlistAnalytics => {
-    const activeEntries = waitlistEntries.filter(e => e.status === 'WAITING' || e.status === 'CONTACTED');
-    
+    const activeEntries = waitlistEntries.filter(
+      (e) => e.status === "WAITING" || e.status === "CONTACTED",
+    );
+
     // Basic metrics
-    const averageWaitTime = activeEntries.reduce((sum, entry) => sum + entry.estimatedWaitTime, 0) / activeEntries.length || 0;
+    const averageWaitTime =
+      activeEntries.reduce((sum, entry) => sum + entry.estimatedWaitTime, 0) /
+        activeEntries.length || 0;
     const totalWaiting = activeEntries.length;
-    
+
     // Priority distribution
-    const priorityGroups = activeEntries.reduce((acc, entry) => {
-      if (!acc[entry.priority]) {
-        acc[entry.priority] = [];
-      }
-      acc[entry.priority].push(entry);
-      return acc;
-    }, {} as Record<string, WaitlistEntry[]>);
+    const priorityGroups = activeEntries.reduce(
+      (acc, entry) => {
+        if (!acc[entry.priority]) {
+          acc[entry.priority] = [];
+        }
+        acc[entry.priority].push(entry);
+        return acc;
+      },
+      {} as Record<string, WaitlistEntry[]>,
+    );
 
     const priorityDistribution = Object.entries(priorityGroups).map(([priority, entries]) => ({
       priority: PRIORITY_LABELS[priority as keyof typeof PRIORITY_LABELS],
       count: entries.length,
       avgWait: entries.reduce((sum, e) => sum + e.estimatedWaitTime, 0) / entries.length,
-      color: PRIORITY_COLORS[priority as keyof typeof PRIORITY_COLORS]
+      color: PRIORITY_COLORS[priority as keyof typeof PRIORITY_COLORS],
     }));
 
     // Specialty breakdown
-    const specialtyGroups = activeEntries.reduce((acc, entry) => {
-      if (!acc[entry.specialty]) {
-        acc[entry.specialty] = [];
-      }
-      acc[entry.specialty].push(entry);
-      return acc;
-    }, {} as Record<string, WaitlistEntry[]>);
+    const specialtyGroups = activeEntries.reduce(
+      (acc, entry) => {
+        if (!acc[entry.specialty]) {
+          acc[entry.specialty] = [];
+        }
+        acc[entry.specialty].push(entry);
+        return acc;
+      },
+      {} as Record<string, WaitlistEntry[]>,
+    );
 
     const specialtyBreakdown = Object.entries(specialtyGroups).map(([specialty, entries]) => ({
       specialty,
       waiting: entries.length,
       avgWait: entries.reduce((sum, e) => sum + e.estimatedWaitTime, 0) / entries.length,
-      capacity: 100 // Mock capacity
+      capacity: 100, // Mock capacity
     }));
 
     // Wait time projection (mock data for demo)
@@ -190,20 +218,20 @@ export function WaitlistOptimization({
       const date = new Date();
       date.setDate(date.getDate() + i);
       return {
-        date: date.toISOString().split('T')[0],
+        date: date.toISOString().split("T")[0],
         projected: Math.max(0, averageWaitTime - i * 0.5 + Math.random() * 2),
         historical: Math.max(0, averageWaitTime + Math.random() * 3),
-        optimized: Math.max(0, averageWaitTime - i * 0.8 + Math.random() * 1)
+        optimized: Math.max(0, averageWaitTime - i * 0.8 + Math.random() * 1),
       };
     });
 
     // Conversion rates
     const conversionRates = [
-      { stage: 'Waitlist Entry', rate: 100, count: totalWaiting },
-      { stage: 'First Contact', rate: 85, count: Math.round(totalWaiting * 0.85) },
-      { stage: 'Response', rate: 68, count: Math.round(totalWaiting * 0.68) },
-      { stage: 'Scheduled', rate: 78, count: Math.round(totalWaiting * 0.78) },
-      { stage: 'Attended', rate: 82, count: Math.round(totalWaiting * 0.82) }
+      { stage: "Waitlist Entry", rate: 100, count: totalWaiting },
+      { stage: "First Contact", rate: 85, count: Math.round(totalWaiting * 0.85) },
+      { stage: "Response", rate: 68, count: Math.round(totalWaiting * 0.68) },
+      { stage: "Scheduled", rate: 78, count: Math.round(totalWaiting * 0.78) },
+      { stage: "Attended", rate: 82, count: Math.round(totalWaiting * 0.82) },
     ];
 
     return {
@@ -214,7 +242,7 @@ export function WaitlistOptimization({
       priorityDistribution,
       specialtyBreakdown,
       waitTimeProjection,
-      conversionRates
+      conversionRates,
     };
   }, [waitlistEntries]);
 
@@ -225,70 +253,70 @@ export function WaitlistOptimization({
     const suggestions: OptimizationSuggestion[] = [];
 
     // High-risk patients that need immediate attention
-    const highRiskPatients = waitlistEntries.filter(e => 
-      e.noShowRisk > 70 && e.status === 'WAITING'
+    const highRiskPatients = waitlistEntries.filter(
+      (e) => e.noShowRisk > 70 && e.status === "WAITING",
     );
-    
+
     if (highRiskPatients.length > 0) {
       suggestions.push({
-        type: 'PROACTIVE_CONTACT',
+        type: "PROACTIVE_CONTACT",
         description: `${highRiskPatients.length} high-risk patients need immediate contact to prevent dropout`,
-        impact: 'HIGH',
+        impact: "HIGH",
         estimatedReduction: 3,
         affectedPatients: highRiskPatients.length,
         confidence: 85,
-        actionRequired: 'Contact high-risk patients within 24 hours'
+        actionRequired: "Contact high-risk patients within 24 hours",
       });
     }
 
     // Long-waiting urgent patients
-    const urgentLongWait = waitlistEntries.filter(e => 
-      e.priority === 'URGENT' && e.estimatedWaitTime > 7
+    const urgentLongWait = waitlistEntries.filter(
+      (e) => e.priority === "URGENT" && e.estimatedWaitTime > 7,
     );
-    
+
     if (urgentLongWait.length > 0) {
       suggestions.push({
-        type: 'PRIORITY_ADJUSTMENT',
+        type: "PRIORITY_ADJUSTMENT",
         description: `${urgentLongWait.length} urgent patients waiting over 7 days`,
-        impact: 'HIGH',
+        impact: "HIGH",
         estimatedReduction: 5,
         affectedPatients: urgentLongWait.length,
         confidence: 92,
-        actionRequired: 'Reallocate urgent slots or add emergency capacity'
+        actionRequired: "Reallocate urgent slots or add emergency capacity",
       });
     }
 
     // Slot reallocation opportunities
-    const overCapacitySpecialties = analytics.specialtyBreakdown.filter(s => 
-      s.waiting > s.capacity * 0.8
+    const overCapacitySpecialties = analytics.specialtyBreakdown.filter(
+      (s) => s.waiting > s.capacity * 0.8,
     );
-    
+
     if (overCapacitySpecialties.length > 0) {
       suggestions.push({
-        type: 'SLOT_REALLOCATION',
+        type: "SLOT_REALLOCATION",
         description: `Rebalance capacity for ${overCapacitySpecialties.length} over-capacity specialties`,
-        impact: 'MEDIUM',
+        impact: "MEDIUM",
         estimatedReduction: 2,
         affectedPatients: overCapacitySpecialties.reduce((sum, s) => sum + s.waiting, 0),
         confidence: 78,
-        actionRequired: 'Review and redistribute appointment slots'
+        actionRequired: "Review and redistribute appointment slots",
       });
     }
 
     // Potential cancellations based on patterns
-    const likelyCancellations = waitlistEntries.filter(e => 
-      e.contactAttempts > 2 && !e.lastContact && e.estimatedWaitTime > 14
+    const likelyCancellations = waitlistEntries.filter(
+      (e) => e.contactAttempts > 2 && !e.lastContact && e.estimatedWaitTime > 14,
     );
-    
+
     if (likelyCancellations.length > 0) {
       suggestions.push({
-        type: 'CANCELLATION_PREDICTION',
+        type: "CANCELLATION_PREDICTION",
         description: `${likelyCancellations.length} patients likely to cancel based on engagement patterns`,
-        impact: 'MEDIUM',
+        impact: "MEDIUM",
         estimatedReduction: 1,
         affectedPatients: likelyCancellations.length,
         confidence: 65,
-        actionRequired: 'Follow up with disengaged patients or mark for removal'
+        actionRequired: "Follow up with disengaged patients or mark for removal",
       });
     }
 
@@ -302,22 +330,22 @@ export function WaitlistOptimization({
    * Filter and sort waitlist entries
    */
   const filteredEntries = useMemo(() => {
-    const filtered = waitlistEntries.filter(entry => {
-      if (priorityFilter !== 'ALL' && entry.priority !== priorityFilter) return false;
-      if (specialtyFilter !== 'ALL' && entry.specialty !== specialtyFilter) return false;
+    const filtered = waitlistEntries.filter((entry) => {
+      if (priorityFilter !== "ALL" && entry.priority !== priorityFilter) return false;
+      if (specialtyFilter !== "ALL" && entry.specialty !== specialtyFilter) return false;
       return true;
     });
 
     return filtered.sort((a, b) => {
       switch (sortBy) {
-        case 'waitTime':
+        case "waitTime":
           return b.estimatedWaitTime - a.estimatedWaitTime;
-        case 'priority':
+        case "priority":
           const priorityOrder = { URGENT: 4, HIGH: 3, MEDIUM: 2, LOW: 1 };
           return priorityOrder[b.priority] - priorityOrder[a.priority];
-        case 'risk':
+        case "risk":
           return b.noShowRisk - a.noShowRisk;
-        case 'date':
+        case "date":
           return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
         default:
           return 0;
@@ -330,11 +358,16 @@ export function WaitlistOptimization({
    */
   const getPriorityVariant = (priority: string) => {
     switch (priority) {
-      case 'URGENT': return 'destructive';
-      case 'HIGH': return 'destructive';
-      case 'MEDIUM': return 'default';
-      case 'LOW': return 'secondary';
-      default: return 'outline';
+      case "URGENT":
+        return "destructive";
+      case "HIGH":
+        return "destructive";
+      case "MEDIUM":
+        return "default";
+      case "LOW":
+        return "secondary";
+      default:
+        return "outline";
     }
   };
 
@@ -342,32 +375,32 @@ export function WaitlistOptimization({
    * Get wait time color
    */
   const getWaitTimeColor = (days: number): string => {
-    if (days <= 3) return 'text-green-600';
-    if (days <= 7) return 'text-yellow-600';
-    if (days <= 14) return 'text-orange-600';
-    return 'text-red-600';
+    if (days <= 3) return "text-green-600";
+    if (days <= 7) return "text-yellow-600";
+    if (days <= 14) return "text-orange-600";
+    return "text-red-600";
   };
 
   /**
    * Format days to readable format
    */
   const formatWaitTime = (days: number): string => {
-    if (days < 1) return 'Same day';
-    if (days === 1) return '1 day';
+    if (days < 1) return "Same day";
+    if (days === 1) return "1 day";
     if (days < 7) return `${Math.round(days)} days`;
     const weeks = Math.round(days / 7);
-    return weeks === 1 ? '1 week' : `${weeks} weeks`;
+    return weeks === 1 ? "1 week" : `${weeks} weeks`;
   };
 
   /**
    * Handle contact patient
    */
-  const handleContactPatient = (entry: WaitlistEntry, method: 'SMS' | 'PHONE' | 'EMAIL') => {
+  const handleContactPatient = (entry: WaitlistEntry, method: "SMS" | "PHONE" | "EMAIL") => {
     onContactPatient(entry.patientId, method);
     onUpdateEntry(entry.id, {
       contactAttempts: entry.contactAttempts + 1,
       lastContact: new Date(),
-      status: 'CONTACTED'
+      status: "CONTACTED",
     });
   };
 
@@ -384,7 +417,7 @@ export function WaitlistOptimization({
         <div className="flex items-center gap-3">
           <Button variant="outline" onClick={() => setShowOptimizations(!showOptimizations)}>
             <Target className="h-4 w-4 mr-2" />
-            {showOptimizations ? 'Hide' : 'Show'} Optimizations
+            {showOptimizations ? "Hide" : "Show"} Optimizations
           </Button>
           <Button variant="outline">
             <Settings className="h-4 w-4 mr-2" />
@@ -401,11 +434,16 @@ export function WaitlistOptimization({
       {showOptimizations && optimizationSuggestions.length > 0 && (
         <div className="space-y-3">
           {optimizationSuggestions.slice(0, 3).map((suggestion, index) => (
-            <Alert key={index} className={
-              suggestion.impact === 'HIGH' ? 'border-red-200 bg-red-50' :
-              suggestion.impact === 'MEDIUM' ? 'border-yellow-200 bg-yellow-50' :
-              'border-blue-200 bg-blue-50'
-            }>
+            <Alert
+              key={index}
+              className={
+                suggestion.impact === "HIGH"
+                  ? "border-red-200 bg-red-50"
+                  : suggestion.impact === "MEDIUM"
+                    ? "border-yellow-200 bg-yellow-50"
+                    : "border-blue-200 bg-blue-50"
+              }
+            >
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
                 <div className="flex items-center justify-between">
@@ -416,10 +454,15 @@ export function WaitlistOptimization({
                     </div>
                   </div>
                   <div className="text-right ml-4">
-                    <Badge variant={
-                      suggestion.impact === 'HIGH' ? 'destructive' :
-                      suggestion.impact === 'MEDIUM' ? 'default' : 'secondary'
-                    }>
+                    <Badge
+                      variant={
+                        suggestion.impact === "HIGH"
+                          ? "destructive"
+                          : suggestion.impact === "MEDIUM"
+                            ? "default"
+                            : "secondary"
+                      }
+                    >
                       {suggestion.impact} Impact
                     </Badge>
                     <div className="text-xs text-muted-foreground mt-1">
@@ -444,9 +487,7 @@ export function WaitlistOptimization({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{analytics.totalWaiting}</div>
-            <div className="text-xs text-muted-foreground">
-              Active waitlist entries
-            </div>
+            <div className="text-xs text-muted-foreground">Active waitlist entries</div>
           </CardContent>
         </Card>
 
@@ -461,9 +502,7 @@ export function WaitlistOptimization({
             <div className={`text-2xl font-bold ${getWaitTimeColor(analytics.averageWaitTime)}`}>
               {formatWaitTime(analytics.averageWaitTime)}
             </div>
-            <div className="text-xs text-muted-foreground">
-              Current average
-            </div>
+            <div className="text-xs text-muted-foreground">Current average</div>
           </CardContent>
         </Card>
 
@@ -475,12 +514,8 @@ export function WaitlistOptimization({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
-              {analytics.dailyThroughput}
-            </div>
-            <div className="text-xs text-muted-foreground">
-              Patients/day
-            </div>
+            <div className="text-2xl font-bold text-blue-600">{analytics.dailyThroughput}</div>
+            <div className="text-xs text-muted-foreground">Patients/day</div>
           </CardContent>
         </Card>
 
@@ -492,12 +527,8 @@ export function WaitlistOptimization({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
-              {analytics.utilizationRate}%
-            </div>
-            <div className="text-xs text-muted-foreground">
-              Capacity usage
-            </div>
+            <div className="text-2xl font-bold text-green-600">{analytics.utilizationRate}%</div>
+            <div className="text-xs text-muted-foreground">Capacity usage</div>
           </CardContent>
         </Card>
       </div>
@@ -540,7 +571,7 @@ export function WaitlistOptimization({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="ALL">All Specialties</SelectItem>
-                      {analytics.specialtyBreakdown.map(specialty => (
+                      {analytics.specialtyBreakdown.map((specialty) => (
                         <SelectItem key={specialty.specialty} value={specialty.specialty}>
                           {specialty.specialty} ({specialty.waiting})
                         </SelectItem>
@@ -587,7 +618,7 @@ export function WaitlistOptimization({
                   </div>
                 ) : (
                   filteredEntries.map((entry) => (
-                    <Card 
+                    <Card
                       key={entry.id}
                       className="cursor-pointer hover:bg-muted/50"
                       onClick={() => setSelectedEntry(entry)}
@@ -602,7 +633,9 @@ export function WaitlistOptimization({
                             <Badge variant="outline">{entry.specialty}</Badge>
                           </div>
                           <div className="text-right">
-                            <div className={`font-bold ${getWaitTimeColor(entry.estimatedWaitTime)}`}>
+                            <div
+                              className={`font-bold ${getWaitTimeColor(entry.estimatedWaitTime)}`}
+                            >
                               {formatWaitTime(entry.estimatedWaitTime)}
                             </div>
                             <div className="text-xs text-muted-foreground">
@@ -624,11 +657,17 @@ export function WaitlistOptimization({
                           </div>
                           <div>
                             <div className="text-xs text-muted-foreground">Status</div>
-                            <Badge variant={
-                              entry.status === 'WAITING' ? 'default' :
-                              entry.status === 'CONTACTED' ? 'secondary' :
-                              entry.status === 'SCHEDULED' ? 'outline' : 'destructive'
-                            }>
+                            <Badge
+                              variant={
+                                entry.status === "WAITING"
+                                  ? "default"
+                                  : entry.status === "CONTACTED"
+                                    ? "secondary"
+                                    : entry.status === "SCHEDULED"
+                                      ? "outline"
+                                      : "destructive"
+                              }
+                            >
                               {entry.status.toLowerCase()}
                             </Badge>
                           </div>
@@ -651,7 +690,7 @@ export function WaitlistOptimization({
                               size="sm"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                handleContactPatient(entry, 'SMS');
+                                handleContactPatient(entry, "SMS");
                               }}
                             >
                               <MessageSquare className="h-4 w-4" />
@@ -661,7 +700,7 @@ export function WaitlistOptimization({
                               size="sm"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                handleContactPatient(entry, 'PHONE');
+                                handleContactPatient(entry, "PHONE");
                               }}
                             >
                               <Phone className="h-4 w-4" />
@@ -708,10 +747,15 @@ export function WaitlistOptimization({
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <Badge variant={
-                              suggestion.impact === 'HIGH' ? 'destructive' :
-                              suggestion.impact === 'MEDIUM' ? 'default' : 'secondary'
-                            }>
+                            <Badge
+                              variant={
+                                suggestion.impact === "HIGH"
+                                  ? "destructive"
+                                  : suggestion.impact === "MEDIUM"
+                                    ? "default"
+                                    : "secondary"
+                              }
+                            >
                               {suggestion.impact} Impact
                             </Badge>
                             <span className="text-sm text-muted-foreground">
@@ -719,7 +763,9 @@ export function WaitlistOptimization({
                             </span>
                           </div>
                           <h4 className="font-medium mb-1">{suggestion.description}</h4>
-                          <p className="text-sm text-muted-foreground">{suggestion.actionRequired}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {suggestion.actionRequired}
+                          </p>
                         </div>
                         <div className="text-right ml-4">
                           <div className="text-lg font-bold text-green-600">
@@ -731,9 +777,7 @@ export function WaitlistOptimization({
                         </div>
                       </div>
                       <div className="flex gap-2">
-                        <Button size="sm">
-                          Apply Suggestion
-                        </Button>
+                        <Button size="sm">Apply Suggestion</Button>
                         <Button variant="outline" size="sm">
                           View Details
                         </Button>
@@ -768,9 +812,9 @@ export function WaitlistOptimization({
                             </div>
                           </div>
                         </div>
-                        <Progress 
-                          value={utilizationRate} 
-                          className={`h-2 ${utilizationRate > 80 ? 'bg-red-100' : utilizationRate > 60 ? 'bg-yellow-100' : 'bg-green-100'}`}
+                        <Progress
+                          value={utilizationRate}
+                          className={`h-2 ${utilizationRate > 80 ? "bg-red-100" : utilizationRate > 60 ? "bg-yellow-100" : "bg-green-100"}`}
                         />
                         <div className="text-xs text-muted-foreground">
                           {utilizationRate.toFixed(0)}% capacity utilization
@@ -790,37 +834,45 @@ export function WaitlistOptimization({
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={analytics.waitTimeProjection.slice(0, 14)}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis 
-                      dataKey="date" 
-                      tickFormatter={(date) => new Date(date).toLocaleDateString('pt-BR', { month: 'short', day: 'numeric' })}
+                    <XAxis
+                      dataKey="date"
+                      tickFormatter={(date) =>
+                        new Date(date).toLocaleDateString("pt-BR", {
+                          month: "short",
+                          day: "numeric",
+                        })
+                      }
                     />
                     <YAxis />
-                    <Tooltip 
-                      labelFormatter={(date) => new Date(date).toLocaleDateString('pt-BR')}
+                    <Tooltip
+                      labelFormatter={(date) => new Date(date).toLocaleDateString("pt-BR")}
                       formatter={(value, name) => [
                         `${value.toFixed(1)} days`,
-                        name === 'projected' ? 'Current Trend' :
-                        name === 'historical' ? 'Historical' : 'Optimized'
+                        name === "projected"
+                          ? "Current Trend"
+                          : name === "historical"
+                            ? "Historical"
+                            : "Optimized",
                       ]}
                     />
-                    <Line 
-                      type="monotone" 
-                      dataKey="historical" 
-                      stroke="#9CA3AF" 
+                    <Line
+                      type="monotone"
+                      dataKey="historical"
+                      stroke="#9CA3AF"
                       strokeDasharray="5 5"
                       name="historical"
                     />
-                    <Line 
-                      type="monotone" 
-                      dataKey="projected" 
-                      stroke="#EF4444" 
+                    <Line
+                      type="monotone"
+                      dataKey="projected"
+                      stroke="#EF4444"
                       strokeWidth={2}
                       name="projected"
                     />
-                    <Line 
-                      type="monotone" 
-                      dataKey="optimized" 
-                      stroke="#10B981" 
+                    <Line
+                      type="monotone"
+                      dataKey="optimized"
+                      stroke="#10B981"
                       strokeWidth={2}
                       name="optimized"
                     />
@@ -889,40 +941,45 @@ export function WaitlistOptimization({
               <ResponsiveContainer width="100%" height={400}>
                 <AreaChart data={analytics.waitTimeProjection}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="date" 
-                    tickFormatter={(date) => new Date(date).toLocaleDateString('pt-BR', { month: 'short', day: 'numeric' })}
+                  <XAxis
+                    dataKey="date"
+                    tickFormatter={(date) =>
+                      new Date(date).toLocaleDateString("pt-BR", { month: "short", day: "numeric" })
+                    }
                   />
                   <YAxis />
-                  <Tooltip 
-                    labelFormatter={(date) => new Date(date).toLocaleDateString('pt-BR')}
+                  <Tooltip
+                    labelFormatter={(date) => new Date(date).toLocaleDateString("pt-BR")}
                     formatter={(value, name) => [
                       `${value.toFixed(1)} days`,
-                      name === 'projected' ? 'Projected' :
-                      name === 'historical' ? 'Historical' : 'Optimized'
+                      name === "projected"
+                        ? "Projected"
+                        : name === "historical"
+                          ? "Historical"
+                          : "Optimized",
                     ]}
                   />
-                  <Area 
-                    type="monotone" 
-                    dataKey="historical" 
+                  <Area
+                    type="monotone"
+                    dataKey="historical"
                     stackId="1"
-                    stroke="#9CA3AF" 
+                    stroke="#9CA3AF"
                     fill="#F3F4F6"
                     name="historical"
                   />
-                  <Area 
-                    type="monotone" 
-                    dataKey="projected" 
+                  <Area
+                    type="monotone"
+                    dataKey="projected"
                     stackId="2"
-                    stroke="#EF4444" 
+                    stroke="#EF4444"
                     fill="#FEE2E2"
                     name="projected"
                   />
-                  <Area 
-                    type="monotone" 
-                    dataKey="optimized" 
+                  <Area
+                    type="monotone"
+                    dataKey="optimized"
                     stackId="3"
-                    stroke="#10B981" 
+                    stroke="#10B981"
                     fill="#DCFCE7"
                     name="optimized"
                   />
@@ -971,19 +1028,27 @@ export function WaitlistOptimization({
                     <div>{selectedEntry.doctor}</div>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Requested Date</label>
+                    <label className="text-sm font-medium text-muted-foreground">
+                      Requested Date
+                    </label>
                     <div>{selectedEntry.requestedDate.toLocaleDateString()}</div>
                   </div>
                 </div>
                 <div className="space-y-3">
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Estimated Wait</label>
-                    <div className={`font-medium ${getWaitTimeColor(selectedEntry.estimatedWaitTime)}`}>
+                    <label className="text-sm font-medium text-muted-foreground">
+                      Estimated Wait
+                    </label>
+                    <div
+                      className={`font-medium ${getWaitTimeColor(selectedEntry.estimatedWaitTime)}`}
+                    >
                       {formatWaitTime(selectedEntry.estimatedWaitTime)}
                     </div>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">No-Show Risk</label>
+                    <label className="text-sm font-medium text-muted-foreground">
+                      No-Show Risk
+                    </label>
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{selectedEntry.noShowRisk}%</span>
                       <Progress value={selectedEntry.noShowRisk} className="h-2 flex-1" />
@@ -991,11 +1056,17 @@ export function WaitlistOptimization({
                   </div>
                   <div>
                     <label className="text-sm font-medium text-muted-foreground">Status</label>
-                    <Badge variant={
-                      selectedEntry.status === 'WAITING' ? 'default' :
-                      selectedEntry.status === 'CONTACTED' ? 'secondary' :
-                      selectedEntry.status === 'SCHEDULED' ? 'outline' : 'destructive'
-                    }>
+                    <Badge
+                      variant={
+                        selectedEntry.status === "WAITING"
+                          ? "default"
+                          : selectedEntry.status === "CONTACTED"
+                            ? "secondary"
+                            : selectedEntry.status === "SCHEDULED"
+                              ? "outline"
+                              : "destructive"
+                      }
+                    >
                       {selectedEntry.status.toLowerCase()}
                     </Badge>
                   </div>
@@ -1013,10 +1084,9 @@ export function WaitlistOptimization({
                   <div className="flex justify-between text-sm">
                     <span>Last Contact:</span>
                     <span className="font-medium">
-                      {selectedEntry.lastContact ? 
-                        selectedEntry.lastContact.toLocaleDateString() : 
-                        'Never'
-                      }
+                      {selectedEntry.lastContact
+                        ? selectedEntry.lastContact.toLocaleDateString()
+                        : "Never"}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
@@ -1045,21 +1115,21 @@ export function WaitlistOptimization({
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
-                    onClick={() => handleContactPatient(selectedEntry, 'SMS')}
+                    onClick={() => handleContactPatient(selectedEntry, "SMS")}
                   >
                     <MessageSquare className="h-4 w-4 mr-2" />
                     Send SMS
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={() => handleContactPatient(selectedEntry, 'PHONE')}
+                    onClick={() => handleContactPatient(selectedEntry, "PHONE")}
                   >
                     <Phone className="h-4 w-4 mr-2" />
                     Call
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={() => handleContactPatient(selectedEntry, 'EMAIL')}
+                    onClick={() => handleContactPatient(selectedEntry, "EMAIL")}
                   >
                     <Mail className="h-4 w-4 mr-2" />
                     Email

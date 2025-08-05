@@ -1,17 +1,17 @@
-import type { ConflictCheckResponse } from "@/app/lib/types/appointments";
-import { createClient } from "@/lib/supabase/server";
+﻿import type { ConflictCheckResponse } from "@/app/lib/types/appointments";
+import type { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
-// 🚀 Edge Runtime para detecção instantânea de conflitos
-export const runtime = 'edge';
+// ðŸš€ Edge Runtime para detecÃ§Ã£o instantÃ¢nea de conflitos
+export const runtime = "edge";
 
 /**
- * ⚡ Conflict Check API - Edge Runtime Optimized
- * 
- * 📊 Critical performance: <50ms para detecção de conflitos
- * 🔍 Real-time conflict detection sem latency
- * 🌐 Global edge deployment para agenda mundial
- * ⚙️ Smart conflict resolution com edge computing
+ * âš¡ Conflict Check API - Edge Runtime Optimized
+ *
+ * ðŸ“Š Critical performance: <50ms para detecÃ§Ã£o de conflitos
+ * ðŸ” Real-time conflict detection sem latency
+ * ðŸŒ Global edge deployment para agenda mundial
+ * âš™ï¸ Smart conflict resolution com edge computing
  */
 
 export async function POST(request: Request) {
@@ -31,10 +31,7 @@ export async function POST(request: Request) {
     const { professional_id, start_time, end_time } = body;
 
     if (!professional_id || !start_time || !end_time) {
-      return NextResponse.json(
-        { error: "Missing required parameters" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Missing required parameters" }, { status: 400 });
     }
 
     // Get clinic_id from user's profile
@@ -62,7 +59,7 @@ export async function POST(request: Request) {
         professionals:professional_id (
           full_name
         )
-      `
+      `,
       )
       .eq("clinic_id", profile.clinic_id)
       .eq("professional_id", professional_id)
@@ -86,17 +83,12 @@ export async function POST(request: Request) {
 
     const response: ConflictCheckResponse = {
       has_conflict: hasConflict,
-      conflicting_appointments: hasConflict
-        ? conflictingAppointments
-        : undefined,
+      conflicting_appointments: hasConflict ? conflictingAppointments : undefined,
     };
 
     return NextResponse.json(response);
   } catch (error) {
     console.error("API Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

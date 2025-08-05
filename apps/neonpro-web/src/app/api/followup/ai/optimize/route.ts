@@ -1,32 +1,32 @@
-﻿// AI-Powered Follow-up Optimization API
+// AI-Powered Follow-up Optimization API
 // Epic 7.3: Treatment Follow-up Automation
 // Author: VoidBeast Agent
 
-import { createtreatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
-import { NextRequest, NextResponse } from 'next/server';
+import type { createtreatmentFollowupService } from "@/app/lib/services/treatment-followup-service";
+import type { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
     const { patientId, protocolId, channel } = await request.json();
-    
+
     if (!patientId || !protocolId || !channel) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Missing required parameters: patientId, protocolId, channel' 
+        {
+          success: false,
+          error: "Missing required parameters: patientId, protocolId, channel",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Calculate optimal timing
     const optimalTiming = await createtreatmentFollowupService().calculateOptimalTiming(patientId);
-    
+
     // Generate personalized message
     const personalizedMessage = await createtreatmentFollowupService().generatePersonalizedMessage(
-      patientId, 
-      protocolId, 
-      channel
+      patientId,
+      protocolId,
+      channel,
     );
 
     return NextResponse.json({
@@ -35,23 +35,23 @@ export async function POST(request: NextRequest) {
         optimalTiming,
         personalizedMessage,
         recommendations: {
-          bestTimeToSend: `${optimalTiming.optimal_hour.toString().padStart(2, '0')}:00`,
+          bestTimeToSend: `${optimalTiming.optimal_hour.toString().padStart(2, "0")}:00`,
           bestDayOfWeek: optimalTiming.optimal_day_of_week,
           confidenceScore: optimalTiming.confidence_score,
           channel: channel,
-          messageLength: personalizedMessage.length
-        }
-      }
+          messageLength: personalizedMessage.length,
+        },
+      },
     });
   } catch (error) {
-    console.error('Error optimizing follow-up:', error);
+    console.error("Error optimizing follow-up:", error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to optimize follow-up',
-        details: error instanceof Error ? error.message : 'Unknown error'
+      {
+        success: false,
+        error: "Failed to optimize follow-up",
+        details: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

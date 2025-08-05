@@ -1,19 +1,27 @@
-﻿/**
+/**
  * NeonPro Medical History Timeline Service
  * Manages patient medical history with visual timeline representation
  */
 
-import { createClient } from '@/lib/supabase/server';
+import type { createClient } from "@/lib/supabase/server";
 
 export interface TimelineEvent {
   id: string;
   patientId: string;
-  eventType: 'appointment' | 'treatment' | 'procedure' | 'medication' | 'test' | 'diagnosis' | 'note' | 'photo';
+  eventType:
+    | "appointment"
+    | "treatment"
+    | "procedure"
+    | "medication"
+    | "test"
+    | "diagnosis"
+    | "note"
+    | "photo";
   title: string;
   description: string;
   date: Date;
-  category: 'medical' | 'aesthetic' | 'dental' | 'wellness' | 'emergency';
-  severity?: 'low' | 'medium' | 'high' | 'critical';
+  category: "medical" | "aesthetic" | "dental" | "wellness" | "emergency";
+  severity?: "low" | "medium" | "high" | "critical";
   professionalId?: string;
   professionalName?: string;
   attachments?: TimelineAttachment[];
@@ -27,7 +35,7 @@ export interface TimelineEvent {
 export interface TimelineAttachment {
   id: string;
   name: string;
-  type: 'document' | 'image' | 'report' | 'prescription' | 'lab_result';
+  type: "document" | "image" | "report" | "prescription" | "lab_result";
   url: string;
   size: number;
   uploadedAt: Date;
@@ -39,7 +47,7 @@ export interface BeforeAfterPhoto {
   eventId: string;
   beforePhoto?: PhotoData;
   afterPhoto?: PhotoData;
-  comparisonType: 'treatment' | 'procedure' | 'healing' | 'progress';
+  comparisonType: "treatment" | "procedure" | "healing" | "progress";
   notes?: string;
   quality: number; // 0-100
 }
@@ -67,7 +75,7 @@ export interface TreatmentOutcome {
   nextSteps?: string[];
   patientFeedback?: string;
   professionalAssessment?: string;
-  healingProgress: 'excellent' | 'good' | 'fair' | 'poor';
+  healingProgress: "excellent" | "good" | "fair" | "poor";
 }
 
 export interface ProgressNote {
@@ -75,8 +83,8 @@ export interface ProgressNote {
   note: string;
   date: Date;
   author: string;
-  type: 'observation' | 'instruction' | 'warning' | 'milestone';
-  visibility: 'patient' | 'staff' | 'professional' | 'internal';
+  type: "observation" | "instruction" | "warning" | "milestone";
+  visibility: "patient" | "staff" | "professional" | "internal";
 }
 
 export interface MilestoneTracking {
@@ -95,7 +103,7 @@ export interface Milestone {
   description: string;
   targetDate: Date;
   completedDate?: Date;
-  status: 'pending' | 'in_progress' | 'completed' | 'delayed' | 'cancelled';
+  status: "pending" | "in_progress" | "completed" | "delayed" | "cancelled";
   criteria: string[];
   completedCriteria: string[];
   progress: number; // 0-100
@@ -127,7 +135,7 @@ export class createmedicalTimelineService {
     try {
       const supabase = await this.getSupabase();
       let query = supabase
-        .from('patient_timeline_events')
+        .from("patient_timeline_events")
         .select(`
           *,
           professional:professionals(name),
@@ -136,41 +144,41 @@ export class createmedicalTimelineService {
           outcome:treatment_outcomes(*),
           notes:progress_notes(*)
         `)
-        .eq('patient_id', patientId);
+        .eq("patient_id", patientId);
 
       // Apply filters
       if (filter) {
         if (filter.eventTypes?.length) {
-          query = query.in('event_type', filter.eventTypes);
+          query = query.in("event_type", filter.eventTypes);
         }
         if (filter.categories?.length) {
-          query = query.in('category', filter.categories);
+          query = query.in("category", filter.categories);
         }
         if (filter.dateRange) {
           query = query
-            .gte('date', filter.dateRange.start.toISOString())
-            .lte('date', filter.dateRange.end.toISOString());
+            .gte("date", filter.dateRange.start.toISOString())
+            .lte("date", filter.dateRange.end.toISOString());
         }
         if (filter.professionals?.length) {
-          query = query.in('professional_id', filter.professionals);
+          query = query.in("professional_id", filter.professionals);
         }
         if (filter.severity?.length) {
-          query = query.in('severity', filter.severity);
+          query = query.in("severity", filter.severity);
         }
       }
 
-      query = query.order('date', { ascending: false });
+      query = query.order("date", { ascending: false });
 
       const { data, error } = await query;
 
       if (error) {
-        console.error('Error fetching timeline:', error);
-        throw new Error('Failed to fetch patient timeline');
+        console.error("Error fetching timeline:", error);
+        throw new Error("Failed to fetch patient timeline");
       }
 
       return this.transformTimelineData(data || []);
     } catch (error) {
-      console.error('Error in getPatientTimeline:', error);
+      console.error("Error in getPatientTimeline:", error);
       // Return mock data for development
       return this.getMockTimelineData(patientId);
     }
@@ -179,11 +187,11 @@ export class createmedicalTimelineService {
   /**
    * Add new timeline event
    */
-  async addTimelineEvent(event: Omit<TimelineEvent, 'id'>): Promise<TimelineEvent> {
+  async addTimelineEvent(event: Omit<TimelineEvent, "id">): Promise<TimelineEvent> {
     try {
       const supabase = await this.getSupabase();
       const { data, error } = await supabase
-        .from('patient_timeline_events')
+        .from("patient_timeline_events")
         .insert({
           patient_id: event.patientId,
           event_type: event.eventType,
@@ -193,23 +201,23 @@ export class createmedicalTimelineService {
           category: event.category,
           severity: event.severity,
           professional_id: event.professionalId,
-          metadata: event.metadata
+          metadata: event.metadata,
         })
         .select()
         .single();
 
       if (error) {
-        console.error('Error adding timeline event:', error);
-        throw new Error('Failed to add timeline event');
+        console.error("Error adding timeline event:", error);
+        throw new Error("Failed to add timeline event");
       }
 
       return this.transformTimelineEvent(data);
     } catch (error) {
-      console.error('Error in addTimelineEvent:', error);
+      console.error("Error in addTimelineEvent:", error);
       // Return mock event for development
       return {
         id: `mock_${Date.now()}`,
-        ...event
+        ...event,
       };
     }
   }
@@ -217,31 +225,34 @@ export class createmedicalTimelineService {
   /**
    * Update timeline event
    */
-  async updateTimelineEvent(eventId: string, updates: Partial<TimelineEvent>): Promise<TimelineEvent> {
+  async updateTimelineEvent(
+    eventId: string,
+    updates: Partial<TimelineEvent>,
+  ): Promise<TimelineEvent> {
     try {
       const supabase = await this.getSupabase();
       const { data, error } = await supabase
-        .from('patient_timeline_events')
+        .from("patient_timeline_events")
         .update({
           ...(updates.title && { title: updates.title }),
           ...(updates.description && { description: updates.description }),
           ...(updates.date && { date: updates.date.toISOString() }),
           ...(updates.category && { category: updates.category }),
           ...(updates.severity && { severity: updates.severity }),
-          ...(updates.metadata && { metadata: updates.metadata })
+          ...(updates.metadata && { metadata: updates.metadata }),
         })
-        .eq('id', eventId)
+        .eq("id", eventId)
         .select()
         .single();
 
       if (error) {
-        console.error('Error updating timeline event:', error);
-        throw new Error('Failed to update timeline event');
+        console.error("Error updating timeline event:", error);
+        throw new Error("Failed to update timeline event");
       }
 
       return this.transformTimelineEvent(data);
     } catch (error) {
-      console.error('Error in updateTimelineEvent:', error);
+      console.error("Error in updateTimelineEvent:", error);
       throw error;
     }
   }
@@ -249,37 +260,40 @@ export class createmedicalTimelineService {
   /**
    * Add before/after photos to timeline event
    */
-  async addBeforeAfterPhotos(eventId: string, photos: Omit<BeforeAfterPhoto, 'id' | 'eventId'>): Promise<BeforeAfterPhoto> {
+  async addBeforeAfterPhotos(
+    eventId: string,
+    photos: Omit<BeforeAfterPhoto, "id" | "eventId">,
+  ): Promise<BeforeAfterPhoto> {
     try {
       const supabase = await this.getSupabase();
       const { data, error } = await supabase
-        .from('before_after_photos')
+        .from("before_after_photos")
         .insert({
           event_id: eventId,
           comparison_type: photos.comparisonType,
           notes: photos.notes,
-          quality: photos.quality
+          quality: photos.quality,
         })
         .select()
         .single();
 
       if (error) {
-        console.error('Error adding before/after photos:', error);
-        throw new Error('Failed to add before/after photos');
+        console.error("Error adding before/after photos:", error);
+        throw new Error("Failed to add before/after photos");
       }
 
       return {
         id: data.id,
         eventId: eventId,
-        ...photos
+        ...photos,
       };
     } catch (error) {
-      console.error('Error in addBeforeAfterPhotos:', error);
+      console.error("Error in addBeforeAfterPhotos:", error);
       // Return mock photo for development
       return {
         id: `photo_${Date.now()}`,
         eventId,
-        ...photos
+        ...photos,
       };
     }
   }
@@ -287,37 +301,37 @@ export class createmedicalTimelineService {
   /**
    * Add progress note to timeline event
    */
-  async addProgressNote(eventId: string, note: Omit<ProgressNote, 'id'>): Promise<ProgressNote> {
+  async addProgressNote(eventId: string, note: Omit<ProgressNote, "id">): Promise<ProgressNote> {
     try {
       const supabase = await this.getSupabase();
       const { data, error } = await supabase
-        .from('progress_notes')
+        .from("progress_notes")
         .insert({
           event_id: eventId,
           note: note.note,
           date: note.date.toISOString(),
           author: note.author,
           type: note.type,
-          visibility: note.visibility
+          visibility: note.visibility,
         })
         .select()
         .single();
 
       if (error) {
-        console.error('Error adding progress note:', error);
-        throw new Error('Failed to add progress note');
+        console.error("Error adding progress note:", error);
+        throw new Error("Failed to add progress note");
       }
 
       return {
         id: data.id,
-        ...note
+        ...note,
       };
     } catch (error) {
-      console.error('Error in addProgressNote:', error);
+      console.error("Error in addProgressNote:", error);
       // Return mock note for development
       return {
         id: `note_${Date.now()}`,
-        ...note
+        ...note,
       };
     }
   }
@@ -329,21 +343,21 @@ export class createmedicalTimelineService {
     try {
       const supabase = await this.getSupabase();
       const { data, error } = await supabase
-        .from('milestone_tracking')
+        .from("milestone_tracking")
         .select(`
           *,
           milestones:milestones(*)
         `)
-        .eq('patient_id', patientId);
+        .eq("patient_id", patientId);
 
       if (error) {
-        console.error('Error fetching milestones:', error);
-        throw new Error('Failed to fetch treatment milestones');
+        console.error("Error fetching milestones:", error);
+        throw new Error("Failed to fetch treatment milestones");
       }
 
       return data || [];
     } catch (error) {
-      console.error('Error in getTreatmentMilestones:', error);
+      console.error("Error in getTreatmentMilestones:", error);
       // Return mock milestones for development
       return this.getMockMilestones(patientId);
     }
@@ -352,11 +366,15 @@ export class createmedicalTimelineService {
   /**
    * Update milestone progress
    */
-  async updateMilestoneProgress(milestoneId: string, progress: number, notes?: string): Promise<Milestone> {
+  async updateMilestoneProgress(
+    milestoneId: string,
+    progress: number,
+    notes?: string,
+  ): Promise<Milestone> {
     try {
       const updates: any = { progress };
       if (progress === 100) {
-        updates.status = 'completed';
+        updates.status = "completed";
         updates.completed_date = new Date().toISOString();
       }
       if (notes) {
@@ -365,20 +383,20 @@ export class createmedicalTimelineService {
 
       const supabase = await this.getSupabase();
       const { data, error } = await supabase
-        .from('milestones')
+        .from("milestones")
         .update(updates)
-        .eq('id', milestoneId)
+        .eq("id", milestoneId)
         .select()
         .single();
 
       if (error) {
-        console.error('Error updating milestone:', error);
-        throw new Error('Failed to update milestone progress');
+        console.error("Error updating milestone:", error);
+        throw new Error("Failed to update milestone progress");
       }
 
       return this.transformMilestone(data);
     } catch (error) {
-      console.error('Error in updateMilestoneProgress:', error);
+      console.error("Error in updateMilestoneProgress:", error);
       throw error;
     }
   }
@@ -386,27 +404,30 @@ export class createmedicalTimelineService {
   /**
    * Generate timeline summary for period
    */
-  async getTimelineSummary(patientId: string, period: 'week' | 'month' | 'quarter' | 'year'): Promise<any> {
+  async getTimelineSummary(
+    patientId: string,
+    period: "week" | "month" | "quarter" | "year",
+  ): Promise<any> {
     const endDate = new Date();
     const startDate = new Date();
-    
+
     switch (period) {
-      case 'week':
+      case "week":
         startDate.setDate(endDate.getDate() - 7);
         break;
-      case 'month':
+      case "month":
         startDate.setMonth(endDate.getMonth() - 1);
         break;
-      case 'quarter':
+      case "quarter":
         startDate.setMonth(endDate.getMonth() - 3);
         break;
-      case 'year':
+      case "year":
         startDate.setFullYear(endDate.getFullYear() - 1);
         break;
     }
 
     const events = await this.getPatientTimeline(patientId, {
-      dateRange: { start: startDate, end: endDate }
+      dateRange: { start: startDate, end: endDate },
     });
 
     return {
@@ -414,13 +435,13 @@ export class createmedicalTimelineService {
       eventTypes: this.groupByEventType(events),
       categories: this.groupByCategory(events),
       timeline: events,
-      insights: this.generateTimelineInsights(events)
+      insights: this.generateTimelineInsights(events),
     };
   }
 
   // Private helper methods
   private transformTimelineData(data: any[]): TimelineEvent[] {
-    return data.map(item => this.transformTimelineEvent(item));
+    return data.map((item) => this.transformTimelineEvent(item));
   }
 
   private transformTimelineEvent(data: any): TimelineEvent {
@@ -440,7 +461,7 @@ export class createmedicalTimelineService {
       outcome: data.outcome,
       notes: data.notes || [],
       relatedEventIds: data.related_event_ids || [],
-      metadata: data.metadata || {}
+      metadata: data.metadata || {},
     };
   }
 
@@ -455,22 +476,28 @@ export class createmedicalTimelineService {
       criteria: data.criteria || [],
       completedCriteria: data.completed_criteria || [],
       progress: data.progress,
-      notes: data.notes
+      notes: data.notes,
     };
   }
 
   private groupByEventType(events: TimelineEvent[]): Record<string, number> {
-    return events.reduce((acc, event) => {
-      acc[event.eventType] = (acc[event.eventType] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    return events.reduce(
+      (acc, event) => {
+        acc[event.eventType] = (acc[event.eventType] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
   }
 
   private groupByCategory(events: TimelineEvent[]): Record<string, number> {
-    return events.reduce((acc, event) => {
-      acc[event.category] = (acc[event.category] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    return events.reduce(
+      (acc, event) => {
+        acc[event.category] = (acc[event.category] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
   }
 
   private generateTimelineInsights(events: TimelineEvent[]): any {
@@ -478,29 +505,33 @@ export class createmedicalTimelineService {
       mostActiveMonth: this.getMostActiveMonth(events),
       treatmentFrequency: this.calculateTreatmentFrequency(events),
       outcomePatterns: this.analyzeOutcomePatterns(events),
-      professionalDistribution: this.getProfessionalDistribution(events)
+      professionalDistribution: this.getProfessionalDistribution(events),
     };
   }
 
   private getMostActiveMonth(events: TimelineEvent[]): string {
-    const monthCounts = events.reduce((acc, event) => {
-      const month = event.date.toISOString().substring(0, 7);
-      acc[month] = (acc[month] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const monthCounts = events.reduce(
+      (acc, event) => {
+        const month = event.date.toISOString().substring(0, 7);
+        acc[month] = (acc[month] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
-    return Object.entries(monthCounts)
-      .sort(([,a], [,b]) => b - a)[0]?.[0] || '';
+    return Object.entries(monthCounts).sort(([, a], [, b]) => b - a)[0]?.[0] || "";
   }
 
   private calculateTreatmentFrequency(events: TimelineEvent[]): number {
-    const treatmentEvents = events.filter(e => e.eventType === 'treatment' || e.eventType === 'procedure');
+    const treatmentEvents = events.filter(
+      (e) => e.eventType === "treatment" || e.eventType === "procedure",
+    );
     if (treatmentEvents.length < 2) return 0;
 
-    const dates = treatmentEvents.map(e => e.date.getTime()).sort();
+    const dates = treatmentEvents.map((e) => e.date.getTime()).sort();
     const intervals = [];
     for (let i = 1; i < dates.length; i++) {
-      intervals.push(dates[i] - dates[i-1]);
+      intervals.push(dates[i] - dates[i - 1]);
     }
 
     const avgInterval = intervals.reduce((sum, interval) => sum + interval, 0) / intervals.length;
@@ -508,165 +539,169 @@ export class createmedicalTimelineService {
   }
 
   private analyzeOutcomePatterns(events: TimelineEvent[]): any {
-    const eventsWithOutcomes = events.filter(e => e.outcome);
+    const eventsWithOutcomes = events.filter((e) => e.outcome);
     const totalOutcomes = eventsWithOutcomes.length;
-    
+
     if (totalOutcomes === 0) return { successRate: 0, avgSatisfaction: 0 };
 
-    const successfulOutcomes = eventsWithOutcomes.filter(e => e.outcome?.success).length;
-    const avgSatisfaction = eventsWithOutcomes.reduce((sum, e) => 
-      sum + (e.outcome?.satisfactionScore || 0), 0) / totalOutcomes;
+    const successfulOutcomes = eventsWithOutcomes.filter((e) => e.outcome?.success).length;
+    const avgSatisfaction =
+      eventsWithOutcomes.reduce((sum, e) => sum + (e.outcome?.satisfactionScore || 0), 0) /
+      totalOutcomes;
 
     return {
       successRate: (successfulOutcomes / totalOutcomes) * 100,
-      avgSatisfaction: Math.round(avgSatisfaction * 10) / 10
+      avgSatisfaction: Math.round(avgSatisfaction * 10) / 10,
     };
   }
 
   private getProfessionalDistribution(events: TimelineEvent[]): Record<string, number> {
-    return events.reduce((acc, event) => {
-      if (event.professionalName) {
-        acc[event.professionalName] = (acc[event.professionalName] || 0) + 1;
-      }
-      return acc;
-    }, {} as Record<string, number>);
+    return events.reduce(
+      (acc, event) => {
+        if (event.professionalName) {
+          acc[event.professionalName] = (acc[event.professionalName] || 0) + 1;
+        }
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
   }
 
   // Mock data for development
   private getMockTimelineData(patientId: string): TimelineEvent[] {
     return [
       {
-        id: 'event_1',
+        id: "event_1",
         patientId,
-        eventType: 'appointment',
-        title: 'Consulta Inicial',
-        description: 'Primeira consulta para avaliação estética',
-        date: new Date('2024-12-15'),
-        category: 'aesthetic',
-        severity: 'low',
-        professionalId: 'prof_1',
-        professionalName: 'Dr. Ana Silva',
+        eventType: "appointment",
+        title: "Consulta Inicial",
+        description: "Primeira consulta para avaliação estética",
+        date: new Date("2024-12-15"),
+        category: "aesthetic",
+        severity: "low",
+        professionalId: "prof_1",
+        professionalName: "Dr. Ana Silva",
         attachments: [],
         beforeAfterPhotos: [],
         notes: [
           {
-            id: 'note_1',
-            note: 'Paciente interessada em procedimento de harmonização facial',
-            date: new Date('2024-12-15'),
-            author: 'Dr. Ana Silva',
-            type: 'observation',
-            visibility: 'professional'
-          }
+            id: "note_1",
+            note: "Paciente interessada em procedimento de harmonização facial",
+            date: new Date("2024-12-15"),
+            author: "Dr. Ana Silva",
+            type: "observation",
+            visibility: "professional",
+          },
         ],
-        metadata: { duration: 60, cost: 200 }
+        metadata: { duration: 60, cost: 200 },
       },
       {
-        id: 'event_2',
+        id: "event_2",
         patientId,
-        eventType: 'procedure',
-        title: 'Aplicação de Botox',
-        description: 'Procedimento de harmonização facial com toxina botulínica',
-        date: new Date('2025-01-05'),
-        category: 'aesthetic',
-        severity: 'medium',
-        professionalId: 'prof_1',
-        professionalName: 'Dr. Ana Silva',
+        eventType: "procedure",
+        title: "Aplicação de Botox",
+        description: "Procedimento de harmonização facial com toxina botulínica",
+        date: new Date("2025-01-05"),
+        category: "aesthetic",
+        severity: "medium",
+        professionalId: "prof_1",
+        professionalName: "Dr. Ana Silva",
         attachments: [],
         beforeAfterPhotos: [
           {
-            id: 'photo_1',
-            eventId: 'event_2',
-            comparisonType: 'treatment',
-            notes: 'Aplicação focada em rugas de expressão',
+            id: "photo_1",
+            eventId: "event_2",
+            comparisonType: "treatment",
+            notes: "Aplicação focada em rugas de expressão",
             quality: 95,
             beforePhoto: {
-              id: 'before_1',
-              url: '/images/before_1.jpg',
-              thumbnailUrl: '/images/before_1_thumb.jpg',
-              uploadedAt: new Date('2025-01-05'),
-              metadata: { width: 1920, height: 1080, quality: 95 }
+              id: "before_1",
+              url: "/images/before_1.jpg",
+              thumbnailUrl: "/images/before_1_thumb.jpg",
+              uploadedAt: new Date("2025-01-05"),
+              metadata: { width: 1920, height: 1080, quality: 95 },
             },
             afterPhoto: {
-              id: 'after_1',
-              url: '/images/after_1.jpg',
-              thumbnailUrl: '/images/after_1_thumb.jpg',
-              uploadedAt: new Date('2025-01-26'),
-              metadata: { width: 1920, height: 1080, quality: 95 }
-            }
-          }
+              id: "after_1",
+              url: "/images/after_1.jpg",
+              thumbnailUrl: "/images/after_1_thumb.jpg",
+              uploadedAt: new Date("2025-01-26"),
+              metadata: { width: 1920, height: 1080, quality: 95 },
+            },
+          },
         ],
         outcome: {
-          id: 'outcome_1',
+          id: "outcome_1",
           success: true,
           satisfactionScore: 9,
           complications: [],
           followUpRequired: true,
-          nextSteps: ['Retorno em 15 dias', 'Avaliação de resultados'],
-          patientFeedback: 'Muito satisfeita com o resultado',
-          professionalAssessment: 'Resultado excelente, paciente respondeu muito bem',
-          healingProgress: 'excellent'
+          nextSteps: ["Retorno em 15 dias", "Avaliação de resultados"],
+          patientFeedback: "Muito satisfeita com o resultado",
+          professionalAssessment: "Resultado excelente, paciente respondeu muito bem",
+          healingProgress: "excellent",
         },
         notes: [
           {
-            id: 'note_2',
-            note: 'Aplicação realizada sem intercorrências',
-            date: new Date('2025-01-05'),
-            author: 'Dr. Ana Silva',
-            type: 'observation',
-            visibility: 'professional'
-          }
+            id: "note_2",
+            note: "Aplicação realizada sem intercorrências",
+            date: new Date("2025-01-05"),
+            author: "Dr. Ana Silva",
+            type: "observation",
+            visibility: "professional",
+          },
         ],
-        metadata: { units: 20, cost: 800 }
-      }
+        metadata: { units: 20, cost: 800 },
+      },
     ];
   }
 
   private getMockMilestones(patientId: string): MilestoneTracking[] {
     return [
       {
-        id: 'milestone_tracking_1',
+        id: "milestone_tracking_1",
         patientId,
-        treatmentPlan: 'Harmonização Facial Completa',
+        treatmentPlan: "Harmonização Facial Completa",
         overallProgress: 65,
-        estimatedCompletion: new Date('2025-06-01'),
+        estimatedCompletion: new Date("2025-06-01"),
         milestones: [
           {
-            id: 'milestone_1',
-            title: 'Consulta Inicial',
-            description: 'Avaliação e planejamento do tratamento',
-            targetDate: new Date('2024-12-15'),
-            completedDate: new Date('2024-12-15'),
-            status: 'completed',
-            criteria: ['Análise facial', 'Expectativas alinhadas', 'Plano definido'],
-            completedCriteria: ['Análise facial', 'Expectativas alinhadas', 'Plano definido'],
+            id: "milestone_1",
+            title: "Consulta Inicial",
+            description: "Avaliação e planejamento do tratamento",
+            targetDate: new Date("2024-12-15"),
+            completedDate: new Date("2024-12-15"),
+            status: "completed",
+            criteria: ["Análise facial", "Expectativas alinhadas", "Plano definido"],
+            completedCriteria: ["Análise facial", "Expectativas alinhadas", "Plano definido"],
             progress: 100,
-            notes: 'Consulta realizada com sucesso'
+            notes: "Consulta realizada com sucesso",
           },
           {
-            id: 'milestone_2',
-            title: 'Primeira Aplicação',
-            description: 'Aplicação inicial de toxina botulínica',
-            targetDate: new Date('2025-01-05'),
-            completedDate: new Date('2025-01-05'),
-            status: 'completed',
-            criteria: ['Aplicação segura', 'Resultado imediato', 'Sem complicações'],
-            completedCriteria: ['Aplicação segura', 'Resultado imediato', 'Sem complicações'],
+            id: "milestone_2",
+            title: "Primeira Aplicação",
+            description: "Aplicação inicial de toxina botulínica",
+            targetDate: new Date("2025-01-05"),
+            completedDate: new Date("2025-01-05"),
+            status: "completed",
+            criteria: ["Aplicação segura", "Resultado imediato", "Sem complicações"],
+            completedCriteria: ["Aplicação segura", "Resultado imediato", "Sem complicações"],
             progress: 100,
-            notes: 'Procedimento realizado conforme planejado'
+            notes: "Procedimento realizado conforme planejado",
           },
           {
-            id: 'milestone_3',
-            title: 'Avaliação de Resultados',
-            description: 'Avaliação dos resultados após 3 semanas',
-            targetDate: new Date('2025-01-26'),
-            status: 'in_progress',
-            criteria: ['Redução de rugas', 'Satisfação da paciente', 'Necessidade de retoques'],
-            completedCriteria: ['Redução de rugas', 'Satisfação da paciente'],
+            id: "milestone_3",
+            title: "Avaliação de Resultados",
+            description: "Avaliação dos resultados após 3 semanas",
+            targetDate: new Date("2025-01-26"),
+            status: "in_progress",
+            criteria: ["Redução de rugas", "Satisfação da paciente", "Necessidade de retoques"],
+            completedCriteria: ["Redução de rugas", "Satisfação da paciente"],
             progress: 75,
-            notes: 'Resultados muito positivos, paciente satisfeita'
-          }
-        ]
-      }
+            notes: "Resultados muito positivos, paciente satisfeita",
+          },
+        ],
+      },
     ];
   }
 }

@@ -1,24 +1,26 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { MultiLocationInventoryService } from '@/app/lib/services/multi-location-inventory-service';
-import type { InventoryFilters, UpdateInventoryStock } from '@/app/lib/types/inventory';
+import type { NextRequest, NextResponse } from "next/server";
+import type { createClient } from "@/lib/supabase/server";
+import type { MultiLocationInventoryService } from "@/app/lib/services/multi-location-inventory-service";
+import type { InventoryFilters, UpdateInventoryStock } from "@/app/lib/types/inventory";
 
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const searchParams = request.nextUrl.searchParams;
     const filters: InventoryFilters = {
-      clinic_id: searchParams.get('clinic_id') || undefined,
-      room_id: searchParams.get('room_id') || undefined,
-      low_stock: searchParams.get('low_stock') === 'true',
-      expiring_soon: searchParams.get('expiring_soon') === 'true',
-      batch_number: searchParams.get('batch_number') || undefined,
+      clinic_id: searchParams.get("clinic_id") || undefined,
+      room_id: searchParams.get("room_id") || undefined,
+      low_stock: searchParams.get("low_stock") === "true",
+      expiring_soon: searchParams.get("expiring_soon") === "true",
+      batch_number: searchParams.get("batch_number") || undefined,
     };
 
     const inventoryService = new MultiLocationInventoryService();
@@ -26,28 +28,27 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ data: stock });
   } catch (error) {
-    console.error('Error fetching inventory stock:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch inventory stock' },
-      { status: 500 }
-    );
+    console.error("Error fetching inventory stock:", error);
+    return NextResponse.json({ error: "Failed to fetch inventory stock" }, { status: 500 });
   }
 }
 
 export async function PUT(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
-    
+
     // Handle bulk updates
     if (Array.isArray(body)) {
-      const updates: UpdateInventoryStock[] = body.map(update => ({
+      const updates: UpdateInventoryStock[] = body.map((update) => ({
         ...update,
         last_counted_by: session.user.id,
       }));
@@ -57,7 +58,7 @@ export async function PUT(request: NextRequest) {
 
       return NextResponse.json({ data: updatedStock });
     }
-    
+
     // Handle single update
     const updateData: UpdateInventoryStock = {
       ...body,
@@ -69,10 +70,7 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({ data: stock });
   } catch (error) {
-    console.error('Error updating inventory stock:', error);
-    return NextResponse.json(
-      { error: 'Failed to update inventory stock' },
-      { status: 500 }
-    );
+    console.error("Error updating inventory stock:", error);
+    return NextResponse.json({ error: "Failed to update inventory stock" }, { status: 500 });
   }
 }

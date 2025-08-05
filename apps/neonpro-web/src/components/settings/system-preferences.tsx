@@ -1,25 +1,37 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import type { useState, useEffect } from "react";
+import type { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
-  Settings, 
-  Bell, 
-  Palette, 
-  Globe,
-  Save,
-  Loader2,
-  CheckCircle2
-} from "lucide-react";
-import { toast } from "sonner";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
+import type { Button } from "@/components/ui/button";
+import type { Switch } from "@/components/ui/switch";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Settings, Bell, Palette, Globe, Save, Loader2, CheckCircle2 } from "lucide-react";
+import type { toast } from "sonner";
 
 const systemPreferencesSchema = z.object({
   // UI Preferences
@@ -31,7 +43,7 @@ const systemPreferencesSchema = z.object({
     currency: z.enum(["BRL", "USD", "EUR"]),
     compactMode: z.boolean(),
   }),
-  
+
   // Notifications
   notifications: z.object({
     email: z.object({
@@ -53,7 +65,7 @@ const systemPreferencesSchema = z.object({
       systemUpdates: z.boolean(),
     }),
   }),
-  
+
   // System Behavior
   system: z.object({
     autoLogout: z.boolean(),
@@ -63,7 +75,7 @@ const systemPreferencesSchema = z.object({
     performanceMode: z.enum(["normal", "high", "low"]),
     dataRetentionDays: z.number().min(90).max(2555), // Max 7 years
   }),
-  
+
   // Privacy
   privacy: z.object({
     shareAnalytics: z.boolean(),
@@ -79,7 +91,7 @@ export default function SystemPreferences() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  
+
   const form = useForm<SystemPreferencesFormData>({
     resolver: zodResolver(systemPreferencesSchema),
     defaultValues: {
@@ -177,9 +189,7 @@ export default function SystemPreferences() {
                 <Palette className="h-5 w-5" />
                 Interface e Exibição
               </CardTitle>
-              <CardDescription>
-                Personalize a aparência e formato de exibição
-              </CardDescription>
+              <CardDescription>Personalize a aparência e formato de exibição</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -287,10 +297,7 @@ export default function SystemPreferences() {
                       </FormDescription>
                     </div>
                     <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -305,14 +312,12 @@ export default function SystemPreferences() {
                 <Bell className="h-5 w-5" />
                 Notificações
               </CardTitle>
-              <CardDescription>
-                Configure como e quando receber notificações
-              </CardDescription>
+              <CardDescription>Configure como e quando receber notificações</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-4">
                 <h4 className="font-medium">Email</h4>
-                
+
                 <FormField
                   control={form.control}
                   name="notifications.email.enabled"
@@ -320,15 +325,10 @@ export default function SystemPreferences() {
                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                       <div className="space-y-0.5">
                         <FormLabel className="text-base">Notificações por Email</FormLabel>
-                        <FormDescription>
-                          Receber notificações via email
-                        </FormDescription>
+                        <FormDescription>Receber notificações via email</FormDescription>
                       </div>
                       <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
+                        <Switch checked={field.value} onCheckedChange={field.onChange} />
                       </FormControl>
                     </FormItem>
                   )}
@@ -343,15 +343,10 @@ export default function SystemPreferences() {
                         <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                           <div className="space-y-0.5">
                             <FormLabel>Lembretes de Consulta</FormLabel>
-                            <FormDescription>
-                              Notificações sobre próximas consultas
-                            </FormDescription>
+                            <FormDescription>Notificações sobre próximas consultas</FormDescription>
                           </div>
                           <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -369,10 +364,7 @@ export default function SystemPreferences() {
                             </FormDescription>
                           </div>
                           <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -385,15 +377,10 @@ export default function SystemPreferences() {
                         <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                           <div className="space-y-0.5">
                             <FormLabel>Relatórios Semanais</FormLabel>
-                            <FormDescription>
-                              Resumo semanal das atividades
-                            </FormDescription>
+                            <FormDescription>Resumo semanal das atividades</FormDescription>
                           </div>
                           <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -404,7 +391,7 @@ export default function SystemPreferences() {
 
               <div className="space-y-4">
                 <h4 className="font-medium">Push Notifications</h4>
-                
+
                 <FormField
                   control={form.control}
                   name="notifications.push.enabled"
@@ -412,15 +399,10 @@ export default function SystemPreferences() {
                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                       <div className="space-y-0.5">
                         <FormLabel className="text-base">Notificações Push</FormLabel>
-                        <FormDescription>
-                          Notificações instantâneas no navegador
-                        </FormDescription>
+                        <FormDescription>Notificações instantâneas no navegador</FormDescription>
                       </div>
                       <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
+                        <Switch checked={field.value} onCheckedChange={field.onChange} />
                       </FormControl>
                     </FormItem>
                   )}
@@ -435,15 +417,10 @@ export default function SystemPreferences() {
                         <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                           <div className="space-y-0.5">
                             <FormLabel>Lembretes de Consulta</FormLabel>
-                            <FormDescription>
-                              Notificações sobre próximas consultas
-                            </FormDescription>
+                            <FormDescription>Notificações sobre próximas consultas</FormDescription>
                           </div>
                           <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -456,15 +433,10 @@ export default function SystemPreferences() {
                         <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                           <div className="space-y-0.5">
                             <FormLabel>Mensagens de Pacientes</FormLabel>
-                            <FormDescription>
-                              Notificações sobre novas mensagens
-                            </FormDescription>
+                            <FormDescription>Notificações sobre novas mensagens</FormDescription>
                           </div>
                           <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -491,15 +463,10 @@ export default function SystemPreferences() {
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
                       <FormLabel className="text-base">Logout Automático</FormLabel>
-                      <FormDescription>
-                        Desconectar automaticamente por inatividade
-                      </FormDescription>
+                      <FormDescription>Desconectar automaticamente por inatividade</FormDescription>
                     </div>
                     <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -521,9 +488,7 @@ export default function SystemPreferences() {
                           onChange={(e) => field.onChange(parseInt(e.target.value) || 60)}
                         />
                       </FormControl>
-                      <FormDescription>
-                        Minutos de inatividade antes do logout
-                      </FormDescription>
+                      <FormDescription>Minutos de inatividade antes do logout</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -585,15 +550,10 @@ export default function SystemPreferences() {
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
                       <FormLabel className="text-base">Log de Auditoria</FormLabel>
-                      <FormDescription>
-                        Registrar todas as ações para conformidade
-                      </FormDescription>
+                      <FormDescription>Registrar todas as ações para conformidade</FormDescription>
                     </div>
                     <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}

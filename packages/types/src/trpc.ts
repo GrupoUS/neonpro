@@ -1,6 +1,6 @@
 /**
  * Shared tRPC types for NeonPro Healthcare
- * 
+ *
  * Type definitions for:
  * - Healthcare user roles and permissions
  * - Medical data structures
@@ -10,34 +10,30 @@
  */
 
 // Healthcare user roles
-export type HealthcareRole = 
-  | 'admin'
-  | 'healthcare_professional' 
-  | 'patient'
-  | 'staff';
+export type HealthcareRole = "admin" | "healthcare_professional" | "patient" | "staff";
 
 // Medical professional specializations
-export type MedicalSpecialization = 
-  | 'general_medicine'
-  | 'cardiology'
-  | 'pediatrics'
-  | 'orthopedics'
-  | 'neurology'
-  | 'dermatology'
-  | 'psychiatry'
-  | 'radiology'
-  | 'surgery'
-  | 'emergency'
-  | 'other';
+export type MedicalSpecialization =
+  | "general_medicine"
+  | "cardiology"
+  | "pediatrics"
+  | "orthopedics"
+  | "neurology"
+  | "dermatology"
+  | "psychiatry"
+  | "radiology"
+  | "surgery"
+  | "emergency"
+  | "other";
 
 // Healthcare facility types
-export type FacilityType = 
-  | 'hospital'
-  | 'clinic'
-  | 'practice'
-  | 'laboratory'
-  | 'pharmacy'
-  | 'diagnostic_center';
+export type FacilityType =
+  | "hospital"
+  | "clinic"
+  | "practice"
+  | "laboratory"
+  | "pharmacy"
+  | "diagnostic_center";
 
 // LGPD compliance status
 export interface LGPDCompliance {
@@ -95,7 +91,7 @@ export interface HealthcareTenant {
   };
   created_at: string;
   updated_at: string;
-}// Audit trail interface
+} // Audit trail interface
 export interface HealthcareAuditLog {
   id: string;
   user_id: string | null;
@@ -134,16 +130,16 @@ export interface HealthcareAPIResponse<T = any> {
 
 // Error codes for healthcare API
 export enum HealthcareErrorCode {
-  UNAUTHORIZED = 'UNAUTHORIZED',
-  FORBIDDEN = 'FORBIDDEN',
-  NOT_FOUND = 'NOT_FOUND',
-  BAD_REQUEST = 'BAD_REQUEST',
-  INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
-  LGPD_CONSENT_REQUIRED = 'LGPD_CONSENT_REQUIRED',
-  MEDICAL_LICENSE_INVALID = 'MEDICAL_LICENSE_INVALID',
-  TENANT_ACCESS_DENIED = 'TENANT_ACCESS_DENIED',
-  DATA_RETENTION_EXPIRED = 'DATA_RETENTION_EXPIRED',
-  AUDIT_LOG_REQUIRED = 'AUDIT_LOG_REQUIRED',
+  UNAUTHORIZED = "UNAUTHORIZED",
+  FORBIDDEN = "FORBIDDEN",
+  NOT_FOUND = "NOT_FOUND",
+  BAD_REQUEST = "BAD_REQUEST",
+  INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR",
+  LGPD_CONSENT_REQUIRED = "LGPD_CONSENT_REQUIRED",
+  MEDICAL_LICENSE_INVALID = "MEDICAL_LICENSE_INVALID",
+  TENANT_ACCESS_DENIED = "TENANT_ACCESS_DENIED",
+  DATA_RETENTION_EXPIRED = "DATA_RETENTION_EXPIRED",
+  AUDIT_LOG_REQUIRED = "AUDIT_LOG_REQUIRED",
 }
 
 // Performance metrics for healthcare operations

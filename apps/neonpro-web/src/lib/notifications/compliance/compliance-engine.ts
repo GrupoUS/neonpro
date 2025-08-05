@@ -1,9 +1,9 @@
-﻿/**
+/**
  * Compliance & Security Engine - NeonPro Notifications
- * 
+ *
  * Engine de compliance para garantir conformidade com LGPD, ANVISA, CFM
  * e outras regulamentações aplicáveis ao sistema de notificações de clínicas.
- * 
+ *
  * Features:
  * - Auditoria LGPD completa
  * - Validação de consentimento CFM/ANVISA
@@ -11,16 +11,16 @@
  * - Logs de auditoria detalhados
  * - Encryption end-to-end
  * - Retention policies automatizadas
- * 
+ *
  * @author APEX Architecture Team
  * @version 1.0.0
  * @compliance LGPD, ANVISA, CFM, ISO 27001
  */
 
-import { z } from 'zod';
-import { createClient } from '@/lib/supabase/server';
-import { createHash, randomBytes, createCipheriv, createDecipheriv } from 'crypto';
-import { NotificationChannel, NotificationType } from '../types';
+import type { z } from "zod";
+import type { createClient } from "@/lib/supabase/server";
+import type { createHash, randomBytes, createCipheriv, createDecipheriv } from "crypto";
+import type { NotificationChannel, NotificationType } from "../types";
 
 // ================================================================================
 // COMPLIANCE SCHEMAS & TYPES
@@ -29,22 +29,30 @@ import { NotificationChannel, NotificationType } from '../types';
 const LGPDConsentSchema = z.object({
   userId: z.string().uuid(),
   clinicId: z.string().uuid(),
-  consentType: z.enum(['explicit', 'implied', 'legitimate_interest']),
+  consentType: z.enum(["explicit", "implied", "legitimate_interest"]),
   purpose: z.string(),
   legalBasis: z.enum([
-    'consent',           // Art. 7º, I
-    'legal_obligation',  // Art. 7º, II
-    'public_interest',   // Art. 7º, III
-    'vital_interests',   // Art. 7º, IV
-    'legitimate_interests', // Art. 7º, IX
-    'contract_performance' // Art. 7º, V
+    "consent", // Art. 7º, I
+    "legal_obligation", // Art. 7º, II
+    "public_interest", // Art. 7º, III
+    "vital_interests", // Art. 7º, IV
+    "legitimate_interests", // Art. 7º, IX
+    "contract_performance", // Art. 7º, V
   ]),
-  dataCategories: z.array(z.enum([
-    'identification', 'contact', 'demographic', 'health',
-    'behavioral', 'professional', 'financial', 'biometric'
-  ])),
+  dataCategories: z.array(
+    z.enum([
+      "identification",
+      "contact",
+      "demographic",
+      "health",
+      "behavioral",
+      "professional",
+      "financial",
+      "biometric",
+    ]),
+  ),
   consentGivenAt: z.string().datetime(),
-  consentMethod: z.enum(['form', 'email', 'phone', 'sms', 'in_person']),
+  consentMethod: z.enum(["form", "email", "phone", "sms", "in_person"]),
   isMinor: z.boolean().default(false),
   parentalConsent: z.string().uuid().optional(),
   retentionPeriod: z.number(), // em dias
@@ -59,19 +67,28 @@ const AuditLogSchema = z.object({
   clinicId: z.string().uuid(),
   userId: z.string().uuid().optional(),
   action: z.enum([
-    'notification_sent', 'notification_opened', 'notification_clicked',
-    'consent_given', 'consent_revoked', 'data_accessed', 'data_exported',
-    'data_deleted', 'retention_applied', 'encryption_performed',
-    'compliance_check', 'security_incident', 'policy_updated'
+    "notification_sent",
+    "notification_opened",
+    "notification_clicked",
+    "consent_given",
+    "consent_revoked",
+    "data_accessed",
+    "data_exported",
+    "data_deleted",
+    "retention_applied",
+    "encryption_performed",
+    "compliance_check",
+    "security_incident",
+    "policy_updated",
   ]),
-  entityType: z.enum(['notification', 'user', 'consent', 'data', 'system']),
+  entityType: z.enum(["notification", "user", "consent", "data", "system"]),
   entityId: z.string(),
   details: z.record(z.any()),
   ipAddress: z.string().optional(),
   userAgent: z.string().optional(),
   timestamp: z.string().datetime(),
-  severity: z.enum(['low', 'medium', 'high', 'critical']),
-  complianceFramework: z.array(z.enum(['LGPD', 'ANVISA', 'CFM', 'ISO27001'])),
+  severity: z.enum(["low", "medium", "high", "critical"]),
+  complianceFramework: z.array(z.enum(["LGPD", "ANVISA", "CFM", "ISO27001"])),
 });
 
 const DPIASchema = z.object({
@@ -82,19 +99,21 @@ const DPIASchema = z.object({
   dataTypes: z.array(z.string()),
   stakeholders: z.array(z.string()),
   riskAssessment: z.object({
-    privacyRisks: z.array(z.object({
-      risk: z.string(),
-      likelihood: z.enum(['low', 'medium', 'high']),
-      impact: z.enum(['low', 'medium', 'high']),
-      mitigation: z.string(),
-    })),
+    privacyRisks: z.array(
+      z.object({
+        risk: z.string(),
+        likelihood: z.enum(["low", "medium", "high"]),
+        impact: z.enum(["low", "medium", "high"]),
+        mitigation: z.string(),
+      }),
+    ),
     overallRiskScore: z.number().min(1).max(10),
-    recommendation: z.enum(['proceed', 'proceed_with_conditions', 'review_required', 'reject']),
+    recommendation: z.enum(["proceed", "proceed_with_conditions", "review_required", "reject"]),
   }),
   safeguards: z.array(z.string()),
   reviewDate: z.string().datetime(),
   reviewerId: z.string().uuid(),
-  status: z.enum(['draft', 'under_review', 'approved', 'rejected']),
+  status: z.enum(["draft", "under_review", "approved", "rejected"]),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
 });
@@ -106,10 +125,10 @@ type DPIA = z.infer<typeof DPIASchema>;
 interface ComplianceCheckResult {
   isCompliant: boolean;
   violations: Array<{
-    regulation: 'LGPD' | 'ANVISA' | 'CFM';
+    regulation: "LGPD" | "ANVISA" | "CFM";
     article: string;
     description: string;
-    severity: 'low' | 'medium' | 'high' | 'critical';
+    severity: "low" | "medium" | "high" | "critical";
     remediation: string;
   }>;
   recommendations: string[];
@@ -127,7 +146,7 @@ interface EncryptionResult {
 interface RetentionPolicy {
   dataCategory: string;
   retentionPeriod: number; // dias
-  deletionMethod: 'soft' | 'hard' | 'anonymize';
+  deletionMethod: "soft" | "hard" | "anonymize";
   legalBasis: string;
   exceptions: string[];
 }
@@ -145,7 +164,7 @@ export class NotificationComplianceEngine {
     this.supabase = createClient();
     this.encryptionKey = this.deriveEncryptionKey();
     this.initializeRetentionPolicies();
-    
+
     // Flush audit logs a cada 30 segundos
     setInterval(() => this.flushAuditLogs(), 30000);
   }
@@ -161,10 +180,10 @@ export class NotificationComplianceEngine {
     userId: string,
     clinicId: string,
     notificationType: NotificationType,
-    channel: NotificationChannel
+    channel: NotificationChannel,
   ): Promise<ComplianceCheckResult> {
     try {
-      const violations: ComplianceCheckResult['violations'] = [];
+      const violations: ComplianceCheckResult["violations"] = [];
       const recommendations: string[] = [];
       const auditTrail: string[] = [];
 
@@ -172,11 +191,11 @@ export class NotificationComplianceEngine {
       const consent = await this.getValidConsent(userId, clinicId, notificationType);
       if (!consent) {
         violations.push({
-          regulation: 'LGPD',
-          article: 'Art. 7º',
-          description: 'Ausência de consentimento válido para tratamento de dados',
-          severity: 'critical',
-          remediation: 'Obter consentimento explícito antes do envio',
+          regulation: "LGPD",
+          article: "Art. 7º",
+          description: "Ausência de consentimento válido para tratamento de dados",
+          severity: "critical",
+          remediation: "Obter consentimento explícito antes do envio",
         });
       } else {
         auditTrail.push(`Consentimento válido encontrado: ${consent.consentType}`);
@@ -185,11 +204,11 @@ export class NotificationComplianceEngine {
       // 2. Verificar período de retenção
       if (consent && this.isRetentionPeriodExceeded(consent)) {
         violations.push({
-          regulation: 'LGPD',
-          article: 'Art. 15º',
-          description: 'Período de retenção excedido',
-          severity: 'high',
-          remediation: 'Aplicar política de retenção e deletar dados expirados',
+          regulation: "LGPD",
+          article: "Art. 15º",
+          description: "Período de retenção excedido",
+          severity: "high",
+          remediation: "Aplicar política de retenção e deletar dados expirados",
         });
       }
 
@@ -197,11 +216,11 @@ export class NotificationComplianceEngine {
       const dataMinimizationCheck = await this.validateDataMinimization(userId, notificationType);
       if (!dataMinimizationCheck.isCompliant) {
         violations.push({
-          regulation: 'LGPD',
-          article: 'Art. 6º, III',
-          description: 'Violação do princípio da minimização',
-          severity: 'medium',
-          remediation: 'Reduzir dados utilizados ao mínimo necessário',
+          regulation: "LGPD",
+          article: "Art. 6º, III",
+          description: "Violação do princípio da minimização",
+          severity: "medium",
+          remediation: "Reduzir dados utilizados ao mínimo necessário",
         });
       }
 
@@ -209,30 +228,30 @@ export class NotificationComplianceEngine {
       const channelCompliance = await this.validateChannelCompliance(userId, channel);
       if (!channelCompliance) {
         violations.push({
-          regulation: 'LGPD',
-          article: 'Art. 46º',
-          description: 'Canal de comunicação inadequado para o tipo de dado',
-          severity: 'medium',
-          remediation: 'Utilizar canal com maior nível de segurança',
+          regulation: "LGPD",
+          article: "Art. 46º",
+          description: "Canal de comunicação inadequado para o tipo de dado",
+          severity: "medium",
+          remediation: "Utilizar canal com maior nível de segurança",
         });
-        recommendations.push('Considerar usar canal criptografado end-to-end');
+        recommendations.push("Considerar usar canal criptografado end-to-end");
       }
 
       // 5. Verificar se é menor de idade
       if (consent && consent.isMinor && !consent.parentalConsent) {
         violations.push({
-          regulation: 'LGPD',
-          article: 'Art. 14º',
-          description: 'Tratamento de dados de menor sem consentimento dos pais',
-          severity: 'critical',
-          remediation: 'Obter consentimento específico dos responsáveis legais',
+          regulation: "LGPD",
+          article: "Art. 14º",
+          description: "Tratamento de dados de menor sem consentimento dos pais",
+          severity: "critical",
+          remediation: "Obter consentimento específico dos responsáveis legais",
         });
       }
 
       // Log da verificação
       await this.logAuditEvent({
-        action: 'compliance_check',
-        entityType: 'notification',
+        action: "compliance_check",
+        entityType: "notification",
         entityId: `${userId}_${notificationType}`,
         details: {
           violations: violations.length,
@@ -240,8 +259,8 @@ export class NotificationComplianceEngine {
           notificationType,
           hasConsent: !!consent,
         },
-        severity: violations.some(v => v.severity === 'critical') ? 'critical' : 'medium',
-        complianceFramework: ['LGPD'],
+        severity: violations.some((v) => v.severity === "critical") ? "critical" : "medium",
+        complianceFramework: ["LGPD"],
         userId,
         clinicId,
       });
@@ -253,7 +272,7 @@ export class NotificationComplianceEngine {
         auditTrail,
       };
     } catch (error) {
-      console.error('Erro na validação LGPD:', error);
+      console.error("Erro na validação LGPD:", error);
       throw error;
     }
   }
@@ -264,16 +283,16 @@ export class NotificationComplianceEngine {
   private async getValidConsent(
     userId: string,
     clinicId: string,
-    notificationType: NotificationType
+    notificationType: NotificationType,
   ): Promise<LGPDConsent | null> {
     try {
       const { data, error } = await this.supabase
-        .from('lgpd_consents')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('clinic_id', clinicId)
-        .eq('is_revoked', false)
-        .order('consent_given_at', { ascending: false })
+        .from("lgpd_consents")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("clinic_id", clinicId)
+        .eq("is_revoked", false)
+        .order("consent_given_at", { ascending: false })
         .limit(1);
 
       if (error || !data || data.length === 0) {
@@ -284,19 +303,19 @@ export class NotificationComplianceEngine {
 
       // Verificar se o consentimento cobre o tipo de notificação
       const purposeMapping: Record<NotificationType, string[]> = {
-        [NotificationType.APPOINTMENT_REMINDER]: ['appointment', 'reminder', 'healthcare'],
-        [NotificationType.APPOINTMENT_CONFIRMATION]: ['appointment', 'confirmation', 'healthcare'],
-        [NotificationType.PRESCRIPTION_READY]: ['prescription', 'healthcare', 'medication'],
-        [NotificationType.PAYMENT_DUE]: ['financial', 'payment', 'billing'],
-        [NotificationType.PROMOTION]: ['marketing', 'promotion', 'commercial'],
-        [NotificationType.SYSTEM_ALERT]: ['system', 'security', 'maintenance'],
-        [NotificationType.BIRTHDAY]: ['marketing', 'celebration', 'personal'],
-        [NotificationType.FOLLOW_UP]: ['healthcare', 'follow_up', 'medical'],
+        [NotificationType.APPOINTMENT_REMINDER]: ["appointment", "reminder", "healthcare"],
+        [NotificationType.APPOINTMENT_CONFIRMATION]: ["appointment", "confirmation", "healthcare"],
+        [NotificationType.PRESCRIPTION_READY]: ["prescription", "healthcare", "medication"],
+        [NotificationType.PAYMENT_DUE]: ["financial", "payment", "billing"],
+        [NotificationType.PROMOTION]: ["marketing", "promotion", "commercial"],
+        [NotificationType.SYSTEM_ALERT]: ["system", "security", "maintenance"],
+        [NotificationType.BIRTHDAY]: ["marketing", "celebration", "personal"],
+        [NotificationType.FOLLOW_UP]: ["healthcare", "follow_up", "medical"],
       };
 
       const requiredPurposes = purposeMapping[notificationType] || [];
-      const hasPurpose = requiredPurposes.some(purpose => 
-        consent.purpose_details.toLowerCase().includes(purpose)
+      const hasPurpose = requiredPurposes.some((purpose) =>
+        consent.purpose_details.toLowerCase().includes(purpose),
       );
 
       if (!hasPurpose) {
@@ -305,7 +324,7 @@ export class NotificationComplianceEngine {
 
       return LGPDConsentSchema.parse(consent);
     } catch (error) {
-      console.error('Erro ao obter consentimento:', error);
+      console.error("Erro ao obter consentimento:", error);
       return null;
     }
   }
@@ -317,7 +336,7 @@ export class NotificationComplianceEngine {
     const consentDate = new Date(consent.consentGivenAt);
     const expiryDate = new Date(consentDate);
     expiryDate.setDate(expiryDate.getDate() + consent.retentionPeriod);
-    
+
     return new Date() > expiryDate;
   }
 
@@ -326,26 +345,26 @@ export class NotificationComplianceEngine {
    */
   private async validateDataMinimization(
     userId: string,
-    notificationType: NotificationType
+    notificationType: NotificationType,
   ): Promise<{ isCompliant: boolean; details: string[] }> {
     // Define campos necessários por tipo de notificação
     const requiredFields: Record<NotificationType, string[]> = {
-      [NotificationType.APPOINTMENT_REMINDER]: ['name', 'phone', 'appointment_date'],
-      [NotificationType.APPOINTMENT_CONFIRMATION]: ['name', 'phone', 'appointment_date'],
-      [NotificationType.PRESCRIPTION_READY]: ['name', 'phone'],
-      [NotificationType.PAYMENT_DUE]: ['name', 'email', 'amount'],
-      [NotificationType.PROMOTION]: ['name', 'preferred_channel'],
-      [NotificationType.SYSTEM_ALERT]: ['email'],
-      [NotificationType.BIRTHDAY]: ['name', 'birth_date'],
-      [NotificationType.FOLLOW_UP]: ['name', 'phone', 'last_appointment'],
+      [NotificationType.APPOINTMENT_REMINDER]: ["name", "phone", "appointment_date"],
+      [NotificationType.APPOINTMENT_CONFIRMATION]: ["name", "phone", "appointment_date"],
+      [NotificationType.PRESCRIPTION_READY]: ["name", "phone"],
+      [NotificationType.PAYMENT_DUE]: ["name", "email", "amount"],
+      [NotificationType.PROMOTION]: ["name", "preferred_channel"],
+      [NotificationType.SYSTEM_ALERT]: ["email"],
+      [NotificationType.BIRTHDAY]: ["name", "birth_date"],
+      [NotificationType.FOLLOW_UP]: ["name", "phone", "last_appointment"],
     };
 
     const required = requiredFields[notificationType] || [];
-    
+
     // Para simplificar, assumimos compliance se temos definição clara dos campos
     return {
       isCompliant: required.length > 0,
-      details: [`Campos necessários: ${required.join(', ')}`],
+      details: [`Campos necessários: ${required.join(", ")}`],
     };
   }
 
@@ -354,17 +373,14 @@ export class NotificationComplianceEngine {
    */
   private async validateChannelCompliance(
     userId: string,
-    channel: NotificationChannel
+    channel: NotificationChannel,
   ): Promise<boolean> {
     // SMS e WhatsApp são adequados para dados não-sensíveis
     // Email com criptografia é adequado para dados sensíveis
     // Push notifications para alertas não-sensíveis
-    
-    const secureChannels = [
-      NotificationChannel.EMAIL, 
-      NotificationChannel.WHATSAPP
-    ];
-    
+
+    const secureChannels = [NotificationChannel.EMAIL, NotificationChannel.WHATSAPP];
+
     // Para simplificar, consideramos todos os canais seguros no contexto clínico
     return secureChannels.includes(channel) || channel === NotificationChannel.IN_APP;
   }
@@ -380,20 +396,20 @@ export class NotificationComplianceEngine {
     userId: string,
     clinicId: string,
     content: string,
-    notificationType: NotificationType
+    notificationType: NotificationType,
   ): Promise<ComplianceCheckResult> {
-    const violations: ComplianceCheckResult['violations'] = [];
+    const violations: ComplianceCheckResult["violations"] = [];
     const recommendations: string[] = [];
     const auditTrail: string[] = [];
 
     // 1. Verificar se contém informações médicas sensíveis
     const hasSensitiveInfo = this.detectSensitiveMedicalInfo(content);
     if (hasSensitiveInfo.detected) {
-      auditTrail.push(`Informações médicas detectadas: ${hasSensitiveInfo.types.join(', ')}`);
-      
+      auditTrail.push(`Informações médicas detectadas: ${hasSensitiveInfo.types.join(", ")}`);
+
       // CFM - Resolução 2.314/2022 (Telemedicina)
       if (notificationType === NotificationType.FOLLOW_UP) {
-        recommendations.push('Considerar usar canal seguro para seguimento médico');
+        recommendations.push("Considerar usar canal seguro para seguimento médico");
       }
     }
 
@@ -402,10 +418,10 @@ export class NotificationComplianceEngine {
       const anvisaCompliance = this.validateANVISADrugCompliance(content);
       if (!anvisaCompliance.isCompliant) {
         violations.push({
-          regulation: 'ANVISA',
-          article: 'RDC 357/2020',
-          description: 'Comunicação de medicamento não conforme',
-          severity: 'high',
+          regulation: "ANVISA",
+          article: "RDC 357/2020",
+          description: "Comunicação de medicamento não conforme",
+          severity: "high",
           remediation: anvisaCompliance.remediation,
         });
       }
@@ -414,25 +430,25 @@ export class NotificationComplianceEngine {
     // 3. Verificar sigilo médico (CFM)
     if (this.containsProtectedHealthInfo(content)) {
       violations.push({
-        regulation: 'CFM',
-        article: 'Código de Ética Médica - Art. 73',
-        description: 'Possível violação do sigilo médico',
-        severity: 'critical',
-        remediation: 'Remover informações protegidas ou usar canal seguro',
+        regulation: "CFM",
+        article: "Código de Ética Médica - Art. 73",
+        description: "Possível violação do sigilo médico",
+        severity: "critical",
+        remediation: "Remover informações protegidas ou usar canal seguro",
       });
     }
 
     await this.logAuditEvent({
-      action: 'compliance_check',
-      entityType: 'notification',
+      action: "compliance_check",
+      entityType: "notification",
       entityId: `medical_${userId}_${notificationType}`,
       details: {
         violations: violations.length,
         sensitiveInfo: hasSensitiveInfo.detected,
         notificationType,
       },
-      severity: violations.some(v => v.severity === 'critical') ? 'critical' : 'low',
-      complianceFramework: ['ANVISA', 'CFM'],
+      severity: violations.some((v) => v.severity === "critical") ? "critical" : "low",
+      complianceFramework: ["ANVISA", "CFM"],
       userId,
       clinicId,
     });
@@ -473,18 +489,21 @@ export class NotificationComplianceEngine {
   /**
    * Valida conformidade ANVISA para medicamentos
    */
-  private validateANVISADrugCompliance(content: string): { isCompliant: boolean; remediation: string } {
+  private validateANVISADrugCompliance(content: string): {
+    isCompliant: boolean;
+    remediation: string;
+  } {
     const controlledSubstances = /ritalina|morfina|codeína|tramadol|clonazepam/i;
     const hasControlled = controlledSubstances.test(content);
 
     if (hasControlled) {
       return {
         isCompliant: false,
-        remediation: 'Usar canal seguro para comunicação de substâncias controladas',
+        remediation: "Usar canal seguro para comunicação de substâncias controladas",
       };
     }
 
-    return { isCompliant: true, remediation: '' };
+    return { isCompliant: true, remediation: "" };
   }
 
   /**
@@ -501,7 +520,7 @@ export class NotificationComplianceEngine {
       /resultado.*laboratorial/i,
     ];
 
-    return phiPatterns.some(pattern => pattern.test(content));
+    return phiPatterns.some((pattern) => pattern.test(content));
   }
 
   /**
@@ -510,38 +529,38 @@ export class NotificationComplianceEngine {
   async encryptSensitiveData(data: string, dataType: string): Promise<EncryptionResult> {
     try {
       const iv = randomBytes(16);
-      const cipher = createCipheriv('aes-256-gcm', this.encryptionKey, iv);
-      
-      let encrypted = cipher.update(data, 'utf8', 'hex');
-      encrypted += cipher.final('hex');
-      
+      const cipher = createCipheriv("aes-256-gcm", this.encryptionKey, iv);
+
+      let encrypted = cipher.update(data, "utf8", "hex");
+      encrypted += cipher.final("hex");
+
       const authTag = cipher.getAuthTag();
       const keyId = this.generateKeyId();
 
       const result: EncryptionResult = {
-        encryptedData: encrypted + authTag.toString('hex'),
-        iv: iv.toString('hex'),
+        encryptedData: encrypted + authTag.toString("hex"),
+        iv: iv.toString("hex"),
         keyId,
-        algorithm: 'aes-256-gcm',
+        algorithm: "aes-256-gcm",
         timestamp: new Date().toISOString(),
       };
 
       await this.logAuditEvent({
-        action: 'encryption_performed',
-        entityType: 'data',
+        action: "encryption_performed",
+        entityType: "data",
         entityId: keyId,
         details: {
           dataType,
-          algorithm: 'aes-256-gcm',
+          algorithm: "aes-256-gcm",
           keyId,
         },
-        severity: 'low',
-        complianceFramework: ['LGPD', 'ISO27001'],
+        severity: "low",
+        complianceFramework: ["LGPD", "ISO27001"],
       });
 
       return result;
     } catch (error) {
-      console.error('Erro na criptografia:', error);
+      console.error("Erro na criptografia:", error);
       throw error;
     }
   }
@@ -552,36 +571,36 @@ export class NotificationComplianceEngine {
   async decryptSensitiveData(encryptionResult: EncryptionResult): Promise<string> {
     try {
       const { encryptedData, iv, algorithm } = encryptionResult;
-      
-      if (algorithm !== 'aes-256-gcm') {
-        throw new Error('Algoritmo de criptografia não suportado');
+
+      if (algorithm !== "aes-256-gcm") {
+        throw new Error("Algoritmo de criptografia não suportado");
       }
 
-      const ivBuffer = Buffer.from(iv, 'hex');
-      const encryptedBuffer = Buffer.from(encryptedData.slice(0, -32), 'hex');
-      const authTag = Buffer.from(encryptedData.slice(-32), 'hex');
+      const ivBuffer = Buffer.from(iv, "hex");
+      const encryptedBuffer = Buffer.from(encryptedData.slice(0, -32), "hex");
+      const authTag = Buffer.from(encryptedData.slice(-32), "hex");
 
-      const decipher = createDecipheriv('aes-256-gcm', this.encryptionKey, ivBuffer);
+      const decipher = createDecipheriv("aes-256-gcm", this.encryptionKey, ivBuffer);
       decipher.setAuthTag(authTag);
 
-      let decrypted = decipher.update(encryptedBuffer, undefined, 'utf8');
-      decrypted += decipher.final('utf8');
+      let decrypted = decipher.update(encryptedBuffer, undefined, "utf8");
+      decrypted += decipher.final("utf8");
 
       await this.logAuditEvent({
-        action: 'data_accessed',
-        entityType: 'data',
+        action: "data_accessed",
+        entityType: "data",
         entityId: encryptionResult.keyId,
         details: {
-          algorithm: 'aes-256-gcm',
+          algorithm: "aes-256-gcm",
           keyId: encryptionResult.keyId,
         },
-        severity: 'medium',
-        complianceFramework: ['LGPD', 'ISO27001'],
+        severity: "medium",
+        complianceFramework: ["LGPD", "ISO27001"],
       });
 
       return decrypted;
     } catch (error) {
-      console.error('Erro na descriptografia:', error);
+      console.error("Erro na descriptografia:", error);
       throw error;
     }
   }
@@ -590,27 +609,24 @@ export class NotificationComplianceEngine {
    * Deriva chave de criptografia
    */
   private deriveEncryptionKey(): Buffer {
-    const secret = process.env.ENCRYPTION_SECRET || 'default-secret-key-change-in-production';
-    return Buffer.from(createHash('sha256').update(secret).digest('hex'), 'hex');
+    const secret = process.env.ENCRYPTION_SECRET || "default-secret-key-change-in-production";
+    return Buffer.from(createHash("sha256").update(secret).digest("hex"), "hex");
   }
 
   /**
    * Gera ID único para chave
    */
   private generateKeyId(): string {
-    return createHash('sha256')
-      .update(randomBytes(32))
-      .digest('hex')
-      .substring(0, 16);
+    return createHash("sha256").update(randomBytes(32)).digest("hex").substring(0, 16);
   }
 
   /**
    * Registra evento de auditoria
    */
-  async logAuditEvent(event: Omit<AuditLog, 'id' | 'timestamp'>): Promise<void> {
+  async logAuditEvent(event: Omit<AuditLog, "id" | "timestamp">): Promise<void> {
     const auditLog: AuditLog = {
       ...event,
-      id: createHash('sha256').update(randomBytes(32)).digest('hex').substring(0, 16),
+      id: createHash("sha256").update(randomBytes(32)).digest("hex").substring(0, 16),
       timestamp: new Date().toISOString(),
     };
 
@@ -619,7 +635,7 @@ export class NotificationComplianceEngine {
     this.auditBuffer.push(validatedLog);
 
     // Flush imediato para eventos críticos
-    if (event.severity === 'critical') {
+    if (event.severity === "critical") {
       await this.flushAuditLogs();
     }
   }
@@ -634,17 +650,15 @@ export class NotificationComplianceEngine {
       const logs = [...this.auditBuffer];
       this.auditBuffer = [];
 
-      const { error } = await this.supabase
-        .from('compliance_audit_logs')
-        .insert(logs);
+      const { error } = await this.supabase.from("compliance_audit_logs").insert(logs);
 
       if (error) {
-        console.error('Erro ao persistir logs de auditoria:', error);
+        console.error("Erro ao persistir logs de auditoria:", error);
         // Re-adicionar logs ao buffer em caso de erro
         this.auditBuffer.unshift(...logs);
       }
     } catch (error) {
-      console.error('Erro no flush de logs:', error);
+      console.error("Erro no flush de logs:", error);
     }
   }
 
@@ -655,37 +669,37 @@ export class NotificationComplianceEngine {
     // Políticas baseadas na LGPD e regulamentações médicas
     const policies: RetentionPolicy[] = [
       {
-        dataCategory: 'notification_logs',
+        dataCategory: "notification_logs",
         retentionPeriod: 1095, // 3 anos
-        deletionMethod: 'soft',
-        legalBasis: 'LGPD Art. 16',
-        exceptions: ['legal_proceedings', 'audit_requirements'],
+        deletionMethod: "soft",
+        legalBasis: "LGPD Art. 16",
+        exceptions: ["legal_proceedings", "audit_requirements"],
       },
       {
-        dataCategory: 'consent_records',
+        dataCategory: "consent_records",
         retentionPeriod: 1825, // 5 anos
-        deletionMethod: 'hard',
-        legalBasis: 'LGPD Art. 16 + CFM',
-        exceptions: ['ongoing_treatment'],
+        deletionMethod: "hard",
+        legalBasis: "LGPD Art. 16 + CFM",
+        exceptions: ["ongoing_treatment"],
       },
       {
-        dataCategory: 'medical_communications',
+        dataCategory: "medical_communications",
         retentionPeriod: 3650, // 10 anos (CFM)
-        deletionMethod: 'anonymize',
-        legalBasis: 'CFM Resolução 1.821/2007',
-        exceptions: ['patient_request'],
+        deletionMethod: "anonymize",
+        legalBasis: "CFM Resolução 1.821/2007",
+        exceptions: ["patient_request"],
       },
       {
-        dataCategory: 'marketing_preferences',
+        dataCategory: "marketing_preferences",
         retentionPeriod: 730, // 2 anos
-        deletionMethod: 'hard',
-        legalBasis: 'LGPD Art. 16',
+        deletionMethod: "hard",
+        legalBasis: "LGPD Art. 16",
         exceptions: [],
       },
     ];
 
     // Programar execução das políticas (simulado - em produção usar cron job)
-    console.log('📋 Políticas de retenção inicializadas:', policies.length);
+    console.log("📋 Políticas de retenção inicializadas:", policies.length);
   }
 
   /**
@@ -694,21 +708,21 @@ export class NotificationComplianceEngine {
   async applyRetentionPolicies(clinicId: string): Promise<void> {
     try {
       await this.logAuditEvent({
-        action: 'retention_applied',
-        entityType: 'system',
+        action: "retention_applied",
+        entityType: "system",
         entityId: `retention_${clinicId}`,
         details: {
           clinicId,
           executedAt: new Date().toISOString(),
         },
-        severity: 'medium',
-        complianceFramework: ['LGPD', 'CFM'],
+        severity: "medium",
+        complianceFramework: ["LGPD", "CFM"],
         clinicId,
       });
 
-      console.log('📋 Políticas de retenção aplicadas para clínica:', clinicId);
+      console.log("📋 Políticas de retenção aplicadas para clínica:", clinicId);
     } catch (error) {
-      console.error('Erro ao aplicar políticas de retenção:', error);
+      console.error("Erro ao aplicar políticas de retenção:", error);
     }
   }
 
@@ -719,38 +733,38 @@ export class NotificationComplianceEngine {
     clinicId: string,
     processName: string,
     description: string,
-    reviewerId: string
+    reviewerId: string,
   ): Promise<DPIA> {
     try {
-      const assessmentId = createHash('sha256')
+      const assessmentId = createHash("sha256")
         .update(`${clinicId}_${processName}_${Date.now()}`)
-        .digest('hex')
+        .digest("hex")
         .substring(0, 16);
 
       // Avaliação automática de riscos
       const riskAssessment = {
         privacyRisks: [
           {
-            risk: 'Acesso não autorizado a dados médicos',
-            likelihood: 'medium' as const,
-            impact: 'high' as const,
-            mitigation: 'Implementar autenticação multi-fator e criptografia end-to-end',
+            risk: "Acesso não autorizado a dados médicos",
+            likelihood: "medium" as const,
+            impact: "high" as const,
+            mitigation: "Implementar autenticação multi-fator e criptografia end-to-end",
           },
           {
-            risk: 'Violação de consentimento LGPD',
-            likelihood: 'low' as const,
-            impact: 'high' as const,
-            mitigation: 'Validar consentimento antes de cada comunicação',
+            risk: "Violação de consentimento LGPD",
+            likelihood: "low" as const,
+            impact: "high" as const,
+            mitigation: "Validar consentimento antes de cada comunicação",
           },
           {
-            risk: 'Retenção excessiva de dados',
-            likelihood: 'medium' as const,
-            impact: 'medium' as const,
-            mitigation: 'Implementar políticas automatizadas de retenção',
+            risk: "Retenção excessiva de dados",
+            likelihood: "medium" as const,
+            impact: "medium" as const,
+            mitigation: "Implementar políticas automatizadas de retenção",
           },
         ],
         overallRiskScore: 6.5,
-        recommendation: 'proceed_with_conditions' as const,
+        recommendation: "proceed_with_conditions" as const,
       };
 
       const dpia: DPIA = {
@@ -758,49 +772,47 @@ export class NotificationComplianceEngine {
         clinicId,
         processName,
         description,
-        dataTypes: ['personal_data', 'health_data', 'contact_data'],
-        stakeholders: ['patients', 'healthcare_professionals', 'clinic_staff'],
+        dataTypes: ["personal_data", "health_data", "contact_data"],
+        stakeholders: ["patients", "healthcare_professionals", "clinic_staff"],
         riskAssessment,
         safeguards: [
-          'Criptografia AES-256',
-          'Logs de auditoria detalhados',
-          'Controle de acesso baseado em funções',
-          'Validação de consentimento LGPD',
-          'Políticas de retenção automatizadas',
+          "Criptografia AES-256",
+          "Logs de auditoria detalhados",
+          "Controle de acesso baseado em funções",
+          "Validação de consentimento LGPD",
+          "Políticas de retenção automatizadas",
         ],
         reviewDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(), // 1 ano
         reviewerId,
-        status: 'approved',
+        status: "approved",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
 
       // Salvar DPIA
-      const { error } = await this.supabase
-        .from('dpia_assessments')
-        .insert(dpia);
+      const { error } = await this.supabase.from("dpia_assessments").insert(dpia);
 
       if (error) {
-        console.error('Erro ao salvar DPIA:', error);
+        console.error("Erro ao salvar DPIA:", error);
       }
 
       await this.logAuditEvent({
-        action: 'compliance_check',
-        entityType: 'system',
+        action: "compliance_check",
+        entityType: "system",
         entityId: assessmentId,
         details: {
           processName,
           riskScore: riskAssessment.overallRiskScore,
           recommendation: riskAssessment.recommendation,
         },
-        severity: 'medium',
-        complianceFramework: ['LGPD'],
+        severity: "medium",
+        complianceFramework: ["LGPD"],
         clinicId,
       });
 
       return dpia;
     } catch (error) {
-      console.error('Erro na execução do DPIA:', error);
+      console.error("Erro na execução do DPIA:", error);
       throw error;
     }
   }
@@ -812,4 +824,3 @@ export class NotificationComplianceEngine {
 
 export const createnotificationComplianceEngine = () => new NotificationComplianceEngine();
 export type { LGPDConsent, AuditLog, DPIA, ComplianceCheckResult };
-

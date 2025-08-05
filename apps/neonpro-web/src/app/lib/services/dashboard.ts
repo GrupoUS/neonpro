@@ -1,4 +1,4 @@
-﻿import { createClient } from '@/lib/supabase/server';
+import type { createClient } from "@/lib/supabase/server";
 
 export class DashboardService {
   private async getSupabase() {
@@ -6,37 +6,37 @@ export class DashboardService {
     return await createClient();
   }
 
-    // Add new methods for dashboard API
+  // Add new methods for dashboard API
 
-  async getAllMetrics(period: string = '30d') {
+  async getAllMetrics(period: string = "30d") {
     const supabase = await createClient();
-    
+
     const periodDays = this.parsePeriodToDays(period);
     const startDate = new Date(Date.now() - periodDays * 24 * 60 * 60 * 1000);
 
     const { data: performanceLogs, error } = await supabase
-      .from('dashboard_performance_logs')
-      .select('*')
-      .gte('timestamp', startDate.toISOString())
-      .order('timestamp', { ascending: false });
+      .from("dashboard_performance_logs")
+      .select("*")
+      .gte("timestamp", startDate.toISOString())
+      .order("timestamp", { ascending: false });
 
     if (error) throw error;
 
     return performanceLogs || [];
   }
 
-  async getMetricData(metric: string, period: string = '30d') {
+  async getMetricData(metric: string, period: string = "30d") {
     const supabase = await createClient();
-    
+
     const periodDays = this.parsePeriodToDays(period);
     const startDate = new Date(Date.now() - periodDays * 24 * 60 * 60 * 1000);
 
     const { data: logs, error } = await supabase
-      .from('dashboard_performance_logs')
-      .select('*')
-      .eq('metric_type', metric)
-      .gte('timestamp', startDate.toISOString())
-      .order('timestamp', { ascending: false });
+      .from("dashboard_performance_logs")
+      .select("*")
+      .eq("metric_type", metric)
+      .gte("timestamp", startDate.toISOString())
+      .order("timestamp", { ascending: false });
 
     if (error) throw error;
 
@@ -47,14 +47,16 @@ export class DashboardService {
     const supabase = await createClient();
 
     const { data, error } = await supabase
-      .from('dashboard_performance_logs')
-      .insert([{
-        metric_type: metric,
-        value: value,
-        metadata: metadata || {},
-        timestamp: new Date().toISOString(),
-        user_id: userId
-      }])
+      .from("dashboard_performance_logs")
+      .insert([
+        {
+          metric_type: metric,
+          value: value,
+          metadata: metadata || {},
+          timestamp: new Date().toISOString(),
+          user_id: userId,
+        },
+      ])
       .select()
       .single();
 
@@ -64,28 +66,31 @@ export class DashboardService {
 
   private parsePeriodToDays(period: string): number {
     const periodMap: { [key: string]: number } = {
-      '7d': 7,
-      '30d': 30,
-      '90d': 90,
-      '1y': 365
+      "7d": 7,
+      "30d": 30,
+      "90d": 90,
+      "1y": 365,
     };
     return periodMap[period] || 30;
   }
-  async createDashboardConfig(userId: string, data: {
-    layout_config: any;
-    widget_preferences: any;
-    update_frequency?: number;
-    is_default?: boolean;
-  }) {
+  async createDashboardConfig(
+    userId: string,
+    data: {
+      layout_config: any;
+      widget_preferences: any;
+      update_frequency?: number;
+      is_default?: boolean;
+    },
+  ) {
     const supabase = await createClient();
-    
+
     const { data: config, error } = await supabase
-      .from('dashboard_configurations')
+      .from("dashboard_configurations")
       .insert({
         user_id: userId,
         ...data,
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .select()
       .single();
@@ -96,21 +101,21 @@ export class DashboardService {
 
   async getDashboardConfig(userId: string, configId?: string) {
     const supabase = await createClient();
-    
+
     let query = supabase
-      .from('dashboard_configurations')
+      .from("dashboard_configurations")
       .select(`
         *,
         dashboard_widgets (
           *
         )
       `)
-      .eq('user_id', userId);
+      .eq("user_id", userId);
 
     if (configId) {
-      query = query.eq('id', configId);
+      query = query.eq("id", configId);
     } else {
-      query = query.eq('is_default', true);
+      query = query.eq("is_default", true);
     }
 
     const { data, error } = await query.single();
@@ -120,14 +125,14 @@ export class DashboardService {
 
   async updateDashboardConfig(configId: string, data: any) {
     const supabase = await createClient();
-    
+
     const { data: config, error } = await supabase
-      .from('dashboard_configurations')
+      .from("dashboard_configurations")
       .update({
         ...data,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
-      .eq('id', configId)
+      .eq("id", configId)
       .select()
       .single();
 
@@ -137,11 +142,8 @@ export class DashboardService {
 
   async deleteDashboardConfig(configId: string) {
     const supabase = await createClient();
-    
-    const { error } = await supabase
-      .from('dashboard_configurations')
-      .delete()
-      .eq('id', configId);
+
+    const { error } = await supabase.from("dashboard_configurations").delete().eq("id", configId);
 
     if (error) throw error;
     return { success: true };
@@ -161,13 +163,13 @@ export class DashboardService {
     is_visible?: boolean;
   }) {
     const supabase = await createClient();
-    
+
     const { data: widget, error } = await supabase
-      .from('dashboard_widgets')
+      .from("dashboard_widgets")
       .insert({
         ...data,
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .select()
       .single();
@@ -178,13 +180,13 @@ export class DashboardService {
 
   async getWidgets(configId: string) {
     const supabase = await createClient();
-    
+
     const { data, error } = await supabase
-      .from('dashboard_widgets')
-      .select('*')
-      .eq('config_id', configId)
-      .order('position_y')
-      .order('position_x');
+      .from("dashboard_widgets")
+      .select("*")
+      .eq("config_id", configId)
+      .order("position_y")
+      .order("position_x");
 
     if (error) throw error;
     return data;
@@ -192,14 +194,14 @@ export class DashboardService {
 
   async updateWidget(widgetId: string, data: any) {
     const supabase = await createClient();
-    
+
     const { data: widget, error } = await supabase
-      .from('dashboard_widgets')
+      .from("dashboard_widgets")
       .update({
         ...data,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
-      .eq('id', widgetId)
+      .eq("id", widgetId)
       .select()
       .single();
 
@@ -209,18 +211,15 @@ export class DashboardService {
 
   async deleteWidget(widgetId: string) {
     const supabase = await createClient();
-    
-    const { error } = await supabase
-      .from('dashboard_widgets')
-      .delete()
-      .eq('id', widgetId);
+
+    const { error } = await supabase.from("dashboard_widgets").delete().eq("id", widgetId);
 
     if (error) throw error;
     return { success: true };
   }
 
   // KPI Metrics
-  async calculateKPIMetrics(clinicId?: string, period: string = 'daily', date?: Date) {
+  async calculateKPIMetrics(clinicId?: string, period: string = "daily", date?: Date) {
     const supabase = await createClient();
     const calculationDate = date || new Date();
     const startDate = this.getDateRange(calculationDate, period).start;
@@ -228,13 +227,13 @@ export class DashboardService {
 
     // Revenue Metrics
     const revenueMetrics = await this.calculateRevenueMetrics(clinicId, startDate, endDate);
-    
+
     // Patient Metrics
     const patientMetrics = await this.calculatePatientMetrics(clinicId, startDate, endDate);
-    
+
     // Appointment Metrics
     const appointmentMetrics = await this.calculateAppointmentMetrics(clinicId, startDate, endDate);
-    
+
     // Efficiency Metrics
     const efficiencyMetrics = await this.calculateEfficiencyMetrics(clinicId, startDate, endDate);
 
@@ -244,15 +243,15 @@ export class DashboardService {
       appointments: appointmentMetrics,
       efficiency: efficiencyMetrics,
       calculation_date: calculationDate.toISOString(),
-      period
+      period,
     };
   }
 
   private async calculateRevenueMetrics(clinicId?: string, startDate?: Date, endDate?: Date) {
     const supabase = await createClient();
-    
+
     let query = supabase
-      .from('appointments')
+      .from("appointments")
       .select(`
         total_amount,
         paid_amount,
@@ -263,37 +262,41 @@ export class DashboardService {
           price
         )
       `)
-      .eq('status', 'completed');
+      .eq("status", "completed");
 
-    if (clinicId) query = query.eq('clinic_id', clinicId);
-    if (startDate) query = query.gte('appointment_date', startDate.toISOString());
-    if (endDate) query = query.lte('appointment_date', endDate.toISOString());
+    if (clinicId) query = query.eq("clinic_id", clinicId);
+    if (startDate) query = query.gte("appointment_date", startDate.toISOString());
+    if (endDate) query = query.lte("appointment_date", endDate.toISOString());
 
     const { data: appointments, error } = await query;
     if (error) throw error;
 
-    const totalRevenue = appointments?.reduce((sum: number, apt: any) => sum + (apt.paid_amount || 0), 0) || 0;
+    const totalRevenue =
+      appointments?.reduce((sum: number, apt: any) => sum + (apt.paid_amount || 0), 0) || 0;
     const averageTransaction = appointments?.length ? totalRevenue / appointments.length : 0;
 
     // Revenue by service
-    const serviceRevenue = appointments?.reduce((acc: any, apt: any) => {
-      if (apt.services) {
-        const serviceName = apt.services.name;
-        if (!acc[serviceName]) {
-          acc[serviceName] = { revenue: 0, count: 0 };
+    const serviceRevenue =
+      appointments?.reduce((acc: any, apt: any) => {
+        if (apt.services) {
+          const serviceName = apt.services.name;
+          if (!acc[serviceName]) {
+            acc[serviceName] = { revenue: 0, count: 0 };
+          }
+          acc[serviceName].revenue += apt.paid_amount || 0;
+          acc[serviceName].count += 1;
         }
-        acc[serviceName].revenue += apt.paid_amount || 0;
-        acc[serviceName].count += 1;
-      }
-      return acc;
-    }, {}) || {};
+        return acc;
+      }, {}) || {};
 
-    const revenueByService = Object.entries(serviceRevenue).map(([service, data]: [string, any]) => ({
-      service_name: service,
-      revenue: data.revenue,
-      count: data.count,
-      percentage: totalRevenue > 0 ? (data.revenue / totalRevenue) * 100 : 0
-    }));
+    const revenueByService = Object.entries(serviceRevenue).map(
+      ([service, data]: [string, any]) => ({
+        service_name: service,
+        revenue: data.revenue,
+        count: data.count,
+        percentage: totalRevenue > 0 ? (data.revenue / totalRevenue) * 100 : 0,
+      }),
+    );
 
     return {
       daily_revenue: totalRevenue,
@@ -303,27 +306,25 @@ export class DashboardService {
       average_transaction: averageTransaction,
       revenue_by_service: revenueByService,
       revenue_trend: [], // TODO: Implement trend calculation
-      revenue_forecast: [] // TODO: Implement forecast
+      revenue_forecast: [], // TODO: Implement forecast
     };
   }
 
   private async calculatePatientMetrics(clinicId?: string, startDate?: Date, endDate?: Date) {
     const supabase = await createClient();
-    
-    let query = supabase
-      .from('profiles')
-      .select('*');
 
-    if (clinicId) query = query.eq('clinic_id', clinicId);
-    if (startDate) query = query.gte('created_at', startDate.toISOString());
+    let query = supabase.from("profiles").select("*");
+
+    if (clinicId) query = query.eq("clinic_id", clinicId);
+    if (startDate) query = query.gte("created_at", startDate.toISOString());
 
     const { data: patients, error } = await query;
     if (error) throw error;
 
     const totalPatients = patients?.length || 0;
-    const newPatients = patients?.filter((p: any) => 
-      new Date(p.created_at) >= (startDate || new Date(0))
-    ).length || 0;
+    const newPatients =
+      patients?.filter((p: any) => new Date(p.created_at) >= (startDate || new Date(0))).length ||
+      0;
 
     return {
       new_patients: newPatients,
@@ -333,31 +334,33 @@ export class DashboardService {
       retention_rate: 0, // TODO: Calculate retention
       lifetime_value: 0, // TODO: Calculate LTV
       patient_segmentation: [],
-      acquisition_sources: []
+      acquisition_sources: [],
     };
   }
 
   private async calculateAppointmentMetrics(clinicId?: string, startDate?: Date, endDate?: Date) {
     const supabase = await createClient();
-    
-    let query = supabase
-      .from('appointments')
-      .select('*');
 
-    if (clinicId) query = query.eq('clinic_id', clinicId);
-    if (startDate) query = query.gte('appointment_date', startDate.toISOString());
-    if (endDate) query = query.lte('appointment_date', endDate.toISOString());
+    let query = supabase.from("appointments").select("*");
+
+    if (clinicId) query = query.eq("clinic_id", clinicId);
+    if (startDate) query = query.gte("appointment_date", startDate.toISOString());
+    if (endDate) query = query.lte("appointment_date", endDate.toISOString());
 
     const { data: appointments, error } = await query;
     if (error) throw error;
 
     const totalAppointments = appointments?.length || 0;
-    const completedAppointments = appointments?.filter((a: any) => a.status === 'completed').length || 0;
-    const cancelledAppointments = appointments?.filter((a: any) => a.status === 'cancelled').length || 0;
-    const noShowAppointments = appointments?.filter((a: any) => a.status === 'no_show').length || 0;
+    const completedAppointments =
+      appointments?.filter((a: any) => a.status === "completed").length || 0;
+    const cancelledAppointments =
+      appointments?.filter((a: any) => a.status === "cancelled").length || 0;
+    const noShowAppointments = appointments?.filter((a: any) => a.status === "no_show").length || 0;
 
-    const bookingRate = totalAppointments > 0 ? (completedAppointments / totalAppointments) * 100 : 0;
-    const cancellationRate = totalAppointments > 0 ? (cancelledAppointments / totalAppointments) * 100 : 0;
+    const bookingRate =
+      totalAppointments > 0 ? (completedAppointments / totalAppointments) * 100 : 0;
+    const cancellationRate =
+      totalAppointments > 0 ? (cancelledAppointments / totalAppointments) * 100 : 0;
     const noShowRate = totalAppointments > 0 ? (noShowAppointments / totalAppointments) * 100 : 0;
 
     return {
@@ -368,7 +371,7 @@ export class DashboardService {
       utilization_rate: 0, // TODO: Calculate utilization
       average_booking_lead_time: 0, // TODO: Calculate lead time
       appointment_types: [],
-      time_slot_analysis: []
+      time_slot_analysis: [],
     };
   }
 
@@ -383,29 +386,32 @@ export class DashboardService {
       service_completion_rate: 0,
       cost_per_patient: 0,
       profit_margin: 0,
-      operational_efficiency: 0
+      operational_efficiency: 0,
     };
   }
 
   // Alert Management
-  async createAlert(userId: string, data: {
-    alert_type: string;
-    metric_name: string;
-    threshold_value: number;
-    threshold_operator?: string;
-    notification_method?: string;
-  }) {
+  async createAlert(
+    userId: string,
+    data: {
+      alert_type: string;
+      metric_name: string;
+      threshold_value: number;
+      threshold_operator?: string;
+      notification_method?: string;
+    },
+  ) {
     const supabase = await createClient();
-    
+
     const { data: alert, error } = await supabase
-      .from('dashboard_alerts')
+      .from("dashboard_alerts")
       .insert({
         user_id: userId,
         ...data,
         is_active: true,
         trigger_count: 0,
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .select()
       .single();
@@ -416,13 +422,10 @@ export class DashboardService {
 
   async getAlerts(userId: string, clinicId?: string) {
     const supabase = await createClient();
-    
-    let query = supabase
-      .from('dashboard_alerts')
-      .select('*')
-      .eq('user_id', userId);
 
-    if (clinicId) query = query.eq('clinic_id', clinicId);
+    let query = supabase.from("dashboard_alerts").select("*").eq("user_id", userId);
+
+    if (clinicId) query = query.eq("clinic_id", clinicId);
 
     const { data, error } = await query;
     if (error) throw error;
@@ -431,14 +434,14 @@ export class DashboardService {
 
   async updateAlert(alertId: string, data: any) {
     const supabase = await createClient();
-    
+
     const { data: alert, error } = await supabase
-      .from('dashboard_alerts')
+      .from("dashboard_alerts")
       .update({
         ...data,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
-      .eq('id', alertId)
+      .eq("id", alertId)
       .select()
       .single();
 
@@ -448,31 +451,31 @@ export class DashboardService {
 
   async deleteAlert(alertId: string) {
     const supabase = await createClient();
-    
-    const { error } = await supabase
-      .from('dashboard_alerts')
-      .delete()
-      .eq('id', alertId);
+
+    const { error } = await supabase.from("dashboard_alerts").delete().eq("id", alertId);
 
     if (error) throw error;
     return { success: true };
   }
 
   // Performance Logging
-  async logPerformance(userId: string, data: {
-    dashboard_load_time: number;
-    data_fetch_time: number;
-    widget_count: number;
-    error_count?: number;
-  }) {
+  async logPerformance(
+    userId: string,
+    data: {
+      dashboard_load_time: number;
+      data_fetch_time: number;
+      widget_count: number;
+      error_count?: number;
+    },
+  ) {
     const supabase = await createClient();
-    
+
     const { data: log, error } = await supabase
-      .from('dashboard_performance_logs')
+      .from("dashboard_performance_logs")
       .insert({
         user_id: userId,
         ...data,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       })
       .select()
       .single();
@@ -483,12 +486,12 @@ export class DashboardService {
 
   async getPerformanceLogs(userId: string, limit: number = 100) {
     const supabase = await createClient();
-    
+
     const { data, error } = await supabase
-      .from('dashboard_performance_logs')
-      .select('*')
-      .eq('user_id', userId)
-      .order('timestamp', { ascending: false })
+      .from("dashboard_performance_logs")
+      .select("*")
+      .eq("user_id", userId)
+      .order("timestamp", { ascending: false })
       .limit(limit);
 
     if (error) throw error;
@@ -498,35 +501,38 @@ export class DashboardService {
   // Cache Management
   async getCachedData(cacheKey: string, clinicId?: string) {
     const supabase = await createClient();
-    
-    let query = supabase
-      .from('dashboard_cache')
-      .select('*')
-      .eq('cache_key', cacheKey)
-      .gt('expires_at', new Date().toISOString());
 
-    if (clinicId) query = query.eq('clinic_id', clinicId);
+    let query = supabase
+      .from("dashboard_cache")
+      .select("*")
+      .eq("cache_key", cacheKey)
+      .gt("expires_at", new Date().toISOString());
+
+    if (clinicId) query = query.eq("clinic_id", clinicId);
 
     const { data, error } = await query.single();
     if (error) return null;
     return data?.cache_data;
   }
 
-  async setCachedData(cacheKey: string, data: any, expiresInMinutes: number = 30, clinicId?: string) {
+  async setCachedData(
+    cacheKey: string,
+    data: any,
+    expiresInMinutes: number = 30,
+    clinicId?: string,
+  ) {
     const supabase = await createClient();
-    
+
     const expiresAt = new Date();
     expiresAt.setMinutes(expiresAt.getMinutes() + expiresInMinutes);
 
-    const { error } = await supabase
-      .from('dashboard_cache')
-      .upsert({
-        cache_key: cacheKey,
-        cache_data: data,
-        expires_at: expiresAt.toISOString(),
-        clinic_id: clinicId,
-        created_at: new Date().toISOString()
-      });
+    const { error } = await supabase.from("dashboard_cache").upsert({
+      cache_key: cacheKey,
+      cache_data: data,
+      expires_at: expiresAt.toISOString(),
+      clinic_id: clinicId,
+      created_at: new Date().toISOString(),
+    });
 
     if (error) throw error;
     return { success: true };
@@ -538,25 +544,25 @@ export class DashboardService {
     const end = new Date(date);
 
     switch (period) {
-      case 'daily':
+      case "daily":
         start.setHours(0, 0, 0, 0);
         end.setHours(23, 59, 59, 999);
         break;
-      case 'weekly':
+      case "weekly":
         const day = start.getDay();
         start.setDate(start.getDate() - day);
         start.setHours(0, 0, 0, 0);
         end.setDate(start.getDate() + 6);
         end.setHours(23, 59, 59, 999);
         break;
-      case 'monthly':
+      case "monthly":
         start.setDate(1);
         start.setHours(0, 0, 0, 0);
         end.setMonth(end.getMonth() + 1);
         end.setDate(0);
         end.setHours(23, 59, 59, 999);
         break;
-      case 'yearly':
+      case "yearly":
         start.setMonth(0, 1);
         start.setHours(0, 0, 0, 0);
         end.setMonth(11, 31);
@@ -570,9 +576,9 @@ export class DashboardService {
   // Dashboard Summary
   async getDashboardSummary(userId: string, clinicId?: string) {
     const supabase = await createClient();
-    const cacheKey = `dashboard_summary_${userId}_${clinicId || 'all'}`;
+    const cacheKey = `dashboard_summary_${userId}_${clinicId || "all"}`;
     const cached = await this.getCachedData(cacheKey, clinicId);
-    
+
     if (cached) {
       return cached;
     }
@@ -588,23 +594,23 @@ export class DashboardService {
       growth_rate: metrics.revenue.revenue_growth,
       alert_count: alerts?.filter((a: any) => a.is_active).length || 0,
       last_updated: new Date().toISOString(),
-      performance_score: 100 // TODO: Calculate performance score
+      performance_score: 100, // TODO: Calculate performance score
     };
 
     // Cache for 5 minutes
     await this.setCachedData(cacheKey, summary, 5, clinicId);
-    
+
     return summary;
   }
 
   // Real-time data updates
   async getWidgetData(widgetId: string, query?: any) {
     const supabase = await createClient();
-    
+
     const { data: widget, error } = await supabase
-      .from('dashboard_widgets')
-      .select('*')
-      .eq('id', widgetId)
+      .from("dashboard_widgets")
+      .select("*")
+      .eq("id", widgetId)
       .single();
 
     if (error) throw error;
@@ -618,8 +624,8 @@ export class DashboardService {
       metadata: {
         last_updated: new Date().toISOString(),
         data_points: Array.isArray(data) ? data.length : 1,
-        calculation_time: 0
-      }
+        calculation_time: 0,
+      },
     };
   }
 
@@ -629,11 +635,11 @@ export class DashboardService {
     const { data_source, configuration } = widget;
 
     switch (data_source) {
-      case 'revenue':
+      case "revenue":
         return await this.getRevenueData(configuration, query);
-      case 'patients':
+      case "patients":
         return await this.getPatientData(configuration, query);
-      case 'appointments':
+      case "appointments":
         return await this.getAppointmentData(configuration, query);
       default:
         return [];
@@ -646,7 +652,7 @@ export class DashboardService {
     return {
       total: 0,
       trend: [],
-      breakdown: []
+      breakdown: [],
     };
   }
 
@@ -657,7 +663,7 @@ export class DashboardService {
       total: 0,
       new: 0,
       returning: 0,
-      segments: []
+      segments: [],
     };
   }
 
@@ -668,8 +674,7 @@ export class DashboardService {
       total: 0,
       completed: 0,
       cancelled: 0,
-      upcoming: 0
+      upcoming: 0,
     };
   }
 }
-

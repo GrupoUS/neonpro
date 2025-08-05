@@ -1,25 +1,59 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import type { useState, useEffect } from "react";
+import type { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Switch } from "@/components/ui/switch";
-import { 
-  Briefcase, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Clock, 
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { Switch } from "@/components/ui/switch";
+import type {
+  Briefcase,
+  Plus,
+  Edit,
+  Trash2,
+  Clock,
   DollarSign,
   Search,
   Filter,
@@ -28,9 +62,9 @@ import {
   Star,
   TrendingUp,
   Loader2,
-  Tag
+  Tag,
 } from "lucide-react";
-import { toast } from "sonner";
+import type { toast } from "sonner";
 
 const serviceCategories = [
   { value: "facial", label: "Tratamentos Faciais", color: "bg-blue-100 text-blue-800" },
@@ -66,10 +100,14 @@ const serviceSchema = z.object({
   allowOnlineBooking: z.boolean().default(true),
   maxAdvanceBookingDays: z.number().min(0).max(365).optional(),
   minAdvanceBookingHours: z.number().min(0).max(168).optional(),
-  sessionPackages: z.array(z.object({
-    sessions: z.number().min(2),
-    discountPercent: z.number().min(0).max(50),
-  })).optional(),
+  sessionPackages: z
+    .array(
+      z.object({
+        sessions: z.number().min(2),
+        discountPercent: z.number().min(0).max(50),
+      }),
+    )
+    .optional(),
   tags: z.string().optional(),
 });
 
@@ -92,7 +130,7 @@ export default function ServiceCatalog() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const [filterStatus, setFilterStatus] = useState<string>("all");
-  
+
   const form = useForm<ServiceFormData>({
     resolver: zodResolver(serviceSchema),
     defaultValues: {
@@ -122,7 +160,7 @@ export default function ServiceCatalog() {
         // const response = await fetch("/api/settings/services");
         // const data = await response.json();
         // setServices(data);
-        
+
         // Mock data for demonstration
         setServices([
           {
@@ -131,8 +169,8 @@ export default function ServiceCatalog() {
             description: "Limpeza completa com extração e hidratação",
             category: "facial",
             duration: 90,
-            price: 150.00,
-            cost: 45.00,
+            price: 150.0,
+            cost: 45.0,
             active: true,
             featured: true,
             requiresSpecialist: true,
@@ -144,7 +182,7 @@ export default function ServiceCatalog() {
             updatedAt: new Date(),
             totalBookings: 45,
             averageRating: 4.8,
-            revenue: 6750.00,
+            revenue: 6750.0,
           },
           {
             id: "2",
@@ -152,8 +190,8 @@ export default function ServiceCatalog() {
             description: "Remoção de pelos faciais com laser diodo",
             category: "depilacao",
             duration: 30,
-            price: 80.00,
-            cost: 15.00,
+            price: 80.0,
+            cost: 15.0,
             active: true,
             featured: false,
             requiresSpecialist: true,
@@ -169,7 +207,7 @@ export default function ServiceCatalog() {
             updatedAt: new Date(),
             totalBookings: 120,
             averageRating: 4.9,
-            revenue: 9600.00,
+            revenue: 9600.0,
           },
         ]);
       } catch (error) {
@@ -192,9 +230,9 @@ export default function ServiceCatalog() {
           ...data,
           updatedAt: new Date(),
         };
-        setServices(prev => prev.map(service => 
-          service.id === editingService.id ? updatedService : service
-        ));
+        setServices((prev) =>
+          prev.map((service) => (service.id === editingService.id ? updatedService : service)),
+        );
         toast.success("Serviço atualizado com sucesso!");
       } else {
         // Add new service
@@ -204,10 +242,10 @@ export default function ServiceCatalog() {
           createdAt: new Date(),
           updatedAt: new Date(),
         };
-        setServices(prev => [...prev, newService]);
+        setServices((prev) => [...prev, newService]);
         toast.success("Serviço adicionado com sucesso!");
       }
-      
+
       setIsDialogOpen(false);
       setEditingService(null);
       form.reset();
@@ -229,7 +267,7 @@ export default function ServiceCatalog() {
   const handleDelete = async (serviceId: string) => {
     if (confirm("Tem certeza que deseja remover este serviço?")) {
       try {
-        setServices(prev => prev.filter(service => service.id !== serviceId));
+        setServices((prev) => prev.filter((service) => service.id !== serviceId));
         toast.success("Serviço removido com sucesso!");
       } catch (error) {
         console.error("Erro ao remover serviço:", error);
@@ -240,13 +278,17 @@ export default function ServiceCatalog() {
 
   const handleToggleActive = async (serviceId: string) => {
     try {
-      setServices(prev => prev.map(service => 
-        service.id === serviceId ? { 
-          ...service, 
-          active: !service.active,
-          updatedAt: new Date()
-        } : service
-      ));
+      setServices((prev) =>
+        prev.map((service) =>
+          service.id === serviceId
+            ? {
+                ...service,
+                active: !service.active,
+                updatedAt: new Date(),
+              }
+            : service,
+        ),
+      );
       toast.success("Status atualizado com sucesso!");
     } catch (error) {
       console.error("Erro ao atualizar status:", error);
@@ -256,13 +298,17 @@ export default function ServiceCatalog() {
 
   const handleToggleFeatured = async (serviceId: string) => {
     try {
-      setServices(prev => prev.map(service => 
-        service.id === serviceId ? { 
-          ...service, 
-          featured: !service.featured,
-          updatedAt: new Date()
-        } : service
-      ));
+      setServices((prev) =>
+        prev.map((service) =>
+          service.id === serviceId
+            ? {
+                ...service,
+                featured: !service.featured,
+                updatedAt: new Date(),
+              }
+            : service,
+        ),
+      );
       toast.success("Destaque atualizado com sucesso!");
     } catch (error) {
       console.error("Erro ao atualizar destaque:", error);
@@ -270,25 +316,28 @@ export default function ServiceCatalog() {
     }
   };
 
-  const filteredServices = services.filter(service => {
-    const matchesSearch = service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         (service.description && service.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
-                         (service.tags && service.tags.toLowerCase().includes(searchTerm.toLowerCase()));
-    
+  const filteredServices = services.filter((service) => {
+    const matchesSearch =
+      service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (service.description &&
+        service.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (service.tags && service.tags.toLowerCase().includes(searchTerm.toLowerCase()));
+
     const matchesCategory = filterCategory === "all" || service.category === filterCategory;
-    
-    const matchesStatus = filterStatus === "all" || 
-                         (filterStatus === "active" && service.active) ||
-                         (filterStatus === "inactive" && !service.active) ||
-                         (filterStatus === "featured" && service.featured);
-    
+
+    const matchesStatus =
+      filterStatus === "all" ||
+      (filterStatus === "active" && service.active) ||
+      (filterStatus === "inactive" && !service.active) ||
+      (filterStatus === "featured" && service.featured);
+
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(value);
   };
 
@@ -315,14 +364,12 @@ export default function ServiceCatalog() {
           <h2 className="text-2xl font-semibold text-gray-900">
             Catálogo de Serviços ({services.length})
           </h2>
-          <p className="text-gray-600">
-            Gerenciar serviços, preços e configurações
-          </p>
+          <p className="text-gray-600">Gerenciar serviços, preços e configurações</p>
         </div>
-        
+
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button 
+            <Button
               onClick={() => {
                 setEditingService(null);
                 form.reset();
@@ -334,14 +381,12 @@ export default function ServiceCatalog() {
           </DialogTrigger>
           <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>
-                {editingService ? "Editar Serviço" : "Adicionar Serviço"}
-              </DialogTitle>
+              <DialogTitle>{editingService ? "Editar Serviço" : "Adicionar Serviço"}</DialogTitle>
               <DialogDescription>
                 Configure os detalhes do serviço oferecido pela clínica
               </DialogDescription>
             </DialogHeader>
-            
+
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 {/* Basic Information */}
@@ -418,8 +463,8 @@ export default function ServiceCatalog() {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Duração *</FormLabel>
-                            <Select 
-                              value={field.value?.toString()} 
+                            <Select
+                              value={field.value?.toString()}
                               onValueChange={(value) => field.onChange(parseInt(value))}
                             >
                               <FormControl>
@@ -483,9 +528,7 @@ export default function ServiceCatalog() {
                                 onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                               />
                             </FormControl>
-                            <FormDescription>
-                              Preço cobrado do paciente (R$)
-                            </FormDescription>
+                            <FormDescription>Preço cobrado do paciente (R$)</FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -507,9 +550,7 @@ export default function ServiceCatalog() {
                                 onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                               />
                             </FormControl>
-                            <FormDescription>
-                              Custo para realizar o serviço (R$)
-                            </FormDescription>
+                            <FormDescription>Custo para realizar o serviço (R$)</FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -521,19 +562,27 @@ export default function ServiceCatalog() {
                       <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
                         <div className="flex items-center gap-2 mb-2">
                           <TrendingUp className="h-4 w-4 text-green-600" />
-                          <span className="font-medium text-green-800">Análise de Lucratividade</span>
+                          <span className="font-medium text-green-800">
+                            Análise de Lucratividade
+                          </span>
                         </div>
                         <div className="grid grid-cols-2 gap-4 text-sm">
                           <div>
                             <span className="text-gray-600">Lucro por Sessão:</span>
                             <div className="font-bold text-green-700">
-                              {formatCurrency(calculateProfit(form.watch("price"), form.watch("cost")).profit)}
+                              {formatCurrency(
+                                calculateProfit(form.watch("price"), form.watch("cost")).profit,
+                              )}
                             </div>
                           </div>
                           <div>
                             <span className="text-gray-600">Margem de Lucro:</span>
                             <div className="font-bold text-green-700">
-                              {calculateProfit(form.watch("price"), form.watch("cost")).margin.toFixed(1)}%
+                              {calculateProfit(
+                                form.watch("price"),
+                                form.watch("cost"),
+                              ).margin.toFixed(1)}
+                              %
                             </div>
                           </div>
                         </div>
@@ -557,15 +606,10 @@ export default function ServiceCatalog() {
                           <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                             <div className="space-y-0.5">
                               <FormLabel className="text-base">Serviço Ativo</FormLabel>
-                              <FormDescription>
-                                Disponível para agendamento
-                              </FormDescription>
+                              <FormDescription>Disponível para agendamento</FormDescription>
                             </div>
                             <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
+                              <Switch checked={field.value} onCheckedChange={field.onChange} />
                             </FormControl>
                           </FormItem>
                         )}
@@ -578,15 +622,10 @@ export default function ServiceCatalog() {
                           <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                             <div className="space-y-0.5">
                               <FormLabel className="text-base">Serviço em Destaque</FormLabel>
-                              <FormDescription>
-                                Destacar nas listagens
-                              </FormDescription>
+                              <FormDescription>Destacar nas listagens</FormDescription>
                             </div>
                             <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
+                              <Switch checked={field.value} onCheckedChange={field.onChange} />
                             </FormControl>
                           </FormItem>
                         )}
@@ -599,15 +638,10 @@ export default function ServiceCatalog() {
                           <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                             <div className="space-y-0.5">
                               <FormLabel className="text-base">Requer Especialista</FormLabel>
-                              <FormDescription>
-                                Apenas profissionais habilitados
-                              </FormDescription>
+                              <FormDescription>Apenas profissionais habilitados</FormDescription>
                             </div>
                             <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
+                              <Switch checked={field.value} onCheckedChange={field.onChange} />
                             </FormControl>
                           </FormItem>
                         )}
@@ -620,15 +654,10 @@ export default function ServiceCatalog() {
                           <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                             <div className="space-y-0.5">
                               <FormLabel className="text-base">Agendamento Online</FormLabel>
-                              <FormDescription>
-                                Permitir agendamento pelo portal
-                              </FormDescription>
+                              <FormDescription>Permitir agendamento pelo portal</FormDescription>
                             </div>
                             <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
+                              <Switch checked={field.value} onCheckedChange={field.onChange} />
                             </FormControl>
                           </FormItem>
                         )}
@@ -675,9 +704,7 @@ export default function ServiceCatalog() {
                                 onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                               />
                             </FormControl>
-                            <FormDescription>
-                              Mínimo de horas para agendar
-                            </FormDescription>
+                            <FormDescription>Mínimo de horas para agendar</FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -757,9 +784,7 @@ export default function ServiceCatalog() {
       <Card>
         <CardHeader>
           <CardTitle>Serviços Cadastrados</CardTitle>
-          <CardDescription>
-            Lista completa do catálogo de serviços
-          </CardDescription>
+          <CardDescription>Lista completa do catálogo de serviços</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -769,12 +794,10 @@ export default function ServiceCatalog() {
           ) : filteredServices.length === 0 ? (
             <div className="text-center p-8">
               <Briefcase className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                Nenhum serviço encontrado
-              </h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum serviço encontrado</h3>
               <p className="text-gray-600 mb-4">
-                {searchTerm || filterCategory !== "all" || filterStatus !== "all" 
-                  ? "Tente ajustar os filtros de busca" 
+                {searchTerm || filterCategory !== "all" || filterStatus !== "all"
+                  ? "Tente ajustar os filtros de busca"
                   : "Adicione o primeiro serviço ao catálogo"}
               </p>
             </div>
@@ -795,7 +818,9 @@ export default function ServiceCatalog() {
                 </TableHeader>
                 <TableBody>
                   {filteredServices.map((service) => {
-                    const category = serviceCategories.find(cat => cat.value === service.category);
+                    const category = serviceCategories.find(
+                      (cat) => cat.value === service.category,
+                    );
                     const { profit, margin } = calculateProfit(service.price, service.cost);
 
                     return (
@@ -815,21 +840,20 @@ export default function ServiceCatalog() {
                             )}
                             {service.tags && (
                               <div className="flex flex-wrap gap-1 mt-1">
-                                {service.tags.split(',').slice(0, 3).map((tag, index) => (
-                                  <Badge key={index} variant="outline" className="text-xs">
-                                    {tag.trim()}
-                                  </Badge>
-                                ))}
+                                {service.tags
+                                  .split(",")
+                                  .slice(0, 3)
+                                  .map((tag, index) => (
+                                    <Badge key={index} variant="outline" className="text-xs">
+                                      {tag.trim()}
+                                    </Badge>
+                                  ))}
                               </div>
                             )}
                           </div>
                         </TableCell>
                         <TableCell>
-                          {category && (
-                            <Badge className={category.color}>
-                              {category.label}
-                            </Badge>
-                          )}
+                          {category && <Badge className={category.color}>{category.label}</Badge>}
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-1">
@@ -838,9 +862,7 @@ export default function ServiceCatalog() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <div className="font-medium">
-                            {formatCurrency(service.price)}
-                          </div>
+                          <div className="font-medium">{formatCurrency(service.price)}</div>
                           {service.cost && service.cost > 0 && (
                             <div className="text-sm text-gray-600">
                               Custo: {formatCurrency(service.cost)}
@@ -848,12 +870,8 @@ export default function ServiceCatalog() {
                           )}
                         </TableCell>
                         <TableCell>
-                          <div className="font-medium text-green-600">
-                            {formatCurrency(profit)}
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            {margin.toFixed(1)}%
-                          </div>
+                          <div className="font-medium text-green-600">{formatCurrency(profit)}</div>
+                          <div className="text-sm text-gray-600">{margin.toFixed(1)}%</div>
                         </TableCell>
                         <TableCell>
                           <div className="flex flex-col gap-1">
@@ -908,13 +926,11 @@ export default function ServiceCatalog() {
                               onClick={() => handleToggleFeatured(service.id)}
                               className={service.featured ? "text-yellow-600" : ""}
                             >
-                              <Star className={`h-4 w-4 ${service.featured ? 'fill-current' : ''}`} />
+                              <Star
+                                className={`h-4 w-4 ${service.featured ? "fill-current" : ""}`}
+                              />
                             </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEdit(service)}
-                            >
+                            <Button variant="ghost" size="sm" onClick={() => handleEdit(service)}>
                               <Edit className="h-4 w-4" />
                             </Button>
                             <Button

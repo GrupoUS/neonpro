@@ -4,14 +4,14 @@
  * Compliant with rate limits and caching strategies
  */
 
-import {
-    cleanCNPJ,
-    CNPJCache,
-    CNPJCompanyData,
-    CNPJConsultationResult,
-    CNPJRateLimiter,
-    validateCNPJFormat
-} from './cnpj-validator';
+import type {
+  cleanCNPJ,
+  CNPJCache,
+  CNPJCompanyData,
+  CNPJConsultationResult,
+  CNPJRateLimiter,
+  validateCNPJFormat,
+} from "./cnpj-validator";
 
 /**
  * Brasil API Response Interface
@@ -73,12 +73,12 @@ interface BrasilAPIResponse {
  * Error types for API consultation
  */
 export enum CNPJConsultationError {
-  INVALID_FORMAT = 'INVALID_FORMAT',
-  RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
-  API_ERROR = 'API_ERROR',
-  NETWORK_ERROR = 'NETWORK_ERROR',
-  NOT_FOUND = 'NOT_FOUND',
-  FORBIDDEN = 'FORBIDDEN'
+  INVALID_FORMAT = "INVALID_FORMAT",
+  RATE_LIMIT_EXCEEDED = "RATE_LIMIT_EXCEEDED",
+  API_ERROR = "API_ERROR",
+  NETWORK_ERROR = "NETWORK_ERROR",
+  NOT_FOUND = "NOT_FOUND",
+  FORBIDDEN = "FORBIDDEN",
 }
 
 /**
@@ -97,37 +97,37 @@ const DEFAULT_CONFIG: CNPJConsultationConfig = {
   forceRefresh: false,
   timeout: 10000, // 10 seconds
   retryAttempts: 3,
-  retryDelay: 1000 // 1 second
+  retryDelay: 1000, // 1 second
 };
 
 /**
  * Main CNPJ consultation service
  */
 export class CNPJConsultationService {
-  private static readonly BASE_URL = 'https://brasilapi.com.br/api/cnpj/v1';
-  
+  private static readonly BASE_URL = "https://brasilapi.com.br/api/cnpj/v1";
+
   /**
    * Consult CNPJ data from Brasil API
    */
   static async consultCNPJ(
     cnpj: string,
-    clientIP: string = 'unknown',
-    config: Partial<CNPJConsultationConfig> = {}
+    clientIP: string = "unknown",
+    config: Partial<CNPJConsultationConfig> = {},
   ): Promise<CNPJConsultationResult> {
     const finalConfig = { ...DEFAULT_CONFIG, ...config };
-    
+
     // Validate CNPJ format first
     const validation = validateCNPJFormat(cnpj);
     if (!validation.valid) {
       return {
         success: false,
         cached: false,
-        errors: validation.errors || ['CNPJ inválido']
+        errors: validation.errors || ["CNPJ inválido"],
       };
     }
-    
+
     const cleanedCNPJ = cleanCNPJ(cnpj);
-    
+
     // Check cache first (unless force refresh)
     if (finalConfig.useCache && !finalConfig.forceRefresh) {
       const cached = CNPJCache.get(cleanedCNPJ);
@@ -136,11 +136,11 @@ export class CNPJConsultationService {
           success: true,
           data: cached,
           cached: true,
-          cache_expiry: CNPJCache.getCacheExpiry(cleanedCNPJ)?.toISOString()
+          cache_expiry: CNPJCache.getCacheExpiry(cleanedCNPJ)?.toISOString(),
         };
       }
     }
-    
+
     // Check rate limiting
     if (!CNPJRateLimiter.canMakeRequest(clientIP)) {
       return {
@@ -149,63 +149,59 @@ export class CNPJConsultationService {
         errors: [CNPJConsultationError.RATE_LIMIT_EXCEEDED],
         rate_limit: {
           remaining: CNPJRateLimiter.getRemainingRequests(clientIP),
-          reset_time: CNPJRateLimiter.getResetTime(clientIP).toISOString()
-        }
+          reset_time: CNPJRateLimiter.getResetTime(clientIP).toISOString(),
+        },
       };
     }
-    
+
     // Make API request with retry logic
     try {
-      const data = await this.fetchWithRetry(
-        `${this.BASE_URL}/${cleanedCNPJ}`,
-        finalConfig
-      );
-      
+      const data = await this.fetchWithRetry(`${this.BASE_URL}/${cleanedCNPJ}`, finalConfig);
+
       const transformed = this.transformBrasilAPIResponse(data);
-      
+
       // Cache successful result
       if (finalConfig.useCache) {
         CNPJCache.set(cleanedCNPJ, transformed);
       }
-      
+
       return {
         success: true,
         data: transformed,
         cached: false,
         rate_limit: {
           remaining: CNPJRateLimiter.getRemainingRequests(clientIP),
-          reset_time: CNPJRateLimiter.getResetTime(clientIP).toISOString()
-        }
+          reset_time: CNPJRateLimiter.getResetTime(clientIP).toISOString(),
+        },
       };
-      
     } catch (error) {
       return this.handleConsultationError(error, clientIP);
     }
   }
-  
+
   /**
    * Fetch with retry logic and timeout
    */
   private static async fetchWithRetry(
     url: string,
     config: CNPJConsultationConfig,
-    attempt: number = 1
+    attempt: number = 1,
   ): Promise<BrasilAPIResponse> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), config.timeout);
-    
+
     try {
       const response = await fetch(url, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'User-Agent': 'NeonPro/1.0 (Clinic Management System)',
-          'Accept': 'application/json',
+          "User-Agent": "NeonPro/1.0 (Clinic Management System)",
+          Accept: "application/json",
         },
-        signal: controller.signal
+        signal: controller.signal,
       });
-      
+
       clearTimeout(timeoutId);
-      
+
       if (!response.ok) {
         if (response.status === 404) {
           throw new Error(CNPJConsultationError.NOT_FOUND);
@@ -215,35 +211,31 @@ export class CNPJConsultationService {
         }
         throw new Error(CNPJConsultationError.API_ERROR);
       }
-      
+
       const data = await response.json();
       return data;
-      
     } catch (error) {
       clearTimeout(timeoutId);
-      
+
       // Retry logic
-      if (attempt < config.retryAttempts && 
-          error instanceof Error && 
-          error.name !== CNPJConsultationError.NOT_FOUND) {
-        
-        await new Promise(resolve => 
-          setTimeout(resolve, config.retryDelay * attempt)
-        );
-        
+      if (
+        attempt < config.retryAttempts &&
+        error instanceof Error &&
+        error.name !== CNPJConsultationError.NOT_FOUND
+      ) {
+        await new Promise((resolve) => setTimeout(resolve, config.retryDelay * attempt));
+
         return this.fetchWithRetry(url, config, attempt + 1);
       }
-      
+
       throw error;
     }
   }
-  
+
   /**
    * Transform Brasil API response to our interface
    */
-  private static transformBrasilAPIResponse(
-    response: BrasilAPIResponse
-  ): CNPJCompanyData {
+  private static transformBrasilAPIResponse(response: BrasilAPIResponse): CNPJCompanyData {
     return {
       cnpj: response.cnpj,
       razao_social: response.razao_social,
@@ -251,11 +243,11 @@ export class CNPJConsultationService {
       porte: response.porte,
       atividade_principal: {
         code: response.cnae_fiscal,
-        text: response.cnae_fiscal_descricao
+        text: response.cnae_fiscal_descricao,
       },
-      atividades_secundarias: response.cnaes_secundarios.map(cnae => ({
+      atividades_secundarias: response.cnaes_secundarios.map((cnae) => ({
         code: cnae.codigo,
-        text: cnae.descricao
+        text: cnae.descricao,
       })),
       endereco: {
         logradouro: `${response.descricao_tipo_logradouro} ${response.logradouro}`,
@@ -264,109 +256,106 @@ export class CNPJConsultationService {
         bairro: response.bairro,
         municipio: response.municipio,
         uf: response.uf,
-        cep: response.cep
+        cep: response.cep,
       },
-      telefone: response.ddd_telefone_1 ? 
-        `(${response.ddd_telefone_1.slice(0, 2)}) ${response.ddd_telefone_1.slice(2)}` : 
-        undefined,
+      telefone: response.ddd_telefone_1
+        ? `(${response.ddd_telefone_1.slice(0, 2)}) ${response.ddd_telefone_1.slice(2)}`
+        : undefined,
       situacao: response.descricao_situacao_cadastral,
       data_situacao: response.data_situacao_cadastral,
       motivo_situacao: response.motivo_situacao_cadastral || undefined,
       natureza_juridica: response.codigo_natureza_juridica,
-      capital_social: parseFloat(response.capital_social.replace(',', '.')),
+      capital_social: parseFloat(response.capital_social.replace(",", ".")),
       data_inicio_atividade: response.data_inicio_atividade,
-      qsa: response.qsa?.map(socio => ({
+      qsa: response.qsa?.map((socio) => ({
         nome: socio.nome_socio,
         qual: socio.codigo_qualificacao_socio,
         nome_rep_legal: socio.nome_representante_legal,
-        qual_rep_legal: socio.codigo_qualificacao_representante_legal
-      }))
+        qual_rep_legal: socio.codigo_qualificacao_representante_legal,
+      })),
     };
   }
-  
+
   /**
    * Handle consultation errors
    */
-  private static handleConsultationError(
-    error: any,
-    clientIP: string
-  ): CNPJConsultationResult {
+  private static handleConsultationError(error: any, clientIP: string): CNPJConsultationResult {
     let errorType = CNPJConsultationError.API_ERROR;
-    let errorMessage = 'Erro desconhecido na consulta';
-    
+    let errorMessage = "Erro desconhecido na consulta";
+
     if (error instanceof Error) {
       switch (error.message) {
         case CNPJConsultationError.NOT_FOUND:
           errorType = CNPJConsultationError.NOT_FOUND;
-          errorMessage = 'CNPJ não encontrado na Receita Federal';
+          errorMessage = "CNPJ não encontrado na Receita Federal";
           break;
         case CNPJConsultationError.RATE_LIMIT_EXCEEDED:
           errorType = CNPJConsultationError.RATE_LIMIT_EXCEEDED;
-          errorMessage = 'Limite de consultas excedido. Tente novamente em alguns minutos.';
+          errorMessage = "Limite de consultas excedido. Tente novamente em alguns minutos.";
           break;
-        case 'AbortError':
+        case "AbortError":
           errorType = CNPJConsultationError.NETWORK_ERROR;
-          errorMessage = 'Timeout na consulta. Tente novamente.';
+          errorMessage = "Timeout na consulta. Tente novamente.";
           break;
         default:
-          if (error.name === 'TypeError' && error.message.includes('fetch')) {
+          if (error.name === "TypeError" && error.message.includes("fetch")) {
             errorType = CNPJConsultationError.NETWORK_ERROR;
-            errorMessage = 'Erro de conexão. Verifique sua internet.';
+            errorMessage = "Erro de conexão. Verifique sua internet.";
           }
       }
     }
-    
+
     return {
       success: false,
       cached: false,
       errors: [errorMessage],
       rate_limit: {
         remaining: CNPJRateLimiter.getRemainingRequests(clientIP),
-        reset_time: CNPJRateLimiter.getResetTime(clientIP).toISOString()
-      }
+        reset_time: CNPJRateLimiter.getResetTime(clientIP).toISOString(),
+      },
     };
   }
-  
+
   /**
    * Batch consultation for multiple CNPJs
    */
   static async batchConsultCNPJ(
     cnpjs: string[],
-    clientIP: string = 'unknown',
-    config: Partial<CNPJConsultationConfig> = {}
+    clientIP: string = "unknown",
+    config: Partial<CNPJConsultationConfig> = {},
   ): Promise<Map<string, CNPJConsultationResult>> {
     const results = new Map<string, CNPJConsultationResult>();
-    
+
     // Process in batches to respect rate limits
     const batchSize = 2; // Conservative batch size
     const delay = 1000; // 1 second between batches
-    
+
     for (let i = 0; i < cnpjs.length; i += batchSize) {
       const batch = cnpjs.slice(i, i + batchSize);
-      
-      const batchPromises = batch.map(async cnpj => {
+
+      const batchPromises = batch.map(async (cnpj) => {
         const result = await this.consultCNPJ(cnpj, clientIP, config);
         results.set(cnpj, result);
       });
-      
+
       await Promise.all(batchPromises);
-      
+
       // Add delay between batches (except for the last one)
       if (i + batchSize < cnpjs.length) {
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
-    
+
     return results;
   }
-  
+
   /**
    * Clear all caches (for admin purposes)
    */
   static clearCache(): void {
     CNPJCache.clear();
   }
-  
+
   /**
    * Get cache statistics
    */
@@ -377,10 +366,10 @@ export class CNPJConsultationService {
     // Note: This is a simplified implementation
     // In production, you might want more detailed statistics
     const entriesCount = (CNPJCache as any).cache?.size || 0;
-    
+
     return {
       cached_entries: entriesCount,
-      cache_size_estimate: `~${entriesCount * 2}KB`
+      cache_size_estimate: `~${entriesCount * 2}KB`,
     };
   }
 }

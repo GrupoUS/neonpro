@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import React, { 
-  Suspense, 
-  lazy, 
-  ComponentType, 
-  useState, 
-  useEffect, 
-  useRef, 
+import React, {
+  Suspense,
+  lazy,
+  ComponentType,
+  useState,
+  useEffect,
+  useRef,
   useCallback,
-  ReactNode
-} from 'react';
-import { Loader2, AlertCircle, RefreshCw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+  ReactNode,
+} from "react";
+import type { Loader2, AlertCircle, RefreshCw } from "lucide-react";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent } from "@/components/ui/card";
+import type { cn } from "@/lib/utils";
 
 // =====================================================================================
 // LAZY LOADING SYSTEM
@@ -52,7 +52,7 @@ export function LazyLoader({
   minLoadingTime = 200,
   retryable = true,
   onError,
-  onLoad
+  onLoad,
 }: LazyLoaderProps) {
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -78,18 +78,21 @@ export function LazyLoader({
     }, remainingTime);
   }, [minLoadingTime, onLoad]);
 
-  const handleError = useCallback((error: Error) => {
-    if (mounted.current) {
-      setHasError(true);
-      setIsLoading(false);
-      onError?.(error);
-    }
-  }, [onError]);
+  const handleError = useCallback(
+    (error: Error) => {
+      if (mounted.current) {
+        setHasError(true);
+        setIsLoading(false);
+        onError?.(error);
+      }
+    },
+    [onError],
+  );
 
   const handleRetry = useCallback(() => {
     setHasError(false);
     setIsLoading(true);
-    setRetryCount(prev => prev + 1);
+    setRetryCount((prev) => prev + 1);
     loadingStartTime.current = Date.now();
   }, []);
 
@@ -101,8 +104,8 @@ export function LazyLoader({
 
   if (hasError) {
     return (
-      <ErrorFallback 
-        error={new Error('Component failed to load')}
+      <ErrorFallback
+        error={new Error("Component failed to load")}
         onRetry={retryable ? handleRetry : undefined}
         retryCount={retryCount}
         customFallback={errorFallback}
@@ -114,13 +117,10 @@ export function LazyLoader({
   return (
     <div className={className}>
       <ErrorBoundary onError={handleError}>
-        <Suspense 
+        <Suspense
           fallback={
             fallback || (
-              <LoadingFallback 
-                minLoadingTime={minLoadingTime}
-                onLoadComplete={handleLoad}
-              />
+              <LoadingFallback minLoadingTime={minLoadingTime} onLoadComplete={handleLoad} />
             )
           }
         >
@@ -154,7 +154,7 @@ class ErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('LazyLoader Error:', error, errorInfo);
+    console.error("LazyLoader Error:", error, errorInfo);
     this.props.onError?.(error);
   }
 
@@ -178,11 +178,11 @@ interface LoadingFallbackProps {
   showProgress?: boolean;
 }
 
-function LoadingFallback({ 
-  minLoadingTime = 200, 
+function LoadingFallback({
+  minLoadingTime = 200,
   onLoadComplete,
-  message = 'Loading component...',
-  showProgress = false
+  message = "Loading component...",
+  showProgress = false,
 }: LoadingFallbackProps) {
   const [progress, setProgress] = useState(0);
   const startTime = useRef(Date.now());
@@ -216,7 +216,7 @@ function LoadingFallback({
             <p className="text-sm text-muted-foreground">{message}</p>
             {showProgress && (
               <div className="mt-2 w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div 
+                <div
                   className="h-full bg-primary transition-all duration-300 ease-out"
                   style={{ width: `${progress}%` }}
                 />
@@ -241,38 +241,34 @@ interface ErrorFallbackProps {
   className?: string;
 }
 
-function ErrorFallback({ 
-  error, 
-  onRetry, 
-  retryCount = 0, 
+function ErrorFallback({
+  error,
+  onRetry,
+  retryCount = 0,
   customFallback,
-  className 
+  className,
 }: ErrorFallbackProps) {
   if (customFallback) {
     return <div className={className}>{customFallback}</div>;
   }
 
   return (
-    <Card className={cn('border-red-200 bg-red-50', className)}>
+    <Card className={cn("border-red-200 bg-red-50", className)}>
       <CardContent className="p-8">
         <div className="flex flex-col items-center justify-center space-y-4">
           <AlertCircle className="h-8 w-8 text-red-500" />
           <div className="text-center">
-            <h3 className="text-lg font-semibold text-red-900 mb-2">
-              Failed to load component
-            </h3>
+            <h3 className="text-lg font-semibold text-red-900 mb-2">Failed to load component</h3>
             <p className="text-sm text-red-700 mb-4">
-              {error.message || 'An unexpected error occurred'}
+              {error.message || "An unexpected error occurred"}
             </p>
             {retryCount > 0 && (
-              <p className="text-xs text-red-600 mb-4">
-                Retry attempts: {retryCount}
-              </p>
+              <p className="text-xs text-red-600 mb-4">Retry attempts: {retryCount}</p>
             )}
             {onRetry && (
-              <Button 
-                onClick={onRetry} 
-                variant="outline" 
+              <Button
+                onClick={onRetry}
+                variant="outline"
                 size="sm"
                 className="border-red-300 text-red-700 hover:bg-red-100"
               >
@@ -293,7 +289,7 @@ function ErrorFallback({
 
 export function createLazyComponent<T extends ComponentType<any>>(
   importFn: () => Promise<{ default: T }>,
-  options: LazyComponentOptions = {}
+  options: LazyComponentOptions = {},
 ) {
   const {
     fallback,
@@ -301,23 +297,20 @@ export function createLazyComponent<T extends ComponentType<any>>(
     minLoadingTime = 200,
     retryable = true,
     preload = false,
-    chunkName
+    chunkName,
   } = options;
 
   // Create the lazy component
   const LazyComponent = lazy(() => {
     // Add artificial delay for minimum loading time
     const loadPromise = importFn();
-    
+
     if (minLoadingTime > 0) {
-      const delayPromise = new Promise(resolve => 
-        setTimeout(resolve, minLoadingTime)
-      );
-      
-      return Promise.all([loadPromise, delayPromise])
-        .then(([module]) => module);
+      const delayPromise = new Promise((resolve) => setTimeout(resolve, minLoadingTime));
+
+      return Promise.all([loadPromise, delayPromise]).then(([module]) => module);
     }
-    
+
     return loadPromise;
   });
 
@@ -333,10 +326,12 @@ export function createLazyComponent<T extends ComponentType<any>>(
       }
     }, []);
 
-    const containerProps = preload ? {
-      onMouseEnter: handlePreload,
-      onFocus: handlePreload
-    } : {};
+    const containerProps = preload
+      ? {
+          onMouseEnter: handlePreload,
+          onFocus: handlePreload,
+        }
+      : {};
 
     return (
       <div {...containerProps}>
@@ -353,7 +348,7 @@ export function createLazyComponent<T extends ComponentType<any>>(
   });
 
   // Add display name for debugging
-  EnhancedComponent.displayName = `LazyComponent(${chunkName || 'Unknown'})`;
+  EnhancedComponent.displayName = `LazyComponent(${chunkName || "Unknown"})`;
 
   // Add preload method
   (EnhancedComponent as any).preload = () => importFn();
@@ -377,10 +372,10 @@ interface IntersectionLazyLoaderProps {
 export function IntersectionLazyLoader({
   children,
   fallback,
-  rootMargin = '50px',
+  rootMargin = "50px",
   threshold = 0.1,
   triggerOnce = true,
-  className
+  className,
 }: IntersectionLazyLoaderProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [hasTriggered, setHasTriggered] = useState(false);
@@ -404,8 +399,8 @@ export function IntersectionLazyLoader({
       },
       {
         rootMargin,
-        threshold
-      }
+        threshold,
+      },
     );
 
     observer.observe(element);
@@ -417,15 +412,13 @@ export function IntersectionLazyLoader({
 
   return (
     <div ref={elementRef} className={className}>
-      {isVisible ? (
-        children
-      ) : (
-        fallback || (
-          <div className="h-32 flex items-center justify-center">
-            <div className="text-sm text-muted-foreground">Loading...</div>
-          </div>
-        )
-      )}
+      {isVisible
+        ? children
+        : fallback || (
+            <div className="h-32 flex items-center justify-center">
+              <div className="text-sm text-muted-foreground">Loading...</div>
+            </div>
+          )}
     </div>
   );
 }
@@ -440,13 +433,13 @@ export function useLazyPreload(importFn: () => Promise<any>) {
 
   const preload = useCallback(async () => {
     if (isPreloaded || isPreloading) return;
-    
+
     setIsPreloading(true);
     try {
       await importFn();
       setIsPreloaded(true);
     } catch (error) {
-      console.warn('Preload failed:', error);
+      console.warn("Preload failed:", error);
     } finally {
       setIsPreloading(false);
     }
@@ -455,7 +448,7 @@ export function useLazyPreload(importFn: () => Promise<any>) {
   return {
     preload,
     isPreloaded,
-    isPreloading
+    isPreloading,
   };
 }
 
@@ -471,7 +464,7 @@ export function useComponentVisibility(threshold = 0.1) {
       ([entry]) => {
         setIsVisible(entry.isIntersecting);
       },
-      { threshold }
+      { threshold },
     );
 
     observer.observe(element);

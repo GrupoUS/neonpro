@@ -17,7 +17,7 @@ export interface TreatmentOutcome {
   complications?: Record<string, any>;
   follow_up_required: boolean;
   notes?: string;
-  status: 'active' | 'completed' | 'cancelled';
+  status: "active" | "completed" | "cancelled";
   created_at: string;
   updated_at: string;
 }
@@ -26,7 +26,7 @@ export interface SuccessMetrics {
   id: string;
   treatment_type: string;
   provider_id?: string;
-  time_period: 'monthly' | 'quarterly' | 'yearly';
+  time_period: "monthly" | "quarterly" | "yearly";
   period_start: string;
   period_end: string;
   total_treatments: number;
@@ -66,10 +66,10 @@ export interface ProtocolOptimization {
   recommended_changes: Record<string, any>;
   success_rate_improvement?: number;
   evidence_data?: Record<string, any>;
-  implementation_priority: 'low' | 'medium' | 'high' | 'critical';
+  implementation_priority: "low" | "medium" | "high" | "critical";
   cost_impact?: number;
   timeline_estimate?: string;
-  approval_status: 'pending' | 'approved' | 'rejected' | 'implemented';
+  approval_status: "pending" | "approved" | "rejected" | "implemented";
   approved_by?: string;
   implementation_date?: string;
   results_tracking?: Record<string, any>;
@@ -80,7 +80,7 @@ export interface ProtocolOptimization {
 export interface QualityBenchmark {
   id: string;
   treatment_type: string;
-  benchmark_type: 'industry_standard' | 'clinic_target' | 'best_practice';
+  benchmark_type: "industry_standard" | "clinic_target" | "best_practice";
   metric_name: string;
   target_value: number;
   current_value?: number;
@@ -88,7 +88,7 @@ export interface QualityBenchmark {
   benchmark_source?: string;
   update_frequency?: string;
   last_updated?: string;
-  status: 'active' | 'inactive' | 'deprecated';
+  status: "active" | "inactive" | "deprecated";
   created_at: string;
   updated_at: string;
 }
@@ -117,7 +117,7 @@ export interface ComplianceReport {
   findings?: Record<string, any>;
   recommendations?: Record<string, any>;
   action_items?: Record<string, any>;
-  status: 'draft' | 'review' | 'approved' | 'published';
+  status: "draft" | "review" | "approved" | "published";
   generated_by?: string;
   reviewed_by?: string;
   created_at: string;
@@ -180,7 +180,7 @@ export interface SuccessRateStats {
   total_treatments: number;
   average_satisfaction: number;
   benchmark_comparison: number;
-  trend_direction: 'up' | 'down' | 'stable';
+  trend_direction: "up" | "down" | "stable";
   improvement_opportunities: number;
 }
 
@@ -199,14 +199,14 @@ export interface TreatmentTypeStats {
   success_rate: number;
   total_treatments: number;
   satisfaction_score: number;
-  benchmark_status: 'above' | 'at' | 'below';
+  benchmark_status: "above" | "at" | "below";
 }
 
 export interface ComplianceStats {
   overall_compliance: number;
   pending_reports: number;
   overdue_items: number;
-  certification_status: 'current' | 'expiring' | 'expired';
+  certification_status: "current" | "expiring" | "expired";
 }
 
 // Filter and Search Types
@@ -267,7 +267,7 @@ export interface UpdateTreatmentOutcomeData {
   complications?: Record<string, any>;
   follow_up_required?: boolean;
   notes?: string;
-  status?: 'active' | 'completed' | 'cancelled';
+  status?: "active" | "completed" | "cancelled";
 }
 
 export interface CreateProtocolOptimizationData {
@@ -276,14 +276,14 @@ export interface CreateProtocolOptimizationData {
   recommended_changes: Record<string, any>;
   success_rate_improvement?: number;
   evidence_data?: Record<string, any>;
-  implementation_priority: 'low' | 'medium' | 'high' | 'critical';
+  implementation_priority: "low" | "medium" | "high" | "critical";
   cost_impact?: number;
   timeline_estimate?: string;
 }
 
 export interface CreateQualityBenchmarkData {
   treatment_type: string;
-  benchmark_type: 'industry_standard' | 'clinic_target' | 'best_practice';
+  benchmark_type: "industry_standard" | "clinic_target" | "best_practice";
   metric_name: string;
   target_value: number;
   benchmark_source?: string;

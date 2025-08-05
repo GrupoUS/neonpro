@@ -3,12 +3,12 @@
  * Automated bundle analysis and optimization recommendations
  */
 
-import { exec } from 'child_process'
-import { promisify } from 'util'
-import { writeFileSync, readFileSync } from 'fs'
-import { join } from 'path'
+import { exec } from "child_process";
+import { promisify } from "util";
+import { writeFileSync, readFileSync } from "fs";
+import { join } from "path";
 
-const execAsync = promisify(exec)
+const execAsync = promisify(exec);
 
 interface BundleStats {
   totalSize: number
@@ -257,6 +257,6 @@ export async function runFullAnalysis(url?: string): Promise<void> {
 
 // CLI interface
 if (require.main === module) {
-  const url = process.argv[2]
-  runFullAnalysis(url)
+  const url = process.argv[2];
+  runFullAnalysis(url);
 }

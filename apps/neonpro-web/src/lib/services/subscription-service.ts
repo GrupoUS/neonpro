@@ -1,7 +1,7 @@
-import { createClient } from '@/lib/supabase/server';
-import { stripe } from '@/lib/stripe';
-import Stripe from 'stripe';
-import { NEONPRO_PLANS, type PlanId } from '@/lib/constants/plans';
+import type { createClient } from "@/lib/supabase/server";
+import type { stripe } from "@/lib/stripe";
+import Stripe from "stripe";
+import type { NEONPRO_PLANS, type PlanId } from "@/lib/constants/plans";
 
 // Subscription service class
 export class SubscriptionService {
@@ -24,10 +24,10 @@ export class SubscriptionService {
     userId: string,
     userEmail: string,
     successUrl: string,
-    cancelUrl: string
+    cancelUrl: string,
   ): Promise<Stripe.Checkout.Session> {
     const plan = NEONPRO_PLANS[planId];
-    
+
     if (!plan) {
       throw new Error(`Invalid plan ID: ${planId}`);
     }
@@ -41,7 +41,7 @@ export class SubscriptionService {
             quantity: 1,
           },
         ],
-        mode: 'subscription',
+        mode: "subscription",
         success_url: successUrl,
         cancel_url: cancelUrl,
         metadata: {
@@ -54,17 +54,17 @@ export class SubscriptionService {
             planId,
           },
         },
-        locale: 'pt-BR',
-        currency: 'brl',
-        payment_method_types: ['card', 'boleto'],
+        locale: "pt-BR",
+        currency: "brl",
+        payment_method_types: ["card", "boleto"],
         allow_promotion_codes: true,
-        billing_address_collection: 'required',
-        customer_creation: 'always',
+        billing_address_collection: "required",
+        customer_creation: "always",
       });
 
       return session;
     } catch (error) {
-      console.error('Error creating checkout session:', error);
+      console.error("Error creating checkout session:", error);
       throw error;
     }
   }
@@ -72,18 +72,18 @@ export class SubscriptionService {
   // Create a billing portal session
   async createBillingPortalSession(
     customerId: string,
-    returnUrl: string
+    returnUrl: string,
   ): Promise<Stripe.BillingPortal.Session> {
     try {
       const session = await stripe.billingPortal.sessions.create({
         customer: customerId,
         return_url: returnUrl,
-        locale: 'pt-BR',
+        locale: "pt-BR",
       });
 
       return session;
     } catch (error) {
-      console.error('Error creating billing portal session:', error);
+      console.error("Error creating billing portal session:", error);
       throw error;
     }
   }
@@ -93,13 +93,13 @@ export class SubscriptionService {
     try {
       const subscriptions = await stripe.subscriptions.list({
         customer: customerId,
-        status: 'active',
+        status: "active",
         limit: 1,
       });
 
       return subscriptions.data[0] || null;
     } catch (error) {
-      console.error('Error getting active subscription:', error);
+      console.error("Error getting active subscription:", error);
       return null;
     }
   }
@@ -113,7 +113,7 @@ export class SubscriptionService {
 
       return subscription;
     } catch (error) {
-      console.error('Error canceling subscription:', error);
+      console.error("Error canceling subscription:", error);
       throw error;
     }
   }
@@ -127,7 +127,7 @@ export class SubscriptionService {
 
       return subscription;
     } catch (error) {
-      console.error('Error reactivating subscription:', error);
+      console.error("Error reactivating subscription:", error);
       throw error;
     }
   }
@@ -142,29 +142,27 @@ export class SubscriptionService {
       status?: string;
       currentPeriodStart?: Date;
       currentPeriodEnd?: Date;
-    }
+    },
   ): Promise<void> {
     try {
       const supabase = await this.getSupabaseClient();
-      
-      const { error } = await supabase
-        .from('user_subscriptions')
-        .upsert({
-          user_id: userId,
-          stripe_customer_id: subscriptionData.stripeCustomerId,
-          stripe_subscription_id: subscriptionData.stripeSubscriptionId,
-          plan_id: subscriptionData.planId,
-          status: subscriptionData.status,
-          current_period_start: subscriptionData.currentPeriodStart?.toISOString(),
-          current_period_end: subscriptionData.currentPeriodEnd?.toISOString(),
-          updated_at: new Date().toISOString(),
-        });
+
+      const { error } = await supabase.from("user_subscriptions").upsert({
+        user_id: userId,
+        stripe_customer_id: subscriptionData.stripeCustomerId,
+        stripe_subscription_id: subscriptionData.stripeSubscriptionId,
+        plan_id: subscriptionData.planId,
+        status: subscriptionData.status,
+        current_period_start: subscriptionData.currentPeriodStart?.toISOString(),
+        current_period_end: subscriptionData.currentPeriodEnd?.toISOString(),
+        updated_at: new Date().toISOString(),
+      });
 
       if (error) {
         throw error;
       }
     } catch (error) {
-      console.error('Error updating user subscription:', error);
+      console.error("Error updating user subscription:", error);
       throw error;
     }
   }
@@ -173,20 +171,20 @@ export class SubscriptionService {
   async getUserSubscription(userId: string): Promise<any> {
     try {
       const supabase = await this.getSupabaseClient();
-      
+
       const { data, error } = await supabase
-        .from('user_subscriptions')
-        .select('*')
-        .eq('user_id', userId)
+        .from("user_subscriptions")
+        .select("*")
+        .eq("user_id", userId)
         .single();
 
-      if (error && error.code !== 'PGRST116') {
+      if (error && error.code !== "PGRST116") {
         throw error;
       }
 
       return data;
     } catch (error) {
-      console.error('Error getting user subscription:', error);
+      console.error("Error getting user subscription:", error);
       return null;
     }
   }
@@ -195,15 +193,14 @@ export class SubscriptionService {
   async hasActiveSubscription(userId: string): Promise<boolean> {
     try {
       const subscription = await this.getUserSubscription(userId);
-      
+
       if (!subscription) return false;
-      
+
       return (
-        subscription.status === 'active' &&
-        new Date(subscription.current_period_end) > new Date()
+        subscription.status === "active" && new Date(subscription.current_period_end) > new Date()
       );
     } catch (error) {
-      console.error('Error checking active subscription:', error);
+      console.error("Error checking active subscription:", error);
       return false;
     }
   }
@@ -220,9 +217,9 @@ export class SubscriptionService {
 
   // Format price for display
   formatPrice(price: number): string {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(price / 100);
   }
 }
@@ -239,35 +236,31 @@ export class StripeWebhookHandler {
     let event: Stripe.Event;
 
     try {
-      event = stripe.webhooks.constructEvent(
-        body,
-        signature,
-        process.env.STRIPE_WEBHOOK_SECRET!
-      );
+      event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET!);
     } catch (err) {
-      console.error('Webhook signature verification failed:', err);
+      console.error("Webhook signature verification failed:", err);
       throw err;
     }
 
     switch (event.type) {
-      case 'checkout.session.completed':
+      case "checkout.session.completed":
         await this.handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session);
         break;
 
-      case 'customer.subscription.created':
-      case 'customer.subscription.updated':
+      case "customer.subscription.created":
+      case "customer.subscription.updated":
         await this.handleSubscriptionChange(event.data.object as Stripe.Subscription);
         break;
 
-      case 'customer.subscription.deleted':
+      case "customer.subscription.deleted":
         await this.handleSubscriptionDeleted(event.data.object as Stripe.Subscription);
         break;
 
-      case 'invoice.payment_succeeded':
+      case "invoice.payment_succeeded":
         await this.handlePaymentSucceeded(event.data.object as Stripe.Invoice);
         break;
 
-      case 'invoice.payment_failed':
+      case "invoice.payment_failed":
         await this.handlePaymentFailed(event.data.object as Stripe.Invoice);
         break;
 
@@ -279,16 +272,14 @@ export class StripeWebhookHandler {
   private async handleCheckoutCompleted(session: Stripe.Checkout.Session): Promise<void> {
     try {
       const userId = session.metadata?.userId;
-      
+
       if (!userId) {
-        console.error('No userId in checkout session metadata');
+        console.error("No userId in checkout session metadata");
         return;
       }
 
       // Get the subscription
-      const subscription = await stripe.subscriptions.retrieve(
-        session.subscription as string
-      );
+      const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
 
       await this.subscriptionService.updateUserSubscription(userId, {
         stripeCustomerId: session.customer as string,
@@ -301,16 +292,16 @@ export class StripeWebhookHandler {
 
       console.log(`Subscription created for user ${userId}`);
     } catch (error) {
-      console.error('Error handling checkout completion:', error);
+      console.error("Error handling checkout completion:", error);
     }
   }
 
   private async handleSubscriptionChange(subscription: Stripe.Subscription): Promise<void> {
     try {
       const userId = subscription.metadata?.userId;
-      
+
       if (!userId) {
-        console.error('No userId in subscription metadata');
+        console.error("No userId in subscription metadata");
         return;
       }
 
@@ -322,26 +313,26 @@ export class StripeWebhookHandler {
 
       console.log(`Subscription updated for user ${userId}: ${subscription.status}`);
     } catch (error) {
-      console.error('Error handling subscription change:', error);
+      console.error("Error handling subscription change:", error);
     }
   }
 
   private async handleSubscriptionDeleted(subscription: Stripe.Subscription): Promise<void> {
     try {
       const userId = subscription.metadata?.userId;
-      
+
       if (!userId) {
-        console.error('No userId in subscription metadata');
+        console.error("No userId in subscription metadata");
         return;
       }
 
       await this.subscriptionService.updateUserSubscription(userId, {
-        status: 'canceled',
+        status: "canceled",
       });
 
       console.log(`Subscription canceled for user ${userId}`);
     } catch (error) {
-      console.error('Error handling subscription deletion:', error);
+      console.error("Error handling subscription deletion:", error);
     }
   }
 

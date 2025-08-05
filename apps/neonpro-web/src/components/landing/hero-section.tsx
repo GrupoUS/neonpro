@@ -1,19 +1,19 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { 
-  Heart, 
-  Shield, 
-  Sparkles, 
-  Users, 
-  Calendar, 
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Card, CardContent } from "@/components/ui/card";
+import type {
+  Heart,
+  Shield,
+  Sparkles,
+  Users,
+  Calendar,
   BarChart3,
   CheckCircle,
   Star,
   ArrowRight,
-  Play
+  Play,
 } from "lucide-react";
 
 interface HeroSectionProps {
@@ -59,11 +59,11 @@ export function HeroSection({ onLoginClick, onRegisterClick }: HeroSectionProps)
                   Clínicas Estéticas
                 </span>
               </h1>
-              
+
               <p className="text-xl lg:text-2xl text-white/90 leading-relaxed max-w-xl">
-                Plataforma AI-powered que transforma sua clínica estética em um 
-                centro de excelência, aumentando resultados em <strong>+85%</strong> e 
-                reduzindo tempo administrativo em <strong>70%</strong>.
+                Plataforma AI-powered que transforma sua clínica estética em um centro de
+                excelência, aumentando resultados em <strong>+85%</strong> e reduzindo tempo
+                administrativo em <strong>70%</strong>.
               </p>
             </div>
             {/* Key Stats */}
@@ -93,7 +93,7 @@ export function HeroSection({ onLoginClick, onRegisterClick }: HeroSectionProps)
                 Começar Agora
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
-              
+
               <Button
                 size="lg"
                 variant="outline"
@@ -116,9 +116,7 @@ export function HeroSection({ onLoginClick, onRegisterClick }: HeroSectionProps)
                 Ver demonstração (2 min)
               </Button>
               <span className="text-white/60">•</span>
-              <span className="text-sm text-white/80">
-                Sem compromisso, teste gratuito
-              </span>
+              <span className="text-sm text-white/80">Sem compromisso, teste gratuito</span>
             </div>
           </div>
           {/* Right Content - Feature Cards */}
@@ -136,8 +134,8 @@ export function HeroSection({ onLoginClick, onRegisterClick }: HeroSectionProps)
                   </div>
                 </div>
                 <p className="text-white/90 text-sm leading-relaxed">
-                  Algoritmos de ML preveem no-shows, otimizam agendas e sugerem 
-                  tratamentos personalizados para cada paciente.
+                  Algoritmos de ML preveem no-shows, otimizam agendas e sugerem tratamentos
+                  personalizados para cada paciente.
                 </p>
                 <div className="flex items-center text-yellow-300 text-sm">
                   <Star className="h-4 w-4 mr-1" />
@@ -159,8 +157,8 @@ export function HeroSection({ onLoginClick, onRegisterClick }: HeroSectionProps)
                   </div>
                 </div>
                 <p className="text-white/90 text-sm leading-relaxed">
-                  Sistema inteligente que elimina conflitos de horário, 
-                  otimiza intervalos e maximiza a ocupação da agenda.
+                  Sistema inteligente que elimina conflitos de horário, otimiza intervalos e
+                  maximiza a ocupação da agenda.
                 </p>
                 <div className="flex items-center text-yellow-300 text-sm">
                   <Star className="h-4 w-4 mr-1" />
@@ -181,8 +179,8 @@ export function HeroSection({ onLoginClick, onRegisterClick }: HeroSectionProps)
                   </div>
                 </div>
                 <p className="text-white/90 text-sm leading-relaxed">
-                  Dashboards inteligentes com métricas de performance, 
-                  previsões de receita e análise de satisfação do paciente.
+                  Dashboards inteligentes com métricas de performance, previsões de receita e
+                  análise de satisfação do paciente.
                 </p>
                 <div className="flex items-center text-yellow-300 text-sm">
                   <Star className="h-4 w-4 mr-1" />
@@ -204,8 +202,8 @@ export function HeroSection({ onLoginClick, onRegisterClick }: HeroSectionProps)
                   </div>
                 </div>
                 <p className="text-white/90 text-sm leading-relaxed">
-                  Atendimento automático às normas LGPD, ANVISA e CFM, 
-                  com auditoria contínua e relatórios de conformidade.
+                  Atendimento automático às normas LGPD, ANVISA e CFM, com auditoria contínua e
+                  relatórios de conformidade.
                 </p>
                 <div className="flex items-center text-yellow-300 text-sm">
                   <Star className="h-4 w-4 mr-1" />
@@ -218,9 +216,7 @@ export function HeroSection({ onLoginClick, onRegisterClick }: HeroSectionProps)
         {/* Bottom Trust Indicators */}
         <div className="mt-16 pt-8 border-t border-white/20">
           <div className="text-center text-white/80 space-y-4">
-            <p className="text-sm">
-              Confiado por clínicas líderes em todo o Brasil
-            </p>
+            <p className="text-sm">Confiado por clínicas líderes em todo o Brasil</p>
             <div className="flex justify-center items-center space-x-8 opacity-60">
               <div className="h-8 bg-white/20 rounded px-4 flex items-center text-xs font-medium">
                 ANVISA

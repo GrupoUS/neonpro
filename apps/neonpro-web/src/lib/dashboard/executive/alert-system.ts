@@ -1,12 +1,20 @@
-﻿import { z } from 'zod';
-import { createClient } from '@/lib/supabase/client';
-import { logger } from '@/lib/logger';
-import { createkpiCalculationService, type KPICalculationResult } from './kpi-calculation-service';
+import type { z } from "zod";
+import type { createClient } from "@/lib/supabase/client";
+import type { logger } from "@/lib/logger";
+import type {
+  createkpiCalculationService,
+  type KPICalculationResult,
+} from "./kpi-calculation-service";
 
 // Alert Types and Schemas
-export const AlertSeveritySchema = z.enum(['low', 'medium', 'high', 'critical']);
-export const AlertStatusSchema = z.enum(['active', 'acknowledged', 'resolved', 'dismissed']);
-export const AlertTypeSchema = z.enum(['kpi_threshold', 'trend_anomaly', 'system_health', 'business_rule']);
+export const AlertSeveritySchema = z.enum(["low", "medium", "high", "critical"]);
+export const AlertStatusSchema = z.enum(["active", "acknowledged", "resolved", "dismissed"]);
+export const AlertTypeSchema = z.enum([
+  "kpi_threshold",
+  "trend_anomaly",
+  "system_health",
+  "business_rule",
+]);
 
 export const AlertRuleSchema = z.object({
   id: z.string().uuid(),
@@ -18,11 +26,11 @@ export const AlertRuleSchema = z.object({
   isActive: z.boolean().default(true),
   conditions: z.object({
     kpiId: z.string().uuid().optional(),
-    operator: z.enum(['>', '<', '>=', '<=', '==', '!=', 'between']),
+    operator: z.enum([">", "<", ">=", "<=", "==", "!=", "between"]),
     threshold: z.number(),
     secondaryThreshold: z.number().optional(), // for 'between' operator
     timeWindow: z.number().min(1).default(60), // minutes
-    consecutiveViolations: z.number().min(1).default(1)
+    consecutiveViolations: z.number().min(1).default(1),
   }),
   actions: z.object({
     sendEmail: z.boolean().default(false),
@@ -30,20 +38,24 @@ export const AlertRuleSchema = z.object({
     sendPushNotification: z.boolean().default(true),
     createTicket: z.boolean().default(false),
     emailRecipients: z.array(z.string().email()).optional(),
-    smsRecipients: z.array(z.string()).optional()
+    smsRecipients: z.array(z.string()).optional(),
   }),
-  schedule: z.object({
-    enabled: z.boolean().default(true),
-    timezone: z.string().default('America/Sao_Paulo'),
-    workingHours: z.object({
-      start: z.string().regex(/^\d{2}:\d{2}$/),
-      end: z.string().regex(/^\d{2}:\d{2}$/)
-    }).optional(),
-    workingDays: z.array(z.number().min(0).max(6)).optional(), // 0 = Sunday
-    excludeHolidays: z.boolean().default(false)
-  }).optional(),
+  schedule: z
+    .object({
+      enabled: z.boolean().default(true),
+      timezone: z.string().default("America/Sao_Paulo"),
+      workingHours: z
+        .object({
+          start: z.string().regex(/^\d{2}:\d{2}$/),
+          end: z.string().regex(/^\d{2}:\d{2}$/),
+        })
+        .optional(),
+      workingDays: z.array(z.number().min(0).max(6)).optional(), // 0 = Sunday
+      excludeHolidays: z.boolean().default(false),
+    })
+    .optional(),
   createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime()
+  updatedAt: z.string().datetime(),
 });
 
 export const AlertInstanceSchema = z.object({
@@ -62,27 +74,29 @@ export const AlertInstanceSchema = z.object({
   resolvedBy: z.string().uuid().optional(),
   dismissedAt: z.string().datetime().optional(),
   dismissedBy: z.string().uuid().optional(),
-  metadata: z.object({
-    kpiValue: z.number().optional(),
-    threshold: z.number().optional(),
-    previousValue: z.number().optional(),
-    violationCount: z.number().default(1),
-    autoResolved: z.boolean().default(false)
-  }).optional()
+  metadata: z
+    .object({
+      kpiValue: z.number().optional(),
+      threshold: z.number().optional(),
+      previousValue: z.number().optional(),
+      violationCount: z.number().default(1),
+      autoResolved: z.boolean().default(false),
+    })
+    .optional(),
 });
 
 export const AlertNotificationSchema = z.object({
   id: z.string().uuid(),
   alertId: z.string().uuid(),
   clinicId: z.string().uuid(),
-  type: z.enum(['email', 'sms', 'push', 'webhook']),
+  type: z.enum(["email", "sms", "push", "webhook"]),
   recipient: z.string(),
-  status: z.enum(['pending', 'sent', 'delivered', 'failed']),
+  status: z.enum(["pending", "sent", "delivered", "failed"]),
   sentAt: z.string().datetime().optional(),
   deliveredAt: z.string().datetime().optional(),
   errorMessage: z.string().optional(),
   retryCount: z.number().default(0),
-  maxRetries: z.number().default(3)
+  maxRetries: z.number().default(3),
 });
 
 export type AlertSeverity = z.infer<typeof AlertSeveritySchema>;
@@ -108,7 +122,7 @@ export class AlertSystem {
     }
 
     this.isRunning = true;
-    logger.info('Starting Alert System...');
+    logger.info("Starting Alert System...");
 
     // Load and start monitoring all active alert rules
     await this.loadAndStartAlertRules();
@@ -116,7 +130,7 @@ export class AlertSystem {
     // Start periodic cleanup of old alerts
     this.startPeriodicCleanup();
 
-    logger.info('Alert System started successfully');
+    logger.info("Alert System started successfully");
   }
 
   /**
@@ -128,7 +142,7 @@ export class AlertSystem {
     }
 
     this.isRunning = false;
-    logger.info('Stopping Alert System...');
+    logger.info("Stopping Alert System...");
 
     // Clear all timers
     for (const timer of this.evaluationTimers.values()) {
@@ -136,19 +150,21 @@ export class AlertSystem {
     }
     this.evaluationTimers.clear();
 
-    logger.info('Alert System stopped');
+    logger.info("Alert System stopped");
   }
 
   /**
    * Create a new alert rule
    */
-  async createAlertRule(rule: Omit<AlertRule, 'id' | 'createdAt' | 'updatedAt'>): Promise<AlertRule | null> {
+  async createAlertRule(
+    rule: Omit<AlertRule, "id" | "createdAt" | "updatedAt">,
+  ): Promise<AlertRule | null> {
     try {
       const ruleId = crypto.randomUUID();
       const now = new Date().toISOString();
 
       const { data, error } = await this.supabase
-        .from('alert_rules')
+        .from("alert_rules")
         .insert({
           id: ruleId,
           clinic_id: rule.clinicId,
@@ -161,13 +177,13 @@ export class AlertSystem {
           actions: rule.actions,
           schedule: rule.schedule,
           created_at: now,
-          updated_at: now
+          updated_at: now,
         })
         .select()
         .single();
 
       if (error) {
-        logger.error('Error creating alert rule:', error);
+        logger.error("Error creating alert rule:", error);
         return null;
       }
 
@@ -183,7 +199,7 @@ export class AlertSystem {
         actions: data.actions,
         schedule: data.schedule,
         createdAt: data.created_at,
-        updatedAt: data.updated_at
+        updatedAt: data.updated_at,
       };
 
       // Start monitoring the new rule
@@ -193,7 +209,7 @@ export class AlertSystem {
 
       return newRule;
     } catch (error) {
-      logger.error('Error creating alert rule:', error);
+      logger.error("Error creating alert rule:", error);
       return null;
     }
   }
@@ -204,7 +220,7 @@ export class AlertSystem {
   async updateAlertRule(ruleId: string, updates: Partial<AlertRule>): Promise<AlertRule | null> {
     try {
       const { data, error } = await this.supabase
-        .from('alert_rules')
+        .from("alert_rules")
         .update({
           name: updates.name,
           description: updates.description,
@@ -214,14 +230,14 @@ export class AlertSystem {
           conditions: updates.conditions,
           actions: updates.actions,
           schedule: updates.schedule,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
-        .eq('id', ruleId)
+        .eq("id", ruleId)
         .select()
         .single();
 
       if (error) {
-        logger.error('Error updating alert rule:', error);
+        logger.error("Error updating alert rule:", error);
         return null;
       }
 
@@ -237,7 +253,7 @@ export class AlertSystem {
         actions: data.actions,
         schedule: data.schedule,
         createdAt: data.created_at,
-        updatedAt: data.updated_at
+        updatedAt: data.updated_at,
       };
 
       // Restart rule evaluation
@@ -248,7 +264,7 @@ export class AlertSystem {
 
       return updatedRule;
     } catch (error) {
-      logger.error('Error updating alert rule:', error);
+      logger.error("Error updating alert rule:", error);
       return null;
     }
   }
@@ -262,19 +278,16 @@ export class AlertSystem {
       this.stopRuleEvaluation(ruleId);
 
       // Delete the rule
-      const { error } = await this.supabase
-        .from('alert_rules')
-        .delete()
-        .eq('id', ruleId);
+      const { error } = await this.supabase.from("alert_rules").delete().eq("id", ruleId);
 
       if (error) {
-        logger.error('Error deleting alert rule:', error);
+        logger.error("Error deleting alert rule:", error);
         return false;
       }
 
       return true;
     } catch (error) {
-      logger.error('Error deleting alert rule:', error);
+      logger.error("Error deleting alert rule:", error);
       return false;
     }
   }
@@ -285,19 +298,19 @@ export class AlertSystem {
   async getActiveAlerts(clinicId: string, limit = 50): Promise<AlertInstance[]> {
     try {
       const { data, error } = await this.supabase
-        .from('alert_instances')
-        .select('*')
-        .eq('clinic_id', clinicId)
-        .eq('status', 'active')
-        .order('triggered_at', { ascending: false })
+        .from("alert_instances")
+        .select("*")
+        .eq("clinic_id", clinicId)
+        .eq("status", "active")
+        .order("triggered_at", { ascending: false })
         .limit(limit);
 
       if (error) {
-        logger.error('Error fetching active alerts:', error);
+        logger.error("Error fetching active alerts:", error);
         return [];
       }
 
-      return data.map(alert => ({
+      return data.map((alert) => ({
         id: alert.id,
         ruleId: alert.rule_id,
         clinicId: alert.clinic_id,
@@ -313,10 +326,10 @@ export class AlertSystem {
         resolvedBy: alert.resolved_by,
         dismissedAt: alert.dismissed_at,
         dismissedBy: alert.dismissed_by,
-        metadata: alert.metadata
+        metadata: alert.metadata,
       }));
     } catch (error) {
-      logger.error('Error getting active alerts:', error);
+      logger.error("Error getting active alerts:", error);
       return [];
     }
   }
@@ -327,22 +340,22 @@ export class AlertSystem {
   async acknowledgeAlert(alertId: string, userId: string): Promise<boolean> {
     try {
       const { error } = await this.supabase
-        .from('alert_instances')
+        .from("alert_instances")
         .update({
-          status: 'acknowledged',
+          status: "acknowledged",
           acknowledged_at: new Date().toISOString(),
-          acknowledged_by: userId
+          acknowledged_by: userId,
         })
-        .eq('id', alertId);
+        .eq("id", alertId);
 
       if (error) {
-        logger.error('Error acknowledging alert:', error);
+        logger.error("Error acknowledging alert:", error);
         return false;
       }
 
       return true;
     } catch (error) {
-      logger.error('Error acknowledging alert:', error);
+      logger.error("Error acknowledging alert:", error);
       return false;
     }
   }
@@ -353,22 +366,22 @@ export class AlertSystem {
   async resolveAlert(alertId: string, userId: string): Promise<boolean> {
     try {
       const { error } = await this.supabase
-        .from('alert_instances')
+        .from("alert_instances")
         .update({
-          status: 'resolved',
+          status: "resolved",
           resolved_at: new Date().toISOString(),
-          resolved_by: userId
+          resolved_by: userId,
         })
-        .eq('id', alertId);
+        .eq("id", alertId);
 
       if (error) {
-        logger.error('Error resolving alert:', error);
+        logger.error("Error resolving alert:", error);
         return false;
       }
 
       return true;
     } catch (error) {
-      logger.error('Error resolving alert:', error);
+      logger.error("Error resolving alert:", error);
       return false;
     }
   }
@@ -379,22 +392,22 @@ export class AlertSystem {
   async dismissAlert(alertId: string, userId: string): Promise<boolean> {
     try {
       const { error } = await this.supabase
-        .from('alert_instances')
+        .from("alert_instances")
         .update({
-          status: 'dismissed',
+          status: "dismissed",
           dismissed_at: new Date().toISOString(),
-          dismissed_by: userId
+          dismissed_by: userId,
         })
-        .eq('id', alertId);
+        .eq("id", alertId);
 
       if (error) {
-        logger.error('Error dismissing alert:', error);
+        logger.error("Error dismissing alert:", error);
         return false;
       }
 
       return true;
     } catch (error) {
-      logger.error('Error dismissing alert:', error);
+      logger.error("Error dismissing alert:", error);
       return false;
     }
   }
@@ -405,12 +418,12 @@ export class AlertSystem {
   private async loadAndStartAlertRules(): Promise<void> {
     try {
       const { data: rules, error } = await this.supabase
-        .from('alert_rules')
-        .select('*')
-        .eq('is_active', true);
+        .from("alert_rules")
+        .select("*")
+        .eq("is_active", true);
 
       if (error) {
-        logger.error('Error loading alert rules:', error);
+        logger.error("Error loading alert rules:", error);
         return;
       }
 
@@ -427,7 +440,7 @@ export class AlertSystem {
           actions: ruleData.actions,
           schedule: ruleData.schedule,
           createdAt: ruleData.created_at,
-          updatedAt: ruleData.updated_at
+          updatedAt: ruleData.updated_at,
         };
 
         this.startRuleEvaluation(rule);
@@ -435,7 +448,7 @@ export class AlertSystem {
 
       logger.info(`Started monitoring ${rules.length} alert rules`);
     } catch (error) {
-      logger.error('Error loading alert rules:', error);
+      logger.error("Error loading alert rules:", error);
     }
   }
 
@@ -481,7 +494,7 @@ export class AlertSystem {
 
       // Get current KPI value
       const kpiResults = await createkpiCalculationService().calculateClinicKPIs(rule.clinicId);
-      const targetKPI = kpiResults.find(kpi => kpi.kpi.id === rule.conditions.kpiId);
+      const targetKPI = kpiResults.find((kpi) => kpi.kpi.id === rule.conditions.kpiId);
 
       if (!targetKPI) {
         return; // KPI not found
@@ -493,7 +506,7 @@ export class AlertSystem {
       if (isViolated) {
         // Check for existing active alert
         const existingAlert = await this.getExistingActiveAlert(rule.id);
-        
+
         if (existingAlert) {
           // Update violation count
           await this.updateViolationCount(existingAlert.id);
@@ -543,25 +556,26 @@ export class AlertSystem {
   /**
    * Evaluate if a condition is violated
    */
-  private evaluateCondition(value: number, conditions: AlertRule['conditions']): boolean {
+  private evaluateCondition(value: number, conditions: AlertRule["conditions"]): boolean {
     const { operator, threshold, secondaryThreshold } = conditions;
 
     switch (operator) {
-      case '>':
+      case ">":
         return value > threshold;
-      case '<':
+      case "<":
         return value < threshold;
-      case '>=':
+      case ">=":
         return value >= threshold;
-      case '<=':
+      case "<=":
         return value <= threshold;
-      case '==':
+      case "==":
         return value === threshold;
-      case '!=':
+      case "!=":
         return value !== threshold;
-      case 'between':
-        return secondaryThreshold !== undefined && 
-               value >= threshold && value <= secondaryThreshold;
+      case "between":
+        return (
+          secondaryThreshold !== undefined && value >= threshold && value <= secondaryThreshold
+        );
       default:
         return false;
     }
@@ -573,10 +587,10 @@ export class AlertSystem {
   private async getExistingActiveAlert(ruleId: string): Promise<AlertInstance | null> {
     try {
       const { data, error } = await this.supabase
-        .from('alert_instances')
-        .select('*')
-        .eq('rule_id', ruleId)
-        .eq('status', 'active')
+        .from("alert_instances")
+        .select("*")
+        .eq("rule_id", ruleId)
+        .eq("status", "active")
         .single();
 
       if (error || !data) {
@@ -599,7 +613,7 @@ export class AlertSystem {
         resolvedBy: data.resolved_by,
         dismissedAt: data.dismissed_at,
         dismissedBy: data.dismissed_by,
-        metadata: data.metadata
+        metadata: data.metadata,
       };
     } catch (error) {
       return null;
@@ -614,20 +628,28 @@ export class AlertSystem {
       const alertId = crypto.randomUUID();
       const now = new Date().toISOString();
 
-      const alert: Omit<AlertInstance, 'acknowledgedAt' | 'acknowledgedBy' | 'resolvedAt' | 'resolvedBy' | 'dismissedAt' | 'dismissedBy'> = {
+      const alert: Omit<
+        AlertInstance,
+        | "acknowledgedAt"
+        | "acknowledgedBy"
+        | "resolvedAt"
+        | "resolvedBy"
+        | "dismissedAt"
+        | "dismissedBy"
+      > = {
         id: alertId,
         ruleId: rule.id,
         clinicId: rule.clinicId,
         title: `${rule.name} - Limite Excedido`,
         message: this.generateAlertMessage(rule, kpiResult),
         severity: rule.severity,
-        status: 'active',
+        status: "active",
         data: {
           kpiId: kpiResult.kpi.id,
           kpiName: kpiResult.kpi.name,
           currentValue: kpiResult.currentValue,
           threshold: rule.conditions.threshold,
-          operator: rule.conditions.operator
+          operator: rule.conditions.operator,
         },
         triggeredAt: now,
         metadata: {
@@ -635,27 +657,25 @@ export class AlertSystem {
           threshold: rule.conditions.threshold,
           previousValue: kpiResult.previousValue,
           violationCount: 1,
-          autoResolved: false
-        }
+          autoResolved: false,
+        },
       };
 
-      const { error } = await this.supabase
-        .from('alert_instances')
-        .insert({
-          id: alert.id,
-          rule_id: alert.ruleId,
-          clinic_id: alert.clinicId,
-          title: alert.title,
-          message: alert.message,
-          severity: alert.severity,
-          status: alert.status,
-          data: alert.data,
-          triggered_at: alert.triggeredAt,
-          metadata: alert.metadata
-        });
+      const { error } = await this.supabase.from("alert_instances").insert({
+        id: alert.id,
+        rule_id: alert.ruleId,
+        clinic_id: alert.clinicId,
+        title: alert.title,
+        message: alert.message,
+        severity: alert.severity,
+        status: alert.status,
+        data: alert.data,
+        triggered_at: alert.triggeredAt,
+        metadata: alert.metadata,
+      });
 
       if (error) {
-        logger.error('Error creating alert:', error);
+        logger.error("Error creating alert:", error);
         return;
       }
 
@@ -664,7 +684,7 @@ export class AlertSystem {
 
       logger.info(`Alert created: ${alert.title}`);
     } catch (error) {
-      logger.error('Error creating alert:', error);
+      logger.error("Error creating alert:", error);
     }
   }
 
@@ -677,8 +697,10 @@ export class AlertSystem {
     const threshold = rule.conditions.threshold;
     const operator = rule.conditions.operator;
 
-    return `O KPI "${kpiName}" está com valor ${currentValue}, que ${operator} ${threshold}. ` +
-           `Verifique os dados e tome as ações necessárias.`;
+    return (
+      `O KPI "${kpiName}" está com valor ${currentValue}, que ${operator} ${threshold}. ` +
+      `Verifique os dados e tome as ações necessárias.`
+    );
   }
 
   /**
@@ -687,9 +709,9 @@ export class AlertSystem {
   private async updateViolationCount(alertId: string): Promise<void> {
     try {
       const { data, error } = await this.supabase
-        .from('alert_instances')
-        .select('metadata')
-        .eq('id', alertId)
+        .from("alert_instances")
+        .select("metadata")
+        .eq("id", alertId)
         .single();
 
       if (error || !data) {
@@ -700,16 +722,16 @@ export class AlertSystem {
       const newViolationCount = (metadata.violationCount || 1) + 1;
 
       await this.supabase
-        .from('alert_instances')
+        .from("alert_instances")
         .update({
           metadata: {
             ...metadata,
-            violationCount: newViolationCount
-          }
+            violationCount: newViolationCount,
+          },
         })
-        .eq('id', alertId);
+        .eq("id", alertId);
     } catch (error) {
-      logger.error('Error updating violation count:', error);
+      logger.error("Error updating violation count:", error);
     }
   }
 
@@ -719,18 +741,18 @@ export class AlertSystem {
   private async autoResolveAlerts(ruleId: string): Promise<void> {
     try {
       await this.supabase
-        .from('alert_instances')
+        .from("alert_instances")
         .update({
-          status: 'resolved',
+          status: "resolved",
           resolved_at: new Date().toISOString(),
           metadata: {
-            autoResolved: true
-          }
+            autoResolved: true,
+          },
         })
-        .eq('rule_id', ruleId)
-        .eq('status', 'active');
+        .eq("rule_id", ruleId)
+        .eq("status", "active");
     } catch (error) {
-      logger.error('Error auto-resolving alerts:', error);
+      logger.error("Error auto-resolving alerts:", error);
     }
   }
 
@@ -760,7 +782,7 @@ export class AlertSystem {
         await this.sendPushNotification(alert);
       }
     } catch (error) {
-      logger.error('Error sending alert notifications:', error);
+      logger.error("Error sending alert notifications:", error);
     }
   }
 
@@ -792,13 +814,16 @@ export class AlertSystem {
    * Start periodic cleanup of old alerts
    */
   private startPeriodicCleanup(): void {
-    setInterval(async () => {
-      try {
-        await this.cleanupOldAlerts();
-      } catch (error) {
-        logger.error('Error during periodic cleanup:', error);
-      }
-    }, 24 * 60 * 60 * 1000); // Daily cleanup
+    setInterval(
+      async () => {
+        try {
+          await this.cleanupOldAlerts();
+        } catch (error) {
+          logger.error("Error during periodic cleanup:", error);
+        }
+      },
+      24 * 60 * 60 * 1000,
+    ); // Daily cleanup
   }
 
   /**
@@ -810,14 +835,14 @@ export class AlertSystem {
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
       await this.supabase
-        .from('alert_instances')
+        .from("alert_instances")
         .delete()
-        .in('status', ['resolved', 'dismissed'])
-        .lt('triggered_at', thirtyDaysAgo.toISOString());
+        .in("status", ["resolved", "dismissed"])
+        .lt("triggered_at", thirtyDaysAgo.toISOString());
 
-      logger.info('Completed periodic cleanup of old alerts');
+      logger.info("Completed periodic cleanup of old alerts");
     } catch (error) {
-      logger.error('Error cleaning up old alerts:', error);
+      logger.error("Error cleaning up old alerts:", error);
     }
   }
 
@@ -834,28 +859,28 @@ export class AlertSystem {
   }> {
     try {
       const { data, error } = await this.supabase
-        .from('alert_instances')
-        .select('severity, status')
-        .eq('clinic_id', clinicId)
-        .gte('triggered_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()); // Last 7 days
+        .from("alert_instances")
+        .select("severity, status")
+        .eq("clinic_id", clinicId)
+        .gte("triggered_at", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()); // Last 7 days
 
       if (error) {
-        logger.error('Error fetching alert statistics:', error);
+        logger.error("Error fetching alert statistics:", error);
         return { total: 0, active: 0, critical: 0, high: 0, medium: 0, low: 0 };
       }
 
       const stats = {
         total: data.length,
-        active: data.filter(a => a.status === 'active').length,
-        critical: data.filter(a => a.severity === 'critical').length,
-        high: data.filter(a => a.severity === 'high').length,
-        medium: data.filter(a => a.severity === 'medium').length,
-        low: data.filter(a => a.severity === 'low').length
+        active: data.filter((a) => a.status === "active").length,
+        critical: data.filter((a) => a.severity === "critical").length,
+        high: data.filter((a) => a.severity === "high").length,
+        medium: data.filter((a) => a.severity === "medium").length,
+        low: data.filter((a) => a.severity === "low").length,
       };
 
       return stats;
     } catch (error) {
-      logger.error('Error getting alert statistics:', error);
+      logger.error("Error getting alert statistics:", error);
       return { total: 0, active: 0, critical: 0, high: 0, medium: 0, low: 0 };
     }
   }
@@ -863,4 +888,3 @@ export class AlertSystem {
 
 // Export singleton instance
 export const createalertSystem = () => new AlertSystem();
-

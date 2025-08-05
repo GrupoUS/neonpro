@@ -11,7 +11,7 @@ import type {
   SlotValidationRequest,
   SlotValidationResponse,
 } from "@/app/lib/types/conflict-prevention";
-import { useCallback, useRef, useState } from "react";
+import type { useCallback, useRef, useState } from "react";
 
 interface UseConflictPreventionProps {
   debounceMs?: number; // Debounce validation calls
@@ -28,9 +28,7 @@ interface UseConflictPreventionReturn {
   isAvailable: boolean;
 
   // Actions
-  validateSlot: (
-    request: SlotValidationRequest
-  ) => Promise<SlotValidationResponse>;
+  validateSlot: (request: SlotValidationRequest) => Promise<SlotValidationResponse>;
   clearValidation: () => void;
 
   // Utilities
@@ -46,13 +44,10 @@ export function useConflictPrevention({
 }: UseConflictPreventionProps = {}): UseConflictPreventionReturn {
   // State management
   const [isValidating, setIsValidating] = useState(false);
-  const [lastValidation, setLastValidation] =
-    useState<SlotValidationResponse | null>(null);
+  const [lastValidation, setLastValidation] = useState<SlotValidationResponse | null>(null);
   const [conflicts, setConflicts] = useState<AppointmentConflict[]>([]);
   const [warnings, setWarnings] = useState<AppointmentConflict[]>([]);
-  const [alternativeSlots, setAlternativeSlots] = useState<AlternativeSlot[]>(
-    []
-  );
+  const [alternativeSlots, setAlternativeSlots] = useState<AlternativeSlot[]>([]);
   const [isAvailable, setIsAvailable] = useState(false);
 
   // Refs for debouncing and request management
@@ -115,8 +110,7 @@ export function useConflictPrevention({
                 throw new Error(errorData.details || `HTTP ${response.status}`);
               }
 
-              const validationResult: SlotValidationResponse =
-                await response.json();
+              const validationResult: SlotValidationResponse = await response.json();
 
               // Update state
               setLastValidation(validationResult);
@@ -145,17 +139,13 @@ export function useConflictPrevention({
                 warnings: [],
                 alternative_slots: [],
                 validation_details: {
-                  appointment_date: new Date(request.start_time)
-                    .toISOString()
-                    .split("T")[0],
-                  appointment_time: new Date(request.start_time)
-                    .toTimeString()
-                    .split(" ")[0],
+                  appointment_date: new Date(request.start_time).toISOString().split("T")[0],
+                  appointment_time: new Date(request.start_time).toTimeString().split(" ")[0],
                   day_of_week: new Date(request.start_time).getDay(),
                   duration_minutes: Math.round(
                     (new Date(request.end_time).getTime() -
                       new Date(request.start_time).getTime()) /
-                      60000
+                      60000,
                   ),
                 },
               };
@@ -172,11 +162,11 @@ export function useConflictPrevention({
               currentRequestRef.current = "";
             }
           },
-          enableRealTime ? debounceMs : 0
+          enableRealTime ? debounceMs : 0,
         );
       });
     },
-    [debounceMs, enableRealTime, isValidating, lastValidation]
+    [debounceMs, enableRealTime, isValidating, lastValidation],
   );
 
   // Clear validation state
@@ -196,14 +186,13 @@ export function useConflictPrevention({
 
   // Utility functions
   const hasErrors = conflicts.some((c) => c.severity === "error");
-  const hasWarnings =
-    warnings.length > 0 || conflicts.some((c) => c.severity === "warning");
+  const hasWarnings = warnings.length > 0 || conflicts.some((c) => c.severity === "warning");
 
   const getConflictsByType = useCallback(
     (type: string): AppointmentConflict[] => {
       return conflicts.filter((conflict) => conflict.type === type);
     },
-    [conflicts]
+    [conflicts],
   );
 
   const getSuggestedSlots = useCallback(
@@ -213,7 +202,7 @@ export function useConflictPrevention({
         .sort((a, b) => (b.score || 0) - (a.score || 0))
         .slice(0, limit);
     },
-    [alternativeSlots]
+    [alternativeSlots],
   );
 
   // Cleanup on unmount
@@ -256,7 +245,7 @@ export function useQuickAvailabilityCheck() {
       serviceTypeId: string,
       startTime: string,
       endTime: string,
-      excludeAppointmentId?: string
+      excludeAppointmentId?: string,
     ): Promise<boolean> => {
       try {
         setIsChecking(true);
@@ -271,9 +260,7 @@ export function useQuickAvailabilityCheck() {
           }),
         });
 
-        const response = await fetch(
-          `/api/appointments/validate-slot?${params}`
-        );
+        const response = await fetch(`/api/appointments/validate-slot?${params}`);
 
         if (!response.ok) {
           return false;
@@ -288,7 +275,7 @@ export function useQuickAvailabilityCheck() {
         setIsChecking(false);
       }
     },
-    []
+    [],
   );
 
   return {

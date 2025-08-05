@@ -1,26 +1,52 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { 
-  Users, 
-  Search, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Phone, 
-  Mail, 
+import type { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { LoadingSpinner } from "@/components/ui/loading-spinner";
+import type {
+  Users,
+  Search,
+  Plus,
+  Edit,
+  Trash2,
+  Phone,
+  Mail,
   Calendar,
   MapPin,
   FileText,
@@ -29,7 +55,7 @@ import {
   Heart,
   Eye,
   Filter,
-  CheckCircle
+  CheckCircle,
 } from "lucide-react";
 
 interface Patient {
@@ -90,10 +116,10 @@ export default function PatientsPage() {
   useEffect(() => {
     const loadPatients = async () => {
       setIsLoading(true);
-      
+
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1200));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1200));
+
       setPatients([
         {
           id: "1",
@@ -106,16 +132,16 @@ export default function PatientsPage() {
             street: "Rua das Flores, 123",
             city: "São Paulo",
             state: "SP",
-            zipCode: "01234-567"
+            zipCode: "01234-567",
           },
           emergencyContact: {
             name: "João Silva",
             phone: "(11) 88888-8888",
-            relationship: "Esposo"
+            relationship: "Esposo",
           },
           insurance: {
             provider: "Unimed",
-            planNumber: "123456789"
+            planNumber: "123456789",
           },
           medicalInfo: {
             bloodType: "O+",
@@ -123,10 +149,10 @@ export default function PatientsPage() {
             medications: ["Losartana 50mg"],
             conditions: ["Hipertensão", "Diabetes Tipo 2"],
             lastVisit: "2024-07-20",
-            nextAppointment: "2024-08-15"
+            nextAppointment: "2024-08-15",
           },
           status: "ativo",
-          registrationDate: "2023-01-15"
+          registrationDate: "2023-01-15",
         },
         {
           id: "2",
@@ -139,12 +165,12 @@ export default function PatientsPage() {
             street: "Av. Paulista, 456",
             city: "São Paulo",
             state: "SP",
-            zipCode: "01310-100"
+            zipCode: "01310-100",
           },
           emergencyContact: {
             name: "Maria Rodrigues",
             phone: "(11) 77777-7777",
-            relationship: "Esposa"
+            relationship: "Esposa",
           },
           medicalInfo: {
             bloodType: "A-",
@@ -152,10 +178,10 @@ export default function PatientsPage() {
             medications: ["Sinvastatina 20mg"],
             conditions: ["Colesterol Alto"],
             lastVisit: "2024-07-18",
-            nextAppointment: "2024-08-10"
+            nextAppointment: "2024-08-10",
           },
           status: "ativo",
-          registrationDate: "2023-03-10"
+          registrationDate: "2023-03-10",
         },
         {
           id: "3",
@@ -168,37 +194,38 @@ export default function PatientsPage() {
             street: "Rua Augusta, 789",
             city: "São Paulo",
             state: "SP",
-            zipCode: "01305-000"
+            zipCode: "01305-000",
           },
           emergencyContact: {
             name: "Pedro Oliveira",
             phone: "(11) 66666-6666",
-            relationship: "Pai"
+            relationship: "Pai",
           },
           medicalInfo: {
             bloodType: "B+",
             allergies: ["Lactose"],
             medications: [],
             conditions: ["Intolerância à Lactose"],
-            lastVisit: "2024-07-25"
+            lastVisit: "2024-07-25",
           },
           status: "ativo",
-          registrationDate: "2023-05-20"
-        }
+          registrationDate: "2023-05-20",
+        },
       ]);
-      
+
       setIsLoading(false);
     };
 
     loadPatients();
   }, []);
 
-  const filteredPatients = patients.filter(patient => {
-    const matchesSearch = patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         patient.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         patient.phone.includes(searchTerm);
+  const filteredPatients = patients.filter((patient) => {
+    const matchesSearch =
+      patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      patient.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      patient.phone.includes(searchTerm);
     const matchesStatus = statusFilter === "all" || patient.status === statusFilter;
-    
+
     return matchesSearch && matchesStatus;
   });
 
@@ -240,9 +267,7 @@ export default function PatientsPage() {
             <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Cadastrar Novo Paciente</DialogTitle>
-                <DialogDescription>
-                  Preencha as informações do novo paciente
-                </DialogDescription>
+                <DialogDescription>Preencha as informações do novo paciente</DialogDescription>
               </DialogHeader>
               <NewPatientForm onClose={() => setIsDialogOpen(false)} />
             </DialogContent>
@@ -260,7 +285,7 @@ export default function PatientsPage() {
           <CardContent>
             <div className="text-2xl font-bold">{patients.length}</div>
             <p className="text-xs text-muted-foreground">
-              {patients.filter(p => p.status === "ativo").length} ativos
+              {patients.filter((p) => p.status === "ativo").length} ativos
             </p>
           </CardContent>
         </Card>
@@ -272,9 +297,7 @@ export default function PatientsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">12</div>
-            <p className="text-xs text-muted-foreground">
-              +20% vs mês anterior
-            </p>
+            <p className="text-xs text-muted-foreground">+20% vs mês anterior</p>
           </CardContent>
         </Card>
 
@@ -285,9 +308,7 @@ export default function PatientsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">28</div>
-            <p className="text-xs text-muted-foreground">
-              Para os próximos 7 dias
-            </p>
+            <p className="text-xs text-muted-foreground">Para os próximos 7 dias</p>
           </CardContent>
         </Card>
 
@@ -298,9 +319,7 @@ export default function PatientsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">3</div>
-            <p className="text-xs text-muted-foreground">
-              Requerem atenção
-            </p>
+            <p className="text-xs text-muted-foreground">Requerem atenção</p>
           </CardContent>
         </Card>
       </div>
@@ -320,7 +339,7 @@ export default function PatientsPage() {
                 />
               </div>
             </div>
-            
+
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Status" />
@@ -332,7 +351,7 @@ export default function PatientsPage() {
                 <SelectItem value="bloqueado">Bloqueado</SelectItem>
               </SelectContent>
             </Select>
-            
+
             <Button variant="outline" size="sm">
               <Filter className="w-4 h-4 mr-2" />
               Mais Filtros
@@ -348,9 +367,7 @@ export default function PatientsPage() {
             <Users className="w-5 h-5 mr-2 text-neon-500" />
             Lista de Pacientes
           </CardTitle>
-          <CardDescription>
-            {filteredPatients.length} paciente(s) encontrado(s)
-          </CardDescription>
+          <CardDescription>{filteredPatients.length} paciente(s) encontrado(s)</CardDescription>
         </CardHeader>
         <CardContent>
           {filteredPatients.length === 0 ? (
@@ -359,9 +376,7 @@ export default function PatientsPage() {
               <p className="text-lg font-medium text-muted-foreground mb-2">
                 Nenhum paciente encontrado
               </p>
-              <p className="text-sm text-muted-foreground">
-                Tente ajustar os filtros de busca
-              </p>
+              <p className="text-sm text-muted-foreground">Tente ajustar os filtros de busca</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -385,14 +400,15 @@ export default function PatientsPage() {
                           <Avatar>
                             <AvatarImage src={patient.avatar} />
                             <AvatarFallback className="bg-neon-100 text-neon-700">
-                              {patient.name.split(' ').map(n => n[0]).join('')}
+                              {patient.name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")}
                             </AvatarFallback>
                           </Avatar>
                           <div>
                             <p className="font-medium">{patient.name}</p>
-                            <p className="text-sm text-muted-foreground">
-                              ID: {patient.id}
-                            </p>
+                            <p className="text-sm text-muted-foreground">ID: {patient.id}</p>
                           </div>
                         </div>
                       </TableCell>
@@ -424,10 +440,17 @@ export default function PatientsPage() {
                         <div className="text-sm">
                           {patient.medicalInfo.lastVisit ? (
                             <>
-                              <p>{new Date(patient.medicalInfo.lastVisit).toLocaleDateString('pt-BR')}</p>
+                              <p>
+                                {new Date(patient.medicalInfo.lastVisit).toLocaleDateString(
+                                  "pt-BR",
+                                )}
+                              </p>
                               {patient.medicalInfo.nextAppointment && (
                                 <p className="text-muted-foreground">
-                                  Próxima: {new Date(patient.medicalInfo.nextAppointment).toLocaleDateString('pt-BR')}
+                                  Próxima:{" "}
+                                  {new Date(patient.medicalInfo.nextAppointment).toLocaleDateString(
+                                    "pt-BR",
+                                  )}
                                 </p>
                               )}
                             </>
@@ -457,7 +480,7 @@ export default function PatientsPage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => console.log('Edit patient', patient.id)}
+                            onClick={() => console.log("Edit patient", patient.id)}
                             className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                           >
                             <Edit className="w-4 h-4" />
@@ -465,7 +488,7 @@ export default function PatientsPage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => console.log('Delete patient', patient.id)}
+                            onClick={() => console.log("Delete patient", patient.id)}
                             className="text-red-600 hover:text-red-700 hover:bg-red-50"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -485,10 +508,7 @@ export default function PatientsPage() {
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
         <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto">
           {selectedPatient && (
-            <PatientDetailsView 
-              patient={selectedPatient}
-              onClose={() => setIsDetailsOpen(false)}
-            />
+            <PatientDetailsView patient={selectedPatient} onClose={() => setIsDetailsOpen(false)} />
           )}
         </DialogContent>
       </Dialog>
@@ -502,21 +522,25 @@ const calculateAge = (dateOfBirth: string) => {
   const birthDate = new Date(dateOfBirth);
   let age = today.getFullYear() - birthDate.getFullYear();
   const monthDiff = today.getMonth() - birthDate.getMonth();
-  
+
   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
     age--;
   }
-  
+
   return age;
 };
 
 // Helper function for status colors
 const getStatusColor = (status: string) => {
   switch (status) {
-    case "ativo": return "bg-green-100 text-green-800 border-green-200";
-    case "inativo": return "bg-yellow-100 text-yellow-800 border-yellow-200";
-    case "bloqueado": return "bg-red-100 text-red-800 border-red-200";
-    default: return "bg-gray-100 text-gray-800 border-gray-200";
+    case "ativo":
+      return "bg-green-100 text-green-800 border-green-200";
+    case "inativo":
+      return "bg-yellow-100 text-yellow-800 border-yellow-200";
+    case "bloqueado":
+      return "bg-red-100 text-red-800 border-red-200";
+    default:
+      return "bg-gray-100 text-gray-800 border-gray-200";
   }
 };
 
@@ -529,12 +553,17 @@ function PatientDetailsView({ patient, onClose }: { patient: Patient; onClose: (
           <Avatar className="w-12 h-12">
             <AvatarImage src={patient.avatar} />
             <AvatarFallback className="bg-neon-100 text-neon-700">
-              {patient.name.split(' ').map(n => n[0]).join('')}
+              {patient.name
+                .split(" ")
+                .map((n) => n[0])
+                .join("")}
             </AvatarFallback>
           </Avatar>
           <div>
             <h2 className="text-xl font-bold">{patient.name}</h2>
-            <p className="text-muted-foreground">{calculateAge(patient.dateOfBirth)} anos • {patient.gender}</p>
+            <p className="text-muted-foreground">
+              {calculateAge(patient.dateOfBirth)} anos • {patient.gender}
+            </p>
           </div>
         </DialogTitle>
       </DialogHeader>
@@ -558,8 +587,12 @@ function PatientDetailsView({ patient, onClose }: { patient: Patient; onClose: (
               <p className="font-medium">{patient.phone}</p>
             </div>
             <div>
-              <Label className="text-sm font-medium text-muted-foreground">Data de Nascimento</Label>
-              <p className="font-medium">{new Date(patient.dateOfBirth).toLocaleDateString('pt-BR')}</p>
+              <Label className="text-sm font-medium text-muted-foreground">
+                Data de Nascimento
+              </Label>
+              <p className="font-medium">
+                {new Date(patient.dateOfBirth).toLocaleDateString("pt-BR")}
+              </p>
             </div>
             <div>
               <Label className="text-sm font-medium text-muted-foreground">Gênero</Label>
@@ -570,14 +603,18 @@ function PatientDetailsView({ patient, onClose }: { patient: Patient; onClose: (
           <div>
             <Label className="text-sm font-medium text-muted-foreground">Endereço</Label>
             <p className="font-medium">
-              {patient.address.street}<br />
-              {patient.address.city}, {patient.address.state}<br />
+              {patient.address.street}
+              <br />
+              {patient.address.city}, {patient.address.state}
+              <br />
               CEP: {patient.address.zipCode}
             </p>
           </div>
 
           <div>
-            <Label className="text-sm font-medium text-muted-foreground">Contato de Emergência</Label>
+            <Label className="text-sm font-medium text-muted-foreground">
+              Contato de Emergência
+            </Label>
             <p className="font-medium">
               {patient.emergencyContact.name} ({patient.emergencyContact.relationship})<br />
               {patient.emergencyContact.phone}
@@ -607,7 +644,11 @@ function PatientDetailsView({ patient, onClose }: { patient: Patient; onClose: (
             <div className="flex flex-wrap gap-2 mt-1">
               {patient.medicalInfo.allergies.length > 0 ? (
                 patient.medicalInfo.allergies.map((allergy, index) => (
-                  <Badge key={index} variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
+                  <Badge
+                    key={index}
+                    variant="outline"
+                    className="bg-yellow-50 text-yellow-700 border-yellow-200"
+                  >
                     <AlertCircle className="w-3 h-3 mr-1" />
                     {allergy}
                   </Badge>
@@ -623,7 +664,11 @@ function PatientDetailsView({ patient, onClose }: { patient: Patient; onClose: (
             <div className="flex flex-wrap gap-2 mt-1">
               {patient.medicalInfo.medications.length > 0 ? (
                 patient.medicalInfo.medications.map((medication, index) => (
-                  <Badge key={index} variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                  <Badge
+                    key={index}
+                    variant="outline"
+                    className="bg-blue-50 text-blue-700 border-blue-200"
+                  >
                     {medication}
                   </Badge>
                 ))
@@ -638,7 +683,11 @@ function PatientDetailsView({ patient, onClose }: { patient: Patient; onClose: (
             <div className="flex flex-wrap gap-2 mt-1">
               {patient.medicalInfo.conditions.length > 0 ? (
                 patient.medicalInfo.conditions.map((condition, index) => (
-                  <Badge key={index} variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
+                  <Badge
+                    key={index}
+                    variant="outline"
+                    className="bg-orange-50 text-orange-700 border-orange-200"
+                  >
                     {condition}
                   </Badge>
                 ))
@@ -652,13 +701,15 @@ function PatientDetailsView({ patient, onClose }: { patient: Patient; onClose: (
         <TabsContent value="history" className="space-y-4">
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <Label className="text-sm font-medium text-muted-foreground">Histórico de Consultas</Label>
+              <Label className="text-sm font-medium text-muted-foreground">
+                Histórico de Consultas
+              </Label>
               <Button variant="outline" size="sm">
                 <Plus className="w-4 h-4 mr-2" />
                 Nova Consulta
               </Button>
             </div>
-            
+
             <div className="space-y-3">
               {/* Sample medical history - would come from API */}
               <div className="p-4 border rounded-lg">
@@ -676,7 +727,7 @@ function PatientDetailsView({ patient, onClose }: { patient: Patient; onClose: (
                   <strong>Tratamento:</strong> Manter medicação atual, retorno em 30 dias
                 </p>
               </div>
-              
+
               <div className="p-4 border rounded-lg">
                 <div className="flex justify-between items-start mb-2">
                   <div>
@@ -705,11 +756,13 @@ function PatientDetailsView({ patient, onClose }: { patient: Patient; onClose: (
                   <p className="font-medium">{patient.insurance.provider}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-muted-foreground">Número do Plano</Label>
+                  <Label className="text-sm font-medium text-muted-foreground">
+                    Número do Plano
+                  </Label>
                   <p className="font-medium">{patient.insurance.planNumber}</p>
                 </div>
               </div>
-              
+
               <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
                 <div className="flex items-center">
                   <CheckCircle className="w-5 h-5 text-green-600 mr-2" />
@@ -723,9 +776,7 @@ function PatientDetailsView({ patient, onClose }: { patient: Patient; onClose: (
           ) : (
             <div className="text-center py-8">
               <AlertCircle className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-              <p className="text-lg font-medium text-muted-foreground mb-2">
-                Sem Convênio Médico
-              </p>
+              <p className="text-lg font-medium text-muted-foreground mb-2">Sem Convênio Médico</p>
               <p className="text-sm text-muted-foreground">
                 Paciente realiza consultas particulares
               </p>
@@ -767,7 +818,7 @@ function NewPatientForm({ onClose }: { onClose: () => void }) {
     medications: "",
     conditions: "",
     insuranceProvider: "",
-    planNumber: ""
+    planNumber: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -792,7 +843,7 @@ function NewPatientForm({ onClose }: { onClose: () => void }) {
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 required
               />
             </div>
@@ -802,7 +853,7 @@ function NewPatientForm({ onClose }: { onClose: () => void }) {
                 id="email"
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 required
               />
             </div>
@@ -811,7 +862,7 @@ function NewPatientForm({ onClose }: { onClose: () => void }) {
               <Input
                 id="phone"
                 value={formData.phone}
-                onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 required
               />
             </div>
@@ -821,7 +872,7 @@ function NewPatientForm({ onClose }: { onClose: () => void }) {
                 id="dateOfBirth"
                 type="date"
                 value={formData.dateOfBirth}
-                onChange={(e) => setFormData({...formData, dateOfBirth: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
                 required
               />
             </div>
@@ -829,7 +880,10 @@ function NewPatientForm({ onClose }: { onClose: () => void }) {
 
           <div>
             <Label htmlFor="gender">Gênero</Label>
-            <Select value={formData.gender} onValueChange={(value) => setFormData({...formData, gender: value})}>
+            <Select
+              value={formData.gender}
+              onValueChange={(value) => setFormData({ ...formData, gender: value })}
+            >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -846,23 +900,23 @@ function NewPatientForm({ onClose }: { onClose: () => void }) {
             <Input
               placeholder="Rua, número"
               value={formData.street}
-              onChange={(e) => setFormData({...formData, street: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, street: e.target.value })}
             />
             <div className="grid grid-cols-3 gap-2">
               <Input
                 placeholder="Cidade"
                 value={formData.city}
-                onChange={(e) => setFormData({...formData, city: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
               />
               <Input
                 placeholder="Estado"
                 value={formData.state}
-                onChange={(e) => setFormData({...formData, state: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, state: e.target.value })}
               />
               <Input
                 placeholder="CEP"
                 value={formData.zipCode}
-                onChange={(e) => setFormData({...formData, zipCode: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, zipCode: e.target.value })}
               />
             </div>
           </div>
@@ -872,7 +926,10 @@ function NewPatientForm({ onClose }: { onClose: () => void }) {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="bloodType">Tipo Sanguíneo</Label>
-              <Select value={formData.bloodType} onValueChange={(value) => setFormData({...formData, bloodType: value})}>
+              <Select
+                value={formData.bloodType}
+                onValueChange={(value) => setFormData({ ...formData, bloodType: value })}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione" />
                 </SelectTrigger>
@@ -895,7 +952,7 @@ function NewPatientForm({ onClose }: { onClose: () => void }) {
             <Textarea
               id="allergies"
               value={formData.allergies}
-              onChange={(e) => setFormData({...formData, allergies: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, allergies: e.target.value })}
               placeholder="Ex: Penicilina, Pólen, Lactose"
             />
           </div>
@@ -905,7 +962,7 @@ function NewPatientForm({ onClose }: { onClose: () => void }) {
             <Textarea
               id="medications"
               value={formData.medications}
-              onChange={(e) => setFormData({...formData, medications: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, medications: e.target.value })}
               placeholder="Ex: Losartana 50mg, Sinvastatina 20mg"
             />
           </div>
@@ -915,7 +972,7 @@ function NewPatientForm({ onClose }: { onClose: () => void }) {
             <Textarea
               id="conditions"
               value={formData.conditions}
-              onChange={(e) => setFormData({...formData, conditions: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, conditions: e.target.value })}
               placeholder="Ex: Hipertensão, Diabetes, Asma"
             />
           </div>
@@ -928,7 +985,7 @@ function NewPatientForm({ onClose }: { onClose: () => void }) {
               <Input
                 id="insuranceProvider"
                 value={formData.insuranceProvider}
-                onChange={(e) => setFormData({...formData, insuranceProvider: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, insuranceProvider: e.target.value })}
                 placeholder="Ex: Unimed, SulAmérica"
               />
             </div>
@@ -937,7 +994,7 @@ function NewPatientForm({ onClose }: { onClose: () => void }) {
               <Input
                 id="planNumber"
                 value={formData.planNumber}
-                onChange={(e) => setFormData({...formData, planNumber: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, planNumber: e.target.value })}
                 placeholder="Número da carteirinha"
               />
             </div>

@@ -3,13 +3,13 @@
  * Handles scheduling conflicts, resource optimization, and automated resolution
  */
 
-import { Database } from '@/types/supabase';
+import type { Database } from "@/types/supabase";
 
 // Base types from database
-type Appointment = Database['public']['Tables']['appointments']['Row'];
-type Staff = Database['public']['Tables']['staff']['Row'];
-type Room = Database['public']['Tables']['rooms']['Row'];
-type Equipment = Database['public']['Tables']['equipment']['Row'];
+type Appointment = Database["public"]["Tables"]["appointments"]["Row"];
+type Staff = Database["public"]["Tables"]["staff"]["Row"];
+type Room = Database["public"]["Tables"]["rooms"]["Row"];
+type Equipment = Database["public"]["Tables"]["equipment"]["Row"];
 
 // Conflict Detection Types
 export interface ConflictDetectionConfig {
@@ -24,20 +24,20 @@ export interface ConflictDetectionConfig {
 }
 
 export enum ConflictType {
-  TIME_OVERLAP = 'time_overlap',
-  STAFF_UNAVAILABLE = 'staff_unavailable',
-  ROOM_OCCUPIED = 'room_occupied',
-  EQUIPMENT_UNAVAILABLE = 'equipment_unavailable',
-  RESOURCE_OVERBOOKED = 'resource_overbooked',
-  SCHEDULE_VIOLATION = 'schedule_violation',
-  CAPACITY_EXCEEDED = 'capacity_exceeded'
+  TIME_OVERLAP = "time_overlap",
+  STAFF_UNAVAILABLE = "staff_unavailable",
+  ROOM_OCCUPIED = "room_occupied",
+  EQUIPMENT_UNAVAILABLE = "equipment_unavailable",
+  RESOURCE_OVERBOOKED = "resource_overbooked",
+  SCHEDULE_VIOLATION = "schedule_violation",
+  CAPACITY_EXCEEDED = "capacity_exceeded",
 }
 
 export enum ConflictSeverity {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  CRITICAL = 'critical'
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
+  CRITICAL = "critical",
 }
 
 export interface ConflictDetails {
@@ -61,16 +61,16 @@ export interface ConflictDetails {
 
 // Resolution Strategy Types
 export enum ResolutionStrategy {
-  RESCHEDULE_LATER = 'reschedule_later',
-  RESCHEDULE_EARLIER = 'reschedule_earlier',
-  CHANGE_STAFF = 'change_staff',
-  CHANGE_ROOM = 'change_room',
-  CHANGE_EQUIPMENT = 'change_equipment',
-  SPLIT_APPOINTMENT = 'split_appointment',
-  MERGE_APPOINTMENTS = 'merge_appointments',
-  EXTEND_HOURS = 'extend_hours',
-  DELEGATE_TO_ALTERNATIVE = 'delegate_to_alternative',
-  MANUAL_INTERVENTION = 'manual_intervention'
+  RESCHEDULE_LATER = "reschedule_later",
+  RESCHEDULE_EARLIER = "reschedule_earlier",
+  CHANGE_STAFF = "change_staff",
+  CHANGE_ROOM = "change_room",
+  CHANGE_EQUIPMENT = "change_equipment",
+  SPLIT_APPOINTMENT = "split_appointment",
+  MERGE_APPOINTMENTS = "merge_appointments",
+  EXTEND_HOURS = "extend_hours",
+  DELEGATE_TO_ALTERNATIVE = "delegate_to_alternative",
+  MANUAL_INTERVENTION = "manual_intervention",
 }
 
 export interface ResolutionOption {
@@ -115,7 +115,7 @@ export interface ProposedChanges {
   equipmentAssignments?: {
     appointmentId: string;
     equipmentId: string;
-    action: 'assign' | 'unassign' | 'replace';
+    action: "assign" | "unassign" | "replace";
   }[];
   newAppointments?: Partial<Appointment>[];
   cancelledAppointments?: string[];
@@ -165,7 +165,7 @@ export interface WorkloadMetrics {
 export interface AvailabilityWindow {
   start: Date;
   end: Date;
-  type: 'available' | 'preferred' | 'unavailable';
+  type: "available" | "preferred" | "unavailable";
   reason?: string;
 }
 
@@ -184,7 +184,7 @@ export interface StaffPreferences {
 // Resource Management Types
 export interface ResourceAvailability {
   resourceId: string;
-  resourceType: 'staff' | 'room' | 'equipment';
+  resourceType: "staff" | "room" | "equipment";
   availability: AvailabilityWindow[];
   capacity: number;
   currentUtilization: number;
@@ -195,9 +195,9 @@ export interface ResourceAvailability {
 export interface MaintenanceWindow {
   start: Date;
   end: Date;
-  type: 'scheduled' | 'emergency' | 'preventive';
+  type: "scheduled" | "emergency" | "preventive";
   description: string;
-  impact: 'partial' | 'full';
+  impact: "partial" | "full";
 }
 
 export interface ResourceRestrictions {
@@ -249,8 +249,8 @@ export interface OptimizationDashboard {
 
 export interface RecommendedAction {
   id: string;
-  type: 'optimization' | 'prevention' | 'resolution';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
+  type: "optimization" | "prevention" | "resolution";
+  priority: "low" | "medium" | "high" | "urgent";
   description: string;
   expectedImpact: string;
   estimatedEffort: string;
@@ -271,7 +271,7 @@ export interface PerformanceMetrics {
 // Event and Notification Types
 export interface ConflictEvent {
   id: string;
-  type: 'conflict_detected' | 'conflict_resolved' | 'optimization_completed';
+  type: "conflict_detected" | "conflict_resolved" | "optimization_completed";
   timestamp: Date;
   conflictId?: string;
   resolutionId?: string;
@@ -298,7 +298,7 @@ export interface NotificationTemplate {
   id: string;
   type: ConflictType;
   severity: ConflictSeverity;
-  channel: 'email' | 'sms' | 'push' | 'in_app';
+  channel: "email" | "sms" | "push" | "in_app";
   template: string;
   variables: string[];
   delay: number; // minutes
@@ -330,7 +330,7 @@ export interface ConflictDetectionParams {
 }
 
 export interface OptimizationParams {
-  scope: 'day' | 'week' | 'month';
+  scope: "day" | "week" | "month";
   targetDate: Date;
   objectives: string[];
   constraints: Partial<OptimizationConstraints>;
@@ -342,7 +342,7 @@ export interface AnalyticsParams {
     start: Date;
     end: Date;
   };
-  granularity: 'hour' | 'day' | 'week' | 'month';
+  granularity: "hour" | "day" | "week" | "month";
   metrics: string[];
   filters?: Record<string, any>;
 }
@@ -407,16 +407,11 @@ export interface PatternAnalysis {
 }
 
 export interface SeasonalTrend {
-  period: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  period: "daily" | "weekly" | "monthly" | "yearly";
   pattern: number[];
   confidence: number;
   description: string;
 }
 
 // Export main types
-export type {
-  Appointment,
-  Staff,
-  Room,
-  Equipment
-};
+export type { Appointment, Staff, Room, Equipment };

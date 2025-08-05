@@ -3,8 +3,8 @@
 // Epic 6 - Story 6.3: Comprehensive supplier management with performance tracking
 // =====================================================================================
 
-import { SupplierManagementService } from '@/app/lib/services/supplier-management-service';
-import { NextRequest, NextResponse } from 'next/server';
+import type { SupplierManagementService } from "@/app/lib/services/supplier-management-service";
+import type { NextRequest, NextResponse } from "next/server";
 
 const supplierService = new SupplierManagementService();
 
@@ -14,22 +14,16 @@ const supplierService = new SupplierManagementService();
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const clinicId = searchParams.get('clinic_id');
-    
+    const clinicId = searchParams.get("clinic_id");
+
     if (!clinicId) {
-      return NextResponse.json(
-        { error: 'clinic_id é obrigatório' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "clinic_id é obrigatório" }, { status: 400 });
     }
 
     const dashboardData = await supplierService.getDashboardData(clinicId);
     return NextResponse.json(dashboardData);
   } catch (error) {
-    console.error('Erro ao buscar dados do dashboard:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    console.error("Erro ao buscar dados do dashboard:", error);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
 }

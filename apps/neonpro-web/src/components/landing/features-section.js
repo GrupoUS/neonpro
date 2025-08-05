@@ -6,209 +6,254 @@ var card_1 = require("@/components/ui/card");
 var badge_1 = require("@/components/ui/badge");
 var lucide_react_1 = require("lucide-react");
 var features = [
-    {
-        icon: lucide_react_1.Brain,
-        title: "IA Preditiva para Agendamentos",
-        description: "Algoritmos avançados que preveem no-shows, otimizam horários e sugerem os melhores slots para cada tipo de procedimento.",
-        benefits: ["Reduz no-shows em 75%", "Otimização automática da agenda", "Previsão de demanda sazonal"],
-        category: "AI-Powered",
-        color: "from-purple-500 to-pink-500"
-    },
-    {
-        icon: lucide_react_1.Calendar,
-        title: "Agenda Inteligente Zero-Conflito",
-        description: "Sistema de agendamento que elimina sobreposições, gerencia múltiplos profissionais e otimiza o fluxo de pacientes.",
-        benefits: ["100% livre de conflitos", "Gestão multi-profissional", "Otimização de tempo ocioso"],
-        category: "Smart Scheduling",
-        color: "from-blue-500 to-cyan-500"
-    },
-    {
-        icon: lucide_react_1.Users,
-        title: "CRM Especializado em Estética",
-        description: "Gestão completa do relacionamento com pacientes, histórico de tratamentos e automação de follow-ups personalizados.",
-        benefits: ["Histórico completo do paciente", "Follow-ups automatizados", "Segmentação inteligente"],
-        category: "Patient Care",
-        color: "from-green-500 to-emerald-500"
-    },
-    {
-        icon: lucide_react_1.BarChart3,
-        title: "Business Intelligence Avançado",
-        description: "Dashboards em tempo real com métricas de performance, análise de ROI por procedimento e previsões de receita.",
-        benefits: ["Métricas em tempo real", "ROI por procedimento", "Previsões financeiras"],
-        category: "Analytics",
-        color: "from-orange-500 to-red-500"
-    },
-    {
-        icon: lucide_react_1.Shield,
-        title: "Compliance LGPD/ANVISA/CFM",
-        description: "Conformidade automática com todas as regulamentações brasileiras, incluindo auditoria contínua e relatórios de compliance.",
-        benefits: ["Auditoria automática 24/7", "Relatórios de conformidade", "Gestão de consentimentos"],
-        category: "Compliance",
-        color: "from-red-500 to-pink-500"
-    },
-    {
-        icon: lucide_react_1.Smartphone,
-        title: "Portal do Paciente Mobile",
-        description: "App PWA para pacientes com agendamento online, acompanhamento de tratamentos e comunicação direta com a clínica.",
-        benefits: ["Agendamento 24/7", "Lembretes automáticos", "Avaliação pós-tratamento"],
-        category: "Digital Experience",
-        color: "from-indigo-500 to-purple-500"
-    },
-    {
-        icon: lucide_react_1.FileText,
-        title: "Prontuário Eletrônico Certificado",
-        description: "Sistema de prontuário digital com assinatura eletrônica, fotos evolutivas e integração com equipamentos médicos.",
-        benefits: ["Certificação digital ICP-Brasil", "Fotos evolutivas automáticas", "Integração com equipamentos"],
-        category: "Medical Records",
-        color: "from-teal-500 to-green-500"
-    },
-    {
-        icon: lucide_react_1.CreditCard,
-        title: "Gestão Financeira Integrada",
-        description: "Controle completo de receitas, despesas, comissões de profissionais e integração com gateways de pagamento.",
-        benefits: ["Controle de fluxo de caixa", "Gestão de comissões", "Pagamentos online"],
-        category: "Financial",
-        color: "from-yellow-500 to-orange-500"
-    },
-    {
-        icon: lucide_react_1.UserCheck,
-        title: "Gestão de Profissionais",
-        description: "Sistema completo para gerenciar médicos, enfermeiros e staff, incluindo agenda individual e controle de permissões.",
-        benefits: ["Agenda por profissional", "Controle de permissões", "Relatórios de produtividade"],
-        category: "Team Management",
-        color: "from-cyan-500 to-blue-500"
-    }
+  {
+    icon: lucide_react_1.Brain,
+    title: "IA Preditiva para Agendamentos",
+    description:
+      "Algoritmos avançados que preveem no-shows, otimizam horários e sugerem os melhores slots para cada tipo de procedimento.",
+    benefits: [
+      "Reduz no-shows em 75%",
+      "Otimização automática da agenda",
+      "Previsão de demanda sazonal",
+    ],
+    category: "AI-Powered",
+    color: "from-purple-500 to-pink-500",
+  },
+  {
+    icon: lucide_react_1.Calendar,
+    title: "Agenda Inteligente Zero-Conflito",
+    description:
+      "Sistema de agendamento que elimina sobreposições, gerencia múltiplos profissionais e otimiza o fluxo de pacientes.",
+    benefits: [
+      "100% livre de conflitos",
+      "Gestão multi-profissional",
+      "Otimização de tempo ocioso",
+    ],
+    category: "Smart Scheduling",
+    color: "from-blue-500 to-cyan-500",
+  },
+  {
+    icon: lucide_react_1.Users,
+    title: "CRM Especializado em Estética",
+    description:
+      "Gestão completa do relacionamento com pacientes, histórico de tratamentos e automação de follow-ups personalizados.",
+    benefits: [
+      "Histórico completo do paciente",
+      "Follow-ups automatizados",
+      "Segmentação inteligente",
+    ],
+    category: "Patient Care",
+    color: "from-green-500 to-emerald-500",
+  },
+  {
+    icon: lucide_react_1.BarChart3,
+    title: "Business Intelligence Avançado",
+    description:
+      "Dashboards em tempo real com métricas de performance, análise de ROI por procedimento e previsões de receita.",
+    benefits: ["Métricas em tempo real", "ROI por procedimento", "Previsões financeiras"],
+    category: "Analytics",
+    color: "from-orange-500 to-red-500",
+  },
+  {
+    icon: lucide_react_1.Shield,
+    title: "Compliance LGPD/ANVISA/CFM",
+    description:
+      "Conformidade automática com todas as regulamentações brasileiras, incluindo auditoria contínua e relatórios de compliance.",
+    benefits: [
+      "Auditoria automática 24/7",
+      "Relatórios de conformidade",
+      "Gestão de consentimentos",
+    ],
+    category: "Compliance",
+    color: "from-red-500 to-pink-500",
+  },
+  {
+    icon: lucide_react_1.Smartphone,
+    title: "Portal do Paciente Mobile",
+    description:
+      "App PWA para pacientes com agendamento online, acompanhamento de tratamentos e comunicação direta com a clínica.",
+    benefits: ["Agendamento 24/7", "Lembretes automáticos", "Avaliação pós-tratamento"],
+    category: "Digital Experience",
+    color: "from-indigo-500 to-purple-500",
+  },
+  {
+    icon: lucide_react_1.FileText,
+    title: "Prontuário Eletrônico Certificado",
+    description:
+      "Sistema de prontuário digital com assinatura eletrônica, fotos evolutivas e integração com equipamentos médicos.",
+    benefits: [
+      "Certificação digital ICP-Brasil",
+      "Fotos evolutivas automáticas",
+      "Integração com equipamentos",
+    ],
+    category: "Medical Records",
+    color: "from-teal-500 to-green-500",
+  },
+  {
+    icon: lucide_react_1.CreditCard,
+    title: "Gestão Financeira Integrada",
+    description:
+      "Controle completo de receitas, despesas, comissões de profissionais e integração com gateways de pagamento.",
+    benefits: ["Controle de fluxo de caixa", "Gestão de comissões", "Pagamentos online"],
+    category: "Financial",
+    color: "from-yellow-500 to-orange-500",
+  },
+  {
+    icon: lucide_react_1.UserCheck,
+    title: "Gestão de Profissionais",
+    description:
+      "Sistema completo para gerenciar médicos, enfermeiros e staff, incluindo agenda individual e controle de permissões.",
+    benefits: ["Agenda por profissional", "Controle de permissões", "Relatórios de produtividade"],
+    category: "Team Management",
+    color: "from-cyan-500 to-blue-500",
+  },
 ];
 var stats = [
-    {
-        value: "+85%",
-        label: "Aumento nos Resultados",
-        description: "Melhoria na taxa de sucesso dos tratamentos"
-    },
-    {
-        value: "70%",
-        label: "Redução Tempo Admin",
-        description: "Menos tempo gasto em tarefas administrativas"
-    },
-    {
-        value: "98%",
-        label: "Satisfação do Paciente",
-        description: "Índice de satisfação dos pacientes atendidos"
-    },
-    {
-        value: "24/7",
-        label: "Suporte Especializado",
-        description: "Atendimento técnico especializado em saúde"
-    }
+  {
+    value: "+85%",
+    label: "Aumento nos Resultados",
+    description: "Melhoria na taxa de sucesso dos tratamentos",
+  },
+  {
+    value: "70%",
+    label: "Redução Tempo Admin",
+    description: "Menos tempo gasto em tarefas administrativas",
+  },
+  {
+    value: "98%",
+    label: "Satisfação do Paciente",
+    description: "Índice de satisfação dos pacientes atendidos",
+  },
+  {
+    value: "24/7",
+    label: "Suporte Especializado",
+    description: "Atendimento técnico especializado em saúde",
+  },
 ];
 function FeaturesSection() {
-    return (<div className="container mx-auto px-4 sm:px-6 lg:px-8">
+  return (
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="text-center mb-16">
         <badge_1.Badge className="mb-4 bg-[#6366f1]/10 text-[#6366f1] border-[#6366f1]/20">
-          <lucide_react_1.Zap className="h-3 w-3 mr-1"/>
+          <lucide_react_1.Zap className="h-3 w-3 mr-1" />
           Recursos Avançados
         </badge_1.Badge>
-        
+
         <h2 className="text-4xl font-bold text-slate-900 mb-6">
           Tudo que sua Clínica Estética Precisa em{" "}
           <span className="bg-gradient-to-r from-[#6366f1] to-purple-600 bg-clip-text text-transparent">
             Uma Única Plataforma
           </span>
         </h2>
-        
+
         <p className="text-xl text-slate-700 max-w-3xl mx-auto leading-relaxed">
-          Sistema completo desenvolvido especificamente para clínicas estéticas brasileiras, 
-          com conformidade total às regulamentações nacionais e recursos de IA para maximizar seus resultados.
+          Sistema completo desenvolvido especificamente para clínicas estéticas brasileiras, com
+          conformidade total às regulamentações nacionais e recursos de IA para maximizar seus
+          resultados.
         </p>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
-        {stats.map(function (stat, index) { return (<card_1.Card key={index} className="text-center bg-gradient-to-br from-[#6366f1]/5 to-purple-500/5 border-[#6366f1]/20">
-            <card_1.CardContent className="p-6">
-              <div className="text-3xl font-bold text-[#6366f1] mb-2">
-                {stat.value}
-              </div>
-              <div className="font-semibold text-slate-900 mb-1">
-                {stat.label}
-              </div>
-              <div className="text-sm text-slate-600">
-                {stat.description}
-              </div>
-            </card_1.CardContent>
-          </card_1.Card>); })}
+        {stats.map(function (stat, index) {
+          return (
+            <card_1.Card
+              key={index}
+              className="text-center bg-gradient-to-br from-[#6366f1]/5 to-purple-500/5 border-[#6366f1]/20"
+            >
+              <card_1.CardContent className="p-6">
+                <div className="text-3xl font-bold text-[#6366f1] mb-2">{stat.value}</div>
+                <div className="font-semibold text-slate-900 mb-1">{stat.label}</div>
+                <div className="text-sm text-slate-600">{stat.description}</div>
+              </card_1.CardContent>
+            </card_1.Card>
+          );
+        })}
       </div>
 
       {/* Features Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {features.map(function (feature, index) { return (<card_1.Card key={index} className="group hover:shadow-xl transition-all duration-300 border-slate-200 hover:border-[#6366f1]/30">
-            <card_1.CardHeader className="pb-4">
-              <div className="flex items-start justify-between mb-4">
-                <div className={"h-12 w-12 rounded-lg bg-gradient-to-br ".concat(feature.color, " flex items-center justify-center group-hover:scale-110 transition-transform duration-300")}>
-                  <feature.icon className="h-6 w-6 text-white"/>
+        {features.map(function (feature, index) {
+          return (
+            <card_1.Card
+              key={index}
+              className="group hover:shadow-xl transition-all duration-300 border-slate-200 hover:border-[#6366f1]/30"
+            >
+              <card_1.CardHeader className="pb-4">
+                <div className="flex items-start justify-between mb-4">
+                  <div
+                    className={"h-12 w-12 rounded-lg bg-gradient-to-br ".concat(
+                      feature.color,
+                      " flex items-center justify-center group-hover:scale-110 transition-transform duration-300",
+                    )}
+                  >
+                    <feature.icon className="h-6 w-6 text-white" />
+                  </div>
+                  <badge_1.Badge variant="secondary" className="text-xs">
+                    {feature.category}
+                  </badge_1.Badge>
                 </div>
-                <badge_1.Badge variant="secondary" className="text-xs">
-                  {feature.category}
-                </badge_1.Badge>
-              </div>
-              
-              <card_1.CardTitle className="text-xl font-bold text-slate-900 group-hover:text-[#6366f1] transition-colors">
-                {feature.title}
-              </card_1.CardTitle>
-            </card_1.CardHeader>
-            
-            <card_1.CardContent className="space-y-4">
-              <p className="text-slate-700 leading-relaxed">
-                {feature.description}
-              </p>
-              
-              <div className="space-y-2">
-                <div className="flex items-center text-sm font-medium text-slate-800 mb-2">
-                  <lucide_react_1.CheckCircle className="h-4 w-4 text-green-500 mr-2"/>
-                  Principais Benefícios:
+
+                <card_1.CardTitle className="text-xl font-bold text-slate-900 group-hover:text-[#6366f1] transition-colors">
+                  {feature.title}
+                </card_1.CardTitle>
+              </card_1.CardHeader>
+
+              <card_1.CardContent className="space-y-4">
+                <p className="text-slate-700 leading-relaxed">{feature.description}</p>
+
+                <div className="space-y-2">
+                  <div className="flex items-center text-sm font-medium text-slate-800 mb-2">
+                    <lucide_react_1.CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                    Principais Benefícios:
+                  </div>
+                  <ul className="space-y-1">
+                    {feature.benefits.map(function (benefit, benefitIndex) {
+                      return (
+                        <li key={benefitIndex} className="flex items-center text-sm text-slate-600">
+                          <lucide_react_1.Star className="h-3 w-3 text-[#6366f1] mr-2 flex-shrink-0" />
+                          {benefit}
+                        </li>
+                      );
+                    })}
+                  </ul>
                 </div>
-                <ul className="space-y-1">
-                  {feature.benefits.map(function (benefit, benefitIndex) { return (<li key={benefitIndex} className="flex items-center text-sm text-slate-600">
-                      <lucide_react_1.Star className="h-3 w-3 text-[#6366f1] mr-2 flex-shrink-0"/>
-                      {benefit}
-                    </li>); })}
-                </ul>
-              </div>
-            </card_1.CardContent>
-          </card_1.Card>); })}
+              </card_1.CardContent>
+            </card_1.Card>
+          );
+        })}
       </div>
 
       {/* Bottom CTA Section */}
       <div className="mt-16 p-8 rounded-2xl bg-gradient-to-br from-[#6366f1] to-purple-600 text-white text-center">
         <div className="max-w-3xl mx-auto space-y-6">
           <div className="flex items-center justify-center space-x-2 mb-4">
-            <lucide_react_1.TrendingUp className="h-8 w-8 text-yellow-300"/>
-            <h3 className="text-3xl font-bold">
-              Transforme sua Clínica Hoje Mesmo
-            </h3>
+            <lucide_react_1.TrendingUp className="h-8 w-8 text-yellow-300" />
+            <h3 className="text-3xl font-bold">Transforme sua Clínica Hoje Mesmo</h3>
           </div>
-          
+
           <p className="text-xl text-white/90 leading-relaxed">
-            Junte-se a mais de <strong>500 clínicas</strong> que já revolucionaram 
-            seus resultados com o NeonPro. Teste gratuito por 30 dias, sem compromisso.
+            Junte-se a mais de <strong>500 clínicas</strong> que já revolucionaram seus resultados
+            com o NeonPro. Teste gratuito por 30 dias, sem compromisso.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <div className="flex items-center text-white/90">
-              <lucide_react_1.CheckCircle className="h-5 w-5 text-green-300 mr-2"/>
+              <lucide_react_1.CheckCircle className="h-5 w-5 text-green-300 mr-2" />
               Configuração em 24 horas
             </div>
             <div className="flex items-center text-white/90">
-              <lucide_react_1.CheckCircle className="h-5 w-5 text-green-300 mr-2"/>
+              <lucide_react_1.CheckCircle className="h-5 w-5 text-green-300 mr-2" />
               Migração gratuita de dados
             </div>
             <div className="flex items-center text-white/90">
-              <lucide_react_1.CheckCircle className="h-5 w-5 text-green-300 mr-2"/>
+              <lucide_react_1.CheckCircle className="h-5 w-5 text-green-300 mr-2" />
               Treinamento da equipe incluso
             </div>
           </div>
         </div>
       </div>
-    </div>);
+    </div>
+  );
 }

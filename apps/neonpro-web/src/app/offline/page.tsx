@@ -2,12 +2,18 @@
 // VIBECODE V1.0 - Healthcare PWA Pattern
 // Purpose: Fallback page when user is offline
 
-'use client'
+"use client";
 
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { CheckCircle, Loader2, Wifi, WifiOff } from 'lucide-react'
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { CheckCircle, Loader2, Wifi, WifiOff } from "lucide-react";
 
 export default function OfflinePage() {
   return (
@@ -31,18 +37,18 @@ export default function OfflinePage() {
             <h4 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">
               Disponível offline
             </h4>
-            
+
             <div className="space-y-2">
               <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/50">
                 <CheckCircle className="w-4 h-4 text-green-600" />
                 <span className="text-sm">Ver agendamentos salvos</span>
               </div>
-              
+
               <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/50">
                 <CheckCircle className="w-4 h-4 text-green-600" />
                 <span className="text-sm">Acessar perfil do paciente</span>
               </div>
-              
+
               <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/50">
                 <CheckCircle className="w-4 h-4 text-green-600" />
                 <span className="text-sm">Navegar no portal</span>
@@ -55,7 +61,7 @@ export default function OfflinePage() {
             <h4 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">
               Status de sincronização
             </h4>
-            
+
             <div className="flex items-center gap-3 p-3 rounded-lg border bg-card">
               <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
               <div className="flex-1">
@@ -70,15 +76,11 @@ export default function OfflinePage() {
 
           {/* Actions */}
           <div className="space-y-3">
-            <Button
-              onClick={() => window.location.reload()}
-              className="w-full"
-              size="lg"
-            >
+            <Button onClick={() => window.location.reload()} className="w-full" size="lg">
               <Wifi className="w-4 h-4 mr-2" />
               Tentar reconectar
             </Button>
-            
+
             <Button
               onClick={() => window.history.back()}
               variant="outline"
@@ -98,5 +100,5 @@ export default function OfflinePage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

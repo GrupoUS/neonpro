@@ -1,7 +1,7 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
-import { createsystemIntegrationManager } from '@/lib/patients/integration/system-integration-manager';
-import { createClient } from '@/lib/supabase/server';
-import { AuditLogger } from '@/lib/audit/audit-logger';
+import type { NextRequest, NextResponse } from "next/server";
+import type { createsystemIntegrationManager } from "@/lib/patients/integration/system-integration-manager";
+import type { createClient } from "@/lib/supabase/server";
+import type { AuditLogger } from "@/lib/audit/audit-logger";
 
 const auditLogger = new AuditLogger();
 
@@ -12,68 +12,71 @@ const auditLogger = new AuditLogger();
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     // Check user permissions
     const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
       .single();
 
-    if (!profile || !['admin', 'manager', 'staff'].includes(profile.role)) {
+    if (!profile || !["admin", "manager", "staff"].includes(profile.role)) {
       return NextResponse.json(
-        { error: 'Acesso negado: permissões insuficientes' },
-        { status: 403 }
+        { error: "Acesso negado: permissões insuficientes" },
+        { status: 403 },
       );
     }
 
     const searchParams = request.nextUrl.searchParams;
-    const query = searchParams.get('q') || '';
-    const limit = parseInt(searchParams.get('limit') || '50');
-    
+    const query = searchParams.get("q") || "";
+    const limit = parseInt(searchParams.get("limit") || "50");
+
     // Parse filters
     const filters: any = {};
-    
-    if (searchParams.get('name')) filters.name = searchParams.get('name');
-    if (searchParams.get('email')) filters.email = searchParams.get('email');
-    if (searchParams.get('phone')) filters.phone = searchParams.get('phone');
-    if (searchParams.get('cpf')) filters.cpf = searchParams.get('cpf');
-    if (searchParams.get('gender')) filters.gender = searchParams.get('gender');
-    if (searchParams.get('riskLevel')) filters.riskLevel = searchParams.get('riskLevel');
-    if (searchParams.get('treatmentType')) filters.treatmentType = searchParams.get('treatmentType');
-    if (searchParams.get('appointmentStatus')) filters.appointmentStatus = searchParams.get('appointmentStatus');
-    if (searchParams.get('hasPhotos')) filters.hasPhotos = searchParams.get('hasPhotos') === 'true';
-    if (searchParams.get('consentStatus')) filters.consentStatus = searchParams.get('consentStatus') === 'true';
-    
+
+    if (searchParams.get("name")) filters.name = searchParams.get("name");
+    if (searchParams.get("email")) filters.email = searchParams.get("email");
+    if (searchParams.get("phone")) filters.phone = searchParams.get("phone");
+    if (searchParams.get("cpf")) filters.cpf = searchParams.get("cpf");
+    if (searchParams.get("gender")) filters.gender = searchParams.get("gender");
+    if (searchParams.get("riskLevel")) filters.riskLevel = searchParams.get("riskLevel");
+    if (searchParams.get("treatmentType"))
+      filters.treatmentType = searchParams.get("treatmentType");
+    if (searchParams.get("appointmentStatus"))
+      filters.appointmentStatus = searchParams.get("appointmentStatus");
+    if (searchParams.get("hasPhotos")) filters.hasPhotos = searchParams.get("hasPhotos") === "true";
+    if (searchParams.get("consentStatus"))
+      filters.consentStatus = searchParams.get("consentStatus") === "true";
+
     // Age range
-    const minAge = searchParams.get('minAge');
-    const maxAge = searchParams.get('maxAge');
+    const minAge = searchParams.get("minAge");
+    const maxAge = searchParams.get("maxAge");
     if (minAge && maxAge) {
       filters.ageRange = { min: parseInt(minAge), max: parseInt(maxAge) };
     }
-    
+
     // Date range for last visit
-    const lastVisitFrom = searchParams.get('lastVisitFrom');
-    const lastVisitTo = searchParams.get('lastVisitTo');
+    const lastVisitFrom = searchParams.get("lastVisitFrom");
+    const lastVisitTo = searchParams.get("lastVisitTo");
     if (lastVisitFrom && lastVisitTo) {
       filters.lastVisit = {
         from: new Date(lastVisitFrom),
-        to: new Date(lastVisitTo)
+        to: new Date(lastVisitTo),
       };
     }
-    
+
     // Tags
-    const tags = searchParams.get('tags');
+    const tags = searchParams.get("tags");
     if (tags) {
-      filters.tags = tags.split(',').map(tag => tag.trim());
+      filters.tags = tags.split(",").map((tag) => tag.trim());
     }
 
     // Execute search
@@ -81,20 +84,20 @@ export async function GET(request: NextRequest) {
       query,
       filters,
       user.id,
-      limit
+      limit,
     );
 
     // Log search activity
     await auditLogger.log({
-      action: 'advanced_patient_search',
+      action: "advanced_patient_search",
       userId: user.id,
       details: {
         query,
         filters,
         resultCount: searchResults.patients.length,
-        searchTime: searchResults.searchTime
+        searchTime: searchResults.searchTime,
       },
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     return NextResponse.json({
@@ -105,25 +108,25 @@ export async function GET(request: NextRequest) {
         totalCount: searchResults.totalCount,
         searchTime: searchResults.searchTime,
         query,
-        filters
-      }
+        filters,
+      },
     });
   } catch (error) {
-    console.error('Error in advanced patient search:', error);
-    
+    console.error("Error in advanced patient search:", error);
+
     await auditLogger.log({
-      action: 'advanced_patient_search_error',
-      userId: 'system',
-      details: { error: error instanceof Error ? error.message : 'Unknown error' },
-      timestamp: new Date()
+      action: "advanced_patient_search_error",
+      userId: "system",
+      details: { error: error instanceof Error ? error.message : "Unknown error" },
+      timestamp: new Date(),
     });
 
     return NextResponse.json(
-      { 
-        error: 'Erro interno do servidor',
-        details: error instanceof Error ? error.message : 'Erro desconhecido'
+      {
+        error: "Erro interno do servidor",
+        details: error instanceof Error ? error.message : "Erro desconhecido",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -135,26 +138,26 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Não autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     // Check user permissions (only admin/manager can create segments)
     const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
       .single();
 
-    if (!profile || !['admin', 'manager'].includes(profile.role)) {
+    if (!profile || !["admin", "manager"].includes(profile.role)) {
       return NextResponse.json(
-        { error: 'Acesso negado: apenas administradores e gerentes podem criar segmentos' },
-        { status: 403 }
+        { error: "Acesso negado: apenas administradores e gerentes podem criar segmentos" },
+        { status: 403 },
       );
     }
 
@@ -164,8 +167,8 @@ export async function POST(request: NextRequest) {
     // Validate required fields
     if (!name || !description || !criteria) {
       return NextResponse.json(
-        { error: 'Campos obrigatórios: name, description, criteria' },
-        { status: 400 }
+        { error: "Campos obrigatórios: name, description, criteria" },
+        { status: 400 },
       );
     }
 
@@ -174,42 +177,41 @@ export async function POST(request: NextRequest) {
       name,
       description,
       criteria,
-      user.id
+      user.id,
     );
 
     // Log segment creation
     await auditLogger.log({
-      action: 'patient_segment_created',
+      action: "patient_segment_created",
       userId: user.id,
       details: {
         segmentId: segment.id,
         name: segment.name,
-        patientCount: segment.patientCount
+        patientCount: segment.patientCount,
       },
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     return NextResponse.json({
       success: true,
-      data: segment
+      data: segment,
     });
   } catch (error) {
-    console.error('Error creating patient segment:', error);
-    
+    console.error("Error creating patient segment:", error);
+
     await auditLogger.log({
-      action: 'patient_segment_creation_error',
-      userId: 'system',
-      details: { error: error instanceof Error ? error.message : 'Unknown error' },
-      timestamp: new Date()
+      action: "patient_segment_creation_error",
+      userId: "system",
+      details: { error: error instanceof Error ? error.message : "Unknown error" },
+      timestamp: new Date(),
     });
 
     return NextResponse.json(
-      { 
-        error: 'Erro interno do servidor',
-        details: error instanceof Error ? error.message : 'Erro desconhecido'
+      {
+        error: "Erro interno do servidor",
+        details: error instanceof Error ? error.message : "Erro desconhecido",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-

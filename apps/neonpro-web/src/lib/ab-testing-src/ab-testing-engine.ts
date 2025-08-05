@@ -1,16 +1,26 @@
-﻿/**
+/**
  * A/B Testing Engine
  * NeonPro - Sistema Completo de Testes A/B para Comunicação
  */
 
-import { createClient } from '@/lib/supabase/client';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { createClient } from "@/lib/supabase/client";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import type {
-  ABTestConfig, TestVariation, TestResults, ABTestEvent,
-  AudienceFilter, ConversionGoal, TestQueryFilter, TestQueryResult,
-  VariationResults, StatisticalSignificance, TestTemplate,
-  AutomationRule, ExperimentAnalytics, TestReport
-} from './types/ab-testing';
+  ABTestConfig,
+  TestVariation,
+  TestResults,
+  ABTestEvent,
+  AudienceFilter,
+  ConversionGoal,
+  TestQueryFilter,
+  TestQueryResult,
+  VariationResults,
+  StatisticalSignificance,
+  TestTemplate,
+  AutomationRule,
+  ExperimentAnalytics,
+  TestReport,
+} from "./types/ab-testing";
 
 export class ABTestingEngine {
   private supabase: SupabaseClient;
@@ -42,7 +52,7 @@ export class ABTestingEngine {
       const calculatedSampleSize = this.calculateSampleSize(
         config.confidenceLevel || 95,
         config.powerAnalysis || 80,
-        config.minimumDetectableEffect || 5
+        config.minimumDetectableEffect || 5,
       );
 
       const testConfig: ABTestConfig = {
@@ -51,7 +61,7 @@ export class ABTestingEngine {
         name: config.name!,
         description: config.description,
         type: config.type!,
-        status: 'draft',
+        status: "draft",
         startDate: config.startDate || new Date(),
         endDate: config.endDate,
         duration: config.duration,
@@ -67,12 +77,12 @@ export class ABTestingEngine {
         updatedAt: new Date(),
         sampleSize: calculatedSampleSize,
         currentSampleSize: 0,
-        variations: config.variations || []
+        variations: config.variations || [],
       };
 
       // Salvar no banco
       const { data, error } = await this.supabase
-        .from('ab_tests')
+        .from("ab_tests")
         .insert({
           id: testConfig.id,
           clinic_id: testConfig.clinicId,
@@ -94,7 +104,7 @@ export class ABTestingEngine {
           created_at: testConfig.createdAt.toISOString(),
           updated_at: testConfig.updatedAt.toISOString(),
           sample_size: testConfig.sampleSize,
-          current_sample_size: testConfig.currentSampleSize
+          current_sample_size: testConfig.currentSampleSize,
         })
         .select()
         .single();
@@ -109,7 +119,7 @@ export class ABTestingEngine {
       await this.invalidateCache(`test_${testConfig.id}`);
       return testConfig;
     } catch (error) {
-      console.error('Error creating A/B test:', error);
+      console.error("Error creating A/B test:", error);
       throw error;
     }
   }
@@ -120,7 +130,7 @@ export class ABTestingEngine {
   async updateTest(testId: string, updates: Partial<ABTestConfig>): Promise<ABTestConfig> {
     try {
       const { data, error } = await this.supabase
-        .from('ab_tests')
+        .from("ab_tests")
         .update({
           name: updates.name,
           description: updates.description,
@@ -128,9 +138,9 @@ export class ABTestingEngine {
           end_date: updates.endDate?.toISOString(),
           traffic_allocation: updates.trafficAllocation,
           audience_filter: updates.audienceFilter,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
-        .eq('id', testId)
+        .eq("id", testId)
         .select()
         .single();
 
@@ -139,7 +149,7 @@ export class ABTestingEngine {
       await this.invalidateCache(`test_${testId}`);
       return this.mapTestFromDB(data);
     } catch (error) {
-      console.error('Error updating A/B test:', error);
+      console.error("Error updating A/B test:", error);
       throw error;
     }
   }
@@ -154,16 +164,16 @@ export class ABTestingEngine {
       if (cached) return cached;
 
       const { data, error } = await this.supabase
-        .from('ab_tests')
+        .from("ab_tests")
         .select(`
           *,
           variations:ab_test_variations(*)
         `)
-        .eq('id', testId)
+        .eq("id", testId)
         .single();
 
       if (error) {
-        if (error.code === 'PGRST116') return null;
+        if (error.code === "PGRST116") return null;
         throw error;
       }
 
@@ -171,7 +181,7 @@ export class ABTestingEngine {
       this.setCache(cacheKey, test);
       return test;
     } catch (error) {
-      console.error('Error fetching A/B test:', error);
+      console.error("Error fetching A/B test:", error);
       throw error;
     }
   }
@@ -181,38 +191,41 @@ export class ABTestingEngine {
    */
   async getTests(filter: TestQueryFilter = {}): Promise<TestQueryResult> {
     try {
-      let query = this.supabase
-        .from('ab_tests')
-        .select(`
+      let query = this.supabase.from("ab_tests").select(
+        `
           *,
           variations:ab_test_variations(*)
-        `, { count: 'exact' });
+        `,
+        { count: "exact" },
+      );
 
       // Aplicar filtros
       if (filter.clinicId) {
-        query = query.eq('clinic_id', filter.clinicId);
+        query = query.eq("clinic_id", filter.clinicId);
       }
 
       if (filter.status?.length) {
-        query = query.in('status', filter.status);
+        query = query.in("status", filter.status);
       }
 
       if (filter.type?.length) {
-        query = query.in('type', filter.type);
+        query = query.in("type", filter.type);
       }
 
       if (filter.dateRange) {
         query = query
-          .gte('created_at', filter.dateRange.start.toISOString())
-          .lte('created_at', filter.dateRange.end.toISOString());
+          .gte("created_at", filter.dateRange.start.toISOString())
+          .lte("created_at", filter.dateRange.end.toISOString());
       }
 
       if (filter.createdBy?.length) {
-        query = query.in('created_by', filter.createdBy);
+        query = query.in("created_by", filter.createdBy);
       }
 
       if (filter.searchTerm) {
-        query = query.or(`name.ilike.%${filter.searchTerm}%,description.ilike.%${filter.searchTerm}%`);
+        query = query.or(
+          `name.ilike.%${filter.searchTerm}%,description.ilike.%${filter.searchTerm}%`,
+        );
       }
 
       // Paginação
@@ -223,9 +236,9 @@ export class ABTestingEngine {
       query = query.range(offset, offset + limit - 1);
 
       // Ordenação
-      const sortBy = filter.sortBy || 'created_at';
-      const sortOrder = filter.sortOrder || 'desc';
-      query = query.order(sortBy, { ascending: sortOrder === 'asc' });
+      const sortBy = filter.sortBy || "created_at";
+      const sortOrder = filter.sortOrder || "desc";
+      query = query.order(sortBy, { ascending: sortOrder === "asc" });
 
       const { data, error, count } = await query;
 
@@ -239,11 +252,11 @@ export class ABTestingEngine {
       return {
         tests,
         totalCount: count || 0,
-        hasMore: (page * limit) < (count || 0),
-        aggregations
+        hasMore: page * limit < (count || 0),
+        aggregations,
       };
     } catch (error) {
-      console.error('Error querying A/B tests:', error);
+      console.error("Error querying A/B tests:", error);
       throw error;
     }
   }
@@ -257,25 +270,28 @@ export class ABTestingEngine {
   /**
    * Criar variações para um teste
    */
-  async createVariations(testId: string, variations: Partial<TestVariation>[]): Promise<TestVariation[]> {
+  async createVariations(
+    testId: string,
+    variations: Partial<TestVariation>[],
+  ): Promise<TestVariation[]> {
     try {
-      const variationsToInsert = variations.map(variation => ({
+      const variationsToInsert = variations.map((variation) => ({
         id: variation.id || this.generateId(),
         test_id: testId,
         name: variation.name!,
         description: variation.description,
-        status: variation.status || 'active',
+        status: variation.status || "active",
         traffic_percentage: variation.trafficPercentage!,
         content: variation.content!,
         impressions: 0,
         conversions: 0,
         conversion_rate: 0,
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       }));
 
       const { data, error } = await this.supabase
-        .from('ab_test_variations')
+        .from("ab_test_variations")
         .insert(variationsToInsert)
         .select();
 
@@ -284,7 +300,7 @@ export class ABTestingEngine {
       await this.invalidateCache(`test_${testId}`);
       return (data || []).map(this.mapVariationFromDB);
     } catch (error) {
-      console.error('Error creating variations:', error);
+      console.error("Error creating variations:", error);
       throw error;
     }
   }
@@ -292,19 +308,22 @@ export class ABTestingEngine {
   /**
    * Atualizar variação
    */
-  async updateVariation(variationId: string, updates: Partial<TestVariation>): Promise<TestVariation> {
+  async updateVariation(
+    variationId: string,
+    updates: Partial<TestVariation>,
+  ): Promise<TestVariation> {
     try {
       const { data, error } = await this.supabase
-        .from('ab_test_variations')
+        .from("ab_test_variations")
         .update({
           name: updates.name,
           description: updates.description,
           status: updates.status,
           traffic_percentage: updates.trafficPercentage,
           content: updates.content,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
-        .eq('id', variationId)
+        .eq("id", variationId)
         .select()
         .single();
 
@@ -314,7 +333,7 @@ export class ABTestingEngine {
       await this.invalidateCache(`test_${variation.testId}`);
       return variation;
     } catch (error) {
-      console.error('Error updating variation:', error);
+      console.error("Error updating variation:", error);
       throw error;
     }
   }
@@ -331,24 +350,24 @@ export class ABTestingEngine {
   async startTest(testId: string): Promise<void> {
     try {
       const test = await this.getTest(testId);
-      if (!test) throw new Error('Test not found');
+      if (!test) throw new Error("Test not found");
 
-      if (test.status !== 'draft') {
-        throw new Error('Only draft tests can be started');
+      if (test.status !== "draft") {
+        throw new Error("Only draft tests can be started");
       }
 
       // Validar configuração antes de iniciar
       this.validateTestForStart(test);
 
       await this.updateTest(testId, {
-        status: 'active',
-        startDate: new Date()
+        status: "active",
+        startDate: new Date(),
       });
 
       // Criar eventos de audit
-      await this.logTestEvent(testId, 'test_started', { startedBy: test.createdBy });
+      await this.logTestEvent(testId, "test_started", { startedBy: test.createdBy });
     } catch (error) {
-      console.error('Error starting test:', error);
+      console.error("Error starting test:", error);
       throw error;
     }
   }
@@ -358,10 +377,10 @@ export class ABTestingEngine {
    */
   async pauseTest(testId: string, reason?: string): Promise<void> {
     try {
-      await this.updateTest(testId, { status: 'paused' });
-      await this.logTestEvent(testId, 'test_paused', { reason });
+      await this.updateTest(testId, { status: "paused" });
+      await this.logTestEvent(testId, "test_paused", { reason });
     } catch (error) {
-      console.error('Error pausing test:', error);
+      console.error("Error pausing test:", error);
       throw error;
     }
   }
@@ -372,23 +391,23 @@ export class ABTestingEngine {
   async completeTest(testId: string, reason?: string): Promise<TestResults> {
     try {
       const test = await this.getTest(testId);
-      if (!test) throw new Error('Test not found');
+      if (!test) throw new Error("Test not found");
 
       // Calcular resultados finais
       const results = await this.calculateTestResults(testId);
 
       // Atualizar status
-      await this.updateTest(testId, { 
-        status: 'completed',
+      await this.updateTest(testId, {
+        status: "completed",
         endDate: new Date(),
-        results
+        results,
       });
 
-      await this.logTestEvent(testId, 'test_completed', { reason, results });
+      await this.logTestEvent(testId, "test_completed", { reason, results });
 
       return results;
     } catch (error) {
-      console.error('Error completing test:', error);
+      console.error("Error completing test:", error);
       throw error;
     }
   }
@@ -399,7 +418,7 @@ export class ABTestingEngine {
   async assignVariation(testId: string, patientId: string): Promise<TestVariation | null> {
     try {
       const test = await this.getTest(testId);
-      if (!test || test.status !== 'active') return null;
+      if (!test || test.status !== "active") return null;
 
       // Verificar se paciente está na audiência
       const isInAudience = await this.isPatientInAudience(patientId, test.audienceFilter);
@@ -419,13 +438,13 @@ export class ABTestingEngine {
         testId,
         variationId: variation.id,
         patientId,
-        type: 'impression',
-        timestamp: new Date()
+        type: "impression",
+        timestamp: new Date(),
       });
 
       return variation;
     } catch (error) {
-      console.error('Error assigning variation:', error);
+      console.error("Error assigning variation:", error);
       return null;
     }
   }
@@ -444,7 +463,7 @@ export class ABTestingEngine {
     variationId: string,
     patientId: string,
     goalId?: string,
-    monetaryValue?: number
+    monetaryValue?: number,
   ): Promise<void> {
     try {
       await this.recordEvent({
@@ -452,13 +471,13 @@ export class ABTestingEngine {
         testId,
         variationId,
         patientId,
-        type: 'conversion',
+        type: "conversion",
         goalId,
         monetaryValue,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     } catch (error) {
-      console.error('Error recording conversion:', error);
+      console.error("Error recording conversion:", error);
       throw error;
     }
   }
@@ -476,7 +495,7 @@ export class ABTestingEngine {
         await this.flushEventBuffer();
       }
     } catch (error) {
-      console.error('Error recording event:', error);
+      console.error("Error recording event:", error);
       throw error;
     }
   }
@@ -493,13 +512,13 @@ export class ABTestingEngine {
   async calculateTestResults(testId: string): Promise<TestResults> {
     try {
       const test = await this.getTest(testId);
-      if (!test) throw new Error('Test not found');
+      if (!test) throw new Error("Test not found");
 
       // Buscar eventos do teste
       const { data: events } = await this.supabase
-        .from('ab_test_events')
-        .select('*')
-        .eq('test_id', testId);
+        .from("ab_test_events")
+        .select("*")
+        .eq("test_id", testId);
 
       if (!events?.length) {
         return this.createEmptyResults(testId);
@@ -510,9 +529,9 @@ export class ABTestingEngine {
 
       // Calcular métricas por variação
       const variationResults = await Promise.all(
-        test.variations.map(variation => 
-          this.calculateVariationResults(variation, eventsByVariation[variation.id] || [])
-        )
+        test.variations.map((variation) =>
+          this.calculateVariationResults(variation, eventsByVariation[variation.id] || []),
+        ),
       );
 
       // Calcular significância estatística
@@ -526,9 +545,9 @@ export class ABTestingEngine {
 
       const results: TestResults = {
         testId,
-        status: test.status === 'completed' ? 'completed' : 'ongoing',
-        totalImpressions: events.filter(e => e.type === 'impression').length,
-        totalConversions: events.filter(e => e.type === 'conversion').length,
+        status: test.status === "completed" ? "completed" : "ongoing",
+        totalImpressions: events.filter((e) => e.type === "impression").length,
+        totalConversions: events.filter((e) => e.type === "conversion").length,
         overallConversionRate: this.calculateOverallConversionRate(events),
         statisticalSignificance: statisticalAnalysis.significance,
         confidenceLevel: test.confidenceLevel,
@@ -541,7 +560,7 @@ export class ABTestingEngine {
         dailyResults: await this.calculateDailyResults(testId, events),
         insights,
         recommendations: await this.generateRecommendations(test, variationResults, insights),
-        calculatedAt: new Date()
+        calculatedAt: new Date(),
       };
 
       // Salvar resultados
@@ -549,7 +568,7 @@ export class ABTestingEngine {
 
       return results;
     } catch (error) {
-      console.error('Error calculating test results:', error);
+      console.error("Error calculating test results:", error);
       throw error;
     }
   }
@@ -564,9 +583,9 @@ export class ABTestingEngine {
   } {
     if (variationResults.length < 2) {
       return {
-        significance: 'not_significant',
+        significance: "not_significant",
         pValue: 1,
-        powerAchieved: 0
+        powerAchieved: 0,
       };
     }
 
@@ -583,22 +602,25 @@ export class ABTestingEngine {
       maxPower = Math.max(maxPower, power);
     }
 
-    let significance: StatisticalSignificance = 'not_significant';
-    if (minPValue < 0.001) significance = 'highly_significant';
-    else if (minPValue < 0.01) significance = 'significant';
-    else if (minPValue < 0.05) significance = 'marginally_significant';
+    let significance: StatisticalSignificance = "not_significant";
+    if (minPValue < 0.001) significance = "highly_significant";
+    else if (minPValue < 0.01) significance = "significant";
+    else if (minPValue < 0.05) significance = "marginally_significant";
 
     return {
       significance,
       pValue: minPValue,
-      powerAchieved: maxPower
+      powerAchieved: maxPower,
     };
   }
 
   /**
    * Realizar teste t entre duas variações
    */
-  private performTTest(control: VariationResults, variant: VariationResults): {
+  private performTTest(
+    control: VariationResults,
+    variant: VariationResults,
+  ): {
     pValue: number;
     power: number;
   } {
@@ -612,21 +634,21 @@ export class ABTestingEngine {
     }
 
     // Pooled proportion
-    const pooled = ((p1 * n1) + (p2 * n2)) / (n1 + n2);
-    
+    const pooled = (p1 * n1 + p2 * n2) / (n1 + n2);
+
     // Standard error
-    const se = Math.sqrt(pooled * (1 - pooled) * ((1 / n1) + (1 / n2)));
-    
+    const se = Math.sqrt(pooled * (1 - pooled) * (1 / n1 + 1 / n2));
+
     if (se === 0) {
       return { pValue: 1, power: 0 };
     }
 
     // Z-score
     const z = Math.abs(p2 - p1) / se;
-    
+
     // P-value (two-tailed)
     const pValue = 2 * (1 - this.normalCDF(z));
-    
+
     // Power calculation (simplified)
     const effect = Math.abs(p2 - p1);
     const power = Math.min(1, effect * Math.sqrt(Math.min(n1, n2)) * 2);
@@ -646,18 +668,18 @@ export class ABTestingEngine {
    */
   private erf(x: number): number {
     // Aproximação para função de erro
-    const a1 =  0.254829592;
+    const a1 = 0.254829592;
     const a2 = -0.284496736;
-    const a3 =  1.421413741;
+    const a3 = 1.421413741;
     const a4 = -1.453152027;
-    const a5 =  1.061405429;
-    const p  =  0.3275911;
+    const a5 = 1.061405429;
+    const p = 0.3275911;
 
     const sign = x >= 0 ? 1 : -1;
     x = Math.abs(x);
 
     const t = 1.0 / (1.0 + p * x);
-    const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+    const y = 1.0 - ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
 
     return sign * y;
   }
@@ -672,19 +694,22 @@ export class ABTestingEngine {
    * Validar configuração de teste
    */
   private validateTestConfig(config: Partial<ABTestConfig>): void {
-    if (!config.clinicId) throw new Error('Clinic ID is required');
-    if (!config.name) throw new Error('Test name is required');
-    if (!config.type) throw new Error('Test type is required');
-    if (!config.audienceFilter) throw new Error('Audience filter is required');
-    if (!config.primaryGoal) throw new Error('Primary goal is required');
-    if (!config.createdBy) throw new Error('Created by is required');
+    if (!config.clinicId) throw new Error("Clinic ID is required");
+    if (!config.name) throw new Error("Test name is required");
+    if (!config.type) throw new Error("Test type is required");
+    if (!config.audienceFilter) throw new Error("Audience filter is required");
+    if (!config.primaryGoal) throw new Error("Primary goal is required");
+    if (!config.createdBy) throw new Error("Created by is required");
 
-    if (config.trafficAllocation && (config.trafficAllocation < 1 || config.trafficAllocation > 100)) {
-      throw new Error('Traffic allocation must be between 1 and 100');
+    if (
+      config.trafficAllocation &&
+      (config.trafficAllocation < 1 || config.trafficAllocation > 100)
+    ) {
+      throw new Error("Traffic allocation must be between 1 and 100");
     }
 
     if (config.confidenceLevel && ![90, 95, 99].includes(config.confidenceLevel)) {
-      throw new Error('Confidence level must be 90, 95, or 99');
+      throw new Error("Confidence level must be 90, 95, or 99");
     }
   }
 
@@ -693,12 +718,12 @@ export class ABTestingEngine {
    */
   private validateTestForStart(test: ABTestConfig): void {
     if (test.variations.length < 2) {
-      throw new Error('Test must have at least 2 variations');
+      throw new Error("Test must have at least 2 variations");
     }
 
     const totalTraffic = test.variations.reduce((sum, v) => sum + v.trafficPercentage, 0);
     if (Math.abs(totalTraffic - 100) > 0.01) {
-      throw new Error('Variation traffic percentages must sum to 100');
+      throw new Error("Variation traffic percentages must sum to 100");
     }
   }
 
@@ -709,17 +734,21 @@ export class ABTestingEngine {
     // Simplified sample size calculation for proportions
     const alpha = (100 - confidence) / 100;
     const beta = (100 - power) / 100;
-    
+
     const zAlpha = this.getZScore(1 - alpha / 2);
     const zBeta = this.getZScore(1 - beta);
-    
+
     const p1 = 0.1; // Assumed baseline conversion rate
     const p2 = p1 * (1 + effect / 100);
-    
+
     const pooled = (p1 + p2) / 2;
-    const numerator = Math.pow(zAlpha * Math.sqrt(2 * pooled * (1 - pooled)) + zBeta * Math.sqrt(p1 * (1 - p1) + p2 * (1 - p2)), 2);
+    const numerator = Math.pow(
+      zAlpha * Math.sqrt(2 * pooled * (1 - pooled)) +
+        zBeta * Math.sqrt(p1 * (1 - p1) + p2 * (1 - p2)),
+      2,
+    );
     const denominator = Math.pow(p2 - p1, 2);
-    
+
     return Math.ceil(numerator / denominator);
   }
 
@@ -750,9 +779,9 @@ export class ABTestingEngine {
 
       // Buscar dados do paciente para outros filtros
       const { data: patient } = await this.supabase
-        .from('patients')
-        .select('*')
-        .eq('id', patientId)
+        .from("patients")
+        .select("*")
+        .eq("id", patientId)
         .single();
 
       if (!patient) return false;
@@ -763,7 +792,7 @@ export class ABTestingEngine {
         if (age < filter.ageRange.min || age > filter.ageRange.max) return false;
       }
 
-      if (filter.gender && filter.gender !== 'all' && patient.gender !== filter.gender) {
+      if (filter.gender && filter.gender !== "all" && patient.gender !== filter.gender) {
         return false;
       }
 
@@ -771,7 +800,7 @@ export class ABTestingEngine {
 
       return true;
     } catch (error) {
-      console.error('Error checking patient audience:', error);
+      console.error("Error checking patient audience:", error);
       return false;
     }
   }
@@ -780,7 +809,7 @@ export class ABTestingEngine {
    * Selecionar variação baseada no peso
    */
   private selectVariationByWeight(variations: TestVariation[]): TestVariation | null {
-    const activeVariations = variations.filter(v => v.status === 'active');
+    const activeVariations = variations.filter((v) => v.status === "active");
     if (!activeVariations.length) return null;
 
     const random = Math.random() * 100;
@@ -806,7 +835,7 @@ export class ABTestingEngine {
       const events = [...this.eventBuffer];
       this.eventBuffer = [];
 
-      const eventsToInsert = events.map(event => ({
+      const eventsToInsert = events.map((event) => ({
         id: event.id,
         test_id: event.testId,
         variation_id: event.variationId,
@@ -820,17 +849,15 @@ export class ABTestingEngine {
         monetary_value: event.monetaryValue,
         ip_address: event.ipAddress,
         user_agent: event.userAgent,
-        referrer: event.referrer
+        referrer: event.referrer,
       }));
 
-      await this.supabase
-        .from('ab_test_events')
-        .insert(eventsToInsert);
+      await this.supabase.from("ab_test_events").insert(eventsToInsert);
 
       // Atualizar métricas das variações
       await this.updateVariationMetrics(events);
     } catch (error) {
-      console.error('Error flushing event buffer:', error);
+      console.error("Error flushing event buffer:", error);
       // Recolocar eventos no buffer para tentar novamente
       this.eventBuffer.unshift(...events);
     }
@@ -840,30 +867,34 @@ export class ABTestingEngine {
    * Atualizar métricas das variações
    */
   private async updateVariationMetrics(events: ABTestEvent[]): Promise<void> {
-    const metricsByVariation = events.reduce((acc, event) => {
-      if (!acc[event.variationId]) {
-        acc[event.variationId] = { impressions: 0, conversions: 0 };
-      }
+    const metricsByVariation = events.reduce(
+      (acc, event) => {
+        if (!acc[event.variationId]) {
+          acc[event.variationId] = { impressions: 0, conversions: 0 };
+        }
 
-      if (event.type === 'impression') {
-        acc[event.variationId].impressions++;
-      } else if (event.type === 'conversion') {
-        acc[event.variationId].conversions++;
-      }
+        if (event.type === "impression") {
+          acc[event.variationId].impressions++;
+        } else if (event.type === "conversion") {
+          acc[event.variationId].conversions++;
+        }
 
-      return acc;
-    }, {} as Record<string, { impressions: number; conversions: number }>);
+        return acc;
+      },
+      {} as Record<string, { impressions: number; conversions: number }>,
+    );
 
     for (const [variationId, metrics] of Object.entries(metricsByVariation)) {
       await this.supabase
-        .from('ab_test_variations')
+        .from("ab_test_variations")
         .update({
           impressions: metrics.impressions,
           conversions: metrics.conversions,
-          conversion_rate: metrics.impressions > 0 ? (metrics.conversions / metrics.impressions) * 100 : 0,
-          updated_at: new Date().toISOString()
+          conversion_rate:
+            metrics.impressions > 0 ? (metrics.conversions / metrics.impressions) * 100 : 0,
+          updated_at: new Date().toISOString(),
         })
-        .eq('id', variationId);
+        .eq("id", variationId);
     }
   }
 
@@ -877,8 +908,8 @@ export class ABTestingEngine {
     }, this.flushInterval);
 
     // Processar ao fechar/sair
-    if (typeof window !== 'undefined') {
-      window.addEventListener('beforeunload', () => {
+    if (typeof window !== "undefined") {
+      window.addEventListener("beforeunload", () => {
         this.flushEventBuffer();
       });
     }
@@ -911,7 +942,7 @@ export class ABTestingEngine {
       sampleSize: data.sample_size,
       currentSampleSize: data.current_sample_size,
       variations: (data.variations || []).map(this.mapVariationFromDB),
-      results: data.results
+      results: data.results,
     };
   }
 
@@ -934,7 +965,7 @@ export class ABTestingEngine {
       significance: data.significance,
       pValue: data.p_value,
       createdAt: new Date(data.created_at),
-      updatedAt: new Date(data.updated_at)
+      updatedAt: new Date(data.updated_at),
     };
   }
 
@@ -952,11 +983,11 @@ export class ABTestingEngine {
     const today = new Date();
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-    
+
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
-    
+
     return age;
   }
 
@@ -966,19 +997,20 @@ export class ABTestingEngine {
   private getFromCache(key: string): any {
     const item = this.cache.get(key);
     if (!item) return null;
-    
+
     if (item.expiry && Date.now() > item.expiry) {
       this.cache.delete(key);
       return null;
     }
-    
+
     return item.data;
   }
 
-  private setCache(key: string, data: any, ttl: number = 300000): void { // 5 minutes
+  private setCache(key: string, data: any, ttl: number = 300000): void {
+    // 5 minutes
     this.cache.set(key, {
       data,
-      expiry: Date.now() + ttl
+      expiry: Date.now() + ttl,
     });
   }
 
@@ -999,69 +1031,77 @@ export class ABTestingEngine {
     }, {});
   }
 
-  private async calculateVariationResults(variation: TestVariation, events: any[]): Promise<VariationResults> {
-    const impressions = events.filter(e => e.type === 'impression').length;
-    const conversions = events.filter(e => e.type === 'conversion').length;
-    
+  private async calculateVariationResults(
+    variation: TestVariation,
+    events: any[],
+  ): Promise<VariationResults> {
+    const impressions = events.filter((e) => e.type === "impression").length;
+    const conversions = events.filter((e) => e.type === "conversion").length;
+
     return {
       variationId: variation.id,
       variationName: variation.name,
       impressions,
       conversions,
       conversionRate: impressions > 0 ? (conversions / impressions) * 100 : 0,
-      significance: 'not_significant',
+      significance: "not_significant",
       pValue: 1,
       confidenceInterval: { lower: 0, upper: 0 },
       liftPercentage: 0,
       isWinner: false,
       goalResults: [],
-      segmentResults: []
+      segmentResults: [],
     };
   }
 
   private createEmptyResults(testId: string): TestResults {
     return {
       testId,
-      status: 'ongoing',
+      status: "ongoing",
       totalImpressions: 0,
       totalConversions: 0,
       overallConversionRate: 0,
-      statisticalSignificance: 'not_significant',
+      statisticalSignificance: "not_significant",
       confidenceLevel: 95,
       pValue: 1,
       powerAchieved: 0,
       variationResults: [],
       insights: [],
       recommendations: [],
-      calculatedAt: new Date()
+      calculatedAt: new Date(),
     };
   }
 
   private calculateOverallConversionRate(events: any[]): number {
-    const impressions = events.filter(e => e.type === 'impression').length;
-    const conversions = events.filter(e => e.type === 'conversion').length;
+    const impressions = events.filter((e) => e.type === "impression").length;
+    const conversions = events.filter((e) => e.type === "conversion").length;
     return impressions > 0 ? (conversions / impressions) * 100 : 0;
   }
 
-  private determineWinner(variations: VariationResults[], confidenceLevel: number): {
+  private determineWinner(
+    variations: VariationResults[],
+    confidenceLevel: number,
+  ): {
     winnerId?: string;
     lift?: number;
     confidenceInterval?: { lower: number; upper: number };
   } {
     if (variations.length < 2) return {};
-    
-    const bestVariation = variations.reduce((best, current) => 
-      current.conversionRate > best.conversionRate ? current : best
+
+    const bestVariation = variations.reduce((best, current) =>
+      current.conversionRate > best.conversionRate ? current : best,
     );
 
     const control = variations[0];
-    const lift = control.conversionRate > 0 ? 
-      ((bestVariation.conversionRate - control.conversionRate) / control.conversionRate) * 100 : 0;
+    const lift =
+      control.conversionRate > 0
+        ? ((bestVariation.conversionRate - control.conversionRate) / control.conversionRate) * 100
+        : 0;
 
     return {
       winnerId: bestVariation.variationId,
       lift,
-      confidenceInterval: { lower: lift - 5, upper: lift + 5 }
+      confidenceInterval: { lower: lift - 5, upper: lift + 5 },
     };
   }
 
@@ -1069,33 +1109,35 @@ export class ABTestingEngine {
     return [];
   }
 
-  private async generateTestInsights(test: ABTestConfig, variations: VariationResults[], events: any[]): Promise<any[]> {
+  private async generateTestInsights(
+    test: ABTestConfig,
+    variations: VariationResults[],
+    events: any[],
+  ): Promise<any[]> {
     return [];
   }
 
-  private async generateRecommendations(test: ABTestConfig, variations: VariationResults[], insights: any[]): Promise<string[]> {
-    return ['Continue test to reach statistical significance'];
+  private async generateRecommendations(
+    test: ABTestConfig,
+    variations: VariationResults[],
+    insights: any[],
+  ): Promise<string[]> {
+    return ["Continue test to reach statistical significance"];
   }
 
   private async saveTestResults(testId: string, results: TestResults): Promise<void> {
-    await this.supabase
-      .from('ab_tests')
-      .update({ results })
-      .eq('id', testId);
+    await this.supabase.from("ab_tests").update({ results }).eq("id", testId);
   }
 
   private async logTestEvent(testId: string, eventType: string, data: any): Promise<void> {
-    await this.supabase
-      .from('ab_test_audit_log')
-      .insert({
-        test_id: testId,
-        event_type: eventType,
-        event_data: data,
-        timestamp: new Date().toISOString()
-      });
+    await this.supabase.from("ab_test_audit_log").insert({
+      test_id: testId,
+      event_type: eventType,
+      event_data: data,
+      timestamp: new Date().toISOString(),
+    });
   }
 }
 
 // Export singleton instance
 export const abTestingEngine = new ABTestingEngine();
-

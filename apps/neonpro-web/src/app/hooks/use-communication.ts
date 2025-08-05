@@ -1,6 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useCallback, useState } from 'react'
-import { toast } from 'react-hot-toast'
+import type { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import type { useCallback, useState } from "react";
+import type { toast } from "react-hot-toast";
 import type {
   Message,
   MessageThread,
@@ -12,261 +12,277 @@ import type {
   MessageFilters,
   ThreadFilters,
   TemplateFilters,
-  PaginatedResponse
-} from '@/app/lib/types/communication'
+  PaginatedResponse,
+} from "@/app/lib/types/communication";
 
 // Query keys for React Query
 export const communicationKeys = {
-  all: ['communication'] as const,
-  
+  all: ["communication"] as const,
+
   // Messages
-  messages: () => [...communicationKeys.all, 'messages'] as const,
-  messagesList: (filters?: MessageFilters) => [...communicationKeys.messages(), 'list', filters] as const,
-  message: (id: string) => [...communicationKeys.messages(), 'detail', id] as const,
-  messagesByThread: (threadId: string) => [...communicationKeys.messages(), 'thread', threadId] as const,
-  
+  messages: () => [...communicationKeys.all, "messages"] as const,
+  messagesList: (filters?: MessageFilters) =>
+    [...communicationKeys.messages(), "list", filters] as const,
+  message: (id: string) => [...communicationKeys.messages(), "detail", id] as const,
+  messagesByThread: (threadId: string) =>
+    [...communicationKeys.messages(), "thread", threadId] as const,
+
   // Threads
-  threads: () => [...communicationKeys.all, 'threads'] as const,
-  threadsList: (filters?: ThreadFilters) => [...communicationKeys.threads(), 'list', filters] as const,
-  thread: (id: string) => [...communicationKeys.threads(), 'detail', id] as const,
-  threadsStats: () => [...communicationKeys.threads(), 'stats'] as const,
-  
+  threads: () => [...communicationKeys.all, "threads"] as const,
+  threadsList: (filters?: ThreadFilters) =>
+    [...communicationKeys.threads(), "list", filters] as const,
+  thread: (id: string) => [...communicationKeys.threads(), "detail", id] as const,
+  threadsStats: () => [...communicationKeys.threads(), "stats"] as const,
+
   // Templates
-  templates: () => [...communicationKeys.all, 'templates'] as const,
-  templatesList: (filters?: TemplateFilters) => [...communicationKeys.templates(), 'list', filters] as const,
-  template: (id: string) => [...communicationKeys.templates(), 'detail', id] as const,
-  templatesByCategory: (category: string) => [...communicationKeys.templates(), 'category', category] as const,
-  
+  templates: () => [...communicationKeys.all, "templates"] as const,
+  templatesList: (filters?: TemplateFilters) =>
+    [...communicationKeys.templates(), "list", filters] as const,
+  template: (id: string) => [...communicationKeys.templates(), "detail", id] as const,
+  templatesByCategory: (category: string) =>
+    [...communicationKeys.templates(), "category", category] as const,
+
   // Stats
-  stats: () => [...communicationKeys.all, 'stats'] as const,
-  statsOverview: () => [...communicationKeys.stats(), 'overview'] as const,
-  statsMessages: (period?: string) => [...communicationKeys.stats(), 'messages', period] as const
-}
+  stats: () => [...communicationKeys.all, "stats"] as const,
+  statsOverview: () => [...communicationKeys.stats(), "overview"] as const,
+  statsMessages: (period?: string) => [...communicationKeys.stats(), "messages", period] as const,
+};
 
 // API functions
 const api = {
   // Messages
   async getMessages(filters?: MessageFilters): Promise<PaginatedResponse<Message>> {
-    const params = new URLSearchParams()
+    const params = new URLSearchParams();
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
-          params.append(key, String(value))
+          params.append(key, String(value));
         }
-      })
+      });
     }
-    
-    const response = await fetch(`/api/communication/messages?${params}`)
+
+    const response = await fetch(`/api/communication/messages?${params}`);
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || 'Failed to fetch messages')
+      const error = await response.json();
+      throw new Error(error.error || "Failed to fetch messages");
     }
-    return response.json()
+    return response.json();
   },
 
   async getMessage(id: string): Promise<{ data: { message: Message } }> {
-    const response = await fetch(`/api/communication/messages/${id}`)
+    const response = await fetch(`/api/communication/messages/${id}`);
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || 'Failed to fetch message')
+      const error = await response.json();
+      throw new Error(error.error || "Failed to fetch message");
     }
-    return response.json()
+    return response.json();
   },
 
   async sendMessage(data: SendMessageRequest): Promise<{ data: { message: Message } }> {
-    const response = await fetch('/api/communication/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    })
+    const response = await fetch("/api/communication/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || 'Failed to send message')
+      const error = await response.json();
+      throw new Error(error.error || "Failed to send message");
     }
-    return response.json()
+    return response.json();
   },
 
   async markMessageAsRead(id: string): Promise<{ data: { message: Message } }> {
     const response = await fetch(`/api/communication/messages/${id}/read`, {
-      method: 'POST'
-    })
+      method: "POST",
+    });
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || 'Failed to mark message as read')
+      const error = await response.json();
+      throw new Error(error.error || "Failed to mark message as read");
     }
-    return response.json()
+    return response.json();
   },
 
   async deleteMessage(id: string): Promise<void> {
     const response = await fetch(`/api/communication/messages/${id}`, {
-      method: 'DELETE'
-    })
+      method: "DELETE",
+    });
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || 'Failed to delete message')
+      const error = await response.json();
+      throw new Error(error.error || "Failed to delete message");
     }
   },
 
   // Threads
   async getThreads(filters?: ThreadFilters): Promise<PaginatedResponse<MessageThread>> {
-    const params = new URLSearchParams()
+    const params = new URLSearchParams();
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
-          params.append(key, String(value))
+          params.append(key, String(value));
         }
-      })
+      });
     }
-    
-    const response = await fetch(`/api/communication/threads?${params}`)
+
+    const response = await fetch(`/api/communication/threads?${params}`);
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || 'Failed to fetch threads')
+      const error = await response.json();
+      throw new Error(error.error || "Failed to fetch threads");
     }
-    return response.json()
+    return response.json();
   },
 
   async getThread(id: string): Promise<{ data: { thread: MessageThread } }> {
-    const response = await fetch(`/api/communication/threads/${id}`)
+    const response = await fetch(`/api/communication/threads/${id}`);
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || 'Failed to fetch thread')
+      const error = await response.json();
+      throw new Error(error.error || "Failed to fetch thread");
     }
-    return response.json()
+    return response.json();
   },
 
-  async createThread(data: { 
-    patient_id: string; 
-    subject?: string; 
-    priority?: 'low' | 'normal' | 'high' | 'urgent' 
+  async createThread(data: {
+    patient_id: string;
+    subject?: string;
+    priority?: "low" | "normal" | "high" | "urgent";
   }): Promise<{ data: { thread: MessageThread } }> {
-    const response = await fetch('/api/communication/threads', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    })
+    const response = await fetch("/api/communication/threads", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || 'Failed to create thread')
+      const error = await response.json();
+      throw new Error(error.error || "Failed to create thread");
     }
-    return response.json()
+    return response.json();
   },
 
-  async updateThread(id: string, data: {
-    status?: 'active' | 'closed' | 'archived';
-    priority?: 'low' | 'normal' | 'high' | 'urgent';
-    assigned_to?: string;
-  }): Promise<{ data: { thread: MessageThread } }> {
+  async updateThread(
+    id: string,
+    data: {
+      status?: "active" | "closed" | "archived";
+      priority?: "low" | "normal" | "high" | "urgent";
+      assigned_to?: string;
+    },
+  ): Promise<{ data: { thread: MessageThread } }> {
     const response = await fetch(`/api/communication/threads/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    })
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || 'Failed to update thread')
+      const error = await response.json();
+      throw new Error(error.error || "Failed to update thread");
     }
-    return response.json()
+    return response.json();
   },
 
   async archiveThread(id: string): Promise<{ data: { thread: MessageThread } }> {
     const response = await fetch(`/api/communication/threads/${id}/archive`, {
-      method: 'POST'
-    })
+      method: "POST",
+    });
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || 'Failed to archive thread')
+      const error = await response.json();
+      throw new Error(error.error || "Failed to archive thread");
     }
-    return response.json()
+    return response.json();
   },
 
   // Templates
   async getTemplates(filters?: TemplateFilters): Promise<PaginatedResponse<MessageTemplate>> {
-    const params = new URLSearchParams()
+    const params = new URLSearchParams();
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
-          params.append(key, String(value))
+          params.append(key, String(value));
         }
-      })
+      });
     }
-    
-    const response = await fetch(`/api/communication/templates?${params}`)
+
+    const response = await fetch(`/api/communication/templates?${params}`);
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || 'Failed to fetch templates')
+      const error = await response.json();
+      throw new Error(error.error || "Failed to fetch templates");
     }
-    return response.json()
+    return response.json();
   },
 
   async getTemplate(id: string): Promise<{ data: { template: MessageTemplate } }> {
-    const response = await fetch(`/api/communication/templates/${id}`)
+    const response = await fetch(`/api/communication/templates/${id}`);
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || 'Failed to fetch template')
+      const error = await response.json();
+      throw new Error(error.error || "Failed to fetch template");
     }
-    return response.json()
+    return response.json();
   },
 
-  async createTemplate(data: CreateTemplateRequest): Promise<{ data: { template: MessageTemplate } }> {
-    const response = await fetch('/api/communication/templates', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    })
+  async createTemplate(
+    data: CreateTemplateRequest,
+  ): Promise<{ data: { template: MessageTemplate } }> {
+    const response = await fetch("/api/communication/templates", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || 'Failed to create template')
+      const error = await response.json();
+      throw new Error(error.error || "Failed to create template");
     }
-    return response.json()
+    return response.json();
   },
 
-  async updateTemplate(id: string, data: UpdateTemplateRequest): Promise<{ data: { template: MessageTemplate } }> {
+  async updateTemplate(
+    id: string,
+    data: UpdateTemplateRequest,
+  ): Promise<{ data: { template: MessageTemplate } }> {
     const response = await fetch(`/api/communication/templates/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    })
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || 'Failed to update template')
+      const error = await response.json();
+      throw new Error(error.error || "Failed to update template");
     }
-    return response.json()
+    return response.json();
   },
 
   async deleteTemplate(id: string): Promise<void> {
     const response = await fetch(`/api/communication/templates/${id}`, {
-      method: 'DELETE'
-    })
+      method: "DELETE",
+    });
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || 'Failed to delete template')
+      const error = await response.json();
+      throw new Error(error.error || "Failed to delete template");
     }
   },
 
-  async duplicateTemplate(id: string, name: string): Promise<{ data: { template: MessageTemplate } }> {
+  async duplicateTemplate(
+    id: string,
+    name: string,
+  ): Promise<{ data: { template: MessageTemplate } }> {
     const response = await fetch(`/api/communication/templates/${id}/duplicate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name })
-    })
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name }),
+    });
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || 'Failed to duplicate template')
+      const error = await response.json();
+      throw new Error(error.error || "Failed to duplicate template");
     }
-    return response.json()
+    return response.json();
   },
 
   // Stats
   async getCommunicationStats(): Promise<{ data: CommunicationStats }> {
-    const response = await fetch('/api/communication/stats')
+    const response = await fetch("/api/communication/stats");
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || 'Failed to fetch communication stats')
+      const error = await response.json();
+      throw new Error(error.error || "Failed to fetch communication stats");
     }
-    return response.json()
-  }
-}
+    return response.json();
+  },
+};
 
 // Hooks for Messages
 export function useMessages(filters?: MessageFilters) {
@@ -274,8 +290,8 @@ export function useMessages(filters?: MessageFilters) {
     queryKey: communicationKeys.messagesList(filters),
     queryFn: () => api.getMessages(filters),
     staleTime: 30000, // 30 seconds
-    refetchOnWindowFocus: false
-  })
+    refetchOnWindowFocus: false,
+  });
 }
 
 export function useMessage(id: string, enabled = true) {
@@ -283,70 +299,69 @@ export function useMessage(id: string, enabled = true) {
     queryKey: communicationKeys.message(id),
     queryFn: () => api.getMessage(id),
     enabled: enabled && !!id,
-    staleTime: 60000 // 1 minute
-  })
+    staleTime: 60000, // 1 minute
+  });
 }
 
 export function useSendMessage() {
-  const queryClient = useQueryClient()
-  
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: api.sendMessage,
     onSuccess: (data) => {
       // Invalidate messages list to show new message
-      queryClient.invalidateQueries({ queryKey: communicationKeys.messages() })
+      queryClient.invalidateQueries({ queryKey: communicationKeys.messages() });
       // Also invalidate threads if this message is part of a thread
-      queryClient.invalidateQueries({ queryKey: communicationKeys.threads() })
-      toast.success('Message sent successfully')
+      queryClient.invalidateQueries({ queryKey: communicationKeys.threads() });
+      toast.success("Message sent successfully");
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to send message')
-    }
-  })
+      toast.error(error.message || "Failed to send message");
+    },
+  });
 }
 
 export function useMarkMessageAsRead() {
-  const queryClient = useQueryClient()
-  
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: api.markMessageAsRead,
     onSuccess: (data, messageId) => {
       // Update the specific message in cache
-      queryClient.setQueryData(
-        communicationKeys.message(messageId),
-        { data: { message: data.data.message } }
-      )
+      queryClient.setQueryData(communicationKeys.message(messageId), {
+        data: { message: data.data.message },
+      });
       // Invalidate messages list to update read status
-      queryClient.invalidateQueries({ queryKey: communicationKeys.messages() })
+      queryClient.invalidateQueries({ queryKey: communicationKeys.messages() });
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to mark message as read')
-    }
-  })
+      toast.error(error.message || "Failed to mark message as read");
+    },
+  });
 }
 
 export function useDeleteMessage() {
-  const queryClient = useQueryClient()
-  
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: api.deleteMessage,
     onSuccess: () => {
       // Invalidate messages list
-      queryClient.invalidateQueries({ queryKey: communicationKeys.messages() })
-      toast.success('Message deleted successfully')
+      queryClient.invalidateQueries({ queryKey: communicationKeys.messages() });
+      toast.success("Message deleted successfully");
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to delete message')
-    }
-  })
-}// Hooks for Threads
+      toast.error(error.message || "Failed to delete message");
+    },
+  });
+} // Hooks for Threads
 export function useThreads(filters?: ThreadFilters) {
   return useQuery({
     queryKey: communicationKeys.threadsList(filters),
     queryFn: () => api.getThreads(filters),
     staleTime: 30000, // 30 seconds
-    refetchOnWindowFocus: false
-  })
+    refetchOnWindowFocus: false,
+  });
 }
 
 export function useThread(id: string, enabled = true) {
@@ -354,67 +369,65 @@ export function useThread(id: string, enabled = true) {
     queryKey: communicationKeys.thread(id),
     queryFn: () => api.getThread(id),
     enabled: enabled && !!id,
-    staleTime: 60000 // 1 minute
-  })
+    staleTime: 60000, // 1 minute
+  });
 }
 
 export function useCreateThread() {
-  const queryClient = useQueryClient()
-  
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: api.createThread,
     onSuccess: () => {
       // Invalidate threads list
-      queryClient.invalidateQueries({ queryKey: communicationKeys.threads() })
-      toast.success('Thread created successfully')
+      queryClient.invalidateQueries({ queryKey: communicationKeys.threads() });
+      toast.success("Thread created successfully");
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to create thread')
-    }
-  })
+      toast.error(error.message || "Failed to create thread");
+    },
+  });
 }
 
 export function useUpdateThread() {
-  const queryClient = useQueryClient()
-  
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Parameters<typeof api.updateThread>[1] }) =>
       api.updateThread(id, data),
     onSuccess: (data, { id }) => {
       // Update the specific thread in cache
-      queryClient.setQueryData(
-        communicationKeys.thread(id),
-        { data: { thread: data.data.thread } }
-      )
+      queryClient.setQueryData(communicationKeys.thread(id), {
+        data: { thread: data.data.thread },
+      });
       // Invalidate threads list
-      queryClient.invalidateQueries({ queryKey: communicationKeys.threads() })
-      toast.success('Thread updated successfully')
+      queryClient.invalidateQueries({ queryKey: communicationKeys.threads() });
+      toast.success("Thread updated successfully");
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to update thread')
-    }
-  })
+      toast.error(error.message || "Failed to update thread");
+    },
+  });
 }
 
 export function useArchiveThread() {
-  const queryClient = useQueryClient()
-  
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: api.archiveThread,
     onSuccess: (data, threadId) => {
       // Update the specific thread in cache
-      queryClient.setQueryData(
-        communicationKeys.thread(threadId),
-        { data: { thread: data.data.thread } }
-      )
+      queryClient.setQueryData(communicationKeys.thread(threadId), {
+        data: { thread: data.data.thread },
+      });
       // Invalidate threads list
-      queryClient.invalidateQueries({ queryKey: communicationKeys.threads() })
-      toast.success('Thread archived successfully')
+      queryClient.invalidateQueries({ queryKey: communicationKeys.threads() });
+      toast.success("Thread archived successfully");
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to archive thread')
-    }
-  })
+      toast.error(error.message || "Failed to archive thread");
+    },
+  });
 }
 
 // Hooks for Templates
@@ -423,8 +436,8 @@ export function useTemplates(filters?: TemplateFilters) {
     queryKey: communicationKeys.templatesList(filters),
     queryFn: () => api.getTemplates(filters),
     staleTime: 60000, // 1 minute - templates change less frequently
-    refetchOnWindowFocus: false
-  })
+    refetchOnWindowFocus: false,
+  });
 }
 
 export function useTemplate(id: string, enabled = true) {
@@ -432,79 +445,77 @@ export function useTemplate(id: string, enabled = true) {
     queryKey: communicationKeys.template(id),
     queryFn: () => api.getTemplate(id),
     enabled: enabled && !!id,
-    staleTime: 300000 // 5 minutes - templates are fairly static
-  })
+    staleTime: 300000, // 5 minutes - templates are fairly static
+  });
 }
 
 export function useCreateTemplate() {
-  const queryClient = useQueryClient()
-  
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: api.createTemplate,
     onSuccess: () => {
       // Invalidate templates list
-      queryClient.invalidateQueries({ queryKey: communicationKeys.templates() })
-      toast.success('Template created successfully')
+      queryClient.invalidateQueries({ queryKey: communicationKeys.templates() });
+      toast.success("Template created successfully");
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to create template')
-    }
-  })
+      toast.error(error.message || "Failed to create template");
+    },
+  });
 }
 
 export function useUpdateTemplate() {
-  const queryClient = useQueryClient()
-  
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateTemplateRequest }) =>
       api.updateTemplate(id, data),
     onSuccess: (data, { id }) => {
       // Update the specific template in cache
-      queryClient.setQueryData(
-        communicationKeys.template(id),
-        { data: { template: data.data.template } }
-      )
+      queryClient.setQueryData(communicationKeys.template(id), {
+        data: { template: data.data.template },
+      });
       // Invalidate templates list
-      queryClient.invalidateQueries({ queryKey: communicationKeys.templates() })
-      toast.success('Template updated successfully')
+      queryClient.invalidateQueries({ queryKey: communicationKeys.templates() });
+      toast.success("Template updated successfully");
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to update template')
-    }
-  })
+      toast.error(error.message || "Failed to update template");
+    },
+  });
 }
 
 export function useDeleteTemplate() {
-  const queryClient = useQueryClient()
-  
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: api.deleteTemplate,
     onSuccess: () => {
       // Invalidate templates list
-      queryClient.invalidateQueries({ queryKey: communicationKeys.templates() })
-      toast.success('Template deleted successfully')
+      queryClient.invalidateQueries({ queryKey: communicationKeys.templates() });
+      toast.success("Template deleted successfully");
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to delete template')
-    }
-  })
+      toast.error(error.message || "Failed to delete template");
+    },
+  });
 }
 
 export function useDuplicateTemplate() {
-  const queryClient = useQueryClient()
-  
+  const queryClient = useQueryClient();
+
   return useMutation({
-    mutationFn: ({ id, name }: { id: string; name: string }) =>
-      api.duplicateTemplate(id, name),
+    mutationFn: ({ id, name }: { id: string; name: string }) => api.duplicateTemplate(id, name),
     onSuccess: () => {
       // Invalidate templates list to show new template
-      queryClient.invalidateQueries({ queryKey: communicationKeys.templates() })
-      toast.success('Template duplicated successfully')
+      queryClient.invalidateQueries({ queryKey: communicationKeys.templates() });
+      toast.success("Template duplicated successfully");
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to duplicate template')
-    }
-  })
+      toast.error(error.message || "Failed to duplicate template");
+    },
+  });
 }
 
 // Hooks for Statistics
@@ -513,107 +524,116 @@ export function useCommunicationStats() {
     queryKey: communicationKeys.statsOverview(),
     queryFn: api.getCommunicationStats,
     staleTime: 300000, // 5 minutes
-    refetchOnWindowFocus: false
-  })
+    refetchOnWindowFocus: false,
+  });
 }
 
 // Specialized hooks for common use cases
 export function useInbox(filters?: MessageFilters) {
-  const [selectedMessage, setSelectedMessage] = useState<string | null>(null)
-  
+  const [selectedMessage, setSelectedMessage] = useState<string | null>(null);
+
   const messagesQuery = useMessages({
     ...filters,
-    status: 'delivered', // Only show delivered messages in inbox
-    sort: 'created_at',
-    order: 'desc'
-  })
-  
-  const markAsRead = useMarkMessageAsRead()
-  
-  const handleSelectMessage = useCallback((messageId: string) => {
-    setSelectedMessage(messageId)
-    // Auto-mark as read when selected
-    markAsRead.mutate(messageId)
-  }, [markAsRead])
-  
+    status: "delivered", // Only show delivered messages in inbox
+    sort: "created_at",
+    order: "desc",
+  });
+
+  const markAsRead = useMarkMessageAsRead();
+
+  const handleSelectMessage = useCallback(
+    (messageId: string) => {
+      setSelectedMessage(messageId);
+      // Auto-mark as read when selected
+      markAsRead.mutate(messageId);
+    },
+    [markAsRead],
+  );
+
   return {
     ...messagesQuery,
     selectedMessage,
     setSelectedMessage: handleSelectMessage,
-    markAsRead
-  }
+    markAsRead,
+  };
 }
 
 export function usePatientCommunication(patientId: string) {
   const threadsQuery = useThreads({
     patient_id: patientId,
-    sort: 'updated_at',
-    order: 'desc'
-  })
-  
+    sort: "updated_at",
+    order: "desc",
+  });
+
   const messagesQuery = useMessages({
     recipient_id: patientId,
-    sort: 'created_at',
-    order: 'desc'
-  })
-  
-  const createThread = useCreateThread()
-  const sendMessage = useSendMessage()
-  
-  const startConversation = useCallback(async (subject?: string) => {
-    return createThread.mutateAsync({
-      patient_id: patientId,
-      subject,
-      priority: 'normal'
-    })
-  }, [createThread, patientId])
-  
-  const sendQuickMessage = useCallback(async (content: string, channel: 'sms' | 'email' | 'whatsapp' = 'sms') => {
-    return sendMessage.mutateAsync({
-      recipient_id: patientId,
-      recipient_type: 'patient',
-      content,
-      channel,
-      priority: 'normal'
-    })
-  }, [sendMessage, patientId])
-  
+    sort: "created_at",
+    order: "desc",
+  });
+
+  const createThread = useCreateThread();
+  const sendMessage = useSendMessage();
+
+  const startConversation = useCallback(
+    async (subject?: string) => {
+      return createThread.mutateAsync({
+        patient_id: patientId,
+        subject,
+        priority: "normal",
+      });
+    },
+    [createThread, patientId],
+  );
+
+  const sendQuickMessage = useCallback(
+    async (content: string, channel: "sms" | "email" | "whatsapp" = "sms") => {
+      return sendMessage.mutateAsync({
+        recipient_id: patientId,
+        recipient_type: "patient",
+        content,
+        channel,
+        priority: "normal",
+      });
+    },
+    [sendMessage, patientId],
+  );
+
   return {
     threads: threadsQuery,
     messages: messagesQuery,
     startConversation,
     sendQuickMessage,
     isCreatingThread: createThread.isPending,
-    isSendingMessage: sendMessage.isPending
-  }
+    isSendingMessage: sendMessage.isPending,
+  };
 }
 
 export function useTemplatesByCategory(category?: string) {
   return useTemplates({
     category,
-    active: 'true',
-    sort: 'name',
-    order: 'asc'
-  })
+    active: "true",
+    sort: "name",
+    order: "asc",
+  });
 }
 
 // Real-time communication hook
 export function useRealtimeCommunication() {
-  const queryClient = useQueryClient()
-  
+  const queryClient = useQueryClient();
+
   // This would integrate with WebSocket or Supabase real-time subscriptions
   // For now, we'll use polling as a fallback
-  const { data: stats } = useCommunicationStats()
-  
+  const { data: stats } = useCommunicationStats();
+
   const refreshInbox = useCallback(() => {
-    queryClient.invalidateQueries({ queryKey: communicationKeys.messages() })
-    queryClient.invalidateQueries({ queryKey: communicationKeys.threads() })
-  }, [queryClient])
-  
+    queryClient.invalidateQueries({ queryKey: communicationKeys.messages() });
+    queryClient.invalidateQueries({ queryKey: communicationKeys.threads() });
+  }, [queryClient]);
+
   return {
     stats,
     refreshInbox,
     unreadCount: stats?.data?.unread_messages || 0,
-    activeThreads: stats?.data?.active_threads || 0
-  }
+    activeThreads: stats?.data?.active_threads || 0,
+  };
 }

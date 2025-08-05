@@ -2,105 +2,105 @@
 // Appointment history and audit trail component
 // Story 1.1 Task 5 - Appointment Details Modal/Sidebar
 
-'use client';
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { 
-  History, 
-  Plus, 
-  Edit, 
-  X, 
-  CheckCircle, 
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Separator } from "@/components/ui/separator";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type {
+  History,
+  Plus,
+  Edit,
+  X,
+  CheckCircle,
   Calendar,
   Clock,
   User,
   FileText,
-  Loader2
-} from 'lucide-react';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { AppointmentHistoryEntry } from '@/app/lib/types/appointments';
+  Loader2,
+} from "lucide-react";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { AppointmentHistoryEntry } from "@/app/lib/types/appointments";
 
 // Action configuration with icons and colors
 const actionConfig = {
-  create: { 
-    label: 'Criado', 
-    icon: Plus, 
-    color: 'bg-green-100 text-green-700 border-green-200',
-    variant: 'default' as const
+  create: {
+    label: "Criado",
+    icon: Plus,
+    color: "bg-green-100 text-green-700 border-green-200",
+    variant: "default" as const,
   },
-  update: { 
-    label: 'Atualizado', 
-    icon: Edit, 
-    color: 'bg-blue-100 text-blue-700 border-blue-200',
-    variant: 'secondary' as const
+  update: {
+    label: "Atualizado",
+    icon: Edit,
+    color: "bg-blue-100 text-blue-700 border-blue-200",
+    variant: "secondary" as const,
   },
-  cancel: { 
-    label: 'Cancelado', 
-    icon: X, 
-    color: 'bg-red-100 text-red-700 border-red-200',
-    variant: 'destructive' as const
+  cancel: {
+    label: "Cancelado",
+    icon: X,
+    color: "bg-red-100 text-red-700 border-red-200",
+    variant: "destructive" as const,
   },
-  complete: { 
-    label: 'Concluído', 
-    icon: CheckCircle, 
-    color: 'bg-emerald-100 text-emerald-700 border-emerald-200',
-    variant: 'default' as const
+  complete: {
+    label: "Concluído",
+    icon: CheckCircle,
+    color: "bg-emerald-100 text-emerald-700 border-emerald-200",
+    variant: "default" as const,
   },
-  reschedule: { 
-    label: 'Reagendado', 
-    icon: Calendar, 
-    color: 'bg-orange-100 text-orange-700 border-orange-200',
-    variant: 'secondary' as const
-  }
+  reschedule: {
+    label: "Reagendado",
+    icon: Calendar,
+    color: "bg-orange-100 text-orange-700 border-orange-200",
+    variant: "secondary" as const,
+  },
 };
 
 // Field labels for better display
 const fieldLabels: Record<string, string> = {
-  patient_id: 'Paciente',
-  professional_id: 'Profissional',
-  service_type_id: 'Serviço',
-  start_time: 'Data/Hora Início',
-  end_time: 'Data/Hora Fim',
-  status: 'Status',
-  notes: 'Observações',
-  internal_notes: 'Observações Internas'
+  patient_id: "Paciente",
+  professional_id: "Profissional",
+  service_type_id: "Serviço",
+  start_time: "Data/Hora Início",
+  end_time: "Data/Hora Fim",
+  status: "Status",
+  notes: "Observações",
+  internal_notes: "Observações Internas",
 };
 
 interface AppointmentHistoryProps {
   history: AppointmentHistoryEntry[];
   isLoading?: boolean;
-}export default function AppointmentHistory({ 
-  history, 
-  isLoading = false 
+}
+export default function AppointmentHistory({
+  history,
+  isLoading = false,
 }: AppointmentHistoryProps) {
-  
   const formatDateTime = (dateString: string) => {
     return format(new Date(dateString), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
   };
 
   const formatFieldValue = (field: string, value: any) => {
-    if (!value) return 'N/A';
-    
-    if (field.includes('time')) {
+    if (!value) return "N/A";
+
+    if (field.includes("time")) {
       return format(new Date(value), "dd/MM/yyyy HH:mm", { locale: ptBR });
     }
-    
-    if (field === 'status') {
+
+    if (field === "status") {
       const statusLabels: Record<string, string> = {
-        scheduled: 'Agendado',
-        confirmed: 'Confirmado',
-        in_progress: 'Em Andamento',
-        completed: 'Concluído',
-        cancelled: 'Cancelado',
-        no_show: 'Não Compareceu'
+        scheduled: "Agendado",
+        confirmed: "Confirmado",
+        in_progress: "Em Andamento",
+        completed: "Concluído",
+        cancelled: "Cancelado",
+        no_show: "Não Compareceu",
       };
       return statusLabels[value] || value;
     }
-    
+
     return value;
   };
 
@@ -108,7 +108,7 @@ interface AppointmentHistoryProps {
     const fieldLabel = fieldLabels[field] || field;
     const oldFormatted = formatFieldValue(field, oldValue);
     const newFormatted = formatFieldValue(field, newValue);
-    
+
     return (
       <div key={field} className="text-xs space-y-1">
         <span className="font-medium">{fieldLabel}:</span>
@@ -130,7 +130,8 @@ interface AppointmentHistoryProps {
         </CardContent>
       </Card>
     );
-  }  if (!history.length) {
+  }
+  if (!history.length) {
     return (
       <Card>
         <CardHeader>
@@ -170,13 +171,13 @@ interface AppointmentHistoryProps {
                   {index < history.length - 1 && (
                     <div className="absolute left-6 top-10 h-full w-px bg-border" />
                   )}
-                  
+
                   <div className="flex gap-3">
                     {/* Action icon */}
                     <div className={`rounded-full p-2 ${actionInfo.color} flex-shrink-0`}>
                       <ActionIcon className="h-4 w-4" />
                     </div>
-                    
+
                     {/* Event details */}
                     <div className="flex-1 space-y-2">
                       <div className="flex items-start justify-between">
@@ -186,14 +187,13 @@ interface AppointmentHistoryProps {
                               {actionInfo.label}
                             </Badge>
                           </div>
-                          <p className="text-sm font-medium mt-1">
-                            {entry.changed_by_name}
-                          </p>
+                          <p className="text-sm font-medium mt-1">{entry.changed_by_name}</p>
                           <p className="text-xs text-muted-foreground">
                             {formatDateTime(entry.created_at)}
                           </p>
                         </div>
-                      </div>                      {/* Change reason */}
+                      </div>{" "}
+                      {/* Change reason */}
                       {entry.change_reason && (
                         <div className="bg-muted/50 rounded p-2">
                           <div className="flex items-start gap-2">
@@ -204,29 +204,26 @@ interface AppointmentHistoryProps {
                           </div>
                         </div>
                       )}
-                      
                       {/* Field changes */}
-                      {entry.action === 'update' && entry.changed_fields.length > 0 && (
+                      {entry.action === "update" && entry.changed_fields.length > 0 && (
                         <div className="bg-muted/30 rounded p-3 space-y-2">
                           <p className="text-xs font-medium text-muted-foreground mb-2">
                             Campos alterados:
                           </p>
-                          {entry.changed_fields.map((field) => (
+                          {entry.changed_fields.map((field) =>
                             renderFieldChange(
                               field,
                               entry.old_values?.[field],
-                              entry.new_values?.[field]
-                            )
-                          ))}
+                              entry.new_values?.[field],
+                            ),
+                          )}
                         </div>
                       )}
                     </div>
                   </div>
-                  
+
                   {/* Separator */}
-                  {index < history.length - 1 && (
-                    <Separator className="mt-4" />
-                  )}
+                  {index < history.length - 1 && <Separator className="mt-4" />}
                 </div>
               );
             })}

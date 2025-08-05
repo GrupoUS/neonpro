@@ -3,16 +3,18 @@
 // Cash Registers Hook - React hook for cash register operations
 // Following financial dashboard patterns from Context7 research
 
-import { useState, useEffect, useCallback } from 'react';
-import { toast } from 'sonner';
-import { cashFlowService } from '../services/cash-flow-service';
-import type { CashRegister } from '../types';
+import type { useState, useEffect, useCallback } from "react";
+import type { toast } from "sonner";
+import type { cashFlowService } from "../services/cash-flow-service";
+import type { CashRegister } from "../types";
 
 interface UseCashRegistersReturn {
   registers: CashRegister[];
   loading: boolean;
   error: string | null;
-  createRegister: (register: Omit<CashRegister, 'id' | 'created_at' | 'updated_at'>) => Promise<void>;
+  createRegister: (
+    register: Omit<CashRegister, "id" | "created_at" | "updated_at">,
+  ) => Promise<void>;
   updateRegister: (id: string, updates: Partial<CashRegister>) => Promise<void>;
   refreshRegisters: () => Promise<void>;
 }
@@ -26,11 +28,11 @@ export function useCashRegisters(clinicId: string): UseCashRegistersReturn {
     try {
       setLoading(true);
       setError(null);
-      
+
       const data = await cashFlowService.getCashRegisters(clinicId);
       setRegisters(data);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load cash registers';
+      const errorMessage = err instanceof Error ? err.message : "Failed to load cash registers";
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {
@@ -38,46 +40,52 @@ export function useCashRegisters(clinicId: string): UseCashRegistersReturn {
     }
   }, [clinicId]);
 
-  const createRegister = useCallback(async (register: Omit<CashRegister, 'id' | 'created_at' | 'updated_at'>) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const newRegister = await cashFlowService.createCashRegister(register);
-      
-      // Add the new register to the current list (optimistic update)
-      setRegisters(prev => [...prev, newRegister]);
-      
-      toast.success('Cash register created successfully');
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to create cash register';
-      setError(errorMessage);
-      toast.error(errorMessage);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const createRegister = useCallback(
+    async (register: Omit<CashRegister, "id" | "created_at" | "updated_at">) => {
+      try {
+        setLoading(true);
+        setError(null);
 
-  const updateRegister = useCallback(async (id: string, updates: Partial<CashRegister>) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // For now, we'll just refresh the list after update
-      // TODO: Implement updateCashRegister in service
-      await loadRegisters();
-      
-      toast.success('Cash register updated successfully');
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to update cash register';
-      setError(errorMessage);
-      toast.error(errorMessage);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [loadRegisters]);
+        const newRegister = await cashFlowService.createCashRegister(register);
+
+        // Add the new register to the current list (optimistic update)
+        setRegisters((prev) => [...prev, newRegister]);
+
+        toast.success("Cash register created successfully");
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Failed to create cash register";
+        setError(errorMessage);
+        toast.error(errorMessage);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [],
+  );
+
+  const updateRegister = useCallback(
+    async (id: string, updates: Partial<CashRegister>) => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // For now, we'll just refresh the list after update
+        // TODO: Implement updateCashRegister in service
+        await loadRegisters();
+
+        toast.success("Cash register updated successfully");
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Failed to update cash register";
+        setError(errorMessage);
+        toast.error(errorMessage);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [loadRegisters],
+  );
 
   const refreshRegisters = useCallback(async () => {
     await loadRegisters();
@@ -96,6 +104,6 @@ export function useCashRegisters(clinicId: string): UseCashRegistersReturn {
     error,
     createRegister,
     updateRegister,
-    refreshRegisters
+    refreshRegisters,
   };
 }

@@ -1,5 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
-import { addDays, addMinutes, format, parseISO } from "date-fns";
+﻿import type { createClient } from "@/lib/supabase/server";
+import type { addDays, addMinutes, format, parseISO } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
 
 // =============================================
@@ -65,10 +65,7 @@ export async function GET(request: NextRequest) {
     const serviceTypeId = searchParams.get("service_type_id");
 
     if (!professionalId || !clinicId || !startDateStr || !endDateStr) {
-      return NextResponse.json(
-        { error: "Missing required parameters" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Missing required parameters" }, { status: 400 });
     }
 
     const startDate = parseISO(startDateStr);
@@ -77,21 +74,12 @@ export async function GET(request: NextRequest) {
     const supabase = await createClient();
 
     // Get professional schedule and existing appointments
-    const [professionalSchedule, existingAppointments, serviceRules, holidays] =
-      await Promise.all([
-        getProfessionalSchedule(supabase, professionalId, clinicId),
-        getExistingAppointments(
-          supabase,
-          professionalId,
-          clinicId,
-          startDate,
-          endDate
-        ),
-        serviceTypeId
-          ? getServiceRules(supabase, serviceTypeId, clinicId)
-          : Promise.resolve(null),
-        getClinicHolidays(supabase, clinicId, startDate, endDate),
-      ]);
+    const [professionalSchedule, existingAppointments, serviceRules, holidays] = await Promise.all([
+      getProfessionalSchedule(supabase, professionalId, clinicId),
+      getExistingAppointments(supabase, professionalId, clinicId, startDate, endDate),
+      serviceTypeId ? getServiceRules(supabase, serviceTypeId, clinicId) : Promise.resolve(null),
+      getClinicHolidays(supabase, clinicId, startDate, endDate),
+    ]);
 
     // Generate availability data for each day
     const days: DayAvailability[] = [];
@@ -102,9 +90,7 @@ export async function GET(request: NextRequest) {
       currentDate = addDays(currentDate, 1)
     ) {
       const dayOfWeek = currentDate.getDay();
-      const daySchedule = professionalSchedule.find(
-        (s) => s.day_of_week === dayOfWeek
-      );
+      const daySchedule = professionalSchedule.find((s) => s.day_of_week === dayOfWeek);
 
       if (daySchedule && daySchedule.is_available) {
         const dayAvailability = await generateDayAvailability(
@@ -112,7 +98,7 @@ export async function GET(request: NextRequest) {
           daySchedule,
           existingAppointments,
           serviceRules,
-          holidays
+          holidays,
         );
         days.push(dayAvailability);
       } else {
@@ -141,17 +127,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(response);
   } catch (error) {
     console.error("Error in availability-heatmap API:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
 async function getProfessionalSchedule(
   supabase: any,
   professionalId: string,
-  clinicId: string
+  clinicId: string,
 ): Promise<ProfessionalSchedule[]> {
   const { data, error } = await supabase
     .from("professional_schedules")
@@ -172,7 +155,7 @@ async function getExistingAppointments(
   professionalId: string,
   clinicId: string,
   startDate: Date,
-  endDate: Date
+  endDate: Date,
 ) {
   const { data, error } = await supabase
     .from("appointments")
@@ -191,11 +174,7 @@ async function getExistingAppointments(
   return data || [];
 }
 
-async function getServiceRules(
-  supabase: any,
-  serviceTypeId: string,
-  clinicId: string
-) {
+async function getServiceRules(supabase: any, serviceTypeId: string, clinicId: string) {
   const { data, error } = await supabase
     .from("service_type_rules")
     .select("*")
@@ -212,12 +191,7 @@ async function getServiceRules(
   return data;
 }
 
-async function getClinicHolidays(
-  supabase: any,
-  clinicId: string,
-  startDate: Date,
-  endDate: Date
-) {
+async function getClinicHolidays(supabase: any, clinicId: string, startDate: Date, endDate: Date) {
   const { data, error } = await supabase
     .from("clinic_holidays")
     .select("*")
@@ -226,8 +200,8 @@ async function getClinicHolidays(
     .or(
       `start_date.lte.${format(endDate, "yyyy-MM-dd")},end_date.gte.${format(
         startDate,
-        "yyyy-MM-dd"
-      )}`
+        "yyyy-MM-dd",
+      )}`,
     );
 
   if (error) {
@@ -243,7 +217,7 @@ async function generateDayAvailability(
   schedule: any,
   appointments: any[],
   serviceRules: any,
-  holidays: any[]
+  holidays: any[],
 ): Promise<DayAvailability> {
   const slots: AvailabilitySlot[] = [];
   const intervalMinutes = 30; // 30-minute slots
@@ -259,11 +233,7 @@ async function generateDayAvailability(
   });
 
   // Generate time slots
-  for (
-    let currentTime = startTime;
-    currentTime < endTime;
-    currentTime += intervalMinutes
-  ) {
+  for (let currentTime = startTime; currentTime < endTime; currentTime += intervalMinutes) {
     const slotStart = new Date(date);
     slotStart.setHours(Math.floor(currentTime / 60), currentTime % 60, 0, 0);
 
@@ -275,7 +245,7 @@ async function generateDayAvailability(
       schedule,
       appointments,
       serviceRules,
-      dayHolidays
+      dayHolidays,
     );
 
     slots.push(slot);
@@ -284,12 +254,10 @@ async function generateDayAvailability(
   // Calculate summary
   const summary = {
     total_slots: slots.length,
-    available_slots: slots.filter(
-      (s) => s.available && s.conflicts.length === 0
-    ).length,
+    available_slots: slots.filter((s) => s.available && s.conflicts.length === 0).length,
     blocked_slots: slots.filter((s) => !s.available).length,
     warning_slots: slots.filter(
-      (s) => s.available && s.conflicts.some((c) => c.severity === "warning")
+      (s) => s.available && s.conflicts.some((c) => c.severity === "warning"),
     ).length,
   };
 
@@ -306,7 +274,7 @@ async function analyzeSlot(
   schedule: any,
   appointments: any[],
   serviceRules: any,
-  holidays: any[]
+  holidays: any[],
 ): Promise<AvailabilitySlot> {
   const conflicts = [];
   let available = true;
@@ -355,7 +323,7 @@ async function analyzeSlot(
     ) {
       conflicts.push({
         type: "break_time",
-        message: "Horário de intervalo",
+        message: "HorÃ¡rio de intervalo",
         severity: "error" as const,
       });
       available = false;
@@ -385,7 +353,7 @@ async function analyzeSlot(
   } else if (capacityUsed / maxCapacity >= 0.8) {
     conflicts.push({
       type: "capacity_high",
-      message: `Alta ocupação (${capacityUsed}/${maxCapacity})`,
+      message: `Alta ocupaÃ§Ã£o (${capacityUsed}/${maxCapacity})`,
       severity: "warning" as const,
     });
   }
@@ -433,9 +401,7 @@ async function analyzeSlot(
       if (bufferConflicts.length > 0) {
         conflicts.push({
           type: "buffer_conflict",
-          message: `Conflito com tempo de buffer (${
-            bufferBefore + bufferAfter
-          }min)`,
+          message: `Conflito com tempo de buffer (${bufferBefore + bufferAfter}min)`,
           severity: "warning" as const,
         });
       }

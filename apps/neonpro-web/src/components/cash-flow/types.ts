@@ -5,13 +5,26 @@ export interface CashFlowEntry {
   id: string;
   clinic_id: string;
   register_id: string;
-  transaction_type: 'receipt' | 'payment' | 'transfer' | 'adjustment' | 'opening_balance' | 'closing_balance';
-  category: 'service_payment' | 'product_sale' | 'expense' | 'tax' | 'fee' | 'refund' | 'other';
+  transaction_type:
+    | "receipt"
+    | "payment"
+    | "transfer"
+    | "adjustment"
+    | "opening_balance"
+    | "closing_balance";
+  category: "service_payment" | "product_sale" | "expense" | "tax" | "fee" | "refund" | "other";
   amount: number;
   currency: string;
   description: string;
   reference_number?: string;
-  payment_method: 'cash' | 'credit_card' | 'debit_card' | 'pix' | 'bank_transfer' | 'check' | 'other';
+  payment_method:
+    | "cash"
+    | "credit_card"
+    | "debit_card"
+    | "pix"
+    | "bank_transfer"
+    | "check"
+    | "other";
   related_appointment_id?: string;
   related_patient_id?: string;
   created_by: string;
@@ -55,7 +68,7 @@ export interface PaymentReconciliation {
   transaction_count: number;
   reconciled_count: number;
   discrepancy_count: number;
-  status: 'pending' | 'in_progress' | 'completed' | 'failed' | 'requires_review';
+  status: "pending" | "in_progress" | "completed" | "failed" | "requires_review";
   notes?: string;
   created_by: string;
   completed_by?: string;
@@ -68,8 +81,15 @@ export interface ReconciliationDiscrepancy {
   id: string;
   reconciliation_id: string;
   clinic_id: string;
-  discrepancy_type: 'missing_transaction' | 'amount_mismatch' | 'fee_mismatch' | 'duplicate_transaction' | 'incorrect_status' | 'settlement_mismatch' | 'currency_mismatch';
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  discrepancy_type:
+    | "missing_transaction"
+    | "amount_mismatch"
+    | "fee_mismatch"
+    | "duplicate_transaction"
+    | "incorrect_status"
+    | "settlement_mismatch"
+    | "currency_mismatch";
+  severity: "low" | "medium" | "high" | "critical";
   our_transaction_id?: string;
   gateway_transaction_id?: string;
   our_amount?: number;
@@ -77,7 +97,7 @@ export interface ReconciliationDiscrepancy {
   amount_difference?: number;
   description: string;
   detailed_comparison?: Record<string, any>;
-  status: 'open' | 'investigating' | 'resolved' | 'disputed' | 'escalated' | 'ignored';
+  status: "open" | "investigating" | "resolved" | "disputed" | "escalated" | "ignored";
   resolution_method?: string;
   resolution_notes?: string;
   resolved_by?: string;
@@ -123,9 +143,9 @@ export interface CashFlowFilters {
   dateFrom?: string;
   dateTo?: string;
   registerId?: string;
-  transactionType?: CashFlowEntry['transaction_type'];
-  category?: CashFlowEntry['category'];
-  paymentMethod?: CashFlowEntry['payment_method'];
+  transactionType?: CashFlowEntry["transaction_type"];
+  category?: CashFlowEntry["category"];
+  paymentMethod?: CashFlowEntry["payment_method"];
   isReconciled?: boolean;
   search?: string;
 }
@@ -144,7 +164,7 @@ export interface ReconciliationReport {
     expected: number;
     actual: number;
     difference: number;
-    status: 'ok' | 'warning' | 'error';
+    status: "ok" | "warning" | "error";
   }>;
   discrepancies: ReconciliationDiscrepancy[];
   recommendations: string[];

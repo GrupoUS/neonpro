@@ -1,7 +1,7 @@
 /**
  * NeonPro - Clinical Dashboard Enhanced (FASE 2)
  * Dashboard otimizado para fluxos clínicos específicos
- * 
+ *
  * Melhorias Fase 2:
  * - Interface orientada para personas médicas (Dr. Marina, Carla Santos)
  * - Workflows otimizados para eficiência clínica
@@ -10,15 +10,21 @@
  * - Performance otimizada para uso intensivo
  */
 
-'use client'
+"use client";
 
-import { useState, useEffect, useMemo } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Progress } from '@/components/ui/progress'
-import { 
+import type { useState, useEffect, useMemo } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Progress } from "@/components/ui/progress";
+import type {
   Calendar,
   Users,
   TrendingUp,
@@ -30,35 +36,35 @@ import {
   Brain,
   Target,
   DollarSign,
-  Phone
-} from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { useAccessibility } from '@/contexts/accessibility-context'
+  Phone,
+} from "lucide-react";
+import type { cn } from "@/lib/utils";
+import type { useAccessibility } from "@/contexts/accessibility-context";
 
 interface ClinicalMetrics {
-  todayAppointments: number
-  pendingConsultations: number
-  completedTreatments: number
-  revenue: number
-  patientSatisfaction: number
-  noShowRate: number
-  averageWaitTime: number
-  emergencyAlerts: number
+  todayAppointments: number;
+  pendingConsultations: number;
+  completedTreatments: number;
+  revenue: number;
+  patientSatisfaction: number;
+  noShowRate: number;
+  averageWaitTime: number;
+  emergencyAlerts: number;
 }
 
 interface PatientPriorityItem {
-  id: string
-  name: string
-  condition: string
-  priority: 'high' | 'medium' | 'low'
-  nextAppointment: string
-  riskScore: number
-  lastVisit: string
+  id: string;
+  name: string;
+  condition: string;
+  priority: "high" | "medium" | "low";
+  nextAppointment: string;
+  riskScore: number;
+  lastVisit: string;
 }
 
 interface ClinicalDashboardProps {
-  className?: string
-  userRole: 'doctor' | 'coordinator' | 'admin'
+  className?: string;
+  userRole: "doctor" | "coordinator" | "admin";
 }
 
 export function ClinicalDashboardEnhanced({ className, userRole }: ClinicalDashboardProps) {
@@ -70,99 +76,120 @@ export function ClinicalDashboardEnhanced({ className, userRole }: ClinicalDashb
     patientSatisfaction: 4.8,
     noShowRate: 12,
     averageWaitTime: 15,
-    emergencyAlerts: 2
-  })
+    emergencyAlerts: 2,
+  });
 
   const [priorityPatients, setPriorityPatients] = useState<PatientPriorityItem[]>([
     {
-      id: '1',
-      name: 'Ana Costa',
-      condition: 'Pós-cirúrgico - Acompanhamento',
-      priority: 'high',
-      nextAppointment: '14:30',
+      id: "1",
+      name: "Ana Costa",
+      condition: "Pós-cirúrgico - Acompanhamento",
+      priority: "high",
+      nextAppointment: "14:30",
       riskScore: 85,
-      lastVisit: '2 dias atrás'
+      lastVisit: "2 dias atrás",
     },
     {
-      id: '2',
-      name: 'Maria Silva',
-      condition: 'Tratamento anti-idade',
-      priority: 'medium',
-      nextAppointment: '16:00',
+      id: "2",
+      name: "Maria Silva",
+      condition: "Tratamento anti-idade",
+      priority: "medium",
+      nextAppointment: "16:00",
       riskScore: 45,
-      lastVisit: '1 semana atrás'
+      lastVisit: "1 semana atrás",
     },
     {
-      id: '3',
-      name: 'João Santos',
-      condition: 'Consulta inicial',
-      priority: 'low',
-      nextAppointment: '17:15',
+      id: "3",
+      name: "João Santos",
+      condition: "Consulta inicial",
+      priority: "low",
+      nextAppointment: "17:15",
       riskScore: 20,
-      lastVisit: 'Novo paciente'
-    }
-  ])
+      lastVisit: "Novo paciente",
+    },
+  ]);
 
-  const { announceToScreenReader } = useAccessibility()
-  const [activeTab, setActiveTab] = useState('overview')
+  const { announceToScreenReader } = useAccessibility();
+  const [activeTab, setActiveTab] = useState("overview");
 
   // Memoized calculations for performance
   const calculatedMetrics = useMemo(() => {
-    const occupancyRate = Math.round((metrics.completedTreatments / metrics.todayAppointments) * 100)
-    const satisfactionGrade = metrics.patientSatisfaction >= 4.5 ? 'Excelente' : 
-                             metrics.patientSatisfaction >= 4.0 ? 'Bom' : 'Regular'
-    const revenueGrowth = '+12%' // Mock data
-    
-    return { occupancyRate, satisfactionGrade, revenueGrowth }
-  }, [metrics])
+    const occupancyRate = Math.round(
+      (metrics.completedTreatments / metrics.todayAppointments) * 100,
+    );
+    const satisfactionGrade =
+      metrics.patientSatisfaction >= 4.5
+        ? "Excelente"
+        : metrics.patientSatisfaction >= 4.0
+          ? "Bom"
+          : "Regular";
+    const revenueGrowth = "+12%"; // Mock data
+
+    return { occupancyRate, satisfactionGrade, revenueGrowth };
+  }, [metrics]);
 
   // Announce important updates for screen readers
   useEffect(() => {
     if (metrics.emergencyAlerts > 0) {
-      announceToScreenReader(`Atenção: ${metrics.emergencyAlerts} alerta(s) médico(s) requer(em) atenção imediata`, 'assertive')
+      announceToScreenReader(
+        `Atenção: ${metrics.emergencyAlerts} alerta(s) médico(s) requer(em) atenção imediata`,
+        "assertive",
+      );
     }
-  }, [metrics.emergencyAlerts, announceToScreenReader])
+  }, [metrics.emergencyAlerts, announceToScreenReader]);
 
   const handleTabChange = (tab: string) => {
-    setActiveTab(tab)
-    announceToScreenReader(`Navegou para aba ${tab}`, 'polite')
-  }
+    setActiveTab(tab);
+    announceToScreenReader(`Navegou para aba ${tab}`, "polite");
+  };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'high': return 'bg-red-100 text-red-800 border-red-200'
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200'
-      case 'low': return 'bg-green-100 text-green-800 border-green-200'
-      default: return 'bg-gray-100 text-gray-800 border-gray-200'
+      case "high":
+        return "bg-red-100 text-red-800 border-red-200";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "low":
+        return "bg-green-100 text-green-800 border-green-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
-  }
+  };
 
   const getPriorityIcon = (priority: string) => {
     switch (priority) {
-      case 'high': return <AlertTriangle className="h-4 w-4" />
-      case 'medium': return <Clock className="h-4 w-4" />
-      case 'low': return <CheckCircle2 className="h-4 w-4" />
-      default: return null
+      case "high":
+        return <AlertTriangle className="h-4 w-4" />;
+      case "medium":
+        return <Clock className="h-4 w-4" />;
+      case "low":
+        return <CheckCircle2 className="h-4 w-4" />;
+      default:
+        return null;
     }
-  }
+  };
 
   return (
-    <div className={cn('space-y-6 p-6', className)}>
+    <div className={cn("space-y-6 p-6", className)}>
       {/* Header com contexto personalizado por role */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
-            {userRole === 'doctor' ? 'Painel Clínico' : 
-             userRole === 'coordinator' ? 'Central de Coordenação' : 
-             'Dashboard Administrativo'}
+            {userRole === "doctor"
+              ? "Painel Clínico"
+              : userRole === "coordinator"
+                ? "Central de Coordenação"
+                : "Dashboard Administrativo"}
           </h1>
           <p className="text-muted-foreground mt-1">
-            {userRole === 'doctor' ? 'Visão completa dos seus pacientes e tratamentos' :
-             userRole === 'coordinator' ? 'Coordenação eficiente do fluxo de pacientes' :
-             'Controle administrativo e métricas gerais'}
+            {userRole === "doctor"
+              ? "Visão completa dos seus pacientes e tratamentos"
+              : userRole === "coordinator"
+                ? "Coordenação eficiente do fluxo de pacientes"
+                : "Controle administrativo e métricas gerais"}
           </p>
         </div>
-        
+
         {/* Alertas de emergência */}
         {metrics.emergencyAlerts > 0 && (
           <div className="flex items-center space-x-2">
@@ -216,9 +243,7 @@ export function ClinicalDashboardEnhanced({ className, userRole }: ClinicalDashb
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{metrics.patientSatisfaction}/5</div>
-            <p className="text-xs text-muted-foreground">
-              {calculatedMetrics.satisfactionGrade}
-            </p>
+            <p className="text-xs text-muted-foreground">{calculatedMetrics.satisfactionGrade}</p>
           </CardContent>
         </Card>
 
@@ -247,7 +272,6 @@ export function ClinicalDashboardEnhanced({ className, userRole }: ClinicalDashb
 
         <TabsContent value="overview" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
-            
             {/* Pacientes Prioritários */}
             <Card>
               <CardHeader>
@@ -255,9 +279,7 @@ export function ClinicalDashboardEnhanced({ className, userRole }: ClinicalDashb
                   <Target className="h-5 w-5 mr-2" />
                   Pacientes Prioritários
                 </CardTitle>
-                <CardDescription>
-                  Baseado em risco clínico e urgência
-                </CardDescription>
+                <CardDescription>Baseado em risco clínico e urgência</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 {priorityPatients.map((patient) => (
@@ -266,8 +288,8 @@ export function ClinicalDashboardEnhanced({ className, userRole }: ClinicalDashb
                     className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors"
                   >
                     <div className="flex items-center space-x-3">
-                      <Badge 
-                        variant="outline" 
+                      <Badge
+                        variant="outline"
                         className={cn("text-xs", getPriorityColor(patient.priority))}
                       >
                         {getPriorityIcon(patient.priority)}
@@ -280,9 +302,7 @@ export function ClinicalDashboardEnhanced({ className, userRole }: ClinicalDashb
                     </div>
                     <div className="text-right">
                       <p className="text-sm font-medium">{patient.nextAppointment}</p>
-                      <p className="text-xs text-muted-foreground">
-                        Risco: {patient.riskScore}%
-                      </p>
+                      <p className="text-xs text-muted-foreground">Risco: {patient.riskScore}%</p>
                     </div>
                   </div>
                 ))}
@@ -296,9 +316,7 @@ export function ClinicalDashboardEnhanced({ className, userRole }: ClinicalDashb
             <Card>
               <CardHeader>
                 <CardTitle>Ações Rápidas</CardTitle>
-                <CardDescription>
-                  Fluxos otimizados para máxima eficiência
-                </CardDescription>
+                <CardDescription>Fluxos otimizados para máxima eficiência</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button variant="default" className="w-full justify-start" size="sm">
@@ -320,16 +338,13 @@ export function ClinicalDashboardEnhanced({ className, userRole }: ClinicalDashb
               </CardContent>
             </Card>
           </div>
-
         </TabsContent>
 
         <TabsContent value="patients" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle>Lista de Pacientes do Dia</CardTitle>
-              <CardDescription>
-                Pacientes agendados com status em tempo real
-              </CardDescription>
+              <CardDescription>Pacientes agendados com status em tempo real</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8 text-muted-foreground">
@@ -348,9 +363,7 @@ export function ClinicalDashboardEnhanced({ className, userRole }: ClinicalDashb
                 <Brain className="h-5 w-5 mr-2" />
                 Insights de IA
               </CardTitle>
-              <CardDescription>
-                Análises preditivas e recomendações personalizadas
-              </CardDescription>
+              <CardDescription>Análises preditivas e recomendações personalizadas</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8 text-muted-foreground">
@@ -379,8 +392,7 @@ export function ClinicalDashboardEnhanced({ className, userRole }: ClinicalDashb
             </CardContent>
           </Card>
         </TabsContent>
-
       </Tabs>
     </div>
-  )
+  );
 }

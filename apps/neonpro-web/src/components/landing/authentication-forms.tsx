@@ -1,17 +1,17 @@
 // components/landing/authentication-forms.tsx
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { 
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type {
   UserCheck,
   Heart,
   Stethoscope,
   Shield,
   Clock,
   Smartphone,
-  ArrowRight
+  ArrowRight,
 } from "lucide-react";
 
 interface AuthenticationFormsProps {
@@ -19,41 +19,44 @@ interface AuthenticationFormsProps {
   onPatientLogin: () => void;
 }
 
-export function AuthenticationForms({ onProfessionalLogin, onPatientLogin }: AuthenticationFormsProps) {
+export function AuthenticationForms({
+  onProfessionalLogin,
+  onPatientLogin,
+}: AuthenticationFormsProps) {
   const professionalFeatures = [
     {
       icon: Stethoscope,
       title: "Dashboard Médico Completo",
-      description: "Controle total da sua prática clínica"
+      description: "Controle total da sua prática clínica",
     },
     {
       icon: Clock,
       title: "Agenda Inteligente",
-      description: "IA otimiza automaticamente seus horários"
+      description: "IA otimiza automaticamente seus horários",
     },
     {
       icon: Shield,
       title: "Compliance Automático",
-      description: "LGPD, ANVISA e CFM sempre em dia"
-    }
+      description: "LGPD, ANVISA e CFM sempre em dia",
+    },
   ];
 
   const patientFeatures = [
     {
       icon: Heart,
       title: "Cuidado Personalizado",
-      description: "Acompanhamento completo do seu bem-estar"
+      description: "Acompanhamento completo do seu bem-estar",
     },
     {
       icon: Smartphone,
       title: "Acesso Mobile",
-      description: "Gerencie tudo pelo seu smartphone"
+      description: "Gerencie tudo pelo seu smartphone",
     },
     {
       icon: UserCheck,
       title: "Dados Seguros",
-      description: "Máxima proteção das suas informações"
-    }
+      description: "Máxima proteção das suas informações",
+    },
   ];
 
   return (
@@ -82,15 +85,12 @@ export function AuthenticationForms({ onProfessionalLogin, onPatientLogin }: Aut
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20">
                   <Stethoscope className="h-6 w-6" />
                 </div>
-                <Badge className="bg-white/20 text-white border-white/30">
-                  Profissionais
-                </Badge>
+                <Badge className="bg-white/20 text-white border-white/30">Profissionais</Badge>
               </div>
-              <CardTitle className="text-2xl font-bold mb-2">
-                Acesso Profissional
-              </CardTitle>
+              <CardTitle className="text-2xl font-bold mb-2">Acesso Profissional</CardTitle>
               <p className="text-sky-100 leading-relaxed">
-                Dashboard completo para médicos, enfermeiros e gestores de clínicas estéticas e de beleza
+                Dashboard completo para médicos, enfermeiros e gestores de clínicas estéticas e de
+                beleza
               </p>
             </div>
 
@@ -172,13 +172,9 @@ export function AuthenticationForms({ onProfessionalLogin, onPatientLogin }: Aut
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20">
                   <Heart className="h-6 w-6" />
                 </div>
-                <Badge className="bg-white/20 text-white border-white/30">
-                  Pacientes
-                </Badge>
+                <Badge className="bg-white/20 text-white border-white/30">Pacientes</Badge>
               </div>
-              <CardTitle className="text-2xl font-bold mb-2">
-                Portal do Paciente
-              </CardTitle>
+              <CardTitle className="text-2xl font-bold mb-2">Portal do Paciente</CardTitle>
               <p className="text-pink-100 leading-relaxed">
                 Acompanhe seus tratamentos, consultas e evolução de forma simples e segura
               </p>
@@ -265,8 +261,9 @@ export function AuthenticationForms({ onProfessionalLogin, onPatientLogin }: Aut
               </h3>
             </div>
             <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
-              Todos os dados são protegidos com criptografia de nível bancário e em total conformidade 
-              com a LGPD, ANVISA e regulamentações do CFM para máxima segurança das informações de saúde.
+              Todos os dados são protegidos com criptografia de nível bancário e em total
+              conformidade com a LGPD, ANVISA e regulamentações do CFM para máxima segurança das
+              informações de saúde.
             </p>
             <div className="flex flex-wrap justify-center gap-3">
               <Badge variant="secondary" className="text-xs">

@@ -1,20 +1,20 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Input } from "@/components/ui/input";
 import LoadingSpinner from "@/components/ui/loading-spinner";
-import {
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import {
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
   AlertCircle,
   Building,
   Calendar,
@@ -28,19 +28,13 @@ import {
   Shield,
   User,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import type { useEffect, useState } from "react";
 
 // Tipos de documentos brasileiros para clínicas estéticas
 interface PatientDocument {
   id: string;
   title: string;
-  type:
-    | "receipt"
-    | "medical_report"
-    | "consent_form"
-    | "prescription"
-    | "invoice"
-    | "certificate";
+  type: "receipt" | "medical_report" | "consent_form" | "prescription" | "invoice" | "certificate";
   category: "financial" | "medical" | "legal" | "administrative";
   date: Date;
   size: string;
@@ -159,8 +153,7 @@ export default function DocumentCenter() {
       doc.doctor?.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesType = filterType === "all" || doc.type === filterType;
-    const matchesCategory =
-      filterCategory === "all" || doc.category === filterCategory;
+    const matchesCategory = filterCategory === "all" || doc.category === filterCategory;
 
     return matchesSearch && matchesType && matchesCategory;
   });
@@ -175,10 +168,8 @@ export default function DocumentCenter() {
     // Incrementar contador de acesso (compliance LGPD)
     setDocuments((prev) =>
       prev.map((doc) =>
-        doc.id === document.id
-          ? { ...doc, accessCount: doc.accessCount + 1 }
-          : doc
-      )
+        doc.id === document.id ? { ...doc, accessCount: doc.accessCount + 1 } : doc,
+      ),
     );
 
     setDownloading(null);
@@ -223,10 +214,7 @@ export default function DocumentCenter() {
         );
       case "processing":
         return (
-          <Badge
-            variant="outline"
-            className="text-yellow-700 border-yellow-300"
-          >
+          <Badge variant="outline" className="text-yellow-700 border-yellow-300">
             Processando
           </Badge>
         );
@@ -238,10 +226,7 @@ export default function DocumentCenter() {
         );
       case "pending_signature":
         return (
-          <Badge
-            variant="outline"
-            className="text-orange-700 border-orange-300"
-          >
+          <Badge variant="outline" className="text-orange-700 border-orange-300">
             Aguardando Assinatura
           </Badge>
         );
@@ -254,9 +239,7 @@ export default function DocumentCenter() {
     return (
       <div className="flex items-center justify-center py-12">
         <LoadingSpinner size="lg" />
-        <span className="ml-3 text-gray-600">
-          Carregando seus documentos...
-        </span>
+        <span className="ml-3 text-gray-600">Carregando seus documentos...</span>
       </div>
     );
   }
@@ -267,13 +250,11 @@ export default function DocumentCenter() {
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border">
         <div className="flex items-center gap-3 mb-4">
           <FileText className="h-6 w-6 text-blue-600" />
-          <h1 className="text-2xl font-semibold text-gray-900">
-            Central de Documentos
-          </h1>
+          <h1 className="text-2xl font-semibold text-gray-900">Central de Documentos</h1>
         </div>
         <p className="text-gray-600 mb-4">
-          Acesse com segurança todos os seus documentos médicos e financeiros.
-          Todos os downloads são registrados para conformidade com a LGPD.
+          Acesse com segurança todos os seus documentos médicos e financeiros. Todos os downloads
+          são registrados para conformidade com a LGPD.
         </p>
 
         {/* Informações de Segurança LGPD */}
@@ -281,16 +262,12 @@ export default function DocumentCenter() {
           <div className="flex items-start gap-3">
             <Shield className="h-5 w-5 text-blue-600 mt-0.5" />
             <div className="text-sm">
-              <p className="text-gray-700 font-medium mb-1">
-                Segurança e Privacidade
-              </p>
+              <p className="text-gray-700 font-medium mb-1">Segurança e Privacidade</p>
               <ul className="text-gray-600 space-y-1">
                 <li>• Todos os documentos são criptografados</li>
                 <li>• Acessos são registrados conforme LGPD</li>
                 <li>• Documentos médicos têm prazo de validade</li>
-                <li>
-                  • Você pode solicitar exclusão de dados a qualquer momento
-                </li>
+                <li>• Você pode solicitar exclusão de dados a qualquer momento</li>
               </ul>
             </div>
           </div>
@@ -322,12 +299,8 @@ export default function DocumentCenter() {
               <SelectContent>
                 <SelectItem value="all">Todos os tipos</SelectItem>
                 <SelectItem value="receipt">Recibos</SelectItem>
-                <SelectItem value="medical_report">
-                  Relatórios Médicos
-                </SelectItem>
-                <SelectItem value="consent_form">
-                  Termos de Consentimento
-                </SelectItem>
+                <SelectItem value="medical_report">Relatórios Médicos</SelectItem>
+                <SelectItem value="consent_form">Termos de Consentimento</SelectItem>
                 <SelectItem value="prescription">Prescrições</SelectItem>
                 <SelectItem value="invoice">Faturas</SelectItem>
                 <SelectItem value="certificate">Certificados</SelectItem>
@@ -368,10 +341,7 @@ export default function DocumentCenter() {
           </Card>
         ) : (
           filteredDocuments.map((document) => (
-            <Card
-              key={document.id}
-              className="hover:shadow-md transition-shadow"
-            >
+            <Card key={document.id} className="hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   {/* Informações do Documento */}
@@ -379,9 +349,7 @@ export default function DocumentCenter() {
                     <div className="flex items-start gap-3 mb-3">
                       {getDocumentIcon(document.type)}
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900 mb-1">
-                          {document.title}
-                        </h3>
+                        <h3 className="font-semibold text-gray-900 mb-1">{document.title}</h3>
                         <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600">
                           <div className="flex items-center gap-1">
                             <Calendar className="h-4 w-4" />
@@ -415,28 +383,19 @@ export default function DocumentCenter() {
                     <div className="flex flex-wrap items-center gap-2 mb-3">
                       {getStatusBadge(document.status)}
                       {document.encrypted && (
-                        <Badge
-                          variant="outline"
-                          className="text-green-700 border-green-300"
-                        >
+                        <Badge variant="outline" className="text-green-700 border-green-300">
                           <Shield className="h-3 w-3 mr-1" />
                           Criptografado
                         </Badge>
                       )}
                       {document.lgpdCompliant && (
-                        <Badge
-                          variant="outline"
-                          className="text-blue-700 border-blue-300"
-                        >
+                        <Badge variant="outline" className="text-blue-700 border-blue-300">
                           <CheckCircle className="h-3 w-3 mr-1" />
                           LGPD
                         </Badge>
                       )}
                       {document.expiryDate && (
-                        <Badge
-                          variant="outline"
-                          className="text-orange-700 border-orange-300"
-                        >
+                        <Badge variant="outline" className="text-orange-700 border-orange-300">
                           <Clock className="h-3 w-3 mr-1" />
                           Expira em {format(document.expiryDate, "dd/MM/yyyy")}
                         </Badge>
@@ -444,21 +403,16 @@ export default function DocumentCenter() {
                     </div>{" "}
                     {/* Informações de Acesso LGPD */}
                     <div className="text-xs text-gray-500 mb-4">
-                      Acessado {document.accessCount}{" "}
-                      {document.accessCount === 1 ? "vez" : "vezes"} • Último
-                      acesso registrado conforme LGPD
+                      Acessado {document.accessCount} {document.accessCount === 1 ? "vez" : "vezes"}{" "}
+                      • Último acesso registrado conforme LGPD
                     </div>
                     {/* Tratamento Relacionado */}
                     {document.treatment && (
                       <div className="bg-gray-50 rounded-lg p-3 mb-4">
                         <div className="flex items-center gap-2 text-sm">
                           <Building className="h-4 w-4 text-gray-600" />
-                          <span className="font-medium text-gray-700">
-                            Tratamento:
-                          </span>
-                          <span className="text-gray-600">
-                            {document.treatment}
-                          </span>
+                          <span className="font-medium text-gray-700">Tratamento:</span>
+                          <span className="text-gray-600">{document.treatment}</span>
                         </div>
                       </div>
                     )}
@@ -481,10 +435,7 @@ export default function DocumentCenter() {
                     <Button
                       size="sm"
                       onClick={() => handleDownload(document)}
-                      disabled={
-                        downloading === document.id ||
-                        document.status === "processing"
-                      }
+                      disabled={downloading === document.id || document.status === "processing"}
                       className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
                     >
                       {downloading === document.id ? (
@@ -508,12 +459,10 @@ export default function DocumentCenter() {
                     <div className="flex items-start gap-3">
                       <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
                       <div className="text-sm">
-                        <p className="font-medium text-yellow-800 mb-1">
-                          Documento Protegido
-                        </p>
+                        <p className="font-medium text-yellow-800 mb-1">Documento Protegido</p>
                         <p className="text-yellow-700">
-                          Este documento requer senha para acesso. A senha foi
-                          enviada por SMS/email.
+                          Este documento requer senha para acesso. A senha foi enviada por
+                          SMS/email.
                         </p>
                       </div>
                     </div>
@@ -521,18 +470,14 @@ export default function DocumentCenter() {
                 )}
 
                 {document.expiryDate &&
-                  document.expiryDate <
-                    new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) && (
+                  document.expiryDate < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) && (
                     <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
                       <div className="flex items-start gap-3">
                         <Clock className="h-5 w-5 text-orange-600 mt-0.5" />
                         <div className="text-sm">
-                          <p className="font-medium text-orange-800 mb-1">
-                            Documento Expirando
-                          </p>
+                          <p className="font-medium text-orange-800 mb-1">Documento Expirando</p>
                           <p className="text-orange-700">
-                            Este documento expira em breve. Faça o download se
-                            necessário.
+                            Este documento expira em breve. Faça o download se necessário.
                           </p>
                         </div>
                       </div>
@@ -549,43 +494,29 @@ export default function DocumentCenter() {
           <div className="flex items-start gap-3">
             <Shield className="h-6 w-6 text-blue-600 mt-0.5" />
             <div>
-              <h3 className="font-semibold text-blue-900 mb-2">
-                Seus Direitos LGPD
-              </h3>
+              <h3 className="font-semibold text-blue-900 mb-2">Seus Direitos LGPD</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800">
                 <div>
                   <p className="font-medium mb-1">Acesso aos Dados</p>
-                  <p>
-                    Você pode acessar todos os seus documentos a qualquer
-                    momento.
-                  </p>
+                  <p>Você pode acessar todos os seus documentos a qualquer momento.</p>
                 </div>
                 <div>
                   <p className="font-medium mb-1">Correção de Dados</p>
-                  <p>
-                    Solicite correção de informações incorretas em seus
-                    documentos.
-                  </p>
+                  <p>Solicite correção de informações incorretas em seus documentos.</p>
                 </div>
                 <div>
                   <p className="font-medium mb-1">Exclusão de Dados</p>
-                  <p>
-                    Solicite a exclusão de documentos quando permitido por lei.
-                  </p>
+                  <p>Solicite a exclusão de documentos quando permitido por lei.</p>
                 </div>
                 <div>
                   <p className="font-medium mb-1">Portabilidade</p>
-                  <p>
-                    Solicite o envio de seus dados para outro prestador de
-                    serviços.
-                  </p>
+                  <p>Solicite o envio de seus dados para outro prestador de serviços.</p>
                 </div>
               </div>
               <div className="mt-4 pt-4 border-t border-blue-200">
                 <p className="text-sm text-blue-700">
-                  Para exercer seus direitos LGPD, entre em contato através da
-                  página de configurações ou envie um email para
-                  privacidade@neonpro.com.br
+                  Para exercer seus direitos LGPD, entre em contato através da página de
+                  configurações ou envie um email para privacidade@neonpro.com.br
                 </p>
               </div>
             </div>

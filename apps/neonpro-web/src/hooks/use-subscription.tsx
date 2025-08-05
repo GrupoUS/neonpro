@@ -1,8 +1,8 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { User } from '@supabase/auth-helpers-nextjs';
+import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import type { User } from "@supabase/auth-helpers-nextjs";
 
 interface SubscriptionData {
   id: string;
@@ -21,9 +21,7 @@ interface SubscriptionData {
 }
 
 export function useSubscription() {
-  const [subscription, setSubscription] = useState<SubscriptionData | null>(
-    null
-  );
+  const [subscription, setSubscription] = useState<SubscriptionData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -110,10 +108,10 @@ interface SubscriptionContextType {
 
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
 
-export function SubscriptionProvider({ 
-  children, 
-  user 
-}: { 
+export function SubscriptionProvider({
+  children,
+  user,
+}: {
   children: React.ReactNode;
   user: User | null;
 }) {
@@ -131,7 +129,7 @@ export function SubscriptionProvider({
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await fetch("/api/subscription/current");
       if (response.ok) {
         const data = await response.json();
@@ -154,12 +152,12 @@ export function SubscriptionProvider({
   }, [user?.id]);
 
   return (
-    <SubscriptionContext.Provider 
-      value={{ 
-        subscription, 
-        loading, 
-        error, 
-        refreshSubscription 
+    <SubscriptionContext.Provider
+      value={{
+        subscription,
+        loading,
+        error,
+        refreshSubscription,
       }}
     >
       {children}
@@ -170,7 +168,7 @@ export function SubscriptionProvider({
 export function useSubscriptionContext() {
   const context = useContext(SubscriptionContext);
   if (context === undefined) {
-    throw new Error('useSubscriptionContext must be used within a SubscriptionProvider');
+    throw new Error("useSubscriptionContext must be used within a SubscriptionProvider");
   }
   return context;
 }

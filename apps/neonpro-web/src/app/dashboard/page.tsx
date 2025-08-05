@@ -1,26 +1,32 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Chart } from "@/components/ui/chart";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { 
-  Calendar, 
-  Users, 
-  DollarSign, 
-  Activity, 
-  TrendingUp, 
-  Clock, 
+import type { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Progress } from "@/components/ui/progress";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Chart } from "@/components/ui/chart";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { LoadingSpinner } from "@/components/ui/loading-spinner";
+import type {
+  Calendar,
+  Users,
+  DollarSign,
+  Activity,
+  TrendingUp,
+  Clock,
   AlertCircle,
   Plus,
   Eye,
   FileText,
-  Settings
+  Settings,
 } from "lucide-react";
 
 interface DashboardStats {
@@ -55,7 +61,7 @@ export default function DashboardPage() {
     monthlyRevenue: 0,
     activeConsultations: 0,
     pendingResults: 0,
-    cancellationRate: 0
+    cancellationRate: 0,
   });
 
   const [todayAppointments, setTodayAppointments] = useState<Appointment[]>([]);
@@ -65,17 +71,17 @@ export default function DashboardPage() {
     // Simulate data loading
     const loadDashboardData = async () => {
       setIsLoading(true);
-      
+
       // Simulate API calls
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       setStats({
         totalPatients: 1247,
         appointmentsToday: 12,
         monthlyRevenue: 85420,
         activeConsultations: 3,
         pendingResults: 8,
-        cancellationRate: 2.3
+        cancellationRate: 2.3,
       });
 
       setTodayAppointments([
@@ -85,15 +91,15 @@ export default function DashboardPage() {
           time: "09:00",
           type: "Consulta Geral",
           status: "confirmed",
-          avatar: "/placeholder-avatar.jpg"
+          avatar: "/placeholder-avatar.jpg",
         },
         {
-          id: "2", 
+          id: "2",
           patientName: "Carlos Rodrigues",
           time: "10:30",
           type: "Retorno",
           status: "completed",
-          avatar: "/placeholder-avatar.jpg"
+          avatar: "/placeholder-avatar.jpg",
         },
         {
           id: "3",
@@ -101,7 +107,7 @@ export default function DashboardPage() {
           time: "14:00",
           type: "Exames",
           status: "pending",
-          avatar: "/placeholder-avatar.jpg"
+          avatar: "/placeholder-avatar.jpg",
         },
         {
           id: "4",
@@ -109,8 +115,8 @@ export default function DashboardPage() {
           time: "15:30",
           type: "Consulta Especializada",
           status: "confirmed",
-          avatar: "/placeholder-avatar.jpg"
-        }
+          avatar: "/placeholder-avatar.jpg",
+        },
       ]);
 
       setRevenueData([
@@ -118,7 +124,7 @@ export default function DashboardPage() {
         { month: "Fev", revenue: 68900, appointments: 142 },
         { month: "Mar", revenue: 79200, appointments: 168 },
         { month: "Abr", revenue: 83100, appointments: 174 },
-        { month: "Mai", revenue: 85420, appointments: 181 }
+        { month: "Mai", revenue: 85420, appointments: 181 },
       ]);
 
       setIsLoading(false);
@@ -129,21 +135,31 @@ export default function DashboardPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "confirmed": return "bg-green-100 text-green-800 border-green-200";
-      case "pending": return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case "completed": return "bg-blue-100 text-blue-800 border-blue-200";
-      case "cancelled": return "bg-red-100 text-red-800 border-red-200";
-      default: return "bg-gray-100 text-gray-800 border-gray-200";
+      case "confirmed":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "completed":
+        return "bg-blue-100 text-blue-800 border-blue-200";
+      case "cancelled":
+        return "bg-red-100 text-red-800 border-red-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case "confirmed": return "Confirmado";
-      case "pending": return "Pendente";
-      case "completed": return "Concluído";
-      case "cancelled": return "Cancelado";
-      default: return "Desconhecido";
+      case "confirmed":
+        return "Confirmado";
+      case "pending":
+        return "Pendente";
+      case "completed":
+        return "Concluído";
+      case "cancelled":
+        return "Cancelado";
+      default:
+        return "Desconhecido";
     }
   };
 
@@ -156,17 +172,14 @@ export default function DashboardPage() {
         </div>
       </div>
     );
-  }  return (
+  }
+  return (
     <main className="flex-1 space-y-6 p-6 max-w-7xl mx-auto">
       {/* Header Section */}
       <div className="flex flex-col space-y-2 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-            Dashboard NEONPRO
-          </h1>
-          <p className="text-muted-foreground">
-            Visão geral da sua clínica médica
-          </p>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Dashboard NEONPRO</h1>
+          <p className="text-muted-foreground">Visão geral da sua clínica médica</p>
         </div>
         <div className="flex items-center space-x-2">
           <Button variant="outline" size="sm">
@@ -216,9 +229,7 @@ export default function DashboardPage() {
             <DollarSign className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              R$ {stats.monthlyRevenue.toLocaleString()}
-            </div>
+            <div className="text-2xl font-bold">R$ {stats.monthlyRevenue.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
               <TrendingUp className="w-3 h-3 inline mr-1" />
               +8.2% em relação ao mês anterior
@@ -250,7 +261,7 @@ export default function DashboardPage() {
               Consultas de Hoje
             </CardTitle>
             <CardDescription>
-              Agenda do dia - {new Date().toLocaleDateString('pt-BR')}
+              Agenda do dia - {new Date().toLocaleDateString("pt-BR")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -269,7 +280,10 @@ export default function DashboardPage() {
                     <Avatar>
                       <AvatarImage src={appointment.avatar} />
                       <AvatarFallback>
-                        {appointment.patientName.split(' ').map(n => n[0]).join('')}
+                        {appointment.patientName
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
                       </AvatarFallback>
                     </Avatar>
                     <div>
@@ -280,10 +294,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Badge 
-                      variant="outline" 
-                      className={getStatusColor(appointment.status)}
-                    >
+                    <Badge variant="outline" className={getStatusColor(appointment.status)}>
                       {getStatusText(appointment.status)}
                     </Badge>
                     <Button variant="ghost" size="sm">
@@ -294,15 +305,14 @@ export default function DashboardPage() {
               ))
             )}
           </CardContent>
-        </Card>        {/* Quick Actions & Analytics */}
+        </Card>{" "}
+        {/* Quick Actions & Analytics */}
         <div className="space-y-6">
           {/* Quick Actions */}
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Ações Rápidas</CardTitle>
-              <CardDescription>
-                Acesso rápido às principais funcionalidades
-              </CardDescription>
+              <CardDescription>Acesso rápido às principais funcionalidades</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <Button className="w-full justify-start" variant="outline">
@@ -332,9 +342,7 @@ export default function DashboardPage() {
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Métricas de Performance</CardTitle>
-              <CardDescription>
-                Indicadores de performance da clínica
-              </CardDescription>
+              <CardDescription>Indicadores de performance da clínica</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
@@ -344,7 +352,7 @@ export default function DashboardPage() {
                 </div>
                 <Progress value={87} className="h-2" />
               </div>
-              
+
               <div>
                 <div className="flex justify-between text-sm mb-2">
                   <span>Satisfação do Paciente</span>
@@ -352,7 +360,7 @@ export default function DashboardPage() {
                 </div>
                 <Progress value={94} className="h-2" />
               </div>
-              
+
               <div>
                 <div className="flex justify-between text-sm mb-2">
                   <span>Tempo Médio de Espera</span>
@@ -360,7 +368,7 @@ export default function DashboardPage() {
                 </div>
                 <Progress value={78} className="h-2" />
               </div>
-              
+
               <div>
                 <div className="flex justify-between text-sm mb-2">
                   <span>Eficiência Operacional</span>
@@ -390,7 +398,7 @@ export default function DashboardPage() {
               <TabsTrigger value="revenue">Receita</TabsTrigger>
               <TabsTrigger value="appointments">Consultas</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="revenue" className="space-y-4">
               <div className="h-[300px] mt-4">
                 {/* Placeholder for revenue chart */}
@@ -405,7 +413,7 @@ export default function DashboardPage() {
                 </div>
               </div>
             </TabsContent>
-            
+
             <TabsContent value="appointments" className="space-y-4">
               <div className="h-[300px] mt-4">
                 {/* Placeholder for appointments chart */}
@@ -413,9 +421,7 @@ export default function DashboardPage() {
                   <div className="text-center">
                     <Activity className="w-12 h-12 mx-auto mb-4 text-blue-500" />
                     <p className="text-lg font-medium text-blue-700">Gráfico de Consultas</p>
-                    <p className="text-sm text-muted-foreground">
-                      181 consultas este mês
-                    </p>
+                    <p className="text-sm text-muted-foreground">181 consultas este mês</p>
                   </div>
                 </div>
               </div>

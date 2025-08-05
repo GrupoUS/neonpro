@@ -1,0 +1,71 @@
+# Cloudflare Workers configuration for NeonPro Analytics Edge Service
+name = "neonpro-analytics-edge"
+main = "src/index.ts"
+compatibility_date = "2024-01-17"
+compatibility_flags = ["nodejs_compat"]
+
+# Performance optimizations for healthcare analytics
+[env.production]
+name = "neonpro-analytics-prod"
+route = "analytics.neonpro.health/*"
+
+[env.staging]  
+name = "neonpro-analytics-staging"
+route = "analytics-staging.neonpro.health/*"
+
+[env.development]
+name = "neonpro-analytics-dev"
+
+# Environment variables for healthcare compliance
+[vars]
+ENVIRONMENT = "development"
+API_VERSION = "v1"
+MAX_REQUEST_SIZE = "1048576"  # 1MB limit
+RATE_LIMIT_REQUESTS = "10000"  # 10K requests per minute
+ANALYTICS_RETENTION_DAYS = "2555"  # 7 years for medical analytics
+
+# Supabase configuration (secrets)
+# Add these via: wrangler secret put <NAME>
+# SUPABASE_URL
+# SUPABASE_ANON_KEY  
+# SUPABASE_SERVICE_KEY
+# JWT_SECRET
+
+# KV namespaces for caching
+[[kv_namespaces]]
+binding = "ANALYTICS_CACHE"
+id = "analytics_cache_namespace"
+preview_id = "analytics_cache_preview"
+
+[[kv_namespaces]]
+binding = "RATE_LIMIT_CACHE"
+id = "rate_limit_namespace" 
+preview_id = "rate_limit_preview"
+
+# D1 Database for edge analytics storage
+[[d1_databases]]
+binding = "ANALYTICS_DB"
+database_name = "neonpro-analytics"
+database_id = "analytics_database_id"
+
+# Durable Objects for real-time aggregation
+[[durable_objects.bindings]]
+name = "ANALYTICS_AGGREGATOR" 
+class_name = "AnalyticsAggregator"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["AnalyticsAggregator"]
+
+# Performance and resource limits
+[placement]
+mode = "smart"
+
+[limits]
+cpu_ms = 30000  # 30 seconds CPU time
+memory_mb = 128  # 128MB memory limit
+
+# Custom domain and SSL
+[route]
+pattern = "analytics.neonpro.health/*"
+zone_name = "neonpro.health"

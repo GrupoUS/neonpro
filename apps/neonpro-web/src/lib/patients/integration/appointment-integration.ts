@@ -4,10 +4,10 @@
  * Part of Story 3.1 - Task 6: System Integration & Search
  */
 
-import { Patient } from '@/types/patient';
-import { Appointment } from '@/types/appointment';
-import { supabase } from '@/lib/supabase/client';
-import { logger } from '@/lib/logger';
+import type { Patient } from "@/types/patient";
+import type { Appointment } from "@/types/appointment";
+import type { supabase } from "@/lib/supabase/client";
+import type { logger } from "@/lib/logger";
 
 export interface PatientAppointmentHistory {
   patient_id: string;
@@ -36,25 +36,23 @@ export class PatientAppointmentIntegration {
   /**
    * Get comprehensive appointment history for a patient
    */
-  static async getPatientAppointmentHistory(
-    patientId: string
-  ): Promise<PatientAppointmentHistory> {
+  static async getPatientAppointmentHistory(patientId: string): Promise<PatientAppointmentHistory> {
     try {
       const { data: appointments, error } = await supabase
-        .from('appointments')
+        .from("appointments")
         .select(`
           *,
           services(*),
           staff(*)
         `)
-        .eq('patient_id', patientId)
-        .order('appointment_date', { ascending: false });
+        .eq("patient_id", patientId)
+        .order("appointment_date", { ascending: false });
 
       if (error) throw error;
 
-      const completed = appointments?.filter(apt => apt.status === 'completed') || [];
-      const cancelled = appointments?.filter(apt => apt.status === 'cancelled') || [];
-      const noShows = appointments?.filter(apt => apt.status === 'no_show') || [];
+      const completed = appointments?.filter((apt) => apt.status === "completed") || [];
+      const cancelled = appointments?.filter((apt) => apt.status === "cancelled") || [];
+      const noShows = appointments?.filter((apt) => apt.status === "no_show") || [];
 
       // Calculate preferred times and services
       const timePreferences = this.calculateTimePreferences(completed);
@@ -62,18 +60,18 @@ export class PatientAppointmentIntegration {
 
       // Calculate average rating
       const ratingsSum = completed
-        .filter(apt => apt.rating)
+        .filter((apt) => apt.rating)
         .reduce((sum, apt) => sum + (apt.rating || 0), 0);
       const averageRating = completed.length > 0 ? ratingsSum / completed.length : 0;
 
       // Get next appointment
       const { data: nextAppointment } = await supabase
-        .from('appointments')
-        .select('appointment_date')
-        .eq('patient_id', patientId)
-        .eq('status', 'scheduled')
-        .gte('appointment_date', new Date().toISOString())
-        .order('appointment_date', { ascending: true })
+        .from("appointments")
+        .select("appointment_date")
+        .eq("patient_id", patientId)
+        .eq("status", "scheduled")
+        .gte("appointment_date", new Date().toISOString())
+        .order("appointment_date", { ascending: true })
         .limit(1)
         .single();
 
@@ -88,41 +86,44 @@ export class PatientAppointmentIntegration {
         last_appointment_date: completed[0]?.appointment_date || null,
         next_appointment_date: nextAppointment?.appointment_date || null,
         preferred_times: timePreferences,
-        preferred_services: servicePreferences
+        preferred_services: servicePreferences,
       };
     } catch (error) {
-      logger.error('Error fetching patient appointment history:', error);
-      throw new Error('Failed to fetch appointment history');
+      logger.error("Error fetching patient appointment history:", error);
+      throw new Error("Failed to fetch appointment history");
     }
   }
 
   /**
    * Generate appointment insights for a patient
    */
-  static async generateAppointmentInsights(
-    patientId: string
-  ): Promise<AppointmentInsights> {
+  static async generateAppointmentInsights(patientId: string): Promise<AppointmentInsights> {
     try {
       const history = await this.getPatientAppointmentHistory(patientId);
-      
-      const attendanceRate = history.total_appointments > 0 
-        ? (history.completed_appointments / history.total_appointments) * 100
-        : 0;
+
+      const attendanceRate =
+        history.total_appointments > 0
+          ? (history.completed_appointments / history.total_appointments) * 100
+          : 0;
 
       // Calculate punctuality score based on check-in times
       const punctualityScore = await this.calculatePunctualityScore(patientId);
-      
+
       // Calculate satisfaction score from ratings
       const satisfactionScore = history.average_rating * 20; // Convert to percentage
-      
+
       // Calculate loyalty index
       const loyaltyIndex = this.calculateLoyaltyIndex(history);
-      
+
       // Identify risk factors
       const riskFactors = this.identifyRiskFactors(history, attendanceRate);
-      
+
       // Generate recommendations
-      const recommendations = this.generateRecommendations(history, attendanceRate, satisfactionScore);
+      const recommendations = this.generateRecommendations(
+        history,
+        attendanceRate,
+        satisfactionScore,
+      );
 
       return {
         attendance_rate: attendanceRate,
@@ -130,11 +131,11 @@ export class PatientAppointmentIntegration {
         satisfaction_score: satisfactionScore,
         loyalty_index: loyaltyIndex,
         risk_factors: riskFactors,
-        recommendations: recommendations
+        recommendations: recommendations,
       };
     } catch (error) {
-      logger.error('Error generating appointment insights:', error);
-      throw new Error('Failed to generate appointment insights');
+      logger.error("Error generating appointment insights:", error);
+      throw new Error("Failed to generate appointment insights");
     }
   }
 
@@ -143,22 +144,22 @@ export class PatientAppointmentIntegration {
    */
   static async linkPatientToAppointment(
     patientId: string,
-    appointmentData: Partial<Appointment>
+    appointmentData: Partial<Appointment>,
   ): Promise<Appointment> {
     try {
       // Get patient preferences to suggest optimal appointment
       const history = await this.getPatientAppointmentHistory(patientId);
-      
+
       // Apply patient preferences if not specified
       const optimizedAppointment = {
         ...appointmentData,
         patient_id: patientId,
         preferred_time: appointmentData.appointment_time || history.preferred_times[0],
-        notes: `${appointmentData.notes || ''} | Patient preferences: ${history.preferred_services.join(', ')}`
+        notes: `${appointmentData.notes || ""} | Patient preferences: ${history.preferred_services.join(", ")}`,
       };
 
       const { data: appointment, error } = await supabase
-        .from('appointments')
+        .from("appointments")
         .insert(optimizedAppointment)
         .select()
         .single();
@@ -167,18 +168,18 @@ export class PatientAppointmentIntegration {
 
       // Update patient's last interaction
       await supabase
-        .from('patients')
-        .update({ 
+        .from("patients")
+        .update({
           last_appointment_date: appointment.appointment_date,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
-        .eq('id', patientId);
+        .eq("id", patientId);
 
       logger.info(`Patient ${patientId} linked to appointment ${appointment.id}`);
       return appointment;
     } catch (error) {
-      logger.error('Error linking patient to appointment:', error);
-      throw new Error('Failed to link patient to appointment');
+      logger.error("Error linking patient to appointment:", error);
+      throw new Error("Failed to link patient to appointment");
     }
   }
 
@@ -187,15 +188,15 @@ export class PatientAppointmentIntegration {
    */
   private static calculateTimePreferences(appointments: Appointment[]): string[] {
     const timeSlots: { [key: string]: number } = {};
-    
-    appointments.forEach(apt => {
+
+    appointments.forEach((apt) => {
       const hour = new Date(apt.appointment_date).getHours();
       const timeSlot = this.getTimeSlot(hour);
       timeSlots[timeSlot] = (timeSlots[timeSlot] || 0) + 1;
     });
 
     return Object.entries(timeSlots)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 3)
       .map(([slot]) => slot);
   }
@@ -205,15 +206,15 @@ export class PatientAppointmentIntegration {
    */
   private static calculateServicePreferences(appointments: Appointment[]): string[] {
     const services: { [key: string]: number } = {};
-    
-    appointments.forEach(apt => {
+
+    appointments.forEach((apt) => {
       if (apt.service_type) {
         services[apt.service_type] = (services[apt.service_type] || 0) + 1;
       }
     });
 
     return Object.entries(services)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 5)
       .map(([service]) => service);
   }
@@ -224,14 +225,14 @@ export class PatientAppointmentIntegration {
   private static async calculatePunctualityScore(patientId: string): Promise<number> {
     try {
       const { data: checkIns, error } = await supabase
-        .from('appointment_check_ins')
-        .select('check_in_time, scheduled_time')
-        .eq('patient_id', patientId)
+        .from("appointment_check_ins")
+        .select("check_in_time, scheduled_time")
+        .eq("patient_id", patientId)
         .limit(20); // Last 20 appointments
 
       if (error || !checkIns?.length) return 75; // Default score
 
-      const punctualAppointments = checkIns.filter(checkIn => {
+      const punctualAppointments = checkIns.filter((checkIn) => {
         const scheduledTime = new Date(checkIn.scheduled_time);
         const checkInTime = new Date(checkIn.check_in_time);
         const diffMinutes = (checkInTime.getTime() - scheduledTime.getTime()) / (1000 * 60);
@@ -240,7 +241,7 @@ export class PatientAppointmentIntegration {
 
       return (punctualAppointments.length / checkIns.length) * 100;
     } catch (error) {
-      logger.error('Error calculating punctuality score:', error);
+      logger.error("Error calculating punctuality score:", error);
       return 75; // Default score
     }
   }
@@ -251,9 +252,10 @@ export class PatientAppointmentIntegration {
   private static calculateLoyaltyIndex(history: PatientAppointmentHistory): number {
     const factors = {
       totalAppointments: Math.min(history.total_appointments / 10, 1) * 30,
-      attendanceRate: (history.completed_appointments / Math.max(history.total_appointments, 1)) * 40,
+      attendanceRate:
+        (history.completed_appointments / Math.max(history.total_appointments, 1)) * 40,
       averageRating: (history.average_rating / 5) * 20,
-      consistency: this.calculateConsistency(history) * 10
+      consistency: this.calculateConsistency(history) * 10,
     };
 
     return Math.round(Object.values(factors).reduce((sum, factor) => sum + factor, 0));
@@ -264,11 +266,11 @@ export class PatientAppointmentIntegration {
    */
   private static calculateConsistency(history: PatientAppointmentHistory): number {
     if (history.appointments.length < 2) return 0;
-    
+
     // Calculate average time between appointments
     const intervals: number[] = [];
     for (let i = 1; i < history.appointments.length; i++) {
-      const current = new Date(history.appointments[i-1].appointment_date);
+      const current = new Date(history.appointments[i - 1].appointment_date);
       const previous = new Date(history.appointments[i].appointment_date);
       const daysDiff = (current.getTime() - previous.getTime()) / (1000 * 60 * 60 * 24);
       intervals.push(daysDiff);
@@ -276,9 +278,11 @@ export class PatientAppointmentIntegration {
 
     // Calculate consistency (lower variance = higher consistency)
     const avgInterval = intervals.reduce((sum, interval) => sum + interval, 0) / intervals.length;
-    const variance = intervals.reduce((sum, interval) => sum + Math.pow(interval - avgInterval, 2), 0) / intervals.length;
-    
-    return Math.max(0, 1 - (variance / (avgInterval * avgInterval)));
+    const variance =
+      intervals.reduce((sum, interval) => sum + Math.pow(interval - avgInterval, 2), 0) /
+      intervals.length;
+
+    return Math.max(0, 1 - variance / (avgInterval * avgInterval));
   }
 
   /**
@@ -286,32 +290,32 @@ export class PatientAppointmentIntegration {
    */
   private static identifyRiskFactors(
     history: PatientAppointmentHistory,
-    attendanceRate: number
+    attendanceRate: number,
   ): string[] {
     const risks: string[] = [];
 
     if (attendanceRate < 70) {
-      risks.push('Low attendance rate');
+      risks.push("Low attendance rate");
     }
 
     if (history.no_show_count > 2) {
-      risks.push('Multiple no-shows');
+      risks.push("Multiple no-shows");
     }
 
     if (history.average_rating < 3) {
-      risks.push('Low satisfaction scores');
+      risks.push("Low satisfaction scores");
     }
 
     if (history.cancelled_appointments > history.completed_appointments) {
-      risks.push('High cancellation rate');
+      risks.push("High cancellation rate");
     }
 
-    const daysSinceLastAppointment = history.last_appointment_date 
+    const daysSinceLastAppointment = history.last_appointment_date
       ? (Date.now() - new Date(history.last_appointment_date).getTime()) / (1000 * 60 * 60 * 24)
       : 0;
 
     if (daysSinceLastAppointment > 180) {
-      risks.push('Long absence from clinic');
+      risks.push("Long absence from clinic");
     }
 
     return risks;
@@ -323,28 +327,32 @@ export class PatientAppointmentIntegration {
   private static generateRecommendations(
     history: PatientAppointmentHistory,
     attendanceRate: number,
-    satisfactionScore: number
+    satisfactionScore: number,
   ): string[] {
     const recommendations: string[] = [];
 
     if (attendanceRate < 80) {
-      recommendations.push('Send appointment reminders 24h and 2h before');
+      recommendations.push("Send appointment reminders 24h and 2h before");
     }
 
     if (history.preferred_times.length > 0) {
-      recommendations.push(`Schedule during preferred times: ${history.preferred_times.join(', ')}`);
+      recommendations.push(
+        `Schedule during preferred times: ${history.preferred_times.join(", ")}`,
+      );
     }
 
     if (satisfactionScore < 70) {
-      recommendations.push('Follow up after appointments to improve satisfaction');
+      recommendations.push("Follow up after appointments to improve satisfaction");
     }
 
     if (history.no_show_count > 1) {
-      recommendations.push('Require confirmation calls for future appointments');
+      recommendations.push("Require confirmation calls for future appointments");
     }
 
     if (history.preferred_services.length > 0) {
-      recommendations.push(`Focus on preferred services: ${history.preferred_services.slice(0, 2).join(', ')}`);
+      recommendations.push(
+        `Focus on preferred services: ${history.preferred_services.slice(0, 2).join(", ")}`,
+      );
     }
 
     return recommendations;
@@ -354,10 +362,10 @@ export class PatientAppointmentIntegration {
    * Get time slot category from hour
    */
   private static getTimeSlot(hour: number): string {
-    if (hour >= 8 && hour < 12) return 'Morning (8-12)';
-    if (hour >= 12 && hour < 17) return 'Afternoon (12-17)';
-    if (hour >= 17 && hour < 20) return 'Evening (17-20)';
-    return 'Other';
+    if (hour >= 8 && hour < 12) return "Morning (8-12)";
+    if (hour >= 12 && hour < 17) return "Afternoon (12-17)";
+    if (hour >= 17 && hour < 20) return "Evening (17-20)";
+    return "Other";
   }
 }
 

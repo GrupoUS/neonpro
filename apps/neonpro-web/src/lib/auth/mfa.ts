@@ -1,6 +1,6 @@
 /**
  * Multi-Factor Authentication (MFA) System for NeonPro Healthcare Platform
- * 
+ *
  * Features:
  * - TOTP (Time-based One-Time Password) with authenticator apps
  * - SMS-based verification (fallback)
@@ -11,21 +11,21 @@
  * - Device registration and trust
  * - Emergency bypass for clinical emergencies
  * - Comprehensive audit logging
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  */
 
-import * as OTPAuth from 'otpauth';
-import { createClient } from '@supabase/supabase-js';
-import { z } from 'zod';
-import crypto from 'crypto';
+import * as OTPAuth from "otpauth";
+import type { createClient } from "@supabase/supabase-js";
+import type { z } from "zod";
+import crypto from "crypto";
 
 // Types and Interfaces
 export interface MFAConfig {
   issuer: string;
   label: string;
-  algorithm: 'SHA1' | 'SHA256' | 'SHA512';
+  algorithm: "SHA1" | "SHA256" | "SHA512";
   digits: number;
   period: number;
   window: number;
@@ -61,7 +61,7 @@ export interface MFAUserSettings {
 
 export interface MFAMethod {
   id: string;
-  type: 'totp' | 'sms' | 'backup';
+  type: "totp" | "sms" | "backup";
   name: string;
   isEnabled: boolean;
   isPrimary: boolean;
@@ -95,9 +95,9 @@ export interface EmergencyContact {
 export interface MFAAuditLog {
   id: string;
   userId: string;
-  action: 'setup' | 'verify' | 'bypass' | 'disable' | 'recover';
+  action: "setup" | "verify" | "bypass" | "disable" | "recover";
   method: string;
-  result: 'success' | 'failure' | 'locked';
+  result: "success" | "failure" | "locked";
   ipAddress: string;
   userAgent: string;
   deviceFingerprint?: string;
@@ -109,16 +109,16 @@ export interface MFAAuditLog {
 // Validation Schemas
 export const MFASetupSchema = z.object({
   userId: z.string().uuid(),
-  method: z.enum(['totp', 'sms']),
+  method: z.enum(["totp", "sms"]),
   phoneNumber: z.string().optional(),
-  deviceName: z.string().min(1, 'Device name is required'),
-  lgpdConsent: z.boolean().refine(val => val === true, 'LGPD consent is required'),
+  deviceName: z.string().min(1, "Device name is required"),
+  lgpdConsent: z.boolean().refine((val) => val === true, "LGPD consent is required"),
 });
 
 export const MFAVerificationSchema = z.object({
   userId: z.string().uuid(),
-  token: z.string().min(6, 'Token must be at least 6 characters'),
-  method: z.enum(['totp', 'sms', 'backup']),
+  token: z.string().min(6, "Token must be at least 6 characters"),
+  method: z.enum(["totp", "sms", "backup"]),
   deviceFingerprint: z.string().optional(),
   emergencyBypass: z.boolean().optional(),
 });
@@ -133,9 +133,9 @@ const RATE_LIMIT_CONFIG = {
 
 // Default MFA Configuration
 const DEFAULT_MFA_CONFIG: MFAConfig = {
-  issuer: 'NeonPro Healthcare',
-  label: 'NeonPro Account',
-  algorithm: 'SHA1',
+  issuer: "NeonPro Healthcare",
+  label: "NeonPro Account",
+  algorithm: "SHA1",
   digits: 6,
   period: 30,
   window: 1,
@@ -158,14 +158,14 @@ export class MFAService {
    */
   async setupMFA(
     userId: string,
-    method: 'totp' | 'sms',
+    method: "totp" | "sms",
     options: {
       phoneNumber?: string;
       deviceName: string;
       lgpdConsent: boolean;
       userAgent: string;
       ipAddress: string;
-    }
+    },
   ): Promise<MFASetupResult> {
     try {
       // Validate input
@@ -180,7 +180,7 @@ export class MFAService {
       // Check if user already has MFA enabled
       const existingMFA = await this.getUserMFASettings(userId);
       if (existingMFA?.isEnabled) {
-        throw new Error('MFA already enabled for this user');
+        throw new Error("MFA already enabled for this user");
       }
 
       // Generate cryptographically secure secret (20 bytes = 160 bits)
@@ -218,15 +218,15 @@ export class MFAService {
       // Create audit log entry
       await this.createAuditLog({
         userId,
-        action: 'setup',
+        action: "setup",
         method,
-        result: 'success',
+        result: "success",
         ipAddress: options.ipAddress,
         userAgent: options.userAgent,
         metadata: {
           deviceName: options.deviceName,
           lgpdConsent: options.lgpdConsent,
-          phoneNumber: options.phoneNumber ? '***' + options.phoneNumber.slice(-4) : undefined,
+          phoneNumber: options.phoneNumber ? "***" + options.phoneNumber.slice(-4) : undefined,
         },
       });
 
@@ -236,37 +236,36 @@ export class MFAService {
         backupCodes,
         recoveryToken,
       };
-
     } catch (error) {
       // Log setup failure
       await this.createAuditLog({
         userId,
-        action: 'setup',
+        action: "setup",
         method,
-        result: 'failure',
+        result: "failure",
         ipAddress: options.ipAddress,
         userAgent: options.userAgent,
         metadata: {
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : "Unknown error",
         },
       });
 
       throw error;
     }
-  }  /**
+  } /**
    * Verify MFA token with comprehensive security and healthcare compliance
    */
   async verifyMFA(
     userId: string,
     token: string,
-    method: 'totp' | 'sms' | 'backup',
+    method: "totp" | "sms" | "backup",
     options: {
       deviceFingerprint?: string;
       userAgent: string;
       ipAddress: string;
       emergencyBypass?: boolean;
       emergencyReason?: string;
-    }
+    },
   ): Promise<MFAVerificationResult> {
     try {
       // Validate input
@@ -283,9 +282,9 @@ export class MFAService {
       if (rateLimitResult.isLocked) {
         await this.createAuditLog({
           userId,
-          action: 'verify',
+          action: "verify",
           method,
-          result: 'locked',
+          result: "locked",
           ipAddress: options.ipAddress,
           userAgent: options.userAgent,
           metadata: {
@@ -298,7 +297,7 @@ export class MFAService {
           isValid: false,
           remainingAttempts: 0,
           lockedUntil: rateLimitResult.lockedUntil,
-          auditLogId: '',
+          auditLogId: "",
         };
       }
 
@@ -310,7 +309,7 @@ export class MFAService {
       // Get user MFA settings
       const mfaSettings = await this.getUserMFASettings(userId);
       if (!mfaSettings?.isEnabled) {
-        throw new Error('MFA not enabled for this user');
+        throw new Error("MFA not enabled for this user");
       }
 
       let isValid = false;
@@ -318,22 +317,22 @@ export class MFAService {
 
       // Verify token based on method
       switch (method) {
-        case 'totp':
+        case "totp":
           const totpResult = await this.verifyTOTP(userId, token);
           isValid = totpResult.isValid;
           delta = totpResult.delta;
           break;
 
-        case 'sms':
+        case "sms":
           isValid = await this.verifySMS(userId, token);
           break;
 
-        case 'backup':
+        case "backup":
           isValid = await this.verifyBackupCode(userId, token);
           break;
 
         default:
-          throw new Error('Invalid MFA method');
+          throw new Error("Invalid MFA method");
       }
 
       // Update rate limiting
@@ -342,9 +341,9 @@ export class MFAService {
       // Create audit log
       const auditLogId = await this.createAuditLog({
         userId,
-        action: 'verify',
+        action: "verify",
         method,
-        result: isValid ? 'success' : 'failure',
+        result: isValid ? "success" : "failure",
         ipAddress: options.ipAddress,
         userAgent: options.userAgent,
         deviceFingerprint: options.deviceFingerprint,
@@ -370,18 +369,17 @@ export class MFAService {
         remainingAttempts: rateLimitResult.remainingAttempts - 1,
         auditLogId,
       };
-
     } catch (error) {
       // Log verification error
       const auditLogId = await this.createAuditLog({
         userId,
-        action: 'verify',
+        action: "verify",
         method,
-        result: 'failure',
+        result: "failure",
         ipAddress: options.ipAddress,
         userAgent: options.userAgent,
         metadata: {
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : "Unknown error",
         },
       });
 
@@ -392,17 +390,20 @@ export class MFAService {
   /**
    * Verify TOTP token using OTPAuth library
    */
-  private async verifyTOTP(userId: string, token: string): Promise<{ isValid: boolean; delta?: number }> {
+  private async verifyTOTP(
+    userId: string,
+    token: string,
+  ): Promise<{ isValid: boolean; delta?: number }> {
     // Get user's TOTP secret from database
     const { data: mfaData, error } = await this.supabase
-      .from('user_mfa_settings')
-      .select('secret')
-      .eq('user_id', userId)
-      .eq('method', 'totp')
+      .from("user_mfa_settings")
+      .select("secret")
+      .eq("user_id", userId)
+      .eq("method", "totp")
       .single();
 
     if (error || !mfaData) {
-      throw new Error('TOTP not configured for this user');
+      throw new Error("TOTP not configured for this user");
     }
 
     // Create TOTP instance with stored secret
@@ -432,10 +433,10 @@ export class MFAService {
    */
   private async verifySMS(userId: string, token: string): Promise<boolean> {
     const { data: smsData, error } = await this.supabase
-      .from('user_mfa_sms_tokens')
-      .select('token, expires_at')
-      .eq('user_id', userId)
-      .eq('used', false)
+      .from("user_mfa_sms_tokens")
+      .select("token, expires_at")
+      .eq("user_id", userId)
+      .eq("used", false)
       .single();
 
     if (error || !smsData) {
@@ -448,18 +449,15 @@ export class MFAService {
     }
 
     // Verify token (constant-time comparison)
-    const isValid = crypto.timingSafeEqual(
-      Buffer.from(token),
-      Buffer.from(smsData.token)
-    );
+    const isValid = crypto.timingSafeEqual(Buffer.from(token), Buffer.from(smsData.token));
 
     // Mark token as used if valid
     if (isValid) {
       await this.supabase
-        .from('user_mfa_sms_tokens')
+        .from("user_mfa_sms_tokens")
         .update({ used: true })
-        .eq('user_id', userId)
-        .eq('token', token);
+        .eq("user_id", userId)
+        .eq("token", token);
     }
 
     return isValid;
@@ -470,9 +468,9 @@ export class MFAService {
    */
   private async verifyBackupCode(userId: string, code: string): Promise<boolean> {
     const { data: mfaData, error } = await this.supabase
-      .from('user_mfa_settings')
-      .select('backup_codes, backup_codes_used')
-      .eq('user_id', userId)
+      .from("user_mfa_settings")
+      .select("backup_codes, backup_codes_used")
+      .eq("user_id", userId)
       .single();
 
     if (error || !mfaData) {
@@ -488,20 +486,20 @@ export class MFAService {
     if (isValid) {
       // Remove used backup code and increment usage counter
       const updatedBackupCodes = mfaData.backup_codes.filter(
-        (storedCode: string) => storedCode !== hashedCode
+        (storedCode: string) => storedCode !== hashedCode,
       );
 
       await this.supabase
-        .from('user_mfa_settings')
+        .from("user_mfa_settings")
         .update({
           backup_codes: updatedBackupCodes,
           backup_codes_used: mfaData.backup_codes_used + 1,
         })
-        .eq('user_id', userId);
+        .eq("user_id", userId);
     }
 
     return isValid;
-  }  /**
+  } /**
    * Handle emergency bypass for clinical emergencies
    */
   private async handleEmergencyBypass(
@@ -510,34 +508,34 @@ export class MFAService {
       emergencyReason?: string;
       userAgent: string;
       ipAddress: string;
-    }
+    },
   ): Promise<MFAVerificationResult> {
     // Check daily emergency bypass limit
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
 
     const { data: bypassCount } = await this.supabase
-      .from('mfa_audit_logs')
-      .select('id')
-      .eq('user_id', userId)
-      .eq('emergency_bypass', true)
-      .gte('timestamp', todayStart.toISOString());
+      .from("mfa_audit_logs")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("emergency_bypass", true)
+      .gte("timestamp", todayStart.toISOString());
 
     if (bypassCount && bypassCount.length >= RATE_LIMIT_CONFIG.emergencyBypassMaxPerDay) {
-      throw new Error('Daily emergency bypass limit exceeded');
+      throw new Error("Daily emergency bypass limit exceeded");
     }
 
     // Create audit log for emergency bypass
     const auditLogId = await this.createAuditLog({
       userId,
-      action: 'bypass',
-      method: 'emergency',
-      result: 'success',
+      action: "bypass",
+      method: "emergency",
+      result: "success",
       ipAddress: options.ipAddress,
       userAgent: options.userAgent,
       emergencyBypass: true,
       metadata: {
-        reason: options.emergencyReason || 'Clinical emergency',
+        reason: options.emergencyReason || "Clinical emergency",
         bypassCount: (bypassCount?.length || 0) + 1,
       },
     });
@@ -561,15 +559,15 @@ export class MFAService {
     options: {
       userAgent: string;
       ipAddress: string;
-    }
+    },
   ): Promise<{ success: boolean; expiresIn: number }> {
     try {
       // Get user's phone number
       const mfaSettings = await this.getUserMFASettings(userId);
-      const smsMethod = mfaSettings?.methods.find(m => m.type === 'sms' && m.isEnabled);
+      const smsMethod = mfaSettings?.methods.find((m) => m.type === "sms" && m.isEnabled);
 
       if (!smsMethod?.phoneNumber) {
-        throw new Error('SMS MFA not configured for this user');
+        throw new Error("SMS MFA not configured for this user");
       }
 
       // Generate 6-digit OTP
@@ -577,14 +575,12 @@ export class MFAService {
       const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
 
       // Store OTP in database
-      await this.supabase
-        .from('user_mfa_sms_tokens')
-        .insert({
-          user_id: userId,
-          token: otp,
-          expires_at: expiresAt.toISOString(),
-          used: false,
-        });
+      await this.supabase.from("user_mfa_sms_tokens").insert({
+        user_id: userId,
+        token: otp,
+        expires_at: expiresAt.toISOString(),
+        used: false,
+      });
 
       // Send SMS via Supabase (or your SMS provider)
       // This would integrate with your SMS service
@@ -593,13 +589,13 @@ export class MFAService {
       // Create audit log
       await this.createAuditLog({
         userId,
-        action: 'verify',
-        method: 'sms',
-        result: 'success',
+        action: "verify",
+        method: "sms",
+        result: "success",
         ipAddress: options.ipAddress,
         userAgent: options.userAgent,
         metadata: {
-          phoneNumber: '***' + smsMethod.phoneNumber.slice(-4),
+          phoneNumber: "***" + smsMethod.phoneNumber.slice(-4),
           expiresAt: expiresAt.toISOString(),
         },
       });
@@ -608,17 +604,16 @@ export class MFAService {
         success: true,
         expiresIn: 300, // 5 minutes in seconds
       };
-
     } catch (error) {
       await this.createAuditLog({
         userId,
-        action: 'verify',
-        method: 'sms',
-        result: 'failure',
+        action: "verify",
+        method: "sms",
+        result: "failure",
         ipAddress: options.ipAddress,
         userAgent: options.userAgent,
         metadata: {
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : "Unknown error",
         },
       });
 
@@ -636,31 +631,31 @@ export class MFAService {
       reason: string;
       userAgent: string;
       ipAddress: string;
-    }
+    },
   ): Promise<{ success: boolean }> {
     try {
       // Verify admin authorization if provided
       if (options.adminUserId) {
-        await this.verifyAdminAuthorization(options.adminUserId, 'disable_mfa');
+        await this.verifyAdminAuthorization(options.adminUserId, "disable_mfa");
       }
 
       // Disable MFA in database
       await this.supabase
-        .from('user_mfa_settings')
+        .from("user_mfa_settings")
         .update({
           is_enabled: false,
           disabled_at: new Date().toISOString(),
           disabled_reason: options.reason,
           disabled_by: options.adminUserId || userId,
         })
-        .eq('user_id', userId);
+        .eq("user_id", userId);
 
       // Create audit log
       await this.createAuditLog({
         userId,
-        action: 'disable',
-        method: 'admin',
-        result: 'success',
+        action: "disable",
+        method: "admin",
+        result: "success",
         ipAddress: options.ipAddress,
         userAgent: options.userAgent,
         metadata: {
@@ -670,17 +665,16 @@ export class MFAService {
       });
 
       return { success: true };
-
     } catch (error) {
       await this.createAuditLog({
         userId,
-        action: 'disable',
-        method: 'admin',
-        result: 'failure',
+        action: "disable",
+        method: "admin",
+        result: "failure",
         ipAddress: options.ipAddress,
         userAgent: options.userAgent,
         metadata: {
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : "Unknown error",
         },
       });
 
@@ -693,14 +687,14 @@ export class MFAService {
    */
   async getUserMFASettings(userId: string): Promise<MFAUserSettings | null> {
     const { data, error } = await this.supabase
-      .from('user_mfa_settings')
+      .from("user_mfa_settings")
       .select(`
         *,
         user_mfa_methods(*),
         user_trusted_devices(*),
         user_emergency_contacts(*)
       `)
-      .eq('user_id', userId)
+      .eq("user_id", userId)
       .single();
 
     if (error || !data) {
@@ -718,14 +712,14 @@ export class MFAService {
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
     };
-  }  /**
+  } /**
    * Generate backup codes for MFA recovery
    */
   private generateBackupCodes(count: number = 8): string[] {
     const codes: string[] = [];
     for (let i = 0; i < count; i++) {
       // Generate 10-character alphanumeric code
-      const code = crypto.randomBytes(5).toString('hex').toUpperCase();
+      const code = crypto.randomBytes(5).toString("hex").toUpperCase();
       codes.push(code);
     }
     return codes;
@@ -735,7 +729,7 @@ export class MFAService {
    * Generate recovery token for account recovery
    */
   private generateRecoveryToken(): string {
-    return crypto.randomBytes(32).toString('hex');
+    return crypto.randomBytes(32).toString("hex");
   }
 
   /**
@@ -754,57 +748,56 @@ export class MFAService {
    * Hash individual backup code
    */
   private async hashBackupCode(code: string): Promise<string> {
-    return crypto.pbkdf2Sync(code, 'neonpro-mfa-salt', 100000, 64, 'sha512').toString('hex');
+    return crypto.pbkdf2Sync(code, "neonpro-mfa-salt", 100000, 64, "sha512").toString("hex");
   }
 
   /**
    * Hash recovery token for secure storage
    */
   private async hashRecoveryToken(token: string): Promise<string> {
-    return crypto.pbkdf2Sync(token, 'neonpro-recovery-salt', 100000, 64, 'sha512').toString('hex');
+    return crypto.pbkdf2Sync(token, "neonpro-recovery-salt", 100000, 64, "sha512").toString("hex");
   }
 
   /**
    * Store MFA configuration in database
    */
-  private async storeMFAConfiguration(userId: string, config: {
-    secret: string;
-    method: 'totp' | 'sms';
-    phoneNumber?: string;
-    deviceName: string;
-    backupCodes: string[];
-    recoveryToken: string;
-  }): Promise<void> {
+  private async storeMFAConfiguration(
+    userId: string,
+    config: {
+      secret: string;
+      method: "totp" | "sms";
+      phoneNumber?: string;
+      deviceName: string;
+      backupCodes: string[];
+      recoveryToken: string;
+    },
+  ): Promise<void> {
     // Begin transaction
-    const { error: settingsError } = await this.supabase
-      .from('user_mfa_settings')
-      .insert({
-        user_id: userId,
-        is_enabled: true,
-        secret: config.secret,
-        backup_codes: config.backupCodes,
-        backup_codes_used: 0,
-        recovery_token: config.recoveryToken,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      });
+    const { error: settingsError } = await this.supabase.from("user_mfa_settings").insert({
+      user_id: userId,
+      is_enabled: true,
+      secret: config.secret,
+      backup_codes: config.backupCodes,
+      backup_codes_used: 0,
+      recovery_token: config.recoveryToken,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    });
 
     if (settingsError) {
       throw new Error(`Failed to store MFA settings: ${settingsError.message}`);
     }
 
     // Store MFA method
-    const { error: methodError } = await this.supabase
-      .from('user_mfa_methods')
-      .insert({
-        user_id: userId,
-        type: config.method,
-        name: config.deviceName,
-        is_enabled: true,
-        is_primary: true,
-        phone_number: config.phoneNumber,
-        created_at: new Date().toISOString(),
-      });
+    const { error: methodError } = await this.supabase.from("user_mfa_methods").insert({
+      user_id: userId,
+      type: config.method,
+      name: config.deviceName,
+      is_enabled: true,
+      is_primary: true,
+      phone_number: config.phoneNumber,
+      created_at: new Date().toISOString(),
+    });
 
     if (methodError) {
       throw new Error(`Failed to store MFA method: ${methodError.message}`);
@@ -814,7 +807,10 @@ export class MFAService {
   /**
    * Check rate limiting for MFA attempts
    */
-  private async checkRateLimit(userId: string, ipAddress: string): Promise<{
+  private async checkRateLimit(
+    userId: string,
+    ipAddress: string,
+  ): Promise<{
     isLocked: boolean;
     remainingAttempts: number;
     lockedUntil?: Date;
@@ -822,23 +818,23 @@ export class MFAService {
     const windowStart = new Date(Date.now() - RATE_LIMIT_CONFIG.windowMinutes * 60 * 1000);
 
     const { data: attempts } = await this.supabase
-      .from('mfa_audit_logs')
-      .select('result, timestamp')
-      .eq('user_id', userId)
-      .eq('action', 'verify')
-      .gte('timestamp', windowStart.toISOString())
-      .order('timestamp', { ascending: false });
+      .from("mfa_audit_logs")
+      .select("result, timestamp")
+      .eq("user_id", userId)
+      .eq("action", "verify")
+      .gte("timestamp", windowStart.toISOString())
+      .order("timestamp", { ascending: false });
 
     if (!attempts) {
       return { isLocked: false, remainingAttempts: RATE_LIMIT_CONFIG.maxAttempts };
     }
 
-    const failedAttempts = attempts.filter(attempt => attempt.result === 'failure').length;
+    const failedAttempts = attempts.filter((attempt) => attempt.result === "failure").length;
 
     if (failedAttempts >= RATE_LIMIT_CONFIG.maxAttempts) {
-      const lastFailure = attempts.find(attempt => attempt.result === 'failure');
+      const lastFailure = attempts.find((attempt) => attempt.result === "failure");
       const lockedUntil = new Date(
-        new Date(lastFailure!.timestamp).getTime() + RATE_LIMIT_CONFIG.lockoutMinutes * 60 * 1000
+        new Date(lastFailure!.timestamp).getTime() + RATE_LIMIT_CONFIG.lockoutMinutes * 60 * 1000,
       );
 
       if (new Date() < lockedUntil) {
@@ -855,7 +851,11 @@ export class MFAService {
   /**
    * Update rate limiting after verification attempt
    */
-  private async updateRateLimit(userId: string, ipAddress: string, success: boolean): Promise<void> {
+  private async updateRateLimit(
+    userId: string,
+    ipAddress: string,
+    success: boolean,
+  ): Promise<void> {
     // Rate limiting is handled through audit logs
     // This method is placeholder for additional rate limiting logic if needed
   }
@@ -863,9 +863,9 @@ export class MFAService {
   /**
    * Create comprehensive audit log entry
    */
-  private async createAuditLog(log: Omit<MFAAuditLog, 'id' | 'timestamp'>): Promise<string> {
+  private async createAuditLog(log: Omit<MFAAuditLog, "id" | "timestamp">): Promise<string> {
     const { data, error } = await this.supabase
-      .from('mfa_audit_logs')
+      .from("mfa_audit_logs")
       .insert({
         user_id: log.userId,
         action: log.action,
@@ -878,15 +878,15 @@ export class MFAService {
         metadata: log.metadata,
         timestamp: new Date().toISOString(),
       })
-      .select('id')
+      .select("id")
       .single();
 
     if (error) {
-      console.error('Failed to create audit log:', error);
-      return '';
+      console.error("Failed to create audit log:", error);
+      return "";
     }
 
-    return data?.id || '';
+    return data?.id || "";
   }
 
   /**
@@ -898,20 +898,18 @@ export class MFAService {
     options: {
       userAgent: string;
       ipAddress: string;
-    }
+    },
   ): Promise<void> {
     const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
 
-    await this.supabase
-      .from('user_trusted_devices')
-      .upsert({
-        user_id: userId,
-        fingerprint: deviceFingerprint,
-        user_agent: options.userAgent,
-        ip_address: options.ipAddress,
-        last_seen: new Date().toISOString(),
-        expires_at: expiresAt.toISOString(),
-      });
+    await this.supabase.from("user_trusted_devices").upsert({
+      user_id: userId,
+      fingerprint: deviceFingerprint,
+      user_agent: options.userAgent,
+      ip_address: options.ipAddress,
+      last_seen: new Date().toISOString(),
+      expires_at: expiresAt.toISOString(),
+    });
   }
 
   /**
@@ -919,32 +917,32 @@ export class MFAService {
    */
   private async updateLastVerified(userId: string, method: string): Promise<void> {
     await this.supabase
-      .from('user_mfa_settings')
+      .from("user_mfa_settings")
       .update({
         last_verified: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
-      .eq('user_id', userId);
+      .eq("user_id", userId);
 
     await this.supabase
-      .from('user_mfa_methods')
+      .from("user_mfa_methods")
       .update({
         last_used: new Date().toISOString(),
       })
-      .eq('user_id', userId)
-      .eq('type', method);
-  }  /**
+      .eq("user_id", userId)
+      .eq("type", method);
+  } /**
    * Send SMS via integrated SMS service
    */
   private async sendSMS(phoneNumber: string, otp: string): Promise<void> {
     // This would integrate with your SMS service (Twilio, AWS SNS, etc.)
     // For now, we'll use Supabase's built-in SMS functionality
-    
+
     const message = `Seu código de verificação NeonPro é: ${otp}. Válido por 5 minutos. Não compartilhe este código.`;
-    
+
     // In production, implement actual SMS sending
     console.log(`SMS to ${phoneNumber}: ${message}`);
-    
+
     // Supabase SMS integration would go here
     // await this.supabase.auth.sendOtp({ phone: phoneNumber, options: { message } });
   }
@@ -958,13 +956,13 @@ export class MFAService {
       emergencyReason?: string;
       userAgent: string;
       ipAddress: string;
-    }
+    },
   ): Promise<void> {
     // Get user information
     const { data: user } = await this.supabase
-      .from('users')
-      .select('email, full_name')
-      .eq('id', userId)
+      .from("users")
+      .select("email, full_name")
+      .eq("id", userId)
       .single();
 
     if (!user) return;
@@ -972,17 +970,17 @@ export class MFAService {
     // Send notification to user and security team
     const notification = {
       to: user.email,
-      subject: 'Alerta de Segurança: Bypass de MFA Utilizado',
+      subject: "Alerta de Segurança: Bypass de MFA Utilizado",
       body: `
         Olá ${user.full_name},
         
         Um bypass de emergência foi utilizado em sua conta NeonPro Healthcare.
         
         Detalhes:
-        - Data/Hora: ${new Date().toLocaleString('pt-BR')}
+        - Data/Hora: ${new Date().toLocaleString("pt-BR")}
         - IP: ${options.ipAddress}
         - Navegador: ${options.userAgent}
-        - Motivo: ${options.emergencyReason || 'Emergência clínica'}
+        - Motivo: ${options.emergencyReason || "Emergência clínica"}
         
         Se você não realizou esta ação, entre em contato com o suporte imediatamente.
         
@@ -991,7 +989,7 @@ export class MFAService {
     };
 
     // In production, send actual email notification
-    console.log('Emergency bypass notification:', notification);
+    console.log("Emergency bypass notification:", notification);
   }
 
   /**
@@ -999,14 +997,14 @@ export class MFAService {
    */
   private async verifyAdminAuthorization(adminUserId: string, operation: string): Promise<void> {
     const { data: admin } = await this.supabase
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', adminUserId)
-      .in('role', ['admin', 'security_officer'])
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", adminUserId)
+      .in("role", ["admin", "security_officer"])
       .single();
 
     if (!admin) {
-      throw new Error('Insufficient permissions for this operation');
+      throw new Error("Insufficient permissions for this operation");
     }
   }
 
@@ -1018,13 +1016,13 @@ export class MFAService {
     options: {
       userAgent: string;
       ipAddress: string;
-    }
+    },
   ): Promise<string[]> {
     try {
       // Verify MFA is enabled
       const mfaSettings = await this.getUserMFASettings(userId);
       if (!mfaSettings?.isEnabled) {
-        throw new Error('MFA not enabled for this user');
+        throw new Error("MFA not enabled for this user");
       }
 
       // Generate new backup codes
@@ -1033,20 +1031,20 @@ export class MFAService {
 
       // Update database
       await this.supabase
-        .from('user_mfa_settings')
+        .from("user_mfa_settings")
         .update({
           backup_codes: hashedCodes,
           backup_codes_used: 0,
           updated_at: new Date().toISOString(),
         })
-        .eq('user_id', userId);
+        .eq("user_id", userId);
 
       // Create audit log
       await this.createAuditLog({
         userId,
-        action: 'recover',
-        method: 'backup',
-        result: 'success',
+        action: "recover",
+        method: "backup",
+        result: "success",
         ipAddress: options.ipAddress,
         userAgent: options.userAgent,
         metadata: {
@@ -1055,17 +1053,16 @@ export class MFAService {
       });
 
       return newBackupCodes;
-
     } catch (error) {
       await this.createAuditLog({
         userId,
-        action: 'recover',
-        method: 'backup',
-        result: 'failure',
+        action: "recover",
+        method: "backup",
+        result: "failure",
         ipAddress: options.ipAddress,
         userAgent: options.userAgent,
         metadata: {
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : "Unknown error",
         },
       });
 
@@ -1089,42 +1086,44 @@ export class MFAService {
 
     const queries = await Promise.all([
       // Total users
-      this.supabase.from('users').select('id', { count: 'exact', head: true }),
-      
+      this.supabase
+        .from("users")
+        .select("id", { count: "exact", head: true }),
+
       // Enabled MFA users
       this.supabase
-        .from('user_mfa_settings')
-        .select('user_id', { count: 'exact', head: true })
-        .eq('is_enabled', true),
-      
+        .from("user_mfa_settings")
+        .select("user_id", { count: "exact", head: true })
+        .eq("is_enabled", true),
+
       // TOTP users
       this.supabase
-        .from('user_mfa_methods')
-        .select('user_id', { count: 'exact', head: true })
-        .eq('type', 'totp')
-        .eq('is_enabled', true),
-      
+        .from("user_mfa_methods")
+        .select("user_id", { count: "exact", head: true })
+        .eq("type", "totp")
+        .eq("is_enabled", true),
+
       // SMS users
       this.supabase
-        .from('user_mfa_methods')
-        .select('user_id', { count: 'exact', head: true })
-        .eq('type', 'sms')
-        .eq('is_enabled', true),
-      
+        .from("user_mfa_methods")
+        .select("user_id", { count: "exact", head: true })
+        .eq("type", "sms")
+        .eq("is_enabled", true),
+
       // Emergency bypasses today
       this.supabase
-        .from('mfa_audit_logs')
-        .select('id', { count: 'exact', head: true })
-        .eq('emergency_bypass', true)
-        .gte('timestamp', todayStart.toISOString()),
-      
+        .from("mfa_audit_logs")
+        .select("id", { count: "exact", head: true })
+        .eq("emergency_bypass", true)
+        .gte("timestamp", todayStart.toISOString()),
+
       // Failed attempts today
       this.supabase
-        .from('mfa_audit_logs')
-        .select('id', { count: 'exact', head: true })
-        .eq('action', 'verify')
-        .eq('result', 'failure')
-        .gte('timestamp', todayStart.toISOString()),
+        .from("mfa_audit_logs")
+        .select("id", { count: "exact", head: true })
+        .eq("action", "verify")
+        .eq("result", "failure")
+        .gte("timestamp", todayStart.toISOString()),
     ]);
 
     return {
@@ -1148,10 +1147,10 @@ export function getMFAService(): MFAService {
   if (!mfaServiceInstance) {
     const supabaseUrl = process.env.SUPABASE_URL!;
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-    
+
     mfaServiceInstance = new MFAService(supabaseUrl, supabaseKey);
   }
-  
+
   return mfaServiceInstance;
 }
 
@@ -1170,22 +1169,20 @@ export const MFAUtils = {
    * Format backup codes for display
    */
   formatBackupCodes: (codes: string[]): string[] => {
-    return codes.map(code => 
-      code.replace(/(.{4})(.{4})(.{2})/, '$1-$2-$3')
-    );
+    return codes.map((code) => code.replace(/(.{4})(.{4})(.{2})/, "$1-$2-$3"));
   },
 
   /**
    * Validate token format
    */
-  validateToken: (token: string, method: 'totp' | 'sms' | 'backup'): boolean => {
+  validateToken: (token: string, method: "totp" | "sms" | "backup"): boolean => {
     switch (method) {
-      case 'totp':
+      case "totp":
         return /^\d{6}$/.test(token);
-      case 'sms':
+      case "sms":
         return /^\d{6}$/.test(token);
-      case 'backup':
-        return /^[A-F0-9]{10}$/i.test(token.replace(/-/g, ''));
+      case "backup":
+        return /^[A-F0-9]{10}$/i.test(token.replace(/-/g, ""));
       default:
         return false;
     }
@@ -1193,4 +1190,3 @@ export const MFAUtils = {
 };
 
 export default MFAService;
-

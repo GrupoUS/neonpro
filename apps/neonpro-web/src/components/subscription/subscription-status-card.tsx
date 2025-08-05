@@ -10,10 +10,10 @@
 
 "use client";
 
-import { cn } from "@/lib/utils";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import {
+import type { cn } from "@/lib/utils";
+import type { formatDistanceToNow } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
   AlertTriangle,
   Calendar,
   CheckCircle2,
@@ -24,10 +24,10 @@ import {
   TrendingUp,
   Zap,
 } from "lucide-react";
-import { useSubscriptionStatus } from "../../hooks/use-subscription-status";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import {
+import type { useSubscriptionStatus } from "../../hooks/use-subscription-status";
+import type { Badge } from "../ui/badge";
+import type { Button } from "../ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
@@ -35,9 +35,9 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { Progress } from "../ui/progress";
-import { Separator } from "../ui/separator";
-import { Skeleton } from "../ui/skeleton";
+import type { Progress } from "../ui/progress";
+import type { Separator } from "../ui/separator";
+import type { Skeleton } from "../ui/skeleton";
 
 export interface SubscriptionStatusCardProps {
   className?: string;
@@ -60,16 +60,8 @@ export function SubscriptionStatusCard({
   onManage,
   onCancel,
 }: SubscriptionStatusCardProps) {
-  const {
-    status,
-    tier,
-    features,
-    gracePeriodEnd,
-    nextBilling,
-    isLoading,
-    error,
-    refresh,
-  } = useSubscriptionStatus();
+  const { status, tier, features, gracePeriodEnd, nextBilling, isLoading, error, refresh } =
+    useSubscriptionStatus();
 
   // Loading skeleton
   if (isLoading) {
@@ -160,8 +152,7 @@ export function SubscriptionStatusCard({
     },
   } as const;
 
-  const config =
-    statusConfig[status as keyof typeof statusConfig] || statusConfig.cancelled;
+  const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.cancelled;
   const StatusIcon = config.icon;
 
   // Calculate trial progress if applicable
@@ -178,9 +169,7 @@ export function SubscriptionStatusCard({
 
     return {
       progress,
-      daysLeft: Math.ceil(
-        (end.getTime() - now.getTime()) / (24 * 60 * 60 * 1000)
-      ),
+      daysLeft: Math.ceil((end.getTime() - now.getTime()) / (24 * 60 * 60 * 1000)),
     };
   };
 
@@ -219,9 +208,7 @@ export function SubscriptionStatusCard({
           <div className="mt-4 space-y-2">
             <div className="flex justify-between text-sm">
               <span>Período de teste</span>
-              <span className="font-medium">
-                {trialInfo.daysLeft} dias restantes
-              </span>
+              <span className="font-medium">{trialInfo.daysLeft} dias restantes</span>
             </div>
             <Progress value={trialInfo.progress} className="h-2" />
           </div>
@@ -267,9 +254,7 @@ export function SubscriptionStatusCard({
           <div>
             <Separator />
             <div className="pt-4">
-              <h4 className="text-sm font-medium mb-3">
-                Funcionalidades Incluídas
-              </h4>
+              <h4 className="text-sm font-medium mb-3">Funcionalidades Incluídas</h4>
               <div className="grid grid-cols-2 gap-2">
                 {features.slice(0, 6).map((feature, index) => (
                   <div

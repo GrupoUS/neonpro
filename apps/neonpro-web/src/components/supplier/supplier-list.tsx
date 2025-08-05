@@ -5,47 +5,47 @@
 // sorting, and bulk operations for NeonPro clinic management
 // ============================================================================
 
-'use client';
+"use client";
 
-import React, { useState, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { 
+import React, { useState, useMemo } from "react";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Badge } from "@/components/ui/badge";
+import type { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue 
-} from '@/components/ui/select';
-import {
+  SelectValue,
+} from "@/components/ui/select";
+import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
+} from "@/components/ui/dropdown-menu";
+import type {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Progress } from '@/components/ui/progress';
-import { Skeleton } from '@/components/ui/skeleton';
-import { 
-  Search, 
-  Filter, 
-  Plus, 
-  MoreVertical, 
-  Eye, 
-  Edit, 
+} from "@/components/ui/table";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type { Progress } from "@/components/ui/progress";
+import type { Skeleton } from "@/components/ui/skeleton";
+import type {
+  Search,
+  Filter,
+  Plus,
+  MoreVertical,
+  Eye,
+  Edit,
   Trash2,
   Star,
   TrendingUp,
@@ -62,16 +62,11 @@ import {
   MapPin,
   RefreshCw,
   Download,
-  Upload
-} from 'lucide-react';
-import { 
-  Supplier, 
-  SupplierStatus, 
-  SupplierCategory,
-  RiskLevel 
-} from '@/lib/types/supplier';
-import { useSuppliers, useSupplierSearch } from '@/lib/hooks/use-supplier';
-import { cn } from '@/lib/utils';
+  Upload,
+} from "lucide-react";
+import type { Supplier, SupplierStatus, SupplierCategory, RiskLevel } from "@/lib/types/supplier";
+import type { useSuppliers, useSupplierSearch } from "@/lib/hooks/use-supplier";
+import type { cn } from "@/lib/utils";
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -89,9 +84,9 @@ interface SupplierListProps {
 
 interface SupplierFilters {
   search: string;
-  category: SupplierCategory | 'all';
-  status: SupplierStatus | 'all';
-  riskLevel: RiskLevel | 'all';
+  category: SupplierCategory | "all";
+  status: SupplierStatus | "all";
+  riskLevel: RiskLevel | "all";
   performanceRange: [number, number];
 }
 
@@ -102,17 +97,17 @@ interface SupplierFilters {
 const getStatusColor = (status: SupplierStatus): string => {
   switch (status) {
     case SupplierStatus.ACTIVE:
-      return 'bg-green-100 text-green-800 border-green-200';
+      return "bg-green-100 text-green-800 border-green-200";
     case SupplierStatus.INACTIVE:
-      return 'bg-gray-100 text-gray-800 border-gray-200';
+      return "bg-gray-100 text-gray-800 border-gray-200";
     case SupplierStatus.SUSPENDED:
-      return 'bg-red-100 text-red-800 border-red-200';
+      return "bg-red-100 text-red-800 border-red-200";
     case SupplierStatus.PENDING_VERIFICATION:
-      return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      return "bg-yellow-100 text-yellow-800 border-yellow-200";
     case SupplierStatus.BLOCKED:
-      return 'bg-red-100 text-red-800 border-red-200';
+      return "bg-red-100 text-red-800 border-red-200";
     default:
-      return 'bg-gray-100 text-gray-800 border-gray-200';
+      return "bg-gray-100 text-gray-800 border-gray-200";
   }
 };
 
@@ -136,48 +131,48 @@ const getStatusIcon = (status: SupplierStatus) => {
 const getRiskColor = (riskLevel: RiskLevel): string => {
   switch (riskLevel) {
     case RiskLevel.LOW:
-      return 'bg-green-100 text-green-800';
+      return "bg-green-100 text-green-800";
     case RiskLevel.MEDIUM:
-      return 'bg-yellow-100 text-yellow-800';
+      return "bg-yellow-100 text-yellow-800";
     case RiskLevel.HIGH:
-      return 'bg-orange-100 text-orange-800';
+      return "bg-orange-100 text-orange-800";
     case RiskLevel.CRITICAL:
-      return 'bg-red-100 text-red-800';
+      return "bg-red-100 text-red-800";
     default:
-      return 'bg-gray-100 text-gray-800';
+      return "bg-gray-100 text-gray-800";
   }
 };
 
 const getCategoryIcon = (category: SupplierCategory) => {
   switch (category) {
     case SupplierCategory.MEDICAL_EQUIPMENT:
-      return '🏥';
+      return "🏥";
     case SupplierCategory.AESTHETIC_SUPPLIES:
-      return '💄';
+      return "💄";
     case SupplierCategory.PHARMACEUTICALS:
-      return '💊';
+      return "💊";
     case SupplierCategory.CONSUMABLES:
-      return '📦';
+      return "📦";
     case SupplierCategory.TECHNOLOGY:
-      return '💻';
+      return "💻";
     case SupplierCategory.SERVICES:
-      return '🔧';
+      return "🔧";
     case SupplierCategory.MAINTENANCE:
-      return '⚙️';
+      return "⚙️";
     case SupplierCategory.OFFICE_SUPPLIES:
-      return '📋';
+      return "📋";
     default:
-      return '📦';
+      return "📦";
   }
 };
 
 const getPerformanceTrend = (score: number, previousScore?: number) => {
-  if (!previousScore) return { icon: <Minus className="h-3 w-3" />, color: 'text-gray-500' };
-  
+  if (!previousScore) return { icon: <Minus className="h-3 w-3" />, color: "text-gray-500" };
+
   const difference = score - previousScore;
-  if (difference > 5) return { icon: <TrendingUp className="h-3 w-3" />, color: 'text-green-600' };
-  if (difference < -5) return { icon: <TrendingDown className="h-3 w-3" />, color: 'text-red-600' };
-  return { icon: <Minus className="h-3 w-3" />, color: 'text-gray-500' };
+  if (difference > 5) return { icon: <TrendingUp className="h-3 w-3" />, color: "text-green-600" };
+  if (difference < -5) return { icon: <TrendingDown className="h-3 w-3" />, color: "text-red-600" };
+  return { icon: <Minus className="h-3 w-3" />, color: "text-gray-500" };
 };
 
 // ============================================================================
@@ -191,16 +186,18 @@ export function SupplierList({
   onSupplierEdit,
   onSupplierDelete,
   selectable = false,
-  compactView = false
+  compactView = false,
 }: SupplierListProps) {
   // ============================================================================
   // STATE MANAGEMENT
   // ============================================================================
 
   const [selectedSuppliers, setSelectedSuppliers] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState<'name' | 'performance' | 'category' | 'status' | 'risk'>('name');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
+  const [sortBy, setSortBy] = useState<"name" | "performance" | "category" | "status" | "risk">(
+    "name",
+  );
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [viewMode, setViewMode] = useState<"table" | "cards">("table");
 
   // Search and filtering
   const {
@@ -214,7 +211,7 @@ export function SupplierList({
     setSelectedRiskLevels,
     filters,
     clearFilters,
-    hasActiveFilters
+    hasActiveFilters,
   } = useSupplierSearch();
 
   // Data fetching
@@ -230,7 +227,7 @@ export function SupplierList({
     isCreating,
     isUpdating,
     isDeleting,
-    isTogglingStatus
+    isTogglingStatus,
   } = useSuppliers(clinicId, filters);
 
   // ============================================================================
@@ -245,23 +242,23 @@ export function SupplierList({
       let aValue: any, bValue: any;
 
       switch (sortBy) {
-        case 'name':
+        case "name":
           aValue = a.name.toLowerCase();
           bValue = b.name.toLowerCase();
           break;
-        case 'performance':
+        case "performance":
           aValue = a.performance_score || 0;
           bValue = b.performance_score || 0;
           break;
-        case 'category':
+        case "category":
           aValue = a.category;
           bValue = b.category;
           break;
-        case 'status':
+        case "status":
           aValue = a.status;
           bValue = b.status;
           break;
-        case 'risk':
+        case "risk":
           aValue = a.risk_level;
           bValue = b.risk_level;
           break;
@@ -269,8 +266,8 @@ export function SupplierList({
           return 0;
       }
 
-      if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
-      if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
+      if (aValue < bValue) return sortOrder === "asc" ? -1 : 1;
+      if (aValue > bValue) return sortOrder === "asc" ? 1 : -1;
       return 0;
     });
 
@@ -279,18 +276,20 @@ export function SupplierList({
 
   // Statistics
   const statistics = useMemo(() => {
-    if (!suppliers?.length) return {
-      total: 0,
-      active: 0,
-      averagePerformance: 0,
-      highRisk: 0
-    };
+    if (!suppliers?.length)
+      return {
+        total: 0,
+        active: 0,
+        averagePerformance: 0,
+        highRisk: 0,
+      };
 
     const total = suppliers.length;
-    const active = suppliers.filter(s => s.status === SupplierStatus.ACTIVE).length;
-    const averagePerformance = suppliers.reduce((sum, s) => sum + (s.performance_score || 0), 0) / total;
-    const highRisk = suppliers.filter(s => 
-      s.risk_level === RiskLevel.HIGH || s.risk_level === RiskLevel.CRITICAL
+    const active = suppliers.filter((s) => s.status === SupplierStatus.ACTIVE).length;
+    const averagePerformance =
+      suppliers.reduce((sum, s) => sum + (s.performance_score || 0), 0) / total;
+    const highRisk = suppliers.filter(
+      (s) => s.risk_level === RiskLevel.HIGH || s.risk_level === RiskLevel.CRITICAL,
     ).length;
 
     return { total, active, averagePerformance, highRisk };
@@ -302,20 +301,18 @@ export function SupplierList({
 
   const handleSort = (column: typeof sortBy) => {
     if (sortBy === column) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
       setSortBy(column);
-      setSortOrder('asc');
+      setSortOrder("asc");
     }
   };
 
   const handleSelectSupplier = (supplierId: string) => {
     if (!selectable) return;
 
-    setSelectedSuppliers(prev =>
-      prev.includes(supplierId)
-        ? prev.filter(id => id !== supplierId)
-        : [...prev, supplierId]
+    setSelectedSuppliers((prev) =>
+      prev.includes(supplierId) ? prev.filter((id) => id !== supplierId) : [...prev, supplierId],
     );
   };
 
@@ -325,11 +322,11 @@ export function SupplierList({
     if (selectedSuppliers.length === sortedSuppliers.length) {
       setSelectedSuppliers([]);
     } else {
-      setSelectedSuppliers(sortedSuppliers.map(s => s.id));
+      setSelectedSuppliers(sortedSuppliers.map((s) => s.id));
     }
   };
 
-  const handleBulkAction = (action: 'activate' | 'deactivate' | 'delete') => {
+  const handleBulkAction = (action: "activate" | "deactivate" | "delete") => {
     // Implementation for bulk actions
     console.log(`Bulk ${action} for:`, selectedSuppliers);
   };
@@ -339,11 +336,11 @@ export function SupplierList({
   // ============================================================================
 
   const renderSupplierCard = (supplier: Supplier) => (
-    <Card 
-      key={supplier.id} 
+    <Card
+      key={supplier.id}
       className={cn(
         "transition-all hover:shadow-md cursor-pointer",
-        selectedSuppliers.includes(supplier.id) && "ring-2 ring-blue-500"
+        selectedSuppliers.includes(supplier.id) && "ring-2 ring-blue-500",
       )}
       onClick={() => onSupplierSelect?.(supplier)}
     >
@@ -362,15 +359,15 @@ export function SupplierList({
               </div>
               <p className="text-xs text-gray-500 truncate">{supplier.legal_name}</p>
               <div className="flex items-center gap-2 mt-1">
-                <Badge 
-                  variant="secondary" 
+                <Badge
+                  variant="secondary"
                   className={cn("text-xs", getStatusColor(supplier.status))}
                 >
                   {getStatusIcon(supplier.status)}
                   <span className="ml-1">{supplier.status}</span>
                 </Badge>
-                <Badge 
-                  variant="outline" 
+                <Badge
+                  variant="outline"
                   className={cn("text-xs", getRiskColor(supplier.risk_level))}
                 >
                   {supplier.risk_level}
@@ -394,7 +391,7 @@ export function SupplierList({
                 Editar
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 onClick={() => onSupplierDelete?.(supplier)}
                 className="text-red-600"
               >
@@ -404,7 +401,7 @@ export function SupplierList({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        
+
         <div className="mt-3 space-y-2">
           <div className="flex items-center justify-between text-xs">
             <span className="text-gray-500">Performance</span>
@@ -414,7 +411,7 @@ export function SupplierList({
             </div>
           </div>
           <Progress value={supplier.performance_score || 0} className="h-1" />
-          
+
           <div className="flex items-center justify-between text-xs text-gray-500">
             <div className="flex items-center gap-1">
               <Star className="h-3 w-3 fill-current text-yellow-400" />
@@ -422,7 +419,7 @@ export function SupplierList({
             </div>
             <div className="flex items-center gap-1">
               <Phone className="h-3 w-3" />
-              <span>{supplier.primary_contact?.phone || 'N/A'}</span>
+              <span>{supplier.primary_contact?.phone || "N/A"}</span>
             </div>
           </div>
         </div>
@@ -431,11 +428,11 @@ export function SupplierList({
   );
 
   const renderSupplierRow = (supplier: Supplier) => (
-    <TableRow 
+    <TableRow
       key={supplier.id}
       className={cn(
         "cursor-pointer hover:bg-gray-50",
-        selectedSuppliers.includes(supplier.id) && "bg-blue-50"
+        selectedSuppliers.includes(supplier.id) && "bg-blue-50",
       )}
       onClick={() => onSupplierSelect?.(supplier)}
     >
@@ -448,7 +445,7 @@ export function SupplierList({
           />
         </TableCell>
       )}
-      
+
       <TableCell>
         <div className="flex items-center space-x-3">
           <Avatar className="h-8 w-8">
@@ -465,26 +462,20 @@ export function SupplierList({
           </div>
         </div>
       </TableCell>
-      
+
       <TableCell>
-        <Badge 
-          variant="secondary" 
-          className={cn("text-xs", getStatusColor(supplier.status))}
-        >
+        <Badge variant="secondary" className={cn("text-xs", getStatusColor(supplier.status))}>
           {getStatusIcon(supplier.status)}
           <span className="ml-1">{supplier.status}</span>
         </Badge>
       </TableCell>
-      
+
       <TableCell>
-        <Badge 
-          variant="outline" 
-          className={cn("text-xs", getRiskColor(supplier.risk_level))}
-        >
+        <Badge variant="outline" className={cn("text-xs", getRiskColor(supplier.risk_level))}>
           {supplier.risk_level}
         </Badge>
       </TableCell>
-      
+
       <TableCell>
         <div className="flex items-center gap-2">
           <div className="flex-1">
@@ -496,29 +487,29 @@ export function SupplierList({
           {getPerformanceTrend(supplier.performance_score || 0).icon}
         </div>
       </TableCell>
-      
+
       <TableCell>
         <div className="flex items-center gap-1">
           <Star className="h-3 w-3 fill-current text-yellow-400" />
           <span className="text-sm">{supplier.quality_rating || 0}/5</span>
         </div>
       </TableCell>
-      
+
       <TableCell>
         <div className="text-sm space-y-1">
           <div className="flex items-center gap-1 text-gray-600">
             <Mail className="h-3 w-3" />
             <span className="truncate max-w-[120px]">
-              {supplier.primary_contact?.email || 'N/A'}
+              {supplier.primary_contact?.email || "N/A"}
             </span>
           </div>
           <div className="flex items-center gap-1 text-gray-600">
             <Phone className="h-3 w-3" />
-            <span>{supplier.primary_contact?.phone || 'N/A'}</span>
+            <span>{supplier.primary_contact?.phone || "N/A"}</span>
           </div>
         </div>
       </TableCell>
-      
+
       <TableCell>
         <DropdownMenu>
           <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
@@ -536,10 +527,7 @@ export function SupplierList({
               Editar
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem 
-              onClick={() => onSupplierDelete?.(supplier)}
-              className="text-red-600"
-            >
+            <DropdownMenuItem onClick={() => onSupplierDelete?.(supplier)} className="text-red-600">
               <Trash2 className="h-4 w-4 mr-2" />
               Excluir
             </DropdownMenuItem>
@@ -599,9 +587,7 @@ export function SupplierList({
       <Card>
         <CardContent className="p-6 text-center">
           <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
-            Erro ao carregar fornecedores
-          </h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Erro ao carregar fornecedores</h3>
           <p className="text-gray-500 mb-4">
             Ocorreu um erro ao carregar a lista de fornecedores. Tente novamente.
           </p>
@@ -633,7 +619,7 @@ export function SupplierList({
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -645,7 +631,7 @@ export function SupplierList({
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -657,7 +643,7 @@ export function SupplierList({
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -685,13 +671,13 @@ export function SupplierList({
                 className="pl-10"
               />
             </div>
-            
+
             {/* Filters */}
             <div className="flex gap-2">
               <Select
-                value={selectedCategories[0] || 'all'}
-                onValueChange={(value) => 
-                  setSelectedCategories(value === 'all' ? [] : [value as SupplierCategory])
+                value={selectedCategories[0] || "all"}
+                onValueChange={(value) =>
+                  setSelectedCategories(value === "all" ? [] : [value as SupplierCategory])
                 }
               >
                 <SelectTrigger className="w-40">
@@ -699,18 +685,18 @@ export function SupplierList({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todas</SelectItem>
-                  {Object.values(SupplierCategory).map(category => (
+                  {Object.values(SupplierCategory).map((category) => (
                     <SelectItem key={category} value={category}>
                       {getCategoryIcon(category)} {category}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              
+
               <Select
-                value={selectedStatuses[0] || 'all'}
-                onValueChange={(value) => 
-                  setSelectedStatuses(value === 'all' ? [] : [value as SupplierStatus])
+                value={selectedStatuses[0] || "all"}
+                onValueChange={(value) =>
+                  setSelectedStatuses(value === "all" ? [] : [value as SupplierStatus])
                 }
               >
                 <SelectTrigger className="w-32">
@@ -718,18 +704,18 @@ export function SupplierList({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos</SelectItem>
-                  {Object.values(SupplierStatus).map(status => (
+                  {Object.values(SupplierStatus).map((status) => (
                     <SelectItem key={status} value={status}>
                       {getStatusIcon(status)} {status}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              
+
               <Select
-                value={selectedRiskLevels[0] || 'all'}
-                onValueChange={(value) => 
-                  setSelectedRiskLevels(value === 'all' ? [] : [value as RiskLevel])
+                value={selectedRiskLevels[0] || "all"}
+                onValueChange={(value) =>
+                  setSelectedRiskLevels(value === "all" ? [] : [value as RiskLevel])
                 }
               >
                 <SelectTrigger className="w-32">
@@ -737,28 +723,28 @@ export function SupplierList({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos</SelectItem>
-                  {Object.values(RiskLevel).map(risk => (
+                  {Object.values(RiskLevel).map((risk) => (
                     <SelectItem key={risk} value={risk}>
                       {risk}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              
+
               {hasActiveFilters && (
                 <Button variant="outline" onClick={clearFilters} size="sm">
                   Limpar
                 </Button>
               )}
             </div>
-            
+
             {/* Actions */}
             <div className="flex gap-2">
               <Button onClick={() => refetch()} variant="outline" size="sm">
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Atualizar
               </Button>
-              
+
               {onSupplierCreate && (
                 <Button onClick={onSupplierCreate} size="sm">
                   <Plus className="h-4 w-4 mr-2" />
@@ -767,7 +753,7 @@ export function SupplierList({
               )}
             </div>
           </div>
-          
+
           {/* Bulk Actions */}
           {selectable && selectedSuppliers.length > 0 && (
             <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
@@ -776,24 +762,20 @@ export function SupplierList({
                   {selectedSuppliers.length} fornecedor(es) selecionado(s)
                 </span>
                 <div className="flex gap-2">
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    onClick={() => handleBulkAction('activate')}
-                  >
+                  <Button size="sm" variant="outline" onClick={() => handleBulkAction("activate")}>
                     Ativar
                   </Button>
-                  <Button 
-                    size="sm" 
+                  <Button
+                    size="sm"
                     variant="outline"
-                    onClick={() => handleBulkAction('deactivate')}
+                    onClick={() => handleBulkAction("deactivate")}
                   >
                     Desativar
                   </Button>
-                  <Button 
-                    size="sm" 
+                  <Button
+                    size="sm"
                     variant="outline"
-                    onClick={() => handleBulkAction('delete')}
+                    onClick={() => handleBulkAction("delete")}
                     className="text-red-600 hover:text-red-700"
                   >
                     Excluir
@@ -806,7 +788,7 @@ export function SupplierList({
       </Card>
 
       {/* Suppliers List */}
-      {viewMode === 'cards' ? (
+      {viewMode === "cards" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {sortedSuppliers.map(renderSupplierCard)}
         </div>
@@ -818,53 +800,48 @@ export function SupplierList({
                 {selectable && (
                   <TableHead className="w-12">
                     <Checkbox
-                      checked={selectedSuppliers.length === sortedSuppliers.length && sortedSuppliers.length > 0}
+                      checked={
+                        selectedSuppliers.length === sortedSuppliers.length &&
+                        sortedSuppliers.length > 0
+                      }
                       onCheckedChange={handleSelectAll}
                     />
                   </TableHead>
                 )}
-                <TableHead 
+                <TableHead
                   className="cursor-pointer hover:bg-gray-50"
-                  onClick={() => handleSort('name')}
+                  onClick={() => handleSort("name")}
                 >
                   <div className="flex items-center gap-1">
                     Fornecedor
-                    {sortBy === 'name' && (
-                      sortOrder === 'asc' ? '↑' : '↓'
-                    )}
+                    {sortBy === "name" && (sortOrder === "asc" ? "↑" : "↓")}
                   </div>
                 </TableHead>
-                <TableHead 
+                <TableHead
                   className="cursor-pointer hover:bg-gray-50"
-                  onClick={() => handleSort('status')}
+                  onClick={() => handleSort("status")}
                 >
                   <div className="flex items-center gap-1">
                     Status
-                    {sortBy === 'status' && (
-                      sortOrder === 'asc' ? '↑' : '↓'
-                    )}
+                    {sortBy === "status" && (sortOrder === "asc" ? "↑" : "↓")}
                   </div>
                 </TableHead>
-                <TableHead 
+                <TableHead
                   className="cursor-pointer hover:bg-gray-50"
-                  onClick={() => handleSort('risk')}
+                  onClick={() => handleSort("risk")}
                 >
                   <div className="flex items-center gap-1">
                     Risco
-                    {sortBy === 'risk' && (
-                      sortOrder === 'asc' ? '↑' : '↓'
-                    )}
+                    {sortBy === "risk" && (sortOrder === "asc" ? "↑" : "↓")}
                   </div>
                 </TableHead>
-                <TableHead 
+                <TableHead
                   className="cursor-pointer hover:bg-gray-50"
-                  onClick={() => handleSort('performance')}
+                  onClick={() => handleSort("performance")}
                 >
                   <div className="flex items-center gap-1">
                     Performance
-                    {sortBy === 'performance' && (
-                      sortOrder === 'asc' ? '↑' : '↓'
-                    )}
+                    {sortBy === "performance" && (sortOrder === "asc" ? "↑" : "↓")}
                   </div>
                 </TableHead>
                 <TableHead>Qualidade</TableHead>
@@ -872,9 +849,7 @@ export function SupplierList({
                 <TableHead className="w-12"></TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
-              {sortedSuppliers.map(renderSupplierRow)}
-            </TableBody>
+            <TableBody>{sortedSuppliers.map(renderSupplierRow)}</TableBody>
           </Table>
         </Card>
       )}
@@ -884,14 +859,11 @@ export function SupplierList({
         <Card>
           <CardContent className="p-12 text-center">
             <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Nenhum fornecedor encontrado
-            </h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum fornecedor encontrado</h3>
             <p className="text-gray-500 mb-4">
-              {hasActiveFilters 
-                ? 'Tente ajustar os filtros para encontrar fornecedores.' 
-                : 'Comece criando seu primeiro fornecedor.'
-              }
+              {hasActiveFilters
+                ? "Tente ajustar os filtros para encontrar fornecedores."
+                : "Comece criando seu primeiro fornecedor."}
             </p>
             {!hasActiveFilters && onSupplierCreate && (
               <Button onClick={onSupplierCreate}>

@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -11,22 +11,22 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { documentsService } from "@/lib/services/documents";
-import { VendorService } from "@/lib/services/vendors";
-import { Vendor, VendorFormData } from "@/lib/types/accounts-payable";
-import { Building, FileText, Loader2, Mail } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { documentsService } from "@/lib/services/documents";
+import type { VendorService } from "@/lib/services/vendors";
+import type { Vendor, VendorFormData } from "@/lib/types/accounts-payable";
+import type { Building, FileText, Loader2, Mail } from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 import DocumentUpload from "./document-upload";
 
 interface VendorFormProps {
@@ -53,12 +53,7 @@ const paymentMethods = [
   { value: "other", label: "Outro" },
 ];
 
-export function VendorForm({
-  vendor,
-  open,
-  onOpenChange,
-  onSuccess,
-}: VendorFormProps) {
+export function VendorForm({ vendor, open, onOpenChange, onSuccess }: VendorFormProps) {
   const [loading, setLoading] = useState(false);
   const [documents, setDocuments] = useState<any[]>([]);
   const [loadingDocuments, setLoadingDocuments] = useState(false);
@@ -170,10 +165,7 @@ export function VendorForm({
 
     setLoadingDocuments(true);
     try {
-      const vendorDocuments = await documentsService.getDocuments(
-        "vendor",
-        vendor.id
-      );
+      const vendorDocuments = await documentsService.getDocuments("vendor", vendor.id);
       setDocuments(vendorDocuments);
     } catch (error) {
       console.error("Erro ao carregar documentos:", error);
@@ -236,9 +228,7 @@ export function VendorForm({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>
-            {vendor ? "Editar Fornecedor" : "Novo Fornecedor"}
-          </DialogTitle>
+          <DialogTitle>{vendor ? "Editar Fornecedor" : "Novo Fornecedor"}</DialogTitle>
           <DialogDescription>
             {vendor
               ? "Atualize as informações do fornecedor."
@@ -278,9 +268,7 @@ export function VendorForm({
                     <Input
                       id="vendor_code"
                       value={formData.vendor_code}
-                      onChange={(e) =>
-                        updateField("vendor_code", e.target.value)
-                      }
+                      onChange={(e) => updateField("vendor_code", e.target.value)}
                       placeholder="VEND001"
                       required
                     />
@@ -291,9 +279,7 @@ export function VendorForm({
                     <Input
                       id="company_name"
                       value={formData.company_name}
-                      onChange={(e) =>
-                        updateField("company_name", e.target.value)
-                      }
+                      onChange={(e) => updateField("company_name", e.target.value)}
                       placeholder="Nome da empresa"
                       required
                     />
@@ -304,9 +290,7 @@ export function VendorForm({
                     <Input
                       id="legal_name"
                       value={formData.legal_name}
-                      onChange={(e) =>
-                        updateField("legal_name", e.target.value)
-                      }
+                      onChange={(e) => updateField("legal_name", e.target.value)}
                       placeholder="Razão social"
                     />
                   </div>
@@ -315,9 +299,7 @@ export function VendorForm({
                     <Label htmlFor="vendor_type">Tipo</Label>
                     <Select
                       value={formData.vendor_type}
-                      onValueChange={(value) =>
-                        updateField("vendor_type", value)
-                      }
+                      onValueChange={(value) => updateField("vendor_type", value)}
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -348,9 +330,7 @@ export function VendorForm({
                     <Input
                       id="contact_person"
                       value={formData.contact_person}
-                      onChange={(e) =>
-                        updateField("contact_person", e.target.value)
-                      }
+                      onChange={(e) => updateField("contact_person", e.target.value)}
                       placeholder="Nome do contato"
                     />
                   </div>
@@ -400,9 +380,7 @@ export function VendorForm({
                       <Input
                         id="address_line1"
                         value={formData.address_line1}
-                        onChange={(e) =>
-                          updateField("address_line1", e.target.value)
-                        }
+                        onChange={(e) => updateField("address_line1", e.target.value)}
                         placeholder="Rua, número"
                       />
                     </div>
@@ -412,9 +390,7 @@ export function VendorForm({
                       <Input
                         id="address_line2"
                         value={formData.address_line2}
-                        onChange={(e) =>
-                          updateField("address_line2", e.target.value)
-                        }
+                        onChange={(e) => updateField("address_line2", e.target.value)}
                         placeholder="Apartamento, sala, etc."
                       />
                     </div>
@@ -444,9 +420,7 @@ export function VendorForm({
                       <Input
                         id="postal_code"
                         value={formData.postal_code}
-                        onChange={(e) =>
-                          updateField("postal_code", e.target.value)
-                        }
+                        onChange={(e) => updateField("postal_code", e.target.value)}
                         placeholder="01234-567"
                       />
                     </div>
@@ -483,29 +457,21 @@ export function VendorForm({
                     </div>
 
                     <div>
-                      <Label htmlFor="state_registration">
-                        Inscrição Estadual
-                      </Label>
+                      <Label htmlFor="state_registration">Inscrição Estadual</Label>
                       <Input
                         id="state_registration"
                         value={formData.state_registration}
-                        onChange={(e) =>
-                          updateField("state_registration", e.target.value)
-                        }
+                        onChange={(e) => updateField("state_registration", e.target.value)}
                         placeholder="123.456.789.012"
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="municipal_registration">
-                        Inscrição Municipal
-                      </Label>
+                      <Label htmlFor="municipal_registration">Inscrição Municipal</Label>
                       <Input
                         id="municipal_registration"
                         value={formData.municipal_registration}
-                        onChange={(e) =>
-                          updateField("municipal_registration", e.target.value)
-                        }
+                        onChange={(e) => updateField("municipal_registration", e.target.value)}
                         placeholder="123456789"
                       />
                     </div>
@@ -514,9 +480,7 @@ export function VendorForm({
                       <Checkbox
                         id="tax_exempt"
                         checked={formData.tax_exempt}
-                        onCheckedChange={(checked) =>
-                          updateField("tax_exempt", checked)
-                        }
+                        onCheckedChange={(checked) => updateField("tax_exempt", checked)}
                       />
                       <Label htmlFor="tax_exempt">Isento de Impostos</Label>
                     </div>
@@ -534,9 +498,7 @@ export function VendorForm({
                       <Input
                         id="bank_name"
                         value={formData.bank_name}
-                        onChange={(e) =>
-                          updateField("bank_name", e.target.value)
-                        }
+                        onChange={(e) => updateField("bank_name", e.target.value)}
                         placeholder="Nome do banco"
                       />
                     </div>
@@ -546,9 +508,7 @@ export function VendorForm({
                       <Input
                         id="bank_branch"
                         value={formData.bank_branch}
-                        onChange={(e) =>
-                          updateField("bank_branch", e.target.value)
-                        }
+                        onChange={(e) => updateField("bank_branch", e.target.value)}
                         placeholder="0123-4"
                       />
                     </div>
@@ -558,9 +518,7 @@ export function VendorForm({
                       <Input
                         id="bank_account"
                         value={formData.bank_account}
-                        onChange={(e) =>
-                          updateField("bank_account", e.target.value)
-                        }
+                        onChange={(e) => updateField("bank_account", e.target.value)}
                         placeholder="12345-6"
                       />
                     </div>
@@ -591,10 +549,7 @@ export function VendorForm({
                       type="number"
                       value={formData.payment_terms_days}
                       onChange={(e) =>
-                        updateField(
-                          "payment_terms_days",
-                          parseInt(e.target.value) || 30
-                        )
+                        updateField("payment_terms_days", parseInt(e.target.value) || 30)
                       }
                       min="0"
                       max="365"
@@ -605,9 +560,7 @@ export function VendorForm({
                     <Label htmlFor="payment_method">Método de Pagamento</Label>
                     <Select
                       value={formData.payment_method}
-                      onValueChange={(value) =>
-                        updateField("payment_method", value)
-                      }
+                      onValueChange={(value) => updateField("payment_method", value)}
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -629,10 +582,7 @@ export function VendorForm({
                       type="number"
                       value={formData.credit_limit || ""}
                       onChange={(e) =>
-                        updateField(
-                          "credit_limit",
-                          parseFloat(e.target.value) || undefined
-                        )
+                        updateField("credit_limit", parseFloat(e.target.value) || undefined)
                       }
                       placeholder="0.00"
                       step="0.01"
@@ -652,9 +602,7 @@ export function VendorForm({
                     <Checkbox
                       id="is_active"
                       checked={formData.is_active}
-                      onCheckedChange={(checked) =>
-                        updateField("is_active", checked)
-                      }
+                      onCheckedChange={(checked) => updateField("is_active", checked)}
                     />
                     <Label htmlFor="is_active">Ativo</Label>
                   </div>
@@ -663,9 +611,7 @@ export function VendorForm({
                     <Checkbox
                       id="requires_approval"
                       checked={formData.requires_approval}
-                      onCheckedChange={(checked) =>
-                        updateField("requires_approval", checked)
-                      }
+                      onCheckedChange={(checked) => updateField("requires_approval", checked)}
                     />
                     <Label htmlFor="requires_approval">Requer Aprovação</Label>
                   </div>
@@ -687,11 +633,7 @@ export function VendorForm({
         </Tabs>
 
         <DialogFooter>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-          >
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
           <Button type="submit" onClick={handleSubmit} disabled={loading}>

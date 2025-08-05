@@ -1,11 +1,17 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
+import type { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
   Calendar,
   List,
   Users,
@@ -16,53 +22,52 @@ import {
   Trophy,
   TrendingUp,
   Settings,
-  RefreshCw
-} from 'lucide-react'
-import { format } from 'date-fns'
-import { pt } from 'date-fns/locale'
-import { toast } from 'sonner'
-import { useAppointmentsManager } from '@/hooks/use-appointments-manager'
-import { AppointmentFilters } from './appointment-filters'
-import { AppointmentListView } from './appointment-list-view'
-import { AppointmentCalendarView } from './appointment-calendar-view'
-import { QuickActions } from './quick-actions'
-import {
+  RefreshCw,
+} from "lucide-react";
+import type { format } from "date-fns";
+import type { pt } from "date-fns/locale";
+import type { toast } from "sonner";
+import type { useAppointmentsManager } from "@/hooks/use-appointments-manager";
+import type { AppointmentFilters } from "./appointment-filters";
+import type { AppointmentListView } from "./appointment-list-view";
+import type { AppointmentCalendarView } from "./appointment-calendar-view";
+import type { QuickActions } from "./quick-actions";
+import type {
   EditAppointmentDialog,
   RescheduleAppointmentDialog,
   ContactPatientDialog,
-  CreateAppointmentDialog
-} from './appointments/modals'
-import type { Appointment } from '@/hooks/use-appointments-manager'
+  CreateAppointmentDialog,
+} from "./appointments/modals";
+import type { Appointment } from "@/hooks/use-appointments-manager";
 
 interface AppointmentManagementDashboardProps {
-  userId: string
-  userRole: 'admin' | 'professional' | 'receptionist'
-  professionalId?: string
-  className?: string
+  userId: string;
+  userRole: "admin" | "professional" | "receptionist";
+  professionalId?: string;
+  className?: string;
 }
 
 export function AppointmentManagementDashboard({
   userId,
   userRole,
   professionalId,
-  className = ''
+  className = "",
 }: AppointmentManagementDashboardProps) {
-  const [currentDate, setCurrentDate] = useState<Date | null>(null)
-  const [selectedView, setSelectedView] = useState<'list' | 'calendar'>('list')
-  const [refreshing, setRefreshing] = useState(false)
+  const [currentDate, setCurrentDate] = useState<Date | null>(null);
+  const [selectedView, setSelectedView] = useState<"list" | "calendar">("list");
+  const [refreshing, setRefreshing] = useState(false);
 
   // Initialize current date on client side only
   useEffect(() => {
+    setCurrentDate(new Date());
+  }, []);
 
-    setCurrentDate(new Date())
-  }, [])
-  
   // Modal states
-  const [editDialogOpen, setEditDialogOpen] = useState(false)
-  const [rescheduleDialogOpen, setRescheduleDialogOpen] = useState(false)
-  const [contactDialogOpen, setContactDialogOpen] = useState(false)
-  const [createDialogOpen, setCreateDialogOpen] = useState(false)
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [rescheduleDialogOpen, setRescheduleDialogOpen] = useState(false);
+  const [contactDialogOpen, setContactDialogOpen] = useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
 
   const {
     appointments,
@@ -77,112 +82,116 @@ export function AppointmentManagementDashboard({
     rescheduleAppointment,
     markCompleted,
     markNoShow,
-    refreshData
+    refreshData,
   } = useAppointmentsManager({
     userId,
     userRole,
     professionalId,
     autoRefresh: true,
-    refreshInterval: 30000 // 30 seconds
-  })
+    refreshInterval: 30000, // 30 seconds
+  });
 
   // Mock professionals data (replace with actual data)
   const professionals = [
-    { id: '1', name: 'Dr. Ana Silva' },
-    { id: '2', name: 'Dr. Carlos Santos' },
-    { id: '3', name: 'Dra. Maria Oliveira' }
-  ]
+    { id: "1", name: "Dr. Ana Silva" },
+    { id: "2", name: "Dr. Carlos Santos" },
+    { id: "3", name: "Dra. Maria Oliveira" },
+  ];
 
   const handleRefresh = async () => {
-    setRefreshing(true)
+    setRefreshing(true);
     try {
-      await refreshData()
-      toast.success('Dados atualizados!')
+      await refreshData();
+      toast.success("Dados atualizados!");
     } catch (error) {
-      toast.error('Erro ao atualizar dados')
+      toast.error("Erro ao atualizar dados");
     } finally {
-      setRefreshing(false)
+      setRefreshing(false);
     }
-  }
+  };
 
   const handleEditAppointment = (appointment: Appointment) => {
-    setSelectedAppointment(appointment)
-    setEditDialogOpen(true)
-  }
+    setSelectedAppointment(appointment);
+    setEditDialogOpen(true);
+  };
 
   const handleRescheduleAppointment = (appointment: Appointment) => {
-    setSelectedAppointment(appointment)
-    setRescheduleDialogOpen(true)
-  }
+    setSelectedAppointment(appointment);
+    setRescheduleDialogOpen(true);
+  };
 
   const handleContactPatient = (appointment: Appointment) => {
-    setSelectedAppointment(appointment)
-    setContactDialogOpen(true)
-  }
+    setSelectedAppointment(appointment);
+    setContactDialogOpen(true);
+  };
 
   const handleCreateAppointment = (date?: Date, time?: string) => {
-    setCreateDialogOpen(true)
-  }
+    setCreateDialogOpen(true);
+  };
 
   // Handle appointment updates from modals
   const handleAppointmentUpdate = (updatedAppointment: Appointment) => {
     // Refresh data to show updated appointment
-    refreshData()
-    setSelectedAppointment(null)
-  }
+    refreshData();
+    setSelectedAppointment(null);
+  };
 
-  const handleAppointmentReschedule = async (appointmentId: string, newStartTime: string, reason: string) => {
+  const handleAppointmentReschedule = async (
+    appointmentId: string,
+    newStartTime: string,
+    reason: string,
+  ) => {
     try {
-      await rescheduleAppointment(appointmentId, newStartTime, reason)
-      setSelectedAppointment(null)
+      await rescheduleAppointment(appointmentId, newStartTime, reason);
+      setSelectedAppointment(null);
     } catch (error) {
-      throw error // Re-throw to be handled by the modal
+      throw error; // Re-throw to be handled by the modal
     }
-  }
+  };
 
   const handleCreateSuccess = () => {
     // Refresh data to show new appointment
-    refreshData()
-  }
+    refreshData();
+  };
 
   const handleBulkAction = async (action: string, appointmentIds: string[], reason?: string) => {
     try {
       switch (action) {
-        case 'confirm':
-          await Promise.all(appointmentIds.map(id => confirmAppointment(id)))
-          break
-        case 'cancel':
-          await Promise.all(appointmentIds.map(id => cancelAppointment(id, reason)))
-          break
-        case 'complete':
-          await Promise.all(appointmentIds.map(id => markCompleted(id)))
-          break
-        case 'no_show':
-          await Promise.all(appointmentIds.map(id => markNoShow(id)))
-          break
+        case "confirm":
+          await Promise.all(appointmentIds.map((id) => confirmAppointment(id)));
+          break;
+        case "cancel":
+          await Promise.all(appointmentIds.map((id) => cancelAppointment(id, reason)));
+          break;
+        case "complete":
+          await Promise.all(appointmentIds.map((id) => markCompleted(id)));
+          break;
+        case "no_show":
+          await Promise.all(appointmentIds.map((id) => markNoShow(id)));
+          break;
       }
     } catch (error) {
-      throw error
+      throw error;
     }
-  }
+  };
 
   const formatDateRange = () => {
     switch (filters.dateRange) {
-      case 'today':
-        return 'Hoje'
-      case 'week':
-        return 'Esta Semana'
-      case 'month':
-        return 'Este Mês'
-      case 'custom':
+      case "today":
+        return "Hoje";
+      case "week":
+        return "Esta Semana";
+      case "month":
+        return "Este Mês";
+      case "custom":
         if (filters.startDate && filters.endDate) {
-          return `${format(filters.startDate, 'dd/MM')} - ${format(filters.endDate, 'dd/MM')}`
+          return `${format(filters.startDate, "dd/MM")} - ${format(filters.endDate, "dd/MM")}`;
         }
-        return 'Período Personalizado'
+        return "Período Personalizado";
       default:
-        return 'Esta Semana'
+        return "Esta Semana";
     }
-  }
+  };
 
   if (error) {
     return (
@@ -192,9 +201,7 @@ export function AppointmentManagementDashboard({
             <AlertCircle className="h-12 w-12 text-red-500" />
             <div>
               <h3 className="font-semibold text-red-600">Erro ao carregar agendamentos</h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                {error}
-              </p>
+              <p className="text-sm text-muted-foreground mt-1">{error}</p>
             </div>
             <Button onClick={handleRefresh} variant="outline">
               <RefreshCw className="h-4 w-4 mr-2" />
@@ -203,7 +210,7 @@ export function AppointmentManagementDashboard({
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -213,23 +220,17 @@ export function AppointmentManagementDashboard({
         <div>
           <h1 className="text-3xl font-bold">Gerenciamento de Agendamentos</h1>
           <p className="text-muted-foreground">
-            {formatDateRange()} • {statistics.total} agendamento{statistics.total !== 1 ? 's' : ''}
+            {formatDateRange()} • {statistics.total} agendamento{statistics.total !== 1 ? "s" : ""}
           </p>
         </div>
-        
+
         <div className="flex items-center space-x-2">
-          <Button 
-            variant="outline" 
-            onClick={handleRefresh}
-            disabled={refreshing || isLoading}
-          >
-            <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+          <Button variant="outline" onClick={handleRefresh} disabled={refreshing || isLoading}>
+            <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? "animate-spin" : ""}`} />
             Atualizar
           </Button>
-          
-          <Button onClick={() => handleCreateAppointment()}>
-            Novo Agendamento
-          </Button>
+
+          <Button onClick={() => handleCreateAppointment()}>Novo Agendamento</Button>
         </div>
       </div>
 
@@ -290,7 +291,7 @@ export function AppointmentManagementDashboard({
             onAppointmentSelect={handleEditAppointment}
             onDaySelect={(date) => {
               // Focus on selected day
-              setCurrentDate(date)
+              setCurrentDate(date);
             }}
             onCreateAppointment={handleCreateAppointment}
             loading={isLoading}
@@ -325,17 +326,19 @@ export function AppointmentManagementDashboard({
                 <div className="text-sm text-muted-foreground">Pendentes</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-red-600">{statistics.cancelled + statistics.noShow}</div>
+                <div className="text-2xl font-bold text-red-600">
+                  {statistics.cancelled + statistics.noShow}
+                </div>
                 <div className="text-sm text-muted-foreground">Cancelados/Faltas</div>
               </div>
             </div>
-            
+
             {statistics.revenue && (
               <div className="mt-4 pt-4 border-t">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Receita do Período</span>
                   <span className="text-lg font-bold text-green-600">
-                    R$ {statistics.revenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    R$ {statistics.revenue.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                   </span>
                 </div>
               </div>
@@ -372,5 +375,5 @@ export function AppointmentManagementDashboard({
         professionalId={professionalId}
       />
     </div>
-  )
+  );
 }

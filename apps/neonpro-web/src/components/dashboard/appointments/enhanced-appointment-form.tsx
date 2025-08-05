@@ -6,26 +6,28 @@
 // =============================================
 
 import type { AlternativeSlot } from "@/app/lib/types/conflict-prevention";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { withErrorBoundary } from "@/components/ui/error-boundary";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { withErrorBoundary } from "@/components/ui/error-boundary";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { useConflictPrevention } from "@/hooks/appointments/use-conflict-prevention";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { addMinutes, format, parseISO } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import {
+import type { Textarea } from "@/components/ui/textarea";
+import type { useConflictPrevention } from "@/hooks/appointments/use-conflict-prevention";
+import type { useAlternativeSlots } from "@/hooks/appointments/use-alternative-slots";
+import AlternativeSlotsDisplay from "@/components/dashboard/appointments/alternative-slots-display";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type { addMinutes, format, parseISO } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
   AlertCircle,
   ArrowRight,
   Calendar,
@@ -35,10 +37,10 @@ import {
   Loader2,
   User,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
+import type { useEffect, useState } from "react";
+import type { Controller, useForm } from "react-hook-form";
+import type { toast } from "sonner";
+import type { z } from "zod";
 
 // Form validation schema
 const appointmentFormSchema = z.object({
@@ -67,15 +69,11 @@ export function EnhancedAppointmentForm({
 }: EnhancedAppointmentFormProps) {
   // Form state
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [patients, setPatients] = useState<Array<{ id: string; name: string }>>(
-    []
+  const [patients, setPatients] = useState<Array<{ id: string; name: string }>>([]);
+  const [professionals, setProfessionals] = useState<Array<{ id: string; name: string }>>([]);
+  const [services, setServices] = useState<Array<{ id: string; name: string; duration: number }>>(
+    [],
   );
-  const [professionals, setProfessionals] = useState<
-    Array<{ id: string; name: string }>
-  >([]);
-  const [services, setServices] = useState<
-    Array<{ id: string; name: string; duration: number }>
-  >([]);
   const [estimatedDuration, setEstimatedDuration] = useState(60); // minutes
 
   // Conflict prevention integration
@@ -94,6 +92,9 @@ export function EnhancedAppointmentForm({
     debounceMs: 500,
     enableRealTime: true,
   });
+
+  // Alternative slots suggestion hook
+  const alternativeSlots = useAlternativeSlots();
 
   // Form setup
   const form = useForm<AppointmentFormData>({
@@ -122,10 +123,7 @@ export function EnhancedAppointmentForm({
       const service = services.find((s) => s.id === serviceId);
       if (service) {
         setEstimatedDuration(service.duration);
-        const endTime = addMinutes(
-          parseISO(startTime),
-          service.duration
-        ).toISOString();
+        const endTime = addMinutes(parseISO(startTime), service.duration).toISOString();
         form.setValue("end_time", endTime);
 
         // Trigger validation for new time slot
@@ -168,7 +166,7 @@ export function EnhancedAppointmentForm({
             id: s.id,
             name: s.name,
             duration: s.duration_minutes || 60,
-          }))
+          })),
         );
       }
     } catch (error) {
@@ -179,12 +177,7 @@ export function EnhancedAppointmentForm({
   const triggerValidation = async () => {
     const values = form.getValues();
 
-    if (
-      values.professional_id &&
-      values.service_type_id &&
-      values.start_time &&
-      values.end_time
-    ) {
+    if (values.professional_id && values.service_type_id && values.start_time && values.end_time) {
       try {
         await validateSlot({
           professional_id: values.professional_id,
@@ -206,21 +199,47 @@ export function EnhancedAppointmentForm({
     // This will trigger validation through the useEffect
   };
 
+  // Function to get alternative suggestions when conflicts occur
+  const getAlternativeSuggestions = async () => {
+    const formData = form.getValues();
+
+    if (!formData.professional_id || !formData.service_type_id || !formData.start_time) {
+      toast.error("Complete os campos obrigatórios antes de buscar alternativas");
+      return;
+    }
+
+    const service = services.find((s) => s.id === formData.service_type_id);
+    if (!service) {
+      toast.error("Serviço não encontrado");
+      return;
+    }
+
+    try {
+      await alternativeSlots.getSuggestions({
+        professional_id: formData.professional_id,
+        service_type_id: formData.service_type_id,
+        preferred_start_time: formData.start_time,
+        duration_minutes: service.duration,
+        search_window_days: 7,
+        max_suggestions: 5,
+        exclude_appointment_id: editingAppointment?.id,
+      });
+    } catch (error) {
+      console.error("Error getting alternative suggestions:", error);
+    }
+  };
+
   const handleSubmit = async (data: AppointmentFormData) => {
     // Final validation before submission
     if (hasErrors) {
-      toast.error(
-        "Existem conflitos que impedem o agendamento. Por favor, resolva-os primeiro."
-      );
+      toast.error("Existem conflitos que impedem o agendamento. Por favor, resolva-os primeiro.");
       return;
     }
 
     setIsSubmitting(true);
     try {
       await onSave(data);
-      toast.success(
-        editingAppointment ? "Agendamento atualizado!" : "Agendamento criado!"
-      );
+      toast.success(editingAppointment ? "Agendamento atualizado!" : "Agendamento criado!");
     } catch (error) {
       console.error("Error saving appointment:", error);
       toast.error("Erro ao salvar agendamento");
@@ -382,13 +401,7 @@ export function EnhancedAppointmentForm({
                       field.onChange(e.target.value);
                       clearValidation();
                     }}
-                    className={
-                      hasErrors
-                        ? "border-red-500"
-                        : isAvailable
-                        ? "border-green-500"
-                        : ""
-                    }
+                    className={hasErrors ? "border-red-500" : isAvailable ? "border-green-500" : ""}
                   />
                 )}
               />
@@ -403,12 +416,8 @@ export function EnhancedAppointmentForm({
               <Label htmlFor="duration">Duração Estimada</Label>
               <div className="flex items-center gap-2 mt-1">
                 <Clock className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">
-                  {estimatedDuration} minutos
-                </span>
-                {isValidating && (
-                  <Badge variant="secondary">Validando...</Badge>
-                )}
+                <span className="text-sm text-muted-foreground">{estimatedDuration} minutos</span>
+                {isValidating && <Badge variant="secondary">Validando...</Badge>}
               </div>
             </div>
           </div>
@@ -438,8 +447,40 @@ export function EnhancedAppointmentForm({
             </div>
           )}
 
-          {/* Alternative Slots Suggestions */}
-          {hasErrors && suggestedSlots.length > 0 && (
+          {/* Enhanced Alternative Slots Suggestions */}
+          {hasErrors && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h4 className="font-medium text-blue-900 flex items-center gap-2">
+                  <CalendarDays className="h-4 w-4" />
+                  Buscar Horários Alternativos
+                </h4>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={getAlternativeSuggestions}
+                  disabled={alternativeSlots.isLoading}
+                >
+                  {alternativeSlots.isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Buscar Alternativas
+                </Button>
+              </div>
+
+              <AlternativeSlotsDisplay
+                alternativeSlots={alternativeSlots}
+                onSelectSlot={(slot) => {
+                  applyAlternativeSlot(slot);
+                  alternativeSlots.selectSuggestion(slot);
+                }}
+                compact={true}
+                maxDisplaySlots={3}
+              />
+            </div>
+          )}
+
+          {/* Basic Alternative Slots Suggestions (Legacy) */}
+          {hasErrors && suggestedSlots.length > 0 && !alternativeSlots.suggestions.length && (
             <Card className="border-blue-200 bg-blue-50">
               <CardContent className="p-4">
                 <h4 className="font-medium text-blue-900 flex items-center gap-2 mb-3">
@@ -472,8 +513,7 @@ export function EnhancedAppointmentForm({
             <Alert className="border-green-200 bg-green-50">
               <CheckCircle className="h-4 w-4 text-green-600" />
               <AlertDescription className="text-green-700">
-                Horário disponível! O agendamento pode ser realizado sem
-                conflitos.
+                Horário disponível! O agendamento pode ser realizado sem conflitos.
               </AlertDescription>
             </Alert>
           )}
@@ -496,11 +536,7 @@ export function EnhancedAppointmentForm({
 
           {/* Form Actions */}
           <div className="flex items-center gap-3 pt-4">
-            <Button
-              type="submit"
-              disabled={isSubmitting || hasErrors}
-              className="flex-1"
-            >
+            <Button type="submit" disabled={isSubmitting || hasErrors} className="flex-1">
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -526,36 +562,8 @@ export function EnhancedAppointmentForm({
 // Export with Error Boundary protection for critical appointment functionality
 export default withErrorBoundary(EnhancedAppointmentForm, {
   onError: (error, errorInfo) => {
-    console.error('Critical error in appointment form:', error, errorInfo);
-    
-    // Send to Sentry monitoring service
-    if (typeof window !== 'undefined') {
-      import('@sentry/nextjs').then(({ withScope, captureException }) => {
-        withScope((scope) => {
-          scope.setTag('component', 'EnhancedAppointmentForm')
-          scope.setTag('criticalError', true)
-          scope.setContext('appointmentForm', {
-            componentStack: errorInfo.componentStack,
-            timestamp: new Date().toISOString(),
-            userAgent: window.navigator.userAgent,
-            url: window.location.href,
-          })
-          
-          captureException(error, {
-            level: 'error',
-            tags: {
-              section: 'appointment-booking',
-              feature: 'conflict-prevention',
-            },
-            extra: {
-              errorInfo,
-            },
-          })
-        })
-      }).catch(sentryError => {
-        console.error('Failed to report error to Sentry:', sentryError)
-      })
-    }
+    console.error("Critical error in appointment form:", error, errorInfo);
+    // TODO: Send to monitoring service in production
   },
-  showDetails: process.env.NODE_ENV === 'development',
+  showDetails: process.env.NODE_ENV === "development",
 });

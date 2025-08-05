@@ -1,111 +1,127 @@
-"use client"
+"use client";
 
-import React, { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { format } from 'date-fns'
-import { 
-  User, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Calendar, 
-  Shield, 
-  Camera, 
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { format } from "date-fns";
+import {
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Calendar,
+  Shield,
+  Camera,
   Save,
   Eye,
   EyeOff,
   AlertCircle,
-  CheckCircle2
-} from 'lucide-react'
+  CheckCircle2,
+} from "lucide-react";
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Separator } from '@/components/ui/separator'
-import { toast } from 'sonner'
-import { usePatientAuth } from '@/lib/auth/patient-auth'
-import { formatCpf, formatPhone } from '@/lib/utils'
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
+import { usePatientAuth } from "@/lib/auth/patient-auth";
+import { formatCpf, formatPhone } from "@/lib/utils";
 
 const profileSchema = z.object({
-  name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
-  email: z.string().email('Email inválido'),
-  phone: z.string().min(10, 'Telefone inválido'),
-  birth_date: z.string().min(1, 'Data de nascimento é obrigatória'),
-  gender: z.enum(['M', 'F', 'NB'], { required_error: 'Selecione o gênero' }),
-  emergency_contact_name: z.string().min(2, 'Nome do contato é obrigatório'),
-  emergency_contact: z.string().min(10, 'Telefone do contato é obrigatório'),
+  name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
+  email: z.string().email("Email inválido"),
+  phone: z.string().min(10, "Telefone inválido"),
+  birth_date: z.string().min(1, "Data de nascimento é obrigatória"),
+  gender: z.enum(["M", "F", "NB"], { required_error: "Selecione o gênero" }),
+  emergency_contact_name: z.string().min(2, "Nome do contato é obrigatório"),
+  emergency_contact: z.string().min(10, "Telefone do contato é obrigatório"),
   address: z.object({
-    street: z.string().min(1, 'Rua é obrigatória'),
-    number: z.string().min(1, 'Número é obrigatório'),
+    street: z.string().min(1, "Rua é obrigatória"),
+    number: z.string().min(1, "Número é obrigatório"),
     complement: z.string().optional(),
-    neighborhood: z.string().min(1, 'Bairro é obrigatório'),
-    city: z.string().min(1, 'Cidade é obrigatória'),
-    state: z.string().min(2, 'Estado é obrigatório').max(2, 'Use a sigla do estado'),
-    zipcode: z.string().regex(/^\d{5}-?\d{3}$/, 'CEP inválido')
+    neighborhood: z.string().min(1, "Bairro é obrigatório"),
+    city: z.string().min(1, "Cidade é obrigatória"),
+    state: z.string().min(2, "Estado é obrigatório").max(2, "Use a sigla do estado"),
+    zipcode: z.string().regex(/^\d{5}-?\d{3}$/, "CEP inválido"),
+  }),
+});
+
+type ProfileData = z.infer<typeof profileSchema>;
+
+const passwordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Senha atual é obrigatória"),
+    newPassword: z.string().min(8, "Nova senha deve ter pelo menos 8 caracteres"),
+    confirmPassword: z.string().min(1, "Confirmação de senha é obrigatória"),
   })
-})
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Senhas não coincidem",
+    path: ["confirmPassword"],
+  });
 
-type ProfileData = z.infer<typeof profileSchema>
-
-const passwordSchema = z.object({
-  currentPassword: z.string().min(1, 'Senha atual é obrigatória'),
-  newPassword: z.string().min(8, 'Nova senha deve ter pelo menos 8 caracteres'),
-  confirmPassword: z.string().min(1, 'Confirmação de senha é obrigatória')
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Senhas não coincidem",
-  path: ["confirmPassword"]
-})
-
-type PasswordData = z.infer<typeof passwordSchema>
+type PasswordData = z.infer<typeof passwordSchema>;
 
 export function ProfileManagement() {
-  const { patient, updatePatient } = usePatientAuth()
-  const [isUpdating, setIsUpdating] = useState(false)
-  const [showPasswordForm, setShowPasswordForm] = useState(false)
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false)
-  const [showNewPassword, setShowNewPassword] = useState(false)
+  const { patient, updatePatient } = usePatientAuth();
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
 
   const profileForm = useForm<ProfileData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      name: patient?.name || '',
-      email: patient?.email || '',
-      phone: patient?.phone || '',
-      birth_date: patient?.birth_date || '',
-      gender: patient?.gender || 'M',
-      emergency_contact_name: patient?.emergency_contact_name || '',
-      emergency_contact: patient?.emergency_contact || '',
+      name: patient?.name || "",
+      email: patient?.email || "",
+      phone: patient?.phone || "",
+      birth_date: patient?.birth_date || "",
+      gender: patient?.gender || "M",
+      emergency_contact_name: patient?.emergency_contact_name || "",
+      emergency_contact: patient?.emergency_contact || "",
       address: {
-        street: '',
-        number: '',
-        complement: '',
-        neighborhood: '',
-        city: '',
-        state: '',
-        zipcode: ''
-      }
-    }
-  })
+        street: "",
+        number: "",
+        complement: "",
+        neighborhood: "",
+        city: "",
+        state: "",
+        zipcode: "",
+      },
+    },
+  });
 
   const passwordForm = useForm<PasswordData>({
     resolver: zodResolver(passwordSchema),
     defaultValues: {
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: ''
-    }
-  })
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+  });
 
   const handleProfileUpdate = async (data: ProfileData) => {
-    setIsUpdating(true)
+    setIsUpdating(true);
     try {
       await updatePatient({
         name: data.name,
@@ -114,65 +130,66 @@ export function ProfileManagement() {
         birth_date: data.birth_date,
         gender: data.gender,
         emergency_contact_name: data.emergency_contact_name,
-        emergency_contact: data.emergency_contact
+        emergency_contact: data.emergency_contact,
         // TODO: Update address in separate table
-      })
-      
-      toast.success('Perfil atualizado com sucesso!')
+      });
+
+      toast.success("Perfil atualizado com sucesso!");
     } catch (error) {
-      toast.error('Erro ao atualizar perfil')
+      toast.error("Erro ao atualizar perfil");
     } finally {
-      setIsUpdating(false)
+      setIsUpdating(false);
     }
-  }
+  };
 
   const handlePasswordUpdate = async (data: PasswordData) => {
-    setIsUpdating(true)
+    setIsUpdating(true);
     try {
       // TODO: Call API to update password
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      
-      toast.success('Senha alterada com sucesso!')
-      passwordForm.reset()
-      setShowPasswordForm(false)
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      toast.success("Senha alterada com sucesso!");
+      passwordForm.reset();
+      setShowPasswordForm(false);
     } catch (error) {
-      toast.error('Erro ao alterar senha')
+      toast.error("Erro ao alterar senha");
     } finally {
-      setIsUpdating(false)
+      setIsUpdating(false);
     }
-  }
+  };
 
   const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) return
+    const file = event.target.files?.[0];
+    if (!file) return;
 
     // Validate file type and size
-    if (!file.type.startsWith('image/')) {
-      toast.error('Por favor, selecione uma imagem válida')
-      return
+    if (!file.type.startsWith("image/")) {
+      toast.error("Por favor, selecione uma imagem válida");
+      return;
     }
 
-    if (file.size > 5 * 1024 * 1024) { // 5MB
-      toast.error('Imagem deve ter no máximo 5MB')
-      return
+    if (file.size > 5 * 1024 * 1024) {
+      // 5MB
+      toast.error("Imagem deve ter no máximo 5MB");
+      return;
     }
 
     try {
       // TODO: Upload to storage and update patient record
-      toast.success('Foto de perfil atualizada!')
+      toast.success("Foto de perfil atualizada!");
     } catch (error) {
-      toast.error('Erro ao atualizar foto de perfil')
+      toast.error("Erro ao atualizar foto de perfil");
     }
-  }
+  };
 
   const getInitials = (name: string) => {
     return name
-      .split(' ')
-      .map(n => n[0])
-      .join('')
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
       .toUpperCase()
-      .slice(0, 2)
-  }
+      .slice(0, 2);
+  };
 
   return (
     <div className="space-y-8">
@@ -202,10 +219,11 @@ export function ProfileManagement() {
                 {patient?.name && getInitials(patient.name)}
               </AvatarFallback>
             </Avatar>
-            
+
             <div>
               <p className="text-sm text-muted-foreground mb-3">
-                Escolha uma foto de perfil. Recomendamos uma imagem quadrada de pelo menos 200x200px.
+                Escolha uma foto de perfil. Recomendamos uma imagem quadrada de pelo menos
+                200x200px.
               </p>
               <div className="flex gap-3">
                 <label htmlFor="avatar-upload">
@@ -282,12 +300,12 @@ export function ProfileManagement() {
                     <FormItem>
                       <FormLabel>Telefone *</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="(11) 99999-9999" 
+                        <Input
+                          placeholder="(11) 99999-9999"
                           {...field}
                           onChange={(e) => {
-                            const formatted = formatPhone(e.target.value)
-                            field.onChange(formatted)
+                            const formatted = formatPhone(e.target.value);
+                            field.onChange(formatted);
                           }}
                         />
                       </FormControl>
@@ -342,7 +360,7 @@ export function ProfileManagement() {
                   <Phone className="w-5 h-5 text-primary" />
                   Contato de Emergência
                 </h3>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     control={profileForm.control}
@@ -365,12 +383,12 @@ export function ProfileManagement() {
                       <FormItem>
                         <FormLabel>Telefone de Emergência *</FormLabel>
                         <FormControl>
-                          <Input 
-                            placeholder="(11) 99999-9999" 
+                          <Input
+                            placeholder="(11) 99999-9999"
                             {...field}
                             onChange={(e) => {
-                              const formatted = formatPhone(e.target.value)
-                              field.onChange(formatted)
+                              const formatted = formatPhone(e.target.value);
+                              field.onChange(formatted);
                             }}
                           />
                         </FormControl>
@@ -389,7 +407,7 @@ export function ProfileManagement() {
                   <MapPin className="w-5 h-5 text-primary" />
                   Endereço
                 </h3>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <FormField
                     control={profileForm.control}
@@ -531,9 +549,7 @@ export function ProfileManagement() {
             <div className="flex items-center justify-between p-4 border rounded-lg">
               <div>
                 <h4 className="font-medium">Senha</h4>
-                <p className="text-sm text-muted-foreground">
-                  Última alteração: Há 3 meses
-                </p>
+                <p className="text-sm text-muted-foreground">Última alteração: Há 3 meses</p>
               </div>
               <Button variant="outline" onClick={() => setShowPasswordForm(true)}>
                 Alterar Senha
@@ -541,7 +557,10 @@ export function ProfileManagement() {
             </div>
           ) : (
             <Form {...passwordForm}>
-              <form onSubmit={passwordForm.handleSubmit(handlePasswordUpdate)} className="space-y-4">
+              <form
+                onSubmit={passwordForm.handleSubmit(handlePasswordUpdate)}
+                className="space-y-4"
+              >
                 <FormField
                   control={passwordForm.control}
                   name="currentPassword"
@@ -550,10 +569,10 @@ export function ProfileManagement() {
                       <FormLabel>Senha Atual *</FormLabel>
                       <FormControl>
                         <div className="relative">
-                          <Input 
-                            type={showCurrentPassword ? "text" : "password"} 
+                          <Input
+                            type={showCurrentPassword ? "text" : "password"}
                             placeholder="Digite sua senha atual"
-                            {...field} 
+                            {...field}
                           />
                           <Button
                             type="button"
@@ -583,10 +602,10 @@ export function ProfileManagement() {
                       <FormLabel>Nova Senha *</FormLabel>
                       <FormControl>
                         <div className="relative">
-                          <Input 
-                            type={showNewPassword ? "text" : "password"} 
+                          <Input
+                            type={showNewPassword ? "text" : "password"}
                             placeholder="Digite a nova senha"
-                            {...field} 
+                            {...field}
                           />
                           <Button
                             type="button"
@@ -603,9 +622,7 @@ export function ProfileManagement() {
                           </Button>
                         </div>
                       </FormControl>
-                      <FormDescription>
-                        Mínimo de 8 caracteres com letras e números
-                      </FormDescription>
+                      <FormDescription>Mínimo de 8 caracteres com letras e números</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -618,11 +635,7 @@ export function ProfileManagement() {
                     <FormItem>
                       <FormLabel>Confirmar Nova Senha *</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="password" 
-                          placeholder="Confirme a nova senha"
-                          {...field} 
-                        />
+                        <Input type="password" placeholder="Confirme a nova senha" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -630,12 +643,12 @@ export function ProfileManagement() {
                 />
 
                 <div className="flex justify-end gap-3">
-                  <Button 
-                    type="button" 
-                    variant="outline" 
+                  <Button
+                    type="button"
+                    variant="outline"
                     onClick={() => {
-                      setShowPasswordForm(false)
-                      passwordForm.reset()
+                      setShowPasswordForm(false);
+                      passwordForm.reset();
                     }}
                   >
                     Cancelar
@@ -647,7 +660,7 @@ export function ProfileManagement() {
                         Alterando...
                       </>
                     ) : (
-                      'Alterar Senha'
+                      "Alterar Senha"
                     )}
                   </Button>
                 </div>
@@ -673,7 +686,7 @@ export function ProfileManagement() {
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-3 p-3 border rounded-lg">
               <CheckCircle2 className="w-5 h-5 text-green-600" />
               <div>
@@ -686,12 +699,12 @@ export function ProfileManagement() {
           <Alert>
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              <strong>CPF:</strong> Seus dados estão protegidos. O CPF não pode ser alterado por questões de segurança. 
-              Para alterações, entre em contato conosco.
+              <strong>CPF:</strong> Seus dados estão protegidos. O CPF não pode ser alterado por
+              questões de segurança. Para alterações, entre em contato conosco.
             </AlertDescription>
           </Alert>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

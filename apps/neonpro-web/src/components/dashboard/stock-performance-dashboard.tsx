@@ -1,16 +1,28 @@
-'use client'
+"use client";
 
-import React, { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Calendar, DatePickerWithRange } from '@/components/ui/calendar'
-import { Progress } from '@/components/ui/progress'
-import { Separator } from '@/components/ui/separator'
-import {
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Calendar, DatePickerWithRange } from "@/components/ui/calendar";
+import type { Progress } from "@/components/ui/progress";
+import type { Separator } from "@/components/ui/separator";
+import type {
   BarChart,
   Bar,
   LineChart,
@@ -26,9 +38,9 @@ import {
   ResponsiveContainer,
   Area,
   AreaChart,
-  ComposedChart
-} from 'recharts'
-import {
+  ComposedChart,
+} from "recharts";
+import type {
   TrendingUp,
   TrendingDown,
   AlertTriangle,
@@ -45,158 +57,172 @@ import {
   Calendar as CalendarIcon,
   ArrowUp,
   ArrowDown,
-  Minus
-} from 'lucide-react'
-import { DateRange } from 'react-day-picker'
+  Minus,
+} from "lucide-react";
+import type { DateRange } from "react-day-picker";
 
 interface StockKPI {
-  key: string
-  label: string
-  value: number
-  unit: string
-  trend: 'up' | 'down' | 'stable'
-  trendValue: number
-  status: 'good' | 'warning' | 'critical'
-  target?: number
-  description: string
+  key: string;
+  label: string;
+  value: number;
+  unit: string;
+  trend: "up" | "down" | "stable";
+  trendValue: number;
+  status: "good" | "warning" | "critical";
+  target?: number;
+  description: string;
 }
 
 interface TopProduct {
-  id: string
-  name: string
-  consumption: number
-  value: number
-  trend: 'up' | 'down' | 'stable'
-  impact: 'high' | 'medium' | 'low'
+  id: string;
+  name: string;
+  consumption: number;
+  value: number;
+  trend: "up" | "down" | "stable";
+  impact: "high" | "medium" | "low";
 }
 
 interface AlertSummary {
-  type: 'low_stock' | 'expiring' | 'expired' | 'overstock'
-  count: number
-  severity: 'low' | 'medium' | 'high' | 'critical'
-  trend: 'up' | 'down' | 'stable'
+  type: "low_stock" | "expiring" | "expired" | "overstock";
+  count: number;
+  severity: "low" | "medium" | "high" | "critical";
+  trend: "up" | "down" | "stable";
 }
 
 interface PerformanceMetric {
-  date: string
-  turnoverRate: number
-  accuracy: number
-  wastePercentage: number
-  totalValue: number
-  daysCoverage: number
+  date: string;
+  turnoverRate: number;
+  accuracy: number;
+  wastePercentage: number;
+  totalValue: number;
+  daysCoverage: number;
 }
 
 interface StockPerformanceDashboardProps {
-  clinicId: string
-  refreshInterval?: number
+  clinicId: string;
+  refreshInterval?: number;
 }
 
 const COLORS = {
-  primary: '#3b82f6',
-  success: '#10b981',
-  warning: '#f59e0b',
-  danger: '#ef4444',
-  info: '#6366f1',
-  neutral: '#6b7280'
-}
+  primary: "#3b82f6",
+  success: "#10b981",
+  warning: "#f59e0b",
+  danger: "#ef4444",
+  info: "#6366f1",
+  neutral: "#6b7280",
+};
 
 const ALERT_COLORS = {
-  low_stock: '#ef4444',
-  expiring: '#f59e0b',
-  expired: '#dc2626',
-  overstock: '#6366f1'
-}
+  low_stock: "#ef4444",
+  expiring: "#f59e0b",
+  expired: "#dc2626",
+  overstock: "#6366f1",
+};
 
-export function StockPerformanceDashboard({ 
-  clinicId, 
-  refreshInterval = 30000 
+export function StockPerformanceDashboard({
+  clinicId,
+  refreshInterval = 30000,
 }: StockPerformanceDashboardProps) {
-  const [kpis, setKpis] = useState<StockKPI[]>([])
-  const [topProducts, setTopProducts] = useState<TopProduct[]>([])
-  const [alertsSummary, setAlertsSummary] = useState<AlertSummary[]>([])
-  const [performanceData, setPerformanceData] = useState<PerformanceMetric[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [kpis, setKpis] = useState<StockKPI[]>([]);
+  const [topProducts, setTopProducts] = useState<TopProduct[]>([]);
+  const [alertsSummary, setAlertsSummary] = useState<AlertSummary[]>([]);
+  const [performanceData, setPerformanceData] = useState<PerformanceMetric[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedDateRange, setSelectedDateRange] = useState<DateRange | undefined>({
     from: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 dias atrás
-    to: new Date()
-  })
-  const [selectedPeriod, setSelectedPeriod] = useState('30d')
-  const [autoRefresh, setAutoRefresh] = useState(true)
+    to: new Date(),
+  });
+  const [selectedPeriod, setSelectedPeriod] = useState("30d");
+  const [autoRefresh, setAutoRefresh] = useState(true);
 
   // Fetch dashboard data
   const fetchDashboardData = async () => {
     try {
-      setError(null)
+      setError(null);
       const params = new URLSearchParams({
         clinicId,
         period: selectedPeriod,
         ...(selectedDateRange?.from && { startDate: selectedDateRange.from.toISOString() }),
-        ...(selectedDateRange?.to && { endDate: selectedDateRange.to.toISOString() })
-      })
+        ...(selectedDateRange?.to && { endDate: selectedDateRange.to.toISOString() }),
+      });
 
       const [kpisRes, productsRes, alertsRes, metricsRes] = await Promise.all([
         fetch(`/api/stock/dashboard/kpis?${params}`),
         fetch(`/api/stock/dashboard/top-products?${params}`),
         fetch(`/api/stock/dashboard/alerts-summary?${params}`),
-        fetch(`/api/stock/dashboard/performance-metrics?${params}`)
-      ])
+        fetch(`/api/stock/dashboard/performance-metrics?${params}`),
+      ]);
 
       if (!kpisRes.ok || !productsRes.ok || !alertsRes.ok || !metricsRes.ok) {
-        throw new Error('Erro ao carregar dados do dashboard')
+        throw new Error("Erro ao carregar dados do dashboard");
       }
 
       const [kpisData, productsData, alertsData, metricsData] = await Promise.all([
         kpisRes.json(),
         productsRes.json(),
         alertsRes.json(),
-        metricsRes.json()
-      ])
+        metricsRes.json(),
+      ]);
 
-      setKpis(kpisData.data)
-      setTopProducts(productsData.data)
-      setAlertsSummary(alertsData.data)
-      setPerformanceData(metricsData.data)
+      setKpis(kpisData.data);
+      setTopProducts(productsData.data);
+      setAlertsSummary(alertsData.data);
+      setPerformanceData(metricsData.data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro desconhecido')
+      setError(err instanceof Error ? err.message : "Erro desconhecido");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   // Auto refresh effect
   useEffect(() => {
-    fetchDashboardData()
+    fetchDashboardData();
 
     if (autoRefresh && refreshInterval > 0) {
-      const interval = setInterval(fetchDashboardData, refreshInterval)
-      return () => clearInterval(interval)
+      const interval = setInterval(fetchDashboardData, refreshInterval);
+      return () => clearInterval(interval);
     }
-  }, [clinicId, selectedPeriod, selectedDateRange, autoRefresh, refreshInterval])
+  }, [clinicId, selectedPeriod, selectedDateRange, autoRefresh, refreshInterval]);
 
   // Render KPI card
   const renderKPICard = (kpi: StockKPI) => {
-    const TrendIcon = kpi.trend === 'up' ? ArrowUp : kpi.trend === 'down' ? ArrowDown : Minus
-    const trendColor = kpi.trend === 'up' ? COLORS.success : kpi.trend === 'down' ? COLORS.danger : COLORS.neutral
-    const statusColor = kpi.status === 'good' ? COLORS.success : kpi.status === 'warning' ? COLORS.warning : COLORS.danger
+    const TrendIcon = kpi.trend === "up" ? ArrowUp : kpi.trend === "down" ? ArrowDown : Minus;
+    const trendColor =
+      kpi.trend === "up" ? COLORS.success : kpi.trend === "down" ? COLORS.danger : COLORS.neutral;
+    const statusColor =
+      kpi.status === "good"
+        ? COLORS.success
+        : kpi.status === "warning"
+          ? COLORS.warning
+          : COLORS.danger;
 
     return (
       <Card key={kpi.key} className="relative overflow-hidden">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <CardTitle className="text-sm font-medium text-gray-600">{kpi.label}</CardTitle>
-            <Badge 
-              variant={kpi.status === 'good' ? 'default' : kpi.status === 'warning' ? 'secondary' : 'destructive'}
+            <Badge
+              variant={
+                kpi.status === "good"
+                  ? "default"
+                  : kpi.status === "warning"
+                    ? "secondary"
+                    : "destructive"
+              }
               className="text-xs"
             >
-              {kpi.status === 'good' ? 'Bom' : kpi.status === 'warning' ? 'Atenção' : 'Crítico'}
+              {kpi.status === "good" ? "Bom" : kpi.status === "warning" ? "Atenção" : "Crítico"}
             </Badge>
           </div>
         </CardHeader>
         <CardContent>
           <div className="flex items-baseline space-x-2">
             <div className="text-2xl font-bold">
-              {kpi.value.toLocaleString('pt-BR', { minimumFractionDigits: kpi.unit === '%' ? 1 : 0 })}
+              {kpi.value.toLocaleString("pt-BR", {
+                minimumFractionDigits: kpi.unit === "%" ? 1 : 0,
+              })}
               <span className="text-sm font-normal ml-1">{kpi.unit}</span>
             </div>
             <div className="flex items-center space-x-1">
@@ -206,34 +232,37 @@ export function StockPerformanceDashboard({
               </span>
             </div>
           </div>
-          
+
           {kpi.target && (
             <div className="mt-2">
               <div className="flex justify-between text-xs text-gray-500 mb-1">
-                <span>Meta: {kpi.target}{kpi.unit}</span>
+                <span>
+                  Meta: {kpi.target}
+                  {kpi.unit}
+                </span>
                 <span>{((kpi.value / kpi.target) * 100).toFixed(1)}%</span>
               </div>
-              <Progress 
-                value={(kpi.value / kpi.target) * 100} 
+              <Progress
+                value={(kpi.value / kpi.target) * 100}
                 className="h-2"
                 style={{ backgroundColor: statusColor }}
               />
             </div>
           )}
-          
+
           <p className="text-xs text-gray-500 mt-2">{kpi.description}</p>
         </CardContent>
       </Card>
-    )
-  }
+    );
+  };
 
   // Render top products chart
   const renderTopProductsChart = () => (
     <ResponsiveContainer width="100%" height={300}>
       <BarChart data={topProducts.slice(0, 10)}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis 
-          dataKey="name" 
+        <XAxis
+          dataKey="name"
           angle={-45}
           textAnchor="end"
           height={100}
@@ -241,11 +270,11 @@ export function StockPerformanceDashboard({
           fontSize={12}
         />
         <YAxis />
-        <Tooltip 
+        <Tooltip
           labelFormatter={(label) => `Produto: ${label}`}
           formatter={(value, name) => [
-            name === 'consumption' ? `${value} un.` : `R$ ${value.toLocaleString('pt-BR')}`,
-            name === 'consumption' ? 'Consumo' : 'Valor'
+            name === "consumption" ? `${value} un.` : `R$ ${value.toLocaleString("pt-BR")}`,
+            name === "consumption" ? "Consumo" : "Valor",
           ]}
         />
         <Legend />
@@ -253,15 +282,15 @@ export function StockPerformanceDashboard({
         <Bar dataKey="value" fill={COLORS.success} name="Valor (R$)" />
       </BarChart>
     </ResponsiveContainer>
-  )
+  );
 
   // Render alerts summary chart
   const renderAlertsSummaryChart = () => {
-    const alertsData = alertsSummary.map(alert => ({
-      name: alert.type.replace('_', ' ').toUpperCase(),
+    const alertsData = alertsSummary.map((alert) => ({
+      name: alert.type.replace("_", " ").toUpperCase(),
       value: alert.count,
-      color: ALERT_COLORS[alert.type]
-    }))
+      color: ALERT_COLORS[alert.type],
+    }));
 
     return (
       <ResponsiveContainer width="100%" height={300}>
@@ -280,11 +309,11 @@ export function StockPerformanceDashboard({
               <Cell key={`cell-${index}`} fill={entry.color} />
             ))}
           </Pie>
-          <Tooltip formatter={(value) => [`${value} alertas`, 'Quantidade']} />
+          <Tooltip formatter={(value) => [`${value} alertas`, "Quantidade"]} />
         </PieChart>
       </ResponsiveContainer>
-    )
-  }
+    );
+  };
 
   // Render performance trends chart
   const renderPerformanceTrendsChart = () => (
@@ -294,26 +323,57 @@ export function StockPerformanceDashboard({
         <XAxis dataKey="date" />
         <YAxis yAxisId="left" />
         <YAxis yAxisId="right" orientation="right" />
-        <Tooltip 
+        <Tooltip
           labelFormatter={(label) => `Data: ${label}`}
           formatter={(value, name) => {
             switch (name) {
-              case 'turnoverRate': return [`${value}x`, 'Giro de Estoque']
-              case 'accuracy': return [`${value}%`, 'Acuracidade']
-              case 'wastePercentage': return [`${value}%`, 'Desperdício']
-              case 'daysCoverage': return [`${value} dias`, 'Cobertura']
-              default: return [value, name]
+              case "turnoverRate":
+                return [`${value}x`, "Giro de Estoque"];
+              case "accuracy":
+                return [`${value}%`, "Acuracidade"];
+              case "wastePercentage":
+                return [`${value}%`, "Desperdício"];
+              case "daysCoverage":
+                return [`${value} dias`, "Cobertura"];
+              default:
+                return [value, name];
             }
           }}
         />
         <Legend />
-        <Line yAxisId="left" type="monotone" dataKey="turnoverRate" stroke={COLORS.primary} name="Giro" />
-        <Line yAxisId="left" type="monotone" dataKey="accuracy" stroke={COLORS.success} name="Acuracidade" />
-        <Area yAxisId="right" type="monotone" dataKey="wastePercentage" fill={COLORS.danger} fillOpacity={0.3} stroke={COLORS.danger} name="Desperdício" />
-        <Bar yAxisId="right" dataKey="daysCoverage" fill={COLORS.warning} fillOpacity={0.7} name="Cobertura" />
+        <Line
+          yAxisId="left"
+          type="monotone"
+          dataKey="turnoverRate"
+          stroke={COLORS.primary}
+          name="Giro"
+        />
+        <Line
+          yAxisId="left"
+          type="monotone"
+          dataKey="accuracy"
+          stroke={COLORS.success}
+          name="Acuracidade"
+        />
+        <Area
+          yAxisId="right"
+          type="monotone"
+          dataKey="wastePercentage"
+          fill={COLORS.danger}
+          fillOpacity={0.3}
+          stroke={COLORS.danger}
+          name="Desperdício"
+        />
+        <Bar
+          yAxisId="right"
+          dataKey="daysCoverage"
+          fill={COLORS.warning}
+          fillOpacity={0.7}
+          name="Cobertura"
+        />
       </ComposedChart>
     </ResponsiveContainer>
-  )
+  );
 
   if (loading) {
     return (
@@ -321,7 +381,7 @@ export function StockPerformanceDashboard({
         <RefreshCw className="animate-spin" size={32} />
         <span className="ml-2">Carregando dashboard...</span>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -330,7 +390,7 @@ export function StockPerformanceDashboard({
         <AlertTriangle className="h-4 w-4" />
         <AlertDescription>{error}</AlertDescription>
       </Alert>
-    )
+    );
   }
 
   return (
@@ -343,7 +403,7 @@ export function StockPerformanceDashboard({
             Métricas e indicadores de performance do estoque em tempo real
           </p>
         </div>
-        
+
         <div className="flex items-center space-x-2">
           <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
             <SelectTrigger className="w-32">
@@ -357,22 +417,22 @@ export function StockPerformanceDashboard({
               <SelectItem value="custom">Personalizado</SelectItem>
             </SelectContent>
           </Select>
-          
+
           <Button
             variant="outline"
             size="sm"
             onClick={() => setAutoRefresh(!autoRefresh)}
-            className={autoRefresh ? 'text-green-600' : 'text-gray-600'}
+            className={autoRefresh ? "text-green-600" : "text-gray-600"}
           >
             <Activity size={16} className="mr-1" />
-            {autoRefresh ? 'Auto' : 'Manual'}
+            {autoRefresh ? "Auto" : "Manual"}
           </Button>
-          
+
           <Button variant="outline" size="sm" onClick={fetchDashboardData}>
             <RefreshCw size={16} className="mr-1" />
             Atualizar
           </Button>
-          
+
           <Button variant="outline" size="sm">
             <Download size={16} className="mr-1" />
             Exportar
@@ -381,9 +441,7 @@ export function StockPerformanceDashboard({
       </div>
 
       {/* KPIs Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {kpis.map(renderKPICard)}
-      </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">{kpis.map(renderKPICard)}</div>
 
       {/* Charts Section */}
       <Tabs defaultValue="trends" className="space-y-4">
@@ -402,9 +460,7 @@ export function StockPerformanceDashboard({
                 Evolução das principais métricas de estoque ao longo do tempo
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              {renderPerformanceTrendsChart()}
-            </CardContent>
+            <CardContent>{renderPerformanceTrendsChart()}</CardContent>
           </Card>
         </TabsContent>
 
@@ -416,11 +472,9 @@ export function StockPerformanceDashboard({
                 Produtos com maior impacto no consumo e valor financeiro
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              {renderTopProductsChart()}
-            </CardContent>
+            <CardContent>{renderTopProductsChart()}</CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader>
               <CardTitle>Análise Detalhada de Produtos</CardTitle>
@@ -428,7 +482,10 @@ export function StockPerformanceDashboard({
             <CardContent>
               <div className="space-y-4">
                 {topProducts.slice(0, 5).map((product, index) => (
-                  <div key={product.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div
+                    key={product.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white text-sm font-bold">
                         {index + 1}
@@ -436,17 +493,29 @@ export function StockPerformanceDashboard({
                       <div>
                         <p className="font-medium">{product.name}</p>
                         <p className="text-sm text-gray-500">
-                          {product.consumption} un. • R$ {product.value.toLocaleString('pt-BR')}
+                          {product.consumption} un. • R$ {product.value.toLocaleString("pt-BR")}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Badge variant={product.impact === 'high' ? 'destructive' : product.impact === 'medium' ? 'secondary' : 'outline'}>
-                        {product.impact === 'high' ? 'Alto Impacto' : product.impact === 'medium' ? 'Médio Impacto' : 'Baixo Impacto'}
+                      <Badge
+                        variant={
+                          product.impact === "high"
+                            ? "destructive"
+                            : product.impact === "medium"
+                              ? "secondary"
+                              : "outline"
+                        }
+                      >
+                        {product.impact === "high"
+                          ? "Alto Impacto"
+                          : product.impact === "medium"
+                            ? "Médio Impacto"
+                            : "Baixo Impacto"}
                       </Badge>
-                      {product.trend === 'up' ? (
+                      {product.trend === "up" ? (
                         <TrendingUp size={16} className="text-green-600" />
-                      ) : product.trend === 'down' ? (
+                      ) : product.trend === "down" ? (
                         <TrendingDown size={16} className="text-red-600" />
                       ) : (
                         <Minus size={16} className="text-gray-600" />
@@ -464,42 +533,47 @@ export function StockPerformanceDashboard({
             <Card>
               <CardHeader>
                 <CardTitle>Distribuição de Alertas</CardTitle>
-                <CardDescription>
-                  Breakdown de alertas ativos por categoria
-                </CardDescription>
+                <CardDescription>Breakdown de alertas ativos por categoria</CardDescription>
               </CardHeader>
-              <CardContent>
-                {renderAlertsSummaryChart()}
-              </CardContent>
+              <CardContent>{renderAlertsSummaryChart()}</CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader>
                 <CardTitle>Status dos Alertas</CardTitle>
-                <CardDescription>
-                  Resumo detalhado dos alertas por tipo
-                </CardDescription>
+                <CardDescription>Resumo detalhado dos alertas por tipo</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {alertsSummary.map((alert) => (
-                    <div key={alert.type} className="flex items-center justify-between p-3 border rounded">
+                    <div
+                      key={alert.type}
+                      className="flex items-center justify-between p-3 border rounded"
+                    >
                       <div className="flex items-center space-x-3">
-                        <div 
-                          className="w-4 h-4 rounded-full" 
+                        <div
+                          className="w-4 h-4 rounded-full"
                           style={{ backgroundColor: ALERT_COLORS[alert.type] }}
                         />
                         <span className="font-medium capitalize">
-                          {alert.type.replace('_', ' ')}
+                          {alert.type.replace("_", " ")}
                         </span>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <Badge variant={alert.severity === 'critical' ? 'destructive' : alert.severity === 'high' ? 'secondary' : 'outline'}>
+                        <Badge
+                          variant={
+                            alert.severity === "critical"
+                              ? "destructive"
+                              : alert.severity === "high"
+                                ? "secondary"
+                                : "outline"
+                          }
+                        >
                           {alert.count} alertas
                         </Badge>
-                        {alert.trend === 'up' ? (
+                        {alert.trend === "up" ? (
                           <TrendingUp size={16} className="text-red-600" />
-                        ) : alert.trend === 'down' ? (
+                        ) : alert.trend === "down" ? (
                           <TrendingDown size={16} className="text-green-600" />
                         ) : (
                           <Minus size={16} className="text-gray-600" />
@@ -548,7 +622,7 @@ export function StockPerformanceDashboard({
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
@@ -578,7 +652,7 @@ export function StockPerformanceDashboard({
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
@@ -612,7 +686,7 @@ export function StockPerformanceDashboard({
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
 
-export default StockPerformanceDashboard
+export default StockPerformanceDashboard;

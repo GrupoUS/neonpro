@@ -8,27 +8,27 @@
 
 "use client";
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Button } from "@/components/ui/button";
+import type { Calendar } from "@/components/ui/calendar";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import {
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import type { useQuery, useQueryClient } from "@tanstack/react-query";
+import type {
   addWeeks,
   eachDayOfInterval,
   endOfWeek,
@@ -37,8 +37,8 @@ import {
   startOfWeek,
   subWeeks,
 } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import {
+import type { ptBR } from "date-fns/locale";
+import type {
   AlertTriangle,
   Calendar as CalendarIcon,
   CheckCircle,
@@ -119,8 +119,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [currentWeek, setCurrentWeek] = useState<Date>(new Date());
   const [viewMode, setViewMode] = useState<"month" | "week" | "day">("week");
-  const [selectedProfessional, setSelectedProfessional] =
-    useState<string>("all");
+  const [selectedProfessional, setSelectedProfessional] = useState<string>("all");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -133,19 +132,10 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     isLoading: appointmentsLoading,
     error: appointmentsError,
   } = useQuery({
-    queryKey: [
-      "appointments",
-      selectedDate,
-      selectedProfessional,
-      selectedStatus,
-    ],
+    queryKey: ["appointments", selectedDate, selectedProfessional, selectedStatus],
     queryFn: async () => {
-      const startDate =
-        viewMode === "month"
-          ? startOfWeek(selectedDate)
-          : startOfWeek(currentWeek);
-      const endDate =
-        viewMode === "month" ? endOfWeek(selectedDate) : endOfWeek(currentWeek);
+      const startDate = viewMode === "month" ? startOfWeek(selectedDate) : startOfWeek(currentWeek);
+      const endDate = viewMode === "month" ? endOfWeek(selectedDate) : endOfWeek(currentWeek);
 
       let query = supabase
         .from("appointments")
@@ -155,7 +145,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
           patients (id, full_name, phone),
           professionals (id, full_name, color),
           service_types (id, name, duration_minutes, color)
-        `
+        `,
         )
         .gte("start_time", startDate.toISOString())
         .lte("start_time", endDate.toISOString())
@@ -242,11 +232,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
   }, [currentWeek]);
 
   // Get appointments for a specific date and time
-  const getAppointmentsForSlot = (
-    date: Date,
-    time: string,
-    professionalId?: string
-  ) => {
+  const getAppointmentsForSlot = (date: Date, time: string, professionalId?: string) => {
     const slotDateTime = new Date(date);
     const [hours, minutes] = time.split(":").map(Number);
     slotDateTime.setHours(hours, minutes, 0, 0);
@@ -263,8 +249,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
         (appointmentStart < slotEnd && appointmentEnd >= slotEnd) ||
         (appointmentStart >= slotDateTime && appointmentEnd <= slotEnd);
 
-      const matchesProfessional =
-        !professionalId || appointment.professional_id === professionalId;
+      const matchesProfessional = !professionalId || appointment.professional_id === professionalId;
 
       return hasTimeOverlap && matchesProfessional;
     });
@@ -294,16 +279,13 @@ const CalendarView: React.FC<CalendarViewProps> = ({
 
   // Get priority indicator
   const getPriorityIcon = (priority: number) => {
-    if (priority >= 4)
-      return <AlertTriangle className="w-3 h-3 text-red-500" />;
+    if (priority >= 4) return <AlertTriangle className="w-3 h-3 text-red-500" />;
     if (priority >= 3) return <Clock className="w-3 h-3 text-yellow-500" />;
     return null;
   };
 
   // Appointment Card Component
-  const AppointmentCard: React.FC<{ appointment: Appointment }> = ({
-    appointment,
-  }) => (
+  const AppointmentCard: React.FC<{ appointment: Appointment }> = ({ appointment }) => (
     <div
       className={`p-2 rounded-md text-xs cursor-pointer transition-all hover:shadow-md border ${getStatusColor(appointment.status)}`}
       onClick={() => onAppointmentClick?.(appointment)}
@@ -313,21 +295,15 @@ const CalendarView: React.FC<CalendarViewProps> = ({
       }}
     >
       <div className="flex items-center justify-between mb-1">
-        <span className="font-medium truncate">
-          {appointment.patients.full_name}
-        </span>
+        <span className="font-medium truncate">{appointment.patients.full_name}</span>
         {getPriorityIcon(appointment.priority)}
       </div>
       <div className="text-gray-600 mb-1">
         {format(new Date(appointment.start_time), "HH:mm")} -{" "}
         {format(new Date(appointment.end_time), "HH:mm")}
       </div>
-      <div className="text-gray-500 truncate">
-        {appointment.service_types.name}
-      </div>
-      <div className="text-gray-500 truncate text-xs">
-        {appointment.professionals.full_name}
-      </div>
+      <div className="text-gray-500 truncate">{appointment.service_types.name}</div>
+      <div className="text-gray-500 truncate text-xs">{appointment.professionals.full_name}</div>
     </div>
   );
 
@@ -340,9 +316,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
           <div className="p-2 font-medium text-sm text-gray-600">Horário</div>
           {weekDays.map((day) => (
             <div key={day.toISOString()} className="p-2 text-center">
-              <div className="font-medium text-sm">
-                {format(day, "EEEEEE", { locale: ptBR })}
-              </div>
+              <div className="font-medium text-sm">{format(day, "EEEEEE", { locale: ptBR })}</div>
               <div
                 className={`text-lg ${isSameDay(day, new Date()) ? "text-blue-600 font-bold" : ""}`}
               >
@@ -356,9 +330,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
         <div className="space-y-1">
           {timeSlots.map((time) => (
             <div key={time} className="grid grid-cols-8 gap-1">
-              <div className="p-2 text-sm text-gray-600 font-mono border-r">
-                {time}
-              </div>
+              <div className="p-2 text-sm text-gray-600 font-mono border-r">{time}</div>
               {weekDays.map((day) => {
                 const slotAppointments = getAppointmentsForSlot(day, time);
                 return (
@@ -369,10 +341,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                   >
                     <div className="space-y-1">
                       {slotAppointments.map((appointment) => (
-                        <AppointmentCard
-                          key={appointment.id}
-                          appointment={appointment}
-                        />
+                        <AppointmentCard key={appointment.id} appointment={appointment} />
                       ))}
                     </div>
                   </div>
@@ -400,28 +369,20 @@ const CalendarView: React.FC<CalendarViewProps> = ({
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">
-            Agendamentos -{" "}
-            {format(selectedDate, "dd/MM/yyyy", { locale: ptBR })}
+            Agendamentos - {format(selectedDate, "dd/MM/yyyy", { locale: ptBR })}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
             {appointments
-              .filter((appointment) =>
-                isSameDay(new Date(appointment.start_time), selectedDate)
-              )
+              .filter((appointment) => isSameDay(new Date(appointment.start_time), selectedDate))
               .map((appointment) => (
-                <AppointmentCard
-                  key={appointment.id}
-                  appointment={appointment}
-                />
+                <AppointmentCard key={appointment.id} appointment={appointment} />
               ))}
             {appointments.filter((appointment) =>
-              isSameDay(new Date(appointment.start_time), selectedDate)
+              isSameDay(new Date(appointment.start_time), selectedDate),
             ).length === 0 && (
-              <p className="text-gray-500 text-center py-4">
-                Nenhum agendamento para este dia
-              </p>
+              <p className="text-gray-500 text-center py-4">Nenhum agendamento para este dia</p>
             )}
           </div>
         </CardContent>
@@ -461,9 +422,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
             {/* View Mode Tabs */}
             <Tabs
               value={viewMode}
-              onValueChange={(value) =>
-                setViewMode(value as "month" | "week" | "day")
-              }
+              onValueChange={(value) => setViewMode(value as "month" | "week" | "day")}
               className="w-full lg:w-auto"
             >
               <TabsList>
@@ -485,17 +444,11 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                   <ChevronLeft className="w-4 h-4" />
                 </Button>
                 <span className="px-4 py-2 text-sm font-medium">
-                  {format(
-                    startOfWeek(currentWeek, { weekStartsOn: 1 }),
-                    "dd/MM",
-                    { locale: ptBR }
-                  )}{" "}
+                  {format(startOfWeek(currentWeek, { weekStartsOn: 1 }), "dd/MM", { locale: ptBR })}{" "}
                   -{" "}
-                  {format(
-                    endOfWeek(currentWeek, { weekStartsOn: 1 }),
-                    "dd/MM/yyyy",
-                    { locale: ptBR }
-                  )}
+                  {format(endOfWeek(currentWeek, { weekStartsOn: 1 }), "dd/MM/yyyy", {
+                    locale: ptBR,
+                  })}
                 </span>
                 <Button onClick={goToNextWeek} variant="outline" size="sm">
                   <ChevronRight className="w-4 h-4" />
@@ -505,10 +458,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
 
             {/* Filters */}
             <div className="flex items-center gap-2 w-full lg:w-auto">
-              <Select
-                value={selectedProfessional}
-                onValueChange={setSelectedProfessional}
-              >
+              <Select value={selectedProfessional} onValueChange={setSelectedProfessional}>
                 <SelectTrigger className="w-full lg:w-[200px]">
                   <SelectValue placeholder="Profissional" />
                 </SelectTrigger>
@@ -537,16 +487,12 @@ const CalendarView: React.FC<CalendarViewProps> = ({
               </Select>
 
               <Button
-                onClick={() =>
-                  queryClient.invalidateQueries({ queryKey: ["appointments"] })
-                }
+                onClick={() => queryClient.invalidateQueries({ queryKey: ["appointments"] })}
                 variant="outline"
                 size="sm"
                 disabled={appointmentsLoading}
               >
-                <RefreshCw
-                  className={`w-4 h-4 ${appointmentsLoading ? "animate-spin" : ""}`}
-                />
+                <RefreshCw className={`w-4 h-4 ${appointmentsLoading ? "animate-spin" : ""}`} />
               </Button>
             </div>
           </div>
@@ -593,9 +539,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                 <p className="text-sm text-gray-600">Total Hoje</p>
                 <p className="text-2xl font-bold">
                   {
-                    appointments.filter((apt) =>
-                      isSameDay(new Date(apt.start_time), new Date())
-                    ).length
+                    appointments.filter((apt) => isSameDay(new Date(apt.start_time), new Date()))
+                      .length
                   }
                 </p>
               </div>
@@ -610,10 +555,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
               <div>
                 <p className="text-sm text-gray-600">Confirmados</p>
                 <p className="text-2xl font-bold text-green-600">
-                  {
-                    appointments.filter((apt) => apt.status === "confirmed")
-                      .length
-                  }
+                  {appointments.filter((apt) => apt.status === "confirmed").length}
                 </p>
               </div>
               <CheckCircle className="w-8 h-8 text-green-500" />
@@ -627,10 +569,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
               <div>
                 <p className="text-sm text-gray-600">Em Andamento</p>
                 <p className="text-2xl font-bold text-yellow-600">
-                  {
-                    appointments.filter((apt) => apt.status === "in_progress")
-                      .length
-                  }
+                  {appointments.filter((apt) => apt.status === "in_progress").length}
                 </p>
               </div>
               <Clock className="w-8 h-8 text-yellow-500" />

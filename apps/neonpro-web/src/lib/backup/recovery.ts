@@ -1,13 +1,13 @@
 /**
  * NeonPro Recovery Service
  * Story 1.8: Sistema de Backup e Recovery
- * 
+ *
  * Serviço de recuperação para restauração de backups
  * e gerenciamento de disaster recovery.
  */
 
-import { createClient } from '@supabase/supabase-js';
-import { 
+import type { createClient } from "@supabase/supabase-js";
+import type {
   RecoveryRequest,
   RecoveryStatus,
   RecoveryType,
@@ -19,12 +19,12 @@ import {
   ApiResponse,
   DisasterRecoveryPlan,
   RecoveryPoint,
-  ValidationResult
-} from './types';
-import { StorageManager } from './storage';
-import { auditLogger } from '../auth/audit/audit-logger';
-import { notificationManager } from '../notifications';
-import { MonitoringService } from './monitoring';
+  ValidationResult,
+} from "./types";
+import type { StorageManager } from "./storage";
+import type { auditLogger } from "../auth/audit/audit-logger";
+import type { notificationManager } from "../notifications";
+import type { MonitoringService } from "./monitoring";
 
 /**
  * Interface para validação de recovery
@@ -51,7 +51,7 @@ export class RecoveryService {
   constructor(storageManager: StorageManager, monitoring?: MonitoringService) {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     );
     this.storageManager = storageManager;
     this.monitoring = monitoring;
@@ -68,18 +68,18 @@ export class RecoveryService {
     backupId: string,
     type: RecoveryType,
     options: RecoveryOptions,
-    userId: string
+    userId: string,
   ): Promise<ApiResponse<RecoveryRequest>> {
     try {
       // Validar backup
       const { data: backup, error: backupError } = await this.supabase
-        .from('backup_records')
-        .select('*')
-        .eq('id', backupId)
+        .from("backup_records")
+        .select("*")
+        .eq("id", backupId)
         .single();
 
       if (backupError || !backup) {
-        return this.handleError('Backup não encontrado', backupError);
+        return this.handleError("Backup não encontrado", backupError);
       }
 
       // Validar recovery
@@ -87,10 +87,10 @@ export class RecoveryService {
       if (!validation.isValid) {
         return {
           success: false,
-          error: validation.errors.join(', '),
-          message: 'Validação de recovery falhou',
+          error: validation.errors.join(", "),
+          message: "Validação de recovery falhou",
           timestamp: new Date(),
-          requestId: crypto.randomUUID()
+          requestId: crypto.randomUUID(),
         };
       }
 
@@ -105,13 +105,11 @@ export class RecoveryService {
         requestedAt: new Date(),
         estimatedDuration: validation.estimatedTime,
         estimatedSize: validation.estimatedSize,
-        priority: options.priority || 'MEDIUM'
+        priority: options.priority || "MEDIUM",
       };
 
       // Salvar no banco
-      const { error: insertError } = await this.supabase
-        .from('recovery_requests')
-        .insert(request);
+      const { error: insertError } = await this.supabase.from("recovery_requests").insert(request);
 
       if (insertError) throw insertError;
 
@@ -120,22 +118,22 @@ export class RecoveryService {
       this.processRecoveryQueue();
 
       await auditLogger.log({
-        action: 'RECOVERY_REQUESTED',
-        entityType: 'RECOVERY',
+        action: "RECOVERY_REQUESTED",
+        entityType: "RECOVERY",
         entityId: request.id,
         details: { backupId, type, options },
-        userId
+        userId,
       });
 
       return {
         success: true,
         data: request,
-        message: 'Solicitação de recovery criada',
+        message: "Solicitação de recovery criada",
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
-      return this.handleError('Erro ao criar solicitação de recovery', error);
+      return this.handleError("Erro ao criar solicitação de recovery", error);
     }
   }
 
@@ -145,21 +143,21 @@ export class RecoveryService {
   private async validateRecovery(
     backup: BackupRecord,
     type: RecoveryType,
-    options: RecoveryOptions
+    options: RecoveryOptions,
   ): Promise<RecoveryValidation> {
     const validation: RecoveryValidation = {
       isValid: true,
       errors: [],
       warnings: [],
       estimatedTime: 0,
-      estimatedSize: backup.size || 0
+      estimatedSize: backup.size || 0,
     };
 
     try {
       // Verificar status do backup
-      if (backup.status !== 'COMPLETED') {
+      if (backup.status !== "COMPLETED") {
         validation.isValid = false;
-        validation.errors.push('Backup não está completo');
+        validation.errors.push("Backup não está completo");
       }
 
       // Verificar integridade
@@ -167,7 +165,7 @@ export class RecoveryService {
         const isValid = await this.verifyBackupIntegrity(backup);
         if (!isValid) {
           validation.isValid = false;
-          validation.errors.push('Backup corrompido - checksum inválido');
+          validation.errors.push("Backup corrompido - checksum inválido");
         }
       }
 
@@ -175,13 +173,13 @@ export class RecoveryService {
       const exists = await this.storageManager.exists(backup.path);
       if (!exists) {
         validation.isValid = false;
-        validation.errors.push('Arquivo de backup não encontrado no storage');
+        validation.errors.push("Arquivo de backup não encontrado no storage");
       }
 
       // Verificar espaço em disco (se aplicável)
       if (type === RecoveryType.FULL_RESTORE && options.targetPath) {
         // Implementar verificação de espaço em disco
-        validation.warnings.push('Verificar espaço em disco disponível');
+        validation.warnings.push("Verificar espaço em disco disponível");
       }
 
       // Estimar tempo baseado no tamanho
@@ -190,9 +188,8 @@ export class RecoveryService {
 
       // Verificar conflitos
       if (type === RecoveryType.FULL_RESTORE) {
-        validation.warnings.push('Recovery completo irá sobrescrever dados existentes');
+        validation.warnings.push("Recovery completo irá sobrescrever dados existentes");
       }
-
     } catch (error) {
       validation.isValid = false;
       validation.errors.push(`Erro na validação: ${error.message}`);
@@ -210,7 +207,7 @@ export class RecoveryService {
       // Por enquanto, retorna true
       return true;
     } catch (error) {
-      console.error('Erro ao verificar integridade:', error);
+      console.error("Erro ao verificar integridade:", error);
       return false;
     }
   }
@@ -250,8 +247,8 @@ export class RecoveryService {
       status: RecoveryStatus.RUNNING,
       startTime: new Date(),
       progress: 0,
-      currentStep: 'Iniciando recovery',
-      estimatedCompletion: new Date(Date.now() + request.estimatedDuration * 1000)
+      currentStep: "Iniciando recovery",
+      estimatedCompletion: new Date(Date.now() + request.estimatedDuration * 1000),
     };
 
     this.activeRecoveries.set(request.id, progress);
@@ -259,16 +256,16 @@ export class RecoveryService {
     try {
       // Atualizar status no banco
       await this.supabase
-        .from('recovery_requests')
-        .update({ 
+        .from("recovery_requests")
+        .update({
           status: RecoveryStatus.RUNNING,
-          startedAt: new Date().toISOString()
+          startedAt: new Date().toISOString(),
         })
-        .eq('id', request.id);
+        .eq("id", request.id);
 
       // Executar recovery baseado no tipo
       let result: RecoveryResult;
-      
+
       switch (request.type) {
         case RecoveryType.FULL_RESTORE:
           result = await this.performFullRestore(request, progress);
@@ -288,7 +285,6 @@ export class RecoveryService {
 
       // Finalizar recovery
       await this.completeRecovery(request, result, progress);
-
     } catch (error) {
       await this.failRecovery(request, error.message, progress);
     } finally {
@@ -303,15 +299,15 @@ export class RecoveryService {
    */
   private async performFullRestore(
     request: RecoveryRequest,
-    progress: RecoveryProgress
+    progress: RecoveryProgress,
   ): Promise<RecoveryResult> {
     const result: RecoveryResult = {
       success: false,
-      message: '',
+      message: "",
       restoredFiles: [],
       restoredSize: 0,
       duration: 0,
-      errors: []
+      errors: [],
     };
 
     const startTime = Date.now();
@@ -319,15 +315,15 @@ export class RecoveryService {
     try {
       // Buscar backup
       const { data: backup } = await this.supabase
-        .from('backup_records')
-        .select('*')
-        .eq('id', request.backupId)
+        .from("backup_records")
+        .select("*")
+        .eq("id", request.backupId)
         .single();
 
-      if (!backup) throw new Error('Backup não encontrado');
+      if (!backup) throw new Error("Backup não encontrado");
 
       // Atualizar progresso
-      progress.currentStep = 'Baixando backup';
+      progress.currentStep = "Baixando backup";
       progress.progress = 10;
       await this.updateProgress(progress);
 
@@ -336,18 +332,18 @@ export class RecoveryService {
         onProgress: (downloaded, total) => {
           progress.progress = 10 + (downloaded / total) * 40;
           this.updateProgress(progress);
-        }
+        },
       });
 
       // Atualizar progresso
-      progress.currentStep = 'Extraindo arquivos';
+      progress.currentStep = "Extraindo arquivos";
       progress.progress = 50;
       await this.updateProgress(progress);
 
       // Extrair e restaurar arquivos
       const extractedFiles = await this.extractBackup(backupData, request.options);
-      
-      progress.currentStep = 'Restaurando arquivos';
+
+      progress.currentStep = "Restaurando arquivos";
       progress.progress = 70;
       await this.updateProgress(progress);
 
@@ -355,14 +351,14 @@ export class RecoveryService {
       const restoredFiles = await this.restoreFiles(extractedFiles, request.options);
 
       // Verificar integridade
-      progress.currentStep = 'Verificando integridade';
+      progress.currentStep = "Verificando integridade";
       progress.progress = 90;
       await this.updateProgress(progress);
 
       const verification = await this.verifyRestoration(restoredFiles);
       if (!verification.isValid) {
         result.errors = verification.errors;
-        throw new Error('Falha na verificação de integridade');
+        throw new Error("Falha na verificação de integridade");
       }
 
       // Finalizar
@@ -370,11 +366,10 @@ export class RecoveryService {
       await this.updateProgress(progress);
 
       result.success = true;
-      result.message = 'Restore completo realizado com sucesso';
+      result.message = "Restore completo realizado com sucesso";
       result.restoredFiles = restoredFiles;
       result.restoredSize = restoredFiles.reduce((sum, f) => sum + f.size, 0);
       result.duration = Date.now() - startTime;
-
     } catch (error) {
       result.errors.push(error.message);
       throw error;
@@ -388,16 +383,16 @@ export class RecoveryService {
    */
   private async performPartialRestore(
     request: RecoveryRequest,
-    progress: RecoveryProgress
+    progress: RecoveryProgress,
   ): Promise<RecoveryResult> {
     // Implementação similar ao restore completo, mas com filtros
     const result: RecoveryResult = {
       success: true,
-      message: 'Restore parcial realizado com sucesso',
+      message: "Restore parcial realizado com sucesso",
       restoredFiles: [],
       restoredSize: 0,
       duration: 0,
-      errors: []
+      errors: [],
     };
 
     // Implementar lógica de restore parcial
@@ -412,15 +407,15 @@ export class RecoveryService {
    */
   private async performPointInTimeRestore(
     request: RecoveryRequest,
-    progress: RecoveryProgress
+    progress: RecoveryProgress,
   ): Promise<RecoveryResult> {
     const result: RecoveryResult = {
       success: true,
-      message: 'Restore point-in-time realizado com sucesso',
+      message: "Restore point-in-time realizado com sucesso",
       restoredFiles: [],
       restoredSize: 0,
       duration: 0,
-      errors: []
+      errors: [],
     };
 
     // Implementar lógica de point-in-time restore
@@ -435,15 +430,15 @@ export class RecoveryService {
    */
   private async performVerification(
     request: RecoveryRequest,
-    progress: RecoveryProgress
+    progress: RecoveryProgress,
   ): Promise<RecoveryResult> {
     const result: RecoveryResult = {
       success: true,
-      message: 'Verificação realizada com sucesso',
+      message: "Verificação realizada com sucesso",
       restoredFiles: [],
       restoredSize: 0,
       duration: 0,
-      errors: []
+      errors: [],
     };
 
     // Implementar lógica de verificação
@@ -480,7 +475,7 @@ export class RecoveryService {
     return {
       isValid: true,
       errors: [],
-      warnings: []
+      warnings: [],
     };
   }
 
@@ -490,13 +485,13 @@ export class RecoveryService {
   private async updateProgress(progress: RecoveryProgress): Promise<void> {
     // Atualizar no banco
     await this.supabase
-      .from('recovery_requests')
+      .from("recovery_requests")
       .update({
         progress: progress.progress,
         currentStep: progress.currentStep,
-        estimatedCompletion: progress.estimatedCompletion?.toISOString()
+        estimatedCompletion: progress.estimatedCompletion?.toISOString(),
       })
-      .eq('id', progress.requestId);
+      .eq("id", progress.requestId);
 
     // Atualizar cache local
     this.activeRecoveries.set(progress.requestId, progress);
@@ -508,28 +503,28 @@ export class RecoveryService {
   private async completeRecovery(
     request: RecoveryRequest,
     result: RecoveryResult,
-    progress: RecoveryProgress
+    progress: RecoveryProgress,
   ): Promise<void> {
     const endTime = new Date();
-    
+
     // Atualizar no banco
     await this.supabase
-      .from('recovery_requests')
+      .from("recovery_requests")
       .update({
         status: RecoveryStatus.COMPLETED,
         completedAt: endTime.toISOString(),
         result: result,
-        progress: 100
+        progress: 100,
       })
-      .eq('id', request.id);
+      .eq("id", request.id);
 
     // Log de auditoria
     await auditLogger.log({
-      action: 'RECOVERY_COMPLETED',
-      entityType: 'RECOVERY',
+      action: "RECOVERY_COMPLETED",
+      entityType: "RECOVERY",
       entityId: request.id,
       details: { result },
-      userId: request.requestedBy
+      userId: request.requestedBy,
     });
 
     // Notificação
@@ -544,27 +539,27 @@ export class RecoveryService {
   private async failRecovery(
     request: RecoveryRequest,
     errorMessage: string,
-    progress: RecoveryProgress
+    progress: RecoveryProgress,
   ): Promise<void> {
     const endTime = new Date();
-    
+
     // Atualizar no banco
     await this.supabase
-      .from('recovery_requests')
+      .from("recovery_requests")
       .update({
         status: RecoveryStatus.FAILED,
         completedAt: endTime.toISOString(),
-        error: errorMessage
+        error: errorMessage,
       })
-      .eq('id', request.id);
+      .eq("id", request.id);
 
     // Log de auditoria
     await auditLogger.log({
-      action: 'RECOVERY_FAILED',
-      entityType: 'RECOVERY',
+      action: "RECOVERY_FAILED",
+      entityType: "RECOVERY",
       entityId: request.id,
       details: { error: errorMessage },
-      userId: request.requestedBy
+      userId: request.requestedBy,
     });
 
     // Notificação
@@ -573,10 +568,10 @@ export class RecoveryService {
     // Alerta de monitoramento
     if (this.monitoring) {
       await this.monitoring.createAlert(
-        'RECOVERY_FAILURE',
-        'HIGH',
+        "RECOVERY_FAILURE",
+        "HIGH",
         `Falha no recovery ${request.id}: ${errorMessage}`,
-        { requestId: request.id, error: errorMessage }
+        { requestId: request.id, error: errorMessage },
       );
     }
 
@@ -592,24 +587,24 @@ export class RecoveryService {
    */
   private async notifyRecoveryCompletion(
     request: RecoveryRequest,
-    result: RecoveryResult
+    result: RecoveryResult,
   ): Promise<void> {
     try {
       const notification = {
-        title: 'Recovery Concluído',
+        title: "Recovery Concluído",
         message: `Recovery ${request.type} concluído com sucesso`,
         data: {
           requestId: request.id,
           type: request.type,
-          result
+          result,
         },
-        channels: ['EMAIL', 'PUSH'],
-        priority: 'MEDIUM'
+        channels: ["EMAIL", "PUSH"],
+        priority: "MEDIUM",
       };
 
       await notificationManager.send(notification);
     } catch (error) {
-      console.error('Erro ao notificar conclusão de recovery:', error);
+      console.error("Erro ao notificar conclusão de recovery:", error);
     }
   }
 
@@ -618,24 +613,24 @@ export class RecoveryService {
    */
   private async notifyRecoveryFailure(
     request: RecoveryRequest,
-    errorMessage: string
+    errorMessage: string,
   ): Promise<void> {
     try {
       const notification = {
-        title: 'Falha no Recovery',
+        title: "Falha no Recovery",
         message: `Recovery ${request.type} falhou: ${errorMessage}`,
         data: {
           requestId: request.id,
           type: request.type,
-          error: errorMessage
+          error: errorMessage,
         },
-        channels: ['EMAIL', 'PUSH', 'SMS'],
-        priority: 'HIGH'
+        channels: ["EMAIL", "PUSH", "SMS"],
+        priority: "HIGH",
       };
 
       await notificationManager.send(notification);
     } catch (error) {
-      console.error('Erro ao notificar falha de recovery:', error);
+      console.error("Erro ao notificar falha de recovery:", error);
     }
   }
 
@@ -655,19 +650,19 @@ export class RecoveryService {
           success: true,
           data: activeProgress,
           timestamp: new Date(),
-          requestId: crypto.randomUUID()
+          requestId: crypto.randomUUID(),
         };
       }
 
       // Buscar no banco
       const { data: request, error } = await this.supabase
-        .from('recovery_requests')
-        .select('*')
-        .eq('id', requestId)
+        .from("recovery_requests")
+        .select("*")
+        .eq("id", requestId)
         .single();
 
       if (error || !request) {
-        return this.handleError('Recovery não encontrado', error);
+        return this.handleError("Recovery não encontrado", error);
       }
 
       const progress: RecoveryProgress = {
@@ -676,19 +671,21 @@ export class RecoveryService {
         startTime: request.startedAt ? new Date(request.startedAt) : undefined,
         endTime: request.completedAt ? new Date(request.completedAt) : undefined,
         progress: request.progress || 0,
-        currentStep: request.currentStep || '',
-        estimatedCompletion: request.estimatedCompletion ? new Date(request.estimatedCompletion) : undefined,
-        error: request.error
+        currentStep: request.currentStep || "",
+        estimatedCompletion: request.estimatedCompletion
+          ? new Date(request.estimatedCompletion)
+          : undefined,
+        error: request.error,
       };
 
       return {
         success: true,
         data: progress,
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
-      return this.handleError('Erro ao obter status de recovery', error);
+      return this.handleError("Erro ao obter status de recovery", error);
     }
   }
 
@@ -706,36 +703,36 @@ export class RecoveryService {
       }
 
       // Remover da fila se estiver pendente
-      this.recoveryQueue = this.recoveryQueue.filter(r => r.id !== requestId);
+      this.recoveryQueue = this.recoveryQueue.filter((r) => r.id !== requestId);
 
       // Atualizar no banco
       const { error } = await this.supabase
-        .from('recovery_requests')
+        .from("recovery_requests")
         .update({
           status: RecoveryStatus.CANCELLED,
           cancelledBy: userId,
-          cancelledAt: new Date().toISOString()
+          cancelledAt: new Date().toISOString(),
         })
-        .eq('id', requestId);
+        .eq("id", requestId);
 
       if (error) throw error;
 
       await auditLogger.log({
-        action: 'RECOVERY_CANCELLED',
-        entityType: 'RECOVERY',
+        action: "RECOVERY_CANCELLED",
+        entityType: "RECOVERY",
         entityId: requestId,
         details: {},
-        userId
+        userId,
       });
 
       return {
         success: true,
-        message: 'Recovery cancelado',
+        message: "Recovery cancelado",
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
-      return this.handleError('Erro ao cancelar recovery', error);
+      return this.handleError("Erro ao cancelar recovery", error);
     }
   }
 
@@ -750,28 +747,26 @@ export class RecoveryService {
       startDate?: Date;
       endDate?: Date;
     },
-    pagination?: { page: number; limit: number }
+    pagination?: { page: number; limit: number },
   ): Promise<ApiResponse<{ requests: RecoveryRequest[]; total: number }>> {
     try {
-      let query = this.supabase
-        .from('recovery_requests')
-        .select('*', { count: 'exact' });
+      let query = this.supabase.from("recovery_requests").select("*", { count: "exact" });
 
       // Aplicar filtros
       if (filters?.status) {
-        query = query.eq('status', filters.status);
+        query = query.eq("status", filters.status);
       }
       if (filters?.type) {
-        query = query.eq('type', filters.type);
+        query = query.eq("type", filters.type);
       }
       if (filters?.userId) {
-        query = query.eq('requestedBy', filters.userId);
+        query = query.eq("requestedBy", filters.userId);
       }
       if (filters?.startDate) {
-        query = query.gte('requestedAt', filters.startDate.toISOString());
+        query = query.gte("requestedAt", filters.startDate.toISOString());
       }
       if (filters?.endDate) {
-        query = query.lte('requestedAt', filters.endDate.toISOString());
+        query = query.lte("requestedAt", filters.endDate.toISOString());
       }
 
       // Aplicar paginação
@@ -780,7 +775,7 @@ export class RecoveryService {
         query = query.range(offset, offset + pagination.limit - 1);
       }
 
-      query = query.order('requestedAt', { ascending: false });
+      query = query.order("requestedAt", { ascending: false });
 
       const { data: requests, error, count } = await query;
 
@@ -790,13 +785,13 @@ export class RecoveryService {
         success: true,
         data: {
           requests: requests as RecoveryRequest[],
-          total: count || 0
+          total: count || 0,
         },
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
-      return this.handleError('Erro ao listar recoveries', error);
+      return this.handleError("Erro ao listar recoveries", error);
     }
   }
 
@@ -805,22 +800,19 @@ export class RecoveryService {
    */
   async getRecoveryPoints(configId?: string): Promise<ApiResponse<RecoveryPoint[]>> {
     try {
-      let query = this.supabase
-        .from('backup_records')
-        .select('*')
-        .eq('status', 'COMPLETED');
+      let query = this.supabase.from("backup_records").select("*").eq("status", "COMPLETED");
 
       if (configId) {
-        query = query.eq('configId', configId);
+        query = query.eq("configId", configId);
       }
 
-      query = query.order('startTime', { ascending: false });
+      query = query.order("startTime", { ascending: false });
 
       const { data: backups, error } = await query;
 
       if (error) throw error;
 
-      const recoveryPoints: RecoveryPoint[] = (backups || []).map(backup => ({
+      const recoveryPoints: RecoveryPoint[] = (backups || []).map((backup) => ({
         id: backup.id,
         timestamp: new Date(backup.startTime),
         type: backup.type,
@@ -831,18 +823,18 @@ export class RecoveryService {
         metadata: {
           duration: backup.duration,
           checksum: backup.checksum,
-          compression: backup.compression
-        }
+          compression: backup.compression,
+        },
       }));
 
       return {
         success: true,
         data: recoveryPoints,
         timestamp: new Date(),
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
       };
     } catch (error) {
-      return this.handleError('Erro ao obter pontos de recuperação', error);
+      return this.handleError("Erro ao obter pontos de recuperação", error);
     }
   }
 
@@ -850,10 +842,10 @@ export class RecoveryService {
     console.error(message, error);
     return {
       success: false,
-      error: error?.message || 'Erro interno do servidor',
+      error: error?.message || "Erro interno do servidor",
       message,
       timestamp: new Date(),
-      requestId: crypto.randomUUID()
+      requestId: crypto.randomUUID(),
     };
   }
 }

@@ -1,20 +1,20 @@
 /**
  * Report Generator Component
- * 
+ *
  * Handles report generation, scheduling, and export functionality
  * for the executive dashboard with multiple formats and templates.
  */
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
-import {
+import React, { useState, useEffect } from "react";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type { Separator } from "@/components/ui/separator";
+import type {
   FileText,
   Download,
   Calendar,
@@ -33,35 +33,30 @@ import {
   Edit,
   CheckCircle,
   AlertCircle,
-  Loader2
-} from 'lucide-react';
-import {
+  Loader2,
+} from "lucide-react";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog';
-import {
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger
-} from '@/components/ui/tabs';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Switch } from '@/components/ui/switch';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+  SelectValue,
+} from "@/components/ui/select";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type { Switch } from "@/components/ui/switch";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
 
-import { DashboardReport, ReportTemplate, ReportSchedule } from '@/lib/dashboard/types';
+import type { DashboardReport, ReportTemplate, ReportSchedule } from "@/lib/dashboard/types";
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -82,7 +77,7 @@ interface ReportConfig {
   templateId: string;
   title: string;
   description?: string;
-  format: 'pdf' | 'excel' | 'csv' | 'png';
+  format: "pdf" | "excel" | "csv" | "png";
   dateRange: {
     start: Date;
     end: Date;
@@ -95,7 +90,7 @@ interface ReportConfig {
   };
   recipients?: string[];
   schedule?: {
-    frequency: 'once' | 'daily' | 'weekly' | 'monthly';
+    frequency: "once" | "daily" | "weekly" | "monthly";
     time?: string;
     dayOfWeek?: number;
     dayOfMonth?: number;
@@ -121,52 +116,50 @@ interface ScheduleItemProps {
 // ============================================================================
 
 const REPORT_FORMATS = {
-  pdf: { label: 'PDF', icon: FileText, description: 'Documento formatado para impressão' },
-  excel: { label: 'Excel', icon: FileSpreadsheet, description: 'Planilha com dados e gráficos' },
-  csv: { label: 'CSV', icon: FileText, description: 'Dados brutos em formato tabular' },
-  png: { label: 'PNG', icon: Image, description: 'Imagem dos gráficos principais' }
+  pdf: { label: "PDF", icon: FileText, description: "Documento formatado para impressão" },
+  excel: { label: "Excel", icon: FileSpreadsheet, description: "Planilha com dados e gráficos" },
+  csv: { label: "CSV", icon: FileText, description: "Dados brutos em formato tabular" },
+  png: { label: "PNG", icon: Image, description: "Imagem dos gráficos principais" },
 };
 
 const FREQUENCY_OPTIONS = {
-  once: { label: 'Uma vez', description: 'Gerar apenas uma vez' },
-  daily: { label: 'Diário', description: 'Todos os dias no horário especificado' },
-  weekly: { label: 'Semanal', description: 'Uma vez por semana' },
-  monthly: { label: 'Mensal', description: 'Uma vez por mês' }
+  once: { label: "Uma vez", description: "Gerar apenas uma vez" },
+  daily: { label: "Diário", description: "Todos os dias no horário especificado" },
+  weekly: { label: "Semanal", description: "Uma vez por semana" },
+  monthly: { label: "Mensal", description: "Uma vez por mês" },
 };
 
-const WEEKDAYS = [
-  'Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'
-];
+const WEEKDAYS = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
 
 const DEFAULT_TEMPLATES: ReportTemplate[] = [
   {
-    id: 'executive-summary',
-    name: 'Resumo Executivo',
-    description: 'Visão geral dos KPIs principais',
-    sections: ['financial', 'operational', 'patient'],
-    defaultFormat: 'pdf'
+    id: "executive-summary",
+    name: "Resumo Executivo",
+    description: "Visão geral dos KPIs principais",
+    sections: ["financial", "operational", "patient"],
+    defaultFormat: "pdf",
   },
   {
-    id: 'financial-detailed',
-    name: 'Relatório Financeiro Detalhado',
-    description: 'Análise completa das métricas financeiras',
-    sections: ['financial'],
-    defaultFormat: 'excel'
+    id: "financial-detailed",
+    name: "Relatório Financeiro Detalhado",
+    description: "Análise completa das métricas financeiras",
+    sections: ["financial"],
+    defaultFormat: "excel",
   },
   {
-    id: 'operational-performance',
-    name: 'Performance Operacional',
-    description: 'Métricas de eficiência e produtividade',
-    sections: ['operational', 'staff'],
-    defaultFormat: 'pdf'
+    id: "operational-performance",
+    name: "Performance Operacional",
+    description: "Métricas de eficiência e produtividade",
+    sections: ["operational", "staff"],
+    defaultFormat: "pdf",
   },
   {
-    id: 'patient-analytics',
-    name: 'Analytics de Pacientes',
-    description: 'Análise de satisfação e experiência do paciente',
-    sections: ['patient'],
-    defaultFormat: 'excel'
-  }
+    id: "patient-analytics",
+    name: "Analytics de Pacientes",
+    description: "Análise de satisfação e experiência do paciente",
+    sections: ["patient"],
+    defaultFormat: "excel",
+  },
 ];
 
 // ============================================================================
@@ -174,39 +167,39 @@ const DEFAULT_TEMPLATES: ReportTemplate[] = [
 // ============================================================================
 
 const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) return "0 Bytes";
   const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const sizes = ["Bytes", "KB", "MB", "GB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 };
 
 const getNextRunTime = (schedule: ReportSchedule): string => {
   const now = new Date();
   const nextRun = new Date();
-  
+
   switch (schedule.frequency) {
-    case 'daily':
+    case "daily":
       nextRun.setDate(now.getDate() + 1);
       break;
-    case 'weekly':
+    case "weekly":
       const daysUntilNext = (schedule.dayOfWeek! - now.getDay() + 7) % 7;
       nextRun.setDate(now.getDate() + (daysUntilNext || 7));
       break;
-    case 'monthly':
+    case "monthly":
       nextRun.setMonth(now.getMonth() + 1);
       nextRun.setDate(schedule.dayOfMonth!);
       break;
     default:
-      return 'N/A';
+      return "N/A";
   }
-  
+
   if (schedule.time) {
-    const [hours, minutes] = schedule.time.split(':').map(Number);
+    const [hours, minutes] = schedule.time.split(":").map(Number);
     nextRun.setHours(hours, minutes, 0, 0);
   }
-  
-  return nextRun.toLocaleString('pt-BR');
+
+  return nextRun.toLocaleString("pt-BR");
 };
 
 // ============================================================================
@@ -216,14 +209,14 @@ const getNextRunTime = (schedule: ReportSchedule): string => {
 const ReportItem: React.FC<ReportItemProps> = ({ report, onDelete, onDownload, onShare }) => {
   const formatConfig = REPORT_FORMATS[report.format];
   const Icon = formatConfig.icon;
-  
+
   return (
     <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
       <div className="flex items-center gap-3">
         <div className="p-2 bg-blue-100 rounded-lg">
           <Icon className="h-5 w-5 text-blue-600" />
         </div>
-        
+
         <div className="flex-1">
           <h4 className="font-medium text-gray-900">{report.title}</h4>
           <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
@@ -231,36 +224,36 @@ const ReportItem: React.FC<ReportItemProps> = ({ report, onDelete, onDownload, o
             <span>•</span>
             <span>{formatFileSize(report.size || 0)}</span>
             <span>•</span>
-            <span>{new Date(report.generatedAt).toLocaleString('pt-BR')}</span>
+            <span>{new Date(report.generatedAt).toLocaleString("pt-BR")}</span>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
-          <Badge variant={report.status === 'completed' ? 'default' : 'secondary'}>
-            {report.status === 'completed' ? 'Concluído' : 'Processando'}
+          <Badge variant={report.status === "completed" ? "default" : "secondary"}>
+            {report.status === "completed" ? "Concluído" : "Processando"}
           </Badge>
         </div>
       </div>
-      
+
       <div className="flex items-center gap-2">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => onDownload(report.id)}
-          disabled={report.status !== 'completed'}
+          disabled={report.status !== "completed"}
         >
           <Download className="h-4 w-4" />
         </Button>
-        
+
         <Button
           variant="ghost"
           size="sm"
           onClick={() => onShare(report.id)}
-          disabled={report.status !== 'completed'}
+          disabled={report.status !== "completed"}
         >
           <Share className="h-4 w-4" />
         </Button>
-        
+
         <Button
           variant="ghost"
           size="sm"
@@ -285,7 +278,7 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({ schedule, onEdit, onDelete,
         <div className="p-2 bg-green-100 rounded-lg">
           <Calendar className="h-5 w-5 text-green-600" />
         </div>
-        
+
         <div className="flex-1">
           <h4 className="font-medium text-gray-900">{schedule.name}</h4>
           <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
@@ -294,28 +287,24 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({ schedule, onEdit, onDelete,
             <span>Próxima execução: {getNextRunTime(schedule)}</span>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
-          <Badge variant={schedule.enabled ? 'default' : 'secondary'}>
-            {schedule.enabled ? 'Ativo' : 'Inativo'}
+          <Badge variant={schedule.enabled ? "default" : "secondary"}>
+            {schedule.enabled ? "Ativo" : "Inativo"}
           </Badge>
         </div>
       </div>
-      
+
       <div className="flex items-center gap-2">
         <Switch
           checked={schedule.enabled}
           onCheckedChange={(enabled) => onToggle(schedule.id, enabled)}
         />
-        
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => onEdit(schedule)}
-        >
+
+        <Button variant="ghost" size="sm" onClick={() => onEdit(schedule)}>
           <Edit className="h-4 w-4" />
         </Button>
-        
+
         <Button
           variant="ghost"
           size="sm"
@@ -341,126 +330,126 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
   onScheduleReport,
   onDeleteReport,
   onDeleteSchedule,
-  canManage = true
+  canManage = true,
 }) => {
   // ============================================================================
   // STATE MANAGEMENT
   // ============================================================================
-  
+
   const [isGenerating, setIsGenerating] = useState(false);
   const [showNewReportDialog, setShowNewReportDialog] = useState(false);
   const [showScheduleDialog, setShowScheduleDialog] = useState(false);
   const [editingSchedule, setEditingSchedule] = useState<ReportSchedule | null>(null);
-  
+
   const [reportConfig, setReportConfig] = useState<ReportConfig>({
-    templateId: '',
-    title: '',
-    description: '',
-    format: 'pdf',
+    templateId: "",
+    title: "",
+    description: "",
+    format: "pdf",
     dateRange: {
       start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
-      end: new Date()
+      end: new Date(),
     },
     filters: {
       includeCharts: true,
-      includeRawData: false
+      includeRawData: false,
     },
-    recipients: []
+    recipients: [],
   });
-  
+
   const [scheduleConfig, setScheduleConfig] = useState<ReportSchedule>({
-    id: '',
-    name: '',
-    templateId: '',
-    frequency: 'weekly',
+    id: "",
+    name: "",
+    templateId: "",
+    frequency: "weekly",
     enabled: true,
     recipients: [],
-    format: 'pdf',
+    format: "pdf",
     createdAt: new Date(),
     lastRun: null,
-    nextRun: new Date()
+    nextRun: new Date(),
   });
-  
+
   // ============================================================================
   // EVENT HANDLERS
   // ============================================================================
-  
+
   const handleGenerateReport = async () => {
     if (!reportConfig.templateId || !reportConfig.title) {
       return;
     }
-    
+
     setIsGenerating(true);
     try {
       await onGenerateReport(reportConfig);
       setShowNewReportDialog(false);
       // Reset form
       setReportConfig({
-        templateId: '',
-        title: '',
-        description: '',
-        format: 'pdf',
+        templateId: "",
+        title: "",
+        description: "",
+        format: "pdf",
         dateRange: {
           start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-          end: new Date()
+          end: new Date(),
         },
         filters: {
           includeCharts: true,
-          includeRawData: false
+          includeRawData: false,
         },
-        recipients: []
+        recipients: [],
       });
     } catch (error) {
-      console.error('Error generating report:', error);
+      console.error("Error generating report:", error);
     } finally {
       setIsGenerating(false);
     }
   };
-  
+
   const handleScheduleReport = async () => {
     if (!scheduleConfig.name || !scheduleConfig.templateId) {
       return;
     }
-    
+
     try {
       await onScheduleReport(scheduleConfig);
       setShowScheduleDialog(false);
       setEditingSchedule(null);
       // Reset form
       setScheduleConfig({
-        id: '',
-        name: '',
-        templateId: '',
-        frequency: 'weekly',
+        id: "",
+        name: "",
+        templateId: "",
+        frequency: "weekly",
         enabled: true,
         recipients: [],
-        format: 'pdf',
+        format: "pdf",
         createdAt: new Date(),
         lastRun: null,
-        nextRun: new Date()
+        nextRun: new Date(),
       });
     } catch (error) {
-      console.error('Error scheduling report:', error);
+      console.error("Error scheduling report:", error);
     }
   };
-  
+
   const handleEditSchedule = (schedule: ReportSchedule) => {
     setEditingSchedule(schedule);
     setScheduleConfig(schedule);
     setShowScheduleDialog(true);
   };
-  
+
   const handleToggleSchedule = async (scheduleId: string, enabled: boolean) => {
-    const schedule = schedules.find(s => s.id === scheduleId);
+    const schedule = schedules.find((s) => s.id === scheduleId);
     if (schedule) {
       await onScheduleReport({ ...schedule, enabled });
     }
   };
-  
+
   // ============================================================================
   // RENDER HELPERS
   // ============================================================================
-  
+
   const renderNewReportDialog = () => (
     <Dialog open={showNewReportDialog} onOpenChange={setShowNewReportDialog}>
       <DialogTrigger asChild>
@@ -469,7 +458,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
           Novo Relatório
         </Button>
       </DialogTrigger>
-      
+
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Gerar Novo Relatório</DialogTitle>
@@ -477,20 +466,20 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
             Configure os parâmetros para gerar um novo relatório do dashboard.
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="space-y-6">
           {/* Template Selection */}
           <div className="space-y-2">
             <Label>Template</Label>
-            <Select 
-              value={reportConfig.templateId} 
-              onValueChange={(value) => setReportConfig(prev => ({ ...prev, templateId: value }))}
+            <Select
+              value={reportConfig.templateId}
+              onValueChange={(value) => setReportConfig((prev) => ({ ...prev, templateId: value }))}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Selecione um template" />
               </SelectTrigger>
               <SelectContent>
-                {templates.map(template => (
+                {templates.map((template) => (
                   <SelectItem key={template.id} value={template.id}>
                     <div>
                       <div className="font-medium">{template.name}</div>
@@ -501,23 +490,25 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
               </SelectContent>
             </Select>
           </div>
-          
+
           {/* Basic Info */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Título</Label>
               <Input
                 value={reportConfig.title}
-                onChange={(e) => setReportConfig(prev => ({ ...prev, title: e.target.value }))}
+                onChange={(e) => setReportConfig((prev) => ({ ...prev, title: e.target.value }))}
                 placeholder="Nome do relatório"
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label>Formato</Label>
-              <Select 
-                value={reportConfig.format} 
-                onValueChange={(value: any) => setReportConfig(prev => ({ ...prev, format: value }))}
+              <Select
+                value={reportConfig.format}
+                onValueChange={(value: any) =>
+                  setReportConfig((prev) => ({ ...prev, format: value }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -538,18 +529,20 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
               </Select>
             </div>
           </div>
-          
+
           {/* Description */}
           <div className="space-y-2">
             <Label>Descrição (opcional)</Label>
             <Textarea
               value={reportConfig.description}
-              onChange={(e) => setReportConfig(prev => ({ ...prev, description: e.target.value }))}
+              onChange={(e) =>
+                setReportConfig((prev) => ({ ...prev, description: e.target.value }))
+              }
               placeholder="Descrição do relatório"
               rows={3}
             />
           </div>
-          
+
           {/* Date Range */}
           <div className="space-y-2">
             <Label>Período</Label>
@@ -558,55 +551,63 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                 <Label className="text-sm text-gray-600">Data Inicial</Label>
                 <Input
                   type="date"
-                  value={reportConfig.dateRange.start.toISOString().split('T')[0]}
-                  onChange={(e) => setReportConfig(prev => ({
-                    ...prev,
-                    dateRange: { ...prev.dateRange, start: new Date(e.target.value) }
-                  }))}
+                  value={reportConfig.dateRange.start.toISOString().split("T")[0]}
+                  onChange={(e) =>
+                    setReportConfig((prev) => ({
+                      ...prev,
+                      dateRange: { ...prev.dateRange, start: new Date(e.target.value) },
+                    }))
+                  }
                 />
               </div>
-              
+
               <div>
                 <Label className="text-sm text-gray-600">Data Final</Label>
                 <Input
                   type="date"
-                  value={reportConfig.dateRange.end.toISOString().split('T')[0]}
-                  onChange={(e) => setReportConfig(prev => ({
-                    ...prev,
-                    dateRange: { ...prev.dateRange, end: new Date(e.target.value) }
-                  }))}
+                  value={reportConfig.dateRange.end.toISOString().split("T")[0]}
+                  onChange={(e) =>
+                    setReportConfig((prev) => ({
+                      ...prev,
+                      dateRange: { ...prev.dateRange, end: new Date(e.target.value) },
+                    }))
+                  }
                 />
               </div>
             </div>
           </div>
-          
+
           {/* Filters */}
           <div className="space-y-4">
             <Label>Opções de Conteúdo</Label>
-            
+
             <div className="space-y-3">
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="includeCharts"
                   checked={reportConfig.filters.includeCharts}
-                  onCheckedChange={(checked) => setReportConfig(prev => ({
-                    ...prev,
-                    filters: { ...prev.filters, includeCharts: !!checked }
-                  }))}
+                  onCheckedChange={(checked) =>
+                    setReportConfig((prev) => ({
+                      ...prev,
+                      filters: { ...prev.filters, includeCharts: !!checked },
+                    }))
+                  }
                 />
                 <Label htmlFor="includeCharts" className="text-sm">
                   Incluir gráficos e visualizações
                 </Label>
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="includeRawData"
                   checked={reportConfig.filters.includeRawData}
-                  onCheckedChange={(checked) => setReportConfig(prev => ({
-                    ...prev,
-                    filters: { ...prev.filters, includeRawData: !!checked }
-                  }))}
+                  onCheckedChange={(checked) =>
+                    setReportConfig((prev) => ({
+                      ...prev,
+                      filters: { ...prev.filters, includeRawData: !!checked },
+                    }))
+                  }
                 />
                 <Label htmlFor="includeRawData" className="text-sm">
                   Incluir dados brutos (tabelas detalhadas)
@@ -615,15 +616,12 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
             </div>
           </div>
         </div>
-        
+
         <DialogFooter>
-          <Button 
-            variant="outline" 
-            onClick={() => setShowNewReportDialog(false)}
-          >
+          <Button variant="outline" onClick={() => setShowNewReportDialog(false)}>
             Cancelar
           </Button>
-          <Button 
+          <Button
             onClick={handleGenerateReport}
             disabled={isGenerating || !reportConfig.templateId || !reportConfig.title}
           >
@@ -634,7 +632,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
       </DialogContent>
     </Dialog>
   );
-  
+
   const renderScheduleDialog = () => (
     <Dialog open={showScheduleDialog} onOpenChange={setShowScheduleDialog}>
       <DialogTrigger asChild>
@@ -643,17 +641,13 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
           Agendar Relatório
         </Button>
       </DialogTrigger>
-      
+
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>
-            {editingSchedule ? 'Editar Agendamento' : 'Agendar Relatório'}
-          </DialogTitle>
-          <DialogDescription>
-            Configure o agendamento automático de relatórios.
-          </DialogDescription>
+          <DialogTitle>{editingSchedule ? "Editar Agendamento" : "Agendar Relatório"}</DialogTitle>
+          <DialogDescription>Configure o agendamento automático de relatórios.</DialogDescription>
         </DialogHeader>
-        
+
         <div className="space-y-6">
           {/* Basic Info */}
           <div className="grid grid-cols-2 gap-4">
@@ -661,22 +655,24 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
               <Label>Nome do Agendamento</Label>
               <Input
                 value={scheduleConfig.name}
-                onChange={(e) => setScheduleConfig(prev => ({ ...prev, name: e.target.value }))}
+                onChange={(e) => setScheduleConfig((prev) => ({ ...prev, name: e.target.value }))}
                 placeholder="Ex: Relatório Semanal Executivo"
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label>Template</Label>
-              <Select 
-                value={scheduleConfig.templateId} 
-                onValueChange={(value) => setScheduleConfig(prev => ({ ...prev, templateId: value }))}
+              <Select
+                value={scheduleConfig.templateId}
+                onValueChange={(value) =>
+                  setScheduleConfig((prev) => ({ ...prev, templateId: value }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione um template" />
                 </SelectTrigger>
                 <SelectContent>
-                  {templates.map(template => (
+                  {templates.map((template) => (
                     <SelectItem key={template.id} value={template.id}>
                       {template.name}
                     </SelectItem>
@@ -685,13 +681,15 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
               </Select>
             </div>
           </div>
-          
+
           {/* Frequency */}
           <div className="space-y-2">
             <Label>Frequência</Label>
-            <Select 
-              value={scheduleConfig.frequency} 
-              onValueChange={(value: any) => setScheduleConfig(prev => ({ ...prev, frequency: value }))}
+            <Select
+              value={scheduleConfig.frequency}
+              onValueChange={(value: any) =>
+                setScheduleConfig((prev) => ({ ...prev, frequency: value }))
+              }
             >
               <SelectTrigger>
                 <SelectValue />
@@ -708,28 +706,30 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
               </SelectContent>
             </Select>
           </div>
-          
+
           {/* Timing */}
-          {scheduleConfig.frequency !== 'once' && (
+          {scheduleConfig.frequency !== "once" && (
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Horário</Label>
                 <Input
                   type="time"
-                  value={scheduleConfig.time || '09:00'}
-                  onChange={(e) => setScheduleConfig(prev => ({ ...prev, time: e.target.value }))}
+                  value={scheduleConfig.time || "09:00"}
+                  onChange={(e) => setScheduleConfig((prev) => ({ ...prev, time: e.target.value }))}
                 />
               </div>
-              
-              {scheduleConfig.frequency === 'weekly' && (
+
+              {scheduleConfig.frequency === "weekly" && (
                 <div className="space-y-2">
                   <Label>Dia da Semana</Label>
-                  <Select 
-                    value={scheduleConfig.dayOfWeek?.toString() || '1'} 
-                    onValueChange={(value) => setScheduleConfig(prev => ({ 
-                      ...prev, 
-                      dayOfWeek: parseInt(value) 
-                    }))}
+                  <Select
+                    value={scheduleConfig.dayOfWeek?.toString() || "1"}
+                    onValueChange={(value) =>
+                      setScheduleConfig((prev) => ({
+                        ...prev,
+                        dayOfWeek: parseInt(value),
+                      }))
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -744,8 +744,8 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                   </Select>
                 </div>
               )}
-              
-              {scheduleConfig.frequency === 'monthly' && (
+
+              {scheduleConfig.frequency === "monthly" && (
                 <div className="space-y-2">
                   <Label>Dia do Mês</Label>
                   <Input
@@ -753,23 +753,27 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                     min="1"
                     max="31"
                     value={scheduleConfig.dayOfMonth || 1}
-                    onChange={(e) => setScheduleConfig(prev => ({ 
-                      ...prev, 
-                      dayOfMonth: parseInt(e.target.value) 
-                    }))}
+                    onChange={(e) =>
+                      setScheduleConfig((prev) => ({
+                        ...prev,
+                        dayOfMonth: parseInt(e.target.value),
+                      }))
+                    }
                   />
                 </div>
               )}
             </div>
           )}
-          
+
           {/* Format and Recipients */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Formato</Label>
-              <Select 
-                value={scheduleConfig.format} 
-                onValueChange={(value: any) => setScheduleConfig(prev => ({ ...prev, format: value }))}
+              <Select
+                value={scheduleConfig.format}
+                onValueChange={(value: any) =>
+                  setScheduleConfig((prev) => ({ ...prev, format: value }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -786,25 +790,23 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="space-y-2">
               <Label>Status</Label>
               <div className="flex items-center space-x-2 pt-2">
                 <Switch
                   checked={scheduleConfig.enabled}
-                  onCheckedChange={(enabled) => setScheduleConfig(prev => ({ ...prev, enabled }))}
+                  onCheckedChange={(enabled) => setScheduleConfig((prev) => ({ ...prev, enabled }))}
                 />
-                <Label className="text-sm">
-                  {scheduleConfig.enabled ? 'Ativo' : 'Inativo'}
-                </Label>
+                <Label className="text-sm">{scheduleConfig.enabled ? "Ativo" : "Inativo"}</Label>
               </div>
             </div>
           </div>
         </div>
-        
+
         <DialogFooter>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => {
               setShowScheduleDialog(false);
               setEditingSchedule(null);
@@ -812,32 +814,30 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
           >
             Cancelar
           </Button>
-          <Button 
+          <Button
             onClick={handleScheduleReport}
             disabled={!scheduleConfig.name || !scheduleConfig.templateId}
           >
-            {editingSchedule ? 'Atualizar' : 'Agendar'}
+            {editingSchedule ? "Atualizar" : "Agendar"}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
-  
+
   // ============================================================================
   // MAIN RENDER
   // ============================================================================
-  
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Relatórios</h2>
-          <p className="text-gray-600 mt-1">
-            Gere e agende relatórios personalizados do dashboard
-          </p>
+          <p className="text-gray-600 mt-1">Gere e agende relatórios personalizados do dashboard</p>
         </div>
-        
+
         {canManage && (
           <div className="flex items-center gap-3">
             {renderNewReportDialog()}
@@ -845,7 +845,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
           </div>
         )}
       </div>
-      
+
       {/* Content Tabs */}
       <Tabs defaultValue="reports" className="space-y-6">
         <TabsList>
@@ -862,7 +862,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
             Templates
           </TabsTrigger>
         </TabsList>
-        
+
         {/* Reports Tab */}
         <TabsContent value="reports">
           <Card>
@@ -872,7 +872,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                 Relatórios Recentes
               </CardTitle>
             </CardHeader>
-            
+
             <CardContent>
               {reports.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
@@ -887,8 +887,8 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                       <ReportItem
                         report={report}
                         onDelete={onDeleteReport}
-                        onDownload={(id) => console.log('Download report:', id)}
-                        onShare={(id) => console.log('Share report:', id)}
+                        onDownload={(id) => console.log("Download report:", id)}
+                        onShare={(id) => console.log("Share report:", id)}
                       />
                       {index < reports.length - 1 && <Separator />}
                     </React.Fragment>
@@ -898,7 +898,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         {/* Schedules Tab */}
         <TabsContent value="schedules">
           <Card>
@@ -908,7 +908,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                 Agendamentos Ativos
               </CardTitle>
             </CardHeader>
-            
+
             <CardContent>
               {schedules.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
@@ -934,7 +934,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         {/* Templates Tab */}
         <TabsContent value="templates">
           <Card>
@@ -944,14 +944,14 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                 Templates Disponíveis
               </CardTitle>
             </CardHeader>
-            
+
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {templates.map(template => (
+                {templates.map((template) => (
                   <div key={template.id} className="p-4 border rounded-lg">
                     <h4 className="font-medium text-gray-900">{template.name}</h4>
                     <p className="text-sm text-gray-600 mt-1">{template.description}</p>
-                    
+
                     <div className="flex items-center justify-between mt-4">
                       <div className="flex items-center gap-2">
                         <Badge variant="outline">
@@ -961,16 +961,16 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                           {template.sections.length} seções
                         </span>
                       </div>
-                      
+
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => {
-                          setReportConfig(prev => ({
+                          setReportConfig((prev) => ({
                             ...prev,
                             templateId: template.id,
                             title: template.name,
-                            format: template.defaultFormat
+                            format: template.defaultFormat,
                           }));
                           setShowNewReportDialog(true);
                         }}

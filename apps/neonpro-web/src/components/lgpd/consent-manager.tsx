@@ -1,17 +1,23 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Shield, Download, Eye, EyeOff, Check, X, AlertTriangle } from 'lucide-react'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import type { useState } from "react";
+import type { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type { Shield, Download, Eye, EyeOff, Check, X, AlertTriangle } from "lucide-react";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import {
+import type { Button } from "@/components/ui/button";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Input } from "@/components/ui/input";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
   Form,
   FormControl,
   FormDescription,
@@ -19,122 +25,127 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import {
+} from "@/components/ui/form";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Badge } from '@/components/ui/badge'
-import { consentSchema, type ConsentFormData } from '@/lib/healthcare/schemas'
-import { formatCpf } from '@/lib/utils'
-import { toast } from 'sonner'
+} from "@/components/ui/select";
+import type { Badge } from "@/components/ui/badge";
+import type { consentSchema, type ConsentFormData } from "@/lib/healthcare/schemas";
+import type { formatCpf } from "@/lib/utils";
+import type { toast } from "sonner";
 
 interface ConsentRecord {
-  id: string
-  patient_cpf: string
-  patient_name: string
-  consent_type: string
-  consent_given: boolean
-  legal_basis: string
-  purpose_description: string
-  data_retention_period: string
-  created_at: Date
-  updated_at: Date
-  status: 'active' | 'revoked' | 'expired'
+  id: string;
+  patient_cpf: string;
+  patient_name: string;
+  consent_type: string;
+  consent_given: boolean;
+  legal_basis: string;
+  purpose_description: string;
+  data_retention_period: string;
+  created_at: Date;
+  updated_at: Date;
+  status: "active" | "revoked" | "expired";
 }
 
 interface ConsentManagerProps {
-  patientCpf?: string
-  patientName?: string
-  existingConsents?: ConsentRecord[]
-  onSubmit: (data: ConsentFormData) => Promise<void>
-  onRevoke: (consentId: string) => Promise<void>
-  isLoading?: boolean
+  patientCpf?: string;
+  patientName?: string;
+  existingConsents?: ConsentRecord[];
+  onSubmit: (data: ConsentFormData) => Promise<void>;
+  onRevoke: (consentId: string) => Promise<void>;
+  isLoading?: boolean;
 }
 
 export function ConsentManager({
-  patientCpf = '',
-  patientName = '',
+  patientCpf = "",
+  patientName = "",
   existingConsents = [],
   onSubmit,
   onRevoke,
-  isLoading = false
+  isLoading = false,
 }: ConsentManagerProps) {
-  const [showDetails, setShowDetails] = useState(false)
-  const [selectedConsent, setSelectedConsent] = useState<ConsentRecord | null>(null)
+  const [showDetails, setShowDetails] = useState(false);
+  const [selectedConsent, setSelectedConsent] = useState<ConsentRecord | null>(null);
 
   const form = useForm<ConsentFormData>({
     resolver: zodResolver(consentSchema),
     defaultValues: {
       patient_cpf: patientCpf,
-      consent_type: 'data_processing',
+      consent_type: "data_processing",
       consent_given: false,
-      legal_basis: 'consent',
-      purpose_description: '',
-      data_retention_period: '20 anos (dados médicos)',
+      legal_basis: "consent",
+      purpose_description: "",
+      data_retention_period: "20 anos (dados médicos)",
       rights_information: true,
-      withdrawal_instructions: 'Para revogar este consentimento, entre em contato conosco através do email lgpd@neonpro.com.br'
-    }
-  })
+      withdrawal_instructions:
+        "Para revogar este consentimento, entre em contato conosco através do email lgpd@neonpro.com.br",
+    },
+  });
 
   const handleSubmitForm = async (data: ConsentFormData) => {
     try {
-      await onSubmit(data)
-      toast.success('Consentimento registrado com sucesso!', {
-        description: 'O registro foi salvo de forma segura conforme LGPD.'
-      })
-      form.reset()
+      await onSubmit(data);
+      toast.success("Consentimento registrado com sucesso!", {
+        description: "O registro foi salvo de forma segura conforme LGPD.",
+      });
+      form.reset();
     } catch (error) {
-      toast.error('Erro ao registrar consentimento', {
-        description: 'Verifique os dados e tente novamente.'
-      })
+      toast.error("Erro ao registrar consentimento", {
+        description: "Verifique os dados e tente novamente.",
+      });
     }
-  }
+  };
 
   const handleRevokeConsent = async (consentId: string) => {
     try {
-      await onRevoke(consentId)
-      toast.success('Consentimento revogado', {
-        description: 'A revogação foi processada conforme solicitado.'
-      })
+      await onRevoke(consentId);
+      toast.success("Consentimento revogado", {
+        description: "A revogação foi processada conforme solicitado.",
+      });
     } catch (error) {
-      toast.error('Erro ao revogar consentimento', {
-        description: 'Tente novamente ou entre em contato com o suporte.'
-      })
+      toast.error("Erro ao revogar consentimento", {
+        description: "Tente novamente ou entre em contato com o suporte.",
+      });
     }
-  }
+  };
 
   const getConsentTypeLabel = (type: string): string => {
     const labels: Record<string, string> = {
-      data_processing: 'Tratamento de Dados',
-      marketing: 'Comunicações de Marketing',
-      research: 'Pesquisa e Desenvolvimento',
-      procedure: 'Procedimento Médico',
-      photography: 'Uso de Imagem',
-      testimonial: 'Depoimento/Testemunho'
-    }
-    return labels[type] || type
-  }
+      data_processing: "Tratamento de Dados",
+      marketing: "Comunicações de Marketing",
+      research: "Pesquisa e Desenvolvimento",
+      procedure: "Procedimento Médico",
+      photography: "Uso de Imagem",
+      testimonial: "Depoimento/Testemunho",
+    };
+    return labels[type] || type;
+  };
 
   const getStatusBadge = (status: string, consentGiven: boolean) => {
     if (!consentGiven) {
-      return <Badge variant="destructive">Negado</Badge>
+      return <Badge variant="destructive">Negado</Badge>;
     }
-    
+
     switch (status) {
-      case 'active':
-        return <Badge variant="default" className="bg-green-100 text-green-800">Ativo</Badge>
-      case 'revoked':
-        return <Badge variant="secondary">Revogado</Badge>
-      case 'expired':
-        return <Badge variant="secondary">Expirado</Badge>
+      case "active":
+        return (
+          <Badge variant="default" className="bg-green-100 text-green-800">
+            Ativo
+          </Badge>
+        );
+      case "revoked":
+        return <Badge variant="secondary">Revogado</Badge>;
+      case "expired":
+        return <Badge variant="secondary">Expirado</Badge>;
       default:
-        return <Badge variant="secondary">{status}</Badge>
+        return <Badge variant="secondary">{status}</Badge>;
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -157,7 +168,6 @@ export function ConsentManager({
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmitForm)} className="space-y-6">
-              
               {/* Patient Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
@@ -171,8 +181,8 @@ export function ConsentManager({
                           placeholder="000.000.000-00"
                           {...field}
                           onChange={(e) => {
-                            const formatted = formatCpf(e.target.value)
-                            field.onChange(formatted)
+                            const formatted = formatCpf(e.target.value);
+                            field.onChange(formatted);
                           }}
                           className="bg-background"
                         />
@@ -207,7 +217,8 @@ export function ConsentManager({
                     </FormItem>
                   )}
                 />
-              </div>              <FormField
+              </div>{" "}
+              <FormField
                 control={form.control}
                 name="purpose_description"
                 render={({ field }) => (
@@ -228,7 +239,6 @@ export function ConsentManager({
                   </FormItem>
                 )}
               />
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
@@ -268,15 +278,12 @@ export function ConsentManager({
                           className="bg-background"
                         />
                       </FormControl>
-                      <FormDescription>
-                        Tempo que os dados serão mantidos
-                      </FormDescription>
+                      <FormDescription>Tempo que os dados serão mantidos</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
-
               <FormField
                 control={form.control}
                 name="consent_given"
@@ -296,8 +303,9 @@ export function ConsentManager({
                           Consentimento do Titular *
                         </FormLabel>
                         <FormDescription className="text-xs">
-                          Declaro que li e compreendi as informações sobre o tratamento dos meus dados pessoais,
-                          incluindo meus direitos como titular, e autorizo o tratamento descrito acima.
+                          Declaro que li e compreendi as informações sobre o tratamento dos meus
+                          dados pessoais, incluindo meus direitos como titular, e autorizo o
+                          tratamento descrito acima.
                         </FormDescription>
                       </div>
                     </div>
@@ -305,19 +313,31 @@ export function ConsentManager({
                   </FormItem>
                 )}
               />
-
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <div className="flex items-start gap-3">
                   <Shield className="w-5 h-5 text-blue-600 mt-0.5" />
                   <div>
                     <h4 className="font-medium text-blue-800">Seus Direitos LGPD</h4>
                     <div className="text-sm text-blue-700 space-y-1 mt-2">
-                      <p>• <strong>Confirmação:</strong> Saber se seus dados estão sendo tratados</p>
-                      <p>• <strong>Acesso:</strong> Obter cópia dos seus dados pessoais</p>
-                      <p>• <strong>Correção:</strong> Corrigir dados incompletos ou desatualizados</p>
-                      <p>• <strong>Eliminação:</strong> Excluir dados desnecessários ou tratados irregularmente</p>
-                      <p>• <strong>Portabilidade:</strong> Transferir dados para outro fornecedor</p>
-                      <p>• <strong>Revogação:</strong> Retirar consentimento a qualquer momento</p>
+                      <p>
+                        • <strong>Confirmação:</strong> Saber se seus dados estão sendo tratados
+                      </p>
+                      <p>
+                        • <strong>Acesso:</strong> Obter cópia dos seus dados pessoais
+                      </p>
+                      <p>
+                        • <strong>Correção:</strong> Corrigir dados incompletos ou desatualizados
+                      </p>
+                      <p>
+                        • <strong>Eliminação:</strong> Excluir dados desnecessários ou tratados
+                        irregularmente
+                      </p>
+                      <p>
+                        • <strong>Portabilidade:</strong> Transferir dados para outro fornecedor
+                      </p>
+                      <p>
+                        • <strong>Revogação:</strong> Retirar consentimento a qualquer momento
+                      </p>
                     </div>
                     <p className="text-xs text-blue-600 mt-3 font-medium">
                       Para exercer seus direitos: lgpd@neonpro.com.br
@@ -325,21 +345,19 @@ export function ConsentManager({
                   </div>
                 </div>
               </div>
-
               <Button type="submit" disabled={isLoading} className="w-full">
-                {isLoading ? 'Registrando...' : 'Registrar Consentimento'}
+                {isLoading ? "Registrando..." : "Registrar Consentimento"}
               </Button>
             </form>
           </Form>
         </CardContent>
-      </Card>      {/* Existing Consents */}
+      </Card>{" "}
+      {/* Existing Consents */}
       {existingConsents.length > 0 && (
         <Card className="medical-card">
           <CardHeader>
             <CardTitle className="text-xl">Consentimentos Registrados</CardTitle>
-            <CardDescription>
-              Histórico de consentimentos do paciente {patientName}
-            </CardDescription>
+            <CardDescription>Histórico de consentimentos do paciente {patientName}</CardDescription>
           </CardHeader>
 
           <CardContent>
@@ -352,22 +370,24 @@ export function ConsentManager({
                   <div className="flex items-start justify-between">
                     <div className="space-y-2">
                       <div className="flex items-center gap-3">
-                        <h4 className="font-medium">
-                          {getConsentTypeLabel(consent.consent_type)}
-                        </h4>
+                        <h4 className="font-medium">{getConsentTypeLabel(consent.consent_type)}</h4>
                         {getStatusBadge(consent.status, consent.consent_given)}
                       </div>
-                      
-                      <p className="text-sm text-muted-foreground">
-                        {consent.purpose_description}
-                      </p>
-                      
+
+                      <p className="text-sm text-muted-foreground">{consent.purpose_description}</p>
+
                       <div className="text-xs text-muted-foreground">
                         <p>Base Legal: {consent.legal_basis}</p>
                         <p>Retenção: {consent.data_retention_period}</p>
-                        <p>Registrado em: {format(consent.created_at, 'dd/MM/yyyy HH:mm', { locale: ptBR })}</p>
+                        <p>
+                          Registrado em:{" "}
+                          {format(consent.created_at, "dd/MM/yyyy HH:mm", { locale: ptBR })}
+                        </p>
                         {consent.updated_at !== consent.created_at && (
-                          <p>Atualizado em: {format(consent.updated_at, 'dd/MM/yyyy HH:mm', { locale: ptBR })}</p>
+                          <p>
+                            Atualizado em:{" "}
+                            {format(consent.updated_at, "dd/MM/yyyy HH:mm", { locale: ptBR })}
+                          </p>
                         )}
                       </div>
                     </div>
@@ -380,8 +400,8 @@ export function ConsentManager({
                       >
                         <Eye className="w-4 h-4" />
                       </Button>
-                      
-                      {consent.status === 'active' && consent.consent_given && (
+
+                      {consent.status === "active" && consent.consent_given && (
                         <Button
                           variant="outline"
                           size="sm"
@@ -399,22 +419,15 @@ export function ConsentManager({
           </CardContent>
         </Card>
       )}
-
       {/* Consent Details Modal/Card */}
       {selectedConsent && (
         <Card className="medical-card">
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
               <CardTitle className="text-xl">Detalhes do Consentimento</CardTitle>
-              <CardDescription>
-                Informações completas do registro de consentimento
-              </CardDescription>
+              <CardDescription>Informações completas do registro de consentimento</CardDescription>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setSelectedConsent(null)}
-            >
+            <Button variant="outline" size="sm" onClick={() => setSelectedConsent(null)}>
               <X className="w-4 h-4" />
             </Button>
           </CardHeader>
@@ -454,10 +467,10 @@ export function ConsentManager({
             <div className="border-t pt-4">
               <h4 className="font-medium mb-2">Como Revogar Este Consentimento</h4>
               <p className="text-sm text-muted-foreground">
-                Para revogar este consentimento, entre em contato conosco através do email{' '}
+                Para revogar este consentimento, entre em contato conosco através do email{" "}
                 <a href="mailto:lgpd@neonpro.com.br" className="text-primary underline">
                   lgpd@neonpro.com.br
-                </a>{' '}
+                </a>{" "}
                 informando seu CPF e o tipo de consentimento que deseja revogar.
               </p>
             </div>
@@ -467,13 +480,13 @@ export function ConsentManager({
                 <Download className="w-4 h-4 mr-2" />
                 Baixar Comprovante
               </Button>
-              {selectedConsent.status === 'active' && selectedConsent.consent_given && (
+              {selectedConsent.status === "active" && selectedConsent.consent_given && (
                 <Button
                   variant="destructive"
                   size="sm"
                   onClick={() => {
-                    handleRevokeConsent(selectedConsent.id)
-                    setSelectedConsent(null)
+                    handleRevokeConsent(selectedConsent.id);
+                    setSelectedConsent(null);
                   }}
                 >
                   Revogar Consentimento
@@ -484,5 +497,5 @@ export function ConsentManager({
         </Card>
       )}
     </div>
-  )
+  );
 }

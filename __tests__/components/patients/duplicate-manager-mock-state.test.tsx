@@ -59,9 +59,7 @@ describe("DuplicateManagerHookMinimal - Mocked State", () => {
       },
     ];
 
-    const { container } = render(
-      <DuplicateManagerHookMinimal duplicates={mockDuplicates} />
-    );
+    const { container } = render(<DuplicateManagerHookMinimal duplicates={mockDuplicates} />);
 
     // Check if the component renders with expected structure
     expect(container.firstChild).toBeTruthy();

@@ -1,62 +1,58 @@
-﻿/**
+/**
  * Current Subscription API
  * Epic: EPIC-001 - Advanced Subscription Management
  * Story: EPIC-001.1 - Subscription Middleware & Management System
- * 
+ *
  * GET /api/subscription/current - Get current user's subscription details
  * PUT /api/subscription/current - Update subscription settings
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server'
-import { cookies } from 'next/headers';
-import type { Database } from '@/types/database';
-import { getSubscriptionContext } from '@/middleware/subscription/subscriptionUtils';
+import type { NextRequest, NextResponse } from "next/server";
+import type { createClient } from "@/lib/supabase/server";
+import type { cookies } from "next/headers";
+import type { Database } from "@/types/database";
+import type { getSubscriptionContext } from "@/middleware/subscription/subscriptionUtils";
 
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get user's clinic
     const { data: userClinic } = await supabase
-      .from('user_clinics')
-      .select('clinic_id')
-      .eq('user_id', session.user.id)
-      .eq('is_active', true)
+      .from("user_clinics")
+      .select("clinic_id")
+      .eq("user_id", session.user.id)
+      .eq("is_active", true)
       .single();
 
     if (!userClinic) {
-      return NextResponse.json(
-        { error: 'No active clinic found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "No active clinic found" }, { status: 404 });
     }
 
     // Get current subscription with plan details and usage
     const { data: subscription, error } = await supabase
-      .from('user_subscriptions')
+      .from("user_subscriptions")
       .select(`
         *,
         plan:subscription_plans(*),
         usage:subscription_usage(*)
       `)
-      .eq('clinic_id', userClinic.clinic_id)
-      .in('status', ['trial', 'active'])
+      .eq("clinic_id", userClinic.clinic_id)
+      .in("status", ["trial", "active"])
       .single();
 
     if (error || !subscription) {
       return NextResponse.json({
         success: true,
         data: null,
-        message: 'No active subscription found'
+        message: "No active subscription found",
       });
     }
 
@@ -73,41 +69,36 @@ export async function GET(request: NextRequest) {
         status_info: subscriptionStatus,
         usage_stats: usageStats,
         formatted_dates: {
-          current_period_start: subscription.current_period_start 
-            ? new Date(subscription.current_period_start).toLocaleDateString('pt-BR')
+          current_period_start: subscription.current_period_start
+            ? new Date(subscription.current_period_start).toLocaleDateString("pt-BR")
             : null,
           current_period_end: subscription.current_period_end
-            ? new Date(subscription.current_period_end).toLocaleDateString('pt-BR')
+            ? new Date(subscription.current_period_end).toLocaleDateString("pt-BR")
             : null,
           trial_end: subscription.trial_end
-            ? new Date(subscription.trial_end).toLocaleDateString('pt-BR')
+            ? new Date(subscription.trial_end).toLocaleDateString("pt-BR")
             : null,
           next_billing_date: subscription.next_billing_date
-            ? new Date(subscription.next_billing_date).toLocaleDateString('pt-BR')
-            : null
-        }
-      }
+            ? new Date(subscription.next_billing_date).toLocaleDateString("pt-BR")
+            : null,
+        },
+      },
     });
-
   } catch (error) {
-    console.error('Current subscription API error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    console.error("Current subscription API error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
 export async function PUT(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
@@ -115,22 +106,19 @@ export async function PUT(request: NextRequest) {
 
     // Get user's clinic
     const { data: userClinic } = await supabase
-      .from('user_clinics')
-      .select('clinic_id')
-      .eq('user_id', session.user.id)
-      .eq('is_active', true)
+      .from("user_clinics")
+      .select("clinic_id")
+      .eq("user_id", session.user.id)
+      .eq("is_active", true)
       .single();
 
     if (!userClinic) {
-      return NextResponse.json(
-        { error: 'No active clinic found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "No active clinic found" }, { status: 404 });
     }
 
     // Update subscription settings
     const updateData: any = {};
-    
+
     if (cancel_at_period_end !== undefined) {
       updateData.cancel_at_period_end = cancel_at_period_end;
       if (cancel_at_period_end && cancellation_reason) {
@@ -139,35 +127,28 @@ export async function PUT(request: NextRequest) {
     }
 
     const { data: updatedSubscription, error } = await supabase
-      .from('user_subscriptions')
+      .from("user_subscriptions")
       .update(updateData)
-      .eq('clinic_id', userClinic.clinic_id)
-      .in('status', ['trial', 'active'])
+      .eq("clinic_id", userClinic.clinic_id)
+      .in("status", ["trial", "active"])
       .select()
       .single();
 
     if (error) {
-      console.error('Error updating subscription:', error);
-      return NextResponse.json(
-        { error: 'Failed to update subscription' },
-        { status: 500 }
-      );
+      console.error("Error updating subscription:", error);
+      return NextResponse.json({ error: "Failed to update subscription" }, { status: 500 });
     }
 
     return NextResponse.json({
       success: true,
       data: updatedSubscription,
-      message: cancel_at_period_end 
-        ? 'Assinatura serÃ¡ cancelada no final do perÃ­odo atual'
-        : 'ConfiguraÃ§Ãµes de assinatura atualizadas'
+      message: cancel_at_period_end
+        ? "Assinatura serÃ¡ cancelada no final do perÃ­odo atual"
+        : "ConfiguraÃ§Ãµes de assinatura atualizadas",
     });
-
   } catch (error) {
-    console.error('Update subscription API error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    console.error("Update subscription API error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -181,34 +162,34 @@ async function calculateUsageStats(supabase: any, subscription: any) {
       let currentUsage = 0;
 
       switch (limitKey) {
-        case 'max_patients':
+        case "max_patients":
           const { count: patientCount } = await supabase
-            .from('patients')
-            .select('*', { count: 'exact', head: true })
-            .eq('clinic_id', subscription.clinic_id)
-            .eq('is_active', true);
+            .from("patients")
+            .select("*", { count: "exact", head: true })
+            .eq("clinic_id", subscription.clinic_id)
+            .eq("is_active", true);
           currentUsage = patientCount || 0;
           break;
 
-        case 'max_appointments_per_month':
+        case "max_appointments_per_month":
           const startOfMonth = new Date();
           startOfMonth.setDate(1);
           startOfMonth.setHours(0, 0, 0, 0);
-          
+
           const { count: appointmentCount } = await supabase
-            .from('appointments')
-            .select('*', { count: 'exact', head: true })
-            .eq('clinic_id', subscription.clinic_id)
-            .gte('appointment_date', startOfMonth.toISOString());
+            .from("appointments")
+            .select("*", { count: "exact", head: true })
+            .eq("clinic_id", subscription.clinic_id)
+            .gte("appointment_date", startOfMonth.toISOString());
           currentUsage = appointmentCount || 0;
           break;
 
-        case 'max_users':
+        case "max_users":
           const { count: userCount } = await supabase
-            .from('user_clinics')
-            .select('*', { count: 'exact', head: true })
-            .eq('clinic_id', subscription.clinic_id)
-            .eq('is_active', true);
+            .from("user_clinics")
+            .select("*", { count: "exact", head: true })
+            .eq("clinic_id", subscription.clinic_id)
+            .eq("is_active", true);
           currentUsage = userCount || 0;
           break;
       }
@@ -218,15 +199,15 @@ async function calculateUsageStats(supabase: any, subscription: any) {
 
       stats[limitKey] = {
         current: currentUsage,
-        limit: limit === -1 ? 'Unlimited' : limit,
+        limit: limit === -1 ? "Unlimited" : limit,
         percentage,
-        remaining: limit === -1 ? Infinity : Math.max(0, limit - currentUsage)
+        remaining: limit === -1 ? Infinity : Math.max(0, limit - currentUsage),
       };
     });
 
     await Promise.all(usagePromises);
   } catch (error) {
-    console.error('Error calculating usage stats:', error);
+    console.error("Error calculating usage stats:", error);
   }
 
   return stats;
@@ -234,29 +215,29 @@ async function calculateUsageStats(supabase: any, subscription: any) {
 
 function getSubscriptionStatus(subscription: any) {
   const now = new Date();
-  
-  if (subscription.status === 'trial') {
+
+  if (subscription.status === "trial") {
     if (subscription.trial_end) {
       const trialEnd = new Date(subscription.trial_end);
       const daysRemaining = Math.ceil((trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-      
+
       if (daysRemaining <= 0) {
         return {
-          status: 'trial_expired',
-          message: 'PerÃ­odo de teste expirado',
-          action_required: true
+          status: "trial_expired",
+          message: "PerÃ­odo de teste expirado",
+          action_required: true,
         };
       } else if (daysRemaining <= 3) {
         return {
-          status: 'trial_ending',
+          status: "trial_ending",
           message: `Teste expira em ${daysRemaining} dias`,
-          action_required: true
+          action_required: true,
         };
       } else {
         return {
-          status: 'trial_active',
+          status: "trial_active",
           message: `${daysRemaining} dias restantes no teste`,
-          action_required: false
+          action_required: false,
         };
       }
     }
@@ -265,18 +246,17 @@ function getSubscriptionStatus(subscription: any) {
   if (subscription.cancel_at_period_end && subscription.current_period_end) {
     const periodEnd = new Date(subscription.current_period_end);
     const daysRemaining = Math.ceil((periodEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-    
+
     return {
-      status: 'canceling',
+      status: "canceling",
       message: `Assinatura serÃ¡ cancelada em ${daysRemaining} dias`,
-      action_required: false
+      action_required: false,
     };
   }
 
   return {
-    status: 'active',
-    message: 'Assinatura ativa',
-    action_required: false
+    status: "active",
+    message: "Assinatura ativa",
+    action_required: false,
   };
 }
-

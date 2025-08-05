@@ -1,7 +1,7 @@
 /**
  * LGPD Consent Management System
  * Implements automated consent tracking and management for LGPD compliance
- * 
+ *
  * Features:
  * - Granular consent tracking for all data types
  * - Consent versioning and historical tracking
@@ -9,13 +9,13 @@
  * - Consent analytics and reporting
  * - Consent re-confirmation workflows
  * - Consent inheritance for related accounts
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  */
 
-import { EventEmitter } from 'events';
-import { z } from 'zod';
+import type { EventEmitter } from "events";
+import type { z } from "zod";
 
 // ============================================================================
 // LGPD CONSENT TYPES & INTERFACES
@@ -25,55 +25,55 @@ import { z } from 'zod';
  * LGPD Data Types for Consent Management
  */
 export enum LGPDDataType {
-  PERSONAL_DATA = 'personal_data',
-  SENSITIVE_DATA = 'sensitive_data',
-  BIOMETRIC_DATA = 'biometric_data',
-  HEALTH_DATA = 'health_data',
-  AUTHENTICATION_DATA = 'authentication_data',
-  SESSION_DATA = 'session_data',
-  BEHAVIORAL_DATA = 'behavioral_data',
-  COMMUNICATION_DATA = 'communication_data',
-  FINANCIAL_DATA = 'financial_data',
-  LOCATION_DATA = 'location_data'
+  PERSONAL_DATA = "personal_data",
+  SENSITIVE_DATA = "sensitive_data",
+  BIOMETRIC_DATA = "biometric_data",
+  HEALTH_DATA = "health_data",
+  AUTHENTICATION_DATA = "authentication_data",
+  SESSION_DATA = "session_data",
+  BEHAVIORAL_DATA = "behavioral_data",
+  COMMUNICATION_DATA = "communication_data",
+  FINANCIAL_DATA = "financial_data",
+  LOCATION_DATA = "location_data",
 }
 
 /**
  * LGPD Processing Purposes
  */
 export enum LGPDProcessingPurpose {
-  AUTHENTICATION = 'authentication',
-  AUTHORIZATION = 'authorization',
-  SESSION_MANAGEMENT = 'session_management',
-  SECURITY_MONITORING = 'security_monitoring',
-  AUDIT_LOGGING = 'audit_logging',
-  COMMUNICATION = 'communication',
-  ANALYTICS = 'analytics',
-  COMPLIANCE = 'compliance',
-  LEGAL_OBLIGATION = 'legal_obligation',
-  LEGITIMATE_INTEREST = 'legitimate_interest'
+  AUTHENTICATION = "authentication",
+  AUTHORIZATION = "authorization",
+  SESSION_MANAGEMENT = "session_management",
+  SECURITY_MONITORING = "security_monitoring",
+  AUDIT_LOGGING = "audit_logging",
+  COMMUNICATION = "communication",
+  ANALYTICS = "analytics",
+  COMPLIANCE = "compliance",
+  LEGAL_OBLIGATION = "legal_obligation",
+  LEGITIMATE_INTEREST = "legitimate_interest",
 }
 
 /**
  * LGPD Legal Basis for Processing
  */
 export enum LGPDLegalBasis {
-  CONSENT = 'consent',
-  CONTRACT = 'contract',
-  LEGAL_OBLIGATION = 'legal_obligation',
-  VITAL_INTERESTS = 'vital_interests',
-  PUBLIC_INTEREST = 'public_interest',
-  LEGITIMATE_INTERESTS = 'legitimate_interests'
+  CONSENT = "consent",
+  CONTRACT = "contract",
+  LEGAL_OBLIGATION = "legal_obligation",
+  VITAL_INTERESTS = "vital_interests",
+  PUBLIC_INTEREST = "public_interest",
+  LEGITIMATE_INTERESTS = "legitimate_interests",
 }
 
 /**
  * Consent Status Types
  */
 export enum ConsentStatus {
-  GIVEN = 'given',
-  WITHDRAWN = 'withdrawn',
-  EXPIRED = 'expired',
-  PENDING = 'pending',
-  INVALID = 'invalid'
+  GIVEN = "given",
+  WITHDRAWN = "withdrawn",
+  EXPIRED = "expired",
+  PENDING = "pending",
+  INVALID = "invalid",
 }
 
 /**
@@ -95,7 +95,7 @@ export interface ConsentRecord {
   metadata: {
     ipAddress: string;
     userAgent: string;
-    consentMethod: 'explicit' | 'implicit' | 'inherited';
+    consentMethod: "explicit" | "implicit" | "inherited";
     consentInterface: string;
     dataRetentionPeriod?: number;
     thirdPartySharing?: boolean;
@@ -111,7 +111,7 @@ export interface ConsentRecord {
  */
 export interface ConsentAuditEntry {
   id: string;
-  action: 'given' | 'withdrawn' | 'renewed' | 'expired' | 'modified';
+  action: "given" | "withdrawn" | "renewed" | "expired" | "modified";
   timestamp: Date;
   reason?: string;
   ipAddress: string;
@@ -201,13 +201,17 @@ export interface ConsentAnalytics {
  * Consent Events
  */
 export interface ConsentEvents {
-  'consent:given': { userId: string; consent: ConsentRecord };
-  'consent:withdrawn': { userId: string; consent: ConsentRecord; reason?: string };
-  'consent:expired': { userId: string; consent: ConsentRecord };
-  'consent:renewed': { userId: string; consent: ConsentRecord };
-  'consent:violation': { userId: string; violation: string; severity: 'low' | 'medium' | 'high' | 'critical' };
-  'consent:analytics': { analytics: ConsentAnalytics };
-  'consent:audit': { userId: string; action: string; details: Record<string, any> };
+  "consent:given": { userId: string; consent: ConsentRecord };
+  "consent:withdrawn": { userId: string; consent: ConsentRecord; reason?: string };
+  "consent:expired": { userId: string; consent: ConsentRecord };
+  "consent:renewed": { userId: string; consent: ConsentRecord };
+  "consent:violation": {
+    userId: string;
+    violation: string;
+    severity: "low" | "medium" | "high" | "critical";
+  };
+  "consent:analytics": { analytics: ConsentAnalytics };
+  "consent:audit": { userId: string; action: string; details: Record<string, any> };
 }
 
 // ============================================================================
@@ -216,7 +220,7 @@ export interface ConsentEvents {
 
 /**
  * LGPD Consent Management System
- * 
+ *
  * Provides comprehensive consent management for LGPD compliance including:
  * - Granular consent tracking and management
  * - Automated consent lifecycle management
@@ -245,8 +249,8 @@ export class ConsentManager extends EventEmitter {
       cleanupIntervalHours: 24,
       analyticsIntervalHours: 6,
       auditEnabled: true,
-      encryptionEnabled: true
-    }
+      encryptionEnabled: true,
+    },
   ) {
     super();
     this.setMaxListeners(100);
@@ -275,12 +279,11 @@ export class ConsentManager extends EventEmitter {
       await this.generateAnalytics();
 
       this.isInitialized = true;
-      this.emit('consent:audit', {
-        userId: 'system',
-        action: 'consent_manager_initialized',
-        details: { timestamp: new Date() }
+      this.emit("consent:audit", {
+        userId: "system",
+        action: "consent_manager_initialized",
+        details: { timestamp: new Date() },
       });
-
     } catch (error) {
       throw new Error(`Failed to initialize consent manager: ${error}`);
     }
@@ -301,34 +304,33 @@ export class ConsentManager extends EventEmitter {
           legalBasis: consentData.legalBasis,
           granted: consentData.granted,
           context: request.context,
-          metadata: consentData.metadata
+          metadata: consentData.metadata,
         });
 
         results.push(consent);
 
         // Emit consent event
-        this.emit('consent:given', {
+        this.emit("consent:given", {
           userId: request.userId,
-          consent
+          consent,
         });
 
         // Audit log
-        this.emit('consent:audit', {
+        this.emit("consent:audit", {
           userId: request.userId,
-          action: 'consent_processed',
+          action: "consent_processed",
           details: {
             dataType: consentData.dataType,
             purpose: consentData.purpose,
             granted: consentData.granted,
-            timestamp: new Date()
-          }
+            timestamp: new Date(),
+          },
         });
-
       } catch (error) {
-        this.emit('consent:violation', {
+        this.emit("consent:violation", {
           userId: request.userId,
           violation: `Failed to process consent: ${error}`,
-          severity: 'high'
+          severity: "high",
         });
         throw error;
       }
@@ -349,17 +351,17 @@ export class ConsentManager extends EventEmitter {
       ipAddress: string;
       userAgent: string;
       interface: string;
-    }
+    },
   ): Promise<ConsentRecord> {
     const consentKey = this.generateConsentKey(userId, dataType, purpose);
     const consent = this.consents.get(consentKey);
 
     if (!consent) {
-      throw new Error('Consent record not found');
+      throw new Error("Consent record not found");
     }
 
     if (consent.status === ConsentStatus.WITHDRAWN) {
-      throw new Error('Consent already withdrawn');
+      throw new Error("Consent already withdrawn");
     }
 
     // Update consent record
@@ -371,12 +373,12 @@ export class ConsentManager extends EventEmitter {
     // Add audit entry
     const auditEntry: ConsentAuditEntry = {
       id: this.generateId(),
-      action: 'withdrawn',
+      action: "withdrawn",
       timestamp: new Date(),
       reason,
-      ipAddress: context?.ipAddress || 'unknown',
-      userAgent: context?.userAgent || 'unknown',
-      metadata: { interface: context?.interface }
+      ipAddress: context?.ipAddress || "unknown",
+      userAgent: context?.userAgent || "unknown",
+      metadata: { interface: context?.interface },
     };
     consent.auditTrail.push(auditEntry);
 
@@ -384,21 +386,21 @@ export class ConsentManager extends EventEmitter {
     await this.saveConsent(consent);
 
     // Emit events
-    this.emit('consent:withdrawn', {
+    this.emit("consent:withdrawn", {
       userId,
       consent,
-      reason
+      reason,
     });
 
-    this.emit('consent:audit', {
+    this.emit("consent:audit", {
       userId,
-      action: 'consent_withdrawn',
+      action: "consent_withdrawn",
       details: {
         dataType,
         purpose,
         reason,
-        timestamp: new Date()
-      }
+        timestamp: new Date(),
+      },
     });
 
     return consent;
@@ -415,13 +417,13 @@ export class ConsentManager extends EventEmitter {
       ipAddress: string;
       userAgent: string;
       interface: string;
-    }
+    },
   ): Promise<ConsentRecord> {
     const consentKey = this.generateConsentKey(userId, dataType, purpose);
     const consent = this.consents.get(consentKey);
 
     if (!consent) {
-      throw new Error('Consent record not found');
+      throw new Error("Consent record not found");
     }
 
     // Update consent record
@@ -441,11 +443,11 @@ export class ConsentManager extends EventEmitter {
     // Add audit entry
     const auditEntry: ConsentAuditEntry = {
       id: this.generateId(),
-      action: 'renewed',
+      action: "renewed",
       timestamp: new Date(),
       ipAddress: context.ipAddress,
       userAgent: context.userAgent,
-      metadata: { interface: context.interface }
+      metadata: { interface: context.interface },
     };
     consent.auditTrail.push(auditEntry);
 
@@ -453,19 +455,19 @@ export class ConsentManager extends EventEmitter {
     await this.saveConsent(consent);
 
     // Emit events
-    this.emit('consent:renewed', {
+    this.emit("consent:renewed", {
       userId,
-      consent
+      consent,
     });
 
-    this.emit('consent:audit', {
+    this.emit("consent:audit", {
       userId,
-      action: 'consent_renewed',
+      action: "consent_renewed",
       details: {
         dataType,
         purpose,
-        timestamp: new Date()
-      }
+        timestamp: new Date(),
+      },
     });
 
     return consent;
@@ -476,18 +478,14 @@ export class ConsentManager extends EventEmitter {
    */
   getUserConsents(userId: string): ConsentRecord[] {
     return Array.from(this.consents.values())
-      .filter(consent => consent.userId === userId)
+      .filter((consent) => consent.userId === userId)
       .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
   }
 
   /**
    * Check if user has valid consent
    */
-  hasValidConsent(
-    userId: string,
-    dataType: LGPDDataType,
-    purpose: LGPDProcessingPurpose
-  ): boolean {
+  hasValidConsent(userId: string, dataType: LGPDDataType, purpose: LGPDProcessingPurpose): boolean {
     const consentKey = this.generateConsentKey(userId, dataType, purpose);
     const consent = this.consents.get(consentKey);
 
@@ -509,18 +507,17 @@ export class ConsentManager extends EventEmitter {
     const renewalDate = new Date();
     renewalDate.setDate(renewalDate.getDate() + this.config.renewalReminderDays);
 
-    return Array.from(this.consents.values())
-      .filter(consent => {
-        if (userId && consent.userId !== userId) {
-          return false;
-        }
-        return (
-          consent.status === ConsentStatus.GIVEN &&
-          consent.expiryDate &&
-          consent.expiryDate <= renewalDate &&
-          !consent.renewalRequired
-        );
-      });
+    return Array.from(this.consents.values()).filter((consent) => {
+      if (userId && consent.userId !== userId) {
+        return false;
+      }
+      return (
+        consent.status === ConsentStatus.GIVEN &&
+        consent.expiryDate &&
+        consent.expiryDate <= renewalDate &&
+        !consent.renewalRequired
+      );
+    });
   }
 
   /**
@@ -540,39 +537,52 @@ export class ConsentManager extends EventEmitter {
 
     // Basic counts
     const totalConsents = consents.length;
-    const activeConsents = consents.filter(c => c.status === ConsentStatus.GIVEN).length;
-    const withdrawnConsents = consents.filter(c => c.status === ConsentStatus.WITHDRAWN).length;
-    const expiredConsents = consents.filter(c => c.status === ConsentStatus.EXPIRED).length;
+    const activeConsents = consents.filter((c) => c.status === ConsentStatus.GIVEN).length;
+    const withdrawnConsents = consents.filter((c) => c.status === ConsentStatus.WITHDRAWN).length;
+    const expiredConsents = consents.filter((c) => c.status === ConsentStatus.EXPIRED).length;
 
     // Consent by type
-    const consentsByType = consents.reduce((acc, consent) => {
-      acc[consent.dataType] = (acc[consent.dataType] || 0) + 1;
-      return acc;
-    }, {} as Record<LGPDDataType, number>);
+    const consentsByType = consents.reduce(
+      (acc, consent) => {
+        acc[consent.dataType] = (acc[consent.dataType] || 0) + 1;
+        return acc;
+      },
+      {} as Record<LGPDDataType, number>,
+    );
 
     // Consent by purpose
-    const consentsByPurpose = consents.reduce((acc, consent) => {
-      acc[consent.purpose] = (acc[consent.purpose] || 0) + 1;
-      return acc;
-    }, {} as Record<LGPDProcessingPurpose, number>);
+    const consentsByPurpose = consents.reduce(
+      (acc, consent) => {
+        acc[consent.purpose] = (acc[consent.purpose] || 0) + 1;
+        return acc;
+      },
+      {} as Record<LGPDProcessingPurpose, number>,
+    );
 
     // Consent by status
-    const consentsByStatus = consents.reduce((acc, consent) => {
-      acc[consent.status] = (acc[consent.status] || 0) + 1;
-      return acc;
-    }, {} as Record<ConsentStatus, number>);
+    const consentsByStatus = consents.reduce(
+      (acc, consent) => {
+        acc[consent.status] = (acc[consent.status] || 0) + 1;
+        return acc;
+      },
+      {} as Record<ConsentStatus, number>,
+    );
 
     // Rates
     const consentRate = totalConsents > 0 ? (activeConsents / totalConsents) * 100 : 0;
     const withdrawalRate = totalConsents > 0 ? (withdrawnConsents / totalConsents) * 100 : 0;
-    const renewalRate = totalConsents > 0 ? (consents.filter(c => 
-      c.auditTrail.some(entry => entry.action === 'renewed')
-    ).length / totalConsents) * 100 : 0;
+    const renewalRate =
+      totalConsents > 0
+        ? (consents.filter((c) => c.auditTrail.some((entry) => entry.action === "renewed")).length /
+            totalConsents) *
+          100
+        : 0;
 
     // Expiring consents
-    const expiringConsents = consents.filter(consent => 
-      consent.expiryDate && 
-      consent.expiryDate <= new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
+    const expiringConsents = consents.filter(
+      (consent) =>
+        consent.expiryDate &&
+        consent.expiryDate <= new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000),
     ).length;
 
     // Compliance assessment
@@ -590,12 +600,12 @@ export class ConsentManager extends EventEmitter {
       trends: {
         daily: {},
         weekly: {},
-        monthly: {}
+        monthly: {},
       },
-      compliance
+      compliance,
     };
 
-    this.emit('consent:analytics', { analytics: this.analytics });
+    this.emit("consent:analytics", { analytics: this.analytics });
   }
 
   /**
@@ -611,20 +621,20 @@ export class ConsentManager extends EventEmitter {
     let score = 100;
 
     // Check for expired consents
-    const expiredConsents = consents.filter(c => 
-      c.expiryDate && c.expiryDate < new Date() && c.status === ConsentStatus.GIVEN
+    const expiredConsents = consents.filter(
+      (c) => c.expiryDate && c.expiryDate < new Date() && c.status === ConsentStatus.GIVEN,
     );
     if (expiredConsents.length > 0) {
       issues.push(`${expiredConsents.length} expired consents still active`);
-      recommendations.push('Update expired consents to expired status');
+      recommendations.push("Update expired consents to expired status");
       score -= 10;
     }
 
     // Check for missing audit trails
-    const missingAuditTrails = consents.filter(c => c.auditTrail.length === 0);
+    const missingAuditTrails = consents.filter((c) => c.auditTrail.length === 0);
     if (missingAuditTrails.length > 0) {
       issues.push(`${missingAuditTrails.length} consents without audit trails`);
-      recommendations.push('Ensure all consents have complete audit trails');
+      recommendations.push("Ensure all consents have complete audit trails");
       score -= 15;
     }
 
@@ -637,7 +647,7 @@ export class ConsentManager extends EventEmitter {
     return {
       score: Math.max(0, score),
       issues,
-      recommendations
+      recommendations,
     };
   }
 
@@ -658,12 +668,10 @@ export class ConsentManager extends EventEmitter {
     };
     metadata?: Record<string, any>;
   }): Promise<ConsentRecord> {
-    const config = this.configurations.get(
-      this.generateConfigKey(data.dataType, data.purpose)
-    );
+    const config = this.configurations.get(this.generateConfigKey(data.dataType, data.purpose));
 
     const now = new Date();
-    const expiryDate = config?.defaultExpiry 
+    const expiryDate = config?.defaultExpiry
       ? new Date(now.getTime() + config.defaultExpiry * 24 * 60 * 60 * 1000)
       : undefined;
 
@@ -674,7 +682,7 @@ export class ConsentManager extends EventEmitter {
       purpose: data.purpose,
       legalBasis: data.legalBasis,
       status: data.granted ? ConsentStatus.GIVEN : ConsentStatus.WITHDRAWN,
-      version: '1.0',
+      version: "1.0",
       consentGiven: data.granted,
       consentDate: now,
       expiryDate,
@@ -682,23 +690,25 @@ export class ConsentManager extends EventEmitter {
       metadata: {
         ipAddress: data.context.ipAddress,
         userAgent: data.context.userAgent,
-        consentMethod: 'explicit',
+        consentMethod: "explicit",
         consentInterface: data.context.interface,
         dataRetentionPeriod: config?.defaultExpiry,
         thirdPartySharing: config?.thirdPartySharing?.enabled,
         automatedDecisionMaking: config?.automatedDecisionMaking?.enabled,
-        ...data.metadata
+        ...data.metadata,
       },
-      auditTrail: [{
-        id: this.generateId(),
-        action: data.granted ? 'given' : 'withdrawn',
-        timestamp: now,
-        ipAddress: data.context.ipAddress,
-        userAgent: data.context.userAgent,
-        metadata: { interface: data.context.interface }
-      }],
+      auditTrail: [
+        {
+          id: this.generateId(),
+          action: data.granted ? "given" : "withdrawn",
+          timestamp: now,
+          ipAddress: data.context.ipAddress,
+          userAgent: data.context.userAgent,
+          metadata: { interface: data.context.interface },
+        },
+      ],
       createdAt: now,
-      updatedAt: now
+      updatedAt: now,
     };
 
     // Store consent
@@ -724,17 +734,17 @@ export class ConsentManager extends EventEmitter {
         defaultExpiry: 365,
         renewalPeriod: 30,
         description: {
-          pt: 'Dados pessoais para autenticação no sistema',
-          en: 'Personal data for system authentication'
+          pt: "Dados pessoais para autenticação no sistema",
+          en: "Personal data for system authentication",
         },
         dataUsage: {
-          pt: 'Utilizados para verificar sua identidade e permitir acesso ao sistema',
-          en: 'Used to verify your identity and allow system access'
+          pt: "Utilizados para verificar sua identidade e permitir acesso ao sistema",
+          en: "Used to verify your identity and allow system access",
         },
         consequences: {
-          pt: 'Sem estes dados, não será possível acessar o sistema',
-          en: 'Without this data, system access will not be possible'
-        }
+          pt: "Sem estes dados, não será possível acessar o sistema",
+          en: "Without this data, system access will not be possible",
+        },
       },
       {
         dataType: LGPDDataType.BIOMETRIC_DATA,
@@ -744,17 +754,17 @@ export class ConsentManager extends EventEmitter {
         defaultExpiry: 180,
         renewalPeriod: 30,
         description: {
-          pt: 'Dados biométricos para autenticação multifator',
-          en: 'Biometric data for multi-factor authentication'
+          pt: "Dados biométricos para autenticação multifator",
+          en: "Biometric data for multi-factor authentication",
         },
         dataUsage: {
-          pt: 'Utilizados para autenticação biométrica adicional',
-          en: 'Used for additional biometric authentication'
+          pt: "Utilizados para autenticação biométrica adicional",
+          en: "Used for additional biometric authentication",
         },
         consequences: {
-          pt: 'Sem estes dados, a autenticação biométrica não estará disponível',
-          en: 'Without this data, biometric authentication will not be available'
-        }
+          pt: "Sem estes dados, a autenticação biométrica não estará disponível",
+          en: "Without this data, biometric authentication will not be available",
+        },
       },
       {
         dataType: LGPDDataType.SESSION_DATA,
@@ -764,17 +774,17 @@ export class ConsentManager extends EventEmitter {
         defaultExpiry: 90,
         renewalPeriod: 15,
         description: {
-          pt: 'Dados de sessão para gerenciamento de acesso',
-          en: 'Session data for access management'
+          pt: "Dados de sessão para gerenciamento de acesso",
+          en: "Session data for access management",
         },
         dataUsage: {
-          pt: 'Utilizados para manter sua sessão ativa e segura',
-          en: 'Used to maintain your active and secure session'
+          pt: "Utilizados para manter sua sessão ativa e segura",
+          en: "Used to maintain your active and secure session",
         },
         consequences: {
-          pt: 'Sem estes dados, será necessário fazer login frequentemente',
-          en: 'Without this data, frequent logins will be required'
-        }
+          pt: "Sem estes dados, será necessário fazer login frequentemente",
+          en: "Without this data, frequent logins will be required",
+        },
       },
       {
         dataType: LGPDDataType.BEHAVIORAL_DATA,
@@ -784,18 +794,18 @@ export class ConsentManager extends EventEmitter {
         defaultExpiry: 365,
         renewalPeriod: 60,
         description: {
-          pt: 'Dados comportamentais para monitoramento de segurança',
-          en: 'Behavioral data for security monitoring'
+          pt: "Dados comportamentais para monitoramento de segurança",
+          en: "Behavioral data for security monitoring",
         },
         dataUsage: {
-          pt: 'Utilizados para detectar atividades suspeitas e proteger sua conta',
-          en: 'Used to detect suspicious activities and protect your account'
+          pt: "Utilizados para detectar atividades suspeitas e proteger sua conta",
+          en: "Used to detect suspicious activities and protect your account",
         },
         consequences: {
-          pt: 'Sem estes dados, a proteção contra atividades suspeitas será limitada',
-          en: 'Without this data, protection against suspicious activities will be limited'
-        }
-      }
+          pt: "Sem estes dados, a proteção contra atividades suspeitas será limitada",
+          en: "Without this data, protection against suspicious activities will be limited",
+        },
+      },
     ];
 
     for (const config of defaultConfigs) {
@@ -824,18 +834,24 @@ export class ConsentManager extends EventEmitter {
    * Start cleanup interval
    */
   private startCleanupInterval(): void {
-    this.cleanupInterval = setInterval(async () => {
-      await this.cleanupExpiredConsents();
-    }, this.config.cleanupIntervalHours * 60 * 60 * 1000);
+    this.cleanupInterval = setInterval(
+      async () => {
+        await this.cleanupExpiredConsents();
+      },
+      this.config.cleanupIntervalHours * 60 * 60 * 1000,
+    );
   }
 
   /**
    * Start analytics interval
    */
   private startAnalyticsInterval(): void {
-    this.analyticsInterval = setInterval(async () => {
-      await this.generateAnalytics();
-    }, this.config.analyticsIntervalHours * 60 * 60 * 1000);
+    this.analyticsInterval = setInterval(
+      async () => {
+        await this.generateAnalytics();
+      },
+      this.config.analyticsIntervalHours * 60 * 60 * 1000,
+    );
   }
 
   /**
@@ -858,31 +874,31 @@ export class ConsentManager extends EventEmitter {
         // Add audit entry
         consent.auditTrail.push({
           id: this.generateId(),
-          action: 'expired',
+          action: "expired",
           timestamp: now,
-          ipAddress: 'system',
-          userAgent: 'system',
-          metadata: { automated: true }
+          ipAddress: "system",
+          userAgent: "system",
+          metadata: { automated: true },
         });
 
         expiredConsents.push(consent);
         await this.saveConsent(consent);
 
-        this.emit('consent:expired', {
+        this.emit("consent:expired", {
           userId: consent.userId,
-          consent
+          consent,
         });
       }
     }
 
     if (expiredConsents.length > 0) {
-      this.emit('consent:audit', {
-        userId: 'system',
-        action: 'expired_consents_cleanup',
+      this.emit("consent:audit", {
+        userId: "system",
+        action: "expired_consents_cleanup",
         details: {
           count: expiredConsents.length,
-          timestamp: now
-        }
+          timestamp: now,
+        },
       });
     }
   }
@@ -893,7 +909,7 @@ export class ConsentManager extends EventEmitter {
   private generateConsentKey(
     userId: string,
     dataType: LGPDDataType,
-    purpose: LGPDProcessingPurpose
+    purpose: LGPDProcessingPurpose,
   ): string {
     return `${userId}:${dataType}:${purpose}`;
   }
@@ -901,10 +917,7 @@ export class ConsentManager extends EventEmitter {
   /**
    * Generate configuration key
    */
-  private generateConfigKey(
-    dataType: LGPDDataType,
-    purpose: LGPDProcessingPurpose
-  ): string {
+  private generateConfigKey(dataType: LGPDDataType, purpose: LGPDProcessingPurpose): string {
     return `${dataType}:${purpose}`;
   }
 
@@ -932,10 +945,10 @@ export class ConsentManager extends EventEmitter {
     this.removeAllListeners();
     this.isInitialized = false;
 
-    this.emit('consent:audit', {
-      userId: 'system',
-      action: 'consent_manager_shutdown',
-      details: { timestamp: new Date() }
+    this.emit("consent:audit", {
+      userId: "system",
+      action: "consent_manager_shutdown",
+      details: { timestamp: new Date() },
     });
   }
 
@@ -943,25 +956,24 @@ export class ConsentManager extends EventEmitter {
    * Health check
    */
   getHealthStatus(): {
-    status: 'healthy' | 'degraded' | 'unhealthy';
+    status: "healthy" | "degraded" | "unhealthy";
     details: Record<string, any>;
   } {
     const issues: string[] = [];
-    
+
     if (!this.isInitialized) {
-      issues.push('Consent manager not initialized');
+      issues.push("Consent manager not initialized");
     }
 
     if (!this.cleanupInterval) {
-      issues.push('Cleanup interval not running');
+      issues.push("Cleanup interval not running");
     }
 
     if (!this.analyticsInterval) {
-      issues.push('Analytics interval not running');
+      issues.push("Analytics interval not running");
     }
 
-    const status = issues.length === 0 ? 'healthy' : 
-                  issues.length <= 2 ? 'degraded' : 'unhealthy';
+    const status = issues.length === 0 ? "healthy" : issues.length <= 2 ? "degraded" : "unhealthy";
 
     return {
       status,
@@ -970,8 +982,8 @@ export class ConsentManager extends EventEmitter {
         totalConsents: this.consents.size,
         totalConfigurations: this.configurations.size,
         issues,
-        lastAnalytics: this.analytics ? new Date() : null
-      }
+        lastAnalytics: this.analytics ? new Date() : null,
+      },
     };
   }
 }
@@ -994,21 +1006,21 @@ export class ConsentValidator {
     const errors: string[] = [];
 
     if (!request.userId) {
-      errors.push('User ID is required');
+      errors.push("User ID is required");
     }
 
     if (!request.consents || request.consents.length === 0) {
-      errors.push('At least one consent is required');
+      errors.push("At least one consent is required");
     }
 
     if (!request.context) {
-      errors.push('Context is required');
+      errors.push("Context is required");
     } else {
       if (!request.context.ipAddress) {
-        errors.push('IP address is required in context');
+        errors.push("IP address is required in context");
       }
       if (!request.context.userAgent) {
-        errors.push('User agent is required in context');
+        errors.push("User agent is required in context");
       }
     }
 
@@ -1026,7 +1038,7 @@ export class ConsentValidator {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -1040,11 +1052,11 @@ export class ConsentValidator {
     const errors: string[] = [];
 
     if (!consent.id) {
-      errors.push('Consent ID is required');
+      errors.push("Consent ID is required");
     }
 
     if (!consent.userId) {
-      errors.push('User ID is required');
+      errors.push("User ID is required");
     }
 
     if (!Object.values(LGPDDataType).includes(consent.dataType)) {
@@ -1064,16 +1076,16 @@ export class ConsentValidator {
     }
 
     if (consent.expiryDate && consent.expiryDate <= consent.consentDate) {
-      errors.push('Expiry date must be after consent date');
+      errors.push("Expiry date must be after consent date");
     }
 
     if (!consent.auditTrail || consent.auditTrail.length === 0) {
-      errors.push('Audit trail is required');
+      errors.push("Audit trail is required");
     }
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 }
@@ -1092,5 +1104,5 @@ export type {
   ConsentConfiguration,
   ConsentAnalytics,
   ConsentEvents,
-  ConsentAuditEntry
+  ConsentAuditEntry,
 };

@@ -1,16 +1,10 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AccountsPayableService } from "@/lib/services/accounts-payable";
-import { VendorService } from "@/lib/services/vendors";
-import {
-  AlertCircle,
-  Building,
-  CreditCard,
-  Loader2,
-  Receipt,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { AccountsPayableService } from "@/lib/services/accounts-payable";
+import type { VendorService } from "@/lib/services/vendors";
+import type { AlertCircle, Building, CreditCard, Loader2, Receipt } from "lucide-react";
+import type { useEffect, useState } from "react";
 
 export function APDashboardStats() {
   const [stats, setStats] = useState({
@@ -57,9 +51,7 @@ export function APDashboardStats() {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
-            Contas Pendentes
-          </CardTitle>
+          <CardTitle className="text-sm font-medium">Contas Pendentes</CardTitle>
           <Receipt className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
@@ -71,9 +63,7 @@ export function APDashboardStats() {
           ) : (
             <div className="text-2xl font-bold">{stats.pending}</div>
           )}
-          <p className="text-xs text-muted-foreground">
-            Aguardando aprovação ou pagamento
-          </p>
+          <p className="text-xs text-muted-foreground">Aguardando aprovação ou pagamento</p>
         </CardContent>
       </Card>
 
@@ -89,13 +79,9 @@ export function APDashboardStats() {
               <div className="text-2xl font-bold">R$ --</div>
             </div>
           ) : (
-            <div className="text-2xl font-bold">
-              {formatCurrency(stats.totalOpenAmount)}
-            </div>
+            <div className="text-2xl font-bold">{formatCurrency(stats.totalOpenAmount)}</div>
           )}
-          <p className="text-xs text-muted-foreground">
-            Valor total a ser pago
-          </p>
+          <p className="text-xs text-muted-foreground">Valor total a ser pago</p>
         </CardContent>
       </Card>
 
@@ -113,17 +99,13 @@ export function APDashboardStats() {
           ) : (
             <div className="text-2xl font-bold">{stats.dueToday}</div>
           )}
-          <p className="text-xs text-muted-foreground">
-            Contas com vencimento hoje
-          </p>
+          <p className="text-xs text-muted-foreground">Contas com vencimento hoje</p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
-            Fornecedores Ativos
-          </CardTitle>
+          <CardTitle className="text-sm font-medium">Fornecedores Ativos</CardTitle>
           <Building className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
@@ -135,9 +117,7 @@ export function APDashboardStats() {
           ) : (
             <div className="text-2xl font-bold">{stats.activeVendors}</div>
           )}
-          <p className="text-xs text-muted-foreground">
-            Fornecedores cadastrados
-          </p>
+          <p className="text-xs text-muted-foreground">Fornecedores cadastrados</p>
         </CardContent>
       </Card>
     </div>

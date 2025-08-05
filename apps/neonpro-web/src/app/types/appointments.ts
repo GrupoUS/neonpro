@@ -4,21 +4,21 @@
 // =============================================================================
 
 // Database enums
-export type AppointmentStatus = 
-  | 'pending' 
-  | 'confirmed' 
-  | 'in_progress' 
-  | 'completed' 
-  | 'cancelled' 
-  | 'no_show';
+export type AppointmentStatus =
+  | "pending"
+  | "confirmed"
+  | "in_progress"
+  | "completed"
+  | "cancelled"
+  | "no_show";
 
-export type ProfessionalSpecialty = 
-  | 'dermatologist' 
-  | 'aesthetician' 
-  | 'cosmetologist' 
-  | 'plastic_surgeon' 
-  | 'nutritionist' 
-  | 'physiotherapist';
+export type ProfessionalSpecialty =
+  | "dermatologist"
+  | "aesthetician"
+  | "cosmetologist"
+  | "plastic_surgeon"
+  | "nutritionist"
+  | "physiotherapist";
 
 // Service interface
 export interface Service {
@@ -51,7 +51,7 @@ export interface Professional {
   working_hours?: Record<string, any>;
   created_at: string;
   updated_at: string;
-}// Time slot interface
+} // Time slot interface
 export interface TimeSlot {
   id: string;
   professional_id: string;

@@ -1,56 +1,62 @@
 /**
  * LGPD Compliance Monitoring Dashboard Component
- * 
+ *
  * Real-time compliance monitoring interface for healthcare administrators
  * with violations, alerts, metrics, and recommendations management.
  */
 
-"use client"
+"use client";
 
-import React, { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Progress } from '@/components/ui/progress'
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Progress } from "@/components/ui/progress";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
   DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Input } from '@/components/ui/input'
-import { 
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Input } from "@/components/ui/input";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
-import {
+  SelectValue,
+} from "@/components/ui/select";
+import type {
   useComplianceMonitoring,
   useComplianceMetrics,
   useComplianceViolations,
   useComplianceAlerts,
-  useComplianceRecommendations
-} from '@/app/lib/lgpd/monitoring/use-compliance-monitoring'
-import {
+  useComplianceRecommendations,
+} from "@/app/lib/lgpd/monitoring/use-compliance-monitoring";
+import type {
   ComplianceViolation,
   ViolationType,
-  ComplianceCategory
-} from '@/app/lib/lgpd/monitoring/compliance-monitoring'
-import { 
-  Shield, 
-  AlertTriangle, 
-  CheckCircle, 
-  Clock, 
-  Activity, 
+  ComplianceCategory,
+} from "@/app/lib/lgpd/monitoring/compliance-monitoring";
+import type {
+  Shield,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Activity,
   Eye,
   FileText,
   Users,
@@ -66,11 +72,11 @@ import {
   Info,
   CheckCircle2,
   XCircle,
-  Lightbulb
-} from 'lucide-react'
+  Lightbulb,
+} from "lucide-react";
 
 interface ComplianceMonitoringDashboardProps {
-  className?: string
+  className?: string;
 }
 
 export function ComplianceMonitoringDashboard({ className }: ComplianceMonitoringDashboardProps) {
@@ -85,67 +91,56 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
     reportViolation,
     resolveViolation,
     acknowledgeAlert,
-    triggerAssessment
-  } = useComplianceMonitoring()
+    triggerAssessment,
+  } = useComplianceMonitoring();
 
-  const { 
-    metrics, 
-    getComplianceLevelColor, 
-    getComplianceLevelText 
-  } = useComplianceMetrics()
+  const { metrics, getComplianceLevelColor, getComplianceLevelText } = useComplianceMetrics();
 
   const {
     violations,
     getViolationsByType,
     getCriticalViolations,
     getViolationTypeText,
-    getSeverityColor
-  } = useComplianceViolations()
+    getSeverityColor,
+  } = useComplianceViolations();
 
-  const {
-    alerts,
-    getUnacknowledgedAlerts,
-    getCriticalAlerts,
-    getAlertSeverityColor
-  } = useComplianceAlerts()
+  const { alerts, getUnacknowledgedAlerts, getCriticalAlerts, getAlertSeverityColor } =
+    useComplianceAlerts();
 
-  const {
-    recommendations,
-    getCriticalRecommendations,
-    getPriorityColor
-  } = useComplianceRecommendations()
+  const { recommendations, getCriticalRecommendations, getPriorityColor } =
+    useComplianceRecommendations();
 
   // Dialog states
-  const [violationDialogOpen, setViolationDialogOpen] = useState(false)
-  const [resolveDialogOpen, setResolveDialogOpen] = useState(false)
-  const [selectedViolation, setSelectedViolation] = useState<ComplianceViolation | null>(null)
+  const [violationDialogOpen, setViolationDialogOpen] = useState(false);
+  const [resolveDialogOpen, setResolveDialogOpen] = useState(false);
+  const [selectedViolation, setSelectedViolation] = useState<ComplianceViolation | null>(null);
 
   // Form states
   const [violationForm, setViolationForm] = useState({
-    type: '' as ViolationType | '',
-    category: '' as ComplianceCategory | '',
-    description: '',
-    severity: 'medium',
-    affectedData: '',
-    potentialImpact: ''
-  })
+    type: "" as ViolationType | "",
+    category: "" as ComplianceCategory | "",
+    description: "",
+    severity: "medium",
+    affectedData: "",
+    potentialImpact: "",
+  });
 
   const [resolutionForm, setResolutionForm] = useState({
-    resolution: '',
-    responsible: ''
-  })
+    resolution: "",
+    responsible: "",
+  });
 
   // Start monitoring on component mount
   useEffect(() => {
     if (!isMonitoring && !isLoading) {
-      startMonitoring()
+      startMonitoring();
     }
-  }, [isMonitoring, isLoading, startMonitoring])
+  }, [isMonitoring, isLoading, startMonitoring]);
 
   // Handle violation reporting
   const handleReportViolation = async () => {
     if (!violationForm.type || !violationForm.category || !violationForm.description) {
-      return
+      return;
     }
 
     await reportViolation({
@@ -154,36 +149,36 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
       description: violationForm.description,
       severity: violationForm.severity,
       affectedData: violationForm.affectedData,
-      potentialImpact: violationForm.potentialImpact
-    })
+      potentialImpact: violationForm.potentialImpact,
+    });
 
     setViolationForm({
-      type: '',
-      category: '',
-      description: '',
-      severity: 'medium',
-      affectedData: '',
-      potentialImpact: ''
-    })
-    setViolationDialogOpen(false)
-  }
+      type: "",
+      category: "",
+      description: "",
+      severity: "medium",
+      affectedData: "",
+      potentialImpact: "",
+    });
+    setViolationDialogOpen(false);
+  };
 
   // Handle violation resolution
   const handleResolveViolation = async () => {
     if (!selectedViolation || !resolutionForm.resolution || !resolutionForm.responsible) {
-      return
+      return;
     }
 
     await resolveViolation(
       selectedViolation.id,
       resolutionForm.resolution,
-      resolutionForm.responsible
-    )
+      resolutionForm.responsible,
+    );
 
-    setSelectedViolation(null)
-    setResolutionForm({ resolution: '', responsible: '' })
-    setResolveDialogOpen(false)
-  }
+    setSelectedViolation(null);
+    setResolutionForm({ resolution: "", responsible: "" });
+    setResolveDialogOpen(false);
+  };
 
   if (isLoading) {
     return (
@@ -191,7 +186,7 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
         <RefreshCw className="h-8 w-8 animate-spin" />
         <span className="ml-2">Carregando monitoramento de conformidade...</span>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -201,13 +196,13 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
         <AlertTitle>Erro no Monitoramento</AlertTitle>
         <AlertDescription>{error}</AlertDescription>
       </Alert>
-    )
+    );
   }
 
-  const criticalViolations = getCriticalViolations()
-  const unacknowledgedAlerts = getUnacknowledgedAlerts()
-  const criticalAlerts = getCriticalAlerts()
-  const criticalRecommendations = getCriticalRecommendations()
+  const criticalViolations = getCriticalViolations();
+  const unacknowledgedAlerts = getUnacknowledgedAlerts();
+  const criticalAlerts = getCriticalAlerts();
+  const criticalRecommendations = getCriticalRecommendations();
 
   return (
     <div className={`space-y-6 ${className}`}>
@@ -220,39 +215,21 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={refresh}
-            disabled={isLoading}
-          >
-            <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+          <Button variant="outline" size="sm" onClick={refresh} disabled={isLoading}>
+            <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? "animate-spin" : ""}`} />
             Atualizar
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={triggerAssessment}
-            disabled={isLoading}
-          >
+          <Button variant="outline" size="sm" onClick={triggerAssessment} disabled={isLoading}>
             <FileText className="h-4 w-4 mr-2" />
             Executar Avaliação
           </Button>
           {isMonitoring ? (
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={stopMonitoring}
-            >
+            <Button variant="destructive" size="sm" onClick={stopMonitoring}>
               <Square className="h-4 w-4 mr-2" />
               Parar Monitoramento
             </Button>
           ) : (
-            <Button
-              variant="default"
-              size="sm"
-              onClick={startMonitoring}
-            >
+            <Button variant="default" size="sm" onClick={startMonitoring}>
               <Play className="h-4 w-4 mr-2" />
               Iniciar Monitoramento
             </Button>
@@ -278,9 +255,7 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
             <p className="text-xs text-muted-foreground">
               Score: {metrics?.overallScore.toFixed(1)}%
             </p>
-            {metrics && (
-              <Progress value={metrics.overallScore} className="mt-2" />
-            )}
+            {metrics && <Progress value={metrics.overallScore} className="mt-2" />}
           </CardContent>
         </Card>
 
@@ -290,12 +265,8 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {violations.length}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {criticalViolations.length} críticas
-            </p>
+            <div className="text-2xl font-bold">{violations.length}</div>
+            <p className="text-xs text-muted-foreground">{criticalViolations.length} críticas</p>
             {criticalViolations.length > 0 && (
               <Badge variant="destructive" className="mt-2">
                 Ação Imediata Necessária
@@ -310,12 +281,8 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
             <Bell className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {unacknowledgedAlerts.length}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {criticalAlerts.length} críticos
-            </p>
+            <div className="text-2xl font-bold">{unacknowledgedAlerts.length}</div>
+            <p className="text-xs text-muted-foreground">{criticalAlerts.length} críticos</p>
             {criticalAlerts.length > 0 && (
               <Badge variant="destructive" className="mt-2">
                 Crítico
@@ -330,9 +297,7 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
             <Lightbulb className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {recommendations.length}
-            </div>
+            <div className="text-2xl font-bold">{recommendations.length}</div>
             <p className="text-xs text-muted-foreground">
               {criticalRecommendations.length} prioritárias
             </p>
@@ -351,8 +316,9 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Atenção: Problemas Críticos Detectados</AlertTitle>
           <AlertDescription>
-            Existem {criticalViolations.length} violações críticas e {criticalAlerts.length} alertas críticos 
-            que requerem atenção imediata. Verifique as abas correspondentes para mais detalhes.
+            Existem {criticalViolations.length} violações críticas e {criticalAlerts.length} alertas
+            críticos que requerem atenção imediata. Verifique as abas correspondentes para mais
+            detalhes.
           </AlertDescription>
         </Alert>
       )}
@@ -379,16 +345,15 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
           </TabsTrigger>
           <TabsTrigger value="metrics">Métricas</TabsTrigger>
           <TabsTrigger value="recommendations">Recomendações</TabsTrigger>
-        </TabsList>        {/* Overview Tab */}
+        </TabsList>{" "}
+        {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             {/* Compliance Score Chart */}
             <Card>
               <CardHeader>
                 <CardTitle>Detalhamento da Conformidade</CardTitle>
-                <CardDescription>
-                  Pontuação detalhada por categoria
-                </CardDescription>
+                <CardDescription>Pontuação detalhada por categoria</CardDescription>
               </CardHeader>
               <CardContent>
                 {metrics && (
@@ -437,9 +402,7 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
             <Card>
               <CardHeader>
                 <CardTitle>Atividade Recente</CardTitle>
-                <CardDescription>
-                  Últimas violações e alertas
-                </CardDescription>
+                <CardDescription>Últimas violações e alertas</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -454,10 +417,7 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
                           {new Date(violation.detectedAt).toLocaleString()}
                         </p>
                       </div>
-                      <Badge 
-                        variant="outline" 
-                        className={getSeverityColor(violation.severity)}
-                      >
+                      <Badge variant="outline" className={getSeverityColor(violation.severity)}>
                         {violation.severity}
                       </Badge>
                     </div>
@@ -466,17 +426,12 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
                     <div key={alert.id} className="flex items-start space-x-3">
                       <Bell className="h-4 w-4 text-blue-500 mt-0.5" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">
-                          {alert.title}
-                        </p>
+                        <p className="text-sm font-medium truncate">{alert.title}</p>
                         <p className="text-xs text-muted-foreground">
                           {new Date(alert.timestamp).toLocaleString()}
                         </p>
                       </div>
-                      <Badge 
-                        variant="outline" 
-                        className={getAlertSeverityColor(alert.severity)}
-                      >
+                      <Badge variant="outline" className={getAlertSeverityColor(alert.severity)}>
                         {alert.severity}
                       </Badge>
                     </div>
@@ -486,7 +441,6 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
             </Card>
           </div>
         </TabsContent>
-
         {/* Violations Tab */}
         <TabsContent value="violations" className="space-y-4">
           <div className="flex justify-between items-center">
@@ -508,49 +462,80 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
                 <div className="grid gap-4 py-4">
                   <div className="grid gap-2">
                     <Label htmlFor="violation-type">Tipo de Violação</Label>
-                    <Select 
-                      value={violationForm.type} 
-                      onValueChange={(value) => setViolationForm(prev => ({ ...prev, type: value as ViolationType }))}
+                    <Select
+                      value={violationForm.type}
+                      onValueChange={(value) =>
+                        setViolationForm((prev) => ({ ...prev, type: value as ViolationType }))
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione o tipo" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value={ViolationType.CONSENT_VIOLATION}>Violação de Consentimento</SelectItem>
-                        <SelectItem value={ViolationType.DATA_ACCESS_VIOLATION}>Violação de Acesso a Dados</SelectItem>
-                        <SelectItem value={ViolationType.RETENTION_VIOLATION}>Violação de Retenção</SelectItem>
-                        <SelectItem value={ViolationType.AUDIT_VIOLATION}>Violação de Auditoria</SelectItem>
-                        <SelectItem value={ViolationType.DISCLOSURE_VIOLATION}>Violação de Divulgação</SelectItem>
-                        <SelectItem value={ViolationType.SECURITY_VIOLATION}>Violação de Segurança</SelectItem>
-                        <SelectItem value={ViolationType.RESPONSE_TIME_VIOLATION}>Violação de Prazo</SelectItem>
+                        <SelectItem value={ViolationType.CONSENT_VIOLATION}>
+                          Violação de Consentimento
+                        </SelectItem>
+                        <SelectItem value={ViolationType.DATA_ACCESS_VIOLATION}>
+                          Violação de Acesso a Dados
+                        </SelectItem>
+                        <SelectItem value={ViolationType.RETENTION_VIOLATION}>
+                          Violação de Retenção
+                        </SelectItem>
+                        <SelectItem value={ViolationType.AUDIT_VIOLATION}>
+                          Violação de Auditoria
+                        </SelectItem>
+                        <SelectItem value={ViolationType.DISCLOSURE_VIOLATION}>
+                          Violação de Divulgação
+                        </SelectItem>
+                        <SelectItem value={ViolationType.SECURITY_VIOLATION}>
+                          Violação de Segurança
+                        </SelectItem>
+                        <SelectItem value={ViolationType.RESPONSE_TIME_VIOLATION}>
+                          Violação de Prazo
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="violation-category">Categoria</Label>
-                    <Select 
-                      value={violationForm.category} 
-                      onValueChange={(value) => setViolationForm(prev => ({ ...prev, category: value as ComplianceCategory }))}
+                    <Select
+                      value={violationForm.category}
+                      onValueChange={(value) =>
+                        setViolationForm((prev) => ({
+                          ...prev,
+                          category: value as ComplianceCategory,
+                        }))
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione a categoria" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value={ComplianceCategory.CONSENT}>Consentimento</SelectItem>
-                        <SelectItem value={ComplianceCategory.DATA_ACCESS}>Acesso a Dados</SelectItem>
-                        <SelectItem value={ComplianceCategory.DATA_RETENTION}>Retenção de Dados</SelectItem>
-                        <SelectItem value={ComplianceCategory.AUDIT_TRAIL}>Trilha de Auditoria</SelectItem>
+                        <SelectItem value={ComplianceCategory.DATA_ACCESS}>
+                          Acesso a Dados
+                        </SelectItem>
+                        <SelectItem value={ComplianceCategory.DATA_RETENTION}>
+                          Retenção de Dados
+                        </SelectItem>
+                        <SelectItem value={ComplianceCategory.AUDIT_TRAIL}>
+                          Trilha de Auditoria
+                        </SelectItem>
                         <SelectItem value={ComplianceCategory.SECURITY}>Segurança</SelectItem>
                         <SelectItem value={ComplianceCategory.DISCLOSURE}>Divulgação</SelectItem>
-                        <SelectItem value={ComplianceCategory.RESPONSE_TIME}>Tempo de Resposta</SelectItem>
+                        <SelectItem value={ComplianceCategory.RESPONSE_TIME}>
+                          Tempo de Resposta
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="violation-severity">Severidade</Label>
-                    <Select 
-                      value={violationForm.severity} 
-                      onValueChange={(value) => setViolationForm(prev => ({ ...prev, severity: value }))}
+                    <Select
+                      value={violationForm.severity}
+                      onValueChange={(value) =>
+                        setViolationForm((prev) => ({ ...prev, severity: value }))
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -569,7 +554,9 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
                       id="violation-description"
                       placeholder="Descreva a violação..."
                       value={violationForm.description}
-                      onChange={(e) => setViolationForm(prev => ({ ...prev, description: e.target.value }))}
+                      onChange={(e) =>
+                        setViolationForm((prev) => ({ ...prev, description: e.target.value }))
+                      }
                     />
                   </div>
                   <div className="grid gap-2">
@@ -578,7 +565,9 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
                       id="affected-data"
                       placeholder="Quais dados foram afetados..."
                       value={violationForm.affectedData}
-                      onChange={(e) => setViolationForm(prev => ({ ...prev, affectedData: e.target.value }))}
+                      onChange={(e) =>
+                        setViolationForm((prev) => ({ ...prev, affectedData: e.target.value }))
+                      }
                     />
                   </div>
                   <div className="grid gap-2">
@@ -587,15 +576,19 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
                       id="potential-impact"
                       placeholder="Descreva o impacto potencial..."
                       value={violationForm.potentialImpact}
-                      onChange={(e) => setViolationForm(prev => ({ ...prev, potentialImpact: e.target.value }))}
+                      onChange={(e) =>
+                        setViolationForm((prev) => ({ ...prev, potentialImpact: e.target.value }))
+                      }
                     />
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     onClick={handleReportViolation}
-                    disabled={!violationForm.type || !violationForm.category || !violationForm.description}
+                    disabled={
+                      !violationForm.type || !violationForm.category || !violationForm.description
+                    }
                   >
                     Reportar Violação
                   </Button>
@@ -621,16 +614,12 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
                       <Badge className={getSeverityColor(violation.severity)}>
                         {violation.severity}
                       </Badge>
-                      <Badge variant="outline">
-                        {violation.status}
-                      </Badge>
+                      <Badge variant="outline">{violation.status}</Badge>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground mb-3">
-                    {violation.description}
-                  </p>
+                  <p className="text-sm text-muted-foreground mb-3">{violation.description}</p>
                   {violation.affectedData && (
                     <div className="mb-2">
                       <span className="text-sm font-medium">Dados Afetados: </span>
@@ -643,13 +632,13 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
                       <span className="text-sm">{violation.potentialImpact}</span>
                     </div>
                   )}
-                  {violation.status === 'pending' && (
+                  {violation.status === "pending" && (
                     <div className="flex justify-end">
                       <Button
                         size="sm"
                         onClick={() => {
-                          setSelectedViolation(violation)
-                          setResolveDialogOpen(true)
+                          setSelectedViolation(violation);
+                          setResolveDialogOpen(true);
                         }}
                       >
                         <CheckCircle2 className="h-4 w-4 mr-2" />
@@ -657,7 +646,7 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
                       </Button>
                     </div>
                   )}
-                  {violation.status === 'resolved' && violation.resolution && (
+                  {violation.status === "resolved" && violation.resolution && (
                     <div className="bg-green-50 p-3 rounded-md mt-3">
                       <div className="flex items-start space-x-2">
                         <CheckCircle className="h-4 w-4 text-green-600 mt-0.5" />
@@ -666,7 +655,9 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
                           <p className="text-sm text-green-700">{violation.resolution}</p>
                           {violation.resolvedBy && (
                             <p className="text-xs text-green-600 mt-1">
-                              Resolvido por: {violation.resolvedBy} em {violation.resolvedAt && new Date(violation.resolvedAt).toLocaleString()}
+                              Resolvido por: {violation.resolvedBy} em{" "}
+                              {violation.resolvedAt &&
+                                new Date(violation.resolvedAt).toLocaleString()}
                             </p>
                           )}
                         </div>
@@ -678,7 +669,6 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
             ))}
           </div>
         </TabsContent>
-
         {/* Alerts Tab */}
         <TabsContent value="alerts" className="space-y-4">
           <div className="flex justify-between items-center">
@@ -691,10 +681,18 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="flex items-start space-x-3">
-                      {alert.severity === 'critical' && <AlertCircle className="h-5 w-5 text-red-500 mt-0.5" />}
-                      {alert.severity === 'error' && <XCircle className="h-5 w-5 text-orange-500 mt-0.5" />}
-                      {alert.severity === 'warning' && <AlertTriangle className="h-5 w-5 text-yellow-500 mt-0.5" />}
-                      {alert.severity === 'info' && <Info className="h-5 w-5 text-blue-500 mt-0.5" />}
+                      {alert.severity === "critical" && (
+                        <AlertCircle className="h-5 w-5 text-red-500 mt-0.5" />
+                      )}
+                      {alert.severity === "error" && (
+                        <XCircle className="h-5 w-5 text-orange-500 mt-0.5" />
+                      )}
+                      {alert.severity === "warning" && (
+                        <AlertTriangle className="h-5 w-5 text-yellow-500 mt-0.5" />
+                      )}
+                      {alert.severity === "info" && (
+                        <Info className="h-5 w-5 text-blue-500 mt-0.5" />
+                      )}
                       <div>
                         <CardTitle className="text-base">{alert.title}</CardTitle>
                         <CardDescription>
@@ -706,18 +704,12 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
                       <Badge className={getAlertSeverityColor(alert.severity)}>
                         {alert.severity}
                       </Badge>
-                      {alert.acknowledged && (
-                        <Badge variant="outline">
-                          Confirmado
-                        </Badge>
-                      )}
+                      {alert.acknowledged && <Badge variant="outline">Confirmado</Badge>}
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground mb-3">
-                    {alert.message}
-                  </p>
+                  <p className="text-sm text-muted-foreground mb-3">{alert.message}</p>
                   {alert.metadata && Object.keys(alert.metadata).length > 0 && (
                     <div className="bg-gray-50 p-3 rounded-md mb-3">
                       <p className="text-sm font-medium mb-2">Detalhes:</p>
@@ -736,7 +728,7 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => acknowledgeAlert(alert.id, 'Admin')}
+                        onClick={() => acknowledgeAlert(alert.id, "Admin")}
                       >
                         <CheckCircle2 className="h-4 w-4 mr-2" />
                         Confirmar
@@ -764,10 +756,11 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
               </Card>
             ))}
           </div>
-        </TabsContent>        {/* Metrics Tab */}
+        </TabsContent>{" "}
+        {/* Metrics Tab */}
         <TabsContent value="metrics" className="space-y-4">
           <h3 className="text-lg font-semibold">Métricas Detalhadas</h3>
-          
+
           {metrics && (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               <Card>
@@ -775,9 +768,7 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
                   <CardTitle className="text-sm">Conformidade Geral</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold mb-2">
-                    {metrics.overallScore.toFixed(1)}%
-                  </div>
+                  <div className="text-3xl font-bold mb-2">{metrics.overallScore.toFixed(1)}%</div>
                   <Progress value={metrics.overallScore} className="mb-2" />
                   <p className="text-sm text-muted-foreground">
                     Nível: {getComplianceLevelText(metrics.overallComplianceLevel)}
@@ -790,9 +781,7 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
                   <CardTitle className="text-sm">Consentimento</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold mb-2">
-                    {metrics.consentScore.toFixed(1)}%
-                  </div>
+                  <div className="text-3xl font-bold mb-2">{metrics.consentScore.toFixed(1)}%</div>
                   <Progress value={metrics.consentScore} className="mb-2" />
                   <div className="text-xs space-y-1">
                     <div>Válidos: {metrics.consentMetrics.validConsents}</div>
@@ -807,9 +796,7 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
                   <CardTitle className="text-sm">Acesso a Dados</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold mb-2">
-                    {metrics.accessScore.toFixed(1)}%
-                  </div>
+                  <div className="text-3xl font-bold mb-2">{metrics.accessScore.toFixed(1)}%</div>
                   <Progress value={metrics.accessScore} className="mb-2" />
                   <div className="text-xs space-y-1">
                     <div>Solicitações: {metrics.accessMetrics.totalRequests}</div>
@@ -841,14 +828,14 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
                   <CardTitle className="text-sm">Auditoria</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold mb-2">
-                    {metrics.auditScore.toFixed(1)}%
-                  </div>
+                  <div className="text-3xl font-bold mb-2">{metrics.auditScore.toFixed(1)}%</div>
                   <Progress value={metrics.auditScore} className="mb-2" />
                   <div className="text-xs space-y-1">
                     <div>Eventos Hoje: {metrics.auditMetrics.eventsToday}</div>
                     <div>Falhas: {metrics.auditMetrics.failedEvents}</div>
-                    <div>Cobertura: {(metrics.auditMetrics.coveragePercentage * 100).toFixed(1)}%</div>
+                    <div>
+                      Cobertura: {(metrics.auditMetrics.coveragePercentage * 100).toFixed(1)}%
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -858,21 +845,20 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
                   <CardTitle className="text-sm">Segurança</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold mb-2">
-                    {metrics.securityScore.toFixed(1)}%
-                  </div>
+                  <div className="text-3xl font-bold mb-2">{metrics.securityScore.toFixed(1)}%</div>
                   <Progress value={metrics.securityScore} className="mb-2" />
                   <div className="text-xs space-y-1">
                     <div>Incidentes: {metrics.securityMetrics.securityIncidents}</div>
                     <div>Acessos Não Autorizados: {metrics.securityMetrics.unauthorizedAccess}</div>
-                    <div>Criptografia: {(metrics.securityMetrics.encryptionCoverage * 100).toFixed(1)}%</div>
+                    <div>
+                      Criptografia: {(metrics.securityMetrics.encryptionCoverage * 100).toFixed(1)}%
+                    </div>
                   </div>
                 </CardContent>
               </Card>
             </div>
           )}
         </TabsContent>
-
         {/* Recommendations Tab */}
         <TabsContent value="recommendations" className="space-y-4">
           <div className="flex justify-between items-center">
@@ -888,9 +874,7 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
                       <Lightbulb className="h-5 w-5 text-yellow-500 mt-0.5" />
                       <div>
                         <CardTitle className="text-base">{recommendation.title}</CardTitle>
-                        <CardDescription>
-                          Categoria: {recommendation.category}
-                        </CardDescription>
+                        <CardDescription>Categoria: {recommendation.category}</CardDescription>
                       </div>
                     </div>
                     <Badge className={getPriorityColor(recommendation.priority)}>
@@ -899,9 +883,7 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground mb-3">
-                    {recommendation.description}
-                  </p>
+                  <p className="text-sm text-muted-foreground mb-3">{recommendation.description}</p>
                   {recommendation.actionItems.length > 0 && (
                     <div className="bg-blue-50 p-3 rounded-md">
                       <p className="text-sm font-medium text-blue-800 mb-2">Ações Recomendadas:</p>
@@ -935,9 +917,7 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Resolver Violação</DialogTitle>
-            <DialogDescription>
-              Registre a resolução da violação de conformidade
-            </DialogDescription>
+            <DialogDescription>Registre a resolução da violação de conformidade</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
@@ -946,7 +926,9 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
                 id="resolution-description"
                 placeholder="Descreva como a violação foi resolvida..."
                 value={resolutionForm.resolution}
-                onChange={(e) => setResolutionForm(prev => ({ ...prev, resolution: e.target.value }))}
+                onChange={(e) =>
+                  setResolutionForm((prev) => ({ ...prev, resolution: e.target.value }))
+                }
               />
             </div>
             <div className="grid gap-2">
@@ -955,7 +937,9 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
                 id="responsible-person"
                 placeholder="Nome do responsável pela resolução"
                 value={resolutionForm.responsible}
-                onChange={(e) => setResolutionForm(prev => ({ ...prev, responsible: e.target.value }))}
+                onChange={(e) =>
+                  setResolutionForm((prev) => ({ ...prev, responsible: e.target.value }))
+                }
               />
             </div>
           </div>
@@ -963,7 +947,7 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
             <Button variant="outline" onClick={() => setResolveDialogOpen(false)}>
               Cancelar
             </Button>
-            <Button 
+            <Button
               onClick={handleResolveViolation}
               disabled={!resolutionForm.resolution || !resolutionForm.responsible}
             >
@@ -973,7 +957,7 @@ export function ComplianceMonitoringDashboard({ className }: ComplianceMonitorin
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }
 
-export default ComplianceMonitoringDashboard
+export default ComplianceMonitoringDashboard;

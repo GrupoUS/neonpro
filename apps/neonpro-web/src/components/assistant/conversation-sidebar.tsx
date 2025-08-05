@@ -1,28 +1,21 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import {
+import type { useState, useEffect } from "react";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type { Badge } from "@/components/ui/badge";
+import type { Separator } from "@/components/ui/separator";
+import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { 
-  Plus, 
-  MessageSquare, 
-  MoreVertical, 
-  Trash2, 
-  Edit,
-  Calendar
-} from 'lucide-react';
-import { toast } from 'sonner';
-import { formatDistanceToNow } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+} from "@/components/ui/dropdown-menu";
+import type { Plus, MessageSquare, MoreVertical, Trash2, Edit, Calendar } from "lucide-react";
+import type { toast } from "sonner";
+import type { formatDistanceToNow } from "date-fns";
+import type { ptBR } from "date-fns/locale";
 
 interface Conversation {
   id: string;
@@ -43,7 +36,7 @@ interface ConversationSidebarProps {
 export function ConversationSidebar({
   selectedConversationId,
   onSelectConversation,
-  onNewConversation
+  onNewConversation,
 }: ConversationSidebarProps) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,16 +48,16 @@ export function ConversationSidebar({
   const loadConversations = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/assistant/conversations');
+      const response = await fetch("/api/assistant/conversations");
       if (response.ok) {
         const data = await response.json();
         setConversations(data.conversations);
       } else {
-        toast.error('Erro ao carregar conversas');
+        toast.error("Erro ao carregar conversas");
       }
     } catch (error) {
-      console.error('Error loading conversations:', error);
-      toast.error('Erro ao carregar conversas');
+      console.error("Error loading conversations:", error);
+      toast.error("Erro ao carregar conversas");
     } finally {
       setLoading(false);
     }
@@ -72,68 +65,76 @@ export function ConversationSidebar({
 
   const createNewConversation = async () => {
     try {
-      const response = await fetch('/api/assistant/conversations', {
-        method: 'POST',
+      const response = await fetch("/api/assistant/conversations", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          title: 'Nova Conversa',
-          model: 'gpt4'
+          title: "Nova Conversa",
+          model: "gpt4",
         }),
       });
 
       if (response.ok) {
         const data = await response.json();
-        setConversations(prev => [data.conversation, ...prev]);
+        setConversations((prev) => [data.conversation, ...prev]);
         onSelectConversation(data.conversation.id);
         onNewConversation();
-        toast.success('Nova conversa criada');
+        toast.success("Nova conversa criada");
       } else {
-        toast.error('Erro ao criar nova conversa');
+        toast.error("Erro ao criar nova conversa");
       }
     } catch (error) {
-      console.error('Error creating conversation:', error);
-      toast.error('Erro ao criar nova conversa');
+      console.error("Error creating conversation:", error);
+      toast.error("Erro ao criar nova conversa");
     }
   };
 
   const deleteConversation = async (conversationId: string) => {
     try {
       const response = await fetch(`/api/assistant/conversations/${conversationId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (response.ok) {
-        setConversations(prev => prev.filter(conv => conv.id !== conversationId));
+        setConversations((prev) => prev.filter((conv) => conv.id !== conversationId));
         if (selectedConversationId === conversationId) {
           onNewConversation(); // Reset to new conversation
         }
-        toast.success('Conversa excluída');
+        toast.success("Conversa excluída");
       } else {
-        toast.error('Erro ao excluir conversa');
+        toast.error("Erro ao excluir conversa");
       }
     } catch (error) {
-      console.error('Error deleting conversation:', error);
-      toast.error('Erro ao excluir conversa');
+      console.error("Error deleting conversation:", error);
+      toast.error("Erro ao excluir conversa");
     }
   };
 
   const getModelBadgeColor = (model: string) => {
     switch (model) {
-      case 'gpt4': return 'bg-green-100 text-green-800';
-      case 'claude': return 'bg-purple-100 text-purple-800';
-      case 'gpt35': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "gpt4":
+        return "bg-green-100 text-green-800";
+      case "claude":
+        return "bg-purple-100 text-purple-800";
+      case "gpt35":
+        return "bg-blue-100 text-blue-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getModelName = (model: string) => {
     switch (model) {
-      case 'gpt4': return 'GPT-4';
-      case 'claude': return 'Claude';
-      case 'gpt35': return 'GPT-3.5';
-      default: return model;
+      case "gpt4":
+        return "GPT-4";
+      case "claude":
+        return "Claude";
+      case "gpt35":
+        return "GPT-3.5";
+      default:
+        return model;
     }
   };
 
@@ -145,11 +146,7 @@ export function ConversationSidebar({
             <MessageSquare className="h-5 w-5" />
             Conversas
           </CardTitle>
-          <Button
-            size="sm"
-            onClick={createNewConversation}
-            className="h-8 w-8 p-0"
-          >
+          <Button size="sm" onClick={createNewConversation} className="h-8 w-8 p-0">
             <Plus className="h-4 w-4" />
           </Button>
         </div>
@@ -177,18 +174,16 @@ export function ConversationSidebar({
                   key={conversation.id}
                   className={`group p-3 rounded-lg cursor-pointer transition-colors border ${
                     selectedConversationId === conversation.id
-                      ? 'bg-blue-50 border-blue-200'
-                      : 'hover:bg-gray-50 border-transparent'
+                      ? "bg-blue-50 border-blue-200"
+                      : "hover:bg-gray-50 border-transparent"
                   }`}
                   onClick={() => onSelectConversation(conversation.id)}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-medium truncate">
-                        {conversation.title}
-                      </h4>
+                      <h4 className="text-sm font-medium truncate">{conversation.title}</h4>
                       <div className="flex items-center gap-2 mt-1">
-                        <Badge 
+                        <Badge
                           variant="secondary"
                           className={`text-xs ${getModelBadgeColor(conversation.model_used)}`}
                         >
@@ -203,7 +198,7 @@ export function ConversationSidebar({
                         <span className="text-xs text-muted-foreground">
                           {formatDistanceToNow(new Date(conversation.updated_at), {
                             addSuffix: true,
-                            locale: ptBR
+                            locale: ptBR,
                           })}
                         </span>
                       </div>
@@ -225,7 +220,7 @@ export function ConversationSidebar({
                           <Edit className="h-4 w-4 mr-2" />
                           Renomear
                         </DropdownMenuItem>
-                        <DropdownMenuItem 
+                        <DropdownMenuItem
                           className="text-red-600"
                           onClick={(e) => {
                             e.stopPropagation();

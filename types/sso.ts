@@ -4,7 +4,7 @@
 export interface SSOProvider {
   id: string;
   name: string;
-  type: 'oauth' | 'saml' | 'oidc';
+  type: "oauth" | "saml" | "oidc";
   enabled: boolean;
   config: SSOProviderConfig;
   metadata?: SSOProviderMetadata;
@@ -73,7 +73,7 @@ export interface SSOAuthRequest {
   scopes?: string[];
   domainHint?: string;
   loginHint?: string;
-  prompt?: 'none' | 'login' | 'consent' | 'select_account';
+  prompt?: "none" | "login" | "consent" | "select_account";
   maxAge?: number;
 }
 
@@ -101,7 +101,7 @@ export interface SSOAccountLinking {
   providerUserId: string;
   email: string;
   linkedAt: Date;
-  linkingMethod: 'automatic' | 'manual' | 'admin';
+  linkingMethod: "automatic" | "manual" | "admin";
   verified: boolean;
   primary: boolean;
 }
@@ -130,16 +130,16 @@ export interface SSOAuditLog {
   timestamp: Date;
 }
 
-export type SSOAuditAction = 
-  | 'sso_login_attempt'
-  | 'sso_login_success'
-  | 'sso_login_failure'
-  | 'sso_logout'
-  | 'sso_token_refresh'
-  | 'sso_account_link'
-  | 'sso_account_unlink'
-  | 'sso_provider_config_change'
-  | 'sso_domain_mapping_change';
+export type SSOAuditAction =
+  | "sso_login_attempt"
+  | "sso_login_success"
+  | "sso_login_failure"
+  | "sso_logout"
+  | "sso_token_refresh"
+  | "sso_account_link"
+  | "sso_account_unlink"
+  | "sso_provider_config_change"
+  | "sso_domain_mapping_change";
 
 export interface SSOConfiguration {
   providers: SSOProvider[];
@@ -170,117 +170,117 @@ export interface SSOError {
   timestamp: Date;
 }
 
-export type SSOErrorCode = 
-  | 'PROVIDER_NOT_FOUND'
-  | 'PROVIDER_DISABLED'
-  | 'INVALID_STATE'
-  | 'INVALID_NONCE'
-  | 'TOKEN_EXPIRED'
-  | 'TOKEN_INVALID'
-  | 'USER_NOT_FOUND'
-  | 'EMAIL_NOT_VERIFIED'
-  | 'DOMAIN_NOT_ALLOWED'
-  | 'ACCOUNT_LINKING_FAILED'
-  | 'PROVIDER_ERROR'
-  | 'NETWORK_ERROR'
-  | 'CONFIGURATION_ERROR';
+export type SSOErrorCode =
+  | "PROVIDER_NOT_FOUND"
+  | "PROVIDER_DISABLED"
+  | "INVALID_STATE"
+  | "INVALID_NONCE"
+  | "TOKEN_EXPIRED"
+  | "TOKEN_INVALID"
+  | "USER_NOT_FOUND"
+  | "EMAIL_NOT_VERIFIED"
+  | "DOMAIN_NOT_ALLOWED"
+  | "ACCOUNT_LINKING_FAILED"
+  | "PROVIDER_ERROR"
+  | "NETWORK_ERROR"
+  | "CONFIGURATION_ERROR";
 
 // Default SSO Providers Configuration
 export const DEFAULT_SSO_PROVIDERS: Partial<SSOProvider>[] = [
   {
-    id: 'google',
-    name: 'Google',
-    type: 'oauth',
+    id: "google",
+    name: "Google",
+    type: "oauth",
     enabled: true,
     config: {
-      authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
-      tokenUrl: 'https://oauth2.googleapis.com/token',
-      userInfoUrl: 'https://www.googleapis.com/oauth2/v2/userinfo',
-      scopes: ['openid', 'email', 'profile'],
-      clientId: '',
-      redirectUri: '',
+      authUrl: "https://accounts.google.com/o/oauth2/v2/auth",
+      tokenUrl: "https://oauth2.googleapis.com/token",
+      userInfoUrl: "https://www.googleapis.com/oauth2/v2/userinfo",
+      scopes: ["openid", "email", "profile"],
+      clientId: "",
+      redirectUri: "",
     },
     metadata: {
-      iconUrl: '/icons/google.svg',
-      brandColor: '#4285f4',
-      description: 'Sign in with your Google account',
+      iconUrl: "/icons/google.svg",
+      brandColor: "#4285f4",
+      description: "Sign in with your Google account",
     },
   },
   {
-    id: 'microsoft',
-    name: 'Microsoft',
-    type: 'oauth',
+    id: "microsoft",
+    name: "Microsoft",
+    type: "oauth",
     enabled: true,
     config: {
-      authUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
-      tokenUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
-      userInfoUrl: 'https://graph.microsoft.com/v1.0/me',
-      scopes: ['openid', 'email', 'profile'],
-      clientId: '',
-      redirectUri: '',
+      authUrl: "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+      tokenUrl: "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+      userInfoUrl: "https://graph.microsoft.com/v1.0/me",
+      scopes: ["openid", "email", "profile"],
+      clientId: "",
+      redirectUri: "",
     },
     metadata: {
-      iconUrl: '/icons/microsoft.svg',
-      brandColor: '#0078d4',
-      description: 'Sign in with your Microsoft account',
+      iconUrl: "/icons/microsoft.svg",
+      brandColor: "#0078d4",
+      description: "Sign in with your Microsoft account",
       enterpriseOnly: true,
     },
   },
   {
-    id: 'azure-ad',
-    name: 'Azure Active Directory',
-    type: 'oauth',
+    id: "azure-ad",
+    name: "Azure Active Directory",
+    type: "oauth",
     enabled: false,
     config: {
-      authUrl: 'https://login.microsoftonline.com/{tenant}/oauth2/v2.0/authorize',
-      tokenUrl: 'https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token',
-      userInfoUrl: 'https://graph.microsoft.com/v1.0/me',
-      scopes: ['openid', 'email', 'profile'],
-      clientId: '',
-      redirectUri: '',
+      authUrl: "https://login.microsoftonline.com/{tenant}/oauth2/v2.0/authorize",
+      tokenUrl: "https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token",
+      userInfoUrl: "https://graph.microsoft.com/v1.0/me",
+      scopes: ["openid", "email", "profile"],
+      clientId: "",
+      redirectUri: "",
     },
     metadata: {
-      iconUrl: '/icons/azure-ad.svg',
-      brandColor: '#0078d4',
-      description: 'Sign in with your organization account',
+      iconUrl: "/icons/azure-ad.svg",
+      brandColor: "#0078d4",
+      description: "Sign in with your organization account",
       enterpriseOnly: true,
     },
   },
   {
-    id: 'facebook',
-    name: 'Facebook',
-    type: 'oauth',
+    id: "facebook",
+    name: "Facebook",
+    type: "oauth",
     enabled: false,
     config: {
-      authUrl: 'https://www.facebook.com/v18.0/dialog/oauth',
-      tokenUrl: 'https://graph.facebook.com/v18.0/oauth/access_token',
-      userInfoUrl: 'https://graph.facebook.com/v18.0/me',
-      scopes: ['email', 'public_profile'],
-      clientId: '',
-      redirectUri: '',
+      authUrl: "https://www.facebook.com/v18.0/dialog/oauth",
+      tokenUrl: "https://graph.facebook.com/v18.0/oauth/access_token",
+      userInfoUrl: "https://graph.facebook.com/v18.0/me",
+      scopes: ["email", "public_profile"],
+      clientId: "",
+      redirectUri: "",
     },
     metadata: {
-      iconUrl: '/icons/facebook.svg',
-      brandColor: '#1877f2',
-      description: 'Sign in with Facebook',
+      iconUrl: "/icons/facebook.svg",
+      brandColor: "#1877f2",
+      description: "Sign in with Facebook",
     },
   },
   {
-    id: 'apple',
-    name: 'Apple',
-    type: 'oauth',
+    id: "apple",
+    name: "Apple",
+    type: "oauth",
     enabled: false,
     config: {
-      authUrl: 'https://appleid.apple.com/auth/authorize',
-      tokenUrl: 'https://appleid.apple.com/auth/token',
-      scopes: ['email', 'name'],
-      clientId: '',
-      redirectUri: '',
+      authUrl: "https://appleid.apple.com/auth/authorize",
+      tokenUrl: "https://appleid.apple.com/auth/token",
+      scopes: ["email", "name"],
+      clientId: "",
+      redirectUri: "",
     },
     metadata: {
-      iconUrl: '/icons/apple.svg',
-      brandColor: '#000000',
-      description: 'Sign in with Apple ID',
+      iconUrl: "/icons/apple.svg",
+      brandColor: "#000000",
+      description: "Sign in with Apple ID",
     },
   },
 ];
@@ -294,8 +294,8 @@ export interface SSOProviderValidation {
 
 export const SSO_VALIDATION_SCHEMAS: Record<string, SSOProviderValidation> = {
   oauth: {
-    required: ['clientId', 'authUrl', 'tokenUrl', 'redirectUri', 'scopes'],
-    optional: ['clientSecret', 'userInfoUrl', 'issuer', 'jwksUri'],
+    required: ["clientId", "authUrl", "tokenUrl", "redirectUri", "scopes"],
+    optional: ["clientSecret", "userInfoUrl", "issuer", "jwksUri"],
     format: {
       clientId: /^[a-zA-Z0-9._-]+$/,
       authUrl: /^https:\/\/.+/,
@@ -304,8 +304,8 @@ export const SSO_VALIDATION_SCHEMAS: Record<string, SSOProviderValidation> = {
     },
   },
   saml: {
-    required: ['samlEntryPoint', 'samlCert', 'issuer'],
-    optional: ['redirectUri'],
+    required: ["samlEntryPoint", "samlCert", "issuer"],
+    optional: ["redirectUri"],
     format: {
       samlEntryPoint: /^https:\/\/.+/,
       issuer: /^[a-zA-Z0-9._:-]+$/,

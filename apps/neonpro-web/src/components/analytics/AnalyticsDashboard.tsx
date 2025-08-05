@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { CalendarIcon, Download, RefreshCw } from 'lucide-react';
-import { KPICard, InteractiveLineChart } from '@/components/charts';
-import { format, subDays, startOfMonth, endOfMonth } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import type { useState, useEffect } from "react";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { CalendarIcon, Download, RefreshCw } from "lucide-react";
+import type { KPICard, InteractiveLineChart } from "@/components/charts";
+import type { format, subDays, startOfMonth, endOfMonth } from "date-fns";
+import type { ptBR } from "date-fns/locale";
 
 interface KPIData {
   metric_name: string;
@@ -14,7 +14,7 @@ interface KPIData {
   metric_formatted: string;
   previous_value: number;
   percentage_change: number;
-  trend: 'up' | 'down' | 'stable';
+  trend: "up" | "down" | "stable";
 }
 
 interface TrendData {
@@ -35,8 +35,8 @@ export function AnalyticsDashboard() {
   const [appointmentTrends, setAppointmentTrends] = useState<TrendData[]>([]);
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState({
-    start: format(startOfMonth(subDays(new Date(), 30)), 'yyyy-MM-dd'),
-    end: format(endOfMonth(new Date()), 'yyyy-MM-dd')
+    start: format(startOfMonth(subDays(new Date(), 30)), "yyyy-MM-dd"),
+    end: format(endOfMonth(new Date()), "yyyy-MM-dd"),
   });
 
   const fetchDashboardData = async () => {
@@ -44,7 +44,7 @@ export function AnalyticsDashboard() {
     try {
       // Fetch KPIs
       const kpiResponse = await fetch(
-        `/api/analytics/dashboard?start_date=${dateRange.start}&end_date=${dateRange.end}`
+        `/api/analytics/dashboard?start_date=${dateRange.start}&end_date=${dateRange.end}`,
       );
       if (kpiResponse.ok) {
         const kpiData = await kpiResponse.json();
@@ -53,7 +53,7 @@ export function AnalyticsDashboard() {
 
       // Fetch revenue trends
       const revenueResponse = await fetch(
-        `/api/analytics/trends?type=revenue&period=monthly&start_date=${dateRange.start}&end_date=${dateRange.end}`
+        `/api/analytics/trends?type=revenue&period=monthly&start_date=${dateRange.start}&end_date=${dateRange.end}`,
       );
       if (revenueResponse.ok) {
         const revenueData = await revenueResponse.json();
@@ -62,15 +62,14 @@ export function AnalyticsDashboard() {
 
       // Fetch appointment trends
       const appointmentResponse = await fetch(
-        `/api/analytics/trends?type=appointments&period=monthly&start_date=${dateRange.start}&end_date=${dateRange.end}`
+        `/api/analytics/trends?type=appointments&period=monthly&start_date=${dateRange.start}&end_date=${dateRange.end}`,
       );
       if (appointmentResponse.ok) {
         const appointmentData = await appointmentResponse.json();
         setAppointmentTrends(appointmentData.trends || []);
       }
-
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+      console.error("Error fetching dashboard data:", error);
     } finally {
       setLoading(false);
     }
@@ -80,17 +79,17 @@ export function AnalyticsDashboard() {
     fetchDashboardData();
   }, [dateRange]);
 
-  const revenueChartData = revenueTrends.map(trend => ({
+  const revenueChartData = revenueTrends.map((trend) => ({
     name: trend.period_label,
     Receita: trend.revenue || 0,
-    Transações: trend.transactions_count || 0
+    Transações: trend.transactions_count || 0,
   }));
 
-  const appointmentChartData = appointmentTrends.map(trend => ({
+  const appointmentChartData = appointmentTrends.map((trend) => ({
     name: trend.period_label,
-    'Total de Agendamentos': trend.total_appointments || 0,
-    'Agendamentos Concluídos': trend.completed_appointments || 0,
-    'Taxa de Conclusão': trend.completion_rate || 0
+    "Total de Agendamentos": trend.total_appointments || 0,
+    "Agendamentos Concluídos": trend.completed_appointments || 0,
+    "Taxa de Conclusão": trend.completion_rate || 0,
   }));
 
   return (
@@ -99,22 +98,15 @@ export function AnalyticsDashboard() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Dashboard Analytics</h1>
-          <p className="text-muted-foreground">
-            Visão geral das métricas e performance da clínica
-          </p>
+          <p className="text-muted-foreground">Visão geral das métricas e performance da clínica</p>
         </div>
-        
+
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={fetchDashboardData}
-            disabled={loading}
-          >
-            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+          <Button variant="outline" size="sm" onClick={fetchDashboardData} disabled={loading}>
+            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             Atualizar
           </Button>
-          
+
           <Button variant="outline" size="sm">
             <Download className="h-4 w-4" />
             Exportar
@@ -148,10 +140,10 @@ export function AnalyticsDashboard() {
             data={revenueChartData}
             lines={[
               {
-                dataKey: 'Receita',
-                name: 'Receita',
-                color: '#8884d8'
-              }
+                dataKey: "Receita",
+                name: "Receita",
+                color: "#8884d8",
+              },
             ]}
             height={300}
           />
@@ -163,15 +155,15 @@ export function AnalyticsDashboard() {
             data={appointmentChartData}
             lines={[
               {
-                dataKey: 'Total de Agendamentos',
-                name: 'Total',
-                color: '#82ca9d'
+                dataKey: "Total de Agendamentos",
+                name: "Total",
+                color: "#82ca9d",
               },
               {
-                dataKey: 'Agendamentos Concluídos',
-                name: 'Concluídos',
-                color: '#ffc658'
-              }
+                dataKey: "Agendamentos Concluídos",
+                name: "Concluídos",
+                color: "#ffc658",
+              },
             ]}
             height={300}
           />

@@ -1,7 +1,7 @@
-﻿/**
+/**
  * Safety Alerts System
  * Story 3.2: AI-powered Risk Assessment + Insights Implementation
- * 
+ *
  * This module implements comprehensive safety alerts and monitoring:
  * - Real-time risk monitoring and alerts
  * - Automated safety protocol activation
@@ -12,180 +12,180 @@
  * - Brazilian healthcare safety standards compliance
  */
 
-import { createClient } from '@/lib/supabase/client'
+import type { createClient } from "@/lib/supabase/client";
 
 // Alert Types
-type AlertType = 
-  | 'critical_risk'
-  | 'high_risk'
-  | 'contraindication'
-  | 'drug_interaction'
-  | 'allergy_warning'
-  | 'equipment_failure'
-  | 'staff_alert'
-  | 'compliance_violation'
-  | 'emergency_protocol'
-  | 'predictive_warning'
+type AlertType =
+  | "critical_risk"
+  | "high_risk"
+  | "contraindication"
+  | "drug_interaction"
+  | "allergy_warning"
+  | "equipment_failure"
+  | "staff_alert"
+  | "compliance_violation"
+  | "emergency_protocol"
+  | "predictive_warning";
 
 // Alert Severity
-type AlertSeverity = 'info' | 'warning' | 'urgent' | 'critical' | 'emergency'
+type AlertSeverity = "info" | "warning" | "urgent" | "critical" | "emergency";
 
 // Alert Priority
-type AlertPriority = 'low' | 'medium' | 'high' | 'critical'
+type AlertPriority = "low" | "medium" | "high" | "critical";
 
 // Alert Status
-type AlertStatus = 'active' | 'acknowledged' | 'resolved' | 'escalated' | 'dismissed'
+type AlertStatus = "active" | "acknowledged" | "resolved" | "escalated" | "dismissed";
 
 // Alert Channel
-type AlertChannel = 'dashboard' | 'email' | 'sms' | 'push' | 'system' | 'emergency'
+type AlertChannel = "dashboard" | "email" | "sms" | "push" | "system" | "emergency";
 
 // Safety Alert
 interface SafetyAlert {
-  id: string
-  type: AlertType
-  severity: AlertSeverity
-  priority: AlertPriority
-  status: AlertStatus
-  title: string
-  message: string
+  id: string;
+  type: AlertType;
+  severity: AlertSeverity;
+  priority: AlertPriority;
+  status: AlertStatus;
+  title: string;
+  message: string;
   details: {
-    patientId?: string
-    treatmentId?: string
-    staffId?: string
-    equipmentId?: string
-    riskScore?: number
-    riskFactors?: string[]
-    recommendations?: string[]
-    requiredActions?: string[]
-    timeframe?: string
-    consequences?: string[]
-  }
+    patientId?: string;
+    treatmentId?: string;
+    staffId?: string;
+    equipmentId?: string;
+    riskScore?: number;
+    riskFactors?: string[];
+    recommendations?: string[];
+    requiredActions?: string[];
+    timeframe?: string;
+    consequences?: string[];
+  };
   metadata: {
-    source: string
-    timestamp: Date
-    expiresAt?: Date
-    escalationTime?: Date
-    acknowledgedBy?: string
-    acknowledgedAt?: Date
-    resolvedBy?: string
-    resolvedAt?: Date
-    escalatedTo?: string[]
-  }
-  channels: AlertChannel[]
+    source: string;
+    timestamp: Date;
+    expiresAt?: Date;
+    escalationTime?: Date;
+    acknowledgedBy?: string;
+    acknowledgedAt?: Date;
+    resolvedBy?: string;
+    resolvedAt?: Date;
+    escalatedTo?: string[];
+  };
+  channels: AlertChannel[];
   recipients: {
-    userId: string
-    role: string
-    channel: AlertChannel
-    delivered: boolean
-    deliveredAt?: Date
-    acknowledged: boolean
-    acknowledgedAt?: Date
-  }[]
+    userId: string;
+    role: string;
+    channel: AlertChannel;
+    delivered: boolean;
+    deliveredAt?: Date;
+    acknowledged: boolean;
+    acknowledgedAt?: Date;
+  }[];
   compliance: {
-    cfmRequired: boolean
-    anvisaRequired: boolean
-    ethicsRequired: boolean
-    documentationRequired: boolean
-    reportingRequired: boolean
-  }
+    cfmRequired: boolean;
+    anvisaRequired: boolean;
+    ethicsRequired: boolean;
+    documentationRequired: boolean;
+    reportingRequired: boolean;
+  };
 }
 
 // Alert Rule
 interface AlertRule {
-  id: string
-  name: string
-  description: string
-  type: AlertType
-  severity: AlertSeverity
-  priority: AlertPriority
+  id: string;
+  name: string;
+  description: string;
+  type: AlertType;
+  severity: AlertSeverity;
+  priority: AlertPriority;
   conditions: {
-    field: string
-    operator: 'equals' | 'greater_than' | 'less_than' | 'contains' | 'not_contains'
-    value: any
-    logic?: 'and' | 'or'
-  }[]
+    field: string;
+    operator: "equals" | "greater_than" | "less_than" | "contains" | "not_contains";
+    value: any;
+    logic?: "and" | "or";
+  }[];
   actions: {
-    type: 'alert' | 'block' | 'require_approval' | 'escalate' | 'log'
-    parameters: any
-  }[]
-  channels: AlertChannel[]
+    type: "alert" | "block" | "require_approval" | "escalate" | "log";
+    parameters: any;
+  }[];
+  channels: AlertChannel[];
   recipients: {
-    role: string
-    channel: AlertChannel
-  }[]
-  enabled: boolean
+    role: string;
+    channel: AlertChannel;
+  }[];
+  enabled: boolean;
   escalationRules: {
-    timeMinutes: number
-    escalateTo: string[]
-    channels: AlertChannel[]
-  }[]
+    timeMinutes: number;
+    escalateTo: string[];
+    channels: AlertChannel[];
+  }[];
   compliance: {
-    cfmGuideline?: string
-    anvisaRequirement?: string
-    ethicsCode?: string
-  }
+    cfmGuideline?: string;
+    anvisaRequirement?: string;
+    ethicsCode?: string;
+  };
 }
 
 // Alert Configuration
 interface AlertConfig {
-  enabled: boolean
+  enabled: boolean;
   channels: {
-    dashboard: { enabled: boolean }
-    email: { enabled: boolean; smtp?: any }
-    sms: { enabled: boolean; provider?: any }
-    push: { enabled: boolean; service?: any }
-    emergency: { enabled: boolean; contacts?: string[] }
-  }
+    dashboard: { enabled: boolean };
+    email: { enabled: boolean; smtp?: any };
+    sms: { enabled: boolean; provider?: any };
+    push: { enabled: boolean; service?: any };
+    emergency: { enabled: boolean; contacts?: string[] };
+  };
   escalation: {
-    enabled: boolean
-    timeouts: Record<AlertSeverity, number>
-    maxEscalations: number
-  }
+    enabled: boolean;
+    timeouts: Record<AlertSeverity, number>;
+    maxEscalations: number;
+  };
   compliance: {
-    cfmReporting: boolean
-    anvisaReporting: boolean
-    ethicsReporting: boolean
-    automaticDocumentation: boolean
-  }
+    cfmReporting: boolean;
+    anvisaReporting: boolean;
+    ethicsReporting: boolean;
+    automaticDocumentation: boolean;
+  };
   monitoring: {
-    realTimeEnabled: boolean
-    batchProcessing: boolean
-    intervalMinutes: number
-  }
+    realTimeEnabled: boolean;
+    batchProcessing: boolean;
+    intervalMinutes: number;
+  };
 }
 
 // Alert Statistics
 interface AlertStatistics {
-  total: number
-  byType: Record<AlertType, number>
-  bySeverity: Record<AlertSeverity, number>
-  byStatus: Record<AlertStatus, number>
+  total: number;
+  byType: Record<AlertType, number>;
+  bySeverity: Record<AlertSeverity, number>;
+  byStatus: Record<AlertStatus, number>;
   responseTime: {
-    average: number
-    median: number
-    percentile95: number
-  }
-  escalationRate: number
-  resolutionRate: number
-  falsePositiveRate: number
+    average: number;
+    median: number;
+    percentile95: number;
+  };
+  escalationRate: number;
+  resolutionRate: number;
+  falsePositiveRate: number;
 }
 
 class SafetyAlertsSystem {
-  private supabase = createClient()
-  private config: AlertConfig
-  private alertRules: Map<string, AlertRule> = new Map()
-  private activeAlerts: Map<string, SafetyAlert> = new Map()
-  private alertHistory: SafetyAlert[] = []
-  private isMonitoring: boolean = false
-  private monitoringInterval?: NodeJS.Timeout
+  private supabase = createClient();
+  private config: AlertConfig;
+  private alertRules: Map<string, AlertRule> = new Map();
+  private activeAlerts: Map<string, SafetyAlert> = new Map();
+  private alertHistory: SafetyAlert[] = [];
+  private isMonitoring: boolean = false;
+  private monitoringInterval?: NodeJS.Timeout;
 
   constructor(config?: Partial<AlertConfig>) {
-    this.config = this.initializeConfig(config)
-    this.loadAlertRules()
-    this.loadActiveAlerts()
-    
+    this.config = this.initializeConfig(config);
+    this.loadAlertRules();
+    this.loadActiveAlerts();
+
     if (this.config.monitoring.realTimeEnabled) {
-      this.startRealTimeMonitoring()
+      this.startRealTimeMonitoring();
     }
   }
 
@@ -197,52 +197,55 @@ class SafetyAlertsSystem {
     severity: AlertSeverity,
     title: string,
     message: string,
-    details: SafetyAlert['details'],
+    details: SafetyAlert["details"],
     options?: {
-      priority?: AlertPriority
-      channels?: AlertChannel[]
-      recipients?: string[]
-      expiresIn?: number
-      escalateIn?: number
-    }
+      priority?: AlertPriority;
+      channels?: AlertChannel[];
+      recipients?: string[];
+      expiresIn?: number;
+      escalateIn?: number;
+    },
   ): Promise<SafetyAlert> {
     try {
-      const alertId = this.generateAlertId()
-      const now = new Date()
+      const alertId = this.generateAlertId();
+      const now = new Date();
 
       const alert: SafetyAlert = {
         id: alertId,
         type,
         severity,
         priority: options?.priority || this.determinePriority(severity),
-        status: 'active',
+        status: "active",
         title,
         message,
         details,
         metadata: {
-          source: 'safety_alerts_system',
+          source: "safety_alerts_system",
           timestamp: now,
-          expiresAt: options?.expiresIn ? new Date(now.getTime() + options.expiresIn * 60000) : undefined,
-          escalationTime: options?.escalateIn ? new Date(now.getTime() + options.escalateIn * 60000) : undefined
+          expiresAt: options?.expiresIn
+            ? new Date(now.getTime() + options.expiresIn * 60000)
+            : undefined,
+          escalationTime: options?.escalateIn
+            ? new Date(now.getTime() + options.escalateIn * 60000)
+            : undefined,
         },
         channels: options?.channels || this.getDefaultChannels(severity),
         recipients: await this.determineRecipients(type, severity, options?.recipients),
-        compliance: this.determineComplianceRequirements(type, severity)
-      }
+        compliance: this.determineComplianceRequirements(type, severity),
+      };
 
       // Store alert
-      this.activeAlerts.set(alertId, alert)
-      await this.storeAlert(alert)
+      this.activeAlerts.set(alertId, alert);
+      await this.storeAlert(alert);
 
       // Process alert
-      await this.processAlert(alert)
+      await this.processAlert(alert);
 
-      console.log(`Safety alert created: ${alertId} - ${title} (${severity})`)
-      return alert
-
+      console.log(`Safety alert created: ${alertId} - ${title} (${severity})`);
+      return alert;
     } catch (error) {
-      console.error('Error creating safety alert:', error)
-      throw new Error('Failed to create safety alert')
+      console.error("Error creating safety alert:", error);
+      throw new Error("Failed to create safety alert");
     }
   }
 
@@ -252,9 +255,9 @@ class SafetyAlertsSystem {
   async processRiskAssessment(
     patientId: string,
     treatmentId: string,
-    riskResult: any
+    riskResult: any,
   ): Promise<SafetyAlert[]> {
-    const alerts: SafetyAlert[] = []
+    const alerts: SafetyAlert[] = [];
 
     try {
       // Check for critical alerts from risk assessment
@@ -270,24 +273,30 @@ class SafetyAlertsSystem {
               treatmentId,
               riskScore: riskResult.overallRisk.score,
               riskFactors: [criticalAlert.message],
-              requiredActions: criticalAlert.action === 'block' ? ['Treatment blocked pending review'] : ['Immediate review required'],
-              timeframe: criticalAlert.severity === 'critical' ? 'Immediate' : '15 minutes',
-              consequences: ['Patient safety risk', 'Potential complications']
+              requiredActions:
+                criticalAlert.action === "block"
+                  ? ["Treatment blocked pending review"]
+                  : ["Immediate review required"],
+              timeframe: criticalAlert.severity === "critical" ? "Immediate" : "15 minutes",
+              consequences: ["Patient safety risk", "Potential complications"],
             },
             {
-              priority: 'critical',
-              escalateIn: criticalAlert.severity === 'critical' ? 5 : 15
-            }
-          )
-          alerts.push(alert)
+              priority: "critical",
+              escalateIn: criticalAlert.severity === "critical" ? 5 : 15,
+            },
+          );
+          alerts.push(alert);
         }
       }
 
       // Check overall risk level
-      if (riskResult.overallRisk.severity === 'high' || riskResult.overallRisk.severity === 'critical') {
+      if (
+        riskResult.overallRisk.severity === "high" ||
+        riskResult.overallRisk.severity === "critical"
+      ) {
         const alert = await this.createAlert(
-          'high_risk',
-          riskResult.overallRisk.severity === 'critical' ? 'critical' : 'urgent',
+          "high_risk",
+          riskResult.overallRisk.severity === "critical" ? "critical" : "urgent",
           `High Risk Patient Alert`,
           `Patient ${patientId} has ${riskResult.overallRisk.severity} risk level (${riskResult.overallRisk.score}/100)`,
           {
@@ -296,48 +305,47 @@ class SafetyAlertsSystem {
             riskScore: riskResult.overallRisk.score,
             riskFactors: this.extractRiskFactors(riskResult.categoryRisks),
             recommendations: riskResult.recommendations.preOperative,
-            requiredActions: ['Enhanced monitoring', 'Specialist consultation'],
-            timeframe: 'Before procedure',
-            consequences: ['Increased complication risk', 'Extended recovery time']
+            requiredActions: ["Enhanced monitoring", "Specialist consultation"],
+            timeframe: "Before procedure",
+            consequences: ["Increased complication risk", "Extended recovery time"],
           },
           {
-            priority: riskResult.overallRisk.severity === 'critical' ? 'critical' : 'high'
-          }
-        )
-        alerts.push(alert)
+            priority: riskResult.overallRisk.severity === "critical" ? "critical" : "high",
+          },
+        );
+        alerts.push(alert);
       }
 
       // Check for contraindications
       const contraindications = riskResult.criticalAlerts?.filter(
-        (alert: any) => alert.type === 'contraindication'
-      )
+        (alert: any) => alert.type === "contraindication",
+      );
       if (contraindications && contraindications.length > 0) {
         const alert = await this.createAlert(
-          'contraindication',
-          'critical',
-          'Contraindication Detected',
-          'Treatment contraindications have been identified',
+          "contraindication",
+          "critical",
+          "Contraindication Detected",
+          "Treatment contraindications have been identified",
           {
             patientId,
             treatmentId,
             riskFactors: contraindications.map((c: any) => c.message),
-            requiredActions: ['Treatment blocked', 'Physician review required'],
-            timeframe: 'Immediate',
-            consequences: ['Treatment cannot proceed', 'Alternative treatment required']
+            requiredActions: ["Treatment blocked", "Physician review required"],
+            timeframe: "Immediate",
+            consequences: ["Treatment cannot proceed", "Alternative treatment required"],
           },
           {
-            priority: 'critical',
-            escalateIn: 0 // Immediate escalation
-          }
-        )
-        alerts.push(alert)
+            priority: "critical",
+            escalateIn: 0, // Immediate escalation
+          },
+        );
+        alerts.push(alert);
       }
 
-      return alerts
-
+      return alerts;
     } catch (error) {
-      console.error('Error processing risk assessment alerts:', error)
-      return alerts
+      console.error("Error processing risk assessment alerts:", error);
+      return alerts;
     }
   }
 
@@ -347,86 +355,88 @@ class SafetyAlertsSystem {
   async monitorPatientVitals(
     patientId: string,
     vitals: {
-      heartRate?: number
-      bloodPressure?: { systolic: number; diastolic: number }
-      oxygenSaturation?: number
-      temperature?: number
-      respiratoryRate?: number
-    }
+      heartRate?: number;
+      bloodPressure?: { systolic: number; diastolic: number };
+      oxygenSaturation?: number;
+      temperature?: number;
+      respiratoryRate?: number;
+    },
   ): Promise<SafetyAlert[]> {
-    const alerts: SafetyAlert[] = []
+    const alerts: SafetyAlert[] = [];
 
     try {
       // Heart rate monitoring
       if (vitals.heartRate) {
         if (vitals.heartRate > 120 || vitals.heartRate < 50) {
-          const severity = vitals.heartRate > 150 || vitals.heartRate < 40 ? 'critical' : 'urgent'
+          const severity = vitals.heartRate > 150 || vitals.heartRate < 40 ? "critical" : "urgent";
           const alert = await this.createAlert(
-            'critical_risk',
+            "critical_risk",
             severity,
-            'Abnormal Heart Rate',
+            "Abnormal Heart Rate",
             `Heart rate: ${vitals.heartRate} bpm`,
             {
               patientId,
               riskFactors: [`Heart rate: ${vitals.heartRate} bpm`],
-              requiredActions: ['Immediate assessment', 'Cardiac monitoring'],
-              timeframe: 'Immediate',
-              consequences: ['Cardiac complications', 'Hemodynamic instability']
+              requiredActions: ["Immediate assessment", "Cardiac monitoring"],
+              timeframe: "Immediate",
+              consequences: ["Cardiac complications", "Hemodynamic instability"],
             },
-            { priority: 'critical', escalateIn: 2 }
-          )
-          alerts.push(alert)
+            { priority: "critical", escalateIn: 2 },
+          );
+          alerts.push(alert);
         }
       }
 
       // Blood pressure monitoring
       if (vitals.bloodPressure) {
-        const { systolic, diastolic } = vitals.bloodPressure
+        const { systolic, diastolic } = vitals.bloodPressure;
         if (systolic > 180 || systolic < 90 || diastolic > 110 || diastolic < 60) {
-          const severity = systolic > 200 || systolic < 80 || diastolic > 120 || diastolic < 50 ? 'critical' : 'urgent'
+          const severity =
+            systolic > 200 || systolic < 80 || diastolic > 120 || diastolic < 50
+              ? "critical"
+              : "urgent";
           const alert = await this.createAlert(
-            'critical_risk',
+            "critical_risk",
             severity,
-            'Abnormal Blood Pressure',
+            "Abnormal Blood Pressure",
             `Blood pressure: ${systolic}/${diastolic} mmHg`,
             {
               patientId,
               riskFactors: [`Blood pressure: ${systolic}/${diastolic} mmHg`],
-              requiredActions: ['Blood pressure management', 'Cardiovascular assessment'],
-              timeframe: 'Immediate',
-              consequences: ['Cardiovascular complications', 'Stroke risk']
+              requiredActions: ["Blood pressure management", "Cardiovascular assessment"],
+              timeframe: "Immediate",
+              consequences: ["Cardiovascular complications", "Stroke risk"],
             },
-            { priority: 'critical', escalateIn: 2 }
-          )
-          alerts.push(alert)
+            { priority: "critical", escalateIn: 2 },
+          );
+          alerts.push(alert);
         }
       }
 
       // Oxygen saturation monitoring
       if (vitals.oxygenSaturation && vitals.oxygenSaturation < 95) {
-        const severity = vitals.oxygenSaturation < 90 ? 'critical' : 'urgent'
+        const severity = vitals.oxygenSaturation < 90 ? "critical" : "urgent";
         const alert = await this.createAlert(
-          'critical_risk',
+          "critical_risk",
           severity,
-          'Low Oxygen Saturation',
+          "Low Oxygen Saturation",
           `Oxygen saturation: ${vitals.oxygenSaturation}%`,
           {
             patientId,
             riskFactors: [`Oxygen saturation: ${vitals.oxygenSaturation}%`],
-            requiredActions: ['Oxygen therapy', 'Respiratory assessment'],
-            timeframe: 'Immediate',
-            consequences: ['Hypoxia', 'Respiratory failure']
+            requiredActions: ["Oxygen therapy", "Respiratory assessment"],
+            timeframe: "Immediate",
+            consequences: ["Hypoxia", "Respiratory failure"],
           },
-          { priority: 'critical', escalateIn: 1 }
-        )
-        alerts.push(alert)
+          { priority: "critical", escalateIn: 1 },
+        );
+        alerts.push(alert);
       }
 
-      return alerts
-
+      return alerts;
     } catch (error) {
-      console.error('Error monitoring patient vitals:', error)
-      return alerts
+      console.error("Error monitoring patient vitals:", error);
+      return alerts;
     }
   }
 
@@ -436,46 +446,45 @@ class SafetyAlertsSystem {
   async checkDrugInteractions(
     patientId: string,
     medications: string[],
-    newMedication: string
+    newMedication: string,
   ): Promise<SafetyAlert[]> {
-    const alerts: SafetyAlert[] = []
+    const alerts: SafetyAlert[] = [];
 
     try {
       // Get drug interaction data
       const { data: interactions } = await this.supabase
-        .from('drug_interactions')
-        .select('*')
-        .or(`drug1.in.(${medications.join(',')}),drug2.eq.${newMedication}`)
+        .from("drug_interactions")
+        .select("*")
+        .or(`drug1.in.(${medications.join(",")}),drug2.eq.${newMedication}`);
 
       if (interactions && interactions.length > 0) {
         for (const interaction of interactions) {
-          const severity = this.mapInteractionSeverity(interaction.severity)
+          const severity = this.mapInteractionSeverity(interaction.severity);
           const alert = await this.createAlert(
-            'drug_interaction',
+            "drug_interaction",
             severity,
-            'Drug Interaction Alert',
+            "Drug Interaction Alert",
             `Interaction between ${interaction.drug1} and ${interaction.drug2}`,
             {
               patientId,
               riskFactors: [interaction.description],
-              requiredActions: ['Review medication', 'Consider alternatives'],
-              timeframe: severity === 'critical' ? 'Immediate' : '30 minutes',
-              consequences: [interaction.consequences]
+              requiredActions: ["Review medication", "Consider alternatives"],
+              timeframe: severity === "critical" ? "Immediate" : "30 minutes",
+              consequences: [interaction.consequences],
             },
             {
-              priority: severity === 'critical' ? 'critical' : 'high',
-              escalateIn: severity === 'critical' ? 5 : 30
-            }
-          )
-          alerts.push(alert)
+              priority: severity === "critical" ? "critical" : "high",
+              escalateIn: severity === "critical" ? 5 : 30,
+            },
+          );
+          alerts.push(alert);
         }
       }
 
-      return alerts
-
+      return alerts;
     } catch (error) {
-      console.error('Error checking drug interactions:', error)
-      return alerts
+      console.error("Error checking drug interactions:", error);
+      return alerts;
     }
   }
 
@@ -485,117 +494,111 @@ class SafetyAlertsSystem {
   async monitorEquipmentStatus(
     equipmentId: string,
     status: {
-      operational: boolean
-      lastMaintenance?: Date
-      nextMaintenance?: Date
-      errorCodes?: string[]
-      calibrationStatus?: 'valid' | 'expired' | 'due'
-    }
+      operational: boolean;
+      lastMaintenance?: Date;
+      nextMaintenance?: Date;
+      errorCodes?: string[];
+      calibrationStatus?: "valid" | "expired" | "due";
+    },
   ): Promise<SafetyAlert[]> {
-    const alerts: SafetyAlert[] = []
+    const alerts: SafetyAlert[] = [];
 
     try {
       // Equipment failure
       if (!status.operational) {
         const alert = await this.createAlert(
-          'equipment_failure',
-          'critical',
-          'Equipment Failure',
+          "equipment_failure",
+          "critical",
+          "Equipment Failure",
           `Equipment ${equipmentId} is not operational`,
           {
             equipmentId,
-            riskFactors: ['Equipment failure', ...(status.errorCodes || [])],
-            requiredActions: ['Stop using equipment', 'Technical support', 'Use backup equipment'],
-            timeframe: 'Immediate',
-            consequences: ['Treatment delay', 'Patient safety risk']
+            riskFactors: ["Equipment failure", ...(status.errorCodes || [])],
+            requiredActions: ["Stop using equipment", "Technical support", "Use backup equipment"],
+            timeframe: "Immediate",
+            consequences: ["Treatment delay", "Patient safety risk"],
           },
-          { priority: 'critical', escalateIn: 0 }
-        )
-        alerts.push(alert)
+          { priority: "critical", escalateIn: 0 },
+        );
+        alerts.push(alert);
       }
 
       // Calibration expired
-      if (status.calibrationStatus === 'expired') {
+      if (status.calibrationStatus === "expired") {
         const alert = await this.createAlert(
-          'equipment_failure',
-          'urgent',
-          'Equipment Calibration Expired',
+          "equipment_failure",
+          "urgent",
+          "Equipment Calibration Expired",
           `Equipment ${equipmentId} calibration has expired`,
           {
             equipmentId,
-            riskFactors: ['Expired calibration'],
-            requiredActions: ['Recalibrate equipment', 'Verify accuracy'],
-            timeframe: 'Before next use',
-            consequences: ['Inaccurate readings', 'Treatment errors']
+            riskFactors: ["Expired calibration"],
+            requiredActions: ["Recalibrate equipment", "Verify accuracy"],
+            timeframe: "Before next use",
+            consequences: ["Inaccurate readings", "Treatment errors"],
           },
-          { priority: 'high', escalateIn: 60 }
-        )
-        alerts.push(alert)
+          { priority: "high", escalateIn: 60 },
+        );
+        alerts.push(alert);
       }
 
       // Maintenance overdue
       if (status.nextMaintenance && status.nextMaintenance < new Date()) {
         const alert = await this.createAlert(
-          'equipment_failure',
-          'warning',
-          'Equipment Maintenance Overdue',
+          "equipment_failure",
+          "warning",
+          "Equipment Maintenance Overdue",
           `Equipment ${equipmentId} maintenance is overdue`,
           {
             equipmentId,
-            riskFactors: ['Overdue maintenance'],
-            requiredActions: ['Schedule maintenance', 'Inspect equipment'],
-            timeframe: '24 hours',
-            consequences: ['Equipment failure risk', 'Reduced reliability']
+            riskFactors: ["Overdue maintenance"],
+            requiredActions: ["Schedule maintenance", "Inspect equipment"],
+            timeframe: "24 hours",
+            consequences: ["Equipment failure risk", "Reduced reliability"],
           },
-          { priority: 'medium', escalateIn: 1440 } // 24 hours
-        )
-        alerts.push(alert)
+          { priority: "medium", escalateIn: 1440 }, // 24 hours
+        );
+        alerts.push(alert);
       }
 
-      return alerts
-
+      return alerts;
     } catch (error) {
-      console.error('Error monitoring equipment status:', error)
-      return alerts
+      console.error("Error monitoring equipment status:", error);
+      return alerts;
     }
   }
 
   /**
    * Acknowledge an alert
    */
-  async acknowledgeAlert(
-    alertId: string,
-    userId: string,
-    notes?: string
-  ): Promise<boolean> {
+  async acknowledgeAlert(alertId: string, userId: string, notes?: string): Promise<boolean> {
     try {
-      const alert = this.activeAlerts.get(alertId)
+      const alert = this.activeAlerts.get(alertId);
       if (!alert) {
-        throw new Error('Alert not found')
+        throw new Error("Alert not found");
       }
 
       // Update alert status
-      alert.status = 'acknowledged'
-      alert.metadata.acknowledgedBy = userId
-      alert.metadata.acknowledgedAt = new Date()
+      alert.status = "acknowledged";
+      alert.metadata.acknowledgedBy = userId;
+      alert.metadata.acknowledgedAt = new Date();
 
       // Update recipients
-      alert.recipients.forEach(recipient => {
+      alert.recipients.forEach((recipient) => {
         if (recipient.userId === userId) {
-          recipient.acknowledged = true
-          recipient.acknowledgedAt = new Date()
+          recipient.acknowledged = true;
+          recipient.acknowledgedAt = new Date();
         }
-      })
+      });
 
       // Update in database
-      await this.updateAlert(alert)
+      await this.updateAlert(alert);
 
-      console.log(`Alert ${alertId} acknowledged by ${userId}`)
-      return true
-
+      console.log(`Alert ${alertId} acknowledged by ${userId}`);
+      return true;
     } catch (error) {
-      console.error('Error acknowledging alert:', error)
-      return false
+      console.error("Error acknowledging alert:", error);
+      return false;
     }
   }
 
@@ -606,86 +609,80 @@ class SafetyAlertsSystem {
     alertId: string,
     userId: string,
     resolution: string,
-    notes?: string
+    notes?: string,
   ): Promise<boolean> {
     try {
-      const alert = this.activeAlerts.get(alertId)
+      const alert = this.activeAlerts.get(alertId);
       if (!alert) {
-        throw new Error('Alert not found')
+        throw new Error("Alert not found");
       }
 
       // Update alert status
-      alert.status = 'resolved'
-      alert.metadata.resolvedBy = userId
-      alert.metadata.resolvedAt = new Date()
+      alert.status = "resolved";
+      alert.metadata.resolvedBy = userId;
+      alert.metadata.resolvedAt = new Date();
 
       // Move to history
-      this.alertHistory.push(alert)
-      this.activeAlerts.delete(alertId)
+      this.alertHistory.push(alert);
+      this.activeAlerts.delete(alertId);
 
       // Update in database
-      await this.updateAlert(alert)
+      await this.updateAlert(alert);
 
-      console.log(`Alert ${alertId} resolved by ${userId}: ${resolution}`)
-      return true
-
+      console.log(`Alert ${alertId} resolved by ${userId}: ${resolution}`);
+      return true;
     } catch (error) {
-      console.error('Error resolving alert:', error)
-      return false
+      console.error("Error resolving alert:", error);
+      return false;
     }
   }
 
   /**
    * Escalate an alert
    */
-  async escalateAlert(
-    alertId: string,
-    escalationLevel: number,
-    reason?: string
-  ): Promise<boolean> {
+  async escalateAlert(alertId: string, escalationLevel: number, reason?: string): Promise<boolean> {
     try {
-      const alert = this.activeAlerts.get(alertId)
+      const alert = this.activeAlerts.get(alertId);
       if (!alert) {
-        throw new Error('Alert not found')
+        throw new Error("Alert not found");
       }
 
       // Find escalation rule
-      const rule = this.alertRules.get(alert.type)
+      const rule = this.alertRules.get(alert.type);
       if (!rule || !rule.escalationRules[escalationLevel]) {
-        throw new Error('Escalation rule not found')
+        throw new Error("Escalation rule not found");
       }
 
-      const escalationRule = rule.escalationRules[escalationLevel]
+      const escalationRule = rule.escalationRules[escalationLevel];
 
       // Update alert status
-      alert.status = 'escalated'
-      alert.metadata.escalatedTo = escalationRule.escalateTo
+      alert.status = "escalated";
+      alert.metadata.escalatedTo = escalationRule.escalateTo;
 
       // Add new recipients
       for (const escalateTo of escalationRule.escalateTo) {
         for (const channel of escalationRule.channels) {
           alert.recipients.push({
             userId: escalateTo,
-            role: 'escalation',
+            role: "escalation",
             channel,
             delivered: false,
-            acknowledged: false
-          })
+            acknowledged: false,
+          });
         }
       }
 
       // Send escalation notifications
-      await this.sendAlertNotifications(alert, escalationRule.channels)
+      await this.sendAlertNotifications(alert, escalationRule.channels);
 
       // Update in database
-      await this.updateAlert(alert)
+      await this.updateAlert(alert);
 
-      console.log(`Alert ${alertId} escalated to level ${escalationLevel}`)
-      return true
-
+      console.log(`Alert ${alertId} escalated to level ${escalationLevel}`);
+      return true;
     } catch (error) {
-      console.error('Error escalating alert:', error)
-      return false
+      console.error("Error escalating alert:", error);
+      return false;
     }
   }
 
@@ -693,31 +690,33 @@ class SafetyAlertsSystem {
    * Get active alerts
    */
   getActiveAlerts(filters?: {
-    type?: AlertType
-    severity?: AlertSeverity
-    priority?: AlertPriority
-    patientId?: string
-    treatmentId?: string
+    type?: AlertType;
+    severity?: AlertSeverity;
+    priority?: AlertPriority;
+    patientId?: string;
+    treatmentId?: string;
   }): SafetyAlert[] {
-    let alerts = Array.from(this.activeAlerts.values())
+    let alerts = Array.from(this.activeAlerts.values());
 
     if (filters) {
-      if (filters.type) alerts = alerts.filter(a => a.type === filters.type)
-      if (filters.severity) alerts = alerts.filter(a => a.severity === filters.severity)
-      if (filters.priority) alerts = alerts.filter(a => a.priority === filters.priority)
-      if (filters.patientId) alerts = alerts.filter(a => a.details.patientId === filters.patientId)
-      if (filters.treatmentId) alerts = alerts.filter(a => a.details.treatmentId === filters.treatmentId)
+      if (filters.type) alerts = alerts.filter((a) => a.type === filters.type);
+      if (filters.severity) alerts = alerts.filter((a) => a.severity === filters.severity);
+      if (filters.priority) alerts = alerts.filter((a) => a.priority === filters.priority);
+      if (filters.patientId)
+        alerts = alerts.filter((a) => a.details.patientId === filters.patientId);
+      if (filters.treatmentId)
+        alerts = alerts.filter((a) => a.details.treatmentId === filters.treatmentId);
     }
 
     return alerts.sort((a, b) => {
       // Sort by priority and timestamp
-      const priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 }
-      const aPriority = priorityOrder[a.priority]
-      const bPriority = priorityOrder[b.priority]
-      
-      if (aPriority !== bPriority) return bPriority - aPriority
-      return b.metadata.timestamp.getTime() - a.metadata.timestamp.getTime()
-    })
+      const priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
+      const aPriority = priorityOrder[a.priority];
+      const bPriority = priorityOrder[b.priority];
+
+      if (aPriority !== bPriority) return bPriority - aPriority;
+      return b.metadata.timestamp.getTime() - a.metadata.timestamp.getTime();
+    });
   }
 
   /**
@@ -725,20 +724,18 @@ class SafetyAlertsSystem {
    */
   async getAlertStatistics(timeframe?: { start: Date; end: Date }): Promise<AlertStatistics> {
     try {
-      let query = this.supabase
-        .from('safety_alerts')
-        .select('*')
+      let query = this.supabase.from("safety_alerts").select("*");
 
       if (timeframe) {
         query = query
-          .gte('created_at', timeframe.start.toISOString())
-          .lte('created_at', timeframe.end.toISOString())
+          .gte("created_at", timeframe.start.toISOString())
+          .lte("created_at", timeframe.end.toISOString());
       }
 
-      const { data: alerts } = await query
+      const { data: alerts } = await query;
 
       if (!alerts) {
-        return this.getEmptyStatistics()
+        return this.getEmptyStatistics();
       }
 
       const stats: AlertStatistics = {
@@ -749,41 +746,43 @@ class SafetyAlertsSystem {
         responseTime: { average: 0, median: 0, percentile95: 0 },
         escalationRate: 0,
         resolutionRate: 0,
-        falsePositiveRate: 0
-      }
+        falsePositiveRate: 0,
+      };
 
       // Calculate statistics
-      alerts.forEach(alert => {
-        stats.byType[alert.type as AlertType] = (stats.byType[alert.type as AlertType] || 0) + 1
-        stats.bySeverity[alert.severity as AlertSeverity] = (stats.bySeverity[alert.severity as AlertSeverity] || 0) + 1
-        stats.byStatus[alert.status as AlertStatus] = (stats.byStatus[alert.status as AlertStatus] || 0) + 1
-      })
+      alerts.forEach((alert) => {
+        stats.byType[alert.type as AlertType] = (stats.byType[alert.type as AlertType] || 0) + 1;
+        stats.bySeverity[alert.severity as AlertSeverity] =
+          (stats.bySeverity[alert.severity as AlertSeverity] || 0) + 1;
+        stats.byStatus[alert.status as AlertStatus] =
+          (stats.byStatus[alert.status as AlertStatus] || 0) + 1;
+      });
 
       // Calculate rates
-      const resolvedAlerts = alerts.filter(a => a.status === 'resolved')
-      const escalatedAlerts = alerts.filter(a => a.status === 'escalated')
-      
-      stats.resolutionRate = alerts.length > 0 ? resolvedAlerts.length / alerts.length : 0
-      stats.escalationRate = alerts.length > 0 ? escalatedAlerts.length / alerts.length : 0
+      const resolvedAlerts = alerts.filter((a) => a.status === "resolved");
+      const escalatedAlerts = alerts.filter((a) => a.status === "escalated");
+
+      stats.resolutionRate = alerts.length > 0 ? resolvedAlerts.length / alerts.length : 0;
+      stats.escalationRate = alerts.length > 0 ? escalatedAlerts.length / alerts.length : 0;
 
       // Calculate response times
       const responseTimes = resolvedAlerts
-        .filter(a => a.acknowledged_at && a.created_at)
-        .map(a => new Date(a.acknowledged_at).getTime() - new Date(a.created_at).getTime())
-        .map(ms => ms / 60000) // Convert to minutes
+        .filter((a) => a.acknowledged_at && a.created_at)
+        .map((a) => new Date(a.acknowledged_at).getTime() - new Date(a.created_at).getTime())
+        .map((ms) => ms / 60000); // Convert to minutes
 
       if (responseTimes.length > 0) {
-        stats.responseTime.average = responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length
-        responseTimes.sort((a, b) => a - b)
-        stats.responseTime.median = responseTimes[Math.floor(responseTimes.length / 2)]
-        stats.responseTime.percentile95 = responseTimes[Math.floor(responseTimes.length * 0.95)]
+        stats.responseTime.average =
+          responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length;
+        responseTimes.sort((a, b) => a - b);
+        stats.responseTime.median = responseTimes[Math.floor(responseTimes.length / 2)];
+        stats.responseTime.percentile95 = responseTimes[Math.floor(responseTimes.length * 0.95)];
       }
 
-      return stats
-
+      return stats;
     } catch (error) {
-      console.error('Error getting alert statistics:', error)
-      return this.getEmptyStatistics()
+      console.error("Error getting alert statistics:", error);
+      return this.getEmptyStatistics();
     }
   }
 
@@ -791,20 +790,20 @@ class SafetyAlertsSystem {
    * Start real-time monitoring
    */
   private startRealTimeMonitoring(): void {
-    if (this.isMonitoring) return
+    if (this.isMonitoring) return;
 
-    this.isMonitoring = true
-    console.log('Starting real-time safety monitoring')
+    this.isMonitoring = true;
+    console.log("Starting real-time safety monitoring");
 
     // Set up Supabase real-time subscriptions
-    this.setupRealtimeSubscriptions()
+    this.setupRealtimeSubscriptions();
 
     // Set up periodic monitoring
     if (this.config.monitoring.batchProcessing) {
       this.monitoringInterval = setInterval(
         () => this.performPeriodicChecks(),
-        this.config.monitoring.intervalMinutes * 60000
-      )
+        this.config.monitoring.intervalMinutes * 60000,
+      );
     }
   }
 
@@ -812,14 +811,14 @@ class SafetyAlertsSystem {
    * Stop real-time monitoring
    */
   stopRealTimeMonitoring(): void {
-    this.isMonitoring = false
-    
+    this.isMonitoring = false;
+
     if (this.monitoringInterval) {
-      clearInterval(this.monitoringInterval)
-      this.monitoringInterval = undefined
+      clearInterval(this.monitoringInterval);
+      this.monitoringInterval = undefined;
     }
 
-    console.log('Stopped real-time safety monitoring')
+    console.log("Stopped real-time safety monitoring");
   }
 
   /**
@@ -828,30 +827,33 @@ class SafetyAlertsSystem {
   private setupRealtimeSubscriptions(): void {
     // Subscribe to patient vitals changes
     this.supabase
-      .channel('patient_vitals')
-      .on('postgres_changes', 
-        { event: 'INSERT', schema: 'public', table: 'patient_vitals' },
-        (payload) => this.handleVitalsUpdate(payload.new)
+      .channel("patient_vitals")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "patient_vitals" },
+        (payload) => this.handleVitalsUpdate(payload.new),
       )
-      .subscribe()
+      .subscribe();
 
     // Subscribe to equipment status changes
     this.supabase
-      .channel('equipment_status')
-      .on('postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'equipment' },
-        (payload) => this.handleEquipmentUpdate(payload.new)
+      .channel("equipment_status")
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "equipment" },
+        (payload) => this.handleEquipmentUpdate(payload.new),
       )
-      .subscribe()
+      .subscribe();
 
     // Subscribe to treatment updates
     this.supabase
-      .channel('treatments')
-      .on('postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'treatments' },
-        (payload) => this.handleTreatmentUpdate(payload.new)
+      .channel("treatments")
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "treatments" },
+        (payload) => this.handleTreatmentUpdate(payload.new),
       )
-      .subscribe()
+      .subscribe();
   }
 
   /**
@@ -864,10 +866,10 @@ class SafetyAlertsSystem {
         bloodPressure: vitals.blood_pressure ? JSON.parse(vitals.blood_pressure) : undefined,
         oxygenSaturation: vitals.oxygen_saturation,
         temperature: vitals.temperature,
-        respiratoryRate: vitals.respiratory_rate
-      })
+        respiratoryRate: vitals.respiratory_rate,
+      });
     } catch (error) {
-      console.error('Error handling vitals update:', error)
+      console.error("Error handling vitals update:", error);
     }
   }
 
@@ -878,13 +880,17 @@ class SafetyAlertsSystem {
     try {
       await this.monitorEquipmentStatus(equipment.id, {
         operational: equipment.operational,
-        lastMaintenance: equipment.last_maintenance ? new Date(equipment.last_maintenance) : undefined,
-        nextMaintenance: equipment.next_maintenance ? new Date(equipment.next_maintenance) : undefined,
+        lastMaintenance: equipment.last_maintenance
+          ? new Date(equipment.last_maintenance)
+          : undefined,
+        nextMaintenance: equipment.next_maintenance
+          ? new Date(equipment.next_maintenance)
+          : undefined,
         errorCodes: equipment.error_codes ? JSON.parse(equipment.error_codes) : undefined,
-        calibrationStatus: equipment.calibration_status
-      })
+        calibrationStatus: equipment.calibration_status,
+      });
     } catch (error) {
-      console.error('Error handling equipment update:', error)
+      console.error("Error handling equipment update:", error);
     }
   }
 
@@ -894,25 +900,25 @@ class SafetyAlertsSystem {
   private async handleTreatmentUpdate(treatment: any): Promise<void> {
     try {
       // Check if treatment status changed to something that requires alerts
-      if (treatment.status === 'emergency' || treatment.status === 'complication') {
+      if (treatment.status === "emergency" || treatment.status === "complication") {
         await this.createAlert(
-          'emergency_protocol',
-          'critical',
-          'Treatment Emergency',
+          "emergency_protocol",
+          "critical",
+          "Treatment Emergency",
           `Treatment ${treatment.id} status changed to ${treatment.status}`,
           {
             patientId: treatment.patient_id,
             treatmentId: treatment.id,
             riskFactors: [treatment.status],
-            requiredActions: ['Emergency response', 'Immediate assessment'],
-            timeframe: 'Immediate',
-            consequences: ['Patient safety risk']
+            requiredActions: ["Emergency response", "Immediate assessment"],
+            timeframe: "Immediate",
+            consequences: ["Patient safety risk"],
           },
-          { priority: 'critical', escalateIn: 0 }
-        )
+          { priority: "critical", escalateIn: 0 },
+        );
       }
     } catch (error) {
-      console.error('Error handling treatment update:', error)
+      console.error("Error handling treatment update:", error);
     }
   }
 
@@ -921,22 +927,21 @@ class SafetyAlertsSystem {
    */
   private async performPeriodicChecks(): Promise<void> {
     try {
-      console.log('Performing periodic safety checks')
+      console.log("Performing periodic safety checks");
 
       // Check for expired alerts
-      await this.checkExpiredAlerts()
+      await this.checkExpiredAlerts();
 
       // Check for escalation timeouts
-      await this.checkEscalationTimeouts()
+      await this.checkEscalationTimeouts();
 
       // Check compliance requirements
-      await this.checkComplianceRequirements()
+      await this.checkComplianceRequirements();
 
       // Update alert statistics
-      await this.updateAlertStatistics()
-
+      await this.updateAlertStatistics();
     } catch (error) {
-      console.error('Error in periodic safety checks:', error)
+      console.error("Error in periodic safety checks:", error);
     }
   }
 
@@ -944,11 +949,11 @@ class SafetyAlertsSystem {
    * Check for expired alerts
    */
   private async checkExpiredAlerts(): Promise<void> {
-    const now = new Date()
-    
+    const now = new Date();
+
     for (const [alertId, alert] of this.activeAlerts) {
       if (alert.metadata.expiresAt && alert.metadata.expiresAt < now) {
-        await this.resolveAlert(alertId, 'system', 'Alert expired')
+        await this.resolveAlert(alertId, "system", "Alert expired");
       }
     }
   }
@@ -957,14 +962,18 @@ class SafetyAlertsSystem {
    * Check for escalation timeouts
    */
   private async checkEscalationTimeouts(): Promise<void> {
-    const now = new Date()
-    
+    const now = new Date();
+
     for (const [alertId, alert] of this.activeAlerts) {
-      if (alert.metadata.escalationTime && alert.metadata.escalationTime < now && alert.status === 'active') {
+      if (
+        alert.metadata.escalationTime &&
+        alert.metadata.escalationTime < now &&
+        alert.status === "active"
+      ) {
         // Find current escalation level and escalate
-        const rule = this.alertRules.get(alert.type)
+        const rule = this.alertRules.get(alert.type);
         if (rule && rule.escalationRules.length > 0) {
-          await this.escalateAlert(alertId, 0, 'Escalation timeout')
+          await this.escalateAlert(alertId, 0, "Escalation timeout");
         }
       }
     }
@@ -978,7 +987,7 @@ class SafetyAlertsSystem {
     for (const [alertId, alert] of this.activeAlerts) {
       if (alert.compliance.cfmRequired || alert.compliance.anvisaRequired) {
         // Generate compliance report if not already done
-        await this.generateComplianceReport(alert)
+        await this.generateComplianceReport(alert);
       }
     }
   }
@@ -1000,16 +1009,14 @@ class SafetyAlertsSystem {
         outcome: alert.status,
         cfm_compliance: alert.compliance.cfmRequired,
         anvisa_compliance: alert.compliance.anvisaRequired,
-        generated_at: new Date()
-      }
+        generated_at: new Date(),
+      };
 
-      await this.supabase
-        .from('compliance_reports')
-        .insert(report)
+      await this.supabase.from("compliance_reports").insert(report);
 
-      console.log(`Compliance report generated for alert ${alert.id}`)
+      console.log(`Compliance report generated for alert ${alert.id}`);
     } catch (error) {
-      console.error('Error generating compliance report:', error)
+      console.error("Error generating compliance report:", error);
     }
   }
 
@@ -1017,187 +1024,185 @@ class SafetyAlertsSystem {
    * Helper methods
    */
   private generateAlertId(): string {
-    return `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    return `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
   private determinePriority(severity: AlertSeverity): AlertPriority {
     const priorityMap: Record<AlertSeverity, AlertPriority> = {
-      emergency: 'critical',
-      critical: 'critical',
-      urgent: 'high',
-      warning: 'medium',
-      info: 'low'
-    }
-    return priorityMap[severity]
+      emergency: "critical",
+      critical: "critical",
+      urgent: "high",
+      warning: "medium",
+      info: "low",
+    };
+    return priorityMap[severity];
   }
 
   private getDefaultChannels(severity: AlertSeverity): AlertChannel[] {
-    if (severity === 'emergency' || severity === 'critical') {
-      return ['dashboard', 'email', 'sms', 'push', 'emergency']
+    if (severity === "emergency" || severity === "critical") {
+      return ["dashboard", "email", "sms", "push", "emergency"];
     }
-    if (severity === 'urgent') {
-      return ['dashboard', 'email', 'push']
+    if (severity === "urgent") {
+      return ["dashboard", "email", "push"];
     }
-    return ['dashboard', 'email']
+    return ["dashboard", "email"];
   }
 
   private async determineRecipients(
     type: AlertType,
     severity: AlertSeverity,
-    customRecipients?: string[]
-  ): Promise<SafetyAlert['recipients']> {
-    const recipients: SafetyAlert['recipients'] = []
+    customRecipients?: string[],
+  ): Promise<SafetyAlert["recipients"]> {
+    const recipients: SafetyAlert["recipients"] = [];
 
     if (customRecipients) {
-      customRecipients.forEach(userId => {
+      customRecipients.forEach((userId) => {
         recipients.push({
           userId,
-          role: 'custom',
-          channel: 'dashboard',
+          role: "custom",
+          channel: "dashboard",
           delivered: false,
-          acknowledged: false
-        })
-      })
+          acknowledged: false,
+        });
+      });
     } else {
       // Default recipients based on type and severity
-      const defaultRecipients = await this.getDefaultRecipients(type, severity)
-      recipients.push(...defaultRecipients)
+      const defaultRecipients = await this.getDefaultRecipients(type, severity);
+      recipients.push(...defaultRecipients);
     }
 
-    return recipients
+    return recipients;
   }
 
   private async getDefaultRecipients(
     type: AlertType,
-    severity: AlertSeverity
-  ): Promise<SafetyAlert['recipients']> {
+    severity: AlertSeverity,
+  ): Promise<SafetyAlert["recipients"]> {
     // This would query the database for default recipients based on roles
     // For now, return empty array
-    return []
+    return [];
   }
 
   private determineComplianceRequirements(
     type: AlertType,
-    severity: AlertSeverity
-  ): SafetyAlert['compliance'] {
+    severity: AlertSeverity,
+  ): SafetyAlert["compliance"] {
     return {
-      cfmRequired: severity === 'critical' || severity === 'emergency',
-      anvisaRequired: type === 'equipment_failure' || severity === 'emergency',
-      ethicsRequired: type === 'contraindication' || severity === 'critical',
+      cfmRequired: severity === "critical" || severity === "emergency",
+      anvisaRequired: type === "equipment_failure" || severity === "emergency",
+      ethicsRequired: type === "contraindication" || severity === "critical",
       documentationRequired: true,
-      reportingRequired: severity === 'critical' || severity === 'emergency'
-    }
+      reportingRequired: severity === "critical" || severity === "emergency",
+    };
   }
 
   private extractRiskFactors(categoryRisks: any[]): string[] {
     return categoryRisks
-      .filter(risk => risk.severity === 'high' || risk.severity === 'critical')
-      .flatMap(risk => risk.factors)
+      .filter((risk) => risk.severity === "high" || risk.severity === "critical")
+      .flatMap((risk) => risk.factors);
   }
 
   private mapInteractionSeverity(severity: string): AlertSeverity {
     const severityMap: Record<string, AlertSeverity> = {
-      'major': 'critical',
-      'moderate': 'urgent',
-      'minor': 'warning',
-      'contraindicated': 'critical'
-    }
-    return severityMap[severity] || 'warning'
+      major: "critical",
+      moderate: "urgent",
+      minor: "warning",
+      contraindicated: "critical",
+    };
+    return severityMap[severity] || "warning";
   }
 
   private async processAlert(alert: SafetyAlert): Promise<void> {
     // Send notifications
-    await this.sendAlertNotifications(alert, alert.channels)
+    await this.sendAlertNotifications(alert, alert.channels);
 
     // Apply alert rules
-    await this.applyAlertRules(alert)
+    await this.applyAlertRules(alert);
 
     // Log alert
-    console.log(`Processing alert: ${alert.id} - ${alert.title}`)
+    console.log(`Processing alert: ${alert.id} - ${alert.title}`);
   }
 
   private async sendAlertNotifications(
     alert: SafetyAlert,
-    channels: AlertChannel[]
+    channels: AlertChannel[],
   ): Promise<void> {
     // Implementation would send notifications via various channels
-    console.log(`Sending alert notifications for ${alert.id} via channels: ${channels.join(', ')}`)
+    console.log(`Sending alert notifications for ${alert.id} via channels: ${channels.join(", ")}`);
   }
 
   private async applyAlertRules(alert: SafetyAlert): Promise<void> {
-    const rule = this.alertRules.get(alert.type)
-    if (!rule) return
+    const rule = this.alertRules.get(alert.type);
+    if (!rule) return;
 
     // Apply rule actions
     for (const action of rule.actions) {
       switch (action.type) {
-        case 'block':
+        case "block":
           // Block the treatment or action
-          break
-        case 'require_approval':
+          break;
+        case "require_approval":
           // Require approval before proceeding
-          break
-        case 'escalate':
+          break;
+        case "escalate":
           // Immediate escalation
-          await this.escalateAlert(alert.id, 0, 'Rule-based escalation')
-          break
-        case 'log':
+          await this.escalateAlert(alert.id, 0, "Rule-based escalation");
+          break;
+        case "log":
           // Additional logging
-          console.log(`Rule action: ${action.type} for alert ${alert.id}`)
-          break
+          console.log(`Rule action: ${action.type} for alert ${alert.id}`);
+          break;
       }
     }
   }
 
   private async storeAlert(alert: SafetyAlert): Promise<void> {
     try {
-      await this.supabase
-        .from('safety_alerts')
-        .insert({
-          id: alert.id,
-          type: alert.type,
-          severity: alert.severity,
-          priority: alert.priority,
-          status: alert.status,
-          title: alert.title,
-          message: alert.message,
-          details: JSON.stringify(alert.details),
-          metadata: JSON.stringify(alert.metadata),
-          channels: JSON.stringify(alert.channels),
-          recipients: JSON.stringify(alert.recipients),
-          compliance: JSON.stringify(alert.compliance),
-          created_at: alert.metadata.timestamp.toISOString()
-        })
+      await this.supabase.from("safety_alerts").insert({
+        id: alert.id,
+        type: alert.type,
+        severity: alert.severity,
+        priority: alert.priority,
+        status: alert.status,
+        title: alert.title,
+        message: alert.message,
+        details: JSON.stringify(alert.details),
+        metadata: JSON.stringify(alert.metadata),
+        channels: JSON.stringify(alert.channels),
+        recipients: JSON.stringify(alert.recipients),
+        compliance: JSON.stringify(alert.compliance),
+        created_at: alert.metadata.timestamp.toISOString(),
+      });
     } catch (error) {
-      console.error('Error storing alert:', error)
+      console.error("Error storing alert:", error);
     }
   }
 
   private async updateAlert(alert: SafetyAlert): Promise<void> {
     try {
       await this.supabase
-        .from('safety_alerts')
+        .from("safety_alerts")
         .update({
           status: alert.status,
           metadata: JSON.stringify(alert.metadata),
           recipients: JSON.stringify(alert.recipients),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
-        .eq('id', alert.id)
+        .eq("id", alert.id);
     } catch (error) {
-      console.error('Error updating alert:', error)
+      console.error("Error updating alert:", error);
     }
   }
 
   private async loadAlertRules(): Promise<void> {
     try {
       const { data: rules } = await this.supabase
-        .from('alert_rules')
-        .select('*')
-        .eq('enabled', true)
+        .from("alert_rules")
+        .select("*")
+        .eq("enabled", true);
 
       if (rules) {
-        rules.forEach(rule => {
+        rules.forEach((rule) => {
           this.alertRules.set(rule.type, {
             id: rule.id,
             name: rule.name,
@@ -1205,30 +1210,30 @@ class SafetyAlertsSystem {
             type: rule.type,
             severity: rule.severity,
             priority: rule.priority,
-            conditions: JSON.parse(rule.conditions || '[]'),
-            actions: JSON.parse(rule.actions || '[]'),
-            channels: JSON.parse(rule.channels || '[]'),
-            recipients: JSON.parse(rule.recipients || '[]'),
+            conditions: JSON.parse(rule.conditions || "[]"),
+            actions: JSON.parse(rule.actions || "[]"),
+            channels: JSON.parse(rule.channels || "[]"),
+            recipients: JSON.parse(rule.recipients || "[]"),
             enabled: rule.enabled,
-            escalationRules: JSON.parse(rule.escalation_rules || '[]'),
-            compliance: JSON.parse(rule.compliance || '{}')
-          })
-        })
+            escalationRules: JSON.parse(rule.escalation_rules || "[]"),
+            compliance: JSON.parse(rule.compliance || "{}"),
+          });
+        });
       }
     } catch (error) {
-      console.error('Error loading alert rules:', error)
+      console.error("Error loading alert rules:", error);
     }
   }
 
   private async loadActiveAlerts(): Promise<void> {
     try {
       const { data: alerts } = await this.supabase
-        .from('safety_alerts')
-        .select('*')
-        .in('status', ['active', 'acknowledged', 'escalated'])
+        .from("safety_alerts")
+        .select("*")
+        .in("status", ["active", "acknowledged", "escalated"]);
 
       if (alerts) {
-        alerts.forEach(alertData => {
+        alerts.forEach((alertData) => {
           const alert: SafetyAlert = {
             id: alertData.id,
             type: alertData.type,
@@ -1237,17 +1242,17 @@ class SafetyAlertsSystem {
             status: alertData.status,
             title: alertData.title,
             message: alertData.message,
-            details: JSON.parse(alertData.details || '{}'),
-            metadata: JSON.parse(alertData.metadata || '{}'),
-            channels: JSON.parse(alertData.channels || '[]'),
-            recipients: JSON.parse(alertData.recipients || '[]'),
-            compliance: JSON.parse(alertData.compliance || '{}')
-          }
-          this.activeAlerts.set(alert.id, alert)
-        })
+            details: JSON.parse(alertData.details || "{}"),
+            metadata: JSON.parse(alertData.metadata || "{}"),
+            channels: JSON.parse(alertData.channels || "[]"),
+            recipients: JSON.parse(alertData.recipients || "[]"),
+            compliance: JSON.parse(alertData.compliance || "{}"),
+          };
+          this.activeAlerts.set(alert.id, alert);
+        });
       }
     } catch (error) {
-      console.error('Error loading active alerts:', error)
+      console.error("Error loading active alerts:", error);
     }
   }
 
@@ -1259,7 +1264,7 @@ class SafetyAlertsSystem {
         email: { enabled: true },
         sms: { enabled: true },
         push: { enabled: true },
-        emergency: { enabled: true }
+        emergency: { enabled: true },
       },
       escalation: {
         enabled: true,
@@ -1268,24 +1273,24 @@ class SafetyAlertsSystem {
           warning: 30,
           urgent: 15,
           critical: 5,
-          emergency: 0
+          emergency: 0,
         },
-        maxEscalations: 3
+        maxEscalations: 3,
       },
       compliance: {
         cfmReporting: true,
         anvisaReporting: true,
         ethicsReporting: true,
-        automaticDocumentation: true
+        automaticDocumentation: true,
       },
       monitoring: {
         realTimeEnabled: true,
         batchProcessing: true,
-        intervalMinutes: 5
-      }
-    }
+        intervalMinutes: 5,
+      },
+    };
 
-    return { ...defaultConfig, ...config }
+    return { ...defaultConfig, ...config };
   }
 
   private getEmptyStatistics(): AlertStatistics {
@@ -1297,8 +1302,8 @@ class SafetyAlertsSystem {
       responseTime: { average: 0, median: 0, percentile95: 0 },
       escalationRate: 0,
       resolutionRate: 0,
-      falsePositiveRate: 0
-    }
+      falsePositiveRate: 0,
+    };
   }
 
   private async updateAlertStatistics(): Promise<void> {
@@ -1317,6 +1322,5 @@ export {
   type AlertSeverity,
   type AlertPriority,
   type AlertStatus,
-  type AlertChannel
-}
-
+  type AlertChannel,
+};

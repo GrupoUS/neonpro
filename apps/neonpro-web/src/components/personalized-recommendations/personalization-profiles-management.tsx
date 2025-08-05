@@ -1,15 +1,15 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -17,20 +17,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import { Brain, Edit, Plus, Trash2, User } from "lucide-react";
-import { useState } from "react";
+import type { Switch } from "@/components/ui/switch";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Brain, Edit, Plus, Trash2, User } from "lucide-react";
+import type { useState } from "react";
 
 interface PersonalizationProfile {
   id: string;
@@ -99,15 +99,10 @@ const mockProfiles: PersonalizationProfile[] = [
 export function PersonalizationProfilesManagement() {
   const [profiles, setProfiles] = useState(mockProfiles);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [editingProfile, setEditingProfile] =
-    useState<PersonalizationProfile | null>(null);
+  const [editingProfile, setEditingProfile] = useState<PersonalizationProfile | null>(null);
 
   const handleToggleProfile = (profileId: string) => {
-    setProfiles(
-      profiles.map((p) =>
-        p.id === profileId ? { ...p, isActive: !p.isActive } : p
-      )
-    );
+    setProfiles(profiles.map((p) => (p.id === profileId ? { ...p, isActive: !p.isActive } : p)));
   };
 
   const handleDeleteProfile = (profileId: string) => {
@@ -146,9 +141,7 @@ export function PersonalizationProfilesManagement() {
         {profiles.map((profile) => (
           <Card
             key={profile.id}
-            className={
-              profile.isActive ? "border-green-200" : "border-gray-200"
-            }
+            className={profile.isActive ? "border-green-200" : "border-gray-200"}
           >
             <CardHeader>
               <div className="flex items-start justify-between">
@@ -188,30 +181,20 @@ export function PersonalizationProfilesManagement() {
                 <div>
                   <Label className="font-medium">Tratamentos Preferidos</Label>
                   <div className="space-y-1 mt-1">
-                    {profile.preferences.treatmentTypes.map(
-                      (treatment, index) => (
-                        <Badge
-                          key={index}
-                          variant="outline"
-                          className="text-xs"
-                        >
-                          {treatment}
-                        </Badge>
-                      )
-                    )}
+                    {profile.preferences.treatmentTypes.map((treatment, index) => (
+                      <Badge key={index} variant="outline" className="text-xs">
+                        {treatment}
+                      </Badge>
+                    ))}
                   </div>
                 </div>
                 <div>
                   <Label className="font-medium">Faixa de Preço</Label>
-                  <p className="text-muted-foreground mt-1">
-                    {profile.preferences.priceRange}
-                  </p>
+                  <p className="text-muted-foreground mt-1">{profile.preferences.priceRange}</p>
                 </div>
                 <div>
                   <Label className="font-medium">Horário Preferido</Label>
-                  <p className="text-muted-foreground mt-1">
-                    {profile.preferences.timePreference}
-                  </p>
+                  <p className="text-muted-foreground mt-1">{profile.preferences.timePreference}</p>
                 </div>
                 <div>
                   <Label className="font-medium">Estilo de Comunicação</Label>
@@ -221,14 +204,8 @@ export function PersonalizationProfilesManagement() {
                 </div>
               </div>
               <div className="flex justify-between items-center mt-4 pt-4 border-t text-xs text-muted-foreground">
-                <span>
-                  Criado em:{" "}
-                  {new Date(profile.createdAt).toLocaleDateString("pt-BR")}
-                </span>
-                <span>
-                  Último uso:{" "}
-                  {new Date(profile.lastUsed).toLocaleDateString("pt-BR")}
-                </span>
+                <span>Criado em: {new Date(profile.createdAt).toLocaleDateString("pt-BR")}</span>
+                <span>Último uso: {new Date(profile.lastUsed).toLocaleDateString("pt-BR")}</span>
               </div>
             </CardContent>
           </Card>
@@ -261,10 +238,7 @@ function ProfileForm({ onSave }: { onSave: () => void }) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="description">Descrição</Label>
-            <Textarea
-              id="description"
-              placeholder="Descreva o perfil e suas características..."
-            />
+            <Textarea id="description" placeholder="Descreva o perfil e suas características..." />
           </div>
         </TabsContent>
 

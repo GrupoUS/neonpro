@@ -1,26 +1,32 @@
-'use client';
+"use client";
 
 /**
  * Story 11.3: Inventory Overview Component
  * Comprehensive inventory overview with alerts, stock levels, and quick actions
  */
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Icons } from '@/components/ui/icons';
-import { 
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Progress } from "@/components/ui/progress";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Icons } from "@/components/ui/icons";
+import type {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { type InventoryDashboardSummary } from '@/lib/inventory';
+} from "@/components/ui/table";
+import type { type InventoryDashboardSummary } from "@/lib/inventory";
 
 interface InventoryOverviewProps {
   dashboardData: InventoryDashboardSummary | null;
@@ -30,19 +36,15 @@ interface InventoryOverviewProps {
 
 interface AlertItem {
   id: string;
-  type: 'low_stock' | 'expiry' | 'out_of_stock' | 'fifo_violation';
+  type: "low_stock" | "expiry" | "out_of_stock" | "fifo_violation";
   product_name: string;
   message: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   action_required: string;
   created_at: Date;
 }
 
-export function InventoryOverview({ 
-  dashboardData, 
-  onRefresh, 
-  className 
-}: InventoryOverviewProps) {
+export function InventoryOverview({ dashboardData, onRefresh, className }: InventoryOverviewProps) {
   const [alerts, setAlerts] = useState<AlertItem[]>([]);
   const [lowStockProducts, setLowStockProducts] = useState<any[]>([]);
   const [expiringProducts, setExpiringProducts] = useState<any[]>([]);
@@ -59,87 +61,87 @@ export function InventoryOverview({
     try {
       // Simulate loading detailed data
       // In real implementation, these would be separate API calls
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       // Mock alerts data
       setAlerts([
         {
-          id: '1',
-          type: 'low_stock',
-          product_name: 'Luvas de Procedimento',
-          message: 'Estoque baixo - apenas 45 unidades restantes',
-          severity: 'medium',
-          action_required: 'Reabastecer estoque',
-          created_at: new Date()
+          id: "1",
+          type: "low_stock",
+          product_name: "Luvas de Procedimento",
+          message: "Estoque baixo - apenas 45 unidades restantes",
+          severity: "medium",
+          action_required: "Reabastecer estoque",
+          created_at: new Date(),
         },
         {
-          id: '2',
-          type: 'expiry',
-          product_name: 'Soro Fisiológico 500ml',
-          message: 'Lote vencendo em 5 dias',
-          severity: 'high',
-          action_required: 'Usar prioritariamente',
-          created_at: new Date()
+          id: "2",
+          type: "expiry",
+          product_name: "Soro Fisiológico 500ml",
+          message: "Lote vencendo em 5 dias",
+          severity: "high",
+          action_required: "Usar prioritariamente",
+          created_at: new Date(),
         },
         {
-          id: '3',
-          type: 'out_of_stock',
-          product_name: 'Seringas 5ml',
-          message: 'Produto em falta',
-          severity: 'critical',
-          action_required: 'Compra urgente',
-          created_at: new Date()
-        }
+          id: "3",
+          type: "out_of_stock",
+          product_name: "Seringas 5ml",
+          message: "Produto em falta",
+          severity: "critical",
+          action_required: "Compra urgente",
+          created_at: new Date(),
+        },
       ]);
 
       // Mock low stock products
       setLowStockProducts([
         {
-          id: '1',
-          name: 'Luvas de Procedimento',
+          id: "1",
+          name: "Luvas de Procedimento",
           current_stock: 45,
           minimum_stock: 100,
           percentage: 45,
-          status: 'low'
+          status: "low",
         },
         {
-          id: '2',
-          name: 'Máscaras Cirúrgicas',
+          id: "2",
+          name: "Máscaras Cirúrgicas",
           current_stock: 78,
           minimum_stock: 200,
           percentage: 39,
-          status: 'critical'
+          status: "critical",
         },
         {
-          id: '3',
-          name: 'Gaze Estéril',
+          id: "3",
+          name: "Gaze Estéril",
           current_stock: 23,
           minimum_stock: 50,
           percentage: 46,
-          status: 'low'
-        }
+          status: "low",
+        },
       ]);
 
       // Mock expiring products
       setExpiringProducts([
         {
-          id: '1',
-          name: 'Soro Fisiológico 500ml',
-          batch_number: 'LT20241201',
-          expiry_date: new Date('2024-12-10'),
+          id: "1",
+          name: "Soro Fisiológico 500ml",
+          batch_number: "LT20241201",
+          expiry_date: new Date("2024-12-10"),
           days_to_expiry: 5,
           quantity: 120,
-          value: 2400
+          value: 2400,
         },
         {
-          id: '2',
-          name: 'Medicamento X',
-          batch_number: 'LT20241205',
-          expiry_date: new Date('2024-12-15'),
+          id: "2",
+          name: "Medicamento X",
+          batch_number: "LT20241205",
+          expiry_date: new Date("2024-12-15"),
           days_to_expiry: 10,
           quantity: 30,
-          value: 1500
-        }
+          value: 1500,
+        },
       ]);
     } finally {
       setIsLoadingDetails(false);
@@ -148,25 +150,25 @@ export function InventoryOverview({
 
   const getSeverityColor = (severity: string) => {
     const colors = {
-      low: 'bg-blue-100 text-blue-800 border-blue-200',
-      medium: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      high: 'bg-orange-100 text-orange-800 border-orange-200',
-      critical: 'bg-red-100 text-red-800 border-red-200'
+      low: "bg-blue-100 text-blue-800 border-blue-200",
+      medium: "bg-yellow-100 text-yellow-800 border-yellow-200",
+      high: "bg-orange-100 text-orange-800 border-orange-200",
+      critical: "bg-red-100 text-red-800 border-red-200",
     };
     return colors[severity as keyof typeof colors] || colors.low;
   };
 
   const getStockStatusColor = (percentage: number) => {
-    if (percentage <= 25) return 'bg-red-500';
-    if (percentage <= 50) return 'bg-orange-500';
-    if (percentage <= 75) return 'bg-yellow-500';
-    return 'bg-green-500';
+    if (percentage <= 25) return "bg-red-500";
+    if (percentage <= 50) return "bg-orange-500";
+    if (percentage <= 75) return "bg-yellow-500";
+    return "bg-green-500";
   };
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(value);
   };
 
@@ -191,9 +193,7 @@ export function InventoryOverview({
               <Icons.AlertTriangle className="h-5 w-5" />
               Alertas Ativos
             </CardTitle>
-            <CardDescription>
-              Situações que requerem atenção imediata
-            </CardDescription>
+            <CardDescription>Situações que requerem atenção imediata</CardDescription>
           </CardHeader>
           <CardContent>
             {isLoadingDetails ? (
@@ -237,9 +237,7 @@ export function InventoryOverview({
               <Icons.TrendingDown className="h-5 w-5" />
               Produtos com Estoque Baixo
             </CardTitle>
-            <CardDescription>
-              Produtos próximos ao estoque mínimo
-            </CardDescription>
+            <CardDescription>Produtos próximos ao estoque mínimo</CardDescription>
           </CardHeader>
           <CardContent>
             {isLoadingDetails ? (
@@ -262,14 +260,13 @@ export function InventoryOverview({
                       </span>
                     </div>
                     <div className="space-y-1">
-                      <Progress 
-                        value={product.percentage} 
-                        className="h-2"
-                      />
+                      <Progress value={product.percentage} className="h-2" />
                       <div className="flex justify-between text-xs text-muted-foreground">
                         <span>{product.percentage}% do mínimo</span>
-                        <Badge variant={product.status === 'critical' ? 'destructive' : 'secondary'}>
-                          {product.status === 'critical' ? 'Crítico' : 'Baixo'}
+                        <Badge
+                          variant={product.status === "critical" ? "destructive" : "secondary"}
+                        >
+                          {product.status === "critical" ? "Crítico" : "Baixo"}
                         </Badge>
                       </div>
                     </div>
@@ -293,9 +290,7 @@ export function InventoryOverview({
             <Icons.DollarSign className="h-5 w-5" />
             Valor do Estoque
           </CardTitle>
-          <CardDescription>
-            Distribuição de valor por categoria e status
-          </CardDescription>
+          <CardDescription>Distribuição de valor por categoria e status</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -328,9 +323,7 @@ export function InventoryOverview({
             <Icons.Clock className="h-5 w-5" />
             Produtos Próximos ao Vencimento
           </CardTitle>
-          <CardDescription>
-            Lotes que vencem nos próximos 30 dias
-          </CardDescription>
+          <CardDescription>Lotes que vencem nos próximos 30 dias</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoadingDetails ? (
@@ -353,11 +346,9 @@ export function InventoryOverview({
                   <TableRow key={product.id}>
                     <TableCell className="font-medium">{product.name}</TableCell>
                     <TableCell>{product.batch_number}</TableCell>
+                    <TableCell>{product.expiry_date.toLocaleDateString("pt-BR")}</TableCell>
                     <TableCell>
-                      {product.expiry_date.toLocaleDateString('pt-BR')}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={product.days_to_expiry <= 7 ? 'destructive' : 'secondary'}>
+                      <Badge variant={product.days_to_expiry <= 7 ? "destructive" : "secondary"}>
                         {product.days_to_expiry} dias
                       </Badge>
                     </TableCell>
@@ -389,9 +380,7 @@ export function InventoryOverview({
             <Icons.Zap className="h-5 w-5" />
             Ações Rápidas
           </CardTitle>
-          <CardDescription>
-            Operações frequentes do sistema de estoque
-          </CardDescription>
+          <CardDescription>Operações frequentes do sistema de estoque</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

@@ -1,10 +1,10 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/auth-context";
-import { AlertCircle, CheckCircle, Chrome } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
-import { toast } from "sonner";
+import type { Button } from "@/components/ui/button";
+import type { useAuth } from "@/contexts/auth-context";
+import type { AlertCircle, CheckCircle, Chrome } from "lucide-react";
+import type { useCallback, useEffect, useState } from "react";
+import type { toast } from "sonner";
 
 interface SignInWithGooglePopupButtonProps {
   text?: string;
@@ -67,7 +67,7 @@ export function SignInWithGooglePopupButton({
       onError?.(userMessage);
       setAuthState("error");
     },
-    [onError]
+    [onError],
   );
 
   // Optimized sign in with timeout and retry logic
@@ -81,20 +81,16 @@ export function SignInWithGooglePopupButton({
     try {
       // Timeout protection (4 seconds max to stay under 5s total)
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(
-          () => reject(new Error("OAuth timeout after 4 seconds")),
-          4000
-        );
+        setTimeout(() => reject(new Error("OAuth timeout after 4 seconds")), 4000);
       });
 
       setAuthState("authenticating");
       const popupTime = Date.now();
       setMetrics((prev) => ({ ...prev, popupOpenTime: popupTime }));
 
-      const { error } = (await Promise.race([
-        signInWithGoogle(),
-        timeoutPromise,
-      ])) as { error: any };
+      const { error } = (await Promise.race([signInWithGoogle(), timeoutPromise])) as {
+        error: any;
+      };
 
       const authCompleteTime = Date.now();
       const totalTime = authCompleteTime - startTime;
@@ -115,9 +111,7 @@ export function SignInWithGooglePopupButton({
 
       // Performance feedback
       if (totalTime <= 3000) {
-        console.log(
-          `✅ OAuth completed in ${totalTime}ms (≤3s requirement met)`
-        );
+        console.log(`✅ OAuth completed in ${totalTime}ms (≤3s requirement met)`);
       } else {
         console.warn(`⚠️ OAuth took ${totalTime}ms (exceeds 3s requirement)`);
       }
@@ -125,8 +119,7 @@ export function SignInWithGooglePopupButton({
       toast.success("Login realizado com sucesso!");
       onSuccess?.();
     } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Erro inesperado no OAuth";
+      const errorMessage = err instanceof Error ? err.message : "Erro inesperado no OAuth";
       handleOAuthError(err, "handleSignIn");
     } finally {
       setIsLoading(false);
@@ -143,7 +136,7 @@ export function SignInWithGooglePopupButton({
         handleSignIn();
       }
     },
-    [handleSignIn]
+    [handleSignIn],
   );
 
   // Preload popup optimization
@@ -209,11 +202,7 @@ export function SignInWithGooglePopupButton({
         hover:shadow-md 
         focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
         ${authState === "error" ? "border-red-300 hover:border-red-400" : ""}
-        ${
-          authState === "success"
-            ? "border-green-300 hover:border-green-400"
-            : ""
-        }
+        ${authState === "success" ? "border-green-300 hover:border-green-400" : ""}
       `}
       onClick={handleSignIn}
       onKeyDown={handleKeyDown}

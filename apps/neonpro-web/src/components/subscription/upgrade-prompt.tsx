@@ -10,19 +10,12 @@
 
 "use client";
 
-import { cn } from "@/lib/utils";
-import {
-  AlertTriangle,
-  Crown,
-  Sparkles,
-  TrendingUp,
-  X,
-  Zap,
-} from "lucide-react";
-import { useState } from "react";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import {
+import type { cn } from "@/lib/utils";
+import type { AlertTriangle, Crown, Sparkles, TrendingUp, X, Zap } from "lucide-react";
+import type { useState } from "react";
+import type { Badge } from "../ui/badge";
+import type { Button } from "../ui/button";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -30,18 +23,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
-import { Progress } from "../ui/progress";
-import { Separator } from "../ui/separator";
+import type { Progress } from "../ui/progress";
+import type { Separator } from "../ui/separator";
 
 export interface UpgradePromptProps {
   isOpen: boolean;
   onClose: () => void;
-  reason:
-    | "expired"
-    | "cancelled"
-    | "trial_ended"
-    | "feature_limit"
-    | "usage_limit";
+  reason: "expired" | "cancelled" | "trial_ended" | "feature_limit" | "usage_limit";
   currentPlan?: string;
   suggestedPlan?: string;
   usageMetrics?: {
@@ -231,26 +219,17 @@ export function UpgradePrompt({
                 <Icon className={cn("h-5 w-5", urgency.color)} />
               </div>
               <div>
-                <DialogTitle className="text-xl font-semibold">
-                  {config.title}
-                </DialogTitle>
+                <DialogTitle className="text-xl font-semibold">{config.title}</DialogTitle>
                 <Badge variant={urgency.badgeVariant} className="mt-1">
                   {config.badge}
                 </Badge>
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="h-8 w-8 p-0"
-            >
+            <Button variant="ghost" size="sm" onClick={onClose} className="h-8 w-8 p-0">
               <X className="h-4 w-4" />
             </Button>
           </div>
-          <DialogDescription className="text-base mt-4">
-            {config.description}
-          </DialogDescription>
+          <DialogDescription className="text-base mt-4">{config.description}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
@@ -275,9 +254,7 @@ export function UpgradePrompt({
           {/* Current vs Suggested Plan */}
           <div className="grid grid-cols-2 gap-4">
             <div className="p-4 border rounded-lg bg-muted/50">
-              <h4 className="font-medium text-sm text-muted-foreground">
-                Current Plan
-              </h4>
+              <h4 className="font-medium text-sm text-muted-foreground">Current Plan</h4>
               <p className="font-semibold">{currentPlan}</p>
             </div>
             <div className="p-4 border-2 border-primary rounded-lg bg-primary/5">

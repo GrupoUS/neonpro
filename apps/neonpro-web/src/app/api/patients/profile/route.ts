@@ -1,8 +1,8 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
-import { ProfileManager } from '@/lib/patients/profile-manager';
-import { PatientInsights } from '@/lib/ai/patient-insights';
-import { createClient } from '@/lib/supabase/server';
-import { z } from 'zod';
+import type { NextRequest, NextResponse } from "next/server";
+import type { ProfileManager } from "@/lib/patients/profile-manager";
+import type { PatientInsights } from "@/lib/ai/patient-insights";
+import type { createClient } from "@/lib/supabase/server";
+import type { z } from "zod";
 
 // Initialize services
 const profileManager = new ProfileManager();
@@ -15,28 +15,34 @@ const CreateProfileSchema = z.object({
   demographics: z.object({
     name: z.string().min(1),
     date_of_birth: z.string(),
-    gender: z.enum(['male', 'female', 'other']),
+    gender: z.enum(["male", "female", "other"]),
     phone: z.string().optional(),
     email: z.string().email().optional(),
-    address: z.string().optional()
+    address: z.string().optional(),
   }),
-  medical_history: z.object({
-    allergies: z.array(z.string()).optional(),
-    conditions: z.array(z.string()).optional(),
-    medications: z.array(z.string()).optional(),
-    surgeries: z.array(z.string()).optional()
-  }).optional(),
-  preferences: z.object({
-    language: z.string().optional(),
-    timezone: z.string().optional(),
-    communication_method: z.enum(['email', 'sms', 'phone', 'in_app']).optional(),
-    appointment_reminders: z.boolean().optional()
-  }).optional(),
-  emergency_contact: z.object({
-    name: z.string().optional(),
-    relationship: z.string().optional(),
-    phone: z.string().optional()
-  }).optional()
+  medical_history: z
+    .object({
+      allergies: z.array(z.string()).optional(),
+      conditions: z.array(z.string()).optional(),
+      medications: z.array(z.string()).optional(),
+      surgeries: z.array(z.string()).optional(),
+    })
+    .optional(),
+  preferences: z
+    .object({
+      language: z.string().optional(),
+      timezone: z.string().optional(),
+      communication_method: z.enum(["email", "sms", "phone", "in_app"]).optional(),
+      appointment_reminders: z.boolean().optional(),
+    })
+    .optional(),
+  emergency_contact: z
+    .object({
+      name: z.string().optional(),
+      relationship: z.string().optional(),
+      phone: z.string().optional(),
+    })
+    .optional(),
 });
 
 const SearchSchema = z.object({
@@ -44,7 +50,7 @@ const SearchSchema = z.object({
   phone: z.string().optional(),
   email: z.string().optional(),
   conditions: z.array(z.string()).optional(),
-  min_completeness: z.number().min(0).max(1).optional()
+  min_completeness: z.number().min(0).max(1).optional(),
 });
 
 /**
@@ -53,14 +59,14 @@ const SearchSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Parse and validate request body
@@ -71,10 +77,7 @@ export async function POST(request: NextRequest) {
     const profile = await profileManager.createPatientProfile(validatedData);
 
     if (!profile) {
-      return NextResponse.json(
-        { error: 'Failed to create patient profile' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to create patient profile" }, { status: 500 });
     }
 
     // Generate initial insights
@@ -83,23 +86,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       profile,
       insights,
-      message: 'Patient profile created successfully'
+      message: "Patient profile created successfully",
     });
-
   } catch (error) {
-    console.error('Error creating patient profile:', error);
-    
+    console.error("Error creating patient profile:", error);
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { error: "Invalid request data", details: error.errors },
+        { status: 400 },
       );
     }
 
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -109,26 +108,26 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Parse search parameters
     const { searchParams } = new URL(request.url);
     const searchData = {
-      name: searchParams.get('name') || undefined,
-      phone: searchParams.get('phone') || undefined,
-      email: searchParams.get('email') || undefined,
-      conditions: searchParams.get('conditions')?.split(',') || undefined,
-      min_completeness: searchParams.get('min_completeness') 
-        ? parseFloat(searchParams.get('min_completeness')!) 
-        : undefined
+      name: searchParams.get("name") || undefined,
+      phone: searchParams.get("phone") || undefined,
+      email: searchParams.get("email") || undefined,
+      conditions: searchParams.get("conditions")?.split(",") || undefined,
+      min_completeness: searchParams.get("min_completeness")
+        ? parseFloat(searchParams.get("min_completeness")!)
+        : undefined,
     };
 
     // Validate search parameters
@@ -140,23 +139,18 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       profiles,
       count: profiles.length,
-      message: 'Patient profiles retrieved successfully'
+      message: "Patient profiles retrieved successfully",
     });
-
   } catch (error) {
-    console.error('Error searching patient profiles:', error);
-    
+    console.error("Error searching patient profiles:", error);
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid search parameters', details: error.errors },
-        { status: 400 }
+        { error: "Invalid search parameters", details: error.errors },
+        { status: 400 },
       );
     }
 
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
-

@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Filter, X, UserCheck, AlertTriangle, Calendar, Clock } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+import React from "react";
+import type { Filter, X, UserCheck, AlertTriangle, Calendar, Clock } from "lucide-react";
+import type { Button } from "@/components/ui/button";
+import type { Label } from "@/components/ui/label";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type { Badge } from "@/components/ui/badge";
+import type { Separator } from "@/components/ui/separator";
 
 interface PatientFiltersProps {
   filters: {
@@ -25,87 +25,83 @@ interface PatientFiltersProps {
   onFiltersChange: (filters: any) => void;
 }
 
-export default function PatientFilters({
-  filters,
-  onFiltersChange
-}: PatientFiltersProps) {
-
+export default function PatientFilters({ filters, onFiltersChange }: PatientFiltersProps) {
   const handleFilterChange = (key: string, value: any) => {
     onFiltersChange({
       ...filters,
-      [key]: value
+      [key]: value,
     });
   };
 
   const clearAllFilters = () => {
     onFiltersChange({
-      status: 'all',
-      riskLevel: 'all',
-      ageRange: 'all',
-      hasUpcomingAppointments: false
+      status: "all",
+      riskLevel: "all",
+      ageRange: "all",
+      hasUpcomingAppointments: false,
     });
   };
 
   const getActiveFiltersCount = () => {
     let count = 0;
-    if (filters.status !== 'all') count++;
-    if (filters.riskLevel !== 'all') count++;
-    if (filters.ageRange !== 'all') count++;
+    if (filters.status !== "all") count++;
+    if (filters.riskLevel !== "all") count++;
+    if (filters.ageRange !== "all") count++;
     if (filters.hasUpcomingAppointments) count++;
     return count;
   };
 
   const getActiveFiltersList = () => {
     const activeFilters = [];
-    
-    if (filters.status !== 'all') {
+
+    if (filters.status !== "all") {
       const statusLabels = {
-        'active': 'Ativo',
-        'inactive': 'Inativo',
-        'vip': 'VIP',
-        'new': 'Novo'
+        active: "Ativo",
+        inactive: "Inativo",
+        vip: "VIP",
+        new: "Novo",
       };
       activeFilters.push({
-        key: 'status',
+        key: "status",
         label: `Status: ${statusLabels[filters.status as keyof typeof statusLabels]}`,
-        value: filters.status
+        value: filters.status,
       });
     }
 
-    if (filters.riskLevel !== 'all') {
+    if (filters.riskLevel !== "all") {
       const riskLabels = {
-        'low': 'Baixo',
-        'medium': 'Médio',
-        'high': 'Alto',
-        'critical': 'Crítico'
+        low: "Baixo",
+        medium: "Médio",
+        high: "Alto",
+        critical: "Crítico",
       };
       activeFilters.push({
-        key: 'riskLevel',
+        key: "riskLevel",
         label: `Risco: ${riskLabels[filters.riskLevel as keyof typeof riskLabels]}`,
-        value: filters.riskLevel
+        value: filters.riskLevel,
       });
     }
 
-    if (filters.ageRange !== 'all') {
+    if (filters.ageRange !== "all") {
       const ageLabels = {
-        '0-18': '0-18 anos',
-        '19-30': '19-30 anos',
-        '31-50': '31-50 anos',
-        '51-70': '51-70 anos',
-        '70+': '70+ anos'
+        "0-18": "0-18 anos",
+        "19-30": "19-30 anos",
+        "31-50": "31-50 anos",
+        "51-70": "51-70 anos",
+        "70+": "70+ anos",
       };
       activeFilters.push({
-        key: 'ageRange',
+        key: "ageRange",
         label: `Idade: ${ageLabels[filters.ageRange as keyof typeof ageLabels]}`,
-        value: filters.ageRange
+        value: filters.ageRange,
       });
     }
 
     if (filters.hasUpcomingAppointments) {
       activeFilters.push({
-        key: 'hasUpcomingAppointments',
-        label: 'Com consultas agendadas',
-        value: true
+        key: "hasUpcomingAppointments",
+        label: "Com consultas agendadas",
+        value: true,
       });
     }
 
@@ -127,7 +123,7 @@ export default function PatientFilters({
           </Label>
           <Select
             value={filters.status}
-            onValueChange={(value) => handleFilterChange('status', value)}
+            onValueChange={(value) => handleFilterChange("status", value)}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Todos os status" />
@@ -170,7 +166,7 @@ export default function PatientFilters({
           </Label>
           <Select
             value={filters.riskLevel}
-            onValueChange={(value) => handleFilterChange('riskLevel', value)}
+            onValueChange={(value) => handleFilterChange("riskLevel", value)}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Todos os níveis" />
@@ -213,7 +209,7 @@ export default function PatientFilters({
           </Label>
           <Select
             value={filters.ageRange}
-            onValueChange={(value) => handleFilterChange('ageRange', value)}
+            onValueChange={(value) => handleFilterChange("ageRange", value)}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Todas as idades" />
@@ -239,14 +235,11 @@ export default function PatientFilters({
             <Checkbox
               id="upcoming-appointments"
               checked={filters.hasUpcomingAppointments}
-              onCheckedChange={(checked) => 
-                handleFilterChange('hasUpcomingAppointments', !!checked)
+              onCheckedChange={(checked) =>
+                handleFilterChange("hasUpcomingAppointments", !!checked)
               }
             />
-            <Label 
-              htmlFor="upcoming-appointments" 
-              className="text-sm cursor-pointer"
-            >
+            <Label htmlFor="upcoming-appointments" className="text-sm cursor-pointer">
               Com consultas agendadas
             </Label>
           </div>
@@ -261,9 +254,7 @@ export default function PatientFilters({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Filter className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium">
-                  Filtros ativos ({activeFiltersCount})
-                </span>
+                <span className="text-sm font-medium">Filtros ativos ({activeFiltersCount})</span>
               </div>
               <Button
                 variant="ghost"
@@ -275,7 +266,7 @@ export default function PatientFilters({
                 Limpar todos
               </Button>
             </div>
-            
+
             <div className="flex flex-wrap gap-2">
               {activeFiltersList.map((filter) => (
                 <Badge
@@ -288,10 +279,10 @@ export default function PatientFilters({
                     variant="ghost"
                     size="sm"
                     onClick={() => {
-                      if (filter.key === 'hasUpcomingAppointments') {
+                      if (filter.key === "hasUpcomingAppointments") {
                         handleFilterChange(filter.key, false);
                       } else {
-                        handleFilterChange(filter.key, 'all');
+                        handleFilterChange(filter.key, "all");
                       }
                     }}
                     className="h-4 w-4 p-0 hover:bg-muted-foreground/20 ml-1"
@@ -308,9 +299,9 @@ export default function PatientFilters({
       {/* Filter Instructions */}
       <div className="text-xs text-muted-foreground">
         <div>
-          <strong>Dica:</strong> Combine múltiplos filtros para refinar sua busca. 
-          Os filtros trabalham em conjunto para mostrar apenas pacientes que atendem 
-          a todos os critérios selecionados.
+          <strong>Dica:</strong> Combine múltiplos filtros para refinar sua busca. Os filtros
+          trabalham em conjunto para mostrar apenas pacientes que atendem a todos os critérios
+          selecionados.
         </div>
       </div>
     </div>

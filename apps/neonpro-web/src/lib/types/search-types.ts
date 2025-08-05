@@ -2,53 +2,53 @@
 // NeonPro - Sistema de Busca Inteligente com Processamento de Linguagem Natural
 // Quality Standard: ≥9.5/10 (BMad Enhanced)
 
-export type SearchIntent = 
-  | 'patient_lookup'           // Buscar paciente específico
-  | 'appointment_search'       // Buscar agendamentos
-  | 'medical_record_search'    // Buscar prontuários médicos
-  | 'procedure_search'         // Buscar procedimentos
-  | 'financial_search'         // Buscar informações financeiras
-  | 'compliance_search'        // Buscar dados de compliance
-  | 'general_search'           // Busca geral no sistema
-  | 'similar_cases'            // Buscar casos similares
-  | 'treatment_history'        // Histórico de tratamentos
-  | 'analytics_search';        // Buscar dados analíticos
+export type SearchIntent =
+  | "patient_lookup" // Buscar paciente específico
+  | "appointment_search" // Buscar agendamentos
+  | "medical_record_search" // Buscar prontuários médicos
+  | "procedure_search" // Buscar procedimentos
+  | "financial_search" // Buscar informações financeiras
+  | "compliance_search" // Buscar dados de compliance
+  | "general_search" // Busca geral no sistema
+  | "similar_cases" // Buscar casos similares
+  | "treatment_history" // Histórico de tratamentos
+  | "analytics_search"; // Buscar dados analíticos
 
-export type SearchContext = 
-  | 'clinical'                 // Contexto clínico/médico
-  | 'administrative'           // Contexto administrativo
-  | 'financial'               // Contexto financeiro
-  | 'compliance'              // Contexto de compliance
-  | 'analytics'               // Contexto analítico
-  | 'general';                // Contexto geral
+export type SearchContext =
+  | "clinical" // Contexto clínico/médico
+  | "administrative" // Contexto administrativo
+  | "financial" // Contexto financeiro
+  | "compliance" // Contexto de compliance
+  | "analytics" // Contexto analítico
+  | "general"; // Contexto geral
 
-export type SearchMode = 
-  | 'natural_language'         // Busca em linguagem natural
-  | 'structured'              // Busca estruturada
-  | 'semantic'                // Busca semântica
-  | 'similarity'              // Busca por similaridade
-  | 'fuzzy'                   // Busca aproximada
-  | 'exact';                  // Busca exata
+export type SearchMode =
+  | "natural_language" // Busca em linguagem natural
+  | "structured" // Busca estruturada
+  | "semantic" // Busca semântica
+  | "similarity" // Busca por similaridade
+  | "fuzzy" // Busca aproximada
+  | "exact"; // Busca exata
 
-export type EntityType = 
-  | 'patient'
-  | 'appointment'
-  | 'medical_record'
-  | 'procedure'
-  | 'prescription'
-  | 'payment'
-  | 'user'
-  | 'document'
-  | 'compliance_record'
-  | 'analytics_data';
+export type EntityType =
+  | "patient"
+  | "appointment"
+  | "medical_record"
+  | "procedure"
+  | "prescription"
+  | "payment"
+  | "user"
+  | "document"
+  | "compliance_record"
+  | "analytics_data";
 
-export type SearchDataCategory = 
-  | 'personal'                // Dados pessoais
-  | 'medical'                 // Dados médicos
-  | 'financial'              // Dados financeiros
-  | 'sensitive'               // Dados sensíveis
-  | 'public'                  // Dados públicos
-  | 'internal';               // Dados internos
+export type SearchDataCategory =
+  | "personal" // Dados pessoais
+  | "medical" // Dados médicos
+  | "financial" // Dados financeiros
+  | "sensitive" // Dados sensíveis
+  | "public" // Dados públicos
+  | "internal"; // Dados internos
 
 export interface NaturalLanguageQuery {
   originalQuery: string;
@@ -63,7 +63,7 @@ export interface NaturalLanguageQuery {
   }>;
   suggestedFilters: SearchFilter[];
   confidence: number;
-  language: 'pt' | 'en';
+  language: "pt" | "en";
   medicalTerms: string[];
   temporalFilters?: {
     startDate?: Date;
@@ -74,7 +74,16 @@ export interface NaturalLanguageQuery {
 
 export interface SearchFilter {
   field: string;
-  operator: 'equals' | 'contains' | 'starts_with' | 'ends_with' | 'between' | 'in' | 'not_in' | 'exists' | 'similarity';
+  operator:
+    | "equals"
+    | "contains"
+    | "starts_with"
+    | "ends_with"
+    | "between"
+    | "in"
+    | "not_in"
+    | "exists"
+    | "similarity";
   value: any;
   label: string;
   category: SearchDataCategory;
@@ -90,7 +99,7 @@ export interface SearchQuery {
   intent?: SearchIntent;
   filters: SearchFilter[];
   sortBy?: string;
-  sortOrder: 'asc' | 'desc';
+  sortOrder: "asc" | "desc";
   limit: number;
   offset: number;
   includeHighlights: boolean;
@@ -121,7 +130,7 @@ export interface SearchResult {
   metadata: Record<string, any>;
   dataCategory: SearchDataCategory;
   lastModified: Date;
-  accessLevel: 'public' | 'restricted' | 'confidential';
+  accessLevel: "public" | "restricted" | "confidential";
   complianceFlags: string[];
 }
 
@@ -153,7 +162,7 @@ export interface SearchResponse {
 
 export interface SearchSuggestion {
   query: string;
-  type: 'autocomplete' | 'spelling_correction' | 'query_expansion' | 'related_search';
+  type: "autocomplete" | "spelling_correction" | "query_expansion" | "related_search";
   score: number;
   reason: string;
   previewResults?: number;
@@ -174,7 +183,7 @@ export interface SearchAnalytics {
   resultQuality?: number;
   abandoned: boolean;
   refinements: Array<{
-    type: 'filter_added' | 'filter_removed' | 'query_modified' | 'sort_changed';
+    type: "filter_added" | "filter_removed" | "query_modified" | "sort_changed";
     timestamp: Date;
     details: any;
   }>;
@@ -215,10 +224,10 @@ export interface SemanticIndex {
 }
 
 export interface SearchConfiguration {
-  nlpProvider: 'openai' | 'claude' | 'local';
-  searchEngine: 'elasticsearch' | 'algolia' | 'supabase';
-  vectorDatabase: 'pinecone' | 'supabase' | 'local';
-  embeddingModel: 'text-embedding-ada-002' | 'text-embedding-3-small' | 'text-embedding-3-large';
+  nlpProvider: "openai" | "claude" | "local";
+  searchEngine: "elasticsearch" | "algolia" | "supabase";
+  vectorDatabase: "pinecone" | "supabase" | "local";
+  embeddingModel: "text-embedding-ada-002" | "text-embedding-3-small" | "text-embedding-3-large";
   maxQueryLength: number;
   maxResults: number;
   cacheEnabled: boolean;
@@ -247,7 +256,7 @@ export interface SearchIndex {
   entityType: EntityType;
   fields: Array<{
     name: string;
-    type: 'text' | 'keyword' | 'number' | 'date' | 'boolean' | 'object';
+    type: "text" | "keyword" | "number" | "date" | "boolean" | "object";
     searchable: boolean;
     filterable: boolean;
     sortable: boolean;
@@ -322,17 +331,23 @@ export interface SearchOptimizationMetrics {
     averageResults: number;
     successRate: number;
   }>;
-  performanceByIntent: Record<SearchIntent, {
-    averageTime: number;
-    successRate: number;
-    userSatisfaction: number;
-  }>;
-  indexStatistics: Record<string, {
-    documentsCount: number;
-    sizeInMB: number;
-    lastOptimized: Date;
-    queryPerformance: number;
-  }>;
+  performanceByIntent: Record<
+    SearchIntent,
+    {
+      averageTime: number;
+      successRate: number;
+      userSatisfaction: number;
+    }
+  >;
+  indexStatistics: Record<
+    string,
+    {
+      documentsCount: number;
+      sizeInMB: number;
+      lastOptimized: Date;
+      queryPerformance: number;
+    }
+  >;
 }
 
 // Error Types
@@ -340,38 +355,38 @@ export class SearchError extends Error {
   constructor(
     message: string,
     public code: string,
-    public details?: any
+    public details?: any,
   ) {
     super(message);
-    this.name = 'SearchError';
+    this.name = "SearchError";
   }
 }
 
 export class NLPProcessingError extends SearchError {
   constructor(message: string, details?: any) {
-    super(message, 'NLP_PROCESSING_ERROR', details);
-    this.name = 'NLPProcessingError';
+    super(message, "NLP_PROCESSING_ERROR", details);
+    this.name = "NLPProcessingError";
   }
 }
 
 export class SearchIndexError extends SearchError {
   constructor(message: string, details?: any) {
-    super(message, 'SEARCH_INDEX_ERROR', details);
-    this.name = 'SearchIndexError';
+    super(message, "SEARCH_INDEX_ERROR", details);
+    this.name = "SearchIndexError";
   }
 }
 
 export class VectorSearchError extends SearchError {
   constructor(message: string, details?: any) {
-    super(message, 'VECTOR_SEARCH_ERROR', details);
-    this.name = 'VectorSearchError';
+    super(message, "VECTOR_SEARCH_ERROR", details);
+    this.name = "VectorSearchError";
   }
 }
 
 export class SearchPermissionError extends SearchError {
   constructor(message: string, details?: any) {
-    super(message, 'SEARCH_PERMISSION_ERROR', details);
-    this.name = 'SearchPermissionError';
+    super(message, "SEARCH_PERMISSION_ERROR", details);
+    this.name = "SearchPermissionError";
   }
 }
 
@@ -384,7 +399,7 @@ export type SearchValidationResult = {
 };
 
 export type SearchPerformanceProfile = {
-  queryComplexity: 'low' | 'medium' | 'high';
+  queryComplexity: "low" | "medium" | "high";
   expectedResults: number;
   estimatedTime: number;
   recommendedIndexes: string[];
@@ -396,8 +411,8 @@ export interface MedicalSearchContext {
   patientId?: string;
   procedureType?: string;
   diagnosisCode?: string;
-  treatmentPhase?: 'consultation' | 'treatment' | 'follow_up' | 'completed';
-  urgencyLevel?: 'low' | 'medium' | 'high' | 'critical';
+  treatmentPhase?: "consultation" | "treatment" | "follow_up" | "completed";
+  urgencyLevel?: "low" | "medium" | "high" | "critical";
   specialization?: string;
   dateRange?: {
     start: Date;
@@ -418,16 +433,16 @@ export interface ClinicalSearchResult extends SearchResult {
     medications: string[];
     allergies: string[];
   };
-  confidentialityLevel: 'public' | 'restricted' | 'confidential' | 'highly_confidential';
+  confidentialityLevel: "public" | "restricted" | "confidential" | "highly_confidential";
   accessRestrictions: string[];
 }
 
 // Export default configuration
 export const DEFAULT_SEARCH_CONFIG: SearchConfiguration = {
-  nlpProvider: 'openai',
-  searchEngine: 'elasticsearch',
-  vectorDatabase: 'supabase',
-  embeddingModel: 'text-embedding-3-small',
+  nlpProvider: "openai",
+  searchEngine: "elasticsearch",
+  vectorDatabase: "supabase",
+  embeddingModel: "text-embedding-3-small",
   maxQueryLength: 500,
   maxResults: 50,
   cacheEnabled: true,
@@ -437,5 +452,5 @@ export const DEFAULT_SEARCH_CONFIG: SearchConfiguration = {
   fallbackToTraditionalSearch: true,
   similarityThreshold: 0.7,
   relevanceThreshold: 0.5,
-  supportedLanguages: ['pt', 'en']
+  supportedLanguages: ["pt", "en"],
 };

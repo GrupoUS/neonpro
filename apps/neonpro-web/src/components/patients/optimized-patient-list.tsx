@@ -1,35 +1,30 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { createClient } from '@/app/utils/supabase/client';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { 
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import type { createClient } from "@/app/utils/supabase/client";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Badge } from "@/components/ui/badge";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { 
-  Search, 
-  User, 
-  Phone, 
+} from "@/components/ui/table";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
+  Search,
+  User,
+  Phone,
   Mail,
   Eye,
   RefreshCw,
   ChevronLeft,
   ChevronRight,
-} from 'lucide-react';
+} from "lucide-react";
 
 // =====================================================================================
 // OPTIMIZED PATIENT LIST COMPONENT
@@ -43,7 +38,7 @@ interface Patient {
   phone?: string;
   birth_date?: string;
   gender?: string;
-  status: 'active' | 'inactive' | 'pending';
+  status: "active" | "inactive" | "pending";
   last_visit?: string;
   avatar_url?: string;
   created_at: string;
@@ -60,13 +55,13 @@ const SEARCH_DEBOUNCE_MS = 500;
 
 export default function OptimizedPatientList({
   onPatientSelect,
-  searchTerm = '',
-  onSearchChange
+  searchTerm = "",
+  onSearchChange,
 }: OptimizedPatientListProps) {
   // =====================================================================================
   // STATE MANAGEMENT
   // =====================================================================================
-  
+
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -74,13 +69,13 @@ export default function OptimizedPatientList({
   const [totalCount, setTotalCount] = useState(0);
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
   const [mounted, setMounted] = useState(true);
-  
+
   const supabase = createClient();
 
   // =====================================================================================
   // MEMOIZED VALUES
   // =====================================================================================
-  
+
   const totalPages = useMemo(() => {
     return Math.ceil(totalCount / ITEMS_PER_PAGE);
   }, [totalCount]);
@@ -94,7 +89,7 @@ export default function OptimizedPatientList({
   // =====================================================================================
   // OPTIMIZED SEARCH WITH DEBOUNCING
   // =====================================================================================
-  
+
   useEffect(() => {
     if (localSearchTerm.length === 0 || localSearchTerm.length >= 2) {
       const timer = setTimeout(() => {
@@ -111,56 +106,59 @@ export default function OptimizedPatientList({
   // =====================================================================================
   // OPTIMIZED DATA FETCHING
   // =====================================================================================
-  
-  const fetchPatients = useCallback(async (page: number, search: string) => {
-    if (!mounted) return;
-    
-    try {
-      setLoading(true);
-      setError(null);
 
-      const from = (page - 1) * ITEMS_PER_PAGE;
-      const to = from + ITEMS_PER_PAGE - 1;
+  const fetchPatients = useCallback(
+    async (page: number, search: string) => {
+      if (!mounted) return;
 
-      let query = supabase
-        .from('patients')
-        .select('*', { count: 'exact' })
-        .range(from, to)
-        .order('created_at', { ascending: false });
+      try {
+        setLoading(true);
+        setError(null);
 
-      // Apply search filter if provided
-      if (search.trim()) {
-        query = query.or(
-          `name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`
-        );
+        const from = (page - 1) * ITEMS_PER_PAGE;
+        const to = from + ITEMS_PER_PAGE - 1;
+
+        let query = supabase
+          .from("patients")
+          .select("*", { count: "exact" })
+          .range(from, to)
+          .order("created_at", { ascending: false });
+
+        // Apply search filter if provided
+        if (search.trim()) {
+          query = query.or(
+            `name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`,
+          );
+        }
+
+        const { data, error: fetchError, count } = await query;
+
+        if (fetchError) {
+          throw fetchError;
+        }
+
+        if (mounted) {
+          setPatients(data || []);
+          setTotalCount(count || 0);
+        }
+      } catch (err) {
+        if (mounted) {
+          setError(err instanceof Error ? err.message : "Failed to fetch patients");
+          console.error("Error fetching patients:", err);
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
       }
-
-      const { data, error: fetchError, count } = await query;
-
-      if (fetchError) {
-        throw fetchError;
-      }
-
-      if (mounted) {
-        setPatients(data || []);
-        setTotalCount(count || 0);
-      }
-    } catch (err) {
-      if (mounted) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch patients');
-        console.error('Error fetching patients:', err);
-      }
-    } finally {
-      if (mounted) {
-        setLoading(false);
-      }
-    }
-  }, [supabase, mounted]);
+    },
+    [supabase, mounted],
+  );
 
   // =====================================================================================
   // EFFECTS
   // =====================================================================================
-  
+
   useEffect(() => {
     fetchPatients(currentPage, searchTerm);
   }, [currentPage, searchTerm, fetchPatients]);
@@ -175,16 +173,19 @@ export default function OptimizedPatientList({
   // =====================================================================================
   // EVENT HANDLERS
   // =====================================================================================
-  
+
   const handleSearchChange = useCallback((value: string) => {
     setLocalSearchTerm(value);
   }, []);
 
-  const handlePageChange = useCallback((page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  }, [totalPages]);
+  const handlePageChange = useCallback(
+    (page: number) => {
+      if (page >= 1 && page <= totalPages) {
+        setCurrentPage(page);
+      }
+    },
+    [totalPages],
+  );
 
   const handleRefresh = useCallback(() => {
     fetchPatients(currentPage, searchTerm);
@@ -192,21 +193,25 @@ export default function OptimizedPatientList({
 
   const getStatusBadgeColor = useCallback((status: string) => {
     switch (status) {
-      case 'active': return 'bg-green-100 text-green-800';
-      case 'inactive': return 'bg-gray-100 text-gray-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "active":
+        return "bg-green-100 text-green-800";
+      case "inactive":
+        return "bg-gray-100 text-gray-800";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   }, []);
 
   const formatDate = useCallback((dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
+    return new Date(dateString).toLocaleDateString("pt-BR");
   }, []);
 
   // =====================================================================================
   // RENDER
   // =====================================================================================
-  
+
   if (error) {
     return (
       <Card>
@@ -232,7 +237,7 @@ export default function OptimizedPatientList({
             <RefreshCw className="h-4 w-4" />
           </Button>
         </CardTitle>
-        
+
         {/* Optimized Search */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -244,12 +249,13 @@ export default function OptimizedPatientList({
           />
         </div>
       </CardHeader>
-      
+
       <CardContent>
         {/* Results Info */}
         <div className="flex justify-between items-center mb-4">
           <p className="text-sm text-gray-600">
-            Mostrando {paginationInfo.start}-{paginationInfo.end} de {paginationInfo.total} pacientes
+            Mostrando {paginationInfo.start}-{paginationInfo.end} de {paginationInfo.total}{" "}
+            pacientes
           </p>
           {loading && <span className="text-sm text-blue-600">Carregando...</span>}
         </div>
@@ -302,19 +308,13 @@ export default function OptimizedPatientList({
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge className={getStatusBadgeColor(patient.status)}>
-                      {patient.status}
-                    </Badge>
+                    <Badge className={getStatusBadgeColor(patient.status)}>{patient.status}</Badge>
                   </TableCell>
                   <TableCell>
-                    {patient.last_visit ? formatDate(patient.last_visit) : 'Nunca'}
+                    {patient.last_visit ? formatDate(patient.last_visit) : "Nunca"}
                   </TableCell>
                   <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => onPatientSelect?.(patient)}
-                    >
+                    <Button variant="ghost" size="sm" onClick={() => onPatientSelect?.(patient)}>
                       <Eye className="h-4 w-4" />
                     </Button>
                   </TableCell>
@@ -336,11 +336,11 @@ export default function OptimizedPatientList({
               <ChevronLeft className="h-4 w-4 mr-1" />
               Anterior
             </Button>
-            
+
             <span className="text-sm text-gray-600">
               Página {currentPage} de {totalPages}
             </span>
-            
+
             <Button
               variant="outline"
               size="sm"

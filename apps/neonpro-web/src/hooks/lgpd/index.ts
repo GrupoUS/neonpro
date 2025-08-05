@@ -2,23 +2,23 @@
 // Hooks para gerenciamento de dados pessoais e conformidade
 
 // Dashboard e métricas
-export { useLGPDDashboard } from './useLGPDDashboard';
+export { useLGPDDashboard } from "./useLGPDDashboard";
 
 // Gerenciamento de consentimentos
-export { useConsentManagement } from './useConsentManagement';
-export { useConsentBanner } from './useConsentBanner';
+export { useConsentManagement } from "./useConsentManagement";
+export { useConsentBanner } from "./useConsentBanner";
 
 // Direitos dos titulares
-export { useDataSubjectRights } from './useDataSubjectRights';
+export { useDataSubjectRights } from "./useDataSubjectRights";
 
 // Avaliações de conformidade
-export { useComplianceAssessment } from './useComplianceAssessment';
+export { useComplianceAssessment } from "./useComplianceAssessment";
 
 // Gestão de incidentes
-export { useBreachManagement } from './useBreachManagement';
+export { useBreachManagement } from "./useBreachManagement";
 
 // Trilha de auditoria
-export { useAuditTrail } from './useAuditTrail';
+export { useAuditTrail } from "./useAuditTrail";
 
 // Re-export tipos relacionados
 export type {
@@ -28,5 +28,5 @@ export type {
   DataSubjectRequest,
   ComplianceAssessment,
   SecurityBreach,
-  AuditEvent
-} from '@/types/lgpd';
+  AuditEvent,
+} from "@/types/lgpd";

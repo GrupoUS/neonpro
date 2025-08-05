@@ -1,46 +1,60 @@
-// components/dashboard/appointments/sidebar/appointment-edit-form.tsx  
+// components/dashboard/appointments/sidebar/appointment-edit-form.tsx
 // Appointment edit form for sidebar
 // Story 1.1 Task 5 - Appointment Details Modal/Sidebar
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { Loader2, Save, AlertCircle } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { toast } from 'sonner';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { 
-  AppointmentWithDetails, 
-  UpdateAppointmentFormData, 
+import type { useState, useEffect } from "react";
+import type { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type { z } from "zod";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Label } from "@/components/ui/label";
+import type { Separator } from "@/components/ui/separator";
+import type { Loader2, Save, AlertCircle } from "lucide-react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { toast } from "sonner";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  AppointmentWithDetails,
+  UpdateAppointmentFormData,
   UpdateAppointmentResponse,
-  ConflictCheckResponse 
-} from '@/app/lib/types/appointments';
+  ConflictCheckResponse,
+} from "@/app/lib/types/appointments";
 
 // Form validation schema
 const appointmentEditSchema = z.object({
-  patient_id: z.string().min(1, 'Paciente é obrigatório'),
-  professional_id: z.string().min(1, 'Profissional é obrigatório'),
-  service_type_id: z.string().min(1, 'Tipo de serviço é obrigatório'),
-  start_time: z.string().min(1, 'Data e horário são obrigatórios'),
-  status: z.enum(['scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show']),
+  patient_id: z.string().min(1, "Paciente é obrigatório"),
+  professional_id: z.string().min(1, "Profissional é obrigatório"),
+  service_type_id: z.string().min(1, "Tipo de serviço é obrigatório"),
+  start_time: z.string().min(1, "Data e horário são obrigatórios"),
+  status: z.enum(["scheduled", "confirmed", "in_progress", "completed", "cancelled", "no_show"]),
   notes: z.string().optional(),
   internal_notes: z.string().optional(),
-  change_reason: z.string().min(1, 'Motivo da alteração é obrigatório')
+  change_reason: z.string().min(1, "Motivo da alteração é obrigatório"),
 });
 
-type AppointmentEditFormData = z.infer<typeof appointmentEditSchema>;interface AppointmentEditFormProps {
+type AppointmentEditFormData = z.infer<typeof appointmentEditSchema>;
+interface AppointmentEditFormProps {
   appointment: AppointmentWithDetails;
   onUpdate: (appointment: AppointmentWithDetails) => void;
   onCancel: () => void;
@@ -51,12 +65,14 @@ export default function AppointmentEditForm({
   appointment,
   onUpdate,
   onCancel,
-  isUpdating = false
+  isUpdating = false,
 }: AppointmentEditFormProps) {
   const [patients, setPatients] = useState<Array<{ id: string; full_name: string }>>([]);
   const [professionals, setProfessionals] = useState<Array<{ id: string; full_name: string }>>([]);
-  const [services, setServices] = useState<Array<{ id: string; name: string; duration_minutes: number }>>([]);
-  const [conflictError, setConflictError] = useState<string>('');
+  const [services, setServices] = useState<
+    Array<{ id: string; name: string; duration_minutes: number }>
+  >([]);
+  const [conflictError, setConflictError] = useState<string>("");
   const [checkingConflict, setCheckingConflict] = useState(false);
 
   const form = useForm<AppointmentEditFormData>({
@@ -67,10 +83,10 @@ export default function AppointmentEditForm({
       service_type_id: appointment.service_type_id,
       start_time: format(new Date(appointment.start_time), "yyyy-MM-dd'T'HH:mm"),
       status: appointment.status,
-      notes: appointment.notes || '',
-      internal_notes: appointment.internal_notes || '',
-      change_reason: ''
-    }
+      notes: appointment.notes || "",
+      internal_notes: appointment.internal_notes || "",
+      change_reason: "",
+    },
   });
 
   // Load reference data
@@ -79,9 +95,9 @@ export default function AppointmentEditForm({
       try {
         // Load patients, professionals, and services
         const [patientsRes, professionalsRes, servicesRes] = await Promise.all([
-          fetch('/api/patients'),
-          fetch('/api/professionals'), 
-          fetch('/api/services')
+          fetch("/api/patients"),
+          fetch("/api/professionals"),
+          fetch("/api/services"),
         ]);
 
         if (patientsRes.ok) {
@@ -99,53 +115,58 @@ export default function AppointmentEditForm({
           setServices(servicesData.data || []);
         }
       } catch (error) {
-        console.error('Error loading reference data:', error);
-        toast.error('Erro ao carregar dados de referência');
+        console.error("Error loading reference data:", error);
+        toast.error("Erro ao carregar dados de referência");
       }
     };
 
     loadReferenceData();
-  }, []);  // Check for conflicts when time or professional changes
+  }, []); // Check for conflicts when time or professional changes
   const checkConflicts = async (professionalId: string, startTime: string, serviceId: string) => {
     if (!professionalId || !startTime || !serviceId) return;
 
     try {
       setCheckingConflict(true);
-      setConflictError('');
+      setConflictError("");
 
-      const selectedService = services.find(s => s.id === serviceId);
+      const selectedService = services.find((s) => s.id === serviceId);
       if (!selectedService) return;
 
-      const endTime = new Date(new Date(startTime).getTime() + selectedService.duration_minutes * 60000).toISOString();
+      const endTime = new Date(
+        new Date(startTime).getTime() + selectedService.duration_minutes * 60000,
+      ).toISOString();
 
-      const response = await fetch('/api/appointments/check-conflicts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/appointments/check-conflicts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           professional_id: professionalId,
           start_time: startTime,
           end_time: endTime,
-          exclude_appointment_id: appointment.id
-        })
+          exclude_appointment_id: appointment.id,
+        }),
       });
 
       const data: ConflictCheckResponse = await response.json();
 
       if (data.has_conflict && data.conflicting_appointments?.length) {
-        const conflicts = data.conflicting_appointments.map(
-          c => `${c.patient_name} (${format(new Date(c.start_time), 'HH:mm', { locale: ptBR })})`
-        ).join(', ');
+        const conflicts = data.conflicting_appointments
+          .map(
+            (c) =>
+              `${c.patient_name} (${format(new Date(c.start_time), "HH:mm", { locale: ptBR })})`,
+          )
+          .join(", ");
         setConflictError(`Conflito detectado com: ${conflicts}`);
       }
     } catch (error) {
-      console.error('Error checking conflicts:', error);
+      console.error("Error checking conflicts:", error);
     } finally {
       setCheckingConflict(false);
     }
   };
 
   // Watch form changes for conflict checking
-  const watchedValues = form.watch(['professional_id', 'start_time', 'service_type_id']);
+  const watchedValues = form.watch(["professional_id", "start_time", "service_type_id"]);
 
   useEffect(() => {
     const [professionalId, startTime, serviceId] = watchedValues;
@@ -156,17 +177,17 @@ export default function AppointmentEditForm({
       }, 500);
       return () => clearTimeout(timer);
     }
-  }, [watchedValues]);  // Handle form submission
+  }, [watchedValues]); // Handle form submission
   const onSubmit = async (data: AppointmentEditFormData) => {
     if (conflictError) {
-      toast.error('Resolva os conflitos antes de continuar');
+      toast.error("Resolva os conflitos antes de continuar");
       return;
     }
 
     try {
-      const selectedService = services.find(s => s.id === data.service_type_id);
+      const selectedService = services.find((s) => s.id === data.service_type_id);
       if (!selectedService) {
-        toast.error('Serviço não encontrado');
+        toast.error("Serviço não encontrado");
         return;
       }
 
@@ -182,43 +203,47 @@ export default function AppointmentEditForm({
         status: data.status,
         notes: data.notes,
         internal_notes: data.internal_notes,
-        change_reason: data.change_reason
+        change_reason: data.change_reason,
       };
 
       const response = await fetch(`/api/appointments/${appointment.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updateData)
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updateData),
       });
 
       const result: UpdateAppointmentResponse = await response.json();
 
       if (!response.ok || !result.success) {
         if (result.conflicts?.length) {
-          const conflicts = result.conflicts.map(
-            c => `${c.patient_name} (${format(new Date(c.start_time), 'HH:mm', { locale: ptBR })})`
-          ).join(', ');
+          const conflicts = result.conflicts
+            .map(
+              (c) =>
+                `${c.patient_name} (${format(new Date(c.start_time), "HH:mm", { locale: ptBR })})`,
+            )
+            .join(", ");
           setConflictError(`Conflito detectado: ${conflicts}`);
           return;
         }
-        
-        throw new Error(result.error_message || 'Erro ao atualizar agendamento');
+
+        throw new Error(result.error_message || "Erro ao atualizar agendamento");
       }
 
       if (result.data) {
         onUpdate(result.data);
       }
     } catch (error) {
-      console.error('Error updating appointment:', error);
-      toast.error('Erro ao atualizar agendamento');
+      console.error("Error updating appointment:", error);
+      toast.error("Erro ao atualizar agendamento");
     }
-  };  const statusOptions = [
-    { value: 'scheduled', label: 'Agendado' },
-    { value: 'confirmed', label: 'Confirmado' },
-    { value: 'in_progress', label: 'Em Andamento' },
-    { value: 'completed', label: 'Concluído' },
-    { value: 'cancelled', label: 'Cancelado' },
-    { value: 'no_show', label: 'Não Compareceu' }
+  };
+  const statusOptions = [
+    { value: "scheduled", label: "Agendado" },
+    { value: "confirmed", label: "Confirmado" },
+    { value: "in_progress", label: "Em Andamento" },
+    { value: "completed", label: "Concluído" },
+    { value: "cancelled", label: "Cancelado" },
+    { value: "no_show", label: "Não Compareceu" },
   ];
 
   return (
@@ -235,11 +260,10 @@ export default function AppointmentEditForm({
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
-                    {checkingConflict ? 'Verificando conflitos...' : conflictError}
+                    {checkingConflict ? "Verificando conflitos..." : conflictError}
                   </AlertDescription>
                 </Alert>
               )}
-
               {/* Patient Selection */}
               <FormField
                 control={form.control}
@@ -264,7 +288,8 @@ export default function AppointmentEditForm({
                     <FormMessage />
                   </FormItem>
                 )}
-              />              {/* Professional Selection */}
+              />{" "}
+              {/* Professional Selection */}
               <FormField
                 control={form.control}
                 name="professional_id"
@@ -289,7 +314,6 @@ export default function AppointmentEditForm({
                   </FormItem>
                 )}
               />
-
               {/* Service Selection */}
               <FormField
                 control={form.control}
@@ -306,7 +330,8 @@ export default function AppointmentEditForm({
                       <SelectContent>
                         {services.map((service) => (
                           <SelectItem key={service.id} value={service.id}>
-                            {service.name} ({Math.floor(service.duration_minutes / 60)}h{service.duration_minutes % 60}min)
+                            {service.name} ({Math.floor(service.duration_minutes / 60)}h
+                            {service.duration_minutes % 60}min)
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -314,7 +339,8 @@ export default function AppointmentEditForm({
                     <FormMessage />
                   </FormItem>
                 )}
-              />              {/* Date and Time */}
+              />{" "}
+              {/* Date and Time */}
               <FormField
                 control={form.control}
                 name="start_time"
@@ -332,7 +358,6 @@ export default function AppointmentEditForm({
                   </FormItem>
                 )}
               />
-
               {/* Status */}
               <FormField
                 control={form.control}
@@ -358,7 +383,6 @@ export default function AppointmentEditForm({
                   </FormItem>
                 )}
               />
-
               {/* Change Reason */}
               <FormField
                 control={form.control}
@@ -367,16 +391,13 @@ export default function AppointmentEditForm({
                   <FormItem>
                     <FormLabel>Motivo da Alteração *</FormLabel>
                     <FormControl>
-                      <Textarea
-                        placeholder="Descreva o motivo da alteração..."
-                        {...field}
-                      />
+                      <Textarea placeholder="Descreva o motivo da alteração..." {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
-              />              <Separator />
-
+              />{" "}
+              <Separator />
               {/* Notes */}
               <FormField
                 control={form.control}
@@ -385,16 +406,12 @@ export default function AppointmentEditForm({
                   <FormItem>
                     <FormLabel>Observações do Cliente</FormLabel>
                     <FormControl>
-                      <Textarea
-                        placeholder="Observações visíveis ao cliente..."
-                        {...field}
-                      />
+                      <Textarea placeholder="Observações visíveis ao cliente..." {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="internal_notes"
@@ -402,16 +419,12 @@ export default function AppointmentEditForm({
                   <FormItem>
                     <FormLabel>Observações Internas</FormLabel>
                     <FormControl>
-                      <Textarea
-                        placeholder="Observações internas da equipe..."
-                        {...field}
-                      />
+                      <Textarea placeholder="Observações internas da equipe..." {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
               {/* Actions */}
               <div className="flex gap-3 pt-4">
                 <Button
@@ -423,12 +436,7 @@ export default function AppointmentEditForm({
                   <Save className="mr-2 h-4 w-4" />
                   Salvar Alterações
                 </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={onCancel}
-                  disabled={isUpdating}
-                >
+                <Button type="button" variant="outline" onClick={onCancel} disabled={isUpdating}>
                   Cancelar
                 </Button>
               </div>

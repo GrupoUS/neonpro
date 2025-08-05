@@ -2,5 +2,5 @@
 export const useToast = () => ({
   toast: () => null,
   dismiss: () => null,
-  toasts: []
+  toasts: [],
 });

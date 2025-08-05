@@ -1,29 +1,41 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
-import { 
-  Settings, 
-  Clock, 
-  Bell, 
-  Shield, 
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Switch } from "@/components/ui/switch";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Separator } from "@/components/ui/separator";
+import type { Badge } from "@/components/ui/badge";
+import type {
+  Settings,
+  Clock,
+  Bell,
+  Shield,
   Database,
   Users,
   FileText,
   Save,
   RefreshCw,
-  AlertTriangle
-} from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+  AlertTriangle,
+} from "lucide-react";
+import type { useToast } from "@/components/ui/use-toast";
 
 interface AutomationConfig {
   enabled: boolean;
@@ -83,43 +95,43 @@ const defaultConfig: AutomationConfig = {
   schedules: {
     fullAutomation: {
       enabled: false,
-      cron: '0 2 * * *',
-      timezone: 'America/Sao_Paulo'
+      cron: "0 2 * * *",
+      timezone: "America/Sao_Paulo",
     },
     consentManagement: {
       enabled: false,
-      cron: '0 */6 * * *'
+      cron: "0 */6 * * *",
     },
     dataSubjectRights: {
       enabled: false,
-      cron: '0 */4 * * *'
+      cron: "0 */4 * * *",
     },
     auditReporting: {
       enabled: false,
-      cron: '0 1 * * 0'
+      cron: "0 1 * * 0",
     },
     anonymization: {
       enabled: false,
-      cron: '0 3 * * 0'
-    }
+      cron: "0 3 * * 0",
+    },
   },
   notifications: {
     email: {
       enabled: false,
       recipients: [],
-      events: []
+      events: [],
     },
     webhook: {
       enabled: false,
-      url: '',
-      events: []
-    }
+      url: "",
+      events: [],
+    },
   },
   limits: {
     maxConcurrentJobs: 3,
     jobTimeout: 3600,
     retryAttempts: 3,
-    batchSize: 100
+    batchSize: 100,
   },
   features: {
     autoConsentManagement: false,
@@ -127,8 +139,8 @@ const defaultConfig: AutomationConfig = {
     autoAuditReporting: false,
     autoAnonymization: false,
     realTimeMonitoring: false,
-    smartAlerts: false
-  }
+    smartAlerts: false,
+  },
 };
 
 export default function AutomationConfig() {
@@ -141,17 +153,17 @@ export default function AutomationConfig() {
   const loadConfig = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/compliance/automation/config');
+      const response = await fetch("/api/compliance/automation/config");
       if (response.ok) {
         const data = await response.json();
         setConfig(data.data);
       }
     } catch (error) {
-      console.error('Erro ao carregar configuração:', error);
+      console.error("Erro ao carregar configuração:", error);
       toast({
-        title: 'Erro',
-        description: 'Falha ao carregar configuração',
-        variant: 'destructive'
+        title: "Erro",
+        description: "Falha ao carregar configuração",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -161,29 +173,29 @@ export default function AutomationConfig() {
   const saveConfig = async () => {
     try {
       setSaving(true);
-      const response = await fetch('/api/compliance/automation/config', {
-        method: 'PUT',
+      const response = await fetch("/api/compliance/automation/config", {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(config)
+        body: JSON.stringify(config),
       });
 
       if (response.ok) {
         setHasChanges(false);
         toast({
-          title: 'Sucesso',
-          description: 'Configuração salva com sucesso'
+          title: "Sucesso",
+          description: "Configuração salva com sucesso",
         });
       } else {
-        throw new Error('Falha ao salvar configuração');
+        throw new Error("Falha ao salvar configuração");
       }
     } catch (error) {
-      console.error('Erro ao salvar configuração:', error);
+      console.error("Erro ao salvar configuração:", error);
       toast({
-        title: 'Erro',
-        description: 'Falha ao salvar configuração',
-        variant: 'destructive'
+        title: "Erro",
+        description: "Falha ao salvar configuração",
+        variant: "destructive",
       });
     } finally {
       setSaving(false);
@@ -195,15 +207,15 @@ export default function AutomationConfig() {
   }, []);
 
   const updateConfig = (path: string, value: any) => {
-    setConfig(prev => {
+    setConfig((prev) => {
       const newConfig = { ...prev };
-      const keys = path.split('.');
+      const keys = path.split(".");
       let current: any = newConfig;
-      
+
       for (let i = 0; i < keys.length - 1; i++) {
         current = current[keys[i]];
       }
-      
+
       current[keys[keys.length - 1]] = value;
       setHasChanges(true);
       return newConfig;
@@ -225,9 +237,7 @@ export default function AutomationConfig() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Configuração da Automação</h1>
-          <p className="text-muted-foreground">
-            Configure os parâmetros da automação LGPD
-          </p>
+          <p className="text-muted-foreground">Configure os parâmetros da automação LGPD</p>
         </div>
         <div className="flex items-center space-x-2">
           {hasChanges && (
@@ -236,12 +246,9 @@ export default function AutomationConfig() {
               Alterações não salvas
             </Badge>
           )}
-          <Button
-            onClick={saveConfig}
-            disabled={saving || !hasChanges}
-          >
-            <Save className={`h-4 w-4 mr-2 ${saving ? 'animate-spin' : ''}`} />
-            {saving ? 'Salvando...' : 'Salvar'}
+          <Button onClick={saveConfig} disabled={saving || !hasChanges}>
+            <Save className={`h-4 w-4 mr-2 ${saving ? "animate-spin" : ""}`} />
+            {saving ? "Salvando..." : "Salvar"}
           </Button>
         </div>
       </div>
@@ -252,9 +259,7 @@ export default function AutomationConfig() {
             <Settings className="h-5 w-5 mr-2" />
             Configuração Geral
           </CardTitle>
-          <CardDescription>
-            Configurações principais da automação
-          </CardDescription>
+          <CardDescription>Configurações principais da automação</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
@@ -269,7 +274,7 @@ export default function AutomationConfig() {
             <Switch
               id="automation-enabled"
               checked={config.enabled}
-              onCheckedChange={(checked) => updateConfig('enabled', checked)}
+              onCheckedChange={(checked) => updateConfig("enabled", checked)}
             />
           </div>
         </CardContent>
@@ -291,9 +296,7 @@ export default function AutomationConfig() {
                 <Clock className="h-5 w-5 mr-2" />
                 Agendamentos
               </CardTitle>
-              <CardDescription>
-                Configure quando cada processo deve ser executado
-              </CardDescription>
+              <CardDescription>Configure quando cada processo deve ser executado</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Automação Completa */}
@@ -302,8 +305,8 @@ export default function AutomationConfig() {
                   <Label className="text-base font-medium">Automação Completa</Label>
                   <Switch
                     checked={config.schedules.fullAutomation.enabled}
-                    onCheckedChange={(checked) => 
-                      updateConfig('schedules.fullAutomation.enabled', checked)
+                    onCheckedChange={(checked) =>
+                      updateConfig("schedules.fullAutomation.enabled", checked)
                     }
                   />
                 </div>
@@ -314,21 +317,19 @@ export default function AutomationConfig() {
                       <Input
                         id="full-cron"
                         value={config.schedules.fullAutomation.cron}
-                        onChange={(e) => 
-                          updateConfig('schedules.fullAutomation.cron', e.target.value)
+                        onChange={(e) =>
+                          updateConfig("schedules.fullAutomation.cron", e.target.value)
                         }
                         placeholder="0 2 * * *"
                       />
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Diariamente às 02:00
-                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">Diariamente às 02:00</p>
                     </div>
                     <div>
                       <Label htmlFor="timezone">Fuso Horário</Label>
                       <Select
                         value={config.schedules.fullAutomation.timezone}
-                        onValueChange={(value) => 
-                          updateConfig('schedules.fullAutomation.timezone', value)
+                        onValueChange={(value) =>
+                          updateConfig("schedules.fullAutomation.timezone", value)
                         }
                       >
                         <SelectTrigger>
@@ -359,8 +360,8 @@ export default function AutomationConfig() {
                   </div>
                   <Switch
                     checked={config.schedules.consentManagement.enabled}
-                    onCheckedChange={(checked) => 
-                      updateConfig('schedules.consentManagement.enabled', checked)
+                    onCheckedChange={(checked) =>
+                      updateConfig("schedules.consentManagement.enabled", checked)
                     }
                   />
                 </div>
@@ -370,14 +371,12 @@ export default function AutomationConfig() {
                     <Input
                       id="consent-cron"
                       value={config.schedules.consentManagement.cron}
-                      onChange={(e) => 
-                        updateConfig('schedules.consentManagement.cron', e.target.value)
+                      onChange={(e) =>
+                        updateConfig("schedules.consentManagement.cron", e.target.value)
                       }
                       placeholder="0 */6 * * *"
                     />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      A cada 6 horas
-                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">A cada 6 horas</p>
                   </div>
                 )}
               </div>
@@ -395,8 +394,8 @@ export default function AutomationConfig() {
                   </div>
                   <Switch
                     checked={config.schedules.dataSubjectRights.enabled}
-                    onCheckedChange={(checked) => 
-                      updateConfig('schedules.dataSubjectRights.enabled', checked)
+                    onCheckedChange={(checked) =>
+                      updateConfig("schedules.dataSubjectRights.enabled", checked)
                     }
                   />
                 </div>
@@ -406,14 +405,12 @@ export default function AutomationConfig() {
                     <Input
                       id="rights-cron"
                       value={config.schedules.dataSubjectRights.cron}
-                      onChange={(e) => 
-                        updateConfig('schedules.dataSubjectRights.cron', e.target.value)
+                      onChange={(e) =>
+                        updateConfig("schedules.dataSubjectRights.cron", e.target.value)
                       }
                       placeholder="0 */4 * * *"
                     />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      A cada 4 horas
-                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">A cada 4 horas</p>
                   </div>
                 )}
               </div>
@@ -427,53 +424,57 @@ export default function AutomationConfig() {
                 <Shield className="h-5 w-5 mr-2" />
                 Recursos da Automação
               </CardTitle>
-              <CardDescription>
-                Habilite ou desabilite recursos específicos
-              </CardDescription>
+              <CardDescription>Habilite ou desabilite recursos específicos</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label className="text-base font-medium">Gestão Automática de Consentimentos</Label>
+                    <Label className="text-base font-medium">
+                      Gestão Automática de Consentimentos
+                    </Label>
                     <p className="text-sm text-muted-foreground">
                       Verificação e renovação automática de consentimentos
                     </p>
                   </div>
                   <Switch
                     checked={config.features.autoConsentManagement}
-                    onCheckedChange={(checked) => 
-                      updateConfig('features.autoConsentManagement', checked)
+                    onCheckedChange={(checked) =>
+                      updateConfig("features.autoConsentManagement", checked)
                     }
                   />
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label className="text-base font-medium">Processamento de Direitos dos Titulares</Label>
+                    <Label className="text-base font-medium">
+                      Processamento de Direitos dos Titulares
+                    </Label>
                     <p className="text-sm text-muted-foreground">
                       Processamento automático de solicitações de direitos
                     </p>
                   </div>
                   <Switch
                     checked={config.features.autoDataSubjectRights}
-                    onCheckedChange={(checked) => 
-                      updateConfig('features.autoDataSubjectRights', checked)
+                    onCheckedChange={(checked) =>
+                      updateConfig("features.autoDataSubjectRights", checked)
                     }
                   />
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label className="text-base font-medium">Relatórios de Auditoria Automáticos</Label>
+                    <Label className="text-base font-medium">
+                      Relatórios de Auditoria Automáticos
+                    </Label>
                     <p className="text-sm text-muted-foreground">
                       Geração automática de relatórios de conformidade
                     </p>
                   </div>
                   <Switch
                     checked={config.features.autoAuditReporting}
-                    onCheckedChange={(checked) => 
-                      updateConfig('features.autoAuditReporting', checked)
+                    onCheckedChange={(checked) =>
+                      updateConfig("features.autoAuditReporting", checked)
                     }
                   />
                 </div>
@@ -487,8 +488,8 @@ export default function AutomationConfig() {
                   </div>
                   <Switch
                     checked={config.features.autoAnonymization}
-                    onCheckedChange={(checked) => 
-                      updateConfig('features.autoAnonymization', checked)
+                    onCheckedChange={(checked) =>
+                      updateConfig("features.autoAnonymization", checked)
                     }
                   />
                 </div>
@@ -502,8 +503,8 @@ export default function AutomationConfig() {
                   </div>
                   <Switch
                     checked={config.features.realTimeMonitoring}
-                    onCheckedChange={(checked) => 
-                      updateConfig('features.realTimeMonitoring', checked)
+                    onCheckedChange={(checked) =>
+                      updateConfig("features.realTimeMonitoring", checked)
                     }
                   />
                 </div>
@@ -517,9 +518,7 @@ export default function AutomationConfig() {
                   </div>
                   <Switch
                     checked={config.features.smartAlerts}
-                    onCheckedChange={(checked) => 
-                      updateConfig('features.smartAlerts', checked)
-                    }
+                    onCheckedChange={(checked) => updateConfig("features.smartAlerts", checked)}
                   />
                 </div>
               </div>
@@ -534,9 +533,7 @@ export default function AutomationConfig() {
                 <Bell className="h-5 w-5 mr-2" />
                 Notificações
               </CardTitle>
-              <CardDescription>
-                Configure como e quando receber notificações
-              </CardDescription>
+              <CardDescription>Configure como e quando receber notificações</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Email */}
@@ -545,8 +542,8 @@ export default function AutomationConfig() {
                   <Label className="text-base font-medium">Notificações por Email</Label>
                   <Switch
                     checked={config.notifications.email.enabled}
-                    onCheckedChange={(checked) => 
-                      updateConfig('notifications.email.enabled', checked)
+                    onCheckedChange={(checked) =>
+                      updateConfig("notifications.email.enabled", checked)
                     }
                   />
                 </div>
@@ -556,17 +553,17 @@ export default function AutomationConfig() {
                       <Label htmlFor="email-recipients">Destinatários</Label>
                       <Textarea
                         id="email-recipients"
-                        value={config.notifications.email.recipients.join('\n')}
-                        onChange={(e) => 
-                          updateConfig('notifications.email.recipients', 
-                            e.target.value.split('\n').filter(email => email.trim()))
+                        value={config.notifications.email.recipients.join("\n")}
+                        onChange={(e) =>
+                          updateConfig(
+                            "notifications.email.recipients",
+                            e.target.value.split("\n").filter((email) => email.trim()),
+                          )
                         }
                         placeholder="admin@clinica.com\nresponsavel@clinica.com"
                         rows={3}
                       />
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Um email por linha
-                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">Um email por linha</p>
                     </div>
                   </div>
                 )}
@@ -580,8 +577,8 @@ export default function AutomationConfig() {
                   <Label className="text-base font-medium">Webhook</Label>
                   <Switch
                     checked={config.notifications.webhook.enabled}
-                    onCheckedChange={(checked) => 
-                      updateConfig('notifications.webhook.enabled', checked)
+                    onCheckedChange={(checked) =>
+                      updateConfig("notifications.webhook.enabled", checked)
                     }
                   />
                 </div>
@@ -591,9 +588,7 @@ export default function AutomationConfig() {
                     <Input
                       id="webhook-url"
                       value={config.notifications.webhook.url}
-                      onChange={(e) => 
-                        updateConfig('notifications.webhook.url', e.target.value)
-                      }
+                      onChange={(e) => updateConfig("notifications.webhook.url", e.target.value)}
                       placeholder="https://api.exemplo.com/webhook"
                     />
                   </div>
@@ -610,9 +605,7 @@ export default function AutomationConfig() {
                 <Database className="h-5 w-5 mr-2" />
                 Limites e Performance
               </CardTitle>
-              <CardDescription>
-                Configure limites de execução e performance
-              </CardDescription>
+              <CardDescription>Configure limites de execução e performance</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid gap-6 md:grid-cols-2">
@@ -624,8 +617,8 @@ export default function AutomationConfig() {
                     min="1"
                     max="10"
                     value={config.limits.maxConcurrentJobs}
-                    onChange={(e) => 
-                      updateConfig('limits.maxConcurrentJobs', parseInt(e.target.value))
+                    onChange={(e) =>
+                      updateConfig("limits.maxConcurrentJobs", parseInt(e.target.value))
                     }
                   />
                   <p className="text-xs text-muted-foreground mt-1">
@@ -641,9 +634,7 @@ export default function AutomationConfig() {
                     min="300"
                     max="7200"
                     value={config.limits.jobTimeout}
-                    onChange={(e) => 
-                      updateConfig('limits.jobTimeout', parseInt(e.target.value))
-                    }
+                    onChange={(e) => updateConfig("limits.jobTimeout", parseInt(e.target.value))}
                   />
                   <p className="text-xs text-muted-foreground mt-1">
                     Tempo limite para execução de cada job
@@ -658,9 +649,7 @@ export default function AutomationConfig() {
                     min="0"
                     max="5"
                     value={config.limits.retryAttempts}
-                    onChange={(e) => 
-                      updateConfig('limits.retryAttempts', parseInt(e.target.value))
-                    }
+                    onChange={(e) => updateConfig("limits.retryAttempts", parseInt(e.target.value))}
                   />
                   <p className="text-xs text-muted-foreground mt-1">
                     Número de tentativas em caso de falha
@@ -675,9 +664,7 @@ export default function AutomationConfig() {
                     min="10"
                     max="1000"
                     value={config.limits.batchSize}
-                    onChange={(e) => 
-                      updateConfig('limits.batchSize', parseInt(e.target.value))
-                    }
+                    onChange={(e) => updateConfig("limits.batchSize", parseInt(e.target.value))}
                   />
                   <p className="text-xs text-muted-foreground mt-1">
                     Número de registros processados por lote

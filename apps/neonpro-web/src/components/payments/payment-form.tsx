@@ -1,12 +1,19 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, CreditCard, CheckCircle, AlertTriangle } from 'lucide-react';
-import { toast } from 'sonner';
+import React, { useState } from "react";
+import type { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
+import type { Button } from "@/components/ui/button";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Loader2, CreditCard, CheckCircle, AlertTriangle } from "lucide-react";
+import type { toast } from "sonner";
 
 interface PaymentFormProps {
   invoiceId: string;
@@ -16,16 +23,16 @@ interface PaymentFormProps {
   onError?: (error: string) => void;
 }
 
-export default function PaymentForm({ 
-  invoiceId, 
-  amount, 
-  currency = 'brl',
+export default function PaymentForm({
+  invoiceId,
+  amount,
+  currency = "brl",
   onSuccess,
-  onError 
+  onError,
 }: PaymentFormProps) {
   const stripe = useStripe();
   const elements = useElements();
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -33,14 +40,14 @@ export default function PaymentForm({
   const cardElementOptions = {
     style: {
       base: {
-        fontSize: '16px',
-        color: '#424770',
-        '::placeholder': {
-          color: '#aab7c4',
+        fontSize: "16px",
+        color: "#424770",
+        "::placeholder": {
+          color: "#aab7c4",
         },
       },
       invalid: {
-        color: '#9e2146',
+        color: "#9e2146",
       },
     },
   };
@@ -49,14 +56,14 @@ export default function PaymentForm({
     event.preventDefault();
 
     if (!stripe || !elements) {
-      setError('Stripe não foi carregado corretamente');
+      setError("Stripe não foi carregado corretamente");
       return;
     }
 
     const cardElement = elements.getElement(CardElement);
 
     if (!cardElement) {
-      setError('Elemento do cartão não encontrado');
+      setError("Elemento do cartão não encontrado");
       return;
     }
 
@@ -66,10 +73,10 @@ export default function PaymentForm({
 
     try {
       // Criar Payment Intent
-      const response = await fetch('/api/payments/create-intent', {
-        method: 'POST',
+      const response = await fetch("/api/payments/create-intent", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           invoiceId,
@@ -85,39 +92,35 @@ export default function PaymentForm({
       }
 
       if (!clientSecret) {
-        throw new Error('Client secret não foi retornado');
+        throw new Error("Client secret não foi retornado");
       }
 
       // Confirmar pagamento
-      const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(
-        clientSecret,
-        {
-          payment_method: {
-            card: cardElement,
-          },
-        }
-      );
+      const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: cardElement,
+        },
+      });
 
       if (stripeError) {
-        throw new Error(stripeError.message || 'Erro no pagamento');
+        throw new Error(stripeError.message || "Erro no pagamento");
       }
 
-      if (paymentIntent?.status === 'succeeded') {
-        setSuccess('Pagamento processado com sucesso!');
-        toast.success('Pagamento realizado com sucesso');
-        
+      if (paymentIntent?.status === "succeeded") {
+        setSuccess("Pagamento processado com sucesso!");
+        toast.success("Pagamento realizado com sucesso");
+
         if (onSuccess) {
           onSuccess(paymentIntent.id);
         }
       } else {
-        throw new Error('Pagamento não foi processado corretamente');
+        throw new Error("Pagamento não foi processado corretamente");
       }
-
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido';
+      const errorMessage = err instanceof Error ? err.message : "Erro desconhecido";
       setError(errorMessage);
       toast.error(`Erro no pagamento: ${errorMessage}`);
-      
+
       if (onError) {
         onError(errorMessage);
       }
@@ -127,9 +130,9 @@ export default function PaymentForm({
   };
 
   const formatAmount = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(value / 100);
   };
 
@@ -145,9 +148,7 @@ export default function PaymentForm({
         <CardContent>
           <Alert className="border-green-200 bg-green-50">
             <CheckCircle className="h-4 w-4 text-green-600" />
-            <AlertDescription className="text-green-800">
-              {success}
-            </AlertDescription>
+            <AlertDescription className="text-green-800">{success}</AlertDescription>
           </Alert>
         </CardContent>
       </Card>
@@ -180,10 +181,7 @@ export default function PaymentForm({
               Dados do Cartão
             </label>
             <div className="p-3 border border-gray-300 rounded-md">
-              <CardElement 
-                id="card-element"
-                options={cardElementOptions}
-              />
+              <CardElement id="card-element" options={cardElementOptions} />
             </div>
           </div>
 
@@ -195,11 +193,7 @@ export default function PaymentForm({
         </CardContent>
 
         <CardFooter>
-          <Button 
-            type="submit" 
-            disabled={!stripe || isLoading}
-            className="w-full"
-          >
+          <Button type="submit" disabled={!stripe || isLoading} className="w-full">
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

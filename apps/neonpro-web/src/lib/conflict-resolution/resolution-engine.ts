@@ -3,8 +3,8 @@
  * Advanced system for generating and applying automated conflict resolutions
  */
 
-import { createClient } from '@supabase/supabase-js';
-import {
+import type { createClient } from "@supabase/supabase-js";
+import type {
   ConflictDetails,
   ResolutionOption,
   ResolutionStrategy,
@@ -13,15 +13,15 @@ import {
   ProposedChanges,
   OptimizationConfig,
   OptimizationConstraints,
-  RecommendedAction
-} from './types';
-import { Database } from '@/types/supabase';
-import { ConflictDetectionEngine } from './conflict-detector';
+  RecommendedAction,
+} from "./types";
+import type { Database } from "@/types/supabase";
+import type { ConflictDetectionEngine } from "./conflict-detector";
 
-type Appointment = Database['public']['Tables']['appointments']['Row'];
-type Staff = Database['public']['Tables']['staff']['Row'];
-type Room = Database['public']['Tables']['rooms']['Row'];
-type Equipment = Database['public']['Tables']['equipment']['Row'];
+type Appointment = Database["public"]["Tables"]["appointments"]["Row"];
+type Staff = Database["public"]["Tables"]["staff"]["Row"];
+type Room = Database["public"]["Tables"]["rooms"]["Row"];
+type Equipment = Database["public"]["Tables"]["equipment"]["Row"];
 
 export class ConflictResolutionEngine {
   private supabase;
@@ -35,11 +35,11 @@ export class ConflictResolutionEngine {
     supabaseKey: string,
     conflictDetector: ConflictDetectionEngine,
     config: Partial<OptimizationConfig> = {},
-    constraints: Partial<OptimizationConstraints> = {}
+    constraints: Partial<OptimizationConstraints> = {},
   ) {
-    this.const supabase = createClient(<Database>(supabaseUrl, supabaseKey);
+    this.supabase = createClient<Database>(supabaseUrl, supabaseKey);
     this.conflictDetector = conflictDetector;
-    
+
     this.config = {
       prioritizePatientSatisfaction: true,
       prioritizeStaffWorkload: true,
@@ -50,7 +50,7 @@ export class ConflictResolutionEngine {
         staffWorkload: 0.25,
         resourceUtilization: 0.2,
         operationalEfficiency: 0.15,
-        financialImpact: 0.1
+        financialImpact: 0.1,
       },
       constraints: {
         maxReschedulingDistance: 24,
@@ -58,21 +58,21 @@ export class ConflictResolutionEngine {
         maxDailyWorkHours: 8,
         requiredEquipmentAvailability: 0.95,
         maxRoomCapacityUtilization: 0.9,
-        businessHours: { start: '08:00', end: '18:00' },
-        excludedDays: ['sunday']
+        businessHours: { start: "08:00", end: "18:00" },
+        excludedDays: ["sunday"],
       },
-      ...config
+      ...config,
     };
-    
+
     this.constraints = {
       maxReschedulingDistance: 24,
       minStaffBreakTime: 15,
       maxDailyWorkHours: 8,
       requiredEquipmentAvailability: 0.95,
       maxRoomCapacityUtilization: 0.9,
-      businessHours: { start: '08:00', end: '18:00' },
-      excludedDays: ['sunday'],
-      ...constraints
+      businessHours: { start: "08:00", end: "18:00" },
+      excludedDays: ["sunday"],
+      ...constraints,
     };
   }
 
@@ -100,15 +100,29 @@ export class ConflictResolutionEngine {
       const resolutions: ResolutionOption[] = [];
 
       // Strategy 1: Reschedule later
-      const rescheduleOptions = await this.generateRescheduleOptions(conflict, appointments, resources, 'later');
+      const rescheduleOptions = await this.generateRescheduleOptions(
+        conflict,
+        appointments,
+        resources,
+        "later",
+      );
       resolutions.push(...rescheduleOptions);
 
       // Strategy 2: Reschedule earlier
-      const earlierOptions = await this.generateRescheduleOptions(conflict, appointments, resources, 'earlier');
+      const earlierOptions = await this.generateRescheduleOptions(
+        conflict,
+        appointments,
+        resources,
+        "earlier",
+      );
       resolutions.push(...earlierOptions);
 
       // Strategy 3: Change resources
-      const resourceOptions = await this.generateResourceChangeOptions(conflict, appointments, resources);
+      const resourceOptions = await this.generateResourceChangeOptions(
+        conflict,
+        appointments,
+        resources,
+      );
       resolutions.push(...resourceOptions);
 
       // Strategy 4: Split or merge appointments
@@ -116,7 +130,11 @@ export class ConflictResolutionEngine {
       resolutions.push(...restructureOptions);
 
       // Strategy 5: Alternative solutions
-      const alternativeOptions = await this.generateAlternativeOptions(conflict, appointments, resources);
+      const alternativeOptions = await this.generateAlternativeOptions(
+        conflict,
+        appointments,
+        resources,
+      );
       resolutions.push(...alternativeOptions);
 
       // Evaluate and rank all options
@@ -128,7 +146,7 @@ export class ConflictResolutionEngine {
 
       return rankedResolutions;
     } catch (error) {
-      console.error('Error generating resolutions:', error);
+      console.error("Error generating resolutions:", error);
       throw new Error(`Resolution generation failed: ${error.message}`);
     }
   }
@@ -153,22 +171,22 @@ export class ConflictResolutionEngine {
           appliedChanges: {},
           impact: this.createEmptyImpact(),
           notifications: [],
-          errors: validation.errors
+          errors: validation.errors,
         };
       }
 
       // Apply changes in transaction
       const result = await this.applyChangesInTransaction(resolution);
-      
+
       // Generate notifications
       const notifications = await this.generateNotifications(resolution, result);
-      
+
       // Calculate actual impact
       const impact = await this.calculateActualImpact(resolution, result);
-      
+
       // Log resolution application
       await this.logResolutionApplication(resolutionId, result, impact);
-      
+
       // Clear related caches
       this.clearRelatedCaches(resolution);
 
@@ -178,17 +196,17 @@ export class ConflictResolutionEngine {
         appliedChanges: result.changes,
         impact,
         notifications,
-        warnings: result.warnings
+        warnings: result.warnings,
       };
     } catch (error) {
-      console.error('Error applying resolution:', error);
+      console.error("Error applying resolution:", error);
       return {
         success: false,
         resolutionId,
         appliedChanges: {},
         impact: this.createEmptyImpact(),
         notifications: [],
-        errors: [error.message]
+        errors: [error.message],
       };
     }
   }
@@ -200,35 +218,41 @@ export class ConflictResolutionEngine {
     conflict: ConflictDetails,
     appointments: Appointment[],
     resources: any,
-    direction: 'earlier' | 'later'
+    direction: "earlier" | "later",
   ): Promise<ResolutionOption[]> {
     const options: ResolutionOption[] = [];
-    
+
     for (const appointment of appointments) {
       const availableSlots = await this.findAvailableSlots(
         appointment,
         resources,
         direction,
-        this.constraints.maxReschedulingDistance
+        this.constraints.maxReschedulingDistance,
       );
 
-      for (const slot of availableSlots.slice(0, 3)) { // Top 3 options
+      for (const slot of availableSlots.slice(0, 3)) {
+        // Top 3 options
         const proposedChanges: ProposedChanges = {
-          appointments: [{
-            id: appointment.id,
-            changes: {
-              start_time: slot.start.toISOString(),
-              end_time: slot.end.toISOString()
-            }
-          }]
+          appointments: [
+            {
+              id: appointment.id,
+              changes: {
+                start_time: slot.start.toISOString(),
+                end_time: slot.end.toISOString(),
+              },
+            },
+          ],
         };
 
         const impact = await this.calculateResolutionImpact(proposedChanges, conflict);
         const confidence = this.calculateConfidence(slot, appointment, resources);
-        
+
         options.push({
           id: `reschedule_${direction}_${appointment.id}_${slot.start.getTime()}`,
-          strategy: direction === 'later' ? ResolutionStrategy.RESCHEDULE_LATER : ResolutionStrategy.RESCHEDULE_EARLIER,
+          strategy:
+            direction === "later"
+              ? ResolutionStrategy.RESCHEDULE_LATER
+              : ResolutionStrategy.RESCHEDULE_EARLIER,
           description: `Reschedule appointment ${direction} to ${slot.start.toLocaleString()}`,
           confidence,
           impact,
@@ -241,15 +265,17 @@ export class ConflictResolutionEngine {
           metadata: {
             originalTime: {
               start: appointment.start_time,
-              end: appointment.end_time
+              end: appointment.end_time,
             },
             newTime: {
               start: slot.start.toISOString(),
-              end: slot.end.toISOString()
+              end: slot.end.toISOString(),
             },
-            timeShift: Math.abs(new Date(appointment.start_time).getTime() - slot.start.getTime()) / (1000 * 60 * 60),
-            slot
-          }
+            timeShift:
+              Math.abs(new Date(appointment.start_time).getTime() - slot.start.getTime()) /
+              (1000 * 60 * 60),
+            slot,
+          },
         });
       }
     }
@@ -263,7 +289,7 @@ export class ConflictResolutionEngine {
   private async generateResourceChangeOptions(
     conflict: ConflictDetails,
     appointments: Appointment[],
-    resources: any
+    resources: any,
   ): Promise<ResolutionOption[]> {
     const options: ResolutionOption[] = [];
 
@@ -274,20 +300,22 @@ export class ConflictResolutionEngine {
           appointment,
           resources.staff,
           new Date(appointment.start_time),
-          new Date(appointment.end_time)
+          new Date(appointment.end_time),
         );
 
         for (const staff of alternativeStaff.slice(0, 2)) {
           const proposedChanges: ProposedChanges = {
-            staffAssignments: [{
-              appointmentId: appointment.id,
-              oldStaffId: appointment.staff_id,
-              newStaffId: staff.id
-            }]
+            staffAssignments: [
+              {
+                appointmentId: appointment.id,
+                oldStaffId: appointment.staff_id,
+                newStaffId: staff.id,
+              },
+            ],
           };
 
           const impact = await this.calculateResolutionImpact(proposedChanges, conflict);
-          
+
           options.push({
             id: `change_staff_${appointment.id}_${staff.id}`,
             strategy: ResolutionStrategy.CHANGE_STAFF,
@@ -303,8 +331,8 @@ export class ConflictResolutionEngine {
             metadata: {
               originalStaff: resources.staff.find((s: any) => s.id === appointment.staff_id),
               newStaff: staff,
-              appointment
-            }
+              appointment,
+            },
           });
         }
       }
@@ -315,20 +343,22 @@ export class ConflictResolutionEngine {
           appointment,
           resources.rooms,
           new Date(appointment.start_time),
-          new Date(appointment.end_time)
+          new Date(appointment.end_time),
         );
 
         for (const room of alternativeRooms.slice(0, 2)) {
           const proposedChanges: ProposedChanges = {
-            roomAssignments: [{
-              appointmentId: appointment.id,
-              oldRoomId: appointment.room_id,
-              newRoomId: room.id
-            }]
+            roomAssignments: [
+              {
+                appointmentId: appointment.id,
+                oldRoomId: appointment.room_id,
+                newRoomId: room.id,
+              },
+            ],
           };
 
           const impact = await this.calculateResolutionImpact(proposedChanges, conflict);
-          
+
           options.push({
             id: `change_room_${appointment.id}_${room.id}`,
             strategy: ResolutionStrategy.CHANGE_ROOM,
@@ -344,8 +374,8 @@ export class ConflictResolutionEngine {
             metadata: {
               originalRoom: resources.rooms.find((r: any) => r.id === appointment.room_id),
               newRoom: room,
-              appointment
-            }
+              appointment,
+            },
           });
         }
       }
@@ -359,16 +389,18 @@ export class ConflictResolutionEngine {
    */
   private async generateRestructureOptions(
     conflict: ConflictDetails,
-    appointments: Appointment[]
+    appointments: Appointment[],
   ): Promise<ResolutionOption[]> {
     const options: ResolutionOption[] = [];
 
     // Split appointment options
     for (const appointment of appointments) {
-      const duration = new Date(appointment.end_time).getTime() - new Date(appointment.start_time).getTime();
+      const duration =
+        new Date(appointment.end_time).getTime() - new Date(appointment.start_time).getTime();
       const durationMinutes = duration / (1000 * 60);
 
-      if (durationMinutes >= 60) { // Only split appointments longer than 1 hour
+      if (durationMinutes >= 60) {
+        // Only split appointments longer than 1 hour
         const splitOptions = await this.generateSplitOptions(appointment);
         options.push(...splitOptions);
       }
@@ -389,7 +421,7 @@ export class ConflictResolutionEngine {
   private async generateAlternativeOptions(
     conflict: ConflictDetails,
     appointments: Appointment[],
-    resources: any
+    resources: any,
   ): Promise<ResolutionOption[]> {
     const options: ResolutionOption[] = [];
 
@@ -407,42 +439,45 @@ export class ConflictResolutionEngine {
     options.push({
       id: `manual_intervention_${conflict.id}`,
       strategy: ResolutionStrategy.MANUAL_INTERVENTION,
-      description: 'Requires manual intervention by scheduling manager',
+      description: "Requires manual intervention by scheduling manager",
       confidence: 1.0,
       impact: this.createNeutralImpact(),
       estimatedTime: 30,
       cost: 0.8,
       feasibility: 1.0,
       proposedChanges: {},
-      pros: ['Flexible solution', 'Human oversight', 'Custom resolution'],
-      cons: ['Requires manual work', 'Time consuming', 'May delay resolution'],
+      pros: ["Flexible solution", "Human oversight", "Custom resolution"],
+      cons: ["Requires manual work", "Time consuming", "May delay resolution"],
       metadata: {
         conflict,
         appointments,
-        requiresApproval: true
-      }
+        requiresApproval: true,
+      },
     });
 
     return options;
-  }  /**
+  } /**
    * Evaluate resolution options
    */
   private async evaluateResolutions(
     resolutions: ResolutionOption[],
-    conflict: ConflictDetails
+    conflict: ConflictDetails,
   ): Promise<ResolutionOption[]> {
     const evaluatedResolutions: ResolutionOption[] = [];
 
     for (const resolution of resolutions) {
       // Recalculate impact with current data
-      const updatedImpact = await this.calculateResolutionImpact(resolution.proposedChanges, conflict);
-      
+      const updatedImpact = await this.calculateResolutionImpact(
+        resolution.proposedChanges,
+        conflict,
+      );
+
       // Calculate overall score
       const overallScore = this.calculateOverallScore(updatedImpact);
-      
+
       // Update feasibility based on current constraints
       const updatedFeasibility = await this.validateFeasibility(resolution);
-      
+
       evaluatedResolutions.push({
         ...resolution,
         impact: updatedImpact,
@@ -450,8 +485,8 @@ export class ConflictResolutionEngine {
         metadata: {
           ...resolution.metadata,
           overallScore,
-          evaluatedAt: new Date().toISOString()
-        }
+          evaluatedAt: new Date().toISOString(),
+        },
       });
     }
 
@@ -474,7 +509,7 @@ export class ConflictResolutionEngine {
    */
   private calculateOverallScore(impact: ResolutionImpact): number {
     const weights = this.config.weights;
-    
+
     return (
       impact.patientSatisfaction * weights.patientSatisfaction +
       impact.staffWorkload * weights.staffWorkload +
@@ -489,7 +524,7 @@ export class ConflictResolutionEngine {
    */
   private async calculateResolutionImpact(
     proposedChanges: ProposedChanges,
-    conflict: ConflictDetails
+    conflict: ConflictDetails,
   ): Promise<ResolutionImpact> {
     let patientSatisfaction = 0;
     let staffWorkload = 0;
@@ -508,7 +543,7 @@ export class ConflictResolutionEngine {
           const originalTime = new Date(appointment.start_time);
           const newTime = new Date(change.changes.start_time);
           const timeDiff = Math.abs(newTime.getTime() - originalTime.getTime()) / (1000 * 60 * 60);
-          
+
           // Less impact for smaller time changes
           patientSatisfaction -= Math.min(timeDiff / 24, 0.5);
         }
@@ -560,7 +595,7 @@ export class ConflictResolutionEngine {
       resourceUtilization,
       operationalEfficiency,
       financialImpact,
-      overallScore: 0
+      overallScore: 0,
     });
 
     return {
@@ -569,7 +604,7 @@ export class ConflictResolutionEngine {
       resourceUtilization: Math.max(-1, Math.min(1, resourceUtilization)),
       operationalEfficiency: Math.max(-1, Math.min(1, operationalEfficiency)),
       financialImpact: Math.max(-1, Math.min(1, financialImpact)),
-      overallScore
+      overallScore,
     };
   }
 
@@ -583,7 +618,7 @@ export class ConflictResolutionEngine {
 
     try {
       // Start transaction
-      const { data, error } = await this.supabase.rpc('begin_transaction');
+      const { data, error } = await this.supabase.rpc("begin_transaction");
       if (error) throw error;
 
       // Apply appointment changes
@@ -591,9 +626,9 @@ export class ConflictResolutionEngine {
         appliedChanges.appointments = [];
         for (const change of changes.appointments) {
           const { error: updateError } = await this.supabase
-            .from('appointments')
+            .from("appointments")
             .update(change.changes)
-            .eq('id', change.id);
+            .eq("id", change.id);
 
           if (updateError) {
             warnings.push(`Failed to update appointment ${change.id}: ${updateError.message}`);
@@ -608,12 +643,14 @@ export class ConflictResolutionEngine {
         appliedChanges.staffAssignments = [];
         for (const assignment of changes.staffAssignments) {
           const { error: updateError } = await this.supabase
-            .from('appointments')
+            .from("appointments")
             .update({ staff_id: assignment.newStaffId })
-            .eq('id', assignment.appointmentId);
+            .eq("id", assignment.appointmentId);
 
           if (updateError) {
-            warnings.push(`Failed to update staff assignment for appointment ${assignment.appointmentId}: ${updateError.message}`);
+            warnings.push(
+              `Failed to update staff assignment for appointment ${assignment.appointmentId}: ${updateError.message}`,
+            );
           } else {
             appliedChanges.staffAssignments.push(assignment);
           }
@@ -625,12 +662,14 @@ export class ConflictResolutionEngine {
         appliedChanges.roomAssignments = [];
         for (const assignment of changes.roomAssignments) {
           const { error: updateError } = await this.supabase
-            .from('appointments')
+            .from("appointments")
             .update({ room_id: assignment.newRoomId })
-            .eq('id', assignment.appointmentId);
+            .eq("id", assignment.appointmentId);
 
           if (updateError) {
-            warnings.push(`Failed to update room assignment for appointment ${assignment.appointmentId}: ${updateError.message}`);
+            warnings.push(
+              `Failed to update room assignment for appointment ${assignment.appointmentId}: ${updateError.message}`,
+            );
           } else {
             appliedChanges.roomAssignments.push(assignment);
           }
@@ -641,28 +680,32 @@ export class ConflictResolutionEngine {
       if (changes.equipmentAssignments) {
         appliedChanges.equipmentAssignments = [];
         for (const assignment of changes.equipmentAssignments) {
-          if (assignment.action === 'assign') {
+          if (assignment.action === "assign") {
             const { error: insertError } = await this.supabase
-              .from('appointment_equipment')
+              .from("appointment_equipment")
               .insert({
                 appointment_id: assignment.appointmentId,
-                equipment_id: assignment.equipmentId
+                equipment_id: assignment.equipmentId,
               });
 
             if (insertError) {
-              warnings.push(`Failed to assign equipment ${assignment.equipmentId}: ${insertError.message}`);
+              warnings.push(
+                `Failed to assign equipment ${assignment.equipmentId}: ${insertError.message}`,
+              );
             } else {
               appliedChanges.equipmentAssignments.push(assignment);
             }
-          } else if (assignment.action === 'unassign') {
+          } else if (assignment.action === "unassign") {
             const { error: deleteError } = await this.supabase
-              .from('appointment_equipment')
+              .from("appointment_equipment")
               .delete()
-              .eq('appointment_id', assignment.appointmentId)
-              .eq('equipment_id', assignment.equipmentId);
+              .eq("appointment_id", assignment.appointmentId)
+              .eq("equipment_id", assignment.equipmentId);
 
             if (deleteError) {
-              warnings.push(`Failed to unassign equipment ${assignment.equipmentId}: ${deleteError.message}`);
+              warnings.push(
+                `Failed to unassign equipment ${assignment.equipmentId}: ${deleteError.message}`,
+              );
             } else {
               appliedChanges.equipmentAssignments.push(assignment);
             }
@@ -675,7 +718,7 @@ export class ConflictResolutionEngine {
         appliedChanges.newAppointments = [];
         for (const newApt of changes.newAppointments) {
           const { data: insertedApt, error: insertError } = await this.supabase
-            .from('appointments')
+            .from("appointments")
             .insert(newApt)
             .select()
             .single();
@@ -693,9 +736,9 @@ export class ConflictResolutionEngine {
         appliedChanges.cancelledAppointments = [];
         for (const aptId of changes.cancelledAppointments) {
           const { error: updateError } = await this.supabase
-            .from('appointments')
-            .update({ status: 'cancelled' })
-            .eq('id', aptId);
+            .from("appointments")
+            .update({ status: "cancelled" })
+            .eq("id", aptId);
 
           if (updateError) {
             warnings.push(`Failed to cancel appointment ${aptId}: ${updateError.message}`);
@@ -706,13 +749,13 @@ export class ConflictResolutionEngine {
       }
 
       // Commit transaction
-      const { error: commitError } = await this.supabase.rpc('commit_transaction');
+      const { error: commitError } = await this.supabase.rpc("commit_transaction");
       if (commitError) throw commitError;
 
       return { changes: appliedChanges, warnings };
     } catch (error) {
       // Rollback transaction
-      await this.supabase.rpc('rollback_transaction');
+      await this.supabase.rpc("rollback_transaction");
       throw error;
     }
   }
@@ -720,7 +763,9 @@ export class ConflictResolutionEngine {
   /**
    * Validate resolution before applying
    */
-  private async validateResolution(resolution: ResolutionOption): Promise<{ isValid: boolean; errors: string[] }> {
+  private async validateResolution(
+    resolution: ResolutionOption,
+  ): Promise<{ isValid: boolean; errors: string[] }> {
     const errors: string[] = [];
 
     // Check if appointments still exist
@@ -729,7 +774,7 @@ export class ConflictResolutionEngine {
         const appointment = await this.getAppointmentById(change.id);
         if (!appointment) {
           errors.push(`Appointment ${change.id} no longer exists`);
-        } else if (appointment.status !== 'scheduled') {
+        } else if (appointment.status !== "scheduled") {
           errors.push(`Appointment ${change.id} is no longer scheduled`);
         }
       }
@@ -761,7 +806,7 @@ export class ConflictResolutionEngine {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -771,36 +816,39 @@ export class ConflictResolutionEngine {
   private async findAvailableSlots(
     appointment: Appointment,
     resources: any,
-    direction: 'earlier' | 'later',
-    maxHours: number
+    direction: "earlier" | "later",
+    maxHours: number,
   ): Promise<{ start: Date; end: Date; score: number }[]> {
     const slots: { start: Date; end: Date; score: number }[] = [];
-    const duration = new Date(appointment.end_time).getTime() - new Date(appointment.start_time).getTime();
+    const duration =
+      new Date(appointment.end_time).getTime() - new Date(appointment.start_time).getTime();
     const originalStart = new Date(appointment.start_time);
-    
-    const searchStart = direction === 'earlier' 
-      ? new Date(originalStart.getTime() - (maxHours * 60 * 60 * 1000))
-      : originalStart;
-    
-    const searchEnd = direction === 'later'
-      ? new Date(originalStart.getTime() + (maxHours * 60 * 60 * 1000))
-      : originalStart;
+
+    const searchStart =
+      direction === "earlier"
+        ? new Date(originalStart.getTime() - maxHours * 60 * 60 * 1000)
+        : originalStart;
+
+    const searchEnd =
+      direction === "later"
+        ? new Date(originalStart.getTime() + maxHours * 60 * 60 * 1000)
+        : originalStart;
 
     // Generate potential slots (every 15 minutes)
     for (let time = searchStart.getTime(); time <= searchEnd.getTime(); time += 15 * 60 * 1000) {
       const slotStart = new Date(time);
       const slotEnd = new Date(time + duration);
-      
+
       // Check if slot is within business hours
       if (!this.isWithinBusinessHours(slotStart, slotEnd)) continue;
-      
+
       // Check if slot is available
       const isAvailable = await this.isSlotAvailable(slotStart, slotEnd, appointment, resources);
       if (!isAvailable) continue;
-      
+
       // Calculate score based on various factors
       const score = this.calculateSlotScore(slotStart, originalStart, appointment);
-      
+
       slots.push({ start: slotStart, end: slotEnd, score });
     }
 
@@ -812,25 +860,25 @@ export class ConflictResolutionEngine {
     appointment: Appointment,
     allStaff: Staff[],
     startTime: Date,
-    endTime: Date
+    endTime: Date,
   ): Promise<Staff[]> {
     const alternatives: Staff[] = [];
-    
+
     for (const staff of allStaff) {
       if (staff.id === appointment.staff_id) continue;
       if (!staff.active) continue;
-      
+
       // Check availability
       const isAvailable = await this.isStaffAvailable(staff.id, startTime, endTime);
       if (!isAvailable) continue;
-      
+
       // Check qualifications
       const isQualified = await this.isStaffQualified(staff, appointment);
       if (!isQualified) continue;
-      
+
       alternatives.push(staff);
     }
-    
+
     return alternatives;
   }
 
@@ -838,25 +886,25 @@ export class ConflictResolutionEngine {
     appointment: Appointment,
     allRooms: Room[],
     startTime: Date,
-    endTime: Date
+    endTime: Date,
   ): Promise<Room[]> {
     const alternatives: Room[] = [];
-    
+
     for (const room of allRooms) {
       if (room.id === appointment.room_id) continue;
       if (!room.active) continue;
-      
+
       // Check availability
       const isAvailable = await this.isRoomAvailable(room.id, startTime, endTime);
       if (!isAvailable) continue;
-      
+
       // Check suitability
       const isSuitable = await this.isRoomSuitable(room, appointment);
       if (!isSuitable) continue;
-      
+
       alternatives.push(room);
     }
-    
+
     return alternatives;
   }
 
@@ -866,131 +914,135 @@ export class ConflictResolutionEngine {
   private isWithinBusinessHours(start: Date, end: Date): boolean {
     const businessStart = this.parseTime(this.constraints.businessHours.start);
     const businessEnd = this.parseTime(this.constraints.businessHours.end);
-    
+
     const startTime = start.getHours() * 60 + start.getMinutes();
     const endTime = end.getHours() * 60 + end.getMinutes();
-    
+
     return startTime >= businessStart && endTime <= businessEnd;
   }
 
   private parseTime(timeStr: string): number {
-    const [hours, minutes] = timeStr.split(':').map(Number);
+    const [hours, minutes] = timeStr.split(":").map(Number);
     return hours * 60 + minutes;
   }
 
-  private calculateSlotScore(slotStart: Date, originalStart: Date, appointment: Appointment): number {
+  private calculateSlotScore(
+    slotStart: Date,
+    originalStart: Date,
+    appointment: Appointment,
+  ): number {
     let score = 1.0;
-    
+
     // Prefer slots closer to original time
     const timeDiff = Math.abs(slotStart.getTime() - originalStart.getTime()) / (1000 * 60 * 60);
     score -= timeDiff * 0.1;
-    
+
     // Prefer slots during preferred hours
     const hour = slotStart.getHours();
     if (hour >= 9 && hour <= 17) {
       score += 0.2;
     }
-    
+
     // Prefer weekdays
     const dayOfWeek = slotStart.getDay();
     if (dayOfWeek >= 1 && dayOfWeek <= 5) {
       score += 0.1;
     }
-    
+
     return Math.max(0, score);
   }
 
   private calculateConfidence(slot: any, appointment: Appointment, resources: any): number {
     // Base confidence
     let confidence = 0.8;
-    
+
     // Adjust based on slot score
     confidence += slot.score * 0.2;
-    
+
     // Adjust based on resource availability
     if (resources.staff && resources.rooms) {
       confidence += 0.1;
     }
-    
+
     return Math.min(1.0, confidence);
   }
 
   private calculateEstimatedTime(changes: ProposedChanges): number {
     let time = 0;
-    
+
     if (changes.appointments) time += changes.appointments.length * 2;
     if (changes.staffAssignments) time += changes.staffAssignments.length * 3;
     if (changes.roomAssignments) time += changes.roomAssignments.length * 5;
     if (changes.equipmentAssignments) time += changes.equipmentAssignments.length * 2;
-    
+
     return Math.max(5, time);
   }
 
   private calculateCost(changes: ProposedChanges): number {
     let cost = 0.1; // Base cost
-    
+
     if (changes.appointments) cost += changes.appointments.length * 0.1;
     if (changes.staffAssignments) cost += changes.staffAssignments.length * 0.2;
     if (changes.roomAssignments) cost += changes.roomAssignments.length * 0.15;
-    
+
     return Math.min(1.0, cost);
   }
 
   private calculateFeasibility(changes: ProposedChanges, resources: any): number {
     // Base feasibility
     let feasibility = 0.9;
-    
+
     // Reduce based on complexity
     const complexity = Object.keys(changes).length;
     feasibility -= complexity * 0.1;
-    
+
     return Math.max(0.1, feasibility);
   }
 
   private generatePros(strategy: ResolutionStrategy, impact: ResolutionImpact): string[] {
     const pros: string[] = [];
-    
-    if (impact.patientSatisfaction > 0) pros.push('Improves patient satisfaction');
-    if (impact.staffWorkload > 0) pros.push('Balances staff workload');
-    if (impact.resourceUtilization > 0) pros.push('Optimizes resource usage');
-    if (impact.operationalEfficiency > 0) pros.push('Increases operational efficiency');
-    
+
+    if (impact.patientSatisfaction > 0) pros.push("Improves patient satisfaction");
+    if (impact.staffWorkload > 0) pros.push("Balances staff workload");
+    if (impact.resourceUtilization > 0) pros.push("Optimizes resource usage");
+    if (impact.operationalEfficiency > 0) pros.push("Increases operational efficiency");
+
     switch (strategy) {
       case ResolutionStrategy.RESCHEDULE_LATER:
       case ResolutionStrategy.RESCHEDULE_EARLIER:
-        pros.push('Maintains original resources', 'Quick to implement');
+        pros.push("Maintains original resources", "Quick to implement");
         break;
       case ResolutionStrategy.CHANGE_STAFF:
-        pros.push('Utilizes available staff', 'Maintains original time');
+        pros.push("Utilizes available staff", "Maintains original time");
         break;
       case ResolutionStrategy.CHANGE_ROOM:
-        pros.push('Maintains original time', 'May provide better facilities');
+        pros.push("Maintains original time", "May provide better facilities");
         break;
     }
-    
+
     return pros;
   }
 
   private generateCons(strategy: ResolutionStrategy, impact: ResolutionImpact): string[] {
     const cons: string[] = [];
-    
-    if (impact.patientSatisfaction < 0) cons.push('May reduce patient satisfaction');
-    if (impact.staffWorkload < 0) cons.push('May increase staff workload');
-    if (impact.resourceUtilization < 0) cons.push('May reduce resource efficiency');
-    
+
+    if (impact.patientSatisfaction < 0) cons.push("May reduce patient satisfaction");
+    if (impact.staffWorkload < 0) cons.push("May increase staff workload");
+    if (impact.resourceUtilization < 0) cons.push("May reduce resource efficiency");
+
     switch (strategy) {
       case ResolutionStrategy.RESCHEDULE_LATER:
       case ResolutionStrategy.RESCHEDULE_EARLIER:
-        cons.push('Changes appointment time', 'May inconvenience patient');
+        cons.push("Changes appointment time", "May inconvenience patient");
         break;
       case ResolutionStrategy.CHANGE_STAFF:
-        cons.push('Different staff member', 'May affect continuity of care');
+        cons.push("Different staff member", "May affect continuity of care");
         break;
       case ResolutionStrategy.CHANGE_ROOM:
-        cons.push('Different location', 'May require patient notification');
+        cons.push("Different location", "May require patient notification");
         break;
     }
-    
+
     return cons;
   }
 
@@ -1001,7 +1053,7 @@ export class ConflictResolutionEngine {
       resourceUtilization: 0,
       operationalEfficiency: 0,
       financialImpact: 0,
-      overallScore: 0
+      overallScore: 0,
     };
   }
 
@@ -1012,7 +1064,7 @@ export class ConflictResolutionEngine {
       resourceUtilization: 0,
       operationalEfficiency: 0.1,
       financialImpact: 0,
-      overallScore: 0.1
+      overallScore: 0.1,
     };
   }
 
@@ -1028,80 +1080,74 @@ export class ConflictResolutionEngine {
   }
 
   private async getAppointmentsByIds(ids: string[]): Promise<Appointment[]> {
-    const { data, error } = await this.supabase
-      .from('appointments')
-      .select('*')
-      .in('id', ids);
-    
+    const { data, error } = await this.supabase.from("appointments").select("*").in("id", ids);
+
     if (error) throw error;
     return data || [];
   }
 
   private async getAppointmentById(id: string): Promise<Appointment | null> {
     const { data, error } = await this.supabase
-      .from('appointments')
-      .select('*')
-      .eq('id', id)
+      .from("appointments")
+      .select("*")
+      .eq("id", id)
       .single();
-    
+
     if (error) return null;
     return data;
   }
 
   private async getStaffById(id: string): Promise<Staff | null> {
-    const { data, error } = await this.supabase
-      .from('staff')
-      .select('*')
-      .eq('id', id)
-      .single();
-    
+    const { data, error } = await this.supabase.from("staff").select("*").eq("id", id).single();
+
     if (error) return null;
     return data;
   }
 
   private async getRoomById(id: string): Promise<Room | null> {
-    const { data, error } = await this.supabase
-      .from('rooms')
-      .select('*')
-      .eq('id', id)
-      .single();
-    
+    const { data, error } = await this.supabase.from("rooms").select("*").eq("id", id).single();
+
     if (error) return null;
     return data;
   }
 
   private async getAffectedResources(conflict: ConflictDetails): Promise<any> {
     const resources: any = {};
-    
+
     if (conflict.affectedResources.staff) {
       const { data } = await this.supabase
-        .from('staff')
-        .select('*')
-        .in('id', conflict.affectedResources.staff);
+        .from("staff")
+        .select("*")
+        .in("id", conflict.affectedResources.staff);
       resources.staff = data || [];
     }
-    
+
     if (conflict.affectedResources.rooms) {
       const { data } = await this.supabase
-        .from('rooms')
-        .select('*')
-        .in('id', conflict.affectedResources.rooms);
+        .from("rooms")
+        .select("*")
+        .in("id", conflict.affectedResources.rooms);
       resources.rooms = data || [];
     }
-    
+
     if (conflict.affectedResources.equipment) {
       const { data } = await this.supabase
-        .from('equipment')
-        .select('*')
-        .in('id', conflict.affectedResources.equipment);
+        .from("equipment")
+        .select("*")
+        .in("id", conflict.affectedResources.equipment);
       resources.equipment = data || [];
     }
-    
+
     return resources;
   }
 
   // Additional placeholder methods
-  private async isSlotAvailable(start: Date, end: Date, appointment: Appointment, resources: any): Promise<boolean> {
+  private async isSlotAvailable(
+    start: Date,
+    end: Date,
+    appointment: Appointment,
+    resources: any,
+  ): Promise<boolean> {
     return true; // Simplified implementation
   }
 
@@ -1145,11 +1191,18 @@ export class ConflictResolutionEngine {
     return []; // Simplified implementation
   }
 
-  private async calculateActualImpact(resolution: ResolutionOption, result: any): Promise<ResolutionImpact> {
+  private async calculateActualImpact(
+    resolution: ResolutionOption,
+    result: any,
+  ): Promise<ResolutionImpact> {
     return resolution.impact; // Simplified implementation
   }
 
-  private async logResolutionApplication(resolutionId: string, result: any, impact: ResolutionImpact): Promise<void> {
+  private async logResolutionApplication(
+    resolutionId: string,
+    result: any,
+    impact: ResolutionImpact,
+  ): Promise<void> {
     // Log to database
   }
 
@@ -1165,11 +1218,17 @@ export class ConflictResolutionEngine {
     return []; // Simplified implementation
   }
 
-  private async generateExtendHoursOption(conflict: ConflictDetails, appointments: Appointment[]): Promise<ResolutionOption | null> {
+  private async generateExtendHoursOption(
+    conflict: ConflictDetails,
+    appointments: Appointment[],
+  ): Promise<ResolutionOption | null> {
     return null; // Simplified implementation
   }
 
-  private async generateDelegateOptions(appointments: Appointment[], resources: any): Promise<ResolutionOption[]> {
+  private async generateDelegateOptions(
+    appointments: Appointment[],
+    resources: any,
+  ): Promise<ResolutionOption[]> {
     return []; // Simplified implementation
   }
 

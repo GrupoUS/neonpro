@@ -13,10 +13,7 @@ const UpdateServiceSchema = z.object({
   requires_appointment: z.boolean().optional(),
 });
 
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const resolvedParams = await params;
     const supabase = await createClient();
@@ -42,17 +39,11 @@ export async function GET(
     return NextResponse.json({ service });
   } catch (error) {
     console.error("API Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const resolvedParams = await params;
     const supabase = await createClient();
@@ -77,10 +68,7 @@ export async function PUT(
 
     if (error) {
       console.error("Error updating service:", error);
-      return NextResponse.json(
-        { error: "Failed to update service" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to update service" }, { status: 500 });
     }
 
     return NextResponse.json({ service });
@@ -88,22 +76,16 @@ export async function PUT(
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Validation failed", details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error("API Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const resolvedParams = await params;
     const supabase = await createClient();
@@ -125,10 +107,7 @@ export async function DELETE(
 
     if (invoiceError) {
       console.error("Error checking service relations:", invoiceError);
-      return NextResponse.json(
-        { error: "Failed to check service relations" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to check service relations" }, { status: 500 });
     }
 
     if (invoices && invoices.length > 0) {
@@ -142,10 +121,7 @@ export async function DELETE(
 
       if (error) {
         console.error("Error deactivating service:", error);
-        return NextResponse.json(
-          { error: "Failed to deactivate service" },
-          { status: 500 }
-        );
+        return NextResponse.json({ error: "Failed to deactivate service" }, { status: 500 });
       }
 
       return NextResponse.json({
@@ -155,25 +131,16 @@ export async function DELETE(
     }
 
     // Safe to delete
-    const { error } = await supabase
-      .from("services")
-      .delete()
-      .eq("id", resolvedParams.id);
+    const { error } = await supabase.from("services").delete().eq("id", resolvedParams.id);
 
     if (error) {
       console.error("Error deleting service:", error);
-      return NextResponse.json(
-        { error: "Failed to delete service" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to delete service" }, { status: 500 });
     }
 
     return NextResponse.json({ message: "Service deleted successfully" });
   } catch (error) {
     console.error("API Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

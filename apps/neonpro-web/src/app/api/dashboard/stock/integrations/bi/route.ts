@@ -1,5 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
-import { NextRequest, NextResponse } from "next/server";
+import type { createClient } from "@/lib/supabase/server";
+import type { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
   const supabase = await createClient();
@@ -47,32 +47,41 @@ export async function GET() {
     // Calcular métricas de BI
     const analytics = {
       totalItems: biMetrics?.length || 0,
-      totalValue: biMetrics?.reduce((acc, item) => acc + (item.current_quantity * item.unit_price), 0) || 0,
-      lowStockItems: biMetrics?.filter(item => item.current_quantity <= item.min_threshold).length || 0,
-      overStockItems: biMetrics?.filter(item => item.current_quantity >= item.max_threshold).length || 0,
-      categoryDistribution: biMetrics?.reduce((acc, item) => {
-        acc[item.category] = (acc[item.category] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>) || {},
-      movementsTrend: biMetrics?.flatMap(item => item.movements || [])
-        .reduce((acc, movement) => {
-          const date = new Date(movement.created_at).toISOString().split('T')[0];
-          acc[date] = (acc[date] || 0) + movement.quantity;
-          return acc;
-        }, {} as Record<string, number>) || {},
+      totalValue:
+        biMetrics?.reduce((acc, item) => acc + item.current_quantity * item.unit_price, 0) || 0,
+      lowStockItems:
+        biMetrics?.filter((item) => item.current_quantity <= item.min_threshold).length || 0,
+      overStockItems:
+        biMetrics?.filter((item) => item.current_quantity >= item.max_threshold).length || 0,
+      categoryDistribution:
+        biMetrics?.reduce(
+          (acc, item) => {
+            acc[item.category] = (acc[item.category] || 0) + 1;
+            return acc;
+          },
+          {} as Record<string, number>,
+        ) || {},
+      movementsTrend:
+        biMetrics
+          ?.flatMap((item) => item.movements || [])
+          .reduce(
+            (acc, movement) => {
+              const date = new Date(movement.created_at).toISOString().split("T")[0];
+              acc[date] = (acc[date] || 0) + movement.quantity;
+              return acc;
+            },
+            {} as Record<string, number>,
+          ) || {},
     };
 
     return NextResponse.json({
       success: true,
       data: analytics,
-      items: biMetrics
+      items: biMetrics,
     });
   } catch (error) {
     console.error("BI Integration Error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -92,9 +101,7 @@ export async function POST(request: NextRequest) {
     const { exportFormat, dateRange, filters } = body;
 
     // Aplicar filtros na consulta
-    let query = supabase
-      .from("stock_items")
-      .select(`
+    let query = supabase.from("stock_items").select(`
         *,
         movements:stock_movements(*)
       `);
@@ -108,9 +115,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (dateRange?.start && dateRange?.end) {
-      query = query
-        .gte("created_at", dateRange.start)
-        .lte("created_at", dateRange.end);
+      query = query.gte("created_at", dateRange.start).lte("created_at", dateRange.end);
     }
 
     const { data: exportData, error } = await query;
@@ -127,19 +132,17 @@ export async function POST(request: NextRequest) {
       data: exportData,
       summary: {
         totalItems: exportData?.length || 0,
-        totalValue: exportData?.reduce((acc, item) => acc + (item.current_quantity * item.unit_price), 0) || 0,
-      }
+        totalValue:
+          exportData?.reduce((acc, item) => acc + item.current_quantity * item.unit_price, 0) || 0,
+      },
     };
 
     return NextResponse.json({
       success: true,
-      export: processedData
+      export: processedData,
     });
   } catch (error) {
     console.error("BI Export Error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

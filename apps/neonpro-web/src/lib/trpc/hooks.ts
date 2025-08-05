@@ -1,10 +1,10 @@
-import { trpc } from './client';
-import { useRouter } from 'next/navigation';
-import { useCallback } from 'react';
+import type { trpc } from "./client";
+import type { useRouter } from "next/navigation";
+import type { useCallback } from "react";
 
 /**
  * Healthcare-specific tRPC hooks for NeonPro
- * 
+ *
  * Custom hooks with:
  * - Healthcare role validation
  * - LGPD compliance checks
@@ -15,7 +15,7 @@ import { useCallback } from 'react';
 // Enhanced auth hook with healthcare validation
 export function useHealthcareAuth() {
   const router = useRouter();
-  
+
   const {
     data: user,
     isLoading,
@@ -25,37 +25,37 @@ export function useHealthcareAuth() {
     retry: false,
     refetchOnWindowFocus: true,
     onError: (error) => {
-      if (error.data?.code === 'UNAUTHORIZED') {
+      if (error.data?.code === "UNAUTHORIZED") {
         // Redirect to login for unauthorized healthcare access
-        router.push('/login');
-      } else if (error.data?.code === 'FORBIDDEN') {
+        router.push("/login");
+      } else if (error.data?.code === "FORBIDDEN") {
         // Handle LGPD consent issues
-        if (error.message.includes('LGPD')) {
-          router.push('/consent');
+        if (error.message.includes("LGPD")) {
+          router.push("/consent");
         }
       }
     },
   });
 
   // Validate medical professional access
-  const isMedicalProfessional = user?.role === 'healthcare_professional' && 
-                                !!user.medical_license;
-  
+  const isMedicalProfessional = user?.role === "healthcare_professional" && !!user.medical_license;
+
   // Validate admin access
-  const isAdmin = user?.role === 'admin';
-  
+  const isAdmin = user?.role === "admin";
+
   // Validate LGPD compliance
   const isLGPDCompliant = user?.lgpd_consent && user?.data_consent_given;
 
   // Healthcare role checker
-  const hasRole = useCallback((roles: string[]) => {
-    return user ? roles.includes(user.role) : false;
-  }, [user]);
+  const hasRole = useCallback(
+    (roles: string[]) => {
+      return user ? roles.includes(user.role) : false;
+    },
+    [user],
+  );
 
   // Check if user can access patient data
-  const canAccessPatientData = user && 
-                               isLGPDCompliant && 
-                               (isMedicalProfessional || isAdmin);
+  const canAccessPatientData = user && isLGPDCompliant && (isMedicalProfessional || isAdmin);
 
   return {
     user,
@@ -72,7 +72,7 @@ export function useHealthcareAuth() {
   };
 }
 
-// LGPD consent management hook  
+// LGPD consent management hook
 export function useLGPDConsent() {
   const updateConsent = trpc.auth.updateConsent.useMutation({
     onSuccess: () => {
@@ -80,7 +80,7 @@ export function useLGPDConsent() {
       trpc.auth.me.useQuery().refetch();
     },
     onError: (error) => {
-      console.error('Failed to update LGPD consent:', error);
+      console.error("Failed to update LGPD consent:", error);
     },
   });
 
@@ -112,32 +112,35 @@ export function useLGPDConsent() {
 export function useHealthcareErrorHandler() {
   const router = useRouter();
 
-  const handleError = useCallback((error: any) => {
-    const errorCode = error?.data?.code;
-    const errorMessage = error?.message;
+  const handleError = useCallback(
+    (error: any) => {
+      const errorCode = error?.data?.code;
+      const errorMessage = error?.message;
 
-    switch (errorCode) {
-      case 'UNAUTHORIZED':
-        router.push('/login');
-        break;
-      case 'FORBIDDEN':
-        if (errorMessage?.includes('LGPD')) {
-          router.push('/consent');
-        } else if (errorMessage?.includes('medical license')) {
-          // Handle medical license validation errors
-          console.error('Medical license validation failed');
-        } else {
-          // General permission error
-          console.error('Access forbidden:', errorMessage);
-        }
-        break;
-      case 'NOT_FOUND':
-        console.error('Healthcare resource not found:', errorMessage);
-        break;
-      default:
-        console.error('Healthcare API error:', errorMessage);
-    }
-  }, [router]);
+      switch (errorCode) {
+        case "UNAUTHORIZED":
+          router.push("/login");
+          break;
+        case "FORBIDDEN":
+          if (errorMessage?.includes("LGPD")) {
+            router.push("/consent");
+          } else if (errorMessage?.includes("medical license")) {
+            // Handle medical license validation errors
+            console.error("Medical license validation failed");
+          } else {
+            // General permission error
+            console.error("Access forbidden:", errorMessage);
+          }
+          break;
+        case "NOT_FOUND":
+          console.error("Healthcare resource not found:", errorMessage);
+          break;
+        default:
+          console.error("Healthcare API error:", errorMessage);
+      }
+    },
+    [router],
+  );
 
   return { handleError };
 }

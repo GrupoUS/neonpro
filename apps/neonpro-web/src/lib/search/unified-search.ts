@@ -1,11 +1,11 @@
-﻿// lib/search/unified-search.ts - Server-side search implementation
-import { createClient } from "@/lib/supabase/server";
-import { AIInsightsEngine } from "@/lib/ai/insights-engine";
-import { MedicalTimelineManager } from "@/lib/medical/timeline-manager";
-import { DuplicateDetectionSystem } from "@/lib/patients/duplicate-detection";
-import { PhotoRecognitionSystem } from "@/lib/patients/photo-recognition";
-import { ProfileManager } from "@/lib/patients/profile-manager";
-import { nlpSearchEngine, type NLPSearchQuery, type SearchContext } from "./nlp-engine";
+// lib/search/unified-search.ts - Server-side search implementation
+import type { createClient } from "@/lib/supabase/server";
+import type { AIInsightsEngine } from "@/lib/ai/insights-engine";
+import type { MedicalTimelineManager } from "@/lib/medical/timeline-manager";
+import type { DuplicateDetectionSystem } from "@/lib/patients/duplicate-detection";
+import type { PhotoRecognitionSystem } from "@/lib/patients/photo-recognition";
+import type { ProfileManager } from "@/lib/patients/profile-manager";
+import type { nlpSearchEngine, type NLPSearchQuery, type SearchContext } from "./nlp-engine";
 
 // Re-export types from the shared types file
 export type {
@@ -20,7 +20,7 @@ export type {
   SearchFacets,
   SearchStats,
   SavedSearch,
-  SearchHistory
+  SearchHistory,
 } from "./types";
 
 export interface SearchAction {
@@ -44,7 +44,7 @@ export class createunifiedSearchSystem {
    */
   async search(query: SearchQuery): Promise<SearchResponse> {
     const startTime = performance.now();
-    
+
     try {
       // Process query with NLP if enabled
       let nlpAnalysis: NLPSearchQuery | undefined;
@@ -58,7 +58,11 @@ export class createunifiedSearchSystem {
 
       // Determinar tipos de busca baseado nos filtros ou análise NLP
       let searchTypes = query.filters?.types || [
-        'patients', 'appointments', 'medical_records', 'insights', 'timeline_events'
+        "patients",
+        "appointments",
+        "medical_records",
+        "insights",
+        "timeline_events",
       ];
 
       // Refine search types based on NLP intent
@@ -67,35 +71,35 @@ export class createunifiedSearchSystem {
       }
 
       // Executar buscas em paralelo para cada tipo
-      if (searchTypes.includes('patients')) {
+      if (searchTypes.includes("patients")) {
         searchPromises.push(this.searchPatients(query));
       }
 
-      if (searchTypes.includes('timeline_events')) {
+      if (searchTypes.includes("timeline_events")) {
         searchPromises.push(this.searchTimelineEvents(query));
       }
 
-      if (searchTypes.includes('insights')) {
+      if (searchTypes.includes("insights")) {
         searchPromises.push(this.searchInsights(query));
       }
 
-      if (searchTypes.includes('duplicates')) {
+      if (searchTypes.includes("duplicates")) {
         searchPromises.push(this.searchDuplicates(query));
       }
 
-      if (searchTypes.includes('photos')) {
+      if (searchTypes.includes("photos")) {
         searchPromises.push(this.searchPhotos(query));
       }
 
-      if (searchTypes.includes('medical_records')) {
+      if (searchTypes.includes("medical_records")) {
         searchPromises.push(this.searchMedicalRecords(query));
       }
 
-      if (searchTypes.includes('appointments')) {
+      if (searchTypes.includes("appointments")) {
         searchPromises.push(this.searchAppointments(query));
       }
 
-      if (searchTypes.includes('documents')) {
+      if (searchTypes.includes("documents")) {
         searchPromises.push(this.searchDocuments(query));
       }
 
@@ -123,63 +127,66 @@ export class createunifiedSearchSystem {
         totalCount: allResults.length,
         executionTime,
         suggestions,
-        facets: this.generateSearchFacets(allResults)
+        facets: this.generateSearchFacets(allResults),
       };
     } catch (error) {
-      console.error('Erro na busca unificada:', error);
-      throw new Error('Falha na execução da busca');
+      console.error("Erro na busca unificada:", error);
+      throw new Error("Falha na execução da busca");
     }
   }
 
   /**
    * Refina tipos de busca baseado na análise NLP
    */
-  private refineSearchTypesFromNLP(defaultTypes: SearchType[], nlpAnalysis: NLPSearchQuery): SearchType[] {
+  private refineSearchTypesFromNLP(
+    defaultTypes: SearchType[],
+    nlpAnalysis: NLPSearchQuery,
+  ): SearchType[] {
     const refinedTypes = [...defaultTypes];
 
     // Based on intent target, prioritize certain search types
     switch (nlpAnalysis.intent.target) {
-      case 'patient':
-        if (!refinedTypes.includes('patients')) refinedTypes.unshift('patients');
-        if (!refinedTypes.includes('photos')) refinedTypes.push('photos');
-        if (!refinedTypes.includes('duplicates')) refinedTypes.push('duplicates');
+      case "patient":
+        if (!refinedTypes.includes("patients")) refinedTypes.unshift("patients");
+        if (!refinedTypes.includes("photos")) refinedTypes.push("photos");
+        if (!refinedTypes.includes("duplicates")) refinedTypes.push("duplicates");
         break;
-      
-      case 'appointment':
-        if (!refinedTypes.includes('appointments')) refinedTypes.unshift('appointments');
+
+      case "appointment":
+        if (!refinedTypes.includes("appointments")) refinedTypes.unshift("appointments");
         break;
-      
-      case 'treatment':
-        if (!refinedTypes.includes('medical_records')) refinedTypes.unshift('medical_records');
-        if (!refinedTypes.includes('timeline_events')) refinedTypes.push('timeline_events');
+
+      case "treatment":
+        if (!refinedTypes.includes("medical_records")) refinedTypes.unshift("medical_records");
+        if (!refinedTypes.includes("timeline_events")) refinedTypes.push("timeline_events");
         break;
-      
-      case 'procedure':
-        if (!refinedTypes.includes('timeline_events')) refinedTypes.unshift('timeline_events');
-        if (!refinedTypes.includes('medical_records')) refinedTypes.push('medical_records');
+
+      case "procedure":
+        if (!refinedTypes.includes("timeline_events")) refinedTypes.unshift("timeline_events");
+        if (!refinedTypes.includes("medical_records")) refinedTypes.push("medical_records");
         break;
-      
-      case 'record':
-        if (!refinedTypes.includes('medical_records')) refinedTypes.unshift('medical_records');
-        if (!refinedTypes.includes('documents')) refinedTypes.push('documents');
+
+      case "record":
+        if (!refinedTypes.includes("medical_records")) refinedTypes.unshift("medical_records");
+        if (!refinedTypes.includes("documents")) refinedTypes.push("documents");
         break;
     }
 
     // Based on entities found, add relevant search types
-    const hasPersonEntity = nlpAnalysis.entities.some(e => e.type === 'person');
-    const hasProcedureEntity = nlpAnalysis.entities.some(e => e.type === 'procedure');
-    const hasConditionEntity = nlpAnalysis.entities.some(e => e.type === 'condition');
+    const hasPersonEntity = nlpAnalysis.entities.some((e) => e.type === "person");
+    const hasProcedureEntity = nlpAnalysis.entities.some((e) => e.type === "procedure");
+    const hasConditionEntity = nlpAnalysis.entities.some((e) => e.type === "condition");
 
-    if (hasPersonEntity && !refinedTypes.includes('patients')) {
-      refinedTypes.unshift('patients');
+    if (hasPersonEntity && !refinedTypes.includes("patients")) {
+      refinedTypes.unshift("patients");
     }
 
-    if (hasProcedureEntity && !refinedTypes.includes('timeline_events')) {
-      refinedTypes.push('timeline_events');
+    if (hasProcedureEntity && !refinedTypes.includes("timeline_events")) {
+      refinedTypes.push("timeline_events");
     }
 
-    if (hasConditionEntity && !refinedTypes.includes('medical_records')) {
-      refinedTypes.push('medical_records');
+    if (hasConditionEntity && !refinedTypes.includes("medical_records")) {
+      refinedTypes.push("medical_records");
     }
 
     return refinedTypes;
@@ -192,64 +199,64 @@ export class createunifiedSearchSystem {
     try {
       const results: SearchResult[] = [];
       const nlpAnalysis = query.nlpAnalysis;
-      
+
       // Enhanced search logic using NLP analysis
       const searchTerm = query.term;
       let nameFilter: string | undefined;
       let ageFilter: { min?: number; max?: number } | undefined;
       let specialtyFilter: string | undefined;
-      
+
       // Extract filters from NLP analysis if available
       if (nlpAnalysis) {
         // Use person entities as name filters
-        const personEntities = nlpAnalysis.entities.filter(e => e.type === 'person');
+        const personEntities = nlpAnalysis.entities.filter((e) => e.type === "person");
         if (personEntities.length > 0) {
           nameFilter = personEntities[0].value;
         }
-        
+
         // Use age entities for age filtering
-        const ageEntities = nlpAnalysis.entities.filter(e => e.type === 'age');
+        const ageEntities = nlpAnalysis.entities.filter((e) => e.type === "age");
         if (ageEntities.length > 0) {
           const age = parseInt(ageEntities[0].value);
           ageFilter = { min: age - 2, max: age + 2 }; // Allow some variance
         }
-        
+
         // Use specialty entities
-        const specialtyEntities = nlpAnalysis.entities.filter(e => e.type === 'specialty');
+        const specialtyEntities = nlpAnalysis.entities.filter((e) => e.type === "specialty");
         if (specialtyEntities.length > 0) {
           specialtyFilter = specialtyEntities[0].value;
         }
       }
-      
+
       // Simular busca de pacientes com filtros NLP
       const mockPatients = [
         {
-          id: 'pat_123',
-          name: 'João Silva Santos',
-          email: 'joao.silva@email.com',
-          phone: '(11) 99999-9999',
-          birthDate: '1985-03-15',
+          id: "pat_123",
+          name: "João Silva Santos",
+          email: "joao.silva@email.com",
+          phone: "(11) 99999-9999",
+          birthDate: "1985-03-15",
           age: 39,
-          specialty: 'dermatologia'
+          specialty: "dermatologia",
         },
         {
-          id: 'pat_456',
-          name: 'Maria Santos Silva',
-          email: 'maria.santos@email.com',
-          phone: '(11) 88888-8888',
-          birthDate: '1990-07-22',
+          id: "pat_456",
+          name: "Maria Santos Silva",
+          email: "maria.santos@email.com",
+          phone: "(11) 88888-8888",
+          birthDate: "1990-07-22",
           age: 34,
-          specialty: 'estética'
+          specialty: "estética",
         },
         {
-          id: 'pat_789',
-          name: 'Ana Botox Cliente',
-          email: 'ana.cliente@email.com',
-          phone: '(11) 77777-7777',
-          birthDate: '1988-11-10',
+          id: "pat_789",
+          name: "Ana Botox Cliente",
+          email: "ana.cliente@email.com",
+          phone: "(11) 77777-7777",
+          birthDate: "1988-11-10",
           age: 36,
-          specialty: 'estética'
-        }
+          specialty: "estética",
+        },
       ];
 
       for (const patient of mockPatients) {
@@ -267,7 +274,7 @@ export class createunifiedSearchSystem {
         } else if (this.matchesSearchTerm(searchTerm, patient.name, patient.email, patient.phone)) {
           matches = true;
           matchScore += 0.2;
-          matchReasons.push('Corresponde ao termo de busca');
+          matchReasons.push("Corresponde ao termo de busca");
         }
 
         // Check age match
@@ -290,9 +297,12 @@ export class createunifiedSearchSystem {
 
         // Check for procedure entities (enhanced matching)
         if (nlpAnalysis) {
-          const procedureEntities = nlpAnalysis.entities.filter(e => e.type === 'procedure');
+          const procedureEntities = nlpAnalysis.entities.filter((e) => e.type === "procedure");
           for (const proc of procedureEntities) {
-            if (proc.value.toLowerCase() === 'botox' && patient.name.toLowerCase().includes('botox')) {
+            if (
+              proc.value.toLowerCase() === "botox" &&
+              patient.name.toLowerCase().includes("botox")
+            ) {
               matches = true;
               matchScore += 0.3;
               matchReasons.push(`Procedimento relacionado: ${proc.value}`);
@@ -303,29 +313,29 @@ export class createunifiedSearchSystem {
         if (matches) {
           results.push({
             id: patient.id,
-            type: 'patients',
+            type: "patients",
             title: patient.name,
             description: `${patient.email} • ${patient.phone} • ${patient.age} anos • ${patient.specialty}`,
             relevanceScore: Math.min(matchScore, 1.0),
-            metadata: { 
-              ...patient, 
+            metadata: {
+              ...patient,
               matchReasons,
-              nlpEnhanced: !!nlpAnalysis 
+              nlpEnhanced: !!nlpAnalysis,
             },
             highlights: matchReasons,
             url: `/patients/${patient.id}`,
             actions: [
-              { id: 'view', label: 'Ver Perfil', url: `/patients/${patient.id}` },
-              { id: 'edit', label: 'Editar', url: `/patients/${patient.id}/edit` },
-              { id: 'timeline', label: 'Timeline', url: `/patients/${patient.id}/timeline` }
-            ]
+              { id: "view", label: "Ver Perfil", url: `/patients/${patient.id}` },
+              { id: "edit", label: "Editar", url: `/patients/${patient.id}/edit` },
+              { id: "timeline", label: "Timeline", url: `/patients/${patient.id}/timeline` },
+            ],
           });
         }
       }
 
       return results.sort((a, b) => b.relevanceScore - a.relevanceScore);
     } catch (error) {
-      console.error('Erro na busca de pacientes:', error);
+      console.error("Erro na busca de pacientes:", error);
       return [];
     }
   }
@@ -340,42 +350,40 @@ export class createunifiedSearchSystem {
       // Simular busca de eventos da timeline
       const mockEvents = [
         {
-          id: 'evt_001',
-          title: 'Consulta de Rotina',
-          description: 'Consulta anual preventiva',
-          date: new Date('2024-01-15'),
-          provider: 'Dr. Maria Silva',
-          type: 'appointment'
+          id: "evt_001",
+          title: "Consulta de Rotina",
+          description: "Consulta anual preventiva",
+          date: new Date("2024-01-15"),
+          provider: "Dr. Maria Silva",
+          type: "appointment",
         },
         {
-          id: 'evt_002',
-          title: 'Exames Laboratoriais',
-          description: 'Hemograma completo, perfil lipídico',
-          date: new Date('2024-01-20'),
-          provider: 'Lab Central',
-          type: 'lab'
-        }
+          id: "evt_002",
+          title: "Exames Laboratoriais",
+          description: "Hemograma completo, perfil lipídico",
+          date: new Date("2024-01-20"),
+          provider: "Lab Central",
+          type: "lab",
+        },
       ];
 
       for (const event of mockEvents) {
         if (this.matchesSearchTerm(query.term, event.title, event.description, event.provider)) {
           results.push({
             id: event.id,
-            type: 'timeline_events',
+            type: "timeline_events",
             title: event.title,
             description: `${event.description} • ${event.provider}`,
             relevanceScore: this.calculateRelevance(query.term, event.title),
             metadata: event,
-            actions: [
-              { id: 'view', label: 'Ver Detalhes', handler: 'viewTimelineEvent' }
-            ]
+            actions: [{ id: "view", label: "Ver Detalhes", handler: "viewTimelineEvent" }],
           });
         }
       }
 
       return results;
     } catch (error) {
-      console.error('Erro na busca de eventos da timeline:', error);
+      console.error("Erro na busca de eventos da timeline:", error);
       return [];
     }
   }
@@ -390,40 +398,38 @@ export class createunifiedSearchSystem {
       // Simular busca de insights
       const mockInsights = [
         {
-          id: 'insight_001',
-          title: 'Risco Cardiovascular Elevado',
-          description: 'Análise dos dados clínicos indica risco aumentado',
+          id: "insight_001",
+          title: "Risco Cardiovascular Elevado",
+          description: "Análise dos dados clínicos indica risco aumentado",
           confidence: 0.87,
-          type: 'clinical'
+          type: "clinical",
         },
         {
-          id: 'insight_002',
-          title: 'Padrão de Não Aderência',
-          description: 'IA detectou padrões de baixa aderência medicamentosa',
+          id: "insight_002",
+          title: "Padrão de Não Aderência",
+          description: "IA detectou padrões de baixa aderência medicamentosa",
           confidence: 0.73,
-          type: 'behavioral'
-        }
+          type: "behavioral",
+        },
       ];
 
       for (const insight of mockInsights) {
         if (this.matchesSearchTerm(query.term, insight.title, insight.description)) {
           results.push({
             id: insight.id,
-            type: 'insights',
+            type: "insights",
             title: insight.title,
             description: insight.description,
             relevanceScore: this.calculateRelevance(query.term, insight.title),
             metadata: insight,
-            actions: [
-              { id: 'view', label: 'Ver Insight', handler: 'viewInsight' }
-            ]
+            actions: [{ id: "view", label: "Ver Insight", handler: "viewInsight" }],
           });
         }
       }
 
       return results;
     } catch (error) {
-      console.error('Erro na busca de insights:', error);
+      console.error("Erro na busca de insights:", error);
       return [];
     }
   }
@@ -442,22 +448,22 @@ export class createunifiedSearchSystem {
         if (this.matchesSearchTerm(query.term, duplicate.id, duplicate.status)) {
           results.push({
             id: duplicate.id,
-            type: 'duplicates',
+            type: "duplicates",
             title: `Duplicata: ${duplicate.primaryPatientId} ↔ ${duplicate.duplicatePatientId}`,
             description: `Score: ${duplicate.confidenceScore} • Status: ${duplicate.status}`,
             relevanceScore: duplicate.confidenceScore,
             metadata: duplicate,
             actions: [
-              { id: 'review', label: 'Revisar', handler: 'reviewDuplicate' },
-              { id: 'merge', label: 'Merge', handler: 'mergeDuplicate' }
-            ]
+              { id: "review", label: "Revisar", handler: "reviewDuplicate" },
+              { id: "merge", label: "Merge", handler: "mergeDuplicate" },
+            ],
           });
         }
       }
 
       return results;
     } catch (error) {
-      console.error('Erro na busca de duplicatas:', error);
+      console.error("Erro na busca de duplicatas:", error);
       return [];
     }
   }
@@ -472,33 +478,31 @@ export class createunifiedSearchSystem {
       // Simular busca de fotos
       const mockPhotos = [
         {
-          id: 'photo_001',
-          patientId: 'pat_123',
-          fileName: 'profile_photo.jpg',
-          status: 'verified',
-          verificationScore: 0.92
-        }
+          id: "photo_001",
+          patientId: "pat_123",
+          fileName: "profile_photo.jpg",
+          status: "verified",
+          verificationScore: 0.92,
+        },
       ];
 
       for (const photo of mockPhotos) {
         if (this.matchesSearchTerm(query.term, photo.fileName, photo.patientId, photo.status)) {
           results.push({
             id: photo.id,
-            type: 'photos',
+            type: "photos",
             title: photo.fileName,
             description: `Paciente: ${photo.patientId} • Status: ${photo.status}`,
             relevanceScore: photo.verificationScore || 0.5,
             metadata: photo,
-            actions: [
-              { id: 'view', label: 'Ver Foto', handler: 'viewPhoto' }
-            ]
+            actions: [{ id: "view", label: "Ver Foto", handler: "viewPhoto" }],
           });
         }
       }
 
       return results;
     } catch (error) {
-      console.error('Erro na busca de fotos:', error);
+      console.error("Erro na busca de fotos:", error);
       return [];
     }
   }
@@ -511,7 +515,7 @@ export class createunifiedSearchSystem {
       // Simular busca de registros médicos
       return [];
     } catch (error) {
-      console.error('Erro na busca de registros médicos:', error);
+      console.error("Erro na busca de registros médicos:", error);
       return [];
     }
   }
@@ -524,7 +528,7 @@ export class createunifiedSearchSystem {
       // Simular busca de consultas
       return [];
     } catch (error) {
-      console.error('Erro na busca de consultas:', error);
+      console.error("Erro na busca de consultas:", error);
       return [];
     }
   }
@@ -537,7 +541,7 @@ export class createunifiedSearchSystem {
       // Simular busca de documentos
       return [];
     } catch (error) {
-      console.error('Erro na busca de documentos:', error);
+      console.error("Erro na busca de documentos:", error);
       return [];
     }
   }
@@ -547,9 +551,7 @@ export class createunifiedSearchSystem {
    */
   private matchesSearchTerm(searchTerm: string, ...fields: string[]): boolean {
     const term = searchTerm.toLowerCase();
-    return fields.some(field => 
-      field && field.toLowerCase().includes(term)
-    );
+    return fields.some((field) => field && field.toLowerCase().includes(term));
   }
 
   /**
@@ -558,19 +560,19 @@ export class createunifiedSearchSystem {
   private calculateRelevance(searchTerm: string, text: string): number {
     const term = searchTerm.toLowerCase();
     const content = text.toLowerCase();
-    
+
     if (content === term) return 1.0;
     if (content.startsWith(term)) return 0.9;
     if (content.includes(term)) return 0.7;
-    
+
     // Calcular similaridade por palavras
-    const termWords = term.split(' ');
-    const contentWords = content.split(' ');
-    const matches = termWords.filter(word => 
-      contentWords.some(contentWord => contentWord.includes(word))
+    const termWords = term.split(" ");
+    const contentWords = content.split(" ");
+    const matches = termWords.filter((word) =>
+      contentWords.some((contentWord) => contentWord.includes(word)),
     ).length;
-    
-    return matches / termWords.length * 0.6;
+
+    return (matches / termWords.length) * 0.6;
   }
 
   /**
@@ -582,7 +584,7 @@ export class createunifiedSearchSystem {
       `${term} exames`,
       `${term} medicamentos`,
       `histórico ${term}`,
-      `timeline ${term}`
+      `timeline ${term}`,
     ];
 
     return suggestions.slice(0, 3);
@@ -591,12 +593,14 @@ export class createunifiedSearchSystem {
   /**
    * Gera facetas para filtros
    */
-  private generateSearchFacets(results: SearchResult[]): Record<string, Array<{ value: string; count: number }>> {
+  private generateSearchFacets(
+    results: SearchResult[],
+  ): Record<string, Array<{ value: string; count: number }>> {
     const facets: Record<string, Array<{ value: string; count: number }>> = {};
 
     // Faceta por tipo
     const typeCount: Record<string, number> = {};
-    results.forEach(result => {
+    results.forEach((result) => {
       typeCount[result.type] = (typeCount[result.type] || 0) + 1;
     });
 
@@ -609,25 +613,25 @@ export class createunifiedSearchSystem {
    * Busca inteligente com NLP automático
    */
   async smartSearch(
-    term: string, 
+    term: string,
     context?: SearchContext,
     options?: {
       limit?: number;
       types?: SearchType[];
       includeInactive?: boolean;
-    }
+    },
   ): Promise<SearchResponse> {
     const query: SearchQuery = {
       term,
       context,
       filters: {
-        types: options?.types || ['patients', 'appointments', 'timeline_events', 'insights']
+        types: options?.types || ["patients", "appointments", "timeline_events", "insights"],
       },
       options: {
         useNLP: true, // Force NLP processing
         limit: options?.limit || 20,
-        sortBy: 'relevance'
-      }
+        sortBy: "relevance",
+      },
     };
 
     return await this.search(query);
@@ -639,12 +643,12 @@ export class createunifiedSearchSystem {
   async conversationalSearch(
     naturalLanguageQuery: string,
     userId: string,
-    userRole: string = 'user'
+    userRole: string = "user",
   ): Promise<SearchResponse> {
     const context: SearchContext = {
       userId,
       userRole,
-      recentSearches: [] // Could be loaded from database
+      recentSearches: [], // Could be loaded from database
     };
 
     // Enable NLP for natural language processing
@@ -654,9 +658,9 @@ export class createunifiedSearchSystem {
       options: {
         useNLP: true,
         limit: 15,
-        sortBy: 'relevance',
-        highlight: true
-      }
+        sortBy: "relevance",
+        highlight: true,
+      },
     };
 
     const response = await this.search(query);
@@ -665,8 +669,12 @@ export class createunifiedSearchSystem {
     if (response.nlpAnalysis) {
       // Log the search for future context
       console.log(`Conversational search by ${userId}: "${naturalLanguageQuery}"`);
-      console.log(`Intent: ${response.nlpAnalysis.intent.action} ${response.nlpAnalysis.intent.target}`);
-      console.log(`Entities: ${response.nlpAnalysis.entities.map(e => `${e.type}:${e.value}`).join(', ')}`);
+      console.log(
+        `Intent: ${response.nlpAnalysis.intent.action} ${response.nlpAnalysis.intent.target}`,
+      );
+      console.log(
+        `Entities: ${response.nlpAnalysis.entities.map((e) => `${e.type}:${e.value}`).join(", ")}`,
+      );
     }
 
     return response;
@@ -690,27 +698,29 @@ export class createunifiedSearchSystem {
         criteria.patientName,
         ...(criteria.keywords || []),
         ...(criteria.eventTypes || []),
-        ...(criteria.providers || [])
-      ].filter(Boolean).join(' ');
+        ...(criteria.providers || []),
+      ]
+        .filter(Boolean)
+        .join(" ");
 
       const query: SearchQuery = {
         term: searchTerms,
         context: criteria.context,
         filters: {
           dateRange: criteria.dateRange,
-          types: ['patients', 'timeline_events', 'appointments'] as SearchType[]
+          types: ["patients", "timeline_events", "appointments"] as SearchType[],
         },
         options: {
           useNLP: criteria.useNLP !== false, // Default to true for advanced search
           limit: 50,
-          sortBy: 'relevance'
-        }
+          sortBy: "relevance",
+        },
       };
 
       return await this.search(query);
     } catch (error) {
-      console.error('Erro na busca avançada:', error);
-      throw new Error('Falha na busca avançada');
+      console.error("Erro na busca avançada:", error);
+      throw new Error("Falha na busca avançada");
     }
   }
 
@@ -720,29 +730,29 @@ export class createunifiedSearchSystem {
   async saveSearch(name: string, query: SearchQuery, userId: string): Promise<string> {
     try {
       const savedSearchId = `search_${Date.now()}`;
-      
+
       // Simular salvamento da busca
       console.log(`Busca salva: ${name} por ${userId}`);
-      
+
       return savedSearchId;
     } catch (error) {
-      console.error('Erro ao salvar busca:', error);
-      throw new Error('Falha ao salvar busca');
+      console.error("Erro ao salvar busca:", error);
+      throw new Error("Falha ao salvar busca");
     }
   }
 
   /**
    * Gera estatísticas do sistema de busca
    */
-  async getSearchStatistics(timeframe: string = '30days'): Promise<GlobalSearchStats> {
+  async getSearchStatistics(timeframe: string = "30days"): Promise<GlobalSearchStats> {
     try {
       const stats: GlobalSearchStats = {
         totalSearches: 1847,
         averageResultsPerSearch: 12.3,
         mostSearchedTerms: [
-          { term: 'joão', count: 145 },
-          { term: 'consulta', count: 98 },
-          { term: 'exame', count: 87 }
+          { term: "joão", count: 145 },
+          { term: "consulta", count: 98 },
+          { term: "exame", count: 87 },
         ],
         searchesByType: {
           patients: 654,
@@ -754,23 +764,22 @@ export class createunifiedSearchSystem {
           medications: 67,
           documents: 45,
           duplicates: 23,
-          photos: 12
+          photos: 12,
         },
         averageExecutionTime: 145.6,
         userSearchPatterns: {
-          peakHours: ['09:00-11:00', '14:00-16:00'],
+          peakHours: ["09:00-11:00", "14:00-16:00"],
           commonSequences: [
-            ['paciente', 'timeline', 'consultas'],
-            ['exame', 'resultado', 'histórico']
-          ]
-        }
+            ["paciente", "timeline", "consultas"],
+            ["exame", "resultado", "histórico"],
+          ],
+        },
       };
 
       return stats;
     } catch (error) {
-      console.error('Erro ao gerar estatísticas de busca:', error);
-      throw new Error('Falha na geração de estatísticas');
+      console.error("Erro ao gerar estatísticas de busca:", error);
+      throw new Error("Falha na geração de estatísticas");
     }
   }
 }
-

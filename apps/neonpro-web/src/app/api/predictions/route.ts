@@ -1,79 +1,70 @@
-﻿// Story 10.2: Progress Tracking through Computer Vision - Predictions API
+// Story 10.2: Progress Tracking through Computer Vision - Predictions API
 // API endpoint for managing progress predictions
 
-import { progressTrackingService } from '@/app/lib/services/progress-tracking';
-import {
-    createProgressPredictionRequestSchema
-} from '@/app/lib/validations/progress-tracking';
-import { cookies } from 'next/headers';
-import { createClient } from '@/lib/supabase/server'
-import { NextRequest, NextResponse } from 'next/server';
+import type { progressTrackingService } from "@/app/lib/services/progress-tracking";
+import type { createProgressPredictionRequestSchema } from "@/app/lib/validations/progress-tracking";
+import type { cookies } from "next/headers";
+import type { createClient } from "@/lib/supabase/server";
+import type { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
 
     const body = await request.json();
-    
+
     // Validate request body
     const validatedData = createProgressPredictionRequestSchema.parse(body);
-    
+
     // Create progress prediction
     const prediction = await progressTrackingService.createProgressPrediction(validatedData);
-    
+
     return NextResponse.json(prediction, { status: 201 });
   } catch (error: any) {
-    console.error('Error creating progress prediction:', error);
-    
-    if (error.name === 'ZodError') {
+    console.error("Error creating progress prediction:", error);
+
+    if (error.name === "ZodError") {
       return NextResponse.json(
-        { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { error: "Invalid request data", details: error.errors },
+        { status: 400 },
       );
     }
-    
-    return NextResponse.json(
-      { error: 'Failed to create progress prediction' },
-      { status: 500 }
-    );
+
+    return NextResponse.json({ error: "Failed to create progress prediction" }, { status: 500 });
   }
 }
 
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const patientId = searchParams.get('patient_id') || undefined;
-    
+    const patientId = searchParams.get("patient_id") || undefined;
+
     // Get progress predictions
     const predictions = await progressTrackingService.getProgressPredictions(patientId);
-    
+
     return NextResponse.json(predictions);
   } catch (error: any) {
-    console.error('Error fetching progress predictions:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch progress predictions' },
-      { status: 500 }
-    );
+    console.error("Error fetching progress predictions:", error);
+    return NextResponse.json({ error: "Failed to fetch progress predictions" }, { status: 500 });
   }
 }
-

@@ -1,13 +1,13 @@
-import { UserProfile } from '@clerk/nextjs'
-import { auth } from '@clerk/nextjs/server'
-import { redirect } from 'next/navigation'
+import type { UserProfile } from "@clerk/nextjs";
+import type { auth } from "@clerk/nextjs/server";
+import type { redirect } from "next/navigation";
 
 export default async function PerfilPage() {
-  const { userId } = auth()
-  
+  const { userId } = auth();
+
   // Redirect unauthenticated users
   if (!userId) {
-    redirect('/auth/entrar')
+    redirect("/auth/entrar");
   }
 
   return (
@@ -15,9 +15,7 @@ export default async function PerfilPage() {
       <div className="max-w-4xl mx-auto">
         {/* Healthcare-focused header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">
-            Perfil Profissional
-          </h1>
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">Perfil Profissional</h1>
           <p className="text-slate-600">
             Gerencie suas informações profissionais e configurações de conta
           </p>
@@ -28,7 +26,7 @@ export default async function PerfilPage() {
 
         {/* Clerk UserProfile Component */}
         <div className="flex justify-center">
-          <UserProfile 
+          <UserProfile
             path="/perfil"
             routing="path"
             appearance={{
@@ -48,7 +46,7 @@ export default async function PerfilPage() {
                 formFieldSuccessText: "text-emerald-600",
                 formFieldErrorText: "text-red-600",
                 identityPreviewText: "text-slate-700",
-                identityPreviewEditButton: "text-sky-600 hover:text-sky-700"
+                identityPreviewEditButton: "text-sky-600 hover:text-sky-700",
               },
               variables: {
                 colorPrimary: "#0ea5e9",
@@ -56,8 +54,8 @@ export default async function PerfilPage() {
                 colorInputBackground: "#f8fafc",
                 borderRadius: "0.75rem",
                 colorSuccess: "#10b981",
-                colorDanger: "#ef4444"
-              }
+                colorDanger: "#ef4444",
+              },
             }}
           />
         </div>
@@ -70,16 +68,16 @@ export default async function PerfilPage() {
             </h3>
             <div className="space-y-3 text-sm text-blue-800">
               <p>
-                <strong>Proteção de Dados:</strong> Todas as informações são criptografadas e 
+                <strong>Proteção de Dados:</strong> Todas as informações são criptografadas e
                 armazenadas em conformidade com a LGPD e normas do CFM.
               </p>
               <p>
-                <strong>Registro Profissional:</strong> Mantenha seus dados de registro 
-                profissional sempre atualizados para garantir o acesso completo ao sistema.
+                <strong>Registro Profissional:</strong> Mantenha seus dados de registro profissional
+                sempre atualizados para garantir o acesso completo ao sistema.
               </p>
               <p>
-                <strong>Segurança:</strong> Recomendamos ativar a autenticação de dois fatores 
-                para máxima segurança dos dados dos pacientes.
+                <strong>Segurança:</strong> Recomendamos ativar a autenticação de dois fatores para
+                máxima segurança dos dados dos pacientes.
               </p>
             </div>
           </div>
@@ -109,8 +107,11 @@ export default async function PerfilPage() {
             </div>
             <div className="mt-4 pt-4 border-t border-amber-200">
               <p className="text-xs text-amber-700">
-                Para exercer seus direitos, entre em contato com nosso DPO: 
-                <a href="mailto:dpo@neonpro.com.br" className="text-amber-900 hover:underline font-medium">
+                Para exercer seus direitos, entre em contato com nosso DPO:
+                <a
+                  href="mailto:dpo@neonpro.com.br"
+                  className="text-amber-900 hover:underline font-medium"
+                >
                   dpo@neonpro.com.br
                 </a>
               </p>
@@ -119,10 +120,10 @@ export default async function PerfilPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export const metadata = {
-  title: 'Perfil Profissional - NeonPro Saúde',
-  description: 'Gerencie seu perfil profissional e configurações de conta com segurança LGPD',
-}
+  title: "Perfil Profissional - NeonPro Saúde",
+  description: "Gerencie seu perfil profissional e configurações de conta com segurança LGPD",
+};

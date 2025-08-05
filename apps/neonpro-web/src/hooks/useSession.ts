@@ -1,26 +1,26 @@
 /**
  * Session Management Hooks
  * Story 1.4: Session Management & Security
- * 
+ *
  * React hooks for session management, security monitoring,
  * and device tracking with real-time updates.
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import { sessionManager } from '@/lib/auth/session';
-import { 
-  UserSession, 
-  SessionSecurityEvent, 
+import type { useState, useEffect, useCallback, useRef } from "react";
+import type { useRouter } from "next/navigation";
+import type { sessionManager } from "@/lib/auth/session";
+import type {
+  UserSession,
+  SessionSecurityEvent,
   DeviceRegistration,
   CreateSessionRequest,
   UpdateSessionRequest,
   SessionAnalytics,
   SecurityEventType,
-  SessionAction
-} from '@/types/session';
-import { useToast } from '@/hooks/use-toast';
-import { logger } from '@/lib/logger';
+  SessionAction,
+} from "@/types/session";
+import type { useToast } from "@/hooks/use-toast";
+import type { logger } from "@/lib/logger";
 
 // ============================================================================
 // SESSION HOOK
@@ -52,7 +52,7 @@ export function useSession(): UseSessionReturn {
   const [devices, setDevices] = useState<DeviceRegistration[]>([]);
   const [analytics, setAnalytics] = useState<SessionAnalytics | null>(null);
   const [error, setError] = useState<string | null>(null);
-  
+
   const router = useRouter();
   const { toast } = useToast();
   const heartbeatRef = useRef<NodeJS.Timeout | null>(null);
@@ -62,153 +62,164 @@ export function useSession(): UseSessionReturn {
   // SESSION MANAGEMENT
   // ============================================================================
 
-  const createSession = useCallback(async (request: CreateSessionRequest): Promise<UserSession> => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      
-      const newSession = await sessionManager.createSession(request);
-      setSession(newSession);
-      
-      // Start session monitoring
-      startSessionMonitoring(newSession);
-      
-      // Load related data
-      await Promise.all([
-        loadSecurityEvents(newSession.id),
-        loadUserDevices(newSession.user_id),
-        loadSessionAnalytics(newSession.user_id)
-      ]);
-      
-      toast({
-        title: "Session Created",
-        description: "You have been successfully logged in.",
-        variant: "default"
-      });
-      
-      logger.info('Session created via hook', { session_id: newSession.id });
-      return newSession;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to create session';
-      setError(errorMessage);
-      
-      toast({
-        title: "Login Failed",
-        description: errorMessage,
-        variant: "destructive"
-      });
-      
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [toast]);
+  const createSession = useCallback(
+    async (request: CreateSessionRequest): Promise<UserSession> => {
+      try {
+        setIsLoading(true);
+        setError(null);
 
-  const updateSession = useCallback(async (updates: UpdateSessionRequest): Promise<void> => {
-    if (!session) return;
-    
-    try {
-      const updatedSession = await sessionManager.updateSession(session.id, updates);
-      setSession(updatedSession);
-      
-      logger.info('Session updated via hook', { session_id: session.id, updates });
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to update session';
-      setError(errorMessage);
-      logger.error('Session update failed', { error: err, session_id: session.id });
-    }
-  }, [session]);
+        const newSession = await sessionManager.createSession(request);
+        setSession(newSession);
 
-  const terminateSession = useCallback(async (reason: string = 'user_logout'): Promise<void> => {
-    if (!session) return;
-    
-    try {
-      setIsLoading(true);
-      
-      await sessionManager.terminateSession(session.id, reason);
-      
-      // Stop monitoring
-      stopSessionMonitoring();
-      
-      // Clear state
-      setSession(null);
-      setSecurityEvents([]);
-      setDevices([]);
-      setAnalytics(null);
-      setError(null);
-      
-      toast({
-        title: "Session Ended",
-        description: "You have been successfully logged out.",
-        variant: "default"
-      });
-      
-      // Redirect to login
-      router.push('/auth/login');
-      
-      logger.info('Session terminated via hook', { session_id: session.id, reason });
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to terminate session';
-      setError(errorMessage);
-      
-      toast({
-        title: "Logout Failed",
-        description: errorMessage,
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }, [session, router, toast]);
+        // Start session monitoring
+        startSessionMonitoring(newSession);
+
+        // Load related data
+        await Promise.all([
+          loadSecurityEvents(newSession.id),
+          loadUserDevices(newSession.user_id),
+          loadSessionAnalytics(newSession.user_id),
+        ]);
+
+        toast({
+          title: "Session Created",
+          description: "You have been successfully logged in.",
+          variant: "default",
+        });
+
+        logger.info("Session created via hook", { session_id: newSession.id });
+        return newSession;
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Failed to create session";
+        setError(errorMessage);
+
+        toast({
+          title: "Login Failed",
+          description: errorMessage,
+          variant: "destructive",
+        });
+
+        throw err;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [toast],
+  );
+
+  const updateSession = useCallback(
+    async (updates: UpdateSessionRequest): Promise<void> => {
+      if (!session) return;
+
+      try {
+        const updatedSession = await sessionManager.updateSession(session.id, updates);
+        setSession(updatedSession);
+
+        logger.info("Session updated via hook", { session_id: session.id, updates });
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Failed to update session";
+        setError(errorMessage);
+        logger.error("Session update failed", { error: err, session_id: session.id });
+      }
+    },
+    [session],
+  );
+
+  const terminateSession = useCallback(
+    async (reason: string = "user_logout"): Promise<void> => {
+      if (!session) return;
+
+      try {
+        setIsLoading(true);
+
+        await sessionManager.terminateSession(session.id, reason);
+
+        // Stop monitoring
+        stopSessionMonitoring();
+
+        // Clear state
+        setSession(null);
+        setSecurityEvents([]);
+        setDevices([]);
+        setAnalytics(null);
+        setError(null);
+
+        toast({
+          title: "Session Ended",
+          description: "You have been successfully logged out.",
+          variant: "default",
+        });
+
+        // Redirect to login
+        router.push("/auth/login");
+
+        logger.info("Session terminated via hook", { session_id: session.id, reason });
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Failed to terminate session";
+        setError(errorMessage);
+
+        toast({
+          title: "Logout Failed",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [session, router, toast],
+  );
 
   const terminateAllSessions = useCallback(async (): Promise<void> => {
     if (!session) return;
-    
+
     try {
       setIsLoading(true);
-      
+
       // Get all active sessions for user
       const { data: activeSessions } = await sessionManager.supabase
-        .from('user_sessions')
-        .select('id')
-        .eq('user_id', session.user_id)
-        .eq('is_active', true);
-      
+        .from("user_sessions")
+        .select("id")
+        .eq("user_id", session.user_id)
+        .eq("is_active", true);
+
       if (activeSessions) {
         // Terminate all sessions
         await Promise.all(
-          activeSessions.map(s => sessionManager.terminateSession(s.id, 'terminate_all_sessions'))
+          activeSessions.map((s) =>
+            sessionManager.terminateSession(s.id, "terminate_all_sessions"),
+          ),
         );
       }
-      
+
       // Stop monitoring
       stopSessionMonitoring();
-      
+
       // Clear state
       setSession(null);
       setSecurityEvents([]);
       setDevices([]);
       setAnalytics(null);
       setError(null);
-      
+
       toast({
         title: "All Sessions Terminated",
         description: "All active sessions have been terminated for security.",
-        variant: "default"
+        variant: "default",
       });
-      
+
       // Redirect to login
-      router.push('/auth/login');
-      
-      logger.info('All sessions terminated via hook', { user_id: session.user_id });
+      router.push("/auth/login");
+
+      logger.info("All sessions terminated via hook", { user_id: session.user_id });
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to terminate all sessions';
+      const errorMessage = err instanceof Error ? err.message : "Failed to terminate all sessions";
       setError(errorMessage);
-      
+
       toast({
         title: "Termination Failed",
         description: errorMessage,
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -217,46 +228,46 @@ export function useSession(): UseSessionReturn {
 
   const refreshSession = useCallback(async (): Promise<void> => {
     if (!session) return;
-    
+
     try {
       // Get current session from database
       const { data: currentSession } = await sessionManager.supabase
-        .from('user_sessions')
-        .select('*')
-        .eq('id', session.id)
-        .eq('is_active', true)
+        .from("user_sessions")
+        .select("*")
+        .eq("id", session.id)
+        .eq("is_active", true)
         .single();
-      
+
       if (currentSession) {
         setSession(currentSession);
-        
+
         // Refresh related data
         await Promise.all([
           loadSecurityEvents(currentSession.id),
           loadUserDevices(currentSession.user_id),
-          loadSessionAnalytics(currentSession.user_id)
+          loadSessionAnalytics(currentSession.user_id),
         ]);
       } else {
         // Session no longer exists or is inactive
-        await terminateSession('session_expired');
+        await terminateSession("session_expired");
       }
     } catch (err) {
-      logger.error('Session refresh failed', { error: err, session_id: session.id });
-      setError('Failed to refresh session');
+      logger.error("Session refresh failed", { error: err, session_id: session.id });
+      setError("Failed to refresh session");
     }
   }, [session, terminateSession]);
 
   const extendSession = useCallback(async (): Promise<void> => {
     if (!session) return;
-    
+
     try {
       await updateSession({
-        last_activity: new Date().toISOString()
+        last_activity: new Date().toISOString(),
       });
-      
-      logger.info('Session extended via hook', { session_id: session.id });
+
+      logger.info("Session extended via hook", { session_id: session.id });
     } catch (err) {
-      logger.error('Session extension failed', { error: err, session_id: session.id });
+      logger.error("Session extension failed", { error: err, session_id: session.id });
     }
   }, [session, updateSession]);
 
@@ -264,136 +275,141 @@ export function useSession(): UseSessionReturn {
   // SECURITY MONITORING
   // ============================================================================
 
-  const reportSuspiciousActivity = useCallback(async (
-    eventType: SecurityEventType, 
-    details?: any
-  ): Promise<void> => {
-    if (!session) return;
-    
-    try {
-      // Create security event
-      await sessionManager.supabase
-        .from('session_security_events')
-        .insert({
+  const reportSuspiciousActivity = useCallback(
+    async (eventType: SecurityEventType, details?: any): Promise<void> => {
+      if (!session) return;
+
+      try {
+        // Create security event
+        await sessionManager.supabase.from("session_security_events").insert({
           session_id: session.id,
           user_id: session.user_id,
           event_type: eventType,
-          severity: 'medium',
+          severity: "medium",
           details: {
             ...details,
-            reported_by: 'user',
-            timestamp: new Date().toISOString()
+            reported_by: "user",
+            timestamp: new Date().toISOString(),
           },
           ip_address: session.ip_address,
           user_agent: session.user_agent,
           timestamp: new Date().toISOString(),
-          resolved: false
+          resolved: false,
         });
-      
-      // Reload security events
-      await loadSecurityEvents(session.id);
-      
-      toast({
-        title: "Security Event Reported",
-        description: "Suspicious activity has been reported and logged.",
-        variant: "default"
-      });
-      
-      logger.warn('Suspicious activity reported via hook', { 
-        session_id: session.id, 
-        event_type: eventType,
-        details 
-      });
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to report suspicious activity';
-      setError(errorMessage);
-      
-      toast({
-        title: "Report Failed",
-        description: errorMessage,
-        variant: "destructive"
-      });
-    }
-  }, [session, toast]);
+
+        // Reload security events
+        await loadSecurityEvents(session.id);
+
+        toast({
+          title: "Security Event Reported",
+          description: "Suspicious activity has been reported and logged.",
+          variant: "default",
+        });
+
+        logger.warn("Suspicious activity reported via hook", {
+          session_id: session.id,
+          event_type: eventType,
+          details,
+        });
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Failed to report suspicious activity";
+        setError(errorMessage);
+
+        toast({
+          title: "Report Failed",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      }
+    },
+    [session, toast],
+  );
 
   // ============================================================================
   // DEVICE MANAGEMENT
   // ============================================================================
 
-  const trustDevice = useCallback(async (deviceId: string): Promise<void> => {
-    try {
-      await sessionManager.supabase
-        .from('device_registrations')
-        .update({ trusted: true })
-        .eq('id', deviceId);
-      
-      // Reload devices
-      if (session) {
-        await loadUserDevices(session.user_id);
-      }
-      
-      toast({
-        title: "Device Trusted",
-        description: "Device has been marked as trusted.",
-        variant: "default"
-      });
-      
-      logger.info('Device trusted via hook', { device_id: deviceId });
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to trust device';
-      setError(errorMessage);
-      
-      toast({
-        title: "Trust Failed",
-        description: errorMessage,
-        variant: "destructive"
-      });
-    }
-  }, [session, toast]);
+  const trustDevice = useCallback(
+    async (deviceId: string): Promise<void> => {
+      try {
+        await sessionManager.supabase
+          .from("device_registrations")
+          .update({ trusted: true })
+          .eq("id", deviceId);
 
-  const blockDevice = useCallback(async (deviceId: string): Promise<void> => {
-    try {
-      await sessionManager.supabase
-        .from('device_registrations')
-        .update({ blocked: true })
-        .eq('id', deviceId);
-      
-      // Terminate any active sessions from this device
-      const { data: deviceSessions } = await sessionManager.supabase
-        .from('user_sessions')
-        .select('id')
-        .eq('device_fingerprint', (devices.find(d => d.id === deviceId)?.device_fingerprint))
-        .eq('is_active', true);
-      
-      if (deviceSessions) {
-        await Promise.all(
-          deviceSessions.map(s => sessionManager.terminateSession(s.id, 'device_blocked'))
-        );
+        // Reload devices
+        if (session) {
+          await loadUserDevices(session.user_id);
+        }
+
+        toast({
+          title: "Device Trusted",
+          description: "Device has been marked as trusted.",
+          variant: "default",
+        });
+
+        logger.info("Device trusted via hook", { device_id: deviceId });
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Failed to trust device";
+        setError(errorMessage);
+
+        toast({
+          title: "Trust Failed",
+          description: errorMessage,
+          variant: "destructive",
+        });
       }
-      
-      // Reload devices
-      if (session) {
-        await loadUserDevices(session.user_id);
+    },
+    [session, toast],
+  );
+
+  const blockDevice = useCallback(
+    async (deviceId: string): Promise<void> => {
+      try {
+        await sessionManager.supabase
+          .from("device_registrations")
+          .update({ blocked: true })
+          .eq("id", deviceId);
+
+        // Terminate any active sessions from this device
+        const { data: deviceSessions } = await sessionManager.supabase
+          .from("user_sessions")
+          .select("id")
+          .eq("device_fingerprint", devices.find((d) => d.id === deviceId)?.device_fingerprint)
+          .eq("is_active", true);
+
+        if (deviceSessions) {
+          await Promise.all(
+            deviceSessions.map((s) => sessionManager.terminateSession(s.id, "device_blocked")),
+          );
+        }
+
+        // Reload devices
+        if (session) {
+          await loadUserDevices(session.user_id);
+        }
+
+        toast({
+          title: "Device Blocked",
+          description: "Device has been blocked and all sessions terminated.",
+          variant: "default",
+        });
+
+        logger.info("Device blocked via hook", { device_id: deviceId });
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Failed to block device";
+        setError(errorMessage);
+
+        toast({
+          title: "Block Failed",
+          description: errorMessage,
+          variant: "destructive",
+        });
       }
-      
-      toast({
-        title: "Device Blocked",
-        description: "Device has been blocked and all sessions terminated.",
-        variant: "default"
-      });
-      
-      logger.info('Device blocked via hook', { device_id: deviceId });
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to block device';
-      setError(errorMessage);
-      
-      toast({
-        title: "Block Failed",
-        description: errorMessage,
-        variant: "destructive"
-      });
-    }
-  }, [session, devices, toast]);
+    },
+    [session, devices, toast],
+  );
 
   // ============================================================================
   // DATA LOADING
@@ -402,29 +418,29 @@ export function useSession(): UseSessionReturn {
   const loadSecurityEvents = useCallback(async (sessionId: string): Promise<void> => {
     try {
       const { data: events } = await sessionManager.supabase
-        .from('session_security_events')
-        .select('*')
-        .eq('session_id', sessionId)
-        .order('timestamp', { ascending: false })
+        .from("session_security_events")
+        .select("*")
+        .eq("session_id", sessionId)
+        .order("timestamp", { ascending: false })
         .limit(50);
-      
+
       setSecurityEvents(events || []);
     } catch (err) {
-      logger.error('Failed to load security events', { error: err, session_id: sessionId });
+      logger.error("Failed to load security events", { error: err, session_id: sessionId });
     }
   }, []);
 
   const loadUserDevices = useCallback(async (userId: string): Promise<void> => {
     try {
       const { data: userDevices } = await sessionManager.supabase
-        .from('device_registrations')
-        .select('*')
-        .eq('user_id', userId)
-        .order('last_seen', { ascending: false });
-      
+        .from("device_registrations")
+        .select("*")
+        .eq("user_id", userId)
+        .order("last_seen", { ascending: false });
+
       setDevices(userDevices || []);
     } catch (err) {
-      logger.error('Failed to load user devices', { error: err, user_id: userId });
+      logger.error("Failed to load user devices", { error: err, user_id: userId });
     }
   }, []);
 
@@ -432,57 +448,60 @@ export function useSession(): UseSessionReturn {
     try {
       // Get session analytics from last 30 days
       const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-      
+
       const { data: sessions } = await sessionManager.supabase
-        .from('user_sessions')
-        .select('*')
-        .eq('user_id', userId)
-        .gte('created_at', thirtyDaysAgo);
-      
+        .from("user_sessions")
+        .select("*")
+        .eq("user_id", userId)
+        .gte("created_at", thirtyDaysAgo);
+
       if (sessions) {
         const analytics: SessionAnalytics = {
           total_sessions: sessions.length,
-          active_sessions: sessions.filter(s => s.is_active).length,
+          active_sessions: sessions.filter((s) => s.is_active).length,
           average_duration_minutes: 0,
-          unique_devices: new Set(sessions.map(s => s.device_fingerprint)).size,
-          unique_locations: new Set(sessions.map(s => s.ip_address)).size,
+          unique_devices: new Set(sessions.map((s) => s.device_fingerprint)).size,
+          unique_locations: new Set(sessions.map((s) => s.ip_address)).size,
           security_events_count: 0,
           last_login: sessions.length > 0 ? sessions[0].created_at : null,
-          most_used_device: '',
-          risk_score: 0
+          most_used_device: "",
+          risk_score: 0,
         };
-        
+
         // Calculate average duration
-        const completedSessions = sessions.filter(s => !s.is_active);
+        const completedSessions = sessions.filter((s) => !s.is_active);
         if (completedSessions.length > 0) {
           const totalDuration = completedSessions.reduce((sum, session) => {
             const start = new Date(session.created_at).getTime();
             const end = new Date(session.expires_at).getTime();
             return sum + (end - start);
           }, 0);
-          analytics.average_duration_minutes = Math.round(totalDuration / completedSessions.length / 60000);
+          analytics.average_duration_minutes = Math.round(
+            totalDuration / completedSessions.length / 60000,
+          );
         }
-        
+
         // Get security events count
         const { count: securityCount } = await sessionManager.supabase
-          .from('session_security_events')
-          .select('*', { count: 'exact', head: true })
-          .eq('user_id', userId)
-          .gte('timestamp', thirtyDaysAgo);
-        
+          .from("session_security_events")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", userId)
+          .gte("timestamp", thirtyDaysAgo);
+
         analytics.security_events_count = securityCount || 0;
-        
+
         // Calculate risk score (simplified)
-        analytics.risk_score = Math.min(100, 
-          (analytics.security_events_count * 10) + 
-          (analytics.unique_locations > 5 ? 20 : 0) +
-          (analytics.unique_devices > 3 ? 15 : 0)
+        analytics.risk_score = Math.min(
+          100,
+          analytics.security_events_count * 10 +
+            (analytics.unique_locations > 5 ? 20 : 0) +
+            (analytics.unique_devices > 3 ? 15 : 0),
         );
-        
+
         setAnalytics(analytics);
       }
     } catch (err) {
-      logger.error('Failed to load session analytics', { error: err, user_id: userId });
+      logger.error("Failed to load session analytics", { error: err, user_id: userId });
     }
   }, []);
 
@@ -490,34 +509,40 @@ export function useSession(): UseSessionReturn {
   // SESSION MONITORING
   // ============================================================================
 
-  const startSessionMonitoring = useCallback((sessionData: UserSession): void => {
-    // Heartbeat to keep session alive
-    heartbeatRef.current = setInterval(() => {
-      extendSession();
-    }, 5 * 60 * 1000); // Every 5 minutes
-    
-    // Security monitoring
-    securityMonitorRef.current = setInterval(() => {
-      if (sessionData.id) {
-        loadSecurityEvents(sessionData.id);
-      }
-    }, 30 * 1000); // Every 30 seconds
-    
-    logger.info('Session monitoring started', { session_id: sessionData.id });
-  }, [extendSession, loadSecurityEvents]);
+  const startSessionMonitoring = useCallback(
+    (sessionData: UserSession): void => {
+      // Heartbeat to keep session alive
+      heartbeatRef.current = setInterval(
+        () => {
+          extendSession();
+        },
+        5 * 60 * 1000,
+      ); // Every 5 minutes
+
+      // Security monitoring
+      securityMonitorRef.current = setInterval(() => {
+        if (sessionData.id) {
+          loadSecurityEvents(sessionData.id);
+        }
+      }, 30 * 1000); // Every 30 seconds
+
+      logger.info("Session monitoring started", { session_id: sessionData.id });
+    },
+    [extendSession, loadSecurityEvents],
+  );
 
   const stopSessionMonitoring = useCallback((): void => {
     if (heartbeatRef.current) {
       clearInterval(heartbeatRef.current);
       heartbeatRef.current = null;
     }
-    
+
     if (securityMonitorRef.current) {
       clearInterval(securityMonitorRef.current);
       securityMonitorRef.current = null;
     }
-    
-    logger.info('Session monitoring stopped');
+
+    logger.info("Session monitoring stopped");
   }, []);
 
   // ============================================================================
@@ -534,10 +559,13 @@ export function useSession(): UseSessionReturn {
   // Auto-refresh session periodically
   useEffect(() => {
     if (session) {
-      const refreshInterval = setInterval(() => {
-        refreshSession();
-      }, 10 * 60 * 1000); // Every 10 minutes
-      
+      const refreshInterval = setInterval(
+        () => {
+          refreshSession();
+        },
+        10 * 60 * 1000,
+      ); // Every 10 minutes
+
       return () => clearInterval(refreshInterval);
     }
   }, [session, refreshSession]);
@@ -558,7 +586,7 @@ export function useSession(): UseSessionReturn {
     reportSuspiciousActivity,
     trustDevice,
     blockDevice,
-    error
+    error,
   };
 }
 
@@ -585,100 +613,109 @@ export function useSecurityEvents(sessionId?: string): UseSecurityEventsReturn {
 
   const loadEvents = useCallback(async (): Promise<void> => {
     if (!sessionId) return;
-    
+
     try {
       setIsLoading(true);
       setError(null);
-      
+
       const { data: securityEvents, error: loadError } = await sessionManager.supabase
-        .from('session_security_events')
-        .select('*')
-        .eq('session_id', sessionId)
-        .order('timestamp', { ascending: false });
-      
+        .from("session_security_events")
+        .select("*")
+        .eq("session_id", sessionId)
+        .order("timestamp", { ascending: false });
+
       if (loadError) throw loadError;
-      
+
       setEvents(securityEvents || []);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load security events';
+      const errorMessage = err instanceof Error ? err.message : "Failed to load security events";
       setError(errorMessage);
-      logger.error('Failed to load security events', { error: err, session_id: sessionId });
+      logger.error("Failed to load security events", { error: err, session_id: sessionId });
     } finally {
       setIsLoading(false);
     }
   }, [sessionId]);
 
-  const resolveEvent = useCallback(async (eventId: string): Promise<void> => {
-    try {
-      await sessionManager.supabase
-        .from('session_security_events')
-        .update({ 
-          resolved: true,
-          resolved_at: new Date().toISOString()
-        })
-        .eq('id', eventId);
-      
-      // Reload events
-      await loadEvents();
-      
-      toast({
-        title: "Event Resolved",
-        description: "Security event has been marked as resolved.",
-        variant: "default"
-      });
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to resolve event';
-      setError(errorMessage);
-      
-      toast({
-        title: "Resolution Failed",
-        description: errorMessage,
-        variant: "destructive"
-      });
-    }
-  }, [loadEvents, toast]);
+  const resolveEvent = useCallback(
+    async (eventId: string): Promise<void> => {
+      try {
+        await sessionManager.supabase
+          .from("session_security_events")
+          .update({
+            resolved: true,
+            resolved_at: new Date().toISOString(),
+          })
+          .eq("id", eventId);
 
-  const dismissEvent = useCallback(async (eventId: string): Promise<void> => {
-    try {
-      await sessionManager.supabase
-        .from('session_security_events')
-        .update({ 
-          resolved: true,
-          resolved_at: new Date().toISOString(),
-          details: { dismissed: true }
-        })
-        .eq('id', eventId);
-      
-      // Reload events
-      await loadEvents();
-      
-      toast({
-        title: "Event Dismissed",
-        description: "Security event has been dismissed.",
-        variant: "default"
-      });
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to dismiss event';
-      setError(errorMessage);
-      
-      toast({
-        title: "Dismissal Failed",
-        description: errorMessage,
-        variant: "destructive"
-      });
-    }
-  }, [loadEvents, toast]);
+        // Reload events
+        await loadEvents();
 
-  const getEventsByType = useCallback((eventType: SecurityEventType): SessionSecurityEvent[] => {
-    return events.filter(event => event.event_type === eventType);
-  }, [events]);
+        toast({
+          title: "Event Resolved",
+          description: "Security event has been marked as resolved.",
+          variant: "default",
+        });
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Failed to resolve event";
+        setError(errorMessage);
+
+        toast({
+          title: "Resolution Failed",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      }
+    },
+    [loadEvents, toast],
+  );
+
+  const dismissEvent = useCallback(
+    async (eventId: string): Promise<void> => {
+      try {
+        await sessionManager.supabase
+          .from("session_security_events")
+          .update({
+            resolved: true,
+            resolved_at: new Date().toISOString(),
+            details: { dismissed: true },
+          })
+          .eq("id", eventId);
+
+        // Reload events
+        await loadEvents();
+
+        toast({
+          title: "Event Dismissed",
+          description: "Security event has been dismissed.",
+          variant: "default",
+        });
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Failed to dismiss event";
+        setError(errorMessage);
+
+        toast({
+          title: "Dismissal Failed",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      }
+    },
+    [loadEvents, toast],
+  );
+
+  const getEventsByType = useCallback(
+    (eventType: SecurityEventType): SessionSecurityEvent[] => {
+      return events.filter((event) => event.event_type === eventType);
+    },
+    [events],
+  );
 
   const getUnresolvedEvents = useCallback((): SessionSecurityEvent[] => {
-    return events.filter(event => !event.resolved);
+    return events.filter((event) => !event.resolved);
   }, [events]);
 
   const getCriticalEvents = useCallback((): SessionSecurityEvent[] => {
-    return events.filter(event => event.severity === 'critical' && !event.resolved);
+    return events.filter((event) => event.severity === "critical" && !event.resolved);
   }, [events]);
 
   // Load events when sessionId changes
@@ -696,6 +733,6 @@ export function useSecurityEvents(sessionId?: string): UseSecurityEventsReturn {
     getEventsByType,
     getUnresolvedEvents,
     getCriticalEvents,
-    error
+    error,
   };
 }

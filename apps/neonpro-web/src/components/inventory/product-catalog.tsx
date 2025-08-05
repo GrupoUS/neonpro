@@ -1,23 +1,23 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import {
+import type { Input } from "@/components/ui/input";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
+import type {
   Table,
   TableBody,
   TableCell,
@@ -25,7 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
+import type {
   AlertTriangle,
   CheckCircle,
   Clock,
@@ -35,7 +35,7 @@ import {
   Shield,
   Thermometer,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import type { useMemo, useState } from "react";
 
 interface Product {
   id: string;
@@ -170,10 +170,8 @@ export function ProductCatalog() {
         product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.ncmCode.includes(searchTerm);
 
-      const matchesCategory =
-        selectedCategory === "all" || product.category === selectedCategory;
-      const matchesStatus =
-        selectedStatus === "all" || product.status === selectedStatus;
+      const matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
+      const matchesStatus = selectedStatus === "all" || product.status === selectedStatus;
 
       return matchesSearch && matchesCategory && matchesStatus;
     });
@@ -259,7 +257,7 @@ export function ProductCatalog() {
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {categories.map((category) => {
           const categoryCount = mockProducts.filter(
-            (p) => p.category === category.id && p.status === "active"
+            (p) => p.category === category.id && p.status === "active",
           ).length;
           return (
             <Card
@@ -268,9 +266,7 @@ export function ProductCatalog() {
                 selectedCategory === category.id ? "ring-2 ring-primary" : ""
               }`}
               onClick={() =>
-                setSelectedCategory(
-                  selectedCategory === category.id ? "all" : category.id
-                )
+                setSelectedCategory(selectedCategory === category.id ? "all" : category.id)
               }
             >
               <CardContent className="p-4 text-center">
@@ -290,10 +286,7 @@ export function ProductCatalog() {
           <CardTitle className="flex items-center justify-between">
             <span>Produtos ({filteredProducts.length})</span>
             <div className="flex items-center gap-2">
-              <Badge
-                variant="outline"
-                className="bg-blue-50 text-blue-700 border-blue-200"
-              >
+              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
                 <Shield className="w-3 h-3 mr-1" />
                 ANVISA Compliant
               </Badge>
@@ -322,9 +315,7 @@ export function ProductCatalog() {
                 {filteredProducts.map((product) => {
                   const stockStatus = getStockStatus(product);
                   const StockIcon = stockStatus.icon;
-                  const category = categories.find(
-                    (c) => c.id === product.category
-                  );
+                  const category = categories.find((c) => c.id === product.category);
                   const expiringSoon = isExpiringSoon(product.expirationDate);
 
                   return (
@@ -351,10 +342,7 @@ export function ProductCatalog() {
 
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Badge
-                            variant="outline"
-                            className={stockStatus.color}
-                          >
+                          <Badge variant="outline" className={stockStatus.color}>
                             <StockIcon className="w-3 h-3 mr-1" />
                             {product.currentStock} {product.unit}
                           </Badge>
@@ -378,12 +366,8 @@ export function ProductCatalog() {
                           <div
                             className={`text-sm ${expiringSoon ? "text-amber-600 font-medium" : ""}`}
                           >
-                            {expiringSoon && (
-                              <Clock className="w-3 h-3 inline mr-1" />
-                            )}
-                            {new Date(
-                              product.expirationDate
-                            ).toLocaleDateString("pt-BR")}
+                            {expiringSoon && <Clock className="w-3 h-3 inline mr-1" />}
+                            {new Date(product.expirationDate).toLocaleDateString("pt-BR")}
                             {product.batchNumber && (
                               <div className="text-xs text-muted-foreground">
                                 Lote: {product.batchNumber}
@@ -391,9 +375,7 @@ export function ProductCatalog() {
                             )}
                           </div>
                         ) : (
-                          <span className="text-muted-foreground text-sm">
-                            N/A
-                          </span>
+                          <span className="text-muted-foreground text-sm">N/A</span>
                         )}
                       </TableCell>
 
@@ -443,11 +425,7 @@ export function ProductCatalog() {
 
                       <TableCell>
                         <Badge
-                          variant={
-                            product.status === "active"
-                              ? "default"
-                              : "secondary"
-                          }
+                          variant={product.status === "active" ? "default" : "secondary"}
                           className={
                             product.status === "active"
                               ? "bg-green-100 text-green-800 border-green-200"

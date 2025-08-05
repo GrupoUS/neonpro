@@ -1,23 +1,23 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import {
+import type { Input } from "@/components/ui/input";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
+import type {
   Table,
   TableBody,
   TableCell,
@@ -25,9 +25,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { format, isToday, isTomorrow, isYesterday } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import {
+import type { format, isToday, isTomorrow, isYesterday } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
   AlertTriangle,
   Bell,
   Calendar,
@@ -39,7 +39,7 @@ import {
   TrendingUp,
   Zap,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import type { useEffect, useState } from "react";
 
 // Mock data - substituir por dados reais do Supabase
 const mockPaymentReminders = [
@@ -148,9 +148,7 @@ interface DueDateMonitoringProps {
 
 export function DueDateMonitoring({ clinicId }: DueDateMonitoringProps) {
   const [reminders, setReminders] = useState<PaymentReminder[]>([]);
-  const [filteredReminders, setFilteredReminders] = useState<PaymentReminder[]>(
-    []
-  );
+  const [filteredReminders, setFilteredReminders] = useState<PaymentReminder[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterType, setFilterType] = useState<string>("all");
   const [filterPriority, setFilterPriority] = useState<string>("all");
@@ -186,16 +184,12 @@ export function DueDateMonitoring({ clinicId }: DueDateMonitoringProps) {
 
     // Filtro por tipo de alerta
     if (filterType !== "all") {
-      filtered = filtered.filter(
-        (reminder) => reminder.alert_type === filterType
-      );
+      filtered = filtered.filter((reminder) => reminder.alert_type === filterType);
     }
 
     // Filtro por prioridade
     if (filterPriority !== "all") {
-      filtered = filtered.filter(
-        (reminder) => reminder.priority === filterPriority
-      );
+      filtered = filtered.filter((reminder) => reminder.priority === filterPriority);
     }
 
     // Filtro por termo de busca
@@ -205,7 +199,7 @@ export function DueDateMonitoring({ clinicId }: DueDateMonitoringProps) {
         (reminder) =>
           reminder.vendor.name.toLowerCase().includes(term) ||
           reminder.description.toLowerCase().includes(term) ||
-          reminder.vendor.document.includes(term)
+          reminder.vendor.document.includes(term),
       );
     }
 
@@ -334,9 +328,7 @@ export function DueDateMonitoring({ clinicId }: DueDateMonitoringProps) {
             <AlertTriangle className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">
-              {stats.overdue}
-            </div>
+            <div className="text-2xl font-bold text-red-600">{stats.overdue}</div>
             <p className="text-xs text-muted-foreground">
               {formatCurrency(stats.urgentAmount)} urgente
             </p>
@@ -349,9 +341,7 @@ export function DueDateMonitoring({ clinicId }: DueDateMonitoringProps) {
             <Clock className="h-4 w-4 text-orange-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">
-              {stats.dueToday}
-            </div>
+            <div className="text-2xl font-bold text-orange-600">{stats.dueToday}</div>
             <p className="text-xs text-muted-foreground">Atenção imediata</p>
           </CardContent>
         </Card>
@@ -362,9 +352,7 @@ export function DueDateMonitoring({ clinicId }: DueDateMonitoringProps) {
             <Calendar className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
-              {stats.dueSoon}
-            </div>
+            <div className="text-2xl font-bold text-blue-600">{stats.dueSoon}</div>
             <p className="text-xs text-muted-foreground">
               {formatCurrency(stats.totalAmount)} total
             </p>
@@ -379,9 +367,7 @@ export function DueDateMonitoring({ clinicId }: DueDateMonitoringProps) {
             <Bell className="h-5 w-5" />
             Monitoramento de Vencimentos
           </CardTitle>
-          <CardDescription>
-            Acompanhe contas próximas do vencimento e em atraso
-          </CardDescription>
+          <CardDescription>Acompanhe contas próximas do vencimento e em atraso</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col sm:flex-row gap-4 mb-4">
@@ -457,58 +443,44 @@ export function DueDateMonitoring({ clinicId }: DueDateMonitoringProps) {
                     <TableRow key={reminder.id}>
                       <TableCell>
                         <div>
-                          <div className="font-medium">
-                            {reminder.vendor.name}
-                          </div>
+                          <div className="font-medium">{reminder.vendor.name}</div>
                           <div className="text-sm text-muted-foreground">
                             {reminder.vendor.document}
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="max-w-[200px] truncate">
-                          {reminder.description}
-                        </div>
+                        <div className="max-w-[200px] truncate">{reminder.description}</div>
                       </TableCell>
                       <TableCell>
-                        <div className="font-medium">
-                          {formatCurrency(reminder.amount)}
-                        </div>
+                        <div className="font-medium">{formatCurrency(reminder.amount)}</div>
                       </TableCell>
                       <TableCell>
-                        <div className="text-sm">
-                          {formatDateDisplay(reminder.due_date)}
-                        </div>
+                        <div className="text-sm">{formatDateDisplay(reminder.due_date)}</div>
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline">
                           {reminder.status === "pending"
                             ? "Pendente"
                             : reminder.status === "approved"
-                            ? "Aprovado"
-                            : "Pago"}
+                              ? "Aprovado"
+                              : "Pago"}
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Badge
-                          variant={getPriorityBadgeColor(reminder.priority)}
-                        >
+                        <Badge variant={getPriorityBadgeColor(reminder.priority)}>
                           {reminder.priority === "urgent"
                             ? "Urgente"
                             : reminder.priority === "high"
-                            ? "Alta"
-                            : reminder.priority === "medium"
-                            ? "Média"
-                            : "Baixa"}
+                              ? "Alta"
+                              : reminder.priority === "medium"
+                                ? "Média"
+                                : "Baixa"}
                         </Badge>
                       </TableCell>
                       <TableCell>
                         <div className="space-y-1">
-                          <Badge
-                            variant={getAlertTypeBadgeColor(
-                              reminder.alert_type
-                            )}
-                          >
+                          <Badge variant={getAlertTypeBadgeColor(reminder.alert_type)}>
                             {getAlertTypeLabel(reminder.alert_type)}
                           </Badge>
                           <div className="text-xs text-muted-foreground">

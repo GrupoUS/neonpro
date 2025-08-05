@@ -14,14 +14,14 @@ exports.isValidErrorCode = isValidErrorCode;
 var config_1 = require("./config");
 // Type Guards
 function isAnalysisResult(obj) {
-    return obj && typeof obj.id === 'string' && typeof obj.analysisData === 'object';
+  return obj && typeof obj.id === "string" && typeof obj.analysisData === "object";
 }
 function isValidTreatmentType(type) {
-    return Object.values(config_1.TREATMENT_TYPES).includes(type);
+  return Object.values(config_1.TREATMENT_TYPES).includes(type);
 }
 function isValidAnalysisStatus(status) {
-    return Object.values(config_1.ANALYSIS_STATUS).includes(status);
+  return Object.values(config_1.ANALYSIS_STATUS).includes(status);
 }
 function isValidErrorCode(code) {
-    return Object.values(config_1.ERROR_CODES).includes(code);
+  return Object.values(config_1.ERROR_CODES).includes(code);
 }

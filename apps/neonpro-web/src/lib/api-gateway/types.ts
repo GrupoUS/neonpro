@@ -1,7 +1,7 @@
 /**
  * NeonPro - API Gateway Types
  * Type definitions for the API Gateway system
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  * @created 2025-01-27
@@ -13,7 +13,7 @@
 export interface ApiGatewayConfig {
   baseUrl: string;
   version: string;
-  environment: 'development' | 'staging' | 'production';
+  environment: "development" | "staging" | "production";
   cors: {
     origins: string[];
     methods: string[];
@@ -33,7 +33,7 @@ export interface ApiGatewayConfig {
   };
   logging: {
     enabled: boolean;
-    level: 'debug' | 'info' | 'warn' | 'error';
+    level: "debug" | "info" | "warn" | "error";
     includeBody: boolean;
     includeHeaders: boolean;
   };
@@ -50,7 +50,7 @@ export interface ApiGatewayConfig {
 export interface ApiRoute {
   id: string;
   path: string;
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   handler: string;
   middleware: string[];
   authentication: {
@@ -85,8 +85,8 @@ export interface ApiRoute {
  */
 export interface ApiParameter {
   name: string;
-  in: 'query' | 'path' | 'header' | 'body';
-  type: 'string' | 'number' | 'boolean' | 'array' | 'object';
+  in: "query" | "path" | "header" | "body";
+  type: "string" | "number" | "boolean" | "array" | "object";
   required: boolean;
   description: string;
   example?: any;
@@ -134,7 +134,7 @@ export interface ApiClientConfig {
   id: string;
   name: string;
   description: string;
-  type: 'web' | 'mobile' | 'server' | 'integration';
+  type: "web" | "mobile" | "server" | "integration";
   apiKey: string;
   secretKey?: string;
   allowedOrigins: string[];
@@ -219,24 +219,24 @@ export interface ApiMetrics {
  * API Health Check
  */
 export interface ApiHealthCheck {
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status: "healthy" | "degraded" | "unhealthy";
   timestamp: Date;
   version: string;
   uptime: number;
   checks: {
     database: {
-      status: 'up' | 'down';
+      status: "up" | "down";
       responseTime: number;
       error?: string;
     };
     cache: {
-      status: 'up' | 'down';
+      status: "up" | "down";
       responseTime: number;
       error?: string;
     };
     integrations: {
       name: string;
-      status: 'up' | 'down';
+      status: "up" | "down";
       responseTime: number;
       error?: string;
     }[];
@@ -318,20 +318,22 @@ export interface ApiGatewayManager {
   unregisterRoute(routeId: string): Promise<void>;
   getRoute(routeId: string): Promise<ApiRoute | null>;
   listRoutes(): Promise<ApiRoute[]>;
-  
+
   // Client Management
-  createClient(config: Omit<ApiClientConfig, 'id' | 'createdAt' | 'updatedAt'>): Promise<ApiClientConfig>;
+  createClient(
+    config: Omit<ApiClientConfig, "id" | "createdAt" | "updatedAt">,
+  ): Promise<ApiClientConfig>;
   updateClient(clientId: string, updates: Partial<ApiClientConfig>): Promise<ApiClientConfig>;
   deleteClient(clientId: string): Promise<void>;
   getClient(clientId: string): Promise<ApiClientConfig | null>;
   listClients(): Promise<ApiClientConfig[]>;
-  
+
   // Authentication & Authorization
   authenticateRequest(context: ApiRequestContext): Promise<boolean>;
   authorizeRequest(context: ApiRequestContext): Promise<boolean>;
   generateApiKey(clientId: string): Promise<string>;
   validateApiKey(apiKey: string): Promise<ApiClientConfig | null>;
-  
+
   // Rate Limiting
   checkRateLimit(context: ApiRequestContext): Promise<boolean>;
   getRateLimitStatus(clientId: string): Promise<{
@@ -339,16 +341,16 @@ export interface ApiGatewayManager {
     resetTime: Date;
     limit: number;
   }>;
-  
+
   // Monitoring & Metrics
   recordRequest(context: ApiRequestContext, response: ApiResponseContext): Promise<void>;
   getMetrics(period?: string): Promise<ApiMetrics>;
   getHealthCheck(): Promise<ApiHealthCheck>;
-  
+
   // Documentation
   generateDocumentation(): Promise<ApiDocumentation>;
   getDocumentation(): Promise<ApiDocumentation>;
-  
+
   // Middleware & Plugins
   registerMiddleware(middleware: ApiMiddleware): Promise<void>;
   unregisterMiddleware(name: string): Promise<void>;
@@ -360,16 +362,16 @@ export interface ApiGatewayManager {
  * API Gateway Events
  */
 export interface ApiGatewayEvents {
-  'request:start': { context: ApiRequestContext };
-  'request:end': { context: ApiRequestContext; response: ApiResponseContext };
-  'request:error': { context: ApiRequestContext; error: ApiError };
-  'client:created': { client: ApiClientConfig };
-  'client:updated': { client: ApiClientConfig };
-  'client:deleted': { clientId: string };
-  'route:registered': { route: ApiRoute };
-  'route:unregistered': { routeId: string };
-  'rate_limit:exceeded': { context: ApiRequestContext };
-  'health:changed': { status: 'healthy' | 'degraded' | 'unhealthy' };
+  "request:start": { context: ApiRequestContext };
+  "request:end": { context: ApiRequestContext; response: ApiResponseContext };
+  "request:error": { context: ApiRequestContext; error: ApiError };
+  "client:created": { client: ApiClientConfig };
+  "client:updated": { client: ApiClientConfig };
+  "client:deleted": { clientId: string };
+  "route:registered": { route: ApiRoute };
+  "route:unregistered": { routeId: string };
+  "rate_limit:exceeded": { context: ApiRequestContext };
+  "health:changed": { status: "healthy" | "degraded" | "unhealthy" };
 }
 
 /**

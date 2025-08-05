@@ -1,101 +1,104 @@
-﻿/**
+/**
  * Advanced Forecasting React Hook for NeonPro
- * 
+ *
  * Custom hook providing comprehensive forecasting capabilities including:
  * - ML-inspired time series forecasting
  * - Scenario analysis and sensitivity testing
  * - Statistical model evaluation and confidence intervals
  * - Real-time prediction updates with data validation
  * - Export capabilities for forecasting reports
- * 
+ *
  * Integrates with ForecastingEngine service and provides UI-ready prediction data.
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { createClient } from '@/lib/supabase/client'
-import { 
+import type { useState, useEffect, useCallback, useMemo } from "react";
+import type { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import type { createClient } from "@/lib/supabase/client";
+import type {
   ForecastingConfig,
   ForecastResult,
   ScenarioConfig,
   ModelEvaluation,
   createForecastingEngine,
-  forecastingUtils
-} from '@/lib/analytics/advanced/forecasting-engine'
+  forecastingUtils,
+} from "@/lib/analytics/advanced/forecasting-engine";
 
 // Types for hook configuration and state
 export interface ForecastingHookConfig {
-  metric: 'revenue' | 'subscriptions' | 'churn' | 'trials'
-  timeHorizon: 30 | 90 | 180 | 365 // days
-  model: 'linear' | 'exponential' | 'seasonal' | 'auto'
-  granularity: 'daily' | 'weekly' | 'monthly'
-  confidenceLevel: 90 | 95 | 99
-  includeSeasonality: boolean
-  includeTrends: boolean
-  autoRefresh?: boolean
-  refreshInterval?: number
+  metric: "revenue" | "subscriptions" | "churn" | "trials";
+  timeHorizon: 30 | 90 | 180 | 365; // days
+  model: "linear" | "exponential" | "seasonal" | "auto";
+  granularity: "daily" | "weekly" | "monthly";
+  confidenceLevel: 90 | 95 | 99;
+  includeSeasonality: boolean;
+  includeTrends: boolean;
+  autoRefresh?: boolean;
+  refreshInterval?: number;
 }
 
 export interface ForecastingState {
-  forecast: ForecastResult | null
-  scenarios: { [key: string]: ForecastResult }
-  evaluation: ModelEvaluation | null
-  predictions: any[]
-  chartData: any[]
+  forecast: ForecastResult | null;
+  scenarios: { [key: string]: ForecastResult };
+  evaluation: ModelEvaluation | null;
+  predictions: any[];
+  chartData: any[];
   confidence: {
-    upper: number[]
-    lower: number[]
-    mean: number[]
-  }
+    upper: number[];
+    lower: number[];
+    mean: number[];
+  };
   accuracy: {
-    mape: number
-    rmse: number
-    r2: number
-  }
-  isLoading: boolean
-  error: string | null
-  lastUpdated: Date | null
+    mape: number;
+    rmse: number;
+    r2: number;
+  };
+  isLoading: boolean;
+  error: string | null;
+  lastUpdated: Date | null;
 }
 
 export interface ForecastingActions {
-  generateForecast: (config: ForecastingConfig) => Promise<void>
-  runScenario: (name: string, config: ScenarioConfig) => Promise<void>
-  updateModel: (modelType: string) => Promise<void>
-  refreshData: () => Promise<void>
-  exportForecast: (format: 'csv' | 'excel' | 'pdf') => Promise<void>
-  updateConfig: (newConfig: Partial<ForecastingHookConfig>) => void
+  generateForecast: (config: ForecastingConfig) => Promise<void>;
+  runScenario: (name: string, config: ScenarioConfig) => Promise<void>;
+  updateModel: (modelType: string) => Promise<void>;
+  refreshData: () => Promise<void>;
+  exportForecast: (format: "csv" | "excel" | "pdf") => Promise<void>;
+  updateConfig: (newConfig: Partial<ForecastingHookConfig>) => void;
 }
 
 /**
  * Main forecasting hook
  */
 export function useForecasting(
-  initialConfig: ForecastingHookConfig
+  initialConfig: ForecastingHookConfig,
 ): ForecastingState & ForecastingActions {
-  const queryClient = useQueryClient()
-  const supabase = await createClient()
-  const [config, setConfig] = useState<ForecastingHookConfig>(initialConfig)
-  const [scenarios, setScenarios] = useState<{ [key: string]: ForecastResult }>({})
-  const [error, setError] = useState<string | null>(null)
+  const queryClient = useQueryClient();
+  const supabase = await createClient();
+  const [config, setConfig] = useState<ForecastingHookConfig>(initialConfig);
+  const [scenarios, setScenarios] = useState<{ [key: string]: ForecastResult }>({});
+  const [error, setError] = useState<string | null>(null);
 
   // Initialize forecasting engine
-  const forecastingEngine = useMemo(() => createForecastingEngine(), [])
+  const forecastingEngine = useMemo(() => createForecastingEngine(), []);
 
   // Query key for caching
-  const queryKey = useMemo(() => [
-    'forecasting',
-    config.metric,
-    config.timeHorizon,
-    config.model,
-    config.granularity,
-    config.confidenceLevel
-  ], [config])
+  const queryKey = useMemo(
+    () => [
+      "forecasting",
+      config.metric,
+      config.timeHorizon,
+      config.model,
+      config.granularity,
+      config.confidenceLevel,
+    ],
+    [config],
+  );
 
   // Main forecasting query
   const {
     data: forecastData,
     isLoading,
-    refetch: refreshData
+    refetch: refreshData,
   } = useQuery({
     queryKey,
     queryFn: async () => {
@@ -103,37 +106,37 @@ export function useForecasting(
         const forecastConfig: ForecastingConfig = {
           metric: config.metric,
           timeHorizon: config.timeHorizon,
-          model: config.model === 'auto' ? 'seasonal' : config.model,
+          model: config.model === "auto" ? "seasonal" : config.model,
           granularity: config.granularity,
           confidenceLevel: config.confidenceLevel,
           includeSeasonality: config.includeSeasonality,
           includeTrends: config.includeTrends,
           startDate: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString(), // Last year
-          endDate: new Date().toISOString()
-        }
+          endDate: new Date().toISOString(),
+        };
 
         // Generate main forecast
-        const forecast = await forecastingEngine.generateForecast(forecastConfig)
-        
+        const forecast = await forecastingEngine.generateForecast(forecastConfig);
+
         if (!forecast || !forecast.predictions || forecast.predictions.length === 0) {
-          throw new Error('No forecast data generated')
+          throw new Error("No forecast data generated");
         }
 
         // Evaluate model performance
-        const evaluation = await forecastingEngine.evaluateModel(forecast, forecastConfig)
-        
+        const evaluation = await forecastingEngine.evaluateModel(forecast, forecastConfig);
+
         // Generate sensitivity analysis
         const sensitivityAnalysis = await forecastingEngine.performSensitivityAnalysis(
           forecastConfig,
-          ['growth_rate', 'seasonal_factor', 'trend_strength']
-        )
+          ["growth_rate", "seasonal_factor", "trend_strength"],
+        );
 
         // Format data for visualization
-        const chartData = forecastingUtils.formatForChart(forecast, config.granularity)
+        const chartData = forecastingUtils.formatForChart(forecast, config.granularity);
         const confidenceIntervals = forecastingUtils.calculateConfidenceIntervals(
           forecast.predictions,
-          config.confidenceLevel
-        )
+          config.confidenceLevel,
+        );
 
         return {
           forecast,
@@ -145,132 +148,150 @@ export function useForecasting(
           accuracy: {
             mape: evaluation.metrics.mape,
             rmse: evaluation.metrics.rmse,
-            r2: evaluation.metrics.r2
-          }
-        }
+            r2: evaluation.metrics.r2,
+          },
+        };
       } catch (err) {
-        console.error('Forecasting error:', err)
-        throw err
+        console.error("Forecasting error:", err);
+        throw err;
       }
     },
     staleTime: 10 * 60 * 1000, // 10 minutes
     cacheTime: 60 * 60 * 1000, // 1 hour
     retry: 2,
     refetchOnWindowFocus: false,
-    enabled: !!config.metric && config.timeHorizon > 0
-  })
+    enabled: !!config.metric && config.timeHorizon > 0,
+  });
 
   // Auto-refresh effect
   useEffect(() => {
-    if (!config.autoRefresh || !config.refreshInterval) return
+    if (!config.autoRefresh || !config.refreshInterval) return;
 
     const interval = setInterval(() => {
-      refreshData()
-    }, config.refreshInterval * 1000)
+      refreshData();
+    }, config.refreshInterval * 1000);
 
-    return () => clearInterval(interval)
-  }, [config.autoRefresh, config.refreshInterval, refreshData])
+    return () => clearInterval(interval);
+  }, [config.autoRefresh, config.refreshInterval, refreshData]);
 
   // Generate forecast mutation
   const generateForecastMutation = useMutation({
     mutationFn: async (newConfig: ForecastingConfig) => {
-      const forecast = await forecastingEngine.generateForecast(newConfig)
-      const evaluation = await forecastingEngine.evaluateModel(forecast, newConfig)
-      
-      return { forecast, evaluation }
+      const forecast = await forecastingEngine.generateForecast(newConfig);
+      const evaluation = await forecastingEngine.evaluateModel(forecast, newConfig);
+
+      return { forecast, evaluation };
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(queryKey, data)
-      setError(null)
+      queryClient.setQueryData(queryKey, data);
+      setError(null);
     },
     onError: (err) => {
-      setError(err instanceof Error ? err.message : 'Forecast generation failed')
-    }
-  })
+      setError(err instanceof Error ? err.message : "Forecast generation failed");
+    },
+  });
 
   // Run scenario mutation
   const runScenarioMutation = useMutation({
-    mutationFn: async ({ name, scenarioConfig }: { name: string, scenarioConfig: ScenarioConfig }) => {
+    mutationFn: async ({
+      name,
+      scenarioConfig,
+    }: {
+      name: string;
+      scenarioConfig: ScenarioConfig;
+    }) => {
       if (!forecastData?.forecast) {
-        throw new Error('Base forecast required for scenario analysis')
+        throw new Error("Base forecast required for scenario analysis");
       }
 
       const scenarioResult = await forecastingEngine.runScenarioAnalysis(
         forecastData.forecast,
-        scenarioConfig
-      )
-      
-      return { name, result: scenarioResult }
+        scenarioConfig,
+      );
+
+      return { name, result: scenarioResult };
     },
     onSuccess: ({ name, result }) => {
-      setScenarios(prev => ({ ...prev, [name]: result }))
-      setError(null)
+      setScenarios((prev) => ({ ...prev, [name]: result }));
+      setError(null);
     },
     onError: (err) => {
-      setError(err instanceof Error ? err.message : 'Scenario analysis failed')
-    }
-  })
+      setError(err instanceof Error ? err.message : "Scenario analysis failed");
+    },
+  });
 
   // Export forecast mutation
   const exportForecastMutation = useMutation({
-    mutationFn: async (format: 'csv' | 'excel' | 'pdf') => {
-      if (!forecastData) throw new Error('No forecast data to export')
+    mutationFn: async (format: "csv" | "excel" | "pdf") => {
+      if (!forecastData) throw new Error("No forecast data to export");
 
-      const response = await fetch('/api/analytics/export', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/analytics/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          type: 'forecasting',
+          type: "forecasting",
           format,
           data: {
             forecast: forecastData.forecast,
             evaluation: forecastData.evaluation,
             scenarios,
-            config
-          }
-        })
-      })
+            config,
+          },
+        }),
+      });
 
-      if (!response.ok) throw new Error('Export failed')
+      if (!response.ok) throw new Error("Export failed");
 
-      const blob = await response.blob()
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `forecast-${config.metric}-${new Date().toISOString().split('T')[0]}.${format}`
-      document.body.appendChild(a)
-      a.click()
-      window.URL.revokeObjectURL(url)
-      document.body.removeChild(a)
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `forecast-${config.metric}-${new Date().toISOString().split("T")[0]}.${format}`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
     },
     onError: (err) => {
-      setError(err instanceof Error ? err.message : 'Export failed')
-    }
-  })
+      setError(err instanceof Error ? err.message : "Export failed");
+    },
+  });
 
   // Actions
-  const generateForecast = useCallback(async (newConfig: ForecastingConfig) => {
-    await generateForecastMutation.mutateAsync(newConfig)
-  }, [generateForecastMutation])
+  const generateForecast = useCallback(
+    async (newConfig: ForecastingConfig) => {
+      await generateForecastMutation.mutateAsync(newConfig);
+    },
+    [generateForecastMutation],
+  );
 
-  const runScenario = useCallback(async (name: string, scenarioConfig: ScenarioConfig) => {
-    await runScenarioMutation.mutateAsync({ name, scenarioConfig })
-  }, [runScenarioMutation])
+  const runScenario = useCallback(
+    async (name: string, scenarioConfig: ScenarioConfig) => {
+      await runScenarioMutation.mutateAsync({ name, scenarioConfig });
+    },
+    [runScenarioMutation],
+  );
 
-  const updateModel = useCallback(async (modelType: string) => {
-    const newConfig = { ...config, model: modelType as any }
-    setConfig(newConfig)
-    await refreshData()
-  }, [config, refreshData])
+  const updateModel = useCallback(
+    async (modelType: string) => {
+      const newConfig = { ...config, model: modelType as any };
+      setConfig(newConfig);
+      await refreshData();
+    },
+    [config, refreshData],
+  );
 
-  const exportForecast = useCallback(async (format: 'csv' | 'excel' | 'pdf') => {
-    await exportForecastMutation.mutateAsync(format)
-  }, [exportForecastMutation])
+  const exportForecast = useCallback(
+    async (format: "csv" | "excel" | "pdf") => {
+      await exportForecastMutation.mutateAsync(format);
+    },
+    [exportForecastMutation],
+  );
 
   const updateConfig = useCallback((newConfig: Partial<ForecastingHookConfig>) => {
-    setConfig(prev => ({ ...prev, ...newConfig }))
-    setError(null)
-  }, [])
+    setConfig((prev) => ({ ...prev, ...newConfig }));
+    setError(null);
+  }, []);
 
   // Return hook interface
   return {
@@ -283,7 +304,11 @@ export function useForecasting(
     confidence: forecastData?.confidenceIntervals || { upper: [], lower: [], mean: [] },
     accuracy: forecastData?.accuracy || { mape: 0, rmse: 0, r2: 0 },
     isLoading: isLoading || generateForecastMutation.isPending || runScenarioMutation.isPending,
-    error: error || generateForecastMutation.error?.message || runScenarioMutation.error?.message || null,
+    error:
+      error ||
+      generateForecastMutation.error?.message ||
+      runScenarioMutation.error?.message ||
+      null,
     lastUpdated: forecastData ? new Date() : null,
 
     // Actions
@@ -292,75 +317,78 @@ export function useForecasting(
     updateModel,
     refreshData,
     exportForecast,
-    updateConfig
-  }
+    updateConfig,
+  };
 }
 
 /**
  * Hook for forecast comparison analysis
  */
 export function useForecastComparison(forecasts: ForecastResult[]) {
-  const queryClient = useQueryClient()
-  
-  return useQuery({
-    queryKey: ['forecast-comparison', forecasts.map(f => f.config.metric)],
-    queryFn: async () => {
-      const response = await fetch('/api/analytics/advanced?type=forecasting', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'compare',
-          forecasts,
-          includeCorrelations: true
-        })
-      })
+  const queryClient = useQueryClient();
 
-      if (!response.ok) throw new Error('Forecast comparison failed')
-      return response.json()
+  return useQuery({
+    queryKey: ["forecast-comparison", forecasts.map((f) => f.config.metric)],
+    queryFn: async () => {
+      const response = await fetch("/api/analytics/advanced?type=forecasting", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "compare",
+          forecasts,
+          includeCorrelations: true,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Forecast comparison failed");
+      return response.json();
     },
     enabled: forecasts.length > 1,
-    staleTime: 15 * 60 * 1000 // 15 minutes
-  })
+    staleTime: 15 * 60 * 1000, // 15 minutes
+  });
 }
 
 /**
  * Hook for real-time forecast updates
  */
 export function useRealTimeForecastUpdates(metric: string, enabled: boolean = true) {
-  const [updates, setUpdates] = useState<any[]>([])
-  const supabase = await createClient()
+  const [updates, setUpdates] = useState<any[]>([]);
+  const supabase = await createClient();
 
   useEffect(() => {
-    if (!enabled || !metric) return
+    if (!enabled || !metric) return;
 
     // Subscribe to real-time data changes that might affect forecasts
     const subscription = supabase
       .channel(`forecast-updates-${metric}`)
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
-          table: metric === 'revenue' ? 'subscription_revenue' : 'subscriptions',
+          event: "*",
+          schema: "public",
+          table: metric === "revenue" ? "subscription_revenue" : "subscriptions",
         },
         (payload) => {
           // Add update to queue for forecast recalculation
-          setUpdates(prev => [...prev, {
-            timestamp: new Date(),
-            type: payload.eventType,
-            data: payload.new || payload.old,
-            table: payload.table
-          }])
-        }
+          setUpdates((prev) => [
+            ...prev,
+            {
+              timestamp: new Date(),
+              type: payload.eventType,
+              data: payload.new || payload.old,
+              table: payload.table,
+            },
+          ]);
+        },
       )
-      .subscribe()
+      .subscribe();
 
     return () => {
-      subscription.unsubscribe()
-    }
-  }, [metric, enabled, supabase])
+      subscription.unsubscribe();
+    };
+  }, [metric, enabled, supabase]);
 
-  return updates
+  return updates;
 }
 
 /**
@@ -368,84 +396,87 @@ export function useRealTimeForecastUpdates(metric: string, enabled: boolean = tr
  */
 export function useForecastAccuracy(metric: string, timeWindow: number = 30) {
   return useQuery({
-    queryKey: ['forecast-accuracy', metric, timeWindow],
+    queryKey: ["forecast-accuracy", metric, timeWindow],
     queryFn: async () => {
-      const response = await fetch('/api/analytics/accuracy', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/analytics/accuracy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           metric,
           timeWindow,
-          includeBreakdown: true
-        })
-      })
+          includeBreakdown: true,
+        }),
+      });
 
-      if (!response.ok) throw new Error('Failed to fetch accuracy data')
-      return response.json()
+      if (!response.ok) throw new Error("Failed to fetch accuracy data");
+      return response.json();
     },
     staleTime: 60 * 60 * 1000, // 1 hour
-    enabled: !!metric
-  })
+    enabled: !!metric,
+  });
 }
 
 /**
  * Utility hook for forecast data formatting
  */
 export function useForecastFormatters() {
-  return useMemo(() => ({
-    formatPrediction: (value: number, metric: string): string => {
-      if (metric === 'revenue') {
-        return new Intl.NumberFormat('en-US', {
-          style: 'currency',
-          currency: 'USD'
-        }).format(value)
-      } else if (metric === 'churn') {
-        return `${Math.round(value * 100) / 100}%`
-      } else {
-        return Math.round(value).toLocaleString()
-      }
-    },
-    
-    formatAccuracy: (value: number): string => {
-      return `${Math.round(value * 100) / 100}%`
-    },
-    
-    formatConfidenceInterval: (lower: number, upper: number, metric: string): string => {
-      const formatValue = (v: number) => {
-        if (metric === 'revenue') {
-          return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 0
-          }).format(v)
-        } else if (metric === 'churn') {
-          return `${Math.round(v * 100) / 100}%`
+  return useMemo(
+    () => ({
+      formatPrediction: (value: number, metric: string): string => {
+        if (metric === "revenue") {
+          return new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+          }).format(value);
+        } else if (metric === "churn") {
+          return `${Math.round(value * 100) / 100}%`;
         } else {
-          return Math.round(v).toLocaleString()
+          return Math.round(value).toLocaleString();
         }
-      }
-      
-      return `${formatValue(lower)} - ${formatValue(upper)}`
-    },
-    
-    getAccuracyColor: (accuracy: number): string => {
-      if (accuracy >= 90) return 'text-green-600'
-      if (accuracy >= 75) return 'text-yellow-600'
-      return 'text-red-600'
-    },
-    
-    getAccuracyBadgeVariant: (accuracy: number): 'default' | 'secondary' | 'destructive' => {
-      if (accuracy >= 90) return 'default'
-      if (accuracy >= 75) return 'secondary'
-      return 'destructive'
-    },
-    
-    formatTimeHorizon: (days: number): string => {
-      if (days < 7) return `${days} day${days > 1 ? 's' : ''}`
-      if (days < 30) return `${Math.round(days / 7)} week${Math.round(days / 7) > 1 ? 's' : ''}`
-      if (days < 365) return `${Math.round(days / 30)} month${Math.round(days / 30) > 1 ? 's' : ''}`
-      return `${Math.round(days / 365)} year${Math.round(days / 365) > 1 ? 's' : ''}`
-    }
-  }), [])
-}
+      },
 
+      formatAccuracy: (value: number): string => {
+        return `${Math.round(value * 100) / 100}%`;
+      },
+
+      formatConfidenceInterval: (lower: number, upper: number, metric: string): string => {
+        const formatValue = (v: number) => {
+          if (metric === "revenue") {
+            return new Intl.NumberFormat("en-US", {
+              style: "currency",
+              currency: "USD",
+              minimumFractionDigits: 0,
+            }).format(v);
+          } else if (metric === "churn") {
+            return `${Math.round(v * 100) / 100}%`;
+          } else {
+            return Math.round(v).toLocaleString();
+          }
+        };
+
+        return `${formatValue(lower)} - ${formatValue(upper)}`;
+      },
+
+      getAccuracyColor: (accuracy: number): string => {
+        if (accuracy >= 90) return "text-green-600";
+        if (accuracy >= 75) return "text-yellow-600";
+        return "text-red-600";
+      },
+
+      getAccuracyBadgeVariant: (accuracy: number): "default" | "secondary" | "destructive" => {
+        if (accuracy >= 90) return "default";
+        if (accuracy >= 75) return "secondary";
+        return "destructive";
+      },
+
+      formatTimeHorizon: (days: number): string => {
+        if (days < 7) return `${days} day${days > 1 ? "s" : ""}`;
+        if (days < 30) return `${Math.round(days / 7)} week${Math.round(days / 7) > 1 ? "s" : ""}`;
+        if (days < 365)
+          return `${Math.round(days / 30)} month${Math.round(days / 30) > 1 ? "s" : ""}`;
+        return `${Math.round(days / 365)} year${Math.round(days / 365) > 1 ? "s" : ""}`;
+      },
+    }),
+    [],
+  );
+}

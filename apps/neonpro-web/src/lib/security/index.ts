@@ -1,31 +1,31 @@
 /**
  * Healthcare Security Framework
- * 
+ *
  * Comprehensive security implementation for healthcare systems with:
  * - Session management with healthcare-specific timeouts
  * - End-to-end encryption for sensitive medical data
  * - Role-based access control with fine-grained permissions
  * - Audit trail for all security events
  * - Compliance with healthcare regulations (HIPAA, LGPD, etc.)
- * 
+ *
  * Usage:
  * ```typescript
- * import { HealthcareSecurity } from '@/lib/security'
- * 
+ * import type { HealthcareSecurity } from "@/lib/security"
+ *
  * // Create secure session
  * const session = await HealthcareSecurity.createSession({
  *   userId: 'doctor-id',
  *   userRole: UserRole.DOCTOR,
  *   ipAddress: '192.168.1.100'
  * })
- * 
+ *
  * // Check permissions
  * const canAccess = await HealthcareSecurity.hasPermission(
  *   'user-id',
  *   Permission.READ_MEDICAL_RECORDS,
  *   'patient-id'
  * )
- * 
+ *
  * // Encrypt sensitive data
  * const encrypted = await HealthcareSecurity.encryptPatientData({
  *   cpf: '123.456.789-01',
@@ -41,8 +41,8 @@ export {
   SessionStatus,
   MFAMethod,
   sessionSchema,
-  type Session
-} from './session-manager'
+  type Session,
+} from "./session-manager";
 
 // Encryption
 export {
@@ -53,8 +53,8 @@ export {
   encryptedDataSchema,
   keyInfoSchema,
   type EncryptedData,
-  type KeyInfo
-} from './encryption'
+  type KeyInfo,
+} from "./encryption";
 
 // Role-Based Access Control
 export {
@@ -67,8 +67,8 @@ export {
   userRoleSchema,
   type PermissionGrant,
   type RoleDefinition,
-  type UserRole
-} from './rbac'
+  type UserRole,
+} from "./rbac";
 
 /**
  * Unified Healthcare Security Manager
@@ -79,16 +79,16 @@ export class HealthcareSecurity {
    * Create authenticated session with security validation
    */
   static async createSession(params: {
-    userId: string
-    userRole: UserRole
-    ipAddress: string
-    userAgent: string
-    deviceFingerprint?: string
-    loginMethod?: 'password' | 'sso' | 'certificate' | 'biometric'
+    userId: string;
+    userRole: UserRole;
+    ipAddress: string;
+    userAgent: string;
+    deviceFingerprint?: string;
+    loginMethod?: "password" | "sso" | "certificate" | "biometric";
   }): Promise<{
-    session: Session
-    requiresMFA: boolean
-    securityWarnings: string[]
+    session: Session;
+    requiresMFA: boolean;
+    securityWarnings: string[];
   }> {
     // Create session
     const session = await HealthcareSessionManager.createSession({
@@ -97,57 +97,57 @@ export class HealthcareSecurity {
       ipAddress: params.ipAddress,
       userAgent: params.userAgent,
       deviceFingerprint: params.deviceFingerprint,
-      loginMethod: params.loginMethod || 'password'
-    })
+      loginMethod: params.loginMethod || "password",
+    });
 
     // Check if MFA is required
-    const requiresMFA = session.riskScore >= 30 || 
-                       [UserRole.ADMIN, UserRole.DOCTOR].includes(params.userRole)
+    const requiresMFA =
+      session.riskScore >= 30 || [UserRole.ADMIN, UserRole.DOCTOR].includes(params.userRole);
 
     // Generate security warnings
-    const securityWarnings: string[] = []
+    const securityWarnings: string[] = [];
     if (session.riskScore > 50) {
-      securityWarnings.push('High risk login detected - additional verification may be required')
+      securityWarnings.push("High risk login detected - additional verification may be required");
     }
     if (!params.deviceFingerprint) {
-      securityWarnings.push('Device fingerprint not provided - session tracking limited')
+      securityWarnings.push("Device fingerprint not provided - session tracking limited");
     }
 
     return {
       session,
       requiresMFA,
-      securityWarnings
-    }
+      securityWarnings,
+    };
   }
 
   /**
    * Validate session and check permissions in one call
    */
   static async validateSessionAndPermission(params: {
-    sessionId: string
-    ipAddress: string
-    permission: Permission
-    resourceId?: string
-    context?: AccessContext
+    sessionId: string;
+    ipAddress: string;
+    permission: Permission;
+    resourceId?: string;
+    context?: AccessContext;
   }): Promise<{
-    sessionValid: boolean
-    permissionGranted: boolean
-    session?: Session
-    reason?: string
-    requiresMFA?: boolean
+    sessionValid: boolean;
+    permissionGranted: boolean;
+    session?: Session;
+    reason?: string;
+    requiresMFA?: boolean;
   }> {
     // Validate session
     const sessionResult = await HealthcareSessionManager.validateSession(
       params.sessionId,
-      params.ipAddress
-    )
+      params.ipAddress,
+    );
 
     if (!sessionResult.valid || !sessionResult.session) {
       return {
         sessionValid: false,
         permissionGranted: false,
-        reason: sessionResult.reason
-      }
+        reason: sessionResult.reason,
+      };
     }
 
     // Check permission
@@ -155,68 +155,66 @@ export class HealthcareSecurity {
       sessionResult.session.userId,
       params.permission,
       params.context || AccessContext.NORMAL,
-      params.resourceId
-    )
+      params.resourceId,
+    );
 
     return {
       sessionValid: true,
       permissionGranted: permissionResult.granted,
       session: sessionResult.session,
       reason: permissionResult.reason,
-      requiresMFA: sessionResult.requiresMFA || !sessionResult.session.mfaVerified
-    }
+      requiresMFA: sessionResult.requiresMFA || !sessionResult.session.mfaVerified,
+    };
   }
 
   /**
    * Encrypt patient data with automatic field classification
    */
-  static async encryptPatientData(
-    patientData: Record<string, any>
-  ): Promise<Record<string, any>> {
-    return await HealthcareEncryption.encryptPatientRecord(patientData)
+  static async encryptPatientData(patientData: Record<string, any>): Promise<Record<string, any>> {
+    return await HealthcareEncryption.encryptPatientRecord(patientData);
   }
 
   /**
    * Decrypt patient data
    */
   static async decryptPatientData(
-    encryptedData: Record<string, any>
+    encryptedData: Record<string, any>,
   ): Promise<Record<string, any>> {
-    return await HealthcareEncryption.decryptPatientRecord(encryptedData)
+    return await HealthcareEncryption.decryptPatientRecord(encryptedData);
   }
 
   /**
    * Emergency access with full audit trail
    */
   static async emergencyAccess(params: {
-    userId: string
-    sessionId: string
-    patientId: string
-    permission: Permission
-    justification: string
-    approver?: string
-    ipAddress: string
+    userId: string;
+    sessionId: string;
+    patientId: string;
+    permission: Permission;
+    justification: string;
+    approver?: string;
+    ipAddress: string;
   }): Promise<{
-    granted: boolean
-    emergencyToken?: string
-    expiresAt?: Date
-    auditId: string
+    granted: boolean;
+    emergencyToken?: string;
+    expiresAt?: Date;
+    auditId: string;
   }> {
     // Validate session
     const sessionResult = await HealthcareSessionManager.validateSession(
       params.sessionId,
-      params.ipAddress
-    )
+      params.ipAddress,
+    );
 
     if (!sessionResult.valid) {
       return {
         granted: false,
-        auditId: await this.createAuditRecord('emergency_access_denied', {
+        auditId: await this.createAuditRecord("emergency_access_denied", {
           userId: params.userId,
-          reason: 'Invalid session',
-          patientId: params.patientId
-        })
-      }
+          reason: "Invalid session",
+          patientId: params.patientId,
+        }),
+      };
     }
 
     // Request emergency access
@@ -225,125 +223,125 @@ export class HealthcareSecurity {
       params.permission,
       params.patientId,
       params.justification,
-      params.approver
-    )
+      params.approver,
+    );
 
     // Create comprehensive audit record
-    const auditId = await this.createAuditRecord('emergency_access_requested', {
+    const auditId = await this.createAuditRecord("emergency_access_requested", {
       userId: params.userId,
       patientId: params.patientId,
       permission: params.permission,
       justification: params.justification,
       granted: emergencyResult.granted,
-      emergencyToken: emergencyResult.emergencyToken
-    })
+      emergencyToken: emergencyResult.emergencyToken,
+    });
 
     return {
       ...emergencyResult,
-      auditId
-    }
+      auditId,
+    };
   }
 
   /**
    * Comprehensive security health check
    */
   static async securityHealthCheck(): Promise<{
-    overallScore: number
+    overallScore: number;
     sessionSecurity: {
-      activeSessions: number
-      expiringSessions: number
-      suspiciousSessions: number
-      mfaCompliance: number
-    }
+      activeSessions: number;
+      expiringSessions: number;
+      suspiciousSessions: number;
+      mfaCompliance: number;
+    };
     encryptionStatus: {
-      encryptedFields: number
-      keyRotationNeeded: number
-      encryptionCoverage: number
-    }
+      encryptedFields: number;
+      keyRotationNeeded: number;
+      encryptionCoverage: number;
+    };
     accessControl: {
-      totalUsers: number
-      roleCompliance: number
-      overduePermissionReviews: number
-      emergencyAccessUsage: number
-    }
-    recommendations: string[]
-    criticalIssues: string[]
+      totalUsers: number;
+      roleCompliance: number;
+      overduePermissionReviews: number;
+      emergencyAccessUsage: number;
+    };
+    recommendations: string[];
+    criticalIssues: string[];
   }> {
     // TODO: Implement comprehensive security health check
     // This would aggregate data from all security components
-    
+
     return {
       overallScore: 85,
       sessionSecurity: {
         activeSessions: 0,
         expiringSessions: 0,
         suspiciousSessions: 0,
-        mfaCompliance: 0
+        mfaCompliance: 0,
       },
       encryptionStatus: {
         encryptedFields: 0,
         keyRotationNeeded: 0,
-        encryptionCoverage: 0
+        encryptionCoverage: 0,
       },
       accessControl: {
         totalUsers: 0,
         roleCompliance: 0,
         overduePermissionReviews: 0,
-        emergencyAccessUsage: 0
+        emergencyAccessUsage: 0,
       },
       recommendations: [
-        'Enable MFA for all administrative users',
-        'Review and rotate encryption keys older than 90 days',
-        'Audit user permissions and remove unused roles',
-        'Implement automated session timeout warnings'
+        "Enable MFA for all administrative users",
+        "Review and rotate encryption keys older than 90 days",
+        "Audit user permissions and remove unused roles",
+        "Implement automated session timeout warnings",
       ],
-      criticalIssues: []
-    }
+      criticalIssues: [],
+    };
   }
 
   /**
    * Generate security compliance report
    */
   static async generateComplianceReport(params: {
-    startDate: Date
-    endDate: Date
-    includeDetails?: boolean
+    startDate: Date;
+    endDate: Date;
+    includeDetails?: boolean;
   }): Promise<{
-    period: { start: Date; end: Date }
-    complianceScore: number
+    period: { start: Date; end: Date };
+    complianceScore: number;
     sessionCompliance: {
-      averageSessionDuration: number
-      mfaUsageRate: number
-      suspiciousActivityCount: number
-    }
+      averageSessionDuration: number;
+      mfaUsageRate: number;
+      suspiciousActivityCount: number;
+    };
     dataProtection: {
-      encryptionCoverage: number
-      keyRotationCompliance: number
-      dataBreachCount: number
-    }
+      encryptionCoverage: number;
+      keyRotationCompliance: number;
+      dataBreachCount: number;
+    };
     accessControl: {
-      unauthorizedAttempts: number
-      emergencyAccessCount: number
-      roleReviewCompliance: number
-    }
+      unauthorizedAttempts: number;
+      emergencyAccessCount: number;
+      roleReviewCompliance: number;
+    };
     auditTrail: {
-      totalEvents: number
-      criticalEvents: number
-      auditCoverage: number
-    }
+      totalEvents: number;
+      criticalEvents: number;
+      auditCoverage: number;
+    };
     recommendations: Array<{
-      priority: 'high' | 'medium' | 'low'
-      category: string
-      description: string
-      impact: string
-    }>
-    nextReviewDate: Date
+      priority: "high" | "medium" | "low";
+      category: string;
+      description: string;
+      impact: string;
+    }>;
+    nextReviewDate: Date;
   }> {
     // TODO: Generate comprehensive compliance report
     // This would aggregate compliance data from all security components
-    
-    const nextReviewDate = new Date(params.endDate)
-    nextReviewDate.setMonth(nextReviewDate.getMonth() + 3) // Quarterly reviews
+
+    const nextReviewDate = new Date(params.endDate);
+    nextReviewDate.setMonth(nextReviewDate.getMonth() + 3); // Quarterly reviews
 
     return {
       period: { start: params.startDate, end: params.endDate },
@@ -351,63 +349,63 @@ export class HealthcareSecurity {
       sessionCompliance: {
         averageSessionDuration: 45, // minutes
         mfaUsageRate: 78, // percentage
-        suspiciousActivityCount: 0
+        suspiciousActivityCount: 0,
       },
       dataProtection: {
         encryptionCoverage: 95, // percentage
         keyRotationCompliance: 88, // percentage
-        dataBreachCount: 0
+        dataBreachCount: 0,
       },
       accessControl: {
         unauthorizedAttempts: 0,
         emergencyAccessCount: 0,
-        roleReviewCompliance: 85 // percentage
+        roleReviewCompliance: 85, // percentage
       },
       auditTrail: {
         totalEvents: 0,
         criticalEvents: 0,
-        auditCoverage: 100 // percentage
+        auditCoverage: 100, // percentage
       },
       recommendations: [
         {
-          priority: 'high',
-          category: 'Multi-Factor Authentication',
-          description: 'Increase MFA adoption rate to 95% for all users',
-          impact: 'Significantly reduces risk of unauthorized access'
+          priority: "high",
+          category: "Multi-Factor Authentication",
+          description: "Increase MFA adoption rate to 95% for all users",
+          impact: "Significantly reduces risk of unauthorized access",
         },
         {
-          priority: 'medium',
-          category: 'Key Management',
-          description: 'Implement automated key rotation for encryption keys',
-          impact: 'Improves data protection and compliance'
+          priority: "medium",
+          category: "Key Management",
+          description: "Implement automated key rotation for encryption keys",
+          impact: "Improves data protection and compliance",
         },
         {
-          priority: 'low',
-          category: 'Role Management',
-          description: 'Conduct quarterly role access reviews',
-          impact: 'Ensures principle of least privilege'
-        }
+          priority: "low",
+          category: "Role Management",
+          description: "Conduct quarterly role access reviews",
+          impact: "Ensures principle of least privilege",
+        },
       ],
-      nextReviewDate
-    }
+      nextReviewDate,
+    };
   }
 
   // Private helper methods
   private static async createAuditRecord(
     eventType: string,
-    details: Record<string, any>
+    details: Record<string, any>,
   ): Promise<string> {
-    const auditId = crypto.randomUUID()
-    
+    const auditId = crypto.randomUUID();
+
     // TODO: Store comprehensive audit record
-    console.log('Security audit record created:', {
+    console.log("Security audit record created:", {
       id: auditId,
       eventType,
       details,
-      timestamp: new Date()
-    })
-    
-    return auditId
+      timestamp: new Date(),
+    });
+
+    return auditId;
   }
 }
 
@@ -419,102 +417,102 @@ export class SecurityMiddleware {
    * Validate session and permissions for API requests
    */
   static async validateRequest(params: {
-    sessionId?: string
-    apiKey?: string
-    ipAddress: string
-    userAgent: string
-    endpoint: string
-    method: string
-    requiredPermission?: Permission
-    resourceId?: string
+    sessionId?: string;
+    apiKey?: string;
+    ipAddress: string;
+    userAgent: string;
+    endpoint: string;
+    method: string;
+    requiredPermission?: Permission;
+    resourceId?: string;
   }): Promise<{
-    authorized: boolean
-    userId?: string
-    userRole?: UserRole
-    session?: Session
-    reason?: string
+    authorized: boolean;
+    userId?: string;
+    userRole?: UserRole;
+    session?: Session;
+    reason?: string;
   }> {
     // Handle API key authentication
     if (params.apiKey) {
-      return await this.validateApiKey(params.apiKey, params.requiredPermission)
+      return await this.validateApiKey(params.apiKey, params.requiredPermission);
     }
 
     // Handle session authentication
     if (params.sessionId) {
-      return await this.validateSessionAuth(params)
+      return await this.validateSessionAuth(params);
     }
 
     return {
       authorized: false,
-      reason: 'No authentication method provided'
-    }
+      reason: "No authentication method provided",
+    };
   }
 
   /**
    * Rate limiting for security-sensitive endpoints
    */
   static async checkRateLimit(params: {
-    userId?: string
-    ipAddress: string
-    endpoint: string
-    windowMinutes?: number
-    maxRequests?: number
+    userId?: string;
+    ipAddress: string;
+    endpoint: string;
+    windowMinutes?: number;
+    maxRequests?: number;
   }): Promise<{
-    allowed: boolean
-    remainingRequests?: number
-    resetTime?: Date
+    allowed: boolean;
+    remainingRequests?: number;
+    resetTime?: Date;
   }> {
     // TODO: Implement rate limiting
     return {
       allowed: true,
       remainingRequests: 100,
-      resetTime: new Date(Date.now() + 60 * 60 * 1000)
-    }
+      resetTime: new Date(Date.now() + 60 * 60 * 1000),
+    };
   }
 
   // Private methods
   private static async validateApiKey(
     apiKey: string,
-    requiredPermission?: Permission
+    requiredPermission?: Permission,
   ): Promise<{
-    authorized: boolean
-    userId?: string
-    userRole?: UserRole
-    reason?: string
+    authorized: boolean;
+    userId?: string;
+    userRole?: UserRole;
+    reason?: string;
   }> {
     // TODO: Validate API key
     return {
       authorized: false,
-      reason: 'API key validation not implemented'
-    }
+      reason: "API key validation not implemented",
+    };
   }
 
   private static async validateSessionAuth(params: {
-    sessionId: string
-    ipAddress: string
-    requiredPermission?: Permission
-    resourceId?: string
+    sessionId: string;
+    ipAddress: string;
+    requiredPermission?: Permission;
+    resourceId?: string;
   }): Promise<{
-    authorized: boolean
-    userId?: string
-    userRole?: UserRole
-    session?: Session
-    reason?: string
+    authorized: boolean;
+    userId?: string;
+    userRole?: UserRole;
+    session?: Session;
+    reason?: string;
   }> {
     if (!params.requiredPermission) {
       // Just validate session
       const result = await HealthcareSessionManager.validateSession(
         params.sessionId,
-        params.ipAddress
-      )
-      
+        params.ipAddress,
+      );
+
       return {
         authorized: result.valid,
         userId: result.session?.userId,
         userRole: result.session?.userRole,
         session: result.session,
-        reason: result.reason
-      }
+        reason: result.reason,
+      };
     }
 
     // Validate session and permission
@@ -522,15 +520,15 @@ export class SecurityMiddleware {
       sessionId: params.sessionId,
       ipAddress: params.ipAddress,
       permission: params.requiredPermission,
-      resourceId: params.resourceId
-    })
+      resourceId: params.resourceId,
+    });
 
     return {
       authorized: result.sessionValid && result.permissionGranted,
       userId: result.session?.userId,
       userRole: result.session?.userRole,
       session: result.session,
-      reason: result.reason
-    }
+      reason: result.reason,
+    };
   }
 }

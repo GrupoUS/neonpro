@@ -6,25 +6,22 @@ export interface SystemIntegrationManager {
     query: string,
     filters: SearchFilters,
     userId: string,
-    limit?: number
+    limit?: number,
   ): Promise<SearchResults>;
-  
-  getIntegratedPatientData(
-    patientId: string,
-    userId: string
-  ): Promise<IntegratedPatientData>;
-  
+
+  getIntegratedPatientData(patientId: string, userId: string): Promise<IntegratedPatientData>;
+
   createPatientSegment(
     name: string,
     description: string,
     criteria: SegmentCriteria,
-    userId: string
+    userId: string,
   ): Promise<PatientSegment>;
-  
+
   getQuickAccessPatients(
     type: QuickAccessType,
     userId: string,
-    limit?: number
+    limit?: number,
   ): Promise<QuickAccessData>;
 }
 
@@ -34,8 +31,8 @@ export interface SearchFilters {
   email?: string;
   phone?: string;
   cpf?: string;
-  gender?: 'male' | 'female' | 'other';
-  riskLevel?: 'low' | 'medium' | 'high';
+  gender?: "male" | "female" | "other";
+  riskLevel?: "low" | "medium" | "high";
   treatmentType?: string;
   appointmentStatus?: string;
   hasPhotos?: boolean;
@@ -66,9 +63,9 @@ export interface SearchPatient {
   email: string;
   phone: string;
   cpf: string;
-  gender: 'male' | 'female' | 'other';
+  gender: "male" | "female" | "other";
   age: number;
-  riskLevel: 'low' | 'medium' | 'high';
+  riskLevel: "low" | "medium" | "high";
   lastVisit: string;
   appointmentStatus: string;
   treatmentType: string;
@@ -81,13 +78,13 @@ export interface SearchPatient {
 }
 
 // Quick Access Types
-export type QuickAccessType = 
-  | 'recent'
-  | 'favorites'
-  | 'high-risk'
-  | 'upcoming-appointments'
-  | 'pending-verification'
-  | 'frequent';
+export type QuickAccessType =
+  | "recent"
+  | "favorites"
+  | "high-risk"
+  | "upcoming-appointments"
+  | "pending-verification"
+  | "frequent";
 
 export interface QuickAccessData {
   patients: QuickAccessPatient[];
@@ -102,8 +99,8 @@ export interface QuickAccessPatient {
   email: string;
   phone: string;
   age: number;
-  gender: 'male' | 'female' | 'other';
-  riskLevel: 'low' | 'medium' | 'high';
+  gender: "male" | "female" | "other";
+  riskLevel: "low" | "medium" | "high";
   lastVisit: string;
   nextAppointment?: string;
   treatmentType: string;
@@ -111,8 +108,8 @@ export interface QuickAccessPatient {
   photoUrl?: string;
   isFavorite: boolean;
   visitCount: number;
-  verificationStatus: 'pending' | 'verified' | 'failed';
-  urgencyLevel?: 'low' | 'medium' | 'high' | 'critical';
+  verificationStatus: "pending" | "verified" | "failed";
+  urgencyLevel?: "low" | "medium" | "high" | "critical";
   lastActivity?: string;
 }
 
@@ -132,7 +129,7 @@ export interface PatientAppointment {
   date: string;
   time: string;
   type: string;
-  status: 'scheduled' | 'completed' | 'cancelled' | 'no-show';
+  status: "scheduled" | "completed" | "cancelled" | "no-show";
   provider: string;
   notes?: string;
   duration: number;
@@ -144,14 +141,14 @@ export interface PatientTreatment {
   type: string;
   startDate: string;
   endDate?: string;
-  status: 'active' | 'completed' | 'paused' | 'cancelled';
+  status: "active" | "completed" | "paused" | "cancelled";
   provider: string;
   progress: number;
   notes?: string;
 }
 
 export interface RiskAssessment {
-  overall: 'low' | 'medium' | 'high' | 'critical';
+  overall: "low" | "medium" | "high" | "critical";
   factors: RiskFactor[];
   score: number;
   lastUpdated: string;
@@ -161,25 +158,25 @@ export interface RiskAssessment {
 export interface RiskFactor {
   category: string;
   factor: string;
-  severity: 'low' | 'medium' | 'high';
+  severity: "low" | "medium" | "high";
   impact: number;
   description: string;
 }
 
 export interface CommunicationRecord {
   id: string;
-  type: 'email' | 'sms' | 'call' | 'in-person' | 'video';
+  type: "email" | "sms" | "call" | "in-person" | "video";
   date: string;
   subject?: string;
   content: string;
-  direction: 'inbound' | 'outbound';
-  status: 'sent' | 'delivered' | 'read' | 'replied';
+  direction: "inbound" | "outbound";
+  status: "sent" | "delivered" | "read" | "replied";
   provider: string;
 }
 
 export interface PatientInsight {
   id: string;
-  type: 'behavioral' | 'clinical' | 'engagement' | 'risk' | 'preference';
+  type: "behavioral" | "clinical" | "engagement" | "risk" | "preference";
   title: string;
   description: string;
   confidence: number;
@@ -192,10 +189,10 @@ export interface PatientInsight {
 export interface TimelineEvent {
   id: string;
   date: string;
-  type: 'appointment' | 'treatment' | 'communication' | 'assessment' | 'photo' | 'consent';
+  type: "appointment" | "treatment" | "communication" | "assessment" | "photo" | "consent";
   title: string;
   description: string;
-  importance: 'low' | 'medium' | 'high';
+  importance: "low" | "medium" | "high";
   category: string;
   metadata?: Record<string, any>;
 }
@@ -218,12 +215,12 @@ export interface SegmentCriteria {
   patientIds?: string[];
   filters: SearchFilters;
   conditions: SegmentCondition[];
-  logic: 'AND' | 'OR';
+  logic: "AND" | "OR";
 }
 
 export interface SegmentCondition {
   field: string;
-  operator: 'equals' | 'contains' | 'greater_than' | 'less_than' | 'between' | 'in' | 'not_in';
+  operator: "equals" | "contains" | "greater_than" | "less_than" | "between" | "in" | "not_in";
   value: any;
   weight?: number;
 }
@@ -287,7 +284,7 @@ export interface SegmentApiResponse {
 export interface FavoriteApiResponse {
   success: boolean;
   data?: {
-    action: 'added' | 'removed';
+    action: "added" | "removed";
     patientId: string;
     patientName: string;
   };
@@ -311,7 +308,7 @@ export interface QuickAccessProps {
 
 export interface SystemIntegrationProps {
   onPatientSelect?: (patient: SearchPatient | QuickAccessPatient) => void;
-  userRole?: 'admin' | 'manager' | 'staff';
+  userRole?: "admin" | "manager" | "staff";
   showStats?: boolean;
   enableSegmentCreation?: boolean;
 }
@@ -319,7 +316,7 @@ export interface SystemIntegrationProps {
 // Utility Types
 export interface SearchSuggestion {
   text: string;
-  type: 'name' | 'email' | 'phone' | 'treatment' | 'tag';
+  type: "name" | "email" | "phone" | "treatment" | "tag";
   frequency: number;
   relevance: number;
 }
@@ -349,31 +346,31 @@ export class SystemIntegrationError extends Error {
   constructor(
     message: string,
     public code: string,
-    public details?: any
+    public details?: any,
   ) {
     super(message);
-    this.name = 'SystemIntegrationError';
+    this.name = "SystemIntegrationError";
   }
 }
 
 export class SearchError extends SystemIntegrationError {
   constructor(message: string, details?: any) {
-    super(message, 'SEARCH_ERROR', details);
-    this.name = 'SearchError';
+    super(message, "SEARCH_ERROR", details);
+    this.name = "SearchError";
   }
 }
 
 export class QuickAccessError extends SystemIntegrationError {
   constructor(message: string, details?: any) {
-    super(message, 'QUICK_ACCESS_ERROR', details);
-    this.name = 'QuickAccessError';
+    super(message, "QUICK_ACCESS_ERROR", details);
+    this.name = "QuickAccessError";
   }
 }
 
 export class SegmentError extends SystemIntegrationError {
   constructor(message: string, details?: any) {
-    super(message, 'SEGMENT_ERROR', details);
-    this.name = 'SegmentError';
+    super(message, "SEGMENT_ERROR", details);
+    this.name = "SegmentError";
   }
 }
 

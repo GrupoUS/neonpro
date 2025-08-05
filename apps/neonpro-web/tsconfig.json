@@ -16,6 +16,7 @@
     "plugins": [{"name": "next"}],
     "allowImportingTsExtensions": false,
     "forceConsistentCasingInFileNames": true,
+    "types": [],
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],

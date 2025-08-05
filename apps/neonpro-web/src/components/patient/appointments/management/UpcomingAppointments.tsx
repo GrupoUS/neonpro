@@ -1,16 +1,27 @@
-'use client'
+"use client";
 
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import type { CancellationPolicies, PatientAppointment } from '@/hooks/patient/usePatientAppointments'
-import { format, parseISO } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
-import { AlertTriangle, Calendar, CheckCircle, Clock, RotateCcw, User, XCircle } from 'lucide-react'
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent } from "@/components/ui/card";
+import type {
+  CancellationPolicies,
+  PatientAppointment,
+} from "@/hooks/patient/usePatientAppointments";
+import type { format, parseISO } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  AlertTriangle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  RotateCcw,
+  User,
+  XCircle,
+} from "lucide-react";
 
 /**
  * Upcoming Appointments Component for NeonPro
- * 
+ *
  * Based on VIBECODE MCP Research:
  * - Context7: React component patterns with accessibility
  * - Tavily: Healthcare appointment display best practices
@@ -18,11 +29,11 @@ import { AlertTriangle, Calendar, CheckCircle, Clock, RotateCcw, User, XCircle }
  */
 
 interface UpcomingAppointmentsProps {
-  appointments: PatientAppointment[]
-  onCancel: (appointmentId: string) => void
-  onReschedule: (appointmentId: string) => void
-  onView: (appointmentId: string) => void
-  cancellationPolicies: CancellationPolicies | null
+  appointments: PatientAppointment[];
+  onCancel: (appointmentId: string) => void;
+  onReschedule: (appointmentId: string) => void;
+  onView: (appointmentId: string) => void;
+  cancellationPolicies: CancellationPolicies | null;
 }
 
 export function UpcomingAppointments({
@@ -30,7 +41,7 @@ export function UpcomingAppointments({
   onCancel,
   onReschedule,
   onView,
-  cancellationPolicies
+  cancellationPolicies,
 }: UpcomingAppointmentsProps) {
   if (appointments.length === 0) {
     return (
@@ -43,19 +54,23 @@ export function UpcomingAppointments({
           Você não tem agendamentos futuros. Que tal agendar um novo procedimento?
         </p>
       </div>
-    )
+    );
   }
 
   const getStatusBadge = (appointment: PatientAppointment) => {
     switch (appointment.status) {
-      case 'confirmed':
-        return <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-100">Confirmado</Badge>
-      case 'rescheduled':
-        return <Badge variant="secondary">Reagendado</Badge>
+      case "confirmed":
+        return (
+          <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-100">
+            Confirmado
+          </Badge>
+        );
+      case "rescheduled":
+        return <Badge variant="secondary">Reagendado</Badge>;
       default:
-        return <Badge variant="outline">{appointment.status}</Badge>
+        return <Badge variant="outline">{appointment.status}</Badge>;
     }
-  }
+  };
 
   const getUrgencyIndicator = (hoursUntil: number) => {
     if (hoursUntil <= 24) {
@@ -63,51 +78,54 @@ export function UpcomingAppointments({
         <div title="Menos de 24h - não pode cancelar">
           <AlertTriangle className="h-4 w-4 text-orange-500" />
         </div>
-      )
+      );
     } else if (hoursUntil <= 48) {
       return (
         <div title="Menos de 48h - não pode reagendar">
           <AlertTriangle className="h-4 w-4 text-yellow-500" />
         </div>
-      )
+      );
     }
     return (
       <div title="Pode cancelar e reagendar">
         <CheckCircle className="h-4 w-4 text-green-500" />
       </div>
-    )
-  }
+    );
+  };
 
   const formatAppointmentDateTime = (date: string, time: string) => {
     try {
-      const dateTime = parseISO(`${date}T${time}`)
+      const dateTime = parseISO(`${date}T${time}`);
       return {
-        date: format(dateTime, 'EEEE, dd MMMM yyyy', { locale: ptBR }),
-        time: format(dateTime, 'HH:mm', { locale: ptBR })
-      }
+        date: format(dateTime, "EEEE, dd MMMM yyyy", { locale: ptBR }),
+        time: format(dateTime, "HH:mm", { locale: ptBR }),
+      };
     } catch (error) {
-      return { date: date, time: time }
+      return { date: date, time: time };
     }
-  }
+  };
 
   // Group appointments by date for better organization
-  const groupedAppointments = appointments.reduce((groups, appointment) => {
-    const date = appointment.appointment_date
-    if (!groups[date]) {
-      groups[date] = []
-    }
-    groups[date].push(appointment)
-    return groups
-  }, {} as Record<string, PatientAppointment[]>)
+  const groupedAppointments = appointments.reduce(
+    (groups, appointment) => {
+      const date = appointment.appointment_date;
+      if (!groups[date]) {
+        groups[date] = [];
+      }
+      groups[date].push(appointment);
+      return groups;
+    },
+    {} as Record<string, PatientAppointment[]>,
+  );
 
   // Sort dates
-  const sortedDates = Object.keys(groupedAppointments).sort()
+  const sortedDates = Object.keys(groupedAppointments).sort();
 
   return (
     <div className="space-y-4">
-      {sortedDates.map(date => {
-        const dayAppointments = groupedAppointments[date]
-        const formattedDate = formatAppointmentDateTime(date, '00:00').date
+      {sortedDates.map((date) => {
+        const dayAppointments = groupedAppointments[date];
+        const formattedDate = formatAppointmentDateTime(date, "00:00").date;
 
         return (
           <div key={date} className="space-y-3">
@@ -117,8 +135,11 @@ export function UpcomingAppointments({
             </div>
 
             {dayAppointments.map((appointment) => {
-              const { time } = formatAppointmentDateTime(appointment.appointment_date, appointment.appointment_time)
-              
+              const { time } = formatAppointmentDateTime(
+                appointment.appointment_date,
+                appointment.appointment_time,
+              );
+
               return (
                 <Card key={appointment.id} className="transition-shadow hover:shadow-md">
                   <CardContent className="p-4">
@@ -129,9 +150,7 @@ export function UpcomingAppointments({
                           <div className="flex items-center gap-3">
                             <div className="flex items-center gap-2">
                               {getUrgencyIndicator(appointment.hours_until_appointment)}
-                              <h3 className="font-semibold text-lg">
-                                {appointment.service_name}
-                              </h3>
+                              <h3 className="font-semibold text-lg">{appointment.service_name}</h3>
                             </div>
                             {getStatusBadge(appointment)}
                           </div>
@@ -143,14 +162,11 @@ export function UpcomingAppointments({
                             <Clock className="h-4 w-4" />
                             <span>{time}</span>
                           </div>
+                          <div>Duração: {appointment.service_duration} min</div>
                           <div>
-                            Duração: {appointment.service_duration} min
-                          </div>
-                          <div>
-                            {appointment.hours_until_appointment > 0 
+                            {appointment.hours_until_appointment > 0
                               ? `Em ${appointment.hours_until_appointment}h`
-                              : `${Math.abs(appointment.hours_until_appointment)}h atrás`
-                            }
+                              : `${Math.abs(appointment.hours_until_appointment)}h atrás`}
                           </div>
                         </div>
 
@@ -177,29 +193,32 @@ export function UpcomingAppointments({
                               <div>
                                 <strong>Cancelamento não permitido</strong>
                                 <br />
-                                Resta{appointment.hours_until_appointment > 1 ? 'm' : ''} apenas {appointment.hours_until_appointment}h. 
-                                Mínimo necessário: {cancellationPolicies?.minimum_hours || 24}h.
+                                Resta{appointment.hours_until_appointment > 1 ? "m" : ""} apenas{" "}
+                                {appointment.hours_until_appointment}h. Mínimo necessário:{" "}
+                                {cancellationPolicies?.minimum_hours || 24}h.
                               </div>
                             </div>
                           )}
 
-                          {!appointment.can_reschedule && appointment.hours_until_appointment < 48 && appointment.can_cancel && (
-                            <div className="flex items-start gap-2 text-xs text-yellow-600 bg-yellow-50 dark:bg-yellow-950 p-2 rounded-md">
-                              <AlertTriangle className="h-4 w-4 flex-shrink-0 mt-0.5" />
-                              <div>
-                                <strong>Reagendamento não permitido</strong>
-                                <br />
-                                Solicitações de reagendamento precisam de 48h de antecedência.
+                          {!appointment.can_reschedule &&
+                            appointment.hours_until_appointment < 48 &&
+                            appointment.can_cancel && (
+                              <div className="flex items-start gap-2 text-xs text-yellow-600 bg-yellow-50 dark:bg-yellow-950 p-2 rounded-md">
+                                <AlertTriangle className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                                <div>
+                                  <strong>Reagendamento não permitido</strong>
+                                  <br />
+                                  Solicitações de reagendamento precisam de 48h de antecedência.
+                                </div>
                               </div>
-                            </div>
-                          )}
+                            )}
                         </div>
                       </div>
 
                       {/* Action buttons */}
                       <div className="flex flex-col gap-2 ml-4">
-                        <Button 
-                          variant="outline" 
+                        <Button
+                          variant="outline"
                           size="sm"
                           onClick={() => onView(appointment.id)}
                           className="text-xs"
@@ -208,8 +227,8 @@ export function UpcomingAppointments({
                         </Button>
 
                         {appointment.can_reschedule && (
-                          <Button 
-                            variant="outline" 
+                          <Button
+                            variant="outline"
                             size="sm"
                             onClick={() => onReschedule(appointment.id)}
                             className="text-xs"
@@ -220,8 +239,8 @@ export function UpcomingAppointments({
                         )}
 
                         {appointment.can_cancel && (
-                          <Button 
-                            variant="destructive" 
+                          <Button
+                            variant="destructive"
                             size="sm"
                             onClick={() => onCancel(appointment.id)}
                             className="text-xs"
@@ -234,10 +253,10 @@ export function UpcomingAppointments({
                     </div>
                   </CardContent>
                 </Card>
-              )
+              );
             })}
           </div>
-        )
+        );
       })}
 
       {/* Policy information footer */}
@@ -247,7 +266,9 @@ export function UpcomingAppointments({
             <div>
               <strong>Cancelamento:</strong> {cancellationPolicies.minimum_hours}h de antecedência
               {cancellationPolicies.fee_applies && (
-                <div>Taxa por cancelamento tardio: R$ {cancellationPolicies.fee_amount.toFixed(2)}</div>
+                <div>
+                  Taxa por cancelamento tardio: R$ {cancellationPolicies.fee_amount.toFixed(2)}
+                </div>
               )}
             </div>
             <div>
@@ -258,5 +279,5 @@ export function UpcomingAppointments({
         </div>
       )}
     </div>
-  )
+  );
 }

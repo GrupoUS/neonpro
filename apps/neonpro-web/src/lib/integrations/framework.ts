@@ -1,14 +1,14 @@
 /**
  * NeonPro - Third-party Integrations Framework
  * Core framework implementation
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  * @created 2025-01-27
  */
 
-import { createClient } from '@supabase/supabase-js';
-import {
+import type { createClient } from "@supabase/supabase-js";
+import type {
   IntegrationConfig,
   IntegrationConnector,
   IntegrationManager,
@@ -30,8 +30,8 @@ import {
   RetryPolicy,
   RateLimitConfig,
   IntegrationEndpoint,
-  WebhookConfig
-} from './types';
+  WebhookConfig,
+} from "./types";
 
 /**
  * Main Integration Framework Class
@@ -52,7 +52,7 @@ export class NeonProIntegrationFramework implements IntegrationManager {
     rateLimiter: RateLimiter,
     webhookManager: WebhookManager,
     cache: IntegrationCache,
-    queue: IntegrationQueue
+    queue: IntegrationQueue,
   ) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.rateLimiter = rateLimiter;
@@ -79,8 +79,8 @@ export class NeonProIntegrationFramework implements IntegrationManager {
       if (!connector) {
         throw new IntegrationFrameworkError(
           `Connector not found for type: ${config.type}`,
-          'CONNECTOR_NOT_FOUND',
-          config.id
+          "CONNECTOR_NOT_FOUND",
+          config.id,
         );
       }
 
@@ -88,25 +88,21 @@ export class NeonProIntegrationFramework implements IntegrationManager {
       const isValid = await connector.validateConfig(config);
       if (!isValid) {
         throw new IntegrationFrameworkError(
-          'Invalid integration configuration',
-          'INVALID_CONFIG',
-          config.id
+          "Invalid integration configuration",
+          "INVALID_CONFIG",
+          config.id,
         );
       }
 
       // Test authentication
       const authResult = await connector.authenticate(config.credentials);
       if (!authResult) {
-        throw new IntegrationFrameworkError(
-          'Authentication failed',
-          'AUTH_FAILED',
-          config.id
-        );
+        throw new IntegrationFrameworkError("Authentication failed", "AUTH_FAILED", config.id);
       }
 
       // Save to database
       const { data, error } = await this.supabase
-        .from('integrations')
+        .from("integrations")
         .insert({
           id: config.id,
           name: config.name,
@@ -121,7 +117,7 @@ export class NeonProIntegrationFramework implements IntegrationManager {
           retry_policy: config.retryPolicy,
           monitoring: config.monitoring,
           created_at: new Date(),
-          updated_at: new Date()
+          updated_at: new Date(),
         })
         .select()
         .single();
@@ -129,8 +125,8 @@ export class NeonProIntegrationFramework implements IntegrationManager {
       if (error) {
         throw new IntegrationFrameworkError(
           `Failed to save integration: ${error.message}`,
-          'DATABASE_ERROR',
-          config.id
+          "DATABASE_ERROR",
+          config.id,
         );
       }
 
@@ -142,18 +138,18 @@ export class NeonProIntegrationFramework implements IntegrationManager {
       await this.logEvent({
         id: crypto.randomUUID(),
         integrationId: config.id,
-        type: 'integration_created',
+        type: "integration_created",
         data: { name: config.name, type: config.type },
-        source: 'internal',
+        source: "internal",
         timestamp: new Date(),
         processed: true,
         retryCount: 0,
-        clinicId: config.settings.clinicId || 'system'
+        clinicId: config.settings.clinicId || "system",
       });
 
       return config.id;
     } catch (error) {
-      console.error('Failed to create integration:', error);
+      console.error("Failed to create integration:", error);
       throw error;
     }
   }
@@ -167,8 +163,8 @@ export class NeonProIntegrationFramework implements IntegrationManager {
       if (!existing) {
         throw new IntegrationFrameworkError(
           `Integration not found: ${id}`,
-          'INTEGRATION_NOT_FOUND',
-          id
+          "INTEGRATION_NOT_FOUND",
+          id,
         );
       }
 
@@ -180,45 +176,47 @@ export class NeonProIntegrationFramework implements IntegrationManager {
         if (!connector) {
           throw new IntegrationFrameworkError(
             `Connector not found for type: ${updates.type}`,
-            'CONNECTOR_NOT_FOUND',
-            id
+            "CONNECTOR_NOT_FOUND",
+            id,
           );
         }
 
         const isValid = await connector.validateConfig(updated);
         if (!isValid) {
           throw new IntegrationFrameworkError(
-            'Invalid integration configuration',
-            'INVALID_CONFIG',
-            id
+            "Invalid integration configuration",
+            "INVALID_CONFIG",
+            id,
           );
         }
       }
 
       // Update in database
       const { error } = await this.supabase
-        .from('integrations')
+        .from("integrations")
         .update({
           name: updated.name,
           type: updated.type,
           version: updated.version,
           enabled: updated.enabled,
           settings: updated.settings,
-          credentials: updates.credentials ? await this.encryptCredentials(updates.credentials) : undefined,
+          credentials: updates.credentials
+            ? await this.encryptCredentials(updates.credentials)
+            : undefined,
           endpoints: updated.endpoints,
           webhooks: updated.webhooks,
           rate_limits: updated.rateLimits,
           retry_policy: updated.retryPolicy,
           monitoring: updated.monitoring,
-          updated_at: new Date()
+          updated_at: new Date(),
         })
-        .eq('id', id);
+        .eq("id", id);
 
       if (error) {
         throw new IntegrationFrameworkError(
           `Failed to update integration: ${error.message}`,
-          'DATABASE_ERROR',
-          id
+          "DATABASE_ERROR",
+          id,
         );
       }
 
@@ -230,16 +228,16 @@ export class NeonProIntegrationFramework implements IntegrationManager {
       await this.logEvent({
         id: crypto.randomUUID(),
         integrationId: id,
-        type: 'integration_updated',
+        type: "integration_updated",
         data: updates,
-        source: 'internal',
+        source: "internal",
         timestamp: new Date(),
         processed: true,
         retryCount: 0,
-        clinicId: updated.settings.clinicId || 'system'
+        clinicId: updated.settings.clinicId || "system",
       });
     } catch (error) {
-      console.error('Failed to update integration:', error);
+      console.error("Failed to update integration:", error);
       throw error;
     }
   }
@@ -253,22 +251,19 @@ export class NeonProIntegrationFramework implements IntegrationManager {
       if (!integration) {
         throw new IntegrationFrameworkError(
           `Integration not found: ${id}`,
-          'INTEGRATION_NOT_FOUND',
-          id
+          "INTEGRATION_NOT_FOUND",
+          id,
         );
       }
 
       // Delete from database
-      const { error } = await this.supabase
-        .from('integrations')
-        .delete()
-        .eq('id', id);
+      const { error } = await this.supabase.from("integrations").delete().eq("id", id);
 
       if (error) {
         throw new IntegrationFrameworkError(
           `Failed to delete integration: ${error.message}`,
-          'DATABASE_ERROR',
-          id
+          "DATABASE_ERROR",
+          id,
         );
       }
 
@@ -280,16 +275,16 @@ export class NeonProIntegrationFramework implements IntegrationManager {
       await this.logEvent({
         id: crypto.randomUUID(),
         integrationId: id,
-        type: 'integration_deleted',
+        type: "integration_deleted",
         data: { name: integration.name, type: integration.type },
-        source: 'internal',
+        source: "internal",
         timestamp: new Date(),
         processed: true,
         retryCount: 0,
-        clinicId: integration.settings.clinicId || 'system'
+        clinicId: integration.settings.clinicId || "system",
       });
     } catch (error) {
-      console.error('Failed to delete integration:', error);
+      console.error("Failed to delete integration:", error);
       throw error;
     }
   }
@@ -312,9 +307,9 @@ export class NeonProIntegrationFramework implements IntegrationManager {
 
       // Load from database
       const { data, error } = await this.supabase
-        .from('integrations')
-        .select('*')
-        .eq('id', id)
+        .from("integrations")
+        .select("*")
+        .eq("id", id)
         .single();
 
       if (error || !data) {
@@ -335,7 +330,7 @@ export class NeonProIntegrationFramework implements IntegrationManager {
         retryPolicy: data.retry_policy,
         monitoring: data.monitoring,
         createdAt: new Date(data.created_at),
-        updatedAt: new Date(data.updated_at)
+        updatedAt: new Date(data.updated_at),
       };
 
       // Cache and store in memory
@@ -344,7 +339,7 @@ export class NeonProIntegrationFramework implements IntegrationManager {
 
       return integration;
     } catch (error) {
-      console.error('Failed to get integration:', error);
+      console.error("Failed to get integration:", error);
       return null;
     }
   }
@@ -355,16 +350,16 @@ export class NeonProIntegrationFramework implements IntegrationManager {
   async listIntegrations(clinicId: string): Promise<IntegrationConfig[]> {
     try {
       const { data, error } = await this.supabase
-        .from('integrations')
-        .select('*')
-        .eq('settings->>clinicId', clinicId)
-        .order('created_at', { ascending: false });
+        .from("integrations")
+        .select("*")
+        .eq("settings->>clinicId", clinicId)
+        .order("created_at", { ascending: false });
 
       if (error) {
         throw new IntegrationFrameworkError(
           `Failed to list integrations: ${error.message}`,
-          'DATABASE_ERROR',
-          'list'
+          "DATABASE_ERROR",
+          "list",
         );
       }
 
@@ -384,14 +379,14 @@ export class NeonProIntegrationFramework implements IntegrationManager {
           retryPolicy: item.retry_policy,
           monitoring: item.monitoring,
           createdAt: new Date(item.created_at),
-          updatedAt: new Date(item.updated_at)
+          updatedAt: new Date(item.updated_at),
         };
         integrations.push(integration);
       }
 
       return integrations;
     } catch (error) {
-      console.error('Failed to list integrations:', error);
+      console.error("Failed to list integrations:", error);
       throw error;
     }
   }
@@ -405,8 +400,8 @@ export class NeonProIntegrationFramework implements IntegrationManager {
       if (!integration) {
         throw new IntegrationFrameworkError(
           `Integration not found: ${id}`,
-          'INTEGRATION_NOT_FOUND',
-          id
+          "INTEGRATION_NOT_FOUND",
+          id,
         );
       }
 
@@ -414,29 +409,29 @@ export class NeonProIntegrationFramework implements IntegrationManager {
       if (!connector) {
         throw new IntegrationFrameworkError(
           `Connector not found for type: ${integration.type}`,
-          'CONNECTOR_NOT_FOUND',
-          id
+          "CONNECTOR_NOT_FOUND",
+          id,
         );
       }
 
       const health = await connector.getHealthStatus();
-      
+
       // Log health check
       await this.logEvent({
         id: crypto.randomUUID(),
         integrationId: id,
-        type: 'health_check',
+        type: "health_check",
         data: health,
-        source: 'internal',
+        source: "internal",
         timestamp: new Date(),
         processed: true,
         retryCount: 0,
-        clinicId: integration.settings.clinicId || 'system'
+        clinicId: integration.settings.clinicId || "system",
       });
 
       return health;
     } catch (error) {
-      console.error('Failed to test connection:', error);
+      console.error("Failed to test connection:", error);
       throw error;
     }
   }
@@ -447,22 +442,22 @@ export class NeonProIntegrationFramework implements IntegrationManager {
   async executeRequest(id: string, endpoint: string, data?: any): Promise<IntegrationResponse> {
     const startTime = Date.now();
     const requestId = crypto.randomUUID();
-    
+
     try {
       const integration = await this.getIntegration(id);
       if (!integration) {
         throw new IntegrationFrameworkError(
           `Integration not found: ${id}`,
-          'INTEGRATION_NOT_FOUND',
-          id
+          "INTEGRATION_NOT_FOUND",
+          id,
         );
       }
 
       if (!integration.enabled) {
         throw new IntegrationFrameworkError(
           `Integration is disabled: ${id}`,
-          'INTEGRATION_DISABLED',
-          id
+          "INTEGRATION_DISABLED",
+          id,
         );
       }
 
@@ -470,29 +465,25 @@ export class NeonProIntegrationFramework implements IntegrationManager {
       if (!connector) {
         throw new IntegrationFrameworkError(
           `Connector not found for type: ${integration.type}`,
-          'CONNECTOR_NOT_FOUND',
-          id
+          "CONNECTOR_NOT_FOUND",
+          id,
         );
       }
 
       // Find endpoint configuration
-      const endpointConfig = integration.endpoints.find(ep => ep.name === endpoint);
+      const endpointConfig = integration.endpoints.find((ep) => ep.name === endpoint);
       if (!endpointConfig) {
         throw new IntegrationFrameworkError(
           `Endpoint not found: ${endpoint}`,
-          'ENDPOINT_NOT_FOUND',
-          id
+          "ENDPOINT_NOT_FOUND",
+          id,
         );
       }
 
       // Check rate limits
       const canProceed = await this.rateLimiter.checkLimit(id, endpoint);
       if (!canProceed) {
-        throw new IntegrationFrameworkError(
-          'Rate limit exceeded',
-          'RATE_LIMIT_EXCEEDED',
-          id
-        );
+        throw new IntegrationFrameworkError("Rate limit exceeded", "RATE_LIMIT_EXCEEDED", id);
       }
 
       // Log request
@@ -504,7 +495,7 @@ export class NeonProIntegrationFramework implements IntegrationManager {
         headers: endpointConfig.headers || {},
         body: data,
         timestamp: new Date(),
-        clinicId: integration.settings.clinicId || 'system'
+        clinicId: integration.settings.clinicId || "system",
       };
 
       await this.logRequest(request);
@@ -526,12 +517,12 @@ export class NeonProIntegrationFramework implements IntegrationManager {
       const errorResponse: IntegrationResponse = {
         id: crypto.randomUUID(),
         requestId,
-        status: 'error',
+        status: "error",
         statusCode: error instanceof IntegrationFrameworkError ? 400 : 500,
         headers: {},
         error: error.message,
         duration,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       await this.logResponse(errorResponse);
@@ -548,8 +539,8 @@ export class NeonProIntegrationFramework implements IntegrationManager {
       if (!integration) {
         throw new IntegrationFrameworkError(
           `Integration not found: ${id}`,
-          'INTEGRATION_NOT_FOUND',
-          id
+          "INTEGRATION_NOT_FOUND",
+          id,
         );
       }
 
@@ -557,8 +548,8 @@ export class NeonProIntegrationFramework implements IntegrationManager {
       if (!connector) {
         throw new IntegrationFrameworkError(
           `Connector not found for type: ${integration.type}`,
-          'CONNECTOR_NOT_FOUND',
-          id
+          "CONNECTOR_NOT_FOUND",
+          id,
         );
       }
 
@@ -568,16 +559,16 @@ export class NeonProIntegrationFramework implements IntegrationManager {
       await this.logEvent({
         id: crypto.randomUUID(),
         integrationId: id,
-        type: 'webhook_received',
+        type: "webhook_received",
         data: { payload, headers },
-        source: 'external',
+        source: "external",
         timestamp: new Date(),
         processed: true,
         retryCount: 0,
-        clinicId: integration.settings.clinicId || 'system'
+        clinicId: integration.settings.clinicId || "system",
       });
     } catch (error) {
-      console.error('Failed to handle webhook:', error);
+      console.error("Failed to handle webhook:", error);
       throw error;
     }
   }
@@ -591,8 +582,8 @@ export class NeonProIntegrationFramework implements IntegrationManager {
       if (!integration) {
         throw new IntegrationFrameworkError(
           `Integration not found: ${id}`,
-          'INTEGRATION_NOT_FOUND',
-          id
+          "INTEGRATION_NOT_FOUND",
+          id,
         );
       }
 
@@ -600,56 +591,56 @@ export class NeonProIntegrationFramework implements IntegrationManager {
       if (!connector) {
         throw new IntegrationFrameworkError(
           `Connector not found for type: ${integration.type}`,
-          'CONNECTOR_NOT_FOUND',
-          id
+          "CONNECTOR_NOT_FOUND",
+          id,
         );
       }
 
       const syncOperation: SyncOperation = {
         id: crypto.randomUUID(),
         integrationId: id,
-        type: operation.type || 'sync',
-        entity: operation.entity || 'unknown',
-        status: 'pending',
+        type: operation.type || "sync",
+        entity: operation.entity || "unknown",
+        status: "pending",
         progress: 0,
         totalRecords: operation.totalRecords || 0,
         processedRecords: 0,
         errorRecords: 0,
         startedAt: new Date(),
         metadata: operation.metadata,
-        clinicId: integration.settings.clinicId || 'system'
+        clinicId: integration.settings.clinicId || "system",
       };
 
       // Save sync operation
       const { error } = await this.supabase
-        .from('integration_sync_operations')
+        .from("integration_sync_operations")
         .insert(syncOperation);
 
       if (error) {
         throw new IntegrationFrameworkError(
           `Failed to save sync operation: ${error.message}`,
-          'DATABASE_ERROR',
-          id
+          "DATABASE_ERROR",
+          id,
         );
       }
 
       // Queue sync job
       await this.queue.enqueue({
         id: crypto.randomUUID(),
-        type: 'sync',
+        type: "sync",
         integrationId: id,
         payload: syncOperation,
         priority: 1,
         attempts: 0,
         maxAttempts: 3,
         delay: 0,
-        status: 'pending',
-        createdAt: new Date()
+        status: "pending",
+        createdAt: new Date(),
       });
 
       return syncOperation.id;
     } catch (error) {
-      console.error('Failed to start sync:', error);
+      console.error("Failed to start sync:", error);
       throw error;
     }
   }
@@ -670,12 +661,12 @@ export class NeonProIntegrationFramework implements IntegrationManager {
         errorRate: 0,
         uptime: 100,
         period: period as any,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       return metrics;
     } catch (error) {
-      console.error('Failed to get metrics:', error);
+      console.error("Failed to get metrics:", error);
       throw error;
     }
   }
@@ -686,23 +677,23 @@ export class NeonProIntegrationFramework implements IntegrationManager {
   async getLogs(id: string, filters?: any): Promise<IntegrationLog[]> {
     try {
       const { data, error } = await this.supabase
-        .from('integration_logs')
-        .select('*')
-        .eq('integration_id', id)
-        .order('timestamp', { ascending: false })
+        .from("integration_logs")
+        .select("*")
+        .eq("integration_id", id)
+        .order("timestamp", { ascending: false })
         .limit(filters?.limit || 100);
 
       if (error) {
         throw new IntegrationFrameworkError(
           `Failed to get logs: ${error.message}`,
-          'DATABASE_ERROR',
-          id
+          "DATABASE_ERROR",
+          id,
         );
       }
 
       return data || [];
     } catch (error) {
-      console.error('Failed to get logs:', error);
+      console.error("Failed to get logs:", error);
       throw error;
     }
   }
@@ -719,21 +710,15 @@ export class NeonProIntegrationFramework implements IntegrationManager {
   }
 
   private async logRequest(request: IntegrationRequest): Promise<void> {
-    await this.supabase
-      .from('integration_requests')
-      .insert(request);
+    await this.supabase.from("integration_requests").insert(request);
   }
 
   private async logResponse(response: IntegrationResponse): Promise<void> {
-    await this.supabase
-      .from('integration_responses')
-      .insert(response);
+    await this.supabase.from("integration_responses").insert(response);
   }
 
   private async logEvent(event: IntegrationEvent): Promise<void> {
-    await this.supabase
-      .from('integration_events')
-      .insert(event);
+    await this.supabase.from("integration_events").insert(event);
   }
 }
 
@@ -755,10 +740,10 @@ export class IntegrationFrameworkError extends Error implements IntegrationError
     endpoint?: string,
     statusCode?: number,
     retryable: boolean = false,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ) {
     super(message);
-    this.name = 'IntegrationFrameworkError';
+    this.name = "IntegrationFrameworkError";
     this.code = code;
     this.integrationId = integrationId;
     this.endpoint = endpoint;

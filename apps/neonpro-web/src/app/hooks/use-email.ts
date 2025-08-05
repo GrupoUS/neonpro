@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useToast } from '@/components/ui/use-toast';
-import {
+import type { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { useToast } from "@/components/ui/use-toast";
+import type {
   EmailTemplate,
   EmailMessage,
   EmailServiceResponse,
@@ -11,7 +11,7 @@ import {
   EmailSettings,
   EmailProviderConfig,
   EmailValidationResult,
-} from '@/app/types/email';
+} from "@/app/types/email";
 
 // =======================================
 // EMAIL TEMPLATE HOOKS
@@ -23,16 +23,16 @@ export function useEmailTemplates(filters?: {
   search?: string;
 }) {
   return useQuery({
-    queryKey: ['email-templates', filters],
+    queryKey: ["email-templates", filters],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (filters?.category) params.append('category', filters.category);
-      if (filters?.isActive !== undefined) params.append('isActive', filters.isActive.toString());
-      if (filters?.search) params.append('search', filters.search);
+      if (filters?.category) params.append("category", filters.category);
+      if (filters?.isActive !== undefined) params.append("isActive", filters.isActive.toString());
+      if (filters?.search) params.append("search", filters.search);
 
       const response = await fetch(`/api/email/templates?${params}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch email templates');
+        throw new Error("Failed to fetch email templates");
       }
       return response.json() as Promise<EmailTemplate[]>;
     },
@@ -41,12 +41,12 @@ export function useEmailTemplates(filters?: {
 
 export function useEmailTemplate(id: string) {
   return useQuery({
-    queryKey: ['email-template', id],
+    queryKey: ["email-template", id],
     queryFn: async () => {
       const response = await fetch(`/api/email/templates/${id}`);
       if (!response.ok) {
         if (response.status === 404) return null;
-        throw new Error('Failed to fetch email template');
+        throw new Error("Failed to fetch email template");
       }
       return response.json() as Promise<EmailTemplate>;
     },
@@ -59,31 +59,31 @@ export function useCreateEmailTemplate() {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async (template: Omit<EmailTemplate, 'id' | 'createdAt' | 'updatedAt'>) => {
-      const response = await fetch('/api/email/templates', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+    mutationFn: async (template: Omit<EmailTemplate, "id" | "createdAt" | "updatedAt">) => {
+      const response = await fetch("/api/email/templates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(template),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create email template');
+        throw new Error("Failed to create email template");
       }
 
       return response.json() as Promise<EmailTemplate>;
     },
     onSuccess: (template) => {
-      queryClient.invalidateQueries({ queryKey: ['email-templates'] });
+      queryClient.invalidateQueries({ queryKey: ["email-templates"] });
       toast({
-        title: 'Template criado',
+        title: "Template criado",
         description: `Template "${template.name}" foi criado com sucesso.`,
       });
     },
     onError: (error) => {
       toast({
-        title: 'Erro ao criar template',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
-        variant: 'destructive',
+        title: "Erro ao criar template",
+        description: error instanceof Error ? error.message : "Erro desconhecido",
+        variant: "destructive",
       });
     },
   });
@@ -96,30 +96,30 @@ export function useUpdateEmailTemplate() {
   return useMutation({
     mutationFn: async ({ id, updates }: { id: string; updates: Partial<EmailTemplate> }) => {
       const response = await fetch(`/api/email/templates/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updates),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update email template');
+        throw new Error("Failed to update email template");
       }
 
       return response.json() as Promise<EmailTemplate>;
     },
     onSuccess: (template) => {
-      queryClient.invalidateQueries({ queryKey: ['email-templates'] });
-      queryClient.invalidateQueries({ queryKey: ['email-template', template.id] });
+      queryClient.invalidateQueries({ queryKey: ["email-templates"] });
+      queryClient.invalidateQueries({ queryKey: ["email-template", template.id] });
       toast({
-        title: 'Template atualizado',
+        title: "Template atualizado",
         description: `Template "${template.name}" foi atualizado com sucesso.`,
       });
     },
     onError: (error) => {
       toast({
-        title: 'Erro ao atualizar template',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
-        variant: 'destructive',
+        title: "Erro ao atualizar template",
+        description: error instanceof Error ? error.message : "Erro desconhecido",
+        variant: "destructive",
       });
     },
   });
@@ -132,25 +132,25 @@ export function useDeleteEmailTemplate() {
   return useMutation({
     mutationFn: async (id: string) => {
       const response = await fetch(`/api/email/templates/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete email template');
+        throw new Error("Failed to delete email template");
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['email-templates'] });
+      queryClient.invalidateQueries({ queryKey: ["email-templates"] });
       toast({
-        title: 'Template excluído',
-        description: 'Template foi excluído com sucesso.',
+        title: "Template excluído",
+        description: "Template foi excluído com sucesso.",
       });
     },
     onError: (error) => {
       toast({
-        title: 'Erro ao excluir template',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
-        variant: 'destructive',
+        title: "Erro ao excluir template",
+        description: error instanceof Error ? error.message : "Erro desconhecido",
+        variant: "destructive",
       });
     },
   });
@@ -165,14 +165,14 @@ export function useSendEmail() {
 
   return useMutation({
     mutationFn: async (message: EmailMessage) => {
-      const response = await fetch('/api/email/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/email/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(message),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to send email');
+        throw new Error("Failed to send email");
       }
 
       return response.json() as Promise<EmailServiceResponse>;
@@ -180,22 +180,22 @@ export function useSendEmail() {
     onSuccess: (result) => {
       if (result.success) {
         toast({
-          title: 'Email enviado',
-          description: 'Email foi enviado com sucesso.',
+          title: "Email enviado",
+          description: "Email foi enviado com sucesso.",
         });
       } else {
         toast({
-          title: 'Falha no envio',
-          description: result.error || 'Erro desconhecido ao enviar email',
-          variant: 'destructive',
+          title: "Falha no envio",
+          description: result.error || "Erro desconhecido ao enviar email",
+          variant: "destructive",
         });
       }
     },
     onError: (error) => {
       toast({
-        title: 'Erro ao enviar email',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
-        variant: 'destructive',
+        title: "Erro ao enviar email",
+        description: error instanceof Error ? error.message : "Erro desconhecido",
+        variant: "destructive",
       });
     },
   });
@@ -205,21 +205,21 @@ export function useSendBulkEmail() {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async ({ 
-      messages, 
-      batchSize = 10 
-    }: { 
-      messages: EmailMessage[]; 
+    mutationFn: async ({
+      messages,
+      batchSize = 10,
+    }: {
+      messages: EmailMessage[];
       batchSize?: number;
     }) => {
-      const response = await fetch('/api/email/bulk', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/email/bulk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages, batchSize }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to send bulk emails');
+        throw new Error("Failed to send bulk emails");
       }
 
       return response.json() as Promise<BulkEmailResponse>;
@@ -227,22 +227,22 @@ export function useSendBulkEmail() {
     onSuccess: (result) => {
       if (result.success) {
         toast({
-          title: 'Emails enviados',
+          title: "Emails enviados",
           description: `${result.totalSent} emails enviados com sucesso. ${result.totalFailed} falharam.`,
         });
       } else {
         toast({
-          title: 'Falha no envio em lote',
+          title: "Falha no envio em lote",
           description: `Todos os ${result.totalFailed} emails falharam.`,
-          variant: 'destructive',
+          variant: "destructive",
         });
       }
     },
     onError: (error) => {
       toast({
-        title: 'Erro ao enviar emails em lote',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
-        variant: 'destructive',
+        title: "Erro ao enviar emails em lote",
+        description: error instanceof Error ? error.message : "Erro desconhecido",
+        variant: "destructive",
       });
     },
   });
@@ -254,21 +254,21 @@ export function useSendBulkEmail() {
 
 export function useEmailPreview() {
   return useMutation({
-    mutationFn: async ({ 
-      templateId, 
-      variables 
-    }: { 
-      templateId: string; 
+    mutationFn: async ({
+      templateId,
+      variables,
+    }: {
+      templateId: string;
       variables: Record<string, any>;
     }) => {
-      const response = await fetch('/api/email/preview', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/email/preview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ templateId, variables }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to preview email');
+        throw new Error("Failed to preview email");
       }
 
       return response.json() as Promise<EmailPreview>;
@@ -279,14 +279,14 @@ export function useEmailPreview() {
 export function useValidateEmail() {
   return useMutation({
     mutationFn: async (email: string) => {
-      const response = await fetch('/api/email/validate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/email/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to validate email');
+        throw new Error("Failed to validate email");
       }
 
       return response.json() as Promise<EmailValidationResult>;
@@ -305,17 +305,17 @@ export function useEmailAnalytics(filters?: {
   campaignId?: string;
 }) {
   return useQuery({
-    queryKey: ['email-analytics', filters],
+    queryKey: ["email-analytics", filters],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (filters?.startDate) params.append('startDate', filters.startDate.toISOString());
-      if (filters?.endDate) params.append('endDate', filters.endDate.toISOString());
-      if (filters?.templateId) params.append('templateId', filters.templateId);
-      if (filters?.campaignId) params.append('campaignId', filters.campaignId);
+      if (filters?.startDate) params.append("startDate", filters.startDate.toISOString());
+      if (filters?.endDate) params.append("endDate", filters.endDate.toISOString());
+      if (filters?.templateId) params.append("templateId", filters.templateId);
+      if (filters?.campaignId) params.append("campaignId", filters.campaignId);
 
       const response = await fetch(`/api/email/analytics?${params}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch email analytics');
+        throw new Error("Failed to fetch email analytics");
       }
       return response.json() as Promise<EmailAnalytics>;
     },
@@ -324,12 +324,12 @@ export function useEmailAnalytics(filters?: {
 
 export function useEmailDeliveryReport(messageId: string) {
   return useQuery({
-    queryKey: ['email-delivery-report', messageId],
+    queryKey: ["email-delivery-report", messageId],
     queryFn: async () => {
       const response = await fetch(`/api/email/delivery/${messageId}`);
       if (!response.ok) {
         if (response.status === 404) return null;
-        throw new Error('Failed to fetch delivery report');
+        throw new Error("Failed to fetch delivery report");
       }
       return response.json() as Promise<EmailDeliveryReport>;
     },
@@ -344,17 +344,17 @@ export function useEmailEvents(filters?: {
   event?: string;
 }) {
   return useQuery({
-    queryKey: ['email-events', filters],
+    queryKey: ["email-events", filters],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (filters?.startDate) params.append('startDate', filters.startDate.toISOString());
-      if (filters?.endDate) params.append('endDate', filters.endDate.toISOString());
-      if (filters?.messageId) params.append('messageId', filters.messageId);
-      if (filters?.event) params.append('event', filters.event);
+      if (filters?.startDate) params.append("startDate", filters.startDate.toISOString());
+      if (filters?.endDate) params.append("endDate", filters.endDate.toISOString());
+      if (filters?.messageId) params.append("messageId", filters.messageId);
+      if (filters?.event) params.append("event", filters.event);
 
       const response = await fetch(`/api/email/events?${params}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch email events');
+        throw new Error("Failed to fetch email events");
       }
       return response.json();
     },
@@ -367,12 +367,12 @@ export function useEmailEvents(filters?: {
 
 export function useEmailSettings() {
   return useQuery({
-    queryKey: ['email-settings'],
+    queryKey: ["email-settings"],
     queryFn: async () => {
-      const response = await fetch('/api/email/settings');
+      const response = await fetch("/api/email/settings");
       if (!response.ok) {
         if (response.status === 404) return null;
-        throw new Error('Failed to fetch email settings');
+        throw new Error("Failed to fetch email settings");
       }
       return response.json() as Promise<EmailSettings>;
     },
@@ -385,30 +385,30 @@ export function useUpdateEmailSettings() {
 
   return useMutation({
     mutationFn: async (settings: Partial<EmailSettings>) => {
-      const response = await fetch('/api/email/settings', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/email/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(settings),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update email settings');
+        throw new Error("Failed to update email settings");
       }
 
       return response.json() as Promise<EmailSettings>;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['email-settings'] });
+      queryClient.invalidateQueries({ queryKey: ["email-settings"] });
       toast({
-        title: 'Configurações atualizadas',
-        description: 'Configurações de email foram atualizadas com sucesso.',
+        title: "Configurações atualizadas",
+        description: "Configurações de email foram atualizadas com sucesso.",
       });
     },
     onError: (error) => {
       toast({
-        title: 'Erro ao atualizar configurações',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
-        variant: 'destructive',
+        title: "Erro ao atualizar configurações",
+        description: error instanceof Error ? error.message : "Erro desconhecido",
+        variant: "destructive",
       });
     },
   });
@@ -420,11 +420,11 @@ export function useUpdateEmailSettings() {
 
 export function useEmailProviders() {
   return useQuery({
-    queryKey: ['email-providers'],
+    queryKey: ["email-providers"],
     queryFn: async () => {
-      const response = await fetch('/api/email/providers');
+      const response = await fetch("/api/email/providers");
       if (!response.ok) {
-        throw new Error('Failed to fetch email providers');
+        throw new Error("Failed to fetch email providers");
       }
       return response.json() as Promise<EmailProviderConfig[]>;
     },
@@ -436,31 +436,31 @@ export function useCreateEmailProvider() {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async (provider: Omit<EmailProviderConfig, 'id'>) => {
-      const response = await fetch('/api/email/providers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+    mutationFn: async (provider: Omit<EmailProviderConfig, "id">) => {
+      const response = await fetch("/api/email/providers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(provider),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create email provider');
+        throw new Error("Failed to create email provider");
       }
 
       return response.json() as Promise<EmailProviderConfig>;
     },
     onSuccess: (provider) => {
-      queryClient.invalidateQueries({ queryKey: ['email-providers'] });
+      queryClient.invalidateQueries({ queryKey: ["email-providers"] });
       toast({
-        title: 'Provedor criado',
+        title: "Provedor criado",
         description: `Provedor "${provider.name}" foi criado com sucesso.`,
       });
     },
     onError: (error) => {
       toast({
-        title: 'Erro ao criar provedor',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
-        variant: 'destructive',
+        title: "Erro ao criar provedor",
+        description: error instanceof Error ? error.message : "Erro desconhecido",
+        variant: "destructive",
       });
     },
   });
@@ -471,37 +471,31 @@ export function useUpdateEmailProvider() {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async ({ 
-      id, 
-      updates 
-    }: { 
-      id: string; 
-      updates: Partial<EmailProviderConfig>;
-    }) => {
+    mutationFn: async ({ id, updates }: { id: string; updates: Partial<EmailProviderConfig> }) => {
       const response = await fetch(`/api/email/providers/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updates),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update email provider');
+        throw new Error("Failed to update email provider");
       }
 
       return response.json() as Promise<EmailProviderConfig>;
     },
     onSuccess: (provider) => {
-      queryClient.invalidateQueries({ queryKey: ['email-providers'] });
+      queryClient.invalidateQueries({ queryKey: ["email-providers"] });
       toast({
-        title: 'Provedor atualizado',
+        title: "Provedor atualizado",
         description: `Provedor "${provider.name}" foi atualizado com sucesso.`,
       });
     },
     onError: (error) => {
       toast({
-        title: 'Erro ao atualizar provedor',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
-        variant: 'destructive',
+        title: "Erro ao atualizar provedor",
+        description: error instanceof Error ? error.message : "Erro desconhecido",
+        variant: "destructive",
       });
     },
   });
@@ -514,25 +508,25 @@ export function useDeleteEmailProvider() {
   return useMutation({
     mutationFn: async (id: string) => {
       const response = await fetch(`/api/email/providers/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete email provider');
+        throw new Error("Failed to delete email provider");
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['email-providers'] });
+      queryClient.invalidateQueries({ queryKey: ["email-providers"] });
       toast({
-        title: 'Provedor excluído',
-        description: 'Provedor foi excluído com sucesso.',
+        title: "Provedor excluído",
+        description: "Provedor foi excluído com sucesso.",
       });
     },
     onError: (error) => {
       toast({
-        title: 'Erro ao excluir provedor',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
-        variant: 'destructive',
+        title: "Erro ao excluir provedor",
+        description: error instanceof Error ? error.message : "Erro desconhecido",
+        variant: "destructive",
       });
     },
   });
@@ -544,11 +538,11 @@ export function useTestEmailProvider() {
   return useMutation({
     mutationFn: async (id: string) => {
       const response = await fetch(`/api/email/providers/${id}/test`, {
-        method: 'POST',
+        method: "POST",
       });
 
       if (!response.ok) {
-        throw new Error('Failed to test email provider');
+        throw new Error("Failed to test email provider");
       }
 
       return response.json() as Promise<{ success: boolean; message: string }>;
@@ -556,22 +550,22 @@ export function useTestEmailProvider() {
     onSuccess: (result) => {
       if (result.success) {
         toast({
-          title: 'Teste bem-sucedido',
-          description: result.message || 'Provedor testado com sucesso.',
+          title: "Teste bem-sucedido",
+          description: result.message || "Provedor testado com sucesso.",
         });
       } else {
         toast({
-          title: 'Teste falhou',
-          description: result.message || 'Teste do provedor falhou.',
-          variant: 'destructive',
+          title: "Teste falhou",
+          description: result.message || "Teste do provedor falhou.",
+          variant: "destructive",
         });
       }
     },
     onError: (error) => {
       toast({
-        title: 'Erro ao testar provedor',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
-        variant: 'destructive',
+        title: "Erro ao testar provedor",
+        description: error instanceof Error ? error.message : "Erro desconhecido",
+        variant: "destructive",
       });
     },
   });
@@ -583,11 +577,11 @@ export function useTestEmailProvider() {
 
 export function useEmailSuppressions() {
   return useQuery({
-    queryKey: ['email-suppressions'],
+    queryKey: ["email-suppressions"],
     queryFn: async () => {
-      const response = await fetch('/api/email/suppressions');
+      const response = await fetch("/api/email/suppressions");
       if (!response.ok) {
-        throw new Error('Failed to fetch email suppressions');
+        throw new Error("Failed to fetch email suppressions");
       }
       return response.json();
     },
@@ -599,37 +593,31 @@ export function useAddEmailSuppression() {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async ({ 
-      email, 
-      reason 
-    }: { 
-      email: string; 
-      reason: string;
-    }) => {
-      const response = await fetch('/api/email/suppressions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+    mutationFn: async ({ email, reason }: { email: string; reason: string }) => {
+      const response = await fetch("/api/email/suppressions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, reason }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to add email suppression');
+        throw new Error("Failed to add email suppression");
       }
 
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['email-suppressions'] });
+      queryClient.invalidateQueries({ queryKey: ["email-suppressions"] });
       toast({
-        title: 'Email suprimido',
-        description: 'Email foi adicionado à lista de supressão.',
+        title: "Email suprimido",
+        description: "Email foi adicionado à lista de supressão.",
       });
     },
     onError: (error) => {
       toast({
-        title: 'Erro ao suprimir email',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
-        variant: 'destructive',
+        title: "Erro ao suprimir email",
+        description: error instanceof Error ? error.message : "Erro desconhecido",
+        variant: "destructive",
       });
     },
   });
@@ -642,25 +630,25 @@ export function useRemoveEmailSuppression() {
   return useMutation({
     mutationFn: async (email: string) => {
       const response = await fetch(`/api/email/suppressions/${encodeURIComponent(email)}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (!response.ok) {
-        throw new Error('Failed to remove email suppression');
+        throw new Error("Failed to remove email suppression");
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['email-suppressions'] });
+      queryClient.invalidateQueries({ queryKey: ["email-suppressions"] });
       toast({
-        title: 'Supressão removida',
-        description: 'Email foi removido da lista de supressão.',
+        title: "Supressão removida",
+        description: "Email foi removido da lista de supressão.",
       });
     },
     onError: (error) => {
       toast({
-        title: 'Erro ao remover supressão',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
-        variant: 'destructive',
+        title: "Erro ao remover supressão",
+        description: error instanceof Error ? error.message : "Erro desconhecido",
+        variant: "destructive",
       });
     },
   });
@@ -672,11 +660,11 @@ export function useRemoveEmailSuppression() {
 
 export function useEmailQuota() {
   return useQuery({
-    queryKey: ['email-quota'],
+    queryKey: ["email-quota"],
     queryFn: async () => {
-      const response = await fetch('/api/email/quota');
+      const response = await fetch("/api/email/quota");
       if (!response.ok) {
-        throw new Error('Failed to fetch email quota');
+        throw new Error("Failed to fetch email quota");
       }
       return response.json() as Promise<{
         used: number;
@@ -691,21 +679,21 @@ export function useEmailQuota() {
 
 export function useEmailHealth() {
   return useQuery({
-    queryKey: ['email-health'],
+    queryKey: ["email-health"],
     queryFn: async () => {
-      const response = await fetch('/api/email/health');
+      const response = await fetch("/api/email/health");
       if (!response.ok) {
-        throw new Error('Failed to fetch email health');
+        throw new Error("Failed to fetch email health");
       }
       return response.json() as Promise<{
         providers: Array<{
           name: string;
           provider: string;
-          status: 'healthy' | 'degraded' | 'down';
+          status: "healthy" | "degraded" | "down";
           lastChecked: Date;
           responseTime?: number;
         }>;
-        overall: 'healthy' | 'degraded' | 'down';
+        overall: "healthy" | "degraded" | "down";
       }>;
     },
     refetchInterval: 2 * 60 * 1000, // Refetch every 2 minutes
@@ -723,36 +711,29 @@ export {
   useCreateEmailTemplate,
   useUpdateEmailTemplate,
   useDeleteEmailTemplate,
-  
   // Sending hooks
   useSendEmail,
   useSendBulkEmail,
-  
   // Preview & validation hooks
   useEmailPreview,
   useValidateEmail,
-  
   // Analytics hooks
   useEmailAnalytics,
   useEmailDeliveryReport,
   useEmailEvents,
-  
   // Settings hooks
   useEmailSettings,
   useUpdateEmailSettings,
-  
   // Provider hooks
   useEmailProviders,
   useCreateEmailProvider,
   useUpdateEmailProvider,
   useDeleteEmailProvider,
   useTestEmailProvider,
-  
   // Suppression hooks
   useEmailSuppressions,
   useAddEmailSuppression,
   useRemoveEmailSuppression,
-  
   // Utility hooks
   useEmailQuota,
   useEmailHealth,

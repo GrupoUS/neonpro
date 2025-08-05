@@ -1,17 +1,17 @@
 "use client";
 
-import { ExportModal } from "@/components/dashboard/analytics/export-modal";
-import { KPICard } from "@/components/dashboard/analytics/kpi-card";
-import { Button } from "@/components/ui/button";
-import {
+import type { ExportModal } from "@/components/dashboard/analytics/export-modal";
+import type { KPICard } from "@/components/dashboard/analytics/kpi-card";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { useState } from "react";
 
 // Mock data baseado nas pesquisas de KPIs para clínicas
 const kpiData = {
@@ -97,17 +97,12 @@ export function AnalyticsDashboard() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Dashboard de Analytics
-          </h1>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard de Analytics</h1>
           <p className="text-muted-foreground">
             Visão completa dos indicadores de performance da clínica
           </p>
         </div>
-        <Button
-          onClick={() => setShowExportModal(true)}
-          className="bg-blue-600 hover:bg-blue-700"
-        >
+        <Button onClick={() => setShowExportModal(true)} className="bg-blue-600 hover:bg-blue-700">
           📊 Exportar Relatório
         </Button>
       </div>
@@ -160,9 +155,7 @@ export function AnalyticsDashboard() {
             <Card>
               <CardHeader>
                 <CardTitle>Evolução da Satisfação do Paciente</CardTitle>
-                <CardDescription>
-                  Tendência mensal da satisfação dos pacientes
-                </CardDescription>
+                <CardDescription>Tendência mensal da satisfação dos pacientes</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -174,8 +167,7 @@ export function AnalyticsDashboard() {
                       <div className="text-2xl mb-2">📊</div>
                       <p>Gráfico interativo em desenvolvimento</p>
                       <p className="text-sm text-muted-foreground">
-                        Dados: {chartData.patientSatisfactionTrend.length}{" "}
-                        pontos temporais
+                        Dados: {chartData.patientSatisfactionTrend.length} pontos temporais
                       </p>
                     </div>
                   </div>
@@ -186,9 +178,7 @@ export function AnalyticsDashboard() {
             <Card>
               <CardHeader>
                 <CardTitle>Distribuição de Serviços</CardTitle>
-                <CardDescription>
-                  Proporção de agendamentos por tipo de serviço
-                </CardDescription>
+                <CardDescription>Proporção de agendamentos por tipo de serviço</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -200,8 +190,7 @@ export function AnalyticsDashboard() {
                       <div className="text-2xl mb-2">📈</div>
                       <p>Gráfico interativo em desenvolvimento</p>
                       <p className="text-sm text-muted-foreground">
-                        Dados: {chartData.appointmentsByService.length}{" "}
-                        categorias de serviços
+                        Dados: {chartData.appointmentsByService.length} categorias de serviços
                       </p>
                     </div>
                   </div>
@@ -252,9 +241,7 @@ export function AnalyticsDashboard() {
             <Card>
               <CardHeader>
                 <CardTitle>Tempo de Espera por Período</CardTitle>
-                <CardDescription>
-                  Análise dos tempos de espera ao longo do dia
-                </CardDescription>
+                <CardDescription>Análise dos tempos de espera ao longo do dia</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -266,8 +253,7 @@ export function AnalyticsDashboard() {
                       <div className="text-2xl mb-2">⏱️</div>
                       <p>Análise de tempo de espera por horário</p>
                       <p className="text-sm text-muted-foreground">
-                        Dados: {chartData.waitTimesByPeriod.length} períodos do
-                        dia
+                        Dados: {chartData.waitTimesByPeriod.length} períodos do dia
                       </p>
                     </div>
                   </div>
@@ -278,9 +264,7 @@ export function AnalyticsDashboard() {
             <Card>
               <CardHeader>
                 <CardTitle>Eficiência de Agendamentos</CardTitle>
-                <CardDescription>
-                  Correlação entre períodos e utilização
-                </CardDescription>
+                <CardDescription>Correlação entre períodos e utilização</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -343,9 +327,7 @@ export function AnalyticsDashboard() {
             <Card>
               <CardHeader>
                 <CardTitle>Crescimento de Receita</CardTitle>
-                <CardDescription>
-                  Comparação receita vs despesas mensais
-                </CardDescription>
+                <CardDescription>Comparação receita vs despesas mensais</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -368,9 +350,7 @@ export function AnalyticsDashboard() {
             <Card>
               <CardHeader>
                 <CardTitle>Projeções de Receita</CardTitle>
-                <CardDescription>
-                  Previsões baseadas em tendências históricas
-                </CardDescription>
+                <CardDescription>Previsões baseadas em tendências históricas</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">

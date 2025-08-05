@@ -63,7 +63,7 @@ export interface AutomationStatus {
   enabled: boolean;
   lastRun: string | null;
   nextRun: string | null;
-  status: 'running' | 'idle' | 'error';
+  status: "running" | "idle" | "error";
   currentJobs: AutomationJob[];
   features: {
     autoConsentManagement: boolean;
@@ -77,9 +77,14 @@ export interface AutomationStatus {
 
 export interface AutomationJob {
   id: string;
-  type: 'full_automation' | 'consent_management' | 'data_subject_rights' | 
-        'audit_reporting' | 'anonymization' | 'health_check';
-  status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
+  type:
+    | "full_automation"
+    | "consent_management"
+    | "data_subject_rights"
+    | "audit_reporting"
+    | "anonymization"
+    | "health_check";
+  status: "pending" | "running" | "completed" | "failed" | "cancelled";
   startedAt: string;
   completedAt?: string;
   progress: number;
@@ -125,9 +130,9 @@ export interface ComplianceAlert {
   clinic_id: string;
   title: string;
   description: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  category: 'consent' | 'data_subject_rights' | 'security' | 'audit' | 'performance' | 'compliance';
-  status: 'active' | 'resolved' | 'dismissed';
+  severity: "low" | "medium" | "high" | "critical";
+  category: "consent" | "data_subject_rights" | "security" | "audit" | "performance" | "compliance";
+  status: "active" | "resolved" | "dismissed";
   source: string;
   metadata?: Record<string, any>;
   auto_resolve_at?: string;
@@ -159,11 +164,16 @@ export interface MonitoringData {
 }
 
 export interface AutomationExecutionRequest {
-  action: 'run_full_automation' | 'process_consent_automation' | 
-          'process_data_subject_rights' | 'run_audit_automation' | 
-          'generate_compliance_reports' | 'run_anonymization' | 'health_check';
+  action:
+    | "run_full_automation"
+    | "process_consent_automation"
+    | "process_data_subject_rights"
+    | "run_audit_automation"
+    | "generate_compliance_reports"
+    | "run_anonymization"
+    | "health_check";
   parameters?: Record<string, any>;
-  priority?: 'low' | 'normal' | 'high';
+  priority?: "low" | "normal" | "high";
   scheduledFor?: string;
 }
 
@@ -183,7 +193,7 @@ export interface MonitoringFilters {
     end: string;
   };
   eventTypes?: string[];
-  severity?: ('low' | 'medium' | 'high' | 'critical')[];
+  severity?: ("low" | "medium" | "high" | "critical")[];
   includeMetrics?: boolean;
   includeAlerts?: boolean;
   includeTrends?: boolean;
@@ -193,24 +203,30 @@ export interface MonitoringFilters {
 export interface CreateAlertRequest {
   title: string;
   description: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  category: 'consent' | 'data_subject_rights' | 'security' | 'audit' | 'performance' | 'compliance';
+  severity: "low" | "medium" | "high" | "critical";
+  category: "consent" | "data_subject_rights" | "security" | "audit" | "performance" | "compliance";
   source: string;
   metadata?: Record<string, any>;
   auto_resolve_hours?: number;
 }
 
 export interface UpdateAlertRequest {
-  status?: 'active' | 'resolved' | 'dismissed';
+  status?: "active" | "resolved" | "dismissed";
   resolution_notes?: string;
 }
 
 // Eventos de auditoria para automação
 export interface AutomationAuditEvent {
   clinic_id: string;
-  event_type: 'automation';
-  action: 'automation_started' | 'automation_completed' | 'automation_failed' | 
-          'config_updated' | 'alert_created' | 'alert_resolved' | 'job_executed';
+  event_type: "automation";
+  action:
+    | "automation_started"
+    | "automation_completed"
+    | "automation_failed"
+    | "config_updated"
+    | "alert_created"
+    | "alert_resolved"
+    | "job_executed";
   user_id?: string;
   details: {
     jobId?: string;
@@ -221,16 +237,21 @@ export interface AutomationAuditEvent {
     duration?: number;
     results?: any;
   };
-  severity: 'info' | 'warning' | 'error' | 'critical';
+  severity: "info" | "warning" | "error" | "critical";
   ip_address?: string;
   user_agent?: string;
 }
 
 // Configurações de notificação
 export interface NotificationEvent {
-  type: 'automation_completed' | 'automation_failed' | 'alert_created' | 
-        'compliance_score_changed' | 'security_incident' | 'config_updated';
-  severity: 'info' | 'warning' | 'error' | 'critical';
+  type:
+    | "automation_completed"
+    | "automation_failed"
+    | "alert_created"
+    | "compliance_score_changed"
+    | "security_incident"
+    | "config_updated";
+  severity: "info" | "warning" | "error" | "critical";
   title: string;
   message: string;
   data?: Record<string, any>;

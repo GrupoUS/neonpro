@@ -5,11 +5,11 @@
 // Story 1.2: Unified business rules management
 // =============================================
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
   Calendar,
   CheckCircle,
   Clock,
@@ -18,10 +18,10 @@ import {
   Settings,
   UserCheck,
 } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { ClinicHolidayManager } from "./clinic-holiday-manager";
-import { ServiceTypeRuleManager } from "./service-type-rule-manager";
+import type { useState } from "react";
+import type { toast } from "sonner";
+import type { ClinicHolidayManager } from "./clinic-holiday-manager";
+import type { ServiceTypeRuleManager } from "./service-type-rule-manager";
 
 interface BusinessRulesConfigPanelProps {
   clinicId: string;
@@ -40,17 +40,14 @@ export function BusinessRulesConfigPanel({
     serviceRules: 0,
   });
 
-  const handleConfigurationUpdate = (
-    type: "schedules" | "holidays" | "rules",
-    count: number
-  ) => {
+  const handleConfigurationUpdate = (type: "schedules" | "holidays" | "rules", count: number) => {
     setConfigStats((prev) => ({
       ...prev,
       [type === "schedules"
         ? "professionalSchedules"
         : type === "holidays"
-        ? "holidays"
-        : "serviceRules"]: count,
+          ? "holidays"
+          : "serviceRules"]: count,
     }));
 
     setHasUnsavedChanges(true);
@@ -60,12 +57,9 @@ export function BusinessRulesConfigPanel({
   const saveAllConfigurations = async () => {
     try {
       // This could trigger a refresh of all cached rules
-      const response = await fetch(
-        `/api/clinic/${clinicId}/business-rules/refresh`,
-        {
-          method: "POST",
-        }
-      );
+      const response = await fetch(`/api/clinic/${clinicId}/business-rules/refresh`, {
+        method: "POST",
+      });
 
       if (response.ok) {
         setHasUnsavedChanges(false);
@@ -92,25 +86,20 @@ export function BusinessRulesConfigPanel({
 
   const getConfigurationSummary = () => {
     const totalConfigs =
-      configStats.professionalSchedules +
-      configStats.holidays +
-      configStats.serviceRules;
+      configStats.professionalSchedules + configStats.holidays + configStats.serviceRules;
 
     if (totalConfigs === 0) {
       return {
         status: "warning",
         message: "Nenhuma regra configurada",
-        description:
-          "Configure horários, feriados e regras para evitar conflitos",
+        description: "Configure horários, feriados e regras para evitar conflitos",
       };
     }
 
     const missingConfigs = [];
-    if (configStats.professionalSchedules === 0)
-      missingConfigs.push("horários dos profissionais");
+    if (configStats.professionalSchedules === 0) missingConfigs.push("horários dos profissionais");
     if (configStats.holidays === 0) missingConfigs.push("feriados");
-    if (configStats.serviceRules === 0)
-      missingConfigs.push("regras de serviços");
+    if (configStats.serviceRules === 0) missingConfigs.push("regras de serviços");
 
     if (missingConfigs.length > 0) {
       return {
@@ -141,8 +130,7 @@ export function BusinessRulesConfigPanel({
                 Regras de Negócio
               </CardTitle>
               <p className="text-sm text-muted-foreground mt-1">
-                Configure horários, feriados e regras para prevenir conflitos de
-                agendamento
+                Configure horários, feriados e regras para prevenir conflitos de agendamento
               </p>
             </div>
 
@@ -157,16 +145,14 @@ export function BusinessRulesConfigPanel({
                       configSummary.status === "success"
                         ? "default"
                         : configSummary.status === "warning"
-                        ? "destructive"
-                        : "secondary"
+                          ? "destructive"
+                          : "secondary"
                     }
                   >
                     {configSummary.message}
                   </Badge>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {configSummary.description}
-                </p>
+                <p className="text-xs text-muted-foreground mt-1">{configSummary.description}</p>
               </div>
 
               {hasUnsavedChanges && (
@@ -184,25 +170,15 @@ export function BusinessRulesConfigPanel({
               <div className="text-2xl font-bold text-blue-600">
                 {configStats.professionalSchedules}
               </div>
-              <div className="text-xs text-muted-foreground">
-                Horários Profissionais
-              </div>
+              <div className="text-xs text-muted-foreground">Horários Profissionais</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">
-                {configStats.holidays}
-              </div>
-              <div className="text-xs text-muted-foreground">
-                Feriados/Fechamentos
-              </div>
+              <div className="text-2xl font-bold text-green-600">{configStats.holidays}</div>
+              <div className="text-xs text-muted-foreground">Feriados/Fechamentos</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">
-                {configStats.serviceRules}
-              </div>
-              <div className="text-xs text-muted-foreground">
-                Regras de Serviços
-              </div>
+              <div className="text-2xl font-bold text-purple-600">{configStats.serviceRules}</div>
+              <div className="text-xs text-muted-foreground">Regras de Serviços</div>
             </div>
           </div>
         </CardContent>
@@ -211,16 +187,9 @@ export function BusinessRulesConfigPanel({
       {/* Configuration Tabs */}
       <Card>
         <CardContent className="p-0">
-          <Tabs
-            value={activeTab}
-            onValueChange={setActiveTab}
-            className="w-full"
-          >
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-3 rounded-none border-b">
-              <TabsTrigger
-                value="schedules"
-                className="flex items-center gap-2"
-              >
+              <TabsTrigger value="schedules" className="flex items-center gap-2">
                 {getTabIcon("schedules")}
                 Horários dos Profissionais
               </TabsTrigger>
@@ -238,16 +207,14 @@ export function BusinessRulesConfigPanel({
               <TabsContent value="schedules" className="mt-0">
                 <div className="space-y-4">
                   <p className="text-sm text-muted-foreground">
-                    Configure os horários de trabalho para cada profissional da
-                    clínica.
+                    Configure os horários de trabalho para cada profissional da clínica.
                   </p>
                   {/* Here you would typically list professionals and allow managing each one */}
                   <div className="text-center py-8 text-muted-foreground">
                     <Clock className="h-8 w-8 mx-auto mb-2 opacity-50" />
                     <p>Selecione um profissional para configurar horários</p>
                     <p className="text-xs">
-                      Esta funcionalidade seria integrada com a seleção de
-                      profissionais
+                      Esta funcionalidade seria integrada com a seleção de profissionais
                     </p>
                   </div>
                 </div>
@@ -265,9 +232,7 @@ export function BusinessRulesConfigPanel({
               <TabsContent value="rules" className="mt-0">
                 <ServiceTypeRuleManager
                   clinicId={clinicId}
-                  onRulesChange={(rules) =>
-                    handleConfigurationUpdate("rules", rules.length)
-                  }
+                  onRulesChange={(rules) => handleConfigurationUpdate("rules", rules.length)}
                 />
               </TabsContent>
             </div>
@@ -329,13 +294,11 @@ export function BusinessRulesConfigPanel({
             <div className="flex items-start gap-3">
               <UserCheck className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
               <div>
-                <h4 className="font-medium text-blue-900 mb-2">
-                  Validação em Tempo Real
-                </h4>
+                <h4 className="font-medium text-blue-900 mb-2">Validação em Tempo Real</h4>
                 <p className="text-blue-700 text-sm">
-                  O sistema valida automaticamente cada agendamento contra todas
-                  as regras configuradas, prevenindo conflitos antes que
-                  aconteçam e sugerindo horários alternativos quando necessário.
+                  O sistema valida automaticamente cada agendamento contra todas as regras
+                  configuradas, prevenindo conflitos antes que aconteçam e sugerindo horários
+                  alternativos quando necessário.
                 </p>
               </div>
             </div>

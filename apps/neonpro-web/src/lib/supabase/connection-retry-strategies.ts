@@ -1,7 +1,7 @@
 /**
  * 🎯 Healthcare Connection Retry Strategies
  * Task 1.3 - CONNECTION POOLING OPTIMIZATION
- * 
+ *
  * Advanced retry strategies with healthcare compliance and patient safety
  * Features:
  * - Healthcare-optimized retry patterns
@@ -11,115 +11,125 @@
  * - Emergency escalation protocols
  */
 
-import { Database } from '@/types/database'
-import { SupabaseClient } from '@supabase/supabase-js'
-import { getConnectionPoolManager } from './connection-pool-manager'
+import type { Database } from "@/types/database";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { getConnectionPoolManager } from "./connection-pool-manager";
 
 // Healthcare retry configuration
 interface HealthcareRetryConfig {
-  maxAttempts: number
-  baseDelay: number
-  maxDelay: number
-  backoffMultiplier: number
-  jitter: boolean
-  circuitBreakerEnabled: boolean
-  healthCheckInterval: number
-  emergencyEscalationThreshold: number
+  maxAttempts: number;
+  baseDelay: number;
+  maxDelay: number;
+  backoffMultiplier: number;
+  jitter: boolean;
+  circuitBreakerEnabled: boolean;
+  healthCheckInterval: number;
+  emergencyEscalationThreshold: number;
 }
 
 // Circuit breaker states
-type CircuitBreakerState = 'closed' | 'open' | 'half-open'
+type CircuitBreakerState = "closed" | "open" | "half-open";
 
 // Healthcare operation priorities
-type HealthcarePriority = 'emergency' | 'critical' | 'standard' | 'background'
+type HealthcarePriority = "emergency" | "critical" | "standard" | "background";
 
 // Retry result with healthcare metrics
 interface RetryResult<T> {
-  data: T | null
-  success: boolean
-  attempts: number
-  totalTime: number
-  finalError: Error | null
-  circuitBreakerTriggered: boolean
-  patientSafetyEnsured: boolean
-  complianceValidated: boolean
+  data: T | null;
+  success: boolean;
+  attempts: number;
+  totalTime: number;
+  finalError: Error | null;
+  circuitBreakerTriggered: boolean;
+  patientSafetyEnsured: boolean;
+  complianceValidated: boolean;
 }
 
 // Healthcare-specific error classifications
 interface HealthcareErrorClassification {
-  type: 'connection' | 'authentication' | 'authorization' | 'data' | 'compliance' | 'timeout' | 'resource'
-  severity: 'low' | 'medium' | 'high' | 'critical' | 'emergency'
-  isRetryable: boolean
-  requiresImmediateEscalation: boolean
-  patientSafetyImpact: boolean
-  lgpdImplications: boolean
+  type:
+    | "connection"
+    | "authentication"
+    | "authorization"
+    | "data"
+    | "compliance"
+    | "timeout"
+    | "resource";
+  severity: "low" | "medium" | "high" | "critical" | "emergency";
+  isRetryable: boolean;
+  requiresImmediateEscalation: boolean;
+  patientSafetyImpact: boolean;
+  lgpdImplications: boolean;
 }
 
 class HealthcareConnectionRetryManager {
-  private static instance: HealthcareConnectionRetryManager
-  private circuitBreakers: Map<string, {
-    state: CircuitBreakerState
-    failures: number
-    lastFailure: Date
-    nextAttempt: Date
-  }> = new Map()
+  private static instance: HealthcareConnectionRetryManager;
+  private circuitBreakers: Map<
+    string,
+    {
+      state: CircuitBreakerState;
+      failures: number;
+      lastFailure: Date;
+      nextAttempt: Date;
+    }
+  > = new Map();
 
   // Healthcare-optimized retry configurations
   private readonly retryConfigs: Record<HealthcarePriority, HealthcareRetryConfig> = {
     emergency: {
       maxAttempts: 5,
-      baseDelay: 100,      // 100ms
-      maxDelay: 2000,      // 2 seconds max for emergency
+      baseDelay: 100, // 100ms
+      maxDelay: 2000, // 2 seconds max for emergency
       backoffMultiplier: 1.5,
       jitter: true,
       circuitBreakerEnabled: false, // Never give up on emergency
       healthCheckInterval: 5000,
-      emergencyEscalationThreshold: 3
+      emergencyEscalationThreshold: 3,
     },
-    
+
     critical: {
       maxAttempts: 4,
-      baseDelay: 200,      // 200ms
-      maxDelay: 5000,      // 5 seconds max
+      baseDelay: 200, // 200ms
+      maxDelay: 5000, // 5 seconds max
       backoffMultiplier: 2.0,
       jitter: true,
       circuitBreakerEnabled: true,
       healthCheckInterval: 10000,
-      emergencyEscalationThreshold: 2
+      emergencyEscalationThreshold: 2,
     },
-    
+
     standard: {
       maxAttempts: 3,
-      baseDelay: 500,      // 500ms
-      maxDelay: 10000,     // 10 seconds max
+      baseDelay: 500, // 500ms
+      maxDelay: 10000, // 10 seconds max
       backoffMultiplier: 2.0,
       jitter: true,
       circuitBreakerEnabled: true,
       healthCheckInterval: 15000,
-      emergencyEscalationThreshold: 3
+      emergencyEscalationThreshold: 3,
     },
-    
+
     background: {
       maxAttempts: 2,
-      baseDelay: 1000,     // 1 second
-      maxDelay: 30000,     // 30 seconds max
+      baseDelay: 1000, // 1 second
+      maxDelay: 30000, // 30 seconds max
       backoffMultiplier: 3.0,
       jitter: true,
       circuitBreakerEnabled: true,
       healthCheckInterval: 30000,
-      emergencyEscalationThreshold: 5
-    }
-  }
+      emergencyEscalationThreshold: 5,
+    },
+  };
 
   private constructor() {
-    this.initializeCircuitBreakerMonitoring()
+    this.initializeCircuitBreakerMonitoring();
   }
 
   public static getInstance(): HealthcareConnectionRetryManager {
     if (!HealthcareConnectionRetryManager.instance) {
-      HealthcareConnectionRetryManager.instance = new HealthcareConnectionRetryManager()
+      HealthcareConnectionRetryManager.instance = new HealthcareConnectionRetryManager();
     }
-    return HealthcareConnectionRetryManager.instance
+    return HealthcareConnectionRetryManager.instance;
   }
 
   /**
@@ -128,18 +138,18 @@ class HealthcareConnectionRetryManager {
   public async executeWithRetry<T>(
     operation: (client: SupabaseClient<Database>) => Promise<T>,
     options: {
-      clinicId: string
-      operationType: string
-      priority: HealthcarePriority
-      patientId?: string
-      userId: string
-      requiresCompliance?: boolean
-    }
+      clinicId: string;
+      operationType: string;
+      priority: HealthcarePriority;
+      patientId?: string;
+      userId: string;
+      requiresCompliance?: boolean;
+    },
   ): Promise<RetryResult<T>> {
-    const startTime = Date.now()
-    const config = this.retryConfigs[options.priority]
-    const circuitBreakerKey = `${options.clinicId}_${options.operationType}`
-    
+    const startTime = Date.now();
+    const config = this.retryConfigs[options.priority];
+    const circuitBreakerKey = `${options.clinicId}_${options.operationType}`;
+
     // Check circuit breaker state
     if (config.circuitBreakerEnabled && this.isCircuitBreakerOpen(circuitBreakerKey)) {
       return {
@@ -147,35 +157,38 @@ class HealthcareConnectionRetryManager {
         success: false,
         attempts: 0,
         totalTime: Date.now() - startTime,
-        finalError: new Error('Circuit breaker is open - service temporarily unavailable'),
+        finalError: new Error("Circuit breaker is open - service temporarily unavailable"),
         circuitBreakerTriggered: true,
         patientSafetyEnsured: false,
-        complianceValidated: false
-      }
+        complianceValidated: false,
+      };
     }
 
-    let lastError: Error | null = null
-    let attempts = 0
-    
+    let lastError: Error | null = null;
+    let attempts = 0;
+
     for (attempts = 1; attempts <= config.maxAttempts; attempts++) {
       try {
         // Get fresh client for each attempt
-        const poolManager = getConnectionPoolManager()
+        const poolManager = getConnectionPoolManager();
         const client = poolManager.getHealthcareClient(
-          options.clinicId, 
-          options.priority === 'emergency' || options.priority === 'critical' ? 'critical' : 'standard'
-        )
+          options.clinicId,
+          options.priority === "emergency" || options.priority === "critical"
+            ? "critical"
+            : "standard",
+        );
 
         // Execute operation with timeout based on priority
-        const timeoutMs = this.getTimeoutForPriority(options.priority)
-        const result = await this.executeWithTimeout(operation(client), timeoutMs)
-        
+        const timeoutMs = this.getTimeoutForPriority(options.priority);
+        const result = await this.executeWithTimeout(operation(client), timeoutMs);
+
         // Success - reset circuit breaker
-        this.recordSuccess(circuitBreakerKey)
-        
+        this.recordSuccess(circuitBreakerKey);
+
         // Validate compliance if required
-        const complianceValidated = options.requiresCompliance ? 
-          await this.validateHealthcareCompliance(options, result) : true
+        const complianceValidated = options.requiresCompliance
+          ? await this.validateHealthcareCompliance(options, result)
+          : true;
 
         return {
           data: result,
@@ -185,65 +198,67 @@ class HealthcareConnectionRetryManager {
           finalError: null,
           circuitBreakerTriggered: false,
           patientSafetyEnsured: true,
-          complianceValidated
-        }
-
+          complianceValidated,
+        };
       } catch (error) {
-        lastError = error as Error
-        
+        lastError = error as Error;
+
         // Classify error for healthcare context
-        const errorClassification = this.classifyHealthcareError(error as Error)
-        
+        const errorClassification = this.classifyHealthcareError(error as Error);
+
         // Log healthcare-specific error information
-        await this.logHealthcareError(error as Error, options, attempts, errorClassification)
-        
+        await this.logHealthcareError(error as Error, options, attempts, errorClassification);
+
         // Check if this error requires immediate escalation
         if (errorClassification.requiresImmediateEscalation) {
-          await this.escalateEmergency(error as Error, options, errorClassification)
-          break
+          await this.escalateEmergency(error as Error, options, errorClassification);
+          break;
         }
-        
+
         // Check if error is retryable
         if (!errorClassification.isRetryable) {
           console.warn(`Non-retryable healthcare error on attempt ${attempts}:`, {
             error: error.message,
             classification: errorClassification,
             clinicId: options.clinicId,
-            patientId: options.patientId
-          })
-          break
+            patientId: options.patientId,
+          });
+          break;
         }
-        
+
         // Record failure for circuit breaker
-        this.recordFailure(circuitBreakerKey)
-        
+        this.recordFailure(circuitBreakerKey);
+
         // Don't wait after last attempt
         if (attempts < config.maxAttempts) {
-          const delay = this.calculateDelay(attempts, config)
-          
-          console.warn(`Healthcare operation failed, retrying in ${delay}ms (attempt ${attempts}/${config.maxAttempts}):`, {
-            error: error.message,
-            clinicId: options.clinicId,
-            operationType: options.operationType,
-            priority: options.priority,
-            patientSafetyImpact: errorClassification.patientSafetyImpact
-          })
-          
-          await this.sleep(delay)
+          const delay = this.calculateDelay(attempts, config);
+
+          console.warn(
+            `Healthcare operation failed, retrying in ${delay}ms (attempt ${attempts}/${config.maxAttempts}):`,
+            {
+              error: error.message,
+              clinicId: options.clinicId,
+              operationType: options.operationType,
+              priority: options.priority,
+              patientSafetyImpact: errorClassification.patientSafetyImpact,
+            },
+          );
+
+          await this.sleep(delay);
         }
       }
     }
 
     // All attempts failed
-    const totalTime = Date.now() - startTime
-    
+    const totalTime = Date.now() - startTime;
+
     // Handle failure based on patient safety impact
     const patientSafetyEnsured = await this.handleHealthcareFailure(
-      lastError!, 
-      options, 
-      attempts, 
-      totalTime
-    )
+      lastError!,
+      options,
+      attempts,
+      totalTime,
+    );
 
     return {
       data: null,
@@ -253,98 +268,102 @@ class HealthcareConnectionRetryManager {
       finalError: lastError,
       circuitBreakerTriggered: false,
       patientSafetyEnsured,
-      complianceValidated: false
-    }
+      complianceValidated: false,
+    };
   }
 
   /**
    * Classify error for healthcare context
    */
   private classifyHealthcareError(error: Error): HealthcareErrorClassification {
-    const message = error.message.toLowerCase()
-    const code = (error as any).code || ''
+    const message = error.message.toLowerCase();
+    const code = (error as any).code || "";
 
     // Connection errors
-    if (message.includes('connection') || message.includes('network') || code === 'ECONNREFUSED') {
+    if (message.includes("connection") || message.includes("network") || code === "ECONNREFUSED") {
       return {
-        type: 'connection',
-        severity: 'high',
+        type: "connection",
+        severity: "high",
         isRetryable: true,
         requiresImmediateEscalation: false,
         patientSafetyImpact: true,
-        lgpdImplications: false
-      }
+        lgpdImplications: false,
+      };
     }
 
     // Authentication errors
-    if (message.includes('authentication') || code === 'PGRST301') {
+    if (message.includes("authentication") || code === "PGRST301") {
       return {
-        type: 'authentication',
-        severity: 'critical',
+        type: "authentication",
+        severity: "critical",
         isRetryable: false,
         requiresImmediateEscalation: true,
         patientSafetyImpact: true,
-        lgpdImplications: true
-      }
+        lgpdImplications: true,
+      };
     }
 
     // Authorization errors
-    if (message.includes('authorization') || message.includes('permission') || code === 'PGRST302') {
+    if (
+      message.includes("authorization") ||
+      message.includes("permission") ||
+      code === "PGRST302"
+    ) {
       return {
-        type: 'authorization',
-        severity: 'critical',
+        type: "authorization",
+        severity: "critical",
         isRetryable: false,
         requiresImmediateEscalation: true,
         patientSafetyImpact: true,
-        lgpdImplications: true
-      }
+        lgpdImplications: true,
+      };
     }
 
     // Timeout errors
-    if (message.includes('timeout') || message.includes('timed out')) {
+    if (message.includes("timeout") || message.includes("timed out")) {
       return {
-        type: 'timeout',
-        severity: 'medium',
+        type: "timeout",
+        severity: "medium",
         isRetryable: true,
         requiresImmediateEscalation: false,
         patientSafetyImpact: true,
-        lgpdImplications: false
-      }
+        lgpdImplications: false,
+      };
     }
 
     // Resource errors
-    if (message.includes('too many connections') || message.includes('resource')) {
+    if (message.includes("too many connections") || message.includes("resource")) {
       return {
-        type: 'resource',
-        severity: 'high',
+        type: "resource",
+        severity: "high",
         isRetryable: true,
         requiresImmediateEscalation: false,
         patientSafetyImpact: true,
-        lgpdImplications: false
-      }
+        lgpdImplications: false,
+      };
     }
 
     // Data integrity errors
-    if (code.startsWith('23') || message.includes('constraint') || message.includes('integrity')) {
+    if (code.startsWith("23") || message.includes("constraint") || message.includes("integrity")) {
       return {
-        type: 'data',
-        severity: 'critical',
+        type: "data",
+        severity: "critical",
         isRetryable: false,
         requiresImmediateEscalation: true,
         patientSafetyImpact: true,
-        lgpdImplications: true
-      }
+        lgpdImplications: true,
+      };
     }
 
     // Default classification
     return {
-      type: 'connection',
-      severity: 'medium',
+      type: "connection",
+      severity: "medium",
       isRetryable: true,
       requiresImmediateEscalation: false,
       patientSafetyImpact: false,
-      lgpdImplications: false
-    }
+      lgpdImplications: false,
+    };
   }
 
   /**
@@ -353,16 +372,16 @@ class HealthcareConnectionRetryManager {
   private calculateDelay(attempt: number, config: HealthcareRetryConfig): number {
     const exponentialDelay = Math.min(
       config.baseDelay * Math.pow(config.backoffMultiplier, attempt - 1),
-      config.maxDelay
-    )
+      config.maxDelay,
+    );
 
     if (config.jitter) {
       // Add jitter to prevent thundering herd
-      const jitterAmount = exponentialDelay * 0.1 * Math.random()
-      return Math.floor(exponentialDelay + jitterAmount)
+      const jitterAmount = exponentialDelay * 0.1 * Math.random();
+      return Math.floor(exponentialDelay + jitterAmount);
     }
 
-    return exponentialDelay
+    return exponentialDelay;
   }
 
   /**
@@ -370,10 +389,14 @@ class HealthcareConnectionRetryManager {
    */
   private getTimeoutForPriority(priority: HealthcarePriority): number {
     switch (priority) {
-      case 'emergency': return 5000   // 5 seconds for emergency
-      case 'critical': return 10000   // 10 seconds for critical
-      case 'standard': return 15000   // 15 seconds for standard
-      case 'background': return 30000 // 30 seconds for background
+      case "emergency":
+        return 5000; // 5 seconds for emergency
+      case "critical":
+        return 10000; // 10 seconds for critical
+      case "standard":
+        return 15000; // 15 seconds for standard
+      case "background":
+        return 30000; // 30 seconds for background
     }
   }
 
@@ -384,9 +407,12 @@ class HealthcareConnectionRetryManager {
     return Promise.race([
       promise,
       new Promise<never>((_, reject) => {
-        setTimeout(() => reject(new Error(`Healthcare operation timeout after ${timeoutMs}ms`)), timeoutMs)
-      })
-    ])
+        setTimeout(
+          () => reject(new Error(`Healthcare operation timeout after ${timeoutMs}ms`)),
+          timeoutMs,
+        );
+      }),
+    ]);
   }
 
   /**
@@ -396,7 +422,7 @@ class HealthcareConnectionRetryManager {
     error: Error,
     options: any,
     attempt: number,
-    classification: HealthcareErrorClassification
+    classification: HealthcareErrorClassification,
   ): Promise<void> {
     const errorLog = {
       timestamp: new Date().toISOString(),
@@ -409,25 +435,25 @@ class HealthcareConnectionRetryManager {
       error: {
         message: error.message,
         code: (error as any).code,
-        classification
+        classification,
       },
       healthcareContext: {
         patientSafetyImpact: classification.patientSafetyImpact,
         lgpdImplications: classification.lgpdImplications,
-        requiresEscalation: classification.requiresImmediateEscalation
-      }
-    }
+        requiresEscalation: classification.requiresImmediateEscalation,
+      },
+    };
 
-    console.error('🏥 Healthcare Connection Error:', errorLog)
+    console.error("🏥 Healthcare Connection Error:", errorLog);
 
     // If LGPD implications, ensure audit trail
     if (classification.lgpdImplications) {
-      console.error('🔒 LGPD Compliance Alert: Patient data access error', {
+      console.error("🔒 LGPD Compliance Alert: Patient data access error", {
         clinicId: options.clinicId,
         patientId: options.patientId,
         error: error.message,
-        timestamp: new Date().toISOString()
-      })
+        timestamp: new Date().toISOString(),
+      });
     }
   }
 
@@ -437,16 +463,16 @@ class HealthcareConnectionRetryManager {
   private async escalateEmergency(
     error: Error,
     options: any,
-    classification: HealthcareErrorClassification
+    classification: HealthcareErrorClassification,
   ): Promise<void> {
-    console.error('🚨 HEALTHCARE EMERGENCY ESCALATION:', {
+    console.error("🚨 HEALTHCARE EMERGENCY ESCALATION:", {
       error: error.message,
       classification,
       clinicId: options.clinicId,
       patientId: options.patientId,
       timestamp: new Date().toISOString(),
-      action: 'IMMEDIATE_INTERVENTION_REQUIRED'
-    })
+      action: "IMMEDIATE_INTERVENTION_REQUIRED",
+    });
 
     // Additional escalation logic would go here
     // e.g., alert healthcare administrators, activate backup systems
@@ -459,11 +485,11 @@ class HealthcareConnectionRetryManager {
     error: Error,
     options: any,
     attempts: number,
-    totalTime: number
+    totalTime: number,
   ): Promise<boolean> {
-    const classification = this.classifyHealthcareError(error)
-    
-    console.error('🏥 Healthcare Operation Failed:', {
+    const classification = this.classifyHealthcareError(error);
+
+    console.error("🏥 Healthcare Operation Failed:", {
       finalError: error.message,
       clinicId: options.clinicId,
       patientId: options.patientId,
@@ -472,16 +498,16 @@ class HealthcareConnectionRetryManager {
       totalAttempts: attempts,
       totalTime,
       patientSafetyImpact: classification.patientSafetyImpact,
-      classification
-    })
+      classification,
+    });
 
     // Implement patient safety protocols
     if (classification.patientSafetyImpact) {
-      await this.activatePatientSafetyProtocols(error, options, classification)
-      return false // Patient safety could not be ensured
+      await this.activatePatientSafetyProtocols(error, options, classification);
+      return false; // Patient safety could not be ensured
     }
 
-    return true // No patient safety impact
+    return true; // No patient safety impact
   }
 
   /**
@@ -490,16 +516,16 @@ class HealthcareConnectionRetryManager {
   private async activatePatientSafetyProtocols(
     error: Error,
     options: any,
-    classification: HealthcareErrorClassification
+    classification: HealthcareErrorClassification,
   ): Promise<void> {
-    console.error('🛡️ PATIENT SAFETY PROTOCOLS ACTIVATED:', {
+    console.error("🛡️ PATIENT SAFETY PROTOCOLS ACTIVATED:", {
       error: error.message,
       clinicId: options.clinicId,
       patientId: options.patientId,
       classification,
       timestamp: new Date().toISOString(),
-      protocols: ['ISOLATION', 'FALLBACK', 'ALERT']
-    })
+      protocols: ["ISOLATION", "FALLBACK", "ALERT"],
+    });
 
     // Implement specific safety protocols
     // 1. Isolate affected connections
@@ -518,18 +544,18 @@ class HealthcareConnectionRetryManager {
         // Validate patient data access permissions
         // Check consent status
         // Verify audit trail requirements
-        console.log('🔍 LGPD Compliance Validated:', {
+        console.log("🔍 LGPD Compliance Validated:", {
           clinicId: options.clinicId,
           patientId: options.patientId,
           userId: options.userId,
-          timestamp: new Date().toISOString()
-        })
+          timestamp: new Date().toISOString(),
+        });
       }
 
-      return true
+      return true;
     } catch (error) {
-      console.error('❌ Healthcare compliance validation failed:', error)
-      return false
+      console.error("❌ Healthcare compliance validation failed:", error);
+      return false;
     }
   }
 
@@ -537,49 +563,49 @@ class HealthcareConnectionRetryManager {
    * Circuit breaker management
    */
   private isCircuitBreakerOpen(key: string): boolean {
-    const breaker = this.circuitBreakers.get(key)
-    if (!breaker) return false
+    const breaker = this.circuitBreakers.get(key);
+    if (!breaker) return false;
 
-    if (breaker.state === 'open') {
+    if (breaker.state === "open") {
       // Check if we should move to half-open
       if (Date.now() >= breaker.nextAttempt.getTime()) {
-        breaker.state = 'half-open'
-        this.circuitBreakers.set(key, breaker)
-        return false
+        breaker.state = "half-open";
+        this.circuitBreakers.set(key, breaker);
+        return false;
       }
-      return true
+      return true;
     }
 
-    return false
+    return false;
   }
 
   private recordSuccess(key: string): void {
-    const breaker = this.circuitBreakers.get(key)
+    const breaker = this.circuitBreakers.get(key);
     if (breaker) {
-      breaker.state = 'closed'
-      breaker.failures = 0
-      this.circuitBreakers.set(key, breaker)
+      breaker.state = "closed";
+      breaker.failures = 0;
+      this.circuitBreakers.set(key, breaker);
     }
   }
 
   private recordFailure(key: string): void {
     const breaker = this.circuitBreakers.get(key) || {
-      state: 'closed' as CircuitBreakerState,
+      state: "closed" as CircuitBreakerState,
       failures: 0,
       lastFailure: new Date(),
-      nextAttempt: new Date()
-    }
+      nextAttempt: new Date(),
+    };
 
-    breaker.failures++
-    breaker.lastFailure = new Date()
+    breaker.failures++;
+    breaker.lastFailure = new Date();
 
     // Open circuit if failure threshold exceeded
     if (breaker.failures >= 3) {
-      breaker.state = 'open'
-      breaker.nextAttempt = new Date(Date.now() + 30000) // 30 seconds
+      breaker.state = "open";
+      breaker.nextAttempt = new Date(Date.now() + 30000); // 30 seconds
     }
 
-    this.circuitBreakers.set(key, breaker)
+    this.circuitBreakers.set(key, breaker);
   }
 
   /**
@@ -587,8 +613,8 @@ class HealthcareConnectionRetryManager {
    */
   private initializeCircuitBreakerMonitoring(): void {
     setInterval(() => {
-      this.monitorCircuitBreakers()
-    }, 60000) // Check every minute
+      this.monitorCircuitBreakers();
+    }, 60000); // Check every minute
   }
 
   /**
@@ -596,13 +622,13 @@ class HealthcareConnectionRetryManager {
    */
   private monitorCircuitBreakers(): void {
     for (const [key, breaker] of this.circuitBreakers) {
-      if (breaker.state === 'open') {
-        console.warn('⚡ Healthcare Circuit Breaker Open:', {
+      if (breaker.state === "open") {
+        console.warn("⚡ Healthcare Circuit Breaker Open:", {
           key,
           failures: breaker.failures,
           lastFailure: breaker.lastFailure,
-          nextAttempt: breaker.nextAttempt
-        })
+          nextAttempt: breaker.nextAttempt,
+        });
       }
     }
   }
@@ -611,90 +637,93 @@ class HealthcareConnectionRetryManager {
    * Sleep utility
    */
   private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms))
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
    * Get circuit breaker status
    */
   public getCircuitBreakerStatus(): Array<{
-    key: string
-    state: CircuitBreakerState
-    failures: number
-    lastFailure: Date | null
+    key: string;
+    state: CircuitBreakerState;
+    failures: number;
+    lastFailure: Date | null;
   }> {
     return Array.from(this.circuitBreakers.entries()).map(([key, breaker]) => ({
       key,
       state: breaker.state,
       failures: breaker.failures,
-      lastFailure: breaker.lastFailure
-    }))
+      lastFailure: breaker.lastFailure,
+    }));
   }
 
   /**
    * Reset circuit breaker
    */
   public resetCircuitBreaker(key: string): boolean {
-    const breaker = this.circuitBreakers.get(key)
+    const breaker = this.circuitBreakers.get(key);
     if (breaker) {
-      breaker.state = 'closed'
-      breaker.failures = 0
-      this.circuitBreakers.set(key, breaker)
-      console.log(`🔄 Healthcare circuit breaker reset: ${key}`)
-      return true
+      breaker.state = "closed";
+      breaker.failures = 0;
+      this.circuitBreakers.set(key, breaker);
+      console.log(`🔄 Healthcare circuit breaker reset: ${key}`);
+      return true;
     }
-    return false
+    return false;
   }
 
   /**
    * Get retry statistics
    */
   public getRetryStatistics(): {
-    configurations: Record<HealthcarePriority, HealthcareRetryConfig>
-    circuitBreakers: number
-    openCircuitBreakers: number
+    configurations: Record<HealthcarePriority, HealthcareRetryConfig>;
+    circuitBreakers: number;
+    openCircuitBreakers: number;
   } {
-    const openBreakers = Array.from(this.circuitBreakers.values())
-      .filter(b => b.state === 'open').length
+    const openBreakers = Array.from(this.circuitBreakers.values()).filter(
+      (b) => b.state === "open",
+    ).length;
 
     return {
       configurations: this.retryConfigs,
       circuitBreakers: this.circuitBreakers.size,
-      openCircuitBreakers: openBreakers
-    }
+      openCircuitBreakers: openBreakers,
+    };
   }
 }
 
 // Export singleton
-export const getRetryManager = () => HealthcareConnectionRetryManager.getInstance()
+export const getRetryManager = () => HealthcareConnectionRetryManager.getInstance();
 
 // Export types
 export type {
-    CircuitBreakerState, HealthcareErrorClassification,
-    HealthcarePriority, HealthcareRetryConfig,
-    RetryResult
-}
+  CircuitBreakerState,
+  HealthcareErrorClassification,
+  HealthcarePriority,
+  HealthcareRetryConfig,
+  RetryResult,
+};
 
 // Helper function for quick retry execution
 export const executeWithHealthcareRetry = async <T>(
   operation: (client: SupabaseClient<Database>) => Promise<T>,
   clinicId: string,
   operationType: string,
-  priority: HealthcarePriority = 'standard',
+  priority: HealthcarePriority = "standard",
   options?: {
-    patientId?: string
-    userId?: string
-    requiresCompliance?: boolean
-  }
+    patientId?: string;
+    userId?: string;
+    requiresCompliance?: boolean;
+  },
 ): Promise<RetryResult<T>> => {
-  const retryManager = getRetryManager()
-  
+  const retryManager = getRetryManager();
+
   return retryManager.executeWithRetry(operation, {
     clinicId,
     operationType,
     priority,
-    userId: options?.userId || 'unknown',
+    userId: options?.userId || "unknown",
     patientId: options?.patientId,
-    requiresCompliance: options?.requiresCompliance || false
-  })
-}
+    requiresCompliance: options?.requiresCompliance || false,
+  });
+};

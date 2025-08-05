@@ -1,9 +1,9 @@
-﻿// Follow-up Dashboard Stats API
+// Follow-up Dashboard Stats API
 // Epic 7.3: Treatment Follow-up Automation
 // Author: VoidBeast Agent
 
-import { createtreatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
-import { NextRequest, NextResponse } from 'next/server';
+import type { createtreatmentFollowupService } from "@/app/lib/services/treatment-followup-service";
+import type { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,17 +11,17 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: stats
+      data: stats,
     });
   } catch (error) {
-    console.error('Error fetching dashboard stats:', error);
+    console.error("Error fetching dashboard stats:", error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to fetch dashboard stats',
-        details: error instanceof Error ? error.message : 'Unknown error'
+      {
+        success: false,
+        error: "Failed to fetch dashboard stats",
+        details: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

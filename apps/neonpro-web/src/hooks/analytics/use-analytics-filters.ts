@@ -1,266 +1,273 @@
 /**
  * Analytics Filters Utility Hook for NeonPro
- * 
+ *
  * Centralized hook for managing analytics filters across all dashboard components:
  * - Date range selection with presets
  * - Metric filtering and segmentation
  * - Customer segment filters
  * - Subscription tier filters
  * - Geographic and demographic filters
- * 
+ *
  * Provides consistent filtering interface for all analytics hooks.
  */
 
-import { useState, useCallback, useMemo, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
+import type { useState, useCallback, useMemo, useEffect } from "react";
+import type { useSearchParams } from "next/navigation";
 
 // Types for filter configuration
 export interface DateRangeFilter {
-  start: string
-  end: string
-  preset?: 'today' | '7d' | '30d' | '90d' | '1y' | 'custom'
+  start: string;
+  end: string;
+  preset?: "today" | "7d" | "30d" | "90d" | "1y" | "custom";
 }
 
 export interface SegmentFilter {
-  type: 'subscription_tier' | 'customer_segment' | 'geographic' | 'demographic'
-  values: string[]
+  type: "subscription_tier" | "customer_segment" | "geographic" | "demographic";
+  values: string[];
 }
 
 export interface MetricFilter {
-  metrics: string[]
-  aggregation: 'sum' | 'avg' | 'count' | 'distinct'
-  groupBy?: string[]
+  metrics: string[];
+  aggregation: "sum" | "avg" | "count" | "distinct";
+  groupBy?: string[];
 }
 
 export interface AnalyticsFilters {
-  dateRange: DateRangeFilter
-  segments: SegmentFilter[]
-  metrics: MetricFilter
-  customFilters: { [key: string]: any }
+  dateRange: DateRangeFilter;
+  segments: SegmentFilter[];
+  metrics: MetricFilter;
+  customFilters: { [key: string]: any };
 }
 
 export interface FilterState {
-  filters: AnalyticsFilters
-  isValid: boolean
-  errors: string[]
-  appliedFilters: AnalyticsFilters | null
-  hasChanges: boolean
+  filters: AnalyticsFilters;
+  isValid: boolean;
+  errors: string[];
+  appliedFilters: AnalyticsFilters | null;
+  hasChanges: boolean;
 }
 
 export interface FilterActions {
-  updateDateRange: (dateRange: DateRangeFilter) => void
-  addSegmentFilter: (segment: SegmentFilter) => void
-  removeSegmentFilter: (type: string) => void
-  updateMetricFilter: (metrics: MetricFilter) => void
-  setCustomFilter: (key: string, value: any) => void
-  clearCustomFilter: (key: string) => void
-  applyFilters: () => void
-  resetFilters: () => void
-  saveFilterSet: (name: string) => void
-  loadFilterSet: (name: string) => void
-  getFilterSummary: () => string
+  updateDateRange: (dateRange: DateRangeFilter) => void;
+  addSegmentFilter: (segment: SegmentFilter) => void;
+  removeSegmentFilter: (type: string) => void;
+  updateMetricFilter: (metrics: MetricFilter) => void;
+  setCustomFilter: (key: string, value: any) => void;
+  clearCustomFilter: (key: string) => void;
+  applyFilters: () => void;
+  resetFilters: () => void;
+  saveFilterSet: (name: string) => void;
+  loadFilterSet: (name: string) => void;
+  getFilterSummary: () => string;
 }
 
 // Default filter configuration
 const DEFAULT_FILTERS: AnalyticsFilters = {
   dateRange: {
-    start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    end: new Date().toISOString().split('T')[0],
-    preset: '30d'
+    start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+    end: new Date().toISOString().split("T")[0],
+    preset: "30d",
   },
   segments: [],
   metrics: {
-    metrics: ['revenue', 'subscriptions', 'churn'],
-    aggregation: 'sum'
+    metrics: ["revenue", "subscriptions", "churn"],
+    aggregation: "sum",
   },
-  customFilters: {}
-}
+  customFilters: {},
+};
 
 /**
  * Main analytics filters hook
  */
 export function useAnalyticsFilters(
-  initialFilters?: Partial<AnalyticsFilters>
+  initialFilters?: Partial<AnalyticsFilters>,
 ): FilterState & FilterActions {
-  const searchParams = useSearchParams()
+  const searchParams = useSearchParams();
   const [filters, setFilters] = useState<AnalyticsFilters>({
     ...DEFAULT_FILTERS,
-    ...initialFilters
-  })
-  const [appliedFilters, setAppliedFilters] = useState<AnalyticsFilters | null>(null)
-  const [savedFilterSets, setSavedFilterSets] = useState<{ [name: string]: AnalyticsFilters }>({})
+    ...initialFilters,
+  });
+  const [appliedFilters, setAppliedFilters] = useState<AnalyticsFilters | null>(null);
+  const [savedFilterSets, setSavedFilterSets] = useState<{ [name: string]: AnalyticsFilters }>({});
 
   // Load filters from URL on mount
   useEffect(() => {
-    const urlFilters = parseFiltersFromURL(searchParams)
+    const urlFilters = parseFiltersFromURL(searchParams);
     if (urlFilters) {
-      setFilters(prev => ({ ...prev, ...urlFilters }))
+      setFilters((prev) => ({ ...prev, ...urlFilters }));
     }
-  }, [searchParams])
+  }, [searchParams]);
 
   // Validate filters
   const validation = useMemo(() => {
-    const errors: string[] = []
-    let isValid = true
+    const errors: string[] = [];
+    let isValid = true;
 
     // Validate date range
     if (new Date(filters.dateRange.start) > new Date(filters.dateRange.end)) {
-      errors.push('Start date must be before end date')
-      isValid = false
+      errors.push("Start date must be before end date");
+      isValid = false;
     }
 
     // Validate metrics
     if (filters.metrics.metrics.length === 0) {
-      errors.push('At least one metric must be selected')
-      isValid = false
+      errors.push("At least one metric must be selected");
+      isValid = false;
     }
 
     // Validate date range span (not too large)
-    const daysDiff = (new Date(filters.dateRange.end).getTime() - new Date(filters.dateRange.start).getTime()) / (1000 * 60 * 60 * 24)
+    const daysDiff =
+      (new Date(filters.dateRange.end).getTime() - new Date(filters.dateRange.start).getTime()) /
+      (1000 * 60 * 60 * 24);
     if (daysDiff > 365) {
-      errors.push('Date range cannot exceed 365 days')
-      isValid = false
+      errors.push("Date range cannot exceed 365 days");
+      isValid = false;
     }
 
-    return { isValid, errors }
-  }, [filters])
+    return { isValid, errors };
+  }, [filters]);
 
   // Check if filters have changed since last applied
   const hasChanges = useMemo(() => {
-    if (!appliedFilters) return true
-    return JSON.stringify(filters) !== JSON.stringify(appliedFilters)
-  }, [filters, appliedFilters])
+    if (!appliedFilters) return true;
+    return JSON.stringify(filters) !== JSON.stringify(appliedFilters);
+  }, [filters, appliedFilters]);
 
   // Actions
   const updateDateRange = useCallback((dateRange: DateRangeFilter) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
       dateRange: {
         ...dateRange,
         // Auto-calculate dates for presets
-        ...(dateRange.preset && dateRange.preset !== 'custom' 
+        ...(dateRange.preset && dateRange.preset !== "custom"
           ? getPresetDateRange(dateRange.preset)
-          : {})
-      }
-    }))
-  }, [])
+          : {}),
+      },
+    }));
+  }, []);
 
   const addSegmentFilter = useCallback((segment: SegmentFilter) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
-      segments: [
-        ...prev.segments.filter(s => s.type !== segment.type),
-        segment
-      ]
-    }))
-  }, [])
+      segments: [...prev.segments.filter((s) => s.type !== segment.type), segment],
+    }));
+  }, []);
 
   const removeSegmentFilter = useCallback((type: string) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
-      segments: prev.segments.filter(s => s.type !== type)
-    }))
-  }, [])
+      segments: prev.segments.filter((s) => s.type !== type),
+    }));
+  }, []);
 
   const updateMetricFilter = useCallback((metricFilter: MetricFilter) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
-      metrics: metricFilter
-    }))
-  }, [])
+      metrics: metricFilter,
+    }));
+  }, []);
 
   const setCustomFilter = useCallback((key: string, value: any) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
       customFilters: {
         ...prev.customFilters,
-        [key]: value
-      }
-    }))
-  }, [])
+        [key]: value,
+      },
+    }));
+  }, []);
 
   const clearCustomFilter = useCallback((key: string) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
       customFilters: Object.fromEntries(
-        Object.entries(prev.customFilters).filter(([k]) => k !== key)
-      )
-    }))
-  }, [])
+        Object.entries(prev.customFilters).filter(([k]) => k !== key),
+      ),
+    }));
+  }, []);
 
   const applyFilters = useCallback(() => {
     if (validation.isValid) {
-      setAppliedFilters({ ...filters })
+      setAppliedFilters({ ...filters });
       // Update URL with current filters
-      updateURLWithFilters(filters)
+      updateURLWithFilters(filters);
     }
-  }, [filters, validation.isValid])
+  }, [filters, validation.isValid]);
 
   const resetFilters = useCallback(() => {
-    setFilters(DEFAULT_FILTERS)
-    setAppliedFilters(null)
-  }, [])
+    setFilters(DEFAULT_FILTERS);
+    setAppliedFilters(null);
+  }, []);
 
-  const saveFilterSet = useCallback((name: string) => {
-    const newFilterSets = {
-      ...savedFilterSets,
-      [name]: { ...filters }
-    }
-    setSavedFilterSets(newFilterSets)
-    
-    // Save to localStorage
-    try {
-      localStorage.setItem('neonpro-analytics-filters', JSON.stringify(newFilterSets))
-    } catch (error) {
-      console.error('Failed to save filter set:', error)
-    }
-  }, [filters, savedFilterSets])
+  const saveFilterSet = useCallback(
+    (name: string) => {
+      const newFilterSets = {
+        ...savedFilterSets,
+        [name]: { ...filters },
+      };
+      setSavedFilterSets(newFilterSets);
 
-  const loadFilterSet = useCallback((name: string) => {
-    const filterSet = savedFilterSets[name]
-    if (filterSet) {
-      setFilters(filterSet)
-    }
-  }, [savedFilterSets])
+      // Save to localStorage
+      try {
+        localStorage.setItem("neonpro-analytics-filters", JSON.stringify(newFilterSets));
+      } catch (error) {
+        console.error("Failed to save filter set:", error);
+      }
+    },
+    [filters, savedFilterSets],
+  );
+
+  const loadFilterSet = useCallback(
+    (name: string) => {
+      const filterSet = savedFilterSets[name];
+      if (filterSet) {
+        setFilters(filterSet);
+      }
+    },
+    [savedFilterSets],
+  );
 
   const getFilterSummary = useCallback(() => {
-    const parts: string[] = []
-    
+    const parts: string[] = [];
+
     // Date range
-    if (filters.dateRange.preset && filters.dateRange.preset !== 'custom') {
-      parts.push(`Last ${getPresetLabel(filters.dateRange.preset)}`)
+    if (filters.dateRange.preset && filters.dateRange.preset !== "custom") {
+      parts.push(`Last ${getPresetLabel(filters.dateRange.preset)}`);
     } else {
-      parts.push(`${filters.dateRange.start} to ${filters.dateRange.end}`)
+      parts.push(`${filters.dateRange.start} to ${filters.dateRange.end}`);
     }
-    
+
     // Metrics
-    parts.push(`${filters.metrics.metrics.length} metric${filters.metrics.metrics.length > 1 ? 's' : ''}`)
-    
+    parts.push(
+      `${filters.metrics.metrics.length} metric${filters.metrics.metrics.length > 1 ? "s" : ""}`,
+    );
+
     // Segments
     if (filters.segments.length > 0) {
-      parts.push(`${filters.segments.length} segment${filters.segments.length > 1 ? 's' : ''}`)
+      parts.push(`${filters.segments.length} segment${filters.segments.length > 1 ? "s" : ""}`);
     }
-    
+
     // Custom filters
-    const customCount = Object.keys(filters.customFilters).length
+    const customCount = Object.keys(filters.customFilters).length;
     if (customCount > 0) {
-      parts.push(`${customCount} custom filter${customCount > 1 ? 's' : ''}`)
+      parts.push(`${customCount} custom filter${customCount > 1 ? "s" : ""}`);
     }
-    
-    return parts.join(', ')
-  }, [filters])
+
+    return parts.join(", ");
+  }, [filters]);
 
   // Load saved filter sets on mount
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('neonpro-analytics-filters')
+      const saved = localStorage.getItem("neonpro-analytics-filters");
       if (saved) {
-        setSavedFilterSets(JSON.parse(saved))
+        setSavedFilterSets(JSON.parse(saved));
       }
     } catch (error) {
-      console.error('Failed to load saved filters:', error)
+      console.error("Failed to load saved filters:", error);
     }
-  }, [])
+  }, []);
 
   return {
     // State
@@ -281,71 +288,77 @@ export function useAnalyticsFilters(
     resetFilters,
     saveFilterSet,
     loadFilterSet,
-    getFilterSummary
-  }
+    getFilterSummary,
+  };
 }
 
 // Utility functions
 function getPresetDateRange(preset: string): { start: string; end: string } {
-  const end = new Date()
-  const start = new Date()
+  const end = new Date();
+  const start = new Date();
 
   switch (preset) {
-    case 'today':
+    case "today":
       // Today only
-      break
-    case '7d':
-      start.setDate(end.getDate() - 7)
-      break
-    case '30d':
-      start.setDate(end.getDate() - 30)
-      break
-    case '90d':
-      start.setDate(end.getDate() - 90)
-      break
-    case '1y':
-      start.setFullYear(end.getFullYear() - 1)
-      break
+      break;
+    case "7d":
+      start.setDate(end.getDate() - 7);
+      break;
+    case "30d":
+      start.setDate(end.getDate() - 30);
+      break;
+    case "90d":
+      start.setDate(end.getDate() - 90);
+      break;
+    case "1y":
+      start.setFullYear(end.getFullYear() - 1);
+      break;
     default:
-      start.setDate(end.getDate() - 30)
+      start.setDate(end.getDate() - 30);
   }
 
   return {
-    start: start.toISOString().split('T')[0],
-    end: end.toISOString().split('T')[0]
-  }
+    start: start.toISOString().split("T")[0],
+    end: end.toISOString().split("T")[0],
+  };
 }
 
 function getPresetLabel(preset: string): string {
   switch (preset) {
-    case 'today': return 'Today'
-    case '7d': return '7 days'
-    case '30d': return '30 days'
-    case '90d': return '90 days'
-    case '1y': return 'year'
-    default: return preset
+    case "today":
+      return "Today";
+    case "7d":
+      return "7 days";
+    case "30d":
+      return "30 days";
+    case "90d":
+      return "90 days";
+    case "1y":
+      return "year";
+    default:
+      return preset;
   }
 }
 
 function parseFiltersFromURL(searchParams: URLSearchParams): Partial<AnalyticsFilters> | null {
   try {
-    const filtersParam = searchParams.get('filters')
+    const filtersParam = searchParams.get("filters");
     if (filtersParam) {
-      return JSON.parse(decodeURIComponent(filtersParam))
+      return JSON.parse(decodeURIComponent(filtersParam));
     }
   } catch (error) {
-    console.error('Failed to parse filters from URL:', error)
+    console.error("Failed to parse filters from URL:", error);
   }
-  return null
+  return null;
 }
 
 function updateURLWithFilters(filters: AnalyticsFilters) {
   try {
-    const url = new URL(window.location.href)
-    url.searchParams.set('filters', encodeURIComponent(JSON.stringify(filters)))
-    window.history.replaceState({}, '', url.toString())
+    const url = new URL(window.location.href);
+    url.searchParams.set("filters", encodeURIComponent(JSON.stringify(filters)));
+    window.history.replaceState({}, "", url.toString());
   } catch (error) {
-    console.error('Failed to update URL with filters:', error)
+    console.error("Failed to update URL with filters:", error);
   }
 }
 
@@ -353,30 +366,51 @@ function updateURLWithFilters(filters: AnalyticsFilters) {
  * Hook for common filter presets
  */
 export function useFilterPresets() {
-  return useMemo(() => ({
-    // Date range presets
-    datePresets: [
-      { label: 'Today', value: 'today' },
-      { label: 'Last 7 days', value: '7d' },
-      { label: 'Last 30 days', value: '30d' },
-      { label: 'Last 90 days', value: '90d' },
-      { label: 'Last year', value: '1y' },
-      { label: 'Custom range', value: 'custom' }
-    ],
+  return useMemo(
+    () => ({
+      // Date range presets
+      datePresets: [
+        { label: "Today", value: "today" },
+        { label: "Last 7 days", value: "7d" },
+        { label: "Last 30 days", value: "30d" },
+        { label: "Last 90 days", value: "90d" },
+        { label: "Last year", value: "1y" },
+        { label: "Custom range", value: "custom" },
+      ],
 
-    // Metric presets
-    metricPresets: [
-      { label: 'Core Metrics', metrics: ['revenue', 'subscriptions', 'churn'] },
-      { label: 'Growth Metrics', metrics: ['new_subscriptions', 'conversion_rate', 'growth_rate'] },
-      { label: 'Retention Metrics', metrics: ['retention_rate', 'churn_rate', 'ltv'] },
-      { label: 'Trial Metrics', metrics: ['trial_conversions', 'trial_duration', 'trial_to_paid'] }
-    ],
+      // Metric presets
+      metricPresets: [
+        { label: "Core Metrics", metrics: ["revenue", "subscriptions", "churn"] },
+        {
+          label: "Growth Metrics",
+          metrics: ["new_subscriptions", "conversion_rate", "growth_rate"],
+        },
+        { label: "Retention Metrics", metrics: ["retention_rate", "churn_rate", "ltv"] },
+        {
+          label: "Trial Metrics",
+          metrics: ["trial_conversions", "trial_duration", "trial_to_paid"],
+        },
+      ],
 
-    // Segment presets
-    segmentPresets: [
-      { label: 'Subscription Tiers', type: 'subscription_tier', values: ['basic', 'pro', 'enterprise'] },
-      { label: 'Customer Segments', type: 'customer_segment', values: ['new', 'existing', 'churned'] },
-      { label: 'Geographic Regions', type: 'geographic', values: ['north_america', 'europe', 'asia_pacific'] }
-    ]
-  }), [])
+      // Segment presets
+      segmentPresets: [
+        {
+          label: "Subscription Tiers",
+          type: "subscription_tier",
+          values: ["basic", "pro", "enterprise"],
+        },
+        {
+          label: "Customer Segments",
+          type: "customer_segment",
+          values: ["new", "existing", "churned"],
+        },
+        {
+          label: "Geographic Regions",
+          type: "geographic",
+          values: ["north_america", "europe", "asia_pacific"],
+        },
+      ],
+    }),
+    [],
+  );
 }

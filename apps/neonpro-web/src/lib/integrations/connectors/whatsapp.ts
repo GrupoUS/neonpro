@@ -1,19 +1,19 @@
 /**
  * NeonPro - WhatsApp Business API Connector
  * Integration with WhatsApp Business API for patient communication
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  * @created 2025-01-27
  */
 
-import {
+import type {
   IntegrationConnector,
   IntegrationConfig,
   IntegrationRequest,
   IntegrationResponse,
-  WebhookConfig
-} from '../types';
+  WebhookConfig,
+} from "../types";
 
 /**
  * WhatsApp Business API Configuration
@@ -31,7 +31,7 @@ export interface WhatsAppConfig extends IntegrationConfig {
  */
 export interface WhatsAppMessage {
   to: string;
-  type: 'text' | 'template' | 'image' | 'document' | 'audio' | 'video';
+  type: "text" | "template" | "image" | "document" | "audio" | "video";
   text?: {
     body: string;
     preview_url?: boolean;
@@ -100,7 +100,7 @@ export interface WhatsAppWebhookEvent {
         }[];
         statuses?: {
           id: string;
-          status: 'sent' | 'delivered' | 'read' | 'failed';
+          status: "sent" | "delivered" | "read" | "failed";
           timestamp: string;
           recipient_id: string;
           errors?: any[];
@@ -120,7 +120,7 @@ export class WhatsAppConnector implements IntegrationConnector {
 
   constructor(config: WhatsAppConfig) {
     this.config = config;
-    this.baseUrl = `https://graph.facebook.com/${config.apiVersion || 'v18.0'}`;
+    this.baseUrl = `https://graph.facebook.com/${config.apiVersion || "v18.0"}`;
   }
 
   /**
@@ -129,16 +129,16 @@ export class WhatsAppConnector implements IntegrationConnector {
   async testConnection(): Promise<boolean> {
     try {
       const response = await this.makeRequest({
-        method: 'GET',
+        method: "GET",
         endpoint: `/${this.config.phoneNumberId}`,
         params: {
-          fields: 'id,display_phone_number,verified_name'
-        }
+          fields: "id,display_phone_number,verified_name",
+        },
       });
 
       return response.success && response.data?.id === this.config.phoneNumberId;
     } catch (error) {
-      console.error('WhatsApp connection test failed:', error);
+      console.error("WhatsApp connection test failed:", error);
       return false;
     }
   }
@@ -149,17 +149,17 @@ export class WhatsAppConnector implements IntegrationConnector {
   async sendMessage(message: WhatsAppMessage): Promise<IntegrationResponse> {
     try {
       const payload = {
-        messaging_product: 'whatsapp',
-        recipient_type: 'individual',
+        messaging_product: "whatsapp",
+        recipient_type: "individual",
         to: message.to,
         type: message.type,
-        ...this.buildMessagePayload(message)
+        ...this.buildMessagePayload(message),
       };
 
       const response = await this.makeRequest({
-        method: 'POST',
+        method: "POST",
         endpoint: `/${this.config.phoneNumberId}/messages`,
-        data: payload
+        data: payload,
       });
 
       return {
@@ -168,16 +168,16 @@ export class WhatsAppConnector implements IntegrationConnector {
         error: response.error,
         metadata: {
           messageId: response.data?.messages?.[0]?.id,
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to send message',
+        error: error instanceof Error ? error.message : "Failed to send message",
         metadata: {
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       };
     }
   }
@@ -190,29 +190,35 @@ export class WhatsAppConnector implements IntegrationConnector {
     patientName: string,
     appointmentDate: Date,
     doctorName: string,
-    clinicName: string
+    clinicName: string,
   ): Promise<IntegrationResponse> {
     const message: WhatsAppMessage = {
       to: phoneNumber,
-      type: 'template',
+      type: "template",
       template: {
-        name: 'appointment_reminder',
+        name: "appointment_reminder",
         language: {
-          code: 'pt_BR'
+          code: "pt_BR",
         },
         components: [
           {
-            type: 'body',
+            type: "body",
             parameters: [
-              { type: 'text', text: patientName },
-              { type: 'text', text: appointmentDate.toLocaleDateString('pt-BR') },
-              { type: 'text', text: appointmentDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) },
-              { type: 'text', text: doctorName },
-              { type: 'text', text: clinicName }
-            ]
-          }
-        ]
-      }
+              { type: "text", text: patientName },
+              { type: "text", text: appointmentDate.toLocaleDateString("pt-BR") },
+              {
+                type: "text",
+                text: appointmentDate.toLocaleTimeString("pt-BR", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }),
+              },
+              { type: "text", text: doctorName },
+              { type: "text", text: clinicName },
+            ],
+          },
+        ],
+      },
     };
 
     return this.sendMessage(message);
@@ -225,44 +231,46 @@ export class WhatsAppConnector implements IntegrationConnector {
     phoneNumber: string,
     patientName: string,
     appointmentDate: Date,
-    doctorName: string
+    doctorName: string,
   ): Promise<IntegrationResponse> {
     const message: WhatsAppMessage = {
       to: phoneNumber,
-      type: 'template',
+      type: "template",
       template: {
-        name: 'appointment_confirmation',
+        name: "appointment_confirmation",
         language: {
-          code: 'pt_BR'
+          code: "pt_BR",
         },
         components: [
           {
-            type: 'body',
+            type: "body",
             parameters: [
-              { type: 'text', text: patientName },
-              { type: 'text', text: appointmentDate.toLocaleDateString('pt-BR') },
-              { type: 'text', text: appointmentDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) },
-              { type: 'text', text: doctorName }
-            ]
+              { type: "text", text: patientName },
+              { type: "text", text: appointmentDate.toLocaleDateString("pt-BR") },
+              {
+                type: "text",
+                text: appointmentDate.toLocaleTimeString("pt-BR", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }),
+              },
+              { type: "text", text: doctorName },
+            ],
           },
           {
-            type: 'button',
-            sub_type: 'quick_reply',
-            index: '0',
-            parameters: [
-              { type: 'payload', payload: 'CONFIRM_APPOINTMENT' }
-            ]
+            type: "button",
+            sub_type: "quick_reply",
+            index: "0",
+            parameters: [{ type: "payload", payload: "CONFIRM_APPOINTMENT" }],
           },
           {
-            type: 'button',
-            sub_type: 'quick_reply',
-            index: '1',
-            parameters: [
-              { type: 'payload', payload: 'RESCHEDULE_APPOINTMENT' }
-            ]
-          }
-        ]
-      }
+            type: "button",
+            sub_type: "quick_reply",
+            index: "1",
+            parameters: [{ type: "payload", payload: "RESCHEDULE_APPOINTMENT" }],
+          },
+        ],
+      },
     };
 
     return this.sendMessage(message);
@@ -275,28 +283,28 @@ export class WhatsAppConnector implements IntegrationConnector {
     phoneNumber: string,
     patientName: string,
     examType: string,
-    resultsUrl?: string
+    resultsUrl?: string,
   ): Promise<IntegrationResponse> {
     if (resultsUrl) {
       // Send document with results
       const message: WhatsAppMessage = {
         to: phoneNumber,
-        type: 'document',
+        type: "document",
         document: {
           link: resultsUrl,
           caption: `Olá ${patientName}, seus resultados de ${examType} estão prontos. Confira o documento anexo.`,
-          filename: `Resultados_${examType}_${patientName.replace(/\s+/g, '_')}.pdf`
-        }
+          filename: `Resultados_${examType}_${patientName.replace(/\s+/g, "_")}.pdf`,
+        },
       };
       return this.sendMessage(message);
     } else {
       // Send text message
       const message: WhatsAppMessage = {
         to: phoneNumber,
-        type: 'text',
+        type: "text",
         text: {
-          body: `Olá ${patientName}, seus resultados de ${examType} estão prontos. Entre em contato conosco para mais informações.`
-        }
+          body: `Olá ${patientName}, seus resultados de ${examType} estão prontos. Entre em contato conosco para mais informações.`,
+        },
       };
       return this.sendMessage(message);
     }
@@ -308,18 +316,18 @@ export class WhatsAppConnector implements IntegrationConnector {
   async getMessageTemplates(): Promise<IntegrationResponse> {
     try {
       const response = await this.makeRequest({
-        method: 'GET',
+        method: "GET",
         endpoint: `/${this.config.businessAccountId}/message_templates`,
         params: {
-          fields: 'name,status,category,language,components'
-        }
+          fields: "name,status,category,language,components",
+        },
       });
 
       return response;
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to get templates'
+        error: error instanceof Error ? error.message : "Failed to get templates",
       };
     }
   }
@@ -330,39 +338,39 @@ export class WhatsAppConnector implements IntegrationConnector {
   async uploadMedia(
     file: Buffer,
     filename: string,
-    mimeType: string
+    mimeType: string,
   ): Promise<IntegrationResponse> {
     try {
       const formData = new FormData();
-      formData.append('file', new Blob([file], { type: mimeType }), filename);
-      formData.append('type', mimeType);
-      formData.append('messaging_product', 'whatsapp');
+      formData.append("file", new Blob([file], { type: mimeType }), filename);
+      formData.append("type", mimeType);
+      formData.append("messaging_product", "whatsapp");
 
       const response = await fetch(`${this.baseUrl}/${this.config.phoneNumberId}/media`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${this.config.accessToken}`
+          Authorization: `Bearer ${this.config.accessToken}`,
         },
-        body: formData
+        body: formData,
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error?.message || 'Upload failed');
+        throw new Error(data.error?.message || "Upload failed");
       }
 
       return {
         success: true,
         data: {
           id: data.id,
-          url: data.url
-        }
+          url: data.url,
+        },
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to upload media'
+        error: error instanceof Error ? error.message : "Failed to upload media",
       };
     }
   }
@@ -373,16 +381,16 @@ export class WhatsAppConnector implements IntegrationConnector {
   async getMediaUrl(mediaId: string): Promise<IntegrationResponse> {
     try {
       const response = await this.makeRequest({
-        method: 'GET',
-        endpoint: `/${mediaId}`
+        method: "GET",
+        endpoint: `/${mediaId}`,
       });
 
       if (response.success && response.data?.url) {
         // Get the actual media file
         const mediaResponse = await fetch(response.data.url, {
           headers: {
-            'Authorization': `Bearer ${this.config.accessToken}`
-          }
+            Authorization: `Bearer ${this.config.accessToken}`,
+          },
         });
 
         return {
@@ -391,8 +399,8 @@ export class WhatsAppConnector implements IntegrationConnector {
             url: response.data.url,
             mimeType: response.data.mime_type,
             sha256: response.data.sha256,
-            fileSize: response.data.file_size
-          }
+            fileSize: response.data.file_size,
+          },
         };
       }
 
@@ -400,7 +408,7 @@ export class WhatsAppConnector implements IntegrationConnector {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to get media URL'
+        error: error instanceof Error ? error.message : "Failed to get media URL",
       };
     }
   }
@@ -413,22 +421,22 @@ export class WhatsAppConnector implements IntegrationConnector {
 
     for (const entry of payload.entry) {
       for (const change of entry.changes) {
-        if (change.field === 'messages') {
+        if (change.field === "messages") {
           const value = change.value;
 
           // Process incoming messages
           if (value.messages) {
             for (const message of value.messages) {
               events.push({
-                type: 'message_received',
+                type: "message_received",
                 data: {
                   messageId: message.id,
                   from: message.from,
                   timestamp: new Date(parseInt(message.timestamp) * 1000),
                   messageType: message.type,
                   text: message.text?.body,
-                  context: message.context
-                }
+                  context: message.context,
+                },
               });
             }
           }
@@ -437,14 +445,14 @@ export class WhatsAppConnector implements IntegrationConnector {
           if (value.statuses) {
             for (const status of value.statuses) {
               events.push({
-                type: 'message_status',
+                type: "message_status",
                 data: {
                   messageId: status.id,
                   status: status.status,
                   timestamp: new Date(parseInt(status.timestamp) * 1000),
                   recipientId: status.recipient_id,
-                  errors: status.errors
-                }
+                  errors: status.errors,
+                },
               });
             }
           }
@@ -462,15 +470,15 @@ export class WhatsAppConnector implements IntegrationConnector {
     return {
       id: `whatsapp-${this.config.phoneNumberId}`,
       url: `${this.config.webhookUrl}/whatsapp`,
-      events: ['messages', 'message_deliveries', 'message_reads'],
+      events: ["messages", "message_deliveries", "message_reads"],
       secret: this.config.webhookVerifyToken,
       active: true,
       retryPolicy: {
         maxRetries: 3,
         initialDelay: 1000,
         maxDelay: 30000,
-        backoffStrategy: 'exponential'
-      }
+        backoffStrategy: "exponential",
+      },
     };
   }
 
@@ -491,7 +499,7 @@ export class WhatsAppConnector implements IntegrationConnector {
   private async makeRequest(request: IntegrationRequest): Promise<IntegrationResponse> {
     try {
       const url = new URL(`${this.baseUrl}${request.endpoint}`);
-      
+
       // Add query parameters
       if (request.params) {
         Object.entries(request.params).forEach(([key, value]) => {
@@ -502,10 +510,10 @@ export class WhatsAppConnector implements IntegrationConnector {
       const options: RequestInit = {
         method: request.method,
         headers: {
-          'Authorization': `Bearer ${this.config.accessToken}`,
-          'Content-Type': 'application/json',
-          ...request.headers
-        }
+          Authorization: `Bearer ${this.config.accessToken}`,
+          "Content-Type": "application/json",
+          ...request.headers,
+        },
       };
 
       if (request.data) {
@@ -524,16 +532,16 @@ export class WhatsAppConnector implements IntegrationConnector {
         data,
         metadata: {
           statusCode: response.status,
-          headers: Object.fromEntries(response.headers.entries())
-        }
+          headers: Object.fromEntries(response.headers.entries()),
+        },
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Request failed',
+        error: error instanceof Error ? error.message : "Request failed",
         metadata: {
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       };
     }
   }
@@ -545,22 +553,22 @@ export class WhatsAppConnector implements IntegrationConnector {
     const payload: any = {};
 
     switch (message.type) {
-      case 'text':
+      case "text":
         payload.text = message.text;
         break;
-      case 'template':
+      case "template":
         payload.template = message.template;
         break;
-      case 'image':
+      case "image":
         payload.image = message.image;
         break;
-      case 'document':
+      case "document":
         payload.document = message.document;
         break;
-      case 'audio':
+      case "audio":
         payload.audio = message.audio;
         break;
-      case 'video':
+      case "video":
         payload.video = message.video;
         break;
     }
@@ -573,11 +581,11 @@ export class WhatsAppConnector implements IntegrationConnector {
  * WhatsApp Message Templates
  */
 export const WhatsAppTemplates = {
-  APPOINTMENT_REMINDER: 'appointment_reminder',
-  APPOINTMENT_CONFIRMATION: 'appointment_confirmation',
-  EXAM_RESULTS: 'exam_results',
-  PAYMENT_REMINDER: 'payment_reminder',
-  WELCOME_MESSAGE: 'welcome_message'
+  APPOINTMENT_REMINDER: "appointment_reminder",
+  APPOINTMENT_CONFIRMATION: "appointment_confirmation",
+  EXAM_RESULTS: "exam_results",
+  PAYMENT_REMINDER: "payment_reminder",
+  WELCOME_MESSAGE: "welcome_message",
 };
 
 /**
@@ -587,15 +595,15 @@ export class WhatsAppUtils {
   /**
    * Format phone number for WhatsApp
    */
-  static formatPhoneNumber(phone: string, countryCode: string = '55'): string {
+  static formatPhoneNumber(phone: string, countryCode: string = "55"): string {
     // Remove all non-numeric characters
-    const cleaned = phone.replace(/\D/g, '');
-    
+    const cleaned = phone.replace(/\D/g, "");
+
     // Add country code if not present
     if (!cleaned.startsWith(countryCode)) {
       return `${countryCode}${cleaned}`;
     }
-    
+
     return cleaned;
   }
 
@@ -603,7 +611,7 @@ export class WhatsAppUtils {
    * Validate phone number format
    */
   static isValidPhoneNumber(phone: string): boolean {
-    const cleaned = phone.replace(/\D/g, '');
+    const cleaned = phone.replace(/\D/g, "");
     return cleaned.length >= 10 && cleaned.length <= 15;
   }
 

@@ -1,7 +1,6 @@
-﻿// utils/supabase/client.ts
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+// utils/supabase/client.ts
+import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export function createClient() {
-  return createClientComponentClient()
+  return createClientComponentClient();
 }
-

@@ -3,11 +3,11 @@
 // Author: Dev Agent
 // Date: 2025-01-26
 
-import { NextRequest, NextResponse } from 'next/server';
-import { KPIEngine } from '@/lib/analytics/kpi-engine';
-import { kpiCalculationSchema } from '@/lib/validations/kpi-validations';
-import { createClient } from '@/lib/supabase/server';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import type { KPIEngine } from "@/lib/analytics/kpi-engine";
+import type { kpiCalculationSchema } from "@/lib/validations/kpi-validations";
+import type { createClient } from "@/lib/supabase/server";
+import type { z } from "zod";
 
 interface KPICalculationRequest {
   kpi_ids?: string[];
@@ -15,7 +15,7 @@ interface KPICalculationRequest {
   time_period: {
     start_date: string;
     end_date: string;
-    preset?: 'today' | 'week' | 'month' | 'quarter' | 'year' | 'custom';
+    preset?: "today" | "week" | "month" | "quarter" | "year" | "custom";
   };
   filters?: {
     service_types?: string[];
@@ -25,7 +25,7 @@ interface KPICalculationRequest {
   };
   include_variance?: boolean;
   include_targets?: boolean;
-  calculation_method?: 'real_time' | 'cached' | 'force_refresh';
+  calculation_method?: "real_time" | "cached" | "force_refresh";
 }
 
 const requestSchema = z.object({
@@ -34,23 +34,25 @@ const requestSchema = z.object({
   time_period: z.object({
     start_date: z.string(),
     end_date: z.string(),
-    preset: z.enum(['today', 'week', 'month', 'quarter', 'year', 'custom']).optional(),
+    preset: z.enum(["today", "week", "month", "quarter", "year", "custom"]).optional(),
   }),
-  filters: z.object({
-    service_types: z.array(z.string()).optional(),
-    doctor_ids: z.array(z.string()).optional(),
-    location_ids: z.array(z.string()).optional(),
-    payment_methods: z.array(z.string()).optional(),
-  }).optional(),
+  filters: z
+    .object({
+      service_types: z.array(z.string()).optional(),
+      doctor_ids: z.array(z.string()).optional(),
+      location_ids: z.array(z.string()).optional(),
+      payment_methods: z.array(z.string()).optional(),
+    })
+    .optional(),
   include_variance: z.boolean().default(true),
   include_targets: z.boolean().default(true),
-  calculation_method: z.enum(['real_time', 'cached', 'force_refresh']).default('cached'),
+  calculation_method: z.enum(["real_time", "cached", "force_refresh"]).default("cached"),
 });
 
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Get current user
     const {
       data: { user },
@@ -59,8 +61,8 @@ export async function POST(request: NextRequest) {
 
     if (userError || !user) {
       return NextResponse.json(
-        { success: false, error: 'Authentication required' },
-        { status: 401 }
+        { success: false, error: "Authentication required" },
+        { status: 401 },
       );
     }
 
@@ -79,7 +81,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Format results for API response
-    const formattedResults = results.map(result => ({
+    const formattedResults = results.map((result) => ({
       id: result.kpi_id,
       kpi_name: result.kpi_name,
       kpi_category: result.kpi_category,
@@ -107,28 +109,27 @@ export async function POST(request: NextRequest) {
         filters_applied: validatedData.filters ? Object.keys(validatedData.filters).length : 0,
       },
     });
-
   } catch (error) {
-    console.error('Error calculating KPIs:', error);
-    
+    console.error("Error calculating KPIs:", error);
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid request data',
+          error: "Invalid request data",
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       {
         success: false,
-        error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Internal server error",
+        message: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -136,7 +137,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Get current user
     const {
       data: { user },
@@ -145,28 +146,28 @@ export async function GET(request: NextRequest) {
 
     if (userError || !user) {
       return NextResponse.json(
-        { success: false, error: 'Authentication required' },
-        { status: 401 }
+        { success: false, error: "Authentication required" },
+        { status: 401 },
       );
     }
 
     const { searchParams } = new URL(request.url);
-    const category = searchParams.get('category');
-    const includeTargets = searchParams.get('include_targets') === 'true';
-    const limit = parseInt(searchParams.get('limit') || '50');
+    const category = searchParams.get("category");
+    const includeTargets = searchParams.get("include_targets") === "true";
+    const limit = parseInt(searchParams.get("limit") || "50");
 
     // Get cached KPIs from database
     let query = supabase
-      .from('financial_kpis')
+      .from("financial_kpis")
       .select(`
         *,
         kpi_targets(target_value, target_type, validity_period)
       `)
-      .order('last_updated', { ascending: false })
+      .order("last_updated", { ascending: false })
       .limit(limit);
 
     if (category) {
-      query = query.eq('kpi_category', category);
+      query = query.eq("kpi_category", category);
     }
 
     const { data: kpis, error } = await query;
@@ -176,21 +177,23 @@ export async function GET(request: NextRequest) {
     }
 
     // Format results
-    const formattedKpis = kpis?.map(kpi => ({
-      id: kpi.id,
-      kpi_name: kpi.kpi_name,
-      kpi_category: kpi.kpi_category,
-      current_value: kpi.current_value,
-      previous_value: kpi.previous_value,
-      target_value: includeTargets && kpi.kpi_targets?.[0]?.target_value 
-        ? kpi.kpi_targets[0].target_value 
-        : undefined,
-      variance_percent: kpi.variance_percent,
-      trend_direction: kpi.trend_direction,
-      calculation_date: kpi.calculation_date,
-      last_updated: kpi.last_updated,
-      metadata: kpi.metadata,
-    })) || [];
+    const formattedKpis =
+      kpis?.map((kpi) => ({
+        id: kpi.id,
+        kpi_name: kpi.kpi_name,
+        kpi_category: kpi.kpi_category,
+        current_value: kpi.current_value,
+        previous_value: kpi.previous_value,
+        target_value:
+          includeTargets && kpi.kpi_targets?.[0]?.target_value
+            ? kpi.kpi_targets[0].target_value
+            : undefined,
+        variance_percent: kpi.variance_percent,
+        trend_direction: kpi.trend_direction,
+        calculation_date: kpi.calculation_date,
+        last_updated: kpi.last_updated,
+        metadata: kpi.metadata,
+      })) || [];
 
     return NextResponse.json({
       success: true,
@@ -202,17 +205,15 @@ export async function GET(request: NextRequest) {
         retrieved_at: new Date().toISOString(),
       },
     });
-
   } catch (error) {
-    console.error('Error retrieving KPIs:', error);
+    console.error("Error retrieving KPIs:", error);
     return NextResponse.json(
       {
         success: false,
-        error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Internal server error",
+        message: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-

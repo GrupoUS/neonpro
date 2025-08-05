@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import type { Button } from "@/components/ui/button";
 import React from "react";
 
 export interface DuplicateManagerHookMinimalProps {
@@ -47,15 +47,11 @@ export default function DuplicateManagerHookMinimal({
           <div className="grid grid-cols-2 gap-4">
             <div className="border p-3 rounded">
               <h4 className="font-medium">{duplicate.patient1.name}</h4>
-              <p className="text-sm text-muted-foreground">
-                {duplicate.patient1.email}
-              </p>
+              <p className="text-sm text-muted-foreground">{duplicate.patient1.email}</p>
             </div>
             <div className="border p-3 rounded">
               <h4 className="font-medium">{duplicate.patient2.name}</h4>
-              <p className="text-sm text-muted-foreground">
-                {duplicate.patient2.email}
-              </p>
+              <p className="text-sm text-muted-foreground">{duplicate.patient2.email}</p>
             </div>
           </div>
         </div>

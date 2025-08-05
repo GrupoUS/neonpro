@@ -1,19 +1,19 @@
 /**
  * NeonPro - Google Calendar Connector
  * Integration with Google Calendar API for appointment synchronization
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  * @created 2025-01-27
  */
 
-import {
+import type {
   IntegrationConnector,
   IntegrationConfig,
   IntegrationRequest,
   IntegrationResponse,
-  WebhookConfig
-} from '../types';
+  WebhookConfig,
+} from "../types";
 
 /**
  * Google Calendar Configuration
@@ -48,15 +48,15 @@ export interface GoogleCalendarEvent {
   attendees?: {
     email: string;
     displayName?: string;
-    responseStatus?: 'needsAction' | 'declined' | 'tentative' | 'accepted';
+    responseStatus?: "needsAction" | "declined" | "tentative" | "accepted";
   }[];
   location?: string;
-  status?: 'confirmed' | 'tentative' | 'cancelled';
-  visibility?: 'default' | 'public' | 'private' | 'confidential';
+  status?: "confirmed" | "tentative" | "cancelled";
+  visibility?: "default" | "public" | "private" | "confidential";
   reminders?: {
     useDefault: boolean;
     overrides?: {
-      method: 'email' | 'popup';
+      method: "email" | "popup";
       minutes: number;
     }[];
   };
@@ -72,8 +72,8 @@ export interface GoogleCalendarEvent {
  */
 export class GoogleCalendarConnector implements IntegrationConnector {
   private config: GoogleCalendarConfig;
-  private baseUrl = 'https://www.googleapis.com/calendar/v3';
-  private tokenUrl = 'https://oauth2.googleapis.com/token';
+  private baseUrl = "https://www.googleapis.com/calendar/v3";
+  private tokenUrl = "https://oauth2.googleapis.com/token";
 
   constructor(config: GoogleCalendarConfig) {
     this.config = config;
@@ -85,15 +85,15 @@ export class GoogleCalendarConnector implements IntegrationConnector {
   async testConnection(): Promise<boolean> {
     try {
       await this.ensureValidToken();
-      
+
       const response = await this.makeRequest({
-        method: 'GET',
-        endpoint: `/calendars/${this.config.calendarId}`
+        method: "GET",
+        endpoint: `/calendars/${this.config.calendarId}`,
       });
 
       return response.success && response.data?.id === this.config.calendarId;
     } catch (error) {
-      console.error('Google Calendar connection test failed:', error);
+      console.error("Google Calendar connection test failed:", error);
       return false;
     }
   }
@@ -106,9 +106,9 @@ export class GoogleCalendarConnector implements IntegrationConnector {
       await this.ensureValidToken();
 
       const response = await this.makeRequest({
-        method: 'POST',
+        method: "POST",
         endpoint: `/calendars/${this.config.calendarId}/events`,
-        data: event
+        data: event,
       });
 
       return {
@@ -118,16 +118,16 @@ export class GoogleCalendarConnector implements IntegrationConnector {
         metadata: {
           eventId: response.data?.id,
           htmlLink: response.data?.htmlLink,
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to create event',
+        error: error instanceof Error ? error.message : "Failed to create event",
         metadata: {
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       };
     }
   }
@@ -135,14 +135,17 @@ export class GoogleCalendarConnector implements IntegrationConnector {
   /**
    * Update calendar event
    */
-  async updateEvent(eventId: string, event: Partial<GoogleCalendarEvent>): Promise<IntegrationResponse> {
+  async updateEvent(
+    eventId: string,
+    event: Partial<GoogleCalendarEvent>,
+  ): Promise<IntegrationResponse> {
     try {
       await this.ensureValidToken();
 
       const response = await this.makeRequest({
-        method: 'PUT',
+        method: "PUT",
         endpoint: `/calendars/${this.config.calendarId}/events/${eventId}`,
-        data: event
+        data: event,
       });
 
       return {
@@ -152,17 +155,17 @@ export class GoogleCalendarConnector implements IntegrationConnector {
         metadata: {
           eventId: response.data?.id,
           updated: response.data?.updated,
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to update event',
+        error: error instanceof Error ? error.message : "Failed to update event",
         metadata: {
           eventId,
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       };
     }
   }
@@ -175,8 +178,8 @@ export class GoogleCalendarConnector implements IntegrationConnector {
       await this.ensureValidToken();
 
       const response = await this.makeRequest({
-        method: 'DELETE',
-        endpoint: `/calendars/${this.config.calendarId}/events/${eventId}`
+        method: "DELETE",
+        endpoint: `/calendars/${this.config.calendarId}/events/${eventId}`,
       });
 
       return {
@@ -185,17 +188,17 @@ export class GoogleCalendarConnector implements IntegrationConnector {
         error: response.error,
         metadata: {
           eventId,
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to delete event',
+        error: error instanceof Error ? error.message : "Failed to delete event",
         metadata: {
           eventId,
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       };
     }
   }
@@ -208,19 +211,19 @@ export class GoogleCalendarConnector implements IntegrationConnector {
       await this.ensureValidToken();
 
       const response = await this.makeRequest({
-        method: 'GET',
-        endpoint: `/calendars/${this.config.calendarId}/events/${eventId}`
+        method: "GET",
+        endpoint: `/calendars/${this.config.calendarId}/events/${eventId}`,
       });
 
       return response;
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to get event',
+        error: error instanceof Error ? error.message : "Failed to get event",
         metadata: {
           eventId,
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       };
     }
   }
@@ -231,7 +234,7 @@ export class GoogleCalendarConnector implements IntegrationConnector {
   async listEvents(
     timeMin?: Date,
     timeMax?: Date,
-    maxResults: number = 250
+    maxResults: number = 250,
   ): Promise<IntegrationResponse> {
     try {
       await this.ensureValidToken();
@@ -239,7 +242,7 @@ export class GoogleCalendarConnector implements IntegrationConnector {
       const params: any = {
         maxResults,
         singleEvents: true,
-        orderBy: 'startTime'
+        orderBy: "startTime",
       };
 
       if (timeMin) {
@@ -251,9 +254,9 @@ export class GoogleCalendarConnector implements IntegrationConnector {
       }
 
       const response = await this.makeRequest({
-        method: 'GET',
+        method: "GET",
         endpoint: `/calendars/${this.config.calendarId}/events`,
-        params
+        params,
       });
 
       return {
@@ -261,21 +264,21 @@ export class GoogleCalendarConnector implements IntegrationConnector {
         data: {
           events: response.data?.items || [],
           nextPageToken: response.data?.nextPageToken,
-          summary: response.data?.summary
+          summary: response.data?.summary,
         },
         error: response.error,
         metadata: {
           count: response.data?.items?.length || 0,
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to list events',
+        error: error instanceof Error ? error.message : "Failed to list events",
         metadata: {
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       };
     }
   }
@@ -286,11 +289,11 @@ export class GoogleCalendarConnector implements IntegrationConnector {
   async checkAvailability(
     startTime: Date,
     endTime: Date,
-    excludeEventId?: string
+    excludeEventId?: string,
   ): Promise<IntegrationResponse> {
     try {
       const response = await this.listEvents(startTime, endTime);
-      
+
       if (!response.success) {
         return response;
       }
@@ -300,10 +303,10 @@ export class GoogleCalendarConnector implements IntegrationConnector {
         if (excludeEventId && event.id === excludeEventId) {
           return false;
         }
-        
+
         const eventStart = new Date(event.start.dateTime || event.start.date);
         const eventEnd = new Date(event.end.dateTime || event.end.date);
-        
+
         return (
           (startTime >= eventStart && startTime < eventEnd) ||
           (endTime > eventStart && endTime <= eventEnd) ||
@@ -315,18 +318,18 @@ export class GoogleCalendarConnector implements IntegrationConnector {
         success: true,
         data: {
           available: conflictingEvents.length === 0,
-          conflicts: conflictingEvents
+          conflicts: conflictingEvents,
         },
         metadata: {
           startTime: startTime.toISOString(),
           endTime: endTime.toISOString(),
-          conflictCount: conflictingEvents.length
-        }
+          conflictCount: conflictingEvents.length,
+        },
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to check availability'
+        error: error instanceof Error ? error.message : "Failed to check availability",
       };
     }
   }
@@ -341,7 +344,7 @@ export class GoogleCalendarConnector implements IntegrationConnector {
     startTime: Date,
     endTime: Date,
     appointmentType: string,
-    notes?: string
+    notes?: string,
   ): Promise<IntegrationResponse> {
     const event: GoogleCalendarEvent = {
       summary: `${appointmentType} - ${patientName}`,
@@ -349,37 +352,39 @@ export class GoogleCalendarConnector implements IntegrationConnector {
         `Paciente: ${patientName}`,
         `Médico: ${doctorName}`,
         `Tipo: ${appointmentType}`,
-        notes ? `Observações: ${notes}` : ''
-      ].filter(Boolean).join('\n'),
+        notes ? `Observações: ${notes}` : "",
+      ]
+        .filter(Boolean)
+        .join("\n"),
       start: {
         dateTime: startTime.toISOString(),
-        timeZone: this.config.timeZone
+        timeZone: this.config.timeZone,
       },
       end: {
         dateTime: endTime.toISOString(),
-        timeZone: this.config.timeZone
+        timeZone: this.config.timeZone,
       },
       attendees: [
         {
           email: patientEmail,
-          displayName: patientName
-        }
+          displayName: patientName,
+        },
       ],
       reminders: {
         useDefault: false,
         overrides: [
-          { method: 'email', minutes: 24 * 60 }, // 1 day before
-          { method: 'popup', minutes: 60 }       // 1 hour before
-        ]
+          { method: "email", minutes: 24 * 60 }, // 1 day before
+          { method: "popup", minutes: 60 }, // 1 hour before
+        ],
       },
       extendedProperties: {
         private: {
-          source: 'neonpro',
+          source: "neonpro",
           patientName,
           doctorName,
-          appointmentType
-        }
-      }
+          appointmentType,
+        },
+      },
     };
 
     return this.createEvent(event);
@@ -391,24 +396,24 @@ export class GoogleCalendarConnector implements IntegrationConnector {
   async setupWebhook(): Promise<IntegrationResponse> {
     try {
       if (!this.config.webhookUrl) {
-        throw new Error('Webhook URL not configured');
+        throw new Error("Webhook URL not configured");
       }
 
       await this.ensureValidToken();
 
       const channelId = this.config.channelId || `neonpro-${Date.now()}`;
-      
+
       const response = await this.makeRequest({
-        method: 'POST',
+        method: "POST",
         endpoint: `/calendars/${this.config.calendarId}/events/watch`,
         data: {
           id: channelId,
-          type: 'web_hook',
+          type: "web_hook",
           address: this.config.webhookUrl,
           params: {
-            ttl: '3600' // 1 hour
-          }
-        }
+            ttl: "3600", // 1 hour
+          },
+        },
       });
 
       if (response.success) {
@@ -421,7 +426,7 @@ export class GoogleCalendarConnector implements IntegrationConnector {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to setup webhook'
+        error: error instanceof Error ? error.message : "Failed to setup webhook",
       };
     }
   }
@@ -432,25 +437,25 @@ export class GoogleCalendarConnector implements IntegrationConnector {
   async stopWebhook(): Promise<IntegrationResponse> {
     try {
       if (!this.config.channelId || !this.config.resourceId) {
-        throw new Error('No active webhook to stop');
+        throw new Error("No active webhook to stop");
       }
 
       await this.ensureValidToken();
 
       const response = await this.makeRequest({
-        method: 'POST',
-        endpoint: '/channels/stop',
+        method: "POST",
+        endpoint: "/channels/stop",
         data: {
           id: this.config.channelId,
-          resourceId: this.config.resourceId
-        }
+          resourceId: this.config.resourceId,
+        },
       });
 
       return response;
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to stop webhook'
+        error: error instanceof Error ? error.message : "Failed to stop webhook",
       };
     }
   }
@@ -459,24 +464,24 @@ export class GoogleCalendarConnector implements IntegrationConnector {
    * Process webhook notification
    */
   async processWebhook(headers: Record<string, string>): Promise<any> {
-    const channelId = headers['x-goog-channel-id'];
-    const resourceState = headers['x-goog-resource-state'];
-    const resourceId = headers['x-goog-resource-id'];
-    const resourceUri = headers['x-goog-resource-uri'];
+    const channelId = headers["x-goog-channel-id"];
+    const resourceState = headers["x-goog-resource-state"];
+    const resourceId = headers["x-goog-resource-id"];
+    const resourceUri = headers["x-goog-resource-uri"];
 
     if (channelId !== this.config.channelId) {
-      throw new Error('Invalid channel ID');
+      throw new Error("Invalid channel ID");
     }
 
     return {
-      type: 'calendar_change',
+      type: "calendar_change",
       data: {
         channelId,
         resourceState,
         resourceId,
         resourceUri,
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     };
   }
 
@@ -486,15 +491,15 @@ export class GoogleCalendarConnector implements IntegrationConnector {
   getWebhookConfig(): WebhookConfig {
     return {
       id: `google-calendar-${this.config.calendarId}`,
-      url: this.config.webhookUrl || '',
-      events: ['calendar_changes'],
+      url: this.config.webhookUrl || "",
+      events: ["calendar_changes"],
       active: true,
       retryPolicy: {
         maxRetries: 3,
         initialDelay: 1000,
         maxDelay: 30000,
-        backoffStrategy: 'exponential'
-      }
+        backoffStrategy: "exponential",
+      },
     };
   }
 
@@ -507,7 +512,7 @@ export class GoogleCalendarConnector implements IntegrationConnector {
     if (!this.config.accessToken) {
       await this.refreshAccessToken();
     }
-    
+
     // TODO: Add token expiration check
   }
 
@@ -517,27 +522,27 @@ export class GoogleCalendarConnector implements IntegrationConnector {
   private async refreshAccessToken(): Promise<void> {
     try {
       const response = await fetch(this.tokenUrl, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
+          "Content-Type": "application/x-www-form-urlencoded",
         },
         body: new URLSearchParams({
           client_id: this.config.clientId,
           client_secret: this.config.clientSecret,
           refresh_token: this.config.refreshToken,
-          grant_type: 'refresh_token'
-        })
+          grant_type: "refresh_token",
+        }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error_description || 'Failed to refresh token');
+        throw new Error(data.error_description || "Failed to refresh token");
       }
 
       this.config.accessToken = data.access_token;
     } catch (error) {
-      console.error('Failed to refresh access token:', error);
+      console.error("Failed to refresh access token:", error);
       throw error;
     }
   }
@@ -548,7 +553,7 @@ export class GoogleCalendarConnector implements IntegrationConnector {
   private async makeRequest(request: IntegrationRequest): Promise<IntegrationResponse> {
     try {
       const url = new URL(`${this.baseUrl}${request.endpoint}`);
-      
+
       // Add query parameters
       if (request.params) {
         Object.entries(request.params).forEach(([key, value]) => {
@@ -559,10 +564,10 @@ export class GoogleCalendarConnector implements IntegrationConnector {
       const options: RequestInit = {
         method: request.method,
         headers: {
-          'Authorization': `Bearer ${this.config.accessToken}`,
-          'Content-Type': 'application/json',
-          ...request.headers
-        }
+          Authorization: `Bearer ${this.config.accessToken}`,
+          "Content-Type": "application/json",
+          ...request.headers,
+        },
       };
 
       if (request.data) {
@@ -570,10 +575,10 @@ export class GoogleCalendarConnector implements IntegrationConnector {
       }
 
       const response = await fetch(url.toString(), options);
-      
+
       let data;
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
         data = await response.json();
       } else {
         data = await response.text();
@@ -588,16 +593,16 @@ export class GoogleCalendarConnector implements IntegrationConnector {
         data,
         metadata: {
           statusCode: response.status,
-          headers: Object.fromEntries(response.headers.entries())
-        }
+          headers: Object.fromEntries(response.headers.entries()),
+        },
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Request failed',
+        error: error instanceof Error ? error.message : "Request failed",
         metadata: {
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       };
     }
   }
@@ -612,7 +617,7 @@ export class GoogleCalendarUtils {
    */
   static appointmentToEvent(
     appointment: any,
-    timeZone: string = 'America/Sao_Paulo'
+    timeZone: string = "America/Sao_Paulo",
   ): GoogleCalendarEvent {
     return {
       summary: `${appointment.type} - ${appointment.patient.name}`,
@@ -620,32 +625,34 @@ export class GoogleCalendarUtils {
         `Paciente: ${appointment.patient.name}`,
         `Médico: ${appointment.doctor.name}`,
         `Tipo: ${appointment.type}`,
-        appointment.notes ? `Observações: ${appointment.notes}` : ''
-      ].filter(Boolean).join('\n'),
+        appointment.notes ? `Observações: ${appointment.notes}` : "",
+      ]
+        .filter(Boolean)
+        .join("\n"),
       start: {
         dateTime: new Date(appointment.startTime).toISOString(),
-        timeZone
+        timeZone,
       },
       end: {
         dateTime: new Date(appointment.endTime).toISOString(),
-        timeZone
+        timeZone,
       },
       attendees: [
         {
           email: appointment.patient.email,
-          displayName: appointment.patient.name
-        }
+          displayName: appointment.patient.name,
+        },
       ],
       location: appointment.location,
-      status: appointment.status === 'cancelled' ? 'cancelled' : 'confirmed',
+      status: appointment.status === "cancelled" ? "cancelled" : "confirmed",
       extendedProperties: {
         private: {
-          source: 'neonpro',
+          source: "neonpro",
           appointmentId: appointment.id,
           patientId: appointment.patient.id,
-          doctorId: appointment.doctor.id
-        }
-      }
+          doctorId: appointment.doctor.id,
+        },
+      },
     };
   }
 
@@ -654,7 +661,7 @@ export class GoogleCalendarUtils {
    */
   static eventToAppointment(event: any): any {
     const extendedProps = event.extendedProperties?.private || {};
-    
+
     return {
       id: extendedProps.appointmentId,
       externalId: event.id,
@@ -662,15 +669,16 @@ export class GoogleCalendarUtils {
       description: event.description,
       startTime: new Date(event.start.dateTime || event.start.date),
       endTime: new Date(event.end.dateTime || event.end.date),
-      status: event.status === 'cancelled' ? 'cancelled' : 'confirmed',
+      status: event.status === "cancelled" ? "cancelled" : "confirmed",
       location: event.location,
-      attendees: event.attendees?.map((attendee: any) => ({
-        email: attendee.email,
-        name: attendee.displayName,
-        status: attendee.responseStatus
-      })) || [],
-      source: 'google-calendar',
-      lastModified: new Date(event.updated)
+      attendees:
+        event.attendees?.map((attendee: any) => ({
+          email: attendee.email,
+          name: attendee.displayName,
+          status: attendee.responseStatus,
+        })) || [],
+      source: "google-calendar",
+      lastModified: new Date(event.updated),
     };
   }
 
@@ -678,23 +686,23 @@ export class GoogleCalendarUtils {
    * Generate recurring event rule
    */
   static generateRecurrenceRule(
-    frequency: 'daily' | 'weekly' | 'monthly',
+    frequency: "daily" | "weekly" | "monthly",
     interval: number = 1,
     count?: number,
-    until?: Date
+    until?: Date,
   ): string[] {
     let rule = `RRULE:FREQ=${frequency.toUpperCase()}`;
-    
+
     if (interval > 1) {
       rule += `;INTERVAL=${interval}`;
     }
-    
+
     if (count) {
       rule += `;COUNT=${count}`;
     } else if (until) {
-      rule += `;UNTIL=${until.toISOString().replace(/[-:]/g, '').split('.')[0]}Z`;
+      rule += `;UNTIL=${until.toISOString().replace(/[-:]/g, "").split(".")[0]}Z`;
     }
-    
+
     return [rule];
   }
 
@@ -705,30 +713,30 @@ export class GoogleCalendarUtils {
     date: Date,
     startHour: number = 8,
     endHour: number = 18,
-    slotDuration: number = 30
+    slotDuration: number = 30,
   ): { start: Date; end: Date }[] {
     const slots: { start: Date; end: Date }[] = [];
     const currentDate = new Date(date);
-    
+
     // Skip weekends
     if (currentDate.getDay() === 0 || currentDate.getDay() === 6) {
       return slots;
     }
-    
+
     for (let hour = startHour; hour < endHour; hour++) {
       for (let minute = 0; minute < 60; minute += slotDuration) {
         const start = new Date(currentDate);
         start.setHours(hour, minute, 0, 0);
-        
+
         const end = new Date(start);
         end.setMinutes(end.getMinutes() + slotDuration);
-        
+
         if (end.getHours() <= endHour) {
           slots.push({ start, end });
         }
       }
     }
-    
+
     return slots;
   }
 }

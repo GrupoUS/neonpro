@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { IntegratedSessionSecurity } from '@/lib/security/integrated-session-security';
-import { requireAuth } from '@/lib/auth';
+import type { NextRequest, NextResponse } from "next/server";
+import type { IntegratedSessionSecurity } from "@/lib/security/integrated-session-security";
+import type { requireAuth } from "@/lib/auth";
 
 /**
  * Session Security API Route
@@ -18,20 +18,14 @@ export async function POST(request: NextRequest) {
     // Authenticate the request
     const authResult = await requireAuth(request);
     if (!authResult.authenticated) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
 
     const body = await request.json();
     const { sessionId, maxConcurrentSessions = 3 } = body;
 
     if (!sessionId) {
-      return NextResponse.json(
-        { error: 'Session ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Session ID is required" }, { status: 400 });
     }
 
     // Initialize session security
@@ -39,23 +33,19 @@ export async function POST(request: NextRequest) {
       authResult.user!.id,
       sessionId,
       request,
-      { maxConcurrentSessions }
+      { maxConcurrentSessions },
     );
 
     return NextResponse.json({
-      message: 'Session security initialized successfully',
+      message: "Session security initialized successfully",
       sessionId,
       csrfToken: result.csrfToken,
       fingerprint: result.fingerprint,
-      timeoutConfig: result.timeoutConfig
+      timeoutConfig: result.timeoutConfig,
     });
-
   } catch (error) {
-    console.error('Session initialization error:', error);
-    return NextResponse.json(
-      { error: 'Failed to initialize session security' },
-      { status: 500 }
-    );
+    console.error("Session initialization error:", error);
+    return NextResponse.json({ error: "Failed to initialize session security" }, { status: 500 });
   }
 }
 
@@ -66,45 +56,34 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { sessionId, userId, activityType = 'api_call' } = body;
+    const { sessionId, userId, activityType = "api_call" } = body;
 
     if (!sessionId || !userId) {
-      return NextResponse.json(
-        { error: 'Session ID and User ID are required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Session ID and User ID are required" }, { status: 400 });
     }
 
     // Perform comprehensive security check
-    const securityCheck = await sessionSecurity.performSecurityCheck(
-      userId,
-      sessionId,
-      request
-    );
+    const securityCheck = await sessionSecurity.performSecurityCheck(userId, sessionId, request);
 
     if (!securityCheck.allowed) {
       return NextResponse.json(
-        { 
-          error: 'Session security validation failed',
+        {
+          error: "Session security validation failed",
           reason: securityCheck.reason,
-          action: securityCheck.action
+          action: securityCheck.action,
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     return NextResponse.json({
       valid: true,
-      message: 'Session security validated successfully',
-      securityStatus: securityCheck
+      message: "Session security validated successfully",
+      securityStatus: securityCheck,
     });
-
   } catch (error) {
-    console.error('Session validation error:', error);
-    return NextResponse.json(
-      { error: 'Failed to validate session security' },
-      { status: 500 }
-    );
+    console.error("Session validation error:", error);
+    return NextResponse.json({ error: "Failed to validate session security" }, { status: 500 });
   }
 }
 
@@ -117,40 +96,27 @@ export async function GET(request: NextRequest) {
     // Authenticate the request
     const authResult = await requireAuth(request);
     if (!authResult.authenticated) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const sessionId = searchParams.get('sessionId');
+    const sessionId = searchParams.get("sessionId");
 
     if (!sessionId) {
-      return NextResponse.json(
-        { error: 'Session ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Session ID is required" }, { status: 400 });
     }
 
     // Get session security status
-    const status = await sessionSecurity.getSessionSecurityStatus(
-      authResult.user!.id,
-      sessionId
-    );
+    const status = await sessionSecurity.getSessionSecurityStatus(authResult.user!.id, sessionId);
 
     return NextResponse.json({
       sessionId,
       userId: authResult.user!.id,
-      securityStatus: status
+      securityStatus: status,
     });
-
   } catch (error) {
-    console.error('Session status error:', error);
-    return NextResponse.json(
-      { error: 'Failed to get session security status' },
-      { status: 500 }
-    );
+    console.error("Session status error:", error);
+    return NextResponse.json({ error: "Failed to get session security status" }, { status: 500 });
   }
 }
 
@@ -163,20 +129,17 @@ export async function DELETE(request: NextRequest) {
     // Authenticate the request
     const authResult = await requireAuth(request);
     if (!authResult.authenticated) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const sessionId = searchParams.get('sessionId');
-    const terminateAll = searchParams.get('terminateAll') === 'true';
+    const sessionId = searchParams.get("sessionId");
+    const terminateAll = searchParams.get("terminateAll") === "true";
 
     if (!sessionId && !terminateAll) {
       return NextResponse.json(
-        { error: 'Session ID is required or set terminateAll=true' },
-        { status: 400 }
+        { error: "Session ID is required or set terminateAll=true" },
+        { status: 400 },
       );
     }
 
@@ -184,22 +147,18 @@ export async function DELETE(request: NextRequest) {
       // Terminate all sessions for the user
       await sessionSecurity.terminateAllUserSessions(authResult.user!.id);
       return NextResponse.json({
-        message: 'All user sessions terminated successfully'
+        message: "All user sessions terminated successfully",
       });
     } else {
       // Terminate specific session
       await sessionSecurity.terminateSession(authResult.user!.id, sessionId!);
       return NextResponse.json({
-        message: 'Session terminated successfully',
-        sessionId
+        message: "Session terminated successfully",
+        sessionId,
       });
     }
-
   } catch (error) {
-    console.error('Session termination error:', error);
-    return NextResponse.json(
-      { error: 'Failed to terminate session' },
-      { status: 500 }
-    );
+    console.error("Session termination error:", error);
+    return NextResponse.json({ error: "Failed to terminate session" }, { status: 500 });
   }
 }

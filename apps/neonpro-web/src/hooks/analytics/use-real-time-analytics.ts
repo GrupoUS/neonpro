@@ -1,360 +1,369 @@
-﻿/**
+/**
  * Real-Time Analytics Dashboard Hook for NeonPro
- * 
+ *
  * Custom hook providing real-time analytics capabilities including:
  * - Live subscription metrics and KPI tracking
  * - Real-time trial conversion monitoring
  * - Revenue streaming with performance alerts
  * - Event-driven updates with WebSocket integration
  * - Configurable refresh rates and data filters
- * 
+ *
  * Integrates with Supabase real-time subscriptions and analytics API.
  */
 
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { createClient } from '@/lib/supabase/client'
+import type { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import type { useQuery, useQueryClient } from "@tanstack/react-query";
+import type { createClient } from "@/lib/supabase/client";
 
 // Types for real-time analytics
 export interface RealTimeMetrics {
-  activeSubscriptions: number
-  monthlyRecurringRevenue: number
-  trialConversions: number
-  churnRate: number
-  newSignups: number
-  lastUpdated: Date
+  activeSubscriptions: number;
+  monthlyRecurringRevenue: number;
+  trialConversions: number;
+  churnRate: number;
+  newSignups: number;
+  lastUpdated: Date;
 }
 
 export interface RealTimeConfig {
-  metrics: ('subscriptions' | 'revenue' | 'trials' | 'churn' | 'signups')[]
-  refreshInterval: number
-  enableAlerts: boolean
+  metrics: ("subscriptions" | "revenue" | "trials" | "churn" | "signups")[];
+  refreshInterval: number;
+  enableAlerts: boolean;
   alertThresholds: {
-    churnRate?: number
-    conversionRate?: number
-    revenueGrowth?: number
-  }
-  timeRange: '1h' | '24h' | '7d' | '30d'
+    churnRate?: number;
+    conversionRate?: number;
+    revenueGrowth?: number;
+  };
+  timeRange: "1h" | "24h" | "7d" | "30d";
 }
 
 export interface RealTimeState {
-  metrics: RealTimeMetrics
-  trends: { [key: string]: number[] }
+  metrics: RealTimeMetrics;
+  trends: { [key: string]: number[] };
   alerts: Array<{
-    id: string
-    type: 'warning' | 'critical' | 'info'
-    message: string
-    timestamp: Date
-    metric: string
-  }>
-  isConnected: boolean
-  lastUpdate: Date | null
-  error: string | null
+    id: string;
+    type: "warning" | "critical" | "info";
+    message: string;
+    timestamp: Date;
+    metric: string;
+  }>;
+  isConnected: boolean;
+  lastUpdate: Date | null;
+  error: string | null;
 }
 
 export interface RealTimeActions {
-  startMonitoring: () => void
-  stopMonitoring: () => void
-  refreshMetrics: () => Promise<void>
-  updateConfig: (config: Partial<RealTimeConfig>) => void
-  clearAlerts: () => void
-  acknowledgeAlert: (alertId: string) => void
+  startMonitoring: () => void;
+  stopMonitoring: () => void;
+  refreshMetrics: () => Promise<void>;
+  updateConfig: (config: Partial<RealTimeConfig>) => void;
+  clearAlerts: () => void;
+  acknowledgeAlert: (alertId: string) => void;
 }
 
 /**
  * Main real-time analytics dashboard hook
  */
 export function useRealTimeAnalytics(
-  initialConfig: RealTimeConfig
+  initialConfig: RealTimeConfig,
 ): RealTimeState & RealTimeActions {
-  const queryClient = useQueryClient()
-  const supabase = await createClient()
-  const [config, setConfig] = useState<RealTimeConfig>(initialConfig)
+  const queryClient = useQueryClient();
+  const supabase = await createClient();
+  const [config, setConfig] = useState<RealTimeConfig>(initialConfig);
   const [metrics, setMetrics] = useState<RealTimeMetrics>({
     activeSubscriptions: 0,
     monthlyRecurringRevenue: 0,
     trialConversions: 0,
     churnRate: 0,
     newSignups: 0,
-    lastUpdated: new Date()
-  })
-  const [trends, setTrends] = useState<{ [key: string]: number[] }>({})
-  const [alerts, setAlerts] = useState<any[]>([])
-  const [isConnected, setIsConnected] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const subscriptionsRef = useRef<{ [key: string]: any }>({})
-  const intervalRef = useRef<NodeJS.Timeout | null>(null)
+    lastUpdated: new Date(),
+  });
+  const [trends, setTrends] = useState<{ [key: string]: number[] }>({});
+  const [alerts, setAlerts] = useState<any[]>([]);
+  const [isConnected, setIsConnected] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const subscriptionsRef = useRef<{ [key: string]: any }>({});
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Fetch initial metrics
-  const {
-    data: initialData,
-    refetch: refreshMetrics
-  } = useQuery({
-    queryKey: ['real-time-metrics', config.timeRange],
+  const { data: initialData, refetch: refreshMetrics } = useQuery({
+    queryKey: ["real-time-metrics", config.timeRange],
     queryFn: async () => {
       try {
-        const response = await fetch('/api/analytics/real-time', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        const response = await fetch("/api/analytics/real-time", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             metrics: config.metrics,
             timeRange: config.timeRange,
-            includeTrends: true
-          })
-        })
+            includeTrends: true,
+          }),
+        });
 
-        if (!response.ok) throw new Error('Failed to fetch metrics')
-        const data = await response.json()
-        
-        setMetrics(data.metrics)
-        setTrends(data.trends || {})
-        
-        return data
+        if (!response.ok) throw new Error("Failed to fetch metrics");
+        const data = await response.json();
+
+        setMetrics(data.metrics);
+        setTrends(data.trends || {});
+
+        return data;
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch metrics')
-        throw err
+        setError(err instanceof Error ? err.message : "Failed to fetch metrics");
+        throw err;
       }
     },
     refetchInterval: config.refreshInterval * 1000,
-    staleTime: 30 * 1000 // 30 seconds
-  })
+    staleTime: 30 * 1000, // 30 seconds
+  });
 
   // Check for alerts based on thresholds
-  const checkAlerts = useCallback((newMetrics: RealTimeMetrics) => {
-    if (!config.enableAlerts) return
+  const checkAlerts = useCallback(
+    (newMetrics: RealTimeMetrics) => {
+      if (!config.enableAlerts) return;
 
-    const newAlerts: any[] = []
+      const newAlerts: any[] = [];
 
-    // Churn rate alert
-    if (config.alertThresholds.churnRate && newMetrics.churnRate > config.alertThresholds.churnRate) {
-      newAlerts.push({
-        id: `churn-${Date.now()}`,
-        type: 'critical',
-        message: `Churn rate (${newMetrics.churnRate.toFixed(2)}%) exceeds threshold (${config.alertThresholds.churnRate}%)`,
-        timestamp: new Date(),
-        metric: 'churn'
-      })
-    }
-
-    // Revenue growth alert (if we have previous data)
-    if (config.alertThresholds.revenueGrowth && metrics.monthlyRecurringRevenue > 0) {
-      const growth = ((newMetrics.monthlyRecurringRevenue - metrics.monthlyRecurringRevenue) / metrics.monthlyRecurringRevenue) * 100
-      if (growth < config.alertThresholds.revenueGrowth) {
+      // Churn rate alert
+      if (
+        config.alertThresholds.churnRate &&
+        newMetrics.churnRate > config.alertThresholds.churnRate
+      ) {
         newAlerts.push({
-          id: `revenue-${Date.now()}`,
-          type: 'warning',
-          message: `Revenue growth (${growth.toFixed(2)}%) below threshold (${config.alertThresholds.revenueGrowth}%)`,
+          id: `churn-${Date.now()}`,
+          type: "critical",
+          message: `Churn rate (${newMetrics.churnRate.toFixed(2)}%) exceeds threshold (${config.alertThresholds.churnRate}%)`,
           timestamp: new Date(),
-          metric: 'revenue'
-        })
+          metric: "churn",
+        });
       }
-    }
 
-    if (newAlerts.length > 0) {
-      setAlerts(prev => [...prev, ...newAlerts])
-    }
-  }, [config, metrics])
+      // Revenue growth alert (if we have previous data)
+      if (config.alertThresholds.revenueGrowth && metrics.monthlyRecurringRevenue > 0) {
+        const growth =
+          ((newMetrics.monthlyRecurringRevenue - metrics.monthlyRecurringRevenue) /
+            metrics.monthlyRecurringRevenue) *
+          100;
+        if (growth < config.alertThresholds.revenueGrowth) {
+          newAlerts.push({
+            id: `revenue-${Date.now()}`,
+            type: "warning",
+            message: `Revenue growth (${growth.toFixed(2)}%) below threshold (${config.alertThresholds.revenueGrowth}%)`,
+            timestamp: new Date(),
+            metric: "revenue",
+          });
+        }
+      }
+
+      if (newAlerts.length > 0) {
+        setAlerts((prev) => [...prev, ...newAlerts]);
+      }
+    },
+    [config, metrics],
+  );
 
   // Start real-time monitoring
   const startMonitoring = useCallback(() => {
-    if (isConnected) return
+    if (isConnected) return;
 
     try {
       // Subscribe to subscription changes
-      if (config.metrics.includes('subscriptions') || config.metrics.includes('revenue')) {
+      if (config.metrics.includes("subscriptions") || config.metrics.includes("revenue")) {
         subscriptionsRef.current.subscriptions = supabase
-          .channel('subscriptions-changes')
+          .channel("subscriptions-changes")
           .on(
-            'postgres_changes',
+            "postgres_changes",
             {
-              event: '*',
-              schema: 'public',
-              table: 'subscriptions'
+              event: "*",
+              schema: "public",
+              table: "subscriptions",
             },
             (payload) => {
               // Update metrics when subscriptions change
-              setMetrics(prev => {
-                const updated = { ...prev, lastUpdated: new Date() }
-                
-                if (payload.eventType === 'INSERT') {
-                  updated.activeSubscriptions += 1
-                  updated.newSignups += 1
-                } else if (payload.eventType === 'DELETE') {
-                  updated.activeSubscriptions -= 1
-                } else if (payload.eventType === 'UPDATE') {
+              setMetrics((prev) => {
+                const updated = { ...prev, lastUpdated: new Date() };
+
+                if (payload.eventType === "INSERT") {
+                  updated.activeSubscriptions += 1;
+                  updated.newSignups += 1;
+                } else if (payload.eventType === "DELETE") {
+                  updated.activeSubscriptions -= 1;
+                } else if (payload.eventType === "UPDATE") {
                   // Handle status changes
-                  const old = payload.old
-                  const newSub = payload.new
-                  
+                  const old = payload.old;
+                  const newSub = payload.new;
+
                   if (old?.status !== newSub?.status) {
-                    if (newSub?.status === 'active' && old?.status !== 'active') {
-                      updated.activeSubscriptions += 1
-                      if (old?.status === 'trialing') {
-                        updated.trialConversions += 1
+                    if (newSub?.status === "active" && old?.status !== "active") {
+                      updated.activeSubscriptions += 1;
+                      if (old?.status === "trialing") {
+                        updated.trialConversions += 1;
                       }
-                    } else if (old?.status === 'active' && newSub?.status !== 'active') {
-                      updated.activeSubscriptions -= 1
+                    } else if (old?.status === "active" && newSub?.status !== "active") {
+                      updated.activeSubscriptions -= 1;
                     }
                   }
                 }
-                
-                checkAlerts(updated)
-                return updated
-              })
-            }
+
+                checkAlerts(updated);
+                return updated;
+              });
+            },
           )
           .subscribe((status) => {
-            setIsConnected(status === 'SUBSCRIBED')
-            if (status === 'CHANNEL_ERROR') {
-              setError('Failed to connect to subscription updates')
+            setIsConnected(status === "SUBSCRIBED");
+            if (status === "CHANNEL_ERROR") {
+              setError("Failed to connect to subscription updates");
             }
-          })
+          });
       }
 
       // Subscribe to trial changes
-      if (config.metrics.includes('trials')) {
+      if (config.metrics.includes("trials")) {
         subscriptionsRef.current.trials = supabase
-          .channel('trial-changes')
+          .channel("trial-changes")
           .on(
-            'postgres_changes',
+            "postgres_changes",
             {
-              event: '*',
-              schema: 'public',
-              table: 'subscription_trials'
+              event: "*",
+              schema: "public",
+              table: "subscription_trials",
             },
             (payload) => {
-              if (payload.eventType === 'UPDATE' && payload.new?.converted_at) {
-                setMetrics(prev => ({
+              if (payload.eventType === "UPDATE" && payload.new?.converted_at) {
+                setMetrics((prev) => ({
                   ...prev,
                   trialConversions: prev.trialConversions + 1,
-                  lastUpdated: new Date()
-                }))
+                  lastUpdated: new Date(),
+                }));
               }
-            }
+            },
           )
-          .subscribe()
+          .subscribe();
       }
 
       // Subscribe to revenue changes
-      if (config.metrics.includes('revenue')) {
+      if (config.metrics.includes("revenue")) {
         subscriptionsRef.current.revenue = supabase
-          .channel('revenue-changes')
+          .channel("revenue-changes")
           .on(
-            'postgres_changes',
+            "postgres_changes",
             {
-              event: '*',
-              schema: 'public',
-              table: 'subscription_revenue'
+              event: "*",
+              schema: "public",
+              table: "subscription_revenue",
             },
             (payload) => {
               // Recalculate MRR when revenue changes
-              refreshMetrics()
-            }
+              refreshMetrics();
+            },
           )
-          .subscribe()
+          .subscribe();
       }
 
-      setError(null)
+      setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to start monitoring')
+      setError(err instanceof Error ? err.message : "Failed to start monitoring");
     }
-  }, [config, isConnected, supabase, checkAlerts, refreshMetrics])
+  }, [config, isConnected, supabase, checkAlerts, refreshMetrics]);
 
   // Stop monitoring
   const stopMonitoring = useCallback(() => {
-    Object.values(subscriptionsRef.current).forEach(subscription => {
+    Object.values(subscriptionsRef.current).forEach((subscription) => {
       if (subscription?.unsubscribe) {
-        subscription.unsubscribe()
+        subscription.unsubscribe();
       }
-    })
-    subscriptionsRef.current = {}
-    setIsConnected(false)
+    });
+    subscriptionsRef.current = {};
+    setIsConnected(false);
 
     if (intervalRef.current) {
-      clearInterval(intervalRef.current)
-      intervalRef.current = null
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
     }
-  }, [])
+  }, []);
 
   // Update configuration
-  const updateConfig = useCallback((newConfig: Partial<RealTimeConfig>) => {
-    setConfig(prev => ({ ...prev, ...newConfig }))
-    
-    // Restart monitoring if metrics changed
-    if (newConfig.metrics && isConnected) {
-      stopMonitoring()
-      setTimeout(startMonitoring, 100)
-    }
-  }, [isConnected, startMonitoring, stopMonitoring])
+  const updateConfig = useCallback(
+    (newConfig: Partial<RealTimeConfig>) => {
+      setConfig((prev) => ({ ...prev, ...newConfig }));
+
+      // Restart monitoring if metrics changed
+      if (newConfig.metrics && isConnected) {
+        stopMonitoring();
+        setTimeout(startMonitoring, 100);
+      }
+    },
+    [isConnected, startMonitoring, stopMonitoring],
+  );
 
   // Clear all alerts
   const clearAlerts = useCallback(() => {
-    setAlerts([])
-  }, [])
+    setAlerts([]);
+  }, []);
 
   // Acknowledge specific alert
   const acknowledgeAlert = useCallback((alertId: string) => {
-    setAlerts(prev => prev.filter(alert => alert.id !== alertId))
-  }, [])
+    setAlerts((prev) => prev.filter((alert) => alert.id !== alertId));
+  }, []);
 
   // Auto-start monitoring on mount
   useEffect(() => {
-    startMonitoring()
-    
+    startMonitoring();
+
     return () => {
-      stopMonitoring()
-    }
-  }, []) // Empty dependency array for mount/unmount only
+      stopMonitoring();
+    };
+  }, []); // Empty dependency array for mount/unmount only
 
   // Update trends periodically
   useEffect(() => {
-    if (!isConnected) return
+    if (!isConnected) return;
 
     intervalRef.current = setInterval(() => {
-      setTrends(prev => {
-        const updated = { ...prev }
-        
+      setTrends((prev) => {
+        const updated = { ...prev };
+
         // Add current metrics to trends
-        config.metrics.forEach(metric => {
-          if (!updated[metric]) updated[metric] = []
-          
-          let value = 0
+        config.metrics.forEach((metric) => {
+          if (!updated[metric]) updated[metric] = [];
+
+          let value = 0;
           switch (metric) {
-            case 'subscriptions':
-              value = metrics.activeSubscriptions
-              break
-            case 'revenue':
-              value = metrics.monthlyRecurringRevenue
-              break
-            case 'trials':
-              value = metrics.trialConversions
-              break
-            case 'churn':
-              value = metrics.churnRate
-              break
-            case 'signups':
-              value = metrics.newSignups
-              break
+            case "subscriptions":
+              value = metrics.activeSubscriptions;
+              break;
+            case "revenue":
+              value = metrics.monthlyRecurringRevenue;
+              break;
+            case "trials":
+              value = metrics.trialConversions;
+              break;
+            case "churn":
+              value = metrics.churnRate;
+              break;
+            case "signups":
+              value = metrics.newSignups;
+              break;
           }
-          
-          updated[metric].push(value)
-          
+
+          updated[metric].push(value);
+
           // Keep only last 100 data points
           if (updated[metric].length > 100) {
-            updated[metric] = updated[metric].slice(-100)
+            updated[metric] = updated[metric].slice(-100);
           }
-        })
-        
-        return updated
-      })
-    }, 60000) // Update trends every minute
+        });
+
+        return updated;
+      });
+    }, 60000); // Update trends every minute
 
     return () => {
       if (intervalRef.current) {
-        clearInterval(intervalRef.current)
+        clearInterval(intervalRef.current);
       }
-    }
-  }, [isConnected, config.metrics, metrics])
+    };
+  }, [isConnected, config.metrics, metrics]);
 
   return {
     // State
@@ -369,12 +378,12 @@ export function useRealTimeAnalytics(
     startMonitoring,
     stopMonitoring,
     refreshMetrics: async () => {
-      await refreshMetrics()
+      await refreshMetrics();
     },
     updateConfig,
     clearAlerts,
-    acknowledgeAlert
-  }
+    acknowledgeAlert,
+  };
 }
 
 /**
@@ -385,39 +394,39 @@ export function usePerformanceMonitoring() {
     responseTime: 0,
     errorRate: 0,
     throughput: 0,
-    uptime: 100
-  })
+    uptime: 100,
+  });
 
   useEffect(() => {
     const checkPerformance = async () => {
       try {
-        const start = Date.now()
-        const response = await fetch('/api/health')
-        const responseTime = Date.now() - start
-        
-        const data = await response.json()
-        
+        const start = Date.now();
+        const response = await fetch("/api/health");
+        const responseTime = Date.now() - start;
+
+        const data = await response.json();
+
         setPerformance({
           responseTime,
           errorRate: data.errorRate || 0,
           throughput: data.throughput || 0,
-          uptime: data.uptime || 100
-        })
+          uptime: data.uptime || 100,
+        });
       } catch (err) {
-        setPerformance(prev => ({
+        setPerformance((prev) => ({
           ...prev,
-          errorRate: prev.errorRate + 1
-        }))
+          errorRate: prev.errorRate + 1,
+        }));
       }
-    }
+    };
 
-    const interval = setInterval(checkPerformance, 30000) // Every 30 seconds
-    checkPerformance() // Initial check
+    const interval = setInterval(checkPerformance, 30000); // Every 30 seconds
+    checkPerformance(); // Initial check
 
-    return () => clearInterval(interval)
-  }, [])
+    return () => clearInterval(interval);
+  }, []);
 
-  return performance
+  return performance;
 }
 
 /**
@@ -428,51 +437,51 @@ export function useUserActivityMonitoring() {
     activeUsers: 0,
     sessionsToday: 0,
     averageSessionDuration: 0,
-    bounceRate: 0
-  })
-  const supabase = await createClient()
+    bounceRate: 0,
+  });
+  const supabase = await createClient();
 
   useEffect(() => {
     // Subscribe to user activity events
     const subscription = supabase
-      .channel('user-activity')
+      .channel("user-activity")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
-          table: 'user_sessions'
+          event: "*",
+          schema: "public",
+          table: "user_sessions",
         },
         (payload) => {
           // Update activity metrics
-          setActivity(prev => {
-            const updated = { ...prev }
-            
-            if (payload.eventType === 'INSERT') {
-              updated.sessionsToday += 1
-              updated.activeUsers += 1
-            } else if (payload.eventType === 'UPDATE' && payload.new?.ended_at) {
-              updated.activeUsers -= 1
-              
+          setActivity((prev) => {
+            const updated = { ...prev };
+
+            if (payload.eventType === "INSERT") {
+              updated.sessionsToday += 1;
+              updated.activeUsers += 1;
+            } else if (payload.eventType === "UPDATE" && payload.new?.ended_at) {
+              updated.activeUsers -= 1;
+
               // Calculate session duration
-              const duration = new Date(payload.new.ended_at).getTime() - 
-                             new Date(payload.new.started_at).getTime()
-              
-              updated.averageSessionDuration = 
-                (updated.averageSessionDuration + duration / 1000 / 60) / 2 // Average in minutes
+              const duration =
+                new Date(payload.new.ended_at).getTime() -
+                new Date(payload.new.started_at).getTime();
+
+              updated.averageSessionDuration =
+                (updated.averageSessionDuration + duration / 1000 / 60) / 2; // Average in minutes
             }
-            
-            return updated
-          })
-        }
+
+            return updated;
+          });
+        },
       )
-      .subscribe()
+      .subscribe();
 
     return () => {
-      subscription.unsubscribe()
-    }
-  }, [supabase])
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
 
-  return activity
+  return activity;
 }
-

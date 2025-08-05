@@ -52,7 +52,7 @@ export interface ResponsePattern {
 }
 
 export interface ResponseQuality {
-  sentiment: 'positive' | 'neutral' | 'negative';
+  sentiment: "positive" | "neutral" | "negative";
   completion: number; // percentage of completed actions
   satisfaction: number; // 1-5 scale
   actionTaken: boolean;
@@ -69,7 +69,7 @@ export interface UsageFrequency {
   daily: number;
   weekly: number;
   monthly: number;
-  preferred: 'low' | 'medium' | 'high';
+  preferred: "low" | "medium" | "high";
 }
 
 export interface UsageVolume {
@@ -95,7 +95,7 @@ export interface UsageContext {
 
 export interface EngagementTrend {
   period: TrendPeriod;
-  direction: 'increasing' | 'decreasing' | 'stable';
+  direction: "increasing" | "decreasing" | "stable";
   magnitude: number; // percentage change
   confidence: number;
   factors: TrendFactor[];
@@ -107,7 +107,7 @@ export interface TrendFactor {
   confidence: number;
 }
 
-export type TrendPeriod = '7d' | '30d' | '90d' | '365d';
+export type TrendPeriod = "7d" | "30d" | "90d" | "365d";
 
 export interface PatientDemographics {
   age: number;
@@ -118,8 +118,8 @@ export interface PatientDemographics {
   communicationStyle: CommunicationStyle;
 }
 
-export type AgeGroup = '18-24' | '25-34' | '35-44' | '45-54' | '55-64' | '65+';
-export type Gender = 'male' | 'female' | 'non_binary' | 'prefer_not_to_say';
+export type AgeGroup = "18-24" | "25-34" | "35-44" | "45-54" | "55-64" | "65+";
+export type Gender = "male" | "female" | "non_binary" | "prefer_not_to_say";
 
 export interface PatientLocation {
   city: string;
@@ -129,7 +129,7 @@ export interface PatientLocation {
   connectivity: ConnectivityLevel;
 }
 
-export type ConnectivityLevel = 'excellent' | 'good' | 'fair' | 'poor';
+export type ConnectivityLevel = "excellent" | "good" | "fair" | "poor";
 
 export interface DigitalLiteracy {
   level: LiteracyLevel;
@@ -138,8 +138,8 @@ export interface DigitalLiteracy {
   supportNeeds: SupportLevel;
 }
 
-export type LiteracyLevel = 'high' | 'medium' | 'low' | 'unknown';
-export type SupportLevel = 'none' | 'minimal' | 'moderate' | 'high';
+export type LiteracyLevel = "high" | "medium" | "low" | "unknown";
+export type SupportLevel = "none" | "minimal" | "moderate" | "high";
 
 export interface DeviceComfort {
   device: DeviceType;
@@ -147,11 +147,11 @@ export interface DeviceComfort {
   usage: DeviceUsage;
 }
 
-export type DeviceType = 'smartphone' | 'tablet' | 'computer' | 'smartwatch';
+export type DeviceType = "smartphone" | "tablet" | "computer" | "smartwatch";
 
 export interface DeviceUsage {
-  frequency: 'daily' | 'weekly' | 'monthly' | 'rarely';
-  skillLevel: 'beginner' | 'intermediate' | 'advanced';
+  frequency: "daily" | "weekly" | "monthly" | "rarely";
+  skillLevel: "beginner" | "intermediate" | "advanced";
   primaryUse: string[];
 }
 
@@ -161,23 +161,29 @@ export interface FeatureComfort {
   usage: FeatureUsage;
 }
 
-export type CommunicationFeature = 
-  | 'text_messages' 
-  | 'voice_calls' 
-  | 'video_calls' 
-  | 'email' 
-  | 'push_notifications'
-  | 'app_messaging'
-  | 'social_media'
-  | 'web_portals';
+export type CommunicationFeature =
+  | "text_messages"
+  | "voice_calls"
+  | "video_calls"
+  | "email"
+  | "push_notifications"
+  | "app_messaging"
+  | "social_media"
+  | "web_portals";
 
 export interface FeatureUsage {
-  frequency: 'high' | 'medium' | 'low' | 'never';
+  frequency: "high" | "medium" | "low" | "never";
   preference: number; // 0-100
   effectiveness: number; // 0-100
 }
 
-export type CommunicationStyle = 'formal' | 'casual' | 'technical' | 'empathetic' | 'direct' | 'detailed';
+export type CommunicationStyle =
+  | "formal"
+  | "casual"
+  | "technical"
+  | "empathetic"
+  | "direct"
+  | "detailed";
 
 export interface DeviceProfile {
   deviceId: string;
@@ -188,7 +194,7 @@ export interface DeviceProfile {
   notifications: NotificationSettings;
 }
 
-export type OperatingSystem = 'ios' | 'android' | 'windows' | 'macos' | 'web';
+export type OperatingSystem = "ios" | "android" | "windows" | "macos" | "web";
 
 export interface DeviceCapabilities {
   pushNotifications: boolean;
@@ -201,12 +207,12 @@ export interface DeviceCapabilities {
   accessibility: AccessibilityFeature[];
 }
 
-export type AccessibilityFeature = 
-  | 'voice_over' 
-  | 'large_text' 
-  | 'high_contrast' 
-  | 'reduced_motion' 
-  | 'hearing_aid_compatible';
+export type AccessibilityFeature =
+  | "voice_over"
+  | "large_text"
+  | "high_contrast"
+  | "reduced_motion"
+  | "hearing_aid_compatible";
 
 export interface DeviceUsagePattern {
   primaryHours: number[];
@@ -231,7 +237,7 @@ export interface TimeWindow {
   timezone: string;
 }
 
-export type UrgencyLevel = 'low' | 'medium' | 'high' | 'critical';
+export type UrgencyLevel = "low" | "medium" | "high" | "critical";
 
 export interface EnabledChannel {
   channel: CommunicationType;
@@ -248,17 +254,17 @@ export interface AccessibilityNeeds {
 
 export interface AccessibilityRequirement {
   type: AccessibilityType;
-  severity: 'mild' | 'moderate' | 'severe';
+  severity: "mild" | "moderate" | "severe";
   accommodationRequired: boolean;
   description: string;
 }
 
-export type AccessibilityType = 
-  | 'visual_impairment' 
-  | 'hearing_impairment' 
-  | 'motor_impairment' 
-  | 'cognitive_impairment'
-  | 'language_barrier';
+export type AccessibilityType =
+  | "visual_impairment"
+  | "hearing_impairment"
+  | "motor_impairment"
+  | "cognitive_impairment"
+  | "language_barrier";
 
 export interface Accommodation {
   type: AccommodationType;
@@ -267,13 +273,13 @@ export interface Accommodation {
   lastReviewed: Date;
 }
 
-export type AccommodationType = 
-  | 'large_text' 
-  | 'high_contrast' 
-  | 'voice_output' 
-  | 'simplified_interface'
-  | 'multilingual_support'
-  | 'caregiver_copy';
+export type AccommodationType =
+  | "large_text"
+  | "high_contrast"
+  | "voice_output"
+  | "simplified_interface"
+  | "multilingual_support"
+  | "caregiver_copy";
 
 export interface SupportContact {
   name: string;
@@ -288,27 +294,27 @@ export interface ContactInformation {
   preferredMethod: CommunicationType;
 }
 
-export type SupportPermission = 
-  | 'receive_notifications' 
-  | 'emergency_contact' 
-  | 'medical_updates' 
-  | 'appointment_reminders';
+export type SupportPermission =
+  | "receive_notifications"
+  | "emergency_contact"
+  | "medical_updates"
+  | "appointment_reminders";
 
-export type CommunicationType = 'email' | 'sms' | 'whatsapp' | 'push' | 'voice' | 'video';
+export type CommunicationType = "email" | "sms" | "whatsapp" | "push" | "voice" | "video";
 
-export type CommunicationPurpose = 
-  | 'appointment_reminder'
-  | 'appointment_confirmation'
-  | 'appointment_reschedule'
-  | 'treatment_followup'
-  | 'medication_reminder'
-  | 'results_notification'
-  | 'marketing'
-  | 'educational'
-  | 'emergency'
-  | 'satisfaction_survey'
-  | 'payment_reminder'
-  | 'promotional';
+export type CommunicationPurpose =
+  | "appointment_reminder"
+  | "appointment_confirmation"
+  | "appointment_reschedule"
+  | "treatment_followup"
+  | "medication_reminder"
+  | "results_notification"
+  | "marketing"
+  | "educational"
+  | "emergency"
+  | "satisfaction_survey"
+  | "payment_reminder"
+  | "promotional";
 
 export interface ChannelOptimizationRequest {
   patientId: string;
@@ -329,12 +335,17 @@ export interface CommunicationContent {
   personalization: PersonalizationLevel;
 }
 
-export type ContentType = 'informational' | 'actionable' | 'promotional' | 'emergency' | 'educational';
-export type ContentLength = 'short' | 'medium' | 'long';
-export type ContentComplexity = 'simple' | 'moderate' | 'complex';
-export type MediaType = 'text' | 'image' | 'video' | 'audio' | 'document' | 'interactive';
-export type InteractivityLevel = 'none' | 'low' | 'medium' | 'high';
-export type PersonalizationLevel = 'none' | 'basic' | 'moderate' | 'high';
+export type ContentType =
+  | "informational"
+  | "actionable"
+  | "promotional"
+  | "emergency"
+  | "educational";
+export type ContentLength = "short" | "medium" | "long";
+export type ContentComplexity = "simple" | "moderate" | "complex";
+export type MediaType = "text" | "image" | "video" | "audio" | "document" | "interactive";
+export type InteractivityLevel = "none" | "low" | "medium" | "high";
+export type PersonalizationLevel = "none" | "basic" | "moderate" | "high";
 
 export interface OptimizationConstraints {
   maxChannels: number;
@@ -345,7 +356,7 @@ export interface OptimizationConstraints {
 }
 
 export interface TimeConstraint {
-  type: 'send_before' | 'send_after' | 'send_between';
+  type: "send_before" | "send_after" | "send_between";
   value: Date | TimeWindow;
 }
 
@@ -356,7 +367,7 @@ export interface BudgetConstraint {
 }
 
 export interface ComplianceRequirement {
-  type: 'lgpd' | 'anvisa' | 'cfm' | 'custom';
+  type: "lgpd" | "anvisa" | "cfm" | "custom";
   rule: string;
   mandatory: boolean;
 }
@@ -369,7 +380,7 @@ export interface ChannelExclusion {
 
 export interface ChannelPreferenceOverride {
   channel: CommunicationType;
-  override: 'force_include' | 'force_exclude' | 'prefer' | 'avoid';
+  override: "force_include" | "force_exclude" | "prefer" | "avoid";
   reason: string;
 }
 
@@ -403,13 +414,13 @@ export interface ContentAdaptation {
   impact: AdaptationImpact;
 }
 
-export type AdaptationType = 
-  | 'format_change' 
-  | 'length_adjustment' 
-  | 'tone_modification' 
-  | 'accessibility_enhancement'
-  | 'personalization_increase'
-  | 'simplification';
+export type AdaptationType =
+  | "format_change"
+  | "length_adjustment"
+  | "tone_modification"
+  | "accessibility_enhancement"
+  | "personalization_increase"
+  | "simplification";
 
 export interface AdaptationImpact {
   effectiveness: number; // percentage change
@@ -466,13 +477,18 @@ export interface Evidence {
   description: string;
 }
 
-export type EvidenceType = 'historical_data' | 'patient_preference' | 'clinical_guideline' | 'research_study' | 'expert_opinion';
+export type EvidenceType =
+  | "historical_data"
+  | "patient_preference"
+  | "clinical_guideline"
+  | "research_study"
+  | "expert_opinion";
 
 export interface Consideration {
   aspect: string;
   description: string;
-  impact: 'positive' | 'negative' | 'neutral';
-  importance: 'low' | 'medium' | 'high';
+  impact: "positive" | "negative" | "neutral";
+  importance: "low" | "medium" | "high";
 }
 
 export interface Tradeoff {
@@ -544,7 +560,7 @@ export interface CostBreakdown {
   unitCost: number;
 }
 
-export type CostType = 'fixed' | 'per_message' | 'per_minute' | 'per_engagement';
+export type CostType = "fixed" | "per_message" | "per_minute" | "per_engagement";
 
 export interface CostComparison {
   vsBaseline: number; // percentage difference
@@ -575,14 +591,14 @@ export interface RequirementValidation {
 
 export interface ComplianceRisk {
   risk: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   probability: number; // percentage
   mitigation: string[];
 }
 
 export interface ComplianceRecommendation {
   recommendation: string;
-  priority: 'low' | 'medium' | 'high';
+  priority: "low" | "medium" | "high";
   implementation: string;
   impact: string;
 }
@@ -606,8 +622,13 @@ export interface GlobalOptimizationSettings {
   optimizationFrequency: OptimizationFrequency;
 }
 
-export type OptimizationStrategy = 'effectiveness' | 'cost' | 'speed' | 'compliance' | 'patient_preference';
-export type OptimizationFrequency = 'realtime' | 'daily' | 'weekly' | 'monthly';
+export type OptimizationStrategy =
+  | "effectiveness"
+  | "cost"
+  | "speed"
+  | "compliance"
+  | "patient_preference";
+export type OptimizationFrequency = "realtime" | "daily" | "weekly" | "monthly";
 
 export interface ChannelSettings {
   enabled: boolean;
@@ -657,7 +678,11 @@ export interface AdaptationTrigger {
   metric: string;
 }
 
-export type TriggerType = 'effectiveness_drop' | 'engagement_drop' | 'complaint' | 'accessibility_need';
+export type TriggerType =
+  | "effectiveness_drop"
+  | "engagement_drop"
+  | "complaint"
+  | "accessibility_need";
 
 export interface ContentModification {
   type: ModificationType;
@@ -665,13 +690,13 @@ export interface ContentModification {
   validation: ValidationRule[];
 }
 
-export type ModificationType = 
-  | 'shorten_content' 
-  | 'simplify_language' 
-  | 'add_personalization' 
-  | 'change_tone'
-  | 'add_accessibility_features'
-  | 'modify_timing';
+export type ModificationType =
+  | "shorten_content"
+  | "simplify_language"
+  | "add_personalization"
+  | "change_tone"
+  | "add_accessibility_features"
+  | "modify_timing";
 
 export interface ValidationRule {
   rule: string;
@@ -682,7 +707,7 @@ export interface ValidationRule {
 export interface AdaptationCondition {
   condition: string;
   value: any;
-  operator: 'equals' | 'greater_than' | 'less_than' | 'contains' | 'in_range';
+  operator: "equals" | "greater_than" | "less_than" | "contains" | "in_range";
 }
 
 export interface QualityThresholds {
@@ -709,7 +734,7 @@ export interface ComplianceSettings {
   privacySettings: PrivacySettings;
 }
 
-export type ConsentType = 'marketing' | 'treatment' | 'research' | 'data_sharing' | 'communication';
+export type ConsentType = "marketing" | "treatment" | "research" | "data_sharing" | "communication";
 
 export interface DataRetentionPolicy {
   defaultPeriod: number; // days
@@ -736,7 +761,7 @@ export interface ChannelAnalytics {
 export interface AnalyticsPeriod {
   start: Date;
   end: Date;
-  granularity: 'hour' | 'day' | 'week' | 'month';
+  granularity: "hour" | "day" | "week" | "month";
 }
 
 export interface ChannelMetrics {
@@ -785,7 +810,7 @@ export interface QualityMetrics {
 }
 
 export interface TrendData {
-  direction: 'up' | 'down' | 'stable';
+  direction: "up" | "down" | "stable";
   magnitude: number; // percentage
   confidence: number;
 }
@@ -802,10 +827,10 @@ export interface ChannelInsight {
   insight: string;
   data: InsightData;
   actionable: boolean;
-  priority: 'low' | 'medium' | 'high';
+  priority: "low" | "medium" | "high";
 }
 
-export type InsightType = 'trend' | 'anomaly' | 'opportunity' | 'risk' | 'pattern';
+export type InsightType = "trend" | "anomaly" | "opportunity" | "risk" | "pattern";
 
 export interface InsightData {
   metric: string;
@@ -829,13 +854,13 @@ export interface AnalyticsRecommendation {
   dependencies: string[];
 }
 
-export type RecommendationType = 
-  | 'channel_optimization' 
-  | 'content_adaptation' 
-  | 'timing_adjustment'
-  | 'audience_segmentation'
-  | 'cost_optimization'
-  | 'compliance_improvement';
+export type RecommendationType =
+  | "channel_optimization"
+  | "content_adaptation"
+  | "timing_adjustment"
+  | "audience_segmentation"
+  | "cost_optimization"
+  | "compliance_improvement";
 
 export interface ImpactEstimate {
   effectiveness: number; // percentage improvement
@@ -845,9 +870,9 @@ export interface ImpactEstimate {
 }
 
 export interface EffortEstimate {
-  technical: 'low' | 'medium' | 'high';
-  operational: 'low' | 'medium' | 'high';
-  training: 'low' | 'medium' | 'high';
+  technical: "low" | "medium" | "high";
+  operational: "low" | "medium" | "high";
+  training: "low" | "medium" | "high";
   timeline: string;
 }
 
@@ -865,14 +890,14 @@ export interface ChannelOptimizationJob {
   completedAt?: Date;
 }
 
-export type JobType = 
-  | 'profile_update' 
-  | 'batch_optimization' 
-  | 'analytics_calculation'
-  | 'model_training'
-  | 'compliance_audit';
+export type JobType =
+  | "profile_update"
+  | "batch_optimization"
+  | "analytics_calculation"
+  | "model_training"
+  | "compliance_audit";
 
-export type JobStatus = 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
+export type JobStatus = "pending" | "running" | "completed" | "failed" | "cancelled";
 
 export interface JobParameters {
   patientIds?: string[];
@@ -934,7 +959,7 @@ export interface FeedbackFactor {
 export interface Improvement {
   area: string;
   suggestion: string;
-  priority: 'low' | 'medium' | 'high';
+  priority: "low" | "medium" | "high";
   implementation: string;
 }
 
@@ -949,7 +974,7 @@ export interface ChannelTestResult {
   completedAt?: Date;
 }
 
-export type TestType = 'ab_test' | 'multivariate' | 'champion_challenger' | 'canary';
+export type TestType = "ab_test" | "multivariate" | "champion_challenger" | "canary";
 
 export interface TestSetup {
   variants: TestVariant[];
@@ -980,7 +1005,7 @@ export interface TimingConfiguration {
   delays: DelayConfiguration[];
 }
 
-export type TimingStrategy = 'immediate' | 'optimal' | 'batch' | 'triggered';
+export type TimingStrategy = "immediate" | "optimal" | "batch" | "triggered";
 
 export interface DelayConfiguration {
   type: DelayType;
@@ -988,7 +1013,7 @@ export interface DelayConfiguration {
   conditions: DelayCondition[];
 }
 
-export type DelayType = 'fixed' | 'adaptive' | 'conditional';
+export type DelayType = "fixed" | "adaptive" | "conditional";
 
 export interface DelayCondition {
   condition: string;
@@ -1016,7 +1041,7 @@ export interface DataSource {
   conditions: SourceCondition[];
 }
 
-export type SourceType = 'patient_data' | 'appointment_data' | 'clinic_data' | 'external_api';
+export type SourceType = "patient_data" | "appointment_data" | "clinic_data" | "external_api";
 
 export interface SourceCondition {
   field: string;
@@ -1029,7 +1054,7 @@ export interface FormattingRule {
   parameters: Record<string, any>;
 }
 
-export type FormatType = 'date' | 'currency' | 'phone' | 'name' | 'address';
+export type FormatType = "date" | "currency" | "phone" | "name" | "address";
 
 export interface ContentAdaptationRule {
   trigger: ContentTrigger;
@@ -1079,7 +1104,7 @@ export interface AllocationStrategy {
   constraints: AllocationConstraint[];
 }
 
-export type AllocationType = 'random' | 'stratified' | 'cohort' | 'geographic';
+export type AllocationType = "random" | "stratified" | "cohort" | "geographic";
 
 export interface AllocationDistribution {
   variant: string;
@@ -1099,7 +1124,7 @@ export interface AllocationConstraint {
   value: any;
 }
 
-export type ConstraintType = 'demographic' | 'behavioral' | 'temporal' | 'geographic';
+export type ConstraintType = "demographic" | "behavioral" | "temporal" | "geographic";
 
 export interface TestDuration {
   type: DurationType;
@@ -1107,12 +1132,12 @@ export interface TestDuration {
   conditions: StoppingCondition[];
 }
 
-export type DurationType = 'fixed_time' | 'sample_size' | 'significance' | 'conditional';
+export type DurationType = "fixed_time" | "sample_size" | "significance" | "conditional";
 
 export interface StoppingCondition {
   metric: string;
   threshold: number;
-  direction: 'greater_than' | 'less_than' | 'significant_difference';
+  direction: "greater_than" | "less_than" | "significant_difference";
 }
 
 export interface SuccessMetric {
@@ -1123,7 +1148,7 @@ export interface SuccessMetric {
   weight: number; // 0-1
 }
 
-export type MetricType = 'conversion' | 'engagement' | 'satisfaction' | 'cost' | 'time';
+export type MetricType = "conversion" | "engagement" | "satisfaction" | "cost" | "time";
 
 export interface MetricCalculation {
   formula: string;
@@ -1143,7 +1168,7 @@ export interface MetricTarget {
   tolerance: number;
 }
 
-export type TargetType = 'absolute' | 'relative' | 'lift' | 'improvement';
+export type TargetType = "absolute" | "relative" | "lift" | "improvement";
 
 export interface TestSegment {
   name: string;
@@ -1163,7 +1188,7 @@ export interface SegmentAllocation {
   distribution: Record<string, number>; // variant -> percentage
 }
 
-export type SegmentStrategy = 'proportional' | 'equal' | 'weighted' | 'custom';
+export type SegmentStrategy = "proportional" | "equal" | "weighted" | "custom";
 
 export interface TestResults {
   summary: ResultSummary;
@@ -1181,7 +1206,11 @@ export interface ResultSummary {
   recommendedAction: RecommendedAction;
 }
 
-export type RecommendedAction = 'implement_winner' | 'continue_testing' | 'stop_test' | 'redesign_test';
+export type RecommendedAction =
+  | "implement_winner"
+  | "continue_testing"
+  | "stop_test"
+  | "redesign_test";
 
 export interface VariantResult {
   variant: string;
@@ -1231,7 +1260,7 @@ export interface ConfidenceInterval {
 }
 
 export interface TrendAnalysis {
-  direction: 'improving' | 'declining' | 'stable';
+  direction: "improving" | "declining" | "stable";
   rate: number; // percentage per day
   confidence: number;
 }
@@ -1256,7 +1285,7 @@ export interface MetricRecommendation {
   next_steps: string[];
 }
 
-export type MetricAction = 'implement' | 'investigate' | 'ignore' | 'monitor';
+export type MetricAction = "implement" | "investigate" | "ignore" | "monitor";
 
 export interface SignificanceResult {
   overall: SignificanceTest;
@@ -1277,7 +1306,7 @@ export interface TestStatistic {
   degreesOfFreedom?: number;
 }
 
-export type StatisticType = 'chi_square' | 't_test' | 'f_test' | 'z_test';
+export type StatisticType = "chi_square" | "t_test" | "f_test" | "z_test";
 
 export interface PairwiseComparison {
   variant1: string;
@@ -1331,7 +1360,11 @@ export interface SegmentInsight {
   actionable: boolean;
 }
 
-export type SegmentInsightType = 'performance_difference' | 'demographic_pattern' | 'behavioral_pattern' | 'opportunity';
+export type SegmentInsightType =
+  | "performance_difference"
+  | "demographic_pattern"
+  | "behavioral_pattern"
+  | "opportunity";
 
 export interface TestConclusion {
   decision: TestDecision;
@@ -1347,7 +1380,7 @@ export interface TestDecision {
   timeline: string;
 }
 
-export type DecisionAction = 'implement' | 'iterate' | 'abandon' | 'extend_test';
+export type DecisionAction = "implement" | "iterate" | "abandon" | "extend_test";
 
 export interface ConclusionReasoning {
   primary: string[];
@@ -1391,7 +1424,7 @@ export interface ResourceRequirement {
   duration: string;
 }
 
-export type ResourceType = 'engineering' | 'design' | 'data' | 'clinical' | 'marketing';
+export type ResourceType = "engineering" | "design" | "data" | "clinical" | "marketing";
 
 export interface ImplementationRisk {
   risk: string;
@@ -1400,7 +1433,7 @@ export interface ImplementationRisk {
   mitigation: string[];
 }
 
-export type RiskImpact = 'low' | 'medium' | 'high' | 'critical';
+export type RiskImpact = "low" | "medium" | "high" | "critical";
 
 export interface FollowUpPlan {
   monitoring: MonitoringPlan;
@@ -1415,12 +1448,12 @@ export interface MonitoringPlan {
   reporting: ReportingConfiguration;
 }
 
-export type MonitoringFrequency = 'realtime' | 'hourly' | 'daily' | 'weekly';
+export type MonitoringFrequency = "realtime" | "hourly" | "daily" | "weekly";
 
 export interface AlertConfiguration {
   metric: string;
   threshold: number;
-  direction: 'above' | 'below' | 'change';
+  direction: "above" | "below" | "change";
   recipients: string[];
 }
 
@@ -1431,8 +1464,8 @@ export interface ReportingConfiguration {
   content: string[];
 }
 
-export type ReportingFrequency = 'daily' | 'weekly' | 'monthly' | 'quarterly';
-export type ReportFormat = 'dashboard' | 'email' | 'pdf' | 'api';
+export type ReportingFrequency = "daily" | "weekly" | "monthly" | "quarterly";
+export type ReportFormat = "dashboard" | "email" | "pdf" | "api";
 
 export interface OptimizationPlan {
   opportunities: OptimizationOpportunity[];
@@ -1448,8 +1481,8 @@ export interface OptimizationOpportunity {
   priority: OpportunityPriority;
 }
 
-export type EffortLevel = 'low' | 'medium' | 'high';
-export type OpportunityPriority = 'low' | 'medium' | 'high' | 'critical';
+export type EffortLevel = "low" | "medium" | "high";
+export type OpportunityPriority = "low" | "medium" | "high" | "critical";
 
 export interface OptimizationTimeline {
   quick_wins: string[]; // 0-30 days
@@ -1470,7 +1503,7 @@ export interface NextTest {
   priority: TestPriority;
 }
 
-export type TestPriority = 'low' | 'medium' | 'high' | 'critical';
+export type TestPriority = "low" | "medium" | "high" | "critical";
 
 export interface LearningApplication {
   learning: string;
@@ -1500,7 +1533,7 @@ export interface PlannedTest {
   resources: string[];
 }
 
-export type TestScope = 'single_channel' | 'multi_channel' | 'full_journey' | 'segment_specific';
+export type TestScope = "single_channel" | "multi_channel" | "full_journey" | "segment_specific";
 
 export interface ResourceAllocation {
   engineering: number; // person-days
@@ -1543,7 +1576,7 @@ export interface SkillDevelopment {
   timeline: string;
 }
 
-export type SkillLevel = 'beginner' | 'intermediate' | 'advanced' | 'expert';
+export type SkillLevel = "beginner" | "intermediate" | "advanced" | "expert";
 
 export interface ToolRequirement {
   tool: string;

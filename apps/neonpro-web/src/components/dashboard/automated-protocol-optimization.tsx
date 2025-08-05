@@ -1,15 +1,15 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
+import type { Progress } from "@/components/ui/progress";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
   Activity,
   AlertTriangle,
   BarChart3,
@@ -64,18 +64,13 @@ export default function AutomatedProtocolOptimization({
       {/* Header Section */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">
-            Protocol Optimization
-          </h2>
+          <h2 className="text-3xl font-bold tracking-tight">Protocol Optimization</h2>
           <p className="text-muted-foreground">
             AI-powered protocol analysis and automated improvements
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <Badge
-            variant="outline"
-            className={`${statusColor[data.status]} text-white border-0`}
-          >
+          <Badge variant="outline" className={`${statusColor[data.status]} text-white border-0`}>
             {statusIcon[data.status]}
             <span className="ml-1 capitalize">{data.status}</span>
           </Badge>
@@ -90,24 +85,18 @@ export default function AutomatedProtocolOptimization({
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Current Version
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Current Version</CardTitle>
             <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{data.currentVersion}</div>
-            <p className="text-xs text-muted-foreground">
-              Latest protocol version
-            </p>
+            <p className="text-xs text-muted-foreground">Latest protocol version</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Optimization Score
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Optimization Score</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -121,24 +110,18 @@ export default function AutomatedProtocolOptimization({
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Active Experiments
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Active Experiments</CardTitle>
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{data.activeExperiments}</div>
-            <p className="text-xs text-muted-foreground">
-              Running optimization tests
-            </p>
+            <p className="text-xs text-muted-foreground">Running optimization tests</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Completed Analyses
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Completed Analyses</CardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -162,15 +145,11 @@ export default function AutomatedProtocolOptimization({
             <Card className="col-span-4">
               <CardHeader>
                 <CardTitle>Protocol Performance</CardTitle>
-                <CardDescription>
-                  Real-time analysis of protocol effectiveness
-                </CardDescription>
+                <CardDescription>Real-time analysis of protocol effectiveness</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="h-[300px] flex items-center justify-center bg-muted/10 rounded-lg">
-                  <p className="text-muted-foreground">
-                    Performance Chart Placeholder
-                  </p>
+                  <p className="text-muted-foreground">Performance Chart Placeholder</p>
                 </div>
               </CardContent>
             </Card>
@@ -185,9 +164,7 @@ export default function AutomatedProtocolOptimization({
                   <AlertTriangle className="h-5 w-5 text-yellow-500 mt-0.5" />
                   <div>
                     <p className="text-sm font-medium">Priority Action</p>
-                    <p className="text-sm text-muted-foreground">
-                      {data.nextRecommendation}
-                    </p>
+                    <p className="text-sm text-muted-foreground">{data.nextRecommendation}</p>
                   </div>
                 </div>
                 <Button className="w-full">Implement Recommendation</Button>
@@ -200,15 +177,11 @@ export default function AutomatedProtocolOptimization({
           <Card>
             <CardHeader>
               <CardTitle>Active Experiments</CardTitle>
-              <CardDescription>
-                Currently running protocol optimization experiments
-              </CardDescription>
+              <CardDescription>Currently running protocol optimization experiments</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="h-[400px] flex items-center justify-center bg-muted/10 rounded-lg">
-                <p className="text-muted-foreground">
-                  Experiments List Placeholder
-                </p>
+                <p className="text-muted-foreground">Experiments List Placeholder</p>
               </div>
             </CardContent>
           </Card>
@@ -218,15 +191,11 @@ export default function AutomatedProtocolOptimization({
           <Card>
             <CardHeader>
               <CardTitle>Protocol Analytics</CardTitle>
-              <CardDescription>
-                Detailed analytics and performance metrics
-              </CardDescription>
+              <CardDescription>Detailed analytics and performance metrics</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="h-[400px] flex items-center justify-center bg-muted/10 rounded-lg">
-                <p className="text-muted-foreground">
-                  Analytics Dashboard Placeholder
-                </p>
+                <p className="text-muted-foreground">Analytics Dashboard Placeholder</p>
               </div>
             </CardContent>
           </Card>
@@ -236,15 +205,11 @@ export default function AutomatedProtocolOptimization({
           <Card>
             <CardHeader>
               <CardTitle>AI Recommendations</CardTitle>
-              <CardDescription>
-                Machine learning-powered protocol improvements
-              </CardDescription>
+              <CardDescription>Machine learning-powered protocol improvements</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="h-[400px] flex items-center justify-center bg-muted/10 rounded-lg">
-                <p className="text-muted-foreground">
-                  Recommendations Engine Placeholder
-                </p>
+                <p className="text-muted-foreground">Recommendations Engine Placeholder</p>
               </div>
             </CardContent>
           </Card>

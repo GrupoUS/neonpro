@@ -12,17 +12,17 @@ export class DemandForecastingService {
       predictedDemand: 0,
       confidence: 0,
       seasonalFactors: [],
-      trendAnalysis: null
+      trendAnalysis: null,
     };
   }
 
   static async analyzeTrends(itemId: string, historicalData: any[]) {
     // Implementar análise de tendências
     return {
-      trend: 'stable',
+      trend: "stable",
       growthRate: 0,
       seasonality: false,
-      anomalies: []
+      anomalies: [],
     };
   }
 
@@ -31,7 +31,7 @@ export class DemandForecastingService {
     return {
       recommendations: [],
       potentialSavings: 0,
-      riskAssessment: 'low'
+      riskAssessment: "low",
     };
   }
 }

@@ -4,15 +4,15 @@
  */
 
 // Configuration
-export { clerkConfig, healthcareAppearance, validateClerkConfig } from './clerk-config';
+export { clerkConfig, healthcareAppearance, validateClerkConfig } from "./clerk-config";
 
 // Session Management
-export { 
+export {
   sessionManager,
   ClerkSessionManager,
   type SessionMetadata,
-  type SessionOptions 
-} from './simple-session-manager';
+  type SessionOptions,
+} from "./simple-session-manager";
 
 // Utilities and Helpers
 export {
@@ -29,8 +29,8 @@ export {
   HealthcarePermissions,
   type AuthResult,
   type HealthcareRole,
-  type HealthcarePermission
-} from './utils';
+  type HealthcarePermission,
+} from "./utils";
 
 // Re-export essential Clerk hooks and components for convenience
 export {
@@ -45,11 +45,11 @@ export {
   SignedIn,
   SignedOut,
   RedirectToSignIn,
-  RedirectToSignUp
-} from '@clerk/nextjs';
+  RedirectToSignUp,
+} from "@clerk/nextjs";
 
 // Re-export server utilities
 export {
   auth,
-  currentUser
-} from '@clerk/nextjs/server';
+  currentUser,
+} from "@clerk/nextjs/server";

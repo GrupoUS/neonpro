@@ -1,26 +1,32 @@
 /**
  * Simple placeholder components for remaining analytics dashboard tabs
  * Epic 10 - Story 10.5: Vision Analytics Dashboard (Real-time Insights)
- * 
+ *
  * These are basic implementations to ensure the dashboard functions.
  * They can be enhanced in future iterations.
- * 
+ *
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 
-'use client';
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import {
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type {
   BarChart3,
   Brain,
   Shield,
   TrendingUp,
   Activity,
   AlertTriangle,
-  CheckCircle
-} from 'lucide-react';
+  CheckCircle,
+} from "lucide-react";
 
 // Types for props
 interface BasePanelProps {

@@ -1,43 +1,49 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import {
+} from "@/components/ui/select";
+import type {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import {
+} from "@/components/ui/table";
+import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
+} from "@/components/ui/dropdown-menu";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import {
+} from "@/components/ui/dialog";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type {
   CheckCircle,
   XCircle,
   Clock,
@@ -54,17 +60,17 @@ import {
   RefreshCw,
   AlertTriangle,
   Shield,
-} from 'lucide-react';
-import { formatBytes, formatDuration, formatDate } from '@/lib/utils';
-import { toast } from 'sonner';
+} from "lucide-react";
+import type { formatBytes, formatDuration, formatDate } from "@/lib/utils";
+import type { toast } from "sonner";
 
 // Types
 interface BackupRecord {
   id: string;
   config_id: string;
   config_name: string;
-  status: 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
-  type: 'FULL' | 'INCREMENTAL' | 'DIFFERENTIAL' | 'DATABASE' | 'FILES';
+  status: "PENDING" | "RUNNING" | "COMPLETED" | "FAILED" | "CANCELLED";
+  type: "FULL" | "INCREMENTAL" | "DIFFERENTIAL" | "DATABASE" | "FILES";
   start_time: Date;
   end_time?: Date;
   duration?: number;
@@ -107,11 +113,11 @@ const BackupHistory: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [filters, setFilters] = useState({
-    status: '',
-    type: '',
-    dateFrom: '',
-    dateTo: '',
-    searchTerm: '',
+    status: "",
+    type: "",
+    dateFrom: "",
+    dateTo: "",
+    searchTerm: "",
   });
 
   const itemsPerPage = 20;
@@ -138,11 +144,11 @@ const BackupHistory: React.FC = () => {
         setBackups(data.data || []);
         setTotalPages(Math.ceil((data.total || 0) / itemsPerPage));
       } else {
-        toast.error('Erro ao carregar histórico de backups');
+        toast.error("Erro ao carregar histórico de backups");
       }
     } catch (error) {
-      console.error('Erro ao carregar histórico:', error);
-      toast.error('Erro ao carregar histórico de backups');
+      console.error("Erro ao carregar histórico:", error);
+      toast.error("Erro ao carregar histórico de backups");
     } finally {
       setLoading(false);
     }
@@ -152,28 +158,28 @@ const BackupHistory: React.FC = () => {
     let filtered = [...backups];
 
     if (filters.status) {
-      filtered = filtered.filter(backup => backup.status === filters.status);
+      filtered = filtered.filter((backup) => backup.status === filters.status);
     }
 
     if (filters.type) {
-      filtered = filtered.filter(backup => backup.type === filters.type);
+      filtered = filtered.filter((backup) => backup.type === filters.type);
     }
 
     if (filters.dateFrom) {
       const fromDate = new Date(filters.dateFrom);
-      filtered = filtered.filter(backup => new Date(backup.start_time) >= fromDate);
+      filtered = filtered.filter((backup) => new Date(backup.start_time) >= fromDate);
     }
 
     if (filters.dateTo) {
       const toDate = new Date(filters.dateTo);
-      filtered = filtered.filter(backup => new Date(backup.start_time) <= toDate);
+      filtered = filtered.filter((backup) => new Date(backup.start_time) <= toDate);
     }
 
     if (filters.searchTerm) {
       const term = filters.searchTerm.toLowerCase();
-      filtered = filtered.filter(backup => 
-        backup.config_name.toLowerCase().includes(term) ||
-        backup.id.toLowerCase().includes(term)
+      filtered = filtered.filter(
+        (backup) =>
+          backup.config_name.toLowerCase().includes(term) || backup.id.toLowerCase().includes(term),
       );
     }
 
@@ -188,55 +194,55 @@ const BackupHistory: React.FC = () => {
         setSelectedBackup(data.data);
         setShowDetails(true);
       } else {
-        toast.error('Erro ao carregar detalhes do backup');
+        toast.error("Erro ao carregar detalhes do backup");
       }
     } catch (error) {
-      console.error('Erro ao carregar detalhes:', error);
-      toast.error('Erro ao carregar detalhes do backup');
+      console.error("Erro ao carregar detalhes:", error);
+      toast.error("Erro ao carregar detalhes do backup");
     }
   };
 
   const handleDownloadBackup = async (backupId: string) => {
     try {
-      toast.info('Iniciando download do backup...');
+      toast.info("Iniciando download do backup...");
       // Implementar download do backup
       // const response = await fetch(`/api/backup/jobs/${backupId}/download`);
       // ... lógica de download
     } catch (error) {
-      console.error('Erro ao baixar backup:', error);
-      toast.error('Erro ao baixar backup');
+      console.error("Erro ao baixar backup:", error);
+      toast.error("Erro ao baixar backup");
     }
   };
 
   const handleDeleteBackup = async (backupId: string) => {
     try {
       const response = await fetch(`/api/backup/jobs/${backupId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (response.ok) {
-        toast.success('Backup removido com sucesso');
+        toast.success("Backup removido com sucesso");
         loadBackupHistory();
       } else {
-        toast.error('Erro ao remover backup');
+        toast.error("Erro ao remover backup");
       }
     } catch (error) {
-      console.error('Erro ao remover backup:', error);
-      toast.error('Erro ao remover backup');
+      console.error("Erro ao remover backup:", error);
+      toast.error("Erro ao remover backup");
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'COMPLETED':
+      case "COMPLETED":
         return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case 'FAILED':
+      case "FAILED":
         return <XCircle className="h-4 w-4 text-red-500" />;
-      case 'RUNNING':
+      case "RUNNING":
         return <RefreshCw className="h-4 w-4 text-blue-500 animate-spin" />;
-      case 'PENDING':
+      case "PENDING":
         return <Clock className="h-4 w-4 text-yellow-500" />;
-      case 'CANCELLED':
+      case "CANCELLED":
         return <XCircle className="h-4 w-4 text-gray-500" />;
       default:
         return <Clock className="h-4 w-4 text-gray-500" />;
@@ -245,9 +251,9 @@ const BackupHistory: React.FC = () => {
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'DATABASE':
+      case "DATABASE":
         return <Database className="h-4 w-4" />;
-      case 'FILES':
+      case "FILES":
         return <HardDrive className="h-4 w-4" />;
       default:
         return <Shield className="h-4 w-4" />;
@@ -256,18 +262,18 @@ const BackupHistory: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'COMPLETED':
-        return 'default';
-      case 'FAILED':
-        return 'destructive';
-      case 'RUNNING':
-        return 'secondary';
-      case 'PENDING':
-        return 'outline';
-      case 'CANCELLED':
-        return 'secondary';
+      case "COMPLETED":
+        return "default";
+      case "FAILED":
+        return "destructive";
+      case "RUNNING":
+        return "secondary";
+      case "PENDING":
+        return "outline";
+      case "CANCELLED":
+        return "secondary";
       default:
-        return 'outline';
+        return "outline";
     }
   };
 
@@ -281,7 +287,7 @@ const BackupHistory: React.FC = () => {
           </p>
         </div>
         <Button onClick={loadBackupHistory} disabled={loading}>
-          <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
           Atualizar
         </Button>
       </div>
@@ -376,12 +382,8 @@ const BackupHistory: React.FC = () => {
       {/* Tabela de Histórico */}
       <Card>
         <CardHeader>
-          <CardTitle>
-            Backups ({filteredBackups.length})
-          </CardTitle>
-          <CardDescription>
-            Histórico completo de operações de backup
-          </CardDescription>
+          <CardTitle>Backups ({filteredBackups.length})</CardTitle>
+          <CardDescription>Histórico completo de operações de backup</CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -392,9 +394,7 @@ const BackupHistory: React.FC = () => {
           ) : filteredBackups.length === 0 ? (
             <div className="text-center py-8">
               <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">
-                Nenhum backup encontrado
-              </p>
+              <p className="text-muted-foreground">Nenhum backup encontrado</p>
             </div>
           ) : (
             <Table>
@@ -433,7 +433,7 @@ const BackupHistory: React.FC = () => {
                           {backup.status}
                         </Badge>
                       </div>
-                      {backup.status === 'FAILED' && backup.error_message && (
+                      {backup.status === "FAILED" && backup.error_message && (
                         <div className="text-xs text-red-500 mt-1 max-w-xs truncate">
                           {backup.error_message}
                         </div>
@@ -450,7 +450,7 @@ const BackupHistory: React.FC = () => {
                     <TableCell>
                       {backup.duration ? (
                         formatDuration(backup.duration)
-                      ) : backup.status === 'RUNNING' ? (
+                      ) : backup.status === "RUNNING" ? (
                         <span className="text-blue-500">Em execução...</span>
                       ) : (
                         <span className="text-muted-foreground">-</span>
@@ -479,16 +479,12 @@ const BackupHistory: React.FC = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                          <DropdownMenuItem
-                            onClick={() => loadBackupDetails(backup.id)}
-                          >
+                          <DropdownMenuItem onClick={() => loadBackupDetails(backup.id)}>
                             <Eye className="h-4 w-4 mr-2" />
                             Ver Detalhes
                           </DropdownMenuItem>
-                          {backup.status === 'COMPLETED' && (
-                            <DropdownMenuItem
-                              onClick={() => handleDownloadBackup(backup.id)}
-                            >
+                          {backup.status === "COMPLETED" && (
+                            <DropdownMenuItem onClick={() => handleDownloadBackup(backup.id)}>
                               <Download className="h-4 w-4 mr-2" />
                               Download
                             </DropdownMenuItem>
@@ -540,9 +536,7 @@ const BackupHistory: React.FC = () => {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Detalhes do Backup</DialogTitle>
-            <DialogDescription>
-              Informações detalhadas sobre a operação de backup
-            </DialogDescription>
+            <DialogDescription>Informações detalhadas sobre a operação de backup</DialogDescription>
           </DialogHeader>
           {selectedBackup && (
             <div className="space-y-4">
@@ -568,7 +562,7 @@ const BackupHistory: React.FC = () => {
                 <div>
                   <Label className="text-sm font-medium">Início</Label>
                   <p className="text-sm text-muted-foreground">
-                    {formatDate(new Date(selectedBackup.start_time))} às{' '}
+                    {formatDate(new Date(selectedBackup.start_time))} às{" "}
                     {new Date(selectedBackup.start_time).toLocaleTimeString()}
                   </p>
                 </div>
@@ -576,7 +570,7 @@ const BackupHistory: React.FC = () => {
                   <div>
                     <Label className="text-sm font-medium">Fim</Label>
                     <p className="text-sm text-muted-foreground">
-                      {formatDate(new Date(selectedBackup.end_time))} às{' '}
+                      {formatDate(new Date(selectedBackup.end_time))} às{" "}
                       {new Date(selectedBackup.end_time).toLocaleTimeString()}
                     </p>
                   </div>
@@ -648,7 +642,7 @@ const BackupHistory: React.FC = () => {
                     </div>
                     <div className="text-center">
                       <p className="text-2xl font-bold text-purple-600">
-                        {selectedBackup.metrics.verification_status === 'PASSED' ? '✓' : '✗'}
+                        {selectedBackup.metrics.verification_status === "PASSED" ? "✓" : "✗"}
                       </p>
                       <p className="text-xs text-muted-foreground">Verificação</p>
                     </div>

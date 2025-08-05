@@ -1,1 +1,3 @@
-﻿export default function UsageLimitGate() { return <div>Usage Limit Gate</div>; }
+﻿export default function UsageLimitGate() {
+  return <div>Usage Limit Gate</div>;
+}

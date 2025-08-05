@@ -1,5 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
-import { NextResponse } from "next/server";
+import type { createClient } from "@/lib/supabase/server";
+import type { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   try {
@@ -36,7 +36,7 @@ export async function GET(request: Request) {
         phone,
         email,
         is_active
-      `
+      `,
       )
       .eq("clinic_id", profile.clinic_id)
       .eq("is_active", true)
@@ -49,9 +49,6 @@ export async function GET(request: Request) {
     return NextResponse.json(professionals);
   } catch (error) {
     console.error("API Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

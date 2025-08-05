@@ -1,25 +1,25 @@
-'use client';
+"use client";
 
-import React, { useState, useRef, useEffect } from 'react';
-import { Send, Paperclip, Phone, Video, MoreHorizontal } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from '@/components/ui/dropdown-menu';
-import { useCommunicationRealtime } from '@/hooks/use-communication-realtime';
-import { Message } from '@/types/communication';
-import { formatDistanceToNow } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { cn } from '@/lib/utils';
+import React, { useState, useRef, useEffect } from "react";
+import type { Send, Paperclip, Phone, Video, MoreHorizontal } from "lucide-react";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Badge } from "@/components/ui/badge";
+import type { Separator } from "@/components/ui/separator";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import type { useCommunicationRealtime } from "@/hooks/use-communication-realtime";
+import type { Message } from "@/types/communication";
+import type { formatDistanceToNow } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { cn } from "@/lib/utils";
 
 export interface StaffChatProps {
   conversationId: string;
@@ -32,13 +32,8 @@ export interface StaffChatProps {
   className?: string;
 }
 
-export function StaffChat({ 
-  conversationId, 
-  userId, 
-  patientContext,
-  className 
-}: StaffChatProps) {
-  const [messageInput, setMessageInput] = useState('');
+export function StaffChat({ conversationId, userId, patientContext, className }: StaffChatProps) {
+  const [messageInput, setMessageInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -52,16 +47,16 @@ export function StaffChat({
     typingUsers,
     sendMessage,
     markAsRead,
-    broadcastTyping
+    broadcastTyping,
   } = useCommunicationRealtime({
     conversationId,
     userId,
-    autoConnect: true
+    autoConnect: true,
   });
 
   // Auto scroll para a última mensagem
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   // Gerenciar status de digitação
@@ -86,20 +81,20 @@ export function StaffChat({
   // Enviar mensagem
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!messageInput.trim()) return;
 
     const content = messageInput.trim();
-    setMessageInput('');
-    
+    setMessageInput("");
+
     // Parar indicador de digitação
     if (isTyping) {
       setIsTyping(false);
       broadcastTyping(false);
     }
 
-    await sendMessage(content, 'text', conversationId);
-    
+    await sendMessage(content, "text", conversationId);
+
     // Focar novamente no input
     inputRef.current?.focus();
   };
@@ -107,52 +102,46 @@ export function StaffChat({
   // Renderizar mensagem
   const renderMessage = (message: Message, index: number) => {
     const isCurrentUser = message.sender_id === userId;
-    const showAvatar = !isCurrentUser && (
-      index === 0 || 
-      messages[index - 1]?.sender_id !== message.sender_id
-    );
+    const showAvatar =
+      !isCurrentUser && (index === 0 || messages[index - 1]?.sender_id !== message.sender_id);
 
     return (
       <div
         key={message.id}
-        className={cn(
-          'flex gap-3 mb-4',
-          isCurrentUser ? 'flex-row-reverse' : 'flex-row'
-        )}
+        className={cn("flex gap-3 mb-4", isCurrentUser ? "flex-row-reverse" : "flex-row")}
       >
         {showAvatar && !isCurrentUser && (
           <Avatar className="w-8 h-8">
             <AvatarImage src={message.sender?.raw_user_meta_data?.avatar} />
             <AvatarFallback>
-              {message.sender?.raw_user_meta_data?.full_name?.[0] || 
-               message.sender?.email?.[0]?.toUpperCase() || 'U'}
+              {message.sender?.raw_user_meta_data?.full_name?.[0] ||
+                message.sender?.email?.[0]?.toUpperCase() ||
+                "U"}
             </AvatarFallback>
           </Avatar>
         )}
-        
+
         {!showAvatar && !isCurrentUser && (
           <div className="w-8" /> // Espaçamento
         )}
-        
-        <div className={cn(
-          'max-w-[70%] flex flex-col',
-          isCurrentUser ? 'items-end' : 'items-start'
-        )}>
+
+        <div
+          className={cn("max-w-[70%] flex flex-col", isCurrentUser ? "items-end" : "items-start")}
+        >
           {!isCurrentUser && showAvatar && (
             <span className="text-xs text-muted-foreground mb-1">
-              {message.sender?.raw_user_meta_data?.full_name || 
-               message.sender?.email || 'Usuário'}
+              {message.sender?.raw_user_meta_data?.full_name || message.sender?.email || "Usuário"}
             </span>
           )}
-          
-          <div className={cn(
-            'rounded-lg px-3 py-2 break-words',
-            isCurrentUser 
-              ? 'bg-primary text-primary-foreground' 
-              : 'bg-muted'
-          )}>
+
+          <div
+            className={cn(
+              "rounded-lg px-3 py-2 break-words",
+              isCurrentUser ? "bg-primary text-primary-foreground" : "bg-muted",
+            )}
+          >
             <p>{message.content}</p>
-            
+
             {message.attachments && message.attachments.length > 0 && (
               <div className="mt-2 space-y-1">
                 {message.attachments.map((attachment) => (
@@ -164,15 +153,13 @@ export function StaffChat({
               </div>
             )}
           </div>
-          
+
           <span className="text-xs text-muted-foreground mt-1">
             {formatDistanceToNow(new Date(message.created_at), {
               addSuffix: true,
-              locale: ptBR
+              locale: ptBR,
             })}
-            {message.read_at && isCurrentUser && (
-              <span className="ml-1">✓</span>
-            )}
+            {message.read_at && isCurrentUser && <span className="ml-1">✓</span>}
           </span>
         </div>
       </div>
@@ -180,25 +167,23 @@ export function StaffChat({
   };
 
   return (
-    <Card className={cn('flex flex-col h-[600px]', className)}>
+    <Card className={cn("flex flex-col h-[600px]", className)}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <CardTitle className="text-lg">
-              {patientContext ? `Chat - ${patientContext.name}` : 'Chat da Equipe'}
+              {patientContext ? `Chat - ${patientContext.name}` : "Chat da Equipe"}
             </CardTitle>
             <div className="flex items-center gap-2">
-              <Badge variant={isConnected ? 'default' : 'destructive'}>
-                {isConnected ? 'Conectado' : 'Desconectado'}
+              <Badge variant={isConnected ? "default" : "destructive"}>
+                {isConnected ? "Conectado" : "Desconectado"}
               </Badge>
               {patientContext && (
-                <Badge variant="outline">
-                  Paciente #{patientContext.id.slice(-6)}
-                </Badge>
+                <Badge variant="outline">Paciente #{patientContext.id.slice(-6)}</Badge>
               )}
             </div>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm">
               <Phone className="w-4 h-4" />
@@ -232,13 +217,13 @@ export function StaffChat({
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
           )}
-          
+
           {error && (
             <div className="text-center py-8 text-destructive">
               <p>Erro ao carregar chat: {error}</p>
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 className="mt-2"
                 onClick={() => window.location.reload()}
               >
@@ -246,16 +231,16 @@ export function StaffChat({
               </Button>
             </div>
           )}
-          
+
           {!isLoading && !error && messages.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
               <p>Nenhuma mensagem ainda.</p>
               <p className="text-sm mt-1">Inicie a conversa!</p>
             </div>
           )}
-          
+
           {messages.map((message, index) => renderMessage(message, index))}
-          
+
           {/* Indicador de digitação */}
           {typingUsers.length > 0 && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -265,13 +250,13 @@ export function StaffChat({
                 <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce delay-200" />
               </div>
               <span>
-                {typingUsers.length === 1 
-                  ? 'Alguém está digitando...' 
+                {typingUsers.length === 1
+                  ? "Alguém está digitando..."
                   : `${typingUsers.length} pessoas estão digitando...`}
               </span>
             </div>
           )}
-          
+
           <div ref={messagesEndRef} />
         </ScrollArea>
 
@@ -280,15 +265,10 @@ export function StaffChat({
         {/* Input de mensagem */}
         <div className="p-4">
           <form onSubmit={handleSendMessage} className="flex gap-2">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="shrink-0"
-            >
+            <Button type="button" variant="ghost" size="sm" className="shrink-0">
               <Paperclip className="w-4 h-4" />
             </Button>
-            
+
             <Input
               ref={inputRef}
               value={messageInput}
@@ -300,12 +280,8 @@ export function StaffChat({
               className="flex-1"
               disabled={!isConnected}
             />
-            
-            <Button
-              type="submit"
-              disabled={!messageInput.trim() || !isConnected}
-              size="sm"
-            >
+
+            <Button type="submit" disabled={!messageInput.trim() || !isConnected} size="sm">
               <Send className="w-4 h-4" />
             </Button>
           </form>

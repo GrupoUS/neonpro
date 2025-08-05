@@ -1,8 +1,8 @@
-// Main Dashboard Layout - STORY-SUB-002 Task 4  
+// Main Dashboard Layout - STORY-SUB-002 Task 4
 // Integrates analytics overview, conversion charts, and trial management
 // Based on research: SaaS dashboard best practices + shadcn/ui patterns
 // Created: 2025-01-22
-'use client';
+"use client";
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Dashboard = Dashboard;
@@ -16,9 +16,12 @@ var analytics_overview_1 = require("./analytics/analytics-overview");
 var conversion_charts_1 = require("./analytics/conversion-charts");
 var trial_management_1 = require("./trial-management/trial-management");
 function Dashboard(_a) {
-    var className = _a.className;
-    var _b = (0, react_1.useState)('overview'), activeTab = _b[0], setActiveTab = _b[1];
-    return (<div className={(0, utils_1.cn)('flex-1 space-y-4 p-4 md:p-8 pt-6', className)}>
+  var className = _a.className;
+  var _b = (0, react_1.useState)("overview"),
+    activeTab = _b[0],
+    setActiveTab = _b[1];
+  return (
+    <div className={(0, utils_1.cn)("flex-1 space-y-4 p-4 md:p-8 pt-6", className)}>
       {/* Dashboard Header */}
       <div className="flex items-center justify-between space-y-2">
         <div>
@@ -29,35 +32,36 @@ function Dashboard(_a) {
         </div>
         <div className="flex items-center space-x-2">
           <button_1.Button variant="outline" size="sm">
-            <lucide_react_1.Download className="mr-2 h-4 w-4"/>
+            <lucide_react_1.Download className="mr-2 h-4 w-4" />
             Export
           </button_1.Button>
           <button_1.Button variant="outline" size="sm">
-            <lucide_react_1.Filter className="mr-2 h-4 w-4"/>
+            <lucide_react_1.Filter className="mr-2 h-4 w-4" />
             Filters
           </button_1.Button>
           <button_1.Button variant="outline" size="sm">
-            <lucide_react_1.Bell className="mr-2 h-4 w-4"/>
+            <lucide_react_1.Bell className="mr-2 h-4 w-4" />
             Alerts
           </button_1.Button>
           <button_1.Button variant="outline" size="sm">
-            <lucide_react_1.Settings className="mr-2 h-4 w-4"/>
+            <lucide_react_1.Settings className="mr-2 h-4 w-4" />
             Settings
           </button_1.Button>
         </div>
-      </div>      {/* Main Dashboard Tabs */}
+      </div>{" "}
+      {/* Main Dashboard Tabs */}
       <tabs_1.Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <tabs_1.TabsList className="grid w-full grid-cols-3">
           <tabs_1.TabsTrigger value="overview" className="flex items-center space-x-2">
-            <lucide_react_1.BarChart3 className="h-4 w-4"/>
+            <lucide_react_1.BarChart3 className="h-4 w-4" />
             <span>Overview</span>
           </tabs_1.TabsTrigger>
           <tabs_1.TabsTrigger value="analytics" className="flex items-center space-x-2">
-            <lucide_react_1.TrendingUp className="h-4 w-4"/>
+            <lucide_react_1.TrendingUp className="h-4 w-4" />
             <span>Analytics</span>
           </tabs_1.TabsTrigger>
           <tabs_1.TabsTrigger value="trials" className="flex items-center space-x-2">
-            <lucide_react_1.Users className="h-4 w-4"/>
+            <lucide_react_1.Users className="h-4 w-4" />
             <span>Trial Management</span>
           </tabs_1.TabsTrigger>
         </tabs_1.TabsList>
@@ -77,13 +81,12 @@ function Dashboard(_a) {
           <trial_management_1.TrialManagement />
         </tabs_1.TabsContent>
       </tabs_1.Tabs>
-
       {/* Quick Stats Cards - Always Visible */}
       <div className="grid gap-4 md:grid-cols-4">
         <card_1.Card>
           <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <card_1.CardTitle className="text-sm font-medium">Active Trials</card_1.CardTitle>
-            <lucide_react_1.Users className="h-4 w-4 text-muted-foreground"/>
+            <lucide_react_1.Users className="h-4 w-4 text-muted-foreground" />
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="text-2xl font-bold">124</div>
@@ -92,11 +95,11 @@ function Dashboard(_a) {
             </p>
           </card_1.CardContent>
         </card_1.Card>
-        
+
         <card_1.Card>
           <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <card_1.CardTitle className="text-sm font-medium">Conversion Rate</card_1.CardTitle>
-            <lucide_react_1.TrendingUp className="h-4 w-4 text-muted-foreground"/>
+            <lucide_react_1.TrendingUp className="h-4 w-4 text-muted-foreground" />
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="text-2xl font-bold">26.8%</div>
@@ -105,11 +108,11 @@ function Dashboard(_a) {
             </p>
           </card_1.CardContent>
         </card_1.Card>
-        
+
         <card_1.Card>
           <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <card_1.CardTitle className="text-sm font-medium">High Risk Trials</card_1.CardTitle>
-            <lucide_react_1.RefreshCw className="h-4 w-4 text-muted-foreground"/>
+            <lucide_react_1.RefreshCw className="h-4 w-4 text-muted-foreground" />
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="text-2xl font-bold">8</div>
@@ -118,11 +121,11 @@ function Dashboard(_a) {
             </p>
           </card_1.CardContent>
         </card_1.Card>
-        
+
         <card_1.Card>
           <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <card_1.CardTitle className="text-sm font-medium">Revenue This Month</card_1.CardTitle>
-            <lucide_react_1.BarChart3 className="h-4 w-4 text-muted-foreground"/>
+            <lucide_react_1.BarChart3 className="h-4 w-4 text-muted-foreground" />
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="text-2xl font-bold">$18,420</div>
@@ -132,5 +135,6 @@ function Dashboard(_a) {
           </card_1.CardContent>
         </card_1.Card>
       </div>
-    </div>);
+    </div>
+  );
 }

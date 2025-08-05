@@ -3,10 +3,10 @@ import type { Config } from "tailwindcss";
 const config: Config = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
   ],
   prefix: "",
   theme: {
@@ -21,20 +21,20 @@ const config: Config = {
       colors: {
         // NEONPROV1 Design System Colors
         neon: {
-          primary: '#1E40AF',      // Blue-700 - Primary brand
-          secondary: '#3B82F6',    // Blue-500 - Secondary actions
-          accent: '#60A5FA',       // Blue-400 - Accent elements
-          success: '#10B981',      // Emerald-500 - Success states
-          warning: '#F59E0B',      // Amber-500 - Warning states
-          danger: '#EF4444',       // Red-500 - Error/danger states
+          primary: "#1E40AF", // Blue-700 - Primary brand
+          secondary: "#3B82F6", // Blue-500 - Secondary actions
+          accent: "#60A5FA", // Blue-400 - Accent elements
+          success: "#10B981", // Emerald-500 - Success states
+          warning: "#F59E0B", // Amber-500 - Warning states
+          danger: "#EF4444", // Red-500 - Error/danger states
         },
         // Healthcare specific colors
         healthcare: {
-          critical: '#DC2626',     // Red-600 - Critical alerts
-          urgent: '#EA580C',       // Orange-600 - Urgent priority
-          normal: '#059669',       // Emerald-600 - Normal status
-          pending: '#D97706',      // Amber-600 - Pending status
-          completed: '#16A34A',    // Green-600 - Completed
+          critical: "#DC2626", // Red-600 - Critical alerts
+          urgent: "#EA580C", // Orange-600 - Urgent priority
+          normal: "#059669", // Emerald-600 - Normal status
+          pending: "#D97706", // Amber-600 - Pending status
+          completed: "#16A34A", // Green-600 - Completed
         },
         border: "oklch(var(--border))",
         input: "oklch(var(--input))",
@@ -70,22 +70,22 @@ const config: Config = {
           foreground: "oklch(var(--card-foreground))",
         },
         chart: {
-          '1': 'oklch(var(--chart-1))',
-          '2': 'oklch(var(--chart-2))',
-          '3': 'oklch(var(--chart-3))',
-          '4': 'oklch(var(--chart-4))',
-          '5': 'oklch(var(--chart-5))'
+          "1": "oklch(var(--chart-1))",
+          "2": "oklch(var(--chart-2))",
+          "3": "oklch(var(--chart-3))",
+          "4": "oklch(var(--chart-4))",
+          "5": "oklch(var(--chart-5))",
         },
         sidebar: {
-          DEFAULT: 'oklch(var(--sidebar-background))',
-          foreground: 'oklch(var(--sidebar-foreground))',
-          primary: 'oklch(var(--sidebar-primary))',
-          'primary-foreground': 'oklch(var(--sidebar-primary-foreground))',
-          accent: 'oklch(var(--sidebar-accent))',
-          'accent-foreground': 'oklch(var(--sidebar-accent-foreground))',
-          border: 'oklch(var(--sidebar-border))',
-          ring: 'oklch(var(--sidebar-ring))'
-        }
+          DEFAULT: "oklch(var(--sidebar-background))",
+          foreground: "oklch(var(--sidebar-foreground))",
+          primary: "oklch(var(--sidebar-primary))",
+          "primary-foreground": "oklch(var(--sidebar-primary-foreground))",
+          accent: "oklch(var(--sidebar-accent))",
+          "accent-foreground": "oklch(var(--sidebar-accent-foreground))",
+          border: "oklch(var(--sidebar-border))",
+          ring: "oklch(var(--sidebar-ring))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -94,35 +94,35 @@ const config: Config = {
       },
       // NEONPROV1 Animation System
       animation: {
-        'fade-in': 'fadeIn 0.3s ease-in-out',
-        'slide-in': 'slideIn 0.3s ease-out',
-        'pulse-neon': 'pulseNeon 2s ease-in-out infinite',
-        'bounce-soft': 'bounceSoft 0.6s ease-out',
+        "fade-in": "fadeIn 0.3s ease-in-out",
+        "slide-in": "slideIn 0.3s ease-out",
+        "pulse-neon": "pulseNeon 2s ease-in-out infinite",
+        "bounce-soft": "bounceSoft 0.6s ease-out",
       },
       keyframes: {
         fadeIn: {
-          '0%': { opacity: '0', transform: 'translateY(10px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
+          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
         },
         slideIn: {
-          '0%': { opacity: '0', transform: 'translateX(-20px)' },
-          '100%': { opacity: '1', transform: 'translateX(0)' },
+          "0%": { opacity: "0", transform: "translateX(-20px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
         },
         pulseNeon: {
-          '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0.8' },
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.8" },
         },
         bounceSoft: {
-          '0%, 20%, 53%, 80%, 100%': { transform: 'translateY(0)' },
-          '40%, 43%': { transform: 'translateY(-8px)' },
-          '70%': { transform: 'translateY(-4px)' },
+          "0%, 20%, 53%, 80%, 100%": { transform: "translateY(0)" },
+          "40%, 43%": { transform: "translateY(-8px)" },
+          "70%": { transform: "translateY(-4px)" },
         },
       },
       // Healthcare specific spacing
       spacing: {
-        '18': '4.5rem',
-        '88': '22rem',
-        '128': '32rem',
+        "18": "4.5rem",
+        "88": "22rem",
+        "128": "32rem",
       },
       keyframes: {
         "accordion-down": {

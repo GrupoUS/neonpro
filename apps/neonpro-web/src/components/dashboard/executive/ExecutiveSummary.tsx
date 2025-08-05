@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import {
+import React, { useState, useEffect } from "react";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Progress } from "@/components/ui/progress";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Separator } from "@/components/ui/separator";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type {
   TrendingUp,
   TrendingDown,
   Minus,
@@ -34,9 +34,9 @@ import {
   FileText,
   ArrowRight,
   ArrowUp,
-  ArrowDown
-} from 'lucide-react';
-import { format, subDays, startOfMonth, endOfMonth, isToday, isYesterday } from 'date-fns';
+  ArrowDown,
+} from "lucide-react";
+import type { format, subDays, startOfMonth, endOfMonth, isToday, isYesterday } from "date-fns";
 
 // Types
 interface ExecutiveSummaryData {
@@ -66,19 +66,19 @@ interface KeyMetric {
   value: number;
   previousValue: number;
   target: number;
-  unit: 'currency' | 'percentage' | 'number' | 'duration';
-  trend: 'up' | 'down' | 'stable';
-  status: 'excellent' | 'good' | 'warning' | 'critical';
-  impact: 'high' | 'medium' | 'low';
-  category: 'financial' | 'operational' | 'clinical' | 'satisfaction';
+  unit: "currency" | "percentage" | "number" | "duration";
+  trend: "up" | "down" | "stable";
+  status: "excellent" | "good" | "warning" | "critical";
+  impact: "high" | "medium" | "low";
+  category: "financial" | "operational" | "clinical" | "satisfaction";
 }
 
 interface Insight {
   id: string;
   title: string;
   description: string;
-  type: 'opportunity' | 'risk' | 'trend' | 'anomaly';
-  priority: 'high' | 'medium' | 'low';
+  type: "opportunity" | "risk" | "trend" | "anomaly";
+  priority: "high" | "medium" | "low";
   impact: string;
   confidence: number;
   relatedMetrics: string[];
@@ -89,9 +89,9 @@ interface Recommendation {
   id: string;
   title: string;
   description: string;
-  category: 'financial' | 'operational' | 'clinical' | 'strategic';
-  priority: 'high' | 'medium' | 'low';
-  effort: 'low' | 'medium' | 'high';
+  category: "financial" | "operational" | "clinical" | "strategic";
+  priority: "high" | "medium" | "low";
+  effort: "low" | "medium" | "high";
   expectedImpact: string;
   timeline: string;
   resources: string[];
@@ -102,7 +102,7 @@ interface Alert {
   id: string;
   title: string;
   message: string;
-  severity: 'critical' | 'warning' | 'info';
+  severity: "critical" | "warning" | "info";
   category: string;
   timestamp: Date;
   acknowledged: boolean;
@@ -116,16 +116,16 @@ interface Achievement {
   category: string;
   value: string;
   date: Date;
-  impact: 'high' | 'medium' | 'low';
+  impact: "high" | "medium" | "low";
 }
 
 interface Trend {
   id: string;
   metric: string;
-  direction: 'up' | 'down' | 'stable';
+  direction: "up" | "down" | "stable";
   magnitude: number;
   duration: string;
-  significance: 'high' | 'medium' | 'low';
+  significance: "high" | "medium" | "low";
   description: string;
 }
 
@@ -149,14 +149,14 @@ interface FinancialSummary {
   };
   cashFlow: {
     current: number;
-    trend: 'positive' | 'negative' | 'stable';
+    trend: "positive" | "negative" | "stable";
   };
 }
 
 interface OperationalSummary {
   efficiency: {
     score: number;
-    trend: 'up' | 'down' | 'stable';
+    trend: "up" | "down" | "stable";
   };
   capacity: {
     utilization: number;
@@ -205,42 +205,44 @@ interface ExecutiveSummaryProps {
 
 const PRIORITY_CONFIG = {
   high: {
-    color: 'text-red-600',
-    bgColor: 'bg-red-50',
-    borderColor: 'border-red-200',
-    label: 'High Priority'
+    color: "text-red-600",
+    bgColor: "bg-red-50",
+    borderColor: "border-red-200",
+    label: "High Priority",
   },
   medium: {
-    color: 'text-yellow-600',
-    bgColor: 'bg-yellow-50',
-    borderColor: 'border-yellow-200',
-    label: 'Medium Priority'
+    color: "text-yellow-600",
+    bgColor: "bg-yellow-50",
+    borderColor: "border-yellow-200",
+    label: "Medium Priority",
   },
   low: {
-    color: 'text-green-600',
-    bgColor: 'bg-green-50',
-    borderColor: 'border-green-200',
-    label: 'Low Priority'
-  }
+    color: "text-green-600",
+    bgColor: "bg-green-50",
+    borderColor: "border-green-200",
+    label: "Low Priority",
+  },
 };
 
 const STATUS_CONFIG = {
-  excellent: { color: 'text-green-600', icon: CheckCircle, label: 'Excellent' },
-  good: { color: 'text-blue-600', icon: CheckCircle, label: 'Good' },
-  warning: { color: 'text-yellow-600', icon: AlertTriangle, label: 'Warning' },
-  critical: { color: 'text-red-600', icon: XCircle, label: 'Critical' }
+  excellent: { color: "text-green-600", icon: CheckCircle, label: "Excellent" },
+  good: { color: "text-blue-600", icon: CheckCircle, label: "Good" },
+  warning: { color: "text-yellow-600", icon: AlertTriangle, label: "Warning" },
+  critical: { color: "text-red-600", icon: XCircle, label: "Critical" },
 };
 
 export function ExecutiveSummary({
   clinicId,
   dateRange,
-  className = '',
+  className = "",
   showDetails = true,
   autoRefresh = true,
-  refreshInterval = 300000 // 5 minutes
+  refreshInterval = 300000, // 5 minutes
 }: ExecutiveSummaryProps) {
   const [summaryData, setSummaryData] = useState<ExecutiveSummaryData | null>(null);
-  const [selectedTab, setSelectedTab] = useState<'overview' | 'insights' | 'recommendations' | 'details'>('overview');
+  const [selectedTab, setSelectedTab] = useState<
+    "overview" | "insights" | "recommendations" | "details"
+  >("overview");
   const [isLoading, setIsLoading] = useState(true);
   const [lastRefresh, setLastRefresh] = useState(new Date());
 
@@ -250,12 +252,12 @@ export function ExecutiveSummary({
       setIsLoading(true);
       try {
         // Simulate API call - replace with actual implementation
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        await new Promise((resolve) => setTimeout(resolve, 1500));
         const mockData = generateMockSummaryData(clinicId, dateRange);
         setSummaryData(mockData);
         setLastRefresh(new Date());
       } catch (err) {
-        console.error('Failed to load executive summary:', err);
+        console.error("Failed to load executive summary:", err);
       } finally {
         setIsLoading(false);
       }
@@ -275,10 +277,10 @@ export function ExecutiveSummary({
           setSummaryData(mockData);
           setLastRefresh(new Date());
         } catch (err) {
-          console.error('Failed to refresh summary:', err);
+          console.error("Failed to refresh summary:", err);
         }
       };
-      
+
       refreshData();
     }, refreshInterval);
 
@@ -288,28 +290,28 @@ export function ExecutiveSummary({
   // Format value based on unit
   const formatValue = (value: number, unit: string): string => {
     switch (unit) {
-      case 'currency':
-        return new Intl.NumberFormat('pt-BR', {
-          style: 'currency',
-          currency: 'BRL'
+      case "currency":
+        return new Intl.NumberFormat("pt-BR", {
+          style: "currency",
+          currency: "BRL",
         }).format(value);
-      case 'percentage':
+      case "percentage":
         return `${value.toFixed(1)}%`;
-      case 'duration':
+      case "duration":
         const hours = Math.floor(value / 60);
         const minutes = value % 60;
         return `${hours}h ${minutes}m`;
       default:
-        return value.toLocaleString('pt-BR');
+        return value.toLocaleString("pt-BR");
     }
   };
 
   // Get trend icon
-  const getTrendIcon = (trend: string, size = 'h-4 w-4') => {
+  const getTrendIcon = (trend: string, size = "h-4 w-4") => {
     switch (trend) {
-      case 'up':
+      case "up":
         return <TrendingUp className={`${size} text-green-600`} />;
-      case 'down':
+      case "down":
         return <TrendingDown className={`${size} text-red-600`} />;
       default:
         return <Minus className={`${size} text-gray-600`} />;
@@ -319,11 +321,11 @@ export function ExecutiveSummary({
   // Calculate score change
   const getScoreChange = (current: number, previous: number) => {
     const change = current - previous;
-    const percentage = ((change / previous) * 100);
+    const percentage = (change / previous) * 100;
     return {
       value: change,
       percentage,
-      trend: change > 0 ? 'up' : change < 0 ? 'down' : 'stable'
+      trend: change > 0 ? "up" : change < 0 ? "down" : "stable",
     };
   };
 
@@ -331,12 +333,12 @@ export function ExecutiveSummary({
   const handleRefresh = async () => {
     setIsLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       const mockData = generateMockSummaryData(clinicId, dateRange);
       setSummaryData(mockData);
       setLastRefresh(new Date());
     } catch (err) {
-      console.error('Failed to refresh summary:', err);
+      console.error("Failed to refresh summary:", err);
     } finally {
       setIsLoading(false);
     }
@@ -345,18 +347,18 @@ export function ExecutiveSummary({
   // Export summary
   const handleExport = () => {
     if (!summaryData) return;
-    
+
     const exportData = {
       ...summaryData,
-      exportedAt: new Date().toISOString()
+      exportedAt: new Date().toISOString(),
     };
-    
+
     const dataStr = JSON.stringify(exportData, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const dataBlob = new Blob([dataStr], { type: "application/json" });
     const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.download = `executive-summary-${format(new Date(), 'yyyy-MM-dd')}.json`;
+    link.download = `executive-summary-${format(new Date(), "yyyy-MM-dd")}.json`;
     link.click();
     URL.revokeObjectURL(url);
   };
@@ -406,25 +408,27 @@ export function ExecutiveSummary({
             Executive Summary
             {isLoading && <RefreshCw className="h-4 w-4 animate-spin" />}
           </CardTitle>
-          
+
           <div className="flex items-center gap-2">
             <Button size="sm" variant="outline" onClick={handleRefresh} disabled={isLoading}>
-              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
             </Button>
-            
+
             <Button size="sm" variant="outline" onClick={handleExport}>
               <Download className="h-4 w-4" />
             </Button>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          <span>Last updated: {format(lastRefresh, 'HH:mm:ss')}</span>
+          <span>Last updated: {format(lastRefresh, "HH:mm:ss")}</span>
           <Separator orientation="vertical" className="h-4" />
-          <span>Period: {format(dateRange.from, 'MMM dd')} - {format(dateRange.to, 'MMM dd')}</span>
+          <span>
+            Period: {format(dateRange.from, "MMM dd")} - {format(dateRange.to, "MMM dd")}
+          </span>
         </div>
       </CardHeader>
-      
+
       <CardContent>
         {/* Overall Score */}
         <div className="mb-6">
@@ -432,23 +436,29 @@ export function ExecutiveSummary({
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold text-blue-900 mb-2">Overall Performance Score</h3>
+                  <h3 className="text-lg font-semibold text-blue-900 mb-2">
+                    Overall Performance Score
+                  </h3>
                   <div className="flex items-center gap-4">
                     <div className="text-4xl font-bold text-blue-900">
                       {summaryData.overallScore.toFixed(1)}/10
                     </div>
                     <div className="flex items-center gap-2">
-                      {getTrendIcon(scoreChange.trend, 'h-6 w-6')}
+                      {getTrendIcon(scoreChange.trend, "h-6 w-6")}
                       <div className="text-sm">
-                        <div className={`font-medium ${
-                          scoreChange.trend === 'up' ? 'text-green-600' : 
-                          scoreChange.trend === 'down' ? 'text-red-600' : 'text-gray-600'
-                        }`}>
-                          {scoreChange.value > 0 ? '+' : ''}{scoreChange.value.toFixed(1)}
+                        <div
+                          className={`font-medium ${
+                            scoreChange.trend === "up"
+                              ? "text-green-600"
+                              : scoreChange.trend === "down"
+                                ? "text-red-600"
+                                : "text-gray-600"
+                          }`}
+                        >
+                          {scoreChange.value > 0 ? "+" : ""}
+                          {scoreChange.value.toFixed(1)}
                         </div>
-                        <div className="text-muted-foreground">
-                          vs. previous period
-                        </div>
+                        <div className="text-muted-foreground">vs. previous period</div>
                       </div>
                     </div>
                   </div>
@@ -469,7 +479,7 @@ export function ExecutiveSummary({
             <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
             <TabsTrigger value="details">Details</TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="overview" className="space-y-6">
             {/* Key Metrics */}
             <div>
@@ -481,8 +491,9 @@ export function ExecutiveSummary({
                 {summaryData.keyMetrics.slice(0, 4).map((metric) => {
                   const statusConfig = STATUS_CONFIG[metric.status];
                   const StatusIcon = statusConfig.icon;
-                  const change = ((metric.value - metric.previousValue) / metric.previousValue) * 100;
-                  
+                  const change =
+                    ((metric.value - metric.previousValue) / metric.previousValue) * 100;
+
                   return (
                     <Card key={metric.id}>
                       <CardContent className="p-4">
@@ -495,11 +506,17 @@ export function ExecutiveSummary({
                         </div>
                         <div className="flex items-center gap-2 text-sm">
                           {getTrendIcon(metric.trend)}
-                          <span className={`${
-                            change > 0 ? 'text-green-600' : 
-                            change < 0 ? 'text-red-600' : 'text-gray-600'
-                          }`}>
-                            {change > 0 ? '+' : ''}{change.toFixed(1)}%
+                          <span
+                            className={`${
+                              change > 0
+                                ? "text-green-600"
+                                : change < 0
+                                  ? "text-red-600"
+                                  : "text-gray-600"
+                            }`}
+                          >
+                            {change > 0 ? "+" : ""}
+                            {change.toFixed(1)}%
                           </span>
                         </div>
                       </CardContent>
@@ -524,7 +541,7 @@ export function ExecutiveSummary({
                     <span className="text-sm">Revenue</span>
                     <div className="text-right">
                       <div className="font-medium">
-                        {formatValue(summaryData.financialSummary.revenue.current, 'currency')}
+                        {formatValue(summaryData.financialSummary.revenue.current, "currency")}
                       </div>
                       <div className="text-xs text-green-600">
                         +{summaryData.financialSummary.revenue.growth.toFixed(1)}%
@@ -541,9 +558,9 @@ export function ExecutiveSummary({
                     <span className="text-sm">Cash Flow</span>
                     <div className="flex items-center gap-1">
                       <span className="font-medium">
-                        {formatValue(summaryData.financialSummary.cashFlow.current, 'currency')}
+                        {formatValue(summaryData.financialSummary.cashFlow.current, "currency")}
                       </span>
-                      {summaryData.financialSummary.cashFlow.trend === 'positive' && (
+                      {summaryData.financialSummary.cashFlow.trend === "positive" && (
                         <ArrowUp className="h-3 w-3 text-green-600" />
                       )}
                     </div>
@@ -566,7 +583,7 @@ export function ExecutiveSummary({
                       <span className="font-medium">
                         {summaryData.operationalSummary.efficiency.score.toFixed(1)}%
                       </span>
-                      {getTrendIcon(summaryData.operationalSummary.efficiency.trend, 'h-3 w-3')}
+                      {getTrendIcon(summaryData.operationalSummary.efficiency.trend, "h-3 w-3")}
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
@@ -634,7 +651,7 @@ export function ExecutiveSummary({
                             <Badge variant="secondary" className="bg-green-100 text-green-800">
                               {achievement.category}
                             </Badge>
-                            <span>{format(achievement.date, 'MMM dd')}</span>
+                            <span>{format(achievement.date, "MMM dd")}</span>
                           </div>
                         </div>
                       </div>
@@ -644,7 +661,7 @@ export function ExecutiveSummary({
               </div>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="insights" className="space-y-6">
             <div>
               <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -654,9 +671,12 @@ export function ExecutiveSummary({
               <div className="space-y-4">
                 {summaryData.insights.map((insight) => {
                   const priorityConfig = PRIORITY_CONFIG[insight.priority];
-                  
+
                   return (
-                    <Card key={insight.id} className={`${priorityConfig.borderColor} ${priorityConfig.bgColor}`}>
+                    <Card
+                      key={insight.id}
+                      className={`${priorityConfig.borderColor} ${priorityConfig.bgColor}`}
+                    >
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex-1">
@@ -665,11 +685,16 @@ export function ExecutiveSummary({
                               <Badge variant="secondary" className="text-xs">
                                 {insight.type}
                               </Badge>
-                              <Badge variant="outline" className={`text-xs ${priorityConfig.color}`}>
+                              <Badge
+                                variant="outline"
+                                className={`text-xs ${priorityConfig.color}`}
+                              >
                                 {priorityConfig.label}
                               </Badge>
                             </div>
-                            <p className="text-sm text-muted-foreground mb-2">{insight.description}</p>
+                            <p className="text-sm text-muted-foreground mb-2">
+                              {insight.description}
+                            </p>
                             <p className="text-sm font-medium">{insight.impact}</p>
                           </div>
                           <div className="text-right">
@@ -700,7 +725,7 @@ export function ExecutiveSummary({
               </div>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="recommendations" className="space-y-6">
             <div>
               <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -710,7 +735,7 @@ export function ExecutiveSummary({
               <div className="space-y-4">
                 {summaryData.recommendations.map((recommendation) => {
                   const priorityConfig = PRIORITY_CONFIG[recommendation.priority];
-                  
+
                   return (
                     <Card key={recommendation.id}>
                       <CardContent className="p-4">
@@ -721,15 +746,22 @@ export function ExecutiveSummary({
                               <Badge variant="secondary" className="text-xs">
                                 {recommendation.category}
                               </Badge>
-                              <Badge variant="outline" className={`text-xs ${priorityConfig.color}`}>
+                              <Badge
+                                variant="outline"
+                                className={`text-xs ${priorityConfig.color}`}
+                              >
                                 {priorityConfig.label}
                               </Badge>
                             </div>
-                            <p className="text-sm text-muted-foreground mb-3">{recommendation.description}</p>
+                            <p className="text-sm text-muted-foreground mb-3">
+                              {recommendation.description}
+                            </p>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                               <div>
                                 <span className="font-medium">Expected Impact:</span>
-                                <p className="text-muted-foreground">{recommendation.expectedImpact}</p>
+                                <p className="text-muted-foreground">
+                                  {recommendation.expectedImpact}
+                                </p>
                               </div>
                               <div>
                                 <span className="font-medium">Timeline:</span>
@@ -762,7 +794,7 @@ export function ExecutiveSummary({
               </div>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="details" className="space-y-6">
             {/* Trends */}
             <div>
@@ -801,34 +833,46 @@ export function ExecutiveSummary({
                 Active Alerts
               </h3>
               <div className="space-y-2">
-                {summaryData.alerts.filter(alert => !alert.acknowledged).map((alert) => (
-                  <Card key={alert.id} className={`${
-                    alert.severity === 'critical' ? 'border-red-200 bg-red-50' :
-                    alert.severity === 'warning' ? 'border-yellow-200 bg-yellow-50' :
-                    'border-blue-200 bg-blue-50'
-                  }`}>
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h4 className="font-medium">{alert.title}</h4>
-                            <Badge variant="outline" className={`text-xs ${
-                              alert.severity === 'critical' ? 'text-red-600' :
-                              alert.severity === 'warning' ? 'text-yellow-600' :
-                              'text-blue-600'
-                            }`}>
-                              {alert.severity}
-                            </Badge>
+                {summaryData.alerts
+                  .filter((alert) => !alert.acknowledged)
+                  .map((alert) => (
+                    <Card
+                      key={alert.id}
+                      className={`${
+                        alert.severity === "critical"
+                          ? "border-red-200 bg-red-50"
+                          : alert.severity === "warning"
+                            ? "border-yellow-200 bg-yellow-50"
+                            : "border-blue-200 bg-blue-50"
+                      }`}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="font-medium">{alert.title}</h4>
+                              <Badge
+                                variant="outline"
+                                className={`text-xs ${
+                                  alert.severity === "critical"
+                                    ? "text-red-600"
+                                    : alert.severity === "warning"
+                                      ? "text-yellow-600"
+                                      : "text-blue-600"
+                                }`}
+                              >
+                                {alert.severity}
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-muted-foreground">{alert.message}</p>
                           </div>
-                          <p className="text-sm text-muted-foreground">{alert.message}</p>
+                          <div className="text-xs text-muted-foreground">
+                            {format(alert.timestamp, "HH:mm")}
+                          </div>
                         </div>
-                        <div className="text-xs text-muted-foreground">
-                          {format(alert.timestamp, 'HH:mm')}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                      </CardContent>
+                    </Card>
+                  ))}
               </div>
             </div>
           </TabsContent>
@@ -839,7 +883,10 @@ export function ExecutiveSummary({
 }
 
 // Helper function to generate mock summary data
-function generateMockSummaryData(clinicId: string, dateRange: { from: Date; to: Date }): ExecutiveSummaryData {
+function generateMockSummaryData(
+  clinicId: string,
+  dateRange: { from: Date; to: Date },
+): ExecutiveSummaryData {
   return {
     id: `summary-${clinicId}-${Date.now()}`,
     clinicId,
@@ -848,215 +895,218 @@ function generateMockSummaryData(clinicId: string, dateRange: { from: Date; to: 
     previousScore: 7.9,
     keyMetrics: [
       {
-        id: 'revenue',
-        name: 'Revenue',
+        id: "revenue",
+        name: "Revenue",
         value: 125000,
         previousValue: 118000,
         target: 130000,
-        unit: 'currency',
-        trend: 'up',
-        status: 'good',
-        impact: 'high',
-        category: 'financial'
+        unit: "currency",
+        trend: "up",
+        status: "good",
+        impact: "high",
+        category: "financial",
       },
       {
-        id: 'satisfaction',
-        name: 'Patient Satisfaction',
+        id: "satisfaction",
+        name: "Patient Satisfaction",
         value: 4.7,
         previousValue: 4.5,
         target: 4.8,
-        unit: 'number',
-        trend: 'up',
-        status: 'excellent',
-        impact: 'high',
-        category: 'satisfaction'
+        unit: "number",
+        trend: "up",
+        status: "excellent",
+        impact: "high",
+        category: "satisfaction",
       },
       {
-        id: 'efficiency',
-        name: 'Operational Efficiency',
+        id: "efficiency",
+        name: "Operational Efficiency",
         value: 87.3,
         previousValue: 84.1,
         target: 90.0,
-        unit: 'percentage',
-        trend: 'up',
-        status: 'good',
-        impact: 'medium',
-        category: 'operational'
+        unit: "percentage",
+        trend: "up",
+        status: "good",
+        impact: "medium",
+        category: "operational",
       },
       {
-        id: 'wait-time',
-        name: 'Avg Wait Time',
+        id: "wait-time",
+        name: "Avg Wait Time",
         value: 18,
         previousValue: 22,
         target: 15,
-        unit: 'duration',
-        trend: 'down',
-        status: 'warning',
-        impact: 'medium',
-        category: 'operational'
-      }
+        unit: "duration",
+        trend: "down",
+        status: "warning",
+        impact: "medium",
+        category: "operational",
+      },
     ],
     insights: [
       {
-        id: 'insight-1',
-        title: 'Revenue Growth Acceleration',
-        description: 'Revenue growth has accelerated by 15% compared to the previous period, driven by increased patient volume and new service offerings.',
-        type: 'opportunity',
-        priority: 'high',
-        impact: 'Potential for 20% revenue increase if trend continues',
+        id: "insight-1",
+        title: "Revenue Growth Acceleration",
+        description:
+          "Revenue growth has accelerated by 15% compared to the previous period, driven by increased patient volume and new service offerings.",
+        type: "opportunity",
+        priority: "high",
+        impact: "Potential for 20% revenue increase if trend continues",
         confidence: 85,
-        relatedMetrics: ['Revenue', 'Patient Volume'],
-        actionable: true
+        relatedMetrics: ["Revenue", "Patient Volume"],
+        actionable: true,
       },
       {
-        id: 'insight-2',
-        title: 'Wait Time Improvement Needed',
-        description: 'Despite recent improvements, wait times are still above target. Peak hours show the highest delays.',
-        type: 'risk',
-        priority: 'medium',
-        impact: 'May affect patient satisfaction if not addressed',
+        id: "insight-2",
+        title: "Wait Time Improvement Needed",
+        description:
+          "Despite recent improvements, wait times are still above target. Peak hours show the highest delays.",
+        type: "risk",
+        priority: "medium",
+        impact: "May affect patient satisfaction if not addressed",
         confidence: 78,
-        relatedMetrics: ['Wait Time', 'Patient Satisfaction'],
-        actionable: true
-      }
+        relatedMetrics: ["Wait Time", "Patient Satisfaction"],
+        actionable: true,
+      },
     ],
     recommendations: [
       {
-        id: 'rec-1',
-        title: 'Implement Advanced Scheduling System',
-        description: 'Deploy AI-powered scheduling to optimize appointment distribution and reduce wait times.',
-        category: 'operational',
-        priority: 'high',
-        effort: 'medium',
-        expectedImpact: '25% reduction in wait times, 10% increase in patient satisfaction',
-        timeline: '2-3 months',
-        resources: ['IT Team', 'Training Budget'],
-        kpis: ['Wait Time', 'Patient Satisfaction']
+        id: "rec-1",
+        title: "Implement Advanced Scheduling System",
+        description:
+          "Deploy AI-powered scheduling to optimize appointment distribution and reduce wait times.",
+        category: "operational",
+        priority: "high",
+        effort: "medium",
+        expectedImpact: "25% reduction in wait times, 10% increase in patient satisfaction",
+        timeline: "2-3 months",
+        resources: ["IT Team", "Training Budget"],
+        kpis: ["Wait Time", "Patient Satisfaction"],
       },
       {
-        id: 'rec-2',
-        title: 'Expand Telehealth Services',
-        description: 'Increase telehealth capacity to handle routine consultations and follow-ups.',
-        category: 'strategic',
-        priority: 'medium',
-        effort: 'low',
-        expectedImpact: '15% increase in capacity, improved patient convenience',
-        timeline: '1-2 months',
-        resources: ['Technology Platform', 'Staff Training'],
-        kpis: ['Capacity Utilization', 'Patient Satisfaction']
-      }
+        id: "rec-2",
+        title: "Expand Telehealth Services",
+        description: "Increase telehealth capacity to handle routine consultations and follow-ups.",
+        category: "strategic",
+        priority: "medium",
+        effort: "low",
+        expectedImpact: "15% increase in capacity, improved patient convenience",
+        timeline: "1-2 months",
+        resources: ["Technology Platform", "Staff Training"],
+        kpis: ["Capacity Utilization", "Patient Satisfaction"],
+      },
     ],
     alerts: [
       {
-        id: 'alert-1',
-        title: 'Equipment Maintenance Due',
-        message: 'Critical medical equipment requires scheduled maintenance within 48 hours.',
-        severity: 'warning',
-        category: 'maintenance',
+        id: "alert-1",
+        title: "Equipment Maintenance Due",
+        message: "Critical medical equipment requires scheduled maintenance within 48 hours.",
+        severity: "warning",
+        category: "maintenance",
         timestamp: new Date(),
         acknowledged: false,
-        actionRequired: true
-      }
+        actionRequired: true,
+      },
     ],
     achievements: [
       {
-        id: 'ach-1',
-        title: 'Patient Satisfaction Target Exceeded',
-        description: 'Achieved 4.7/5 patient satisfaction score, exceeding quarterly target.',
-        category: 'Quality',
-        value: '4.7/5',
+        id: "ach-1",
+        title: "Patient Satisfaction Target Exceeded",
+        description: "Achieved 4.7/5 patient satisfaction score, exceeding quarterly target.",
+        category: "Quality",
+        value: "4.7/5",
         date: subDays(new Date(), 2),
-        impact: 'high'
+        impact: "high",
       },
       {
-        id: 'ach-2',
-        title: 'Revenue Growth Milestone',
-        description: 'Reached highest monthly revenue in clinic history.',
-        category: 'Financial',
-        value: 'R$ 125,000',
+        id: "ach-2",
+        title: "Revenue Growth Milestone",
+        description: "Reached highest monthly revenue in clinic history.",
+        category: "Financial",
+        value: "R$ 125,000",
         date: subDays(new Date(), 5),
-        impact: 'high'
-      }
+        impact: "high",
+      },
     ],
     trends: [
       {
-        id: 'trend-1',
-        metric: 'Patient Volume',
-        direction: 'up',
+        id: "trend-1",
+        metric: "Patient Volume",
+        direction: "up",
         magnitude: 12.5,
-        duration: '3 months',
-        significance: 'high',
-        description: 'Steady increase in patient appointments across all departments'
+        duration: "3 months",
+        significance: "high",
+        description: "Steady increase in patient appointments across all departments",
       },
       {
-        id: 'trend-2',
-        metric: 'Staff Productivity',
-        direction: 'up',
+        id: "trend-2",
+        metric: "Staff Productivity",
+        direction: "up",
         magnitude: 8.3,
-        duration: '2 months',
-        significance: 'medium',
-        description: 'Improved productivity following new workflow implementation'
-      }
+        duration: "2 months",
+        significance: "medium",
+        description: "Improved productivity following new workflow implementation",
+      },
     ],
     financialSummary: {
       revenue: {
         current: 125000,
         previous: 118000,
         target: 130000,
-        growth: 5.9
+        growth: 5.9,
       },
       costs: {
         current: 95000,
         previous: 92000,
         target: 98000,
-        change: 3.3
+        change: 3.3,
       },
       profit: {
         current: 30000,
         previous: 26000,
-        margin: 24.0
+        margin: 24.0,
       },
       cashFlow: {
         current: 45000,
-        trend: 'positive'
-      }
+        trend: "positive",
+      },
     },
     operationalSummary: {
       efficiency: {
         score: 87.3,
-        trend: 'up'
+        trend: "up",
       },
       capacity: {
         utilization: 82.5,
-        available: 17.5
+        available: 17.5,
       },
       quality: {
         score: 94.2,
-        incidents: 2
+        incidents: 2,
       },
       staff: {
         productivity: 91.8,
-        satisfaction: 4.3
-      }
+        satisfaction: 4.3,
+      },
     },
     clinicalSummary: {
       outcomes: {
         successRate: 94.2,
-        improvement: 2.1
+        improvement: 2.1,
       },
       safety: {
         score: 98.5,
-        incidents: 0
+        incidents: 0,
       },
       satisfaction: {
         patient: 4.7,
-        provider: 4.2
+        provider: 4.2,
       },
       compliance: {
         score: 96.8,
-        issues: 1
-      }
+        issues: 1,
+      },
     },
-    lastUpdated: new Date()
+    lastUpdated: new Date(),
   };
 }

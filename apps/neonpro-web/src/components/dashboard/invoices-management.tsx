@@ -1,26 +1,26 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import {
+import type { Separator } from "@/components/ui/separator";
+import type {
   Table,
   TableBody,
   TableCell,
@@ -28,18 +28,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Textarea } from "@/components/ui/textarea";
-import { useBilling } from "@/hooks/use-billing";
+import type { Textarea } from "@/components/ui/textarea";
+import type { useBilling } from "@/hooks/use-billing";
 import type {
   CreateInvoiceData,
   CreateInvoiceItemData,
   Invoice,
   InvoiceFilters,
 } from "@/types/billing";
-import { INVOICE_STATUSES } from "@/types/billing";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import {
+import type { INVOICE_STATUSES } from "@/types/billing";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
   Calendar,
   Clock,
   DollarSign,
@@ -50,8 +50,8 @@ import {
   Send,
   User,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 
 interface InvoiceFormData {
   patient_id: string;
@@ -91,7 +91,7 @@ export function InvoicesManagement() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>({});
-  
+
   // Add patients state
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loadingPatients, setLoadingPatients] = useState(false);
@@ -109,17 +109,17 @@ export function InvoicesManagement() {
   const fetchPatients = async () => {
     try {
       setLoadingPatients(true);
-      const response = await fetch('/api/patients');
-      
+      const response = await fetch("/api/patients");
+
       if (response.ok) {
         const data = await response.json();
         setPatients(data.data || []);
       } else {
-        toast.error('Erro ao carregar pacientes');
+        toast.error("Erro ao carregar pacientes");
       }
     } catch (error) {
-      console.error('Error fetching patients:', error);
-      toast.error('Erro ao carregar pacientes');
+      console.error("Error fetching patients:", error);
+      toast.error("Erro ao carregar pacientes");
     } finally {
       setLoadingPatients(false);
     }
@@ -151,7 +151,7 @@ export function InvoicesManagement() {
     (invoice) =>
       invoice.invoice_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
       invoice.patient_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      invoice.notes?.toLowerCase().includes(searchTerm.toLowerCase())
+      invoice.notes?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const resetForm = () => {
@@ -192,17 +192,12 @@ export function InvoicesManagement() {
   const updateInvoiceItem = (index: number, field: string, value: any) => {
     setFormData((prev) => ({
       ...prev,
-      items: prev.items.map((item, i) =>
-        i === index ? { ...item, [field]: value } : item
-      ),
+      items: prev.items.map((item, i) => (i === index ? { ...item, [field]: value } : item)),
     }));
   };
 
   const calculateTotal = () => {
-    const subtotal = formData.items.reduce(
-      (sum, item) => sum + item.quantity * item.unit_price,
-      0
-    );
+    const subtotal = formData.items.reduce((sum, item) => sum + item.quantity * item.unit_price, 0);
     const discount = parseFloat(formData.discount_amount || "0");
     const tax = parseFloat(formData.tax_amount || "0");
     return subtotal - discount + tax;
@@ -216,34 +211,25 @@ export function InvoicesManagement() {
       return;
     }
 
-    if (
-      formData.items.length === 0 ||
-      formData.items.some((item) => !item.service_id)
-    ) {
+    if (formData.items.length === 0 || formData.items.some((item) => !item.service_id)) {
       toast.error("Adicione pelo menos um item à fatura");
       return;
     }
 
-    const invoiceItems: CreateInvoiceItemData[] = formData.items.map(
-      (item) => ({
-        service_id: item.service_id,
-        quantity: item.quantity,
-        unit_price: item.unit_price,
-        description: item.description || "Serviço",
-      })
-    );
+    const invoiceItems: CreateInvoiceItemData[] = formData.items.map((item) => ({
+      service_id: item.service_id,
+      quantity: item.quantity,
+      unit_price: item.unit_price,
+      description: item.description || "Serviço",
+    }));
 
     const invoiceData: CreateInvoiceData = {
       patient_id: formData.patient_id,
       due_date: formData.due_date,
       items: invoiceItems,
       notes: formData.notes || undefined,
-      discount_amount: formData.discount_amount
-        ? parseFloat(formData.discount_amount)
-        : undefined,
-      tax_amount: formData.tax_amount
-        ? parseFloat(formData.tax_amount)
-        : undefined,
+      discount_amount: formData.discount_amount ? parseFloat(formData.discount_amount) : undefined,
+      tax_amount: formData.tax_amount ? parseFloat(formData.tax_amount) : undefined,
     };
 
     const success = (await createInvoice(invoiceData)) !== null;
@@ -331,9 +317,7 @@ export function InvoicesManagement() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold">Gerenciar Faturas</h2>
-          <p className="text-muted-foreground">
-            Visualize e gerencie todas as faturas da clínica
-          </p>
+          <p className="text-muted-foreground">Visualize e gerencie todas as faturas da clínica</p>
         </div>
 
         <Button onClick={openCreateDialog} className="w-full sm:w-auto">
@@ -346,27 +330,19 @@ export function InvoicesManagement() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Pendente
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Total Pendente</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {formatCurrency(
                 invoices
-                  .filter((inv) =>
-                    ["sent", "viewed", "overdue"].includes(inv.status)
-                  )
-                  .reduce((sum, inv) => sum + inv.total_amount, 0)
+                  .filter((inv) => ["sent", "viewed", "overdue"].includes(inv.status))
+                  .reduce((sum, inv) => sum + inv.total_amount, 0),
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              {
-                invoices.filter((inv) =>
-                  ["sent", "viewed", "overdue"].includes(inv.status)
-                ).length
-              }{" "}
+              {invoices.filter((inv) => ["sent", "viewed", "overdue"].includes(inv.status)).length}{" "}
               faturas
             </p>
           </CardContent>
@@ -374,9 +350,7 @@ export function InvoicesManagement() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Pagas Este Mês
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Pagas Este Mês</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -384,7 +358,7 @@ export function InvoicesManagement() {
               {formatCurrency(
                 invoices
                   .filter((inv) => inv.status === "paid")
-                  .reduce((sum, inv) => sum + inv.total_amount, 0)
+                  .reduce((sum, inv) => sum + inv.total_amount, 0),
               )}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -406,7 +380,7 @@ export function InvoicesManagement() {
               {formatCurrency(
                 invoices
                   .filter((inv) => inv.status === "overdue")
-                  .reduce((sum, inv) => sum + inv.total_amount, 0)
+                  .reduce((sum, inv) => sum + inv.total_amount, 0),
               )}
             </p>
           </CardContent>
@@ -414,18 +388,15 @@ export function InvoicesManagement() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Taxa de Pagamento
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Taxa de Pagamento</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {invoices.length > 0
                 ? Math.round(
-                    (invoices.filter((inv) => inv.status === "paid").length /
-                      invoices.length) *
-                      100
+                    (invoices.filter((inv) => inv.status === "paid").length / invoices.length) *
+                      100,
                   )
                 : 0}
               %
@@ -490,18 +461,13 @@ export function InvoicesManagement() {
           {loading ? (
             <div className="space-y-3">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="h-12 bg-gray-200 rounded animate-pulse"
-                ></div>
+                <div key={i} className="h-12 bg-gray-200 rounded animate-pulse"></div>
               ))}
             </div>
           ) : filteredInvoices.length === 0 ? (
             <div className="text-center py-12">
               <DollarSign className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium mb-2">
-                Nenhuma fatura encontrada
-              </h3>
+              <h3 className="text-lg font-medium mb-2">Nenhuma fatura encontrada</h3>
               <p className="text-muted-foreground mb-4">
                 {searchTerm
                   ? "Tente ajustar os filtros de busca"
@@ -530,9 +496,7 @@ export function InvoicesManagement() {
               <TableBody>
                 {filteredInvoices.map((invoice) => (
                   <TableRow key={invoice.id}>
-                    <TableCell className="font-medium">
-                      {invoice.invoice_number}
-                    </TableCell>
+                    <TableCell className="font-medium">{invoice.invoice_number}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <User className="h-4 w-4" />
@@ -543,9 +507,7 @@ export function InvoicesManagement() {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <Calendar className="h-4 w-4" />
-                        {invoice.due_date
-                          ? formatDate(invoice.due_date)
-                          : "N/A"}
+                        {invoice.due_date ? formatDate(invoice.due_date) : "N/A"}
                       </div>
                     </TableCell>
                     <TableCell className="font-medium">
@@ -558,11 +520,7 @@ export function InvoicesManagement() {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => openViewDialog(invoice)}
-                        >
+                        <Button variant="ghost" size="sm" onClick={() => openViewDialog(invoice)}>
                           <Eye className="h-4 w-4" />
                         </Button>
 
@@ -586,19 +544,14 @@ export function InvoicesManagement() {
 
                         <Select
                           value={invoice.status}
-                          onValueChange={(value) =>
-                            handleStatusUpdate(invoice, value)
-                          }
+                          onValueChange={(value) => handleStatusUpdate(invoice, value)}
                         >
                           <SelectTrigger className="w-auto h-8">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
                             {INVOICE_STATUSES.map((status: any) => (
-                              <SelectItem
-                                key={status.value}
-                                value={status.value}
-                              >
+                              <SelectItem key={status.value} value={status.value}>
                                 {status.label}
                               </SelectItem>
                             ))}
@@ -619,9 +572,7 @@ export function InvoicesManagement() {
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Nova Fatura</DialogTitle>
-            <DialogDescription>
-              Crie uma nova fatura para o paciente
-            </DialogDescription>
+            <DialogDescription>Crie uma nova fatura para o paciente</DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -630,9 +581,7 @@ export function InvoicesManagement() {
                 <Label htmlFor="patient_id">Paciente *</Label>
                 <Select
                   value={formData.patient_id}
-                  onValueChange={(value) =>
-                    setFormData((prev) => ({ ...prev, patient_id: value }))
-                  }
+                  onValueChange={(value) => setFormData((prev) => ({ ...prev, patient_id: value }))}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecionar paciente" />
@@ -650,9 +599,7 @@ export function InvoicesManagement() {
                             <div>
                               <div className="font-medium">{patient.full_name}</div>
                               {patient.email && (
-                                <div className="text-xs text-muted-foreground">
-                                  {patient.email}
-                                </div>
+                                <div className="text-xs text-muted-foreground">{patient.email}</div>
                               )}
                             </div>
                           </div>
@@ -687,11 +634,7 @@ export function InvoicesManagement() {
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <Label className="text-base font-medium">Itens da Fatura</Label>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={addInvoiceItem}
-                >
+                <Button type="button" variant="outline" onClick={addInvoiceItem}>
                   <Plus className="h-4 w-4 mr-2" />
                   Adicionar Item
                 </Button>
@@ -722,11 +665,7 @@ export function InvoicesManagement() {
                           const service = services.find((s) => s.id === value);
                           updateInvoiceItem(index, "service_id", value);
                           if (service) {
-                            updateInvoiceItem(
-                              index,
-                              "unit_price",
-                              service.base_price
-                            );
+                            updateInvoiceItem(index, "unit_price", service.base_price);
                           }
                         }}
                       >
@@ -736,8 +675,7 @@ export function InvoicesManagement() {
                         <SelectContent>
                           {services.map((service) => (
                             <SelectItem key={service.id} value={service.id}>
-                              {service.name} -{" "}
-                              {formatCurrency(service.base_price)}
+                              {service.name} - {formatCurrency(service.base_price)}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -751,11 +689,7 @@ export function InvoicesManagement() {
                         min="1"
                         value={item.quantity}
                         onChange={(e) =>
-                          updateInvoiceItem(
-                            index,
-                            "quantity",
-                            parseInt(e.target.value)
-                          )
+                          updateInvoiceItem(index, "quantity", parseInt(e.target.value))
                         }
                       />
                     </div>
@@ -768,11 +702,7 @@ export function InvoicesManagement() {
                         min="0"
                         value={item.unit_price}
                         onChange={(e) =>
-                          updateInvoiceItem(
-                            index,
-                            "unit_price",
-                            parseFloat(e.target.value)
-                          )
+                          updateInvoiceItem(index, "unit_price", parseFloat(e.target.value))
                         }
                       />
                     </div>
@@ -782,17 +712,14 @@ export function InvoicesManagement() {
                     <Label>Descrição Adicional</Label>
                     <Input
                       value={item.description || ""}
-                      onChange={(e) =>
-                        updateInvoiceItem(index, "description", e.target.value)
-                      }
+                      onChange={(e) => updateInvoiceItem(index, "description", e.target.value)}
                       placeholder="Descrição personalizada (opcional)"
                     />
                   </div>
 
                   <div className="text-right">
                     <span className="text-sm text-muted-foreground">
-                      Subtotal:{" "}
-                      {formatCurrency(item.quantity * item.unit_price)}
+                      Subtotal: {formatCurrency(item.quantity * item.unit_price)}
                     </span>
                   </div>
                 </div>
@@ -851,20 +778,14 @@ export function InvoicesManagement() {
               <Textarea
                 id="notes"
                 value={formData.notes}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, notes: e.target.value }))
-                }
+                onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
                 placeholder="Observações adicionais para a fatura..."
                 rows={3}
               />
             </div>
 
             <div className="flex justify-end gap-2 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setIsCreateDialogOpen(false)}
-              >
+              <Button type="button" variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
                 Cancelar
               </Button>
               <Button type="submit" disabled={loading}>
@@ -887,37 +808,25 @@ export function InvoicesManagement() {
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm text-muted-foreground">
-                    Status
-                  </Label>
-                  <Badge
-                    className={`mt-1 ${getStatusColor(selectedInvoice.status)}`}
-                  >
+                  <Label className="text-sm text-muted-foreground">Status</Label>
+                  <Badge className={`mt-1 ${getStatusColor(selectedInvoice.status)}`}>
                     {getStatusLabel(selectedInvoice.status)}
                   </Badge>
                 </div>
                 <div>
-                  <Label className="text-sm text-muted-foreground">
-                    Valor Total
-                  </Label>
+                  <Label className="text-sm text-muted-foreground">Valor Total</Label>
                   <div className="text-lg font-bold">
                     {formatCurrency(selectedInvoice.total_amount)}
                   </div>
                 </div>
                 <div>
-                  <Label className="text-sm text-muted-foreground">
-                    Data de Emissão
-                  </Label>
+                  <Label className="text-sm text-muted-foreground">Data de Emissão</Label>
                   <div>{formatDate(selectedInvoice.issue_date)}</div>
                 </div>
                 <div>
-                  <Label className="text-sm text-muted-foreground">
-                    Data de Vencimento
-                  </Label>
+                  <Label className="text-sm text-muted-foreground">Data de Vencimento</Label>
                   <div>
-                    {selectedInvoice.due_date
-                      ? formatDate(selectedInvoice.due_date)
-                      : "N/A"}
+                    {selectedInvoice.due_date ? formatDate(selectedInvoice.due_date) : "N/A"}
                   </div>
                 </div>
               </div>
@@ -925,14 +834,9 @@ export function InvoicesManagement() {
               <Separator />
 
               <div>
-                <Label className="text-base font-medium mb-4 block">
-                  Itens da Fatura
-                </Label>
+                <Label className="text-base font-medium mb-4 block">Itens da Fatura</Label>
                 {selectedInvoice.items?.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex justify-between items-center py-2"
-                  >
+                  <div key={index} className="flex justify-between items-center py-2">
                     <div>
                       <div className="font-medium">{item.description}</div>
                       <div className="text-sm text-muted-foreground">
@@ -943,32 +847,21 @@ export function InvoicesManagement() {
                       {formatCurrency(item.quantity * item.unit_price)}
                     </div>
                   </div>
-                )) || (
-                  <div className="text-muted-foreground">
-                    Nenhum item encontrado
-                  </div>
-                )}
+                )) || <div className="text-muted-foreground">Nenhum item encontrado</div>}
               </div>
 
               {selectedInvoice.notes && (
                 <>
                   <Separator />
                   <div>
-                    <Label className="text-base font-medium mb-2 block">
-                      Observações
-                    </Label>
-                    <p className="text-sm text-muted-foreground">
-                      {selectedInvoice.notes}
-                    </p>
+                    <Label className="text-base font-medium mb-2 block">Observações</Label>
+                    <p className="text-sm text-muted-foreground">{selectedInvoice.notes}</p>
                   </div>
                 </>
               )}
 
               <div className="flex justify-end gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() => handleDownloadInvoice(selectedInvoice)}
-                >
+                <Button variant="outline" onClick={() => handleDownloadInvoice(selectedInvoice)}>
                   <Download className="h-4 w-4 mr-2" />
                   Download
                 </Button>

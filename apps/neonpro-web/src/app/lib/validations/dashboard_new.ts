@@ -1,25 +1,27 @@
-import { z } from 'zod';
+import type { z } from "zod";
 
 // Layout Configuration
 export const layoutConfigSchema = z.object({
-  layout: z.enum(['grid', 'flex', 'masonry']),
+  layout: z.enum(["grid", "flex", "masonry"]),
   columns: z.number().min(1).max(12),
   rowHeight: z.number().min(20).max(500),
-  compactType: z.enum(['vertical', 'horizontal']).nullable().optional(),
+  compactType: z.enum(["vertical", "horizontal"]).nullable().optional(),
   margin: z.tuple([z.number(), z.number()]).optional(),
   containerPadding: z.tuple([z.number(), z.number()]).optional(),
-  breakpoints: z.object({
-    lg: z.number(),
-    md: z.number(),
-    sm: z.number(),
-    xs: z.number(),
-    xxs: z.number(),
-  }).optional(),
+  breakpoints: z
+    .object({
+      lg: z.number(),
+      md: z.number(),
+      sm: z.number(),
+      xs: z.number(),
+      xxs: z.number(),
+    })
+    .optional(),
 });
 
 // Widget Preferences
 export const widgetPreferencesSchema = z.object({
-  theme: z.enum(['light', 'dark', 'auto']),
+  theme: z.enum(["light", "dark", "auto"]),
   autoRefresh: z.boolean(),
   refreshInterval: z.number().min(1000).max(300000), // 1s to 5min
   showAnimations: z.boolean(),
@@ -30,9 +32,9 @@ export const widgetPreferencesSchema = z.object({
 
 // Widget Configuration
 export const widgetConfigurationSchema = z.object({
-  chartType: z.enum(['line', 'bar', 'pie', 'area', 'scatter', 'donut']).optional(),
-  timeRange: z.enum(['today', 'week', 'month', 'quarter', 'year', 'custom']).optional(),
-  aggregation: z.enum(['sum', 'average', 'count', 'min', 'max']).optional(),
+  chartType: z.enum(["line", "bar", "pie", "area", "scatter", "donut"]).optional(),
+  timeRange: z.enum(["today", "week", "month", "quarter", "year", "custom"]).optional(),
+  aggregation: z.enum(["sum", "average", "count", "min", "max"]).optional(),
   filters: z.record(z.any()).optional(),
   colors: z.array(z.string()).optional(),
   showLegend: z.boolean().optional(),
@@ -78,7 +80,7 @@ export const updateDashboardConfigSchema = z.object({
 export const dashboardWidgetSchema = z.object({
   id: z.string().uuid(),
   config_id: z.string().uuid(),
-  widget_type: z.enum(['chart', 'metric', 'table', 'alert', 'progress', 'gauge']),
+  widget_type: z.enum(["chart", "metric", "table", "alert", "progress", "gauge"]),
   widget_name: z.string().min(1).max(100),
   data_source: z.string().min(1).max(100),
   position_x: z.number().min(0),
@@ -93,7 +95,7 @@ export const dashboardWidgetSchema = z.object({
 
 export const createWidgetSchema = z.object({
   config_id: z.string().uuid(),
-  widget_type: z.enum(['chart', 'metric', 'table', 'alert', 'progress', 'gauge']),
+  widget_type: z.enum(["chart", "metric", "table", "alert", "progress", "gauge"]),
   widget_name: z.string().min(1).max(100),
   data_source: z.string().min(1).max(100),
   position_x: z.number().min(0),
@@ -105,7 +107,7 @@ export const createWidgetSchema = z.object({
 });
 
 export const updateWidgetSchema = z.object({
-  widget_type: z.enum(['chart', 'metric', 'table', 'alert', 'progress', 'gauge']).optional(),
+  widget_type: z.enum(["chart", "metric", "table", "alert", "progress", "gauge"]).optional(),
   widget_name: z.string().min(1).max(100).optional(),
   data_source: z.string().min(1).max(100).optional(),
   position_x: z.number().min(0).optional(),
@@ -122,9 +124,9 @@ export const kpiMetricSchema = z.object({
   clinic_id: z.string().uuid().optional(),
   metric_name: z.string().min(1).max(100),
   metric_value: z.number(),
-  metric_type: z.enum(['revenue', 'patient', 'appointment', 'efficiency']),
+  metric_type: z.enum(["revenue", "patient", "appointment", "efficiency"]),
   calculation_date: z.string().datetime(),
-  calculation_period: z.enum(['daily', 'weekly', 'monthly', 'yearly']),
+  calculation_period: z.enum(["daily", "weekly", "monthly", "yearly"]),
   metadata: z.record(z.any()).optional(),
   created_at: z.string().datetime(),
   updated_at: z.string().datetime(),
@@ -134,7 +136,7 @@ export const kpiCalculationRequestSchema = z.object({
   clinic_id: z.string().uuid().optional(),
   calculation_date: z.string().datetime().optional(),
   metrics: z.array(z.string()).optional(),
-  period: z.enum(['daily', 'weekly', 'monthly']).optional().default('daily'),
+  period: z.enum(["daily", "weekly", "monthly"]).optional().default("daily"),
 });
 
 // Dashboard Alerts
@@ -142,11 +144,11 @@ export const dashboardAlertSchema = z.object({
   id: z.string().uuid(),
   user_id: z.string().uuid(),
   clinic_id: z.string().uuid().optional(),
-  alert_type: z.enum(['revenue_drop', 'low_bookings', 'high_cancellations', 'efficiency_warning']),
+  alert_type: z.enum(["revenue_drop", "low_bookings", "high_cancellations", "efficiency_warning"]),
   metric_name: z.string().min(1).max(100),
   threshold_value: z.number(),
-  threshold_operator: z.enum(['less_than', 'greater_than', 'equals']),
-  notification_method: z.enum(['email', 'sms', 'push', 'dashboard']),
+  threshold_operator: z.enum(["less_than", "greater_than", "equals"]),
+  notification_method: z.enum(["email", "sms", "push", "dashboard"]),
   is_active: z.boolean(),
   last_triggered_at: z.string().datetime().optional(),
   trigger_count: z.number().min(0),
@@ -155,19 +157,27 @@ export const dashboardAlertSchema = z.object({
 });
 
 export const createAlertSchema = z.object({
-  alert_type: z.enum(['revenue_drop', 'low_bookings', 'high_cancellations', 'efficiency_warning']),
+  alert_type: z.enum(["revenue_drop", "low_bookings", "high_cancellations", "efficiency_warning"]),
   metric_name: z.string().min(1).max(100),
   threshold_value: z.number(),
-  threshold_operator: z.enum(['less_than', 'greater_than', 'equals']).optional().default('less_than'),
-  notification_method: z.enum(['email', 'sms', 'push', 'dashboard']).optional().default('dashboard'),
+  threshold_operator: z
+    .enum(["less_than", "greater_than", "equals"])
+    .optional()
+    .default("less_than"),
+  notification_method: z
+    .enum(["email", "sms", "push", "dashboard"])
+    .optional()
+    .default("dashboard"),
 });
 
 export const updateAlertSchema = z.object({
-  alert_type: z.enum(['revenue_drop', 'low_bookings', 'high_cancellations', 'efficiency_warning']).optional(),
+  alert_type: z
+    .enum(["revenue_drop", "low_bookings", "high_cancellations", "efficiency_warning"])
+    .optional(),
   metric_name: z.string().min(1).max(100).optional(),
   threshold_value: z.number().optional(),
-  threshold_operator: z.enum(['less_than', 'greater_than', 'equals']).optional(),
-  notification_method: z.enum(['email', 'sms', 'push', 'dashboard']).optional(),
+  threshold_operator: z.enum(["less_than", "greater_than", "equals"]).optional(),
+  notification_method: z.enum(["email", "sms", "push", "dashboard"]).optional(),
   is_active: z.boolean().optional(),
 });
 
@@ -202,12 +212,14 @@ export const dashboardCacheSchema = z.object({
 
 // Export Data Schemas
 export const dashboardExportSchema = z.object({
-  format: z.enum(['pdf', 'excel', 'csv', 'png']),
+  format: z.enum(["pdf", "excel", "csv", "png"]),
   widgets: z.array(z.string().uuid()).optional(),
-  date_range: z.object({
-    start: z.string().datetime(),
-    end: z.string().datetime(),
-  }).optional(),
+  date_range: z
+    .object({
+      start: z.string().datetime(),
+      end: z.string().datetime(),
+    })
+    .optional(),
   include_charts: z.boolean().optional().default(true),
   include_data: z.boolean().optional().default(true),
 });
@@ -217,7 +229,7 @@ export const dashboardQueryParamsSchema = z.object({
   clinic_id: z.string().uuid().optional(),
   config_id: z.string().uuid().optional(),
   widget_id: z.string().uuid().optional(),
-  time_range: z.enum(['today', 'week', 'month', 'quarter', 'year', 'custom']).optional(),
+  time_range: z.enum(["today", "week", "month", "quarter", "year", "custom"]).optional(),
   start_date: z.string().datetime().optional(),
   end_date: z.string().datetime().optional(),
   refresh: z.boolean().optional(),
@@ -226,10 +238,10 @@ export const dashboardQueryParamsSchema = z.object({
 
 export const widgetDataQuerySchema = z.object({
   widget_id: z.string().uuid(),
-  time_range: z.enum(['today', 'week', 'month', 'quarter', 'year', 'custom']).optional(),
+  time_range: z.enum(["today", "week", "month", "quarter", "year", "custom"]).optional(),
   start_date: z.string().datetime().optional(),
   end_date: z.string().datetime().optional(),
-  aggregation: z.enum(['sum', 'average', 'count', 'min', 'max']).optional(),
+  aggregation: z.enum(["sum", "average", "count", "min", "max"]).optional(),
   filters: z.record(z.any()).optional(),
 });
 

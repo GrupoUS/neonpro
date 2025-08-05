@@ -1,8 +1,8 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { ConflictDetector } from './conflict-detector';
-import { ResolutionEngine } from './resolution-engine';
-import { ResourceOptimizer } from './resource-optimizer';
-import {
+import type { createClient, SupabaseClient } from "@supabase/supabase-js";
+import type { ConflictDetector } from "./conflict-detector";
+import type { ResolutionEngine } from "./resolution-engine";
+import type { ResourceOptimizer } from "./resource-optimizer";
+import type {
   ConflictDetails,
   ResolutionOption,
   ResourceOptimization,
@@ -15,12 +15,12 @@ import {
   ConflictResolutionResult,
   SystemAnalytics,
   PerformanceMetrics,
-  AutomationSettings
-} from './types';
+  AutomationSettings,
+} from "./types";
 
 /**
  * Unified Intelligent Conflict Resolution System
- * 
+ *
  * This system provides comprehensive conflict detection, resolution, and resource optimization
  * for healthcare scheduling and resource management.
  */
@@ -40,10 +40,10 @@ export class IntelligentConflictResolutionSystem {
     supabaseKey: string,
     config?: Partial<OptimizationConfig>,
     constraints?: Partial<OptimizationConstraints>,
-    automationSettings?: Partial<AutomationSettings>
+    automationSettings?: Partial<AutomationSettings>,
   ) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
-    
+
     // Default configuration
     this.config = {
       weights: {
@@ -51,16 +51,16 @@ export class IntelligentConflictResolutionSystem {
         staffWorkload: 0.25,
         resourceUtilization: 0.2,
         operationalEfficiency: 0.15,
-        financialImpact: 0.1
+        financialImpact: 0.1,
       },
       thresholds: {
         conflictSeverity: 0.7,
         autoResolutionConfidence: 0.8,
-        resourceUtilization: 0.85
+        resourceUtilization: 0.85,
       },
-      ...config
+      ...config,
     };
-    
+
     // Default constraints
     this.constraints = {
       maxStaffUtilization: 0.9,
@@ -70,15 +70,15 @@ export class IntelligentConflictResolutionSystem {
       maxEquipmentUtilization: 0.9,
       minEquipmentUtilization: 0.2,
       businessHours: {
-        start: '08:00',
-        end: '18:00'
+        start: "08:00",
+        end: "18:00",
       },
       maxOvertimeHours: 2,
       minBufferTime: 15,
       maxReschedulingWindow: 7,
-      ...constraints
+      ...constraints,
     };
-    
+
     // Default automation settings
     this.automationSettings = {
       autoDetection: true,
@@ -87,38 +87,38 @@ export class IntelligentConflictResolutionSystem {
       notificationSettings: {
         emailNotifications: true,
         smsNotifications: false,
-        inAppNotifications: true
+        inAppNotifications: true,
       },
       escalationRules: {
         highSeverityThreshold: 0.8,
         escalationDelay: 30,
-        maxAutoAttempts: 3
+        maxAutoAttempts: 3,
       },
-      ...automationSettings
+      ...automationSettings,
     };
-    
+
     // Initialize components
     this.conflictDetector = new ConflictDetector(
       supabaseUrl,
       supabaseKey,
       this.config,
-      this.constraints
+      this.constraints,
     );
-    
+
     this.resolutionEngine = new ResolutionEngine(
       supabaseUrl,
       supabaseKey,
       this.config,
-      this.constraints
+      this.constraints,
     );
-    
+
     this.resourceOptimizer = new ResourceOptimizer(
       supabaseUrl,
       supabaseKey,
       this.config,
-      this.constraints
+      this.constraints,
     );
-    
+
     // Initialize performance metrics
     this.performanceMetrics = {
       conflictsDetected: 0,
@@ -127,9 +127,9 @@ export class IntelligentConflictResolutionSystem {
       successRate: 0,
       optimizationsApplied: 0,
       systemUptime: Date.now(),
-      lastUpdated: new Date()
+      lastUpdated: new Date(),
     };
-    
+
     // Start automated processes if enabled
     if (this.automationSettings.autoDetection) {
       this.startAutomatedConflictDetection();
@@ -142,15 +142,15 @@ export class IntelligentConflictResolutionSystem {
   async detectAndResolveConflicts(
     startDate?: Date,
     endDate?: Date,
-    autoResolve: boolean = false
+    autoResolve: boolean = false,
   ): Promise<ConflictResolutionResult> {
     const start = startDate || new Date();
     const end = endDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days ahead
-    
+
     try {
       // Step 1: Detect conflicts
       const conflicts = await this.conflictDetector.detectConflicts(start, end);
-      
+
       if (conflicts.length === 0) {
         return {
           success: true,
@@ -160,19 +160,19 @@ export class IntelligentConflictResolutionSystem {
           resolutions: [],
           optimizations: [],
           executionTime: 0,
-          timestamp: new Date()
+          timestamp: new Date(),
         };
       }
-      
+
       const startTime = Date.now();
       const resolutions: ResolutionOption[] = [];
       const appliedResolutions: any[] = [];
-      
+
       // Step 2: Generate resolutions for each conflict
       for (const conflict of conflicts) {
         const conflictResolutions = await this.resolutionEngine.generateResolutions(conflict);
         resolutions.push(...conflictResolutions);
-        
+
         // Auto-resolve if enabled and confidence is high enough
         if (autoResolve && this.shouldAutoResolve(conflictResolutions)) {
           const bestResolution = conflictResolutions[0]; // Already sorted by score
@@ -185,18 +185,18 @@ export class IntelligentConflictResolutionSystem {
           }
         }
       }
-      
+
       // Step 3: Generate system-wide optimizations
       const optimizations = await this.generateSystemOptimizations(start, end);
-      
+
       // Update performance metrics
       this.performanceMetrics.conflictsDetected += conflicts.length;
       this.performanceMetrics.averageResolutionTime = this.calculateAverageResolutionTime();
       this.performanceMetrics.successRate = this.calculateSuccessRate();
       this.performanceMetrics.lastUpdated = new Date();
-      
+
       const executionTime = Date.now() - startTime;
-      
+
       return {
         success: true,
         conflictsDetected: conflicts.length,
@@ -206,10 +206,10 @@ export class IntelligentConflictResolutionSystem {
         appliedResolutions,
         optimizations,
         executionTime,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     } catch (error) {
-      console.error('Error in conflict detection and resolution:', error);
+      console.error("Error in conflict detection and resolution:", error);
       throw error;
     }
   }
@@ -220,11 +220,11 @@ export class IntelligentConflictResolutionSystem {
   async detectConflicts(
     startDate?: Date,
     endDate?: Date,
-    conflictTypes?: ConflictType[]
+    conflictTypes?: ConflictType[],
   ): Promise<ConflictDetails[]> {
     const start = startDate || new Date();
     const end = endDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-    
+
     return await this.conflictDetector.detectConflicts(start, end, conflictTypes);
   }
 
@@ -233,13 +233,13 @@ export class IntelligentConflictResolutionSystem {
    */
   async generateResolutions(
     conflictId: string,
-    strategies?: ResolutionStrategy[]
+    strategies?: ResolutionStrategy[],
   ): Promise<ResolutionOption[]> {
     const conflict = await this.getConflictById(conflictId);
     if (!conflict) {
       throw new Error(`Conflict ${conflictId} not found`);
     }
-    
+
     return await this.resolutionEngine.generateResolutions(conflict, strategies);
   }
 
@@ -259,7 +259,7 @@ export class IntelligentConflictResolutionSystem {
   async optimizeResources(
     startDate: Date,
     endDate: Date,
-    strategy: OptimizationStrategy = OptimizationStrategy.BALANCED
+    strategy: OptimizationStrategy = OptimizationStrategy.BALANCED,
   ): Promise<ResourceOptimization> {
     return await this.resourceOptimizer.optimizeResources(startDate, endDate, strategy);
   }
@@ -270,7 +270,7 @@ export class IntelligentConflictResolutionSystem {
   async balanceWorkload(
     startDate: Date,
     endDate: Date,
-    targetUtilization: number = 0.8
+    targetUtilization: number = 0.8,
   ): Promise<LoadBalancingResult> {
     return await this.resourceOptimizer.balanceWorkload(startDate, endDate, targetUtilization);
   }
@@ -291,27 +291,30 @@ export class IntelligentConflictResolutionSystem {
   async getSystemAnalytics(
     startDate: Date,
     endDate: Date,
-    includeForecasting: boolean = true
+    includeForecasting: boolean = true,
   ): Promise<SystemAnalytics> {
     const cacheKey = `analytics-${startDate.toISOString()}-${endDate.toISOString()}-${includeForecasting}`;
-    
+
     if (this.analyticsCache.has(cacheKey)) {
       return this.analyticsCache.get(cacheKey)!;
     }
-    
+
     try {
       // Gather analytics from all components
       const conflictAnalytics = await this.getConflictAnalytics(startDate, endDate);
       const resolutionAnalytics = await this.getResolutionAnalytics(startDate, endDate);
       const optimizationAnalytics = await this.getOptimizationAnalytics(startDate, endDate);
-      const resourceMetrics = await this.resourceOptimizer.calculateResourceMetrics(startDate, endDate);
-      
+      const resourceMetrics = await this.resourceOptimizer.calculateResourceMetrics(
+        startDate,
+        endDate,
+      );
+
       // Generate forecasting if requested
       let forecasting = null;
       if (includeForecasting) {
         forecasting = await this.generateForecasting(startDate, endDate);
       }
-      
+
       const analytics: SystemAnalytics = {
         period: { start: startDate, end: endDate },
         conflictAnalytics,
@@ -322,13 +325,13 @@ export class IntelligentConflictResolutionSystem {
         forecasting,
         trends: await this.calculateTrends(startDate, endDate),
         recommendations: await this.generateSystemRecommendations(),
-        generatedAt: new Date()
+        generatedAt: new Date(),
       };
-      
+
       this.analyticsCache.set(cacheKey, analytics);
       return analytics;
     } catch (error) {
-      console.error('Error generating system analytics:', error);
+      console.error("Error generating system analytics:", error);
       throw error;
     }
   }
@@ -339,7 +342,7 @@ export class IntelligentConflictResolutionSystem {
   getPerformanceMetrics(): PerformanceMetrics {
     return {
       ...this.performanceMetrics,
-      systemUptime: Date.now() - this.performanceMetrics.systemUptime
+      systemUptime: Date.now() - this.performanceMetrics.systemUptime,
     };
   }
 
@@ -349,7 +352,7 @@ export class IntelligentConflictResolutionSystem {
   updateConfiguration(
     config?: Partial<OptimizationConfig>,
     constraints?: Partial<OptimizationConstraints>,
-    automationSettings?: Partial<AutomationSettings>
+    automationSettings?: Partial<AutomationSettings>,
   ): void {
     if (config) {
       this.config = { ...this.config, ...config };
@@ -357,17 +360,17 @@ export class IntelligentConflictResolutionSystem {
       this.resolutionEngine.updateConfig(config);
       this.resourceOptimizer.updateConfig(config);
     }
-    
+
     if (constraints) {
       this.constraints = { ...this.constraints, ...constraints };
       this.conflictDetector.updateConstraints(constraints);
       this.resolutionEngine.updateConstraints(constraints);
       this.resourceOptimizer.updateConstraints(constraints);
     }
-    
+
     if (automationSettings) {
       this.automationSettings = { ...this.automationSettings, ...automationSettings };
-      
+
       // Restart automation if settings changed
       if (automationSettings.autoDetection !== undefined) {
         if (automationSettings.autoDetection) {
@@ -377,7 +380,7 @@ export class IntelligentConflictResolutionSystem {
         }
       }
     }
-    
+
     // Clear caches
     this.clearAllCaches();
   }
@@ -387,17 +390,20 @@ export class IntelligentConflictResolutionSystem {
    */
   private startAutomatedConflictDetection(): void {
     // Run every 30 minutes
-    setInterval(async () => {
-      try {
-        await this.detectAndResolveConflicts(
-          new Date(),
-          new Date(Date.now() + 24 * 60 * 60 * 1000), // Next 24 hours
-          this.automationSettings.autoResolution
-        );
-      } catch (error) {
-        console.error('Error in automated conflict detection:', error);
-      }
-    }, 30 * 60 * 1000);
+    setInterval(
+      async () => {
+        try {
+          await this.detectAndResolveConflicts(
+            new Date(),
+            new Date(Date.now() + 24 * 60 * 60 * 1000), // Next 24 hours
+            this.automationSettings.autoResolution,
+          );
+        } catch (error) {
+          console.error("Error in automated conflict detection:", error);
+        }
+      },
+      30 * 60 * 1000,
+    );
   }
 
   /**
@@ -413,24 +419,21 @@ export class IntelligentConflictResolutionSystem {
    */
   private async generateSystemOptimizations(
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<ResourceOptimization[]> {
     const optimizations: ResourceOptimization[] = [];
-    
+
     // Generate resource optimization
     const resourceOpt = await this.resourceOptimizer.optimizeResources(
       startDate,
       endDate,
-      OptimizationStrategy.BALANCED
+      OptimizationStrategy.BALANCED,
     );
     optimizations.push(resourceOpt);
-    
+
     // Generate workload balancing
-    const workloadBalance = await this.resourceOptimizer.balanceWorkload(
-      startDate,
-      endDate
-    );
-    
+    const workloadBalance = await this.resourceOptimizer.balanceWorkload(startDate, endDate);
+
     // Convert workload balance to optimization format
     if (workloadBalance.balancingActions.length > 0) {
       const workloadOpt: ResourceOptimization = {
@@ -439,15 +442,18 @@ export class IntelligentConflictResolutionSystem {
         strategy: OptimizationStrategy.BALANCED,
         currentMetrics: await this.resourceOptimizer.calculateResourceMetrics(startDate, endDate),
         recommendations: [], // Would convert balancing actions to recommendations
-        expectedImprovements: await this.resourceOptimizer.calculateResourceMetrics(startDate, endDate),
+        expectedImprovements: await this.resourceOptimizer.calculateResourceMetrics(
+          startDate,
+          endDate,
+        ),
         confidence: workloadBalance.confidence,
         estimatedImplementationTime: workloadBalance.estimatedTime,
         createdAt: workloadBalance.createdAt,
-        status: 'pending'
+        status: "pending",
       };
       optimizations.push(workloadOpt);
     }
-    
+
     return optimizations;
   }
 
@@ -458,7 +464,7 @@ export class IntelligentConflictResolutionSystem {
     if (!this.automationSettings.autoResolution || resolutions.length === 0) {
       return false;
     }
-    
+
     const bestResolution = resolutions[0];
     return (
       bestResolution.confidence >= this.config.thresholds.autoResolutionConfidence &&
@@ -493,7 +499,7 @@ export class IntelligentConflictResolutionSystem {
       conflictsBySeverity: {},
       averageResolutionTime: 0,
       mostCommonConflictType: null,
-      peakConflictTimes: []
+      peakConflictTimes: [],
     };
   }
 
@@ -508,7 +514,7 @@ export class IntelligentConflictResolutionSystem {
       averageConfidence: 0,
       successRate: 0,
       mostEffectiveStrategy: null,
-      averageImplementationTime: 0
+      averageImplementationTime: 0,
     };
   }
 
@@ -523,7 +529,7 @@ export class IntelligentConflictResolutionSystem {
       averageImpact: 0,
       roi: 0,
       mostImpactfulOptimization: null,
-      cumulativeImprovements: {}
+      cumulativeImprovements: {},
     };
   }
 
@@ -536,7 +542,7 @@ export class IntelligentConflictResolutionSystem {
       predictedConflicts: [],
       resourceDemandForecast: {},
       recommendedPreventiveMeasures: [],
-      confidenceLevel: 0.75
+      confidenceLevel: 0.75,
     };
   }
 
@@ -550,7 +556,7 @@ export class IntelligentConflictResolutionSystem {
       resolutionTrends: {},
       optimizationTrends: {},
       seasonalPatterns: {},
-      emergingIssues: []
+      emergingIssues: [],
     };
   }
 
@@ -584,53 +590,53 @@ export class IntelligentConflictResolutionSystem {
    * Health check for the system
    */
   async healthCheck(): Promise<{
-    status: 'healthy' | 'degraded' | 'unhealthy';
+    status: "healthy" | "degraded" | "unhealthy";
     components: Record<string, boolean>;
     lastCheck: Date;
   }> {
     try {
       // Check database connection
-      const { error: dbError } = await this.supabase.from('appointments').select('count').limit(1);
+      const { error: dbError } = await this.supabase.from("appointments").select("count").limit(1);
       const dbHealthy = !dbError;
-      
+
       // Check component health
       const components = {
         database: dbHealthy,
         conflictDetector: true, // Would implement actual health checks
         resolutionEngine: true,
         resourceOptimizer: true,
-        automation: this.automationSettings.autoDetection
+        automation: this.automationSettings.autoDetection,
       };
-      
+
       const allHealthy = Object.values(components).every(Boolean);
       const mostlyHealthy = Object.values(components).filter(Boolean).length >= 3;
-      
+
       return {
-        status: allHealthy ? 'healthy' : mostlyHealthy ? 'degraded' : 'unhealthy',
+        status: allHealthy ? "healthy" : mostlyHealthy ? "degraded" : "unhealthy",
         components,
-        lastCheck: new Date()
+        lastCheck: new Date(),
       };
     } catch (error) {
       return {
-        status: 'unhealthy',
+        status: "unhealthy",
         components: {
           database: false,
           conflictDetector: false,
           resolutionEngine: false,
           resourceOptimizer: false,
-          automation: false
+          automation: false,
         },
-        lastCheck: new Date()
+        lastCheck: new Date(),
       };
     }
   }
 }
 
 // Export all types and classes
-export * from './types';
-export { ConflictDetector } from './conflict-detector';
-export { ResolutionEngine } from './resolution-engine';
-export { ResourceOptimizer } from './resource-optimizer';
+export * from "./types";
+export { ConflictDetector } from "./conflict-detector";
+export { ResolutionEngine } from "./resolution-engine";
+export { ResourceOptimizer } from "./resource-optimizer";
 
 // Default export
 export default IntelligentConflictResolutionSystem;

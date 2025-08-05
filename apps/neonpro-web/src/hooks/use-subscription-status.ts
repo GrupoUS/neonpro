@@ -1,69 +1,69 @@
 /**
  * Real-time Subscription Status Hook
- * 
+ *
  * React hook that provides real-time subscription status updates with
  * automatic UI synchronization and state management.
- * 
+ *
  * @author NeonPro Development Team
  * @version 1.0.0
  */
 
-'use client'
+"use client";
 
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { useAuth } from '../contexts/auth-context'
-import type { RealtimeMetrics, SubscriptionRealtimeUpdate } from '../lib/subscription-realtime'
-import { subscriptionRealtimeManager } from '../lib/subscription-realtime'
-import type { SubscriptionStatus } from '../lib/subscription-status'
+import type { useCallback, useEffect, useRef, useState } from "react";
+import type { useAuth } from "../contexts/auth-context";
+import type { RealtimeMetrics, SubscriptionRealtimeUpdate } from "../lib/subscription-realtime";
+import type { subscriptionRealtimeManager } from "../lib/subscription-realtime";
+import type { SubscriptionStatus } from "../lib/subscription-status";
 
 export interface SubscriptionState {
-  status: SubscriptionStatus
-  tier: string | null
-  features: string[]
-  gracePeriodEnd: string | null
-  nextBilling: string | null
-  isLoading: boolean
-  isConnected: boolean
-  lastUpdate: string | null
-  error: string | null
+  status: SubscriptionStatus;
+  tier: string | null;
+  features: string[];
+  gracePeriodEnd: string | null;
+  nextBilling: string | null;
+  isLoading: boolean;
+  isConnected: boolean;
+  lastUpdate: string | null;
+  error: string | null;
 }
 
 export interface SubscriptionActions {
-  refresh: () => Promise<void>
-  connect: () => Promise<void>
-  disconnect: () => Promise<void>
-  clearError: () => void
+  refresh: () => Promise<void>;
+  connect: () => Promise<void>;
+  disconnect: () => Promise<void>;
+  clearError: () => void;
 }
 
 export interface UseSubscriptionStatusOptions {
-  autoConnect?: boolean
-  enableLogging?: boolean
-  onStatusChange?: (status: SubscriptionStatus, previous?: SubscriptionStatus) => void
-  onError?: (error: string) => void
-  onConnect?: () => void
-  onDisconnect?: () => void
+  autoConnect?: boolean;
+  enableLogging?: boolean;
+  onStatusChange?: (status: SubscriptionStatus, previous?: SubscriptionStatus) => void;
+  onError?: (error: string) => void;
+  onConnect?: () => void;
+  onDisconnect?: () => void;
 }
 
 export interface UseSubscriptionStatusReturn extends SubscriptionState, SubscriptionActions {
-  metrics: RealtimeMetrics
-  events: SubscriptionRealtimeUpdate[]
-  isExpired: boolean
-  isActive: boolean
-  canAccessFeature: (feature: string) => boolean
+  metrics: RealtimeMetrics;
+  events: SubscriptionRealtimeUpdate[];
+  isExpired: boolean;
+  isActive: boolean;
+  canAccessFeature: (feature: string) => boolean;
 }
 
 /**
  * Hook for real-time subscription status management
- * 
+ *
  * @param options Configuration options for the hook
  * @returns Subscription state, actions, and utilities
  */
 export function useSubscriptionStatus(
-  options: UseSubscriptionStatusOptions = {}
+  options: UseSubscriptionStatusOptions = {},
 ): UseSubscriptionStatusReturn {
-  const { user } = useAuth()
+  const { user } = useAuth();
   const [state, setState] = useState<SubscriptionState>({
-    status: 'trialing',
+    status: "trialing",
     tier: null,
     features: [],
     gracePeriodEnd: null,
@@ -71,49 +71,43 @@ export function useSubscriptionStatus(
     isLoading: false,
     isConnected: false,
     lastUpdate: null,
-    error: null
-  })
-  
-  const [events, setEvents] = useState<SubscriptionRealtimeUpdate[]>([])
+    error: null,
+  });
+
+  const [events, setEvents] = useState<SubscriptionRealtimeUpdate[]>([]);
   const [metrics, setMetrics] = useState<RealtimeMetrics>({
     connectionsActive: 0,
     messagesReceived: 0,
     messagesSent: 0,
     reconnectAttempts: 0,
-    lastConnected: '',
+    lastConnected: "",
     uptime: 0,
-    latency: 0
-  })
+    latency: 0,
+  });
 
-  const unsubscribeRef = useRef<(() => void) | null>(null)
-  const optionsRef = useRef(options)
+  const unsubscribeRef = useRef<(() => void) | null>(null);
+  const optionsRef = useRef(options);
 
   // Update options ref when options change
   useEffect(() => {
-    optionsRef.current = options
-  }, [options])
+    optionsRef.current = options;
+  }, [options]);
 
   /**
    * Handle subscription status updates
    */
   const handleSubscriptionUpdate = useCallback((update: SubscriptionRealtimeUpdate) => {
-    const { 
-      status, 
-      previousStatus, 
-      metadata = {},
-      event,
-      timestamp 
-    } = update
+    const { status, previousStatus, metadata = {}, event, timestamp } = update;
 
     if (optionsRef.current.enableLogging) {
-      console.log(`[useSubscriptionStatus] Received update:`, update)
+      console.log(`[useSubscriptionStatus] Received update:`, update);
     }
 
     // Add event to history (keep last 50 events)
-    setEvents(prev => [update, ...prev.slice(0, 49)])
+    setEvents((prev) => [update, ...prev.slice(0, 49)]);
 
     // Update state
-    setState(prevState => ({
+    setState((prevState) => ({
       ...prevState,
       status,
       tier: metadata.tier || prevState.tier,
@@ -122,240 +116,243 @@ export function useSubscriptionStatus(
       nextBilling: metadata.nextBilling || prevState.nextBilling,
       lastUpdate: timestamp,
       isLoading: false,
-      error: null
-    }))
+      error: null,
+    }));
 
     // Trigger status change callback
     if (optionsRef.current.onStatusChange && previousStatus !== status) {
-      optionsRef.current.onStatusChange(status, previousStatus)
+      optionsRef.current.onStatusChange(status, previousStatus);
     }
 
     // Handle specific events
     switch (event) {
-      case 'subscription_expired':
-      case 'subscription_cancelled':
+      case "subscription_expired":
+      case "subscription_cancelled":
         if (optionsRef.current.enableLogging) {
-          console.warn(`[useSubscriptionStatus] Subscription ${event}`)
+          console.warn(`[useSubscriptionStatus] Subscription ${event}`);
         }
-        break
-      case 'subscription_activated':
-      case 'subscription_upgraded':
+        break;
+      case "subscription_activated":
+      case "subscription_upgraded":
         if (optionsRef.current.enableLogging) {
-          console.info(`[useSubscriptionStatus] Subscription ${event}`)
+          console.info(`[useSubscriptionStatus] Subscription ${event}`);
         }
-        break
-      case 'payment_failed':
-        setState(prev => ({ ...prev, error: 'Payment failed. Please update your payment method.' }))
+        break;
+      case "payment_failed":
+        setState((prev) => ({
+          ...prev,
+          error: "Payment failed. Please update your payment method.",
+        }));
         if (optionsRef.current.onError) {
-          optionsRef.current.onError('Payment failed. Please update your payment method.')
+          optionsRef.current.onError("Payment failed. Please update your payment method.");
         }
-        break
+        break;
     }
-  }, [])
+  }, []);
 
   /**
    * Connect to real-time updates
    */
   const connect = useCallback(async () => {
     if (!user?.id || unsubscribeRef.current) {
-      return
+      return;
     }
 
-    setState(prev => ({ ...prev, isLoading: true }))
+    setState((prev) => ({ ...prev, isLoading: true }));
 
     try {
       // Subscribe to user's subscription updates
-      const unsubscribe = subscriptionRealtimeManager.subscribe(
-        user.id,
-        handleSubscriptionUpdate
-      )
+      const unsubscribe = subscriptionRealtimeManager.subscribe(user.id, handleSubscriptionUpdate);
 
-      unsubscribeRef.current = unsubscribe
+      unsubscribeRef.current = unsubscribe;
 
-      setState(prev => ({ 
-        ...prev, 
-        isConnected: true, 
+      setState((prev) => ({
+        ...prev,
+        isConnected: true,
         isLoading: false,
-        error: null 
-      }))
+        error: null,
+      }));
 
       if (optionsRef.current.onConnect) {
-        optionsRef.current.onConnect()
+        optionsRef.current.onConnect();
       }
 
       if (optionsRef.current.enableLogging) {
-        console.log(`[useSubscriptionStatus] Connected for user ${user.id}`)
+        console.log(`[useSubscriptionStatus] Connected for user ${user.id}`);
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to connect'
-      setState(prev => ({ 
-        ...prev, 
+      const errorMessage = error instanceof Error ? error.message : "Failed to connect";
+      setState((prev) => ({
+        ...prev,
         isLoading: false,
-        error: errorMessage 
-      }))
+        error: errorMessage,
+      }));
 
       if (optionsRef.current.onError) {
-        optionsRef.current.onError(errorMessage)
+        optionsRef.current.onError(errorMessage);
       }
     }
-  }, [user?.id, handleSubscriptionUpdate])
+  }, [user?.id, handleSubscriptionUpdate]);
 
   /**
    * Disconnect from real-time updates
    */
   const disconnect = useCallback(async () => {
     if (unsubscribeRef.current) {
-      unsubscribeRef.current()
-      unsubscribeRef.current = null
+      unsubscribeRef.current();
+      unsubscribeRef.current = null;
     }
 
-    setState(prev => ({ 
-      ...prev, 
+    setState((prev) => ({
+      ...prev,
       isConnected: false,
-      isLoading: false 
-    }))
+      isLoading: false,
+    }));
 
     if (optionsRef.current.onDisconnect) {
-      optionsRef.current.onDisconnect()
+      optionsRef.current.onDisconnect();
     }
 
     if (optionsRef.current.enableLogging) {
-      console.log(`[useSubscriptionStatus] Disconnected`)
+      console.log(`[useSubscriptionStatus] Disconnected`);
     }
-  }, [])
+  }, []);
 
   /**
    * Refresh subscription status
    */
   const refresh = useCallback(async () => {
     if (!user?.id) {
-      return
+      return;
     }
 
-    setState(prev => ({ ...prev, isLoading: true }))
+    setState((prev) => ({ ...prev, isLoading: true }));
 
     try {
-      await subscriptionRealtimeManager.forceRefresh(user.id)
-      setState(prev => ({ ...prev, isLoading: false }))
+      await subscriptionRealtimeManager.forceRefresh(user.id);
+      setState((prev) => ({ ...prev, isLoading: false }));
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to refresh'
-      setState(prev => ({ 
-        ...prev, 
+      const errorMessage = error instanceof Error ? error.message : "Failed to refresh";
+      setState((prev) => ({
+        ...prev,
         isLoading: false,
-        error: errorMessage 
-      }))
+        error: errorMessage,
+      }));
     }
-  }, [user?.id])
+  }, [user?.id]);
 
   /**
    * Clear current error
    */
   const clearError = useCallback(() => {
-    setState(prev => ({ ...prev, error: null }))
-  }, [])
+    setState((prev) => ({ ...prev, error: null }));
+  }, []);
 
   /**
    * Check if user can access a specific feature
    */
-  const canAccessFeature = useCallback((feature: string): boolean => {
-    if (!state.features.length) {
-      return false
-    }
-    return state.features.includes(feature)
-  }, [state.features])
+  const canAccessFeature = useCallback(
+    (feature: string): boolean => {
+      if (!state.features.length) {
+        return false;
+      }
+      return state.features.includes(feature);
+    },
+    [state.features],
+  );
 
   // Update metrics periodically
   useEffect(() => {
     const updateMetrics = () => {
-      setMetrics(subscriptionRealtimeManager.getMetrics())
-    }
+      setMetrics(subscriptionRealtimeManager.getMetrics());
+    };
 
-    updateMetrics()
-    const interval = setInterval(updateMetrics, 5000) // Update every 5 seconds
+    updateMetrics();
+    const interval = setInterval(updateMetrics, 5000); // Update every 5 seconds
 
-    return () => clearInterval(interval)
-  }, [])
+    return () => clearInterval(interval);
+  }, []);
 
   // Auto-connect on mount if enabled
   useEffect(() => {
     if (options.autoConnect !== false && user?.id) {
-      connect()
+      connect();
     }
 
     return () => {
-      disconnect()
-    }
-  }, [user?.id, connect, disconnect, options.autoConnect])
+      disconnect();
+    };
+  }, [user?.id, connect, disconnect, options.autoConnect]);
 
   // Update connection status based on realtime manager
   useEffect(() => {
     const checkConnection = () => {
-      const isConnected = subscriptionRealtimeManager.isConnectedToRealtime()
-      setState(prev => ({ ...prev, isConnected }))
-    }
+      const isConnected = subscriptionRealtimeManager.isConnectedToRealtime();
+      setState((prev) => ({ ...prev, isConnected }));
+    };
 
-    const interval = setInterval(checkConnection, 1000) // Check every second
-    return () => clearInterval(interval)
-  }, [])
+    const interval = setInterval(checkConnection, 1000); // Check every second
+    return () => clearInterval(interval);
+  }, []);
 
   // Computed values
-  const isExpired = state.status === 'expired' || state.status === 'cancelled'
-  const isActive = state.status === 'active' || state.status === 'trialing'
+  const isExpired = state.status === "expired" || state.status === "cancelled";
+  const isActive = state.status === "active" || state.status === "trialing";
 
   return {
     // State
     ...state,
-    
+
     // Computed values
     isExpired,
     isActive,
-    
+
     // Actions
     connect,
     disconnect,
     refresh,
     clearError,
     canAccessFeature,
-    
+
     // Additional data
     metrics,
-    events
-  }
+    events,
+  };
 }
 
 /**
  * Simplified hook for just subscription status (no real-time updates)
  */
 export function useSubscriptionStatusSimple() {
-  const { user } = useAuth()
-  const [status, setStatus] = useState<SubscriptionStatus | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const { user } = useAuth();
+  const [status, setStatus] = useState<SubscriptionStatus | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!user?.id) return
+    if (!user?.id) return;
 
     const fetchStatus = async () => {
-      setIsLoading(true)
+      setIsLoading(true);
       try {
         // This would typically call your subscription service
         // For now, we'll use a placeholder
-        setStatus('active')
+        setStatus("active");
       } catch (error) {
-        console.error('Failed to fetch subscription status:', error)
+        console.error("Failed to fetch subscription status:", error);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchStatus()
-  }, [user?.id])
+    fetchStatus();
+  }, [user?.id]);
 
   return {
     status,
     isLoading,
-    isActive: status === 'active' || status === 'trialing',
-    isExpired: status === 'expired' || status === 'cancelled'
-  }
+    isActive: status === "active" || status === "trialing",
+    isExpired: status === "expired" || status === "cancelled",
+  };
 }
 
 /**
@@ -363,15 +360,15 @@ export function useSubscriptionStatusSimple() {
  */
 export function useSubscriptionFeatures() {
   const { features, tier, canAccessFeature } = useSubscriptionStatus({
-    autoConnect: true
-  })
+    autoConnect: true,
+  });
 
   return {
     features,
     tier,
     canAccess: canAccessFeature,
-    hasBasicFeatures: tier === 'basic' || tier === 'premium' || tier === 'enterprise',
-    hasPremiumFeatures: tier === 'premium' || tier === 'enterprise',
-    hasEnterpriseFeatures: tier === 'enterprise'
-  }
+    hasBasicFeatures: tier === "basic" || tier === "premium" || tier === "enterprise",
+    hasPremiumFeatures: tier === "premium" || tier === "enterprise",
+    hasEnterpriseFeatures: tier === "enterprise",
+  };
 }

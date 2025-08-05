@@ -1,35 +1,35 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { 
-  MessageSquare, 
-  Users, 
-  Send, 
-  Clock, 
-  CheckCircle, 
+import React, { useState, useEffect } from "react";
+import type {
+  MessageSquare,
+  Users,
+  Send,
+  Clock,
+  CheckCircle,
   AlertCircle,
   TrendingUp,
   Mail,
   Smartphone,
-  Bell
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
-import { StaffChat } from './staff-chat';
-import { ConsentManager } from './consent-manager';
-import { TemplateManager } from './template-manager';
-import { 
-  CommunicationConversation, 
-  CommunicationTemplate, 
+  Bell,
+} from "lucide-react";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Progress } from "@/components/ui/progress";
+import type { StaffChat } from "./staff-chat";
+import type { ConsentManager } from "./consent-manager";
+import type { TemplateManager } from "./template-manager";
+import type {
+  CommunicationConversation,
+  CommunicationTemplate,
   CommunicationConsent,
-  CommunicationNotification 
-} from '@/types/communication';
-import { createClient } from '@/lib/supabase/client';
-import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
+  CommunicationNotification,
+} from "@/types/communication";
+import type { createClient } from "@/lib/supabase/client";
+import type { useToast } from "@/hooks/use-toast";
+import type { cn } from "@/lib/utils";
 
 export interface CommunicationDashboardProps {
   userId: string;
@@ -49,10 +49,10 @@ interface DashboardStats {
   responseRate: number;
 }
 
-export function CommunicationDashboard({ 
-  userId, 
-  clinicId, 
-  className 
+export function CommunicationDashboard({
+  userId,
+  clinicId,
+  className,
 }: CommunicationDashboardProps) {
   const [stats, setStats] = useState<DashboardStats>({
     totalConversations: 0,
@@ -63,15 +63,15 @@ export function CommunicationDashboard({
     smsToday: 0,
     pushToday: 0,
     consentRate: 0,
-    responseRate: 0
+    responseRate: 0,
   });
-  
+
   const [conversations, setConversations] = useState<CommunicationConversation[]>([]);
   const [templates, setTemplates] = useState<CommunicationTemplate[]>([]);
   const [consents, setConsents] = useState<CommunicationConsent[]>([]);
   const [notifications, setNotifications] = useState<CommunicationNotification[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
   const [loading, setLoading] = useState(true);
 
   const { toast } = useToast();
@@ -80,23 +80,23 @@ export function CommunicationDashboard({
   // Carregar dados do dashboard
   useEffect(() => {
     loadDashboardData();
-    
+
     // Configurar updates em tempo real
     const conversationChannel = supabase
-      .channel('dashboard-conversations')
+      .channel("dashboard-conversations")
       .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'communication_conversations' },
-        () => loadConversations()
+        "postgres_changes",
+        { event: "*", schema: "public", table: "communication_conversations" },
+        () => loadConversations(),
       )
       .subscribe();
 
     const messageChannel = supabase
-      .channel('dashboard-messages')
+      .channel("dashboard-messages")
       .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'communication_messages' },
-        () => loadStats()
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "communication_messages" },
+        () => loadStats(),
       )
       .subscribe();
 
@@ -114,13 +114,13 @@ export function CommunicationDashboard({
         loadConversations(),
         loadTemplates(),
         loadConsents(),
-        loadNotifications()
+        loadNotifications(),
       ]);
     } catch (error) {
       toast({
-        title: 'Erro ao carregar dashboard',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
-        variant: 'destructive'
+        title: "Erro ao carregar dashboard",
+        description: error instanceof Error ? error.message : "Erro desconhecido",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -129,40 +129,35 @@ export function CommunicationDashboard({
 
   const loadStats = async () => {
     try {
-      const today = new Date().toISOString().split('T')[0];
-      
+      const today = new Date().toISOString().split("T")[0];
+
       // Carregar estatísticas paralelo
-      const [
-        conversationsData,
-        messagesData,
-        notificationsData,
-        consentsData
-      ] = await Promise.all([
+      const [conversationsData, messagesData, notificationsData, consentsData] = await Promise.all([
+        supabase.from("communication_conversations").select("id, status").eq("clinic_id", clinicId),
+
         supabase
-          .from('communication_conversations')
-          .select('id, status')
-          .eq('clinic_id', clinicId),
-        
+          .from("communication_messages")
+          .select("id, sender_id, created_at")
+          .gte("created_at", `${today}T00:00:00.000Z`)
+          .lt("created_at", `${today}T23:59:59.999Z`),
+
         supabase
-          .from('communication_messages')
-          .select('id, sender_id, created_at')
-          .gte('created_at', `${today}T00:00:00.000Z`)
-          .lt('created_at', `${today}T23:59:59.999Z`),
-        
-        supabase
-          .from('communication_notifications')
-          .select('id, type, sent_at')
-          .eq('clinic_id', clinicId)
-          .gte('created_at', `${today}T00:00:00.000Z`)
-          .lt('created_at', `${today}T23:59:59.999Z`),
-        
-        supabase
-          .from('communication_consents')
-          .select('id, consent_type, consented')
+          .from("communication_notifications")
+          .select("id, type, sent_at")
+          .eq("clinic_id", clinicId)
+          .gte("created_at", `${today}T00:00:00.000Z`)
+          .lt("created_at", `${today}T23:59:59.999Z`),
+
+        supabase.from("communication_consents").select("id, consent_type, consented"),
       ]);
 
-      if (conversationsData.error || messagesData.error || notificationsData.error || consentsData.error) {
-        throw new Error('Erro ao carregar estatísticas');
+      if (
+        conversationsData.error ||
+        messagesData.error ||
+        notificationsData.error ||
+        consentsData.error
+      ) {
+        throw new Error("Erro ao carregar estatísticas");
       }
 
       const conversations = conversationsData.data || [];
@@ -170,112 +165,111 @@ export function CommunicationDashboard({
       const notifications = notificationsData.data || [];
       const consents = consentsData.data || [];
 
-      const messagesSent = messages.filter(m => m.sender_id === userId).length;
+      const messagesSent = messages.filter((m) => m.sender_id === userId).length;
       const messagesReceived = messages.length - messagesSent;
-      
-      const emailsToday = notifications.filter(n => n.type === 'email' && n.sent_at).length;
-      const smsToday = notifications.filter(n => n.type === 'sms' && n.sent_at).length;
-      const pushToday = notifications.filter(n => n.type === 'push' && n.sent_at).length;
+
+      const emailsToday = notifications.filter((n) => n.type === "email" && n.sent_at).length;
+      const smsToday = notifications.filter((n) => n.type === "sms" && n.sent_at).length;
+      const pushToday = notifications.filter((n) => n.type === "push" && n.sent_at).length;
 
       const totalConsents = consents.length;
-      const consentedCount = consents.filter(c => c.consented).length;
+      const consentedCount = consents.filter((c) => c.consented).length;
       const consentRate = totalConsents > 0 ? (consentedCount / totalConsents) * 100 : 0;
 
       setStats({
         totalConversations: conversations.length,
-        activeConversations: conversations.filter(c => c.status === 'active').length,
+        activeConversations: conversations.filter((c) => c.status === "active").length,
         messagesSentToday: messagesSent,
         messagesReceivedToday: messagesReceived,
         emailsToday,
         smsToday,
         pushToday,
         consentRate: Math.round(consentRate),
-        responseRate: 85 // TODO: Calcular taxa de resposta real
+        responseRate: 85, // TODO: Calcular taxa de resposta real
       });
-
     } catch (error) {
-      console.error('Erro ao carregar estatísticas:', error);
+      console.error("Erro ao carregar estatísticas:", error);
     }
   };
 
   const loadConversations = async () => {
     try {
       const { data, error } = await supabase
-        .from('communication_conversations')
+        .from("communication_conversations")
         .select(`
           *,
           patient:patients(id, name, email),
           last_message:communication_messages(content, created_at, sender_id)
         `)
-        .eq('clinic_id', clinicId)
-        .order('updated_at', { ascending: false })
+        .eq("clinic_id", clinicId)
+        .order("updated_at", { ascending: false })
         .limit(20);
 
       if (error) throw error;
       setConversations(data || []);
     } catch (error) {
-      console.error('Erro ao carregar conversas:', error);
+      console.error("Erro ao carregar conversas:", error);
     }
   };
 
   const loadTemplates = async () => {
     try {
       const { data, error } = await supabase
-        .from('communication_templates')
-        .select('*')
-        .eq('clinic_id', clinicId)
-        .order('created_at', { ascending: false });
+        .from("communication_templates")
+        .select("*")
+        .eq("clinic_id", clinicId)
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       setTemplates(data || []);
     } catch (error) {
-      console.error('Erro ao carregar templates:', error);
+      console.error("Erro ao carregar templates:", error);
     }
   };
 
   const loadConsents = async () => {
     try {
       const { data, error } = await supabase
-        .from('communication_consents')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .from("communication_consents")
+        .select("*")
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       setConsents(data || []);
     } catch (error) {
-      console.error('Erro ao carregar consentimentos:', error);
+      console.error("Erro ao carregar consentimentos:", error);
     }
   };
 
   const loadNotifications = async () => {
     try {
       const { data, error } = await supabase
-        .from('communication_notifications')
-        .select('*')
-        .eq('clinic_id', clinicId)
-        .order('created_at', { ascending: false })
+        .from("communication_notifications")
+        .select("*")
+        .eq("clinic_id", clinicId)
+        .order("created_at", { ascending: false })
         .limit(50);
 
       if (error) throw error;
       setNotifications(data || []);
     } catch (error) {
-      console.error('Erro ao carregar notificações:', error);
+      console.error("Erro ao carregar notificações:", error);
     }
   };
 
   // Renderizar cards de estatísticas
-  const StatCard = ({ 
-    title, 
-    value, 
-    icon, 
-    change, 
-    changeType = 'neutral' 
+  const StatCard = ({
+    title,
+    value,
+    icon,
+    change,
+    changeType = "neutral",
   }: {
     title: string;
     value: string | number;
     icon: React.ReactNode;
     change?: string;
-    changeType?: 'positive' | 'negative' | 'neutral';
+    changeType?: "positive" | "negative" | "neutral";
   }) => (
     <Card>
       <CardContent className="p-6">
@@ -285,18 +279,21 @@ export function CommunicationDashboard({
             <div className="flex items-center gap-2">
               <h3 className="text-2xl font-bold">{value}</h3>
               {change && (
-                <Badge 
-                  variant={changeType === 'positive' ? 'default' : 
-                          changeType === 'negative' ? 'destructive' : 'secondary'}
+                <Badge
+                  variant={
+                    changeType === "positive"
+                      ? "default"
+                      : changeType === "negative"
+                        ? "destructive"
+                        : "secondary"
+                  }
                 >
                   {change}
                 </Badge>
               )}
             </div>
           </div>
-          <div className="text-muted-foreground">
-            {icon}
-          </div>
+          <div className="text-muted-foreground">{icon}</div>
         </div>
       </CardContent>
     </Card>
@@ -311,7 +308,7 @@ export function CommunicationDashboard({
   }
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn("space-y-6", className)}>
       {/* Cabeçalho */}
       <div>
         <h1 className="text-3xl font-bold">Dashboard de Comunicação</h1>
@@ -375,9 +372,7 @@ export function CommunicationDashboard({
               <CardContent>
                 <div className="text-2xl font-bold">{stats.emailsToday}</div>
                 <Progress value={65} className="mt-2" />
-                <p className="text-xs text-muted-foreground mt-2">
-                  65% da meta diária
-                </p>
+                <p className="text-xs text-muted-foreground mt-2">65% da meta diária</p>
               </CardContent>
             </Card>
 
@@ -391,9 +386,7 @@ export function CommunicationDashboard({
               <CardContent>
                 <div className="text-2xl font-bold">{stats.smsToday}</div>
                 <Progress value={80} className="mt-2" />
-                <p className="text-xs text-muted-foreground mt-2">
-                  80% da meta diária
-                </p>
+                <p className="text-xs text-muted-foreground mt-2">80% da meta diária</p>
               </CardContent>
             </Card>
 
@@ -407,9 +400,7 @@ export function CommunicationDashboard({
               <CardContent>
                 <div className="text-2xl font-bold">{stats.pushToday}</div>
                 <Progress value={45} className="mt-2" />
-                <p className="text-xs text-muted-foreground mt-2">
-                  45% da meta diária
-                </p>
+                <p className="text-xs text-muted-foreground mt-2">45% da meta diária</p>
               </CardContent>
             </Card>
           </div>
@@ -422,22 +413,26 @@ export function CommunicationDashboard({
             <CardContent>
               <div className="space-y-4">
                 {conversations.slice(0, 5).map((conversation) => (
-                  <div key={conversation.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div
+                    key={conversation.id}
+                    className="flex items-center justify-between p-3 border rounded-lg"
+                  >
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
                         <Users className="w-5 h-5" />
                       </div>
                       <div>
                         <p className="font-medium">
-                          {conversation.patient?.name || 'Paciente não identificado'}
+                          {conversation.patient?.name || "Paciente não identificado"}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          {conversation.last_message?.content?.substring(0, 50) || 'Sem mensagens'}...
+                          {conversation.last_message?.content?.substring(0, 50) || "Sem mensagens"}
+                          ...
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <Badge variant={conversation.status === 'active' ? 'default' : 'secondary'}>
+                      <Badge variant={conversation.status === "active" ? "default" : "secondary"}>
                         {conversation.status}
                       </Badge>
                       <p className="text-xs text-muted-foreground mt-1">
@@ -462,16 +457,16 @@ export function CommunicationDashboard({
                 {conversations.map((conversation) => (
                   <Button
                     key={conversation.id}
-                    variant={selectedConversation === conversation.id ? 'default' : 'ghost'}
+                    variant={selectedConversation === conversation.id ? "default" : "ghost"}
                     className="w-full justify-start h-auto p-3"
                     onClick={() => setSelectedConversation(conversation.id)}
                   >
                     <div className="text-left">
                       <p className="font-medium">
-                        {conversation.patient?.name || 'Paciente não identificado'}
+                        {conversation.patient?.name || "Paciente não identificado"}
                       </p>
                       <p className="text-xs text-muted-foreground truncate">
-                        {conversation.last_message?.content || 'Sem mensagens'}
+                        {conversation.last_message?.content || "Sem mensagens"}
                       </p>
                     </div>
                   </Button>
@@ -485,9 +480,7 @@ export function CommunicationDashboard({
                 <StaffChat
                   conversationId={selectedConversation}
                   userId={userId}
-                  patientContext={
-                    conversations.find(c => c.id === selectedConversation)?.patient
-                  }
+                  patientContext={conversations.find((c) => c.id === selectedConversation)?.patient}
                 />
               ) : (
                 <Card className="h-[600px] flex items-center justify-center">
@@ -505,8 +498,8 @@ export function CommunicationDashboard({
           <TemplateManager
             templates={templates}
             onTemplateUpdate={(template) => {
-              setTemplates(prev => {
-                const index = prev.findIndex(t => t.id === template.id);
+              setTemplates((prev) => {
+                const index = prev.findIndex((t) => t.id === template.id);
                 if (index >= 0) {
                   const updated = [...prev];
                   updated[index] = template;
@@ -517,7 +510,7 @@ export function CommunicationDashboard({
               });
             }}
             onTemplateDelete={(templateId) => {
-              setTemplates(prev => prev.filter(t => t.id !== templateId));
+              setTemplates((prev) => prev.filter((t) => t.id !== templateId));
             }}
           />
         </TabsContent>
@@ -527,8 +520,8 @@ export function CommunicationDashboard({
             patientId={userId} // TODO: Implementar seleção de paciente
             consents={consents}
             onConsentUpdate={(consent) => {
-              setConsents(prev => {
-                const index = prev.findIndex(c => c.id === consent.id);
+              setConsents((prev) => {
+                const index = prev.findIndex((c) => c.id === consent.id);
                 if (index >= 0) {
                   const updated = [...prev];
                   updated[index] = consent;

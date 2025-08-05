@@ -2,17 +2,24 @@
 // NeonPro - Epic 6 Story 6.2 Task 1: Patient Communication Center
 // Comprehensive type definitions for modern healthcare communication platform
 
-import { z } from 'zod';
+import type { z } from "zod";
 
 // ============================================================================
 // CORE COMMUNICATION TYPES
 // ============================================================================
 
-export type MessageStatus = 'draft' | 'sent' | 'delivered' | 'read' | 'failed';
-export type MessagePriority = 'low' | 'normal' | 'high' | 'urgent';
-export type CommunicationChannel = 'sms' | 'email' | 'portal' | 'whatsapp' | 'internal';
-export type MessageType = 'text' | 'appointment' | 'reminder' | 'alert' | 'document' | 'image' | 'form';
-export type ConversationStatus = 'active' | 'archived' | 'blocked';
+export type MessageStatus = "draft" | "sent" | "delivered" | "read" | "failed";
+export type MessagePriority = "low" | "normal" | "high" | "urgent";
+export type CommunicationChannel = "sms" | "email" | "portal" | "whatsapp" | "internal";
+export type MessageType =
+  | "text"
+  | "appointment"
+  | "reminder"
+  | "alert"
+  | "document"
+  | "image"
+  | "form";
+export type ConversationStatus = "active" | "archived" | "blocked";
 
 // ============================================================================
 // MESSAGE THREAD & CONVERSATION SYSTEM
@@ -35,7 +42,7 @@ export interface MessageThread {
 
 export interface ThreadParticipant {
   user_id: string;
-  role: 'patient' | 'doctor' | 'nurse' | 'receptionist' | 'admin';
+  role: "patient" | "doctor" | "nurse" | "receptionist" | "admin";
   name: string;
   avatar?: string;
   joined_at: string;
@@ -46,7 +53,7 @@ export interface Message {
   id: string;
   thread_id: string;
   sender_id: string;
-  sender_type: 'patient' | 'staff';
+  sender_type: "patient" | "staff";
   recipient_ids: string[];
   type: MessageType;
   channel: CommunicationChannel;
@@ -87,7 +94,7 @@ export interface MessageAttachment {
 export interface MessageMetadata {
   ip_address?: string;
   user_agent?: string;
-  device_type?: 'mobile' | 'desktop' | 'tablet';
+  device_type?: "mobile" | "desktop" | "tablet";
   location?: {
     country?: string;
     region?: string;
@@ -110,7 +117,7 @@ export interface CommunicationConsent {
   channel: CommunicationChannel;
   consent_given: boolean;
   consent_date: string;
-  consent_method: 'verbal' | 'written' | 'electronic';
+  consent_method: "verbal" | "written" | "electronic";
   phi_sharing_allowed: boolean;
   marketing_allowed: boolean;
   appointment_reminders: boolean;
@@ -158,23 +165,23 @@ export interface MessageTemplate {
   updated_at: string;
 }
 
-export type TemplateCategory = 
-  | 'appointment' 
-  | 'reminder' 
-  | 'follow_up' 
-  | 'confirmation' 
-  | 'cancellation' 
-  | 'test_results' 
-  | 'medication' 
-  | 'billing' 
-  | 'marketing' 
-  | 'emergency' 
-  | 'general';
+export type TemplateCategory =
+  | "appointment"
+  | "reminder"
+  | "follow_up"
+  | "confirmation"
+  | "cancellation"
+  | "test_results"
+  | "medication"
+  | "billing"
+  | "marketing"
+  | "emergency"
+  | "general";
 
 export interface TemplateVariable {
   name: string;
   description: string;
-  type: 'text' | 'number' | 'date' | 'boolean' | 'list';
+  type: "text" | "number" | "date" | "boolean" | "list";
   required: boolean;
   default_value?: string;
   validation_pattern?: string;
@@ -199,18 +206,31 @@ export interface AutomationRule {
 }
 
 export interface AutomationTrigger {
-  type: 'appointment_created' | 'appointment_reminder' | 'treatment_completed' | 'no_show' | 'birthday' | 'manual' | 'time_based';
+  type:
+    | "appointment_created"
+    | "appointment_reminder"
+    | "treatment_completed"
+    | "no_show"
+    | "birthday"
+    | "manual"
+    | "time_based";
   config: Record<string, any>;
 }
 
 export interface AutomationCondition {
   field: string;
-  operator: 'equals' | 'not_equals' | 'contains' | 'greater_than' | 'less_than' | 'in' | 'not_in';
+  operator: "equals" | "not_equals" | "contains" | "greater_than" | "less_than" | "in" | "not_in";
   value: string | number | boolean | string[];
 }
 
 export interface AutomationAction {
-  type: 'send_message' | 'create_task' | 'update_patient' | 'send_email' | 'send_sms' | 'create_appointment';
+  type:
+    | "send_message"
+    | "create_task"
+    | "update_patient"
+    | "send_email"
+    | "send_sms"
+    | "create_appointment";
   template_id?: string;
   channel?: CommunicationChannel;
   delay_minutes?: number;
@@ -218,7 +238,7 @@ export interface AutomationAction {
 }
 
 export interface AutomationSchedule {
-  frequency: 'once' | 'daily' | 'weekly' | 'monthly' | 'yearly';
+  frequency: "once" | "daily" | "weekly" | "monthly" | "yearly";
   interval?: number;
   days_of_week?: number[];
   day_of_month?: number;
@@ -257,8 +277,14 @@ export interface CommunicationCampaign {
   updated_at: string;
 }
 
-export type CampaignType = 'one_time' | 'recurring' | 'triggered' | 'drip';
-export type CampaignStatus = 'draft' | 'scheduled' | 'running' | 'completed' | 'cancelled' | 'paused';
+export type CampaignType = "one_time" | "recurring" | "triggered" | "drip";
+export type CampaignStatus =
+  | "draft"
+  | "scheduled"
+  | "running"
+  | "completed"
+  | "cancelled"
+  | "paused";
 
 export interface CampaignAudience {
   include_criteria: AudienceCriteria[];
@@ -308,7 +334,7 @@ export interface QuickResponse {
 // ============================================================================
 
 export interface CommunicationStats {
-  period: 'today' | 'week' | 'month' | 'quarter' | 'year';
+  period: "today" | "week" | "month" | "quarter" | "year";
   total_messages: number;
   messages_by_channel: Record<CommunicationChannel, number>;
   messages_by_type: Record<MessageType, number>;
@@ -365,7 +391,7 @@ export interface CommunicationPreferences {
   };
   follow_up_preferences: {
     enabled: boolean;
-    frequency: 'immediate' | 'daily' | 'weekly';
+    frequency: "immediate" | "daily" | "weekly";
     max_attempts: number;
   };
   custom_settings: Record<string, any>;
@@ -380,7 +406,7 @@ export interface CommunicationPreferences {
 export interface ExternalProvider {
   id: string;
   name: string;
-  type: 'sms' | 'email' | 'whatsapp' | 'voice';
+  type: "sms" | "email" | "whatsapp" | "voice";
   provider: string; // e.g., 'twilio', 'sendgrid', 'mailgun'
   is_active: boolean;
   configuration: ProviderConfiguration;
@@ -413,42 +439,56 @@ export interface RateLimit {
 export const MessageSchema = z.object({
   thread_id: z.string().uuid(),
   sender_id: z.string().uuid(),
-  sender_type: z.enum(['patient', 'staff']),
+  sender_type: z.enum(["patient", "staff"]),
   recipient_ids: z.array(z.string().uuid()),
-  type: z.enum(['text', 'appointment', 'reminder', 'alert', 'document', 'image', 'form']),
-  channel: z.enum(['sms', 'email', 'portal', 'whatsapp', 'internal']),
+  type: z.enum(["text", "appointment", "reminder", "alert", "document", "image", "form"]),
+  channel: z.enum(["sms", "email", "portal", "whatsapp", "internal"]),
   subject: z.string().optional(),
-  content: z.string().min(1, 'Message content is required'),
-  priority: z.enum(['low', 'normal', 'high', 'urgent']).default('normal'),
+  content: z.string().min(1, "Message content is required"),
+  priority: z.enum(["low", "normal", "high", "urgent"]).default("normal"),
   template_id: z.string().uuid().optional(),
   automation_id: z.string().uuid().optional(),
 });
 
 export const MessageTemplateSchema = z.object({
-  name: z.string().min(1, 'Template name is required'),
+  name: z.string().min(1, "Template name is required"),
   description: z.string().optional(),
-  category: z.enum(['appointment', 'reminder', 'follow_up', 'confirmation', 'cancellation', 'test_results', 'medication', 'billing', 'marketing', 'emergency', 'general']),
-  type: z.enum(['text', 'appointment', 'reminder', 'alert', 'document', 'image', 'form']),
-  channel: z.array(z.enum(['sms', 'email', 'portal', 'whatsapp', 'internal'])),
-  subject_template: z.string().min(1, 'Subject template is required'),
-  content_template: z.string().min(1, 'Content template is required'),
-  variables: z.array(z.object({
-    name: z.string(),
-    description: z.string(),
-    type: z.enum(['text', 'number', 'date', 'boolean', 'list']),
-    required: z.boolean(),
-    default_value: z.string().optional(),
-    validation_pattern: z.string().optional(),
-    options: z.array(z.string()).optional(),
-  })),
+  category: z.enum([
+    "appointment",
+    "reminder",
+    "follow_up",
+    "confirmation",
+    "cancellation",
+    "test_results",
+    "medication",
+    "billing",
+    "marketing",
+    "emergency",
+    "general",
+  ]),
+  type: z.enum(["text", "appointment", "reminder", "alert", "document", "image", "form"]),
+  channel: z.array(z.enum(["sms", "email", "portal", "whatsapp", "internal"])),
+  subject_template: z.string().min(1, "Subject template is required"),
+  content_template: z.string().min(1, "Content template is required"),
+  variables: z.array(
+    z.object({
+      name: z.string(),
+      description: z.string(),
+      type: z.enum(["text", "number", "date", "boolean", "list"]),
+      required: z.boolean(),
+      default_value: z.string().optional(),
+      validation_pattern: z.string().optional(),
+      options: z.array(z.string()).optional(),
+    }),
+  ),
   is_active: z.boolean().default(true),
 });
 
 export const CommunicationConsentSchema = z.object({
   patient_id: z.string().uuid(),
-  channel: z.enum(['sms', 'email', 'portal', 'whatsapp', 'internal']),
+  channel: z.enum(["sms", "email", "portal", "whatsapp", "internal"]),
   consent_given: z.boolean(),
-  consent_method: z.enum(['verbal', 'written', 'electronic']),
+  consent_method: z.enum(["verbal", "written", "electronic"]),
   phi_sharing_allowed: z.boolean(),
   marketing_allowed: z.boolean(),
   appointment_reminders: z.boolean(),
@@ -460,41 +500,51 @@ export const CommunicationConsentSchema = z.object({
 });
 
 export const CommunicationCampaignSchema = z.object({
-  name: z.string().min(1, 'Campaign name is required'),
+  name: z.string().min(1, "Campaign name is required"),
   description: z.string().optional(),
-  type: z.enum(['one_time', 'recurring', 'triggered', 'drip']),
+  type: z.enum(["one_time", "recurring", "triggered", "drip"]),
   message_template_id: z.string().uuid(),
-  channel: z.enum(['sms', 'email', 'portal', 'whatsapp', 'internal']),
+  channel: z.enum(["sms", "email", "portal", "whatsapp", "internal"]),
   scheduled_at: z.string().optional(),
   target_audience: z.object({
-    include_criteria: z.array(z.object({
-      field: z.string(),
-      operator: z.string(),
-      value: z.any(),
-    })),
-    exclude_criteria: z.array(z.object({
-      field: z.string(),
-      operator: z.string(),
-      value: z.any(),
-    })),
+    include_criteria: z.array(
+      z.object({
+        field: z.string(),
+        operator: z.string(),
+        value: z.any(),
+      }),
+    ),
+    exclude_criteria: z.array(
+      z.object({
+        field: z.string(),
+        operator: z.string(),
+        value: z.any(),
+      }),
+    ),
     patient_ids: z.array(z.string().uuid()).optional(),
   }),
 });
 
 export const QuickResponseSchema = z.object({
-  name: z.string().min(1, 'Quick response name is required'),
-  shortcut: z.string().min(1, 'Shortcut is required').regex(/^\/\w+$/, 'Shortcut must start with / and contain only letters, numbers, and underscores'),
-  content: z.string().min(1, 'Content is required'),
-  category: z.string().min(1, 'Category is required'),
-  channel: z.array(z.enum(['sms', 'email', 'portal', 'whatsapp', 'internal'])),
+  name: z.string().min(1, "Quick response name is required"),
+  shortcut: z
+    .string()
+    .min(1, "Shortcut is required")
+    .regex(
+      /^\/\w+$/,
+      "Shortcut must start with / and contain only letters, numbers, and underscores",
+    ),
+  content: z.string().min(1, "Content is required"),
+  category: z.string().min(1, "Category is required"),
+  channel: z.array(z.enum(["sms", "email", "portal", "whatsapp", "internal"])),
   is_personal: z.boolean().default(false),
 });
 
 export const CommunicationPreferencesSchema = z.object({
   patient_id: z.string().uuid(),
-  preferred_channel: z.enum(['sms', 'email', 'portal', 'whatsapp', 'internal']),
-  preferred_time_start: z.string().regex(/^\d{2}:\d{2}$/, 'Time must be in HH:MM format'),
-  preferred_time_end: z.string().regex(/^\d{2}:\d{2}$/, 'Time must be in HH:MM format'),
+  preferred_channel: z.enum(["sms", "email", "portal", "whatsapp", "internal"]),
+  preferred_time_start: z.string().regex(/^\d{2}:\d{2}$/, "Time must be in HH:MM format"),
+  preferred_time_end: z.string().regex(/^\d{2}:\d{2}$/, "Time must be in HH:MM format"),
   timezone: z.string(),
   language: z.string(),
   quiet_hours_enabled: z.boolean(),
@@ -504,11 +554,11 @@ export const CommunicationPreferencesSchema = z.object({
   appointment_reminders: z.object({
     enabled: z.boolean(),
     advance_days: z.array(z.number().min(0).max(30)),
-    channels: z.array(z.enum(['sms', 'email', 'portal', 'whatsapp', 'internal'])),
+    channels: z.array(z.enum(["sms", "email", "portal", "whatsapp", "internal"])),
   }),
   follow_up_preferences: z.object({
     enabled: z.boolean(),
-    frequency: z.enum(['immediate', 'daily', 'weekly']),
+    frequency: z.enum(["immediate", "daily", "weekly"]),
     max_attempts: z.number().min(1).max(10),
   }),
 });
@@ -553,8 +603,8 @@ export interface GetMessagesRequest {
   search?: string;
   page?: number;
   limit?: number;
-  sort_by?: 'created_at' | 'sent_at' | 'priority';
-  sort_order?: 'asc' | 'desc';
+  sort_by?: "created_at" | "sent_at" | "priority";
+  sort_order?: "asc" | "desc";
 }
 
 export interface GetMessagesResponse {
@@ -622,13 +672,13 @@ export interface CommunicationError {
   permanent?: boolean;
 }
 
-export type CommunicationErrorCode = 
-  | 'INVALID_RECIPIENT'
-  | 'CONSENT_REQUIRED'
-  | 'RATE_LIMIT_EXCEEDED'
-  | 'PROVIDER_ERROR'
-  | 'TEMPLATE_NOT_FOUND'
-  | 'ENCRYPTION_FAILED'
-  | 'DELIVERY_FAILED'
-  | 'CONTENT_BLOCKED'
-  | 'INSUFFICIENT_CREDITS';
+export type CommunicationErrorCode =
+  | "INVALID_RECIPIENT"
+  | "CONSENT_REQUIRED"
+  | "RATE_LIMIT_EXCEEDED"
+  | "PROVIDER_ERROR"
+  | "TEMPLATE_NOT_FOUND"
+  | "ENCRYPTION_FAILED"
+  | "DELIVERY_FAILED"
+  | "CONTENT_BLOCKED"
+  | "INSUFFICIENT_CREDITS";

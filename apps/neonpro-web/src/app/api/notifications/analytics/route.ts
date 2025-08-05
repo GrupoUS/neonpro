@@ -1,33 +1,37 @@
 /**
  * API Endpoint: Notification Analytics
- * 
+ *
  * Endpoint para métricas, relatórios e insights de notificações
- * 
+ *
  * @route GET /api/notifications/analytics
  * @author APEX Architecture Team
  * @version 1.0.0
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
-import { createClient } from '@/lib/supabase/server';
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { createClient } from "@/lib/supabase/server";
 
 // ================================================================================
 // VALIDATION SCHEMAS
 // ================================================================================
 
 const AnalyticsQuerySchema = z.object({
-  metric: z.enum(['overview', 'performance', 'engagement', 'channels', 'trends']).default('overview'),
-  period: z.enum(['hour', 'day', 'week', 'month', 'quarter', 'year']).default('week'),
+  metric: z
+    .enum(["overview", "performance", "engagement", "channels", "trends"])
+    .default("overview"),
+  period: z.enum(["hour", "day", "week", "month", "quarter", "year"]).default("week"),
   dateFrom: z.string().datetime().optional(),
   dateTo: z.string().datetime().optional(),
-  groupBy: z.enum(['type', 'channel', 'status', 'user']).optional(),
-  filters: z.object({
-    type: z.string().optional(),
-    channel: z.string().optional(),
-    status: z.string().optional(),
-    userId: z.string().uuid().optional(),
-  }).optional(),
+  groupBy: z.enum(["type", "channel", "status", "user"]).optional(),
+  filters: z
+    .object({
+      type: z.string().optional(),
+      channel: z.string().optional(),
+      status: z.string().optional(),
+      userId: z.string().uuid().optional(),
+    })
+    .optional(),
 });
 
 // ================================================================================
@@ -36,33 +40,39 @@ const AnalyticsQuerySchema = z.object({
 
 async function validateAuth(request: NextRequest) {
   const supabase = await createClient();
-  
-  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+  const {
+    data: { session },
+    error: sessionError,
+  } = await supabase.auth.getSession();
   if (sessionError || !session) {
-    return { error: 'Não autenticado', status: 401 };
+    return { error: "Não autenticado", status: 401 };
   }
 
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
   if (userError || !user) {
-    return { error: 'Usuário inválido', status: 401 };
+    return { error: "Usuário inválido", status: 401 };
   }
 
   const { data: profile } = await supabase
-    .from('profiles')
-    .select('clinic_id, role, permissions')
-    .eq('id', user.id)
+    .from("profiles")
+    .select("clinic_id, role, permissions")
+    .eq("id", user.id)
     .single();
 
   if (!profile) {
-    return { error: 'Perfil não encontrado', status: 404 };
+    return { error: "Perfil não encontrado", status: 404 };
   }
 
   // Verificar permissões de analytics
-  const canViewAnalytics = profile.permissions?.includes('view_analytics') || 
-                          ['admin', 'manager'].includes(profile.role);
+  const canViewAnalytics =
+    profile.permissions?.includes("view_analytics") || ["admin", "manager"].includes(profile.role);
 
   if (!canViewAnalytics) {
-    return { error: 'Sem permissão para visualizar analytics', status: 403 };
+    return { error: "Sem permissão para visualizar analytics", status: 403 };
   }
 
   return { user, profile, supabase };
@@ -80,26 +90,26 @@ function calculatePeriod(period: string, dateFrom?: string, dateTo?: string) {
     from = new Date(dateFrom);
   } else {
     switch (period) {
-      case 'hour':
-        from = new Date(now.getTime() - (60 * 60 * 1000)); // 1 hora
+      case "hour":
+        from = new Date(now.getTime() - 60 * 60 * 1000); // 1 hora
         break;
-      case 'day':
-        from = new Date(now.getTime() - (24 * 60 * 60 * 1000)); // 1 dia
+      case "day":
+        from = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 1 dia
         break;
-      case 'week':
-        from = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000)); // 1 semana
+      case "week":
+        from = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); // 1 semana
         break;
-      case 'month':
-        from = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000)); // 30 dias
+      case "month":
+        from = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // 30 dias
         break;
-      case 'quarter':
-        from = new Date(now.getTime() - (90 * 24 * 60 * 60 * 1000)); // 90 dias
+      case "quarter":
+        from = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000); // 90 dias
         break;
-      case 'year':
-        from = new Date(now.getTime() - (365 * 24 * 60 * 60 * 1000)); // 365 dias
+      case "year":
+        from = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000); // 365 dias
         break;
       default:
-        from = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000));
+        from = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     }
   }
 
@@ -117,36 +127,33 @@ function calculatePeriod(period: string, dateFrom?: string, dateTo?: string) {
 export async function GET(request: NextRequest) {
   try {
     const authResult = await validateAuth(request);
-    if ('error' in authResult) {
-      return NextResponse.json(
-        { error: authResult.error },
-        { status: authResult.status }
-      );
+    if ("error" in authResult) {
+      return NextResponse.json({ error: authResult.error }, { status: authResult.status });
     }
 
     const { profile } = authResult;
     const { searchParams } = new URL(request.url);
-    
+
     // Validar parâmetros
     const queryParams = {
-      metric: searchParams.get('metric') || 'overview',
-      period: searchParams.get('period') || 'week',
-      dateFrom: searchParams.get('dateFrom') || undefined,
-      dateTo: searchParams.get('dateTo') || undefined,
-      groupBy: searchParams.get('groupBy') || undefined,
+      metric: searchParams.get("metric") || "overview",
+      period: searchParams.get("period") || "week",
+      dateFrom: searchParams.get("dateFrom") || undefined,
+      dateTo: searchParams.get("dateTo") || undefined,
+      groupBy: searchParams.get("groupBy") || undefined,
       filters: {
-        type: searchParams.get('filterType') || undefined,
-        channel: searchParams.get('filterChannel') || undefined,
-        status: searchParams.get('filterStatus') || undefined,
-        userId: searchParams.get('filterUserId') || undefined,
+        type: searchParams.get("filterType") || undefined,
+        channel: searchParams.get("filterChannel") || undefined,
+        status: searchParams.get("filterStatus") || undefined,
+        userId: searchParams.get("filterUserId") || undefined,
       },
     };
 
     const validationResult = AnalyticsQuerySchema.safeParse(queryParams);
     if (!validationResult.success) {
       return NextResponse.json(
-        { error: 'Parâmetros inválidos', details: validationResult.error.errors },
-        { status: 400 }
+        { error: "Parâmetros inválidos", details: validationResult.error.errors },
+        { status: 400 },
       );
     }
 
@@ -157,58 +164,53 @@ export async function GET(request: NextRequest) {
     let analyticsData;
 
     // Load analytics module dynamically to avoid build-time initialization
-    const { createNotificationAnalytics } = await import('@/lib/notifications/analytics/notification-analytics');
+    const { createNotificationAnalytics } = await import(
+      "@/lib/notifications/analytics/notification-analytics"
+    );
     const notificationAnalytics = createNotificationAnalytics();
 
     switch (query.metric) {
-      case 'overview':
-        analyticsData = await notificationAnalytics.getOverviewMetrics(
-          profile.clinic_id,
-          from,
-          to
-        );
+      case "overview":
+        analyticsData = await notificationAnalytics.getOverviewMetrics(profile.clinic_id, from, to);
         break;
 
-      case 'performance':
+      case "performance":
         analyticsData = await notificationAnalytics.getPerformanceMetrics(
           profile.clinic_id,
           from,
           to,
-          query.filters
+          query.filters,
         );
         break;
 
-      case 'engagement':
+      case "engagement":
         analyticsData = await notificationAnalytics.getEngagementMetrics(
           profile.clinic_id,
           from,
           to,
-          query.filters
+          query.filters,
         );
         break;
 
-      case 'channels':
+      case "channels":
         analyticsData = await notificationAnalytics.getChannelAnalytics(
           profile.clinic_id,
           from,
-          to
+          to,
         );
         break;
 
-      case 'trends':
+      case "trends":
         analyticsData = await notificationAnalytics.getTrendAnalysis(
           profile.clinic_id,
           from,
           to,
-          query.groupBy || 'type'
+          query.groupBy || "type",
         );
         break;
 
       default:
-        return NextResponse.json(
-          { error: 'Tipo de métrica não suportado' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "Tipo de métrica não suportado" }, { status: 400 });
     }
 
     return NextResponse.json({
@@ -223,15 +225,14 @@ export async function GET(request: NextRequest) {
       data: analyticsData,
       generatedAt: new Date().toISOString(),
     });
-
   } catch (error) {
-    console.error('Erro nas analytics de notificações:', error);
+    console.error("Erro nas analytics de notificações:", error);
     return NextResponse.json(
-      { 
-        error: 'Erro interno do servidor',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      {
+        error: "Erro interno do servidor",
+        details: process.env.NODE_ENV === "development" ? error.message : undefined,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

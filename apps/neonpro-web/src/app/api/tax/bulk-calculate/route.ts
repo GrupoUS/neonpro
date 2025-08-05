@@ -1,42 +1,39 @@
-﻿// Bulk Tax Calculation API Endpoint
+// Bulk Tax Calculation API Endpoint
 // Story 5.5: Calculate Brazilian taxes for multiple services
 
-import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { brazilianTaxEngine } from '@/lib/services/tax/tax-engine';
-import { bulkTaxCalculationRequestSchema } from '@/lib/validations/brazilian-tax';
+import type { NextResponse } from "next/server";
+import type { createClient } from "@/lib/supabase/server";
+import type { brazilianTaxEngine } from "@/lib/services/tax/tax-engine";
+import type { bulkTaxCalculationRequestSchema } from "@/lib/validations/brazilian-tax";
 
 export async function POST(request: Request) {
   try {
     const supabase = await createClient();
-    
+
     // Check authentication
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Parse request body
     const body = await request.json();
-    
+
     // Validate request data
     const validatedData = bulkTaxCalculationRequestSchema.parse(body);
 
     // Verify clinic access
     const { data: clinic, error: clinicError } = await supabase
-      .from('clinics')
-      .select('id, name')
-      .eq('id', validatedData.clinic_id)
+      .from("clinics")
+      .select("id, name")
+      .eq("id", validatedData.clinic_id)
       .single();
 
     if (clinicError || !clinic) {
-      return NextResponse.json(
-        { error: 'Clinic not found or access denied' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Clinic not found or access denied" }, { status: 404 });
     }
 
     // Process bulk calculations
@@ -45,17 +42,17 @@ export async function POST(request: Request) {
 
     for (let i = 0; i < validatedData.calculations.length; i++) {
       const calculation = validatedData.calculations[i];
-      
+
       try {
         // Calculate taxes for this item
         const taxResult = await brazilianTaxEngine.calculateTaxes({
           clinic_id: validatedData.clinic_id,
-          ...calculation
+          ...calculation,
         });
 
         // Store calculation result
         const { data: calculationRecord, error: insertError } = await supabase
-          .from('tax_calculations')
+          .from("tax_calculations")
           .insert({
             clinic_id: validatedData.clinic_id,
             service_type: calculation.service_type,
@@ -63,7 +60,7 @@ export async function POST(request: Request) {
             taxes: taxResult.taxes,
             total_amount: taxResult.totalAmount,
             calculation_metadata: taxResult,
-            created_by: session.user.id
+            created_by: session.user.id,
           })
           .select()
           .single();
@@ -71,8 +68,8 @@ export async function POST(request: Request) {
         if (insertError) {
           errors.push({
             index: i,
-            error: 'Failed to store calculation result',
-            details: insertError.message
+            error: "Failed to store calculation result",
+            details: insertError.message,
           });
           continue;
         }
@@ -80,14 +77,13 @@ export async function POST(request: Request) {
         results.push({
           index: i,
           calculation_id: calculationRecord.id,
-          ...taxResult
+          ...taxResult,
         });
-
       } catch (error) {
         errors.push({
           index: i,
-          error: 'Calculation failed',
-          details: error instanceof Error ? error.message : 'Unknown error'
+          error: "Calculation failed",
+          details: error instanceof Error ? error.message : "Unknown error",
         });
       }
     }
@@ -98,24 +94,19 @@ export async function POST(request: Request) {
         processed: results.length,
         failed: errors.length,
         results,
-        errors
-      }
+        errors,
+      },
     });
-
   } catch (error) {
-    console.error('Bulk tax calculation error:', error);
-    
-    if (error instanceof Error && error.name === 'ZodError') {
+    console.error("Bulk tax calculation error:", error);
+
+    if (error instanceof Error && error.name === "ZodError") {
       return NextResponse.json(
-        { error: 'Invalid request data', details: error.message },
-        { status: 400 }
+        { error: "Invalid request data", details: error.message },
+        { status: 400 },
       );
     }
 
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
-

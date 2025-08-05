@@ -1,6 +1,6 @@
-import { TRPCError } from '@trpc/server';
-import { middleware, publicProcedure } from './trpc';
-import { type Context } from './context';
+import type { TRPCError } from "@trpc/server";
+import type { middleware, publicProcedure } from "./trpc";
+import type { type Context } from "./context";
 
 // Healthcare audit trail interface
 interface AuditTrailData {
@@ -24,10 +24,10 @@ interface AuditTrailData {
 // Healthcare compliance middleware
 export const healthcareAuditMiddleware = middleware(async ({ ctx, next, path, type }) => {
   const startTime = Date.now();
-  
+
   try {
     const result = await next();
-    
+
     // Log successful healthcare operation
     await logHealthcareAudit({
       ctx,
@@ -37,7 +37,7 @@ export const healthcareAuditMiddleware = middleware(async ({ ctx, next, path, ty
       duration: Date.now() - startTime,
       error: null,
     });
-    
+
     return result;
   } catch (error) {
     // Log failed healthcare operation
@@ -47,9 +47,9 @@ export const healthcareAuditMiddleware = middleware(async ({ ctx, next, path, ty
       type,
       success: false,
       duration: Date.now() - startTime,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: error instanceof Error ? error.message : "Unknown error",
     });
-    
+
     throw error;
   }
 });
@@ -58,16 +58,16 @@ export const healthcareAuditMiddleware = middleware(async ({ ctx, next, path, ty
 export const authMiddleware = middleware(async ({ ctx, next }) => {
   if (!ctx.user) {
     throw new TRPCError({
-      code: 'UNAUTHORIZED',
-      message: 'Healthcare authentication required',
+      code: "UNAUTHORIZED",
+      message: "Healthcare authentication required",
     });
   }
 
   // Validate LGPD compliance
   if (!ctx.user.lgpd_consent || !ctx.user.data_consent_given) {
     throw new TRPCError({
-      code: 'FORBIDDEN',
-      message: 'LGPD data consent required for healthcare operations',
+      code: "FORBIDDEN",
+      message: "LGPD data consent required for healthcare operations",
     });
   }
 
@@ -82,50 +82,50 @@ export const authMiddleware = middleware(async ({ ctx, next }) => {
 // Medical professional middleware
 export const medicalProfessionalMiddleware = authMiddleware.unstable_pipe(
   middleware(async ({ ctx, next }) => {
-    const allowedRoles = ['healthcare_professional', 'admin'];
-    
+    const allowedRoles = ["healthcare_professional", "admin"];
+
     if (!allowedRoles.includes(ctx.user.role)) {
       throw new TRPCError({
-        code: 'FORBIDDEN',
-        message: 'Medical professional access required',
+        code: "FORBIDDEN",
+        message: "Medical professional access required",
       });
     }
 
     // Validate medical license for healthcare professionals
-    if (ctx.user.role === 'healthcare_professional' && !ctx.user.medical_license) {
+    if (ctx.user.role === "healthcare_professional" && !ctx.user.medical_license) {
       throw new TRPCError({
-        code: 'FORBIDDEN',
-        message: 'Valid medical license required',
+        code: "FORBIDDEN",
+        message: "Valid medical license required",
       });
     }
 
     return next();
-  })
+  }),
 );
 
 // Admin-only middleware
 export const adminMiddleware = authMiddleware.unstable_pipe(
   middleware(async ({ ctx, next }) => {
-    if (ctx.user.role !== 'admin') {
+    if (ctx.user.role !== "admin") {
       throw new TRPCError({
-        code: 'FORBIDDEN',
-        message: 'Administrative access required',
+        code: "FORBIDDEN",
+        message: "Administrative access required",
       });
     }
 
     return next();
-  })
+  }),
 );
 
 // Tenant isolation middleware
 export const tenantMiddleware = authMiddleware.unstable_pipe(
   middleware(async ({ ctx, next, input }) => {
     // Ensure tenant_id matches user's tenant for data isolation
-    if (input && typeof input === 'object' && 'tenant_id' in input) {
+    if (input && typeof input === "object" && "tenant_id" in input) {
       if (input.tenant_id !== ctx.user.tenant_id) {
         throw new TRPCError({
-          code: 'FORBIDDEN',
-          message: 'Cross-tenant access not allowed',
+          code: "FORBIDDEN",
+          message: "Cross-tenant access not allowed",
         });
       }
     }
@@ -136,8 +136,8 @@ export const tenantMiddleware = authMiddleware.unstable_pipe(
         tenantId: ctx.user.tenant_id,
       },
     });
-  })
-);// Healthcare audit logging function
+  }),
+); // Healthcare audit logging function
 async function logHealthcareAudit({
   ctx,
   path,
@@ -157,7 +157,7 @@ async function logHealthcareAudit({
     const auditData: AuditTrailData = {
       user_id: ctx.user?.id || null,
       action: `${type}.${path}`,
-      resource_type: path.split('.')[0] || 'unknown',
+      resource_type: path.split(".")[0] || "unknown",
       tenant_id: ctx.user?.tenant_id,
       metadata: {
         success,
@@ -171,19 +171,16 @@ async function logHealthcareAudit({
       compliance_flags: {
         lgpd_compliant: ctx.user?.lgpd_consent || false,
         data_consent_validated: ctx.user?.data_consent_given || false,
-        medical_role_verified: ctx.user?.role === 'healthcare_professional' ? 
-          !!ctx.user?.medical_license : true,
+        medical_role_verified:
+          ctx.user?.role === "healthcare_professional" ? !!ctx.user?.medical_license : true,
       },
     };
 
     // Insert audit log into Supabase
-    await ctx.supabase
-      .from('healthcare_audit_logs')
-      .insert(auditData);
-      
+    await ctx.supabase.from("healthcare_audit_logs").insert(auditData);
   } catch (auditError) {
     // Log audit errors but don't fail the main operation
-    console.error('Healthcare audit logging failed:', auditError);
+    console.error("Healthcare audit logging failed:", auditError);
   }
 }
 

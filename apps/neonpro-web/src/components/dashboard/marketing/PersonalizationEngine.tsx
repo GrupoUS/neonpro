@@ -4,30 +4,30 @@
 
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
-import {
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import {
+import type { Separator } from "@/components/ui/separator";
+import type { Switch } from "@/components/ui/switch";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
   AlertCircle,
   Brain,
   CheckCircle,
@@ -38,8 +38,8 @@ import {
   Target,
   TrendingUp,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 
 interface PersonalizationRule {
   id: string;
@@ -161,12 +161,7 @@ export default function PersonalizationEngine({
           id: "1",
           name: "Template VIP Personalizado",
           type: "email",
-          content_variables: [
-            "first_name",
-            "last_purchase",
-            "vip_tier",
-            "exclusive_offer",
-          ],
+          content_variables: ["first_name", "last_purchase", "vip_tier", "exclusive_offer"],
           base_template:
             "Olá {{first_name}}, como membro {{vip_tier}}, temos uma oferta exclusiva...",
           personalization_fields: {
@@ -181,12 +176,7 @@ export default function PersonalizationEngine({
           id: "2",
           name: "Template Re-engajamento",
           type: "email",
-          content_variables: [
-            "first_name",
-            "last_visit",
-            "favorite_category",
-            "comeback_offer",
-          ],
+          content_variables: ["first_name", "last_visit", "favorite_category", "comeback_offer"],
           base_template:
             "Sentimos sua falta, {{first_name}}! Veja o que há de novo em {{favorite_category}}...",
           personalization_fields: {
@@ -283,10 +273,8 @@ export default function PersonalizationEngine({
   };
 
   const getPriorityBadge = (priority: number) => {
-    if (priority >= 8)
-      return <Badge className="bg-red-500 text-white">Alta</Badge>;
-    if (priority >= 5)
-      return <Badge className="bg-yellow-500 text-white">Média</Badge>;
+    if (priority >= 8) return <Badge className="bg-red-500 text-white">Alta</Badge>;
+    if (priority >= 5) return <Badge className="bg-yellow-500 text-white">Média</Badge>;
     return <Badge className="bg-green-500 text-white">Baixa</Badge>;
   };
 
@@ -324,8 +312,7 @@ export default function PersonalizationEngine({
             Engine de Personalização
           </h2>
           <p className="text-muted-foreground">
-            Configure regras inteligentes para personalizar automaticamente suas
-            campanhas
+            Configure regras inteligentes para personalizar automaticamente suas campanhas
           </p>
         </div>
       </div>
@@ -337,9 +324,7 @@ export default function PersonalizationEngine({
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Regras Ativas</p>
-                <p className="text-2xl font-bold">
-                  {rules.filter((r) => r.is_active).length}
-                </p>
+                <p className="text-2xl font-bold">{rules.filter((r) => r.is_active).length}</p>
               </div>
               <Target className="h-8 w-8 text-blue-500" />
             </div>
@@ -362,9 +347,7 @@ export default function PersonalizationEngine({
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">
-                  Performance Média
-                </p>
+                <p className="text-sm text-muted-foreground">Performance Média</p>
                 <p className="text-2xl font-bold">7.5</p>
               </div>
               <TrendingUp className="h-8 w-8 text-purple-500" />
@@ -410,9 +393,7 @@ export default function PersonalizationEngine({
                   <Input
                     id="rule_name"
                     value={ruleForm.name}
-                    onChange={(e) =>
-                      setRuleForm((prev) => ({ ...prev, name: e.target.value }))
-                    }
+                    onChange={(e) => setRuleForm((prev) => ({ ...prev, name: e.target.value }))}
                     placeholder="Ex: Personalização VIP"
                   />
                 </div>
@@ -471,9 +452,7 @@ export default function PersonalizationEngine({
                   </div>
 
                   <div>
-                    <Label htmlFor="engagement_level">
-                      Nível de Engajamento
-                    </Label>
+                    <Label htmlFor="engagement_level">Nível de Engajamento</Label>
                     <Select
                       value={ruleForm.conditions.engagement_level}
                       onValueChange={(value) =>
@@ -505,9 +484,7 @@ export default function PersonalizationEngine({
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="content_variation">
-                      Variação de Conteúdo
-                    </Label>
+                    <Label htmlFor="content_variation">Variação de Conteúdo</Label>
                     <Select
                       value={ruleForm.actions.content_variation}
                       onValueChange={(value) =>
@@ -524,15 +501,9 @@ export default function PersonalizationEngine({
                         <SelectValue placeholder="Tipo de variação" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="premium_offers">
-                          Ofertas Premium
-                        </SelectItem>
-                        <SelectItem value="discount_focus">
-                          Foco em Desconto
-                        </SelectItem>
-                        <SelectItem value="product_recs">
-                          Recomendações
-                        </SelectItem>
+                        <SelectItem value="premium_offers">Ofertas Premium</SelectItem>
+                        <SelectItem value="discount_focus">Foco em Desconto</SelectItem>
+                        <SelectItem value="product_recs">Recomendações</SelectItem>
                         <SelectItem value="urgency">Urgência</SelectItem>
                       </SelectContent>
                     </Select>
@@ -579,9 +550,7 @@ export default function PersonalizationEngine({
                       }))
                     }
                   />
-                  <Label htmlFor="send_time_optimization">
-                    Otimização de Horário de Envio
-                  </Label>
+                  <Label htmlFor="send_time_optimization">Otimização de Horário de Envio</Label>
                 </div>
               </div>
 
@@ -599,11 +568,7 @@ export default function PersonalizationEngine({
                 <Label htmlFor="is_active">Regra Ativa</Label>
               </div>
 
-              <Button
-                onClick={handleCreateRule}
-                disabled={!ruleForm.name}
-                className="w-full"
-              >
+              <Button onClick={handleCreateRule} disabled={!ruleForm.name} className="w-full">
                 Criar Regra de Personalização
               </Button>
             </CardContent>
@@ -611,9 +576,7 @@ export default function PersonalizationEngine({
 
           {/* Existing Rules */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">
-              Regras Configuradas ({rules.length})
-            </h3>
+            <h3 className="text-lg font-semibold">Regras Configuradas ({rules.length})</h3>
 
             {rules.map((rule) => (
               <Card key={rule.id}>
@@ -622,8 +585,7 @@ export default function PersonalizationEngine({
                     <div>
                       <CardTitle className="text-lg">{rule.name}</CardTitle>
                       <CardDescription>
-                        Criada em{" "}
-                        {new Date(rule.created_at).toLocaleDateString("pt-BR")}
+                        Criada em {new Date(rule.created_at).toLocaleDateString("pt-BR")}
                       </CardDescription>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -641,19 +603,14 @@ export default function PersonalizationEngine({
                     {/* Performance Score */}
                     {rule.performance_score && (
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">
-                          Performance:
-                        </span>
+                        <span className="text-sm font-medium">Performance:</span>
                         <div className="flex items-center space-x-2">
                           <span
                             className={`font-bold ${getPerformanceColor(rule.performance_score)}`}
                           >
                             {rule.performance_score.toFixed(1)}/10
                           </span>
-                          <Progress
-                            value={rule.performance_score * 10}
-                            className="w-20"
-                          />
+                          <Progress value={rule.performance_score * 10} className="w-20" />
                         </div>
                       </div>
                     )}
@@ -665,18 +622,12 @@ export default function PersonalizationEngine({
                       <div>
                         <h4 className="font-medium mb-2">Condições</h4>
                         <ul className="space-y-1 text-muted-foreground">
-                          {Object.entries(rule.condition).map(
-                            ([key, value]) => (
-                              <li key={key}>
-                                <span className="capitalize">
-                                  {key.replace("_", " ")}:{" "}
-                                </span>
-                                {typeof value === "string"
-                                  ? value
-                                  : JSON.stringify(value)}
-                              </li>
-                            )
-                          )}
+                          {Object.entries(rule.condition).map(([key, value]) => (
+                            <li key={key}>
+                              <span className="capitalize">{key.replace("_", " ")}: </span>
+                              {typeof value === "string" ? value : JSON.stringify(value)}
+                            </li>
+                          ))}
                         </ul>
                       </div>
 
@@ -685,12 +636,8 @@ export default function PersonalizationEngine({
                         <ul className="space-y-1 text-muted-foreground">
                           {Object.entries(rule.action).map(([key, value]) => (
                             <li key={key}>
-                              <span className="capitalize">
-                                {key.replace("_", " ")}:{" "}
-                              </span>
-                              {typeof value === "string"
-                                ? value
-                                : JSON.stringify(value)}
+                              <span className="capitalize">{key.replace("_", " ")}: </span>
+                              {typeof value === "string" ? value : JSON.stringify(value)}
                             </li>
                           ))}
                         </ul>
@@ -773,22 +720,14 @@ export default function PersonalizationEngine({
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <Label>Variáveis de Conteúdo</Label>
-                  <Button
-                    onClick={addContentVariable}
-                    variant="outline"
-                    size="sm"
-                  >
+                  <Button onClick={addContentVariable} variant="outline" size="sm">
                     Adicionar Variável
                   </Button>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
                   {templateForm.content_variables.map((variable) => (
-                    <Badge
-                      key={variable}
-                      variant="outline"
-                      className="flex items-center gap-1"
-                    >
+                    <Badge key={variable} variant="outline" className="flex items-center gap-1">
                       {`{{${variable}}}`}
                       <button
                         onClick={() => removeContentVariable(variable)}
@@ -832,9 +771,7 @@ export default function PersonalizationEngine({
 
           {/* Existing Templates */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">
-              Templates Criados ({templates.length})
-            </h3>
+            <h3 className="text-lg font-semibold">Templates Criados ({templates.length})</h3>
 
             {templates.map((template) => (
               <Card key={template.id}>
@@ -843,8 +780,7 @@ export default function PersonalizationEngine({
                     <div>
                       <CardTitle className="text-lg">{template.name}</CardTitle>
                       <CardDescription>
-                        Tipo: {template.type.toUpperCase()} •
-                        {template.usage_count} usos
+                        Tipo: {template.type.toUpperCase()} •{template.usage_count} usos
                       </CardDescription>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -869,9 +805,7 @@ export default function PersonalizationEngine({
 
                     {/* Variables */}
                     <div>
-                      <h4 className="font-medium mb-2">
-                        Variáveis Disponíveis
-                      </h4>
+                      <h4 className="font-medium mb-2">Variáveis Disponíveis</h4>
                       <div className="flex flex-wrap gap-2">
                         {template.content_variables.map((variable) => (
                           <Badge key={variable} variant="outline">
@@ -914,26 +848,16 @@ export default function PersonalizationEngine({
                 {/* Overall Performance */}
                 <div className="grid grid-cols-3 gap-4">
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-green-600">
-                      +24%
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Uplift em Conversão
-                    </div>
+                    <div className="text-3xl font-bold text-green-600">+24%</div>
+                    <div className="text-sm text-muted-foreground">Uplift em Conversão</div>
                   </div>
                   <div className="text-center">
                     <div className="text-3xl font-bold text-blue-600">+18%</div>
-                    <div className="text-sm text-muted-foreground">
-                      Melhoria em Engajamento
-                    </div>
+                    <div className="text-sm text-muted-foreground">Melhoria em Engajamento</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-purple-600">
-                      87%
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Taxa de Acerto
-                    </div>
+                    <div className="text-3xl font-bold text-purple-600">87%</div>
+                    <div className="text-sm text-muted-foreground">Taxa de Acerto</div>
                   </div>
                 </div>
 
@@ -941,17 +865,11 @@ export default function PersonalizationEngine({
 
                 {/* Top Performing Rules */}
                 <div>
-                  <h4 className="font-medium mb-3">
-                    Regras com Melhor Performance
-                  </h4>
+                  <h4 className="font-medium mb-3">Regras com Melhor Performance</h4>
                   <div className="space-y-2">
                     {rules
                       .filter((r) => r.performance_score)
-                      .sort(
-                        (a, b) =>
-                          (b.performance_score || 0) -
-                          (a.performance_score || 0)
-                      )
+                      .sort((a, b) => (b.performance_score || 0) - (a.performance_score || 0))
                       .slice(0, 3)
                       .map((rule, index) => (
                         <div
@@ -976,8 +894,7 @@ export default function PersonalizationEngine({
                               {rule.performance_score?.toFixed(1)}/10
                             </div>
                             <div className="text-sm text-green-600">
-                              +{Math.round((rule.performance_score || 0) * 3)}%
-                              uplift
+                              +{Math.round((rule.performance_score || 0) * 3)}% uplift
                             </div>
                           </div>
                         </div>
@@ -987,17 +904,15 @@ export default function PersonalizationEngine({
 
                 {/* Recommendations */}
                 <div>
-                  <h4 className="font-medium mb-3">
-                    Recomendações de Otimização
-                  </h4>
+                  <h4 className="font-medium mb-3">Recomendações de Otimização</h4>
                   <div className="space-y-2">
                     <div className="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
                       <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5" />
                       <div>
                         <div className="font-medium">Expandir Regra VIP</div>
                         <div className="text-sm text-muted-foreground">
-                          A regra para clientes VIP está performando muito bem.
-                          Considere criar variações para diferentes níveis VIP.
+                          A regra para clientes VIP está performando muito bem. Considere criar
+                          variações para diferentes níveis VIP.
                         </div>
                       </div>
                     </div>
@@ -1007,9 +922,8 @@ export default function PersonalizationEngine({
                       <div>
                         <div className="font-medium">Otimizar Timing</div>
                         <div className="text-sm text-muted-foreground">
-                          Algumas regras podem se beneficiar de horários de
-                          envio mais específicos baseados no comportamento do
-                          usuário.
+                          Algumas regras podem se beneficiar de horários de envio mais específicos
+                          baseados no comportamento do usuário.
                         </div>
                       </div>
                     </div>

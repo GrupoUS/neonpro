@@ -1,15 +1,15 @@
-'use client'
+"use client";
 
 /**
  * Statistical Insights Component for NeonPro
- * 
+ *
  * Advanced statistical analysis and insights dashboard providing
  * correlation analysis, significance testing, predictive modeling,
  * and data quality assessments for business intelligence.
  */
 
-import React, { useState, useMemo, useCallback } from 'react'
-import {
+import React, { useState, useMemo, useCallback } from "react";
+import type {
   ResponsiveContainer,
   ScatterChart,
   Scatter,
@@ -23,16 +23,28 @@ import {
   BarChart,
   Bar,
   Cell,
-  ReferenceLine
-} from 'recharts'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Progress } from '@/components/ui/progress'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { 
+  ReferenceLine,
+} from "recharts";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Progress } from "@/components/ui/progress";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type {
   BarChart3,
   TrendingUp,
   TrendingDown,
@@ -50,152 +62,155 @@ import {
   Filter,
   RefreshCw,
   Download,
-  Info
-} from 'lucide-react'
+  Info,
+} from "lucide-react";
 
 // Types for statistical data
 interface CorrelationData {
-  variable1: string
-  variable2: string
-  correlation: number
-  pValue: number
-  significance: 'high' | 'medium' | 'low' | 'none'
-  sampleSize: number
+  variable1: string;
+  variable2: string;
+  correlation: number;
+  pValue: number;
+  significance: "high" | "medium" | "low" | "none";
+  sampleSize: number;
 }
 
 interface RegressionResult {
-  equation: string
-  rSquared: number
+  equation: string;
+  rSquared: number;
   coefficients: Array<{
-    variable: string
-    coefficient: number
-    pValue: number
-    significance: boolean
-  }>
-  residuals: number[]
+    variable: string;
+    coefficient: number;
+    pValue: number;
+    significance: boolean;
+  }>;
+  residuals: number[];
   predictions: Array<{
-    actual: number
-    predicted: number
-    residual: number
-  }>
+    actual: number;
+    predicted: number;
+    residual: number;
+  }>;
 }
 
 interface StatisticalTest {
-  testName: string
-  hypothesis: string
-  testStatistic: number
-  pValue: number
-  criticalValue: number
-  result: 'reject' | 'fail_to_reject'
-  interpretation: string
-  confidenceLevel: number
+  testName: string;
+  hypothesis: string;
+  testStatistic: number;
+  pValue: number;
+  criticalValue: number;
+  result: "reject" | "fail_to_reject";
+  interpretation: string;
+  confidenceLevel: number;
 }
 
 interface DataQualityMetrics {
-  completeness: number
-  accuracy: number
-  consistency: number
-  validity: number
-  uniqueness: number
+  completeness: number;
+  accuracy: number;
+  consistency: number;
+  validity: number;
+  uniqueness: number;
   outliers: Array<{
-    metric: string
-    value: number
-    zScore: number
-    isOutlier: boolean
-  }>
+    metric: string;
+    value: number;
+    zScore: number;
+    isOutlier: boolean;
+  }>;
 }
 
 interface PredictiveModel {
-  modelType: 'linear' | 'polynomial' | 'exponential' | 'seasonal'
-  accuracy: number
-  features: string[]
+  modelType: "linear" | "polynomial" | "exponential" | "seasonal";
+  accuracy: number;
+  features: string[];
   featureImportance: Array<{
-    feature: string
-    importance: number
-  }>
-  crossValidationScore: number
+    feature: string;
+    importance: number;
+  }>;
+  crossValidationScore: number;
   predictions: Array<{
-    date: string
-    predicted: number
-    confidence: number
-  }>
+    date: string;
+    predicted: number;
+    confidence: number;
+  }>;
 }
 
 interface StatisticalInsightsProps {
-  correlations: CorrelationData[]
-  regressionResults?: RegressionResult
-  statisticalTests: StatisticalTest[]
-  dataQuality: DataQualityMetrics
-  predictiveModels: PredictiveModel[]
-  rawData: Array<Record<string, number>>
-  loading?: boolean
-  className?: string
-  onModelRetrain?: (modelType: string) => void
-  onDataRefresh?: () => void
-  onExportResults?: (format: 'csv' | 'pdf') => void
+  correlations: CorrelationData[];
+  regressionResults?: RegressionResult;
+  statisticalTests: StatisticalTest[];
+  dataQuality: DataQualityMetrics;
+  predictiveModels: PredictiveModel[];
+  rawData: Array<Record<string, number>>;
+  loading?: boolean;
+  className?: string;
+  onModelRetrain?: (modelType: string) => void;
+  onDataRefresh?: () => void;
+  onExportResults?: (format: "csv" | "pdf") => void;
 }
 
 // Utility functions
 const getCorrelationStrength = (correlation: number) => {
-  const abs = Math.abs(correlation)
-  if (abs >= 0.8) return { strength: 'Very Strong', color: 'text-red-600' }
-  if (abs >= 0.6) return { strength: 'Strong', color: 'text-orange-600' }
-  if (abs >= 0.4) return { strength: 'Moderate', color: 'text-yellow-600' }
-  if (abs >= 0.2) return { strength: 'Weak', color: 'text-blue-600' }
-  return { strength: 'Very Weak', color: 'text-gray-600' }
-}
+  const abs = Math.abs(correlation);
+  if (abs >= 0.8) return { strength: "Very Strong", color: "text-red-600" };
+  if (abs >= 0.6) return { strength: "Strong", color: "text-orange-600" };
+  if (abs >= 0.4) return { strength: "Moderate", color: "text-yellow-600" };
+  if (abs >= 0.2) return { strength: "Weak", color: "text-blue-600" };
+  return { strength: "Very Weak", color: "text-gray-600" };
+};
 
 const getSignificanceLevel = (pValue: number) => {
-  if (pValue < 0.001) return { level: '***', color: 'text-green-600', description: 'Highly Significant' }
-  if (pValue < 0.01) return { level: '**', color: 'text-green-500', description: 'Very Significant' }
-  if (pValue < 0.05) return { level: '*', color: 'text-green-400', description: 'Significant' }
-  if (pValue < 0.1) return { level: '†', color: 'text-yellow-500', description: 'Marginally Significant' }
-  return { level: 'ns', color: 'text-gray-500', description: 'Not Significant' }
-}
+  if (pValue < 0.001)
+    return { level: "***", color: "text-green-600", description: "Highly Significant" };
+  if (pValue < 0.01)
+    return { level: "**", color: "text-green-500", description: "Very Significant" };
+  if (pValue < 0.05) return { level: "*", color: "text-green-400", description: "Significant" };
+  if (pValue < 0.1)
+    return { level: "†", color: "text-yellow-500", description: "Marginally Significant" };
+  return { level: "ns", color: "text-gray-500", description: "Not Significant" };
+};
 
 const getQualityColor = (score: number) => {
-  if (score >= 90) return 'text-green-600'
-  if (score >= 75) return 'text-blue-600'
-  if (score >= 60) return 'text-yellow-600'
-  return 'text-red-600'
-}
+  if (score >= 90) return "text-green-600";
+  if (score >= 75) return "text-blue-600";
+  if (score >= 60) return "text-yellow-600";
+  return "text-red-600";
+};
 
 const calculateCorrelationMatrix = (data: Array<Record<string, number>>) => {
-  if (data.length === 0) return []
-  
-  const keys = Object.keys(data[0]).filter(key => typeof data[0][key] === 'number')
-  const matrix: Array<{ x: string; y: string; value: number }> = []
-  
-  keys.forEach(key1 => {
-    keys.forEach(key2 => {
-      const values1 = data.map(d => d[key1]).filter(v => !isNaN(v))
-      const values2 = data.map(d => d[key2]).filter(v => !isNaN(v))
-      
+  if (data.length === 0) return [];
+
+  const keys = Object.keys(data[0]).filter((key) => typeof data[0][key] === "number");
+  const matrix: Array<{ x: string; y: string; value: number }> = [];
+
+  keys.forEach((key1) => {
+    keys.forEach((key2) => {
+      const values1 = data.map((d) => d[key1]).filter((v) => !isNaN(v));
+      const values2 = data.map((d) => d[key2]).filter((v) => !isNaN(v));
+
       if (values1.length > 1 && values2.length > 1) {
-        const correlation = calculatePearsonCorrelation(values1, values2)
-        matrix.push({ x: key1, y: key2, value: correlation })
+        const correlation = calculatePearsonCorrelation(values1, values2);
+        matrix.push({ x: key1, y: key2, value: correlation });
       }
-    })
-  })
-  
-  return matrix
-}
+    });
+  });
+
+  return matrix;
+};
 
 const calculatePearsonCorrelation = (x: number[], y: number[]) => {
-  const n = Math.min(x.length, y.length)
-  if (n < 2) return 0
-  
-  const sumX = x.slice(0, n).reduce((sum, val) => sum + val, 0)
-  const sumY = y.slice(0, n).reduce((sum, val) => sum + val, 0)
-  const sumXY = x.slice(0, n).reduce((sum, val, i) => sum + val * y[i], 0)
-  const sumX2 = x.slice(0, n).reduce((sum, val) => sum + val * val, 0)
-  const sumY2 = y.slice(0, n).reduce((sum, val) => sum + val * val, 0)
-  
-  const numerator = n * sumXY - sumX * sumY
-  const denominator = Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY))
-  
-  return denominator === 0 ? 0 : numerator / denominator
-}
+  const n = Math.min(x.length, y.length);
+  if (n < 2) return 0;
+
+  const sumX = x.slice(0, n).reduce((sum, val) => sum + val, 0);
+  const sumY = y.slice(0, n).reduce((sum, val) => sum + val, 0);
+  const sumXY = x.slice(0, n).reduce((sum, val, i) => sum + val * y[i], 0);
+  const sumX2 = x.slice(0, n).reduce((sum, val) => sum + val * val, 0);
+  const sumY2 = y.slice(0, n).reduce((sum, val) => sum + val * val, 0);
+
+  const numerator = n * sumXY - sumX * sumY;
+  const denominator = Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY));
+
+  return denominator === 0 ? 0 : numerator / denominator;
+};
 
 export function StatisticalInsights({
   correlations,
@@ -205,60 +220,63 @@ export function StatisticalInsights({
   predictiveModels,
   rawData,
   loading = false,
-  className = '',
+  className = "",
   onModelRetrain,
   onDataRefresh,
-  onExportResults
+  onExportResults,
 }: StatisticalInsightsProps) {
-  const [selectedView, setSelectedView] = useState<'correlations' | 'regression' | 'tests' | 'quality' | 'models'>('correlations')
-  const [selectedCorrelation, setSelectedCorrelation] = useState<string | null>(null)
-  const [confidenceLevel, setConfidenceLevel] = useState<number>(95)
-  const [showOnlySignificant, setShowOnlySignificant] = useState(false)
+  const [selectedView, setSelectedView] = useState<
+    "correlations" | "regression" | "tests" | "quality" | "models"
+  >("correlations");
+  const [selectedCorrelation, setSelectedCorrelation] = useState<string | null>(null);
+  const [confidenceLevel, setConfidenceLevel] = useState<number>(95);
+  const [showOnlySignificant, setShowOnlySignificant] = useState(false);
 
   // Calculate correlation matrix from raw data
   const correlationMatrix = useMemo(() => {
-    return calculateCorrelationMatrix(rawData)
-  }, [rawData])
+    return calculateCorrelationMatrix(rawData);
+  }, [rawData]);
 
   // Filter significant correlations
   const significantCorrelations = useMemo(() => {
-    return correlations.filter(c => 
-      !showOnlySignificant || c.significance !== 'none'
-    ).sort((a, b) => Math.abs(b.correlation) - Math.abs(a.correlation))
-  }, [correlations, showOnlySignificant])
+    return correlations
+      .filter((c) => !showOnlySignificant || c.significance !== "none")
+      .sort((a, b) => Math.abs(b.correlation) - Math.abs(a.correlation));
+  }, [correlations, showOnlySignificant]);
 
   // Calculate overall statistics
   const statisticalSummary = useMemo(() => {
-    const strongCorrelations = correlations.filter(c => Math.abs(c.correlation) >= 0.6).length
-    const significantTests = statisticalTests.filter(t => t.result === 'reject').length
-    const overallDataQuality = (
-      dataQuality.completeness + 
-      dataQuality.accuracy + 
-      dataQuality.consistency + 
-      dataQuality.validity + 
-      dataQuality.uniqueness
-    ) / 5
+    const strongCorrelations = correlations.filter((c) => Math.abs(c.correlation) >= 0.6).length;
+    const significantTests = statisticalTests.filter((t) => t.result === "reject").length;
+    const overallDataQuality =
+      (dataQuality.completeness +
+        dataQuality.accuracy +
+        dataQuality.consistency +
+        dataQuality.validity +
+        dataQuality.uniqueness) /
+      5;
 
-    const bestModel = predictiveModels.reduce((best, model) => 
-      model.accuracy > (best?.accuracy || 0) ? model : best
-    , predictiveModels[0])
+    const bestModel = predictiveModels.reduce(
+      (best, model) => (model.accuracy > (best?.accuracy || 0) ? model : best),
+      predictiveModels[0],
+    );
 
     return {
       strongCorrelations,
       significantTests,
       overallDataQuality,
       bestModel,
-      totalOutliers: dataQuality.outliers.filter(o => o.isOutlier).length
-    }
-  }, [correlations, statisticalTests, dataQuality, predictiveModels])
+      totalOutliers: dataQuality.outliers.filter((o) => o.isOutlier).length,
+    };
+  }, [correlations, statisticalTests, dataQuality, predictiveModels]);
 
   // Custom tooltip for correlation heatmap
   const CorrelationTooltip = ({ active, payload }: any) => {
-    if (!active || !payload || !payload.length) return null
-    
-    const data = payload[0].payload
-    const strength = getCorrelationStrength(data.value)
-    
+    if (!active || !payload || !payload.length) return null;
+
+    const data = payload[0].payload;
+    const strength = getCorrelationStrength(data.value);
+
     return (
       <div className="bg-white p-4 border rounded-lg shadow-lg max-w-xs">
         <p className="font-semibold text-gray-900 mb-2">
@@ -275,8 +293,8 @@ export function StatisticalInsights({
           </div>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   if (loading) {
     return (
@@ -300,7 +318,7 @@ export function StatisticalInsights({
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -358,7 +376,7 @@ export function StatisticalInsights({
                   {(statisticalSummary.bestModel?.accuracy || 0).toFixed(1)}%
                 </p>
                 <p className="text-xs text-orange-700 capitalize">
-                  {statisticalSummary.bestModel?.modelType || 'N/A'}
+                  {statisticalSummary.bestModel?.modelType || "N/A"}
                 </p>
               </div>
               <Brain className="h-8 w-8 text-orange-600" />
@@ -377,7 +395,7 @@ export function StatisticalInsights({
             <TabsTrigger value="quality">Data Quality</TabsTrigger>
             <TabsTrigger value="models">Models</TabsTrigger>
           </TabsList>
-          
+
           <div className="flex items-center gap-2">
             <Button
               variant={showOnlySignificant ? "default" : "outline"}
@@ -390,7 +408,7 @@ export function StatisticalInsights({
             <Button variant="outline" size="sm" onClick={onDataRefresh}>
               <RefreshCw className="h-4 w-4" />
             </Button>
-            <Button variant="outline" size="sm" onClick={() => onExportResults?.('csv')}>
+            <Button variant="outline" size="sm" onClick={() => onExportResults?.("csv")}>
               <Download className="h-4 w-4" />
             </Button>
           </div>
@@ -417,17 +435,15 @@ export function StatisticalInsights({
                       <XAxis type="category" dataKey="x" />
                       <YAxis type="category" dataKey="y" />
                       <Tooltip content={<CorrelationTooltip />} />
-                      <Scatter
-                        data={correlationMatrix}
-                        fill="#8884d8"
-                      >
+                      <Scatter data={correlationMatrix} fill="#8884d8">
                         {correlationMatrix.map((entry, index) => (
-                          <Cell 
-                            key={index} 
-                            fill={entry.value > 0 ? 
-                              `rgba(34, 197, 94, ${Math.abs(entry.value)})` : 
-                              `rgba(239, 68, 68, ${Math.abs(entry.value)})`
-                            } 
+                          <Cell
+                            key={index}
+                            fill={
+                              entry.value > 0
+                                ? `rgba(34, 197, 94, ${Math.abs(entry.value)})`
+                                : `rgba(239, 68, 68, ${Math.abs(entry.value)})`
+                            }
                           />
                         ))}
                       </Scatter>
@@ -448,18 +464,21 @@ export function StatisticalInsights({
               <CardContent>
                 <div className="space-y-4">
                   {significantCorrelations.map((correlation, index) => {
-                    const strength = getCorrelationStrength(correlation.correlation)
-                    const significance = getSignificanceLevel(correlation.pValue)
-                    
+                    const strength = getCorrelationStrength(correlation.correlation);
+                    const significance = getSignificanceLevel(correlation.pValue);
+
                     return (
-                      <div 
+                      <div
                         key={`${correlation.variable1}-${correlation.variable2}`}
                         className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer"
-                        onClick={() => setSelectedCorrelation(
-                          selectedCorrelation === `${correlation.variable1}-${correlation.variable2}` 
-                            ? null 
-                            : `${correlation.variable1}-${correlation.variable2}`
-                        )}
+                        onClick={() =>
+                          setSelectedCorrelation(
+                            selectedCorrelation ===
+                              `${correlation.variable1}-${correlation.variable2}`
+                              ? null
+                              : `${correlation.variable1}-${correlation.variable2}`,
+                          )
+                        }
                       >
                         <div className="flex items-center justify-between">
                           <div className="space-y-1">
@@ -476,44 +495,43 @@ export function StatisticalInsights({
                             <Badge variant="outline" className={strength.color}>
                               {strength.strength}
                             </Badge>
-                            <Badge 
-                              variant={significance.level === 'ns' ? 'secondary' : 'default'}
+                            <Badge
+                              variant={significance.level === "ns" ? "secondary" : "default"}
                               className={significance.color}
                             >
                               {significance.level}
                             </Badge>
                           </div>
                         </div>
-                        
-                        {selectedCorrelation === `${correlation.variable1}-${correlation.variable2}` && (
+
+                        {selectedCorrelation ===
+                          `${correlation.variable1}-${correlation.variable2}` && (
                           <div className="mt-4 pt-4 border-t">
                             <div className="grid grid-cols-2 gap-4 text-sm">
                               <div>
                                 <strong>Interpretation:</strong>
                                 <p className="text-gray-600 mt-1">
-                                  {Math.abs(correlation.correlation) < 0.3 
+                                  {Math.abs(correlation.correlation) < 0.3
                                     ? "Little to no linear relationship between variables."
                                     : correlation.correlation > 0
-                                    ? "Positive relationship: as one variable increases, the other tends to increase."
-                                    : "Negative relationship: as one variable increases, the other tends to decrease."
-                                  }
+                                      ? "Positive relationship: as one variable increases, the other tends to increase."
+                                      : "Negative relationship: as one variable increases, the other tends to decrease."}
                                 </p>
                               </div>
                               <div>
                                 <strong>Statistical Significance:</strong>
                                 <p className="text-gray-600 mt-1">
-                                  {significance.description}. {
-                                    correlation.pValue < 0.05 
-                                      ? "The relationship is statistically significant."
-                                      : "The relationship may be due to chance."
-                                  }
+                                  {significance.description}.{" "}
+                                  {correlation.pValue < 0.05
+                                    ? "The relationship is statistically significant."
+                                    : "The relationship may be due to chance."}
                                 </p>
                               </div>
                             </div>
                           </div>
                         )}
                       </div>
-                    )
+                    );
                   })}
                 </div>
               </CardContent>
@@ -531,9 +549,7 @@ export function StatisticalInsights({
                     <TrendingUp className="h-5 w-5" />
                     Regression Analysis
                   </CardTitle>
-                  <CardDescription>
-                    {regressionResults.equation}
-                  </CardDescription>
+                  <CardDescription>{regressionResults.equation}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -551,10 +567,12 @@ export function StatisticalInsights({
                     <div className="bg-green-50 p-4 rounded-lg">
                       <div className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
-                        <span className="text-sm font-medium text-green-700">Significant Coefficients</span>
+                        <span className="text-sm font-medium text-green-700">
+                          Significant Coefficients
+                        </span>
                       </div>
                       <p className="text-2xl font-bold text-green-900 mt-1">
-                        {regressionResults.coefficients.filter(c => c.significance).length}
+                        {regressionResults.coefficients.filter((c) => c.significance).length}
                       </p>
                       <p className="text-xs text-green-700 mt-1">
                         of {regressionResults.coefficients.length} total
@@ -567,9 +585,13 @@ export function StatisticalInsights({
                         <span className="text-sm font-medium text-purple-700">Model Fit</span>
                       </div>
                       <p className="text-2xl font-bold text-purple-900 mt-1">
-                        {regressionResults.rSquared >= 0.8 ? 'Excellent' :
-                         regressionResults.rSquared >= 0.6 ? 'Good' :
-                         regressionResults.rSquared >= 0.4 ? 'Fair' : 'Poor'}
+                        {regressionResults.rSquared >= 0.8
+                          ? "Excellent"
+                          : regressionResults.rSquared >= 0.6
+                            ? "Good"
+                            : regressionResults.rSquared >= 0.4
+                              ? "Fair"
+                              : "Poor"}
                       </p>
                     </div>
                   </div>
@@ -580,17 +602,18 @@ export function StatisticalInsights({
               <Card>
                 <CardHeader>
                   <CardTitle>Regression Coefficients</CardTitle>
-                  <CardDescription>
-                    Variable contributions to the model
-                  </CardDescription>
+                  <CardDescription>Variable contributions to the model</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
                     {regressionResults.coefficients.map((coeff, index) => {
-                      const significance = getSignificanceLevel(coeff.pValue)
-                      
+                      const significance = getSignificanceLevel(coeff.pValue);
+
                       return (
-                        <div key={coeff.variable} className="flex items-center justify-between p-3 border rounded">
+                        <div
+                          key={coeff.variable}
+                          className="flex items-center justify-between p-3 border rounded"
+                        >
                           <div>
                             <h4 className="font-medium">{coeff.variable}</h4>
                             <p className="text-sm text-gray-600">
@@ -598,8 +621,8 @@ export function StatisticalInsights({
                             </p>
                           </div>
                           <div className="text-right">
-                            <Badge 
-                              variant={coeff.significance ? 'default' : 'secondary'}
+                            <Badge
+                              variant={coeff.significance ? "default" : "secondary"}
                               className={significance.color}
                             >
                               {significance.level}
@@ -609,7 +632,7 @@ export function StatisticalInsights({
                             </p>
                           </div>
                         </div>
-                      )
+                      );
                     })}
                   </div>
                 </CardContent>
@@ -619,29 +642,31 @@ export function StatisticalInsights({
               <Card>
                 <CardHeader>
                   <CardTitle>Residual Analysis</CardTitle>
-                  <CardDescription>
-                    Model fit assessment through residual patterns
-                  </CardDescription>
+                  <CardDescription>Model fit assessment through residual patterns</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="h-80">
                     <ResponsiveContainer width="100%" height="100%">
                       <ScatterChart data={regressionResults.predictions}>
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis 
-                          dataKey="predicted" 
+                        <XAxis
+                          dataKey="predicted"
                           name="Predicted"
-                          label={{ value: 'Predicted Values', position: 'insideBottom', offset: -5 }}
+                          label={{
+                            value: "Predicted Values",
+                            position: "insideBottom",
+                            offset: -5,
+                          }}
                         />
-                        <YAxis 
-                          dataKey="residual" 
+                        <YAxis
+                          dataKey="residual"
                           name="Residual"
-                          label={{ value: 'Residuals', angle: -90, position: 'insideLeft' }}
+                          label={{ value: "Residuals", angle: -90, position: "insideLeft" }}
                         />
-                        <Tooltip 
+                        <Tooltip
                           formatter={(value: number, name: string) => [
-                            value.toFixed(3), 
-                            name === 'residual' ? 'Residual' : 'Predicted'
+                            value.toFixed(3),
+                            name === "residual" ? "Residual" : "Predicted",
                           ]}
                         />
                         <ReferenceLine y={0} stroke="#666" strokeDasharray="2 2" />
@@ -656,7 +681,9 @@ export function StatisticalInsights({
             <Card>
               <CardContent className="text-center py-12">
                 <Calculator className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No Regression Analysis Available</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  No Regression Analysis Available
+                </h3>
                 <p className="text-gray-600">
                   Run a regression analysis to see detailed model results and diagnostics.
                 </p>
@@ -675,11 +702,11 @@ export function StatisticalInsights({
                       <CardTitle className="text-lg">{test.testName}</CardTitle>
                       <CardDescription>{test.hypothesis}</CardDescription>
                     </div>
-                    <Badge 
-                      variant={test.result === 'reject' ? 'default' : 'secondary'}
-                      className={test.result === 'reject' ? 'text-green-600' : 'text-gray-600'}
+                    <Badge
+                      variant={test.result === "reject" ? "default" : "secondary"}
+                      className={test.result === "reject" ? "text-green-600" : "text-gray-600"}
                     >
-                      {test.result === 'reject' ? 'Significant' : 'Not Significant'}
+                      {test.result === "reject" ? "Significant" : "Not Significant"}
                     </Badge>
                   </div>
                 </CardHeader>
@@ -702,7 +729,7 @@ export function StatisticalInsights({
                       <p className="text-xl font-bold">{test.confidenceLevel}%</p>
                     </div>
                   </div>
-                  
+
                   <Alert>
                     <Info className="h-4 w-4" />
                     <AlertDescription>
@@ -712,12 +739,14 @@ export function StatisticalInsights({
                 </CardContent>
               </Card>
             ))}
-            
+
             {statisticalTests.length === 0 && (
               <Card>
                 <CardContent className="text-center py-12">
                   <Calculator className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No Statistical Tests Available</h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    No Statistical Tests Available
+                  </h3>
                   <p className="text-gray-600">
                     Configure and run statistical tests to validate your hypotheses.
                   </p>
@@ -732,13 +761,13 @@ export function StatisticalInsights({
             {/* Data Quality Overview */}
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
               {[
-                { name: 'Completeness', value: dataQuality.completeness, icon: CheckCircle },
-                { name: 'Accuracy', value: dataQuality.accuracy, icon: Target },
-                { name: 'Consistency', value: dataQuality.consistency, icon: Layers },
-                { name: 'Validity', value: dataQuality.validity, icon: Shield },
-                { name: 'Uniqueness', value: dataQuality.uniqueness, icon: Zap }
+                { name: "Completeness", value: dataQuality.completeness, icon: CheckCircle },
+                { name: "Accuracy", value: dataQuality.accuracy, icon: Target },
+                { name: "Consistency", value: dataQuality.consistency, icon: Layers },
+                { name: "Validity", value: dataQuality.validity, icon: Shield },
+                { name: "Uniqueness", value: dataQuality.uniqueness, icon: Zap },
               ].map((metric) => {
-                const Icon = metric.icon
+                const Icon = metric.icon;
                 return (
                   <Card key={metric.name}>
                     <CardContent className="p-6">
@@ -752,7 +781,7 @@ export function StatisticalInsights({
                       <Progress value={metric.value} className="mt-2 h-2" />
                     </CardContent>
                   </Card>
-                )
+                );
               })}
             </div>
 
@@ -763,17 +792,18 @@ export function StatisticalInsights({
                   <AlertTriangle className="h-5 w-5" />
                   Outlier Analysis
                 </CardTitle>
-                <CardDescription>
-                  Statistical outliers that may require attention
-                </CardDescription>
+                <CardDescription>Statistical outliers that may require attention</CardDescription>
               </CardHeader>
               <CardContent>
                 {dataQuality.outliers.length > 0 ? (
                   <div className="space-y-3">
                     {dataQuality.outliers
-                      .filter(outlier => outlier.isOutlier)
+                      .filter((outlier) => outlier.isOutlier)
                       .map((outlier, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 border rounded">
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-3 border rounded"
+                        >
                           <div>
                             <h4 className="font-medium">{outlier.metric}</h4>
                             <p className="text-sm text-gray-600">
@@ -823,11 +853,11 @@ export function StatisticalInsights({
                         <div>
                           <h4 className="font-medium capitalize">{model.modelType} Model</h4>
                           <p className="text-sm text-gray-600">
-                            Features: {model.features.join(', ')}
+                            Features: {model.features.join(", ")}
                           </p>
                         </div>
                         <div className="text-right">
-                          <Badge variant={model.accuracy >= 80 ? 'default' : 'secondary'}>
+                          <Badge variant={model.accuracy >= 80 ? "default" : "secondary"}>
                             {model.accuracy.toFixed(1)}% Accuracy
                           </Badge>
                           <p className="text-xs text-gray-600 mt-1">
@@ -835,7 +865,7 @@ export function StatisticalInsights({
                           </p>
                         </div>
                       </div>
-                      
+
                       <div className="mb-3">
                         <div className="flex justify-between items-center mb-1">
                           <span className="text-sm text-gray-600">Model Performance</span>
@@ -852,20 +882,22 @@ export function StatisticalInsights({
                             <span className="text-gray-600">{feature.feature}</span>
                             <div className="flex items-center gap-2">
                               <div className="w-20 h-2 bg-gray-200 rounded">
-                                <div 
+                                <div
                                   className="h-full bg-blue-500 rounded"
                                   style={{ width: `${feature.importance * 100}%` }}
                                 />
                               </div>
-                              <span className="font-medium">{(feature.importance * 100).toFixed(0)}%</span>
+                              <span className="font-medium">
+                                {(feature.importance * 100).toFixed(0)}%
+                              </span>
                             </div>
                           </div>
                         ))}
                       </div>
 
                       <div className="mt-3 flex gap-2">
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           variant="outline"
                           onClick={() => onModelRetrain?.(model.modelType)}
                         >
@@ -882,7 +914,9 @@ export function StatisticalInsights({
               <Card>
                 <CardContent className="text-center py-12">
                   <Brain className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No Predictive Models Available</h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    No Predictive Models Available
+                  </h3>
                   <p className="text-gray-600">
                     Train machine learning models to generate predictions and insights.
                   </p>
@@ -898,13 +932,14 @@ export function StatisticalInsights({
         <Alert>
           <BarChart3 className="h-4 w-4" />
           <AlertDescription>
-            <strong>Key Finding:</strong> {statisticalSummary.strongCorrelations} strong correlation(s) detected and{' '}
-            {statisticalSummary.significantTests} statistical test(s) show significant results. 
-            Data quality is {statisticalSummary.overallDataQuality >= 80 ? 'excellent' : 'adequate'} at{' '}
+            <strong>Key Finding:</strong> {statisticalSummary.strongCorrelations} strong
+            correlation(s) detected and {statisticalSummary.significantTests} statistical test(s)
+            show significant results. Data quality is{" "}
+            {statisticalSummary.overallDataQuality >= 80 ? "excellent" : "adequate"} at{" "}
             {statisticalSummary.overallDataQuality.toFixed(0)}%.
           </AlertDescription>
         </Alert>
       )}
     </div>
-  )
+  );
 }

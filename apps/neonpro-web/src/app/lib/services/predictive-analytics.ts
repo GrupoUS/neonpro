@@ -11,7 +11,7 @@ export class PredictiveAnalyticsService {
       prediction: null,
       confidence: 0,
       factors: [],
-      createdAt: new Date()
+      createdAt: new Date(),
     };
   }
 
@@ -21,7 +21,7 @@ export class PredictiveAnalyticsService {
       modelType,
       accuracy: 0,
       trainedAt: new Date(),
-      version: '1.0'
+      version: "1.0",
     };
   }
 
@@ -32,7 +32,7 @@ export class PredictiveAnalyticsService {
       accuracy: 0,
       precision: 0,
       recall: 0,
-      f1Score: 0
+      f1Score: 0,
     };
   }
 }

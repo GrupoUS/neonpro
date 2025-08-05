@@ -1,26 +1,30 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server'
-import { cookies } from 'next/headers';
-import { z } from 'zod';
-import { DashboardLayoutEngine } from '@/lib/dashboard/executive/dashboard-layout-engine';
+import type { NextRequest, NextResponse } from "next/server";
+import type { createClient } from "@/lib/supabase/server";
+import type { cookies } from "next/headers";
+import type { z } from "zod";
+import type { DashboardLayoutEngine } from "@/lib/dashboard/executive/dashboard-layout-engine";
 
 // Schema for layout creation/update
 const CreateLayoutSchema = z.object({
-  name: z.string().min(1, 'Nome Ã© obrigatÃ³rio'),
+  name: z.string().min(1, "Nome Ã© obrigatÃ³rio"),
   description: z.string().optional(),
   isDefault: z.boolean().default(false),
   layoutConfig: z.object({
-    widgets: z.array(z.object({
-      id: z.string(),
-      position: z.object({
-        x: z.number(),
-        y: z.number(),
-        w: z.number(),
-        h: z.number()
-      }),
-      config: z.record(z.any())
-    })).default([])
-  })
+    widgets: z
+      .array(
+        z.object({
+          id: z.string(),
+          position: z.object({
+            x: z.number(),
+            y: z.number(),
+            w: z.number(),
+            h: z.number(),
+          }),
+          config: z.record(z.any()),
+        }),
+      )
+      .default([]),
+  }),
 });
 
 const UpdateLayoutSchema = CreateLayoutSchema.partial();
@@ -29,27 +33,27 @@ const UpdateLayoutSchema = CreateLayoutSchema.partial();
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'NÃ£o autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "NÃ£o autorizado" }, { status: 401 });
     }
 
     // Get user's clinic
     const { data: clinicUser } = await supabase
-      .from('clinic_users')
-      .select('clinic_id')
-      .eq('user_id', user.id)
+      .from("clinic_users")
+      .select("clinic_id")
+      .eq("user_id", user.id)
       .single();
 
     if (!clinicUser) {
       return NextResponse.json(
-        { error: 'UsuÃ¡rio nÃ£o associado a uma clÃ­nica' },
-        { status: 403 }
+        { error: "UsuÃ¡rio nÃ£o associado a uma clÃ­nica" },
+        { status: 403 },
       );
     }
 
@@ -58,11 +62,8 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ layouts });
   } catch (error) {
-    console.error('Error fetching layouts:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    console.error("Error fetching layouts:", error);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
 }
 
@@ -70,27 +71,27 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'NÃ£o autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "NÃ£o autorizado" }, { status: 401 });
     }
 
     // Get user's clinic
     const { data: clinicUser } = await supabase
-      .from('clinic_users')
-      .select('clinic_id')
-      .eq('user_id', user.id)
+      .from("clinic_users")
+      .select("clinic_id")
+      .eq("user_id", user.id)
       .single();
 
     if (!clinicUser) {
       return NextResponse.json(
-        { error: 'UsuÃ¡rio nÃ£o associado a uma clÃ­nica' },
-        { status: 403 }
+        { error: "UsuÃ¡rio nÃ£o associado a uma clÃ­nica" },
+        { status: 403 },
       );
     }
 
@@ -101,23 +102,19 @@ export async function POST(request: NextRequest) {
     const layoutEngine = new DashboardLayoutEngine(supabase, clinicUser.clinic_id);
     const layout = await layoutEngine.createLayout({
       ...validatedData,
-      userId: user.id
+      userId: user.id,
     });
 
     return NextResponse.json({ layout }, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Dados invÃ¡lidos', details: error.errors },
-        { status: 400 }
+        { error: "Dados invÃ¡lidos", details: error.errors },
+        { status: 400 },
       );
     }
 
-    console.error('Error creating layout:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    console.error("Error creating layout:", error);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
 }
-

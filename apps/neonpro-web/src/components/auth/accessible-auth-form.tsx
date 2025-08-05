@@ -1,18 +1,24 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Eye, EyeOff, ShieldCheck, AlertTriangle } from 'lucide-react';
-import { createClient } from '@/app/utils/supabase/client';
-import { toast } from 'sonner';
+import React, { useState, useEffect } from "react";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Loader2, Eye, EyeOff, ShieldCheck, AlertTriangle } from "lucide-react";
+import type { createClient } from "@/app/utils/supabase/client";
+import type { toast } from "sonner";
 
 interface AccessibleFormProps {
   onSuccess?: () => void;
-  mode?: 'login' | 'register' | 'reset';
+  mode?: "login" | "register" | "reset";
 }
 
 interface FormErrors {
@@ -29,12 +35,12 @@ interface AccessibilityState {
   screenReaderActive: boolean;
 }
 
-export function AccessibleAuthForm({ onSuccess, mode = 'login' }: AccessibleFormProps) {
+export function AccessibleAuthForm({ onSuccess, mode = "login" }: AccessibleFormProps) {
   const [formMode, setFormMode] = useState(mode);
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    confirmPassword: '',
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -52,14 +58,15 @@ export function AccessibleAuthForm({ onSuccess, mode = 'login' }: AccessibleForm
   // Detect screen reader and accessibility preferences
   useEffect(() => {
     const checkAccessibilityPreferences = () => {
-      const hasScreenReader = window.navigator.userAgent.includes('NVDA') || 
-                             window.navigator.userAgent.includes('JAWS') ||
-                             'speechSynthesis' in window;
-      
-      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const prefersHighContrast = window.matchMedia('(prefers-contrast: high)').matches;
+      const hasScreenReader =
+        window.navigator.userAgent.includes("NVDA") ||
+        window.navigator.userAgent.includes("JAWS") ||
+        "speechSynthesis" in window;
 
-      setAccessibility(prev => ({
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const prefersHighContrast = window.matchMedia("(prefers-contrast: high)").matches;
+
+      setAccessibility((prev) => ({
         ...prev,
         screenReaderActive: hasScreenReader,
         reducedMotion: prefersReducedMotion,
@@ -70,38 +77,38 @@ export function AccessibleAuthForm({ onSuccess, mode = 'login' }: AccessibleForm
     checkAccessibilityPreferences();
 
     // Listen for changes in accessibility preferences
-    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const contrastQuery = window.matchMedia('(prefers-contrast: high)');
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const contrastQuery = window.matchMedia("(prefers-contrast: high)");
 
     const handleMotionChange = (e: MediaQueryListEvent) => {
-      setAccessibility(prev => ({ ...prev, reducedMotion: e.matches }));
+      setAccessibility((prev) => ({ ...prev, reducedMotion: e.matches }));
     };
 
     const handleContrastChange = (e: MediaQueryListEvent) => {
-      setAccessibility(prev => ({ ...prev, highContrast: e.matches }));
+      setAccessibility((prev) => ({ ...prev, highContrast: e.matches }));
     };
 
-    motionQuery.addEventListener('change', handleMotionChange);
-    contrastQuery.addEventListener('change', handleContrastChange);
+    motionQuery.addEventListener("change", handleMotionChange);
+    contrastQuery.addEventListener("change", handleContrastChange);
 
     return () => {
-      motionQuery.removeEventListener('change', handleMotionChange);
-      contrastQuery.removeEventListener('change', handleContrastChange);
+      motionQuery.removeEventListener("change", handleMotionChange);
+      contrastQuery.removeEventListener("change", handleContrastChange);
     };
   }, []);
 
   // Announce messages to screen readers
   const announceToScreenReader = (message: string) => {
-    setAccessibility(prev => ({
+    setAccessibility((prev) => ({
       ...prev,
       announcements: [...prev.announcements, message],
     }));
 
     // Clear announcement after it's been read
     setTimeout(() => {
-      setAccessibility(prev => ({
+      setAccessibility((prev) => ({
         ...prev,
-        announcements: prev.announcements.filter(a => a !== message),
+        announcements: prev.announcements.filter((a) => a !== message),
       }));
     }, 3000);
   };
@@ -112,24 +119,24 @@ export function AccessibleAuthForm({ onSuccess, mode = 'login' }: AccessibleForm
 
     // Email validation
     if (!formData.email) {
-      newErrors.email = 'Email é obrigatório para continuar';
+      newErrors.email = "Email é obrigatório para continuar";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Por favor, insira um email válido no formato usuario@dominio.com';
+      newErrors.email = "Por favor, insira um email válido no formato usuario@dominio.com";
     }
 
     // Password validation
     if (!formData.password) {
-      newErrors.password = 'Senha é obrigatória';
-    } else if (formMode === 'register' && formData.password.length < 8) {
-      newErrors.password = 'Senha deve ter pelo menos 8 caracteres para segurança';
+      newErrors.password = "Senha é obrigatória";
+    } else if (formMode === "register" && formData.password.length < 8) {
+      newErrors.password = "Senha deve ter pelo menos 8 caracteres para segurança";
     }
 
     // Confirm password validation for registration
-    if (formMode === 'register') {
+    if (formMode === "register") {
       if (!formData.confirmPassword) {
-        newErrors.confirmPassword = 'Confirmação de senha é obrigatória';
+        newErrors.confirmPassword = "Confirmação de senha é obrigatória";
       } else if (formData.password !== formData.confirmPassword) {
-        newErrors.confirmPassword = 'As senhas não coincidem. Por favor, verifique ambos os campos';
+        newErrors.confirmPassword = "As senhas não coincidem. Por favor, verifique ambos os campos";
       }
     }
 
@@ -138,7 +145,7 @@ export function AccessibleAuthForm({ onSuccess, mode = 'login' }: AccessibleForm
     // Announce errors to screen reader
     const errorCount = Object.keys(newErrors).length;
     if (errorCount > 0) {
-      const errorMessage = `Formulário contém ${errorCount} erro${errorCount > 1 ? 's' : ''}. Por favor, corrija os campos destacados.`;
+      const errorMessage = `Formulário contém ${errorCount} erro${errorCount > 1 ? "s" : ""}. Por favor, corrija os campos destacados.`;
       announceToScreenReader(errorMessage);
     }
 
@@ -148,7 +155,7 @@ export function AccessibleAuthForm({ onSuccess, mode = 'login' }: AccessibleForm
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -157,28 +164,29 @@ export function AccessibleAuthForm({ onSuccess, mode = 'login' }: AccessibleForm
     setErrors({});
 
     try {
-      if (formMode === 'login') {
+      if (formMode === "login") {
         const { error } = await supabase.auth.signInWithPassword({
           email: formData.email,
           password: formData.password,
         });
 
         if (error) {
-          if (error.message.includes('Invalid login credentials')) {
-            setErrors({ general: 'Email ou senha incorretos. Verifique suas credenciais e tente novamente.' });
-            announceToScreenReader('Login falhou. Email ou senha incorretos.');
+          if (error.message.includes("Invalid login credentials")) {
+            setErrors({
+              general: "Email ou senha incorretos. Verifique suas credenciais e tente novamente.",
+            });
+            announceToScreenReader("Login falhou. Email ou senha incorretos.");
           } else {
             setErrors({ general: `Erro no login: ${error.message}` });
-            announceToScreenReader('Erro no sistema. Tente novamente em alguns momentos.');
+            announceToScreenReader("Erro no sistema. Tente novamente em alguns momentos.");
           }
           return;
         }
 
-        announceToScreenReader('Login realizado com sucesso. Redirecionando...');
-        toast.success('Login realizado com sucesso!');
+        announceToScreenReader("Login realizado com sucesso. Redirecionando...");
+        toast.success("Login realizado com sucesso!");
         onSuccess?.();
-
-      } else if (formMode === 'register') {
+      } else if (formMode === "register") {
         const { error } = await supabase.auth.signUp({
           email: formData.email,
           password: formData.password,
@@ -186,30 +194,31 @@ export function AccessibleAuthForm({ onSuccess, mode = 'login' }: AccessibleForm
 
         if (error) {
           setErrors({ general: `Erro no cadastro: ${error.message}` });
-          announceToScreenReader('Erro no cadastro. Tente novamente.');
+          announceToScreenReader("Erro no cadastro. Tente novamente.");
           return;
         }
 
-        announceToScreenReader('Cadastro realizado com sucesso. Verifique seu email para confirmação.');
-        toast.success('Cadastro realizado! Verifique seu email para confirmar a conta.');
-        setFormMode('login');
-
-      } else if (formMode === 'reset') {
+        announceToScreenReader(
+          "Cadastro realizado com sucesso. Verifique seu email para confirmação.",
+        );
+        toast.success("Cadastro realizado! Verifique seu email para confirmar a conta.");
+        setFormMode("login");
+      } else if (formMode === "reset") {
         const { error } = await supabase.auth.resetPasswordForEmail(formData.email);
 
         if (error) {
           setErrors({ general: `Erro ao enviar email: ${error.message}` });
-          announceToScreenReader('Erro ao enviar email de recuperação.');
+          announceToScreenReader("Erro ao enviar email de recuperação.");
           return;
         }
 
-        announceToScreenReader('Email de recuperação enviado com sucesso.');
-        toast.success('Email de recuperação enviado!');
-        setFormMode('login');
+        announceToScreenReader("Email de recuperação enviado com sucesso.");
+        toast.success("Email de recuperação enviado!");
+        setFormMode("login");
       }
     } catch (error) {
-      setErrors({ general: 'Erro inesperado. Tente novamente.' });
-      announceToScreenReader('Erro inesperado no sistema.');
+      setErrors({ general: "Erro inesperado. Tente novamente." });
+      announceToScreenReader("Erro inesperado no sistema.");
     } finally {
       setIsLoading(false);
     }
@@ -217,40 +226,40 @@ export function AccessibleAuthForm({ onSuccess, mode = 'login' }: AccessibleForm
 
   // Handle input changes with real-time validation feedback
   const handleInputChange = (field: keyof typeof formData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    
+    setFormData((prev) => ({ ...prev, [field]: value }));
+
     // Clear field-specific error when user starts typing
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
 
   // Get form title and description based on mode
   const getFormContent = () => {
     switch (formMode) {
-      case 'register':
+      case "register":
         return {
-          title: 'Criar nova conta',
-          description: 'Preencha os dados para criar sua conta no NeonPro',
-          submitText: 'Criar conta',
-          switchText: 'Já tem uma conta? Faça login',
-          switchAction: () => setFormMode('login'),
+          title: "Criar nova conta",
+          description: "Preencha os dados para criar sua conta no NeonPro",
+          submitText: "Criar conta",
+          switchText: "Já tem uma conta? Faça login",
+          switchAction: () => setFormMode("login"),
         };
-      case 'reset':
+      case "reset":
         return {
-          title: 'Recuperar senha',
-          description: 'Digite seu email para receber instruções de recuperação',
-          submitText: 'Enviar email',
-          switchText: 'Lembrou da senha? Faça login',
-          switchAction: () => setFormMode('login'),
+          title: "Recuperar senha",
+          description: "Digite seu email para receber instruções de recuperação",
+          submitText: "Enviar email",
+          switchText: "Lembrou da senha? Faça login",
+          switchAction: () => setFormMode("login"),
         };
       default:
         return {
-          title: 'Entrar na conta',
-          description: 'Digite suas credenciais para acessar o NeonPro',
-          submitText: 'Entrar',
-          switchText: 'Não tem uma conta? Cadastre-se',
-          switchAction: () => setFormMode('register'),
+          title: "Entrar na conta",
+          description: "Digite suas credenciais para acessar o NeonPro",
+          submitText: "Entrar",
+          switchText: "Não tem uma conta? Cadastre-se",
+          switchAction: () => setFormMode("register"),
         };
     }
   };
@@ -258,17 +267,12 @@ export function AccessibleAuthForm({ onSuccess, mode = 'login' }: AccessibleForm
   const formContent = getFormContent();
 
   return (
-    <div 
-      className={`w-full max-w-md mx-auto ${accessibility.highContrast ? 'high-contrast' : ''}`}
+    <div
+      className={`w-full max-w-md mx-auto ${accessibility.highContrast ? "high-contrast" : ""}`}
       data-testid="accessible-auth-form"
     >
       {/* Screen reader announcements */}
-      <div 
-        aria-live="polite" 
-        aria-atomic="true" 
-        className="sr-only"
-        role="status"
-      >
+      <div aria-live="polite" aria-atomic="true" className="sr-only" role="status">
         {accessibility.announcements.map((announcement, index) => (
           <div key={index}>{announcement}</div>
         ))}
@@ -276,12 +280,8 @@ export function AccessibleAuthForm({ onSuccess, mode = 'login' }: AccessibleForm
 
       <Card className="border-2 focus-within:border-primary">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">
-            {formContent.title}
-          </CardTitle>
-          <CardDescription className="text-base">
-            {formContent.description}
-          </CardDescription>
+          <CardTitle className="text-2xl font-bold">{formContent.title}</CardTitle>
+          <CardDescription className="text-base">{formContent.description}</CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -296,20 +296,17 @@ export function AccessibleAuthForm({ onSuccess, mode = 'login' }: AccessibleForm
 
             {/* Email field */}
             <div className="space-y-2 mb-4">
-              <Label 
-                htmlFor="email" 
-                className="text-sm font-medium"
-              >
+              <Label htmlFor="email" className="text-sm font-medium">
                 Email *
               </Label>
               <Input
                 id="email"
                 type="email"
                 value={formData.email}
-                onChange={(e) => handleInputChange('email', e.target.value)}
-                className={`${errors.email ? 'border-red-500 focus:border-red-500' : ''}`}
+                onChange={(e) => handleInputChange("email", e.target.value)}
+                className={`${errors.email ? "border-red-500 focus:border-red-500" : ""}`}
                 aria-invalid={!!errors.email}
-                aria-describedby={errors.email ? 'email-error' : 'email-help'}
+                aria-describedby={errors.email ? "email-error" : "email-help"}
                 placeholder="seu.email@exemplo.com"
                 autoComplete="email"
                 required
@@ -318,9 +315,9 @@ export function AccessibleAuthForm({ onSuccess, mode = 'login' }: AccessibleForm
                 Digite seu endereço de email válido
               </div>
               {errors.email && (
-                <div 
-                  id="email-error" 
-                  className="text-xs text-red-600" 
+                <div
+                  id="email-error"
+                  className="text-xs text-red-600"
                   role="alert"
                   aria-live="polite"
                 >
@@ -330,25 +327,24 @@ export function AccessibleAuthForm({ onSuccess, mode = 'login' }: AccessibleForm
             </div>
 
             {/* Password field (not shown in reset mode) */}
-            {formMode !== 'reset' && (
+            {formMode !== "reset" && (
               <div className="space-y-2 mb-4">
-                <Label 
-                  htmlFor="password" 
-                  className="text-sm font-medium"
-                >
+                <Label htmlFor="password" className="text-sm font-medium">
                   Senha *
                 </Label>
                 <div className="relative">
                   <Input
                     id="password"
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     value={formData.password}
-                    onChange={(e) => handleInputChange('password', e.target.value)}
-                    className={`pr-10 ${errors.password ? 'border-red-500 focus:border-red-500' : ''}`}
+                    onChange={(e) => handleInputChange("password", e.target.value)}
+                    className={`pr-10 ${errors.password ? "border-red-500 focus:border-red-500" : ""}`}
                     aria-invalid={!!errors.password}
-                    aria-describedby={errors.password ? 'password-error' : 'password-help'}
-                    placeholder={formMode === 'register' ? 'Mínimo 8 caracteres' : 'Digite sua senha'}
-                    autoComplete={formMode === 'register' ? 'new-password' : 'current-password'}
+                    aria-describedby={errors.password ? "password-error" : "password-help"}
+                    placeholder={
+                      formMode === "register" ? "Mínimo 8 caracteres" : "Digite sua senha"
+                    }
+                    autoComplete={formMode === "register" ? "new-password" : "current-password"}
                     required
                   />
                   <Button
@@ -357,7 +353,7 @@ export function AccessibleAuthForm({ onSuccess, mode = 'login' }: AccessibleForm
                     size="sm"
                     className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                     onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                    aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
                     tabIndex={-1}
                   >
                     {showPassword ? (
@@ -368,15 +364,14 @@ export function AccessibleAuthForm({ onSuccess, mode = 'login' }: AccessibleForm
                   </Button>
                 </div>
                 <div id="password-help" className="text-xs text-muted-foreground">
-                  {formMode === 'register' 
-                    ? 'Senha deve ter pelo menos 8 caracteres para segurança'
-                    : 'Digite sua senha atual'
-                  }
+                  {formMode === "register"
+                    ? "Senha deve ter pelo menos 8 caracteres para segurança"
+                    : "Digite sua senha atual"}
                 </div>
                 {errors.password && (
-                  <div 
-                    id="password-error" 
-                    className="text-xs text-red-600" 
+                  <div
+                    id="password-error"
+                    className="text-xs text-red-600"
                     role="alert"
                     aria-live="polite"
                   >
@@ -387,23 +382,22 @@ export function AccessibleAuthForm({ onSuccess, mode = 'login' }: AccessibleForm
             )}
 
             {/* Confirm password field (only for registration) */}
-            {formMode === 'register' && (
+            {formMode === "register" && (
               <div className="space-y-2 mb-4">
-                <Label 
-                  htmlFor="confirmPassword" 
-                  className="text-sm font-medium"
-                >
+                <Label htmlFor="confirmPassword" className="text-sm font-medium">
                   Confirmar senha *
                 </Label>
                 <div className="relative">
                   <Input
                     id="confirmPassword"
-                    type={showConfirmPassword ? 'text' : 'password'}
+                    type={showConfirmPassword ? "text" : "password"}
                     value={formData.confirmPassword}
-                    onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                    className={`pr-10 ${errors.confirmPassword ? 'border-red-500 focus:border-red-500' : ''}`}
+                    onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                    className={`pr-10 ${errors.confirmPassword ? "border-red-500 focus:border-red-500" : ""}`}
                     aria-invalid={!!errors.confirmPassword}
-                    aria-describedby={errors.confirmPassword ? 'confirm-password-error' : 'confirm-password-help'}
+                    aria-describedby={
+                      errors.confirmPassword ? "confirm-password-error" : "confirm-password-help"
+                    }
                     placeholder="Digite a senha novamente"
                     autoComplete="new-password"
                     required
@@ -414,7 +408,7 @@ export function AccessibleAuthForm({ onSuccess, mode = 'login' }: AccessibleForm
                     size="sm"
                     className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    aria-label={showConfirmPassword ? 'Ocultar confirmação' : 'Mostrar confirmação'}
+                    aria-label={showConfirmPassword ? "Ocultar confirmação" : "Mostrar confirmação"}
                     tabIndex={-1}
                   >
                     {showConfirmPassword ? (
@@ -428,9 +422,9 @@ export function AccessibleAuthForm({ onSuccess, mode = 'login' }: AccessibleForm
                   Repita a senha para confirmação
                 </div>
                 {errors.confirmPassword && (
-                  <div 
-                    id="confirm-password-error" 
-                    className="text-xs text-red-600" 
+                  <div
+                    id="confirm-password-error"
+                    className="text-xs text-red-600"
                     role="alert"
                     aria-live="polite"
                   >
@@ -460,7 +454,9 @@ export function AccessibleAuthForm({ onSuccess, mode = 'login' }: AccessibleForm
               )}
             </Button>
             <div id="submit-help" className="sr-only">
-              {isLoading ? 'Aguarde enquanto processamos sua solicitação' : `Clique para ${formContent.submitText.toLowerCase()}`}
+              {isLoading
+                ? "Aguarde enquanto processamos sua solicitação"
+                : `Clique para ${formContent.submitText.toLowerCase()}`}
             </div>
 
             {/* Mode switch */}
@@ -477,12 +473,12 @@ export function AccessibleAuthForm({ onSuccess, mode = 'login' }: AccessibleForm
             </div>
 
             {/* Password reset link */}
-            {formMode === 'login' && (
+            {formMode === "login" && (
               <div className="text-center mt-2">
                 <Button
                   type="button"
                   variant="link"
-                  onClick={() => setFormMode('reset')}
+                  onClick={() => setFormMode("reset")}
                   className="text-sm text-muted-foreground"
                   disabled={isLoading}
                 >

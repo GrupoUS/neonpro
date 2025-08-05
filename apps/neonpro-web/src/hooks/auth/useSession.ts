@@ -3,67 +3,67 @@
 // Story 1.4: Session Management & Security
 // =====================================================
 
-import { useState, useEffect, useCallback, useRef } from 'react'
-import { useSupabase } from '@/hooks/useSupabase'
-import { UnifiedSessionSystem, SessionData, SessionValidation } from '@/lib/auth/session'
-import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
+import type { useState, useEffect, useCallback, useRef } from "react";
+import type { useSupabase } from "@/hooks/useSupabase";
+import type { UnifiedSessionSystem, SessionData, SessionValidation } from "@/lib/auth/session";
+import type { useRouter } from "next/navigation";
+import type { toast } from "sonner";
 
 // =====================================================
 // TYPES & INTERFACES
 // =====================================================
 
 export interface SessionState {
-  isLoading: boolean
-  isAuthenticated: boolean
-  user: any | null
-  session: SessionData | null
+  isLoading: boolean;
+  isAuthenticated: boolean;
+  user: any | null;
+  session: SessionData | null;
   securityScore?: {
-    score: number
-    factors: string[]
-  }
-  error: string | null
+    score: number;
+    factors: string[];
+  };
+  error: string | null;
 }
 
 export interface SessionActions {
-  login: (credentials: LoginCredentials, deviceInfo: DeviceInfo) => Promise<boolean>
-  logout: () => Promise<void>
-  refreshSession: () => Promise<void>
-  extendSession: () => Promise<void>
-  validateSession: () => Promise<boolean>
-  updateActivity: (activityType: string, metadata?: any) => Promise<void>
+  login: (credentials: LoginCredentials, deviceInfo: DeviceInfo) => Promise<boolean>;
+  logout: () => Promise<void>;
+  refreshSession: () => Promise<void>;
+  extendSession: () => Promise<void>;
+  validateSession: () => Promise<boolean>;
+  updateActivity: (activityType: string, metadata?: any) => Promise<void>;
 }
 
 export interface LoginCredentials {
-  email?: string
-  password?: string
-  provider?: string
-  token?: string
+  email?: string;
+  password?: string;
+  provider?: string;
+  token?: string;
 }
 
 export interface DeviceInfo {
-  fingerprint: string
-  userAgent: string
-  ipAddress: string
-  location?: string
+  fingerprint: string;
+  userAgent: string;
+  ipAddress: string;
+  location?: string;
 }
 
 export interface UseSessionOptions {
-  autoRefresh?: boolean
-  refreshInterval?: number
-  redirectOnExpiry?: string
-  showWarnings?: boolean
-  trackActivity?: boolean
+  autoRefresh?: boolean;
+  refreshInterval?: number;
+  redirectOnExpiry?: string;
+  showWarnings?: boolean;
+  trackActivity?: boolean;
 }
 
 export interface UseSessionReturn extends SessionState, SessionActions {
-  timeUntilExpiry: number | null
-  isExpiringSoon: boolean
+  timeUntilExpiry: number | null;
+  isExpiringSoon: boolean;
   sessionStats: {
-    duration: number
-    activitiesCount: number
-    lastActivity: Date | null
-  } | null
+    duration: number;
+    activitiesCount: number;
+    lastActivity: Date | null;
+  } | null;
 }
 
 // =====================================================
@@ -74,62 +74,62 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
   const {
     autoRefresh = true,
     refreshInterval = 60000, // 1 minute
-    redirectOnExpiry = '/login',
+    redirectOnExpiry = "/login",
     showWarnings = true,
-    trackActivity = true
-  } = options
+    trackActivity = true,
+  } = options;
 
-  const { supabase } = useSupabase()
-  const router = useRouter()
-  
+  const { supabase } = useSupabase();
+  const router = useRouter();
+
   // Session system instance
-  const sessionSystemRef = useRef<UnifiedSessionSystem | null>(null)
-  
+  const sessionSystemRef = useRef<UnifiedSessionSystem | null>(null);
+
   // State
   const [state, setState] = useState<SessionState>({
     isLoading: true,
     isAuthenticated: false,
     user: null,
     session: null,
-    error: null
-  })
-  
-  const [timeUntilExpiry, setTimeUntilExpiry] = useState<number | null>(null)
+    error: null,
+  });
+
+  const [timeUntilExpiry, setTimeUntilExpiry] = useState<number | null>(null);
   const [sessionStats, setSessionStats] = useState<{
-    duration: number
-    activitiesCount: number
-    lastActivity: Date | null
-  } | null>(null)
-  
+    duration: number;
+    activitiesCount: number;
+    lastActivity: Date | null;
+  } | null>(null);
+
   // Refs for intervals
-  const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null)
-  const expiryTimerRef = useRef<NodeJS.Timeout | null>(null)
-  const warningShownRef = useRef(false)
+  const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const expiryTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const warningShownRef = useRef(false);
 
   // =====================================================
   // INITIALIZATION
   // =====================================================
 
   useEffect(() => {
-    if (!supabase) return
+    if (!supabase) return;
 
     // Initialize session system
-    sessionSystemRef.current = new UnifiedSessionSystem(supabase)
+    sessionSystemRef.current = new UnifiedSessionSystem(supabase);
     sessionSystemRef.current.initialize().then(() => {
       // Check for existing session
-      checkExistingSession()
-    })
+      checkExistingSession();
+    });
 
     return () => {
       // Cleanup intervals
       if (refreshIntervalRef.current) {
-        clearInterval(refreshIntervalRef.current)
+        clearInterval(refreshIntervalRef.current);
       }
       if (expiryTimerRef.current) {
-        clearTimeout(expiryTimerRef.current)
+        clearTimeout(expiryTimerRef.current);
       }
-    }
-  }, [supabase])
+    };
+  }, [supabase]);
 
   // =====================================================
   // SESSION MANAGEMENT
@@ -137,18 +137,18 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
 
   const checkExistingSession = useCallback(async () => {
     try {
-      const sessionId = localStorage.getItem('session_id')
+      const sessionId = localStorage.getItem("session_id");
       if (!sessionId) {
-        setState(prev => ({ ...prev, isLoading: false }))
-        return
+        setState((prev) => ({ ...prev, isLoading: false }));
+        return;
       }
 
-      const deviceInfo = await getDeviceInfo()
+      const deviceInfo = await getDeviceInfo();
       const validation = await sessionSystemRef.current?.validateSession(
         sessionId,
         deviceInfo.ipAddress,
-        deviceInfo.userAgent
-      )
+        deviceInfo.userAgent,
+      );
 
       if (validation?.isValid && validation.session) {
         setState({
@@ -157,268 +157,267 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
           user: validation.user,
           session: validation.session,
           securityScore: validation.securityScore,
-          error: null
-        })
+          error: null,
+        });
 
         // Start auto-refresh if enabled
         if (autoRefresh) {
-          startAutoRefresh()
+          startAutoRefresh();
         }
 
         // Start expiry timer
-        startExpiryTimer(validation.session.expiresAt)
-        
+        startExpiryTimer(validation.session.expiresAt);
+
         // Update session stats
-        updateSessionStats(validation.session)
+        updateSessionStats(validation.session);
       } else {
         // Invalid session, clear storage
-        localStorage.removeItem('session_id')
-        setState(prev => ({ ...prev, isLoading: false }))
+        localStorage.removeItem("session_id");
+        setState((prev) => ({ ...prev, isLoading: false }));
       }
     } catch (error) {
-      console.error('Session check error:', error)
+      console.error("Session check error:", error);
       setState({
         isLoading: false,
         isAuthenticated: false,
         user: null,
         session: null,
-        error: error instanceof Error ? error.message : 'Session check failed'
-      })
+        error: error instanceof Error ? error.message : "Session check failed",
+      });
     }
-  }, [autoRefresh])
+  }, [autoRefresh]);
 
-  const login = useCallback(async (
-    credentials: LoginCredentials,
-    deviceInfo: DeviceInfo
-  ): Promise<boolean> => {
-    try {
-      setState(prev => ({ ...prev, isLoading: true, error: null }))
+  const login = useCallback(
+    async (credentials: LoginCredentials, deviceInfo: DeviceInfo): Promise<boolean> => {
+      try {
+        setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
-      const result = await sessionSystemRef.current?.authenticateUser(
-        credentials,
-        deviceInfo
-      )
+        const result = await sessionSystemRef.current?.authenticateUser(credentials, deviceInfo);
 
-      if (result?.success && result.session) {
-        // Store session ID
-        localStorage.setItem('session_id', result.session.sessionId)
-        
-        setState({
-          isLoading: false,
-          isAuthenticated: true,
-          user: result.user,
-          session: result.session,
-          error: null
-        })
+        if (result?.success && result.session) {
+          // Store session ID
+          localStorage.setItem("session_id", result.session.sessionId);
 
-        // Start auto-refresh
-        if (autoRefresh) {
-          startAutoRefresh()
-        }
+          setState({
+            isLoading: false,
+            isAuthenticated: true,
+            user: result.user,
+            session: result.session,
+            error: null,
+          });
 
-        // Start expiry timer
-        startExpiryTimer(result.session.expiresAt)
-        
-        // Update session stats
-        updateSessionStats(result.session)
-
-        // Show success message
-        if (showWarnings) {
-          toast.success('Login successful')
-          
-          // Show device warning if needed
-          if (!result.deviceValidation?.isTrusted) {
-            toast.warning('New device detected. Check your email for security notification.')
+          // Start auto-refresh
+          if (autoRefresh) {
+            startAutoRefresh();
           }
-        }
 
-        return true
-      } else {
-        setState(prev => ({
+          // Start expiry timer
+          startExpiryTimer(result.session.expiresAt);
+
+          // Update session stats
+          updateSessionStats(result.session);
+
+          // Show success message
+          if (showWarnings) {
+            toast.success("Login successful");
+
+            // Show device warning if needed
+            if (!result.deviceValidation?.isTrusted) {
+              toast.warning("New device detected. Check your email for security notification.");
+            }
+          }
+
+          return true;
+        } else {
+          setState((prev) => ({
+            ...prev,
+            isLoading: false,
+            error: result?.error || "Login failed",
+          }));
+
+          if (showWarnings) {
+            toast.error(result?.error || "Login failed");
+          }
+
+          return false;
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Login failed";
+        setState((prev) => ({
           ...prev,
           isLoading: false,
-          error: result?.error || 'Login failed'
-        }))
-        
+          error: errorMessage,
+        }));
+
         if (showWarnings) {
-          toast.error(result?.error || 'Login failed')
+          toast.error(errorMessage);
         }
-        
-        return false
+
+        return false;
       }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Login failed'
-      setState(prev => ({
-        ...prev,
-        isLoading: false,
-        error: errorMessage
-      }))
-      
-      if (showWarnings) {
-        toast.error(errorMessage)
-      }
-      
-      return false
-    }
-  }, [autoRefresh, showWarnings])
+    },
+    [autoRefresh, showWarnings],
+  );
 
   const logout = useCallback(async () => {
     try {
-      const sessionId = localStorage.getItem('session_id')
+      const sessionId = localStorage.getItem("session_id");
       if (sessionId && sessionSystemRef.current) {
-        await sessionSystemRef.current.terminateSession(sessionId, 'user_logout')
+        await sessionSystemRef.current.terminateSession(sessionId, "user_logout");
       }
-      
+
       // Clear local storage
-      localStorage.removeItem('session_id')
-      
+      localStorage.removeItem("session_id");
+
       // Clear intervals
       if (refreshIntervalRef.current) {
-        clearInterval(refreshIntervalRef.current)
+        clearInterval(refreshIntervalRef.current);
       }
       if (expiryTimerRef.current) {
-        clearTimeout(expiryTimerRef.current)
+        clearTimeout(expiryTimerRef.current);
       }
-      
+
       // Reset state
       setState({
         isLoading: false,
         isAuthenticated: false,
         user: null,
         session: null,
-        error: null
-      })
-      
-      setTimeUntilExpiry(null)
-      setSessionStats(null)
-      warningShownRef.current = false
-      
+        error: null,
+      });
+
+      setTimeUntilExpiry(null);
+      setSessionStats(null);
+      warningShownRef.current = false;
+
       if (showWarnings) {
-        toast.success('Logged out successfully')
+        toast.success("Logged out successfully");
       }
-      
+
       // Redirect to login
-      router.push(redirectOnExpiry)
+      router.push(redirectOnExpiry);
     } catch (error) {
-      console.error('Logout error:', error)
+      console.error("Logout error:", error);
       if (showWarnings) {
-        toast.error('Logout failed')
+        toast.error("Logout failed");
       }
     }
-  }, [router, redirectOnExpiry, showWarnings])
+  }, [router, redirectOnExpiry, showWarnings]);
 
   const refreshSession = useCallback(async () => {
     try {
-      const sessionId = localStorage.getItem('session_id')
-      if (!sessionId) return
+      const sessionId = localStorage.getItem("session_id");
+      if (!sessionId) return;
 
-      const deviceInfo = await getDeviceInfo()
+      const deviceInfo = await getDeviceInfo();
       const validation = await sessionSystemRef.current?.validateSession(
         sessionId,
         deviceInfo.ipAddress,
-        deviceInfo.userAgent
-      )
+        deviceInfo.userAgent,
+      );
 
       if (validation?.isValid && validation.session) {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           session: validation.session,
           securityScore: validation.securityScore,
-          error: null
-        }))
-        
+          error: null,
+        }));
+
         // Update expiry timer
-        startExpiryTimer(validation.session.expiresAt)
-        
+        startExpiryTimer(validation.session.expiresAt);
+
         // Update session stats
-        updateSessionStats(validation.session)
+        updateSessionStats(validation.session);
       } else {
         // Session invalid, logout
-        await logout()
+        await logout();
       }
     } catch (error) {
-      console.error('Session refresh error:', error)
-      setState(prev => ({
+      console.error("Session refresh error:", error);
+      setState((prev) => ({
         ...prev,
-        error: error instanceof Error ? error.message : 'Session refresh failed'
-      }))
+        error: error instanceof Error ? error.message : "Session refresh failed",
+      }));
     }
-  }, [logout])
+  }, [logout]);
 
   const extendSession = useCallback(async () => {
     try {
-      const sessionId = localStorage.getItem('session_id')
-      if (!sessionId || !sessionSystemRef.current) return
+      const sessionId = localStorage.getItem("session_id");
+      if (!sessionId || !sessionSystemRef.current) return;
 
-      const result = await sessionSystemRef.current.sessionManager.extendSession(sessionId)
-      
+      const result = await sessionSystemRef.current.sessionManager.extendSession(sessionId);
+
       if (result.success && result.newExpiresAt) {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
-          session: prev.session ? {
-            ...prev.session,
-            expiresAt: result.newExpiresAt!
-          } : null
-        }))
-        
+          session: prev.session
+            ? {
+                ...prev.session,
+                expiresAt: result.newExpiresAt!,
+              }
+            : null,
+        }));
+
         // Update expiry timer
-        startExpiryTimer(result.newExpiresAt)
-        
+        startExpiryTimer(result.newExpiresAt);
+
         if (showWarnings) {
-          toast.success('Session extended successfully')
+          toast.success("Session extended successfully");
         }
       }
     } catch (error) {
-      console.error('Session extension error:', error)
+      console.error("Session extension error:", error);
       if (showWarnings) {
-        toast.error('Failed to extend session')
+        toast.error("Failed to extend session");
       }
     }
-  }, [showWarnings])
+  }, [showWarnings]);
 
   const validateSession = useCallback(async (): Promise<boolean> => {
     try {
-      const sessionId = localStorage.getItem('session_id')
-      if (!sessionId) return false
+      const sessionId = localStorage.getItem("session_id");
+      if (!sessionId) return false;
 
-      const deviceInfo = await getDeviceInfo()
+      const deviceInfo = await getDeviceInfo();
       const validation = await sessionSystemRef.current?.validateSession(
         sessionId,
         deviceInfo.ipAddress,
-        deviceInfo.userAgent
-      )
+        deviceInfo.userAgent,
+      );
 
-      return validation?.isValid || false
+      return validation?.isValid || false;
     } catch (error) {
-      console.error('Session validation error:', error)
-      return false
+      console.error("Session validation error:", error);
+      return false;
     }
-  }, [])
+  }, []);
 
-  const updateActivity = useCallback(async (
-    activityType: string,
-    metadata?: any
-  ) => {
-    try {
-      if (!trackActivity) return
-      
-      const sessionId = localStorage.getItem('session_id')
-      if (!sessionId || !sessionSystemRef.current) return
+  const updateActivity = useCallback(
+    async (activityType: string, metadata?: any) => {
+      try {
+        if (!trackActivity) return;
 
-      await sessionSystemRef.current.sessionManager.updateActivity(
-        sessionId,
-        activityType,
-        metadata
-      )
-      
-      // Update session stats
-      if (state.session) {
-        updateSessionStats(state.session)
+        const sessionId = localStorage.getItem("session_id");
+        if (!sessionId || !sessionSystemRef.current) return;
+
+        await sessionSystemRef.current.sessionManager.updateActivity(
+          sessionId,
+          activityType,
+          metadata,
+        );
+
+        // Update session stats
+        if (state.session) {
+          updateSessionStats(state.session);
+        }
+      } catch (error) {
+        console.error("Activity update error:", error);
       }
-    } catch (error) {
-      console.error('Activity update error:', error)
-    }
-  }, [trackActivity, state.session])
+    },
+    [trackActivity, state.session],
+  );
 
   // =====================================================
   // HELPER FUNCTIONS
@@ -426,70 +425,70 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
 
   const startAutoRefresh = useCallback(() => {
     if (refreshIntervalRef.current) {
-      clearInterval(refreshIntervalRef.current)
+      clearInterval(refreshIntervalRef.current);
     }
-    
-    refreshIntervalRef.current = setInterval(() => {
-      refreshSession()
-    }, refreshInterval)
-  }, [refreshSession, refreshInterval])
 
-  const startExpiryTimer = useCallback((expiresAt: Date) => {
-    if (expiryTimerRef.current) {
-      clearTimeout(expiryTimerRef.current)
-    }
-    
-    const updateTimer = () => {
-      const now = Date.now()
-      const expiry = expiresAt.getTime()
-      const timeLeft = expiry - now
-      
-      setTimeUntilExpiry(Math.max(0, timeLeft))
-      
-      // Show warning 5 minutes before expiry
-      if (timeLeft <= 5 * 60 * 1000 && timeLeft > 0 && !warningShownRef.current && showWarnings) {
-        warningShownRef.current = true
-        toast.warning(
-          'Your session will expire soon. Click to extend.',
-          {
+    refreshIntervalRef.current = setInterval(() => {
+      refreshSession();
+    }, refreshInterval);
+  }, [refreshSession, refreshInterval]);
+
+  const startExpiryTimer = useCallback(
+    (expiresAt: Date) => {
+      if (expiryTimerRef.current) {
+        clearTimeout(expiryTimerRef.current);
+      }
+
+      const updateTimer = () => {
+        const now = Date.now();
+        const expiry = expiresAt.getTime();
+        const timeLeft = expiry - now;
+
+        setTimeUntilExpiry(Math.max(0, timeLeft));
+
+        // Show warning 5 minutes before expiry
+        if (timeLeft <= 5 * 60 * 1000 && timeLeft > 0 && !warningShownRef.current && showWarnings) {
+          warningShownRef.current = true;
+          toast.warning("Your session will expire soon. Click to extend.", {
             action: {
-              label: 'Extend Session',
-              onClick: extendSession
+              label: "Extend Session",
+              onClick: extendSession,
             },
-            duration: 10000
-          }
-        )
-      }
-      
-      // Auto logout when expired
-      if (timeLeft <= 0) {
-        logout()
-        return
-      }
-      
-      // Schedule next update
-      expiryTimerRef.current = setTimeout(updateTimer, 1000)
-    }
-    
-    updateTimer()
-  }, [logout, extendSession, showWarnings])
+            duration: 10000,
+          });
+        }
+
+        // Auto logout when expired
+        if (timeLeft <= 0) {
+          logout();
+          return;
+        }
+
+        // Schedule next update
+        expiryTimerRef.current = setTimeout(updateTimer, 1000);
+      };
+
+      updateTimer();
+    },
+    [logout, extendSession, showWarnings],
+  );
 
   const updateSessionStats = useCallback((session: SessionData) => {
-    const now = Date.now()
-    const duration = now - session.createdAt.getTime()
-    
+    const now = Date.now();
+    const duration = now - session.createdAt.getTime();
+
     setSessionStats({
       duration,
       activitiesCount: session.activitiesCount || 0,
-      lastActivity: session.lastActivity || null
-    })
-  }, [])
+      lastActivity: session.lastActivity || null,
+    });
+  }, []);
 
   // =====================================================
   // COMPUTED VALUES
   // =====================================================
 
-  const isExpiringSoon = timeUntilExpiry !== null && timeUntilExpiry <= 5 * 60 * 1000 // 5 minutes
+  const isExpiringSoon = timeUntilExpiry !== null && timeUntilExpiry <= 5 * 60 * 1000; // 5 minutes
 
   // =====================================================
   // RETURN HOOK INTERFACE
@@ -503,7 +502,7 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
     session: state.session,
     securityScore: state.securityScore,
     error: state.error,
-    
+
     // Actions
     login,
     logout,
@@ -511,12 +510,12 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
     extendSession,
     validateSession,
     updateActivity,
-    
+
     // Computed
     timeUntilExpiry,
     isExpiringSoon,
-    sessionStats
-  }
+    sessionStats,
+  };
 }
 
 // =====================================================
@@ -528,44 +527,44 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
  */
 async function getDeviceInfo(): Promise<DeviceInfo> {
   // Generate device fingerprint
-  const fingerprint = await generateDeviceFingerprint()
-  
+  const fingerprint = await generateDeviceFingerprint();
+
   // Get IP address (in production, this would come from server)
-  const ipAddress = await getClientIP()
-  
+  const ipAddress = await getClientIP();
+
   return {
     fingerprint,
     userAgent: navigator.userAgent,
     ipAddress,
-    location: await getLocation()
-  }
+    location: await getLocation(),
+  };
 }
 
 /**
  * Generate device fingerprint
  */
 async function generateDeviceFingerprint(): Promise<string> {
-  const canvas = document.createElement('canvas')
-  const ctx = canvas.getContext('2d')
-  ctx?.fillText('Device fingerprint', 10, 10)
-  
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  ctx?.fillText("Device fingerprint", 10, 10);
+
   const fingerprint = [
     navigator.userAgent,
     navigator.language,
-    screen.width + 'x' + screen.height,
+    screen.width + "x" + screen.height,
     new Date().getTimezoneOffset(),
-    canvas.toDataURL()
-  ].join('|')
-  
+    canvas.toDataURL(),
+  ].join("|");
+
   // Simple hash function
-  let hash = 0
+  let hash = 0;
   for (let i = 0; i < fingerprint.length; i++) {
-    const char = fingerprint.charCodeAt(i)
-    hash = ((hash << 5) - hash) + char
-    hash = hash & hash // Convert to 32-bit integer
+    const char = fingerprint.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash = hash & hash; // Convert to 32-bit integer
   }
-  
-  return Math.abs(hash).toString(36)
+
+  return Math.abs(hash).toString(36);
 }
 
 /**
@@ -573,11 +572,11 @@ async function generateDeviceFingerprint(): Promise<string> {
  */
 async function getClientIP(): Promise<string> {
   try {
-    const response = await fetch('https://api.ipify.org?format=json')
-    const data = await response.json()
-    return data.ip || '127.0.0.1'
+    const response = await fetch("https://api.ipify.org?format=json");
+    const data = await response.json();
+    return data.ip || "127.0.0.1";
   } catch {
-    return '127.0.0.1'
+    return "127.0.0.1";
   }
 }
 
@@ -586,11 +585,11 @@ async function getClientIP(): Promise<string> {
  */
 async function getLocation(): Promise<string | undefined> {
   try {
-    const response = await fetch('https://ipapi.co/json/')
-    const data = await response.json()
-    return `${data.city}, ${data.country_name}`
+    const response = await fetch("https://ipapi.co/json/");
+    const data = await response.json();
+    return `${data.city}, ${data.country_name}`;
   } catch {
-    return undefined
+    return undefined;
   }
 }
 
@@ -598,4 +597,4 @@ async function getLocation(): Promise<string | undefined> {
 // EXPORT DEFAULT
 // =====================================================
 
-export default useSession
+export default useSession;

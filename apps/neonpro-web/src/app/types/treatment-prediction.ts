@@ -5,10 +5,10 @@ export interface PredictionModel {
   id: string;
   name: string;
   version: string;
-  algorithm_type: 'ensemble' | 'neural_network' | 'random_forest' | 'gradient_boosting' | 'svm';
+  algorithm_type: "ensemble" | "neural_network" | "random_forest" | "gradient_boosting" | "svm";
   accuracy: number; // 0-1, target ≥0.85
   confidence_threshold: number; // Default 0.85
-  status: 'training' | 'active' | 'deprecated';
+  status: "training" | "active" | "deprecated";
   training_data_size: number;
   feature_count: number;
   model_data?: Record<string, any>; // Serialized model parameters
@@ -36,19 +36,19 @@ export interface TreatmentPrediction {
   treatment_type: string;
   prediction_score: number; // 0-1 probability of success
   confidence_interval: ConfidenceInterval;
-  risk_assessment: 'low' | 'medium' | 'high';
-  predicted_outcome: 'success' | 'partial_success' | 'failure';
+  risk_assessment: "low" | "medium" | "high";
+  predicted_outcome: "success" | "partial_success" | "failure";
   prediction_date: string;
   model_id: string;
   features_used: PredictionFeatures;
   explainability_data?: ExplainabilityData;
-  actual_outcome?: 'success' | 'partial_success' | 'failure';
+  actual_outcome?: "success" | "partial_success" | "failure";
   outcome_date?: string;
   accuracy_validated: boolean;
   created_at: string;
   updated_at: string;
   created_by?: string;
-  
+
   // Relationships
   model?: PredictionModel;
   patient?: any; // Patient interface from main types
@@ -66,38 +66,38 @@ export interface PredictionFeatures {
   age: number;
   gender: string;
   bmi?: number;
-  
+
   // Medical history factors
   previous_treatments: number;
   success_rate_history: number;
   medical_conditions: string[];
   medications: string[];
   allergies: string[];
-  
+
   // Lifestyle factors
-  smoking_status: 'never' | 'former' | 'current';
-  alcohol_consumption: 'none' | 'light' | 'moderate' | 'heavy';
-  exercise_frequency: 'none' | 'light' | 'moderate' | 'regular';
-  
+  smoking_status: "never" | "former" | "current";
+  alcohol_consumption: "none" | "light" | "moderate" | "heavy";
+  exercise_frequency: "none" | "light" | "moderate" | "regular";
+
   // Treatment-specific factors
   treatment_complexity: number; // 1-5
   provider_experience: number;
   clinic_success_rate: number;
-  
+
   // Skin-specific factors (for aesthetic treatments)
   skin_type?: string;
   skin_condition?: string;
   photosensitivity?: boolean;
-  
+
   // Psychological factors
-  treatment_expectations: 'realistic' | 'optimistic' | 'unrealistic';
+  treatment_expectations: "realistic" | "optimistic" | "unrealistic";
   anxiety_level: number; // 1-5
   compliance_history: number; // 0-1
-  
+
   // External factors
   seasonal_factors?: string;
   geographic_location?: string;
-  support_system: 'strong' | 'moderate' | 'weak';
+  support_system: "strong" | "moderate" | "weak";
 }
 
 export interface ExplainabilityData {
@@ -138,10 +138,10 @@ export interface MedicalHistory {
 }
 
 export interface LifestyleFactors {
-  smoking: 'never' | 'former' | 'current';
-  alcohol: 'none' | 'light' | 'moderate' | 'heavy';
-  exercise: 'none' | 'light' | 'moderate' | 'regular';
-  diet: 'poor' | 'average' | 'good' | 'excellent';
+  smoking: "never" | "former" | "current";
+  alcohol: "none" | "light" | "moderate" | "heavy";
+  exercise: "none" | "light" | "moderate" | "regular";
+  diet: "poor" | "average" | "good" | "excellent";
   sleep_quality: number; // 1-5
   stress_level: number; // 1-5
 }
@@ -157,7 +157,7 @@ export interface TreatmentHistory {
 export interface TreatmentHistoryItem {
   treatment_type: string;
   date: string;
-  outcome: 'success' | 'partial_success' | 'failure';
+  outcome: "success" | "partial_success" | "failure";
   provider: string;
   notes?: string;
 }
@@ -165,21 +165,21 @@ export interface TreatmentHistoryItem {
 export interface PsychologicalFactors {
   anxiety_level: number; // 1-5
   motivation_level: number; // 1-5
-  treatment_expectations: 'realistic' | 'optimistic' | 'unrealistic';
+  treatment_expectations: "realistic" | "optimistic" | "unrealistic";
   body_image_satisfaction: number; // 1-5
   perfectionism_tendency: number; // 1-5
 }
 
 export interface SocialFactors {
-  support_system: 'strong' | 'moderate' | 'weak';
-  socioeconomic_status: 'low' | 'middle' | 'high';
-  education_level: 'basic' | 'secondary' | 'higher';
-  employment_status: 'employed' | 'unemployed' | 'retired' | 'student';
+  support_system: "strong" | "moderate" | "weak";
+  socioeconomic_status: "low" | "middle" | "high";
+  education_level: "basic" | "secondary" | "higher";
+  employment_status: "employed" | "unemployed" | "retired" | "student";
 }
 
 export interface GeographicFactors {
   location: string;
-  climate: 'tropical' | 'temperate' | 'arid' | 'cold';
+  climate: "tropical" | "temperate" | "arid" | "cold";
   accessibility_score: number; // 1-5
   travel_distance_km: number;
 }
@@ -232,7 +232,7 @@ export interface ModelPerformance {
   validation_metrics?: ValidationMetrics;
   feature_importance?: Record<string, number>;
   created_at: string;
-  
+
   // Relationships
   model?: PredictionModel;
 }
@@ -256,14 +256,14 @@ export interface PredictionFeedback {
   id: string;
   prediction_id: string;
   provider_id: string;
-  feedback_type: 'validation' | 'correction' | 'enhancement';
+  feedback_type: "validation" | "correction" | "enhancement";
   original_prediction: number;
   adjusted_prediction?: number;
   reasoning: string;
   confidence_level: number; // 1-5
   medical_factors?: Record<string, any>;
   created_at: string;
-  
+
   // Relationships
   prediction?: TreatmentPrediction;
   provider?: any; // User interface from main types
@@ -278,10 +278,10 @@ export interface PredictionResponse {
 }
 
 export interface TreatmentRecommendation {
-  type: 'preparation' | 'modification' | 'monitoring' | 'post_care';
+  type: "preparation" | "modification" | "monitoring" | "post_care";
   description: string;
-  importance: 'low' | 'medium' | 'high' | 'critical';
-  evidence_level: 'expert_opinion' | 'case_studies' | 'clinical_trials';
+  importance: "low" | "medium" | "high" | "critical";
+  evidence_level: "expert_opinion" | "case_studies" | "clinical_trials";
 }
 
 export interface AlternativeTreatment {
@@ -340,18 +340,18 @@ export interface TrainingRequest {
 
 export interface TrainingResponse {
   model_id: string;
-  training_status: 'started' | 'in_progress' | 'completed' | 'failed';
+  training_status: "started" | "in_progress" | "completed" | "failed";
   estimated_completion?: string;
   progress_percentage?: number;
   performance_preview?: ModelPerformanceMetrics;
 }
 
 // Utility Types
-export type PredictionConfidence = 'very_low' | 'low' | 'medium' | 'high' | 'very_high';
-export type TreatmentOutcome = 'success' | 'partial_success' | 'failure';
-export type RiskLevel = 'low' | 'medium' | 'high';
-export type ModelStatus = 'training' | 'active' | 'deprecated';
-export type FeedbackType = 'validation' | 'correction' | 'enhancement';
+export type PredictionConfidence = "very_low" | "low" | "medium" | "high" | "very_high";
+export type TreatmentOutcome = "success" | "partial_success" | "failure";
+export type RiskLevel = "low" | "medium" | "high";
+export type ModelStatus = "training" | "active" | "deprecated";
+export type FeedbackType = "validation" | "correction" | "enhancement";
 
 // Filter and Search Types
 export interface PredictionFilters {

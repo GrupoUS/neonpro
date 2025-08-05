@@ -6,22 +6,23 @@ var react_1 = require("react");
 var auth_context_1 = require("@/contexts/auth-context");
 var use_subscription_1 = require("@/hooks/use-subscription");
 // Debug: Log the imported SubscriptionProvider
-console.log('SubscriptionProvider:', use_subscription_1.SubscriptionProvider);
+console.log("SubscriptionProvider:", use_subscription_1.SubscriptionProvider);
 function SubscriptionWrapper(_a) {
-    var children = _a.children;
-    var user = (0, auth_context_1.useAuth)().user;
-    // Convert auth context user to supabase user format
-    var supabaseUser = user ? {
+  var children = _a.children;
+  var user = (0, auth_context_1.useAuth)().user;
+  // Convert auth context user to supabase user format
+  var supabaseUser = user
+    ? {
         id: user.id,
         email: user.email,
         user_metadata: user.user_metadata || {},
         app_metadata: {},
-        aud: 'authenticated',
+        aud: "authenticated",
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         email_confirmed_at: new Date().toISOString(),
         last_sign_in_at: new Date().toISOString(),
-        role: 'authenticated',
+        role: "authenticated",
         confirmation_sent_at: null,
         confirmed_at: null,
         email_change: null,
@@ -37,7 +38,12 @@ function SubscriptionWrapper(_a) {
         phone_change_sent_at: null,
         recovery_sent_at: null,
         new_email: null,
-        new_phone: null
-    } : null;
-    return <use_subscription_1.SubscriptionProvider user={supabaseUser}>{children}</use_subscription_1.SubscriptionProvider>;
+        new_phone: null,
+      }
+    : null;
+  return (
+    <use_subscription_1.SubscriptionProvider user={supabaseUser}>
+      {children}
+    </use_subscription_1.SubscriptionProvider>
+  );
 }

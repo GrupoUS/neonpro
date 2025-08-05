@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { 
-  Calendar, 
-  FileText, 
-  Clock, 
-  CheckCircle, 
-  AlertCircle, 
-  Plus, 
-  Edit, 
-  Trash2, 
+import React, { useState, useEffect } from "react";
+import type {
+  Calendar,
+  FileText,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  Plus,
+  Edit,
+  Trash2,
   Download,
   Upload,
   Search,
@@ -24,31 +24,57 @@ import {
   Timer,
   TrendingUp,
   Award,
-  AlertTriangle
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Progress } from '@/components/ui/progress';
-import { toast } from 'sonner';
-import { format, addDays, differenceInDays } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+  AlertTriangle,
+} from "lucide-react";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type { Progress } from "@/components/ui/progress";
+import type { toast } from "sonner";
+import type { format, addDays, differenceInDays } from "date-fns";
+import type { ptBR } from "date-fns/locale";
 
 // Treatment Plan Types based on FHIR R4 and existing schema
 interface TreatmentPlan {
   id: string;
   patient_id: string;
   plan_name: string;
-  plan_type: 'orthodontics' | 'implants' | 'periodontics' | 'endodontics' | 'oral_surgery' | 'general' | 'cosmetic';
-  status: 'draft' | 'active' | 'on_hold' | 'completed' | 'cancelled' | 'revised';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
+  plan_type:
+    | "orthodontics"
+    | "implants"
+    | "periodontics"
+    | "endodontics"
+    | "oral_surgery"
+    | "general"
+    | "cosmetic";
+  status: "draft" | "active" | "on_hold" | "completed" | "cancelled" | "revised";
+  priority: "low" | "medium" | "high" | "urgent";
   start_date: string;
   estimated_end_date: string;
   actual_end_date?: string;
@@ -76,7 +102,7 @@ interface TreatmentProtocol {
   id: string;
   treatment_plan_id: string;
   protocol_name: string;
-  protocol_type: 'standard' | 'custom' | 'emergency';
+  protocol_type: "standard" | "custom" | "emergency";
   category: string;
   sequence_order: number;
   estimated_duration: number; // in minutes
@@ -87,7 +113,7 @@ interface TreatmentProtocol {
   post_care_instructions: string[];
   follow_up_requirements: FollowUpRequirement[];
   quality_metrics: QualityMetric[];
-  status: 'pending' | 'in_progress' | 'completed' | 'skipped' | 'failed';
+  status: "pending" | "in_progress" | "completed" | "skipped" | "failed";
   scheduled_date?: string;
   completed_date?: string;
   performed_by?: string;
@@ -107,7 +133,7 @@ interface ProtocolStep {
   safety_notes?: string[];
   verification_points: string[];
   completion_criteria: string;
-  status: 'pending' | 'in_progress' | 'completed' | 'skipped';
+  status: "pending" | "in_progress" | "completed" | "skipped";
   completed_at?: string;
   completed_by?: string;
   notes?: string;
@@ -139,7 +165,7 @@ interface ProfessionalAssignment {
   id: string;
   professional_id: string;
   professional_name: string;
-  role: 'primary_dentist' | 'assistant' | 'hygienist' | 'specialist' | 'anesthesiologist';
+  role: "primary_dentist" | "assistant" | "hygienist" | "specialist" | "anesthesiologist";
   specialization?: string;
   license_number: string;
   assignment_date: string;
@@ -158,7 +184,7 @@ interface ProgressNote {
   id: string;
   treatment_plan_id: string;
   protocol_id?: string;
-  note_type: 'progress' | 'complication' | 'modification' | 'completion';
+  note_type: "progress" | "complication" | "modification" | "completion";
   title: string;
   content: string;
   attachments?: Attachment[];
@@ -185,9 +211,9 @@ interface FollowUpRequirement {
   title: string;
   description: string;
   due_date: string;
-  priority: 'low' | 'medium' | 'high';
+  priority: "low" | "medium" | "high";
   assigned_to: string;
-  status: 'pending' | 'completed' | 'overdue';
+  status: "pending" | "completed" | "overdue";
   completion_notes?: string;
 }
 
@@ -208,20 +234,20 @@ interface TreatmentPlanManagerProps {
   onPlanUpdate?: () => void;
 }
 
-export default function TreatmentPlanManager({ 
-  patientId, 
-  readOnly = false, 
-  onPlanUpdate 
+export default function TreatmentPlanManager({
+  patientId,
+  readOnly = false,
+  onPlanUpdate,
 }: TreatmentPlanManagerProps) {
   // State management
   const [treatmentPlans, setTreatmentPlans] = useState<TreatmentPlan[]>([]);
   const [selectedPlan, setSelectedPlan] = useState<TreatmentPlan | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('overview');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
-  const [filterType, setFilterType] = useState('all');
-  
+  const [activeTab, setActiveTab] = useState("overview");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [filterType, setFilterType] = useState("all");
+
   // Dialog states
   const [showPlanDialog, setShowPlanDialog] = useState(false);
   const [showProtocolDialog, setShowProtocolDialog] = useState(false);
@@ -247,16 +273,15 @@ export default function TreatmentPlanManager({
       //   `)
       //   .eq('patient_id', patientId)
       //   .order('created_at', { ascending: false });
-      
+
       // Mock data for demonstration
       setTreatmentPlans(generateMockTreatmentPlans());
       if (treatmentPlans.length > 0) {
         setSelectedPlan(treatmentPlans[0]);
       }
-      
     } catch (error) {
-      console.error('Error loading treatment plans:', error);
-      toast.error('Erro ao carregar planos de tratamento');
+      console.error("Error loading treatment plans:", error);
+      toast.error("Erro ao carregar planos de tratamento");
     } finally {
       setLoading(false);
     }
@@ -274,112 +299,116 @@ export default function TreatmentPlanManager({
         progress_notes: [],
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        created_by: 'current_user_id', // TODO: Get from auth
-        updated_by: 'current_user_id',
+        created_by: "current_user_id", // TODO: Get from auth
+        updated_by: "current_user_id",
         lgpd_consent: true,
-        data_retention_date: new Date(Date.now() + 7 * 365 * 24 * 60 * 60 * 1000).toISOString() // 7 years
+        data_retention_date: new Date(Date.now() + 7 * 365 * 24 * 60 * 60 * 1000).toISOString(), // 7 years
       } as TreatmentPlan;
-      
-      setTreatmentPlans(prev => [newPlan, ...prev]);
+
+      setTreatmentPlans((prev) => [newPlan, ...prev]);
       setSelectedPlan(newPlan);
       setShowPlanDialog(false);
-      toast.success('Plano de tratamento criado com sucesso');
+      toast.success("Plano de tratamento criado com sucesso");
       onPlanUpdate?.();
     } catch (error) {
-      console.error('Error creating treatment plan:', error);
-      toast.error('Erro ao criar plano de tratamento');
+      console.error("Error creating treatment plan:", error);
+      toast.error("Erro ao criar plano de tratamento");
     }
   };
 
   const handleAddProtocol = async (protocolData: Partial<TreatmentProtocol>) => {
     if (!selectedPlan) return;
-    
+
     try {
       const newProtocol: TreatmentProtocol = {
         id: `protocol_${Date.now()}`,
         treatment_plan_id: selectedPlan.id,
         ...protocolData,
-        status: 'pending',
+        status: "pending",
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        lgpd_consent: true
+        lgpd_consent: true,
       } as TreatmentProtocol;
-      
+
       const updatedPlan = {
         ...selectedPlan,
-        protocols: [...selectedPlan.protocols, newProtocol]
+        protocols: [...selectedPlan.protocols, newProtocol],
       };
-      
+
       setSelectedPlan(updatedPlan);
-      setTreatmentPlans(prev => 
-        prev.map(plan => plan.id === selectedPlan.id ? updatedPlan : plan)
+      setTreatmentPlans((prev) =>
+        prev.map((plan) => (plan.id === selectedPlan.id ? updatedPlan : plan)),
       );
       setShowProtocolDialog(false);
-      toast.success('Protocolo adicionado com sucesso');
+      toast.success("Protocolo adicionado com sucesso");
       onPlanUpdate?.();
     } catch (error) {
-      console.error('Error adding protocol:', error);
-      toast.error('Erro ao adicionar protocolo');
+      console.error("Error adding protocol:", error);
+      toast.error("Erro ao adicionar protocolo");
     }
   };
 
   const handleStartProtocol = async (protocolId: string) => {
     if (!selectedPlan) return;
-    
+
     try {
-      const updatedProtocols = selectedPlan.protocols.map(protocol => 
-        protocol.id === protocolId 
-          ? { ...protocol, status: 'in_progress' as const, scheduled_date: new Date().toISOString() }
-          : protocol
+      const updatedProtocols = selectedPlan.protocols.map((protocol) =>
+        protocol.id === protocolId
+          ? {
+              ...protocol,
+              status: "in_progress" as const,
+              scheduled_date: new Date().toISOString(),
+            }
+          : protocol,
       );
-      
+
       const updatedPlan = { ...selectedPlan, protocols: updatedProtocols };
       setSelectedPlan(updatedPlan);
-      setTreatmentPlans(prev => 
-        prev.map(plan => plan.id === selectedPlan.id ? updatedPlan : plan)
+      setTreatmentPlans((prev) =>
+        prev.map((plan) => (plan.id === selectedPlan.id ? updatedPlan : plan)),
       );
-      
-      toast.success('Protocolo iniciado');
+
+      toast.success("Protocolo iniciado");
       onPlanUpdate?.();
     } catch (error) {
-      console.error('Error starting protocol:', error);
-      toast.error('Erro ao iniciar protocolo');
+      console.error("Error starting protocol:", error);
+      toast.error("Erro ao iniciar protocolo");
     }
   };
 
   const handleCompleteProtocol = async (protocolId: string, notes?: string) => {
     if (!selectedPlan) return;
-    
+
     try {
-      const updatedProtocols = selectedPlan.protocols.map(protocol => 
-        protocol.id === protocolId 
-          ? { 
-              ...protocol, 
-              status: 'completed' as const, 
+      const updatedProtocols = selectedPlan.protocols.map((protocol) =>
+        protocol.id === protocolId
+          ? {
+              ...protocol,
+              status: "completed" as const,
               completed_date: new Date().toISOString(),
-              notes: notes || protocol.notes
+              notes: notes || protocol.notes,
             }
-          : protocol
+          : protocol,
       );
-      
-      const completedCount = updatedProtocols.filter(p => p.status === 'completed').length;
-      
-      const updatedPlan = { 
-        ...selectedPlan, 
+
+      const completedCount = updatedProtocols.filter((p) => p.status === "completed").length;
+
+      const updatedPlan = {
+        ...selectedPlan,
         protocols: updatedProtocols,
-        completed_sessions: completedCount
+        completed_sessions: completedCount,
       };
-      
+
       setSelectedPlan(updatedPlan);
-      setTreatmentPlans(prev => 
-        prev.map(plan => plan.id === selectedPlan.id ? updatedPlan : plan)
+      setTreatmentPlans((prev) =>
+        prev.map((plan) => (plan.id === selectedPlan.id ? updatedPlan : plan)),
       );
-      
-      toast.success('Protocolo concluído');
+
+      toast.success("Protocolo concluído");
       onPlanUpdate?.();
     } catch (error) {
-      console.error('Error completing protocol:', error);
-      toast.error('Erro ao concluir protocolo');
+      console.error("Error completing protocol:", error);
+      toast.error("Erro ao concluir protocolo");
     }
   };
 
@@ -390,38 +419,60 @@ export default function TreatmentPlanManager({
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'draft': return 'bg-gray-100 text-gray-800';
-      case 'active': return 'bg-blue-100 text-blue-800';
-      case 'on_hold': return 'bg-yellow-100 text-yellow-800';
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'cancelled': return 'bg-red-100 text-red-800';
-      case 'revised': return 'bg-purple-100 text-purple-800';
-      case 'pending': return 'bg-gray-100 text-gray-800';
-      case 'in_progress': return 'bg-blue-100 text-blue-800';
-      case 'failed': return 'bg-red-100 text-red-800';
-      case 'skipped': return 'bg-orange-100 text-orange-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "draft":
+        return "bg-gray-100 text-gray-800";
+      case "active":
+        return "bg-blue-100 text-blue-800";
+      case "on_hold":
+        return "bg-yellow-100 text-yellow-800";
+      case "completed":
+        return "bg-green-100 text-green-800";
+      case "cancelled":
+        return "bg-red-100 text-red-800";
+      case "revised":
+        return "bg-purple-100 text-purple-800";
+      case "pending":
+        return "bg-gray-100 text-gray-800";
+      case "in_progress":
+        return "bg-blue-100 text-blue-800";
+      case "failed":
+        return "bg-red-100 text-red-800";
+      case "skipped":
+        return "bg-orange-100 text-orange-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'low': return 'bg-green-100 text-green-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'high': return 'bg-orange-100 text-orange-800';
-      case 'urgent': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "low":
+        return "bg-green-100 text-green-800";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800";
+      case "high":
+        return "bg-orange-100 text-orange-800";
+      case "urgent":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'orthodontics': return <Target className="h-4 w-4" />;
-      case 'implants': return <Award className="h-4 w-4" />;
-      case 'periodontics': return <Activity className="h-4 w-4" />;
-      case 'endodontics': return <Clipboard className="h-4 w-4" />;
-      case 'oral_surgery': return <AlertTriangle className="h-4 w-4" />;
-      default: return <FileText className="h-4 w-4" />;
+      case "orthodontics":
+        return <Target className="h-4 w-4" />;
+      case "implants":
+        return <Award className="h-4 w-4" />;
+      case "periodontics":
+        return <Activity className="h-4 w-4" />;
+      case "endodontics":
+        return <Clipboard className="h-4 w-4" />;
+      case "oral_surgery":
+        return <AlertTriangle className="h-4 w-4" />;
+      default:
+        return <FileText className="h-4 w-4" />;
     }
   };
 
@@ -448,8 +499,8 @@ export default function TreatmentPlanManager({
             variant="outline"
             onClick={() => {
               // Export treatment plans with LGPD compliance
-              console.log('Exporting treatment plans');
-              toast.success('Planos exportados com conformidade LGPD');
+              console.log("Exporting treatment plans");
+              toast.success("Planos exportados com conformidade LGPD");
             }}
             className="hidden sm:flex"
           >
@@ -525,12 +576,12 @@ export default function TreatmentPlanManager({
             {treatmentPlans.map((plan) => {
               const progress = calculatePlanProgress(plan);
               const isSelected = selectedPlan?.id === plan.id;
-              
+
               return (
-                <Card 
-                  key={plan.id} 
+                <Card
+                  key={plan.id}
                   className={`cursor-pointer transition-colors ${
-                    isSelected ? 'ring-2 ring-primary' : 'hover:bg-muted/50'
+                    isSelected ? "ring-2 ring-primary" : "hover:bg-muted/50"
                   }`}
                   onClick={() => setSelectedPlan(plan)}
                 >
@@ -552,7 +603,7 @@ export default function TreatmentPlanManager({
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="space-y-2">
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-muted-foreground">Progresso</span>
@@ -560,8 +611,12 @@ export default function TreatmentPlanManager({
                         </div>
                         <Progress value={progress} className="h-2" />
                         <div className="flex items-center justify-between text-xs text-muted-foreground">
-                          <span>{plan.completed_sessions}/{plan.total_sessions} sessões</span>
-                          <span>{format(new Date(plan.start_date), 'dd/MM/yy', { locale: ptBR })}</span>
+                          <span>
+                            {plan.completed_sessions}/{plan.total_sessions} sessões
+                          </span>
+                          <span>
+                            {format(new Date(plan.start_date), "dd/MM/yy", { locale: ptBR })}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -613,50 +668,64 @@ export default function TreatmentPlanManager({
                           <div className="space-y-2 text-sm">
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Início:</span>
-                              <span>{format(new Date(selectedPlan.start_date), 'dd/MM/yyyy', { locale: ptBR })}</span>
+                              <span>
+                                {format(new Date(selectedPlan.start_date), "dd/MM/yyyy", {
+                                  locale: ptBR,
+                                })}
+                              </span>
                             </div>
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Previsão de término:</span>
-                              <span>{format(new Date(selectedPlan.estimated_end_date), 'dd/MM/yyyy', { locale: ptBR })}</span>
+                              <span>
+                                {format(new Date(selectedPlan.estimated_end_date), "dd/MM/yyyy", {
+                                  locale: ptBR,
+                                })}
+                              </span>
                             </div>
                             {selectedPlan.actual_end_date && (
                               <div className="flex justify-between">
                                 <span className="text-muted-foreground">Término real:</span>
-                                <span>{format(new Date(selectedPlan.actual_end_date), 'dd/MM/yyyy', { locale: ptBR })}</span>
+                                <span>
+                                  {format(new Date(selectedPlan.actual_end_date), "dd/MM/yyyy", {
+                                    locale: ptBR,
+                                  })}
+                                </span>
                               </div>
                             )}
                           </div>
                         </div>
-                        
+
                         <div>
                           <h4 className="font-semibold mb-2">Progresso</h4>
                           <div className="space-y-2">
                             <div className="flex items-center justify-between text-sm">
                               <span className="text-muted-foreground">Sessões concluídas</span>
-                              <span className="font-medium">{selectedPlan.completed_sessions}/{selectedPlan.total_sessions}</span>
+                              <span className="font-medium">
+                                {selectedPlan.completed_sessions}/{selectedPlan.total_sessions}
+                              </span>
                             </div>
                             <Progress value={calculatePlanProgress(selectedPlan)} className="h-2" />
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="space-y-4">
                         <div>
                           <h4 className="font-semibold mb-2">Custos</h4>
                           <div className="space-y-2 text-sm">
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Estimado:</span>
-                              <span>R$ {selectedPlan.estimated_cost.toLocaleString('pt-BR')}</span>
+                              <span>R$ {selectedPlan.estimated_cost.toLocaleString("pt-BR")}</span>
                             </div>
                             {selectedPlan.actual_cost && (
                               <div className="flex justify-between">
                                 <span className="text-muted-foreground">Real:</span>
-                                <span>R$ {selectedPlan.actual_cost.toLocaleString('pt-BR')}</span>
+                                <span>R$ {selectedPlan.actual_cost.toLocaleString("pt-BR")}</span>
                               </div>
                             )}
                           </div>
                         </div>
-                        
+
                         <div>
                           <h4 className="font-semibold mb-2">Objetivos</h4>
                           <div className="space-y-1">
@@ -670,23 +739,27 @@ export default function TreatmentPlanManager({
                         </div>
                       </div>
                     </div>
-                    
-                    {selectedPlan.contraindications && selectedPlan.contraindications.length > 0 && (
-                      <div>
-                        <h4 className="font-semibold mb-2 flex items-center space-x-2">
-                          <AlertTriangle className="h-4 w-4 text-orange-500" />
-                          <span>Contraindicações</span>
-                        </h4>
-                        <div className="space-y-1">
-                          {selectedPlan.contraindications.map((contraindication, index) => (
-                            <div key={index} className="flex items-center space-x-2 text-sm text-orange-700">
-                              <AlertCircle className="h-3 w-3" />
-                              <span>{contraindication}</span>
-                            </div>
-                          ))}
+
+                    {selectedPlan.contraindications &&
+                      selectedPlan.contraindications.length > 0 && (
+                        <div>
+                          <h4 className="font-semibold mb-2 flex items-center space-x-2">
+                            <AlertTriangle className="h-4 w-4 text-orange-500" />
+                            <span>Contraindicações</span>
+                          </h4>
+                          <div className="space-y-1">
+                            {selectedPlan.contraindications.map((contraindication, index) => (
+                              <div
+                                key={index}
+                                className="flex items-center space-x-2 text-sm text-orange-700"
+                              >
+                                <AlertCircle className="h-3 w-3" />
+                                <span>{contraindication}</span>
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -718,104 +791,125 @@ export default function TreatmentPlanManager({
                     </Dialog>
                   )}
                 </div>
-                
+
                 <div className="space-y-4">
                   {selectedPlan.protocols
                     .sort((a, b) => a.sequence_order - b.sequence_order)
                     .map((protocol) => (
-                    <Card key={protocol.id}>
-                      <CardContent className="p-4">
-                        <div className="flex items-start justify-between">
-                          <div className="space-y-2 flex-1">
-                            <div className="flex items-center space-x-2">
-                              <Badge variant="outline">#{protocol.sequence_order}</Badge>
-                              <h4 className="font-semibold">{protocol.protocol_name}</h4>
-                              <Badge className={getStatusColor(protocol.status)}>
-                                {protocol.status}
-                              </Badge>
+                      <Card key={protocol.id}>
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between">
+                            <div className="space-y-2 flex-1">
+                              <div className="flex items-center space-x-2">
+                                <Badge variant="outline">#{protocol.sequence_order}</Badge>
+                                <h4 className="font-semibold">{protocol.protocol_name}</h4>
+                                <Badge className={getStatusColor(protocol.status)}>
+                                  {protocol.status}
+                                </Badge>
+                              </div>
+
+                              <div className="grid gap-2 md:grid-cols-3 text-sm">
+                                <div>
+                                  <span className="text-muted-foreground">Categoria: </span>
+                                  <span>{protocol.category}</span>
+                                </div>
+                                <div>
+                                  <span className="text-muted-foreground">Duração: </span>
+                                  <span>{protocol.estimated_duration} min</span>
+                                </div>
+                                <div>
+                                  <span className="text-muted-foreground">Etapas: </span>
+                                  <span>{protocol.steps.length}</span>
+                                </div>
+                              </div>
+
+                              {protocol.scheduled_date && (
+                                <div className="text-sm">
+                                  <span className="text-muted-foreground">Agendado para: </span>
+                                  <span>
+                                    {format(new Date(protocol.scheduled_date), "dd/MM/yyyy HH:mm", {
+                                      locale: ptBR,
+                                    })}
+                                  </span>
+                                </div>
+                              )}
+
+                              {protocol.notes && (
+                                <p className="text-sm text-muted-foreground">{protocol.notes}</p>
+                              )}
                             </div>
-                            
-                            <div className="grid gap-2 md:grid-cols-3 text-sm">
-                              <div>
-                                <span className="text-muted-foreground">Categoria: </span>
-                                <span>{protocol.category}</span>
+
+                            {!readOnly && (
+                              <div className="flex items-center space-x-2">
+                                {protocol.status === "pending" && (
+                                  <Button
+                                    size="sm"
+                                    onClick={() => handleStartProtocol(protocol.id)}
+                                  >
+                                    <Play className="mr-1 h-3 w-3" />
+                                    Iniciar
+                                  </Button>
+                                )}
+                                {protocol.status === "in_progress" && (
+                                  <Button
+                                    size="sm"
+                                    onClick={() => handleCompleteProtocol(protocol.id)}
+                                  >
+                                    <CheckCircle className="mr-1 h-3 w-3" />
+                                    Concluir
+                                  </Button>
+                                )}
+                                <Button variant="ghost" size="sm">
+                                  <Edit className="h-3 w-3" />
+                                </Button>
                               </div>
-                              <div>
-                                <span className="text-muted-foreground">Duração: </span>
-                                <span>{protocol.estimated_duration} min</span>
-                              </div>
-                              <div>
-                                <span className="text-muted-foreground">Etapas: </span>
-                                <span>{protocol.steps.length}</span>
-                              </div>
-                            </div>
-                            
-                            {protocol.scheduled_date && (
-                              <div className="text-sm">
-                                <span className="text-muted-foreground">Agendado para: </span>
-                                <span>{format(new Date(protocol.scheduled_date), 'dd/MM/yyyy HH:mm', { locale: ptBR })}</span>
-                              </div>
-                            )}
-                            
-                            {protocol.notes && (
-                              <p className="text-sm text-muted-foreground">{protocol.notes}</p>
                             )}
                           </div>
-                          
-                          {!readOnly && (
-                            <div className="flex items-center space-x-2">
-                              {protocol.status === 'pending' && (
-                                <Button 
-                                  size="sm" 
-                                  onClick={() => handleStartProtocol(protocol.id)}
-                                >
-                                  <Play className="mr-1 h-3 w-3" />
-                                  Iniciar
-                                </Button>
-                              )}
-                              {protocol.status === 'in_progress' && (
-                                <Button 
-                                  size="sm" 
-                                  onClick={() => handleCompleteProtocol(protocol.id)}
-                                >
-                                  <CheckCircle className="mr-1 h-3 w-3" />
-                                  Concluir
-                                </Button>
-                              )}
-                              <Button variant="ghost" size="sm">
-                                <Edit className="h-3 w-3" />
-                              </Button>
+
+                          {/* Protocol Steps */}
+                          {protocol.steps.length > 0 && (
+                            <div className="mt-4 pt-4 border-t">
+                              <h5 className="font-medium mb-2">Etapas do Protocolo</h5>
+                              <div className="space-y-2">
+                                {protocol.steps.map((step) => (
+                                  <div
+                                    key={step.id}
+                                    className="flex items-center space-x-3 text-sm"
+                                  >
+                                    <Badge
+                                      variant="outline"
+                                      className="w-8 h-6 flex items-center justify-center"
+                                    >
+                                      {step.step_number}
+                                    </Badge>
+                                    <div className="flex-1">
+                                      <span
+                                        className={
+                                          step.status === "completed"
+                                            ? "line-through text-muted-foreground"
+                                            : ""
+                                        }
+                                      >
+                                        {step.title}
+                                      </span>
+                                      <span className="text-muted-foreground ml-2">
+                                        ({step.estimated_time} min)
+                                      </span>
+                                    </div>
+                                    <Badge
+                                      className={getStatusColor(step.status)}
+                                      variant="secondary"
+                                    >
+                                      {step.status}
+                                    </Badge>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
                           )}
-                        </div>
-                        
-                        {/* Protocol Steps */}
-                        {protocol.steps.length > 0 && (
-                          <div className="mt-4 pt-4 border-t">
-                            <h5 className="font-medium mb-2">Etapas do Protocolo</h5>
-                            <div className="space-y-2">
-                              {protocol.steps.map((step) => (
-                                <div key={step.id} className="flex items-center space-x-3 text-sm">
-                                  <Badge variant="outline" className="w-8 h-6 flex items-center justify-center">
-                                    {step.step_number}
-                                  </Badge>
-                                  <div className="flex-1">
-                                    <span className={step.status === 'completed' ? 'line-through text-muted-foreground' : ''}>
-                                      {step.title}
-                                    </span>
-                                    <span className="text-muted-foreground ml-2">({step.estimated_time} min)</span>
-                                  </div>
-                                  <Badge className={getStatusColor(step.status)} variant="secondary">
-                                    {step.status}
-                                  </Badge>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  ))}
+                        </CardContent>
+                      </Card>
+                    ))}
                 </div>
               </TabsContent>
 
@@ -834,15 +928,13 @@ export default function TreatmentPlanManager({
                       <DialogContent className="max-w-2xl">
                         <DialogHeader>
                           <DialogTitle>Adicionar Nota de Progresso</DialogTitle>
-                          <DialogDescription>
-                            Registre o progresso do tratamento
-                          </DialogDescription>
+                          <DialogDescription>Registre o progresso do tratamento</DialogDescription>
                         </DialogHeader>
                         <ProgressNoteForm
                           onSubmit={(data) => {
                             // Handle progress note submission
                             setShowProgressDialog(false);
-                            toast.success('Nota de progresso adicionada');
+                            toast.success("Nota de progresso adicionada");
                           }}
                           onCancel={() => setShowProgressDialog(false)}
                         />
@@ -850,7 +942,7 @@ export default function TreatmentPlanManager({
                     </Dialog>
                   )}
                 </div>
-                
+
                 <div className="space-y-4">
                   {selectedPlan.progress_notes.map((note) => (
                     <Card key={note.id}>
@@ -862,7 +954,9 @@ export default function TreatmentPlanManager({
                               <Badge variant="outline">{note.note_type}</Badge>
                             </div>
                             <span className="text-sm text-muted-foreground">
-                              {format(new Date(note.created_at), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+                              {format(new Date(note.created_at), "dd/MM/yyyy HH:mm", {
+                                locale: ptBR,
+                              })}
                             </span>
                           </div>
                           <p className="text-sm">{note.content}</p>
@@ -879,7 +973,7 @@ export default function TreatmentPlanManager({
               {/* Team Tab */}
               <TabsContent value="team" className="space-y-4">
                 <h3 className="text-lg font-semibold">Equipe Responsável</h3>
-                
+
                 <div className="grid gap-4 md:grid-cols-2">
                   {selectedPlan.assigned_professionals.map((assignment) => (
                     <Card key={assignment.id}>
@@ -890,7 +984,9 @@ export default function TreatmentPlanManager({
                             <Badge variant="outline">{assignment.role}</Badge>
                           </div>
                           {assignment.specialization && (
-                            <p className="text-sm text-muted-foreground">{assignment.specialization}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {assignment.specialization}
+                            </p>
                           )}
                           <div className="text-xs text-muted-foreground">
                             CRO: {assignment.license_number}
@@ -918,7 +1014,9 @@ export default function TreatmentPlanManager({
               <CardContent className="flex items-center justify-center p-8">
                 <div className="text-center space-y-2">
                   <FileText className="h-8 w-8 text-muted-foreground mx-auto" />
-                  <p className="text-muted-foreground">Selecione um plano de tratamento para ver os detalhes</p>
+                  <p className="text-muted-foreground">
+                    Selecione um plano de tratamento para ver os detalhes
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -930,35 +1028,50 @@ export default function TreatmentPlanManager({
 }
 
 // Form Components (simplified for brevity)
-function TreatmentPlanForm({ onSubmit, onCancel }: { onSubmit: (data: any) => void; onCancel: () => void }) {
+function TreatmentPlanForm({
+  onSubmit,
+  onCancel,
+}: {
+  onSubmit: (data: any) => void;
+  onCancel: () => void;
+}) {
   const [formData, setFormData] = useState({
-    plan_name: '',
-    plan_type: 'general',
-    priority: 'medium',
-    start_date: '',
-    estimated_end_date: '',
+    plan_name: "",
+    plan_type: "general",
+    priority: "medium",
+    start_date: "",
+    estimated_end_date: "",
     total_sessions: 1,
     estimated_cost: 0,
-    description: '',
-    objectives: [''],
-    success_criteria: ['']
+    description: "",
+    objectives: [""],
+    success_criteria: [""],
   });
 
   return (
-    <form onSubmit={(e) => { e.preventDefault(); onSubmit(formData); }} className="space-y-4">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit(formData);
+      }}
+      className="space-y-4"
+    >
       <div className="grid gap-4 md:grid-cols-2">
         <div>
           <Label htmlFor="plan_name">Nome do Plano *</Label>
           <Input
             id="plan_name"
             value={formData.plan_name}
-            onChange={(e) => setFormData(prev => ({ ...prev, plan_name: e.target.value }))}
+            onChange={(e) => setFormData((prev) => ({ ...prev, plan_name: e.target.value }))}
             required
           />
         </div>
         <div>
           <Label htmlFor="plan_type">Tipo de Tratamento</Label>
-          <Select value={formData.plan_type} onValueChange={(value) => setFormData(prev => ({ ...prev, plan_type: value }))}>
+          <Select
+            value={formData.plan_type}
+            onValueChange={(value) => setFormData((prev) => ({ ...prev, plan_type: value }))}
+          >
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
@@ -974,11 +1087,14 @@ function TreatmentPlanForm({ onSubmit, onCancel }: { onSubmit: (data: any) => vo
           </Select>
         </div>
       </div>
-      
+
       <div className="grid gap-4 md:grid-cols-3">
         <div>
           <Label htmlFor="priority">Prioridade</Label>
-          <Select value={formData.priority} onValueChange={(value) => setFormData(prev => ({ ...prev, priority: value }))}>
+          <Select
+            value={formData.priority}
+            onValueChange={(value) => setFormData((prev) => ({ ...prev, priority: value }))}
+          >
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
@@ -996,7 +1112,7 @@ function TreatmentPlanForm({ onSubmit, onCancel }: { onSubmit: (data: any) => vo
             id="start_date"
             type="date"
             value={formData.start_date}
-            onChange={(e) => setFormData(prev => ({ ...prev, start_date: e.target.value }))}
+            onChange={(e) => setFormData((prev) => ({ ...prev, start_date: e.target.value }))}
           />
         </div>
         <div>
@@ -1005,11 +1121,13 @@ function TreatmentPlanForm({ onSubmit, onCancel }: { onSubmit: (data: any) => vo
             id="estimated_end_date"
             type="date"
             value={formData.estimated_end_date}
-            onChange={(e) => setFormData(prev => ({ ...prev, estimated_end_date: e.target.value }))}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, estimated_end_date: e.target.value }))
+            }
           />
         </div>
       </div>
-      
+
       <div className="grid gap-4 md:grid-cols-2">
         <div>
           <Label htmlFor="total_sessions">Total de Sessões</Label>
@@ -1018,7 +1136,9 @@ function TreatmentPlanForm({ onSubmit, onCancel }: { onSubmit: (data: any) => vo
             type="number"
             min="1"
             value={formData.total_sessions}
-            onChange={(e) => setFormData(prev => ({ ...prev, total_sessions: parseInt(e.target.value) || 1 }))}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, total_sessions: parseInt(e.target.value) || 1 }))
+            }
           />
         </div>
         <div>
@@ -1029,46 +1149,58 @@ function TreatmentPlanForm({ onSubmit, onCancel }: { onSubmit: (data: any) => vo
             min="0"
             step="0.01"
             value={formData.estimated_cost}
-            onChange={(e) => setFormData(prev => ({ ...prev, estimated_cost: parseFloat(e.target.value) || 0 }))}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, estimated_cost: parseFloat(e.target.value) || 0 }))
+            }
           />
         </div>
       </div>
-      
+
       <div>
         <Label htmlFor="description">Descrição</Label>
         <Textarea
           id="description"
           value={formData.description}
-          onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+          onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
           rows={3}
         />
       </div>
-      
+
       <div className="flex items-center space-x-2">
         <Checkbox id="lgpd_consent" required />
         <Label htmlFor="lgpd_consent" className="text-sm">
           Confirmo o consentimento LGPD para armazenamento destes dados de tratamento
         </Label>
       </div>
-      
+
       <div className="flex justify-end space-x-2">
         <Button type="button" variant="outline" onClick={onCancel}>
           Cancelar
         </Button>
-        <Button type="submit">
-          Criar Plano
-        </Button>
+        <Button type="submit">Criar Plano</Button>
       </div>
     </form>
   );
 }
 
-function ProtocolForm({ onSubmit, onCancel }: { onSubmit: (data: any) => void; onCancel: () => void }) {
+function ProtocolForm({
+  onSubmit,
+  onCancel,
+}: {
+  onSubmit: (data: any) => void;
+  onCancel: () => void;
+}) {
   // Similar form structure for protocols
   return <div>Protocol Form Component</div>;
 }
 
-function ProgressNoteForm({ onSubmit, onCancel }: { onSubmit: (data: any) => void; onCancel: () => void }) {
+function ProgressNoteForm({
+  onSubmit,
+  onCancel,
+}: {
+  onSubmit: (data: any) => void;
+  onCancel: () => void;
+}) {
   // Similar form structure for progress notes
   return <div>Progress Note Form Component</div>;
 }
@@ -1077,158 +1209,157 @@ function ProgressNoteForm({ onSubmit, onCancel }: { onSubmit: (data: any) => voi
 function generateMockTreatmentPlans(): TreatmentPlan[] {
   return [
     {
-      id: 'plan_1',
-      patient_id: 'patient_1',
-      plan_name: 'Tratamento Ortodôntico Completo',
-      plan_type: 'orthodontics',
-      status: 'active',
-      priority: 'medium',
-      start_date: '2024-01-15',
-      estimated_end_date: '2025-01-15',
+      id: "plan_1",
+      patient_id: "patient_1",
+      plan_name: "Tratamento Ortodôntico Completo",
+      plan_type: "orthodontics",
+      status: "active",
+      priority: "medium",
+      start_date: "2024-01-15",
+      estimated_end_date: "2025-01-15",
       total_sessions: 24,
       completed_sessions: 8,
-      estimated_cost: 8500.00,
-      actual_cost: 2800.00,
-      description: 'Tratamento ortodôntico completo com aparelho fixo para correção de maloclusão classe II',
+      estimated_cost: 8500.0,
+      actual_cost: 2800.0,
+      description:
+        "Tratamento ortodôntico completo com aparelho fixo para correção de maloclusão classe II",
       objectives: [
-        'Corrigir maloclusão classe II',
-        'Alinhar dentes anteriores',
-        'Melhorar função mastigatória',
-        'Otimizar estética do sorriso'
+        "Corrigir maloclusão classe II",
+        "Alinhar dentes anteriores",
+        "Melhorar função mastigatória",
+        "Otimizar estética do sorriso",
       ],
-      contraindications: [
-        'Doença periodontal ativa',
-        'Higiene oral inadequada'
-      ],
+      contraindications: ["Doença periodontal ativa", "Higiene oral inadequada"],
       success_criteria: [
-        'Overjet entre 2-4mm',
-        'Overbite entre 2-4mm',
-        'Alinhamento dental adequado',
-        'Função mastigatória normal'
+        "Overjet entre 2-4mm",
+        "Overbite entre 2-4mm",
+        "Alinhamento dental adequado",
+        "Função mastigatória normal",
       ],
       protocols: [
         {
-          id: 'protocol_1',
-          treatment_plan_id: 'plan_1',
-          protocol_name: 'Instalação de Aparelho Ortodôntico',
-          protocol_type: 'standard',
-          category: 'Ortodontia',
+          id: "protocol_1",
+          treatment_plan_id: "plan_1",
+          protocol_name: "Instalação de Aparelho Ortodôntico",
+          protocol_type: "standard",
+          category: "Ortodontia",
           sequence_order: 1,
           estimated_duration: 90,
           required_materials: [
             {
-              id: 'mat_1',
-              name: 'Brackets metálicos',
+              id: "mat_1",
+              name: "Brackets metálicos",
               quantity: 20,
-              unit: 'unidades',
-              cost_per_unit: 15.00,
-              required: true
-            }
+              unit: "unidades",
+              cost_per_unit: 15.0,
+              required: true,
+            },
           ],
           required_equipment: [
             {
-              id: 'eq_1',
-              name: 'Cadeira odontológica',
-              type: 'furniture',
+              id: "eq_1",
+              name: "Cadeira odontológica",
+              type: "furniture",
               operator_certification_required: false,
-              safety_protocols: ['Posicionamento adequado do paciente']
-            }
+              safety_protocols: ["Posicionamento adequado do paciente"],
+            },
           ],
           steps: [
             {
-              id: 'step_1',
+              id: "step_1",
               step_number: 1,
-              title: 'Preparação do paciente',
-              description: 'Posicionar paciente e preparar campo operatório',
+              title: "Preparação do paciente",
+              description: "Posicionar paciente e preparar campo operatório",
               estimated_time: 10,
-              required_skills: ['Posicionamento', 'Isolamento'],
-              verification_points: ['Paciente confortável', 'Campo limpo'],
-              completion_criteria: 'Paciente preparado adequadamente',
-              status: 'completed',
-              completed_at: '2024-01-15T10:00:00Z',
-              completed_by: 'doctor_1'
-            }
+              required_skills: ["Posicionamento", "Isolamento"],
+              verification_points: ["Paciente confortável", "Campo limpo"],
+              completion_criteria: "Paciente preparado adequadamente",
+              status: "completed",
+              completed_at: "2024-01-15T10:00:00Z",
+              completed_by: "doctor_1",
+            },
           ],
-          precautions: ['Verificar alergias', 'Confirmar higiene oral'],
+          precautions: ["Verificar alergias", "Confirmar higiene oral"],
           post_care_instructions: [
-            'Evitar alimentos duros nas primeiras 24h',
-            'Manter higiene oral rigorosa',
-            'Retornar em caso de desconforto excessivo'
+            "Evitar alimentos duros nas primeiras 24h",
+            "Manter higiene oral rigorosa",
+            "Retornar em caso de desconforto excessivo",
           ],
           follow_up_requirements: [
             {
-              id: 'follow_1',
-              title: 'Consulta de acompanhamento',
-              description: 'Verificar adaptação ao aparelho',
-              due_date: '2024-02-15',
-              priority: 'medium',
-              assigned_to: 'doctor_1',
-              status: 'pending'
-            }
+              id: "follow_1",
+              title: "Consulta de acompanhamento",
+              description: "Verificar adaptação ao aparelho",
+              due_date: "2024-02-15",
+              priority: "medium",
+              assigned_to: "doctor_1",
+              status: "pending",
+            },
           ],
           quality_metrics: [
             {
-              id: 'metric_1',
-              metric_name: 'Tempo de instalação',
+              id: "metric_1",
+              metric_name: "Tempo de instalação",
               target_value: 90,
               actual_value: 85,
-              unit: 'minutos',
-              measurement_date: '2024-01-15',
-              measured_by: 'doctor_1'
-            }
+              unit: "minutos",
+              measurement_date: "2024-01-15",
+              measured_by: "doctor_1",
+            },
           ],
-          status: 'completed',
-          scheduled_date: '2024-01-15T09:00:00Z',
-          completed_date: '2024-01-15T10:30:00Z',
-          performed_by: 'doctor_1',
-          notes: 'Instalação realizada sem intercorrências',
-          created_at: '2024-01-15T08:00:00Z',
-          updated_at: '2024-01-15T10:30:00Z',
-          lgpd_consent: true
-        }
+          status: "completed",
+          scheduled_date: "2024-01-15T09:00:00Z",
+          completed_date: "2024-01-15T10:30:00Z",
+          performed_by: "doctor_1",
+          notes: "Instalação realizada sem intercorrências",
+          created_at: "2024-01-15T08:00:00Z",
+          updated_at: "2024-01-15T10:30:00Z",
+          lgpd_consent: true,
+        },
       ],
       assigned_professionals: [
         {
-          id: 'assign_1',
-          professional_id: 'prof_1',
-          professional_name: 'Dr. João Silva',
-          role: 'primary_dentist',
-          specialization: 'Ortodontia',
-          license_number: 'CRO-SP 12345',
-          assignment_date: '2024-01-15',
+          id: "assign_1",
+          professional_id: "prof_1",
+          professional_name: "Dr. João Silva",
+          role: "primary_dentist",
+          specialization: "Ortodontia",
+          license_number: "CRO-SP 12345",
+          assignment_date: "2024-01-15",
           responsibilities: [
-            'Planejamento do tratamento',
-            'Execução dos procedimentos',
-            'Acompanhamento do progresso'
+            "Planejamento do tratamento",
+            "Execução dos procedimentos",
+            "Acompanhamento do progresso",
           ],
           availability_schedule: [
             {
               day_of_week: 1,
-              start_time: '08:00',
-              end_time: '17:00',
-              location: 'Consultório 1'
-            }
-          ]
-        }
+              start_time: "08:00",
+              end_time: "17:00",
+              location: "Consultório 1",
+            },
+          ],
+        },
       ],
       progress_notes: [
         {
-          id: 'note_1',
-          treatment_plan_id: 'plan_1',
-          note_type: 'progress',
-          title: 'Progresso após 3 meses',
-          content: 'Paciente apresenta boa evolução no alinhamento dental. Cooperação excelente com higiene oral.',
-          created_at: '2024-04-15T14:00:00Z',
-          created_by: 'Dr. João Silva',
-          lgpd_consent: true
-        }
+          id: "note_1",
+          treatment_plan_id: "plan_1",
+          note_type: "progress",
+          title: "Progresso após 3 meses",
+          content:
+            "Paciente apresenta boa evolução no alinhamento dental. Cooperação excelente com higiene oral.",
+          created_at: "2024-04-15T14:00:00Z",
+          created_by: "Dr. João Silva",
+          lgpd_consent: true,
+        },
       ],
-      created_at: '2024-01-15T08:00:00Z',
-      updated_at: '2024-04-15T14:00:00Z',
-      created_by: 'doctor_1',
-      updated_by: 'doctor_1',
+      created_at: "2024-01-15T08:00:00Z",
+      updated_at: "2024-04-15T14:00:00Z",
+      created_by: "doctor_1",
+      updated_by: "doctor_1",
       lgpd_consent: true,
-      data_retention_date: '2031-01-15T08:00:00Z'
-    }
+      data_retention_date: "2031-01-15T08:00:00Z",
+    },
   ];
 }

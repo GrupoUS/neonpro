@@ -1,33 +1,39 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { 
-  Clock, 
-  Wifi, 
-  WifiOff, 
+import type { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Skeleton } from "@/components/ui/skeleton";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type {
+  Clock,
+  Wifi,
+  WifiOff,
   Calendar,
   CheckCircle,
   XCircle,
   Users,
-  Activity
-} from 'lucide-react'
-import { format } from 'date-fns'
-import { pt } from 'date-fns/locale'
-import { cn } from '@/lib/utils'
-import { useAvailabilityManager } from '@/hooks/use-availability-manager'
-import type { TimeSlot } from '@/hooks/use-realtime-availability'
+  Activity,
+} from "lucide-react";
+import type { format } from "date-fns";
+import type { pt } from "date-fns/locale";
+import type { cn } from "@/lib/utils";
+import type { useAvailabilityManager } from "@/hooks/use-availability-manager";
+import type { TimeSlot } from "@/hooks/use-realtime-availability";
 
 interface RealTimeAvailabilityProps {
-  professionalId?: string
-  serviceId?: string
-  selectedDate?: Date
-  onSlotSelect?: (slot: TimeSlot) => void
-  className?: string
+  professionalId?: string;
+  serviceId?: string;
+  selectedDate?: Date;
+  onSlotSelect?: (slot: TimeSlot) => void;
+  className?: string;
 }
 
 export function RealTimeAvailability({
@@ -35,7 +41,7 @@ export function RealTimeAvailability({
   serviceId,
   selectedDate,
   onSlotSelect,
-  className
+  className,
 }: RealTimeAvailabilityProps) {
   const {
     timeSlots,
@@ -47,22 +53,22 @@ export function RealTimeAvailability({
     availability,
     updateFilters,
     selectSlot,
-    isSlotBookable
-  } = useAvailabilityManager()
+    isSlotBookable,
+  } = useAvailabilityManager();
 
   // Atualizar filtros quando props mudarem
   useEffect(() => {
     updateFilters({
       professionalId,
       serviceId,
-      date: selectedDate
-    })
-  }, [professionalId, serviceId, selectedDate, updateFilters])
+      date: selectedDate,
+    });
+  }, [professionalId, serviceId, selectedDate, updateFilters]);
 
   const handleSlotClick = (slot: TimeSlot) => {
-    selectSlot(slot)
-    onSlotSelect?.(slot)
-  }
+    selectSlot(slot);
+    onSlotSelect?.(slot);
+  };
 
   if (isLoading) {
     return (
@@ -74,9 +80,7 @@ export function RealTimeAvailability({
                 <Clock className="h-5 w-5" />
                 Disponibilidade em Tempo Real
               </CardTitle>
-              <CardDescription>
-                Carregando horários disponíveis...
-              </CardDescription>
+              <CardDescription>Carregando horários disponíveis...</CardDescription>
             </div>
             <Skeleton className="h-6 w-6 rounded-full" />
           </div>
@@ -91,7 +95,7 @@ export function RealTimeAvailability({
           ))}
         </CardContent>
       </Card>
-    )
+    );
   }
 
   if (error) {
@@ -109,7 +113,7 @@ export function RealTimeAvailability({
           </Alert>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -127,13 +131,10 @@ export function RealTimeAvailability({
               )}
             </CardTitle>
             <CardDescription>
-              {isConnected 
-                ? 'Atualizações automáticas ativadas' 
-                : 'Reconectando...'
-              }
+              {isConnected ? "Atualizações automáticas ativadas" : "Reconectando..."}
             </CardDescription>
           </div>
-          
+
           {/* Indicadores de status */}
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="text-xs">
@@ -163,43 +164,43 @@ export function RealTimeAvailability({
                 <div className="flex items-center gap-2 mb-3">
                   <Calendar className="h-4 w-4" />
                   <h3 className="font-medium">
-                    {format(new Date(date + 'T00:00:00'), 'EEEE, dd/MM/yyyy', { locale: pt })}
+                    {format(new Date(date + "T00:00:00"), "EEEE, dd/MM/yyyy", { locale: pt })}
                   </h3>
                   <Badge variant="outline" className="ml-auto text-xs">
-                    {slots.filter(slot => slot.is_available).length} disponíveis
+                    {slots.filter((slot) => slot.is_available).length} disponíveis
                   </Badge>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
                   {slots.map((slot) => {
-                    const isSelected = selectedSlot?.id === slot.id
-                    const isBookable = isSlotBookable(slot)
-                    
+                    const isSelected = selectedSlot?.id === slot.id;
+                    const isBookable = isSlotBookable(slot);
+
                     return (
                       <Button
                         key={slot.id}
-                        variant={isSelected ? 'default' : slot.is_available ? 'outline' : 'ghost'}
+                        variant={isSelected ? "default" : slot.is_available ? "outline" : "ghost"}
                         size="sm"
                         className={cn(
-                          'h-12 flex flex-col items-center justify-center text-xs',
-                          !slot.is_available && 'opacity-50 cursor-not-allowed',
-                          !isBookable && slot.is_available && 'opacity-60',
-                          isSelected && 'ring-2 ring-primary ring-offset-1'
+                          "h-12 flex flex-col items-center justify-center text-xs",
+                          !slot.is_available && "opacity-50 cursor-not-allowed",
+                          !isBookable && slot.is_available && "opacity-60",
+                          isSelected && "ring-2 ring-primary ring-offset-1",
                         )}
                         disabled={!slot.is_available || !isBookable}
                         onClick={() => isBookable && handleSlotClick(slot)}
                       >
                         <span className="font-medium">
-                          {format(new Date(`2000-01-01T${slot.start_time}`), 'HH:mm')}
+                          {format(new Date(`2000-01-01T${slot.start_time}`), "HH:mm")}
                         </span>
                         <span className="text-[10px] opacity-75">
-                          {slot.is_available ? 'Livre' : 'Ocupado'}
+                          {slot.is_available ? "Livre" : "Ocupado"}
                         </span>
                         {isSelected && (
                           <CheckCircle className="h-3 w-3 absolute -top-1 -right-1 text-primary" />
                         )}
                       </Button>
-                    )
+                    );
                   })}
                 </div>
               </div>
@@ -212,12 +213,10 @@ export function RealTimeAvailability({
           <div className="mt-6 p-4 bg-muted rounded-lg">
             <div className="flex items-center justify-between text-sm">
               <span>Taxa de disponibilidade:</span>
-              <span className="font-medium">
-                {availability.availabilityRate}%
-              </span>
+              <span className="font-medium">{availability.availabilityRate}%</span>
             </div>
             <div className="w-full bg-background rounded-full h-2 mt-2">
-              <div 
+              <div
                 className="bg-primary h-2 rounded-full transition-all duration-300"
                 style={{ width: `${availability.availabilityRate}%` }}
               />
@@ -226,5 +225,5 @@ export function RealTimeAvailability({
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

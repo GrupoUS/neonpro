@@ -1,21 +1,21 @@
 /**
  * Background Job Processors - Research-Backed Implementation
- * 
+ *
  * Handles background processing for:
  * - OAuth token refresh automation
  * - Data synchronization jobs
  * - Webhook event processing
  * - Analytics data aggregation
- * 
+ *
  * Implementation follows Next.js serverless patterns with queue-based processing
  * Based on research from Bull, Redis patterns, and serverless job processing
  */
 
-import { createClient } from '@/lib/supabase/server';
-import { InstagramOAuthHandler } from '@/lib/oauth/platforms/instagram-handler';
-import { FacebookOAuthHandler } from '@/lib/oauth/platforms/facebook-handler';
-import { WhatsAppOAuthHandler } from '@/lib/oauth/platforms/whatsapp-handler';
-import { HubSpotOAuthHandler } from '@/lib/oauth/platforms/hubspot-handler';
+import type { createClient } from "@/lib/supabase/server";
+import type { InstagramOAuthHandler } from "@/lib/oauth/platforms/instagram-handler";
+import type { FacebookOAuthHandler } from "@/lib/oauth/platforms/facebook-handler";
+import type { WhatsAppOAuthHandler } from "@/lib/oauth/platforms/whatsapp-handler";
+import type { HubSpotOAuthHandler } from "@/lib/oauth/platforms/hubspot-handler";
 
 interface JobContext {
   jobId: string;
@@ -27,28 +27,28 @@ interface JobContext {
 }
 
 interface TokenRefreshJob extends JobContext {
-  type: 'token_refresh';
+  type: "token_refresh";
   accountId: string;
   currentToken: string;
   refreshToken?: string;
 }
 
 interface DataSyncJob extends JobContext {
-  type: 'data_sync';
-  syncType: 'posts' | 'analytics' | 'contacts' | 'deals';
+  type: "data_sync";
+  syncType: "posts" | "analytics" | "contacts" | "deals";
   lastSyncAt?: string;
   fullSync?: boolean;
 }
 
 interface WebhookProcessingJob extends JobContext {
-  type: 'webhook_processing';
+  type: "webhook_processing";
   webhookData: any;
   eventType: string;
-  priority: 'high' | 'medium' | 'low';
+  priority: "high" | "medium" | "low";
 }
 
 interface AnalyticsAggregationJob extends JobContext {
-  type: 'analytics_aggregation';
+  type: "analytics_aggregation";
   dateRange: {
     startDate: string;
     endDate: string;
@@ -71,10 +71,13 @@ export class JobQueueManager {
   /**
    * Add job to the processing queue
    */
-  async addJob(job: BackgroundJob, priority: 'high' | 'medium' | 'low' = 'medium'): Promise<string> {
+  async addJob(
+    job: BackgroundJob,
+    priority: "high" | "medium" | "low" = "medium",
+  ): Promise<string> {
     try {
       const { data, error } = await this.supabase
-        .from('background_jobs')
+        .from("background_jobs")
         .insert({
           id: job.jobId,
           type: job.type,
@@ -82,13 +85,13 @@ export class JobQueueManager {
           platform: job.platform,
           priority,
           payload: job,
-          status: 'pending',
+          status: "pending",
           retry_count: 0,
           max_retries: job.maxRetries || 3,
           scheduled_at: new Date().toISOString(),
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         })
-        .select('id')
+        .select("id")
         .single();
 
       if (error) {
@@ -97,9 +100,8 @@ export class JobQueueManager {
 
       console.log(`Job ${job.jobId} queued successfully with priority ${priority}`);
       return data.id;
-
     } catch (error) {
-      console.error('Error adding job to queue:', error);
+      console.error("Error adding job to queue:", error);
       throw error;
     }
   }
@@ -111,12 +113,12 @@ export class JobQueueManager {
     try {
       // Get next job with priority ordering
       const { data: job, error } = await this.supabase
-        .from('background_jobs')
-        .select('*')
-        .eq('status', 'pending')
-        .or('scheduled_at.lte.' + new Date().toISOString())
-        .order('priority', { ascending: false })
-        .order('created_at', { ascending: true })
+        .from("background_jobs")
+        .select("*")
+        .eq("status", "pending")
+        .or("scheduled_at.lte." + new Date().toISOString())
+        .order("priority", { ascending: false })
+        .order("created_at", { ascending: true })
         .limit(1)
         .single();
 
@@ -126,12 +128,12 @@ export class JobQueueManager {
 
       // Mark job as processing
       await this.supabase
-        .from('background_jobs')
+        .from("background_jobs")
         .update({
-          status: 'processing',
-          started_at: new Date().toISOString()
+          status: "processing",
+          started_at: new Date().toISOString(),
         })
-        .eq('id', job.id);
+        .eq("id", job.id);
 
       try {
         // Process the job based on type
@@ -139,53 +141,51 @@ export class JobQueueManager {
 
         // Mark job as completed
         await this.supabase
-          .from('background_jobs')
+          .from("background_jobs")
           .update({
-            status: 'completed',
-            completed_at: new Date().toISOString()
+            status: "completed",
+            completed_at: new Date().toISOString(),
           })
-          .eq('id', job.id);
+          .eq("id", job.id);
 
         console.log(`Job ${job.id} completed successfully`);
         return true;
-
       } catch (processingError) {
         console.error(`Job ${job.id} processing failed:`, processingError);
 
         // Handle job failure with retry logic
         const newRetryCount = (job.retry_count || 0) + 1;
-        
+
         if (newRetryCount >= (job.max_retries || 3)) {
           // Max retries reached, mark as failed
           await this.supabase
-            .from('background_jobs')
+            .from("background_jobs")
             .update({
-              status: 'failed',
+              status: "failed",
               error_message: processingError.message,
-              failed_at: new Date().toISOString()
+              failed_at: new Date().toISOString(),
             })
-            .eq('id', job.id);
+            .eq("id", job.id);
         } else {
           // Schedule retry with exponential backoff
           const retryDelay = Math.pow(2, newRetryCount) * 60 * 1000; // Exponential backoff in minutes
           const scheduledAt = new Date(Date.now() + retryDelay).toISOString();
 
           await this.supabase
-            .from('background_jobs')
+            .from("background_jobs")
             .update({
-              status: 'pending',
+              status: "pending",
               retry_count: newRetryCount,
               scheduled_at: scheduledAt,
-              error_message: processingError.message
+              error_message: processingError.message,
             })
-            .eq('id', job.id);
+            .eq("id", job.id);
         }
 
         return false;
       }
-
     } catch (error) {
-      console.error('Error processing job queue:', error);
+      console.error("Error processing job queue:", error);
       return false;
     }
   }
@@ -195,16 +195,16 @@ export class JobQueueManager {
    */
   private async executeJob(job: BackgroundJob): Promise<void> {
     switch (job.type) {
-      case 'token_refresh':
+      case "token_refresh":
         await this.processTokenRefresh(job);
         break;
-      case 'data_sync':
+      case "data_sync":
         await this.processDataSync(job);
         break;
-      case 'webhook_processing':
+      case "webhook_processing":
         await this.processWebhook(job);
         break;
-      case 'analytics_aggregation':
+      case "analytics_aggregation":
         await this.processAnalyticsAggregation(job);
         break;
       default:
@@ -220,52 +220,49 @@ export class JobQueueManager {
       let handler;
 
       switch (job.platform) {
-        case 'instagram':
+        case "instagram":
           handler = new InstagramOAuthHandler();
           break;
-        case 'facebook':
+        case "facebook":
           handler = new FacebookOAuthHandler();
           break;
-        case 'whatsapp':
+        case "whatsapp":
           handler = new WhatsAppOAuthHandler();
           break;
-        case 'hubspot':
+        case "hubspot":
           handler = new HubSpotOAuthHandler();
           break;
         default:
           throw new Error(`Unsupported platform: ${job.platform}`);
       }
 
-      const refreshedTokens = await handler.refreshToken(
-        job.refreshToken || job.currentToken
-      );
+      const refreshedTokens = await handler.refreshToken(job.refreshToken || job.currentToken);
 
       // Update the connection with new tokens
       await this.supabase
-        .from('social_media_accounts')
+        .from("social_media_accounts")
         .update({
           access_token: refreshedTokens.accessToken,
           refresh_token: refreshedTokens.refreshToken,
           token_expires_at: refreshedTokens.expiresAt,
           last_token_refresh: new Date().toISOString(),
-          status: 'active'
+          status: "active",
         })
-        .eq('id', job.accountId);
+        .eq("id", job.accountId);
 
       console.log(`Token refreshed successfully for ${job.platform} account ${job.accountId}`);
-
     } catch (error) {
       console.error(`Token refresh failed for ${job.platform}:`, error);
-      
+
       // Mark connection as needs reauthorization
       await this.supabase
-        .from('social_media_accounts')
+        .from("social_media_accounts")
         .update({
-          status: 'needs_reauth',
+          status: "needs_reauth",
           last_error: error.message,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
-        .eq('id', job.accountId);
+        .eq("id", job.accountId);
 
       throw error;
     }
@@ -278,9 +275,9 @@ export class JobQueueManager {
     try {
       // Get connection details
       const { data: connection } = await this.supabase
-        .from('social_media_accounts')
-        .select('*')
-        .eq('id', job.connectionId)
+        .from("social_media_accounts")
+        .select("*")
+        .eq("id", job.connectionId)
         .single();
 
       if (!connection) {
@@ -288,16 +285,16 @@ export class JobQueueManager {
       }
 
       switch (job.syncType) {
-        case 'posts':
+        case "posts":
           await this.syncSocialMediaPosts(connection, job);
           break;
-        case 'analytics':
+        case "analytics":
           await this.syncSocialMediaAnalytics(connection, job);
           break;
-        case 'contacts':
+        case "contacts":
           await this.syncMarketingContacts(connection, job);
           break;
-        case 'deals':
+        case "deals":
           await this.syncMarketingDeals(connection, job);
           break;
         default:
@@ -306,12 +303,11 @@ export class JobQueueManager {
 
       // Update last sync timestamp
       await this.supabase
-        .from('social_media_accounts')
+        .from("social_media_accounts")
         .update({
-          last_sync_at: new Date().toISOString()
+          last_sync_at: new Date().toISOString(),
         })
-        .eq('id', job.connectionId);
-
+        .eq("id", job.connectionId);
     } catch (error) {
       console.error(`Data sync failed for ${job.syncType}:`, error);
       throw error;
@@ -325,22 +321,21 @@ export class JobQueueManager {
     try {
       // Process webhook data based on platform and event type
       switch (job.platform) {
-        case 'instagram':
+        case "instagram":
           await this.processInstagramWebhookData(job.webhookData, job.eventType);
           break;
-        case 'facebook':
+        case "facebook":
           await this.processFacebookWebhookData(job.webhookData, job.eventType);
           break;
-        case 'whatsapp':
+        case "whatsapp":
           await this.processWhatsAppWebhookData(job.webhookData, job.eventType);
           break;
-        case 'hubspot':
+        case "hubspot":
           await this.processHubSpotWebhookData(job.webhookData, job.eventType);
           break;
         default:
           throw new Error(`Unsupported webhook platform: ${job.platform}`);
       }
-
     } catch (error) {
       console.error(`Webhook processing failed for ${job.platform}:`, error);
       throw error;
@@ -355,15 +350,8 @@ export class JobQueueManager {
       const { startDate, endDate } = job.dateRange;
 
       for (const metric of job.metrics) {
-        await this.aggregateMetric(
-          job.profileId,
-          job.platform,
-          metric,
-          startDate,
-          endDate
-        );
+        await this.aggregateMetric(job.profileId, job.platform, metric, startDate, endDate);
       }
-
     } catch (error) {
       console.error(`Analytics aggregation failed:`, error);
       throw error;
@@ -416,7 +404,7 @@ export class JobQueueManager {
     platform: string,
     metric: string,
     startDate: string,
-    endDate: string
+    endDate: string,
   ): Promise<void> {
     // Implementation for aggregating specific metrics
     console.log(`Aggregating ${metric} for ${platform} from ${startDate} to ${endDate}`);
@@ -441,25 +429,25 @@ export class JobScheduler {
     const expirationThreshold = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
     const { data: expiringConnections } = await supabase
-      .from('social_media_accounts')
-      .select('*')
-      .lt('token_expires_at', expirationThreshold.toISOString())
-      .eq('status', 'active')
-      .not('refresh_token', 'is', null);
+      .from("social_media_accounts")
+      .select("*")
+      .lt("token_expires_at", expirationThreshold.toISOString())
+      .eq("status", "active")
+      .not("refresh_token", "is", null);
 
     for (const connection of expiringConnections || []) {
       const job: TokenRefreshJob = {
         jobId: `token_refresh_${connection.id}_${Date.now()}`,
-        type: 'token_refresh',
+        type: "token_refresh",
         profileId: connection.profile_id,
         platform: connection.platform,
         connectionId: connection.id,
         accountId: connection.id,
         currentToken: connection.access_token,
-        refreshToken: connection.refresh_token
+        refreshToken: connection.refresh_token,
       };
 
-      await this.jobQueue.addJob(job, 'high');
+      await this.jobQueue.addJob(job, "high");
     }
   }
 
@@ -469,33 +457,33 @@ export class JobScheduler {
   async scheduleDailySyncJobs(): Promise<void> {
     const supabase = await createClient();
     const { data: activeConnections } = await supabase
-      .from('social_media_accounts')
-      .select('*')
-      .eq('status', 'active');
+      .from("social_media_accounts")
+      .select("*")
+      .eq("status", "active");
 
     for (const connection of activeConnections || []) {
       // Schedule posts sync
       const postsJob: DataSyncJob = {
         jobId: `posts_sync_${connection.id}_${Date.now()}`,
-        type: 'data_sync',
+        type: "data_sync",
         profileId: connection.profile_id,
         platform: connection.platform,
         connectionId: connection.id,
-        syncType: 'posts'
+        syncType: "posts",
       };
 
       // Schedule analytics sync
       const analyticsJob: DataSyncJob = {
         jobId: `analytics_sync_${connection.id}_${Date.now()}`,
-        type: 'data_sync',
+        type: "data_sync",
         profileId: connection.profile_id,
         platform: connection.platform,
         connectionId: connection.id,
-        syncType: 'analytics'
+        syncType: "analytics",
       };
 
-      await this.jobQueue.addJob(postsJob, 'medium');
-      await this.jobQueue.addJob(analyticsJob, 'medium');
+      await this.jobQueue.addJob(postsJob, "medium");
+      await this.jobQueue.addJob(analyticsJob, "medium");
     }
   }
 }
@@ -517,7 +505,7 @@ export async function processBackgroundJobs(): Promise<{ processed: number; erro
       }
       processed++;
     } catch (error) {
-      console.error('Job processing error:', error);
+      console.error("Job processing error:", error);
       errors++;
     }
   }

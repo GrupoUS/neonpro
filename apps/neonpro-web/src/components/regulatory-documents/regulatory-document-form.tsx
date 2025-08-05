@@ -1,174 +1,198 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { CalendarIcon, Upload, X } from 'lucide-react'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import type { useState, useEffect } from "react";
+import type { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type { z } from "zod";
+import type { CalendarIcon, Upload, X } from "lucide-react";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Calendar } from '@/components/ui/calendar'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Calendar } from "@/components/ui/calendar";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
-import { useRegulatoryCategories } from '@/hooks/use-regulatory-categories'
-import { cn } from '@/lib/utils'
-import type { RegulatoryDocument, CreateDocumentRequest, UpdateDocumentRequest } from '@/types/regulatory-documents'
+import type { useRegulatoryCategories } from "@/hooks/use-regulatory-categories";
+import type { cn } from "@/lib/utils";
+import type {
+  RegulatoryDocument,
+  CreateDocumentRequest,
+  UpdateDocumentRequest,
+} from "@/types/regulatory-documents";
 
 const documentFormSchema = z.object({
-  document_type: z.string().min(1, 'Tipo do documento é obrigatório'),
-  document_category: z.string().min(1, 'Categoria é obrigatória'),
-  authority: z.string().min(1, 'Autoridade é obrigatória'),
+  document_type: z.string().min(1, "Tipo do documento é obrigatório"),
+  document_category: z.string().min(1, "Categoria é obrigatória"),
+  authority: z.string().min(1, "Autoridade é obrigatória"),
   document_number: z.string().optional(),
-  issue_date: z.date({ required_error: 'Data de emissão é obrigatória' }),
+  issue_date: z.date({ required_error: "Data de emissão é obrigatória" }),
   expiration_date: z.date().optional(),
-  status: z.enum(['valid', 'expiring', 'expired', 'pending']).default('pending'),
+  status: z.enum(["valid", "expiring", "expired", "pending"]).default("pending"),
   associated_professional_id: z.string().optional(),
   associated_equipment_id: z.string().optional(),
-})
+});
 
-type DocumentFormData = z.infer<typeof documentFormSchema>
+type DocumentFormData = z.infer<typeof documentFormSchema>;
 
 interface RegulatoryDocumentFormProps {
-  document?: RegulatoryDocument
-  onSubmit: (data: CreateDocumentRequest | UpdateDocumentRequest) => Promise<void>
-  onCancel: () => void
-  loading?: boolean
+  document?: RegulatoryDocument;
+  onSubmit: (data: CreateDocumentRequest | UpdateDocumentRequest) => Promise<void>;
+  onCancel: () => void;
+  loading?: boolean;
 }
 
 export function RegulatoryDocumentForm({
   document,
   onSubmit,
   onCancel,
-  loading = false
+  loading = false,
 }: RegulatoryDocumentFormProps) {
   const [uploadedFile, setUploadedFile] = useState<{
-    url: string
-    name: string
-    size: number
-  } | null>(null)
-  const [uploading, setUploading] = useState(false)
+    url: string;
+    name: string;
+    size: number;
+  } | null>(null);
+  const [uploading, setUploading] = useState(false);
 
-  const { categories, authorities, groupedCategories } = useRegulatoryCategories()
-  
+  const { categories, authorities, groupedCategories } = useRegulatoryCategories();
+
   const form = useForm<DocumentFormData>({
     resolver: zodResolver(documentFormSchema),
     defaultValues: {
-      document_type: document?.document_type || '',
-      document_category: document?.document_category || '',
-      authority: document?.authority || '',
-      document_number: document?.document_number || '',
+      document_type: document?.document_type || "",
+      document_category: document?.document_category || "",
+      authority: document?.authority || "",
+      document_number: document?.document_number || "",
       issue_date: document ? new Date(document.issue_date) : undefined,
       expiration_date: document?.expiration_date ? new Date(document.expiration_date) : undefined,
-      status: document?.status || 'pending',
-      associated_professional_id: document?.associated_professional_id || '',
-      associated_equipment_id: document?.associated_equipment_id || '',
-    }
-  })
+      status: document?.status || "pending",
+      associated_professional_id: document?.associated_professional_id || "",
+      associated_equipment_id: document?.associated_equipment_id || "",
+    },
+  });
 
-  const selectedAuthority = form.watch('authority')
-  const selectedCategory = form.watch('document_category')
+  const selectedAuthority = form.watch("authority");
+  const selectedCategory = form.watch("document_category");
 
   // Update authority when category changes
   useEffect(() => {
     if (selectedCategory && categories.length > 0) {
-      const category = categories.find(cat => cat.name === selectedCategory)
+      const category = categories.find((cat) => cat.name === selectedCategory);
       if (category && category.authority_name !== selectedAuthority) {
-        form.setValue('authority', category.authority_name)
+        form.setValue("authority", category.authority_name);
       }
     }
-  }, [selectedCategory, categories, selectedAuthority, form])
+  }, [selectedCategory, categories, selectedAuthority, form]);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) return
+    const file = event.target.files?.[0];
+    if (!file) return;
 
     // Validate file size (10MB limit)
     if (file.size > 10 * 1024 * 1024) {
-      alert('Arquivo muito grande. Tamanho máximo: 10MB')
-      return
+      alert("Arquivo muito grande. Tamanho máximo: 10MB");
+      return;
     }
 
     // Validate file type
     const allowedTypes = [
-      'application/pdf',
-      'image/jpeg',
-      'image/png',
-      'image/webp',
-      'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    ]
+      "application/pdf",
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
 
     if (!allowedTypes.includes(file.type)) {
-      alert('Tipo de arquivo não permitido. Use: PDF, JPG, PNG, WebP, DOC, DOCX')
-      return
+      alert("Tipo de arquivo não permitido. Use: PDF, JPG, PNG, WebP, DOC, DOCX");
+      return;
     }
 
-    setUploading(true)
+    setUploading(true);
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('category', selectedCategory || 'general')
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("category", selectedCategory || "general");
       if (document?.id) {
-        formData.append('document_id', document.id)
+        formData.append("document_id", document.id);
       }
 
-      const response = await fetch('/api/regulatory-documents/upload', {
-        method: 'POST',
+      const response = await fetch("/api/regulatory-documents/upload", {
+        method: "POST",
         body: formData,
-      })
+      });
 
       if (!response.ok) {
-        throw new Error('Failed to upload file')
+        throw new Error("Failed to upload file");
       }
 
-      const result = await response.json()
+      const result = await response.json();
       setUploadedFile({
         url: result.file.url,
         name: result.file.name,
-        size: result.file.size
-      })
+        size: result.file.size,
+      });
     } catch (error) {
-      console.error('Upload error:', error)
-      alert('Erro ao fazer upload do arquivo')
+      console.error("Upload error:", error);
+      alert("Erro ao fazer upload do arquivo");
     } finally {
-      setUploading(false)
+      setUploading(false);
     }
-  }
+  };
 
   const removeUploadedFile = async () => {
-    if (!uploadedFile) return
+    if (!uploadedFile) return;
 
     try {
-      await fetch('/api/regulatory-documents/upload', {
-        method: 'DELETE',
+      await fetch("/api/regulatory-documents/upload", {
+        method: "DELETE",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          filePath: uploadedFile.url.replace('/storage/v1/object/public/documents/', ''),
-          documentId: document?.id
+          filePath: uploadedFile.url.replace("/storage/v1/object/public/documents/", ""),
+          documentId: document?.id,
         }),
-      })
+      });
 
-      setUploadedFile(null)
+      setUploadedFile(null);
     } catch (error) {
-      console.error('Error removing file:', error)
+      console.error("Error removing file:", error);
     }
-  }
+  };
 
   const handleSubmit = async (data: DocumentFormData) => {
     const submitData = {
       ...data,
-      issue_date: data.issue_date.toISOString().split('T')[0],
-      expiration_date: data.expiration_date?.toISOString().split('T')[0],
+      issue_date: data.issue_date.toISOString().split("T")[0],
+      expiration_date: data.expiration_date?.toISOString().split("T")[0],
       file_url: uploadedFile?.url,
       file_name: uploadedFile?.name,
       file_size: uploadedFile?.size,
@@ -176,30 +200,29 @@ export function RegulatoryDocumentForm({
       document_number: data.document_number || undefined,
       associated_professional_id: data.associated_professional_id || undefined,
       associated_equipment_id: data.associated_equipment_id || undefined,
-    }
+    };
 
-    await onSubmit(submitData)
-  }
+    await onSubmit(submitData);
+  };
 
   const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes'
-    const k = 1024
-    const sizes = ['Bytes', 'KB', 'MB', 'GB']
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
-  }
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  };
 
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
         <CardTitle>
-          {document ? 'Editar Documento Regulatório' : 'Novo Documento Regulatório'}
+          {document ? "Editar Documento Regulatório" : "Novo Documento Regulatório"}
         </CardTitle>
         <CardDescription>
-          {document 
-            ? 'Atualize as informações do documento regulatório'
-            : 'Adicione um novo documento de compliance ou certificação'
-          }
+          {document
+            ? "Atualize as informações do documento regulatório"
+            : "Adicione um novo documento de compliance ou certificação"}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -214,7 +237,7 @@ export function RegulatoryDocumentForm({
                   <FormItem>
                     <FormLabel>Tipo do Documento</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         placeholder="Ex: Alvará Sanitário, Licença de Funcionamento"
                         {...field}
                       />
@@ -274,7 +297,10 @@ export function RegulatoryDocumentForm({
                       </FormControl>
                       <SelectContent>
                         {authorities.map((authority) => (
-                          <SelectItem key={authority.authority_code} value={authority.authority_name}>
+                          <SelectItem
+                            key={authority.authority_code}
+                            value={authority.authority_name}
+                          >
                             {authority.authority_name}
                           </SelectItem>
                         ))}
@@ -293,10 +319,7 @@ export function RegulatoryDocumentForm({
                   <FormItem>
                     <FormLabel>Número do Documento (Opcional)</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="Ex: 12345/2024"
-                        {...field}
-                      />
+                      <Input placeholder="Ex: 12345/2024" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -319,7 +342,7 @@ export function RegulatoryDocumentForm({
                             variant="outline"
                             className={cn(
                               "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
                             )}
                           >
                             {field.value ? (
@@ -336,9 +359,7 @@ export function RegulatoryDocumentForm({
                           mode="single"
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
+                          disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                           initialFocus
                         />
                       </PopoverContent>
@@ -362,7 +383,7 @@ export function RegulatoryDocumentForm({
                             variant="outline"
                             className={cn(
                               "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
                             )}
                           >
                             {field.value ? (
@@ -379,9 +400,7 @@ export function RegulatoryDocumentForm({
                           mode="single"
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date < new Date()
-                          }
+                          disabled={(date) => date < new Date()}
                           initialFocus
                         />
                       </PopoverContent>
@@ -420,7 +439,7 @@ export function RegulatoryDocumentForm({
             {/* File Upload */}
             <div className="space-y-4">
               <Label>Arquivo do Documento</Label>
-              
+
               {!uploadedFile ? (
                 <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6">
                   <div className="flex flex-col items-center justify-center space-y-2">
@@ -476,25 +495,16 @@ export function RegulatoryDocumentForm({
 
             {/* Form Actions */}
             <div className="flex items-center justify-end space-x-4 pt-6">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onCancel}
-                disabled={loading}
-              >
+              <Button type="button" variant="outline" onClick={onCancel} disabled={loading}>
                 Cancelar
               </Button>
-              <Button
-                type="submit"
-                disabled={loading || uploading}
-                className="min-w-[120px]"
-              >
-                {loading ? 'Salvando...' : document ? 'Atualizar' : 'Criar'}
+              <Button type="submit" disabled={loading || uploading} className="min-w-[120px]">
+                {loading ? "Salvando..." : document ? "Atualizar" : "Criar"}
               </Button>
             </div>
           </form>
         </Form>
       </CardContent>
     </Card>
-  )
+  );
 }

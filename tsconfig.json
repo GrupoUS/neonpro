@@ -1,18 +1,21 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": ["dom", "dom.iterable", "es6"],
+    "target": "es2017",
+    "lib": ["dom", "dom.iterable", "es2017", "es2018", "es2019", "es2020"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "downlevelIteration": true,
+    "forceConsistentCasingInFileNames": true,
     "plugins": [
       {
         "name": "next"
@@ -20,9 +23,23 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./apps/neonpro-web/src/*"],
+      "@/components/*": ["./apps/neonpro-web/src/components/*"],
+      "@/lib/*": ["./apps/neonpro-web/src/lib/*"],
+      "@/utils/*": ["./apps/neonpro-web/src/utils/*"],
+      "@/types/*": ["./apps/neonpro-web/src/types/*", "./types/*"],
+      "@/hooks/*": ["./apps/neonpro-web/src/hooks/*"],
+      "@/contexts/*": ["./apps/neonpro-web/src/contexts/*"],
+      "@/app/*": ["./apps/neonpro-web/src/app/*"],
+      "@/server/*": ["./apps/neonpro-web/src/server/*"],
+      "@/styles/*": ["./apps/neonpro-web/src/styles/*"],
+      "@api/*": ["./apps/neonpro-api/src/*"],
+      "@edge/*": ["./apps/neonpro-edge-services/*"],
+      "@config/*": ["./config/*"],
+      "@packages/*": ["./packages/*"],
+      "@shared/*": ["./packages/shared/*"]
     },
-    "types": [],
+    "types": ["node"],
     "typeRoots": ["node_modules/@types"]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

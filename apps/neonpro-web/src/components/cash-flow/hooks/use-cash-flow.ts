@@ -3,14 +3,10 @@
 // Cash Flow Hook - React hook for cash flow operations
 // Following financial dashboard patterns from Context7 research
 
-import { useState, useEffect, useCallback } from 'react';
-import { toast } from 'sonner';
-import { cashFlowService } from '../services/cash-flow-service';
-import type { 
-  CashFlowEntry, 
-  CashFlowFilters,
-  CashFlowAnalytics 
-} from '../types';
+import type { useState, useEffect, useCallback } from "react";
+import type { toast } from "sonner";
+import type { cashFlowService } from "../services/cash-flow-service";
+import type { CashFlowEntry, CashFlowFilters, CashFlowAnalytics } from "../types";
 
 interface UseCashFlowReturn {
   entries: CashFlowEntry[];
@@ -19,7 +15,7 @@ interface UseCashFlowReturn {
   error: string | null;
   totalPages: number;
   currentPage: number;
-  createEntry: (entry: Omit<CashFlowEntry, 'id' | 'created_at' | 'updated_at'>) => Promise<void>;
+  createEntry: (entry: Omit<CashFlowEntry, "id" | "created_at" | "updated_at">) => Promise<void>;
   updateEntry: (id: string, updates: Partial<CashFlowEntry>) => Promise<void>;
   deleteEntry: (id: string) => Promise<void>;
   loadEntries: (filters?: CashFlowFilters, page?: number) => Promise<void>;
@@ -36,88 +32,93 @@ export function useCashFlow(clinicId: string, initialFilters?: CashFlowFilters):
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<CashFlowFilters | undefined>(initialFilters);
 
-  const loadEntries = useCallback(async (newFilters?: CashFlowFilters, page: number = 1) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const filtersToUse = newFilters || filters;
-      setFilters(filtersToUse);
-      setCurrentPage(page);
+  const loadEntries = useCallback(
+    async (newFilters?: CashFlowFilters, page: number = 1) => {
+      try {
+        setLoading(true);
+        setError(null);
 
-      const result = await cashFlowService.getCashFlowEntries(clinicId, filtersToUse, page);
-      
-      setEntries(result.data);
-      setTotalPages(result.totalPages);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load cash flow entries';
-      setError(errorMessage);
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  }, [clinicId, filters]);
+        const filtersToUse = newFilters || filters;
+        setFilters(filtersToUse);
+        setCurrentPage(page);
 
-  const loadAnalytics = useCallback(async (
-    periodStart: string, 
-    periodEnd: string, 
-    registerId?: string
-  ) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const analyticsData = await cashFlowService.getCashFlowAnalytics(
-        clinicId, 
-        periodStart, 
-        periodEnd, 
-        registerId
-      );
-      
-      setAnalytics(analyticsData);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load analytics';
-      setError(errorMessage);
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  }, [clinicId]);  const createEntry = useCallback(async (entry: Omit<CashFlowEntry, 'id' | 'created_at' | 'updated_at'>) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const newEntry = await cashFlowService.createCashFlowEntry(entry);
-      
-      // Add the new entry to the current list (optimistic update)
-      setEntries(prev => [newEntry, ...prev]);
-      
-      toast.success('Transaction created successfully');
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to create transaction';
-      setError(errorMessage);
-      toast.error(errorMessage);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+        const result = await cashFlowService.getCashFlowEntries(clinicId, filtersToUse, page);
+
+        setEntries(result.data);
+        setTotalPages(result.totalPages);
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Failed to load cash flow entries";
+        setError(errorMessage);
+        toast.error(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [clinicId, filters],
+  );
+
+  const loadAnalytics = useCallback(
+    async (periodStart: string, periodEnd: string, registerId?: string) => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const analyticsData = await cashFlowService.getCashFlowAnalytics(
+          clinicId,
+          periodStart,
+          periodEnd,
+          registerId,
+        );
+
+        setAnalytics(analyticsData);
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Failed to load analytics";
+        setError(errorMessage);
+        toast.error(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [clinicId],
+  );
+  const createEntry = useCallback(
+    async (entry: Omit<CashFlowEntry, "id" | "created_at" | "updated_at">) => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const newEntry = await cashFlowService.createCashFlowEntry(entry);
+
+        // Add the new entry to the current list (optimistic update)
+        setEntries((prev) => [newEntry, ...prev]);
+
+        toast.success("Transaction created successfully");
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Failed to create transaction";
+        setError(errorMessage);
+        toast.error(errorMessage);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [],
+  );
 
   const updateEntry = useCallback(async (id: string, updates: Partial<CashFlowEntry>) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const updatedEntry = await cashFlowService.updateCashFlowEntry(id, updates);
-      
+
       // Update the entry in the current list (optimistic update)
-      setEntries(prev => prev.map(entry => 
-        entry.id === id ? updatedEntry : entry
-      ));
-      
-      toast.success('Transaction updated successfully');
+      setEntries((prev) => prev.map((entry) => (entry.id === id ? updatedEntry : entry)));
+
+      toast.success("Transaction updated successfully");
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to update transaction';
+      const errorMessage = err instanceof Error ? err.message : "Failed to update transaction";
       setError(errorMessage);
       toast.error(errorMessage);
       throw err;
@@ -130,15 +131,15 @@ export function useCashFlow(clinicId: string, initialFilters?: CashFlowFilters):
     try {
       setLoading(true);
       setError(null);
-      
+
       await cashFlowService.deleteCashFlowEntry(id);
-      
+
       // Remove the entry from the current list (optimistic update)
-      setEntries(prev => prev.filter(entry => entry.id !== id));
-      
-      toast.success('Transaction deleted successfully');
+      setEntries((prev) => prev.filter((entry) => entry.id !== id));
+
+      toast.success("Transaction deleted successfully");
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to delete transaction';
+      const errorMessage = err instanceof Error ? err.message : "Failed to delete transaction";
       setError(errorMessage);
       toast.error(errorMessage);
       throw err;
@@ -170,6 +171,6 @@ export function useCashFlow(clinicId: string, initialFilters?: CashFlowFilters):
     deleteEntry,
     loadEntries,
     loadAnalytics,
-    refetch
+    refetch,
   };
 }

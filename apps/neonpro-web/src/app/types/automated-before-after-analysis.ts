@@ -19,8 +19,8 @@ export interface PhotoAnalysisSession {
   patient_id: string;
   treatment_type?: string;
   session_name?: string;
-  analysis_type: 'before_after' | 'progress_tracking' | 'treatment_validation';
-  status: 'pending' | 'processing' | 'completed' | 'failed' | 'queued';
+  analysis_type: "before_after" | "progress_tracking" | "treatment_validation";
+  status: "pending" | "processing" | "completed" | "failed" | "queued";
   started_at: string;
   completed_at?: string;
   processing_time_seconds?: number;
@@ -39,9 +39,9 @@ export interface BeforeAfterPhotoPair {
   before_photo_id?: string;
   after_photo_id?: string;
   treatment_area?: string;
-  pair_type: 'frontal' | 'profile' | 'close_up' | 'full_body' | 'specific_area';
+  pair_type: "frontal" | "profile" | "close_up" | "full_body" | "specific_area";
   time_between_days?: number;
-  analysis_status: 'pending' | 'analyzed' | 'failed' | 'manual_review';
+  analysis_status: "pending" | "analyzed" | "failed" | "manual_review";
   improvement_percentage?: number;
   comparison_score?: number;
   created_at: string;
@@ -67,7 +67,7 @@ export interface ImageAnalysisResult {
 export interface MeasurementMetric {
   id: string;
   metric_name: string;
-  metric_type: 'distance' | 'area' | 'volume' | 'angle' | 'texture' | 'color' | 'symmetry';
+  metric_type: "distance" | "area" | "volume" | "angle" | "texture" | "color" | "symmetry";
   measurement_unit?: string;
   calculation_method?: string;
   accuracy_weight: number;
@@ -81,7 +81,7 @@ export interface MeasurementMetric {
 export interface TreatmentArea {
   id: string;
   area_name: string;
-  area_category: 'facial' | 'body' | 'specific' | 'surgical' | 'cosmetic';
+  area_category: "facial" | "body" | "specific" | "surgical" | "cosmetic";
   anatomical_region?: string;
   measurement_points?: Record<string, any>;
   standard_views?: Record<string, any>;
@@ -94,7 +94,7 @@ export interface TreatmentArea {
 export interface VisualAnnotation {
   id: string;
   analysis_result_id: string;
-  annotation_type: 'highlight' | 'measurement' | 'comparison' | 'change_area' | 'improvement_zone';
+  annotation_type: "highlight" | "measurement" | "comparison" | "change_area" | "improvement_zone";
   coordinates: Record<string, any>;
   annotation_data?: Record<string, any>;
   style_properties?: Record<string, any>;
@@ -106,7 +106,7 @@ export interface VisualAnnotation {
 export interface AnalysisReport {
   id: string;
   session_id: string;
-  report_type: 'summary' | 'detailed' | 'patient_consultation' | 'clinical' | 'research';
+  report_type: "summary" | "detailed" | "patient_consultation" | "clinical" | "research";
   report_title?: string;
   generated_at: string;
   report_data?: Record<string, any>;
@@ -120,9 +120,9 @@ export interface AnalysisReport {
 export interface QualityValidation {
   id: string;
   analysis_result_id: string;
-  validation_type: 'automated' | 'manual' | 'peer_review' | 'expert_validation';
+  validation_type: "automated" | "manual" | "peer_review" | "expert_validation";
   validator_id?: string;
-  validation_status: 'pending' | 'approved' | 'rejected' | 'needs_review';
+  validation_status: "pending" | "approved" | "rejected" | "needs_review";
   accuracy_assessment?: number;
   quality_score?: number;
   validation_notes?: string;
@@ -145,7 +145,7 @@ export interface MLModelTraining {
   f1_score?: number;
   training_parameters?: Record<string, any>;
   model_weights_path?: string;
-  deployment_status: 'training' | 'completed' | 'deployed' | 'archived';
+  deployment_status: "training" | "completed" | "deployed" | "archived";
   performance_metrics?: Record<string, any>;
   created_at: string;
   updated_at: string;
@@ -156,7 +156,7 @@ export interface CreateAnalysisSessionRequest {
   patient_id: string;
   treatment_type?: string;
   session_name?: string;
-  analysis_type: PhotoAnalysisSession['analysis_type'];
+  analysis_type: PhotoAnalysisSession["analysis_type"];
 }
 
 export interface CreatePhotoPairRequest {
@@ -164,7 +164,7 @@ export interface CreatePhotoPairRequest {
   before_photo_id?: string;
   after_photo_id?: string;
   treatment_area?: string;
-  pair_type: BeforeAfterPhotoPair['pair_type'];
+  pair_type: BeforeAfterPhotoPair["pair_type"];
   time_between_days?: number;
 }
 
@@ -176,7 +176,7 @@ export interface StartAnalysisRequest {
 
 export interface AnalysisProgressResponse {
   session_id: string;
-  status: PhotoAnalysisSession['status'];
+  status: PhotoAnalysisSession["status"];
   progress_percentage: number;
   processed_photos: number;
   total_photos: number;
@@ -203,16 +203,16 @@ export interface ComparisonAnalysisResponse {
 
 export interface GenerateReportRequest {
   session_id: string;
-  report_type: AnalysisReport['report_type'];
+  report_type: AnalysisReport["report_type"];
   template_options?: Record<string, any>;
   include_sections?: string[];
-  export_format?: 'pdf' | 'html' | 'json';
+  export_format?: "pdf" | "html" | "json";
 }
 
 export interface BatchAnalysisRequest {
   session_ids: string[];
   analysis_parameters?: Record<string, any>;
-  priority_level?: 'low' | 'normal' | 'high';
+  priority_level?: "low" | "normal" | "high";
 }
 
 export interface ModelTrainingRequest {
@@ -226,13 +226,13 @@ export interface ModelTrainingRequest {
 export interface AccuracyValidationRequest {
   analysis_result_id: string;
   ground_truth_data?: Record<string, any>;
-  validation_type: QualityValidation['validation_type'];
+  validation_type: QualityValidation["validation_type"];
   validator_notes?: string;
 }
 
 export interface AnnotationCreateRequest {
   analysis_result_id: string;
-  annotation_type: VisualAnnotation['annotation_type'];
+  annotation_type: VisualAnnotation["annotation_type"];
   coordinates: Record<string, any>;
   annotation_data?: Record<string, any>;
   style_properties?: Record<string, any>;
@@ -243,8 +243,8 @@ export interface AnnotationCreateRequest {
 export interface AnalysisSessionFilters {
   patient_id?: string;
   treatment_type?: string;
-  analysis_type?: PhotoAnalysisSession['analysis_type'];
-  status?: PhotoAnalysisSession['status'];
+  analysis_type?: PhotoAnalysisSession["analysis_type"];
+  status?: PhotoAnalysisSession["status"];
   date_from?: string;
   date_to?: string;
   accuracy_min?: number;
@@ -254,8 +254,8 @@ export interface AnalysisSessionFilters {
 export interface PhotoPairFilters {
   session_id?: string;
   treatment_area?: string;
-  pair_type?: BeforeAfterPhotoPair['pair_type'];
-  analysis_status?: BeforeAfterPhotoPair['analysis_status'];
+  pair_type?: BeforeAfterPhotoPair["pair_type"];
+  analysis_status?: BeforeAfterPhotoPair["analysis_status"];
   improvement_min?: number;
   time_between_min?: number;
   time_between_max?: number;
@@ -272,7 +272,7 @@ export interface AnalysisResultFilters {
 
 export interface ReportFilters {
   session_id?: string;
-  report_type?: AnalysisReport['report_type'];
+  report_type?: AnalysisReport["report_type"];
   generated_by?: string;
   date_from?: string;
   date_to?: string;

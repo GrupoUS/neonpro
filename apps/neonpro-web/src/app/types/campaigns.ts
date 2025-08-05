@@ -6,7 +6,7 @@ export interface CampaignTemplate {
   id: string;
   name: string;
   description?: string;
-  template_type: 'email' | 'sms' | 'whatsapp' | 'push' | 'multi-channel';
+  template_type: "email" | "sms" | "whatsapp" | "push" | "multi-channel";
   content_template: Record<string, any>;
   subject_template?: string;
   personalization_fields?: Record<string, any>;
@@ -22,7 +22,7 @@ export interface MarketingCampaign {
   id: string;
   name: string;
   description?: string;
-  campaign_type: 'automated' | 'manual' | 'trigger-based' | 'a-b-test';
+  campaign_type: "automated" | "manual" | "trigger-based" | "a-b-test";
   template_id?: string;
   target_segments: Record<string, any>;
   content: Record<string, any>;
@@ -32,7 +32,7 @@ export interface MarketingCampaign {
   personalization_config?: Record<string, any>;
   send_time_optimization: boolean;
   automation_level: number; // Target ≥80% automation
-  status: 'draft' | 'scheduled' | 'running' | 'paused' | 'completed' | 'cancelled';
+  status: "draft" | "scheduled" | "running" | "paused" | "completed" | "cancelled";
   start_date?: string;
   end_date?: string;
   created_by?: string;
@@ -43,12 +43,12 @@ export interface MarketingCampaign {
 export interface CampaignExecution {
   id: string;
   campaign_id: string;
-  execution_type: 'scheduled' | 'triggered' | 'manual' | 'test';
+  execution_type: "scheduled" | "triggered" | "manual" | "test";
   target_patient_ids: string[];
   content_variation_id?: string;
   delivery_channel: string;
   personalized_content: Record<string, any>;
-  execution_status: 'pending' | 'sending' | 'sent' | 'failed' | 'cancelled';
+  execution_status: "pending" | "sending" | "sent" | "failed" | "cancelled";
   scheduled_at?: string;
   executed_at?: string;
   metrics?: Record<string, any>;
@@ -60,14 +60,14 @@ export interface CampaignABTest {
   id: string;
   campaign_id: string;
   test_name: string;
-  test_type: 'content' | 'subject' | 'timing' | 'channel' | 'multivariate';
+  test_type: "content" | "subject" | "timing" | "channel" | "multivariate";
   variations: Record<string, any>;
   traffic_split: Record<string, any>;
   success_metrics: Record<string, any>;
   confidence_level: number;
   min_sample_size: number;
   test_duration_hours?: number;
-  status: 'draft' | 'running' | 'completed' | 'stopped';
+  status: "draft" | "running" | "completed" | "stopped";
   winner_variation_id?: string;
   statistical_significance?: number;
   results?: Record<string, any>;
@@ -82,7 +82,7 @@ export interface CampaignTrigger {
   id: string;
   campaign_id: string;
   trigger_name: string;
-  trigger_type: 'event' | 'behavioral' | 'date-based' | 'milestone' | 'lifecycle';
+  trigger_type: "event" | "behavioral" | "date-based" | "milestone" | "lifecycle";
   trigger_conditions: Record<string, any>;
   delay_config?: Record<string, any>;
   frequency_limits?: Record<string, any>;
@@ -139,7 +139,7 @@ export interface CampaignPerformanceMetrics {
 export interface MarketingConsent {
   id: string;
   patient_id: string;
-  consent_type: 'email' | 'sms' | 'whatsapp' | 'push' | 'all';
+  consent_type: "email" | "sms" | "whatsapp" | "push" | "all";
   consent_status: boolean;
   consent_source?: string;
   consent_date: string;
@@ -166,7 +166,7 @@ export interface CampaignAuditTrail {
 // Campaign Builder Types
 export interface CampaignStep {
   id: string;
-  type: 'trigger' | 'condition' | 'action' | 'delay' | 'split';
+  type: "trigger" | "condition" | "action" | "delay" | "split";
   config: Record<string, any>;
   position: { x: number; y: number };
   connections: string[];
@@ -228,7 +228,7 @@ export interface CampaignAnalytics {
 export interface CreateCampaignRequest {
   name: string;
   description?: string;
-  campaign_type: MarketingCampaign['campaign_type'];
+  campaign_type: MarketingCampaign["campaign_type"];
   template_id?: string;
   target_segments: Record<string, any>;
   content: Record<string, any>;
@@ -265,8 +265,8 @@ export interface CampaignDetailsResponse extends MarketingCampaign {
 
 // Dashboard Filter Types
 export interface CampaignFilters {
-  status?: MarketingCampaign['status'][];
-  campaign_type?: MarketingCampaign['campaign_type'][];
+  status?: MarketingCampaign["status"][];
+  campaign_type?: MarketingCampaign["campaign_type"][];
   delivery_channels?: string[];
   date_range?: {
     start: string;

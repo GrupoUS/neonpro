@@ -3,27 +3,23 @@
 // Story 1.4: Session Management & Security
 // =====================================================
 
-'use client'
+"use client";
 
-import React, { useState, useEffect } from 'react'
-import { useSecurityMonitoring } from '@/hooks/auth'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Progress } from '@/components/ui/progress'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
-  Alert, 
-  AlertDescription, 
-  AlertTitle 
-} from '@/components/ui/alert'
-import { Separator } from '@/components/ui/separator'
-import { 
-  Shield, 
-  ShieldAlert, 
+import React, { useState, useEffect } from "react";
+import type { useSecurityMonitoring } from "@/hooks/auth";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Progress } from "@/components/ui/progress";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Separator } from "@/components/ui/separator";
+import type {
+  Shield,
+  ShieldAlert,
   ShieldCheck,
-  AlertTriangle, 
-  Activity, 
+  AlertTriangle,
+  Activity,
   Eye,
   Clock,
   MapPin,
@@ -31,42 +27,42 @@ import {
   RefreshCw,
   TrendingUp,
   TrendingDown,
-  Minus
-} from 'lucide-react'
-import { cn } from '@/lib/utils'
+  Minus,
+} from "lucide-react";
+import type { cn } from "@/lib/utils";
 
 // =====================================================
 // TYPES & INTERFACES
 // =====================================================
 
 export interface SecurityDashboardProps {
-  className?: string
-  showDetailedEvents?: boolean
-  maxEvents?: number
-  autoRefresh?: boolean
-  refreshInterval?: number // in seconds
+  className?: string;
+  showDetailedEvents?: boolean;
+  maxEvents?: number;
+  autoRefresh?: boolean;
+  refreshInterval?: number; // in seconds
 }
 
 interface SecurityEvent {
-  id: string
-  type: string
-  severity: 'low' | 'medium' | 'high' | 'critical'
-  description: string
-  timestamp: string
-  ipAddress?: string
-  location?: string
-  deviceInfo?: string
-  resolved: boolean
-  metadata?: Record<string, any>
+  id: string;
+  type: string;
+  severity: "low" | "medium" | "high" | "critical";
+  description: string;
+  timestamp: string;
+  ipAddress?: string;
+  location?: string;
+  deviceInfo?: string;
+  resolved: boolean;
+  metadata?: Record<string, any>;
 }
 
 interface SecurityMetrics {
-  totalEvents: number
-  criticalEvents: number
-  resolvedEvents: number
-  activeThreats: number
-  securityScore: number
-  riskTrend: 'up' | 'down' | 'stable'
+  totalEvents: number;
+  criticalEvents: number;
+  resolvedEvents: number;
+  activeThreats: number;
+  securityScore: number;
+  riskTrend: "up" | "down" | "stable";
 }
 
 // =====================================================
@@ -78,7 +74,7 @@ export function SecurityDashboard({
   showDetailedEvents = true,
   maxEvents = 10,
   autoRefresh = true,
-  refreshInterval = 30
+  refreshInterval = 30,
 }: SecurityDashboardProps) {
   const {
     securityScore,
@@ -86,134 +82,155 @@ export function SecurityDashboard({
     deviceRiskLevel,
     isDeviceTrusted,
     securityEvents,
-    refreshSecurityData
-  } = useSecurityMonitoring()
+    refreshSecurityData,
+  } = useSecurityMonitoring();
 
-  const [isRefreshing, setIsRefreshing] = useState(false)
-  const [selectedTab, setSelectedTab] = useState('overview')
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [selectedTab, setSelectedTab] = useState("overview");
 
   // Mock security metrics (in real implementation, this would come from the hook)
   const [metrics] = useState<SecurityMetrics>({
     totalEvents: securityEvents?.length || 0,
-    criticalEvents: securityEvents?.filter(e => e.severity === 'critical').length || 0,
-    resolvedEvents: securityEvents?.filter(e => e.resolved).length || 0,
-    activeThreats: securityEvents?.filter(e => !e.resolved && e.severity === 'high').length || 0,
+    criticalEvents: securityEvents?.filter((e) => e.severity === "critical").length || 0,
+    resolvedEvents: securityEvents?.filter((e) => e.resolved).length || 0,
+    activeThreats: securityEvents?.filter((e) => !e.resolved && e.severity === "high").length || 0,
     securityScore: securityScore || 85,
-    riskTrend: 'stable'
-  })
+    riskTrend: "stable",
+  });
 
   // Auto-refresh logic
   useEffect(() => {
-    if (!autoRefresh) return
+    if (!autoRefresh) return;
 
     const interval = setInterval(() => {
-      refreshSecurityData()
-    }, refreshInterval * 1000)
+      refreshSecurityData();
+    }, refreshInterval * 1000);
 
-    return () => clearInterval(interval)
-  }, [autoRefresh, refreshInterval, refreshSecurityData])
+    return () => clearInterval(interval);
+  }, [autoRefresh, refreshInterval, refreshSecurityData]);
 
   // Manual refresh
   const handleRefresh = async () => {
-    setIsRefreshing(true)
+    setIsRefreshing(true);
     try {
-      await refreshSecurityData()
+      await refreshSecurityData();
     } finally {
-      setIsRefreshing(false)
+      setIsRefreshing(false);
     }
-  }
+  };
 
   // Get security status color
   const getSecurityColor = (status: string) => {
     switch (status) {
-      case 'secure': return 'text-green-600'
-      case 'moderate': return 'text-yellow-600'
-      case 'warning': return 'text-orange-600'
-      case 'critical': return 'text-red-600'
-      default: return 'text-gray-600'
+      case "secure":
+        return "text-green-600";
+      case "moderate":
+        return "text-yellow-600";
+      case "warning":
+        return "text-orange-600";
+      case "critical":
+        return "text-red-600";
+      default:
+        return "text-gray-600";
     }
-  }
+  };
 
   // Get security badge variant
   const getSecurityBadgeVariant = (status: string) => {
     switch (status) {
-      case 'secure': return 'default'
-      case 'moderate': return 'secondary'
-      case 'warning': return 'outline'
-      case 'critical': return 'destructive'
-      default: return 'secondary'
+      case "secure":
+        return "default";
+      case "moderate":
+        return "secondary";
+      case "warning":
+        return "outline";
+      case "critical":
+        return "destructive";
+      default:
+        return "secondary";
     }
-  }
+  };
 
   // Get severity color
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'low': return 'text-blue-600'
-      case 'medium': return 'text-yellow-600'
-      case 'high': return 'text-orange-600'
-      case 'critical': return 'text-red-600'
-      default: return 'text-gray-600'
+      case "low":
+        return "text-blue-600";
+      case "medium":
+        return "text-yellow-600";
+      case "high":
+        return "text-orange-600";
+      case "critical":
+        return "text-red-600";
+      default:
+        return "text-gray-600";
     }
-  }
+  };
 
   // Get severity badge variant
   const getSeverityBadgeVariant = (severity: string) => {
     switch (severity) {
-      case 'low': return 'outline'
-      case 'medium': return 'secondary'
-      case 'high': return 'outline'
-      case 'critical': return 'destructive'
-      default: return 'outline'
+      case "low":
+        return "outline";
+      case "medium":
+        return "secondary";
+      case "high":
+        return "outline";
+      case "critical":
+        return "destructive";
+      default:
+        return "outline";
     }
-  }
+  };
 
   // Get trend icon
   const getTrendIcon = (trend: string) => {
     switch (trend) {
-      case 'up': return TrendingUp
-      case 'down': return TrendingDown
-      default: return Minus
+      case "up":
+        return TrendingUp;
+      case "down":
+        return TrendingDown;
+      default:
+        return Minus;
     }
-  }
+  };
 
   // Get trend color
   const getTrendColor = (trend: string) => {
     switch (trend) {
-      case 'up': return 'text-red-600'
-      case 'down': return 'text-green-600'
-      default: return 'text-gray-600'
+      case "up":
+        return "text-red-600";
+      case "down":
+        return "text-green-600";
+      default:
+        return "text-gray-600";
     }
-  }
+  };
 
   return (
-    <div className={cn('w-full space-y-6', className)}>
+    <div className={cn("w-full space-y-6", className)}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Shield className="h-6 w-6" />
           <h2 className="text-2xl font-bold">Security Dashboard</h2>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleRefresh}
-          disabled={isRefreshing}
-        >
-          <RefreshCw className={cn('h-4 w-4 mr-2', isRefreshing && 'animate-spin')} />
+        <Button variant="outline" size="sm" onClick={handleRefresh} disabled={isRefreshing}>
+          <RefreshCw className={cn("h-4 w-4 mr-2", isRefreshing && "animate-spin")} />
           Refresh
         </Button>
       </div>
 
       {/* Security Status Alert */}
-      {securityStatus !== 'secure' && (
-        <Alert variant={securityStatus === 'critical' ? 'destructive' : 'default'}>
+      {securityStatus !== "secure" && (
+        <Alert variant={securityStatus === "critical" ? "destructive" : "default"}>
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Security Alert</AlertTitle>
           <AlertDescription>
-            Your security status is currently <strong>{securityStatus}</strong>. 
-            {securityStatus === 'critical' && 'Immediate attention required.'}
-            {securityStatus === 'warning' && 'Please review security recommendations.'}
-            {securityStatus === 'moderate' && 'Consider improving your security settings.'}
+            Your security status is currently <strong>{securityStatus}</strong>.
+            {securityStatus === "critical" && "Immediate attention required."}
+            {securityStatus === "warning" && "Please review security recommendations."}
+            {securityStatus === "moderate" && "Consider improving your security settings."}
           </AlertDescription>
         </Alert>
       )}
@@ -240,10 +257,7 @@ export function SecurityDashboard({
                 <div className="space-y-2">
                   <div className="text-2xl font-bold">{securityScore}%</div>
                   <Progress value={securityScore} className="h-2" />
-                  <Badge 
-                    variant={getSecurityBadgeVariant(securityStatus)}
-                    className="text-xs"
-                  >
+                  <Badge variant={getSecurityBadgeVariant(securityStatus)} className="text-xs">
                     {securityStatus.toUpperCase()}
                   </Badge>
                 </div>
@@ -260,12 +274,10 @@ export function SecurityDashboard({
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  <div className="text-2xl font-bold text-red-600">
-                    {metrics.activeThreats}
-                  </div>
+                  <div className="text-2xl font-bold text-red-600">{metrics.activeThreats}</div>
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
                     {React.createElement(getTrendIcon(metrics.riskTrend), {
-                      className: cn('h-3 w-3', getTrendColor(metrics.riskTrend))
+                      className: cn("h-3 w-3", getTrendColor(metrics.riskTrend)),
                     })}
                     <span>Risk trend</span>
                   </div>
@@ -290,11 +302,11 @@ export function SecurityDashboard({
                       <ShieldAlert className="h-4 w-4 text-orange-600" />
                     )}
                     <span className="text-sm font-medium">
-                      {isDeviceTrusted ? 'Trusted' : 'Untrusted'}
+                      {isDeviceTrusted ? "Trusted" : "Untrusted"}
                     </span>
                   </div>
-                  <Badge 
-                    variant={deviceRiskLevel === 'low' ? 'default' : 'destructive'}
+                  <Badge
+                    variant={deviceRiskLevel === "low" ? "default" : "destructive"}
                     className="text-xs"
                   >
                     {deviceRiskLevel.toUpperCase()} RISK
@@ -332,23 +344,20 @@ export function SecurityDashboard({
                 <div className="space-y-3">
                   {securityEvents.slice(0, 3).map((event) => (
                     <div key={event.id} className="flex items-start gap-3 p-3 rounded-lg border">
-                      <AlertTriangle className={cn(
-                        'h-4 w-4 mt-0.5',
-                        getSeverityColor(event.severity)
-                      )} />
+                      <AlertTriangle
+                        className={cn("h-4 w-4 mt-0.5", getSeverityColor(event.severity))}
+                      />
                       <div className="flex-1 space-y-1">
                         <div className="flex items-center justify-between">
                           <span className="font-medium">{event.type}</span>
-                          <Badge 
+                          <Badge
                             variant={getSeverityBadgeVariant(event.severity)}
                             className="text-xs"
                           >
                             {event.severity.toUpperCase()}
                           </Badge>
                         </div>
-                        <p className="text-sm text-muted-foreground">
-                          {event.description}
-                        </p>
+                        <p className="text-sm text-muted-foreground">{event.description}</p>
                         <div className="flex items-center gap-4 text-xs text-muted-foreground">
                           <div className="flex items-center gap-1">
                             <Clock className="h-3 w-3" />
@@ -376,28 +385,25 @@ export function SecurityDashboard({
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <span>Security Events</span>
-                <Badge variant="outline">
-                  {securityEvents?.length || 0} events
-                </Badge>
+                <Badge variant="outline">{securityEvents?.length || 0} events</Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
               {securityEvents && securityEvents.length > 0 ? (
                 <div className="space-y-3">
                   {securityEvents.slice(0, maxEvents).map((event) => (
-                    <div 
-                      key={event.id} 
+                    <div
+                      key={event.id}
                       className={cn(
-                        'p-4 rounded-lg border transition-colors',
-                        event.resolved ? 'bg-muted/30' : 'bg-card'
+                        "p-4 rounded-lg border transition-colors",
+                        event.resolved ? "bg-muted/30" : "bg-card",
                       )}
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex items-start gap-3">
-                          <AlertTriangle className={cn(
-                            'h-4 w-4 mt-0.5',
-                            getSeverityColor(event.severity)
-                          )} />
+                          <AlertTriangle
+                            className={cn("h-4 w-4 mt-0.5", getSeverityColor(event.severity))}
+                          />
                           <div className="space-y-1">
                             <div className="flex items-center gap-2">
                               <span className="font-medium">{event.type}</span>
@@ -407,32 +413,26 @@ export function SecurityDashboard({
                                 </Badge>
                               )}
                             </div>
-                            <p className="text-sm text-muted-foreground">
-                              {event.description}
-                            </p>
+                            <p className="text-sm text-muted-foreground">{event.description}</p>
                             {showDetailedEvents && (
                               <div className="flex items-center gap-4 text-xs text-muted-foreground mt-2">
                                 <div className="flex items-center gap-1">
                                   <Clock className="h-3 w-3" />
                                   <span>{new Date(event.timestamp).toLocaleString()}</span>
                                 </div>
-                                {event.ipAddress && (
-                                  <span>IP: {event.ipAddress}</span>
-                                )}
+                                {event.ipAddress && <span>IP: {event.ipAddress}</span>}
                                 {event.location && (
                                   <div className="flex items-center gap-1">
                                     <MapPin className="h-3 w-3" />
                                     <span>{event.location}</span>
                                   </div>
                                 )}
-                                {event.deviceInfo && (
-                                  <span>Device: {event.deviceInfo}</span>
-                                )}
+                                {event.deviceInfo && <span>Device: {event.deviceInfo}</span>}
                               </div>
                             )}
                           </div>
                         </div>
-                        <Badge 
+                        <Badge
                           variant={getSeverityBadgeVariant(event.severity)}
                           className="text-xs"
                         >
@@ -491,11 +491,11 @@ export function SecurityDashboard({
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
                     <span>Device Trust</span>
-                    <span>{isDeviceTrusted ? '100%' : '60%'}</span>
+                    <span>{isDeviceTrusted ? "100%" : "60%"}</span>
                   </div>
                   <Progress value={isDeviceTrusted ? 100 : 60} className="h-2" />
                 </div>
-                
+
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
                     <span>Session Security</span>
@@ -503,7 +503,7 @@ export function SecurityDashboard({
                   </div>
                   <Progress value={85} className="h-2" />
                 </div>
-                
+
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
                     <span>Activity Patterns</span>
@@ -511,15 +511,21 @@ export function SecurityDashboard({
                   </div>
                   <Progress value={90} className="h-2" />
                 </div>
-                
+
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
                     <span>Risk Assessment</span>
-                    <span>{deviceRiskLevel === 'low' ? '95%' : deviceRiskLevel === 'medium' ? '70%' : '40%'}</span>
+                    <span>
+                      {deviceRiskLevel === "low"
+                        ? "95%"
+                        : deviceRiskLevel === "medium"
+                          ? "70%"
+                          : "40%"}
+                    </span>
                   </div>
-                  <Progress 
-                    value={deviceRiskLevel === 'low' ? 95 : deviceRiskLevel === 'medium' ? 70 : 40} 
-                    className="h-2" 
+                  <Progress
+                    value={deviceRiskLevel === "low" ? 95 : deviceRiskLevel === "medium" ? 70 : 40}
+                    className="h-2"
                   />
                 </div>
               </CardContent>
@@ -528,11 +534,11 @@ export function SecurityDashboard({
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
 
 // =====================================================
 // EXPORT DEFAULT
 // =====================================================
 
-export default SecurityDashboard
+export default SecurityDashboard;

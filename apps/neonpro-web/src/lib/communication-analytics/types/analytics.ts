@@ -1,9 +1,9 @@
 /**
  * Type Definitions for Communication Analytics System
- * 
+ *
  * Definições de tipos TypeScript para o sistema de analytics de comunicação
  * do NeonPro Healthcare Management System.
- * 
+ *
  * @author NeonPro Development Team
  * @version 1.0.0
  * @since 2025-01-30
@@ -11,8 +11,8 @@
 
 export interface CommunicationEvent {
   id: string;
-  channel: 'sms' | 'email' | 'whatsapp' | 'push';
-  messageType: 'reminder' | 'confirmation' | 'marketing' | 'alert' | 'follow_up';
+  channel: "sms" | "email" | "whatsapp" | "push";
+  messageType: "reminder" | "confirmation" | "marketing" | "alert" | "follow_up";
   patientId: string;
   clinicId: string;
   sentAt: Date;
@@ -135,10 +135,10 @@ export interface TrendAnalysis {
     roiGrowth: number;
   };
   trends: {
-    messageVolume: 'increasing' | 'decreasing' | 'stable';
-    engagement: 'increasing' | 'decreasing' | 'stable';
-    revenue: 'increasing' | 'decreasing' | 'stable';
-    cost: 'increasing' | 'decreasing' | 'stable';
+    messageVolume: "increasing" | "decreasing" | "stable";
+    engagement: "increasing" | "decreasing" | "stable";
+    revenue: "increasing" | "decreasing" | "stable";
+    cost: "increasing" | "decreasing" | "stable";
   };
 }
 
@@ -166,7 +166,7 @@ export interface BenchmarkData {
   }>;
   overallScore: number;
   recommendations: string[];
-  ranking: 'excellent' | 'good' | 'average' | 'below_average' | 'poor' | 'unknown';
+  ranking: "excellent" | "good" | "average" | "below_average" | "poor" | "unknown";
 }
 
 export interface AnalyticsMetrics {
@@ -211,12 +211,12 @@ export interface AlertConfig {
   isActive: boolean;
   conditions: {
     metric: string;
-    operator: 'gt' | 'lt' | 'eq' | 'gte' | 'lte';
+    operator: "gt" | "lt" | "eq" | "gte" | "lte";
     threshold: number;
     timeframe: number; // em minutos
   }[];
   actions: {
-    type: 'email' | 'sms' | 'webhook' | 'dashboard';
+    type: "email" | "sms" | "webhook" | "dashboard";
     recipients: string[];
     payload?: any;
   }[];
@@ -228,10 +228,10 @@ export interface SegmentAnalysis {
   segment: string;
   criteria: {
     ageRange?: { min: number; max: number };
-    gender?: 'M' | 'F' | 'other';
+    gender?: "M" | "F" | "other";
     location?: string;
     treatmentType?: string[];
-    loyaltyLevel?: 'new' | 'regular' | 'vip';
+    loyaltyLevel?: "new" | "regular" | "vip";
     communicationPreference?: string[];
   };
   metrics: {
@@ -344,10 +344,10 @@ export interface KPICardProps {
   title: string;
   value: number | string;
   change?: number;
-  trend?: 'up' | 'down' | 'stable';
-  format?: 'number' | 'currency' | 'percentage';
+  trend?: "up" | "down" | "stable";
+  format?: "number" | "currency" | "percentage";
   icon?: string;
-  color?: 'primary' | 'success' | 'warning' | 'error';
+  color?: "primary" | "success" | "warning" | "error";
 }
 
 // Export all types for easy importing
@@ -364,5 +364,5 @@ export type {
   SegmentAnalysis,
   TimeSeriesData,
   AttributionModel,
-  DateRange
+  DateRange,
 };

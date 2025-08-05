@@ -1,6 +1,6 @@
 /**
  * 🏥 ADVANCED MEDICAL AI DASHBOARD - NEONPRO HEALTHCARE SYSTEM
- * 
+ *
  * Multi-MCP Integration Demonstration:
  * ✅ Sequential Thinking MCP: Strategic planning and AI analysis (used in development)
  * ✅ Context7 MCP: Next.js Server Component patterns and documentation
@@ -8,75 +8,81 @@
  * ✅ Exa MCP: Expert implementation patterns and authority sources
  * ✅ Desktop Commander: File operations and project structure
  * ✅ shadcn-ui MCP: UI components (attempted integration - server configuration)
- * 
+ *
  * Demonstrates: 6 AI Models, Real-time Healthcare Analytics, LGPD Compliance,
  * Computer Vision Analysis, Wellness Integration, Performance Monitoring
- * 
+ *
  * @version 4.0 - Complete MCP Integration
- * @date January 24, 2025 
+ * @date January 24, 2025
  * @compliance LGPD/ANVISA/CFM
  */
 
-import { Suspense } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import { Button } from "@/components/ui/button"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { 
-  Activity, 
-  Brain, 
-  Heart, 
-  TrendingUp, 
-  Users, 
+import type { Suspense } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Progress } from "@/components/ui/progress";
+import type { Button } from "@/components/ui/button";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Activity,
+  Brain,
+  Heart,
+  TrendingUp,
+  Users,
   Calendar,
   Shield,
   Eye,
   Smartphone,
   BarChart3,
   Clock,
-  AlertTriangle
-} from "lucide-react"
+  AlertTriangle,
+} from "lucide-react";
 
 // Healthcare AI Models Performance Data (NeonPro's 6 ML Models)
 interface AIModelMetrics {
-  name: string
-  accuracy: number
-  inferenceTime: number
-  status: 'active' | 'training' | 'offline'
-  predictions: number
-  confidence: number
+  name: string;
+  accuracy: number;
+  inferenceTime: number;
+  status: "active" | "training" | "offline";
+  predictions: number;
+  confidence: number;
 }
 
 interface HealthcareMetrics {
-  aiModels: AIModelMetrics[]
+  aiModels: AIModelMetrics[];
   todayStats: {
-    appointments: number
-    completedProcedures: number
-    aiPredictions: number
-    patientSatisfaction: number
-    noShowRate: number
-    revenueToday: number
-  }
+    appointments: number;
+    completedProcedures: number;
+    aiPredictions: number;
+    patientSatisfaction: number;
+    noShowRate: number;
+    revenueToday: number;
+  };
   compliance: {
-    lgpdScore: number
-    anvisaCompliance: boolean
-    cfmCompliance: boolean
-    auditTrails: number
-  }
+    lgpdScore: number;
+    anvisaCompliance: boolean;
+    cfmCompliance: boolean;
+    auditTrails: number;
+  };
   wellness: {
-    wearableConnections: number
-    biometricReadings: number
-    moodTrackingActive: number
-    wellnessScore: number
-  }
+    wearableConnections: number;
+    biometricReadings: number;
+    moodTrackingActive: number;
+    wellnessScore: number;
+  };
   computerVision: {
-    analysesPerformed: number
-    progressPhotos: number
-    skinConditionDetections: number
-    treatmentOptimizations: number
-  }
+    analysesPerformed: number;
+    progressPhotos: number;
+    skinConditionDetections: number;
+    treatmentOptimizations: number;
+  };
 }
 
 // Simulated real-time healthcare data (would come from API in production)
@@ -86,50 +92,50 @@ const mockHealthcareData: HealthcareMetrics = {
       name: "Treatment Success Prediction",
       accuracy: 87.5,
       inferenceTime: 285,
-      status: 'active',
+      status: "active",
       predictions: 247,
-      confidence: 94.2
+      confidence: 94.2,
     },
     {
-      name: "No-Show Probability Calculator", 
+      name: "No-Show Probability Calculator",
       accuracy: 82.1,
       inferenceTime: 180,
-      status: 'active',
+      status: "active",
       predictions: 156,
-      confidence: 89.7
+      confidence: 89.7,
     },
     {
       name: "Revenue Forecasting Engine",
       accuracy: 88.9,
       inferenceTime: 350,
-      status: 'active',
+      status: "active",
       predictions: 89,
-      confidence: 92.1
+      confidence: 92.1,
     },
     {
       name: "Computer Vision Analysis",
       accuracy: 91.3,
       inferenceTime: 480,
-      status: 'active',
+      status: "active",
       predictions: 134,
-      confidence: 95.8
+      confidence: 95.8,
     },
     {
       name: "Wellness Score Calculator",
       accuracy: 84.6,
       inferenceTime: 220,
-      status: 'active',
+      status: "active",
       predictions: 203,
-      confidence: 87.4
+      confidence: 87.4,
     },
     {
       name: "Scheduling Optimization AI",
       accuracy: 96.2,
       inferenceTime: 95,
-      status: 'active',
+      status: "active",
       predictions: 412,
-      confidence: 98.1
-    }
+      confidence: 98.1,
+    },
   ],
   todayStats: {
     appointments: 28,
@@ -137,62 +143,64 @@ const mockHealthcareData: HealthcareMetrics = {
     aiPredictions: 1241,
     patientSatisfaction: 9.2,
     noShowRate: 12.5,
-    revenueToday: 8750
+    revenueToday: 8750,
   },
   compliance: {
     lgpdScore: 98.7,
     anvisaCompliance: true,
     cfmCompliance: true,
-    auditTrails: 1456
+    auditTrails: 1456,
   },
   wellness: {
     wearableConnections: 89,
     biometricReadings: 2341,
     moodTrackingActive: 67,
-    wellnessScore: 87.3
+    wellnessScore: 87.3,
   },
   computerVision: {
     analysesPerformed: 134,
     progressPhotos: 89,
     skinConditionDetections: 67,
-    treatmentOptimizations: 23
-  }
-}
+    treatmentOptimizations: 23,
+  },
+};
 
 // Server Component for fetching real-time data (Next.js pattern from Context7)
 async function getHealthcareMetrics(): Promise<HealthcareMetrics> {
   // In production, this would fetch from Supabase with RLS policies
   // await supabase.from('healthcare_metrics').select('*').eq('clinic_id', session.user.id)
-  
+
   // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 100))
-  
-  return mockHealthcareData
+  await new Promise((resolve) => setTimeout(resolve, 100));
+
+  return mockHealthcareData;
 }
 
 // AI Model Status Component
 function AIModelCard({ model }: { model: AIModelMetrics }) {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-green-500'
-      case 'training': return 'bg-yellow-500'  
-      case 'offline': return 'bg-red-500'
-      default: return 'bg-gray-500'
+      case "active":
+        return "bg-green-500";
+      case "training":
+        return "bg-yellow-500";
+      case "offline":
+        return "bg-red-500";
+      default:
+        return "bg-gray-500";
     }
-  }
+  };
 
   const getAccuracyColor = (accuracy: number) => {
-    if (accuracy >= 90) return 'text-green-600'
-    if (accuracy >= 85) return 'text-yellow-600'
-    return 'text-red-600'
-  }
+    if (accuracy >= 90) return "text-green-600";
+    if (accuracy >= 85) return "text-yellow-600";
+    return "text-red-600";
+  };
 
   return (
     <Card className="relative overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium truncate pr-2">
-          {model.name}
-        </CardTitle>
+        <CardTitle className="text-sm font-medium truncate pr-2">{model.name}</CardTitle>
         <div className={`w-3 h-3 rounded-full ${getStatusColor(model.status)}`} />
       </CardHeader>
       <CardContent>
@@ -204,7 +212,7 @@ function AIModelCard({ model }: { model: AIModelMetrics }) {
               {model.accuracy}%
             </span>
           </div>
-          
+
           {/* Inference Time */}
           <div className="flex justify-between items-center">
             <span className="text-xs text-muted-foreground">Tempo Resposta</span>
@@ -228,13 +236,13 @@ function AIModelCard({ model }: { model: AIModelMetrics }) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 // Main Dashboard Component (Next.js Server Component pattern)
 export default async function AdvancedMedicalAIDashboard() {
   // Fetch real-time healthcare data (Server Component pattern from Context7)
-  const metrics = await getHealthcareMetrics()
+  const metrics = await getHealthcareMetrics();
 
   return (
     <div className="space-y-6 p-6 bg-gradient-to-br from-blue-50 to-white min-h-screen">
@@ -249,7 +257,7 @@ export default async function AdvancedMedicalAIDashboard() {
             Sistema Inteligente de Gestão Clínica com 6 Modelos de IA
           </p>
         </div>
-        
+
         {/* Real-time Status Indicator */}
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
@@ -278,10 +286,10 @@ export default async function AdvancedMedicalAIDashboard() {
             <Brain className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{metrics.todayStats.aiPredictions.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">
-              Otimizações inteligentes ativas
-            </p>
+            <div className="text-2xl font-bold">
+              {metrics.todayStats.aiPredictions.toLocaleString()}
+            </div>
+            <p className="text-xs text-muted-foreground">Otimizações inteligentes ativas</p>
           </CardContent>
         </Card>
 
@@ -307,9 +315,7 @@ export default async function AdvancedMedicalAIDashboard() {
             <div className="text-2xl font-bold">
               R$ {metrics.todayStats.revenueToday.toLocaleString()}
             </div>
-            <p className="text-xs text-muted-foreground">
-              Previsão mensal otimizada
-            </p>
+            <p className="text-xs text-muted-foreground">Previsão mensal otimizada</p>
           </CardContent>
         </Card>
       </div>
@@ -330,7 +336,7 @@ export default async function AdvancedMedicalAIDashboard() {
               <AIModelCard key={index} model={model} />
             ))}
           </div>
-          
+
           {/* AI Performance Summary */}
           <Card>
             <CardHeader>
@@ -346,13 +352,21 @@ export default async function AdvancedMedicalAIDashboard() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                 <div>
                   <div className="text-2xl font-bold text-green-600">
-                    {(metrics.aiModels.reduce((acc, model) => acc + model.accuracy, 0) / metrics.aiModels.length).toFixed(1)}%
+                    {(
+                      metrics.aiModels.reduce((acc, model) => acc + model.accuracy, 0) /
+                      metrics.aiModels.length
+                    ).toFixed(1)}
+                    %
                   </div>
                   <p className="text-xs text-muted-foreground">Acurácia Média</p>
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-blue-600">
-                    {Math.round(metrics.aiModels.reduce((acc, model) => acc + model.inferenceTime, 0) / metrics.aiModels.length)}ms
+                    {Math.round(
+                      metrics.aiModels.reduce((acc, model) => acc + model.inferenceTime, 0) /
+                        metrics.aiModels.length,
+                    )}
+                    ms
                   </div>
                   <p className="text-xs text-muted-foreground">Tempo Médio</p>
                 </div>
@@ -364,7 +378,8 @@ export default async function AdvancedMedicalAIDashboard() {
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-orange-600">
-                    {metrics.aiModels.filter(model => model.status === 'active').length}/{metrics.aiModels.length}
+                    {metrics.aiModels.filter((model) => model.status === "active").length}/
+                    {metrics.aiModels.length}
                   </div>
                   <p className="text-xs text-muted-foreground">Modelos Ativos</p>
                 </div>
@@ -390,7 +405,9 @@ export default async function AdvancedMedicalAIDashboard() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm">Leituras Biométricas</span>
-                  <span className="text-sm font-medium">{metrics.wellness.biometricReadings.toLocaleString()}</span>
+                  <span className="text-sm font-medium">
+                    {metrics.wellness.biometricReadings.toLocaleString()}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm">Mood Tracking Ativo</span>
@@ -399,7 +416,9 @@ export default async function AdvancedMedicalAIDashboard() {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Wellness Score Geral</span>
-                    <span className="text-sm font-bold text-green-600">{metrics.wellness.wellnessScore}%</span>
+                    <span className="text-sm font-bold text-green-600">
+                      {metrics.wellness.wellnessScore}%
+                    </span>
                   </div>
                   <Progress value={metrics.wellness.wellnessScore} className="h-2" />
                 </div>
@@ -416,7 +435,9 @@ export default async function AdvancedMedicalAIDashboard() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4 text-center">
                   <div>
-                    <div className="text-lg font-bold">{metrics.computerVision.analysesPerformed}</div>
+                    <div className="text-lg font-bold">
+                      {metrics.computerVision.analysesPerformed}
+                    </div>
                     <p className="text-xs text-muted-foreground">Análises Realizadas</p>
                   </div>
                   <div>
@@ -424,11 +445,15 @@ export default async function AdvancedMedicalAIDashboard() {
                     <p className="text-xs text-muted-foreground">Fotos de Progresso</p>
                   </div>
                   <div>
-                    <div className="text-lg font-bold">{metrics.computerVision.skinConditionDetections}</div>
+                    <div className="text-lg font-bold">
+                      {metrics.computerVision.skinConditionDetections}
+                    </div>
                     <p className="text-xs text-muted-foreground">Detecções de Pele</p>
                   </div>
                   <div>
-                    <div className="text-lg font-bold">{metrics.computerVision.treatmentOptimizations}</div>
+                    <div className="text-lg font-bold">
+                      {metrics.computerVision.treatmentOptimizations}
+                    </div>
                     <p className="text-xs text-muted-foreground">Otimizações</p>
                   </div>
                 </div>
@@ -492,9 +517,7 @@ export default async function AdvancedMedicalAIDashboard() {
                     <Badge variant="destructive">Não Conforme</Badge>
                   )}
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Regulamentações de Saúde Digital
-                </p>
+                <p className="text-xs text-muted-foreground">Regulamentações de Saúde Digital</p>
               </CardContent>
             </Card>
           </div>
@@ -506,9 +529,7 @@ export default async function AdvancedMedicalAIDashboard() {
             <Card>
               <CardHeader>
                 <CardTitle>Performance Analytics</CardTitle>
-                <CardDescription>
-                  Métricas de performance do sistema em tempo real
-                </CardDescription>
+                <CardDescription>Métricas de performance do sistema em tempo real</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -535,9 +556,7 @@ export default async function AdvancedMedicalAIDashboard() {
             <Card>
               <CardHeader>
                 <CardTitle>Operational Insights</CardTitle>
-                <CardDescription>
-                  Insights operacionais e otimizações sugeridas
-                </CardDescription>
+                <CardDescription>Insights operacionais e otimizações sugeridas</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -586,16 +605,28 @@ export default async function AdvancedMedicalAIDashboard() {
               Sequential Thinking + Context7 + Tavily + Exa + Desktop Commander + shadcn-ui MCP
             </p>
             <div className="flex justify-center gap-2 mt-3">
-              <Badge variant="outline" className="bg-green-50">Sequential ✓</Badge>
-              <Badge variant="outline" className="bg-blue-50">Context7 ✓</Badge>
-              <Badge variant="outline" className="bg-purple-50">Tavily ✓</Badge>
-              <Badge variant="outline" className="bg-orange-50">Exa ✓</Badge>
-              <Badge variant="outline" className="bg-gray-50">Desktop Commander ✓</Badge>
-              <Badge variant="outline" className="bg-indigo-50">shadcn-ui ✓</Badge>
+              <Badge variant="outline" className="bg-green-50">
+                Sequential ✓
+              </Badge>
+              <Badge variant="outline" className="bg-blue-50">
+                Context7 ✓
+              </Badge>
+              <Badge variant="outline" className="bg-purple-50">
+                Tavily ✓
+              </Badge>
+              <Badge variant="outline" className="bg-orange-50">
+                Exa ✓
+              </Badge>
+              <Badge variant="outline" className="bg-gray-50">
+                Desktop Commander ✓
+              </Badge>
+              <Badge variant="outline" className="bg-indigo-50">
+                shadcn-ui ✓
+              </Badge>
             </div>
           </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

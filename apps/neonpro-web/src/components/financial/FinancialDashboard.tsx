@@ -1,15 +1,21 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui/card';
-import { Button } from '@neonpro/ui/button';
-import { Badge } from '@neonpro/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@neonpro/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@neonpro/ui/select';
-import { Alert, AlertDescription, AlertTitle } from '@neonpro/ui/alert';
-import { Skeleton } from '@neonpro/ui/skeleton';
-import { Progress } from '@neonpro/ui/progress';
-import {
+import React, { useState, useEffect, useCallback } from "react";
+import type { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@neonpro/ui/card";
+import type { Button } from "@neonpro/ui/button";
+import type { Badge } from "@neonpro/ui/badge";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@neonpro/ui/tabs";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@neonpro/ui/select";
+import type { Alert, AlertDescription, AlertTitle } from "@neonpro/ui/alert";
+import type { Skeleton } from "@neonpro/ui/skeleton";
+import type { Progress } from "@neonpro/ui/progress";
+import type {
   TrendingUp,
   TrendingDown,
   DollarSign,
@@ -26,14 +32,14 @@ import {
   LineChart,
   Activity,
   Clock,
-  Zap
-} from 'lucide-react';
-import { FinancialSystem, getDefaultFinancialConfig } from '@/lib/financial';
-import { FinancialKPICards } from './FinancialKPICards';
-import { FinancialCharts } from './FinancialCharts';
-import { FinancialReports } from './FinancialReports';
-import { FinancialInsights } from './FinancialInsights';
-import { FinancialSettings } from './FinancialSettings';
+  Zap,
+} from "lucide-react";
+import type { FinancialSystem, getDefaultFinancialConfig } from "@/lib/financial";
+import type { FinancialKPICards } from "./FinancialKPICards";
+import type { FinancialCharts } from "./FinancialCharts";
+import type { FinancialReports } from "./FinancialReports";
+import type { FinancialInsights } from "./FinancialInsights";
+import type { FinancialSettings } from "./FinancialSettings";
 
 interface FinancialDashboardProps {
   clinicId: string;
@@ -52,7 +58,7 @@ interface DashboardData {
 }
 
 interface SystemHealth {
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status: "healthy" | "degraded" | "unhealthy";
   modules: Record<string, { status: string; message?: string }>;
   overall_score: number;
 }
@@ -61,7 +67,7 @@ export function FinancialDashboard({
   clinicId,
   supabaseUrl,
   supabaseKey,
-  className = ''
+  className = "",
 }: FinancialDashboardProps) {
   // State Management
   const [financialSystem, setFinancialSystem] = useState<FinancialSystem | null>(null);
@@ -70,8 +76,10 @@ export function FinancialDashboard({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [activeTab, setActiveTab] = useState('overview');
-  const [timeframe, setTimeframe] = useState<'day' | 'week' | 'month' | 'quarter' | 'year'>('month');
+  const [activeTab, setActiveTab] = useState("overview");
+  const [timeframe, setTimeframe] = useState<"day" | "week" | "month" | "quarter" | "year">(
+    "month",
+  );
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [refreshInterval, setRefreshInterval] = useState(300000); // 5 minutes
 
@@ -83,53 +91,56 @@ export function FinancialDashboard({
 
       const config = getDefaultFinancialConfig(clinicId, supabaseUrl, supabaseKey);
       const system = new FinancialSystem(config);
-      
+
       await system.initialize();
       setFinancialSystem(system);
 
       // Load initial data
       await loadDashboardData(system);
       await checkSystemHealth(system);
-
     } catch (err) {
-      console.error('Failed to initialize financial system:', err);
-      setError('Failed to initialize financial system. Please check your configuration.');
+      console.error("Failed to initialize financial system:", err);
+      setError("Failed to initialize financial system. Please check your configuration.");
     } finally {
       setLoading(false);
     }
   }, [clinicId, supabaseUrl, supabaseKey]);
 
   // Load Dashboard Data
-  const loadDashboardData = useCallback(async (system?: FinancialSystem) => {
-    try {
-      const activeSystem = system || financialSystem;
-      if (!activeSystem) return;
+  const loadDashboardData = useCallback(
+    async (system?: FinancialSystem) => {
+      try {
+        const activeSystem = system || financialSystem;
+        if (!activeSystem) return;
 
-      const overview = await activeSystem.getFinancialOverview(timeframe);
-      setDashboardData({
-        ...overview,
-        lastUpdated: new Date()
-      });
-
-    } catch (err) {
-      console.error('Failed to load dashboard data:', err);
-      setError('Failed to load dashboard data.');
-    }
-  }, [financialSystem, timeframe]);
+        const overview = await activeSystem.getFinancialOverview(timeframe);
+        setDashboardData({
+          ...overview,
+          lastUpdated: new Date(),
+        });
+      } catch (err) {
+        console.error("Failed to load dashboard data:", err);
+        setError("Failed to load dashboard data.");
+      }
+    },
+    [financialSystem, timeframe],
+  );
 
   // Check System Health
-  const checkSystemHealth = useCallback(async (system?: FinancialSystem) => {
-    try {
-      const activeSystem = system || financialSystem;
-      if (!activeSystem) return;
+  const checkSystemHealth = useCallback(
+    async (system?: FinancialSystem) => {
+      try {
+        const activeSystem = system || financialSystem;
+        if (!activeSystem) return;
 
-      const health = await activeSystem.healthCheck();
-      setSystemHealth(health);
-
-    } catch (err) {
-      console.error('Failed to check system health:', err);
-    }
-  }, [financialSystem]);
+        const health = await activeSystem.healthCheck();
+        setSystemHealth(health);
+      } catch (err) {
+        console.error("Failed to check system health:", err);
+      }
+    },
+    [financialSystem],
+  );
 
   // Refresh Data
   const refreshData = useCallback(async () => {
@@ -137,12 +148,9 @@ export function FinancialDashboard({
 
     try {
       setRefreshing(true);
-      await Promise.all([
-        loadDashboardData(),
-        checkSystemHealth()
-      ]);
+      await Promise.all([loadDashboardData(), checkSystemHealth()]);
     } catch (err) {
-      console.error('Failed to refresh data:', err);
+      console.error("Failed to refresh data:", err);
     } finally {
       setRefreshing(false);
     }
@@ -186,7 +194,7 @@ export function FinancialDashboard({
           </div>
           <Skeleton className="h-10 w-32" />
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[...Array(4)].map((_, i) => (
             <Card key={i}>
@@ -200,7 +208,7 @@ export function FinancialDashboard({
             </Card>
           ))}
         </div>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
@@ -232,7 +240,7 @@ export function FinancialDashboard({
           <AlertTitle>Error</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
-        
+
         <div className="flex justify-center">
           <Button onClick={initializeSystem} variant="outline">
             <RefreshCw className="h-4 w-4 mr-2" />
@@ -246,20 +254,28 @@ export function FinancialDashboard({
   // Get status color for system health
   const getHealthColor = (status: string) => {
     switch (status) {
-      case 'healthy': return 'text-green-600';
-      case 'degraded': return 'text-yellow-600';
-      case 'unhealthy': return 'text-red-600';
-      default: return 'text-gray-600';
+      case "healthy":
+        return "text-green-600";
+      case "degraded":
+        return "text-yellow-600";
+      case "unhealthy":
+        return "text-red-600";
+      default:
+        return "text-gray-600";
     }
   };
 
   // Get status icon for system health
   const getHealthIcon = (status: string) => {
     switch (status) {
-      case 'healthy': return <CheckCircle className="h-4 w-4" />;
-      case 'degraded': return <AlertTriangle className="h-4 w-4" />;
-      case 'unhealthy': return <AlertTriangle className="h-4 w-4" />;
-      default: return <Activity className="h-4 w-4" />;
+      case "healthy":
+        return <CheckCircle className="h-4 w-4" />;
+      case "degraded":
+        return <AlertTriangle className="h-4 w-4" />;
+      case "unhealthy":
+        return <AlertTriangle className="h-4 w-4" />;
+      default:
+        return <Activity className="h-4 w-4" />;
     }
   };
 
@@ -273,19 +289,19 @@ export function FinancialDashboard({
             Comprehensive financial analytics and business intelligence
           </p>
         </div>
-        
+
         <div className="flex items-center gap-2">
           {/* System Health Indicator */}
           {systemHealth && (
-            <Badge 
-              variant={systemHealth.status === 'healthy' ? 'default' : 'destructive'}
+            <Badge
+              variant={systemHealth.status === "healthy" ? "default" : "destructive"}
               className={`${getHealthColor(systemHealth.status)} flex items-center gap-1`}
             >
               {getHealthIcon(systemHealth.status)}
               {systemHealth.status} ({systemHealth.overall_score.toFixed(0)}%)
             </Badge>
           )}
-          
+
           {/* Last Updated */}
           {dashboardData && (
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
@@ -293,15 +309,10 @@ export function FinancialDashboard({
               {dashboardData.lastUpdated.toLocaleTimeString()}
             </div>
           )}
-          
+
           {/* Refresh Button */}
-          <Button
-            onClick={refreshData}
-            disabled={refreshing}
-            variant="outline"
-            size="sm"
-          >
-            <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+          <Button onClick={refreshData} disabled={refreshing} variant="outline" size="sm">
+            <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? "animate-spin" : ""}`} />
             Refresh
           </Button>
         </div>
@@ -326,12 +337,12 @@ export function FinancialDashboard({
               </SelectContent>
             </Select>
           </div>
-          
+
           {/* Auto Refresh Toggle */}
           <div className="flex items-center gap-2">
             <Button
               onClick={() => setAutoRefresh(!autoRefresh)}
-              variant={autoRefresh ? 'default' : 'outline'}
+              variant={autoRefresh ? "default" : "outline"}
               size="sm"
             >
               <Zap className="h-4 w-4 mr-2" />
@@ -339,7 +350,7 @@ export function FinancialDashboard({
             </Button>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm">
             <Download className="h-4 w-4 mr-2" />
@@ -381,22 +392,22 @@ export function FinancialDashboard({
         <TabsContent value="overview" className="space-y-6">
           {/* KPI Cards */}
           {dashboardData?.kpis && (
-            <FinancialKPICards 
+            <FinancialKPICards
               kpis={dashboardData.kpis}
               timeframe={timeframe}
               loading={refreshing}
             />
           )}
-          
+
           {/* Charts Grid */}
           {dashboardData?.charts && (
-            <FinancialCharts 
+            <FinancialCharts
               charts={dashboardData.charts}
               timeframe={timeframe}
               loading={refreshing}
             />
           )}
-          
+
           {/* Quick Insights */}
           {dashboardData?.insights && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -414,14 +425,22 @@ export function FinancialDashboard({
                   <div className="space-y-3">
                     {dashboardData.insights.slice(0, 3).map((insight: any, index: number) => (
                       <div key={index} className="flex items-start gap-3 p-3 rounded-lg border">
-                        <div className={`p-1 rounded-full ${
-                          insight.type === 'positive' ? 'bg-green-100 text-green-600' :
-                          insight.type === 'warning' ? 'bg-yellow-100 text-yellow-600' :
-                          'bg-red-100 text-red-600'
-                        }`}>
-                          {insight.type === 'positive' ? <TrendingUp className="h-4 w-4" /> :
-                           insight.type === 'warning' ? <AlertTriangle className="h-4 w-4" /> :
-                           <TrendingDown className="h-4 w-4" />}
+                        <div
+                          className={`p-1 rounded-full ${
+                            insight.type === "positive"
+                              ? "bg-green-100 text-green-600"
+                              : insight.type === "warning"
+                                ? "bg-yellow-100 text-yellow-600"
+                                : "bg-red-100 text-red-600"
+                          }`}
+                        >
+                          {insight.type === "positive" ? (
+                            <TrendingUp className="h-4 w-4" />
+                          ) : insight.type === "warning" ? (
+                            <AlertTriangle className="h-4 w-4" />
+                          ) : (
+                            <TrendingDown className="h-4 w-4" />
+                          )}
                         </div>
                         <div className="flex-1">
                           <h4 className="font-medium">{insight.title}</h4>
@@ -435,7 +454,7 @@ export function FinancialDashboard({
                   </div>
                 </CardContent>
               </Card>
-              
+
               {/* System Status */}
               <Card>
                 <CardHeader>
@@ -443,27 +462,29 @@ export function FinancialDashboard({
                     <Activity className="h-5 w-5" />
                     System Status
                   </CardTitle>
-                  <CardDescription>
-                    Financial system health and performance
-                  </CardDescription>
+                  <CardDescription>Financial system health and performance</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {systemHealth && (
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-medium">Overall Health</span>
-                        <Badge variant={systemHealth.status === 'healthy' ? 'default' : 'destructive'}>
+                        <Badge
+                          variant={systemHealth.status === "healthy" ? "default" : "destructive"}
+                        >
                           {systemHealth.status}
                         </Badge>
                       </div>
-                      
+
                       <Progress value={systemHealth.overall_score} className="h-2" />
-                      
+
                       <div className="space-y-2">
                         {Object.entries(systemHealth.modules).map(([module, status]) => (
                           <div key={module} className="flex items-center justify-between text-sm">
-                            <span className="capitalize">{module.replace('_', ' ')}</span>
-                            <div className={`flex items-center gap-1 ${getHealthColor(status.status)}`}>
+                            <span className="capitalize">{module.replace("_", " ")}</span>
+                            <div
+                              className={`flex items-center gap-1 ${getHealthColor(status.status)}`}
+                            >
                               {getHealthIcon(status.status)}
                               <span className="capitalize">{status.status}</span>
                             </div>
@@ -481,7 +502,7 @@ export function FinancialDashboard({
         {/* Analytics Tab */}
         <TabsContent value="analytics" className="space-y-6">
           {dashboardData?.analytics && (
-            <FinancialCharts 
+            <FinancialCharts
               charts={dashboardData.charts}
               analytics={dashboardData.analytics}
               timeframe={timeframe}
@@ -494,7 +515,7 @@ export function FinancialDashboard({
         {/* Reports Tab */}
         <TabsContent value="reports" className="space-y-6">
           {dashboardData?.reports && financialSystem && (
-            <FinancialReports 
+            <FinancialReports
               reports={dashboardData.reports}
               financialSystem={financialSystem}
               timeframe={timeframe}
@@ -506,7 +527,7 @@ export function FinancialDashboard({
         {/* Insights Tab */}
         <TabsContent value="insights" className="space-y-6">
           {dashboardData?.insights && (
-            <FinancialInsights 
+            <FinancialInsights
               insights={dashboardData.insights}
               analytics={dashboardData.analytics}
               kpis={dashboardData.kpis}
@@ -519,7 +540,7 @@ export function FinancialDashboard({
         {/* Settings Tab */}
         <TabsContent value="settings" className="space-y-6">
           {financialSystem && (
-            <FinancialSettings 
+            <FinancialSettings
               financialSystem={financialSystem}
               autoRefresh={autoRefresh}
               refreshInterval={refreshInterval}

@@ -1,18 +1,18 @@
 /**
  * Data Cleanup API Route
- * 
+ *
  * HTTP endpoint for triggering and managing data cleanup operations
  * in the NeonPro session management system.
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  * @created 2024
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { DataCleanupService } from '@/lib/auth/session/DataCleanupService';
-import { createClient } from '@supabase/supabase-js';
-import { sessionConfig } from '@/lib/auth/session/config';
+import type { NextRequest, NextResponse } from "next/server";
+import { DataCleanupService } from "@/lib/auth/session/DataCleanupService";
+import { createClient } from "@supabase/supabase-js";
+import { sessionConfig } from "@/lib/auth/session/config";
 
 // Initialize cleanup service
 const cleanupService = new DataCleanupService({
@@ -22,7 +22,7 @@ const cleanupService = new DataCleanupService({
   securityEventRetentionDays: sessionConfig.cleanup.securityEventRetentionDays,
   notificationRetentionDays: sessionConfig.cleanup.notificationRetentionDays,
   auditLogRetentionDays: sessionConfig.cleanup.auditLogRetentionDays,
-  archiveCriticalEvents: true
+  archiveCriticalEvents: true,
 });
 
 /**
@@ -35,11 +35,11 @@ export async function POST(request: NextRequest) {
     const authResult = await verifyCleanupPermissions(request);
     if (!authResult.success) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: authResult.error 
+        {
+          success: false,
+          error: authResult.error,
         },
-        { status: authResult.status }
+        { status: authResult.status },
       );
     }
 
@@ -52,11 +52,11 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: {
-            code: 'INVALID_TASKS',
-            message: 'Tasks must be an array'
-          }
+            code: "INVALID_TASKS",
+            message: "Tasks must be an array",
+          },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -68,11 +68,11 @@ export async function POST(request: NextRequest) {
           {
             success: false,
             error: {
-              code: 'CLEANUP_IN_PROGRESS',
-              message: 'Cleanup is already in progress. Use force=true to override.'
-            }
+              code: "CLEANUP_IN_PROGRESS",
+              message: "Cleanup is already in progress. Use force=true to override.",
+            },
           },
-          { status: 409 }
+          { status: 409 },
         );
       }
     }
@@ -85,18 +85,17 @@ export async function POST(request: NextRequest) {
     } else {
       return NextResponse.json(result, { status: 500 });
     }
-
   } catch (error) {
-    console.error('Cleanup API error:', error);
+    console.error("Cleanup API error:", error);
     return NextResponse.json(
       {
         success: false,
         error: {
-          code: 'INTERNAL_ERROR',
-          message: 'Internal server error during cleanup'
-        }
+          code: "INTERNAL_ERROR",
+          message: "Internal server error during cleanup",
+        },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -111,11 +110,11 @@ export async function GET(request: NextRequest) {
     const authResult = await verifyCleanupPermissions(request);
     if (!authResult.success) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: authResult.error 
+        {
+          success: false,
+          error: authResult.error,
         },
-        { status: authResult.status }
+        { status: authResult.status },
       );
     }
 
@@ -126,18 +125,17 @@ export async function GET(request: NextRequest) {
     } else {
       return NextResponse.json(result, { status: 500 });
     }
-
   } catch (error) {
-    console.error('Cleanup status API error:', error);
+    console.error("Cleanup status API error:", error);
     return NextResponse.json(
       {
         success: false,
         error: {
-          code: 'INTERNAL_ERROR',
-          message: 'Internal server error getting cleanup status'
-        }
+          code: "INTERNAL_ERROR",
+          message: "Internal server error getting cleanup status",
+        },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -152,11 +150,11 @@ export async function DELETE(request: NextRequest) {
     const authResult = await verifyCleanupPermissions(request, true);
     if (!authResult.success) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: authResult.error 
+        {
+          success: false,
+          error: authResult.error,
         },
-        { status: authResult.status }
+        { status: authResult.status },
       );
     }
 
@@ -165,23 +163,22 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        message: 'All scheduled cleanup tasks stopped',
-        timestamp: new Date().toISOString()
+        message: "All scheduled cleanup tasks stopped",
+        timestamp: new Date().toISOString(),
       },
-      { status: 200 }
+      { status: 200 },
     );
-
   } catch (error) {
-    console.error('Stop cleanup API error:', error);
+    console.error("Stop cleanup API error:", error);
     return NextResponse.json(
       {
         success: false,
         error: {
-          code: 'INTERNAL_ERROR',
-          message: 'Internal server error stopping cleanup tasks'
-        }
+          code: "INTERNAL_ERROR",
+          message: "Internal server error stopping cleanup tasks",
+        },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -190,8 +187,8 @@ export async function DELETE(request: NextRequest) {
  * Helper function to verify cleanup permissions
  */
 async function verifyCleanupPermissions(
-  request: NextRequest, 
-  requireAdmin = false
+  request: NextRequest,
+  requireAdmin = false,
 ): Promise<{
   success: boolean;
   error?: any;
@@ -200,36 +197,36 @@ async function verifyCleanupPermissions(
 }> {
   try {
     // Get authorization header
-    const authorization = request.headers.get('authorization');
-    if (!authorization || !authorization.startsWith('Bearer ')) {
+    const authorization = request.headers.get("authorization");
+    if (!authorization || !authorization.startsWith("Bearer ")) {
       return {
         success: false,
         error: {
-          code: 'UNAUTHORIZED',
-          message: 'Missing or invalid authorization header'
+          code: "UNAUTHORIZED",
+          message: "Missing or invalid authorization header",
         },
-        status: 401
+        status: 401,
       };
     }
 
     const token = authorization.substring(7);
 
     // Verify JWT token with Supabase
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_ANON_KEY!
-    );
+    const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
 
-    const { data: { user }, error } = await supabase.auth.getUser(token);
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser(token);
 
     if (error || !user) {
       return {
         success: false,
         error: {
-          code: 'INVALID_TOKEN',
-          message: 'Invalid or expired token'
+          code: "INVALID_TOKEN",
+          message: "Invalid or expired token",
         },
-        status: 401
+        status: 401,
       };
     }
 
@@ -237,48 +234,47 @@ async function verifyCleanupPermissions(
     if (requireAdmin) {
       // Get user role from database
       const { data: userProfile, error: profileError } = await supabase
-        .from('user_profiles')
-        .select('role')
-        .eq('user_id', user.id)
+        .from("user_profiles")
+        .select("role")
+        .eq("user_id", user.id)
         .single();
 
       if (profileError || !userProfile) {
         return {
           success: false,
           error: {
-            code: 'USER_PROFILE_ERROR',
-            message: 'Unable to verify user permissions'
+            code: "USER_PROFILE_ERROR",
+            message: "Unable to verify user permissions",
           },
-          status: 403
+          status: 403,
         };
       }
 
-      if (userProfile.role !== 'admin' && userProfile.role !== 'super_admin') {
+      if (userProfile.role !== "admin" && userProfile.role !== "super_admin") {
         return {
           success: false,
           error: {
-            code: 'INSUFFICIENT_PERMISSIONS',
-            message: 'Admin permissions required for this operation'
+            code: "INSUFFICIENT_PERMISSIONS",
+            message: "Admin permissions required for this operation",
           },
-          status: 403
+          status: 403,
         };
       }
     }
 
     return {
       success: true,
-      userId: user.id
+      userId: user.id,
     };
-
   } catch (error) {
-    console.error('Permission verification error:', error);
+    console.error("Permission verification error:", error);
     return {
       success: false,
       error: {
-        code: 'PERMISSION_CHECK_ERROR',
-        message: 'Error verifying permissions'
+        code: "PERMISSION_CHECK_ERROR",
+        message: "Error verifying permissions",
       },
-      status: 500
+      status: 500,
     };
   }
 }
@@ -288,19 +284,19 @@ async function verifyCleanupPermissions(
  */
 function validateCleanupTasks(tasks: string[]): { valid: boolean; invalidTasks?: string[] } {
   const validTasks = [
-    'expired_sessions',
-    'inactive_devices',
-    'old_security_events',
-    'old_notifications',
-    'expired_device_verifications',
-    'old_audit_logs'
+    "expired_sessions",
+    "inactive_devices",
+    "old_security_events",
+    "old_notifications",
+    "expired_device_verifications",
+    "old_audit_logs",
   ];
 
-  const invalidTasks = tasks.filter(task => !validTasks.includes(task));
-  
+  const invalidTasks = tasks.filter((task) => !validTasks.includes(task));
+
   return {
     valid: invalidTasks.length === 0,
-    invalidTasks: invalidTasks.length > 0 ? invalidTasks : undefined
+    invalidTasks: invalidTasks.length > 0 ? invalidTasks : undefined,
   };
 }
 
@@ -316,7 +312,7 @@ function checkRateLimit(identifier: string, maxRequests = 10, windowMs = 60000):
   if (!userLimit || now > userLimit.resetTime) {
     rateLimitMap.set(identifier, {
       count: 1,
-      resetTime: now + windowMs
+      resetTime: now + windowMs,
     });
     return true;
   }
@@ -328,6 +324,3 @@ function checkRateLimit(identifier: string, maxRequests = 10, windowMs = 60000):
   userLimit.count++;
   return true;
 }
-
-export { cleanupService };
-

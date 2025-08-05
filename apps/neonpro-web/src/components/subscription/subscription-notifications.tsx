@@ -10,15 +10,15 @@
 
 "use client";
 
-import { cn } from "@/lib/utils";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { AlertTriangle, Bell, CheckCircle2, Info, X } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useSubscriptionStatus } from "../../hooks/use-subscription-status";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
-import { Button } from "../ui/button";
-import { useToast } from "../ui/use-toast";
+import type { cn } from "@/lib/utils";
+import type { formatDistanceToNow } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { AlertTriangle, Bell, CheckCircle2, Info, X } from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { useSubscriptionStatus } from "../../hooks/use-subscription-status";
+import type { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import type { Button } from "../ui/button";
+import type { useToast } from "../ui/use-toast";
 
 export interface SubscriptionNotificationProps {
   className?: string;
@@ -36,28 +36,21 @@ export function SubscriptionNotificationProvider({
   showProgress = true,
 }: SubscriptionNotificationProps) {
   const { toast } = useToast();
-  const {
-    status,
-    tier,
-    gracePeriodEnd,
-    nextBilling,
-    isLoading,
-    error,
-    events,
-  } = useSubscriptionStatus({
-    onStatusChange: (newStatus, previousStatus) => {
-      if (previousStatus && newStatus !== previousStatus) {
-        handleStatusChange(newStatus, previousStatus);
-      }
-    },
-    onError: (errorMessage) => {
-      toast({
-        title: "Erro na Assinatura",
-        description: errorMessage,
-        variant: "destructive",
-      });
-    },
-  });
+  const { status, tier, gracePeriodEnd, nextBilling, isLoading, error, events } =
+    useSubscriptionStatus({
+      onStatusChange: (newStatus, previousStatus) => {
+        if (previousStatus && newStatus !== previousStatus) {
+          handleStatusChange(newStatus, previousStatus);
+        }
+      },
+      onError: (errorMessage) => {
+        toast({
+          title: "Erro na Assinatura",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      },
+    });
 
   const [notifications, setNotifications] = useState<
     Array<{
@@ -80,14 +73,12 @@ export function SubscriptionNotificationProvider({
       active: {
         type: "success" as const,
         title: "Assinatura Ativada",
-        description:
-          "Sua assinatura está ativa e todas as funcionalidades estão disponíveis.",
+        description: "Sua assinatura está ativa e todas as funcionalidades estão disponíveis.",
       },
       trialing: {
         type: "info" as const,
         title: "Período de Teste Iniciado",
-        description:
-          "Aproveite todas as funcionalidades durante seu período de teste.",
+        description: "Aproveite todas as funcionalidades durante seu período de teste.",
       },
       past_due: {
         type: "warning" as const,
@@ -138,9 +129,7 @@ export function SubscriptionNotificationProvider({
   };
 
   // Add notification to queue
-  const addNotification = (
-    notification: Omit<(typeof notifications)[0], "id" | "timestamp">
-  ) => {
+  const addNotification = (notification: Omit<(typeof notifications)[0], "id" | "timestamp">) => {
     const newNotification = {
       ...notification,
       id: Math.random().toString(36).substr(2, 9),
@@ -160,10 +149,8 @@ export function SubscriptionNotificationProvider({
   const dismissNotification = (id: string) => {
     setNotifications((prev) =>
       prev.map((notification) =>
-        notification.id === id
-          ? { ...notification, dismissed: true }
-          : notification
-      )
+        notification.id === id ? { ...notification, dismissed: true } : notification,
+      ),
     );
 
     // Remove after animation
@@ -176,8 +163,7 @@ export function SubscriptionNotificationProvider({
   useEffect(() => {
     if (status === "trialing" && gracePeriodEnd) {
       const daysUntilExpiration = Math.ceil(
-        (new Date(gracePeriodEnd).getTime() - new Date().getTime()) /
-          (1000 * 60 * 60 * 24)
+        (new Date(gracePeriodEnd).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24),
       );
 
       if (daysUntilExpiration <= 3 && daysUntilExpiration > 0) {
@@ -195,8 +181,7 @@ export function SubscriptionNotificationProvider({
 
     if (status === "active" && nextBilling) {
       const daysUntilBilling = Math.ceil(
-        (new Date(nextBilling).getTime() - new Date().getTime()) /
-          (1000 * 60 * 60 * 24)
+        (new Date(nextBilling).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24),
       );
 
       if (daysUntilBilling <= 7 && daysUntilBilling > 0) {
@@ -244,7 +229,7 @@ export function SubscriptionNotificationProvider({
       className={cn(
         "fixed z-50 w-full max-w-md space-y-2",
         position === "top" ? "top-4 right-4" : "bottom-4 right-4",
-        className
+        className,
       )}
     >
       {notifications
@@ -255,21 +240,14 @@ export function SubscriptionNotificationProvider({
             className={cn(
               "transform transition-all duration-300 ease-in-out",
               "translate-x-0 opacity-100",
-              notification.dismissed && "translate-x-full opacity-0"
+              notification.dismissed && "translate-x-full opacity-0",
             )}
           >
-            <Alert
-              className={cn(
-                "shadow-lg border-l-4",
-                getNotificationStyles(notification.type)
-              )}
-            >
+            <Alert className={cn("shadow-lg border-l-4", getNotificationStyles(notification.type))}>
               <div className="flex items-start gap-3">
                 {getNotificationIcon(notification.type)}
                 <div className="flex-1 min-w-0">
-                  <AlertTitle className="text-sm font-medium">
-                    {notification.title}
-                  </AlertTitle>
+                  <AlertTitle className="text-sm font-medium">{notification.title}</AlertTitle>
                   <AlertDescription className="text-sm text-muted-foreground mt-1">
                     {notification.description}
                   </AlertDescription>

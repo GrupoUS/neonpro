@@ -1,56 +1,70 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import type { useState, useEffect } from "react";
+import type { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { 
-  Building2, 
-  MapPin, 
-  Phone, 
-  Mail, 
-  Globe, 
-  FileCheck, 
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Separator } from "@/components/ui/separator";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type {
+  Building2,
+  MapPin,
+  Phone,
+  Mail,
+  Globe,
+  FileCheck,
   Save,
   AlertCircle,
   CheckCircle2,
-  Loader2
+  Loader2,
 } from "lucide-react";
-import { toast } from "sonner";
+import type { toast } from "sonner";
 
 // CNPJ validation function
 const validateCNPJ = (cnpj: string): boolean => {
   // Remove non-numeric characters
   const cleanCNPJ = cnpj.replace(/[^\d]/g, "");
-  
+
   if (cleanCNPJ.length !== 14) return false;
-  
+
   // Check for known invalid patterns
   if (/^(\d)\1{13}$/.test(cleanCNPJ)) return false;
-  
+
   // CNPJ validation algorithm
   let sum = 0;
   let remainder;
   const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
   const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-  
+
   // First verification digit
   for (let i = 0; i < 12; i++) {
     sum += parseInt(cleanCNPJ.charAt(i)) * weights1[i];
   }
   remainder = sum % 11;
   const digit1 = remainder < 2 ? 0 : 11 - remainder;
-  
+
   if (parseInt(cleanCNPJ.charAt(12)) !== digit1) return false;
-  
+
   // Second verification digit
   sum = 0;
   for (let i = 0; i < 13; i++) {
@@ -58,7 +72,7 @@ const validateCNPJ = (cnpj: string): boolean => {
   }
   remainder = sum % 11;
   const digit2 = remainder < 2 ? 0 : 11 - remainder;
-  
+
   return parseInt(cleanCNPJ.charAt(13)) === digit2;
 };
 
@@ -75,13 +89,13 @@ const clinicProfileSchema = z.object({
   cnpj: z.string().refine(validateCNPJ, "CNPJ inválido"),
   stateRegistration: z.string().optional(),
   municipalRegistration: z.string().optional(),
-  
+
   // Contact Information
   phone: z.string().min(10, "Telefone deve ter pelo menos 10 dígitos"),
   whatsapp: z.string().optional(),
   email: z.string().email("Email inválido"),
   website: z.string().url("Website deve ser uma URL válida").optional().or(z.literal("")),
-  
+
   // Address Information
   address: z.string().min(5, "Endereço deve ter pelo menos 5 caracteres"),
   addressNumber: z.string().min(1, "Número é obrigatório"),
@@ -90,17 +104,25 @@ const clinicProfileSchema = z.object({
   city: z.string().min(2, "Cidade é obrigatória"),
   state: z.string().length(2, "Estado deve ter 2 caracteres"),
   zipCode: z.string().refine(validateCEP, "CEP inválido"),
-  
+
   // Professional Information
   description: z.string().max(500, "Descrição deve ter no máximo 500 caracteres").optional(),
   specialties: z.string().optional(),
-  
+
   // Operating Information
   foundedYear: z.number().min(1900).max(new Date().getFullYear()).optional(),
-  
+
   // LGPD Compliance
-  privacyPolicyUrl: z.string().url("URL da política de privacidade deve ser válida").optional().or(z.literal("")),
-  termsOfServiceUrl: z.string().url("URL dos termos de serviço deve ser válida").optional().or(z.literal("")),
+  privacyPolicyUrl: z
+    .string()
+    .url("URL da política de privacidade deve ser válida")
+    .optional()
+    .or(z.literal("")),
+  termsOfServiceUrl: z
+    .string()
+    .url("URL dos termos de serviço deve ser válida")
+    .optional()
+    .or(z.literal("")),
 });
 
 type ClinicProfileFormData = z.infer<typeof clinicProfileSchema>;
@@ -109,7 +131,7 @@ export default function ClinicProfile() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  
+
   const form = useForm<ClinicProfileFormData>({
     resolver: zodResolver(clinicProfileSchema),
     defaultValues: {
@@ -155,7 +177,7 @@ export default function ClinicProfile() {
       try {
         const response = await fetch(`https://viacep.com.br/ws/${cleanCEP}/json/`);
         const data = await response.json();
-        
+
         if (!data.erro) {
           form.setValue("address", data.logradouro || "");
           form.setValue("neighborhood", data.bairro || "");
@@ -197,7 +219,7 @@ export default function ClinicProfile() {
       //   headers: { "Content-Type": "application/json" },
       //   body: JSON.stringify(data),
       // });
-      
+
       setLastSaved(new Date());
       toast.success("Perfil da clínica salvo com sucesso!");
     } catch (error) {
@@ -289,9 +311,7 @@ export default function ClinicProfile() {
                           maxLength={18}
                         />
                       </FormControl>
-                      <FormDescription>
-                        Cadastro Nacional da Pessoa Jurídica
-                      </FormDescription>
+                      <FormDescription>Cadastro Nacional da Pessoa Jurídica</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -339,7 +359,8 @@ export default function ClinicProfile() {
                       />
                     </FormControl>
                     <FormDescription>
-                      Máximo 500 caracteres. Esta descrição pode ser exibida em relatórios e documentos.
+                      Máximo 500 caracteres. Esta descrição pode ser exibida em relatórios e
+                      documentos.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -450,9 +471,7 @@ export default function ClinicProfile() {
                           maxLength={9}
                         />
                       </FormControl>
-                      <FormDescription>
-                        O endereço será preenchido automaticamente
-                      </FormDescription>
+                      <FormDescription>O endereço será preenchido automaticamente</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -589,9 +608,7 @@ export default function ClinicProfile() {
                     <FormControl>
                       <Input placeholder="https://www.clinica.com.br/termos" {...field} />
                     </FormControl>
-                    <FormDescription>
-                      Link para os termos de serviço da clínica
-                    </FormDescription>
+                    <FormDescription>Link para os termos de serviço da clínica</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

@@ -2,30 +2,30 @@
 // PWA Implementation with offline-first strategies + Background Sync
 // Target: API p95 ≤ 800ms, Page Load p95 ≤ 300ms
 
-const CACHE_VERSION = '1.1.0'
-const STATIC_CACHE = `neonpro-static-v${CACHE_VERSION}`
-const DYNAMIC_CACHE = `neonpro-dynamic-v${CACHE_VERSION}`
-const API_CACHE = `neonpro-api-v${CACHE_VERSION}`
-const OFFLINE_QUEUE_CACHE = `neonpro-offline-queue-v${CACHE_VERSION}`
+const CACHE_VERSION = "1.1.0";
+const STATIC_CACHE = `neonpro-static-v${CACHE_VERSION}`;
+const DYNAMIC_CACHE = `neonpro-dynamic-v${CACHE_VERSION}`;
+const API_CACHE = `neonpro-api-v${CACHE_VERSION}`;
+const OFFLINE_QUEUE_CACHE = `neonpro-offline-queue-v${CACHE_VERSION}`;
 
 // Background sync configuration
-const BACKGROUND_SYNC_TAG = 'neonpro-background-sync'
-const APPOINTMENT_SYNC_TAG = 'appointment-booking-sync'
+const BACKGROUND_SYNC_TAG = "neonpro-background-sync";
+const APPOINTMENT_SYNC_TAG = "appointment-booking-sync";
 
 // Critical resources for offline functionality
 const STATIC_CACHE_URLS = [
-  '/',
-  '/dashboard',
-  '/login',
-  '/signup',
-  '/offline',
-  '/patient/portal',
-  '/patient/appointments',
-  '/patient/profile',
-  '/manifest.json',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
-]
+  "/",
+  "/dashboard",
+  "/login",
+  "/signup",
+  "/offline",
+  "/patient/portal",
+  "/patient/appointments",
+  "/patient/profile",
+  "/manifest.json",
+  "/icons/icon-192x192.png",
+  "/icons/icon-512x512.png",
+];
 
 // API endpoints to cache for offline access
 const CACHEABLE_API_PATTERNS = [
@@ -33,7 +33,7 @@ const CACHEABLE_API_PATTERNS = [
   /\/api\/service-types$/,
   /\/api\/settings$/,
   /\/api\/patient\/profile$/,
-]
+];
 
 // Network-first patterns (real-time data)
 const NETWORK_FIRST_PATTERNS = [
@@ -41,125 +41,125 @@ const NETWORK_FIRST_PATTERNS = [
   /\/api\/patients\/[^/]+$/,
   /\/api\/auth/,
   /\/api\/patient\/appointments/,
-]
+];
 
 // Offline queue for failed requests
-let offlineQueue = []
+let offlineQueue = [];
 
 // Install Event - Cache static assets
-self.addEventListener('install', (event) => {
-  console.log('🚀 NeonPro SW: Installing v' + CACHE_VERSION)
-  
+self.addEventListener("install", (event) => {
+  console.log("🚀 NeonPro SW: Installing v" + CACHE_VERSION);
+
   event.waitUntil(
     Promise.all([
       caches.open(STATIC_CACHE).then((cache) => {
-        console.log('📦 Caching static resources...')
-        return cache.addAll(STATIC_CACHE_URLS)
+        console.log("📦 Caching static resources...");
+        return cache.addAll(STATIC_CACHE_URLS);
       }),
-      self.skipWaiting()
-    ])
-  )
-})
+      self.skipWaiting(),
+    ]),
+  );
+});
 
 // Activate Event - Clean old caches and take control
-self.addEventListener('activate', (event) => {
-  console.log('✅ NeonPro SW: Activating v' + CACHE_VERSION)
-  
+self.addEventListener("activate", (event) => {
+  console.log("✅ NeonPro SW: Activating v" + CACHE_VERSION);
+
   event.waitUntil(
     Promise.all([
       caches.keys().then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
             if (!cacheName.includes(CACHE_VERSION)) {
-              console.log('🗑️ Deleting old cache:', cacheName)
-              return caches.delete(cacheName)
+              console.log("🗑️ Deleting old cache:", cacheName);
+              return caches.delete(cacheName);
             }
-          })
-        )
+          }),
+        );
       }),
-      self.clients.claim()
-    ])
-  )
-})
+      self.clients.claim(),
+    ]),
+  );
+});
 
 // Fetch Event - Intelligent caching strategies with offline queue
-self.addEventListener('fetch', (event) => {
-  const { request } = event
-  const url = new URL(request.url)
+self.addEventListener("fetch", (event) => {
+  const { request } = event;
+  const url = new URL(request.url);
 
   // Handle POST/PUT/DELETE requests for background sync
-  if (request.method !== 'GET') {
-    if (url.pathname.startsWith('/api/patient/appointments') || 
-        url.pathname.startsWith('/api/patient/profile')) {
-      event.respondWith(handleOfflineCapableRequest(request))
+  if (request.method !== "GET") {
+    if (
+      url.pathname.startsWith("/api/patient/appointments") ||
+      url.pathname.startsWith("/api/patient/profile")
+    ) {
+      event.respondWith(handleOfflineCapableRequest(request));
     }
-    return
+    return;
   }
 
   // Skip external requests
   if (url.origin !== self.location.origin) {
-    return
+    return;
   }
 
-  event.respondWith(handleRequest(request))
-})
+  event.respondWith(handleRequest(request));
+});
 
 // Main request handler with strategy selection
 async function handleRequest(request) {
-  const url = new URL(request.url)
-  
+  const url = new URL(request.url);
+
   try {
     // Static assets - Cache First
     if (isStaticAsset(url.pathname)) {
-      return await cacheFirst(request, STATIC_CACHE)
+      return await cacheFirst(request, STATIC_CACHE);
     }
-    
+
     // API requests - Specific strategies
-    if (url.pathname.startsWith('/api/')) {
-      return await handleApiRequest(request)
+    if (url.pathname.startsWith("/api/")) {
+      return await handleApiRequest(request);
     }
-    
+
     // Pages - Network First with cache fallback
-    return await networkFirst(request, DYNAMIC_CACHE)
-    
+    return await networkFirst(request, DYNAMIC_CACHE);
   } catch (error) {
-    console.error('🚨 Request failed:', error)
-    return await handleOfflineRequest(request)
+    console.error("🚨 Request failed:", error);
+    return await handleOfflineRequest(request);
   }
 }
 
 // Handle POST/PUT/DELETE requests with offline queue capability
 async function handleOfflineCapableRequest(request) {
   try {
-    const response = await fetch(request)
-    
+    const response = await fetch(request);
+
     if (response.ok) {
-      console.log('✅ Request successful:', request.url)
-      return response
+      console.log("✅ Request successful:", request.url);
+      return response;
     }
-    
-    throw new Error(`HTTP ${response.status}`)
-    
+
+    throw new Error(`HTTP ${response.status}`);
   } catch (error) {
-    console.log('📱 Network failed, queuing for background sync:', request.url)
-    
+    console.log("📱 Network failed, queuing for background sync:", request.url);
+
     // Queue the request for background sync
-    await queueRequestForSync(request)
-    
+    await queueRequestForSync(request);
+
     // Return optimistic response for user feedback
     return new Response(
       JSON.stringify({
         success: true,
         queued: true,
-        message: 'Ação salva. Será sincronizada quando você estiver online.'
+        message: "Ação salva. Será sincronizada quando você estiver online.",
       }),
       {
         status: 202, // Accepted
         headers: {
-          'Content-Type': 'application/json'
-        }
-      }
-    )
+          "Content-Type": "application/json",
+        },
+      },
+    );
   }
 }
 
@@ -171,449 +171,447 @@ async function queueRequestForSync(request) {
       url: request.url,
       method: request.method,
       headers: Object.fromEntries(request.headers.entries()),
-      body: request.method !== 'GET' ? await request.clone().text() : null,
-      timestamp: Date.now()
-    }
-    
+      body: request.method !== "GET" ? await request.clone().text() : null,
+      timestamp: Date.now(),
+    };
+
     // Store in cache for persistence
-    const cache = await caches.open(OFFLINE_QUEUE_CACHE)
-    const queueResponse = new Response(JSON.stringify(requestData))
-    await cache.put(`queue-${requestData.id}`, queueResponse)
-    
+    const cache = await caches.open(OFFLINE_QUEUE_CACHE);
+    const queueResponse = new Response(JSON.stringify(requestData));
+    await cache.put(`queue-${requestData.id}`, queueResponse);
+
     // Register background sync
-    if ('serviceWorker' in self && 'sync' in self.registration) {
-      await self.registration.sync.register(BACKGROUND_SYNC_TAG)
-      console.log('🔄 Background sync registered')
+    if ("serviceWorker" in self && "sync" in self.registration) {
+      await self.registration.sync.register(BACKGROUND_SYNC_TAG);
+      console.log("🔄 Background sync registered");
     }
-    
+
     // Store in IndexedDB for reliability
-    await storeInIndexedDB('offlineQueue', requestData)
-    
+    await storeInIndexedDB("offlineQueue", requestData);
   } catch (error) {
-    console.error('❌ Failed to queue request:', error)
+    console.error("❌ Failed to queue request:", error);
   }
 }
 
 // Background Sync Event
-self.addEventListener('sync', (event) => {
-  console.log('🔄 Background sync triggered:', event.tag)
-  
+self.addEventListener("sync", (event) => {
+  console.log("🔄 Background sync triggered:", event.tag);
+
   if (event.tag === BACKGROUND_SYNC_TAG) {
-    event.waitUntil(processOfflineQueue())
+    event.waitUntil(processOfflineQueue());
   } else if (event.tag === APPOINTMENT_SYNC_TAG) {
-    event.waitUntil(syncAppointmentData())
+    event.waitUntil(syncAppointmentData());
   }
-})
+});
 
 // Process offline queue when connection is restored
 async function processOfflineQueue() {
   try {
-    console.log('🔄 Processing offline queue...')
-    
-    const cache = await caches.open(OFFLINE_QUEUE_CACHE)
-    const queuedRequests = await cache.keys()
-    
+    console.log("🔄 Processing offline queue...");
+
+    const cache = await caches.open(OFFLINE_QUEUE_CACHE);
+    const queuedRequests = await cache.keys();
+
     for (const cacheKey of queuedRequests) {
       try {
-        const response = await cache.match(cacheKey)
-        const requestData = await response.json()
-        
-        console.log('🔄 Syncing queued request:', requestData.url)
-        
+        const response = await cache.match(cacheKey);
+        const requestData = await response.json();
+
+        console.log("🔄 Syncing queued request:", requestData.url);
+
         const syncResponse = await fetch(requestData.url, {
           method: requestData.method,
           headers: requestData.headers,
-          body: requestData.body
-        })
-        
+          body: requestData.body,
+        });
+
         if (syncResponse.ok) {
-          console.log('✅ Successfully synced:', requestData.url)
-          
+          console.log("✅ Successfully synced:", requestData.url);
+
           // Remove from cache and IndexedDB
-          await cache.delete(cacheKey)
-          await removeFromIndexedDB('offlineQueue', requestData.id)
-          
+          await cache.delete(cacheKey);
+          await removeFromIndexedDB("offlineQueue", requestData.id);
+
           // Notify client about successful sync
-          await notifyClientOfSync('sync-success', {
+          await notifyClientOfSync("sync-success", {
             url: requestData.url,
             id: requestData.id,
-            timestamp: requestData.timestamp
-          })
+            timestamp: requestData.timestamp,
+          });
         } else {
-          console.error('❌ Sync failed:', requestData.url, syncResponse.status)
-          
+          console.error("❌ Sync failed:", requestData.url, syncResponse.status);
+
           // Keep in queue for retry, but notify client
-          await notifyClientOfSync('sync-failed', {
+          await notifyClientOfSync("sync-failed", {
             url: requestData.url,
             id: requestData.id,
-            status: syncResponse.status
-          })
+            status: syncResponse.status,
+          });
         }
-        
       } catch (error) {
-        console.error('❌ Error processing queue item:', error)
+        console.error("❌ Error processing queue item:", error);
       }
     }
-    
   } catch (error) {
-    console.error('❌ Background sync error:', error)
+    console.error("❌ Background sync error:", error);
   }
 }
 
 // Sync appointment-specific data
 async function syncAppointmentData() {
   try {
-    console.log('📅 Syncing appointment data...')
-    
+    console.log("📅 Syncing appointment data...");
+
     // Get fresh appointment data
-    const response = await fetch('/api/patient/appointments')
+    const response = await fetch("/api/patient/appointments");
     if (response.ok) {
-      const cache = await caches.open(API_CACHE)
-      await cache.put('/api/patient/appointments', response.clone())
-      console.log('✅ Appointment data synced')
+      const cache = await caches.open(API_CACHE);
+      await cache.put("/api/patient/appointments", response.clone());
+      console.log("✅ Appointment data synced");
     }
-    
   } catch (error) {
-    console.error('❌ Appointment sync failed:', error)
+    console.error("❌ Appointment sync failed:", error);
   }
 }
 
 // Notify client of sync events
 async function notifyClientOfSync(type, data) {
-  const clients = await self.clients.matchAll()
-  
-  clients.forEach(client => {
+  const clients = await self.clients.matchAll();
+
+  clients.forEach((client) => {
     client.postMessage({
-      type: 'BACKGROUND_SYNC',
+      type: "BACKGROUND_SYNC",
       action: type,
-      data
-    })
-  })
+      data,
+    });
+  });
 }
 
 // IndexedDB utilities for persistent offline queue
 async function storeInIndexedDB(storeName, data) {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open('NeonProOffline', 1)
-    
+    const request = indexedDB.open("NeonProOffline", 1);
+
     request.onupgradeneeded = (event) => {
-      const db = event.target.result
+      const db = event.target.result;
       if (!db.objectStoreNames.contains(storeName)) {
-        const store = db.createObjectStore(storeName, { keyPath: 'id' })
-        store.createIndex('timestamp', 'timestamp', { unique: false })
+        const store = db.createObjectStore(storeName, { keyPath: "id" });
+        store.createIndex("timestamp", "timestamp", { unique: false });
       }
-    }
-    
+    };
+
     request.onsuccess = (event) => {
-      const db = event.target.result
-      const transaction = db.transaction([storeName], 'readwrite')
-      const store = transaction.objectStore(storeName)
-      
-      const addRequest = store.put(data)
-      addRequest.onsuccess = () => resolve()
-      addRequest.onerror = () => reject(addRequest.error)
-    }
-    
-    request.onerror = () => reject(request.error)
-  })
+      const db = event.target.result;
+      const transaction = db.transaction([storeName], "readwrite");
+      const store = transaction.objectStore(storeName);
+
+      const addRequest = store.put(data);
+      addRequest.onsuccess = () => resolve();
+      addRequest.onerror = () => reject(addRequest.error);
+    };
+
+    request.onerror = () => reject(request.error);
+  });
 }
 
 async function removeFromIndexedDB(storeName, id) {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open('NeonProOffline', 1)
-    
+    const request = indexedDB.open("NeonProOffline", 1);
+
     request.onsuccess = (event) => {
-      const db = event.target.result
-      const transaction = db.transaction([storeName], 'readwrite')
-      const store = transaction.objectStore(storeName)
-      
-      const deleteRequest = store.delete(id)
-      deleteRequest.onsuccess = () => resolve()
-      deleteRequest.onerror = () => reject(deleteRequest.error)
-    }
-    
-    request.onerror = () => reject(request.error)
-  })
+      const db = event.target.result;
+      const transaction = db.transaction([storeName], "readwrite");
+      const store = transaction.objectStore(storeName);
+
+      const deleteRequest = store.delete(id);
+      deleteRequest.onsuccess = () => resolve();
+      deleteRequest.onerror = () => reject(deleteRequest.error);
+    };
+
+    request.onerror = () => reject(request.error);
+  });
 }
 
 // Cache First Strategy (static assets)
 async function cacheFirst(request, cacheName) {
-  const cache = await caches.open(cacheName)
-  const cachedResponse = await cache.match(request)
-  
+  const cache = await caches.open(cacheName);
+  const cachedResponse = await cache.match(request);
+
   if (cachedResponse) {
-    console.log('📦 Cache hit:', request.url)
-    
+    console.log("📦 Cache hit:", request.url);
+
     // Update cache in background for fresh content
-    fetch(request).then((response) => {
-      if (response.ok) cache.put(request, response.clone())
-    }).catch(() => {})
-    
-    return cachedResponse
+    fetch(request)
+      .then((response) => {
+        if (response.ok) cache.put(request, response.clone());
+      })
+      .catch(() => {});
+
+    return cachedResponse;
   }
-  
-  console.log('🌐 Cache miss:', request.url)
-  const response = await fetch(request)
-  
+
+  console.log("🌐 Cache miss:", request.url);
+  const response = await fetch(request);
+
   if (response.ok) {
-    cache.put(request, response.clone())
+    cache.put(request, response.clone());
   }
-  
-  return response
+
+  return response;
 }
 
 // Network First Strategy (dynamic content)
 async function networkFirst(request, cacheName) {
-  const cache = await caches.open(cacheName)
-  
+  const cache = await caches.open(cacheName);
+
   try {
-    const response = await fetch(request)
-    
+    const response = await fetch(request);
+
     if (response.ok) {
-      cache.put(request, response.clone())
+      cache.put(request, response.clone());
     }
-    
-    return response
-    
+
+    return response;
   } catch (error) {
-    const cachedResponse = await cache.match(request)
-    
+    const cachedResponse = await cache.match(request);
+
     if (cachedResponse) {
-      console.log('📦 Offline fallback:', request.url)
-      return cachedResponse
+      console.log("📦 Offline fallback:", request.url);
+      return cachedResponse;
     }
-    
-    throw error
+
+    throw error;
   }
 }
 
 // Handle API requests with specific strategies
 async function handleApiRequest(request) {
-  const url = new URL(request.url)
-  
+  const url = new URL(request.url);
+
   // Authentication - Always network
-  if (url.pathname.startsWith('/api/auth/')) {
-    return await fetch(request)
+  if (url.pathname.startsWith("/api/auth/")) {
+    return await fetch(request);
   }
-  
+
   // Cacheable APIs - Cache first
   if (isCacheableApi(url.pathname)) {
-    return await cacheFirst(request, API_CACHE)
+    return await cacheFirst(request, API_CACHE);
   }
-  
+
   // Real-time APIs - Network first
-  return await networkFirst(request, API_CACHE)
+  return await networkFirst(request, API_CACHE);
 }
 
 // Handle offline requests
 async function handleOfflineRequest(request) {
-  const url = new URL(request.url)
-  
+  const url = new URL(request.url);
+
   // Navigation requests - Return offline page
-  if (request.mode === 'navigate') {
-    const cache = await caches.open(STATIC_CACHE)
-    const offlinePage = await cache.match('/offline')
-    return offlinePage || new Response('Offline', { status: 503 })
+  if (request.mode === "navigate") {
+    const cache = await caches.open(STATIC_CACHE);
+    const offlinePage = await cache.match("/offline");
+    return offlinePage || new Response("Offline", { status: 503 });
   }
-  
+
   // Try to find cached version
-  const cacheNames = [STATIC_CACHE, DYNAMIC_CACHE, API_CACHE]
-  
+  const cacheNames = [STATIC_CACHE, DYNAMIC_CACHE, API_CACHE];
+
   for (const cacheName of cacheNames) {
-    const cache = await caches.open(cacheName)
-    const cachedResponse = await cache.match(request)
-    
+    const cache = await caches.open(cacheName);
+    const cachedResponse = await cache.match(request);
+
     if (cachedResponse) {
-      return cachedResponse
+      return cachedResponse;
     }
   }
-  
-  return new Response('Offline', { status: 503 })
+
+  return new Response("Offline", { status: 503 });
 }
 
 // Utility functions
 function isStaticAsset(pathname) {
-  return /\.(js|css|png|jpg|jpeg|svg|ico|woff|woff2)$/.test(pathname) ||
-         STATIC_CACHE_URLS.includes(pathname)
+  return (
+    /\.(js|css|png|jpg|jpeg|svg|ico|woff|woff2)$/.test(pathname) ||
+    STATIC_CACHE_URLS.includes(pathname)
+  );
 }
 
 function isCacheableApi(pathname) {
-  return CACHEABLE_API_PATTERNS.some(pattern => pattern.test(pathname))
+  return CACHEABLE_API_PATTERNS.some((pattern) => pattern.test(pathname));
 }
 
 // Push notification event handler
-self.addEventListener('push', (event) => {
-  console.log('[SW] Push received:', event)
+self.addEventListener("push", (event) => {
+  console.log("[SW] Push received:", event);
 
   let notificationData = {
-    title: 'NeonPro',
-    body: 'Você tem uma nova notificação',
-    icon: '/icons/icon-192x192.png',
-    badge: '/icons/badge-72x72.png',
-    tag: 'default',
+    title: "NeonPro",
+    body: "Você tem uma nova notificação",
+    icon: "/icons/icon-192x192.png",
+    badge: "/icons/badge-72x72.png",
+    tag: "default",
     data: {
-      url: '/dashboard'
+      url: "/dashboard",
     },
     actions: [
       {
-        action: 'open',
-        title: 'Abrir',
-        icon: '/icons/open-action.png'
+        action: "open",
+        title: "Abrir",
+        icon: "/icons/open-action.png",
       },
       {
-        action: 'close',
-        title: 'Fechar'
-      }
-    ]
-  }
+        action: "close",
+        title: "Fechar",
+      },
+    ],
+  };
 
   if (event.data) {
     try {
-      const pushData = event.data.json()
+      const pushData = event.data.json();
       notificationData = {
         ...notificationData,
-        ...pushData
-      }
+        ...pushData,
+      };
     } catch (error) {
-      console.error('[SW] Error parsing push data:', error)
+      console.error("[SW] Error parsing push data:", error);
     }
   }
 
-  const notificationPromise = self.registration.showNotification(
-    notificationData.title,
-    {
-      body: notificationData.body,
-      icon: notificationData.icon,
-      badge: notificationData.badge,
-      tag: notificationData.tag,
-      data: notificationData.data,
-      actions: notificationData.actions,
-      requireInteraction: notificationData.requireInteraction || false,
-      silent: notificationData.silent || false,
-      vibrate: notificationData.vibrate || [200, 100, 200],
-      timestamp: Date.now()
-    }
-  )
+  const notificationPromise = self.registration.showNotification(notificationData.title, {
+    body: notificationData.body,
+    icon: notificationData.icon,
+    badge: notificationData.badge,
+    tag: notificationData.tag,
+    data: notificationData.data,
+    actions: notificationData.actions,
+    requireInteraction: notificationData.requireInteraction || false,
+    silent: notificationData.silent || false,
+    vibrate: notificationData.vibrate || [200, 100, 200],
+    timestamp: Date.now(),
+  });
 
-  event.waitUntil(notificationPromise)
-})
+  event.waitUntil(notificationPromise);
+});
 
 // Notification click handler
-self.addEventListener('notificationclick', (event) => {
-  console.log('[SW] Notification clicked:', event)
+self.addEventListener("notificationclick", (event) => {
+  console.log("[SW] Notification clicked:", event);
 
-  const notification = event.notification
-  const action = event.action
-  const data = notification.data || {}
+  const notification = event.notification;
+  const action = event.action;
+  const data = notification.data || {};
 
-  notification.close()
+  notification.close();
 
-  if (action === 'close') {
-    return
+  if (action === "close") {
+    return;
   }
 
   // Default action or 'open' action
-  let targetUrl = data.url || '/dashboard'
+  let targetUrl = data.url || "/dashboard";
 
   // Handle different notification types
   if (data.type) {
     switch (data.type) {
-      case 'appointment_reminder':
-      case 'appointment_confirmation':
-      case 'appointment_cancellation':
-        targetUrl = `/dashboard/appointments${data.appointmentId ? `/${data.appointmentId}` : ''}`
-        break
-      case 'payment_due':
-      case 'payment_received':
-        targetUrl = `/dashboard/billing${data.invoiceId ? `/${data.invoiceId}` : ''}`
-        break
-      case 'system_notification':
-        targetUrl = data.url || '/dashboard/notifications'
-        break
+      case "appointment_reminder":
+      case "appointment_confirmation":
+      case "appointment_cancellation":
+        targetUrl = `/dashboard/appointments${data.appointmentId ? `/${data.appointmentId}` : ""}`;
+        break;
+      case "payment_due":
+      case "payment_received":
+        targetUrl = `/dashboard/billing${data.invoiceId ? `/${data.invoiceId}` : ""}`;
+        break;
+      case "system_notification":
+        targetUrl = data.url || "/dashboard/notifications";
+        break;
       default:
-        targetUrl = data.url || '/dashboard'
+        targetUrl = data.url || "/dashboard";
     }
   }
 
-  const urlPromise = clients.matchAll({
-    type: 'window',
-    includeUncontrolled: true
-  }).then((clientList) => {
-    // Check if the app is already open
-    for (let i = 0; i < clientList.length; i++) {
-      const client = clientList[i]
-      const clientUrl = new URL(client.url)
-      
-      if (clientUrl.origin === self.location.origin) {
-        // Focus existing window and navigate to target URL
-        return client.focus().then(() => {
-          return client.navigate(targetUrl)
-        })
+  const urlPromise = clients
+    .matchAll({
+      type: "window",
+      includeUncontrolled: true,
+    })
+    .then((clientList) => {
+      // Check if the app is already open
+      for (let i = 0; i < clientList.length; i++) {
+        const client = clientList[i];
+        const clientUrl = new URL(client.url);
+
+        if (clientUrl.origin === self.location.origin) {
+          // Focus existing window and navigate to target URL
+          return client.focus().then(() => {
+            return client.navigate(targetUrl);
+          });
+        }
       }
-    }
 
-    // Open new window if app is not open
-    return clients.openWindow(targetUrl)
-  })
+      // Open new window if app is not open
+      return clients.openWindow(targetUrl);
+    });
 
-  event.waitUntil(urlPromise)
-})
+  event.waitUntil(urlPromise);
+});
 
 // Notification close handler
-self.addEventListener('notificationclose', (event) => {
-  console.log('[SW] Notification closed:', event)
+self.addEventListener("notificationclose", (event) => {
+  console.log("[SW] Notification closed:", event);
 
-  const notification = event.notification
-  const data = notification.data || {}
+  const notification = event.notification;
+  const data = notification.data || {};
 
   // Track notification closure analytics if needed
   if (data.trackClose) {
     // Could send analytics data here
-    console.log('[SW] Tracking notification close for:', data.type)
+    console.log("[SW] Tracking notification close for:", data.type);
   }
-})
+});
 
 // Background sync handler (for offline actions)
-self.addEventListener('sync', (event) => {
-  console.log('[SW] Background sync:', event.tag)
+self.addEventListener("sync", (event) => {
+  console.log("[SW] Background sync:", event.tag);
 
-  if (event.tag === 'sync-notifications') {
-    const syncPromise = syncPendingNotifications()
-    event.waitUntil(syncPromise)
+  if (event.tag === "sync-notifications") {
+    const syncPromise = syncPendingNotifications();
+    event.waitUntil(syncPromise);
   }
-})
+});
 
 // Helper function to sync pending notifications when back online
 async function syncPendingNotifications() {
   try {
-    console.log('[SW] Syncing pending notifications...')
+    console.log("[SW] Syncing pending notifications...");
 
     // Get pending notifications from IndexedDB or local storage
-    const pendingNotifications = await getPendingNotifications()
+    const pendingNotifications = await getPendingNotifications();
 
     for (const notification of pendingNotifications) {
       try {
         // Attempt to sync with server
-        const response = await fetch('/api/notifications/sync', {
-          method: 'POST',
+        const response = await fetch("/api/notifications/sync", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify(notification)
-        })
+          body: JSON.stringify(notification),
+        });
 
         if (response.ok) {
           // Remove from pending list
-          await removePendingNotification(notification.id)
+          await removePendingNotification(notification.id);
         }
       } catch (error) {
-        console.error('[SW] Error syncing notification:', error)
+        console.error("[SW] Error syncing notification:", error);
       }
     }
 
-    console.log('[SW] Notification sync completed')
+    console.log("[SW] Notification sync completed");
   } catch (error) {
-    console.error('[SW] Error during notification sync:', error)
+    console.error("[SW] Error during notification sync:", error);
   }
 }
 
@@ -621,63 +619,60 @@ async function syncPendingNotifications() {
 async function getPendingNotifications() {
   // This would typically use IndexedDB
   // For now, returning empty array
-  return []
+  return [];
 }
 
 async function removePendingNotification(notificationId) {
   // This would typically remove from IndexedDB
-  console.log('[SW] Removing pending notification:', notificationId)
+  console.log("[SW] Removing pending notification:", notificationId);
 }
 
 // Handle messages from main thread
-self.addEventListener('message', (event) => {
-  console.log('[SW] Message received:', event.data)
+self.addEventListener("message", (event) => {
+  console.log("[SW] Message received:", event.data);
 
-  const { type, data } = event.data
+  const { type, data } = event.data;
 
   switch (type) {
-    case 'SKIP_WAITING':
-      self.skipWaiting()
-      break
-    
-    case 'GET_VERSION':
-      event.ports[0].postMessage({
-        type: 'VERSION',
-        version: CACHE_NAME
-      })
-      break
+    case "SKIP_WAITING":
+      self.skipWaiting();
+      break;
 
-    case 'CLEAR_CACHE':
+    case "GET_VERSION":
+      event.ports[0].postMessage({
+        type: "VERSION",
+        version: CACHE_NAME,
+      });
+      break;
+
+    case "CLEAR_CACHE":
       caches.delete(CACHE_NAME).then(() => {
         event.ports[0].postMessage({
-          type: 'CACHE_CLEARED',
-          success: true
-        })
-      })
-      break
+          type: "CACHE_CLEARED",
+          success: true,
+        });
+      });
+      break;
 
-    case 'UPDATE_NOTIFICATION_PREFERENCES':
+    case "UPDATE_NOTIFICATION_PREFERENCES":
       // Handle notification preference updates
-      updateNotificationPreferences(data)
-      break
+      updateNotificationPreferences(data);
+      break;
 
     default:
-      console.log('[SW] Unknown message type:', type)
+      console.log("[SW] Unknown message type:", type);
   }
-})
+});
 
 async function updateNotificationPreferences(preferences) {
-  console.log('[SW] Updating notification preferences:', preferences)
+  console.log("[SW] Updating notification preferences:", preferences);
   // Store preferences for offline use
   try {
-    const cache = await caches.open('preferences')
-    await cache.put(
-      '/preferences/notifications',
-      new Response(JSON.stringify(preferences))
-    )
+    const cache = await caches.open("preferences");
+    await cache.put("/preferences/notifications", new Response(JSON.stringify(preferences)));
   } catch (error) {
-    console.error('[SW] Error storing preferences:', error)
+    console.error("[SW] Error storing preferences:", error);
   }
 }
 
-console.log('[SW] Service Worker loaded successfully')
+console.log("[SW] Service Worker loaded successfully");

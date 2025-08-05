@@ -1,241 +1,252 @@
 /**
  * Analytics Export Utility Hook for NeonPro
- * 
+ *
  * Specialized hook for handling analytics data export across different formats:
  * - CSV exports for raw data analysis
  * - Excel exports with formatted charts and tables
  * - PDF reports with visualizations and insights
  * - JSON exports for API integration
- * 
+ *
  * Provides unified export interface for all analytics components.
  */
 
-import { useState, useCallback } from 'react'
-import { useMutation } from '@tanstack/react-query'
+import type { useState, useCallback } from "react";
+import type { useMutation } from "@tanstack/react-query";
 
 // Types for export configuration
 export interface ExportConfig {
-  type: 'cohort' | 'forecast' | 'insights' | 'dashboard' | 'realtime'
-  format: 'csv' | 'excel' | 'pdf' | 'json'
-  data: any
+  type: "cohort" | "forecast" | "insights" | "dashboard" | "realtime";
+  format: "csv" | "excel" | "pdf" | "json";
+  data: any;
   options?: {
-    includeCharts?: boolean
-    includeMetadata?: boolean
-    dateRange?: { start: string; end: string }
-    filename?: string
-    template?: 'standard' | 'executive' | 'technical'
-  }
+    includeCharts?: boolean;
+    includeMetadata?: boolean;
+    dateRange?: { start: string; end: string };
+    filename?: string;
+    template?: "standard" | "executive" | "technical";
+  };
 }
 
 export interface ExportState {
-  isExporting: boolean
-  progress: number
-  error: string | null
-  lastExport: Date | null
+  isExporting: boolean;
+  progress: number;
+  error: string | null;
+  lastExport: Date | null;
 }
 
 export interface ExportActions {
-  exportData: (config: ExportConfig) => Promise<void>
-  exportMultiple: (configs: ExportConfig[]) => Promise<void>
-  generateReport: (type: 'executive' | 'technical', data: any) => Promise<void>
-  clearError: () => void
+  exportData: (config: ExportConfig) => Promise<void>;
+  exportMultiple: (configs: ExportConfig[]) => Promise<void>;
+  generateReport: (type: "executive" | "technical", data: any) => Promise<void>;
+  clearError: () => void;
 }
 
 /**
  * Main analytics export hook
  */
 export function useAnalyticsExport(): ExportState & ExportActions {
-  const [progress, setProgress] = useState(0)
-  const [error, setError] = useState<string | null>(null)
-  const [lastExport, setLastExport] = useState<Date | null>(null)
+  const [progress, setProgress] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const [lastExport, setLastExport] = useState<Date | null>(null);
 
   // Single export mutation
   const exportMutation = useMutation({
     mutationFn: async (config: ExportConfig) => {
-      setProgress(0)
-      setError(null)
+      setProgress(0);
+      setError(null);
 
-      const response = await fetch('/api/analytics/export', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(config)
-      })
+      const response = await fetch("/api/analytics/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(config),
+      });
 
       if (!response.ok) {
-        throw new Error(`Export failed: ${response.statusText}`)
+        throw new Error(`Export failed: ${response.statusText}`);
       }
 
-      setProgress(50)
+      setProgress(50);
 
       // Handle different response types
-      let blob: Blob
-      let filename: string
+      let blob: Blob;
+      let filename: string;
 
-      if (config.format === 'json') {
-        const data = await response.json()
-        blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
-        filename = config.options?.filename || `${config.type}-export.json`
+      if (config.format === "json") {
+        const data = await response.json();
+        blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        filename = config.options?.filename || `${config.type}-export.json`;
       } else {
-        blob = await response.blob()
-        const contentDisposition = response.headers.get('Content-Disposition')
+        blob = await response.blob();
+        const contentDisposition = response.headers.get("Content-Disposition");
         filename = contentDisposition
-          ? contentDisposition.split('filename=')[1]?.replace(/"/g, '')
-          : config.options?.filename || `${config.type}-export.${config.format}`
+          ? contentDisposition.split("filename=")[1]?.replace(/"/g, "")
+          : config.options?.filename || `${config.type}-export.${config.format}`;
       }
 
-      setProgress(100)
+      setProgress(100);
 
       // Trigger download
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = filename
-      document.body.appendChild(a)
-      a.click()
-      window.URL.revokeObjectURL(url)
-      document.body.removeChild(a)
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
 
-      setLastExport(new Date())
-      setProgress(0)
+      setLastExport(new Date());
+      setProgress(0);
     },
     onError: (err) => {
-      setError(err instanceof Error ? err.message : 'Export failed')
-      setProgress(0)
-    }
-  })
+      setError(err instanceof Error ? err.message : "Export failed");
+      setProgress(0);
+    },
+  });
 
   // Multiple export mutation
   const multipleExportMutation = useMutation({
     mutationFn: async (configs: ExportConfig[]) => {
-      setProgress(0)
-      setError(null)
+      setProgress(0);
+      setError(null);
 
-      const totalConfigs = configs.length
-      const results = []
+      const totalConfigs = configs.length;
+      const results = [];
 
       for (let i = 0; i < totalConfigs; i++) {
-        const config = configs[i]
-        setProgress((i / totalConfigs) * 100)
+        const config = configs[i];
+        setProgress((i / totalConfigs) * 100);
 
         try {
-          const response = await fetch('/api/analytics/export', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(config)
-          })
+          const response = await fetch("/api/analytics/export", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(config),
+          });
 
           if (!response.ok) {
-            throw new Error(`Export ${i + 1} failed: ${response.statusText}`)
+            throw new Error(`Export ${i + 1} failed: ${response.statusText}`);
           }
 
-          const blob = await response.blob()
-          const filename = config.options?.filename || `${config.type}-export-${i + 1}.${config.format}`
-          
-          results.push({ blob, filename, config })
+          const blob = await response.blob();
+          const filename =
+            config.options?.filename || `${config.type}-export-${i + 1}.${config.format}`;
+
+          results.push({ blob, filename, config });
         } catch (err) {
-          console.error(`Export ${i + 1} failed:`, err)
-          results.push({ error: err, config })
+          console.error(`Export ${i + 1} failed:`, err);
+          results.push({ error: err, config });
         }
       }
 
       // Download all successful exports
-      results.forEach(result => {
+      results.forEach((result) => {
         if (result.blob) {
-          const url = window.URL.createObjectURL(result.blob)
-          const a = document.createElement('a')
-          a.href = url
-          a.download = result.filename
-          document.body.appendChild(a)
-          a.click()
-          window.URL.revokeObjectURL(url)
-          document.body.removeChild(a)
+          const url = window.URL.createObjectURL(result.blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = result.filename;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
         }
-      })
+      });
 
-      const failedCount = results.filter(r => r.error).length
+      const failedCount = results.filter((r) => r.error).length;
       if (failedCount > 0) {
-        throw new Error(`${failedCount} of ${totalConfigs} exports failed`)
+        throw new Error(`${failedCount} of ${totalConfigs} exports failed`);
       }
 
-      setProgress(100)
-      setLastExport(new Date())
-      setTimeout(() => setProgress(0), 1000)
+      setProgress(100);
+      setLastExport(new Date());
+      setTimeout(() => setProgress(0), 1000);
     },
     onError: (err) => {
-      setError(err instanceof Error ? err.message : 'Multiple export failed')
-      setProgress(0)
-    }
-  })
+      setError(err instanceof Error ? err.message : "Multiple export failed");
+      setProgress(0);
+    },
+  });
 
   // Report generation mutation
   const reportMutation = useMutation({
-    mutationFn: async ({ type, data }: { type: 'executive' | 'technical', data: any }) => {
-      setProgress(0)
-      setError(null)
+    mutationFn: async ({ type, data }: { type: "executive" | "technical"; data: any }) => {
+      setProgress(0);
+      setError(null);
 
-      const response = await fetch('/api/analytics/generate-report', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/analytics/generate-report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           reportType: type,
           data,
-          format: 'pdf',
+          format: "pdf",
           includeCharts: true,
           includeInsights: true,
-          timestamp: new Date().toISOString()
-        })
-      })
+          timestamp: new Date().toISOString(),
+        }),
+      });
 
       if (!response.ok) {
-        throw new Error(`Report generation failed: ${response.statusText}`)
+        throw new Error(`Report generation failed: ${response.statusText}`);
       }
 
-      setProgress(75)
+      setProgress(75);
 
-      const blob = await response.blob()
-      const filename = `${type}-analytics-report-${new Date().toISOString().split('T')[0]}.pdf`
+      const blob = await response.blob();
+      const filename = `${type}-analytics-report-${new Date().toISOString().split("T")[0]}.pdf`;
 
-      setProgress(100)
+      setProgress(100);
 
       // Download report
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = filename
-      document.body.appendChild(a)
-      a.click()
-      window.URL.revokeObjectURL(url)
-      document.body.removeChild(a)
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
 
-      setLastExport(new Date())
-      setTimeout(() => setProgress(0), 1000)
+      setLastExport(new Date());
+      setTimeout(() => setProgress(0), 1000);
     },
     onError: (err) => {
-      setError(err instanceof Error ? err.message : 'Report generation failed')
-      setProgress(0)
-    }
-  })
+      setError(err instanceof Error ? err.message : "Report generation failed");
+      setProgress(0);
+    },
+  });
 
   // Actions
-  const exportData = useCallback(async (config: ExportConfig) => {
-    await exportMutation.mutateAsync(config)
-  }, [exportMutation])
+  const exportData = useCallback(
+    async (config: ExportConfig) => {
+      await exportMutation.mutateAsync(config);
+    },
+    [exportMutation],
+  );
 
-  const exportMultiple = useCallback(async (configs: ExportConfig[]) => {
-    await multipleExportMutation.mutateAsync(configs)
-  }, [multipleExportMutation])
+  const exportMultiple = useCallback(
+    async (configs: ExportConfig[]) => {
+      await multipleExportMutation.mutateAsync(configs);
+    },
+    [multipleExportMutation],
+  );
 
-  const generateReport = useCallback(async (type: 'executive' | 'technical', data: any) => {
-    await reportMutation.mutateAsync({ type, data })
-  }, [reportMutation])
+  const generateReport = useCallback(
+    async (type: "executive" | "technical", data: any) => {
+      await reportMutation.mutateAsync({ type, data });
+    },
+    [reportMutation],
+  );
 
   const clearError = useCallback(() => {
-    setError(null)
-  }, [])
+    setError(null);
+  }, []);
 
   return {
     // State
-    isExporting: exportMutation.isPending || multipleExportMutation.isPending || reportMutation.isPending,
+    isExporting:
+      exportMutation.isPending || multipleExportMutation.isPending || reportMutation.isPending,
     progress,
     error,
     lastExport,
@@ -244,77 +255,95 @@ export function useAnalyticsExport(): ExportState & ExportActions {
     exportData,
     exportMultiple,
     generateReport,
-    clearError
-  }
+    clearError,
+  };
 }
 
 /**
  * Hook for predefined export templates
  */
 export function useExportTemplates() {
-  const { exportData, generateReport } = useAnalyticsExport()
+  const { exportData, generateReport } = useAnalyticsExport();
 
   return {
     // Cohort analysis templates
-    exportCohortCSV: useCallback((data: any) => {
-      return exportData({
-        type: 'cohort',
-        format: 'csv',
-        data,
-        options: {
-          filename: `cohort-analysis-${new Date().toISOString().split('T')[0]}.csv`,
-          includeMetadata: true
-        }
-      })
-    }, [exportData]),
+    exportCohortCSV: useCallback(
+      (data: any) => {
+        return exportData({
+          type: "cohort",
+          format: "csv",
+          data,
+          options: {
+            filename: `cohort-analysis-${new Date().toISOString().split("T")[0]}.csv`,
+            includeMetadata: true,
+          },
+        });
+      },
+      [exportData],
+    ),
 
-    exportCohortExcel: useCallback((data: any) => {
-      return exportData({
-        type: 'cohort',
-        format: 'excel',
-        data,
-        options: {
-          filename: `cohort-analysis-${new Date().toISOString().split('T')[0]}.xlsx`,
-          includeCharts: true,
-          includeMetadata: true
-        }
-      })
-    }, [exportData]),
+    exportCohortExcel: useCallback(
+      (data: any) => {
+        return exportData({
+          type: "cohort",
+          format: "excel",
+          data,
+          options: {
+            filename: `cohort-analysis-${new Date().toISOString().split("T")[0]}.xlsx`,
+            includeCharts: true,
+            includeMetadata: true,
+          },
+        });
+      },
+      [exportData],
+    ),
 
     // Forecasting templates
-    exportForecastPDF: useCallback((data: any) => {
-      return exportData({
-        type: 'forecast',
-        format: 'pdf',
-        data,
-        options: {
-          filename: `forecast-report-${new Date().toISOString().split('T')[0]}.pdf`,
-          includeCharts: true,
-          template: 'technical'
-        }
-      })
-    }, [exportData]),
+    exportForecastPDF: useCallback(
+      (data: any) => {
+        return exportData({
+          type: "forecast",
+          format: "pdf",
+          data,
+          options: {
+            filename: `forecast-report-${new Date().toISOString().split("T")[0]}.pdf`,
+            includeCharts: true,
+            template: "technical",
+          },
+        });
+      },
+      [exportData],
+    ),
 
     // Dashboard templates
-    exportExecutiveDashboard: useCallback((data: any) => {
-      return generateReport('executive', data)
-    }, [generateReport]),
+    exportExecutiveDashboard: useCallback(
+      (data: any) => {
+        return generateReport("executive", data);
+      },
+      [generateReport],
+    ),
 
-    exportTechnicalDashboard: useCallback((data: any) => {
-      return generateReport('technical', data)
-    }, [generateReport]),
+    exportTechnicalDashboard: useCallback(
+      (data: any) => {
+        return generateReport("technical", data);
+      },
+      [generateReport],
+    ),
 
     // Insights templates
-    exportInsightsJSON: useCallback((data: any) => {
-      return exportData({
-        type: 'insights',
-        format: 'json',
-        data,
-        options: {
-          filename: `statistical-insights-${new Date().toISOString().split('T')[0]}.json`,
-          includeMetadata: true
-        }
-      })
-    }, [exportData])
-  }
+    exportInsightsJSON: useCallback(
+      (data: any) => {
+        return exportData({
+          type: "insights",
+          format: "json",
+          data,
+          options: {
+            filename: `statistical-insights-${new Date().toISOString().split("T")[0]}.json`,
+            includeMetadata: true,
+          },
+        });
+      },
+      [exportData],
+    ),
+  };
 }

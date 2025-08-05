@@ -1,15 +1,15 @@
 // Story 11.2: No-Show Prediction Overview Component Tests
 // Test suite for overview dashboard component
 
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import NoShowPredictionOverview from '@/components/dashboard/no-show-prediction/overview';
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import NoShowPredictionOverview from "@/components/dashboard/no-show-prediction/overview";
 
 // Mock fetch
 global.fetch = jest.fn();
 
 // Mock toast hook
-jest.mock('@/hooks/use-toast', () => ({
+jest.mock("@/hooks/use-toast", () => ({
   useToast: () => ({
     toast: jest.fn(),
   }),
@@ -24,26 +24,27 @@ const mockOverviewData = {
   cost_savings: 3500,
   recent_predictions: [
     {
-      id: 'pred-1',
-      patient_name: 'João Silva',
-      appointment_date: '2024-02-15T14:00:00Z',
+      id: "pred-1",
+      patient_name: "João Silva",
+      appointment_date: "2024-02-15T14:00:00Z",
       risk_score: 0.85,
-      intervention_status: 'pending'
+      intervention_status: "pending",
     },
     {
-      id: 'pred-2',
-      patient_name: 'Maria Santos',
-      appointment_date: '2024-02-16T10:00:00Z',
+      id: "pred-2",
+      patient_name: "Maria Santos",
+      appointment_date: "2024-02-16T10:00:00Z",
       risk_score: 0.92,
-      intervention_status: 'completed'
-    }
-  ]
+      intervention_status: "completed",
+    },
+  ],
 };
 
-describe('NoShowPredictionOverview', () => {
+describe("NoShowPredictionOverview", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });  it('should render overview metrics correctly', async () => {
+  });
+  it("should render overview metrics correctly", async () => {
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => mockOverviewData,
@@ -52,16 +53,16 @@ describe('NoShowPredictionOverview', () => {
     render(<NoShowPredictionOverview />);
 
     await waitFor(() => {
-      expect(screen.getByText('150')).toBeInTheDocument();
-      expect(screen.getByText('85.0%')).toBeInTheDocument();
-      expect(screen.getByText('12')).toBeInTheDocument();
-      expect(screen.getByText('8')).toBeInTheDocument();
-      expect(screen.getByText('R$ 15,000')).toBeInTheDocument();
-      expect(screen.getByText('R$ 3,500')).toBeInTheDocument();
+      expect(screen.getByText("150")).toBeInTheDocument();
+      expect(screen.getByText("85.0%")).toBeInTheDocument();
+      expect(screen.getByText("12")).toBeInTheDocument();
+      expect(screen.getByText("8")).toBeInTheDocument();
+      expect(screen.getByText("R$ 15,000")).toBeInTheDocument();
+      expect(screen.getByText("R$ 3,500")).toBeInTheDocument();
     });
   });
 
-  it('should display recent predictions', async () => {
+  it("should display recent predictions", async () => {
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => mockOverviewData,
@@ -70,34 +71,34 @@ describe('NoShowPredictionOverview', () => {
     render(<NoShowPredictionOverview />);
 
     await waitFor(() => {
-      expect(screen.getByText('João Silva')).toBeInTheDocument();
-      expect(screen.getByText('Maria Santos')).toBeInTheDocument();
-      expect(screen.getByText('85% risk')).toBeInTheDocument();
-      expect(screen.getByText('92% risk')).toBeInTheDocument();
-      expect(screen.getByText('pending')).toBeInTheDocument();
-      expect(screen.getByText('completed')).toBeInTheDocument();
+      expect(screen.getByText("João Silva")).toBeInTheDocument();
+      expect(screen.getByText("Maria Santos")).toBeInTheDocument();
+      expect(screen.getByText("85% risk")).toBeInTheDocument();
+      expect(screen.getByText("92% risk")).toBeInTheDocument();
+      expect(screen.getByText("pending")).toBeInTheDocument();
+      expect(screen.getByText("completed")).toBeInTheDocument();
     });
   });
 
-  it('should show loading state initially', () => {
+  it("should show loading state initially", () => {
     (fetch as jest.Mock).mockImplementation(() => new Promise(() => {}));
 
     render(<NoShowPredictionOverview />);
 
-    expect(screen.getAllByRole('progressbar')).toHaveLength(6);
+    expect(screen.getAllByRole("progressbar")).toHaveLength(6);
   });
 
-  it('should handle fetch errors gracefully', async () => {
-    (fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+  it("should handle fetch errors gracefully", async () => {
+    (fetch as jest.Mock).mockRejectedValueOnce(new Error("Network error"));
 
     render(<NoShowPredictionOverview />);
 
     await waitFor(() => {
-      expect(screen.getByText('No data available')).toBeInTheDocument();
+      expect(screen.getByText("No data available")).toBeInTheDocument();
     });
   });
 
-  it('should display quick action buttons', async () => {
+  it("should display quick action buttons", async () => {
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => mockOverviewData,
@@ -106,17 +107,17 @@ describe('NoShowPredictionOverview', () => {
     render(<NoShowPredictionOverview />);
 
     await waitFor(() => {
-      expect(screen.getByText('Run New Prediction')).toBeInTheDocument();
-      expect(screen.getByText('Model Settings')).toBeInTheDocument();
-      expect(screen.getByText('Export Report')).toBeInTheDocument();
-      expect(screen.getByText('Schedule Analysis')).toBeInTheDocument();
+      expect(screen.getByText("Run New Prediction")).toBeInTheDocument();
+      expect(screen.getByText("Model Settings")).toBeInTheDocument();
+      expect(screen.getByText("Export Report")).toBeInTheDocument();
+      expect(screen.getByText("Schedule Analysis")).toBeInTheDocument();
     });
   });
 
-  it('should handle empty recent predictions', async () => {
+  it("should handle empty recent predictions", async () => {
     const emptyData = {
       ...mockOverviewData,
-      recent_predictions: []
+      recent_predictions: [],
     };
 
     (fetch as jest.Mock).mockResolvedValueOnce({
@@ -127,7 +128,7 @@ describe('NoShowPredictionOverview', () => {
     render(<NoShowPredictionOverview />);
 
     await waitFor(() => {
-      expect(screen.getByText('No high-risk predictions found')).toBeInTheDocument();
+      expect(screen.getByText("No high-risk predictions found")).toBeInTheDocument();
     });
   });
 });

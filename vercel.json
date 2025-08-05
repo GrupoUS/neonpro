@@ -1,21 +1,70 @@
 {
   "version": 2,
-  "buildCommand": "turbo build --filter=@neonpro/web",
-  "installCommand": "npm install",
-  "framework": "nextjs",
-  "outputDirectory": "apps/neonpro-web/.next",
-  "rootDirectory": "apps/neonpro-web",
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD ./",
-  "functions": {
-    "apps/neonpro-web/src/app/api/**/*.ts": {
-      "runtime": "nodejs20.x",
-      "maxDuration": 30
-    }
+  "name": "neonpro-healthcare-api",
+  "alias": ["api.neonpro.health", "neonpro-api"],
+  "regions": ["gru1", "iad1"],
+  "env": {
+    "NODE_ENV": "production",
+    "API_VERSION": "v3",
+    "HEALTHCARE_MODE": "true",
+    "LGPD_COMPLIANCE": "true",
+    "ANVISA_COMPLIANCE": "true"
   },
-  "rewrites": [
+  "builds": [
     {
-      "source": "/api/trpc/(.*)",
-      "destination": "/api/trpc/$1"
+      "src": "apps/neonpro-api/src/server.ts",
+      "use": "@vercel/node",
+      "config": {
+        "maxLambdaSize": "50mb",
+        "nodejs18.x": true
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/v1/(.*)",
+      "dest": "/apps/neonpro-api/src/server.ts",
+      "headers": {
+        "x-api-version": "v1",
+        "cache-control": "s-maxage=60, stale-while-revalidate"
+      }
+    },
+    {
+      "src": "/api/v2/(.*)",
+      "dest": "/apps/neonpro-api/src/server.ts",
+      "headers": {
+        "x-api-version": "v2",
+        "cache-control": "s-maxage=30, stale-while-revalidate"
+      }
+    },
+    {
+      "src": "/api/v3/(.*)",
+      "dest": "/apps/neonpro-api/src/server.ts",
+      "headers": {
+        "x-api-version": "v3",
+        "cache-control": "s-maxage=10, stale-while-revalidate"
+      }
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/apps/neonpro-api/src/server.ts",
+      "headers": {
+        "x-api-version": "v3"
+      }
+    },
+    {
+      "src": "/health/(.*)",
+      "dest": "/apps/neonpro-api/src/server.ts",
+      "headers": {
+        "cache-control": "no-cache"
+      }
+    },
+    {
+      "src": "/metrics",
+      "dest": "/apps/neonpro-api/src/server.ts",
+      "headers": {
+        "cache-control": "no-cache"
+      }
     }
   ],
   "headers": [
@@ -24,25 +73,63 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "*"
+          "value": "https://neonpro.health"
         },
         {
           "key": "Access-Control-Allow-Methods",
-          "value": "GET, POST, PUT, DELETE, OPTIONS"
+          "value": "GET, POST, PUT, PATCH, DELETE, OPTIONS"
         },
         {
           "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization"
+          "value": "Content-Type, Authorization, x-tenant-id, x-api-version"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
         },
         {
           "key": "X-Content-Type-Options",
           "value": "nosniff"
         },
         {
-          "key": "X-Frame-Options",
-          "value": "DENY"
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
         }
       ]
+    }
+  ],
+  "functions": {
+    "apps/neonpro-api/src/server.ts": {
+      "maxDuration": 30,
+      "regions": ["gru1", "iad1"],
+      "environment": {
+        "SUPABASE_URL": "@supabase-url",
+        "SUPABASE_ANON_KEY": "@supabase-anon-key",
+        "SUPABASE_SERVICE_KEY": "@supabase-service-key",
+        "REDIS_URL": "@redis-url",
+        "JWT_SECRET": "@jwt-secret",
+        "ENCRYPTION_KEY": "@encryption-key",
+        "LGPD_AUDIT_WEBHOOK": "@lgpd-audit-webhook",
+        "ANVISA_API_KEY": "@anvisa-api-key"
+      }
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/backup",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/cleanup",
+      "schedule": "0 3 * * 0"
+    },
+    {
+      "path": "/api/cron/compliance-check",
+      "schedule": "0 1 * * *"
     }
   ]
 }

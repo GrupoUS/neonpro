@@ -1,26 +1,38 @@
 /**
  * TASK-003: Business Logic Enhancement
  * Intelligent Invoice Generation Component
- * 
+ *
  * AI-powered invoice generation with template customization,
  * automated calculations, and compliance checking.
  */
 
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, Download, Send, Eye, Save } from 'lucide-react';
-import { format } from 'date-fns';
-import { pt } from 'date-fns/locale';
-import { useToast } from '@/components/ui/use-toast';
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Badge } from "@/components/ui/badge";
+import type { Calendar } from "@/components/ui/calendar";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type { CalendarIcon, Download, Send, Eye, Save } from "lucide-react";
+import type { format } from "date-fns";
+import type { pt } from "date-fns/locale";
+import type { useToast } from "@/components/ui/use-toast";
 
 interface InvoiceItem {
   id: string;
@@ -36,7 +48,7 @@ interface InvoiceItem {
 interface InvoiceTemplate {
   id: string;
   name: string;
-  type: 'consultation' | 'procedure' | 'package' | 'custom';
+  type: "consultation" | "procedure" | "package" | "custom";
   items: InvoiceItem[];
   terms: string;
   notes: string;
@@ -56,10 +68,10 @@ interface IntelligentInvoicingProps {
   onInvoiceGenerated?: (invoiceId: string) => void;
 }
 
-export function IntelligentInvoicing({ 
-  patientId, 
-  appointmentId, 
-  onInvoiceGenerated 
+export function IntelligentInvoicing({
+  patientId,
+  appointmentId,
+  onInvoiceGenerated,
 }: IntelligentInvoicingProps) {
   const [patient, setPatient] = useState<Patient | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<InvoiceTemplate | null>(null);
@@ -69,75 +81,75 @@ export function IntelligentInvoicing({
   const [taxRate, setTaxRate] = useState(0);
   const [isGenerating, setIsGenerating] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
-  
+
   const { toast } = useToast();
 
   // Mock templates - In production, these would come from the database
   const templates: InvoiceTemplate[] = [
     {
-      id: '1',
-      name: 'Consulta Dermatológica',
-      type: 'consultation',
+      id: "1",
+      name: "Consulta Dermatológica",
+      type: "consultation",
       items: [
         {
-          id: '1',
-          serviceId: 'srv_001',
-          serviceName: 'Consulta Dermatológica',
+          id: "1",
+          serviceId: "srv_001",
+          serviceName: "Consulta Dermatológica",
           quantity: 1,
-          unitPrice: 200.00,
+          unitPrice: 200.0,
           discount: 0,
           taxRate: 0,
-          total: 200.00
-        }
+          total: 200.0,
+        },
       ],
-      terms: 'Pagamento à vista ou parcelado em até 3x',
-      notes: 'Consulta médica especializada'
+      terms: "Pagamento à vista ou parcelado em até 3x",
+      notes: "Consulta médica especializada",
     },
     {
-      id: '2',
-      name: 'Procedimento Estético Completo',
-      type: 'procedure',
+      id: "2",
+      name: "Procedimento Estético Completo",
+      type: "procedure",
       items: [
         {
-          id: '1',
-          serviceId: 'srv_002',
-          serviceName: 'Botox Facial',
+          id: "1",
+          serviceId: "srv_002",
+          serviceName: "Botox Facial",
           quantity: 1,
-          unitPrice: 800.00,
+          unitPrice: 800.0,
           discount: 0,
           taxRate: 0,
-          total: 800.00
+          total: 800.0,
         },
         {
-          id: '2',
-          serviceId: 'srv_003',
-          serviceName: 'Preenchimento Labial',
+          id: "2",
+          serviceId: "srv_003",
+          serviceName: "Preenchimento Labial",
           quantity: 1,
-          unitPrice: 600.00,
+          unitPrice: 600.0,
           discount: 0,
           taxRate: 0,
-          total: 600.00
-        }
+          total: 600.0,
+        },
       ],
-      terms: 'Pagamento parcelado em até 6x sem juros',
-      notes: 'Procedimentos realizados conforme protocolo clínico'
-    }
+      terms: "Pagamento parcelado em até 6x sem juros",
+      notes: "Procedimentos realizados conforme protocolo clínico",
+    },
   ];
 
   // AI-powered template recommendation based on patient history and appointment
   const recommendTemplate = async () => {
     if (!patientId && !appointmentId) return;
-    
+
     setIsGenerating(true);
     try {
       // Simulate AI analysis
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       // Mock AI recommendation - In production, this would use ML algorithms
       const recommendedTemplate = templates[0];
       setSelectedTemplate(recommendedTemplate);
       setInvoiceItems([...recommendedTemplate.items]);
-      
+
       toast({
         title: "Template Recomendado",
         description: `AI recomendou: ${recommendedTemplate.name}`,
@@ -160,12 +172,12 @@ export function IntelligentInvoicing({
     const taxableAmount = subtotal - discountAmount;
     const taxAmount = taxableAmount * (taxRate / 100);
     const total = taxableAmount + taxAmount;
-    
+
     return {
       subtotal,
       discountAmount,
       taxAmount,
-      total
+      total,
     };
   };
 
@@ -183,7 +195,7 @@ export function IntelligentInvoicing({
     setIsGenerating(true);
     try {
       const totals = calculateTotals();
-      
+
       // Simulate invoice generation API call
       const invoiceData = {
         patientId: patient.id,
@@ -195,21 +207,20 @@ export function IntelligentInvoicing({
         ...totals,
         template: selectedTemplate?.name,
         generatedAt: new Date().toISOString(),
-        status: 'pending'
+        status: "pending",
       };
 
       // Mock API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       const invoiceId = `INV-${Date.now()}`;
-      
+
       toast({
         title: "Fatura Gerada",
         description: `Fatura ${invoiceId} criada com sucesso`,
       });
-      
+
       onInvoiceGenerated?.(invoiceId);
-      
     } catch (error) {
       toast({
         title: "Erro na Geração",
@@ -240,16 +251,18 @@ export function IntelligentInvoicing({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="patient">Paciente</Label>
-              <Select onValueChange={(value) => {
-                // Mock patient data
-                setPatient({
-                  id: value,
-                  name: 'Maria Silva',
-                  email: 'maria@email.com',
-                  cpf: '123.456.789-00',
-                  address: 'Rua das Flores, 123'
-                });
-              }}>
+              <Select
+                onValueChange={(value) => {
+                  // Mock patient data
+                  setPatient({
+                    id: value,
+                    name: "Maria Silva",
+                    email: "maria@email.com",
+                    cpf: "123.456.789-00",
+                    address: "Rua das Flores, 123",
+                  });
+                }}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecionar paciente" />
                 </SelectTrigger>
@@ -271,12 +284,7 @@ export function IntelligentInvoicing({
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={dueDate}
-                    onSelect={setDueDate}
-                    initialFocus
-                  />
+                  <Calendar mode="single" selected={dueDate} onSelect={setDueDate} initialFocus />
                 </PopoverContent>
               </Popover>
             </div>
@@ -286,23 +294,25 @@ export function IntelligentInvoicing({
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <Label>Template de Fatura</Label>
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={recommendTemplate}
                 disabled={isGenerating}
               >
-                {isGenerating ? 'Analisando...' : 'Recomendar com AI'}
+                {isGenerating ? "Analisando..." : "Recomendar com AI"}
               </Button>
             </div>
-            
-            <Select onValueChange={(templateId) => {
-              const template = templates.find(t => t.id === templateId);
-              if (template) {
-                setSelectedTemplate(template);
-                setInvoiceItems([...template.items]);
-              }
-            }}>
+
+            <Select
+              onValueChange={(templateId) => {
+                const template = templates.find((t) => t.id === templateId);
+                if (template) {
+                  setSelectedTemplate(template);
+                  setInvoiceItems([...template.items]);
+                }
+              }}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Selecionar template" />
               </SelectTrigger>
@@ -326,7 +336,10 @@ export function IntelligentInvoicing({
               <div className="border rounded-lg">
                 <div className="p-4 space-y-4">
                   {invoiceItems.map((item, index) => (
-                    <div key={item.id} className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                    <div
+                      key={item.id}
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded"
+                    >
                       <div>
                         <p className="font-medium">{item.serviceName}</p>
                         <p className="text-sm text-gray-600">
@@ -399,25 +412,25 @@ export function IntelligentInvoicing({
 
           {/* Actions */}
           <div className="flex flex-wrap gap-2">
-            <Button 
+            <Button
               onClick={generateInvoice}
               disabled={isGenerating || !patient || invoiceItems.length === 0}
               className="flex-1 sm:flex-none"
             >
               <Send className="mr-2 h-4 w-4" />
-              {isGenerating ? 'Gerando...' : 'Gerar Fatura'}
+              {isGenerating ? "Gerando..." : "Gerar Fatura"}
             </Button>
-            
+
             <Button variant="outline" onClick={() => setPreviewMode(true)}>
               <Eye className="mr-2 h-4 w-4" />
               Visualizar
             </Button>
-            
+
             <Button variant="outline">
               <Save className="mr-2 h-4 w-4" />
               Salvar Rascunho
             </Button>
-            
+
             <Button variant="outline">
               <Download className="mr-2 h-4 w-4" />
               Exportar PDF

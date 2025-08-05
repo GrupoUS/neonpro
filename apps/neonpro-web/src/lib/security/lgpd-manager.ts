@@ -17,18 +17,20 @@ export interface DataProcessingLog {
 }
 
 export class LGPDManager {
-  static async recordConsent(consent: Omit<LGPDConsent, 'timestamp'>): Promise<LGPDConsent> {
+  static async recordConsent(consent: Omit<LGPDConsent, "timestamp">): Promise<LGPDConsent> {
     return {
       ...consent,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
-  static async logDataProcessing(log: Omit<DataProcessingLog, 'id' | 'timestamp'>): Promise<DataProcessingLog> {
+  static async logDataProcessing(
+    log: Omit<DataProcessingLog, "id" | "timestamp">,
+  ): Promise<DataProcessingLog> {
     return {
       id: Math.random().toString(36),
       timestamp: new Date(),
-      ...log
+      ...log,
     };
   }
 
@@ -47,7 +49,7 @@ export class LGPDManager {
     return {
       userId,
       data: {},
-      generatedAt: new Date().toISOString()
+      generatedAt: new Date().toISOString(),
     };
   }
 }

@@ -1,9 +1,9 @@
 // lib/utils/logger.ts
 export enum LogLevel {
-  ERROR = 'error',
-  WARN = 'warn',
-  INFO = 'info',
-  DEBUG = 'debug'
+  ERROR = "error",
+  WARN = "warn",
+  INFO = "info",
+  DEBUG = "debug",
 }
 
 export interface LogEntry {
@@ -19,9 +19,9 @@ export class Logger {
       level,
       message,
       timestamp: new Date(),
-      metadata
+      metadata,
     };
-    
+
     console.log(JSON.stringify(entry));
   }
 

@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import type { createClient } from "@supabase/supabase-js";
 import type {
   KPIMetric,
   KPIAlert,
@@ -15,15 +15,12 @@ import type {
   KPIFilter,
   DateRange,
   APIResponse,
-  PerformanceMetrics
-} from './types';
-import { API_CONFIG, API_ENDPOINTS, CACHE_KEYS } from './config';
+  PerformanceMetrics,
+} from "./types";
+import type { API_CONFIG, API_ENDPOINTS, CACHE_KEYS } from "./config";
 
 // Supabase client
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_ANON_KEY!
-);
+const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
 
 // Cache implementation
 class CacheManager {
@@ -33,7 +30,7 @@ class CacheManager {
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
-      ttl
+      ttl,
     });
   }
 
@@ -65,7 +62,7 @@ class APIClient {
   private async request<T>(
     endpoint: string,
     options: RequestInit = {},
-    retries: number = API_CONFIG.retryAttempts
+    retries: number = API_CONFIG.retryAttempts,
   ): Promise<APIResponse<T>> {
     const url = `${API_CONFIG.baseUrl}${endpoint}`;
     const controller = new AbortController();
@@ -76,9 +73,9 @@ class APIClient {
         ...options,
         signal: controller.signal,
         headers: {
-          'Content-Type': 'application/json',
-          ...options.headers
-        }
+          "Content-Type": "application/json",
+          ...options.headers,
+        },
       });
 
       clearTimeout(timeoutId);
@@ -92,21 +89,21 @@ class APIClient {
         data,
         success: true,
         error: null,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       clearTimeout(timeoutId);
-      
-      if (retries > 0 && error instanceof Error && error.name !== 'AbortError') {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+
+      if (retries > 0 && error instanceof Error && error.name !== "AbortError") {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         return this.request<T>(endpoint, options, retries - 1);
       }
 
       return {
         data: null,
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date().toISOString()
+        error: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -126,21 +123,21 @@ class APIClient {
 
   async post<T>(endpoint: string, data?: any): Promise<APIResponse<T>> {
     return this.request<T>(endpoint, {
-      method: 'POST',
-      body: data ? JSON.stringify(data) : undefined
+      method: "POST",
+      body: data ? JSON.stringify(data) : undefined,
     });
   }
 
   async put<T>(endpoint: string, data?: any): Promise<APIResponse<T>> {
     return this.request<T>(endpoint, {
-      method: 'PUT',
-      body: data ? JSON.stringify(data) : undefined
+      method: "PUT",
+      body: data ? JSON.stringify(data) : undefined,
     });
   }
 
   async delete<T>(endpoint: string): Promise<APIResponse<T>> {
     return this.request<T>(endpoint, {
-      method: 'DELETE'
+      method: "DELETE",
     });
   }
 }
@@ -152,10 +149,10 @@ export class FinancialKPIService {
   // Fetch KPI data with caching
   static async getKPIData(
     filters: KPIFilter,
-    useCache: boolean = true
+    useCache: boolean = true,
   ): Promise<APIResponse<KPIMetric[]>> {
     const cacheKey = `${CACHE_KEYS.KPI_DATA}_${JSON.stringify(filters)}`;
-    
+
     if (useCache) {
       const cached = cache.get<KPIMetric[]>(cacheKey);
       if (cached) {
@@ -163,7 +160,7 @@ export class FinancialKPIService {
           data: cached,
           success: true,
           error: null,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       }
     }
@@ -173,7 +170,7 @@ export class FinancialKPIService {
     }
 
     const response = await apiClient.get<KPIMetric[]>(API_ENDPOINTS.KPI_DATA, filters);
-    
+
     if (response.success && response.data) {
       cache.set(cacheKey, response.data);
     }
@@ -182,9 +179,7 @@ export class FinancialKPIService {
   }
 
   // Fetch alerts
-  static async getAlerts(
-    filters?: Partial<KPIFilter>
-  ): Promise<APIResponse<KPIAlert[]>> {
+  static async getAlerts(filters?: Partial<KPIFilter>): Promise<APIResponse<KPIAlert[]>> {
     if (API_CONFIG.enableMocking) {
       return this.getMockAlerts();
     }
@@ -193,9 +188,7 @@ export class FinancialKPIService {
   }
 
   // Fetch benchmarks
-  static async getBenchmarks(
-    kpiIds: string[]
-  ): Promise<APIResponse<KPIBenchmark[]>> {
+  static async getBenchmarks(kpiIds: string[]): Promise<APIResponse<KPIBenchmark[]>> {
     if (API_CONFIG.enableMocking) {
       return this.getMockBenchmarks(kpiIds);
     }
@@ -206,7 +199,7 @@ export class FinancialKPIService {
   // Fetch forecasts
   static async getForecasts(
     kpiIds: string[],
-    horizon: number = 30
+    horizon: number = 30,
   ): Promise<APIResponse<KPIForecast[]>> {
     if (API_CONFIG.enableMocking) {
       return this.getMockForecasts(kpiIds, horizon);
@@ -216,185 +209,181 @@ export class FinancialKPIService {
   }
 
   // Export data
-  static async exportData(
-    options: ExportOptions
-  ): Promise<APIResponse<{ downloadUrl: string }>> {
+  static async exportData(options: ExportOptions): Promise<APIResponse<{ downloadUrl: string }>> {
     return apiClient.post<{ downloadUrl: string }>(API_ENDPOINTS.EXPORT, options);
   }
 
   // Share report
-  static async shareReport(
-    options: ShareOptions
-  ): Promise<APIResponse<{ shareUrl: string }>> {
+  static async shareReport(options: ShareOptions): Promise<APIResponse<{ shareUrl: string }>> {
     return apiClient.post<{ shareUrl: string }>(API_ENDPOINTS.SHARE, options);
   }
 
   // Mock data generators
   private static async getMockKPIData(filters: KPIFilter): Promise<APIResponse<KPIMetric[]>> {
-    await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API delay
+    await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate API delay
 
     const mockData: KPIMetric[] = [
       {
-        id: 'total-revenue',
-        name: 'Receita Total',
+        id: "total-revenue",
+        name: "Receita Total",
         value: 125000,
         previousValue: 118000,
         target: 130000,
-        unit: 'currency',
-        trend: 'up',
+        unit: "currency",
+        trend: "up",
         changePercent: 5.93,
-        status: 'good',
+        status: "good",
         lastUpdated: new Date(),
-        category: 'revenue',
-        description: 'Receita total do período selecionado'
+        category: "revenue",
+        description: "Receita total do período selecionado",
       },
       {
-        id: 'gross-margin',
-        name: 'Margem Bruta',
+        id: "gross-margin",
+        name: "Margem Bruta",
         value: 38.5,
         previousValue: 36.2,
         target: 40,
-        unit: 'percentage',
-        trend: 'up',
+        unit: "percentage",
+        trend: "up",
         changePercent: 6.35,
-        status: 'good',
+        status: "good",
         lastUpdated: new Date(),
-        category: 'profitability',
-        description: 'Margem bruta de lucro'
+        category: "profitability",
+        description: "Margem bruta de lucro",
       },
       {
-        id: 'cash-flow',
-        name: 'Fluxo de Caixa',
+        id: "cash-flow",
+        name: "Fluxo de Caixa",
         value: 45000,
         previousValue: 42000,
         target: 50000,
-        unit: 'currency',
-        trend: 'up',
+        unit: "currency",
+        trend: "up",
         changePercent: 7.14,
-        status: 'warning',
+        status: "warning",
         lastUpdated: new Date(),
-        category: 'cash-flow',
-        description: 'Fluxo de caixa líquido'
+        category: "cash-flow",
+        description: "Fluxo de caixa líquido",
       },
       {
-        id: 'utilization-rate',
-        name: 'Taxa de Utilização',
+        id: "utilization-rate",
+        name: "Taxa de Utilização",
         value: 82.3,
         previousValue: 79.1,
         target: 85,
-        unit: 'percentage',
-        trend: 'up',
+        unit: "percentage",
+        trend: "up",
         changePercent: 4.04,
-        status: 'good',
+        status: "good",
         lastUpdated: new Date(),
-        category: 'efficiency',
-        description: 'Taxa de utilização dos recursos'
-      }
+        category: "efficiency",
+        description: "Taxa de utilização dos recursos",
+      },
     ];
 
     return {
       data: mockData,
       success: true,
       error: null,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
   private static async getMockAlerts(): Promise<APIResponse<KPIAlert[]>> {
     const mockAlerts: KPIAlert[] = [
       {
-        id: 'alert-1',
-        kpiId: 'cash-flow',
-        title: 'Fluxo de Caixa Abaixo da Meta',
-        message: 'O fluxo de caixa está 10% abaixo da meta mensal',
-        severity: 'warning',
+        id: "alert-1",
+        kpiId: "cash-flow",
+        title: "Fluxo de Caixa Abaixo da Meta",
+        message: "O fluxo de caixa está 10% abaixo da meta mensal",
+        severity: "warning",
         isRead: false,
         createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
         threshold: 50000,
-        currentValue: 45000
+        currentValue: 45000,
       },
       {
-        id: 'alert-2',
-        kpiId: 'utilization-rate',
-        title: 'Excelente Taxa de Utilização',
-        message: 'Taxa de utilização superou a meta em 3%',
-        severity: 'info',
+        id: "alert-2",
+        kpiId: "utilization-rate",
+        title: "Excelente Taxa de Utilização",
+        message: "Taxa de utilização superou a meta em 3%",
+        severity: "info",
         isRead: true,
         createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 hours ago
         threshold: 80,
-        currentValue: 82.3
-      }
+        currentValue: 82.3,
+      },
     ];
 
     return {
       data: mockAlerts,
       success: true,
       error: null,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
   private static async getMockBenchmarks(kpiIds: string[]): Promise<APIResponse<KPIBenchmark[]>> {
     const mockBenchmarks: KPIBenchmark[] = [
       {
-        id: 'benchmark-1',
-        kpiId: 'total-revenue',
-        industry: 'healthcare',
-        segment: 'dental-clinic',
+        id: "benchmark-1",
+        kpiId: "total-revenue",
+        industry: "healthcare",
+        segment: "dental-clinic",
         percentile25: 80000,
         percentile50: 120000,
         percentile75: 180000,
         percentile90: 250000,
-        source: 'Industry Report 2024',
-        lastUpdated: new Date()
+        source: "Industry Report 2024",
+        lastUpdated: new Date(),
       },
       {
-        id: 'benchmark-2',
-        kpiId: 'gross-margin',
-        industry: 'healthcare',
-        segment: 'dental-clinic',
+        id: "benchmark-2",
+        kpiId: "gross-margin",
+        industry: "healthcare",
+        segment: "dental-clinic",
         percentile25: 30,
         percentile50: 38,
         percentile75: 45,
         percentile90: 55,
-        source: 'Industry Report 2024',
-        lastUpdated: new Date()
-      }
+        source: "Industry Report 2024",
+        lastUpdated: new Date(),
+      },
     ];
 
     return {
-      data: mockBenchmarks.filter(b => kpiIds.includes(b.kpiId)),
+      data: mockBenchmarks.filter((b) => kpiIds.includes(b.kpiId)),
       success: true,
       error: null,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
   private static async getMockForecasts(
     kpiIds: string[],
-    horizon: number
+    horizon: number,
   ): Promise<APIResponse<KPIForecast[]>> {
     const mockForecasts: KPIForecast[] = [
       {
-        id: 'forecast-1',
-        kpiId: 'total-revenue',
+        id: "forecast-1",
+        kpiId: "total-revenue",
         predictions: Array.from({ length: horizon }, (_, i) => ({
           date: new Date(Date.now() + (i + 1) * 24 * 60 * 60 * 1000),
           value: 125000 + Math.random() * 20000 - 10000,
-          confidence: 0.85 - (i * 0.01)
+          confidence: 0.85 - i * 0.01,
         })),
-        model: 'ARIMA',
+        model: "ARIMA",
         accuracy: 0.92,
         lastTrained: new Date(),
-        createdAt: new Date()
-      }
+        createdAt: new Date(),
+      },
     ];
 
     return {
-      data: mockForecasts.filter(f => kpiIds.includes(f.kpiId)),
+      data: mockForecasts.filter((f) => kpiIds.includes(f.kpiId)),
       success: true,
       error: null,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }
@@ -402,23 +391,20 @@ export class FinancialKPIService {
 // Supabase Service for real-time data
 export class SupabaseKPIService {
   // Real-time KPI subscription
-  static subscribeToKPIUpdates(
-    callback: (data: KPIMetric[]) => void,
-    filters?: KPIFilter
-  ) {
+  static subscribeToKPIUpdates(callback: (data: KPIMetric[]) => void, filters?: KPIFilter) {
     return supabase
-      .channel('kpi-updates')
+      .channel("kpi-updates")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
-          table: 'financial_kpis'
+          event: "*",
+          schema: "public",
+          table: "financial_kpis",
         },
         (payload) => {
           // Process real-time updates
           this.processKPIUpdate(payload, callback, filters);
-        }
+        },
       )
       .subscribe();
   }
@@ -427,7 +413,7 @@ export class SupabaseKPIService {
   private static async processKPIUpdate(
     payload: any,
     callback: (data: KPIMetric[]) => void,
-    filters?: KPIFilter
+    filters?: KPIFilter,
   ) {
     try {
       // Fetch updated data
@@ -436,18 +422,18 @@ export class SupabaseKPIService {
         callback(response.data);
       }
     } catch (error) {
-      console.error('Error processing KPI update:', error);
+      console.error("Error processing KPI update:", error);
     }
   }
 
   // Fetch financial data from Supabase
   static async getFinancialData(
     dateRange: DateRange,
-    filters?: Partial<KPIFilter>
+    filters?: Partial<KPIFilter>,
   ): Promise<FinancialData | null> {
     try {
       const { data, error } = await supabase
-        .from('appointments')
+        .from("appointments")
         .select(`
           id,
           total_amount,
@@ -457,15 +443,15 @@ export class SupabaseKPIService {
           provider:providers(name),
           patient:patients(name)
         `)
-        .gte('created_at', dateRange.startDate.toISOString())
-        .lte('created_at', dateRange.endDate.toISOString());
+        .gte("created_at", dateRange.startDate.toISOString())
+        .lte("created_at", dateRange.endDate.toISOString());
 
       if (error) throw error;
 
       // Process and aggregate data
       return this.processFinancialData(data || []);
     } catch (error) {
-      console.error('Error fetching financial data:', error);
+      console.error("Error fetching financial data:", error);
       return null;
     }
   }
@@ -473,11 +459,11 @@ export class SupabaseKPIService {
   // Process raw financial data
   private static processFinancialData(rawData: any[]): FinancialData {
     const totalRevenue = rawData
-      .filter(item => item.status === 'completed')
+      .filter((item) => item.status === "completed")
       .reduce((sum, item) => sum + (item.total_amount || 0), 0);
 
     const totalAppointments = rawData.length;
-    const completedAppointments = rawData.filter(item => item.status === 'completed').length;
+    const completedAppointments = rawData.filter((item) => item.status === "completed").length;
     const averageTicket = completedAppointments > 0 ? totalRevenue / completedAppointments : 0;
 
     return {
@@ -488,111 +474,114 @@ export class SupabaseKPIService {
       conversionRate: totalAppointments > 0 ? (completedAppointments / totalAppointments) * 100 : 0,
       period: {
         startDate: new Date(),
-        endDate: new Date()
-      }
+        endDate: new Date(),
+      },
     };
   }
 
   // Get service metrics
-  static async getServiceMetrics(
-    dateRange: DateRange
-  ): Promise<ServiceMetrics[]> {
+  static async getServiceMetrics(dateRange: DateRange): Promise<ServiceMetrics[]> {
     try {
       const { data, error } = await supabase
-        .from('appointments')
+        .from("appointments")
         .select(`
           service:services(id, name, category, price),
           total_amount,
           status
         `)
-        .gte('created_at', dateRange.startDate.toISOString())
-        .lte('created_at', dateRange.endDate.toISOString())
-        .eq('status', 'completed');
+        .gte("created_at", dateRange.startDate.toISOString())
+        .lte("created_at", dateRange.endDate.toISOString())
+        .eq("status", "completed");
 
       if (error) throw error;
 
       // Group by service and calculate metrics
-      const serviceGroups = data?.reduce((acc, item) => {
-        const serviceId = item.service?.id;
-        if (!serviceId) return acc;
+      const serviceGroups =
+        data?.reduce(
+          (acc, item) => {
+            const serviceId = item.service?.id;
+            if (!serviceId) return acc;
 
-        if (!acc[serviceId]) {
-          acc[serviceId] = {
-            id: serviceId,
-            name: item.service.name,
-            category: item.service.category,
-            revenue: 0,
-            appointments: 0,
-            averagePrice: item.service.price || 0
-          };
-        }
+            if (!acc[serviceId]) {
+              acc[serviceId] = {
+                id: serviceId,
+                name: item.service.name,
+                category: item.service.category,
+                revenue: 0,
+                appointments: 0,
+                averagePrice: item.service.price || 0,
+              };
+            }
 
-        acc[serviceId].revenue += item.total_amount || 0;
-        acc[serviceId].appointments += 1;
+            acc[serviceId].revenue += item.total_amount || 0;
+            acc[serviceId].appointments += 1;
 
-        return acc;
-      }, {} as Record<string, ServiceMetrics>) || {};
+            return acc;
+          },
+          {} as Record<string, ServiceMetrics>,
+        ) || {};
 
       return Object.values(serviceGroups);
     } catch (error) {
-      console.error('Error fetching service metrics:', error);
+      console.error("Error fetching service metrics:", error);
       return [];
     }
   }
 
   // Get provider metrics
-  static async getProviderMetrics(
-    dateRange: DateRange
-  ): Promise<ProviderMetrics[]> {
+  static async getProviderMetrics(dateRange: DateRange): Promise<ProviderMetrics[]> {
     try {
       const { data, error } = await supabase
-        .from('appointments')
+        .from("appointments")
         .select(`
           provider:providers(id, name),
           total_amount,
           status,
           duration
         `)
-        .gte('created_at', dateRange.startDate.toISOString())
-        .lte('created_at', dateRange.endDate.toISOString())
-        .eq('status', 'completed');
+        .gte("created_at", dateRange.startDate.toISOString())
+        .lte("created_at", dateRange.endDate.toISOString())
+        .eq("status", "completed");
 
       if (error) throw error;
 
       // Group by provider and calculate metrics
-      const providerGroups = data?.reduce((acc, item) => {
-        const providerId = item.provider?.id;
-        if (!providerId) return acc;
+      const providerGroups =
+        data?.reduce(
+          (acc, item) => {
+            const providerId = item.provider?.id;
+            if (!providerId) return acc;
 
-        if (!acc[providerId]) {
-          acc[providerId] = {
-            id: providerId,
-            name: item.provider.name,
-            revenue: 0,
-            appointments: 0,
-            averageTicket: 0,
-            utilizationRate: 0
-          };
-        }
+            if (!acc[providerId]) {
+              acc[providerId] = {
+                id: providerId,
+                name: item.provider.name,
+                revenue: 0,
+                appointments: 0,
+                averageTicket: 0,
+                utilizationRate: 0,
+              };
+            }
 
-        acc[providerId].revenue += item.total_amount || 0;
-        acc[providerId].appointments += 1;
+            acc[providerId].revenue += item.total_amount || 0;
+            acc[providerId].appointments += 1;
 
-        return acc;
-      }, {} as Record<string, ProviderMetrics>) || {};
+            return acc;
+          },
+          {} as Record<string, ProviderMetrics>,
+        ) || {};
 
       // Calculate averages
-      Object.values(providerGroups).forEach(provider => {
-        provider.averageTicket = provider.appointments > 0 
-          ? provider.revenue / provider.appointments 
-          : 0;
+      Object.values(providerGroups).forEach((provider) => {
+        provider.averageTicket =
+          provider.appointments > 0 ? provider.revenue / provider.appointments : 0;
         // Note: utilizationRate would need additional schedule data
         provider.utilizationRate = 75 + Math.random() * 20; // Mock for now
       });
 
       return Object.values(providerGroups);
     } catch (error) {
-      console.error('Error fetching provider metrics:', error);
+      console.error("Error fetching provider metrics:", error);
       return [];
     }
   }
@@ -605,7 +594,7 @@ export class PerformanceService {
     renderTime: 0,
     dataFreshness: 0,
     errorRate: 0,
-    cacheHitRate: 0
+    cacheHitRate: 0,
   };
 
   static startTimer(operation: string): () => number {
@@ -619,13 +608,13 @@ export class PerformanceService {
 
   static recordMetric(operation: string, value: number): void {
     switch (operation) {
-      case 'load':
+      case "load":
         this.metrics.loadTime = value;
         break;
-      case 'render':
+      case "render":
         this.metrics.renderTime = value;
         break;
-      case 'data-freshness':
+      case "data-freshness":
         this.metrics.dataFreshness = value;
         break;
     }
@@ -641,7 +630,7 @@ export class PerformanceService {
       renderTime: 0,
       dataFreshness: 0,
       errorRate: 0,
-      cacheHitRate: 0
+      cacheHitRate: 0,
     };
   }
 }
@@ -651,6 +640,5 @@ export default {
   FinancialKPIService,
   SupabaseKPIService,
   PerformanceService,
-  cache
+  cache,
 };
-

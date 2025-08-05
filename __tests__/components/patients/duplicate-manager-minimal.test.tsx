@@ -22,7 +22,7 @@ describe("React 19 Compatibility Test", () => {
       <div>
         <h1>Test Header</h1>
         <p>Test paragraph</p>
-      </div>
+      </div>,
     );
 
     expect(container.querySelector("h1")).toHaveTextContent("Test Header");

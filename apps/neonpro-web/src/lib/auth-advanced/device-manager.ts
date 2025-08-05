@@ -1,16 +1,8 @@
 // Device Manager Service
 // Story 1.4: Session Management & Security Implementation
 
-import {
-  DeviceRegistration,
-  DeviceInfo,
-  LocationInfo,
-  UserSession,
-} from './types';
-import {
-  DEVICE_TRUST_FACTORS,
-  LOCATION_RISK_FACTORS,
-} from './config';
+import type { DeviceRegistration, DeviceInfo, LocationInfo, UserSession } from "./types";
+import type { DEVICE_TRUST_FACTORS, LOCATION_RISK_FACTORS } from "./config";
 
 export interface DeviceFingerprint {
   userAgent: string;
@@ -63,7 +55,7 @@ export class DeviceManager {
   async registerDevice(
     userId: string,
     deviceInfo: DeviceInfo,
-    location?: LocationInfo
+    location?: LocationInfo,
   ): Promise<DeviceRegistration> {
     try {
       const fingerprint = await this.generateDeviceFingerprint(deviceInfo);
@@ -75,10 +67,10 @@ export class DeviceManager {
         device_fingerprint: fingerprint.userAgent + fingerprint.platform,
         device_name: this.generateDeviceName(deviceInfo),
         device_type: this.detectDeviceType(deviceInfo),
-        browser_name: deviceInfo.browser || 'Unknown',
-        browser_version: deviceInfo.browserVersion || 'Unknown',
-        os_name: deviceInfo.os || 'Unknown',
-        os_version: deviceInfo.osVersion || 'Unknown',
+        browser_name: deviceInfo.browser || "Unknown",
+        browser_version: deviceInfo.browserVersion || "Unknown",
+        os_name: deviceInfo.os || "Unknown",
+        os_version: deviceInfo.osVersion || "Unknown",
         is_mobile: this.isMobileDevice(deviceInfo),
         is_trusted: trustScore >= DEVICE_TRUST_FACTORS.MINIMUM_TRUST_SCORE,
         trust_score: trustScore,
@@ -86,25 +78,25 @@ export class DeviceManager {
         last_seen: new Date(),
         location: location,
         fingerprint_data: fingerprint,
-        verification_status: riskAssessment.requiresVerification ? 'pending' : 'verified',
+        verification_status: riskAssessment.requiresVerification ? "pending" : "verified",
         is_blocked: riskAssessment.isBlocked,
       };
 
       // Check if device already exists
       const existingDevice = await this.findExistingDevice(
         userId,
-        deviceRegistration.device_fingerprint!
+        deviceRegistration.device_fingerprint!,
       );
 
       if (existingDevice) {
         // Update existing device
         const { data, error } = await this.supabase
-          .from('device_registrations')
+          .from("device_registrations")
           .update({
             ...deviceRegistration,
             updated_at: new Date(),
           })
-          .eq('id', existingDevice.id)
+          .eq("id", existingDevice.id)
           .select()
           .single();
 
@@ -113,7 +105,7 @@ export class DeviceManager {
       } else {
         // Create new device registration
         const { data, error } = await this.supabase
-          .from('device_registrations')
+          .from("device_registrations")
           .insert({
             ...deviceRegistration,
             id: `device-${Date.now()}-${Math.random().toString(36).substring(2)}`,
@@ -127,7 +119,7 @@ export class DeviceManager {
         return data;
       }
     } catch (error) {
-      console.error('Error registering device:', error);
+      console.error("Error registering device:", error);
       throw error;
     }
   }
@@ -136,7 +128,7 @@ export class DeviceManager {
   async validateDevice(
     userId: string,
     deviceFingerprint: string,
-    currentLocation?: LocationInfo
+    currentLocation?: LocationInfo,
   ): Promise<{
     isValid: boolean;
     device?: DeviceRegistration;
@@ -144,14 +136,14 @@ export class DeviceManager {
   }> {
     try {
       const device = await this.getDeviceByFingerprint(userId, deviceFingerprint);
-      
+
       if (!device) {
         return {
           isValid: false,
           riskAssessment: {
             trustScore: 0,
-            riskFactors: ['unknown_device'],
-            recommendations: ['Register device', 'Complete verification'],
+            riskFactors: ["unknown_device"],
+            recommendations: ["Register device", "Complete verification"],
             isBlocked: true,
             requiresVerification: true,
           },
@@ -165,8 +157,8 @@ export class DeviceManager {
           device,
           riskAssessment: {
             trustScore: 0,
-            riskFactors: ['device_blocked'],
-            recommendations: ['Contact administrator'],
+            riskFactors: ["device_blocked"],
+            recommendations: ["Contact administrator"],
             isBlocked: true,
             requiresVerification: false,
           },
@@ -174,27 +166,24 @@ export class DeviceManager {
       }
 
       // Assess current risk
-      const riskAssessment = await this.assessDeviceRisk(
-        device.fingerprint_data,
-        currentLocation
-      );
+      const riskAssessment = await this.assessDeviceRisk(device.fingerprint_data, currentLocation);
 
       // Update device last seen
       await this.updateDeviceLastSeen(device.id, currentLocation);
 
       return {
-        isValid: !riskAssessment.isBlocked && device.verification_status === 'verified',
+        isValid: !riskAssessment.isBlocked && device.verification_status === "verified",
         device,
         riskAssessment,
       };
     } catch (error) {
-      console.error('Error validating device:', error);
+      console.error("Error validating device:", error);
       return {
         isValid: false,
         riskAssessment: {
           trustScore: 0,
-          riskFactors: ['validation_error'],
-          recommendations: ['Try again later'],
+          riskFactors: ["validation_error"],
+          recommendations: ["Try again later"],
           isBlocked: true,
           requiresVerification: true,
         },
@@ -203,30 +192,26 @@ export class DeviceManager {
   }
 
   // Device Trust Management
-  async updateDeviceTrust(
-    deviceId: string,
-    trustScore: number,
-    reason: string
-  ): Promise<void> {
+  async updateDeviceTrust(deviceId: string, trustScore: number, reason: string): Promise<void> {
     try {
       const { error } = await this.supabase
-        .from('device_registrations')
+        .from("device_registrations")
         .update({
           trust_score: Math.max(0, Math.min(100, trustScore)),
           is_trusted: trustScore >= DEVICE_TRUST_FACTORS.MINIMUM_TRUST_SCORE,
           updated_at: new Date(),
         })
-        .eq('id', deviceId);
+        .eq("id", deviceId);
 
       if (error) throw error;
 
       // Log trust score change
-      await this.logDeviceEvent(deviceId, 'trust_score_updated', {
+      await this.logDeviceEvent(deviceId, "trust_score_updated", {
         new_score: trustScore,
         reason,
       });
     } catch (error) {
-      console.error('Error updating device trust:', error);
+      console.error("Error updating device trust:", error);
       throw error;
     }
   }
@@ -234,20 +219,20 @@ export class DeviceManager {
   async blockDevice(deviceId: string, reason: string): Promise<void> {
     try {
       const { error } = await this.supabase
-        .from('device_registrations')
+        .from("device_registrations")
         .update({
           is_blocked: true,
           is_trusted: false,
           trust_score: 0,
           updated_at: new Date(),
         })
-        .eq('id', deviceId);
+        .eq("id", deviceId);
 
       if (error) throw error;
 
-      await this.logDeviceEvent(deviceId, 'device_blocked', { reason });
+      await this.logDeviceEvent(deviceId, "device_blocked", { reason });
     } catch (error) {
-      console.error('Error blocking device:', error);
+      console.error("Error blocking device:", error);
       throw error;
     }
   }
@@ -256,28 +241,28 @@ export class DeviceManager {
     try {
       // Recalculate trust score
       const device = await this.getDeviceById(deviceId);
-      if (!device) throw new Error('Device not found');
+      if (!device) throw new Error("Device not found");
 
       const trustScore = await this.calculateDeviceTrustScore(
         device.fingerprint_data,
-        device.location
+        device.location,
       );
 
       const { error } = await this.supabase
-        .from('device_registrations')
+        .from("device_registrations")
         .update({
           is_blocked: false,
           trust_score: trustScore,
           is_trusted: trustScore >= DEVICE_TRUST_FACTORS.MINIMUM_TRUST_SCORE,
           updated_at: new Date(),
         })
-        .eq('id', deviceId);
+        .eq("id", deviceId);
 
       if (error) throw error;
 
-      await this.logDeviceEvent(deviceId, 'device_unblocked', { reason });
+      await this.logDeviceEvent(deviceId, "device_unblocked", { reason });
     } catch (error) {
-      console.error('Error unblocking device:', error);
+      console.error("Error unblocking device:", error);
       throw error;
     }
   }
@@ -285,10 +270,10 @@ export class DeviceManager {
   // Device Analytics
   async getDeviceAnalytics(userId?: string): Promise<DeviceAnalytics> {
     try {
-      let query = this.supabase.from('device_registrations').select('*');
-      
+      let query = this.supabase.from("device_registrations").select("*");
+
       if (userId) {
-        query = query.eq('user_id', userId);
+        query = query.eq("user_id", userId);
       }
 
       const { data: devices, error } = await query;
@@ -296,7 +281,7 @@ export class DeviceManager {
 
       return this.calculateDeviceAnalytics(devices || []);
     } catch (error) {
-      console.error('Error getting device analytics:', error);
+      console.error("Error getting device analytics:", error);
       return this.getEmptyAnalytics();
     }
   }
@@ -304,15 +289,15 @@ export class DeviceManager {
   async getUserDevices(userId: string): Promise<DeviceRegistration[]> {
     try {
       const { data, error } = await this.supabase
-        .from('device_registrations')
-        .select('*')
-        .eq('user_id', userId)
-        .order('last_seen', { ascending: false });
+        .from("device_registrations")
+        .select("*")
+        .eq("user_id", userId)
+        .order("last_seen", { ascending: false });
 
       if (error) throw error;
       return data || [];
     } catch (error) {
-      console.error('Error getting user devices:', error);
+      console.error("Error getting user devices:", error);
       return [];
     }
   }
@@ -320,13 +305,13 @@ export class DeviceManager {
   // Device Fingerprinting
   async generateDeviceFingerprint(deviceInfo: DeviceInfo): Promise<DeviceFingerprint> {
     const cacheKey = JSON.stringify(deviceInfo);
-    
+
     if (this.fingerprintCache.has(cacheKey)) {
       return this.fingerprintCache.get(cacheKey)!;
     }
 
     const fingerprint: DeviceFingerprint = {
-      userAgent: deviceInfo.userAgent || 'Unknown',
+      userAgent: deviceInfo.userAgent || "Unknown",
       screen: {
         width: deviceInfo.screenWidth || 0,
         height: deviceInfo.screenHeight || 0,
@@ -334,7 +319,7 @@ export class DeviceManager {
       },
       timezone: deviceInfo.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
       language: deviceInfo.language || navigator.language,
-      platform: deviceInfo.platform || 'Unknown',
+      platform: deviceInfo.platform || "Unknown",
       cookieEnabled: deviceInfo.cookieEnabled ?? true,
       doNotTrack: deviceInfo.doNotTrack ?? false,
       plugins: deviceInfo.plugins || [],
@@ -351,40 +336,40 @@ export class DeviceManager {
   // Private Methods
   private async findExistingDevice(
     userId: string,
-    deviceFingerprint: string
+    deviceFingerprint: string,
   ): Promise<DeviceRegistration | null> {
     try {
       const { data, error } = await this.supabase
-        .from('device_registrations')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('device_fingerprint', deviceFingerprint)
+        .from("device_registrations")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("device_fingerprint", deviceFingerprint)
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows returned
+      if (error && error.code !== "PGRST116") throw error; // PGRST116 = no rows returned
       return data || null;
     } catch (error) {
-      console.error('Error finding existing device:', error);
+      console.error("Error finding existing device:", error);
       return null;
     }
   }
 
   private async getDeviceByFingerprint(
     userId: string,
-    deviceFingerprint: string
+    deviceFingerprint: string,
   ): Promise<DeviceRegistration | null> {
     try {
       const { data, error } = await this.supabase
-        .from('device_registrations')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('device_fingerprint', deviceFingerprint)
+        .from("device_registrations")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("device_fingerprint", deviceFingerprint)
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error && error.code !== "PGRST116") throw error;
       return data || null;
     } catch (error) {
-      console.error('Error getting device by fingerprint:', error);
+      console.error("Error getting device by fingerprint:", error);
       return null;
     }
   }
@@ -392,35 +377,36 @@ export class DeviceManager {
   private async getDeviceById(deviceId: string): Promise<DeviceRegistration | null> {
     try {
       const { data, error } = await this.supabase
-        .from('device_registrations')
-        .select('*')
-        .eq('id', deviceId)
+        .from("device_registrations")
+        .select("*")
+        .eq("id", deviceId)
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error && error.code !== "PGRST116") throw error;
       return data || null;
     } catch (error) {
-      console.error('Error getting device by ID:', error);
+      console.error("Error getting device by ID:", error);
       return null;
     }
   }
 
   private async calculateDeviceTrustScore(
     fingerprint: DeviceFingerprint,
-    location?: LocationInfo
+    location?: LocationInfo,
   ): Promise<number> {
     const cacheKey = JSON.stringify({ fingerprint, location });
-    
+
     // Check cache
     const cached = this.trustScoreCache.get(cacheKey);
-    if (cached && Date.now() - cached.timestamp.getTime() < 300000) { // 5 minute cache
+    if (cached && Date.now() - cached.timestamp.getTime() < 300000) {
+      // 5 minute cache
       return cached.score;
     }
 
     let score = DEVICE_TRUST_FACTORS.BASE_TRUST_SCORE;
 
     // Browser consistency
-    if (fingerprint.userAgent && fingerprint.userAgent !== 'Unknown') {
+    if (fingerprint.userAgent && fingerprint.userAgent !== "Unknown") {
       score += DEVICE_TRUST_FACTORS.KNOWN_BROWSER_BONUS;
     }
 
@@ -449,7 +435,7 @@ export class DeviceManager {
       if (LOCATION_RISK_FACTORS.HIGH_RISK_COUNTRIES.includes(location.country)) {
         score -= 20;
       }
-      
+
       if (location.isVPN || location.isProxy) {
         score -= 15;
       }
@@ -457,7 +443,7 @@ export class DeviceManager {
 
     // Ensure score is within bounds
     const finalScore = Math.max(0, Math.min(100, score));
-    
+
     // Cache the result
     this.trustScoreCache.set(cacheKey, {
       score: finalScore,
@@ -469,52 +455,52 @@ export class DeviceManager {
 
   private async assessDeviceRisk(
     fingerprint: DeviceFingerprint,
-    location?: LocationInfo
+    location?: LocationInfo,
   ): Promise<DeviceRiskAssessment> {
     const riskFactors: string[] = [];
     const recommendations: string[] = [];
     const trustScore = await this.calculateDeviceTrustScore(fingerprint, location);
 
     // Check for suspicious characteristics
-    if (!fingerprint.userAgent || fingerprint.userAgent === 'Unknown') {
-      riskFactors.push('missing_user_agent');
-      recommendations.push('Update browser');
+    if (!fingerprint.userAgent || fingerprint.userAgent === "Unknown") {
+      riskFactors.push("missing_user_agent");
+      recommendations.push("Update browser");
     }
 
     if (fingerprint.screen.width === 0 || fingerprint.screen.height === 0) {
-      riskFactors.push('invalid_screen_resolution');
-      recommendations.push('Check display settings');
+      riskFactors.push("invalid_screen_resolution");
+      recommendations.push("Check display settings");
     }
 
     if (fingerprint.doNotTrack) {
-      riskFactors.push('do_not_track_enabled');
+      riskFactors.push("do_not_track_enabled");
     }
 
     if (!fingerprint.cookieEnabled) {
-      riskFactors.push('cookies_disabled');
-      recommendations.push('Enable cookies');
+      riskFactors.push("cookies_disabled");
+      recommendations.push("Enable cookies");
     }
 
     // Location-based risks
     if (location) {
       if (LOCATION_RISK_FACTORS.HIGH_RISK_COUNTRIES.includes(location.country)) {
-        riskFactors.push('high_risk_location');
-        recommendations.push('Verify identity');
+        riskFactors.push("high_risk_location");
+        recommendations.push("Verify identity");
       }
 
       if (location.isVPN) {
-        riskFactors.push('vpn_usage');
-        recommendations.push('Disable VPN for verification');
+        riskFactors.push("vpn_usage");
+        recommendations.push("Disable VPN for verification");
       }
 
       if (location.isProxy) {
-        riskFactors.push('proxy_usage');
-        recommendations.push('Disable proxy for verification');
+        riskFactors.push("proxy_usage");
+        recommendations.push("Disable proxy for verification");
       }
     }
 
     // Determine if device should be blocked
-    const isBlocked = trustScore < 30 || riskFactors.includes('high_risk_location');
+    const isBlocked = trustScore < 30 || riskFactors.includes("high_risk_location");
     const requiresVerification = trustScore < 60 || riskFactors.length > 2;
 
     return {
@@ -527,35 +513,36 @@ export class DeviceManager {
   }
 
   private generateDeviceName(deviceInfo: DeviceInfo): string {
-    const browser = deviceInfo.browser || 'Unknown Browser';
-    const os = deviceInfo.os || 'Unknown OS';
+    const browser = deviceInfo.browser || "Unknown Browser";
+    const os = deviceInfo.os || "Unknown OS";
     const deviceType = this.detectDeviceType(deviceInfo);
-    
+
     return `${browser} on ${os} (${deviceType})`;
   }
 
   private detectDeviceType(deviceInfo: DeviceInfo): string {
-    const userAgent = deviceInfo.userAgent?.toLowerCase() || '';
-    
-    if (userAgent.includes('mobile') || userAgent.includes('android') || userAgent.includes('iphone')) {
-      return 'Mobile';
+    const userAgent = deviceInfo.userAgent?.toLowerCase() || "";
+
+    if (
+      userAgent.includes("mobile") ||
+      userAgent.includes("android") ||
+      userAgent.includes("iphone")
+    ) {
+      return "Mobile";
     }
-    
-    if (userAgent.includes('tablet') || userAgent.includes('ipad')) {
-      return 'Tablet';
+
+    if (userAgent.includes("tablet") || userAgent.includes("ipad")) {
+      return "Tablet";
     }
-    
-    return 'Desktop';
+
+    return "Desktop";
   }
 
   private isMobileDevice(deviceInfo: DeviceInfo): boolean {
-    return this.detectDeviceType(deviceInfo) === 'Mobile';
+    return this.detectDeviceType(deviceInfo) === "Mobile";
   }
 
-  private async updateDeviceLastSeen(
-    deviceId: string,
-    location?: LocationInfo
-  ): Promise<void> {
+  private async updateDeviceLastSeen(deviceId: string, location?: LocationInfo): Promise<void> {
     try {
       const updateData: any = {
         last_seen: new Date(),
@@ -567,46 +554,45 @@ export class DeviceManager {
       }
 
       const { error } = await this.supabase
-        .from('device_registrations')
+        .from("device_registrations")
         .update(updateData)
-        .eq('id', deviceId);
+        .eq("id", deviceId);
 
       if (error) throw error;
     } catch (error) {
-      console.error('Error updating device last seen:', error);
+      console.error("Error updating device last seen:", error);
     }
   }
 
   private async logDeviceEvent(
     deviceId: string,
     eventType: string,
-    metadata: Record<string, any>
+    metadata: Record<string, any>,
   ): Promise<void> {
     try {
-      const { error } = await this.supabase
-        .from('device_events')
-        .insert({
-          id: `event-${Date.now()}-${Math.random().toString(36).substring(2)}`,
-          device_id: deviceId,
-          event_type: eventType,
-          metadata,
-          created_at: new Date(),
-        });
+      const { error } = await this.supabase.from("device_events").insert({
+        id: `event-${Date.now()}-${Math.random().toString(36).substring(2)}`,
+        device_id: deviceId,
+        event_type: eventType,
+        metadata,
+        created_at: new Date(),
+      });
 
       if (error) {
-        console.error('Error logging device event:', error);
+        console.error("Error logging device event:", error);
       }
     } catch (error) {
-      console.error('Error logging device event:', error);
+      console.error("Error logging device event:", error);
     }
   }
 
   private calculateDeviceAnalytics(devices: DeviceRegistration[]): DeviceAnalytics {
     const analytics: DeviceAnalytics = {
       totalDevices: devices.length,
-      trustedDevices: devices.filter(d => d.is_trusted).length,
-      suspiciousDevices: devices.filter(d => d.risk_indicators && d.risk_indicators.length > 0).length,
-      blockedDevices: devices.filter(d => d.is_blocked).length,
+      trustedDevices: devices.filter((d) => d.is_trusted).length,
+      suspiciousDevices: devices.filter((d) => d.risk_indicators && d.risk_indicators.length > 0)
+        .length,
+      blockedDevices: devices.filter((d) => d.is_blocked).length,
       devicesByType: {},
       devicesByLocation: {},
       averageTrustScore: 0,
@@ -624,21 +610,21 @@ export class DeviceManager {
 
     // Calculate averages and distributions
     let totalTrustScore = 0;
-    
-    devices.forEach(device => {
+
+    devices.forEach((device) => {
       // Trust score
       totalTrustScore += device.trust_score;
-      
+
       // Device type distribution
-      const deviceType = device.device_type || 'Unknown';
+      const deviceType = device.device_type || "Unknown";
       analytics.devicesByType[deviceType] = (analytics.devicesByType[deviceType] || 0) + 1;
-      
+
       // Location distribution
       if (device.location?.country) {
         const country = device.location.country;
         analytics.devicesByLocation[country] = (analytics.devicesByLocation[country] || 0) + 1;
       }
-      
+
       // Risk distribution
       if (device.trust_score >= 80) {
         analytics.riskDistribution.low++;
@@ -678,22 +664,22 @@ export class DeviceManager {
   async cleanupOldDevices(daysOld: number = 90): Promise<number> {
     try {
       const cutoffDate = new Date(Date.now() - daysOld * 24 * 60 * 60 * 1000);
-      
+
       const { data, error } = await this.supabase
-        .from('device_registrations')
+        .from("device_registrations")
         .delete()
-        .lt('last_seen', cutoffDate.toISOString())
-        .eq('is_trusted', false)
-        .select('id');
+        .lt("last_seen", cutoffDate.toISOString())
+        .eq("is_trusted", false)
+        .select("id");
 
       if (error) throw error;
-      
+
       const deletedCount = data?.length || 0;
       console.log(`Cleaned up ${deletedCount} old devices`);
-      
+
       return deletedCount;
     } catch (error) {
-      console.error('Error cleaning up old devices:', error);
+      console.error("Error cleaning up old devices:", error);
       return 0;
     }
   }
@@ -701,22 +687,22 @@ export class DeviceManager {
   async cleanupBlockedDevices(daysOld: number = 30): Promise<number> {
     try {
       const cutoffDate = new Date(Date.now() - daysOld * 24 * 60 * 60 * 1000);
-      
+
       const { data, error } = await this.supabase
-        .from('device_registrations')
+        .from("device_registrations")
         .delete()
-        .lt('updated_at', cutoffDate.toISOString())
-        .eq('is_blocked', true)
-        .select('id');
+        .lt("updated_at", cutoffDate.toISOString())
+        .eq("is_blocked", true)
+        .select("id");
 
       if (error) throw error;
-      
+
       const deletedCount = data?.length || 0;
       console.log(`Cleaned up ${deletedCount} blocked devices`);
-      
+
       return deletedCount;
     } catch (error) {
-      console.error('Error cleaning up blocked devices:', error);
+      console.error("Error cleaning up blocked devices:", error);
       return 0;
     }
   }

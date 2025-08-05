@@ -1,13 +1,13 @@
-﻿/**
+/**
  * AI Duration Prediction Engine - Core ML Service
  * Story 2.1: AI Duration Prediction Engine
- * 
+ *
  * Implements intelligent appointment duration prediction using machine learning
  * with A/B testing, professional efficiency tracking, and continuous learning.
  */
 
-import { createClient } from '@/lib/supabase/client';
-import { AuditLogger } from '@/lib/auth/audit/audit-logger';
+import type { createClient } from "@/lib/supabase/client";
+import type { AuditLogger } from "@/lib/auth/audit/audit-logger";
 
 // ===============================================
 // Types and Interfaces
@@ -18,14 +18,14 @@ export interface PredictionFeatures {
   professionalId: string;
   patientAge?: number;
   isFirstVisit: boolean;
-  patientAnxietyLevel?: 'low' | 'medium' | 'high';
-  treatmentComplexity?: 'simple' | 'standard' | 'complex';
-  timeOfDay?: 'morning' | 'afternoon' | 'evening';
+  patientAnxietyLevel?: "low" | "medium" | "high";
+  treatmentComplexity?: "simple" | "standard" | "complex";
+  timeOfDay?: "morning" | "afternoon" | "evening";
   dayOfWeek?: number; // 0-6
   historicalDuration?: number;
   hasComorbidities?: boolean;
   requiresSpecialEquipment?: boolean;
-  patientMobilityLevel?: 'normal' | 'limited' | 'wheelchair';
+  patientMobilityLevel?: "normal" | "limited" | "wheelchair";
   specialRequirements?: string[];
 }
 
@@ -57,13 +57,13 @@ export class AIDurationPredictionService {
   private auditLogger: AuditLogger;
 
   private readonly BASELINE_DURATIONS: Record<string, number> = {
-    'consultation': 30,
-    'cleaning': 45,
-    'treatment': 60,
-    'surgery': 120,
-    'checkup': 20,
-    'emergency': 90,
-    'follow_up': 25
+    consultation: 30,
+    cleaning: 45,
+    treatment: 60,
+    surgery: 120,
+    checkup: 20,
+    emergency: 90,
+    follow_up: 25,
   };
 
   constructor() {
@@ -76,22 +76,22 @@ export class AIDurationPredictionService {
    */
   async predictDuration(
     appointmentId: string,
-    features: PredictionFeatures
+    features: PredictionFeatures,
   ): Promise<DurationPrediction> {
     try {
       // Get active model version
       const activeModel = await this.getActiveModel();
       if (!activeModel) {
-        throw new Error('No active ML model found');
+        throw new Error("No active ML model found");
       }
 
       // Calculate base duration
       const baseDuration = this.getBaseDuration(features.treatmentType);
-      
+
       // Apply professional efficiency factor
       const efficiencyFactor = await this.getProfessionalEfficiencyFactor(
         features.professionalId,
-        features.treatmentType
+        features.treatmentType,
       );
 
       // Apply complexity factors
@@ -102,13 +102,13 @@ export class AIDurationPredictionService {
 
       // Calculate final prediction
       const predictedDuration = Math.round(
-        baseDuration * efficiencyFactor * complexityMultiplier * temporalFactor
+        baseDuration * efficiencyFactor * complexityMultiplier * temporalFactor,
       );
 
       // Calculate confidence score
       const confidenceScore = this.calculateConfidenceScore(
         features,
-        activeModel.confidenceThreshold
+        activeModel.confidenceThreshold,
       );
 
       const prediction: DurationPrediction = {
@@ -122,25 +122,25 @@ export class AIDurationPredictionService {
           complexityMultiplier,
           temporalFactor,
           treatmentType: features.treatmentType,
-          professionalId: features.professionalId
-        }
+          professionalId: features.professionalId,
+        },
       };
 
       // Store prediction in database
       await this.storePrediction(appointmentId, prediction);
 
       // Audit log
-      await this.auditLogger.logInfo('ai_duration_prediction', {
+      await this.auditLogger.logInfo("ai_duration_prediction", {
         appointmentId,
         prediction,
-        features
+        features,
       });
 
       return prediction;
     } catch (error) {
-      await this.auditLogger.logError('ai_duration_prediction_failed', error as Error, {
+      await this.auditLogger.logError("ai_duration_prediction_failed", error as Error, {
         appointmentId,
-        features
+        features,
       });
       throw error;
     }
@@ -152,19 +152,19 @@ export class AIDurationPredictionService {
   async updatePredictionWithActual(
     appointmentId: string,
     actualDuration: number,
-    feedbackNotes?: string
+    feedbackNotes?: string,
   ): Promise<PredictionFeedback> {
     if (actualDuration <= 0) {
-      throw new Error('Duration must be positive');
+      throw new Error("Duration must be positive");
     }
 
     try {
       // Get the prediction
       const { data: prediction, error: predictionError } = await this.supabase
-        .from('ml_duration_predictions')
-        .select('*')
-        .eq('appointment_id', appointmentId)
-        .order('created_at', { ascending: false })
+        .from("ml_duration_predictions")
+        .select("*")
+        .eq("appointment_id", appointmentId)
+        .order("created_at", { ascending: false })
         .limit(1)
         .single();
 
@@ -173,49 +173,49 @@ export class AIDurationPredictionService {
       }
 
       // Calculate accuracy
-      const accuracyScore = 1.0 - Math.min(
-        Math.abs(prediction.predicted_duration - actualDuration) / 
-        Math.max(prediction.predicted_duration, actualDuration),
-        1.0
-      );
+      const accuracyScore =
+        1.0 -
+        Math.min(
+          Math.abs(prediction.predicted_duration - actualDuration) /
+            Math.max(prediction.predicted_duration, actualDuration),
+          1.0,
+        );
 
       const result: PredictionFeedback = {
         appointmentId,
         actualDuration,
         accuracyScore,
-        predictionError: prediction.predicted_duration - actualDuration
+        predictionError: prediction.predicted_duration - actualDuration,
       };
 
       // Update prediction feedback
-      const { error: feedbackError } = await this.supabase
-        .from('prediction_feedback')
-        .upsert({
-          prediction_id: prediction.id,
-          appointment_id: appointmentId,
-          actual_duration: actualDuration,
-          accuracy_score: accuracyScore,
-          prediction_error: prediction.predicted_duration - actualDuration,
-          feedback_notes: feedbackNotes,
-          completion_status: 'completed'
-        });
+      const { error: feedbackError } = await this.supabase.from("prediction_feedback").upsert({
+        prediction_id: prediction.id,
+        appointment_id: appointmentId,
+        actual_duration: actualDuration,
+        accuracy_score: accuracyScore,
+        prediction_error: prediction.predicted_duration - actualDuration,
+        feedback_notes: feedbackNotes,
+        completion_status: "completed",
+      });
 
       if (feedbackError) {
         throw new Error(`Failed to update feedback: ${feedbackError.message}`);
       }
 
       // Audit log
-      await this.auditLogger.logInfo('ai_prediction_feedback', {
+      await this.auditLogger.logInfo("ai_prediction_feedback", {
         appointmentId,
         predictedDuration: prediction.predicted_duration,
         actualDuration,
-        accuracyScore
+        accuracyScore,
       });
 
       return result;
     } catch (error) {
-      await this.auditLogger.logError('ai_prediction_feedback_failed', error as Error, {
+      await this.auditLogger.logError("ai_prediction_feedback_failed", error as Error, {
         appointmentId,
-        actualDuration
+        actualDuration,
       });
       throw error;
     }
@@ -226,10 +226,10 @@ export class AIDurationPredictionService {
    */
   async getPredictionForAppointment(appointmentId: string): Promise<DurationPrediction | null> {
     const { data, error } = await this.supabase
-      .from('ml_duration_predictions')
-      .select('*')
-      .eq('appointment_id', appointmentId)
-      .order('created_at', { ascending: false })
+      .from("ml_duration_predictions")
+      .select("*")
+      .eq("appointment_id", appointmentId)
+      .order("created_at", { ascending: false })
       .limit(1)
       .single();
 
@@ -240,7 +240,7 @@ export class AIDurationPredictionService {
       predictedDuration: data.predicted_duration,
       confidenceScore: data.confidence_score,
       modelVersion: data.model_version,
-      predictionFactors: data.prediction_factors || {}
+      predictionFactors: data.prediction_factors || {},
     };
   }
 
@@ -250,9 +250,9 @@ export class AIDurationPredictionService {
   async getProfessionalEfficiencyMetrics(professionalId: string) {
     try {
       const { data, error } = await this.supabase
-        .from('professional_efficiency_stats')
-        .select('*')
-        .eq('professional_id', professionalId)
+        .from("professional_efficiency_stats")
+        .select("*")
+        .eq("professional_id", professionalId)
         .single();
 
       if (error) throw error;
@@ -261,11 +261,11 @@ export class AIDurationPredictionService {
         professionalId,
         averageDuration: data.avg_duration_minutes,
         efficiencyRating: data.efficiency_rating,
-        totalAppointments: data.total_appointments
+        totalAppointments: data.total_appointments,
       };
     } catch (error) {
-      await this.auditLogger.logError('professional_efficiency_metrics_failed', error as Error, {
-        professionalId
+      await this.auditLogger.logError("professional_efficiency_metrics_failed", error as Error, {
+        professionalId,
       });
       return null;
     }
@@ -274,10 +274,10 @@ export class AIDurationPredictionService {
   // Private helper methods
   private async getActiveModel() {
     const { data, error } = await this.supabase
-      .from('ml_model_performance')
-      .select('*')
-      .eq('is_active', true)
-      .order('deployed_at', { ascending: false })
+      .from("ml_model_performance")
+      .select("*")
+      .eq("is_active", true)
+      .order("deployed_at", { ascending: false })
       .limit(1)
       .single();
 
@@ -285,7 +285,7 @@ export class AIDurationPredictionService {
 
     return {
       version: data.model_version,
-      confidenceThreshold: data.confidence_threshold || 0.7
+      confidenceThreshold: data.confidence_threshold || 0.7,
     };
   }
 
@@ -295,13 +295,13 @@ export class AIDurationPredictionService {
 
   private async getProfessionalEfficiencyFactor(
     professionalId: string,
-    treatmentType: string
+    treatmentType: string,
   ): Promise<number> {
     try {
       const { data } = await this.supabase
-        .from('professional_efficiency_stats')
-        .select('efficiency_rating')
-        .eq('professional_id', professionalId)
+        .from("professional_efficiency_stats")
+        .select("efficiency_rating")
+        .eq("professional_id", professionalId)
         .single();
 
       return data?.efficiency_rating || 1.0;
@@ -323,12 +323,12 @@ export class AIDurationPredictionService {
     if (features.isFirstVisit) multiplier *= 1.2;
 
     // Anxiety level
-    if (features.patientAnxietyLevel === 'high') multiplier *= 1.25;
-    else if (features.patientAnxietyLevel === 'medium') multiplier *= 1.1;
+    if (features.patientAnxietyLevel === "high") multiplier *= 1.25;
+    else if (features.patientAnxietyLevel === "medium") multiplier *= 1.1;
 
     // Treatment complexity
-    if (features.treatmentComplexity === 'complex') multiplier *= 1.5;
-    else if (features.treatmentComplexity === 'simple') multiplier *= 0.8;
+    if (features.treatmentComplexity === "complex") multiplier *= 1.5;
+    else if (features.treatmentComplexity === "simple") multiplier *= 0.8;
 
     // Comorbidities
     if (features.hasComorbidities) multiplier *= 1.2;
@@ -337,8 +337,8 @@ export class AIDurationPredictionService {
     if (features.requiresSpecialEquipment) multiplier *= 1.15;
 
     // Mobility limitations
-    if (features.patientMobilityLevel === 'limited') multiplier *= 1.1;
-    else if (features.patientMobilityLevel === 'wheelchair') multiplier *= 1.2;
+    if (features.patientMobilityLevel === "limited") multiplier *= 1.1;
+    else if (features.patientMobilityLevel === "wheelchair") multiplier *= 1.2;
 
     return multiplier;
   }
@@ -347,11 +347,13 @@ export class AIDurationPredictionService {
     let factor = 1.0;
 
     // Time of day impact
-    if (features.timeOfDay === 'morning') factor *= 0.95; // More efficient
-    else if (features.timeOfDay === 'evening') factor *= 1.1; // Less efficient
+    if (features.timeOfDay === "morning")
+      factor *= 0.95; // More efficient
+    else if (features.timeOfDay === "evening") factor *= 1.1; // Less efficient
 
     // Day of week impact
-    if (features.dayOfWeek === 1) factor *= 1.05; // Monday rush
+    if (features.dayOfWeek === 1)
+      factor *= 1.05; // Monday rush
     else if (features.dayOfWeek === 5) factor *= 1.02; // Friday wind-down
 
     return factor;
@@ -361,7 +363,9 @@ export class AIDurationPredictionService {
     let confidence = 0.8; // Base confidence
 
     // More complete features = higher confidence
-    const featureCount = Object.values(features).filter(v => v !== undefined && v !== null).length;
+    const featureCount = Object.values(features).filter(
+      (v) => v !== undefined && v !== null,
+    ).length;
     confidence += (featureCount - 4) * 0.02; // Boost for each additional feature
 
     // Historical data availability
@@ -371,16 +375,14 @@ export class AIDurationPredictionService {
   }
 
   private async storePrediction(appointmentId: string, prediction: DurationPrediction) {
-    const { error } = await this.supabase
-      .from('ml_duration_predictions')
-      .insert({
-        appointment_id: appointmentId,
-        predicted_duration: prediction.predictedDuration,
-        confidence_score: prediction.confidenceScore,
-        model_version: prediction.modelVersion,
-        prediction_factors: prediction.predictionFactors,
-        created_at: new Date().toISOString()
-      });
+    const { error } = await this.supabase.from("ml_duration_predictions").insert({
+      appointment_id: appointmentId,
+      predicted_duration: prediction.predictedDuration,
+      confidence_score: prediction.confidenceScore,
+      model_version: prediction.modelVersion,
+      prediction_factors: prediction.predictionFactors,
+      created_at: new Date().toISOString(),
+    });
 
     if (error) {
       throw new Error(`Failed to store prediction: ${error.message}`);
@@ -408,29 +410,29 @@ export class AIABTestingService {
     try {
       // Check if user already has assignment
       const { data: existing, error: existingError } = await this.supabase
-        .from('ab_test_assignments')
-        .select('*')
-        .eq('user_id', userId)
+        .from("ab_test_assignments")
+        .select("*")
+        .eq("user_id", userId)
         .single();
 
       if (existing && !existingError) {
         return {
           userId,
           testGroup: existing.test_group,
-          assignedAt: existing.assigned_at
+          assignedAt: existing.assigned_at,
         };
       }
 
       // Assign to group using hash-based consistent assignment
       const hash = this.hashUserId(userId);
-      const testGroup = hash % 2 === 0 ? 'control' : 'treatment';
+      const testGroup = hash % 2 === 0 ? "control" : "treatment";
 
       const { data, error } = await this.supabase
-        .from('ab_test_assignments')
+        .from("ab_test_assignments")
         .insert({
           user_id: userId,
           test_group: testGroup,
-          assigned_at: new Date().toISOString()
+          assigned_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -440,11 +442,11 @@ export class AIABTestingService {
       return {
         userId,
         testGroup: data.test_group,
-        assignedAt: data.assigned_at
+        assignedAt: data.assigned_at,
       };
     } catch (error) {
-      await this.auditLogger.logError('ab_test_assignment_failed', error as Error, {
-        userId
+      await this.auditLogger.logError("ab_test_assignment_failed", error as Error, {
+        userId,
       });
       throw error;
     }
@@ -455,7 +457,7 @@ export class AIABTestingService {
    */
   async shouldUseAIPrediction(userId: string): Promise<boolean> {
     const assignment = await this.assignUserToTestGroup(userId);
-    return assignment.testGroup === 'treatment';
+    return assignment.testGroup === "treatment";
   }
 
   /**
@@ -463,14 +465,12 @@ export class AIABTestingService {
    */
   async getTestStatistics() {
     try {
-      const { data, error } = await this.supabase
-        .from('ab_test_assignments')
-        .select('test_group');
+      const { data, error } = await this.supabase.from("ab_test_assignments").select("test_group");
 
       if (error) throw error;
 
-      const controlGroup = data.filter(d => d.test_group === 'control').length;
-      const treatmentGroup = data.filter(d => d.test_group === 'treatment').length;
+      const controlGroup = data.filter((d) => d.test_group === "control").length;
+      const treatmentGroup = data.filter((d) => d.test_group === "treatment").length;
       const totalParticipants = data.length;
 
       return {
@@ -479,15 +479,15 @@ export class AIABTestingService {
         treatmentGroup,
         conversionRate: {
           control: 0.85, // Mock data
-          treatment: 0.92 // Mock data
+          treatment: 0.92, // Mock data
         },
         confidenceInterval: {
           lower: 0.02,
-          upper: 0.12
-        }
+          upper: 0.12,
+        },
       };
     } catch (error) {
-      await this.auditLogger.logError('ab_test_statistics_failed', error as Error);
+      await this.auditLogger.logError("ab_test_statistics_failed", error as Error);
       throw error;
     }
   }
@@ -499,10 +499,52 @@ export class AIABTestingService {
     let hash = 0;
     for (let i = 0; i < userId.length; i++) {
       const char = userId.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return Math.abs(hash);
+  }
+
+  /**
+   * Get A/B testing statistics
+   */
+  async getABTestStats() {
+    try {
+      const { data, error } = await this.supabase
+        .from("ai_ab_test_data")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(100);
+
+      if (error) throw error;
+
+      const modelAStats = data.filter((d) => d.model_type === "A");
+      const modelBStats = data.filter((d) => d.model_type === "B");
+
+      return {
+        success: true,
+        data: {
+          modelA: {
+            count: modelAStats.length,
+            avgAccuracy:
+              modelAStats.reduce((sum, d) => sum + d.accuracy, 0) / modelAStats.length || 0,
+            avgConfidence:
+              modelAStats.reduce((sum, d) => sum + d.confidence, 0) / modelAStats.length || 0,
+          },
+          modelB: {
+            count: modelBStats.length,
+            avgAccuracy:
+              modelBStats.reduce((sum, d) => sum + d.accuracy, 0) / modelBStats.length || 0,
+            avgConfidence:
+              modelBStats.reduce((sum, d) => sum + d.confidence, 0) / modelBStats.length || 0,
+          },
+          totalTests: data.length,
+        },
+      };
+    } catch (error) {
+      await this.auditLogger.logError("ab_test_stats_failed", error as Error);
+      throw error;
+    }
   }
 }
 
@@ -536,13 +578,13 @@ export class ModelPerformanceService {
     try {
       // Deactivate current models
       await this.supabase
-        .from('ml_model_performance')
+        .from("ml_model_performance")
         .update({ is_active: false })
-        .eq('is_active', true);
+        .eq("is_active", true);
 
       // Insert new model
       const { data, error } = await this.supabase
-        .from('ml_model_performance')
+        .from("ml_model_performance")
         .insert({
           model_version: modelMetrics.modelVersion,
           accuracy_percentage: modelMetrics.accuracyPercentage,
@@ -554,7 +596,7 @@ export class ModelPerformanceService {
           feature_importance: modelMetrics.featureImportance,
           hyperparameters: modelMetrics.hyperparameters,
           is_active: true,
-          deployed_at: new Date().toISOString()
+          deployed_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -564,11 +606,11 @@ export class ModelPerformanceService {
       return {
         success: true,
         modelVersion: modelMetrics.modelVersion,
-        deploymentTimestamp: data.deployed_at
+        deploymentTimestamp: data.deployed_at,
       };
     } catch (error) {
-      await this.auditLogger.logError('model_deployment_failed', error as Error, {
-        modelVersion: modelMetrics.modelVersion
+      await this.auditLogger.logError("model_deployment_failed", error as Error, {
+        modelVersion: modelMetrics.modelVersion,
       });
       throw error;
     }
@@ -580,9 +622,9 @@ export class ModelPerformanceService {
   async getCurrentModelMetrics() {
     try {
       const { data, error } = await this.supabase
-        .from('ml_model_performance')
-        .select('*')
-        .eq('is_active', true)
+        .from("ml_model_performance")
+        .select("*")
+        .eq("is_active", true)
         .single();
 
       if (error) throw error;
@@ -595,10 +637,10 @@ export class ModelPerformanceService {
         confidenceThreshold: data.confidence_threshold,
         featureImportance: data.feature_importance,
         hyperparameters: data.hyperparameters,
-        deployedAt: data.deployed_at
+        deployedAt: data.deployed_at,
       };
     } catch (error) {
-      await this.auditLogger.logError('model_metrics_retrieval_failed', error as Error);
+      await this.auditLogger.logError("model_metrics_retrieval_failed", error as Error);
       throw error;
     }
   }
@@ -615,18 +657,19 @@ export class ModelPerformanceService {
     try {
       // Get current model
       const currentModel = await this.getCurrentModelMetrics();
-      
+
       // Calculate updated metrics
-      const updatedAccuracy = (currentModel.accuracyPercentage + feedbackData.predictionAccuracy * 100) / 2;
-      
+      const updatedAccuracy =
+        (currentModel.accuracyPercentage + feedbackData.predictionAccuracy * 100) / 2;
+
       // Update model performance
       const { data, error } = await this.supabase
-        .from('ml_model_performance')
+        .from("ml_model_performance")
         .update({
           accuracy_percentage: updatedAccuracy,
-          last_updated: new Date().toISOString()
+          last_updated: new Date().toISOString(),
         })
-        .eq('is_active', true)
+        .eq("is_active", true)
         .select()
         .single();
 
@@ -637,13 +680,79 @@ export class ModelPerformanceService {
         updatedMetrics: {
           modelVersion: data.model_version,
           accuracyPercentage: data.accuracy_percentage,
-          lastUpdated: data.last_updated
-        }
+          lastUpdated: data.last_updated,
+        },
       };
     } catch (error) {
-      await this.auditLogger.logError('performance_metrics_update_failed', error as Error);
+      await this.auditLogger.logError("performance_metrics_update_failed", error as Error);
+      throw error;
+    }
+  }
+
+  /**
+   * Update model performance with feedback data
+   */
+  async updateModelPerformance(feedbackData: {
+    actualDuration: number;
+    predictedDuration: number;
+    confidenceScore: number;
+    appointmentType: string;
+    professionalId: string;
+  }) {
+    try {
+      const error = Math.abs(feedbackData.actualDuration - feedbackData.predictedDuration);
+      const accuracy = 1 - error / feedbackData.actualDuration;
+
+      await this.supabase.from("ml_feedback_data").insert({
+        actual_duration: feedbackData.actualDuration,
+        predicted_duration: feedbackData.predictedDuration,
+        confidence_score: feedbackData.confidenceScore,
+        accuracy: accuracy,
+        appointment_type: feedbackData.appointmentType,
+        professional_id: feedbackData.professionalId,
+        created_at: new Date().toISOString(),
+      });
+
+      return { success: true, accuracy };
+    } catch (error) {
+      await this.auditLogger.logError("model_performance_update_failed", error as Error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get model performance metrics
+   */
+  async getModelPerformance(modelVersion?: string) {
+    try {
+      let query = this.supabase
+        .from("ml_model_performance")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (modelVersion) {
+        query = query.eq("model_version", modelVersion);
+      }
+
+      const { data, error } = await query.limit(10);
+
+      if (error) throw error;
+
+      return {
+        success: true,
+        data: data.map((model) => ({
+          modelVersion: model.model_version,
+          accuracy: model.accuracy_percentage,
+          mae: model.mae_minutes,
+          rmse: model.rmse_minutes,
+          confidenceThreshold: model.confidence_threshold,
+          isActive: model.is_active,
+          createdAt: model.created_at,
+        })),
+      };
+    } catch (error) {
+      await this.auditLogger.logError("get_model_performance_failed", error as Error);
       throw error;
     }
   }
 }
-

@@ -5,17 +5,17 @@
 
 // ESLint configuration
 export const eslintConfig = {
-  extends: ['next/core-web-vitals', '@next/eslint-config-next'],
+  extends: ["next/core-web-vitals", "@next/eslint-config-next"],
   rules: {
-    '@typescript-eslint/no-unused-vars': 'error',
-    'prefer-const': 'error',
+    "@typescript-eslint/no-unused-vars": "error",
+    "prefer-const": "error",
   },
 };
 
 // Prettier configuration
 export const prettierConfig = {
   semi: true,
-  trailingComma: 'es5',
+  trailingComma: "es5",
   singleQuote: true,
   printWidth: 80,
   tabWidth: 2,
@@ -23,16 +23,16 @@ export const prettierConfig = {
 
 // Tailwind base configuration
 export const tailwindConfig = {
-  content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
+  content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
     extend: {
       colors: {
         healthcare: {
-          primary: '#0070f3',
-          secondary: '#7c3aed',
-          success: '#10b981',
-          warning: '#f59e0b',
-          error: '#ef4444',
+          primary: "#0070f3",
+          secondary: "#7c3aed",
+          success: "#10b981",
+          warning: "#f59e0b",
+          error: "#ef4444",
         },
       },
     },
@@ -43,21 +43,21 @@ export const tailwindConfig = {
 // TypeScript configuration base
 export const tsConfig = {
   compilerOptions: {
-    target: 'es5',
-    lib: ['dom', 'dom.iterable', 'es6'],
+    target: "es5",
+    lib: ["dom", "dom.iterable", "es6"],
     allowJs: true,
     skipLibCheck: true,
     strict: true,
     forceConsistentCasingInFileNames: true,
     noEmit: true,
     esModuleInterop: true,
-    module: 'esnext',
-    moduleResolution: 'node',
+    module: "esnext",
+    moduleResolution: "node",
     resolveJsonModule: true,
     isolatedModules: true,
-    jsx: 'preserve',
+    jsx: "preserve",
     incremental: true,
   },
-  include: ['next-env.d.ts', '**/*.ts', '**/*.tsx'],
-  exclude: ['node_modules'],
+  include: ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  exclude: ["node_modules"],
 };

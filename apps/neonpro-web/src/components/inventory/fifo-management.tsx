@@ -1,32 +1,38 @@
-'use client';
+"use client";
 
 /**
  * Story 11.3: FIFO Management Component
  * Advanced FIFO optimization and expiry management interface
  */
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Icons } from '@/components/ui/icons';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Progress } from '@/components/ui/progress';
-import { 
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Icons } from "@/components/ui/icons";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Progress } from "@/components/ui/progress";
+import type {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { 
+} from "@/components/ui/table";
+import type {
   FIFOManager,
   type FIFOAnalysis,
   type ExpiryAlert,
-  type FIFORecommendation
-} from '@/lib/inventory';
-import { useToast } from '@/hooks/use-toast';
+  type FIFORecommendation,
+} from "@/lib/inventory";
+import type { useToast } from "@/hooks/use-toast";
 
 interface FIFOManagementProps {
   onRefresh: () => void;
@@ -63,13 +69,12 @@ export function FIFOManagement({ onRefresh, className }: FIFOManagementProps) {
         throw new Error(alertsError);
       }
       setExpiryAlerts(alerts || []);
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao carregar dados FIFO';
+      const errorMessage = error instanceof Error ? error.message : "Erro ao carregar dados FIFO";
       toast({
-        title: 'Erro',
+        title: "Erro",
         description: errorMessage,
-        variant: 'destructive',
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -79,25 +84,25 @@ export function FIFOManagement({ onRefresh, className }: FIFOManagementProps) {
   const handleBlockExpiringBatches = async () => {
     try {
       const { blocked, error } = await fifoManager.blockExpiringBatches(0);
-      
+
       if (error) {
         throw new Error(error);
       }
 
       toast({
-        title: 'Sucesso',
+        title: "Sucesso",
         description: `${blocked} lotes vencidos foram bloqueados automaticamente`,
       });
 
       loadFIFOData();
       onRefresh();
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao bloquear lotes vencidos';
+      const errorMessage =
+        error instanceof Error ? error.message : "Erro ao bloquear lotes vencidos";
       toast({
-        title: 'Erro',
+        title: "Erro",
         description: errorMessage,
-        variant: 'destructive',
+        variant: "destructive",
       });
     }
   };
@@ -107,56 +112,60 @@ export function FIFOManagement({ onRefresh, className }: FIFOManagementProps) {
       const { success, error } = await fifoManager.executeBatchTransfer({
         lote_id: alert.lote_id,
         centro_custo_origem: alert.centro_custo_principal,
-        centro_custo_destino: 'cc001', // Would be selected by user
+        centro_custo_destino: "cc001", // Would be selected by user
         quantidade: Math.min(alert.quantidade_disponivel, 50),
         motivo: `Transferência automática - produto vencendo em ${alert.dias_para_vencer} dias`,
-        urgente: alert.dias_para_vencer <= 7
+        urgente: alert.dias_para_vencer <= 7,
       });
 
       if (!success) {
-        throw new Error(error || 'Erro ao executar transferência');
+        throw new Error(error || "Erro ao executar transferência");
       }
 
       toast({
-        title: 'Sucesso',
-        description: 'Transferência executada com sucesso',
+        title: "Sucesso",
+        description: "Transferência executada com sucesso",
       });
 
       loadFIFOData();
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao executar transferência';
+      const errorMessage =
+        error instanceof Error ? error.message : "Erro ao executar transferência";
       toast({
-        title: 'Erro',
+        title: "Erro",
         description: errorMessage,
-        variant: 'destructive',
+        variant: "destructive",
       });
     }
   };
 
   const getPriorityColor = (priority: string) => {
     const colors = {
-      'baixa': 'bg-green-100 text-green-800',
-      'media': 'bg-yellow-100 text-yellow-800',
-      'alta': 'bg-orange-100 text-orange-800',
-      'critica': 'bg-red-100 text-red-800'
+      baixa: "bg-green-100 text-green-800",
+      media: "bg-yellow-100 text-yellow-800",
+      alta: "bg-orange-100 text-orange-800",
+      critica: "bg-red-100 text-red-800",
     };
-    return colors[priority as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return colors[priority as keyof typeof colors] || "bg-gray-100 text-gray-800";
   };
 
   const getUrgencyIcon = (urgency: string) => {
     switch (urgency) {
-      case 'critica': return <Icons.AlertTriangle className="h-4 w-4 text-red-500" />;
-      case 'alta': return <Icons.AlertCircle className="h-4 w-4 text-orange-500" />;
-      case 'media': return <Icons.Info className="h-4 w-4 text-yellow-500" />;
-      default: return <Icons.CheckCircle className="h-4 w-4 text-green-500" />;
+      case "critica":
+        return <Icons.AlertTriangle className="h-4 w-4 text-red-500" />;
+      case "alta":
+        return <Icons.AlertCircle className="h-4 w-4 text-orange-500" />;
+      case "media":
+        return <Icons.Info className="h-4 w-4 text-yellow-500" />;
+      default:
+        return <Icons.CheckCircle className="h-4 w-4 text-green-500" />;
     }
   };
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(value);
   };
 
@@ -169,7 +178,7 @@ export function FIFOManagement({ onRefresh, className }: FIFOManagementProps) {
             <p className="text-muted-foreground">Otimização e controle de vencimentos</p>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {[1, 2].map((i) => (
             <Card key={i}>
@@ -184,11 +193,16 @@ export function FIFOManagement({ onRefresh, className }: FIFOManagementProps) {
   }
 
   const totalExpiring = expiryAlerts.length;
-  const criticalAlerts = expiryAlerts.filter(alert => alert.prioridade === 'critica').length;
+  const criticalAlerts = expiryAlerts.filter((alert) => alert.prioridade === "critica").length;
   const totalWasteValue = expiryAlerts.reduce((sum, alert) => sum + alert.valor_estimado, 0);
-  const fifoComplianceScore = fifoAnalysis.length > 0 
-    ? Math.round(fifoAnalysis.reduce((sum, analysis) => sum + (analysis.economia_fifo / 100), 0) / fifoAnalysis.length * 100)
-    : 0;
+  const fifoComplianceScore =
+    fifoAnalysis.length > 0
+      ? Math.round(
+          (fifoAnalysis.reduce((sum, analysis) => sum + analysis.economia_fifo / 100, 0) /
+            fifoAnalysis.length) *
+            100,
+        )
+      : 0;
 
   return (
     <div className={`space-y-6 ${className}`}>
@@ -196,17 +210,15 @@ export function FIFOManagement({ onRefresh, className }: FIFOManagementProps) {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">Gestão FIFO</h2>
-          <p className="text-muted-foreground">
-            Otimização de uso e controle de vencimentos
-          </p>
+          <p className="text-muted-foreground">Otimização de uso e controle de vencimentos</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={loadFIFOData}>
             <Icons.RefreshCw className="w-4 h-4 mr-2" />
             Atualizar
           </Button>
-          <Button 
-            variant="destructive" 
+          <Button
+            variant="destructive"
             onClick={handleBlockExpiringBatches}
             disabled={criticalAlerts === 0}
           >
@@ -240,11 +252,7 @@ export function FIFOManagement({ onRefresh, className }: FIFOManagementProps) {
           <CardContent>
             <div className="text-2xl font-bold text-orange-600">{totalExpiring}</div>
             <div className="flex items-center gap-2 mt-2">
-              {criticalAlerts > 0 && (
-                <Badge variant="destructive">
-                  {criticalAlerts} críticos
-                </Badge>
-              )}
+              {criticalAlerts > 0 && <Badge variant="destructive">{criticalAlerts} críticos</Badge>}
             </div>
           </CardContent>
         </Card>
@@ -256,9 +264,7 @@ export function FIFOManagement({ onRefresh, className }: FIFOManagementProps) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">
-              {formatCurrency(totalWasteValue)}
-            </div>
+            <div className="text-2xl font-bold text-red-600">{formatCurrency(totalWasteValue)}</div>
             <p className="text-sm text-muted-foreground">Produtos próximos ao vencimento</p>
           </CardContent>
         </Card>
@@ -272,7 +278,7 @@ export function FIFOManagement({ onRefresh, className }: FIFOManagementProps) {
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
               {formatCurrency(
-                fifoAnalysis.reduce((sum, analysis) => sum + analysis.desperdicioEvitado, 0)
+                fifoAnalysis.reduce((sum, analysis) => sum + analysis.desperdicioEvitado, 0),
               )}
             </div>
             <p className="text-sm text-muted-foreground">Desperdício evitado</p>
@@ -297,9 +303,7 @@ export function FIFOManagement({ onRefresh, className }: FIFOManagementProps) {
             <Icons.Clock className="h-5 w-5" />
             Alertas de Vencimento
           </CardTitle>
-          <CardDescription>
-            Produtos que vencem nos próximos 30 dias
-          </CardDescription>
+          <CardDescription>Produtos que vencem nos próximos 30 dias</CardDescription>
         </CardHeader>
         <CardContent>
           {expiryAlerts.length > 0 ? (
@@ -321,9 +325,7 @@ export function FIFOManagement({ onRefresh, className }: FIFOManagementProps) {
                   <TableRow key={alert.id}>
                     <TableCell className="font-medium">{alert.nome_produto}</TableCell>
                     <TableCell>{alert.numero_lote}</TableCell>
-                    <TableCell>
-                      {alert.data_validade.toLocaleDateString('pt-BR')}
-                    </TableCell>
+                    <TableCell>{alert.data_validade.toLocaleDateString("pt-BR")}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         {getUrgencyIcon(alert.prioridade)}
@@ -339,8 +341,8 @@ export function FIFOManagement({ onRefresh, className }: FIFOManagementProps) {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-1">
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           variant="outline"
                           onClick={() => handleExecuteTransfer(alert)}
                         >
@@ -373,9 +375,7 @@ export function FIFOManagement({ onRefresh, className }: FIFOManagementProps) {
             <Icons.BarChart3 className="h-5 w-5" />
             Análise FIFO por Produto
           </CardTitle>
-          <CardDescription>
-            Análise detalhada de otimização FIFO por produto
-          </CardDescription>
+          <CardDescription>Análise detalhada de otimização FIFO por produto</CardDescription>
         </CardHeader>
         <CardContent>
           {fifoAnalysis.length > 0 ? (
@@ -385,9 +385,7 @@ export function FIFOManagement({ onRefresh, className }: FIFOManagementProps) {
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-medium">{analysis.nome_produto}</h3>
                     <div className="flex gap-2">
-                      <Badge variant="outline">
-                        {analysis.lotes_disponiveis.length} lotes
-                      </Badge>
+                      <Badge variant="outline">{analysis.lotes_disponiveis.length} lotes</Badge>
                       <Badge variant="secondary">
                         {formatCurrency(analysis.economia_fifo)} economia
                       </Badge>
@@ -420,7 +418,7 @@ export function FIFOManagement({ onRefresh, className }: FIFOManagementProps) {
                     <div className="space-y-2">
                       <h4 className="font-medium text-sm">Recomendações:</h4>
                       {analysis.recomendacoes.slice(0, 3).map((rec, index) => (
-                        <div 
+                        <div
                           key={index}
                           className="flex items-center justify-between p-2 bg-gray-50 rounded text-sm"
                         >
@@ -428,9 +426,7 @@ export function FIFOManagement({ onRefresh, className }: FIFOManagementProps) {
                             {getUrgencyIcon(rec.urgencia)}
                             <span>{rec.acao_recomendada}</span>
                           </div>
-                          <Badge variant="outline">
-                            {formatCurrency(rec.impacto_financeiro)}
-                          </Badge>
+                          <Badge variant="outline">{formatCurrency(rec.impacto_financeiro)}</Badge>
                         </div>
                       ))}
                     </div>
@@ -440,9 +436,7 @@ export function FIFOManagement({ onRefresh, className }: FIFOManagementProps) {
 
               {fifoAnalysis.length > 5 && (
                 <div className="text-center">
-                  <Button variant="outline">
-                    Ver Todos os Produtos ({fifoAnalysis.length})
-                  </Button>
+                  <Button variant="outline">Ver Todos os Produtos ({fifoAnalysis.length})</Button>
                 </div>
               )}
             </div>
@@ -462,9 +456,7 @@ export function FIFOManagement({ onRefresh, className }: FIFOManagementProps) {
             <Icons.Settings className="h-5 w-5" />
             Configurações FIFO
           </CardTitle>
-          <CardDescription>
-            Configurações rápidas de otimização FIFO
-          </CardDescription>
+          <CardDescription>Configurações rápidas de otimização FIFO</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -482,7 +474,7 @@ export function FIFOManagement({ onRefresh, className }: FIFOManagementProps) {
                 <Badge variant="secondary">Ativada</Badge>
               </div>
             </div>
-            
+
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Transferências Sugeridas</span>
@@ -498,7 +490,7 @@ export function FIFOManagement({ onRefresh, className }: FIFOManagementProps) {
               </div>
             </div>
           </div>
-          
+
           <div className="flex justify-end mt-6">
             <Button variant="outline">
               <Icons.Settings className="w-4 h-4 mr-2" />

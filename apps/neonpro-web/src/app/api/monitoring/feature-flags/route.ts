@@ -1,38 +1,40 @@
 /**
  * TASK-001: Foundation Setup & Baseline
  * Feature Flags Management API
- * 
+ *
  * Provides comprehensive feature flag management with gradual rollout
  * capability for safe enhancement implementation.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import type { NextRequest, NextResponse } from "next/server";
+import type { createClient } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const searchParams = request.nextUrl.searchParams;
-    const environment = searchParams.get('environment');
-    const epic_id = searchParams.get('epic_id');
+    const environment = searchParams.get("environment");
+    const epic_id = searchParams.get("epic_id");
 
     let query = supabase
-      .from('feature_flags')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .from("feature_flags")
+      .select("*")
+      .order("created_at", { ascending: false });
 
     if (environment) {
-      query = query.eq('environment', environment);
+      query = query.eq("environment", environment);
     }
 
     if (epic_id) {
-      query = query.eq('epic_id', epic_id);
+      query = query.eq("epic_id", epic_id);
     }
 
     const { data: flags, error } = await query;
@@ -45,30 +47,28 @@ export async function GET(request: NextRequest) {
       success: true,
       data: { flags: flags || [] },
     });
-
   } catch (error) {
-    console.error('Error fetching feature flags:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch feature flags' },
-      { status: 500 }
-    );
+    console.error("Error fetching feature flags:", error);
+    return NextResponse.json({ error: "Failed to fetch feature flags" }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
     const {
       name,
       description,
-      environment = 'development',
+      environment = "development",
       epic_id,
       enabled = false,
       rollout_percentage = 0,
@@ -77,29 +77,29 @@ export async function POST(request: NextRequest) {
     // Validate required fields
     if (!name || !description) {
       return NextResponse.json(
-        { error: 'Missing required fields: name, description' },
-        { status: 400 }
+        { error: "Missing required fields: name, description" },
+        { status: 400 },
       );
     }
 
     // Check if flag with same name exists in environment
     const { data: existingFlag } = await supabase
-      .from('feature_flags')
-      .select('id')
-      .eq('name', name)
-      .eq('environment', environment)
+      .from("feature_flags")
+      .select("id")
+      .eq("name", name)
+      .eq("environment", environment)
       .single();
 
     if (existingFlag) {
       return NextResponse.json(
-        { error: 'Feature flag with this name already exists in this environment' },
-        { status: 409 }
+        { error: "Feature flag with this name already exists in this environment" },
+        { status: 409 },
       );
     }
 
     // Create new feature flag
     const { data: flag, error } = await supabase
-      .from('feature_flags')
+      .from("feature_flags")
       .insert({
         name,
         description,
@@ -119,14 +119,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: { flag },
-      message: 'Feature flag created successfully',
+      message: "Feature flag created successfully",
     });
-
   } catch (error) {
-    console.error('Error creating feature flag:', error);
-    return NextResponse.json(
-      { error: 'Failed to create feature flag' },
-      { status: 500 }
-    );
+    console.error("Error creating feature flag:", error);
+    return NextResponse.json({ error: "Failed to create feature flag" }, { status: 500 });
   }
 }

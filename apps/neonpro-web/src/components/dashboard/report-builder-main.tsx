@@ -129,11 +129,7 @@ const quickActions = [
     description: "Receitas, pagamentos e faturamento",
     icon: TrendingUp,
     color: "bg-green-100 text-green-700",
-    action: () =>
-      window.open(
-        "/dashboard/report-builder/new?template=financial-summary",
-        "_blank"
-      ),
+    action: () => window.open("/dashboard/report-builder/new?template=financial-summary", "_blank"),
   },
   {
     title: "Análise de Pacientes",
@@ -141,10 +137,7 @@ const quickActions = [
     icon: BarChart3,
     color: "bg-blue-100 text-blue-700",
     action: () =>
-      window.open(
-        "/dashboard/report-builder/new?template=patient-demographics",
-        "_blank"
-      ),
+      window.open("/dashboard/report-builder/new?template=patient-demographics", "_blank"),
   },
   {
     title: "Dashboard Executivo",
@@ -204,8 +197,7 @@ export function ReportBuilderMain() {
       report.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       report.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = filterType === "all" || report.type === filterType;
-    const matchesStatus =
-      filterStatus === "all" || report.status === filterStatus;
+    const matchesStatus = filterStatus === "all" || report.status === filterStatus;
 
     return matchesSearch && matchesType && matchesStatus;
   });
@@ -224,8 +216,7 @@ export function ReportBuilderMain() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Report Builder</h1>
           <p className="text-muted-foreground">
-            Crie relatórios personalizados com nossa ferramenta de arrastar e
-            soltar
+            Crie relatórios personalizados com nossa ferramenta de arrastar e soltar
           </p>
         </div>
 
@@ -260,9 +251,7 @@ export function ReportBuilderMain() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-medium text-sm">{action.title}</h3>
-                    <p className="text-xs text-muted-foreground">
-                      {action.description}
-                    </p>
+                    <p className="text-xs text-muted-foreground">{action.description}</p>
                   </div>
                   <ExternalLink className="w-4 h-4 text-muted-foreground" />
                 </div>
@@ -320,10 +309,7 @@ export function ReportBuilderMain() {
           {/* Reports Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredReports.map((report) => (
-              <Card
-                key={report.id}
-                className="hover:shadow-md transition-shadow"
-              >
+              <Card key={report.id} className="hover:shadow-md transition-shadow">
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2">
@@ -332,17 +318,9 @@ export function ReportBuilderMain() {
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0"
-                        >
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                           <span className="sr-only">Abrir menu</span>
-                          <svg
-                            className="h-4 w-4"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                          >
+                          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none">
                             <circle cx="12" cy="12" r="1" fill="currentColor" />
                             <circle cx="12" cy="5" r="1" fill="currentColor" />
                             <circle cx="12" cy="19" r="1" fill="currentColor" />
@@ -376,9 +354,7 @@ export function ReportBuilderMain() {
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
-                  <CardDescription className="text-xs">
-                    {report.description}
-                  </CardDescription>
+                  <CardDescription className="text-xs">{report.description}</CardDescription>
                 </CardHeader>
 
                 <CardContent className="pb-3">
@@ -416,9 +392,7 @@ export function ReportBuilderMain() {
           {filteredReports.length === 0 && (
             <div className="text-center py-12">
               <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium mb-2">
-                Nenhum relatório encontrado
-              </h3>
+              <h3 className="text-lg font-medium mb-2">Nenhum relatório encontrado</h3>
               <p className="text-muted-foreground mb-4">
                 {searchQuery || filterType !== "all" || filterStatus !== "all"
                   ? "Tente ajustar os filtros de busca"
@@ -448,9 +422,7 @@ export function ReportBuilderMain() {
                         <IconComponent className="w-5 h-5" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <CardTitle className="text-base">
-                          {template.name}
-                        </CardTitle>
+                        <CardTitle className="text-base">{template.name}</CardTitle>
                         <CardDescription className="text-xs">
                           {template.description}
                         </CardDescription>
@@ -473,9 +445,7 @@ export function ReportBuilderMain() {
         <TabsContent value="shared" className="space-y-4">
           <div className="text-center py-12">
             <Share className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-medium mb-2">
-              Relatórios Compartilhados
-            </h3>
+            <h3 className="text-lg font-medium mb-2">Relatórios Compartilhados</h3>
             <p className="text-muted-foreground">
               Aqui aparecerão os relatórios compartilhados com você
             </p>

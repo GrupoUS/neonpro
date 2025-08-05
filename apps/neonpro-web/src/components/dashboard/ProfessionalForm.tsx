@@ -1,22 +1,28 @@
-'use client'
+"use client";
 
-import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import {
+import React, { useState, useEffect } from "react";
+import type { useRouter } from "next/navigation";
+import type { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import {
+} from "@/components/ui/select";
+import type {
   Form,
   FormControl,
   FormDescription,
@@ -24,11 +30,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Badge } from '@/components/ui/badge'
-import { Checkbox } from '@/components/ui/checkbox'
-import {
+} from "@/components/ui/form";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Badge } from "@/components/ui/badge";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -36,14 +42,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { toast } from 'sonner'
-import { 
-  Save, 
-  X, 
-  Plus, 
-  Trash2, 
-  Upload, 
+} from "@/components/ui/dialog";
+import type { toast } from "sonner";
+import type {
+  Save,
+  X,
+  Plus,
+  Trash2,
+  Upload,
   FileText,
   Certificate,
   User,
@@ -54,283 +60,295 @@ import {
   Mail,
   MapPin,
   Award,
-  Stethoscope
-} from 'lucide-react'
-import { Professional, ProfessionalCredential, ProfessionalSpecialty, ProfessionalService, EmploymentStatus, ProfessionalStatus } from '@/lib/types/professional'
-import { ProfessionalCreateSchema, ProfessionalUpdateSchema, CredentialCreateSchema, ServiceCreateSchema } from '@/lib/validations/professional'
-import { 
-  createProfessional, 
-  updateProfessional, 
+  Stethoscope,
+} from "lucide-react";
+import type {
+  Professional,
+  ProfessionalCredential,
+  ProfessionalSpecialty,
+  ProfessionalService,
+  EmploymentStatus,
+  ProfessionalStatus,
+} from "@/lib/types/professional";
+import type {
+  ProfessionalCreateSchema,
+  ProfessionalUpdateSchema,
+  CredentialCreateSchema,
+  ServiceCreateSchema,
+} from "@/lib/validations/professional";
+import type {
+  createProfessional,
+  updateProfessional,
   getProfessional,
   createCredential,
   createService,
-  getSpecialties
-} from '@/lib/supabase/professionals'
-import { z } from 'zod'
+  getSpecialties,
+} from "@/lib/supabase/professionals";
+import type { z } from "zod";
 
 interface ProfessionalFormProps {
-  professionalId?: string
-  mode?: 'create' | 'edit'
+  professionalId?: string;
+  mode?: "create" | "edit";
 }
 
 interface CredentialFormData {
-  credential_type: string
-  credential_number: string
-  issuing_authority: string
-  issue_date: string
-  expiry_date?: string
-  description?: string
+  credential_type: string;
+  credential_number: string;
+  issuing_authority: string;
+  issue_date: string;
+  expiry_date?: string;
+  description?: string;
 }
 
 interface ServiceFormData {
-  service_name: string
-  service_type: string
-  description?: string
-  duration_minutes: number
-  base_price?: number
-  requires_certification: boolean
+  service_name: string;
+  service_type: string;
+  description?: string;
+  duration_minutes: number;
+  base_price?: number;
+  requires_certification: boolean;
 }
 
-type ProfessionalFormData = z.infer<typeof ProfessionalCreateSchema>
+type ProfessionalFormData = z.infer<typeof ProfessionalCreateSchema>;
 
 const employmentStatusOptions = [
-  { value: 'full_time', label: 'Tempo Integral' },
-  { value: 'part_time', label: 'Meio Período' },
-  { value: 'contractor', label: 'Contratado' },
-  { value: 'locum_tenens', label: 'Substituto' },
-  { value: 'retired', label: 'Aposentado' }
-]
+  { value: "full_time", label: "Tempo Integral" },
+  { value: "part_time", label: "Meio Período" },
+  { value: "contractor", label: "Contratado" },
+  { value: "locum_tenens", label: "Substituto" },
+  { value: "retired", label: "Aposentado" },
+];
 
 const professionalStatusOptions = [
-  { value: 'active', label: 'Ativo' },
-  { value: 'inactive', label: 'Inativo' },
-  { value: 'suspended', label: 'Suspenso' },
-  { value: 'pending_verification', label: 'Pendente Verificação' }
-]
+  { value: "active", label: "Ativo" },
+  { value: "inactive", label: "Inativo" },
+  { value: "suspended", label: "Suspenso" },
+  { value: "pending_verification", label: "Pendente Verificação" },
+];
 
 const credentialTypeOptions = [
-  { value: 'license', label: 'Licença Profissional' },
-  { value: 'certification', label: 'Certificação' },
-  { value: 'board_certification', label: 'Certificação do Conselho' },
-  { value: 'fellowship', label: 'Fellowship' },
-  { value: 'residency', label: 'Residência' },
-  { value: 'degree', label: 'Diploma' },
-  { value: 'cme', label: 'Educação Médica Continuada' },
-  { value: 'training', label: 'Treinamento' }
-]
+  { value: "license", label: "Licença Profissional" },
+  { value: "certification", label: "Certificação" },
+  { value: "board_certification", label: "Certificação do Conselho" },
+  { value: "fellowship", label: "Fellowship" },
+  { value: "residency", label: "Residência" },
+  { value: "degree", label: "Diploma" },
+  { value: "cme", label: "Educação Médica Continuada" },
+  { value: "training", label: "Treinamento" },
+];
 
 const serviceTypeOptions = [
-  { value: 'consultation', label: 'Consulta' },
-  { value: 'procedure', label: 'Procedimento' },
-  { value: 'surgery', label: 'Cirurgia' },
-  { value: 'diagnostic', label: 'Diagnóstico' },
-  { value: 'therapy', label: 'Terapia' },
-  { value: 'emergency', label: 'Emergência' },
-  { value: 'telemedicine', label: 'Telemedicina' },
-  { value: 'administrative', label: 'Administrativo' }
-]
+  { value: "consultation", label: "Consulta" },
+  { value: "procedure", label: "Procedimento" },
+  { value: "surgery", label: "Cirurgia" },
+  { value: "diagnostic", label: "Diagnóstico" },
+  { value: "therapy", label: "Terapia" },
+  { value: "emergency", label: "Emergência" },
+  { value: "telemedicine", label: "Telemedicina" },
+  { value: "administrative", label: "Administrativo" },
+];
 
-export default function ProfessionalForm({ professionalId, mode = 'create' }: ProfessionalFormProps) {
-  const router = useRouter()
-  const [loading, setLoading] = useState(false)
-  const [professional, setProfessional] = useState<Professional | null>(null)
-  const [credentials, setCredentials] = useState<ProfessionalCredential[]>([])
-  const [services, setServices] = useState<ProfessionalService[]>([])
-  const [specialties, setSpecialties] = useState<ProfessionalSpecialty[]>([])
-  const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>([])
-  const [showCredentialDialog, setShowCredentialDialog] = useState(false)
-  const [showServiceDialog, setShowServiceDialog] = useState(false)
-  const [profilePhoto, setProfilePhoto] = useState<File | null>(null)
+export default function ProfessionalForm({
+  professionalId,
+  mode = "create",
+}: ProfessionalFormProps) {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [professional, setProfessional] = useState<Professional | null>(null);
+  const [credentials, setCredentials] = useState<ProfessionalCredential[]>([]);
+  const [services, setServices] = useState<ProfessionalService[]>([]);
+  const [specialties, setSpecialties] = useState<ProfessionalSpecialty[]>([]);
+  const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>([]);
+  const [showCredentialDialog, setShowCredentialDialog] = useState(false);
+  const [showServiceDialog, setShowServiceDialog] = useState(false);
+  const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
 
   const form = useForm<ProfessionalFormData>({
-    resolver: zodResolver(mode === 'create' ? ProfessionalCreateSchema : ProfessionalUpdateSchema),
+    resolver: zodResolver(mode === "create" ? ProfessionalCreateSchema : ProfessionalUpdateSchema),
     defaultValues: {
-      given_name: '',
-      family_name: '',
-      email: '',
-      phone_number: '',
-      birth_date: '',
-      license_number: '',
-      qualification: '',
-      employment_status: 'full_time',
-      status: 'pending_verification',
-      bio: '',
+      given_name: "",
+      family_name: "",
+      email: "",
+      phone_number: "",
+      birth_date: "",
+      license_number: "",
+      qualification: "",
+      employment_status: "full_time",
+      status: "pending_verification",
+      bio: "",
       address: {
-        line: '',
-        city: '',
-        state: '',
-        postal_code: '',
-        country: 'BR'
-      }
-    }
-  })
+        line: "",
+        city: "",
+        state: "",
+        postal_code: "",
+        country: "BR",
+      },
+    },
+  });
 
   const credentialForm = useForm<CredentialFormData>({
     resolver: zodResolver(CredentialCreateSchema.omit({ professional_id: true })),
     defaultValues: {
-      credential_type: '',
-      credential_number: '',
-      issuing_authority: '',
-      issue_date: '',
-      expiry_date: '',
-      description: ''
-    }
-  })
+      credential_type: "",
+      credential_number: "",
+      issuing_authority: "",
+      issue_date: "",
+      expiry_date: "",
+      description: "",
+    },
+  });
 
   const serviceForm = useForm<ServiceFormData>({
     resolver: zodResolver(ServiceCreateSchema.omit({ professional_id: true })),
     defaultValues: {
-      service_name: '',
-      service_type: '',
-      description: '',
+      service_name: "",
+      service_type: "",
+      description: "",
       duration_minutes: 60,
       base_price: 0,
-      requires_certification: false
-    }
-  })
+      requires_certification: false,
+    },
+  });
 
   useEffect(() => {
-    loadSpecialties()
-    if (mode === 'edit' && professionalId) {
-      loadProfessional()
+    loadSpecialties();
+    if (mode === "edit" && professionalId) {
+      loadProfessional();
     }
-  }, [mode, professionalId])
+  }, [mode, professionalId]);
 
   const loadSpecialties = async () => {
     try {
-      const data = await getSpecialties()
-      setSpecialties(data)
+      const data = await getSpecialties();
+      setSpecialties(data);
     } catch (error) {
-      console.error('Error loading specialties:', error)
-      toast.error('Erro ao carregar especialidades')
+      console.error("Error loading specialties:", error);
+      toast.error("Erro ao carregar especialidades");
     }
-  }
+  };
 
   const loadProfessional = async () => {
-    if (!professionalId) return
+    if (!professionalId) return;
 
     try {
-      setLoading(true)
-      const data = await getProfessional(professionalId)
-      setProfessional(data)
-      
+      setLoading(true);
+      const data = await getProfessional(professionalId);
+      setProfessional(data);
+
       // Populate form with professional data
       form.reset({
         given_name: data.given_name,
         family_name: data.family_name,
-        email: data.email || '',
-        phone_number: data.phone_number || '',
-        birth_date: data.birth_date || '',
-        license_number: data.license_number || '',
-        qualification: data.qualification || '',
+        email: data.email || "",
+        phone_number: data.phone_number || "",
+        birth_date: data.birth_date || "",
+        license_number: data.license_number || "",
+        qualification: data.qualification || "",
         employment_status: data.employment_status,
         status: data.status,
-        bio: data.bio || '',
+        bio: data.bio || "",
         address: data.address || {
-          line: '',
-          city: '',
-          state: '',
-          postal_code: '',
-          country: 'BR'
-        }
-      })
-      
+          line: "",
+          city: "",
+          state: "",
+          postal_code: "",
+          country: "BR",
+        },
+      });
     } catch (error) {
-      console.error('Error loading professional:', error)
-      toast.error('Erro ao carregar dados do profissional')
+      console.error("Error loading professional:", error);
+      toast.error("Erro ao carregar dados do profissional");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const onSubmit = async (data: ProfessionalFormData) => {
     try {
-      setLoading(true)
-      
-      if (mode === 'create') {
-        const newProfessional = await createProfessional(data)
-        toast.success('Profissional cadastrado com sucesso!')
-        router.push(`/dashboard/professionals/${newProfessional.id}`)
-      } else if (mode === 'edit' && professionalId) {
-        await updateProfessional(professionalId, data)
-        toast.success('Profissional atualizado com sucesso!')
-        router.push('/dashboard/professionals')
+      setLoading(true);
+
+      if (mode === "create") {
+        const newProfessional = await createProfessional(data);
+        toast.success("Profissional cadastrado com sucesso!");
+        router.push(`/dashboard/professionals/${newProfessional.id}`);
+      } else if (mode === "edit" && professionalId) {
+        await updateProfessional(professionalId, data);
+        toast.success("Profissional atualizado com sucesso!");
+        router.push("/dashboard/professionals");
       }
     } catch (error) {
-      console.error('Error saving professional:', error)
-      toast.error('Erro ao salvar profissional')
+      console.error("Error saving professional:", error);
+      toast.error("Erro ao salvar profissional");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleAddCredential = async (data: CredentialFormData) => {
-    if (!professionalId && mode === 'edit') {
-      toast.error('Salve o profissional primeiro antes de adicionar credenciais')
-      return
+    if (!professionalId && mode === "edit") {
+      toast.error("Salve o profissional primeiro antes de adicionar credenciais");
+      return;
     }
 
     try {
-      setLoading(true)
+      setLoading(true);
       const credentialData = {
         ...data,
-        professional_id: professionalId!
-      }
-      
-      const newCredential = await createCredential(credentialData)
-      setCredentials(prev => [...prev, newCredential])
-      credentialForm.reset()
-      setShowCredentialDialog(false)
-      toast.success('Credencial adicionada com sucesso!')
+        professional_id: professionalId!,
+      };
+
+      const newCredential = await createCredential(credentialData);
+      setCredentials((prev) => [...prev, newCredential]);
+      credentialForm.reset();
+      setShowCredentialDialog(false);
+      toast.success("Credencial adicionada com sucesso!");
     } catch (error) {
-      console.error('Error adding credential:', error)
-      toast.error('Erro ao adicionar credencial')
+      console.error("Error adding credential:", error);
+      toast.error("Erro ao adicionar credencial");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleAddService = async (data: ServiceFormData) => {
-    if (!professionalId && mode === 'edit') {
-      toast.error('Salve o profissional primeiro antes de adicionar serviços')
-      return
+    if (!professionalId && mode === "edit") {
+      toast.error("Salve o profissional primeiro antes de adicionar serviços");
+      return;
     }
 
     try {
-      setLoading(true)
+      setLoading(true);
       const serviceData = {
         ...data,
-        professional_id: professionalId!
-      }
-      
-      const newService = await createService(serviceData)
-      setServices(prev => [...prev, newService])
-      serviceForm.reset()
-      setShowServiceDialog(false)
-      toast.success('Serviço adicionado com sucesso!')
+        professional_id: professionalId!,
+      };
+
+      const newService = await createService(serviceData);
+      setServices((prev) => [...prev, newService]);
+      serviceForm.reset();
+      setShowServiceDialog(false);
+      toast.success("Serviço adicionado com sucesso!");
     } catch (error) {
-      console.error('Error adding service:', error)
-      toast.error('Erro ao adicionar serviço')
+      console.error("Error adding service:", error);
+      toast.error("Erro ao adicionar serviço");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
+    const file = event.target.files?.[0];
     if (file) {
-      setProfilePhoto(file)
-      toast.success('Foto selecionada com sucesso!')
+      setProfilePhoto(file);
+      toast.success("Foto selecionada com sucesso!");
     }
-  }
+  };
 
   const handleSpecialtyToggle = (specialtyId: string) => {
-    setSelectedSpecialties(prev => 
-      prev.includes(specialtyId) 
-        ? prev.filter(id => id !== specialtyId)
-        : [...prev, specialtyId]
-    )
-  }
+    setSelectedSpecialties((prev) =>
+      prev.includes(specialtyId) ? prev.filter((id) => id !== specialtyId) : [...prev, specialtyId],
+    );
+  };
 
   return (
     <div className="flex-1 space-y-6">
@@ -338,13 +356,12 @@ export default function ProfessionalForm({ professionalId, mode = 'create' }: Pr
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">
-            {mode === 'create' ? 'Cadastrar Profissional' : 'Editar Profissional'}
+            {mode === "create" ? "Cadastrar Profissional" : "Editar Profissional"}
           </h2>
           <p className="text-muted-foreground">
-            {mode === 'create' 
-              ? 'Cadastre um novo profissional no sistema'
-              : 'Edite as informações do profissional'
-            }
+            {mode === "create"
+              ? "Cadastre um novo profissional no sistema"
+              : "Edite as informações do profissional"}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -352,12 +369,9 @@ export default function ProfessionalForm({ professionalId, mode = 'create' }: Pr
             <X className="mr-2 h-4 w-4" />
             Cancelar
           </Button>
-          <Button 
-            onClick={form.handleSubmit(onSubmit)}
-            disabled={loading}
-          >
+          <Button onClick={form.handleSubmit(onSubmit)} disabled={loading}>
             <Save className="mr-2 h-4 w-4" />
-            {loading ? 'Salvando...' : 'Salvar'}
+            {loading ? "Salvando..." : "Salvar"}
           </Button>
         </div>
       </div>
@@ -381,9 +395,7 @@ export default function ProfessionalForm({ professionalId, mode = 'create' }: Pr
                     <User className="h-5 w-5" />
                     Informações Pessoais
                   </CardTitle>
-                  <CardDescription>
-                    Dados pessoais do profissional
-                  </CardDescription>
+                  <CardDescription>Dados pessoais do profissional</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {/* Profile Photo */}
@@ -392,9 +404,9 @@ export default function ProfessionalForm({ professionalId, mode = 'create' }: Pr
                     <div className="flex items-center gap-4">
                       <div className="h-24 w-24 rounded-full bg-muted flex items-center justify-center">
                         {profilePhoto ? (
-                          <img 
-                            src={URL.createObjectURL(profilePhoto)} 
-                            alt="Profile" 
+                          <img
+                            src={URL.createObjectURL(profilePhoto)}
+                            alt="Profile"
                             className="h-24 w-24 rounded-full object-cover"
                           />
                         ) : (
@@ -457,11 +469,7 @@ export default function ProfessionalForm({ professionalId, mode = 'create' }: Pr
                         <FormItem>
                           <FormLabel>Email *</FormLabel>
                           <FormControl>
-                            <Input 
-                              type="email" 
-                              placeholder="email@exemplo.com" 
-                              {...field} 
-                            />
+                            <Input type="email" placeholder="email@exemplo.com" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -569,10 +577,10 @@ export default function ProfessionalForm({ professionalId, mode = 'create' }: Pr
                       <FormItem>
                         <FormLabel>Biografia</FormLabel>
                         <FormControl>
-                          <Textarea 
+                          <Textarea
                             placeholder="Descrição sobre o profissional, experiência, especialidades..."
                             className="min-h-[100px]"
-                            {...field} 
+                            {...field}
                           />
                         </FormControl>
                         <FormDescription>
@@ -594,9 +602,7 @@ export default function ProfessionalForm({ professionalId, mode = 'create' }: Pr
                     <Briefcase className="h-5 w-5" />
                     Informações Profissionais
                   </CardTitle>
-                  <CardDescription>
-                    Dados relacionados à atividade profissional
-                  </CardDescription>
+                  <CardDescription>Dados relacionados à atividade profissional</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -621,7 +627,10 @@ export default function ProfessionalForm({ professionalId, mode = 'create' }: Pr
                         <FormItem>
                           <FormLabel>Qualificação Principal</FormLabel>
                           <FormControl>
-                            <Input placeholder="Médico, Dentista, Fisioterapeuta, etc." {...field} />
+                            <Input
+                              placeholder="Médico, Dentista, Fisioterapeuta, etc."
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -690,19 +699,17 @@ export default function ProfessionalForm({ professionalId, mode = 'create' }: Pr
                     <Star className="h-5 w-5" />
                     Especialidades
                   </CardTitle>
-                  <CardDescription>
-                    Selecione as especialidades do profissional
-                  </CardDescription>
+                  <CardDescription>Selecione as especialidades do profissional</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {specialties.map((specialty) => (
-                      <div 
-                        key={specialty.id} 
+                      <div
+                        key={specialty.id}
                         className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-accent cursor-pointer"
                         onClick={() => handleSpecialtyToggle(specialty.id)}
                       >
-                        <Checkbox 
+                        <Checkbox
                           checked={selectedSpecialties.includes(specialty.id)}
                           onChange={() => handleSpecialtyToggle(specialty.id)}
                         />
@@ -729,9 +736,7 @@ export default function ProfessionalForm({ professionalId, mode = 'create' }: Pr
                         <Certificate className="h-5 w-5" />
                         Credenciais e Certificações
                       </CardTitle>
-                      <CardDescription>
-                        Gerencie as credenciais profissionais
-                      </CardDescription>
+                      <CardDescription>Gerencie as credenciais profissionais</CardDescription>
                     </div>
                     <Dialog open={showCredentialDialog} onOpenChange={setShowCredentialDialog}>
                       <DialogTrigger asChild>
@@ -748,7 +753,10 @@ export default function ProfessionalForm({ professionalId, mode = 'create' }: Pr
                           </DialogDescription>
                         </DialogHeader>
                         <Form {...credentialForm}>
-                          <form onSubmit={credentialForm.handleSubmit(handleAddCredential)} className="space-y-4">
+                          <form
+                            onSubmit={credentialForm.handleSubmit(handleAddCredential)}
+                            className="space-y-4"
+                          >
                             <FormField
                               control={credentialForm.control}
                               name="credential_type"
@@ -781,7 +789,10 @@ export default function ProfessionalForm({ professionalId, mode = 'create' }: Pr
                                 <FormItem>
                                   <FormLabel>Número da Credencial</FormLabel>
                                   <FormControl>
-                                    <Input placeholder="Número ou código da credencial" {...field} />
+                                    <Input
+                                      placeholder="Número ou código da credencial"
+                                      {...field}
+                                    />
                                   </FormControl>
                                   <FormMessage />
                                 </FormItem>
@@ -839,9 +850,9 @@ export default function ProfessionalForm({ professionalId, mode = 'create' }: Pr
                                 <FormItem>
                                   <FormLabel>Descrição</FormLabel>
                                   <FormControl>
-                                    <Textarea 
+                                    <Textarea
                                       placeholder="Detalhes sobre a credencial..."
-                                      {...field} 
+                                      {...field}
                                     />
                                   </FormControl>
                                   <FormMessage />
@@ -851,13 +862,10 @@ export default function ProfessionalForm({ professionalId, mode = 'create' }: Pr
                           </form>
                         </Form>
                         <DialogFooter>
-                          <Button 
-                            variant="outline" 
-                            onClick={() => setShowCredentialDialog(false)}
-                          >
+                          <Button variant="outline" onClick={() => setShowCredentialDialog(false)}>
                             Cancelar
                           </Button>
-                          <Button 
+                          <Button
                             onClick={credentialForm.handleSubmit(handleAddCredential)}
                             disabled={loading}
                           >
@@ -877,18 +885,30 @@ export default function ProfessionalForm({ professionalId, mode = 'create' }: Pr
                   ) : (
                     <div className="space-y-4">
                       {credentials.map((credential) => (
-                        <div key={credential.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div
+                          key={credential.id}
+                          className="flex items-center justify-between p-4 border rounded-lg"
+                        >
                           <div>
                             <div className="font-medium">{credential.credential_type}</div>
                             <div className="text-sm text-muted-foreground">
                               {credential.credential_number} - {credential.issuing_authority}
                             </div>
                             <div className="text-sm text-muted-foreground">
-                              Válida até: {credential.expiry_date ? new Date(credential.expiry_date).toLocaleDateString('pt-BR') : 'Sem expiração'}
+                              Válida até:{" "}
+                              {credential.expiry_date
+                                ? new Date(credential.expiry_date).toLocaleDateString("pt-BR")
+                                : "Sem expiração"}
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Badge variant={credential.verification_status === 'verified' ? 'default' : 'outline'}>
+                            <Badge
+                              variant={
+                                credential.verification_status === "verified"
+                                  ? "default"
+                                  : "outline"
+                              }
+                            >
                               {credential.verification_status}
                             </Badge>
                             <Button variant="ghost" size="sm">
@@ -932,7 +952,10 @@ export default function ProfessionalForm({ professionalId, mode = 'create' }: Pr
                           </DialogDescription>
                         </DialogHeader>
                         <Form {...serviceForm}>
-                          <form onSubmit={serviceForm.handleSubmit(handleAddService)} className="space-y-4">
+                          <form
+                            onSubmit={serviceForm.handleSubmit(handleAddService)}
+                            className="space-y-4"
+                          >
                             <FormField
                               control={serviceForm.control}
                               name="service_name"
@@ -979,10 +1002,7 @@ export default function ProfessionalForm({ professionalId, mode = 'create' }: Pr
                                 <FormItem>
                                   <FormLabel>Descrição</FormLabel>
                                   <FormControl>
-                                    <Textarea 
-                                      placeholder="Descrição do serviço..."
-                                      {...field} 
-                                    />
+                                    <Textarea placeholder="Descrição do serviço..." {...field} />
                                   </FormControl>
                                   <FormMessage />
                                 </FormItem>
@@ -997,8 +1017,8 @@ export default function ProfessionalForm({ professionalId, mode = 'create' }: Pr
                                   <FormItem>
                                     <FormLabel>Duração (minutos)</FormLabel>
                                     <FormControl>
-                                      <Input 
-                                        type="number" 
+                                      <Input
+                                        type="number"
                                         placeholder="60"
                                         {...field}
                                         onChange={(e) => field.onChange(parseInt(e.target.value))}
@@ -1016,8 +1036,8 @@ export default function ProfessionalForm({ professionalId, mode = 'create' }: Pr
                                   <FormItem>
                                     <FormLabel>Preço Base (R$)</FormLabel>
                                     <FormControl>
-                                      <Input 
-                                        type="number" 
+                                      <Input
+                                        type="number"
                                         step="0.01"
                                         placeholder="0.00"
                                         {...field}
@@ -1042,9 +1062,7 @@ export default function ProfessionalForm({ professionalId, mode = 'create' }: Pr
                                     />
                                   </FormControl>
                                   <div className="space-y-1 leading-none">
-                                    <FormLabel>
-                                      Requer Certificação Específica
-                                    </FormLabel>
+                                    <FormLabel>Requer Certificação Específica</FormLabel>
                                     <FormDescription>
                                       Marque se este serviço requer certificação específica
                                     </FormDescription>
@@ -1055,13 +1073,10 @@ export default function ProfessionalForm({ professionalId, mode = 'create' }: Pr
                           </form>
                         </Form>
                         <DialogFooter>
-                          <Button 
-                            variant="outline" 
-                            onClick={() => setShowServiceDialog(false)}
-                          >
+                          <Button variant="outline" onClick={() => setShowServiceDialog(false)}>
                             Cancelar
                           </Button>
-                          <Button 
+                          <Button
                             onClick={serviceForm.handleSubmit(handleAddService)}
                             disabled={loading}
                           >
@@ -1092,7 +1107,7 @@ export default function ProfessionalForm({ professionalId, mode = 'create' }: Pr
                           <div className="flex items-center justify-between text-sm">
                             <span>Duração: {service.duration_minutes}min</span>
                             <span className="font-medium">
-                              R$ {service.base_price?.toFixed(2) || '0.00'}
+                              R$ {service.base_price?.toFixed(2) || "0.00"}
                             </span>
                           </div>
                           {service.requires_certification && (
@@ -1112,5 +1127,5 @@ export default function ProfessionalForm({ professionalId, mode = 'create' }: Pr
         </form>
       </Form>
     </div>
-  )
+  );
 }

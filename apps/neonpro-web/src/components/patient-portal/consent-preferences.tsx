@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import React, { useState } from 'react'
-import { format, parseISO } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
-import { 
-  Shield, 
-  Check, 
-  X, 
-  Download, 
-  Eye, 
+import React, { useState } from "react";
+import { format, parseISO } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import {
+  Shield,
+  Check,
+  X,
+  Download,
+  Eye,
   AlertTriangle,
   FileText,
   Mail,
@@ -20,256 +20,277 @@ import {
   Users,
   Trash2,
   Edit,
-  History
-} from 'lucide-react'
+  History,
+} from "lucide-react";
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Switch } from '@/components/ui/switch'
-import { Badge } from '@/components/ui/badge'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Separator } from '@/components/ui/separator'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Label } from '@/components/ui/label'
-import { toast } from 'sonner'
-import { usePatientAuth } from '@/lib/hooks/use-patient-auth'
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Separator } from "@/components/ui/separator";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { usePatientAuth } from "@/lib/hooks/use-patient-auth";
 
 interface ConsentItem {
-  id: string
-  type: 'lgpd_basic' | 'marketing' | 'whatsapp' | 'email' | 'sms' | 'photography' | 'research' | 'data_sharing'
-  title: string
-  description: string
-  required: boolean
-  granted: boolean
-  granted_at?: string
-  revoked_at?: string
-  icon: React.ComponentType<{ className?: string }>
-  legal_basis: string
-  data_retention_period: string
-  purposes: string[]
+  id: string;
+  type:
+    | "lgpd_basic"
+    | "marketing"
+    | "whatsapp"
+    | "email"
+    | "sms"
+    | "photography"
+    | "research"
+    | "data_sharing";
+  title: string;
+  description: string;
+  required: boolean;
+  granted: boolean;
+  granted_at?: string;
+  revoked_at?: string;
+  icon: React.ComponentType<{ className?: string }>;
+  legal_basis: string;
+  data_retention_period: string;
+  purposes: string[];
 }
 
 interface DataRight {
-  id: string
-  title: string
-  description: string
-  action: string
-  icon: React.ComponentType<{ className?: string }>
+  id: string;
+  title: string;
+  description: string;
+  action: string;
+  icon: React.ComponentType<{ className?: string }>;
 }
 
 export function ConsentPreferences() {
-  const { patient, updatePatient } = usePatientAuth()
-  const [isUpdating, setIsUpdating] = useState(false)
-  
+  const { patient, updatePatient } = usePatientAuth();
+  const [isUpdating, setIsUpdating] = useState(false);
+
   // LGPD Consent Management
   const [consents, setConsents] = useState<ConsentItem[]>([
     {
-      id: 'lgpd_basic',
-      type: 'lgpd_basic',
-      title: 'Tratamento de Dados Básicos (Obrigatório)',
-      description: 'Autorização para tratamento de dados pessoais necessários para prestação de serviços médicos e estéticos.',
+      id: "lgpd_basic",
+      type: "lgpd_basic",
+      title: "Tratamento de Dados Básicos (Obrigatório)",
+      description:
+        "Autorização para tratamento de dados pessoais necessários para prestação de serviços médicos e estéticos.",
       required: true,
       granted: true,
-      granted_at: '2025-01-20T10:00:00Z',
+      granted_at: "2025-01-20T10:00:00Z",
       icon: Shield,
-      legal_basis: 'Consentimento do titular (Art. 7º, I, LGPD)',
-      data_retention_period: '20 anos (conforme CFM)',
+      legal_basis: "Consentimento do titular (Art. 7º, I, LGPD)",
+      data_retention_period: "20 anos (conforme CFM)",
       purposes: [
-        'Prestação de serviços médicos e estéticos',
-        'Agendamento e controle de consultas',
-        'Histórico médico e acompanhamento',
-        'Comunicação sobre procedimentos'
-      ]
+        "Prestação de serviços médicos e estéticos",
+        "Agendamento e controle de consultas",
+        "Histórico médico e acompanhamento",
+        "Comunicação sobre procedimentos",
+      ],
     },
     {
-      id: 'marketing',
-      type: 'marketing',
-      title: 'Comunicações de Marketing',
-      description: 'Receber informações sobre novos tratamentos, promoções e conteúdo educativo sobre estética e saúde.',
+      id: "marketing",
+      type: "marketing",
+      title: "Comunicações de Marketing",
+      description:
+        "Receber informações sobre novos tratamentos, promoções e conteúdo educativo sobre estética e saúde.",
       required: false,
       granted: true,
-      granted_at: '2025-01-20T10:00:00Z',
+      granted_at: "2025-01-20T10:00:00Z",
       icon: Mail,
-      legal_basis: 'Consentimento específico do titular',
-      data_retention_period: '2 anos após revogação',
+      legal_basis: "Consentimento específico do titular",
+      data_retention_period: "2 anos após revogação",
       purposes: [
-        'Envio de newsletters sobre tratamentos',
-        'Promoções e ofertas especiais',
-        'Conteúdo educativo sobre estética',
-        'Pesquisas de satisfação'
-      ]
+        "Envio de newsletters sobre tratamentos",
+        "Promoções e ofertas especiais",
+        "Conteúdo educativo sobre estética",
+        "Pesquisas de satisfação",
+      ],
     },
     {
-      id: 'whatsapp',
-      type: 'whatsapp',
-      title: 'WhatsApp Business',
-      description: 'Receber lembretes de consulta, confirmações e comunicações importantes via WhatsApp.',
+      id: "whatsapp",
+      type: "whatsapp",
+      title: "WhatsApp Business",
+      description:
+        "Receber lembretes de consulta, confirmações e comunicações importantes via WhatsApp.",
       required: false,
       granted: false,
       icon: MessageSquare,
-      legal_basis: 'Consentimento específico do titular',
-      data_retention_period: '1 ano após revogação',
+      legal_basis: "Consentimento específico do titular",
+      data_retention_period: "1 ano após revogação",
       purposes: [
-        'Lembretes de consultas agendadas',
-        'Confirmações de agendamento',
-        'Orientações pós-procedimento',
-        'Comunicações urgentes'
-      ]
+        "Lembretes de consultas agendadas",
+        "Confirmações de agendamento",
+        "Orientações pós-procedimento",
+        "Comunicações urgentes",
+      ],
     },
     {
-      id: 'photography',
-      type: 'photography',
-      title: 'Registro Fotográfico',
-      description: 'Autorização para captura e armazenamento de fotos para acompanhamento médico (antes/depois).',
+      id: "photography",
+      type: "photography",
+      title: "Registro Fotográfico",
+      description:
+        "Autorização para captura e armazenamento de fotos para acompanhamento médico (antes/depois).",
       required: false,
       granted: true,
-      granted_at: '2025-01-20T10:00:00Z',
+      granted_at: "2025-01-20T10:00:00Z",
       icon: Camera,
-      legal_basis: 'Consentimento específico para fins médicos',
-      data_retention_period: '20 anos (arquivo médico)',
+      legal_basis: "Consentimento específico para fins médicos",
+      data_retention_period: "20 anos (arquivo médico)",
       purposes: [
-        'Acompanhamento da evolução dos tratamentos',
-        'Documentação médica obrigatória',
-        'Comparação de resultados',
-        'Análise de eficácia dos procedimentos'
-      ]
+        "Acompanhamento da evolução dos tratamentos",
+        "Documentação médica obrigatória",
+        "Comparação de resultados",
+        "Análise de eficácia dos procedimentos",
+      ],
     },
     {
-      id: 'research',
-      type: 'research',
-      title: 'Pesquisa e Desenvolvimento',
-      description: 'Uso de dados anonimizados para pesquisas científicas e desenvolvimento de novos tratamentos.',
+      id: "research",
+      type: "research",
+      title: "Pesquisa e Desenvolvimento",
+      description:
+        "Uso de dados anonimizados para pesquisas científicas e desenvolvimento de novos tratamentos.",
       required: false,
       granted: false,
       icon: Database,
-      legal_basis: 'Consentimento para fins de pesquisa científica',
-      data_retention_period: 'Indefinido (dados anonimizados)',
+      legal_basis: "Consentimento para fins de pesquisa científica",
+      data_retention_period: "Indefinido (dados anonimizados)",
       purposes: [
-        'Pesquisas científicas em estética',
-        'Desenvolvimento de novos tratamentos',
-        'Estudos de eficácia e segurança',
-        'Publicações científicas (dados anonimizados)'
-      ]
-    }
-  ])
+        "Pesquisas científicas em estética",
+        "Desenvolvimento de novos tratamentos",
+        "Estudos de eficácia e segurança",
+        "Publicações científicas (dados anonimizados)",
+      ],
+    },
+  ]);
 
   // LGPD Rights
   const dataRights: DataRight[] = [
     {
-      id: 'access',
-      title: 'Acesso aos Dados',
-      description: 'Solicitar uma cópia de todos os seus dados pessoais que processamos.',
-      action: 'Solicitar Cópia',
-      icon: Eye
+      id: "access",
+      title: "Acesso aos Dados",
+      description: "Solicitar uma cópia de todos os seus dados pessoais que processamos.",
+      action: "Solicitar Cópia",
+      icon: Eye,
     },
     {
-      id: 'rectification',
-      title: 'Correção de Dados',
-      description: 'Corrigir dados pessoais incompletos, inexatos ou desatualizados.',
-      action: 'Solicitar Correção',
-      icon: Edit
+      id: "rectification",
+      title: "Correção de Dados",
+      description: "Corrigir dados pessoais incompletos, inexatos ou desatualizados.",
+      action: "Solicitar Correção",
+      icon: Edit,
     },
     {
-      id: 'deletion',
-      title: 'Exclusão de Dados',
-      description: 'Solicitar a exclusão de dados pessoais desnecessários ou tratados inadequadamente.',
-      action: 'Solicitar Exclusão',
-      icon: Trash2
+      id: "deletion",
+      title: "Exclusão de Dados",
+      description:
+        "Solicitar a exclusão de dados pessoais desnecessários ou tratados inadequadamente.",
+      action: "Solicitar Exclusão",
+      icon: Trash2,
     },
     {
-      id: 'portability',
-      title: 'Portabilidade',
-      description: 'Receber seus dados em formato estruturado para transferir a outro prestador.',
-      action: 'Exportar Dados',
-      icon: Download
+      id: "portability",
+      title: "Portabilidade",
+      description: "Receber seus dados em formato estruturado para transferir a outro prestador.",
+      action: "Exportar Dados",
+      icon: Download,
     },
     {
-      id: 'history',
-      title: 'Histórico de Consentimentos',
-      description: 'Visualizar o histórico completo de consentimentos concedidos e revogados.',
-      action: 'Ver Histórico',
-      icon: History
-    }
-  ]
+      id: "history",
+      title: "Histórico de Consentimentos",
+      description: "Visualizar o histórico completo de consentimentos concedidos e revogados.",
+      action: "Ver Histórico",
+      icon: History,
+    },
+  ];
 
   const handleConsentToggle = async (consentId: string, granted: boolean) => {
-    if (isUpdating) return
+    if (isUpdating) return;
 
-    setIsUpdating(true)
+    setIsUpdating(true);
     try {
       // Find the consent item
-      const consent = consents.find(c => c.id === consentId)
-      if (!consent) return
+      const consent = consents.find((c) => c.id === consentId);
+      if (!consent) return;
 
       // Can't revoke required consents
       if (consent.required && !granted) {
-        toast.error('Este consentimento é obrigatório para o uso dos serviços')
-        return
+        toast.error("Este consentimento é obrigatório para o uso dos serviços");
+        return;
       }
 
       // Update local state optimistically
-      setConsents(prev => prev.map(c => 
-        c.id === consentId 
-          ? { 
-              ...c, 
-              granted,
-              granted_at: granted ? new Date().toISOString() : c.granted_at,
-              revoked_at: !granted ? new Date().toISOString() : undefined
-            }
-          : c
-      ))
+      setConsents((prev) =>
+        prev.map((c) =>
+          c.id === consentId
+            ? {
+                ...c,
+                granted,
+                granted_at: granted ? new Date().toISOString() : c.granted_at,
+                revoked_at: !granted ? new Date().toISOString() : undefined,
+              }
+            : c,
+        ),
+      );
 
       // TODO: Call API to update consent
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       toast.success(
-        granted 
-          ? 'Consentimento concedido com sucesso'
-          : 'Consentimento revogado com sucesso'
-      )
-
+        granted ? "Consentimento concedido com sucesso" : "Consentimento revogado com sucesso",
+      );
     } catch (error) {
       // Revert optimistic update on error
-      setConsents(prev => prev.map(c => 
-        c.id === consentId 
-          ? { ...c, granted: !granted }
-          : c
-      ))
-      
-      toast.error('Erro ao atualizar consentimento')
+      setConsents((prev) =>
+        prev.map((c) => (c.id === consentId ? { ...c, granted: !granted } : c)),
+      );
+
+      toast.error("Erro ao atualizar consentimento");
     } finally {
-      setIsUpdating(false)
+      setIsUpdating(false);
     }
-  }
+  };
 
   const handleDataRightRequest = async (rightId: string) => {
     try {
       // TODO: Call API to process data right request
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      toast.success('Solicitação enviada com sucesso', {
-        description: 'Você receberá uma resposta em até 15 dias úteis conforme a LGPD'
-      })
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      toast.success("Solicitação enviada com sucesso", {
+        description: "Você receberá uma resposta em até 15 dias úteis conforme a LGPD",
+      });
     } catch (error) {
-      toast.error('Erro ao processar solicitação')
+      toast.error("Erro ao processar solicitação");
     }
-  }
+  };
 
   const getConsentStatus = (consent: ConsentItem) => {
     if (consent.granted) {
       return {
-        label: 'Ativo',
-        color: 'bg-green-100 text-green-800',
-        date: consent.granted_at ? format(parseISO(consent.granted_at), "d 'de' MMM, yyyy", { locale: ptBR }) : ''
-      }
+        label: "Ativo",
+        color: "bg-green-100 text-green-800",
+        date: consent.granted_at
+          ? format(parseISO(consent.granted_at), "d 'de' MMM, yyyy", { locale: ptBR })
+          : "",
+      };
     } else {
       return {
-        label: consent.revoked_at ? 'Revogado' : 'Não Concedido',
-        color: 'bg-red-100 text-red-800',
-        date: consent.revoked_at ? format(parseISO(consent.revoked_at), "d 'de' MMM, yyyy", { locale: ptBR }) : ''
-      }
+        label: consent.revoked_at ? "Revogado" : "Não Concedido",
+        color: "bg-red-100 text-red-800",
+        date: consent.revoked_at
+          ? format(parseISO(consent.revoked_at), "d 'de' MMM, yyyy", { locale: ptBR })
+          : "",
+      };
     }
-  }
+  };
 
   return (
     <div className="space-y-8">
@@ -287,9 +308,10 @@ export function ConsentPreferences() {
       <Alert className="border-blue-200 bg-blue-50">
         <Shield className="h-4 w-4 text-blue-600" />
         <AlertDescription className="text-blue-800">
-          <strong>Seus Direitos LGPD:</strong> Como titular dos dados, você tem direito a confirmação da existência de tratamento, 
-          acesso aos dados, correção, anonimização, bloqueio, eliminação, portabilidade, informação sobre compartilhamento 
-          e revogação do consentimento a qualquer momento.
+          <strong>Seus Direitos LGPD:</strong> Como titular dos dados, você tem direito a
+          confirmação da existência de tratamento, acesso aos dados, correção, anonimização,
+          bloqueio, eliminação, portabilidade, informação sobre compartilhamento e revogação do
+          consentimento a qualquer momento.
         </AlertDescription>
       </Alert>
 
@@ -306,9 +328,9 @@ export function ConsentPreferences() {
         </CardHeader>
         <CardContent className="space-y-6">
           {consents.map((consent) => {
-            const Icon = consent.icon
-            const status = getConsentStatus(consent)
-            
+            const Icon = consent.icon;
+            const status = getConsentStatus(consent);
+
             return (
               <div key={consent.id} className="flex items-start gap-4 p-4 border rounded-lg">
                 <div className="flex-shrink-0">
@@ -316,31 +338,27 @@ export function ConsentPreferences() {
                     <Icon className="w-5 h-5 text-primary" />
                   </div>
                 </div>
-                
+
                 <div className="flex-1 min-w-0 space-y-3">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <div className="flex items-center gap-3 mb-1">
                         <h3 className="font-semibold">{consent.title}</h3>
-                        <Badge className={status.color}>
-                          {status.label}
-                        </Badge>
+                        <Badge className={status.color}>{status.label}</Badge>
                         {consent.required && (
                           <Badge variant="outline" className="text-xs">
                             Obrigatório
                           </Badge>
                         )}
                       </div>
-                      <p className="text-sm text-muted-foreground mb-2">
-                        {consent.description}
-                      </p>
+                      <p className="text-sm text-muted-foreground mb-2">{consent.description}</p>
                       {status.date && (
                         <p className="text-xs text-muted-foreground">
-                          {consent.granted ? 'Concedido' : 'Revogado'} em {status.date}
+                          {consent.granted ? "Concedido" : "Revogado"} em {status.date}
                         </p>
                       )}
                     </div>
-                    
+
                     <div className="flex items-center gap-3">
                       <Dialog>
                         <DialogTrigger asChild>
@@ -356,29 +374,25 @@ export function ConsentPreferences() {
                               {consent.title}
                             </DialogTitle>
                           </DialogHeader>
-                          
+
                           <div className="space-y-4">
                             <div>
                               <h4 className="font-semibold mb-2">Descrição</h4>
-                              <p className="text-sm text-muted-foreground">
-                                {consent.description}
-                              </p>
+                              <p className="text-sm text-muted-foreground">{consent.description}</p>
                             </div>
-                            
+
                             <div>
                               <h4 className="font-semibold mb-2">Base Legal</h4>
-                              <p className="text-sm text-muted-foreground">
-                                {consent.legal_basis}
-                              </p>
+                              <p className="text-sm text-muted-foreground">{consent.legal_basis}</p>
                             </div>
-                            
+
                             <div>
                               <h4 className="font-semibold mb-2">Período de Retenção</h4>
                               <p className="text-sm text-muted-foreground">
                                 {consent.data_retention_period}
                               </p>
                             </div>
-                            
+
                             <div>
                               <h4 className="font-semibold mb-2">Finalidades do Tratamento</h4>
                               <ul className="text-sm text-muted-foreground space-y-1">
@@ -393,10 +407,10 @@ export function ConsentPreferences() {
                           </div>
                         </DialogContent>
                       </Dialog>
-                      
+
                       <div className="flex items-center gap-2">
                         <Label htmlFor={`consent-${consent.id}`} className="text-sm">
-                          {consent.granted ? 'Ativo' : 'Inativo'}
+                          {consent.granted ? "Ativo" : "Inativo"}
                         </Label>
                         <Switch
                           id={`consent-${consent.id}`}
@@ -409,7 +423,7 @@ export function ConsentPreferences() {
                   </div>
                 </div>
               </div>
-            )
+            );
           })}
         </CardContent>
       </Card>
@@ -428,8 +442,8 @@ export function ConsentPreferences() {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {dataRights.map((right) => {
-              const Icon = right.icon
-              
+              const Icon = right.icon;
+
               return (
                 <div key={right.id} className="flex items-start gap-4 p-4 border rounded-lg">
                   <div className="flex-shrink-0">
@@ -437,14 +451,12 @@ export function ConsentPreferences() {
                       <Icon className="w-5 h-5 text-primary" />
                     </div>
                   </div>
-                  
+
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold mb-1">{right.title}</h3>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      {right.description}
-                    </p>
-                    <Button 
-                      variant="outline" 
+                    <p className="text-sm text-muted-foreground mb-3">{right.description}</p>
+                    <Button
+                      variant="outline"
                       size="sm"
                       onClick={() => handleDataRightRequest(right.id)}
                     >
@@ -452,7 +464,7 @@ export function ConsentPreferences() {
                     </Button>
                   </div>
                 </div>
-              )
+              );
             })}
           </div>
         </CardContent>
@@ -468,10 +480,10 @@ export function ConsentPreferences() {
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            Nossa Política de Privacidade detalha como coletamos, usamos, armazenamos e protegemos 
+            Nossa Política de Privacidade detalha como coletamos, usamos, armazenamos e protegemos
             seus dados pessoais, sempre em conformidade com a LGPD.
           </p>
-          
+
           <div className="flex gap-3">
             <Button variant="outline" asChild>
               <a href="/privacy-policy" target="_blank">
@@ -497,12 +509,10 @@ export function ConsentPreferences() {
               <Shield className="w-6 h-6 text-white" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-blue-900 mb-2">
-                Dúvidas sobre Privacidade?
-              </h3>
+              <h3 className="font-semibold text-blue-900 mb-2">Dúvidas sobre Privacidade?</h3>
               <p className="text-blue-800 text-sm mb-4">
-                Entre em contato com nosso Encarregado de Proteção de Dados (DPO) para 
-                esclarecer dúvidas sobre o tratamento dos seus dados pessoais.
+                Entre em contato com nosso Encarregado de Proteção de Dados (DPO) para esclarecer
+                dúvidas sobre o tratamento dos seus dados pessoais.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Button variant="outline" size="sm" className="text-blue-700 border-blue-300">
@@ -519,5 +529,5 @@ export function ConsentPreferences() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

@@ -1,15 +1,15 @@
-﻿// NeonPro - Bank Reconciliation Manager
+// NeonPro - Bank Reconciliation Manager
 // Story 6.1 - Task 4: Bank Reconciliation System
 // Comprehensive bank reconciliation service for automated transaction matching
 
-import { createClient } from '@/lib/supabase/client';
-import { z } from 'zod';
+import type { createClient } from "@/lib/supabase/client";
+import type { z } from "zod";
 
 // Validation schemas
 const BankStatementSchema = z.object({
   id: z.string().optional(),
-  bank_name: z.string().min(1, 'Bank name is required'),
-  account_number: z.string().min(1, 'Account number is required'),
+  bank_name: z.string().min(1, "Bank name is required"),
+  account_number: z.string().min(1, "Account number is required"),
   statement_date: z.string().datetime(),
   opening_balance: z.number(),
   closing_balance: z.number(),
@@ -18,52 +18,66 @@ const BankStatementSchema = z.object({
   statement_period_start: z.string().datetime(),
   statement_period_end: z.string().datetime(),
   file_path: z.string().optional(),
-  import_status: z.enum(['pending', 'processing', 'completed', 'failed']).default('pending'),
-  created_by: z.string().uuid()
+  import_status: z.enum(["pending", "processing", "completed", "failed"]).default("pending"),
+  created_by: z.string().uuid(),
 });
 
 const BankTransactionSchema = z.object({
   id: z.string().optional(),
   statement_id: z.string().uuid(),
   transaction_date: z.string().datetime(),
-  description: z.string().min(1, 'Description is required'),
+  description: z.string().min(1, "Description is required"),
   reference_number: z.string().optional(),
   debit_amount: z.number().optional(),
   credit_amount: z.number().optional(),
   balance: z.number(),
-  transaction_type: z.enum(['debit', 'credit']),
+  transaction_type: z.enum(["debit", "credit"]),
   category: z.string().optional(),
   matched_payment_id: z.string().uuid().optional(),
-  reconciliation_status: z.enum(['unmatched', 'matched', 'disputed', 'ignored']).default('unmatched'),
+  reconciliation_status: z
+    .enum(["unmatched", "matched", "disputed", "ignored"])
+    .default("unmatched"),
   matching_confidence: z.number().min(0).max(1).optional(),
-  notes: z.string().optional()
+  notes: z.string().optional(),
 });
 
 const ReconciliationRuleSchema = z.object({
   id: z.string().optional(),
-  rule_name: z.string().min(1, 'Rule name is required'),
-  rule_type: z.enum(['exact_match', 'amount_match', 'date_range_match', 'description_pattern', 'reference_match']),
+  rule_name: z.string().min(1, "Rule name is required"),
+  rule_type: z.enum([
+    "exact_match",
+    "amount_match",
+    "date_range_match",
+    "description_pattern",
+    "reference_match",
+  ]),
   conditions: z.record(z.any()),
   priority: z.number().min(1).max(10).default(5),
   auto_match: z.boolean().default(false),
   is_active: z.boolean().default(true),
-  created_by: z.string().uuid()
+  created_by: z.string().uuid(),
 });
 
 const DiscrepancySchema = z.object({
   id: z.string().optional(),
   statement_id: z.string().uuid(),
-  discrepancy_type: z.enum(['missing_transaction', 'duplicate_transaction', 'amount_mismatch', 'date_mismatch', 'unmatched_payment']),
-  description: z.string().min(1, 'Description is required'),
+  discrepancy_type: z.enum([
+    "missing_transaction",
+    "duplicate_transaction",
+    "amount_mismatch",
+    "date_mismatch",
+    "unmatched_payment",
+  ]),
+  description: z.string().min(1, "Description is required"),
   expected_amount: z.number().optional(),
   actual_amount: z.number().optional(),
   transaction_id: z.string().uuid().optional(),
   payment_id: z.string().uuid().optional(),
-  severity: z.enum(['low', 'medium', 'high', 'critical']).default('medium'),
-  status: z.enum(['open', 'investigating', 'resolved', 'closed']).default('open'),
+  severity: z.enum(["low", "medium", "high", "critical"]).default("medium"),
+  status: z.enum(["open", "investigating", "resolved", "closed"]).default("open"),
   resolution_notes: z.string().optional(),
   resolved_by: z.string().uuid().optional(),
-  resolved_at: z.string().datetime().optional()
+  resolved_at: z.string().datetime().optional(),
 });
 
 export type BankStatement = z.infer<typeof BankStatementSchema>;
@@ -111,16 +125,16 @@ export class BankReconciliationManager {
    * Import bank statement from file
    */
   async importBankStatement(
-    statementData: Omit<BankStatement, 'id'>,
-    transactions: Omit<BankTransaction, 'id' | 'statement_id'>[]
+    statementData: Omit<BankStatement, "id">,
+    transactions: Omit<BankTransaction, "id" | "statement_id">[],
   ): Promise<ImportResult> {
     try {
       // Validate statement data
       const validatedStatement = BankStatementSchema.parse(statementData);
-      
+
       // Insert bank statement
       const { data: statement, error: statementError } = await this.supabase
-        .from('bank_statements')
+        .from("bank_statements")
         .insert(validatedStatement)
         .select()
         .single();
@@ -135,25 +149,25 @@ export class BankReconciliationManager {
         imported_transactions: 0,
         failed_transactions: 0,
         errors: [],
-        warnings: []
+        warnings: [],
       };
 
       // Import transactions in batches
       const batchSize = 100;
       for (let i = 0; i < transactions.length; i += batchSize) {
         const batch = transactions.slice(i, i + batchSize);
-        
+
         try {
-          const validatedTransactions = batch.map(transaction => {
+          const validatedTransactions = batch.map((transaction) => {
             const validated = BankTransactionSchema.parse({
               ...transaction,
-              statement_id: statement.id
+              statement_id: statement.id,
             });
             return validated;
           });
 
           const { data, error } = await this.supabase
-            .from('bank_transactions')
+            .from("bank_transactions")
             .insert(validatedTransactions)
             .select();
 
@@ -164,21 +178,23 @@ export class BankReconciliationManager {
             importResult.imported_transactions += data.length;
           }
         } catch (validationError) {
-          importResult.errors.push(`Validation error in batch ${Math.floor(i / batchSize) + 1}: ${validationError}`);
+          importResult.errors.push(
+            `Validation error in batch ${Math.floor(i / batchSize) + 1}: ${validationError}`,
+          );
           importResult.failed_transactions += batch.length;
         }
       }
 
       // Update statement status
-      const finalStatus = importResult.failed_transactions === 0 ? 'completed' : 'failed';
+      const finalStatus = importResult.failed_transactions === 0 ? "completed" : "failed";
       await this.supabase
-        .from('bank_statements')
+        .from("bank_statements")
         .update({ import_status: finalStatus })
-        .eq('id', statement.id);
+        .eq("id", statement.id);
 
       return importResult;
     } catch (error) {
-      throw new Error(`Import failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(`Import failed: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
   }
 
@@ -189,10 +205,10 @@ export class BankReconciliationManager {
     try {
       // Get unmatched transactions
       const { data: transactions, error: transError } = await this.supabase
-        .from('bank_transactions')
-        .select('*')
-        .eq('statement_id', statementId)
-        .eq('reconciliation_status', 'unmatched');
+        .from("bank_transactions")
+        .select("*")
+        .eq("statement_id", statementId)
+        .eq("reconciliation_status", "unmatched");
 
       if (transError) {
         throw new Error(`Failed to fetch transactions: ${transError.message}`);
@@ -200,10 +216,10 @@ export class BankReconciliationManager {
 
       // Get active reconciliation rules
       const { data: rules, error: rulesError } = await this.supabase
-        .from('reconciliation_rules')
-        .select('*')
-        .eq('is_active', true)
-        .order('priority', { ascending: false });
+        .from("reconciliation_rules")
+        .select("*")
+        .eq("is_active", true)
+        .order("priority", { ascending: false });
 
       if (rulesError) {
         throw new Error(`Failed to fetch reconciliation rules: ${rulesError.message}`);
@@ -213,26 +229,28 @@ export class BankReconciliationManager {
 
       for (const transaction of transactions) {
         const matchResult = await this.findMatchingPayment(transaction, rules);
-        
+
         if (matchResult) {
           matchingResults.push(matchResult);
-          
+
           // Update transaction with match
           await this.supabase
-            .from('bank_transactions')
+            .from("bank_transactions")
             .update({
               matched_payment_id: matchResult.payment_id,
-              reconciliation_status: matchResult.auto_matched ? 'matched' : 'unmatched',
+              reconciliation_status: matchResult.auto_matched ? "matched" : "unmatched",
               matching_confidence: matchResult.confidence_score,
-              notes: `Auto-matched using criteria: ${matchResult.matching_criteria.join(', ')}`
+              notes: `Auto-matched using criteria: ${matchResult.matching_criteria.join(", ")}`,
             })
-            .eq('id', matchResult.transaction_id);
+            .eq("id", matchResult.transaction_id);
         }
       }
 
       return matchingResults;
     } catch (error) {
-      throw new Error(`Auto matching failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Auto matching failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }
 
@@ -241,12 +259,12 @@ export class BankReconciliationManager {
    */
   private async findMatchingPayment(
     transaction: BankTransaction,
-    rules: ReconciliationRule[]
+    rules: ReconciliationRule[],
   ): Promise<MatchingResult | null> {
     try {
       const amount = transaction.credit_amount || transaction.debit_amount || 0;
       const transactionDate = new Date(transaction.transaction_date);
-      
+
       // Search for potential payment matches
       const dateRange = 7; // days
       const startDate = new Date(transactionDate);
@@ -255,11 +273,11 @@ export class BankReconciliationManager {
       endDate.setDate(endDate.getDate() + dateRange);
 
       const { data: payments, error } = await this.supabase
-        .from('payments')
-        .select('*')
-        .gte('created_at', startDate.toISOString())
-        .lte('created_at', endDate.toISOString())
-        .eq('status', 'completed');
+        .from("payments")
+        .select("*")
+        .gte("created_at", startDate.toISOString())
+        .lte("created_at", endDate.toISOString())
+        .eq("status", "completed");
 
       if (error || !payments) {
         return null;
@@ -269,11 +287,7 @@ export class BankReconciliationManager {
       let highestConfidence = 0;
 
       for (const payment of payments) {
-        const confidence = this.calculateMatchingConfidence(
-          transaction,
-          payment,
-          rules
-        );
+        const confidence = this.calculateMatchingConfidence(transaction, payment, rules);
 
         if (confidence.score > highestConfidence && confidence.score >= 0.7) {
           highestConfidence = confidence.score;
@@ -282,14 +296,14 @@ export class BankReconciliationManager {
             payment_id: payment.id,
             confidence_score: confidence.score,
             matching_criteria: confidence.criteria,
-            auto_matched: confidence.score >= 0.9
+            auto_matched: confidence.score >= 0.9,
           };
         }
       }
 
       return bestMatch;
     } catch (error) {
-      console.error('Error finding matching payment:', error);
+      console.error("Error finding matching payment:", error);
       return null;
     }
   }
@@ -300,7 +314,7 @@ export class BankReconciliationManager {
   private calculateMatchingConfidence(
     transaction: BankTransaction,
     payment: any,
-    rules: ReconciliationRule[]
+    rules: ReconciliationRule[],
   ): { score: number; criteria: string[] } {
     let score = 0;
     const criteria: string[] = [];
@@ -309,37 +323,40 @@ export class BankReconciliationManager {
     // Exact amount match (40% weight)
     if (Math.abs(payment.amount - amount) < 0.01) {
       score += 0.4;
-      criteria.push('exact_amount_match');
+      criteria.push("exact_amount_match");
     } else if (Math.abs(payment.amount - amount) / payment.amount < 0.05) {
       score += 0.2;
-      criteria.push('approximate_amount_match');
+      criteria.push("approximate_amount_match");
     }
 
     // Date proximity (30% weight)
     const transactionDate = new Date(transaction.transaction_date);
     const paymentDate = new Date(payment.created_at);
-    const daysDiff = Math.abs(transactionDate.getTime() - paymentDate.getTime()) / (1000 * 60 * 60 * 24);
-    
+    const daysDiff =
+      Math.abs(transactionDate.getTime() - paymentDate.getTime()) / (1000 * 60 * 60 * 24);
+
     if (daysDiff === 0) {
       score += 0.3;
-      criteria.push('same_date');
+      criteria.push("same_date");
     } else if (daysDiff <= 1) {
       score += 0.2;
-      criteria.push('next_day');
+      criteria.push("next_day");
     } else if (daysDiff <= 3) {
       score += 0.1;
-      criteria.push('within_3_days');
+      criteria.push("within_3_days");
     }
 
     // Reference number match (20% weight)
     if (transaction.reference_number && payment.reference_id) {
       if (transaction.reference_number === payment.reference_id) {
         score += 0.2;
-        criteria.push('reference_match');
-      } else if (transaction.reference_number.includes(payment.reference_id) || 
-                 payment.reference_id.includes(transaction.reference_number)) {
+        criteria.push("reference_match");
+      } else if (
+        transaction.reference_number.includes(payment.reference_id) ||
+        payment.reference_id.includes(transaction.reference_number)
+      ) {
         score += 0.1;
-        criteria.push('partial_reference_match');
+        criteria.push("partial_reference_match");
       }
     }
 
@@ -347,15 +364,15 @@ export class BankReconciliationManager {
     if (transaction.description && payment.description) {
       const similarity = this.calculateStringSimilarity(
         transaction.description.toLowerCase(),
-        payment.description.toLowerCase()
+        payment.description.toLowerCase(),
       );
-      
+
       if (similarity > 0.8) {
         score += 0.1;
-        criteria.push('description_match');
+        criteria.push("description_match");
       } else if (similarity > 0.5) {
         score += 0.05;
-        criteria.push('partial_description_match');
+        criteria.push("partial_description_match");
       }
     }
 
@@ -386,7 +403,7 @@ export class BankReconciliationManager {
           matrix[i][j] = Math.min(
             matrix[i - 1][j - 1] + 1,
             matrix[i][j - 1] + 1,
-            matrix[i - 1][j] + 1
+            matrix[i - 1][j] + 1,
           );
         }
       }
@@ -405,9 +422,9 @@ export class BankReconciliationManager {
 
       // Get statement and transactions
       const { data: statement, error: stmtError } = await this.supabase
-        .from('bank_statements')
-        .select('*')
-        .eq('id', statementId)
+        .from("bank_statements")
+        .select("*")
+        .eq("id", statementId)
         .single();
 
       if (stmtError) {
@@ -415,9 +432,9 @@ export class BankReconciliationManager {
       }
 
       const { data: transactions, error: transError } = await this.supabase
-        .from('bank_transactions')
-        .select('*')
-        .eq('statement_id', statementId);
+        .from("bank_transactions")
+        .select("*")
+        .eq("statement_id", statementId);
 
       if (transError) {
         throw new Error(`Failed to fetch transactions: ${transError.message}`);
@@ -433,27 +450,27 @@ export class BankReconciliationManager {
       if (Math.abs(calculatedBalance - statement.closing_balance) > 0.01) {
         discrepancies.push({
           statement_id: statementId,
-          discrepancy_type: 'amount_mismatch',
-          description: 'Calculated balance does not match statement closing balance',
+          discrepancy_type: "amount_mismatch",
+          description: "Calculated balance does not match statement closing balance",
           expected_amount: statement.closing_balance,
           actual_amount: calculatedBalance,
-          severity: 'high'
+          severity: "high",
         });
       }
 
       // Check for unmatched transactions
       const unmatchedTransactions = transactions.filter(
-        trans => trans.reconciliation_status === 'unmatched'
+        (trans) => trans.reconciliation_status === "unmatched",
       );
 
       for (const transaction of unmatchedTransactions) {
         discrepancies.push({
           statement_id: statementId,
-          discrepancy_type: 'unmatched_payment',
+          discrepancy_type: "unmatched_payment",
           description: `Unmatched transaction: ${transaction.description}`,
           actual_amount: transaction.credit_amount || transaction.debit_amount,
           transaction_id: transaction.id,
-          severity: 'medium'
+          severity: "medium",
         });
       }
 
@@ -462,28 +479,30 @@ export class BankReconciliationManager {
       for (const duplicate of duplicates) {
         discrepancies.push({
           statement_id: statementId,
-          discrepancy_type: 'duplicate_transaction',
+          discrepancy_type: "duplicate_transaction",
           description: `Potential duplicate transaction: ${duplicate.description}`,
           actual_amount: duplicate.credit_amount || duplicate.debit_amount,
           transaction_id: duplicate.id,
-          severity: 'medium'
+          severity: "medium",
         });
       }
 
       // Save discrepancies to database
       if (discrepancies.length > 0) {
         const { error: discError } = await this.supabase
-          .from('reconciliation_discrepancies')
+          .from("reconciliation_discrepancies")
           .insert(discrepancies);
 
         if (discError) {
-          console.error('Failed to save discrepancies:', discError);
+          console.error("Failed to save discrepancies:", discError);
         }
       }
 
       return discrepancies;
     } catch (error) {
-      throw new Error(`Discrepancy detection failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Discrepancy detection failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }
 
@@ -496,7 +515,7 @@ export class BankReconciliationManager {
 
     for (const transaction of transactions) {
       const key = `${transaction.transaction_date}_${transaction.credit_amount || transaction.debit_amount}_${transaction.description}`;
-      
+
       if (seen.has(key)) {
         duplicates.push(transaction);
       } else {
@@ -513,24 +532,24 @@ export class BankReconciliationManager {
   async getReconciliationSummary(statementId: string): Promise<ReconciliationSummary> {
     try {
       const { data: transactions, error } = await this.supabase
-        .from('bank_transactions')
-        .select('reconciliation_status')
-        .eq('statement_id', statementId);
+        .from("bank_transactions")
+        .select("reconciliation_status")
+        .eq("statement_id", statementId);
 
       if (error) {
         throw new Error(`Failed to fetch transactions: ${error.message}`);
       }
 
       const total = transactions.length;
-      const matched = transactions.filter(t => t.reconciliation_status === 'matched').length;
-      const unmatched = transactions.filter(t => t.reconciliation_status === 'unmatched').length;
-      const disputed = transactions.filter(t => t.reconciliation_status === 'disputed').length;
+      const matched = transactions.filter((t) => t.reconciliation_status === "matched").length;
+      const unmatched = transactions.filter((t) => t.reconciliation_status === "unmatched").length;
+      const disputed = transactions.filter((t) => t.reconciliation_status === "disputed").length;
 
       const { data: discrepancies, error: discError } = await this.supabase
-        .from('reconciliation_discrepancies')
-        .select('id')
-        .eq('statement_id', statementId)
-        .eq('status', 'open');
+        .from("reconciliation_discrepancies")
+        .select("id")
+        .eq("statement_id", statementId)
+        .eq("status", "open");
 
       if (discError) {
         throw new Error(`Failed to fetch discrepancies: ${discError.message}`);
@@ -545,37 +564,37 @@ export class BankReconciliationManager {
         total_discrepancies: discrepancies.length,
         reconciliation_percentage: total > 0 ? (matched / total) * 100 : 0,
         balance_difference: 0, // This would be calculated from actual vs expected balance
-        last_reconciled_at: new Date().toISOString()
+        last_reconciled_at: new Date().toISOString(),
       };
     } catch (error) {
-      throw new Error(`Failed to get reconciliation summary: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to get reconciliation summary: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }
 
   /**
    * Manual transaction matching
    */
-  async manualMatch(
-    transactionId: string,
-    paymentId: string,
-    notes?: string
-  ): Promise<void> {
+  async manualMatch(transactionId: string, paymentId: string, notes?: string): Promise<void> {
     try {
       const { error } = await this.supabase
-        .from('bank_transactions')
+        .from("bank_transactions")
         .update({
           matched_payment_id: paymentId,
-          reconciliation_status: 'matched',
+          reconciliation_status: "matched",
           matching_confidence: 1.0,
-          notes: notes || 'Manually matched'
+          notes: notes || "Manually matched",
         })
-        .eq('id', transactionId);
+        .eq("id", transactionId);
 
       if (error) {
         throw new Error(`Failed to update transaction: ${error.message}`);
       }
     } catch (error) {
-      throw new Error(`Manual matching failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Manual matching failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }
 
@@ -583,13 +602,13 @@ export class BankReconciliationManager {
    * Create reconciliation rule
    */
   async createReconciliationRule(
-    ruleData: Omit<ReconciliationRule, 'id'>
+    ruleData: Omit<ReconciliationRule, "id">,
   ): Promise<ReconciliationRule> {
     try {
       const validatedRule = ReconciliationRuleSchema.parse(ruleData);
-      
+
       const { data, error } = await this.supabase
-        .from('reconciliation_rules')
+        .from("reconciliation_rules")
         .insert(validatedRule)
         .select()
         .single();
@@ -600,7 +619,9 @@ export class BankReconciliationManager {
 
       return data;
     } catch (error) {
-      throw new Error(`Rule creation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Rule creation failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }
 }
@@ -614,4 +635,3 @@ export function getBankReconciliationManager(): BankReconciliationManager {
   }
   return bankReconciliationManager;
 }
-

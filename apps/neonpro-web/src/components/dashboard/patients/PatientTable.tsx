@@ -1,35 +1,35 @@
-import React from 'react';
-import { 
-  Eye, 
-  Edit, 
-  Trash2, 
-  ChevronLeft, 
+import React from "react";
+import type {
+  Eye,
+  Edit,
+  Trash2,
+  ChevronLeft,
   ChevronRight,
   MoreHorizontal,
   Phone,
   Mail,
-  Calendar
-} from 'lucide-react';
-import {
+  Calendar,
+} from "lucide-react";
+import type {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import {
+} from "@/components/ui/table";
+import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+} from "@/components/ui/dropdown-menu";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface TablePatient {
   id: number;
@@ -62,13 +62,13 @@ export function PatientTable({
   onPageChange,
   onViewPatient,
   onEditPatient,
-  onDeletePatient
+  onDeletePatient,
 }: PatientTableProps) {
   const getInitials = (name: string): string => {
     return name
-      .split(' ')
-      .map(n => n[0])
-      .join('')
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
       .toUpperCase()
       .slice(0, 2);
   };
@@ -82,7 +82,11 @@ export function PatientTable({
   };
 
   const handleDeletePatient = (id: number) => {
-    if (window.confirm('Tem certeza que deseja excluir este paciente? Esta ação não pode ser desfeita.')) {
+    if (
+      window.confirm(
+        "Tem certeza que deseja excluir este paciente? Esta ação não pode ser desfeita.",
+      )
+    ) {
       onDeletePatient?.(id);
     }
   };
@@ -169,7 +173,7 @@ export function PatientTable({
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-col gap-1">
-                      {patient.phone !== 'N/A' && (
+                      {patient.phone !== "N/A" && (
                         <div className="flex items-center gap-1 text-sm">
                           <Phone className="h-3 w-3 text-muted-foreground" />
                           <span>{patient.phone}</span>
@@ -177,13 +181,9 @@ export function PatientTable({
                       )}
                     </div>
                   </TableCell>
+                  <TableCell>{patient.status}</TableCell>
                   <TableCell>
-                    {patient.status}
-                  </TableCell>
-                  <TableCell>
-                    <span className="text-sm text-muted-foreground">
-                      {patient.created_at}
-                    </span>
+                    <span className="text-sm text-muted-foreground">{patient.created_at}</span>
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>
@@ -205,7 +205,7 @@ export function PatientTable({
                           Editar
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem 
+                        <DropdownMenuItem
                           onClick={() => handleDeletePatient(patient.id)}
                           className="text-destructive"
                         >

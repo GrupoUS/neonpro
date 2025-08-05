@@ -6,17 +6,17 @@
 
 "use client";
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
+import type {
   AlertTriangle,
   Bell,
   BellOff,
@@ -26,7 +26,7 @@ import {
   TrendingDown,
   X,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import type { useEffect, useState } from "react";
 
 // =====================================================================================
 // TYPES & INTERFACES
@@ -34,12 +34,7 @@ import { useEffect, useState } from "react";
 
 interface InventoryAlert {
   id: string;
-  type:
-    | "low_stock"
-    | "out_of_stock"
-    | "expired"
-    | "expiring_soon"
-    | "overstock";
+  type: "low_stock" | "out_of_stock" | "expired" | "expiring_soon" | "overstock";
   title: string;
   message: string;
   item_name: string;
@@ -149,9 +144,7 @@ export default function InventoryAlerts() {
       }
 
       setAlerts((prev) =>
-        prev.map((alert) =>
-          alert.id === alertId ? { ...alert, is_read: true } : alert
-        )
+        prev.map((alert) => (alert.id === alertId ? { ...alert, is_read: true } : alert)),
       );
     } catch (err) {
       console.error("Error marking alert as read:", err);
@@ -208,18 +201,15 @@ export default function InventoryAlerts() {
     .sort((a, b) => {
       // Sort by severity first, then by date
       const severityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
-      const severityDiff =
-        severityOrder[b.severity] - severityOrder[a.severity];
+      const severityDiff = severityOrder[b.severity] - severityOrder[a.severity];
       if (severityDiff !== 0) return severityDiff;
 
-      return (
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
 
   const unreadCount = alerts.filter((alert) => !alert.is_read).length;
   const criticalCount = alerts.filter(
-    (alert) => alert.severity === "critical" || alert.severity === "high"
+    (alert) => alert.severity === "critical" || alert.severity === "high",
   ).length;
 
   // =====================================================================================
@@ -381,46 +371,29 @@ export default function InventoryAlerts() {
 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center space-x-2 mb-1">
-                          <h4 className="font-medium text-gray-900">
-                            {alert.title}
-                          </h4>
-                          <Badge
-                            variant="outline"
-                            className={severityConfig.color}
-                          >
+                          <h4 className="font-medium text-gray-900">{alert.title}</h4>
+                          <Badge variant="outline" className={severityConfig.color}>
                             {severityConfig.label}
                           </Badge>
                           {!alert.is_read && (
-                            <Badge
-                              variant="default"
-                              className="bg-blue-100 text-blue-800"
-                            >
+                            <Badge variant="default" className="bg-blue-100 text-blue-800">
                               New
                             </Badge>
                           )}
                         </div>
 
-                        <p className="text-sm text-gray-600 mb-2">
-                          {alert.message}
-                        </p>
+                        <p className="text-sm text-gray-600 mb-2">{alert.message}</p>
 
                         <div className="flex items-center space-x-4 text-xs text-gray-500">
                           <span>Item: {alert.item_name}</span>
-                          {alert.location_name && (
-                            <span>Location: {alert.location_name}</span>
-                          )}
+                          {alert.location_name && <span>Location: {alert.location_name}</span>}
                           {alert.current_quantity !== undefined && (
                             <span>Current: {alert.current_quantity}</span>
                           )}
                           {alert.expiry_date && (
-                            <span>
-                              Expires:{" "}
-                              {new Date(alert.expiry_date).toLocaleDateString()}
-                            </span>
+                            <span>Expires: {new Date(alert.expiry_date).toLocaleDateString()}</span>
                           )}
-                          <span>
-                            {new Date(alert.created_at).toLocaleDateString()}
-                          </span>
+                          <span>{new Date(alert.created_at).toLocaleDateString()}</span>
                         </div>
                       </div>
                     </div>

@@ -14,10 +14,10 @@ var auth_1 = require("./routers/auth");
  * - Type-safe end-to-end communication
  */
 exports.appRouter = (0, trpc_1.createTRPCRouter)({
-    auth: auth_1.authRouter,
-    // Additional routers will be added here:
-    // patients: patientsRouter,
-    // appointments: appointmentsRouter,
-    // medical: medicalRouter,
-    // reports: reportsRouter,
+  auth: auth_1.authRouter,
+  // Additional routers will be added here:
+  // patients: patientsRouter,
+  // appointments: appointmentsRouter,
+  // medical: medicalRouter,
+  // reports: reportsRouter,
 });

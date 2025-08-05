@@ -6,12 +6,24 @@ export interface ConsentForm {
   clinic_id: string;
   form_name: string;
   form_version: string;
-  consent_type: 'data_processing' | 'medical_treatment' | 'marketing' | 'research' | 
-                'data_sharing' | 'telehealth' | 'photography' | 'communication';
+  consent_type:
+    | "data_processing"
+    | "medical_treatment"
+    | "marketing"
+    | "research"
+    | "data_sharing"
+    | "telehealth"
+    | "photography"
+    | "communication";
   form_template: string;
   html_template?: string;
-  legal_basis?: 'consent' | 'legitimate_interest' | 'vital_interests' | 
-               'legal_obligation' | 'public_task' | 'contract';
+  legal_basis?:
+    | "consent"
+    | "legitimate_interest"
+    | "vital_interests"
+    | "legal_obligation"
+    | "public_task"
+    | "contract";
   required_fields: string[];
   optional_fields: string[];
   retention_period_days?: number;
@@ -43,7 +55,7 @@ export interface PatientConsent {
   legal_basis?: string;
   processing_categories: string[];
   retention_period_days?: number;
-  status: 'active' | 'withdrawn' | 'expired' | 'pending';
+  status: "active" | "withdrawn" | "expired" | "pending";
   created_at: string;
   updated_at: string;
   // Relations
@@ -54,9 +66,15 @@ export interface PatientConsent {
 export interface LegalDocument {
   id: string;
   clinic_id: string;
-  document_type: 'privacy_policy' | 'terms_of_service' | 'consent_template' | 
-                 'data_processing_agreement' | 'regulatory_compliance' | 
-                 'patient_rights' | 'incident_response_plan' | 'audit_report';
+  document_type:
+    | "privacy_policy"
+    | "terms_of_service"
+    | "consent_template"
+    | "data_processing_agreement"
+    | "regulatory_compliance"
+    | "patient_rights"
+    | "incident_response_plan"
+    | "audit_report";
   title: string;
   version: string;
   document_content: string;
@@ -64,13 +82,13 @@ export interface LegalDocument {
   file_url?: string;
   effective_date: string;
   expiry_date?: string;
-  approval_status: 'draft' | 'under_review' | 'approved' | 'published' | 'archived' | 'expired';
+  approval_status: "draft" | "under_review" | "approved" | "published" | "archived" | "expired";
   approved_by?: string;
   approved_at?: string;
   regulatory_body?: string;
   compliance_framework?: string;
   tags: string[];
-  access_level: 'public' | 'internal' | 'restricted' | 'confidential';
+  access_level: "public" | "internal" | "restricted" | "confidential";
   digital_signature?: Record<string, any>;
   checksum?: string;
   is_active: boolean;
@@ -84,19 +102,25 @@ export interface ComplianceMetric {
   id: string;
   clinic_id: string;
   metric_name: string;
-  metric_type: 'consent_rate' | 'data_retention_compliance' | 'breach_incidents' | 
-               'audit_score' | 'training_completion' | 'policy_adherence' |
-               'data_subject_requests' | 'incident_response_time';
+  metric_type:
+    | "consent_rate"
+    | "data_retention_compliance"
+    | "breach_incidents"
+    | "audit_score"
+    | "training_completion"
+    | "policy_adherence"
+    | "data_subject_requests"
+    | "incident_response_time";
   metric_value: number;
   metric_unit?: string;
   target_value?: number;
   threshold_min?: number;
   threshold_max?: number;
-  measurement_period: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly';
+  measurement_period: "daily" | "weekly" | "monthly" | "quarterly" | "yearly";
   measurement_date: string;
   data_source?: string;
   calculation_method?: string;
-  status: 'normal' | 'warning' | 'critical' | 'unknown';
+  status: "normal" | "warning" | "critical" | "unknown";
   notes?: string;
   metadata: Record<string, any>;
   created_at: string;
@@ -108,9 +132,16 @@ export interface ComplianceTraining {
   id: string;
   clinic_id: string;
   training_name: string;
-  training_type: 'data_protection' | 'patient_privacy' | 'security_awareness' | 
-                 'lgpd_compliance' | 'hipaa_compliance' | 'clinical_documentation' |
-                 'incident_response' | 'ethics' | 'regulatory_updates';
+  training_type:
+    | "data_protection"
+    | "patient_privacy"
+    | "security_awareness"
+    | "lgpd_compliance"
+    | "hipaa_compliance"
+    | "clinical_documentation"
+    | "incident_response"
+    | "ethics"
+    | "regulatory_updates";
   description?: string;
   content_url?: string;
   training_material: Record<string, any>;
@@ -145,7 +176,7 @@ export interface TrainingCompletion {
   passed?: boolean;
   time_spent_minutes?: number;
   attempts: number;
-  status: 'not_started' | 'in_progress' | 'completed' | 'failed' | 'expired';
+  status: "not_started" | "in_progress" | "completed" | "failed" | "expired";
   certification_issued: boolean;
   certification_number?: string;
   certification_expiry?: string;
@@ -163,7 +194,7 @@ export interface AuditEvent {
   clinic_id: string;
   table_name: string;
   record_id: string;
-  operation: 'INSERT' | 'UPDATE' | 'DELETE';
+  operation: "INSERT" | "UPDATE" | "DELETE";
   user_id?: string;
   old_values?: Record<string, any>;
   new_values?: Record<string, any>;
@@ -171,7 +202,7 @@ export interface AuditEvent {
   ip_address?: string;
   user_agent?: string;
   session_id?: string;
-  risk_level: 'low' | 'medium' | 'high' | 'critical';
+  risk_level: "low" | "medium" | "high" | "critical";
   compliance_impact: boolean;
   created_at: string;
 }
@@ -192,7 +223,7 @@ export interface ConsentFormData {
 }
 
 export interface DigitalSignature {
-  signature_type: 'drawn' | 'typed' | 'uploaded';
+  signature_type: "drawn" | "typed" | "uploaded";
   signature_data: string; // Base64 or SVG data
   timestamp: string;
   ip_address: string;

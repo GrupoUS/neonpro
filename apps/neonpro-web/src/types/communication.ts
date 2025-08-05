@@ -6,14 +6,14 @@ export interface CommunicationMessage {
   conversation_id: string;
   sender_id: string;
   content: string;
-  message_type: 'text' | 'image' | 'file' | 'template' | 'system';
+  message_type: "text" | "image" | "file" | "template" | "system";
   metadata: Record<string, any>;
   read_at?: Date;
   delivered_at?: Date;
   created_at: Date;
   updated_at: Date;
   deleted_at?: Date;
-  
+
   // Computed fields
   sender?: {
     id: string;
@@ -25,7 +25,7 @@ export interface CommunicationMessage {
 
 export interface CommunicationConversation {
   id: string;
-  type: 'internal' | 'patient_chat' | 'broadcast' | 'emergency';
+  type: "internal" | "patient_chat" | "broadcast" | "emergency";
   title?: string;
   participants: string[]; // Array of user IDs
   patient_id?: string;
@@ -35,7 +35,7 @@ export interface CommunicationConversation {
   archived_at?: Date;
   created_at: Date;
   updated_at: Date;
-  
+
   // Computed fields
   last_message?: CommunicationMessage;
   unread_count?: number;
@@ -51,8 +51,8 @@ export interface CommunicationTemplate {
   clinic_id: string;
   name: string;
   description?: string;
-  template_type: 'email' | 'sms' | 'push' | 'chat' | 'whatsapp';
-  category: 'appointment_reminder' | 'treatment_followup' | 'promotional' | 'emergency' | 'general';
+  template_type: "email" | "sms" | "push" | "chat" | "whatsapp";
+  category: "appointment_reminder" | "treatment_followup" | "promotional" | "emergency" | "general";
   subject?: string;
   content: string;
   variables: string[]; // Available template variables like {{patient_name}}, {{appointment_date}}
@@ -66,8 +66,8 @@ export interface CommunicationTemplate {
 export interface CommunicationNotification {
   id: string;
   recipient_id: string;
-  type: 'push' | 'email' | 'sms' | 'in_app';
-  channel: 'firebase' | 'sendgrid' | 'twilio' | 'internal';
+  type: "push" | "email" | "sms" | "in_app";
+  channel: "firebase" | "sendgrid" | "twilio" | "internal";
   title?: string;
   content: string;
   data: Record<string, any>;
@@ -79,15 +79,15 @@ export interface CommunicationNotification {
   error_message?: string;
   clinic_id: string;
   created_at: Date;
-  
+
   // Computed fields
-  status: 'pending' | 'sent' | 'delivered' | 'read' | 'failed';
+  status: "pending" | "sent" | "delivered" | "read" | "failed";
 }
 
 export interface CommunicationConsent {
   id: string;
   patient_id: string;
-  consent_type: 'email' | 'sms' | 'push' | 'marketing' | 'emergency' | 'appointment_reminders';
+  consent_type: "email" | "sms" | "push" | "marketing" | "emergency" | "appointment_reminders";
   consented: boolean;
   consented_at?: Date;
   revoked_at?: Date;
@@ -95,17 +95,24 @@ export interface CommunicationConsent {
   user_agent?: string;
   created_at: Date;
   updated_at: Date;
-  
+
   // LGPD compliance fields
-  legal_basis: 'consent' | 'legitimate_interest' | 'vital_interest' | 'legal_obligation';
+  legal_basis: "consent" | "legitimate_interest" | "vital_interest" | "legal_obligation";
   purpose: string;
   retention_period_days?: number;
 }
 
 export interface CommunicationAuditLog {
   id: string;
-  action: 'message_sent' | 'message_read' | 'consent_granted' | 'consent_revoked' | 'conversation_created' | 'data_exported' | 'data_deleted';
-  entity_type: 'message' | 'conversation' | 'consent' | 'notification' | 'template';
+  action:
+    | "message_sent"
+    | "message_read"
+    | "consent_granted"
+    | "consent_revoked"
+    | "conversation_created"
+    | "data_exported"
+    | "data_deleted";
+  entity_type: "message" | "conversation" | "consent" | "notification" | "template";
   entity_id: string;
   user_id?: string;
   patient_id?: string;
@@ -120,14 +127,14 @@ export interface CommunicationAuditLog {
 export interface SendMessageRequest {
   conversation_id: string;
   content: string;
-  message_type?: 'text' | 'image' | 'file' | 'template';
+  message_type?: "text" | "image" | "file" | "template";
   metadata?: Record<string, any>;
   template_id?: string;
   template_variables?: Record<string, string>;
 }
 
 export interface CreateConversationRequest {
-  type: 'internal' | 'patient_chat' | 'broadcast';
+  type: "internal" | "patient_chat" | "broadcast";
   title?: string;
   participants: string[];
   patient_id?: string;
@@ -136,7 +143,7 @@ export interface CreateConversationRequest {
 
 export interface SendNotificationRequest {
   recipient_ids: string[];
-  type: 'push' | 'email' | 'sms';
+  type: "push" | "email" | "sms";
   title?: string;
   content: string;
   template_id?: string;
@@ -146,15 +153,15 @@ export interface SendNotificationRequest {
 }
 
 export interface UpdateConsentRequest {
-  consent_type: 'email' | 'sms' | 'push' | 'marketing' | 'emergency' | 'appointment_reminders';
+  consent_type: "email" | "sms" | "push" | "marketing" | "emergency" | "appointment_reminders";
   consented: boolean;
-  legal_basis?: 'consent' | 'legitimate_interest' | 'vital_interest' | 'legal_obligation';
+  legal_basis?: "consent" | "legitimate_interest" | "vital_interest" | "legal_obligation";
   purpose?: string;
 }
 
 // Real-time Events
 export interface RealtimeMessageEvent {
-  type: 'new_message' | 'message_read' | 'user_typing' | 'user_online' | 'user_offline';
+  type: "new_message" | "message_read" | "user_typing" | "user_online" | "user_offline";
   conversation_id: string;
   user_id: string;
   data: any;
@@ -162,7 +169,7 @@ export interface RealtimeMessageEvent {
 
 // Search and Filter Types
 export interface ConversationFilters {
-  type?: 'internal' | 'patient_chat' | 'broadcast';
+  type?: "internal" | "patient_chat" | "broadcast";
   patient_id?: string;
   clinic_id?: string;
   active_only?: boolean;
@@ -174,7 +181,7 @@ export interface ConversationFilters {
 
 export interface MessageFilters {
   conversation_id: string;
-  message_type?: 'text' | 'image' | 'file' | 'template' | 'system';
+  message_type?: "text" | "image" | "file" | "template" | "system";
   sender_id?: string;
   date_from?: Date;
   date_to?: Date;
@@ -186,7 +193,7 @@ export interface MessageFilters {
 // Communication Statistics
 export interface CommunicationStats {
   clinic_id: string;
-  period: 'day' | 'week' | 'month' | 'year';
+  period: "day" | "week" | "month" | "year";
   messages_sent: number;
   messages_received: number;
   conversations_active: number;
@@ -202,7 +209,13 @@ export interface CommunicationStats {
 
 // Error Types
 export interface CommunicationError {
-  code: 'UNAUTHORIZED' | 'CONVERSATION_NOT_FOUND' | 'MESSAGE_SEND_FAILED' | 'CONSENT_REQUIRED' | 'TEMPLATE_NOT_FOUND' | 'RATE_LIMIT_EXCEEDED';
+  code:
+    | "UNAUTHORIZED"
+    | "CONVERSATION_NOT_FOUND"
+    | "MESSAGE_SEND_FAILED"
+    | "CONSENT_REQUIRED"
+    | "TEMPLATE_NOT_FOUND"
+    | "RATE_LIMIT_EXCEEDED";
   message: string;
   details?: Record<string, any>;
 }
@@ -210,7 +223,7 @@ export interface CommunicationError {
 // Webhook Types for External Services
 export interface EmailWebhookEvent {
   id: string;
-  event: 'delivered' | 'opened' | 'clicked' | 'bounced' | 'spam';
+  event: "delivered" | "opened" | "clicked" | "bounced" | "spam";
   notification_id: string;
   timestamp: Date;
   data: Record<string, any>;
@@ -218,7 +231,7 @@ export interface EmailWebhookEvent {
 
 export interface SMSWebhookEvent {
   id: string;
-  event: 'delivered' | 'failed' | 'clicked';
+  event: "delivered" | "failed" | "clicked";
   notification_id: string;
   timestamp: Date;
   data: Record<string, any>;

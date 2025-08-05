@@ -5,6 +5,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExportDashboard = void 0;
 var export_dashboard_1 = require("./export-dashboard");
-Object.defineProperty(exports, "ExportDashboard", { enumerable: true, get: function () { return export_dashboard_1.ExportDashboard; } });
+Object.defineProperty(exports, "ExportDashboard", {
+  enumerable: true,
+  get: function () {
+    return export_dashboard_1.ExportDashboard;
+  },
+});
 var export_dashboard_2 = require("./export-dashboard");
-Object.defineProperty(exports, "ExportDashboard", { enumerable: true, get: function () { return export_dashboard_2.default; } });
+Object.defineProperty(exports, "ExportDashboard", {
+  enumerable: true,
+  get: function () {
+    return export_dashboard_2.default;
+  },
+});

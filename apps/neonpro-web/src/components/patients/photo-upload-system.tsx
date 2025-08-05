@@ -1,26 +1,38 @@
-"use client"
+"use client";
 
-import React, { useState, useRef, useCallback, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Progress } from "@/components/ui/progress"
-import { Badge } from "@/components/ui/badge"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { 
-  Upload, 
-  X, 
-  AlertCircle, 
-  CheckCircle, 
-  Camera, 
-  FileImage, 
+import React, { useState, useRef, useCallback, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Progress } from "@/components/ui/progress";
+import type { Badge } from "@/components/ui/badge";
+import type { Calendar } from "@/components/ui/calendar";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Separator } from "@/components/ui/separator";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Upload,
+  X,
+  AlertCircle,
+  CheckCircle,
+  Camera,
+  FileImage,
   Calendar as CalendarIcon,
   Shield,
   Eye,
@@ -29,302 +41,310 @@ import {
   ZoomIn,
   RotateCcw,
   Info,
-  Lock
-} from 'lucide-react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
-import { cn } from '@/lib/utils'
+  Lock,
+} from "lucide-react";
+import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { cn } from "@/lib/utils";
 
 interface PhotoMetadata {
-  date: Date
-  treatmentType: string
-  category: 'before' | 'after' | 'during'
-  notes: string
-  tags: string[]
-  anatomicalArea: string
+  date: Date;
+  treatmentType: string;
+  category: "before" | "after" | "during";
+  notes: string;
+  tags: string[];
+  anatomicalArea: string;
 }
 
 interface UploadedPhoto {
-  id: string
-  fileName: string
-  filePath: string
-  publicUrl: string
-  metadata: PhotoMetadata
-  uploadDate: Date
-  fileSize: number
-  mimeType: string
-  lgpdConsented: boolean
-  patient_id: string
+  id: string;
+  fileName: string;
+  filePath: string;
+  publicUrl: string;
+  metadata: PhotoMetadata;
+  uploadDate: Date;
+  fileSize: number;
+  mimeType: string;
+  lgpdConsented: boolean;
+  patient_id: string;
 }
 
 interface PhotoUploadSystemProps {
-  patientId: string
-  onPhotosUploaded?: (photos: UploadedPhoto[]) => void
-  readonly?: boolean
-  className?: string
+  patientId: string;
+  onPhotosUploaded?: (photos: UploadedPhoto[]) => void;
+  readonly?: boolean;
+  className?: string;
 }
 
-const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/heic', 'image/webp']
-const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
-const MAX_FILES = 10
+const ALLOWED_FILE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/heic", "image/webp"];
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_FILES = 10;
 
 const TREATMENT_TYPES = [
-  'Preenchimento',
-  'Botox',
-  'Laser',
-  'Peeling',
-  'Harmonização Facial',
-  'Limpeza de Pele',
-  'Microagulhamento',
-  'Radiofrequência',
-  'Criolipólise',
-  'Outro'
-]
+  "Preenchimento",
+  "Botox",
+  "Laser",
+  "Peeling",
+  "Harmonização Facial",
+  "Limpeza de Pele",
+  "Microagulhamento",
+  "Radiofrequência",
+  "Criolipólise",
+  "Outro",
+];
 
 const ANATOMICAL_AREAS = [
-  'Face Completa',
-  'Testa',
-  'Área dos Olhos',
-  'Nariz',
-  'Bochechas',
-  'Lábios',
-  'Queixo',
-  'Pescoço',
-  'Corpo',
-  'Abdômen',
-  'Braços',
-  'Pernas',
-  'Outro'
-]
+  "Face Completa",
+  "Testa",
+  "Área dos Olhos",
+  "Nariz",
+  "Bochechas",
+  "Lábios",
+  "Queixo",
+  "Pescoço",
+  "Corpo",
+  "Abdômen",
+  "Braços",
+  "Pernas",
+  "Outro",
+];
 
-export function PhotoUploadSystem({ 
-  patientId, 
+export function PhotoUploadSystem({
+  patientId,
   onPhotosUploaded,
   readonly = false,
-  className 
+  className,
 }: PhotoUploadSystemProps) {
-  const [files, setFiles] = useState<File[]>([])
-  const [uploading, setUploading] = useState(false)
-  const [uploadProgress, setUploadProgress] = useState(0)
-  const [uploadedPhotos, setUploadedPhotos] = useState<UploadedPhoto[]>([])
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
-  const [dragActive, setDragActive] = useState(false)
-  const [lgpdConsent, setLgpdConsent] = useState(false)
-  const [selectedPhoto, setSelectedPhoto] = useState<UploadedPhoto | null>(null)
+  const [files, setFiles] = useState<File[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadedPhotos, setUploadedPhotos] = useState<UploadedPhoto[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [dragActive, setDragActive] = useState(false);
+  const [lgpdConsent, setLgpdConsent] = useState(false);
+  const [selectedPhoto, setSelectedPhoto] = useState<UploadedPhoto | null>(null);
   const [photoMetadata, setPhotoMetadata] = useState<PhotoMetadata>({
     date: new Date(),
-    treatmentType: '',
-    category: 'before',
-    notes: '',
+    treatmentType: "",
+    category: "before",
+    notes: "",
     tags: [],
-    anatomicalArea: ''
-  })
+    anatomicalArea: "",
+  });
 
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const dropRef = useRef<HTMLDivElement>(null)
-  const supabase = createClientComponentClient()
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const dropRef = useRef<HTMLDivElement>(null);
+  const supabase = createClientComponentClient();
 
   // Load existing photos
   useEffect(() => {
-    loadExistingPhotos()
-  }, [patientId])
+    loadExistingPhotos();
+  }, [patientId]);
 
   // Verificar consentimento LGPD para fotos
   useEffect(() => {
-    checkLGPDConsent()
-  }, [patientId])
+    checkLGPDConsent();
+  }, [patientId]);
 
   const checkLGPDConsent = async () => {
     try {
       const { data, error } = await supabase
-        .from('profiles')
-        .select('lgpd_consents')
-        .eq('id', patientId)
-        .single()
+        .from("profiles")
+        .select("lgpd_consents")
+        .eq("id", patientId)
+        .single();
 
-      if (error) throw error
+      if (error) throw error;
 
-      const consents = data?.lgpd_consents as any
-      const photoConsent = consents?.photo_consent || false
-      setLgpdConsent(photoConsent)
+      const consents = data?.lgpd_consents as any;
+      const photoConsent = consents?.photo_consent || false;
+      setLgpdConsent(photoConsent);
 
       if (!photoConsent) {
-        setError('Paciente não possui consentimento LGPD para armazenamento de fotos. Atualize o consentimento primeiro.')
+        setError(
+          "Paciente não possui consentimento LGPD para armazenamento de fotos. Atualize o consentimento primeiro.",
+        );
       }
     } catch (err) {
-      console.error('Erro ao verificar consentimento LGPD:', err)
-      setError('Erro ao verificar consentimento LGPD')
+      console.error("Erro ao verificar consentimento LGPD:", err);
+      setError("Erro ao verificar consentimento LGPD");
     }
-  }
+  };
 
   const loadExistingPhotos = async () => {
     try {
       const { data, error } = await supabase
-        .from('patient_photos')
-        .select('*')
-        .eq('patient_id', patientId)
-        .order('created_at', { ascending: false })
+        .from("patient_photos")
+        .select("*")
+        .eq("patient_id", patientId)
+        .order("created_at", { ascending: false });
 
-      if (error) throw error
+      if (error) throw error;
 
       const photosWithUrls = await Promise.all(
         (data || []).map(async (photo) => {
           const { data: urlData } = await supabase.storage
-            .from('patient-photos')
-            .createSignedUrl(photo.file_path, 3600) // 1 hora
+            .from("patient-photos")
+            .createSignedUrl(photo.file_path, 3600); // 1 hora
 
           return {
             id: photo.id,
             fileName: photo.file_name,
             filePath: photo.file_path,
-            publicUrl: urlData?.signedUrl || '',
+            publicUrl: urlData?.signedUrl || "",
             metadata: photo.metadata as PhotoMetadata,
             uploadDate: new Date(photo.created_at),
             fileSize: photo.file_size,
             mimeType: photo.mime_type,
             lgpdConsented: photo.lgpd_consented,
-            patient_id: photo.patient_id
-          }
-        })
-      )
+            patient_id: photo.patient_id,
+          };
+        }),
+      );
 
-      setUploadedPhotos(photosWithUrls)
+      setUploadedPhotos(photosWithUrls);
     } catch (err) {
-      console.error('Erro ao carregar fotos:', err)
-      setError('Erro ao carregar fotos existentes')
+      console.error("Erro ao carregar fotos:", err);
+      setError("Erro ao carregar fotos existentes");
     }
-  }
+  };
 
   const handleDrag = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
+    e.preventDefault();
+    e.stopPropagation();
     if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true)
+      setDragActive(true);
     } else if (e.type === "dragleave") {
-      setDragActive(false)
+      setDragActive(false);
     }
-  }, [])
+  }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setDragActive(false)
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setDragActive(false);
 
-    if (readonly || !lgpdConsent) return
+      if (readonly || !lgpdConsent) return;
 
-    const droppedFiles = Array.from(e.dataTransfer.files)
-    handleFiles(droppedFiles)
-  }, [readonly, lgpdConsent])
+      const droppedFiles = Array.from(e.dataTransfer.files);
+      handleFiles(droppedFiles);
+    },
+    [readonly, lgpdConsent],
+  );
 
-  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    if (readonly || !lgpdConsent) return
+  const handleFileSelect = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (readonly || !lgpdConsent) return;
 
-    const selectedFiles = Array.from(e.target.files || [])
-    handleFiles(selectedFiles)
-  }, [readonly, lgpdConsent])
+      const selectedFiles = Array.from(e.target.files || []);
+      handleFiles(selectedFiles);
+    },
+    [readonly, lgpdConsent],
+  );
 
   const handleFiles = (newFiles: File[]) => {
-    const validFiles = newFiles.filter(file => {
+    const validFiles = newFiles.filter((file) => {
       if (!ALLOWED_FILE_TYPES.includes(file.type)) {
-        setError(`Tipo de arquivo não permitido: ${file.name}. Use apenas JPG, PNG, HEIC ou WebP.`)
-        return false
+        setError(`Tipo de arquivo não permitido: ${file.name}. Use apenas JPG, PNG, HEIC ou WebP.`);
+        return false;
       }
       if (file.size > MAX_FILE_SIZE) {
-        setError(`Arquivo muito grande: ${file.name}. Máximo: 10MB.`)
-        return false
+        setError(`Arquivo muito grande: ${file.name}. Máximo: 10MB.`);
+        return false;
       }
-      return true
-    })
+      return true;
+    });
 
     if (files.length + validFiles.length > MAX_FILES) {
-      setError(`Máximo ${MAX_FILES} arquivos permitidos`)
-      return
+      setError(`Máximo ${MAX_FILES} arquivos permitidos`);
+      return;
     }
 
-    setFiles(prev => [...prev, ...validFiles])
-    setError(null)
-  }
+    setFiles((prev) => [...prev, ...validFiles]);
+    setError(null);
+  };
 
   const removeFile = (index: number) => {
-    setFiles(prev => prev.filter((_, i) => i !== index))
-  }
+    setFiles((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const compressImage = (file: File, quality: number = 0.7): Promise<Blob> => {
     return new Promise((resolve) => {
-      const canvas = document.createElement('canvas')
-      const ctx = canvas.getContext('2d')!
-      const img = new Image()
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d")!;
+      const img = new Image();
 
       img.onload = () => {
         // Calcular dimensões mantendo proporção
-        const maxWidth = 1920
-        const maxHeight = 1080
-        let { width, height } = img
+        const maxWidth = 1920;
+        const maxHeight = 1080;
+        let { width, height } = img;
 
         if (width > maxWidth || height > maxHeight) {
-          const ratio = Math.min(maxWidth / width, maxHeight / height)
-          width *= ratio
-          height *= ratio
+          const ratio = Math.min(maxWidth / width, maxHeight / height);
+          width *= ratio;
+          height *= ratio;
         }
 
-        canvas.width = width
-        canvas.height = height
+        canvas.width = width;
+        canvas.height = height;
 
         // Desenhar e comprimir
-        ctx.drawImage(img, 0, 0, width, height)
-        canvas.toBlob(resolve, file.type, quality)
-      }
+        ctx.drawImage(img, 0, 0, width, height);
+        canvas.toBlob(resolve, file.type, quality);
+      };
 
-      img.src = URL.createObjectURL(file)
-    })
-  }
+      img.src = URL.createObjectURL(file);
+    });
+  };
 
   const uploadFiles = async () => {
     if (!lgpdConsent) {
-      setError('Consentimento LGPD para fotos é obrigatório')
-      return
+      setError("Consentimento LGPD para fotos é obrigatório");
+      return;
     }
 
     if (files.length === 0) {
-      setError('Selecione pelo menos uma foto')
-      return
+      setError("Selecione pelo menos uma foto");
+      return;
     }
 
     if (!photoMetadata.treatmentType || !photoMetadata.anatomicalArea) {
-      setError('Preencha todos os campos obrigatórios (Tipo de Tratamento e Área Anatômica)')
-      return
+      setError("Preencha todos os campos obrigatórios (Tipo de Tratamento e Área Anatômica)");
+      return;
     }
 
-    setUploading(true)
-    setError(null)
-    setSuccess(null)
-    setUploadProgress(0)
+    setUploading(true);
+    setError(null);
+    setSuccess(null);
+    setUploadProgress(0);
 
     try {
       const uploadPromises = files.map(async (file, index) => {
         // Comprimir imagem
-        const compressedBlob = await compressImage(file)
-        
+        const compressedBlob = await compressImage(file);
+
         // Gerar nome único
-        const fileExt = file.name.split('.').pop()
-        const fileName = `${patientId}/${Date.now()}-${index}.${fileExt}`
-        
+        const fileExt = file.name.split(".").pop();
+        const fileName = `${patientId}/${Date.now()}-${index}.${fileExt}`;
+
         // Upload para Supabase Storage
         const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('patient-photos')
+          .from("patient-photos")
           .upload(fileName, compressedBlob, {
             contentType: file.type,
-            cacheControl: '3600',
-            upsert: false
-          })
+            cacheControl: "3600",
+            upsert: false,
+          });
 
-        if (uploadError) throw uploadError
+        if (uploadError) throw uploadError;
 
         // Salvar metadados no banco
         const { data: photoData, error: dbError } = await supabase
-          .from('patient_photos')
+          .from("patient_photos")
           .insert({
             patient_id: patientId,
             file_name: file.name,
@@ -332,97 +352,91 @@ export function PhotoUploadSystem({
             file_size: file.size,
             mime_type: file.type,
             metadata: photoMetadata,
-            lgpd_consented: lgpdConsent
+            lgpd_consented: lgpdConsent,
           })
           .select()
-          .single()
+          .single();
 
-        if (dbError) throw dbError
+        if (dbError) throw dbError;
 
         // Atualizar progresso
-        setUploadProgress(prev => prev + (100 / files.length))
+        setUploadProgress((prev) => prev + 100 / files.length);
 
-        return photoData
-      })
+        return photoData;
+      });
 
-      await Promise.all(uploadPromises)
+      await Promise.all(uploadPromises);
 
-      setSuccess(`${files.length} foto(s) enviada(s) com sucesso!`)
-      setFiles([])
+      setSuccess(`${files.length} foto(s) enviada(s) com sucesso!`);
+      setFiles([]);
       setPhotoMetadata({
         date: new Date(),
-        treatmentType: '',
-        category: 'before',
-        notes: '',
+        treatmentType: "",
+        category: "before",
+        notes: "",
         tags: [],
-        anatomicalArea: ''
-      })
-      
-      // Recarregar fotos
-      await loadExistingPhotos()
-      
-      if (onPhotosUploaded) {
-        onPhotosUploaded(uploadedPhotos)
-      }
+        anatomicalArea: "",
+      });
 
+      // Recarregar fotos
+      await loadExistingPhotos();
+
+      if (onPhotosUploaded) {
+        onPhotosUploaded(uploadedPhotos);
+      }
     } catch (err) {
-      console.error('Erro no upload:', err)
-      setError('Erro ao enviar fotos. Tente novamente.')
+      console.error("Erro no upload:", err);
+      setError("Erro ao enviar fotos. Tente novamente.");
     } finally {
-      setUploading(false)
-      setUploadProgress(0)
+      setUploading(false);
+      setUploadProgress(0);
     }
-  }
+  };
 
   const deletePhoto = async (photoId: string, filePath: string) => {
     try {
       // Deletar do storage
       const { error: storageError } = await supabase.storage
-        .from('patient-photos')
-        .remove([filePath])
+        .from("patient-photos")
+        .remove([filePath]);
 
-      if (storageError) throw storageError
+      if (storageError) throw storageError;
 
       // Deletar do banco
-      const { error: dbError } = await supabase
-        .from('patient_photos')
-        .delete()
-        .eq('id', photoId)
+      const { error: dbError } = await supabase.from("patient_photos").delete().eq("id", photoId);
 
-      if (dbError) throw dbError
+      if (dbError) throw dbError;
 
       // Atualizar lista local
-      setUploadedPhotos(prev => prev.filter(photo => photo.id !== photoId))
-      setSuccess('Foto deletada com sucesso')
-
+      setUploadedPhotos((prev) => prev.filter((photo) => photo.id !== photoId));
+      setSuccess("Foto deletada com sucesso");
     } catch (err) {
-      console.error('Erro ao deletar foto:', err)
-      setError('Erro ao deletar foto')
+      console.error("Erro ao deletar foto:", err);
+      setError("Erro ao deletar foto");
     }
-  }
+  };
 
   const downloadPhoto = async (photo: UploadedPhoto) => {
     try {
       const { data, error } = await supabase.storage
-        .from('patient-photos')
-        .download(photo.filePath)
+        .from("patient-photos")
+        .download(photo.filePath);
 
-      if (error) throw error
+      if (error) throw error;
 
-      const url = URL.createObjectURL(data)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = photo.fileName
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      URL.revokeObjectURL(url)
-
+      const url = URL.createObjectURL(data);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = photo.fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
     } catch (err) {
-      console.error('Erro ao baixar foto:', err)
-      setError('Erro ao baixar foto')
+      console.error("Erro ao baixar foto:", err);
+      setError("Erro ao baixar foto");
     }
-  }
+  };
 
   if (!lgpdConsent) {
     return (
@@ -432,22 +446,20 @@ export function PhotoUploadSystem({
             <Lock className="h-5 w-5 text-red-500" />
             Sistema de Fotos Médicas
           </CardTitle>
-          <CardDescription>
-            Gerenciamento seguro de fotos com conformidade LGPD
-          </CardDescription>
+          <CardDescription>Gerenciamento seguro de fotos com conformidade LGPD</CardDescription>
         </CardHeader>
         <CardContent>
           <Alert>
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Consentimento LGPD Necessário</AlertTitle>
             <AlertDescription>
-              O paciente deve fornecer consentimento específico para armazenamento de fotos médicas antes de prosseguir. 
-              Atualize o consentimento LGPD do paciente primeiro.
+              O paciente deve fornecer consentimento específico para armazenamento de fotos médicas
+              antes de prosseguir. Atualize o consentimento LGPD do paciente primeiro.
             </AlertDescription>
           </Alert>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -460,9 +472,7 @@ export function PhotoUploadSystem({
             LGPD Conforme
           </Badge>
         </CardTitle>
-        <CardDescription>
-          Upload seguro de fotos médicas com metadados completos
-        </CardDescription>
+        <CardDescription>Upload seguro de fotos médicas com metadados completos</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Alertas */}
@@ -485,9 +495,7 @@ export function PhotoUploadSystem({
         <Tabs defaultValue="upload" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="upload">Upload de Fotos</TabsTrigger>
-            <TabsTrigger value="gallery">
-              Galeria ({uploadedPhotos.length})
-            </TabsTrigger>
+            <TabsTrigger value="gallery">Galeria ({uploadedPhotos.length})</TabsTrigger>
           </TabsList>
 
           <TabsContent value="upload" className="space-y-6">
@@ -502,9 +510,9 @@ export function PhotoUploadSystem({
                   onDrop={handleDrop}
                   className={cn(
                     "border-2 border-dashed rounded-lg p-8 text-center transition-colors",
-                    dragActive 
-                      ? "border-primary bg-primary/5" 
-                      : "border-muted-foreground/25 hover:border-muted-foreground/50"
+                    dragActive
+                      ? "border-primary bg-primary/5"
+                      : "border-muted-foreground/25 hover:border-muted-foreground/50",
                   )}
                 >
                   <div className="flex flex-col items-center gap-4">
@@ -533,7 +541,7 @@ export function PhotoUploadSystem({
                     ref={fileInputRef}
                     type="file"
                     multiple
-                    accept={ALLOWED_FILE_TYPES.join(',')}
+                    accept={ALLOWED_FILE_TYPES.join(",")}
                     onChange={handleFileSelect}
                     className="hidden"
                   />
@@ -542,9 +550,7 @@ export function PhotoUploadSystem({
                 {/* Arquivos Selecionados */}
                 {files.length > 0 && (
                   <div className="space-y-4">
-                    <h3 className="text-sm font-medium">
-                      Arquivos Selecionados ({files.length})
-                    </h3>
+                    <h3 className="text-sm font-medium">Arquivos Selecionados ({files.length})</h3>
                     <div className="space-y-2 max-h-32 overflow-y-auto">
                       {files.map((file, index) => (
                         <div
@@ -579,7 +585,7 @@ export function PhotoUploadSystem({
                   <div className="space-y-4">
                     <Separator />
                     <h3 className="text-sm font-medium">Informações das Fotos</h3>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {/* Data */}
                       <div className="space-y-2">
@@ -590,23 +596,21 @@ export function PhotoUploadSystem({
                               variant="outline"
                               className={cn(
                                 "justify-start text-left font-normal",
-                                !photoMetadata.date && "text-muted-foreground"
+                                !photoMetadata.date && "text-muted-foreground",
                               )}
                             >
                               <CalendarIcon className="mr-2 h-4 w-4" />
-                              {photoMetadata.date ? (
-                                format(photoMetadata.date, "PPP", { locale: ptBR })
-                              ) : (
-                                "Selecione uma data"
-                              )}
+                              {photoMetadata.date
+                                ? format(photoMetadata.date, "PPP", { locale: ptBR })
+                                : "Selecione uma data"}
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0">
                             <Calendar
                               mode="single"
                               selected={photoMetadata.date}
-                              onSelect={(date) => 
-                                setPhotoMetadata(prev => ({ ...prev, date: date || new Date() }))
+                              onSelect={(date) =>
+                                setPhotoMetadata((prev) => ({ ...prev, date: date || new Date() }))
                               }
                               initialFocus
                             />
@@ -619,15 +623,15 @@ export function PhotoUploadSystem({
                         <Label>Tipo de Tratamento *</Label>
                         <Select
                           value={photoMetadata.treatmentType}
-                          onValueChange={(value) => 
-                            setPhotoMetadata(prev => ({ ...prev, treatmentType: value }))
+                          onValueChange={(value) =>
+                            setPhotoMetadata((prev) => ({ ...prev, treatmentType: value }))
                           }
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Selecione o tratamento" />
                           </SelectTrigger>
                           <SelectContent>
-                            {TREATMENT_TYPES.map(type => (
+                            {TREATMENT_TYPES.map((type) => (
                               <SelectItem key={type} value={type}>
                                 {type}
                               </SelectItem>
@@ -641,8 +645,8 @@ export function PhotoUploadSystem({
                         <Label>Categoria</Label>
                         <Select
                           value={photoMetadata.category}
-                          onValueChange={(value: 'before' | 'after' | 'during') => 
-                            setPhotoMetadata(prev => ({ ...prev, category: value }))
+                          onValueChange={(value: "before" | "after" | "during") =>
+                            setPhotoMetadata((prev) => ({ ...prev, category: value }))
                           }
                         >
                           <SelectTrigger>
@@ -661,15 +665,15 @@ export function PhotoUploadSystem({
                         <Label>Área Anatômica *</Label>
                         <Select
                           value={photoMetadata.anatomicalArea}
-                          onValueChange={(value) => 
-                            setPhotoMetadata(prev => ({ ...prev, anatomicalArea: value }))
+                          onValueChange={(value) =>
+                            setPhotoMetadata((prev) => ({ ...prev, anatomicalArea: value }))
                           }
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Selecione a área" />
                           </SelectTrigger>
                           <SelectContent>
-                            {ANATOMICAL_AREAS.map(area => (
+                            {ANATOMICAL_AREAS.map((area) => (
                               <SelectItem key={area} value={area}>
                                 {area}
                               </SelectItem>
@@ -685,8 +689,8 @@ export function PhotoUploadSystem({
                       <Textarea
                         placeholder="Observações sobre as fotos (opcional)"
                         value={photoMetadata.notes}
-                        onChange={(e) => 
-                          setPhotoMetadata(prev => ({ ...prev, notes: e.target.value }))
+                        onChange={(e) =>
+                          setPhotoMetadata((prev) => ({ ...prev, notes: e.target.value }))
                         }
                         rows={3}
                       />
@@ -706,11 +710,7 @@ export function PhotoUploadSystem({
                     )}
 
                     {/* Botão de Upload */}
-                    <Button
-                      onClick={uploadFiles}
-                      disabled={uploading}
-                      className="w-full"
-                    >
+                    <Button onClick={uploadFiles} disabled={uploading} className="w-full">
                       {uploading ? (
                         <>
                           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
@@ -735,9 +735,7 @@ export function PhotoUploadSystem({
               <div className="text-center py-8">
                 <FileImage className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <p className="text-lg font-medium">Nenhuma foto encontrada</p>
-                <p className="text-sm text-muted-foreground">
-                  As fotos enviadas aparecerão aqui
-                </p>
+                <p className="text-sm text-muted-foreground">As fotos enviadas aparecerão aqui</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -759,11 +757,7 @@ export function PhotoUploadSystem({
                         >
                           <ZoomIn className="h-4 w-4" />
                         </Button>
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          onClick={() => downloadPhoto(photo)}
-                        >
+                        <Button size="sm" variant="secondary" onClick={() => downloadPhoto(photo)}>
                           <Download className="h-4 w-4" />
                         </Button>
                         {!readonly && (
@@ -781,8 +775,11 @@ export function PhotoUploadSystem({
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
                           <Badge variant="outline">
-                            {photo.metadata.category === 'before' ? 'Antes' :
-                             photo.metadata.category === 'after' ? 'Depois' : 'Durante'}
+                            {photo.metadata.category === "before"
+                              ? "Antes"
+                              : photo.metadata.category === "after"
+                                ? "Depois"
+                                : "Durante"}
                           </Badge>
                           <span className="text-xs text-muted-foreground">
                             {format(photo.uploadDate, "dd/MM/yyyy", { locale: ptBR })}
@@ -812,11 +809,7 @@ export function PhotoUploadSystem({
             <div className="bg-background rounded-lg max-w-4xl max-h-[90vh] overflow-auto">
               <div className="p-4 border-b flex items-center justify-between">
                 <h3 className="text-lg font-semibold">{selectedPhoto.fileName}</h3>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setSelectedPhoto(null)}
-                >
+                <Button variant="ghost" size="sm" onClick={() => setSelectedPhoto(null)}>
                   <X className="h-4 w-4" />
                 </Button>
               </div>
@@ -832,18 +825,25 @@ export function PhotoUploadSystem({
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <p className="font-medium">Tratamento:</p>
-                      <p className="text-muted-foreground">{selectedPhoto.metadata.treatmentType}</p>
+                      <p className="text-muted-foreground">
+                        {selectedPhoto.metadata.treatmentType}
+                      </p>
                     </div>
                     <div>
                       <p className="font-medium">Categoria:</p>
                       <p className="text-muted-foreground">
-                        {selectedPhoto.metadata.category === 'before' ? 'Antes' :
-                         selectedPhoto.metadata.category === 'after' ? 'Depois' : 'Durante'}
+                        {selectedPhoto.metadata.category === "before"
+                          ? "Antes"
+                          : selectedPhoto.metadata.category === "after"
+                            ? "Depois"
+                            : "Durante"}
                       </p>
                     </div>
                     <div>
                       <p className="font-medium">Área:</p>
-                      <p className="text-muted-foreground">{selectedPhoto.metadata.anatomicalArea}</p>
+                      <p className="text-muted-foreground">
+                        {selectedPhoto.metadata.anatomicalArea}
+                      </p>
                     </div>
                     <div>
                       <p className="font-medium">Data:</p>
@@ -865,5 +865,5 @@ export function PhotoUploadSystem({
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

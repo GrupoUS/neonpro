@@ -1,28 +1,34 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
-} from '@/components/ui/dropdown-menu';
-import { 
-  MoreHorizontal, 
-  Download, 
-  Mail, 
-  CreditCard, 
-  Eye, 
+import React, { useState } from "react";
+import type { Button } from "@/components/ui/button";
+import type {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import type {
+  MoreHorizontal,
+  Download,
+  Mail,
+  CreditCard,
+  Eye,
   Loader2,
   CheckCircle,
-  AlertTriangle
-} from 'lucide-react';
-import { toast } from 'sonner';
-import PaymentForm from './payment-form';
-import StripeProvider from './stripe-provider';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+  AlertTriangle,
+} from "lucide-react";
+import type { toast } from "sonner";
+import PaymentForm from "./payment-form";
+import StripeProvider from "./stripe-provider";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Invoice {
   id: string;
@@ -54,13 +60,13 @@ export default function InvoiceActions({ invoice, onStatusUpdate }: InvoiceActio
   const [pdfData, setPdfData] = useState<string | null>(null);
 
   const handleSendEmail = async () => {
-    setIsLoading(prev => ({ ...prev, email: true }));
+    setIsLoading((prev) => ({ ...prev, email: true }));
 
     try {
-      const response = await fetch('/api/email/send-invoice', {
-        method: 'POST',
+      const response = await fetch("/api/email/send-invoice", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           invoiceId: invoice.id,
@@ -71,68 +77,66 @@ export default function InvoiceActions({ invoice, onStatusUpdate }: InvoiceActio
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Erro ao enviar email');
+        throw new Error(data.error || "Erro ao enviar email");
       }
 
-      toast.success('Email enviado com sucesso!');
-      
+      toast.success("Email enviado com sucesso!");
+
       if (onStatusUpdate) {
         onStatusUpdate();
       }
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
       toast.error(`Erro ao enviar email: ${errorMessage}`);
     } finally {
-      setIsLoading(prev => ({ ...prev, email: false }));
+      setIsLoading((prev) => ({ ...prev, email: false }));
     }
   };
 
   const handleDownloadPDF = async () => {
-    setIsLoading(prev => ({ ...prev, pdf: true }));
+    setIsLoading((prev) => ({ ...prev, pdf: true }));
 
     try {
       const response = await fetch(`/api/pdf/invoice?id=${invoice.id}`, {
-        method: 'GET',
+        method: "GET",
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Erro ao gerar PDF');
+        throw new Error(errorData.error || "Erro ao gerar PDF");
       }
 
       // Criar blob e baixar arquivo
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
+      const a = document.createElement("a");
+      a.style.display = "none";
       a.href = url;
       a.download = `fatura-${invoice.invoice_number}.pdf`;
-      
+
       document.body.appendChild(a);
       a.click();
-      
+
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
 
-      toast.success('PDF baixado com sucesso!');
-
+      toast.success("PDF baixado com sucesso!");
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
       toast.error(`Erro ao baixar PDF: ${errorMessage}`);
     } finally {
-      setIsLoading(prev => ({ ...prev, pdf: false }));
+      setIsLoading((prev) => ({ ...prev, pdf: false }));
     }
   };
 
   const handlePreviewPDF = async () => {
-    setIsLoading(prev => ({ ...prev, pdf: true }));
+    setIsLoading((prev) => ({ ...prev, pdf: true }));
 
     try {
-      const response = await fetch('/api/pdf/invoice', {
-        method: 'POST',
+      const response = await fetch("/api/pdf/invoice", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           invoiceId: invoice.id,
@@ -143,24 +147,23 @@ export default function InvoiceActions({ invoice, onStatusUpdate }: InvoiceActio
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Erro ao gerar PDF');
+        throw new Error(data.error || "Erro ao gerar PDF");
       }
 
       setPdfData(data.pdfData);
       setShowPdfPreview(true);
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
       toast.error(`Erro ao visualizar PDF: ${errorMessage}`);
     } finally {
-      setIsLoading(prev => ({ ...prev, pdf: false }));
+      setIsLoading((prev) => ({ ...prev, pdf: false }));
     }
   };
 
   const handlePaymentSuccess = (paymentIntentId: string) => {
-    toast.success('Pagamento processado com sucesso!');
+    toast.success("Pagamento processado com sucesso!");
     setShowPaymentDialog(false);
-    
+
     if (onStatusUpdate) {
       onStatusUpdate();
     }
@@ -170,8 +173,8 @@ export default function InvoiceActions({ invoice, onStatusUpdate }: InvoiceActio
     toast.error(`Erro no pagamento: ${error}`);
   };
 
-  const canPay = invoice.status === 'pending' || invoice.status === 'overdue';
-  const isPaid = invoice.status === 'paid';
+  const canPay = invoice.status === "pending" || invoice.status === "overdue";
+  const isPaid = invoice.status === "paid";
 
   return (
     <>
@@ -182,7 +185,7 @@ export default function InvoiceActions({ invoice, onStatusUpdate }: InvoiceActio
             <MoreHorizontal className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
-        
+
         <DropdownMenuContent align="end">
           {/* Visualizar PDF */}
           <DropdownMenuItem onClick={handlePreviewPDF} disabled={isLoading.pdf}>
@@ -213,7 +216,7 @@ export default function InvoiceActions({ invoice, onStatusUpdate }: InvoiceActio
             ) : (
               <Mail className="mr-2 h-4 w-4" />
             )}
-            {invoice.email_sent_at ? 'Reenviar Email' : 'Enviar Email'}
+            {invoice.email_sent_at ? "Reenviar Email" : "Enviar Email"}
             {invoice.email_sent_at && <CheckCircle className="ml-1 h-3 w-3 text-green-600" />}
           </DropdownMenuItem>
 
@@ -221,8 +224,8 @@ export default function InvoiceActions({ invoice, onStatusUpdate }: InvoiceActio
 
           {/* Pagamento */}
           {canPay && (
-            <DropdownMenuItem 
-              onClick={() => setShowPaymentDialog(true)} 
+            <DropdownMenuItem
+              onClick={() => setShowPaymentDialog(true)}
               disabled={isLoading.payment}
             >
               <CreditCard className="mr-2 h-4 w-4" />
@@ -245,12 +248,11 @@ export default function InvoiceActions({ invoice, onStatusUpdate }: InvoiceActio
           <DialogHeader>
             <DialogTitle>Realizar Pagamento</DialogTitle>
             <DialogDescription>
-              Fatura #{invoice.invoice_number} - Vencimento: {
-                new Date(invoice.due_date).toLocaleDateString('pt-BR')
-              }
+              Fatura #{invoice.invoice_number} - Vencimento:{" "}
+              {new Date(invoice.due_date).toLocaleDateString("pt-BR")}
             </DialogDescription>
           </DialogHeader>
-          
+
           <StripeProvider>
             <PaymentForm
               invoiceId={invoice.id}
@@ -268,7 +270,7 @@ export default function InvoiceActions({ invoice, onStatusUpdate }: InvoiceActio
           <DialogHeader>
             <DialogTitle>Visualizar Fatura #{invoice.invoice_number}</DialogTitle>
           </DialogHeader>
-          
+
           {pdfData && (
             <div className="flex-1 min-h-[600px]">
               <iframe

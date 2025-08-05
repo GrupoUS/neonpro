@@ -6,13 +6,13 @@
 // =============================================
 
 import type { AlternativeSlot } from "@/app/lib/types/conflict-prevention";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { format, isSameDay, parseISO } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Separator } from "@/components/ui/separator";
+import type { format, isSameDay, parseISO } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
   AlertCircle,
   ArrowRight,
   CalendarDays,
@@ -22,8 +22,8 @@ import {
   Star,
   User,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 
 interface AlternativeSlotSuggestionProps {
   clinicId: string;
@@ -80,9 +80,7 @@ export function AlternativeSlotSuggestion({
 
   // Calculate duration from original times
   const durationMinutes = Math.round(
-    (parseISO(originalEndTime).getTime() -
-      parseISO(originalStartTime).getTime()) /
-      (1000 * 60)
+    (parseISO(originalEndTime).getTime() - parseISO(originalStartTime).getTime()) / (1000 * 60),
   );
 
   useEffect(() => {
@@ -106,9 +104,7 @@ export function AlternativeSlotSuggestion({
       };
 
       const queryString = new URLSearchParams(params as any).toString();
-      const response = await fetch(
-        `/api/appointments/suggest-slots?${queryString}`
-      );
+      const response = await fetch(`/api/appointments/suggest-slots?${queryString}`);
 
       if (!response.ok) {
         throw new Error("Failed to fetch alternative slots");
@@ -134,11 +130,9 @@ export function AlternativeSlotSuggestion({
     const startDate = parseISO(slot.start_time);
     const endDate = parseISO(slot.end_time);
 
-    return `${format(startDate, "EEEE, dd/MM", { locale: ptBR })} • ${format(
-      startDate,
-      "HH:mm",
-      { locale: ptBR }
-    )}-${format(endDate, "HH:mm", { locale: ptBR })}`;
+    return `${format(startDate, "EEEE, dd/MM", { locale: ptBR })} • ${format(startDate, "HH:mm", {
+      locale: ptBR,
+    })}-${format(endDate, "HH:mm", { locale: ptBR })}`;
   };
 
   const getSlotScore = (slot: AlternativeSlot): number => {
@@ -160,9 +154,7 @@ export function AlternativeSlotSuggestion({
   const getDaysFromOriginal = (slotTime: string): number => {
     const original = parseISO(originalStartTime);
     const slot = parseISO(slotTime);
-    return Math.ceil(
-      (slot.getTime() - original.getTime()) / (1000 * 60 * 60 * 24)
-    );
+    return Math.ceil((slot.getTime() - original.getTime()) / (1000 * 60 * 60 * 24));
   };
 
   const groupSlotsByDate = (slots: AlternativeSlot[]) => {
@@ -206,9 +198,7 @@ export function AlternativeSlotSuggestion({
           <div className="flex items-center justify-center py-8">
             <div className="text-center">
               <Loader2 className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-2" />
-              <p className="text-sm text-muted-foreground">
-                Buscando horários alternativos...
-              </p>
+              <p className="text-sm text-muted-foreground">Buscando horários alternativos...</p>
             </div>
           </div>
         )}
@@ -217,12 +207,9 @@ export function AlternativeSlotSuggestion({
         {!isLoading && !hasSlots && (
           <div className="text-center py-8">
             <AlertCircle className="h-8 w-8 text-amber-500 mx-auto mb-2" />
-            <h3 className="font-medium mb-2">
-              Nenhum horário alternativo encontrado
-            </h3>
+            <h3 className="font-medium mb-2">Nenhum horário alternativo encontrado</h3>
             <p className="text-sm text-muted-foreground mb-4">
-              Não encontramos horários disponíveis nos próximos{" "}
-              {searchWindowDays} dias.
+              Não encontramos horários disponíveis nos próximos {searchWindowDays} dias.
             </p>
             <div className="space-y-2 text-xs text-muted-foreground">
               <p>• Tente escolher um período diferente</p>
@@ -241,8 +228,8 @@ export function AlternativeSlotSuggestion({
                 <div className="flex items-center gap-2 text-blue-900 text-sm">
                   <CheckCircle className="h-4 w-4" />
                   <span>
-                    Encontrados {searchInfo.available_slots_found} horários
-                    disponíveis de {searchInfo.total_slots_checked} verificados
+                    Encontrados {searchInfo.available_slots_found} horários disponíveis de{" "}
+                    {searchInfo.total_slots_checked} verificados
                   </span>
                 </div>
               </div>
@@ -281,9 +268,7 @@ export function AlternativeSlotSuggestion({
                         <Card
                           key={index}
                           className={`cursor-pointer transition-all hover:shadow-md ${
-                            isSelected
-                              ? "ring-2 ring-blue-500 bg-blue-50"
-                              : "hover:bg-gray-50"
+                            isSelected ? "ring-2 ring-blue-500 bg-blue-50" : "hover:bg-gray-50"
                           }`}
                           onClick={() => handleSlotSelect(slot)}
                         >
@@ -297,11 +282,7 @@ export function AlternativeSlotSuggestion({
                                 </span>
                               </div>
                               {score > 0 && (
-                                <Badge
-                                  className={`text-xs ${getSlotScoreColor(
-                                    score
-                                  )}`}
-                                >
+                                <Badge className={`text-xs ${getSlotScoreColor(score)}`}>
                                   <Star className="h-3 w-3 mr-1" />
                                   {getSlotScoreLabel(score)}
                                 </Badge>
@@ -309,9 +290,7 @@ export function AlternativeSlotSuggestion({
                             </div>
 
                             {slot.reason && (
-                              <p className="text-xs text-muted-foreground mb-2">
-                                {slot.reason}
-                              </p>
+                              <p className="text-xs text-muted-foreground mb-2">{slot.reason}</p>
                             )}
 
                             {slot.conflicts && slot.conflicts.length > 0 && (
@@ -338,9 +317,7 @@ export function AlternativeSlotSuggestion({
                               </div>
                               <ArrowRight
                                 className={`h-4 w-4 transition-transform ${
-                                  isSelected
-                                    ? "text-blue-600 scale-110"
-                                    : "text-muted-foreground"
+                                  isSelected ? "text-blue-600 scale-110" : "text-muted-foreground"
                                 }`}
                               />
                             </div>
@@ -367,8 +344,7 @@ export function AlternativeSlotSuggestion({
                 Buscar Mais
               </Button>
               <div className="text-xs text-muted-foreground">
-                Mostrando até {maxSuggestions} sugestões nos próximos{" "}
-                {searchWindowDays} dias
+                Mostrando até {maxSuggestions} sugestões nos próximos {searchWindowDays} dias
               </div>
             </div>
           </div>
@@ -381,9 +357,7 @@ export function AlternativeSlotSuggestion({
               <strong>Como funciona:</strong>
             </p>
             <p>• Horários são ordenados por proximidade e disponibilidade</p>
-            <p>
-              • Badges indicam a qualidade da sugestão baseada em preferências
-            </p>
+            <p>• Badges indicam a qualidade da sugestão baseada em preferências</p>
             <p>• Clique em um horário para aplicá-lo automaticamente</p>
             <p>• Conflitos menores são mostrados como avisos</p>
           </div>

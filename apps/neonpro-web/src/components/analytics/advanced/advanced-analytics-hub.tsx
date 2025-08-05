@@ -1,27 +1,39 @@
-'use client'
+"use client";
 
 /**
  * Advanced Analytics Hub Component for NeonPro
- * 
+ *
  * Master component that integrates all advanced analytics features:
  * - Cohort Analysis with interactive heatmaps
  * - Time Series Forecasting with ML models
  * - Advanced Metrics Dashboard with KPIs
  * - Statistical Insights with correlation analysis
- * 
+ *
  * Provides unified interface for comprehensive business intelligence.
  */
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Progress } from '@/components/ui/progress'
-import { Separator } from '@/components/ui/separator'
-import { 
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Progress } from "@/components/ui/progress";
+import type { Separator } from "@/components/ui/separator";
+import type {
   BarChart3,
   TrendingUp,
   Brain,
@@ -37,62 +49,62 @@ import {
   Settings,
   Zap,
   LineChart,
-  PieChart
-} from 'lucide-react'
+  PieChart,
+} from "lucide-react";
 
 // Import advanced analytics components
-import { CohortHeatmap } from './cohort-heatmap'
-import { ForecastingCharts } from './forecasting-charts'
-import { AdvancedMetricsDashboard } from './advanced-metrics-dashboard'
-import { StatisticalInsights } from './statistical-insights'
+import type { CohortHeatmap } from "./cohort-heatmap";
+import type { ForecastingCharts } from "./forecasting-charts";
+import type { AdvancedMetricsDashboard } from "./advanced-metrics-dashboard";
+import type { StatisticalInsights } from "./statistical-insights";
 
 // Types
 interface AnalyticsConfig {
-  dateRange: { start: string; end: string }
-  refreshInterval: number
-  autoRefresh: boolean
-  selectedMetrics: string[]
-  confidenceLevel: number
+  dateRange: { start: string; end: string };
+  refreshInterval: number;
+  autoRefresh: boolean;
+  selectedMetrics: string[];
+  confidenceLevel: number;
 }
 
 interface AnalyticsData {
-  cohortData: any[]
-  forecastData: any[]
-  kpis: any[]
-  timeSeriesData: any[]
-  segmentationData: any[]
-  benchmarkData: any[]
-  correlations: any[]
-  statisticalTests: any[]
-  dataQuality: any
-  predictiveModels: any[]
+  cohortData: any[];
+  forecastData: any[];
+  kpis: any[];
+  timeSeriesData: any[];
+  segmentationData: any[];
+  benchmarkData: any[];
+  correlations: any[];
+  statisticalTests: any[];
+  dataQuality: any;
+  predictiveModels: any[];
 }
 
 interface AdvancedAnalyticsHubProps {
-  initialConfig?: Partial<AnalyticsConfig>
-  className?: string
-  onConfigChange?: (config: AnalyticsConfig) => void
-  onDataExport?: (data: any, format: 'csv' | 'pdf' | 'json') => void
+  initialConfig?: Partial<AnalyticsConfig>;
+  className?: string;
+  onConfigChange?: (config: AnalyticsConfig) => void;
+  onDataExport?: (data: any, format: "csv" | "pdf" | "json") => void;
 }
 
 export function AdvancedAnalyticsHub({
   initialConfig = {},
-  className = '',
+  className = "",
   onConfigChange,
-  onDataExport
+  onDataExport,
 }: AdvancedAnalyticsHubProps) {
   // State management
   const [config, setConfig] = useState<AnalyticsConfig>({
     dateRange: {
-      start: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      end: new Date().toISOString().split('T')[0]
+      start: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+      end: new Date().toISOString().split("T")[0],
     },
     refreshInterval: 300000, // 5 minutes
     autoRefresh: false,
-    selectedMetrics: ['subscriptions', 'revenue', 'churn_rate', 'mrr'],
+    selectedMetrics: ["subscriptions", "revenue", "churn_rate", "mrr"],
     confidenceLevel: 95,
-    ...initialConfig
-  })
+    ...initialConfig,
+  });
 
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData>({
     cohortData: [],
@@ -109,141 +121,153 @@ export function AdvancedAnalyticsHub({
       consistency: 0,
       validity: 0,
       uniqueness: 0,
-      outliers: []
+      outliers: [],
     },
-    predictiveModels: []
-  })
+    predictiveModels: [],
+  });
 
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [lastRefresh, setLastRefresh] = useState<Date | null>(null)
-  const [selectedView, setSelectedView] = useState<'overview' | 'cohorts' | 'forecasting' | 'metrics' | 'statistics'>('overview')
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
+  const [selectedView, setSelectedView] = useState<
+    "overview" | "cohorts" | "forecasting" | "metrics" | "statistics"
+  >("overview");
 
   // Fetch analytics data
-  const fetchAnalyticsData = useCallback(async (showLoading = true) => {
-    if (showLoading) setLoading(true)
-    setError(null)
+  const fetchAnalyticsData = useCallback(
+    async (showLoading = true) => {
+      if (showLoading) setLoading(true);
+      setError(null);
 
-    try {
-      // Fetch cohort analysis
-      const cohortResponse = await fetch('/api/analytics/advanced?type=cohort-analysis', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          startDate: config.dateRange.start,
-          endDate: config.dateRange.end,
-          cohortSize: 'monthly',
-          metrics: ['retention', 'revenue', 'churn']
-        })
-      })
+      try {
+        // Fetch cohort analysis
+        const cohortResponse = await fetch("/api/analytics/advanced?type=cohort-analysis", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            startDate: config.dateRange.start,
+            endDate: config.dateRange.end,
+            cohortSize: "monthly",
+            metrics: ["retention", "revenue", "churn"],
+          }),
+        });
 
-      // Fetch forecasting data
-      const forecastResponse = await fetch('/api/analytics/advanced?type=forecasting', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          metric: 'revenue',
-          periods: 30,
-          confidence_level: config.confidenceLevel / 100,
-          include_scenarios: true
-        })
-      })
+        // Fetch forecasting data
+        const forecastResponse = await fetch("/api/analytics/advanced?type=forecasting", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            metric: "revenue",
+            periods: 30,
+            confidence_level: config.confidenceLevel / 100,
+            include_scenarios: true,
+          }),
+        });
 
-      // Fetch statistical analysis
-      const statisticsResponse = await fetch('/api/analytics/advanced?type=statistical-analysis', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          metrics: config.selectedMetrics,
-          analysis_type: 'all',
-          confidence_level: config.confidenceLevel / 100,
-          include_outliers: true
-        })
-      })
+        // Fetch statistical analysis
+        const statisticsResponse = await fetch(
+          "/api/analytics/advanced?type=statistical-analysis",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              metrics: config.selectedMetrics,
+              analysis_type: "all",
+              confidence_level: config.confidenceLevel / 100,
+              include_outliers: true,
+            }),
+          },
+        );
 
-      // Process responses
-      const [cohortData, forecastData, statisticsData] = await Promise.all([
-        cohortResponse.json(),
-        forecastResponse.json(),
-        statisticsResponse.json()
-      ])
+        // Process responses
+        const [cohortData, forecastData, statisticsData] = await Promise.all([
+          cohortResponse.json(),
+          forecastResponse.json(),
+          statisticsResponse.json(),
+        ]);
 
-      // Generate mock KPIs and other data for dashboard
-      const kpis = generateMockKPIs()
-      const timeSeriesData = generateMockTimeSeriesData()
-      const segmentationData = generateMockSegmentationData()
-      const benchmarkData = generateMockBenchmarkData()
+        // Generate mock KPIs and other data for dashboard
+        const kpis = generateMockKPIs();
+        const timeSeriesData = generateMockTimeSeriesData();
+        const segmentationData = generateMockSegmentationData();
+        const benchmarkData = generateMockBenchmarkData();
 
-      setAnalyticsData({
-        cohortData: cohortData.success ? cohortData.data.cohort_data : [],
-        forecastData: forecastData.success ? forecastData.data.forecast : [],
-        kpis,
-        timeSeriesData,
-        segmentationData,
-        benchmarkData,
-        correlations: statisticsData.success ? statisticsData.data.correlations || [] : [],
-        statisticalTests: statisticsData.success ? statisticsData.data.significance_tests || [] : [],
-        dataQuality: statisticsData.success ? statisticsData.data.data_quality || {} : {},
-        predictiveModels: statisticsData.success ? statisticsData.data.predictive_models || [] : []
-      })
+        setAnalyticsData({
+          cohortData: cohortData.success ? cohortData.data.cohort_data : [],
+          forecastData: forecastData.success ? forecastData.data.forecast : [],
+          kpis,
+          timeSeriesData,
+          segmentationData,
+          benchmarkData,
+          correlations: statisticsData.success ? statisticsData.data.correlations || [] : [],
+          statisticalTests: statisticsData.success
+            ? statisticsData.data.significance_tests || []
+            : [],
+          dataQuality: statisticsData.success ? statisticsData.data.data_quality || {} : {},
+          predictiveModels: statisticsData.success
+            ? statisticsData.data.predictive_models || []
+            : [],
+        });
 
-      setLastRefresh(new Date())
-
-    } catch (err) {
-      console.error('Analytics data fetch error:', err)
-      setError('Failed to load analytics data. Please try again.')
-    } finally {
-      if (showLoading) setLoading(false)
-    }
-  }, [config])
+        setLastRefresh(new Date());
+      } catch (err) {
+        console.error("Analytics data fetch error:", err);
+        setError("Failed to load analytics data. Please try again.");
+      } finally {
+        if (showLoading) setLoading(false);
+      }
+    },
+    [config],
+  );
 
   // Auto-refresh effect
   useEffect(() => {
     if (config.autoRefresh && config.refreshInterval > 0) {
       const interval = setInterval(() => {
-        fetchAnalyticsData(false)
-      }, config.refreshInterval)
+        fetchAnalyticsData(false);
+      }, config.refreshInterval);
 
-      return () => clearInterval(interval)
+      return () => clearInterval(interval);
     }
-  }, [config.autoRefresh, config.refreshInterval, fetchAnalyticsData])
+  }, [config.autoRefresh, config.refreshInterval, fetchAnalyticsData]);
 
   // Initial data load
   useEffect(() => {
-    fetchAnalyticsData()
-  }, [fetchAnalyticsData])
+    fetchAnalyticsData();
+  }, [fetchAnalyticsData]);
 
   // Config change handler
   useEffect(() => {
-    onConfigChange?.(config)
-  }, [config, onConfigChange])
+    onConfigChange?.(config);
+  }, [config, onConfigChange]);
 
   // Analytics summary calculations
   const analyticsSummary = useMemo(() => {
-    const totalKPIs = analyticsData.kpis.length
-    const overPerformingKPIs = analyticsData.kpis.filter(kpi => 
-      kpi.value.target && kpi.value.current >= kpi.value.target
-    ).length
+    const totalKPIs = analyticsData.kpis.length;
+    const overPerformingKPIs = analyticsData.kpis.filter(
+      (kpi) => kpi.value.target && kpi.value.current >= kpi.value.target,
+    ).length;
 
-    const strongCorrelations = analyticsData.correlations.filter(c => 
-      Math.abs(c.correlation) >= 0.6
-    ).length
+    const strongCorrelations = analyticsData.correlations.filter(
+      (c) => Math.abs(c.correlation) >= 0.6,
+    ).length;
 
-    const significantTests = analyticsData.statisticalTests.filter(t => 
-      t.result === 'reject'
-    ).length
+    const significantTests = analyticsData.statisticalTests.filter(
+      (t) => t.result === "reject",
+    ).length;
 
-    const overallDataQuality = (
-      analyticsData.dataQuality.completeness + 
-      analyticsData.dataQuality.accuracy + 
-      analyticsData.dataQuality.consistency + 
-      analyticsData.dataQuality.validity + 
-      analyticsData.dataQuality.uniqueness
-    ) / 5 || 0
+    const overallDataQuality =
+      (analyticsData.dataQuality.completeness +
+        analyticsData.dataQuality.accuracy +
+        analyticsData.dataQuality.consistency +
+        analyticsData.dataQuality.validity +
+        analyticsData.dataQuality.uniqueness) /
+        5 || 0;
 
-    const bestModel = analyticsData.predictiveModels.reduce((best, model) => 
-      model.accuracy > (best?.accuracy || 0) ? model : best
-    , analyticsData.predictiveModels[0])
+    const bestModel = analyticsData.predictiveModels.reduce(
+      (best, model) => (model.accuracy > (best?.accuracy || 0) ? model : best),
+      analyticsData.predictiveModels[0],
+    );
 
     return {
       totalKPIs,
@@ -252,26 +276,26 @@ export function AdvancedAnalyticsHub({
       significantTests,
       overallDataQuality,
       bestModel,
-      outliers: analyticsData.dataQuality.outliers?.filter(o => o.isOutlier).length || 0
-    }
-  }, [analyticsData])
+      outliers: analyticsData.dataQuality.outliers?.filter((o) => o.isOutlier).length || 0,
+    };
+  }, [analyticsData]);
 
   // Event handlers
   const handleConfigUpdate = (updates: Partial<AnalyticsConfig>) => {
-    setConfig(prev => ({ ...prev, ...updates }))
-  }
+    setConfig((prev) => ({ ...prev, ...updates }));
+  };
 
   const handleRefresh = () => {
-    fetchAnalyticsData()
-  }
+    fetchAnalyticsData();
+  };
 
-  const handleExport = (format: 'csv' | 'pdf' | 'json') => {
-    onDataExport?.(analyticsData, format)
-  }
+  const handleExport = (format: "csv" | "pdf" | "json") => {
+    onDataExport?.(analyticsData, format);
+  };
 
   const handleDateRangeChange = (start: string, end: string) => {
-    handleConfigUpdate({ dateRange: { start, end } })
-  }
+    handleConfigUpdate({ dateRange: { start, end } });
+  };
 
   if (loading && !analyticsData.kpis.length) {
     return (
@@ -291,7 +315,7 @@ export function AdvancedAnalyticsHub({
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -312,12 +336,10 @@ export function AdvancedAnalyticsHub({
             <div className="flex items-center gap-2">
               <Badge variant="outline" className="flex items-center gap-1">
                 <Activity className="h-3 w-3" />
-                {config.autoRefresh ? 'Auto-refresh ON' : 'Manual refresh'}
+                {config.autoRefresh ? "Auto-refresh ON" : "Manual refresh"}
               </Badge>
               {lastRefresh && (
-                <Badge variant="secondary">
-                  Last updated: {lastRefresh.toLocaleTimeString()}
-                </Badge>
+                <Badge variant="secondary">Last updated: {lastRefresh.toLocaleTimeString()}</Badge>
               )}
             </div>
           </div>
@@ -338,8 +360,8 @@ export function AdvancedAnalyticsHub({
                 </SelectContent>
               </Select>
 
-              <Select 
-                value={config.confidenceLevel.toString()} 
+              <Select
+                value={config.confidenceLevel.toString()}
                 onValueChange={(value) => handleConfigUpdate({ confidenceLevel: parseInt(value) })}
               >
                 <SelectTrigger className="w-32">
@@ -363,9 +385,9 @@ export function AdvancedAnalyticsHub({
                 Auto-refresh
               </Button>
               <Button variant="outline" size="sm" onClick={handleRefresh} disabled={loading}>
-                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
               </Button>
-              <Button variant="outline" size="sm" onClick={() => handleExport('csv')}>
+              <Button variant="outline" size="sm" onClick={() => handleExport("csv")}>
                 <Download className="h-4 w-4" />
               </Button>
             </div>
@@ -437,7 +459,7 @@ export function AdvancedAnalyticsHub({
                   {(analyticsSummary.bestModel?.accuracy || 0).toFixed(1)}%
                 </p>
                 <p className="text-xs text-orange-700 capitalize">
-                  {analyticsSummary.bestModel?.modelType || 'N/A'}
+                  {analyticsSummary.bestModel?.modelType || "N/A"}
                 </p>
               </div>
               <Brain className="h-8 w-8 text-orange-600" />
@@ -447,7 +469,7 @@ export function AdvancedAnalyticsHub({
       </div>
 
       {/* Main Analytics Views */}
-      {selectedView === 'overview' && (
+      {selectedView === "overview" && (
         <div className="space-y-6">
           {/* Quick Insights */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -468,7 +490,7 @@ export function AdvancedAnalyticsHub({
                     </div>
                   </div>
                   <Progress value={75} className="h-2" />
-                  
+
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-600">User Retention</span>
                     <div className="flex items-center gap-2">
@@ -477,7 +499,7 @@ export function AdvancedAnalyticsHub({
                     </div>
                   </div>
                   <Progress value={85} className="h-2" />
-                  
+
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-600">Forecast Accuracy</span>
                     <div className="flex items-center gap-2">
@@ -502,33 +524,27 @@ export function AdvancedAnalyticsHub({
                   <div className="flex items-start gap-3 p-3 bg-yellow-50 rounded-lg">
                     <AlertTriangle className="h-4 w-4 text-yellow-600 mt-0.5" />
                     <div>
-                      <p className="text-sm font-medium text-yellow-800">
-                        Churn Rate Increase
-                      </p>
+                      <p className="text-sm font-medium text-yellow-800">Churn Rate Increase</p>
                       <p className="text-xs text-yellow-700">
                         3.2% increase detected in the last week
                       </p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
                     <Target className="h-4 w-4 text-blue-600 mt-0.5" />
                     <div>
-                      <p className="text-sm font-medium text-blue-800">
-                        Model Retraining Due
-                      </p>
+                      <p className="text-sm font-medium text-blue-800">Model Retraining Due</p>
                       <p className="text-xs text-blue-700">
                         Revenue forecasting model accuracy below 90%
                       </p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
                     <CheckCircle className="h-4 w-4 text-green-600 mt-0.5" />
                     <div>
-                      <p className="text-sm font-medium text-green-800">
-                        Data Quality Excellent
-                      </p>
+                      <p className="text-sm font-medium text-green-800">Data Quality Excellent</p>
                       <p className="text-xs text-green-700">
                         All quality metrics above 85% threshold
                       </p>
@@ -555,7 +571,7 @@ export function AdvancedAnalyticsHub({
         </div>
       )}
 
-      {selectedView === 'cohorts' && (
+      {selectedView === "cohorts" && (
         <CohortHeatmap
           cohortData={analyticsData.cohortData}
           loading={loading}
@@ -564,17 +580,20 @@ export function AdvancedAnalyticsHub({
         />
       )}
 
-      {selectedView === 'forecasting' && (
+      {selectedView === "forecasting" && (
         <ForecastingCharts
           metric="revenue"
-          historicalData={analyticsData.timeSeriesData.map(d => ({ date: d.date, value: d.revenue }))}
+          historicalData={analyticsData.timeSeriesData.map((d) => ({
+            date: d.date,
+            value: d.revenue,
+          }))}
           forecastData={analyticsData.forecastData}
           loading={loading}
           onDateRangeChange={handleDateRangeChange}
         />
       )}
 
-      {selectedView === 'metrics' && (
+      {selectedView === "metrics" && (
         <AdvancedMetricsDashboard
           kpis={analyticsData.kpis}
           timeSeriesData={analyticsData.timeSeriesData}
@@ -588,7 +607,7 @@ export function AdvancedAnalyticsHub({
         />
       )}
 
-      {selectedView === 'statistics' && (
+      {selectedView === "statistics" && (
         <StatisticalInsights
           correlations={analyticsData.correlations}
           statisticalTests={analyticsData.statisticalTests}
@@ -606,7 +625,9 @@ export function AdvancedAnalyticsHub({
         <CardContent className="p-4">
           <div className="flex items-center justify-between text-sm text-gray-600">
             <div className="flex items-center gap-4">
-              <span>Data Range: {config.dateRange.start} to {config.dateRange.end}</span>
+              <span>
+                Data Range: {config.dateRange.start} to {config.dateRange.end}
+              </span>
               <Separator orientation="vertical" className="h-4" />
               <span>Confidence Level: {config.confidenceLevel}%</span>
               <Separator orientation="vertical" className="h-4" />
@@ -614,11 +635,9 @@ export function AdvancedAnalyticsHub({
             </div>
             <div className="flex items-center gap-2">
               {analyticsSummary.outliers > 0 && (
-                <Badge variant="destructive">
-                  {analyticsSummary.outliers} outliers detected
-                </Badge>
+                <Badge variant="destructive">{analyticsSummary.outliers} outliers detected</Badge>
               )}
-              <Badge variant={analyticsSummary.overallDataQuality >= 80 ? 'default' : 'secondary'}>
+              <Badge variant={analyticsSummary.overallDataQuality >= 80 ? "default" : "secondary"}>
                 Quality: {analyticsSummary.overallDataQuality.toFixed(0)}%
               </Badge>
             </div>
@@ -626,85 +645,85 @@ export function AdvancedAnalyticsHub({
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
 
 // Mock data generators for testing
 function generateMockKPIs() {
   return [
     {
-      id: 'revenue',
-      title: 'Total Revenue',
+      id: "revenue",
+      title: "Total Revenue",
       value: {
         current: 125400,
         previous: 118200,
         change: 7200,
         changePercent: 6.1,
-        trend: 'up',
-        target: 130000
+        trend: "up",
+        target: 130000,
       },
-      format: 'currency',
+      format: "currency",
       icon: DollarSign,
-      color: 'text-green-600',
-      description: 'Monthly recurring revenue'
+      color: "text-green-600",
+      description: "Monthly recurring revenue",
     },
     {
-      id: 'users',
-      title: 'Active Users',
+      id: "users",
+      title: "Active Users",
       value: {
         current: 2840,
         previous: 2650,
         change: 190,
         changePercent: 7.2,
-        trend: 'up',
-        target: 3000
+        trend: "up",
+        target: 3000,
       },
-      format: 'number',
+      format: "number",
       icon: Users,
-      color: 'text-blue-600',
-      description: 'Monthly active users'
-    }
-  ]
+      color: "text-blue-600",
+      description: "Monthly active users",
+    },
+  ];
 }
 
 function generateMockTimeSeriesData() {
-  const data = []
+  const data = [];
   for (let i = 30; i >= 0; i--) {
-    const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000)
+    const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
     data.push({
-      date: date.toISOString().split('T')[0],
+      date: date.toISOString().split("T")[0],
       revenue: 4000 + Math.random() * 1000,
       subscriptions: 80 + Math.random() * 20,
       churn_rate: 2 + Math.random() * 3,
-      mrr: 25000 + Math.random() * 5000
-    })
+      mrr: 25000 + Math.random() * 5000,
+    });
   }
-  return data
+  return data;
 }
 
 function generateMockSegmentationData() {
   return [
-    { name: 'Enterprise', value: 45, color: '#3b82f6', change: 5.2 },
-    { name: 'Pro', value: 35, color: '#10b981', change: -2.1 },
-    { name: 'Starter', value: 20, color: '#f59e0b', change: 8.7 }
-  ]
+    { name: "Enterprise", value: 45, color: "#3b82f6", change: 5.2 },
+    { name: "Pro", value: 35, color: "#10b981", change: -2.1 },
+    { name: "Starter", value: 20, color: "#f59e0b", change: 8.7 },
+  ];
 }
 
 function generateMockBenchmarkData() {
   return [
     {
-      metric: 'Customer Acquisition Cost',
+      metric: "Customer Acquisition Cost",
       value: 120,
       benchmark: 150,
       industry: 180,
-      percentile: 75
+      percentile: 75,
     },
     {
-      metric: 'Lifetime Value',
+      metric: "Lifetime Value",
       value: 2400,
       benchmark: 2200,
       industry: 2000,
-      percentile: 80
-    }
-  ]
+      percentile: 80,
+    },
+  ];
 }

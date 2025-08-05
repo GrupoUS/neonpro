@@ -1,35 +1,35 @@
 /**
  * NeonPro - Third-party Integrations Framework
  * Main export file for the integrations system
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  * @created 2025-01-27
  */
 
 // Core Framework
-export { NeonProIntegrationFramework } from './framework';
-export { NeonProWebhookManager, WebhookSignatureUtils } from './webhook-manager';
-export { SupabaseRateLimiter, MemoryRateLimiter } from './rate-limiter';
+export { NeonProIntegrationFramework } from "./framework";
+export { NeonProWebhookManager, WebhookSignatureUtils } from "./webhook-manager";
+export { SupabaseRateLimiter, MemoryRateLimiter } from "./rate-limiter";
 export {
   MemoryIntegrationCache,
   RedisIntegrationCache,
   SupabaseIntegrationCache,
-  CacheFactory
-} from './cache';
+  CacheFactory,
+} from "./cache";
 export {
   MemoryIntegrationQueue,
   SupabaseIntegrationQueue,
-  QueueFactory
-} from './queue';
+  QueueFactory,
+} from "./queue";
 
 // Connectors
-export { WhatsAppConnector, WhatsAppUtils } from './connectors/whatsapp';
-export { GoogleCalendarConnector, GoogleCalendarUtils } from './connectors/google-calendar';
-export { StripeConnector, StripeUtils } from './connectors/stripe';
+export { WhatsAppConnector, WhatsAppUtils } from "./connectors/whatsapp";
+export { GoogleCalendarConnector, GoogleCalendarUtils } from "./connectors/google-calendar";
+export { StripeConnector, StripeUtils } from "./connectors/stripe";
 
 // Types
-export * from './types';
+export * from "./types";
 
 // Re-export commonly used types for convenience
 export type {
@@ -42,8 +42,8 @@ export type {
   WebhookManager,
   RateLimiter,
   IntegrationCache,
-  IntegrationQueue
-} from './types';
+  IntegrationQueue,
+} from "./types";
 
 /**
  * Integration Framework Factory
@@ -53,36 +53,34 @@ export class IntegrationFrameworkFactory {
   /**
    * Create a complete integration framework instance
    */
-  static async create(config: {
-    supabaseUrl?: string;
-    supabaseKey?: string;
-    redisUrl?: string;
-    cacheType?: 'memory' | 'redis' | 'supabase';
-    queueType?: 'memory' | 'supabase';
-    rateLimiterType?: 'memory' | 'supabase';
-  } = {}): Promise<NeonProIntegrationFramework> {
-    const {
-      cacheType = 'memory',
-      queueType = 'memory',
-      rateLimiterType = 'memory'
-    } = config;
+  static async create(
+    config: {
+      supabaseUrl?: string;
+      supabaseKey?: string;
+      redisUrl?: string;
+      cacheType?: "memory" | "redis" | "supabase";
+      queueType?: "memory" | "supabase";
+      rateLimiterType?: "memory" | "supabase";
+    } = {},
+  ): Promise<NeonProIntegrationFramework> {
+    const { cacheType = "memory", queueType = "memory", rateLimiterType = "memory" } = config;
 
     // Create cache instance
     const cache = CacheFactory.create(cacheType, {
       supabaseUrl: config.supabaseUrl,
       supabaseKey: config.supabaseKey,
-      redisUrl: config.redisUrl
+      redisUrl: config.redisUrl,
     });
 
     // Create queue instance
     const queue = QueueFactory.create(queueType, {
       supabaseUrl: config.supabaseUrl,
-      supabaseKey: config.supabaseKey
+      supabaseKey: config.supabaseKey,
     });
 
     // Create rate limiter instance
     let rateLimiter;
-    if (rateLimiterType === 'supabase' && config.supabaseUrl && config.supabaseKey) {
+    if (rateLimiterType === "supabase" && config.supabaseUrl && config.supabaseKey) {
       rateLimiter = new SupabaseRateLimiter(config.supabaseUrl, config.supabaseKey);
     } else {
       rateLimiter = new MemoryRateLimiter();
@@ -91,7 +89,7 @@ export class IntegrationFrameworkFactory {
     // Create webhook manager
     const webhookManager = new NeonProWebhookManager({
       queue,
-      rateLimiter
+      rateLimiter,
     });
 
     // Create and return framework instance
@@ -99,7 +97,7 @@ export class IntegrationFrameworkFactory {
       cache,
       queue,
       rateLimiter,
-      webhookManager
+      webhookManager,
     });
   }
 
@@ -114,25 +112,25 @@ export class IntegrationFrameworkFactory {
     webhookUrl?: string;
   }) {
     return new WhatsAppConnector({
-      id: 'whatsapp-business',
-      name: 'WhatsApp Business',
-      type: 'messaging',
+      id: "whatsapp-business",
+      name: "WhatsApp Business",
+      type: "messaging",
       enabled: true,
       credentials: {
         accessToken: config.accessToken,
         phoneNumberId: config.phoneNumberId,
         businessAccountId: config.businessAccountId,
-        webhookVerifyToken: config.webhookVerifyToken || ''
+        webhookVerifyToken: config.webhookVerifyToken || "",
       },
       endpoints: {
-        baseUrl: 'https://graph.facebook.com/v18.0',
-        webhookUrl: config.webhookUrl
+        baseUrl: "https://graph.facebook.com/v18.0",
+        webhookUrl: config.webhookUrl,
       },
       rateLimits: {
         requestsPerSecond: 10,
         requestsPerMinute: 600,
-        requestsPerHour: 36000
-      }
+        requestsPerHour: 36000,
+      },
     });
   }
 
@@ -152,8 +150,8 @@ export class IntegrationFrameworkFactory {
       clientSecret: config.clientSecret,
       refreshToken: config.refreshToken,
       calendarId: config.calendarId,
-      timeZone: config.timeZone || 'America/Sao_Paulo',
-      webhookUrl: config.webhookUrl
+      timeZone: config.timeZone || "America/Sao_Paulo",
+      webhookUrl: config.webhookUrl,
     });
   }
 
@@ -172,9 +170,9 @@ export class IntegrationFrameworkFactory {
       secretKey: config.secretKey,
       publishableKey: config.publishableKey,
       webhookSecret: config.webhookSecret,
-      currency: config.currency || 'BRL',
-      country: config.country || 'BR',
-      webhookUrl: config.webhookUrl
+      currency: config.currency || "BRL",
+      country: config.country || "BR",
+      webhookUrl: config.webhookUrl,
     });
   }
 }

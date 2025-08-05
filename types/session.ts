@@ -127,7 +127,7 @@ export interface SuspiciousActivity {
   detected_at: Date;
   auto_resolved: boolean;
   manual_review_required: boolean;
-  status: 'pending' | 'investigating' | 'resolved' | 'false_positive';
+  status: "pending" | "investigating" | "resolved" | "false_positive";
   resolution_notes?: string;
 }
 
@@ -142,72 +142,72 @@ export interface CrossDeviceSync {
   devices: {
     device_fingerprint: string;
     last_sync: Date;
-    sync_status: 'synced' | 'pending' | 'failed';
+    sync_status: "synced" | "pending" | "failed";
   }[];
 }
 
 // Enums
 export enum SecurityEventType {
-  LOGIN_SUCCESS = 'login_success',
-  LOGIN_FAILED = 'login_failed',
-  SESSION_CREATED = 'session_created',
-  SESSION_EXPIRED = 'session_expired',
-  SESSION_TERMINATED = 'session_terminated',
-  SUSPICIOUS_ACTIVITY = 'suspicious_activity',
-  DEVICE_REGISTERED = 'device_registered',
-  DEVICE_BLOCKED = 'device_blocked',
-  IP_BLOCKED = 'ip_blocked',
-  CONCURRENT_LIMIT_EXCEEDED = 'concurrent_limit_exceeded',
-  GEOGRAPHIC_ANOMALY = 'geographic_anomaly',
-  TIME_ANOMALY = 'time_anomaly',
-  RAPID_LOGIN_ATTEMPTS = 'rapid_login_attempts',
-  SESSION_HIJACK_ATTEMPT = 'session_hijack_attempt'
+  LOGIN_SUCCESS = "login_success",
+  LOGIN_FAILED = "login_failed",
+  SESSION_CREATED = "session_created",
+  SESSION_EXPIRED = "session_expired",
+  SESSION_TERMINATED = "session_terminated",
+  SUSPICIOUS_ACTIVITY = "suspicious_activity",
+  DEVICE_REGISTERED = "device_registered",
+  DEVICE_BLOCKED = "device_blocked",
+  IP_BLOCKED = "ip_blocked",
+  CONCURRENT_LIMIT_EXCEEDED = "concurrent_limit_exceeded",
+  GEOGRAPHIC_ANOMALY = "geographic_anomaly",
+  TIME_ANOMALY = "time_anomaly",
+  RAPID_LOGIN_ATTEMPTS = "rapid_login_attempts",
+  SESSION_HIJACK_ATTEMPT = "session_hijack_attempt",
 }
 
 export enum SecuritySeverity {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  CRITICAL = 'critical'
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
+  CRITICAL = "critical",
 }
 
 export enum DeviceType {
-  DESKTOP = 'desktop',
-  MOBILE = 'mobile',
-  TABLET = 'tablet',
-  UNKNOWN = 'unknown'
+  DESKTOP = "desktop",
+  MOBILE = "mobile",
+  TABLET = "tablet",
+  UNKNOWN = "unknown",
 }
 
 export enum SessionAction {
-  CREATE = 'create',
-  REFRESH = 'refresh',
-  EXTEND = 'extend',
-  TERMINATE = 'terminate',
-  EXPIRE = 'expire',
-  VALIDATE = 'validate',
-  UPDATE_ACTIVITY = 'update_activity',
-  SECURITY_CHECK = 'security_check',
-  DEVICE_REGISTER = 'device_register',
-  DEVICE_TRUST = 'device_trust',
-  POLICY_VIOLATION = 'policy_violation'
+  CREATE = "create",
+  REFRESH = "refresh",
+  EXTEND = "extend",
+  TERMINATE = "terminate",
+  EXPIRE = "expire",
+  VALIDATE = "validate",
+  UPDATE_ACTIVITY = "update_activity",
+  SECURITY_CHECK = "security_check",
+  DEVICE_REGISTER = "device_register",
+  DEVICE_TRUST = "device_trust",
+  POLICY_VIOLATION = "policy_violation",
 }
 
 export enum SecurityLevel {
-  BASIC = 'basic',
-  STANDARD = 'standard',
-  HIGH = 'high',
-  MAXIMUM = 'maximum'
+  BASIC = "basic",
+  STANDARD = "standard",
+  HIGH = "high",
+  MAXIMUM = "maximum",
 }
 
 export enum SuspiciousActivityType {
-  UNUSUAL_LOGIN_TIME = 'unusual_login_time',
-  GEOGRAPHIC_ANOMALY = 'geographic_anomaly',
-  NEW_DEVICE_LOGIN = 'new_device_login',
-  RAPID_LOGIN_ATTEMPTS = 'rapid_login_attempts',
-  CONCURRENT_SESSIONS_EXCEEDED = 'concurrent_sessions_exceeded',
-  IP_REPUTATION_RISK = 'ip_reputation_risk',
-  BEHAVIORAL_ANOMALY = 'behavioral_anomaly',
-  SESSION_PATTERN_ANOMALY = 'session_pattern_anomaly'
+  UNUSUAL_LOGIN_TIME = "unusual_login_time",
+  GEOGRAPHIC_ANOMALY = "geographic_anomaly",
+  NEW_DEVICE_LOGIN = "new_device_login",
+  RAPID_LOGIN_ATTEMPTS = "rapid_login_attempts",
+  CONCURRENT_SESSIONS_EXCEEDED = "concurrent_sessions_exceeded",
+  IP_REPUTATION_RISK = "ip_reputation_risk",
+  BEHAVIORAL_ANOMALY = "behavioral_anomaly",
+  SESSION_PATTERN_ANOMALY = "session_pattern_anomaly",
 }
 
 // API Response Types

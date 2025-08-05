@@ -7,28 +7,28 @@
  * Features: Create, edit, view, manage invoices with NFSe integration
  */
 
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import type { useRouter } from "next/navigation";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 
 // UI Components
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Separator } from "@/components/ui/separator";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
 
 // Icons
-import {
+import type {
   AlertCircle,
   CheckCircle,
   DollarSign,
@@ -49,7 +49,7 @@ import type {
 } from "@/lib/types/financial";
 
 // Services
-import {
+import type {
   createInvoice,
   getFinancialSummary,
   getInvoiceById,
@@ -71,9 +71,7 @@ export function InvoiceManager({
   const router = useRouter();
 
   // State Management
-  const [activeTab, setActiveTab] = useState<"list" | "create" | "edit">(
-    defaultView
-  );
+  const [activeTab, setActiveTab] = useState<"list" | "create" | "edit">(defaultView);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [summary, setSummary] = useState<FinancialSummary | null>(null);
@@ -221,7 +219,7 @@ export function InvoiceManager({
     (invoice) =>
       invoice.patient?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       invoice.invoice_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      invoice.description.toLowerCase().includes(searchTerm.toLowerCase())
+      invoice.description.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Status badge color mapping
@@ -266,9 +264,7 @@ export function InvoiceManager({
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Total Faturas
-              </CardTitle>
+              <CardTitle className="text-sm font-medium">Total Faturas</CardTitle>
               <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -282,9 +278,7 @@ export function InvoiceManager({
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                R$ {(summary.total_amount / 100).toFixed(2)}
-              </div>
+              <div className="text-2xl font-bold">R$ {(summary.total_amount / 100).toFixed(2)}</div>
             </CardContent>
           </Card>
 
@@ -318,15 +312,10 @@ export function InvoiceManager({
       <Card>
         <CardHeader>
           <CardTitle>Gestão de Faturas</CardTitle>
-          <CardDescription>
-            Crie, edite e gerencie faturas para seus pacientes
-          </CardDescription>
+          <CardDescription>Crie, edite e gerencie faturas para seus pacientes</CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs
-            value={activeTab}
-            onValueChange={(value) => setActiveTab(value as any)}
-          >
+          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)}>
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="list">Lista de Faturas</TabsTrigger>
               <TabsTrigger value="create">Criar Fatura</TabsTrigger>
@@ -366,9 +355,7 @@ export function InvoiceManager({
                       <div className="flex items-center justify-between">
                         <div className="space-y-1">
                           <div className="flex items-center space-x-2">
-                            <span className="font-medium">
-                              #{invoice.invoice_number}
-                            </span>
+                            <span className="font-medium">#{invoice.invoice_number}</span>
                             <Badge className={getStatusColor(invoice.status)}>
                               {getStatusText(invoice.status)}
                             </Badge>
@@ -392,16 +379,15 @@ export function InvoiceManager({
                             <Download className="h-4 w-4" />
                           </Button>
 
-                          {invoice.status !== "sent" &&
-                            invoice.status !== "paid" && (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleSendEmail(invoice.id)}
-                              >
-                                <Send className="h-4 w-4" />
-                              </Button>
-                            )}
+                          {invoice.status !== "sent" && invoice.status !== "paid" && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleSendEmail(invoice.id)}
+                            >
+                              <Send className="h-4 w-4" />
+                            </Button>
+                          )}
 
                           <Button
                             variant="outline"
@@ -430,9 +416,7 @@ export function InvoiceManager({
                     id="patient"
                     placeholder="ID do paciente"
                     value={formData.patient_id || ""}
-                    onChange={(e) =>
-                      setFormData({ ...formData, patient_id: e.target.value })
-                    }
+                    onChange={(e) => setFormData({ ...formData, patient_id: e.target.value })}
                   />
                 </div>
 
@@ -442,9 +426,7 @@ export function InvoiceManager({
                     id="description"
                     placeholder="Descrição dos serviços..."
                     value={formData.description || ""}
-                    onChange={(e) =>
-                      setFormData({ ...formData, description: e.target.value })
-                    }
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   />
                 </div>
 
@@ -454,9 +436,7 @@ export function InvoiceManager({
                     id="due_date"
                     type="date"
                     value={formData.due_date || ""}
-                    onChange={(e) =>
-                      setFormData({ ...formData, due_date: e.target.value })
-                    }
+                    onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
                   />
                 </div>
               </div>
@@ -502,9 +482,7 @@ export function InvoiceManager({
                       id="edit_due_date"
                       type="date"
                       value={formData.due_date || ""}
-                      onChange={(e) =>
-                        setFormData({ ...formData, due_date: e.target.value })
-                      }
+                      onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
                     />
                   </div>
                 </div>

@@ -1,27 +1,39 @@
 // Transactions List - Display and manage cash flow transactions
 // Following financial dashboard patterns from Context7 research
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { MoreHorizontal, Search, Filter, ArrowUpDown } from 'lucide-react';
-import { useCashFlow } from '../hooks/use-cash-flow';
-import { useCashRegisters } from '../hooks/use-cash-registers';
-import { 
-  formatCurrency, 
+import type { useState } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Badge } from "@/components/ui/badge";
+import type { MoreHorizontal, Search, Filter, ArrowUpDown } from "lucide-react";
+import type { useCashFlow } from "../hooks/use-cash-flow";
+import type { useCashRegisters } from "../hooks/use-cash-registers";
+import type {
+  formatCurrency,
   formatDateTime,
   getTransactionTypeDisplayName,
   getCategoryDisplayName,
   getPaymentMethodDisplayName,
   getPaymentMethodIcon,
-  getTransactionTypeColor 
-} from '../utils/calculations';
-import type { CashFlowFilters, CashFlowEntry } from '../types';
+  getTransactionTypeColor,
+} from "../utils/calculations";
+import type { CashFlowFilters, CashFlowEntry } from "../types";
 
 interface TransactionsListProps {
   clinicId: string;
@@ -29,19 +41,12 @@ interface TransactionsListProps {
 }
 
 export function TransactionsList({ clinicId, initialFilters }: TransactionsListProps) {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState<CashFlowFilters>(initialFilters || {});
-  
+
   const { registers } = useCashRegisters(clinicId);
-  const { 
-    entries, 
-    loading, 
-    totalPages, 
-    currentPage, 
-    loadEntries,
-    updateEntry,
-    deleteEntry 
-  } = useCashFlow(clinicId, { ...filters, search: searchTerm });
+  const { entries, loading, totalPages, currentPage, loadEntries, updateEntry, deleteEntry } =
+    useCashFlow(clinicId, { ...filters, search: searchTerm });
 
   const handleFilterChange = (key: keyof CashFlowFilters, value: any) => {
     const newFilters = { ...filters, [key]: value };
@@ -55,8 +60,8 @@ export function TransactionsList({ clinicId, initialFilters }: TransactionsListP
   };
 
   const getRegisterName = (registerId: string) => {
-    const register = registers.find(r => r.id === registerId);
-    return register?.register_name || 'N/A';
+    const register = registers.find((r) => r.id === registerId);
+    return register?.register_name || "N/A";
   };
 
   return (
@@ -65,9 +70,7 @@ export function TransactionsList({ clinicId, initialFilters }: TransactionsListP
         <div className="flex items-center justify-between">
           <div>
             <CardTitle>Transações</CardTitle>
-            <CardDescription>
-              Histórico de movimentações financeiras
-            </CardDescription>
+            <CardDescription>Histórico de movimentações financeiras</CardDescription>
           </div>
           <Button size="sm">Nova Transação</Button>
         </div>
@@ -89,11 +92,11 @@ export function TransactionsList({ clinicId, initialFilters }: TransactionsListP
               <Filter className="h-4 w-4" />
             </Button>
           </div>
-          
+
           <div className="flex gap-2">
             <Select
-              value={filters.transactionType || ''}
-              onValueChange={(value) => handleFilterChange('transactionType', value || undefined)}
+              value={filters.transactionType || ""}
+              onValueChange={(value) => handleFilterChange("transactionType", value || undefined)}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Tipo" />
@@ -108,8 +111,8 @@ export function TransactionsList({ clinicId, initialFilters }: TransactionsListP
             </Select>
 
             <Select
-              value={filters.paymentMethod || ''}
-              onValueChange={(value) => handleFilterChange('paymentMethod', value || undefined)}
+              value={filters.paymentMethod || ""}
+              onValueChange={(value) => handleFilterChange("paymentMethod", value || undefined)}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Forma de pagamento" />
@@ -125,8 +128,8 @@ export function TransactionsList({ clinicId, initialFilters }: TransactionsListP
             </Select>
 
             <Select
-              value={filters.registerId || ''}
-              onValueChange={(value) => handleFilterChange('registerId', value || undefined)}
+              value={filters.registerId || ""}
+              onValueChange={(value) => handleFilterChange("registerId", value || undefined)}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Caixa" />
@@ -141,7 +144,8 @@ export function TransactionsList({ clinicId, initialFilters }: TransactionsListP
               </SelectContent>
             </Select>
           </div>
-        </div>        {/* Transactions Table */}
+        </div>{" "}
+        {/* Transactions Table */}
         <div className="rounded-md border">
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -173,10 +177,10 @@ export function TransactionsList({ clinicId, initialFilters }: TransactionsListP
                   </tr>
                 ) : (
                   entries.map((entry) => (
-                    <TransactionRow 
-                      key={entry.id} 
+                    <TransactionRow
+                      key={entry.id}
                       entry={entry}
-                      registerName={getRegisterName(entry.register_id || '')}
+                      registerName={getRegisterName(entry.register_id || "")}
                       onUpdate={updateEntry}
                       onDelete={deleteEntry}
                     />
@@ -186,7 +190,6 @@ export function TransactionsList({ clinicId, initialFilters }: TransactionsListP
             </table>
           </div>
         </div>
-
         {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex items-center justify-between mt-4">
@@ -194,16 +197,16 @@ export function TransactionsList({ clinicId, initialFilters }: TransactionsListP
               Página {currentPage} de {totalPages}
             </p>
             <div className="flex gap-2">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="sm"
                 disabled={currentPage === 1}
                 onClick={() => loadEntries(filters, currentPage - 1)}
               >
                 Anterior
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="sm"
                 disabled={currentPage === totalPages}
                 onClick={() => loadEntries(filters, currentPage + 1)}
@@ -229,40 +232,31 @@ function TransactionRow({ entry, registerName, onUpdate, onDelete }: Transaction
   return (
     <tr className="border-b hover:bg-muted/50">
       <td className="p-4">
-        <div className="text-sm">
-          {formatDateTime(entry.created_at)}
-        </div>
+        <div className="text-sm">{formatDateTime(entry.created_at)}</div>
       </td>
       <td className="p-4">
-        <Badge 
-          variant="outline" 
-          className={getTransactionTypeColor(entry.transaction_type)}
-        >
+        <Badge variant="outline" className={getTransactionTypeColor(entry.transaction_type)}>
           {getTransactionTypeDisplayName(entry.transaction_type)}
         </Badge>
       </td>
       <td className="p-4">
-        <div className="max-w-[200px] truncate">
-          {entry.description}
-        </div>
+        <div className="max-w-[200px] truncate">{entry.description}</div>
         {entry.reference_number && (
-          <div className="text-xs text-muted-foreground">
-            Ref: {entry.reference_number}
-          </div>
+          <div className="text-xs text-muted-foreground">Ref: {entry.reference_number}</div>
         )}
       </td>
       <td className="p-4">
-        <span className="text-sm">
-          {getCategoryDisplayName(entry.category)}
-        </span>
+        <span className="text-sm">{getCategoryDisplayName(entry.category)}</span>
       </td>
       <td className="p-4">
-        <span className={`font-medium ${
-          ['receipt', 'opening_balance'].includes(entry.transaction_type) 
-            ? 'text-green-600' 
-            : 'text-red-600'
-        }`}>
-          {['receipt', 'opening_balance'].includes(entry.transaction_type) ? '+' : '-'}
+        <span
+          className={`font-medium ${
+            ["receipt", "opening_balance"].includes(entry.transaction_type)
+              ? "text-green-600"
+              : "text-red-600"
+          }`}
+        >
+          {["receipt", "opening_balance"].includes(entry.transaction_type) ? "+" : "-"}
           {formatCurrency(entry.amount)}
         </span>
       </td>
@@ -277,7 +271,7 @@ function TransactionRow({ entry, registerName, onUpdate, onDelete }: Transaction
       </td>
       <td className="p-4">
         <Badge variant={entry.is_reconciled ? "default" : "secondary"}>
-          {entry.is_reconciled ? 'Conciliado' : 'Pendente'}
+          {entry.is_reconciled ? "Conciliado" : "Pendente"}
         </Badge>
       </td>
       <td className="p-4">

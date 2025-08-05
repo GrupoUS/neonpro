@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 // =====================================================================================
 // CACHE MANAGER
@@ -38,11 +38,11 @@ class CacheManager<T = any> {
       ttl: options.ttl || 5 * 60 * 1000, // 5 minutes default
       maxSize: options.maxSize || 100,
       persistent: options.persistent || false,
-      prefix: options.prefix || 'neonpro_cache'
+      prefix: options.prefix || "neonpro_cache",
     };
 
     // Load persisted cache if enabled
-    if (this.options.persistent && typeof window !== 'undefined') {
+    if (this.options.persistent && typeof window !== "undefined") {
       this.loadFromStorage();
     }
 
@@ -68,7 +68,7 @@ class CacheManager<T = any> {
       timestamp: now,
       ttl: itemTtl,
       accessCount: 0,
-      lastAccessed: now
+      lastAccessed: now,
     };
 
     this.cache.set(key, item);
@@ -81,14 +81,14 @@ class CacheManager<T = any> {
 
   get(key: string): T | null {
     const item = this.cache.get(key);
-    
+
     if (!item) {
       this.stats.misses++;
       return null;
     }
 
     const now = Date.now();
-    
+
     // Check if item has expired
     if (now - item.timestamp > item.ttl) {
       this.delete(key);
@@ -120,18 +120,18 @@ class CacheManager<T = any> {
 
   delete(key: string): boolean {
     const deleted = this.cache.delete(key);
-    
+
     if (deleted && this.options.persistent) {
       this.removeFromStorage(key);
     }
-    
+
     return deleted;
   }
 
   clear(): void {
     this.cache.clear();
     this.stats = { hits: 0, misses: 0 };
-    
+
     if (this.options.persistent) {
       this.clearStorage();
     }
@@ -142,11 +142,7 @@ class CacheManager<T = any> {
   // =====================================================================================
 
   // Get or set pattern
-  async getOrSet(
-    key: string, 
-    factory: () => Promise<T> | T, 
-    ttl?: number
-  ): Promise<T> {
+  async getOrSet(key: string, factory: () => Promise<T> | T, ttl?: number): Promise<T> {
     const cached = this.get(key);
     if (cached !== null) {
       return cached;
@@ -165,12 +161,12 @@ class CacheManager<T = any> {
   }
 
   getMany(keys: string[]): Array<{ key: string; data: T | null }> {
-    return keys.map(key => ({ key, data: this.get(key) }));
+    return keys.map((key) => ({ key, data: this.get(key) }));
   }
 
   deleteMany(keys: string[]): number {
     let deleted = 0;
-    keys.forEach(key => {
+    keys.forEach((key) => {
       if (this.delete(key)) deleted++;
     });
     return deleted;
@@ -206,7 +202,7 @@ class CacheManager<T = any> {
   // =====================================================================================
 
   private evictLRU(): void {
-    let oldestKey = '';
+    let oldestKey = "";
     let oldestTime = Date.now();
 
     for (const [key, item] of this.cache.entries()) {
@@ -231,7 +227,7 @@ class CacheManager<T = any> {
       }
     }
 
-    expiredKeys.forEach(key => this.delete(key));
+    expiredKeys.forEach((key) => this.delete(key));
   }
 
   private startCleanup(): void {
@@ -246,19 +242,19 @@ class CacheManager<T = any> {
   // =====================================================================================
 
   private persistItem(key: string, item: CacheItem<T>): void {
-    if (typeof window === 'undefined') return;
-    
+    if (typeof window === "undefined") return;
+
     try {
       const storageKey = `${this.options.prefix}_${key}`;
       localStorage.setItem(storageKey, JSON.stringify(item));
     } catch (error) {
-      console.warn('Failed to persist cache item:', error);
+      console.warn("Failed to persist cache item:", error);
     }
   }
 
   private loadFromStorage(): void {
-    if (typeof window === 'undefined') return;
-    
+    if (typeof window === "undefined") return;
+
     try {
       const prefix = `${this.options.prefix}_`;
       for (let i = 0; i < localStorage.length; i++) {
@@ -279,38 +275,38 @@ class CacheManager<T = any> {
         }
       }
     } catch (error) {
-      console.warn('Failed to load cache from storage:', error);
+      console.warn("Failed to load cache from storage:", error);
     }
   }
 
   private removeFromStorage(key: string): void {
-    if (typeof window === 'undefined') return;
-    
+    if (typeof window === "undefined") return;
+
     try {
       const storageKey = `${this.options.prefix}_${key}`;
       localStorage.removeItem(storageKey);
     } catch (error) {
-      console.warn('Failed to remove cache item from storage:', error);
+      console.warn("Failed to remove cache item from storage:", error);
     }
   }
 
   private clearStorage(): void {
-    if (typeof window === 'undefined') return;
-    
+    if (typeof window === "undefined") return;
+
     try {
       const prefix = `${this.options.prefix}_`;
       const keysToRemove: string[] = [];
-      
+
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (key?.startsWith(prefix)) {
           keysToRemove.push(key);
         }
       }
-      
-      keysToRemove.forEach(key => localStorage.removeItem(key));
+
+      keysToRemove.forEach((key) => localStorage.removeItem(key));
     } catch (error) {
-      console.warn('Failed to clear cache storage:', error);
+      console.warn("Failed to clear cache storage:", error);
     }
   }
 
@@ -324,7 +320,7 @@ class CacheManager<T = any> {
       hits: this.stats.hits,
       misses: this.stats.misses,
       size: this.cache.size,
-      hitRate: total > 0 ? this.stats.hits / total : 0
+      hitRate: total > 0 ? this.stats.hits / total : 0,
     };
   }
 
@@ -355,7 +351,7 @@ export const defaultCache = new CacheManager({
   ttl: 5 * 60 * 1000, // 5 minutes
   maxSize: 100,
   persistent: true,
-  prefix: 'neonpro_default'
+  prefix: "neonpro_default",
 });
 
 // API response cache
@@ -363,7 +359,7 @@ export const apiCache = new CacheManager({
   ttl: 2 * 60 * 1000, // 2 minutes
   maxSize: 50,
   persistent: false,
-  prefix: 'neonpro_api'
+  prefix: "neonpro_api",
 });
 
 // User data cache
@@ -371,7 +367,7 @@ export const userCache = new CacheManager({
   ttl: 10 * 60 * 1000, // 10 minutes
   maxSize: 20,
   persistent: true,
-  prefix: 'neonpro_user'
+  prefix: "neonpro_user",
 });
 
 // Static data cache (longer TTL)
@@ -379,7 +375,7 @@ export const staticCache = new CacheManager({
   ttl: 30 * 60 * 1000, // 30 minutes
   maxSize: 200,
   persistent: true,
-  prefix: 'neonpro_static'
+  prefix: "neonpro_static",
 });
 
 export { CacheManager };

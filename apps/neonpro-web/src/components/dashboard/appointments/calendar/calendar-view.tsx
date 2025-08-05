@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { toast } from "sonner";
-import { CalendarNavigation, type CalendarView } from "./calendar-navigation";
-import { DayView } from "./day-view";
-import { WeekView } from "./week-view";
-import { MonthView } from "./month-view";
+import type { toast } from "sonner";
+import type { CalendarNavigation, type CalendarView } from "./calendar-navigation";
+import type { DayView } from "./day-view";
+import type { WeekView } from "./week-view";
+import type { MonthView } from "./month-view";
 import type { AppointmentWithRelations } from "@/app/lib/types/appointments";
 
 interface CalendarViewProps {
@@ -43,15 +43,15 @@ export function CalendarView({
   useEffect(() => {
     // This will be implemented when we add real-time functionality
     // For now, we can refresh appointments periodically or on window focus
-    
+
     const handleFocus = () => {
       if (onRefresh) {
         onRefresh();
       }
     };
 
-    window.addEventListener('focus', handleFocus);
-    return () => window.removeEventListener('focus', handleFocus);
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
   }, [onRefresh]);
 
   // Handle keyboard shortcuts
@@ -59,37 +59,39 @@ export function CalendarView({
     const handleKeyPress = (event: KeyboardEvent) => {
       // Only handle if no input elements are focused
       const activeElement = document.activeElement;
-      if (activeElement?.tagName === 'INPUT' || 
-          activeElement?.tagName === 'TEXTAREA' || 
-          activeElement?.tagName === 'SELECT') {
+      if (
+        activeElement?.tagName === "INPUT" ||
+        activeElement?.tagName === "TEXTAREA" ||
+        activeElement?.tagName === "SELECT"
+      ) {
         return;
       }
 
       switch (event.key) {
-        case 'ArrowLeft':
+        case "ArrowLeft":
           handlePreviousNavigation();
           break;
-        case 'ArrowRight':
+        case "ArrowRight":
           handleNextNavigation();
           break;
-        case 't':
+        case "t":
           setCurrentDate(new Date());
           break;
-        case '1':
-          setView('day');
+        case "1":
+          setView("day");
           break;
-        case '2':
-          setView('week');
+        case "2":
+          setView("week");
           break;
-        case '3':
-          setView('month');
+        case "3":
+          setView("month");
           break;
-        case 'n':
+        case "n":
           if (onCreateAppointment) {
             onCreateAppointment(currentDate || undefined);
           }
           break;
-        case 'r':
+        case "r":
           if (onRefresh) {
             onRefresh();
             toast.success("Calendário atualizado");
@@ -98,8 +100,8 @@ export function CalendarView({
       }
     };
 
-    document.addEventListener('keydown', handleKeyPress);
-    return () => document.removeEventListener('keydown', handleKeyPress);
+    document.addEventListener("keydown", handleKeyPress);
+    return () => document.removeEventListener("keydown", handleKeyPress);
   }, [currentDate, onCreateAppointment, onRefresh]);
 
   // Navigation handlers
@@ -107,14 +109,18 @@ export function CalendarView({
     if (!currentDate) return;
     const today = new Date();
     switch (view) {
-      case 'day':
-        setCurrentDate(prev => prev ? new Date(prev.getTime() - 24 * 60 * 60 * 1000) : new Date());
+      case "day":
+        setCurrentDate((prev) =>
+          prev ? new Date(prev.getTime() - 24 * 60 * 60 * 1000) : new Date(),
+        );
         break;
-      case 'week':
-        setCurrentDate(prev => prev ? new Date(prev.getTime() - 7 * 24 * 60 * 60 * 1000) : new Date());
+      case "week":
+        setCurrentDate((prev) =>
+          prev ? new Date(prev.getTime() - 7 * 24 * 60 * 60 * 1000) : new Date(),
+        );
         break;
-      case 'month':
-        setCurrentDate(prev => {
+      case "month":
+        setCurrentDate((prev) => {
           if (!prev) return new Date();
           const newDate = new Date(prev);
           newDate.setMonth(prev.getMonth() - 1);
@@ -127,14 +133,18 @@ export function CalendarView({
   const handleNextNavigation = useCallback(() => {
     if (!currentDate) return;
     switch (view) {
-      case 'day':
-        setCurrentDate(prev => prev ? new Date(prev.getTime() + 24 * 60 * 60 * 1000) : new Date());
+      case "day":
+        setCurrentDate((prev) =>
+          prev ? new Date(prev.getTime() + 24 * 60 * 60 * 1000) : new Date(),
+        );
         break;
-      case 'week':
-        setCurrentDate(prev => prev ? new Date(prev.getTime() + 7 * 24 * 60 * 60 * 1000) : new Date());
+      case "week":
+        setCurrentDate((prev) =>
+          prev ? new Date(prev.getTime() + 7 * 24 * 60 * 60 * 1000) : new Date(),
+        );
         break;
-      case 'month':
-        setCurrentDate(prev => {
+      case "month":
+        setCurrentDate((prev) => {
           if (!prev) return new Date();
           const newDate = new Date(prev);
           newDate.setMonth(prev.getMonth() + 1);
@@ -149,79 +159,94 @@ export function CalendarView({
   }, []);
 
   // Appointment action handlers with optimistic updates
-  const handleAppointmentEdit = useCallback(async (appointment: AppointmentWithRelations) => {
-    if (onAppointmentEdit) {
-      setIsLoading(true);
-      try {
-        await onAppointmentEdit(appointment);
-        // Refresh appointments after edit
-        if (onRefresh) {
-          onRefresh();
+  const handleAppointmentEdit = useCallback(
+    async (appointment: AppointmentWithRelations) => {
+      if (onAppointmentEdit) {
+        setIsLoading(true);
+        try {
+          await onAppointmentEdit(appointment);
+          // Refresh appointments after edit
+          if (onRefresh) {
+            onRefresh();
+          }
+        } catch (error) {
+          console.error("Error editing appointment:", error);
+          toast.error("Erro ao editar agendamento");
+        } finally {
+          setIsLoading(false);
         }
-      } catch (error) {
-        console.error("Error editing appointment:", error);
-        toast.error("Erro ao editar agendamento");
-      } finally {
-        setIsLoading(false);
       }
-    }
-  }, [onAppointmentEdit, onRefresh]);
+    },
+    [onAppointmentEdit, onRefresh],
+  );
 
-  const handleAppointmentCancel = useCallback(async (appointment: AppointmentWithRelations) => {
-    if (onAppointmentCancel) {
-      setIsLoading(true);
-      try {
-        await onAppointmentCancel(appointment);
-        toast.success("Agendamento cancelado");
-        // Refresh appointments after cancel
-        if (onRefresh) {
-          onRefresh();
+  const handleAppointmentCancel = useCallback(
+    async (appointment: AppointmentWithRelations) => {
+      if (onAppointmentCancel) {
+        setIsLoading(true);
+        try {
+          await onAppointmentCancel(appointment);
+          toast.success("Agendamento cancelado");
+          // Refresh appointments after cancel
+          if (onRefresh) {
+            onRefresh();
+          }
+        } catch (error) {
+          console.error("Error cancelling appointment:", error);
+          toast.error("Erro ao cancelar agendamento");
+        } finally {
+          setIsLoading(false);
         }
-      } catch (error) {
-        console.error("Error cancelling appointment:", error);
-        toast.error("Erro ao cancelar agendamento");
-      } finally {
-        setIsLoading(false);
       }
-    }
-  }, [onAppointmentCancel, onRefresh]);
+    },
+    [onAppointmentCancel, onRefresh],
+  );
 
-  const handleAppointmentComplete = useCallback(async (appointment: AppointmentWithRelations) => {
-    if (onAppointmentComplete) {
-      setIsLoading(true);
-      try {
-        await onAppointmentComplete(appointment);
-        toast.success("Agendamento marcado como concluído");
-        // Refresh appointments after complete
-        if (onRefresh) {
-          onRefresh();
+  const handleAppointmentComplete = useCallback(
+    async (appointment: AppointmentWithRelations) => {
+      if (onAppointmentComplete) {
+        setIsLoading(true);
+        try {
+          await onAppointmentComplete(appointment);
+          toast.success("Agendamento marcado como concluído");
+          // Refresh appointments after complete
+          if (onRefresh) {
+            onRefresh();
+          }
+        } catch (error) {
+          console.error("Error completing appointment:", error);
+          toast.error("Erro ao concluir agendamento");
+        } finally {
+          setIsLoading(false);
         }
-      } catch (error) {
-        console.error("Error completing appointment:", error);
-        toast.error("Erro ao concluir agendamento");
-      } finally {
-        setIsLoading(false);
       }
-    }
-  }, [onAppointmentComplete, onRefresh]);
+    },
+    [onAppointmentComplete, onRefresh],
+  );
 
   // Handle time slot clicks
-  const handleTimeSlotClick = useCallback((time: string) => {
-    if (onCreateAppointment) {
-      onCreateAppointment(currentDate || undefined, time);
-    }
-  }, [currentDate, onCreateAppointment]);
+  const handleTimeSlotClick = useCallback(
+    (time: string) => {
+      if (onCreateAppointment) {
+        onCreateAppointment(currentDate || undefined, time);
+      }
+    },
+    [currentDate, onCreateAppointment],
+  );
 
-  const handleWeekTimeSlotClick = useCallback((date: Date, time: string) => {
-    if (onCreateAppointment) {
-      onCreateAppointment(date, time);
-    }
-  }, [onCreateAppointment]);
+  const handleWeekTimeSlotClick = useCallback(
+    (date: Date, time: string) => {
+      if (onCreateAppointment) {
+        onCreateAppointment(date, time);
+      }
+    },
+    [onCreateAppointment],
+  );
 
   const handleDayClick = useCallback((date: Date) => {
     // Switch to day view when clicking on a day in month view
     setCurrentDate(date);
-    setView('day');
+    setView("day");
   }, []);
 
   // Render current view
@@ -235,30 +260,16 @@ export function CalendarView({
     };
 
     switch (view) {
-      case 'day':
+      case "day":
         return (
-          <DayView
-            date={currentDate}
-            onTimeSlotClick={handleTimeSlotClick}
-            {...commonProps}
-          />
+          <DayView date={currentDate} onTimeSlotClick={handleTimeSlotClick} {...commonProps} />
         );
-      case 'week':
+      case "week":
         return (
-          <WeekView
-            date={currentDate}
-            onTimeSlotClick={handleWeekTimeSlotClick}
-            {...commonProps}
-          />
+          <WeekView date={currentDate} onTimeSlotClick={handleWeekTimeSlotClick} {...commonProps} />
         );
-      case 'month':
-        return (
-          <MonthView
-            date={currentDate}
-            onDayClick={handleDayClick}
-            {...commonProps}
-          />
-        );
+      case "month":
+        return <MonthView date={currentDate} onDayClick={handleDayClick} {...commonProps} />;
       default:
         return null;
     }
@@ -267,7 +278,7 @@ export function CalendarView({
   // Don't render until currentDate is initialized
   if (!currentDate) {
     return (
-      <div className={`flex flex-col h-full ${className || ''}`}>
+      <div className={`flex flex-col h-full ${className || ""}`}>
         <div className="flex-1 flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
@@ -276,7 +287,7 @@ export function CalendarView({
   }
 
   return (
-    <div className={`flex flex-col h-full ${className || ''}`}>
+    <div className={`flex flex-col h-full ${className || ""}`}>
       {/* Navigation */}
       <CalendarNavigation
         currentDate={currentDate}
@@ -299,11 +310,21 @@ export function CalendarView({
       {/* Keyboard shortcuts help */}
       <div className="hidden lg:block p-2 border-t text-xs text-muted-foreground">
         <div className="flex flex-wrap gap-4">
-          <span><kbd className="bg-muted px-1 rounded">←/→</kbd> Navegar</span>
-          <span><kbd className="bg-muted px-1 rounded">T</kbd> Hoje</span>
-          <span><kbd className="bg-muted px-1 rounded">1/2/3</kbd> Dia/Semana/Mês</span>
-          <span><kbd className="bg-muted px-1 rounded">N</kbd> Novo agendamento</span>
-          <span><kbd className="bg-muted px-1 rounded">R</kbd> Atualizar</span>
+          <span>
+            <kbd className="bg-muted px-1 rounded">←/→</kbd> Navegar
+          </span>
+          <span>
+            <kbd className="bg-muted px-1 rounded">T</kbd> Hoje
+          </span>
+          <span>
+            <kbd className="bg-muted px-1 rounded">1/2/3</kbd> Dia/Semana/Mês
+          </span>
+          <span>
+            <kbd className="bg-muted px-1 rounded">N</kbd> Novo agendamento
+          </span>
+          <span>
+            <kbd className="bg-muted px-1 rounded">R</kbd> Atualizar
+          </span>
         </div>
       </div>
     </div>

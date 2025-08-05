@@ -1,14 +1,26 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { CalendarIcon, ClockIcon, UserIcon, TrendingUpIcon, SparklesIcon } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Badge } from "@/components/ui/badge";
+import type { CalendarIcon, ClockIcon, UserIcon, TrendingUpIcon, SparklesIcon } from "lucide-react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface OptimizedSlot {
   slot_id: string;
@@ -38,14 +50,14 @@ interface OptimizationMetadata {
 }
 
 export default function AISchedulingOptimizer() {
-  const [patientId, setPatientId] = useState('');
-  const [treatmentType, setTreatmentType] = useState('');
-  const [preferredDateStart, setPreferredDateStart] = useState('');
-  const [preferredDateEnd, setPreferredDateEnd] = useState('');
-  const [durationMinutes, setDurationMinutes] = useState('60');
-  const [staffPreference, setStaffPreference] = useState('');
-  const [priority, setPriority] = useState('normal');
-  
+  const [patientId, setPatientId] = useState("");
+  const [treatmentType, setTreatmentType] = useState("");
+  const [preferredDateStart, setPreferredDateStart] = useState("");
+  const [preferredDateEnd, setPreferredDateEnd] = useState("");
+  const [durationMinutes, setDurationMinutes] = useState("60");
+  const [staffPreference, setStaffPreference] = useState("");
+  const [priority, setPriority] = useState("normal");
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [optimizedSlots, setOptimizedSlots] = useState<OptimizedSlot[]>([]);
@@ -54,7 +66,7 @@ export default function AISchedulingOptimizer() {
 
   const handleOptimizeScheduling = async () => {
     if (!patientId || !treatmentType || !preferredDateStart || !preferredDateEnd) {
-      setError('Please fill in all required fields');
+      setError("Please fill in all required fields");
       return;
     }
 
@@ -62,36 +74,35 @@ export default function AISchedulingOptimizer() {
     setError(null);
 
     try {
-      const response = await fetch('/api/ai/scheduling/optimize', {
-        method: 'POST',
+      const response = await fetch("/api/ai/scheduling/optimize", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           patient_id: patientId,
           treatment_type: treatmentType,
           preferred_date_range: {
             start: preferredDateStart,
-            end: preferredDateEnd
+            end: preferredDateEnd,
           },
           duration_minutes: parseInt(durationMinutes),
           staff_preference: staffPreference || undefined,
-          priority
+          priority,
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to optimize scheduling');
+        throw new Error(data.error || "Failed to optimize scheduling");
       }
 
       setOptimizedSlots(data.data.suggested_slots);
       setMetadata(data.data.optimization_metadata);
       setRecommendations(data.data.recommendations);
-
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to optimize scheduling');
+      setError(err instanceof Error ? err.message : "Failed to optimize scheduling");
     } finally {
       setIsLoading(false);
     }
@@ -102,9 +113,9 @@ export default function AISchedulingOptimizer() {
   };
 
   const getConfidenceColor = (score: number) => {
-    if (score >= 0.8) return 'bg-green-100 text-green-800';
-    if (score >= 0.6) return 'bg-yellow-100 text-yellow-800';
-    return 'bg-red-100 text-red-800';
+    if (score >= 0.8) return "bg-green-100 text-green-800";
+    if (score >= 0.6) return "bg-yellow-100 text-yellow-800";
+    return "bg-red-100 text-red-800";
   };
 
   return (
@@ -116,8 +127,8 @@ export default function AISchedulingOptimizer() {
             AI-Powered Scheduling Optimizer
           </CardTitle>
           <CardDescription>
-            Leverage machine learning to find optimal appointment slots based on patient preferences, 
-            staff efficiency, and clinic capacity patterns.
+            Leverage machine learning to find optimal appointment slots based on patient
+            preferences, staff efficiency, and clinic capacity patterns.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -215,12 +226,8 @@ export default function AISchedulingOptimizer() {
             </div>
           </div>
 
-          <Button 
-            onClick={handleOptimizeScheduling} 
-            disabled={isLoading}
-            className="w-full"
-          >
-            {isLoading ? 'Optimizing...' : 'Find Optimal Slots'}
+          <Button onClick={handleOptimizeScheduling} disabled={isLoading} className="w-full">
+            {isLoading ? "Optimizing..." : "Find Optimal Slots"}
           </Button>
 
           {error && (
@@ -252,15 +259,21 @@ export default function AISchedulingOptimizer() {
                   <div className="text-sm text-gray-600">Slots Analyzed</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold">{Math.round(metadata.ai_confidence_range.average * 100)}%</div>
+                  <div className="text-2xl font-bold">
+                    {Math.round(metadata.ai_confidence_range.average * 100)}%
+                  </div>
                   <div className="text-sm text-gray-600">Avg Confidence</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold">{Math.round(metadata.patient_preference_influence * 100)}%</div>
+                  <div className="text-2xl font-bold">
+                    {Math.round(metadata.patient_preference_influence * 100)}%
+                  </div>
                   <div className="text-sm text-gray-600">Patient Influence</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold">{Math.round(metadata.staff_efficiency_influence * 100)}%</div>
+                  <div className="text-2xl font-bold">
+                    {Math.round(metadata.staff_efficiency_influence * 100)}%
+                  </div>
                   <div className="text-sm text-gray-600">Staff Efficiency</div>
                 </div>
               </div>
@@ -301,25 +314,33 @@ export default function AISchedulingOptimizer() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3 text-sm">
                       <div>
                         <span className="text-gray-600">Patient Score: </span>
-                        <span className="font-medium">{Math.round(slot.optimization_factors.patient_preference_score * 100)}%</span>
+                        <span className="font-medium">
+                          {Math.round(slot.optimization_factors.patient_preference_score * 100)}%
+                        </span>
                       </div>
                       <div>
                         <span className="text-gray-600">Staff Score: </span>
-                        <span className="font-medium">{Math.round(slot.optimization_factors.staff_efficiency_score * 100)}%</span>
+                        <span className="font-medium">
+                          {Math.round(slot.optimization_factors.staff_efficiency_score * 100)}%
+                        </span>
                       </div>
                       <div>
                         <span className="text-gray-600">Capacity Score: </span>
-                        <span className="font-medium">{Math.round(slot.optimization_factors.clinic_capacity_score * 100)}%</span>
+                        <span className="font-medium">
+                          {Math.round(slot.optimization_factors.clinic_capacity_score * 100)}%
+                        </span>
                       </div>
                       <div>
                         <span className="text-gray-600">Success Rate: </span>
-                        <span className="font-medium">{Math.round(slot.optimization_factors.historical_success_rate * 100)}%</span>
+                        <span className="font-medium">
+                          {Math.round(slot.optimization_factors.historical_success_rate * 100)}%
+                        </span>
                       </div>
                     </div>
 
                     {slot.reasons.length > 0 && (
                       <div className="text-sm text-gray-600">
-                        <strong>Why this slot:</strong> {slot.reasons.join(', ')}
+                        <strong>Why this slot:</strong> {slot.reasons.join(", ")}
                       </div>
                     )}
                   </CardContent>

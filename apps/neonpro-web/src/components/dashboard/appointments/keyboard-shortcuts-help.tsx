@@ -4,27 +4,24 @@
 
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
-import { useKeyboardShortcuts } from "@/hooks/appointments/use-keyboard-shortcuts";
-import { Info, Keyboard } from "lucide-react";
+import type { Separator } from "@/components/ui/separator";
+import type { useKeyboardShortcuts } from "@/hooks/appointments/use-keyboard-shortcuts";
+import type { Info, Keyboard } from "lucide-react";
 
 interface KeyboardShortcutsHelpProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export default function KeyboardShortcutsHelp({
-  isOpen,
-  onClose,
-}: KeyboardShortcutsHelpProps) {
+export default function KeyboardShortcutsHelp({ isOpen, onClose }: KeyboardShortcutsHelpProps) {
   const { shortcuts, formatShortcut } = useKeyboardShortcuts();
 
   return (

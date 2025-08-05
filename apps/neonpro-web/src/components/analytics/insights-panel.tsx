@@ -1,7 +1,7 @@
 /**
  * Insights Panel Component
  * Epic 10 - Story 10.5: Vision Analytics Dashboard (Real-time Insights)
- * 
+ *
  * Displays AI-generated insights and recommendations including:
  * - Key performance insights and trends
  * - Automated recommendations for improvement
@@ -9,19 +9,25 @@
  * - Predictive insights and forecasting
  * - Clinical outcome analysis
  * - Business intelligence recommendations
- * 
+ *
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect, useMemo } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
+import type { useState, useEffect, useMemo } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Progress } from "@/components/ui/progress";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
   TrendingUp,
   TrendingDown,
   Lightbulb,
@@ -37,15 +43,15 @@ import {
   ArrowRight,
   Eye,
   Zap,
-  Shield
-} from 'lucide-react';
+  Shield,
+} from "lucide-react";
 
 // Analytics Engine
-import {
+import type {
   type AnalyticsInsight,
   type AnalyticsTimeframe,
-  AnalyticsUtils
-} from '@/lib/analytics';
+  AnalyticsUtils,
+} from "@/lib/analytics";
 
 // Types
 interface InsightsPanelProps {
@@ -58,7 +64,7 @@ interface ProcessedInsight extends AnalyticsInsight {
   categoryIcon: React.ReactNode;
   priorityColor: string;
   actionable: boolean;
-  estimatedImpact: 'low' | 'medium' | 'high';
+  estimatedImpact: "low" | "medium" | "high";
 }
 
 interface InsightCategory {
@@ -70,38 +76,36 @@ interface InsightCategory {
   totalImpact: number;
 }
 
-export function InsightsPanel({
-  insights,
-  isLoading,
-  timeframe
-}: InsightsPanelProps) {
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<'priority' | 'confidence' | 'impact' | 'timestamp'>('priority');
+export function InsightsPanel({ insights, isLoading, timeframe }: InsightsPanelProps) {
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<"priority" | "confidence" | "impact" | "timestamp">(
+    "priority",
+  );
 
   /**
    * Process insights with additional metadata
    */
   const processedInsights = useMemo((): ProcessedInsight[] => {
-    return insights.map(insight => {
+    return insights.map((insight) => {
       // Determine category icon
       let categoryIcon: React.ReactNode;
       switch (insight.category) {
-        case 'performance':
+        case "performance":
           categoryIcon = <BarChart3 className="w-4 h-4" />;
           break;
-        case 'clinical':
+        case "clinical":
           categoryIcon = <Activity className="w-4 h-4" />;
           break;
-        case 'business':
+        case "business":
           categoryIcon = <Target className="w-4 h-4" />;
           break;
-        case 'ai_model':
+        case "ai_model":
           categoryIcon = <Brain className="w-4 h-4" />;
           break;
-        case 'compliance':
+        case "compliance":
           categoryIcon = <Shield className="w-4 h-4" />;
           break;
-        case 'user_experience':
+        case "user_experience":
           categoryIcon = <Users className="w-4 h-4" />;
           break;
         default:
@@ -111,34 +115,34 @@ export function InsightsPanel({
       // Determine priority color
       let priorityColor: string;
       switch (insight.priority) {
-        case 'critical':
-          priorityColor = 'text-red-600 bg-red-50 border-red-200';
+        case "critical":
+          priorityColor = "text-red-600 bg-red-50 border-red-200";
           break;
-        case 'high':
-          priorityColor = 'text-orange-600 bg-orange-50 border-orange-200';
+        case "high":
+          priorityColor = "text-orange-600 bg-orange-50 border-orange-200";
           break;
-        case 'medium':
-          priorityColor = 'text-yellow-600 bg-yellow-50 border-yellow-200';
+        case "medium":
+          priorityColor = "text-yellow-600 bg-yellow-50 border-yellow-200";
           break;
-        case 'low':
-          priorityColor = 'text-blue-600 bg-blue-50 border-blue-200';
+        case "low":
+          priorityColor = "text-blue-600 bg-blue-50 border-blue-200";
           break;
         default:
-          priorityColor = 'text-gray-600 bg-gray-50 border-gray-200';
+          priorityColor = "text-gray-600 bg-gray-50 border-gray-200";
       }
 
       // Determine if actionable
       const actionable = !!(insight.recommendations && insight.recommendations.length > 0);
 
       // Estimate impact based on confidence and business value
-      let estimatedImpact: 'low' | 'medium' | 'high';
+      let estimatedImpact: "low" | "medium" | "high";
       const impactScore = (insight.confidence / 100) * (insight.businessImpact?.efficiency || 50);
       if (impactScore >= 70) {
-        estimatedImpact = 'high';
+        estimatedImpact = "high";
       } else if (impactScore >= 40) {
-        estimatedImpact = 'medium';
+        estimatedImpact = "medium";
       } else {
-        estimatedImpact = 'low';
+        estimatedImpact = "low";
       }
 
       return {
@@ -146,7 +150,7 @@ export function InsightsPanel({
         categoryIcon,
         priorityColor,
         actionable,
-        estimatedImpact
+        estimatedImpact,
       };
     });
   }, [insights]);
@@ -156,8 +160,8 @@ export function InsightsPanel({
    */
   const insightCategories = useMemo((): InsightCategory[] => {
     const categories = new Map<string, ProcessedInsight[]>();
-    
-    processedInsights.forEach(insight => {
+
+    processedInsights.forEach((insight) => {
       const category = insight.category;
       if (!categories.has(category)) {
         categories.set(category, []);
@@ -166,43 +170,47 @@ export function InsightsPanel({
     });
 
     const categoryList: InsightCategory[] = [];
-    
+
     categories.forEach((insights, categoryId) => {
       let label: string;
       let icon: React.ReactNode;
-      
+
       switch (categoryId) {
-        case 'performance':
-          label = 'Performance';
+        case "performance":
+          label = "Performance";
           icon = <BarChart3 className="w-4 h-4" />;
           break;
-        case 'clinical':
-          label = 'Clinical';
+        case "clinical":
+          label = "Clinical";
           icon = <Activity className="w-4 h-4" />;
           break;
-        case 'business':
-          label = 'Business';
+        case "business":
+          label = "Business";
           icon = <Target className="w-4 h-4" />;
           break;
-        case 'ai_model':
-          label = 'AI Models';
+        case "ai_model":
+          label = "AI Models";
           icon = <Brain className="w-4 h-4" />;
           break;
-        case 'compliance':
-          label = 'Compliance';
+        case "compliance":
+          label = "Compliance";
           icon = <Shield className="w-4 h-4" />;
           break;
-        case 'user_experience':
-          label = 'User Experience';
+        case "user_experience":
+          label = "User Experience";
           icon = <Users className="w-4 h-4" />;
           break;
         default:
-          label = 'General';
+          label = "General";
           icon = <Lightbulb className="w-4 h-4" />;
       }
 
-      const averageConfidence = insights.reduce((sum, insight) => sum + insight.confidence, 0) / insights.length;
-      const totalImpact = insights.reduce((sum, insight) => sum + (insight.businessImpact?.efficiency || 0), 0);
+      const averageConfidence =
+        insights.reduce((sum, insight) => sum + insight.confidence, 0) / insights.length;
+      const totalImpact = insights.reduce(
+        (sum, insight) => sum + (insight.businessImpact?.efficiency || 0),
+        0,
+      );
 
       categoryList.push({
         id: categoryId,
@@ -210,7 +218,7 @@ export function InsightsPanel({
         icon,
         insights,
         averageConfidence,
-        totalImpact
+        totalImpact,
       });
     });
 
@@ -221,20 +229,21 @@ export function InsightsPanel({
    * Sort insights
    */
   const sortedInsights = useMemo(() => {
-    const insightsToSort = selectedCategory === 'all' 
-      ? processedInsights 
-      : processedInsights.filter(insight => insight.category === selectedCategory);
+    const insightsToSort =
+      selectedCategory === "all"
+        ? processedInsights
+        : processedInsights.filter((insight) => insight.category === selectedCategory);
 
     return insightsToSort.sort((a, b) => {
       switch (sortBy) {
-        case 'priority':
+        case "priority":
           const priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
           return priorityOrder[b.priority] - priorityOrder[a.priority];
-        case 'confidence':
+        case "confidence":
           return b.confidence - a.confidence;
-        case 'impact':
+        case "impact":
           return (b.businessImpact?.efficiency || 0) - (a.businessImpact?.efficiency || 0);
-        case 'timestamp':
+        case "timestamp":
           return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
         default:
           return 0;
@@ -245,13 +254,13 @@ export function InsightsPanel({
   /**
    * Get insight trend icon
    */
-  const getTrendIcon = (trend: 'improving' | 'declining' | 'stable') => {
+  const getTrendIcon = (trend: "improving" | "declining" | "stable") => {
     switch (trend) {
-      case 'improving':
+      case "improving":
         return <TrendingUp className="w-4 h-4 text-green-600" />;
-      case 'declining':
+      case "declining":
         return <TrendingDown className="w-4 h-4 text-red-600" />;
-      case 'stable':
+      case "stable":
         return <Activity className="w-4 h-4 text-blue-600" />;
       default:
         return <Activity className="w-4 h-4 text-gray-600" />;
@@ -261,11 +270,11 @@ export function InsightsPanel({
   /**
    * Get impact badge
    */
-  const getImpactBadge = (impact: 'low' | 'medium' | 'high') => {
+  const getImpactBadge = (impact: "low" | "medium" | "high") => {
     const colors = {
-      low: 'bg-gray-100 text-gray-800',
-      medium: 'bg-yellow-100 text-yellow-800',
-      high: 'bg-green-100 text-green-800'
+      low: "bg-gray-100 text-gray-800",
+      medium: "bg-yellow-100 text-yellow-800",
+      high: "bg-green-100 text-green-800",
     };
 
     return (
@@ -278,9 +287,9 @@ export function InsightsPanel({
   /**
    * Insight card component
    */
-  const InsightCard: React.FC<{ insight: ProcessedInsight; showCategory?: boolean }> = ({ 
-    insight, 
-    showCategory = true 
+  const InsightCard: React.FC<{ insight: ProcessedInsight; showCategory?: boolean }> = ({
+    insight,
+    showCategory = true,
   }) => (
     <Card className={`border-l-4 ${insight.priorityColor}`}>
       <CardHeader className="pb-3">
@@ -291,14 +300,12 @@ export function InsightsPanel({
           </div>
           <div className="flex items-center gap-2">
             {getTrendIcon(insight.trend)}
-            <Badge variant={insight.priority === 'critical' ? 'destructive' : 'secondary'}>
+            <Badge variant={insight.priority === "critical" ? "destructive" : "secondary"}>
               {insight.priority}
             </Badge>
           </div>
         </div>
-        <CardDescription className="text-sm">
-          {insight.description}
-        </CardDescription>
+        <CardDescription className="text-sm">{insight.description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Metrics */}
@@ -427,7 +434,7 @@ export function InsightsPanel({
               {insights.length} insights generated from {timeframe} data analysis
             </CardDescription>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <select
               value={sortBy}
@@ -446,8 +453,12 @@ export function InsightsPanel({
         <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
           <TabsList className="grid w-full grid-cols-4 lg:grid-cols-7">
             <TabsTrigger value="all">All</TabsTrigger>
-            {insightCategories.map(category => (
-              <TabsTrigger key={category.id} value={category.id} className="flex items-center gap-1">
+            {insightCategories.map((category) => (
+              <TabsTrigger
+                key={category.id}
+                value={category.id}
+                className="flex items-center gap-1"
+              >
                 {category.icon}
                 <span className="hidden lg:inline">{category.label}</span>
                 <Badge variant="secondary" className="ml-1">
@@ -459,12 +470,12 @@ export function InsightsPanel({
 
           <TabsContent value={selectedCategory} className="space-y-4 mt-6">
             {/* Category Summary */}
-            {selectedCategory !== 'all' && (
+            {selectedCategory !== "all" && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 {(() => {
-                  const category = insightCategories.find(cat => cat.id === selectedCategory);
+                  const category = insightCategories.find((cat) => cat.id === selectedCategory);
                   if (!category) return null;
-                  
+
                   return (
                     <>
                       <Card>
@@ -475,13 +486,17 @@ export function InsightsPanel({
                       </Card>
                       <Card>
                         <CardContent className="pt-6">
-                          <div className="text-2xl font-bold">{category.averageConfidence.toFixed(0)}%</div>
+                          <div className="text-2xl font-bold">
+                            {category.averageConfidence.toFixed(0)}%
+                          </div>
                           <p className="text-sm text-muted-foreground">Avg Confidence</p>
                         </CardContent>
                       </Card>
                       <Card>
                         <CardContent className="pt-6">
-                          <div className="text-2xl font-bold">{category.totalImpact.toFixed(0)}%</div>
+                          <div className="text-2xl font-bold">
+                            {category.totalImpact.toFixed(0)}%
+                          </div>
                           <p className="text-sm text-muted-foreground">Total Impact</p>
                         </CardContent>
                       </Card>
@@ -497,7 +512,7 @@ export function InsightsPanel({
                 <InsightCard
                   key={`${insight.id}-${index}`}
                   insight={insight}
-                  showCategory={selectedCategory === 'all'}
+                  showCategory={selectedCategory === "all"}
                 />
               ))}
             </div>
@@ -508,9 +523,7 @@ export function InsightsPanel({
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   No Insights in This Category
                 </h3>
-                <p className="text-gray-600">
-                  Try selecting a different category or timeframe.
-                </p>
+                <p className="text-gray-600">Try selecting a different category or timeframe.</p>
               </div>
             )}
           </TabsContent>

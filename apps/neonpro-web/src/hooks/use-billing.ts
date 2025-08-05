@@ -1,6 +1,6 @@
-﻿"use client";
+"use client";
 
-import { createClient } from "@/lib/supabase/client";
+import type { createClient } from "@/lib/supabase/client";
 import type {
   CreateInvoiceData,
   CreatePaymentData,
@@ -20,16 +20,15 @@ import type {
   UpdateInvoiceData,
   UpdateServiceData,
 } from "@/types/billing";
-import { useCallback, useEffect, useState } from "react";
-import { toast } from "sonner";
+import type { useCallback, useEffect, useState } from "react";
+import type { toast } from "sonner";
 
 export function useBilling() {
   const [loading, setLoading] = useState(false);
   const [services, setServices] = useState<Service[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
-  const [financialSummary, setFinancialSummary] =
-    useState<FinancialSummary | null>(null);
+  const [financialSummary, setFinancialSummary] = useState<FinancialSummary | null>(null);
   const [settings, setSettings] = useState<FinancialSettings | null>(null);
 
   const supabase = await createClient();
@@ -70,9 +69,7 @@ export function useBilling() {
         }
 
         if (filters?.search) {
-          query = query.or(
-            `name.ilike.%${filters.search}%,description.ilike.%${filters.search}%`
-          );
+          query = query.or(`name.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
         }
 
         // Sorting
@@ -96,7 +93,7 @@ export function useBilling() {
         setLoading(false);
       }
     },
-    [supabase]
+    [supabase],
   );
 
   const createService = useCallback(
@@ -127,7 +124,7 @@ export function useBilling() {
         setLoading(false);
       }
     },
-    [supabase, fetchServices]
+    [supabase, fetchServices],
   );
 
   const updateService = useCallback(
@@ -159,7 +156,7 @@ export function useBilling() {
         setLoading(false);
       }
     },
-    [supabase, fetchServices]
+    [supabase, fetchServices],
   );
 
   const deleteService = useCallback(
@@ -186,7 +183,7 @@ export function useBilling() {
         setLoading(false);
       }
     },
-    [supabase, fetchServices]
+    [supabase, fetchServices],
   );
 
   // =====================================================
@@ -233,7 +230,7 @@ export function useBilling() {
 
         if (filters?.search) {
           query = query.or(
-            `invoice_number.ilike.%${filters.search}%,notes.ilike.%${filters.search}%`
+            `invoice_number.ilike.%${filters.search}%,notes.ilike.%${filters.search}%`,
           );
         }
 
@@ -264,7 +261,7 @@ export function useBilling() {
         setLoading(false);
       }
     },
-    [supabase]
+    [supabase],
   );
 
   const createInvoice = useCallback(
@@ -331,7 +328,7 @@ export function useBilling() {
         setLoading(false);
       }
     },
-    [supabase, fetchInvoices]
+    [supabase, fetchInvoices],
   );
 
   const updateInvoice = useCallback(
@@ -363,7 +360,7 @@ export function useBilling() {
         setLoading(false);
       }
     },
-    [supabase, fetchInvoices]
+    [supabase, fetchInvoices],
   );
 
   // =====================================================
@@ -411,7 +408,7 @@ export function useBilling() {
 
         if (filters?.search) {
           query = query.or(
-            `payment_number.ilike.%${filters.search}%,notes.ilike.%${filters.search}%`
+            `payment_number.ilike.%${filters.search}%,notes.ilike.%${filters.search}%`,
           );
         }
 
@@ -442,7 +439,7 @@ export function useBilling() {
         setLoading(false);
       }
     },
-    [supabase]
+    [supabase],
   );
 
   const createPayment = useCallback(
@@ -473,7 +470,7 @@ export function useBilling() {
         setLoading(false);
       }
     },
-    [supabase, fetchPayments]
+    [supabase, fetchPayments],
   );
 
   // =====================================================
@@ -488,9 +485,7 @@ export function useBilling() {
         // Default to current month if no dates provided
         if (!startDate) {
           const now = new Date();
-          startDate = new Date(now.getFullYear(), now.getMonth(), 1)
-            .toISOString()
-            .split("T")[0];
+          startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split("T")[0];
         }
         if (!endDate) {
           endDate = new Date().toISOString().split("T")[0];
@@ -529,13 +524,11 @@ export function useBilling() {
               break;
             case "pending":
               summary.pending_invoices += 1;
-              summary.total_outstanding +=
-                invoice.total_amount - (invoice.paid_amount || 0);
+              summary.total_outstanding += invoice.total_amount - (invoice.paid_amount || 0);
               break;
             case "overdue":
               summary.overdue_invoices += 1;
-              summary.total_outstanding +=
-                invoice.total_amount - (invoice.paid_amount || 0);
+              summary.total_outstanding += invoice.total_amount - (invoice.paid_amount || 0);
               break;
           }
         });
@@ -544,9 +537,8 @@ export function useBilling() {
         const daysDiff = Math.max(
           1,
           Math.ceil(
-            (new Date(endDate).getTime() - new Date(startDate).getTime()) /
-              (1000 * 60 * 60 * 24)
-          )
+            (new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24),
+          ),
         );
         const monthsDiff = Math.max(1, daysDiff / 30);
 
@@ -561,14 +553,14 @@ export function useBilling() {
         setLoading(false);
       }
     },
-    [supabase]
+    [supabase],
   );
 
   const fetchRevenueByPeriod = useCallback(
     async (
       period: "daily" | "weekly" | "monthly" = "monthly",
       startDate?: string,
-      endDate?: string
+      endDate?: string,
     ): Promise<RevenueByPeriod[]> => {
       try {
         // Default to last 12 periods if no dates provided
@@ -595,8 +587,7 @@ export function useBilling() {
         }
 
         // Group by period
-        const grouped: { [key: string]: { revenue: number; count: number } } =
-          {};
+        const grouped: { [key: string]: { revenue: number; count: number } } = {};
 
         data?.forEach((payment: any) => {
           const date = new Date(payment.payment_date);
@@ -607,15 +598,11 @@ export function useBilling() {
               periodKey = date.toISOString().split("T")[0];
               break;
             case "weekly":
-              const weekStart = new Date(
-                date.setDate(date.getDate() - date.getDay())
-              );
+              const weekStart = new Date(date.setDate(date.getDate() - date.getDay()));
               periodKey = weekStart.toISOString().split("T")[0];
               break;
             case "monthly":
-              periodKey = `${date.getFullYear()}-${String(
-                date.getMonth() + 1
-              ).padStart(2, "0")}`;
+              periodKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
               break;
           }
 
@@ -640,7 +627,7 @@ export function useBilling() {
         return [];
       }
     },
-    [supabase]
+    [supabase],
   );
 
   // =====================================================
@@ -696,7 +683,7 @@ export function useBilling() {
         setLoading(false);
       }
     },
-    [supabase, settings?.id]
+    [supabase, settings?.id],
   );
 
   // =====================================================
@@ -714,8 +701,7 @@ export function useBilling() {
         totalDiscount += item.discount_value || 0;
       });
 
-      const taxAmount =
-        (subtotal - totalDiscount) * ((settings?.tax_rate || 0) / 100);
+      const taxAmount = (subtotal - totalDiscount) * ((settings?.tax_rate || 0) / 100);
       const totalAmount = subtotal - totalDiscount + taxAmount;
 
       return {
@@ -725,23 +711,20 @@ export function useBilling() {
         total_amount: totalAmount,
       };
     },
-    [settings?.tax_rate]
+    [settings?.tax_rate],
   );
 
-  const calculatePaymentBalance = useCallback(
-    (invoice: Invoice): PaymentCalculations => {
-      const totalPaid = invoice.paid_amount || 0;
-      const remainingBalance = invoice.total_amount - totalPaid;
-      const isFullyPaid = remainingBalance <= 0.01; // Consider small amounts as paid
+  const calculatePaymentBalance = useCallback((invoice: Invoice): PaymentCalculations => {
+    const totalPaid = invoice.paid_amount || 0;
+    const remainingBalance = invoice.total_amount - totalPaid;
+    const isFullyPaid = remainingBalance <= 0.01; // Consider small amounts as paid
 
-      return {
-        total_paid: totalPaid,
-        remaining_balance: remainingBalance,
-        is_fully_paid: isFullyPaid,
-      };
-    },
-    []
-  );
+    return {
+      total_paid: totalPaid,
+      remaining_balance: remainingBalance,
+      is_fully_paid: isFullyPaid,
+    };
+  }, []);
 
   // Initialize data on mount
   useEffect(() => {
@@ -787,4 +770,3 @@ export function useBilling() {
     calculatePaymentBalance,
   };
 }
-

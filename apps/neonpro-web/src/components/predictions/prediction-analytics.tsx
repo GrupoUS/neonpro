@@ -3,22 +3,28 @@
  * Advanced analytics and insights for no-show prediction system
  */
 
-'use client';
+"use client";
 
-import React, { useState, useMemo } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import React, { useState, useMemo } from "react";
+import type { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Progress } from "@/components/ui/progress";
+import type {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   LineChart,
   Line,
@@ -28,9 +34,9 @@ import {
   Pie,
   Cell,
   AreaChart,
-  Area
-} from 'recharts';
-import { 
+  Area,
+} from "recharts";
+import type {
   TrendingUp,
   TrendingDown,
   Target,
@@ -46,13 +52,13 @@ import {
   Download,
   Filter,
   RefreshCw,
-  Settings
-} from 'lucide-react';
-import type { 
+  Settings,
+} from "lucide-react";
+import type {
   NoShowPrediction,
   PatientRiskProfile,
-  ModelPerformanceMetrics
-} from '@/lib/analytics/no-show-prediction';
+  ModelPerformanceMetrics,
+} from "@/lib/analytics/no-show-prediction";
 
 interface PredictionAnalyticsProps {
   predictions: NoShowPrediction[];
@@ -85,7 +91,7 @@ interface AnalyticsData {
   featureImportance: Array<{
     feature: string;
     importance: number;
-    impact: 'POSITIVE' | 'NEGATIVE';
+    impact: "POSITIVE" | "NEGATIVE";
     category: string;
   }>;
   timePatterns: Array<{
@@ -111,20 +117,24 @@ interface AnalyticsData {
 }
 
 const RISK_COLORS = {
-  'Low (0-25%)': '#10B981',
-  'Medium (26-50%)': '#F59E0B',
-  'High (51-75%)': '#EF4444',
-  'Very High (76-100%)': '#DC2626'
+  "Low (0-25%)": "#10B981",
+  "Medium (26-50%)": "#F59E0B",
+  "High (51-75%)": "#EF4444",
+  "Very High (76-100%)": "#DC2626",
 };
 
 export function PredictionAnalytics({
   predictions,
   riskProfiles,
-  performanceMetrics
+  performanceMetrics,
 }: PredictionAnalyticsProps) {
-  const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d' | '1y'>('30d');
-  const [activeTab, setActiveTab] = useState<'overview' | 'accuracy' | 'features' | 'patterns' | 'impact'>('overview');
-  const [selectedMetric, setSelectedMetric] = useState<'accuracy' | 'precision' | 'recall' | 'f1'>('accuracy');
+  const [timeRange, setTimeRange] = useState<"7d" | "30d" | "90d" | "1y">("30d");
+  const [activeTab, setActiveTab] = useState<
+    "overview" | "accuracy" | "features" | "patterns" | "impact"
+  >("overview");
+  const [selectedMetric, setSelectedMetric] = useState<"accuracy" | "precision" | "recall" | "f1">(
+    "accuracy",
+  );
 
   /**
    * Process analytics data from predictions and metrics
@@ -135,17 +145,17 @@ export function PredictionAnalytics({
     const overallAccuracy = latestMetrics?.accuracy || 0;
 
     // Accuracy by risk level
-    const riskLevels = ['LOW', 'MEDIUM', 'HIGH', 'VERY_HIGH'];
-    const byRiskLevel = riskLevels.map(level => {
-      const levelPredictions = predictions.filter(p => p.riskLevel === level);
-      const correct = levelPredictions.filter(p => p.confidence > 0.8).length; // Mock accuracy calculation
-      
+    const riskLevels = ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"];
+    const byRiskLevel = riskLevels.map((level) => {
+      const levelPredictions = predictions.filter((p) => p.riskLevel === level);
+      const correct = levelPredictions.filter((p) => p.confidence > 0.8).length; // Mock accuracy calculation
+
       return {
         level: level.charAt(0) + level.slice(1).toLowerCase(),
         accuracy: levelPredictions.length > 0 ? (correct / levelPredictions.length) * 100 : 0,
         precision: Math.random() * 20 + 75, // Mock data
         recall: Math.random() * 20 + 70,
-        f1Score: Math.random() * 20 + 73
+        f1Score: Math.random() * 20 + 73,
       };
     });
 
@@ -154,82 +164,173 @@ export function PredictionAnalytics({
       const date = new Date();
       date.setDate(date.getDate() - (29 - i));
       return {
-        date: date.toISOString().split('T')[0],
+        date: date.toISOString().split("T")[0],
         accuracy: 75 + Math.random() * 20,
-        predictions: Math.floor(Math.random() * 50) + 20
+        predictions: Math.floor(Math.random() * 50) + 20,
       };
     });
 
     // Prediction distribution by risk ranges
     const predictionDistribution = [
-      { riskRange: 'Low (0-25%)', count: predictions.filter(p => p.riskScore <= 25).length, accuracy: 92, color: RISK_COLORS['Low (0-25%)'] },
-      { riskRange: 'Medium (26-50%)', count: predictions.filter(p => p.riskScore > 25 && p.riskScore <= 50).length, accuracy: 88, color: RISK_COLORS['Medium (26-50%)'] },
-      { riskRange: 'High (51-75%)', count: predictions.filter(p => p.riskScore > 50 && p.riskScore <= 75).length, accuracy: 84, color: RISK_COLORS['High (51-75%)'] },
-      { riskRange: 'Very High (76-100%)', count: predictions.filter(p => p.riskScore > 75).length, accuracy: 89, color: RISK_COLORS['Very High (76-100%)'] }
+      {
+        riskRange: "Low (0-25%)",
+        count: predictions.filter((p) => p.riskScore <= 25).length,
+        accuracy: 92,
+        color: RISK_COLORS["Low (0-25%)"],
+      },
+      {
+        riskRange: "Medium (26-50%)",
+        count: predictions.filter((p) => p.riskScore > 25 && p.riskScore <= 50).length,
+        accuracy: 88,
+        color: RISK_COLORS["Medium (26-50%)"],
+      },
+      {
+        riskRange: "High (51-75%)",
+        count: predictions.filter((p) => p.riskScore > 50 && p.riskScore <= 75).length,
+        accuracy: 84,
+        color: RISK_COLORS["High (51-75%)"],
+      },
+      {
+        riskRange: "Very High (76-100%)",
+        count: predictions.filter((p) => p.riskScore > 75).length,
+        accuracy: 89,
+        color: RISK_COLORS["Very High (76-100%)"],
+      },
     ];
 
     // Feature importance analysis
     const featureImportance = [
-      { feature: 'Historical No-Show Rate', importance: 0.34, impact: 'POSITIVE' as const, category: 'Historical' },
-      { feature: 'Appointment Day of Week', importance: 0.18, impact: 'POSITIVE' as const, category: 'Temporal' },
-      { feature: 'Time Since Last Visit', importance: 0.15, impact: 'POSITIVE' as const, category: 'Behavioral' },
-      { feature: 'Communication Response Rate', importance: 0.12, impact: 'NEGATIVE' as const, category: 'Communication' },
-      { feature: 'Distance from Clinic', importance: 0.09, impact: 'POSITIVE' as const, category: 'Geographic' },
-      { feature: 'Age Group', importance: 0.08, impact: 'POSITIVE' as const, category: 'Demographic' },
-      { feature: 'Insurance Type', importance: 0.04, impact: 'POSITIVE' as const, category: 'Financial' }
+      {
+        feature: "Historical No-Show Rate",
+        importance: 0.34,
+        impact: "POSITIVE" as const,
+        category: "Historical",
+      },
+      {
+        feature: "Appointment Day of Week",
+        importance: 0.18,
+        impact: "POSITIVE" as const,
+        category: "Temporal",
+      },
+      {
+        feature: "Time Since Last Visit",
+        importance: 0.15,
+        impact: "POSITIVE" as const,
+        category: "Behavioral",
+      },
+      {
+        feature: "Communication Response Rate",
+        importance: 0.12,
+        impact: "NEGATIVE" as const,
+        category: "Communication",
+      },
+      {
+        feature: "Distance from Clinic",
+        importance: 0.09,
+        impact: "POSITIVE" as const,
+        category: "Geographic",
+      },
+      {
+        feature: "Age Group",
+        importance: 0.08,
+        impact: "POSITIVE" as const,
+        category: "Demographic",
+      },
+      {
+        feature: "Insurance Type",
+        importance: 0.04,
+        impact: "POSITIVE" as const,
+        category: "Financial",
+      },
     ].sort((a, b) => b.importance - a.importance);
 
     // Time-based patterns
     const timePatterns = Array.from({ length: 24 }, (_, hour) => ({
       hour,
-      noShowRate: 15 + Math.sin(hour / 24 * Math.PI * 2) * 10 + Math.random() * 5,
+      noShowRate: 15 + Math.sin((hour / 24) * Math.PI * 2) * 10 + Math.random() * 5,
       predictions: Math.floor(Math.random() * 30) + 10,
-      accuracy: 80 + Math.random() * 15
+      accuracy: 80 + Math.random() * 15,
     }));
 
     // Demographic insights
     const demographicInsights = [
-      { segment: 'Young Adults (18-30)', noShowRate: 22, predictedRate: 21, accuracy: 87, count: 450 },
-      { segment: 'Adults (31-50)', noShowRate: 15, predictedRate: 16, accuracy: 91, count: 780 },
-      { segment: 'Seniors (51-70)', noShowRate: 8, predictedRate: 9, accuracy: 94, count: 620 },
-      { segment: 'Elderly (70+)', noShowRate: 12, predictedRate: 11, accuracy: 89, count: 280 },
-      { segment: 'First-time Patients', noShowRate: 28, predictedRate: 27, accuracy: 83, count: 340 },
-      { segment: 'Regular Patients', noShowRate: 10, predictedRate: 11, accuracy: 93, count: 1240 }
+      {
+        segment: "Young Adults (18-30)",
+        noShowRate: 22,
+        predictedRate: 21,
+        accuracy: 87,
+        count: 450,
+      },
+      { segment: "Adults (31-50)", noShowRate: 15, predictedRate: 16, accuracy: 91, count: 780 },
+      { segment: "Seniors (51-70)", noShowRate: 8, predictedRate: 9, accuracy: 94, count: 620 },
+      { segment: "Elderly (70+)", noShowRate: 12, predictedRate: 11, accuracy: 89, count: 280 },
+      {
+        segment: "First-time Patients",
+        noShowRate: 28,
+        predictedRate: 27,
+        accuracy: 83,
+        count: 340,
+      },
+      { segment: "Regular Patients", noShowRate: 10, predictedRate: 11, accuracy: 93, count: 1240 },
     ];
 
     // Intervention impact analysis
     const interventionImpact = [
-      { intervention: 'SMS Reminders', preventedNoShows: 85, cost: 0.15, roi: 450, effectiveness: 78 },
-      { intervention: 'Phone Calls', preventedNoShows: 42, cost: 2.50, roi: 180, effectiveness: 85 },
-      { intervention: 'Email Reminders', preventedNoShows: 28, cost: 0.05, roi: 680, effectiveness: 65 },
-      { intervention: 'Push Notifications', preventedNoShows: 35, cost: 0.02, roi: 890, effectiveness: 72 },
-      { intervention: 'Personal Outreach', preventedNoShows: 18, cost: 15.00, roi: 95, effectiveness: 92 }
+      {
+        intervention: "SMS Reminders",
+        preventedNoShows: 85,
+        cost: 0.15,
+        roi: 450,
+        effectiveness: 78,
+      },
+      { intervention: "Phone Calls", preventedNoShows: 42, cost: 2.5, roi: 180, effectiveness: 85 },
+      {
+        intervention: "Email Reminders",
+        preventedNoShows: 28,
+        cost: 0.05,
+        roi: 680,
+        effectiveness: 65,
+      },
+      {
+        intervention: "Push Notifications",
+        preventedNoShows: 35,
+        cost: 0.02,
+        roi: 890,
+        effectiveness: 72,
+      },
+      {
+        intervention: "Personal Outreach",
+        preventedNoShows: 18,
+        cost: 15.0,
+        roi: 95,
+        effectiveness: 92,
+      },
     ];
 
     return {
       modelAccuracy: {
         overall: overallAccuracy,
         byRiskLevel,
-        overTime
+        overTime,
       },
       predictionDistribution,
       featureImportance,
       timePatterns,
       demographicInsights,
-      interventionImpact
+      interventionImpact,
     };
   }, [predictions, riskProfiles, performanceMetrics, timeRange]);
 
   /**
    * Get metric color based on value
    */
-  const getMetricColor = (value: number, type: 'accuracy' | 'count' = 'accuracy'): string => {
-    if (type === 'accuracy') {
-      if (value >= 90) return 'text-green-600';
-      if (value >= 80) return 'text-yellow-600';
-      return 'text-red-600';
+  const getMetricColor = (value: number, type: "accuracy" | "count" = "accuracy"): string => {
+    if (type === "accuracy") {
+      if (value >= 90) return "text-green-600";
+      if (value >= 80) return "text-yellow-600";
+      return "text-red-600";
     }
-    return 'text-blue-600';
+    return "text-blue-600";
   };
 
   /**
@@ -244,22 +345,22 @@ export function PredictionAnalytics({
    */
   const getModelInsights = () => {
     const insights = [];
-    
-    const lowAccuracySegments = analyticsData.demographicInsights.filter(s => s.accuracy < 85);
+
+    const lowAccuracySegments = analyticsData.demographicInsights.filter((s) => s.accuracy < 85);
     if (lowAccuracySegments.length > 0) {
       insights.push({
-        type: 'improvement',
-        message: `Model accuracy is lower for ${lowAccuracySegments.map(s => s.segment).join(', ')}. Consider adding more training data for these segments.`,
-        priority: 'HIGH'
+        type: "improvement",
+        message: `Model accuracy is lower for ${lowAccuracySegments.map((s) => s.segment).join(", ")}. Consider adding more training data for these segments.`,
+        priority: "HIGH",
       });
     }
 
-    const highROIInterventions = analyticsData.interventionImpact.filter(i => i.roi > 500);
+    const highROIInterventions = analyticsData.interventionImpact.filter((i) => i.roi > 500);
     if (highROIInterventions.length > 0) {
       insights.push({
-        type: 'optimization',
-        message: `Scale up ${highROIInterventions.map(i => i.intervention).join(', ')} - showing excellent ROI.`,
-        priority: 'MEDIUM'
+        type: "optimization",
+        message: `Scale up ${highROIInterventions.map((i) => i.intervention).join(", ")} - showing excellent ROI.`,
+        priority: "MEDIUM",
       });
     }
 
@@ -305,23 +406,33 @@ export function PredictionAnalytics({
       {modelInsights.length > 0 && (
         <div className="space-y-3">
           {modelInsights.map((insight, index) => (
-            <Card key={index} className={
-              insight.priority === 'HIGH' ? 'border-red-200 bg-red-50' :
-              insight.priority === 'MEDIUM' ? 'border-yellow-200 bg-yellow-50' :
-              'border-blue-200 bg-blue-50'
-            }>
+            <Card
+              key={index}
+              className={
+                insight.priority === "HIGH"
+                  ? "border-red-200 bg-red-50"
+                  : insight.priority === "MEDIUM"
+                    ? "border-yellow-200 bg-yellow-50"
+                    : "border-blue-200 bg-blue-50"
+              }
+            >
               <CardContent className="pt-4">
                 <div className="flex items-center gap-2">
-                  {insight.type === 'improvement' ? (
+                  {insight.type === "improvement" ? (
                     <AlertTriangle className="h-4 w-4 text-red-600" />
                   ) : (
                     <TrendingUp className="h-4 w-4 text-blue-600" />
                   )}
                   <span className="text-sm">{insight.message}</span>
-                  <Badge variant={
-                    insight.priority === 'HIGH' ? 'destructive' :
-                    insight.priority === 'MEDIUM' ? 'default' : 'secondary'
-                  }>
+                  <Badge
+                    variant={
+                      insight.priority === "HIGH"
+                        ? "destructive"
+                        : insight.priority === "MEDIUM"
+                          ? "default"
+                          : "secondary"
+                    }
+                  >
                     {insight.priority}
                   </Badge>
                 </div>
@@ -341,12 +452,12 @@ export function PredictionAnalytics({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className={`text-2xl font-bold ${getMetricColor(analyticsData.modelAccuracy.overall)}`}>
+            <div
+              className={`text-2xl font-bold ${getMetricColor(analyticsData.modelAccuracy.overall)}`}
+            >
               {formatPercentage(analyticsData.modelAccuracy.overall)}
             </div>
-            <div className="text-xs text-muted-foreground">
-              Current performance
-            </div>
+            <div className="text-xs text-muted-foreground">Current performance</div>
           </CardContent>
         </Card>
 
@@ -362,7 +473,11 @@ export function PredictionAnalytics({
               {predictions.length.toLocaleString()}
             </div>
             <div className="text-xs text-muted-foreground">
-              {timeRange === '7d' ? 'This week' : timeRange === '30d' ? 'This month' : 'This period'}
+              {timeRange === "7d"
+                ? "This week"
+                : timeRange === "30d"
+                  ? "This month"
+                  : "This period"}
             </div>
           </CardContent>
         </Card>
@@ -376,11 +491,9 @@ export function PredictionAnalytics({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {predictions.filter(p => p.confidence > 0.8).length}
+              {predictions.filter((p) => p.confidence > 0.8).length}
             </div>
-            <div className="text-xs text-muted-foreground">
-              Predictions >80% confidence
-            </div>
+            <div className="text-xs text-muted-foreground">Predictions {">"}80% confidence</div>
           </CardContent>
         </Card>
 
@@ -395,9 +508,7 @@ export function PredictionAnalytics({
             <div className="text-2xl font-bold text-purple-600">
               {analyticsData.featureImportance.length}
             </div>
-            <div className="text-xs text-muted-foreground">
-              Active features
-            </div>
+            <div className="text-xs text-muted-foreground">Active features</div>
           </CardContent>
         </Card>
       </div>
@@ -437,8 +548,8 @@ export function PredictionAnalytics({
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
-                    <Tooltip 
-                      formatter={(value, name) => [value, 'Count']}
+                    <Tooltip
+                      formatter={(value, name) => [value, "Count"]}
                       labelFormatter={(label) => `Risk: ${label}`}
                     />
                   </PieChart>
@@ -446,11 +557,10 @@ export function PredictionAnalytics({
                 <div className="grid grid-cols-2 gap-2 mt-4">
                   {analyticsData.predictionDistribution.map((item, index) => (
                     <div key={index} className="flex items-center gap-2 text-xs">
-                      <div 
-                        className="w-3 h-3 rounded" 
-                        style={{ backgroundColor: item.color }}
-                      />
-                      <span>{item.riskRange}: {item.count}</span>
+                      <div className="w-3 h-3 rounded" style={{ backgroundColor: item.color }} />
+                      <span>
+                        {item.riskRange}: {item.count}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -468,22 +578,27 @@ export function PredictionAnalytics({
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={analyticsData.modelAccuracy.overTime.slice(-14)}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis 
-                      dataKey="date" 
-                      tickFormatter={(date) => new Date(date).toLocaleDateString('pt-BR', { month: 'short', day: 'numeric' })}
+                    <XAxis
+                      dataKey="date"
+                      tickFormatter={(date) =>
+                        new Date(date).toLocaleDateString("pt-BR", {
+                          month: "short",
+                          day: "numeric",
+                        })
+                      }
                     />
                     <YAxis domain={[60, 100]} />
-                    <Tooltip 
-                      labelFormatter={(date) => new Date(date).toLocaleDateString('pt-BR')}
+                    <Tooltip
+                      labelFormatter={(date) => new Date(date).toLocaleDateString("pt-BR")}
                       formatter={(value, name) => [
                         `${value.toFixed(1)}%`,
-                        name === 'accuracy' ? 'Accuracy' : 'Predictions'
+                        name === "accuracy" ? "Accuracy" : "Predictions",
                       ]}
                     />
-                    <Line 
-                      type="monotone" 
-                      dataKey="accuracy" 
-                      stroke="#10B981" 
+                    <Line
+                      type="monotone"
+                      dataKey="accuracy"
+                      stroke="#10B981"
                       strokeWidth={2}
                       name="accuracy"
                     />
@@ -510,7 +625,10 @@ export function PredictionAnalytics({
                         <span className="text-sm font-medium">{feature.feature}</span>
                         <div className="flex items-center gap-2">
                           <span className="text-sm">{(feature.importance * 100).toFixed(1)}%</span>
-                          <Badge variant={feature.impact === 'POSITIVE' ? 'destructive' : 'default'} size="sm">
+                          <Badge
+                            variant={feature.impact === "POSITIVE" ? "destructive" : "default"}
+                            size="sm"
+                          >
                             {feature.impact}
                           </Badge>
                         </div>
@@ -536,7 +654,9 @@ export function PredictionAnalytics({
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-medium">{segment.segment}</span>
                         <div className="text-right">
-                          <div className={`text-sm font-medium ${getMetricColor(segment.accuracy)}`}>
+                          <div
+                            className={`text-sm font-medium ${getMetricColor(segment.accuracy)}`}
+                          >
                             {formatPercentage(segment.accuracy)}
                           </div>
                           <div className="text-xs text-muted-foreground">
@@ -568,7 +688,10 @@ export function PredictionAnalytics({
             </CardHeader>
             <CardContent>
               <div className="mb-4">
-                <Select value={selectedMetric} onValueChange={(value: any) => setSelectedMetric(value)}>
+                <Select
+                  value={selectedMetric}
+                  onValueChange={(value: any) => setSelectedMetric(value)}
+                >
                   <SelectTrigger className="w-48">
                     <SelectValue />
                   </SelectTrigger>
@@ -585,14 +708,13 @@ export function PredictionAnalytics({
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="level" />
                   <YAxis />
-                  <Tooltip 
-                    formatter={(value) => [`${value.toFixed(1)}%`, selectedMetric.charAt(0).toUpperCase() + selectedMetric.slice(1)]}
+                  <Tooltip
+                    formatter={(value) => [
+                      `${value.toFixed(1)}%`,
+                      selectedMetric.charAt(0).toUpperCase() + selectedMetric.slice(1),
+                    ]}
                   />
-                  <Bar 
-                    dataKey={selectedMetric} 
-                    fill="#3B82F6"
-                    name={selectedMetric}
-                  />
+                  <Bar dataKey={selectedMetric} fill="#3B82F6" name={selectedMetric} />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
@@ -663,22 +785,24 @@ export function PredictionAnalytics({
               <ResponsiveContainer width="100%" height={400}>
                 <AreaChart data={analyticsData.modelAccuracy.overTime}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="date" 
-                    tickFormatter={(date) => new Date(date).toLocaleDateString('pt-BR', { month: 'short', day: 'numeric' })}
+                  <XAxis
+                    dataKey="date"
+                    tickFormatter={(date) =>
+                      new Date(date).toLocaleDateString("pt-BR", { month: "short", day: "numeric" })
+                    }
                   />
                   <YAxis domain={[60, 100]} />
-                  <Tooltip 
-                    labelFormatter={(date) => new Date(date).toLocaleDateString('pt-BR')}
+                  <Tooltip
+                    labelFormatter={(date) => new Date(date).toLocaleDateString("pt-BR")}
                     formatter={(value, name) => [
-                      name === 'accuracy' ? `${value.toFixed(1)}%` : value,
-                      name === 'accuracy' ? 'Accuracy' : 'Predictions'
+                      name === "accuracy" ? `${value.toFixed(1)}%` : value,
+                      name === "accuracy" ? "Accuracy" : "Predictions",
                     ]}
                   />
-                  <Area 
-                    type="monotone" 
-                    dataKey="accuracy" 
-                    stroke="#10B981" 
+                  <Area
+                    type="monotone"
+                    dataKey="accuracy"
+                    stroke="#10B981"
                     fill="#DCFCE7"
                     name="accuracy"
                   />
@@ -699,7 +823,7 @@ export function PredictionAnalytics({
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={400}>
-                <BarChart 
+                <BarChart
                   data={analyticsData.featureImportance}
                   layout="horizontal"
                   margin={{ left: 120 }}
@@ -707,14 +831,12 @@ export function PredictionAnalytics({
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis type="number" tickFormatter={(value) => `${(value * 100).toFixed(0)}%`} />
                   <YAxis dataKey="feature" type="category" />
-                  <Tooltip 
-                    formatter={(value) => [`${(value * 100).toFixed(1)}%`, 'Importance']}
-                  />
+                  <Tooltip formatter={(value) => [`${(value * 100).toFixed(1)}%`, "Importance"]} />
                   <Bar dataKey="importance">
                     {analyticsData.featureImportance.map((entry, index) => (
-                      <Cell 
-                        key={`cell-${index}`} 
-                        fill={entry.impact === 'POSITIVE' ? '#EF4444' : '#10B981'} 
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={entry.impact === "POSITIVE" ? "#EF4444" : "#10B981"}
                       />
                     ))}
                   </Bar>
@@ -731,23 +853,30 @@ export function PredictionAnalytics({
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {[...new Set(analyticsData.featureImportance.map(f => f.category))].map(category => {
-                    const categoryFeatures = analyticsData.featureImportance.filter(f => f.category === category);
-                    const totalImportance = categoryFeatures.reduce((sum, f) => sum + f.importance, 0);
-                    
-                    return (
-                      <div key={category} className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="font-medium">{category}</span>
-                          <span className="text-sm">{(totalImportance * 100).toFixed(1)}%</span>
+                  {[...new Set(analyticsData.featureImportance.map((f) => f.category))].map(
+                    (category) => {
+                      const categoryFeatures = analyticsData.featureImportance.filter(
+                        (f) => f.category === category,
+                      );
+                      const totalImportance = categoryFeatures.reduce(
+                        (sum, f) => sum + f.importance,
+                        0,
+                      );
+
+                      return (
+                        <div key={category} className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="font-medium">{category}</span>
+                            <span className="text-sm">{(totalImportance * 100).toFixed(1)}%</span>
+                          </div>
+                          <Progress value={totalImportance * 100} className="h-2" />
+                          <div className="text-xs text-muted-foreground">
+                            {categoryFeatures.length} features
+                          </div>
                         </div>
-                        <Progress value={totalImportance * 100} className="h-2" />
-                        <div className="text-xs text-muted-foreground">
-                          {categoryFeatures.length} features
-                        </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    },
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -761,16 +890,20 @@ export function PredictionAnalytics({
                   <PieChart>
                     <Pie
                       data={[
-                        { 
-                          name: 'Risk Increasing', 
-                          value: analyticsData.featureImportance.filter(f => f.impact === 'POSITIVE').length,
-                          fill: '#EF4444'
+                        {
+                          name: "Risk Increasing",
+                          value: analyticsData.featureImportance.filter(
+                            (f) => f.impact === "POSITIVE",
+                          ).length,
+                          fill: "#EF4444",
                         },
-                        { 
-                          name: 'Risk Decreasing', 
-                          value: analyticsData.featureImportance.filter(f => f.impact === 'NEGATIVE').length,
-                          fill: '#10B981'
-                        }
+                        {
+                          name: "Risk Decreasing",
+                          value: analyticsData.featureImportance.filter(
+                            (f) => f.impact === "NEGATIVE",
+                          ).length,
+                          fill: "#10B981",
+                        },
                       ]}
                       cx="50%"
                       cy="50%"
@@ -798,31 +931,34 @@ export function PredictionAnalytics({
               <ResponsiveContainer width="100%" height={400}>
                 <AreaChart data={analyticsData.timePatterns}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="hour" 
-                    tickFormatter={(hour) => `${hour}:00`}
-                  />
+                  <XAxis dataKey="hour" tickFormatter={(hour) => `${hour}:00`} />
                   <YAxis />
-                  <Tooltip 
+                  <Tooltip
                     labelFormatter={(hour) => `${hour}:00`}
                     formatter={(value, name) => [
-                      name === 'noShowRate' ? `${value.toFixed(1)}%` : 
-                      name === 'accuracy' ? `${value.toFixed(1)}%` : value,
-                      name === 'noShowRate' ? 'No-Show Rate' :
-                      name === 'accuracy' ? 'Prediction Accuracy' : 'Predictions'
+                      name === "noShowRate"
+                        ? `${value.toFixed(1)}%`
+                        : name === "accuracy"
+                          ? `${value.toFixed(1)}%`
+                          : value,
+                      name === "noShowRate"
+                        ? "No-Show Rate"
+                        : name === "accuracy"
+                          ? "Prediction Accuracy"
+                          : "Predictions",
                     ]}
                   />
-                  <Area 
-                    type="monotone" 
-                    dataKey="noShowRate" 
-                    stroke="#EF4444" 
+                  <Area
+                    type="monotone"
+                    dataKey="noShowRate"
+                    stroke="#EF4444"
                     fill="#FEE2E2"
                     name="noShowRate"
                   />
-                  <Area 
-                    type="monotone" 
-                    dataKey="accuracy" 
-                    stroke="#10B981" 
+                  <Area
+                    type="monotone"
+                    dataKey="accuracy"
+                    stroke="#10B981"
                     fill="#DCFCE7"
                     name="accuracy"
                   />
@@ -840,27 +976,24 @@ export function PredictionAnalytics({
               <ResponsiveContainer width="100%" height={400}>
                 <ScatterChart>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="noShowRate" 
+                  <XAxis
+                    dataKey="noShowRate"
                     name="Actual No-Show Rate"
                     tickFormatter={(value) => `${value}%`}
                   />
-                  <YAxis 
+                  <YAxis
                     dataKey="predictedRate"
                     name="Predicted No-Show Rate"
                     tickFormatter={(value) => `${value}%`}
                   />
-                  <Tooltip 
+                  <Tooltip
                     formatter={(value, name) => [
                       `${value}%`,
-                      name === 'noShowRate' ? 'Actual Rate' : 'Predicted Rate'
+                      name === "noShowRate" ? "Actual Rate" : "Predicted Rate",
                     ]}
-                    labelFormatter={(label, payload) => payload?.[0]?.payload?.segment || ''}
+                    labelFormatter={(label, payload) => payload?.[0]?.payload?.segment || ""}
                   />
-                  <Scatter 
-                    data={analyticsData.demographicInsights} 
-                    fill="#3B82F6"
-                  />
+                  <Scatter data={analyticsData.demographicInsights} fill="#3B82F6" />
                 </ScatterChart>
               </ResponsiveContainer>
             </CardContent>
@@ -882,14 +1015,22 @@ export function PredictionAnalytics({
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="intervention" />
                   <YAxis />
-                  <Tooltip 
+                  <Tooltip
                     formatter={(value, name) => [
-                      name === 'roi' ? `${value}%` :
-                      name === 'cost' ? `R$ ${value.toFixed(2)}` :
-                      name === 'effectiveness' ? `${value}%` : value,
-                      name === 'preventedNoShows' ? 'Prevented No-Shows' :
-                      name === 'roi' ? 'ROI' :
-                      name === 'cost' ? 'Cost per Contact' : 'Effectiveness'
+                      name === "roi"
+                        ? `${value}%`
+                        : name === "cost"
+                          ? `R$ ${value.toFixed(2)}`
+                          : name === "effectiveness"
+                            ? `${value}%`
+                            : value,
+                      name === "preventedNoShows"
+                        ? "Prevented No-Shows"
+                        : name === "roi"
+                          ? "ROI"
+                          : name === "cost"
+                            ? "Cost per Contact"
+                            : "Effectiveness",
                     ]}
                   />
                   <Bar dataKey="preventedNoShows" name="preventedNoShows" fill="#10B981" />
@@ -910,20 +1051,20 @@ export function PredictionAnalytics({
                   {analyticsData.interventionImpact
                     .sort((a, b) => b.roi - a.roi)
                     .map((intervention, index) => (
-                    <div key={index} className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium">{intervention.intervention}</span>
-                        <span className="text-lg font-bold text-green-600">
-                          {intervention.roi}%
-                        </span>
+                      <div key={index} className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium">{intervention.intervention}</span>
+                          <span className="text-lg font-bold text-green-600">
+                            {intervention.roi}%
+                          </span>
+                        </div>
+                        <div className="flex justify-between text-sm text-muted-foreground">
+                          <span>Cost: R$ {intervention.cost.toFixed(2)}</span>
+                          <span>{intervention.preventedNoShows} prevented</span>
+                        </div>
+                        <Progress value={Math.min(intervention.roi / 10, 100)} className="h-2" />
                       </div>
-                      <div className="flex justify-between text-sm text-muted-foreground">
-                        <span>Cost: R$ {intervention.cost.toFixed(2)}</span>
-                        <span>{intervention.preventedNoShows} prevented</span>
-                      </div>
-                      <Progress value={Math.min(intervention.roi / 10, 100)} className="h-2" />
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </CardContent>
             </Card>
@@ -936,27 +1077,24 @@ export function PredictionAnalytics({
                 <ResponsiveContainer width="100%" height={300}>
                   <ScatterChart>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis 
-                      dataKey="cost" 
+                    <XAxis
+                      dataKey="cost"
                       name="Cost per Contact"
                       tickFormatter={(value) => `R$ ${value}`}
                     />
-                    <YAxis 
+                    <YAxis
                       dataKey="effectiveness"
                       name="Effectiveness %"
                       tickFormatter={(value) => `${value}%`}
                     />
-                    <Tooltip 
+                    <Tooltip
                       formatter={(value, name) => [
-                        name === 'cost' ? `R$ ${value.toFixed(2)}` : `${value}%`,
-                        name === 'cost' ? 'Cost per Contact' : 'Effectiveness'
+                        name === "cost" ? `R$ ${value.toFixed(2)}` : `${value}%`,
+                        name === "cost" ? "Cost per Contact" : "Effectiveness",
                       ]}
-                      labelFormatter={(label, payload) => payload?.[0]?.payload?.intervention || ''}
+                      labelFormatter={(label, payload) => payload?.[0]?.payload?.intervention || ""}
                     />
-                    <Scatter 
-                      data={analyticsData.interventionImpact} 
-                      fill="#8B5CF6"
-                    />
+                    <Scatter data={analyticsData.interventionImpact} fill="#8B5CF6" />
                   </ScatterChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -972,25 +1110,41 @@ export function PredictionAnalytics({
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-green-600">
-                    {analyticsData.interventionImpact.reduce((sum, i) => sum + i.preventedNoShows, 0)}
+                    {analyticsData.interventionImpact.reduce(
+                      (sum, i) => sum + i.preventedNoShows,
+                      0,
+                    )}
                   </div>
                   <div className="text-xs text-muted-foreground">Total No-Shows Prevented</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-blue-600">
-                    R$ {(analyticsData.interventionImpact.reduce((sum, i) => sum + (i.preventedNoShows * i.cost), 0)).toFixed(0)}
+                    R${" "}
+                    {analyticsData.interventionImpact
+                      .reduce((sum, i) => sum + i.preventedNoShows * i.cost, 0)
+                      .toFixed(0)}
                   </div>
                   <div className="text-xs text-muted-foreground">Total Investment</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-purple-600">
-                    {Math.round(analyticsData.interventionImpact.reduce((sum, i) => sum + i.roi, 0) / analyticsData.interventionImpact.length)}%
+                    {Math.round(
+                      analyticsData.interventionImpact.reduce((sum, i) => sum + i.roi, 0) /
+                        analyticsData.interventionImpact.length,
+                    )}
+                    %
                   </div>
                   <div className="text-xs text-muted-foreground">Average ROI</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-orange-600">
-                    {Math.round(analyticsData.interventionImpact.reduce((sum, i) => sum + i.effectiveness, 0) / analyticsData.interventionImpact.length)}%
+                    {Math.round(
+                      analyticsData.interventionImpact.reduce(
+                        (sum, i) => sum + i.effectiveness,
+                        0,
+                      ) / analyticsData.interventionImpact.length,
+                    )}
+                    %
                   </div>
                   <div className="text-xs text-muted-foreground">Average Effectiveness</div>
                 </div>

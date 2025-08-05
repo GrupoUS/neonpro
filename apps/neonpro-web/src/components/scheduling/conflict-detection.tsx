@@ -1,20 +1,36 @@
 /**
  * Conflict Detection Component
  * Story 2.2: Intelligent conflict detection and resolution
- * 
+ *
  * React component for real-time conflict detection in appointment scheduling
  */
 
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Separator } from '@/components/ui/separator';
-import { Clock, AlertTriangle, CheckCircle, XCircle, RefreshCw, Calendar, Users, MapPin } from 'lucide-react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Separator } from "@/components/ui/separator";
+import type {
+  Clock,
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  RefreshCw,
+  Calendar,
+  Users,
+  MapPin,
+} from "lucide-react";
+import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 // Types matching our backend service
 interface ConflictDetectionResult {
@@ -26,10 +42,10 @@ interface ConflictDetectionResult {
 
 interface SchedulingConflict {
   id: string;
-  type: 'time' | 'staff' | 'room' | 'equipment' | 'business_rules' | 'priority';
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  type: "time" | "staff" | "room" | "equipment" | "business_rules" | "priority";
+  severity: "low" | "medium" | "high" | "critical";
   resourceId?: string;
-  resourceType?: 'room' | 'equipment' | 'service' | 'staff';
+  resourceType?: "room" | "equipment" | "service" | "staff";
   conflictDescription: string;
   affectedAppointments: string[];
   suggestedActions: string[];
@@ -37,10 +53,10 @@ interface SchedulingConflict {
 
 interface ResolutionOption {
   id: string;
-  type: 'reschedule' | 'reassign' | 'waitlist' | 'split' | 'escalate';
+  type: "reschedule" | "reassign" | "waitlist" | "split" | "escalate";
   confidence: number;
   description: string;
-  impact: 'minimal' | 'low' | 'medium' | 'high' | 'significant';
+  impact: "minimal" | "low" | "medium" | "high" | "significant";
   alternativeSlots?: any[];
   resourceAlternatives?: any[];
   estimatedResolutionTime: number;
@@ -67,13 +83,13 @@ export default function ConflictDetection({
   equipmentIds,
   onConflictDetected,
   onResolutionSelected,
-  autoDetect = true
+  autoDetect = true,
 }: ConflictDetectionProps) {
   const [detectionResult, setDetectionResult] = useState<ConflictDetectionResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedResolution, setSelectedResolution] = useState<ResolutionOption | null>(null);
-  
+
   const supabase = createClientComponentClient();
 
   // Auto-detect conflicts when props change
@@ -81,17 +97,25 @@ export default function ConflictDetection({
     if (autoDetect && appointmentStart && appointmentEnd && professionalId && treatmentType) {
       detectConflicts();
     }
-  }, [appointmentStart, appointmentEnd, professionalId, treatmentType, roomId, equipmentIds, autoDetect]);
+  }, [
+    appointmentStart,
+    appointmentEnd,
+    professionalId,
+    treatmentType,
+    roomId,
+    equipmentIds,
+    autoDetect,
+  ]);
 
   const detectConflicts = async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
-      const response = await fetch('/api/scheduling/conflicts/detect', {
-        method: 'POST',
+      const response = await fetch("/api/scheduling/conflicts/detect", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           appointmentStart: appointmentStart.toISOString(),
@@ -99,23 +123,23 @@ export default function ConflictDetection({
           professionalId,
           treatmentType,
           roomId,
-          equipmentIds
-        })
+          equipmentIds,
+        }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to detect conflicts');
+        throw new Error(errorData.error || "Failed to detect conflicts");
       }
 
       const result = await response.json();
       setDetectionResult(result.data);
-      
+
       if (onConflictDetected) {
         onConflictDetected(result.data);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
+      setError(err instanceof Error ? err.message : "An unexpected error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -130,33 +154,50 @@ export default function ConflictDetection({
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'low': return 'bg-blue-100 text-blue-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'high': return 'bg-orange-100 text-orange-800';
-      case 'critical': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "low":
+        return "bg-blue-100 text-blue-800";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800";
+      case "high":
+        return "bg-orange-100 text-orange-800";
+      case "critical":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getConflictTypeIcon = (type: string) => {
     switch (type) {
-      case 'time': return <Clock className="w-4 h-4" />;
-      case 'staff': return <Users className="w-4 h-4" />;
-      case 'room': return <MapPin className="w-4 h-4" />;
-      case 'equipment': return <AlertTriangle className="w-4 h-4" />;
-      case 'business_rules': return <XCircle className="w-4 h-4" />;
-      default: return <AlertTriangle className="w-4 h-4" />;
+      case "time":
+        return <Clock className="w-4 h-4" />;
+      case "staff":
+        return <Users className="w-4 h-4" />;
+      case "room":
+        return <MapPin className="w-4 h-4" />;
+      case "equipment":
+        return <AlertTriangle className="w-4 h-4" />;
+      case "business_rules":
+        return <XCircle className="w-4 h-4" />;
+      default:
+        return <AlertTriangle className="w-4 h-4" />;
     }
   };
 
   const getImpactColor = (impact: string) => {
     switch (impact) {
-      case 'minimal': return 'bg-green-100 text-green-800';
-      case 'low': return 'bg-blue-100 text-blue-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'high': return 'bg-orange-100 text-orange-800';
-      case 'significant': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "minimal":
+        return "bg-green-100 text-green-800";
+      case "low":
+        return "bg-blue-100 text-blue-800";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800";
+      case "high":
+        return "bg-orange-100 text-orange-800";
+      case "significant":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -180,22 +221,16 @@ export default function ConflictDetection({
                 Conflict Detection
               </CardTitle>
               <CardDescription>
-                {isLoading 
-                  ? 'Analyzing potential scheduling conflicts...'
-                  : detectionResult?.hasConflicts 
+                {isLoading
+                  ? "Analyzing potential scheduling conflicts..."
+                  : detectionResult?.hasConflicts
                     ? `Found ${detectionResult.conflicts.length} conflict(s) that require attention`
                     : detectionResult && !detectionResult.hasConflicts
-                      ? 'No conflicts detected - appointment can be scheduled'
-                      : 'Check for scheduling conflicts before confirming appointment'
-                }
+                      ? "No conflicts detected - appointment can be scheduled"
+                      : "Check for scheduling conflicts before confirming appointment"}
               </CardDescription>
             </div>
-            <Button 
-              onClick={detectConflicts} 
-              disabled={isLoading}
-              variant="outline"
-              size="sm"
-            >
+            <Button onClick={detectConflicts} disabled={isLoading} variant="outline" size="sm">
               {isLoading ? (
                 <RefreshCw className="w-4 h-4 animate-spin mr-2" />
               ) : (
@@ -205,18 +240,20 @@ export default function ConflictDetection({
             </Button>
           </div>
         </CardHeader>
-        
+
         {detectionResult && (
           <CardFooter>
             <div className="flex items-center gap-4 text-sm text-gray-600">
               <span>Processing time: {detectionResult.processingTimeMs}ms</span>
               <Separator orientation="vertical" className="h-4" />
               <span>
-                {detectionResult.conflicts.length} conflict{detectionResult.conflicts.length !== 1 ? 's' : ''} found
+                {detectionResult.conflicts.length} conflict
+                {detectionResult.conflicts.length !== 1 ? "s" : ""} found
               </span>
               <Separator orientation="vertical" className="h-4" />
               <span>
-                {detectionResult.resolutionOptions.length} resolution option{detectionResult.resolutionOptions.length !== 1 ? 's' : ''} available
+                {detectionResult.resolutionOptions.length} resolution option
+                {detectionResult.resolutionOptions.length !== 1 ? "s" : ""} available
               </span>
             </div>
           </CardFooter>
@@ -254,16 +291,16 @@ export default function ConflictDetection({
                       {conflict.severity}
                     </Badge>
                   </div>
-                  
+
                   <p className="text-sm text-gray-600 mb-3">{conflict.conflictDescription}</p>
-                  
+
                   {conflict.suggestedActions.length > 0 && (
                     <div>
                       <span className="text-sm font-medium">Suggested actions:</span>
                       <div className="flex flex-wrap gap-1 mt-1">
                         {conflict.suggestedActions.map((action, index) => (
                           <Badge key={index} variant="outline" className="text-xs">
-                            {action.replace('_', ' ')}
+                            {action.replace("_", " ")}
                           </Badge>
                         ))}
                       </div>
@@ -281,19 +318,17 @@ export default function ConflictDetection({
         <Card>
           <CardHeader>
             <CardTitle className="text-blue-600">Resolution Options</CardTitle>
-            <CardDescription>
-              Choose from the following AI-recommended solutions:
-            </CardDescription>
+            <CardDescription>Choose from the following AI-recommended solutions:</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {detectionResult.resolutionOptions.map((option) => (
-                <div 
-                  key={option.id} 
+                <div
+                  key={option.id}
                   className={`border rounded-lg p-4 cursor-pointer transition-all ${
-                    selectedResolution?.id === option.id 
-                      ? 'border-blue-500 bg-blue-50' 
-                      : 'hover:border-gray-300'
+                    selectedResolution?.id === option.id
+                      ? "border-blue-500 bg-blue-50"
+                      : "hover:border-gray-300"
                   }`}
                   onClick={() => handleResolutionSelect(option)}
                 >
@@ -313,23 +348,25 @@ export default function ConflictDetection({
                       ~{Math.round(option.estimatedResolutionTime / 60)}min to resolve
                     </div>
                   </div>
-                  
+
                   <p className="text-sm text-gray-600 mb-3">{option.description}</p>
-                  
+
                   {option.alternativeSlots && option.alternativeSlots.length > 0 && (
                     <div className="text-sm">
                       <span className="font-medium">Alternative times available:</span>
                       <span className="text-gray-600 ml-1">
-                        {option.alternativeSlots.length} option{option.alternativeSlots.length !== 1 ? 's' : ''}
+                        {option.alternativeSlots.length} option
+                        {option.alternativeSlots.length !== 1 ? "s" : ""}
                       </span>
                     </div>
                   )}
-                  
+
                   {option.resourceAlternatives && option.resourceAlternatives.length > 0 && (
                     <div className="text-sm">
                       <span className="font-medium">Alternative resources available:</span>
                       <span className="text-gray-600 ml-1">
-                        {option.resourceAlternatives.length} option{option.resourceAlternatives.length !== 1 ? 's' : ''}
+                        {option.resourceAlternatives.length} option
+                        {option.resourceAlternatives.length !== 1 ? "s" : ""}
                       </span>
                     </div>
                   )}
@@ -337,13 +374,10 @@ export default function ConflictDetection({
               ))}
             </div>
           </CardContent>
-          
+
           {selectedResolution && (
             <CardFooter>
-              <Button 
-                onClick={() => handleResolutionSelect(selectedResolution)}
-                className="w-full"
-              >
+              <Button onClick={() => handleResolutionSelect(selectedResolution)} className="w-full">
                 Apply {selectedResolution.type} Solution
               </Button>
             </CardFooter>
@@ -357,11 +391,10 @@ export default function ConflictDetection({
           <CardContent className="pt-6">
             <div className="text-center">
               <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-green-800 mb-2">
-                No Conflicts Detected
-              </h3>
+              <h3 className="text-lg font-medium text-green-800 mb-2">No Conflicts Detected</h3>
               <p className="text-sm text-gray-600">
-                This appointment can be scheduled without any conflicts. All resources are available and business rules are satisfied.
+                This appointment can be scheduled without any conflicts. All resources are available
+                and business rules are satisfied.
               </p>
             </div>
           </CardContent>

@@ -3,7 +3,12 @@
  * Simple in-memory rate limiting for development and small-scale production
  */
 
-import { RateLimitConfig, RATE_LIMIT_CONFIGS, USER_ROLE_LIMITS, RATE_LIMIT_WHITELIST } from './config';
+import type {
+  RateLimitConfig,
+  RATE_LIMIT_CONFIGS,
+  USER_ROLE_LIMITS,
+  RATE_LIMIT_WHITELIST,
+} from "./config";
 
 interface RateLimitEntry {
   count: number;
@@ -27,20 +32,23 @@ const rateLimitStore: RateLimitStore = {};
  */
 export class MemoryRateLimiter {
   private cleanupInterval: NodeJS.Timeout;
-  
+
   constructor() {
     // Clean up expired entries every 5 minutes
-    this.cleanupInterval = setInterval(() => {
-      this.cleanup();
-    }, 5 * 60 * 1000);
+    this.cleanupInterval = setInterval(
+      () => {
+        this.cleanup();
+      },
+      5 * 60 * 1000,
+    );
   }
-  
+
   /**
    * Check if request should be rate limited
    */
   async checkRateLimit(
     identifier: string,
-    config: RateLimitConfig
+    config: RateLimitConfig,
   ): Promise<{
     allowed: boolean;
     limit: number;
@@ -50,10 +58,10 @@ export class MemoryRateLimiter {
   }> {
     const now = Date.now();
     const key = `rate_limit:${identifier}`;
-    
+
     // Get or create rate limit entry
     let entry = rateLimitStore[key];
-    
+
     if (!entry || now >= entry.resetTime) {
       // Create new window
       entry = {
@@ -62,7 +70,7 @@ export class MemoryRateLimiter {
       };
       rateLimitStore[key] = entry;
     }
-    
+
     // Check if currently blocked
     if (entry.blocked && entry.blockUntil && now < entry.blockUntil) {
       return {
@@ -73,19 +81,19 @@ export class MemoryRateLimiter {
         retryAfter: Math.ceil((entry.blockUntil - now) / 1000),
       };
     }
-    
+
     // Remove block if expired
     if (entry.blocked && entry.blockUntil && now >= entry.blockUntil) {
       entry.blocked = false;
       entry.blockUntil = undefined;
     }
-    
+
     // Check rate limit
     if (entry.count >= config.maxRequests) {
       // Block for additional time if repeatedly hitting limit
       entry.blocked = true;
-      entry.blockUntil = now + (config.windowMs * 2); // Block for 2x window
-      
+      entry.blockUntil = now + config.windowMs * 2; // Block for 2x window
+
       return {
         allowed: false,
         limit: config.maxRequests,
@@ -94,11 +102,11 @@ export class MemoryRateLimiter {
         retryAfter: Math.ceil(config.windowMs / 1000),
       };
     }
-    
+
     // Allow request and increment counter
     entry.count++;
     rateLimitStore[key] = entry;
-    
+
     return {
       allowed: true,
       limit: config.maxRequests,
@@ -106,17 +114,14 @@ export class MemoryRateLimiter {
       resetTime: entry.resetTime,
     };
   }
-  
+
   /**
    * Get rate limit configuration for endpoint and user
    */
-  getRateLimitConfig(
-    endpoint: string,
-    userRole?: string
-  ): RateLimitConfig {
+  getRateLimitConfig(endpoint: string, userRole?: string): RateLimitConfig {
     // Get base config
     const baseConfig = RATE_LIMIT_CONFIGS[endpoint] || RATE_LIMIT_CONFIGS.default;
-    
+
     // Apply role-based multiplier
     if (userRole && USER_ROLE_LIMITS[userRole]) {
       const roleConfig = USER_ROLE_LIMITS[userRole];
@@ -125,33 +130,33 @@ export class MemoryRateLimiter {
         maxRequests: Math.floor(baseConfig.maxRequests * roleConfig.multiplier),
       };
     }
-    
+
     return baseConfig;
   }
-  
+
   /**
    * Check if IP is whitelisted
    */
   isWhitelisted(ip: string): boolean {
     return RATE_LIMIT_WHITELIST.includes(ip);
   }
-  
+
   /**
    * Clean up expired entries
    */
   private cleanup(): void {
     const now = Date.now();
-    
+
     for (const key in rateLimitStore) {
       const entry = rateLimitStore[key];
-      
+
       // Remove expired entries
       if (now >= entry.resetTime && (!entry.blockUntil || now >= entry.blockUntil)) {
         delete rateLimitStore[key];
       }
     }
   }
-  
+
   /**
    * Manually reset rate limit for identifier
    */
@@ -159,13 +164,13 @@ export class MemoryRateLimiter {
     const key = `rate_limit:${identifier}`;
     delete rateLimitStore[key];
   }
-  
+
   /**
    * Get current rate limit status
    */
   async getRateLimitStatus(
     identifier: string,
-    config: RateLimitConfig
+    config: RateLimitConfig,
   ): Promise<{
     limit: number;
     remaining: number;
@@ -175,7 +180,7 @@ export class MemoryRateLimiter {
     const now = Date.now();
     const key = `rate_limit:${identifier}`;
     const entry = rateLimitStore[key];
-    
+
     if (!entry || now >= entry.resetTime) {
       return {
         limit: config.maxRequests,
@@ -184,7 +189,7 @@ export class MemoryRateLimiter {
         blocked: false,
       };
     }
-    
+
     return {
       limit: config.maxRequests,
       remaining: Math.max(0, config.maxRequests - entry.count),
@@ -192,7 +197,7 @@ export class MemoryRateLimiter {
       blocked: entry.blocked || false,
     };
   }
-  
+
   /**
    * Cleanup on shutdown
    */
@@ -209,20 +214,16 @@ export const rateLimiter = new MemoryRateLimiter();
 /**
  * Helper function to create rate limit identifier
  */
-export function createRateLimitIdentifier(
-  ip: string,
-  userId?: string,
-  endpoint?: string
-): string {
+export function createRateLimitIdentifier(ip: string, userId?: string, endpoint?: string): string {
   const parts = [ip];
-  
+
   if (userId) {
     parts.push(`user:${userId}`);
   }
-  
+
   if (endpoint) {
     parts.push(`endpoint:${endpoint}`);
   }
-  
-  return parts.join(':');
+
+  return parts.join(":");
 }

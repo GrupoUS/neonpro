@@ -1,6 +1,6 @@
-﻿/**
+/**
  * NeonPro Revenue Optimization Engine
- * 
+ *
  * Comprehensive revenue optimization system with:
  * - Dynamic pricing strategies with demand-based and competitor analysis
  * - Service mix optimization for maximum profitability
@@ -8,18 +8,18 @@
  * - Automated revenue recommendations with ML-driven insights
  * - Competitive analysis and benchmarking
  * - ROI tracking and performance optimization
- * 
+ *
  * Target: +15% revenue increase through intelligent optimization
  */
 
-import { createClient } from '@/lib/supabase/client';
-import { z } from 'zod';
+import type { createClient } from "@/lib/supabase/client";
+import type { z } from "zod";
 
 // 🔥 Core Types and Schemas
 export const RevenueOptimizationSchema = z.object({
   id: z.string().uuid(),
   clinic_id: z.string().uuid(),
-  optimization_type: z.enum(['pricing', 'service_mix', 'clv', 'competitive', 'automated']),
+  optimization_type: z.enum(["pricing", "service_mix", "clv", "competitive", "automated"]),
   title: z.string().min(1),
   description: z.string(),
   target_metric: z.string(),
@@ -27,8 +27,8 @@ export const RevenueOptimizationSchema = z.object({
   target_value: z.number(),
   current_value: z.number().optional(),
   improvement_percentage: z.number().min(0).max(100),
-  status: z.enum(['draft', 'active', 'completed', 'paused']),
-  priority: z.enum(['low', 'medium', 'high', 'critical']),
+  status: z.enum(["draft", "active", "completed", "paused"]),
+  priority: z.enum(["low", "medium", "high", "critical"]),
   recommendations: z.array(z.string()),
   implementation_steps: z.array(z.string()),
   expected_roi: z.number(),
@@ -37,7 +37,7 @@ export const RevenueOptimizationSchema = z.object({
   target_date: z.string(),
   completion_date: z.string().optional(),
   created_at: z.string(),
-  updated_at: z.string()
+  updated_at: z.string(),
 });
 
 export const PricingStrategySchema = z.object({
@@ -45,7 +45,7 @@ export const PricingStrategySchema = z.object({
   clinic_id: z.string().uuid(),
   service_id: z.string().uuid().optional(),
   strategy_name: z.string().min(1),
-  strategy_type: z.enum(['dynamic', 'competitive', 'value_based', 'demand_based', 'bundle']),
+  strategy_type: z.enum(["dynamic", "competitive", "value_based", "demand_based", "bundle"]),
   base_price: z.number().min(0),
   min_price: z.number().min(0),
   max_price: z.number().min(0),
@@ -57,7 +57,7 @@ export const PricingStrategySchema = z.object({
   effective_from: z.string(),
   effective_until: z.string().optional(),
   created_at: z.string(),
-  updated_at: z.string()
+  updated_at: z.string(),
 });
 
 export const CLVPredictionSchema = z.object({
@@ -66,7 +66,7 @@ export const CLVPredictionSchema = z.object({
   patient_id: z.string().uuid(),
   predicted_clv: z.number().min(0),
   current_clv: z.number().min(0),
-  clv_category: z.enum(['low', 'medium', 'high', 'premium']),
+  clv_category: z.enum(["low", "medium", "high", "premium"]),
   retention_probability: z.number().min(0).max(1),
   churn_risk: z.number().min(0).max(1),
   next_service_prediction: z.string().optional(),
@@ -75,7 +75,7 @@ export const CLVPredictionSchema = z.object({
   calculation_method: z.string(),
   confidence_score: z.number().min(0).max(1),
   created_at: z.string(),
-  updated_at: z.string()
+  updated_at: z.string(),
 });
 
 export type RevenueOptimization = z.infer<typeof RevenueOptimizationSchema>;
@@ -87,7 +87,10 @@ export class createrevenueOptimizationEngine {
   private supabase = createClient();
 
   // 💰 Dynamic Pricing Optimization
-  async optimizePricing(clinicId: string, serviceId?: string): Promise<{
+  async optimizePricing(
+    clinicId: string,
+    serviceId?: string,
+  ): Promise<{
     currentStrategy: PricingStrategy | null;
     recommendations: string[];
     projectedIncrease: number;
@@ -95,17 +98,17 @@ export class createrevenueOptimizationEngine {
   }> {
     try {
       // Validate input parameters
-      if (!clinicId || clinicId.trim() === '') {
-        throw new Error('Clinic ID is required');
+      if (!clinicId || clinicId.trim() === "") {
+        throw new Error("Clinic ID is required");
       }
 
       // Get current pricing strategy
       const { data: currentStrategy } = await this.supabase
-        .from('pricing_strategies')
-        .select('*')
-        .eq('clinic_id', clinicId)
-        .eq('service_id', serviceId || '')
-        .eq('is_active', true)
+        .from("pricing_strategies")
+        .select("*")
+        .eq("clinic_id", clinicId)
+        .eq("service_id", serviceId || "")
+        .eq("is_active", true)
         .single();
 
       // Analyze market demand and competitor pricing
@@ -117,25 +120,25 @@ export class createrevenueOptimizationEngine {
         clinicId,
         serviceId,
         marketAnalysis,
-        competitiveAnalysis
+        competitiveAnalysis,
       );
 
       // Calculate projected revenue increase
       const projectedIncrease = this.calculateProjectedIncrease(
         currentStrategy,
         recommendations,
-        marketAnalysis
+        marketAnalysis,
       );
 
       return {
         currentStrategy,
-        recommendations: recommendations.map(r => r.description),
+        recommendations: recommendations.map((r) => r.description),
         projectedIncrease,
-        competitiveAnalysis
+        competitiveAnalysis,
       };
     } catch (error) {
-      console.error('Error optimizing pricing:', error);
-      throw new Error('Failed to optimize pricing strategy');
+      console.error("Error optimizing pricing:", error);
+      throw new Error("Failed to optimize pricing strategy");
     }
   }
 
@@ -149,44 +152,47 @@ export class createrevenueOptimizationEngine {
     try {
       // Analyze current service performance
       const servicePerformance = await this.analyzeServicePerformance(clinicId);
-      
+
       // Calculate profitability metrics
       const profitabilityMetrics = await this.calculateServiceProfitability(clinicId);
-      
+
       // Generate service mix recommendations
       const optimizedMix = this.generateOptimizedServiceMix(
         servicePerformance,
-        profitabilityMetrics
+        profitabilityMetrics,
       );
 
       // Calculate potential profitability gain
       const profitabilityGain = this.calculateMixProfitabilityGain(
         servicePerformance,
-        optimizedMix
+        optimizedMix,
       );
 
       const recommendations = [
-        'Increase focus on high-margin services',
-        'Reduce capacity allocation for low-performing services',
-        'Introduce package deals for complementary services',
-        'Optimize staff allocation based on service profitability',
-        'Implement cross-selling strategies for premium services'
+        "Increase focus on high-margin services",
+        "Reduce capacity allocation for low-performing services",
+        "Introduce package deals for complementary services",
+        "Optimize staff allocation based on service profitability",
+        "Implement cross-selling strategies for premium services",
       ];
 
       return {
         currentMix: servicePerformance,
         optimizedMix,
         profitabilityGain,
-        recommendations
+        recommendations,
       };
     } catch (error) {
-      console.error('Error optimizing service mix:', error);
-      throw new Error('Failed to optimize service mix');
+      console.error("Error optimizing service mix:", error);
+      throw new Error("Failed to optimize service mix");
     }
   }
 
   // 📊 Customer Lifetime Value Enhancement
-  async enhanceCLV(clinicId: string, patientId?: string): Promise<{
+  async enhanceCLV(
+    clinicId: string,
+    patientId?: string,
+  ): Promise<{
     clvPredictions: CLVPrediction[];
     enhancementStrategies: string[];
     projectedIncrease: number;
@@ -195,12 +201,12 @@ export class createrevenueOptimizationEngine {
     try {
       // Get CLV predictions
       let query = this.supabase
-        .from('customer_lifetime_value')
-        .select('*')
-        .eq('clinic_id', clinicId);
+        .from("customer_lifetime_value")
+        .select("*")
+        .eq("clinic_id", clinicId);
 
       if (patientId) {
-        query = query.eq('patient_id', patientId);
+        query = query.eq("patient_id", patientId);
       }
 
       const { data: clvData } = await query;
@@ -212,24 +218,21 @@ export class createrevenueOptimizationEngine {
       // Generate enhancement strategies
       const enhancementStrategies = this.generateCLVEnhancementStrategies(
         clvPredictions,
-        riskSegmentation
+        riskSegmentation,
       );
 
       // Calculate projected CLV increase
-      const projectedIncrease = this.calculateCLVIncrease(
-        clvPredictions,
-        enhancementStrategies
-      );
+      const projectedIncrease = this.calculateCLVIncrease(clvPredictions, enhancementStrategies);
 
       return {
         clvPredictions,
         enhancementStrategies,
         projectedIncrease,
-        riskSegmentation
+        riskSegmentation,
       };
     } catch (error) {
-      console.error('Error enhancing CLV:', error);
-      throw new Error('Failed to enhance customer lifetime value');
+      console.error("Error enhancing CLV:", error);
+      throw new Error("Failed to enhance customer lifetime value");
     }
   }
 
@@ -256,70 +259,70 @@ export class createrevenueOptimizationEngine {
       // Generate comprehensive recommendations
       const recommendations = [
         {
-          type: 'pricing',
-          priority: 'high',
-          description: 'Implement dynamic pricing for peak demand periods',
+          type: "pricing",
+          priority: "high",
+          description: "Implement dynamic pricing for peak demand periods",
           expectedImpact: 8.5,
-          implementationEffort: 'medium',
-          timeframe: '2-4 weeks'
+          implementationEffort: "medium",
+          timeframe: "2-4 weeks",
         },
         {
-          type: 'service_mix',
-          priority: 'high',
-          description: 'Increase allocation to high-margin aesthetic procedures',
+          type: "service_mix",
+          priority: "high",
+          description: "Increase allocation to high-margin aesthetic procedures",
           expectedImpact: 12.3,
-          implementationEffort: 'low',
-          timeframe: '1-2 weeks'
+          implementationEffort: "low",
+          timeframe: "1-2 weeks",
         },
         {
-          type: 'clv',
-          priority: 'medium',
-          description: 'Launch retention program for high-value customers',
+          type: "clv",
+          priority: "medium",
+          description: "Launch retention program for high-value customers",
           expectedImpact: 15.7,
-          implementationEffort: 'high',
-          timeframe: '4-6 weeks'
+          implementationEffort: "high",
+          timeframe: "4-6 weeks",
         },
         {
-          type: 'competitive',
-          priority: 'medium',
-          description: 'Adjust pricing to match market positioning',
+          type: "competitive",
+          priority: "medium",
+          description: "Adjust pricing to match market positioning",
           expectedImpact: 6.2,
-          implementationEffort: 'low',
-          timeframe: '1 week'
+          implementationEffort: "low",
+          timeframe: "1 week",
         },
         {
-          type: 'upselling',
-          priority: 'high',
-          description: 'Implement automated upselling recommendations',
+          type: "upselling",
+          priority: "high",
+          description: "Implement automated upselling recommendations",
           expectedImpact: 9.8,
-          implementationEffort: 'medium',
-          timeframe: '3-4 weeks'
-        }
+          implementationEffort: "medium",
+          timeframe: "3-4 weeks",
+        },
       ];
 
       // Calculate total projected increase
       const totalProjectedIncrease = recommendations.reduce(
         (sum, rec) => sum + rec.expectedImpact,
-        0
+        0,
       );
 
       // Generate implementation plan
       const implementationPlan = [
-        '1. Phase 1 (Week 1-2): Quick wins - pricing adjustments and service mix optimization',
-        '2. Phase 2 (Week 3-4): Medium effort initiatives - dynamic pricing and upselling systems',
-        '3. Phase 3 (Week 5-6): High impact programs - retention and loyalty initiatives',
-        '4. Phase 4 (Week 7-8): Integration and optimization - system integration and performance monitoring',
-        '5. Ongoing: Continuous monitoring and adjustment based on performance metrics'
+        "1. Phase 1 (Week 1-2): Quick wins - pricing adjustments and service mix optimization",
+        "2. Phase 2 (Week 3-4): Medium effort initiatives - dynamic pricing and upselling systems",
+        "3. Phase 3 (Week 5-6): High impact programs - retention and loyalty initiatives",
+        "4. Phase 4 (Week 7-8): Integration and optimization - system integration and performance monitoring",
+        "5. Ongoing: Continuous monitoring and adjustment based on performance metrics",
       ];
 
       return {
         recommendations,
         totalProjectedIncrease,
-        implementationPlan
+        implementationPlan,
       };
     } catch (error) {
-      console.error('Error generating automated recommendations:', error);
-      throw new Error('Failed to generate automated recommendations');
+      console.error("Error generating automated recommendations:", error);
+      throw new Error("Failed to generate automated recommendations");
     }
   }
 
@@ -334,10 +337,10 @@ export class createrevenueOptimizationEngine {
     try {
       // Get competitive analysis data
       const { data: competitiveData } = await this.supabase
-        .from('competitive_analysis')
-        .select('*')
-        .eq('clinic_id', clinicId)
-        .order('analysis_date', { ascending: false })
+        .from("competitive_analysis")
+        .select("*")
+        .eq("clinic_id", clinicId)
+        .order("analysis_date", { ascending: false })
         .limit(10);
 
       const competitorData = competitiveData || [];
@@ -350,11 +353,11 @@ export class createrevenueOptimizationEngine {
 
       // Generate opportunity areas
       const opportunityAreas = [
-        'Premium service positioning in underserved segments',
-        'Technology-enhanced service delivery competitive advantage',
-        'Flexible pricing models for different customer segments',
-        'Geographic expansion into less competitive areas',
-        'Partnership opportunities with complementary businesses'
+        "Premium service positioning in underserved segments",
+        "Technology-enhanced service delivery competitive advantage",
+        "Flexible pricing models for different customer segments",
+        "Geographic expansion into less competitive areas",
+        "Partnership opportunities with complementary businesses",
       ];
 
       // Calculate benchmark metrics
@@ -365,16 +368,19 @@ export class createrevenueOptimizationEngine {
         marketPosition,
         pricingGaps,
         opportunityAreas,
-        benchmarkMetrics
+        benchmarkMetrics,
       };
     } catch (error) {
-      console.error('Error getting competitive analysis:', error);
-      throw new Error('Failed to get competitive analysis');
+      console.error("Error getting competitive analysis:", error);
+      throw new Error("Failed to get competitive analysis");
     }
   }
 
   // 📈 ROI Tracking and Performance
-  async trackROI(clinicId: string, optimizationId?: string): Promise<{
+  async trackROI(
+    clinicId: string,
+    optimizationId?: string,
+  ): Promise<{
     roiMetrics: any[];
     performanceIndicators: any;
     trendAnalysis: any;
@@ -382,25 +388,23 @@ export class createrevenueOptimizationEngine {
   }> {
     try {
       // Get ROI data for optimizations
-      let query = this.supabase
-        .from('revenue_optimizations')
-        .select('*')
-        .eq('clinic_id', clinicId);
+      let query = this.supabase.from("revenue_optimizations").select("*").eq("clinic_id", clinicId);
 
       if (optimizationId) {
-        query = query.eq('id', optimizationId);
+        query = query.eq("id", optimizationId);
       }
 
       const { data: optimizations } = await query;
-      const roiMetrics = (optimizations || []).map(opt => ({
+      const roiMetrics = (optimizations || []).map((opt) => ({
         id: opt.id,
         title: opt.title,
         expectedROI: opt.expected_roi,
         actualROI: opt.actual_roi || 0,
-        performance: opt.actual_roi ? 
-          ((opt.actual_roi / opt.expected_roi) * 100).toFixed(1) + '%' : 'Pending',
+        performance: opt.actual_roi
+          ? ((opt.actual_roi / opt.expected_roi) * 100).toFixed(1) + "%"
+          : "Pending",
         status: opt.status,
-        improvementPercentage: opt.improvement_percentage
+        improvementPercentage: opt.improvement_percentage,
       }));
 
       // Calculate performance indicators
@@ -412,18 +416,18 @@ export class createrevenueOptimizationEngine {
       // Generate recommendations based on performance
       const recommendations = this.generatePerformanceRecommendations(
         performanceIndicators,
-        trendAnalysis
+        trendAnalysis,
       );
 
       return {
         roiMetrics,
         performanceIndicators,
         trendAnalysis,
-        recommendations
+        recommendations,
       };
     } catch (error) {
-      console.error('Error tracking ROI:', error);
-      throw new Error('Failed to track ROI performance');
+      console.error("Error tracking ROI:", error);
+      throw new Error("Failed to track ROI performance");
     }
   }
 
@@ -433,8 +437,8 @@ export class createrevenueOptimizationEngine {
     return {
       demandScore: 0.75,
       seasonalFactor: 1.2,
-      trendDirection: 'increasing',
-      competitiveIntensity: 'medium'
+      trendDirection: "increasing",
+      competitiveIntensity: "medium",
     };
   }
 
@@ -442,27 +446,27 @@ export class createrevenueOptimizationEngine {
     clinicId: string,
     serviceId: string | undefined,
     marketAnalysis: any,
-    competitiveAnalysis: any
+    competitiveAnalysis: any,
   ) {
     // Generate intelligent pricing recommendations
     return [
       {
-        description: 'Increase pricing by 8% for premium services during peak hours',
+        description: "Increase pricing by 8% for premium services during peak hours",
         impact: 8.5,
-        confidence: 0.85
+        confidence: 0.85,
       },
       {
-        description: 'Implement bundle pricing for related procedures',
+        description: "Implement bundle pricing for related procedures",
         impact: 12.3,
-        confidence: 0.78
-      }
+        confidence: 0.78,
+      },
     ];
   }
 
   private calculateProjectedIncrease(
     currentStrategy: any,
     recommendations: any[],
-    marketAnalysis: any
+    marketAnalysis: any,
   ): number {
     // Calculate projected revenue increase based on recommendations
     return recommendations.reduce((sum, rec) => sum + rec.impact, 0);
@@ -472,21 +476,21 @@ export class createrevenueOptimizationEngine {
     // Analyze current service performance metrics
     return [
       {
-        serviceId: '1',
-        serviceName: 'Facial Aesthetics',
+        serviceId: "1",
+        serviceName: "Facial Aesthetics",
         revenue: 25000,
         margin: 0.65,
         demandScore: 0.82,
-        profitabilityRank: 1
+        profitabilityRank: 1,
       },
       {
-        serviceId: '2',
-        serviceName: 'Body Contouring',
+        serviceId: "2",
+        serviceName: "Body Contouring",
         revenue: 35000,
         margin: 0.58,
         demandScore: 0.74,
-        profitabilityRank: 2
-      }
+        profitabilityRank: 2,
+      },
     ];
   }
 
@@ -495,20 +499,20 @@ export class createrevenueOptimizationEngine {
     return {
       totalRevenue: 150000,
       totalCosts: 90000,
-      overallMargin: 0.40,
+      overallMargin: 0.4,
       serviceMargins: new Map([
-        ['1', 0.65],
-        ['2', 0.58]
-      ])
+        ["1", 0.65],
+        ["2", 0.58],
+      ]),
     };
   }
 
   private generateOptimizedServiceMix(servicePerformance: any[], profitabilityMetrics: any) {
     // Generate optimized service mix recommendations
-    return servicePerformance.map(service => ({
+    return servicePerformance.map((service) => ({
       ...service,
-      recommendedAllocation: service.margin > 0.6 ? 'increase' : 'maintain',
-      targetRevenue: service.revenue * (service.margin > 0.6 ? 1.15 : 1.05)
+      recommendedAllocation: service.margin > 0.6 ? "increase" : "maintain",
+      targetRevenue: service.revenue * (service.margin > 0.6 ? 1.15 : 1.05),
     }));
   }
 
@@ -522,44 +526,52 @@ export class createrevenueOptimizationEngine {
   private segmentCustomersByRisk(clvPredictions: CLVPrediction[]) {
     // Segment customers by churn risk and value
     return {
-      highValueLowRisk: clvPredictions.filter(c => c.predicted_clv > 5000 && c.churn_risk < 0.3).length,
-      highValueHighRisk: clvPredictions.filter(c => c.predicted_clv > 5000 && c.churn_risk >= 0.3).length,
-      lowValueLowRisk: clvPredictions.filter(c => c.predicted_clv <= 5000 && c.churn_risk < 0.3).length,
-      lowValueHighRisk: clvPredictions.filter(c => c.predicted_clv <= 5000 && c.churn_risk >= 0.3).length
+      highValueLowRisk: clvPredictions.filter((c) => c.predicted_clv > 5000 && c.churn_risk < 0.3)
+        .length,
+      highValueHighRisk: clvPredictions.filter((c) => c.predicted_clv > 5000 && c.churn_risk >= 0.3)
+        .length,
+      lowValueLowRisk: clvPredictions.filter((c) => c.predicted_clv <= 5000 && c.churn_risk < 0.3)
+        .length,
+      lowValueHighRisk: clvPredictions.filter((c) => c.predicted_clv <= 5000 && c.churn_risk >= 0.3)
+        .length,
     };
   }
 
-  private generateCLVEnhancementStrategies(clvPredictions: CLVPrediction[], riskSegmentation: any): string[] {
+  private generateCLVEnhancementStrategies(
+    clvPredictions: CLVPrediction[],
+    riskSegmentation: any,
+  ): string[] {
     return [
-      'Implement VIP program for high-value, low-risk customers',
-      'Launch retention campaigns for high-value, high-risk customers',
-      'Develop upselling programs for low-value, low-risk customers',
-      'Create win-back campaigns for high-risk customers',
-      'Personalize service recommendations based on CLV predictions'
+      "Implement VIP program for high-value, low-risk customers",
+      "Launch retention campaigns for high-value, high-risk customers",
+      "Develop upselling programs for low-value, low-risk customers",
+      "Create win-back campaigns for high-risk customers",
+      "Personalize service recommendations based on CLV predictions",
     ];
   }
 
   private calculateCLVIncrease(clvPredictions: CLVPrediction[], strategies: string[]): number {
     // Calculate projected CLV increase from enhancement strategies
-    const averageCLV = clvPredictions.reduce((sum, clv) => sum + clv.predicted_clv, 0) / clvPredictions.length;
+    const averageCLV =
+      clvPredictions.reduce((sum, clv) => sum + clv.predicted_clv, 0) / clvPredictions.length;
     return strategies.length * 3.5; // Estimated 3.5% increase per strategy
   }
 
   private calculateMarketPosition(competitorData: any[]): string {
     // Analyze market position based on competitive data
-    return competitorData.length > 5 ? 'Strong Competitive Position' : 'Market Leader';
+    return competitorData.length > 5 ? "Strong Competitive Position" : "Market Leader";
   }
 
   private identifyPricingGaps(competitorData: any[]) {
     // Identify pricing gaps and opportunities
     return [
       {
-        service: 'Premium Facial Treatments',
+        service: "Premium Facial Treatments",
         currentPrice: 300,
         marketAverage: 350,
-        opportunity: 'Price increase potential',
-        recommendedPrice: 335
-      }
+        opportunity: "Price increase potential",
+        recommendedPrice: 335,
+      },
     ];
   }
 
@@ -569,47 +581,48 @@ export class createrevenueOptimizationEngine {
       priceCompetitiveness: 0.85,
       serviceQuality: 0.92,
       customerSatisfaction: 0.88,
-      marketShare: 0.15
+      marketShare: 0.15,
     };
   }
 
   private calculatePerformanceIndicators(roiMetrics: any[]) {
     const totalExpected = roiMetrics.reduce((sum, metric) => sum + metric.expectedROI, 0);
     const totalActual = roiMetrics.reduce((sum, metric) => sum + metric.actualROI, 0);
-    
+
     return {
       overallROI: totalActual / totalExpected,
-      successRate: roiMetrics.filter(m => m.actualROI >= m.expectedROI).length / roiMetrics.length,
-      averagePerformance: roiMetrics.reduce((sum, m) => sum + (m.actualROI / m.expectedROI), 0) / roiMetrics.length
+      successRate:
+        roiMetrics.filter((m) => m.actualROI >= m.expectedROI).length / roiMetrics.length,
+      averagePerformance:
+        roiMetrics.reduce((sum, m) => sum + m.actualROI / m.expectedROI, 0) / roiMetrics.length,
     };
   }
 
   private analyzeTrends(roiMetrics: any[]) {
     return {
-      improving: roiMetrics.filter(m => m.actualROI > m.expectedROI).length,
-      declining: roiMetrics.filter(m => m.actualROI < m.expectedROI * 0.8).length,
-      stable: roiMetrics.filter(m => 
-        m.actualROI >= m.expectedROI * 0.8 && m.actualROI <= m.expectedROI
-      ).length
+      improving: roiMetrics.filter((m) => m.actualROI > m.expectedROI).length,
+      declining: roiMetrics.filter((m) => m.actualROI < m.expectedROI * 0.8).length,
+      stable: roiMetrics.filter(
+        (m) => m.actualROI >= m.expectedROI * 0.8 && m.actualROI <= m.expectedROI,
+      ).length,
     };
   }
 
   private generatePerformanceRecommendations(indicators: any, trends: any): string[] {
     const recommendations = [];
-    
+
     if (indicators.overallROI < 0.8) {
-      recommendations.push('Review and adjust optimization strategies for better ROI');
+      recommendations.push("Review and adjust optimization strategies for better ROI");
     }
-    
+
     if (trends.declining > trends.improving) {
-      recommendations.push('Focus on improving underperforming optimization initiatives');
+      recommendations.push("Focus on improving underperforming optimization initiatives");
     }
-    
+
     if (indicators.successRate > 0.8) {
-      recommendations.push('Scale successful optimization strategies to other areas');
+      recommendations.push("Scale successful optimization strategies to other areas");
     }
-    
+
     return recommendations;
   }
 }
-

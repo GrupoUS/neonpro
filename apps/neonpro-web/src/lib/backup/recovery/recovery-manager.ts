@@ -1,14 +1,14 @@
-import { createClient } from '@supabase/supabase-js';
-import { AuditLogger } from '../../audit/audit-logger';
-import { EncryptionService } from '../../security/encryption-service';
-import { LGPDManager } from '../../lgpd/lgpd-manager';
-import { BackupStrategyManager, DataSourceHandler } from '../strategies/backup-strategies';
+import type { createClient } from "@supabase/supabase-js";
+import type { AuditLogger } from "../../audit/audit-logger";
+import type { EncryptionService } from "../../security/encryption-service";
+import type { LGPDManager } from "../../lgpd/lgpd-manager";
+import type { BackupStrategyManager, DataSourceHandler } from "../strategies/backup-strategies";
 
 export interface RecoveryPlan {
   id: string;
   name: string;
   description: string;
-  recovery_type: 'full_restore' | 'partial_restore' | 'point_in_time' | 'selective_restore';
+  recovery_type: "full_restore" | "partial_restore" | "point_in_time" | "selective_restore";
   target_timestamp: Date;
   data_sources: string[];
   recovery_steps: RecoveryStep[];
@@ -24,7 +24,7 @@ export interface RecoveryStep {
   order: number;
   name: string;
   description: string;
-  type: 'prepare' | 'restore' | 'validate' | 'cleanup';
+  type: "prepare" | "restore" | "validate" | "cleanup";
   data_source: string;
   backup_location: string;
   target_location: string;
@@ -41,7 +41,7 @@ export interface RollbackStep {
   order: number;
   name: string;
   description: string;
-  action: 'restore_backup' | 'delete_files' | 'revert_database' | 'custom_script';
+  action: "restore_backup" | "delete_files" | "revert_database" | "custom_script";
   target: string;
   script?: string;
   timeout_minutes: number;
@@ -50,7 +50,7 @@ export interface RollbackStep {
 export interface ValidationCheck {
   id: string;
   name: string;
-  type: 'checksum' | 'integrity' | 'connectivity' | 'performance' | 'custom';
+  type: "checksum" | "integrity" | "connectivity" | "performance" | "custom";
   target: string;
   expected_result: any;
   tolerance: number;
@@ -61,7 +61,7 @@ export interface ValidationCheck {
 export interface RecoveryExecution {
   id: string;
   plan_id: string;
-  status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled' | 'rolling_back';
+  status: "pending" | "running" | "completed" | "failed" | "cancelled" | "rolling_back";
   started_at: Date;
   completed_at?: Date;
   current_step?: string;
@@ -80,7 +80,7 @@ export interface RecoveryExecution {
 
 export interface RecoveryError {
   step_id: string;
-  error_type: 'timeout' | 'validation_failed' | 'dependency_failed' | 'system_error';
+  error_type: "timeout" | "validation_failed" | "dependency_failed" | "system_error";
   message: string;
   timestamp: Date;
   recoverable: boolean;
@@ -89,7 +89,7 @@ export interface RecoveryError {
 
 export interface ValidationResult {
   check_id: string;
-  status: 'passed' | 'failed' | 'warning';
+  status: "passed" | "failed" | "warning";
   actual_result: any;
   expected_result: any;
   message: string;
@@ -128,11 +128,8 @@ export class RecoveryManager {
   private activeExecutions: Map<string, RecoveryExecution> = new Map();
 
   constructor() {
-    this.supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
-    
+    this.supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+
     this.auditLogger = new AuditLogger();
     this.encryptionService = new EncryptionService();
     this.lgpdManager = new LGPDManager();
@@ -142,39 +139,36 @@ export class RecoveryManager {
   /**
    * Cria um plano de recuperação
    */
-  async createRecoveryPlan(
-    planData: Omit<RecoveryPlan, 'id'>,
-    userId: string
-  ): Promise<string> {
+  async createRecoveryPlan(planData: Omit<RecoveryPlan, "id">, userId: string): Promise<string> {
     try {
       const planId = this.generatePlanId();
-      
+
       const plan: RecoveryPlan = {
         id: planId,
-        ...planData
+        ...planData,
       };
-      
+
       // Validar plano
       const validation = await this.validateRecoveryPlan(plan);
       if (!validation.valid) {
-        throw new Error(`Plano inválido: ${validation.errors.join(', ')}`);
+        throw new Error(`Plano inválido: ${validation.errors.join(", ")}`);
       }
-      
+
       // Salvar plano
       await this.saveRecoveryPlan(plan);
-      
+
       await this.auditLogger.log({
-        action: 'recovery_plan_created',
-        resource_type: 'recovery_plan',
+        action: "recovery_plan_created",
+        resource_type: "recovery_plan",
         resource_id: planId,
         user_id: userId,
         details: {
           name: plan.name,
           recovery_type: plan.recovery_type,
-          data_sources: plan.data_sources
-        }
+          data_sources: plan.data_sources,
+        },
       });
-      
+
       return planId;
     } catch (error) {
       throw new Error(`Erro ao criar plano de recuperação: ${error}`);
@@ -192,30 +186,30 @@ export class RecoveryManager {
       skip_validation?: boolean;
       force_execution?: boolean;
       custom_parameters?: Record<string, any>;
-    }
+    },
   ): Promise<string> {
     try {
       // Obter plano
       const plan = await this.getRecoveryPlan(planId);
       if (!plan) {
-        throw new Error('Plano de recuperação não encontrado');
+        throw new Error("Plano de recuperação não encontrado");
       }
-      
+
       // Verificar pré-requisitos
       if (!options?.force_execution) {
         await this.checkPrerequisites(plan);
       }
-      
+
       const executionId = this.generateExecutionId();
       const estimatedCompletion = new Date();
       estimatedCompletion.setMinutes(
-        estimatedCompletion.getMinutes() + plan.estimated_duration_minutes
+        estimatedCompletion.getMinutes() + plan.estimated_duration_minutes,
       );
-      
+
       const execution: RecoveryExecution = {
         id: executionId,
         plan_id: planId,
-        status: 'pending',
+        status: "pending",
         started_at: new Date(),
         progress_percentage: 0,
         steps_completed: 0,
@@ -229,31 +223,31 @@ export class RecoveryManager {
         metadata: {
           dry_run: options?.dry_run || false,
           skip_validation: options?.skip_validation || false,
-          custom_parameters: options?.custom_parameters || {}
-        }
+          custom_parameters: options?.custom_parameters || {},
+        },
       };
-      
+
       // Salvar execução
       await this.saveRecoveryExecution(execution);
       this.activeExecutions.set(executionId, execution);
-      
+
       // Executar plano
-      this.executeRecoverySteps(executionId, plan).catch(error => {
+      this.executeRecoverySteps(executionId, plan).catch((error) => {
         console.error(`Erro na execução ${executionId}:`, error);
       });
-      
+
       await this.auditLogger.log({
-        action: 'recovery_execution_started',
-        resource_type: 'recovery_execution',
+        action: "recovery_execution_started",
+        resource_type: "recovery_execution",
         resource_id: executionId,
         user_id: userId,
         details: {
           plan_id: planId,
           dry_run: options?.dry_run,
-          estimated_duration: plan.estimated_duration_minutes
-        }
+          estimated_duration: plan.estimated_duration_minutes,
+        },
       });
-      
+
       return executionId;
     } catch (error) {
       throw new Error(`Erro ao executar plano de recuperação: ${error}`);
@@ -270,19 +264,19 @@ export class RecoveryManager {
       if (activeExecution) {
         return activeExecution;
       }
-      
+
       // Buscar no banco
       const { data, error } = await this.supabase
-        .from('recovery_executions')
-        .select('*')
-        .eq('id', executionId)
+        .from("recovery_executions")
+        .select("*")
+        .eq("id", executionId)
         .single();
-      
+
       if (error) {
-        if (error.code === 'PGRST116') return null;
+        if (error.code === "PGRST116") return null;
         throw error;
       }
-      
+
       return this.mapDatabaseToRecoveryExecution(data);
     } catch (error) {
       throw new Error(`Erro ao obter status da execução: ${error}`);
@@ -296,35 +290,35 @@ export class RecoveryManager {
     try {
       const execution = this.activeExecutions.get(executionId);
       if (!execution) {
-        throw new Error('Execução não encontrada ou não está em andamento');
+        throw new Error("Execução não encontrada ou não está em andamento");
       }
-      
-      if (execution.status === 'completed' || execution.status === 'failed') {
-        throw new Error('Execução já foi finalizada');
+
+      if (execution.status === "completed" || execution.status === "failed") {
+        throw new Error("Execução já foi finalizada");
       }
-      
+
       // Atualizar status
-      execution.status = 'cancelled';
+      execution.status = "cancelled";
       execution.completed_at = new Date();
       execution.actual_duration_minutes = Math.floor(
-        (execution.completed_at.getTime() - execution.started_at.getTime()) / 60000
+        (execution.completed_at.getTime() - execution.started_at.getTime()) / 60000,
       );
-      
+
       // Remover da lista ativa
       this.activeExecutions.delete(executionId);
-      
+
       // Atualizar no banco
       await this.updateRecoveryExecution(execution);
-      
+
       await this.auditLogger.log({
-        action: 'recovery_execution_cancelled',
-        resource_type: 'recovery_execution',
+        action: "recovery_execution_cancelled",
+        resource_type: "recovery_execution",
         resource_id: executionId,
         user_id: userId,
         details: {
           steps_completed: execution.steps_completed,
-          progress: execution.progress_percentage
-        }
+          progress: execution.progress_percentage,
+        },
       });
     } catch (error) {
       throw new Error(`Erro ao cancelar execução: ${error}`);
@@ -334,41 +328,38 @@ export class RecoveryManager {
   /**
    * Executa rollback de uma recuperação
    */
-  async executeRollback(
-    executionId: string,
-    userId: string
-  ): Promise<void> {
+  async executeRollback(executionId: string, userId: string): Promise<void> {
     try {
       const execution = await this.getRecoveryExecutionStatus(executionId);
       if (!execution) {
-        throw new Error('Execução não encontrada');
+        throw new Error("Execução não encontrada");
       }
-      
+
       const plan = await this.getRecoveryPlan(execution.plan_id);
       if (!plan) {
-        throw new Error('Plano de recuperação não encontrado');
+        throw new Error("Plano de recuperação não encontrado");
       }
-      
+
       if (execution.rollback_executed) {
-        throw new Error('Rollback já foi executado');
+        throw new Error("Rollback já foi executado");
       }
-      
+
       // Executar steps de rollback
       await this.executeRollbackSteps(plan.rollback_plan, execution);
-      
+
       // Atualizar execução
       execution.rollback_executed = true;
-      execution.status = 'rolling_back';
+      execution.status = "rolling_back";
       await this.updateRecoveryExecution(execution);
-      
+
       await this.auditLogger.log({
-        action: 'recovery_rollback_executed',
-        resource_type: 'recovery_execution',
+        action: "recovery_rollback_executed",
+        resource_type: "recovery_execution",
         resource_id: executionId,
         user_id: userId,
         details: {
-          rollback_steps: plan.rollback_plan.length
-        }
+          rollback_steps: plan.rollback_plan.length,
+        },
       });
     } catch (error) {
       throw new Error(`Erro ao executar rollback: ${error}`);
@@ -387,7 +378,7 @@ export class RecoveryManager {
     pagination?: {
       page: number;
       limit: number;
-    }
+    },
   ): Promise<{
     plans: RecoveryPlan[];
     total: number;
@@ -396,34 +387,34 @@ export class RecoveryManager {
   }> {
     try {
       let query = this.supabase
-        .from('recovery_plans')
-        .select('*', { count: 'exact' })
-        .order('created_at', { ascending: false });
-      
+        .from("recovery_plans")
+        .select("*", { count: "exact" })
+        .order("created_at", { ascending: false });
+
       if (filters?.recovery_type) {
-        query = query.in('recovery_type', filters.recovery_type);
+        query = query.in("recovery_type", filters.recovery_type);
       }
-      
+
       if (filters?.data_sources) {
-        query = query.overlaps('data_sources', filters.data_sources);
+        query = query.overlaps("data_sources", filters.data_sources);
       }
-      
+
       if (pagination) {
         const offset = (pagination.page - 1) * pagination.limit;
         query = query.range(offset, offset + pagination.limit - 1);
       }
-      
+
       const { data, error, count } = await query;
-      
+
       if (error) throw error;
-      
+
       const plans = data.map(this.mapDatabaseToRecoveryPlan);
-      
+
       return {
         plans,
         total: count || 0,
         page: pagination?.page || 1,
-        limit: pagination?.limit || plans.length
+        limit: pagination?.limit || plans.length,
       };
     } catch (error) {
       throw new Error(`Erro ao listar planos: ${error}`);
@@ -444,7 +435,7 @@ export class RecoveryManager {
     pagination?: {
       page: number;
       limit: number;
-    }
+    },
   ): Promise<{
     executions: RecoveryExecution[];
     total: number;
@@ -453,46 +444,46 @@ export class RecoveryManager {
   }> {
     try {
       let query = this.supabase
-        .from('recovery_executions')
-        .select('*', { count: 'exact' })
-        .order('started_at', { ascending: false });
-      
+        .from("recovery_executions")
+        .select("*", { count: "exact" })
+        .order("started_at", { ascending: false });
+
       if (filters?.plan_id) {
-        query = query.eq('plan_id', filters.plan_id);
+        query = query.eq("plan_id", filters.plan_id);
       }
-      
+
       if (filters?.status) {
-        query = query.in('status', filters.status);
+        query = query.in("status", filters.status);
       }
-      
+
       if (filters?.executed_by) {
-        query = query.eq('executed_by', filters.executed_by);
+        query = query.eq("executed_by", filters.executed_by);
       }
-      
+
       if (filters?.date_from) {
-        query = query.gte('started_at', filters.date_from.toISOString());
+        query = query.gte("started_at", filters.date_from.toISOString());
       }
-      
+
       if (filters?.date_to) {
-        query = query.lte('started_at', filters.date_to.toISOString());
+        query = query.lte("started_at", filters.date_to.toISOString());
       }
-      
+
       if (pagination) {
         const offset = (pagination.page - 1) * pagination.limit;
         query = query.range(offset, offset + pagination.limit - 1);
       }
-      
+
       const { data, error, count } = await query;
-      
+
       if (error) throw error;
-      
+
       const executions = data.map(this.mapDatabaseToRecoveryExecution);
-      
+
       return {
         executions,
         total: count || 0,
         page: pagination?.page || 1,
-        limit: pagination?.limit || executions.length
+        limit: pagination?.limit || executions.length,
       };
     } catch (error) {
       throw new Error(`Erro ao listar execuções: ${error}`);
@@ -502,62 +493,65 @@ export class RecoveryManager {
   /**
    * Obtém métricas de recuperação
    */
-  async getRecoveryMetrics(period: 'day' | 'week' | 'month' = 'month'): Promise<RecoveryMetrics> {
+  async getRecoveryMetrics(period: "day" | "week" | "month" = "month"): Promise<RecoveryMetrics> {
     try {
       const startDate = new Date();
       switch (period) {
-        case 'day':
+        case "day":
           startDate.setDate(startDate.getDate() - 1);
           break;
-        case 'week':
+        case "week":
           startDate.setDate(startDate.getDate() - 7);
           break;
-        case 'month':
+        case "month":
           startDate.setMonth(startDate.getMonth() - 1);
           break;
       }
-      
+
       const { data: executions, error } = await this.supabase
-        .from('recovery_executions')
-        .select('*')
-        .gte('started_at', startDate.toISOString());
-      
+        .from("recovery_executions")
+        .select("*")
+        .gte("started_at", startDate.toISOString());
+
       if (error) throw error;
-      
+
       const totalRecoveries = executions.length;
-      const successfulRecoveries = executions.filter(e => e.status === 'completed').length;
-      const failedRecoveries = executions.filter(e => e.status === 'failed').length;
+      const successfulRecoveries = executions.filter((e) => e.status === "completed").length;
+      const failedRecoveries = executions.filter((e) => e.status === "failed").length;
       const successRate = totalRecoveries > 0 ? (successfulRecoveries / totalRecoveries) * 100 : 0;
-      
+
       // Calcular duração média
-      const completedExecutions = executions.filter(e => e.actual_duration_minutes);
-      const averageDuration = completedExecutions.length > 0 ?
-        completedExecutions.reduce((sum, e) => sum + e.actual_duration_minutes, 0) / completedExecutions.length : 0;
-      
+      const completedExecutions = executions.filter((e) => e.actual_duration_minutes);
+      const averageDuration =
+        completedExecutions.length > 0
+          ? completedExecutions.reduce((sum, e) => sum + e.actual_duration_minutes, 0) /
+            completedExecutions.length
+          : 0;
+
       // Erros mais comuns
       const errorCounts = new Map<string, number>();
-      executions.forEach(e => {
-        e.errors?.forEach(error => {
+      executions.forEach((e) => {
+        e.errors?.forEach((error) => {
           const count = errorCounts.get(error.error_type) || 0;
           errorCounts.set(error.error_type, count + 1);
         });
       });
-      
+
       const mostCommonErrors = Array.from(errorCounts.entries())
         .map(([type, count]) => ({
           error_type: type,
           count,
-          percentage: (count / totalRecoveries) * 100
+          percentage: (count / totalRecoveries) * 100,
         }))
         .sort((a, b) => b.count - a.count)
         .slice(0, 5);
-      
+
       // Tendências
       const recoveryTrends = await this.getRecoveryTrends(period);
-      
+
       // Performance por data source
       const dataSourcePerformance = await this.getDataSourcePerformance(period);
-      
+
       return {
         total_recoveries: totalRecoveries,
         successful_recoveries: successfulRecoveries,
@@ -566,7 +560,7 @@ export class RecoveryManager {
         average_duration_minutes: averageDuration,
         most_common_errors: mostCommonErrors,
         recovery_trends: recoveryTrends,
-        data_source_performance: dataSourcePerformance
+        data_source_performance: dataSourcePerformance,
       };
     } catch (error) {
       throw new Error(`Erro ao obter métricas: ${error}`);
@@ -578,7 +572,7 @@ export class RecoveryManager {
    */
   async testRecoveryPlan(
     planId: string,
-    userId: string
+    userId: string,
   ): Promise<{
     success: boolean;
     issues: string[];
@@ -588,13 +582,13 @@ export class RecoveryManager {
     try {
       const plan = await this.getRecoveryPlan(planId);
       if (!plan) {
-        throw new Error('Plano não encontrado');
+        throw new Error("Plano não encontrado");
       }
-      
+
       const issues: string[] = [];
       const warnings: string[] = [];
       let estimatedDuration = 0;
-      
+
       // Validar cada step
       for (const step of plan.recovery_steps) {
         const stepValidation = await this.validateRecoveryStep(step);
@@ -604,36 +598,36 @@ export class RecoveryManager {
         warnings.push(...stepValidation.warnings);
         estimatedDuration += step.timeout_minutes;
       }
-      
+
       // Verificar dependências
       const dependencyValidation = await this.validateStepDependencies(plan.recovery_steps);
       if (!dependencyValidation.valid) {
         issues.push(...dependencyValidation.errors);
       }
-      
+
       // Verificar disponibilidade de backups
       const backupValidation = await this.validateBackupAvailability(plan);
       if (!backupValidation.valid) {
         issues.push(...backupValidation.errors);
       }
-      
+
       await this.auditLogger.log({
-        action: 'recovery_plan_tested',
-        resource_type: 'recovery_plan',
+        action: "recovery_plan_tested",
+        resource_type: "recovery_plan",
         resource_id: planId,
         user_id: userId,
         details: {
           success: issues.length === 0,
           issues_count: issues.length,
-          warnings_count: warnings.length
-        }
+          warnings_count: warnings.length,
+        },
       });
-      
+
       return {
         success: issues.length === 0,
         issues,
         warnings,
-        estimated_duration_minutes: estimatedDuration
+        estimated_duration_minutes: estimatedDuration,
       };
     } catch (error) {
       throw new Error(`Erro ao testar plano: ${error}`);
@@ -641,76 +635,74 @@ export class RecoveryManager {
   }
 
   // Métodos privados
-  private async executeRecoverySteps(
-    executionId: string,
-    plan: RecoveryPlan
-  ): Promise<void> {
+  private async executeRecoverySteps(executionId: string, plan: RecoveryPlan): Promise<void> {
     const execution = this.activeExecutions.get(executionId);
     if (!execution) return;
-    
+
     try {
-      execution.status = 'running';
+      execution.status = "running";
       await this.updateRecoveryExecution(execution);
-      
+
       // Ordenar steps por ordem e dependências
       const orderedSteps = this.orderStepsByDependencies(plan.recovery_steps);
-      
+
       for (let i = 0; i < orderedSteps.length; i++) {
         const step = orderedSteps[i];
         execution.current_step = step.id;
-        
+
         try {
           await this.executeRecoveryStep(step, execution, plan);
           execution.steps_completed++;
-          execution.progress_percentage = Math.floor((execution.steps_completed / execution.steps_total) * 100);
-          
+          execution.progress_percentage = Math.floor(
+            (execution.steps_completed / execution.steps_total) * 100,
+          );
+
           await this.updateRecoveryExecution(execution);
         } catch (error) {
           const recoveryError: RecoveryError = {
             step_id: step.id,
-            error_type: 'system_error',
+            error_type: "system_error",
             message: error.toString(),
             timestamp: new Date(),
             recoverable: false,
-            suggested_action: 'Verificar logs e tentar novamente'
+            suggested_action: "Verificar logs e tentar novamente",
           };
-          
+
           execution.errors.push(recoveryError);
-          
+
           if (step.rollback_on_failure) {
             await this.executeRollbackSteps(plan.rollback_plan, execution);
             execution.rollback_executed = true;
           }
-          
+
           throw error;
         }
       }
-      
+
       // Executar validações finais
       if (!execution.metadata.skip_validation) {
         await this.executeValidationChecks(plan.validation_checks, execution);
       }
-      
-      execution.status = 'completed';
+
+      execution.status = "completed";
       execution.completed_at = new Date();
       execution.progress_percentage = 100;
       execution.actual_duration_minutes = Math.floor(
-        (execution.completed_at.getTime() - execution.started_at.getTime()) / 60000
+        (execution.completed_at.getTime() - execution.started_at.getTime()) / 60000,
       );
-      
+
       await this.updateRecoveryExecution(execution);
       this.activeExecutions.delete(executionId);
-      
     } catch (error) {
-      execution.status = 'failed';
+      execution.status = "failed";
       execution.completed_at = new Date();
       execution.actual_duration_minutes = Math.floor(
-        (execution.completed_at.getTime() - execution.started_at.getTime()) / 60000
+        (execution.completed_at.getTime() - execution.started_at.getTime()) / 60000,
       );
-      
+
       await this.updateRecoveryExecution(execution);
       this.activeExecutions.delete(executionId);
-      
+
       throw error;
     }
   }
@@ -718,33 +710,33 @@ export class RecoveryManager {
   private async executeRecoveryStep(
     step: RecoveryStep,
     execution: RecoveryExecution,
-    plan: RecoveryPlan
+    plan: RecoveryPlan,
   ): Promise<void> {
     const strategy = this.strategyManager.getStrategy(step.data_source);
     if (!strategy) {
       throw new Error(`Estratégia não encontrada: ${step.data_source}`);
     }
-    
+
     switch (step.type) {
-      case 'prepare':
+      case "prepare":
         await this.prepareRecoveryStep(step, execution);
         break;
-        
-      case 'restore':
+
+      case "restore":
         await strategy.restore(step.backup_location, step.target_location);
         break;
-        
-      case 'validate':
+
+      case "validate":
         const isValid = await strategy.validate(step.backup_location);
         if (!isValid) {
           throw new Error(`Validação falhou para ${step.name}`);
         }
         break;
-        
-      case 'cleanup':
+
+      case "cleanup":
         await this.cleanupRecoveryStep(step, execution);
         break;
-        
+
       default:
         throw new Error(`Tipo de step não suportado: ${step.type}`);
     }
@@ -752,7 +744,7 @@ export class RecoveryManager {
 
   private async executeRollbackSteps(
     rollbackSteps: RollbackStep[],
-    execution: RecoveryExecution
+    execution: RecoveryExecution,
   ): Promise<void> {
     for (const step of rollbackSteps.sort((a, b) => a.order - b.order)) {
       try {
@@ -766,22 +758,22 @@ export class RecoveryManager {
 
   private async executeRollbackStep(step: RollbackStep): Promise<void> {
     switch (step.action) {
-      case 'restore_backup':
+      case "restore_backup":
         // Implementar restauração de backup anterior
         console.log(`Restaurando backup para: ${step.target}`);
         break;
-        
-      case 'delete_files':
+
+      case "delete_files":
         // Implementar deleção de arquivos
         console.log(`Deletando arquivos em: ${step.target}`);
         break;
-        
-      case 'revert_database':
+
+      case "revert_database":
         // Implementar reversão de banco
         console.log(`Revertendo banco: ${step.target}`);
         break;
-        
-      case 'custom_script':
+
+      case "custom_script":
         // Executar script customizado
         if (step.script) {
           console.log(`Executando script: ${step.script}`);
@@ -792,28 +784,28 @@ export class RecoveryManager {
 
   private async executeValidationChecks(
     checks: ValidationCheck[],
-    execution: RecoveryExecution
+    execution: RecoveryExecution,
   ): Promise<void> {
     for (const check of checks) {
       try {
         const result = await this.executeValidationCheck(check);
         execution.validation_results.push(result);
-        
-        if (result.status === 'failed' && check.critical) {
+
+        if (result.status === "failed" && check.critical) {
           throw new Error(`Validação crítica falhou: ${check.name}`);
         }
       } catch (error) {
         const result: ValidationResult = {
           check_id: check.id,
-          status: 'failed',
+          status: "failed",
           actual_result: null,
           expected_result: check.expected_result,
           message: error.toString(),
-          timestamp: new Date()
+          timestamp: new Date(),
         };
-        
+
         execution.validation_results.push(result);
-        
+
         if (check.critical) {
           throw error;
         }
@@ -824,52 +816,52 @@ export class RecoveryManager {
   private async executeValidationCheck(check: ValidationCheck): Promise<ValidationResult> {
     // Implementar diferentes tipos de validação
     let actualResult: any;
-    let status: 'passed' | 'failed' | 'warning' = 'passed';
-    let message = 'Validação passou';
-    
+    let status: "passed" | "failed" | "warning" = "passed";
+    let message = "Validação passou";
+
     switch (check.type) {
-      case 'checksum':
+      case "checksum":
         actualResult = await this.validateChecksum(check.target);
         break;
-        
-      case 'integrity':
+
+      case "integrity":
         actualResult = await this.validateIntegrity(check.target);
         break;
-        
-      case 'connectivity':
+
+      case "connectivity":
         actualResult = await this.validateConnectivity(check.target);
         break;
-        
-      case 'performance':
+
+      case "performance":
         actualResult = await this.validatePerformance(check.target);
         break;
-        
-      case 'custom':
+
+      case "custom":
         if (check.script) {
           actualResult = await this.executeCustomValidation(check.script);
         }
         break;
     }
-    
+
     // Comparar resultado com esperado
     if (actualResult !== check.expected_result) {
       const difference = Math.abs(actualResult - check.expected_result);
       if (difference > check.tolerance) {
-        status = 'failed';
+        status = "failed";
         message = `Resultado ${actualResult} difere do esperado ${check.expected_result}`;
       } else {
-        status = 'warning';
+        status = "warning";
         message = `Resultado ${actualResult} dentro da tolerância`;
       }
     }
-    
+
     return {
       check_id: check.id,
       status,
       actual_result: actualResult,
       expected_result: check.expected_result,
       message,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
@@ -882,21 +874,23 @@ export class RecoveryManager {
     return `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  private async validateRecoveryPlan(plan: RecoveryPlan): Promise<{ valid: boolean; errors: string[] }> {
+  private async validateRecoveryPlan(
+    plan: RecoveryPlan,
+  ): Promise<{ valid: boolean; errors: string[] }> {
     const errors: string[] = [];
-    
-    if (!plan.name) errors.push('Nome é obrigatório');
-    if (!plan.recovery_type) errors.push('Tipo de recuperação é obrigatório');
+
+    if (!plan.name) errors.push("Nome é obrigatório");
+    if (!plan.recovery_type) errors.push("Tipo de recuperação é obrigatório");
     if (!plan.data_sources || plan.data_sources.length === 0) {
-      errors.push('Pelo menos uma fonte de dados deve ser especificada');
+      errors.push("Pelo menos uma fonte de dados deve ser especificada");
     }
     if (!plan.recovery_steps || plan.recovery_steps.length === 0) {
-      errors.push('Pelo menos um step de recuperação deve ser especificado');
+      errors.push("Pelo menos um step de recuperação deve ser especificado");
     }
-    
+
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -912,31 +906,41 @@ export class RecoveryManager {
     return steps.sort((a, b) => a.order - b.order);
   }
 
-  private async prepareRecoveryStep(step: RecoveryStep, execution: RecoveryExecution): Promise<void> {
+  private async prepareRecoveryStep(
+    step: RecoveryStep,
+    execution: RecoveryExecution,
+  ): Promise<void> {
     // Implementar preparação do step
     console.log(`Preparando step: ${step.name}`);
   }
 
-  private async cleanupRecoveryStep(step: RecoveryStep, execution: RecoveryExecution): Promise<void> {
+  private async cleanupRecoveryStep(
+    step: RecoveryStep,
+    execution: RecoveryExecution,
+  ): Promise<void> {
     // Implementar limpeza do step
     console.log(`Limpando step: ${step.name}`);
   }
 
-  private async validateRecoveryStep(step: RecoveryStep): Promise<{ valid: boolean; errors: string[]; warnings: string[] }> {
+  private async validateRecoveryStep(
+    step: RecoveryStep,
+  ): Promise<{ valid: boolean; errors: string[]; warnings: string[] }> {
     const errors: string[] = [];
     const warnings: string[] = [];
-    
-    if (!step.name) errors.push('Nome do step é obrigatório');
-    if (!step.data_source) errors.push('Data source é obrigatório');
-    if (!step.backup_location) errors.push('Localização do backup é obrigatória');
-    
+
+    if (!step.name) errors.push("Nome do step é obrigatório");
+    if (!step.data_source) errors.push("Data source é obrigatório");
+    if (!step.backup_location) errors.push("Localização do backup é obrigatória");
+
     return { valid: errors.length === 0, errors, warnings };
   }
 
-  private async validateStepDependencies(steps: RecoveryStep[]): Promise<{ valid: boolean; errors: string[] }> {
+  private async validateStepDependencies(
+    steps: RecoveryStep[],
+  ): Promise<{ valid: boolean; errors: string[] }> {
     const errors: string[] = [];
-    const stepIds = new Set(steps.map(s => s.id));
-    
+    const stepIds = new Set(steps.map((s) => s.id));
+
     for (const step of steps) {
       for (const dependency of step.dependencies) {
         if (!stepIds.has(dependency)) {
@@ -944,15 +948,17 @@ export class RecoveryManager {
         }
       }
     }
-    
+
     return { valid: errors.length === 0, errors };
   }
 
-  private async validateBackupAvailability(plan: RecoveryPlan): Promise<{ valid: boolean; errors: string[] }> {
+  private async validateBackupAvailability(
+    plan: RecoveryPlan,
+  ): Promise<{ valid: boolean; errors: string[] }> {
     const errors: string[] = [];
-    
+
     for (const step of plan.recovery_steps) {
-      if (step.type === 'restore') {
+      if (step.type === "restore") {
         // Verificar se backup existe
         const exists = await this.checkBackupExists(step.backup_location);
         if (!exists) {
@@ -960,7 +966,7 @@ export class RecoveryManager {
         }
       }
     }
-    
+
     return { valid: errors.length === 0, errors };
   }
 
@@ -969,31 +975,35 @@ export class RecoveryManager {
     return true; // Simulado
   }
 
-  private async getRecoveryTrends(period: string): Promise<Array<{ date: string; count: number; success_rate: number }>> {
+  private async getRecoveryTrends(
+    period: string,
+  ): Promise<Array<{ date: string; count: number; success_rate: number }>> {
     // Implementar cálculo de tendências
     const trends = [];
-    const days = period === 'month' ? 30 : period === 'week' ? 7 : 1;
-    
+    const days = period === "month" ? 30 : period === "week" ? 7 : 1;
+
     for (let i = days - 1; i >= 0; i--) {
       const date = new Date();
       date.setDate(date.getDate() - i);
-      
+
       trends.push({
-        date: date.toISOString().split('T')[0],
+        date: date.toISOString().split("T")[0],
         count: Math.floor(Math.random() * 10),
-        success_rate: 80 + Math.random() * 20
+        success_rate: 80 + Math.random() * 20,
       });
     }
-    
+
     return trends;
   }
 
-  private async getDataSourcePerformance(period: string): Promise<Array<{ data_source: string; avg_duration_minutes: number; success_rate: number }>> {
+  private async getDataSourcePerformance(
+    period: string,
+  ): Promise<Array<{ data_source: string; avg_duration_minutes: number; success_rate: number }>> {
     // Implementar cálculo de performance por data source
     return [
-      { data_source: 'database', avg_duration_minutes: 45, success_rate: 95 },
-      { data_source: 'filesystem', avg_duration_minutes: 30, success_rate: 90 },
-      { data_source: 'configurations', avg_duration_minutes: 10, success_rate: 98 }
+      { data_source: "database", avg_duration_minutes: 45, success_rate: 95 },
+      { data_source: "filesystem", avg_duration_minutes: 30, success_rate: 90 },
+      { data_source: "configurations", avg_duration_minutes: 10, success_rate: 98 },
     ];
   }
 
@@ -1020,70 +1030,66 @@ export class RecoveryManager {
 
   // Métodos de persistência
   private async saveRecoveryPlan(plan: RecoveryPlan): Promise<void> {
-    const { error } = await this.supabase
-      .from('recovery_plans')
-      .insert({
-        id: plan.id,
-        name: plan.name,
-        description: plan.description,
-        recovery_type: plan.recovery_type,
-        target_timestamp: plan.target_timestamp.toISOString(),
-        data_sources: plan.data_sources,
-        recovery_steps: plan.recovery_steps,
-        estimated_duration_minutes: plan.estimated_duration_minutes,
-        prerequisites: plan.prerequisites,
-        rollback_plan: plan.rollback_plan,
-        validation_checks: plan.validation_checks,
-        metadata: plan.metadata
-      });
-    
+    const { error } = await this.supabase.from("recovery_plans").insert({
+      id: plan.id,
+      name: plan.name,
+      description: plan.description,
+      recovery_type: plan.recovery_type,
+      target_timestamp: plan.target_timestamp.toISOString(),
+      data_sources: plan.data_sources,
+      recovery_steps: plan.recovery_steps,
+      estimated_duration_minutes: plan.estimated_duration_minutes,
+      prerequisites: plan.prerequisites,
+      rollback_plan: plan.rollback_plan,
+      validation_checks: plan.validation_checks,
+      metadata: plan.metadata,
+    });
+
     if (error) throw error;
   }
 
   private async getRecoveryPlan(planId: string): Promise<RecoveryPlan | null> {
     const { data, error } = await this.supabase
-      .from('recovery_plans')
-      .select('*')
-      .eq('id', planId)
+      .from("recovery_plans")
+      .select("*")
+      .eq("id", planId)
       .single();
-    
+
     if (error) {
-      if (error.code === 'PGRST116') return null;
+      if (error.code === "PGRST116") return null;
       throw error;
     }
-    
+
     return this.mapDatabaseToRecoveryPlan(data);
   }
 
   private async saveRecoveryExecution(execution: RecoveryExecution): Promise<void> {
-    const { error } = await this.supabase
-      .from('recovery_executions')
-      .insert({
-        id: execution.id,
-        plan_id: execution.plan_id,
-        status: execution.status,
-        started_at: execution.started_at.toISOString(),
-        completed_at: execution.completed_at?.toISOString(),
-        current_step: execution.current_step,
-        progress_percentage: execution.progress_percentage,
-        steps_completed: execution.steps_completed,
-        steps_total: execution.steps_total,
-        errors: execution.errors,
-        warnings: execution.warnings,
-        rollback_executed: execution.rollback_executed,
-        validation_results: execution.validation_results,
-        estimated_completion: execution.estimated_completion.toISOString(),
-        actual_duration_minutes: execution.actual_duration_minutes,
-        executed_by: execution.executed_by,
-        metadata: execution.metadata
-      });
-    
+    const { error } = await this.supabase.from("recovery_executions").insert({
+      id: execution.id,
+      plan_id: execution.plan_id,
+      status: execution.status,
+      started_at: execution.started_at.toISOString(),
+      completed_at: execution.completed_at?.toISOString(),
+      current_step: execution.current_step,
+      progress_percentage: execution.progress_percentage,
+      steps_completed: execution.steps_completed,
+      steps_total: execution.steps_total,
+      errors: execution.errors,
+      warnings: execution.warnings,
+      rollback_executed: execution.rollback_executed,
+      validation_results: execution.validation_results,
+      estimated_completion: execution.estimated_completion.toISOString(),
+      actual_duration_minutes: execution.actual_duration_minutes,
+      executed_by: execution.executed_by,
+      metadata: execution.metadata,
+    });
+
     if (error) throw error;
   }
 
   private async updateRecoveryExecution(execution: RecoveryExecution): Promise<void> {
     const { error } = await this.supabase
-      .from('recovery_executions')
+      .from("recovery_executions")
       .update({
         status: execution.status,
         completed_at: execution.completed_at?.toISOString(),
@@ -1095,10 +1101,10 @@ export class RecoveryManager {
         rollback_executed: execution.rollback_executed,
         validation_results: execution.validation_results,
         actual_duration_minutes: execution.actual_duration_minutes,
-        metadata: execution.metadata
+        metadata: execution.metadata,
       })
-      .eq('id', execution.id);
-    
+      .eq("id", execution.id);
+
     if (error) throw error;
   }
 
@@ -1115,7 +1121,7 @@ export class RecoveryManager {
       prerequisites: data.prerequisites || [],
       rollback_plan: data.rollback_plan || [],
       validation_checks: data.validation_checks || [],
-      metadata: data.metadata || {}
+      metadata: data.metadata || {},
     };
   }
 
@@ -1137,10 +1143,9 @@ export class RecoveryManager {
       estimated_completion: new Date(data.estimated_completion),
       actual_duration_minutes: data.actual_duration_minutes,
       executed_by: data.executed_by,
-      metadata: data.metadata || {}
+      metadata: data.metadata || {},
     };
   }
 }
 
 export default RecoveryManager;
-

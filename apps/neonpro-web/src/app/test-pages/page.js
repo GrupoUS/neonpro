@@ -5,11 +5,10 @@ var link_1 = require("next/link");
 var button_1 = require("@/components/ui/button");
 var card_1 = require("@/components/ui/card");
 function TestPagesPage() {
-    return (<div className="container mx-auto p-6 space-y-6">
+  return (
+    <div className="container mx-auto p-6 space-y-6">
       <div className="text-center space-y-4">
-        <h1 className="text-4xl font-bold text-gray-900">
-          NEONPROV1 - Páginas Implementadas
-        </h1>
+        <h1 className="text-4xl font-bold text-gray-900">NEONPROV1 - Páginas Implementadas</h1>
         <p className="text-lg text-muted-foreground">
           Teste das páginas criadas com design system NEONPROV1
         </p>
@@ -51,9 +50,7 @@ function TestPagesPage() {
         <card_1.Card className="hover:shadow-lg transition-shadow border-l-4 border-l-purple-500">
           <card_1.CardHeader>
             <card_1.CardTitle className="text-purple-700">Pacientes</card_1.CardTitle>
-            <card_1.CardDescription>
-              Gerenciamento completo de pacientes
-            </card_1.CardDescription>
+            <card_1.CardDescription>Gerenciamento completo de pacientes</card_1.CardDescription>
           </card_1.CardHeader>
           <card_1.CardContent>
             <link_1.default href="/pacientes">
@@ -67,9 +64,7 @@ function TestPagesPage() {
         <card_1.Card className="hover:shadow-lg transition-shadow border-l-4 border-l-green-500">
           <card_1.CardHeader>
             <card_1.CardTitle className="text-green-700">Financeiro</card_1.CardTitle>
-            <card_1.CardDescription>
-              Relatórios e análises financeiras
-            </card_1.CardDescription>
+            <card_1.CardDescription>Relatórios e análises financeiras</card_1.CardDescription>
           </card_1.CardHeader>
           <card_1.CardContent>
             <link_1.default href="/financeiro">
@@ -82,9 +77,7 @@ function TestPagesPage() {
       </div>
 
       <div className="bg-neon-50 border border-neon-200 rounded-lg p-6">
-        <h2 className="text-2xl font-semibold text-neon-800 mb-4">
-          ✅ Implementação Concluída
-        </h2>
+        <h2 className="text-2xl font-semibold text-neon-800 mb-4">✅ Implementação Concluída</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <h3 className="font-semibold text-neon-700 mb-2">Páginas Implementadas:</h3>
@@ -114,5 +107,6 @@ function TestPagesPage() {
           Implementado com padrões de qualidade ≥9.5/10 enterprise standards
         </p>
       </div>
-    </div>);
+    </div>
+  );
 }

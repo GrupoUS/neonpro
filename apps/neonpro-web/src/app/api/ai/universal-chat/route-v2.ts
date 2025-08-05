@@ -1,10 +1,10 @@
-// Endpoint for Universal AI Chat (Epic 4 - Story 4.1)
+﻿// Endpoint for Universal AI Chat (Epic 4 - Story 4.1)
 // app/api/ai/universal-chat/route.ts
 
-import { createNeonProAIChatEngine } from "@/app/lib/ai/chat-engine-v2";
-import { AIRequest, UniversalChatContext } from "@/app/lib/ai/types";
+import type { createNeonProAIChatEngine } from "@/app/lib/ai/chat-engine-v2";
+import type { AIRequest, UniversalChatContext } from "@/app/lib/ai/types";
 import { createClient } from "@/lib/supabase/server";
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest, NextResponse } from "next/server";
 
 /**
  * POST /api/ai/universal-chat
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     if (!message || typeof message !== "string") {
       return NextResponse.json(
         { error: "Message is required and must be a string" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -35,17 +35,11 @@ export async function POST(request: NextRequest) {
     } = await supabase.auth.getSession();
 
     if (sessionError || !session) {
-      return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
 
     // Build universal context
-    const universalContext = await buildUniversalContext(
-      supabase,
-      session.user.id
-    );
+    const universalContext = await buildUniversalContext(supabase, session.user.id);
 
     // Create AI request
     const aiRequest: AIRequest = {
@@ -81,7 +75,7 @@ export async function POST(request: NextRequest) {
         error: "Internal server error",
         message: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -89,10 +83,7 @@ export async function POST(request: NextRequest) {
 /**
  * Build universal context from all Epic data sources
  */
-async function buildUniversalContext(
-  supabase: any,
-  userId: string
-): Promise<UniversalChatContext> {
+async function buildUniversalContext(supabase: any, userId: string): Promise<UniversalChatContext> {
   try {
     // Get user profile and clinic info
     const { data: profile } = await supabase
@@ -109,13 +100,12 @@ async function buildUniversalContext(
     const clinicId = clinic.id;
 
     // Build context from all Epic data sources in parallel
-    const [appointmentsData, financialData, clinicalData, biData] =
-      await Promise.all([
-        buildAppointmentsContext(supabase, clinicId),
-        buildFinancialContext(supabase, clinicId),
-        buildClinicalContext(supabase, clinicId),
-        buildBusinessIntelligenceContext(supabase, clinicId),
-      ]);
+    const [appointmentsData, financialData, clinicalData, biData] = await Promise.all([
+      buildAppointmentsContext(supabase, clinicId),
+      buildFinancialContext(supabase, clinicId),
+      buildClinicalContext(supabase, clinicId),
+      buildBusinessIntelligenceContext(supabase, clinicId),
+    ]);
 
     return {
       user: {
@@ -354,10 +344,7 @@ async function buildFinancialContext(supabase: any, clinicId: string) {
     .from("financial_transactions")
     .select("*")
     .eq("clinic_id", clinicId)
-    .gte(
-      "created_at",
-      new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-    )
+    .gte("created_at", new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
     .limit(100);
 
   return {
@@ -482,10 +469,7 @@ async function buildClinicalContext(supabase: any, clinicId: string) {
   };
 }
 
-async function buildBusinessIntelligenceContext(
-  supabase: any,
-  clinicId: string
-) {
+async function buildBusinessIntelligenceContext(supabase: any, clinicId: string) {
   // Cross-epic analytics
   return {
     kpis: {

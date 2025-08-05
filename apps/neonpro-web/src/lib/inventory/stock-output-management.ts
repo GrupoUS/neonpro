@@ -4,55 +4,55 @@
  * Integrates with AI-driven forecasting and automated FIFO management
  */
 
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Database } from '@/types/database';
+import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import type { Database } from "@/types/database";
 
 // Types and Interfaces
 export interface StockOutput {
   id: string;
   numero_saida: string;
   tipo_saida: StockOutputType;
-  
+
   // Origin Information
   procedimento_id?: string;
   agendamento_id?: string;
   centro_custo_id: string;
   sala_id?: string;
   equipamento_id?: string;
-  
+
   // Responsible parties
   profissional_id: string;
   responsavel_registro: string;
-  
+
   // Date and time
   data_saida: Date;
   hora_saida: string;
-  
+
   // Items
   itens: StockOutputItem[];
-  
+
   // Totals
   quantidade_total: number;
   valor_total: number;
   custo_total: number;
-  
+
   // Reason and observations
   motivo_saida: string;
   observacoes?: string;
   evidencias?: string[];
-  
+
   // Approval workflow
   requer_aprovacao: boolean;
   aprovado: boolean;
   aprovado_por?: string;
   aprovado_em?: Date;
-  
+
   // Status and control
   status: StockOutputStatus;
   automatico: boolean;
   reversivel: boolean;
   revertido: boolean;
-  
+
   // Audit trail
   criado_em: Date;
   criado_por: string;
@@ -63,29 +63,29 @@ export interface StockOutputItem {
   id: string;
   saida_id: string;
   produto_id: string;
-  
+
   // Batch and traceability
   lote_id: string;
   numero_lote: string;
   data_validade: Date;
-  
+
   // Quantity and costs
   quantidade: number;
   custo_unitario: number;
   valor_total: number;
-  
+
   // Location tracking
   localizacao_origem: string;
   localizacao_destino?: string;
-  
+
   // FIFO control
   ordem_fifo: number;
   selecionado_automaticamente: boolean;
-  
+
   // Notes
   motivo_item?: string;
   observacoes_item?: string;
-  
+
   // Audit
   baixado_em: Date;
   baixado_por: string;
@@ -95,25 +95,25 @@ export interface ProcedureMaterial {
   id: string;
   procedimento_id: string;
   produto_id: string;
-  
+
   // Standard quantities
   quantidade_padrao: number;
   quantidade_minima: number;
   quantidade_maxima: number;
-  
+
   // Options
   obrigatorio: boolean;
   permite_ajuste: boolean;
   unidade_medida: string;
-  
+
   // Costs
   custo_padrao: number;
   margem_aplicada: number;
-  
+
   // Control
   ativo: boolean;
   observacoes?: string;
-  
+
   // Audit
   criado_em: Date;
   atualizado_em: Date;
@@ -125,28 +125,28 @@ export interface CostCenter {
   codigo: string;
   nome: string;
   descricao?: string;
-  
+
   // Hierarchy
   centro_pai_id?: string;
   nivel: number;
   caminho_completo: string;
-  
+
   // Settings
   controla_estoque: boolean;
   requer_aprovacao_saida: boolean;
   limite_valor_saida?: number;
-  
+
   // Goals and control
   meta_consumo_mensal?: number;
   meta_eficiencia?: number;
-  
+
   // Responsible parties
   responsavel_principal: string;
   responsaveis_secundarios: string[];
-  
+
   // Status
   ativo: boolean;
-  
+
   // Audit
   criado_em: Date;
   clinica_id: string;
@@ -156,41 +156,41 @@ export interface BatchStock {
   id: string;
   produto_id: string;
   numero_lote: string;
-  
+
   // Dates
   data_fabricacao: Date;
   data_validade: Date;
   dias_para_vencer: number;
-  
+
   // Quantities
   quantidade_inicial: number;
   quantidade_atual: number;
   quantidade_reservada: number;
   quantidade_disponivel: number;
-  
+
   // Location
   localizacao_principal: string;
   localizacoes_secundarias: string[];
-  
+
   // Batch status
   status: BatchStatus;
   bloqueado: boolean;
   motivo_bloqueio?: string;
-  
+
   // FIFO control
   prioridade_uso: number;
   proximo_a_vencer: boolean;
-  
+
   // Supplier
   entrada_id: string;
   fornecedor_id: string;
   nota_fiscal?: string;
-  
+
   // Quality
   inspecionado: boolean;
   aprovado_qualidade: boolean;
   observacoes_qualidade?: string;
-  
+
   // Audit
   criado_em: Date;
   clinica_id: string;
@@ -200,32 +200,32 @@ export interface ConsumptionAnalysis {
   periodo: AnalysisPeriod;
   centro_custo_id?: string;
   profissional_id?: string;
-  
+
   // General metrics
   total_saidas: number;
   valor_total_consumido: number;
   numero_produtos_diferentes: number;
   numero_procedimentos: number;
-  
+
   // Top products
   produtos_mais_consumidos: ProductConsumption[];
   produtos_maior_custo: ProductConsumption[];
   produtos_maior_desperdicio: ProductConsumption[];
-  
+
   // Efficiency
   eficiencia_uso: number;
   desperdicio_percentual: number;
   economia_fifo: number;
-  
+
   // Comparisons
   variacao_periodo_anterior: number;
   ranking_profissionais: ConsumptionRanking[];
   ranking_centros_custo: ConsumptionRanking[];
-  
+
   // Predictions
   previsao_demanda: DemandForecast[];
   recomendacoes_otimizacao: OptimizationRecommendation[];
-  
+
   // Alerts
   alertas_consumo_anormal: ConsumptionAlert[];
   produtos_desperdicio_alto: string[];
@@ -234,37 +234,37 @@ export interface ConsumptionAnalysis {
 export interface InternalTransfer {
   id: string;
   numero_transferencia: string;
-  
+
   // Origin and destination
   centro_custo_origem: string;
   centro_custo_destino: string;
   localizacao_origem: string;
   localizacao_destino: string;
-  
+
   // Request
   solicitado_por: string;
   motivo_transferencia: string;
   urgente: boolean;
-  
+
   // Items
   itens: TransferItem[];
   quantidade_total: number;
   valor_total: number;
-  
+
   // Workflow
   status: TransferStatus;
   aprovado: boolean;
   aprovado_por?: string;
   aprovado_em?: Date;
-  
+
   // Execution
   executado: boolean;
   executado_por?: string;
   executado_em?: Date;
-  
+
   // Notes
   observacoes?: string;
-  
+
   // Audit
   criado_em: Date;
   criado_por: string;
@@ -340,17 +340,24 @@ export interface AnalysisPeriod {
 }
 
 // Enum Types
-export type StockOutputType = 'procedimento' | 'uso_direto' | 'perda' | 'vencimento' | 'transferencia' | 'ajuste' | 'devolucao';
-export type StockOutputStatus = 'registrada' | 'aprovada' | 'executada' | 'revertida' | 'cancelada';
-export type BatchStatus = 'disponivel' | 'reservado' | 'bloqueado' | 'vencido' | 'esgotado';
-export type TransferStatus = 'solicitada' | 'aprovada' | 'em_transito' | 'concluida' | 'cancelada';
+export type StockOutputType =
+  | "procedimento"
+  | "uso_direto"
+  | "perda"
+  | "vencimento"
+  | "transferencia"
+  | "ajuste"
+  | "devolucao";
+export type StockOutputStatus = "registrada" | "aprovada" | "executada" | "revertida" | "cancelada";
+export type BatchStatus = "disponivel" | "reservado" | "bloqueado" | "vencido" | "esgotado";
+export type TransferStatus = "solicitada" | "aprovada" | "em_transito" | "concluida" | "cancelada";
 
 /**
  * Stock Output Management Class
  * Core logic for managing all stock outputs with FIFO and consumption tracking
  */
 export class StockOutputManager {
-  private const supabase = createClient(ComponentClient<Database>();
+  private supabase = createClient<Database>();
 
   /**
    * Create stock output with automatic FIFO batch selection
@@ -377,7 +384,7 @@ export class StockOutputManager {
       if (!stockValidation.available) {
         return {
           data: null,
-          error: `Estoque insuficiente: ${stockValidation.unavailableItems.join(', ')}`
+          error: `Estoque insuficiente: ${stockValidation.unavailableItems.join(", ")}`,
         };
       }
 
@@ -391,7 +398,7 @@ export class StockOutputManager {
       const requiresApproval = await this.checkApprovalRequirement(
         data.centro_custo_id,
         totals.valor_total,
-        data.tipo_saida
+        data.tipo_saida,
       );
 
       // 5. Generate output number
@@ -399,7 +406,7 @@ export class StockOutputManager {
 
       // 6. Create output record
       const { data: output, error: outputError } = await this.supabase
-        .from('saidas_estoque')
+        .from("saidas_estoque")
         .insert({
           numero_saida: outputNumber,
           tipo_saida: data.tipo_saida,
@@ -415,7 +422,7 @@ export class StockOutputManager {
           automatico: data.automatico || false,
           requer_aprovacao: requiresApproval,
           aprovado: !requiresApproval,
-          status: requiresApproval ? 'registrada' : 'aprovada'
+          status: requiresApproval ? "registrada" : "aprovada",
         })
         .select()
         .single();
@@ -423,7 +430,7 @@ export class StockOutputManager {
       if (outputError) throw outputError;
 
       // 7. Create output items
-      const itemsData = itemsWithFIFO.map(item => ({
+      const itemsData = itemsWithFIFO.map((item) => ({
         saida_id: output.id,
         produto_id: item.produto_id,
         lote_id: item.lote_id,
@@ -432,11 +439,11 @@ export class StockOutputManager {
         localizacao_origem: item.localizacao_origem,
         ordem_fifo: item.ordem_fifo,
         selecionado_automaticamente: item.automatico,
-        motivo_item: item.motivo_item
+        motivo_item: item.motivo_item,
       }));
 
       const { data: items, error: itemsError } = await this.supabase
-        .from('itens_saida_estoque')
+        .from("itens_saida_estoque")
         .insert(itemsData)
         .select();
 
@@ -452,14 +459,13 @@ export class StockOutputManager {
 
       return {
         data: { ...output, itens: items } as StockOutput,
-        error: null
+        error: null,
       };
-
     } catch (error) {
-      console.error('Error creating stock output:', error);
+      console.error("Error creating stock output:", error);
       return {
         data: null,
-        error: 'Erro ao processar saída de estoque'
+        error: "Erro ao processar saída de estoque",
       };
     }
   }
@@ -480,48 +486,47 @@ export class StockOutputManager {
     try {
       // 1. Get standard procedure materials
       const { data: standardMaterials } = await this.supabase
-        .from('procedimentos_materiais')
+        .from("procedimentos_materiais")
         .select(`
           *,
           produto:produtos_estoque(nome, codigo_interno, categoria)
         `)
-        .eq('procedimento_id', data.procedimento_id)
-        .eq('ativo', true);
+        .eq("procedimento_id", data.procedimento_id)
+        .eq("ativo", true);
 
       if (!standardMaterials || standardMaterials.length === 0) {
         return {
           data: null,
-          error: 'Nenhum material padrão configurado para este procedimento'
+          error: "Nenhum material padrão configurado para este procedimento",
         };
       }
 
       // 2. Apply manual adjustments if provided
       const materialsForDeduction = this.applyManualAdjustments(
         standardMaterials,
-        data.ajustes_manuais || []
+        data.ajustes_manuais || [],
       );
 
       // 3. Create automatic stock output
       return await this.createStockOutput({
-        tipo_saida: 'procedimento',
+        tipo_saida: "procedimento",
         centro_custo_id: data.centro_custo_id,
         profissional_id: data.profissional_id,
         procedimento_id: data.procedimento_id,
         agendamento_id: data.agendamento_id,
-        itens: materialsForDeduction.map(material => ({
+        itens: materialsForDeduction.map((material) => ({
           produto_id: material.produto_id,
           quantidade: material.quantidade_padrao,
-          localizacao_origem: 'estoque_principal'
+          localizacao_origem: "estoque_principal",
         })),
         motivo_saida: `Baixa automática - Procedimento realizado`,
-        automatico: true
+        automatico: true,
       });
-
     } catch (error) {
-      console.error('Error processing automatic procedure deduction:', error);
+      console.error("Error processing automatic procedure deduction:", error);
       return {
         data: null,
-        error: 'Erro ao processar baixa automática do procedimento'
+        error: "Erro ao processar baixa automática do procedimento",
       };
     }
   }
@@ -534,31 +539,33 @@ export class StockOutputManager {
       produto_id: string;
       quantidade: number;
       localizacao_origem: string;
+    }>,
+  ): Promise<
+    Array<{
+      produto_id: string;
+      lote_id: string;
+      quantidade: number;
+      custo_unitario: number;
+      localizacao_origem: string;
+      ordem_fifo: number;
+      automatico: boolean;
+      numero_lote: string;
+      data_validade: Date;
     }>
-  ): Promise<Array<{
-    produto_id: string;
-    lote_id: string;
-    quantidade: number;
-    custo_unitario: number;
-    localizacao_origem: string;
-    ordem_fifo: number;
-    automatico: boolean;
-    numero_lote: string;
-    data_validade: Date;
-  }>> {
+  > {
     const result = [];
 
     for (const item of items) {
       // Get available batches ordered by FIFO priority
       const { data: availableBatches } = await this.supabase
-        .from('lotes_estoque')
-        .select('*')
-        .eq('produto_id', item.produto_id)
-        .eq('status', 'disponivel')
-        .gt('quantidade_disponivel', 0)
-        .eq('bloqueado', false)
-        .order('data_validade', { ascending: true })
-        .order('prioridade_uso', { ascending: true });
+        .from("lotes_estoque")
+        .select("*")
+        .eq("produto_id", item.produto_id)
+        .eq("status", "disponivel")
+        .gt("quantidade_disponivel", 0)
+        .eq("bloqueado", false)
+        .order("data_validade", { ascending: true })
+        .order("prioridade_uso", { ascending: true });
 
       if (!availableBatches || availableBatches.length === 0) {
         throw new Error(`Nenhum lote disponível para o produto ${item.produto_id}`);
@@ -574,10 +581,10 @@ export class StockOutputManager {
 
         // Get cost from latest entry
         const { data: latestEntry } = await this.supabase
-          .from('itens_entrada_estoque')
-          .select('custo_unitario')
-          .eq('lote_id', batch.id)
-          .order('criado_em', { ascending: false })
+          .from("itens_entrada_estoque")
+          .select("custo_unitario")
+          .eq("lote_id", batch.id)
+          .order("criado_em", { ascending: false })
           .limit(1)
           .single();
 
@@ -590,7 +597,7 @@ export class StockOutputManager {
           ordem_fifo: fifoOrder++,
           automatico: true,
           numero_lote: batch.numero_lote,
-          data_validade: new Date(batch.data_validade)
+          data_validade: new Date(batch.data_validade),
         });
 
         remainingQuantity -= quantityToTake;
@@ -611,7 +618,7 @@ export class StockOutputManager {
     items: Array<{
       produto_id: string;
       quantidade: number;
-    }>
+    }>,
   ): Promise<{
     available: boolean;
     unavailableItems: string[];
@@ -623,17 +630,17 @@ export class StockOutputManager {
     for (const item of items) {
       // Check total available quantity
       const { data: batchSummary } = await this.supabase
-        .from('lotes_estoque')
-        .select('quantidade_disponivel, numero_lote, data_validade, dias_para_vencer, prioridade_uso, id')
-        .eq('produto_id', item.produto_id)
-        .eq('status', 'disponivel')
-        .eq('bloqueado', false)
-        .gt('quantidade_disponivel', 0);
+        .from("lotes_estoque")
+        .select(
+          "quantidade_disponivel, numero_lote, data_validade, dias_para_vencer, prioridade_uso, id",
+        )
+        .eq("produto_id", item.produto_id)
+        .eq("status", "disponivel")
+        .eq("bloqueado", false)
+        .gt("quantidade_disponivel", 0);
 
-      const totalAvailable = batchSummary?.reduce(
-        (sum, batch) => sum + batch.quantidade_disponivel,
-        0
-      ) || 0;
+      const totalAvailable =
+        batchSummary?.reduce((sum, batch) => sum + batch.quantidade_disponivel, 0) || 0;
 
       if (totalAvailable < item.quantidade) {
         unavailableItems.push(item.produto_id);
@@ -650,7 +657,7 @@ export class StockOutputManager {
           .slice(0, 3); // Top 3 recommendations
 
         recommendations.push(
-          ...sortedBatches.map(batch => ({
+          ...sortedBatches.map((batch) => ({
             lote_id: batch.id,
             produto_id: item.produto_id,
             numero_lote: batch.numero_lote,
@@ -659,10 +666,9 @@ export class StockOutputManager {
             dias_para_vencer: batch.dias_para_vencer,
             prioridade_uso: batch.prioridade_uso,
             recomendado: batch.dias_para_vencer <= 30,
-            motivo_recomendacao: batch.dias_para_vencer <= 30 
-              ? 'Próximo ao vencimento' 
-              : 'FIFO otimizado'
-          }))
+            motivo_recomendacao:
+              batch.dias_para_vencer <= 30 ? "Próximo ao vencimento" : "FIFO otimizado",
+          })),
         );
       }
     }
@@ -670,7 +676,7 @@ export class StockOutputManager {
     return {
       available: unavailableItems.length === 0,
       unavailableItems,
-      recommendations
+      recommendations,
     };
   }
 
@@ -681,12 +687,12 @@ export class StockOutputManager {
     items: Array<{
       lote_id: string;
       quantidade: number;
-    }>
+    }>,
   ): Promise<void> {
     for (const item of items) {
-      await this.supabase.rpc('update_batch_quantity_after_output', {
+      await this.supabase.rpc("update_batch_quantity_after_output", {
         p_lote_id: item.lote_id,
-        p_quantidade_saida: item.quantidade
+        p_quantidade_saida: item.quantidade,
       });
     }
   }
@@ -697,18 +703,18 @@ export class StockOutputManager {
   async checkApprovalRequirement(
     centroCustoId: string,
     valorTotal: number,
-    tipoSaida: StockOutputType
+    tipoSaida: StockOutputType,
   ): Promise<boolean> {
     const { data: costCenter } = await this.supabase
-      .from('centros_custo')
-      .select('requer_aprovacao_saida, limite_valor_saida')
-      .eq('id', centroCustoId)
+      .from("centros_custo")
+      .select("requer_aprovacao_saida, limite_valor_saida")
+      .eq("id", centroCustoId)
       .single();
 
     if (!costCenter) return false;
 
     // Always require approval for losses and adjustments
-    if (['perda', 'ajuste', 'vencimento'].includes(tipoSaida)) {
+    if (["perda", "ajuste", "vencimento"].includes(tipoSaida)) {
       return true;
     }
 
@@ -725,14 +731,14 @@ export class StockOutputManager {
    */
   async generateOutputNumber(): Promise<string> {
     const today = new Date();
-    const datePrefix = today.toISOString().slice(0, 10).replace(/-/g, '');
-    
-    const { count } = await this.supabase
-      .from('saidas_estoque')
-      .select('*', { count: 'exact', head: true })
-      .like('numero_saida', `SAI-${datePrefix}%`);
+    const datePrefix = today.toISOString().slice(0, 10).replace(/-/g, "");
 
-    const sequentialNumber = String((count || 0) + 1).padStart(4, '0');
+    const { count } = await this.supabase
+      .from("saidas_estoque")
+      .select("*", { count: "exact", head: true })
+      .like("numero_saida", `SAI-${datePrefix}%`);
+
+    const sequentialNumber = String((count || 0) + 1).padStart(4, "0");
     return `SAI-${datePrefix}-${sequentialNumber}`;
   }
 
@@ -743,7 +749,7 @@ export class StockOutputManager {
     items: Array<{
       quantidade: number;
       custo_unitario: number;
-    }>
+    }>,
   ): {
     quantidade: number;
     valor: number;
@@ -752,10 +758,10 @@ export class StockOutputManager {
     return items.reduce(
       (totals, item) => ({
         quantidade: totals.quantidade + item.quantidade,
-        valor: totals.valor + (item.quantidade * item.custo_unitario),
-        custo: totals.custo + (item.quantidade * item.custo_unitario)
+        valor: totals.valor + item.quantidade * item.custo_unitario,
+        custo: totals.custo + item.quantidade * item.custo_unitario,
       }),
-      { quantidade: 0, valor: 0, custo: 0 }
+      { quantidade: 0, valor: 0, custo: 0 },
     );
   }
 
@@ -767,13 +773,13 @@ export class StockOutputManager {
     adjustments: Array<{
       produto_id: string;
       quantidade_ajustada: number;
-    }>
+    }>,
   ): any[] {
-    return standardMaterials.map(material => {
-      const adjustment = adjustments.find(adj => adj.produto_id === material.produto_id);
+    return standardMaterials.map((material) => {
+      const adjustment = adjustments.find((adj) => adj.produto_id === material.produto_id);
       return {
         ...material,
-        quantidade_padrao: adjustment?.quantidade_ajustada || material.quantidade_padrao
+        quantidade_padrao: adjustment?.quantidade_ajustada || material.quantidade_padrao,
       };
     });
   }
@@ -781,10 +787,7 @@ export class StockOutputManager {
   /**
    * Log consumption analytics for ML and reporting
    */
-  async logConsumptionAnalytics(
-    output: any,
-    items: any[]
-  ): Promise<void> {
+  async logConsumptionAnalytics(output: any, items: any[]): Promise<void> {
     try {
       // This would integrate with the analytics system
       // For now, we'll create a simple log entry
@@ -796,16 +799,13 @@ export class StockOutputManager {
         tipo_saida: output.tipo_saida,
         valor_total: output.valor_total,
         itens_consumidos: items.length,
-        automatico: output.automatico
+        automatico: output.automatico,
       };
 
       // Store for future analytics processing
-      await this.supabase
-        .from('logs_consumo')
-        .insert(analyticsData);
-
+      await this.supabase.from("logs_consumo").insert(analyticsData);
     } catch (error) {
-      console.error('Error logging consumption analytics:', error);
+      console.error("Error logging consumption analytics:", error);
       // Don't throw - analytics failure shouldn't block the main operation
     }
   }
@@ -826,14 +826,13 @@ export class StockOutputManager {
 
       return {
         data: analysisData,
-        error: null
+        error: null,
       };
-
     } catch (error) {
-      console.error('Error getting consumption analysis:', error);
+      console.error("Error getting consumption analysis:", error);
       return {
         data: null,
-        error: 'Erro ao gerar análise de consumo'
+        error: "Erro ao gerar análise de consumo",
       };
     }
   }
@@ -862,7 +861,7 @@ export class StockOutputManager {
       previsao_demanda: [],
       recomendacoes_otimizacao: [],
       alertas_consumo_anormal: [],
-      produtos_desperdicio_alto: []
+      produtos_desperdicio_alto: [],
     };
   }
 }

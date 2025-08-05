@@ -1,26 +1,32 @@
-'use client'
+"use client";
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { usePatientAppointments } from '@/hooks/patient/usePatientAppointments'
-import { AlertCircle, Calendar, Clock, FileText, TrendingUp, User } from 'lucide-react'
-import { useState } from 'react'
-import { AppointmentCancellation } from './AppointmentCancellation'
-import { AppointmentHistory } from './AppointmentHistory'
-import { AppointmentStatusTracker } from './AppointmentStatusTracker'
-import { RescheduleRequest } from './RescheduleRequest'
-import { UpcomingAppointments } from './UpcomingAppointments'
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Button } from "@/components/ui/button";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { usePatientAppointments } from "@/hooks/patient/usePatientAppointments";
+import type { AlertCircle, Calendar, Clock, FileText, TrendingUp, User } from "lucide-react";
+import type { useState } from "react";
+import type { AppointmentCancellation } from "./AppointmentCancellation";
+import type { AppointmentHistory } from "./AppointmentHistory";
+import type { AppointmentStatusTracker } from "./AppointmentStatusTracker";
+import type { RescheduleRequest } from "./RescheduleRequest";
+import type { UpcomingAppointments } from "./UpcomingAppointments";
 
 /**
  * Appointment Management Interface for NeonPro Patients
- * 
+ *
  * VIBECODE MCP Research Implementation:
  * - Context7: React component patterns and state management
  * - Tavily: Healthcare no-show prevention (27% avg rate, 60% reduction with reminders)
  * - Exa: Advanced cancellation policies (24-48h standards, industry best practices)
- * 
+ *
  * Features:
  * - Comprehensive appointment overview with status tracking
  * - Policy-compliant cancellation and rescheduling
@@ -34,7 +40,7 @@ interface AppointmentManagementProps {
    * Optional callback when appointment actions are performed
    * Useful for parent components to track patient engagement
    */
-  onAppointmentAction?: (action: 'cancel' | 'reschedule' | 'view', appointmentId: string) => void
+  onAppointmentAction?: (action: "cancel" | "reschedule" | "view", appointmentId: string) => void;
 }
 
 export function AppointmentManagement({ onAppointmentAction }: AppointmentManagementProps) {
@@ -48,56 +54,64 @@ export function AppointmentManagement({ onAppointmentAction }: AppointmentManage
     requestReschedule,
     refreshAppointments,
     getNoShowPattern,
-    getCancellationStats
-  } = usePatientAppointments()
+    getCancellationStats,
+  } = usePatientAppointments();
 
-  const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null)
-  const [showCancellationDialog, setShowCancellationDialog] = useState(false)
-  const [showRescheduleDialog, setShowRescheduleDialog] = useState(false)
-  const [activeTab, setActiveTab] = useState('upcoming')
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null);
+  const [showCancellationDialog, setShowCancellationDialog] = useState(false);
+  const [showRescheduleDialog, setShowRescheduleDialog] = useState(false);
+  const [activeTab, setActiveTab] = useState("upcoming");
 
   // Analytics data based on research insights
-  const noShowPattern = getNoShowPattern()
-  const cancellationStats = getCancellationStats()
+  const noShowPattern = getNoShowPattern();
+  const cancellationStats = getCancellationStats();
 
   // Handle appointment actions with analytics tracking
-  const handleAppointmentAction = (action: 'cancel' | 'reschedule' | 'view', appointmentId: string) => {
-    setSelectedAppointmentId(appointmentId)
-    
+  const handleAppointmentAction = (
+    action: "cancel" | "reschedule" | "view",
+    appointmentId: string,
+  ) => {
+    setSelectedAppointmentId(appointmentId);
+
     switch (action) {
-      case 'cancel':
-        setShowCancellationDialog(true)
-        break
-      case 'reschedule':
-        setShowRescheduleDialog(true)
-        break
-      case 'view':
+      case "cancel":
+        setShowCancellationDialog(true);
+        break;
+      case "reschedule":
+        setShowRescheduleDialog(true);
+        break;
+      case "view":
         // Navigate to detailed view or expand
-        break
+        break;
     }
-    
-    onAppointmentAction?.(action, appointmentId)
-  }
+
+    onAppointmentAction?.(action, appointmentId);
+  };
 
   // Handle cancellation completion
   const handleCancellationComplete = async (appointmentId: string, reason: string) => {
-    const success = await cancelAppointment(appointmentId, reason)
+    const success = await cancelAppointment(appointmentId, reason);
     if (success) {
-      setShowCancellationDialog(false)
-      setSelectedAppointmentId(null)
-      await refreshAppointments()
+      setShowCancellationDialog(false);
+      setSelectedAppointmentId(null);
+      await refreshAppointments();
     }
-  }
+  };
 
   // Handle reschedule request completion
-  const handleRescheduleComplete = async (appointmentId: string, newDate: string, newTime: string, reason: string) => {
-    const success = await requestReschedule(appointmentId, newDate, newTime, reason)
+  const handleRescheduleComplete = async (
+    appointmentId: string,
+    newDate: string,
+    newTime: string,
+    reason: string,
+  ) => {
+    const success = await requestReschedule(appointmentId, newDate, newTime, reason);
     if (success) {
-      setShowRescheduleDialog(false)
-      setSelectedAppointmentId(null)
-      await refreshAppointments()
+      setShowRescheduleDialog(false);
+      setSelectedAppointmentId(null);
+      await refreshAppointments();
     }
-  }
+  };
 
   // Loading state
   if (loading) {
@@ -125,7 +139,7 @@ export function AppointmentManagement({ onAppointmentAction }: AppointmentManage
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   // Error state
@@ -136,17 +150,12 @@ export function AppointmentManagement({ onAppointmentAction }: AppointmentManage
         <AlertTitle>Erro ao carregar agendamentos</AlertTitle>
         <AlertDescription>
           {error}
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="ml-4"
-            onClick={refreshAppointments}
-          >
+          <Button variant="outline" size="sm" className="ml-4" onClick={refreshAppointments}>
             Tentar novamente
           </Button>
         </AlertDescription>
       </Alert>
-    )
+    );
   }
 
   return (
@@ -163,7 +172,7 @@ export function AppointmentManagement({ onAppointmentAction }: AppointmentManage
           <CardContent>
             <div className="text-2xl font-bold">{upcomingAppointments.length}</div>
             <p className="text-xs text-muted-foreground">
-              {upcomingAppointments.filter(apt => apt.can_cancel).length} podem ser cancelados
+              {upcomingAppointments.filter((apt) => apt.can_cancel).length} podem ser cancelados
             </p>
           </CardContent>
         </Card>
@@ -176,9 +185,7 @@ export function AppointmentManagement({ onAppointmentAction }: AppointmentManage
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {Math.round(100 - noShowPattern.rate)}%
-            </div>
+            <div className="text-2xl font-bold">{Math.round(100 - noShowPattern.rate)}%</div>
             <p className="text-xs text-muted-foreground">
               {noShowPattern.rate}% de faltas (média: 27%)
             </p>
@@ -193,12 +200,8 @@ export function AppointmentManagement({ onAppointmentAction }: AppointmentManage
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {cancellationPolicies?.minimum_hours || 24}h
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Antecedência mínima obrigatória
-            </p>
+            <div className="text-2xl font-bold">{cancellationPolicies?.minimum_hours || 24}h</div>
+            <p className="text-xs text-muted-foreground">Antecedência mínima obrigatória</p>
           </CardContent>
         </Card>
 
@@ -225,10 +228,18 @@ export function AppointmentManagement({ onAppointmentAction }: AppointmentManage
           <AlertTitle>Política de Cancelamento</AlertTitle>
           <AlertDescription>
             <div className="mt-2 space-y-1 text-sm">
-              <div>• Cancelamentos devem ser feitos com <strong>{cancellationPolicies.minimum_hours}h de antecedência</strong></div>
-              <div>• Reagendamentos precisam de <strong>48h de antecedência</strong> para solicitação</div>
+              <div>
+                • Cancelamentos devem ser feitos com{" "}
+                <strong>{cancellationPolicies.minimum_hours}h de antecedência</strong>
+              </div>
+              <div>
+                • Reagendamentos precisam de <strong>48h de antecedência</strong> para solicitação
+              </div>
               {cancellationPolicies.fee_applies && (
-                <div>• Taxa de cancelamento tardio: <strong>R$ {cancellationPolicies.fee_amount.toFixed(2)}</strong></div>
+                <div>
+                  • Taxa de cancelamento tardio:{" "}
+                  <strong>R$ {cancellationPolicies.fee_amount.toFixed(2)}</strong>
+                </div>
               )}
               <div>• Exceções para emergências médicas e familiares</div>
             </div>
@@ -259,15 +270,16 @@ export function AppointmentManagement({ onAppointmentAction }: AppointmentManage
             <CardHeader>
               <CardTitle>Próximos Agendamentos</CardTitle>
               <CardDescription>
-                Gerencie seus agendamentos futuros. Cancele ou reagende seguindo as políticas da clínica.
+                Gerencie seus agendamentos futuros. Cancele ou reagende seguindo as políticas da
+                clínica.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <UpcomingAppointments
                 appointments={upcomingAppointments}
-                onCancel={(id: string) => handleAppointmentAction('cancel', id)}
-                onReschedule={(id: string) => handleAppointmentAction('reschedule', id)}
-                onView={(id: string) => handleAppointmentAction('view', id)}
+                onCancel={(id: string) => handleAppointmentAction("cancel", id)}
+                onReschedule={(id: string) => handleAppointmentAction("reschedule", id)}
+                onView={(id: string) => handleAppointmentAction("view", id)}
                 cancellationPolicies={cancellationPolicies}
               />
             </CardContent>
@@ -286,7 +298,7 @@ export function AppointmentManagement({ onAppointmentAction }: AppointmentManage
             <CardContent>
               <AppointmentHistory
                 appointments={pastAppointments}
-                onView={(id: string) => handleAppointmentAction('view', id)}
+                onView={(id: string) => handleAppointmentAction("view", id)}
               />
             </CardContent>
           </Card>
@@ -308,7 +320,7 @@ export function AppointmentManagement({ onAppointmentAction }: AppointmentManage
       {selectedAppointmentId && showCancellationDialog && (
         <AppointmentCancellation
           appointmentId={selectedAppointmentId}
-          appointment={upcomingAppointments.find(apt => apt.id === selectedAppointmentId)}
+          appointment={upcomingAppointments.find((apt) => apt.id === selectedAppointmentId)}
           open={showCancellationDialog}
           onOpenChange={setShowCancellationDialog}
           onConfirm={handleCancellationComplete}
@@ -319,14 +331,14 @@ export function AppointmentManagement({ onAppointmentAction }: AppointmentManage
       {selectedAppointmentId && showRescheduleDialog && (
         <RescheduleRequest
           appointmentId={selectedAppointmentId}
-          appointment={upcomingAppointments.find(apt => apt.id === selectedAppointmentId)}
+          appointment={upcomingAppointments.find((apt) => apt.id === selectedAppointmentId)}
           open={showRescheduleDialog}
           onOpenChange={setShowRescheduleDialog}
           onConfirm={handleRescheduleComplete}
         />
       )}
     </div>
-  )
+  );
 }
 
-export default AppointmentManagement
+export default AppointmentManagement;

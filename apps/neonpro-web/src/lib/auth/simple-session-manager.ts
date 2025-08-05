@@ -3,8 +3,8 @@
  * Optimized for Clerk integration and healthcare compliance
  */
 
-import { auth, currentUser } from '@clerk/nextjs/server';
-import { clerkConfig } from './clerk-config';
+import type { auth, currentUser } from "@clerk/nextjs/server";
+import type { clerkConfig } from "./clerk-config";
 
 export interface SessionMetadata {
   userId: string;
@@ -34,7 +34,7 @@ export class ClerkSessionManager {
     this.options = {
       maxInactiveTime: options.maxInactiveTime || clerkConfig.sessionTimeout,
       trackDevices: options.trackDevices ?? true,
-      enforceConcurrentLimits: options.enforceConcurrentLimits ?? true
+      enforceConcurrentLimits: options.enforceConcurrentLimits ?? true,
     };
   }
 
@@ -51,25 +51,25 @@ export class ClerkSessionManager {
   async getCurrentSession(): Promise<SessionMetadata | null> {
     try {
       const { userId, sessionId } = auth();
-      
+
       if (!userId || !sessionId) {
         return null;
       }
 
       const user = await currentUser();
-      
+
       const sessionData: SessionMetadata = {
         userId,
         sessionId,
         lastActivity: Date.now(),
-        roles: user?.publicMetadata?.roles as string[] || [],
-        permissions: user?.publicMetadata?.permissions as string[] || []
+        roles: (user?.publicMetadata?.roles as string[]) || [],
+        permissions: (user?.publicMetadata?.permissions as string[]) || [],
       };
 
       this.sessionStore.set(sessionId, sessionData);
       return sessionData;
     } catch (error) {
-      console.error('Failed to get current session:', error);
+      console.error("Failed to get current session:", error);
       return null;
     }
   }
@@ -85,7 +85,7 @@ export class ClerkSessionManager {
         this.sessionStore.set(sessionId, session);
       }
     } catch (error) {
-      console.error('Failed to update session activity:', error);
+      console.error("Failed to update session activity:", error);
     }
   }
 
@@ -98,7 +98,7 @@ export class ClerkSessionManager {
 
     const now = Date.now();
     const timeSinceActivity = now - session.lastActivity;
-    
+
     return timeSinceActivity < this.options.maxInactiveTime;
   }
 
@@ -106,11 +106,9 @@ export class ClerkSessionManager {
    * Get active sessions for a user
    */
   getUserActiveSessions(userId: string): SessionMetadata[] {
-    return Array.from(this.sessionStore.values())
-      .filter(session => 
-        session.userId === userId && 
-        this.isSessionValid(session.sessionId)
-      );
+    return Array.from(this.sessionStore.values()).filter(
+      (session) => session.userId === userId && this.isSessionValid(session.sessionId),
+    );
   }
 
   /**
@@ -120,22 +118,23 @@ export class ClerkSessionManager {
     if (!this.options.enforceConcurrentLimits) return true;
 
     const activeSessions = this.getUserActiveSessions(userId);
-    
+
     if (activeSessions.length > clerkConfig.maxConcurrentSessions) {
       // Remove oldest sessions
-      const sortedSessions = activeSessions
-        .sort((a, b) => a.lastActivity - b.lastActivity);
-      
-      const sessionsToRemove = sortedSessions
-        .slice(0, activeSessions.length - clerkConfig.maxConcurrentSessions);
-      
+      const sortedSessions = activeSessions.sort((a, b) => a.lastActivity - b.lastActivity);
+
+      const sessionsToRemove = sortedSessions.slice(
+        0,
+        activeSessions.length - clerkConfig.maxConcurrentSessions,
+      );
+
       for (const session of sessionsToRemove) {
         this.sessionStore.delete(session.sessionId);
       }
-      
+
       return false; // Indicates sessions were terminated
     }
-    
+
     return true;
   }
 
@@ -145,16 +144,16 @@ export class ClerkSessionManager {
   cleanupExpiredSessions(): number {
     let removedCount = 0;
     const now = Date.now();
-    
+
     for (const [sessionId, session] of this.sessionStore.entries()) {
       const timeSinceActivity = now - session.lastActivity;
-      
+
       if (timeSinceActivity > this.options.maxInactiveTime) {
         this.sessionStore.delete(sessionId);
         removedCount++;
       }
     }
-    
+
     return removedCount;
   }
 
@@ -163,15 +162,16 @@ export class ClerkSessionManager {
    */
   getSessionStats() {
     const now = Date.now();
-    const activeSessions = Array.from(this.sessionStore.values())
-      .filter(session => this.isSessionValid(session.sessionId));
-    
+    const activeSessions = Array.from(this.sessionStore.values()).filter((session) =>
+      this.isSessionValid(session.sessionId),
+    );
+
     return {
       totalSessions: this.sessionStore.size,
       activeSessions: activeSessions.length,
       expiredSessions: this.sessionStore.size - activeSessions.length,
-      uniqueUsers: new Set(activeSessions.map(s => s.userId)).size,
-      lastCleanup: now
+      uniqueUsers: new Set(activeSessions.map((s) => s.userId)).size,
+      lastCleanup: now,
     };
   }
 
@@ -181,7 +181,7 @@ export class ClerkSessionManager {
   hasPermission(sessionId: string, permission: string): boolean {
     const session = this.sessionStore.get(sessionId);
     if (!session || !this.isSessionValid(sessionId)) return false;
-    
+
     return session.permissions?.includes(permission) || false;
   }
 
@@ -191,7 +191,7 @@ export class ClerkSessionManager {
   hasRole(sessionId: string, role: string): boolean {
     const session = this.sessionStore.get(sessionId);
     if (!session || !this.isSessionValid(sessionId)) return false;
-    
+
     return session.roles?.includes(role) || false;
   }
 }

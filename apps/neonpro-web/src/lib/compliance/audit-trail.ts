@@ -1,23 +1,38 @@
-﻿/**
+/**
  * Audit Trail System
  * Epic 10 - Story 10.4: Healthcare Compliance Computer Vision (Audit Trail)
- * 
+ *
  * Comprehensive audit trail for healthcare compliance monitoring
  * Real-time logging, compliance verification, automated reporting
- * 
+ *
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 
-import { z } from 'zod';
-import { logger } from '@/lib/utils/logger';
-import { createClient } from '@/lib/supabase/client';
-import { EventEmitter } from 'events';
+import type { z } from "zod";
+import type { logger } from "@/lib/utils/logger";
+import type { createClient } from "@/lib/supabase/client";
+import type { EventEmitter } from "events";
 
 // Audit Trail Types
-export type AuditEventType = 'access' | 'modification' | 'deletion' | 'creation' | 'authentication' | 'authorization' | 'compliance_check' | 'data_export' | 'system_event';
-export type AuditSeverity = 'info' | 'warning' | 'error' | 'critical';
-export type ComplianceStatus = 'compliant' | 'non_compliant' | 'pending_review' | 'exempt';
-export type AuditCategory = 'patient_data' | 'medical_records' | 'system_security' | 'user_activity' | 'compliance_validation' | 'data_processing';
+export type AuditEventType =
+  | "access"
+  | "modification"
+  | "deletion"
+  | "creation"
+  | "authentication"
+  | "authorization"
+  | "compliance_check"
+  | "data_export"
+  | "system_event";
+export type AuditSeverity = "info" | "warning" | "error" | "critical";
+export type ComplianceStatus = "compliant" | "non_compliant" | "pending_review" | "exempt";
+export type AuditCategory =
+  | "patient_data"
+  | "medical_records"
+  | "system_security"
+  | "user_activity"
+  | "compliance_validation"
+  | "data_processing";
 
 // Core Audit Interfaces
 export interface AuditTrailEntry {
@@ -72,17 +87,17 @@ export interface ComplianceValidationResult {
   ruleId: string;
   ruleName: string;
   ruleDescription: string;
-  validationStatus: 'passed' | 'failed' | 'warning' | 'not_applicable';
+  validationStatus: "passed" | "failed" | "warning" | "not_applicable";
   validationMessage: string;
   severity: AuditSeverity;
   recommendedAction?: string;
 }
 
 export interface RiskAssessment {
-  riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  riskLevel: "low" | "medium" | "high" | "critical";
   riskFactors: string[];
   riskScore: number; // 0-100
-  riskCategory: 'operational' | 'security' | 'compliance' | 'privacy' | 'safety';
+  riskCategory: "operational" | "security" | "compliance" | "privacy" | "safety";
   mitigation: RiskMitigation;
   impactAssessment: ImpactAssessment;
 }
@@ -91,18 +106,18 @@ export interface RiskMitigation {
   immediateActions: string[];
   longTermActions: string[];
   responsibleParty: string;
-  mitigationStatus: 'pending' | 'in_progress' | 'completed' | 'deferred';
+  mitigationStatus: "pending" | "in_progress" | "completed" | "deferred";
   mitigationDeadline?: string;
   mitigationEvidence?: string;
 }
 
 export interface ImpactAssessment {
-  patientSafety: 'none' | 'low' | 'medium' | 'high';
-  dataPrivacy: 'none' | 'low' | 'medium' | 'high';
-  systemSecurity: 'none' | 'low' | 'medium' | 'high';
-  regulatoryCompliance: 'none' | 'low' | 'medium' | 'high';
-  businessContinuity: 'none' | 'low' | 'medium' | 'high';
-  reputationalRisk: 'none' | 'low' | 'medium' | 'high';
+  patientSafety: "none" | "low" | "medium" | "high";
+  dataPrivacy: "none" | "low" | "medium" | "high";
+  systemSecurity: "none" | "low" | "medium" | "high";
+  regulatoryCompliance: "none" | "low" | "medium" | "high";
+  businessContinuity: "none" | "low" | "medium" | "high";
+  reputationalRisk: "none" | "low" | "medium" | "high";
 }
 
 export interface RetentionInfo {
@@ -129,13 +144,13 @@ export interface AuditQuery {
   limit?: number;
   offset?: number;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
 }
 
 export interface AuditReport {
   id: string;
   generatedDate: string;
-  reportType: 'compliance' | 'security' | 'operational' | 'risk' | 'custom';
+  reportType: "compliance" | "security" | "operational" | "risk" | "custom";
   timeRange: {
     startDate: string;
     endDate: string;
@@ -189,7 +204,12 @@ export interface ResourceActivity {
 
 export interface AuditFinding {
   id: string;
-  type: 'compliance_violation' | 'security_incident' | 'data_breach' | 'unauthorized_access' | 'policy_violation';
+  type:
+    | "compliance_violation"
+    | "security_incident"
+    | "data_breach"
+    | "unauthorized_access"
+    | "policy_violation";
   severity: AuditSeverity;
   title: string;
   description: string;
@@ -199,13 +219,13 @@ export interface AuditFinding {
   recommendedActions: string[];
   assignedTo?: string;
   dueDate?: string;
-  status: 'open' | 'investigating' | 'resolved' | 'closed';
+  status: "open" | "investigating" | "resolved" | "closed";
 }
 
 export interface AuditRecommendation {
   id: string;
-  category: 'compliance' | 'security' | 'operational' | 'risk_management';
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  category: "compliance" | "security" | "operational" | "risk_management";
+  priority: "low" | "medium" | "high" | "critical";
   title: string;
   description: string;
   justification: string;
@@ -215,7 +235,7 @@ export interface AuditRecommendation {
 }
 
 export interface RecommendationImplementation {
-  estimatedEffort: 'low' | 'medium' | 'high';
+  estimatedEffort: "low" | "medium" | "high";
   timeline: string;
   resources: string[];
   dependencies: string[];
@@ -277,8 +297,8 @@ export interface AuditTrend {
   metric: string;
   timePeriod: string;
   values: TrendValue[];
-  trend: 'increasing' | 'decreasing' | 'stable';
-  significance: 'low' | 'medium' | 'high';
+  trend: "increasing" | "decreasing" | "stable";
+  significance: "low" | "medium" | "high";
 }
 
 export interface TrendValue {
@@ -290,7 +310,7 @@ export interface TrendValue {
 export interface ReportAttachment {
   id: string;
   name: string;
-  type: 'chart' | 'table' | 'document' | 'export';
+  type: "chart" | "table" | "document" | "export";
   description: string;
   size: number;
   generatedDate: string;
@@ -315,23 +335,23 @@ export class AuditTrailManager extends EventEmitter {
    */
   private async initializeAuditSystem(): Promise<void> {
     try {
-      logger.info('Initializing Audit Trail System...');
-      
+      logger.info("Initializing Audit Trail System...");
+
       // Load compliance rules
       await this.loadComplianceRules();
-      
+
       // Initialize risk thresholds
       this.initializeRiskThresholds();
-      
+
       // Start periodic buffer flush
       this.startBufferFlush();
-      
+
       // Initialize real-time monitoring
       this.startRealTimeMonitoring();
-      
-      logger.info('Audit Trail System initialized successfully');
+
+      logger.info("Audit Trail System initialized successfully");
     } catch (error) {
-      logger.error('Failed to initialize Audit Trail System:', error);
+      logger.error("Failed to initialize Audit Trail System:", error);
       throw error;
     }
   }
@@ -346,33 +366,33 @@ export class AuditTrailManager extends EventEmitter {
       userId: string;
       action: string;
       description: string;
-    }
+    },
   ): Promise<AuditTrailEntry> {
     try {
       const auditEntry: AuditTrailEntry = {
         id: `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         timestamp: new Date().toISOString(),
-        severity: eventData.severity || 'info',
-        userRole: eventData.userRole || 'unknown',
-        sessionId: eventData.sessionId || 'unknown',
-        ipAddress: eventData.ipAddress || 'unknown',
-        userAgent: eventData.userAgent || 'unknown',
+        severity: eventData.severity || "info",
+        userRole: eventData.userRole || "unknown",
+        sessionId: eventData.sessionId || "unknown",
+        ipAddress: eventData.ipAddress || "unknown",
+        userAgent: eventData.userAgent || "unknown",
         metadata: {
-          applicationName: 'NeonPro',
-          applicationVersion: '1.0.0',
-          moduleId: 'compliance_system',
-          functionName: 'audit_trail',
+          applicationName: "NeonPro",
+          applicationVersion: "1.0.0",
+          moduleId: "compliance_system",
+          functionName: "audit_trail",
           requestId: `req_${Date.now()}`,
           correlationId: `corr_${Date.now()}`,
           childEventIds: [],
           tags: [],
           customData: {},
-          ...eventData.metadata
+          ...eventData.metadata,
         },
         complianceContext: await this.generateComplianceContext(eventData),
         riskAssessment: await this.performRiskAssessment(eventData),
         retention: this.generateRetentionInfo(eventData),
-        ...eventData
+        ...eventData,
       };
 
       // Add to buffer
@@ -387,12 +407,11 @@ export class AuditTrailManager extends EventEmitter {
       }
 
       // Emit event for real-time monitoring
-      this.emit('auditEvent', auditEntry);
+      this.emit("auditEvent", auditEntry);
 
       return auditEntry;
-
     } catch (error) {
-      logger.error('Failed to log audit event:', error);
+      logger.error("Failed to log audit event:", error);
       throw error;
     }
   }
@@ -406,49 +425,47 @@ export class AuditTrailManager extends EventEmitter {
     hasMore: boolean;
   }> {
     try {
-      let queryBuilder = this.supabase
-        .from('audit_trail')
-        .select('*');
+      let queryBuilder = this.supabase.from("audit_trail").select("*");
 
       // Apply filters
       if (query.startDate) {
-        queryBuilder = queryBuilder.gte('timestamp', query.startDate);
+        queryBuilder = queryBuilder.gte("timestamp", query.startDate);
       }
-      
+
       if (query.endDate) {
-        queryBuilder = queryBuilder.lte('timestamp', query.endDate);
+        queryBuilder = queryBuilder.lte("timestamp", query.endDate);
       }
-      
+
       if (query.eventTypes?.length) {
-        queryBuilder = queryBuilder.in('event_type', query.eventTypes);
+        queryBuilder = queryBuilder.in("event_type", query.eventTypes);
       }
-      
+
       if (query.categories?.length) {
-        queryBuilder = queryBuilder.in('category', query.categories);
+        queryBuilder = queryBuilder.in("category", query.categories);
       }
-      
+
       if (query.severities?.length) {
-        queryBuilder = queryBuilder.in('severity', query.severities);
+        queryBuilder = queryBuilder.in("severity", query.severities);
       }
-      
+
       if (query.userIds?.length) {
-        queryBuilder = queryBuilder.in('user_id', query.userIds);
+        queryBuilder = queryBuilder.in("user_id", query.userIds);
       }
-      
+
       if (query.resourceIds?.length) {
-        queryBuilder = queryBuilder.in('resource_id', query.resourceIds);
+        queryBuilder = queryBuilder.in("resource_id", query.resourceIds);
       }
-      
+
       if (query.searchText) {
         queryBuilder = queryBuilder.or(
-          `description.ilike.%${query.searchText}%,action.ilike.%${query.searchText}%`
+          `description.ilike.%${query.searchText}%,action.ilike.%${query.searchText}%`,
         );
       }
 
       // Apply sorting
-      const sortBy = query.sortBy || 'timestamp';
-      const sortOrder = query.sortOrder || 'desc';
-      queryBuilder = queryBuilder.order(sortBy, { ascending: sortOrder === 'asc' });
+      const sortBy = query.sortBy || "timestamp";
+      const sortOrder = query.sortOrder || "desc";
+      queryBuilder = queryBuilder.order(sortBy, { ascending: sortOrder === "asc" });
 
       // Apply pagination
       const limit = query.limit || 100;
@@ -461,18 +478,17 @@ export class AuditTrailManager extends EventEmitter {
         throw error;
       }
 
-      const entries = data?.map(row => this.mapRowToAuditEntry(row)) || [];
+      const entries = data?.map((row) => this.mapRowToAuditEntry(row)) || [];
       const totalCount = count || 0;
       const hasMore = totalCount > offset + limit;
 
       return {
         entries,
         totalCount,
-        hasMore
+        hasMore,
       };
-
     } catch (error) {
-      logger.error('Failed to query audit trail:', error);
+      logger.error("Failed to query audit trail:", error);
       throw error;
     }
   }
@@ -481,17 +497,19 @@ export class AuditTrailManager extends EventEmitter {
    * Generate comprehensive audit report
    */
   async generateAuditReport(
-    reportType: AuditReport['reportType'],
+    reportType: AuditReport["reportType"],
     timeRange: { startDate: string; endDate: string },
-    scope?: Partial<AuditReportScope>
+    scope?: Partial<AuditReportScope>,
   ): Promise<AuditReport> {
     try {
-      logger.info(`Generating ${reportType} audit report for ${timeRange.startDate} to ${timeRange.endDate}`);
+      logger.info(
+        `Generating ${reportType} audit report for ${timeRange.startDate} to ${timeRange.endDate}`,
+      );
 
       const query: AuditQuery = {
         startDate: timeRange.startDate,
         endDate: timeRange.endDate,
-        ...scope
+        ...scope,
       };
 
       const { entries } = await this.queryAuditTrail(query);
@@ -506,7 +524,7 @@ export class AuditTrailManager extends EventEmitter {
           includedUsers: scope?.includedUsers || [],
           includedResources: scope?.includedResources || [],
           excludedPatterns: scope?.excludedPatterns || [],
-          filterCriteria: scope?.filterCriteria || {}
+          filterCriteria: scope?.filterCriteria || {},
         },
         summary: this.generateAuditSummary(entries),
         findings: await this.generateAuditFindings(entries),
@@ -514,7 +532,7 @@ export class AuditTrailManager extends EventEmitter {
         complianceMetrics: this.generateComplianceMetrics(entries),
         riskMetrics: this.generateRiskMetrics(entries),
         trends: await this.generateAuditTrends(entries, timeRange),
-        attachments: []
+        attachments: [],
       };
 
       // Save report
@@ -522,9 +540,8 @@ export class AuditTrailManager extends EventEmitter {
 
       logger.info(`Audit report generated successfully: ${report.id}`);
       return report;
-
     } catch (error) {
-      logger.error('Failed to generate audit report:', error);
+      logger.error("Failed to generate audit report:", error);
       throw error;
     }
   }
@@ -534,44 +551,48 @@ export class AuditTrailManager extends EventEmitter {
    */
   async getComplianceValidation(
     timeRange: { startDate: string; endDate: string },
-    regulations?: string[]
+    regulations?: string[],
   ): Promise<ComplianceValidationSummary> {
     try {
       const query: AuditQuery = {
         startDate: timeRange.startDate,
         endDate: timeRange.endDate,
-        categories: ['compliance_validation']
+        categories: ["compliance_validation"],
       };
 
       const { entries } = await this.queryAuditTrail(query);
 
-      const validationResults = entries.flatMap(entry => 
-        entry.complianceContext.validationResults || []
+      const validationResults = entries.flatMap(
+        (entry) => entry.complianceContext.validationResults || [],
       );
 
-      const filteredResults = regulations ? 
-        validationResults.filter(result => 
-          regulations.some(reg => result.ruleName.includes(reg))
-        ) : validationResults;
+      const filteredResults = regulations
+        ? validationResults.filter((result) =>
+            regulations.some((reg) => result.ruleName.includes(reg)),
+          )
+        : validationResults;
 
       const summary: ComplianceValidationSummary = {
         totalValidations: filteredResults.length,
-        passedValidations: filteredResults.filter(r => r.validationStatus === 'passed').length,
-        failedValidations: filteredResults.filter(r => r.validationStatus === 'failed').length,
-        warningValidations: filteredResults.filter(r => r.validationStatus === 'warning').length,
-        complianceRate: filteredResults.length > 0 ? 
-          (filteredResults.filter(r => r.validationStatus === 'passed').length / filteredResults.length) * 100 : 0,
+        passedValidations: filteredResults.filter((r) => r.validationStatus === "passed").length,
+        failedValidations: filteredResults.filter((r) => r.validationStatus === "failed").length,
+        warningValidations: filteredResults.filter((r) => r.validationStatus === "warning").length,
+        complianceRate:
+          filteredResults.length > 0
+            ? (filteredResults.filter((r) => r.validationStatus === "passed").length /
+                filteredResults.length) *
+              100
+            : 0,
         validationsByRegulation: this.groupValidationsByRegulation(filteredResults),
-        criticalFailures: filteredResults.filter(r => 
-          r.validationStatus === 'failed' && r.severity === 'critical'
+        criticalFailures: filteredResults.filter(
+          (r) => r.validationStatus === "failed" && r.severity === "critical",
         ).length,
-        recommendations: await this.generateComplianceRecommendations(filteredResults)
+        recommendations: await this.generateComplianceRecommendations(filteredResults),
       };
 
       return summary;
-
     } catch (error) {
-      logger.error('Failed to get compliance validation:', error);
+      logger.error("Failed to get compliance validation:", error);
       throw error;
     }
   }
@@ -580,16 +601,16 @@ export class AuditTrailManager extends EventEmitter {
    * Monitor real-time compliance
    */
   async startComplianceMonitoring(): Promise<void> {
-    this.on('auditEvent', async (entry: AuditTrailEntry) => {
+    this.on("auditEvent", async (entry: AuditTrailEntry) => {
       // Check for compliance violations
       const violations = entry.complianceContext.violatedRules;
-      
+
       if (violations.length > 0) {
         await this.handleComplianceViolation(entry, violations);
       }
 
       // Check risk thresholds
-      if (entry.riskAssessment.riskLevel === 'critical') {
+      if (entry.riskAssessment.riskLevel === "critical") {
         await this.handleCriticalRisk(entry);
       }
 
@@ -599,34 +620,38 @@ export class AuditTrailManager extends EventEmitter {
   }
 
   // Helper Methods
-  private async generateComplianceContext(eventData: Partial<AuditTrailEntry>): Promise<ComplianceContext> {
+  private async generateComplianceContext(
+    eventData: Partial<AuditTrailEntry>,
+  ): Promise<ComplianceContext> {
     const applicableRegulations = this.getApplicableRegulations(eventData);
     const complianceRules = this.getComplianceRules(eventData);
     const validationResults = await this.validateCompliance(eventData, complianceRules);
     const violatedRules = validationResults
-      .filter(r => r.validationStatus === 'failed')
-      .map(r => r.ruleId);
+      .filter((r) => r.validationStatus === "failed")
+      .map((r) => r.ruleId);
 
     return {
       applicableRegulations,
-      complianceStatus: violatedRules.length > 0 ? 'non_compliant' : 'compliant',
-      complianceRules: complianceRules.map(r => r.id),
+      complianceStatus: violatedRules.length > 0 ? "non_compliant" : "compliant",
+      complianceRules: complianceRules.map((r) => r.id),
       violatedRules,
-      reviewRequired: violatedRules.some(ruleId => {
+      reviewRequired: violatedRules.some((ruleId) => {
         const rule = this.complianceRules.get(ruleId);
         return rule?.requiresReview || false;
       }),
       automaticValidation: true,
-      validationResults
+      validationResults,
     };
   }
 
-  private async performRiskAssessment(eventData: Partial<AuditTrailEntry>): Promise<RiskAssessment> {
+  private async performRiskAssessment(
+    eventData: Partial<AuditTrailEntry>,
+  ): Promise<RiskAssessment> {
     const riskFactors = this.identifyRiskFactors(eventData);
     const riskScore = this.calculateRiskScore(eventData, riskFactors);
     const riskLevel = this.getRiskLevel(riskScore);
     const riskCategory = this.getRiskCategory(eventData);
-    
+
     return {
       riskLevel,
       riskFactors,
@@ -635,31 +660,31 @@ export class AuditTrailManager extends EventEmitter {
       mitigation: {
         immediateActions: this.getImmediateActions(riskLevel, eventData),
         longTermActions: this.getLongTermActions(riskLevel, eventData),
-        responsibleParty: 'compliance_team',
-        mitigationStatus: 'pending'
+        responsibleParty: "compliance_team",
+        mitigationStatus: "pending",
       },
-      impactAssessment: this.assessImpact(eventData, riskLevel)
+      impactAssessment: this.assessImpact(eventData, riskLevel),
     };
   }
 
   private generateRetentionInfo(eventData: Partial<AuditTrailEntry>): RetentionInfo {
     const retentionPeriod = this.getRetentionPeriod(eventData.category, eventData.eventType);
-    
+
     return {
       retentionPeriod,
-      legalBasis: 'CFM Resolution 1.821/2007 + LGPD Art. 16',
-      retentionReason: 'Audit trail for compliance and legal requirements',
+      legalBasis: "CFM Resolution 1.821/2007 + LGPD Art. 16",
+      retentionReason: "Audit trail for compliance and legal requirements",
       scheduledDeletion: new Date(Date.now() + retentionPeriod * 24 * 60 * 60 * 1000).toISOString(),
       archiveRequired: true,
-      immutableRecord: true
+      immutableRecord: true,
     };
   }
 
   private async checkImmediateCompliance(entry: AuditTrailEntry): Promise<void> {
-    if (entry.complianceContext.complianceStatus === 'non_compliant') {
-      const criticalViolations = entry.complianceContext.violatedRules.filter(ruleId => {
+    if (entry.complianceContext.complianceStatus === "non_compliant") {
+      const criticalViolations = entry.complianceContext.violatedRules.filter((ruleId) => {
         const rule = this.complianceRules.get(ruleId);
-        return rule?.severity === 'critical';
+        return rule?.severity === "critical";
       });
 
       if (criticalViolations.length > 0) {
@@ -676,8 +701,8 @@ export class AuditTrailManager extends EventEmitter {
       this.auditBuffer = [];
 
       const { error } = await this.supabase
-        .from('audit_trail')
-        .insert(entries.map(entry => this.mapAuditEntryToRow(entry)));
+        .from("audit_trail")
+        .insert(entries.map((entry) => this.mapAuditEntryToRow(entry)));
 
       if (error) {
         // Re-add to buffer if save failed
@@ -686,9 +711,8 @@ export class AuditTrailManager extends EventEmitter {
       }
 
       logger.info(`Flushed ${entries.length} audit entries to database`);
-
     } catch (error) {
-      logger.error('Failed to flush audit buffer:', error);
+      logger.error("Failed to flush audit buffer:", error);
     }
   }
 
@@ -707,65 +731,66 @@ export class AuditTrailManager extends EventEmitter {
 
   private async performPeriodicChecks(): Promise<void> {
     // Implement periodic compliance and risk checks
-    logger.info('Performing periodic audit checks...');
+    logger.info("Performing periodic audit checks...");
   }
 
   private getApplicableRegulations(eventData: Partial<AuditTrailEntry>): string[] {
-    const regulations = ['LGPD', 'CFM_1821_2007'];
-    
-    if (eventData.category === 'patient_data') {
-      regulations.push('ANVISA_RDC_44_2009');
+    const regulations = ["LGPD", "CFM_1821_2007"];
+
+    if (eventData.category === "patient_data") {
+      regulations.push("ANVISA_RDC_44_2009");
     }
-    
-    if (eventData.eventType === 'authentication') {
-      regulations.push('ISO_27001');
+
+    if (eventData.eventType === "authentication") {
+      regulations.push("ISO_27001");
     }
-    
+
     return regulations;
   }
 
   private getComplianceRules(eventData: Partial<AuditTrailEntry>): ComplianceRule[] {
-    return Array.from(this.complianceRules.values()).filter(rule => 
-      rule.applicableCategories.includes(eventData.category || 'system_security') &&
-      rule.applicableEventTypes.includes(eventData.eventType || 'system_event')
+    return Array.from(this.complianceRules.values()).filter(
+      (rule) =>
+        rule.applicableCategories.includes(eventData.category || "system_security") &&
+        rule.applicableEventTypes.includes(eventData.eventType || "system_event"),
     );
   }
 
   private async validateCompliance(
     eventData: Partial<AuditTrailEntry>,
-    rules: ComplianceRule[]
+    rules: ComplianceRule[],
   ): Promise<ComplianceValidationResult[]> {
     const results: ComplianceValidationResult[] = [];
-    
+
     for (const rule of rules) {
       const result = await this.validateRule(eventData, rule);
       results.push(result);
     }
-    
+
     return results;
   }
 
   private async validateRule(
     eventData: Partial<AuditTrailEntry>,
-    rule: ComplianceRule
+    rule: ComplianceRule,
   ): Promise<ComplianceValidationResult> {
     // Simplified rule validation - in real implementation, this would be more complex
     const isValid = await this.executeRuleValidation(eventData, rule);
-    
+
     return {
       ruleId: rule.id,
       ruleName: rule.name,
       ruleDescription: rule.description,
-      validationStatus: isValid ? 'passed' : 'failed',
-      validationMessage: isValid ? 'Rule validation passed' : 'Rule validation failed',
+      validationStatus: isValid ? "passed" : "failed",
+      validationMessage: isValid ? "Rule validation passed" : "Rule validation failed",
       severity: rule.severity,
-      recommendedAction: isValid ? undefined : rule.recommendedAction
+      recommendedAction: isValid ? undefined : rule.recommendedAction,
     };
   }
 
   private async executeRuleValidation(
     eventData: Partial<AuditTrailEntry>,
-    rule: ComplianceRule
+    rule: ComplianceRule,
   ): Promise<boolean> {
     // Implement actual rule validation logic
     // This is a simplified version
@@ -774,25 +799,25 @@ export class AuditTrailManager extends EventEmitter {
 
   private identifyRiskFactors(eventData: Partial<AuditTrailEntry>): string[] {
     const factors: string[] = [];
-    
-    if (eventData.eventType === 'access' && eventData.category === 'patient_data') {
-      factors.push('Patient data access');
+
+    if (eventData.eventType === "access" && eventData.category === "patient_data") {
+      factors.push("Patient data access");
     }
-    
-    if (eventData.severity === 'error' || eventData.severity === 'critical') {
-      factors.push('High severity event');
+
+    if (eventData.severity === "error" || eventData.severity === "critical") {
+      factors.push("High severity event");
     }
-    
-    if (eventData.eventType === 'deletion') {
-      factors.push('Data deletion operation');
+
+    if (eventData.eventType === "deletion") {
+      factors.push("Data deletion operation");
     }
-    
+
     return factors;
   }
 
   private calculateRiskScore(eventData: Partial<AuditTrailEntry>, riskFactors: string[]): number {
     let score = 0;
-    
+
     // Base score by event type
     const eventTypeScores: Record<AuditEventType, number> = {
       access: 10,
@@ -803,90 +828,91 @@ export class AuditTrailManager extends EventEmitter {
       authorization: 10,
       compliance_check: 5,
       data_export: 30,
-      system_event: 5
+      system_event: 5,
     };
-    
-    score += eventTypeScores[eventData.eventType || 'system_event'];
-    
+
+    score += eventTypeScores[eventData.eventType || "system_event"];
+
     // Add risk factor scores
     score += riskFactors.length * 10;
-    
+
     // Severity multiplier
     const severityMultipliers: Record<AuditSeverity, number> = {
       info: 1,
       warning: 2,
       error: 3,
-      critical: 5
+      critical: 5,
     };
-    
-    score *= severityMultipliers[eventData.severity || 'info'];
-    
+
+    score *= severityMultipliers[eventData.severity || "info"];
+
     return Math.min(score, 100); // Cap at 100
   }
 
-  private getRiskLevel(riskScore: number): 'low' | 'medium' | 'high' | 'critical' {
-    if (riskScore >= 80) return 'critical';
-    if (riskScore >= 60) return 'high';
-    if (riskScore >= 30) return 'medium';
-    return 'low';
+  private getRiskLevel(riskScore: number): "low" | "medium" | "high" | "critical" {
+    if (riskScore >= 80) return "critical";
+    if (riskScore >= 60) return "high";
+    if (riskScore >= 30) return "medium";
+    return "low";
   }
 
-  private getRiskCategory(eventData: Partial<AuditTrailEntry>): 'operational' | 'security' | 'compliance' | 'privacy' | 'safety' {
-    if (eventData.category === 'patient_data' || eventData.category === 'medical_records') {
-      return 'privacy';
+  private getRiskCategory(
+    eventData: Partial<AuditTrailEntry>,
+  ): "operational" | "security" | "compliance" | "privacy" | "safety" {
+    if (eventData.category === "patient_data" || eventData.category === "medical_records") {
+      return "privacy";
     }
-    
-    if (eventData.category === 'system_security') {
-      return 'security';
+
+    if (eventData.category === "system_security") {
+      return "security";
     }
-    
-    if (eventData.category === 'compliance_validation') {
-      return 'compliance';
+
+    if (eventData.category === "compliance_validation") {
+      return "compliance";
     }
-    
-    return 'operational';
+
+    return "operational";
   }
 
   private getImmediateActions(riskLevel: string, eventData: Partial<AuditTrailEntry>): string[] {
     const actions: string[] = [];
-    
-    if (riskLevel === 'critical') {
-      actions.push('Immediate security team notification');
-      actions.push('Suspend user access if necessary');
-      actions.push('Investigate potential breach');
+
+    if (riskLevel === "critical") {
+      actions.push("Immediate security team notification");
+      actions.push("Suspend user access if necessary");
+      actions.push("Investigate potential breach");
     }
-    
-    if (riskLevel === 'high') {
-      actions.push('Alert compliance officer');
-      actions.push('Review access controls');
+
+    if (riskLevel === "high") {
+      actions.push("Alert compliance officer");
+      actions.push("Review access controls");
     }
-    
+
     return actions;
   }
 
   private getLongTermActions(riskLevel: string, eventData: Partial<AuditTrailEntry>): string[] {
     const actions: string[] = [];
-    
-    if (riskLevel === 'critical' || riskLevel === 'high') {
-      actions.push('Review and update security policies');
-      actions.push('Enhance monitoring and alerting');
-      actions.push('Conduct security awareness training');
+
+    if (riskLevel === "critical" || riskLevel === "high") {
+      actions.push("Review and update security policies");
+      actions.push("Enhance monitoring and alerting");
+      actions.push("Conduct security awareness training");
     }
-    
+
     return actions;
   }
 
   private assessImpact(eventData: Partial<AuditTrailEntry>, riskLevel: string): ImpactAssessment {
-    const baseImpact = riskLevel === 'critical' ? 'high' : 
-                      riskLevel === 'high' ? 'medium' : 'low';
-    
+    const baseImpact = riskLevel === "critical" ? "high" : riskLevel === "high" ? "medium" : "low";
+
     return {
-      patientSafety: eventData.category === 'medical_records' ? baseImpact : 'none',
-      dataPrivacy: eventData.category === 'patient_data' ? baseImpact : 'low',
-      systemSecurity: eventData.category === 'system_security' ? baseImpact : 'low',
+      patientSafety: eventData.category === "medical_records" ? baseImpact : "none",
+      dataPrivacy: eventData.category === "patient_data" ? baseImpact : "low",
+      systemSecurity: eventData.category === "system_security" ? baseImpact : "low",
       regulatoryCompliance: baseImpact,
-      businessContinuity: riskLevel === 'critical' ? 'medium' : 'low',
-      reputationalRisk: riskLevel === 'critical' ? 'high' : 'low'
+      businessContinuity: riskLevel === "critical" ? "medium" : "low",
+      reputationalRisk: riskLevel === "critical" ? "high" : "low",
     };
   }
 
@@ -898,62 +924,68 @@ export class AuditTrailManager extends EventEmitter {
       system_security: 365 * 7, // 7 years
       user_activity: 365 * 5, // 5 years
       compliance_validation: 365 * 10, // 10 years
-      data_processing: 365 * 5 // 5 years
+      data_processing: 365 * 5, // 5 years
     };
-    
-    return categoryRetention[category || 'system_security'];
+
+    return categoryRetention[category || "system_security"];
   }
 
   private async loadComplianceRules(): Promise<void> {
     // Load compliance rules from configuration or database
     const defaultRules: ComplianceRule[] = [
       {
-        id: 'lgpd_data_access',
-        name: 'LGPD Data Access Control',
-        description: 'Ensure proper authorization for personal data access',
-        severity: 'critical',
-        applicableCategories: ['patient_data'],
-        applicableEventTypes: ['access'],
+        id: "lgpd_data_access",
+        name: "LGPD Data Access Control",
+        description: "Ensure proper authorization for personal data access",
+        severity: "critical",
+        applicableCategories: ["patient_data"],
+        applicableEventTypes: ["access"],
         requiresReview: true,
-        recommendedAction: 'Review access permissions and audit trail'
+        recommendedAction: "Review access permissions and audit trail",
       },
       {
-        id: 'cfm_medical_records',
-        name: 'CFM Medical Records Retention',
-        description: 'Ensure proper retention of medical records per CFM 1821/2007',
-        severity: 'warning',
-        applicableCategories: ['medical_records'],
-        applicableEventTypes: ['deletion', 'modification'],
+        id: "cfm_medical_records",
+        name: "CFM Medical Records Retention",
+        description: "Ensure proper retention of medical records per CFM 1821/2007",
+        severity: "warning",
+        applicableCategories: ["medical_records"],
+        applicableEventTypes: ["deletion", "modification"],
         requiresReview: false,
-        recommendedAction: 'Verify retention policy compliance'
-      }
+        recommendedAction: "Verify retention policy compliance",
+      },
     ];
-    
-    defaultRules.forEach(rule => {
+
+    defaultRules.forEach((rule) => {
       this.complianceRules.set(rule.id, rule);
     });
   }
 
   private initializeRiskThresholds(): void {
-    this.riskThresholds.set('critical_threshold', 80);
-    this.riskThresholds.set('high_threshold', 60);
-    this.riskThresholds.set('medium_threshold', 30);
+    this.riskThresholds.set("critical_threshold", 80);
+    this.riskThresholds.set("high_threshold", 60);
+    this.riskThresholds.set("medium_threshold", 30);
   }
 
-  private async triggerImmediateResponse(entry: AuditTrailEntry, violations: string[]): Promise<void> {
+  private async triggerImmediateResponse(
+    entry: AuditTrailEntry,
+    violations: string[],
+  ): Promise<void> {
     // Implement immediate response to critical violations
-    logger.error(`Critical compliance violation detected: ${violations.join(', ')}`);
-    
+    logger.error(`Critical compliance violation detected: ${violations.join(", ")}`);
+
     // Emit critical event
-    this.emit('criticalViolation', {
+    this.emit("criticalViolation", {
       entry,
-      violations
+      violations,
     });
   }
 
-  private async handleComplianceViolation(entry: AuditTrailEntry, violations: string[]): Promise<void> {
+  private async handleComplianceViolation(
+    entry: AuditTrailEntry,
+    violations: string[],
+  ): Promise<void> {
     // Handle compliance violations
-    logger.warning(`Compliance violation detected: ${violations.join(', ')}`);
+    logger.warning(`Compliance violation detected: ${violations.join(", ")}`);
   }
 
   private async handleCriticalRisk(entry: AuditTrailEntry): Promise<void> {
@@ -987,7 +1019,7 @@ export class AuditTrailManager extends EventEmitter {
       metadata: row.metadata,
       complianceContext: row.compliance_context,
       riskAssessment: row.risk_assessment,
-      retention: row.retention
+      retention: row.retention,
     };
   }
 
@@ -1012,78 +1044,89 @@ export class AuditTrailManager extends EventEmitter {
       metadata: entry.metadata,
       compliance_context: entry.complianceContext,
       risk_assessment: entry.riskAssessment,
-      retention: entry.retention
+      retention: entry.retention,
     };
   }
 
   private getAuditCategories(): AuditCategory[] {
-    return ['patient_data', 'medical_records', 'system_security', 'user_activity', 'compliance_validation', 'data_processing'];
+    return [
+      "patient_data",
+      "medical_records",
+      "system_security",
+      "user_activity",
+      "compliance_validation",
+      "data_processing",
+    ];
   }
 
   private generateAuditSummary(entries: AuditTrailEntry[]): AuditSummary {
     return {
       totalEvents: entries.length,
-      eventsByType: this.groupByField(entries, 'eventType'),
-      eventsByCategory: this.groupByField(entries, 'category'),
-      eventsBySeverity: this.groupByField(entries, 'severity'),
+      eventsByType: this.groupByField(entries, "eventType"),
+      eventsByCategory: this.groupByField(entries, "category"),
+      eventsBySeverity: this.groupByField(entries, "severity"),
       complianceRate: this.calculateComplianceRate(entries),
       riskDistribution: this.calculateRiskDistribution(entries),
       topUsers: this.getTopUsers(entries),
-      topResources: this.getTopResources(entries)
+      topResources: this.getTopResources(entries),
     };
   }
 
   private async generateAuditFindings(entries: AuditTrailEntry[]): Promise<AuditFinding[]> {
     // Generate audit findings from entries
     const findings: AuditFinding[] = [];
-    
+
     // Example finding for non-compliant events
-    const nonCompliantEvents = entries.filter(e => e.complianceContext.complianceStatus === 'non_compliant');
+    const nonCompliantEvents = entries.filter(
+      (e) => e.complianceContext.complianceStatus === "non_compliant",
+    );
     if (nonCompliantEvents.length > 0) {
       findings.push({
         id: `finding_compliance_${Date.now()}`,
-        type: 'compliance_violation',
-        severity: 'warning',
-        title: 'Compliance Violations Detected',
+        type: "compliance_violation",
+        severity: "warning",
+        title: "Compliance Violations Detected",
         description: `${nonCompliantEvents.length} compliance violations found`,
-        evidence: nonCompliantEvents.map(e => e.id),
-        relatedEvents: nonCompliantEvents.map(e => e.id),
+        evidence: nonCompliantEvents.map((e) => e.id),
+        relatedEvents: nonCompliantEvents.map((e) => e.id),
         impactAssessment: {
-          patientSafety: 'low',
-          dataPrivacy: 'medium',
-          systemSecurity: 'low',
-          regulatoryCompliance: 'high',
-          businessContinuity: 'low',
-          reputationalRisk: 'medium'
+          patientSafety: "low",
+          dataPrivacy: "medium",
+          systemSecurity: "low",
+          regulatoryCompliance: "high",
+          businessContinuity: "low",
+          reputationalRisk: "medium",
         },
-        recommendedActions: ['Review and address compliance gaps', 'Update policies if necessary'],
-        status: 'open'
+        recommendedActions: ["Review and address compliance gaps", "Update policies if necessary"],
+        status: "open",
       });
     }
-    
+
     return findings;
   }
 
-  private async generateAuditRecommendations(entries: AuditTrailEntry[]): Promise<AuditRecommendation[]> {
+  private async generateAuditRecommendations(
+    entries: AuditTrailEntry[],
+  ): Promise<AuditRecommendation[]> {
     // Generate recommendations based on audit analysis
     return [
       {
         id: `rec_${Date.now()}`,
-        category: 'compliance',
-        priority: 'high',
-        title: 'Enhance Access Control Monitoring',
-        description: 'Implement more granular access control monitoring',
-        justification: 'Multiple access events detected that require closer monitoring',
+        category: "compliance",
+        priority: "high",
+        title: "Enhance Access Control Monitoring",
+        description: "Implement more granular access control monitoring",
+        justification: "Multiple access events detected that require closer monitoring",
         implementation: {
-          estimatedEffort: 'medium',
-          timeline: '2-4 weeks',
-          resources: ['Security team', 'Development team'],
-          dependencies: ['Updated access control system'],
-          successCriteria: ['Reduced unauthorized access attempts', 'Improved compliance scores']
+          estimatedEffort: "medium",
+          timeline: "2-4 weeks",
+          resources: ["Security team", "Development team"],
+          dependencies: ["Updated access control system"],
+          successCriteria: ["Reduced unauthorized access attempts", "Improved compliance scores"],
         },
-        expectedBenefit: 'Improved security posture and compliance',
-        riskReduction: 25
-      }
+        expectedBenefit: "Improved security posture and compliance",
+        riskReduction: 25,
+      },
     ];
   }
 
@@ -1094,7 +1137,7 @@ export class AuditTrailManager extends EventEmitter {
       complianceByCategory: this.calculateComplianceByCategory(entries),
       complianceByUser: this.calculateComplianceByUser(entries),
       complianceTrends: this.calculateComplianceTrends(entries),
-      violationsSummary: this.calculateViolationsSummary(entries)
+      violationsSummary: this.calculateViolationsSummary(entries),
     };
   }
 
@@ -1104,114 +1147,136 @@ export class AuditTrailManager extends EventEmitter {
       riskByCategory: this.calculateRiskByCategory(entries),
       riskByUser: this.calculateRiskByUser(entries),
       riskByResource: this.calculateRiskByResource(entries),
-      highRiskEvents: entries.filter(e => e.riskAssessment.riskLevel === 'high').length,
-      criticalRiskEvents: entries.filter(e => e.riskAssessment.riskLevel === 'critical').length,
+      highRiskEvents: entries.filter((e) => e.riskAssessment.riskLevel === "high").length,
+      criticalRiskEvents: entries.filter((e) => e.riskAssessment.riskLevel === "critical").length,
       riskTrends: this.calculateRiskTrends(entries),
-      riskMitigationStatus: this.calculateRiskMitigationStatus(entries)
+      riskMitigationStatus: this.calculateRiskMitigationStatus(entries),
     };
   }
 
   private async generateAuditTrends(
     entries: AuditTrailEntry[],
-    timeRange: { startDate: string; endDate: string }
+    timeRange: { startDate: string; endDate: string },
   ): Promise<AuditTrend[]> {
     // Generate trend analysis
     return [
       {
-        metric: 'compliance_rate',
-        timePeriod: 'daily',
+        metric: "compliance_rate",
+        timePeriod: "daily",
         values: [],
-        trend: 'stable',
-        significance: 'medium'
-      }
+        trend: "stable",
+        significance: "medium",
+      },
     ];
   }
 
   private async saveAuditReport(report: AuditReport): Promise<void> {
-    const { error } = await this.supabase
-      .from('audit_reports')
-      .insert({
-        id: report.id,
-        generated_date: report.generatedDate,
-        report_type: report.reportType,
-        report_data: report
-      });
-    
+    const { error } = await this.supabase.from("audit_reports").insert({
+      id: report.id,
+      generated_date: report.generatedDate,
+      report_type: report.reportType,
+      report_data: report,
+    });
+
     if (error) {
-      logger.error('Failed to save audit report:', error);
+      logger.error("Failed to save audit report:", error);
     }
   }
 
   // Additional helper methods for calculations
-  private groupByField<T extends Record<string, any>>(items: T[], field: keyof T): Record<string, number> {
-    return items.reduce((acc, item) => {
-      const key = item[field] as string;
-      acc[key] = (acc[key] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+  private groupByField<T extends Record<string, any>>(
+    items: T[],
+    field: keyof T,
+  ): Record<string, number> {
+    return items.reduce(
+      (acc, item) => {
+        const key = item[field] as string;
+        acc[key] = (acc[key] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
   }
 
   private calculateComplianceRate(entries: AuditTrailEntry[]): number {
     if (entries.length === 0) return 100;
-    
-    const compliantEntries = entries.filter(e => e.complianceContext.complianceStatus === 'compliant');
+
+    const compliantEntries = entries.filter(
+      (e) => e.complianceContext.complianceStatus === "compliant",
+    );
     return (compliantEntries.length / entries.length) * 100;
   }
 
   private calculateRiskDistribution(entries: AuditTrailEntry[]): Record<string, number> {
-    return this.groupByField(entries.map(e => ({ riskLevel: e.riskAssessment.riskLevel })), 'riskLevel');
+    return this.groupByField(
+      entries.map((e) => ({ riskLevel: e.riskAssessment.riskLevel })),
+      "riskLevel",
+    );
   }
 
   private getTopUsers(entries: AuditTrailEntry[]): UserActivity[] {
-    const userActivity = new Map<string, { count: number; riskScore: number; lastActivity: string }>();
-    
-    entries.forEach(entry => {
-      const existing = userActivity.get(entry.userId) || { count: 0, riskScore: 0, lastActivity: entry.timestamp };
+    const userActivity = new Map<
+      string,
+      { count: number; riskScore: number; lastActivity: string }
+    >();
+
+    entries.forEach((entry) => {
+      const existing = userActivity.get(entry.userId) || {
+        count: 0,
+        riskScore: 0,
+        lastActivity: entry.timestamp,
+      };
       userActivity.set(entry.userId, {
         count: existing.count + 1,
         riskScore: Math.max(existing.riskScore, entry.riskAssessment.riskScore),
-        lastActivity: entry.timestamp > existing.lastActivity ? entry.timestamp : existing.lastActivity
+        lastActivity:
+          entry.timestamp > existing.lastActivity ? entry.timestamp : existing.lastActivity,
       });
     });
-    
+
     return Array.from(userActivity.entries()).map(([userId, activity]) => ({
       userId,
       userName: `User ${userId}`, // In real implementation, would look up actual name
       eventCount: activity.count,
       riskScore: activity.riskScore,
       complianceRate: 95, // Would calculate actual compliance rate
-      lastActivity: activity.lastActivity
+      lastActivity: activity.lastActivity,
     }));
   }
 
   private getTopResources(entries: AuditTrailEntry[]): ResourceActivity[] {
-    const resourceActivity = new Map<string, { accessCount: number; modificationCount: number; riskScore: number; lastAccessed: string }>();
-    
-    entries.forEach(entry => {
+    const resourceActivity = new Map<
+      string,
+      { accessCount: number; modificationCount: number; riskScore: number; lastAccessed: string }
+    >();
+
+    entries.forEach((entry) => {
       if (!entry.resourceId) return;
-      
-      const existing = resourceActivity.get(entry.resourceId) || { 
-        accessCount: 0, 
-        modificationCount: 0, 
-        riskScore: 0, 
-        lastAccessed: entry.timestamp 
+
+      const existing = resourceActivity.get(entry.resourceId) || {
+        accessCount: 0,
+        modificationCount: 0,
+        riskScore: 0,
+        lastAccessed: entry.timestamp,
       };
-      
+
       resourceActivity.set(entry.resourceId, {
-        accessCount: existing.accessCount + (entry.eventType === 'access' ? 1 : 0),
-        modificationCount: existing.modificationCount + (entry.eventType === 'modification' ? 1 : 0),
+        accessCount: existing.accessCount + (entry.eventType === "access" ? 1 : 0),
+        modificationCount:
+          existing.modificationCount + (entry.eventType === "modification" ? 1 : 0),
         riskScore: Math.max(existing.riskScore, entry.riskAssessment.riskScore),
-        lastAccessed: entry.timestamp > existing.lastAccessed ? entry.timestamp : existing.lastAccessed
+        lastAccessed:
+          entry.timestamp > existing.lastAccessed ? entry.timestamp : existing.lastAccessed,
       });
     });
-    
+
     return Array.from(resourceActivity.entries()).map(([resourceId, activity]) => ({
       resourceId,
-      resourceType: 'patient_record', // Would determine actual type
+      resourceType: "patient_record", // Would determine actual type
       accessCount: activity.accessCount,
       modificationCount: activity.modificationCount,
       riskScore: activity.riskScore,
-      lastAccessed: activity.lastAccessed
+      lastAccessed: activity.lastAccessed,
     }));
   }
 
@@ -1236,21 +1301,23 @@ export class AuditTrailManager extends EventEmitter {
   }
 
   private calculateViolationsSummary(entries: AuditTrailEntry[]): ViolationsSummary {
-    const violations = entries.filter(e => e.complianceContext.complianceStatus === 'non_compliant');
-    
+    const violations = entries.filter(
+      (e) => e.complianceContext.complianceStatus === "non_compliant",
+    );
+
     return {
       totalViolations: violations.length,
-      violationsByType: this.groupByField(violations, 'eventType'),
-      violationsBySeverity: this.groupByField(violations, 'severity'),
+      violationsByType: this.groupByField(violations, "eventType"),
+      violationsBySeverity: this.groupByField(violations, "severity"),
       resolvedViolations: 0, // Would track resolution status
       pendingViolations: violations.length,
-      avgResolutionTime: 0 // Would calculate actual resolution time
+      avgResolutionTime: 0, // Would calculate actual resolution time
     };
   }
 
   private calculateOverallRiskScore(entries: AuditTrailEntry[]): number {
     if (entries.length === 0) return 0;
-    
+
     const totalRisk = entries.reduce((sum, entry) => sum + entry.riskAssessment.riskScore, 0);
     return totalRisk / entries.length;
   }
@@ -1282,21 +1349,25 @@ export class AuditTrailManager extends EventEmitter {
       completedMitigations: 0,
       pendingMitigations: 0,
       overdueMitigations: 0,
-      avgMitigationTime: 0
+      avgMitigationTime: 0,
     };
   }
 
-  private groupValidationsByRegulation(results: ComplianceValidationResult[]): Record<string, number> {
+  private groupValidationsByRegulation(
+    results: ComplianceValidationResult[],
+  ): Record<string, number> {
     // Implementation for grouping validations by regulation
     return {};
   }
 
-  private async generateComplianceRecommendations(results: ComplianceValidationResult[]): Promise<string[]> {
+  private async generateComplianceRecommendations(
+    results: ComplianceValidationResult[],
+  ): Promise<string[]> {
     // Implementation for generating compliance recommendations
     return [
-      'Regular compliance training for staff',
-      'Update compliance policies and procedures',
-      'Implement automated compliance checking'
+      "Regular compliance training for staff",
+      "Update compliance policies and procedures",
+      "Implement automated compliance checking",
     ];
   }
 }
@@ -1326,11 +1397,28 @@ export interface ComplianceValidationSummary {
 
 // Validation schemas
 export const AuditEventValidationSchema = z.object({
-  eventType: z.enum(['access', 'modification', 'deletion', 'creation', 'authentication', 'authorization', 'compliance_check', 'data_export', 'system_event']),
-  category: z.enum(['patient_data', 'medical_records', 'system_security', 'user_activity', 'compliance_validation', 'data_processing']),
-  userId: z.string().min(1, 'User ID is required'),
-  action: z.string().min(1, 'Action is required'),
-  description: z.string().min(1, 'Description is required')
+  eventType: z.enum([
+    "access",
+    "modification",
+    "deletion",
+    "creation",
+    "authentication",
+    "authorization",
+    "compliance_check",
+    "data_export",
+    "system_event",
+  ]),
+  category: z.enum([
+    "patient_data",
+    "medical_records",
+    "system_security",
+    "user_activity",
+    "compliance_validation",
+    "data_processing",
+  ]),
+  userId: z.string().min(1, "User ID is required"),
+  action: z.string().min(1, "Action is required"),
+  description: z.string().min(1, "Description is required"),
 });
 
 // Export additional classes for compatibility
@@ -1338,8 +1426,7 @@ export { AuditTrailManager as LGPDAuditTrail };
 export { AuditTrailManager as LGPDAuditTrailService };
 
 // Export the AuditEventType enum for direct use
-export { AuditEventType } from '../../types/lgpd';
+export { AuditEventType } from "../../types/lgpd";
 
 // Export singleton instance
 export const createauditTrailManager = () => new AuditTrailManager();
-

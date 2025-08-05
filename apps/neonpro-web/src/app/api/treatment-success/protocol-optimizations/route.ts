@@ -1,23 +1,34 @@
-import { TreatmentSuccessService } from '@/app/lib/services/treatment-success';
-import { createProtocolOptimizationSchema } from '@/app/lib/validations/treatment-success';
-import { NextRequest, NextResponse } from 'next/server';
+import type { TreatmentSuccessService } from "@/app/lib/services/treatment-success";
+import type { createProtocolOptimizationSchema } from "@/app/lib/validations/treatment-success";
+import type { NextRequest, NextResponse } from "next/server";
 
 const treatmentSuccessService = new TreatmentSuccessService();
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    
+
     // Extract pagination params
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
-    
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
+
     // Extract filter params
     const filters = {
-      treatment_type: searchParams.get('treatment_type') || undefined,
-      implementation_priority: searchParams.get('implementation_priority') as 'high' | 'medium' | 'low' | undefined,
-      approval_status: searchParams.get('approval_status') as 'pending' | 'approved' | 'rejected' | 'implemented' | undefined,
-      success_improvement_min: searchParams.get('success_improvement_min') ? parseFloat(searchParams.get('success_improvement_min')!) : undefined,
+      treatment_type: searchParams.get("treatment_type") || undefined,
+      implementation_priority: searchParams.get("implementation_priority") as
+        | "high"
+        | "medium"
+        | "low"
+        | undefined,
+      approval_status: searchParams.get("approval_status") as
+        | "pending"
+        | "approved"
+        | "rejected"
+        | "implemented"
+        | undefined,
+      success_improvement_min: searchParams.get("success_improvement_min")
+        ? parseFloat(searchParams.get("success_improvement_min")!)
+        : undefined,
     };
 
     const result = await treatmentSuccessService.getProtocolOptimizations(filters, page, limit);
@@ -29,18 +40,18 @@ export async function GET(request: NextRequest) {
         page: result.page,
         limit: result.limit,
         total: result.total,
-        totalPages: Math.ceil(result.total / result.limit)
-      }
+        totalPages: Math.ceil(result.total / result.limit),
+      },
     });
   } catch (error) {
-    console.error('Error fetching protocol optimizations:', error);
+    console.error("Error fetching protocol optimizations:", error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Erro interno do servidor',
-        details: error instanceof Error ? error.message : 'Erro desconhecido'
+      {
+        success: false,
+        error: "Erro interno do servidor",
+        details: error instanceof Error ? error.message : "Erro desconhecido",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -48,37 +59,40 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     // Validate request body
     const validatedData = createProtocolOptimizationSchema.parse(body);
-    
+
     const optimization = await treatmentSuccessService.createProtocolOptimization(validatedData);
 
-    return NextResponse.json({
-      success: true,
-      data: optimization
-    }, { status: 201 });
+    return NextResponse.json(
+      {
+        success: true,
+        data: optimization,
+      },
+      { status: 201 },
+    );
   } catch (error) {
-    console.error('Error creating protocol optimization:', error);
-    
-    if (error instanceof Error && error.name === 'ZodError') {
+    console.error("Error creating protocol optimization:", error);
+
+    if (error instanceof Error && error.name === "ZodError") {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Dados inválidos',
-          details: error.message
+        {
+          success: false,
+          error: "Dados inválidos",
+          details: error.message,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Erro interno do servidor',
-        details: error instanceof Error ? error.message : 'Erro desconhecido'
+      {
+        success: false,
+        error: "Erro interno do servidor",
+        details: error instanceof Error ? error.message : "Erro desconhecido",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

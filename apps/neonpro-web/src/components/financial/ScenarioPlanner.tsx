@@ -3,42 +3,42 @@
  * Interface para planejamento de cenários financeiros
  */
 
-'use client'
+"use client";
 
-import React, { useState } from 'react';
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogTrigger 
-} from '@/components/ui/dialog';
-import { 
-  AlertTriangle, 
-  TrendingUp, 
-  TrendingDown, 
+import React, { useState } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Badge } from "@/components/ui/badge";
+import type { Progress } from "@/components/ui/progress";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type {
+  AlertTriangle,
+  TrendingUp,
+  TrendingDown,
   DollarSign,
   BarChart3,
   Calculator,
@@ -49,15 +49,15 @@ import {
   Trash2,
   Eye,
   Copy,
-  Play
-} from 'lucide-react';
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+  Play,
+} from "lucide-react";
+import type {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   AreaChart,
   Area,
@@ -67,17 +67,17 @@ import {
   PolarGrid,
   PolarAngleAxis,
   PolarRadiusAxis,
-  Radar
-} from 'recharts';
-import { useToast } from '@/hooks/use-toast';
-import {
+  Radar,
+} from "recharts";
+import type { useToast } from "@/hooks/use-toast";
+import type {
   useScenarioPlanning,
   useScenarioAnalysis,
   useScenarioComparison,
   useFinancialDecisionSupport,
-  useRiskAssessment
-} from '../hooks/use-scenario-planning';
-import { ScenarioParameters } from '../types/cash-flow';
+  useRiskAssessment,
+} from "../hooks/use-scenario-planning";
+import type { ScenarioParameters } from "../types/cash-flow";
 
 interface ScenarioPlannerProps {
   userId: string;
@@ -85,7 +85,7 @@ interface ScenarioPlannerProps {
 
 export function ScenarioPlanner({ userId }: ScenarioPlannerProps) {
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState('scenarios');
+  const [activeTab, setActiveTab] = useState("scenarios");
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
   const {
@@ -98,7 +98,7 @@ export function ScenarioPlanner({ userId }: ScenarioPlannerProps) {
     deleteScenario,
     selectScenario,
     toggleComparisonMode,
-    toggleScenarioSelection
+    toggleScenarioSelection,
   } = useScenarioPlanning();
 
   const { scenarioDetails, isLoadingDetails } = useScenarioAnalysis(activeScenario);
@@ -119,10 +119,10 @@ export function ScenarioPlanner({ userId }: ScenarioPlannerProps) {
           <Button
             variant="outline"
             onClick={toggleComparisonMode}
-            className={comparisonMode ? 'bg-blue-50 border-blue-200' : ''}
+            className={comparisonMode ? "bg-blue-50 border-blue-200" : ""}
           >
             <BarChart3 className="w-4 h-4 mr-2" />
-            {comparisonMode ? 'Sair da Comparação' : 'Comparar Cenários'}
+            {comparisonMode ? "Sair da Comparação" : "Comparar Cenários"}
           </Button>
           <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
             <DialogTrigger asChild>
@@ -132,7 +132,7 @@ export function ScenarioPlanner({ userId }: ScenarioPlannerProps) {
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl">
-              <CreateScenarioForm 
+              <CreateScenarioForm
                 userId={userId}
                 onSuccess={() => {
                   setShowCreateDialog(false);
@@ -166,10 +166,12 @@ export function ScenarioPlanner({ userId }: ScenarioPlannerProps) {
           <CardContent>
             <div className="space-y-2">
               {riskAlerts.map((alert, index) => (
-                <div 
+                <div
                   key={index}
                   className={`flex items-center p-2 rounded-md ${
-                    alert.type === 'danger' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'
+                    alert.type === "danger"
+                      ? "bg-red-100 text-red-800"
+                      : "bg-yellow-100 text-yellow-800"
                   }`}
                 >
                   <AlertCircle className="w-4 h-4 mr-2" />
@@ -203,7 +205,7 @@ export function ScenarioPlanner({ userId }: ScenarioPlannerProps) {
         </TabsContent>
 
         <TabsContent value="analysis" className="space-y-4">
-          <ScenarioAnalysis 
+          <ScenarioAnalysis
             scenario={scenarioDetails}
             isLoading={isLoadingDetails}
             riskData={riskData}
@@ -211,16 +213,11 @@ export function ScenarioPlanner({ userId }: ScenarioPlannerProps) {
         </TabsContent>
 
         <TabsContent value="comparison" className="space-y-4">
-          <ScenarioComparison 
-            scenarios={selectedScenarios}
-            comparisonData={comparisonData}
-          />
+          <ScenarioComparison scenarios={selectedScenarios} comparisonData={comparisonData} />
         </TabsContent>
 
         <TabsContent value="decisions" className="space-y-4">
-          <DecisionSupport 
-            selectedScenarios={selectedScenarios}
-          />
+          <DecisionSupport selectedScenarios={selectedScenarios} />
         </TabsContent>
       </Tabs>
     </div>
@@ -250,7 +247,7 @@ function ScenariosGrid({
   isLoading,
   onSelectScenario,
   onToggleSelection,
-  onDeleteScenario
+  onDeleteScenario,
 }: ScenariosGridProps) {
   if (isLoading) {
     return (
@@ -330,56 +327,66 @@ function ScenarioCard({
   comparisonMode,
   onSelect,
   onToggleSelection,
-  onDelete
+  onDelete,
 }: ScenarioCardProps) {
   const results = scenario.results;
-  const riskLevel = results?.risk_assessment?.risk_level || 'medium';
-  
+  const riskLevel = results?.risk_assessment?.risk_level || "medium";
+
   const getRiskColor = (level: string) => {
     switch (level) {
-      case 'low': return 'text-green-600 bg-green-100';
-      case 'medium': return 'text-yellow-600 bg-yellow-100';
-      case 'high': return 'text-orange-600 bg-orange-100';
-      case 'critical': return 'text-red-600 bg-red-100';
-      default: return 'text-gray-600 bg-gray-100';
+      case "low":
+        return "text-green-600 bg-green-100";
+      case "medium":
+        return "text-yellow-600 bg-yellow-100";
+      case "high":
+        return "text-orange-600 bg-orange-100";
+      case "critical":
+        return "text-red-600 bg-red-100";
+      default:
+        return "text-gray-600 bg-gray-100";
     }
   };
 
   const getRiskIcon = (level: string) => {
     switch (level) {
-      case 'low': return <CheckCircle2 className="w-4 h-4" />;
-      case 'medium': return <AlertCircle className="w-4 h-4" />;
-      case 'high': return <AlertTriangle className="w-4 h-4" />;
-      case 'critical': return <AlertTriangle className="w-4 h-4" />;
-      default: return <AlertCircle className="w-4 h-4" />;
+      case "low":
+        return <CheckCircle2 className="w-4 h-4" />;
+      case "medium":
+        return <AlertCircle className="w-4 h-4" />;
+      case "high":
+        return <AlertTriangle className="w-4 h-4" />;
+      case "critical":
+        return <AlertTriangle className="w-4 h-4" />;
+      default:
+        return <AlertCircle className="w-4 h-4" />;
     }
   };
 
   return (
-    <Card 
+    <Card
       className={`cursor-pointer transition-all ${
-        isActive ? 'ring-2 ring-blue-500 bg-blue-50' : ''
-      } ${isSelected ? 'ring-2 ring-green-500' : ''} hover:shadow-md`}
+        isActive ? "ring-2 ring-blue-500 bg-blue-50" : ""
+      } ${isSelected ? "ring-2 ring-green-500" : ""} hover:shadow-md`}
       onClick={comparisonMode ? onToggleSelection : onSelect}
     >
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start">
           <div className="flex-1">
             <CardTitle className="text-lg">{scenario.name}</CardTitle>
-            <CardDescription className="mt-1">
-              {scenario.description}
-            </CardDescription>
+            <CardDescription className="mt-1">{scenario.description}</CardDescription>
           </div>
           {comparisonMode && (
-            <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
-              isSelected ? 'bg-green-500 border-green-500' : 'border-gray-300'
-            }`}>
+            <div
+              className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
+                isSelected ? "bg-green-500 border-green-500" : "border-gray-300"
+              }`}
+            >
               {isSelected && <CheckCircle2 className="w-3 h-3 text-white" />}
             </div>
           )}
         </div>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         {/* Key Metrics */}
         {results && (
@@ -387,13 +394,13 @@ function ScenarioCard({
             <div className="text-center p-2 bg-green-50 rounded-md">
               <div className="text-sm text-muted-foreground">Lucro Total</div>
               <div className="font-semibold text-green-600">
-                R$ {results.key_metrics?.total_profit?.toLocaleString() || '0'}
+                R$ {results.key_metrics?.total_profit?.toLocaleString() || "0"}
               </div>
             </div>
             <div className="text-center p-2 bg-blue-50 rounded-md">
               <div className="text-sm text-muted-foreground">Margem</div>
               <div className="font-semibold text-blue-600">
-                {results.key_metrics?.profit_margin?.toFixed(1) || '0'}%
+                {results.key_metrics?.profit_margin?.toFixed(1) || "0"}%
               </div>
             </div>
           </div>
@@ -404,12 +411,17 @@ function ScenarioCard({
           <Badge className={`${getRiskColor(riskLevel)} border-0`}>
             {getRiskIcon(riskLevel)}
             <span className="ml-1 capitalize">
-              Risco {riskLevel === 'low' ? 'Baixo' : 
-                     riskLevel === 'medium' ? 'Médio' : 
-                     riskLevel === 'high' ? 'Alto' : 'Crítico'}
+              Risco{" "}
+              {riskLevel === "low"
+                ? "Baixo"
+                : riskLevel === "medium"
+                  ? "Médio"
+                  : riskLevel === "high"
+                    ? "Alto"
+                    : "Crítico"}
             </span>
           </Badge>
-          
+
           {/* Confidence Level */}
           {results?.confidence_level && (
             <div className="text-sm text-muted-foreground">
@@ -428,10 +440,14 @@ function ScenarioCard({
             <Button variant="outline" size="sm">
               <Copy className="w-4 h-4" />
             </Button>
-            <Button variant="outline" size="sm" onClick={(e) => {
-              e.stopPropagation();
-              onDelete();
-            }}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete();
+              }}
+            >
               <Trash2 className="w-4 h-4" />
             </Button>
           </div>
@@ -455,16 +471,16 @@ function CreateScenarioForm({ userId, onSuccess, onError }: CreateScenarioFormPr
   const { createScenario } = useScenarioPlanning();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<Partial<ScenarioParameters>>({
-    name: '',
-    description: '',
+    name: "",
+    description: "",
     projection_period: {
-      start_date: new Date().toISOString().split('T')[0],
-      end_date: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+      start_date: new Date().toISOString().split("T")[0],
+      end_date: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
     },
     baseline_period: {
-      start_date: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      end_date: new Date().toISOString().split('T')[0]
-    }
+      start_date: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+      end_date: new Date().toISOString().split("T")[0],
+    },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -476,10 +492,10 @@ function CreateScenarioForm({ userId, onSuccess, onError }: CreateScenarioFormPr
       if (result.success) {
         onSuccess();
       } else {
-        onError(result.error || 'Erro desconhecido');
+        onError(result.error || "Erro desconhecido");
       }
     } catch (error) {
-      onError(error instanceof Error ? error.message : 'Erro ao criar cenário');
+      onError(error instanceof Error ? error.message : "Erro ao criar cenário");
     } finally {
       setIsLoading(false);
     }
@@ -493,26 +509,26 @@ function CreateScenarioForm({ userId, onSuccess, onError }: CreateScenarioFormPr
           Configure os parâmetros para análise do novo cenário financeiro
         </DialogDescription>
       </DialogHeader>
-      
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid gap-4">
           <div>
             <Label htmlFor="name">Nome do Cenário</Label>
             <Input
               id="name"
-              value={formData.name || ''}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              value={formData.name || ""}
+              onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
               placeholder="Ex: Expansão Q1 2024"
               required
             />
           </div>
-          
+
           <div>
             <Label htmlFor="description">Descrição</Label>
             <Textarea
               id="description"
-              value={formData.description || ''}
-              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+              value={formData.description || ""}
+              onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
               placeholder="Descreva o cenário que você deseja analisar..."
               rows={3}
             />
@@ -524,31 +540,35 @@ function CreateScenarioForm({ userId, onSuccess, onError }: CreateScenarioFormPr
               <Input
                 id="start-date"
                 type="date"
-                value={formData.projection_period?.start_date || ''}
-                onChange={(e) => setFormData(prev => ({
-                  ...prev,
-                  projection_period: {
-                    ...prev.projection_period!,
-                    start_date: e.target.value
-                  }
-                }))}
+                value={formData.projection_period?.start_date || ""}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    projection_period: {
+                      ...prev.projection_period!,
+                      start_date: e.target.value,
+                    },
+                  }))
+                }
                 required
               />
             </div>
-            
+
             <div>
               <Label htmlFor="end-date">Data de Fim</Label>
               <Input
                 id="end-date"
                 type="date"
-                value={formData.projection_period?.end_date || ''}
-                onChange={(e) => setFormData(prev => ({
-                  ...prev,
-                  projection_period: {
-                    ...prev.projection_period!,
-                    end_date: e.target.value
-                  }
-                }))}
+                value={formData.projection_period?.end_date || ""}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    projection_period: {
+                      ...prev.projection_period!,
+                      end_date: e.target.value,
+                    },
+                  }))
+                }
                 required
               />
             </div>
@@ -556,7 +576,7 @@ function CreateScenarioForm({ userId, onSuccess, onError }: CreateScenarioFormPr
         </div>
 
         <div className="flex justify-end gap-2 pt-4">
-          <Button type="button" variant="outline" onClick={() => onError('Cancelado')}>
+          <Button type="button" variant="outline" onClick={() => onError("Cancelado")}>
             Cancelar
           </Button>
           <Button type="submit" disabled={isLoading}>
@@ -627,9 +647,7 @@ function ScenarioAnalysis({ scenario, isLoading, riskData }: ScenarioAnalysisPro
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             {scenario.name}
-            <Badge variant="secondary">
-              Confiança: {scenario.results?.confidence_level || 0}%
-            </Badge>
+            <Badge variant="secondary">Confiança: {scenario.results?.confidence_level || 0}%</Badge>
           </CardTitle>
           <CardDescription>{scenario.description}</CardDescription>
         </CardHeader>
@@ -639,28 +657,28 @@ function ScenarioAnalysis({ scenario, isLoading, riskData }: ScenarioAnalysisPro
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <MetricCard
           title="Lucro Total"
-          value={`R$ ${scenario.results?.key_metrics?.total_profit?.toLocaleString() || '0'}`}
+          value={`R$ ${scenario.results?.key_metrics?.total_profit?.toLocaleString() || "0"}`}
           icon={<DollarSign className="w-4 h-4" />}
           trend={scenario.results?.key_metrics?.revenue_growth_rate || 0}
           color="green"
         />
         <MetricCard
           title="Margem de Lucro"
-          value={`${scenario.results?.key_metrics?.profit_margin?.toFixed(1) || '0'}%`}
+          value={`${scenario.results?.key_metrics?.profit_margin?.toFixed(1) || "0"}%`}
           icon={<TrendingUp className="w-4 h-4" />}
           trend={0}
           color="blue"
         />
         <MetricCard
           title="Volatilidade"
-          value={`${scenario.results?.key_metrics?.revenue_volatility?.toFixed(1) || '0'}%`}
+          value={`${scenario.results?.key_metrics?.revenue_volatility?.toFixed(1) || "0"}%`}
           icon={<BarChart3 className="w-4 h-4" />}
           trend={0}
           color="yellow"
         />
         <MetricCard
           title="Score de Risco"
-          value={`${riskData?.overall_risk_score?.toFixed(0) || '0'}`}
+          value={`${riskData?.overall_risk_score?.toFixed(0) || "0"}`}
           icon={<AlertTriangle className="w-4 h-4" />}
           trend={0}
           color="red"
@@ -679,22 +697,22 @@ function ScenarioAnalysis({ scenario, isLoading, riskData }: ScenarioAnalysisPro
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
                 <YAxis />
-                <Tooltip formatter={(value: any) => [`R$ ${value.toLocaleString()}`, '']} />
-                <Area 
-                  type="monotone" 
-                  dataKey="revenue" 
-                  stackId="1" 
-                  stroke="#10B981" 
-                  fill="#10B981" 
+                <Tooltip formatter={(value: any) => [`R$ ${value.toLocaleString()}`, ""]} />
+                <Area
+                  type="monotone"
+                  dataKey="revenue"
+                  stackId="1"
+                  stroke="#10B981"
+                  fill="#10B981"
                   fillOpacity={0.6}
                   name="Receita"
                 />
-                <Area 
-                  type="monotone" 
-                  dataKey="expenses" 
-                  stackId="2" 
-                  stroke="#EF4444" 
-                  fill="#EF4444" 
+                <Area
+                  type="monotone"
+                  dataKey="expenses"
+                  stackId="2"
+                  stroke="#EF4444"
+                  fill="#EF4444"
                   fillOpacity={0.6}
                   name="Despesas"
                 />
@@ -716,10 +734,7 @@ function ScenarioAnalysis({ scenario, isLoading, riskData }: ScenarioAnalysisPro
                 <div>
                   <Label>Probabilidade de Fluxo Negativo</Label>
                   <div className="flex items-center mt-2">
-                    <Progress 
-                      value={riskData.negative_flow_probability} 
-                      className="flex-1 mr-3" 
-                    />
+                    <Progress value={riskData.negative_flow_probability} className="flex-1 mr-3" />
                     <span className="text-sm font-medium">
                       {riskData.negative_flow_probability?.toFixed(1)}%
                     </span>
@@ -728,10 +743,7 @@ function ScenarioAnalysis({ scenario, isLoading, riskData }: ScenarioAnalysisPro
                 <div>
                   <Label>Risco de Volatilidade</Label>
                   <div className="flex items-center mt-2">
-                    <Progress 
-                      value={riskData.revenue_volatility_risk} 
-                      className="flex-1 mr-3" 
-                    />
+                    <Progress value={riskData.revenue_volatility_risk} className="flex-1 mr-3" />
                     <span className="text-sm font-medium">
                       {riskData.revenue_volatility_risk?.toFixed(1)}%
                     </span>
@@ -745,7 +757,10 @@ function ScenarioAnalysis({ scenario, isLoading, riskData }: ScenarioAnalysisPro
                   <Label>Resultados do Teste de Stress</Label>
                   <div className="mt-2 space-y-2">
                     {riskData.stress_test_results.map((test: any, index: number) => (
-                      <div key={index} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                      <div
+                        key={index}
+                        className="flex justify-between items-center p-2 bg-gray-50 rounded"
+                      >
                         <span className="text-sm">{test.scenario_name}</span>
                         <div className="text-right">
                           <div className="text-sm font-medium">
@@ -796,15 +811,15 @@ interface MetricCardProps {
   value: string;
   icon: React.ReactNode;
   trend: number;
-  color: 'green' | 'blue' | 'yellow' | 'red';
+  color: "green" | "blue" | "yellow" | "red";
 }
 
 function MetricCard({ title, value, icon, trend, color }: MetricCardProps) {
   const colorClasses = {
-    green: 'text-green-600 bg-green-100',
-    blue: 'text-blue-600 bg-blue-100',
-    yellow: 'text-yellow-600 bg-yellow-100',
-    red: 'text-red-600 bg-red-100'
+    green: "text-green-600 bg-green-100",
+    blue: "text-blue-600 bg-blue-100",
+    yellow: "text-yellow-600 bg-yellow-100",
+    red: "text-red-600 bg-red-100",
   };
 
   return (
@@ -815,9 +830,7 @@ function MetricCard({ title, value, icon, trend, color }: MetricCardProps) {
             <p className="text-sm font-medium text-muted-foreground">{title}</p>
             <p className="text-2xl font-bold">{value}</p>
           </div>
-          <div className={`p-3 rounded-full ${colorClasses[color]}`}>
-            {icon}
-          </div>
+          <div className={`p-3 rounded-full ${colorClasses[color]}`}>{icon}</div>
         </div>
         {trend !== 0 && (
           <div className="mt-2 flex items-center">
@@ -826,7 +839,7 @@ function MetricCard({ title, value, icon, trend, color }: MetricCardProps) {
             ) : (
               <TrendingDown className="w-4 h-4 text-red-600 mr-1" />
             )}
-            <span className={`text-sm ${trend > 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <span className={`text-sm ${trend > 0 ? "text-green-600" : "text-red-600"}`}>
               {Math.abs(trend).toFixed(1)}%
             </span>
           </div>
@@ -845,9 +858,7 @@ function ScenarioComparison({ scenarios, comparisonData }: any) {
     <Card>
       <CardHeader>
         <CardTitle>Comparação de Cenários</CardTitle>
-        <CardDescription>
-          Compare até 4 cenários lado a lado
-        </CardDescription>
+        <CardDescription>Compare até 4 cenários lado a lado</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="text-center py-8">

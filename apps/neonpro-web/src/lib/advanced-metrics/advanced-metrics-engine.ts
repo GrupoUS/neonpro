@@ -1,20 +1,42 @@
-﻿/**
+/**
  * Advanced Metrics Engine
  * NeonPro - Sistema avançado de métricas e análise de comunicação
  */
 
-import { createClient } from '@/lib/supabase/client';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { createClient } from "@/lib/supabase/client";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import type {
-  AdvancedMetricsConfig, AdvancedMetricsRequest, AdvancedMetricsResult,
-  CalculatedMetric, MetricType, MetricConfig, TrendAnalysis, MetricInsight,
-  MetricRecommendation, MetricAlert, BenchmarkComparison, EngagementMetrics,
-  SatisfactionMetrics, ConversionMetrics, PredictiveMetrics, QualityMetrics,
-  ComplianceMetrics, HealthcareComplianceMetrics, DataQualityScore,
-  ResultMetadata, MetricBreakdown, MetricContext, AggregationType,
-  FilterConfig, DimensionConfig, AggregationConfig, ComparisonConfig,
-  BenchmarkingConfig, AlertingConfig, ExportSettings
-} from './types/metrics';
+  AdvancedMetricsConfig,
+  AdvancedMetricsRequest,
+  AdvancedMetricsResult,
+  CalculatedMetric,
+  MetricType,
+  MetricConfig,
+  TrendAnalysis,
+  MetricInsight,
+  MetricRecommendation,
+  MetricAlert,
+  BenchmarkComparison,
+  EngagementMetrics,
+  SatisfactionMetrics,
+  ConversionMetrics,
+  PredictiveMetrics,
+  QualityMetrics,
+  ComplianceMetrics,
+  HealthcareComplianceMetrics,
+  DataQualityScore,
+  ResultMetadata,
+  MetricBreakdown,
+  MetricContext,
+  AggregationType,
+  FilterConfig,
+  DimensionConfig,
+  AggregationConfig,
+  ComparisonConfig,
+  BenchmarkingConfig,
+  AlertingConfig,
+  ExportSettings,
+} from "./types/metrics";
 
 export class AdvancedMetricsEngine {
   private supabase: SupabaseClient;
@@ -40,16 +62,13 @@ export class AdvancedMetricsEngine {
       await this.initializeMetricDefinitions();
       this.startPeriodicCalculations();
     } catch (error) {
-      console.error('Error initializing Advanced Metrics Engine:', error);
+      console.error("Error initializing Advanced Metrics Engine:", error);
     }
   }
 
   private async loadConfiguration(): Promise<void> {
     try {
-      const { data } = await this.supabase
-        .from('advanced_metrics_config')
-        .select('*')
-        .single();
+      const { data } = await this.supabase.from("advanced_metrics_config").select("*").single();
 
       if (data) {
         this.config = this.mapConfigFromDB(data);
@@ -58,139 +77,139 @@ export class AdvancedMetricsEngine {
         await this.saveConfiguration();
       }
     } catch (error) {
-      console.error('Error loading configuration:', error);
+      console.error("Error loading configuration:", error);
       this.config = this.getDefaultConfig();
     }
   }
 
   private getDefaultConfig(): AdvancedMetricsConfig {
     return {
-      clinicId: '',
+      clinicId: "",
       enabledMetrics: [
-        'engagement_advanced',
-        'satisfaction_detailed',
-        'conversion_funnel',
-        'communication_effectiveness',
-        'channel_performance',
-        'quality_index',
-        'compliance_score',
-        'roi_advanced'
+        "engagement_advanced",
+        "satisfaction_detailed",
+        "conversion_funnel",
+        "communication_effectiveness",
+        "channel_performance",
+        "quality_index",
+        "compliance_score",
+        "roi_advanced",
       ],
       aggregationSettings: {
-        defaultGranularity: 'day',
+        defaultGranularity: "day",
         aggregationMethods: {
-          'engagement_advanced': 'weighted_average',
-          'satisfaction_detailed': 'average',
-          'conversion_funnel': 'sum',
-          'churn_prediction': 'weighted_average',
-          'lifetime_value': 'average',
-          'communication_effectiveness': 'weighted_average',
-          'channel_performance': 'weighted_average',
-          'content_performance': 'weighted_average',
-          'timing_effectiveness': 'weighted_average',
-          'cost_efficiency': 'weighted_average',
-          'compliance_score': 'average',
-          'quality_index': 'weighted_average',
-          'roi_advanced': 'weighted_average',
-          'custom': 'average'
+          engagement_advanced: "weighted_average",
+          satisfaction_detailed: "average",
+          conversion_funnel: "sum",
+          churn_prediction: "weighted_average",
+          lifetime_value: "average",
+          communication_effectiveness: "weighted_average",
+          channel_performance: "weighted_average",
+          content_performance: "weighted_average",
+          timing_effectiveness: "weighted_average",
+          cost_efficiency: "weighted_average",
+          compliance_score: "average",
+          quality_index: "weighted_average",
+          roi_advanced: "weighted_average",
+          custom: "average",
         },
-        customAggregations: []
+        customAggregations: [],
       },
       alertingConfig: {
         enabled: true,
-        channels: ['email', 'dashboard'],
+        channels: ["email", "dashboard"],
         thresholds: [
           {
-            metric: 'engagement_advanced',
-            operator: 'less_than',
+            metric: "engagement_advanced",
+            operator: "less_than",
             value: 30,
-            severity: 'warning'
+            severity: "warning",
           },
           {
-            metric: 'satisfaction_detailed',
-            operator: 'less_than',
+            metric: "satisfaction_detailed",
+            operator: "less_than",
             value: 6,
-            severity: 'error'
+            severity: "error",
           },
           {
-            metric: 'compliance_score',
-            operator: 'less_than',
+            metric: "compliance_score",
+            operator: "less_than",
             value: 95,
-            severity: 'critical'
-          }
+            severity: "critical",
+          },
         ],
-        frequency: 'real_time',
+        frequency: "real_time",
         escalation: {
           levels: [
-            { threshold: 1, delay: 0, channels: ['dashboard'] },
-            { threshold: 3, delay: 300, channels: ['email'] },
-            { threshold: 5, delay: 900, channels: ['sms'] }
-          ]
-        }
+            { threshold: 1, delay: 0, channels: ["dashboard"] },
+            { threshold: 3, delay: 300, channels: ["email"] },
+            { threshold: 5, delay: 900, channels: ["sms"] },
+          ],
+        },
       },
       dataRetention: {
         rawData: 365,
         aggregatedData: 1095,
         archivedData: 2555,
         complianceData: 2555,
-        autoCleanup: true
+        autoCleanup: true,
       },
       calculationSettings: {
         precision: 2,
-        roundingMode: 'round',
+        roundingMode: "round",
         confidenceInterval: 95,
         significanceLevel: 0.05,
-        outlierHandling: 'cap'
+        outlierHandling: "cap",
       },
       exportSettings: {
-        formats: ['csv', 'xlsx', 'pdf'],
+        formats: ["csv", "xlsx", "pdf"],
         scheduling: [],
         destinations: [],
-        templates: []
-      }
+        templates: [],
+      },
     };
   }
 
   private async initializeMetricDefinitions(): Promise<void> {
     // Definir métricas padrão
-    this.metricDefinitions.set('engagement_advanced', {
+    this.metricDefinitions.set("engagement_advanced", {
       calculator: this.calculateEngagementMetrics.bind(this),
-      dependencies: ['communications_log', 'communication_events'],
-      aggregation: 'weighted_average',
-      unit: 'percentage',
-      category: 'engagement'
+      dependencies: ["communications_log", "communication_events"],
+      aggregation: "weighted_average",
+      unit: "percentage",
+      category: "engagement",
     });
 
-    this.metricDefinitions.set('satisfaction_detailed', {
+    this.metricDefinitions.set("satisfaction_detailed", {
       calculator: this.calculateSatisfactionMetrics.bind(this),
-      dependencies: ['satisfaction_surveys', 'feedback_ratings'],
-      aggregation: 'average',
-      unit: 'score',
-      category: 'satisfaction'
+      dependencies: ["satisfaction_surveys", "feedback_ratings"],
+      aggregation: "average",
+      unit: "score",
+      category: "satisfaction",
     });
 
-    this.metricDefinitions.set('conversion_funnel', {
+    this.metricDefinitions.set("conversion_funnel", {
       calculator: this.calculateConversionMetrics.bind(this),
-      dependencies: ['communications_log', 'appointment_bookings', 'patient_actions'],
-      aggregation: 'sum',
-      unit: 'percentage',
-      category: 'conversion'
+      dependencies: ["communications_log", "appointment_bookings", "patient_actions"],
+      aggregation: "sum",
+      unit: "percentage",
+      category: "conversion",
     });
 
-    this.metricDefinitions.set('quality_index', {
+    this.metricDefinitions.set("quality_index", {
       calculator: this.calculateQualityMetrics.bind(this),
-      dependencies: ['data_quality_checks', 'communication_quality_scores'],
-      aggregation: 'weighted_average',
-      unit: 'index',
-      category: 'quality'
+      dependencies: ["data_quality_checks", "communication_quality_scores"],
+      aggregation: "weighted_average",
+      unit: "index",
+      category: "quality",
     });
 
-    this.metricDefinitions.set('compliance_score', {
+    this.metricDefinitions.set("compliance_score", {
       calculator: this.calculateComplianceMetrics.bind(this),
-      dependencies: ['compliance_audits', 'consent_records', 'data_processing_logs'],
-      aggregation: 'average',
-      unit: 'percentage',
-      category: 'compliance'
+      dependencies: ["compliance_audits", "consent_records", "data_processing_logs"],
+      aggregation: "average",
+      unit: "percentage",
+      category: "compliance",
     });
   }
 
@@ -206,33 +225,33 @@ export class AdvancedMetricsEngine {
   async calculateAdvancedMetrics(request: AdvancedMetricsRequest): Promise<AdvancedMetricsResult> {
     try {
       const requestId = this.generateId();
-      
+
       // Validar request
       this.validateRequest(request);
-      
+
       // Calcular métricas solicitadas
       const metrics = await this.calculateRequestedMetrics(request);
-      
+
       // Análise de tendências
       const trends = await this.analyzeTrends(metrics, request);
-      
+
       // Gerar insights
       const insights = await this.generateInsights(metrics, trends, request);
-      
+
       // Comparações e benchmarks
       const benchmarks = await this.calculateBenchmarks(metrics, request);
-      
+
       // Verificar alertas
       const alerts = await this.checkAlerts(metrics, request);
-      
+
       // Gerar recomendações
       const recommendations = await this.generateRecommendations(
-        metrics, 
-        insights, 
+        metrics,
+        insights,
         benchmarks,
-        request
+        request,
       );
-      
+
       // Metadata do resultado
       const metadata = this.generateResultMetadata(request, metrics);
 
@@ -247,15 +266,15 @@ export class AdvancedMetricsEngine {
         alerts,
         recommendations,
         metadata,
-        generatedAt: new Date()
+        generatedAt: new Date(),
       };
 
       // Salvar resultado
       await this.saveMetricsResult(result);
-      
+
       return result;
     } catch (error) {
-      console.error('Error calculating advanced metrics:', error);
+      console.error("Error calculating advanced metrics:", error);
       throw error;
     }
   }
@@ -264,7 +283,7 @@ export class AdvancedMetricsEngine {
    * Calcular métricas solicitadas
    */
   private async calculateRequestedMetrics(
-    request: AdvancedMetricsRequest
+    request: AdvancedMetricsRequest,
   ): Promise<CalculatedMetric[]> {
     const calculatedMetrics: CalculatedMetric[] = [];
 
@@ -285,13 +304,13 @@ export class AdvancedMetricsEngine {
 
         // Calcular métrica
         const metric = await metricDef.calculator(request, metricConfig);
-        
+
         // Adicionar breakdown se solicitado
         if (request.dimensions?.length > 0) {
           metric.breakdown = await this.calculateMetricBreakdown(
             metric,
             request.dimensions,
-            request
+            request,
           );
         }
 
@@ -317,20 +336,20 @@ export class AdvancedMetricsEngine {
    */
   private async calculateEngagementMetrics(
     request: AdvancedMetricsRequest,
-    config: MetricConfig
+    config: MetricConfig,
   ): Promise<CalculatedMetric> {
     const { data: communications } = await this.supabase
-      .from('communications_log')
+      .from("communications_log")
       .select(`
         *,
         communication_events(*)
       `)
-      .eq('clinic_id', request.clinicId)
-      .gte('sent_at', request.period.start.toISOString())
-      .lte('sent_at', request.period.end.toISOString());
+      .eq("clinic_id", request.clinicId)
+      .gte("sent_at", request.period.start.toISOString())
+      .lte("sent_at", request.period.end.toISOString());
 
     if (!communications?.length) {
-      return this.createEmptyMetric('engagement_advanced', 'percentage');
+      return this.createEmptyMetric("engagement_advanced", "percentage");
     }
 
     // Calcular componentes de engagement
@@ -346,15 +365,11 @@ export class AdvancedMetricsEngine {
       clickRate,
       responseRate,
       completionRate,
-      timeSpent
+      timeSpent,
     });
 
     // Análise de tendência
-    const trend = await this.calculateMetricTrend(
-      'engagement_advanced',
-      engagementScore,
-      request
-    );
+    const trend = await this.calculateMetricTrend("engagement_advanced", engagementScore, request);
 
     // Qualidade dos dados
     const dataQuality = this.assessDataQuality(communications);
@@ -364,20 +379,20 @@ export class AdvancedMetricsEngine {
       communications.length,
       request.period,
       config.filters || [],
-      'Advanced engagement analysis including multi-channel behaviors'
+      "Advanced engagement analysis including multi-channel behaviors",
     );
 
     return {
-      type: 'engagement_advanced',
-      name: 'Engagement Avançado',
+      type: "engagement_advanced",
+      name: "Engagement Avançado",
       value: engagementScore,
-      unit: 'percentage',
+      unit: "percentage",
       trend,
       breakdown: [],
       confidence: this.calculateConfidence(dataQuality, communications.length),
       dataQuality,
       context,
-      calculatedAt: new Date()
+      calculatedAt: new Date(),
     };
   }
 
@@ -386,20 +401,20 @@ export class AdvancedMetricsEngine {
    */
   private async calculateSatisfactionMetrics(
     request: AdvancedMetricsRequest,
-    config: MetricConfig
+    config: MetricConfig,
   ): Promise<CalculatedMetric> {
     const { data: surveys } = await this.supabase
-      .from('satisfaction_surveys')
+      .from("satisfaction_surveys")
       .select(`
         *,
         survey_responses(*)
       `)
-      .eq('clinic_id', request.clinicId)
-      .gte('completed_at', request.period.start.toISOString())
-      .lte('completed_at', request.period.end.toISOString());
+      .eq("clinic_id", request.clinicId)
+      .gte("completed_at", request.period.start.toISOString())
+      .lte("completed_at", request.period.end.toISOString());
 
     if (!surveys?.length) {
-      return this.createEmptyMetric('satisfaction_detailed', 'score');
+      return this.createEmptyMetric("satisfaction_detailed", "score");
     }
 
     // Calcular scores de satisfação
@@ -413,13 +428,13 @@ export class AdvancedMetricsEngine {
       overall: overallSatisfaction,
       nps: npsScore,
       csat,
-      ces
+      ces,
     });
 
     const trend = await this.calculateMetricTrend(
-      'satisfaction_detailed',
+      "satisfaction_detailed",
       satisfactionScore,
-      request
+      request,
     );
 
     const dataQuality = this.assessDataQuality(surveys);
@@ -427,20 +442,20 @@ export class AdvancedMetricsEngine {
       surveys.length,
       request.period,
       config.filters || [],
-      'Detailed satisfaction analysis including NPS, CSAT, and CES'
+      "Detailed satisfaction analysis including NPS, CSAT, and CES",
     );
 
     return {
-      type: 'satisfaction_detailed',
-      name: 'Satisfação Detalhada',
+      type: "satisfaction_detailed",
+      name: "Satisfação Detalhada",
       value: satisfactionScore,
-      unit: 'score',
+      unit: "score",
       trend,
       breakdown: [],
       confidence: this.calculateConfidence(dataQuality, surveys.length),
       dataQuality,
       context,
-      calculatedAt: new Date()
+      calculatedAt: new Date(),
     };
   }
 
@@ -449,18 +464,18 @@ export class AdvancedMetricsEngine {
    */
   private async calculateConversionMetrics(
     request: AdvancedMetricsRequest,
-    config: MetricConfig
+    config: MetricConfig,
   ): Promise<CalculatedMetric> {
     // Buscar dados do funil de conversão
     const { data: funnelData } = await this.supabase
-      .from('conversion_funnel_events')
-      .select('*')
-      .eq('clinic_id', request.clinicId)
-      .gte('event_time', request.period.start.toISOString())
-      .lte('event_time', request.period.end.toISOString());
+      .from("conversion_funnel_events")
+      .select("*")
+      .eq("clinic_id", request.clinicId)
+      .gte("event_time", request.period.start.toISOString())
+      .lte("event_time", request.period.end.toISOString());
 
     if (!funnelData?.length) {
-      return this.createEmptyMetric('conversion_funnel', 'percentage');
+      return this.createEmptyMetric("conversion_funnel", "percentage");
     }
 
     // Calcular taxa de conversão por etapa
@@ -468,9 +483,9 @@ export class AdvancedMetricsEngine {
     const overallConversionRate = this.calculateOverallConversionRate(funnelAnalysis);
 
     const trend = await this.calculateMetricTrend(
-      'conversion_funnel',
+      "conversion_funnel",
       overallConversionRate,
-      request
+      request,
     );
 
     const dataQuality = this.assessDataQuality(funnelData);
@@ -478,20 +493,20 @@ export class AdvancedMetricsEngine {
       funnelData.length,
       request.period,
       config.filters || [],
-      'Conversion funnel analysis with multi-step attribution'
+      "Conversion funnel analysis with multi-step attribution",
     );
 
     return {
-      type: 'conversion_funnel',
-      name: 'Taxa de Conversão do Funil',
+      type: "conversion_funnel",
+      name: "Taxa de Conversão do Funil",
       value: overallConversionRate,
-      unit: 'percentage',
+      unit: "percentage",
       trend,
       breakdown: [],
       confidence: this.calculateConfidence(dataQuality, funnelData.length),
       dataQuality,
       context,
-      calculatedAt: new Date()
+      calculatedAt: new Date(),
     };
   }
 
@@ -500,18 +515,18 @@ export class AdvancedMetricsEngine {
    */
   private async calculateQualityMetrics(
     request: AdvancedMetricsRequest,
-    config: MetricConfig
+    config: MetricConfig,
   ): Promise<CalculatedMetric> {
     // Buscar dados de qualidade
     const { data: qualityData } = await this.supabase
-      .from('quality_assessments')
-      .select('*')
-      .eq('clinic_id', request.clinicId)
-      .gte('assessed_at', request.period.start.toISOString())
-      .lte('assessed_at', request.period.end.toISOString());
+      .from("quality_assessments")
+      .select("*")
+      .eq("clinic_id", request.clinicId)
+      .gte("assessed_at", request.period.start.toISOString())
+      .lte("assessed_at", request.period.end.toISOString());
 
     if (!qualityData?.length) {
-      return this.createEmptyMetric('quality_index', 'index');
+      return this.createEmptyMetric("quality_index", "index");
     }
 
     // Calcular componentes de qualidade
@@ -525,34 +540,30 @@ export class AdvancedMetricsEngine {
       dataQuality: dataQualityScore,
       communication: communicationQualityScore,
       experience: experienceQualityScore,
-      operational: operationalQualityScore
+      operational: operationalQualityScore,
     });
 
-    const trend = await this.calculateMetricTrend(
-      'quality_index',
-      qualityIndex,
-      request
-    );
+    const trend = await this.calculateMetricTrend("quality_index", qualityIndex, request);
 
     const dataQuality = this.assessDataQuality(qualityData);
     const context = this.createMetricContext(
       qualityData.length,
       request.period,
       config.filters || [],
-      'Composite quality index across multiple dimensions'
+      "Composite quality index across multiple dimensions",
     );
 
     return {
-      type: 'quality_index',
-      name: 'Índice de Qualidade',
+      type: "quality_index",
+      name: "Índice de Qualidade",
       value: qualityIndex,
-      unit: 'index',
+      unit: "index",
       trend,
       breakdown: [],
       confidence: this.calculateConfidence(dataQuality, qualityData.length),
       dataQuality,
       context,
-      calculatedAt: new Date()
+      calculatedAt: new Date(),
     };
   }
 
@@ -561,18 +572,18 @@ export class AdvancedMetricsEngine {
    */
   private async calculateComplianceMetrics(
     request: AdvancedMetricsRequest,
-    config: MetricConfig
+    config: MetricConfig,
   ): Promise<CalculatedMetric> {
     // Buscar dados de compliance
     const { data: complianceData } = await this.supabase
-      .from('compliance_assessments')
-      .select('*')
-      .eq('clinic_id', request.clinicId)
-      .gte('assessed_at', request.period.start.toISOString())
-      .lte('assessed_at', request.period.end.toISOString());
+      .from("compliance_assessments")
+      .select("*")
+      .eq("clinic_id", request.clinicId)
+      .gte("assessed_at", request.period.start.toISOString())
+      .lte("assessed_at", request.period.end.toISOString());
 
     if (!complianceData?.length) {
-      return this.createEmptyMetric('compliance_score', 'percentage');
+      return this.createEmptyMetric("compliance_score", "percentage");
     }
 
     // Calcular compliance por regulamentação
@@ -586,34 +597,30 @@ export class AdvancedMetricsEngine {
       lgpd: lgpdCompliance,
       anvisa: anvisaCompliance,
       cfm: cfmCompliance,
-      iso27001: iso27001Compliance
+      iso27001: iso27001Compliance,
     });
 
-    const trend = await this.calculateMetricTrend(
-      'compliance_score',
-      complianceScore,
-      request
-    );
+    const trend = await this.calculateMetricTrend("compliance_score", complianceScore, request);
 
     const dataQuality = this.assessDataQuality(complianceData);
     const context = this.createMetricContext(
       complianceData.length,
       request.period,
       config.filters || [],
-      'Comprehensive compliance assessment across healthcare regulations'
+      "Comprehensive compliance assessment across healthcare regulations",
     );
 
     return {
-      type: 'compliance_score',
-      name: 'Score de Compliance',
+      type: "compliance_score",
+      name: "Score de Compliance",
       value: complianceScore,
-      unit: 'percentage',
+      unit: "percentage",
       trend,
       breakdown: [],
       confidence: this.calculateConfidence(dataQuality, complianceData.length),
       dataQuality,
       context,
-      calculatedAt: new Date()
+      calculatedAt: new Date(),
     };
   }
 
@@ -628,7 +635,7 @@ export class AdvancedMetricsEngine {
    */
   private async analyzeTrends(
     metrics: CalculatedMetric[],
-    request: AdvancedMetricsRequest
+    request: AdvancedMetricsRequest,
   ): Promise<TrendAnalysis[]> {
     const trends: TrendAnalysis[] = [];
 
@@ -638,7 +645,7 @@ export class AdvancedMetricsEngine {
         const historicalData = await this.getHistoricalMetricData(
           metric.type,
           request.clinicId,
-          request.period
+          request.period,
         );
 
         if (historicalData.length < 3) {
@@ -647,27 +654,27 @@ export class AdvancedMetricsEngine {
 
         // Analisar tendência
         const trendData = this.calculateTrendData(historicalData);
-        
+
         // Detectar sazonalidade
         const seasonality = this.detectSeasonality(historicalData);
-        
+
         // Detectar anomalias
         const anomalies = this.detectAnomalies(historicalData, trendData);
-        
+
         // Gerar previsões
         const forecasts = this.generateForecasts(historicalData, trendData);
-        
+
         // Gerar insights de tendência
         const insights = this.generateTrendInsights(trendData, seasonality, anomalies);
 
         trends.push({
           metric: metric.name,
-          timeframe: `${request.period.start.toISOString().split('T')[0]} to ${request.period.end.toISOString().split('T')[0]}`,
+          timeframe: `${request.period.start.toISOString().split("T")[0]} to ${request.period.end.toISOString().split("T")[0]}`,
           trend: trendData,
           seasonality,
           anomalies,
           forecasts,
-          insights
+          insights,
         });
       } catch (error) {
         console.error(`Error analyzing trend for metric ${metric.type}:`, error);
@@ -689,7 +696,7 @@ export class AdvancedMetricsEngine {
   private async generateInsights(
     metrics: CalculatedMetric[],
     trends: TrendAnalysis[],
-    request: AdvancedMetricsRequest
+    request: AdvancedMetricsRequest,
   ): Promise<MetricInsight[]> {
     const insights: MetricInsight[] = [];
 
@@ -716,7 +723,7 @@ export class AdvancedMetricsEngine {
     // Ordenar por impacto e urgência
     insights.sort((a, b) => {
       if (a.urgency !== b.urgency) {
-        const urgencyOrder = { 'critical': 4, 'high': 3, 'medium': 2, 'low': 1 };
+        const urgencyOrder = { critical: 4, high: 3, medium: 2, low: 1 };
         return urgencyOrder[b.urgency] - urgencyOrder[a.urgency];
       }
       return b.impact.overall - a.impact.overall;
@@ -733,39 +740,38 @@ export class AdvancedMetricsEngine {
 
   private validateRequest(request: AdvancedMetricsRequest): void {
     if (!request.clinicId) {
-      throw new Error('Clinic ID is required');
+      throw new Error("Clinic ID is required");
     }
-    
+
     if (!request.period.start || !request.period.end) {
-      throw new Error('Period start and end dates are required');
+      throw new Error("Period start and end dates are required");
     }
-    
+
     if (request.period.start >= request.period.end) {
-      throw new Error('Period start must be before end date');
+      throw new Error("Period start must be before end date");
     }
-    
+
     if (!request.metrics || request.metrics.length === 0) {
-      throw new Error('At least one metric must be specified');
+      throw new Error("At least one metric must be specified");
     }
   }
 
-  private generateCacheKey(
-    request: AdvancedMetricsRequest,
-    config: MetricConfig
-  ): string {
+  private generateCacheKey(request: AdvancedMetricsRequest, config: MetricConfig): string {
     const keyData = {
       clinicId: request.clinicId,
       metric: config.type,
       period: request.period,
       filters: config.filters || [],
-      aggregation: config.aggregationType
+      aggregation: config.aggregationType,
     };
-    
+
     return `metrics_${this.hashObject(keyData)}`;
   }
 
   private hashObject(obj: any): string {
-    return btoa(JSON.stringify(obj)).replace(/[^a-zA-Z0-9]/g, '').substring(0, 16);
+    return btoa(JSON.stringify(obj))
+      .replace(/[^a-zA-Z0-9]/g, "")
+      .substring(0, 16);
   }
 
   private createEmptyMetric(type: MetricType, unit: string): CalculatedMetric {
@@ -775,9 +781,9 @@ export class AdvancedMetricsEngine {
       value: 0,
       unit,
       trend: {
-        direction: 'stable',
+        direction: "stable",
         magnitude: 0,
-        significance: 'low'
+        significance: "low",
       },
       breakdown: [],
       confidence: 0,
@@ -787,38 +793,38 @@ export class AdvancedMetricsEngine {
         accuracy: 0,
         consistency: 0,
         timeliness: 0,
-        issues: []
+        issues: [],
       },
       context: {
         sampleSize: 0,
         timeRange: { start: new Date(), end: new Date() },
         filters: [],
-        methodology: 'No data available',
+        methodology: "No data available",
         assumptions: [],
-        limitations: ['Insufficient data for calculation']
+        limitations: ["Insufficient data for calculation"],
       },
-      calculatedAt: new Date()
+      calculatedAt: new Date(),
     };
   }
 
   private getMetricDisplayName(type: MetricType): string {
     const names = {
-      'engagement_advanced': 'Engagement Avançado',
-      'satisfaction_detailed': 'Satisfação Detalhada',
-      'conversion_funnel': 'Funil de Conversão',
-      'churn_prediction': 'Predição de Churn',
-      'lifetime_value': 'Valor do Ciclo de Vida',
-      'communication_effectiveness': 'Efetividade da Comunicação',
-      'channel_performance': 'Performance dos Canais',
-      'content_performance': 'Performance do Conteúdo',
-      'timing_effectiveness': 'Efetividade do Timing',
-      'cost_efficiency': 'Eficiência de Custo',
-      'compliance_score': 'Score de Compliance',
-      'quality_index': 'Índice de Qualidade',
-      'roi_advanced': 'ROI Avançado',
-      'custom': 'Métrica Customizada'
+      engagement_advanced: "Engagement Avançado",
+      satisfaction_detailed: "Satisfação Detalhada",
+      conversion_funnel: "Funil de Conversão",
+      churn_prediction: "Predição de Churn",
+      lifetime_value: "Valor do Ciclo de Vida",
+      communication_effectiveness: "Efetividade da Comunicação",
+      channel_performance: "Performance dos Canais",
+      content_performance: "Performance do Conteúdo",
+      timing_effectiveness: "Efetividade do Timing",
+      cost_efficiency: "Eficiência de Custo",
+      compliance_score: "Score de Compliance",
+      quality_index: "Índice de Qualidade",
+      roi_advanced: "ROI Avançado",
+      custom: "Métrica Customizada",
     };
-    
+
     return names[type] || type;
   }
 
@@ -828,7 +834,7 @@ export class AdvancedMetricsEngine {
     filters: FilterConfig[],
     methodology: string,
     assumptions: string[] = [],
-    limitations: string[] = []
+    limitations: string[] = [],
   ): MetricContext {
     return {
       sampleSize,
@@ -836,32 +842,40 @@ export class AdvancedMetricsEngine {
       filters,
       methodology,
       assumptions,
-      limitations
+      limitations,
     };
   }
 
   // Placeholder methods para implementação completa
   private calculateOpenRate(communications: any[]): number {
     const totalSent = communications.length;
-    const opened = communications.filter(c => c.communication_events?.some((e: any) => e.event_type === 'opened')).length;
+    const opened = communications.filter((c) =>
+      c.communication_events?.some((e: any) => e.event_type === "opened"),
+    ).length;
     return totalSent > 0 ? (opened / totalSent) * 100 : 0;
   }
 
   private calculateClickRate(communications: any[]): number {
     const totalSent = communications.length;
-    const clicked = communications.filter(c => c.communication_events?.some((e: any) => e.event_type === 'clicked')).length;
+    const clicked = communications.filter((c) =>
+      c.communication_events?.some((e: any) => e.event_type === "clicked"),
+    ).length;
     return totalSent > 0 ? (clicked / totalSent) * 100 : 0;
   }
 
   private calculateResponseRate(communications: any[]): number {
     const totalSent = communications.length;
-    const responded = communications.filter(c => c.communication_events?.some((e: any) => e.event_type === 'responded')).length;
+    const responded = communications.filter((c) =>
+      c.communication_events?.some((e: any) => e.event_type === "responded"),
+    ).length;
     return totalSent > 0 ? (responded / totalSent) * 100 : 0;
   }
 
   private calculateCompletionRate(communications: any[]): number {
     const totalSent = communications.length;
-    const completed = communications.filter(c => c.communication_events?.some((e: any) => e.event_type === 'completed')).length;
+    const completed = communications.filter((c) =>
+      c.communication_events?.some((e: any) => e.event_type === "completed"),
+    ).length;
     return totalSent > 0 ? (completed / totalSent) * 100 : 0;
   }
 
@@ -876,7 +890,7 @@ export class AdvancedMetricsEngine {
       clickRate: 0.25,
       responseRate: 0.3,
       completionRate: 0.15,
-      timeSpent: 0.1
+      timeSpent: 0.1,
     };
 
     return Object.entries(weights).reduce((total, [key, weight]) => {
@@ -887,13 +901,17 @@ export class AdvancedMetricsEngine {
   private async calculateMetricTrend(
     metricType: MetricType,
     currentValue: number,
-    request: AdvancedMetricsRequest
-  ): Promise<{ direction: 'up' | 'down' | 'stable'; magnitude: number; significance: 'low' | 'medium' | 'high' }> {
+    request: AdvancedMetricsRequest,
+  ): Promise<{
+    direction: "up" | "down" | "stable";
+    magnitude: number;
+    significance: "low" | "medium" | "high";
+  }> {
     // Implementar cálculo de tendência
     return {
-      direction: 'stable',
+      direction: "stable",
       magnitude: 0,
-      significance: 'low'
+      significance: "low",
     };
   }
 
@@ -909,7 +927,7 @@ export class AdvancedMetricsEngine {
       accuracy,
       consistency,
       timeliness,
-      issues: []
+      issues: [],
     };
   }
 
@@ -931,74 +949,131 @@ export class AdvancedMetricsEngine {
   private calculateConfidence(dataQuality: DataQualityScore, sampleSize: number): number {
     const qualityFactor = dataQuality.overall / 100;
     const sizeFactor = Math.min(1, sampleSize / 1000);
-    return Math.round((qualityFactor * sizeFactor) * 100) / 100;
+    return Math.round(qualityFactor * sizeFactor * 100) / 100;
   }
 
   // Métodos placeholder para métricas específicas
-  private calculateOverallSatisfaction(surveys: any[]): number { return 7.5; }
-  private calculateNPSScore(surveys: any[]): number { return 45; }
-  private calculateCSATScore(surveys: any[]): number { return 8.2; }
-  private calculateCESScore(surveys: any[]): number { return 6.8; }
-  private calculateCompositeSatisfactionScore(scores: any): number { return 7.8; }
+  private calculateOverallSatisfaction(surveys: any[]): number {
+    return 7.5;
+  }
+  private calculateNPSScore(surveys: any[]): number {
+    return 45;
+  }
+  private calculateCSATScore(surveys: any[]): number {
+    return 8.2;
+  }
+  private calculateCESScore(surveys: any[]): number {
+    return 6.8;
+  }
+  private calculateCompositeSatisfactionScore(scores: any): number {
+    return 7.8;
+  }
 
-  private analyzeFunnelSteps(funnelData: any[]): any { return {}; }
-  private calculateOverallConversionRate(analysis: any): number { return 15.5; }
+  private analyzeFunnelSteps(funnelData: any[]): any {
+    return {};
+  }
+  private calculateOverallConversionRate(analysis: any): number {
+    return 15.5;
+  }
 
-  private calculateDataQualityIndex(data: any[]): number { return 92; }
-  private calculateCommunicationQualityIndex(data: any[]): number { return 88; }
-  private calculateExperienceQualityIndex(data: any[]): number { return 85; }
-  private calculateOperationalQualityIndex(data: any[]): number { return 90; }
-  private calculateCompositeQualityIndex(scores: any): number { return 88.75; }
+  private calculateDataQualityIndex(data: any[]): number {
+    return 92;
+  }
+  private calculateCommunicationQualityIndex(data: any[]): number {
+    return 88;
+  }
+  private calculateExperienceQualityIndex(data: any[]): number {
+    return 85;
+  }
+  private calculateOperationalQualityIndex(data: any[]): number {
+    return 90;
+  }
+  private calculateCompositeQualityIndex(scores: any): number {
+    return 88.75;
+  }
 
-  private calculateLGPDCompliance(data: any[]): number { return 96; }
-  private calculateANVISACompliance(data: any[]): number { return 94; }
-  private calculateCFMCompliance(data: any[]): number { return 98; }
-  private calculateISO27001Compliance(data: any[]): number { return 92; }
-  private calculateCompositeComplianceScore(scores: any): number { return 95; }
+  private calculateLGPDCompliance(data: any[]): number {
+    return 96;
+  }
+  private calculateANVISACompliance(data: any[]): number {
+    return 94;
+  }
+  private calculateCFMCompliance(data: any[]): number {
+    return 98;
+  }
+  private calculateISO27001Compliance(data: any[]): number {
+    return 92;
+  }
+  private calculateCompositeComplianceScore(scores: any): number {
+    return 95;
+  }
 
-  private async getHistoricalMetricData(type: MetricType, clinicId: string, period: any): Promise<any[]> {
+  private async getHistoricalMetricData(
+    type: MetricType,
+    clinicId: string,
+    period: any,
+  ): Promise<any[]> {
     return [];
   }
 
   private calculateTrendData(historicalData: any[]): any {
     return {
-      direction: 'stable' as const,
+      direction: "stable" as const,
       magnitude: 0,
       velocity: 0,
       acceleration: 0,
       confidence: 0.8,
-      significance: 'low' as const
+      significance: "low" as const,
     };
   }
 
-  private detectSeasonality(data: any[]): any { return {}; }
-  private detectAnomalies(data: any[], trend: any): any[] { return []; }
-  private generateForecasts(data: any[], trend: any): any[] { return []; }
-  private generateTrendInsights(trend: any, seasonality: any, anomalies: any[]): any[] { return []; }
+  private detectSeasonality(data: any[]): any {
+    return {};
+  }
+  private detectAnomalies(data: any[], trend: any): any[] {
+    return [];
+  }
+  private generateForecasts(data: any[], trend: any): any[] {
+    return [];
+  }
+  private generateTrendInsights(trend: any, seasonality: any, anomalies: any[]): any[] {
+    return [];
+  }
 
-  private generateMetricSpecificInsights(metric: CalculatedMetric): MetricInsight[] { return []; }
-  private generateTrendSpecificInsights(trend: TrendAnalysis): MetricInsight[] { return []; }
-  private generateCorrelationInsights(metrics: CalculatedMetric[]): MetricInsight[] { return []; }
-  private async generateBenchmarkInsights(metrics: CalculatedMetric[], request: AdvancedMetricsRequest): Promise<MetricInsight[]> { return []; }
+  private generateMetricSpecificInsights(metric: CalculatedMetric): MetricInsight[] {
+    return [];
+  }
+  private generateTrendSpecificInsights(trend: TrendAnalysis): MetricInsight[] {
+    return [];
+  }
+  private generateCorrelationInsights(metrics: CalculatedMetric[]): MetricInsight[] {
+    return [];
+  }
+  private async generateBenchmarkInsights(
+    metrics: CalculatedMetric[],
+    request: AdvancedMetricsRequest,
+  ): Promise<MetricInsight[]> {
+    return [];
+  }
 
   private async calculateMetricBreakdown(
     metric: CalculatedMetric,
     dimensions: DimensionConfig[],
-    request: AdvancedMetricsRequest
+    request: AdvancedMetricsRequest,
   ): Promise<MetricBreakdown[]> {
     return [];
   }
 
   private async calculateBenchmarks(
     metrics: CalculatedMetric[],
-    request: AdvancedMetricsRequest
+    request: AdvancedMetricsRequest,
   ): Promise<BenchmarkComparison[]> {
     return [];
   }
 
   private async checkAlerts(
     metrics: CalculatedMetric[],
-    request: AdvancedMetricsRequest
+    request: AdvancedMetricsRequest,
   ): Promise<MetricAlert[]> {
     return [];
   }
@@ -1007,14 +1082,14 @@ export class AdvancedMetricsEngine {
     metrics: CalculatedMetric[],
     insights: MetricInsight[],
     benchmarks: BenchmarkComparison[],
-    request: AdvancedMetricsRequest
+    request: AdvancedMetricsRequest,
   ): Promise<MetricRecommendation[]> {
     return [];
   }
 
   private generateResultMetadata(
     request: AdvancedMetricsRequest,
-    metrics: CalculatedMetric[]
+    metrics: CalculatedMetric[],
   ): ResultMetadata {
     return {
       requestId: this.generateId(),
@@ -1022,8 +1097,8 @@ export class AdvancedMetricsEngine {
       dataPoints: metrics.length,
       confidence: 0.85,
       limitations: [],
-      methodology: 'Advanced metrics calculation engine',
-      version: '1.0.0'
+      methodology: "Advanced metrics calculation engine",
+      version: "1.0.0",
     };
   }
 
@@ -1050,14 +1125,14 @@ export class AdvancedMetricsEngine {
     try {
       // Limpar cache antigo
       this.cleanupCache();
-      
+
       // Processar alertas pendentes
       await this.processAlerts();
-      
+
       // Atualizar benchmarks
       await this.updateBenchmarks();
     } catch (error) {
-      console.error('Error in maintenance tasks:', error);
+      console.error("Error in maintenance tasks:", error);
     }
   }
 
@@ -1082,4 +1157,3 @@ export class AdvancedMetricsEngine {
 
 // Export singleton instance
 export const createadvancedMetricsEngine = () => new AdvancedMetricsEngine();
-

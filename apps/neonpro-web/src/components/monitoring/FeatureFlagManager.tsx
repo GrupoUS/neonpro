@@ -1,25 +1,45 @@
 /**
  * TASK-001: Foundation Setup & Baseline
  * Feature Flag Management Component
- * 
+ *
  * Provides UI for managing feature flags, gradual rollouts, and A/B testing
  * for safe enhancement implementation with rollback capability.
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { AlertTriangle, CheckCircle, Flag, Settings, Users, TrendingUp, RefreshCw } from 'lucide-react';
-import { toast } from 'sonner';
+import type { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Switch } from "@/components/ui/switch";
+import type { Badge } from "@/components/ui/badge";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Progress } from "@/components/ui/progress";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type {
+  AlertTriangle,
+  CheckCircle,
+  Flag,
+  Settings,
+  Users,
+  TrendingUp,
+  RefreshCw,
+} from "lucide-react";
+import type { toast } from "sonner";
 
 interface FeatureFlag {
   id: string;
@@ -27,7 +47,7 @@ interface FeatureFlag {
   description: string;
   enabled: boolean;
   rollout_percentage: number;
-  environment: 'development' | 'staging' | 'production';
+  environment: "development" | "staging" | "production";
   epic_id?: string;
   created_at: string;
   updated_at: string;
@@ -40,7 +60,7 @@ interface RolloutPlan {
   target_percentage: number;
   start_date: string;
   estimated_completion: string;
-  status: 'pending' | 'in_progress' | 'completed' | 'paused';
+  status: "pending" | "in_progress" | "completed" | "paused";
 }
 
 export function FeatureFlagManager() {
@@ -58,14 +78,14 @@ export function FeatureFlagManager() {
 
   const loadFeatureFlags = async () => {
     try {
-      const response = await fetch('/api/monitoring/feature-flags');
+      const response = await fetch("/api/monitoring/feature-flags");
       if (response.ok) {
         const data = await response.json();
         setFlags(data.flags || []);
       }
     } catch (error) {
-      console.error('Error loading feature flags:', error);
-      toast.error('Failed to load feature flags');
+      console.error("Error loading feature flags:", error);
+      toast.error("Failed to load feature flags");
     } finally {
       setLoading(false);
     }
@@ -73,57 +93,57 @@ export function FeatureFlagManager() {
 
   const loadRolloutPlans = async () => {
     try {
-      const response = await fetch('/api/monitoring/rollout-plans');
+      const response = await fetch("/api/monitoring/rollout-plans");
       if (response.ok) {
         const data = await response.json();
         setRolloutPlans(data.plans || []);
       }
     } catch (error) {
-      console.error('Error loading rollout plans:', error);
+      console.error("Error loading rollout plans:", error);
     }
   };
 
   const toggleFlag = async (flagId: string, enabled: boolean) => {
     try {
       const response = await fetch(`/api/monitoring/feature-flags/${flagId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ enabled }),
       });
 
       if (response.ok) {
-        setFlags(prev => prev.map(flag => 
-          flag.id === flagId ? { ...flag, enabled } : flag
-        ));
-        toast.success(`Feature flag ${enabled ? 'enabled' : 'disabled'}`);
+        setFlags((prev) => prev.map((flag) => (flag.id === flagId ? { ...flag, enabled } : flag)));
+        toast.success(`Feature flag ${enabled ? "enabled" : "disabled"}`);
       } else {
-        throw new Error('Failed to update feature flag');
+        throw new Error("Failed to update feature flag");
       }
     } catch (error) {
-      console.error('Error toggling feature flag:', error);
-      toast.error('Failed to update feature flag');
+      console.error("Error toggling feature flag:", error);
+      toast.error("Failed to update feature flag");
     }
   };
 
   const updateRolloutPercentage = async (flagId: string, percentage: number) => {
     try {
       const response = await fetch(`/api/monitoring/feature-flags/${flagId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ rollout_percentage: percentage }),
       });
 
       if (response.ok) {
-        setFlags(prev => prev.map(flag => 
-          flag.id === flagId ? { ...flag, rollout_percentage: percentage } : flag
-        ));
+        setFlags((prev) =>
+          prev.map((flag) =>
+            flag.id === flagId ? { ...flag, rollout_percentage: percentage } : flag,
+          ),
+        );
         toast.success(`Rollout updated to ${percentage}%`);
       } else {
-        throw new Error('Failed to update rollout percentage');
+        throw new Error("Failed to update rollout percentage");
       }
     } catch (error) {
-      console.error('Error updating rollout:', error);
-      toast.error('Failed to update rollout percentage');
+      console.error("Error updating rollout:", error);
+      toast.error("Failed to update rollout percentage");
     }
   };
 
@@ -216,14 +236,12 @@ export function FeatureFlagManager() {
                         <div className="flex gap-2">
                           {getEnvironmentBadge(flag.environment)}
                           {getStatusBadge(flag)}
-                          {flag.epic_id && (
-                            <Badge variant="outline">Epic {flag.epic_id}</Badge>
-                          )}
+                          {flag.epic_id && <Badge variant="outline">Epic {flag.epic_id}</Badge>}
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
                         <Label htmlFor={`toggle-${flag.id}`} className="text-sm">
-                          {flag.enabled ? 'Enabled' : 'Disabled'}
+                          {flag.enabled ? "Enabled" : "Disabled"}
                         </Label>
                         <Switch
                           id={`toggle-${flag.id}`}

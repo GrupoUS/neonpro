@@ -2,15 +2,15 @@
 // Epic 10.1: Automated Before/After Analysis
 // Target: ≥95% accuracy, <30s processing time
 
-export type AnalysisStatus = 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled';
-export type AnnotationType = 'measurement' | 'highlight' | 'comparison' | 'annotation';
-export type TreatmentType = 
-  | 'skin-aesthetic' 
-  | 'medical-healing' 
-  | 'body-contouring' 
-  | 'facial-rejuvenation' 
-  | 'scar-treatment' 
-  | 'pigmentation';
+export type AnalysisStatus = "pending" | "processing" | "completed" | "failed" | "cancelled";
+export type AnnotationType = "measurement" | "highlight" | "comparison" | "annotation";
+export type TreatmentType =
+  | "skin-aesthetic"
+  | "medical-healing"
+  | "body-contouring"
+  | "facial-rejuvenation"
+  | "scar-treatment"
+  | "pigmentation";
 
 // Core Analysis Interface
 export interface ImageAnalysis {
@@ -18,26 +18,26 @@ export interface ImageAnalysis {
   patient_id: string;
   before_image_id: string;
   after_image_id: string;
-  
+
   // Analysis metadata
   analysis_date: string;
   treatment_type: TreatmentType;
   status: AnalysisStatus;
-  
+
   // Performance metrics (Epic 10.1 requirements)
   accuracy_score: number; // Must be ≥0.95
   processing_time: number; // Must be ≤30000ms
   confidence: number;
-  
+
   // Analysis results
   improvement_percentage: number;
   change_metrics: ChangeMetrics;
   annotations: AnalysisAnnotation[];
-  
+
   // Quality control flags
   meets_accuracy_requirement: boolean;
   meets_time_requirement: boolean;
-  
+
   // Audit fields
   created_at: string;
   updated_at: string;
@@ -122,22 +122,22 @@ export interface AnnotationCoordinate {
 export interface AnalysisPerformance {
   id: string;
   analysis_id: string;
-  
+
   // Performance metrics
   preprocessing_time: number;
   model_inference_time: number;
   postprocessing_time: number;
   total_processing_time: number;
-  
+
   // Resource usage
   memory_usage_mb?: number;
   cpu_usage_percent?: number;
   gpu_usage_percent?: number;
-  
+
   // Model information
   model_version?: string;
   model_accuracy?: number;
-  
+
   recorded_at: string;
 }
 
@@ -145,22 +145,22 @@ export interface AnalysisPerformance {
 export interface AnalysisQualityControl {
   id: string;
   analysis_id: string;
-  
+
   // Quality metrics
   image_quality_score: number;
   alignment_score: number;
   lighting_consistency: number;
   resolution_adequacy: boolean;
-  
+
   // Validation flags
   manual_review_required: boolean;
   automated_validation_passed: boolean;
-  
+
   // Review information
   reviewed_by?: string;
   reviewed_at?: string;
   review_notes?: string;
-  
+
   created_at: string;
 }
 
@@ -170,11 +170,11 @@ export interface AnalysisComparison {
   patient_id: string;
   baseline_analysis_id: string;
   current_analysis_id: string;
-  
+
   // Comparison metrics
   improvement_trend: number;
   consistency_score: number;
-  
+
   // Timeline information
   time_between_analyses: string; // PostgreSQL interval
   comparison_date: string;
@@ -224,7 +224,7 @@ export interface AnalysisOptions {
   enable_detailed_metrics?: boolean;
   enable_annotations?: boolean;
   quality_threshold?: number;
-  processing_priority?: 'low' | 'normal' | 'high';
+  processing_priority?: "low" | "normal" | "high";
   custom_parameters?: Record<string, any>;
 }
 
@@ -281,13 +281,13 @@ export interface AnalysisFilter {
   manual_review_required?: boolean;
   limit?: number;
   offset?: number;
-  sort_by?: 'analysis_date' | 'accuracy_score' | 'processing_time' | 'improvement_percentage';
-  sort_order?: 'asc' | 'desc';
+  sort_by?: "analysis_date" | "accuracy_score" | "processing_time" | "improvement_percentage";
+  sort_order?: "asc" | "desc";
 }
 
 // Analysis Export Interface
 export interface AnalysisExport {
-  format: 'json' | 'csv' | 'pdf';
+  format: "json" | "csv" | "pdf";
   include_images?: boolean;
   include_annotations?: boolean;
   include_performance_data?: boolean;
@@ -348,37 +348,37 @@ export interface AnalysisProcessingError extends AnalysisError {
 
 // Utility Types
 export type AnalysisMetricKey = keyof ChangeMetrics;
-export type AnalysisRequirement = 'accuracy' | 'processing_time' | 'quality' | 'completeness';
-export type AnalysisCompliance = 'compliant' | 'non_compliant' | 'partial';
+export type AnalysisRequirement = "accuracy" | "processing_time" | "quality" | "completeness";
+export type AnalysisCompliance = "compliant" | "non_compliant" | "partial";
 
 // Constants
 export const ANALYSIS_REQUIREMENTS = {
   MIN_ACCURACY: 0.95,
   MAX_PROCESSING_TIME: 30000, // 30 seconds in milliseconds
-  MIN_CONFIDENCE: 0.80,
-  MIN_QUALITY_SCORE: 0.85
+  MIN_CONFIDENCE: 0.8,
+  MIN_QUALITY_SCORE: 0.85,
 } as const;
 
 export const TREATMENT_TYPE_LABELS: Record<TreatmentType, string> = {
-  'skin-aesthetic': 'Estética da Pele',
-  'medical-healing': 'Cicatrização Médica',
-  'body-contouring': 'Contorno Corporal',
-  'facial-rejuvenation': 'Rejuvenescimento Facial',
-  'scar-treatment': 'Tratamento de Cicatrizes',
-  'pigmentation': 'Pigmentação'
+  "skin-aesthetic": "Estética da Pele",
+  "medical-healing": "Cicatrização Médica",
+  "body-contouring": "Contorno Corporal",
+  "facial-rejuvenation": "Rejuvenescimento Facial",
+  "scar-treatment": "Tratamento de Cicatrizes",
+  pigmentation: "Pigmentação",
 };
 
 export const ANNOTATION_TYPE_LABELS: Record<AnnotationType, string> = {
-  'measurement': 'Medição',
-  'highlight': 'Destaque',
-  'comparison': 'Comparação',
-  'annotation': 'Anotação'
+  measurement: "Medição",
+  highlight: "Destaque",
+  comparison: "Comparação",
+  annotation: "Anotação",
 };
 
 export const ANALYSIS_STATUS_LABELS: Record<AnalysisStatus, string> = {
-  'pending': 'Pendente',
-  'processing': 'Processando',
-  'completed': 'Concluído',
-  'failed': 'Falhou',
-  'cancelled': 'Cancelado'
+  pending: "Pendente",
+  processing: "Processando",
+  completed: "Concluído",
+  failed: "Falhou",
+  cancelled: "Cancelado",
 };

@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
+import type { Button } from "@/components/ui/button";
+import type { Calendar } from "@/components/ui/calendar";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -11,42 +11,29 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import { AccountsPayableService } from "@/lib/services/accounts-payable";
-import { documentsService } from "@/lib/services/documents";
-import { ExpenseCategoryService } from "@/lib/services/expense-categories";
-import { VendorService } from "@/lib/services/vendors";
-import {
-  AccountsPayable,
-  AccountsPayableFormData,
-} from "@/lib/types/accounts-payable";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import {
-  Calculator,
-  CalendarIcon,
-  FileText,
-  Loader2,
-  Receipt,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
+import type { AccountsPayableService } from "@/lib/services/accounts-payable";
+import type { documentsService } from "@/lib/services/documents";
+import type { ExpenseCategoryService } from "@/lib/services/expense-categories";
+import type { VendorService } from "@/lib/services/vendors";
+import type { AccountsPayable, AccountsPayableFormData } from "@/lib/types/accounts-payable";
+import type { cn } from "@/lib/utils";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { Calculator, CalendarIcon, FileText, Loader2, Receipt } from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 import DocumentUpload from "./document-upload";
 
 interface AccountsPayableFormProps {
@@ -86,12 +73,8 @@ export function AccountsPayableForm({
   onSuccess,
 }: AccountsPayableFormProps) {
   const [loading, setLoading] = useState(false);
-  const [vendors, setVendors] = useState<
-    { id: string; label: string; value: string }[]
-  >([]);
-  const [categories, setCategories] = useState<
-    { id: string; label: string; value: string }[]
-  >([]);
+  const [vendors, setVendors] = useState<{ id: string; label: string; value: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: string; label: string; value: string }[]>([]);
   const [loadingOptions, setLoadingOptions] = useState(true);
   const [documents, setDocuments] = useState<any[]>([]);
   const [loadingDocuments, setLoadingDocuments] = useState(false);
@@ -124,10 +107,7 @@ export function AccountsPayableForm({
 
     setLoadingDocuments(true);
     try {
-      const payableDocuments = await documentsService.getDocuments(
-        "payable",
-        accountsPayable.id
-      );
+      const payableDocuments = await documentsService.getDocuments("payable", accountsPayable.id);
       setDocuments(payableDocuments);
     } catch (error) {
       console.error("Erro ao carregar documentos:", error);
@@ -213,9 +193,7 @@ export function AccountsPayableForm({
   // Calculate net amount when gross, tax, or discount changes
   useEffect(() => {
     const netAmount =
-      (formData.gross_amount || 0) +
-      (formData.tax_amount || 0) -
-      (formData.discount_amount || 0);
+      (formData.gross_amount || 0) + (formData.tax_amount || 0) - (formData.discount_amount || 0);
     if (netAmount !== formData.net_amount) {
       setFormData((prev) => ({ ...prev, net_amount: netAmount }));
     }
@@ -238,14 +216,8 @@ export function AccountsPayableForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (
-      !formData.vendor_id ||
-      !formData.expense_category_id ||
-      !formData.due_date
-    ) {
-      toast.error(
-        "Fornecedor, categoria de despesa e data de vencimento são obrigatórios"
-      );
+    if (!formData.vendor_id || !formData.expense_category_id || !formData.due_date) {
+      toast.error("Fornecedor, categoria de despesa e data de vencimento são obrigatórios");
       return;
     }
 
@@ -258,10 +230,7 @@ export function AccountsPayableForm({
 
     try {
       if (accountsPayable) {
-        await AccountsPayableService.updateAccountsPayable(
-          accountsPayable.id,
-          formData
-        );
+        await AccountsPayableService.updateAccountsPayable(accountsPayable.id, formData);
         toast.success("Conta a pagar atualizada com sucesso!");
       } else {
         await AccountsPayableService.createAccountsPayable(formData);
@@ -282,10 +251,7 @@ export function AccountsPayableForm({
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleDateSelect = (
-    date: Date | undefined,
-    field: "invoice_date" | "due_date"
-  ) => {
+  const handleDateSelect = (date: Date | undefined, field: "invoice_date" | "due_date") => {
     if (date) {
       const dateString = date.toISOString().split("T")[0];
       updateField(field, dateString);
@@ -374,14 +340,10 @@ export function AccountsPayableForm({
                   </div>
 
                   <div>
-                    <Label htmlFor="expense_category_id">
-                      Categoria de Despesa *
-                    </Label>
+                    <Label htmlFor="expense_category_id">Categoria de Despesa *</Label>
                     <Select
                       value={formData.expense_category_id}
-                      onValueChange={(value) =>
-                        updateField("expense_category_id", value)
-                      }
+                      onValueChange={(value) => updateField("expense_category_id", value)}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione a categoria" />
@@ -401,9 +363,7 @@ export function AccountsPayableForm({
                     <Input
                       id="invoice_number"
                       value={formData.invoice_number}
-                      onChange={(e) =>
-                        updateField("invoice_number", e.target.value)
-                      }
+                      onChange={(e) => updateField("invoice_number", e.target.value)}
                       placeholder="NF-001234"
                     />
                   </div>
@@ -448,7 +408,7 @@ export function AccountsPayableForm({
                           variant="outline"
                           className={cn(
                             "w-full justify-start text-left font-normal",
-                            !formData.invoice_date && "text-muted-foreground"
+                            !formData.invoice_date && "text-muted-foreground",
                           )}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
@@ -463,13 +423,9 @@ export function AccountsPayableForm({
                         <Calendar
                           mode="single"
                           selected={
-                            formData.invoice_date
-                              ? new Date(formData.invoice_date)
-                              : undefined
+                            formData.invoice_date ? new Date(formData.invoice_date) : undefined
                           }
-                          onSelect={(date) =>
-                            handleDateSelect(date, "invoice_date")
-                          }
+                          onSelect={(date) => handleDateSelect(date, "invoice_date")}
                           initialFocus
                         />
                       </PopoverContent>
@@ -477,18 +433,13 @@ export function AccountsPayableForm({
                   </div>
 
                   <div>
-                    <Label htmlFor="payment_terms_days">
-                      Prazo de Pagamento (dias)
-                    </Label>
+                    <Label htmlFor="payment_terms_days">Prazo de Pagamento (dias)</Label>
                     <Input
                       id="payment_terms_days"
                       type="number"
                       value={formData.payment_terms_days}
                       onChange={(e) =>
-                        updateField(
-                          "payment_terms_days",
-                          parseInt(e.target.value) || 30
-                        )
+                        updateField("payment_terms_days", parseInt(e.target.value) || 30)
                       }
                       min="0"
                       max="365"
@@ -499,16 +450,14 @@ export function AccountsPayableForm({
                     <Label htmlFor="due_date">Data de Vencimento *</Label>
                     <Popover
                       open={showCalendar.due}
-                      onOpenChange={(open) =>
-                        setShowCalendar((prev) => ({ ...prev, due: open }))
-                      }
+                      onOpenChange={(open) => setShowCalendar((prev) => ({ ...prev, due: open }))}
                     >
                       <PopoverTrigger asChild>
                         <Button
                           variant="outline"
                           className={cn(
                             "w-full justify-start text-left font-normal",
-                            !formData.due_date && "text-muted-foreground"
+                            !formData.due_date && "text-muted-foreground",
                           )}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
@@ -522,14 +471,8 @@ export function AccountsPayableForm({
                       <PopoverContent className="w-auto p-0">
                         <Calendar
                           mode="single"
-                          selected={
-                            formData.due_date
-                              ? new Date(formData.due_date)
-                              : undefined
-                          }
-                          onSelect={(date) =>
-                            handleDateSelect(date, "due_date")
-                          }
+                          selected={formData.due_date ? new Date(formData.due_date) : undefined}
+                          onSelect={(date) => handleDateSelect(date, "due_date")}
                           initialFocus
                         />
                       </PopoverContent>
@@ -555,10 +498,7 @@ export function AccountsPayableForm({
                         type="number"
                         value={formData.gross_amount}
                         onChange={(e) =>
-                          updateField(
-                            "gross_amount",
-                            parseFloat(e.target.value) || 0
-                          )
+                          updateField("gross_amount", parseFloat(e.target.value) || 0)
                         }
                         placeholder="0.00"
                         step="0.01"
@@ -572,12 +512,7 @@ export function AccountsPayableForm({
                         id="tax_amount"
                         type="number"
                         value={formData.tax_amount}
-                        onChange={(e) =>
-                          updateField(
-                            "tax_amount",
-                            parseFloat(e.target.value) || 0
-                          )
-                        }
+                        onChange={(e) => updateField("tax_amount", parseFloat(e.target.value) || 0)}
                         placeholder="0.00"
                         step="0.01"
                         min="0"
@@ -591,10 +526,7 @@ export function AccountsPayableForm({
                         type="number"
                         value={formData.discount_amount}
                         onChange={(e) =>
-                          updateField(
-                            "discount_amount",
-                            parseFloat(e.target.value) || 0
-                          )
+                          updateField("discount_amount", parseFloat(e.target.value) || 0)
                         }
                         placeholder="0.00"
                         step="0.01"
@@ -606,9 +538,7 @@ export function AccountsPayableForm({
                   <div className="border-t pt-4">
                     <div className="flex justify-between items-center text-lg font-semibold">
                       <span>Valor Líquido:</span>
-                      <span className="text-2xl">
-                        {formatCurrency(formData.net_amount)}
-                      </span>
+                      <span className="text-2xl">{formatCurrency(formData.net_amount)}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -624,9 +554,7 @@ export function AccountsPayableForm({
                     <Label htmlFor="payment_method">Método de Pagamento</Label>
                     <Select
                       value={formData.payment_method}
-                      onValueChange={(value) =>
-                        updateField("payment_method", value)
-                      }
+                      onValueChange={(value) => updateField("payment_method", value)}
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -652,10 +580,7 @@ export function AccountsPayableForm({
                       </SelectTrigger>
                       <SelectContent>
                         {priorityOptions.map((priority) => (
-                          <SelectItem
-                            key={priority.value}
-                            value={priority.value}
-                          >
+                          <SelectItem key={priority.value} value={priority.value}>
                             {priority.label}
                           </SelectItem>
                         ))}
@@ -676,9 +601,7 @@ export function AccountsPayableForm({
                     <Textarea
                       id="description"
                       value={formData.description}
-                      onChange={(e) =>
-                        updateField("description", e.target.value)
-                      }
+                      onChange={(e) => updateField("description", e.target.value)}
                       placeholder="Descrição da despesa..."
                       rows={3}
                     />
@@ -712,11 +635,7 @@ export function AccountsPayableForm({
         </Tabs>
 
         <DialogFooter>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-          >
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
           <Button type="submit" onClick={handleSubmit} disabled={loading}>

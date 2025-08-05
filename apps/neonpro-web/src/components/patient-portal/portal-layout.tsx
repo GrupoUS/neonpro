@@ -1,21 +1,21 @@
-'use client'
+"use client";
 
-import React, { ReactNode, useState } from 'react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
-import { 
-  User, 
-  Calendar, 
-  FileText, 
-  Settings, 
-  Shield, 
-  LogOut, 
+import React, { ReactNode, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  User,
+  Calendar,
+  FileText,
+  Settings,
+  Shield,
+  LogOut,
   Menu,
   Home,
   Bell,
@@ -23,90 +23,104 @@ import {
   CreditCard,
   Phone,
   Mail,
-  Heart
-} from 'lucide-react'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+  Heart,
+} from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface PortalLayoutProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 interface NavigationItem {
-  title: string
-  href: string
-  icon: React.ElementType
-  badge?: string
-  description?: string
+  title: string;
+  href: string;
+  icon: React.ElementType;
+  badge?: string;
+  description?: string;
 }
 
 const navigationItems: NavigationItem[] = [
   {
-    title: 'Dashboard',
-    href: '/patient-portal',
+    title: "Dashboard",
+    href: "/patient-portal",
     icon: Home,
-    description: 'Visão geral das suas informações'
+    description: "Visão geral das suas informações",
   },
   {
-    title: 'Agendar Consulta',
-    href: '/patient-portal/booking',
+    title: "Agendar Consulta",
+    href: "/patient-portal/booking",
     icon: Calendar,
-    description: 'Marque suas consultas online'
+    description: "Marque suas consultas online",
   },
   {
-    title: 'Histórico Médico',
-    href: '/patient-portal/history',
+    title: "Histórico Médico",
+    href: "/patient-portal/history",
     icon: FileText,
-    description: 'Consulte seu histórico de tratamentos'
+    description: "Consulte seu histórico de tratamentos",
   },
   {
-    title: 'Documentos',
-    href: '/patient-portal/documents',
+    title: "Documentos",
+    href: "/patient-portal/documents",
     icon: FileText,
-    description: 'Gerencie seus documentos médicos'
+    description: "Gerencie seus documentos médicos",
   },
   {
-    title: 'Meu Perfil',
-    href: '/patient-portal/profile',
+    title: "Meu Perfil",
+    href: "/patient-portal/profile",
     icon: User,
-    description: 'Atualize suas informações pessoais'
+    description: "Atualize suas informações pessoais",
   },
   {
-    title: 'Configurações LGPD',
-    href: '/patient-portal/lgpd',
+    title: "Configurações LGPD",
+    href: "/patient-portal/lgpd",
     icon: Shield,
-    badge: 'Importante',
-    description: 'Gerencie seus consentimentos e privacidade'
-  }
-]
+    badge: "Importante",
+    description: "Gerencie seus consentimentos e privacidade",
+  },
+];
 
 // Mock user data
 const currentUser = {
-  name: 'Ana Clara Silva',
-  email: 'ana.clara@email.com',
-  phone: '(11) 99999-9999',
-  avatar: '',
-  initials: 'AS',
+  name: "Ana Clara Silva",
+  email: "ana.clara@email.com",
+  phone: "(11) 99999-9999",
+  avatar: "",
+  initials: "AS",
   nextAppointment: {
-    date: '2024-07-25',
-    time: '14:30',
-    doctor: 'Dr. Marina Santos',
-    service: 'Botox Facial'
+    date: "2024-07-25",
+    time: "14:30",
+    doctor: "Dr. Marina Santos",
+    service: "Botox Facial",
   },
   notifications: 3,
-  planType: 'Premium'
-}
+  planType: "Premium",
+};
 
 export function PortalLayout({ children }: PortalLayoutProps) {
-  const pathname = usePathname()
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const isActive = (href: string) => {
-    if (href === '/patient-portal') {
-      return pathname === href
+    if (href === "/patient-portal") {
+      return pathname === href;
     }
-    return pathname.startsWith(href)
-  }
+    return pathname.startsWith(href);
+  };
 
   const NavigationContent = () => (
     <div className="space-y-6">
@@ -127,13 +141,14 @@ export function PortalLayout({ children }: PortalLayoutProps) {
             {currentUser.planType}
           </Badge>
         </div>
-        
+
         {/* Next Appointment */}
         {currentUser.nextAppointment && (
           <div className="pt-3 border-t border-primary/20">
             <p className="text-xs font-medium text-primary mb-1">Próxima Consulta</p>
             <p className="text-sm text-gray-700">
-              {new Date(currentUser.nextAppointment.date).toLocaleDateString('pt-BR')} às {currentUser.nextAppointment.time}
+              {new Date(currentUser.nextAppointment.date).toLocaleDateString("pt-BR")} às{" "}
+              {currentUser.nextAppointment.time}
             </p>
             <p className="text-xs text-gray-600">
               {currentUser.nextAppointment.service} - {currentUser.nextAppointment.doctor}
@@ -145,21 +160,25 @@ export function PortalLayout({ children }: PortalLayoutProps) {
       {/* Navigation Items */}
       <nav className="space-y-2">
         {navigationItems.map((item) => {
-          const IconComponent = item.icon
-          const active = isActive(item.href)
-          
+          const IconComponent = item.icon;
+          const active = isActive(item.href);
+
           return (
             <Link key={item.href} href={item.href}>
-              <div className={cn(
-                'flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 group',
-                active 
-                  ? 'bg-primary text-primary-foreground shadow-md' 
-                  : 'text-gray-700 hover:bg-gray-100 hover:text-primary'
-              )}>
-                <IconComponent className={cn(
-                  'h-5 w-5 transition-colors',
-                  active ? 'text-primary-foreground' : 'text-gray-500 group-hover:text-primary'
-                )} />
+              <div
+                className={cn(
+                  "flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 group",
+                  active
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "text-gray-700 hover:bg-gray-100 hover:text-primary",
+                )}
+              >
+                <IconComponent
+                  className={cn(
+                    "h-5 w-5 transition-colors",
+                    active ? "text-primary-foreground" : "text-gray-500 group-hover:text-primary",
+                  )}
+                />
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <span className="font-medium">{item.title}</span>
@@ -170,17 +189,19 @@ export function PortalLayout({ children }: PortalLayoutProps) {
                     )}
                   </div>
                   {item.description && (
-                    <p className={cn(
-                      'text-xs mt-1',
-                      active ? 'text-primary-foreground/80' : 'text-gray-500'
-                    )}>
+                    <p
+                      className={cn(
+                        "text-xs mt-1",
+                        active ? "text-primary-foreground/80" : "text-gray-500",
+                      )}
+                    >
                       {item.description}
                     </p>
                   )}
                 </div>
               </div>
             </Link>
-          )
+          );
         })}
       </nav>
 
@@ -192,15 +213,21 @@ export function PortalLayout({ children }: PortalLayoutProps) {
           <Heart className="h-4 w-4 text-red-600" />
           <h4 className="font-medium text-red-800">Emergência</h4>
         </div>
-        <p className="text-sm text-red-700 mb-3">
-          Para emergências médicas, ligue imediatamente:
-        </p>
+        <p className="text-sm text-red-700 mb-3">Para emergências médicas, ligue imediatamente:</p>
         <div className="space-y-1">
-          <Button variant="outline" size="sm" className="w-full justify-start text-left border-red-300 hover:bg-red-100">
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full justify-start text-left border-red-300 hover:bg-red-100"
+          >
             <Phone className="h-4 w-4 mr-2" />
             (11) 3333-4444
           </Button>
-          <Button variant="outline" size="sm" className="w-full justify-start text-left border-red-300 hover:bg-red-100">
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full justify-start text-left border-red-300 hover:bg-red-100"
+          >
             <Mail className="h-4 w-4 mr-2" />
             emergencia@neonpro.com.br
           </Button>
@@ -216,7 +243,7 @@ export function PortalLayout({ children }: PortalLayoutProps) {
         </Button>
       </div>
     </div>
-  )
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -233,15 +260,18 @@ export function PortalLayout({ children }: PortalLayoutProps) {
               <p className="text-sm text-gray-500">Portal do Paciente</p>
             </div>
           </div>
-          
+
           <NavigationContent />
-          
+
           {/* Logout */}
           <div className="mt-auto pt-6">
             <Separator className="mb-4" />
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant="ghost" className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
                   <LogOut className="h-5 w-5 mr-3" />
                   Sair da Conta
                 </Button>
@@ -249,9 +279,7 @@ export function PortalLayout({ children }: PortalLayoutProps) {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Confirmar Saída</DialogTitle>
-                  <DialogDescription>
-                    Tem certeza que deseja sair da sua conta?
-                  </DialogDescription>
+                  <DialogDescription>Tem certeza que deseja sair da sua conta?</DialogDescription>
                 </DialogHeader>
                 <div className="flex gap-2 mt-4">
                   <Button variant="destructive" className="flex-1">
@@ -288,13 +316,16 @@ export function PortalLayout({ children }: PortalLayoutProps) {
                     <p className="text-sm text-gray-500">Portal do Paciente</p>
                   </div>
                 </div>
-                
+
                 <NavigationContent />
-                
+
                 {/* Mobile Logout */}
                 <div className="mt-auto pt-6">
                   <Separator className="mb-4" />
-                  <Button variant="ghost" className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50">
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+                  >
                     <LogOut className="h-5 w-5 mr-3" />
                     Sair da Conta
                   </Button>
@@ -312,7 +343,7 @@ export function PortalLayout({ children }: PortalLayoutProps) {
                 </div>
                 <h1 className="text-lg font-semibold text-gray-900">NeonPro</h1>
               </div>
-              
+
               {/* Mobile User Menu */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -370,11 +401,9 @@ export function PortalLayout({ children }: PortalLayoutProps) {
       {/* Main Content */}
       <div className="lg:pl-80">
         <div className="px-4 py-8 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-6xl">
-            {children}
-          </div>
+          <div className="mx-auto max-w-6xl">{children}</div>
         </div>
       </div>
     </div>
-  )
+  );
 }

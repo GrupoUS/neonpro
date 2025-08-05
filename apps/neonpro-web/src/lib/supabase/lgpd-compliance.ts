@@ -1,87 +1,87 @@
-﻿// lib/supabase/lgpd-compliance.ts
+// lib/supabase/lgpd-compliance.ts
 // LGPD (Lei Geral de Proteção de Dados) Compliance Utilities for NeonPro
 // Provides comprehensive audit logging, consent management, and data protection features
 
-import { createClient } from '@/lib/supabase/client'
-import { createClient as createServerClient } from '@/lib/supabase/server'
-import type { Database } from '@/lib/types/supabase'
+import type { createClient } from "@/lib/supabase/client";
+import type { createClient as createServerClient } from "@/lib/supabase/server";
+import type { Database } from "@/lib/types/supabase";
 
 // LGPD Compliance Event Types
-export type LGPDEventType = 
-  | 'data_access'
-  | 'data_modification'
-  | 'data_deletion'
-  | 'consent_granted'
-  | 'consent_revoked'
-  | 'data_export'
-  | 'user_authentication'
-  | 'sensitive_data_access'
-  | 'patient_record_access'
-  | 'medical_procedure_access'
-  | 'professional_access'
-  | 'system_admin_access'
-  | 'audit_log_access'
+export type LGPDEventType =
+  | "data_access"
+  | "data_modification"
+  | "data_deletion"
+  | "consent_granted"
+  | "consent_revoked"
+  | "data_export"
+  | "user_authentication"
+  | "sensitive_data_access"
+  | "patient_record_access"
+  | "medical_procedure_access"
+  | "professional_access"
+  | "system_admin_access"
+  | "audit_log_access";
 
 // LGPD Audit Log Entry Interface
 export interface LGPDAuditLog {
-  id?: string
-  event_type: LGPDEventType
-  user_id: string
-  patient_id?: string
-  clinic_id?: string
-  table_name: string
-  record_id?: string
-  action: string
-  old_values?: Record<string, any>
-  new_values?: Record<string, any>
-  ip_address?: string
-  user_agent?: string
-  session_id?: string
-  consent_type?: string
-  data_subject_rights?: string
-  legal_basis?: string
-  purpose?: string
-  retention_period?: string
-  encryption_status?: boolean
-  anonymization_status?: boolean
-  created_at?: string
-  metadata?: Record<string, any>
+  id?: string;
+  event_type: LGPDEventType;
+  user_id: string;
+  patient_id?: string;
+  clinic_id?: string;
+  table_name: string;
+  record_id?: string;
+  action: string;
+  old_values?: Record<string, any>;
+  new_values?: Record<string, any>;
+  ip_address?: string;
+  user_agent?: string;
+  session_id?: string;
+  consent_type?: string;
+  data_subject_rights?: string;
+  legal_basis?: string;
+  purpose?: string;
+  retention_period?: string;
+  encryption_status?: boolean;
+  anonymization_status?: boolean;
+  created_at?: string;
+  metadata?: Record<string, any>;
 }
 
 // LGPD Consent Types
-export type LGPDConsentType = 
-  | 'medical_treatment'
-  | 'data_processing'
-  | 'marketing'
-  | 'research'
-  | 'data_sharing'
-  | 'photo_usage'
-  | 'telemedicine'
-  | 'wearable_integration'
-  | 'wellness_tracking'
+export type LGPDConsentType =
+  | "medical_treatment"
+  | "data_processing"
+  | "marketing"
+  | "research"
+  | "data_sharing"
+  | "photo_usage"
+  | "telemedicine"
+  | "wearable_integration"
+  | "wellness_tracking";
 
 // LGPD Data Subject Rights
-export type LGPDDataSubjectRights = 
-  | 'access'
-  | 'rectification'
-  | 'erasure'
-  | 'portability'
-  | 'restriction'
-  | 'objection'
-  | 'consent_withdrawal'
+export type LGPDDataSubjectRights =
+  | "access"
+  | "rectification"
+  | "erasure"
+  | "portability"
+  | "restriction"
+  | "objection"
+  | "consent_withdrawal";
 
 // LGPD Compliance Manager Class
 export class LGPDComplianceManager {
-  private supabase: ReturnType<typeof createClient>
-  private isServerSide: boolean
+  private supabase: ReturnType<typeof createClient>;
+  private isServerSide: boolean;
 
   constructor(serverSide = false) {
-    this.isServerSide = serverSide
+    this.isServerSide = serverSide;
     if (serverSide) {
       // Note: Server client needs to be created differently
-      this.supabase = createClient()
+      this.supabase = createClient();
     } else {
-      this.supabase = createClient()
+      this.supabase = createClient();
     }
   }
 
@@ -90,46 +90,46 @@ export class LGPDComplianceManager {
    * Complies with LGPD Article 37 - Data Processing Records
    */
   async createAuditLog(
-    logEntry: Omit<LGPDAuditLog, 'id' | 'created_at'>
+    logEntry: Omit<LGPDAuditLog, "id" | "created_at">,
   ): Promise<{ success: boolean; error?: string }> {
     try {
       // Get current user for audit trail
-      const { data: { user } } = await this.supabase.auth.getUser()
-      
+      const {
+        data: { user },
+      } = await this.supabase.auth.getUser();
+
       // Enhance log entry with compliance metadata
       const enhancedEntry: LGPDAuditLog = {
         ...logEntry,
-        user_id: logEntry.user_id || user?.id || 'anonymous',
+        user_id: logEntry.user_id || user?.id || "anonymous",
         created_at: new Date().toISOString(),
         encryption_status: true, // All data encrypted at rest
         metadata: {
           ...logEntry.metadata,
-          compliance_version: '1.0',
+          compliance_version: "1.0",
           lgpd_article: this.getLGPDArticle(logEntry.event_type),
           timestamp_utc: new Date().toISOString(),
-          user_role: user?.user_metadata?.role || 'unknown',
-          application: 'NeonPro',
-          environment: process.env.NODE_ENV || 'development'
-        }
-      }
+          user_role: user?.user_metadata?.role || "unknown",
+          application: "NeonPro",
+          environment: process.env.NODE_ENV || "development",
+        },
+      };
 
       // Insert audit log into database
-      const { error } = await this.supabase
-        .from('lgpd_audit_logs')
-        .insert(enhancedEntry)
+      const { error } = await this.supabase.from("lgpd_audit_logs").insert(enhancedEntry);
 
       if (error) {
-        console.error('LGPD Audit Log Error:', error)
-        return { success: false, error: error.message }
+        console.error("LGPD Audit Log Error:", error);
+        return { success: false, error: error.message };
       }
 
-      return { success: true }
+      return { success: true };
     } catch (error) {
-      console.error('LGPD Audit Log Exception:', error)
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
-      }
+      console.error("LGPD Audit Log Exception:", error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
     }
   }
 
@@ -140,23 +140,23 @@ export class LGPDComplianceManager {
   async logPatientDataAccess(
     patientId: string,
     clinicId: string,
-    accessType: 'view' | 'edit' | 'create' | 'delete',
+    accessType: "view" | "edit" | "create" | "delete",
     tableAccessed: string,
     recordId?: string,
-    purpose?: string
+    purpose?: string,
   ): Promise<void> {
     await this.createAuditLog({
-      event_type: 'patient_record_access',
+      event_type: "patient_record_access",
       patient_id: patientId,
       clinic_id: clinicId,
       table_name: tableAccessed,
       record_id: recordId,
       action: accessType,
-      purpose: purpose || 'Medical care provision',
-      legal_basis: 'Article 11, II - Protection of life or physical safety',
-      retention_period: '20_years', // Medical records retention
-      data_subject_rights: 'access'
-    })
+      purpose: purpose || "Medical care provision",
+      legal_basis: "Article 11, II - Protection of life or physical safety",
+      retention_period: "20_years", // Medical records retention
+      data_subject_rights: "access",
+    });
   }
 
   /**
@@ -167,21 +167,21 @@ export class LGPDComplianceManager {
     patientId: string,
     clinicId: string,
     consentType: LGPDConsentType,
-    action: 'granted' | 'revoked' | 'updated',
-    consentDetails: Record<string, any>
+    action: "granted" | "revoked" | "updated",
+    consentDetails: Record<string, any>,
   ): Promise<void> {
     await this.createAuditLog({
-      event_type: action === 'granted' ? 'consent_granted' : 'consent_revoked',
+      event_type: action === "granted" ? "consent_granted" : "consent_revoked",
       patient_id: patientId,
       clinic_id: clinicId,
-      table_name: 'patient_consents',
+      table_name: "patient_consents",
       action: action,
       consent_type: consentType,
       new_values: consentDetails,
-      legal_basis: 'Article 8 - Consent',
-      purpose: 'Consent management and compliance',
-      retention_period: 'indefinite_or_until_withdrawal'
-    })
+      legal_basis: "Article 8 - Consent",
+      purpose: "Consent management and compliance",
+      retention_period: "indefinite_or_until_withdrawal",
+    });
   }
 
   /**
@@ -189,22 +189,22 @@ export class LGPDComplianceManager {
    */
   async logAuthenticationEvent(
     userId: string,
-    action: 'login' | 'logout' | 'failed_login' | 'password_reset',
-    metadata?: Record<string, any>
+    action: "login" | "logout" | "failed_login" | "password_reset",
+    metadata?: Record<string, any>,
   ): Promise<void> {
     await this.createAuditLog({
-      event_type: 'user_authentication',
+      event_type: "user_authentication",
       user_id: userId,
-      table_name: 'auth.users',
+      table_name: "auth.users",
       action: action,
-      purpose: 'Security and access control',
-      legal_basis: 'Legitimate interest - Security',
-      retention_period: '5_years',
+      purpose: "Security and access control",
+      legal_basis: "Legitimate interest - Security",
+      retention_period: "5_years",
       metadata: {
         ...metadata,
-        security_event: true
-      }
-    })
+        security_event: true,
+      },
+    });
   }
 
   /**
@@ -214,26 +214,26 @@ export class LGPDComplianceManager {
     userId: string,
     patientId: string,
     clinicId: string,
-    dataType: 'financial' | 'medical_procedure' | 'photo' | 'biometric',
+    dataType: "financial" | "medical_procedure" | "photo" | "biometric",
     action: string,
-    recordId?: string
+    recordId?: string,
   ): Promise<void> {
     await this.createAuditLog({
-      event_type: 'sensitive_data_access',
+      event_type: "sensitive_data_access",
       user_id: userId,
       patient_id: patientId,
       clinic_id: clinicId,
       table_name: `sensitive_${dataType}`,
       record_id: recordId,
       action: action,
-      purpose: 'Healthcare service provision',
-      legal_basis: 'Article 11, II - Protection of life or physical safety',
-      retention_period: '20_years',
+      purpose: "Healthcare service provision",
+      legal_basis: "Article 11, II - Protection of life or physical safety",
+      retention_period: "20_years",
       metadata: {
-        sensitivity_level: 'high',
-        data_category: dataType
-      }
-    })
+        sensitivity_level: "high",
+        data_category: dataType,
+      },
+    });
   }
 
   /**
@@ -244,43 +244,43 @@ export class LGPDComplianceManager {
     patientId: string,
     clinicId: string,
     requestType: LGPDDataSubjectRights,
-    requestDetails: Record<string, any>
+    requestDetails: Record<string, any>,
   ): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
       // Log the data subject rights request
       await this.createAuditLog({
-        event_type: 'data_access',
+        event_type: "data_access",
         patient_id: patientId,
         clinic_id: clinicId,
-        table_name: 'data_subject_requests',
+        table_name: "data_subject_requests",
         action: `data_subject_${requestType}`,
         data_subject_rights: requestType,
-        purpose: 'Data subject rights fulfillment',
+        purpose: "Data subject rights fulfillment",
         legal_basis: `Article ${this.getDataSubjectRightsArticle(requestType)}`,
-        new_values: requestDetails
-      })
+        new_values: requestDetails,
+      });
 
       switch (requestType) {
-        case 'access':
-          return await this.exportPatientData(patientId, clinicId)
-        
-        case 'erasure':
-          return await this.anonymizePatientData(patientId, clinicId)
-        
-        case 'portability':
-          return await this.exportPatientDataPortable(patientId, clinicId)
-        
+        case "access":
+          return await this.exportPatientData(patientId, clinicId);
+
+        case "erasure":
+          return await this.anonymizePatientData(patientId, clinicId);
+
+        case "portability":
+          return await this.exportPatientDataPortable(patientId, clinicId);
+
         default:
-          return { 
-            success: false, 
-            error: `Data subject right ${requestType} not yet implemented` 
-          }
+          return {
+            success: false,
+            error: `Data subject right ${requestType} not yet implemented`,
+          };
       }
     } catch (error) {
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
-      }
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
     }
   }
 
@@ -288,45 +288,45 @@ export class LGPDComplianceManager {
    * Export patient data for LGPD compliance (Data Portability)
    */
   private async exportPatientData(
-    patientId: string, 
-    clinicId: string
+    patientId: string,
+    clinicId: string,
   ): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
       // Fetch all patient-related data across tables
       const { data: patientData, error: patientError } = await this.supabase
-        .from('patients')
-        .select('*')
-        .eq('id', patientId)
-        .eq('clinic_id', clinicId)
-        .single()
+        .from("patients")
+        .select("*")
+        .eq("id", patientId)
+        .eq("clinic_id", clinicId)
+        .single();
 
       if (patientError) {
-        return { success: false, error: patientError.message }
+        return { success: false, error: patientError.message };
       }
 
       // Log data export for audit trail
       await this.logSensitiveDataAccess(
-        patientData.user_id || 'system',
+        patientData.user_id || "system",
         patientId,
         clinicId,
-        'medical_procedure',
-        'data_export'
-      )
+        "medical_procedure",
+        "data_export",
+      );
 
-      return { 
-        success: true, 
+      return {
+        success: true,
         data: {
           patient: patientData,
           exported_at: new Date().toISOString(),
-          export_format: 'JSON',
-          lgpd_compliance: true
-        }
-      }
+          export_format: "JSON",
+          lgpd_compliance: true,
+        },
+      };
     } catch (error) {
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Export failed' 
-      }
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Export failed",
+      };
     }
   }
 
@@ -334,48 +334,48 @@ export class LGPDComplianceManager {
    * Anonymize patient data for erasure requests
    */
   private async anonymizePatientData(
-    patientId: string, 
-    clinicId: string
+    patientId: string,
+    clinicId: string,
   ): Promise<{ success: boolean; error?: string }> {
     try {
       // Instead of deletion, anonymize data to preserve medical history
       const { error } = await this.supabase
-        .from('patients')
+        .from("patients")
         .update({
-          name: 'ANONYMIZED',
+          name: "ANONYMIZED",
           email: null,
           phone: null,
           cpf: null,
           address: null,
           anonymized_at: new Date().toISOString(),
-          anonymization_reason: 'LGPD_ERASURE_REQUEST'
+          anonymization_reason: "LGPD_ERASURE_REQUEST",
         })
-        .eq('id', patientId)
-        .eq('clinic_id', clinicId)
+        .eq("id", patientId)
+        .eq("clinic_id", clinicId);
 
       if (error) {
-        return { success: false, error: error.message }
+        return { success: false, error: error.message };
       }
 
       // Log anonymization action
       await this.createAuditLog({
-        event_type: 'data_deletion',
+        event_type: "data_deletion",
         patient_id: patientId,
         clinic_id: clinicId,
-        table_name: 'patients',
-        action: 'anonymize',
-        data_subject_rights: 'erasure',
-        purpose: 'LGPD compliance - Right to erasure',
-        legal_basis: 'Article 18 - Right to erasure',
-        anonymization_status: true
-      })
+        table_name: "patients",
+        action: "anonymize",
+        data_subject_rights: "erasure",
+        purpose: "LGPD compliance - Right to erasure",
+        legal_basis: "Article 18 - Right to erasure",
+        anonymization_status: true,
+      });
 
-      return { success: true }
+      return { success: true };
     } catch (error) {
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Anonymization failed' 
-      }
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Anonymization failed",
+      };
     }
   }
 
@@ -383,25 +383,25 @@ export class LGPDComplianceManager {
    * Export patient data in portable format (JSON/CSV)
    */
   private async exportPatientDataPortable(
-    patientId: string, 
-    clinicId: string
+    patientId: string,
+    clinicId: string,
   ): Promise<{ success: boolean; data?: any; error?: string }> {
-    const exportResult = await this.exportPatientData(patientId, clinicId)
-    
+    const exportResult = await this.exportPatientData(patientId, clinicId);
+
     if (exportResult.success && exportResult.data) {
       // Convert to portable format
       const portableData = {
         ...exportResult.data,
-        format: 'portable_json',
-        lgpd_article: 'Article 20 - Data Portability',
+        format: "portable_json",
+        lgpd_article: "Article 20 - Data Portability",
         structured_format: true,
-        machine_readable: true
-      }
+        machine_readable: true,
+      };
 
-      return { success: true, data: portableData }
+      return { success: true, data: portableData };
     }
 
-    return exportResult
+    return exportResult;
   }
 
   /**
@@ -409,22 +409,22 @@ export class LGPDComplianceManager {
    */
   private getLGPDArticle(eventType: LGPDEventType): string {
     const articleMap: Record<LGPDEventType, string> = {
-      'data_access': 'Article 17 - Right of access',
-      'data_modification': 'Article 18 - Right to rectification',
-      'data_deletion': 'Article 18 - Right to erasure',
-      'consent_granted': 'Article 8 - Consent',
-      'consent_revoked': 'Article 8 - Consent withdrawal',
-      'data_export': 'Article 20 - Data portability',
-      'user_authentication': 'Article 37 - Data processing records',
-      'sensitive_data_access': 'Article 11 - Sensitive data processing',
-      'patient_record_access': 'Article 11 - Healthcare data',
-      'medical_procedure_access': 'Article 11 - Healthcare data',
-      'professional_access': 'Article 37 - Access control',
-      'system_admin_access': 'Article 37 - System administration',
-      'audit_log_access': 'Article 37 - Audit trail'
-    }
+      data_access: "Article 17 - Right of access",
+      data_modification: "Article 18 - Right to rectification",
+      data_deletion: "Article 18 - Right to erasure",
+      consent_granted: "Article 8 - Consent",
+      consent_revoked: "Article 8 - Consent withdrawal",
+      data_export: "Article 20 - Data portability",
+      user_authentication: "Article 37 - Data processing records",
+      sensitive_data_access: "Article 11 - Sensitive data processing",
+      patient_record_access: "Article 11 - Healthcare data",
+      medical_procedure_access: "Article 11 - Healthcare data",
+      professional_access: "Article 37 - Access control",
+      system_admin_access: "Article 37 - System administration",
+      audit_log_access: "Article 37 - Audit trail",
+    };
 
-    return articleMap[eventType] || 'General LGPD compliance'
+    return articleMap[eventType] || "General LGPD compliance";
   }
 
   /**
@@ -432,25 +432,25 @@ export class LGPDComplianceManager {
    */
   private getDataSubjectRightsArticle(right: LGPDDataSubjectRights): string {
     const rightsMap: Record<LGPDDataSubjectRights, string> = {
-      'access': '17 - Right of access',
-      'rectification': '18 - Right to rectification',
-      'erasure': '18 - Right to erasure',
-      'portability': '20 - Data portability',
-      'restriction': '18 - Restriction of processing',
-      'objection': '21 - Right to object',
-      'consent_withdrawal': '8 - Consent withdrawal'
-    }
+      access: "17 - Right of access",
+      rectification: "18 - Right to rectification",
+      erasure: "18 - Right to erasure",
+      portability: "20 - Data portability",
+      restriction: "18 - Restriction of processing",
+      objection: "21 - Right to object",
+      consent_withdrawal: "8 - Consent withdrawal",
+    };
 
-    return rightsMap[right] || '17-22 - Data subject rights'
+    return rightsMap[right] || "17-22 - Data subject rights";
   }
 }
 
 // Healthcare-specific LGPD compliance hooks
 export class HealthcareLGPDHooks {
-  private compliance: LGPDComplianceManager
+  private compliance: LGPDComplianceManager;
 
   constructor(serverSide = false) {
-    this.compliance = new LGPDComplianceManager(serverSide)
+    this.compliance = new LGPDComplianceManager(serverSide);
   }
 
   /**
@@ -459,14 +459,14 @@ export class HealthcareLGPDHooks {
   async beforePatientAccess(
     patientId: string,
     clinicId: string,
-    action: 'view' | 'edit' | 'create' | 'delete',
+    action: "view" | "edit" | "create" | "delete",
     context: {
-      userId: string
-      userRole: string
-      purpose?: string
-      tableAccessed?: string
-      recordId?: string
-    }
+      userId: string;
+      userRole: string;
+      purpose?: string;
+      tableAccessed?: string;
+      recordId?: string;
+    },
   ): Promise<{ allowed: boolean; reason?: string }> {
     try {
       // Log access attempt
@@ -474,20 +474,20 @@ export class HealthcareLGPDHooks {
         patientId,
         clinicId,
         action,
-        context.tableAccessed || 'patients',
+        context.tableAccessed || "patients",
         context.recordId,
-        context.purpose
-      )
+        context.purpose,
+      );
 
       // Check if user has permission to access this patient's data
       // This would integrate with your RLS policies
-      return { allowed: true }
+      return { allowed: true };
     } catch (error) {
-      console.error('LGPD Patient Access Hook Error:', error)
-      return { 
-        allowed: false, 
-        reason: 'LGPD compliance check failed' 
-      }
+      console.error("LGPD Patient Access Hook Error:", error);
+      return {
+        allowed: false,
+        reason: "LGPD compliance check failed",
+      };
     }
   }
 
@@ -497,14 +497,14 @@ export class HealthcareLGPDHooks {
   async beforeSensitiveDataAccess(
     patientId: string,
     clinicId: string,
-    dataType: 'financial' | 'medical_procedure' | 'photo' | 'biometric',
+    dataType: "financial" | "medical_procedure" | "photo" | "biometric",
     action: string,
     context: {
-      userId: string
-      userRole: string
-      recordId?: string
-      justification?: string
-    }
+      userId: string;
+      userRole: string;
+      recordId?: string;
+      justification?: string;
+    },
   ): Promise<{ allowed: boolean; reason?: string }> {
     try {
       // Enhanced logging for sensitive data
@@ -514,24 +514,24 @@ export class HealthcareLGPDHooks {
         clinicId,
         dataType,
         action,
-        context.recordId
-      )
+        context.recordId,
+      );
 
       // Additional validation for sensitive data access
-      if (dataType === 'financial' && !['admin', 'manager'].includes(context.userRole)) {
-        return { 
-          allowed: false, 
-          reason: 'Insufficient permissions for financial data access' 
-        }
+      if (dataType === "financial" && !["admin", "manager"].includes(context.userRole)) {
+        return {
+          allowed: false,
+          reason: "Insufficient permissions for financial data access",
+        };
       }
 
-      return { allowed: true }
+      return { allowed: true };
     } catch (error) {
-      console.error('LGPD Sensitive Data Access Hook Error:', error)
-      return { 
-        allowed: false, 
-        reason: 'LGPD compliance check failed for sensitive data' 
-      }
+      console.error("LGPD Sensitive Data Access Hook Error:", error);
+      return {
+        allowed: false,
+        reason: "LGPD compliance check failed for sensitive data",
+      };
     }
   }
 
@@ -542,31 +542,31 @@ export class HealthcareLGPDHooks {
     patientId: string,
     clinicId: string,
     consentType: LGPDConsentType,
-    purpose: string
+    purpose: string,
   ): Promise<{ valid: boolean; reason?: string }> {
     try {
       // Check if valid consent exists for this purpose
       // This would query your consent management system
-      
+
       // For now, we'll log the consent check
       await this.compliance.createAuditLog({
-        event_type: 'consent_granted',
+        event_type: "consent_granted",
         patient_id: patientId,
         clinic_id: clinicId,
-        table_name: 'patient_consents',
-        action: 'validate_consent',
+        table_name: "patient_consents",
+        action: "validate_consent",
         consent_type: consentType,
         purpose: purpose,
-        legal_basis: 'Article 8 - Consent validation'
-      })
+        legal_basis: "Article 8 - Consent validation",
+      });
 
-      return { valid: true }
+      return { valid: true };
     } catch (error) {
-      console.error('LGPD Consent Validation Error:', error)
-      return { 
-        valid: false, 
-        reason: 'Consent validation failed' 
-      }
+      console.error("LGPD Consent Validation Error:", error);
+      return {
+        valid: false,
+        reason: "Consent validation failed",
+      };
     }
   }
 }
@@ -589,20 +589,20 @@ export const lgpdUtils = {
   generateConsentFormData: (
     consentType: LGPDConsentType,
     purpose: string,
-    retentionPeriod?: string
+    retentionPeriod?: string,
   ) => ({
     consent_type: consentType,
     purpose,
-    retention_period: retentionPeriod || '20_years',
-    legal_basis: 'Article 8 - Consent',
+    retention_period: retentionPeriod || "20_years",
+    legal_basis: "Article 8 - Consent",
     consent_date: new Date().toISOString(),
-    consent_version: '1.0',
+    consent_version: "1.0",
     can_withdraw: true,
-    withdrawal_method: 'Patient portal or written request',
-    data_categories: ['personal', 'medical', 'contact'],
+    withdrawal_method: "Patient portal or written request",
+    data_categories: ["personal", "medical", "contact"],
     processing_activities: [purpose],
     third_party_sharing: false,
-    international_transfer: false
+    international_transfer: false,
   }),
 
   /**
@@ -611,30 +611,29 @@ export const lgpdUtils = {
   validateDataProcessing: (
     purpose: string,
     legalBasis: string,
-    dataCategories: string[]
+    dataCategories: string[],
   ): { compliant: boolean; issues: string[] } => {
-    const issues: string[] = []
+    const issues: string[] = [];
 
     // Basic validation rules
     if (!purpose || purpose.length < 10) {
-      issues.push('Purpose must be clearly defined (minimum 10 characters)')
+      issues.push("Purpose must be clearly defined (minimum 10 characters)");
     }
 
     if (!legalBasis) {
-      issues.push('Legal basis for processing must be specified')
+      issues.push("Legal basis for processing must be specified");
     }
 
-    if (dataCategories.includes('sensitive') && !legalBasis.includes('Article 11')) {
-      issues.push('Sensitive data requires specific legal basis under Article 11')
+    if (dataCategories.includes("sensitive") && !legalBasis.includes("Article 11")) {
+      issues.push("Sensitive data requires specific legal basis under Article 11");
     }
 
     return {
       compliant: issues.length === 0,
-      issues
-    }
-  }
-}
+      issues,
+    };
+  },
+};
 
 // Default export
-export default LGPDComplianceManager
-
+export default LGPDComplianceManager;

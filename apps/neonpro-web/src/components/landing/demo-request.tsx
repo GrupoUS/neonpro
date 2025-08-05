@@ -1,16 +1,22 @@
 // components/landing/demo-request.tsx
 "use client";
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
-import { 
+import type { useState } from "react";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Badge } from "@/components/ui/badge";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type {
   Calendar,
   Phone,
   Mail,
@@ -20,7 +26,7 @@ import {
   CheckCircle,
   Clock,
   Award,
-  MessageSquare
+  MessageSquare,
 } from "lucide-react";
 
 export function DemoRequest() {
@@ -37,26 +43,26 @@ export function DemoRequest() {
     painPoints: "",
     bestTime: "",
     gdprConsent: false,
-    marketingConsent: false
+    marketingConsent: false,
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
     setIsSubmitting(false);
     setIsSubmitted(true);
   };
@@ -65,34 +71,61 @@ export function DemoRequest() {
     {
       icon: Calendar,
       title: "Demo Personalizada",
-      description: "Demonstração focada no seu tipo de clínica"
+      description: "Demonstração focada no seu tipo de clínica",
     },
     {
       icon: Zap,
       title: "Setup em 24h",
-      description: "Implementação rápida e suporte completo"
+      description: "Implementação rápida e suporte completo",
     },
     {
       icon: Award,
       title: "Treinamento Incluso",
-      description: "Capacitação da equipe sem custo adicional"
+      description: "Capacitação da equipe sem custo adicional",
     },
     {
       icon: Clock,
       title: "30 Dias Grátis",
-      description: "Teste completo sem compromisso"
-    }
+      description: "Teste completo sem compromisso",
+    },
   ];
 
   const states = [
-    "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA",
-    "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN",
-    "RS", "RO", "RR", "SC", "SP", "SE", "TO"
+    "AC",
+    "AL",
+    "AP",
+    "AM",
+    "BA",
+    "CE",
+    "DF",
+    "ES",
+    "GO",
+    "MA",
+    "MT",
+    "MS",
+    "MG",
+    "PA",
+    "PB",
+    "PR",
+    "PE",
+    "PI",
+    "RJ",
+    "RN",
+    "RS",
+    "RO",
+    "RR",
+    "SC",
+    "SP",
+    "SE",
+    "TO",
   ];
 
   if (isSubmitted) {
     return (
-      <section id="demo" className="py-16 lg:py-24 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950">
+      <section
+        id="demo"
+        className="py-16 lg:py-24 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950"
+      >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mx-auto text-center">
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-green-100 dark:bg-green-900 mx-auto mb-6">
@@ -102,7 +135,8 @@ export function DemoRequest() {
               Solicitação Recebida com Sucesso!
             </h2>
             <p className="text-lg text-slate-600 dark:text-slate-400 mb-8">
-              Nossa equipe entrará em contato em até 2 horas úteis para agendar sua demonstração personalizada.
+              Nossa equipe entrará em contato em até 2 horas úteis para agendar sua demonstração
+              personalizada.
             </p>
             <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-green-200 dark:border-green-800">
               <h3 className="font-semibold text-slate-900 dark:text-white mb-4">
@@ -153,8 +187,8 @@ export function DemoRequest() {
             Veja o NeonPro em Ação
           </h2>
           <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed">
-            Agende uma demonstração personalizada e descubra como nossa plataforma pode 
-            transformar sua clínica em apenas 30 minutos.
+            Agende uma demonstração personalizada e descubra como nossa plataforma pode transformar
+            sua clínica em apenas 30 minutos.
           </p>
         </div>
 
@@ -164,7 +198,7 @@ export function DemoRequest() {
             <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6">
               O que você terá:
             </h3>
-            
+
             {benefits.map((benefit, index) => (
               <div key={index} className="flex items-start space-x-4">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sky-100 dark:bg-sky-900 flex-shrink-0">
@@ -222,7 +256,7 @@ export function DemoRequest() {
                   Preencha os dados abaixo e nossa equipe entrará em contato em até 2 horas úteis.
                 </p>
               </CardHeader>
-              
+
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Personal Info */}
@@ -233,19 +267,19 @@ export function DemoRequest() {
                         id="name"
                         type="text"
                         value={formData.name}
-                        onChange={(e) => handleInputChange('name', e.target.value)}
+                        onChange={(e) => handleInputChange("name", e.target.value)}
                         required
                         placeholder="Dr. João Silva"
                       />
                     </div>
-                    
+
                     <div className="space-y-2">
                       <Label htmlFor="email">E-mail Profissional *</Label>
                       <Input
                         id="email"
                         type="email"
                         value={formData.email}
-                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        onChange={(e) => handleInputChange("email", e.target.value)}
                         required
                         placeholder="joao@clinica.com.br"
                       />
@@ -259,7 +293,7 @@ export function DemoRequest() {
                         id="phone"
                         type="tel"
                         value={formData.phone}
-                        onChange={(e) => handleInputChange('phone', e.target.value)}
+                        onChange={(e) => handleInputChange("phone", e.target.value)}
                         required
                         placeholder="(11) 99999-0000"
                       />
@@ -267,7 +301,7 @@ export function DemoRequest() {
 
                     <div className="space-y-2">
                       <Label htmlFor="bestTime">Melhor Horário</Label>
-                      <Select onValueChange={(value) => handleInputChange('bestTime', value)}>
+                      <Select onValueChange={(value) => handleInputChange("bestTime", value)}>
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione o horário" />
                         </SelectTrigger>
@@ -288,7 +322,7 @@ export function DemoRequest() {
                         id="clinicName"
                         type="text"
                         value={formData.clinicName}
-                        onChange={(e) => handleInputChange('clinicName', e.target.value)}
+                        onChange={(e) => handleInputChange("clinicName", e.target.value)}
                         required
                         placeholder="Clínica Bella Vita"
                       />
@@ -296,7 +330,7 @@ export function DemoRequest() {
 
                     <div className="space-y-2">
                       <Label htmlFor="clinicType">Tipo de Clínica *</Label>
-                      <Select onValueChange={(value) => handleInputChange('clinicType', value)}>
+                      <Select onValueChange={(value) => handleInputChange("clinicType", value)}>
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione o tipo" />
                         </SelectTrigger>
@@ -318,7 +352,7 @@ export function DemoRequest() {
                         id="city"
                         type="text"
                         value={formData.city}
-                        onChange={(e) => handleInputChange('city', e.target.value)}
+                        onChange={(e) => handleInputChange("city", e.target.value)}
                         required
                         placeholder="São Paulo"
                       />
@@ -326,13 +360,15 @@ export function DemoRequest() {
 
                     <div className="space-y-2">
                       <Label htmlFor="state">Estado *</Label>
-                      <Select onValueChange={(value) => handleInputChange('state', value)}>
+                      <Select onValueChange={(value) => handleInputChange("state", value)}>
                         <SelectTrigger>
                           <SelectValue placeholder="UF" />
                         </SelectTrigger>
                         <SelectContent>
-                          {states.map(state => (
-                            <SelectItem key={state} value={state}>{state}</SelectItem>
+                          {states.map((state) => (
+                            <SelectItem key={state} value={state}>
+                              {state}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -340,7 +376,9 @@ export function DemoRequest() {
 
                     <div className="space-y-2">
                       <Label htmlFor="currentPatients">Pacientes/Mês</Label>
-                      <Select onValueChange={(value) => handleInputChange('currentPatients', value)}>
+                      <Select
+                        onValueChange={(value) => handleInputChange("currentPatients", value)}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Quantidade" />
                         </SelectTrigger>
@@ -359,7 +397,7 @@ export function DemoRequest() {
                     <Textarea
                       id="painPoints"
                       value={formData.painPoints}
-                      onChange={(e) => handleInputChange('painPoints', e.target.value)}
+                      onChange={(e) => handleInputChange("painPoints", e.target.value)}
                       placeholder="Ex: conflitos de agenda, dificuldade com compliance, relatórios manuais..."
                       rows={3}
                     />
@@ -371,15 +409,17 @@ export function DemoRequest() {
                       <Checkbox
                         id="gdprConsent"
                         checked={formData.gdprConsent}
-                        onCheckedChange={(checked) => handleInputChange('gdprConsent', checked as boolean)}
+                        onCheckedChange={(checked) =>
+                          handleInputChange("gdprConsent", checked as boolean)
+                        }
                         required
                       />
                       <Label htmlFor="gdprConsent" className="text-sm leading-5">
-                        Concordo com o processamento dos meus dados conforme a{' '}
+                        Concordo com o processamento dos meus dados conforme a{" "}
                         <a href="#" className="text-sky-600 hover:underline">
                           Política de Privacidade
-                        </a>{' '}
-                        e{' '}
+                        </a>{" "}
+                        e{" "}
                         <a href="#" className="text-sky-600 hover:underline">
                           Termos de Uso
                         </a>
@@ -391,10 +431,13 @@ export function DemoRequest() {
                       <Checkbox
                         id="marketingConsent"
                         checked={formData.marketingConsent}
-                        onCheckedChange={(checked) => handleInputChange('marketingConsent', checked as boolean)}
+                        onCheckedChange={(checked) =>
+                          handleInputChange("marketingConsent", checked as boolean)
+                        }
                       />
                       <Label htmlFor="marketingConsent" className="text-sm leading-5">
-                        Aceito receber comunicações sobre produtos, serviços e conteúdos relevantes do NeonPro.
+                        Aceito receber comunicações sobre produtos, serviços e conteúdos relevantes
+                        do NeonPro.
                       </Label>
                     </div>
                   </div>

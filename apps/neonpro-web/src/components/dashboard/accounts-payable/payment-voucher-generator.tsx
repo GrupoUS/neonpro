@@ -1,20 +1,20 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import {
+import type { Separator } from "@/components/ui/separator";
+import type { cn } from "@/lib/utils";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
   Building,
   Calendar,
   CheckCircle,
@@ -28,8 +28,8 @@ import {
   Share,
   User,
 } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
+import type { useState } from "react";
+import type { toast } from "sonner";
 
 export interface PaymentVoucher {
   id: string;
@@ -90,8 +90,7 @@ export default function PaymentVoucherGenerator({
   const companyData = {
     company_name: "NeonPro Clínica Estética",
     company_document: "12.345.678/0001-90",
-    company_address:
-      "Av. das Clínicas, 123 - Centro - São Paulo/SP - CEP: 01234-567",
+    company_address: "Av. das Clínicas, 123 - Centro - São Paulo/SP - CEP: 01234-567",
     company_phone: "(11) 3456-7890",
     company_email: "contato@neonpro.com.br",
   };
@@ -106,10 +105,7 @@ export default function PaymentVoucherGenerator({
   const formatDocument = (document: string) => {
     // Format CNPJ or CPF
     if (document.length === 14) {
-      return document.replace(
-        /(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/,
-        "$1.$2.$3/$4-$5"
-      );
+      return document.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
     } else if (document.length === 11) {
       return document.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
     }
@@ -126,9 +122,7 @@ export default function PaymentVoucherGenerator({
 
       const newVoucher: PaymentVoucher = {
         id: `voucher_${Date.now()}`,
-        voucher_number: `CV${new Date().getFullYear()}${String(
-          Date.now()
-        ).slice(-6)}`,
+        voucher_number: `CV${new Date().getFullYear()}${String(Date.now()).slice(-6)}`,
         payment_id: payment.id || "payment_1",
         accounts_payable_id: payment.accounts_payable_id || "ap_1",
         payment_date: payment.payment_date || new Date().toISOString(),
@@ -144,11 +138,9 @@ export default function PaymentVoucherGenerator({
         invoice_number: "INV-2024-001",
         vendor_name: "Fornecedor Alpha Ltda",
         vendor_document: "12345678000190",
-        vendor_address:
-          "Rua do Fornecedor, 456 - Distrito Industrial - São Paulo/SP",
+        vendor_address: "Rua do Fornecedor, 456 - Distrito Industrial - São Paulo/SP",
         original_amount: payment.original_amount || 1500.0,
-        remaining_balance:
-          (payment.original_amount || 1500.0) - (payment.amount_paid || 1500.0),
+        remaining_balance: (payment.original_amount || 1500.0) - (payment.amount_paid || 1500.0),
 
         ...companyData,
       };
@@ -182,7 +174,7 @@ export default function PaymentVoucherGenerator({
         await navigator.share({
           title: `Comprovante de Pagamento ${voucher.voucher_number}`,
           text: `Comprovante de pagamento no valor de ${formatCurrency(
-            voucher.amount_paid
+            voucher.amount_paid,
           )} para ${voucher.vendor_name}`,
           url: window.location.href,
         });
@@ -224,9 +216,7 @@ export default function PaymentVoucherGenerator({
             <Receipt className="h-5 w-5" />
             Comprovante de Pagamento
           </DialogTitle>
-          <DialogDescription>
-            Gere e gerencie comprovantes de pagamento
-          </DialogDescription>
+          <DialogDescription>Gere e gerencie comprovantes de pagamento</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
@@ -258,9 +248,7 @@ export default function PaymentVoucherGenerator({
               {/* Header */}
               <div className="text-center border-b pb-4">
                 <h1 className="text-2xl font-bold">COMPROVANTE DE PAGAMENTO</h1>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Nº {voucher.voucher_number}
-                </p>
+                <p className="text-sm text-muted-foreground mt-1">Nº {voucher.voucher_number}</p>
               </div>
 
               {/* Company Info */}
@@ -307,9 +295,7 @@ export default function PaymentVoucherGenerator({
                         {formatDocument(voucher.vendor_document)}
                       </p>
                     </div>
-                    {voucher.vendor_address && (
-                      <p className="text-sm">{voucher.vendor_address}</p>
-                    )}
+                    {voucher.vendor_address && <p className="text-sm">{voucher.vendor_address}</p>}
                   </div>
                 </CardContent>
               </Card>
@@ -326,12 +312,8 @@ export default function PaymentVoucherGenerator({
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-3">
                       <div>
-                        <p className="text-sm font-medium text-muted-foreground">
-                          Invoice
-                        </p>
-                        <p className="font-semibold">
-                          {voucher.invoice_number}
-                        </p>
+                        <p className="text-sm font-medium text-muted-foreground">Invoice</p>
+                        <p className="font-semibold">{voucher.invoice_number}</p>
                       </div>
                       <div>
                         <p className="text-sm font-medium text-muted-foreground">
@@ -340,11 +322,9 @@ export default function PaymentVoucherGenerator({
                         <div className="flex items-center gap-2">
                           <Calendar className="h-4 w-4 text-muted-foreground" />
                           <p className="font-semibold">
-                            {format(
-                              new Date(voucher.payment_date),
-                              "dd/MM/yyyy 'às' HH:mm",
-                              { locale: ptBR }
-                            )}
+                            {format(new Date(voucher.payment_date), "dd/MM/yyyy 'às' HH:mm", {
+                              locale: ptBR,
+                            })}
                           </p>
                         </div>
                       </div>
@@ -355,8 +335,7 @@ export default function PaymentVoucherGenerator({
                         <div className="flex items-center gap-2">
                           <PaymentMethodIcon method={voucher.payment_method} />
                           <p className="font-semibold">
-                            {paymentMethodLabels[voucher.payment_method] ||
-                              voucher.payment_method}
+                            {paymentMethodLabels[voucher.payment_method] || voucher.payment_method}
                           </p>
                         </div>
                       </div>
@@ -364,17 +343,11 @@ export default function PaymentVoucherGenerator({
 
                     <div className="space-y-3">
                       <div>
-                        <p className="text-sm font-medium text-muted-foreground">
-                          Valor Original
-                        </p>
-                        <p className="font-semibold">
-                          {formatCurrency(voucher.original_amount)}
-                        </p>
+                        <p className="text-sm font-medium text-muted-foreground">Valor Original</p>
+                        <p className="font-semibold">{formatCurrency(voucher.original_amount)}</p>
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-muted-foreground">
-                          Valor Pago
-                        </p>
+                        <p className="text-sm font-medium text-muted-foreground">Valor Pago</p>
                         <p className="font-bold text-lg text-green-600">
                           {formatCurrency(voucher.amount_paid)}
                         </p>
@@ -386,9 +359,7 @@ export default function PaymentVoucherGenerator({
                         <p
                           className={cn(
                             "font-semibold",
-                            voucher.remaining_balance > 0
-                              ? "text-yellow-600"
-                              : "text-green-600"
+                            voucher.remaining_balance > 0 ? "text-yellow-600" : "text-green-600",
                           )}
                         >
                           {formatCurrency(voucher.remaining_balance)}
@@ -404,9 +375,7 @@ export default function PaymentVoucherGenerator({
                       <p className="text-sm font-medium text-muted-foreground mb-1">
                         Número de Referência
                       </p>
-                      <p className="font-semibold">
-                        {voucher.reference_number}
-                      </p>
+                      <p className="font-semibold">{voucher.reference_number}</p>
                     </div>
                   )}
 
@@ -421,9 +390,7 @@ export default function PaymentVoucherGenerator({
 
                   {voucher.notes && (
                     <div className="mt-3">
-                      <p className="text-sm font-medium text-muted-foreground mb-1">
-                        Observações
-                      </p>
+                      <p className="text-sm font-medium text-muted-foreground mb-1">Observações</p>
                       <p className="text-sm">{voucher.notes}</p>
                     </div>
                   )}
@@ -435,24 +402,17 @@ export default function PaymentVoucherGenerator({
                 <div className="flex items-center gap-2">
                   <CheckCircle className="h-5 w-5 text-green-600" />
                   <div>
-                    <p className="font-semibold text-green-600">
-                      Pagamento Confirmado
-                    </p>
+                    <p className="font-semibold text-green-600">Pagamento Confirmado</p>
                     <p className="text-xs text-muted-foreground">
                       Comprovante gerado em{" "}
-                      {format(
-                        new Date(voucher.created_at),
-                        "dd/MM/yyyy 'às' HH:mm",
-                        { locale: ptBR }
-                      )}
+                      {format(new Date(voucher.created_at), "dd/MM/yyyy 'às' HH:mm", {
+                        locale: ptBR,
+                      })}
                     </p>
                   </div>
                 </div>
 
-                <Badge
-                  variant="outline"
-                  className="text-green-700 border-green-200"
-                >
+                <Badge variant="outline" className="text-green-700 border-green-200">
                   <CheckCircle className="h-3 w-3 mr-1" />
                   Válido
                 </Badge>
@@ -481,12 +441,7 @@ export default function PaymentVoucherGenerator({
                 </Button>
 
                 <Button
-                  onClick={() =>
-                    window.open(
-                      `/dashboard/payments/voucher/${voucher.id}`,
-                      "_blank"
-                    )
-                  }
+                  onClick={() => window.open(`/dashboard/payments/voucher/${voucher.id}`, "_blank")}
                   variant="outline"
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />

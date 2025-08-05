@@ -1,15 +1,15 @@
 // components/search/unified-search.tsx
 "use client";
 
-import { searchClient } from "@/lib/search/search-client";
-import {
+import type { searchClient } from "@/lib/search/search-client";
+import type {
   SearchQuery,
   SearchResponse,
   SearchResult,
   SearchType,
 } from "@/lib/search/unified-search";
-import { Bookmark, Clock, Search, X } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import type { Bookmark, Clock, Search, X } from "lucide-react";
+import type { useCallback, useEffect, useState } from "react";
 
 interface UnifiedSearchProps {
   onResultSelect?: (result: SearchResult) => void;
@@ -34,12 +34,10 @@ export default function UnifiedSearch({
   const [showResults, setShowResults] = useState(false);
   const [searchStats, setSearchStats] = useState<SearchResponse | null>(null);
   const [selectedTypes, setSelectedTypes] = useState<SearchType[]>(
-    types || ["patients", "appointments", "medical_records"]
+    types || ["patients", "appointments", "medical_records"],
   );
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
-  const [savedSearches, setSavedSearches] = useState<
-    Array<{ name: string; query: string }>
-  >([]);
+  const [savedSearches, setSavedSearches] = useState<Array<{ name: string; query: string }>>([]);
 
   // Carrega histórico de busca do localStorage
   useEffect(() => {
@@ -84,10 +82,10 @@ export default function UnifiedSearch({
         setSearchStats(response);
 
         // Adiciona ao histórico
-        const newHistory = [
-          searchTerm,
-          ...searchHistory.filter((h) => h !== searchTerm),
-        ].slice(0, 10);
+        const newHistory = [searchTerm, ...searchHistory.filter((h) => h !== searchTerm)].slice(
+          0,
+          10,
+        );
         setSearchHistory(newHistory);
         localStorage.setItem("searchHistory", JSON.stringify(newHistory));
       } catch (error) {
@@ -97,7 +95,7 @@ export default function UnifiedSearch({
         setLoading(false);
       }
     },
-    [selectedTypes, searchHistory]
+    [selectedTypes, searchHistory],
   );
 
   // Debounce para busca automática
@@ -120,7 +118,7 @@ export default function UnifiedSearch({
 
   const handleTypeToggle = (type: SearchType) => {
     setSelectedTypes((prev) =>
-      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type],
     );
   };
 
@@ -292,15 +290,13 @@ export default function UnifiedSearch({
           {searchStats && (
             <div className="p-3 border-b border-gray-100 text-xs text-gray-500 flex justify-between">
               <span>
-                {searchStats.totalCount} resultados em{" "}
-                {searchStats.executionTime.toFixed(0)}ms
+                {searchStats.totalCount} resultados em {searchStats.executionTime.toFixed(0)}ms
               </span>
-              {searchStats.suggestions &&
-                searchStats.suggestions.length > 0 && (
-                  <span className="text-blue-600">
-                    Você quis dizer: {searchStats.suggestions[0]}?
-                  </span>
-                )}
+              {searchStats.suggestions && searchStats.suggestions.length > 0 && (
+                <span className="text-blue-600">
+                  Você quis dizer: {searchStats.suggestions[0]}?
+                </span>
+              )}
             </div>
           )}
 
@@ -320,16 +316,12 @@ export default function UnifiedSearch({
                     <span className="text-lg">{getTypeIcon(result.type)}</span>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-medium text-gray-900 truncate">
-                          {result.title}
-                        </h4>
+                        <h4 className="font-medium text-gray-900 truncate">{result.title}</h4>
                         <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
                           {getTypeLabel(result.type)}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-600 truncate">
-                        {result.description}
-                      </p>
+                      <p className="text-sm text-gray-600 truncate">{result.description}</p>
                       <div className="flex items-center gap-2 mt-1">
                         <div className="w-16 bg-gray-200 rounded-full h-1">
                           <div
@@ -351,12 +343,7 @@ export default function UnifiedSearch({
       )}
 
       {/* Overlay para fechar resultados */}
-      {showResults && (
-        <div
-          className="fixed inset-0 z-40"
-          onClick={() => setShowResults(false)}
-        />
-      )}
+      {showResults && <div className="fixed inset-0 z-40" onClick={() => setShowResults(false)} />}
     </div>
   );
 }

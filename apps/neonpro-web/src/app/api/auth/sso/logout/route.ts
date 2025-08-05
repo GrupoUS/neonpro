@@ -1,23 +1,29 @@
-﻿// SSO Logout Route
+// SSO Logout Route
 // Story 1.3: SSO Integration - Session Termination & Token Revocation
 
-import { NextRequest, NextResponse } from 'next/server';
-import { ssoManager } from '@/lib/auth/sso/sso-manager';
-import { logger } from '@/lib/logger';
-import { cookies } from 'next/headers';
-import { z } from 'zod';
+import type { NextRequest, NextResponse } from "next/server";
+import type { ssoManager } from "@/lib/auth/sso/sso-manager";
+import type { logger } from "@/lib/logger";
+import type { cookies } from "next/headers";
+import type { z } from "zod";
 
 const logoutSchema = z.object({
   redirect_to: z.string().url().optional(),
-  revoke_tokens: z.string().transform(val => val === 'true').optional(),
-  global_logout: z.string().transform(val => val === 'true').optional(),
+  revoke_tokens: z
+    .string()
+    .transform((val) => val === "true")
+    .optional(),
+  global_logout: z
+    .string()
+    .transform((val) => val === "true")
+    .optional(),
 });
 
 export async function POST(request: NextRequest) {
   try {
-// Cookie instantiation moved inside request handlers;
-    const sessionCookie = cookieStore.get('sso_session');
-    const userCookie = cookieStore.get('sso_user');
+    // Cookie instantiation moved inside request handlers;
+    const sessionCookie = cookieStore.get("sso_session");
+    const userCookie = cookieStore.get("sso_user");
 
     // Parse request body for logout options
     let logoutOptions = {};
@@ -34,9 +40,9 @@ export async function POST(request: NextRequest) {
     // Parse query parameters as fallback
     const { searchParams } = new URL(request.url);
     const queryValidation = logoutSchema.safeParse({
-      redirect_to: searchParams.get('redirect_to'),
-      revoke_tokens: searchParams.get('revoke_tokens'),
-      global_logout: searchParams.get('global_logout'),
+      redirect_to: searchParams.get("redirect_to"),
+      revoke_tokens: searchParams.get("revoke_tokens"),
+      global_logout: searchParams.get("global_logout"),
     });
 
     if (queryValidation.success) {
@@ -60,7 +66,7 @@ export async function POST(request: NextRequest) {
         provider = userData.provider;
         userId = userData.id;
       } catch (error) {
-        logger.warn('SSO logout: Failed to parse user cookie', { error: error.message });
+        logger.warn("SSO logout: Failed to parse user cookie", { error: error.message });
       }
     }
 
@@ -72,7 +78,7 @@ export async function POST(request: NextRequest) {
           globalLogout: global_logout,
         });
 
-        logger.info('SSO logout: Session terminated successfully', {
+        logger.info("SSO logout: Session terminated successfully", {
           sessionId,
           provider,
           userId,
@@ -80,7 +86,7 @@ export async function POST(request: NextRequest) {
           globalLogout: global_logout,
         });
       } catch (error) {
-        logger.error('SSO logout: Failed to terminate session', {
+        logger.error("SSO logout: Failed to terminate session", {
           sessionId,
           provider,
           error: error.message,
@@ -92,28 +98,28 @@ export async function POST(request: NextRequest) {
     // Clear all authentication cookies
     const cookieOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax' as const,
-      path: '/',
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax" as const,
+      path: "/",
       maxAge: 0, // Expire immediately
     };
 
-    cookieStore.set('sso_session', '', cookieOptions);
-    cookieStore.set('sso_user', '', { ...cookieOptions, httpOnly: false });
+    cookieStore.set("sso_session", "", cookieOptions);
+    cookieStore.set("sso_user", "", { ...cookieOptions, httpOnly: false });
 
     // Also clear any other auth-related cookies
-    cookieStore.set('auth_token', '', cookieOptions);
-    cookieStore.set('refresh_token', '', cookieOptions);
-    cookieStore.set('user_session', '', cookieOptions);
+    cookieStore.set("auth_token", "", cookieOptions);
+    cookieStore.set("refresh_token", "", cookieOptions);
+    cookieStore.set("user_session", "", cookieOptions);
 
-    logger.info('SSO logout: Cookies cleared successfully', {
+    logger.info("SSO logout: Cookies cleared successfully", {
       provider,
       userId,
     });
 
     // Determine redirect URL
-    let redirectUrl = '/auth/login';
-    
+    let redirectUrl = "/auth/login";
+
     if (redirect_to) {
       try {
         // Validate redirect URL is safe (same origin)
@@ -122,36 +128,36 @@ export async function POST(request: NextRequest) {
           redirectUrl = redirect_to;
         }
       } catch (error) {
-        logger.warn('SSO logout: Invalid redirect URL', { redirect_to, error: error.message });
+        logger.warn("SSO logout: Invalid redirect URL", { redirect_to, error: error.message });
       }
     }
 
     // Add logout success parameter
     const finalUrl = new URL(redirectUrl, request.url);
-    finalUrl.searchParams.set('logout', 'success');
+    finalUrl.searchParams.set("logout", "success");
     if (provider) {
-      finalUrl.searchParams.set('provider', provider);
+      finalUrl.searchParams.set("provider", provider);
     }
 
     return NextResponse.json({
       success: true,
-      message: 'Logout successful',
+      message: "Logout successful",
       redirectUrl: finalUrl.toString(),
       provider,
     });
   } catch (error) {
-    logger.error('SSO logout: Unexpected error', {
+    logger.error("SSO logout: Unexpected error", {
       error: error.message,
       stack: error.stack,
     });
 
     return NextResponse.json(
       {
-        error: 'LOGOUT_FAILED',
-        message: 'Failed to complete logout',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+        error: "LOGOUT_FAILED",
+        message: "Failed to complete logout",
+        details: process.env.NODE_ENV === "development" ? error.message : undefined,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -164,15 +170,14 @@ export async function GET(request: NextRequest) {
 // Handle unsupported methods
 export async function PUT() {
   return NextResponse.json(
-    { error: 'METHOD_NOT_ALLOWED', message: 'PUT method not allowed' },
-    { status: 405 }
+    { error: "METHOD_NOT_ALLOWED", message: "PUT method not allowed" },
+    { status: 405 },
   );
 }
 
 export async function DELETE() {
   return NextResponse.json(
-    { error: 'METHOD_NOT_ALLOWED', message: 'DELETE method not allowed' },
-    { status: 405 }
+    { error: "METHOD_NOT_ALLOWED", message: "DELETE method not allowed" },
+    { status: 405 },
   );
 }
-

@@ -1,12 +1,12 @@
 "use client";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useSubscriptionStatus } from "@/hooks/use-subscription-status";
-import { cn } from "@/lib/utils";
-import { AlertCircle, CheckCircle, Clock, XCircle } from "lucide-react";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { useSubscriptionStatus } from "@/hooks/use-subscription-status";
+import type { cn } from "@/lib/utils";
+import type { AlertCircle, CheckCircle, Clock, XCircle } from "lucide-react";
 import Link from "next/link";
 
 interface SubscriptionStatusIndicatorProps {
@@ -37,9 +37,7 @@ export function SubscriptionStatusIndicator({
     return (
       <div className={cn("flex items-center gap-2", className)}>
         <div className="h-2 w-2 bg-gray-400 rounded-full animate-pulse" />
-        <span className="text-sm text-muted-foreground">
-          Checking subscription...
-        </span>
+        <span className="text-sm text-muted-foreground">Checking subscription...</span>
       </div>
     );
   }
@@ -119,7 +117,7 @@ export function SubscriptionStatusIndicator({
             statusConfig.color === "blue" && "text-blue-600",
             statusConfig.color === "yellow" && "text-yellow-600",
             statusConfig.color === "red" && "text-red-600",
-            statusConfig.color === "gray" && "text-gray-600"
+            statusConfig.color === "gray" && "text-gray-600",
           )}
         />
         <Badge variant={statusConfig.variant}>{statusConfig.label}</Badge>
@@ -144,7 +142,7 @@ export function SubscriptionStatusIndicator({
                 statusConfig.color === "blue" && "text-blue-600",
                 statusConfig.color === "yellow" && "text-yellow-600",
                 statusConfig.color === "red" && "text-red-600",
-                statusConfig.color === "gray" && "text-gray-600"
+                statusConfig.color === "gray" && "text-gray-600",
               )}
             />
             Subscription Status
@@ -153,15 +151,11 @@ export function SubscriptionStatusIndicator({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <p className="text-sm text-muted-foreground">
-          {message || statusConfig.description}
-        </p>
+        <p className="text-sm text-muted-foreground">{message || statusConfig.description}</p>
 
         {currentPeriodEnd && (
           <div className="text-sm">
-            <span className="font-medium">
-              {cancelAtPeriodEnd ? "Ends on: " : "Renews on: "}
-            </span>
+            <span className="font-medium">{cancelAtPeriodEnd ? "Ends on: " : "Renews on: "}</span>
             <span className="text-muted-foreground">
               {currentPeriodEnd.toLocaleDateString("pt-BR")}
             </span>
@@ -173,8 +167,8 @@ export function SubscriptionStatusIndicator({
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Payment Required</AlertTitle>
             <AlertDescription>
-              Your subscription payment is overdue. Please update your payment
-              method to continue accessing premium features.
+              Your subscription payment is overdue. Please update your payment method to continue
+              accessing premium features.
             </AlertDescription>
           </Alert>
         )}
@@ -214,11 +208,7 @@ export function SubscriptionBadge({ className }: { className?: string }) {
   const { hasAccess, isLoading, status } = useSubscriptionStatus();
 
   if (isLoading) {
-    return (
-      <div
-        className={cn("h-6 w-16 bg-gray-200 rounded animate-pulse", className)}
-      />
-    );
+    return <div className={cn("h-6 w-16 bg-gray-200 rounded animate-pulse", className)} />;
   }
 
   if (!hasAccess) {

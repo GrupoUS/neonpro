@@ -1,5 +1,9 @@
 // Patient portal auth service
 export class PatientPortalAuthService {
-  static authenticate() { return {}; }
-  static authorize() { return {}; }
+  static authenticate() {
+    return {};
+  }
+  static authorize() {
+    return {};
+  }
 }

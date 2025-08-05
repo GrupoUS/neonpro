@@ -3,7 +3,7 @@ export interface EngagementMetrics {
   patient_id: string;
   engagement_score: number;
   last_interaction: string;
-  preferred_channel: 'email' | 'sms' | 'app' | 'phone';
+  preferred_channel: "email" | "sms" | "app" | "phone";
   response_rate: number;
   appointment_adherence: number;
   portal_usage: number;
@@ -11,16 +11,16 @@ export interface EngagementMetrics {
 }
 
 export interface EngagementInsight {
-  type: 'high_risk' | 'improving' | 'stable' | 'excellent';
+  type: "high_risk" | "improving" | "stable" | "excellent";
   message: string;
   recommendations: string[];
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  priority: "low" | "medium" | "high" | "critical";
 }
 
 export interface EngagementAnalysis {
   patient_id: string;
   current_score: number;
-  trend: 'increasing' | 'decreasing' | 'stable';
+  trend: "increasing" | "decreasing" | "stable";
   insights: EngagementInsight[];
   next_actions: string[];
 }
@@ -46,7 +46,7 @@ export class PatientEngagementInsights {
       current_score: metrics.engagement_score,
       trend: this.calculateTrend(metrics),
       insights,
-      next_actions: nextActions
+      next_actions: nextActions,
     };
   }
 
@@ -56,56 +56,56 @@ export class PatientEngagementInsights {
     // High risk insight
     if (metrics.engagement_score < 30) {
       insights.push({
-        type: 'high_risk',
-        message: 'Patient shows very low engagement levels',
+        type: "high_risk",
+        message: "Patient shows very low engagement levels",
         recommendations: [
-          'Schedule a personal follow-up call',
-          'Review communication preferences',
-          'Consider alternative engagement strategies'
+          "Schedule a personal follow-up call",
+          "Review communication preferences",
+          "Consider alternative engagement strategies",
         ],
-        priority: 'critical'
+        priority: "critical",
       });
     }
 
     // Appointment adherence insight
     if (metrics.appointment_adherence < 0.7) {
       insights.push({
-        type: 'high_risk',
-        message: 'Low appointment adherence rate',
+        type: "high_risk",
+        message: "Low appointment adherence rate",
         recommendations: [
-          'Send reminder notifications 24h before appointments',
-          'Offer flexible scheduling options',
-          'Discuss barriers to attendance'
+          "Send reminder notifications 24h before appointments",
+          "Offer flexible scheduling options",
+          "Discuss barriers to attendance",
         ],
-        priority: 'high'
+        priority: "high",
       });
     }
 
     // Portal usage insight
     if (metrics.portal_usage < 0.3) {
       insights.push({
-        type: 'improving',
-        message: 'Low patient portal engagement',
+        type: "improving",
+        message: "Low patient portal engagement",
         recommendations: [
-          'Provide portal navigation training',
-          'Highlight portal benefits and features',
-          'Send educational materials about self-service options'
+          "Provide portal navigation training",
+          "Highlight portal benefits and features",
+          "Send educational materials about self-service options",
         ],
-        priority: 'medium'
+        priority: "medium",
       });
     }
 
     // Excellent engagement
     if (metrics.engagement_score > 80) {
       insights.push({
-        type: 'excellent',
-        message: 'Patient shows excellent engagement',
+        type: "excellent",
+        message: "Patient shows excellent engagement",
         recommendations: [
-          'Continue current communication strategy',
-          'Consider patient as advocate for others',
-          'Gather feedback for best practices'
+          "Continue current communication strategy",
+          "Consider patient as advocate for others",
+          "Gather feedback for best practices",
         ],
-        priority: 'low'
+        priority: "low",
       });
     }
 
@@ -116,8 +116,8 @@ export class PatientEngagementInsights {
     const actions: string[] = [];
 
     // Add actions based on insights
-    insights.forEach(insight => {
-      if (insight.priority === 'critical' || insight.priority === 'high') {
+    insights.forEach((insight) => {
+      if (insight.priority === "critical" || insight.priority === "high") {
         actions.push(...insight.recommendations.slice(0, 2));
       }
     });
@@ -125,21 +125,21 @@ export class PatientEngagementInsights {
     // Add general actions based on metrics
     const daysSinceLastInteraction = this.getDaysSinceLastInteraction(metrics.last_interaction);
     if (daysSinceLastInteraction > 30) {
-      actions.push('Schedule wellness check-in');
+      actions.push("Schedule wellness check-in");
     }
 
     if (metrics.response_rate < 0.5) {
-      actions.push('Review and optimize communication timing');
+      actions.push("Review and optimize communication timing");
     }
 
     return actions;
   }
 
-  private calculateTrend(metrics: EngagementMetrics): 'increasing' | 'decreasing' | 'stable' {
+  private calculateTrend(metrics: EngagementMetrics): "increasing" | "decreasing" | "stable" {
     // Simplified trend calculation - in real implementation, this would use historical data
-    if (metrics.engagement_score > 70) return 'increasing';
-    if (metrics.engagement_score < 40) return 'decreasing';
-    return 'stable';
+    if (metrics.engagement_score > 70) return "increasing";
+    if (metrics.engagement_score < 40) return "decreasing";
+    return "stable";
   }
 
   private getDaysSinceLastInteraction(lastInteraction: string): number {
@@ -151,7 +151,7 @@ export class PatientEngagementInsights {
 
   getBulkAnalysis(patientIds: string[]): EngagementAnalysis[] {
     return patientIds
-      .map(id => this.analyzePatientEngagement(id))
+      .map((id) => this.analyzePatientEngagement(id))
       .filter((analysis): analysis is EngagementAnalysis => analysis !== null);
   }
 
@@ -164,20 +164,22 @@ export class PatientEngagementInsights {
   } {
     const allMetrics = Array.from(this.metrics.values());
     const total = allMetrics.length;
-    
+
     if (total === 0) {
       return {
         total_patients: 0,
         high_engagement: 0,
         medium_engagement: 0,
         low_engagement: 0,
-        average_score: 0
+        average_score: 0,
       };
     }
 
-    const high = allMetrics.filter(m => m.engagement_score >= 70).length;
-    const medium = allMetrics.filter(m => m.engagement_score >= 40 && m.engagement_score < 70).length;
-    const low = allMetrics.filter(m => m.engagement_score < 40).length;
+    const high = allMetrics.filter((m) => m.engagement_score >= 70).length;
+    const medium = allMetrics.filter(
+      (m) => m.engagement_score >= 40 && m.engagement_score < 70,
+    ).length;
+    const low = allMetrics.filter((m) => m.engagement_score < 40).length;
     const average = allMetrics.reduce((sum, m) => sum + m.engagement_score, 0) / total;
 
     return {
@@ -185,7 +187,7 @@ export class PatientEngagementInsights {
       high_engagement: high,
       medium_engagement: medium,
       low_engagement: low,
-      average_score: Math.round(average * 10) / 10
+      average_score: Math.round(average * 10) / 10,
     };
   }
 }

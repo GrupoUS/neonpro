@@ -1,16 +1,28 @@
 // Story 11.2: Risk Factors Management Component
 // Analyze and configure patient risk factors
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Progress } from '@/components/ui/progress';
-import { Icons } from '@/components/ui/icons';
-import { useToast } from '@/hooks/use-toast';
+import type { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Progress } from "@/components/ui/progress";
+import type { Icons } from "@/components/ui/icons";
+import type { useToast } from "@/hooks/use-toast";
 
 interface RiskFactor {
   id: string;
@@ -37,34 +49,35 @@ export default function RiskFactorsManagement() {
   const [riskFactors, setRiskFactors] = useState<RiskFactor[]>([]);
   const [summary, setSummary] = useState<Record<string, RiskFactorSummary>>({});
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState("all");
   const { toast } = useToast();
 
   useEffect(() => {
     fetchRiskFactors();
-  }, [filter]);  const fetchRiskFactors = async () => {
+  }, [filter]);
+  const fetchRiskFactors = async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
-      if (filter !== 'all') {
-        params.append('factor_type', filter);
+      if (filter !== "all") {
+        params.append("factor_type", filter);
       }
 
       const response = await fetch(`/api/no-show-prediction/risk-factors?${params}`);
-      
+
       if (!response.ok) {
-        throw new Error('Failed to fetch risk factors');
+        throw new Error("Failed to fetch risk factors");
       }
-      
+
       const data = await response.json();
       setRiskFactors(data.risk_factors || []);
       setSummary(data.summary || {});
     } catch (error) {
-      console.error('Error fetching risk factors:', error);
+      console.error("Error fetching risk factors:", error);
       toast({
-        title: 'Error',
-        description: 'Failed to load risk factors',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to load risk factors",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -72,17 +85,18 @@ export default function RiskFactorsManagement() {
   };
 
   const getImpactColor = (impact: number) => {
-    if (impact >= 0.8) return 'text-red-600';
-    if (impact >= 0.6) return 'text-orange-600';
-    if (impact >= 0.4) return 'text-yellow-600';
-    return 'text-green-600';
+    if (impact >= 0.8) return "text-red-600";
+    if (impact >= 0.6) return "text-orange-600";
+    if (impact >= 0.4) return "text-yellow-600";
+    return "text-green-600";
   };
 
   const getRiskBadgeVariant = (impact: number) => {
-    if (impact >= 0.8) return 'destructive';
-    if (impact >= 0.6) return 'secondary';
-    return 'outline';
-  };  return (
+    if (impact >= 0.8) return "destructive";
+    if (impact >= 0.6) return "secondary";
+    return "outline";
+  };
+  return (
     <div className="space-y-6">
       {/* Summary Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -90,7 +104,7 @@ export default function RiskFactorsManagement() {
           <Card key={factorType}>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium capitalize">
-                {factorType.replace('_', ' ')}
+                {factorType.replace("_", " ")}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -106,7 +120,6 @@ export default function RiskFactorsManagement() {
           </Card>
         ))}
       </div>
-
       {/* Filters and Controls */}
       <Card>
         <CardContent className="pt-6">
@@ -136,7 +149,8 @@ export default function RiskFactorsManagement() {
             </Button>
           </div>
         </CardContent>
-      </Card>      {/* Risk Factors List */}
+      </Card>{" "}
+      {/* Risk Factors List */}
       <Card>
         <CardHeader>
           <CardTitle>Risk Factor Analysis</CardTitle>
@@ -154,17 +168,26 @@ export default function RiskFactorsManagement() {
           ) : (
             <div className="space-y-4">
               {riskFactors.map((factor) => (
-                <div key={factor.id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div
+                  key={factor.id}
+                  className="flex items-center justify-between p-4 border rounded-lg"
+                >
                   <div className="flex items-center space-x-4">
-                    <div className={`w-3 h-3 rounded-full ${
-                      factor.impact_weight >= 0.8 ? 'bg-red-500' :
-                      factor.impact_weight >= 0.6 ? 'bg-orange-500' :
-                      factor.impact_weight >= 0.4 ? 'bg-yellow-500' : 'bg-green-500'
-                    }`} />
+                    <div
+                      className={`w-3 h-3 rounded-full ${
+                        factor.impact_weight >= 0.8
+                          ? "bg-red-500"
+                          : factor.impact_weight >= 0.6
+                            ? "bg-orange-500"
+                            : factor.impact_weight >= 0.4
+                              ? "bg-yellow-500"
+                              : "bg-green-500"
+                      }`}
+                    />
                     <div>
                       <p className="font-medium">{factor.patient.name}</p>
                       <p className="text-sm text-muted-foreground">
-                        {factor.factor_type.replace('_', ' ')} • {factor.factor_value}
+                        {factor.factor_type.replace("_", " ")} • {factor.factor_value}
                       </p>
                     </div>
                   </div>
@@ -178,13 +201,16 @@ export default function RiskFactorsManagement() {
                       </p>
                     </div>
                     <Badge variant={getRiskBadgeVariant(factor.impact_weight)}>
-                      {factor.impact_weight >= 0.8 ? 'High Risk' :
-                       factor.impact_weight >= 0.6 ? 'Medium Risk' : 'Low Risk'}
+                      {factor.impact_weight >= 0.8
+                        ? "High Risk"
+                        : factor.impact_weight >= 0.6
+                          ? "Medium Risk"
+                          : "Low Risk"}
                     </Badge>
                   </div>
                 </div>
               ))}
-              
+
               {riskFactors.length === 0 && (
                 <div className="text-center py-8 text-muted-foreground">
                   No risk factors found for the selected criteria
@@ -194,14 +220,11 @@ export default function RiskFactorsManagement() {
           )}
         </CardContent>
       </Card>
-
       {/* Risk Factor Configuration */}
       <Card>
         <CardHeader>
           <CardTitle>Risk Factor Configuration</CardTitle>
-          <CardDescription>
-            Adjust weights and thresholds for risk factor analysis
-          </CardDescription>
+          <CardDescription>Adjust weights and thresholds for risk factor analysis</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2">
@@ -209,7 +232,7 @@ export default function RiskFactorsManagement() {
               <h4 className="font-medium">Factor Weights</h4>
               {Object.entries(summary).map(([factorType, data]) => (
                 <div key={factorType} className="flex items-center justify-between">
-                  <span className="text-sm capitalize">{factorType.replace('_', ' ')}</span>
+                  <span className="text-sm capitalize">{factorType.replace("_", " ")}</span>
                   <div className="flex items-center space-x-2">
                     <Progress value={data.average_impact * 100} className="w-20 h-2" />
                     <span className="text-xs font-medium w-10">

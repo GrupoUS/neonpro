@@ -1,27 +1,33 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogTrigger 
-} from '@/components/ui/dialog'
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
-import { 
+import type { useState } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Label } from "@/components/ui/label";
+import type {
   Calendar,
   Clock,
   Users,
@@ -34,67 +40,67 @@ import {
   Phone,
   Plus,
   TrendingUp,
-  AlertTriangle
-} from 'lucide-react'
-import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
-import type { Appointment } from '@/hooks/use-appointments-manager'
+  AlertTriangle,
+} from "lucide-react";
+import type { toast } from "sonner";
+import type { cn } from "@/lib/utils";
+import type { Appointment } from "@/hooks/use-appointments-manager";
 
 interface QuickActionsProps {
-  appointments: Appointment[]
-  onConfirmAppointment?: (appointmentId: string) => Promise<void>
-  onCancelAppointment?: (appointmentId: string, reason?: string) => Promise<void>
-  onRescheduleAppointment?: (appointment: Appointment) => void
-  onMarkCompleted?: (appointmentId: string) => Promise<void>
-  onMarkNoShow?: (appointmentId: string) => Promise<void>
-  onCreateAppointment?: () => void
-  onBulkAction?: (action: string, appointmentIds: string[]) => Promise<void>
-  className?: string
+  appointments: Appointment[];
+  onConfirmAppointment?: (appointmentId: string) => Promise<void>;
+  onCancelAppointment?: (appointmentId: string, reason?: string) => Promise<void>;
+  onRescheduleAppointment?: (appointment: Appointment) => void;
+  onMarkCompleted?: (appointmentId: string) => Promise<void>;
+  onMarkNoShow?: (appointmentId: string) => Promise<void>;
+  onCreateAppointment?: () => void;
+  onBulkAction?: (action: string, appointmentIds: string[]) => Promise<void>;
+  className?: string;
 }
 
 interface BulkActionModalProps {
-  isOpen: boolean
-  onClose: () => void
-  appointments: Appointment[]
-  onConfirm: (action: string, appointmentIds: string[], reason?: string) => Promise<void>
+  isOpen: boolean;
+  onClose: () => void;
+  appointments: Appointment[];
+  onConfirm: (action: string, appointmentIds: string[], reason?: string) => Promise<void>;
 }
 
 interface CancelModalProps {
-  isOpen: boolean
-  onClose: () => void
-  appointment: Appointment | null
-  onConfirm: (reason: string) => Promise<void>
+  isOpen: boolean;
+  onClose: () => void;
+  appointment: Appointment | null;
+  onConfirm: (reason: string) => Promise<void>;
 }
 
 function BulkActionModal({ isOpen, onClose, appointments, onConfirm }: BulkActionModalProps) {
-  const [selectedAction, setSelectedAction] = useState<string>('')
-  const [selectedAppointments, setSelectedAppointments] = useState<string[]>([])
-  const [reason, setReason] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [selectedAction, setSelectedAction] = useState<string>("");
+  const [selectedAppointments, setSelectedAppointments] = useState<string[]>([]);
+  const [reason, setReason] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const pendingAppointments = appointments.filter(apt => apt.status === 'pending')
-  const confirmedAppointments = appointments.filter(apt => apt.status === 'confirmed')
+  const pendingAppointments = appointments.filter((apt) => apt.status === "pending");
+  const confirmedAppointments = appointments.filter((apt) => apt.status === "confirmed");
 
   const handleConfirm = async () => {
     if (selectedAppointments.length === 0) {
-      toast.error('Selecione pelo menos um agendamento')
-      return
+      toast.error("Selecione pelo menos um agendamento");
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
     try {
-      await onConfirm(selectedAction, selectedAppointments, reason)
-      toast.success('Ação executada com sucesso!')
-      onClose()
-      setSelectedAction('')
-      setSelectedAppointments([])
-      setReason('')
+      await onConfirm(selectedAction, selectedAppointments, reason);
+      toast.success("Ação executada com sucesso!");
+      onClose();
+      setSelectedAction("");
+      setSelectedAppointments([]);
+      setReason("");
     } catch (error) {
-      toast.error('Erro ao executar ação')
+      toast.error("Erro ao executar ação");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -126,25 +132,32 @@ function BulkActionModal({ isOpen, onClose, appointments, onConfirm }: BulkActio
             <div className="space-y-2">
               <Label>Agendamentos Disponíveis</Label>
               <div className="max-h-40 overflow-y-auto space-y-2 border rounded p-2">
-                {(selectedAction === 'confirm' ? pendingAppointments : 
-                  selectedAction === 'cancel' ? appointments.filter(apt => !['cancelled', 'completed'].includes(apt.status)) :
-                  selectedAction === 'complete' ? confirmedAppointments :
-                  confirmedAppointments
-                ).map(apt => (
+                {(selectedAction === "confirm"
+                  ? pendingAppointments
+                  : selectedAction === "cancel"
+                    ? appointments.filter((apt) => !["cancelled", "completed"].includes(apt.status))
+                    : selectedAction === "complete"
+                      ? confirmedAppointments
+                      : confirmedAppointments
+                ).map((apt) => (
                   <label key={apt.id} className="flex items-center space-x-2 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={selectedAppointments.includes(apt.id)}
                       onChange={(e) => {
                         if (e.target.checked) {
-                          setSelectedAppointments(prev => [...prev, apt.id])
+                          setSelectedAppointments((prev) => [...prev, apt.id]);
                         } else {
-                          setSelectedAppointments(prev => prev.filter(id => id !== apt.id))
+                          setSelectedAppointments((prev) => prev.filter((id) => id !== apt.id));
                         }
                       }}
                     />
                     <span className="text-sm">
-                      {apt.patient.full_name} - {new Date(apt.date_time).toLocaleDateString()} {new Date(apt.date_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {apt.patient.full_name} - {new Date(apt.date_time).toLocaleDateString()}{" "}
+                      {new Date(apt.date_time).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                     </span>
                   </label>
                 ))}
@@ -152,11 +165,13 @@ function BulkActionModal({ isOpen, onClose, appointments, onConfirm }: BulkActio
             </div>
           )}
 
-          {(selectedAction === 'cancel' || selectedAction === 'no_show') && (
+          {(selectedAction === "cancel" || selectedAction === "no_show") && (
             <div className="space-y-2">
-              <Label>Motivo {selectedAction === 'cancel' ? '(opcional)' : ''}</Label>
+              <Label>Motivo {selectedAction === "cancel" ? "(opcional)" : ""}</Label>
               <Textarea
-                placeholder={selectedAction === 'cancel' ? 'Motivo do cancelamento...' : 'Observações...'}
+                placeholder={
+                  selectedAction === "cancel" ? "Motivo do cancelamento..." : "Observações..."
+                }
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
               />
@@ -168,34 +183,34 @@ function BulkActionModal({ isOpen, onClose, appointments, onConfirm }: BulkActio
           <Button variant="outline" onClick={onClose}>
             Cancelar
           </Button>
-          <Button 
-            onClick={handleConfirm} 
+          <Button
+            onClick={handleConfirm}
             disabled={!selectedAction || selectedAppointments.length === 0 || loading}
           >
-            {loading ? 'Processando...' : 'Confirmar'}
+            {loading ? "Processando..." : "Confirmar"}
           </Button>
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
 
 function CancelModal({ isOpen, onClose, appointment, onConfirm }: CancelModalProps) {
-  const [reason, setReason] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [reason, setReason] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleConfirm = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      await onConfirm(reason)
-      onClose()
-      setReason('')
+      await onConfirm(reason);
+      onClose();
+      setReason("");
     } catch (error) {
       // Error handled by parent
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -224,17 +239,13 @@ function CancelModal({ isOpen, onClose, appointment, onConfirm }: CancelModalPro
           <Button variant="outline" onClick={onClose}>
             Voltar
           </Button>
-          <Button 
-            variant="destructive" 
-            onClick={handleConfirm} 
-            disabled={loading}
-          >
-            {loading ? 'Cancelando...' : 'Cancelar Agendamento'}
+          <Button variant="destructive" onClick={handleConfirm} disabled={loading}>
+            {loading ? "Cancelando..." : "Cancelar Agendamento"}
           </Button>
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
 
 export function QuickActions({
@@ -246,77 +257,77 @@ export function QuickActions({
   onMarkNoShow,
   onCreateAppointment,
   onBulkAction,
-  className
+  className,
 }: QuickActionsProps) {
-  const [bulkModalOpen, setBulkModalOpen] = useState(false)
-  const [cancelModalOpen, setCancelModalOpen] = useState(false)
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
+  const [bulkModalOpen, setBulkModalOpen] = useState(false);
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
 
   // Statistics
   const stats = {
     total: appointments.length,
-    pending: appointments.filter(apt => apt.status === 'pending').length,
-    confirmed: appointments.filter(apt => apt.status === 'confirmed').length,
-    cancelled: appointments.filter(apt => apt.status === 'cancelled').length,
-    completed: appointments.filter(apt => apt.status === 'completed').length,
-    noShow: appointments.filter(apt => apt.status === 'no_show').length
-  }
+    pending: appointments.filter((apt) => apt.status === "pending").length,
+    confirmed: appointments.filter((apt) => apt.status === "confirmed").length,
+    cancelled: appointments.filter((apt) => apt.status === "cancelled").length,
+    completed: appointments.filter((apt) => apt.status === "completed").length,
+    noShow: appointments.filter((apt) => apt.status === "no_show").length,
+  };
 
-  const pendingAppointments = appointments.filter(apt => apt.status === 'pending')
-  const upcomingAppointments = appointments.filter(apt => {
-    const appointmentDate = new Date(apt.date_time)
-    const now = new Date()
-    const todayEnd = new Date()
-    todayEnd.setHours(23, 59, 59, 999)
-    return apt.status === 'confirmed' && appointmentDate <= todayEnd && appointmentDate >= now
-  })
+  const pendingAppointments = appointments.filter((apt) => apt.status === "pending");
+  const upcomingAppointments = appointments.filter((apt) => {
+    const appointmentDate = new Date(apt.date_time);
+    const now = new Date();
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999);
+    return apt.status === "confirmed" && appointmentDate <= todayEnd && appointmentDate >= now;
+  });
 
   const handleQuickAction = async (action: string, appointment?: Appointment) => {
     try {
       switch (action) {
-        case 'confirm':
+        case "confirm":
           if (appointment) {
-            await onConfirmAppointment?.(appointment.id)
-            toast.success('Agendamento confirmado!')
+            await onConfirmAppointment?.(appointment.id);
+            toast.success("Agendamento confirmado!");
           }
-          break
-        case 'complete':
+          break;
+        case "complete":
           if (appointment) {
-            await onMarkCompleted?.(appointment.id)
-            toast.success('Agendamento marcado como concluído!')
+            await onMarkCompleted?.(appointment.id);
+            toast.success("Agendamento marcado como concluído!");
           }
-          break
-        case 'no_show':
+          break;
+        case "no_show":
           if (appointment) {
-            await onMarkNoShow?.(appointment.id)
-            toast.success('Agendamento marcado como não compareceu!')
+            await onMarkNoShow?.(appointment.id);
+            toast.success("Agendamento marcado como não compareceu!");
           }
-          break
-        case 'reschedule':
+          break;
+        case "reschedule":
           if (appointment) {
-            onRescheduleAppointment?.(appointment)
+            onRescheduleAppointment?.(appointment);
           }
-          break
+          break;
       }
     } catch (error) {
-      toast.error('Erro ao executar ação')
+      toast.error("Erro ao executar ação");
     }
-  }
+  };
 
   const handleCancelAppointment = async (reason: string) => {
-    if (!selectedAppointment) return
-    
+    if (!selectedAppointment) return;
+
     try {
-      await onCancelAppointment?.(selectedAppointment.id, reason)
-      toast.success('Agendamento cancelado!')
+      await onCancelAppointment?.(selectedAppointment.id, reason);
+      toast.success("Agendamento cancelado!");
     } catch (error) {
-      toast.error('Erro ao cancelar agendamento')
+      toast.error("Erro ao cancelar agendamento");
     }
-  }
+  };
 
   return (
     <>
-      <div className={cn('grid gap-4', className)}>
+      <div className={cn("grid gap-4", className)}>
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           <Card>
@@ -401,9 +412,7 @@ export function QuickActions({
                 <Plus className="h-4 w-4 text-primary" />
                 Novo Agendamento
               </CardTitle>
-              <CardDescription>
-                Criar um novo agendamento rapidamente
-              </CardDescription>
+              <CardDescription>Criar um novo agendamento rapidamente</CardDescription>
             </CardHeader>
             <CardContent>
               <Button onClick={onCreateAppointment} className="w-full">
@@ -422,29 +431,30 @@ export function QuickActions({
                   Confirmações Pendentes
                   <Badge variant="secondary">{pendingAppointments.length}</Badge>
                 </CardTitle>
-                <CardDescription>
-                  Agendamentos aguardando confirmação
-                </CardDescription>
+                <CardDescription>Agendamentos aguardando confirmação</CardDescription>
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="space-y-1 max-h-32 overflow-y-auto">
-                  {pendingAppointments.slice(0, 3).map(apt => (
-                    <div key={apt.id} className="flex items-center justify-between text-sm p-2 bg-muted rounded">
+                  {pendingAppointments.slice(0, 3).map((apt) => (
+                    <div
+                      key={apt.id}
+                      className="flex items-center justify-between text-sm p-2 bg-muted rounded"
+                    >
                       <span>{apt.patient.full_name}</span>
                       <div className="flex gap-1">
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           variant="outline"
-                          onClick={() => handleQuickAction('confirm', apt)}
+                          onClick={() => handleQuickAction("confirm", apt)}
                         >
                           <UserCheck className="h-3 w-3" />
                         </Button>
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           variant="outline"
                           onClick={() => {
-                            setSelectedAppointment(apt)
-                            setCancelModalOpen(true)
+                            setSelectedAppointment(apt);
+                            setCancelModalOpen(true);
                           }}
                         >
                           <XCircle className="h-3 w-3" />
@@ -471,32 +481,36 @@ export function QuickActions({
                   Próximos Agendamentos
                   <Badge variant="secondary">{upcomingAppointments.length}</Badge>
                 </CardTitle>
-                <CardDescription>
-                  Agendamentos confirmados para hoje
-                </CardDescription>
+                <CardDescription>Agendamentos confirmados para hoje</CardDescription>
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="space-y-1 max-h-32 overflow-y-auto">
-                  {upcomingAppointments.slice(0, 3).map(apt => (
-                    <div key={apt.id} className="flex items-center justify-between text-sm p-2 bg-muted rounded">
+                  {upcomingAppointments.slice(0, 3).map((apt) => (
+                    <div
+                      key={apt.id}
+                      className="flex items-center justify-between text-sm p-2 bg-muted rounded"
+                    >
                       <div>
                         <span className="font-medium">{apt.patient.full_name}</span>
                         <span className="text-muted-foreground ml-2">
-                          {new Date(apt.date_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          {new Date(apt.date_time).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
                         </span>
                       </div>
                       <div className="flex gap-1">
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           variant="outline"
-                          onClick={() => handleQuickAction('complete', apt)}
+                          onClick={() => handleQuickAction("complete", apt)}
                         >
                           <CheckCircle className="h-3 w-3" />
                         </Button>
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           variant="outline"
-                          onClick={() => handleQuickAction('no_show', apt)}
+                          onClick={() => handleQuickAction("no_show", apt)}
                         >
                           <AlertTriangle className="h-3 w-3" />
                         </Button>
@@ -515,13 +529,11 @@ export function QuickActions({
                 <Users className="h-4 w-4 text-purple-600" />
                 Ações em Lote
               </CardTitle>
-              <CardDescription>
-                Execute ações em múltiplos agendamentos
-              </CardDescription>
+              <CardDescription>Execute ações em múltiplos agendamentos</CardDescription>
             </CardHeader>
             <CardContent>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="w-full"
                 onClick={() => setBulkModalOpen(true)}
                 disabled={appointments.length === 0}
@@ -543,12 +555,12 @@ export function QuickActions({
       <CancelModal
         isOpen={cancelModalOpen}
         onClose={() => {
-          setCancelModalOpen(false)
-          setSelectedAppointment(null)
+          setCancelModalOpen(false);
+          setSelectedAppointment(null);
         }}
         appointment={selectedAppointment}
         onConfirm={handleCancelAppointment}
       />
     </>
-  )
+  );
 }

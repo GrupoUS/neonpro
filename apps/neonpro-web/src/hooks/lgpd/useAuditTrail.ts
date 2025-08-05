@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { LGPDComplianceManager } from '@/lib/lgpd/LGPDComplianceManager';
-import { AuditEvent, AuditEventFilters, PaginatedResponse } from '@/types/lgpd';
-import { useToast } from '@/hooks/use-toast';
+import type { useState, useEffect, useCallback } from "react";
+import type { LGPDComplianceManager } from "@/lib/lgpd/LGPDComplianceManager";
+import type { AuditEvent, AuditEventFilters, PaginatedResponse } from "@/types/lgpd";
+import type { useToast } from "@/hooks/use-toast";
 
 interface UseAuditTrailReturn {
   // Data
@@ -22,23 +22,23 @@ interface UseAuditTrailReturn {
     topUsers: Array<{ user: string; count: number }>;
     activityByPeriod: Array<{ period: string; count: number }>;
   };
-  
+
   // Loading states
   isLoading: boolean;
   isUpdating: boolean;
-  
+
   // Filters
   filters: AuditEventFilters;
   setFilters: (filters: AuditEventFilters) => void;
-  
+
   // Actions
   loadEvents: () => Promise<void>;
   loadAnalytics: () => Promise<void>;
   exportEvents: () => Promise<void>;
-  
+
   // Pagination
   goToPage: (page: number) => void;
-  
+
   // Error handling
   error: string | null;
 }
@@ -51,25 +51,25 @@ export function useAuditTrail(): UseAuditTrailReturn {
     total: 0,
     today: 0,
     thisWeek: 0,
-    uniqueUsers: 0
+    uniqueUsers: 0,
   });
   const [analytics, setAnalytics] = useState({
     topActions: [] as Array<{ action: string; count: number }>,
     topEntities: [] as Array<{ entity: string; count: number }>,
     topUsers: [] as Array<{ user: string; count: number }>,
-    activityByPeriod: [] as Array<{ period: string; count: number }>
+    activityByPeriod: [] as Array<{ period: string; count: number }>,
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [filters, setFilters] = useState<AuditEventFilters>({
     limit: 50,
     offset: 0,
-    sortBy: 'timestamp',
-    sortOrder: 'desc'
+    sortBy: "timestamp",
+    sortOrder: "desc",
   });
-  
+
   const { toast } = useToast();
   const complianceManager = new LGPDComplianceManager();
 
@@ -78,42 +78,37 @@ export function useAuditTrail(): UseAuditTrailReturn {
       setError(null);
       const response: PaginatedResponse<AuditEvent> = await complianceManager.getAuditTrail({
         ...filters,
-        offset: (currentPage - 1) * (filters.limit || 50)
+        offset: (currentPage - 1) * (filters.limit || 50),
       });
-      
+
       setEvents(response.data);
       setTotalCount(response.total);
-      
+
       // Calculate statistics
       const now = new Date();
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       const thisWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-      
-      const todayEvents = response.data.filter(e => 
-        new Date(e.timestamp) >= today
-      ).length;
-      
-      const thisWeekEvents = response.data.filter(e => 
-        new Date(e.timestamp) >= thisWeek
-      ).length;
-      
-      const uniqueUsers = new Set(
-        response.data.map(e => e.user_id).filter(Boolean)
-      ).size;
-      
+
+      const todayEvents = response.data.filter((e) => new Date(e.timestamp) >= today).length;
+
+      const thisWeekEvents = response.data.filter((e) => new Date(e.timestamp) >= thisWeek).length;
+
+      const uniqueUsers = new Set(response.data.map((e) => e.user_id).filter(Boolean)).size;
+
       setStatistics({
         total: response.total,
         today: todayEvents,
         thisWeek: thisWeekEvents,
-        uniqueUsers
+        uniqueUsers,
       });
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao carregar eventos de auditoria';
+      const errorMessage =
+        err instanceof Error ? err.message : "Erro ao carregar eventos de auditoria";
       setError(errorMessage);
       toast({
-        title: 'Erro',
+        title: "Erro",
         description: errorMessage,
-        variant: 'destructive'
+        variant: "destructive",
       });
     }
   }, [filters, currentPage, complianceManager, toast]);
@@ -121,53 +116,62 @@ export function useAuditTrail(): UseAuditTrailReturn {
   const loadAnalytics = useCallback(async () => {
     try {
       setError(null);
-      
+
       // Get analytics data from audit events
       const allEventsResponse = await complianceManager.getAuditTrail({
         limit: 1000, // Get more data for analytics
-        sortBy: 'timestamp',
-        sortOrder: 'desc'
+        sortBy: "timestamp",
+        sortOrder: "desc",
       });
-      
+
       const allEvents = allEventsResponse.data;
-      
+
       // Calculate top actions
-      const actionCounts = allEvents.reduce((acc, event) => {
-        acc[event.action] = (acc[event.action] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>);
-      
+      const actionCounts = allEvents.reduce(
+        (acc, event) => {
+          acc[event.action] = (acc[event.action] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
+
       const topActions = Object.entries(actionCounts)
         .sort(([, a], [, b]) => b - a)
         .slice(0, 5)
         .map(([action, count]) => ({ action, count }));
-      
+
       // Calculate top entities
-      const entityCounts = allEvents.reduce((acc, event) => {
-        if (event.entity_type) {
-          acc[event.entity_type] = (acc[event.entity_type] || 0) + 1;
-        }
-        return acc;
-      }, {} as Record<string, number>);
-      
+      const entityCounts = allEvents.reduce(
+        (acc, event) => {
+          if (event.entity_type) {
+            acc[event.entity_type] = (acc[event.entity_type] || 0) + 1;
+          }
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
+
       const topEntities = Object.entries(entityCounts)
         .sort(([, a], [, b]) => b - a)
         .slice(0, 5)
         .map(([entity, count]) => ({ entity, count }));
-      
+
       // Calculate top users
-      const userCounts = allEvents.reduce((acc, event) => {
-        if (event.user_id) {
-          acc[event.user_id] = (acc[event.user_id] || 0) + 1;
-        }
-        return acc;
-      }, {} as Record<string, number>);
-      
+      const userCounts = allEvents.reduce(
+        (acc, event) => {
+          if (event.user_id) {
+            acc[event.user_id] = (acc[event.user_id] || 0) + 1;
+          }
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
+
       const topUsers = Object.entries(userCounts)
         .sort(([, a], [, b]) => b - a)
         .slice(0, 5)
         .map(([user, count]) => ({ user, count }));
-      
+
       // Calculate activity by period (last 7 days)
       const activityByPeriod = [];
       for (let i = 6; i >= 0; i--) {
@@ -175,31 +179,31 @@ export function useAuditTrail(): UseAuditTrailReturn {
         date.setDate(date.getDate() - i);
         const dayStart = new Date(date.getFullYear(), date.getMonth(), date.getDate());
         const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
-        
-        const dayEvents = allEvents.filter(e => {
+
+        const dayEvents = allEvents.filter((e) => {
           const eventDate = new Date(e.timestamp);
           return eventDate >= dayStart && eventDate < dayEnd;
         }).length;
-        
+
         activityByPeriod.push({
-          period: date.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit' }),
-          count: dayEvents
+          period: date.toLocaleDateString("pt-BR", { weekday: "short", day: "2-digit" }),
+          count: dayEvents,
         });
       }
-      
+
       setAnalytics({
         topActions,
         topEntities,
         topUsers,
-        activityByPeriod
+        activityByPeriod,
       });
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao carregar análises';
+      const errorMessage = err instanceof Error ? err.message : "Erro ao carregar análises";
       setError(errorMessage);
       toast({
-        title: 'Erro',
+        title: "Erro",
         description: errorMessage,
-        variant: 'destructive'
+        variant: "destructive",
       });
     }
   }, [complianceManager, toast]);
@@ -207,58 +211,62 @@ export function useAuditTrail(): UseAuditTrailReturn {
   const exportEvents = useCallback(async () => {
     try {
       setError(null);
-      
+
       // Create CSV content
       const csvHeaders = [
-        'ID',
-        'Ação',
-        'Tipo de Entidade',
-        'ID da Entidade',
-        'Usuário',
-        'Endereço IP',
-        'User Agent',
-        'Timestamp',
-        'Detalhes'
+        "ID",
+        "Ação",
+        "Tipo de Entidade",
+        "ID da Entidade",
+        "Usuário",
+        "Endereço IP",
+        "User Agent",
+        "Timestamp",
+        "Detalhes",
       ];
-      
-      const csvRows = events.map(event => [
+
+      const csvRows = events.map((event) => [
         event.id,
         event.action,
-        event.entity_type || '',
-        event.entity_id || '',
-        event.user_id || '',
-        event.ip_address || '',
-        event.user_agent || '',
+        event.entity_type || "",
+        event.entity_id || "",
+        event.user_id || "",
+        event.ip_address || "",
+        event.user_agent || "",
         event.timestamp,
-        JSON.stringify(event.details || {})
+        JSON.stringify(event.details || {}),
       ]);
-      
+
       const csvContent = [csvHeaders, ...csvRows]
-        .map(row => row.map(cell => `"${cell}"`).join(','))
-        .join('\n');
-      
+        .map((row) => row.map((cell) => `"${cell}"`).join(","))
+        .join("\n");
+
       // Create and download file
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
       const url = URL.createObjectURL(blob);
-      link.setAttribute('href', url);
-      link.setAttribute('download', `lgpd-audit-trail-${new Date().toISOString().split('T')[0]}.csv`);
-      link.style.visibility = 'hidden';
+      link.setAttribute("href", url);
+      link.setAttribute(
+        "download",
+        `lgpd-audit-trail-${new Date().toISOString().split("T")[0]}.csv`,
+      );
+      link.style.visibility = "hidden";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
+
       toast({
-        title: 'Exportação concluída',
-        description: 'Trilha de auditoria exportada com sucesso.'
+        title: "Exportação concluída",
+        description: "Trilha de auditoria exportada com sucesso.",
       });
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao exportar trilha de auditoria';
+      const errorMessage =
+        err instanceof Error ? err.message : "Erro ao exportar trilha de auditoria";
       setError(errorMessage);
       toast({
-        title: 'Erro na exportação',
+        title: "Erro na exportação",
         description: errorMessage,
-        variant: 'destructive'
+        variant: "destructive",
       });
     }
   }, [events, toast]);
@@ -274,7 +282,7 @@ export function useAuditTrail(): UseAuditTrailReturn {
       await Promise.all([loadEvents(), loadAnalytics()]);
       setIsLoading(false);
     };
-    
+
     loadData();
   }, [loadEvents, loadAnalytics]);
 
@@ -297,24 +305,24 @@ export function useAuditTrail(): UseAuditTrailReturn {
     currentPage,
     statistics,
     analytics,
-    
+
     // Loading states
     isLoading,
     isUpdating,
-    
+
     // Filters
     filters,
     setFilters,
-    
+
     // Actions
     loadEvents,
     loadAnalytics,
     exportEvents,
-    
+
     // Pagination
     goToPage,
-    
+
     // Error handling
-    error
+    error,
   };
 }

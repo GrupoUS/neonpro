@@ -6,19 +6,19 @@
 
 "use client";
 
-import { createClient } from "@/app/utils/supabase/client";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import {
+import type { createClient } from "@/app/utils/supabase/client";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Input } from "@/components/ui/input";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
+import type {
   AlertTriangle,
   Archive,
   Barcode,
@@ -31,8 +31,8 @@ import {
   Search,
   TrendingUp,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 
 // =====================================================================================
 // TYPES & INTERFACES
@@ -134,10 +134,7 @@ export default function InventoryOverview() {
     const stats = inventoryItems.reduce(
       (acc, item) => {
         const totalStock =
-          item.stock_levels?.reduce(
-            (sum, level) => sum + level.available_quantity,
-            0
-          ) || 0;
+          item.stock_levels?.reduce((sum, level) => sum + level.available_quantity, 0) || 0;
         const itemValue = (item.cost || 0) * totalStock;
 
         acc.totalItems += 1;
@@ -156,7 +153,7 @@ export default function InventoryOverview() {
         lowStockItems: 0,
         outOfStockItems: 0,
         totalValue: 0,
-      }
+      },
     );
 
     setStats(stats);
@@ -176,10 +173,7 @@ export default function InventoryOverview() {
 
   const getStockStatus = (item: InventoryItem) => {
     const totalStock =
-      item.stock_levels?.reduce(
-        (sum, level) => sum + level.available_quantity,
-        0
-      ) || 0;
+      item.stock_levels?.reduce((sum, level) => sum + level.available_quantity, 0) || 0;
 
     if (totalStock === 0) {
       return {
@@ -216,9 +210,7 @@ export default function InventoryOverview() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalItems}</div>
-            <p className="text-xs text-muted-foreground">
-              Active inventory items
-            </p>
+            <p className="text-xs text-muted-foreground">Active inventory items</p>
           </CardContent>
         </Card>
 
@@ -228,12 +220,8 @@ export default function InventoryOverview() {
             <AlertTriangle className="h-4 w-4 text-warning" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-warning">
-              {stats.lowStockItems}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Items need reordering
-            </p>
+            <div className="text-2xl font-bold text-warning">{stats.lowStockItems}</div>
+            <p className="text-xs text-muted-foreground">Items need reordering</p>
           </CardContent>
         </Card>
 
@@ -243,9 +231,7 @@ export default function InventoryOverview() {
             <Package className="h-4 w-4 text-destructive" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-destructive">
-              {stats.outOfStockItems}
-            </div>
+            <div className="text-2xl font-bold text-destructive">{stats.outOfStockItems}</div>
             <p className="text-xs text-muted-foreground">Items unavailable</p>
           </CardContent>
         </Card>
@@ -256,12 +242,8 @@ export default function InventoryOverview() {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {formatCurrency(stats.totalValue)}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Current inventory value
-            </p>
+            <div className="text-2xl font-bold">{formatCurrency(stats.totalValue)}</div>
+            <p className="text-xs text-muted-foreground">Current inventory value</p>
           </CardContent>
         </Card>
       </div>
@@ -272,11 +254,7 @@ export default function InventoryOverview() {
           <CardTitle className="flex items-center justify-between">
             <span>Inventory Items</span>
             <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => fetchInventoryData()}
-              >
+              <Button variant="outline" size="sm" onClick={() => fetchInventoryData()}>
                 <RefreshCw className="h-4 w-4 mr-1" />
                 Refresh
               </Button>
@@ -331,19 +309,14 @@ export default function InventoryOverview() {
             <div className="text-center py-8">
               <Package className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
               <p className="text-lg font-medium">No items found</p>
-              <p className="text-muted-foreground">
-                Try adjusting your search or filters
-              </p>
+              <p className="text-muted-foreground">Try adjusting your search or filters</p>
             </div>
           ) : (
             <div className="space-y-2">
               {items.map((item) => {
                 const stockStatus = getStockStatus(item);
                 const totalStock =
-                  item.stock_levels?.reduce(
-                    (sum, level) => sum + level.available_quantity,
-                    0
-                  ) || 0;
+                  item.stock_levels?.reduce((sum, level) => sum + level.available_quantity, 0) || 0;
 
                 return (
                   <div
@@ -365,9 +338,7 @@ export default function InventoryOverview() {
                               )}
                               <span>Unit: {item.unit}</span>
                               {item.category && (
-                                <Badge variant="outline">
-                                  {item.category.name}
-                                </Badge>
+                                <Badge variant="outline">{item.category.name}</Badge>
                               )}
                             </div>
                           </div>
@@ -379,9 +350,7 @@ export default function InventoryOverview() {
                           <div className="font-medium">
                             {totalStock} {item.unit}
                           </div>
-                          <Badge variant={stockStatus.color as any}>
-                            {stockStatus.text}
-                          </Badge>
+                          <Badge variant={stockStatus.color as any}>{stockStatus.text}</Badge>
                         </div>
 
                         <div className="flex items-center space-x-1">

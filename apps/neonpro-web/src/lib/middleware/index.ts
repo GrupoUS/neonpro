@@ -3,7 +3,7 @@
  * Centralized exports for middleware functionality
  */
 
-export * from './auth';
+export * from "./auth";
 
 // Re-export commonly used items
 export {
@@ -14,10 +14,10 @@ export {
   hasRole,
   hasPermission,
   hasRoleLevel,
-  canAccessClinic
-} from './auth';
+  canAccessClinic,
+} from "./auth";
 
 export type {
   AuthUser,
-  AuthResult
-} from './auth';
+  AuthResult,
+} from "./auth";

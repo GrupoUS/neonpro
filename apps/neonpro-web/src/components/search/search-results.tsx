@@ -1,8 +1,8 @@
 // components/search/search-results.tsx
 "use client";
 
-import { SearchResult, SearchType } from "@/lib/search/unified-search";
-import {
+import type { SearchResult, SearchType } from "@/lib/search/unified-search";
+import type {
   Activity,
   Brain,
   Calendar,
@@ -15,7 +15,7 @@ import {
   User,
   Users,
 } from "lucide-react";
-import { useState } from "react";
+import type { useState } from "react";
 
 interface SearchResultsProps {
   results: SearchResult[];
@@ -37,9 +37,7 @@ export default function SearchResults({
   loading = false,
 }: SearchResultsProps) {
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
-  const [sortBy, setSortBy] = useState<"relevance" | "date" | "type">(
-    "relevance"
-  );
+  const [sortBy, setSortBy] = useState<"relevance" | "date" | "type">("relevance");
   const [filterByType, setFilterByType] = useState<SearchType | "all">("all");
 
   const getTypeIcon = (type: SearchType) => {
@@ -78,7 +76,7 @@ export default function SearchResults({
   };
 
   const filteredResults = results.filter(
-    (result) => filterByType === "all" || result.type === filterByType
+    (result) => filterByType === "all" || result.type === filterByType,
   );
 
   const sortedResults = [...filteredResults].sort((a, b) => {
@@ -88,8 +86,7 @@ export default function SearchResults({
       case "date":
         // Assumindo que temos data no metadata
         return (
-          new Date(b.metadata?.date || 0).getTime() -
-          new Date(a.metadata?.date || 0).getTime()
+          new Date(b.metadata?.date || 0).getTime() - new Date(a.metadata?.date || 0).getTime()
         );
       case "type":
         return a.type.localeCompare(b.type);
@@ -98,10 +95,13 @@ export default function SearchResults({
     }
   });
 
-  const typeGroups = results.reduce((groups, result) => {
-    groups[result.type] = (groups[result.type] || 0) + 1;
-    return groups;
-  }, {} as Record<SearchType, number>);
+  const typeGroups = results.reduce(
+    (groups, result) => {
+      groups[result.type] = (groups[result.type] || 0) + 1;
+      return groups;
+    },
+    {} as Record<SearchType, number>,
+  );
 
   const exportResults = () => {
     const csvContent = [
@@ -148,9 +148,7 @@ export default function SearchResults({
       <div className="bg-white rounded-lg p-6 shadow-sm border">
         <div className="flex justify-between items-center mb-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              Resultados para "{query}"
-            </h1>
+            <h1 className="text-2xl font-bold text-gray-900">Resultados para "{query}"</h1>
             <p className="text-gray-600">{totalCount} resultados encontrados</p>
           </div>
 
@@ -179,7 +177,7 @@ export default function SearchResults({
             <span
               key={type}
               className={`px-3 py-1 rounded-full text-sm font-medium ${getTypeColor(
-                type as SearchType
+                type as SearchType,
               )}`}
             >
               {type}: {count}
@@ -195,9 +193,7 @@ export default function SearchResults({
             {/* Filtro por tipo */}
             <select
               value={filterByType}
-              onChange={(e) =>
-                setFilterByType(e.target.value as SearchType | "all")
-              }
+              onChange={(e) => setFilterByType(e.target.value as SearchType | "all")}
               className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
             >
               <option value="all">Todos os tipos</option>
@@ -211,9 +207,7 @@ export default function SearchResults({
             {/* Ordenação */}
             <select
               value={sortBy}
-              onChange={(e) =>
-                setSortBy(e.target.value as "relevance" | "date" | "type")
-              }
+              onChange={(e) => setSortBy(e.target.value as "relevance" | "date" | "type")}
               className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
             >
               <option value="relevance">Relevância</option>
@@ -227,9 +221,7 @@ export default function SearchResults({
             <button
               onClick={() => setViewMode("list")}
               className={`p-2 ${
-                viewMode === "list"
-                  ? "bg-blue-50 text-blue-600"
-                  : "text-gray-600"
+                viewMode === "list" ? "bg-blue-50 text-blue-600" : "text-gray-600"
               }`}
             >
               <List className="h-4 w-4" />
@@ -237,9 +229,7 @@ export default function SearchResults({
             <button
               onClick={() => setViewMode("grid")}
               className={`p-2 ${
-                viewMode === "grid"
-                  ? "bg-blue-50 text-blue-600"
-                  : "text-gray-600"
+                viewMode === "grid" ? "bg-blue-50 text-blue-600" : "text-gray-600"
               }`}
             >
               <Grid className="h-4 w-4" />
@@ -265,31 +255,23 @@ export default function SearchResults({
                     className="p-6 hover:bg-gray-50 cursor-pointer transition-colors"
                   >
                     <div className="flex items-start gap-4">
-                      <div
-                        className={`p-2 rounded-lg ${getTypeColor(
-                          result.type
-                        )}`}
-                      >
+                      <div className={`p-2 rounded-lg ${getTypeColor(result.type)}`}>
                         {getTypeIcon(result.type)}
                       </div>
 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 mb-2">
-                          <h3 className="font-semibold text-gray-900 truncate">
-                            {result.title}
-                          </h3>
+                          <h3 className="font-semibold text-gray-900 truncate">{result.title}</h3>
                           <span
                             className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(
-                              result.type
+                              result.type,
                             )}`}
                           >
                             {result.type}
                           </span>
                         </div>
 
-                        <p className="text-gray-600 mb-3">
-                          {result.description}
-                        </p>
+                        <p className="text-gray-600 mb-3">{result.description}</p>
 
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
@@ -302,8 +284,7 @@ export default function SearchResults({
                               />
                             </div>
                             <span className="text-sm text-gray-500">
-                              {(result.relevanceScore * 100).toFixed(0)}%
-                              relevante
+                              {(result.relevanceScore * 100).toFixed(0)}% relevante
                             </span>
                           </div>
 
@@ -340,16 +321,12 @@ export default function SearchResults({
                     className="border border-gray-200 rounded-lg p-4 hover:shadow-md cursor-pointer transition-all"
                   >
                     <div className="flex items-center gap-3 mb-3">
-                      <div
-                        className={`p-2 rounded-lg ${getTypeColor(
-                          result.type
-                        )}`}
-                      >
+                      <div className={`p-2 rounded-lg ${getTypeColor(result.type)}`}>
                         {getTypeIcon(result.type)}
                       </div>
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(
-                          result.type
+                          result.type,
                         )}`}
                       >
                         {result.type}
@@ -360,9 +337,7 @@ export default function SearchResults({
                       {result.title}
                     </h3>
 
-                    <p className="text-gray-600 text-sm mb-3 line-clamp-3">
-                      {result.description}
-                    </p>
+                    <p className="text-gray-600 text-sm mb-3 line-clamp-3">{result.description}</p>
 
                     <div className="flex items-center gap-2">
                       <div className="flex-1 bg-gray-200 rounded-full h-1">

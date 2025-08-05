@@ -7,34 +7,34 @@
  * Features: Create, edit, view, manage payments with installments
  */
 
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import type { useRouter } from "next/navigation";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 
 // UI Components
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Separator } from "@/components/ui/separator";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Icons
-import {
+import type {
   AlertCircle,
   CheckCircle,
   Clock,
@@ -55,7 +55,7 @@ import type {
 } from "@/lib/types/financial";
 
 // Services
-import {
+import type {
   createPayment,
   getPaymentById,
   listPaymentsByInvoice,
@@ -76,9 +76,7 @@ export function PaymentManager({
   const router = useRouter();
 
   // State Management
-  const [activeTab, setActiveTab] = useState<"list" | "create" | "edit">(
-    defaultView
-  );
+  const [activeTab, setActiveTab] = useState<"list" | "create" | "edit">(defaultView);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
   const [loading, setLoading] = useState(false);
@@ -199,10 +197,7 @@ export function PaymentManager({
     }
   };
 
-  const handleUpdateStatus = async (
-    paymentId: string,
-    status: PaymentProcessingStatus
-  ) => {
+  const handleUpdateStatus = async (paymentId: string, status: PaymentProcessingStatus) => {
     try {
       await updatePayment(paymentId, { status });
       toast.success("Status atualizado com sucesso!");
@@ -216,13 +211,9 @@ export function PaymentManager({
   // Filter payments by search term
   const filteredPayments = payments.filter(
     (payment) =>
-      payment.external_transaction_id
-        ?.toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      payment.authorization_code
-        ?.toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      payment.payment_method.toLowerCase().includes(searchTerm.toLowerCase())
+      payment.external_transaction_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      payment.authorization_code?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      payment.payment_method.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Status badge color mapping
@@ -310,15 +301,10 @@ export function PaymentManager({
       <Card>
         <CardHeader>
           <CardTitle>Gestão de Pagamentos</CardTitle>
-          <CardDescription>
-            Gerencie pagamentos e atualize status de transações
-          </CardDescription>
+          <CardDescription>Gerencie pagamentos e atualize status de transações</CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs
-            value={activeTab}
-            onValueChange={(value) => setActiveTab(value as any)}
-          >
+          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)}>
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="list">Lista de Pagamentos</TabsTrigger>
               <TabsTrigger value="create">Criar Pagamento</TabsTrigger>
@@ -377,9 +363,7 @@ export function PaymentManager({
                           {payment.processed_at && (
                             <div className="text-sm text-muted-foreground">
                               Processado:{" "}
-                              {new Date(
-                                payment.processed_at
-                              ).toLocaleDateString("pt-BR")}
+                              {new Date(payment.processed_at).toLocaleDateString("pt-BR")}
                             </div>
                           )}
                         </div>
@@ -390,9 +374,7 @@ export function PaymentManager({
                               <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() =>
-                                  handleUpdateStatus(payment.id, "completed")
-                                }
+                                onClick={() => handleUpdateStatus(payment.id, "completed")}
                               >
                                 <CheckCircle className="h-4 w-4 mr-1" />
                                 Confirmar
@@ -400,9 +382,7 @@ export function PaymentManager({
                               <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() =>
-                                  handleUpdateStatus(payment.id, "failed")
-                                }
+                                onClick={() => handleUpdateStatus(payment.id, "failed")}
                               >
                                 <XCircle className="h-4 w-4 mr-1" />
                                 Falhar
@@ -437,9 +417,7 @@ export function PaymentManager({
                     id="invoice_id"
                     placeholder="ID da fatura"
                     value={formData.invoice_id || ""}
-                    onChange={(e) =>
-                      setFormData({ ...formData, invoice_id: e.target.value })
-                    }
+                    onChange={(e) => setFormData({ ...formData, invoice_id: e.target.value })}
                     disabled={!!invoiceId}
                   />
                 </div>
@@ -459,15 +437,9 @@ export function PaymentManager({
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="credit_card">
-                        Cartão de Crédito
-                      </SelectItem>
-                      <SelectItem value="debit_card">
-                        Cartão de Débito
-                      </SelectItem>
-                      <SelectItem value="bank_transfer">
-                        Transferência Bancária
-                      </SelectItem>
+                      <SelectItem value="credit_card">Cartão de Crédito</SelectItem>
+                      <SelectItem value="debit_card">Cartão de Débito</SelectItem>
+                      <SelectItem value="bank_transfer">Transferência Bancária</SelectItem>
                       <SelectItem value="pix">PIX</SelectItem>
                       <SelectItem value="cash">Dinheiro</SelectItem>
                       <SelectItem value="financing">Financiamento</SelectItem>
@@ -494,9 +466,7 @@ export function PaymentManager({
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="external_transaction_id">
-                    ID da Transação Externa
-                  </Label>
+                  <Label htmlFor="external_transaction_id">ID da Transação Externa</Label>
                   <Input
                     id="external_transaction_id"
                     placeholder="ID da transação do processador"
@@ -511,9 +481,7 @@ export function PaymentManager({
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="authorization_code">
-                    Código de Autorização
-                  </Label>
+                  <Label htmlFor="authorization_code">Código de Autorização</Label>
                   <Input
                     id="authorization_code"
                     placeholder="Código de autorização"
@@ -575,9 +543,7 @@ export function PaymentManager({
                   </div>
 
                   <div className="grid gap-2">
-                    <Label htmlFor="edit_external_transaction_id">
-                      ID da Transação Externa
-                    </Label>
+                    <Label htmlFor="edit_external_transaction_id">ID da Transação Externa</Label>
                     <Input
                       id="edit_external_transaction_id"
                       value={formData.external_transaction_id || ""}
@@ -591,9 +557,7 @@ export function PaymentManager({
                   </div>
 
                   <div className="grid gap-2">
-                    <Label htmlFor="edit_authorization_code">
-                      Código de Autorização
-                    </Label>
+                    <Label htmlFor="edit_authorization_code">Código de Autorização</Label>
                     <Input
                       id="edit_authorization_code"
                       value={formData.authorization_code || ""}

@@ -2,16 +2,16 @@
  * Vision Analysis System Types
  * Comprehensive TypeScript type definitions for NeonPro Computer Vision System
  * Epic 10 - Story 10.1: Automated Before/After Analysis
- * 
+ *
  * VOIDBEAST V4.0 APEX ENHANCED - Quality ≥9.5/10
  */
 
-import { TREATMENT_TYPES, ANALYSIS_STATUS, ERROR_CODES } from './config';
+import type { TREATMENT_TYPES, ANALYSIS_STATUS, ERROR_CODES } from "./config";
 
 // Base Types
-export type TreatmentType = typeof TREATMENT_TYPES[keyof typeof TREATMENT_TYPES];
-export type AnalysisStatus = typeof ANALYSIS_STATUS[keyof typeof ANALYSIS_STATUS];
-export type ErrorCode = typeof ERROR_CODES[keyof typeof ERROR_CODES];
+export type TreatmentType = (typeof TREATMENT_TYPES)[keyof typeof TREATMENT_TYPES];
+export type AnalysisStatus = (typeof ANALYSIS_STATUS)[keyof typeof ANALYSIS_STATUS];
+export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];
 
 // Image Processing Types
 export interface ImageData {
@@ -55,7 +55,7 @@ export interface ImageProcessingOptions {
     height: number;
   };
   rotation?: number;
-  flip?: 'horizontal' | 'vertical' | 'both';
+  flip?: "horizontal" | "vertical" | "both";
 }
 
 // Analysis Result Types
@@ -103,7 +103,7 @@ export interface ChangeMetrics {
 export interface OverallAssessment {
   improvementScore: number; // 0-10 scale
   confidenceLevel: number; // 0-1 scale
-  clinicalSignificance: 'none' | 'minimal' | 'moderate' | 'significant' | 'dramatic';
+  clinicalSignificance: "none" | "minimal" | "moderate" | "significant" | "dramatic";
   recommendedFollowUp?: string;
   concerns?: string[];
 }
@@ -143,25 +143,25 @@ export interface ObjectiveMeasurement {
   timestamp: string;
 }
 
-export type MeasurementType = 
-  | 'area'
-  | 'perimeter'
-  | 'volume'
-  | 'distance'
-  | 'angle'
-  | 'intensity'
-  | 'texture'
-  | 'color'
-  | 'symmetry'
-  | 'roughness'
-  | 'depth'
-  | 'curvature';
+export type MeasurementType =
+  | "area"
+  | "perimeter"
+  | "volume"
+  | "distance"
+  | "angle"
+  | "intensity"
+  | "texture"
+  | "color"
+  | "symmetry"
+  | "roughness"
+  | "depth"
+  | "curvature";
 
 export interface CalibrationData {
   pixelToMmRatio: number;
   referenceObject?: string;
   calibrationAccuracy: number;
-  calibrationMethod: 'automatic' | 'manual' | 'reference_object';
+  calibrationMethod: "automatic" | "manual" | "reference_object";
   calibrationTimestamp: string;
 }
 
@@ -196,16 +196,16 @@ export interface MeasurementQualityAssurance {
   repeatability: number;
   reproducibility: number;
   uncertainty: number;
-  validationStatus: 'passed' | 'failed' | 'warning';
+  validationStatus: "passed" | "failed" | "warning";
   qualityFlags: string[];
 }
 
-export type ClinicalSignificance = 
-  | 'not_significant'
-  | 'minimal'
-  | 'moderate'
-  | 'significant'
-  | 'highly_significant';
+export type ClinicalSignificance =
+  | "not_significant"
+  | "minimal"
+  | "moderate"
+  | "significant"
+  | "highly_significant";
 
 // Annotation Types
 export interface AnnotationData {
@@ -218,20 +218,20 @@ export interface AnnotationData {
   confidence: number;
   color?: string;
   visible: boolean;
-  createdBy: 'system' | 'user';
+  createdBy: "system" | "user";
   timestamp: string;
   metadata?: Record<string, any>;
 }
 
-export type AnnotationType = 
-  | 'measurement'
-  | 'highlight'
-  | 'comparison'
-  | 'improvement'
-  | 'concern'
-  | 'note'
-  | 'roi'
-  | 'landmark';
+export type AnnotationType =
+  | "measurement"
+  | "highlight"
+  | "comparison"
+  | "improvement"
+  | "concern"
+  | "note"
+  | "roi"
+  | "landmark";
 
 export interface Coordinates {
   x: number;
@@ -245,7 +245,7 @@ export interface RegionOfInterest {
   id: string;
   name: string;
   coordinates: Coordinates[];
-  type: 'polygon' | 'rectangle' | 'circle' | 'freeform';
+  type: "polygon" | "rectangle" | "circle" | "freeform";
   area: number;
   confidence: number;
 }
@@ -311,14 +311,14 @@ export interface VoidBeastCompliance {
   score: number;
   violations: string[];
   recommendations: string[];
-  qualityGate: 'passed' | 'failed' | 'warning';
+  qualityGate: "passed" | "failed" | "warning";
 }
 
 // Model and AI Types
 export interface ModelConfiguration {
   name: string;
   version: string;
-  type: 'primary' | 'fallback' | 'specialized';
+  type: "primary" | "fallback" | "specialized";
   inputShape: number[];
   outputClasses: number;
   confidenceThreshold: number;
@@ -372,8 +372,8 @@ export interface ExportOptions {
   compression?: CompressionLevel;
 }
 
-export type ExportFormat = 'pdf' | 'excel' | 'json' | 'csv' | 'png' | 'jpeg';
-export type CompressionLevel = 'none' | 'low' | 'medium' | 'high';
+export type ExportFormat = "pdf" | "excel" | "json" | "csv" | "png" | "jpeg";
+export type CompressionLevel = "none" | "low" | "medium" | "high";
 
 export interface ExportResult {
   success: boolean;
@@ -413,8 +413,8 @@ export interface AnalysisOptions {
   enabledMetrics: string[];
   customThresholds?: Record<string, number>;
   roiSelection?: RegionOfInterest[];
-  calibrationMethod?: 'auto' | 'manual' | 'reference';
-  qualityLevel: 'fast' | 'standard' | 'high' | 'maximum';
+  calibrationMethod?: "auto" | "manual" | "reference";
+  qualityLevel: "fast" | "standard" | "high" | "maximum";
   includeAnnotations: boolean;
   generateReport: boolean;
 }
@@ -437,17 +437,17 @@ export interface AnalysisProgress {
   processingMetrics: Partial<ProcessingMetrics>;
 }
 
-export type AnalysisStage = 
-  | 'initializing'
-  | 'loading_images'
-  | 'preprocessing'
-  | 'model_loading'
-  | 'analyzing'
-  | 'measuring'
-  | 'annotating'
-  | 'quality_check'
-  | 'finalizing'
-  | 'completed';
+export type AnalysisStage =
+  | "initializing"
+  | "loading_images"
+  | "preprocessing"
+  | "model_loading"
+  | "analyzing"
+  | "measuring"
+  | "annotating"
+  | "quality_check"
+  | "finalizing"
+  | "completed";
 
 export interface AnalysisError {
   code: ErrorCode;
@@ -517,7 +517,7 @@ export interface PaginationOptions {
   page: number;
   limit: number;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
 }
 
 export interface PaginatedResponse<T> {
@@ -546,7 +546,7 @@ export interface FilterOptions {
 
 export interface SortOptions {
   field: string;
-  direction: 'asc' | 'desc';
+  direction: "asc" | "desc";
 }
 
 // Event Types for Real-time Updates
@@ -558,15 +558,15 @@ export interface AnalysisEvent {
   timestamp: string;
 }
 
-export type AnalysisEventType = 
-  | 'analysis_started'
-  | 'analysis_progress'
-  | 'analysis_completed'
-  | 'analysis_failed'
-  | 'analysis_cancelled'
-  | 'export_started'
-  | 'export_completed'
-  | 'export_failed';
+export type AnalysisEventType =
+  | "analysis_started"
+  | "analysis_progress"
+  | "analysis_completed"
+  | "analysis_failed"
+  | "analysis_cancelled"
+  | "export_started"
+  | "export_completed"
+  | "export_failed";
 
 // Validation Types
 export interface ValidationResult {
@@ -664,7 +664,7 @@ export interface MonitoringConfig {
 
 // Type Guards
 export function isAnalysisResult(obj: any): obj is AnalysisResult {
-  return obj && typeof obj.id === 'string' && typeof obj.analysisData === 'object';
+  return obj && typeof obj.id === "string" && typeof obj.analysisData === "object";
 }
 
 export function isValidTreatmentType(type: string): type is TreatmentType {
@@ -699,5 +699,5 @@ export type {
   MeasurementType,
   ClinicalSignificance,
   AnalysisStage,
-  AnalysisEventType
+  AnalysisEventType,
 };

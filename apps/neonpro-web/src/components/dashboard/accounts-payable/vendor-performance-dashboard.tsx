@@ -1,18 +1,18 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Progress } from "@/components/ui/progress";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { VendorService } from "@/lib/services/vendors";
-import {
+import type { VendorService } from "@/lib/services/vendors";
+import type {
   AlertTriangle,
   CheckCircle,
   Clock,
@@ -23,8 +23,8 @@ import {
   TrendingUp,
   XCircle,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 
 interface VendorPerformance {
   vendor_id: string;
@@ -75,7 +75,7 @@ export default function VendorPerformanceDashboard() {
         pending_count: Math.floor(Math.random() * 8) + 2,
         quality_score: Math.random() * 30 + 70,
         last_transaction_date: new Date(
-          Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
+          Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000,
         ).toISOString(),
         documents_count: Math.floor(Math.random() * 15) + 5,
       }));
@@ -106,7 +106,7 @@ export default function VendorPerformanceDashboard() {
   };
 
   const getScoreBadgeVariant = (
-    score: number
+    score: number,
   ): "default" | "secondary" | "destructive" | "outline" => {
     if (score >= 90) return "default";
     if (score >= 70) return "secondary";
@@ -132,19 +132,17 @@ export default function VendorPerformanceDashboard() {
       overdue: acc.overdue + p.overdue_count,
       completed: acc.completed + p.completed_count,
     }),
-    { transactions: 0, amount: 0, overdue: 0, completed: 0 }
+    { transactions: 0, amount: 0, overdue: 0, completed: 0 },
   );
 
   const averagePaymentTime =
     performance.length > 0
-      ? performance.reduce((sum, p) => sum + p.average_payment_time, 0) /
-        performance.length
+      ? performance.reduce((sum, p) => sum + p.average_payment_time, 0) / performance.length
       : 0;
 
   const averageOnTimeRate =
     performance.length > 0
-      ? performance.reduce((sum, p) => sum + p.on_time_payment_rate, 0) /
-        performance.length
+      ? performance.reduce((sum, p) => sum + p.on_time_payment_rate, 0) / performance.length
       : 0;
 
   if (loading) {
@@ -207,9 +205,7 @@ export default function VendorPerformanceDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Total de Transações
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Total de Transações</p>
                 <p className="text-2xl font-bold">{totalStats.transactions}</p>
               </div>
               <FileText className="h-8 w-8 text-muted-foreground" />
@@ -221,12 +217,8 @@ export default function VendorPerformanceDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Valor Total
-                </p>
-                <p className="text-2xl font-bold">
-                  {formatCurrency(totalStats.amount)}
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Valor Total</p>
+                <p className="text-2xl font-bold">{formatCurrency(totalStats.amount)}</p>
               </div>
               <DollarSign className="h-8 w-8 text-muted-foreground" />
             </div>
@@ -240,9 +232,7 @@ export default function VendorPerformanceDashboard() {
                 <p className="text-sm font-medium text-muted-foreground">
                   Tempo Médio de Pagamento
                 </p>
-                <p className="text-2xl font-bold">
-                  {Math.round(averagePaymentTime)} dias
-                </p>
+                <p className="text-2xl font-bold">{Math.round(averagePaymentTime)} dias</p>
               </div>
               <Clock className="h-8 w-8 text-muted-foreground" />
             </div>
@@ -253,12 +243,8 @@ export default function VendorPerformanceDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Taxa de Pontualidade
-                </p>
-                <p className="text-2xl font-bold">
-                  {Math.round(averageOnTimeRate)}%
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Taxa de Pontualidade</p>
+                <p className="text-2xl font-bold">{Math.round(averageOnTimeRate)}%</p>
               </div>
               <CheckCircle className="h-8 w-8 text-muted-foreground" />
             </div>
@@ -291,26 +277,19 @@ export default function VendorPerformanceDashboard() {
               </thead>
               <tbody>
                 {filteredPerformance.map((vendor) => (
-                  <tr
-                    key={vendor.vendor_id}
-                    className="border-b hover:bg-muted/50"
-                  >
+                  <tr key={vendor.vendor_id} className="border-b hover:bg-muted/50">
                     <td className="p-2">
                       <div>
                         <p className="font-medium">{vendor.vendor_name}</p>
                         <p className="text-sm text-muted-foreground">
                           Última transação:{" "}
-                          {new Date(
-                            vendor.last_transaction_date
-                          ).toLocaleDateString("pt-BR")}
+                          {new Date(vendor.last_transaction_date).toLocaleDateString("pt-BR")}
                         </p>
                       </div>
                     </td>
                     <td className="p-2">
                       <div className="flex items-center gap-2">
-                        <Badge
-                          variant={getScoreBadgeVariant(vendor.quality_score)}
-                        >
+                        <Badge variant={getScoreBadgeVariant(vendor.quality_score)}>
                           {Math.round(vendor.quality_score)}
                         </Badge>
                         <div className="flex items-center">
@@ -325,20 +304,13 @@ export default function VendorPerformanceDashboard() {
                       </div>
                     </td>
                     <td className="p-2">{vendor.total_transactions}</td>
-                    <td className="p-2">
-                      {formatCurrency(vendor.total_amount)}
-                    </td>
+                    <td className="p-2">{formatCurrency(vendor.total_amount)}</td>
                     <td className="p-2">
                       <div className="space-y-1">
                         <div className="flex items-center justify-between text-sm">
-                          <span>
-                            {Math.round(vendor.on_time_payment_rate)}%
-                          </span>
+                          <span>{Math.round(vendor.on_time_payment_rate)}%</span>
                         </div>
-                        <Progress
-                          value={vendor.on_time_payment_rate}
-                          className="h-2"
-                        />
+                        <Progress value={vendor.on_time_payment_rate} className="h-2" />
                       </div>
                     </td>
                     <td className="p-2">{vendor.average_payment_time} dias</td>
@@ -346,30 +318,22 @@ export default function VendorPerformanceDashboard() {
                       <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-2">
                           <CheckCircle className="h-4 w-4 text-green-600" />
-                          <span className="text-sm">
-                            {vendor.completed_count} concluídas
-                          </span>
+                          <span className="text-sm">{vendor.completed_count} concluídas</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Clock className="h-4 w-4 text-yellow-600" />
-                          <span className="text-sm">
-                            {vendor.pending_count} pendentes
-                          </span>
+                          <span className="text-sm">{vendor.pending_count} pendentes</span>
                         </div>
                         {vendor.overdue_count > 0 && (
                           <div className="flex items-center gap-2">
                             <XCircle className="h-4 w-4 text-red-600" />
-                            <span className="text-sm">
-                              {vendor.overdue_count} atrasadas
-                            </span>
+                            <span className="text-sm">{vendor.overdue_count} atrasadas</span>
                           </div>
                         )}
                       </div>
                     </td>
                     <td className="p-2">
-                      <Badge variant="outline">
-                        {vendor.documents_count} docs
-                      </Badge>
+                      <Badge variant="outline">{vendor.documents_count} docs</Badge>
                     </td>
                   </tr>
                 ))}

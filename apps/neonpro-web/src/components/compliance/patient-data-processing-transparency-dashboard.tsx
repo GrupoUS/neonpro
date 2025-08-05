@@ -2,23 +2,29 @@
 // NeonPro - Sistema de Automação de Compliance LGPD - Phase 3 Task 3.2
 // Quality Standard: ≥9.5/10 (BMad Enhanced)
 
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Separator } from '@/components/ui/separator';
-import { 
-  Shield, 
-  Eye, 
-  Share2, 
-  FileText, 
-  Calendar, 
-  Users, 
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Progress } from "@/components/ui/progress";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Separator } from "@/components/ui/separator";
+import type {
+  Shield,
+  Eye,
+  Share2,
+  FileText,
+  Calendar,
+  Users,
   AlertTriangle,
   CheckCircle,
   Clock,
@@ -31,11 +37,11 @@ import {
   User,
   Database,
   Activity,
-  BarChart3
-} from 'lucide-react';
-import { toast } from 'sonner';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+  BarChart3,
+} from "lucide-react";
+import type { toast } from "sonner";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
 
 interface ProcessingActivity {
   purpose: string;
@@ -45,7 +51,7 @@ interface ProcessingActivity {
   frequency: string;
   lastActivity: Date;
   canOptOut: boolean;
-  riskLevel: 'low' | 'medium' | 'high';
+  riskLevel: "low" | "medium" | "high";
   complianceScore: number;
 }
 
@@ -58,7 +64,7 @@ interface ThirdPartySharing {
   location: string;
   canOptOut: boolean;
   sharingDate: Date;
-  status: 'active' | 'suspended' | 'terminated';
+  status: "active" | "suspended" | "terminated";
 }
 
 interface DataFlow {
@@ -94,7 +100,7 @@ interface TransparencyDashboardData {
     timestamp: Date;
     action: string;
     description: string;
-    complianceStatus: 'compliant' | 'warning' | 'violation';
+    complianceStatus: "compliant" | "warning" | "violation";
   }>;
   privacySettings: {
     marketingConsent: boolean;
@@ -106,18 +112,18 @@ interface TransparencyDashboardData {
 
 interface PatientDataProcessingTransparencyDashboardProps {
   patientId: string;
-  viewMode: 'patient' | 'admin';
+  viewMode: "patient" | "admin";
   className?: string;
 }
 
 export default function PatientDataProcessingTransparencyDashboard({
   patientId,
-  viewMode = 'patient',
-  className = ''
+  viewMode = "patient",
+  className = "",
 }: PatientDataProcessingTransparencyDashboardProps) {
   const [dashboardData, setDashboardData] = useState<TransparencyDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
   const [refreshing, setRefreshing] = useState(false);
 
   // Load dashboard data
@@ -128,157 +134,157 @@ export default function PatientDataProcessingTransparencyDashboard({
   const loadTransparencyData = async () => {
     try {
       setLoading(true);
-      
+
       // In production, this would call the data processing transparency manager
       const mockData: TransparencyDashboardData = {
         patientId,
-        patientName: 'Maria Silva Santos',
+        patientName: "Maria Silva Santos",
         lastUpdated: new Date(),
         overallTransparencyScore: 9.2,
         processingActivities: [
           {
-            purpose: 'medical_care',
-            description: 'Cuidados médicos e procedimentos estéticos',
-            legalBasis: 'Interesses vitais - Cuidados de saúde',
-            dataCategories: ['dados pessoais', 'dados médicos', 'dados sensíveis'],
-            frequency: 'Conforme necessário',
+            purpose: "medical_care",
+            description: "Cuidados médicos e procedimentos estéticos",
+            legalBasis: "Interesses vitais - Cuidados de saúde",
+            dataCategories: ["dados pessoais", "dados médicos", "dados sensíveis"],
+            frequency: "Conforme necessário",
             lastActivity: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
             canOptOut: false,
-            riskLevel: 'low',
-            complianceScore: 9.5
+            riskLevel: "low",
+            complianceScore: 9.5,
           },
           {
-            purpose: 'appointment_scheduling',
-            description: 'Agendamento e gestão de consultas',
-            legalBasis: 'Execução de contrato',
-            dataCategories: ['dados pessoais', 'dados de contato'],
-            frequency: 'Semanal',
+            purpose: "appointment_scheduling",
+            description: "Agendamento e gestão de consultas",
+            legalBasis: "Execução de contrato",
+            dataCategories: ["dados pessoais", "dados de contato"],
+            frequency: "Semanal",
             lastActivity: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
             canOptOut: false,
-            riskLevel: 'low',
-            complianceScore: 9.8
+            riskLevel: "low",
+            complianceScore: 9.8,
           },
           {
-            purpose: 'marketing',
-            description: 'Comunicações promocionais personalizadas',
-            legalBasis: 'Consentimento',
-            dataCategories: ['dados pessoais', 'preferências'],
-            frequency: 'Mensal',
+            purpose: "marketing",
+            description: "Comunicações promocionais personalizadas",
+            legalBasis: "Consentimento",
+            dataCategories: ["dados pessoais", "preferências"],
+            frequency: "Mensal",
             lastActivity: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
             canOptOut: true,
-            riskLevel: 'medium',
-            complianceScore: 8.5
-          }
+            riskLevel: "medium",
+            complianceScore: 8.5,
+          },
         ],
         thirdPartySharing: [
           {
-            recipient: 'Laboratório Alpha',
-            recipientType: 'processor',
-            purpose: 'Análises clínicas e exames',
-            dataShared: ['dados pessoais', 'resultados de exames'],
-            safeguards: ['Contrato de processamento', 'Criptografia', 'Acesso restrito'],
-            location: 'Brasil',
+            recipient: "Laboratório Alpha",
+            recipientType: "processor",
+            purpose: "Análises clínicas e exames",
+            dataShared: ["dados pessoais", "resultados de exames"],
+            safeguards: ["Contrato de processamento", "Criptografia", "Acesso restrito"],
+            location: "Brasil",
             canOptOut: false,
             sharingDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-            status: 'active'
+            status: "active",
           },
           {
-            recipient: 'Plano de Saúde Beta',
-            recipientType: 'controller',
-            purpose: 'Autorização e reembolso de procedimentos',
-            dataShared: ['dados pessoais', 'dados financeiros', 'relatórios médicos'],
-            safeguards: ['Acordo de confidencialidade', 'Portal seguro', 'Auditoria regular'],
-            location: 'Brasil',
+            recipient: "Plano de Saúde Beta",
+            recipientType: "controller",
+            purpose: "Autorização e reembolso de procedimentos",
+            dataShared: ["dados pessoais", "dados financeiros", "relatórios médicos"],
+            safeguards: ["Acordo de confidencialidade", "Portal seguro", "Auditoria regular"],
+            location: "Brasil",
             canOptOut: false,
             sharingDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-            status: 'active'
-          }
+            status: "active",
+          },
         ],
         dataFlows: {
           internal: [
             {
-              system: 'Sistema de Prontuário Eletrônico',
-              purpose: 'Gestão de histórico médico',
-              dataTypes: ['dados médicos', 'resultados de exames', 'prescrições'],
-              frequency: 'Diário',
+              system: "Sistema de Prontuário Eletrônico",
+              purpose: "Gestão de histórico médico",
+              dataTypes: ["dados médicos", "resultados de exames", "prescrições"],
+              frequency: "Diário",
               encryption: true,
-              lastAccess: new Date(Date.now() - 1 * 60 * 60 * 1000)
+              lastAccess: new Date(Date.now() - 1 * 60 * 60 * 1000),
             },
             {
-              system: 'Sistema de Agendamento',
-              purpose: 'Gestão de consultas',
-              dataTypes: ['dados pessoais', 'dados de contato', 'preferências'],
-              frequency: 'Conforme necessário',
+              system: "Sistema de Agendamento",
+              purpose: "Gestão de consultas",
+              dataTypes: ["dados pessoais", "dados de contato", "preferências"],
+              frequency: "Conforme necessário",
               encryption: true,
-              lastAccess: new Date(Date.now() - 3 * 60 * 60 * 1000)
-            }
+              lastAccess: new Date(Date.now() - 3 * 60 * 60 * 1000),
+            },
           ],
           external: [
             {
-              system: 'Gateway de Pagamento',
-              purpose: 'Processamento de pagamentos',
-              dataTypes: ['dados financeiros', 'dados de transação'],
-              frequency: 'Por transação',
+              system: "Gateway de Pagamento",
+              purpose: "Processamento de pagamentos",
+              dataTypes: ["dados financeiros", "dados de transação"],
+              frequency: "Por transação",
               encryption: true,
-              lastAccess: new Date(Date.now() - 24 * 60 * 60 * 1000)
-            }
-          ]
+              lastAccess: new Date(Date.now() - 24 * 60 * 60 * 1000),
+            },
+          ],
         },
         rights: {
-          access: { 
-            available: true, 
+          access: {
+            available: true,
             lastUsed: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-            description: 'Solicitar cópia de todos os seus dados pessoais'
+            description: "Solicitar cópia de todos os seus dados pessoais",
           },
-          correction: { 
+          correction: {
             available: true,
-            description: 'Corrigir ou atualizar dados pessoais incorretos'
+            description: "Corrigir ou atualizar dados pessoais incorretos",
           },
-          deletion: { 
+          deletion: {
             available: true,
-            description: 'Solicitar exclusão de dados pessoais (sujeito a restrições legais)'
+            description: "Solicitar exclusão de dados pessoais (sujeito a restrições legais)",
           },
-          portability: { 
+          portability: {
             available: true,
-            description: 'Receber seus dados em formato estruturado'
+            description: "Receber seus dados em formato estruturado",
           },
-          objection: { 
+          objection: {
             available: true,
-            description: 'Contestar o processamento de dados para marketing'
-          }
+            description: "Contestar o processamento de dados para marketing",
+          },
         },
         recentActivities: [
           {
             timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-            action: 'data_access',
-            description: 'Acesso ao prontuário médico para consulta',
-            complianceStatus: 'compliant'
+            action: "data_access",
+            description: "Acesso ao prontuário médico para consulta",
+            complianceStatus: "compliant",
           },
           {
             timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-            action: 'appointment_update',
-            description: 'Atualização de dados de agendamento',
-            complianceStatus: 'compliant'
+            action: "appointment_update",
+            description: "Atualização de dados de agendamento",
+            complianceStatus: "compliant",
           },
           {
             timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-            action: 'consent_renewal',
-            description: 'Renovação de consentimento para marketing',
-            complianceStatus: 'compliant'
-          }
+            action: "consent_renewal",
+            description: "Renovação de consentimento para marketing",
+            complianceStatus: "compliant",
+          },
         ],
         privacySettings: {
           marketingConsent: true,
           analyticsConsent: false,
           thirdPartySharing: true,
-          researchParticipation: false
-        }
+          researchParticipation: false,
+        },
       };
 
       setDashboardData(mockData);
     } catch (error) {
-      console.error('Error loading transparency data:', error);
-      toast.error('Erro ao carregar dados de transparência');
+      console.error("Error loading transparency data:", error);
+      toast.error("Erro ao carregar dados de transparência");
     } finally {
       setLoading(false);
     }
@@ -288,7 +294,7 @@ export default function PatientDataProcessingTransparencyDashboard({
     setRefreshing(true);
     await loadTransparencyData();
     setRefreshing(false);
-    toast.success('Dados atualizados com sucesso');
+    toast.success("Dados atualizados com sucesso");
   };
 
   const handleRightExercise = async (rightType: string) => {
@@ -296,47 +302,51 @@ export default function PatientDataProcessingTransparencyDashboard({
       // In production, this would call the privacy rights manager
       toast.success(`Solicitação de ${rightType} enviada com sucesso`);
     } catch (error) {
-      toast.error('Erro ao processar solicitação');
+      toast.error("Erro ao processar solicitação");
     }
   };
 
   const exportTransparencyReport = async () => {
     try {
       // In production, this would generate a comprehensive transparency report
-      toast.success('Relatório de transparência gerado com sucesso');
+      toast.success("Relatório de transparência gerado com sucesso");
     } catch (error) {
-      toast.error('Erro ao gerar relatório');
+      toast.error("Erro ao gerar relatório");
     }
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 9) return 'text-green-600';
-    if (score >= 7) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 9) return "text-green-600";
+    if (score >= 7) return "text-yellow-600";
+    return "text-red-600";
   };
 
   const getScoreBadgeVariant = (score: number) => {
-    if (score >= 9) return 'default';
-    if (score >= 7) return 'secondary';
-    return 'destructive';
+    if (score >= 9) return "default";
+    if (score >= 7) return "secondary";
+    return "destructive";
   };
 
   const getRiskLevelColor = (level: string) => {
     switch (level) {
-      case 'low': return 'text-green-600';
-      case 'medium': return 'text-yellow-600';
-      case 'high': return 'text-red-600';
-      default: return 'text-gray-600';
+      case "low":
+        return "text-green-600";
+      case "medium":
+        return "text-yellow-600";
+      case "high":
+        return "text-red-600";
+      default:
+        return "text-gray-600";
     }
   };
 
   const getComplianceStatusIcon = (status: string) => {
     switch (status) {
-      case 'compliant':
+      case "compliant":
         return <CheckCircle className="h-4 w-4 text-green-600" />;
-      case 'warning':
+      case "warning":
         return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
-      case 'violation':
+      case "violation":
         return <AlertTriangle className="h-4 w-4 text-red-600" />;
       default:
         return <Info className="h-4 w-4 text-gray-600" />;
@@ -377,36 +387,28 @@ export default function PatientDataProcessingTransparencyDashboard({
           <h2 className="text-2xl font-bold flex items-center gap-2">
             <Eye className="h-6 w-6" />
             Transparência de Dados
-            {viewMode === 'admin' && (
-              <Badge variant="outline">Visão Administrativa</Badge>
-            )}
+            {viewMode === "admin" && <Badge variant="outline">Visão Administrativa</Badge>}
           </h2>
           <p className="text-sm text-muted-foreground">
-            Última atualização: {format(dashboardData.lastUpdated, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+            Última atualização:{" "}
+            {format(dashboardData.lastUpdated, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
           </p>
         </div>
         <div className="flex items-center gap-4">
           <div className="text-right">
             <div className="text-sm font-medium">Score de Transparência</div>
-            <div className={`text-2xl font-bold ${getScoreColor(dashboardData.overallTransparencyScore)}`}>
+            <div
+              className={`text-2xl font-bold ${getScoreColor(dashboardData.overallTransparencyScore)}`}
+            >
               {dashboardData.overallTransparencyScore}/10
             </div>
           </div>
           <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={refreshData}
-              disabled={refreshing}
-            >
+            <Button variant="outline" size="sm" onClick={refreshData} disabled={refreshing}>
               {refreshing ? <Clock className="h-4 w-4" /> : <Activity className="h-4 w-4" />}
               Atualizar
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={exportTransparencyReport}
-            >
+            <Button variant="outline" size="sm" onClick={exportTransparencyReport}>
               <Download className="h-4 w-4" />
               Exportar Relatório
             </Button>
@@ -429,65 +431,54 @@ export default function PatientDataProcessingTransparencyDashboard({
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Atividades de Processamento
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Atividades de Processamento</CardTitle>
                 <Database className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{dashboardData.processingActivities.length}</div>
-                <p className="text-xs text-muted-foreground">
-                  ativas no sistema
-                </p>
+                <div className="text-2xl font-bold">
+                  {dashboardData.processingActivities.length}
+                </div>
+                <p className="text-xs text-muted-foreground">ativas no sistema</p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Compartilhamentos Externos
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Compartilhamentos Externos</CardTitle>
                 <Share2 className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{dashboardData.thirdPartySharing.length}</div>
-                <p className="text-xs text-muted-foreground">
-                  parceiros ativos
-                </p>
+                <p className="text-xs text-muted-foreground">parceiros ativos</p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Fluxos de Dados
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Fluxos de Dados</CardTitle>
                 <Activity className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {dashboardData.dataFlows.internal.length + dashboardData.dataFlows.external.length}
+                  {dashboardData.dataFlows.internal.length +
+                    dashboardData.dataFlows.external.length}
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  sistemas integrados
-                </p>
+                <p className="text-xs text-muted-foreground">sistemas integrados</p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Compliance Score
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Compliance Score</CardTitle>
                 <BarChart3 className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className={`text-2xl font-bold ${getScoreColor(dashboardData.overallTransparencyScore)}`}>
+                <div
+                  className={`text-2xl font-bold ${getScoreColor(dashboardData.overallTransparencyScore)}`}
+                >
                   {dashboardData.overallTransparencyScore}/10
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  transparência geral
-                </p>
+                <p className="text-xs text-muted-foreground">transparência geral</p>
               </CardContent>
             </Card>
           </div>
@@ -499,9 +490,7 @@ export default function PatientDataProcessingTransparencyDashboard({
                 <Clock className="h-5 w-5" />
                 Atividades Recentes
               </CardTitle>
-              <CardDescription>
-                Últimas ações relacionadas aos seus dados pessoais
-              </CardDescription>
+              <CardDescription>Últimas ações relacionadas aos seus dados pessoais</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -516,8 +505,10 @@ export default function PatientDataProcessingTransparencyDashboard({
                         </div>
                       </div>
                     </div>
-                    <Badge variant={activity.complianceStatus === 'compliant' ? 'default' : 'secondary'}>
-                      {activity.complianceStatus === 'compliant' ? 'Conforme' : 'Atenção'}
+                    <Badge
+                      variant={activity.complianceStatus === "compliant" ? "default" : "secondary"}
+                    >
+                      {activity.complianceStatus === "compliant" ? "Conforme" : "Atenção"}
                     </Badge>
                   </div>
                 ))}
@@ -550,16 +541,17 @@ export default function PatientDataProcessingTransparencyDashboard({
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Badge 
+                        <Badge
                           variant={getScoreBadgeVariant(activity.complianceScore)}
                           className={getRiskLevelColor(activity.riskLevel)}
                         >
-                          {activity.riskLevel === 'low' ? 'Baixo Risco' : 
-                           activity.riskLevel === 'medium' ? 'Médio Risco' : 'Alto Risco'}
+                          {activity.riskLevel === "low"
+                            ? "Baixo Risco"
+                            : activity.riskLevel === "medium"
+                              ? "Médio Risco"
+                              : "Alto Risco"}
                         </Badge>
-                        <Badge variant="outline">
-                          Score: {activity.complianceScore}/10
-                        </Badge>
+                        <Badge variant="outline">Score: {activity.complianceScore}/10</Badge>
                       </div>
                     </div>
 
@@ -567,14 +559,12 @@ export default function PatientDataProcessingTransparencyDashboard({
                       <div>
                         <span className="font-medium">Categorias de dados:</span>
                         <div className="text-muted-foreground">
-                          {activity.dataCategories.join(', ')}
+                          {activity.dataCategories.join(", ")}
                         </div>
                       </div>
                       <div>
                         <span className="font-medium">Frequência:</span>
-                        <div className="text-muted-foreground">
-                          {activity.frequency}
-                        </div>
+                        <div className="text-muted-foreground">{activity.frequency}</div>
                       </div>
                       <div>
                         <span className="font-medium">Última atividade:</span>
@@ -584,8 +574,8 @@ export default function PatientDataProcessingTransparencyDashboard({
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="font-medium">Pode recusar:</span>
-                        <Badge variant={activity.canOptOut ? 'default' : 'secondary'}>
-                          {activity.canOptOut ? 'Sim' : 'Não'}
+                        <Badge variant={activity.canOptOut ? "default" : "secondary"}>
+                          {activity.canOptOut ? "Sim" : "Não"}
                         </Badge>
                       </div>
                     </div>
@@ -595,7 +585,7 @@ export default function PatientDataProcessingTransparencyDashboard({
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleRightExercise('objection')}
+                          onClick={() => handleRightExercise("objection")}
                         >
                           <Settings className="h-4 w-4 mr-2" />
                           Gerenciar Consentimento
@@ -631,16 +621,14 @@ export default function PatientDataProcessingTransparencyDashboard({
                           {sharing.recipient}
                           <Globe className="h-4 w-4 text-muted-foreground" />
                         </h4>
-                        <p className="text-sm text-muted-foreground">
-                          {sharing.purpose}
-                        </p>
+                        <p className="text-sm text-muted-foreground">{sharing.purpose}</p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Badge variant={sharing.status === 'active' ? 'default' : 'secondary'}>
-                          {sharing.status === 'active' ? 'Ativo' : 'Inativo'}
+                        <Badge variant={sharing.status === "active" ? "default" : "secondary"}>
+                          {sharing.status === "active" ? "Ativo" : "Inativo"}
                         </Badge>
                         <Badge variant="outline">
-                          {sharing.recipientType === 'processor' ? 'Processador' : 'Controlador'}
+                          {sharing.recipientType === "processor" ? "Processador" : "Controlador"}
                         </Badge>
                       </div>
                     </div>
@@ -648,15 +636,11 @@ export default function PatientDataProcessingTransparencyDashboard({
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
                         <span className="font-medium">Dados compartilhados:</span>
-                        <div className="text-muted-foreground">
-                          {sharing.dataShared.join(', ')}
-                        </div>
+                        <div className="text-muted-foreground">{sharing.dataShared.join(", ")}</div>
                       </div>
                       <div>
                         <span className="font-medium">Localização:</span>
-                        <div className="text-muted-foreground">
-                          {sharing.location}
-                        </div>
+                        <div className="text-muted-foreground">{sharing.location}</div>
                       </div>
                       <div>
                         <span className="font-medium">Data do compartilhamento:</span>
@@ -666,8 +650,8 @@ export default function PatientDataProcessingTransparencyDashboard({
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="font-medium">Pode recusar:</span>
-                        <Badge variant={sharing.canOptOut ? 'default' : 'secondary'}>
-                          {sharing.canOptOut ? 'Sim' : 'Não'}
+                        <Badge variant={sharing.canOptOut ? "default" : "secondary"}>
+                          {sharing.canOptOut ? "Sim" : "Não"}
                         </Badge>
                       </div>
                     </div>
@@ -689,7 +673,7 @@ export default function PatientDataProcessingTransparencyDashboard({
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleRightExercise('objection')}
+                          onClick={() => handleRightExercise("objection")}
                         >
                           <Settings className="h-4 w-4 mr-2" />
                           Recusar Compartilhamento
@@ -721,20 +705,22 @@ export default function PatientDataProcessingTransparencyDashboard({
                   <div key={rightKey} className="border rounded-lg p-4 space-y-3">
                     <div className="flex items-center justify-between">
                       <h4 className="font-medium capitalize">
-                        {rightKey === 'access' ? 'Acesso aos Dados' :
-                         rightKey === 'correction' ? 'Correção' :
-                         rightKey === 'deletion' ? 'Exclusão' :
-                         rightKey === 'portability' ? 'Portabilidade' :
-                         'Objeção'}
+                        {rightKey === "access"
+                          ? "Acesso aos Dados"
+                          : rightKey === "correction"
+                            ? "Correção"
+                            : rightKey === "deletion"
+                              ? "Exclusão"
+                              : rightKey === "portability"
+                                ? "Portabilidade"
+                                : "Objeção"}
                       </h4>
-                      <Badge variant={right.available ? 'default' : 'secondary'}>
-                        {right.available ? 'Disponível' : 'Indisponível'}
+                      <Badge variant={right.available ? "default" : "secondary"}>
+                        {right.available ? "Disponível" : "Indisponível"}
                       </Badge>
                     </div>
 
-                    <p className="text-sm text-muted-foreground">
-                      {right.description}
-                    </p>
+                    <p className="text-sm text-muted-foreground">{right.description}</p>
 
                     {right.lastUsed && (
                       <p className="text-xs text-muted-foreground">
@@ -773,20 +759,26 @@ export default function PatientDataProcessingTransparencyDashboard({
                   <div key={setting} className="flex items-center justify-between">
                     <div>
                       <div className="font-medium">
-                        {setting === 'marketingConsent' ? 'Marketing e Promoções' :
-                         setting === 'analyticsConsent' ? 'Análises e Estatísticas' :
-                         setting === 'thirdPartySharing' ? 'Compartilhamento com Terceiros' :
-                         'Participação em Pesquisas'}
+                        {setting === "marketingConsent"
+                          ? "Marketing e Promoções"
+                          : setting === "analyticsConsent"
+                            ? "Análises e Estatísticas"
+                            : setting === "thirdPartySharing"
+                              ? "Compartilhamento com Terceiros"
+                              : "Participação em Pesquisas"}
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        {setting === 'marketingConsent' ? 'Receber comunicações promocionais' :
-                         setting === 'analyticsConsent' ? 'Permitir análise de uso do sistema' :
-                         setting === 'thirdPartySharing' ? 'Compartilhar dados com parceiros' :
-                         'Participar de estudos clínicos'}
+                        {setting === "marketingConsent"
+                          ? "Receber comunicações promocionais"
+                          : setting === "analyticsConsent"
+                            ? "Permitir análise de uso do sistema"
+                            : setting === "thirdPartySharing"
+                              ? "Compartilhar dados com parceiros"
+                              : "Participar de estudos clínicos"}
                       </div>
                     </div>
-                    <Badge variant={enabled ? 'default' : 'secondary'}>
-                      {enabled ? 'Ativo' : 'Inativo'}
+                    <Badge variant={enabled ? "default" : "secondary"}>
+                      {enabled ? "Ativo" : "Inativo"}
                     </Badge>
                   </div>
                 ))}
@@ -810,7 +802,10 @@ export default function PatientDataProcessingTransparencyDashboard({
             <CardContent>
               <div className="space-y-3">
                 {dashboardData.recentActivities.map((activity, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 border rounded-lg"
+                  >
                     <div className="flex items-center gap-3">
                       {getComplianceStatusIcon(activity.complianceStatus)}
                       <div>
@@ -821,10 +816,14 @@ export default function PatientDataProcessingTransparencyDashboard({
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant={activity.complianceStatus === 'compliant' ? 'default' : 'secondary'}>
-                        {activity.complianceStatus === 'compliant' ? 'Conforme' : 'Atenção'}
+                      <Badge
+                        variant={
+                          activity.complianceStatus === "compliant" ? "default" : "secondary"
+                        }
+                      >
+                        {activity.complianceStatus === "compliant" ? "Conforme" : "Atenção"}
                       </Badge>
-                      {viewMode === 'admin' && (
+                      {viewMode === "admin" && (
                         <Button variant="ghost" size="sm">
                           <ExternalLink className="h-4 w-4" />
                         </Button>

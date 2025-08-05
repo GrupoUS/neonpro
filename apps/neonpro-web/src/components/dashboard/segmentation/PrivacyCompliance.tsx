@@ -1,28 +1,28 @@
 "use client";
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
-import {
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
+import type { Switch } from "@/components/ui/switch";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
   AlertTriangle,
   CheckCircle,
   Download,
@@ -33,7 +33,7 @@ import {
   Upload,
   UserCheck,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import type { useEffect, useState } from "react";
 
 interface ComplianceRule {
   id: string;
@@ -122,8 +122,7 @@ export default function PrivacyCompliance() {
         {
           id: "3",
           name: "CFM - Sigilo Médico",
-          description:
-            "Verificar conformidade com regras de sigilo médico do CFM",
+          description: "Verificar conformidade com regras de sigilo médico do CFM",
           type: "CFM",
           isActive: true,
           severity: "CRITICAL",
@@ -134,8 +133,7 @@ export default function PrivacyCompliance() {
         {
           id: "4",
           name: "Retenção de Dados",
-          description:
-            "Verificar se dados não são mantidos além do período legal",
+          description: "Verificar se dados não são mantidos além do período legal",
           type: "CUSTOM",
           isActive: true,
           severity: "MEDIUM",
@@ -185,14 +183,8 @@ export default function PrivacyCompliance() {
       // Calculate compliance score
       const totalRules = mockRules.length;
       const activeRules = mockRules.filter((r) => r.isActive).length;
-      const violationsCount = mockRules.reduce(
-        (acc, r) => acc + r.violations,
-        0
-      );
-      const score = Math.max(
-        0,
-        ((activeRules - violationsCount) / totalRules) * 100
-      );
+      const violationsCount = mockRules.reduce((acc, r) => acc + r.violations, 0);
+      const score = Math.max(0, ((activeRules - violationsCount) / totalRules) * 100);
       setComplianceScore(Math.round(score));
     } catch (error) {
       console.error("Failed to load compliance data:", error);
@@ -222,15 +214,11 @@ export default function PrivacyCompliance() {
 
   const toggleRule = async (ruleId: string) => {
     setComplianceRules((rules) =>
-      rules.map((rule) =>
-        rule.id === ruleId ? { ...rule, isActive: !rule.isActive } : rule
-      )
+      rules.map((rule) => (rule.id === ruleId ? { ...rule, isActive: !rule.isActive } : rule)),
     );
   };
 
-  const updatePrivacySettings = async (
-    newSettings: Partial<PrivacySettings>
-  ) => {
+  const updatePrivacySettings = async (newSettings: Partial<PrivacySettings>) => {
     setPrivacySettings((current) => ({ ...current, ...newSettings }));
     // Here you would make an API call to save settings
   };
@@ -286,9 +274,7 @@ export default function PrivacyCompliance() {
             <div className="flex items-center">
               <Shield className="h-4 w-4 text-muted-foreground" />
               <div className="ml-2">
-                <p className="text-sm font-medium text-muted-foreground">
-                  Score de Conformidade
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Score de Conformidade</p>
                 <div className="flex items-center">
                   <div className="text-2xl font-bold">{complianceScore}%</div>
                   <Progress value={complianceScore} className="ml-2 w-16" />
@@ -303,9 +289,7 @@ export default function PrivacyCompliance() {
             <div className="flex items-center">
               <CheckCircle className="h-4 w-4 text-muted-foreground" />
               <div className="ml-2">
-                <p className="text-sm font-medium text-muted-foreground">
-                  Regras Ativas
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Regras Ativas</p>
                 <div className="text-2xl font-bold">
                   {complianceRules.filter((r) => r.isActive).length}
                 </div>
@@ -319,9 +303,7 @@ export default function PrivacyCompliance() {
             <div className="flex items-center">
               <AlertTriangle className="h-4 w-4 text-muted-foreground" />
               <div className="ml-2">
-                <p className="text-sm font-medium text-muted-foreground">
-                  Violações
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Violações</p>
                 <div className="text-2xl font-bold">
                   {complianceRules.reduce((acc, r) => acc + r.violations, 0)}
                 </div>
@@ -335,9 +317,7 @@ export default function PrivacyCompliance() {
             <div className="flex items-center">
               <UserCheck className="h-4 w-4 text-muted-foreground" />
               <div className="ml-2">
-                <p className="text-sm font-medium text-muted-foreground">
-                  Consentimentos
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Consentimentos</p>
                 <div className="text-2xl font-bold">
                   {consentRecords.filter((c) => c.status === "GRANTED").length}
                 </div>
@@ -352,10 +332,8 @@ export default function PrivacyCompliance() {
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            Foram detectadas{" "}
-            {complianceRules.reduce((acc, r) => acc + r.violations, 0)}{" "}
-            violações de conformidade. Revise as regras e tome as ações
-            necessárias.
+            Foram detectadas {complianceRules.reduce((acc, r) => acc + r.violations, 0)} violações
+            de conformidade. Revise as regras e tome as ações necessárias.
           </AlertDescription>
         </Alert>
       )}
@@ -365,9 +343,7 @@ export default function PrivacyCompliance() {
         <div className="flex items-center justify-between">
           <TabsList>
             <TabsTrigger value="rules">Regras de Conformidade</TabsTrigger>
-            <TabsTrigger value="privacy">
-              Configurações de Privacidade
-            </TabsTrigger>
+            <TabsTrigger value="privacy">Configurações de Privacidade</TabsTrigger>
             <TabsTrigger value="consents">Gestão de Consentimentos</TabsTrigger>
             <TabsTrigger value="audit">Auditoria</TabsTrigger>
           </TabsList>
@@ -385,8 +361,7 @@ export default function PrivacyCompliance() {
             <CardHeader>
               <CardTitle>Regras de Conformidade</CardTitle>
               <CardDescription>
-                Configure e monitore regras de conformidade com LGPD, ANVISA e
-                CFM
+                Configure e monitore regras de conformidade com LGPD, ANVISA e CFM
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -401,28 +376,18 @@ export default function PrivacyCompliance() {
                             <Badge className={getSeverityColor(rule.severity)}>
                               {rule.severity}
                             </Badge>
-                            <Badge
-                              variant={
-                                rule.type === "LGPD" ? "default" : "secondary"
-                              }
-                            >
+                            <Badge variant={rule.type === "LGPD" ? "default" : "secondary"}>
                               {rule.type}
                             </Badge>
                             {rule.violations > 0 && (
-                              <Badge variant="destructive">
-                                {rule.violations} violações
-                              </Badge>
+                              <Badge variant="destructive">{rule.violations} violações</Badge>
                             )}
                           </div>
-                          <p className="text-sm text-muted-foreground mb-2">
-                            {rule.description}
-                          </p>
+                          <p className="text-sm text-muted-foreground mb-2">{rule.description}</p>
                           <div className="flex items-center gap-4 text-xs text-muted-foreground">
                             <span>
                               Última verificação:{" "}
-                              {new Date(rule.lastChecked).toLocaleString(
-                                "pt-BR"
-                              )}
+                              {new Date(rule.lastChecked).toLocaleString("pt-BR")}
                             </span>
                             {rule.autoRemediation && (
                               <span className="flex items-center gap-1">
@@ -455,8 +420,7 @@ export default function PrivacyCompliance() {
             <CardHeader>
               <CardTitle>Configurações de Privacidade</CardTitle>
               <CardDescription>
-                Configure políticas de retenção de dados, criptografia e
-                privacidade
+                Configure políticas de retenção de dados, criptografia e privacidade
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -573,8 +537,7 @@ export default function PrivacyCompliance() {
             <CardHeader>
               <CardTitle>Gestão de Consentimentos</CardTitle>
               <CardDescription>
-                Monitore e gerencie consentimentos dos pacientes para
-                processamento de dados
+                Monitore e gerencie consentimentos dos pacientes para processamento de dados
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -585,9 +548,7 @@ export default function PrivacyCompliance() {
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <h4 className="font-semibold">
-                              {consent.patientName}
-                            </h4>
+                            <h4 className="font-semibold">{consent.patientName}</h4>
                             <Badge className={getStatusColor(consent.status)}>
                               {consent.status}
                             </Badge>
@@ -600,17 +561,12 @@ export default function PrivacyCompliance() {
                           </p>
                           <div className="flex items-center gap-4 text-xs text-muted-foreground">
                             <span>
-                              Concedido:{" "}
-                              {new Date(consent.grantedAt).toLocaleDateString(
-                                "pt-BR"
-                              )}
+                              Concedido: {new Date(consent.grantedAt).toLocaleDateString("pt-BR")}
                             </span>
                             {consent.withdrawnAt && (
                               <span>
                                 Retirado:{" "}
-                                {new Date(
-                                  consent.withdrawnAt
-                                ).toLocaleDateString("pt-BR")}
+                                {new Date(consent.withdrawnAt).toLocaleDateString("pt-BR")}
                               </span>
                             )}
                           </div>

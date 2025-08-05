@@ -33,23 +33,23 @@ export interface WhatsAppMessage {
 }
 
 export enum WhatsAppMessageType {
-  TEXT = 'text',
-  TEMPLATE = 'template',
-  IMAGE = 'image',
-  DOCUMENT = 'document',
-  AUDIO = 'audio',
-  VIDEO = 'video',
-  LOCATION = 'location',
-  CONTACT = 'contact',
-  INTERACTIVE = 'interactive'
+  TEXT = "text",
+  TEMPLATE = "template",
+  IMAGE = "image",
+  DOCUMENT = "document",
+  AUDIO = "audio",
+  VIDEO = "video",
+  LOCATION = "location",
+  CONTACT = "contact",
+  INTERACTIVE = "interactive",
 }
 
 export enum WhatsAppMessageStatus {
-  PENDING = 'pending',
-  SENT = 'sent',
-  DELIVERED = 'delivered',
-  READ = 'read',
-  FAILED = 'failed'
+  PENDING = "pending",
+  SENT = "sent",
+  DELIVERED = "delivered",
+  READ = "read",
+  FAILED = "failed",
 }
 
 export interface WhatsAppTemplate {
@@ -66,21 +66,21 @@ export interface WhatsAppTemplate {
 }
 
 export enum WhatsAppTemplateCategory {
-  AUTHENTICATION = 'authentication',
-  MARKETING = 'marketing',
-  UTILITY = 'utility'
+  AUTHENTICATION = "authentication",
+  MARKETING = "marketing",
+  UTILITY = "utility",
 }
 
 export enum WhatsAppTemplateStatus {
-  PENDING = 'PENDING',
-  APPROVED = 'APPROVED',
-  REJECTED = 'REJECTED',
-  PAUSED = 'PAUSED'
+  PENDING = "PENDING",
+  APPROVED = "APPROVED",
+  REJECTED = "REJECTED",
+  PAUSED = "PAUSED",
 }
 
 export interface WhatsAppTemplateComponent {
-  type: 'HEADER' | 'BODY' | 'FOOTER' | 'BUTTONS';
-  format?: 'TEXT' | 'IMAGE' | 'DOCUMENT' | 'VIDEO';
+  type: "HEADER" | "BODY" | "FOOTER" | "BUTTONS";
+  format?: "TEXT" | "IMAGE" | "DOCUMENT" | "VIDEO";
   text?: string;
   buttons?: WhatsAppTemplateButton[];
   example?: {
@@ -90,7 +90,7 @@ export interface WhatsAppTemplateComponent {
 }
 
 export interface WhatsAppTemplateButton {
-  type: 'QUICK_REPLY' | 'URL' | 'PHONE_NUMBER';
+  type: "QUICK_REPLY" | "URL" | "PHONE_NUMBER";
   text: string;
   url?: string;
   phone_number?: string;
@@ -98,8 +98,8 @@ export interface WhatsAppTemplateButton {
 
 // WhatsApp API Request/Response Types
 export interface SendMessageRequest {
-  messaging_product: 'whatsapp';
-  recipient_type: 'individual';
+  messaging_product: "whatsapp";
+  recipient_type: "individual";
   to: string;
   type: string;
   text?: {
@@ -178,11 +178,16 @@ export interface WhatsAppWebhookPayload {
 // NeonPro specific integration types
 export interface PatientWhatsAppNotification {
   patientId: string;
-  notificationType: 'appointment_reminder' | 'appointment_confirmation' | 'treatment_followup' | 'payment_reminder' | 'welcome_message';
+  notificationType:
+    | "appointment_reminder"
+    | "appointment_confirmation"
+    | "treatment_followup"
+    | "payment_reminder"
+    | "welcome_message";
   scheduleTime?: Date;
   templateName: string;
   templateParams: Record<string, string>;
-  priority: 'low' | 'medium' | 'high';
+  priority: "low" | "medium" | "high";
 }
 
 export interface WhatsAppAnalytics {
@@ -202,7 +207,7 @@ export interface WhatsAppOptIn {
   patientId: string;
   phoneNumber: string;
   isOptedIn: boolean;
-  optInSource: 'registration' | 'website' | 'qr_code' | 'sms' | 'manual';
+  optInSource: "registration" | "website" | "qr_code" | "sms" | "manual";
   optInDate?: Date;
   optOutDate?: Date;
   consentMessage?: string;
@@ -238,7 +243,7 @@ export interface WhatsAppTemplateForm {
 
 export interface SendBulkMessageForm {
   templateId: string;
-  recipientType: 'all_patients' | 'selected_patients' | 'custom_list';
+  recipientType: "all_patients" | "selected_patients" | "custom_list";
   selectedPatients?: string[];
   customPhoneNumbers?: string[];
   templateParams?: Record<string, string>;

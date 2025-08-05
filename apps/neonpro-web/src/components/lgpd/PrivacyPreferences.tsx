@@ -1,19 +1,25 @@
-'use client'
+"use client";
 
-import React, { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Switch } from '@/components/ui/switch'
-import { Label } from '@/components/ui/label'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Separator } from '@/components/ui/separator'
-import { 
-  Shield, 
-  Cookie, 
-  Eye, 
-  Settings, 
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Switch } from "@/components/ui/switch";
+import type { Label } from "@/components/ui/label";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Separator } from "@/components/ui/separator";
+import type {
+  Shield,
+  Cookie,
+  Eye,
+  Settings,
   Save,
   RefreshCw,
   Download,
@@ -28,144 +34,138 @@ import {
   BarChart3,
   Mail,
   Globe,
-  AlertTriangle
-} from 'lucide-react'
-import { useConsentBanner } from '@/hooks/useLGPD'
-import { ConsentPurpose, ConsentRecord } from '@/types/lgpd'
+  AlertTriangle,
+} from "lucide-react";
+import type { useConsentBanner } from "@/hooks/useLGPD";
+import type { ConsentPurpose, ConsentRecord } from "@/types/lgpd";
 
 interface PrivacyPreferencesProps {
-  userId?: string
-  showHeader?: boolean
-  className?: string
+  userId?: string;
+  showHeader?: boolean;
+  className?: string;
 }
 
-export function PrivacyPreferences({ 
+export function PrivacyPreferences({
   userId,
   showHeader = true,
-  className 
+  className,
 }: PrivacyPreferencesProps) {
-  const {
-    purposes,
-    userConsents,
-    isLoading,
-    error,
-    giveConsent,
-    withdrawConsent,
-    refreshData
-  } = useConsentBanner()
+  const { purposes, userConsents, isLoading, error, giveConsent, withdrawConsent, refreshData } =
+    useConsentBanner();
 
-  const [preferences, setPreferences] = useState<Record<string, boolean>>({})
-  const [hasChanges, setHasChanges] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
-  const [saveMessage, setSaveMessage] = useState<string | null>(null)
+  const [preferences, setPreferences] = useState<Record<string, boolean>>({});
+  const [hasChanges, setHasChanges] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
   useEffect(() => {
     // Inicializar preferências com consentimentos existentes
-    const initialPreferences: Record<string, boolean> = {}
-    purposes?.forEach(purpose => {
-      const existingConsent = userConsents?.find(c => c.purpose_id === purpose.id)
-      initialPreferences[purpose.id] = existingConsent?.status === 'given'
-    })
-    setPreferences(initialPreferences)
-    setHasChanges(false)
-  }, [purposes, userConsents])
+    const initialPreferences: Record<string, boolean> = {};
+    purposes?.forEach((purpose) => {
+      const existingConsent = userConsents?.find((c) => c.purpose_id === purpose.id);
+      initialPreferences[purpose.id] = existingConsent?.status === "given";
+    });
+    setPreferences(initialPreferences);
+    setHasChanges(false);
+  }, [purposes, userConsents]);
 
   const handlePreferenceChange = (purposeId: string, enabled: boolean) => {
-    setPreferences(prev => {
-      const newPreferences = { ...prev, [purposeId]: enabled }
-      
+    setPreferences((prev) => {
+      const newPreferences = { ...prev, [purposeId]: enabled };
+
       // Verificar se há mudanças
-      const hasChanges = purposes?.some(purpose => {
-        const existingConsent = userConsents?.find(c => c.purpose_id === purpose.id)
-        const currentStatus = existingConsent?.status === 'given'
-        return newPreferences[purpose.id] !== currentStatus
-      }) || false
-      
-      setHasChanges(hasChanges)
-      return newPreferences
-    })
-  }
+      const hasChanges =
+        purposes?.some((purpose) => {
+          const existingConsent = userConsents?.find((c) => c.purpose_id === purpose.id);
+          const currentStatus = existingConsent?.status === "given";
+          return newPreferences[purpose.id] !== currentStatus;
+        }) || false;
+
+      setHasChanges(hasChanges);
+      return newPreferences;
+    });
+  };
 
   const handleSavePreferences = async () => {
-    setIsSaving(true)
-    setSaveMessage(null)
-    
+    setIsSaving(true);
+    setSaveMessage(null);
+
     try {
       for (const [purposeId, enabled] of Object.entries(preferences)) {
-        const existingConsent = userConsents?.find(c => c.purpose_id === purposeId)
-        const currentStatus = existingConsent?.status === 'given'
-        
+        const existingConsent = userConsents?.find((c) => c.purpose_id === purposeId);
+        const currentStatus = existingConsent?.status === "given";
+
         if (enabled !== currentStatus) {
           if (enabled) {
-            await giveConsent(purposeId)
+            await giveConsent(purposeId);
           } else {
-            await withdrawConsent(purposeId)
+            await withdrawConsent(purposeId);
           }
         }
       }
-      
-      setSaveMessage('Preferências salvas com sucesso!')
-      setHasChanges(false)
-      await refreshData()
+
+      setSaveMessage("Preferências salvas com sucesso!");
+      setHasChanges(false);
+      await refreshData();
     } catch (error) {
-      setSaveMessage('Erro ao salvar preferências. Tente novamente.')
-      console.error('Erro ao salvar preferências:', error)
+      setSaveMessage("Erro ao salvar preferências. Tente novamente.");
+      console.error("Erro ao salvar preferências:", error);
     } finally {
-      setIsSaving(false)
-      setTimeout(() => setSaveMessage(null), 3000)
+      setIsSaving(false);
+      setTimeout(() => setSaveMessage(null), 3000);
     }
-  }
+  };
 
   const handleResetPreferences = () => {
-    const resetPreferences: Record<string, boolean> = {}
-    purposes?.forEach(purpose => {
-      const existingConsent = userConsents?.find(c => c.purpose_id === purpose.id)
-      resetPreferences[purpose.id] = existingConsent?.status === 'given'
-    })
-    setPreferences(resetPreferences)
-    setHasChanges(false)
-  }
+    const resetPreferences: Record<string, boolean> = {};
+    purposes?.forEach((purpose) => {
+      const existingConsent = userConsents?.find((c) => c.purpose_id === purpose.id);
+      resetPreferences[purpose.id] = existingConsent?.status === "given";
+    });
+    setPreferences(resetPreferences);
+    setHasChanges(false);
+  };
 
   const getPurposeIcon = (category: string) => {
     switch (category) {
-      case 'essential':
-        return <Shield className="h-5 w-5" />
-      case 'analytics':
-        return <BarChart3 className="h-5 w-5" />
-      case 'marketing':
-        return <Mail className="h-5 w-5" />
-      case 'personalization':
-        return <Users className="h-5 w-5" />
-      case 'advertising':
-        return <Globe className="h-5 w-5" />
+      case "essential":
+        return <Shield className="h-5 w-5" />;
+      case "analytics":
+        return <BarChart3 className="h-5 w-5" />;
+      case "marketing":
+        return <Mail className="h-5 w-5" />;
+      case "personalization":
+        return <Users className="h-5 w-5" />;
+      case "advertising":
+        return <Globe className="h-5 w-5" />;
       default:
-        return <Cookie className="h-5 w-5" />
+        return <Cookie className="h-5 w-5" />;
     }
-  }
+  };
 
   const getPurposeColor = (category: string) => {
     switch (category) {
-      case 'essential':
-        return 'bg-green-100 text-green-800 border-green-200'
-      case 'analytics':
-        return 'bg-blue-100 text-blue-800 border-blue-200'
-      case 'marketing':
-        return 'bg-purple-100 text-purple-800 border-purple-200'
-      case 'personalization':
-        return 'bg-orange-100 text-orange-800 border-orange-200'
-      case 'advertising':
-        return 'bg-red-100 text-red-800 border-red-200'
+      case "essential":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "analytics":
+        return "bg-blue-100 text-blue-800 border-blue-200";
+      case "marketing":
+        return "bg-purple-100 text-purple-800 border-purple-200";
+      case "personalization":
+        return "bg-orange-100 text-orange-800 border-orange-200";
+      case "advertising":
+        return "bg-red-100 text-red-800 border-red-200";
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200'
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
-  }
+  };
 
   const getConsentHistory = (purposeId: string): ConsentRecord[] => {
-    return userConsents?.filter(c => c.purpose_id === purposeId) || []
-  }
+    return userConsents?.filter((c) => c.purpose_id === purposeId) || [];
+  };
 
-  const essentialPurposes = purposes?.filter(p => p.category === 'essential') || []
-  const optionalPurposes = purposes?.filter(p => p.category !== 'essential') || []
+  const essentialPurposes = purposes?.filter((p) => p.category === "essential") || [];
+  const optionalPurposes = purposes?.filter((p) => p.category !== "essential") || [];
 
   if (isLoading) {
     return (
@@ -173,18 +173,16 @@ export function PrivacyPreferences({
         <RefreshCw className="h-8 w-8 animate-spin" />
         <span className="ml-2">Carregando preferências...</span>
       </div>
-    )
+    );
   }
 
   if (error) {
     return (
       <Alert variant="destructive">
         <AlertTriangle className="h-4 w-4" />
-        <AlertDescription>
-          Erro ao carregar preferências: {error}
-        </AlertDescription>
+        <AlertDescription>Erro ao carregar preferências: {error}</AlertDescription>
       </Alert>
-    )
+    );
   }
 
   return (
@@ -202,12 +200,14 @@ export function PrivacyPreferences({
       )}
 
       {saveMessage && (
-        <Alert className={`mb-4 ${
-          saveMessage.includes('sucesso') 
-            ? 'border-green-200 bg-green-50 text-green-800' 
-            : 'border-red-200 bg-red-50 text-red-800'
-        }`}>
-          {saveMessage.includes('sucesso') ? (
+        <Alert
+          className={`mb-4 ${
+            saveMessage.includes("sucesso")
+              ? "border-green-200 bg-green-50 text-green-800"
+              : "border-red-200 bg-red-50 text-red-800"
+          }`}
+        >
+          {saveMessage.includes("sucesso") ? (
             <CheckCircle className="h-4 w-4" />
           ) : (
             <XCircle className="h-4 w-4" />
@@ -238,7 +238,10 @@ export function PrivacyPreferences({
               </CardHeader>
               <CardContent className="space-y-4">
                 {essentialPurposes.map((purpose) => (
-                  <div key={purpose.id} className="flex items-start justify-between p-4 border rounded-lg bg-green-50">
+                  <div
+                    key={purpose.id}
+                    className="flex items-start justify-between p-4 border rounded-lg bg-green-50"
+                  >
                     <div className="flex items-start gap-3 flex-1">
                       {getPurposeIcon(purpose.category)}
                       <div className="flex-1">
@@ -277,45 +280,47 @@ export function PrivacyPreferences({
               </CardHeader>
               <CardContent className="space-y-4">
                 {optionalPurposes.map((purpose) => (
-                  <div key={purpose.id} className={`p-4 border rounded-lg transition-colors ${
-                    preferences[purpose.id] ? 'bg-blue-50 border-blue-200' : 'bg-gray-50'
-                  }`}>
+                  <div
+                    key={purpose.id}
+                    className={`p-4 border rounded-lg transition-colors ${
+                      preferences[purpose.id] ? "bg-blue-50 border-blue-200" : "bg-gray-50"
+                    }`}
+                  >
                     <div className="flex items-start justify-between">
                       <div className="flex items-start gap-3 flex-1">
                         {getPurposeIcon(purpose.category)}
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             <h4 className="font-medium">{purpose.name}</h4>
-                            <Badge 
-                              variant="outline" 
-                              className={getPurposeColor(purpose.category)}
-                            >
+                            <Badge variant="outline" className={getPurposeColor(purpose.category)}>
                               {purpose.category}
                             </Badge>
                           </div>
                           <p className="text-sm text-gray-600 mb-2">{purpose.description}</p>
-                          
+
                           <div className="space-y-1 text-xs text-gray-500">
                             {purpose.legal_basis && (
-                              <p><strong>Base Legal:</strong> {purpose.legal_basis}</p>
+                              <p>
+                                <strong>Base Legal:</strong> {purpose.legal_basis}
+                              </p>
                             )}
                             {purpose.data_retention_days && (
-                              <p><strong>Retenção:</strong> {purpose.data_retention_days} dias</p>
+                              <p>
+                                <strong>Retenção:</strong> {purpose.data_retention_days} dias
+                              </p>
                             )}
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center gap-2">
                         <Label htmlFor={`switch-${purpose.id}`} className="text-sm">
-                          {preferences[purpose.id] ? 'Ativo' : 'Inativo'}
+                          {preferences[purpose.id] ? "Ativo" : "Inativo"}
                         </Label>
                         <Switch
                           id={`switch-${purpose.id}`}
                           checked={preferences[purpose.id] || false}
-                          onCheckedChange={(checked) => 
-                            handlePreferenceChange(purpose.id, checked)
-                          }
+                          onCheckedChange={(checked) => handlePreferenceChange(purpose.id, checked)}
                         />
                       </div>
                     </div>
@@ -327,16 +332,16 @@ export function PrivacyPreferences({
 
           {/* Botões de ação */}
           <div className="flex justify-between items-center pt-4 border-t">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={handleResetPreferences}
               disabled={!hasChanges || isSaving}
             >
               <RefreshCw className="h-4 w-4 mr-2" />
               Resetar
             </Button>
-            
-            <Button 
+
+            <Button
               onClick={handleSavePreferences}
               disabled={!hasChanges || isSaving}
               className="bg-blue-600 hover:bg-blue-700"
@@ -346,7 +351,7 @@ export function PrivacyPreferences({
               ) : (
                 <Save className="h-4 w-4 mr-2" />
               )}
-              {isSaving ? 'Salvando...' : 'Salvar Preferências'}
+              {isSaving ? "Salvando..." : "Salvar Preferências"}
             </Button>
           </div>
         </TabsContent>
@@ -365,40 +370,45 @@ export function PrivacyPreferences({
             <CardContent>
               <div className="space-y-4">
                 {purposes?.map((purpose) => {
-                  const history = getConsentHistory(purpose.id)
-                  const currentConsent = history.find(c => c.status === 'given')
-                  
+                  const history = getConsentHistory(purpose.id);
+                  const currentConsent = history.find((c) => c.status === "given");
+
                   return (
                     <div key={purpose.id} className="border rounded-lg p-4">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2">
                           {getPurposeIcon(purpose.category)}
                           <h4 className="font-medium">{purpose.name}</h4>
-                          <Badge 
+                          <Badge
                             variant={currentConsent ? "default" : "outline"}
                             className={currentConsent ? "bg-green-100 text-green-800" : ""}
                           >
-                            {currentConsent ? 'Ativo' : 'Inativo'}
+                            {currentConsent ? "Ativo" : "Inativo"}
                           </Badge>
                         </div>
                       </div>
-                      
+
                       {history.length > 0 ? (
                         <div className="space-y-2">
                           {history.slice(0, 3).map((consent, index) => (
-                            <div key={consent.id} className="flex items-center justify-between text-sm bg-gray-50 p-2 rounded">
+                            <div
+                              key={consent.id}
+                              className="flex items-center justify-between text-sm bg-gray-50 p-2 rounded"
+                            >
                               <div className="flex items-center gap-2">
-                                {consent.status === 'given' ? (
+                                {consent.status === "given" ? (
                                   <CheckCircle className="h-4 w-4 text-green-600" />
                                 ) : (
                                   <XCircle className="h-4 w-4 text-red-600" />
                                 )}
                                 <span>
-                                  {consent.status === 'given' ? 'Consentimento dado' : 'Consentimento retirado'}
+                                  {consent.status === "given"
+                                    ? "Consentimento dado"
+                                    : "Consentimento retirado"}
                                 </span>
                               </div>
                               <span className="text-gray-500">
-                                {new Date(consent.created_at).toLocaleDateString('pt-BR')}
+                                {new Date(consent.created_at).toLocaleDateString("pt-BR")}
                               </span>
                             </div>
                           ))}
@@ -412,7 +422,7 @@ export function PrivacyPreferences({
                         <p className="text-sm text-gray-500">Nenhum histórico disponível</p>
                       )}
                     </div>
-                  )
+                  );
                 })}
               </div>
             </CardContent>
@@ -426,9 +436,7 @@ export function PrivacyPreferences({
                 <FileText className="h-5 w-5" />
                 Seus Direitos LGPD
               </CardTitle>
-              <CardDescription>
-                Conheça e exerça seus direitos de proteção de dados
-              </CardDescription>
+              <CardDescription>Conheça e exerça seus direitos de proteção de dados</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -445,7 +453,7 @@ export function PrivacyPreferences({
                     Solicitar Dados
                   </Button>
                 </div>
-                
+
                 <div className="p-4 border rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
                     <Settings className="h-5 w-5 text-green-600" />
@@ -459,7 +467,7 @@ export function PrivacyPreferences({
                     Corrigir Dados
                   </Button>
                 </div>
-                
+
                 <div className="p-4 border rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
                     <Trash2 className="h-5 w-5 text-red-600" />
@@ -473,7 +481,7 @@ export function PrivacyPreferences({
                     Excluir Dados
                   </Button>
                 </div>
-                
+
                 <div className="p-4 border rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
                     <Lock className="h-5 w-5 text-purple-600" />
@@ -488,16 +496,16 @@ export function PrivacyPreferences({
                   </Button>
                 </div>
               </div>
-              
+
               <Separator />
-              
+
               <div className="bg-blue-50 p-4 rounded-lg">
                 <h4 className="font-medium text-blue-900 mb-2 flex items-center gap-2">
                   <Info className="h-4 w-4" />
                   Como exercer seus direitos
                 </h4>
                 <p className="text-sm text-blue-800 mb-3">
-                  Para exercer qualquer um dos seus direitos LGPD, entre em contato conosco através 
+                  Para exercer qualquer um dos seus direitos LGPD, entre em contato conosco através
                   dos canais oficiais. Responderemos sua solicitação em até 15 dias úteis.
                 </p>
                 <div className="flex gap-2">
@@ -516,5 +524,5 @@ export function PrivacyPreferences({
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }

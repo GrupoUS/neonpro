@@ -1,9 +1,9 @@
 // components/landing/footer.tsx
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { 
+import type { Badge } from "@/components/ui/badge";
+import type { Separator } from "@/components/ui/separator";
+import type {
   Shield,
   Mail,
   Phone,
@@ -16,7 +16,7 @@ import {
   Facebook,
   Instagram,
   Linkedin,
-  Youtube
+  Youtube,
 } from "lucide-react";
 
 export function Footer() {
@@ -25,26 +25,26 @@ export function Footer() {
       title: "Política de Privacidade",
       description: "Como protegemos seus dados",
       href: "/privacy-policy",
-      icon: Lock
+      icon: Lock,
     },
     {
       title: "Termos de Uso",
       description: "Condições de utilização",
-      href: "/terms-of-service", 
-      icon: FileText
+      href: "/terms-of-service",
+      icon: FileText,
     },
     {
       title: "Compliance LGPD",
       description: "Conformidade Lei 13.709/2018",
       href: "/lgpd-compliance",
-      icon: Shield
+      icon: Shield,
     },
     {
       title: "Certificação ANVISA",
       description: "Dispositivo médico aprovado",
       href: "/anvisa-certification",
-      icon: Award
-    }
+      icon: Award,
+    },
   ];
 
   const quickLinks = [
@@ -55,7 +55,7 @@ export function Footer() {
     { title: "Blog", href: "/blog" },
     { title: "Ajuda", href: "/help" },
     { title: "Status", href: "/status" },
-    { title: "API", href: "/api-docs" }
+    { title: "API", href: "/api-docs" },
   ];
 
   const solutions = [
@@ -64,14 +64,14 @@ export function Footer() {
     { title: "Cirurgia Plástica", href: "/solutions/plastic-surgery" },
     { title: "Beleza e Bem-estar", href: "/solutions/beauty" },
     { title: "Telemedicina", href: "/solutions/telemedicine" },
-    { title: "Gestão Multi-clínicas", href: "/solutions/multi-clinic" }
+    { title: "Gestão Multi-clínicas", href: "/solutions/multi-clinic" },
   ];
 
   const socialLinks = [
     { icon: Facebook, href: "https://facebook.com/neonpro", label: "Facebook" },
     { icon: Instagram, href: "https://instagram.com/neonpro", label: "Instagram" },
     { icon: Linkedin, href: "https://linkedin.com/company/neonpro", label: "LinkedIn" },
-    { icon: Youtube, href: "https://youtube.com/neonpro", label: "YouTube" }
+    { icon: Youtube, href: "https://youtube.com/neonpro", label: "YouTube" },
   ];
 
   return (
@@ -91,8 +91,8 @@ export function Footer() {
             </div>
 
             <p className="text-slate-300 leading-relaxed">
-              Plataforma brasileira de saúde digital com IA, compliance automático 
-              e ferramentas especializadas para clínicas estéticas.
+              Plataforma brasileira de saúde digital com IA, compliance automático e ferramentas
+              especializadas para clínicas estéticas.
             </p>
 
             {/* Contact Info */}
@@ -112,7 +112,8 @@ export function Footer() {
               <div className="flex items-start space-x-3">
                 <MapPin className="h-4 w-4 text-red-400 mt-0.5" />
                 <span className="text-sm text-slate-300">
-                  São Paulo, SP<br />
+                  São Paulo, SP
+                  <br />
                   Brasil
                 </span>
               </div>
@@ -186,9 +187,7 @@ export function Footer() {
                     <h4 className="text-sm font-medium text-white group-hover:text-sky-300">
                       {link.title}
                     </h4>
-                    <p className="text-xs text-slate-400">
-                      {link.description}
-                    </p>
+                    <p className="text-xs text-slate-400">{link.description}</p>
                   </div>
                   <ExternalLink className="h-3 w-3 text-slate-500 group-hover:text-slate-300 flex-shrink-0 mt-1" />
                 </a>
@@ -236,9 +235,7 @@ export function Footer() {
           <div className="text-right space-y-2">
             <div className="flex justify-end items-center space-x-2">
               <Shield className="h-4 w-4 text-green-400" />
-              <span className="text-sm text-slate-300">
-                Sistema em conformidade com LGPD
-              </span>
+              <span className="text-sm text-slate-300">Sistema em conformidade com LGPD</span>
             </div>
             <p className="text-xs text-slate-400">
               Dados protegidos com criptografia AES-256 | Servidores no Brasil
@@ -255,37 +252,36 @@ export function Footer() {
                 Compromisso com a Privacidade e Segurança
               </h4>
               <p className="text-xs text-slate-300 leading-relaxed">
-                O NeonPro processa dados pessoais de saúde em estrita conformidade com a 
-                Lei Geral de Proteção de Dados (LGPD - Lei 13.709/2018), regulamentações 
-                da ANVISA para dispositivos médicos, e Resolução CFM 2.314/2022 para 
-                telemedicina. Todos os dados são criptografados, armazenados em servidores 
-                brasileiros certificados, e acessados apenas por profissionais autorizados 
-                para finalidades médicas legítimas.
+                O NeonPro processa dados pessoais de saúde em estrita conformidade com a Lei Geral
+                de Proteção de Dados (LGPD - Lei 13.709/2018), regulamentações da ANVISA para
+                dispositivos médicos, e Resolução CFM 2.314/2022 para telemedicina. Todos os dados
+                são criptografados, armazenados em servidores brasileiros certificados, e acessados
+                apenas por profissionais autorizados para finalidades médicas legítimas.
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
-                <a 
-                  href="/privacy-policy" 
+                <a
+                  href="/privacy-policy"
                   className="text-xs text-sky-400 hover:text-sky-300 underline"
                 >
                   Política de Privacidade
                 </a>
                 <span className="text-slate-500">•</span>
-                <a 
-                  href="/data-processing" 
+                <a
+                  href="/data-processing"
                   className="text-xs text-sky-400 hover:text-sky-300 underline"
                 >
                   Tratamento de Dados
                 </a>
                 <span className="text-slate-500">•</span>
-                <a 
-                  href="/patient-rights" 
+                <a
+                  href="/patient-rights"
                   className="text-xs text-sky-400 hover:text-sky-300 underline"
                 >
                   Direitos do Titular
                 </a>
                 <span className="text-slate-500">•</span>
-                <a 
-                  href="/dpo-contact" 
+                <a
+                  href="/dpo-contact"
                   className="text-xs text-sky-400 hover:text-sky-300 underline"
                 >
                   Contato DPO
@@ -298,9 +294,8 @@ export function Footer() {
         {/* Development Attribution */}
         <div className="mt-6 pt-6 border-t border-slate-700 text-center">
           <p className="text-xs text-slate-500">
-            Desenvolvido com ❤️ para o setor de saúde brasileiro | 
-            Infraestrutura: Vercel + Supabase | 
-            Monitoramento: 99.9% uptime
+            Desenvolvido com ❤️ para o setor de saúde brasileiro | Infraestrutura: Vercel + Supabase
+            | Monitoramento: 99.9% uptime
           </p>
         </div>
       </div>

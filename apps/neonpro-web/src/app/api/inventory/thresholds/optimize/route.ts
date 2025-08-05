@@ -1,9 +1,9 @@
 // API Routes for Threshold Optimization Analysis
 // Story 6.2: Automated Reorder Alerts + Threshold Management
 
-import { IntelligentThresholdService } from '@/app/lib/services/intelligent-threshold-service';
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
+import type { IntelligentThresholdService } from "@/app/lib/services/intelligent-threshold-service";
+import type { NextRequest, NextResponse } from "next/server";
+import type { z } from "zod";
 
 const thresholdService = new IntelligentThresholdService();
 
@@ -26,33 +26,36 @@ export async function GET(request: NextRequest) {
       summary: {
         total_items_analyzed: optimizations.length,
         potential_savings: optimizations.reduce((sum, opt) => sum + opt.potential_savings, 0),
-        high_priority_items: optimizations.filter(opt => opt.implementation_priority === 'high').length,
-        average_confidence: optimizations.length > 0 
-          ? optimizations.reduce((sum, opt) => sum + opt.confidence_score, 0) / optimizations.length 
-          : 0,
+        high_priority_items: optimizations.filter((opt) => opt.implementation_priority === "high")
+          .length,
+        average_confidence:
+          optimizations.length > 0
+            ? optimizations.reduce((sum, opt) => sum + opt.confidence_score, 0) /
+              optimizations.length
+            : 0,
       },
     });
   } catch (error: any) {
-    console.error('Error analyzing threshold optimization:', error);
-    
+    console.error("Error analyzing threshold optimization:", error);
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Invalid parameters',
-          details: error.errors 
+        {
+          success: false,
+          error: "Invalid parameters",
+          details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to analyze threshold optimization',
-        details: error.message 
+      {
+        success: false,
+        error: "Failed to analyze threshold optimization",
+        details: error.message,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

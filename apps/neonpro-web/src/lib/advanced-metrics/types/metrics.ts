@@ -55,21 +55,21 @@ export interface AdvancedMetricsResult {
 // METRIC DEFINITIONS
 // ====================================================================
 
-export type MetricType = 
-  | 'engagement_advanced'
-  | 'satisfaction_detailed'
-  | 'conversion_funnel'
-  | 'churn_prediction'
-  | 'lifetime_value'
-  | 'communication_effectiveness'
-  | 'channel_performance'
-  | 'content_performance'
-  | 'timing_effectiveness'
-  | 'cost_efficiency'
-  | 'compliance_score'
-  | 'quality_index'
-  | 'roi_advanced'
-  | 'custom';
+export type MetricType =
+  | "engagement_advanced"
+  | "satisfaction_detailed"
+  | "conversion_funnel"
+  | "churn_prediction"
+  | "lifetime_value"
+  | "communication_effectiveness"
+  | "channel_performance"
+  | "content_performance"
+  | "timing_effectiveness"
+  | "cost_efficiency"
+  | "compliance_score"
+  | "quality_index"
+  | "roi_advanced"
+  | "custom";
 
 export interface MetricConfig {
   type: MetricType;
@@ -87,9 +87,9 @@ export interface CalculatedMetric {
   value: number;
   unit: string;
   trend: {
-    direction: 'up' | 'down' | 'stable';
+    direction: "up" | "down" | "stable";
     magnitude: number;
-    significance: 'low' | 'medium' | 'high';
+    significance: "low" | "medium" | "high";
   };
   breakdown: MetricBreakdown[];
   confidence: number;
@@ -170,7 +170,7 @@ export interface SegmentEngagement {
 
 export interface TemporalEngagement {
   timeframe: string;
-  granularity: 'hour' | 'day' | 'week' | 'month';
+  granularity: "hour" | "day" | "week" | "month";
   engagement: OverallEngagement;
   patterns: TemporalPattern[];
   seasonality: SeasonalityData;
@@ -314,7 +314,7 @@ export interface PredictiveMetrics {
 
 export interface ChurnPrediction {
   riskScore: number;
-  riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  riskLevel: "low" | "medium" | "high" | "critical";
   predictedChurnDate: Date;
   confidence: number;
   factors: ChurnFactor[];
@@ -378,7 +378,7 @@ export interface ComplianceMetrics {
 
 export interface ComplianceScore {
   score: number;
-  level: 'non_compliant' | 'partially_compliant' | 'compliant' | 'fully_compliant';
+  level: "non_compliant" | "partially_compliant" | "compliant" | "fully_compliant";
   requirements: ComplianceRequirement[];
   violations: ComplianceViolation[];
   remediation: RemediationPlan[];
@@ -393,7 +393,7 @@ export interface BenchmarkingConfig {
   sources: BenchmarkSource[];
   metrics: BenchmarkMetric[];
   segments: BenchmarkSegment[];
-  frequency: 'real_time' | 'daily' | 'weekly' | 'monthly';
+  frequency: "real_time" | "daily" | "weekly" | "monthly";
 }
 
 export interface BenchmarkComparison {
@@ -402,12 +402,12 @@ export interface BenchmarkComparison {
   benchmarkValue: number;
   percentile: number;
   gap: number;
-  performance: 'below' | 'at' | 'above';
+  performance: "below" | "at" | "above";
   insights: BenchmarkInsight[];
 }
 
 export interface BenchmarkSource {
-  type: 'industry' | 'region' | 'size' | 'specialty' | 'custom';
+  type: "industry" | "region" | "size" | "specialty" | "custom";
   identifier: string;
   confidence: number;
   lastUpdated: Date;
@@ -428,12 +428,12 @@ export interface TrendAnalysis {
 }
 
 export interface TrendData {
-  direction: 'increasing' | 'decreasing' | 'stable' | 'volatile';
+  direction: "increasing" | "decreasing" | "stable" | "volatile";
   magnitude: number;
   velocity: number;
   acceleration: number;
   confidence: number;
-  significance: 'low' | 'medium' | 'high';
+  significance: "low" | "medium" | "high";
 }
 
 export interface SeasonalityData {
@@ -449,7 +449,7 @@ export interface AnomalyData {
   value: number;
   expectedValue: number;
   deviation: number;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   type: AnomalyType;
   explanation: string[];
 }
@@ -464,7 +464,7 @@ export interface MetricInsight {
   description: string;
   confidence: number;
   impact: ImpactScore;
-  urgency: 'low' | 'medium' | 'high' | 'critical';
+  urgency: "low" | "medium" | "high" | "critical";
   evidence: Evidence[];
   recommendations: string[];
   relatedMetrics: string[];
@@ -510,13 +510,13 @@ export interface FilterConfig {
   field: string;
   operator: FilterOperator;
   value: any;
-  logic?: 'and' | 'or';
+  logic?: "and" | "or";
 }
 
 export interface AggregationConfig {
   type: AggregationType;
   timeframe: string;
-  granularity: 'minute' | 'hour' | 'day' | 'week' | 'month' | 'quarter' | 'year';
+  granularity: "minute" | "hour" | "day" | "week" | "month" | "quarter" | "year";
   fillGaps: boolean;
 }
 
@@ -527,7 +527,7 @@ export interface ComparisonConfig {
 }
 
 export interface AggregationSettings {
-  defaultGranularity: 'hour' | 'day' | 'week' | 'month';
+  defaultGranularity: "hour" | "day" | "week" | "month";
   aggregationMethods: Record<MetricType, AggregationType>;
   customAggregations: CustomAggregation[];
 }
@@ -550,10 +550,10 @@ export interface DataRetentionConfig {
 
 export interface CalculationSettings {
   precision: number;
-  roundingMode: 'floor' | 'ceil' | 'round';
+  roundingMode: "floor" | "ceil" | "round";
   confidenceInterval: number;
   significanceLevel: number;
-  outlierHandling: 'include' | 'exclude' | 'cap';
+  outlierHandling: "include" | "exclude" | "cap";
 }
 
 export interface ExportSettings {
@@ -567,113 +567,92 @@ export interface ExportSettings {
 // SUPPORTING TYPES
 // ====================================================================
 
-export type DimensionType = 
-  | 'temporal'
-  | 'demographic'
-  | 'behavioral'
-  | 'channel'
-  | 'content'
-  | 'journey'
-  | 'segment'
-  | 'geographic'
-  | 'device'
-  | 'custom';
+export type DimensionType =
+  | "temporal"
+  | "demographic"
+  | "behavioral"
+  | "channel"
+  | "content"
+  | "journey"
+  | "segment"
+  | "geographic"
+  | "device"
+  | "custom";
 
-export type AggregationType = 
-  | 'sum'
-  | 'average'
-  | 'median'
-  | 'mode'
-  | 'min'
-  | 'max'
-  | 'count'
-  | 'distinct'
-  | 'percentile'
-  | 'weighted_average'
-  | 'custom';
+export type AggregationType =
+  | "sum"
+  | "average"
+  | "median"
+  | "mode"
+  | "min"
+  | "max"
+  | "count"
+  | "distinct"
+  | "percentile"
+  | "weighted_average"
+  | "custom";
 
-export type FilterOperator = 
-  | 'equals'
-  | 'not_equals'
-  | 'greater_than'
-  | 'less_than'
-  | 'greater_equal'
-  | 'less_equal'
-  | 'in'
-  | 'not_in'
-  | 'contains'
-  | 'not_contains'
-  | 'starts_with'
-  | 'ends_with'
-  | 'regex'
-  | 'is_null'
-  | 'is_not_null';
+export type FilterOperator =
+  | "equals"
+  | "not_equals"
+  | "greater_than"
+  | "less_than"
+  | "greater_equal"
+  | "less_equal"
+  | "in"
+  | "not_in"
+  | "contains"
+  | "not_contains"
+  | "starts_with"
+  | "ends_with"
+  | "regex"
+  | "is_null"
+  | "is_not_null";
 
-export type ComparisonType = 
-  | 'period_over_period'
-  | 'year_over_year'
-  | 'vs_target'
-  | 'vs_benchmark'
-  | 'vs_forecast'
-  | 'custom';
+export type ComparisonType =
+  | "period_over_period"
+  | "year_over_year"
+  | "vs_target"
+  | "vs_benchmark"
+  | "vs_forecast"
+  | "custom";
 
-export type InsightType = 
-  | 'trend'
-  | 'anomaly'
-  | 'correlation'
-  | 'pattern'
-  | 'opportunity'
-  | 'risk'
-  | 'optimization'
-  | 'prediction';
+export type InsightType =
+  | "trend"
+  | "anomaly"
+  | "correlation"
+  | "pattern"
+  | "opportunity"
+  | "risk"
+  | "optimization"
+  | "prediction";
 
-export type RecommendationType = 
-  | 'optimization'
-  | 'enhancement'
-  | 'fix'
-  | 'experiment'
-  | 'strategy'
-  | 'tactical'
-  | 'preventive'
-  | 'corrective';
+export type RecommendationType =
+  | "optimization"
+  | "enhancement"
+  | "fix"
+  | "experiment"
+  | "strategy"
+  | "tactical"
+  | "preventive"
+  | "corrective";
 
-export type AlertType = 
-  | 'threshold'
-  | 'anomaly'
-  | 'trend'
-  | 'quality'
-  | 'compliance'
-  | 'performance'
-  | 'system';
+export type AlertType =
+  | "threshold"
+  | "anomaly"
+  | "trend"
+  | "quality"
+  | "compliance"
+  | "performance"
+  | "system";
 
-export type AlertSeverity = 
-  | 'info'
-  | 'warning'
-  | 'error'
-  | 'critical';
+export type AlertSeverity = "info" | "warning" | "error" | "critical";
 
-export type EffortLevel = 
-  | 'minimal'
-  | 'low'
-  | 'medium'
-  | 'high'
-  | 'significant';
+export type EffortLevel = "minimal" | "low" | "medium" | "high" | "significant";
 
-export type AnomalyType = 
-  | 'spike'
-  | 'dip'
-  | 'shift'
-  | 'drift'
-  | 'seasonal'
-  | 'outlier';
+export type AnomalyType = "spike" | "dip" | "shift" | "drift" | "seasonal" | "outlier";
 
-export type ExportFormat = 
-  | 'csv'
-  | 'xlsx'
-  | 'pdf'
-  | 'json'
-  | 'xml'
-  | 'api';
+export type ExportFormat = "csv" | "xlsx" | "pdf" | "json" | "xml" | "api";
 
 // ====================================================================
 // COMPLEX TYPES
@@ -702,7 +681,7 @@ export interface DataQualityScore {
 
 export interface DataQualityIssue {
   type: string;
-  severity: 'low' | 'medium' | 'high';
+  severity: "low" | "medium" | "high";
   description: string;
   affectedRecords: number;
   resolution: string;
@@ -728,7 +707,7 @@ export interface ImpactScore {
 }
 
 export interface Evidence {
-  type: 'metric' | 'correlation' | 'pattern' | 'benchmark' | 'historical';
+  type: "metric" | "correlation" | "pattern" | "benchmark" | "historical";
   source: string;
   value: any;
   confidence: number;
@@ -753,7 +732,7 @@ export interface ImplementationStep {
 }
 
 export interface RequiredResource {
-  type: 'human' | 'technical' | 'financial' | 'external';
+  type: "human" | "technical" | "financial" | "external";
   name: string;
   quantity: number;
   unit: string;
@@ -970,7 +949,7 @@ export interface ThresholdCondition {
 }
 
 export interface BaselineConfig {
-  type: 'historical' | 'target' | 'benchmark' | 'forecast';
+  type: "historical" | "target" | "benchmark" | "forecast";
   period?: { start: Date; end: Date };
   value?: number;
   source?: string;
@@ -978,7 +957,7 @@ export interface BaselineConfig {
 
 export interface TargetConfig {
   value: number;
-  type: 'absolute' | 'relative' | 'percentile';
+  type: "absolute" | "relative" | "percentile";
   confidence?: number;
   source: string;
 }
@@ -1000,7 +979,7 @@ export interface SatisfactionTrend {
   period: string;
   score: number;
   change: number;
-  significance: 'low' | 'medium' | 'high';
+  significance: "low" | "medium" | "high";
 }
 
 export interface SatisfactionFactor {
@@ -1017,14 +996,14 @@ export interface SatisfactionFactor {
 export interface ExportSchedule {
   id: string;
   name: string;
-  frequency: 'daily' | 'weekly' | 'monthly' | 'quarterly';
+  frequency: "daily" | "weekly" | "monthly" | "quarterly";
   time: string;
   timezone: string;
   enabled: boolean;
 }
 
 export interface ExportDestination {
-  type: 'email' | 'ftp' | 'api' | 'storage';
+  type: "email" | "ftp" | "api" | "storage";
   configuration: Record<string, any>;
   credentials?: Record<string, any>;
 }
@@ -1046,7 +1025,7 @@ export interface ExportStructure {
 
 export interface ExportSection {
   title: string;
-  type: 'summary' | 'detail' | 'chart' | 'table' | 'narrative';
+  type: "summary" | "detail" | "chart" | "table" | "narrative";
   content: string;
   order: number;
 }
@@ -1067,14 +1046,14 @@ export interface TableConfig {
 export interface TableColumn {
   key: string;
   title: string;
-  type: 'text' | 'number' | 'date' | 'percentage' | 'currency';
+  type: "text" | "number" | "date" | "percentage" | "currency";
   format?: string;
   sortable: boolean;
 }
 
 export interface SortConfig {
   column: string;
-  direction: 'asc' | 'desc';
+  direction: "asc" | "desc";
 }
 
 export interface FormattingConfig {
@@ -1099,7 +1078,7 @@ export interface FontConfig {
 }
 
 export interface LayoutConfig {
-  orientation: 'portrait' | 'landscape';
+  orientation: "portrait" | "landscape";
   margins: { top: number; right: number; bottom: number; left: number };
   spacing: number;
 }

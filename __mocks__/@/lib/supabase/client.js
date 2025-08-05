@@ -32,7 +32,7 @@ const mockSupabase = {
       upload: jest.fn().mockResolvedValue({ data: null, error: null }),
       download: jest.fn().mockResolvedValue({ data: null, error: null }),
       remove: jest.fn().mockResolvedValue({ data: null, error: null }),
-      getPublicUrl: jest.fn().mockReturnValue({ data: { publicUrl: 'mock-url' } }),
+      getPublicUrl: jest.fn().mockReturnValue({ data: { publicUrl: "mock-url" } }),
     })),
   },
   realtime: {

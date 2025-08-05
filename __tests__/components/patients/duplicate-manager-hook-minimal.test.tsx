@@ -13,9 +13,7 @@ const mockDuplicates = [
 describe("DuplicateManagerHookMinimal", () => {
   it("renders with hook state", () => {
     render(<DuplicateManagerHookMinimal duplicates={mockDuplicates} />);
-    expect(
-      screen.getByText("Hook Minimal Duplicate Manager")
-    ).toBeInTheDocument();
+    expect(screen.getByText("Hook Minimal Duplicate Manager")).toBeInTheDocument();
   });
 
   it("handles hook state changes", () => {

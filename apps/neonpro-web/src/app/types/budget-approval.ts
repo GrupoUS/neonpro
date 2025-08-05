@@ -219,7 +219,7 @@ export interface CreateApprovalRequest {
 }
 
 export interface ProcessApprovalRequest {
-  action: 'approve' | 'reject' | 'escalate';
+  action: "approve" | "reject" | "escalate";
   reason?: string;
   escalation_reason?: string;
 }
@@ -329,8 +329,8 @@ export interface ApprovalWorkflowAnalytics {
 // =====================================================================================
 
 export interface BudgetOptimizationRecommendation {
-  type: 'reallocation' | 'increase' | 'decrease' | 'consolidation';
-  priority: 'high' | 'medium' | 'low';
+  type: "reallocation" | "increase" | "decrease" | "consolidation";
+  priority: "high" | "medium" | "low";
   budget_id: string;
   budget_name: string;
   current_allocation: number;
@@ -338,8 +338,8 @@ export interface BudgetOptimizationRecommendation {
   potential_savings: number;
   reasoning: string;
   impact_analysis: string;
-  implementation_effort: 'low' | 'medium' | 'high';
-  risk_level: 'low' | 'medium' | 'high';
+  implementation_effort: "low" | "medium" | "high";
+  risk_level: "low" | "medium" | "high";
   confidence_score: number; // 0-1
 }
 
@@ -364,8 +364,8 @@ export interface BudgetForecast {
 
 export interface BudgetNotification {
   id: string;
-  type: 'budget_alert' | 'approval_request' | 'variance_alert' | 'budget_exhausted';
-  severity: 'info' | 'warning' | 'error' | 'critical';
+  type: "budget_alert" | "approval_request" | "variance_alert" | "budget_exhausted";
+  severity: "info" | "warning" | "error" | "critical";
   title: string;
   message: string;
   budget_id?: string;

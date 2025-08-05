@@ -5,8 +5,8 @@
  * Adiciona logs detalhados para identificar problemas de sessão
  */
 
-console.log('🔍 DEBUG AUTH FLOW - Instruções para Produção');
-console.log('='.repeat(60));
+console.log("🔍 DEBUG AUTH FLOW - Instruções para Produção");
+console.log("=".repeat(60));
 
 console.log(`
 📋 INSTRUÇÕES PARA DEBUG EM PRODUÇÃO:
@@ -88,5 +88,5 @@ Se não há logs de callback:
 → Problema de redirecionamento do Google/Supabase
 `);
 
-console.log('\n✅ INSTRUÇÕES COMPLETAS');
-console.log('Execute o teste acima e reporte os resultados para diagnóstico preciso.');
+console.log("\n✅ INSTRUÇÕES COMPLETAS");
+console.log("Execute o teste acima e reporte os resultados para diagnóstico preciso.");

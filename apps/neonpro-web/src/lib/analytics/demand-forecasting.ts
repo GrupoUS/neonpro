@@ -24,9 +24,15 @@ export async function generateForecast(config: ForecastConfig): Promise<DemandFo
 export async function validateForecastAccuracy(forecasts: DemandForecast[]): Promise<number> {
   // Temporary implementation for build compatibility
   return 0.8;
-}// Export do DemandForecastingEngine para analytics
+} // Export do DemandForecastingEngine para analytics
 export class DemandForecastingEngine {
-  static analyze() { return {}; }
-  static predict() { return {}; }
-  static calculate() { return {}; }
+  static analyze() {
+    return {};
+  }
+  static predict() {
+    return {};
+  }
+  static calculate() {
+    return {};
+  }
 }

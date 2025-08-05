@@ -6,14 +6,14 @@
 
 "use client";
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { useBarcode } from "@/hooks/inventory/use-barcode";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Input } from "@/components/ui/input";
+import type { useBarcode } from "@/hooks/inventory/use-barcode";
 import type { BarcodeResult, ScannerError } from "@/lib/types/inventory";
-import {
+import type {
   AlertCircle,
   Camera,
   CameraOff,
@@ -178,12 +178,7 @@ export function BarcodeScanner({
               <AlertCircle className="h-4 w-4" />
               <AlertDescription className="flex items-center justify-between">
                 {error.message}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={clearError}
-                  className="ml-2"
-                >
+                <Button variant="ghost" size="sm" onClick={clearError} className="ml-2">
                   <X className="h-4 w-4" />
                 </Button>
               </AlertDescription>
@@ -224,9 +219,7 @@ export function BarcodeScanner({
                 <div className="absolute top-2 left-2 right-2">
                   <div className="bg-green-500 text-white px-3 py-2 rounded-lg shadow-lg flex items-center gap-2">
                     <CheckCircle className="h-4 w-4" />
-                    <span className="text-sm font-medium truncate">
-                      {lastResult.data}
-                    </span>
+                    <span className="text-sm font-medium truncate">{lastResult.data}</span>
                   </div>
                 </div>
               )}
@@ -255,21 +248,13 @@ export function BarcodeScanner({
               </Button>
 
               {availableCameras.length > 1 && (
-                <Button
-                  onClick={switchCamera}
-                  variant="outline"
-                  disabled={!isInitialized}
-                >
+                <Button onClick={switchCamera} variant="outline" disabled={!isInitialized}>
                   <RotateCw className="h-4 w-4 mr-2" />
                   Switch Camera
                 </Button>
               )}
 
-              <Button
-                onClick={toggleFlashlight}
-                variant="outline"
-                disabled={!isScanning}
-              >
+              <Button onClick={toggleFlashlight} variant="outline" disabled={!isScanning}>
                 {flashlightOn ? (
                   <>
                     <FlashlightOff className="h-4 w-4 mr-2" />
@@ -284,10 +269,7 @@ export function BarcodeScanner({
               </Button>
 
               {showManualInput && (
-                <Button
-                  onClick={() => setShowManualEntry(!showManualEntry)}
-                  variant="outline"
-                >
+                <Button onClick={() => setShowManualEntry(!showManualEntry)} variant="outline">
                   <Keyboard className="h-4 w-4 mr-2" />
                   Manual Entry
                 </Button>
@@ -310,15 +292,10 @@ export function BarcodeScanner({
                     value={manualInput}
                     onChange={(e) => setManualInput(e.target.value)}
                     placeholder="Enter barcode manually..."
-                    onKeyPress={(e) =>
-                      e.key === "Enter" && handleManualSubmit()
-                    }
+                    onKeyPress={(e) => e.key === "Enter" && handleManualSubmit()}
                     className="flex-1"
                   />
-                  <Button
-                    onClick={handleManualSubmit}
-                    disabled={!manualInput.trim()}
-                  >
+                  <Button onClick={handleManualSubmit} disabled={!manualInput.trim()}>
                     Submit
                   </Button>
                 </div>
@@ -330,9 +307,7 @@ export function BarcodeScanner({
           {showHistory && scanHistory.length > 0 && (
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm">
-                  Recent Scans ({scanHistory.length})
-                </CardTitle>
+                <CardTitle className="text-sm">Recent Scans ({scanHistory.length})</CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
                 <div className="space-y-2 max-h-48 overflow-y-auto">
@@ -345,9 +320,7 @@ export function BarcodeScanner({
                         <Badge variant="outline" className="text-xs">
                           {scan.format}
                         </Badge>
-                        <span className="font-mono truncate max-w-48">
-                          {scan.data}
-                        </span>
+                        <span className="font-mono truncate max-w-48">{scan.data}</span>
                       </div>
                       <span className="text-gray-500 text-xs">
                         {formatTimestamp(scan.timestamp)}

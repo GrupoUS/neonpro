@@ -3,13 +3,13 @@
 // Author: Dev Agent
 // Date: 2025-01-26
 
-import { createClient } from '@supabase/supabase-js';
+import type { createClient } from "@supabase/supabase-js";
 import type {
   DrillDownRequest,
   DrillDownResult,
   FinancialKPI,
   DashboardFilters,
-} from '@/lib/types/kpi-types';
+} from "@/lib/types/kpi-types";
 
 export interface DrillDownContext {
   breadcrumbs: Array<{
@@ -21,7 +21,7 @@ export interface DrillDownContext {
   filters: Record<string, any>;
   aggregationLevel: string;
   sortBy: string;
-  sortOrder: 'asc' | 'desc';
+  sortOrder: "asc" | "desc";
 }
 
 export interface DrillDownPath {
@@ -36,10 +36,7 @@ export class DrillDownSystem {
   private cache: Map<string, { data: any; timestamp: number }>;
 
   constructor() {
-    this.supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_ANON_KEY!
-    );
+    this.supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
     this.cache = new Map();
   }
 
@@ -52,10 +49,10 @@ export class DrillDownSystem {
       aggregationLevel?: string;
       limit?: number;
       sortBy?: string;
-      sortOrder?: 'asc' | 'desc';
+      sortOrder?: "asc" | "desc";
       includeSubDimensions?: boolean;
       includeTransactionDetails?: boolean;
-    } = {}
+    } = {},
   ): Promise<{
     results: DrillDownResult[];
     context: DrillDownContext;
@@ -68,18 +65,18 @@ export class DrillDownSystem {
     try {
       // Get KPI details
       const kpi = await this.getKPIDetails(kpiId);
-      if (!kpi) throw new Error('KPI not found');
+      if (!kpi) throw new Error("KPI not found");
 
       // Determine drill-down strategy based on KPI category and dimension
       const strategy = this.getDrillDownStrategy(kpi, dimension);
-      
+
       // Execute drill-down analysis
       const results = await this.performDrillDown(kpi, dimension, filters, options);
-      
+
       // Generate context and navigation path
       const context = this.buildDrillDownContext(dimension, filters, options);
       const path = this.buildDrillDownPath(kpi, dimension, context.breadcrumbs.length);
-      
+
       // Add sub-dimensions if requested
       if (options.includeSubDimensions) {
         for (const result of results) {
@@ -88,7 +85,7 @@ export class DrillDownSystem {
       }
 
       const executionTime = Date.now() - startTime;
-      
+
       return {
         results: results.slice(0, options.limit || 50),
         context,
@@ -96,9 +93,8 @@ export class DrillDownSystem {
         totalCount: results.length,
         executionTime,
       };
-
     } catch (error) {
-      console.error('Drill-down execution error:', error);
+      console.error("Drill-down execution error:", error);
       throw error;
     }
   }
@@ -106,8 +102,8 @@ export class DrillDownSystem {
   // Time-based drill-down
   async drillDownByTime(
     kpi: FinancialKPI,
-    aggregationLevel: 'hour' | 'day' | 'week' | 'month' | 'quarter' | 'year',
-    filters: Record<string, any> = {}
+    aggregationLevel: "hour" | "day" | "week" | "month" | "quarter" | "year",
+    filters: Record<string, any> = {},
   ): Promise<DrillDownResult[]> {
     const cacheKey = `time_drill_${kpi.id}_${aggregationLevel}_${JSON.stringify(filters)}`;
     const cached = this.getFromCache(cacheKey);
@@ -117,35 +113,35 @@ export class DrillDownSystem {
     let groupBy: string;
 
     switch (aggregationLevel) {
-      case 'hour':
-        dateFormat = 'YYYY-MM-DD HH24:00:00';
+      case "hour":
+        dateFormat = "YYYY-MM-DD HH24:00:00";
         groupBy = "DATE_TRUNC('hour', created_at)";
         break;
-      case 'day':
-        dateFormat = 'YYYY-MM-DD';
+      case "day":
+        dateFormat = "YYYY-MM-DD";
         groupBy = "DATE_TRUNC('day', created_at)";
         break;
-      case 'week':
+      case "week":
         dateFormat = 'YYYY-"W"WW';
         groupBy = "DATE_TRUNC('week', created_at)";
         break;
-      case 'month':
-        dateFormat = 'YYYY-MM';
+      case "month":
+        dateFormat = "YYYY-MM";
         groupBy = "DATE_TRUNC('month', created_at)";
         break;
-      case 'quarter':
+      case "quarter":
         dateFormat = 'YYYY-"Q"Q';
         groupBy = "DATE_TRUNC('quarter', created_at)";
         break;
-      case 'year':
-        dateFormat = 'YYYY';
+      case "year":
+        dateFormat = "YYYY";
         groupBy = "DATE_TRUNC('year', created_at)";
         break;
     }
 
     const results: DrillDownResult[] = [];
 
-    if (kpi.kpi_category === 'revenue') {
+    if (kpi.kpi_category === "revenue") {
       const query = `
         SELECT 
           TO_CHAR(${groupBy}, '${dateFormat}') as period,
@@ -153,28 +149,30 @@ export class DrillDownSystem {
           COUNT(*) as transaction_count
         FROM invoices 
         WHERE status = 'paid'
-        ${filters.start_date ? `AND created_at >= '${filters.start_date}'` : ''}
-        ${filters.end_date ? `AND created_at <= '${filters.end_date}'` : ''}
-        ${filters.service_types ? `AND service_type = ANY(ARRAY[${filters.service_types.map((s: string) => `'${s}'`).join(',')}])` : ''}
+        ${filters.start_date ? `AND created_at >= '${filters.start_date}'` : ""}
+        ${filters.end_date ? `AND created_at <= '${filters.end_date}'` : ""}
+        ${filters.service_types ? `AND service_type = ANY(ARRAY[${filters.service_types.map((s: string) => `'${s}'`).join(",")}])` : ""}
         GROUP BY ${groupBy}
         ORDER BY ${groupBy} DESC
       `;
 
-      const { data, error } = await this.supabase.rpc('execute_sql', { query });
+      const { data, error } = await this.supabase.rpc("execute_sql", { query });
       if (error) throw error;
 
       const totalValue = data.reduce((sum: number, row: any) => sum + parseFloat(row.value), 0);
 
-      results.push(...data.map((row: any) => ({
-        dimension_value: row.period,
-        value: parseFloat(row.value),
-        percentage_of_total: totalValue ? (parseFloat(row.value) / totalValue) * 100 : 0,
-        transaction_count: parseInt(row.transaction_count),
-        metadata: {
-          aggregation_level: aggregationLevel,
-          period_start: row.period,
-        },
-      })));
+      results.push(
+        ...data.map((row: any) => ({
+          dimension_value: row.period,
+          value: parseFloat(row.value),
+          percentage_of_total: totalValue ? (parseFloat(row.value) / totalValue) * 100 : 0,
+          transaction_count: parseInt(row.transaction_count),
+          metadata: {
+            aggregation_level: aggregationLevel,
+            period_start: row.period,
+          },
+        })),
+      );
     }
 
     this.setCache(cacheKey, results);
@@ -184,7 +182,7 @@ export class DrillDownSystem {
   // Service type drill-down
   async drillDownByServiceType(
     kpi: FinancialKPI,
-    filters: Record<string, any> = {}
+    filters: Record<string, any> = {},
   ): Promise<DrillDownResult[]> {
     const cacheKey = `service_drill_${kpi.id}_${JSON.stringify(filters)}`;
     const cached = this.getFromCache(cacheKey);
@@ -192,52 +190,61 @@ export class DrillDownSystem {
 
     const results: DrillDownResult[] = [];
 
-    if (kpi.kpi_category === 'revenue' || kpi.kpi_category === 'profitability') {
+    if (kpi.kpi_category === "revenue" || kpi.kpi_category === "profitability") {
       let query = this.supabase
-        .from('invoices')
-        .select('service_type, amount, direct_costs')
-        .eq('status', 'paid');
+        .from("invoices")
+        .select("service_type, amount, direct_costs")
+        .eq("status", "paid");
 
-      if (filters.start_date) query = query.gte('created_at', filters.start_date);
-      if (filters.end_date) query = query.lte('created_at', filters.end_date);
-      if (filters.providers?.length) query = query.in('provider_id', filters.providers);
+      if (filters.start_date) query = query.gte("created_at", filters.start_date);
+      if (filters.end_date) query = query.lte("created_at", filters.end_date);
+      if (filters.providers?.length) query = query.in("provider_id", filters.providers);
 
       const { data, error } = await query;
       if (error) throw error;
 
       // Group by service type
-      const serviceGroups = data.reduce((acc, invoice) => {
-        const service = invoice.service_type || 'Unknown';
-        if (!acc[service]) {
-          acc[service] = {
-            revenue: 0,
-            costs: 0,
-            count: 0,
-          };
-        }
-        acc[service].revenue += invoice.amount;
-        acc[service].costs += invoice.direct_costs || 0;
-        acc[service].count += 1;
-        return acc;
-      }, {} as Record<string, any>);
-
-      const totalRevenue = Object.values(serviceGroups).reduce(
-        (sum: number, group: any) => sum + group.revenue, 0
+      const serviceGroups = data.reduce(
+        (acc, invoice) => {
+          const service = invoice.service_type || "Unknown";
+          if (!acc[service]) {
+            acc[service] = {
+              revenue: 0,
+              costs: 0,
+              count: 0,
+            };
+          }
+          acc[service].revenue += invoice.amount;
+          acc[service].costs += invoice.direct_costs || 0;
+          acc[service].count += 1;
+          return acc;
+        },
+        {} as Record<string, any>,
       );
 
-      results.push(...Object.entries(serviceGroups).map(([service, data]: [string, any]) => ({
-        dimension_value: service,
-        value: kpi.kpi_name === 'Gross Profit Margin' 
-          ? data.revenue ? ((data.revenue - data.costs) / data.revenue) * 100 : 0
-          : data.revenue,
-        percentage_of_total: totalRevenue ? (data.revenue / totalRevenue) * 100 : 0,
-        transaction_count: data.count,
-        metadata: {
-          revenue: data.revenue,
-          costs: data.costs,
-          profit_margin: data.revenue ? ((data.revenue - data.costs) / data.revenue) * 100 : 0,
-        },
-      })));
+      const totalRevenue = Object.values(serviceGroups).reduce(
+        (sum: number, group: any) => sum + group.revenue,
+        0,
+      );
+
+      results.push(
+        ...Object.entries(serviceGroups).map(([service, data]: [string, any]) => ({
+          dimension_value: service,
+          value:
+            kpi.kpi_name === "Gross Profit Margin"
+              ? data.revenue
+                ? ((data.revenue - data.costs) / data.revenue) * 100
+                : 0
+              : data.revenue,
+          percentage_of_total: totalRevenue ? (data.revenue / totalRevenue) * 100 : 0,
+          transaction_count: data.count,
+          metadata: {
+            revenue: data.revenue,
+            costs: data.costs,
+            profit_margin: data.revenue ? ((data.revenue - data.costs) / data.revenue) * 100 : 0,
+          },
+        })),
+      );
     }
 
     this.setCache(cacheKey, results);
@@ -247,7 +254,7 @@ export class DrillDownSystem {
   // Provider drill-down
   async drillDownByProvider(
     kpi: FinancialKPI,
-    filters: Record<string, any> = {}
+    filters: Record<string, any> = {},
   ): Promise<DrillDownResult[]> {
     const cacheKey = `provider_drill_${kpi.id}_${JSON.stringify(filters)}`;
     const cached = this.getFromCache(cacheKey);
@@ -256,69 +263,77 @@ export class DrillDownSystem {
     const results: DrillDownResult[] = [];
 
     // Get provider performance data
-    let query = this.supabase
-      .from('appointments')
-      .select(`
+    let query = this.supabase.from("appointments").select(`
         provider_id,
         providers(name),
         invoices(amount, direct_costs),
         status
       `);
 
-    if (filters.start_date) query = query.gte('created_at', filters.start_date);
-    if (filters.end_date) query = query.lte('created_at', filters.end_date);
-    if (filters.service_types?.length) query = query.in('service_type', filters.service_types);
+    if (filters.start_date) query = query.gte("created_at", filters.start_date);
+    if (filters.end_date) query = query.lte("created_at", filters.end_date);
+    if (filters.service_types?.length) query = query.in("service_type", filters.service_types);
 
     const { data, error } = await query;
     if (error) throw error;
 
     // Group by provider
-    const providerGroups = data.reduce((acc, appointment) => {
-      const providerId = appointment.provider_id;
-      const providerName = appointment.providers?.name || 'Unknown Provider';
-      
-      if (!acc[providerId]) {
-        acc[providerId] = {
-          name: providerName,
-          revenue: 0,
-          costs: 0,
-          appointments: 0,
-          completed: 0,
-        };
-      }
+    const providerGroups = data.reduce(
+      (acc, appointment) => {
+        const providerId = appointment.provider_id;
+        const providerName = appointment.providers?.name || "Unknown Provider";
 
-      acc[providerId].appointments += 1;
-      if (appointment.status === 'completed') {
-        acc[providerId].completed += 1;
-        if (appointment.invoices) {
-          acc[providerId].revenue += appointment.invoices.amount || 0;
-          acc[providerId].costs += appointment.invoices.direct_costs || 0;
+        if (!acc[providerId]) {
+          acc[providerId] = {
+            name: providerName,
+            revenue: 0,
+            costs: 0,
+            appointments: 0,
+            completed: 0,
+          };
         }
-      }
 
-      return acc;
-    }, {} as Record<string, any>);
+        acc[providerId].appointments += 1;
+        if (appointment.status === "completed") {
+          acc[providerId].completed += 1;
+          if (appointment.invoices) {
+            acc[providerId].revenue += appointment.invoices.amount || 0;
+            acc[providerId].costs += appointment.invoices.direct_costs || 0;
+          }
+        }
 
-    const totalRevenue = Object.values(providerGroups).reduce(
-      (sum: number, group: any) => sum + group.revenue, 0
+        return acc;
+      },
+      {} as Record<string, any>,
     );
 
-    results.push(...Object.entries(providerGroups).map(([providerId, data]: [string, any]) => ({
-      dimension_value: data.name,
-      value: kpi.kpi_category === 'revenue' ? data.revenue :
-             kpi.kpi_name === 'Appointment Utilization' ? 
-               data.appointments ? (data.completed / data.appointments) * 100 : 0 :
-             data.revenue,
-      percentage_of_total: totalRevenue ? (data.revenue / totalRevenue) * 100 : 0,
-      transaction_count: data.appointments,
-      metadata: {
-        provider_id: providerId,
-        revenue: data.revenue,
-        costs: data.costs,
-        appointments: data.appointments,
-        completion_rate: data.appointments ? (data.completed / data.appointments) * 100 : 0,
-      },
-    })));
+    const totalRevenue = Object.values(providerGroups).reduce(
+      (sum: number, group: any) => sum + group.revenue,
+      0,
+    );
+
+    results.push(
+      ...Object.entries(providerGroups).map(([providerId, data]: [string, any]) => ({
+        dimension_value: data.name,
+        value:
+          kpi.kpi_category === "revenue"
+            ? data.revenue
+            : kpi.kpi_name === "Appointment Utilization"
+              ? data.appointments
+                ? (data.completed / data.appointments) * 100
+                : 0
+              : data.revenue,
+        percentage_of_total: totalRevenue ? (data.revenue / totalRevenue) * 100 : 0,
+        transaction_count: data.appointments,
+        metadata: {
+          provider_id: providerId,
+          revenue: data.revenue,
+          costs: data.costs,
+          appointments: data.appointments,
+          completion_rate: data.appointments ? (data.completed / data.appointments) * 100 : 0,
+        },
+      })),
+    );
 
     this.setCache(cacheKey, results);
     return results;
@@ -327,7 +342,7 @@ export class DrillDownSystem {
   // Patient segment drill-down
   async drillDownByPatientSegment(
     kpi: FinancialKPI,
-    filters: Record<string, any> = {}
+    filters: Record<string, any> = {},
   ): Promise<DrillDownResult[]> {
     const cacheKey = `patient_drill_${kpi.id}_${JSON.stringify(filters)}`;
     const cached = this.getFromCache(cacheKey);
@@ -336,9 +351,7 @@ export class DrillDownSystem {
     const results: DrillDownResult[] = [];
 
     // Get patient data with segmentation
-    let query = this.supabase
-      .from('patients')
-      .select(`
+    let query = this.supabase.from("patients").select(`
         id,
         age,
         gender,
@@ -348,56 +361,66 @@ export class DrillDownSystem {
         invoices(amount)
       `);
 
-    if (filters.start_date) query = query.gte('created_at', filters.start_date);
-    if (filters.end_date) query = query.lte('created_at', filters.end_date);
+    if (filters.start_date) query = query.gte("created_at", filters.start_date);
+    if (filters.end_date) query = query.lte("created_at", filters.end_date);
 
     const { data, error } = await query;
     if (error) throw error;
 
     // Segment patients by age groups
-    const ageSegments = data.reduce((acc, patient) => {
-      let ageGroup: string;
-      const age = patient.age || 0;
-      
-      if (age < 18) ageGroup = 'Under 18';
-      else if (age < 30) ageGroup = '18-29';
-      else if (age < 45) ageGroup = '30-44';
-      else if (age < 60) ageGroup = '45-59';
-      else ageGroup = '60+';
+    const ageSegments = data.reduce(
+      (acc, patient) => {
+        let ageGroup: string;
+        const age = patient.age || 0;
 
-      if (!acc[ageGroup]) {
-        acc[ageGroup] = {
-          count: 0,
-          revenue: 0,
-          appointments: 0,
-        };
-      }
+        if (age < 18) ageGroup = "Under 18";
+        else if (age < 30) ageGroup = "18-29";
+        else if (age < 45) ageGroup = "30-44";
+        else if (age < 60) ageGroup = "45-59";
+        else ageGroup = "60+";
 
-      acc[ageGroup].count += 1;
-      acc[ageGroup].revenue += patient.invoices?.reduce((sum: number, inv: any) => sum + (inv.amount || 0), 0) || 0;
-      acc[ageGroup].appointments += patient.appointments?.length || 0;
+        if (!acc[ageGroup]) {
+          acc[ageGroup] = {
+            count: 0,
+            revenue: 0,
+            appointments: 0,
+          };
+        }
 
-      return acc;
-    }, {} as Record<string, any>);
+        acc[ageGroup].count += 1;
+        acc[ageGroup].revenue +=
+          patient.invoices?.reduce((sum: number, inv: any) => sum + (inv.amount || 0), 0) || 0;
+        acc[ageGroup].appointments += patient.appointments?.length || 0;
 
-    const totalPatients = Object.values(ageSegments).reduce(
-      (sum: number, segment: any) => sum + segment.count, 0
+        return acc;
+      },
+      {} as Record<string, any>,
     );
 
-    results.push(...Object.entries(ageSegments).map(([segment, data]: [string, any]) => ({
-      dimension_value: segment,
-      value: kpi.kpi_name === 'Revenue Per Patient' ? 
-        data.count ? data.revenue / data.count : 0 :
-        data.count,
-      percentage_of_total: totalPatients ? (data.count / totalPatients) * 100 : 0,
-      transaction_count: data.appointments,
-      metadata: {
-        patient_count: data.count,
-        total_revenue: data.revenue,
-        total_appointments: data.appointments,
-        avg_revenue_per_patient: data.count ? data.revenue / data.count : 0,
-      },
-    })));
+    const totalPatients = Object.values(ageSegments).reduce(
+      (sum: number, segment: any) => sum + segment.count,
+      0,
+    );
+
+    results.push(
+      ...Object.entries(ageSegments).map(([segment, data]: [string, any]) => ({
+        dimension_value: segment,
+        value:
+          kpi.kpi_name === "Revenue Per Patient"
+            ? data.count
+              ? data.revenue / data.count
+              : 0
+            : data.count,
+        percentage_of_total: totalPatients ? (data.count / totalPatients) * 100 : 0,
+        transaction_count: data.appointments,
+        metadata: {
+          patient_count: data.count,
+          total_revenue: data.revenue,
+          total_appointments: data.appointments,
+          avg_revenue_per_patient: data.count ? data.revenue / data.count : 0,
+        },
+      })),
+    );
 
     this.setCache(cacheKey, results);
     return results;
@@ -407,13 +430,13 @@ export class DrillDownSystem {
   private buildDrillDownContext(
     dimension: string,
     filters: Record<string, any>,
-    options: any
+    options: any,
   ): DrillDownContext {
     const breadcrumbs = [
       {
         level: 0,
-        dimension: 'overview',
-        label: 'KPI Overview',
+        dimension: "overview",
+        label: "KPI Overview",
       },
       {
         level: 1,
@@ -425,16 +448,16 @@ export class DrillDownSystem {
     return {
       breadcrumbs,
       filters,
-      aggregationLevel: options.aggregationLevel || 'month',
-      sortBy: options.sortBy || 'value',
-      sortOrder: options.sortOrder || 'desc',
+      aggregationLevel: options.aggregationLevel || "month",
+      sortBy: options.sortBy || "value",
+      sortOrder: options.sortOrder || "desc",
     };
   }
 
   private buildDrillDownPath(
     kpi: FinancialKPI,
     currentDimension: string,
-    currentLevel: number
+    currentLevel: number,
   ): DrillDownPath {
     const availableDimensions = this.getAvailableDimensions(kpi);
     const maxLevels = this.getMaxDrillLevels(kpi);
@@ -458,16 +481,16 @@ export class DrillDownSystem {
     kpi: FinancialKPI,
     dimension: string,
     filters: Record<string, any>,
-    options: any
+    options: any,
   ): Promise<DrillDownResult[]> {
     switch (dimension) {
-      case 'time':
-        return this.drillDownByTime(kpi, options.aggregationLevel || 'month', filters);
-      case 'service_type':
+      case "time":
+        return this.drillDownByTime(kpi, options.aggregationLevel || "month", filters);
+      case "service_type":
         return this.drillDownByServiceType(kpi, filters);
-      case 'provider':
+      case "provider":
         return this.drillDownByProvider(kpi, filters);
-      case 'patient_segment':
+      case "patient_segment":
         return this.drillDownByPatientSegment(kpi, filters);
       default:
         throw new Error(`Unsupported drill-down dimension: ${dimension}`);
@@ -478,11 +501,11 @@ export class DrillDownSystem {
     kpi: FinancialKPI,
     parentDimension: string,
     parentResult: DrillDownResult,
-    filters: Record<string, any>
+    filters: Record<string, any>,
   ): Promise<DrillDownResult[]> {
     // Get sub-dimensions for the current drill-down level
     const subFilters = { ...filters, [parentDimension]: parentResult.dimension_value };
-    
+
     // Determine next dimension based on current one
     const nextDimension = this.getNextDimension(parentDimension);
     if (!nextDimension) return [];
@@ -491,14 +514,14 @@ export class DrillDownSystem {
   }
 
   private getAvailableDimensions(kpi: FinancialKPI): string[] {
-    const baseDimensions = ['time', 'service_type'];
-    
-    if (kpi.kpi_category === 'operational') {
-      baseDimensions.push('provider', 'patient_segment');
+    const baseDimensions = ["time", "service_type"];
+
+    if (kpi.kpi_category === "operational") {
+      baseDimensions.push("provider", "patient_segment");
     }
-    
-    if (kpi.kpi_category === 'revenue' || kpi.kpi_category === 'profitability') {
-      baseDimensions.push('provider', 'patient_segment');
+
+    if (kpi.kpi_category === "revenue" || kpi.kpi_category === "profitability") {
+      baseDimensions.push("provider", "patient_segment");
     }
 
     return baseDimensions;
@@ -511,10 +534,10 @@ export class DrillDownSystem {
 
   private getNextLevelOptions(dimension: string, level: number): string[] | undefined {
     const dimensionHierarchy: Record<string, string[]> = {
-      time: ['service_type', 'provider'],
-      service_type: ['provider', 'patient_segment'],
-      provider: ['patient_segment', 'time'],
-      patient_segment: ['service_type', 'time'],
+      time: ["service_type", "provider"],
+      service_type: ["provider", "patient_segment"],
+      provider: ["patient_segment", "time"],
+      patient_segment: ["service_type", "time"],
     };
 
     return dimensionHierarchy[dimension];
@@ -522,9 +545,9 @@ export class DrillDownSystem {
 
   private getNextDimension(currentDimension: string): string | null {
     const nextDimensions: Record<string, string> = {
-      time: 'service_type',
-      service_type: 'provider',
-      provider: 'patient_segment',
+      time: "service_type",
+      service_type: "provider",
+      provider: "patient_segment",
     };
 
     return nextDimensions[currentDimension] || null;
@@ -532,11 +555,11 @@ export class DrillDownSystem {
 
   private getDimensionLabel(dimension: string): string {
     const labels: Record<string, string> = {
-      time: 'Time Period',
-      service_type: 'Service Type',
-      provider: 'Provider',
-      patient_segment: 'Patient Segment',
-      location: 'Location',
+      time: "Time Period",
+      service_type: "Service Type",
+      provider: "Provider",
+      patient_segment: "Patient Segment",
+      location: "Location",
     };
 
     return labels[dimension] || dimension;
@@ -546,12 +569,13 @@ export class DrillDownSystem {
   private getFromCache(key: string): any | null {
     const cached = this.cache.get(key);
     if (!cached) return null;
-    
-    if (Date.now() - cached.timestamp > 300000) { // 5 minutes
+
+    if (Date.now() - cached.timestamp > 300000) {
+      // 5 minutes
       this.cache.delete(key);
       return null;
     }
-    
+
     return cached.data;
   }
 
@@ -564,11 +588,11 @@ export class DrillDownSystem {
 
   private async getKPIDetails(id: string): Promise<FinancialKPI | null> {
     const { data, error } = await this.supabase
-      .from('financial_kpis')
-      .select('*')
-      .eq('id', id)
+      .from("financial_kpis")
+      .select("*")
+      .eq("id", id)
       .single();
-    
+
     if (error) return null;
     return data;
   }
@@ -576,4 +600,3 @@ export class DrillDownSystem {
 
 // Export singleton instance
 export const drillDownSystem = new DrillDownSystem();
-

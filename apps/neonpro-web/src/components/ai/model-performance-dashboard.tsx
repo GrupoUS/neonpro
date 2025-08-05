@@ -1,33 +1,39 @@
 /**
  * AI Model Performance Dashboard Component
- * 
+ *
  * Displays ML model performance metrics, A/B testing statistics,
  * and provides model management capabilities for administrators.
  */
 
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Brain, 
-  TrendingUp, 
-  TrendingDown, 
-  Activity, 
-  Users, 
-  BarChart3, 
-  RefreshCw, 
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Progress } from "@/components/ui/progress";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Brain,
+  TrendingUp,
+  TrendingDown,
+  Activity,
+  Users,
+  BarChart3,
+  RefreshCw,
   AlertCircle,
   CheckCircle,
   Clock,
-  Target
-} from 'lucide-react';
-import { toast } from 'sonner';
+  Target,
+} from "lucide-react";
+import type { toast } from "sonner";
 
 // Types
 interface ModelMetrics {
@@ -63,9 +69,9 @@ interface ModelPerformanceDashboardProps {
 }
 
 export default function ModelPerformanceDashboard({
-  className = '',
+  className = "",
   showABStats = true,
-  allowModelManagement = false
+  allowModelManagement = false,
 }: ModelPerformanceDashboardProps) {
   // State
   const [data, setData] = useState<ModelPerformanceData | null>(null);
@@ -85,24 +91,24 @@ export default function ModelPerformanceDashboard({
   const loadPerformanceData = async () => {
     try {
       setError(null);
-      
-      const url = new URL('/api/ai/model-performance', window.location.origin);
+
+      const url = new URL("/api/ai/model-performance", window.location.origin);
       if (showABStats) {
-        url.searchParams.set('includeABStats', 'true');
+        url.searchParams.set("includeABStats", "true");
       }
 
       const response = await fetch(url.toString());
       const result: ModelPerformanceData = await response.json();
 
       if (!result.success) {
-        throw new Error(result.error || 'Failed to load performance data');
+        throw new Error(result.error || "Failed to load performance data");
       }
 
       setData(result);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+      const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
       setError(errorMessage);
-      toast.error('Failed to load performance data', { description: errorMessage });
+      toast.error("Failed to load performance data", { description: errorMessage });
     } finally {
       setLoading(false);
     }
@@ -115,7 +121,7 @@ export default function ModelPerformanceDashboard({
     setRefreshing(true);
     await loadPerformanceData();
     setRefreshing(false);
-    toast.success('Performance data refreshed');
+    toast.success("Performance data refreshed");
   };
 
   /**
@@ -123,28 +129,28 @@ export default function ModelPerformanceDashboard({
    */
   const updateModelPerformance = async (modelVersion: string) => {
     setUpdatingModel(modelVersion);
-    
+
     try {
-      const response = await fetch('/api/ai/model-performance', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/ai/model-performance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           modelVersion,
-          action: 'update_performance'
-        })
+          action: "update_performance",
+        }),
       });
 
       const result = await response.json();
 
       if (!result.success) {
-        throw new Error(result.error || 'Failed to update model performance');
+        throw new Error(result.error || "Failed to update model performance");
       }
 
-      toast.success('Model performance updated');
+      toast.success("Model performance updated");
       await loadPerformanceData(); // Refresh data
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
-      toast.error('Failed to update model performance', { description: errorMessage });
+      const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
+      toast.error("Failed to update model performance", { description: errorMessage });
     } finally {
       setUpdatingModel(null);
     }
@@ -154,21 +160,23 @@ export default function ModelPerformanceDashboard({
    * Get accuracy badge variant
    */
   const getAccuracyBadge = (accuracy: number) => {
-    if (accuracy >= 85) return { variant: 'default' as const, icon: CheckCircle, color: 'text-green-600' };
-    if (accuracy >= 70) return { variant: 'secondary' as const, icon: Activity, color: 'text-blue-600' };
-    return { variant: 'destructive' as const, icon: AlertCircle, color: 'text-orange-600' };
+    if (accuracy >= 85)
+      return { variant: "default" as const, icon: CheckCircle, color: "text-green-600" };
+    if (accuracy >= 70)
+      return { variant: "secondary" as const, icon: Activity, color: "text-blue-600" };
+    return { variant: "destructive" as const, icon: AlertCircle, color: "text-orange-600" };
   };
 
   /**
    * Format metrics for display
    */
-  const formatMetric = (value: number, type: 'accuracy' | 'error' | 'threshold') => {
+  const formatMetric = (value: number, type: "accuracy" | "error" | "threshold") => {
     switch (type) {
-      case 'accuracy':
+      case "accuracy":
         return `${value.toFixed(1)}%`;
-      case 'error':
+      case "error":
         return `${value.toFixed(1)} min`;
-      case 'threshold':
+      case "threshold":
         return `${(value * 100).toFixed(0)}%`;
       default:
         return value.toString();
@@ -202,7 +210,7 @@ export default function ModelPerformanceDashboard({
     );
   }
 
-  const activeModel = data?.models?.find(m => m.isActive);
+  const activeModel = data?.models?.find((m) => m.isActive);
   const allModels = data?.models || [];
 
   return (
@@ -213,13 +221,8 @@ export default function ModelPerformanceDashboard({
           <h2 className="text-2xl font-bold tracking-tight">Model Performance</h2>
           <p className="text-muted-foreground">AI model metrics and A/B testing statistics</p>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={refreshData}
-          disabled={refreshing}
-        >
-          <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+        <Button variant="outline" size="sm" onClick={refreshData} disabled={refreshing}>
+          <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? "animate-spin" : ""}`} />
           Refresh
         </Button>
       </div>
@@ -243,7 +246,7 @@ export default function ModelPerformanceDashboard({
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {formatMetric(activeModel.accuracy, 'accuracy')}
+                    {formatMetric(activeModel.accuracy, "accuracy")}
                   </div>
                   <Progress value={activeModel.accuracy} className="mt-2" />
                   <p className="text-xs text-muted-foreground mt-2">
@@ -259,12 +262,8 @@ export default function ModelPerformanceDashboard({
                   <BarChart3 className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">
-                    {formatMetric(activeModel.mae, 'error')}
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    Lower is better
-                  </p>
+                  <div className="text-2xl font-bold">{formatMetric(activeModel.mae, "error")}</div>
+                  <p className="text-xs text-muted-foreground mt-2">Lower is better</p>
                 </CardContent>
               </Card>
 
@@ -276,7 +275,7 @@ export default function ModelPerformanceDashboard({
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {formatMetric(activeModel.confidenceThreshold, 'threshold')}
+                    {formatMetric(activeModel.confidenceThreshold, "threshold")}
                   </div>
                   <p className="text-xs text-muted-foreground mt-2">
                     Prediction confidence minimum
@@ -292,11 +291,9 @@ export default function ModelPerformanceDashboard({
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {formatMetric(activeModel.rmse, 'error')}
+                    {formatMetric(activeModel.rmse, "error")}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    Root Mean Square Error
-                  </p>
+                  <p className="text-xs text-muted-foreground mt-2">Root Mean Square Error</p>
                 </CardContent>
               </Card>
             </div>
@@ -307,9 +304,9 @@ export default function ModelPerformanceDashboard({
             <Alert>
               <CheckCircle className="h-4 w-4" />
               <AlertDescription>
-                Model <strong>{activeModel.version}</strong> is currently active with{' '}
-                <strong>{formatMetric(activeModel.accuracy, 'accuracy')}</strong> accuracy.
-                {activeModel.accuracy < 70 && ' Consider retraining or updating the model.'}
+                Model <strong>{activeModel.version}</strong> is currently active with{" "}
+                <strong>{formatMetric(activeModel.accuracy, "accuracy")}</strong> accuracy.
+                {activeModel.accuracy < 70 && " Consider retraining or updating the model."}
               </AlertDescription>
             </Alert>
           )}
@@ -325,9 +322,7 @@ export default function ModelPerformanceDashboard({
                     <div>
                       <CardTitle className="flex items-center gap-2">
                         {model.version}
-                        {model.isActive && (
-                          <Badge variant="default">Active</Badge>
-                        )}
+                        {model.isActive && <Badge variant="default">Active</Badge>}
                       </CardTitle>
                       <CardDescription>
                         {(() => {
@@ -335,7 +330,7 @@ export default function ModelPerformanceDashboard({
                           return (
                             <Badge variant={variant} className="flex items-center gap-1 w-fit mt-1">
                               <Icon className="h-3 w-3" />
-                              {formatMetric(model.accuracy, 'accuracy')} accuracy
+                              {formatMetric(model.accuracy, "accuracy")} accuracy
                             </Badge>
                           );
                         })()}
@@ -351,7 +346,7 @@ export default function ModelPerformanceDashboard({
                         {updatingModel === model.version ? (
                           <RefreshCw className="h-4 w-4 animate-spin" />
                         ) : (
-                          'Update Metrics'
+                          "Update Metrics"
                         )}
                       </Button>
                     )}
@@ -361,19 +356,23 @@ export default function ModelPerformanceDashboard({
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                       <p className="text-sm font-medium text-gray-500">MAE</p>
-                      <p className="text-lg font-semibold">{formatMetric(model.mae, 'error')}</p>
+                      <p className="text-lg font-semibold">{formatMetric(model.mae, "error")}</p>
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-500">RMSE</p>
-                      <p className="text-lg font-semibold">{formatMetric(model.rmse, 'error')}</p>
+                      <p className="text-lg font-semibold">{formatMetric(model.rmse, "error")}</p>
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-500">Confidence</p>
-                      <p className="text-lg font-semibold">{formatMetric(model.confidenceThreshold, 'threshold')}</p>
+                      <p className="text-lg font-semibold">
+                        {formatMetric(model.confidenceThreshold, "threshold")}
+                      </p>
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-500">Status</p>
-                      <p className="text-lg font-semibold">{model.isActive ? 'Active' : 'Inactive'}</p>
+                      <p className="text-lg font-semibold">
+                        {model.isActive ? "Active" : "Inactive"}
+                      </p>
                     </div>
                   </div>
                 </CardContent>
@@ -393,10 +392,10 @@ export default function ModelPerformanceDashboard({
                   <Users className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{data.abTestStats.total.toLocaleString()}</div>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    Users in A/B test
-                  </p>
+                  <div className="text-2xl font-bold">
+                    {data.abTestStats.total.toLocaleString()}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2">Users in A/B test</p>
                 </CardContent>
               </Card>
 
@@ -407,7 +406,9 @@ export default function ModelPerformanceDashboard({
                   <Clock className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{data.abTestStats.control.toLocaleString()}</div>
+                  <div className="text-2xl font-bold">
+                    {data.abTestStats.control.toLocaleString()}
+                  </div>
                   <Progress value={data.abTestStats.split_percentage.control} className="mt-2" />
                   <p className="text-xs text-muted-foreground mt-2">
                     {data.abTestStats.split_percentage.control}% of users
@@ -422,8 +423,13 @@ export default function ModelPerformanceDashboard({
                   <Brain className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{data.abTestStats.ai_prediction.toLocaleString()}</div>
-                  <Progress value={data.abTestStats.split_percentage.ai_prediction} className="mt-2" />
+                  <div className="text-2xl font-bold">
+                    {data.abTestStats.ai_prediction.toLocaleString()}
+                  </div>
+                  <Progress
+                    value={data.abTestStats.split_percentage.ai_prediction}
+                    className="mt-2"
+                  />
                   <p className="text-xs text-muted-foreground mt-2">
                     {data.abTestStats.split_percentage.ai_prediction}% of users
                   </p>
@@ -435,8 +441,9 @@ export default function ModelPerformanceDashboard({
             <Alert>
               <TrendingUp className="h-4 w-4" />
               <AlertDescription>
-                A/B testing is active with a {data.abTestStats.split_percentage.control}/{data.abTestStats.split_percentage.ai_prediction} split 
-                between control and AI prediction groups. Total participants: {data.abTestStats.total.toLocaleString()}.
+                A/B testing is active with a {data.abTestStats.split_percentage.control}/
+                {data.abTestStats.split_percentage.ai_prediction} split between control and AI
+                prediction groups. Total participants: {data.abTestStats.total.toLocaleString()}.
               </AlertDescription>
             </Alert>
           </TabsContent>

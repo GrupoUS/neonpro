@@ -1,9 +1,9 @@
 // WhatsApp React Hooks for NeonPro
 // Provides React integration for WhatsApp Business API
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { whatsAppService } from '@/app/lib/services/whatsapp-service';
-import {
+import type { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { whatsAppService } from "@/app/lib/services/whatsapp-service";
+import type {
   WhatsAppConfig,
   WhatsAppTemplate,
   WhatsAppMessage,
@@ -11,14 +11,14 @@ import {
   WhatsAppConfigForm,
   WhatsAppTemplateForm,
   SendBulkMessageForm,
-  WhatsAppMessageType
-} from '@/app/types/whatsapp';
-import { toast } from 'react-hot-toast';
+  WhatsAppMessageType,
+} from "@/app/types/whatsapp";
+import type { toast } from "react-hot-toast";
 
 // Configuration hooks
 export function useWhatsAppConfig() {
   return useQuery({
-    queryKey: ['whatsapp-config'],
+    queryKey: ["whatsapp-config"],
     queryFn: () => whatsAppService.getConfig(),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -30,11 +30,11 @@ export function useUpdateWhatsAppConfig() {
   return useMutation({
     mutationFn: (config: WhatsAppConfigForm) => whatsAppService.updateConfig(config),
     onSuccess: (data) => {
-      queryClient.setQueryData(['whatsapp-config'], data);
-      toast.success('Configuração do WhatsApp atualizada com sucesso!');
+      queryClient.setQueryData(["whatsapp-config"], data);
+      toast.success("Configuração do WhatsApp atualizada com sucesso!");
     },
     onError: (error: Error) => {
-      console.error('Error updating WhatsApp config:', error);
+      console.error("Error updating WhatsApp config:", error);
       toast.error(`Erro ao atualizar configuração: ${error.message}`);
     },
   });
@@ -43,7 +43,7 @@ export function useUpdateWhatsAppConfig() {
 // Template hooks
 export function useWhatsAppTemplates() {
   return useQuery({
-    queryKey: ['whatsapp-templates'],
+    queryKey: ["whatsapp-templates"],
     queryFn: () => whatsAppService.getTemplates(),
     staleTime: 10 * 60 * 1000, // 10 minutes
   });
@@ -51,7 +51,7 @@ export function useWhatsAppTemplates() {
 
 export function useWhatsAppTemplate(name: string) {
   return useQuery({
-    queryKey: ['whatsapp-template', name],
+    queryKey: ["whatsapp-template", name],
     queryFn: () => whatsAppService.getTemplate(name),
     enabled: !!name,
     staleTime: 10 * 60 * 1000,
@@ -66,7 +66,7 @@ export function useSendWhatsAppMessage() {
       content,
       type = WhatsAppMessageType.TEXT,
       patientId,
-      templateName
+      templateName,
     }: {
       phoneNumber: string;
       content: string;
@@ -77,10 +77,10 @@ export function useSendWhatsAppMessage() {
       return whatsAppService.sendMessage(phoneNumber, content, type, patientId, templateName);
     },
     onSuccess: () => {
-      toast.success('Mensagem WhatsApp enviada com sucesso!');
+      toast.success("Mensagem WhatsApp enviada com sucesso!");
     },
     onError: (error: Error) => {
-      console.error('Error sending WhatsApp message:', error);
+      console.error("Error sending WhatsApp message:", error);
       toast.error(`Erro ao enviar mensagem: ${error.message}`);
     },
   });
@@ -92,7 +92,7 @@ export function useSendWhatsAppTemplate() {
       phoneNumber,
       templateName,
       parameters = {},
-      patientId
+      patientId,
     }: {
       phoneNumber: string;
       templateName: string;
@@ -102,10 +102,10 @@ export function useSendWhatsAppTemplate() {
       return whatsAppService.sendTemplateMessage(phoneNumber, templateName, parameters, patientId);
     },
     onSuccess: () => {
-      toast.success('Template WhatsApp enviado com sucesso!');
+      toast.success("Template WhatsApp enviado com sucesso!");
     },
     onError: (error: Error) => {
-      console.error('Error sending WhatsApp template:', error);
+      console.error("Error sending WhatsApp template:", error);
       toast.error(`Erro ao enviar template: ${error.message}`);
     },
   });
@@ -116,7 +116,7 @@ export function useSendBulkWhatsAppMessages() {
     mutationFn: async ({
       phoneNumbers,
       templateName,
-      parameters = {}
+      parameters = {},
     }: {
       phoneNumbers: string[];
       templateName: string;
@@ -126,11 +126,11 @@ export function useSendBulkWhatsAppMessages() {
     },
     onSuccess: (results) => {
       toast.success(
-        `Envio em massa concluído: ${results.sent} enviadas, ${results.failed} falharam`
+        `Envio em massa concluído: ${results.sent} enviadas, ${results.failed} falharam`,
       );
     },
     onError: (error: Error) => {
-      console.error('Error sending bulk WhatsApp messages:', error);
+      console.error("Error sending bulk WhatsApp messages:", error);
       toast.error(`Erro no envio em massa: ${error.message}`);
     },
   });
@@ -139,7 +139,7 @@ export function useSendBulkWhatsAppMessages() {
 // Opt-in hooks
 export function useCheckWhatsAppOptIn(phoneNumber: string) {
   return useQuery({
-    queryKey: ['whatsapp-opt-in', phoneNumber],
+    queryKey: ["whatsapp-opt-in", phoneNumber],
     queryFn: () => whatsAppService.checkOptIn(phoneNumber),
     enabled: !!phoneNumber,
     staleTime: 5 * 60 * 1000,
@@ -153,8 +153,8 @@ export function useRecordWhatsAppOptIn() {
     mutationFn: async ({
       patientId,
       phoneNumber,
-      source = 'manual',
-      consentMessage
+      source = "manual",
+      consentMessage,
     }: {
       patientId: string;
       phoneNumber: string;
@@ -164,11 +164,11 @@ export function useRecordWhatsAppOptIn() {
       return whatsAppService.recordOptIn(patientId, phoneNumber, source, consentMessage);
     },
     onSuccess: (_, variables) => {
-      queryClient.setQueryData(['whatsapp-opt-in', variables.phoneNumber], true);
-      toast.success('Consentimento WhatsApp registrado com sucesso!');
+      queryClient.setQueryData(["whatsapp-opt-in", variables.phoneNumber], true);
+      toast.success("Consentimento WhatsApp registrado com sucesso!");
     },
     onError: (error: Error) => {
-      console.error('Error recording WhatsApp opt-in:', error);
+      console.error("Error recording WhatsApp opt-in:", error);
       toast.error(`Erro ao registrar consentimento: ${error.message}`);
     },
   });
@@ -177,7 +177,7 @@ export function useRecordWhatsAppOptIn() {
 // Analytics hooks
 export function useWhatsAppAnalytics(startDate: Date, endDate: Date) {
   return useQuery({
-    queryKey: ['whatsapp-analytics', startDate.toISOString(), endDate.toISOString()],
+    queryKey: ["whatsapp-analytics", startDate.toISOString(), endDate.toISOString()],
     queryFn: () => whatsAppService.getAnalytics(startDate, endDate),
     enabled: !!startDate && !!endDate,
     staleTime: 60 * 1000, // 1 minute for analytics
@@ -206,7 +206,7 @@ export function useWhatsAppStatus() {
     isReady,
     isLoading: configLoading || templatesLoading,
     config,
-    templates
+    templates,
   };
 }
 
@@ -214,64 +214,64 @@ export function useWhatsAppStatus() {
 export function useWhatsAppConfigValidation() {
   return {
     phoneNumberId: {
-      required: 'Phone Number ID é obrigatório',
+      required: "Phone Number ID é obrigatório",
       pattern: {
         value: /^\d+$/,
-        message: 'Phone Number ID deve conter apenas números'
-      }
+        message: "Phone Number ID deve conter apenas números",
+      },
     },
     accessToken: {
-      required: 'Access Token é obrigatório',
+      required: "Access Token é obrigatório",
       minLength: {
         value: 50,
-        message: 'Access Token deve ter pelo menos 50 caracteres'
-      }
+        message: "Access Token deve ter pelo menos 50 caracteres",
+      },
     },
     webhookVerifyToken: {
-      required: 'Webhook Verify Token é obrigatório',
+      required: "Webhook Verify Token é obrigatório",
       minLength: {
         value: 8,
-        message: 'Webhook Verify Token deve ter pelo menos 8 caracteres'
-      }
+        message: "Webhook Verify Token deve ter pelo menos 8 caracteres",
+      },
     },
     businessName: {
-      required: 'Nome do negócio é obrigatório',
+      required: "Nome do negócio é obrigatório",
       maxLength: {
         value: 100,
-        message: 'Nome do negócio deve ter no máximo 100 caracteres'
-      }
-    }
+        message: "Nome do negócio deve ter no máximo 100 caracteres",
+      },
+    },
   };
 }
 
 export function useWhatsAppTemplateValidation() {
   return {
     name: {
-      required: 'Nome do template é obrigatório',
+      required: "Nome do template é obrigatório",
       pattern: {
         value: /^[a-z0-9_]+$/,
-        message: 'Nome deve conter apenas letras minúsculas, números e underscore'
-      }
+        message: "Nome deve conter apenas letras minúsculas, números e underscore",
+      },
     },
     bodyText: {
-      required: 'Texto do corpo é obrigatório',
+      required: "Texto do corpo é obrigatório",
       maxLength: {
         value: 1024,
-        message: 'Texto do corpo deve ter no máximo 1024 caracteres'
-      }
+        message: "Texto do corpo deve ter no máximo 1024 caracteres",
+      },
     },
     headerText: {
       maxLength: {
         value: 60,
-        message: 'Texto do cabeçalho deve ter no máximo 60 caracteres'
-      }
+        message: "Texto do cabeçalho deve ter no máximo 60 caracteres",
+      },
     },
     footerText: {
       maxLength: {
         value: 60,
-        message: 'Texto do rodapé deve ter no máximo 60 caracteres'
-      }
-    }
+        message: "Texto do rodapé deve ter no máximo 60 caracteres",
+      },
+    },
   };
 }
 
@@ -285,26 +285,26 @@ export function useWhatsAppNotifications() {
     phoneNumber: string,
     appointmentDate: string,
     appointmentTime: string,
-    doctorName: string
+    doctorName: string,
   ) => {
     try {
       const isOptedIn = await whatsAppService.checkOptIn(phoneNumber);
       if (!isOptedIn) {
-        throw new Error('Paciente não autorizou mensagens WhatsApp');
+        throw new Error("Paciente não autorizou mensagens WhatsApp");
       }
 
       await sendTemplate.mutateAsync({
         phoneNumber,
-        templateName: 'appointment_reminder',
+        templateName: "appointment_reminder",
         parameters: {
           appointment_date: appointmentDate,
           appointment_time: appointmentTime,
-          doctor_name: doctorName
+          doctor_name: doctorName,
         },
-        patientId
+        patientId,
       });
     } catch (error) {
-      console.error('Error sending appointment reminder:', error);
+      console.error("Error sending appointment reminder:", error);
       throw error;
     }
   };
@@ -314,26 +314,26 @@ export function useWhatsAppNotifications() {
     phoneNumber: string,
     treatmentName: string,
     doctorName: string,
-    daysAfterTreatment: number
+    daysAfterTreatment: number,
   ) => {
     try {
       const isOptedIn = await whatsAppService.checkOptIn(phoneNumber);
       if (!isOptedIn) {
-        throw new Error('Paciente não autorizou mensagens WhatsApp');
+        throw new Error("Paciente não autorizou mensagens WhatsApp");
       }
 
       await sendTemplate.mutateAsync({
         phoneNumber,
-        templateName: 'treatment_followup',
+        templateName: "treatment_followup",
         parameters: {
           treatment_name: treatmentName,
           doctor_name: doctorName,
-          days_after: daysAfterTreatment.toString()
+          days_after: daysAfterTreatment.toString(),
         },
-        patientId
+        patientId,
       });
     } catch (error) {
-      console.error('Error sending treatment followup:', error);
+      console.error("Error sending treatment followup:", error);
       throw error;
     }
   };
@@ -341,6 +341,6 @@ export function useWhatsAppNotifications() {
   return {
     sendAppointmentReminder,
     sendTreatmentFollowup,
-    isLoading: sendTemplate.isPending
+    isLoading: sendTemplate.isPending,
   };
 }

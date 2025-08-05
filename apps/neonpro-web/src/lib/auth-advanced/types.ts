@@ -7,7 +7,7 @@ export interface UserSession {
   device_id: string;
   device_fingerprint: string;
   device_name: string;
-  device_type: 'desktop' | 'mobile' | 'tablet';
+  device_type: "desktop" | "mobile" | "tablet";
   browser_name: string;
   browser_version: string;
   os_name: string;
@@ -28,8 +28,8 @@ export interface UserSession {
   updated_at: Date;
   is_active: boolean;
   is_trusted: boolean;
-  login_method: 'password' | 'sso' | 'mfa' | 'biometric';
-  security_level: 'low' | 'medium' | 'high' | 'critical';
+  login_method: "password" | "sso" | "mfa" | "biometric";
+  security_level: "low" | "medium" | "high" | "critical";
   session_data?: Record<string, any>;
 }
 
@@ -38,8 +38,8 @@ export interface SessionSecurityEvent {
   session_id: string;
   user_id: string;
   event_type: SecurityEventType;
-  event_category: 'authentication' | 'authorization' | 'session' | 'security';
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  event_category: "authentication" | "authorization" | "session" | "security";
+  severity: "low" | "medium" | "high" | "critical";
   description: string;
   metadata: Record<string, any>;
   ip_address: string;
@@ -52,36 +52,36 @@ export interface SessionSecurityEvent {
   };
   risk_score: number; // 0-100
   is_blocked: boolean;
-  resolution_status: 'pending' | 'resolved' | 'false_positive' | 'escalated';
+  resolution_status: "pending" | "resolved" | "false_positive" | "escalated";
   created_at: Date;
   resolved_at?: Date;
 }
 
 export type SecurityEventType =
-  | 'login_success'
-  | 'login_failure'
-  | 'logout'
-  | 'session_timeout'
-  | 'concurrent_session_limit'
-  | 'suspicious_location'
-  | 'suspicious_device'
-  | 'unusual_activity'
-  | 'privilege_escalation_attempt'
-  | 'session_hijack_attempt'
-  | 'brute_force_attempt'
-  | 'account_lockout'
-  | 'password_change'
-  | 'mfa_enabled'
-  | 'mfa_disabled'
-  | 'emergency_access'
-  | 'session_terminated';
+  | "login_success"
+  | "login_failure"
+  | "logout"
+  | "session_timeout"
+  | "concurrent_session_limit"
+  | "suspicious_location"
+  | "suspicious_device"
+  | "unusual_activity"
+  | "privilege_escalation_attempt"
+  | "session_hijack_attempt"
+  | "brute_force_attempt"
+  | "account_lockout"
+  | "password_change"
+  | "mfa_enabled"
+  | "mfa_disabled"
+  | "emergency_access"
+  | "session_terminated";
 
 export interface DeviceRegistration {
   id: string;
   user_id: string;
   device_fingerprint: string;
   device_name: string;
-  device_type: 'desktop' | 'mobile' | 'tablet';
+  device_type: "desktop" | "mobile" | "tablet";
   browser_info: {
     name: string;
     version: string;
@@ -124,18 +124,18 @@ export interface SessionAuditLog {
 }
 
 export type SessionAction =
-  | 'session_created'
-  | 'session_refreshed'
-  | 'session_extended'
-  | 'session_terminated'
-  | 'session_expired'
-  | 'activity_detected'
-  | 'security_check'
-  | 'device_verified'
-  | 'location_verified'
-  | 'permission_checked'
-  | 'data_accessed'
-  | 'settings_changed';
+  | "session_created"
+  | "session_refreshed"
+  | "session_extended"
+  | "session_terminated"
+  | "session_expired"
+  | "activity_detected"
+  | "security_check"
+  | "device_verified"
+  | "location_verified"
+  | "permission_checked"
+  | "data_accessed"
+  | "settings_changed";
 
 export interface SessionPolicy {
   id: string;
@@ -156,7 +156,7 @@ export interface SessionPolicy {
     force_logout_on_policy_change: boolean;
   };
   security_rules: {
-    min_security_level: 'low' | 'medium' | 'high' | 'critical';
+    min_security_level: "low" | "medium" | "high" | "critical";
     require_mfa_for_sensitive_actions: boolean;
     block_concurrent_different_locations: boolean;
     max_failed_attempts: number;
@@ -174,22 +174,22 @@ export interface SessionConfig {
   maxSessionDuration: number; // minutes
   idleTimeout: number; // minutes
   warningBeforeTimeout: number; // minutes
-  
+
   // Concurrent Sessions
   maxConcurrentSessions: number;
   allowMultipleDevices: boolean;
-  
+
   // Security Settings
   enableDeviceFingerprinting: boolean;
   enableLocationTracking: boolean;
   enableSuspiciousActivityDetection: boolean;
   riskScoreThreshold: number;
-  
+
   // Cleanup Settings
   cleanupInterval: number; // minutes
   retainAuditLogs: number; // days
   retainSecurityEvents: number; // days
-  
+
   // Real-time Settings
   enableRealTimeMonitoring: boolean;
   websocketHeartbeat: number; // seconds
@@ -201,7 +201,7 @@ export interface SessionState {
   user: any;
   session: UserSession | null;
   permissions: string[];
-  securityLevel: 'low' | 'medium' | 'high' | 'critical';
+  securityLevel: "low" | "medium" | "high" | "critical";
   lastActivity: Date;
   timeUntilExpiry: number; // seconds
   warningShown: boolean;
@@ -217,22 +217,22 @@ export interface SessionManager {
   extendSession(sessionId: string, duration?: number): Promise<UserSession>;
   terminateSession(sessionId: string, reason?: string): Promise<void>;
   terminateAllSessions(userId: string, exceptSessionId?: string): Promise<void>;
-  
+
   // Session Validation
   validateSession(sessionToken: string): Promise<UserSession | null>;
   checkSessionActivity(sessionId: string): Promise<boolean>;
   updateLastActivity(sessionId: string): Promise<void>;
-  
+
   // Security Monitoring
   detectSuspiciousActivity(session: UserSession, activity: any): Promise<SecurityEventType[]>;
   calculateRiskScore(session: UserSession, activity: any): Promise<number>;
   handleSecurityEvent(event: Partial<SessionSecurityEvent>): Promise<void>;
-  
+
   // Device Management
   registerDevice(userId: string, deviceInfo: DeviceInfo): Promise<DeviceRegistration>;
   verifyDevice(deviceFingerprint: string, userId: string): Promise<boolean>;
   trustDevice(deviceId: string, userId: string): Promise<void>;
-  
+
   // Cleanup
   cleanupExpiredSessions(): Promise<number>;
   cleanupOldAuditLogs(): Promise<number>;
@@ -241,7 +241,7 @@ export interface SessionManager {
 export interface DeviceInfo {
   fingerprint: string;
   name: string;
-  type: 'desktop' | 'mobile' | 'tablet';
+  type: "desktop" | "mobile" | "tablet";
   browser: {
     name: string;
     version: string;
@@ -303,17 +303,17 @@ export interface SessionError extends Error {
 }
 
 export type SessionErrorCode =
-  | 'SESSION_NOT_FOUND'
-  | 'SESSION_EXPIRED'
-  | 'SESSION_INVALID'
-  | 'SESSION_TERMINATED'
-  | 'CONCURRENT_LIMIT_EXCEEDED'
-  | 'DEVICE_NOT_TRUSTED'
-  | 'LOCATION_SUSPICIOUS'
-  | 'SECURITY_VIOLATION'
-  | 'INSUFFICIENT_PERMISSIONS'
-  | 'RATE_LIMIT_EXCEEDED'
-  | 'SYSTEM_ERROR';
+  | "SESSION_NOT_FOUND"
+  | "SESSION_EXPIRED"
+  | "SESSION_INVALID"
+  | "SESSION_TERMINATED"
+  | "CONCURRENT_LIMIT_EXCEEDED"
+  | "DEVICE_NOT_TRUSTED"
+  | "LOCATION_SUSPICIOUS"
+  | "SECURITY_VIOLATION"
+  | "INSUFFICIENT_PERMISSIONS"
+  | "RATE_LIMIT_EXCEEDED"
+  | "SYSTEM_ERROR";
 
 // WebSocket Events for Real-time Session Management
 export interface SessionWebSocketEvent {
@@ -325,15 +325,15 @@ export interface SessionWebSocketEvent {
 }
 
 export type SessionWebSocketEventType =
-  | 'session_warning'
-  | 'session_expired'
-  | 'session_terminated'
-  | 'security_alert'
-  | 'device_verification_required'
-  | 'location_verification_required'
-  | 'concurrent_session_detected'
-  | 'suspicious_activity_detected'
-  | 'emergency_logout';
+  | "session_warning"
+  | "session_expired"
+  | "session_terminated"
+  | "security_alert"
+  | "device_verification_required"
+  | "location_verification_required"
+  | "concurrent_session_detected"
+  | "suspicious_activity_detected"
+  | "emergency_logout";
 
 // React Hook Types
 export interface UseSessionReturn {

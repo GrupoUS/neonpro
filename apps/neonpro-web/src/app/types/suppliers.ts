@@ -8,131 +8,89 @@
 // =====================================================================================
 
 export type SupplierType =
-  | 'medical_supplies'
-  | 'pharmaceuticals'
-  | 'equipment'
-  | 'consumables'
-  | 'services'
-  | 'maintenance'
-  | 'technology'
-  | 'general';
+  | "medical_supplies"
+  | "pharmaceuticals"
+  | "equipment"
+  | "consumables"
+  | "services"
+  | "maintenance"
+  | "technology"
+  | "general";
 
 export type SupplierRating =
-  | 'excellent'
-  | 'good'
-  | 'satisfactory'
-  | 'needs_improvement'
-  | 'poor'
-  | 'not_rated';
+  | "excellent"
+  | "good"
+  | "satisfactory"
+  | "needs_improvement"
+  | "poor"
+  | "not_rated";
 
 export type SupplierStatus =
-  | 'active'
-  | 'inactive'
-  | 'pending_approval'
-  | 'suspended'
-  | 'blacklisted';
+  | "active"
+  | "inactive"
+  | "pending_approval"
+  | "suspended"
+  | "blacklisted";
 
 export type ContractType =
-  | 'general'
-  | 'exclusive'
-  | 'preferred'
-  | 'volume_based'
-  | 'seasonal'
-  | 'emergency';
+  | "general"
+  | "exclusive"
+  | "preferred"
+  | "volume_based"
+  | "seasonal"
+  | "emergency";
 
-export type ContractStatus =
-  | 'active'
-  | 'expired'
-  | 'pending_renewal'
-  | 'terminated'
-  | 'draft';
+export type ContractStatus = "active" | "expired" | "pending_renewal" | "terminated" | "draft";
 
 export type ContactType =
-  | 'general'
-  | 'sales'
-  | 'technical'
-  | 'billing'
-  | 'customer_service'
-  | 'emergency';
+  | "general"
+  | "sales"
+  | "technical"
+  | "billing"
+  | "customer_service"
+  | "emergency";
 
-export type EvaluationType =
-  | 'monthly'
-  | 'quarterly'
-  | 'semi_annual'
-  | 'annual'
-  | 'ad_hoc';
+export type EvaluationType = "monthly" | "quarterly" | "semi_annual" | "annual" | "ad_hoc";
 
-export type PerformanceGrade =
-  | 'A+'
-  | 'A'
-  | 'B+'
-  | 'B'
-  | 'C+'
-  | 'C'
-  | 'D'
-  | 'F';
+export type PerformanceGrade = "A+" | "A" | "B+" | "B" | "C+" | "C" | "D" | "F";
 
-export type RiskLevel =
-  | 'low'
-  | 'medium'
-  | 'high'
-  | 'critical';
+export type RiskLevel = "low" | "medium" | "high" | "critical";
 
 export type CommunicationType =
-  | 'order_inquiry'
-  | 'delivery_issue'
-  | 'quality_complaint'
-  | 'payment_inquiry'
-  | 'contract_negotiation'
-  | 'general_inquiry'
-  | 'emergency';
+  | "order_inquiry"
+  | "delivery_issue"
+  | "quality_complaint"
+  | "payment_inquiry"
+  | "contract_negotiation"
+  | "general_inquiry"
+  | "emergency";
 
 export type CommunicationMethod =
-  | 'email'
-  | 'phone'
-  | 'whatsapp'
-  | 'video_call'
-  | 'in_person'
-  | 'portal';
+  | "email"
+  | "phone"
+  | "whatsapp"
+  | "video_call"
+  | "in_person"
+  | "portal";
 
-export type CommunicationDirection =
-  | 'outbound'
-  | 'inbound';
+export type CommunicationDirection = "outbound" | "inbound";
 
-export type CommunicationStatus =
-  | 'sent'
-  | 'delivered'
-  | 'read'
-  | 'responded'
-  | 'failed';
+export type CommunicationStatus = "sent" | "delivered" | "read" | "responded" | "failed";
 
-export type PriorityLevel =
-  | 'low'
-  | 'medium'
-  | 'high'
-  | 'urgent';
+export type PriorityLevel = "low" | "medium" | "high" | "urgent";
 
 export type QualityIssueType =
-  | 'defective_product'
-  | 'wrong_product'
-  | 'missing_items'
-  | 'damaged_packaging'
-  | 'expired_product'
-  | 'documentation_error'
-  | 'compliance_issue';
+  | "defective_product"
+  | "wrong_product"
+  | "missing_items"
+  | "damaged_packaging"
+  | "expired_product"
+  | "documentation_error"
+  | "compliance_issue";
 
-export type SeverityLevel =
-  | 'low'
-  | 'medium'
-  | 'high'
-  | 'critical';
+export type SeverityLevel = "low" | "medium" | "high" | "critical";
 
-export type IssueStatus =
-  | 'open'
-  | 'in_progress'
-  | 'resolved'
-  | 'closed'
-  | 'escalated';
+export type IssueStatus = "open" | "in_progress" | "resolved" | "closed" | "escalated";
 
 // =====================================================================================
 // CORE INTERFACES
@@ -141,18 +99,18 @@ export type IssueStatus =
 export interface Supplier {
   id: string;
   clinic_id: string;
-  
+
   // Basic Information
   supplier_name: string;
   supplier_code: string;
   business_registration?: string;
   tax_id?: string;
-  
+
   // Contact Information
   primary_contact_name?: string;
   primary_contact_email?: string;
   primary_contact_phone?: string;
-  
+
   // Address Information
   address_line1?: string;
   address_line2?: string;
@@ -160,24 +118,24 @@ export interface Supplier {
   state?: string;
   postal_code?: string;
   country?: string;
-  
+
   // Business Information
   supplier_type: SupplierType;
   category: string[];
   payment_terms?: number;
   currency?: string;
-  
+
   // Performance Metrics
   performance_score?: number;
   reliability_rating?: SupplierRating;
   quality_rating?: SupplierRating;
   delivery_rating?: SupplierRating;
-  
+
   // Status and Flags
   status: SupplierStatus;
   is_preferred?: boolean;
   is_critical?: boolean;
-  
+
   // Audit fields
   created_by?: string;
   created_at: string;
@@ -187,43 +145,43 @@ export interface Supplier {
 export interface SupplierContract {
   id: string;
   supplier_id: string;
-  
+
   // Contract Information
   contract_number: string;
   contract_type: ContractType;
-  
+
   // Terms and Conditions
   start_date: string;
   end_date?: string;
   auto_renewal?: boolean;
   renewal_notice_days?: number;
-  
+
   // Pricing and Payment
   payment_terms?: number;
   early_payment_discount?: number;
   late_payment_penalty?: number;
   minimum_order_amount?: number;
   volume_discount_tiers?: VolumeDiscountTier[];
-  
+
   // Performance Clauses
   delivery_sla_days?: number;
   quality_requirements?: string;
   performance_penalties?: Record<string, any>;
-  
+
   // Status and Metadata
   status: ContractStatus;
   contract_value?: number;
   currency?: string;
-  
+
   // Document Management
   contract_document_url?: string;
   signed_date?: string;
-  
+
   // Audit fields
   created_by?: string;
   created_at: string;
   updated_at: string;
-  
+
   // Relations
   supplier?: Supplier;
 }
@@ -231,36 +189,36 @@ export interface SupplierContract {
 export interface SupplierContact {
   id: string;
   supplier_id: string;
-  
+
   // Contact Information
   contact_name: string;
   contact_title?: string;
   department?: string;
-  
+
   // Contact Methods
   email?: string;
   phone?: string;
   mobile?: string;
   whatsapp?: string;
-  
+
   // Contact Type and Preferences
   contact_type: ContactType;
   is_primary?: boolean;
   preferred_contact_method?: string;
-  
+
   // Communication Preferences
   can_receive_orders?: boolean;
   can_receive_invoices?: boolean;
   can_receive_complaints?: boolean;
   emergency_contact?: boolean;
-  
+
   // Status
   is_active?: boolean;
-  
+
   // Audit fields
   created_at: string;
   updated_at: string;
-  
+
   // Relations
   supplier?: Supplier;
 }
@@ -268,45 +226,45 @@ export interface SupplierContact {
 export interface SupplierPerformance {
   id: string;
   supplier_id: string;
-  
+
   // Time Period
   period_start: string;
   period_end: string;
   evaluation_type: EvaluationType;
-  
+
   // Delivery Performance
   total_orders?: number;
   on_time_deliveries?: number;
   late_deliveries?: number;
   avg_delivery_days?: number;
   delivery_performance_score?: number;
-  
+
   // Quality Performance
   total_items_received?: number;
   defective_items?: number;
   returned_items?: number;
   quality_score?: number;
-  
+
   // Financial Performance
   total_order_value?: number;
   total_invoiced?: number;
   total_paid?: number;
   avg_payment_delay_days?: number;
   cost_savings?: number;
-  
+
   // Communication and Service
   response_time_hours?: number;
   communication_rating?: number;
   issue_resolution_days?: number;
-  
+
   // Overall Performance
   overall_score?: number;
   performance_grade?: PerformanceGrade;
-  
+
   // Metadata
   calculated_at: string;
   calculated_by?: string;
-  
+
   // Relations
   supplier?: Supplier;
 }
@@ -314,13 +272,13 @@ export interface SupplierPerformance {
 export interface SupplierEvaluation {
   id: string;
   supplier_id: string;
-  
+
   // Evaluation Information
   evaluation_date: string;
   evaluation_period_start: string;
   evaluation_period_end: string;
   evaluation_type: EvaluationType;
-  
+
   // Scoring Criteria (1-10 scale)
   delivery_reliability: number;
   product_quality: number;
@@ -328,31 +286,31 @@ export interface SupplierEvaluation {
   pricing_competitiveness: number;
   technical_support: number;
   documentation_quality: number;
-  
+
   // Calculated Scores
   weighted_score: number;
   final_grade: PerformanceGrade;
-  
+
   // Qualitative Assessment
   strengths?: string;
   weaknesses?: string;
   improvement_recommendations?: string;
   action_items?: string;
-  
+
   // Future Relationship
   renewal_recommendation?: boolean;
   preferred_supplier_status?: boolean;
   risk_level?: RiskLevel;
-  
+
   // Evaluator Information
   evaluated_by: string;
   approved_by?: string;
   approval_date?: string;
-  
+
   // Audit fields
   created_at: string;
   updated_at: string;
-  
+
   // Relations
   supplier?: Supplier;
 }
@@ -361,30 +319,30 @@ export interface SupplierCommunication {
   id: string;
   supplier_id: string;
   contact_id?: string;
-  
+
   // Communication Details
   communication_type: CommunicationType;
   subject: string;
   message_body?: string;
-  
+
   // Communication Method
   method: CommunicationMethod;
   direction: CommunicationDirection;
-  
+
   // Status and Follow-up
   status: CommunicationStatus;
   priority: PriorityLevel;
   requires_response?: boolean;
   response_deadline?: string;
-  
+
   // Metadata
   communication_date: string;
   handled_by?: string;
-  
+
   // Audit fields
   created_at: string;
   updated_at: string;
-  
+
   // Relations
   supplier?: Supplier;
   contact?: SupplierContact;
@@ -393,41 +351,41 @@ export interface SupplierCommunication {
 export interface SupplierQualityIssue {
   id: string;
   supplier_id: string;
-  
+
   // Issue Information
   issue_date: string;
   issue_type: QualityIssueType;
   severity: SeverityLevel;
-  
+
   // Issue Details
   issue_description: string;
   affected_items?: string[];
   quantity_affected?: number;
   estimated_cost_impact?: number;
-  
+
   // Resolution
   resolution_required?: boolean;
   resolution_description?: string;
   resolution_date?: string;
   resolved_by?: string;
-  
+
   // Impact Assessment
   customer_impact?: boolean;
   regulatory_impact?: boolean;
   financial_impact?: number;
-  
+
   // Status
   status: IssueStatus;
-  
+
   // Follow-up
   follow_up_required?: boolean;
   follow_up_date?: string;
-  
+
   // Audit fields
   reported_by: string;
   created_at: string;
   updated_at: string;
-  
+
   // Relations
   supplier?: Supplier;
 }
@@ -446,7 +404,7 @@ export interface VolumeDiscountTier {
 export interface PerformancePenalty {
   metric: string;
   threshold: number;
-  penalty_type: 'percentage' | 'fixed_amount' | 'contract_termination';
+  penalty_type: "percentage" | "fixed_amount" | "contract_termination";
   penalty_value?: number;
   description?: string;
 }
@@ -463,21 +421,21 @@ export interface SupplierPerformanceSummary {
   performance_score?: number;
   is_preferred?: boolean;
   is_critical?: boolean;
-  
+
   // Latest performance metrics
   delivery_performance_score?: number;
   quality_score?: number;
   overall_score?: number;
   performance_grade?: PerformanceGrade;
-  
+
   // Contract information
   payment_terms?: number;
   early_payment_discount?: number;
   contract_end_date?: string;
-  
+
   // Issue counts
   open_issues?: number;
-  
+
   // Recent communication
   last_communication?: string;
 }
@@ -490,29 +448,29 @@ export interface ContractRenewalAlert {
   end_date: string;
   auto_renewal?: boolean;
   renewal_notice_days?: number;
-  
+
   // Days until expiration
   days_until_expiration?: number;
-  
+
   // Alert status
-  alert_status?: 'urgent' | 'warning' | 'normal';
+  alert_status?: "urgent" | "warning" | "normal";
 }
 
 export interface QualityIssuesSummary {
   supplier_id: string;
   supplier_name: string;
-  
+
   // Issue counts by status
   open_issues?: number;
   in_progress_issues?: number;
   resolved_issues?: number;
-  
+
   // Issue counts by severity
   critical_issues?: number;
   high_issues?: number;
   medium_issues?: number;
   low_issues?: number;
-  
+
   // Financial impact
   open_financial_impact?: number;
   total_financial_impact?: number;
@@ -527,12 +485,12 @@ export interface CreateSupplierRequest {
   supplier_code: string;
   business_registration?: string;
   tax_id?: string;
-  
+
   // Contact Information
   primary_contact_name?: string;
   primary_contact_email?: string;
   primary_contact_phone?: string;
-  
+
   // Address Information
   address_line1?: string;
   address_line2?: string;
@@ -540,13 +498,13 @@ export interface CreateSupplierRequest {
   state?: string;
   postal_code?: string;
   country?: string;
-  
+
   // Business Information
   supplier_type: SupplierType;
   category?: string[];
   payment_terms?: number;
   currency?: string;
-  
+
   // Status and Flags
   is_preferred?: boolean;
   is_critical?: boolean;
@@ -670,7 +628,7 @@ export interface CompetitiveBidding {
   invited_suppliers: string[];
   bid_deadline: string;
   evaluation_criteria: BidEvaluationCriteria[];
-  status: 'draft' | 'open' | 'closed' | 'awarded';
+  status: "draft" | "open" | "closed" | "awarded";
   winning_supplier_id?: string;
   created_at: string;
 }
@@ -742,10 +700,10 @@ export interface SupplierKPI {
 
 export interface SupplierIntegration {
   supplier_id: string;
-  integration_type: 'edi' | 'api' | 'portal' | 'email';
-  connection_status: 'connected' | 'disconnected' | 'error';
+  integration_type: "edi" | "api" | "portal" | "email";
+  connection_status: "connected" | "disconnected" | "error";
   last_sync: string;
-  sync_frequency: 'real_time' | 'hourly' | 'daily' | 'weekly';
+  sync_frequency: "real_time" | "hourly" | "daily" | "weekly";
   supported_operations: string[];
   configuration: Record<string, any>;
 }
@@ -754,7 +712,7 @@ export interface SupplierPortalAccess {
   supplier_id: string;
   portal_url: string;
   username: string;
-  access_level: 'read_only' | 'order_management' | 'full_access';
+  access_level: "read_only" | "order_management" | "full_access";
   last_login: string;
   features_enabled: string[];
 }

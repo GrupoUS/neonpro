@@ -1,23 +1,23 @@
-﻿import { NotificationMessage, DeliveryStatus } from './types';
+import type { NotificationMessage, DeliveryStatus } from "./types";
 
 export async function sendNotification(message: NotificationMessage) {
   try {
     // Implementation stub
-    console.log('Sending notification:', message);
-    
+    console.log("Sending notification:", message);
+
     return {
       success: true,
       messageId: message.id,
       status: DeliveryStatus.SENT,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   } catch (error) {
-    console.error('Failed to send notification:', error);
+    console.error("Failed to send notification:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: error instanceof Error ? error.message : "Unknown error",
       status: DeliveryStatus.FAILED,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 }

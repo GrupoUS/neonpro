@@ -1,12 +1,12 @@
 /**
  * NeonPro Notification System - Automation Engine
  * Story 1.7: Sistema de Notificações
- * 
+ *
  * Motor de automação para notificações baseadas em eventos e regras
  * Suporte a triggers, condições e ações automatizadas
  */
 
-import {
+import type {
   NotificationType,
   NotificationChannel,
   NotificationPriority,
@@ -15,10 +15,10 @@ import {
   AutomationCondition,
   AutomationAction,
   NotificationContext,
-  NotificationRecipient
-} from '../types';
-import { NotificationManager } from '../notification-manager';
-import { TemplateEngine } from '../template-engine';
+  NotificationRecipient,
+} from "../types";
+import type { NotificationManager } from "../notification-manager";
+import type { TemplateEngine } from "../template-engine";
 
 // ============================================================================
 // INTERFACES
@@ -66,10 +66,10 @@ export class AutomationEngine {
   private rules: Map<string, AutomationRule> = new Map();
   private executionHistory: RuleExecution[] = [];
   private isRunning = false;
-  
+
   constructor(
     private notificationManager: NotificationManager,
-    private templateEngine: TemplateEngine
+    private templateEngine: TemplateEngine,
   ) {}
 
   // ============================================================================
@@ -102,11 +102,11 @@ export class AutomationEngine {
   updateRule(ruleId: string, updates: Partial<AutomationRule>): boolean {
     const rule = this.rules.get(ruleId);
     if (!rule) return false;
-    
+
     const updatedRule = { ...rule, ...updates, id: ruleId };
     this.validateRule(updatedRule);
     this.rules.set(ruleId, updatedRule);
-    
+
     console.log(`✏️ Regra de automação atualizada: ${rule.name}`);
     return true;
   }
@@ -129,7 +129,7 @@ export class AutomationEngine {
    * Lista regras ativas
    */
   getActiveRules(): AutomationRule[] {
-    return Array.from(this.rules.values()).filter(rule => rule.isActive);
+    return Array.from(this.rules.values()).filter((rule) => rule.isActive);
   }
 
   // ============================================================================
@@ -141,26 +141,28 @@ export class AutomationEngine {
    */
   async processEvent(event: EventData): Promise<RuleExecution[]> {
     if (!this.isRunning) {
-      console.warn('⚠️ Motor de automação não está rodando');
+      console.warn("⚠️ Motor de automação não está rodando");
       return [];
     }
-    
+
     const executions: RuleExecution[] = [];
     const applicableRules = this.findApplicableRules(event);
-    
-    console.log(`🔄 Processando evento ${event.type} - ${applicableRules.length} regras aplicáveis`);
-    
+
+    console.log(
+      `🔄 Processando evento ${event.type} - ${applicableRules.length} regras aplicáveis`,
+    );
+
     for (const rule of applicableRules) {
       const execution = await this.executeRule(rule, event);
       executions.push(execution);
       this.executionHistory.push(execution);
     }
-    
+
     // Limitar histórico
     if (this.executionHistory.length > 1000) {
       this.executionHistory = this.executionHistory.slice(-1000);
     }
-    
+
     return executions;
   }
 
@@ -168,7 +170,7 @@ export class AutomationEngine {
    * Encontra regras aplicáveis ao evento
    */
   private findApplicableRules(event: EventData): AutomationRule[] {
-    return this.getActiveRules().filter(rule => {
+    return this.getActiveRules().filter((rule) => {
       // Verificar se o trigger corresponde ao evento
       return this.matchesTrigger(rule.trigger, event);
     });
@@ -182,22 +184,22 @@ export class AutomationEngine {
     if (trigger.eventType !== event.type) {
       return false;
     }
-    
+
     // Verificar tipo de entidade se especificado
     if (trigger.entityType && trigger.entityType !== event.entityType) {
       return false;
     }
-    
+
     // Verificar clínica se especificado
     if (trigger.clinicId && trigger.clinicId !== event.clinicId) {
       return false;
     }
-    
+
     // Verificar condições do trigger
     if (trigger.conditions && trigger.conditions.length > 0) {
       return this.evaluateConditions(trigger.conditions, event);
     }
-    
+
     return true;
   }
 
@@ -218,9 +220,9 @@ export class AutomationEngine {
       actionsExecuted: 0,
       errors: [],
       executedAt: new Date(),
-      duration: 0
+      duration: 0,
     };
-    
+
     try {
       // Avaliar condições
       if (rule.conditions && rule.conditions.length > 0) {
@@ -228,7 +230,7 @@ export class AutomationEngine {
       } else {
         execution.conditionsMet = true;
       }
-      
+
       // Executar ações se condições foram atendidas
       if (execution.conditionsMet) {
         for (const action of rule.actions) {
@@ -236,24 +238,25 @@ export class AutomationEngine {
             await this.executeAction(action, event, rule);
             execution.actionsExecuted++;
           } catch (error) {
-            const errorMsg = error instanceof Error ? error.message : 'Erro desconhecido';
+            const errorMsg = error instanceof Error ? error.message : "Erro desconhecido";
             execution.errors.push(`Ação ${action.type}: ${errorMsg}`);
             console.error(`❌ Erro ao executar ação ${action.type}:`, error);
           }
         }
       }
-      
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMsg = error instanceof Error ? error.message : "Erro desconhecido";
       execution.errors.push(`Execução da regra: ${errorMsg}`);
       console.error(`❌ Erro ao executar regra ${rule.name}:`, error);
     }
-    
+
     execution.duration = Date.now() - startTime;
-    
-    console.log(`✅ Regra ${rule.name} executada em ${execution.duration}ms - ` +
-                `${execution.actionsExecuted} ações, ${execution.errors.length} erros`);
-    
+
+    console.log(
+      `✅ Regra ${rule.name} executada em ${execution.duration}ms - ` +
+        `${execution.actionsExecuted} ações, ${execution.errors.length} erros`,
+    );
+
     return execution;
   }
 
@@ -261,7 +264,7 @@ export class AutomationEngine {
    * Avalia condições
    */
   private evaluateConditions(conditions: AutomationCondition[], event: EventData): boolean {
-    return conditions.every(condition => this.evaluateCondition(condition, event));
+    return conditions.every((condition) => this.evaluateCondition(condition, event));
   }
 
   /**
@@ -269,35 +272,35 @@ export class AutomationEngine {
    */
   private evaluateCondition(condition: AutomationCondition, event: EventData): boolean {
     const value = this.getValueFromEvent(condition.field, event);
-    
+
     switch (condition.operator) {
-      case 'equals':
+      case "equals":
         return value === condition.value;
-      case 'not_equals':
+      case "not_equals":
         return value !== condition.value;
-      case 'greater_than':
+      case "greater_than":
         return Number(value) > Number(condition.value);
-      case 'less_than':
+      case "less_than":
         return Number(value) < Number(condition.value);
-      case 'greater_equal':
+      case "greater_equal":
         return Number(value) >= Number(condition.value);
-      case 'less_equal':
+      case "less_equal":
         return Number(value) <= Number(condition.value);
-      case 'contains':
+      case "contains":
         return String(value).includes(String(condition.value));
-      case 'not_contains':
+      case "not_contains":
         return !String(value).includes(String(condition.value));
-      case 'starts_with':
+      case "starts_with":
         return String(value).startsWith(String(condition.value));
-      case 'ends_with':
+      case "ends_with":
         return String(value).endsWith(String(condition.value));
-      case 'in':
+      case "in":
         return Array.isArray(condition.value) && condition.value.includes(value);
-      case 'not_in':
+      case "not_in":
         return Array.isArray(condition.value) && !condition.value.includes(value);
-      case 'exists':
+      case "exists":
         return value !== undefined && value !== null;
-      case 'not_exists':
+      case "not_exists":
         return value === undefined || value === null;
       default:
         console.warn(`⚠️ Operador desconhecido: ${condition.operator}`);
@@ -309,17 +312,17 @@ export class AutomationEngine {
    * Obtém valor do evento baseado no campo
    */
   private getValueFromEvent(field: string, event: EventData): any {
-    const parts = field.split('.');
+    const parts = field.split(".");
     let value: any = event;
-    
+
     for (const part of parts) {
-      if (value && typeof value === 'object') {
+      if (value && typeof value === "object") {
         value = value[part];
       } else {
         return undefined;
       }
     }
-    
+
     return value;
   }
 
@@ -333,19 +336,19 @@ export class AutomationEngine {
   private async executeAction(
     action: AutomationAction,
     event: EventData,
-    rule: AutomationRule
+    rule: AutomationRule,
   ): Promise<void> {
     switch (action.type) {
-      case 'send_notification':
+      case "send_notification":
         await this.executeSendNotificationAction(action, event, rule);
         break;
-      case 'delay':
+      case "delay":
         await this.executeDelayAction(action);
         break;
-      case 'webhook':
+      case "webhook":
         await this.executeWebhookAction(action, event);
         break;
-      case 'update_entity':
+      case "update_entity":
         await this.executeUpdateEntityAction(action, event);
         break;
       default:
@@ -359,17 +362,17 @@ export class AutomationEngine {
   private async executeSendNotificationAction(
     action: AutomationAction,
     event: EventData,
-    rule: AutomationRule
+    rule: AutomationRule,
   ): Promise<void> {
     const config = action.config;
-    
+
     // Determinar destinatários
     const recipients = await this.resolveRecipients(config.recipients, event);
-    
+
     // Renderizar template
     const templateData = this.buildTemplateData(event, rule);
     const content = await this.templateEngine.render(config.templateId, templateData);
-    
+
     // Enviar notificação para cada destinatário
     for (const recipient of recipients) {
       const context: NotificationContext = {
@@ -380,17 +383,17 @@ export class AutomationEngine {
         recipient,
         clinic: {
           id: event.clinicId,
-          name: 'Clínica' // TODO: Buscar nome real da clínica
+          name: "Clínica", // TODO: Buscar nome real da clínica
         },
         timestamp: new Date(),
         metadata: {
           automationRuleId: rule.id,
           automationRuleName: rule.name,
           triggerEvent: event.type,
-          triggerEntityId: event.entityId
-        }
+          triggerEntityId: event.entityId,
+        },
       };
-      
+
       await this.notificationManager.send(context, content);
     }
   }
@@ -400,7 +403,7 @@ export class AutomationEngine {
    */
   private async executeDelayAction(action: AutomationAction): Promise<void> {
     const delayMs = action.config.duration || 1000;
-    await new Promise(resolve => setTimeout(resolve, delayMs));
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
   }
 
   /**
@@ -408,20 +411,20 @@ export class AutomationEngine {
    */
   private async executeWebhookAction(action: AutomationAction, event: EventData): Promise<void> {
     const config = action.config;
-    
+
     const response = await fetch(config.url, {
-      method: config.method || 'POST',
+      method: config.method || "POST",
       headers: {
-        'Content-Type': 'application/json',
-        ...config.headers
+        "Content-Type": "application/json",
+        ...config.headers,
       },
       body: JSON.stringify({
         event,
         timestamp: new Date().toISOString(),
-        ...config.payload
-      })
+        ...config.payload,
+      }),
     });
-    
+
     if (!response.ok) {
       throw new Error(`Webhook falhou: ${response.status} ${response.statusText}`);
     }
@@ -432,13 +435,13 @@ export class AutomationEngine {
    */
   private async executeUpdateEntityAction(
     action: AutomationAction,
-    event: EventData
+    event: EventData,
   ): Promise<void> {
     // Implementar atualização de entidade
-    console.log('🔄 Atualizando entidade:', {
+    console.log("🔄 Atualizando entidade:", {
       entityId: event.entityId,
       entityType: event.entityType,
-      updates: action.config.updates
+      updates: action.config.updates,
     });
   }
 
@@ -451,39 +454,39 @@ export class AutomationEngine {
    */
   private async resolveRecipients(
     recipientConfig: any,
-    event: EventData
+    event: EventData,
   ): Promise<NotificationRecipient[]> {
     const recipients: NotificationRecipient[] = [];
-    
+
     // Destinatários específicos
     if (recipientConfig.userIds) {
       for (const userId of recipientConfig.userIds) {
         recipients.push({
           id: userId,
-          type: 'user',
+          type: "user",
           name: `Usuário ${userId}`, // TODO: Buscar nome real
           email: `user${userId}@example.com`, // TODO: Buscar email real
-          phone: undefined
+          phone: undefined,
         });
       }
     }
-    
+
     // Destinatários por papel
     if (recipientConfig.roles) {
       // TODO: Implementar busca de usuários por papel
     }
-    
+
     // Destinatário do evento
     if (recipientConfig.includeEventUser && event.userId) {
       recipients.push({
         id: event.userId,
-        type: 'user',
+        type: "user",
         name: `Usuário ${event.userId}`,
         email: `user${event.userId}@example.com`,
-        phone: undefined
+        phone: undefined,
       });
     }
-    
+
     return recipients;
   }
 
@@ -497,18 +500,18 @@ export class AutomationEngine {
         entityId: event.entityId,
         entityType: event.entityType,
         timestamp: event.timestamp,
-        data: event.data
+        data: event.data,
       },
       rule: {
         id: rule.id,
         name: rule.name,
-        description: rule.description
+        description: rule.description,
       },
       clinic: {
-        id: event.clinicId
+        id: event.clinicId,
       },
       now: new Date(),
-      ...event.data
+      ...event.data,
     };
   }
 
@@ -517,29 +520,29 @@ export class AutomationEngine {
    */
   private validateRule(rule: AutomationRule): void {
     if (!rule.id) {
-      throw new Error('ID da regra é obrigatório');
+      throw new Error("ID da regra é obrigatório");
     }
-    
+
     if (!rule.name) {
-      throw new Error('Nome da regra é obrigatório');
+      throw new Error("Nome da regra é obrigatório");
     }
-    
+
     if (!rule.trigger) {
-      throw new Error('Trigger da regra é obrigatório');
+      throw new Error("Trigger da regra é obrigatório");
     }
-    
+
     if (!rule.actions || rule.actions.length === 0) {
-      throw new Error('Pelo menos uma ação é obrigatória');
+      throw new Error("Pelo menos uma ação é obrigatória");
     }
-    
+
     // Validar ações
     for (const action of rule.actions) {
       if (!action.type) {
-        throw new Error('Tipo da ação é obrigatório');
+        throw new Error("Tipo da ação é obrigatório");
       }
-      
-      if (action.type === 'send_notification' && !action.config.templateId) {
-        throw new Error('Template ID é obrigatório para ação de notificação');
+
+      if (action.type === "send_notification" && !action.config.templateId) {
+        throw new Error("Template ID é obrigatório para ação de notificação");
       }
     }
   }
@@ -553,7 +556,7 @@ export class AutomationEngine {
    */
   start(): void {
     this.isRunning = true;
-    console.log('🚀 Motor de automação iniciado');
+    console.log("🚀 Motor de automação iniciado");
   }
 
   /**
@@ -561,7 +564,7 @@ export class AutomationEngine {
    */
   stop(): void {
     this.isRunning = false;
-    console.log('⏹️ Motor de automação parado');
+    console.log("⏹️ Motor de automação parado");
   }
 
   /**
@@ -580,19 +583,19 @@ export class AutomationEngine {
    */
   getStats(): AutomationStats {
     const totalExecutions = this.executionHistory.length;
-    const successfulExecutions = this.executionHistory.filter(e => e.errors.length === 0).length;
+    const successfulExecutions = this.executionHistory.filter((e) => e.errors.length === 0).length;
     const failedExecutions = totalExecutions - successfulExecutions;
-    
+
     const totalDuration = this.executionHistory.reduce((sum, e) => sum + e.duration, 0);
     const averageExecutionTime = totalExecutions > 0 ? totalDuration / totalExecutions : 0;
-    
+
     return {
       totalRules: this.rules.size,
       activeRules: this.getActiveRules().length,
       totalExecutions,
       successfulExecutions,
       failedExecutions,
-      averageExecutionTime
+      averageExecutionTime,
     };
   }
 
@@ -608,7 +611,7 @@ export class AutomationEngine {
    */
   clearExecutionHistory(): void {
     this.executionHistory = [];
-    console.log('🧹 Histórico de execuções limpo');
+    console.log("🧹 Histórico de execuções limpo");
   }
 }
 

@@ -1,13 +1,25 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Search, Filter, Users, Clock, TrendingUp, Calendar } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { PatientTable } from './PatientTable';
-import { searchPatients, getPatientStats } from '@/lib/supabase/patients';
-import { debounce } from 'lodash';
+import React, { useState, useEffect, useMemo } from "react";
+import type { Search, Filter, Users, Clock, TrendingUp, Calendar } from "lucide-react";
+import type { Input } from "@/components/ui/input";
+import type { Button } from "@/components/ui/button";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { PatientTable } from "./PatientTable";
+import type { searchPatients, getPatientStats } from "@/lib/supabase/patients";
+import type { debounce } from "lodash";
 
 interface PatientRecord {
   id: number;
@@ -18,7 +30,7 @@ interface PatientRecord {
     birthDate: string;
     telecom?: Array<{ value: string; system: string }>;
   };
-  status: 'active' | 'inactive';
+  status: "active" | "inactive";
   created_at: string;
   updated_at: string;
 }
@@ -32,9 +44,9 @@ interface PatientStats {
 
 interface SearchFilters {
   query: string;
-  status: 'all' | 'active' | 'inactive';
-  gender: 'all' | 'male' | 'female' | 'other';
-  ageRange: 'all' | '0-18' | '19-40' | '41-65' | '65+';
+  status: "all" | "active" | "inactive";
+  gender: "all" | "male" | "female" | "other";
+  ageRange: "all" | "0-18" | "19-40" | "41-65" | "65+";
   page: number;
   limit: number;
 }
@@ -45,39 +57,40 @@ export function PatientSearch() {
   const [loading, setLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
   const [filters, setFilters] = useState<SearchFilters>({
-    query: '',
-    status: 'all',
-    gender: 'all',
-    ageRange: 'all',
+    query: "",
+    status: "all",
+    gender: "all",
+    ageRange: "all",
     page: 1,
-    limit: 20
+    limit: 20,
   });
 
   // Debounced search function
   const debouncedSearch = useMemo(
-    () => debounce(async (searchFilters: SearchFilters) => {
-      setLoading(true);
-      try {
-        const result = await searchPatients({
-          query: searchFilters.query,
-          status: searchFilters.status === 'all' ? undefined : searchFilters.status,
-          gender: searchFilters.gender === 'all' ? undefined : searchFilters.gender,
-          ageRange: searchFilters.ageRange === 'all' ? undefined : searchFilters.ageRange,
-          page: searchFilters.page,
-          limit: searchFilters.limit
-        });
+    () =>
+      debounce(async (searchFilters: SearchFilters) => {
+        setLoading(true);
+        try {
+          const result = await searchPatients({
+            query: searchFilters.query,
+            status: searchFilters.status === "all" ? undefined : searchFilters.status,
+            gender: searchFilters.gender === "all" ? undefined : searchFilters.gender,
+            ageRange: searchFilters.ageRange === "all" ? undefined : searchFilters.ageRange,
+            page: searchFilters.page,
+            limit: searchFilters.limit,
+          });
 
-        if (result.success && result.data) {
-          setPatients(result.data.patients);
-          setTotalCount(result.data.total);
+          if (result.success && result.data) {
+            setPatients(result.data.patients);
+            setTotalCount(result.data.total);
+          }
+        } catch (error) {
+          console.error("Error searching patients:", error);
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.error('Error searching patients:', error);
-      } finally {
-        setLoading(false);
-      }
-    }, 300),
-    []
+      }, 300),
+    [],
   );
 
   // Load patient statistics
@@ -100,15 +113,15 @@ export function PatientSearch() {
   }, [filters, debouncedSearch]);
 
   const handleFilterChange = (key: keyof SearchFilters, value: any) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
       [key]: value,
-      page: key !== 'page' ? 1 : value // Reset page when other filters change
+      page: key !== "page" ? 1 : value, // Reset page when other filters change
     }));
   };
 
   const handlePageChange = (page: number) => {
-    handleFilterChange('page', page);
+    handleFilterChange("page", page);
   };
 
   const calculateAge = (birthDate: string): number => {
@@ -116,19 +129,19 @@ export function PatientSearch() {
     const birth = new Date(birthDate);
     let age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
-    
+
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
       age--;
     }
-    
+
     return age;
   };
 
   const formatPhoneNumber = (telecom?: Array<{ value: string; system: string }>): string => {
-    const phone = telecom?.find(t => t.system === 'phone');
-    if (!phone) return 'N/A';
-    
-    const digits = phone.value.replace(/\D/g, '');
+    const phone = telecom?.find((t) => t.system === "phone");
+    if (!phone) return "N/A";
+
+    const digits = phone.value.replace(/\D/g, "");
     if (digits.length === 11) {
       return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
     }
@@ -137,32 +150,36 @@ export function PatientSearch() {
 
   const getGenderLabel = (gender: string): string => {
     const labels = {
-      male: 'Masculino',
-      female: 'Feminino',
-      other: 'Outro',
-      unknown: 'Não informado'
+      male: "Masculino",
+      female: "Feminino",
+      other: "Outro",
+      unknown: "Não informado",
     };
-    return labels[gender as keyof typeof labels] || 'Não informado';
+    return labels[gender as keyof typeof labels] || "Não informado";
   };
 
   const getStatusBadge = (status: string) => {
-    if (status === 'active') {
-      return <Badge variant="default" className="bg-green-100 text-green-800">Ativo</Badge>;
+    if (status === "active") {
+      return (
+        <Badge variant="default" className="bg-green-100 text-green-800">
+          Ativo
+        </Badge>
+      );
     }
     return <Badge variant="secondary">Inativo</Badge>;
   };
 
   // Prepare table data
-  const tableData = patients.map(patient => ({
+  const tableData = patients.map((patient) => ({
     id: patient.id,
     medical_record_number: patient.medical_record_number,
-    name: patient.fhir_data.name[0]?.text || 'Nome não informado',
+    name: patient.fhir_data.name[0]?.text || "Nome não informado",
     age: calculateAge(patient.fhir_data.birthDate),
     gender: getGenderLabel(patient.fhir_data.gender),
     phone: formatPhoneNumber(patient.fhir_data.telecom),
     status: getStatusBadge(patient.status),
-    created_at: new Date(patient.created_at).toLocaleDateString('pt-BR'),
-    actions: patient.id
+    created_at: new Date(patient.created_at).toLocaleDateString("pt-BR"),
+    actions: patient.id,
   }));
 
   const totalPages = Math.ceil(totalCount / filters.limit);
@@ -179,9 +196,7 @@ export function PatientSearch() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats.total_patients}</div>
-              <p className="text-xs text-muted-foreground">
-                {stats.active_patients} ativos
-              </p>
+              <p className="text-xs text-muted-foreground">{stats.active_patients} ativos</p>
             </CardContent>
           </Card>
 
@@ -193,7 +208,7 @@ export function PatientSearch() {
             <CardContent>
               <div className="text-2xl font-bold">{stats.new_this_month}</div>
               <p className="text-xs text-muted-foreground">
-                Cadastrados em {new Date().toLocaleDateString('pt-BR', { month: 'long' })}
+                Cadastrados em {new Date().toLocaleDateString("pt-BR", { month: "long" })}
               </p>
             </CardContent>
           </Card>
@@ -205,9 +220,7 @@ export function PatientSearch() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{Math.round(stats.avg_age)} anos</div>
-              <p className="text-xs text-muted-foreground">
-                Média geral dos pacientes
-              </p>
+              <p className="text-xs text-muted-foreground">Média geral dos pacientes</p>
             </CardContent>
           </Card>
 
@@ -220,9 +233,7 @@ export function PatientSearch() {
               <div className="text-2xl font-bold">
                 {Math.round((stats.active_patients / stats.total_patients) * 100)}%
               </div>
-              <p className="text-xs text-muted-foreground">
-                Pacientes ativos
-              </p>
+              <p className="text-xs text-muted-foreground">Pacientes ativos</p>
             </CardContent>
           </Card>
         </div>
@@ -243,7 +254,7 @@ export function PatientSearch() {
             <Input
               placeholder="Buscar por nome, CPF, telefone ou prontuário..."
               value={filters.query}
-              onChange={(e) => handleFilterChange('query', e.target.value)}
+              onChange={(e) => handleFilterChange("query", e.target.value)}
               className="pl-10"
             />
           </div>
@@ -254,7 +265,7 @@ export function PatientSearch() {
               <label className="text-sm font-medium">Status</label>
               <Select
                 value={filters.status}
-                onValueChange={(value) => handleFilterChange('status', value)}
+                onValueChange={(value) => handleFilterChange("status", value)}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -271,7 +282,7 @@ export function PatientSearch() {
               <label className="text-sm font-medium">Gênero</label>
               <Select
                 value={filters.gender}
-                onValueChange={(value) => handleFilterChange('gender', value)}
+                onValueChange={(value) => handleFilterChange("gender", value)}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -289,7 +300,7 @@ export function PatientSearch() {
               <label className="text-sm font-medium">Faixa Etária</label>
               <Select
                 value={filters.ageRange}
-                onValueChange={(value) => handleFilterChange('ageRange', value)}
+                onValueChange={(value) => handleFilterChange("ageRange", value)}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -307,20 +318,20 @@ export function PatientSearch() {
 
           {/* Results Count */}
           <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <span>
-              {loading ? 'Carregando...' : `${totalCount} paciente(s) encontrado(s)`}
-            </span>
+            <span>{loading ? "Carregando..." : `${totalCount} paciente(s) encontrado(s)`}</span>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setFilters({
-                query: '',
-                status: 'all',
-                gender: 'all',
-                ageRange: 'all',
-                page: 1,
-                limit: 20
-              })}
+              onClick={() =>
+                setFilters({
+                  query: "",
+                  status: "all",
+                  gender: "all",
+                  ageRange: "all",
+                  page: 1,
+                  limit: 20,
+                })
+              }
             >
               <Filter className="h-4 w-4 mr-2" />
               Limpar Filtros

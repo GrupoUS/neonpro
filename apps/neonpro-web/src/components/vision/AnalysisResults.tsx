@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Eye, 
-  Clock, 
-  TrendingUp, 
-  Target, 
-  Download, 
+import React, { useState, useEffect } from "react";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Progress } from "@/components/ui/progress";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Eye,
+  Clock,
+  TrendingUp,
+  Target,
+  Download,
   Share2,
   ZoomIn,
   BarChart3,
-  Activity
-} from 'lucide-react';
-import { AnalysisResult, ChangeMetrics, AnnotationData } from '@/lib/vision/analysis-engine';
-import { cn } from '@/lib/utils';
+  Activity,
+} from "lucide-react";
+import type { AnalysisResult, ChangeMetrics, AnnotationData } from "@/lib/vision/analysis-engine";
+import type { cn } from "@/lib/utils";
 
 interface AnalysisResultsProps {
   analysisResult: AnalysisResult;
@@ -27,14 +27,14 @@ interface AnalysisResultsProps {
   className?: string;
 }
 
-export function AnalysisResults({ 
-  analysisResult, 
-  onExport, 
-  onShare, 
-  className 
+export function AnalysisResults({
+  analysisResult,
+  onExport,
+  onShare,
+  className,
 }: AnalysisResultsProps) {
   const [selectedAnnotation, setSelectedAnnotation] = useState<AnnotationData | null>(null);
-  const [imageComparison, setImageComparison] = useState<'before' | 'after' | 'split'>('split');
+  const [imageComparison, setImageComparison] = useState<"before" | "after" | "split">("split");
 
   const formatProcessingTime = (timeMs: number): string => {
     if (timeMs < 1000) return `${timeMs}ms`;
@@ -42,35 +42,30 @@ export function AnalysisResults({
   };
 
   const getAccuracyColor = (accuracy: number): string => {
-    if (accuracy >= 0.95) return 'text-green-600';
-    if (accuracy >= 0.90) return 'text-yellow-600';
-    return 'text-red-600';
+    if (accuracy >= 0.95) return "text-green-600";
+    if (accuracy >= 0.9) return "text-yellow-600";
+    return "text-red-600";
   };
 
   const getImprovementColor = (improvement: number): string => {
-    if (improvement >= 30) return 'text-green-600';
-    if (improvement >= 15) return 'text-yellow-600';
-    return 'text-red-600';
+    if (improvement >= 30) return "text-green-600";
+    if (improvement >= 15) return "text-yellow-600";
+    return "text-red-600";
   };
 
-  const renderMetricCard = (label: string, value: number | undefined, unit: string = '%') => {
+  const renderMetricCard = (label: string, value: number | undefined, unit: string = "%") => {
     if (value === undefined) return null;
-    
+
     return (
       <Card className="p-4">
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium text-gray-600">{label}</span>
-          <span className={cn(
-            "text-lg font-bold",
-            getImprovementColor(value)
-          )}>
-            {value.toFixed(1)}{unit}
+          <span className={cn("text-lg font-bold", getImprovementColor(value))}>
+            {value.toFixed(1)}
+            {unit}
           </span>
         </div>
-        <Progress 
-          value={Math.min(value, 100)} 
-          className="mt-2 h-2" 
-        />
+        <Progress value={Math.min(value, 100)} className="mt-2 h-2" />
       </Card>
     );
   };
@@ -110,10 +105,12 @@ export function AnalysisResults({
               </div>
               <div>
                 <p className="text-sm text-gray-600">Precisão</p>
-                <p className={cn(
-                  "text-xl font-bold",
-                  getAccuracyColor(analysisResult.accuracyScore)
-                )}>
+                <p
+                  className={cn(
+                    "text-xl font-bold",
+                    getAccuracyColor(analysisResult.accuracyScore),
+                  )}
+                >
                   {(analysisResult.accuracyScore * 100).toFixed(1)}%
                 </p>
               </div>
@@ -139,10 +136,12 @@ export function AnalysisResults({
               </div>
               <div>
                 <p className="text-sm text-gray-600">Melhoria Geral</p>
-                <p className={cn(
-                  "text-xl font-bold",
-                  getImprovementColor(analysisResult.improvementPercentage)
-                )}>
+                <p
+                  className={cn(
+                    "text-xl font-bold",
+                    getImprovementColor(analysisResult.improvementPercentage),
+                  )}
+                >
                   {analysisResult.improvementPercentage.toFixed(1)}%
                 </p>
               </div>
@@ -155,28 +154,22 @@ export function AnalysisResults({
               </div>
               <div>
                 <p className="text-sm text-gray-600">Confiança</p>
-                <p className="text-xl font-bold">
-                  {(analysisResult.confidence * 100).toFixed(1)}%
-                </p>
+                <p className="text-xl font-bold">{(analysisResult.confidence * 100).toFixed(1)}%</p>
               </div>
             </div>
           </div>
 
           {/* Status Badges */}
           <div className="flex gap-2 mt-4">
-            <Badge 
-              variant={analysisResult.accuracyScore >= 0.95 ? "default" : "destructive"}
-            >
+            <Badge variant={analysisResult.accuracyScore >= 0.95 ? "default" : "destructive"}>
               {analysisResult.accuracyScore >= 0.95 ? "✓ Precisão Atingida" : "⚠ Precisão Baixa"}
             </Badge>
-            <Badge 
-              variant={analysisResult.processingTime <= 30000 ? "default" : "destructive"}
-            >
-              {analysisResult.processingTime <= 30000 ? "✓ Tempo Otimizado" : "⚠ Processamento Lento"}
+            <Badge variant={analysisResult.processingTime <= 30000 ? "default" : "destructive"}>
+              {analysisResult.processingTime <= 30000
+                ? "✓ Tempo Otimizado"
+                : "⚠ Processamento Lento"}
             </Badge>
-            <Badge variant="outline">
-              {analysisResult.annotations.length} Anotações
-            </Badge>
+            <Badge variant="outline">{analysisResult.annotations.length} Anotações</Badge>
           </div>
         </CardContent>
       </Card>
@@ -201,33 +194,27 @@ export function AnalysisResults({
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {renderMetricCard("Textura da Pele", analysisResult.changeMetrics.skinTexture)}
                 {renderMetricCard(
-                  "Textura da Pele", 
-                  analysisResult.changeMetrics.skinTexture
+                  "Redução de Rugas",
+                  analysisResult.changeMetrics.wrinkleReduction,
                 )}
                 {renderMetricCard(
-                  "Redução de Rugas", 
-                  analysisResult.changeMetrics.wrinkleReduction
+                  "Melhoria de Pigmentação",
+                  analysisResult.changeMetrics.pigmentationImprovement,
                 )}
                 {renderMetricCard(
-                  "Melhoria de Pigmentação", 
-                  analysisResult.changeMetrics.pigmentationImprovement
+                  "Cicatrização de Lesões",
+                  analysisResult.changeMetrics.lesionHealing,
                 )}
                 {renderMetricCard(
-                  "Cicatrização de Lesões", 
-                  analysisResult.changeMetrics.lesionHealing
+                  "Redução de Cicatrizes",
+                  analysisResult.changeMetrics.scarReduction,
                 )}
+                {renderMetricCard("Mudança de Volume", analysisResult.changeMetrics.volumeChange)}
                 {renderMetricCard(
-                  "Redução de Cicatrizes", 
-                  analysisResult.changeMetrics.scarReduction
-                )}
-                {renderMetricCard(
-                  "Mudança de Volume", 
-                  analysisResult.changeMetrics.volumeChange
-                )}
-                {renderMetricCard(
-                  "Melhoria de Simetria", 
-                  analysisResult.changeMetrics.symmetryImprovement
+                  "Melhoria de Simetria",
+                  analysisResult.changeMetrics.symmetryImprovement,
                 )}
               </div>
             </CardContent>
@@ -240,24 +227,24 @@ export function AnalysisResults({
             <CardHeader>
               <CardTitle>Comparação de Imagens</CardTitle>
               <div className="flex gap-2">
-                <Button 
-                  variant={imageComparison === 'before' ? 'default' : 'outline'}
+                <Button
+                  variant={imageComparison === "before" ? "default" : "outline"}
                   size="sm"
-                  onClick={() => setImageComparison('before')}
+                  onClick={() => setImageComparison("before")}
                 >
                   Antes
                 </Button>
-                <Button 
-                  variant={imageComparison === 'after' ? 'default' : 'outline'}
+                <Button
+                  variant={imageComparison === "after" ? "default" : "outline"}
                   size="sm"
-                  onClick={() => setImageComparison('after')}
+                  onClick={() => setImageComparison("after")}
                 >
                   Depois
                 </Button>
-                <Button 
-                  variant={imageComparison === 'split' ? 'default' : 'outline'}
+                <Button
+                  variant={imageComparison === "split" ? "default" : "outline"}
                   size="sm"
-                  onClick={() => setImageComparison('split')}
+                  onClick={() => setImageComparison("split")}
                 >
                   Dividido
                 </Button>
@@ -265,7 +252,7 @@ export function AnalysisResults({
             </CardHeader>
             <CardContent>
               <div className="relative bg-gray-100 rounded-lg p-4 min-h-[400px] flex items-center justify-center">
-                {imageComparison === 'split' && (
+                {imageComparison === "split" && (
                   <div className="grid grid-cols-2 gap-4 w-full">
                     <div className="text-center">
                       <p className="text-sm font-medium mb-2">Antes</p>
@@ -281,25 +268,21 @@ export function AnalysisResults({
                     </div>
                   </div>
                 )}
-                {imageComparison !== 'split' && (
+                {imageComparison !== "split" && (
                   <div className="text-center w-full">
                     <p className="text-sm font-medium mb-2">
-                      {imageComparison === 'before' ? 'Antes' : 'Depois'}
+                      {imageComparison === "before" ? "Antes" : "Depois"}
                     </p>
                     <div className="bg-gray-200 rounded-lg h-64 flex items-center justify-center mx-auto max-w-md">
                       <span className="text-gray-500">
-                        Imagem {imageComparison === 'before' ? 'Antes' : 'Depois'}
+                        Imagem {imageComparison === "before" ? "Antes" : "Depois"}
                       </span>
                     </div>
                   </div>
                 )}
-                
+
                 {/* Zoom Control */}
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="absolute top-4 right-4"
-                >
+                <Button variant="outline" size="sm" className="absolute top-4 right-4">
                   <ZoomIn className="h-4 w-4" />
                 </Button>
               </div>
@@ -316,30 +299,31 @@ export function AnalysisResults({
             <CardContent>
               <div className="space-y-3">
                 {analysisResult.annotations.map((annotation) => (
-                  <div 
+                  <div
                     key={annotation.id}
                     className={cn(
                       "p-3 border rounded-lg cursor-pointer transition-colors",
-                      selectedAnnotation?.id === annotation.id 
-                        ? "border-blue-500 bg-blue-50" 
-                        : "border-gray-200 hover:border-gray-300"
+                      selectedAnnotation?.id === annotation.id
+                        ? "border-blue-500 bg-blue-50"
+                        : "border-gray-200 hover:border-gray-300",
                     )}
                     onClick={() => setSelectedAnnotation(annotation)}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <Badge variant="outline">
-                          {annotation.type === 'measurement' && 'Medição'}
-                          {annotation.type === 'highlight' && 'Destaque'}
-                          {annotation.type === 'comparison' && 'Comparação'}
-                          {annotation.type === 'annotation' && 'Anotação'}
+                          {annotation.type === "measurement" && "Medição"}
+                          {annotation.type === "highlight" && "Destaque"}
+                          {annotation.type === "comparison" && "Comparação"}
+                          {annotation.type === "annotation" && "Anotação"}
                         </Badge>
                         <span className="font-medium">{annotation.description}</span>
                       </div>
                       <div className="text-right">
                         {annotation.value && (
                           <span className="text-lg font-bold">
-                            {annotation.value.toFixed(1)}{annotation.unit}
+                            {annotation.value.toFixed(1)}
+                            {annotation.unit}
                           </span>
                         )}
                         <p className="text-xs text-gray-500">
@@ -367,11 +351,11 @@ export function AnalysisResults({
                   <div>
                     <p className="font-medium">Análise Concluída</p>
                     <p className="text-sm text-gray-600">
-                      {analysisResult.analysisDate.toLocaleString('pt-BR')}
+                      {analysisResult.analysisDate.toLocaleString("pt-BR")}
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
                   <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
                   <div>
@@ -381,14 +365,12 @@ export function AnalysisResults({
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                   <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
                   <div>
                     <p className="font-medium">Imagens Carregadas</p>
-                    <p className="text-sm text-gray-600">
-                      Antes e depois processadas com sucesso
-                    </p>
+                    <p className="text-sm text-gray-600">Antes e depois processadas com sucesso</p>
                   </div>
                 </div>
               </div>

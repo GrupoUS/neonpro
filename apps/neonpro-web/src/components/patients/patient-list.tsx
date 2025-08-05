@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { 
-  Eye, 
-  Calendar, 
-  Edit, 
-  Archive, 
-  MoreHorizontal, 
-  Phone, 
+import React, { useState } from "react";
+import type {
+  Eye,
+  Calendar,
+  Edit,
+  Archive,
+  MoreHorizontal,
+  Phone,
   Mail,
   FileText,
   AlertTriangle,
@@ -15,31 +15,31 @@ import {
   Grid,
   List,
   ChevronLeft,
-  ChevronRight
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Checkbox } from '@/components/ui/checkbox';
-import { 
+  ChevronRight,
+} from "lucide-react";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import {
+} from "@/components/ui/table";
+import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Skeleton } from '@/components/ui/skeleton';
+} from "@/components/ui/dropdown-menu";
+import type { Skeleton } from "@/components/ui/skeleton";
 
-import PatientCard from './patient-card';
+import PatientCard from "./patient-card";
 
 // Types matching the main page
 interface Patient {
@@ -55,7 +55,7 @@ interface Patient {
     profile_picture?: string;
   };
   patient_profiles_extended?: {
-    risk_level: 'low' | 'medium' | 'high' | 'critical';
+    risk_level: "low" | "medium" | "high" | "critical";
     risk_score: number;
     profile_completeness_score: number;
     chronic_conditions: string[];
@@ -75,13 +75,13 @@ interface Patient {
   }[];
   upcoming_appointments?: number;
   last_visit?: string;
-  status: 'active' | 'inactive' | 'vip' | 'new';
+  status: "active" | "inactive" | "vip" | "new";
 }
 
 interface PatientListProps {
   patients: Patient[];
   loading: boolean;
-  viewMode: 'list' | 'grid';
+  viewMode: "list" | "grid";
   selectedPatients: Set<string>;
   onPatientSelect: (patientId: string) => void;
   onSelectAll: (selectAll: boolean) => void;
@@ -93,11 +93,11 @@ export default function PatientList({
   viewMode,
   selectedPatients,
   onPatientSelect,
-  onSelectAll
+  onSelectAll,
 }: PatientListProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
-  
+
   // Calculate pagination
   const totalPages = Math.ceil(patients.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -106,16 +106,16 @@ export default function PatientList({
 
   // Utility functions
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
+    return new Date(dateString).toLocaleDateString("pt-BR");
   };
 
   const formatCPF = (cpf?: string) => {
-    if (!cpf) return 'N/A';
-    return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    if (!cpf) return "N/A";
+    return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
   };
 
   const formatPhone = (phone: string) => {
-    return phone.replace(/(\d{2})(\d{4,5})(\d{4})/, '($1) $2-$3');
+    return phone.replace(/(\d{2})(\d{4,5})(\d{4})/, "($1) $2-$3");
   };
 
   const calculateAge = (birthDate: string) => {
@@ -131,13 +131,25 @@ export default function PatientList({
 
   const getRiskLevelBadge = (riskLevel?: string) => {
     switch (riskLevel) {
-      case 'low':
-        return <Badge variant="secondary" className="bg-green-100 text-green-800">Baixo</Badge>;
-      case 'medium':
-        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Médio</Badge>;
-      case 'high':
-        return <Badge variant="secondary" className="bg-orange-100 text-orange-800">Alto</Badge>;
-      case 'critical':
+      case "low":
+        return (
+          <Badge variant="secondary" className="bg-green-100 text-green-800">
+            Baixo
+          </Badge>
+        );
+      case "medium":
+        return (
+          <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+            Médio
+          </Badge>
+        );
+      case "high":
+        return (
+          <Badge variant="secondary" className="bg-orange-100 text-orange-800">
+            Alto
+          </Badge>
+        );
+      case "critical":
         return <Badge variant="destructive">Crítico</Badge>;
       default:
         return <Badge variant="outline">N/A</Badge>;
@@ -146,14 +158,30 @@ export default function PatientList({
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'active':
-        return <Badge variant="secondary" className="bg-green-100 text-green-800">Ativo</Badge>;
-      case 'inactive':
-        return <Badge variant="secondary" className="bg-gray-100 text-gray-800">Inativo</Badge>;
-      case 'vip':
-        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">VIP ⭐</Badge>;
-      case 'new':
-        return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Novo</Badge>;
+      case "active":
+        return (
+          <Badge variant="secondary" className="bg-green-100 text-green-800">
+            Ativo
+          </Badge>
+        );
+      case "inactive":
+        return (
+          <Badge variant="secondary" className="bg-gray-100 text-gray-800">
+            Inativo
+          </Badge>
+        );
+      case "vip":
+        return (
+          <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+            VIP ⭐
+          </Badge>
+        );
+      case "new":
+        return (
+          <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+            Novo
+          </Badge>
+        );
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -200,7 +228,7 @@ export default function PatientList({
   }
 
   // Grid view
-  if (viewMode === 'grid') {
+  if (viewMode === "grid") {
     return (
       <div className="space-y-6">
         {/* Grid Header with Select All */}
@@ -236,7 +264,8 @@ export default function PatientList({
         {totalPages > 1 && (
           <div className="flex items-center justify-between">
             <div className="text-sm text-muted-foreground">
-              Mostrando {startIndex + 1} até {Math.min(endIndex, patients.length)} de {patients.length} pacientes
+              Mostrando {startIndex + 1} até {Math.min(endIndex, patients.length)} de{" "}
+              {patients.length} pacientes
             </div>
             <div className="flex items-center space-x-2">
               <Button
@@ -305,7 +334,7 @@ export default function PatientList({
           </TableHeader>
           <TableBody>
             {currentPatients.map((patient) => (
-              <TableRow 
+              <TableRow
                 key={patient.id}
                 className={selectedPatients.has(patient.id) ? "bg-muted/50" : ""}
               >
@@ -315,27 +344,24 @@ export default function PatientList({
                     onCheckedChange={() => onPatientSelect(patient.id)}
                   />
                 </TableCell>
-                
+
                 <TableCell className="font-medium">
                   <div className="flex items-center space-x-3">
                     <Avatar className="h-10 w-10">
-                      <AvatarImage 
-                        src={patient.raw_user_meta_data.profile_picture} 
+                      <AvatarImage
+                        src={patient.raw_user_meta_data.profile_picture}
                         alt={patient.raw_user_meta_data.full_name}
                       />
                       <AvatarFallback>
                         {patient.raw_user_meta_data.full_name
-                          .split(' ')
-                          .map(name => name[0])
-                          .join('')
-                          .toUpperCase()
-                        }
+                          .split(" ")
+                          .map((name) => name[0])
+                          .join("")
+                          .toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <div className="font-medium">
-                        {patient.raw_user_meta_data.full_name}
-                      </div>
+                      <div className="font-medium">{patient.raw_user_meta_data.full_name}</div>
                       <div className="text-sm text-muted-foreground">
                         CPF: {formatCPF(patient.raw_user_meta_data.cpf)}
                       </div>
@@ -378,28 +404,27 @@ export default function PatientList({
                     {calculateAge(patient.raw_user_meta_data.date_of_birth)} anos
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    {patient.raw_user_meta_data.gender === 'male' ? 'M' : 
-                     patient.raw_user_meta_data.gender === 'female' ? 'F' : 'O'}
+                    {patient.raw_user_meta_data.gender === "male"
+                      ? "M"
+                      : patient.raw_user_meta_data.gender === "female"
+                        ? "F"
+                        : "O"}
                   </div>
                 </TableCell>
 
-                <TableCell>
-                  {getStatusBadge(patient.status)}
-                </TableCell>
+                <TableCell>{getStatusBadge(patient.status)}</TableCell>
 
                 <TableCell>
                   {getRiskLevelBadge(patient.patient_profiles_extended?.risk_level)}
                 </TableCell>
 
                 <TableCell>
-                  <div className="text-sm">
-                    {patient.upcoming_appointments || 0} agendadas
-                  </div>
+                  <div className="text-sm">{patient.upcoming_appointments || 0} agendadas</div>
                 </TableCell>
 
                 <TableCell>
                   <div className="text-sm">
-                    {patient.last_visit ? formatDate(patient.last_visit) : 'Nunca'}
+                    {patient.last_visit ? formatDate(patient.last_visit) : "Nunca"}
                   </div>
                 </TableCell>
 
@@ -414,21 +439,21 @@ export default function PatientList({
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Ações</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => handlePatientAction('view', patient.id)}>
+                      <DropdownMenuItem onClick={() => handlePatientAction("view", patient.id)}>
                         <Eye className="mr-2 h-4 w-4" />
                         Ver Detalhes
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handlePatientAction('schedule', patient.id)}>
+                      <DropdownMenuItem onClick={() => handlePatientAction("schedule", patient.id)}>
                         <Calendar className="mr-2 h-4 w-4" />
                         Agendar Consulta
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handlePatientAction('edit', patient.id)}>
+                      <DropdownMenuItem onClick={() => handlePatientAction("edit", patient.id)}>
                         <Edit className="mr-2 h-4 w-4" />
                         Editar
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem 
-                        onClick={() => handlePatientAction('archive', patient.id)}
+                      <DropdownMenuItem
+                        onClick={() => handlePatientAction("archive", patient.id)}
                         className="text-red-600"
                       >
                         <Archive className="mr-2 h-4 w-4" />
@@ -447,7 +472,8 @@ export default function PatientList({
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
           <div className="text-sm text-muted-foreground">
-            Mostrando {startIndex + 1} até {Math.min(endIndex, patients.length)} de {patients.length} pacientes
+            Mostrando {startIndex + 1} até {Math.min(endIndex, patients.length)} de{" "}
+            {patients.length} pacientes
           </div>
           <div className="flex items-center space-x-2">
             <Button

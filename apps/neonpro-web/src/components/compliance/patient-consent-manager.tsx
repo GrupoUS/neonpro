@@ -1,14 +1,20 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { PatientConsent } from '@/app/types/compliance';
-import { ConsentService } from '@/app/services/consent.service';
-import { Search, Calendar, CheckCircle, XCircle, Clock, AlertTriangle } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import type { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Input } from "@/components/ui/input";
+import type { PatientConsent } from "@/app/types/compliance";
+import type { ConsentService } from "@/app/services/consent.service";
+import type { Search, Calendar, CheckCircle, XCircle, Clock, AlertTriangle } from "lucide-react";
+import type { useToast } from "@/hooks/use-toast";
 
 interface PatientConsentManagerProps {
   patientId?: string;
@@ -18,8 +24,8 @@ interface PatientConsentManagerProps {
 export function PatientConsentManager({ patientId, clinicId }: PatientConsentManagerProps) {
   const [consents, setConsents] = useState<PatientConsent[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState<string>("all");
   const { toast } = useToast();
   const consentService = new ConsentService();
 
@@ -30,16 +36,16 @@ export function PatientConsentManager({ patientId, clinicId }: PatientConsentMan
   const loadConsents = async () => {
     try {
       setLoading(true);
-      const data = patientId 
+      const data = patientId
         ? await consentService.getPatientConsents(patientId)
         : await consentService.getClinicConsents(clinicId);
       setConsents(data);
     } catch (error) {
-      console.error('Error loading consents:', error);
+      console.error("Error loading consents:", error);
       toast({
-        title: 'Erro',
-        description: 'Não foi possível carregar os consentimentos.',
-        variant: 'destructive',
+        title: "Erro",
+        description: "Não foi possível carregar os consentimentos.",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -50,27 +56,27 @@ export function PatientConsentManager({ patientId, clinicId }: PatientConsentMan
     try {
       await consentService.revokePatientConsent(consentId);
       toast({
-        title: 'Sucesso',
-        description: 'Consentimento revogado com sucesso.',
+        title: "Sucesso",
+        description: "Consentimento revogado com sucesso.",
       });
       loadConsents();
     } catch (error) {
-      console.error('Error revoking consent:', error);
+      console.error("Error revoking consent:", error);
       toast({
-        title: 'Erro',
-        description: 'Não foi possível revogar o consentimento.',
-        variant: 'destructive',
+        title: "Erro",
+        description: "Não foi possível revogar o consentimento.",
+        variant: "destructive",
       });
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'active':
+      case "active":
         return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case 'withdrawn':
+      case "withdrawn":
         return <XCircle className="w-4 h-4 text-red-500" />;
-      case 'expired':
+      case "expired":
         return <Clock className="w-4 h-4 text-orange-500" />;
       default:
         return <AlertTriangle className="w-4 h-4 text-yellow-500" />;
@@ -79,24 +85,24 @@ export function PatientConsentManager({ patientId, clinicId }: PatientConsentMan
 
   const getStatusLabel = (status: string) => {
     const labels: Record<string, string> = {
-      active: 'Ativo',
-      withdrawn: 'Retirado',
-      expired: 'Expirado',
-      pending: 'Pendente'
+      active: "Ativo",
+      withdrawn: "Retirado",
+      expired: "Expirado",
+      pending: "Pendente",
     };
     return labels[status] || status;
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active':
-        return 'bg-green-100 text-green-800';
-      case 'withdrawn':
-        return 'bg-red-100 text-red-800';
-      case 'expired':
-        return 'bg-orange-100 text-orange-800';
+      case "active":
+        return "bg-green-100 text-green-800";
+      case "withdrawn":
+        return "bg-red-100 text-red-800";
+      case "expired":
+        return "bg-orange-100 text-orange-800";
       default:
-        return 'bg-yellow-100 text-yellow-800';
+        return "bg-yellow-100 text-yellow-800";
     }
   };
 
@@ -104,14 +110,17 @@ export function PatientConsentManager({ patientId, clinicId }: PatientConsentMan
     if (!consent.expires_at) return false;
     const expiryDate = new Date(consent.expires_at);
     const today = new Date();
-    const daysUntilExpiry = Math.ceil((expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    const daysUntilExpiry = Math.ceil(
+      (expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+    );
     return daysUntilExpiry <= 30 && daysUntilExpiry > 0;
   };
 
-  const filteredConsents = consents.filter(consent => {
-    const matchesSearch = consent.consent_form?.form_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         consent.patient?.full_name?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filterStatus === 'all' || consent.status === filterStatus;
+  const filteredConsents = consents.filter((consent) => {
+    const matchesSearch =
+      consent.consent_form?.form_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      consent.patient?.full_name?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = filterStatus === "all" || consent.status === filterStatus;
     return matchesSearch && matchesFilter;
   });
 
@@ -130,7 +139,7 @@ export function PatientConsentManager({ patientId, clinicId }: PatientConsentMan
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-semibold">
-              {patientId ? 'Consentimentos do Paciente' : 'Consentimentos da Clínica'}
+              {patientId ? "Consentimentos do Paciente" : "Consentimentos da Clínica"}
             </h3>
             <p className="text-sm text-muted-foreground">
               Gerencie e monitore consentimentos de dados e tratamentos
@@ -142,7 +151,9 @@ export function PatientConsentManager({ patientId, clinicId }: PatientConsentMan
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
-              placeholder={patientId ? "Buscar consentimentos..." : "Buscar por paciente ou formulário..."}
+              placeholder={
+                patientId ? "Buscar consentimentos..." : "Buscar por paciente ou formulário..."
+              }
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -170,13 +181,13 @@ export function PatientConsentManager({ patientId, clinicId }: PatientConsentMan
               <div>
                 <p className="text-sm font-medium">Ativos</p>
                 <p className="text-2xl font-bold">
-                  {consents.filter(c => c.status === 'active').length}
+                  {consents.filter((c) => c.status === "active").length}
                 </p>
               </div>
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
@@ -184,13 +195,13 @@ export function PatientConsentManager({ patientId, clinicId }: PatientConsentMan
               <div>
                 <p className="text-sm font-medium">Revogados</p>
                 <p className="text-2xl font-bold">
-                  {consents.filter(c => c.status === 'withdrawn').length}
+                  {consents.filter((c) => c.status === "withdrawn").length}
                 </p>
               </div>
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
@@ -198,13 +209,13 @@ export function PatientConsentManager({ patientId, clinicId }: PatientConsentMan
               <div>
                 <p className="text-sm font-medium">Expirados</p>
                 <p className="text-2xl font-bold">
-                  {consents.filter(c => c.status === 'expired').length}
+                  {consents.filter((c) => c.status === "expired").length}
                 </p>
               </div>
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
@@ -212,7 +223,7 @@ export function PatientConsentManager({ patientId, clinicId }: PatientConsentMan
               <div>
                 <p className="text-sm font-medium">Expirando Soon</p>
                 <p className="text-2xl font-bold">
-                  {consents.filter(c => isExpiringSoon(c)).length}
+                  {consents.filter((c) => isExpiringSoon(c)).length}
                 </p>
               </div>
             </div>
@@ -228,10 +239,9 @@ export function PatientConsentManager({ patientId, clinicId }: PatientConsentMan
               <CheckCircle className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
               <h3 className="text-lg font-semibold mb-2">Nenhum consentimento encontrado</h3>
               <p className="text-muted-foreground">
-                {searchTerm || filterStatus !== 'all'
-                  ? 'Tente ajustar os filtros de busca.'
-                  : 'Não há consentimentos registrados ainda.'
-                }
+                {searchTerm || filterStatus !== "all"
+                  ? "Tente ajustar os filtros de busca."
+                  : "Não há consentimentos registrados ainda."}
               </p>
             </CardContent>
           </Card>
@@ -253,28 +263,28 @@ export function PatientConsentManager({ patientId, clinicId }: PatientConsentMan
                         </Badge>
                       )}
                     </div>
-                    
+
                     {!patientId && (
                       <p className="text-sm text-muted-foreground mb-2">
                         Paciente: <span className="font-medium">{consent.patient?.full_name}</span>
                       </p>
                     )}
-                    
+
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                       <div>
                         <p className="font-medium text-muted-foreground">Data de Consentimento</p>
-                        <p>{new Date(consent.created_at).toLocaleDateString('pt-BR')}</p>
+                        <p>{new Date(consent.created_at).toLocaleDateString("pt-BR")}</p>
                       </div>
                       {consent.expires_at && (
                         <div>
                           <p className="font-medium text-muted-foreground">Data de Expiração</p>
-                          <p>{new Date(consent.expires_at).toLocaleDateString('pt-BR')}</p>
+                          <p>{new Date(consent.expires_at).toLocaleDateString("pt-BR")}</p>
                         </div>
                       )}
                       {consent.withdrawal_date && (
                         <div>
                           <p className="font-medium text-muted-foreground">Data de Revogação</p>
-                          <p>{new Date(consent.withdrawal_date).toLocaleDateString('pt-BR')}</p>
+                          <p>{new Date(consent.withdrawal_date).toLocaleDateString("pt-BR")}</p>
                         </div>
                       )}
                       <div>
@@ -292,7 +302,7 @@ export function PatientConsentManager({ patientId, clinicId }: PatientConsentMan
                     )}
                   </div>
 
-                  {consent.status === 'active' && (
+                  {consent.status === "active" && (
                     <div className="ml-4">
                       <Button
                         variant="outline"

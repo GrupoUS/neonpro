@@ -1,19 +1,35 @@
-'use client'
+"use client";
 
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import type { PatientAppointment } from '@/hooks/patient/usePatientAppointments'
-import { format, parseISO } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
-import { AlertCircle, Calendar, CheckCircle, Clock, FileText, Filter, Search, User, XCircle } from 'lucide-react'
-import { useState } from 'react'
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent } from "@/components/ui/card";
+import type { Input } from "@/components/ui/input";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { PatientAppointment } from "@/hooks/patient/usePatientAppointments";
+import type { format, parseISO } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  AlertCircle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  FileText,
+  Filter,
+  Search,
+  User,
+  XCircle,
+} from "lucide-react";
+import type { useState } from "react";
 
 /**
  * Appointment History Component for NeonPro
- * 
+ *
  * Based on VIBECODE MCP Research:
  * - Context7: React filtering and search patterns
  * - Tavily: Healthcare appointment history best practices
@@ -21,102 +37,105 @@ import { useState } from 'react'
  */
 
 interface AppointmentHistoryProps {
-  appointments: PatientAppointment[]
-  onView: (appointmentId: string) => void
+  appointments: PatientAppointment[];
+  onView: (appointmentId: string) => void;
 }
 
-type FilterStatus = 'all' | 'completed' | 'cancelled' | 'no_show'
+type FilterStatus = "all" | "completed" | "cancelled" | "no_show";
 
 export function AppointmentHistory({ appointments, onView }: AppointmentHistoryProps) {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState<FilterStatus>('all')
-  const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc')
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<FilterStatus>("all");
+  const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
 
   // Filter and sort appointments
   const filteredAppointments = appointments
-    .filter(appointment => {
+    .filter((appointment) => {
       // Search filter
-      const matchesSearch = searchTerm === '' || 
+      const matchesSearch =
+        searchTerm === "" ||
         appointment.service_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         appointment.professional_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        appointment.notes?.toLowerCase().includes(searchTerm.toLowerCase())
+        appointment.notes?.toLowerCase().includes(searchTerm.toLowerCase());
 
-      // Status filter  
-      const matchesStatus = statusFilter === 'all' || appointment.status === statusFilter
+      // Status filter
+      const matchesStatus = statusFilter === "all" || appointment.status === statusFilter;
 
-      return matchesSearch && matchesStatus
+      return matchesSearch && matchesStatus;
     })
     .sort((a, b) => {
-      const dateA = new Date(`${a.appointment_date}T${a.appointment_time}`)
-      const dateB = new Date(`${b.appointment_date}T${b.appointment_time}`)
-      return sortOrder === 'desc' ? dateB.getTime() - dateA.getTime() : dateA.getTime() - dateB.getTime()
-    })
+      const dateA = new Date(`${a.appointment_date}T${a.appointment_time}`);
+      const dateB = new Date(`${b.appointment_date}T${b.appointment_time}`);
+      return sortOrder === "desc"
+        ? dateB.getTime() - dateA.getTime()
+        : dateA.getTime() - dateB.getTime();
+    });
 
-  const getStatusBadge = (status: PatientAppointment['status']) => {
+  const getStatusBadge = (status: PatientAppointment["status"]) => {
     const statusConfig = {
-      completed: { 
-        variant: 'default' as const, 
-        className: 'bg-green-100 text-green-800 hover:bg-green-100',
+      completed: {
+        variant: "default" as const,
+        className: "bg-green-100 text-green-800 hover:bg-green-100",
         icon: CheckCircle,
-        label: 'Concluído'
+        label: "Concluído",
       },
-      cancelled: { 
-        variant: 'destructive' as const, 
-        className: '',
+      cancelled: {
+        variant: "destructive" as const,
+        className: "",
         icon: XCircle,
-        label: 'Cancelado'
+        label: "Cancelado",
       },
-      no_show: { 
-        variant: 'secondary' as const, 
-        className: 'bg-orange-100 text-orange-800 hover:bg-orange-100',
+      no_show: {
+        variant: "secondary" as const,
+        className: "bg-orange-100 text-orange-800 hover:bg-orange-100",
         icon: AlertCircle,
-        label: 'Falta'
+        label: "Falta",
       },
-      rescheduled: { 
-        variant: 'outline' as const, 
-        className: '',
+      rescheduled: {
+        variant: "outline" as const,
+        className: "",
         icon: Calendar,
-        label: 'Reagendado'
-      }
-    } as const
+        label: "Reagendado",
+      },
+    } as const;
 
     const config = statusConfig[status as keyof typeof statusConfig] || {
-      variant: 'outline' as const,
-      className: '',
+      variant: "outline" as const,
+      className: "",
       icon: FileText,
-      label: status
-    }
+      label: status,
+    };
 
-    const Icon = config.icon
+    const Icon = config.icon;
 
     return (
       <Badge variant={config.variant} className={config.className}>
         <Icon className="h-3 w-3 mr-1" />
         {config.label}
       </Badge>
-    )
-  }
+    );
+  };
 
   const formatAppointmentDateTime = (date: string, time: string) => {
     try {
-      const dateTime = parseISO(`${date}T${time}`)
+      const dateTime = parseISO(`${date}T${time}`);
       return {
-        date: format(dateTime, 'dd/MM/yyyy', { locale: ptBR }),
-        time: format(dateTime, 'HH:mm', { locale: ptBR }),
-        fullDate: format(dateTime, 'EEEE, dd MMMM yyyy', { locale: ptBR })
-      }
+        date: format(dateTime, "dd/MM/yyyy", { locale: ptBR }),
+        time: format(dateTime, "HH:mm", { locale: ptBR }),
+        fullDate: format(dateTime, "EEEE, dd MMMM yyyy", { locale: ptBR }),
+      };
     } catch (error) {
-      return { date, time, fullDate: date }
+      return { date, time, fullDate: date };
     }
-  }
+  };
 
   // Statistics
   const stats = {
     total: appointments.length,
-    completed: appointments.filter(a => a.status === 'completed').length,
-    cancelled: appointments.filter(a => a.status === 'cancelled').length,
-    noShow: appointments.filter(a => a.status === 'no_show').length
-  }
+    completed: appointments.filter((a) => a.status === "completed").length,
+    cancelled: appointments.filter((a) => a.status === "cancelled").length,
+    noShow: appointments.filter((a) => a.status === "no_show").length,
+  };
 
   if (appointments.length === 0) {
     return (
@@ -129,7 +148,7 @@ export function AppointmentHistory({ appointments, onView }: AppointmentHistoryP
           Seus agendamentos passados aparecerão aqui após serem realizados ou cancelados.
         </p>
       </div>
-    )
+    );
   }
 
   return (
@@ -173,8 +192,11 @@ export function AppointmentHistory({ appointments, onView }: AppointmentHistoryP
             className="pl-9"
           />
         </div>
-        
-        <Select value={statusFilter} onValueChange={(value: FilterStatus) => setStatusFilter(value)}>
+
+        <Select
+          value={statusFilter}
+          onValueChange={(value: FilterStatus) => setStatusFilter(value)}
+        >
           <SelectTrigger className="w-full sm:w-48">
             <Filter className="h-4 w-4 mr-2" />
             <SelectValue placeholder="Filtrar por status" />
@@ -187,7 +209,7 @@ export function AppointmentHistory({ appointments, onView }: AppointmentHistoryP
           </SelectContent>
         </Select>
 
-        <Select value={sortOrder} onValueChange={(value: 'desc' | 'asc') => setSortOrder(value)}>
+        <Select value={sortOrder} onValueChange={(value: "desc" | "asc") => setSortOrder(value)}>
           <SelectTrigger className="w-full sm:w-48">
             <SelectValue placeholder="Ordenar por data" />
           </SelectTrigger>
@@ -207,15 +229,17 @@ export function AppointmentHistory({ appointments, onView }: AppointmentHistoryP
       {filteredAppointments.length === 0 ? (
         <div className="text-center py-8">
           <Search className="mx-auto h-8 w-8 text-muted-foreground mb-4" />
-          <p className="text-muted-foreground">Nenhum agendamento encontrado com os filtros aplicados.</p>
+          <p className="text-muted-foreground">
+            Nenhum agendamento encontrado com os filtros aplicados.
+          </p>
         </div>
       ) : (
         <div className="space-y-3">
           {filteredAppointments.map((appointment) => {
             const { date, time, fullDate } = formatAppointmentDateTime(
-              appointment.appointment_date, 
-              appointment.appointment_time
-            )
+              appointment.appointment_date,
+              appointment.appointment_time,
+            );
 
             return (
               <Card key={appointment.id} className="transition-shadow hover:shadow-md">
@@ -238,9 +262,7 @@ export function AppointmentHistory({ appointments, onView }: AppointmentHistoryP
                           <Clock className="h-4 w-4" />
                           <span>{time}</span>
                         </div>
-                        <div>
-                          {appointment.service_duration} min
-                        </div>
+                        <div>{appointment.service_duration} min</div>
                       </div>
 
                       {/* Professional */}
@@ -252,12 +274,15 @@ export function AppointmentHistory({ appointments, onView }: AppointmentHistoryP
                       )}
 
                       {/* Cancellation reason */}
-                      {appointment.status === 'cancelled' && appointment.cancellation_reason && (
+                      {appointment.status === "cancelled" && appointment.cancellation_reason && (
                         <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-md p-2 text-sm">
                           <strong>Motivo do cancelamento:</strong> {appointment.cancellation_reason}
                           {appointment.cancellation_date && (
                             <div className="text-xs text-muted-foreground mt-1">
-                              Cancelado em: {format(parseISO(appointment.cancellation_date), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+                              Cancelado em:{" "}
+                              {format(parseISO(appointment.cancellation_date), "dd/MM/yyyy HH:mm", {
+                                locale: ptBR,
+                              })}
                             </div>
                           )}
                         </div>
@@ -273,8 +298,8 @@ export function AppointmentHistory({ appointments, onView }: AppointmentHistoryP
 
                     {/* Actions */}
                     <div className="ml-4">
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size="sm"
                         onClick={() => onView(appointment.id)}
                         className="text-xs"
@@ -285,7 +310,7 @@ export function AppointmentHistory({ appointments, onView }: AppointmentHistoryP
                   </div>
                 </CardContent>
               </Card>
-            )
+            );
           })}
         </div>
       )}
@@ -294,13 +319,18 @@ export function AppointmentHistory({ appointments, onView }: AppointmentHistoryP
       {filteredAppointments.length > 0 && (
         <div className="mt-6 p-4 bg-muted/30 rounded-lg text-xs text-muted-foreground text-center">
           {stats.completed > 0 && (
-            <span>Taxa de comparecimento: {Math.round((stats.completed / (stats.total - stats.cancelled)) * 100)}%</span>
+            <span>
+              Taxa de comparecimento:{" "}
+              {Math.round((stats.completed / (stats.total - stats.cancelled)) * 100)}%
+            </span>
           )}
           {stats.noShow > 0 && (
-            <span className="ml-4">Taxa de faltas: {Math.round((stats.noShow / stats.total) * 100)}%</span>
+            <span className="ml-4">
+              Taxa de faltas: {Math.round((stats.noShow / stats.total) * 100)}%
+            </span>
           )}
         </div>
       )}
     </div>
-  )
+  );
 }

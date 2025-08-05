@@ -1,12 +1,12 @@
-// =============================================
+﻿// =============================================
 // NeonPro Appointment Slot Validation API
 // Story 1.2: Real-time conflict prevention
 // Route: /api/appointments/validate-slot
 // =============================================
 
-import { createClient } from "@/lib/supabase/server";
+import type { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
+import type { z } from "zod";
 
 // Validation schema for slot validation request
 const validateSlotSchema = z.object({
@@ -19,7 +19,7 @@ const validateSlotSchema = z.object({
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now(); // Capture start time for performance monitoring
-  
+
   try {
     const supabase = await createClient();
 
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     if (authError || !user?.id) {
       return NextResponse.json(
         { error: "Unauthorized", details: "Authentication required" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
           error: "Profile not found",
           details: "User profile or clinic not found",
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -58,15 +58,17 @@ export async function POST(request: NextRequest) {
     const validatedData = validateSlotSchema.parse(body);
 
     // Call the stored procedure for slot validation
-    const { data: validationResult, error: validationError } =
-      await supabase.rpc("sp_validate_appointment_slot", {
+    const { data: validationResult, error: validationError } = await supabase.rpc(
+      "sp_validate_appointment_slot",
+      {
         p_clinic_id: profile.clinic_id,
         p_professional_id: validatedData.professional_id,
         p_service_type_id: validatedData.service_type_id,
         p_start_time: validatedData.start_time,
         p_end_time: validatedData.end_time,
         p_exclude_appointment_id: validatedData.exclude_appointment_id || null,
-      });
+      },
+    );
 
     if (validationError) {
       console.error("Validation procedure error:", validationError);
@@ -76,15 +78,13 @@ export async function POST(request: NextRequest) {
           details: validationError.message,
           code: "VALIDATION_PROCEDURE_ERROR",
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     // Parse the result (stored procedure returns jsonb)
     const result =
-      typeof validationResult === "string"
-        ? JSON.parse(validationResult)
-        : validationResult;
+      typeof validationResult === "string" ? JSON.parse(validationResult) : validationResult;
 
     // Format response for frontend
     const response = {
@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
           validation_errors: error.errors,
           code: "INVALID_REQUEST_PARAMETERS",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
           details: "Request body contains invalid JSON",
           code: "INVALID_JSON",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -141,7 +141,7 @@ export async function POST(request: NextRequest) {
           validation_time_ms: Date.now() - startTime,
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -149,7 +149,7 @@ export async function POST(request: NextRequest) {
 // GET endpoint for availability checking by parameters
 export async function GET(request: NextRequest) {
   const startTime = Date.now(); // Capture start time for performance monitoring
-  
+
   try {
     const supabase = await createClient();
 
@@ -188,10 +188,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         {
           error: "Missing parameters",
-          details:
-            "professional_id, service_type_id, start_time, and end_time are required",
+          details: "professional_id, service_type_id, start_time, and end_time are required",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -207,15 +206,17 @@ export async function GET(request: NextRequest) {
     const validatedData = validateSlotSchema.parse(queryData);
 
     // Call validation function
-    const { data: validationResult, error: validationError } =
-      await supabase.rpc("sp_validate_appointment_slot", {
+    const { data: validationResult, error: validationError } = await supabase.rpc(
+      "sp_validate_appointment_slot",
+      {
         p_clinic_id: profile.clinic_id,
         p_professional_id: validatedData.professional_id,
         p_service_type_id: validatedData.service_type_id,
         p_start_time: validatedData.start_time,
         p_end_time: validatedData.end_time,
         p_exclude_appointment_id: validatedData.exclude_appointment_id || null,
-      });
+      },
+    );
 
     if (validationError) {
       return NextResponse.json(
@@ -223,14 +224,12 @@ export async function GET(request: NextRequest) {
           error: "Validation failed",
           details: validationError.message,
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     const result =
-      typeof validationResult === "string"
-        ? JSON.parse(validationResult)
-        : validationResult;
+      typeof validationResult === "string" ? JSON.parse(validationResult) : validationResult;
 
     return NextResponse.json({
       available: result.available || false,
@@ -250,7 +249,7 @@ export async function GET(request: NextRequest) {
           error: "Invalid parameters",
           validation_errors: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -262,7 +261,7 @@ export async function GET(request: NextRequest) {
           validation_time_ms: Date.now() - startTime,
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

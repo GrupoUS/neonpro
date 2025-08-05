@@ -1,12 +1,12 @@
 // SSO Manager - Core SSO Implementation
 // Story 1.3: SSO Integration Implementation
 
-import { createClient } from '@supabase/supabase-js';
-import { 
-  SSOProvider, 
-  SSOSession, 
-  SSOUserInfo, 
-  SSOAuthRequest, 
+import { createClient } from "@supabase/supabase-js";
+import {
+  SSOProvider,
+  SSOSession,
+  SSOUserInfo,
+  SSOAuthRequest,
   SSOAuthResponse,
   SSOTokenResponse,
   SSOAccountLinking,
@@ -14,12 +14,12 @@ import {
   SSOError,
   SSOErrorCode,
   SSOConfiguration,
-  DEFAULT_SSO_PROVIDERS
-} from '@/types/sso';
-import { Database } from '@/types/database';
-import { logger } from '@/lib/logger';
-import crypto from 'crypto';
-import jwt from 'jsonwebtoken';
+  DEFAULT_SSO_PROVIDERS,
+} from "@/types/sso";
+import { Database } from "@/types/database";
+import { logger } from "@/lib/logger";
+import crypto from "crypto";
+import jwt from "jsonwebtoken";
 
 export class SSOManager {
   private supabase;
@@ -36,7 +36,7 @@ export class SSOManager {
    * Initialize SSO providers from configuration
    */
   private initializeProviders(): void {
-    this.config.providers.forEach(provider => {
+    this.config.providers.forEach((provider) => {
       if (provider.enabled) {
         this.providers.set(provider.id, provider);
       }
@@ -70,19 +70,22 @@ export class SSOManager {
   /**
    * Generate SSO authorization URL
    */
-  async generateAuthUrl(providerId: string, options: Partial<SSOAuthRequest> = {}): Promise<string> {
+  async generateAuthUrl(
+    providerId: string,
+    options: Partial<SSOAuthRequest> = {},
+  ): Promise<string> {
     const provider = this.providers.get(providerId);
     if (!provider) {
-      throw this.createError('PROVIDER_NOT_FOUND', `Provider ${providerId} not found`);
+      throw this.createError("PROVIDER_NOT_FOUND", `Provider ${providerId} not found`);
     }
 
     if (!provider.enabled) {
-      throw this.createError('PROVIDER_DISABLED', `Provider ${providerId} is disabled`);
+      throw this.createError("PROVIDER_DISABLED", `Provider ${providerId} is disabled`);
     }
 
     const state = options.state || this.generateSecureToken();
     const nonce = options.nonce || this.generateSecureToken();
-    
+
     const authRequest: SSOAuthRequest = {
       providerId,
       state,
@@ -97,9 +100,9 @@ export class SSOManager {
 
     const params = new URLSearchParams({
       client_id: provider.config.clientId,
-      response_type: 'code',
+      response_type: "code",
       redirect_uri: authRequest.redirectUri,
-      scope: authRequest.scopes.join(' '),
+      scope: authRequest.scopes.join(" "),
       state: authRequest.state,
       ...(authRequest.nonce && { nonce: authRequest.nonce }),
       ...(authRequest.domainHint && { domain_hint: authRequest.domainHint }),
@@ -117,40 +120,44 @@ export class SSOManager {
   async handleCallback(providerId: string, response: SSOAuthResponse): Promise<SSOSession> {
     const provider = this.providers.get(providerId);
     if (!provider) {
-      throw this.createError('PROVIDER_NOT_FOUND', `Provider ${providerId} not found`);
+      throw this.createError("PROVIDER_NOT_FOUND", `Provider ${providerId} not found`);
     }
 
     // Validate state parameter
     const authRequest = await this.getAuthRequest(response.state);
     if (!authRequest || authRequest.providerId !== providerId) {
-      throw this.createError('INVALID_STATE', 'Invalid state parameter');
+      throw this.createError("INVALID_STATE", "Invalid state parameter");
     }
 
     if (response.error) {
       await this.logAudit({
         providerId,
-        action: 'sso_login_failure',
+        action: "sso_login_failure",
         details: { error: response.error, description: response.errorDescription },
         success: false,
         errorMessage: response.errorDescription,
       });
-      throw this.createError('PROVIDER_ERROR', response.errorDescription || response.error);
+      throw this.createError("PROVIDER_ERROR", response.errorDescription || response.error);
     }
 
     if (!response.code) {
-      throw this.createError('PROVIDER_ERROR', 'No authorization code received');
+      throw this.createError("PROVIDER_ERROR", "No authorization code received");
     }
 
     try {
       // Exchange code for tokens
-      const tokenResponse = await this.exchangeCodeForTokens(provider, response.code, authRequest.redirectUri);
-      
+      const tokenResponse = await this.exchangeCodeForTokens(
+        provider,
+        response.code,
+        authRequest.redirectUri,
+      );
+
       // Get user info
       const userInfo = await this.getUserInfo(provider, tokenResponse.accessToken);
-      
+
       // Create or link account
       const userId = await this.createOrLinkAccount(provider, userInfo);
-      
+
       // Create SSO session
       const session = await this.createSSOSession({
         userId,
@@ -161,14 +168,14 @@ export class SSOManager {
         idToken: tokenResponse.idToken,
         tokenType: tokenResponse.tokenType,
         expiresAt: new Date(Date.now() + tokenResponse.expiresIn * 1000),
-        scope: tokenResponse.scope?.split(' ') || authRequest.scopes,
+        scope: tokenResponse.scope?.split(" ") || authRequest.scopes,
         userInfo,
       });
 
       await this.logAudit({
         userId,
         providerId,
-        action: 'sso_login_success',
+        action: "sso_login_success",
         details: { userInfo: { email: userInfo.email, name: userInfo.name } },
         success: true,
       });
@@ -177,7 +184,7 @@ export class SSOManager {
     } catch (error) {
       await this.logAudit({
         providerId,
-        action: 'sso_login_failure',
+        action: "sso_login_failure",
         details: { error: error.message },
         success: false,
         errorMessage: error.message,
@@ -190,37 +197,37 @@ export class SSOManager {
    * Exchange authorization code for access tokens
    */
   private async exchangeCodeForTokens(
-    provider: SSOProvider, 
-    code: string, 
-    redirectUri: string
+    provider: SSOProvider,
+    code: string,
+    redirectUri: string,
   ): Promise<SSOTokenResponse> {
     const params = new URLSearchParams({
-      grant_type: 'authorization_code',
+      grant_type: "authorization_code",
       client_id: provider.config.clientId,
-      client_secret: provider.config.clientSecret || '',
+      client_secret: provider.config.clientSecret || "",
       code,
       redirect_uri: redirectUri,
     });
 
     const response = await fetch(provider.config.tokenUrl, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Accept': 'application/json',
+        "Content-Type": "application/x-www-form-urlencoded",
+        Accept: "application/json",
       },
       body: params.toString(),
     });
 
     if (!response.ok) {
       const errorData = await response.text();
-      throw this.createError('PROVIDER_ERROR', `Token exchange failed: ${errorData}`);
+      throw this.createError("PROVIDER_ERROR", `Token exchange failed: ${errorData}`);
     }
 
     const tokenData = await response.json();
-    
+
     return {
       accessToken: tokenData.access_token,
-      tokenType: tokenData.token_type || 'Bearer',
+      tokenType: tokenData.token_type || "Bearer",
       expiresIn: tokenData.expires_in || 3600,
       refreshToken: tokenData.refresh_token,
       idToken: tokenData.id_token,
@@ -234,22 +241,22 @@ export class SSOManager {
   private async getUserInfo(provider: SSOProvider, accessToken: string): Promise<SSOUserInfo> {
     if (!provider.config.userInfoUrl) {
       // Try to decode user info from ID token if available
-      throw this.createError('CONFIGURATION_ERROR', 'No user info URL configured');
+      throw this.createError("CONFIGURATION_ERROR", "No user info URL configured");
     }
 
     const response = await fetch(provider.config.userInfoUrl, {
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Accept': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+        Accept: "application/json",
       },
     });
 
     if (!response.ok) {
-      throw this.createError('PROVIDER_ERROR', 'Failed to fetch user info');
+      throw this.createError("PROVIDER_ERROR", "Failed to fetch user info");
     }
 
     const userData = await response.json();
-    
+
     return this.normalizeUserInfo(provider.id, userData);
   }
 
@@ -264,7 +271,7 @@ export class SSOManager {
     };
 
     switch (providerId) {
-      case 'google':
+      case "google":
         return {
           ...baseInfo,
           name: userData.name,
@@ -273,9 +280,9 @@ export class SSOManager {
           picture: userData.picture,
           locale: userData.locale,
         };
-      
-      case 'microsoft':
-      case 'azure-ad':
+
+      case "microsoft":
+      case "azure-ad":
         return {
           ...baseInfo,
           name: userData.displayName || userData.name,
@@ -284,8 +291,8 @@ export class SSOManager {
           picture: userData.photo,
           organizationId: userData.tid,
         };
-      
-      case 'facebook':
+
+      case "facebook":
         return {
           ...baseInfo,
           name: userData.name,
@@ -293,15 +300,15 @@ export class SSOManager {
           lastName: userData.last_name,
           picture: userData.picture?.data?.url,
         };
-      
-      case 'apple':
+
+      case "apple":
         return {
           ...baseInfo,
           name: userData.name ? `${userData.name.firstName} ${userData.name.lastName}` : undefined,
           firstName: userData.name?.firstName,
           lastName: userData.name?.lastName,
         };
-      
+
       default:
         return baseInfo;
     }
@@ -313,9 +320,9 @@ export class SSOManager {
   private async createOrLinkAccount(provider: SSOProvider, userInfo: SSOUserInfo): Promise<string> {
     // Check if user already exists by email
     const { data: existingUser } = await this.supabase
-      .from('users')
-      .select('id')
-      .eq('email', userInfo.email)
+      .from("users")
+      .select("id")
+      .eq("email", userInfo.email)
       .single();
 
     if (existingUser) {
@@ -326,7 +333,7 @@ export class SSOManager {
 
     // Create new user account
     const { data: newUser, error } = await this.supabase
-      .from('users')
+      .from("users")
       .insert({
         email: userInfo.email,
         email_verified: userInfo.emailVerified,
@@ -338,49 +345,51 @@ export class SSOManager {
         created_via_sso: true,
         sso_provider: provider.id,
       })
-      .select('id')
+      .select("id")
       .single();
 
     if (error) {
-      throw this.createError('ACCOUNT_LINKING_FAILED', `Failed to create user: ${error.message}`);
+      throw this.createError("ACCOUNT_LINKING_FAILED", `Failed to create user: ${error.message}`);
     }
 
     // Link SSO account
     await this.linkSSOAccount(newUser.id, provider.id, userInfo);
-    
+
     return newUser.id;
   }
 
   /**
    * Link SSO account to user
    */
-  private async linkSSOAccount(userId: string, providerId: string, userInfo: SSOUserInfo): Promise<void> {
-    const linking: Omit<SSOAccountLinking, 'id'> = {
+  private async linkSSOAccount(
+    userId: string,
+    providerId: string,
+    userInfo: SSOUserInfo,
+  ): Promise<void> {
+    const linking: Omit<SSOAccountLinking, "id"> = {
       userId,
       providerId,
       providerUserId: userInfo.id,
       email: userInfo.email,
       linkedAt: new Date(),
-      linkingMethod: 'automatic',
+      linkingMethod: "automatic",
       verified: userInfo.emailVerified,
       primary: true,
     };
 
-    const { error } = await this.supabase
-      .from('sso_account_links')
-      .upsert(linking, {
-        onConflict: 'user_id,provider_id',
-      });
+    const { error } = await this.supabase.from("sso_account_links").upsert(linking, {
+      onConflict: "user_id,provider_id",
+    });
 
     if (error) {
-      throw this.createError('ACCOUNT_LINKING_FAILED', `Failed to link account: ${error.message}`);
+      throw this.createError("ACCOUNT_LINKING_FAILED", `Failed to link account: ${error.message}`);
     }
 
     await this.logAudit({
       userId,
       providerId,
-      action: 'sso_account_link',
-      details: { email: userInfo.email, method: 'automatic' },
+      action: "sso_account_link",
+      details: { email: userInfo.email, method: "automatic" },
       success: true,
     });
   }
@@ -388,21 +397,23 @@ export class SSOManager {
   /**
    * Create SSO session
    */
-  private async createSSOSession(sessionData: Omit<SSOSession, 'id' | 'createdAt' | 'lastUsedAt'>): Promise<SSOSession> {
-    const session: Omit<SSOSession, 'id'> = {
+  private async createSSOSession(
+    sessionData: Omit<SSOSession, "id" | "createdAt" | "lastUsedAt">,
+  ): Promise<SSOSession> {
+    const session: Omit<SSOSession, "id"> = {
       ...sessionData,
       createdAt: new Date(),
       lastUsedAt: new Date(),
     };
 
     const { data, error } = await this.supabase
-      .from('sso_sessions')
+      .from("sso_sessions")
       .insert(session)
       .select()
       .single();
 
     if (error) {
-      throw this.createError('PROVIDER_ERROR', `Failed to create session: ${error.message}`);
+      throw this.createError("PROVIDER_ERROR", `Failed to create session: ${error.message}`);
     }
 
     return data;
@@ -413,27 +424,27 @@ export class SSOManager {
    */
   async refreshToken(sessionId: string): Promise<SSOSession> {
     const { data: session, error } = await this.supabase
-      .from('sso_sessions')
-      .select('*')
-      .eq('id', sessionId)
+      .from("sso_sessions")
+      .select("*")
+      .eq("id", sessionId)
       .single();
 
     if (error || !session) {
-      throw this.createError('TOKEN_INVALID', 'Session not found');
+      throw this.createError("TOKEN_INVALID", "Session not found");
     }
 
     if (!session.refreshToken) {
-      throw this.createError('TOKEN_INVALID', 'No refresh token available');
+      throw this.createError("TOKEN_INVALID", "No refresh token available");
     }
 
     const provider = this.providers.get(session.providerId);
     if (!provider) {
-      throw this.createError('PROVIDER_NOT_FOUND', `Provider ${session.providerId} not found`);
+      throw this.createError("PROVIDER_NOT_FOUND", `Provider ${session.providerId} not found`);
     }
 
     try {
       const tokenResponse = await this.refreshAccessToken(provider, session.refreshToken);
-      
+
       const updatedSession = {
         ...session,
         accessToken: tokenResponse.accessToken,
@@ -443,20 +454,23 @@ export class SSOManager {
       };
 
       const { data, error: updateError } = await this.supabase
-        .from('sso_sessions')
+        .from("sso_sessions")
         .update(updatedSession)
-        .eq('id', sessionId)
+        .eq("id", sessionId)
         .select()
         .single();
 
       if (updateError) {
-        throw this.createError('PROVIDER_ERROR', `Failed to update session: ${updateError.message}`);
+        throw this.createError(
+          "PROVIDER_ERROR",
+          `Failed to update session: ${updateError.message}`,
+        );
       }
 
       await this.logAudit({
         userId: session.userId,
         providerId: session.providerId,
-        action: 'sso_token_refresh',
+        action: "sso_token_refresh",
         details: { sessionId },
         success: true,
       });
@@ -466,7 +480,7 @@ export class SSOManager {
       await this.logAudit({
         userId: session.userId,
         providerId: session.providerId,
-        action: 'sso_token_refresh',
+        action: "sso_token_refresh",
         details: { sessionId, error: error.message },
         success: false,
         errorMessage: error.message,
@@ -478,33 +492,36 @@ export class SSOManager {
   /**
    * Refresh access token using refresh token
    */
-  private async refreshAccessToken(provider: SSOProvider, refreshToken: string): Promise<SSOTokenResponse> {
+  private async refreshAccessToken(
+    provider: SSOProvider,
+    refreshToken: string,
+  ): Promise<SSOTokenResponse> {
     const params = new URLSearchParams({
-      grant_type: 'refresh_token',
+      grant_type: "refresh_token",
       client_id: provider.config.clientId,
-      client_secret: provider.config.clientSecret || '',
+      client_secret: provider.config.clientSecret || "",
       refresh_token: refreshToken,
     });
 
     const response = await fetch(provider.config.tokenUrl, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Accept': 'application/json',
+        "Content-Type": "application/x-www-form-urlencoded",
+        Accept: "application/json",
       },
       body: params.toString(),
     });
 
     if (!response.ok) {
       const errorData = await response.text();
-      throw this.createError('TOKEN_EXPIRED', `Token refresh failed: ${errorData}`);
+      throw this.createError("TOKEN_EXPIRED", `Token refresh failed: ${errorData}`);
     }
 
     const tokenData = await response.json();
-    
+
     return {
       accessToken: tokenData.access_token,
-      tokenType: tokenData.token_type || 'Bearer',
+      tokenType: tokenData.token_type || "Bearer",
       expiresIn: tokenData.expires_in || 3600,
       refreshToken: tokenData.refresh_token,
       scope: tokenData.scope,
@@ -516,9 +533,9 @@ export class SSOManager {
    */
   async logout(sessionId: string): Promise<void> {
     const { data: session, error } = await this.supabase
-      .from('sso_sessions')
-      .select('*')
-      .eq('id', sessionId)
+      .from("sso_sessions")
+      .select("*")
+      .eq("id", sessionId)
       .single();
 
     if (error || !session) {
@@ -526,15 +543,12 @@ export class SSOManager {
     }
 
     // Delete session
-    await this.supabase
-      .from('sso_sessions')
-      .delete()
-      .eq('id', sessionId);
+    await this.supabase.from("sso_sessions").delete().eq("id", sessionId);
 
     await this.logAudit({
       userId: session.userId,
       providerId: session.providerId,
-      action: 'sso_logout',
+      action: "sso_logout",
       details: { sessionId },
       success: true,
     });
@@ -544,11 +558,11 @@ export class SSOManager {
    * Get domain-based SSO provider
    */
   getDomainProvider(email: string): SSOProvider | null {
-    const domain = email.split('@')[1];
+    const domain = email.split("@")[1];
     if (!domain) return null;
 
-    const domainMapping = this.config.domainMappings.find(mapping => 
-      mapping.domain === domain && mapping.autoRedirect
+    const domainMapping = this.config.domainMappings.find(
+      (mapping) => mapping.domain === domain && mapping.autoRedirect,
     );
 
     if (!domainMapping) return null;
@@ -561,9 +575,9 @@ export class SSOManager {
    */
   async validateSession(sessionId: string): Promise<SSOSession | null> {
     const { data: session, error } = await this.supabase
-      .from('sso_sessions')
-      .select('*')
-      .eq('id', sessionId)
+      .from("sso_sessions")
+      .select("*")
+      .eq("id", sessionId)
       .single();
 
     if (error || !session) {
@@ -577,19 +591,13 @@ export class SSOManager {
         return await this.refreshToken(sessionId);
       } catch {
         // Delete expired session
-        await this.supabase
-          .from('sso_sessions')
-          .delete()
-          .eq('id', sessionId);
+        await this.supabase.from("sso_sessions").delete().eq("id", sessionId);
         return null;
       }
     }
 
     // Update last used timestamp
-    await this.supabase
-      .from('sso_sessions')
-      .update({ lastUsedAt: new Date() })
-      .eq('id', sessionId);
+    await this.supabase.from("sso_sessions").update({ lastUsedAt: new Date() }).eq("id", sessionId);
 
     return session;
   }
@@ -600,7 +608,7 @@ export class SSOManager {
   private async storeAuthRequest(request: SSOAuthRequest): Promise<void> {
     // Store in cache/database with expiration
     // Implementation depends on your caching strategy
-    logger.info('Auth request stored', { state: request.state, providerId: request.providerId });
+    logger.info("Auth request stored", { state: request.state, providerId: request.providerId });
   }
 
   /**
@@ -609,7 +617,7 @@ export class SSOManager {
   private async getAuthRequest(state: string): Promise<SSOAuthRequest | null> {
     // Retrieve from cache/database
     // Implementation depends on your caching strategy
-    logger.info('Auth request retrieved', { state });
+    logger.info("Auth request retrieved", { state });
     return null; // Placeholder
   }
 
@@ -617,29 +625,33 @@ export class SSOManager {
    * Generate secure random token
    */
   private generateSecureToken(): string {
-    return crypto.randomBytes(32).toString('base64url');
+    return crypto.randomBytes(32).toString("base64url");
   }
 
   /**
    * Log audit event
    */
-  private async logAudit(auditData: Omit<SSOAuditLog, 'id' | 'timestamp' | 'ipAddress' | 'userAgent'>): Promise<void> {
-    const audit: Omit<SSOAuditLog, 'id'> = {
+  private async logAudit(
+    auditData: Omit<SSOAuditLog, "id" | "timestamp" | "ipAddress" | "userAgent">,
+  ): Promise<void> {
+    const audit: Omit<SSOAuditLog, "id"> = {
       ...auditData,
       timestamp: new Date(),
-      ipAddress: '0.0.0.0', // Should be passed from request context
-      userAgent: 'Unknown', // Should be passed from request context
+      ipAddress: "0.0.0.0", // Should be passed from request context
+      userAgent: "Unknown", // Should be passed from request context
     };
 
-    await this.supabase
-      .from('sso_audit_logs')
-      .insert(audit);
+    await this.supabase.from("sso_audit_logs").insert(audit);
   }
 
   /**
    * Create SSO error
    */
-  private createError(code: SSOErrorCode, message: string, details?: Record<string, any>): SSOError {
+  private createError(
+    code: SSOErrorCode,
+    message: string,
+    details?: Record<string, any>,
+  ): SSOError {
     return {
       code,
       message,
@@ -652,7 +664,7 @@ export class SSOManager {
    * Get available SSO providers
    */
   getAvailableProviders(): SSOProvider[] {
-    return Array.from(this.providers.values()).filter(provider => provider.enabled);
+    return Array.from(this.providers.values()).filter((provider) => provider.enabled);
   }
 
   /**
@@ -669,10 +681,10 @@ export class SSOManager {
     this.config = { ...this.config, ...config };
     this.providers.clear();
     this.initializeProviders();
-    
+
     await this.logAudit({
-      providerId: 'system',
-      action: 'sso_provider_config_change',
+      providerId: "system",
+      action: "sso_provider_config_change",
       details: { changes: config },
       success: true,
     });

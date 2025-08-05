@@ -1,22 +1,18 @@
 "use client";
 
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
+import type {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { OfflineStatus } from "@/components/ui/offline-status";
-import { Separator } from "@/components/ui/separator";
-import {
-    SidebarInset,
-    SidebarProvider,
-    SidebarTrigger,
-} from "@/components/ui/sidebar";
+import type { OfflineStatus } from "@/components/ui/offline-status";
+import type { Separator } from "@/components/ui/separator";
+import type { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import * as React from "react";
-import { AppSidebar } from "./app-sidebar";
+import type { AppSidebar } from "./app-sidebar";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -43,9 +39,7 @@ export function DashboardLayout({ children, user, breadcrumbs }: DashboardLayout
                     <React.Fragment key={breadcrumb.title}>
                       <BreadcrumbItem className="hidden md:block">
                         {breadcrumb.href ? (
-                          <BreadcrumbLink href={breadcrumb.href}>
-                            {breadcrumb.title}
-                          </BreadcrumbLink>
+                          <BreadcrumbLink href={breadcrumb.href}>{breadcrumb.title}</BreadcrumbLink>
                         ) : (
                           <BreadcrumbPage>{breadcrumb.title}</BreadcrumbPage>
                         )}
@@ -59,16 +53,16 @@ export function DashboardLayout({ children, user, breadcrumbs }: DashboardLayout
               </Breadcrumb>
             )}
           </div>
-          
+
           {/* Offline Status Indicator */}
           <div className="ml-auto pr-4">
             <OfflineStatus variant="badge" />
           </div>
         </header>
-        
+
         {/* Offline Banner */}
         <OfflineStatus variant="banner" />
-        
+
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           {/* Toast notifications */}
           <OfflineStatus variant="toast" />

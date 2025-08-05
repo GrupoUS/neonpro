@@ -2,12 +2,12 @@
 // Integra com o KPI Engine para dados reais do Supabase
 
 import type {
-    DrillDownRequest,
-    DrillDownResult,
-    KPICalculationRequest,
-    KPICalculationResult
-} from '@/lib/types/kpi-types';
-import { useCallback, useEffect, useState } from 'react';
+  DrillDownRequest,
+  DrillDownResult,
+  KPICalculationRequest,
+  KPICalculationResult,
+} from "@/lib/types/kpi-types";
+import type { useCallback, useEffect, useState } from "react";
 
 export interface UseKPIDataOptions {
   dateRange: string;
@@ -38,19 +38,19 @@ export function useKPIData(options: UseKPIDataOptions) {
     const start = new Date();
 
     switch (range) {
-      case '7d':
+      case "7d":
         start.setDate(end.getDate() - 7);
         break;
-      case '30d':
+      case "30d":
         start.setDate(end.getDate() - 30);
         break;
-      case '90d':
+      case "90d":
         start.setDate(end.getDate() - 90);
         break;
-      case '12m':
+      case "12m":
         start.setFullYear(end.getFullYear() - 1);
         break;
-      case 'ytd':
+      case "ytd":
         start.setMonth(0, 1);
         break;
       default:
@@ -58,27 +58,27 @@ export function useKPIData(options: UseKPIDataOptions) {
     }
 
     return {
-      start_date: start.toISOString().split('T')[0],
-      end_date: end.toISOString().split('T')[0],
+      start_date: start.toISOString().split("T")[0],
+      end_date: end.toISOString().split("T")[0],
     };
   }, []);
 
   const fetchKPIData = useCallback(async () => {
-    setState(prev => ({ ...prev, loading: true, error: null }));
+    setState((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
       const timePeriod = calculateDateRange(dateRange);
-      
+
       const request: KPICalculationRequest = {
         time_period: timePeriod,
         force_recalculation: false,
         filters,
       };
 
-      const response = await fetch('/api/analytics/kpis', {
-        method: 'POST',
+      const response = await fetch("/api/analytics/kpis", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(request),
       });
@@ -96,11 +96,11 @@ export function useKPIData(options: UseKPIDataOptions) {
         lastUpdated: new Date(),
       });
     } catch (error) {
-      console.error('Error fetching KPI data:', error);
-      setState(prev => ({
+      console.error("Error fetching KPI data:", error);
+      setState((prev) => ({
         ...prev,
         loading: false,
-        error: error instanceof Error ? error.message : 'Erro ao carregar dados KPI',
+        error: error instanceof Error ? error.message : "Erro ao carregar dados KPI",
       }));
     }
   }, [dateRange, filters, calculateDateRange]);
@@ -137,33 +137,36 @@ export function useDrillDownData() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getDrillDownData = useCallback(async (request: DrillDownRequest): Promise<DrillDownResult | null> => {
-    setLoading(true);
-    setError(null);
+  const getDrillDownData = useCallback(
+    async (request: DrillDownRequest): Promise<DrillDownResult | null> => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      const response = await fetch('/api/analytics/drill-down', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(request),
-      });
+      try {
+        const response = await fetch("/api/analytics/drill-down", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(request),
+        });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setLoading(false);
+        return data;
+      } catch (error) {
+        console.error("Error fetching drill-down data:", error);
+        setError(error instanceof Error ? error.message : "Erro ao carregar análise detalhada");
+        setLoading(false);
+        return null;
       }
-
-      const data = await response.json();
-      setLoading(false);
-      return data;
-    } catch (error) {
-      console.error('Error fetching drill-down data:', error);
-      setError(error instanceof Error ? error.message : 'Erro ao carregar análise detalhada');
-      setLoading(false);
-      return null;
-    }
-  }, []);
+    },
+    [],
+  );
 
   return {
     getDrillDownData,
@@ -184,11 +187,11 @@ export function useProfessionalMetrics(dateRange: string) {
 
     try {
       const timePeriod = calculateDateRange(dateRange);
-      
-      const response = await fetch('/api/analytics/professional-metrics', {
-        method: 'POST',
+
+      const response = await fetch("/api/analytics/professional-metrics", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ time_period: timePeriod }),
       });
@@ -201,8 +204,8 @@ export function useProfessionalMetrics(dateRange: string) {
       setMetrics(data.metrics || []);
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching professional metrics:', error);
-      setError(error instanceof Error ? error.message : 'Erro ao carregar métricas profissionais');
+      console.error("Error fetching professional metrics:", error);
+      setError(error instanceof Error ? error.message : "Erro ao carregar métricas profissionais");
       setLoading(false);
     }
   }, [dateRange]);
@@ -216,19 +219,19 @@ export function useProfessionalMetrics(dateRange: string) {
     const start = new Date();
 
     switch (range) {
-      case '7d':
+      case "7d":
         start.setDate(end.getDate() - 7);
         break;
-      case '30d':
+      case "30d":
         start.setDate(end.getDate() - 30);
         break;
-      case '90d':
+      case "90d":
         start.setDate(end.getDate() - 90);
         break;
-      case '12m':
+      case "12m":
         start.setFullYear(end.getFullYear() - 1);
         break;
-      case 'ytd':
+      case "ytd":
         start.setMonth(0, 1);
         break;
       default:
@@ -236,8 +239,8 @@ export function useProfessionalMetrics(dateRange: string) {
     }
 
     return {
-      start_date: start.toISOString().split('T')[0],
-      end_date: end.toISOString().split('T')[0],
+      start_date: start.toISOString().split("T")[0],
+      end_date: end.toISOString().split("T")[0],
     };
   }, []);
 

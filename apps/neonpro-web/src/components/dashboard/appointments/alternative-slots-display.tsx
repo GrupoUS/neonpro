@@ -4,16 +4,31 @@
 // Enhanced with research-based UI patterns and performance metrics
 // =============================================
 
-'use client';
+"use client";
 
-import React, { useMemo } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Loader2, Clock, Calendar, Star, ArrowRight, AlertCircle, TrendingUp, Zap } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import dayjs from 'dayjs';
-import {
+import React, { useMemo } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type {
+  Loader2,
+  Clock,
+  Calendar,
+  Star,
+  ArrowRight,
+  AlertCircle,
+  TrendingUp,
+  Zap,
+} from "lucide-react";
+import type { cn } from "@/lib/utils";
+import dayjs from "dayjs";
+import type {
   AlternativeSlot,
   UseAlternativeSlotsResult,
   formatAlternativeSlot,
@@ -21,7 +36,7 @@ import {
   getSuggestionQualityColor,
   groupSuggestionsByDay,
   filterSuggestionsWithDayjs,
-} from '@/hooks/appointments/use-alternative-slots';
+} from "@/hooks/appointments/use-alternative-slots";
 
 interface AlternativeSlotsDisplayProps {
   alternativeSlots: UseAlternativeSlotsResult;
@@ -48,19 +63,13 @@ export default function AlternativeSlotsDisplay({
   enableRealtimeFiltering = false,
   showBookingProbability = false,
 }: AlternativeSlotsDisplayProps) {
-  const {
-    suggestions,
-    isLoading,
-    error,
-    selectedSuggestion,
-    searchMetadata,
-    performanceMetrics,
-  } = alternativeSlots;
+  const { suggestions, isLoading, error, selectedSuggestion, searchMetadata, performanceMetrics } =
+    alternativeSlots;
 
   // Performance-optimized suggestion processing with useMemo
   const processedSuggestions = useMemo(() => {
     let processed = suggestions;
-    
+
     // Apply real-time filtering if enabled
     if (enableRealtimeFiltering) {
       processed = filterSuggestionsWithDayjs(processed, {
@@ -68,23 +77,27 @@ export default function AlternativeSlotsDisplay({
         excludeDays: [0], // Exclude Sundays
       });
     }
-    
+
     // Sort by score and booking probability
     processed = processed
       .sort((a, b) => {
-        const scoreA = showBookingProbability ? (a.booking_success_probability || 0) * 100 : a.score;
-        const scoreB = showBookingProbability ? (b.booking_success_probability || 0) * 100 : b.score;
+        const scoreA = showBookingProbability
+          ? (a.booking_success_probability || 0) * 100
+          : a.score;
+        const scoreB = showBookingProbability
+          ? (b.booking_success_probability || 0) * 100
+          : b.score;
         return scoreB - scoreA;
       })
       .slice(0, maxDisplaySlots);
-    
+
     return processed;
   }, [suggestions, enableRealtimeFiltering, showBookingProbability, maxDisplaySlots]);
 
   // Loading state
   if (isLoading) {
     return (
-      <Card className={cn('w-full', className)}>
+      <Card className={cn("w-full", className)}>
         <CardContent className="flex items-center justify-center py-8">
           <div className="flex items-center gap-2 text-muted-foreground">
             <Loader2 className="h-5 w-5 animate-spin" />
@@ -98,7 +111,7 @@ export default function AlternativeSlotsDisplay({
   // Error state
   if (error) {
     return (
-      <Card className={cn('w-full', className)}>
+      <Card className={cn("w-full", className)}>
         <CardContent className="py-6">
           <div className="flex items-center gap-2 text-destructive">
             <AlertCircle className="h-5 w-5" />
@@ -115,7 +128,7 @@ export default function AlternativeSlotsDisplay({
   // No suggestions state
   if (!suggestions.length) {
     return (
-      <Card className={cn('w-full', className)}>
+      <Card className={cn("w-full", className)}>
         <CardContent className="flex items-center justify-center py-8">
           <div className="text-center text-muted-foreground">
             <Clock className="h-8 w-8 mx-auto mb-2 opacity-50" />
@@ -135,25 +148,26 @@ export default function AlternativeSlotsDisplay({
   // Group by day if requested
   if (showGroupByDay) {
     const groupedSuggestions = groupSuggestionsByDay(displaySuggestions);
-    
+
     return (
-      <div className={cn('space-y-4', className)}>
+      <div className={cn("space-y-4", className)}>
         <div className="flex items-center justify-between">
           <h3 className="font-semibold">Horários Alternativos Disponíveis</h3>
           {searchMetadata && (
             <Badge variant="outline" className="text-xs">
-              {searchMetadata.total_suggestions} encontrado{searchMetadata.total_suggestions !== 1 ? 's' : ''}
+              {searchMetadata.total_suggestions} encontrado
+              {searchMetadata.total_suggestions !== 1 ? "s" : ""}
             </Badge>
           )}
         </div>
-        
+
         {Object.entries(groupedSuggestions).map(([date, daySlots]) => {
-          const dayName = new Intl.DateTimeFormat('pt-BR', { 
-            weekday: 'long',
-            day: '2-digit',
-            month: 'long'
+          const dayName = new Intl.DateTimeFormat("pt-BR", {
+            weekday: "long",
+            day: "2-digit",
+            month: "long",
           }).format(new Date(date));
-          
+
           return (
             <Card key={date}>
               <CardHeader className="pb-3">
@@ -179,14 +193,18 @@ export default function AlternativeSlotsDisplay({
 
   // Regular list display
   return (
-    <Card className={cn('w-full', className)}>
+    <Card className={cn("w-full", className)}>
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-lg">Horários Alternativos</CardTitle>
             <CardDescription>
               {searchMetadata && (
-                <>Encontramos {searchMetadata.total_suggestions} opção{searchMetadata.total_suggestions !== 1 ? 'ões' : ''} disponível{searchMetadata.total_suggestions !== 1 ? 'is' : ''}</>
+                <>
+                  Encontramos {searchMetadata.total_suggestions} opção
+                  {searchMetadata.total_suggestions !== 1 ? "ões" : ""} disponível
+                  {searchMetadata.total_suggestions !== 1 ? "is" : ""}
+                </>
               )}
             </CardDescription>
           </div>
@@ -209,11 +227,14 @@ export default function AlternativeSlotsDisplay({
             ranking={index + 1}
           />
         ))}
-        
+
         {suggestions.length > maxDisplaySlots && (
           <div className="text-center pt-2 border-t">
             <p className="text-sm text-muted-foreground">
-              +{suggestions.length - maxDisplaySlots} horário{suggestions.length - maxDisplaySlots !== 1 ? 's' : ''} adicional{suggestions.length - maxDisplaySlots !== 1 ? 'is' : ''} disponível{suggestions.length - maxDisplaySlots !== 1 ? 'is' : ''}
+              +{suggestions.length - maxDisplaySlots} horário
+              {suggestions.length - maxDisplaySlots !== 1 ? "s" : ""} adicional
+              {suggestions.length - maxDisplaySlots !== 1 ? "is" : ""} disponível
+              {suggestions.length - maxDisplaySlots !== 1 ? "is" : ""}
             </p>
           </div>
         )}
@@ -242,7 +263,7 @@ function SlotCard({
 }: SlotCardProps) {
   const quality = getSuggestionQuality(slot);
   const qualityColor = getSuggestionQualityColor(quality);
-  
+
   const handleSelect = () => {
     onSelect?.(slot);
   };
@@ -252,8 +273,8 @@ function SlotCard({
       <Button
         variant={isSelected ? "default" : "outline"}
         className={cn(
-          'w-full justify-between h-auto p-3',
-          isSelected && 'ring-2 ring-primary ring-offset-2'
+          "w-full justify-between h-auto p-3",
+          isSelected && "ring-2 ring-primary ring-offset-2",
         )}
         onClick={handleSelect}
       >
@@ -276,9 +297,9 @@ function SlotCard({
   return (
     <div
       className={cn(
-        'relative rounded-lg border p-4 cursor-pointer transition-all hover:shadow-md',
-        isSelected && 'ring-2 ring-primary ring-offset-2 bg-primary/5',
-        qualityColor.includes('border-') && qualityColor
+        "relative rounded-lg border p-4 cursor-pointer transition-all hover:shadow-md",
+        isSelected && "ring-2 ring-primary ring-offset-2 bg-primary/5",
+        qualityColor.includes("border-") && qualityColor,
       )}
       onClick={handleSelect}
     >
@@ -295,27 +316,27 @@ function SlotCard({
               <span>{formatAlternativeSlot(slot)}</span>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
               <Star className="h-3 w-3" />
               <span>Score: {slot.score.toFixed(0)}</span>
             </div>
-            
+
             {slot.distance_from_preferred_minutes !== 0 && (
               <div>
-                {slot.distance_from_preferred_minutes > 0 ? '+' : ''}
-                {Math.round(slot.distance_from_preferred_minutes / 60 * 10) / 10}h
+                {slot.distance_from_preferred_minutes > 0 ? "+" : ""}
+                {Math.round((slot.distance_from_preferred_minutes / 60) * 10) / 10}h
               </div>
             )}
-            
+
             {slot.is_same_day && (
               <Badge variant="secondary" className="text-xs">
                 Mesmo dia
               </Badge>
             )}
           </div>
-          
+
           {slot.reasons.length > 0 && (
             <div className="flex flex-wrap gap-1">
               {slot.reasons.slice(0, 2).map((reason, idx) => (
@@ -331,12 +352,10 @@ function SlotCard({
             </div>
           )}
         </div>
-        
+
         <div className="ml-4 flex items-center">
           {isSelected ? (
-            <Badge className="bg-primary text-primary-foreground">
-              Selecionado
-            </Badge>
+            <Badge className="bg-primary text-primary-foreground">Selecionado</Badge>
           ) : (
             <Button size="sm" variant="ghost">
               Selecionar

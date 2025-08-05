@@ -1,20 +1,20 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
-import { Eye, EyeOff, Lock, Shield } from "lucide-react";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type { format } from "date-fns";
+import type { Eye, EyeOff, Lock, Shield } from "lucide-react";
+import type { useState } from "react";
+import type { useForm } from "react-hook-form";
 
-import { Button } from "@/components/ui/button";
-import {
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
+import type {
   Form,
   FormControl,
   FormDescription,
@@ -23,11 +23,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { patientSchema, type PatientFormData } from "@/lib/healthcare/schemas";
-import { formatCpf, formatPhone } from "@/lib/utils";
-import { toast } from "sonner";
+import type { Input } from "@/components/ui/input";
+import type { Textarea } from "@/components/ui/textarea";
+import type { patientSchema, type PatientFormData } from "@/lib/healthcare/schemas";
+import type { formatCpf, formatPhone } from "@/lib/utils";
+import type { toast } from "sonner";
 
 interface PatientRegistrationFormProps {
   onSubmit: (data: PatientFormData) => Promise<void>;
@@ -75,8 +75,7 @@ export function PatientRegistrationForm({
     try {
       await onSubmit(data);
       toast.success("Paciente registrado com sucesso!", {
-        description:
-          "Os dados foram salvos de forma segura e em conformidade com a LGPD.",
+        description: "Os dados foram salvos de forma segura e em conformidade com a LGPD.",
       });
       form.reset();
       setCurrentStep(1);
@@ -108,9 +107,7 @@ export function PatientRegistrationForm({
           </div>
           <div>
             <CardTitle className="text-2xl">Cadastro de Paciente</CardTitle>
-            <CardDescription>
-              Informações seguras e protegidas pela LGPD
-            </CardDescription>
+            <CardDescription>Informações seguras e protegidas pela LGPD</CardDescription>
           </div>
         </div>
 
@@ -132,10 +129,7 @@ export function PatientRegistrationForm({
 
       <CardContent>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleSubmitForm)}
-            className="space-y-6"
-          >
+          <form onSubmit={form.handleSubmit(handleSubmitForm)} className="space-y-6">
             {/* Step 1: Basic Information */}
             {currentStep === 1 && (
               <div className="space-y-6">
@@ -241,13 +235,9 @@ export function PatientRegistrationForm({
                         <Input
                           type="date"
                           {...field}
-                          value={
-                            field.value ? format(field.value, "yyyy-MM-dd") : ""
-                          }
+                          value={field.value ? format(field.value, "yyyy-MM-dd") : ""}
                           onChange={(e) => {
-                            const date = e.target.value
-                              ? new Date(e.target.value)
-                              : null;
+                            const date = e.target.value ? new Date(e.target.value) : null;
                             field.onChange(date);
                           }}
                           className="bg-background"
@@ -268,9 +258,7 @@ export function PatientRegistrationForm({
             {currentStep === 2 && (
               <div className="space-y-6">
                 <div className="border-l-4 border-primary pl-4">
-                  <h3 className="font-semibold text-lg">
-                    Contato e Emergência
-                  </h3>
+                  <h3 className="font-semibold text-lg">Contato e Emergência</h3>
                   <p className="text-sm text-muted-foreground">
                     Informações de contato e pessoa de emergência
                   </p>
@@ -284,11 +272,7 @@ export function PatientRegistrationForm({
                       <FormItem>
                         <FormLabel>Nome do Contato de Emergência *</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="Nome completo"
-                            {...field}
-                            className="bg-background"
-                          />
+                          <Input placeholder="Nome completo" {...field} className="bg-background" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -328,11 +312,7 @@ export function PatientRegistrationForm({
                         <FormItem className="md:col-span-2">
                           <FormLabel>Rua/Avenida *</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="Nome da rua"
-                              {...field}
-                              className="bg-background"
-                            />
+                            <Input placeholder="Nome da rua" {...field} className="bg-background" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -346,11 +326,7 @@ export function PatientRegistrationForm({
                         <FormItem>
                           <FormLabel>Número *</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="123"
-                              {...field}
-                              className="bg-background"
-                            />
+                            <Input placeholder="123" {...field} className="bg-background" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -421,12 +397,10 @@ export function PatientRegistrationForm({
                   <div className="flex items-start gap-3">
                     <Lock className="w-5 h-5 text-amber-600 mt-0.5" />
                     <div>
-                      <h4 className="font-medium text-amber-800">
-                        Informações Protegidas
-                      </h4>
+                      <h4 className="font-medium text-amber-800">Informações Protegidas</h4>
                       <p className="text-sm text-amber-700">
-                        Dados médicos são criptografados e protegidos por
-                        padrões hospitalares de segurança.
+                        Dados médicos são criptografados e protegidos por padrões hospitalares de
+                        segurança.
                       </p>
                     </div>
                   </div>
@@ -447,8 +421,7 @@ export function PatientRegistrationForm({
                         />
                       </FormControl>
                       <FormDescription>
-                        Informações importantes para o planejamento do
-                        tratamento.
+                        Informações importantes para o planejamento do tratamento.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -470,8 +443,7 @@ export function PatientRegistrationForm({
                         />
                       </FormControl>
                       <FormDescription>
-                        Fundamental para evitar reações adversas durante
-                        tratamentos.
+                        Fundamental para evitar reações adversas durante tratamentos.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -493,8 +465,7 @@ export function PatientRegistrationForm({
                         />
                       </FormControl>
                       <FormDescription>
-                        Medicamentos podem interferir com procedimentos
-                        estéticos.
+                        Medicamentos podem interferir com procedimentos estéticos.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -525,19 +496,12 @@ export function PatientRegistrationForm({
                   <div className="flex items-start gap-3">
                     <Shield className="w-5 h-5 text-blue-600 mt-0.5" />
                     <div>
-                      <h4 className="font-medium text-blue-800">
-                        Seus Direitos LGPD
-                      </h4>
+                      <h4 className="font-medium text-blue-800">Seus Direitos LGPD</h4>
                       <div className="text-sm text-blue-700 space-y-1">
-                        <p>
-                          • Confirmação da existência de tratamento de dados
-                        </p>
+                        <p>• Confirmação da existência de tratamento de dados</p>
                         <p>• Acesso aos seus dados pessoais</p>
                         <p>• Correção de dados incompletos ou desatualizados</p>
-                        <p>
-                          • Eliminação de dados desnecessários ou tratados em
-                          desconformidade
-                        </p>
+                        <p>• Eliminação de dados desnecessários ou tratados em desconformidade</p>
                         <p>• Portabilidade dos dados</p>
                         <p>• Revogação do consentimento a qualquer momento</p>
                       </div>
@@ -553,8 +517,7 @@ export function PatientRegistrationForm({
                           </>
                         ) : (
                           <>
-                            <Eye className="w-4 h-4 mr-1" /> Ver detalhes
-                            completos
+                            <Eye className="w-4 h-4 mr-1" /> Ver detalhes completos
                           </>
                         )}
                       </Button>
@@ -564,9 +527,7 @@ export function PatientRegistrationForm({
 
                 {showLgpdDetails && (
                   <div className="bg-gray-50 border rounded-lg p-4 text-sm space-y-3">
-                    <h5 className="font-medium">
-                      Finalidades do Tratamento de Dados:
-                    </h5>
+                    <h5 className="font-medium">Finalidades do Tratamento de Dados:</h5>
                     <ul className="list-disc pl-5 space-y-1">
                       <li>Prestação de serviços médicos e estéticos</li>
                       <li>Agendamento e controle de consultas</li>
@@ -577,22 +538,20 @@ export function PatientRegistrationForm({
 
                     <h5 className="font-medium">Base Legal:</h5>
                     <p>
-                      Consentimento do titular (Art. 7º, I, LGPD) e interesse
-                      legítimo para prestação de serviços de saúde.
+                      Consentimento do titular (Art. 7º, I, LGPD) e interesse legítimo para
+                      prestação de serviços de saúde.
                     </p>
 
                     <h5 className="font-medium">Compartilhamento:</h5>
                     <p>
-                      Dados podem ser compartilhados apenas com profissionais
-                      envolvidos no seu tratamento e autoridades sanitárias
-                      quando exigido por lei.
+                      Dados podem ser compartilhados apenas com profissionais envolvidos no seu
+                      tratamento e autoridades sanitárias quando exigido por lei.
                     </p>
 
                     <h5 className="font-medium">Retenção:</h5>
                     <p>
-                      Dados médicos são mantidos pelo prazo mínimo de 20 anos
-                      conforme CFM. Outros dados por 5 anos após término da
-                      relação.
+                      Dados médicos são mantidos pelo prazo mínimo de 20 anos conforme CFM. Outros
+                      dados por 5 anos após término da relação.
                     </p>
                   </div>
                 )}
@@ -617,10 +576,9 @@ export function PatientRegistrationForm({
                               Consentimento LGPD (Obrigatório) *
                             </FormLabel>
                             <FormDescription className="text-xs">
-                              Autorizo o tratamento dos meus dados pessoais para
-                              as finalidades descritas, com base no meu
-                              consentimento livre e informado, podendo revogá-lo
-                              a qualquer momento.
+                              Autorizo o tratamento dos meus dados pessoais para as finalidades
+                              descritas, com base no meu consentimento livre e informado, podendo
+                              revogá-lo a qualquer momento.
                             </FormDescription>
                           </div>
                         </div>
@@ -648,8 +606,8 @@ export function PatientRegistrationForm({
                               Comunicações de Marketing (Opcional)
                             </FormLabel>
                             <FormDescription className="text-xs">
-                              Autorizo receber comunicações sobre novos
-                              tratamentos, promoções e conteúdo educativo.
+                              Autorizo receber comunicações sobre novos tratamentos, promoções e
+                              conteúdo educativo.
                             </FormDescription>
                           </div>
                         </div>
@@ -677,8 +635,8 @@ export function PatientRegistrationForm({
                               Comunicação via WhatsApp (Opcional)
                             </FormLabel>
                             <FormDescription className="text-xs">
-                              Autorizo receber lembretes de consulta e
-                              comunicações importantes via WhatsApp.
+                              Autorizo receber lembretes de consulta e comunicações importantes via
+                              WhatsApp.
                             </FormDescription>
                           </div>
                         </div>
@@ -692,10 +650,7 @@ export function PatientRegistrationForm({
                   <Button type="button" variant="outline" onClick={prevStep}>
                     Anterior
                   </Button>
-                  <Button
-                    type="submit"
-                    disabled={isLoading || !form.watch("consent_lgpd")}
-                  >
+                  <Button type="submit" disabled={isLoading || !form.watch("consent_lgpd")}>
                     {isLoading ? "Salvando..." : "Cadastrar Paciente"}
                   </Button>
                 </div>

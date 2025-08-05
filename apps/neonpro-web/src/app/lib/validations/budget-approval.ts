@@ -1,4 +1,4 @@
-﻿import { z } from 'zod';
+import type { z } from "zod";
 
 export const budgetPeriodUpdateSchema = z.object({
   startDate: z.date(),
@@ -6,20 +6,22 @@ export const budgetPeriodUpdateSchema = z.object({
   totalBudget: z.number().positive(),
   allocatedBudget: z.number().nonnegative(),
   spentBudget: z.number().nonnegative(),
-  categories: z.array(z.object({
-    name: z.string(),
-    allocation: z.number().positive(),
-    spent: z.number().nonnegative()
-  })),
-  approvalStatus: z.enum(['pending', 'approved', 'rejected', 'under_review']),
+  categories: z.array(
+    z.object({
+      name: z.string(),
+      allocation: z.number().positive(),
+      spent: z.number().nonnegative(),
+    }),
+  ),
+  approvalStatus: z.enum(["pending", "approved", "rejected", "under_review"]),
   approvedBy: z.string().uuid().optional(),
   approvedAt: z.date().optional(),
-  notes: z.string().optional()
+  notes: z.string().optional(),
 });
 
 export const createBudgetPeriodSchema = budgetPeriodUpdateSchema.extend({
   clinicId: z.string().uuid(),
-  createdBy: z.string().uuid()
+  createdBy: z.string().uuid(),
 });
 
 export type BudgetPeriod = z.infer<typeof createBudgetPeriodSchema>;
@@ -27,14 +29,13 @@ export type BudgetPeriodUpdate = z.infer<typeof budgetPeriodUpdateSchema>;
 
 // Missing exports for budget approval API routes
 export const approvalSchema = z.object({
-  placeholder: z.string().optional()
+  placeholder: z.string().optional(),
 });
 
 export const budgetSchema = z.object({
-  placeholder: z.string().optional()
+  placeholder: z.string().optional(),
 });
 
 export const bulkBudgetCreateSchema = z.object({
-  placeholder: z.string().optional()
+  placeholder: z.string().optional(),
 });
-

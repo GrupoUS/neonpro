@@ -1,25 +1,47 @@
-'use client';
+"use client";
 
-import React, { useState, useCallback, useMemo } from 'react';
-import { Responsive, WidthProvider, Layout } from 'react-grid-layout';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { 
-  Plus, 
-  Settings, 
-  Trash2, 
-  Copy, 
-  Move, 
-  Maximize2, 
+import React, { useState, useCallback, useMemo } from "react";
+import type { Responsive, WidthProvider, Layout } from "react-grid-layout";
+import type { Card } from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import type {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import type {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Switch } from "@/components/ui/switch";
+import type {
+  Plus,
+  Settings,
+  Trash2,
+  Copy,
+  Move,
+  Maximize2,
   Minimize2,
   RotateCcw,
   Save,
@@ -32,25 +54,25 @@ import {
   Grid3X3,
   Smartphone,
   Tablet,
-  Monitor
-} from 'lucide-react';
+  Monitor,
+} from "lucide-react";
 
 // Types
-import { 
-  DashboardLayout, 
-  DashboardWidget, 
-  WidgetType, 
+import type {
+  DashboardLayout,
+  DashboardWidget,
+  WidgetType,
   LayoutBreakpoint,
   GridPosition,
-  WidgetConfig
-} from '@/lib/dashboard/types';
+  WidgetConfig,
+} from "@/lib/dashboard/types";
 
 // Widget Components
-import { KPIWidget } from './KPIWidget';
-import { ChartWidget } from './ChartWidget';
-import { MetricWidget } from './MetricWidget';
-import { AlertsWidget } from './AlertsWidget';
-import { TableWidget } from './TableWidget';
+import type { KPIWidget } from "./KPIWidget";
+import type { ChartWidget } from "./ChartWidget";
+import type { MetricWidget } from "./MetricWidget";
+import type { AlertsWidget } from "./AlertsWidget";
+import type { TableWidget } from "./TableWidget";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -70,7 +92,7 @@ interface DashboardGridProps {
 
 interface WidgetDialogState {
   isOpen: boolean;
-  mode: 'add' | 'edit';
+  mode: "add" | "edit";
   widget?: DashboardWidget;
 }
 
@@ -83,81 +105,81 @@ interface LayoutPreset {
 }
 
 const WIDGET_TYPES: { value: WidgetType; label: string; description: string }[] = [
-  { value: 'kpi', label: 'KPI Card', description: 'Display key performance indicators' },
-  { value: 'chart', label: 'Chart', description: 'Various chart types for data visualization' },
-  { value: 'metric', label: 'Metric', description: 'Simple metric display with trends' },
-  { value: 'table', label: 'Table', description: 'Tabular data display' },
-  { value: 'alerts', label: 'Alerts', description: 'System alerts and notifications' },
-  { value: 'custom', label: 'Custom', description: 'Custom widget implementation' }
+  { value: "kpi", label: "KPI Card", description: "Display key performance indicators" },
+  { value: "chart", label: "Chart", description: "Various chart types for data visualization" },
+  { value: "metric", label: "Metric", description: "Simple metric display with trends" },
+  { value: "table", label: "Table", description: "Tabular data display" },
+  { value: "alerts", label: "Alerts", description: "System alerts and notifications" },
+  { value: "custom", label: "Custom", description: "Custom widget implementation" },
 ];
 
 const LAYOUT_PRESETS: LayoutPreset[] = [
   {
-    id: 'executive-overview',
-    name: 'Executive Overview',
-    description: 'High-level KPIs and key metrics',
-    preview: '📊',
+    id: "executive-overview",
+    name: "Executive Overview",
+    description: "High-level KPIs and key metrics",
+    preview: "📊",
     layout: {
-      type: 'grid',
+      type: "grid",
       columns: 12,
       rows: 8,
       gap: 16,
       responsive: true,
       areas: [
-        { id: 'revenue-kpi', x: 0, y: 0, width: 3, height: 2 },
-        { id: 'patients-kpi', x: 3, y: 0, width: 3, height: 2 },
-        { id: 'satisfaction-kpi', x: 6, y: 0, width: 3, height: 2 },
-        { id: 'growth-kpi', x: 9, y: 0, width: 3, height: 2 },
-        { id: 'revenue-chart', x: 0, y: 2, width: 6, height: 4 },
-        { id: 'appointments-chart', x: 6, y: 2, width: 6, height: 4 },
-        { id: 'alerts-panel', x: 0, y: 6, width: 12, height: 2 }
-      ]
-    }
+        { id: "revenue-kpi", x: 0, y: 0, width: 3, height: 2 },
+        { id: "patients-kpi", x: 3, y: 0, width: 3, height: 2 },
+        { id: "satisfaction-kpi", x: 6, y: 0, width: 3, height: 2 },
+        { id: "growth-kpi", x: 9, y: 0, width: 3, height: 2 },
+        { id: "revenue-chart", x: 0, y: 2, width: 6, height: 4 },
+        { id: "appointments-chart", x: 6, y: 2, width: 6, height: 4 },
+        { id: "alerts-panel", x: 0, y: 6, width: 12, height: 2 },
+      ],
+    },
   },
   {
-    id: 'operational-dashboard',
-    name: 'Operational Dashboard',
-    description: 'Day-to-day operational metrics',
-    preview: '⚙️',
+    id: "operational-dashboard",
+    name: "Operational Dashboard",
+    description: "Day-to-day operational metrics",
+    preview: "⚙️",
     layout: {
-      type: 'grid',
+      type: "grid",
       columns: 12,
       rows: 10,
       gap: 16,
       responsive: true,
       areas: [
-        { id: 'occupancy-rate', x: 0, y: 0, width: 4, height: 2 },
-        { id: 'avg-wait-time', x: 4, y: 0, width: 4, height: 2 },
-        { id: 'staff-utilization', x: 8, y: 0, width: 4, height: 2 },
-        { id: 'daily-appointments', x: 0, y: 2, width: 8, height: 4 },
-        { id: 'no-shows', x: 8, y: 2, width: 4, height: 2 },
-        { id: 'productivity', x: 8, y: 4, width: 4, height: 2 },
-        { id: 'schedule-overview', x: 0, y: 6, width: 12, height: 4 }
-      ]
-    }
+        { id: "occupancy-rate", x: 0, y: 0, width: 4, height: 2 },
+        { id: "avg-wait-time", x: 4, y: 0, width: 4, height: 2 },
+        { id: "staff-utilization", x: 8, y: 0, width: 4, height: 2 },
+        { id: "daily-appointments", x: 0, y: 2, width: 8, height: 4 },
+        { id: "no-shows", x: 8, y: 2, width: 4, height: 2 },
+        { id: "productivity", x: 8, y: 4, width: 4, height: 2 },
+        { id: "schedule-overview", x: 0, y: 6, width: 12, height: 4 },
+      ],
+    },
   },
   {
-    id: 'financial-analysis',
-    name: 'Financial Analysis',
-    description: 'Financial performance and trends',
-    preview: '💰',
+    id: "financial-analysis",
+    name: "Financial Analysis",
+    description: "Financial performance and trends",
+    preview: "💰",
     layout: {
-      type: 'grid',
+      type: "grid",
       columns: 12,
       rows: 8,
       gap: 16,
       responsive: true,
       areas: [
-        { id: 'total-revenue', x: 0, y: 0, width: 3, height: 2 },
-        { id: 'profit-margin', x: 3, y: 0, width: 3, height: 2 },
-        { id: 'avg-ticket', x: 6, y: 0, width: 3, height: 2 },
-        { id: 'growth-rate', x: 9, y: 0, width: 3, height: 2 },
-        { id: 'revenue-trend', x: 0, y: 2, width: 8, height: 4 },
-        { id: 'payment-methods', x: 8, y: 2, width: 4, height: 4 },
-        { id: 'financial-summary', x: 0, y: 6, width: 12, height: 2 }
-      ]
-    }
-  }
+        { id: "total-revenue", x: 0, y: 0, width: 3, height: 2 },
+        { id: "profit-margin", x: 3, y: 0, width: 3, height: 2 },
+        { id: "avg-ticket", x: 6, y: 0, width: 3, height: 2 },
+        { id: "growth-rate", x: 9, y: 0, width: 3, height: 2 },
+        { id: "revenue-trend", x: 0, y: 2, width: 8, height: 4 },
+        { id: "payment-methods", x: 8, y: 2, width: 4, height: 4 },
+        { id: "financial-summary", x: 0, y: 6, width: 12, height: 2 },
+      ],
+    },
+  },
 ];
 
 const BREAKPOINTS = {
@@ -165,7 +187,7 @@ const BREAKPOINTS = {
   md: 996,
   sm: 768,
   xs: 480,
-  xxs: 0
+  xxs: 0,
 };
 
 const COLS = {
@@ -173,7 +195,7 @@ const COLS = {
   md: 10,
   sm: 6,
   xs: 4,
-  xxs: 2
+  xxs: 2,
 };
 
 export function DashboardGrid({
@@ -187,14 +209,14 @@ export function DashboardGrid({
   onWidgetDuplicate,
   onSaveLayout,
   onResetLayout,
-  className
+  className,
 }: DashboardGridProps) {
   const [widgetDialog, setWidgetDialog] = useState<WidgetDialogState>({
     isOpen: false,
-    mode: 'add'
+    mode: "add",
   });
-  const [selectedPreset, setSelectedPreset] = useState<string>('');
-  const [currentBreakpoint, setCurrentBreakpoint] = useState<LayoutBreakpoint>('lg');
+  const [selectedPreset, setSelectedPreset] = useState<string>("");
+  const [currentBreakpoint, setCurrentBreakpoint] = useState<LayoutBreakpoint>("lg");
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [hiddenWidgets, setHiddenWidgets] = useState<Set<string>>(new Set());
@@ -203,11 +225,11 @@ export function DashboardGrid({
   // Convert widgets to grid layout format
   const gridLayouts = useMemo(() => {
     const layouts: { [key: string]: Layout[] } = {};
-    
-    Object.keys(BREAKPOINTS).forEach(breakpoint => {
+
+    Object.keys(BREAKPOINTS).forEach((breakpoint) => {
       layouts[breakpoint] = widgets
-        .filter(widget => !hiddenWidgets.has(widget.id))
-        .map(widget => ({
+        .filter((widget) => !hiddenWidgets.has(widget.id))
+        .map((widget) => ({
           i: widget.id,
           x: widget.position.x || 0,
           y: widget.position.y || 0,
@@ -217,43 +239,52 @@ export function DashboardGrid({
           minH: widget.position.minHeight || 2,
           maxW: widget.position.maxWidth || 12,
           maxH: widget.position.maxHeight || 8,
-          static: lockedWidgets.has(widget.id)
+          static: lockedWidgets.has(widget.id),
         }));
     });
-    
+
     return layouts;
   }, [widgets, hiddenWidgets, lockedWidgets]);
 
   // Handle layout changes
-  const handleLayoutChange = useCallback((currentLayout: Layout[], allLayouts: { [key: string]: Layout[] }) => {
-    if (onLayoutChange && !isDragging && !isResizing) {
-      onLayoutChange(currentLayout, allLayouts);
-    }
-  }, [onLayoutChange, isDragging, isResizing]);
+  const handleLayoutChange = useCallback(
+    (currentLayout: Layout[], allLayouts: { [key: string]: Layout[] }) => {
+      if (onLayoutChange && !isDragging && !isResizing) {
+        onLayoutChange(currentLayout, allLayouts);
+      }
+    },
+    [onLayoutChange, isDragging, isResizing],
+  );
 
   // Handle widget operations
   const handleAddWidget = useCallback(() => {
-    setWidgetDialog({ isOpen: true, mode: 'add' });
+    setWidgetDialog({ isOpen: true, mode: "add" });
   }, []);
 
   const handleEditWidget = useCallback((widget: DashboardWidget) => {
-    setWidgetDialog({ isOpen: true, mode: 'edit', widget });
+    setWidgetDialog({ isOpen: true, mode: "edit", widget });
   }, []);
 
-  const handleDeleteWidget = useCallback((widgetId: string) => {
-    if (onWidgetDelete) {
-      onWidgetDelete(widgetId);
-    }
-  }, [onWidgetDelete]);
+  const handleDeleteWidget = useCallback(
+    (widgetId: string) => {
+      if (onWidgetDelete) {
+        onWidgetDelete(widgetId);
+      }
+    },
+    [onWidgetDelete],
+  );
 
-  const handleDuplicateWidget = useCallback((widgetId: string) => {
-    if (onWidgetDuplicate) {
-      onWidgetDuplicate(widgetId);
-    }
-  }, [onWidgetDuplicate]);
+  const handleDuplicateWidget = useCallback(
+    (widgetId: string) => {
+      if (onWidgetDuplicate) {
+        onWidgetDuplicate(widgetId);
+      }
+    },
+    [onWidgetDuplicate],
+  );
 
   const handleToggleWidgetVisibility = useCallback((widgetId: string) => {
-    setHiddenWidgets(prev => {
+    setHiddenWidgets((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(widgetId)) {
         newSet.delete(widgetId);
@@ -265,7 +296,7 @@ export function DashboardGrid({
   }, []);
 
   const handleToggleWidgetLock = useCallback((widgetId: string) => {
-    setLockedWidgets(prev => {
+    setLockedWidgets((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(widgetId)) {
         newSet.delete(widgetId);
@@ -277,62 +308,68 @@ export function DashboardGrid({
   }, []);
 
   // Apply layout preset
-  const handleApplyPreset = useCallback((presetId: string) => {
-    const preset = LAYOUT_PRESETS.find(p => p.id === presetId);
-    if (preset && onLayoutChange) {
-      // Convert preset to grid layout format
-      const newLayout: Layout[] = preset.layout.areas.map(area => ({
-        i: area.id,
-        x: area.x,
-        y: area.y,
-        w: area.width,
-        h: area.height,
-        minW: area.minWidth || 2,
-        minH: area.minHeight || 2,
-        maxW: area.maxWidth || 12,
-        maxH: area.maxHeight || 8
-      }));
-      
-      const layouts = { [currentBreakpoint]: newLayout };
-      onLayoutChange(newLayout, layouts);
-    }
-    setSelectedPreset('');
-  }, [currentBreakpoint, onLayoutChange]);
+  const handleApplyPreset = useCallback(
+    (presetId: string) => {
+      const preset = LAYOUT_PRESETS.find((p) => p.id === presetId);
+      if (preset && onLayoutChange) {
+        // Convert preset to grid layout format
+        const newLayout: Layout[] = preset.layout.areas.map((area) => ({
+          i: area.id,
+          x: area.x,
+          y: area.y,
+          w: area.width,
+          h: area.height,
+          minW: area.minWidth || 2,
+          minH: area.minHeight || 2,
+          maxW: area.maxWidth || 12,
+          maxH: area.maxHeight || 8,
+        }));
+
+        const layouts = { [currentBreakpoint]: newLayout };
+        onLayoutChange(newLayout, layouts);
+      }
+      setSelectedPreset("");
+    },
+    [currentBreakpoint, onLayoutChange],
+  );
 
   // Render widget based on type
-  const renderWidget = useCallback((widget: DashboardWidget) => {
-    const commonProps = {
-      widget,
-      isEditing,
-      onUpdate: (updates: Partial<DashboardWidget>) => onWidgetUpdate?.(widget.id, updates)
-    };
+  const renderWidget = useCallback(
+    (widget: DashboardWidget) => {
+      const commonProps = {
+        widget,
+        isEditing,
+        onUpdate: (updates: Partial<DashboardWidget>) => onWidgetUpdate?.(widget.id, updates),
+      };
 
-    switch (widget.widgetType) {
-      case 'kpi':
-        return <KPIWidget {...commonProps} />;
-      case 'chart':
-        return <ChartWidget {...commonProps} />;
-      case 'metric':
-        return <MetricWidget {...commonProps} />;
-      case 'alerts':
-        return <AlertsWidget {...commonProps} />;
-      case 'table':
-        return <TableWidget {...commonProps} />;
-      default:
-        return (
-          <Card className="h-full flex items-center justify-center">
-            <div className="text-center text-muted-foreground">
-              <div className="text-2xl mb-2">🔧</div>
-              <div>Widget type: {widget.widgetType}</div>
-              <div className="text-sm">Not implemented</div>
-            </div>
-          </Card>
-        );
-    }
-  }, [isEditing, onWidgetUpdate]);
+      switch (widget.widgetType) {
+        case "kpi":
+          return <KPIWidget {...commonProps} />;
+        case "chart":
+          return <ChartWidget {...commonProps} />;
+        case "metric":
+          return <MetricWidget {...commonProps} />;
+        case "alerts":
+          return <AlertsWidget {...commonProps} />;
+        case "table":
+          return <TableWidget {...commonProps} />;
+        default:
+          return (
+            <Card className="h-full flex items-center justify-center">
+              <div className="text-center text-muted-foreground">
+                <div className="text-2xl mb-2">🔧</div>
+                <div>Widget type: {widget.widgetType}</div>
+                <div className="text-sm">Not implemented</div>
+              </div>
+            </Card>
+          );
+      }
+    },
+    [isEditing, onWidgetUpdate],
+  );
 
   return (
-    <div className={`dashboard-grid ${className || ''}`}>
+    <div className={`dashboard-grid ${className || ""}`}>
       {/* Grid Controls */}
       {isEditing && (
         <div className="mb-4 flex items-center justify-between bg-muted/50 p-4 rounded-lg">
@@ -341,13 +378,13 @@ export function DashboardGrid({
               <Plus className="h-4 w-4 mr-2" />
               Add Widget
             </Button>
-            
+
             <Select value={selectedPreset} onValueChange={setSelectedPreset}>
               <SelectTrigger className="w-48">
                 <SelectValue placeholder="Apply Layout Preset" />
               </SelectTrigger>
               <SelectContent>
-                {LAYOUT_PRESETS.map(preset => (
+                {LAYOUT_PRESETS.map((preset) => (
                   <SelectItem key={preset.id} value={preset.id}>
                     <div className="flex items-center gap-2">
                       <span>{preset.preview}</span>
@@ -360,52 +397,48 @@ export function DashboardGrid({
                 ))}
               </SelectContent>
             </Select>
-            
+
             {selectedPreset && (
-              <Button 
-                onClick={() => handleApplyPreset(selectedPreset)} 
-                size="sm" 
-                variant="outline"
-              >
+              <Button onClick={() => handleApplyPreset(selectedPreset)} size="sm" variant="outline">
                 Apply
               </Button>
             )}
           </div>
-          
+
           <div className="flex items-center gap-2">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button 
-                    onClick={() => setCurrentBreakpoint('xxs')} 
-                    size="sm" 
-                    variant={currentBreakpoint === 'xxs' ? 'default' : 'outline'}
+                  <Button
+                    onClick={() => setCurrentBreakpoint("xxs")}
+                    size="sm"
+                    variant={currentBreakpoint === "xxs" ? "default" : "outline"}
                   >
                     <Smartphone className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>Mobile View</TooltipContent>
               </Tooltip>
-              
+
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button 
-                    onClick={() => setCurrentBreakpoint('sm')} 
-                    size="sm" 
-                    variant={currentBreakpoint === 'sm' ? 'default' : 'outline'}
+                  <Button
+                    onClick={() => setCurrentBreakpoint("sm")}
+                    size="sm"
+                    variant={currentBreakpoint === "sm" ? "default" : "outline"}
                   >
                     <Tablet className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>Tablet View</TooltipContent>
               </Tooltip>
-              
+
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button 
-                    onClick={() => setCurrentBreakpoint('lg')} 
-                    size="sm" 
-                    variant={currentBreakpoint === 'lg' ? 'default' : 'outline'}
+                  <Button
+                    onClick={() => setCurrentBreakpoint("lg")}
+                    size="sm"
+                    variant={currentBreakpoint === "lg" ? "default" : "outline"}
                   >
                     <Monitor className="h-4 w-4" />
                   </Button>
@@ -413,14 +446,14 @@ export function DashboardGrid({
                 <TooltipContent>Desktop View</TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            
+
             <div className="h-4 w-px bg-border" />
-            
+
             <Button onClick={onSaveLayout} size="sm" variant="outline">
               <Save className="h-4 w-4 mr-2" />
               Save
             </Button>
-            
+
             <Button onClick={onResetLayout} size="sm" variant="outline">
               <RotateCcw className="h-4 w-4 mr-2" />
               Reset
@@ -451,8 +484,8 @@ export function DashboardGrid({
         compactType="vertical"
       >
         {widgets
-          .filter(widget => !hiddenWidgets.has(widget.id))
-          .map(widget => (
+          .filter((widget) => !hiddenWidgets.has(widget.id))
+          .map((widget) => (
             <div key={widget.id} className="relative group">
               {/* Widget Controls */}
               {isEditing && (
@@ -472,7 +505,7 @@ export function DashboardGrid({
                         </TooltipTrigger>
                         <TooltipContent>Edit Widget</TooltipContent>
                       </Tooltip>
-                      
+
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
@@ -486,7 +519,7 @@ export function DashboardGrid({
                         </TooltipTrigger>
                         <TooltipContent>Duplicate Widget</TooltipContent>
                       </Tooltip>
-                      
+
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
@@ -503,10 +536,10 @@ export function DashboardGrid({
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent>
-                          {lockedWidgets.has(widget.id) ? 'Unlock' : 'Lock'} Widget
+                          {lockedWidgets.has(widget.id) ? "Unlock" : "Lock"} Widget
                         </TooltipContent>
                       </Tooltip>
-                      
+
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
@@ -520,7 +553,7 @@ export function DashboardGrid({
                         </TooltipTrigger>
                         <TooltipContent>Hide Widget</TooltipContent>
                       </Tooltip>
-                      
+
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
@@ -538,7 +571,7 @@ export function DashboardGrid({
                   </div>
                 </div>
               )}
-              
+
               {/* Widget Status Indicators */}
               {isEditing && (
                 <div className="absolute top-2 left-2 z-10 flex gap-1">
@@ -549,12 +582,11 @@ export function DashboardGrid({
                   )}
                 </div>
               )}
-              
+
               {/* Widget Content */}
               {renderWidget(widget)}
             </div>
-          ))
-        }
+          ))}
       </ResponsiveGridLayout>
 
       {/* Hidden Widgets Panel */}
@@ -566,19 +598,18 @@ export function DashboardGrid({
           </h3>
           <div className="flex flex-wrap gap-2">
             {widgets
-              .filter(widget => hiddenWidgets.has(widget.id))
-              .map(widget => (
-                <Badge 
-                  key={widget.id} 
-                  variant="outline" 
+              .filter((widget) => hiddenWidgets.has(widget.id))
+              .map((widget) => (
+                <Badge
+                  key={widget.id}
+                  variant="outline"
                   className="cursor-pointer hover:bg-muted"
                   onClick={() => handleToggleWidgetVisibility(widget.id)}
                 >
                   <Eye className="h-3 w-3 mr-1" />
                   {widget.title}
                 </Badge>
-              ))
-            }
+              ))}
           </div>
         </div>
       )}
@@ -588,14 +619,14 @@ export function DashboardGrid({
         isOpen={widgetDialog.isOpen}
         mode={widgetDialog.mode}
         widget={widgetDialog.widget}
-        onClose={() => setWidgetDialog({ isOpen: false, mode: 'add' })}
+        onClose={() => setWidgetDialog({ isOpen: false, mode: "add" })}
         onSave={(widget) => {
-          if (widgetDialog.mode === 'add' && onWidgetAdd) {
+          if (widgetDialog.mode === "add" && onWidgetAdd) {
             onWidgetAdd(widget);
-          } else if (widgetDialog.mode === 'edit' && onWidgetUpdate && widgetDialog.widget) {
+          } else if (widgetDialog.mode === "edit" && onWidgetUpdate && widgetDialog.widget) {
             onWidgetUpdate(widgetDialog.widget.id, widget);
           }
-          setWidgetDialog({ isOpen: false, mode: 'add' });
+          setWidgetDialog({ isOpen: false, mode: "add" });
         }}
       />
     </div>
@@ -605,7 +636,7 @@ export function DashboardGrid({
 // Widget Configuration Dialog Component
 interface WidgetConfigDialogProps {
   isOpen: boolean;
-  mode: 'add' | 'edit';
+  mode: "add" | "edit";
   widget?: DashboardWidget;
   onClose: () => void;
   onSave: (widget: Partial<DashboardWidget>) => void;
@@ -613,26 +644,26 @@ interface WidgetConfigDialogProps {
 
 function WidgetConfigDialog({ isOpen, mode, widget, onClose, onSave }: WidgetConfigDialogProps) {
   const [formData, setFormData] = useState<Partial<DashboardWidget>>({
-    title: '',
-    widgetType: 'kpi',
-    dataSource: '',
+    title: "",
+    widgetType: "kpi",
+    dataSource: "",
     config: {},
     position: { x: 0, y: 0, width: 4, height: 3 },
-    refreshInterval: 300
+    refreshInterval: 300,
   });
 
   // Update form data when widget changes
   React.useEffect(() => {
-    if (widget && mode === 'edit') {
+    if (widget && mode === "edit") {
       setFormData(widget);
     } else {
       setFormData({
-        title: '',
-        widgetType: 'kpi',
-        dataSource: '',
+        title: "",
+        widgetType: "kpi",
+        dataSource: "",
         config: {},
         position: { x: 0, y: 0, width: 4, height: 3 },
-        refreshInterval: 300
+        refreshInterval: 300,
       });
     }
   }, [widget, mode]);
@@ -645,34 +676,34 @@ function WidgetConfigDialog({ isOpen, mode, widget, onClose, onSave }: WidgetCon
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>
-            {mode === 'add' ? 'Add New Widget' : 'Edit Widget'}
-          </DialogTitle>
+          <DialogTitle>{mode === "add" ? "Add New Widget" : "Edit Widget"}</DialogTitle>
         </DialogHeader>
-        
+
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="title">Widget Title</Label>
               <Input
                 id="title"
-                value={formData.title || ''}
-                onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                value={formData.title || ""}
+                onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
                 placeholder="Enter widget title"
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="type">Widget Type</Label>
-              <Select 
-                value={formData.widgetType} 
-                onValueChange={(value: WidgetType) => setFormData(prev => ({ ...prev, widgetType: value }))}
+              <Select
+                value={formData.widgetType}
+                onValueChange={(value: WidgetType) =>
+                  setFormData((prev) => ({ ...prev, widgetType: value }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {WIDGET_TYPES.map(type => (
+                  {WIDGET_TYPES.map((type) => (
                     <SelectItem key={type.value} value={type.value}>
                       <div>
                         <div className="font-medium">{type.label}</div>
@@ -684,17 +715,17 @@ function WidgetConfigDialog({ isOpen, mode, widget, onClose, onSave }: WidgetCon
               </Select>
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="dataSource">Data Source</Label>
             <Input
               id="dataSource"
-              value={formData.dataSource || ''}
-              onChange={(e) => setFormData(prev => ({ ...prev, dataSource: e.target.value }))}
+              value={formData.dataSource || ""}
+              onChange={(e) => setFormData((prev) => ({ ...prev, dataSource: e.target.value }))}
               placeholder="Enter data source endpoint or query"
             />
           </div>
-          
+
           <div className="grid grid-cols-4 gap-4">
             <div className="space-y-2">
               <Label htmlFor="width">Width</Label>
@@ -704,13 +735,15 @@ function WidgetConfigDialog({ isOpen, mode, widget, onClose, onSave }: WidgetCon
                 min="1"
                 max="12"
                 value={formData.position?.width || 4}
-                onChange={(e) => setFormData(prev => ({
-                  ...prev,
-                  position: { ...prev.position!, width: parseInt(e.target.value) }
-                }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    position: { ...prev.position!, width: parseInt(e.target.value) },
+                  }))
+                }
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="height">Height</Label>
               <Input
@@ -719,13 +752,15 @@ function WidgetConfigDialog({ isOpen, mode, widget, onClose, onSave }: WidgetCon
                 min="1"
                 max="10"
                 value={formData.position?.height || 3}
-                onChange={(e) => setFormData(prev => ({
-                  ...prev,
-                  position: { ...prev.position!, height: parseInt(e.target.value) }
-                }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    position: { ...prev.position!, height: parseInt(e.target.value) },
+                  }))
+                }
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="x">X Position</Label>
               <Input
@@ -734,13 +769,15 @@ function WidgetConfigDialog({ isOpen, mode, widget, onClose, onSave }: WidgetCon
                 min="0"
                 max="11"
                 value={formData.position?.x || 0}
-                onChange={(e) => setFormData(prev => ({
-                  ...prev,
-                  position: { ...prev.position!, x: parseInt(e.target.value) }
-                }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    position: { ...prev.position!, x: parseInt(e.target.value) },
+                  }))
+                }
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="y">Y Position</Label>
               <Input
@@ -748,19 +785,23 @@ function WidgetConfigDialog({ isOpen, mode, widget, onClose, onSave }: WidgetCon
                 type="number"
                 min="0"
                 value={formData.position?.y || 0}
-                onChange={(e) => setFormData(prev => ({
-                  ...prev,
-                  position: { ...prev.position!, y: parseInt(e.target.value) }
-                }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    position: { ...prev.position!, y: parseInt(e.target.value) },
+                  }))
+                }
               />
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="refreshInterval">Refresh Interval (seconds)</Label>
-            <Select 
-              value={formData.refreshInterval?.toString() || '300'} 
-              onValueChange={(value) => setFormData(prev => ({ ...prev, refreshInterval: parseInt(value) }))}
+            <Select
+              value={formData.refreshInterval?.toString() || "300"}
+              onValueChange={(value) =>
+                setFormData((prev) => ({ ...prev, refreshInterval: parseInt(value) }))
+              }
             >
               <SelectTrigger>
                 <SelectValue />
@@ -777,14 +818,12 @@ function WidgetConfigDialog({ isOpen, mode, widget, onClose, onSave }: WidgetCon
             </Select>
           </div>
         </div>
-        
+
         <div className="flex justify-end gap-2 pt-4">
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={handleSave}>
-            {mode === 'add' ? 'Add Widget' : 'Save Changes'}
-          </Button>
+          <Button onClick={handleSave}>{mode === "add" ? "Add Widget" : "Save Changes"}</Button>
         </div>
       </DialogContent>
     </Dialog>

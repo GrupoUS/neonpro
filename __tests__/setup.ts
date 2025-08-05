@@ -3,7 +3,7 @@
  * Configures testing environment for React Testing Library and Jest
  */
 
-import '@testing-library/jest-dom';
+import "@testing-library/jest-dom";
 
 // Mock Next.js headers (cookies, headers)
 const mockCookies = jest.fn(() => ({
@@ -12,10 +12,10 @@ const mockCookies = jest.fn(() => ({
   delete: jest.fn(),
   has: jest.fn(),
   getAll: jest.fn(() => []),
-  toString: jest.fn(() => ''),
+  toString: jest.fn(() => ""),
 }));
 
-jest.mock('next/headers', () => ({
+jest.mock("next/headers", () => ({
   cookies: mockCookies,
   headers: jest.fn(() => ({
     get: jest.fn(),
@@ -34,10 +34,10 @@ const mockRouter = {
   back: jest.fn(),
   forward: jest.fn(),
   refresh: jest.fn(),
-  pathname: '/',
+  pathname: "/",
   query: {},
-  asPath: '/',
-  route: '/',
+  asPath: "/",
+  route: "/",
   events: {
     on: jest.fn(),
     off: jest.fn(),
@@ -45,9 +45,9 @@ const mockRouter = {
   },
 };
 
-jest.mock('next/navigation', () => ({
+jest.mock("next/navigation", () => ({
   useRouter: () => mockRouter,
-  usePathname: () => '/',
+  usePathname: () => "/",
   useSearchParams: () => new URLSearchParams(),
 }));
 
@@ -79,25 +79,25 @@ const mockSupabaseClient = {
   raw: jest.fn(() => Promise.resolve({ data: null, error: null })),
 };
 
-jest.mock('../app/utils/supabase/client', () => ({
+jest.mock("../app/utils/supabase/client", () => ({
   createClient: jest.fn(() => mockSupabaseClient),
   createLegacyClient: jest.fn(() => mockSupabaseClient),
   createOptimizedClient: jest.fn(() => mockSupabaseClient),
 }));
 
 // Mock server-side Supabase client
-jest.mock('../app/utils/supabase/server', () => ({
+jest.mock("../app/utils/supabase/server", () => ({
   createClient: jest.fn(() => Promise.resolve(mockSupabaseClient)),
 }));
 
 // Mock @supabase/supabase-js directly
-jest.mock('@supabase/supabase-js', () => ({
+jest.mock("@supabase/supabase-js", () => ({
   createClient: jest.fn(() => mockSupabaseClient),
 }));
 
 // Mock AuditLogger to prevent audit log warnings
 const mockAuditLog = jest.fn().mockResolvedValue(undefined);
-jest.mock('../lib/auth/audit/audit-logger', () => ({
+jest.mock("../lib/auth/audit/audit-logger", () => ({
   AuditLogger: jest.fn().mockImplementation(() => ({
     log: mockAuditLog,
   })),
@@ -107,7 +107,7 @@ jest.mock('../lib/auth/audit/audit-logger', () => ({
 global.mockAuditLog = mockAuditLog;
 
 // Mock React Query client
-jest.mock('@tanstack/react-query', () => ({
+jest.mock("@tanstack/react-query", () => ({
   useQuery: jest.fn(() => ({
     data: undefined,
     isLoading: false,
@@ -124,18 +124,22 @@ jest.mock('@tanstack/react-query', () => ({
 }));
 
 // Mock date-fns
-jest.mock('date-fns', () => ({
+jest.mock("date-fns", () => ({
   format: jest.fn((date: Date) => date.toISOString()),
   parseISO: jest.fn((str: string) => new Date(str)),
   isValid: jest.fn(() => true),
-  addDays: jest.fn((date: Date, days: number) => new Date(date.getTime() + days * 24 * 60 * 60 * 1000)),
-  subDays: jest.fn((date: Date, days: number) => new Date(date.getTime() - days * 24 * 60 * 60 * 1000)),
+  addDays: jest.fn(
+    (date: Date, days: number) => new Date(date.getTime() + days * 24 * 60 * 60 * 1000),
+  ),
+  subDays: jest.fn(
+    (date: Date, days: number) => new Date(date.getTime() - days * 24 * 60 * 60 * 1000),
+  ),
   startOfMonth: jest.fn((date: Date) => new Date(date.getFullYear(), date.getMonth(), 1)),
   endOfMonth: jest.fn((date: Date) => new Date(date.getFullYear(), date.getMonth() + 1, 0)),
 }));
 
 // Mock react-hot-toast
-jest.mock('react-hot-toast', () => ({
+jest.mock("react-hot-toast", () => ({
   toast: {
     success: jest.fn(),
     error: jest.fn(),
@@ -145,20 +149,29 @@ jest.mock('react-hot-toast', () => ({
 }));
 
 // Mock recharts components
-jest.mock('recharts', () => ({
+jest.mock("recharts", () => ({
   ResponsiveContainer: ({ children }: { children: React.ReactNode }) => children,
-  BarChart: ({ children }: { children: React.ReactNode }) => ({ type: 'div', props: { 'data-testid': 'bar-chart', children } }),
-  LineChart: ({ children }: { children: React.ReactNode }) => ({ type: 'div', props: { 'data-testid': 'line-chart', children } }),
-  PieChart: ({ children }: { children: React.ReactNode }) => ({ type: 'div', props: { 'data-testid': 'pie-chart', children } }),
-  Bar: () => ({ type: 'div', props: { 'data-testid': 'bar' } }),
-  Line: () => ({ type: 'div', props: { 'data-testid': 'line' } }),
-  Pie: () => ({ type: 'div', props: { 'data-testid': 'pie' } }),
-  XAxis: () => ({ type: 'div', props: { 'data-testid': 'x-axis' } }),
-  YAxis: () => ({ type: 'div', props: { 'data-testid': 'y-axis' } }),
-  CartesianGrid: () => ({ type: 'div', props: { 'data-testid': 'cartesian-grid' } }),
-  Tooltip: () => ({ type: 'div', props: { 'data-testid': 'tooltip' } }),
-  Legend: () => ({ type: 'div', props: { 'data-testid': 'legend' } }),
-  Cell: () => ({ type: 'div', props: { 'data-testid': 'cell' } }),
+  BarChart: ({ children }: { children: React.ReactNode }) => ({
+    type: "div",
+    props: { "data-testid": "bar-chart", children },
+  }),
+  LineChart: ({ children }: { children: React.ReactNode }) => ({
+    type: "div",
+    props: { "data-testid": "line-chart", children },
+  }),
+  PieChart: ({ children }: { children: React.ReactNode }) => ({
+    type: "div",
+    props: { "data-testid": "pie-chart", children },
+  }),
+  Bar: () => ({ type: "div", props: { "data-testid": "bar" } }),
+  Line: () => ({ type: "div", props: { "data-testid": "line" } }),
+  Pie: () => ({ type: "div", props: { "data-testid": "pie" } }),
+  XAxis: () => ({ type: "div", props: { "data-testid": "x-axis" } }),
+  YAxis: () => ({ type: "div", props: { "data-testid": "y-axis" } }),
+  CartesianGrid: () => ({ type: "div", props: { "data-testid": "cartesian-grid" } }),
+  Tooltip: () => ({ type: "div", props: { "data-testid": "tooltip" } }),
+  Legend: () => ({ type: "div", props: { "data-testid": "legend" } }),
+  Cell: () => ({ type: "div", props: { "data-testid": "cell" } }),
 }));
 
 // Global test utilities
@@ -169,9 +182,9 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
 }));
 
 // Mock window.matchMedia
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
+  value: jest.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -195,10 +208,10 @@ global.Request = class MockRequest {
   public method: string;
   public headers: Headers;
   public body?: any;
-  
+
   constructor(input: any, init?: RequestInit) {
     this._url = input;
-    this.method = init?.method || 'GET';
+    this.method = init?.method || "GET";
     this.headers = new Headers(init?.headers);
     this.body = init?.body;
   }
@@ -206,20 +219,20 @@ global.Request = class MockRequest {
   get url() {
     return this._url;
   }
-  
+
   json() {
     return Promise.resolve(this.body ? JSON.parse(this.body) : {});
   }
-  
+
   text() {
-    return Promise.resolve(this.body || '');
+    return Promise.resolve(this.body || "");
   }
-  
+
   clone() {
     return new MockRequest(this.url, {
       method: this.method,
       headers: this.headers,
-      body: this.body
+      body: this.body,
     });
   }
 } as any;
@@ -228,14 +241,14 @@ global.Response = class MockResponse {
   constructor(body?: any, init?: ResponseInit) {
     Object.assign(this, { body, status: 200, headers: new Headers(), ...init });
   }
-  
+
   static json(object: any, init?: ResponseInit) {
     return new MockResponse(JSON.stringify(object), {
       ...init,
       headers: {
-        'Content-Type': 'application/json',
-        ...(init?.headers || {})
-      }
+        "Content-Type": "application/json",
+        ...(init?.headers || {}),
+      },
     });
   }
 } as any;
@@ -246,6 +259,6 @@ global.NextResponse = {
     json: () => Promise.resolve(object),
     status: init?.status || 200,
     headers: new Headers(init?.headers || {}),
-    ok: (init?.status || 200) >= 200 && (init?.status || 200) < 300
-  }))
+    ok: (init?.status || 200) >= 200 && (init?.status || 200) < 300,
+  })),
 } as any;

@@ -25,13 +25,7 @@ import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -201,8 +195,7 @@ export function ReportBuilderDashboard() {
   const filteredReports = reports.filter(
     (report) =>
       report.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (report.description &&
-        report.description.toLowerCase().includes(searchQuery.toLowerCase()))
+      (report.description && report.description.toLowerCase().includes(searchQuery.toLowerCase())),
   );
 
   const filteredTemplates = templates.filter((template) => {
@@ -210,8 +203,7 @@ export function ReportBuilderDashboard() {
       template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (template.description &&
         template.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesCategory =
-      selectedCategory === "all" || template.category === selectedCategory;
+    const matchesCategory = selectedCategory === "all" || template.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -246,9 +238,7 @@ export function ReportBuilderDashboard() {
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>Criar Novo Relatório</DialogTitle>
-              <DialogDescription>
-                Escolha como deseja começar seu relatório
-              </DialogDescription>
+              <DialogDescription>Escolha como deseja começar seu relatório</DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <Card className="cursor-pointer hover:bg-muted/50 transition-colors">
@@ -258,8 +248,7 @@ export function ReportBuilderDashboard() {
                     Começar do Zero
                   </CardTitle>
                   <CardDescription>
-                    Crie um relatório personalizado usando o editor
-                    drag-and-drop
+                    Crie um relatório personalizado usando o editor drag-and-drop
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -270,9 +259,7 @@ export function ReportBuilderDashboard() {
                     <Copy className="w-5 h-5" />
                     Usar Template
                   </CardTitle>
-                  <CardDescription>
-                    Comece com um template pré-configurado
-                  </CardDescription>
+                  <CardDescription>Comece com um template pré-configurado</CardDescription>
                 </CardHeader>
               </Card>
             </div>
@@ -291,14 +278,9 @@ export function ReportBuilderDashboard() {
         <TabsContent value="reports" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {filteredReports.map((report) => {
-              const IconComponent = getVisualizationIcon(
-                report.visualization_type
-              );
+              const IconComponent = getVisualizationIcon(report.visualization_type);
               return (
-                <Card
-                  key={report.id}
-                  className="medical-card hover:shadow-lg transition-shadow"
-                >
+                <Card key={report.id} className="medical-card hover:shadow-lg transition-shadow">
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-2">
@@ -374,17 +356,12 @@ export function ReportBuilderDashboard() {
                     <div className="space-y-2 text-xs text-muted-foreground">
                       <div className="flex items-center justify-between">
                         <span>Execuções: {report.run_count}</span>
-                        <span>
-                          Atualizado: {formatDate(new Date(report.updated_at))}
-                        </span>
+                        <span>Atualizado: {formatDate(new Date(report.updated_at))}</span>
                       </div>
                       {report.last_run && (
                         <div className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
-                          <span>
-                            Última execução:{" "}
-                            {formatDate(new Date(report.last_run))}
-                          </span>
+                          <span>Última execução: {formatDate(new Date(report.last_run))}</span>
                         </div>
                       )}
                     </div>
@@ -398,9 +375,7 @@ export function ReportBuilderDashboard() {
         <TabsContent value="templates" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {filteredTemplates.map((template) => {
-              const IconComponent = getVisualizationIcon(
-                template.visualization_type
-              );
+              const IconComponent = getVisualizationIcon(template.visualization_type);
               const CategoryIcon = getCategoryIcon(template.category);
               return (
                 <Card
@@ -459,9 +434,7 @@ export function ReportBuilderDashboard() {
         <TabsContent value="scheduled" className="space-y-4">
           <div className="text-center py-12">
             <Calendar className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-medium mb-2">
-              Nenhum relatório agendado
-            </h3>
+            <h3 className="text-lg font-medium mb-2">Nenhum relatório agendado</h3>
             <p className="text-muted-foreground mb-4">
               Configure relatórios para execução automática
             </p>

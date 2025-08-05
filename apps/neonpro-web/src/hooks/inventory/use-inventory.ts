@@ -4,33 +4,33 @@
  * Story 6.1: Real-time Stock Tracking + Barcode/QR Integration
  */
 
-'use client';
+"use client";
 
-import {
-    addScannedItem,
-    completeBarcodeSession,
-    createBarcodeSession,
-    getInventoryCategories,
-    getInventoryItemByBarcode,
-    getInventoryItems,
-    getInventoryLocations,
-    getStockAlerts,
-    resolveStockAlert,
-    subscribeToInventoryUpdates,
-    subscribeToStockAlerts,
-    updateStockLevel
-} from '@/lib/supabase/inventory';
 import type {
-    BarcodeSession,
-    InventoryItem,
-    InventoryState,
-    MovementType,
-    ScannedItem,
-    SessionType
-} from '@/lib/types/inventory';
-import { AlertStatus, ConnectionStatus } from '@/lib/types/inventory';
-import { RealtimeChannel } from '@supabase/supabase-js';
-import { useCallback, useEffect, useRef, useState } from 'react';
+  addScannedItem,
+  completeBarcodeSession,
+  createBarcodeSession,
+  getInventoryCategories,
+  getInventoryItemByBarcode,
+  getInventoryItems,
+  getInventoryLocations,
+  getStockAlerts,
+  resolveStockAlert,
+  subscribeToInventoryUpdates,
+  subscribeToStockAlerts,
+  updateStockLevel,
+} from "@/lib/supabase/inventory";
+import type {
+  BarcodeSession,
+  InventoryItem,
+  InventoryState,
+  MovementType,
+  ScannedItem,
+  SessionType,
+} from "@/lib/types/inventory";
+import type { AlertStatus, ConnectionStatus } from "@/lib/types/inventory";
+import type { RealtimeChannel } from "@supabase/supabase-js";
+import type { useCallback, useEffect, useRef, useState } from "react";
 
 interface UseInventoryOptions {
   enableRealTime?: boolean;
@@ -41,47 +41,47 @@ interface UseInventoryOptions {
 interface UseInventoryReturn {
   // State
   state: InventoryState;
-  
+
   // Loading states
   isLoading: boolean;
   isUpdating: boolean;
-  
+
   // Data actions
   loadInventoryItems: (filters?: any) => Promise<void>;
   loadCategories: () => Promise<void>;
   loadLocations: () => Promise<void>;
   loadAlerts: () => Promise<void>;
   refreshData: () => Promise<void>;
-  
+
   // Stock management
   updateStock: (
     itemId: string,
     quantity: number,
     movementType: MovementType,
     locationId: string,
-    options?: any
+    options?: any,
   ) => Promise<boolean>;
-  
+
   // Barcode scanning
   scanBarcode: (barcodeValue: string) => Promise<{
     success: boolean;
     item?: InventoryItem;
     message?: string;
   }>;
-  
+
   // Session management
   startSession: (sessionType: SessionType, locationId: string) => Promise<BarcodeSession | null>;
   addScanToSession: (sessionId: string, barcodeValue: string) => Promise<ScannedItem | null>;
   endSession: (sessionId: string, notes?: string) => Promise<boolean>;
-  
+
   // Alert management
   resolveAlert: (alertId: string, notes?: string) => Promise<boolean>;
-  
+
   // Filters
   setLocationFilter: (locationId?: string) => void;
   setCategoryFilter: (categoryId?: string) => void;
   setSearchQuery: (query?: string) => void;
-  
+
   // Real-time connection
   connectionStatus: ConnectionStatus;
   reconnect: () => void;
@@ -91,7 +91,7 @@ export function useInventory(options: UseInventoryOptions = {}): UseInventoryRet
   const {
     enableRealTime = true,
     autoLoadData = true,
-    alertRefreshInterval = 30000 // 30 seconds
+    alertRefreshInterval = 30000, // 30 seconds
   } = options;
 
   // State
@@ -106,7 +106,7 @@ export function useInventory(options: UseInventoryOptions = {}): UseInventoryRet
     error: null,
     lastUpdated: new Date().toISOString(),
     isRealTimeEnabled: enableRealTime,
-    connectionStatus: ConnectionStatus.DISCONNECTED
+    connectionStatus: ConnectionStatus.DISCONNECTED,
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -118,55 +118,58 @@ export function useInventory(options: UseInventoryOptions = {}): UseInventoryRet
   const alertInterval = useRef<NodeJS.Timeout | null>(null);
 
   // Load inventory items with filters
-  const loadInventoryItems = useCallback(async (filters?: {
-    category_id?: string;
-    location_id?: string;
-    status?: string;
-    search?: string;
-    limit?: number;
-    offset?: number;
-  }) => {
-    try {
-      setIsLoading(true);
-      setState(prev => ({ ...prev, loading: true, error: null }));
+  const loadInventoryItems = useCallback(
+    async (filters?: {
+      category_id?: string;
+      location_id?: string;
+      status?: string;
+      search?: string;
+      limit?: number;
+      offset?: number;
+    }) => {
+      try {
+        setIsLoading(true);
+        setState((prev) => ({ ...prev, loading: true, error: null }));
 
-      const response = await getInventoryItems(filters);
-      
-      if (response.success) {
-        setState(prev => ({
+        const response = await getInventoryItems(filters);
+
+        if (response.success) {
+          setState((prev) => ({
+            ...prev,
+            items: response.data,
+            loading: false,
+            lastUpdated: new Date().toISOString(),
+          }));
+        } else {
+          throw new Error(response.message || "Failed to load inventory items");
+        }
+      } catch (error) {
+        console.error("Error loading inventory items:", error);
+        setState((prev) => ({
           ...prev,
-          items: response.data,
           loading: false,
-          lastUpdated: new Date().toISOString()
+          error: error instanceof Error ? error.message : "Unknown error",
         }));
-      } else {
-        throw new Error(response.message || 'Failed to load inventory items');
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error('Error loading inventory items:', error);
-      setState(prev => ({
-        ...prev,
-        loading: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      }));
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    },
+    [],
+  );
 
   // Load categories
   const loadCategories = useCallback(async () => {
     try {
       const response = await getInventoryCategories();
-      
+
       if (response.success) {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
-          categories: response.data
+          categories: response.data,
         }));
       }
     } catch (error) {
-      console.error('Error loading categories:', error);
+      console.error("Error loading categories:", error);
     }
   }, []);
 
@@ -174,15 +177,15 @@ export function useInventory(options: UseInventoryOptions = {}): UseInventoryRet
   const loadLocations = useCallback(async () => {
     try {
       const response = await getInventoryLocations();
-      
+
       if (response.success) {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
-          locations: response.data
+          locations: response.data,
         }));
       }
     } catch (error) {
-      console.error('Error loading locations:', error);
+      console.error("Error loading locations:", error);
     }
   }, []);
 
@@ -191,17 +194,17 @@ export function useInventory(options: UseInventoryOptions = {}): UseInventoryRet
     try {
       const response = await getStockAlerts({
         status: AlertStatus.ACTIVE,
-        limit: 50
+        limit: 50,
       });
-      
+
       if (response.success) {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
-          alerts: response.data
+          alerts: response.data,
         }));
       }
     } catch (error) {
-      console.error('Error loading alerts:', error);
+      console.error("Error loading alerts:", error);
     }
   }, []);
 
@@ -211,207 +214,223 @@ export function useInventory(options: UseInventoryOptions = {}): UseInventoryRet
       loadInventoryItems({
         category_id: state.selectedCategory,
         location_id: state.selectedLocation,
-        search: state.searchQuery
+        search: state.searchQuery,
       }),
       loadCategories(),
       loadLocations(),
-      loadAlerts()
+      loadAlerts(),
     ]);
-  }, [loadInventoryItems, loadCategories, loadLocations, loadAlerts, state.selectedCategory, state.selectedLocation, state.searchQuery]);
+  }, [
+    loadInventoryItems,
+    loadCategories,
+    loadLocations,
+    loadAlerts,
+    state.selectedCategory,
+    state.selectedLocation,
+    state.searchQuery,
+  ]);
 
   // Update stock level
-  const updateStock = useCallback(async (
-    itemId: string,
-    quantity: number,
-    movementType: MovementType,
-    locationId: string,
-    options?: {
-      referenceType?: string;
-      referenceId?: string;
-      notes?: string;
-      batchNumber?: string;
-      expirationDate?: string;
-    }
-  ): Promise<boolean> => {
-    try {
-      setIsUpdating(true);
-      
-      const response = await updateStockLevel(
-        itemId,
-        quantity,
-        movementType,
-        locationId,
-        options
-      );
-      
-      if (response.success) {
-        // Refresh inventory items to get updated stock levels
-        await loadInventoryItems({
-          category_id: state.selectedCategory,
-          location_id: state.selectedLocation,
-          search: state.searchQuery
-        });
-        
-        // Refresh alerts as stock changes might trigger new alerts
-        await loadAlerts();
-        
-        return true;
-      } else {
-        throw new Error(response.message || 'Failed to update stock');
+  const updateStock = useCallback(
+    async (
+      itemId: string,
+      quantity: number,
+      movementType: MovementType,
+      locationId: string,
+      options?: {
+        referenceType?: string;
+        referenceId?: string;
+        notes?: string;
+        batchNumber?: string;
+        expirationDate?: string;
+      },
+    ): Promise<boolean> => {
+      try {
+        setIsUpdating(true);
+
+        const response = await updateStockLevel(
+          itemId,
+          quantity,
+          movementType,
+          locationId,
+          options,
+        );
+
+        if (response.success) {
+          // Refresh inventory items to get updated stock levels
+          await loadInventoryItems({
+            category_id: state.selectedCategory,
+            location_id: state.selectedLocation,
+            search: state.searchQuery,
+          });
+
+          // Refresh alerts as stock changes might trigger new alerts
+          await loadAlerts();
+
+          return true;
+        } else {
+          throw new Error(response.message || "Failed to update stock");
+        }
+      } catch (error) {
+        console.error("Error updating stock:", error);
+        setState((prev) => ({
+          ...prev,
+          error: error instanceof Error ? error.message : "Unknown error",
+        }));
+        return false;
+      } finally {
+        setIsUpdating(false);
       }
-    } catch (error) {
-      console.error('Error updating stock:', error);
-      setState(prev => ({
-        ...prev,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      }));
-      return false;
-    } finally {
-      setIsUpdating(false);
-    }
-  }, [loadInventoryItems, loadAlerts, state.selectedCategory, state.selectedLocation, state.searchQuery]);
+    },
+    [
+      loadInventoryItems,
+      loadAlerts,
+      state.selectedCategory,
+      state.selectedLocation,
+      state.searchQuery,
+    ],
+  );
 
   // Scan barcode
-  const scanBarcode = useCallback(async (barcodeValue: string): Promise<{
-    success: boolean;
-    item?: InventoryItem;
-    message?: string;
-  }> => {
-    try {
-      const response = await getInventoryItemByBarcode(barcodeValue);
-      
-      if (response.success && response.data) {
-        return {
-          success: true,
-          item: response.data,
-          message: 'Item found successfully'
-        };
-      } else {
+  const scanBarcode = useCallback(
+    async (
+      barcodeValue: string,
+    ): Promise<{
+      success: boolean;
+      item?: InventoryItem;
+      message?: string;
+    }> => {
+      try {
+        const response = await getInventoryItemByBarcode(barcodeValue);
+
+        if (response.success && response.data) {
+          return {
+            success: true,
+            item: response.data,
+            message: "Item found successfully",
+          };
+        } else {
+          return {
+            success: false,
+            message: "Item not found for this barcode",
+          };
+        }
+      } catch (error) {
+        console.error("Error scanning barcode:", error);
         return {
           success: false,
-          message: 'Item not found for this barcode'
+          message: error instanceof Error ? error.message : "Unknown error",
         };
       }
-    } catch (error) {
-      console.error('Error scanning barcode:', error);
-      return {
-        success: false,
-        message: error instanceof Error ? error.message : 'Unknown error'
-      };
-    }
-  }, []);
+    },
+    [],
+  );
 
   // Start barcode session
-  const startSession = useCallback(async (
-    sessionType: SessionType,
-    locationId: string
-  ): Promise<BarcodeSession | null> => {
-    try {
-      const response = await createBarcodeSession(sessionType, locationId);
-      
-      if (response.success && response.data) {
-        setState(prev => ({
-          ...prev,
-          activeSessions: [...prev.activeSessions, response.data!]
-        }));
-        
-        return response.data;
+  const startSession = useCallback(
+    async (sessionType: SessionType, locationId: string): Promise<BarcodeSession | null> => {
+      try {
+        const response = await createBarcodeSession(sessionType, locationId);
+
+        if (response.success && response.data) {
+          setState((prev) => ({
+            ...prev,
+            activeSessions: [...prev.activeSessions, response.data!],
+          }));
+
+          return response.data;
+        }
+
+        return null;
+      } catch (error) {
+        console.error("Error starting session:", error);
+        return null;
       }
-      
-      return null;
-    } catch (error) {
-      console.error('Error starting session:', error);
-      return null;
-    }
-  }, []);
+    },
+    [],
+  );
 
   // Add scan to session
-  const addScanToSession = useCallback(async (
-    sessionId: string,
-    barcodeValue: string
-  ): Promise<ScannedItem | null> => {
-    try {
-      // First, try to find the item
-      const scanResult = await scanBarcode(barcodeValue);
-      
-      const response = await addScannedItem(
-        sessionId,
-        barcodeValue,
-        scanResult.success ? 'success' : 'item_not_found',
-        scanResult.item?.id,
-        scanResult.success ? undefined : scanResult.message
-      );
-      
-      if (response.success && response.data) {
-        return response.data;
+  const addScanToSession = useCallback(
+    async (sessionId: string, barcodeValue: string): Promise<ScannedItem | null> => {
+      try {
+        // First, try to find the item
+        const scanResult = await scanBarcode(barcodeValue);
+
+        const response = await addScannedItem(
+          sessionId,
+          barcodeValue,
+          scanResult.success ? "success" : "item_not_found",
+          scanResult.item?.id,
+          scanResult.success ? undefined : scanResult.message,
+        );
+
+        if (response.success && response.data) {
+          return response.data;
+        }
+
+        return null;
+      } catch (error) {
+        console.error("Error adding scan to session:", error);
+        return null;
       }
-      
-      return null;
-    } catch (error) {
-      console.error('Error adding scan to session:', error);
-      return null;
-    }
-  }, [scanBarcode]);
+    },
+    [scanBarcode],
+  );
 
   // End session
-  const endSession = useCallback(async (
-    sessionId: string,
-    notes?: string
-  ): Promise<boolean> => {
+  const endSession = useCallback(async (sessionId: string, notes?: string): Promise<boolean> => {
     try {
       const response = await completeBarcodeSession(sessionId, notes);
-      
+
       if (response.success) {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
-          activeSessions: prev.activeSessions.filter(session => session.id !== sessionId)
+          activeSessions: prev.activeSessions.filter((session) => session.id !== sessionId),
         }));
-        
+
         return true;
       }
-      
+
       return false;
     } catch (error) {
-      console.error('Error ending session:', error);
+      console.error("Error ending session:", error);
       return false;
     }
   }, []);
 
   // Resolve alert
-  const resolveAlert = useCallback(async (
-    alertId: string,
-    notes?: string
-  ): Promise<boolean> => {
+  const resolveAlert = useCallback(async (alertId: string, notes?: string): Promise<boolean> => {
     try {
       const response = await resolveStockAlert(alertId, notes);
-      
+
       if (response.success) {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
-          alerts: prev.alerts.filter(alert => alert.id !== alertId)
+          alerts: prev.alerts.filter((alert) => alert.id !== alertId),
         }));
-        
+
         return true;
       }
-      
+
       return false;
     } catch (error) {
-      console.error('Error resolving alert:', error);
+      console.error("Error resolving alert:", error);
       return false;
     }
   }, []);
 
   // Filter setters
   const setLocationFilter = useCallback((locationId?: string) => {
-    setState(prev => ({ ...prev, selectedLocation: locationId }));
+    setState((prev) => ({ ...prev, selectedLocation: locationId }));
   }, []);
 
   const setCategoryFilter = useCallback((categoryId?: string) => {
-    setState(prev => ({ ...prev, selectedCategory: categoryId }));
+    setState((prev) => ({ ...prev, selectedCategory: categoryId }));
   }, []);
 
   const setSearchQuery = useCallback((query?: string) => {
-    setState(prev => ({ ...prev, searchQuery: query }));
+    setState((prev) => ({ ...prev, searchQuery: query }));
   }, []);
 
   // Real-time connection management
@@ -424,39 +443,39 @@ export function useInventory(options: UseInventoryOptions = {}): UseInventoryRet
   // Setup real-time subscriptions
   const setupRealTimeSubscriptions = useCallback(() => {
     try {
-      setState(prev => ({ ...prev, connectionStatus: ConnectionStatus.RECONNECTING }));
+      setState((prev) => ({ ...prev, connectionStatus: ConnectionStatus.RECONNECTING }));
 
       // Subscribe to inventory updates
       inventoryChannel.current = subscribeToInventoryUpdates((payload) => {
-        console.log('Inventory update received:', payload);
-        
+        console.log("Inventory update received:", payload);
+
         // Refresh data when changes occur
         refreshData();
-        
-        setState(prev => ({
+
+        setState((prev) => ({
           ...prev,
           lastUpdated: new Date().toISOString(),
-          connectionStatus: ConnectionStatus.CONNECTED
+          connectionStatus: ConnectionStatus.CONNECTED,
         }));
       });
 
       // Subscribe to new alerts
       alertsChannel.current = subscribeToStockAlerts((payload) => {
-        console.log('New alert received:', payload);
-        
+        console.log("New alert received:", payload);
+
         // Add new alert to state
-        if (payload.eventType === 'INSERT' && payload.new) {
-          setState(prev => ({
+        if (payload.eventType === "INSERT" && payload.new) {
+          setState((prev) => ({
             ...prev,
-            alerts: [payload.new, ...prev.alerts]
+            alerts: [payload.new, ...prev.alerts],
           }));
         }
       });
 
-      setState(prev => ({ ...prev, connectionStatus: ConnectionStatus.CONNECTED }));
+      setState((prev) => ({ ...prev, connectionStatus: ConnectionStatus.CONNECTED }));
     } catch (error) {
-      console.error('Error setting up real-time subscriptions:', error);
-      setState(prev => ({ ...prev, connectionStatus: ConnectionStatus.ERROR }));
+      console.error("Error setting up real-time subscriptions:", error);
+      setState((prev) => ({ ...prev, connectionStatus: ConnectionStatus.ERROR }));
     }
   }, [refreshData]);
 
@@ -466,12 +485,12 @@ export function useInventory(options: UseInventoryOptions = {}): UseInventoryRet
       inventoryChannel.current.unsubscribe();
       inventoryChannel.current = null;
     }
-    
+
     if (alertsChannel.current) {
       alertsChannel.current.unsubscribe();
       alertsChannel.current = null;
     }
-    
+
     if (alertInterval.current) {
       clearInterval(alertInterval.current);
       alertInterval.current = null;
@@ -502,10 +521,16 @@ export function useInventory(options: UseInventoryOptions = {}): UseInventoryRet
       loadInventoryItems({
         category_id: state.selectedCategory,
         location_id: state.selectedLocation,
-        search: state.searchQuery
+        search: state.searchQuery,
       });
     }
-  }, [state.selectedCategory, state.selectedLocation, state.searchQuery, autoLoadData, loadInventoryItems]);
+  }, [
+    state.selectedCategory,
+    state.selectedLocation,
+    state.searchQuery,
+    autoLoadData,
+    loadInventoryItems,
+  ]);
 
   return {
     state,
@@ -526,6 +551,6 @@ export function useInventory(options: UseInventoryOptions = {}): UseInventoryRet
     setCategoryFilter,
     setSearchQuery,
     connectionStatus: state.connectionStatus,
-    reconnect
+    reconnect,
   };
 }

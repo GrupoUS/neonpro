@@ -1,108 +1,108 @@
-'use client'
+"use client";
 
-import React, { useState, useEffect } from 'react'
-import {
+import React, { useState, useEffect } from "react";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog'
-import {
+  DialogTitle,
+} from "@/components/ui/dialog";
+import type {
   Form,
   FormControl,
   FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
-} from '@/components/ui/form'
-import {
+  FormMessage,
+} from "@/components/ui/form";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
-import { Switch } from '@/components/ui/switch'
-import { Badge } from '@/components/ui/badge'
-import { CalendarDays, Clock, User, Phone, MessageCircle, AlertTriangle } from 'lucide-react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
-import moment from 'moment'
-import 'moment/locale/pt-br'
-import { AppointmentEvent, Professional } from '@/app/appointments/page'
-import { cn } from '@/lib/utils'
+  SelectValue,
+} from "@/components/ui/select";
+import type { Input } from "@/components/ui/input";
+import type { Button } from "@/components/ui/button";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Switch } from "@/components/ui/switch";
+import type { Badge } from "@/components/ui/badge";
+import type { CalendarDays, Clock, User, Phone, MessageCircle, AlertTriangle } from "lucide-react";
+import type { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import moment from "moment";
+import "moment/locale/pt-br";
+import type { AppointmentEvent, Professional } from "@/app/appointments/page";
+import type { cn } from "@/lib/utils";
 
-moment.locale('pt-br')
+moment.locale("pt-br");
 
 // Form validation schema
 const quickBookingSchema = z.object({
-  patientName: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
-  phoneNumber: z.string().regex(/^\(\d{2}\)\s\d{4,5}-\d{4}$/, 'Formato: (11) 99999-9999'),
-  email: z.string().email('E-mail inválido').optional().or(z.literal('')),
-  serviceType: z.enum(['consultation', 'botox', 'fillers', 'procedure'], {
-    required_error: 'Selecione o tipo de serviço'
+  patientName: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
+  phoneNumber: z.string().regex(/^\(\d{2}\)\s\d{4,5}-\d{4}$/, "Formato: (11) 99999-9999"),
+  email: z.string().email("E-mail inválido").optional().or(z.literal("")),
+  serviceType: z.enum(["consultation", "botox", "fillers", "procedure"], {
+    required_error: "Selecione o tipo de serviço",
   }),
-  professionalId: z.string().min(1, 'Selecione um profissional'),
-  date: z.string().min(1, 'Selecione uma data'),
-  startTime: z.string().regex(/^\d{2}:\d{2}$/, 'Formato: HH:MM'),
+  professionalId: z.string().min(1, "Selecione um profissional"),
+  date: z.string().min(1, "Selecione uma data"),
+  startTime: z.string().regex(/^\d{2}:\d{2}$/, "Formato: HH:MM"),
   duration: z.number().min(15).max(240),
   notes: z.string().optional(),
   whatsappReminder: z.boolean().default(true),
-  equipmentNeeded: z.array(z.string()).optional()
-})
+  equipmentNeeded: z.array(z.string()).optional(),
+});
 
-type QuickBookingForm = z.infer<typeof quickBookingSchema>
+type QuickBookingForm = z.infer<typeof quickBookingSchema>;
 
 interface QuickBookingModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onSubmit: (appointmentData: Partial<AppointmentEvent>) => void
-  professionals: Professional[]
-  selectedDate?: Date
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (appointmentData: Partial<AppointmentEvent>) => void;
+  professionals: Professional[];
+  selectedDate?: Date;
   selectedSlot?: {
-    start: Date
-    end: Date
-    resourceId?: string
-  }
+    start: Date;
+    end: Date;
+    resourceId?: string;
+  };
 }
 
 // Service type options
 const serviceOptions = [
-  { value: 'consultation', label: 'Consulta', duration: 60, color: 'bg-blue-500' },
-  { value: 'botox', label: 'Aplicação de Botox', duration: 90, color: 'bg-violet-500' },
-  { value: 'fillers', label: 'Preenchimento', duration: 120, color: 'bg-emerald-500' },
-  { value: 'procedure', label: 'Procedimento', duration: 180, color: 'bg-amber-500' }
-]
+  { value: "consultation", label: "Consulta", duration: 60, color: "bg-blue-500" },
+  { value: "botox", label: "Aplicação de Botox", duration: 90, color: "bg-violet-500" },
+  { value: "fillers", label: "Preenchimento", duration: 120, color: "bg-emerald-500" },
+  { value: "procedure", label: "Procedimento", duration: 180, color: "bg-amber-500" },
+];
 
 // Duration options in minutes
 const durationOptions = [
-  { value: 15, label: '15 min' },
-  { value: 30, label: '30 min' },
-  { value: 45, label: '45 min' },
-  { value: 60, label: '1 hora' },
-  { value: 90, label: '1h 30min' },
-  { value: 120, label: '2 horas' },
-  { value: 180, label: '3 horas' },
-  { value: 240, label: '4 horas' }
-]
+  { value: 15, label: "15 min" },
+  { value: 30, label: "30 min" },
+  { value: 45, label: "45 min" },
+  { value: 60, label: "1 hora" },
+  { value: 90, label: "1h 30min" },
+  { value: 120, label: "2 horas" },
+  { value: 180, label: "3 horas" },
+  { value: 240, label: "4 horas" },
+];
 
 // Equipment options
 const equipmentOptions = [
-  'Laser CO2',
-  'Ultrassom',
-  'Radiofrequência',
-  'Criobiótica',
-  'Microagulhamento',
-  'Peeling químico',
-  'Fotobiomodulação'
-]
+  "Laser CO2",
+  "Ultrassom",
+  "Radiofrequência",
+  "Criobiótica",
+  "Microagulhamento",
+  "Peeling químico",
+  "Fotobiomodulação",
+];
 
 export function QuickBookingModal({
   isOpen,
@@ -110,119 +110,125 @@ export function QuickBookingModal({
   onSubmit,
   professionals,
   selectedDate,
-  selectedSlot
+  selectedSlot,
 }: QuickBookingModalProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [conflicts, setConflicts] = useState<string[]>([])
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [conflicts, setConflicts] = useState<string[]>([]);
 
   const form = useForm<QuickBookingForm>({
     resolver: zodResolver(quickBookingSchema),
     defaultValues: {
-      patientName: '',
-      phoneNumber: '',
-      email: '',
-      serviceType: 'consultation',
-      professionalId: '',
-      date: selectedDate ? moment(selectedDate).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD'),
-      startTime: selectedSlot ? moment(selectedSlot.start).format('HH:mm') : '09:00',
+      patientName: "",
+      phoneNumber: "",
+      email: "",
+      serviceType: "consultation",
+      professionalId: "",
+      date: selectedDate
+        ? moment(selectedDate).format("YYYY-MM-DD")
+        : moment().format("YYYY-MM-DD"),
+      startTime: selectedSlot ? moment(selectedSlot.start).format("HH:mm") : "09:00",
       duration: 60,
-      notes: '',
+      notes: "",
       whatsappReminder: true,
-      equipmentNeeded: []
-    }
-  })
+      equipmentNeeded: [],
+    },
+  });
 
   // Auto-fill form when slot is selected
   useEffect(() => {
     if (selectedSlot) {
-      form.setValue('date', moment(selectedSlot.start).format('YYYY-MM-DD'))
-      form.setValue('startTime', moment(selectedSlot.start).format('HH:mm'))
-      
-      const suggestedDuration = moment(selectedSlot.end).diff(moment(selectedSlot.start), 'minutes')
+      form.setValue("date", moment(selectedSlot.start).format("YYYY-MM-DD"));
+      form.setValue("startTime", moment(selectedSlot.start).format("HH:mm"));
+
+      const suggestedDuration = moment(selectedSlot.end).diff(
+        moment(selectedSlot.start),
+        "minutes",
+      );
       if (suggestedDuration >= 15 && suggestedDuration <= 240) {
-        form.setValue('duration', suggestedDuration)
+        form.setValue("duration", suggestedDuration);
       }
-      
+
       if (selectedSlot.resourceId) {
-        form.setValue('professionalId', selectedSlot.resourceId)
+        form.setValue("professionalId", selectedSlot.resourceId);
       }
     }
-  }, [selectedSlot, form])
+  }, [selectedSlot, form]);
 
   // Watch service type to auto-adjust duration
-  const watchedServiceType = form.watch('serviceType')
+  const watchedServiceType = form.watch("serviceType");
   useEffect(() => {
-    const serviceOption = serviceOptions.find(s => s.value === watchedServiceType)
+    const serviceOption = serviceOptions.find((s) => s.value === watchedServiceType);
     if (serviceOption) {
-      form.setValue('duration', serviceOption.duration)
+      form.setValue("duration", serviceOption.duration);
     }
-  }, [watchedServiceType, form])
+  }, [watchedServiceType, form]);
 
   // Phone number formatting
   const formatPhoneNumber = (value: string) => {
-    const numbers = value.replace(/\D/g, '')
-    
-    if (numbers.length <= 2) return `(${numbers}`
-    if (numbers.length <= 6) return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`
-    if (numbers.length <= 10) return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 6)}-${numbers.slice(6)}`
-    return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7, 11)}`
-  }
+    const numbers = value.replace(/\D/g, "");
+
+    if (numbers.length <= 2) return `(${numbers}`;
+    if (numbers.length <= 6) return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+    if (numbers.length <= 10)
+      return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 6)}-${numbers.slice(6)}`;
+    return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7, 11)}`;
+  };
 
   // Validate appointment slot
   const validateSlot = (data: QuickBookingForm) => {
-    const startDateTime = moment(`${data.date} ${data.startTime}`)
-    const endDateTime = moment(startDateTime).add(data.duration, 'minutes')
-    
-    const conflicts: string[] = []
-    
+    const startDateTime = moment(`${data.date} ${data.startTime}`);
+    const endDateTime = moment(startDateTime).add(data.duration, "minutes");
+
+    const conflicts: string[] = [];
+
     // Check business hours
-    const hour = startDateTime.hour()
+    const hour = startDateTime.hour();
     if (hour < 8 || hour >= 18) {
-      conflicts.push('Horário fora do funcionamento (08:00 - 18:00)')
+      conflicts.push("Horário fora do funcionamento (08:00 - 18:00)");
     }
-    
+
     // Check if appointment ends after business hours
     if (endDateTime.hour() > 18) {
-      conflicts.push('Consulta termina após horário de funcionamento')
+      conflicts.push("Consulta termina após horário de funcionamento");
     }
-    
+
     // Check if it's in the past
     if (startDateTime.isBefore(moment())) {
-      conflicts.push('Não é possível agendar no passado')
+      conflicts.push("Não é possível agendar no passado");
     }
-    
+
     // Check weekend
     if (startDateTime.day() === 0 || startDateTime.day() === 6) {
-      conflicts.push('Não atendemos aos finais de semana')
+      conflicts.push("Não atendemos aos finais de semana");
     }
-    
+
     // Check professional availability
-    const professional = professionals.find(p => p.id === data.professionalId)
+    const professional = professionals.find((p) => p.id === data.professionalId);
     if (professional && !professional.availability) {
-      conflicts.push(`${professional.name} não está disponível`)
+      conflicts.push(`${professional.name} não está disponível`);
     }
-    
-    return conflicts
-  }
+
+    return conflicts;
+  };
 
   const onFormSubmit = async (data: QuickBookingForm) => {
-    setIsSubmitting(true)
-    
+    setIsSubmitting(true);
+
     // Validate slot
-    const validationErrors = validateSlot(data)
+    const validationErrors = validateSlot(data);
     if (validationErrors.length > 0) {
-      setConflicts(validationErrors)
-      setIsSubmitting(false)
-      return
+      setConflicts(validationErrors);
+      setIsSubmitting(false);
+      return;
     }
-    
+
     // Clear conflicts
-    setConflicts([])
-    
+    setConflicts([]);
+
     // Create appointment data
-    const startDateTime = moment(`${data.date} ${data.startTime}`)
-    const endDateTime = moment(startDateTime).add(data.duration, 'minutes')
-    
+    const startDateTime = moment(`${data.date} ${data.startTime}`);
+    const endDateTime = moment(startDateTime).add(data.duration, "minutes");
+
     const appointmentData: Partial<AppointmentEvent> = {
       patientName: data.patientName,
       phoneNumber: data.phoneNumber,
@@ -235,19 +241,19 @@ export function QuickBookingModal({
       whatsappReminder: data.whatsappReminder,
       equipmentNeeded: data.equipmentNeeded?.length ? data.equipmentNeeded : undefined,
       patientId: `patient_${Date.now()}`, // In production, this would come from patient database
-      status: 'scheduled'
-    }
-    
+      status: "scheduled",
+    };
+
     try {
-      await onSubmit(appointmentData)
-      form.reset()
-      onClose()
+      await onSubmit(appointmentData);
+      form.reset();
+      onClose();
     } catch (error) {
-      console.error('Error creating appointment:', error)
+      console.error("Error creating appointment:", error);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -257,9 +263,7 @@ export function QuickBookingModal({
             <CalendarDays className="h-5 w-5" />
             <span>Nova Consulta</span>
           </DialogTitle>
-          <DialogDescription>
-            Preencha os dados para agendar uma nova consulta
-          </DialogDescription>
+          <DialogDescription>Preencha os dados para agendar uma nova consulta</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -290,11 +294,7 @@ export function QuickBookingModal({
                   <FormItem>
                     <FormLabel>Nome do Paciente</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="Nome completo" 
-                        {...field}
-                        className="flex items-center"
-                      />
+                      <Input placeholder="Nome completo" {...field} className="flex items-center" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -312,8 +312,8 @@ export function QuickBookingModal({
                         placeholder="(11) 99999-9999"
                         {...field}
                         onChange={(e) => {
-                          const formatted = formatPhoneNumber(e.target.value)
-                          field.onChange(formatted)
+                          const formatted = formatPhoneNumber(e.target.value);
+                          field.onChange(formatted);
                         }}
                       />
                     </FormControl>
@@ -355,7 +355,7 @@ export function QuickBookingModal({
                         {serviceOptions.map((service) => (
                           <SelectItem key={service.value} value={service.value}>
                             <div className="flex items-center space-x-2">
-                              <div className={cn('w-3 h-3 rounded-full', service.color)} />
+                              <div className={cn("w-3 h-3 rounded-full", service.color)} />
                               <span>{service.label}</span>
                               <Badge variant="secondary" className="ml-2">
                                 {service.duration}min
@@ -384,8 +384,8 @@ export function QuickBookingModal({
                       </FormControl>
                       <SelectContent>
                         {professionals.map((professional) => (
-                          <SelectItem 
-                            key={professional.id} 
+                          <SelectItem
+                            key={professional.id}
                             value={professional.id}
                             disabled={!professional.availability}
                           >
@@ -419,7 +419,7 @@ export function QuickBookingModal({
                   <FormItem>
                     <FormLabel>Data</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} min={moment().format('YYYY-MM-DD')} />
+                      <Input type="date" {...field} min={moment().format("YYYY-MM-DD")} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -433,8 +433,8 @@ export function QuickBookingModal({
                   <FormItem>
                     <FormLabel>Horário</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="time" 
+                      <Input
+                        type="time"
                         {...field}
                         min="08:00"
                         max="17:30"
@@ -506,36 +506,26 @@ export function QuickBookingModal({
                       <MessageCircle className="h-4 w-4 text-green-600" />
                       <span>Lembrete via WhatsApp</span>
                     </FormLabel>
-                    <FormDescription>
-                      Enviar lembrete 24h antes da consulta
-                    </FormDescription>
+                    <FormDescription>Enviar lembrete 24h antes da consulta</FormDescription>
                   </div>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
+                    <Switch checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
                 </FormItem>
               )}
             />
 
             <DialogFooter>
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={onClose}
-                disabled={isSubmitting}
-              >
+              <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
                 Cancelar
               </Button>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Agendando...' : 'Agendar Consulta'}
+                {isSubmitting ? "Agendando..." : "Agendar Consulta"}
               </Button>
             </DialogFooter>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

@@ -1,21 +1,27 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import {
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Switch } from "@/components/ui/switch";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import {
+} from "@/components/ui/select";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -23,17 +29,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import {
+} from "@/components/ui/dialog";
+import type {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import {
+} from "@/components/ui/table";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type {
   Clock,
   Plus,
   Play,
@@ -46,9 +52,9 @@ import {
   Shield,
   AlertTriangle,
   CheckCircle,
-} from 'lucide-react';
-import { formatDate, formatTime } from '@/lib/utils';
-import { toast } from 'sonner';
+} from "lucide-react";
+import type { formatDate, formatTime } from "@/lib/utils";
+import type { toast } from "sonner";
 
 // Types
 interface BackupConfig {
@@ -56,16 +62,16 @@ interface BackupConfig {
   name: string;
   description?: string;
   enabled: boolean;
-  type: 'FULL' | 'INCREMENTAL' | 'DIFFERENTIAL' | 'DATABASE' | 'FILES';
-  schedule_frequency: 'HOURLY' | 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'CUSTOM';
+  type: "FULL" | "INCREMENTAL" | "DIFFERENTIAL" | "DATABASE" | "FILES";
+  schedule_frequency: "HOURLY" | "DAILY" | "WEEKLY" | "MONTHLY" | "CUSTOM";
   schedule_time?: string;
   schedule_cron?: string;
   last_backup?: Date;
   next_backup?: Date;
-  status: 'ACTIVE' | 'PAUSED' | 'ERROR';
-  storage_provider: 'LOCAL' | 'S3' | 'GCS' | 'AZURE';
+  status: "ACTIVE" | "PAUSED" | "ERROR";
+  storage_provider: "LOCAL" | "S3" | "GCS" | "AZURE";
   retention_daily: number;
-  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  priority: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   createdAt: Date;
 }
 
@@ -73,13 +79,13 @@ interface NewBackupConfig {
   name: string;
   description?: string;
   enabled: boolean;
-  type: 'FULL' | 'INCREMENTAL' | 'DIFFERENTIAL' | 'DATABASE' | 'FILES';
-  schedule_frequency: 'HOURLY' | 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'CUSTOM';
+  type: "FULL" | "INCREMENTAL" | "DIFFERENTIAL" | "DATABASE" | "FILES";
+  schedule_frequency: "HOURLY" | "DAILY" | "WEEKLY" | "MONTHLY" | "CUSTOM";
   schedule_time?: string;
   schedule_cron?: string;
-  storage_provider: 'LOCAL' | 'S3' | 'GCS' | 'AZURE';
+  storage_provider: "LOCAL" | "S3" | "GCS" | "AZURE";
   retention_daily: number;
-  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  priority: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   notification_email?: string;
 }
 
@@ -88,16 +94,16 @@ const BackupScheduler: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showNewDialog, setShowNewDialog] = useState(false);
   const [newConfig, setNewConfig] = useState<NewBackupConfig>({
-    name: '',
-    description: '',
+    name: "",
+    description: "",
     enabled: true,
-    type: 'FULL',
-    schedule_frequency: 'DAILY',
-    schedule_time: '02:00',
-    storage_provider: 'LOCAL',
+    type: "FULL",
+    schedule_frequency: "DAILY",
+    schedule_time: "02:00",
+    storage_provider: "LOCAL",
     retention_daily: 30,
-    priority: 'MEDIUM',
-    notification_email: '',
+    priority: "MEDIUM",
+    notification_email: "",
   });
 
   useEffect(() => {
@@ -107,16 +113,16 @@ const BackupScheduler: React.FC = () => {
   const loadConfigs = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/backup/configs');
+      const response = await fetch("/api/backup/configs");
       if (response.ok) {
         const data = await response.json();
         setConfigs(data.data || []);
       } else {
-        toast.error('Erro ao carregar configurações de backup');
+        toast.error("Erro ao carregar configurações de backup");
       }
     } catch (error) {
-      console.error('Erro ao carregar configurações:', error);
-      toast.error('Erro ao carregar configurações de backup');
+      console.error("Erro ao carregar configurações:", error);
+      toast.error("Erro ao carregar configurações de backup");
     } finally {
       setLoading(false);
     }
@@ -124,69 +130,69 @@ const BackupScheduler: React.FC = () => {
 
   const handleCreateConfig = async () => {
     try {
-      const response = await fetch('/api/backup/configs', {
-        method: 'POST',
+      const response = await fetch("/api/backup/configs", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(newConfig),
       });
 
       if (response.ok) {
-        toast.success('Configuração de backup criada com sucesso');
+        toast.success("Configuração de backup criada com sucesso");
         setShowNewDialog(false);
         setNewConfig({
-          name: '',
-          description: '',
+          name: "",
+          description: "",
           enabled: true,
-          type: 'FULL',
-          schedule_frequency: 'DAILY',
-          schedule_time: '02:00',
-          storage_provider: 'LOCAL',
+          type: "FULL",
+          schedule_frequency: "DAILY",
+          schedule_time: "02:00",
+          storage_provider: "LOCAL",
           retention_daily: 30,
-          priority: 'MEDIUM',
-          notification_email: '',
+          priority: "MEDIUM",
+          notification_email: "",
         });
         loadConfigs();
       } else {
         const errorData = await response.json();
-        toast.error(errorData.error || 'Erro ao criar configuração');
+        toast.error(errorData.error || "Erro ao criar configuração");
       }
     } catch (error) {
-      console.error('Erro ao criar configuração:', error);
-      toast.error('Erro ao criar configuração de backup');
+      console.error("Erro ao criar configuração:", error);
+      toast.error("Erro ao criar configuração de backup");
     }
   };
 
   const handleToggleConfig = async (id: string, enabled: boolean) => {
     try {
       const response = await fetch(`/api/backup/configs/${id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ enabled }),
       });
 
       if (response.ok) {
-        toast.success(`Configuração ${enabled ? 'ativada' : 'desativada'} com sucesso`);
+        toast.success(`Configuração ${enabled ? "ativada" : "desativada"} com sucesso`);
         loadConfigs();
       } else {
-        toast.error('Erro ao atualizar configuração');
+        toast.error("Erro ao atualizar configuração");
       }
     } catch (error) {
-      console.error('Erro ao atualizar configuração:', error);
-      toast.error('Erro ao atualizar configuração');
+      console.error("Erro ao atualizar configuração:", error);
+      toast.error("Erro ao atualizar configuração");
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'ACTIVE':
+      case "ACTIVE":
         return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case 'PAUSED':
+      case "PAUSED":
         return <Pause className="h-4 w-4 text-yellow-500" />;
-      case 'ERROR':
+      case "ERROR":
         return <AlertTriangle className="h-4 w-4 text-red-500" />;
       default:
         return <Clock className="h-4 w-4 text-gray-500" />;
@@ -195,9 +201,9 @@ const BackupScheduler: React.FC = () => {
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'DATABASE':
+      case "DATABASE":
         return <Database className="h-4 w-4" />;
-      case 'FILES':
+      case "FILES":
         return <HardDrive className="h-4 w-4" />;
       default:
         return <Shield className="h-4 w-4" />;
@@ -206,16 +212,16 @@ const BackupScheduler: React.FC = () => {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'CRITICAL':
-        return 'destructive';
-      case 'HIGH':
-        return 'secondary';
-      case 'MEDIUM':
-        return 'outline';
-      case 'LOW':
-        return 'secondary';
+      case "CRITICAL":
+        return "destructive";
+      case "HIGH":
+        return "secondary";
+      case "MEDIUM":
+        return "outline";
+      case "LOW":
+        return "secondary";
       default:
-        return 'outline';
+        return "outline";
     }
   };
 
@@ -274,7 +280,9 @@ const BackupScheduler: React.FC = () => {
                 <Label htmlFor="frequency">Frequência</Label>
                 <Select
                   value={newConfig.schedule_frequency}
-                  onValueChange={(value: any) => setNewConfig({ ...newConfig, schedule_frequency: value })}
+                  onValueChange={(value: any) =>
+                    setNewConfig({ ...newConfig, schedule_frequency: value })
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -301,7 +309,9 @@ const BackupScheduler: React.FC = () => {
                 <Label htmlFor="provider">Armazenamento</Label>
                 <Select
                   value={newConfig.storage_provider}
-                  onValueChange={(value: any) => setNewConfig({ ...newConfig, storage_provider: value })}
+                  onValueChange={(value: any) =>
+                    setNewConfig({ ...newConfig, storage_provider: value })
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -322,7 +332,9 @@ const BackupScheduler: React.FC = () => {
                   min="1"
                   max="365"
                   value={newConfig.retention_daily}
-                  onChange={(e) => setNewConfig({ ...newConfig, retention_daily: parseInt(e.target.value) })}
+                  onChange={(e) =>
+                    setNewConfig({ ...newConfig, retention_daily: parseInt(e.target.value) })
+                  }
                 />
               </div>
               <div className="col-span-2 space-y-2">
@@ -339,9 +351,7 @@ const BackupScheduler: React.FC = () => {
               <Button variant="outline" onClick={() => setShowNewDialog(false)}>
                 Cancelar
               </Button>
-              <Button onClick={handleCreateConfig}>
-                Criar Configuração
-              </Button>
+              <Button onClick={handleCreateConfig}>Criar Configuração</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -355,17 +365,13 @@ const BackupScheduler: React.FC = () => {
         <Card>
           <CardHeader>
             <CardTitle>Configurações de Backup</CardTitle>
-            <CardDescription>
-              {configs.length} configuração(ões) de backup ativa(s)
-            </CardDescription>
+            <CardDescription>{configs.length} configuração(ões) de backup ativa(s)</CardDescription>
           </CardHeader>
           <CardContent>
             {configs.length === 0 ? (
               <div className="text-center py-8">
                 <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">
-                  Nenhuma configuração de backup encontrada
-                </p>
+                <p className="text-muted-foreground">Nenhuma configuração de backup encontrada</p>
               </div>
             ) : (
               <Table>

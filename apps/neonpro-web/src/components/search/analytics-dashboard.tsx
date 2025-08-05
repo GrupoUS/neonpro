@@ -4,20 +4,26 @@
  * Comprehensive analytics and performance monitoring dashboard
  */
 
-'use client';
+"use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { DatePickerWithRange } from '@/components/ui/date-range-picker';
-import {
+import React, { useState, useEffect, useCallback } from "react";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Progress } from "@/components/ui/progress";
+import type { Separator } from "@/components/ui/separator";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { DatePickerWithRange } from "@/components/ui/date-range-picker";
+import type {
   BarChart,
   Bar,
   LineChart,
@@ -32,9 +38,9 @@ import {
   Legend,
   ResponsiveContainer,
   Area,
-  AreaChart
-} from 'recharts';
-import {
+  AreaChart,
+} from "recharts";
+import type {
   TrendingUp,
   TrendingDown,
   Clock,
@@ -57,17 +63,17 @@ import {
   MousePointer,
   Lightbulb,
   Settings,
-  Bell
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import {
+  Bell,
+} from "lucide-react";
+import type { cn } from "@/lib/utils";
+import type {
   searchAnalytics,
   type SearchMetrics,
   type PerformanceAlert,
   type SearchOptimization,
-  type AnalyticsOptions
-} from '@/lib/search/search-analytics';
-import { DateRange } from 'react-day-picker';
+  type AnalyticsOptions,
+} from "@/lib/search/search-analytics";
+import type { DateRange } from "react-day-picker";
 
 interface AnalyticsDashboardProps {
   userId?: string;
@@ -77,35 +83,37 @@ interface AnalyticsDashboardProps {
 }
 
 const CHART_COLORS = {
-  primary: '#3b82f6',
-  secondary: '#10b981',
-  accent: '#f59e0b',
-  danger: '#ef4444',
-  warning: '#f97316',
-  muted: '#6b7280'
+  primary: "#3b82f6",
+  secondary: "#10b981",
+  accent: "#f59e0b",
+  danger: "#ef4444",
+  warning: "#f97316",
+  muted: "#6b7280",
 };
 
-const PIE_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
+const PIE_COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4"];
 
 export function AnalyticsDashboard({
   userId,
   className,
   autoRefresh = true,
-  refreshInterval = 30000 // 30 seconds
+  refreshInterval = 30000, // 30 seconds
 }: AnalyticsDashboardProps) {
   // State
   const [metrics, setMetrics] = useState<SearchMetrics | null>(null);
   const [alerts, setAlerts] = useState<PerformanceAlert[]>([]);
   const [optimizations, setOptimizations] = useState<SearchOptimization[]>([]);
-  const [trends, setTrends] = useState<Array<{ date: string; metrics: Partial<SearchMetrics> }>>([]);
+  const [trends, setTrends] = useState<Array<{ date: string; metrics: Partial<SearchMetrics> }>>(
+    [],
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTimeRange, setSelectedTimeRange] = useState<DateRange | undefined>({
     from: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
-    to: new Date()
+    to: new Date(),
   });
-  const [selectedSearchType, setSelectedSearchType] = useState<string>('all');
-  const [activeTab, setActiveTab] = useState('overview');
+  const [selectedSearchType, setSelectedSearchType] = useState<string>("all");
+  const [activeTab, setActiveTab] = useState("overview");
   const [realTimeMetrics, setRealTimeMetrics] = useState<Partial<SearchMetrics>>({});
 
   // Load analytics data
@@ -115,29 +123,30 @@ export function AnalyticsDashboard({
       setError(null);
 
       const options: AnalyticsOptions = {
-        timeRange: selectedTimeRange ? {
-          start: selectedTimeRange.from!,
-          end: selectedTimeRange.to!
-        } : undefined,
+        timeRange: selectedTimeRange
+          ? {
+              start: selectedTimeRange.from!,
+              end: selectedTimeRange.to!,
+            }
+          : undefined,
         userId,
-        searchType: selectedSearchType === 'all' ? undefined : selectedSearchType,
-        includeAnonymous: true
+        searchType: selectedSearchType === "all" ? undefined : selectedSearchType,
+        includeAnonymous: true,
       };
 
       const [metricsData, alertsData, optimizationsData, reportData] = await Promise.all([
         searchAnalytics.getSearchMetrics(options),
         searchAnalytics.getPerformanceAlerts(false),
         searchAnalytics.getOptimizationSuggestions(),
-        searchAnalytics.generatePerformanceReport(options)
+        searchAnalytics.generatePerformanceReport(options),
       ]);
 
       setMetrics(metricsData);
       setAlerts(alertsData);
       setOptimizations(optimizationsData);
       setTrends(reportData.trends);
-
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao carregar analytics');
+      setError(err instanceof Error ? err.message : "Erro ao carregar analytics");
     } finally {
       setLoading(false);
     }
@@ -162,10 +171,10 @@ export function AnalyticsDashboard({
   // Subscribe to real-time alerts
   useEffect(() => {
     const unsubscribe = searchAnalytics.onPerformanceAlert((alert) => {
-      setAlerts(prev => [alert, ...prev]);
-      
+      setAlerts((prev) => [alert, ...prev]);
+
       // Show notification (could integrate with toast system)
-      console.log('New performance alert:', alert);
+      console.log("New performance alert:", alert);
     });
 
     return unsubscribe;
@@ -173,9 +182,9 @@ export function AnalyticsDashboard({
 
   // Format numbers
   const formatNumber = (num: number, decimals: number = 0): string => {
-    return new Intl.NumberFormat('pt-BR', {
+    return new Intl.NumberFormat("pt-BR", {
       minimumFractionDigits: decimals,
-      maximumFractionDigits: decimals
+      maximumFractionDigits: decimals,
     }).format(num);
   };
 
@@ -203,11 +212,16 @@ export function AnalyticsDashboard({
   // Get alert severity color
   const getAlertSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'critical': return 'text-red-600 bg-red-50';
-      case 'high': return 'text-orange-600 bg-orange-50';
-      case 'medium': return 'text-yellow-600 bg-yellow-50';
-      case 'low': return 'text-blue-600 bg-blue-50';
-      default: return 'text-gray-600 bg-gray-50';
+      case "critical":
+        return "text-red-600 bg-red-50";
+      case "high":
+        return "text-orange-600 bg-orange-50";
+      case "medium":
+        return "text-yellow-600 bg-yellow-50";
+      case "low":
+        return "text-blue-600 bg-blue-50";
+      default:
+        return "text-gray-600 bg-gray-50";
     }
   };
 
@@ -247,17 +261,12 @@ export function AnalyticsDashboard({
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Analytics de Busca</h2>
-          <p className="text-muted-foreground">
-            Monitoramento de performance e métricas de uso
-          </p>
+          <p className="text-muted-foreground">Monitoramento de performance e métricas de uso</p>
         </div>
-        
+
         <div className="flex items-center gap-2">
-          <DatePickerWithRange
-            date={selectedTimeRange}
-            onDateChange={setSelectedTimeRange}
-          />
-          
+          <DatePickerWithRange date={selectedTimeRange} onDateChange={setSelectedTimeRange} />
+
           <Select value={selectedSearchType} onValueChange={setSelectedSearchType}>
             <SelectTrigger className="w-48">
               <SelectValue placeholder="Tipo de busca" />
@@ -270,13 +279,8 @@ export function AnalyticsDashboard({
               <SelectItem value="segmentation">Segmentação</SelectItem>
             </SelectContent>
           </Select>
-          
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={loadAnalytics}
-            disabled={loading}
-          >
+
+          <Button variant="outline" size="sm" onClick={loadAnalytics} disabled={loading}>
             {loading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
@@ -287,12 +291,14 @@ export function AnalyticsDashboard({
       </div>
 
       {/* Critical Alerts */}
-      {alerts.filter(a => a.severity === 'critical').length > 0 && (
+      {alerts.filter((a) => a.severity === "critical").length > 0 && (
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            <strong>{alerts.filter(a => a.severity === 'critical').length} alertas críticos</strong> detectados.
-            Ação imediata necessária.
+            <strong>
+              {alerts.filter((a) => a.severity === "critical").length} alertas críticos
+            </strong>{" "}
+            detectados. Ação imediata necessária.
           </AlertDescription>
         </Alert>
       )}
@@ -305,11 +311,16 @@ export function AnalyticsDashboard({
             <Search className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {formatNumber(metrics?.totalSearches || 0)}
-            </div>
+            <div className="text-2xl font-bold">{formatNumber(metrics?.totalSearches || 0)}</div>
             <p className="text-xs text-muted-foreground">
-              Últimos {selectedTimeRange ? Math.ceil((selectedTimeRange.to!.getTime() - selectedTimeRange.from!.getTime()) / (1000 * 60 * 60 * 24)) : 30} dias
+              Últimos{" "}
+              {selectedTimeRange
+                ? Math.ceil(
+                    (selectedTimeRange.to!.getTime() - selectedTimeRange.from!.getTime()) /
+                      (1000 * 60 * 60 * 24),
+                  )
+                : 30}{" "}
+              dias
             </p>
           </CardContent>
         </Card>
@@ -323,9 +334,7 @@ export function AnalyticsDashboard({
             <div className="text-2xl font-bold">
               {formatDuration(metrics?.averageResponseTime || 0)}
             </div>
-            <p className="text-xs text-muted-foreground">
-              Tempo médio de resposta
-            </p>
+            <p className="text-xs text-muted-foreground">Tempo médio de resposta</p>
           </CardContent>
         </Card>
 
@@ -335,13 +344,8 @@ export function AnalyticsDashboard({
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {formatPercentage(metrics?.successRate || 0)}
-            </div>
-            <Progress 
-              value={(metrics?.successRate || 0) * 100} 
-              className="mt-2" 
-            />
+            <div className="text-2xl font-bold">{formatPercentage(metrics?.successRate || 0)}</div>
+            <Progress value={(metrics?.successRate || 0) * 100} className="mt-2" />
           </CardContent>
         </Card>
 
@@ -354,9 +358,7 @@ export function AnalyticsDashboard({
             <div className="text-2xl font-bold">
               {formatPercentage(metrics?.userEngagement.clickThroughRate || 0)}
             </div>
-            <p className="text-xs text-muted-foreground">
-              Engajamento do usuário
-            </p>
+            <p className="text-xs text-muted-foreground">Engajamento do usuário</p>
           </CardContent>
         </Card>
       </div>
@@ -388,13 +390,13 @@ export function AnalyticsDashboard({
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="date" />
                     <YAxis />
-                    <Tooltip 
-                      formatter={(value: number) => [formatDuration(value), 'Tempo de Resposta']}
+                    <Tooltip
+                      formatter={(value: number) => [formatDuration(value), "Tempo de Resposta"]}
                     />
-                    <Area 
-                      type="monotone" 
-                      dataKey="metrics.averageResponseTime" 
-                      stroke={CHART_COLORS.primary} 
+                    <Area
+                      type="monotone"
+                      dataKey="metrics.averageResponseTime"
+                      stroke={CHART_COLORS.primary}
                       fill={CHART_COLORS.primary}
                       fillOpacity={0.3}
                     />
@@ -454,9 +456,7 @@ export function AnalyticsDashboard({
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline">
-                        {formatPercentage(query.successRate)}
-                      </Badge>
+                      <Badge variant="outline">{formatPercentage(query.successRate)}</Badge>
                     </div>
                   </div>
                 ))}
@@ -481,32 +481,50 @@ export function AnalyticsDashboard({
                   <div>
                     <div className="flex justify-between text-sm">
                       <span>Processamento NLP</span>
-                      <span>{formatDuration(metrics?.performanceBreakdown.nlpProcessing || 0)}</span>
+                      <span>
+                        {formatDuration(metrics?.performanceBreakdown.nlpProcessing || 0)}
+                      </span>
                     </div>
-                    <Progress 
-                      value={(metrics?.performanceBreakdown.nlpProcessing || 0) / (metrics?.performanceBreakdown.total || 1) * 100} 
+                    <Progress
+                      value={
+                        ((metrics?.performanceBreakdown.nlpProcessing || 0) /
+                          (metrics?.performanceBreakdown.total || 1)) *
+                        100
+                      }
                       className="mt-1"
                     />
                   </div>
-                  
+
                   <div>
                     <div className="flex justify-between text-sm">
                       <span>Consulta ao Banco</span>
-                      <span>{formatDuration(metrics?.performanceBreakdown.databaseQuery || 0)}</span>
+                      <span>
+                        {formatDuration(metrics?.performanceBreakdown.databaseQuery || 0)}
+                      </span>
                     </div>
-                    <Progress 
-                      value={(metrics?.performanceBreakdown.databaseQuery || 0) / (metrics?.performanceBreakdown.total || 1) * 100} 
+                    <Progress
+                      value={
+                        ((metrics?.performanceBreakdown.databaseQuery || 0) /
+                          (metrics?.performanceBreakdown.total || 1)) *
+                        100
+                      }
                       className="mt-1"
                     />
                   </div>
-                  
+
                   <div>
                     <div className="flex justify-between text-sm">
                       <span>Processamento de Resultados</span>
-                      <span>{formatDuration(metrics?.performanceBreakdown.resultProcessing || 0)}</span>
+                      <span>
+                        {formatDuration(metrics?.performanceBreakdown.resultProcessing || 0)}
+                      </span>
                     </div>
-                    <Progress 
-                      value={(metrics?.performanceBreakdown.resultProcessing || 0) / (metrics?.performanceBreakdown.total || 1) * 100} 
+                    <Progress
+                      value={
+                        ((metrics?.performanceBreakdown.resultProcessing || 0) /
+                          (metrics?.performanceBreakdown.total || 1)) *
+                        100
+                      }
                       className="mt-1"
                     />
                   </div>
@@ -528,13 +546,13 @@ export function AnalyticsDashboard({
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="date" />
                     <YAxis domain={[0, 1]} tickFormatter={formatPercentage} />
-                    <Tooltip 
-                      formatter={(value: number) => [formatPercentage(value), 'Taxa de Sucesso']}
+                    <Tooltip
+                      formatter={(value: number) => [formatPercentage(value), "Taxa de Sucesso"]}
                     />
-                    <Line 
-                      type="monotone" 
-                      dataKey="metrics.successRate" 
-                      stroke={CHART_COLORS.secondary} 
+                    <Line
+                      type="monotone"
+                      dataKey="metrics.successRate"
+                      stroke={CHART_COLORS.secondary}
                       strokeWidth={2}
                     />
                   </LineChart>
@@ -614,10 +632,13 @@ export function AnalyticsDashboard({
                     </div>
                   ) : (
                     alerts.map((alert) => (
-                      <div key={alert.id} className={cn(
-                        "p-3 rounded-lg border",
-                        getAlertSeverityColor(alert.severity)
-                      )}>
+                      <div
+                        key={alert.id}
+                        className={cn(
+                          "p-3 rounded-lg border",
+                          getAlertSeverityColor(alert.severity),
+                        )}
+                      >
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
@@ -625,7 +646,7 @@ export function AnalyticsDashboard({
                                 {alert.severity.toUpperCase()}
                               </Badge>
                               <span className="text-xs text-muted-foreground">
-                                {new Date(alert.timestamp).toLocaleString('pt-BR')}
+                                {new Date(alert.timestamp).toLocaleString("pt-BR")}
                               </span>
                             </div>
                             <p className="text-sm font-medium">{alert.message}</p>
@@ -674,7 +695,7 @@ export function AnalyticsDashboard({
                           {formatPercentage(optimization.impact.potentialSpeedup)} melhoria
                         </Badge>
                       </div>
-                      
+
                       <div className="grid grid-cols-3 gap-4 text-sm">
                         <div>
                           <span className="text-muted-foreground">Consultas Afetadas:</span>
@@ -689,11 +710,11 @@ export function AnalyticsDashboard({
                         <div>
                           <span className="text-muted-foreground">Tipo:</span>
                           <div className="font-medium capitalize">
-                            {optimization.optimization.type.replace('_', ' ')}
+                            {optimization.optimization.type.replace("_", " ")}
                           </div>
                         </div>
                       </div>
-                      
+
                       {optimization.optimization.implementation && (
                         <div className="mt-3 p-2 bg-muted rounded text-xs font-mono">
                           {optimization.optimization.implementation}
@@ -722,12 +743,12 @@ export function AnalyticsWidget({ className }: { className?: string }) {
         const data = await searchAnalytics.getSearchMetrics({
           timeRange: {
             start: new Date(Date.now() - 24 * 60 * 60 * 1000), // Last 24 hours
-            end: new Date()
-          }
+            end: new Date(),
+          },
         });
         setMetrics(data);
       } catch (error) {
-        console.error('Error loading analytics widget:', error);
+        console.error("Error loading analytics widget:", error);
       } finally {
         setLoading(false);
       }

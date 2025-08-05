@@ -1,12 +1,12 @@
 // API endpoint for patient retention analytics by patient ID
 // Story 7.4: Advanced patient retention analytics with predictive modeling
 
-import { NextRequest, NextResponse } from 'next/server';
-import { RetentionService } from '../../../../lib/services/retention';
+import { NextRequest, NextResponse } from "next/server";
+import { RetentionService } from "../../../../lib/services/retention";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ patientId: string }> }
+  { params }: { params: Promise<{ patientId: string }> },
 ) {
   try {
     const { patientId } = await params;
@@ -15,9 +15,9 @@ export async function GET(
       return NextResponse.json(
         {
           success: false,
-          error: 'Patient ID is required'
+          error: "Patient ID is required",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -27,25 +27,25 @@ export async function GET(
       return NextResponse.json(
         {
           success: false,
-          error: 'Retention analytics not found for this patient'
+          error: "Retention analytics not found for this patient",
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     return NextResponse.json({
       success: true,
-      data: retentionAnalytics
+      data: retentionAnalytics,
     });
   } catch (error) {
-    console.error('Error in retention analytics by patient GET:', error);
+    console.error("Error in retention analytics by patient GET:", error);
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to fetch retention analytics',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: "Failed to fetch retention analytics",
+        details: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

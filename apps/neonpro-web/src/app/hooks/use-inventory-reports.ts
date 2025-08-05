@@ -1,5 +1,5 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useCallback, useMemo } from 'react';
+import type { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import type { useCallback, useMemo } from "react";
 import type {
   ReportType,
   ReportParameters,
@@ -12,19 +12,19 @@ import type {
   ExpiringItemsReportData,
   TransferReportData,
   LocationPerformanceData,
-} from '@/app/lib/types/inventory-reports';
+} from "@/app/lib/types/inventory-reports";
 
 // =============================================================================
 // QUERY KEYS
 // =============================================================================
 
 const QUERY_KEYS = {
-  reports: ['inventory-reports'] as const,
-  report: (params: ReportParameters) => [...QUERY_KEYS.reports, 'generate', params] as const,
-  definitions: ['inventory-reports', 'definitions'] as const,
-  definitionsWithFilter: (filters: { created_by?: string; is_active?: boolean }) => 
+  reports: ["inventory-reports"] as const,
+  report: (params: ReportParameters) => [...QUERY_KEYS.reports, "generate", params] as const,
+  definitions: ["inventory-reports", "definitions"] as const,
+  definitionsWithFilter: (filters: { created_by?: string; is_active?: boolean }) =>
     [...QUERY_KEYS.definitions, filters] as const,
-  dashboard: ['inventory-reports', 'dashboard'] as const,
+  dashboard: ["inventory-reports", "dashboard"] as const,
 } as const;
 
 // =============================================================================
@@ -32,19 +32,19 @@ const QUERY_KEYS = {
 // =============================================================================
 
 async function generateReport<T extends ReportType>(
-  parameters: ReportParameters
+  parameters: ReportParameters,
 ): Promise<ReportResult<T>> {
-  const response = await fetch('/api/inventory/reports/generate', {
-    method: 'POST',
+  const response = await fetch("/api/inventory/reports/generate", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(parameters),
   });
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.message || 'Failed to generate report');
+    throw new Error(error.message || "Failed to generate report");
   }
 
   const result = await response.json();
@@ -53,11 +53,11 @@ async function generateReport<T extends ReportType>(
 
 async function generateReportFromURL(
   type: ReportType,
-  filters: ReportFilters
+  filters: ReportFilters,
 ): Promise<ReportResult<any>> {
   const searchParams = new URLSearchParams();
-  searchParams.set('type', type);
-  
+  searchParams.set("type", type);
+
   Object.entries(filters).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
       searchParams.set(key, value.toString());
@@ -68,26 +68,27 @@ async function generateReportFromURL(
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.message || 'Failed to generate report');
+    throw new Error(error.message || "Failed to generate report");
   }
 
   const result = await response.json();
   return result.report;
 }
 
-async function fetchReportDefinitions(
-  filters?: { created_by?: string; is_active?: boolean }
-): Promise<ReportDefinition[]> {
+async function fetchReportDefinitions(filters?: {
+  created_by?: string;
+  is_active?: boolean;
+}): Promise<ReportDefinition[]> {
   const searchParams = new URLSearchParams();
-  
-  if (filters?.created_by) searchParams.set('created_by', filters.created_by);
-  if (filters?.is_active !== undefined) searchParams.set('is_active', filters.is_active.toString());
+
+  if (filters?.created_by) searchParams.set("created_by", filters.created_by);
+  if (filters?.is_active !== undefined) searchParams.set("is_active", filters.is_active.toString());
 
   const response = await fetch(`/api/inventory/reports/definitions?${searchParams.toString()}`);
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.message || 'Failed to fetch report definitions');
+    throw new Error(error.message || "Failed to fetch report definitions");
   }
 
   const result = await response.json();
@@ -95,19 +96,19 @@ async function fetchReportDefinitions(
 }
 
 async function createReportDefinition(
-  definition: Omit<ReportDefinition, 'id' | 'created_at' | 'updated_at' | 'created_by'>
+  definition: Omit<ReportDefinition, "id" | "created_at" | "updated_at" | "created_by">,
 ): Promise<ReportDefinition> {
-  const response = await fetch('/api/inventory/reports/definitions', {
-    method: 'POST',
+  const response = await fetch("/api/inventory/reports/definitions", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(definition),
   });
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.message || 'Failed to create report definition');
+    throw new Error(error.message || "Failed to create report definition");
   }
 
   const result = await response.json();
@@ -115,11 +116,11 @@ async function createReportDefinition(
 }
 
 async function fetchDashboardStats(): Promise<ReportDashboardStats> {
-  const response = await fetch('/api/inventory/reports/dashboard');
+  const response = await fetch("/api/inventory/reports/dashboard");
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.message || 'Failed to fetch dashboard stats');
+    throw new Error(error.message || "Failed to fetch dashboard stats");
   }
 
   const result = await response.json();
@@ -163,95 +164,80 @@ export function useInventoryReports() {
 // SPECIFIC REPORT TYPE HOOKS
 // =============================================================================
 
-export function useStockMovementReport(
-  filters: ReportFilters,
-  options?: { enabled?: boolean }
-) {
+export function useStockMovementReport(filters: ReportFilters, options?: { enabled?: boolean }) {
   const parameters: ReportParameters = {
-    type: 'stock_movement',
+    type: "stock_movement",
     filters,
-    format: 'json',
+    format: "json",
   };
 
   return useQuery({
     queryKey: QUERY_KEYS.report(parameters),
-    queryFn: () => generateReport<'stock_movement'>(parameters),
+    queryFn: () => generateReport<"stock_movement">(parameters),
     enabled: options?.enabled !== false,
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: false,
   });
 }
 
-export function useStockValuationReport(
-  filters: ReportFilters,
-  options?: { enabled?: boolean }
-) {
+export function useStockValuationReport(filters: ReportFilters, options?: { enabled?: boolean }) {
   const parameters: ReportParameters = {
-    type: 'stock_valuation',
+    type: "stock_valuation",
     filters,
-    format: 'json',
+    format: "json",
   };
 
   return useQuery({
     queryKey: QUERY_KEYS.report(parameters),
-    queryFn: () => generateReport<'stock_valuation'>(parameters),
+    queryFn: () => generateReport<"stock_valuation">(parameters),
     enabled: options?.enabled !== false,
     staleTime: 1000 * 60 * 10, // 10 minutes (valuation changes less frequently)
     refetchOnWindowFocus: false,
   });
 }
 
-export function useLowStockReport(
-  filters: ReportFilters,
-  options?: { enabled?: boolean }
-) {
+export function useLowStockReport(filters: ReportFilters, options?: { enabled?: boolean }) {
   const parameters: ReportParameters = {
-    type: 'low_stock',
+    type: "low_stock",
     filters,
-    format: 'json',
+    format: "json",
   };
 
   return useQuery({
     queryKey: QUERY_KEYS.report(parameters),
-    queryFn: () => generateReport<'low_stock'>(parameters),
+    queryFn: () => generateReport<"low_stock">(parameters),
     enabled: options?.enabled !== false,
     staleTime: 1000 * 60 * 2, // 2 minutes (low stock is critical)
     refetchOnWindowFocus: true,
   });
 }
 
-export function useExpiringItemsReport(
-  filters: ReportFilters,
-  options?: { enabled?: boolean }
-) {
+export function useExpiringItemsReport(filters: ReportFilters, options?: { enabled?: boolean }) {
   const parameters: ReportParameters = {
-    type: 'expiring_items',
+    type: "expiring_items",
     filters,
-    format: 'json',
+    format: "json",
   };
 
   return useQuery({
     queryKey: QUERY_KEYS.report(parameters),
-    queryFn: () => generateReport<'expiring_items'>(parameters),
+    queryFn: () => generateReport<"expiring_items">(parameters),
     enabled: options?.enabled !== false,
     staleTime: 1000 * 60 * 60, // 1 hour (expiration dates don't change frequently)
     refetchOnWindowFocus: false,
   });
 }
 
-export function useTransferReport(
-  filters: ReportFilters,
-  options?: { enabled?: boolean }
-) {
+export function useTransferReport(filters: ReportFilters, options?: { enabled?: boolean }) {
   const parameters: ReportParameters = {
-    type: 'transfers',
+    type: "transfers",
     filters,
-    format: 'json',
+    format: "json",
   };
 
   return useQuery({
     queryKey: QUERY_KEYS.report(parameters),
-    queryFn: () => generateReport<'transfers'>(parameters),
+    queryFn: () => generateReport<"transfers">(parameters),
     enabled: options?.enabled !== false,
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: false,
@@ -260,17 +246,17 @@ export function useTransferReport(
 
 export function useLocationPerformanceReport(
   filters: ReportFilters,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   const parameters: ReportParameters = {
-    type: 'location_performance',
+    type: "location_performance",
     filters,
-    format: 'json',
+    format: "json",
   };
 
   return useQuery({
     queryKey: QUERY_KEYS.report(parameters),
-    queryFn: () => generateReport<'location_performance'>(parameters),
+    queryFn: () => generateReport<"location_performance">(parameters),
     enabled: options?.enabled !== false,
     staleTime: 1000 * 60 * 15, // 15 minutes (performance metrics change slowly)
     refetchOnWindowFocus: false,
@@ -281,9 +267,7 @@ export function useLocationPerformanceReport(
 // REPORT DEFINITIONS HOOK
 // =============================================================================
 
-export function useReportDefinitions(
-  filters?: { created_by?: string; is_active?: boolean }
-) {
+export function useReportDefinitions(filters?: { created_by?: string; is_active?: boolean }) {
   return useQuery({
     queryKey: filters ? QUERY_KEYS.definitionsWithFilter(filters) : QUERY_KEYS.definitions,
     queryFn: () => fetchReportDefinitions(filters),
@@ -311,38 +295,47 @@ export function useReportsDashboard() {
 // =============================================================================
 
 export function useReportFilters() {
-  const buildDateRangeFilter = useCallback((days: number): Pick<ReportFilters, 'start_date' | 'end_date'> => {
-    const endDate = new Date();
-    const startDate = new Date(endDate);
-    startDate.setDate(startDate.getDate() - days);
+  const buildDateRangeFilter = useCallback(
+    (days: number): Pick<ReportFilters, "start_date" | "end_date"> => {
+      const endDate = new Date();
+      const startDate = new Date(endDate);
+      startDate.setDate(startDate.getDate() - days);
 
-    return {
-      start_date: startDate.toISOString(),
-      end_date: endDate.toISOString(),
-    };
-  }, []);
+      return {
+        start_date: startDate.toISOString(),
+        end_date: endDate.toISOString(),
+      };
+    },
+    [],
+  );
 
-  const buildMonthFilter = useCallback((monthsBack: number = 0): Pick<ReportFilters, 'start_date' | 'end_date'> => {
-    const endDate = new Date();
-    const startDate = new Date(endDate.getFullYear(), endDate.getMonth() - monthsBack, 1);
-    const endOfMonth = new Date(endDate.getFullYear(), endDate.getMonth() - monthsBack + 1, 0);
+  const buildMonthFilter = useCallback(
+    (monthsBack: number = 0): Pick<ReportFilters, "start_date" | "end_date"> => {
+      const endDate = new Date();
+      const startDate = new Date(endDate.getFullYear(), endDate.getMonth() - monthsBack, 1);
+      const endOfMonth = new Date(endDate.getFullYear(), endDate.getMonth() - monthsBack + 1, 0);
 
-    return {
-      start_date: startDate.toISOString(),
-      end_date: endOfMonth.toISOString(),
-    };
-  }, []);
+      return {
+        start_date: startDate.toISOString(),
+        end_date: endOfMonth.toISOString(),
+      };
+    },
+    [],
+  );
 
-  const buildYearFilter = useCallback((yearsBack: number = 0): Pick<ReportFilters, 'start_date' | 'end_date'> => {
-    const year = new Date().getFullYear() - yearsBack;
-    const startDate = new Date(year, 0, 1);
-    const endDate = new Date(year, 11, 31);
+  const buildYearFilter = useCallback(
+    (yearsBack: number = 0): Pick<ReportFilters, "start_date" | "end_date"> => {
+      const year = new Date().getFullYear() - yearsBack;
+      const startDate = new Date(year, 0, 1);
+      const endDate = new Date(year, 11, 31);
 
-    return {
-      start_date: startDate.toISOString(),
-      end_date: endDate.toISOString(),
-    };
-  }, []);
+      return {
+        start_date: startDate.toISOString(),
+        end_date: endDate.toISOString(),
+      };
+    },
+    [],
+  );
 
   return {
     buildDateRangeFilter,
@@ -352,37 +345,36 @@ export function useReportFilters() {
 }
 
 export function useReportExport() {
-  const exportToCSV = useCallback(async (
-    type: ReportType,
-    filters: ReportFilters,
-    filename?: string
-  ) => {
-    const searchParams = new URLSearchParams();
-    searchParams.set('type', type);
-    searchParams.set('format', 'csv');
-    
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        searchParams.set(key, value.toString());
+  const exportToCSV = useCallback(
+    async (type: ReportType, filters: ReportFilters, filename?: string) => {
+      const searchParams = new URLSearchParams();
+      searchParams.set("type", type);
+      searchParams.set("format", "csv");
+
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          searchParams.set(key, value.toString());
+        }
+      });
+
+      const response = await fetch(`/api/inventory/reports/generate?${searchParams.toString()}`);
+
+      if (!response.ok) {
+        throw new Error("Failed to export report");
       }
-    });
 
-    const response = await fetch(`/api/inventory/reports/generate?${searchParams.toString()}`);
-    
-    if (!response.ok) {
-      throw new Error('Failed to export report');
-    }
-
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename || `${type}_report_${Date.now()}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
-  }, []);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename || `${type}_report_${Date.now()}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    },
+    [],
+  );
 
   return { exportToCSV };
 }
@@ -415,7 +407,7 @@ export function useInventoryAnalytics(filters: ReportFilters) {
       },
       performance: {
         averageTurnover: locationPerformance.data?.summary.average_turnover_rate || 0,
-        bestLocation: locationPerformance.data?.summary.best_performing_location || '',
+        bestLocation: locationPerformance.data?.summary.best_performing_location || "",
         systemEfficiency: locationPerformance.data?.summary.average_performance_score || 0,
       },
       trends: {
@@ -434,7 +426,7 @@ export function useInventoryAnalytics(filters: ReportFilters) {
     locationPerformance.data,
   ]);
 
-  const isLoading = 
+  const isLoading =
     stockValuation.isLoading ||
     stockMovement.isLoading ||
     lowStock.isLoading ||
@@ -442,7 +434,7 @@ export function useInventoryAnalytics(filters: ReportFilters) {
     transfers.isLoading ||
     locationPerformance.isLoading;
 
-  const error = 
+  const error =
     stockValuation.error ||
     stockMovement.error ||
     lowStock.error ||

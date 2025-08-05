@@ -1,7 +1,7 @@
 /**
  * Webhook & Event System Integration
  * Story 7.3: Webhook & Event System Implementation
- * 
+ *
  * This module provides the main integration point for the webhook and event system:
  * - Unified system initialization and configuration
  * - Event publishing with automatic webhook delivery
@@ -11,8 +11,8 @@
  * - Health monitoring and diagnostics
  */
 
-import EventSystem from './event-system'
-import WebhookManager from './webhook-manager'
+import EventSystem from "./event-system";
+import WebhookManager from "./webhook-manager";
 import type {
   BaseEvent,
   WebhookEndpoint,
@@ -20,72 +20,72 @@ import type {
   EventAnalytics,
   WebhookSystemConfig,
   EventType,
-  EventPriority
-} from './types'
+  EventPriority,
+} from "./types";
 
 interface WebhookEventSystemConfig {
   supabase: {
-    url: string
-    key: string
-  }
+    url: string;
+    key: string;
+  };
   eventSystem: {
-    enableRealtime: boolean
-    enablePersistence: boolean
+    enableRealtime: boolean;
+    enablePersistence: boolean;
     queueConfig: {
-      maxSize: number
-      processingConcurrency: number
-      batchSize: number
-      processingInterval: number
-    }
-    retentionDays: number
-  }
+      maxSize: number;
+      processingConcurrency: number;
+      batchSize: number;
+      processingInterval: number;
+    };
+    retentionDays: number;
+  };
   webhookManager: {
-    defaultTimeout: number
-    maxRetries: number
-    retryDelayMs: number
-    maxConcurrentDeliveries: number
-    enableSignatureValidation: boolean
-    signatureSecret: string
+    defaultTimeout: number;
+    maxRetries: number;
+    retryDelayMs: number;
+    maxConcurrentDeliveries: number;
+    enableSignatureValidation: boolean;
+    signatureSecret: string;
     rateLimiting: {
-      enabled: boolean
-      requestsPerMinute: number
-      burstLimit: number
-    }
-  }
+      enabled: boolean;
+      requestsPerMinute: number;
+      burstLimit: number;
+    };
+  };
   monitoring: {
-    enableHealthChecks: boolean
-    healthCheckInterval: number
+    enableHealthChecks: boolean;
+    healthCheckInterval: number;
     alertThresholds: {
-      failureRate: number
-      responseTime: number
-      queueDepth: number
-    }
-  }
+      failureRate: number;
+      responseTime: number;
+      queueDepth: number;
+    };
+  };
 }
 
 export class WebhookEventSystem {
-  private eventSystem: EventSystem
-  private webhookManager: WebhookManager
-  private config: WebhookEventSystemConfig
-  private isInitialized: boolean = false
-  private healthCheckInterval?: NodeJS.Timeout
+  private eventSystem: EventSystem;
+  private webhookManager: WebhookManager;
+  private config: WebhookEventSystemConfig;
+  private isInitialized: boolean = false;
+  private healthCheckInterval?: NodeJS.Timeout;
   private systemMetrics: {
-    eventsPublished: number
-    webhooksDelivered: number
-    failedDeliveries: number
-    averageDeliveryTime: number
-    lastHealthCheck: Date
+    eventsPublished: number;
+    webhooksDelivered: number;
+    failedDeliveries: number;
+    averageDeliveryTime: number;
+    lastHealthCheck: Date;
   } = {
     eventsPublished: 0,
     webhooksDelivered: 0,
     failedDeliveries: 0,
     averageDeliveryTime: 0,
-    lastHealthCheck: new Date()
-  }
+    lastHealthCheck: new Date(),
+  };
 
   constructor(config: WebhookEventSystemConfig) {
-    this.config = config
-    
+    this.config = config;
+
     // Initialize event system
     this.eventSystem = new EventSystem({
       supabaseUrl: config.supabase.url,
@@ -93,9 +93,9 @@ export class WebhookEventSystem {
       enableRealtime: config.eventSystem.enableRealtime,
       enablePersistence: config.eventSystem.enablePersistence,
       queueConfig: config.eventSystem.queueConfig,
-      retentionDays: config.eventSystem.retentionDays
-    })
-    
+      retentionDays: config.eventSystem.retentionDays,
+    });
+
     // Initialize webhook manager
     this.webhookManager = new WebhookManager({
       supabaseUrl: config.supabase.url,
@@ -106,8 +106,8 @@ export class WebhookEventSystem {
       maxConcurrentDeliveries: config.webhookManager.maxConcurrentDeliveries,
       enableSignatureValidation: config.webhookManager.enableSignatureValidation,
       signatureSecret: config.webhookManager.signatureSecret,
-      rateLimiting: config.webhookManager.rateLimiting
-    })
+      rateLimiting: config.webhookManager.rateLimiting,
+    });
   }
 
   /**
@@ -115,92 +115,91 @@ export class WebhookEventSystem {
    */
   async initialize(): Promise<void> {
     try {
-      console.log('🚀 Initializing Webhook & Event System...')
-      
+      console.log("🚀 Initializing Webhook & Event System...");
+
       // Initialize event system
-      await this.eventSystem.initialize()
-      
+      await this.eventSystem.initialize();
+
       // Initialize webhook manager
-      await this.webhookManager.initialize()
-      
+      await this.webhookManager.initialize();
+
       // Setup event-to-webhook integration
-      this.setupEventWebhookIntegration()
-      
+      this.setupEventWebhookIntegration();
+
       // Start health monitoring
       if (this.config.monitoring.enableHealthChecks) {
-        this.startHealthMonitoring()
+        this.startHealthMonitoring();
       }
-      
-      this.isInitialized = true
-      console.log('✅ Webhook & Event System initialized successfully')
-      
+
+      this.isInitialized = true;
+      console.log("✅ Webhook & Event System initialized successfully");
     } catch (error) {
-      console.error('❌ Failed to initialize Webhook & Event System:', error)
-      throw new Error('System initialization failed')
+      console.error("❌ Failed to initialize Webhook & Event System:", error);
+      throw new Error("System initialization failed");
     }
   }
 
   /**
    * Publish an event with automatic webhook delivery
    */
-  async publishEvent(eventData: Omit<BaseEvent, 'id' | 'timestamp'>): Promise<{
-    eventId: string
-    deliveryIds: string[]
+  async publishEvent(eventData: Omit<BaseEvent, "id" | "timestamp">): Promise<{
+    eventId: string;
+    deliveryIds: string[];
   }> {
     try {
       if (!this.isInitialized) {
-        throw new Error('System not initialized')
+        throw new Error("System not initialized");
       }
 
-      console.log(`📤 Publishing event: ${eventData.type}`)
-      
+      console.log(`📤 Publishing event: ${eventData.type}`);
+
       // Publish event to event system
-      const eventId = await this.eventSystem.publishEvent(eventData)
-      
+      const eventId = await this.eventSystem.publishEvent(eventData);
+
       // Get the published event
-      const event = await this.eventSystem.getEventById(eventId)
+      const event = await this.eventSystem.getEventById(eventId);
       if (!event) {
-        throw new Error('Failed to retrieve published event')
+        throw new Error("Failed to retrieve published event");
       }
-      
+
       // Deliver to webhooks
-      const deliveryIds = await this.webhookManager.deliverEvent(event)
-      
+      const deliveryIds = await this.webhookManager.deliverEvent(event);
+
       // Update metrics
-      this.systemMetrics.eventsPublished++
-      
-      console.log(`✅ Event ${eventId} published with ${deliveryIds.length} webhook deliveries`)
-      
+      this.systemMetrics.eventsPublished++;
+
+      console.log(`✅ Event ${eventId} published with ${deliveryIds.length} webhook deliveries`);
+
       return {
         eventId,
-        deliveryIds
-      }
-      
+        deliveryIds,
+      };
     } catch (error) {
-      console.error('❌ Failed to publish event:', error)
-      throw new Error(`Event publishing failed: ${error.message}`)
+      console.error("❌ Failed to publish event:", error);
+      throw new Error(`Event publishing failed: ${error.message}`);
     }
   }
 
   /**
    * Register a new webhook endpoint
    */
-  async registerWebhook(webhookData: Omit<WebhookEndpoint, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+  async registerWebhook(
+    webhookData: Omit<WebhookEndpoint, "id" | "createdAt" | "updatedAt">,
+  ): Promise<string> {
     try {
       if (!this.isInitialized) {
-        throw new Error('System not initialized')
+        throw new Error("System not initialized");
       }
 
-      console.log(`🔗 Registering webhook: ${webhookData.name}`)
-      
-      const webhookId = await this.webhookManager.registerWebhook(webhookData)
-      
-      console.log(`✅ Webhook ${webhookId} registered successfully`)
-      return webhookId
-      
+      console.log(`🔗 Registering webhook: ${webhookData.name}`);
+
+      const webhookId = await this.webhookManager.registerWebhook(webhookData);
+
+      console.log(`✅ Webhook ${webhookId} registered successfully`);
+      return webhookId;
     } catch (error) {
-      console.error('❌ Failed to register webhook:', error)
-      throw new Error(`Webhook registration failed: ${error.message}`)
+      console.error("❌ Failed to register webhook:", error);
+      throw new Error(`Webhook registration failed: ${error.message}`);
     }
   }
 
@@ -210,15 +209,14 @@ export class WebhookEventSystem {
   async updateWebhook(webhookId: string, updates: Partial<WebhookEndpoint>): Promise<void> {
     try {
       if (!this.isInitialized) {
-        throw new Error('System not initialized')
+        throw new Error("System not initialized");
       }
 
-      await this.webhookManager.updateWebhook(webhookId, updates)
-      console.log(`✅ Webhook ${webhookId} updated successfully`)
-      
+      await this.webhookManager.updateWebhook(webhookId, updates);
+      console.log(`✅ Webhook ${webhookId} updated successfully`);
     } catch (error) {
-      console.error('❌ Failed to update webhook:', error)
-      throw new Error(`Webhook update failed: ${error.message}`)
+      console.error("❌ Failed to update webhook:", error);
+      throw new Error(`Webhook update failed: ${error.message}`);
     }
   }
 
@@ -228,15 +226,14 @@ export class WebhookEventSystem {
   async deleteWebhook(webhookId: string): Promise<void> {
     try {
       if (!this.isInitialized) {
-        throw new Error('System not initialized')
+        throw new Error("System not initialized");
       }
 
-      await this.webhookManager.deleteWebhook(webhookId)
-      console.log(`✅ Webhook ${webhookId} deleted successfully`)
-      
+      await this.webhookManager.deleteWebhook(webhookId);
+      console.log(`✅ Webhook ${webhookId} deleted successfully`);
     } catch (error) {
-      console.error('❌ Failed to delete webhook:', error)
-      throw new Error(`Webhook deletion failed: ${error.message}`)
+      console.error("❌ Failed to delete webhook:", error);
+      throw new Error(`Webhook deletion failed: ${error.message}`);
     }
   }
 
@@ -244,38 +241,39 @@ export class WebhookEventSystem {
    * Get webhook endpoint by ID
    */
   getWebhook(webhookId: string): WebhookEndpoint | null {
-    return this.webhookManager.getWebhook(webhookId)
+    return this.webhookManager.getWebhook(webhookId);
   }
 
   /**
    * Get all webhooks for a clinic
    */
   getWebhooksByClinic(clinicId: string): WebhookEndpoint[] {
-    return this.webhookManager.getWebhooksByClinic(clinicId)
+    return this.webhookManager.getWebhooksByClinic(clinicId);
   }
 
   /**
    * Test a webhook endpoint
    */
-  async testWebhook(webhookId: string): Promise<{ success: boolean; error?: string; responseTime?: number }> {
+  async testWebhook(
+    webhookId: string,
+  ): Promise<{ success: boolean; error?: string; responseTime?: number }> {
     try {
       if (!this.isInitialized) {
-        throw new Error('System not initialized')
+        throw new Error("System not initialized");
       }
 
-      const webhook = this.webhookManager.getWebhook(webhookId)
+      const webhook = this.webhookManager.getWebhook(webhookId);
       if (!webhook) {
-        throw new Error(`Webhook ${webhookId} not found`)
+        throw new Error(`Webhook ${webhookId} not found`);
       }
 
-      return await this.webhookManager.testWebhookEndpoint(webhook)
-      
+      return await this.webhookManager.testWebhookEndpoint(webhook);
     } catch (error) {
-      console.error('❌ Failed to test webhook:', error)
+      console.error("❌ Failed to test webhook:", error);
       return {
         success: false,
-        error: error.message
-      }
+        error: error.message,
+      };
     }
   }
 
@@ -283,23 +281,22 @@ export class WebhookEventSystem {
    * Get events by criteria
    */
   async getEvents(criteria?: {
-    eventTypes?: EventType[]
-    startDate?: Date
-    endDate?: Date
-    clinicId?: string
-    limit?: number
-    offset?: number
+    eventTypes?: EventType[];
+    startDate?: Date;
+    endDate?: Date;
+    clinicId?: string;
+    limit?: number;
+    offset?: number;
   }): Promise<BaseEvent[]> {
     try {
       if (!this.isInitialized) {
-        throw new Error('System not initialized')
+        throw new Error("System not initialized");
       }
 
-      return await this.eventSystem.getEvents(criteria)
-      
+      return await this.eventSystem.getEvents(criteria);
     } catch (error) {
-      console.error('❌ Failed to get events:', error)
-      return []
+      console.error("❌ Failed to get events:", error);
+      return [];
     }
   }
 
@@ -309,14 +306,13 @@ export class WebhookEventSystem {
   async getEventById(eventId: string): Promise<BaseEvent | null> {
     try {
       if (!this.isInitialized) {
-        throw new Error('System not initialized')
+        throw new Error("System not initialized");
       }
 
-      return await this.eventSystem.getEventById(eventId)
-      
+      return await this.eventSystem.getEventById(eventId);
     } catch (error) {
-      console.error('❌ Failed to get event:', error)
-      return null
+      console.error("❌ Failed to get event:", error);
+      return null;
     }
   }
 
@@ -326,43 +322,44 @@ export class WebhookEventSystem {
   async getDeliveryHistory(webhookId: string, limit: number = 50): Promise<EventDelivery[]> {
     try {
       if (!this.isInitialized) {
-        throw new Error('System not initialized')
+        throw new Error("System not initialized");
       }
 
-      return await this.webhookManager.getDeliveryHistory(webhookId, limit)
-      
+      return await this.webhookManager.getDeliveryHistory(webhookId, limit);
     } catch (error) {
-      console.error('❌ Failed to get delivery history:', error)
-      return []
+      console.error("❌ Failed to get delivery history:", error);
+      return [];
     }
   }
 
   /**
    * Get delivery statistics for a webhook
    */
-  async getDeliveryStats(webhookId: string, days: number = 30): Promise<{
-    totalDeliveries: number
-    successfulDeliveries: number
-    failedDeliveries: number
-    averageResponseTime: number
-    successRate: number
+  async getDeliveryStats(
+    webhookId: string,
+    days: number = 30,
+  ): Promise<{
+    totalDeliveries: number;
+    successfulDeliveries: number;
+    failedDeliveries: number;
+    averageResponseTime: number;
+    successRate: number;
   }> {
     try {
       if (!this.isInitialized) {
-        throw new Error('System not initialized')
+        throw new Error("System not initialized");
       }
 
-      return await this.webhookManager.getDeliveryStats(webhookId, days)
-      
+      return await this.webhookManager.getDeliveryStats(webhookId, days);
     } catch (error) {
-      console.error('❌ Failed to get delivery stats:', error)
+      console.error("❌ Failed to get delivery stats:", error);
       return {
         totalDeliveries: 0,
         successfulDeliveries: 0,
         failedDeliveries: 0,
         averageResponseTime: 0,
-        successRate: 0
-      }
+        successRate: 0,
+      };
     }
   }
 
@@ -370,21 +367,20 @@ export class WebhookEventSystem {
    * Get comprehensive event analytics
    */
   async getEventAnalytics(filters?: {
-    startDate?: Date
-    endDate?: Date
-    eventTypes?: EventType[]
-    clinicId?: string
+    startDate?: Date;
+    endDate?: Date;
+    eventTypes?: EventType[];
+    clinicId?: string;
   }): Promise<EventAnalytics> {
     try {
       if (!this.isInitialized) {
-        throw new Error('System not initialized')
+        throw new Error("System not initialized");
       }
 
-      return await this.eventSystem.getEventAnalytics(filters)
-      
+      return await this.eventSystem.getEventAnalytics(filters);
     } catch (error) {
-      console.error('❌ Failed to get event analytics:', error)
-      throw new Error(`Analytics generation failed: ${error.message}`)
+      console.error("❌ Failed to get event analytics:", error);
+      throw new Error(`Analytics generation failed: ${error.message}`);
     }
   }
 
@@ -392,69 +388,71 @@ export class WebhookEventSystem {
    * Get system health status
    */
   async getSystemHealth(): Promise<{
-    status: 'healthy' | 'degraded' | 'unhealthy'
+    status: "healthy" | "degraded" | "unhealthy";
     eventSystem: {
-      status: 'healthy' | 'unhealthy'
-      queueDepth: number
-      processingRate: number
-    }
+      status: "healthy" | "unhealthy";
+      queueDepth: number;
+      processingRate: number;
+    };
     webhookSystem: {
-      status: 'healthy' | 'unhealthy'
-      activeWebhooks: number
-      failureRate: number
-      averageResponseTime: number
-    }
-    metrics: typeof this.systemMetrics
-    lastCheck: Date
+      status: "healthy" | "unhealthy";
+      activeWebhooks: number;
+      failureRate: number;
+      averageResponseTime: number;
+    };
+    metrics: typeof this.systemMetrics;
+    lastCheck: Date;
   }> {
     try {
       if (!this.isInitialized) {
-        throw new Error('System not initialized')
+        throw new Error("System not initialized");
       }
 
       // Get event system health
-      const eventSystemHealth = await this.checkEventSystemHealth()
-      
+      const eventSystemHealth = await this.checkEventSystemHealth();
+
       // Get webhook system health
-      const webhookSystemHealth = await this.checkWebhookSystemHealth()
-      
+      const webhookSystemHealth = await this.checkWebhookSystemHealth();
+
       // Determine overall status
-      let overallStatus: 'healthy' | 'degraded' | 'unhealthy' = 'healthy'
-      
-      if (eventSystemHealth.status === 'unhealthy' || webhookSystemHealth.status === 'unhealthy') {
-        overallStatus = 'unhealthy'
-      } else if (webhookSystemHealth.failureRate > this.config.monitoring.alertThresholds.failureRate ||
-                 webhookSystemHealth.averageResponseTime > this.config.monitoring.alertThresholds.responseTime ||
-                 eventSystemHealth.queueDepth > this.config.monitoring.alertThresholds.queueDepth) {
-        overallStatus = 'degraded'
+      let overallStatus: "healthy" | "degraded" | "unhealthy" = "healthy";
+
+      if (eventSystemHealth.status === "unhealthy" || webhookSystemHealth.status === "unhealthy") {
+        overallStatus = "unhealthy";
+      } else if (
+        webhookSystemHealth.failureRate > this.config.monitoring.alertThresholds.failureRate ||
+        webhookSystemHealth.averageResponseTime >
+          this.config.monitoring.alertThresholds.responseTime ||
+        eventSystemHealth.queueDepth > this.config.monitoring.alertThresholds.queueDepth
+      ) {
+        overallStatus = "degraded";
       }
-      
+
       return {
         status: overallStatus,
         eventSystem: eventSystemHealth,
         webhookSystem: webhookSystemHealth,
         metrics: this.systemMetrics,
-        lastCheck: new Date()
-      }
-      
+        lastCheck: new Date(),
+      };
     } catch (error) {
-      console.error('❌ Failed to get system health:', error)
+      console.error("❌ Failed to get system health:", error);
       return {
-        status: 'unhealthy',
+        status: "unhealthy",
         eventSystem: {
-          status: 'unhealthy',
+          status: "unhealthy",
           queueDepth: 0,
-          processingRate: 0
+          processingRate: 0,
         },
         webhookSystem: {
-          status: 'unhealthy',
+          status: "unhealthy",
           activeWebhooks: 0,
           failureRate: 100,
-          averageResponseTime: 0
+          averageResponseTime: 0,
         },
         metrics: this.systemMetrics,
-        lastCheck: new Date()
-      }
+        lastCheck: new Date(),
+      };
     }
   }
 
@@ -462,32 +460,33 @@ export class WebhookEventSystem {
    * Clean up old events and delivery records
    */
   async cleanup(): Promise<{
-    eventsDeleted: number
-    deliveriesDeleted: number
+    eventsDeleted: number;
+    deliveriesDeleted: number;
   }> {
     try {
       if (!this.isInitialized) {
-        throw new Error('System not initialized')
+        throw new Error("System not initialized");
       }
 
-      console.log('🧹 Starting system cleanup...')
-      
+      console.log("🧹 Starting system cleanup...");
+
       // Clean up old events
-      const eventsDeleted = await this.eventSystem.cleanupOldEvents()
-      
+      const eventsDeleted = await this.eventSystem.cleanupOldEvents();
+
       // Clean up old delivery records (placeholder - would be implemented in webhook manager)
-      const deliveriesDeleted = 0 // await this.webhookManager.cleanupOldDeliveries()
-      
-      console.log(`✅ Cleanup completed: ${eventsDeleted} events, ${deliveriesDeleted} deliveries deleted`)
-      
+      const deliveriesDeleted = 0; // await this.webhookManager.cleanupOldDeliveries()
+
+      console.log(
+        `✅ Cleanup completed: ${eventsDeleted} events, ${deliveriesDeleted} deliveries deleted`,
+      );
+
       return {
         eventsDeleted,
-        deliveriesDeleted
-      }
-      
+        deliveriesDeleted,
+      };
     } catch (error) {
-      console.error('❌ Failed to cleanup system:', error)
-      throw new Error(`System cleanup failed: ${error.message}`)
+      console.error("❌ Failed to cleanup system:", error);
+      throw new Error(`System cleanup failed: ${error.message}`);
     }
   }
 
@@ -496,25 +495,24 @@ export class WebhookEventSystem {
    */
   async stop(): Promise<void> {
     try {
-      console.log('🛑 Stopping Webhook & Event System...')
-      
+      console.log("🛑 Stopping Webhook & Event System...");
+
       // Stop health monitoring
       if (this.healthCheckInterval) {
-        clearInterval(this.healthCheckInterval)
-        this.healthCheckInterval = undefined
+        clearInterval(this.healthCheckInterval);
+        this.healthCheckInterval = undefined;
       }
-      
+
       // Stop webhook manager
-      await this.webhookManager.stop()
-      
+      await this.webhookManager.stop();
+
       // Stop event system
-      await this.eventSystem.stop()
-      
-      this.isInitialized = false
-      console.log('✅ Webhook & Event System stopped successfully')
-      
+      await this.eventSystem.stop();
+
+      this.isInitialized = false;
+      console.log("✅ Webhook & Event System stopped successfully");
     } catch (error) {
-      console.error('❌ Failed to stop system:', error)
+      console.error("❌ Failed to stop system:", error);
     }
   }
 
@@ -523,86 +521,83 @@ export class WebhookEventSystem {
   private setupEventWebhookIntegration(): void {
     // This would set up automatic webhook delivery when events are published
     // For now, this is handled in the publishEvent method
-    console.log('✅ Event-Webhook integration configured')
+    console.log("✅ Event-Webhook integration configured");
   }
 
   private startHealthMonitoring(): void {
     this.healthCheckInterval = setInterval(
       () => this.performHealthCheck(),
-      this.config.monitoring.healthCheckInterval
-    )
-    
-    console.log('✅ Health monitoring started')
+      this.config.monitoring.healthCheckInterval,
+    );
+
+    console.log("✅ Health monitoring started");
   }
 
   private async performHealthCheck(): Promise<void> {
     try {
-      const health = await this.getSystemHealth()
-      this.systemMetrics.lastHealthCheck = health.lastCheck
-      
+      const health = await this.getSystemHealth();
+      this.systemMetrics.lastHealthCheck = health.lastCheck;
+
       // Log health status
-      if (health.status === 'unhealthy') {
-        console.error('🚨 System health check: UNHEALTHY')
-      } else if (health.status === 'degraded') {
-        console.warn('⚠️ System health check: DEGRADED')
+      if (health.status === "unhealthy") {
+        console.error("🚨 System health check: UNHEALTHY");
+      } else if (health.status === "degraded") {
+        console.warn("⚠️ System health check: DEGRADED");
       } else {
-        console.log('✅ System health check: HEALTHY')
+        console.log("✅ System health check: HEALTHY");
       }
-      
+
       // Here you could implement alerting logic
       // e.g., send notifications when system is unhealthy
-      
     } catch (error) {
-      console.error('❌ Health check failed:', error)
+      console.error("❌ Health check failed:", error);
     }
   }
 
   private async checkEventSystemHealth(): Promise<{
-    status: 'healthy' | 'unhealthy'
-    queueDepth: number
-    processingRate: number
+    status: "healthy" | "unhealthy";
+    queueDepth: number;
+    processingRate: number;
   }> {
     try {
       // This would check the event system's internal health
       // For now, return basic metrics
       return {
-        status: 'healthy',
+        status: "healthy",
         queueDepth: 0, // Would get from event system
-        processingRate: 0 // Would calculate from metrics
-      }
-      
+        processingRate: 0, // Would calculate from metrics
+      };
     } catch (error) {
       return {
-        status: 'unhealthy',
+        status: "unhealthy",
         queueDepth: 0,
-        processingRate: 0
-      }
+        processingRate: 0,
+      };
     }
   }
 
   private async checkWebhookSystemHealth(): Promise<{
-    status: 'healthy' | 'unhealthy'
-    activeWebhooks: number
-    failureRate: number
-    averageResponseTime: number
+    status: "healthy" | "unhealthy";
+    activeWebhooks: number;
+    failureRate: number;
+    averageResponseTime: number;
   }> {
     try {
       // This would check webhook system health
       // For now, return basic metrics
       return {
-        status: 'healthy',
-        activeWebhooks: this.webhookManager.getWebhooksByClinic('').length, // Would get all active webhooks
+        status: "healthy",
+        activeWebhooks: this.webhookManager.getWebhooksByClinic("").length, // Would get all active webhooks
         failureRate: 0, // Would calculate from recent deliveries
-        averageResponseTime: this.systemMetrics.averageDeliveryTime
-      }
-      
+        averageResponseTime: this.systemMetrics.averageDeliveryTime,
+      };
     } catch (error) {
       return {
-        status: 'unhealthy',
+        status: "unhealthy",
         activeWebhooks: 0,
         failureRate: 100,
-        averageResponseTime: 0
-      }
+        averageResponseTime: 0,
+      };
     }
   }
 }
@@ -615,22 +610,25 @@ export type {
   EventAnalytics,
   WebhookSystemConfig,
   EventType,
-  EventPriority
-}
+  EventPriority,
+};
 
 // Export individual components
-export { EventSystem, WebhookManager }
+export { EventSystem, WebhookManager };
 
 // Export main system as default
-export default WebhookEventSystem
+export default WebhookEventSystem;
 
 // Convenience function to create a configured system
 export function createWebhookEventSystem(config: WebhookEventSystemConfig): WebhookEventSystem {
-  return new WebhookEventSystem(config)
+  return new WebhookEventSystem(config);
 }
 
 // Default configuration factory
-export function createDefaultConfig(supabaseConfig: { url: string; key: string }): WebhookEventSystemConfig {
+export function createDefaultConfig(supabaseConfig: {
+  url: string;
+  key: string;
+}): WebhookEventSystemConfig {
   return {
     supabase: supabaseConfig,
     eventSystem: {
@@ -640,9 +638,9 @@ export function createDefaultConfig(supabaseConfig: { url: string; key: string }
         maxSize: 10000,
         processingConcurrency: 10,
         batchSize: 50,
-        processingInterval: 1000
+        processingInterval: 1000,
       },
-      retentionDays: 90
+      retentionDays: 90,
     },
     webhookManager: {
       defaultTimeout: 30000,
@@ -650,12 +648,12 @@ export function createDefaultConfig(supabaseConfig: { url: string; key: string }
       retryDelayMs: 5000,
       maxConcurrentDeliveries: 20,
       enableSignatureValidation: true,
-      signatureSecret: process.env.WEBHOOK_SECRET || 'default-secret',
+      signatureSecret: process.env.WEBHOOK_SECRET || "default-secret",
       rateLimiting: {
         enabled: true,
         requestsPerMinute: 60,
-        burstLimit: 10
-      }
+        burstLimit: 10,
+      },
     },
     monitoring: {
       enableHealthChecks: true,
@@ -663,8 +661,8 @@ export function createDefaultConfig(supabaseConfig: { url: string; key: string }
       alertThresholds: {
         failureRate: 10, // 10%
         responseTime: 5000, // 5 seconds
-        queueDepth: 1000 // 1000 events
-      }
-    }
-  }
+        queueDepth: 1000, // 1000 events
+      },
+    },
+  };
 }

@@ -15,9 +15,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseServiceKey) {
-  console.error(
-    "❌ Variáveis SUPABASE_URL ou SUPABASE_SERVICE_ROLE_KEY não configuradas"
-  );
+  console.error("❌ Variáveis SUPABASE_URL ou SUPABASE_SERVICE_ROLE_KEY não configuradas");
   process.exit(1);
 }
 
@@ -54,10 +52,7 @@ async function runTest(name, testFn) {
 
 // 1. Teste de Conexão
 async function testConnection() {
-  const { data, error } = await supabase
-    .from("auth.users")
-    .select("count")
-    .limit(1);
+  const { data, error } = await supabase.from("auth.users").select("count").limit(1);
 
   if (error && !error.message.includes("permission denied")) {
     throw new Error(`Falha na conexão: ${error.message}`);
@@ -69,10 +64,7 @@ async function testConnection() {
 // 2. Teste de Tabela user_subscriptions
 async function testUserSubscriptionsTable() {
   // Verificar se tabela existe tentando fazer uma query
-  const { error } = await supabase
-    .from("user_subscriptions")
-    .select("id")
-    .limit(1);
+  const { error } = await supabase.from("user_subscriptions").select("id").limit(1);
 
   if (error) {
     throw new Error(`Tabela user_subscriptions: ${error.message}`);
@@ -121,10 +113,7 @@ async function testBillingEventsTable() {
 
 // 5. Teste de View active_subscriptions
 async function testActiveSubscriptionsView() {
-  const { error } = await supabase
-    .from("active_subscriptions")
-    .select("*")
-    .limit(1);
+  const { error } = await supabase.from("active_subscriptions").select("*").limit(1);
 
   if (error) {
     throw new Error(`View active_subscriptions: ${error.message}`);
@@ -135,10 +124,7 @@ async function testActiveSubscriptionsView() {
 
 // 6. Teste de View user_subscriptions_view
 async function testUserSubscriptionsView() {
-  const { error } = await supabase
-    .from("user_subscriptions_view")
-    .select("*")
-    .limit(1);
+  const { error } = await supabase.from("user_subscriptions_view").select("*").limit(1);
 
   if (error) {
     throw new Error(`View user_subscriptions_view: ${error.message}`);
@@ -150,10 +136,7 @@ async function testUserSubscriptionsView() {
 // 7. Teste de RLS Policies
 async function testRLSPolicies() {
   // Teste básico criando um cliente sem service role
-  const publicSupabase = createClient(
-    supabaseUrl,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  );
+  const publicSupabase = createClient(supabaseUrl, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 
   // Tentar acessar subscription_plans (deve funcionar - política pública)
   const { data, error } = await publicSupabase
@@ -176,10 +159,7 @@ async function testTriggersAndFunctions() {
     function_name: "update_updated_at_column",
   });
 
-  if (
-    error &&
-    !error.message.includes('function "get_function_exists" does not exist')
-  ) {
+  if (error && !error.message.includes('function "get_function_exists" does not exist')) {
     throw new Error(`Erro ao verificar functions: ${error.message}`);
   }
 
@@ -191,9 +171,7 @@ async function testDataIntegrity() {
   // Verificar se os planos têm todos os campos necessários
   const { data, error } = await supabase
     .from("subscription_plans")
-    .select(
-      "id, name, price_cents, stripe_price_id, features, max_patients, is_active"
-    );
+    .select("id, name, price_cents, stripe_price_id, features, max_patients, is_active");
 
   if (error) {
     throw new Error(`Erro ao verificar integridade: ${error.message}`);
@@ -221,9 +199,7 @@ async function testCRUDOperations() {
       stripe_subscription_id: "sub_test_123",
       status: "active",
       current_period_start: new Date().toISOString(),
-      current_period_end: new Date(
-        Date.now() + 30 * 24 * 60 * 60 * 1000
-      ).toISOString(),
+      current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
     });
 
     // Não executar de verdade, apenas verificar se a query é válida

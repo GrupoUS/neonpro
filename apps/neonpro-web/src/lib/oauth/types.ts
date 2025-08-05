@@ -69,7 +69,13 @@ export interface TokenRefreshResponse {
   error?: string;
 }
 
-export type SocialMediaPlatform = 'instagram' | 'facebook' | 'whatsapp_business' | 'hubspot' | 'twitter' | 'linkedin';
+export type SocialMediaPlatform =
+  | "instagram"
+  | "facebook"
+  | "whatsapp_business"
+  | "hubspot"
+  | "twitter"
+  | "linkedin";
 
 export interface PlatformCredentials {
   platform: SocialMediaPlatform;

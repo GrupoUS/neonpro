@@ -1,95 +1,126 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Progress } from "@/components/ui/progress"
-import { Brain, Zap, Target, TrendingUp, User, Clock, DollarSign, Heart, AlertTriangle } from "lucide-react"
+import type { useState } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Progress } from "@/components/ui/progress";
+import type {
+  Brain,
+  Zap,
+  Target,
+  TrendingUp,
+  User,
+  Clock,
+  DollarSign,
+  Heart,
+  AlertTriangle,
+} from "lucide-react";
 
 interface PredictionResult {
-  treatment: string
-  confidence: number
-  reasoning: string
-  expectedResults: string
-  duration: string
-  cost: string
-  riskLevel: 'low' | 'medium' | 'high'
+  treatment: string;
+  confidence: number;
+  reasoning: string;
+  expectedResults: string;
+  duration: string;
+  cost: string;
+  riskLevel: "low" | "medium" | "high";
 }
 
 interface PatientProfile {
-  age: number
-  skinType: string
-  concerns: string[]
-  previousTreatments: string[]
-  budget: string
-  timeAvailable: string
+  age: number;
+  skinType: string;
+  concerns: string[];
+  previousTreatments: string[];
+  budget: string;
+  timeAvailable: string;
 }
 
 const mockPredictions: PredictionResult[] = [
   {
-    treatment: 'Harmonização Facial com Ácido Hialurônico',
+    treatment: "Harmonização Facial com Ácido Hialurônico",
     confidence: 94,
-    reasoning: 'Baseado na idade da paciente (32 anos) e preocupações com volume facial, este tratamento é altamente recomendado.',
-    expectedResults: 'Rejuvenescimento facial, melhora do contorno e hidratação profunda',
-    duration: '45-60 minutos',
-    cost: 'R$ 1.200 - R$ 2.000',
-    riskLevel: 'low'
+    reasoning:
+      "Baseado na idade da paciente (32 anos) e preocupações com volume facial, este tratamento é altamente recomendado.",
+    expectedResults: "Rejuvenescimento facial, melhora do contorno e hidratação profunda",
+    duration: "45-60 minutos",
+    cost: "R$ 1.200 - R$ 2.000",
+    riskLevel: "low",
   },
   {
-    treatment: 'Botox para Rugas de Expressão',
+    treatment: "Botox para Rugas de Expressão",
     confidence: 87,
-    reasoning: 'Paciente apresenta linhas de expressão moderadas na testa e região dos olhos.',
-    expectedResults: 'Redução significativa de rugas dinâmicas e prevenção de novas linhas',
-    duration: '20-30 minutos',
-    cost: 'R$ 800 - R$ 1.500',
-    riskLevel: 'low'
+    reasoning: "Paciente apresenta linhas de expressão moderadas na testa e região dos olhos.",
+    expectedResults: "Redução significativa de rugas dinâmicas e prevenção de novas linhas",
+    duration: "20-30 minutos",
+    cost: "R$ 800 - R$ 1.500",
+    riskLevel: "low",
   },
   {
-    treatment: 'Peeling Químico Médio',
+    treatment: "Peeling Químico Médio",
     confidence: 76,
-    reasoning: 'Indicado para melhora da textura da pele e manchas solares identificadas.',
-    expectedResults: 'Pele mais uniforme, redução de manchas e melhora da textura',
-    duration: '30-45 minutos',
-    cost: 'R$ 600 - R$ 1.200',
-    riskLevel: 'medium'
-  }
-]
+    reasoning: "Indicado para melhora da textura da pele e manchas solares identificadas.",
+    expectedResults: "Pele mais uniforme, redução de manchas e melhora da textura",
+    duration: "30-45 minutos",
+    cost: "R$ 600 - R$ 1.200",
+    riskLevel: "medium",
+  },
+];
 
 export default function TreatmentPredictionDashboard() {
-  const [patientData, setPatientData] = useState<Partial<PatientProfile>>({})
-  const [predictions, setPredictions] = useState<PredictionResult[]>([])
-  const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [patientData, setPatientData] = useState<Partial<PatientProfile>>({});
+  const [predictions, setPredictions] = useState<PredictionResult[]>([]);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const handleAnalyze = async () => {
-    setIsAnalyzing(true)
+    setIsAnalyzing(true);
     // Simular análise de IA
-    await new Promise(resolve => setTimeout(resolve, 3000))
-    setPredictions(mockPredictions)
-    setIsAnalyzing(false)
-  }
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    setPredictions(mockPredictions);
+    setIsAnalyzing(false);
+  };
 
   const getRiskColor = (risk: string) => {
     switch (risk) {
-      case 'low': return 'text-green-600 bg-green-100'
-      case 'medium': return 'text-yellow-600 bg-yellow-100'
-      case 'high': return 'text-red-600 bg-red-100'
-      default: return 'text-gray-600 bg-gray-100'
+      case "low":
+        return "text-green-600 bg-green-100";
+      case "medium":
+        return "text-yellow-600 bg-yellow-100";
+      case "high":
+        return "text-red-600 bg-red-100";
+      default:
+        return "text-gray-600 bg-gray-100";
     }
-  }
+  };
 
   const getRiskIcon = (risk: string) => {
     switch (risk) {
-      case 'low': return <Heart className="h-4 w-4" />
-      case 'medium': return <AlertTriangle className="h-4 w-4" />
-      case 'high': return <AlertTriangle className="h-4 w-4" />
-      default: return <AlertTriangle className="h-4 w-4" />
+      case "low":
+        return <Heart className="h-4 w-4" />;
+      case "medium":
+        return <AlertTriangle className="h-4 w-4" />;
+      case "high":
+        return <AlertTriangle className="h-4 w-4" />;
+      default:
+        return <AlertTriangle className="h-4 w-4" />;
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -134,18 +165,24 @@ export default function TreatmentPredictionDashboard() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="age">Idade</Label>
-                  <Input 
-                    id="age" 
-                    type="number" 
+                  <Input
+                    id="age"
+                    type="number"
                     placeholder="Ex: 32"
-                    value={patientData.age || ''}
-                    onChange={(e) => setPatientData(prev => ({ ...prev, age: parseInt(e.target.value) }))}
+                    value={patientData.age || ""}
+                    onChange={(e) =>
+                      setPatientData((prev) => ({ ...prev, age: parseInt(e.target.value) }))
+                    }
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="skinType">Tipo de Pele</Label>
-                  <Select onValueChange={(value) => setPatientData(prev => ({ ...prev, skinType: value }))}>
+                  <Select
+                    onValueChange={(value) =>
+                      setPatientData((prev) => ({ ...prev, skinType: value }))
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
@@ -161,7 +198,11 @@ export default function TreatmentPredictionDashboard() {
 
                 <div className="space-y-2">
                   <Label htmlFor="budget">Orçamento</Label>
-                  <Select onValueChange={(value) => setPatientData(prev => ({ ...prev, budget: value }))}>
+                  <Select
+                    onValueChange={(value) =>
+                      setPatientData((prev) => ({ ...prev, budget: value }))
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Faixa de investimento" />
                     </SelectTrigger>
@@ -177,34 +218,33 @@ export default function TreatmentPredictionDashboard() {
 
               <div className="space-y-2">
                 <Label htmlFor="concerns">Principais Preocupações</Label>
-                <Input 
-                  id="concerns" 
+                <Input
+                  id="concerns"
                   placeholder="Ex: rugas, flacidez, manchas, volume facial..."
-                  onChange={(e) => setPatientData(prev => ({ 
-                    ...prev, 
-                    concerns: e.target.value.split(',').map(c => c.trim()) 
-                  }))}
+                  onChange={(e) =>
+                    setPatientData((prev) => ({
+                      ...prev,
+                      concerns: e.target.value.split(",").map((c) => c.trim()),
+                    }))
+                  }
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="previous">Tratamentos Anteriores</Label>
-                <Input 
-                  id="previous" 
+                <Input
+                  id="previous"
                   placeholder="Ex: botox, preenchimento, peeling..."
-                  onChange={(e) => setPatientData(prev => ({ 
-                    ...prev, 
-                    previousTreatments: e.target.value.split(',').map(t => t.trim()) 
-                  }))}
+                  onChange={(e) =>
+                    setPatientData((prev) => ({
+                      ...prev,
+                      previousTreatments: e.target.value.split(",").map((t) => t.trim()),
+                    }))
+                  }
                 />
               </div>
 
-              <Button 
-                onClick={handleAnalyze} 
-                disabled={isAnalyzing}
-                className="w-full"
-                size="lg"
-              >
+              <Button onClick={handleAnalyze} disabled={isAnalyzing} className="w-full" size="lg">
                 {isAnalyzing ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
@@ -245,13 +285,17 @@ export default function TreatmentPredictionDashboard() {
                             <Target className="h-3 w-3" />
                             {prediction.confidence}% Confiança
                           </Badge>
-                          <Badge 
-                            variant="outline" 
+                          <Badge
+                            variant="outline"
                             className={`flex items-center gap-1 ${getRiskColor(prediction.riskLevel)}`}
                           >
                             {getRiskIcon(prediction.riskLevel)}
-                            Risco {prediction.riskLevel === 'low' ? 'Baixo' : 
-                                   prediction.riskLevel === 'medium' ? 'Médio' : 'Alto'}
+                            Risco{" "}
+                            {prediction.riskLevel === "low"
+                              ? "Baixo"
+                              : prediction.riskLevel === "medium"
+                                ? "Médio"
+                                : "Alto"}
                           </Badge>
                         </div>
                       </div>
@@ -293,7 +337,9 @@ export default function TreatmentPredictionDashboard() {
                         <Label className="font-medium">Confiança</Label>
                         <div className="mt-1">
                           <Progress value={prediction.confidence} className="h-2" />
-                          <p className="text-xs text-muted-foreground mt-1">{prediction.confidence}%</p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {prediction.confidence}%
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -386,5 +432,5 @@ export default function TreatmentPredictionDashboard() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }

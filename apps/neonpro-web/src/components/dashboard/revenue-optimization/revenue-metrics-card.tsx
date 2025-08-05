@@ -1,15 +1,21 @@
 /**
  * Revenue Metrics Card Component
- * 
+ *
  * Displays key revenue metrics and performance indicators
  */
 
-'use client';
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { TrendingUp, TrendingDown, DollarSign, Target, Users, BarChart3 } from 'lucide-react';
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Progress } from "@/components/ui/progress";
+import type { TrendingUp, TrendingDown, DollarSign, Target, Users, BarChart3 } from "lucide-react";
 
 interface RevenueMetricsCardProps {
   metrics: {
@@ -23,7 +29,8 @@ interface RevenueMetricsCardProps {
 }
 
 export function RevenueMetricsCard({ metrics }: RevenueMetricsCardProps) {
-  const growthPercentage = ((metrics.projectedRevenue - metrics.currentRevenue) / metrics.currentRevenue) * 100;
+  const growthPercentage =
+    ((metrics.projectedRevenue - metrics.currentRevenue) / metrics.currentRevenue) * 100;
   const isGrowthPositive = growthPercentage > 0;
 
   return (
@@ -36,11 +43,9 @@ export function RevenueMetricsCard({ metrics }: RevenueMetricsCardProps) {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
-            R$ {metrics.currentRevenue.toLocaleString('pt-BR')}
+            R$ {metrics.currentRevenue.toLocaleString("pt-BR")}
           </div>
-          <p className="text-xs text-muted-foreground">
-            Monthly recurring revenue
-          </p>
+          <p className="text-xs text-muted-foreground">Monthly recurring revenue</p>
         </CardContent>
       </Card>
 
@@ -52,7 +57,7 @@ export function RevenueMetricsCard({ metrics }: RevenueMetricsCardProps) {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-green-600">
-            R$ {metrics.projectedRevenue.toLocaleString('pt-BR')}
+            R$ {metrics.projectedRevenue.toLocaleString("pt-BR")}
           </div>
           <div className="flex items-center gap-1 text-xs">
             {isGrowthPositive ? (
@@ -60,8 +65,9 @@ export function RevenueMetricsCard({ metrics }: RevenueMetricsCardProps) {
             ) : (
               <TrendingDown className="h-3 w-3 text-red-500" />
             )}
-            <span className={isGrowthPositive ? 'text-green-600' : 'text-red-600'}>
-              {growthPercentage > 0 ? '+' : ''}{growthPercentage.toFixed(1)}%
+            <span className={isGrowthPositive ? "text-green-600" : "text-red-600"}>
+              {growthPercentage > 0 ? "+" : ""}
+              {growthPercentage.toFixed(1)}%
             </span>
           </div>
         </CardContent>
@@ -74,12 +80,8 @@ export function RevenueMetricsCard({ metrics }: RevenueMetricsCardProps) {
           <BarChart3 className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-blue-600">
-            {metrics.growthRate.toFixed(1)}%
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Month over month
-          </p>
+          <div className="text-2xl font-bold text-blue-600">{metrics.growthRate.toFixed(1)}%</div>
+          <p className="text-xs text-muted-foreground">Month over month</p>
         </CardContent>
       </Card>
 
@@ -91,9 +93,7 @@ export function RevenueMetricsCard({ metrics }: RevenueMetricsCardProps) {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{metrics.optimizationCount}</div>
-          <p className="text-xs text-muted-foreground">
-            Running initiatives
-          </p>
+          <p className="text-xs text-muted-foreground">Running initiatives</p>
         </CardContent>
       </Card>
 
@@ -121,9 +121,7 @@ export function RevenueMetricsCard({ metrics }: RevenueMetricsCardProps) {
           <div className="text-2xl font-bold text-purple-600">
             {(metrics.averageROI * 100).toFixed(1)}%
           </div>
-          <p className="text-xs text-muted-foreground">
-            Return on investment
-          </p>
+          <p className="text-xs text-muted-foreground">Return on investment</p>
         </CardContent>
       </Card>
     </div>

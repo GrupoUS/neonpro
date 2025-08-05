@@ -7,14 +7,16 @@ export interface DataDeletionRequest {
 }
 
 export class DataDeletionService {
-  static async scheduleDataDeletion(request: DataDeletionRequest): Promise<{ scheduledFor: Date; requestId: string }> {
+  static async scheduleDataDeletion(
+    request: DataDeletionRequest,
+  ): Promise<{ scheduledFor: Date; requestId: string }> {
     const retentionDays = request.retentionPeriod || 30;
     const scheduledFor = new Date();
     scheduledFor.setDate(scheduledFor.getDate() + retentionDays);
 
     return {
       requestId: Math.random().toString(36),
-      scheduledFor
+      scheduledFor,
     };
   }
 
@@ -26,6 +28,8 @@ export class DataDeletionService {
 }
 
 // Export function for compatibility
-export async function scheduleDataDeletion(request: DataDeletionRequest): Promise<{ scheduledFor: Date; requestId: string }> {
+export async function scheduleDataDeletion(
+  request: DataDeletionRequest,
+): Promise<{ scheduledFor: Date; requestId: string }> {
   return DataDeletionService.scheduleDataDeletion(request);
 }

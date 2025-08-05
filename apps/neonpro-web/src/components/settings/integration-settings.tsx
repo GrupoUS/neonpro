@@ -1,30 +1,44 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import type { useState, useEffect } from "react";
+import type { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { 
-  MessageSquare, 
-  Mail, 
-  Phone, 
-  Plug, 
-  CheckCircle2, 
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Switch } from "@/components/ui/switch";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type {
+  MessageSquare,
+  Mail,
+  Phone,
+  Plug,
+  CheckCircle2,
   XCircle,
   Save,
   Loader2,
   TestTube,
-  ExternalLink
+  ExternalLink,
 } from "lucide-react";
-import { toast } from "sonner";
+import type { toast } from "sonner";
 
 const integrationSettingsSchema = z.object({
   // WhatsApp Business
@@ -38,7 +52,7 @@ const integrationSettingsSchema = z.object({
     enableConfirmations: z.boolean(),
     enableStatusUpdates: z.boolean(),
   }),
-  
+
   // Email
   email: z.object({
     enabled: z.boolean(),
@@ -54,7 +68,7 @@ const integrationSettingsSchema = z.object({
     enableNewsletters: z.boolean(),
     enableTransactional: z.boolean(),
   }),
-  
+
   // SMS
   sms: z.object({
     enabled: z.boolean(),
@@ -66,7 +80,7 @@ const integrationSettingsSchema = z.object({
     enableConfirmations: z.boolean(),
     enableEmergencyAlerts: z.boolean(),
   }),
-  
+
   // Calendar Integration
   calendar: z.object({
     googleCalendar: z.object({
@@ -82,7 +96,7 @@ const integrationSettingsSchema = z.object({
       tenantId: z.string().optional(),
     }),
   }),
-  
+
   // Payment Gateways
   paymentGateways: z.object({
     pixApiKey: z.string().optional(),
@@ -100,7 +114,7 @@ export default function IntegrationSettings() {
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [activeTab, setActiveTab] = useState("whatsapp");
   const [connectionStatus, setConnectionStatus] = useState<Record<string, boolean>>({});
-  
+
   const form = useForm<IntegrationSettingsFormData>({
     resolver: zodResolver(integrationSettingsSchema),
     defaultValues: {
@@ -190,7 +204,7 @@ export default function IntegrationSettings() {
       //   headers: { "Content-Type": "application/json" },
       //   body: JSON.stringify(data),
       // });
-      
+
       setLastSaved(new Date());
       toast.success("Configurações de integração salvas com sucesso!");
     } catch (error) {
@@ -203,23 +217,22 @@ export default function IntegrationSettings() {
 
   const testConnection = async (service: string) => {
     try {
-      setConnectionStatus(prev => ({ ...prev, [service]: false }));
-      
+      setConnectionStatus((prev) => ({ ...prev, [service]: false }));
+
       // TODO: Replace with actual API call
       // const response = await fetch(`/api/integrations/test/${service}`, {
       //   method: "POST",
       //   headers: { "Content-Type": "application/json" },
       //   body: JSON.stringify(form.getValues()),
       // });
-      
+
       // Mock success for demo
       setTimeout(() => {
-        setConnectionStatus(prev => ({ ...prev, [service]: true }));
+        setConnectionStatus((prev) => ({ ...prev, [service]: true }));
         toast.success(`Conexão com ${service} testada com sucesso!`);
       }, 2000);
-      
     } catch (error) {
-      setConnectionStatus(prev => ({ ...prev, [service]: false }));
+      setConnectionStatus((prev) => ({ ...prev, [service]: false }));
       toast.error(`Erro ao testar conexão com ${service}`);
     }
   };
@@ -237,7 +250,7 @@ export default function IntegrationSettings() {
       <Alert>
         <Plug className="h-4 w-4" />
         <AlertDescription>
-          <strong>Integrações:</strong> Configure APIs e serviços externos para automatizar 
+          <strong>Integrações:</strong> Configure APIs e serviços externos para automatizar
           comunicações e melhorar a experiência do paciente.
         </AlertDescription>
       </Alert>
@@ -280,7 +293,13 @@ export default function IntegrationSettings() {
                     </div>
                     <div className="flex items-center gap-2">
                       {connectionStatus.whatsapp !== undefined && (
-                        <Badge className={connectionStatus.whatsapp ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}>
+                        <Badge
+                          className={
+                            connectionStatus.whatsapp
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                          }
+                        >
                           {connectionStatus.whatsapp ? (
                             <>
                               <CheckCircle2 className="h-3 w-3 mr-1" />
@@ -320,10 +339,7 @@ export default function IntegrationSettings() {
                           </FormDescription>
                         </div>
                         <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
                       </FormItem>
                     )}
@@ -358,9 +374,7 @@ export default function IntegrationSettings() {
                               <FormControl>
                                 <Input placeholder="1234567890123456" {...field} />
                               </FormControl>
-                              <FormDescription>
-                                ID da conta business do WhatsApp
-                              </FormDescription>
+                              <FormDescription>ID da conta business do WhatsApp</FormDescription>
                               <FormMessage />
                             </FormItem>
                           )}
@@ -403,7 +417,7 @@ export default function IntegrationSettings() {
 
                       <div className="space-y-4">
                         <h4 className="font-medium">Funcionalidades</h4>
-                        
+
                         <FormField
                           control={form.control}
                           name="whatsapp.enableAppointmentReminders"
@@ -416,10 +430,7 @@ export default function IntegrationSettings() {
                                 </FormDescription>
                               </div>
                               <FormControl>
-                                <Switch
-                                  checked={field.value}
-                                  onCheckedChange={field.onChange}
-                                />
+                                <Switch checked={field.value} onCheckedChange={field.onChange} />
                               </FormControl>
                             </FormItem>
                           )}
@@ -432,15 +443,10 @@ export default function IntegrationSettings() {
                             <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                               <div className="space-y-0.5">
                                 <FormLabel>Confirmações de Agendamento</FormLabel>
-                                <FormDescription>
-                                  Solicitar confirmação de presença
-                                </FormDescription>
+                                <FormDescription>Solicitar confirmação de presença</FormDescription>
                               </div>
                               <FormControl>
-                                <Switch
-                                  checked={field.value}
-                                  onCheckedChange={field.onChange}
-                                />
+                                <Switch checked={field.value} onCheckedChange={field.onChange} />
                               </FormControl>
                             </FormItem>
                           )}
@@ -458,10 +464,7 @@ export default function IntegrationSettings() {
                                 </FormDescription>
                               </div>
                               <FormControl>
-                                <Switch
-                                  checked={field.value}
-                                  onCheckedChange={field.onChange}
-                                />
+                                <Switch checked={field.value} onCheckedChange={field.onChange} />
                               </FormControl>
                             </FormItem>
                           )}
@@ -483,9 +486,7 @@ export default function IntegrationSettings() {
                         <Mail className="h-5 w-5" />
                         Email Marketing
                       </CardTitle>
-                      <CardDescription>
-                        Configuração de SMTP e provedores de email
-                      </CardDescription>
+                      <CardDescription>Configuração de SMTP e provedores de email</CardDescription>
                     </div>
                     <Button
                       type="button"
@@ -507,15 +508,10 @@ export default function IntegrationSettings() {
                       <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                         <div className="space-y-0.5">
                           <FormLabel className="text-base">Habilitar Email</FormLabel>
-                          <FormDescription>
-                            Ativar envio de emails automatizados
-                          </FormDescription>
+                          <FormDescription>Ativar envio de emails automatizados</FormDescription>
                         </div>
                         <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
                       </FormItem>
                     )}
@@ -545,7 +541,11 @@ export default function IntegrationSettings() {
                             <FormItem>
                               <FormLabel>Email do Remetente</FormLabel>
                               <FormControl>
-                                <Input type="email" placeholder="contato@clinica.com.br" {...field} />
+                                <Input
+                                  type="email"
+                                  placeholder="contato@clinica.com.br"
+                                  {...field}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -575,9 +575,9 @@ export default function IntegrationSettings() {
                             <FormItem>
                               <FormLabel>Porta SMTP</FormLabel>
                               <FormControl>
-                                <Input 
-                                  type="number" 
-                                  placeholder="587" 
+                                <Input
+                                  type="number"
+                                  placeholder="587"
                                   {...field}
                                   onChange={(e) => field.onChange(parseInt(e.target.value) || 587)}
                                 />
@@ -631,9 +631,7 @@ export default function IntegrationSettings() {
                     <Phone className="h-5 w-5" />
                     SMS
                   </CardTitle>
-                  <CardDescription>
-                    Configuração de provedores SMS brasileiros
-                  </CardDescription>
+                  <CardDescription>Configuração de provedores SMS brasileiros</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <FormField
@@ -643,15 +641,10 @@ export default function IntegrationSettings() {
                       <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                         <div className="space-y-0.5">
                           <FormLabel className="text-base">Habilitar SMS</FormLabel>
-                          <FormDescription>
-                            Ativar envio de SMS para pacientes
-                          </FormDescription>
+                          <FormDescription>Ativar envio de SMS para pacientes</FormDescription>
                         </div>
                         <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
                       </FormItem>
                     )}
@@ -666,7 +659,7 @@ export default function IntegrationSettings() {
                           <FormItem>
                             <FormLabel>Provedor SMS</FormLabel>
                             <FormControl>
-                              <select 
+                              <select
                                 className="w-full p-2 border rounded-md"
                                 value={field.value}
                                 onChange={field.onChange}
@@ -676,9 +669,7 @@ export default function IntegrationSettings() {
                                 <option value="twilio">Twilio</option>
                               </select>
                             </FormControl>
-                            <FormDescription>
-                              Provedor brasileiro para envio de SMS
-                            </FormDescription>
+                            <FormDescription>Provedor brasileiro para envio de SMS</FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -731,7 +722,7 @@ export default function IntegrationSettings() {
                 <CardContent className="space-y-6">
                   <div className="space-y-4">
                     <h4 className="font-medium">Gateways de Pagamento</h4>
-                    
+
                     <FormField
                       control={form.control}
                       name="paymentGateways.mercadoPagoAccessToken"
@@ -741,9 +732,7 @@ export default function IntegrationSettings() {
                           <FormControl>
                             <Input type="password" placeholder="APP_USR-..." {...field} />
                           </FormControl>
-                          <FormDescription>
-                            Token para integração com Mercado Pago
-                          </FormDescription>
+                          <FormDescription>Token para integração com Mercado Pago</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -758,9 +747,7 @@ export default function IntegrationSettings() {
                           <FormControl>
                             <Input type="password" placeholder="sk_..." {...field} />
                           </FormControl>
-                          <FormDescription>
-                            Chave API para geração de PIX
-                          </FormDescription>
+                          <FormDescription>Chave API para geração de PIX</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -771,22 +758,21 @@ export default function IntegrationSettings() {
                     <div className="flex items-center justify-between mb-4">
                       <div>
                         <h4 className="font-medium">Google Calendar</h4>
-                        <p className="text-sm text-gray-600">Sincronizar agendamentos com Google Calendar</p>
+                        <p className="text-sm text-gray-600">
+                          Sincronizar agendamentos com Google Calendar
+                        </p>
                       </div>
                       <FormField
                         control={form.control}
                         name="calendar.googleCalendar.enabled"
                         render={({ field }) => (
                           <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                           </FormControl>
                         )}
                       />
                     </div>
-                    
+
                     {form.watch("calendar.googleCalendar.enabled") && (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <FormField
@@ -796,7 +782,10 @@ export default function IntegrationSettings() {
                             <FormItem>
                               <FormLabel>Client ID</FormLabel>
                               <FormControl>
-                                <Input placeholder="123456789.apps.googleusercontent.com" {...field} />
+                                <Input
+                                  placeholder="123456789.apps.googleusercontent.com"
+                                  {...field}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>

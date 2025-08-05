@@ -10,19 +10,13 @@
 
 "use client";
 
-import { cn } from "@/lib/utils";
-import { Crown, Lock, Sparkles, TrendingUp, Zap } from "lucide-react";
-import { ReactNode } from "react";
-import { useSubscriptionStatus } from "../../hooks/use-subscription-status";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
+import type { cn } from "@/lib/utils";
+import type { Crown, Lock, Sparkles, TrendingUp, Zap } from "lucide-react";
+import type { ReactNode } from "react";
+import type { useSubscriptionStatus } from "../../hooks/use-subscription-status";
+import type { Badge } from "../ui/badge";
+import type { Button } from "../ui/button";
+import type { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 
 export interface FeatureGateProps {
   children: ReactNode;
@@ -117,8 +111,7 @@ export function FeatureGate({
       if (status === "cancelled" || status === "canceled") {
         return {
           title: "Assinatura Cancelada",
-          description:
-            "Sua assinatura foi cancelada. Reative para acessar esta funcionalidade.",
+          description: "Sua assinatura foi cancelada. Reative para acessar esta funcionalidade.",
           action: "Reativar Assinatura",
           variant: "destructive" as const,
         };
@@ -126,16 +119,14 @@ export function FeatureGate({
       if (status === "past_due") {
         return {
           title: "Pagamento Pendente",
-          description:
-            "Atualize sua forma de pagamento para continuar usando esta funcionalidade.",
+          description: "Atualize sua forma de pagamento para continuar usando esta funcionalidade.",
           action: "Atualizar Pagamento",
           variant: "destructive" as const,
         };
       }
       return {
         title: "Assinatura Necessária",
-        description:
-          "Uma assinatura ativa é necessária para acessar esta funcionalidade.",
+        description: "Uma assinatura ativa é necessária para acessar esta funcionalidade.",
         action: "Assinar Agora",
         variant: "default" as const,
       };
@@ -173,18 +164,12 @@ export function FeatureGate({
             {getPlanLabel(requiredPlan)}
           </Badge>
         </CardTitle>
-        <CardDescription className="max-w-sm mx-auto">
-          {blockInfo.description}
-        </CardDescription>
+        <CardDescription className="max-w-sm mx-auto">{blockInfo.description}</CardDescription>
       </CardHeader>
 
       {showUpgrade && (
         <CardContent className="text-center">
-          <Button
-            onClick={onUpgrade}
-            variant={blockInfo.variant}
-            className="w-full max-w-xs"
-          >
+          <Button onClick={onUpgrade} variant={blockInfo.variant} className="w-full max-w-xs">
             {blockInfo.variant === "default" ? (
               <TrendingUp className="h-4 w-4 mr-2" />
             ) : blockInfo.variant === "destructive" ? (
@@ -201,10 +186,7 @@ export function FeatureGate({
 }
 
 // Specific feature gates for common use cases
-export function ProFeatureGate({
-  children,
-  ...props
-}: Omit<FeatureGateProps, "requiredPlan">) {
+export function ProFeatureGate({ children, ...props }: Omit<FeatureGateProps, "requiredPlan">) {
   return (
     <FeatureGate {...props} requiredPlan="pro">
       {children}

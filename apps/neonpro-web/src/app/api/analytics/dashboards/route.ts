@@ -3,11 +3,11 @@
 // Author: Dev Agent
 // Date: 2025-01-26
 
-import { NextRequest, NextResponse } from 'next/server';
-import { DashboardBuilder } from '@/lib/analytics/dashboard-builder';
-import { dashboardLayoutSchema, dashboardWidgetSchema } from '@/lib/validations/kpi-validations';
-import { createClient } from '@/lib/supabase/server';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import { DashboardBuilder } from "@/lib/analytics/dashboard-builder";
+import { dashboardLayoutSchema, dashboardWidgetSchema } from "@/lib/validations/kpi-validations";
+import { createClient } from "@/lib/supabase/server";
+import { z } from "zod";
 
 const createDashboardSchema = z.object({
   dashboard_name: z.string().min(1).max(255),
@@ -18,7 +18,7 @@ const createDashboardSchema = z.object({
     time_period: z.object({
       start_date: z.string(),
       end_date: z.string(),
-      preset: z.enum(['today', 'week', 'month', 'quarter', 'year', 'custom']).optional(),
+      preset: z.enum(["today", "week", "month", "quarter", "year", "custom"]).optional(),
     }),
     service_types: z.array(z.string()).optional(),
     doctor_ids: z.array(z.string()).optional(),
@@ -32,7 +32,7 @@ const createDashboardSchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Get current user
     const {
       data: { user },
@@ -41,32 +41,32 @@ export async function GET(request: NextRequest) {
 
     if (userError || !user) {
       return NextResponse.json(
-        { success: false, error: 'Authentication required' },
-        { status: 401 }
+        { success: false, error: "Authentication required" },
+        { status: 401 },
       );
     }
 
     const { searchParams } = new URL(request.url);
-    const includePublic = searchParams.get('include_public') === 'true';
-    const isDefault = searchParams.get('is_default') === 'true';
+    const includePublic = searchParams.get("include_public") === "true";
+    const isDefault = searchParams.get("is_default") === "true";
 
     // Get user's dashboards
     let query = supabase
-      .from('dashboard_layouts')
+      .from("dashboard_layouts")
       .select(`
         *,
         dashboard_widgets(*)
       `)
-      .order('updated_at', { ascending: false });
+      .order("updated_at", { ascending: false });
 
     if (includePublic) {
       query = query.or(`created_by.eq.${user.id},is_public.eq.true`);
     } else {
-      query = query.eq('created_by', user.id);
+      query = query.eq("created_by", user.id);
     }
 
     if (isDefault) {
-      query = query.eq('is_default', true);
+      query = query.eq("is_default", true);
     }
 
     const { data: dashboards, error } = await query;
@@ -76,19 +76,20 @@ export async function GET(request: NextRequest) {
     }
 
     // Format results
-    const formattedDashboards = dashboards?.map(dashboard => ({
-      id: dashboard.id,
-      dashboard_name: dashboard.dashboard_name,
-      description: dashboard.description,
-      layout: dashboard.layout,
-      filters: dashboard.filters,
-      is_default: dashboard.is_default,
-      is_public: dashboard.is_public,
-      created_by: dashboard.created_by,
-      created_at: dashboard.created_at,
-      updated_at: dashboard.updated_at,
-      widgets: dashboard.dashboard_widgets || [],
-    })) || [];
+    const formattedDashboards =
+      dashboards?.map((dashboard) => ({
+        id: dashboard.id,
+        dashboard_name: dashboard.dashboard_name,
+        description: dashboard.description,
+        layout: dashboard.layout,
+        filters: dashboard.filters,
+        is_default: dashboard.is_default,
+        is_public: dashboard.is_public,
+        created_by: dashboard.created_by,
+        created_at: dashboard.created_at,
+        updated_at: dashboard.updated_at,
+        widgets: dashboard.dashboard_widgets || [],
+      })) || [];
 
     return NextResponse.json({
       success: true,
@@ -99,16 +100,15 @@ export async function GET(request: NextRequest) {
         user_id: user.id,
       },
     });
-
   } catch (error) {
-    console.error('Error retrieving dashboards:', error);
+    console.error("Error retrieving dashboards:", error);
     return NextResponse.json(
       {
         success: false,
-        error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Internal server error",
+        message: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -116,7 +116,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Get current user
     const {
       data: { user },
@@ -125,8 +125,8 @@ export async function POST(request: NextRequest) {
 
     if (userError || !user) {
       return NextResponse.json(
-        { success: false, error: 'Authentication required' },
-        { status: 401 }
+        { success: false, error: "Authentication required" },
+        { status: 401 },
       );
     }
 
@@ -149,23 +149,23 @@ export async function POST(request: NextRequest) {
     // Add widgets
     if (validatedData.widgets.length > 0) {
       await Promise.all(
-        validatedData.widgets.map(widget =>
+        validatedData.widgets.map((widget) =>
           dashboardBuilder.addWidget(result.id, {
             ...widget,
             position: widget.position || { x: 0, y: 0, w: 4, h: 4 },
-          })
-        )
+          }),
+        ),
       );
     }
 
     // Retrieve complete dashboard
     const { data: completeDashboard, error: fetchError } = await supabase
-      .from('dashboard_layouts')
+      .from("dashboard_layouts")
       .select(`
         *,
         dashboard_widgets(*)
       `)
-      .eq('id', result.id)
+      .eq("id", result.id)
       .single();
 
     if (fetchError) {
@@ -187,31 +187,29 @@ export async function POST(request: NextRequest) {
         updated_at: completeDashboard.updated_at,
         widgets: completeDashboard.dashboard_widgets || [],
       },
-      message: 'Dashboard created successfully',
+      message: "Dashboard created successfully",
     });
-
   } catch (error) {
-    console.error('Error creating dashboard:', error);
-    
+    console.error("Error creating dashboard:", error);
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid request data',
+          error: "Invalid request data",
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       {
         success: false,
-        error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Internal server error",
+        message: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-

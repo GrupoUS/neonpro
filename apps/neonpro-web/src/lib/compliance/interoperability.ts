@@ -1,23 +1,58 @@
-﻿/**
+/**
  * Interoperability Standards
  * Epic 10 - Story 10.4: Healthcare Compliance Computer Vision (Interoperability)
- * 
+ *
  * Comprehensive interoperability framework for healthcare systems
  * HL7 FHIR, DICOM, IHE profiles, data exchange standards
- * 
+ *
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 
-import { z } from 'zod';
-import { logger } from '@/lib/utils/logger';
-import { createClient } from '@/lib/supabase/client';
+import type { z } from "zod";
+import type { logger } from "@/lib/utils/logger";
+import type { createClient } from "@/lib/supabase/client";
 
 // Interoperability Types
-export type InteroperabilityStandard = 'HL7_FHIR' | 'DICOM' | 'IHE_XDS' | 'IHE_PIX' | 'IHE_PDQ' | 'CDA' | 'X12' | 'NCPDP';
-export type DataFormat = 'JSON' | 'XML' | 'HL7v2' | 'FHIR' | 'DICOM' | 'CDA' | 'CSV' | 'PDF';
-export type ExchangeMethod = 'REST_API' | 'SOAP' | 'HL7_MLLP' | 'DICOM_DIMSE' | 'FTP' | 'HTTPS' | 'WebSocket';
-export type MessageType = 'ADT' | 'ORM' | 'ORU' | 'SIU' | 'MDM' | 'DFT' | 'BAR' | 'VXU' | 'QBP' | 'RSP';
-export type FHIRResourceType = 'Patient' | 'Practitioner' | 'Organization' | 'Encounter' | 'Observation' | 'DiagnosticReport' | 'Medication' | 'AllergyIntolerance' | 'Condition' | 'Procedure';
+export type InteroperabilityStandard =
+  | "HL7_FHIR"
+  | "DICOM"
+  | "IHE_XDS"
+  | "IHE_PIX"
+  | "IHE_PDQ"
+  | "CDA"
+  | "X12"
+  | "NCPDP";
+export type DataFormat = "JSON" | "XML" | "HL7v2" | "FHIR" | "DICOM" | "CDA" | "CSV" | "PDF";
+export type ExchangeMethod =
+  | "REST_API"
+  | "SOAP"
+  | "HL7_MLLP"
+  | "DICOM_DIMSE"
+  | "FTP"
+  | "HTTPS"
+  | "WebSocket";
+export type MessageType =
+  | "ADT"
+  | "ORM"
+  | "ORU"
+  | "SIU"
+  | "MDM"
+  | "DFT"
+  | "BAR"
+  | "VXU"
+  | "QBP"
+  | "RSP";
+export type FHIRResourceType =
+  | "Patient"
+  | "Practitioner"
+  | "Organization"
+  | "Encounter"
+  | "Observation"
+  | "DiagnosticReport"
+  | "Medication"
+  | "AllergyIntolerance"
+  | "Condition"
+  | "Procedure";
 
 // Core Interoperability Interfaces
 export interface InteroperabilityProfile {
@@ -39,7 +74,7 @@ export interface InteroperabilityProfile {
 export interface InteroperabilityConfiguration {
   baseUrl: string;
   apiVersion: string;
-  authenticationMethod: 'oauth2' | 'basic' | 'api_key' | 'certificate' | 'none';
+  authenticationMethod: "oauth2" | "basic" | "api_key" | "certificate" | "none";
   encryptionRequired: boolean;
   compressionEnabled: boolean;
   timeout: number; // milliseconds
@@ -55,7 +90,7 @@ export interface RateLimitingConfig {
   requestsPerMinute: number;
   requestsPerHour: number;
   burstLimit: number;
-  backoffStrategy: 'linear' | 'exponential' | 'fixed';
+  backoffStrategy: "linear" | "exponential" | "fixed";
 }
 
 export interface ErrorHandlingConfig {
@@ -64,11 +99,11 @@ export interface ErrorHandlingConfig {
   defaultTimeout: number;
   circuitBreakerEnabled: boolean;
   circuitBreakerThreshold: number;
-  fallbackStrategy: 'queue' | 'discard' | 'retry_later';
+  fallbackStrategy: "queue" | "discard" | "retry_later";
 }
 
 export interface LoggingConfig {
-  logLevel: 'debug' | 'info' | 'warn' | 'error';
+  logLevel: "debug" | "info" | "warn" | "error";
   logRequests: boolean;
   logResponses: boolean;
   logErrors: boolean;
@@ -85,7 +120,7 @@ export interface InteroperabilityCompliance {
 }
 
 export interface HL7FHIRCompliance {
-  fhirVersion: '4.0.1' | '4.3.0' | '5.0.0';
+  fhirVersion: "4.0.1" | "4.3.0" | "5.0.0";
   conformanceStatement: string;
   capabilityStatement: FHIRCapabilityStatement;
   supportedResources: FHIRResourceType[];
@@ -100,11 +135,11 @@ export interface FHIRCapabilityStatement {
   url: string;
   version: string;
   name: string;
-  status: 'draft' | 'active' | 'retired';
+  status: "draft" | "active" | "retired";
   date: string;
   publisher: string;
   description: string;
-  kind: 'instance' | 'capability' | 'requirements';
+  kind: "instance" | "capability" | "requirements";
   software: FHIRSoftwareInfo;
   implementation: FHIRImplementationInfo;
   rest: FHIRRestCapability[];
@@ -122,7 +157,7 @@ export interface FHIRImplementationInfo {
 }
 
 export interface FHIRRestCapability {
-  mode: 'client' | 'server';
+  mode: "client" | "server";
   documentation?: string;
   security: FHIRSecurityInfo;
   resource: FHIRResourceCapability[];
@@ -155,14 +190,14 @@ export interface FHIRResourceCapability {
   supportedProfile?: string[];
   documentation?: string;
   interaction: FHIRInteraction[];
-  versioning?: 'no-version' | 'versioned' | 'versioned-update';
+  versioning?: "no-version" | "versioned" | "versioned-update";
   readHistory?: boolean;
   updateCreate?: boolean;
   conditionalCreate?: boolean;
-  conditionalRead?: 'not-supported' | 'modified-since' | 'not-match' | 'full-support';
+  conditionalRead?: "not-supported" | "modified-since" | "not-match" | "full-support";
   conditionalUpdate?: boolean;
-  conditionalDelete?: 'not-supported' | 'single' | 'multiple';
-  referencePolicy?: ('literal' | 'logical' | 'resolves' | 'enforced' | 'local')[];
+  conditionalDelete?: "not-supported" | "single" | "multiple";
+  referencePolicy?: ("literal" | "logical" | "resolves" | "enforced" | "local")[];
   searchInclude?: string[];
   searchRevInclude?: string[];
   searchParam?: FHIRSearchParameter[];
@@ -170,22 +205,53 @@ export interface FHIRResourceCapability {
 }
 
 export interface FHIRInteraction {
-  code: 'read' | 'vread' | 'update' | 'patch' | 'delete' | 'history-instance' | 'history-type' | 'create' | 'search-type';
+  code:
+    | "read"
+    | "vread"
+    | "update"
+    | "patch"
+    | "delete"
+    | "history-instance"
+    | "history-type"
+    | "create"
+    | "search-type";
   documentation?: string;
 }
 
 export interface FHIRSystemInteraction {
-  code: 'transaction' | 'batch' | 'search-system' | 'history-system';
+  code: "transaction" | "batch" | "search-system" | "history-system";
   documentation?: string;
 }
 
 export interface FHIRSearchParameter {
   name: string;
   definition?: string;
-  type: 'number' | 'date' | 'string' | 'token' | 'reference' | 'composite' | 'quantity' | 'uri' | 'special';
+  type:
+    | "number"
+    | "date"
+    | "string"
+    | "token"
+    | "reference"
+    | "composite"
+    | "quantity"
+    | "uri"
+    | "special";
   documentation?: string;
   target?: FHIRResourceType[];
-  modifier?: ('missing' | 'exact' | 'contains' | 'not' | 'text' | 'in' | 'not-in' | 'below' | 'above' | 'type' | 'identifier' | 'of-type')[];
+  modifier?: (
+    | "missing"
+    | "exact"
+    | "contains"
+    | "not"
+    | "text"
+    | "in"
+    | "not-in"
+    | "below"
+    | "above"
+    | "type"
+    | "identifier"
+    | "of-type"
+  )[];
   chain?: string[];
 }
 
@@ -243,7 +309,7 @@ export interface IHECompliance {
 
 export interface IHEProfile {
   name: string;
-  domain: 'ITI' | 'RAD' | 'LAB' | 'CARD' | 'DENT' | 'EYE' | 'PCD' | 'QRPH' | 'PAT';
+  domain: "ITI" | "RAD" | "LAB" | "CARD" | "DENT" | "EYE" | "PCD" | "QRPH" | "PAT";
   version: string;
   description: string;
   actors: string[];
@@ -286,19 +352,19 @@ export interface SecurityCompliance {
 }
 
 export interface AuthenticationMethod {
-  type: 'oauth2' | 'saml' | 'openid_connect' | 'basic' | 'certificate' | 'jwt';
+  type: "oauth2" | "saml" | "openid_connect" | "basic" | "certificate" | "jwt";
   configuration: Record<string, any>;
   required: boolean;
 }
 
 export interface AuthorizationMethod {
-  type: 'rbac' | 'abac' | 'oauth2_scopes' | 'smart_on_fhir';
+  type: "rbac" | "abac" | "oauth2_scopes" | "smart_on_fhir";
   configuration: Record<string, any>;
   required: boolean;
 }
 
 export interface EncryptionMethod {
-  type: 'tls' | 'aes' | 'rsa' | 'ecdsa';
+  type: "tls" | "aes" | "rsa" | "ecdsa";
   version: string;
   keyLength: number;
   required: boolean;
@@ -309,14 +375,14 @@ export interface AccessControlPolicy {
   name: string;
   description: string;
   rules: AccessRule[];
-  enforcement: 'permit' | 'deny' | 'indeterminate';
+  enforcement: "permit" | "deny" | "indeterminate";
 }
 
 export interface AccessRule {
   resource: string;
   action: string;
   condition: string;
-  effect: 'permit' | 'deny';
+  effect: "permit" | "deny";
 }
 
 export interface SecurityLabel {
@@ -361,7 +427,7 @@ export interface InteroperabilityEndpoint {
   version: string;
   authentication: EndpointAuthentication;
   documentation: string;
-  status: 'active' | 'inactive' | 'testing';
+  status: "active" | "inactive" | "testing";
   healthCheck: HealthCheckConfig;
   monitoring: MonitoringConfig;
 }
@@ -394,8 +460,8 @@ export interface MonitoringConfig {
 export interface AlertThreshold {
   metric: string;
   threshold: number;
-  operator: 'gt' | 'lt' | 'eq' | 'ne';
-  severity: 'info' | 'warning' | 'critical';
+  operator: "gt" | "lt" | "eq" | "ne";
+  severity: "info" | "warning" | "critical";
 }
 
 export interface DataMapping {
@@ -424,7 +490,7 @@ export interface MappingRule {
 export interface DataTransformation {
   id: string;
   name: string;
-  type: 'format' | 'value' | 'structure' | 'terminology';
+  type: "format" | "value" | "structure" | "terminology";
   function: string;
   parameters: Record<string, any>;
   description: string;
@@ -433,9 +499,9 @@ export interface DataTransformation {
 export interface ValidationRule {
   id: string;
   name: string;
-  type: 'schema' | 'business' | 'terminology' | 'constraint';
+  type: "schema" | "business" | "terminology" | "constraint";
   rule: string;
-  severity: 'error' | 'warning' | 'info';
+  severity: "error" | "warning" | "info";
   message: string;
   description: string;
 }
@@ -470,10 +536,10 @@ export interface ExchangeMetadata {
 }
 
 export interface ExchangeStatus {
-  status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled';
+  status: "pending" | "processing" | "completed" | "failed" | "cancelled";
   statusDate: string;
   statusReason?: string;
-  ackStatus?: 'AA' | 'AE' | 'AR' | 'CA' | 'CE' | 'CR';
+  ackStatus?: "AA" | "AE" | "AR" | "CA" | "CE" | "CR";
   ackCode?: string;
   ackText?: string;
   errorDetails?: ErrorDetails[];
@@ -481,7 +547,7 @@ export interface ExchangeStatus {
 
 export interface ErrorDetails {
   code: string;
-  severity: 'error' | 'warning' | 'info';
+  severity: "error" | "warning" | "info";
   description: string;
   location?: string;
   suggestedAction?: string;
@@ -499,7 +565,7 @@ export interface ProcessingInfo {
 
 export interface ValidationResult {
   ruleId: string;
-  status: 'passed' | 'failed' | 'warning';
+  status: "passed" | "failed" | "warning";
   message: string;
   location?: string;
   value?: any;
@@ -507,7 +573,7 @@ export interface ValidationResult {
 
 export interface TransformationResult {
   transformationId: string;
-  status: 'success' | 'failed' | 'partial';
+  status: "success" | "failed" | "partial";
   message: string;
   inputData?: any;
   outputData?: any;
@@ -516,7 +582,7 @@ export interface TransformationResult {
 
 export interface DeliveryResult {
   endpointId: string;
-  status: 'delivered' | 'failed' | 'pending';
+  status: "delivered" | "failed" | "pending";
   deliveryTime?: string;
   responseCode?: number;
   responseMessage?: string;
@@ -540,23 +606,23 @@ export class InteroperabilityManager {
    */
   private async initializeInteroperabilityFramework(): Promise<void> {
     try {
-      logger.info('Initializing Interoperability Framework...');
-      
+      logger.info("Initializing Interoperability Framework...");
+
       // Load interoperability profiles
       await this.loadInteroperabilityProfiles();
-      
+
       // Load endpoints
       await this.loadEndpoints();
-      
+
       // Load data mappings
       await this.loadDataMappings();
-      
+
       // Start exchange processing
       this.startExchangeProcessing();
-      
-      logger.info('Interoperability Framework initialized successfully');
+
+      logger.info("Interoperability Framework initialized successfully");
     } catch (error) {
-      logger.error('Failed to initialize Interoperability Framework:', error);
+      logger.error("Failed to initialize Interoperability Framework:", error);
       throw error;
     }
   }
@@ -567,31 +633,40 @@ export class InteroperabilityManager {
   async createFHIRResource(
     resourceType: FHIRResourceType,
     resourceData: any,
-    profileId?: string
+    profileId?: string,
   ): Promise<FHIRResource> {
     try {
       const profile = profileId ? this.profiles.get(profileId) : this.getDefaultFHIRProfile();
-      
+
       if (!profile) {
         throw new Error(`FHIR profile not found: ${profileId}`);
       }
 
       // Validate resource against profile
-      const validationResults = await this.validateFHIRResource(resourceType, resourceData, profile);
-      
-      if (validationResults.some(r => r.status === 'failed')) {
-        throw new Error(`FHIR resource validation failed: ${validationResults.filter(r => r.status === 'failed').map(r => r.message).join(', ')}`);
+      const validationResults = await this.validateFHIRResource(
+        resourceType,
+        resourceData,
+        profile,
+      );
+
+      if (validationResults.some((r) => r.status === "failed")) {
+        throw new Error(
+          `FHIR resource validation failed: ${validationResults
+            .filter((r) => r.status === "failed")
+            .map((r) => r.message)
+            .join(", ")}`,
+        );
       }
 
       const fhirResource: FHIRResource = {
         resourceType,
         id: `${resourceType.toLowerCase()}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         meta: {
-          versionId: '1',
+          versionId: "1",
           lastUpdated: new Date().toISOString(),
-          profile: profile.id ? [profile.id] : undefined
+          profile: profile.id ? [profile.id] : undefined,
         },
-        ...resourceData
+        ...resourceData,
       };
 
       // Save resource
@@ -599,7 +674,6 @@ export class InteroperabilityManager {
 
       logger.info(`FHIR ${resourceType} resource created: ${fhirResource.id}`);
       return fhirResource;
-
     } catch (error) {
       logger.error(`Failed to create FHIR ${resourceType} resource:`, error);
       throw error;
@@ -615,13 +689,13 @@ export class InteroperabilityManager {
     format: DataFormat,
     messageType: MessageType,
     payload: any,
-    metadata?: Partial<ExchangeMetadata>
+    metadata?: Partial<ExchangeMetadata>,
   ): Promise<DataExchangeRequest> {
     try {
       const exchangeRequest: DataExchangeRequest = {
         id: `exchange_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         timestamp: new Date().toISOString(),
-        sourceSystem: 'neonpro',
+        sourceSystem: "neonpro",
         targetSystem,
         standard,
         format,
@@ -630,27 +704,27 @@ export class InteroperabilityManager {
         metadata: {
           correlationId: `corr_${Date.now()}`,
           messageId: `msg_${Date.now()}`,
-          sendingApplication: 'NeonPro',
-          sendingFacility: 'NEONPRO_CLINIC',
+          sendingApplication: "NeonPro",
+          sendingFacility: "NEONPRO_CLINIC",
           receivingApplication: targetSystem,
           receivingFacility: targetSystem.toUpperCase(),
           dateTimeOfMessage: new Date().toISOString(),
           messageControlId: `ctrl_${Date.now()}`,
-          processingId: 'P',
-          versionId: '2.5.1',
-          ...metadata
+          processingId: "P",
+          versionId: "2.5.1",
+          ...metadata,
         },
         status: {
-          status: 'pending',
-          statusDate: new Date().toISOString()
+          status: "pending",
+          statusDate: new Date().toISOString(),
         },
         processing: {
           startTime: new Date().toISOString(),
           retryCount: 0,
           validationResults: [],
           transformationResults: [],
-          deliveryResults: []
-        }
+          deliveryResults: [],
+        },
       };
 
       // Add to processing queue
@@ -661,9 +735,8 @@ export class InteroperabilityManager {
 
       logger.info(`Data exchange request created: ${exchangeRequest.id}`);
       return exchangeRequest;
-
     } catch (error) {
-      logger.error('Failed to send data exchange:', error);
+      logger.error("Failed to send data exchange:", error);
       throw error;
     }
   }
@@ -676,7 +749,7 @@ export class InteroperabilityManager {
     standard: InteroperabilityStandard,
     format: DataFormat,
     payload: any,
-    metadata: ExchangeMetadata
+    metadata: ExchangeMetadata,
   ): Promise<ProcessingInfo> {
     try {
       logger.info(`Processing incoming exchange from ${sourceSystem}`);
@@ -686,15 +759,20 @@ export class InteroperabilityManager {
         retryCount: 0,
         validationResults: [],
         transformationResults: [],
-        deliveryResults: []
+        deliveryResults: [],
       };
 
       // Validate incoming data
       const validationResults = await this.validateIncomingData(standard, format, payload);
       processing.validationResults = validationResults;
 
-      if (validationResults.some(r => r.status === 'failed')) {
-        throw new Error(`Validation failed: ${validationResults.filter(r => r.status === 'failed').map(r => r.message).join(', ')}`);
+      if (validationResults.some((r) => r.status === "failed")) {
+        throw new Error(
+          `Validation failed: ${validationResults
+            .filter((r) => r.status === "failed")
+            .map((r) => r.message)
+            .join(", ")}`,
+        );
       }
 
       // Transform data if mapping exists
@@ -708,11 +786,11 @@ export class InteroperabilityManager {
       await this.processAndStoreData(payload, metadata);
 
       processing.endTime = new Date().toISOString();
-      processing.duration = new Date(processing.endTime).getTime() - new Date(processing.startTime).getTime();
+      processing.duration =
+        new Date(processing.endTime).getTime() - new Date(processing.startTime).getTime();
 
       logger.info(`Incoming exchange processed successfully from ${sourceSystem}`);
       return processing;
-
     } catch (error) {
       logger.error(`Failed to process incoming exchange from ${sourceSystem}:`, error);
       throw error;
@@ -725,9 +803,9 @@ export class InteroperabilityManager {
   async generateCapabilityStatement(): Promise<FHIRCapabilityStatement> {
     try {
       const profile = this.getDefaultFHIRProfile();
-      
+
       if (!profile || !profile.compliance.hl7FhirCompliance.capabilityStatement) {
-        throw new Error('Default FHIR profile or capability statement not found');
+        throw new Error("Default FHIR profile or capability statement not found");
       }
 
       const capabilityStatement = profile.compliance.hl7FhirCompliance.capabilityStatement;
@@ -735,20 +813,19 @@ export class InteroperabilityManager {
       // Update with current system information
       capabilityStatement.date = new Date().toISOString();
       capabilityStatement.software = {
-        name: 'NeonPro Interoperability Engine',
-        version: '1.0.0',
-        releaseDate: new Date().toISOString()
+        name: "NeonPro Interoperability Engine",
+        version: "1.0.0",
+        releaseDate: new Date().toISOString(),
       };
 
       capabilityStatement.implementation = {
-        description: 'NeonPro Healthcare Clinic Management System',
-        url: process.env.NEXT_PUBLIC_SITE_URL || 'https://neonpro.com'
+        description: "NeonPro Healthcare Clinic Management System",
+        url: process.env.NEXT_PUBLIC_SITE_URL || "https://neonpro.com",
       };
 
       return capabilityStatement;
-
     } catch (error) {
-      logger.error('Failed to generate capability statement:', error);
+      logger.error("Failed to generate capability statement:", error);
       throw error;
     }
   }
@@ -759,7 +836,7 @@ export class InteroperabilityManager {
   async validateFHIRResource(
     resourceType: FHIRResourceType,
     resourceData: any,
-    profile: InteroperabilityProfile
+    profile: InteroperabilityProfile,
   ): Promise<ValidationResult[]> {
     const results: ValidationResult[] = [];
 
@@ -767,15 +844,15 @@ export class InteroperabilityManager {
       // Basic resource type validation
       if (!resourceData.resourceType || resourceData.resourceType !== resourceType) {
         results.push({
-          ruleId: 'resource_type_validation',
-          status: 'failed',
-          message: `Resource type mismatch. Expected: ${resourceType}, Found: ${resourceData.resourceType || 'undefined'}`
+          ruleId: "resource_type_validation",
+          status: "failed",
+          message: `Resource type mismatch. Expected: ${resourceType}, Found: ${resourceData.resourceType || "undefined"}`,
         });
       }
 
       // Profile-specific validation
-      const profileValidationRules = profile.validationRules.filter(rule => 
-        rule.type === 'schema' && rule.name.includes(resourceType)
+      const profileValidationRules = profile.validationRules.filter(
+        (rule) => rule.type === "schema" && rule.name.includes(resourceType),
       );
 
       for (const rule of profileValidationRules) {
@@ -784,31 +861,30 @@ export class InteroperabilityManager {
       }
 
       // FHIR-specific validations
-      if (resourceType === 'Patient') {
+      if (resourceType === "Patient") {
         if (!resourceData.identifier || resourceData.identifier.length === 0) {
           results.push({
-            ruleId: 'patient_identifier_required',
-            status: 'failed',
-            message: 'Patient resource must have at least one identifier'
+            ruleId: "patient_identifier_required",
+            status: "failed",
+            message: "Patient resource must have at least one identifier",
           });
         }
       }
 
-      if (resourceType === 'Observation') {
+      if (resourceType === "Observation") {
         if (!resourceData.status) {
           results.push({
-            ruleId: 'observation_status_required',
-            status: 'failed',
-            message: 'Observation resource must have status'
+            ruleId: "observation_status_required",
+            status: "failed",
+            message: "Observation resource must have status",
           });
         }
       }
-
     } catch (error) {
       results.push({
-        ruleId: 'validation_error',
-        status: 'failed',
-        message: `Validation error: ${error.message}`
+        ruleId: "validation_error",
+        status: "failed",
+        message: `Validation error: ${error.message}`,
       });
     }
 
@@ -818,36 +894,38 @@ export class InteroperabilityManager {
   /**
    * Get interoperability metrics
    */
-  async getInteroperabilityMetrics(
-    timeRange: { startDate: string; endDate: string }
-  ): Promise<InteroperabilityMetrics> {
+  async getInteroperabilityMetrics(timeRange: {
+    startDate: string;
+    endDate: string;
+  }): Promise<InteroperabilityMetrics> {
     try {
       const { data: exchangeData } = await this.supabase
-        .from('data_exchanges')
-        .select('*')
-        .gte('timestamp', timeRange.startDate)
-        .lte('timestamp', timeRange.endDate);
+        .from("data_exchanges")
+        .select("*")
+        .gte("timestamp", timeRange.startDate)
+        .lte("timestamp", timeRange.endDate);
 
       const exchanges = exchangeData || [];
 
       const metrics: InteroperabilityMetrics = {
         totalExchanges: exchanges.length,
-        successfulExchanges: exchanges.filter(e => e.status?.status === 'completed').length,
-        failedExchanges: exchanges.filter(e => e.status?.status === 'failed').length,
-        pendingExchanges: exchanges.filter(e => e.status?.status === 'pending' || e.status?.status === 'processing').length,
+        successfulExchanges: exchanges.filter((e) => e.status?.status === "completed").length,
+        failedExchanges: exchanges.filter((e) => e.status?.status === "failed").length,
+        pendingExchanges: exchanges.filter(
+          (e) => e.status?.status === "pending" || e.status?.status === "processing",
+        ).length,
         averageProcessingTime: this.calculateAverageProcessingTime(exchanges),
-        exchangesByStandard: this.groupByField(exchanges, 'standard'),
-        exchangesByFormat: this.groupByField(exchanges, 'format'),
-        exchangesByMessageType: this.groupByField(exchanges, 'messageType'),
+        exchangesByStandard: this.groupByField(exchanges, "standard"),
+        exchangesByFormat: this.groupByField(exchanges, "format"),
+        exchangesByMessageType: this.groupByField(exchanges, "messageType"),
         errorSummary: this.generateErrorSummary(exchanges),
         performanceMetrics: this.generatePerformanceMetrics(exchanges),
-        complianceMetrics: await this.generateComplianceMetrics(exchanges)
+        complianceMetrics: await this.generateComplianceMetrics(exchanges),
       };
 
       return metrics;
-
     } catch (error) {
-      logger.error('Failed to get interoperability metrics:', error);
+      logger.error("Failed to get interoperability metrics:", error);
       throw error;
     }
   }
@@ -856,17 +934,15 @@ export class InteroperabilityManager {
   private async loadInteroperabilityProfiles(): Promise<void> {
     // Load profiles from database or configuration
     const defaultProfile = this.createDefaultFHIRProfile();
-    this.profiles.set('default_fhir', defaultProfile);
+    this.profiles.set("default_fhir", defaultProfile);
   }
 
   private async loadEndpoints(): Promise<void> {
     // Load endpoints from database or configuration
-    const { data } = await this.supabase
-      .from('interoperability_endpoints')
-      .select('*');
-    
+    const { data } = await this.supabase.from("interoperability_endpoints").select("*");
+
     if (data) {
-      data.forEach(endpoint => {
+      data.forEach((endpoint) => {
         this.endpoints.set(endpoint.id, endpoint);
       });
     }
@@ -874,12 +950,10 @@ export class InteroperabilityManager {
 
   private async loadDataMappings(): Promise<void> {
     // Load data mappings from database or configuration
-    const { data } = await this.supabase
-      .from('data_mappings')
-      .select('*');
-    
+    const { data } = await this.supabase.from("data_mappings").select("*");
+
     if (data) {
-      data.forEach(mapping => {
+      data.forEach((mapping) => {
         this.mappings.set(mapping.id, mapping);
       });
     }
@@ -887,18 +961,25 @@ export class InteroperabilityManager {
 
   private createDefaultFHIRProfile(): InteroperabilityProfile {
     return {
-      id: 'default_fhir',
-      name: 'Default FHIR R4 Profile',
-      version: '4.0.1',
-      standards: ['HL7_FHIR'],
-      supportedFormats: ['JSON', 'XML'],
-      exchangeMethods: ['REST_API'],
+      id: "default_fhir",
+      name: "Default FHIR R4 Profile",
+      version: "4.0.1",
+      standards: ["HL7_FHIR"],
+      supportedFormats: ["JSON", "XML"],
+      exchangeMethods: ["REST_API"],
       messageTypes: [],
-      fhirResources: ['Patient', 'Practitioner', 'Organization', 'Encounter', 'Observation', 'DiagnosticReport'],
+      fhirResources: [
+        "Patient",
+        "Practitioner",
+        "Organization",
+        "Encounter",
+        "Observation",
+        "DiagnosticReport",
+      ],
       configuration: {
-        baseUrl: process.env.NEXT_PUBLIC_SITE_URL + '/fhir' || 'https://neonpro.com/fhir',
-        apiVersion: 'R4',
-        authenticationMethod: 'oauth2',
+        baseUrl: process.env.NEXT_PUBLIC_SITE_URL + "/fhir" || "https://neonpro.com/fhir",
+        apiVersion: "R4",
+        authenticationMethod: "oauth2",
         encryptionRequired: true,
         compressionEnabled: true,
         timeout: 30000,
@@ -909,184 +990,189 @@ export class InteroperabilityManager {
           requestsPerMinute: 1000,
           requestsPerHour: 10000,
           burstLimit: 100,
-          backoffStrategy: 'exponential'
+          backoffStrategy: "exponential",
         },
         errorHandling: {
-          retryableErrors: ['timeout', 'connection_error', '5xx'],
-          fatalErrors: ['authentication_error', 'authorization_error', '4xx'],
+          retryableErrors: ["timeout", "connection_error", "5xx"],
+          fatalErrors: ["authentication_error", "authorization_error", "4xx"],
           defaultTimeout: 30000,
           circuitBreakerEnabled: true,
           circuitBreakerThreshold: 5,
-          fallbackStrategy: 'queue'
+          fallbackStrategy: "queue",
         },
         logging: {
-          logLevel: 'info',
+          logLevel: "info",
           logRequests: true,
           logResponses: true,
           logErrors: true,
           logPerformance: true,
-          sanitizeData: true
-        }
+          sanitizeData: true,
+        },
       },
       compliance: {
         hl7FhirCompliance: {
-          fhirVersion: '4.0.1',
-          conformanceStatement: 'NeonPro FHIR R4 Implementation',
+          fhirVersion: "4.0.1",
+          conformanceStatement: "NeonPro FHIR R4 Implementation",
           capabilityStatement: {
-            id: 'neonpro-capability',
-            url: 'https://neonpro.com/fhir/CapabilityStatement/neonpro',
-            version: '1.0.0',
-            name: 'NeonProCapabilityStatement',
-            status: 'active',
+            id: "neonpro-capability",
+            url: "https://neonpro.com/fhir/CapabilityStatement/neonpro",
+            version: "1.0.0",
+            name: "NeonProCapabilityStatement",
+            status: "active",
             date: new Date().toISOString(),
-            publisher: 'NeonPro Healthcare Solutions',
-            description: 'FHIR R4 Capability Statement for NeonPro Clinic Management System',
-            kind: 'instance',
+            publisher: "NeonPro Healthcare Solutions",
+            description: "FHIR R4 Capability Statement for NeonPro Clinic Management System",
+            kind: "instance",
             software: {
-              name: 'NeonPro',
-              version: '1.0.0'
+              name: "NeonPro",
+              version: "1.0.0",
             },
             implementation: {
-              description: 'NeonPro Healthcare Clinic Management System'
+              description: "NeonPro Healthcare Clinic Management System",
             },
-            rest: []
+            rest: [],
           },
-          supportedResources: ['Patient', 'Practitioner', 'Organization', 'Encounter', 'Observation'],
+          supportedResources: [
+            "Patient",
+            "Practitioner",
+            "Organization",
+            "Encounter",
+            "Observation",
+          ],
           supportedInteractions: [
-            { code: 'read' },
-            { code: 'create' },
-            { code: 'update' },
-            { code: 'delete' },
-            { code: 'search-type' }
+            { code: "read" },
+            { code: "create" },
+            { code: "update" },
+            { code: "delete" },
+            { code: "search-type" },
           ],
           supportedSearchParameters: [],
           supportedOperations: [],
-          implementationGuides: []
+          implementationGuides: [],
         },
         dicomCompliance: {
-          dicomVersion: '3.0',
+          dicomVersion: "3.0",
           applicationEntity: {
-            aeTitle: 'NEONPRO',
-            hostname: 'localhost',
+            aeTitle: "NEONPRO",
+            hostname: "localhost",
             port: 11112,
-            calledAETitle: 'NEONPRO',
-            callingAETitle: 'NEONPRO_CLIENT',
+            calledAETitle: "NEONPRO",
+            callingAETitle: "NEONPRO_CLIENT",
             maxPDULength: 16384,
             supportedSCUServices: [],
-            supportedSCPServices: []
+            supportedSCPServices: [],
           },
           sopClasses: [],
           transferSyntaxes: [],
-          characterSets: ['ISO_IR 100'],
-          conformanceStatement: 'NeonPro DICOM Implementation'
+          characterSets: ["ISO_IR 100"],
+          conformanceStatement: "NeonPro DICOM Implementation",
         },
         iheCompliance: {
           profiles: [],
           actors: [],
           transactions: [],
-          contentProfiles: []
+          contentProfiles: [],
         },
         securityCompliance: {
           authenticationMethods: [
             {
-              type: 'oauth2',
+              type: "oauth2",
               configuration: {},
-              required: true
-            }
+              required: true,
+            },
           ],
           authorizationMethods: [
             {
-              type: 'oauth2_scopes',
+              type: "oauth2_scopes",
               configuration: {},
-              required: true
-            }
+              required: true,
+            },
           ],
           encryptionMethods: [
             {
-              type: 'tls',
-              version: '1.3',
+              type: "tls",
+              version: "1.3",
               keyLength: 256,
-              required: true
-            }
+              required: true,
+            },
           ],
           auditingRequired: true,
           accessControlPolicies: [],
-          securityLabels: []
+          securityLabels: [],
         },
         privacyCompliance: {
           consentRequired: true,
           consentManagement: {
-            consentFormats: ['FHIR Consent'],
+            consentFormats: ["FHIR Consent"],
             granularitySupported: true,
             withdrawalSupported: true,
-            auditingEnabled: true
+            auditingEnabled: true,
           },
           dataMinimization: true,
           purposeLimitation: true,
           retentionPolicies: [],
           anonymizationSupported: true,
           rightToErasure: true,
-          dataPortability: true
-        }
+          dataPortability: true,
+        },
       },
       endpoints: [],
       mappings: [],
-      validationRules: []
+      validationRules: [],
     };
   }
 
   private getDefaultFHIRProfile(): InteroperabilityProfile | undefined {
-    return this.profiles.get('default_fhir');
+    return this.profiles.get("default_fhir");
   }
 
   private async validateIncomingData(
     standard: InteroperabilityStandard,
     format: DataFormat,
-    payload: any
+    payload: any,
   ): Promise<ValidationResult[]> {
     const results: ValidationResult[] = [];
 
     try {
       // Basic format validation
-      if (format === 'JSON') {
+      if (format === "JSON") {
         try {
           JSON.parse(JSON.stringify(payload));
           results.push({
-            ruleId: 'json_format_validation',
-            status: 'passed',
-            message: 'Valid JSON format'
+            ruleId: "json_format_validation",
+            status: "passed",
+            message: "Valid JSON format",
           });
         } catch (error) {
           results.push({
-            ruleId: 'json_format_validation',
-            status: 'failed',
-            message: 'Invalid JSON format'
+            ruleId: "json_format_validation",
+            status: "failed",
+            message: "Invalid JSON format",
           });
         }
       }
 
       // Standard-specific validation
-      if (standard === 'HL7_FHIR') {
+      if (standard === "HL7_FHIR") {
         if (payload.resourceType) {
           results.push({
-            ruleId: 'fhir_resource_type_validation',
-            status: 'passed',
-            message: `Valid FHIR resource type: ${payload.resourceType}`
+            ruleId: "fhir_resource_type_validation",
+            status: "passed",
+            message: `Valid FHIR resource type: ${payload.resourceType}`,
           });
         } else {
           results.push({
-            ruleId: 'fhir_resource_type_validation',
-            status: 'failed',
-            message: 'Missing FHIR resourceType'
+            ruleId: "fhir_resource_type_validation",
+            status: "failed",
+            message: "Missing FHIR resourceType",
           });
         }
       }
-
     } catch (error) {
       results.push({
-        ruleId: 'validation_error',
-        status: 'failed',
-        message: `Validation error: ${error.message}`
+        ruleId: "validation_error",
+        status: "failed",
+        message: `Validation error: ${error.message}`,
       });
     }
 
@@ -1096,11 +1182,10 @@ export class InteroperabilityManager {
   private findMapping(
     sourceSystem: string,
     standard: InteroperabilityStandard,
-    format: DataFormat
+    format: DataFormat,
   ): DataMapping | undefined {
-    return Array.from(this.mappings.values()).find(mapping =>
-      mapping.sourceStandard === standard &&
-      mapping.sourceFormat === format
+    return Array.from(this.mappings.values()).find(
+      (mapping) => mapping.sourceStandard === standard && mapping.sourceFormat === format,
     );
   }
 
@@ -1109,27 +1194,26 @@ export class InteroperabilityManager {
 
     for (const transformation of mapping.transformations) {
       const startTime = Date.now();
-      
+
       try {
         // Apply transformation (simplified implementation)
         const transformedData = await this.applyTransformation(payload, transformation);
-        
+
         results.push({
           transformationId: transformation.id,
-          status: 'success',
-          message: 'Transformation completed successfully',
+          status: "success",
+          message: "Transformation completed successfully",
           inputData: payload,
           outputData: transformedData,
-          duration: Date.now() - startTime
+          duration: Date.now() - startTime,
         });
-        
       } catch (error) {
         results.push({
           transformationId: transformation.id,
-          status: 'failed',
+          status: "failed",
           message: `Transformation failed: ${error.message}`,
           inputData: payload,
-          duration: Date.now() - startTime
+          duration: Date.now() - startTime,
         });
       }
     }
@@ -1140,13 +1224,13 @@ export class InteroperabilityManager {
   private async applyTransformation(data: any, transformation: DataTransformation): Promise<any> {
     // Simplified transformation logic
     switch (transformation.type) {
-      case 'format':
+      case "format":
         return this.transformFormat(data, transformation);
-      case 'value':
+      case "value":
         return this.transformValue(data, transformation);
-      case 'structure':
+      case "structure":
         return this.transformStructure(data, transformation);
-      case 'terminology':
+      case "terminology":
         return this.transformTerminology(data, transformation);
       default:
         return data;
@@ -1183,14 +1267,14 @@ export class InteroperabilityManager {
       // Simplified validation rule execution
       return {
         ruleId: rule.id,
-        status: 'passed',
-        message: 'Validation passed'
+        status: "passed",
+        message: "Validation passed",
       };
     } catch (error) {
       return {
         ruleId: rule.id,
-        status: 'failed',
-        message: `Validation failed: ${error.message}`
+        status: "failed",
+        message: `Validation failed: ${error.message}`,
       };
     }
   }
@@ -1205,128 +1289,142 @@ export class InteroperabilityManager {
   private async processExchangeQueue(): Promise<void> {
     if (this.exchangeQueue.length === 0) return;
 
-    const pendingExchanges = this.exchangeQueue.filter(e => e.status.status === 'pending');
-    
-    for (const exchange of pendingExchanges.slice(0, 10)) { // Process up to 10 at a time
+    const pendingExchanges = this.exchangeQueue.filter((e) => e.status.status === "pending");
+
+    for (const exchange of pendingExchanges.slice(0, 10)) {
+      // Process up to 10 at a time
       try {
         await this.processExchange(exchange);
       } catch (error) {
         logger.error(`Failed to process exchange ${exchange.id}:`, error);
-        exchange.status.status = 'failed';
+        exchange.status.status = "failed";
         exchange.status.statusReason = error.message;
       }
     }
   }
 
   private async processExchange(exchange: DataExchangeRequest): Promise<void> {
-    exchange.status.status = 'processing';
-    
+    exchange.status.status = "processing";
+
     // Find target endpoint
-    const endpoint = Array.from(this.endpoints.values()).find(ep => 
-      ep.standard === exchange.standard && 
-      ep.format === exchange.format &&
-      ep.status === 'active'
+    const endpoint = Array.from(this.endpoints.values()).find(
+      (ep) =>
+        ep.standard === exchange.standard &&
+        ep.format === exchange.format &&
+        ep.status === "active",
     );
-    
+
     if (!endpoint) {
       throw new Error(`No active endpoint found for ${exchange.standard}/${exchange.format}`);
     }
-    
+
     // Send data to endpoint
     const deliveryResult = await this.deliverToEndpoint(exchange, endpoint);
     exchange.processing.deliveryResults.push(deliveryResult);
-    
-    if (deliveryResult.status === 'delivered') {
-      exchange.status.status = 'completed';
+
+    if (deliveryResult.status === "delivered") {
+      exchange.status.status = "completed";
     } else {
-      exchange.status.status = 'failed';
+      exchange.status.status = "failed";
       exchange.status.statusReason = deliveryResult.responseMessage;
     }
-    
+
     exchange.processing.endTime = new Date().toISOString();
-    exchange.processing.duration = new Date(exchange.processing.endTime).getTime() - new Date(exchange.processing.startTime).getTime();
-    
+    exchange.processing.duration =
+      new Date(exchange.processing.endTime).getTime() -
+      new Date(exchange.processing.startTime).getTime();
+
     // Update in database
     await this.updateExchangeRequest(exchange);
   }
 
   private async deliverToEndpoint(
     exchange: DataExchangeRequest,
-    endpoint: InteroperabilityEndpoint
+    endpoint: InteroperabilityEndpoint,
   ): Promise<DeliveryResult> {
     try {
       // Simplified delivery implementation
       const response = await fetch(endpoint.url, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': this.getContentType(endpoint.format),
-          'Authorization': 'Bearer token' // Would use actual authentication
+          "Content-Type": this.getContentType(endpoint.format),
+          Authorization: "Bearer token", // Would use actual authentication
         },
-        body: JSON.stringify(exchange.payload)
+        body: JSON.stringify(exchange.payload),
       });
-      
+
       return {
         endpointId: endpoint.id,
-        status: response.ok ? 'delivered' : 'failed',
+        status: response.ok ? "delivered" : "failed",
         deliveryTime: new Date().toISOString(),
         responseCode: response.status,
         responseMessage: response.statusText,
-        retryCount: 0
+        retryCount: 0,
       };
-      
     } catch (error) {
       return {
         endpointId: endpoint.id,
-        status: 'failed',
+        status: "failed",
         deliveryTime: new Date().toISOString(),
         responseMessage: error.message,
-        retryCount: 0
+        retryCount: 0,
       };
     }
   }
 
   private getContentType(format: DataFormat): string {
     const contentTypes: Record<DataFormat, string> = {
-      JSON: 'application/json',
-      XML: 'application/xml',
-      HL7v2: 'application/hl7-v2',
-      FHIR: 'application/fhir+json',
-      DICOM: 'application/dicom',
-      CDA: 'application/xml',
-      CSV: 'text/csv',
-      PDF: 'application/pdf'
+      JSON: "application/json",
+      XML: "application/xml",
+      HL7v2: "application/hl7-v2",
+      FHIR: "application/fhir+json",
+      DICOM: "application/dicom",
+      CDA: "application/xml",
+      CSV: "text/csv",
+      PDF: "application/pdf",
     };
-    
-    return contentTypes[format] || 'application/json';
+
+    return contentTypes[format] || "application/json";
   }
 
   private calculateAverageProcessingTime(exchanges: any[]): number {
-    const completedExchanges = exchanges.filter(e => e.processing?.duration);
+    const completedExchanges = exchanges.filter((e) => e.processing?.duration);
     if (completedExchanges.length === 0) return 0;
-    
+
     const totalTime = completedExchanges.reduce((sum, e) => sum + e.processing.duration, 0);
     return totalTime / completedExchanges.length;
   }
 
-  private groupByField<T extends Record<string, any>>(items: T[], field: keyof T): Record<string, number> {
-    return items.reduce((acc, item) => {
-      const key = item[field] as string;
-      acc[key] = (acc[key] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+  private groupByField<T extends Record<string, any>>(
+    items: T[],
+    field: keyof T,
+  ): Record<string, number> {
+    return items.reduce(
+      (acc, item) => {
+        const key = item[field] as string;
+        acc[key] = (acc[key] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
   }
 
   private generateErrorSummary(exchanges: any[]): Record<string, number> {
-    const failedExchanges = exchanges.filter(e => e.status?.status === 'failed');
-    return this.groupByField(failedExchanges.map(e => ({ reason: e.status.statusReason || 'unknown' })), 'reason');
+    const failedExchanges = exchanges.filter((e) => e.status?.status === "failed");
+    return this.groupByField(
+      failedExchanges.map((e) => ({ reason: e.status.statusReason || "unknown" })),
+      "reason",
+    );
   }
 
   private generatePerformanceMetrics(exchanges: any[]): any {
     return {
       averageProcessingTime: this.calculateAverageProcessingTime(exchanges),
       throughput: exchanges.length, // messages per time period
-      errorRate: exchanges.filter(e => e.status?.status === 'failed').length / Math.max(exchanges.length, 1),
-      uptimePercentage: 99.9 // Would calculate actual uptime
+      errorRate:
+        exchanges.filter((e) => e.status?.status === "failed").length /
+        Math.max(exchanges.length, 1),
+      uptimePercentage: 99.9, // Would calculate actual uptime
     };
   }
 
@@ -1335,59 +1433,55 @@ export class InteroperabilityManager {
       fhirComplianceRate: 100, // Would calculate actual compliance
       securityComplianceRate: 100,
       privacyComplianceRate: 100,
-      auditCoverageRate: 100
+      auditCoverageRate: 100,
     };
   }
 
   // Database operations
   private async saveFHIRResource(resource: FHIRResource): Promise<void> {
-    const { error } = await this.supabase
-      .from('fhir_resources')
-      .insert({
-        id: resource.id,
-        resource_type: resource.resourceType,
-        resource_data: resource,
-        created_at: new Date().toISOString()
-      });
-    
+    const { error } = await this.supabase.from("fhir_resources").insert({
+      id: resource.id,
+      resource_type: resource.resourceType,
+      resource_data: resource,
+      created_at: new Date().toISOString(),
+    });
+
     if (error) {
-      logger.error('Failed to save FHIR resource:', error);
+      logger.error("Failed to save FHIR resource:", error);
     }
   }
 
   private async saveExchangeRequest(exchange: DataExchangeRequest): Promise<void> {
-    const { error } = await this.supabase
-      .from('data_exchanges')
-      .insert({
-        id: exchange.id,
-        timestamp: exchange.timestamp,
-        source_system: exchange.sourceSystem,
-        target_system: exchange.targetSystem,
-        standard: exchange.standard,
-        format: exchange.format,
-        message_type: exchange.messageType,
-        payload: exchange.payload,
-        metadata: exchange.metadata,
-        status: exchange.status,
-        processing: exchange.processing
-      });
-    
+    const { error } = await this.supabase.from("data_exchanges").insert({
+      id: exchange.id,
+      timestamp: exchange.timestamp,
+      source_system: exchange.sourceSystem,
+      target_system: exchange.targetSystem,
+      standard: exchange.standard,
+      format: exchange.format,
+      message_type: exchange.messageType,
+      payload: exchange.payload,
+      metadata: exchange.metadata,
+      status: exchange.status,
+      processing: exchange.processing,
+    });
+
     if (error) {
-      logger.error('Failed to save exchange request:', error);
+      logger.error("Failed to save exchange request:", error);
     }
   }
 
   private async updateExchangeRequest(exchange: DataExchangeRequest): Promise<void> {
     const { error } = await this.supabase
-      .from('data_exchanges')
+      .from("data_exchanges")
       .update({
         status: exchange.status,
-        processing: exchange.processing
+        processing: exchange.processing,
       })
-      .eq('id', exchange.id);
-    
+      .eq("id", exchange.id);
+
     if (error) {
-      logger.error('Failed to update exchange request:', error);
+      logger.error("Failed to update exchange request:", error);
     }
   }
 }
@@ -1420,12 +1514,11 @@ export interface InteroperabilityMetrics {
 
 // Validation schemas
 export const InteroperabilityValidationSchema = z.object({
-  standard: z.enum(['HL7_FHIR', 'DICOM', 'IHE_XDS', 'IHE_PIX', 'IHE_PDQ', 'CDA', 'X12', 'NCPDP']),
-  format: z.enum(['JSON', 'XML', 'HL7v2', 'FHIR', 'DICOM', 'CDA', 'CSV', 'PDF']),
-  messageType: z.enum(['ADT', 'ORM', 'ORU', 'SIU', 'MDM', 'DFT', 'BAR', 'VXU', 'QBP', 'RSP']),
-  targetSystem: z.string().min(1, 'Target system is required')
+  standard: z.enum(["HL7_FHIR", "DICOM", "IHE_XDS", "IHE_PIX", "IHE_PDQ", "CDA", "X12", "NCPDP"]),
+  format: z.enum(["JSON", "XML", "HL7v2", "FHIR", "DICOM", "CDA", "CSV", "PDF"]),
+  messageType: z.enum(["ADT", "ORM", "ORU", "SIU", "MDM", "DFT", "BAR", "VXU", "QBP", "RSP"]),
+  targetSystem: z.string().min(1, "Target system is required"),
 });
 
 // Export singleton instance
 export const createinteroperabilityManager = () => new InteroperabilityManager();
-

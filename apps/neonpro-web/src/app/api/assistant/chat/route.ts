@@ -1,14 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { streamText, convertToCoreMessages } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { anthropic } from "@ai-sdk/anthropic";
+import type { NextRequest, NextResponse } from "next/server";
+import type { createClient } from "@/lib/supabase/server";
+import type { streamText, convertToCoreMessages } from "ai";
+import type { openai } from "@ai-sdk/openai";
+import type { anthropic } from "@ai-sdk/anthropic";
 
 // Configuração dos modelos
 const MODELS = {
-  gpt4: openai('gpt-4o'),
-  claude: anthropic('claude-3-5-sonnet-20241022'),
-  gpt35: openai('gpt-3.5-turbo')
+  gpt4: openai("gpt-4o"),
+  claude: anthropic("claude-3-5-sonnet-20241022"),
+  gpt35: openai("gpt-3.5-turbo"),
 } as const;
 
 type ModelType = keyof typeof MODELS;
@@ -16,14 +16,17 @@ type ModelType = keyof typeof MODELS;
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verificar autenticação
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { messages, conversationId, model = 'gpt4' } = await request.json();
+    const { messages, conversationId, model = "gpt4" } = await request.json();
 
     // Validar modelo
     if (!MODELS[model as ModelType]) {
@@ -34,10 +37,10 @@ export async function POST(request: NextRequest) {
     let conversation;
     if (conversationId) {
       const { data: existingConversation, error: convError } = await supabase
-        .from('assistant_conversations')
-        .select('*')
-        .eq('id', conversationId)
-        .eq('user_id', user.id)
+        .from("assistant_conversations")
+        .select("*")
+        .eq("id", conversationId)
+        .eq("user_id", user.id)
         .single();
 
       if (convError || !existingConversation) {
@@ -47,12 +50,12 @@ export async function POST(request: NextRequest) {
     } else {
       // Criar nova conversa
       const { data: newConversation, error: createError } = await supabase
-        .from('assistant_conversations')
+        .from("assistant_conversations")
         .insert({
           user_id: user.id,
-          title: messages[0]?.content?.substring(0, 50) || 'Nova Conversa',
+          title: messages[0]?.content?.substring(0, 50) || "Nova Conversa",
           model_used: model,
-          is_active: true
+          is_active: true,
         })
         .select()
         .single();
@@ -65,21 +68,21 @@ export async function POST(request: NextRequest) {
 
     // Buscar contexto das preferências do usuário
     const { data: preferences } = await supabase
-      .from('assistant_preferences')
-      .select('*')
-      .eq('user_id', user.id)
+      .from("assistant_preferences")
+      .select("*")
+      .eq("user_id", user.id)
       .single();
 
     // Buscar contexto do perfil do usuário
     const { data: profile } = await supabase
-      .from('profiles')
-      .select('full_name, role, specialty, clinic_name')
-      .eq('id', user.id)
+      .from("profiles")
+      .select("full_name, role, specialty, clinic_name")
+      .eq("id", user.id)
       .single();
 
     // Buscar contexto relevante da clínica (últimos 5 agendamentos, por exemplo)
     const { data: recentAppointments } = await supabase
-      .from('appointments')
+      .from("appointments")
       .select(`
         id,
         date_time,
@@ -88,31 +91,33 @@ export async function POST(request: NextRequest) {
         notes,
         patients(name, phone)
       `)
-      .eq('user_id', user.id)
-      .order('date_time', { ascending: false })
+      .eq("user_id", user.id)
+      .order("date_time", { ascending: false })
       .limit(5);
 
     // Construir prompt do sistema com contexto personalizado
     const systemPrompt = `Você é o Assistente Virtual do NeonPro, uma plataforma de gestão para clínicas de estética e beleza.
 
 CONTEXTO DO USUÁRIO:
-- Nome: ${profile?.full_name || 'Usuário'}
-- Cargo: ${profile?.role || 'Profissional'}
-- Especialidade: ${profile?.specialty || 'Não informada'}
-- Clínica: ${profile?.clinic_name || 'Não informada'}
+- Nome: ${profile?.full_name || "Usuário"}
+- Cargo: ${profile?.role || "Profissional"}
+- Especialidade: ${profile?.specialty || "Não informada"}
+- Clínica: ${profile?.clinic_name || "Não informada"}
 
 PREFERÊNCIAS DO ASSISTENTE:
-- Personalidade: ${preferences?.personality || 'profissional e amigável'}
+- Personalidade: ${preferences?.personality || "profissional e amigável"}
 - Temperatura: ${preferences?.temperature || 0.7}
-- Idioma: ${preferences?.language || 'pt-BR'}
+- Idioma: ${preferences?.language || "pt-BR"}
 
 CONTEXTO RECENTE:
-${recentAppointments && recentAppointments.length > 0 ? 
-  `Últimos agendamentos:
-${recentAppointments.map(apt => 
-  `- ${apt.date_time}: ${apt.patients?.name} - ${apt.service} (${apt.status})`
-).join('\n')}` : 
-  'Nenhum agendamento recente encontrado.'}
+${
+  recentAppointments && recentAppointments.length > 0
+    ? `Últimos agendamentos:
+${recentAppointments
+  .map((apt) => `- ${apt.date_time}: ${apt.patients?.name} - ${apt.service} (${apt.status})`)
+  .join("\n")}`
+    : "Nenhum agendamento recente encontrado."
+}
 
 INSTRUÇÕES:
 1. Sempre responda em português brasileiro
@@ -130,12 +135,12 @@ Seja sempre útil, preciso e contextualmente relevante para a gestão de clínic
 
     // Salvar mensagem do usuário
     const userMessage = messages[messages.length - 1];
-    await supabase.from('assistant_messages').insert({
+    await supabase.from("assistant_messages").insert({
       conversation_id: conversation.id,
       user_id: user.id,
-      role: 'user',
+      role: "user",
       content: userMessage.content,
-      model_used: model
+      model_used: model,
     });
 
     // Gerar resposta com streaming
@@ -148,28 +153,24 @@ Seja sempre útil, preciso e contextualmente relevante para a gestão de clínic
     });
 
     // Log da interação
-    await supabase.from('assistant_logs').insert({
+    await supabase.from("assistant_logs").insert({
       user_id: user.id,
       conversation_id: conversation.id,
-      action: 'chat_request',
+      action: "chat_request",
       details: {
         model,
         message_count: messages.length,
         context_used: {
           has_preferences: !!preferences,
           has_profile: !!profile,
-          recent_appointments_count: recentAppointments?.length || 0
-        }
-      }
+          recent_appointments_count: recentAppointments?.length || 0,
+        },
+      },
     });
 
     return result.toDataStreamResponse();
-
   } catch (error) {
-    console.error('Assistant API Error:', error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    console.error("Assistant API Error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -5,6 +5,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppointmentSearch = exports.AppointmentFilters = void 0;
 var appointment_filters_1 = require("./appointment-filters");
-Object.defineProperty(exports, "AppointmentFilters", { enumerable: true, get: function () { return appointment_filters_1.default; } });
+Object.defineProperty(exports, "AppointmentFilters", {
+  enumerable: true,
+  get: function () {
+    return appointment_filters_1.default;
+  },
+});
 var appointment_search_1 = require("./appointment-search");
-Object.defineProperty(exports, "AppointmentSearch", { enumerable: true, get: function () { return appointment_search_1.default; } });
+Object.defineProperty(exports, "AppointmentSearch", {
+  enumerable: true,
+  get: function () {
+    return appointment_search_1.default;
+  },
+});

@@ -3,7 +3,7 @@ export function rateLimiter() {
   return {
     remaining: 100,
     reset: Date.now() + 3600000,
-    limit: 100
+    limit: 100,
   };
 }
 

@@ -6,11 +6,11 @@ import type {
   StockAlert,
   StockAlertConfig,
 } from "@/app/lib/types/stock-alerts";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -19,17 +19,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import {
+import type { Label } from "@/components/ui/label";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import {
+import type { Switch } from "@/components/ui/switch";
+import type {
   Table,
   TableBody,
   TableCell,
@@ -37,12 +37,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { pt } from "date-fns/locale";
-import {
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { useToast } from "@/hooks/use-toast";
+import type { cn } from "@/lib/utils";
+import type { format } from "date-fns";
+import type { pt } from "date-fns/locale";
+import type {
   AlertTriangle,
   Bell,
   CheckCircle,
@@ -55,7 +55,7 @@ import {
   RefreshCw,
   Settings,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import type { useEffect, useState } from "react";
 
 interface StockAlertsManagementProps {
   className?: string;
@@ -91,26 +91,16 @@ const severityLabels = {
   critical: "Crítica",
 };
 
-export function StockAlertsManagement({
-  className,
-}: StockAlertsManagementProps) {
+export function StockAlertsManagement({ className }: StockAlertsManagementProps) {
   const [alerts, setAlerts] = useState<StockAlert[]>([]);
   const [configs, setConfigs] = useState<StockAlertConfig[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedTab, setSelectedTab] = useState<"alerts" | "configs">(
-    "alerts"
-  );
-  const [filterSeverity, setFilterSeverity] = useState<SeverityLevel | "all">(
-    "all"
-  );
+  const [selectedTab, setSelectedTab] = useState<"alerts" | "configs">("alerts");
+  const [filterSeverity, setFilterSeverity] = useState<SeverityLevel | "all">("all");
   const [filterType, setFilterType] = useState<AlertType | "all">("all");
-  const [filterStatus, setFilterStatus] = useState<
-    "active" | "resolved" | "all"
-  >("all");
+  const [filterStatus, setFilterStatus] = useState<"active" | "resolved" | "all">("all");
   const [showConfigDialog, setShowConfigDialog] = useState(false);
-  const [editingConfig, setEditingConfig] = useState<StockAlertConfig | null>(
-    null
-  );
+  const [editingConfig, setEditingConfig] = useState<StockAlertConfig | null>(null);
   const { toast } = useToast();
 
   // Load alerts and configurations
@@ -154,8 +144,8 @@ export function StockAlertsManagement({
       if (response.ok) {
         setAlerts((prev) =>
           prev.map((alert) =>
-            alert.id === alertId ? { ...alert, resolvedAt: new Date() } : alert
-          )
+            alert.id === alertId ? { ...alert, resolvedAt: new Date() } : alert,
+          ),
         );
         toast({
           title: "Alerta resolvido",
@@ -182,9 +172,7 @@ export function StockAlertsManagement({
 
       if (response.ok) {
         setConfigs((prev) =>
-          prev.map((config) =>
-            config.id === configId ? { ...config, isActive: active } : config
-          )
+          prev.map((config) => (config.id === configId ? { ...config, isActive: active } : config)),
         );
         toast({
           title: active ? "Configuração ativada" : "Configuração desativada",
@@ -202,8 +190,7 @@ export function StockAlertsManagement({
 
   // Filter alerts
   const filteredAlerts = alerts.filter((alert) => {
-    if (filterSeverity !== "all" && alert.severityLevel !== filterSeverity)
-      return false;
+    if (filterSeverity !== "all" && alert.severityLevel !== filterSeverity) return false;
     if (filterType !== "all" && alert.alertType !== filterType) return false;
     if (filterStatus === "active" && alert.resolvedAt) return false;
     if (filterStatus === "resolved" && !alert.resolvedAt) return false;
@@ -247,10 +234,7 @@ export function StockAlertsManagement({
         </div>
       </CardHeader>
       <CardContent>
-        <Tabs
-          value={selectedTab}
-          onValueChange={(value) => setSelectedTab(value as any)}
-        >
+        <Tabs value={selectedTab} onValueChange={(value) => setSelectedTab(value as any)}>
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="alerts" className="flex items-center gap-2">
               <AlertTriangle className="h-4 w-4" />
@@ -285,10 +269,7 @@ export function StockAlertsManagement({
               </SelectContent>
             </Select>
 
-            <Select
-              value={filterType}
-              onValueChange={(value) => setFilterType(value as any)}
-            >
+            <Select value={filterType} onValueChange={(value) => setFilterType(value as any)}>
               <SelectTrigger className="w-40">
                 <SelectValue placeholder="Tipo" />
               </SelectTrigger>
@@ -302,10 +283,7 @@ export function StockAlertsManagement({
             </Select>
 
             {selectedTab === "alerts" && (
-              <Select
-                value={filterStatus}
-                onValueChange={(value) => setFilterStatus(value as any)}
-              >
+              <Select value={filterStatus} onValueChange={(value) => setFilterStatus(value as any)}>
                 <SelectTrigger className="w-32">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
@@ -330,10 +308,7 @@ export function StockAlertsManagement({
               <ScrollArea className="h-96">
                 <div className="space-y-3">
                   {filteredAlerts.map((alert) => {
-                    const Icon =
-                      alertTypeIcons[
-                        alert.alertType as keyof typeof alertTypeIcons
-                      ];
+                    const Icon = alertTypeIcons[alert.alertType as keyof typeof alertTypeIcons];
                     const isResolved = !!alert.resolvedAt;
 
                     return (
@@ -342,7 +317,7 @@ export function StockAlertsManagement({
                         className={cn(
                           "p-4 rounded-lg border transition-colors",
                           alertSeverityColors[alert.severityLevel],
-                          isResolved && "opacity-60"
+                          isResolved && "opacity-60",
                         )}
                       >
                         <div className="flex items-start justify-between">
@@ -351,17 +326,11 @@ export function StockAlertsManagement({
                             <div>
                               <div className="flex items-center gap-2">
                                 <h4 className="font-medium">
-                                  {
-                                    alertTypeLabels[
-                                      alert.alertType as keyof typeof alertTypeLabels
-                                    ]
-                                  }
+                                  {alertTypeLabels[alert.alertType as keyof typeof alertTypeLabels]}
                                 </h4>
                                 <Badge
                                   variant={
-                                    alert.severityLevel === "critical"
-                                      ? "destructive"
-                                      : "secondary"
+                                    alert.severityLevel === "critical" ? "destructive" : "secondary"
                                   }
                                   className="text-xs"
                                 >
@@ -382,11 +351,9 @@ export function StockAlertsManagement({
                                 )}
                                 <span>
                                   {alert.createdAt &&
-                                    format(
-                                      new Date(alert.createdAt),
-                                      "dd/MM/yy HH:mm",
-                                      { locale: pt }
-                                    )}
+                                    format(new Date(alert.createdAt), "dd/MM/yy HH:mm", {
+                                      locale: pt,
+                                    })}
                                 </span>
                               </div>
                             </div>
@@ -414,13 +381,9 @@ export function StockAlertsManagement({
           <TabsContent value="configs" className="space-y-4">
             <div className="flex justify-between items-center">
               <p className="text-sm text-muted-foreground">
-                Configure os alertas automáticos para diferentes tipos de
-                eventos de estoque.
+                Configure os alertas automáticos para diferentes tipos de eventos de estoque.
               </p>
-              <Dialog
-                open={showConfigDialog}
-                onOpenChange={setShowConfigDialog}
-              >
+              <Dialog open={showConfigDialog} onOpenChange={setShowConfigDialog}>
                 <DialogTrigger asChild>
                   <Button onClick={() => setEditingConfig(null)}>
                     <Plus className="h-4 w-4 mr-2" />
@@ -433,8 +396,7 @@ export function StockAlertsManagement({
                       {editingConfig ? "Editar" : "Nova"} Configuração de Alerta
                     </DialogTitle>
                     <DialogDescription>
-                      Configure os parâmetros para alertas automáticos de
-                      estoque.
+                      Configure os parâmetros para alertas automáticos de estoque.
                     </DialogDescription>
                   </DialogHeader>
                   <ConfigForm
@@ -454,8 +416,7 @@ export function StockAlertsManagement({
               <Alert>
                 <Info className="h-4 w-4" />
                 <AlertDescription>
-                  Nenhuma configuração encontrada. Crie uma nova configuração
-                  para começar.
+                  Nenhuma configuração encontrada. Crie uma nova configuração para começar.
                 </AlertDescription>
               </Alert>
             ) : (
@@ -476,16 +437,10 @@ export function StockAlertsManagement({
                         <div className="flex items-center gap-2">
                           {(() => {
                             const Icon =
-                              alertTypeIcons[
-                                config.alertType as keyof typeof alertTypeIcons
-                              ];
+                              alertTypeIcons[config.alertType as keyof typeof alertTypeIcons];
                             return <Icon className="h-4 w-4" />;
                           })()}
-                          {
-                            alertTypeLabels[
-                              config.alertType as keyof typeof alertTypeLabels
-                            ]
-                          }
+                          {alertTypeLabels[config.alertType as keyof typeof alertTypeLabels]}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -498,9 +453,7 @@ export function StockAlertsManagement({
                       <TableCell>
                         <Badge
                           variant={
-                            config.severityLevel === "critical"
-                              ? "destructive"
-                              : "secondary"
+                            config.severityLevel === "critical" ? "destructive" : "secondary"
                           }
                           className="text-xs"
                         >
@@ -510,9 +463,7 @@ export function StockAlertsManagement({
                       <TableCell>
                         <Switch
                           checked={config.isActive}
-                          onCheckedChange={(checked) =>
-                            toggleConfig(config.id!, checked)
-                          }
+                          onCheckedChange={(checked) => toggleConfig(config.id!, checked)}
                         />
                       </TableCell>
                       <TableCell>

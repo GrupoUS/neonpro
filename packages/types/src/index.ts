@@ -11,8 +11,8 @@ export interface Patient {
   phone: string;
   cpf: string;
   birth_date: string;
-  gender: 'M' | 'F' | 'O';
-  status: 'active' | 'inactive';
+  gender: "M" | "F" | "O";
+  status: "active" | "inactive";
   created_at: string;
   updated_at: string;
 }
@@ -25,7 +25,7 @@ export interface Doctor {
   crm: string;
   specialty: string;
   department: string;
-  status: 'active' | 'inactive';
+  status: "active" | "inactive";
   working_hours: Record<string, { start: string; end: string }>;
 }
 
@@ -36,10 +36,10 @@ export interface Appointment {
   doctor_id: string;
   appointment_date: string;
   duration_minutes: number;
-  appointment_type: 'consultation' | 'follow_up' | 'emergency' | 'surgery';
-  status: 'scheduled' | 'completed' | 'cancelled' | 'no_show';
+  appointment_type: "consultation" | "follow_up" | "emergency" | "surgery";
+  status: "scheduled" | "completed" | "cancelled" | "no_show";
   notes?: string;
-  priority: 'low' | 'medium' | 'high' | 'urgent';
+  priority: "low" | "medium" | "high" | "urgent";
 }
 
 // API Response types

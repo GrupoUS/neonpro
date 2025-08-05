@@ -1,7 +1,7 @@
 // lib/compliance/data-export.ts
 export interface DataExportRequest {
   userId: string;
-  format: 'json' | 'csv' | 'pdf';
+  format: "json" | "csv" | "pdf";
   includePersonalData: boolean;
   includeMedicalData: boolean;
 }
@@ -13,13 +13,13 @@ export class DataExportService {
       userId: request.userId,
       personalData: request.includePersonalData ? {} : null,
       medicalData: request.includeMedicalData ? {} : null,
-      exportedAt: new Date().toISOString()
+      exportedAt: new Date().toISOString(),
     };
 
-    if (request.format === 'json') {
+    if (request.format === "json") {
       return JSON.stringify(data, null, 2);
     }
-    
+
     return Buffer.from(JSON.stringify(data));
   }
 }

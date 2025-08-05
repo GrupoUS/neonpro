@@ -1,27 +1,33 @@
 /**
  * Automated Recommendations Component
- * 
+ *
  * Displays AI-powered revenue optimization recommendations
  * with implementation priorities and impact projections
  */
 
-'use client';
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
-import { 
-  Lightbulb, 
-  TrendingUp, 
-  Clock, 
-  Target, 
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Progress } from "@/components/ui/progress";
+import type { Separator } from "@/components/ui/separator";
+import type {
+  Lightbulb,
+  TrendingUp,
+  Clock,
+  Target,
   ArrowRight,
   CheckCircle,
   AlertTriangle,
-  Star
-} from 'lucide-react';
+  Star,
+} from "lucide-react";
 
 interface Recommendation {
   type: string;
@@ -38,27 +44,28 @@ interface AutomatedRecommendationsProps {
 }
 
 const priorityColors = {
-  high: 'bg-red-100 text-red-800 border-red-200',
-  medium: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  low: 'bg-green-100 text-green-800 border-green-200',
-  critical: 'bg-purple-100 text-purple-800 border-purple-200'
+  high: "bg-red-100 text-red-800 border-red-200",
+  medium: "bg-yellow-100 text-yellow-800 border-yellow-200",
+  low: "bg-green-100 text-green-800 border-green-200",
+  critical: "bg-purple-100 text-purple-800 border-purple-200",
 };
 
 const effortColors = {
-  low: 'text-green-600',
-  medium: 'text-yellow-600',
-  high: 'text-red-600'
+  low: "text-green-600",
+  medium: "text-yellow-600",
+  high: "text-red-600",
 };
 
-export function AutomatedRecommendations({ 
-  recommendations, 
-  implementationPlan 
+export function AutomatedRecommendations({
+  recommendations,
+  implementationPlan,
 }: AutomatedRecommendationsProps) {
-  
   const sortedRecommendations = recommendations.sort((a, b) => {
     const priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
-    return priorityOrder[b.priority as keyof typeof priorityOrder] - 
-           priorityOrder[a.priority as keyof typeof priorityOrder];
+    return (
+      priorityOrder[b.priority as keyof typeof priorityOrder] -
+      priorityOrder[a.priority as keyof typeof priorityOrder]
+    );
   });
 
   const totalImpact = recommendations.reduce((sum, rec) => sum + rec.expectedImpact, 0);
@@ -86,29 +93,39 @@ export function AutomatedRecommendations({
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center gap-2">
-                    <Badge 
-                      variant="outline" 
-                      className={priorityColors[recommendation.priority as keyof typeof priorityColors]}
+                    <Badge
+                      variant="outline"
+                      className={
+                        priorityColors[recommendation.priority as keyof typeof priorityColors]
+                      }
                     >
                       {recommendation.priority.toUpperCase()}
                     </Badge>
                     <span className="text-sm text-muted-foreground">
-                      {recommendation.type.replace('_', ' ').toUpperCase()}
+                      {recommendation.type.replace("_", " ").toUpperCase()}
                     </span>
                   </div>
-                  
+
                   <p className="text-sm font-medium leading-relaxed">
                     {recommendation.description}
                   </p>
-                  
+
                   <div className="flex items-center gap-4 text-xs text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <TrendingUp className="h-3 w-3" />
                       <span>+{recommendation.expectedImpact.toFixed(1)}% impact</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Target className={`h-3 w-3 ${effortColors[recommendation.implementationEffort as keyof typeof effortColors]}`} />
-                      <span className={effortColors[recommendation.implementationEffort as keyof typeof effortColors]}>
+                      <Target
+                        className={`h-3 w-3 ${effortColors[recommendation.implementationEffort as keyof typeof effortColors]}`}
+                      />
+                      <span
+                        className={
+                          effortColors[
+                            recommendation.implementationEffort as keyof typeof effortColors
+                          ]
+                        }
+                      >
                         {recommendation.implementationEffort} effort
                       </span>
                     </div>
@@ -124,8 +141,8 @@ export function AutomatedRecommendations({
                       <span>Expected Impact</span>
                       <span>{recommendation.expectedImpact.toFixed(1)}%</span>
                     </div>
-                    <Progress 
-                      value={Math.min(recommendation.expectedImpact * 5, 100)} 
+                    <Progress
+                      value={Math.min(recommendation.expectedImpact * 5, 100)}
                       className="h-2"
                     />
                   </div>

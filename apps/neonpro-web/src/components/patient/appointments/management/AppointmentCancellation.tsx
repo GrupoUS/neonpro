@@ -1,27 +1,30 @@
-'use client'
+"use client";
 
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog'
-import { Label } from '@/components/ui/label'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Textarea } from '@/components/ui/textarea'
-import type { CancellationPolicies, PatientAppointment } from '@/hooks/patient/usePatientAppointments'
-import { format, parseISO } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
-import { AlertTriangle, Calendar, Clock, DollarSign } from 'lucide-react'
-import { useState } from 'react'
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Button } from "@/components/ui/button";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import type { Label } from "@/components/ui/label";
+import type { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
+  CancellationPolicies,
+  PatientAppointment,
+} from "@/hooks/patient/usePatientAppointments";
+import type { format, parseISO } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { AlertTriangle, Calendar, Clock, DollarSign } from "lucide-react";
+import type { useState } from "react";
 
 /**
  * Appointment Cancellation Dialog for NeonPro
- * 
+ *
  * Based on VIBECODE MCP Research:
  * - Context7: React dialog patterns and form validation
  * - Tavily: Healthcare cancellation best practices (27% avg no-show rate)
@@ -29,24 +32,24 @@ import { useState } from 'react'
  */
 
 interface AppointmentCancellationProps {
-  appointmentId: string
-  appointment: PatientAppointment | undefined
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onConfirm: (appointmentId: string, reason: string) => Promise<void>
-  cancellationPolicies: CancellationPolicies | null
+  appointmentId: string;
+  appointment: PatientAppointment | undefined;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onConfirm: (appointmentId: string, reason: string) => Promise<void>;
+  cancellationPolicies: CancellationPolicies | null;
 }
 
 const CANCELLATION_REASONS = [
-  { value: 'illness', label: 'Doença/Mal-estar', emergency: false },
-  { value: 'work_conflict', label: 'Conflito de trabalho', emergency: false },
-  { value: 'transportation', label: 'Problemas de transporte', emergency: false },
-  { value: 'family_emergency', label: 'Emergência familiar', emergency: true },
-  { value: 'medical_emergency', label: 'Emergência médica', emergency: true },
-  { value: 'forgot', label: 'Esqueci do agendamento', emergency: false },
-  { value: 'schedule_change', label: 'Mudança na agenda', emergency: false },
-  { value: 'other', label: 'Outro motivo', emergency: false }
-] as const
+  { value: "illness", label: "Doença/Mal-estar", emergency: false },
+  { value: "work_conflict", label: "Conflito de trabalho", emergency: false },
+  { value: "transportation", label: "Problemas de transporte", emergency: false },
+  { value: "family_emergency", label: "Emergência familiar", emergency: true },
+  { value: "medical_emergency", label: "Emergência médica", emergency: true },
+  { value: "forgot", label: "Esqueci do agendamento", emergency: false },
+  { value: "schedule_change", label: "Mudança na agenda", emergency: false },
+  { value: "other", label: "Outro motivo", emergency: false },
+] as const;
 
 export function AppointmentCancellation({
   appointmentId,
@@ -54,65 +57,68 @@ export function AppointmentCancellation({
   open,
   onOpenChange,
   onConfirm,
-  cancellationPolicies
+  cancellationPolicies,
 }: AppointmentCancellationProps) {
-  const [selectedReason, setSelectedReason] = useState('')
-  const [customReason, setCustomReason] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [selectedReason, setSelectedReason] = useState("");
+  const [customReason, setCustomReason] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (!appointment) return null
+  if (!appointment) return null;
 
   // Check if cancellation is allowed
-  const canCancel = appointment.can_cancel
-  const hoursUntil = appointment.hours_until_appointment
-  const minimumHours = cancellationPolicies?.minimum_hours || 24
+  const canCancel = appointment.can_cancel;
+  const hoursUntil = appointment.hours_until_appointment;
+  const minimumHours = cancellationPolicies?.minimum_hours || 24;
 
   // Check if selected reason is emergency
-  const selectedReasonData = CANCELLATION_REASONS.find(r => r.value === selectedReason)
-  const isEmergencyReason = selectedReasonData?.emergency || false
+  const selectedReasonData = CANCELLATION_REASONS.find((r) => r.value === selectedReason);
+  const isEmergencyReason = selectedReasonData?.emergency || false;
 
   // Calculate fees
-  const feeApplies = cancellationPolicies?.fee_applies && !isEmergencyReason && !canCancel
-  const feeAmount = cancellationPolicies?.fee_amount || 0
+  const feeApplies = cancellationPolicies?.fee_applies && !isEmergencyReason && !canCancel;
+  const feeAmount = cancellationPolicies?.fee_amount || 0;
 
   const formatAppointmentDateTime = (date: string, time: string) => {
     try {
-      const dateTime = parseISO(`${date}T${time}`)
+      const dateTime = parseISO(`${date}T${time}`);
       return {
-        date: format(dateTime, 'EEEE, dd MMMM yyyy', { locale: ptBR }),
-        time: format(dateTime, 'HH:mm', { locale: ptBR })
-      }
+        date: format(dateTime, "EEEE, dd MMMM yyyy", { locale: ptBR }),
+        time: format(dateTime, "HH:mm", { locale: ptBR }),
+      };
     } catch (error) {
-      return { date, time }
+      return { date, time };
     }
-  }
+  };
 
   const handleConfirm = async () => {
-    if (!selectedReason) return
+    if (!selectedReason) return;
 
-    const finalReason = selectedReason === 'other' && customReason ? customReason : selectedReason
+    const finalReason = selectedReason === "other" && customReason ? customReason : selectedReason;
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     try {
-      await onConfirm(appointmentId, finalReason)
-      
+      await onConfirm(appointmentId, finalReason);
+
       // Reset form
-      setSelectedReason('')
-      setCustomReason('')
+      setSelectedReason("");
+      setCustomReason("");
     } catch (error) {
-      console.error('Error confirming cancellation:', error)
+      console.error("Error confirming cancellation:", error);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleCancel = () => {
-    setSelectedReason('')
-    setCustomReason('')
-    onOpenChange(false)
-  }
+    setSelectedReason("");
+    setCustomReason("");
+    onOpenChange(false);
+  };
 
-  const { date, time } = formatAppointmentDateTime(appointment.appointment_date, appointment.appointment_time)
+  const { date, time } = formatAppointmentDateTime(
+    appointment.appointment_date,
+    appointment.appointment_time,
+  );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -159,10 +165,8 @@ export function AppointmentCancellation({
                   </div>
                   <div className="text-sm">
                     • Restam apenas {hoursUntil}h para o agendamento
-                    <br />
-                    • Política da clínica exige {minimumHours}h de antecedência
-                    <br />
-                    • Apenas emergências médicas/familiares são aceitas
+                    <br />• Política da clínica exige {minimumHours}h de antecedência
+                    <br />• Apenas emergências médicas/familiares são aceitas
                   </div>
                   {feeApplies && feeAmount > 0 && (
                     <div className="flex items-center gap-2 mt-2 p-2 bg-red-50 dark:bg-red-950 rounded">
@@ -183,7 +187,8 @@ export function AppointmentCancellation({
                   <strong>Cancelamento permitido</strong>
                 </div>
                 <div className="text-sm mt-1">
-                  Você tem {hoursUntil}h até o agendamento, dentro do prazo de {minimumHours}h exigido.
+                  Você tem {hoursUntil}h até o agendamento, dentro do prazo de {minimumHours}h
+                  exigido.
                 </div>
               </AlertDescription>
             </Alert>
@@ -196,9 +201,9 @@ export function AppointmentCancellation({
               {CANCELLATION_REASONS.map((reason) => (
                 <div key={reason.value} className="flex items-center space-x-2">
                   <RadioGroupItem value={reason.value} id={reason.value} />
-                  <Label 
-                    htmlFor={reason.value} 
-                    className={`text-sm cursor-pointer ${reason.emergency ? 'font-medium text-orange-600' : ''}`}
+                  <Label
+                    htmlFor={reason.value}
+                    className={`text-sm cursor-pointer ${reason.emergency ? "font-medium text-orange-600" : ""}`}
                   >
                     {reason.label}
                     {reason.emergency && <span className="ml-1 text-xs">(Emergência)</span>}
@@ -208,9 +213,11 @@ export function AppointmentCancellation({
             </RadioGroup>
 
             {/* Custom reason field */}
-            {selectedReason === 'other' && (
+            {selectedReason === "other" && (
               <div className="space-y-2">
-                <Label htmlFor="customReason" className="text-sm">Especifique o motivo:</Label>
+                <Label htmlFor="customReason" className="text-sm">
+                  Especifique o motivo:
+                </Label>
                 <Textarea
                   id="customReason"
                   placeholder="Descreva o motivo do cancelamento..."
@@ -251,24 +258,28 @@ export function AppointmentCancellation({
         </div>
 
         <DialogFooter className="flex-col sm:flex-row gap-3">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={handleCancel}
             disabled={isSubmitting}
             className="w-full sm:w-auto"
           >
             Manter Agendamento
           </Button>
-          <Button 
-            variant="destructive" 
+          <Button
+            variant="destructive"
             onClick={handleConfirm}
-            disabled={!selectedReason || (selectedReason === 'other' && !customReason.trim()) || isSubmitting}
+            disabled={
+              !selectedReason ||
+              (selectedReason === "other" && !customReason.trim()) ||
+              isSubmitting
+            }
             className="w-full sm:w-auto"
           >
-            {isSubmitting ? 'Cancelando...' : 'Confirmar Cancelamento'}
+            {isSubmitting ? "Cancelando..." : "Confirmar Cancelamento"}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

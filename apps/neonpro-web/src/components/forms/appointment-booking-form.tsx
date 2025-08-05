@@ -1,17 +1,23 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Calendar, Clock, User, CreditCard, FileText } from 'lucide-react'
-import { format, addDays, isToday, isTomorrow } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import type { useState, useEffect } from "react";
+import type { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type { Calendar, Clock, User, CreditCard, FileText } from "lucide-react";
+import type { format, addDays, isToday, isTomorrow } from "date-fns";
+import type { ptBR } from "date-fns/locale";
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import {
+import type { Button } from "@/components/ui/button";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Input } from "@/components/ui/input";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
   Form,
   FormControl,
   FormDescription,
@@ -19,46 +25,46 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import {
+} from "@/components/ui/form";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { appointmentSchema, type AppointmentFormData } from '@/lib/healthcare/schemas'
-import { formatCurrency } from '@/lib/utils'
-import { toast } from 'sonner'
+} from "@/components/ui/select";
+import type { appointmentSchema, type AppointmentFormData } from "@/lib/healthcare/schemas";
+import type { formatCurrency } from "@/lib/utils";
+import type { toast } from "sonner";
 
 interface Patient {
-  id: string
-  name: string
-  cpf: string
-  phone: string
+  id: string;
+  name: string;
+  cpf: string;
+  phone: string;
 }
 
 interface Professional {
-  id: string
-  name: string
-  specialty: string
-  available_times: string[]
+  id: string;
+  name: string;
+  specialty: string;
+  available_times: string[];
 }
 
 interface Service {
-  id: string
-  name: string
-  duration_minutes: number
-  price: number
-  description: string
+  id: string;
+  name: string;
+  duration_minutes: number;
+  price: number;
+  description: string;
 }
 
 interface AppointmentBookingFormProps {
-  patients: Patient[]
-  professionals: Professional[]
-  services: Service[]
-  onSubmit: (data: AppointmentFormData) => Promise<void>
-  isLoading?: boolean
+  patients: Patient[];
+  professionals: Professional[];
+  services: Service[];
+  onSubmit: (data: AppointmentFormData) => Promise<void>;
+  isLoading?: boolean;
 }
 
 export function AppointmentBookingForm({
@@ -66,82 +72,82 @@ export function AppointmentBookingForm({
   professionals,
   services,
   onSubmit,
-  isLoading = false
+  isLoading = false,
 }: AppointmentBookingFormProps) {
-  const [selectedService, setSelectedService] = useState<Service | null>(null)
-  const [selectedProfessional, setSelectedProfessional] = useState<Professional | null>(null)
-  const [availableSlots, setAvailableSlots] = useState<Date[]>([])
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [selectedProfessional, setSelectedProfessional] = useState<Professional | null>(null);
+  const [availableSlots, setAvailableSlots] = useState<Date[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   const form = useForm<AppointmentFormData>({
     resolver: zodResolver(appointmentSchema),
     defaultValues: {
-      patient_id: '',
-      professional_id: '',
-      service_id: '',
+      patient_id: "",
+      professional_id: "",
+      service_id: "",
       duration_minutes: 60,
-      notes: '',
+      notes: "",
       consent_procedure: false,
-      payment_method: 'card',
+      payment_method: "card",
       total_amount: 0,
-      special_requirements: ''
-    }
-  })
+      special_requirements: "",
+    },
+  });
 
   // Generate available time slots
   const generateTimeSlots = (professional: Professional, date: Date): Date[] => {
-    const slots: Date[] = []
-    const today = new Date()
-    
+    const slots: Date[] = [];
+    const today = new Date();
+
     // Don't allow booking for past dates
-    if (date < today) return slots
+    if (date < today) return slots;
 
     // Generate slots based on professional availability
-    professional.available_times.forEach(timeStr => {
-      const [hours, minutes] = timeStr.split(':').map(Number)
-      const slotTime = new Date(date)
-      slotTime.setHours(hours, minutes, 0, 0)
-      
-      // Don't show past time slots for today
-      if (isToday(date) && slotTime <= today) return
-      
-      slots.push(slotTime)
-    })
+    professional.available_times.forEach((timeStr) => {
+      const [hours, minutes] = timeStr.split(":").map(Number);
+      const slotTime = new Date(date);
+      slotTime.setHours(hours, minutes, 0, 0);
 
-    return slots
-  }
+      // Don't show past time slots for today
+      if (isToday(date) && slotTime <= today) return;
+
+      slots.push(slotTime);
+    });
+
+    return slots;
+  };
 
   // Update available slots when professional or date changes
   useEffect(() => {
     if (selectedProfessional && selectedDate) {
-      const slots = generateTimeSlots(selectedProfessional, selectedDate)
-      setAvailableSlots(slots)
+      const slots = generateTimeSlots(selectedProfessional, selectedDate);
+      setAvailableSlots(slots);
     }
-  }, [selectedProfessional, selectedDate])
+  }, [selectedProfessional, selectedDate]);
 
   const handleSubmitForm = async (data: AppointmentFormData) => {
     try {
-      await onSubmit(data)
-      toast.success('Agendamento realizado com sucesso!', {
-        description: 'O paciente receberá uma confirmação em breve.'
-      })
-      form.reset()
-      setSelectedService(null)
-      setSelectedProfessional(null)
-      setAvailableSlots([])
-      setSelectedDate(null)
+      await onSubmit(data);
+      toast.success("Agendamento realizado com sucesso!", {
+        description: "O paciente receberá uma confirmação em breve.",
+      });
+      form.reset();
+      setSelectedService(null);
+      setSelectedProfessional(null);
+      setAvailableSlots([]);
+      setSelectedDate(null);
     } catch (error) {
-      toast.error('Erro ao criar agendamento', {
-        description: 'Verifique os dados e tente novamente.'
-      })
+      toast.error("Erro ao criar agendamento", {
+        description: "Verifique os dados e tente novamente.",
+      });
     }
-  }
+  };
 
   const formatDateLabel = (date: Date): string => {
-    if (isToday(date)) return `Hoje - ${format(date, 'dd/MM', { locale: ptBR })}`
-    if (isTomorrow(date)) return `Amanhã - ${format(date, 'dd/MM', { locale: ptBR })}`
-    return format(date, "EEEE - dd/MM", { locale: ptBR })
-  }
+    if (isToday(date)) return `Hoje - ${format(date, "dd/MM", { locale: ptBR })}`;
+    if (isTomorrow(date)) return `Amanhã - ${format(date, "dd/MM", { locale: ptBR })}`;
+    return format(date, "EEEE - dd/MM", { locale: ptBR });
+  };
 
   return (
     <Card className="w-full max-w-4xl mx-auto medical-card">
@@ -162,7 +168,6 @@ export function AppointmentBookingForm({
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmitForm)} className="space-y-8">
-            
             {/* Patient Selection */}
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-3">
@@ -218,10 +223,9 @@ export function AppointmentBookingForm({
                 )}
               </Button>
             </div>
-
           </form>
         </Form>
       </CardContent>
     </Card>
-  )
+  );
 }

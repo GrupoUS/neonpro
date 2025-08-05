@@ -1,7 +1,7 @@
 /**
  * Predictive Analytics API Integration Tests
  * Story 8.3: Predictive Analytics for Demand Forecasting (≥85% Accuracy)
- * 
+ *
  * API Testing Coverage:
  * - Forecasting models management
  * - Demand predictions generation
@@ -11,18 +11,24 @@
  * - Performance monitoring
  */
 
-import { NextRequest } from 'next/server';
-import { createMocks } from 'node-mocks-http';
+import { NextRequest } from "next/server";
+import { createMocks } from "node-mocks-http";
 
 // API Route Handlers
-import { GET as modelsGET, POST as modelsPOST } from '@/app/api/predictive-analytics/models/route';
-import { GET as predictionsGET, POST as predictionsPOST } from '@/app/api/predictive-analytics/predictions/route';
-import { GET as accuracyGET } from '@/app/api/predictive-analytics/accuracy/route';
-import { GET as alertsGET, PATCH as alertsPATCH } from '@/app/api/predictive-analytics/alerts/route';
-import { GET as recommendationsGET } from '@/app/api/predictive-analytics/recommendations/route';
+import { GET as modelsGET, POST as modelsPOST } from "@/app/api/predictive-analytics/models/route";
+import {
+  GET as predictionsGET,
+  POST as predictionsPOST,
+} from "@/app/api/predictive-analytics/predictions/route";
+import { GET as accuracyGET } from "@/app/api/predictive-analytics/accuracy/route";
+import {
+  GET as alertsGET,
+  PATCH as alertsPATCH,
+} from "@/app/api/predictive-analytics/alerts/route";
+import { GET as recommendationsGET } from "@/app/api/predictive-analytics/recommendations/route";
 
 // Mock Supabase
-jest.mock('@/app/utils/supabase/server', () => ({
+jest.mock("@/app/utils/supabase/server", () => ({
   createClient: jest.fn(() => ({
     from: jest.fn(() => ({
       select: jest.fn().mockReturnThis(),
@@ -45,41 +51,41 @@ jest.mock('@/app/utils/supabase/server', () => ({
 
 // Mock data
 const mockForecastingModel = {
-  id: 'model-123',
-  model_type: 'appointment_demand',
-  model_name: 'Agendamentos - Modelo Principal',
-  accuracy_score: 0.8750,
-  status: 'active',
-  last_trained: '2025-01-26T09:00:00Z',
-  training_data_start_date: '2024-01-01T00:00:00Z',
-  training_data_end_date: '2025-01-26T00:00:00Z',
+  id: "model-123",
+  model_type: "appointment_demand",
+  model_name: "Agendamentos - Modelo Principal",
+  accuracy_score: 0.875,
+  status: "active",
+  last_trained: "2025-01-26T09:00:00Z",
+  training_data_start_date: "2024-01-01T00:00:00Z",
+  training_data_end_date: "2025-01-26T00:00:00Z",
   metadata: {
-    features: ['historical_bookings', 'seasonal_patterns', 'marketing_campaigns'],
-    algorithm: 'Random Forest',
+    features: ["historical_bookings", "seasonal_patterns", "marketing_campaigns"],
+    algorithm: "Random Forest",
   },
-  created_at: '2025-01-26T09:00:00Z',
-  updated_at: '2025-01-26T09:00:00Z',
+  created_at: "2025-01-26T09:00:00Z",
+  updated_at: "2025-01-26T09:00:00Z",
 };
 
 const mockPrediction = {
-  id: 'pred-123',
-  model_id: 'model-123',
-  prediction_date: '2025-02-01',
-  forecast_period: 'daily',
-  category: 'appointments',
+  id: "pred-123",
+  model_id: "model-123",
+  prediction_date: "2025-02-01",
+  forecast_period: "daily",
+  category: "appointments",
   forecast_value: 45.5,
   confidence_interval_lower: 40.2,
   confidence_interval_upper: 50.8,
   confidence_score: 0.89,
-  created_at: '2025-01-26T09:00:00Z',
+  created_at: "2025-01-26T09:00:00Z",
 };
 
 const mockAlert = {
-  id: 'alert-123',
-  alert_type: 'demand_spike',
-  severity: 'high',
-  title: 'Pico de Demanda Detectado',
-  description: 'Previsão indica aumento de 35% na demanda para a próxima semana',
+  id: "alert-123",
+  alert_type: "demand_spike",
+  severity: "high",
+  title: "Pico de Demanda Detectado",
+  description: "Previsão indica aumento de 35% na demanda para a próxima semana",
   metadata: {
     predicted_increase: 0.35,
     current_baseline: 45,
@@ -87,35 +93,35 @@ const mockAlert = {
   },
   notification_sent: false,
   acknowledged: false,
-  resolution_status: 'open',
-  alert_date: '2025-01-26T09:00:00Z',
-  created_at: '2025-01-26T09:00:00Z',
+  resolution_status: "open",
+  alert_date: "2025-01-26T09:00:00Z",
+  created_at: "2025-01-26T09:00:00Z",
 };
 
 const mockUser = {
-  id: 'user-123',
-  email: 'test@clinic.com',
-  role: 'admin',
+  id: "user-123",
+  email: "test@clinic.com",
+  role: "admin",
 };
 
 const mockSession = {
   user: mockUser,
-  access_token: 'mock-token',
+  access_token: "mock-token",
   expires_at: Date.now() + 3600000,
 };
 
-describe('Predictive Analytics API Integration Tests', () => {
-  const mockSupabase = require('@/app/utils/supabase/server').createClient();
+describe("Predictive Analytics API Integration Tests", () => {
+  const mockSupabase = require("@/app/utils/supabase/server").createClient();
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Mock successful authentication
     mockSupabase.auth.getUser.mockResolvedValue({
       data: { user: mockUser },
       error: null,
     });
-    
+
     mockSupabase.auth.getSession.mockResolvedValue({
       data: { session: mockSession },
       error: null,
@@ -126,17 +132,20 @@ describe('Predictive Analytics API Integration Tests', () => {
     jest.resetAllMocks();
   });
 
-  describe('/api/predictive-analytics/models', () => {
-    describe('GET - List forecasting models', () => {
-      it('returns active forecasting models successfully', async () => {
-        mockSupabase.from().select().mockResolvedValue({
-          data: [mockForecastingModel],
-          error: null,
-        });
+  describe("/api/predictive-analytics/models", () => {
+    describe("GET - List forecasting models", () => {
+      it("returns active forecasting models successfully", async () => {
+        mockSupabase
+          .from()
+          .select()
+          .mockResolvedValue({
+            data: [mockForecastingModel],
+            error: null,
+          });
 
         const { req } = createMocks({
-          method: 'GET',
-          url: '/api/predictive-analytics/models',
+          method: "GET",
+          url: "/api/predictive-analytics/models",
         });
 
         const response = await modelsGET(req as NextRequest);
@@ -146,22 +155,26 @@ describe('Predictive Analytics API Integration Tests', () => {
         expect(data.success).toBe(true);
         expect(data.models).toHaveLength(1);
         expect(data.models[0]).toMatchObject({
-          id: 'model-123',
-          model_type: 'appointment_demand',
-          accuracy_score: 0.8750,
+          id: "model-123",
+          model_type: "appointment_demand",
+          accuracy_score: 0.875,
         });
       });
 
-      it('filters models by type when specified', async () => {
-        mockSupabase.from().select().eq().mockResolvedValue({
-          data: [mockForecastingModel],
-          error: null,
-        });
+      it("filters models by type when specified", async () => {
+        mockSupabase
+          .from()
+          .select()
+          .eq()
+          .mockResolvedValue({
+            data: [mockForecastingModel],
+            error: null,
+          });
 
         const { req } = createMocks({
-          method: 'GET',
-          url: '/api/predictive-analytics/models?type=appointment_demand',
-          query: { type: 'appointment_demand' },
+          method: "GET",
+          url: "/api/predictive-analytics/models?type=appointment_demand",
+          query: { type: "appointment_demand" },
         });
 
         const response = await modelsGET(req as NextRequest);
@@ -169,18 +182,21 @@ describe('Predictive Analytics API Integration Tests', () => {
 
         expect(response.status).toBe(200);
         expect(data.success).toBe(true);
-        expect(mockSupabase.from().eq).toHaveBeenCalledWith('model_type', 'appointment_demand');
+        expect(mockSupabase.from().eq).toHaveBeenCalledWith("model_type", "appointment_demand");
       });
 
-      it('handles database errors gracefully', async () => {
-        mockSupabase.from().select().mockResolvedValue({
-          data: null,
-          error: { message: 'Database connection failed', code: '08000' },
-        });
+      it("handles database errors gracefully", async () => {
+        mockSupabase
+          .from()
+          .select()
+          .mockResolvedValue({
+            data: null,
+            error: { message: "Database connection failed", code: "08000" },
+          });
 
         const { req } = createMocks({
-          method: 'GET',
-          url: '/api/predictive-analytics/models',
+          method: "GET",
+          url: "/api/predictive-analytics/models",
         });
 
         const response = await modelsGET(req as NextRequest);
@@ -191,15 +207,15 @@ describe('Predictive Analytics API Integration Tests', () => {
         expect(data.error).toBeDefined();
       });
 
-      it('requires authentication', async () => {
+      it("requires authentication", async () => {
         mockSupabase.auth.getUser.mockResolvedValue({
           data: { user: null },
-          error: { message: 'No user found' },
+          error: { message: "No user found" },
         });
 
         const { req } = createMocks({
-          method: 'GET',
-          url: '/api/predictive-analytics/models',
+          method: "GET",
+          url: "/api/predictive-analytics/models",
         });
 
         const response = await modelsGET(req as NextRequest);
@@ -208,25 +224,29 @@ describe('Predictive Analytics API Integration Tests', () => {
       });
     });
 
-    describe('POST - Create new forecasting model', () => {
+    describe("POST - Create new forecasting model", () => {
       const newModelData = {
-        model_type: 'treatment_demand',
-        model_name: 'Tratamentos - Modelo Sazonal',
+        model_type: "treatment_demand",
+        model_name: "Tratamentos - Modelo Sazonal",
         metadata: {
-          features: ['historical_treatments', 'seasonal_patterns'],
-          algorithm: 'Linear Regression',
+          features: ["historical_treatments", "seasonal_patterns"],
+          algorithm: "Linear Regression",
         },
       };
 
-      it('creates new forecasting model successfully', async () => {
-        mockSupabase.from().insert().single().mockResolvedValue({
-          data: { ...mockForecastingModel, ...newModelData, id: 'model-456' },
-          error: null,
-        });
+      it("creates new forecasting model successfully", async () => {
+        mockSupabase
+          .from()
+          .insert()
+          .single()
+          .mockResolvedValue({
+            data: { ...mockForecastingModel, ...newModelData, id: "model-456" },
+            error: null,
+          });
 
         const { req } = createMocks({
-          method: 'POST',
-          url: '/api/predictive-analytics/models',
+          method: "POST",
+          url: "/api/predictive-analytics/models",
           body: newModelData,
         });
 
@@ -235,19 +255,19 @@ describe('Predictive Analytics API Integration Tests', () => {
 
         expect(response.status).toBe(201);
         expect(data.success).toBe(true);
-        expect(data.model.model_type).toBe('treatment_demand');
-        expect(data.model.model_name).toBe('Tratamentos - Modelo Sazonal');
+        expect(data.model.model_type).toBe("treatment_demand");
+        expect(data.model.model_name).toBe("Tratamentos - Modelo Sazonal");
       });
 
-      it('validates required fields', async () => {
+      it("validates required fields", async () => {
         const invalidData = {
-          model_name: 'Modelo Sem Tipo',
+          model_name: "Modelo Sem Tipo",
           // Missing model_type
         };
 
         const { req } = createMocks({
-          method: 'POST',
-          url: '/api/predictive-analytics/models',
+          method: "POST",
+          url: "/api/predictive-analytics/models",
           body: invalidData,
         });
 
@@ -256,18 +276,22 @@ describe('Predictive Analytics API Integration Tests', () => {
 
         expect(response.status).toBe(400);
         expect(data.success).toBe(false);
-        expect(data.error).toContain('validation');
+        expect(data.error).toContain("validation");
       });
 
-      it('handles database insert errors', async () => {
-        mockSupabase.from().insert().single().mockResolvedValue({
-          data: null,
-          error: { message: 'Duplicate key value', code: '23505' },
-        });
+      it("handles database insert errors", async () => {
+        mockSupabase
+          .from()
+          .insert()
+          .single()
+          .mockResolvedValue({
+            data: null,
+            error: { message: "Duplicate key value", code: "23505" },
+          });
 
         const { req } = createMocks({
-          method: 'POST',
-          url: '/api/predictive-analytics/models',
+          method: "POST",
+          url: "/api/predictive-analytics/models",
           body: newModelData,
         });
 
@@ -280,18 +304,21 @@ describe('Predictive Analytics API Integration Tests', () => {
     });
   });
 
-  describe('/api/predictive-analytics/predictions', () => {
-    describe('GET - List demand predictions', () => {
-      it('returns predictions with filtering options', async () => {
-        mockSupabase.from().select().mockResolvedValue({
-          data: [mockPrediction],
-          error: null,
-        });
+  describe("/api/predictive-analytics/predictions", () => {
+    describe("GET - List demand predictions", () => {
+      it("returns predictions with filtering options", async () => {
+        mockSupabase
+          .from()
+          .select()
+          .mockResolvedValue({
+            data: [mockPrediction],
+            error: null,
+          });
 
         const { req } = createMocks({
-          method: 'GET',
-          url: '/api/predictive-analytics/predictions?category=appointments&period=daily',
-          query: { category: 'appointments', period: 'daily' },
+          method: "GET",
+          url: "/api/predictive-analytics/predictions?category=appointments&period=daily",
+          query: { category: "appointments", period: "daily" },
         });
 
         const response = await predictionsGET(req as NextRequest);
@@ -300,21 +327,26 @@ describe('Predictive Analytics API Integration Tests', () => {
         expect(response.status).toBe(200);
         expect(data.success).toBe(true);
         expect(data.predictions).toHaveLength(1);
-        expect(data.predictions[0].category).toBe('appointments');
-        expect(data.predictions[0].forecast_period).toBe('daily');
+        expect(data.predictions[0].category).toBe("appointments");
+        expect(data.predictions[0].forecast_period).toBe("daily");
       });
 
-      it('supports date range filtering', async () => {
-        const startDate = '2025-02-01';
-        const endDate = '2025-02-07';
+      it("supports date range filtering", async () => {
+        const startDate = "2025-02-01";
+        const endDate = "2025-02-07";
 
-        mockSupabase.from().select().gte().lte().mockResolvedValue({
-          data: [mockPrediction],
-          error: null,
-        });
+        mockSupabase
+          .from()
+          .select()
+          .gte()
+          .lte()
+          .mockResolvedValue({
+            data: [mockPrediction],
+            error: null,
+          });
 
         const { req } = createMocks({
-          method: 'GET',
+          method: "GET",
           url: `/api/predictive-analytics/predictions?start_date=${startDate}&end_date=${endDate}`,
           query: { start_date: startDate, end_date: endDate },
         });
@@ -324,41 +356,44 @@ describe('Predictive Analytics API Integration Tests', () => {
 
         expect(response.status).toBe(200);
         expect(data.success).toBe(true);
-        expect(mockSupabase.from().gte).toHaveBeenCalledWith('prediction_date', startDate);
-        expect(mockSupabase.from().lte).toHaveBeenCalledWith('prediction_date', endDate);
+        expect(mockSupabase.from().gte).toHaveBeenCalledWith("prediction_date", startDate);
+        expect(mockSupabase.from().lte).toHaveBeenCalledWith("prediction_date", endDate);
       });
 
-      it('includes confidence intervals and scores', async () => {
-        mockSupabase.from().select().mockResolvedValue({
-          data: [mockPrediction],
-          error: null,
-        });
+      it("includes confidence intervals and scores", async () => {
+        mockSupabase
+          .from()
+          .select()
+          .mockResolvedValue({
+            data: [mockPrediction],
+            error: null,
+          });
 
         const { req } = createMocks({
-          method: 'GET',
-          url: '/api/predictive-analytics/predictions',
+          method: "GET",
+          url: "/api/predictive-analytics/predictions",
         });
 
         const response = await predictionsGET(req as NextRequest);
         const data = await response.json();
 
         expect(response.status).toBe(200);
-        expect(data.predictions[0]).toHaveProperty('confidence_interval_lower');
-        expect(data.predictions[0]).toHaveProperty('confidence_interval_upper');
-        expect(data.predictions[0]).toHaveProperty('confidence_score');
+        expect(data.predictions[0]).toHaveProperty("confidence_interval_lower");
+        expect(data.predictions[0]).toHaveProperty("confidence_interval_upper");
+        expect(data.predictions[0]).toHaveProperty("confidence_score");
         expect(data.predictions[0].confidence_score).toBe(0.89);
       });
     });
 
-    describe('POST - Generate new predictions', () => {
+    describe("POST - Generate new predictions", () => {
       const predictionRequest = {
-        model_id: 'model-123',
-        prediction_date: '2025-02-01',
-        forecast_period: 'daily',
-        category: 'appointments',
+        model_id: "model-123",
+        prediction_date: "2025-02-01",
+        forecast_period: "daily",
+        category: "appointments",
       };
 
-      it('generates new predictions successfully', async () => {
+      it("generates new predictions successfully", async () => {
         // Mock model exists
         mockSupabase.from().select().eq().single().mockResolvedValue({
           data: mockForecastingModel,
@@ -372,8 +407,8 @@ describe('Predictive Analytics API Integration Tests', () => {
         });
 
         const { req } = createMocks({
-          method: 'POST',
-          url: '/api/predictive-analytics/predictions',
+          method: "POST",
+          url: "/api/predictive-analytics/predictions",
           body: predictionRequest,
         });
 
@@ -386,15 +421,20 @@ describe('Predictive Analytics API Integration Tests', () => {
         expect(data.prediction.confidence_score).toBe(0.89);
       });
 
-      it('validates model exists and is active', async () => {
-        mockSupabase.from().select().eq().single().mockResolvedValue({
-          data: null,
-          error: { message: 'Model not found', code: 'PGRST116' },
-        });
+      it("validates model exists and is active", async () => {
+        mockSupabase
+          .from()
+          .select()
+          .eq()
+          .single()
+          .mockResolvedValue({
+            data: null,
+            error: { message: "Model not found", code: "PGRST116" },
+          });
 
         const { req } = createMocks({
-          method: 'POST',
-          url: '/api/predictive-analytics/predictions',
+          method: "POST",
+          url: "/api/predictive-analytics/predictions",
           body: predictionRequest,
         });
 
@@ -403,18 +443,18 @@ describe('Predictive Analytics API Integration Tests', () => {
 
         expect(response.status).toBe(404);
         expect(data.success).toBe(false);
-        expect(data.error).toContain('Model not found');
+        expect(data.error).toContain("Model not found");
       });
 
-      it('validates prediction parameters', async () => {
+      it("validates prediction parameters", async () => {
         const invalidRequest = {
-          model_id: 'model-123',
+          model_id: "model-123",
           // Missing required fields
         };
 
         const { req } = createMocks({
-          method: 'POST',
-          url: '/api/predictive-analytics/predictions',
+          method: "POST",
+          url: "/api/predictive-analytics/predictions",
           body: invalidRequest,
         });
 
@@ -423,34 +463,34 @@ describe('Predictive Analytics API Integration Tests', () => {
 
         expect(response.status).toBe(400);
         expect(data.success).toBe(false);
-        expect(data.error).toContain('validation');
+        expect(data.error).toContain("validation");
       });
     });
   });
 
-  describe('/api/predictive-analytics/accuracy', () => {
-    describe('GET - Model accuracy tracking', () => {
+  describe("/api/predictive-analytics/accuracy", () => {
+    describe("GET - Model accuracy tracking", () => {
       const accuracyData = [
         {
-          id: 'acc-123',
-          model_id: 'model-123',
-          evaluation_date: '2025-01-26',
-          accuracy_score: 0.8750,
+          id: "acc-123",
+          model_id: "model-123",
+          evaluation_date: "2025-01-26",
+          accuracy_score: 0.875,
           mae: 2.3,
           rmse: 3.1,
-          evaluation_period: 'weekly',
+          evaluation_period: "weekly",
         },
       ];
 
-      it('returns accuracy metrics for models', async () => {
+      it("returns accuracy metrics for models", async () => {
         mockSupabase.from().select().mockResolvedValue({
           data: accuracyData,
           error: null,
         });
 
         const { req } = createMocks({
-          method: 'GET',
-          url: '/api/predictive-analytics/accuracy',
+          method: "GET",
+          url: "/api/predictive-analytics/accuracy",
         });
 
         const response = await accuracyGET(req as NextRequest);
@@ -459,21 +499,21 @@ describe('Predictive Analytics API Integration Tests', () => {
         expect(response.status).toBe(200);
         expect(data.success).toBe(true);
         expect(data.accuracy_metrics).toHaveLength(1);
-        expect(data.accuracy_metrics[0].accuracy_score).toBe(0.8750);
-        expect(data.accuracy_metrics[0]).toHaveProperty('mae');
-        expect(data.accuracy_metrics[0]).toHaveProperty('rmse');
+        expect(data.accuracy_metrics[0].accuracy_score).toBe(0.875);
+        expect(data.accuracy_metrics[0]).toHaveProperty("mae");
+        expect(data.accuracy_metrics[0]).toHaveProperty("rmse");
       });
 
-      it('filters by model_id when specified', async () => {
+      it("filters by model_id when specified", async () => {
         mockSupabase.from().select().eq().mockResolvedValue({
           data: accuracyData,
           error: null,
         });
 
         const { req } = createMocks({
-          method: 'GET',
-          url: '/api/predictive-analytics/accuracy?model_id=model-123',
-          query: { model_id: 'model-123' },
+          method: "GET",
+          url: "/api/predictive-analytics/accuracy?model_id=model-123",
+          query: { model_id: "model-123" },
         });
 
         const response = await accuracyGET(req as NextRequest);
@@ -481,13 +521,13 @@ describe('Predictive Analytics API Integration Tests', () => {
 
         expect(response.status).toBe(200);
         expect(data.success).toBe(true);
-        expect(mockSupabase.from().eq).toHaveBeenCalledWith('model_id', 'model-123');
+        expect(mockSupabase.from().eq).toHaveBeenCalledWith("model_id", "model-123");
       });
 
-      it('calculates average accuracy across models', async () => {
+      it("calculates average accuracy across models", async () => {
         const multipleAccuracy = [
           { ...accuracyData[0], accuracy_score: 0.85 },
-          { ...accuracyData[0], id: 'acc-456', accuracy_score: 0.90 },
+          { ...accuracyData[0], id: "acc-456", accuracy_score: 0.9 },
         ];
 
         mockSupabase.from().select().mockResolvedValue({
@@ -496,8 +536,8 @@ describe('Predictive Analytics API Integration Tests', () => {
         });
 
         const { req } = createMocks({
-          method: 'GET',
-          url: '/api/predictive-analytics/accuracy',
+          method: "GET",
+          url: "/api/predictive-analytics/accuracy",
         });
 
         const response = await accuracyGET(req as NextRequest);
@@ -508,10 +548,10 @@ describe('Predictive Analytics API Integration Tests', () => {
         expect(data.average_accuracy).toBe(0.875); // (0.85 + 0.90) / 2
       });
 
-      it('identifies models meeting accuracy threshold', async () => {
+      it("identifies models meeting accuracy threshold", async () => {
         const varyingAccuracy = [
           { ...accuracyData[0], accuracy_score: 0.87 }, // Above 85%
-          { ...accuracyData[0], id: 'acc-456', accuracy_score: 0.80 }, // Below 85%
+          { ...accuracyData[0], id: "acc-456", accuracy_score: 0.8 }, // Below 85%
         ];
 
         mockSupabase.from().select().mockResolvedValue({
@@ -520,8 +560,8 @@ describe('Predictive Analytics API Integration Tests', () => {
         });
 
         const { req } = createMocks({
-          method: 'GET',
-          url: '/api/predictive-analytics/accuracy',
+          method: "GET",
+          url: "/api/predictive-analytics/accuracy",
         });
 
         const response = await accuracyGET(req as NextRequest);
@@ -535,17 +575,20 @@ describe('Predictive Analytics API Integration Tests', () => {
     });
   });
 
-  describe('/api/predictive-analytics/alerts', () => {
-    describe('GET - List demand alerts', () => {
-      it('returns active demand alerts', async () => {
-        mockSupabase.from().select().mockResolvedValue({
-          data: [mockAlert],
-          error: null,
-        });
+  describe("/api/predictive-analytics/alerts", () => {
+    describe("GET - List demand alerts", () => {
+      it("returns active demand alerts", async () => {
+        mockSupabase
+          .from()
+          .select()
+          .mockResolvedValue({
+            data: [mockAlert],
+            error: null,
+          });
 
         const { req } = createMocks({
-          method: 'GET',
-          url: '/api/predictive-analytics/alerts',
+          method: "GET",
+          url: "/api/predictive-analytics/alerts",
         });
 
         const response = await alertsGET(req as NextRequest);
@@ -554,20 +597,24 @@ describe('Predictive Analytics API Integration Tests', () => {
         expect(response.status).toBe(200);
         expect(data.success).toBe(true);
         expect(data.alerts).toHaveLength(1);
-        expect(data.alerts[0].alert_type).toBe('demand_spike');
-        expect(data.alerts[0].severity).toBe('high');
+        expect(data.alerts[0].alert_type).toBe("demand_spike");
+        expect(data.alerts[0].severity).toBe("high");
       });
 
-      it('filters alerts by severity', async () => {
-        mockSupabase.from().select().eq().mockResolvedValue({
-          data: [mockAlert],
-          error: null,
-        });
+      it("filters alerts by severity", async () => {
+        mockSupabase
+          .from()
+          .select()
+          .eq()
+          .mockResolvedValue({
+            data: [mockAlert],
+            error: null,
+          });
 
         const { req } = createMocks({
-          method: 'GET',
-          url: '/api/predictive-analytics/alerts?severity=high',
-          query: { severity: 'high' },
+          method: "GET",
+          url: "/api/predictive-analytics/alerts?severity=high",
+          query: { severity: "high" },
         });
 
         const response = await alertsGET(req as NextRequest);
@@ -575,19 +622,23 @@ describe('Predictive Analytics API Integration Tests', () => {
 
         expect(response.status).toBe(200);
         expect(data.success).toBe(true);
-        expect(mockSupabase.from().eq).toHaveBeenCalledWith('severity', 'high');
+        expect(mockSupabase.from().eq).toHaveBeenCalledWith("severity", "high");
       });
 
-      it('filters alerts by acknowledgment status', async () => {
-        mockSupabase.from().select().eq().mockResolvedValue({
-          data: [mockAlert],
-          error: null,
-        });
+      it("filters alerts by acknowledgment status", async () => {
+        mockSupabase
+          .from()
+          .select()
+          .eq()
+          .mockResolvedValue({
+            data: [mockAlert],
+            error: null,
+          });
 
         const { req } = createMocks({
-          method: 'GET',
-          url: '/api/predictive-analytics/alerts?acknowledged=false',
-          query: { acknowledged: 'false' },
+          method: "GET",
+          url: "/api/predictive-analytics/alerts?acknowledged=false",
+          query: { acknowledged: "false" },
         });
 
         const response = await alertsGET(req as NextRequest);
@@ -595,26 +646,31 @@ describe('Predictive Analytics API Integration Tests', () => {
 
         expect(response.status).toBe(200);
         expect(data.success).toBe(true);
-        expect(mockSupabase.from().eq).toHaveBeenCalledWith('acknowledged', false);
+        expect(mockSupabase.from().eq).toHaveBeenCalledWith("acknowledged", false);
       });
     });
 
-    describe('PATCH - Update alert status', () => {
+    describe("PATCH - Update alert status", () => {
       const updateRequest = {
-        alert_id: 'alert-123',
+        alert_id: "alert-123",
         acknowledged: true,
-        resolution_status: 'resolved',
+        resolution_status: "resolved",
       };
 
-      it('acknowledges alert successfully', async () => {
-        mockSupabase.from().update().eq().single().mockResolvedValue({
-          data: { ...mockAlert, acknowledged: true, resolution_status: 'resolved' },
-          error: null,
-        });
+      it("acknowledges alert successfully", async () => {
+        mockSupabase
+          .from()
+          .update()
+          .eq()
+          .single()
+          .mockResolvedValue({
+            data: { ...mockAlert, acknowledged: true, resolution_status: "resolved" },
+            error: null,
+          });
 
         const { req } = createMocks({
-          method: 'PATCH',
-          url: '/api/predictive-analytics/alerts',
+          method: "PATCH",
+          url: "/api/predictive-analytics/alerts",
           body: updateRequest,
         });
 
@@ -624,18 +680,23 @@ describe('Predictive Analytics API Integration Tests', () => {
         expect(response.status).toBe(200);
         expect(data.success).toBe(true);
         expect(data.alert.acknowledged).toBe(true);
-        expect(data.alert.resolution_status).toBe('resolved');
+        expect(data.alert.resolution_status).toBe("resolved");
       });
 
-      it('validates alert exists', async () => {
-        mockSupabase.from().update().eq().single().mockResolvedValue({
-          data: null,
-          error: { message: 'Alert not found', code: 'PGRST116' },
-        });
+      it("validates alert exists", async () => {
+        mockSupabase
+          .from()
+          .update()
+          .eq()
+          .single()
+          .mockResolvedValue({
+            data: null,
+            error: { message: "Alert not found", code: "PGRST116" },
+          });
 
         const { req } = createMocks({
-          method: 'PATCH',
-          url: '/api/predictive-analytics/alerts',
+          method: "PATCH",
+          url: "/api/predictive-analytics/alerts",
           body: updateRequest,
         });
 
@@ -644,18 +705,18 @@ describe('Predictive Analytics API Integration Tests', () => {
 
         expect(response.status).toBe(404);
         expect(data.success).toBe(false);
-        expect(data.error).toContain('Alert not found');
+        expect(data.error).toContain("Alert not found");
       });
 
-      it('validates update parameters', async () => {
+      it("validates update parameters", async () => {
         const invalidRequest = {
-          alert_id: 'alert-123',
-          acknowledged: 'invalid', // Should be boolean
+          alert_id: "alert-123",
+          acknowledged: "invalid", // Should be boolean
         };
 
         const { req } = createMocks({
-          method: 'PATCH',
-          url: '/api/predictive-analytics/alerts',
+          method: "PATCH",
+          url: "/api/predictive-analytics/alerts",
           body: invalidRequest,
         });
 
@@ -664,40 +725,41 @@ describe('Predictive Analytics API Integration Tests', () => {
 
         expect(response.status).toBe(400);
         expect(data.success).toBe(false);
-        expect(data.error).toContain('validation');
+        expect(data.error).toContain("validation");
       });
     });
   });
 
-  describe('/api/predictive-analytics/recommendations', () => {
-    describe('GET - Resource optimization recommendations', () => {
+  describe("/api/predictive-analytics/recommendations", () => {
+    describe("GET - Resource optimization recommendations", () => {
       const mockRecommendations = [
         {
-          id: 'rec-123',
-          recommendation_type: 'resource_allocation',
-          title: 'Aumento de Equipe Recomendado',
-          description: 'Previsão indica necessidade de 2 profissionais adicionais na próxima semana',
-          priority: 'high',
-          estimated_impact: 'Redução de 15% no tempo de espera',
+          id: "rec-123",
+          recommendation_type: "resource_allocation",
+          title: "Aumento de Equipe Recomendado",
+          description:
+            "Previsão indica necessidade de 2 profissionais adicionais na próxima semana",
+          priority: "high",
+          estimated_impact: "Redução de 15% no tempo de espera",
           confidence_score: 0.92,
           metadata: {
-            resource_type: 'staff',
+            resource_type: "staff",
             recommended_quantity: 2,
-            timeframe: 'next_week',
+            timeframe: "next_week",
           },
-          created_at: '2025-01-26T09:00:00Z',
+          created_at: "2025-01-26T09:00:00Z",
         },
       ];
 
-      it('returns optimization recommendations', async () => {
+      it("returns optimization recommendations", async () => {
         mockSupabase.from().select().mockResolvedValue({
           data: mockRecommendations,
           error: null,
         });
 
         const { req } = createMocks({
-          method: 'GET',
-          url: '/api/predictive-analytics/recommendations',
+          method: "GET",
+          url: "/api/predictive-analytics/recommendations",
         });
 
         const response = await recommendationsGET(req as NextRequest);
@@ -706,21 +768,21 @@ describe('Predictive Analytics API Integration Tests', () => {
         expect(response.status).toBe(200);
         expect(data.success).toBe(true);
         expect(data.recommendations).toHaveLength(1);
-        expect(data.recommendations[0].recommendation_type).toBe('resource_allocation');
-        expect(data.recommendations[0].priority).toBe('high');
+        expect(data.recommendations[0].recommendation_type).toBe("resource_allocation");
+        expect(data.recommendations[0].priority).toBe("high");
         expect(data.recommendations[0].confidence_score).toBe(0.92);
       });
 
-      it('filters recommendations by type', async () => {
+      it("filters recommendations by type", async () => {
         mockSupabase.from().select().eq().mockResolvedValue({
           data: mockRecommendations,
           error: null,
         });
 
         const { req } = createMocks({
-          method: 'GET',
-          url: '/api/predictive-analytics/recommendations?type=resource_allocation',
-          query: { type: 'resource_allocation' },
+          method: "GET",
+          url: "/api/predictive-analytics/recommendations?type=resource_allocation",
+          query: { type: "resource_allocation" },
         });
 
         const response = await recommendationsGET(req as NextRequest);
@@ -728,19 +790,22 @@ describe('Predictive Analytics API Integration Tests', () => {
 
         expect(response.status).toBe(200);
         expect(data.success).toBe(true);
-        expect(mockSupabase.from().eq).toHaveBeenCalledWith('recommendation_type', 'resource_allocation');
+        expect(mockSupabase.from().eq).toHaveBeenCalledWith(
+          "recommendation_type",
+          "resource_allocation",
+        );
       });
 
-      it('filters recommendations by priority', async () => {
+      it("filters recommendations by priority", async () => {
         mockSupabase.from().select().eq().mockResolvedValue({
           data: mockRecommendations,
           error: null,
         });
 
         const { req } = createMocks({
-          method: 'GET',
-          url: '/api/predictive-analytics/recommendations?priority=high',
-          query: { priority: 'high' },
+          method: "GET",
+          url: "/api/predictive-analytics/recommendations?priority=high",
+          query: { priority: "high" },
         });
 
         const response = await recommendationsGET(req as NextRequest);
@@ -748,18 +813,18 @@ describe('Predictive Analytics API Integration Tests', () => {
 
         expect(response.status).toBe(200);
         expect(data.success).toBe(true);
-        expect(mockSupabase.from().eq).toHaveBeenCalledWith('priority', 'high');
+        expect(mockSupabase.from().eq).toHaveBeenCalledWith("priority", "high");
       });
 
-      it('orders recommendations by confidence score', async () => {
+      it("orders recommendations by confidence score", async () => {
         mockSupabase.from().select().order().mockResolvedValue({
           data: mockRecommendations,
           error: null,
         });
 
         const { req } = createMocks({
-          method: 'GET',
-          url: '/api/predictive-analytics/recommendations',
+          method: "GET",
+          url: "/api/predictive-analytics/recommendations",
         });
 
         const response = await recommendationsGET(req as NextRequest);
@@ -767,29 +832,31 @@ describe('Predictive Analytics API Integration Tests', () => {
 
         expect(response.status).toBe(200);
         expect(data.success).toBe(true);
-        expect(mockSupabase.from().order).toHaveBeenCalledWith('confidence_score', { ascending: false });
+        expect(mockSupabase.from().order).toHaveBeenCalledWith("confidence_score", {
+          ascending: false,
+        });
       });
     });
   });
 
-  describe('Authentication and Authorization', () => {
-    it('requires valid session for all endpoints', async () => {
+  describe("Authentication and Authorization", () => {
+    it("requires valid session for all endpoints", async () => {
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: null },
-        error: { message: 'No user found' },
+        error: { message: "No user found" },
       });
 
       const endpoints = [
-        { handler: modelsGET, url: '/api/predictive-analytics/models' },
-        { handler: predictionsGET, url: '/api/predictive-analytics/predictions' },
-        { handler: accuracyGET, url: '/api/predictive-analytics/accuracy' },
-        { handler: alertsGET, url: '/api/predictive-analytics/alerts' },
-        { handler: recommendationsGET, url: '/api/predictive-analytics/recommendations' },
+        { handler: modelsGET, url: "/api/predictive-analytics/models" },
+        { handler: predictionsGET, url: "/api/predictive-analytics/predictions" },
+        { handler: accuracyGET, url: "/api/predictive-analytics/accuracy" },
+        { handler: alertsGET, url: "/api/predictive-analytics/alerts" },
+        { handler: recommendationsGET, url: "/api/predictive-analytics/recommendations" },
       ];
 
       for (const endpoint of endpoints) {
         const { req } = createMocks({
-          method: 'GET',
+          method: "GET",
           url: endpoint.url,
         });
 
@@ -798,31 +865,31 @@ describe('Predictive Analytics API Integration Tests', () => {
       }
     });
 
-    it('validates user permissions for write operations', async () => {
-      const limitedUser = { ...mockUser, role: 'user' };
+    it("validates user permissions for write operations", async () => {
+      const limitedUser = { ...mockUser, role: "user" };
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: limitedUser },
         error: null,
       });
 
       const { req } = createMocks({
-        method: 'POST',
-        url: '/api/predictive-analytics/models',
-        body: { model_type: 'test', model_name: 'Test Model' },
+        method: "POST",
+        url: "/api/predictive-analytics/models",
+        body: { model_type: "test", model_name: "Test Model" },
       });
 
       const response = await modelsPOST(req as NextRequest);
-      
+
       // Should check permissions (implementation dependent)
       expect(response.status).toBeOneOf([201, 403]);
     });
   });
 
-  describe('Story 8.3 API Acceptance Criteria Validation', () => {
-    it('AC1: ML-based forecasting with ≥85% accuracy tracking', async () => {
+  describe("Story 8.3 API Acceptance Criteria Validation", () => {
+    it("AC1: ML-based forecasting with ≥85% accuracy tracking", async () => {
       const highAccuracyMetrics = [
-        { accuracy_score: 0.87, model_id: 'model-1' },
-        { accuracy_score: 0.89, model_id: 'model-2' },
+        { accuracy_score: 0.87, model_id: "model-1" },
+        { accuracy_score: 0.89, model_id: "model-2" },
       ];
 
       mockSupabase.from().select().mockResolvedValue({
@@ -831,8 +898,8 @@ describe('Predictive Analytics API Integration Tests', () => {
       });
 
       const { req } = createMocks({
-        method: 'GET',
-        url: '/api/predictive-analytics/accuracy',
+        method: "GET",
+        url: "/api/predictive-analytics/accuracy",
       });
 
       const response = await accuracyGET(req as NextRequest);
@@ -843,11 +910,11 @@ describe('Predictive Analytics API Integration Tests', () => {
       expect(data.models_above_threshold).toBe(2);
     });
 
-    it('AC2: Multi-dimensional forecasting capabilities', async () => {
+    it("AC2: Multi-dimensional forecasting capabilities", async () => {
       const multiDimensionalPredictions = [
-        { category: 'appointments', forecast_period: 'daily' },
-        { category: 'treatments', forecast_period: 'weekly' },
-        { category: 'revenue', forecast_period: 'monthly' },
+        { category: "appointments", forecast_period: "daily" },
+        { category: "treatments", forecast_period: "weekly" },
+        { category: "revenue", forecast_period: "monthly" },
       ];
 
       mockSupabase.from().select().mockResolvedValue({
@@ -856,8 +923,8 @@ describe('Predictive Analytics API Integration Tests', () => {
       });
 
       const { req } = createMocks({
-        method: 'GET',
-        url: '/api/predictive-analytics/predictions',
+        method: "GET",
+        url: "/api/predictive-analytics/predictions",
       });
 
       const response = await predictionsGET(req as NextRequest);
@@ -865,17 +932,17 @@ describe('Predictive Analytics API Integration Tests', () => {
 
       expect(response.status).toBe(200);
       expect(data.predictions).toHaveLength(3);
-      
+
       const categories = data.predictions.map((p: any) => p.category);
-      expect(categories).toContain('appointments');
-      expect(categories).toContain('treatments');
-      expect(categories).toContain('revenue');
+      expect(categories).toContain("appointments");
+      expect(categories).toContain("treatments");
+      expect(categories).toContain("revenue");
     });
 
-    it('AC4: Early warning system implementation', async () => {
+    it("AC4: Early warning system implementation", async () => {
       const demandAlerts = [
-        { alert_type: 'demand_spike', severity: 'high' },
-        { alert_type: 'resource_shortage', severity: 'medium' },
+        { alert_type: "demand_spike", severity: "high" },
+        { alert_type: "resource_shortage", severity: "medium" },
       ];
 
       mockSupabase.from().select().mockResolvedValue({
@@ -884,8 +951,8 @@ describe('Predictive Analytics API Integration Tests', () => {
       });
 
       const { req } = createMocks({
-        method: 'GET',
-        url: '/api/predictive-analytics/alerts',
+        method: "GET",
+        url: "/api/predictive-analytics/alerts",
       });
 
       const response = await alertsGET(req as NextRequest);
@@ -893,16 +960,16 @@ describe('Predictive Analytics API Integration Tests', () => {
 
       expect(response.status).toBe(200);
       expect(data.alerts).toHaveLength(2);
-      
+
       const alertTypes = data.alerts.map((a: any) => a.alert_type);
-      expect(alertTypes).toContain('demand_spike');
-      expect(alertTypes).toContain('resource_shortage');
+      expect(alertTypes).toContain("demand_spike");
+      expect(alertTypes).toContain("resource_shortage");
     });
 
-    it('AC5: Resource optimization recommendations', async () => {
+    it("AC5: Resource optimization recommendations", async () => {
       const optimizationRecs = [
-        { recommendation_type: 'resource_allocation', confidence_score: 0.92 },
-        { recommendation_type: 'schedule_optimization', confidence_score: 0.88 },
+        { recommendation_type: "resource_allocation", confidence_score: 0.92 },
+        { recommendation_type: "schedule_optimization", confidence_score: 0.88 },
       ];
 
       mockSupabase.from().select().order().mockResolvedValue({
@@ -911,8 +978,8 @@ describe('Predictive Analytics API Integration Tests', () => {
       });
 
       const { req } = createMocks({
-        method: 'GET',
-        url: '/api/predictive-analytics/recommendations',
+        method: "GET",
+        url: "/api/predictive-analytics/recommendations",
       });
 
       const response = await recommendationsGET(req as NextRequest);
@@ -923,11 +990,11 @@ describe('Predictive Analytics API Integration Tests', () => {
       expect(data.recommendations[0].confidence_score).toBeGreaterThan(0.85);
     });
 
-    it('AC8: Customizable forecasting timeframes', async () => {
+    it("AC8: Customizable forecasting timeframes", async () => {
       const timeframePredictions = [
-        { forecast_period: 'daily' },
-        { forecast_period: 'weekly' },
-        { forecast_period: 'monthly' },
+        { forecast_period: "daily" },
+        { forecast_period: "weekly" },
+        { forecast_period: "monthly" },
       ];
 
       mockSupabase.from().select().mockResolvedValue({
@@ -936,28 +1003,28 @@ describe('Predictive Analytics API Integration Tests', () => {
       });
 
       const { req } = createMocks({
-        method: 'GET',
-        url: '/api/predictive-analytics/predictions',
+        method: "GET",
+        url: "/api/predictive-analytics/predictions",
       });
 
       const response = await predictionsGET(req as NextRequest);
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      
+
       const periods = data.predictions.map((p: any) => p.forecast_period);
-      expect(periods).toContain('daily');
-      expect(periods).toContain('weekly');
-      expect(periods).toContain('monthly');
+      expect(periods).toContain("daily");
+      expect(periods).toContain("weekly");
+      expect(periods).toContain("monthly");
     });
 
-    it('AC10: Performance tracking and continuous improvement', async () => {
+    it("AC10: Performance tracking and continuous improvement", async () => {
       const performanceMetrics = [
-        { 
-          accuracy_score: 0.87, 
-          mae: 2.1, 
+        {
+          accuracy_score: 0.87,
+          mae: 2.1,
           rmse: 2.8,
-          evaluation_date: '2025-01-26' 
+          evaluation_date: "2025-01-26",
         },
       ];
 
@@ -967,27 +1034,27 @@ describe('Predictive Analytics API Integration Tests', () => {
       });
 
       const { req } = createMocks({
-        method: 'GET',
-        url: '/api/predictive-analytics/accuracy',
+        method: "GET",
+        url: "/api/predictive-analytics/accuracy",
       });
 
       const response = await accuracyGET(req as NextRequest);
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.accuracy_metrics[0]).toHaveProperty('accuracy_score');
-      expect(data.accuracy_metrics[0]).toHaveProperty('mae');
-      expect(data.accuracy_metrics[0]).toHaveProperty('rmse');
-      expect(data.accuracy_metrics[0]).toHaveProperty('evaluation_date');
+      expect(data.accuracy_metrics[0]).toHaveProperty("accuracy_score");
+      expect(data.accuracy_metrics[0]).toHaveProperty("mae");
+      expect(data.accuracy_metrics[0]).toHaveProperty("rmse");
+      expect(data.accuracy_metrics[0]).toHaveProperty("evaluation_date");
     });
   });
 
-  describe('Error Handling and Edge Cases', () => {
-    it('handles malformed request bodies gracefully', async () => {
+  describe("Error Handling and Edge Cases", () => {
+    it("handles malformed request bodies gracefully", async () => {
       const { req } = createMocks({
-        method: 'POST',
-        url: '/api/predictive-analytics/models',
-        body: 'invalid json',
+        method: "POST",
+        url: "/api/predictive-analytics/models",
+        body: "invalid json",
       });
 
       const response = await modelsPOST(req as NextRequest);
@@ -997,12 +1064,12 @@ describe('Predictive Analytics API Integration Tests', () => {
       expect(data.success).toBe(false);
     });
 
-    it('handles database connection timeouts', async () => {
-      mockSupabase.from().select().mockRejectedValue(new Error('Connection timeout'));
+    it("handles database connection timeouts", async () => {
+      mockSupabase.from().select().mockRejectedValue(new Error("Connection timeout"));
 
       const { req } = createMocks({
-        method: 'GET',
-        url: '/api/predictive-analytics/models',
+        method: "GET",
+        url: "/api/predictive-analytics/models",
       });
 
       const response = await modelsGET(req as NextRequest);
@@ -1012,17 +1079,17 @@ describe('Predictive Analytics API Integration Tests', () => {
       expect(data.success).toBe(false);
     });
 
-    it('validates date formats in requests', async () => {
+    it("validates date formats in requests", async () => {
       const invalidRequest = {
-        model_id: 'model-123',
-        prediction_date: 'invalid-date',
-        forecast_period: 'daily',
-        category: 'appointments',
+        model_id: "model-123",
+        prediction_date: "invalid-date",
+        forecast_period: "daily",
+        category: "appointments",
       };
 
       const { req } = createMocks({
-        method: 'POST',
-        url: '/api/predictive-analytics/predictions',
+        method: "POST",
+        url: "/api/predictive-analytics/predictions",
         body: invalidRequest,
       });
 
@@ -1031,28 +1098,29 @@ describe('Predictive Analytics API Integration Tests', () => {
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.error).toContain('date');
+      expect(data.error).toContain("date");
     });
 
-    it('handles concurrent access gracefully', async () => {
+    it("handles concurrent access gracefully", async () => {
       // Simulate concurrent requests
-      const requests = Array.from({ length: 5 }, () => 
+      const requests = Array.from({ length: 5 }, () =>
         createMocks({
-          method: 'GET',
-          url: '/api/predictive-analytics/models',
-        })
+          method: "GET",
+          url: "/api/predictive-analytics/models",
+        }),
       );
 
-      mockSupabase.from().select().mockResolvedValue({
-        data: [mockForecastingModel],
-        error: null,
-      });
+      mockSupabase
+        .from()
+        .select()
+        .mockResolvedValue({
+          data: [mockForecastingModel],
+          error: null,
+        });
 
-      const responses = await Promise.all(
-        requests.map(({ req }) => modelsGET(req as NextRequest))
-      );
+      const responses = await Promise.all(requests.map(({ req }) => modelsGET(req as NextRequest)));
 
-      responses.forEach(response => {
+      responses.forEach((response) => {
         expect(response.status).toBe(200);
       });
     });

@@ -1,26 +1,22 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Calendar } from "@/components/ui/calendar";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import {
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
   BookmarkPlus,
   CalendarIcon,
   ChevronDown,
@@ -29,7 +25,7 @@ import {
   SlidersHorizontal,
   X,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import type { useCallback, useEffect, useState } from "react";
 
 // Tipos para filtros
 export interface SearchFilters {
@@ -102,12 +98,8 @@ export default function SearchAndFilters({
   const [showSaveDialog, setShowSaveDialog] = useState(false);
 
   // Estados de calendário
-  const [startDate, setStartDate] = useState<Date | undefined>(
-    filters.date_range?.start
-  );
-  const [endDate, setEndDate] = useState<Date | undefined>(
-    filters.date_range?.end
-  );
+  const [startDate, setStartDate] = useState<Date | undefined>(filters.date_range?.start);
+  const [endDate, setEndDate] = useState<Date | undefined>(filters.date_range?.end);
   const [showStartCalendar, setShowStartCalendar] = useState(false);
   const [showEndCalendar, setShowEndCalendar] = useState(false);
 
@@ -136,7 +128,7 @@ export default function SearchAndFilters({
       setFilters(updatedFilters);
       onFiltersChange(updatedFilters);
     },
-    [filters, onFiltersChange]
+    [filters, onFiltersChange],
   );
 
   // Handler para busca de texto
@@ -144,7 +136,7 @@ export default function SearchAndFilters({
     (query: string) => {
       updateFilters({ searchQuery: query });
     },
-    [updateFilters]
+    [updateFilters],
   );
 
   // Handler para filtros de data
@@ -243,8 +235,7 @@ export default function SearchAndFilters({
   const activeFiltersCount = Object.entries(filters).filter(([key, value]) => {
     if (key === "searchQuery") return value && value.trim().length > 0;
     if (key === "tags") return Array.isArray(value) && value.length > 0;
-    if (key === "date_range" || key === "amount_range")
-      return value !== undefined;
+    if (key === "date_range" || key === "amount_range") return value !== undefined;
     return value && value !== "" && value !== false;
   }).length;
 
@@ -289,27 +280,21 @@ export default function SearchAndFilters({
             <Button
               variant={filters.overdue_only ? "default" : "outline"}
               size="sm"
-              onClick={() =>
-                updateFilters({ overdue_only: !filters.overdue_only })
-              }
+              onClick={() => updateFilters({ overdue_only: !filters.overdue_only })}
             >
               Em Atraso
             </Button>
             <Button
               variant={filters.due_this_week ? "default" : "outline"}
               size="sm"
-              onClick={() =>
-                updateFilters({ due_this_week: !filters.due_this_week })
-              }
+              onClick={() => updateFilters({ due_this_week: !filters.due_this_week })}
             >
               Vence esta Semana
             </Button>
             <Button
               variant={filters.approved_only ? "default" : "outline"}
               size="sm"
-              onClick={() =>
-                updateFilters({ approved_only: !filters.approved_only })
-              }
+              onClick={() => updateFilters({ approved_only: !filters.approved_only })}
             >
               Aprovados
             </Button>
@@ -324,11 +309,7 @@ export default function SearchAndFilters({
             <CardTitle className="flex items-center justify-between">
               <span>Filtros Avançados</span>
               <div className="flex items-center space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowSaveDialog(true)}
-                >
+                <Button variant="outline" size="sm" onClick={() => setShowSaveDialog(true)}>
                   <BookmarkPlus className="h-4 w-4 mr-2" />
                   Salvar Filtros
                 </Button>
@@ -346,9 +327,7 @@ export default function SearchAndFilters({
                 <Label>Fornecedor</Label>
                 <Select
                   value={filters.vendor_id || ""}
-                  onValueChange={(value) =>
-                    updateFilters({ vendor_id: value || undefined })
-                  }
+                  onValueChange={(value) => updateFilters({ vendor_id: value || undefined })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Todos os fornecedores" />
@@ -369,9 +348,7 @@ export default function SearchAndFilters({
                 <Label>Categoria</Label>
                 <Select
                   value={filters.category_id || ""}
-                  onValueChange={(value) =>
-                    updateFilters({ category_id: value || undefined })
-                  }
+                  onValueChange={(value) => updateFilters({ category_id: value || undefined })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Todas as categorias" />
@@ -380,8 +357,7 @@ export default function SearchAndFilters({
                     <SelectItem value="">Todas as categorias</SelectItem>
                     {categories.map((category) => (
                       <SelectItem key={category.value} value={category.value}>
-                        {category.label}{" "}
-                        {category.count && `(${category.count})`}
+                        {category.label} {category.count && `(${category.count})`}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -393,9 +369,7 @@ export default function SearchAndFilters({
                 <Label>Status</Label>
                 <Select
                   value={filters.status || ""}
-                  onValueChange={(value) =>
-                    updateFilters({ status: value || undefined })
-                  }
+                  onValueChange={(value) => updateFilters({ status: value || undefined })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Todos os status" />
@@ -416,9 +390,7 @@ export default function SearchAndFilters({
                 <Label>Método de Pagamento</Label>
                 <Select
                   value={filters.payment_method || ""}
-                  onValueChange={(value) =>
-                    updateFilters({ payment_method: value || undefined })
-                  }
+                  onValueChange={(value) => updateFilters({ payment_method: value || undefined })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Todos os métodos" />
@@ -437,10 +409,7 @@ export default function SearchAndFilters({
               {/* Data de Início */}
               <div className="space-y-2">
                 <Label>Data de Início</Label>
-                <Popover
-                  open={showStartCalendar}
-                  onOpenChange={setShowStartCalendar}
-                >
+                <Popover open={showStartCalendar} onOpenChange={setShowStartCalendar}>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
@@ -469,10 +438,7 @@ export default function SearchAndFilters({
               {/* Data de Fim */}
               <div className="space-y-2">
                 <Label>Data de Fim</Label>
-                <Popover
-                  open={showEndCalendar}
-                  onOpenChange={setShowEndCalendar}
-                >
+                <Popover open={showEndCalendar} onOpenChange={setShowEndCalendar}>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
@@ -493,9 +459,7 @@ export default function SearchAndFilters({
                         setShowEndCalendar(false);
                       }}
                       locale={ptBR}
-                      disabled={(date) =>
-                        startDate ? date < startDate : false
-                      }
+                      disabled={(date) => (startDate ? date < startDate : false)}
                     />
                   </PopoverContent>
                 </Popover>
@@ -512,7 +476,7 @@ export default function SearchAndFilters({
                   onChange={(e) =>
                     handleAmountRangeChange(
                       e.target.value,
-                      filters.amount_range?.max?.toString() || ""
+                      filters.amount_range?.max?.toString() || "",
                     )
                   }
                 />
@@ -525,7 +489,7 @@ export default function SearchAndFilters({
                   onChange={(e) =>
                     handleAmountRangeChange(
                       filters.amount_range?.min?.toString() || "",
-                      e.target.value
+                      e.target.value,
                     )
                   }
                 />
@@ -537,11 +501,7 @@ export default function SearchAndFilters({
               <Label>Tags</Label>
               <div className="flex flex-wrap gap-2">
                 {(filters.tags || []).map((tag) => (
-                  <Badge
-                    key={tag}
-                    variant="secondary"
-                    className="flex items-center space-x-1"
-                  >
+                  <Badge key={tag} variant="secondary" className="flex items-center space-x-1">
                     <span>{tag}</span>
                     <button
                       onClick={() => handleTagRemove(tag)}
@@ -604,27 +564,15 @@ export default function SearchAndFilters({
           </CardHeader>
           <CardContent>
             <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => exportResults("csv")}
-              >
+              <Button variant="outline" size="sm" onClick={() => exportResults("csv")}>
                 <Download className="h-4 w-4 mr-2" />
                 Exportar CSV
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => exportResults("excel")}
-              >
+              <Button variant="outline" size="sm" onClick={() => exportResults("excel")}>
                 <Download className="h-4 w-4 mr-2" />
                 Exportar Excel
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => exportResults("pdf")}
-              >
+              <Button variant="outline" size="sm" onClick={() => exportResults("pdf")}>
                 <Download className="h-4 w-4 mr-2" />
                 Exportar PDF
               </Button>
@@ -649,16 +597,10 @@ export default function SearchAndFilters({
                 />
               </div>
               <div className="flex items-center justify-end space-x-2">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowSaveDialog(false)}
-                >
+                <Button variant="outline" onClick={() => setShowSaveDialog(false)}>
                   Cancelar
                 </Button>
-                <Button
-                  onClick={saveCurrentFilter}
-                  disabled={!saveFilterName.trim()}
-                >
+                <Button onClick={saveCurrentFilter} disabled={!saveFilterName.trim()}>
                   Salvar
                 </Button>
               </div>

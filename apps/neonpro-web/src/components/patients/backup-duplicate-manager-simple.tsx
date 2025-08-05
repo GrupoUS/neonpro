@@ -1,19 +1,17 @@
 "use client";
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle, Eye, Users, X } from "lucide-react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { CheckCircle, Eye, Users, X } from "lucide-react";
 import React from "react";
 
 interface DuplicateManagerProps {
   onMergeComplete?: (result: any) => void;
 }
 
-export default function DuplicateManager({
-  onMergeComplete,
-}: DuplicateManagerProps) {
+export default function DuplicateManager({ onMergeComplete }: DuplicateManagerProps) {
   const duplicatesState = React.useState<any[]>([]);
   const duplicates = duplicatesState[0];
   const setDuplicates = duplicatesState[1];
@@ -40,9 +38,7 @@ export default function DuplicateManager({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8">
-            Verificando pacientes duplicados...
-          </div>
+          <div className="text-center py-8">Verificando pacientes duplicados...</div>
         </CardContent>
       </Card>
     );
@@ -60,9 +56,7 @@ export default function DuplicateManager({
         <CardContent>
           <Alert>
             <CheckCircle className="h-4 w-4" />
-            <AlertDescription>
-              Nenhuma duplicata pendente encontrada.
-            </AlertDescription>
+            <AlertDescription>Nenhuma duplicata pendente encontrada.</AlertDescription>
           </Alert>
         </CardContent>
       </Card>

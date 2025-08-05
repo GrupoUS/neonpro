@@ -1,19 +1,19 @@
 // SMS Providers API for NeonPro
 // Manage SMS provider configurations
 
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
-import { smsService } from '@/app/lib/services/sms-service';
-import { createClient } from '@/lib/supabase/server';
-import type { SMSProvider } from '@/app/types/sms';
+import type { NextRequest, NextResponse } from "next/server";
+import type { z } from "zod";
+import type { smsService } from "@/app/lib/services/sms-service";
+import type { createClient } from "@/lib/supabase/server";
+import type { SMSProvider } from "@/app/types/sms";
 
 // Schema for provider configuration
 const ProviderConfigSchema = z.object({
-  name: z.string().min(1, 'Provider name is required'),
-  provider: z.enum(['twilio', 'sms_dev', 'zenvia', 'movile', 'custom']),
+  name: z.string().min(1, "Provider name is required"),
+  provider: z.enum(["twilio", "sms_dev", "zenvia", "movile", "custom"]),
   enabled: z.boolean().default(false),
   config: z.object({}).passthrough(), // Allow any config structure
-  webhook_url: z.string().url().optional()
+  webhook_url: z.string().url().optional(),
 });
 
 /**
@@ -23,24 +23,26 @@ export async function GET(request: NextRequest) {
   try {
     // Check authentication
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: { 
-            code: 'UNAUTHORIZED', 
-            message: 'Authentication required' 
-          } 
+        {
+          success: false,
+          error: {
+            code: "UNAUTHORIZED",
+            message: "Authentication required",
+          },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     // Get query parameters
     const { searchParams } = new URL(request.url);
-    const activeOnly = searchParams.get('active') === 'true';
+    const activeOnly = searchParams.get("active") === "true";
 
     let providers;
     if (activeOnly) {
@@ -57,25 +59,24 @@ export async function GET(request: NextRequest) {
         metadata: {
           timestamp: new Date().toISOString(),
           request_id: `providers_${Date.now()}`,
-          count: Array.isArray(providers) ? providers.length : (providers ? 1 : 0)
-        }
+          count: Array.isArray(providers) ? providers.length : providers ? 1 : 0,
+        },
       },
-      { status: 200 }
+      { status: 200 },
     );
-
   } catch (error) {
-    console.error('SMS providers fetch error:', error);
-    
+    console.error("SMS providers fetch error:", error);
+
     return NextResponse.json(
       {
         success: false,
         error: {
-          code: 'INTERNAL_ERROR',
-          message: 'Failed to fetch SMS providers',
-          details: process.env.NODE_ENV === 'development' ? error : undefined
-        }
+          code: "INTERNAL_ERROR",
+          message: "Failed to fetch SMS providers",
+          details: process.env.NODE_ENV === "development" ? error : undefined,
+        },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -87,18 +88,20 @@ export async function POST(request: NextRequest) {
   try {
     // Check authentication
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: { 
-            code: 'UNAUTHORIZED', 
-            message: 'Authentication required' 
-          } 
+        {
+          success: false,
+          error: {
+            code: "UNAUTHORIZED",
+            message: "Authentication required",
+          },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -116,14 +119,13 @@ export async function POST(request: NextRequest) {
         metadata: {
           timestamp: new Date().toISOString(),
           request_id: `provider_upsert_${Date.now()}`,
-          user_id: session.user.id
-        }
+          user_id: session.user.id,
+        },
       },
-      { status: 200 }
+      { status: 200 },
     );
-
   } catch (error) {
-    console.error('SMS provider upsert error:', error);
+    console.error("SMS provider upsert error:", error);
 
     // Handle validation errors
     if (error instanceof z.ZodError) {
@@ -131,27 +133,27 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: {
-            code: 'VALIDATION_ERROR',
-            message: 'Invalid provider configuration',
-            details: error.errors
-          }
+            code: "VALIDATION_ERROR",
+            message: "Invalid provider configuration",
+            details: error.errors,
+          },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Handle SMS service errors
-    if (error && typeof error === 'object' && 'code' in error) {
+    if (error && typeof error === "object" && "code" in error) {
       return NextResponse.json(
         {
           success: false,
           error: {
             code: error.code,
-            message: error.message || 'Provider configuration error',
-            details: process.env.NODE_ENV === 'development' ? error : undefined
-          }
+            message: error.message || "Provider configuration error",
+            details: process.env.NODE_ENV === "development" ? error : undefined,
+          },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -160,12 +162,12 @@ export async function POST(request: NextRequest) {
       {
         success: false,
         error: {
-          code: 'INTERNAL_ERROR',
-          message: 'Internal server error',
-          details: process.env.NODE_ENV === 'development' ? error : undefined
-        }
+          code: "INTERNAL_ERROR",
+          message: "Internal server error",
+          details: process.env.NODE_ENV === "development" ? error : undefined,
+        },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -177,18 +179,20 @@ export async function PUT(request: NextRequest) {
   try {
     // Check authentication
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: { 
-            code: 'UNAUTHORIZED', 
-            message: 'Authentication required' 
-          } 
+        {
+          success: false,
+          error: {
+            code: "UNAUTHORIZED",
+            message: "Authentication required",
+          },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -201,11 +205,11 @@ export async function PUT(request: NextRequest) {
         {
           success: false,
           error: {
-            code: 'VALIDATION_ERROR',
-            message: 'Provider ID and test phone number are required'
-          }
+            code: "VALIDATION_ERROR",
+            message: "Provider ID and test phone number are required",
+          },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -219,30 +223,29 @@ export async function PUT(request: NextRequest) {
           provider_id,
           test_phone,
           connection_successful: testResult,
-          test_timestamp: new Date().toISOString()
+          test_timestamp: new Date().toISOString(),
         },
         metadata: {
           timestamp: new Date().toISOString(),
           request_id: `provider_test_${Date.now()}`,
-          user_id: session.user.id
-        }
+          user_id: session.user.id,
+        },
       },
-      { status: 200 }
+      { status: 200 },
     );
-
   } catch (error) {
-    console.error('SMS provider test error:', error);
-    
+    console.error("SMS provider test error:", error);
+
     return NextResponse.json(
       {
         success: false,
         error: {
-          code: 'TEST_ERROR',
-          message: 'Failed to test SMS provider connection',
-          details: process.env.NODE_ENV === 'development' ? error : undefined
-        }
+          code: "TEST_ERROR",
+          message: "Failed to test SMS provider connection",
+          details: process.env.NODE_ENV === "development" ? error : undefined,
+        },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -254,44 +257,46 @@ export async function DELETE(request: NextRequest) {
   try {
     // Check authentication
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: { 
-            code: 'UNAUTHORIZED', 
-            message: 'Authentication required' 
-          } 
+        {
+          success: false,
+          error: {
+            code: "UNAUTHORIZED",
+            message: "Authentication required",
+          },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     // Get provider ID from query params
     const { searchParams } = new URL(request.url);
-    const providerId = searchParams.get('id');
+    const providerId = searchParams.get("id");
 
     if (!providerId) {
       return NextResponse.json(
         {
           success: false,
           error: {
-            code: 'VALIDATION_ERROR',
-            message: 'Provider ID is required'
-          }
+            code: "VALIDATION_ERROR",
+            message: "Provider ID is required",
+          },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Check if provider has active messages
     const { data: activeMessages } = await supabase
-      .from('sms_messages')
-      .select('id')
-      .eq('provider_id', providerId)
-      .in('status', ['queued', 'sending'])
+      .from("sms_messages")
+      .select("id")
+      .eq("provider_id", providerId)
+      .in("status", ["queued", "sending"])
       .limit(1);
 
     if (activeMessages && activeMessages.length > 0) {
@@ -299,19 +304,16 @@ export async function DELETE(request: NextRequest) {
         {
           success: false,
           error: {
-            code: 'PROVIDER_IN_USE',
-            message: 'Cannot delete provider with active messages'
-          }
+            code: "PROVIDER_IN_USE",
+            message: "Cannot delete provider with active messages",
+          },
         },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
     // Delete provider
-    const { error } = await supabase
-      .from('sms_providers')
-      .delete()
-      .eq('id', providerId);
+    const { error } = await supabase.from("sms_providers").delete().eq("id", providerId);
 
     if (error) throw error;
 
@@ -320,30 +322,29 @@ export async function DELETE(request: NextRequest) {
         success: true,
         data: {
           provider_id: providerId,
-          deleted_at: new Date().toISOString()
+          deleted_at: new Date().toISOString(),
         },
         metadata: {
           timestamp: new Date().toISOString(),
           request_id: `provider_delete_${Date.now()}`,
-          user_id: session.user.id
-        }
+          user_id: session.user.id,
+        },
       },
-      { status: 200 }
+      { status: 200 },
     );
-
   } catch (error) {
-    console.error('SMS provider delete error:', error);
-    
+    console.error("SMS provider delete error:", error);
+
     return NextResponse.json(
       {
         success: false,
         error: {
-          code: 'DELETE_ERROR',
-          message: 'Failed to delete SMS provider',
-          details: process.env.NODE_ENV === 'development' ? error : undefined
-        }
+          code: "DELETE_ERROR",
+          message: "Failed to delete SMS provider",
+          details: process.env.NODE_ENV === "development" ? error : undefined,
+        },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -5,39 +5,34 @@
 // procurement history, quality tracking, and management features
 // ============================================================================
 
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Progress } from '@/components/ui/progress';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs';
-import {
+import React, { useState, useEffect } from "react";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Separator } from "@/components/ui/separator";
+import type { Progress } from "@/components/ui/progress";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import {
+} from "@/components/ui/dialog";
+import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { toast } from 'sonner';
-import {
+} from "@/components/ui/dropdown-menu";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { toast } from "sonner";
+import type {
   Building2,
   User,
   MapPin,
@@ -72,10 +67,10 @@ import {
   Copy,
   Filter,
   Search,
-  RefreshCw
-} from 'lucide-react';
+  RefreshCw,
+} from "lucide-react";
 
-import {
+import type {
   Supplier,
   SupplierStatus,
   SupplierCategory,
@@ -85,18 +80,18 @@ import {
   QualityMetrics,
   ProcurementHistory,
   Contract,
-  Communication
-} from '@/lib/types/supplier';
-import { 
+  Communication,
+} from "@/lib/types/supplier";
+import type {
   useSuppliers,
   useSupplierPerformance,
   useSupplierProcurement,
   useSupplierQuality,
   useSupplierContracts,
-  useSupplierCommunications
-} from '@/lib/hooks/use-supplier';
-import { SupplierForm } from './supplier-form';
-import { cn, formatCurrency, formatDate, formatPercentage } from '@/lib/utils';
+  useSupplierCommunications,
+} from "@/lib/hooks/use-supplier";
+import type { SupplierForm } from "./supplier-form";
+import type { cn, formatCurrency, formatDate, formatPercentage } from "@/lib/utils";
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -116,14 +111,14 @@ interface MetricCardProps {
   value: string | number;
   subtitle?: string;
   icon: React.ReactNode;
-  trend?: 'up' | 'down' | 'neutral';
+  trend?: "up" | "down" | "neutral";
   trendValue?: string;
-  color?: 'default' | 'success' | 'warning' | 'danger';
+  color?: "default" | "success" | "warning" | "danger";
 }
 
 interface PerformanceChartProps {
   data: PerformanceMetrics[];
-  type: 'line' | 'bar' | 'pie';
+  type: "line" | "bar" | "pie";
   title: string;
   height?: number;
 }
@@ -135,40 +130,40 @@ interface PerformanceChartProps {
 const getStatusColor = (status: SupplierStatus): string => {
   switch (status) {
     case SupplierStatus.ACTIVE:
-      return 'bg-green-100 text-green-800 border-green-200';
+      return "bg-green-100 text-green-800 border-green-200";
     case SupplierStatus.INACTIVE:
-      return 'bg-gray-100 text-gray-800 border-gray-200';
+      return "bg-gray-100 text-gray-800 border-gray-200";
     case SupplierStatus.PENDING_VERIFICATION:
-      return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      return "bg-yellow-100 text-yellow-800 border-yellow-200";
     case SupplierStatus.SUSPENDED:
-      return 'bg-red-100 text-red-800 border-red-200';
+      return "bg-red-100 text-red-800 border-red-200";
     case SupplierStatus.BLACKLISTED:
-      return 'bg-red-100 text-red-800 border-red-200';
+      return "bg-red-100 text-red-800 border-red-200";
     default:
-      return 'bg-gray-100 text-gray-800 border-gray-200';
+      return "bg-gray-100 text-gray-800 border-gray-200";
   }
 };
 
 const getRiskLevelColor = (level: RiskLevel): string => {
   switch (level) {
     case RiskLevel.LOW:
-      return 'text-green-600';
+      return "text-green-600";
     case RiskLevel.MEDIUM:
-      return 'text-yellow-600';
+      return "text-yellow-600";
     case RiskLevel.HIGH:
-      return 'text-red-600';
+      return "text-red-600";
     case RiskLevel.CRITICAL:
-      return 'text-red-800';
+      return "text-red-800";
     default:
-      return 'text-gray-600';
+      return "text-gray-600";
   }
 };
 
 const getPerformanceColor = (score: number): string => {
-  if (score >= 90) return 'text-green-600';
-  if (score >= 70) return 'text-yellow-600';
-  if (score >= 50) return 'text-orange-600';
-  return 'text-red-600';
+  if (score >= 90) return "text-green-600";
+  if (score >= 70) return "text-yellow-600";
+  if (score >= 50) return "text-orange-600";
+  return "text-red-600";
 };
 
 const formatScore = (score: number): string => {
@@ -186,44 +181,43 @@ const MetricCard: React.FC<MetricCardProps> = ({
   icon,
   trend,
   trendValue,
-  color = 'default'
+  color = "default",
 }) => {
   const colorClasses = {
-    default: 'border-gray-200',
-    success: 'border-green-200 bg-green-50',
-    warning: 'border-yellow-200 bg-yellow-50',
-    danger: 'border-red-200 bg-red-50'
+    default: "border-gray-200",
+    success: "border-green-200 bg-green-50",
+    warning: "border-yellow-200 bg-yellow-50",
+    danger: "border-red-200 bg-red-50",
   };
 
-  const trendIcon = trend === 'up' ? 
-    <TrendingUp className="h-4 w-4 text-green-600" /> : 
-    trend === 'down' ? 
-    <TrendingDown className="h-4 w-4 text-red-600" /> : 
-    null;
+  const trendIcon =
+    trend === "up" ? (
+      <TrendingUp className="h-4 w-4 text-green-600" />
+    ) : trend === "down" ? (
+      <TrendingDown className="h-4 w-4 text-red-600" />
+    ) : null;
 
   return (
-    <Card className={cn('transition-all hover:shadow-md', colorClasses[color])}>
+    <Card className={cn("transition-all hover:shadow-md", colorClasses[color])}>
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2 rounded-lg bg-white border">
-              {icon}
-            </div>
+            <div className="p-2 rounded-lg bg-white border">{icon}</div>
             <div>
               <p className="text-sm font-medium text-gray-600">{title}</p>
               <p className="text-2xl font-bold text-gray-900">{value}</p>
-              {subtitle && (
-                <p className="text-xs text-gray-500">{subtitle}</p>
-              )}
+              {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
             </div>
           </div>
           {trendValue && trendIcon && (
             <div className="flex items-center space-x-1">
               {trendIcon}
-              <span className={cn(
-                'text-sm font-medium',
-                trend === 'up' ? 'text-green-600' : 'text-red-600'
-              )}>
+              <span
+                className={cn(
+                  "text-sm font-medium",
+                  trend === "up" ? "text-green-600" : "text-red-600",
+                )}
+              >
                 {trendValue}
               </span>
             </div>
@@ -244,69 +238,71 @@ export function SupplierDetail({
   open,
   onOpenChange,
   onEdit,
-  onDelete
+  onDelete,
 }: SupplierDetailProps) {
   // ============================================================================
   // STATE MANAGEMENT
   // ============================================================================
 
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
   const [editFormOpen, setEditFormOpen] = useState(false);
-  const [selectedTimeRange, setSelectedTimeRange] = useState('3months');
+  const [selectedTimeRange, setSelectedTimeRange] = useState("3months");
 
   // Data hooks
-  const { 
-    supplier, 
-    deleteSupplier, 
-    isLoading: isLoadingSupplier 
-  } = useSuppliers(clinicId);
-  
-  const { 
-    performanceData, 
+  const { supplier, deleteSupplier, isLoading: isLoadingSupplier } = useSuppliers(clinicId);
+
+  const {
+    performanceData,
     performanceStats,
-    isLoading: isLoadingPerformance 
+    isLoading: isLoadingPerformance,
   } = useSupplierPerformance(clinicId, supplierId, selectedTimeRange);
-  
-  const { 
-    procurementHistory, 
+
+  const {
+    procurementHistory,
     procurementStats,
-    isLoading: isLoadingProcurement 
+    isLoading: isLoadingProcurement,
   } = useSupplierProcurement(clinicId, supplierId, selectedTimeRange);
-  
-  const { 
-    qualityData, 
+
+  const {
+    qualityData,
     qualityStats,
-    isLoading: isLoadingQuality 
+    isLoading: isLoadingQuality,
   } = useSupplierQuality(clinicId, supplierId, selectedTimeRange);
-  
-  const { 
-    contracts, 
+
+  const {
+    contracts,
     activeContracts,
-    isLoading: isLoadingContracts 
+    isLoading: isLoadingContracts,
   } = useSupplierContracts(clinicId, supplierId);
-  
-  const { 
-    communications, 
+
+  const {
+    communications,
     recentCommunications,
-    isLoading: isLoadingCommunications 
+    isLoading: isLoadingCommunications,
   } = useSupplierCommunications(clinicId, supplierId);
 
   // Get current supplier data
-  const currentSupplier = supplier?.find(s => s.id === supplierId);
+  const currentSupplier = supplier?.find((s) => s.id === supplierId);
 
   // ============================================================================
   // COMPUTED VALUES
   // ============================================================================
 
-  const isLoading = isLoadingSupplier || isLoadingPerformance || 
-                   isLoadingProcurement || isLoadingQuality || 
-                   isLoadingContracts || isLoadingCommunications;
+  const isLoading =
+    isLoadingSupplier ||
+    isLoadingPerformance ||
+    isLoadingProcurement ||
+    isLoadingQuality ||
+    isLoadingContracts ||
+    isLoadingCommunications;
 
-  const overallPerformance = currentSupplier ? 
-    (currentSupplier.performance_score + 
-     currentSupplier.quality_rating + 
-     currentSupplier.reliability_score + 
-     currentSupplier.cost_competitiveness) / 4 : 0;
+  const overallPerformance = currentSupplier
+    ? (currentSupplier.performance_score +
+        currentSupplier.quality_rating +
+        currentSupplier.reliability_score +
+        currentSupplier.cost_competitiveness) /
+      4
+    : 0;
 
   // ============================================================================
   // EVENT HANDLERS
@@ -324,23 +320,23 @@ export function SupplierDetail({
 
     try {
       await deleteSupplier(currentSupplier.id);
-      toast.success('Fornecedor excluído com sucesso');
+      toast.success("Fornecedor excluído com sucesso");
       onOpenChange(false);
       onDelete?.(currentSupplier);
     } catch (error) {
-      console.error('Erro ao excluir fornecedor:', error);
-      toast.error('Erro ao excluir fornecedor');
+      console.error("Erro ao excluir fornecedor:", error);
+      toast.error("Erro ao excluir fornecedor");
     }
   };
 
   const handleExport = () => {
     // Implementation for exporting supplier data
-    toast.info('Funcionalidade de exportação em desenvolvimento');
+    toast.info("Funcionalidade de exportação em desenvolvimento");
   };
 
   const handleCopyId = () => {
     navigator.clipboard.writeText(supplierId);
-    toast.success('ID copiado para a área de transferência');
+    toast.success("ID copiado para a área de transferência");
   };
 
   // ============================================================================
@@ -359,26 +355,22 @@ export function SupplierDetail({
               {currentSupplier.name.substring(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          
+
           <div>
             <div className="flex items-center space-x-3 mb-2">
-              <h1 className="text-2xl font-bold text-gray-900">
-                {currentSupplier.name}
-              </h1>
+              <h1 className="text-2xl font-bold text-gray-900">{currentSupplier.name}</h1>
               <Badge className={getStatusColor(currentSupplier.status)}>
-                {currentSupplier.status.replace('_', ' ')}
+                {currentSupplier.status.replace("_", " ")}
               </Badge>
             </div>
-            
+
             <p className="text-gray-600 mb-1">{currentSupplier.legal_name}</p>
             <p className="text-sm text-gray-500">
-              {currentSupplier.category.replace('_', ' ').toLowerCase()}
+              {currentSupplier.category.replace("_", " ").toLowerCase()}
             </p>
-            
+
             <div className="flex items-center space-x-4 mt-3 text-sm text-gray-500">
-              {currentSupplier.cnpj && (
-                <span>CNPJ: {currentSupplier.cnpj}</span>
-              )}
+              {currentSupplier.cnpj && <span>CNPJ: {currentSupplier.cnpj}</span>}
               {currentSupplier.primary_contact?.email && (
                 <div className="flex items-center space-x-1">
                   <Mail className="h-4 w-4" />
@@ -388,9 +380,9 @@ export function SupplierDetail({
               {currentSupplier.website && (
                 <div className="flex items-center space-x-1">
                   <Globe className="h-4 w-4" />
-                  <a 
-                    href={currentSupplier.website} 
-                    target="_blank" 
+                  <a
+                    href={currentSupplier.website}
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:text-blue-800"
                   >
@@ -408,12 +400,12 @@ export function SupplierDetail({
             <Copy className="h-4 w-4 mr-2" />
             ID
           </Button>
-          
+
           <Button variant="outline" size="sm" onClick={handleExport}>
             <Download className="h-4 w-4 mr-2" />
             Exportar
           </Button>
-          
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
@@ -432,10 +424,7 @@ export function SupplierDetail({
                 Importar Dados
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem 
-                onClick={handleDelete}
-                className="text-red-600"
-              >
+              <DropdownMenuItem onClick={handleDelete} className="text-red-600">
                 <Trash2 className="h-4 w-4 mr-2" />
                 Excluir
               </DropdownMenuItem>
@@ -457,32 +446,48 @@ export function SupplierDetail({
             title="Performance Geral"
             value={formatScore(overallPerformance)}
             icon={<TrendingUp className="h-5 w-5" />}
-            color={overallPerformance >= 80 ? 'success' : 
-                   overallPerformance >= 60 ? 'warning' : 'danger'}
+            color={
+              overallPerformance >= 80 ? "success" : overallPerformance >= 60 ? "warning" : "danger"
+            }
           />
-          
+
           <MetricCard
             title="Qualidade"
             value={formatScore(currentSupplier.quality_rating)}
             icon={<Star className="h-5 w-5" />}
-            color={currentSupplier.quality_rating >= 80 ? 'success' : 
-                   currentSupplier.quality_rating >= 60 ? 'warning' : 'danger'}
+            color={
+              currentSupplier.quality_rating >= 80
+                ? "success"
+                : currentSupplier.quality_rating >= 60
+                  ? "warning"
+                  : "danger"
+            }
           />
-          
+
           <MetricCard
             title="Confiabilidade"
             value={formatScore(currentSupplier.reliability_score)}
             icon={<Shield className="h-5 w-5" />}
-            color={currentSupplier.reliability_score >= 80 ? 'success' : 
-                   currentSupplier.reliability_score >= 60 ? 'warning' : 'danger'}
+            color={
+              currentSupplier.reliability_score >= 80
+                ? "success"
+                : currentSupplier.reliability_score >= 60
+                  ? "warning"
+                  : "danger"
+            }
           />
-          
+
           <MetricCard
             title="Competitividade"
             value={formatScore(currentSupplier.cost_competitiveness)}
             icon={<DollarSign className="h-5 w-5" />}
-            color={currentSupplier.cost_competitiveness >= 80 ? 'success' : 
-                   currentSupplier.cost_competitiveness >= 60 ? 'warning' : 'danger'}
+            color={
+              currentSupplier.cost_competitiveness >= 80
+                ? "success"
+                : currentSupplier.cost_competitiveness >= 60
+                  ? "warning"
+                  : "danger"
+            }
           />
         </div>
 
@@ -500,20 +505,18 @@ export function SupplierDetail({
                 <div>
                   <p className="text-gray-600">Categoria</p>
                   <p className="font-medium">
-                    {currentSupplier.category.replace('_', ' ').toLowerCase()}
+                    {currentSupplier.category.replace("_", " ").toLowerCase()}
                   </p>
                 </div>
                 <div>
                   <p className="text-gray-600">Nível de Risco</p>
-                  <p className={cn('font-medium', getRiskLevelColor(currentSupplier.risk_level))}>
+                  <p className={cn("font-medium", getRiskLevelColor(currentSupplier.risk_level))}>
                     {currentSupplier.risk_level}
                   </p>
                 </div>
                 <div>
                   <p className="text-gray-600">Prazo de Pagamento</p>
-                  <p className="font-medium">
-                    {currentSupplier.payment_terms.replace('_', ' ')}
-                  </p>
+                  <p className="font-medium">{currentSupplier.payment_terms.replace("_", " ")}</p>
                 </div>
                 <div>
                   <p className="text-gray-600">Moeda</p>
@@ -550,16 +553,18 @@ export function SupplierDetail({
                   <div>
                     <p className="font-medium">{currentSupplier.primary_contact.name}</p>
                     {currentSupplier.primary_contact.title && (
-                      <p className="text-sm text-gray-600">{currentSupplier.primary_contact.title}</p>
+                      <p className="text-sm text-gray-600">
+                        {currentSupplier.primary_contact.title}
+                      </p>
                     )}
                   </div>
-                  
+
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center space-x-2">
                       <Mail className="h-4 w-4 text-gray-400" />
                       <span>{currentSupplier.primary_contact.email}</span>
                     </div>
-                    
+
                     {currentSupplier.primary_contact.phone && (
                       <div className="flex items-center space-x-2">
                         <Phone className="h-4 w-4 text-gray-400" />
@@ -569,28 +574,29 @@ export function SupplierDetail({
                   </div>
                 </div>
               )}
-              
-              {currentSupplier.secondary_contacts && currentSupplier.secondary_contacts.length > 0 && (
-                <div>
-                  <Separator className="my-3" />
-                  <p className="text-sm font-medium text-gray-600 mb-2">
-                    Contatos Secundários ({currentSupplier.secondary_contacts.length})
-                  </p>
-                  <div className="space-y-2">
-                    {currentSupplier.secondary_contacts.slice(0, 2).map((contact, index) => (
-                      <div key={index} className="text-sm">
-                        <p className="font-medium">{contact.name}</p>
-                        <p className="text-gray-600">{contact.email}</p>
-                      </div>
-                    ))}
-                    {currentSupplier.secondary_contacts.length > 2 && (
-                      <p className="text-xs text-gray-500">
-                        +{currentSupplier.secondary_contacts.length - 2} contatos adicionais
-                      </p>
-                    )}
+
+              {currentSupplier.secondary_contacts &&
+                currentSupplier.secondary_contacts.length > 0 && (
+                  <div>
+                    <Separator className="my-3" />
+                    <p className="text-sm font-medium text-gray-600 mb-2">
+                      Contatos Secundários ({currentSupplier.secondary_contacts.length})
+                    </p>
+                    <div className="space-y-2">
+                      {currentSupplier.secondary_contacts.slice(0, 2).map((contact, index) => (
+                        <div key={index} className="text-sm">
+                          <p className="font-medium">{contact.name}</p>
+                          <p className="text-gray-600">{contact.email}</p>
+                        </div>
+                      ))}
+                      {currentSupplier.secondary_contacts.length > 2 && (
+                        <p className="text-xs text-gray-500">
+                          +{currentSupplier.secondary_contacts.length - 2} contatos adicionais
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </CardContent>
           </Card>
 
@@ -607,7 +613,8 @@ export function SupplierDetail({
                 <div className="text-sm space-y-1">
                   <p>
                     {currentSupplier.address.street}, {currentSupplier.address.number}
-                    {currentSupplier.address.complement && `, ${currentSupplier.address.complement}`}
+                    {currentSupplier.address.complement &&
+                      `, ${currentSupplier.address.complement}`}
                   </p>
                   <p>{currentSupplier.address.neighborhood}</p>
                   <p>
@@ -636,10 +643,9 @@ export function SupplierDetail({
                   <XCircle className="h-5 w-5 text-red-600" />
                 )}
                 <span className="text-sm">
-                  {currentSupplier.regulatory_compliance 
-                    ? 'Em conformidade regulatória' 
-                    : 'Não conforme'
-                  }
+                  {currentSupplier.regulatory_compliance
+                    ? "Em conformidade regulatória"
+                    : "Não conforme"}
                 </span>
               </div>
 
@@ -660,8 +666,10 @@ export function SupplierDetail({
                       <div key={index} className="flex items-center space-x-2">
                         <Award className="h-4 w-4 text-gray-400" />
                         <span className="text-sm">{cert.name}</span>
-                        <Badge 
-                          variant={cert.verification_status === 'verified' ? 'default' : 'secondary'}
+                        <Badge
+                          variant={
+                            cert.verification_status === "verified" ? "default" : "secondary"
+                          }
                           className="text-xs"
                         >
                           {cert.verification_status}
@@ -690,9 +698,7 @@ export function SupplierDetail({
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-gray-700 whitespace-pre-wrap">
-                {currentSupplier.notes}
-              </p>
+              <p className="text-sm text-gray-700 whitespace-pre-wrap">{currentSupplier.notes}</p>
             </CardContent>
           </Card>
         )}
@@ -706,30 +712,30 @@ export function SupplierDetail({
         <h3 className="text-lg font-semibold">Análise de Performance</h3>
         <div className="flex space-x-2">
           <Button
-            variant={selectedTimeRange === '1month' ? 'default' : 'outline'}
+            variant={selectedTimeRange === "1month" ? "default" : "outline"}
             size="sm"
-            onClick={() => setSelectedTimeRange('1month')}
+            onClick={() => setSelectedTimeRange("1month")}
           >
             1 Mês
           </Button>
           <Button
-            variant={selectedTimeRange === '3months' ? 'default' : 'outline'}
+            variant={selectedTimeRange === "3months" ? "default" : "outline"}
             size="sm"
-            onClick={() => setSelectedTimeRange('3months')}
+            onClick={() => setSelectedTimeRange("3months")}
           >
             3 Meses
           </Button>
           <Button
-            variant={selectedTimeRange === '6months' ? 'default' : 'outline'}
+            variant={selectedTimeRange === "6months" ? "default" : "outline"}
             size="sm"
-            onClick={() => setSelectedTimeRange('6months')}
+            onClick={() => setSelectedTimeRange("6months")}
           >
             6 Meses
           </Button>
           <Button
-            variant={selectedTimeRange === '1year' ? 'default' : 'outline'}
+            variant={selectedTimeRange === "1year" ? "default" : "outline"}
             size="sm"
-            onClick={() => setSelectedTimeRange('1year')}
+            onClick={() => setSelectedTimeRange("1year")}
           >
             1 Ano
           </Button>
@@ -743,25 +749,35 @@ export function SupplierDetail({
             title="Entregas no Prazo"
             value={formatPercentage(performanceStats.on_time_delivery_rate)}
             icon={<Clock className="h-5 w-5" />}
-            color={performanceStats.on_time_delivery_rate >= 0.9 ? 'success' : 
-                   performanceStats.on_time_delivery_rate >= 0.7 ? 'warning' : 'danger'}
+            color={
+              performanceStats.on_time_delivery_rate >= 0.9
+                ? "success"
+                : performanceStats.on_time_delivery_rate >= 0.7
+                  ? "warning"
+                  : "danger"
+            }
           />
-          
+
           <MetricCard
             title="Taxa de Qualidade"
             value={formatPercentage(performanceStats.quality_score)}
             icon={<Star className="h-5 w-5" />}
-            color={performanceStats.quality_score >= 0.9 ? 'success' : 
-                   performanceStats.quality_score >= 0.7 ? 'warning' : 'danger'}
+            color={
+              performanceStats.quality_score >= 0.9
+                ? "success"
+                : performanceStats.quality_score >= 0.7
+                  ? "warning"
+                  : "danger"
+            }
           />
-          
+
           <MetricCard
             title="Pedidos Entregues"
             value={performanceStats.total_orders.toString()}
             subtitle="Total no período"
             icon={<Package className="h-5 w-5" />}
           />
-          
+
           <MetricCard
             title="Valor Total"
             value={formatCurrency(performanceStats.total_value)}
@@ -829,7 +845,7 @@ export function SupplierDetail({
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
               <TrendingUp className="h-5 w-5 text-blue-600" />
               <div>
@@ -857,13 +873,13 @@ export function SupplierDetail({
             value={procurementStats.total_orders.toString()}
             icon={<Package className="h-5 w-5" />}
           />
-          
+
           <MetricCard
             title="Valor Total"
             value={formatCurrency(procurementStats.total_value)}
             icon={<DollarSign className="h-5 w-5" />}
           />
-          
+
           <MetricCard
             title="Ticket Médio"
             value={formatCurrency(procurementStats.average_order_value)}
@@ -884,7 +900,10 @@ export function SupplierDetail({
           <div className="space-y-4">
             {procurementHistory && procurementHistory.length > 0 ? (
               procurementHistory.slice(0, 5).map((order, index) => (
-                <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-3 border rounded-lg"
+                >
                   <div>
                     <p className="font-medium">Pedido #{order.id}</p>
                     <p className="text-sm text-gray-600">
@@ -893,8 +912,8 @@ export function SupplierDetail({
                   </div>
                   <div className="text-right">
                     <p className="font-medium">{formatCurrency(order.total_value)}</p>
-                    <Badge 
-                      variant={order.status === 'delivered' ? 'default' : 'secondary'}
+                    <Badge
+                      variant={order.status === "delivered" ? "default" : "secondary"}
                       className="text-xs"
                     >
                       {order.status}
@@ -935,7 +954,10 @@ export function SupplierDetail({
           <div className="space-y-4">
             {activeContracts && activeContracts.length > 0 ? (
               activeContracts.map((contract, index) => (
-                <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-4 border rounded-lg"
+                >
                   <div>
                     <p className="font-medium">{contract.title}</p>
                     <p className="text-sm text-gray-600">
@@ -946,9 +968,7 @@ export function SupplierDetail({
                     </p>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Badge 
-                      variant={contract.status === 'active' ? 'default' : 'secondary'}
-                    >
+                    <Badge variant={contract.status === "active" ? "default" : "secondary"}>
                       {contract.status}
                     </Badge>
                     <Button variant="outline" size="sm">
@@ -958,9 +978,7 @@ export function SupplierDetail({
                 </div>
               ))
             ) : (
-              <p className="text-gray-500 text-center py-8">
-                Nenhum contrato ativo encontrado
-              </p>
+              <p className="text-gray-500 text-center py-8">Nenhum contrato ativo encontrado</p>
             )}
           </div>
         </CardContent>
@@ -992,9 +1010,9 @@ export function SupplierDetail({
               recentCommunications.map((comm, index) => (
                 <div key={index} className="flex items-start space-x-3 p-3 border rounded-lg">
                   <div className="flex-shrink-0">
-                    {comm.type === 'email' ? (
+                    {comm.type === "email" ? (
                       <Mail className="h-5 w-5 text-blue-600" />
-                    ) : comm.type === 'phone' ? (
+                    ) : comm.type === "phone" ? (
                       <Phone className="h-5 w-5 text-green-600" />
                     ) : (
                       <Activity className="h-5 w-5 text-gray-600" />
@@ -1014,9 +1032,7 @@ export function SupplierDetail({
                 </div>
               ))
             ) : (
-              <p className="text-gray-500 text-center py-8">
-                Nenhuma comunicação registrada
-              </p>
+              <p className="text-gray-500 text-center py-8">Nenhuma comunicação registrada</p>
             )}
           </div>
         </CardContent>
@@ -1048,9 +1064,7 @@ export function SupplierDetail({
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Fornecedor não encontrado</DialogTitle>
-            <DialogDescription>
-              O fornecedor solicitado não foi encontrado.
-            </DialogDescription>
+            <DialogDescription>O fornecedor solicitado não foi encontrado.</DialogDescription>
           </DialogHeader>
         </DialogContent>
       </Dialog>

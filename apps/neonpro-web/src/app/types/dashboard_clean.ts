@@ -89,14 +89,14 @@ export interface FormatConfig {
   decimal_places?: number;
   prefix?: string;
   suffix?: string;
-  format_type?: 'number' | 'currency' | 'percentage' | 'date';
+  format_type?: "number" | "currency" | "percentage" | "date";
   threshold_config?: ThresholdConfig[];
 }
 
 export interface ThresholdConfig {
   value: number;
   color: string;
-  operator: '>' | '<' | '>=' | '<=' | '=';
+  operator: ">" | "<" | ">=" | "<=" | "=";
   label?: string;
 }
 
@@ -108,7 +108,7 @@ export interface KPIMetric {
   unit: string;
   change: number;
   change_percentage: number;
-  trend: 'up' | 'down' | 'stable';
+  trend: "up" | "down" | "stable";
   benchmark: number;
   target: number;
   category: MetricType;
@@ -322,12 +322,22 @@ export interface PerformanceLogRequest {
 }
 
 // Type Unions
-export type DashboardTheme = 'light' | 'dark' | 'auto';
-export type ChartType = 'line' | 'bar' | 'pie' | 'area' | 'scatter' | 'donut' | 'gauge';
-export type MetricType = 'revenue' | 'patient' | 'appointment' | 'efficiency';
-export type AlertType = 'revenue_drop' | 'low_bookings' | 'high_cancellations' | 'efficiency_warning';
-export type NotificationMethod = 'email' | 'sms' | 'push' | 'dashboard';
-export type TimeRange = 'today' | 'week' | 'month' | 'quarter' | 'year' | 'custom';
-export type AggregationType = 'sum' | 'average' | 'count' | 'min' | 'max';
-export type WidgetType = 'kpi' | 'chart' | 'table' | 'metric' | 'progress' | 'gauge' | 'timeline';
-export type DataSourceType = 'revenue' | 'patients' | 'appointments' | 'staff' | 'inventory' | 'custom';
+export type DashboardTheme = "light" | "dark" | "auto";
+export type ChartType = "line" | "bar" | "pie" | "area" | "scatter" | "donut" | "gauge";
+export type MetricType = "revenue" | "patient" | "appointment" | "efficiency";
+export type AlertType =
+  | "revenue_drop"
+  | "low_bookings"
+  | "high_cancellations"
+  | "efficiency_warning";
+export type NotificationMethod = "email" | "sms" | "push" | "dashboard";
+export type TimeRange = "today" | "week" | "month" | "quarter" | "year" | "custom";
+export type AggregationType = "sum" | "average" | "count" | "min" | "max";
+export type WidgetType = "kpi" | "chart" | "table" | "metric" | "progress" | "gauge" | "timeline";
+export type DataSourceType =
+  | "revenue"
+  | "patients"
+  | "appointments"
+  | "staff"
+  | "inventory"
+  | "custom";

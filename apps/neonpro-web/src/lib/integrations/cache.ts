@@ -1,21 +1,15 @@
 /**
  * NeonPro - Integration Cache System
  * High-performance caching system for third-party integrations
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  * @created 2025-01-27
  */
 
-import crypto from 'crypto';
-import { createClient } from '@supabase/supabase-js';
-import {
-  IntegrationCache,
-  CacheEntry,
-  CacheConfig,
-  CacheStats,
-  CacheKey
-} from './types';
+import crypto from "crypto";
+import type { createClient } from "@supabase/supabase-js";
+import type { IntegrationCache, CacheEntry, CacheConfig, CacheStats, CacheKey } from "./types";
 
 /**
  * Memory Cache Implementation
@@ -32,7 +26,7 @@ export class MemoryIntegrationCache implements IntegrationCache {
     deletes: 0,
     evictions: 0,
     size: 0,
-    hitRate: 0
+    hitRate: 0,
   };
 
   constructor(config: CacheConfig) {
@@ -40,7 +34,7 @@ export class MemoryIntegrationCache implements IntegrationCache {
       maxSize: 1000,
       defaultTtl: 300000, // 5 minutes
       cleanupInterval: 60000, // 1 minute
-      ...config
+      ...config,
     };
 
     // Start cleanup interval
@@ -85,8 +79,11 @@ export class MemoryIntegrationCache implements IntegrationCache {
    */
   async set<T>(key: CacheKey, value: T, ttl?: number): Promise<void> {
     const keyStr = this.serializeKey(key);
-    const expiresAt = ttl ? Date.now() + ttl : 
-      (this.config.defaultTtl ? Date.now() + this.config.defaultTtl : null);
+    const expiresAt = ttl
+      ? Date.now() + ttl
+      : this.config.defaultTtl
+        ? Date.now() + this.config.defaultTtl
+        : null;
 
     const entry: CacheEntry = {
       key: keyStr,
@@ -94,7 +91,7 @@ export class MemoryIntegrationCache implements IntegrationCache {
       createdAt: Date.now(),
       expiresAt,
       accessCount: 1,
-      lastAccessed: Date.now()
+      lastAccessed: Date.now(),
     };
 
     // Check if we need to evict
@@ -114,7 +111,7 @@ export class MemoryIntegrationCache implements IntegrationCache {
   async delete(key: CacheKey): Promise<boolean> {
     const keyStr = this.serializeKey(key);
     const existed = this.cache.delete(keyStr);
-    
+
     if (existed) {
       this.removeFromAccessOrder(keyStr);
       this.stats.deletes++;
@@ -130,7 +127,7 @@ export class MemoryIntegrationCache implements IntegrationCache {
   async has(key: CacheKey): Promise<boolean> {
     const keyStr = this.serializeKey(key);
     const entry = this.cache.get(keyStr);
-    
+
     if (!entry) {
       return false;
     }
@@ -175,13 +172,13 @@ export class MemoryIntegrationCache implements IntegrationCache {
    */
   async keys(pattern?: string): Promise<string[]> {
     const keys = Array.from(this.cache.keys());
-    
+
     if (!pattern) {
       return keys;
     }
 
-    const regex = new RegExp(pattern.replace(/\*/g, '.*'));
-    return keys.filter(key => regex.test(key));
+    const regex = new RegExp(pattern.replace(/\*/g, ".*"));
+    return keys.filter((key) => regex.test(key));
   }
 
   // Private helper methods
@@ -190,18 +187,18 @@ export class MemoryIntegrationCache implements IntegrationCache {
    * Serialize cache key to string
    */
   private serializeKey(key: CacheKey): string {
-    if (typeof key === 'string') {
+    if (typeof key === "string") {
       return key;
     }
 
     const parts = [
       key.integrationId,
       key.operation,
-      key.resource || '',
-      key.params ? JSON.stringify(key.params) : ''
+      key.resource || "",
+      key.params ? JSON.stringify(key.params) : "",
     ];
 
-    return parts.join(':');
+    return parts.join(":");
   }
 
   /**
@@ -293,7 +290,7 @@ export class RedisIntegrationCache implements IntegrationCache {
     deletes: 0,
     evictions: 0,
     size: 0,
-    hitRate: 0
+    hitRate: 0,
   };
 
   constructor(redisClient: any, config: CacheConfig) {
@@ -301,8 +298,8 @@ export class RedisIntegrationCache implements IntegrationCache {
     this.config = {
       maxSize: 10000,
       defaultTtl: 300000, // 5 minutes
-      keyPrefix: 'neonpro:integration:',
-      ...config
+      keyPrefix: "neonpro:integration:",
+      ...config,
     };
   }
 
@@ -313,7 +310,7 @@ export class RedisIntegrationCache implements IntegrationCache {
     try {
       const keyStr = this.getRedisKey(key);
       const value = await this.redis.get(keyStr);
-      
+
       if (value === null) {
         this.stats.misses++;
         this.updateHitRate();
@@ -322,10 +319,10 @@ export class RedisIntegrationCache implements IntegrationCache {
 
       this.stats.hits++;
       this.updateHitRate();
-      
+
       return JSON.parse(value) as T;
     } catch (error) {
-      console.error('Redis cache get error:', error);
+      console.error("Redis cache get error:", error);
       this.stats.misses++;
       this.updateHitRate();
       return null;
@@ -349,7 +346,7 @@ export class RedisIntegrationCache implements IntegrationCache {
 
       this.stats.sets++;
     } catch (error) {
-      console.error('Redis cache set error:', error);
+      console.error("Redis cache set error:", error);
       throw error;
     }
   }
@@ -361,15 +358,15 @@ export class RedisIntegrationCache implements IntegrationCache {
     try {
       const keyStr = this.getRedisKey(key);
       const result = await this.redis.del(keyStr);
-      
+
       if (result > 0) {
         this.stats.deletes++;
         return true;
       }
-      
+
       return false;
     } catch (error) {
-      console.error('Redis cache delete error:', error);
+      console.error("Redis cache delete error:", error);
       return false;
     }
   }
@@ -383,7 +380,7 @@ export class RedisIntegrationCache implements IntegrationCache {
       const result = await this.redis.exists(keyStr);
       return result === 1;
     } catch (error) {
-      console.error('Redis cache has error:', error);
+      console.error("Redis cache has error:", error);
       return false;
     }
   }
@@ -395,12 +392,12 @@ export class RedisIntegrationCache implements IntegrationCache {
     try {
       const pattern = `${this.config.keyPrefix}*`;
       const keys = await this.redis.keys(pattern);
-      
+
       if (keys.length > 0) {
         await this.redis.del(...keys);
       }
     } catch (error) {
-      console.error('Redis cache clear error:', error);
+      console.error("Redis cache clear error:", error);
       throw error;
     }
   }
@@ -413,10 +410,10 @@ export class RedisIntegrationCache implements IntegrationCache {
       const pattern = `${this.config.keyPrefix}*`;
       const keys = await this.redis.keys(pattern);
       this.stats.size = keys.length;
-      
+
       return { ...this.stats };
     } catch (error) {
-      console.error('Redis cache stats error:', error);
+      console.error("Redis cache stats error:", error);
       return { ...this.stats };
     }
   }
@@ -430,7 +427,7 @@ export class RedisIntegrationCache implements IntegrationCache {
       const keys = await this.redis.keys(pattern);
       return keys.length;
     } catch (error) {
-      console.error('Redis cache size error:', error);
+      console.error("Redis cache size error:", error);
       return 0;
     }
   }
@@ -440,18 +437,16 @@ export class RedisIntegrationCache implements IntegrationCache {
    */
   async keys(pattern?: string): Promise<string[]> {
     try {
-      const searchPattern = pattern ? 
-        `${this.config.keyPrefix}${pattern}` : 
-        `${this.config.keyPrefix}*`;
-      
+      const searchPattern = pattern
+        ? `${this.config.keyPrefix}${pattern}`
+        : `${this.config.keyPrefix}*`;
+
       const keys = await this.redis.keys(searchPattern);
-      
+
       // Remove prefix from keys
-      return keys.map((key: string) => 
-        key.replace(this.config.keyPrefix!, '')
-      );
+      return keys.map((key: string) => key.replace(this.config.keyPrefix!, ""));
     } catch (error) {
-      console.error('Redis cache keys error:', error);
+      console.error("Redis cache keys error:", error);
       return [];
     }
   }
@@ -462,7 +457,7 @@ export class RedisIntegrationCache implements IntegrationCache {
    * Get Redis key with prefix
    */
   private getRedisKey(key: CacheKey): string {
-    const serializedKey = typeof key === 'string' ? key : this.serializeKey(key);
+    const serializedKey = typeof key === "string" ? key : this.serializeKey(key);
     return `${this.config.keyPrefix}${serializedKey}`;
   }
 
@@ -470,18 +465,18 @@ export class RedisIntegrationCache implements IntegrationCache {
    * Serialize cache key to string
    */
   private serializeKey(key: CacheKey): string {
-    if (typeof key === 'string') {
+    if (typeof key === "string") {
       return key;
     }
 
     const parts = [
       key.integrationId,
       key.operation,
-      key.resource || '',
-      key.params ? crypto.createHash('md5').update(JSON.stringify(key.params)).digest('hex') : ''
+      key.resource || "",
+      key.params ? crypto.createHash("md5").update(JSON.stringify(key.params)).digest("hex") : "",
     ];
 
-    return parts.join(':');
+    return parts.join(":");
   }
 
   /**
@@ -508,20 +503,16 @@ export class SupabaseIntegrationCache implements IntegrationCache {
     deletes: 0,
     evictions: 0,
     size: 0,
-    hitRate: 0
+    hitRate: 0,
   };
 
-  constructor(
-    supabaseUrl: string,
-    supabaseKey: string,
-    config: CacheConfig
-  ) {
+  constructor(supabaseUrl: string, supabaseKey: string, config: CacheConfig) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.config = {
       maxSize: 5000,
       defaultTtl: 300000, // 5 minutes
       useMemoryCache: true,
-      ...config
+      ...config,
     };
 
     // Initialize memory cache for L1 caching
@@ -529,7 +520,7 @@ export class SupabaseIntegrationCache implements IntegrationCache {
       this.memoryCache = new MemoryIntegrationCache({
         maxSize: Math.min(this.config.maxSize / 10, 500),
         defaultTtl: Math.min(this.config.defaultTtl, 60000), // 1 minute max for L1
-        cleanupInterval: 30000
+        cleanupInterval: 30000,
       });
     }
 
@@ -556,9 +547,9 @@ export class SupabaseIntegrationCache implements IntegrationCache {
     // Try L2 cache (database)
     try {
       const { data, error } = await this.supabase
-        .from('integration_cache')
-        .select('value, expires_at')
-        .eq('key', keyStr)
+        .from("integration_cache")
+        .select("value, expires_at")
+        .eq("key", keyStr)
         .single();
 
       if (error || !data) {
@@ -587,7 +578,7 @@ export class SupabaseIntegrationCache implements IntegrationCache {
       this.updateHitRate();
       return value;
     } catch (error) {
-      console.error('Supabase cache get error:', error);
+      console.error("Supabase cache get error:", error);
       this.stats.misses++;
       this.updateHitRate();
       return null;
@@ -604,15 +595,13 @@ export class SupabaseIntegrationCache implements IntegrationCache {
 
     try {
       // Store in L2 cache (database)
-      const { error } = await this.supabase
-        .from('integration_cache')
-        .upsert({
-          key: keyStr,
-          value: JSON.stringify(value),
-          expires_at: expiresAt,
-          created_at: new Date(),
-          updated_at: new Date()
-        });
+      const { error } = await this.supabase.from("integration_cache").upsert({
+        key: keyStr,
+        value: JSON.stringify(value),
+        expires_at: expiresAt,
+        created_at: new Date(),
+        updated_at: new Date(),
+      });
 
       if (error) {
         throw new Error(`Failed to set cache: ${error.message}`);
@@ -625,7 +614,7 @@ export class SupabaseIntegrationCache implements IntegrationCache {
 
       this.stats.sets++;
     } catch (error) {
-      console.error('Supabase cache set error:', error);
+      console.error("Supabase cache set error:", error);
       throw error;
     }
   }
@@ -643,20 +632,17 @@ export class SupabaseIntegrationCache implements IntegrationCache {
       }
 
       // Delete from L2 cache
-      const { error } = await this.supabase
-        .from('integration_cache')
-        .delete()
-        .eq('key', keyStr);
+      const { error } = await this.supabase.from("integration_cache").delete().eq("key", keyStr);
 
       if (error) {
-        console.error('Supabase cache delete error:', error);
+        console.error("Supabase cache delete error:", error);
         return false;
       }
 
       this.stats.deletes++;
       return true;
     } catch (error) {
-      console.error('Supabase cache delete error:', error);
+      console.error("Supabase cache delete error:", error);
       return false;
     }
   }
@@ -666,18 +652,18 @@ export class SupabaseIntegrationCache implements IntegrationCache {
    */
   async has(key: CacheKey): Promise<boolean> {
     // Check L1 cache first
-    if (this.memoryCache && await this.memoryCache.has(key)) {
+    if (this.memoryCache && (await this.memoryCache.has(key))) {
       return true;
     }
 
     // Check L2 cache
     const keyStr = this.serializeKey(key);
-    
+
     try {
       const { data, error } = await this.supabase
-        .from('integration_cache')
-        .select('expires_at')
-        .eq('key', keyStr)
+        .from("integration_cache")
+        .select("expires_at")
+        .eq("key", keyStr)
         .single();
 
       if (error || !data) {
@@ -692,7 +678,7 @@ export class SupabaseIntegrationCache implements IntegrationCache {
 
       return true;
     } catch (error) {
-      console.error('Supabase cache has error:', error);
+      console.error("Supabase cache has error:", error);
       return false;
     }
   }
@@ -708,16 +694,13 @@ export class SupabaseIntegrationCache implements IntegrationCache {
       }
 
       // Clear L2 cache
-      const { error } = await this.supabase
-        .from('integration_cache')
-        .delete()
-        .neq('key', '');
+      const { error } = await this.supabase.from("integration_cache").delete().neq("key", "");
 
       if (error) {
         throw new Error(`Failed to clear cache: ${error.message}`);
       }
     } catch (error) {
-      console.error('Supabase cache clear error:', error);
+      console.error("Supabase cache clear error:", error);
       throw error;
     }
   }
@@ -728,8 +711,8 @@ export class SupabaseIntegrationCache implements IntegrationCache {
   async getStats(): Promise<CacheStats> {
     try {
       const { count, error } = await this.supabase
-        .from('integration_cache')
-        .select('*', { count: 'exact', head: true });
+        .from("integration_cache")
+        .select("*", { count: "exact", head: true });
 
       if (!error) {
         this.stats.size = count || 0;
@@ -745,13 +728,13 @@ export class SupabaseIntegrationCache implements IntegrationCache {
           deletes: this.stats.deletes + memoryStats.deletes,
           evictions: this.stats.evictions + memoryStats.evictions,
           size: this.stats.size,
-          hitRate: this.stats.hitRate
+          hitRate: this.stats.hitRate,
         };
       }
 
       return { ...this.stats };
     } catch (error) {
-      console.error('Supabase cache stats error:', error);
+      console.error("Supabase cache stats error:", error);
       return { ...this.stats };
     }
   }
@@ -762,12 +745,12 @@ export class SupabaseIntegrationCache implements IntegrationCache {
   async size(): Promise<number> {
     try {
       const { count, error } = await this.supabase
-        .from('integration_cache')
-        .select('*', { count: 'exact', head: true });
+        .from("integration_cache")
+        .select("*", { count: "exact", head: true });
 
       return count || 0;
     } catch (error) {
-      console.error('Supabase cache size error:', error);
+      console.error("Supabase cache size error:", error);
       return 0;
     }
   }
@@ -777,12 +760,10 @@ export class SupabaseIntegrationCache implements IntegrationCache {
    */
   async keys(pattern?: string): Promise<string[]> {
     try {
-      let query = this.supabase
-        .from('integration_cache')
-        .select('key');
+      let query = this.supabase.from("integration_cache").select("key");
 
       if (pattern) {
-        query = query.like('key', pattern.replace(/\*/g, '%'));
+        query = query.like("key", pattern.replace(/\*/g, "%"));
       }
 
       const { data, error } = await query;
@@ -793,7 +774,7 @@ export class SupabaseIntegrationCache implements IntegrationCache {
 
       return (data || []).map((item: any) => item.key);
     } catch (error) {
-      console.error('Supabase cache keys error:', error);
+      console.error("Supabase cache keys error:", error);
       return [];
     }
   }
@@ -804,18 +785,18 @@ export class SupabaseIntegrationCache implements IntegrationCache {
    * Serialize cache key to string
    */
   private serializeKey(key: CacheKey): string {
-    if (typeof key === 'string') {
+    if (typeof key === "string") {
       return key;
     }
 
     const parts = [
       key.integrationId,
       key.operation,
-      key.resource || '',
-      key.params ? crypto.createHash('md5').update(JSON.stringify(key.params)).digest('hex') : ''
+      key.resource || "",
+      key.params ? crypto.createHash("md5").update(JSON.stringify(key.params)).digest("hex") : "",
     ];
 
-    return parts.join(':');
+    return parts.join(":");
   }
 
   /**
@@ -824,15 +805,15 @@ export class SupabaseIntegrationCache implements IntegrationCache {
   private async cleanup(): Promise<void> {
     try {
       const { error } = await this.supabase
-        .from('integration_cache')
+        .from("integration_cache")
         .delete()
-        .lt('expires_at', new Date().toISOString());
+        .lt("expires_at", new Date().toISOString());
 
       if (error) {
-        console.error('Cache cleanup error:', error);
+        console.error("Cache cleanup error:", error);
       }
     } catch (error) {
-      console.error('Cache cleanup error:', error);
+      console.error("Cache cleanup error:", error);
     }
   }
 
@@ -854,30 +835,26 @@ export class CacheFactory {
    * Create cache instance based on type
    */
   static createCache(
-    type: 'memory' | 'redis' | 'supabase',
+    type: "memory" | "redis" | "supabase",
     config: CacheConfig,
-    options?: any
+    options?: any,
   ): IntegrationCache {
     switch (type) {
-      case 'memory':
+      case "memory":
         return new MemoryIntegrationCache(config);
-      
-      case 'redis':
+
+      case "redis":
         if (!options?.redisClient) {
-          throw new Error('Redis client is required for Redis cache');
+          throw new Error("Redis client is required for Redis cache");
         }
         return new RedisIntegrationCache(options.redisClient, config);
-      
-      case 'supabase':
+
+      case "supabase":
         if (!options?.supabaseUrl || !options?.supabaseKey) {
-          throw new Error('Supabase URL and key are required for Supabase cache');
+          throw new Error("Supabase URL and key are required for Supabase cache");
         }
-        return new SupabaseIntegrationCache(
-          options.supabaseUrl,
-          options.supabaseKey,
-          config
-        );
-      
+        return new SupabaseIntegrationCache(options.supabaseUrl, options.supabaseKey, config);
+
       default:
         throw new Error(`Unsupported cache type: ${type}`);
     }

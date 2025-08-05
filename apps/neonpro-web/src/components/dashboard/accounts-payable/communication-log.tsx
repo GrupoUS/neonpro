@@ -1,27 +1,27 @@
 "use client";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import {
+import type { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent } from "@/components/ui/card";
+import type {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import {
+import type { Textarea } from "@/components/ui/textarea";
+import type {
   Calendar,
   Clock,
   FileText,
@@ -34,8 +34,8 @@ import {
   User,
   Video,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 
 interface CommunicationLog {
   id: string;
@@ -43,13 +43,7 @@ interface CommunicationLog {
   vendor_name: string;
   user_id: string;
   user_name: string;
-  communication_type:
-    | "email"
-    | "phone"
-    | "meeting"
-    | "video_call"
-    | "message"
-    | "document";
+  communication_type: "email" | "phone" | "meeting" | "video_call" | "message" | "document";
   subject: string;
   content: string;
   status: "pending" | "completed" | "follow_up_required";
@@ -100,10 +94,7 @@ interface CommunicationLogProps {
   vendorName?: string;
 }
 
-export default function CommunicationLog({
-  vendorId,
-  vendorName,
-}: CommunicationLogProps) {
+export default function CommunicationLog({ vendorId, vendorName }: CommunicationLogProps) {
   const [logs, setLogs] = useState<CommunicationLog[]>([]);
   const [filteredLogs, setFilteredLogs] = useState<CommunicationLog[]>([]);
   const [loading, setLoading] = useState(true);
@@ -134,8 +125,7 @@ export default function CommunicationLog({
       user_name: "João Silva",
       communication_type: "email",
       subject: "Confirmação de pedido #001",
-      content:
-        "Enviado e-mail solicitando confirmação do pedido e prazo de entrega.",
+      content: "Enviado e-mail solicitando confirmação do pedido e prazo de entrega.",
       status: "completed",
       priority: "normal",
       created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
@@ -149,15 +139,12 @@ export default function CommunicationLog({
       user_name: "Maria Santos",
       communication_type: "phone",
       subject: "Negociação de preços",
-      content:
-        "Ligação para discussão dos novos preços para o contrato de 2024.",
+      content: "Ligação para discussão dos novos preços para o contrato de 2024.",
       status: "follow_up_required",
       priority: "high",
       created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
       updated_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-      follow_up_date: new Date(
-        Date.now() + 3 * 24 * 60 * 60 * 1000
-      ).toISOString(),
+      follow_up_date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
     },
     {
       id: "3",
@@ -167,8 +154,7 @@ export default function CommunicationLog({
       user_name: "João Silva",
       communication_type: "meeting",
       subject: "Reunião de alinhamento Q1",
-      content:
-        "Reunião presencial para alinhamento das metas do primeiro trimestre.",
+      content: "Reunião presencial para alinhamento das metas do primeiro trimestre.",
       status: "pending",
       priority: "normal",
       created_at: new Date().toISOString(),
@@ -193,14 +179,12 @@ export default function CommunicationLog({
         (log) =>
           log.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
           log.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          log.user_name.toLowerCase().includes(searchTerm.toLowerCase())
+          log.user_name.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
     if (typeFilter !== "all") {
-      filtered = filtered.filter(
-        (log) => log.communication_type === typeFilter
-      );
+      filtered = filtered.filter((log) => log.communication_type === typeFilter);
     }
 
     if (statusFilter !== "all") {
@@ -302,9 +286,7 @@ export default function CommunicationLog({
         <div>
           <h3 className="text-lg font-semibold">Log de Comunicação</h3>
           <p className="text-sm text-muted-foreground">
-            {vendorName
-              ? `Comunicações com ${vendorName}`
-              : "Todas as comunicações"}
+            {vendorName ? `Comunicações com ${vendorName}` : "Todas as comunicações"}
           </p>
         </div>
 
@@ -382,9 +364,7 @@ export default function CommunicationLog({
           <Card>
             <CardContent className="p-8 text-center">
               <MessageCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">
-                Nenhuma comunicação encontrada.
-              </p>
+              <p className="text-muted-foreground">Nenhuma comunicação encontrada.</p>
             </CardContent>
           </Card>
         ) : (
@@ -407,9 +387,7 @@ export default function CommunicationLog({
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <h4 className="font-semibold text-sm">
-                              {log.subject}
-                            </h4>
+                            <h4 className="font-semibold text-sm">{log.subject}</h4>
                             <Badge className={`text-xs ${statusBadge.color}`}>
                               {statusBadge.label}
                             </Badge>
@@ -434,19 +412,14 @@ export default function CommunicationLog({
                             {log.due_date && (
                               <div className="flex items-center gap-1 text-orange-600">
                                 <Calendar className="h-3 w-3" />
-                                Vence:{" "}
-                                {new Date(log.due_date).toLocaleDateString(
-                                  "pt-BR"
-                                )}
+                                Vence: {new Date(log.due_date).toLocaleDateString("pt-BR")}
                               </div>
                             )}
                             {log.follow_up_date && (
                               <div className="flex items-center gap-1 text-blue-600">
                                 <Calendar className="h-3 w-3" />
                                 Follow-up:{" "}
-                                {new Date(
-                                  log.follow_up_date
-                                ).toLocaleDateString("pt-BR")}
+                                {new Date(log.follow_up_date).toLocaleDateString("pt-BR")}
                               </div>
                             )}
                           </div>
@@ -506,9 +479,7 @@ export default function CommunicationLog({
                 <Label htmlFor="priority">Prioridade</Label>
                 <Select
                   value={newLog.priority}
-                  onValueChange={(value) =>
-                    setNewLog((prev) => ({ ...prev, priority: value }))
-                  }
+                  onValueChange={(value) => setNewLog((prev) => ({ ...prev, priority: value }))}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -529,9 +500,7 @@ export default function CommunicationLog({
               <Input
                 id="subject"
                 value={newLog.subject}
-                onChange={(e) =>
-                  setNewLog((prev) => ({ ...prev, subject: e.target.value }))
-                }
+                onChange={(e) => setNewLog((prev) => ({ ...prev, subject: e.target.value }))}
                 placeholder="Assunto da comunicação"
                 required
               />
@@ -542,9 +511,7 @@ export default function CommunicationLog({
               <Textarea
                 id="content"
                 value={newLog.content}
-                onChange={(e) =>
-                  setNewLog((prev) => ({ ...prev, content: e.target.value }))
-                }
+                onChange={(e) => setNewLog((prev) => ({ ...prev, content: e.target.value }))}
                 placeholder="Descreva o conteúdo da comunicação..."
                 rows={4}
                 required
@@ -558,16 +525,12 @@ export default function CommunicationLog({
                   id="due_date"
                   type="datetime-local"
                   value={newLog.due_date}
-                  onChange={(e) =>
-                    setNewLog((prev) => ({ ...prev, due_date: e.target.value }))
-                  }
+                  onChange={(e) => setNewLog((prev) => ({ ...prev, due_date: e.target.value }))}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="follow_up_date">
-                  Data de Follow-up (opcional)
-                </Label>
+                <Label htmlFor="follow_up_date">Data de Follow-up (opcional)</Label>
                 <Input
                   id="follow_up_date"
                   type="datetime-local"
@@ -584,11 +547,7 @@ export default function CommunicationLog({
           </form>
 
           <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setShowNewLogDialog(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => setShowNewLogDialog(false)}>
               Cancelar
             </Button>
             <Button onClick={handleNewLogSubmit}>Salvar Comunicação</Button>

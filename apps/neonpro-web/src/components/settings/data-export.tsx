@@ -1,24 +1,44 @@
 "use client";
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import type { useState } from "react";
+import type { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Progress } from "@/components/ui/progress";
-import { 
-  Download, 
-  FileText, 
-  Database, 
-  Shield, 
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Switch } from "@/components/ui/switch";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Progress } from "@/components/ui/progress";
+import type {
+  Download,
+  FileText,
+  Database,
+  Shield,
   Calendar,
   CheckCircle2,
   Clock,
@@ -31,9 +51,9 @@ import {
   TrendingUp,
   Lock,
   Eye,
-  Filter
+  Filter,
 } from "lucide-react";
-import { toast } from "sonner";
+import type { toast } from "sonner";
 
 const exportTypes = [
   {
@@ -50,8 +70,8 @@ const exportTypes = [
       "incidentes_seguranca",
       "compartilhamentos_dados",
       "politicas_retencao",
-      "avaliacoes_impacto"
-    ]
+      "avaliacoes_impacto",
+    ],
   },
   {
     id: "anvisa_devices",
@@ -66,8 +86,8 @@ const exportTypes = [
       "manutencoes_realizadas",
       "eventos_adversos",
       "calibracoes_metrologia",
-      "responsavel_tecnico"
-    ]
+      "responsavel_tecnico",
+    ],
   },
   {
     id: "cfm_professional",
@@ -82,8 +102,8 @@ const exportTypes = [
       "especializacoes_registradas",
       "atendimentos_telemedicina",
       "prontuarios_eletronicos",
-      "consentimentos_informados"
-    ]
+      "consentimentos_informados",
+    ],
   },
   {
     id: "financial_summary",
@@ -98,8 +118,8 @@ const exportTypes = [
       "custos_operacionais",
       "tributos_recolhidos",
       "pagamentos_profissionais",
-      "investimentos_equipamentos"
-    ]
+      "investimentos_equipamentos",
+    ],
   },
   {
     id: "patient_anonymized",
@@ -114,8 +134,8 @@ const exportTypes = [
       "procedimentos_realizados",
       "resultados_tratamento",
       "dados_epidemiologicos",
-      "estatisticas_clinicas"
-    ]
+      "estatisticas_clinicas",
+    ],
   },
   {
     id: "audit_trail",
@@ -130,9 +150,9 @@ const exportTypes = [
       "acesso_prontuarios",
       "modificacoes_dados",
       "exportacoes_realizadas",
-      "falhas_seguranca"
-    ]
-  }
+      "falhas_seguranca",
+    ],
+  },
 ];
 
 const dateRanges = [
@@ -143,52 +163,54 @@ const dateRanges = [
   { value: "custom", label: "Período personalizado" },
 ];
 
-const exportSchema = z.object({
-  exportType: z.string().min(1, "Tipo de exportação é obrigatório"),
-  format: z.string().min(1, "Formato é obrigatório"),
-  dateRange: z.string().min(1, "Período é obrigatório"),
-  startDate: z.string().optional(),
-  endDate: z.string().optional(),
-  includePersonalData: z.boolean(),
-  anonymizeData: z.boolean(),
-  includeMetadata: z.boolean(),
-  compressionEnabled: z.boolean(),
-  passwordProtection: z.boolean(),
-  password: z.string().optional(),
-  notificationEmail: z.string().email("Email inválido").optional().or(z.literal("")),
-}).superRefine((data, ctx) => {
-  if (data.dateRange === "custom") {
-    if (!data.startDate) {
+const exportSchema = z
+  .object({
+    exportType: z.string().min(1, "Tipo de exportação é obrigatório"),
+    format: z.string().min(1, "Formato é obrigatório"),
+    dateRange: z.string().min(1, "Período é obrigatório"),
+    startDate: z.string().optional(),
+    endDate: z.string().optional(),
+    includePersonalData: z.boolean(),
+    anonymizeData: z.boolean(),
+    includeMetadata: z.boolean(),
+    compressionEnabled: z.boolean(),
+    passwordProtection: z.boolean(),
+    password: z.string().optional(),
+    notificationEmail: z.string().email("Email inválido").optional().or(z.literal("")),
+  })
+  .superRefine((data, ctx) => {
+    if (data.dateRange === "custom") {
+      if (!data.startDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Data inicial é obrigatória para período personalizado",
+          path: ["startDate"],
+        });
+      }
+      if (!data.endDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Data final é obrigatória para período personalizado",
+          path: ["endDate"],
+        });
+      }
+      if (data.startDate && data.endDate && data.startDate >= data.endDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Data final deve ser posterior à data inicial",
+          path: ["endDate"],
+        });
+      }
+    }
+
+    if (data.passwordProtection && (!data.password || data.password.length < 8)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Data inicial é obrigatória para período personalizado",
-        path: ["startDate"],
+        message: "Senha deve ter pelo menos 8 caracteres",
+        path: ["password"],
       });
     }
-    if (!data.endDate) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Data final é obrigatória para período personalizado",
-        path: ["endDate"],
-      });
-    }
-    if (data.startDate && data.endDate && data.startDate >= data.endDate) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Data final deve ser posterior à data inicial",
-        path: ["endDate"],
-      });
-    }
-  }
-  
-  if (data.passwordProtection && (!data.password || data.password.length < 8)) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Senha deve ter pelo menos 8 caracteres",
-      path: ["password"],
-    });
-  }
-});
+  });
 
 type ExportFormData = z.infer<typeof exportSchema>;
 
@@ -252,7 +274,7 @@ export default function DataExport() {
   const watchedDateRange = form.watch("dateRange");
   const watchedPasswordProtection = form.watch("passwordProtection");
 
-  const selectedExportType = exportTypes.find(type => type.id === watchedExportType);
+  const selectedExportType = exportTypes.find((type) => type.id === watchedExportType);
 
   const onSubmit = async (data: ExportFormData) => {
     setIsExporting(true);
@@ -263,10 +285,10 @@ export default function DataExport() {
       //   headers: { "Content-Type": "application/json" },
       //   body: JSON.stringify(data),
       // });
-      
+
       // Simulate export process
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       const newExport: ExportHistory = {
         id: Date.now().toString(),
         type: data.exportType,
@@ -275,9 +297,9 @@ export default function DataExport() {
         createdAt: new Date(),
         status: "processing",
       };
-      
-      setExportHistory(prev => [newExport, ...prev]);
-      
+
+      setExportHistory((prev) => [newExport, ...prev]);
+
       toast.success("Exportação iniciada! Você será notificado quando estiver pronta.");
       form.reset();
     } catch (error) {
@@ -291,14 +313,15 @@ export default function DataExport() {
   const downloadExport = (exportItem: ExportHistory) => {
     if (exportItem.downloadUrl) {
       // TODO: Implement secure download with authentication
-      window.open(exportItem.downloadUrl, '_blank');
+      window.open(exportItem.downloadUrl, "_blank");
       toast.success("Download iniciado");
     }
   };
 
-  const filteredExportTypes = selectedCategory === "all" 
-    ? exportTypes 
-    : exportTypes.filter(type => type.category === selectedCategory);
+  const filteredExportTypes =
+    selectedCategory === "all"
+      ? exportTypes
+      : exportTypes.filter((type) => type.category === selectedCategory);
 
   const getStatusBadge = (status: ExportHistory["status"]) => {
     switch (status) {
@@ -314,7 +337,7 @@ export default function DataExport() {
   };
 
   const getExportTypeInfo = (typeId: string) => {
-    return exportTypes.find(type => type.id === typeId);
+    return exportTypes.find((type) => type.id === typeId);
   };
 
   return (
@@ -323,8 +346,9 @@ export default function DataExport() {
       <Alert>
         <Shield className="h-4 w-4" />
         <AlertDescription>
-          <strong>Conformidade Brasileira:</strong> Todas as exportações seguem as regulamentações 
-          LGPD, ANVISA e CFM. Dados sensíveis são automaticamente protegidos e anonimizados quando necessário.
+          <strong>Conformidade Brasileira:</strong> Todas as exportações seguem as regulamentações
+          LGPD, ANVISA e CFM. Dados sensíveis são automaticamente protegidos e anonimizados quando
+          necessário.
         </AlertDescription>
       </Alert>
 
@@ -354,9 +378,7 @@ export default function DataExport() {
                   <div className="flex items-center justify-between">
                     <div>
                       <CardTitle>Tipos de Exportação</CardTitle>
-                      <CardDescription>
-                        Selecione o tipo de dados para exportar
-                      </CardDescription>
+                      <CardDescription>Selecione o tipo de dados para exportar</CardDescription>
                     </div>
                     <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                       <SelectTrigger className="w-48">
@@ -395,9 +417,7 @@ export default function DataExport() {
                             className="mt-1"
                           />
                         </div>
-                        <p className="text-sm text-gray-600 mb-3">
-                          {exportType.description}
-                        </p>
+                        <p className="text-sm text-gray-600 mb-3">{exportType.description}</p>
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
                             <Badge variant="outline" className="text-xs">
@@ -426,9 +446,7 @@ export default function DataExport() {
                   <Card>
                     <CardHeader>
                       <CardTitle>Configurações</CardTitle>
-                      <CardDescription>
-                        Configure os parâmetros da exportação
-                      </CardDescription>
+                      <CardDescription>Configure os parâmetros da exportação</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       {selectedExportType && (
@@ -436,9 +454,7 @@ export default function DataExport() {
                           <h4 className="font-medium text-blue-900 mb-1">
                             {selectedExportType.name}
                           </h4>
-                          <p className="text-sm text-blue-700">
-                            {selectedExportType.description}
-                          </p>
+                          <p className="text-sm text-blue-700">{selectedExportType.description}</p>
                         </div>
                       )}
 
@@ -525,7 +541,7 @@ export default function DataExport() {
 
                       <div className="space-y-4 border-t pt-4">
                         <h4 className="font-medium">Opções de Privacidade</h4>
-                        
+
                         <FormField
                           control={form.control}
                           name="anonymizeData"
@@ -538,10 +554,7 @@ export default function DataExport() {
                                 </FormDescription>
                               </div>
                               <FormControl>
-                                <Switch
-                                  checked={field.value}
-                                  onCheckedChange={field.onChange}
-                                />
+                                <Switch checked={field.value} onCheckedChange={field.onChange} />
                               </FormControl>
                             </FormItem>
                           )}
@@ -559,10 +572,7 @@ export default function DataExport() {
                                 </FormDescription>
                               </div>
                               <FormControl>
-                                <Switch
-                                  checked={field.value}
-                                  onCheckedChange={field.onChange}
-                                />
+                                <Switch checked={field.value} onCheckedChange={field.onChange} />
                               </FormControl>
                             </FormItem>
                           )}
@@ -580,10 +590,7 @@ export default function DataExport() {
                                 </FormDescription>
                               </div>
                               <FormControl>
-                                <Switch
-                                  checked={field.value}
-                                  onCheckedChange={field.onChange}
-                                />
+                                <Switch checked={field.value} onCheckedChange={field.onChange} />
                               </FormControl>
                             </FormItem>
                           )}
@@ -601,10 +608,7 @@ export default function DataExport() {
                                 </FormDescription>
                               </div>
                               <FormControl>
-                                <Switch
-                                  checked={field.value}
-                                  onCheckedChange={field.onChange}
-                                />
+                                <Switch checked={field.value} onCheckedChange={field.onChange} />
                               </FormControl>
                             </FormItem>
                           )}
@@ -618,7 +622,11 @@ export default function DataExport() {
                               <FormItem>
                                 <FormLabel>Senha</FormLabel>
                                 <FormControl>
-                                  <Input type="password" placeholder="Mínimo 8 caracteres" {...field} />
+                                  <Input
+                                    type="password"
+                                    placeholder="Mínimo 8 caracteres"
+                                    {...field}
+                                  />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -644,8 +652,8 @@ export default function DataExport() {
                         />
                       </div>
 
-                      <Button 
-                        type="submit" 
+                      <Button
+                        type="submit"
                         disabled={!watchedExportType || isExporting}
                         className="w-full"
                       >
@@ -674,9 +682,7 @@ export default function DataExport() {
           <Card>
             <CardHeader>
               <CardTitle>Histórico de Exportações</CardTitle>
-              <CardDescription>
-                Exportações realizadas nos últimos 30 dias
-              </CardDescription>
+              <CardDescription>Exportações realizadas nos últimos 30 dias</CardDescription>
             </CardHeader>
             <CardContent>
               {exportHistory.length === 0 ? (
@@ -685,9 +691,7 @@ export default function DataExport() {
                   <h3 className="text-lg font-medium text-gray-900 mb-2">
                     Nenhuma exportação encontrada
                   </h3>
-                  <p className="text-gray-600">
-                    Suas exportações aparecerão aqui
-                  </p>
+                  <p className="text-gray-600">Suas exportações aparecerão aqui</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -699,9 +703,7 @@ export default function DataExport() {
                           <div className="flex items-center gap-3">
                             <FileText className="h-5 w-5 text-gray-400" />
                             <div>
-                              <h4 className="font-medium">
-                                {typeInfo?.name || exportItem.type}
-                              </h4>
+                              <h4 className="font-medium">{typeInfo?.name || exportItem.type}</h4>
                               <p className="text-sm text-gray-600">
                                 {exportItem.format} • {exportItem.dateRange}
                               </p>
@@ -721,12 +723,13 @@ export default function DataExport() {
                             )}
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center justify-between text-sm text-gray-600">
                           <div className="flex items-center gap-4">
                             <span className="flex items-center gap-1">
                               <Clock className="h-3 w-3" />
-                              {exportItem.createdAt.toLocaleDateString("pt-BR")} às {exportItem.createdAt.toLocaleTimeString("pt-BR")}
+                              {exportItem.createdAt.toLocaleDateString("pt-BR")} às{" "}
+                              {exportItem.createdAt.toLocaleTimeString("pt-BR")}
                             </span>
                             {exportItem.fileSize && (
                               <span className="flex items-center gap-1">
@@ -738,7 +741,12 @@ export default function DataExport() {
                           {exportItem.expiresAt && (
                             <span className="flex items-center gap-1 text-orange-600">
                               <AlertCircle className="h-3 w-3" />
-                              Expira em {Math.ceil((exportItem.expiresAt.getTime() - Date.now()) / (1000 * 60 * 60 * 24))} dias
+                              Expira em{" "}
+                              {Math.ceil(
+                                (exportItem.expiresAt.getTime() - Date.now()) /
+                                  (1000 * 60 * 60 * 24),
+                              )}{" "}
+                              dias
                             </span>
                           )}
                         </div>
@@ -758,9 +766,7 @@ export default function DataExport() {
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle>Exportações Agendadas</CardTitle>
-                  <CardDescription>
-                    Configure exportações automáticas recorrentes
-                  </CardDescription>
+                  <CardDescription>Configure exportações automáticas recorrentes</CardDescription>
                 </div>
                 <Button>
                   <Plus className="h-4 w-4 mr-2" />
@@ -777,9 +783,7 @@ export default function DataExport() {
                 <p className="text-gray-600 mb-4">
                   Configure exportações automáticas para relatórios regulares
                 </p>
-                <Button variant="outline">
-                  Configurar Primeira Exportação
-                </Button>
+                <Button variant="outline">Configurar Primeira Exportação</Button>
               </div>
             </CardContent>
           </Card>

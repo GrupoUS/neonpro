@@ -4,19 +4,25 @@
 
 "use client";
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Switch } from '@/components/ui/switch';
-import {
+import React, { useState } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Switch } from "@/components/ui/switch";
+import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
+} from "@/components/ui/dropdown-menu";
+import type {
   AlertTriangle,
   Bell,
   Edit,
@@ -24,17 +30,17 @@ import {
   MoreVertical,
   Plus,
   Filter,
-  RefreshCw
-} from 'lucide-react';
-import {
+  RefreshCw,
+} from "lucide-react";
+import type {
   StockAlertConfig,
   StockAlert,
   AlertType,
   SeverityLevel,
   ALERT_TYPE_LABELS,
   SEVERITY_LABELS,
-  StockAlertError
-} from '@/app/lib/types/stock';
+  StockAlertError,
+} from "@/app/lib/types/stock";
 
 // =====================================================
 // TYPES AND INTERFACES
@@ -58,29 +64,29 @@ interface AlertListProps {
 
 const getSeverityColor = (severity: SeverityLevel): string => {
   switch (severity) {
-    case 'low':
-      return 'bg-blue-100 text-blue-800 border-blue-200';
-    case 'medium':
-      return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-    case 'high':
-      return 'bg-orange-100 text-orange-800 border-orange-200';
-    case 'critical':
-      return 'bg-red-100 text-red-800 border-red-200';
+    case "low":
+      return "bg-blue-100 text-blue-800 border-blue-200";
+    case "medium":
+      return "bg-yellow-100 text-yellow-800 border-yellow-200";
+    case "high":
+      return "bg-orange-100 text-orange-800 border-orange-200";
+    case "critical":
+      return "bg-red-100 text-red-800 border-red-200";
     default:
-      return 'bg-gray-100 text-gray-800 border-gray-200';
+      return "bg-gray-100 text-gray-800 border-gray-200";
   }
 };
 
 const getAlertTypeIcon = (alertType: AlertType) => {
   const iconProps = { className: "h-4 w-4" };
   switch (alertType) {
-    case 'low_stock':
+    case "low_stock":
       return <AlertTriangle {...iconProps} />;
-    case 'expiring':
+    case "expiring":
       return <Bell {...iconProps} />;
-    case 'expired':
+    case "expired":
       return <AlertTriangle {...iconProps} className="h-4 w-4 text-red-500" />;
-    case 'overstock':
+    case "overstock":
       return <AlertTriangle {...iconProps} className="h-4 w-4 text-orange-500" />;
     default:
       return <Bell {...iconProps} />;
@@ -100,7 +106,7 @@ const AlertList: React.FC<AlertListProps> = ({
   onToggleActive,
   onAcknowledge,
   onRefresh,
-  loading = false
+  loading = false,
 }) => {
   const [actionError, setActionError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
@@ -118,7 +124,7 @@ const AlertList: React.FC<AlertListProps> = ({
       if (error instanceof StockAlertError) {
         setActionError(error.message);
       } else {
-        setActionError('Falha ao atualizar status do alerta');
+        setActionError("Falha ao atualizar status do alerta");
       }
     } finally {
       setActionLoading(null);
@@ -126,7 +132,7 @@ const AlertList: React.FC<AlertListProps> = ({
   };
 
   const handleDelete = async (configId: string) => {
-    if (!confirm('Tem certeza que deseja excluir esta configuração de alerta?')) {
+    if (!confirm("Tem certeza que deseja excluir esta configuração de alerta?")) {
       return;
     }
 
@@ -138,7 +144,7 @@ const AlertList: React.FC<AlertListProps> = ({
       if (error instanceof StockAlertError) {
         setActionError(error.message);
       } else {
-        setActionError('Falha ao excluir configuração de alerta');
+        setActionError("Falha ao excluir configuração de alerta");
       }
     } finally {
       setActionLoading(null);
@@ -154,7 +160,7 @@ const AlertList: React.FC<AlertListProps> = ({
       if (error instanceof StockAlertError) {
         setActionError(error.message);
       } else {
-        setActionError('Falha ao confirmar alerta');
+        setActionError("Falha ao confirmar alerta");
       }
     } finally {
       setActionLoading(null);
@@ -165,8 +171,8 @@ const AlertList: React.FC<AlertListProps> = ({
   // COMPUTED VALUES
   // =====================================================
 
-  const activeAlerts = alerts.filter(alert => !alert.acknowledgedAt);
-  const criticalAlerts = activeAlerts.filter(alert => alert.severityLevel === 'critical');
+  const activeAlerts = alerts.filter((alert) => !alert.acknowledgedAt);
+  const criticalAlerts = activeAlerts.filter((alert) => alert.severityLevel === "critical");
 
   // =====================================================
   // RENDER
@@ -183,13 +189,8 @@ const AlertList: React.FC<AlertListProps> = ({
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onRefresh}
-            disabled={loading}
-          >
-            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+          <Button variant="outline" size="sm" onClick={onRefresh} disabled={loading}>
+            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
             Atualizar
           </Button>
           <Button onClick={onCreateNew}>
@@ -216,9 +217,7 @@ const AlertList: React.FC<AlertListProps> = ({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{activeAlerts.length}</div>
-            <p className="text-xs text-muted-foreground">
-              {criticalAlerts.length} críticos
-            </p>
+            <p className="text-xs text-muted-foreground">{criticalAlerts.length} críticos</p>
           </CardContent>
         </Card>
 
@@ -230,7 +229,7 @@ const AlertList: React.FC<AlertListProps> = ({
           <CardContent>
             <div className="text-2xl font-bold">{configs.length}</div>
             <p className="text-xs text-muted-foreground">
-              {configs.filter(c => c.isActive).length} ativas
+              {configs.filter((c) => c.isActive).length} ativas
             </p>
           </CardContent>
         </Card>
@@ -242,13 +241,12 @@ const AlertList: React.FC<AlertListProps> = ({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {alerts.length > 0 
-                ? Math.round((alerts.filter(a => a.acknowledgedAt).length / alerts.length) * 100)
-                : 0}%
+              {alerts.length > 0
+                ? Math.round((alerts.filter((a) => a.acknowledgedAt).length / alerts.length) * 100)
+                : 0}
+              %
             </div>
-            <p className="text-xs text-muted-foreground">
-              alertas confirmados
-            </p>
+            <p className="text-xs text-muted-foreground">alertas confirmados</p>
           </CardContent>
         </Card>
       </div>
@@ -261,9 +259,7 @@ const AlertList: React.FC<AlertListProps> = ({
               <Bell className="h-5 w-5" />
               Alertas Pendentes
             </CardTitle>
-            <CardDescription>
-              Alertas que requerem atenção imediata
-            </CardDescription>
+            <CardDescription>Alertas que requerem atenção imediata</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -277,7 +273,7 @@ const AlertList: React.FC<AlertListProps> = ({
                     <div>
                       <p className="font-medium">{alert.message}</p>
                       <p className="text-sm text-muted-foreground">
-                        {new Date(alert.triggeredAt).toLocaleString('pt-BR')}
+                        {new Date(alert.triggeredAt).toLocaleString("pt-BR")}
                       </p>
                     </div>
                   </div>
@@ -333,19 +329,21 @@ const AlertList: React.FC<AlertListProps> = ({
                     {getAlertTypeIcon(config.alertType)}
                     <div>
                       <div className="flex items-center gap-2">
-                        <h4 className="font-medium">
-                          {ALERT_TYPE_LABELS[config.alertType]}
-                        </h4>
+                        <h4 className="font-medium">{ALERT_TYPE_LABELS[config.alertType]}</h4>
                         <Badge className={getSeverityColor(config.severityLevel)}>
                           {SEVERITY_LABELS[config.severityLevel]}
                         </Badge>
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        Limite: {config.thresholdValue} {config.thresholdUnit === 'quantity' ? 'unidades' : 
-                               config.thresholdUnit === 'days' ? 'dias' : '%'}
+                        Limite: {config.thresholdValue}{" "}
+                        {config.thresholdUnit === "quantity"
+                          ? "unidades"
+                          : config.thresholdUnit === "days"
+                            ? "dias"
+                            : "%"}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        Canais: {config.notificationChannels.join(', ')}
+                        Canais: {config.notificationChannels.join(", ")}
                       </p>
                     </div>
                   </div>

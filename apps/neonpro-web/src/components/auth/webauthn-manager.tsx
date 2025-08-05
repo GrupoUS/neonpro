@@ -1,7 +1,7 @@
 /**
  * WebAuthn Manager Component
  * TASK-002: Multi-Factor Authentication Enhancement
- * 
+ *
  * Provides UI for WebAuthn credential management including:
  * - Registration of new credentials
  * - Viewing existing credentials
@@ -9,22 +9,37 @@
  * - Testing browser compatibility
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Fingerprint, Shield, Smartphone, Trash2, Plus, AlertCircle, CheckCircle } from 'lucide-react';
-import { webAuthnClient, type WebAuthnCapabilities } from '@/lib/auth/webauthn-client';
+import type { useState, useEffect } from "react";
+import type { Button } from "@/components/ui/button";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Badge } from "@/components/ui/badge";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type {
+  Loader2,
+  Fingerprint,
+  Shield,
+  Smartphone,
+  Trash2,
+  Plus,
+  AlertCircle,
+  CheckCircle,
+} from "lucide-react";
+import type { webAuthnClient, type WebAuthnCapabilities } from "@/lib/auth/webauthn-client";
 
 interface WebAuthnCredential {
   id: string;
   credential_id: string;
-  device_type: 'platform' | 'cross-platform';
+  device_type: "platform" | "cross-platform";
   device_name?: string;
   created_at: string;
   last_used_at?: string;
@@ -36,7 +51,7 @@ export function WebAuthnManager() {
   const [capabilities, setCapabilities] = useState<WebAuthnCapabilities | null>(null);
   const [loading, setLoading] = useState(true);
   const [registering, setRegistering] = useState(false);
-  const [deviceName, setDeviceName] = useState('');
+  const [deviceName, setDeviceName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -50,19 +65,19 @@ export function WebAuthnManager() {
       const caps = await webAuthnClient.checkCapabilities();
       setCapabilities(caps);
     } catch (error) {
-      console.error('Failed to check WebAuthn capabilities:', error);
+      console.error("Failed to check WebAuthn capabilities:", error);
     }
   };
 
   const loadCredentials = async () => {
     try {
-      const response = await fetch('/api/auth/webauthn/credentials');
+      const response = await fetch("/api/auth/webauthn/credentials");
       if (response.ok) {
         const data = await response.json();
         setCredentials(data.credentials || []);
       }
     } catch (error) {
-      console.error('Failed to load credentials:', error);
+      console.error("Failed to load credentials:", error);
     } finally {
       setLoading(false);
     }
@@ -70,7 +85,7 @@ export function WebAuthnManager() {
 
   const handleRegister = async () => {
     if (!capabilities?.supported) {
-      setError('WebAuthn is not supported in this browser');
+      setError("WebAuthn is not supported in this browser");
       return;
     }
 
@@ -80,16 +95,16 @@ export function WebAuthnManager() {
 
     try {
       const result = await webAuthnClient.registerCredential(deviceName || undefined);
-      
+
       if (result.success) {
-        setSuccess('WebAuthn credential registered successfully!');
-        setDeviceName('');
+        setSuccess("WebAuthn credential registered successfully!");
+        setDeviceName("");
         await loadCredentials();
       } else {
-        setError(result.error || 'Registration failed');
+        setError(result.error || "Registration failed");
       }
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Registration failed');
+      setError(error instanceof Error ? error.message : "Registration failed");
     } finally {
       setRegistering(false);
     }
@@ -98,25 +113,25 @@ export function WebAuthnManager() {
   const handleRemove = async (credentialId: string) => {
     try {
       const response = await fetch(`/api/auth/webauthn/credentials/${credentialId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (response.ok) {
-        setSuccess('Credential removed successfully');
+        setSuccess("Credential removed successfully");
         await loadCredentials();
       } else {
-        setError('Failed to remove credential');
+        setError("Failed to remove credential");
       }
     } catch (error) {
-      setError('Failed to remove credential');
+      setError("Failed to remove credential");
     }
   };
 
   const getDeviceIcon = (deviceType: string) => {
     switch (deviceType) {
-      case 'platform':
+      case "platform":
         return <Fingerprint className="h-4 w-4" />;
-      case 'cross-platform':
+      case "cross-platform":
         return <Shield className="h-4 w-4" />;
       default:
         return <Smartphone className="h-4 w-4" />;
@@ -125,12 +140,12 @@ export function WebAuthnManager() {
 
   const getDeviceTypeLabel = (deviceType: string) => {
     switch (deviceType) {
-      case 'platform':
-        return 'Built-in (Touch ID, Face ID, Windows Hello)';
-      case 'cross-platform':
-        return 'Security Key';
+      case "platform":
+        return "Built-in (Touch ID, Face ID, Windows Hello)";
+      case "cross-platform":
+        return "Security Key";
       default:
-        return 'Unknown';
+        return "Unknown";
     }
   };
 
@@ -168,7 +183,7 @@ export function WebAuthnManager() {
                   <AlertCircle className="h-4 w-4 text-red-500" />
                 )}
                 <span className="text-sm">
-                  WebAuthn Support: {capabilities.supported ? 'Available' : 'Not Available'}
+                  WebAuthn Support: {capabilities.supported ? "Available" : "Not Available"}
                 </span>
               </div>
               <div className="flex items-center gap-2">
@@ -178,7 +193,8 @@ export function WebAuthnManager() {
                   <AlertCircle className="h-4 w-4 text-yellow-500" />
                 )}
                 <span className="text-sm">
-                  Platform Authenticator: {capabilities.platformAuthenticatorAvailable ? 'Available' : 'Not Available'}
+                  Platform Authenticator:{" "}
+                  {capabilities.platformAuthenticatorAvailable ? "Available" : "Not Available"}
                 </span>
               </div>
             </div>
@@ -188,7 +204,8 @@ export function WebAuthnManager() {
             <Alert>
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                Your browser does not support WebAuthn. Please use a modern browser like Chrome, Firefox, Safari, or Edge.
+                Your browser does not support WebAuthn. Please use a modern browser like Chrome,
+                Firefox, Safari, or Edge.
               </AlertDescription>
             </Alert>
           )}
@@ -219,11 +236,7 @@ export function WebAuthnManager() {
               />
             </div>
 
-            <Button 
-              onClick={handleRegister} 
-              disabled={registering}
-              className="w-full"
-            >
+            <Button onClick={handleRegister} disabled={registering} className="w-full">
               {registering ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -278,7 +291,7 @@ export function WebAuthnManager() {
                     {getDeviceIcon(credential.device_type)}
                     <div>
                       <div className="font-medium">
-                        {credential.device_name || 'Unnamed Device'}
+                        {credential.device_name || "Unnamed Device"}
                       </div>
                       <div className="text-sm text-muted-foreground">
                         {getDeviceTypeLabel(credential.device_type)}
@@ -294,8 +307,8 @@ export function WebAuthnManager() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge variant={credential.is_active ? 'default' : 'secondary'}>
-                      {credential.is_active ? 'Active' : 'Inactive'}
+                    <Badge variant={credential.is_active ? "default" : "secondary"}>
+                      {credential.is_active ? "Active" : "Inactive"}
                     </Badge>
                     <Button
                       variant="ghost"

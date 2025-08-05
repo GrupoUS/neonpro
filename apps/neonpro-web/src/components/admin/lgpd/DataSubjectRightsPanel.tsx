@@ -1,22 +1,28 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table'
-import { 
+import React, { useState } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Badge } from "@/components/ui/badge";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -24,135 +30,145 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { 
+} from "@/components/ui/dialog";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
-import { 
-  Search, 
-  Filter, 
-  Eye, 
-  CheckCircle, 
-  XCircle, 
-  Clock, 
-  Download, 
+} from "@/components/ui/select";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
+  Search,
+  Filter,
+  Eye,
+  CheckCircle,
+  XCircle,
+  Clock,
+  Download,
   RefreshCw,
   AlertTriangle,
   FileText,
   User,
   Calendar,
-  MessageSquare
-} from 'lucide-react'
-import { useDataSubjectRights } from '@/hooks/useLGPD'
-import { DataSubjectRequest } from '@/types/lgpd'
+  MessageSquare,
+} from "lucide-react";
+import type { useDataSubjectRights } from "@/hooks/useLGPD";
+import type { DataSubjectRequest } from "@/types/lgpd";
 
 interface DataSubjectRightsPanelProps {
-  className?: string
+  className?: string;
 }
 
 export function DataSubjectRightsPanel({ className }: DataSubjectRightsPanelProps) {
-  const {
-    requests,
-    isLoading,
-    error,
-    updateRequest,
-    processRequest,
-    exportRequests,
-    refreshData
-  } = useDataSubjectRights()
+  const { requests, isLoading, error, updateRequest, processRequest, exportRequests, refreshData } =
+    useDataSubjectRights();
 
-  const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState<string>('all')
-  const [typeFilter, setTypeFilter] = useState<string>('all')
-  const [selectedRequest, setSelectedRequest] = useState<DataSubjectRequest | null>(null)
-  const [isProcessingOpen, setIsProcessingOpen] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [selectedRequest, setSelectedRequest] = useState<DataSubjectRequest | null>(null);
+  const [isProcessingOpen, setIsProcessingOpen] = useState(false);
   const [processingData, setProcessingData] = useState({
-    status: '',
-    response: '',
-    admin_notes: ''
-  })
+    status: "",
+    response: "",
+    admin_notes: "",
+  });
 
   // Filtrar solicitações
-  const filteredRequests = requests?.filter(request => {
-    const matchesSearch = 
-      request.user_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      request.request_type?.toLowerCase().includes(searchTerm.toLowerCase())
-    
-    const matchesStatus = statusFilter === 'all' || request.status === statusFilter
-    const matchesType = typeFilter === 'all' || request.request_type === typeFilter
-    
-    return matchesSearch && matchesStatus && matchesType
-  }) || []
+  const filteredRequests =
+    requests?.filter((request) => {
+      const matchesSearch =
+        request.user_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        request.request_type?.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesStatus = statusFilter === "all" || request.status === statusFilter;
+      const matchesType = typeFilter === "all" || request.request_type === typeFilter;
+
+      return matchesSearch && matchesStatus && matchesType;
+    }) || [];
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'pending':
-        return <Badge variant="secondary"><Clock className="h-3 w-3 mr-1" />Pendente</Badge>
-      case 'in_progress':
-        return <Badge variant="default"><RefreshCw className="h-3 w-3 mr-1" />Em Processamento</Badge>
-      case 'completed':
-        return <Badge variant="outline"><CheckCircle className="h-3 w-3 mr-1" />Concluída</Badge>
-      case 'rejected':
-        return <Badge variant="destructive"><XCircle className="h-3 w-3 mr-1" />Rejeitada</Badge>
+      case "pending":
+        return (
+          <Badge variant="secondary">
+            <Clock className="h-3 w-3 mr-1" />
+            Pendente
+          </Badge>
+        );
+      case "in_progress":
+        return (
+          <Badge variant="default">
+            <RefreshCw className="h-3 w-3 mr-1" />
+            Em Processamento
+          </Badge>
+        );
+      case "completed":
+        return (
+          <Badge variant="outline">
+            <CheckCircle className="h-3 w-3 mr-1" />
+            Concluída
+          </Badge>
+        );
+      case "rejected":
+        return (
+          <Badge variant="destructive">
+            <XCircle className="h-3 w-3 mr-1" />
+            Rejeitada
+          </Badge>
+        );
       default:
-        return <Badge variant="secondary">{status}</Badge>
+        return <Badge variant="secondary">{status}</Badge>;
     }
-  }
+  };
 
   const getTypeBadge = (type: string) => {
     const typeLabels = {
-      'access': 'Acesso',
-      'rectification': 'Retificação',
-      'erasure': 'Exclusão',
-      'portability': 'Portabilidade',
-      'restriction': 'Restrição',
-      'objection': 'Oposição'
-    }
-    
-    return (
-      <Badge variant="outline">
-        {typeLabels[type as keyof typeof typeLabels] || type}
-      </Badge>
-    )
-  }
+      access: "Acesso",
+      rectification: "Retificação",
+      erasure: "Exclusão",
+      portability: "Portabilidade",
+      restriction: "Restrição",
+      objection: "Oposição",
+    };
+
+    return <Badge variant="outline">{typeLabels[type as keyof typeof typeLabels] || type}</Badge>;
+  };
 
   const getPriorityColor = (createdAt: string) => {
     const daysSinceCreated = Math.floor(
-      (Date.now() - new Date(createdAt).getTime()) / (1000 * 60 * 60 * 24)
-    )
-    
-    if (daysSinceCreated > 15) return 'text-red-600'
-    if (daysSinceCreated > 10) return 'text-yellow-600'
-    return 'text-green-600'
-  }
+      (Date.now() - new Date(createdAt).getTime()) / (1000 * 60 * 60 * 24),
+    );
+
+    if (daysSinceCreated > 15) return "text-red-600";
+    if (daysSinceCreated > 10) return "text-yellow-600";
+    return "text-green-600";
+  };
 
   const handleProcessRequest = async () => {
-    if (!selectedRequest) return
-    
+    if (!selectedRequest) return;
+
     try {
-      await processRequest(selectedRequest.id, processingData)
-      setIsProcessingOpen(false)
-      setSelectedRequest(null)
-      setProcessingData({ status: '', response: '', admin_notes: '' })
+      await processRequest(selectedRequest.id, processingData);
+      setIsProcessingOpen(false);
+      setSelectedRequest(null);
+      setProcessingData({ status: "", response: "", admin_notes: "" });
     } catch (error) {
-      console.error('Erro ao processar solicitação:', error)
+      console.error("Erro ao processar solicitação:", error);
     }
-  }
+  };
 
   const openProcessingDialog = (request: DataSubjectRequest) => {
-    setSelectedRequest(request)
+    setSelectedRequest(request);
     setProcessingData({
       status: request.status,
-      response: request.response || '',
-      admin_notes: request.admin_notes || ''
-    })
-    setIsProcessingOpen(true)
-  }
+      response: request.response || "",
+      admin_notes: request.admin_notes || "",
+    });
+    setIsProcessingOpen(true);
+  };
 
   if (isLoading) {
     return (
@@ -160,18 +176,16 @@ export function DataSubjectRightsPanel({ className }: DataSubjectRightsPanelProp
         <RefreshCw className="h-8 w-8 animate-spin" />
         <span className="ml-2">Carregando solicitações...</span>
       </div>
-    )
+    );
   }
 
   if (error) {
     return (
       <Alert variant="destructive">
         <AlertTriangle className="h-4 w-4" />
-        <AlertDescription>
-          Erro ao carregar solicitações: {error}
-        </AlertDescription>
+        <AlertDescription>Erro ao carregar solicitações: {error}</AlertDescription>
       </Alert>
-    )
+    );
   }
 
   return (
@@ -204,42 +218,42 @@ export function DataSubjectRightsPanel({ className }: DataSubjectRightsPanelProp
               <div>
                 <p className="text-sm text-muted-foreground">Pendentes</p>
                 <p className="text-2xl font-bold">
-                  {requests?.filter(r => r.status === 'pending').length || 0}
+                  {requests?.filter((r) => r.status === "pending").length || 0}
                 </p>
               </div>
               <Clock className="h-8 w-8 text-yellow-600" />
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Em Processamento</p>
                 <p className="text-2xl font-bold">
-                  {requests?.filter(r => r.status === 'in_progress').length || 0}
+                  {requests?.filter((r) => r.status === "in_progress").length || 0}
                 </p>
               </div>
               <RefreshCw className="h-8 w-8 text-blue-600" />
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Concluídas</p>
                 <p className="text-2xl font-bold">
-                  {requests?.filter(r => r.status === 'completed').length || 0}
+                  {requests?.filter((r) => r.status === "completed").length || 0}
                 </p>
               </div>
               <CheckCircle className="h-8 w-8 text-green-600" />
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -273,7 +287,7 @@ export function DataSubjectRightsPanel({ className }: DataSubjectRightsPanelProp
                 />
               </div>
             </div>
-            
+
             <div>
               <Label htmlFor="status">Status</Label>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -289,7 +303,7 @@ export function DataSubjectRightsPanel({ className }: DataSubjectRightsPanelProp
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div>
               <Label htmlFor="type">Tipo de Solicitação</Label>
               <Select value={typeFilter} onValueChange={setTypeFilter}>
@@ -307,14 +321,14 @@ export function DataSubjectRightsPanel({ className }: DataSubjectRightsPanelProp
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="flex items-end">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => {
-                  setSearchTerm('')
-                  setStatusFilter('all')
-                  setTypeFilter('all')
+                  setSearchTerm("");
+                  setStatusFilter("all");
+                  setTypeFilter("all");
                 }}
               >
                 <Filter className="h-4 w-4 mr-2" />
@@ -346,39 +360,45 @@ export function DataSubjectRightsPanel({ className }: DataSubjectRightsPanelProp
             <TableBody>
               {filteredRequests.map((request) => {
                 const daysSinceCreated = Math.floor(
-                  (Date.now() - new Date(request.created_at).getTime()) / (1000 * 60 * 60 * 24)
-                )
-                const daysRemaining = 15 - daysSinceCreated
-                
+                  (Date.now() - new Date(request.created_at).getTime()) / (1000 * 60 * 60 * 24),
+                );
+                const daysRemaining = 15 - daysSinceCreated;
+
                 return (
                   <TableRow key={request.id}>
                     <TableCell>
                       <div>
                         <div className="font-medium">{request.user_email}</div>
-                        <div className="text-sm text-muted-foreground">
-                          ID: {request.user_id}
-                        </div>
+                        <div className="text-sm text-muted-foreground">ID: {request.user_id}</div>
                       </div>
                     </TableCell>
                     <TableCell>{getTypeBadge(request.request_type)}</TableCell>
                     <TableCell>{getStatusBadge(request.status)}</TableCell>
                     <TableCell>
-                      {new Date(request.created_at).toLocaleDateString('pt-BR')}
+                      {new Date(request.created_at).toLocaleDateString("pt-BR")}
                     </TableCell>
                     <TableCell>
                       <div className={getPriorityColor(request.created_at)}>
                         {daysRemaining > 0 ? (
                           `${daysRemaining} dias restantes`
                         ) : (
-                          <span className="font-semibold">Vencido há {Math.abs(daysRemaining)} dias</span>
+                          <span className="font-semibold">
+                            Vencido há {Math.abs(daysRemaining)} dias
+                          </span>
                         )}
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge 
-                        variant={daysRemaining <= 0 ? "destructive" : daysRemaining <= 5 ? "secondary" : "outline"}
+                      <Badge
+                        variant={
+                          daysRemaining <= 0
+                            ? "destructive"
+                            : daysRemaining <= 5
+                              ? "secondary"
+                              : "outline"
+                        }
                       >
-                        {daysRemaining <= 0 ? 'Crítica' : daysRemaining <= 5 ? 'Alta' : 'Normal'}
+                        {daysRemaining <= 0 ? "Crítica" : daysRemaining <= 5 ? "Alta" : "Normal"}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -394,7 +414,8 @@ export function DataSubjectRightsPanel({ className }: DataSubjectRightsPanelProp
                             <DialogHeader>
                               <DialogTitle>Detalhes da Solicitação</DialogTitle>
                               <DialogDescription>
-                                {getTypeBadge(request.request_type)} - {getStatusBadge(request.status)}
+                                {getTypeBadge(request.request_type)} -{" "}
+                                {getStatusBadge(request.status)}
                               </DialogDescription>
                             </DialogHeader>
                             <div className="space-y-4">
@@ -406,27 +427,25 @@ export function DataSubjectRightsPanel({ className }: DataSubjectRightsPanelProp
                                 <div>
                                   <Label>Data da Solicitação</Label>
                                   <p className="text-sm">
-                                    {new Date(request.created_at).toLocaleString('pt-BR')}
+                                    {new Date(request.created_at).toLocaleString("pt-BR")}
                                   </p>
                                 </div>
                               </div>
-                              
+
                               <div>
                                 <Label>Descrição</Label>
                                 <p className="text-sm bg-muted p-3 rounded">
-                                  {request.description || 'Nenhuma descrição fornecida'}
+                                  {request.description || "Nenhuma descrição fornecida"}
                                 </p>
                               </div>
-                              
+
                               {request.response && (
                                 <div>
                                   <Label>Resposta</Label>
-                                  <p className="text-sm bg-muted p-3 rounded">
-                                    {request.response}
-                                  </p>
+                                  <p className="text-sm bg-muted p-3 rounded">{request.response}</p>
                                 </div>
                               )}
-                              
+
                               {request.admin_notes && (
                                 <div>
                                   <Label>Notas Administrativas</Label>
@@ -435,24 +454,21 @@ export function DataSubjectRightsPanel({ className }: DataSubjectRightsPanelProp
                                   </p>
                                 </div>
                               )}
-                              
+
                               {request.processed_at && (
                                 <div>
                                   <Label>Processado em</Label>
                                   <p className="text-sm">
-                                    {new Date(request.processed_at).toLocaleString('pt-BR')}
+                                    {new Date(request.processed_at).toLocaleString("pt-BR")}
                                   </p>
                                 </div>
                               )}
                             </div>
                           </DialogContent>
                         </Dialog>
-                        
-                        {(request.status === 'pending' || request.status === 'in_progress') && (
-                          <Button
-                            size="sm"
-                            onClick={() => openProcessingDialog(request)}
-                          >
+
+                        {(request.status === "pending" || request.status === "in_progress") && (
+                          <Button size="sm" onClick={() => openProcessingDialog(request)}>
                             <MessageSquare className="h-3 w-3 mr-1" />
                             Processar
                           </Button>
@@ -460,11 +476,11 @@ export function DataSubjectRightsPanel({ className }: DataSubjectRightsPanelProp
                       </div>
                     </TableCell>
                   </TableRow>
-                )
+                );
               })}
             </TableBody>
           </Table>
-          
+
           {filteredRequests.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
               Nenhuma solicitação encontrada
@@ -486,20 +502,20 @@ export function DataSubjectRightsPanel({ className }: DataSubjectRightsPanelProp
               )}
             </DialogDescription>
           </DialogHeader>
-          
+
           {selectedRequest && (
             <div className="space-y-4">
               <div>
                 <Label>Solicitação Original</Label>
                 <p className="text-sm bg-muted p-3 rounded">
-                  {selectedRequest.description || 'Nenhuma descrição fornecida'}
+                  {selectedRequest.description || "Nenhuma descrição fornecida"}
                 </p>
               </div>
-              
+
               <div>
                 <Label htmlFor="status">Novo Status</Label>
-                <Select 
-                  value={processingData.status} 
+                <Select
+                  value={processingData.status}
                   onValueChange={(value) => setProcessingData({ ...processingData, status: value })}
                 >
                   <SelectTrigger>
@@ -512,41 +528,43 @@ export function DataSubjectRightsPanel({ className }: DataSubjectRightsPanelProp
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div>
                 <Label htmlFor="response">Resposta ao Usuário</Label>
                 <Textarea
                   id="response"
                   value={processingData.response}
-                  onChange={(e) => setProcessingData({ ...processingData, response: e.target.value })}
+                  onChange={(e) =>
+                    setProcessingData({ ...processingData, response: e.target.value })
+                  }
                   placeholder="Resposta que será enviada ao usuário..."
                   rows={4}
                 />
               </div>
-              
+
               <div>
                 <Label htmlFor="admin_notes">Notas Administrativas (Internas)</Label>
                 <Textarea
                   id="admin_notes"
                   value={processingData.admin_notes}
-                  onChange={(e) => setProcessingData({ ...processingData, admin_notes: e.target.value })}
+                  onChange={(e) =>
+                    setProcessingData({ ...processingData, admin_notes: e.target.value })
+                  }
                   placeholder="Notas internas sobre o processamento..."
                   rows={3}
                 />
               </div>
             </div>
           )}
-          
+
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsProcessingOpen(false)}>
               Cancelar
             </Button>
-            <Button onClick={handleProcessRequest}>
-              Processar Solicitação
-            </Button>
+            <Button onClick={handleProcessRequest}>Processar Solicitação</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

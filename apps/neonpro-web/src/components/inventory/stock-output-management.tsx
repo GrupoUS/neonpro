@@ -1,44 +1,50 @@
-'use client';
+"use client";
 
 /**
  * Story 11.3: Stock Output Management Component
  * Comprehensive stock output creation and management interface
  */
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Icons } from '@/components/ui/icons';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Icons } from "@/components/ui/icons";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import {
+} from "@/components/ui/dialog";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { 
+} from "@/components/ui/select";
+import type {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { StockOutputManager, type StockOutput, type StockRequest } from '@/lib/inventory';
-import { useToast } from '@/hooks/use-toast';
+} from "@/components/ui/table";
+import type { StockOutputManager, type StockOutput, type StockRequest } from "@/lib/inventory";
+import type { useToast } from "@/hooks/use-toast";
 
 interface StockOutputManagementProps {
   onRefresh: () => void;
@@ -65,11 +71,11 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
   const [isCreating, setIsCreating] = useState(false);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [newOutputData, setNewOutputData] = useState<NewStockOutputData>({
-    centro_custo_id: '',
-    solicitante: '',
-    motivo: '',
+    centro_custo_id: "",
+    solicitante: "",
+    motivo: "",
     urgente: false,
-    items: []
+    items: [],
   });
   const { toast } = useToast();
 
@@ -86,7 +92,7 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
       // Get recent stock outputs
       const { data: outputs, error: outputsError } = await stockOutputManager.getStockOutputs({
         limit: 50,
-        status: undefined
+        status: undefined,
       });
 
       if (outputsError) {
@@ -97,7 +103,7 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
 
       // Get pending requests
       const { data: requests, error: requestsError } = await stockOutputManager.getStockRequests({
-        status: 'pendente'
+        status: "pendente",
       });
 
       if (requestsError) {
@@ -105,13 +111,13 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
       }
 
       setPendingRequests(requests || []);
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao carregar saídas de estoque';
+      const errorMessage =
+        error instanceof Error ? error.message : "Erro ao carregar saídas de estoque";
       toast({
-        title: 'Erro',
+        title: "Erro",
         description: errorMessage,
-        variant: 'destructive',
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -122,11 +128,15 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
     try {
       setIsCreating(true);
 
-      if (!newOutputData.centro_custo_id || !newOutputData.solicitante || newOutputData.items.length === 0) {
+      if (
+        !newOutputData.centro_custo_id ||
+        !newOutputData.solicitante ||
+        newOutputData.items.length === 0
+      ) {
         toast({
-          title: 'Erro de Validação',
-          description: 'Preencha todos os campos obrigatórios e adicione pelo menos um item',
-          variant: 'destructive',
+          title: "Erro de Validação",
+          description: "Preencha todos os campos obrigatórios e adicione pelo menos um item",
+          variant: "destructive",
         });
         return;
       }
@@ -136,11 +146,11 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
         solicitante: newOutputData.solicitante,
         motivo: newOutputData.motivo,
         urgente: newOutputData.urgente,
-        items: newOutputData.items.map(item => ({
+        items: newOutputData.items.map((item) => ({
           produto_id: item.produto_id,
           quantidade_solicitada: item.quantidade_solicitada,
-          observacoes: item.observacoes
-        }))
+          observacoes: item.observacoes,
+        })),
       });
 
       if (error) {
@@ -148,28 +158,28 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
       }
 
       toast({
-        title: 'Sucesso',
+        title: "Sucesso",
         description: `Saída de estoque ${output?.numero_saida} criada com sucesso`,
       });
 
       setShowCreateDialog(false);
       setNewOutputData({
-        centro_custo_id: '',
-        solicitante: '',
-        motivo: '',
+        centro_custo_id: "",
+        solicitante: "",
+        motivo: "",
         urgente: false,
-        items: []
+        items: [],
       });
 
       loadStockOutputs();
       onRefresh();
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao criar saída de estoque';
+      const errorMessage =
+        error instanceof Error ? error.message : "Erro ao criar saída de estoque";
       toast({
-        title: 'Erro',
+        title: "Erro",
         description: errorMessage,
-        variant: 'destructive',
+        variant: "destructive",
       });
     } finally {
       setIsCreating(false);
@@ -178,72 +188,73 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
 
   const handleApproveRequest = async (requestId: string) => {
     try {
-      const { success, error } = await stockOutputManager.approveStockRequest(requestId, 'Sistema');
+      const { success, error } = await stockOutputManager.approveStockRequest(requestId, "Sistema");
 
       if (!success) {
-        throw new Error(error || 'Erro ao aprovar solicitação');
+        throw new Error(error || "Erro ao aprovar solicitação");
       }
 
       toast({
-        title: 'Sucesso',
-        description: 'Solicitação aprovada com sucesso',
+        title: "Sucesso",
+        description: "Solicitação aprovada com sucesso",
       });
 
       loadStockOutputs();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao aprovar solicitação';
+      const errorMessage = error instanceof Error ? error.message : "Erro ao aprovar solicitação";
       toast({
-        title: 'Erro',
+        title: "Erro",
         description: errorMessage,
-        variant: 'destructive',
+        variant: "destructive",
       });
     }
   };
 
   const addItemToOutput = () => {
-    setNewOutputData(prev => ({
+    setNewOutputData((prev) => ({
       ...prev,
-      items: [...prev.items, {
-        produto_id: '',
-        nome_produto: '',
-        quantidade_solicitada: 0,
-        observacoes: ''
-      }]
+      items: [
+        ...prev.items,
+        {
+          produto_id: "",
+          nome_produto: "",
+          quantidade_solicitada: 0,
+          observacoes: "",
+        },
+      ],
     }));
   };
 
   const removeItemFromOutput = (index: number) => {
-    setNewOutputData(prev => ({
+    setNewOutputData((prev) => ({
       ...prev,
-      items: prev.items.filter((_, i) => i !== index)
+      items: prev.items.filter((_, i) => i !== index),
     }));
   };
 
   const updateOutputItem = (index: number, field: string, value: any) => {
-    setNewOutputData(prev => ({
+    setNewOutputData((prev) => ({
       ...prev,
-      items: prev.items.map((item, i) => 
-        i === index ? { ...item, [field]: value } : item
-      )
+      items: prev.items.map((item, i) => (i === index ? { ...item, [field]: value } : item)),
     }));
   };
 
   const getStatusColor = (status: string) => {
     const colors = {
-      'rascunho': 'bg-gray-100 text-gray-800',
-      'pendente': 'bg-yellow-100 text-yellow-800',
-      'aprovada': 'bg-blue-100 text-blue-800',
-      'em_processamento': 'bg-purple-100 text-purple-800',
-      'concluida': 'bg-green-100 text-green-800',
-      'cancelada': 'bg-red-100 text-red-800'
+      rascunho: "bg-gray-100 text-gray-800",
+      pendente: "bg-yellow-100 text-yellow-800",
+      aprovada: "bg-blue-100 text-blue-800",
+      em_processamento: "bg-purple-100 text-purple-800",
+      concluida: "bg-green-100 text-green-800",
+      cancelada: "bg-red-100 text-red-800",
     };
-    return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return colors[status as keyof typeof colors] || "bg-gray-100 text-gray-800";
   };
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(value);
   };
 
@@ -256,7 +267,7 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
             <p className="text-muted-foreground">Gerenciar saídas e solicitações</p>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {[1, 2].map((i) => (
             <Card key={i}>
@@ -276,9 +287,7 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">Saídas de Estoque</h2>
-          <p className="text-muted-foreground">
-            Gerenciar saídas e solicitações de materiais
-          </p>
+          <p className="text-muted-foreground">Gerenciar saídas e solicitações de materiais</p>
         </div>
         <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
           <DialogTrigger asChild>
@@ -294,7 +303,7 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
                 Preencha as informações para criar uma nova saída de estoque
               </DialogDescription>
             </DialogHeader>
-            
+
             <div className="space-y-6">
               {/* Basic Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -302,7 +311,9 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
                   <Label htmlFor="centro_custo">Centro de Custo</Label>
                   <Select
                     value={newOutputData.centro_custo_id}
-                    onValueChange={(value) => setNewOutputData(prev => ({ ...prev, centro_custo_id: value }))}
+                    onValueChange={(value) =>
+                      setNewOutputData((prev) => ({ ...prev, centro_custo_id: value }))
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione o centro de custo" />
@@ -321,7 +332,9 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
                   <Input
                     id="solicitante"
                     value={newOutputData.solicitante}
-                    onChange={(e) => setNewOutputData(prev => ({ ...prev, solicitante: e.target.value }))}
+                    onChange={(e) =>
+                      setNewOutputData((prev) => ({ ...prev, solicitante: e.target.value }))
+                    }
                     placeholder="Nome do solicitante"
                   />
                 </div>
@@ -332,7 +345,9 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
                 <Textarea
                   id="motivo"
                   value={newOutputData.motivo}
-                  onChange={(e) => setNewOutputData(prev => ({ ...prev, motivo: e.target.value }))}
+                  onChange={(e) =>
+                    setNewOutputData((prev) => ({ ...prev, motivo: e.target.value }))
+                  }
                   placeholder="Descreva o motivo da saída"
                   rows={3}
                 />
@@ -343,7 +358,9 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
                   type="checkbox"
                   id="urgente"
                   checked={newOutputData.urgente}
-                  onChange={(e) => setNewOutputData(prev => ({ ...prev, urgente: e.target.checked }))}
+                  onChange={(e) =>
+                    setNewOutputData((prev) => ({ ...prev, urgente: e.target.checked }))
+                  }
                   className="rounded border-gray-300"
                 />
                 <Label htmlFor="urgente">Solicitação urgente</Label>
@@ -381,16 +398,16 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
                             <Icons.Trash2 className="w-4 h-4" />
                           </Button>
                         </div>
-                        
+
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                           <div className="space-y-2">
                             <Label>Produto</Label>
                             <Select
                               value={item.produto_id}
                               onValueChange={(value) => {
-                                updateOutputItem(index, 'produto_id', value);
+                                updateOutputItem(index, "produto_id", value);
                                 // In real implementation, would fetch product name
-                                updateOutputItem(index, 'nome_produto', 'Nome do Produto');
+                                updateOutputItem(index, "nome_produto", "Nome do Produto");
                               }}
                             >
                               <SelectTrigger>
@@ -410,7 +427,13 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
                             <Input
                               type="number"
                               value={item.quantidade_solicitada}
-                              onChange={(e) => updateOutputItem(index, 'quantidade_solicitada', parseInt(e.target.value) || 0)}
+                              onChange={(e) =>
+                                updateOutputItem(
+                                  index,
+                                  "quantidade_solicitada",
+                                  parseInt(e.target.value) || 0,
+                                )
+                              }
                               placeholder="0"
                               min="1"
                             />
@@ -419,8 +442,10 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
                           <div className="space-y-2">
                             <Label>Observações</Label>
                             <Input
-                              value={item.observacoes || ''}
-                              onChange={(e) => updateOutputItem(index, 'observacoes', e.target.value)}
+                              value={item.observacoes || ""}
+                              onChange={(e) =>
+                                updateOutputItem(index, "observacoes", e.target.value)
+                              }
                               placeholder="Observações opcionais"
                             />
                           </div>
@@ -433,14 +458,14 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
 
               {/* Actions */}
               <div className="flex justify-end space-x-2 pt-4">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => setShowCreateDialog(false)}
                   disabled={isCreating}
                 >
                   Cancelar
                 </Button>
-                <Button 
+                <Button
                   onClick={handleCreateStockOutput}
                   disabled={isCreating || newOutputData.items.length === 0}
                 >
@@ -450,7 +475,7 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
                       Criando...
                     </>
                   ) : (
-                    'Criar Saída'
+                    "Criar Saída"
                   )}
                 </Button>
               </div>
@@ -463,16 +488,16 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Saídas Hoje
-            </CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Saídas Hoje</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {stockOutputs.filter(output => {
-                const today = new Date().toDateString();
-                return new Date(output.data_saida).toDateString() === today;
-              }).length}
+              {
+                stockOutputs.filter((output) => {
+                  const today = new Date().toDateString();
+                  return new Date(output.data_saida).toDateString() === today;
+                }).length
+              }
             </div>
             <p className="text-sm text-muted-foreground">Processadas hoje</p>
           </CardContent>
@@ -480,14 +505,10 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Pendentes
-            </CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Pendentes</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">
-              {pendingRequests.length}
-            </div>
+            <div className="text-2xl font-bold text-yellow-600">{pendingRequests.length}</div>
             <p className="text-sm text-muted-foreground">Aguardando aprovação</p>
           </CardContent>
         </Card>
@@ -502,13 +523,16 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
             <div className="text-2xl font-bold text-blue-600">
               {formatCurrency(
                 stockOutputs
-                  .filter(output => {
+                  .filter((output) => {
                     const outputDate = new Date(output.data_saida);
                     const currentMonth = new Date().getMonth();
                     const currentYear = new Date().getFullYear();
-                    return outputDate.getMonth() === currentMonth && outputDate.getFullYear() === currentYear;
+                    return (
+                      outputDate.getMonth() === currentMonth &&
+                      outputDate.getFullYear() === currentYear
+                    );
                   })
-                  .reduce((sum, output) => sum + (output.valor_total || 0), 0)
+                  .reduce((sum, output) => sum + (output.valor_total || 0), 0),
               )}
             </div>
             <p className="text-sm text-muted-foreground">Consumido este mês</p>
@@ -524,9 +548,7 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
               <Icons.Clock className="h-5 w-5" />
               Solicitações Pendentes
             </CardTitle>
-            <CardDescription>
-              Solicitações aguardando aprovação
-            </CardDescription>
+            <CardDescription>Solicitações aguardando aprovação</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -547,19 +569,14 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
                     <TableCell>{request.centro_custo_id}</TableCell>
                     <TableCell className="max-w-xs truncate">{request.motivo}</TableCell>
                     <TableCell>
-                      {new Date(request.data_solicitacao).toLocaleDateString('pt-BR')}
+                      {new Date(request.data_solicitacao).toLocaleDateString("pt-BR")}
                     </TableCell>
                     <TableCell>
-                      <Badge className={getStatusColor(request.status)}>
-                        {request.status}
-                      </Badge>
+                      <Badge className={getStatusColor(request.status)}>{request.status}</Badge>
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          onClick={() => handleApproveRequest(request.id)}
-                        >
+                        <Button size="sm" onClick={() => handleApproveRequest(request.id)}>
                           <Icons.Check className="w-4 h-4 mr-1" />
                           Aprovar
                         </Button>
@@ -584,9 +601,7 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
             <Icons.Package className="h-5 w-5" />
             Saídas Recentes
           </CardTitle>
-          <CardDescription>
-            Últimas saídas de estoque processadas
-          </CardDescription>
+          <CardDescription>Últimas saídas de estoque processadas</CardDescription>
         </CardHeader>
         <CardContent>
           {stockOutputs.length > 0 ? (
@@ -608,14 +623,10 @@ export function StockOutputManagement({ onRefresh, className }: StockOutputManag
                     <TableCell className="font-medium">{output.numero_saida}</TableCell>
                     <TableCell>{output.solicitante}</TableCell>
                     <TableCell>{output.centro_custo_id}</TableCell>
-                    <TableCell>
-                      {new Date(output.data_saida).toLocaleDateString('pt-BR')}
-                    </TableCell>
+                    <TableCell>{new Date(output.data_saida).toLocaleDateString("pt-BR")}</TableCell>
                     <TableCell>{formatCurrency(output.valor_total || 0)}</TableCell>
                     <TableCell>
-                      <Badge className={getStatusColor(output.status)}>
-                        {output.status}
-                      </Badge>
+                      <Badge className={getStatusColor(output.status)}>{output.status}</Badge>
                     </TableCell>
                     <TableCell>
                       <Button size="sm" variant="outline">

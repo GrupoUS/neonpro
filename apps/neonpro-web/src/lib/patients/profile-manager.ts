@@ -1,30 +1,30 @@
 ﻿/**
  * Patient Profile Manager
- * 
+ *
  * Comprehensive patient profile management system for the NeonPro clinic management platform.
  * Handles patient demographics, medical history, care preferences, emergency contacts,
  * and provides 360-degree patient view with profile completeness scoring.
- * 
- * Enhanced with LGPD compliance automation and comprehensive audit trail for 
+ *
+ * Enhanced with LGPD compliance automation and comprehensive audit trail for
  * real-time compliance validation and complete traceability.
  */
 
-import { AuditLogger } from '@/lib/auth/audit/audit-logger';
-import { LGPDComplianceManager } from '@/lib/lgpd/LGPDComplianceManager';
-import { createClient } from '@/lib/supabase/server';
+import { AuditLogger } from "@/lib/auth/audit/audit-logger";
+import { LGPDComplianceManager } from "@/lib/lgpd/LGPDComplianceManager";
+import { createClient } from "@/lib/supabase/server";
 
 // Enhanced patient profile types with comprehensive data structure
 export interface PatientDemographics {
   name: string;
   date_of_birth: string;
-  gender: 'male' | 'female' | 'other' | 'prefer_not_to_say';
+  gender: "male" | "female" | "other" | "prefer_not_to_say";
   phone: string;
   email: string;
   address: string;
   insurance_provider?: string;
   insurance_id?: string;
   preferred_language?: string;
-  marital_status?: 'single' | 'married' | 'divorced' | 'widowed' | 'other';
+  marital_status?: "single" | "married" | "divorced" | "widowed" | "other";
   occupation?: string;
   emergency_contact_name?: string;
   emergency_contact_phone?: string;
@@ -69,9 +69,9 @@ export interface VitalSigns {
 }
 
 export interface CarePreferences {
-  communication_method: 'phone' | 'email' | 'sms' | 'portal';
+  communication_method: "phone" | "email" | "sms" | "portal";
   appointment_preferences: {
-    preferred_time_of_day?: 'morning' | 'afternoon' | 'evening';
+    preferred_time_of_day?: "morning" | "afternoon" | "evening";
     preferred_days?: string[];
     advance_notice_days?: number;
   };
@@ -102,7 +102,7 @@ export interface PatientProfileExtended {
   profile_completeness_score: number;
   risk_assessment?: {
     score: number;
-    level: 'low' | 'medium' | 'high' | 'critical';
+    level: "low" | "medium" | "high" | "critical";
     factors: string[];
   };
   ai_insights?: any;
@@ -136,7 +136,7 @@ export class ProfileManager {
    */
   private async initialize(): Promise<void> {
     if (this.initialized) return;
-    
+
     const supabase = await createClient();
     this.auditLogger = new AuditLogger(supabase);
     this.initialized = true;
@@ -145,14 +145,17 @@ export class ProfileManager {
   /**
    * Create a new comprehensive patient profile
    */
-  async createPatientProfile(profileData: Partial<PatientProfileExtended>, userId?: string): Promise<PatientProfileExtended | null> {
+  async createPatientProfile(
+    profileData: Partial<PatientProfileExtended>,
+    userId?: string,
+  ): Promise<PatientProfileExtended | null> {
     await this.initialize();
     const startTime = Date.now();
-    
+
     try {
       // LGPD Compliance Validation
-      await this.complianceManager.validateDataConsent(profileData, 'patient_profile_creation');
-      
+      await this.complianceManager.validateDataConsent(profileData, "patient_profile_creation");
+
       // Calculate initial profile completeness
       const completenessScore = await this.calculateProfileCompleteness(profileData);
 
@@ -160,30 +163,30 @@ export class ProfileManager {
       const profile: PatientProfileExtended = {
         patient_id: profileData.patient_id || `patient_${Date.now()}`,
         demographics: profileData.demographics || {
-          name: '',
-          date_of_birth: '',
-          gender: 'prefer_not_to_say',
-          phone: '',
-          email: '',
-          address: ''
+          name: "",
+          date_of_birth: "",
+          gender: "prefer_not_to_say",
+          phone: "",
+          email: "",
+          address: "",
         },
         medical_information: profileData.medical_information || {
           medical_history: [],
           chronic_conditions: [],
           current_medications: [],
-          allergies: []
+          allergies: [],
         },
         vital_signs: profileData.vital_signs || {},
         care_preferences: profileData.care_preferences || {
-          communication_method: 'email',
+          communication_method: "email",
           appointment_preferences: {},
-          language: 'en'
+          language: "en",
         },
         emergency_contacts: profileData.emergency_contacts || [],
         profile_completeness_score: completenessScore,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        is_active: true
+        is_active: true,
       };
 
       // Store in mock database
@@ -191,15 +194,15 @@ export class ProfileManager {
 
       // Audit Trail - Patient Profile Creation
       await this.auditLogger.log({
-        user_id: userId || 'system',
-        event_type: 'patient_profile_created',
+        user_id: userId || "system",
+        event_type: "patient_profile_created",
         event_description: `Patient profile created for ${profile.demographics.name}`,
         metadata: {
           patient_id: profile.patient_id,
           completeness_score: completenessScore,
           performance_ms: Date.now() - startTime,
-          compliance_validated: true
-        }
+          compliance_validated: true,
+        },
       });
 
       // Performance monitoring (PRD requirement: ≤20s create)
@@ -208,22 +211,23 @@ export class ProfileManager {
         console.warn(`Patient profile creation exceeded 20s target: ${executionTime}ms`);
       }
 
-      console.log(`Created patient profile for ${profile.patient_id} with completeness: ${completenessScore} (${executionTime}ms)`);
+      console.log(
+        `Created patient profile for ${profile.patient_id} with completeness: ${completenessScore} (${executionTime}ms)`,
+      );
       return profile;
-
     } catch (error) {
       // Audit Trail - Error
       await this.auditLogger.log({
-        user_id: userId || 'system',
-        event_type: 'patient_profile_creation_error',
+        user_id: userId || "system",
+        event_type: "patient_profile_creation_error",
         event_description: `Failed to create patient profile: ${error.message}`,
         metadata: {
           error: error.message,
-          performance_ms: Date.now() - startTime
-        }
+          performance_ms: Date.now() - startTime,
+        },
       });
-      
-      console.error('Error in createPatientProfile:', error);
+
+      console.error("Error in createPatientProfile:", error);
       return null;
     }
   }
@@ -231,13 +235,16 @@ export class ProfileManager {
   /**
    * Retrieve complete patient profile with all related data
    */
-  async getPatientProfile(patientId: string, userId?: string): Promise<PatientProfileExtended | null> {
+  async getPatientProfile(
+    patientId: string,
+    userId?: string,
+  ): Promise<PatientProfileExtended | null> {
     await this.initialize();
     const startTime = Date.now();
-    
+
     try {
       const profile = this.mockProfiles.get(patientId);
-      
+
       if (!profile || !profile.is_active) {
         return null;
       }
@@ -248,14 +255,14 @@ export class ProfileManager {
 
       // Audit Trail - Patient Profile Access
       await this.auditLogger.log({
-        user_id: userId || 'system',
-        event_type: 'patient_profile_accessed',
+        user_id: userId || "system",
+        event_type: "patient_profile_accessed",
         event_description: `Patient profile accessed for ${profile.demographics.name}`,
         metadata: {
           patient_id: patientId,
           performance_ms: Date.now() - startTime,
-          access_timestamp: profile.last_accessed
-        }
+          access_timestamp: profile.last_accessed,
+        },
       });
 
       // Performance monitoring (PRD requirement: ≤2s search)
@@ -266,21 +273,20 @@ export class ProfileManager {
 
       console.log(`Retrieved patient profile for ${patientId} (${executionTime}ms)`);
       return profile;
-
     } catch (error) {
       // Audit Trail - Error
       await this.auditLogger.log({
-        user_id: userId || 'system',
-        event_type: 'patient_profile_access_error',
+        user_id: userId || "system",
+        event_type: "patient_profile_access_error",
         event_description: `Failed to access patient profile: ${error.message}`,
         metadata: {
           patient_id: patientId,
           error: error.message,
-          performance_ms: Date.now() - startTime
-        }
+          performance_ms: Date.now() - startTime,
+        },
       });
-      
-      console.error('Error in getPatientProfile:', error);
+
+      console.error("Error in getPatientProfile:", error);
       return null;
     }
   }
@@ -289,14 +295,14 @@ export class ProfileManager {
    * Update patient profile with selective updates
    */
   async updatePatientProfile(
-    patientId: string, 
-    updateData: ProfileUpdateData
+    patientId: string,
+    updateData: ProfileUpdateData,
   ): Promise<PatientProfileExtended | null> {
     await this.initialize();
     try {
       const currentProfile = this.mockProfiles.get(patientId);
       if (!currentProfile) {
-        throw new Error('Patient profile not found');
+        throw new Error("Patient profile not found");
       }
 
       // Merge update data with current profile
@@ -309,16 +315,15 @@ export class ProfileManager {
       const updatedProfile: PatientProfileExtended = {
         ...mergedData,
         profile_completeness_score: newCompleteness,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       };
 
       this.mockProfiles.set(patientId, updatedProfile);
 
       console.log(`Updated patient profile for ${patientId}, new completeness: ${newCompleteness}`);
       return updatedProfile;
-
     } catch (error) {
-      console.error('Error in updatePatientProfile:', error);
+      console.error("Error in updatePatientProfile:", error);
       return null;
     }
   }
@@ -326,81 +331,85 @@ export class ProfileManager {
   /**
    * Calculate comprehensive profile completeness score
    */
-  async calculateProfileCompleteness(profileData: Partial<PatientProfileExtended>): Promise<number> {
+  async calculateProfileCompleteness(
+    profileData: Partial<PatientProfileExtended>,
+  ): Promise<number> {
     const weights = {
       demographics: 0.3,
       medical_information: 0.25,
       vital_signs: 0.2,
       care_preferences: 0.15,
-      emergency_contacts: 0.1
+      emergency_contacts: 0.1,
     };
 
     let totalScore = 0;
 
     // Demographics completeness
     if (profileData.demographics) {
-      const demoFields = [
-        'name', 'date_of_birth', 'gender', 'phone', 'email', 'address'
-      ];
-      const requiredFields = ['insurance_provider', 'preferred_language', 'emergency_contact_name'];
-      
+      const demoFields = ["name", "date_of_birth", "gender", "phone", "email", "address"];
+      const requiredFields = ["insurance_provider", "preferred_language", "emergency_contact_name"];
+
       const demoScore = this.calculateSectionCompleteness(
         profileData.demographics,
         demoFields,
-        requiredFields
+        requiredFields,
       );
       totalScore += demoScore * weights.demographics;
     }
 
     // Medical information completeness
     if (profileData.medical_information) {
-      const medFields = ['medical_history', 'chronic_conditions', 'current_medications', 'allergies'];
-      const medOptional = ['immunizations', 'family_medical_history'];
-      
+      const medFields = [
+        "medical_history",
+        "chronic_conditions",
+        "current_medications",
+        "allergies",
+      ];
+      const medOptional = ["immunizations", "family_medical_history"];
+
       const medScore = this.calculateSectionCompleteness(
         profileData.medical_information,
         medFields,
-        medOptional
+        medOptional,
       );
       totalScore += medScore * weights.medical_information;
     }
 
     // Vital signs completeness
     if (profileData.vital_signs) {
-      const vitalFields = ['height_cm', 'weight_kg', 'blood_type'];
-      const vitalOptional = ['blood_pressure_systolic', 'heart_rate', 'temperature_celsius'];
-      
+      const vitalFields = ["height_cm", "weight_kg", "blood_type"];
+      const vitalOptional = ["blood_pressure_systolic", "heart_rate", "temperature_celsius"];
+
       const vitalScore = this.calculateSectionCompleteness(
         profileData.vital_signs,
         vitalFields,
-        vitalOptional
+        vitalOptional,
       );
       totalScore += vitalScore * weights.vital_signs;
     }
 
     // Care preferences completeness
     if (profileData.care_preferences) {
-      const careFields = ['communication_method', 'language'];
-      const careOptional = ['appointment_preferences', 'accessibility_needs'];
-      
+      const careFields = ["communication_method", "language"];
+      const careOptional = ["appointment_preferences", "accessibility_needs"];
+
       const careScore = this.calculateSectionCompleteness(
         profileData.care_preferences,
         careFields,
-        careOptional
+        careOptional,
       );
       totalScore += careScore * weights.care_preferences;
     }
 
     // Emergency contacts completeness
     if (profileData.emergency_contacts && profileData.emergency_contacts.length > 0) {
-      const primaryContact = profileData.emergency_contacts.find(contact => contact.is_primary);
+      const primaryContact = profileData.emergency_contacts.find((contact) => contact.is_primary);
       if (primaryContact) {
-        const contactFields = ['name', 'relationship', 'phone'];
-        const contactScore = this.calculateSectionCompleteness(
-          primaryContact,
-          contactFields,
-          ['email', 'address']
-        );
+        const contactFields = ["name", "relationship", "phone"];
+        const contactScore = this.calculateSectionCompleteness(primaryContact, contactFields, [
+          "email",
+          "address",
+        ]);
         totalScore += contactScore * weights.emergency_contacts;
       }
     }
@@ -420,39 +429,38 @@ export class ProfileManager {
     limit?: number;
   }): Promise<PatientProfileExtended[]> {
     try {
-      const allPatients = Array.from(this.mockProfiles.values())
-        .filter(patient => patient.is_active);
+      const allPatients = Array.from(this.mockProfiles.values()).filter(
+        (patient) => patient.is_active,
+      );
 
       let results = allPatients;
 
       // Apply search filters
       if (searchCriteria.name) {
-        results = results.filter(patient => 
-          patient.demographics.name.toLowerCase().includes(searchCriteria.name!.toLowerCase())
+        results = results.filter((patient) =>
+          patient.demographics.name.toLowerCase().includes(searchCriteria.name!.toLowerCase()),
         );
       }
 
       if (searchCriteria.phone) {
-        results = results.filter(patient => 
-          patient.demographics.phone === searchCriteria.phone
-        );
+        results = results.filter((patient) => patient.demographics.phone === searchCriteria.phone);
       }
 
       if (searchCriteria.email) {
-        results = results.filter(patient => 
-          patient.demographics.email.toLowerCase().includes(searchCriteria.email!.toLowerCase())
+        results = results.filter((patient) =>
+          patient.demographics.email.toLowerCase().includes(searchCriteria.email!.toLowerCase()),
         );
       }
 
       if (searchCriteria.dateOfBirth) {
-        results = results.filter(patient => 
-          patient.demographics.date_of_birth === searchCriteria.dateOfBirth
+        results = results.filter(
+          (patient) => patient.demographics.date_of_birth === searchCriteria.dateOfBirth,
         );
       }
 
       if (searchCriteria.insuranceId) {
-        results = results.filter(patient => 
-          patient.demographics.insurance_id === searchCriteria.insuranceId
+        results = results.filter(
+          (patient) => patient.demographics.insurance_id === searchCriteria.insuranceId,
         );
       }
 
@@ -461,12 +469,11 @@ export class ProfileManager {
         results = results.slice(0, searchCriteria.limit);
       }
 
-      return results.sort((a, b) => 
-        new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+      return results.sort(
+        (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),
       );
-
     } catch (error) {
-      console.error('Error in searchPatients:', error);
+      console.error("Error in searchPatients:", error);
       return [];
     }
   }
@@ -478,13 +485,10 @@ export class ProfileManager {
     await this.initialize();
     try {
       return Array.from(this.mockProfiles.values())
-        .filter(patient => 
-          patient.is_active && patient.profile_completeness_score < threshold
-        )
+        .filter((patient) => patient.is_active && patient.profile_completeness_score < threshold)
         .sort((a, b) => a.profile_completeness_score - b.profile_completeness_score);
-
     } catch (error) {
-      console.error('Error in getIncompleteProfiles:', error);
+      console.error("Error in getIncompleteProfiles:", error);
       return [];
     }
   }
@@ -506,9 +510,8 @@ export class ProfileManager {
 
       console.log(`Archived patient profile for ${patientId}`);
       return true;
-
     } catch (error) {
-      console.error('Error in archivePatientProfile:', error);
+      console.error("Error in archivePatientProfile:", error);
       return false;
     }
   }
@@ -526,21 +529,23 @@ export class ProfileManager {
     await this.initialize();
     try {
       const allPatients = Array.from(this.mockProfiles.values());
-      const activePatients = allPatients.filter(patient => patient.is_active);
+      const activePatients = allPatients.filter((patient) => patient.is_active);
 
-      const avgCompleteness = activePatients.length > 0
-        ? activePatients.reduce((sum, patient) => sum + patient.profile_completeness_score, 0) / activePatients.length
-        : 0;
+      const avgCompleteness =
+        activePatients.length > 0
+          ? activePatients.reduce((sum, patient) => sum + patient.profile_completeness_score, 0) /
+            activePatients.length
+          : 0;
 
-      const needingAttention = activePatients.filter(patient => 
-        patient.profile_completeness_score < 0.7
+      const needingAttention = activePatients.filter(
+        (patient) => patient.profile_completeness_score < 0.7,
       );
 
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-      
-      const recentlyUpdated = activePatients.filter(patient => 
-        new Date(patient.updated_at) >= sevenDaysAgo
+
+      const recentlyUpdated = activePatients.filter(
+        (patient) => new Date(patient.updated_at) >= sevenDaysAgo,
       );
 
       return {
@@ -548,17 +553,16 @@ export class ProfileManager {
         activePatients: activePatients.length,
         averageCompleteness: Math.round(avgCompleteness * 100) / 100,
         profilesNeedingAttention: needingAttention.length,
-        recentlyUpdated: recentlyUpdated.length
+        recentlyUpdated: recentlyUpdated.length,
       };
-
     } catch (error) {
-      console.error('Error in getPatientAnalytics:', error);
+      console.error("Error in getPatientAnalytics:", error);
       return {
         totalPatients: 0,
         activePatients: 0,
         averageCompleteness: 0,
         profilesNeedingAttention: 0,
-        recentlyUpdated: 0
+        recentlyUpdated: 0,
       };
     }
   }
@@ -568,7 +572,7 @@ export class ProfileManager {
   private calculateSectionCompleteness(
     sectionData: any,
     requiredFields: string[],
-    optionalFields: string[] = []
+    optionalFields: string[] = [],
   ): number {
     if (!sectionData) return 0;
 
@@ -590,24 +594,24 @@ export class ProfileManager {
     }
 
     // Calculate percentage (required fields count double)
-    const maxScore = (requiredFields.length * 2) + optionalFields.length;
+    const maxScore = requiredFields.length * 2 + optionalFields.length;
     return maxScore > 0 ? score / maxScore : 0;
   }
 
   private hasValidValue(value: any): boolean {
     if (value === null || value === undefined) return false;
-    if (typeof value === 'string' && value.trim() === '') return false;
+    if (typeof value === "string" && value.trim() === "") return false;
     if (Array.isArray(value) && value.length === 0) return false;
     return true;
   }
 
   private mergeProfileData(
     currentProfile: PatientProfileExtended,
-    updateData: ProfileUpdateData
+    updateData: ProfileUpdateData,
   ): PatientProfileExtended {
     return {
       ...currentProfile,
-      demographics: updateData.demographics 
+      demographics: updateData.demographics
         ? { ...currentProfile.demographics, ...updateData.demographics }
         : currentProfile.demographics,
       medical_information: updateData.medical_information
@@ -619,7 +623,7 @@ export class ProfileManager {
       care_preferences: updateData.care_preferences
         ? { ...currentProfile.care_preferences, ...updateData.care_preferences }
         : currentProfile.care_preferences,
-      emergency_contacts: updateData.emergency_contacts || currentProfile.emergency_contacts
+      emergency_contacts: updateData.emergency_contacts || currentProfile.emergency_contacts,
     };
   }
 
@@ -630,7 +634,7 @@ export class ProfileManager {
     await this.initialize();
     try {
       const profile = this.mockProfiles.get(patientId);
-      
+
       if (!profile) {
         console.error(`Patient ${patientId} not found for archiving`);
         return false;
@@ -639,19 +643,17 @@ export class ProfileManager {
       // Mark as inactive (soft delete)
       profile.is_active = false;
       profile.updated_at = new Date().toISOString();
-      
+
       // Update the profile in the mock database
       this.mockProfiles.set(patientId, profile);
-      
+
       console.log(`Archived patient profile for ${patientId}`);
       return true;
-
     } catch (error) {
-      console.error('Error in archivePatient:', error);
+      console.error("Error in archivePatient:", error);
       return false;
     }
   }
 }
 
 export default ProfileManager;
-

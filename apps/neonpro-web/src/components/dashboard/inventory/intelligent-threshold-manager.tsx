@@ -3,21 +3,18 @@
 
 "use client";
 
-import { useIntelligentThresholds } from "@/app/hooks/useIntelligentThresholds";
-import {
-  ReorderThreshold,
-  ThresholdOptimization,
-} from "@/app/types/reorder-alerts";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { useIntelligentThresholds } from "@/app/hooks/useIntelligentThresholds";
+import type { ReorderThreshold, ThresholdOptimization } from "@/app/types/reorder-alerts";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -25,12 +22,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import {
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Switch } from "@/components/ui/switch";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
   AlertCircle,
   AlertTriangle,
   ArrowUp,
@@ -43,7 +40,7 @@ import {
   TrendingUp,
   Zap,
 } from "lucide-react";
-import { useState } from "react";
+import type { useState } from "react";
 
 interface IntelligentThresholdManagerProps {
   clinicId: string;
@@ -76,8 +73,7 @@ export function IntelligentThresholdManager({
     refreshInterval: 30000,
   });
 
-  const [selectedThreshold, setSelectedThreshold] =
-    useState<ReorderThreshold | null>(null);
+  const [selectedThreshold, setSelectedThreshold] = useState<ReorderThreshold | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showOptimizationDialog, setShowOptimizationDialog] = useState(false);
   const [newThreshold, setNewThreshold] = useState({
@@ -96,9 +92,7 @@ export function IntelligentThresholdManager({
       <div className="flex items-center justify-center h-64">
         <div className="text-center space-y-2">
           <Brain className="h-8 w-8 animate-pulse mx-auto text-blue-500" />
-          <p className="text-sm text-muted-foreground">
-            Carregando sistema inteligente...
-          </p>
+          <p className="text-sm text-muted-foreground">Carregando sistema inteligente...</p>
         </div>
       </div>
     );
@@ -140,10 +134,7 @@ export function IntelligentThresholdManager({
     }
   };
 
-  const handleUpdateThreshold = async (
-    id: string,
-    updates: Partial<ReorderThreshold>
-  ) => {
+  const handleUpdateThreshold = async (id: string, updates: Partial<ReorderThreshold>) => {
     try {
       await updateThreshold(id, updates);
     } catch (error) {
@@ -151,9 +142,7 @@ export function IntelligentThresholdManager({
     }
   };
 
-  const handleOptimizeThreshold = async (
-    optimization: ThresholdOptimization
-  ) => {
+  const handleOptimizeThreshold = async (optimization: ThresholdOptimization) => {
     try {
       await updateThreshold(optimization.item_id, {
         reorder_point: optimization.recommended_reorder_point,
@@ -214,9 +203,7 @@ export function IntelligentThresholdManager({
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Total de Limites
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Total de Limites</p>
                 <p className="text-2xl font-bold">{totalThresholds}</p>
               </div>
               <Target className="h-8 w-8 text-blue-500" />
@@ -228,12 +215,8 @@ export function IntelligentThresholdManager({
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Ativos
-                </p>
-                <p className="text-2xl font-bold text-green-600">
-                  {activeThresholds}
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Ativos</p>
+                <p className="text-2xl font-bold text-green-600">{activeThresholds}</p>
               </div>
               <CheckCircle className="h-8 w-8 text-green-500" />
             </div>
@@ -244,12 +227,8 @@ export function IntelligentThresholdManager({
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Auto-Reorder
-                </p>
-                <p className="text-2xl font-bold text-blue-600">
-                  {autoReorderEnabled}
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Auto-Reorder</p>
+                <p className="text-2xl font-bold text-blue-600">{autoReorderEnabled}</p>
               </div>
               <Zap className="h-8 w-8 text-blue-500" />
             </div>
@@ -260,12 +239,8 @@ export function IntelligentThresholdManager({
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Otimizações
-                </p>
-                <p className="text-2xl font-bold text-amber-600">
-                  {optimizationOpportunities}
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Otimizações</p>
+                <p className="text-2xl font-bold text-amber-600">{optimizationOpportunities}</p>
               </div>
               <Lightbulb className="h-8 w-8 text-amber-500" />
             </div>
@@ -303,9 +278,7 @@ export function IntelligentThresholdManager({
                     <div className="flex gap-4 mt-1 text-xs">
                       <span>Atual: {optimization.current_reorder_point}</span>
                       <ArrowUp className="h-3 w-3" />
-                      <span>
-                        Sugerido: {optimization.recommended_reorder_point}
-                      </span>
+                      <span>Sugerido: {optimization.recommended_reorder_point}</span>
                     </div>
                   </div>
                   <div className="text-right">
@@ -317,9 +290,7 @@ export function IntelligentThresholdManager({
                       }
                       className="mb-2"
                     >
-                      {optimization.implementation_priority === "high"
-                        ? "Alta"
-                        : "Média"}{" "}
+                      {optimization.implementation_priority === "high" ? "Alta" : "Média"}{" "}
                       Prioridade
                     </Badge>
                     <p className="text-sm font-medium text-green-600">
@@ -358,10 +329,7 @@ export function IntelligentThresholdManager({
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-4">
-          <PredictiveAnalytics
-            clinicId={clinicId}
-            generateForecast={generateForecast}
-          />
+          <PredictiveAnalytics clinicId={clinicId} generateForecast={generateForecast} />
         </TabsContent>
 
         <TabsContent value="alerts" className="space-y-4">
@@ -386,9 +354,7 @@ function CreateThresholdForm({ threshold, onChange, onSubmit }: any) {
           <Input
             id="item_id"
             value={threshold.item_id}
-            onChange={(e) =>
-              onChange({ ...threshold, item_id: e.target.value })
-            }
+            onChange={(e) => onChange({ ...threshold, item_id: e.target.value })}
             placeholder="ID do item"
           />
         </div>
@@ -415,9 +381,7 @@ function CreateThresholdForm({ threshold, onChange, onSubmit }: any) {
             id="safety_stock"
             type="number"
             value={threshold.safety_stock}
-            onChange={(e) =>
-              onChange({ ...threshold, safety_stock: parseInt(e.target.value) })
-            }
+            onChange={(e) => onChange({ ...threshold, safety_stock: parseInt(e.target.value) })}
           />
         </div>
         <div>
@@ -440,9 +404,7 @@ function CreateThresholdForm({ threshold, onChange, onSubmit }: any) {
         <Switch
           id="auto_reorder"
           checked={threshold.auto_reorder_enabled}
-          onCheckedChange={(checked) =>
-            onChange({ ...threshold, auto_reorder_enabled: checked })
-          }
+          onCheckedChange={(checked) => onChange({ ...threshold, auto_reorder_enabled: checked })}
         />
         <Label htmlFor="auto_reorder">Ativar Reposição Automática</Label>
       </div>
@@ -490,9 +452,7 @@ function ThresholdsList({ thresholds, onUpdate, onDelete }: any) {
                   </div>
                   <div>
                     <span className="text-muted-foreground">Lead Time:</span>
-                    <p className="font-medium">
-                      {threshold.lead_time_days || 7} dias
-                    </p>
+                    <p className="font-medium">{threshold.lead_time_days || 7} dias</p>
                   </div>
                 </div>
               </div>
@@ -523,9 +483,7 @@ function PredictiveAnalytics({ clinicId, generateForecast }: any) {
           <TrendingUp className="h-5 w-5" />
           Análise Preditiva
         </CardTitle>
-        <CardDescription>
-          Previsões de demanda baseadas em IA e dados históricos
-        </CardDescription>
+        <CardDescription>Previsões de demanda baseadas em IA e dados históricos</CardDescription>
       </CardHeader>
       <CardContent>
         <p className="text-center py-8 text-muted-foreground">
@@ -553,21 +511,15 @@ function AlertsOverview({ alertStats, clinicId }: any) {
               <p className="text-sm text-muted-foreground">Total</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-amber-600">
-                {alertStats.pending_alerts}
-              </p>
+              <p className="text-2xl font-bold text-amber-600">{alertStats.pending_alerts}</p>
               <p className="text-sm text-muted-foreground">Pendentes</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-red-600">
-                {alertStats.critical_alerts}
-              </p>
+              <p className="text-2xl font-bold text-red-600">{alertStats.critical_alerts}</p>
               <p className="text-sm text-muted-foreground">Críticos</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-green-600">
-                {alertStats.resolved_today}
-              </p>
+              <p className="text-2xl font-bold text-green-600">{alertStats.resolved_today}</p>
               <p className="text-sm text-muted-foreground">Resolvidos Hoje</p>
             </div>
           </div>
@@ -589,9 +541,7 @@ function SystemSettings({ clinicId }: any) {
           <Settings className="h-5 w-5" />
           Configurações do Sistema
         </CardTitle>
-        <CardDescription>
-          Configure comportamentos automáticos e preferências de IA
-        </CardDescription>
+        <CardDescription>Configure comportamentos automáticos e preferências de IA</CardDescription>
       </CardHeader>
       <CardContent>
         <p className="text-center py-8 text-muted-foreground">

@@ -21,7 +21,7 @@ describe("DuplicateManagerHookMinimal - Native React Testing", () => {
     const html = renderToString(
       React.createElement(DuplicateManagerHookMinimal, {
         duplicates: mockDuplicates,
-      })
+      }),
     );
 
     expect(html).toContain("John Doe");

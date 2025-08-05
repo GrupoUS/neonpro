@@ -1,20 +1,20 @@
 /**
  * NeonPro - API Gateway Middleware System
  * Comprehensive middleware and plugin system for request processing
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  * @created 2025-01-27
  */
 
-import {
+import type {
   ApiMiddleware,
   ApiGatewayPlugin,
   ApiRequestContext,
   ApiResponseContext,
   ApiGatewayConfig,
-  ApiGatewayLogger
-} from './types';
+  ApiGatewayLogger,
+} from "./types";
 
 /**
  * Middleware Manager
@@ -34,11 +34,11 @@ export class MiddlewareManager {
    */
   register(middleware: ApiMiddleware): void {
     this.middleware.set(middleware.name, middleware);
-    
-    this.logger?.info('Middleware registered', {
+
+    this.logger?.info("Middleware registered", {
       name: middleware.name,
       order: middleware.order,
-      enabled: middleware.enabled
+      enabled: middleware.enabled,
     });
   }
 
@@ -47,7 +47,7 @@ export class MiddlewareManager {
    */
   unregister(name: string): void {
     this.middleware.delete(name);
-    this.logger?.info('Middleware unregistered', { name });
+    this.logger?.info("Middleware unregistered", { name });
   }
 
   /**
@@ -55,11 +55,11 @@ export class MiddlewareManager {
    */
   registerPlugin(plugin: ApiGatewayPlugin): void {
     this.plugins.set(plugin.name, plugin);
-    
-    this.logger?.info('Plugin registered', {
+
+    this.logger?.info("Plugin registered", {
       name: plugin.name,
       version: plugin.version,
-      enabled: plugin.enabled
+      enabled: plugin.enabled,
     });
   }
 
@@ -68,7 +68,7 @@ export class MiddlewareManager {
    */
   unregisterPlugin(name: string): void {
     this.plugins.delete(name);
-    this.logger?.info('Plugin unregistered', { name });
+    this.logger?.info("Plugin unregistered", { name });
   }
 
   /**
@@ -81,13 +81,13 @@ export class MiddlewareManager {
     const next = async (): Promise<void> => {
       if (index < middlewares.length) {
         const middleware = middlewares[index++];
-        
+
         try {
           await middleware.handler(context, next);
         } catch (error) {
-          this.logger?.error('Middleware error', error as Error, {
+          this.logger?.error("Middleware error", error as Error, {
             middleware: middleware.name,
-            requestId: context.requestId
+            requestId: context.requestId,
           });
           throw error;
         }
@@ -102,7 +102,7 @@ export class MiddlewareManager {
    */
   private getOrderedMiddleware(): ApiMiddleware[] {
     return Array.from(this.middleware.values())
-      .filter(m => m.enabled)
+      .filter((m) => m.enabled)
       .sort((a, b) => a.order - b.order);
   }
 
@@ -148,40 +148,40 @@ export class CorsMiddleware {
     maxAge?: number;
   }): ApiMiddleware {
     return {
-      name: 'cors',
+      name: "cors",
       order: 1,
       enabled: true,
       config,
       handler: async (context: ApiRequestContext, next: () => Promise<void>) => {
         // Handle preflight requests
-        if (context.method === 'OPTIONS') {
-          context.headers['Access-Control-Allow-Origin'] = config.origins.includes('*') 
-            ? '*' 
-            : config.origins.join(',');
-          context.headers['Access-Control-Allow-Methods'] = config.methods.join(',');
-          context.headers['Access-Control-Allow-Headers'] = config.headers.join(',');
-          context.headers['Access-Control-Allow-Credentials'] = config.credentials.toString();
-          
+        if (context.method === "OPTIONS") {
+          context.headers["Access-Control-Allow-Origin"] = config.origins.includes("*")
+            ? "*"
+            : config.origins.join(",");
+          context.headers["Access-Control-Allow-Methods"] = config.methods.join(",");
+          context.headers["Access-Control-Allow-Headers"] = config.headers.join(",");
+          context.headers["Access-Control-Allow-Credentials"] = config.credentials.toString();
+
           if (config.maxAge) {
-            context.headers['Access-Control-Max-Age'] = config.maxAge.toString();
+            context.headers["Access-Control-Max-Age"] = config.maxAge.toString();
           }
-          
+
           // End preflight request
           return;
         }
 
         // Add CORS headers to actual requests
-        const origin = context.headers['origin'] || context.headers['Origin'];
-        
-        if (origin && (config.origins.includes('*') || config.origins.includes(origin))) {
-          context.headers['Access-Control-Allow-Origin'] = origin;
+        const origin = context.headers["origin"] || context.headers["Origin"];
+
+        if (origin && (config.origins.includes("*") || config.origins.includes(origin))) {
+          context.headers["Access-Control-Allow-Origin"] = origin;
         }
-        
-        context.headers['Access-Control-Allow-Credentials'] = config.credentials.toString();
-        context.headers['Vary'] = 'Origin';
+
+        context.headers["Access-Control-Allow-Credentials"] = config.credentials.toString();
+        context.headers["Vary"] = "Origin";
 
         await next();
-      }
+      },
     };
   }
 }
@@ -191,21 +191,24 @@ export class CorsMiddleware {
  * Logs all API requests and responses
  */
 export class RequestLoggingMiddleware {
-  static create(config: {
-    enabled: boolean;
-    level: 'debug' | 'info' | 'warn' | 'error';
-    includeBody: boolean;
-    includeHeaders: boolean;
-    sensitiveHeaders: string[];
-  }, logger?: ApiGatewayLogger): ApiMiddleware {
+  static create(
+    config: {
+      enabled: boolean;
+      level: "debug" | "info" | "warn" | "error";
+      includeBody: boolean;
+      includeHeaders: boolean;
+      sensitiveHeaders: string[];
+    },
+    logger?: ApiGatewayLogger,
+  ): ApiMiddleware {
     return {
-      name: 'request-logging',
+      name: "request-logging",
       order: 2,
       enabled: config.enabled,
       config,
       handler: async (context: ApiRequestContext, next: () => Promise<void>) => {
         const startTime = Date.now();
-        
+
         // Log request
         const requestLog: any = {
           requestId: context.requestId,
@@ -216,13 +219,13 @@ export class RequestLoggingMiddleware {
           userId: context.userId,
           ipAddress: context.ipAddress,
           userAgent: context.userAgent,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
 
         if (config.includeHeaders) {
           requestLog.headers = RequestLoggingMiddleware.sanitizeHeaders(
             context.headers,
-            config.sensitiveHeaders
+            config.sensitiveHeaders,
           );
         }
 
@@ -230,44 +233,47 @@ export class RequestLoggingMiddleware {
           requestLog.body = context.body;
         }
 
-        logger?.info('API Request', requestLog);
+        logger?.info("API Request", requestLog);
 
         try {
           await next();
-          
+
           // Log successful response
           const duration = Date.now() - startTime;
-          logger?.info('API Response', {
+          logger?.info("API Response", {
             requestId: context.requestId,
             duration,
-            statusCode: context.headers['status-code'] || 200
+            statusCode: context.headers["status-code"] || 200,
           });
         } catch (error) {
           // Log error response
           const duration = Date.now() - startTime;
-          logger?.error('API Error', error as Error, {
+          logger?.error("API Error", error as Error, {
             requestId: context.requestId,
             duration,
-            statusCode: 500
+            statusCode: 500,
           });
           throw error;
         }
-      }
+      },
     };
   }
 
   /**
    * Sanitize headers by removing sensitive information
    */
-  private static sanitizeHeaders(headers: Record<string, any>, sensitiveHeaders: string[]): Record<string, any> {
+  private static sanitizeHeaders(
+    headers: Record<string, any>,
+    sensitiveHeaders: string[],
+  ): Record<string, any> {
     const sanitized = { ...headers };
-    
+
     for (const header of sensitiveHeaders) {
       if (sanitized[header]) {
-        sanitized[header] = '[REDACTED]';
+        sanitized[header] = "[REDACTED]";
       }
     }
-    
+
     return sanitized;
   }
 }
@@ -287,32 +293,34 @@ export class RateLimitingMiddleware {
     skipFailedRequests?: boolean;
   }): ApiMiddleware {
     const instance = new RateLimitingMiddleware();
-    
+
     return {
-      name: 'rate-limiting',
+      name: "rate-limiting",
       order: 3,
       enabled: true,
       config,
       handler: async (context: ApiRequestContext, next: () => Promise<void>) => {
-        const key = config.keyGenerator 
+        const key = config.keyGenerator
           ? config.keyGenerator(context)
           : context.clientId || context.ipAddress;
-        
+
         const allowed = instance.checkRateLimit(key, config);
-        
+
         if (!allowed) {
           const rateLimitInfo = instance.getRateLimitInfo(key, config);
-          
+
           // Add rate limit headers
-          context.headers['X-RateLimit-Limit'] = config.maxRequests.toString();
-          context.headers['X-RateLimit-Remaining'] = rateLimitInfo.remaining.toString();
-          context.headers['X-RateLimit-Reset'] = Math.ceil(rateLimitInfo.resetTime.getTime() / 1000).toString();
-          
-          throw new Error('Rate limit exceeded');
+          context.headers["X-RateLimit-Limit"] = config.maxRequests.toString();
+          context.headers["X-RateLimit-Remaining"] = rateLimitInfo.remaining.toString();
+          context.headers["X-RateLimit-Reset"] = Math.ceil(
+            rateLimitInfo.resetTime.getTime() / 1000,
+          ).toString();
+
+          throw new Error("Rate limit exceeded");
         }
-        
+
         await next();
-      }
+      },
     };
   }
 
@@ -326,7 +334,7 @@ export class RateLimitingMiddleware {
     if (!rateLimitData || rateLimitData.resetTime < now) {
       rateLimitData = {
         count: 0,
-        resetTime: new Date(now.getTime() + config.windowMs)
+        resetTime: new Date(now.getTime() + config.windowMs),
       };
     }
 
@@ -343,22 +351,25 @@ export class RateLimitingMiddleware {
   /**
    * Get rate limit information
    */
-  private getRateLimitInfo(key: string, config: any): {
+  private getRateLimitInfo(
+    key: string,
+    config: any,
+  ): {
     remaining: number;
     resetTime: Date;
   } {
     const rateLimitData = this.rateLimitStore.get(key);
-    
+
     if (!rateLimitData) {
       return {
         remaining: config.maxRequests,
-        resetTime: new Date(Date.now() + config.windowMs)
+        resetTime: new Date(Date.now() + config.windowMs),
       };
     }
 
     return {
       remaining: Math.max(0, config.maxRequests - rateLimitData.count),
-      resetTime: rateLimitData.resetTime
+      resetTime: rateLimitData.resetTime,
     };
   }
 }
@@ -372,11 +383,13 @@ export class AuthenticationMiddleware {
     required: boolean;
     apiKeyHeader: string;
     jwtSecret?: string;
-    validateApiKey: (apiKey: string) => Promise<{ valid: boolean; clientId?: string; userId?: string }>;
+    validateApiKey: (
+      apiKey: string,
+    ) => Promise<{ valid: boolean; clientId?: string; userId?: string }>;
     validateJwt?: (token: string) => Promise<{ valid: boolean; payload?: any }>;
   }): ApiMiddleware {
     return {
-      name: 'authentication',
+      name: "authentication",
       order: 4,
       enabled: config.required,
       config,
@@ -387,12 +400,13 @@ export class AuthenticationMiddleware {
         }
 
         // Try API key authentication
-        const apiKey = context.headers[config.apiKeyHeader.toLowerCase()] || 
-                      context.headers['authorization']?.replace('Bearer ', '');
-        
+        const apiKey =
+          context.headers[config.apiKeyHeader.toLowerCase()] ||
+          context.headers["authorization"]?.replace("Bearer ", "");
+
         if (apiKey) {
           const result = await config.validateApiKey(apiKey);
-          
+
           if (result.valid) {
             context.clientId = result.clientId;
             context.userId = result.userId;
@@ -403,12 +417,12 @@ export class AuthenticationMiddleware {
 
         // Try JWT authentication if configured
         if (config.validateJwt) {
-          const authHeader = context.headers['authorization'];
-          
-          if (authHeader && authHeader.startsWith('Bearer ')) {
+          const authHeader = context.headers["authorization"];
+
+          if (authHeader && authHeader.startsWith("Bearer ")) {
             const token = authHeader.substring(7);
             const result = await config.validateJwt(token);
-            
+
             if (result.valid && result.payload) {
               context.userId = result.payload.sub || result.payload.userId;
               context.userRoles = result.payload.roles;
@@ -419,8 +433,8 @@ export class AuthenticationMiddleware {
           }
         }
 
-        throw new Error('Authentication required');
-      }
+        throw new Error("Authentication required");
+      },
     };
   }
 }
@@ -436,7 +450,7 @@ export class AuthorizationMiddleware {
     adminRoles?: string[];
   }): ApiMiddleware {
     return {
-      name: 'authorization',
+      name: "authorization",
       order: 5,
       enabled: true,
       config,
@@ -447,13 +461,11 @@ export class AuthorizationMiddleware {
         }
 
         const route = context.route;
-        
+
         // Check admin roles
         if (config.adminRoles && context.userRoles) {
-          const hasAdminRole = config.adminRoles.some(role => 
-            context.userRoles!.includes(role)
-          );
-          
+          const hasAdminRole = config.adminRoles.some((role) => context.userRoles!.includes(role));
+
           if (hasAdminRole) {
             await next();
             return;
@@ -461,23 +473,37 @@ export class AuthorizationMiddleware {
         }
 
         // Check required roles
-        if (config.checkRoles && route.authentication.roles && route.authentication.roles.length > 0) {
-          if (!context.userRoles || 
-              !route.authentication.roles.some(role => context.userRoles!.includes(role))) {
-            throw new Error('Insufficient role permissions');
+        if (
+          config.checkRoles &&
+          route.authentication.roles &&
+          route.authentication.roles.length > 0
+        ) {
+          if (
+            !context.userRoles ||
+            !route.authentication.roles.some((role) => context.userRoles!.includes(role))
+          ) {
+            throw new Error("Insufficient role permissions");
           }
         }
 
         // Check required permissions
-        if (config.checkPermissions && route.authentication.permissions && route.authentication.permissions.length > 0) {
-          if (!context.userPermissions || 
-              !route.authentication.permissions.some(perm => context.userPermissions!.includes(perm))) {
-            throw new Error('Insufficient permissions');
+        if (
+          config.checkPermissions &&
+          route.authentication.permissions &&
+          route.authentication.permissions.length > 0
+        ) {
+          if (
+            !context.userPermissions ||
+            !route.authentication.permissions.some((perm) =>
+              context.userPermissions!.includes(perm),
+            )
+          ) {
+            throw new Error("Insufficient permissions");
           }
         }
 
         await next();
-      }
+      },
     };
   }
 }
@@ -494,7 +520,7 @@ export class RequestValidationMiddleware {
     strictMode: boolean;
   }): ApiMiddleware {
     return {
-      name: 'request-validation',
+      name: "request-validation",
       order: 6,
       enabled: true,
       config,
@@ -506,8 +532,8 @@ export class RequestValidationMiddleware {
         if (config.validateParams && route.documentation.parameters) {
           const paramErrors = RequestValidationMiddleware.validateParameters(
             context.params || {},
-            route.documentation.parameters.filter(p => p.in === 'path'),
-            config.strictMode
+            route.documentation.parameters.filter((p) => p.in === "path"),
+            config.strictMode,
           );
           errors.push(...paramErrors);
         }
@@ -516,32 +542,32 @@ export class RequestValidationMiddleware {
         if (config.validateQuery && route.documentation.parameters) {
           const queryErrors = RequestValidationMiddleware.validateParameters(
             context.query || {},
-            route.documentation.parameters.filter(p => p.in === 'query'),
-            config.strictMode
+            route.documentation.parameters.filter((p) => p.in === "query"),
+            config.strictMode,
           );
           errors.push(...queryErrors);
         }
 
         // Validate request body
         if (config.validateBody && context.body && route.documentation.parameters) {
-          const bodyParam = route.documentation.parameters.find(p => p.in === 'body');
-          
+          const bodyParam = route.documentation.parameters.find((p) => p.in === "body");
+
           if (bodyParam) {
             const bodyErrors = RequestValidationMiddleware.validateBody(
               context.body,
               bodyParam.schema,
-              config.strictMode
+              config.strictMode,
             );
             errors.push(...bodyErrors);
           }
         }
 
         if (errors.length > 0) {
-          throw new Error(`Validation errors: ${errors.join(', ')}`);
+          throw new Error(`Validation errors: ${errors.join(", ")}`);
         }
 
         await next();
-      }
+      },
     };
   }
 
@@ -551,13 +577,13 @@ export class RequestValidationMiddleware {
   private static validateParameters(
     values: Record<string, any>,
     parameters: any[],
-    strictMode: boolean
+    strictMode: boolean,
   ): string[] {
     const errors: string[] = [];
 
     for (const param of parameters) {
       const value = values[param.name];
-      
+
       // Check required parameters
       if (param.required && (value === undefined || value === null)) {
         errors.push(`Missing required parameter: ${param.name}`);
@@ -573,7 +599,7 @@ export class RequestValidationMiddleware {
       const paramErrors = RequestValidationMiddleware.validateValue(
         value,
         param.schema,
-        param.name
+        param.name,
       );
       errors.push(...paramErrors);
     }
@@ -584,22 +610,14 @@ export class RequestValidationMiddleware {
   /**
    * Validate request body against schema
    */
-  private static validateBody(
-    body: any,
-    schema: any,
-    strictMode: boolean
-  ): string[] {
-    return RequestValidationMiddleware.validateValue(body, schema, 'body');
+  private static validateBody(body: any, schema: any, strictMode: boolean): string[] {
+    return RequestValidationMiddleware.validateValue(body, schema, "body");
   }
 
   /**
    * Validate value against schema
    */
-  private static validateValue(
-    value: any,
-    schema: any,
-    fieldName: string
-  ): string[] {
+  private static validateValue(value: any, schema: any, fieldName: string): string[] {
     const errors: string[] = [];
 
     if (!schema) {
@@ -608,8 +626,8 @@ export class RequestValidationMiddleware {
 
     // Type validation
     if (schema.type) {
-      const actualType = Array.isArray(value) ? 'array' : typeof value;
-      
+      const actualType = Array.isArray(value) ? "array" : typeof value;
+
       if (actualType !== schema.type) {
         errors.push(`${fieldName} must be of type ${schema.type}, got ${actualType}`);
         return errors;
@@ -617,52 +635,52 @@ export class RequestValidationMiddleware {
     }
 
     // String validations
-    if (schema.type === 'string') {
+    if (schema.type === "string") {
       if (schema.minLength && value.length < schema.minLength) {
         errors.push(`${fieldName} must be at least ${schema.minLength} characters long`);
       }
-      
+
       if (schema.maxLength && value.length > schema.maxLength) {
         errors.push(`${fieldName} must be at most ${schema.maxLength} characters long`);
       }
-      
+
       if (schema.pattern && !new RegExp(schema.pattern).test(value)) {
         errors.push(`${fieldName} does not match required pattern`);
       }
-      
+
       if (schema.enum && !schema.enum.includes(value)) {
-        errors.push(`${fieldName} must be one of: ${schema.enum.join(', ')}`);
+        errors.push(`${fieldName} must be one of: ${schema.enum.join(", ")}`);
       }
     }
 
     // Number validations
-    if (schema.type === 'number' || schema.type === 'integer') {
+    if (schema.type === "number" || schema.type === "integer") {
       if (schema.minimum !== undefined && value < schema.minimum) {
         errors.push(`${fieldName} must be at least ${schema.minimum}`);
       }
-      
+
       if (schema.maximum !== undefined && value > schema.maximum) {
         errors.push(`${fieldName} must be at most ${schema.maximum}`);
       }
     }
 
     // Array validations
-    if (schema.type === 'array') {
+    if (schema.type === "array") {
       if (schema.minItems && value.length < schema.minItems) {
         errors.push(`${fieldName} must have at least ${schema.minItems} items`);
       }
-      
+
       if (schema.maxItems && value.length > schema.maxItems) {
         errors.push(`${fieldName} must have at most ${schema.maxItems} items`);
       }
-      
+
       // Validate array items
       if (schema.items) {
         value.forEach((item: any, index: number) => {
           const itemErrors = RequestValidationMiddleware.validateValue(
             item,
             schema.items,
-            `${fieldName}[${index}]`
+            `${fieldName}[${index}]`,
           );
           errors.push(...itemErrors);
         });
@@ -670,21 +688,24 @@ export class RequestValidationMiddleware {
     }
 
     // Object validations
-    if (schema.type === 'object' && schema.properties) {
+    if (schema.type === "object" && schema.properties) {
       for (const [propName, propSchema] of Object.entries(schema.properties)) {
         const propValue = value[propName];
-        
-        if (schema.required && schema.required.includes(propName) && 
-            (propValue === undefined || propValue === null)) {
+
+        if (
+          schema.required &&
+          schema.required.includes(propName) &&
+          (propValue === undefined || propValue === null)
+        ) {
           errors.push(`${fieldName}.${propName} is required`);
           continue;
         }
-        
+
         if (propValue !== undefined && propValue !== null) {
           const propErrors = RequestValidationMiddleware.validateValue(
             propValue,
             propSchema,
-            `${fieldName}.${propName}`
+            `${fieldName}.${propName}`,
           );
           errors.push(...propErrors);
         }
@@ -707,33 +728,29 @@ export class ResponseTransformationMiddleware {
     removeNullValues: boolean;
   }): ApiMiddleware {
     return {
-      name: 'response-transformation',
+      name: "response-transformation",
       order: 100, // Execute last
       enabled: true,
       config,
       handler: async (context: ApiRequestContext, next: () => Promise<void>) => {
         await next();
-        
+
         // Transform response if present
         if (context.response) {
           context.response = ResponseTransformationMiddleware.transformResponse(
             context.response,
             config,
-            context
+            context,
           );
         }
-      }
+      },
     };
   }
 
   /**
    * Transform response data
    */
-  private static transformResponse(
-    response: any,
-    config: any,
-    context: ApiRequestContext
-  ): any {
+  private static transformResponse(response: any, config: any, context: ApiRequestContext): any {
     let transformed = response;
 
     // Remove null values
@@ -750,7 +767,7 @@ export class ResponseTransformationMiddleware {
     if (config.wrapResponses) {
       transformed = {
         success: true,
-        data: transformed
+        data: transformed,
       };
 
       // Include metadata
@@ -758,7 +775,7 @@ export class ResponseTransformationMiddleware {
         transformed.meta = {
           timestamp: new Date().toISOString(),
           requestId: context.requestId,
-          version: '1.0.0'
+          version: "1.0.0",
         };
       }
     }
@@ -775,18 +792,18 @@ export class ResponseTransformationMiddleware {
     }
 
     if (Array.isArray(obj)) {
-      return obj.map(item => ResponseTransformationMiddleware.removeNullValues(item));
+      return obj.map((item) => ResponseTransformationMiddleware.removeNullValues(item));
     }
 
-    if (typeof obj === 'object') {
+    if (typeof obj === "object") {
       const cleaned: any = {};
-      
+
       for (const [key, value] of Object.entries(obj)) {
         if (value !== null && value !== undefined) {
           cleaned[key] = ResponseTransformationMiddleware.removeNullValues(value);
         }
       }
-      
+
       return cleaned;
     }
 
@@ -802,16 +819,16 @@ export class ResponseTransformationMiddleware {
     }
 
     if (Array.isArray(obj)) {
-      return obj.map(item => ResponseTransformationMiddleware.formatDates(item));
+      return obj.map((item) => ResponseTransformationMiddleware.formatDates(item));
     }
 
-    if (typeof obj === 'object' && obj !== null) {
+    if (typeof obj === "object" && obj !== null) {
       const formatted: any = {};
-      
+
       for (const [key, value] of Object.entries(obj)) {
         formatted[key] = ResponseTransformationMiddleware.formatDates(value);
       }
-      
+
       return formatted;
     }
 

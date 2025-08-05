@@ -1,9 +1,15 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Users,
   Calendar,
   DollarSign,
@@ -79,11 +85,9 @@ export function DashboardContent({ user }: DashboardContentProps) {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">
-            Olá, {user?.user_metadata?.full_name || user?.email?.split('@')[0]}!
+            Olá, {user?.user_metadata?.full_name || user?.email?.split("@")[0]}!
           </h2>
-          <p className="text-muted-foreground">
-            Aqui está um resumo da sua clínica hoje.
-          </p>
+          <p className="text-muted-foreground">Aqui está um resumo da sua clínica hoje.</p>
         </div>
         <div className="flex gap-2">
           <Button>
@@ -101,9 +105,7 @@ export function DashboardContent({ user }: DashboardContentProps) {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total de Pacientes
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Total de Pacientes</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -116,9 +118,7 @@ export function DashboardContent({ user }: DashboardContentProps) {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Consultas Hoje
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Consultas Hoje</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -131,15 +131,11 @@ export function DashboardContent({ user }: DashboardContentProps) {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Receita Mensal
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Receita Mensal</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              R$ {stats.monthlyRevenue.toLocaleString()}
-            </div>
+            <div className="text-2xl font-bold">R$ {stats.monthlyRevenue.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
               <span className="text-green-600">+8%</span> em relação ao mês passado
             </p>
@@ -148,9 +144,7 @@ export function DashboardContent({ user }: DashboardContentProps) {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Pacientes Ativos
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Pacientes Ativos</CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -168,9 +162,7 @@ export function DashboardContent({ user }: DashboardContentProps) {
         <Card className="col-span-4">
           <CardHeader>
             <CardTitle>Agendamentos de Hoje</CardTitle>
-            <CardDescription>
-              Suas consultas programadas para hoje
-            </CardDescription>
+            <CardDescription>Suas consultas programadas para hoje</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -203,9 +195,7 @@ export function DashboardContent({ user }: DashboardContentProps) {
         <Card className="col-span-3">
           <CardHeader>
             <CardTitle>Resumo Rápido</CardTitle>
-            <CardDescription>
-              Estatísticas importantes
-            </CardDescription>
+            <CardDescription>Estatísticas importantes</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -216,7 +206,7 @@ export function DashboardContent({ user }: DashboardContentProps) {
                 </div>
                 <span className="font-medium">87%</span>
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Users className="h-4 w-4 text-blue-600" />
@@ -224,7 +214,7 @@ export function DashboardContent({ user }: DashboardContentProps) {
                 </div>
                 <span className="font-medium">+23 esta semana</span>
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-purple-600" />
@@ -232,7 +222,7 @@ export function DashboardContent({ user }: DashboardContentProps) {
                 </div>
                 <span className="font-medium">Em 30 min</span>
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <DollarSign className="h-4 w-4 text-green-600" />
@@ -249,9 +239,7 @@ export function DashboardContent({ user }: DashboardContentProps) {
       <Card>
         <CardHeader>
           <CardTitle>Ações Rápidas</CardTitle>
-          <CardDescription>
-            Acesso rápido às funcionalidades mais utilizadas
-          </CardDescription>
+          <CardDescription>Acesso rápido às funcionalidades mais utilizadas</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

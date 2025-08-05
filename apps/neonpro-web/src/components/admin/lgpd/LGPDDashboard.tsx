@@ -1,40 +1,40 @@
-'use client'
+"use client";
 
-import React from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
-  Shield, 
-  Users, 
-  FileText, 
-  AlertTriangle, 
-  CheckCircle, 
+import React from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Progress } from "@/components/ui/progress";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Button } from "@/components/ui/button";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Shield,
+  Users,
+  FileText,
+  AlertTriangle,
+  CheckCircle,
   XCircle,
   TrendingUp,
   TrendingDown,
   Clock,
   Download,
-  RefreshCw
-} from 'lucide-react'
-import { useLGPDDashboard } from '@/hooks/useLGPD'
-import { LGPDMetrics } from '@/types/lgpd'
+  RefreshCw,
+} from "lucide-react";
+import type { useLGPDDashboard } from "@/hooks/useLGPD";
+import type { LGPDMetrics } from "@/types/lgpd";
 
 interface LGPDDashboardProps {
-  className?: string
+  className?: string;
 }
 
 export function LGPDDashboard({ className }: LGPDDashboardProps) {
-  const { 
-    metrics, 
-    isLoading, 
-    error, 
-    refreshMetrics,
-    exportReport 
-  } = useLGPDDashboard()
+  const { metrics, isLoading, error, refreshMetrics, exportReport } = useLGPDDashboard();
 
   if (isLoading) {
     return (
@@ -42,42 +42,38 @@ export function LGPDDashboard({ className }: LGPDDashboardProps) {
         <RefreshCw className="h-8 w-8 animate-spin" />
         <span className="ml-2">Carregando métricas...</span>
       </div>
-    )
+    );
   }
 
   if (error) {
     return (
       <Alert variant="destructive">
         <AlertTriangle className="h-4 w-4" />
-        <AlertDescription>
-          Erro ao carregar métricas: {error}
-        </AlertDescription>
+        <AlertDescription>Erro ao carregar métricas: {error}</AlertDescription>
       </Alert>
-    )
+    );
   }
 
   if (!metrics) {
     return (
       <Alert>
         <AlertTriangle className="h-4 w-4" />
-        <AlertDescription>
-          Nenhuma métrica disponível
-        </AlertDescription>
+        <AlertDescription>Nenhuma métrica disponível</AlertDescription>
       </Alert>
-    )
+    );
   }
 
   const getComplianceColor = (score: number) => {
-    if (score >= 90) return 'text-green-600'
-    if (score >= 70) return 'text-yellow-600'
-    return 'text-red-600'
-  }
+    if (score >= 90) return "text-green-600";
+    if (score >= 70) return "text-yellow-600";
+    return "text-red-600";
+  };
 
   const getComplianceVariant = (score: number) => {
-    if (score >= 90) return 'default'
-    if (score >= 70) return 'secondary'
-    return 'destructive'
-  }
+    if (score >= 90) return "default";
+    if (score >= 70) return "secondary";
+    return "destructive";
+  };
 
   return (
     <div className={className}>
@@ -105,61 +101,48 @@ export function LGPDDashboard({ className }: LGPDDashboardProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Conformidade Geral
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Conformidade Geral</CardTitle>
             <Shield className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold mb-2">
-              {metrics.overallCompliance}%
-            </div>
-            <Progress 
-              value={metrics.overallCompliance} 
-              className="mb-2" 
-            />
+            <div className="text-2xl font-bold mb-2">{metrics.overallCompliance}%</div>
+            <Progress value={metrics.overallCompliance} className="mb-2" />
             <Badge variant={getComplianceVariant(metrics.overallCompliance)}>
-              {metrics.overallCompliance >= 90 ? 'Excelente' : 
-               metrics.overallCompliance >= 70 ? 'Bom' : 'Crítico'}
+              {metrics.overallCompliance >= 90
+                ? "Excelente"
+                : metrics.overallCompliance >= 70
+                  ? "Bom"
+                  : "Crítico"}
             </Badge>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Consentimentos Ativos
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Consentimentos Ativos</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {metrics.activeConsents.toLocaleString()}
-            </div>
+            <div className="text-2xl font-bold">{metrics.activeConsents.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
-              {metrics.totalUsers > 0 && (
-                `${((metrics.activeConsents / metrics.totalUsers) * 100).toFixed(1)}% dos usuários`
-              )}
+              {metrics.totalUsers > 0 &&
+                `${((metrics.activeConsents / metrics.totalUsers) * 100).toFixed(1)}% dos usuários`}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Solicitações Pendentes
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Solicitações Pendentes</CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {metrics.pendingRequests}
-            </div>
+            <div className="text-2xl font-bold">{metrics.pendingRequests}</div>
             <p className="text-xs text-muted-foreground">
               {metrics.pendingRequests > 5 ? (
                 <span className="text-red-600">Atenção necessária</span>
               ) : (
-                'Dentro do prazo'
+                "Dentro do prazo"
               )}
             </p>
           </CardContent>
@@ -167,15 +150,11 @@ export function LGPDDashboard({ className }: LGPDDashboardProps) {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Incidentes Ativos
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Incidentes Ativos</CardTitle>
             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {metrics.activeIncidents}
-            </div>
+            <div className="text-2xl font-bold">{metrics.activeIncidents}</div>
             <p className="text-xs text-muted-foreground">
               {metrics.activeIncidents === 0 ? (
                 <span className="text-green-600">Nenhum incidente</span>
@@ -192,12 +171,18 @@ export function LGPDDashboard({ className }: LGPDDashboardProps) {
         <Alert className="mb-6">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            <strong>Atenção:</strong> 
+            <strong>Atenção:</strong>
             {metrics.pendingRequests > 5 && (
-              <span> Há {metrics.pendingRequests} solicitações pendentes que precisam de atenção.</span>
+              <span>
+                {" "}
+                Há {metrics.pendingRequests} solicitações pendentes que precisam de atenção.
+              </span>
             )}
             {metrics.activeIncidents > 0 && (
-              <span> Há {metrics.activeIncidents} incidente(s) ativo(s) que requer(em) resolução.</span>
+              <span>
+                {" "}
+                Há {metrics.activeIncidents} incidente(s) ativo(s) que requer(em) resolução.
+              </span>
             )}
           </AlertDescription>
         </Alert>
@@ -217,9 +202,7 @@ export function LGPDDashboard({ className }: LGPDDashboardProps) {
             <Card>
               <CardHeader>
                 <CardTitle>Status dos Consentimentos</CardTitle>
-                <CardDescription>
-                  Distribuição dos consentimentos por status
-                </CardDescription>
+                <CardDescription>Distribuição dos consentimentos por status</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between items-center">
@@ -240,9 +223,7 @@ export function LGPDDashboard({ className }: LGPDDashboardProps) {
             <Card>
               <CardHeader>
                 <CardTitle>Tendências</CardTitle>
-                <CardDescription>
-                  Evolução dos consentimentos
-                </CardDescription>
+                <CardDescription>Evolução dos consentimentos</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
@@ -306,9 +287,7 @@ export function LGPDDashboard({ className }: LGPDDashboardProps) {
                     </div>
                   </div>
                   <Progress value={77} className="mb-2" />
-                  <p className="text-xs text-muted-foreground">
-                    Meta: 3 dias (LGPD)
-                  </p>
+                  <p className="text-xs text-muted-foreground">Meta: 3 dias (LGPD)</p>
                 </div>
               </CardContent>
             </Card>
@@ -375,9 +354,7 @@ export function LGPDDashboard({ className }: LGPDDashboardProps) {
                     </div>
                   </div>
                   <Progress value={85} className="mb-2" />
-                  <p className="text-xs text-muted-foreground">
-                    Meta: 6 horas
-                  </p>
+                  <p className="text-xs text-muted-foreground">Meta: 6 horas</p>
                 </div>
               </CardContent>
             </Card>
@@ -401,7 +378,7 @@ export function LGPDDashboard({ className }: LGPDDashboardProps) {
                   <div className="flex items-center justify-between">
                     <span className="text-sm">Data</span>
                     <span className="text-sm text-muted-foreground">
-                      {new Date().toLocaleDateString('pt-BR')}
+                      {new Date().toLocaleDateString("pt-BR")}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
@@ -424,7 +401,7 @@ export function LGPDDashboard({ className }: LGPDDashboardProps) {
                   <div className="flex items-center justify-between">
                     <span className="text-sm">Agendada para</span>
                     <span className="text-sm text-muted-foreground">
-                      {new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('pt-BR')}
+                      {new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString("pt-BR")}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
@@ -441,5 +418,5 @@ export function LGPDDashboard({ className }: LGPDDashboardProps) {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }

@@ -1,76 +1,95 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import {
+import type { useState } from "react";
+import type { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type { z } from "zod";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
-import { 
-  MessageSquare, 
-  Phone, 
-  Mail, 
-  User, 
-  Calendar, 
-  Clock, 
+  DialogTitle,
+} from "@/components/ui/dialog";
+import type { Button } from "@/components/ui/button";
+import type {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Separator } from "@/components/ui/separator";
+import type {
+  MessageSquare,
+  Phone,
+  Mail,
+  User,
+  Calendar,
+  Clock,
   Send,
   ExternalLink,
   Loader2,
   Copy,
-  Check
-} from 'lucide-react'
-import { toast } from 'sonner'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
-import type { Appointment } from '@/hooks/use-appointments-manager'
+  Check,
+} from "lucide-react";
+import type { toast } from "sonner";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { Appointment } from "@/hooks/use-appointments-manager";
 
 // Form validation schema
 const contactSchema = z.object({
-  contact_method: z.enum(['whatsapp', 'sms', 'email', 'phone']),
+  contact_method: z.enum(["whatsapp", "sms", "email", "phone"]),
   message_template: z.string().optional(),
-  custom_message: z.string().min(1, 'Mensagem é obrigatória'),
-  send_appointment_details: z.boolean().default(true)
-})
+  custom_message: z.string().min(1, "Mensagem é obrigatória"),
+  send_appointment_details: z.boolean().default(true),
+});
 
-type ContactFormData = z.infer<typeof contactSchema>
+type ContactFormData = z.infer<typeof contactSchema>;
 
 interface ContactPatientDialogProps {
-  appointment: Appointment | null
-  open: boolean
-  onOpenChange: (open: boolean) => void
+  appointment: Appointment | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 export function ContactPatientDialog({
   appointment,
   open,
-  onOpenChange
+  onOpenChange,
 }: ContactPatientDialogProps) {
-  const [isSending, setIsSending] = useState(false)
-  const [copiedPhone, setCopiedPhone] = useState(false)
-  const [copiedEmail, setCopiedEmail] = useState(false)
+  const [isSending, setIsSending] = useState(false);
+  const [copiedPhone, setCopiedPhone] = useState(false);
+  const [copiedEmail, setCopiedEmail] = useState(false);
 
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
     defaultValues: {
-      contact_method: 'whatsapp',
-      message_template: '',
-      custom_message: '',
-      send_appointment_details: true
-    }
-  })
+      contact_method: "whatsapp",
+      message_template: "",
+      custom_message: "",
+      send_appointment_details: true,
+    },
+  });
 
   // Message templates
   const messageTemplates = {
@@ -79,105 +98,107 @@ export function ContactPatientDialog({
     rescheduling: `Olá {patient_name}! Precisamos reagendar seu agendamento de {service_name} que estava marcado para {date} às {time}. Entre em contato conosco para marcar uma nova data.`,
     cancellation: `Olá {patient_name}! Infelizmente precisamos cancelar seu agendamento de {service_name} no dia {date} às {time}. Entre em contato conosco para remarcar.`,
     followup: `Olá {patient_name}! Como foi sua experiência com nosso serviço de {service_name}? Sua opinião é muito importante para nós!`,
-    custom: ''
-  }
+    custom: "",
+  };
 
   // Replace template variables with actual data
   const replaceTemplateVariables = (template: string) => {
-    if (!appointment) return template
+    if (!appointment) return template;
 
     const replacements: Record<string, string> = {
-      '{patient_name}': appointment.patient?.full_name || 'Paciente',
-      '{service_name}': appointment.service?.name || 'Serviço',
-      '{date}': format(new Date(appointment.start_time), "dd 'de' MMMM 'de' yyyy", { locale: ptBR }),
-      '{time}': format(new Date(appointment.start_time), 'HH:mm', { locale: ptBR }),
-      '{professional}': appointment.professional?.full_name || 'Profissional'
-    }
+      "{patient_name}": appointment.patient?.full_name || "Paciente",
+      "{service_name}": appointment.service?.name || "Serviço",
+      "{date}": format(new Date(appointment.start_time), "dd 'de' MMMM 'de' yyyy", {
+        locale: ptBR,
+      }),
+      "{time}": format(new Date(appointment.start_time), "HH:mm", { locale: ptBR }),
+      "{professional}": appointment.professional?.full_name || "Profissional",
+    };
 
-    let result = template
+    let result = template;
     Object.entries(replacements).forEach(([key, value]) => {
-      result = result.replace(new RegExp(key, 'g'), value)
-    })
+      result = result.replace(new RegExp(key, "g"), value);
+    });
 
-    return result
-  }
+    return result;
+  };
 
   // Handle template selection
   const handleTemplateChange = (templateKey: string) => {
-    const template = messageTemplates[templateKey as keyof typeof messageTemplates]
+    const template = messageTemplates[templateKey as keyof typeof messageTemplates];
     if (template) {
-      const processedMessage = replaceTemplateVariables(template)
-      form.setValue('custom_message', processedMessage)
+      const processedMessage = replaceTemplateVariables(template);
+      form.setValue("custom_message", processedMessage);
     }
-  }
+  };
 
   // Handle contact method specific actions
-  const handleDirectContact = async (method: 'phone' | 'whatsapp' | 'email') => {
-    if (!appointment?.patient) return
+  const handleDirectContact = async (method: "phone" | "whatsapp" | "email") => {
+    if (!appointment?.patient) return;
 
-    const patient = appointment.patient
+    const patient = appointment.patient;
 
     switch (method) {
-      case 'phone':
+      case "phone":
         if (patient.phone) {
-          window.open(`tel:${patient.phone}`)
+          window.open(`tel:${patient.phone}`);
         } else {
-          toast.error('Paciente não possui telefone cadastrado')
+          toast.error("Paciente não possui telefone cadastrado");
         }
-        break
+        break;
 
-      case 'whatsapp':
+      case "whatsapp":
         if (patient.phone) {
-          const message = encodeURIComponent(form.getValues('custom_message'))
-          const whatsappUrl = `https://wa.me/55${patient.phone.replace(/\D/g, '')}?text=${message}`
-          window.open(whatsappUrl, '_blank')
+          const message = encodeURIComponent(form.getValues("custom_message"));
+          const whatsappUrl = `https://wa.me/55${patient.phone.replace(/\D/g, "")}?text=${message}`;
+          window.open(whatsappUrl, "_blank");
         } else {
-          toast.error('Paciente não possui telefone cadastrado')
+          toast.error("Paciente não possui telefone cadastrado");
         }
-        break
+        break;
 
-      case 'email':
+      case "email":
         if (patient.email) {
-          const subject = encodeURIComponent(`Agendamento - ${appointment.service?.name}`)
-          const body = encodeURIComponent(form.getValues('custom_message'))
-          window.open(`mailto:${patient.email}?subject=${subject}&body=${body}`)
+          const subject = encodeURIComponent(`Agendamento - ${appointment.service?.name}`);
+          const body = encodeURIComponent(form.getValues("custom_message"));
+          window.open(`mailto:${patient.email}?subject=${subject}&body=${body}`);
         } else {
-          toast.error('Paciente não possui email cadastrado')
+          toast.error("Paciente não possui email cadastrado");
         }
-        break
+        break;
     }
-  }
+  };
 
   // Copy contact info to clipboard
-  const copyToClipboard = async (text: string, type: 'phone' | 'email') => {
+  const copyToClipboard = async (text: string, type: "phone" | "email") => {
     try {
-      await navigator.clipboard.writeText(text)
-      if (type === 'phone') {
-        setCopiedPhone(true)
-        setTimeout(() => setCopiedPhone(false), 2000)
+      await navigator.clipboard.writeText(text);
+      if (type === "phone") {
+        setCopiedPhone(true);
+        setTimeout(() => setCopiedPhone(false), 2000);
       } else {
-        setCopiedEmail(true)
-        setTimeout(() => setCopiedEmail(false), 2000)
+        setCopiedEmail(true);
+        setTimeout(() => setCopiedEmail(false), 2000);
       }
-      toast.success('Copiado para a área de transferência!')
+      toast.success("Copiado para a área de transferência!");
     } catch (error) {
-      toast.error('Erro ao copiar para área de transferência')
+      toast.error("Erro ao copiar para área de transferência");
     }
-  }
+  };
 
   // Handle form submission (for scheduled/tracked contacts)
   const onSubmit = async (data: ContactFormData) => {
-    if (!appointment) return
+    if (!appointment) return;
 
     try {
-      setIsSending(true)
+      setIsSending(true);
 
       // For WhatsApp, open direct link
-      if (data.contact_method === 'whatsapp') {
-        handleDirectContact('whatsapp')
-        toast.success('WhatsApp aberto! Mensagem pronta para envio.')
-        onOpenChange(false)
-        return
+      if (data.contact_method === "whatsapp") {
+        handleDirectContact("whatsapp");
+        toast.success("WhatsApp aberto! Mensagem pronta para envio.");
+        onOpenChange(false);
+        return;
       }
 
       // For other methods, log the contact attempt (you can implement API call here)
@@ -186,39 +207,39 @@ export function ContactPatientDialog({
         patient_id: appointment.patient_id,
         contact_method: data.contact_method,
         message: data.custom_message,
-        sent_at: new Date().toISOString()
-      }
+        sent_at: new Date().toISOString(),
+      };
 
       // TODO: Implement API call to log contact
-      console.log('Contact logged:', contactData)
-      
+      console.log("Contact logged:", contactData);
+
       // Open appropriate contact method
       switch (data.contact_method) {
-        case 'email':
-          handleDirectContact('email')
-          break
-        case 'phone':
-          handleDirectContact('phone')
-          break
-        case 'sms':
+        case "email":
+          handleDirectContact("email");
+          break;
+        case "phone":
+          handleDirectContact("phone");
+          break;
+        case "sms":
           // TODO: Implement SMS API integration
-          toast.info('Funcionalidade de SMS será implementada em breve')
-          break
+          toast.info("Funcionalidade de SMS será implementada em breve");
+          break;
       }
 
-      toast.success('Contato realizado com sucesso!')
-      onOpenChange(false)
+      toast.success("Contato realizado com sucesso!");
+      onOpenChange(false);
     } catch (error) {
-      console.error('Error sending contact:', error)
-      toast.error('Erro ao realizar contato')
+      console.error("Error sending contact:", error);
+      toast.error("Erro ao realizar contato");
     } finally {
-      setIsSending(false)
+      setIsSending(false);
     }
-  }
+  };
 
-  if (!appointment) return null
+  if (!appointment) return null;
 
-  const patient = appointment.patient
+  const patient = appointment.patient;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -246,51 +267,39 @@ export function ContactPatientDialog({
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Phone className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">
-                    {patient?.phone || 'Não informado'}
-                  </span>
+                  <span className="text-sm">{patient?.phone || "Não informado"}</span>
                 </div>
                 {patient?.phone && (
                   <div className="flex gap-1">
                     <Button
                       size="sm"
                       variant="ghost"
-                      onClick={() => copyToClipboard(patient.phone!, 'phone')}
+                      onClick={() => copyToClipboard(patient.phone!, "phone")}
                     >
                       {copiedPhone ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                     </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleDirectContact('phone')}
-                    >
+                    <Button size="sm" variant="ghost" onClick={() => handleDirectContact("phone")}>
                       <ExternalLink className="h-3 w-3" />
                     </Button>
                   </div>
                 )}
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Mail className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">
-                    {patient?.email || 'Não informado'}
-                  </span>
+                  <span className="text-sm">{patient?.email || "Não informado"}</span>
                 </div>
                 {patient?.email && (
                   <div className="flex gap-1">
                     <Button
                       size="sm"
                       variant="ghost"
-                      onClick={() => copyToClipboard(patient.email!, 'email')}
+                      onClick={() => copyToClipboard(patient.email!, "email")}
                     >
                       {copiedEmail ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                     </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleDirectContact('email')}
-                    >
+                    <Button size="sm" variant="ghost" onClick={() => handleDirectContact("email")}>
                       <ExternalLink className="h-3 w-3" />
                     </Button>
                   </div>
@@ -304,18 +313,20 @@ export function ContactPatientDialog({
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm">
-                  {format(new Date(appointment.start_time), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                  {format(new Date(appointment.start_time), "dd 'de' MMMM 'de' yyyy", {
+                    locale: ptBR,
+                  })}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm">
-                  {format(new Date(appointment.start_time), 'HH:mm', { locale: ptBR })}
+                  {format(new Date(appointment.start_time), "HH:mm", { locale: ptBR })}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant="outline">
-                  {appointment.service?.name || 'Serviço não especificado'}
+                  {appointment.service?.name || "Serviço não especificado"}
                 </Badge>
               </div>
             </div>
@@ -395,20 +406,21 @@ export function ContactPatientDialog({
               >
                 Cancelar
               </Button>
-              <Button
-                type="submit"
-                disabled={isSending || !patient?.phone && !patient?.email}
-              >
+              <Button type="submit" disabled={isSending || (!patient?.phone && !patient?.email)}>
                 {isSending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 <Send className="mr-2 h-4 w-4" />
-                {form.watch('contact_method') === 'whatsapp' ? 'Abrir WhatsApp' : 
-                 form.watch('contact_method') === 'phone' ? 'Fazer Ligação' :
-                 form.watch('contact_method') === 'email' ? 'Abrir Email' : 'Enviar'}
+                {form.watch("contact_method") === "whatsapp"
+                  ? "Abrir WhatsApp"
+                  : form.watch("contact_method") === "phone"
+                    ? "Fazer Ligação"
+                    : form.watch("contact_method") === "email"
+                      ? "Abrir Email"
+                      : "Enviar"}
               </Button>
             </DialogFooter>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

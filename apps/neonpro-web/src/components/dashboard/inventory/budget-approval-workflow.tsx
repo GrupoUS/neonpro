@@ -1,29 +1,29 @@
 "use client";
 
-import { useBudgetApproval } from "@/app/hooks/useBudgetApproval";
-import { InventoryBudget } from "@/app/types/budget-approval";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { useBudgetApproval } from "@/app/hooks/useBudgetApproval";
+import type { InventoryBudget } from "@/app/types/budget-approval";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
-import {
+import type { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
   AlertTriangle,
   CheckCircle,
   Clock,
@@ -35,7 +35,7 @@ import {
   TrendingUp,
   XCircle,
 } from "lucide-react";
-import { useState } from "react";
+import type { useState } from "react";
 
 // =====================================================================================
 // TYPES & INTERFACES
@@ -75,9 +75,7 @@ export function BudgetApprovalWorkflow({
 
   const [showCreateBudget, setShowCreateBudget] = useState(false);
   const [showCreateApproval, setShowCreateApproval] = useState(false);
-  const [selectedBudget, setSelectedBudget] = useState<InventoryBudget | null>(
-    null
-  );
+  const [selectedBudget, setSelectedBudget] = useState<InventoryBudget | null>(null);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -126,9 +124,7 @@ export function BudgetApprovalWorkflow({
 
   const BudgetCard = ({ budget }: { budget: InventoryBudget }) => {
     const utilizationPercentage =
-      budget.total_amount > 0
-        ? ((budget.spent_amount || 0) / budget.total_amount) * 100
-        : 0;
+      budget.total_amount > 0 ? ((budget.spent_amount || 0) / budget.total_amount) * 100 : 0;
 
     const remainingAmount = budget.total_amount - (budget.spent_amount || 0);
 
@@ -151,9 +147,7 @@ export function BudgetApprovalWorkflow({
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label className="text-sm text-muted-foreground">
-                  Total Budget
-                </Label>
+                <Label className="text-sm text-muted-foreground">Total Budget</Label>
                 <p className="text-2xl font-bold text-green-600">
                   ${budget.total_amount.toLocaleString()}
                 </p>
@@ -184,19 +178,11 @@ export function BudgetApprovalWorkflow({
             </div>
 
             <div className="flex gap-2 mt-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setSelectedBudget(budget)}
-              >
+              <Button variant="outline" size="sm" onClick={() => setSelectedBudget(budget)}>
                 <Eye className="h-4 w-4 mr-1" />
                 View Details
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => generateForecast(budget.id)}
-              >
+              <Button variant="outline" size="sm" onClick={() => generateForecast(budget.id)}>
                 <TrendingUp className="h-4 w-4 mr-1" />
                 Forecast
               </Button>
@@ -214,9 +200,7 @@ export function BudgetApprovalWorkflow({
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-lg">{approval.request_type}</CardTitle>
-              <CardDescription>
-                Amount: ${approval.amount?.toLocaleString()}
-              </CardDescription>
+              <CardDescription>Amount: ${approval.amount?.toLocaleString()}</CardDescription>
             </div>
             <Badge className={getApprovalStatusColor(approval.status)}>
               <div className="flex items-center gap-1">
@@ -229,9 +213,7 @@ export function BudgetApprovalWorkflow({
         <CardContent>
           <div className="space-y-3">
             {approval.description && (
-              <p className="text-sm text-muted-foreground">
-                {approval.description}
-              </p>
+              <p className="text-sm text-muted-foreground">{approval.description}</p>
             )}
 
             <div className="grid grid-cols-2 gap-4 text-sm">
@@ -267,9 +249,7 @@ export function BudgetApprovalWorkflow({
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() =>
-                    processApproval(approval.id, "request_changes")
-                  }
+                  onClick={() => processApproval(approval.id, "request_changes")}
                 >
                   <AlertTriangle className="h-4 w-4 mr-1" />
                   Request Changes
@@ -287,12 +267,9 @@ export function BudgetApprovalWorkflow({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">
-            Budget & Approval Workflow
-          </h2>
+          <h2 className="text-3xl font-bold tracking-tight">Budget & Approval Workflow</h2>
           <p className="text-muted-foreground">
-            Manage inventory budgets, track spending, and handle approval
-            workflows
+            Manage inventory budgets, track spending, and handle approval workflows
           </p>
         </div>
         <div className="flex gap-3">
@@ -320,25 +297,18 @@ export function BudgetApprovalWorkflow({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{budgets.length}</div>
-            <p className="text-xs text-muted-foreground">
-              Active budget allocations
-            </p>
+            <p className="text-xs text-muted-foreground">Active budget allocations</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Allocated
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Total Allocated</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              $
-              {budgets
-                .reduce((sum, b) => sum + b.total_amount, 0)
-                .toLocaleString()}
+              ${budgets.reduce((sum, b) => sum + b.total_amount, 0).toLocaleString()}
             </div>
             <p className="text-xs text-muted-foreground">Across all budgets</p>
           </CardContent>
@@ -351,10 +321,7 @@ export function BudgetApprovalWorkflow({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              $
-              {budgets
-                .reduce((sum, b) => sum + (b.spent_amount || 0), 0)
-                .toLocaleString()}
+              ${budgets.reduce((sum, b) => sum + (b.spent_amount || 0), 0).toLocaleString()}
             </div>
             <p className="text-xs text-muted-foreground">Year to date</p>
           </CardContent>
@@ -362,9 +329,7 @@ export function BudgetApprovalWorkflow({
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Pending Approvals
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Pending Approvals</CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -426,16 +391,11 @@ export function BudgetApprovalWorkflow({
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="approved">Approved</SelectItem>
                   <SelectItem value="rejected">Rejected</SelectItem>
-                  <SelectItem value="changes_requested">
-                    Changes Requested
-                  </SelectItem>
+                  <SelectItem value="changes_requested">Changes Requested</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <Dialog
-              open={showCreateApproval}
-              onOpenChange={setShowCreateApproval}
-            >
+            <Dialog open={showCreateApproval} onOpenChange={setShowCreateApproval}>
               <DialogTrigger asChild>
                 <Button>
                   <Plus className="h-4 w-4 mr-2" />
@@ -462,9 +422,7 @@ export function BudgetApprovalWorkflow({
           <Card>
             <CardHeader>
               <CardTitle>Budget Forecasting</CardTitle>
-              <CardDescription>
-                AI-powered budget forecasting and trend analysis
-              </CardDescription>
+              <CardDescription>AI-powered budget forecasting and trend analysis</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -476,9 +434,7 @@ export function BudgetApprovalWorkflow({
                           <h4 className="font-medium">
                             Forecast Period: {forecast.forecast_period} days
                           </h4>
-                          <Badge variant="outline">
-                            {forecast.forecast_accuracy}% accuracy
-                          </Badge>
+                          <Badge variant="outline">{forecast.forecast_accuracy}% accuracy</Badge>
                         </div>
                         <div className="grid grid-cols-2 gap-4 text-sm">
                           <div>
@@ -510,8 +466,7 @@ export function BudgetApprovalWorkflow({
                 ) : (
                   <div className="text-center py-8">
                     <p className="text-muted-foreground">
-                      No forecasts available. Select a budget to generate
-                      forecasts.
+                      No forecasts available. Select a budget to generate forecasts.
                     </p>
                   </div>
                 )}
@@ -531,11 +486,7 @@ export function BudgetApprovalWorkflow({
             <CardContent>
               <div className="space-y-4">
                 <Button
-                  onClick={() =>
-                    generateOptimizationRecommendations(
-                      budgets.map((b) => b.id)
-                    )
-                  }
+                  onClick={() => generateOptimizationRecommendations(budgets.map((b) => b.id))}
                   disabled={budgets.length === 0}
                 >
                   Generate Optimization Recommendations
@@ -559,9 +510,7 @@ export function BudgetApprovalWorkflow({
                             {rec.priority} priority
                           </Badge>
                         </div>
-                        <p className="text-sm text-muted-foreground mb-3">
-                          {rec.reasoning}
-                        </p>
+                        <p className="text-sm text-muted-foreground mb-3">{rec.reasoning}</p>
                         <div className="grid grid-cols-2 gap-4 text-sm">
                           <div>
                             <Label>Potential Savings</Label>
@@ -571,16 +520,12 @@ export function BudgetApprovalWorkflow({
                           </div>
                           <div>
                             <Label>Implementation Effort</Label>
-                            <p className="font-medium">
-                              {rec.implementation_effort}
-                            </p>
+                            <p className="font-medium">{rec.implementation_effort}</p>
                           </div>
                         </div>
                         <div className="mt-3">
                           <Label>Impact Analysis</Label>
-                          <p className="text-sm text-muted-foreground">
-                            {rec.impact_analysis}
-                          </p>
+                          <p className="text-sm text-muted-foreground">{rec.impact_analysis}</p>
                         </div>
                         <div className="mt-3 grid grid-cols-2 gap-4 text-sm">
                           <div>
@@ -602,8 +547,8 @@ export function BudgetApprovalWorkflow({
                 ) : (
                   <div className="text-center py-8">
                     <p className="text-muted-foreground">
-                      No optimization recommendations available. Generate
-                      recommendations to see insights.
+                      No optimization recommendations available. Generate recommendations to see
+                      insights.
                     </p>
                   </div>
                 )}

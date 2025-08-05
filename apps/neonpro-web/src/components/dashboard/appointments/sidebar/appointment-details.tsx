@@ -2,40 +2,50 @@
 // Read-only appointment details component
 // Story 1.1 Task 5 - Appointment Details Modal/Sidebar
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { 
-  Calendar, 
-  Clock, 
-  User, 
-  UserCheck, 
-  FileText, 
+import type { useState } from "react";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Separator } from "@/components/ui/separator";
+import type {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Label } from "@/components/ui/label";
+import type {
+  Calendar,
+  Clock,
+  User,
+  UserCheck,
+  FileText,
   Phone,
   Mail,
   Trash2,
   MapPin,
-  DollarSign
-} from 'lucide-react';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { AppointmentWithDetails } from '@/app/lib/types/appointments';
+  DollarSign,
+} from "lucide-react";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { AppointmentWithDetails } from "@/app/lib/types/appointments";
 
 // Status configuration with colors and labels
 const statusConfig = {
-  scheduled: { label: 'Agendado', color: 'bg-blue-500', variant: 'default' as const },
-  confirmed: { label: 'Confirmado', color: 'bg-green-500', variant: 'default' as const },
-  in_progress: { label: 'Em Andamento', color: 'bg-yellow-500', variant: 'secondary' as const },
-  completed: { label: 'Concluído', color: 'bg-emerald-500', variant: 'default' as const },
-  cancelled: { label: 'Cancelado', color: 'bg-red-500', variant: 'destructive' as const },
-  no_show: { label: 'Não Compareceu', color: 'bg-gray-500', variant: 'secondary' as const }
+  scheduled: { label: "Agendado", color: "bg-blue-500", variant: "default" as const },
+  confirmed: { label: "Confirmado", color: "bg-green-500", variant: "default" as const },
+  in_progress: { label: "Em Andamento", color: "bg-yellow-500", variant: "secondary" as const },
+  completed: { label: "Concluído", color: "bg-emerald-500", variant: "default" as const },
+  cancelled: { label: "Cancelado", color: "bg-red-500", variant: "destructive" as const },
+  no_show: { label: "Não Compareceu", color: "bg-gray-500", variant: "secondary" as const },
 };
 
 interface AppointmentDetailsProps {
@@ -43,11 +53,9 @@ interface AppointmentDetailsProps {
   onDelete?: (reason: string) => void;
 }
 
-export default function AppointmentDetails({ 
-  appointment, 
-  onDelete 
-}: AppointmentDetailsProps) {
-  const [deleteReason, setDeleteReason] = useState('');  const formatDateTime = (dateString: string) => {
+export default function AppointmentDetails({ appointment, onDelete }: AppointmentDetailsProps) {
+  const [deleteReason, setDeleteReason] = useState("");
+  const formatDateTime = (dateString: string) => {
     return format(new Date(dateString), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
   };
 
@@ -55,22 +63,22 @@ export default function AppointmentDetails({
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     if (hours > 0) {
-      return `${hours}h${mins > 0 ? ` ${mins}min` : ''}`;
+      return `${hours}h${mins > 0 ? ` ${mins}min` : ""}`;
     }
     return `${mins}min`;
   };
 
   const formatPrice = (price?: number | null) => {
-    if (!price) return 'Não definido';
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    if (!price) return "Não definido";
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(price);
   };
 
   const handleDelete = () => {
     if (onDelete) {
-      onDelete(deleteReason || 'Cancelado pelo usuário');
+      onDelete(deleteReason || "Cancelado pelo usuário");
     }
   };
 
@@ -83,9 +91,7 @@ export default function AppointmentDetails({
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg">Informações Gerais</CardTitle>
-            <Badge variant={status.variant}>
-              {status.label}
-            </Badge>
+            <Badge variant={status.variant}>{status.label}</Badge>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -97,7 +103,8 @@ export default function AppointmentDetails({
                 {formatDateTime(appointment.start_time)}
               </p>
             </div>
-          </div>          <div className="flex items-center gap-3">
+          </div>{" "}
+          <div className="flex items-center gap-3">
             <Clock className="h-4 w-4 text-muted-foreground" />
             <div>
               <p className="font-medium">Duração</p>
@@ -106,19 +113,15 @@ export default function AppointmentDetails({
               </p>
             </div>
           </div>
-
           <div className="flex items-center gap-3">
             <MapPin className="h-4 w-4 text-muted-foreground" />
             <div>
               <p className="font-medium">Clínica</p>
-              <p className="text-sm text-muted-foreground">
-                {appointment.clinic_name}
-              </p>
+              <p className="text-sm text-muted-foreground">{appointment.clinic_name}</p>
             </div>
           </div>
         </CardContent>
       </Card>
-
       {/* Patient Information */}
       <Card>
         <CardHeader className="pb-3">
@@ -131,26 +134,23 @@ export default function AppointmentDetails({
           <div>
             <p className="font-medium">{appointment.patient_name}</p>
           </div>
-          
+
           {appointment.patient_email && (
             <div className="flex items-center gap-3">
               <Mail className="h-4 w-4 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">
-                {appointment.patient_email}
-              </p>
+              <p className="text-sm text-muted-foreground">{appointment.patient_email}</p>
             </div>
           )}
-          
+
           {appointment.patient_phone && (
             <div className="flex items-center gap-3">
               <Phone className="h-4 w-4 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">
-                {appointment.patient_phone}
-              </p>
+              <p className="text-sm text-muted-foreground">{appointment.patient_phone}</p>
             </div>
           )}
         </CardContent>
-      </Card>      {/* Professional Information */}
+      </Card>{" "}
+      {/* Professional Information */}
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2">
@@ -162,7 +162,6 @@ export default function AppointmentDetails({
           <p className="font-medium">{appointment.professional_name}</p>
         </CardContent>
       </Card>
-
       {/* Service Information */}
       <Card>
         <CardHeader className="pb-3">
@@ -172,7 +171,7 @@ export default function AppointmentDetails({
           <div>
             <p className="font-medium">{appointment.service_name}</p>
           </div>
-          
+
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4 text-muted-foreground" />
@@ -180,7 +179,7 @@ export default function AppointmentDetails({
                 {formatDuration(appointment.service_duration)}
               </span>
             </div>
-            
+
             {appointment.service_price && (
               <div className="flex items-center gap-2">
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
@@ -192,16 +191,15 @@ export default function AppointmentDetails({
           </div>
 
           <div className="flex items-center gap-2">
-            <div 
+            <div
               className="h-4 w-4 rounded-full border"
               style={{ backgroundColor: appointment.service_color }}
             />
-            <span className="text-sm text-muted-foreground">
-              Cor do serviço
-            </span>
+            <span className="text-sm text-muted-foreground">Cor do serviço</span>
           </div>
         </CardContent>
-      </Card>      {/* Notes */}
+      </Card>{" "}
+      {/* Notes */}
       {(appointment.notes || appointment.internal_notes) && (
         <Card>
           <CardHeader className="pb-3">
@@ -214,26 +212,21 @@ export default function AppointmentDetails({
             {appointment.notes && (
               <div>
                 <Label className="text-sm font-medium">Observações do Cliente</Label>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {appointment.notes}
-                </p>
+                <p className="text-sm text-muted-foreground mt-1">{appointment.notes}</p>
               </div>
             )}
-            
+
             {appointment.internal_notes && (
               <div>
                 <Label className="text-sm font-medium">Observações Internas</Label>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {appointment.internal_notes}
-                </p>
+                <p className="text-sm text-muted-foreground mt-1">{appointment.internal_notes}</p>
               </div>
             )}
           </CardContent>
         </Card>
       )}
-
       {/* Actions */}
-      {appointment.status !== 'cancelled' && appointment.status !== 'completed' && (
+      {appointment.status !== "cancelled" && appointment.status !== "completed" && (
         <Card className="border-red-200">
           <CardHeader className="pb-3">
             <CardTitle className="text-lg text-red-600">Ações</CardTitle>
@@ -252,7 +245,8 @@ export default function AppointmentDetails({
                   <AlertDialogDescription>
                     Esta ação não pode ser desfeita. O agendamento será cancelado permanentemente.
                   </AlertDialogDescription>
-                </AlertDialogHeader>                <div className="space-y-4">
+                </AlertDialogHeader>{" "}
+                <div className="space-y-4">
                   <div>
                     <Label htmlFor="delete-reason">Motivo do cancelamento</Label>
                     <Textarea
@@ -266,10 +260,7 @@ export default function AppointmentDetails({
                 </div>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleDelete}
-                    className="bg-red-600 hover:bg-red-700"
-                  >
+                  <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
                     Confirmar Cancelamento
                   </AlertDialogAction>
                 </AlertDialogFooter>

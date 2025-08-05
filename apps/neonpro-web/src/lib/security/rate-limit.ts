@@ -5,5 +5,5 @@ export const withRateLimit = (handler: any) => {
 
 export const rateLimit = {
   check: () => true,
-  reset: () => true
+  reset: () => true,
 };

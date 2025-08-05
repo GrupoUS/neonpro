@@ -25,7 +25,7 @@ export class CommunicationService {
       content,
       sender_id: senderId,
       thread_id: threadId,
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
     };
   }
 
@@ -38,7 +38,7 @@ export class CommunicationService {
       id: Math.random().toString(36),
       title,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
   }
 }

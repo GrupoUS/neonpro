@@ -3,7 +3,13 @@
 // NeonPro - Session Management & Security
 // ============================================================================
 
-import { SessionConfig, SessionPolicy, SecurityConfig, DeviceConfig, AuditConfig } from './types';
+import type {
+  SessionConfig,
+  SessionPolicy,
+  SecurityConfig,
+  DeviceConfig,
+  AuditConfig,
+} from "./types";
 
 // ============================================================================
 // DEFAULT CONFIGURATIONS
@@ -17,31 +23,31 @@ export const DEFAULT_SESSION_CONFIG: SessionConfig = {
   sessionTimeout: 30 * 60 * 1000, // 30 minutes
   renewalThreshold: 0.25, // Renew when 25% of time remaining
   maxSessionDuration: 8 * 60 * 60 * 1000, // 8 hours max
-  
+
   // Concurrent sessions
   maxConcurrentSessions: 3,
   allowMultipleDevices: true,
-  
+
   // Security settings
   requireDeviceVerification: false,
   enableLocationTracking: true,
   enableDeviceFingerprinting: true,
-  
+
   // Token settings
   tokenRotationInterval: 15 * 60 * 1000, // 15 minutes
   refreshTokenExpiry: 7 * 24 * 60 * 60 * 1000, // 7 days
-  
+
   // Cleanup settings
   cleanupInterval: 60 * 60 * 1000, // 1 hour
   retainExpiredSessions: 24 * 60 * 60 * 1000, // 24 hours
-  
+
   // Redis settings
   redis: {
     enabled: true,
-    keyPrefix: 'neonpro:session:',
+    keyPrefix: "neonpro:session:",
     ttl: 30 * 60, // 30 minutes in seconds
   },
-  
+
   // LGPD compliance
   lgpd: {
     enabled: true,
@@ -60,27 +66,27 @@ export const DEFAULT_SECURITY_CONFIG: SecurityConfig = {
   suspiciousActivityThreshold: 5,
   maxFailedAttempts: 3,
   lockoutDuration: 15 * 60 * 1000, // 15 minutes
-  
+
   // IP monitoring
   enableIpBlacklist: true,
   autoBlockSuspiciousIps: true,
   ipReputationCheck: true,
-  
+
   // Geographic restrictions
   enableGeoBlocking: false,
   allowedCountries: [],
   blockedCountries: [],
-  
+
   // Device security
   requireTrustedDevice: false,
   deviceTrustThreshold: 70,
   autoTrustAfterDays: 30,
-  
+
   // Session security
   enableSessionHijackingDetection: true,
   enablePrivilegeEscalationDetection: true,
   securityScoreThreshold: 50,
-  
+
   // Monitoring
   realTimeMonitoring: true,
   alertThresholds: {
@@ -98,29 +104,29 @@ export const DEFAULT_DEVICE_CONFIG: DeviceConfig = {
   // Registration
   autoRegisterDevices: true,
   requireDeviceVerification: false,
-  deviceVerificationMethods: ['email', 'sms'],
-  
+  deviceVerificationMethods: ["email", "sms"],
+
   // Trust management
   initialTrustLevel: 50,
   maxTrustLevel: 100,
   trustDecayRate: 0.1, // Per day
-  
+
   // Fingerprinting
   enableFingerprinting: true,
   fingerprintComponents: [
-    'userAgent',
-    'screen',
-    'timezone',
-    'language',
-    'platform',
-    'plugins',
-    'canvas',
+    "userAgent",
+    "screen",
+    "timezone",
+    "language",
+    "platform",
+    "plugins",
+    "canvas",
   ],
-  
+
   // Cleanup
   cleanupInactiveAfterDays: 90,
   removeUntrustedAfterDays: 30,
-  
+
   // Security
   blockSuspiciousDevices: true,
   maxDevicesPerUser: 10,
@@ -135,27 +141,22 @@ export const DEFAULT_AUDIT_CONFIG: AuditConfig = {
   enableSecurityLogs: true,
   enableDeviceLogs: true,
   enableLgpdLogs: true,
-  
+
   // Log retention
   logRetentionDays: 365,
   archiveAfterDays: 90,
-  
+
   // Performance
   bufferSize: 100,
   flushInterval: 5000, // 5 seconds
-  
+
   // Privacy
   anonymizePersonalData: true,
-  excludeSensitiveFields: [
-    'password',
-    'token',
-    'secret',
-    'key',
-  ],
-  
+  excludeSensitiveFields: ["password", "token", "secret", "key"],
+
   // Search
   enableFullTextSearch: true,
-  searchLanguage: 'portuguese',
+  searchLanguage: "portuguese",
 };
 
 // ============================================================================
@@ -215,9 +216,9 @@ export const HIGH_SECURITY_CONFIG: Partial<SessionConfig> = {
  * Standard session policy for regular users
  */
 export const STANDARD_SESSION_POLICY: SessionPolicy = {
-  id: 'standard',
-  name: 'Standard Session Policy',
-  description: 'Default policy for regular users',
+  id: "standard",
+  name: "Standard Session Policy",
+  description: "Default policy for regular users",
   config: {
     sessionTimeout: 30 * 60 * 1000,
     renewalThreshold: 0.25,
@@ -228,7 +229,7 @@ export const STANDARD_SESSION_POLICY: SessionPolicy = {
   isActive: true,
   priority: 0,
   effectiveFrom: new Date(),
-  createdBy: 'system',
+  createdBy: "system",
   createdAt: new Date(),
   updatedAt: new Date(),
 };
@@ -237,9 +238,9 @@ export const STANDARD_SESSION_POLICY: SessionPolicy = {
  * Admin session policy for administrative users
  */
 export const ADMIN_SESSION_POLICY: SessionPolicy = {
-  id: 'admin',
-  name: 'Admin Session Policy',
-  description: 'Enhanced security policy for administrators',
+  id: "admin",
+  name: "Admin Session Policy",
+  description: "Enhanced security policy for administrators",
   config: {
     sessionTimeout: 15 * 60 * 1000,
     renewalThreshold: 0.5,
@@ -251,7 +252,7 @@ export const ADMIN_SESSION_POLICY: SessionPolicy = {
   isActive: true,
   priority: 10,
   effectiveFrom: new Date(),
-  createdBy: 'system',
+  createdBy: "system",
   createdAt: new Date(),
   updatedAt: new Date(),
 };
@@ -260,9 +261,9 @@ export const ADMIN_SESSION_POLICY: SessionPolicy = {
  * Guest session policy for temporary access
  */
 export const GUEST_SESSION_POLICY: SessionPolicy = {
-  id: 'guest',
-  name: 'Guest Session Policy',
-  description: 'Limited policy for guest users',
+  id: "guest",
+  name: "Guest Session Policy",
+  description: "Limited policy for guest users",
   config: {
     sessionTimeout: 10 * 60 * 1000,
     renewalThreshold: 0.1,
@@ -273,7 +274,7 @@ export const GUEST_SESSION_POLICY: SessionPolicy = {
   isActive: true,
   priority: -10,
   effectiveFrom: new Date(),
-  createdBy: 'system',
+  createdBy: "system",
   createdAt: new Date(),
   updatedAt: new Date(),
 };
@@ -285,10 +286,7 @@ export const GUEST_SESSION_POLICY: SessionPolicy = {
 /**
  * Merge configurations with precedence
  */
-export function mergeConfigs(
-  base: SessionConfig,
-  override: Partial<SessionConfig>
-): SessionConfig {
+export function mergeConfigs(base: SessionConfig, override: Partial<SessionConfig>): SessionConfig {
   return {
     ...base,
     ...override,
@@ -308,24 +306,24 @@ export function mergeConfigs(
  */
 export function getEnvironmentConfig(env: string): SessionConfig {
   const baseConfig = DEFAULT_SESSION_CONFIG;
-  
+
   switch (env.toLowerCase()) {
-    case 'development':
-    case 'dev':
+    case "development":
+    case "dev":
       return mergeConfigs(baseConfig, DEVELOPMENT_CONFIG);
-    
-    case 'production':
-    case 'prod':
+
+    case "production":
+    case "prod":
       return mergeConfigs(baseConfig, PRODUCTION_CONFIG);
-    
-    case 'staging':
-    case 'test':
+
+    case "staging":
+    case "test":
       return mergeConfigs(baseConfig, {
         sessionTimeout: 20 * 60 * 1000,
         maxConcurrentSessions: 5,
         cleanupInterval: 10 * 60 * 1000,
       });
-    
+
     default:
       return baseConfig;
   }
@@ -336,44 +334,44 @@ export function getEnvironmentConfig(env: string): SessionConfig {
  */
 export function validateConfig(config: SessionConfig): string[] {
   const errors: string[] = [];
-  
+
   // Validate timeouts
   if (config.sessionTimeout <= 0) {
-    errors.push('Session timeout must be positive');
+    errors.push("Session timeout must be positive");
   }
-  
+
   if (config.renewalThreshold <= 0 || config.renewalThreshold >= 1) {
-    errors.push('Renewal threshold must be between 0 and 1');
+    errors.push("Renewal threshold must be between 0 and 1");
   }
-  
+
   if (config.maxConcurrentSessions <= 0) {
-    errors.push('Max concurrent sessions must be positive');
+    errors.push("Max concurrent sessions must be positive");
   }
-  
+
   if (config.tokenRotationInterval <= 0) {
-    errors.push('Token rotation interval must be positive');
+    errors.push("Token rotation interval must be positive");
   }
-  
+
   if (config.refreshTokenExpiry <= config.sessionTimeout) {
-    errors.push('Refresh token expiry must be greater than session timeout');
+    errors.push("Refresh token expiry must be greater than session timeout");
   }
-  
+
   // Validate Redis config
   if (config.redis.enabled && !config.redis.keyPrefix) {
-    errors.push('Redis key prefix is required when Redis is enabled');
+    errors.push("Redis key prefix is required when Redis is enabled");
   }
-  
+
   // Validate LGPD config
   if (config.lgpd.enabled) {
     if (config.lgpd.dataRetentionDays <= 0) {
-      errors.push('LGPD data retention days must be positive');
+      errors.push("LGPD data retention days must be positive");
     }
-    
+
     if (config.lgpd.anonymizeAfterDays <= config.lgpd.dataRetentionDays) {
-      errors.push('LGPD anonymize after days must be greater than retention days');
+      errors.push("LGPD anonymize after days must be greater than retention days");
     }
   }
-  
+
   return errors;
 }
 
@@ -382,16 +380,16 @@ export function validateConfig(config: SessionConfig): string[] {
  */
 export function getPolicyByRole(role: string): SessionPolicy {
   switch (role.toLowerCase()) {
-    case 'admin':
-    case 'administrator':
-    case 'owner':
+    case "admin":
+    case "administrator":
+    case "owner":
       return ADMIN_SESSION_POLICY;
-    
-    case 'guest':
-    case 'visitor':
-    case 'temporary':
+
+    case "guest":
+    case "visitor":
+    case "temporary":
       return GUEST_SESSION_POLICY;
-    
+
     default:
       return STANDARD_SESSION_POLICY;
   }
@@ -410,7 +408,7 @@ export function createCustomPolicy(
     userRole?: string;
     effectiveFrom?: Date;
     effectiveUntil?: Date;
-  } = {}
+  } = {},
 ): SessionPolicy {
   return {
     id: `custom_${Date.now()}`,
@@ -423,7 +421,7 @@ export function createCustomPolicy(
     priority: options.priority ?? 0,
     effectiveFrom: options.effectiveFrom ?? new Date(),
     effectiveUntil: options.effectiveUntil,
-    createdBy: 'system',
+    createdBy: "system",
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -446,7 +444,7 @@ export const CLINIC_PRESETS = {
     requireDeviceVerification: false,
     cleanupInterval: 30 * 60 * 1000, // 30 minutes
   }),
-  
+
   /**
    * Medium clinic configuration (6-20 users)
    */
@@ -456,7 +454,7 @@ export const CLINIC_PRESETS = {
     requireDeviceVerification: true,
     cleanupInterval: 15 * 60 * 1000, // 15 minutes
   }),
-  
+
   /**
    * Large clinic configuration (21+ users)
    */
@@ -467,7 +465,7 @@ export const CLINIC_PRESETS = {
     tokenRotationInterval: 10 * 60 * 1000, // 10 minutes
     cleanupInterval: 10 * 60 * 1000, // 10 minutes
   }),
-  
+
   /**
    * Enterprise configuration (50+ users)
    */
@@ -480,7 +478,7 @@ export const CLINIC_PRESETS = {
     cleanupInterval: 5 * 60 * 1000, // 5 minutes
     redis: {
       enabled: true,
-      keyPrefix: 'neonpro:enterprise:session:',
+      keyPrefix: "neonpro:enterprise:session:",
       ttl: 15 * 60, // 15 minutes
     },
   }),
@@ -510,10 +508,4 @@ export {
   GUEST_SESSION_POLICY,
 };
 
-export type {
-  SessionConfig,
-  SessionPolicy,
-  SecurityConfig,
-  DeviceConfig,
-  AuditConfig,
-};
+export type { SessionConfig, SessionPolicy, SecurityConfig, DeviceConfig, AuditConfig };

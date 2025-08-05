@@ -1,43 +1,49 @@
-'use client';
+"use client";
 
 /**
  * Story 11.3: Inventory Configuration Component
  * System configuration and settings management
  */
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Icons } from '@/components/ui/icons';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
-import {
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Icons } from "@/components/ui/icons";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Switch } from "@/components/ui/switch";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
+} from "@/components/ui/select";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { 
+} from "@/components/ui/table";
+import type { Badge } from "@/components/ui/badge";
+import type { Separator } from "@/components/ui/separator";
+import type {
   InventoryConfig,
   type ConfigurationSettings,
   type AlertRule,
-  type AutomationRule
-} from '@/lib/inventory';
-import { useToast } from '@/hooks/use-toast';
+  type AutomationRule,
+} from "@/lib/inventory";
+import type { useToast } from "@/hooks/use-toast";
 
 interface InventoryConfigurationProps {
   onRefresh: () => void;
@@ -72,7 +78,7 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
   const [automationRules, setAutomationRules] = useState<AutomationRule[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState('general');
+  const [activeTab, setActiveTab] = useState("general");
   const [configForm, setConfigForm] = useState<ConfigFormData>({
     fifo_enabled: true,
     auto_alerts: true,
@@ -83,15 +89,15 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
     consumption_forecast_days: 30,
     efficiency_target: 85,
     auto_reorder_enabled: false,
-    reorder_lead_time: 7
+    reorder_lead_time: 7,
   });
   const [alertRuleForm, setAlertRuleForm] = useState<AlertRuleFormData>({
-    name: '',
-    type: 'stock_low',
+    name: "",
+    type: "stock_low",
     threshold: 10,
-    severity: 'media',
+    severity: "media",
     enabled: true,
-    description: ''
+    description: "",
   });
   const [isEditingRule, setIsEditingRule] = useState<string | null>(null);
   const { toast } = useToast();
@@ -108,9 +114,9 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
 
       // Load general configuration
       const { data: configData, error: configError } = await inventoryConfig.getConfiguration();
-      
+
       if (configError) {
-        console.warn('Config error:', configError);
+        console.warn("Config error:", configError);
       } else if (configData) {
         setConfig(configData);
         setConfigForm({
@@ -123,34 +129,36 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
           consumption_forecast_days: configData.consumption_forecast_days,
           efficiency_target: configData.efficiency_target,
           auto_reorder_enabled: configData.auto_reorder_enabled,
-          reorder_lead_time: configData.reorder_lead_time
+          reorder_lead_time: configData.reorder_lead_time,
         });
       }
 
       // Load alert rules
-      const { data: alertRulesData, error: alertRulesError } = await inventoryConfig.getAlertRules();
-      
+      const { data: alertRulesData, error: alertRulesError } =
+        await inventoryConfig.getAlertRules();
+
       if (alertRulesError) {
-        console.warn('Alert rules error:', alertRulesError);
+        console.warn("Alert rules error:", alertRulesError);
       } else {
         setAlertRules(alertRulesData || []);
       }
 
       // Load automation rules
-      const { data: automationRulesData, error: automationRulesError } = await inventoryConfig.getAutomationRules();
-      
+      const { data: automationRulesData, error: automationRulesError } =
+        await inventoryConfig.getAutomationRules();
+
       if (automationRulesError) {
-        console.warn('Automation rules error:', automationRulesError);
+        console.warn("Automation rules error:", automationRulesError);
       } else {
         setAutomationRules(automationRulesData || []);
       }
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao carregar configurações';
+      const errorMessage =
+        error instanceof Error ? error.message : "Erro ao carregar configurações";
       toast({
-        title: 'Erro',
+        title: "Erro",
         description: errorMessage,
-        variant: 'destructive',
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -168,19 +176,18 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
       }
 
       toast({
-        title: 'Sucesso',
-        description: 'Configurações salvas com sucesso',
+        title: "Sucesso",
+        description: "Configurações salvas com sucesso",
       });
 
       loadConfiguration();
       onRefresh();
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao salvar configurações';
+      const errorMessage = error instanceof Error ? error.message : "Erro ao salvar configurações";
       toast({
-        title: 'Erro',
+        title: "Erro",
         description: errorMessage,
-        variant: 'destructive',
+        variant: "destructive",
       });
     } finally {
       setIsSaving(false);
@@ -190,9 +197,9 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
   const handleSaveAlertRule = async () => {
     if (!alertRuleForm.name || !alertRuleForm.description) {
       toast({
-        title: 'Erro',
-        description: 'Preencha todos os campos obrigatórios',
-        variant: 'destructive',
+        title: "Erro",
+        description: "Preencha todos os campos obrigatórios",
+        variant: "destructive",
       });
       return;
     }
@@ -207,27 +214,26 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
       }
 
       toast({
-        title: 'Sucesso',
-        description: isEditingRule ? 'Regra atualizada com sucesso' : 'Regra criada com sucesso',
+        title: "Sucesso",
+        description: isEditingRule ? "Regra atualizada com sucesso" : "Regra criada com sucesso",
       });
 
       setAlertRuleForm({
-        name: '',
-        type: 'stock_low',
+        name: "",
+        type: "stock_low",
         threshold: 10,
-        severity: 'media',
+        severity: "media",
         enabled: true,
-        description: ''
+        description: "",
       });
       setIsEditingRule(null);
       loadConfiguration();
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao salvar regra';
+      const errorMessage = error instanceof Error ? error.message : "Erro ao salvar regra";
       toast({
-        title: 'Erro',
+        title: "Erro",
         description: errorMessage,
-        variant: 'destructive',
+        variant: "destructive",
       });
     }
   };
@@ -241,18 +247,17 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
       }
 
       toast({
-        title: 'Sucesso',
-        description: 'Regra removida com sucesso',
+        title: "Sucesso",
+        description: "Regra removida com sucesso",
       });
 
       loadConfiguration();
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao remover regra';
+      const errorMessage = error instanceof Error ? error.message : "Erro ao remover regra";
       toast({
-        title: 'Erro',
+        title: "Erro",
         description: errorMessage,
-        variant: 'destructive',
+        variant: "destructive",
       });
     }
   };
@@ -264,27 +269,27 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
       threshold: rule.threshold,
       severity: rule.severity,
       enabled: rule.enabled,
-      description: rule.description
+      description: rule.description,
     });
     setIsEditingRule(rule.id);
   };
 
   const getSeverityColor = (severity: string) => {
     const colors = {
-      'baixa': 'bg-blue-100 text-blue-800',
-      'media': 'bg-yellow-100 text-yellow-800',
-      'alta': 'bg-red-100 text-red-800'
+      baixa: "bg-blue-100 text-blue-800",
+      media: "bg-yellow-100 text-yellow-800",
+      alta: "bg-red-100 text-red-800",
     };
-    return colors[severity as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return colors[severity as keyof typeof colors] || "bg-gray-100 text-gray-800";
   };
 
   const getTypeLabel = (type: string) => {
     const labels = {
-      'stock_low': 'Estoque Baixo',
-      'expiry_warning': 'Vencimento Próximo',
-      'efficiency_low': 'Eficiência Baixa',
-      'cost_high': 'Custo Alto',
-      'consumption_anomaly': 'Anomalia de Consumo'
+      stock_low: "Estoque Baixo",
+      expiry_warning: "Vencimento Próximo",
+      efficiency_low: "Eficiência Baixa",
+      cost_high: "Custo Alto",
+      consumption_anomaly: "Anomalia de Consumo",
     };
     return labels[type as keyof typeof labels] || type;
   };
@@ -298,7 +303,7 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
             <p className="text-muted-foreground">Configurações do sistema</p>
           </div>
         </div>
-        
+
         <Card>
           <CardContent className="p-6">
             <div className="h-48 bg-gray-200 rounded animate-pulse" />
@@ -314,9 +319,7 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">Configurações do Inventário</h2>
-          <p className="text-muted-foreground">
-            Configurações e regras do sistema de inventário
-          </p>
+          <p className="text-muted-foreground">Configurações e regras do sistema de inventário</p>
         </div>
         <Button variant="outline" onClick={loadConfiguration}>
           <Icons.RefreshCw className="w-4 h-4 mr-2" />
@@ -338,9 +341,7 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
           <Card>
             <CardHeader>
               <CardTitle>Configurações Gerais</CardTitle>
-              <CardDescription>
-                Configurações básicas do sistema de inventário
-              </CardDescription>
+              <CardDescription>Configurações básicas do sistema de inventário</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Core Features */}
@@ -354,8 +355,8 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
                     <Switch
                       id="fifo_enabled"
                       checked={configForm.fifo_enabled}
-                      onCheckedChange={(checked) => 
-                        setConfigForm(prev => ({ ...prev, fifo_enabled: checked }))
+                      onCheckedChange={(checked) =>
+                        setConfigForm((prev) => ({ ...prev, fifo_enabled: checked }))
                       }
                     />
                   </div>
@@ -367,8 +368,8 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
                     <Switch
                       id="auto_alerts"
                       checked={configForm.auto_alerts}
-                      onCheckedChange={(checked) => 
-                        setConfigForm(prev => ({ ...prev, auto_alerts: checked }))
+                      onCheckedChange={(checked) =>
+                        setConfigForm((prev) => ({ ...prev, auto_alerts: checked }))
                       }
                     />
                   </div>
@@ -380,8 +381,8 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
                     <Switch
                       id="cost_tracking"
                       checked={configForm.cost_tracking}
-                      onCheckedChange={(checked) => 
-                        setConfigForm(prev => ({ ...prev, cost_tracking: checked }))
+                      onCheckedChange={(checked) =>
+                        setConfigForm((prev) => ({ ...prev, cost_tracking: checked }))
                       }
                     />
                   </div>
@@ -393,8 +394,8 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
                     <Switch
                       id="transfer_approval_required"
                       checked={configForm.transfer_approval_required}
-                      onCheckedChange={(checked) => 
-                        setConfigForm(prev => ({ ...prev, transfer_approval_required: checked }))
+                      onCheckedChange={(checked) =>
+                        setConfigForm((prev) => ({ ...prev, transfer_approval_required: checked }))
                       }
                     />
                   </div>
@@ -415,10 +416,12 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
                       min="1"
                       max="100"
                       value={configForm.min_stock_threshold}
-                      onChange={(e) => setConfigForm(prev => ({ 
-                        ...prev, 
-                        min_stock_threshold: parseInt(e.target.value) || 10 
-                      }))}
+                      onChange={(e) =>
+                        setConfigForm((prev) => ({
+                          ...prev,
+                          min_stock_threshold: parseInt(e.target.value) || 10,
+                        }))
+                      }
                     />
                   </div>
 
@@ -430,10 +433,12 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
                       min="1"
                       max="365"
                       value={configForm.expiry_warning_days}
-                      onChange={(e) => setConfigForm(prev => ({ 
-                        ...prev, 
-                        expiry_warning_days: parseInt(e.target.value) || 30 
-                      }))}
+                      onChange={(e) =>
+                        setConfigForm((prev) => ({
+                          ...prev,
+                          expiry_warning_days: parseInt(e.target.value) || 30,
+                        }))
+                      }
                     />
                   </div>
 
@@ -445,10 +450,12 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
                       min="7"
                       max="365"
                       value={configForm.consumption_forecast_days}
-                      onChange={(e) => setConfigForm(prev => ({ 
-                        ...prev, 
-                        consumption_forecast_days: parseInt(e.target.value) || 30 
-                      }))}
+                      onChange={(e) =>
+                        setConfigForm((prev) => ({
+                          ...prev,
+                          consumption_forecast_days: parseInt(e.target.value) || 30,
+                        }))
+                      }
                     />
                   </div>
 
@@ -460,10 +467,12 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
                       min="50"
                       max="100"
                       value={configForm.efficiency_target}
-                      onChange={(e) => setConfigForm(prev => ({ 
-                        ...prev, 
-                        efficiency_target: parseInt(e.target.value) || 85 
-                      }))}
+                      onChange={(e) =>
+                        setConfigForm((prev) => ({
+                          ...prev,
+                          efficiency_target: parseInt(e.target.value) || 85,
+                        }))
+                      }
                     />
                   </div>
                 </div>
@@ -481,8 +490,8 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
                   <Switch
                     id="auto_reorder_enabled"
                     checked={configForm.auto_reorder_enabled}
-                    onCheckedChange={(checked) => 
-                      setConfigForm(prev => ({ ...prev, auto_reorder_enabled: checked }))
+                    onCheckedChange={(checked) =>
+                      setConfigForm((prev) => ({ ...prev, auto_reorder_enabled: checked }))
                     }
                   />
                 </div>
@@ -496,10 +505,12 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
                       min="1"
                       max="30"
                       value={configForm.reorder_lead_time}
-                      onChange={(e) => setConfigForm(prev => ({ 
-                        ...prev, 
-                        reorder_lead_time: parseInt(e.target.value) || 7 
-                      }))}
+                      onChange={(e) =>
+                        setConfigForm((prev) => ({
+                          ...prev,
+                          reorder_lead_time: parseInt(e.target.value) || 7,
+                        }))
+                      }
                     />
                   </div>
                 )}
@@ -531,7 +542,7 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
             <Card>
               <CardHeader>
                 <CardTitle>
-                  {isEditingRule ? 'Editar Regra de Alerta' : 'Nova Regra de Alerta'}
+                  {isEditingRule ? "Editar Regra de Alerta" : "Nova Regra de Alerta"}
                 </CardTitle>
                 <CardDescription>
                   Configure regras personalizadas para alertas automáticos
@@ -543,22 +554,26 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
                   <Input
                     id="rule_name"
                     value={alertRuleForm.name}
-                    onChange={(e) => setAlertRuleForm(prev => ({ 
-                      ...prev, 
-                      name: e.target.value 
-                    }))}
+                    onChange={(e) =>
+                      setAlertRuleForm((prev) => ({
+                        ...prev,
+                        name: e.target.value,
+                      }))
+                    }
                     placeholder="Ex: Estoque Crítico Medicamentos"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="rule_type">Tipo de Alerta</Label>
-                  <Select 
-                    value={alertRuleForm.type} 
-                    onValueChange={(value) => setAlertRuleForm(prev => ({ 
-                      ...prev, 
-                      type: value 
-                    }))}
+                  <Select
+                    value={alertRuleForm.type}
+                    onValueChange={(value) =>
+                      setAlertRuleForm((prev) => ({
+                        ...prev,
+                        type: value,
+                      }))
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -579,21 +594,25 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
                     id="rule_threshold"
                     type="number"
                     value={alertRuleForm.threshold}
-                    onChange={(e) => setAlertRuleForm(prev => ({ 
-                      ...prev, 
-                      threshold: parseInt(e.target.value) || 0 
-                    }))}
+                    onChange={(e) =>
+                      setAlertRuleForm((prev) => ({
+                        ...prev,
+                        threshold: parseInt(e.target.value) || 0,
+                      }))
+                    }
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="rule_severity">Severidade</Label>
-                  <Select 
-                    value={alertRuleForm.severity} 
-                    onValueChange={(value) => setAlertRuleForm(prev => ({ 
-                      ...prev, 
-                      severity: value 
-                    }))}
+                  <Select
+                    value={alertRuleForm.severity}
+                    onValueChange={(value) =>
+                      setAlertRuleForm((prev) => ({
+                        ...prev,
+                        severity: value,
+                      }))
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -611,10 +630,12 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
                   <Textarea
                     id="rule_description"
                     value={alertRuleForm.description}
-                    onChange={(e) => setAlertRuleForm(prev => ({ 
-                      ...prev, 
-                      description: e.target.value 
-                    }))}
+                    onChange={(e) =>
+                      setAlertRuleForm((prev) => ({
+                        ...prev,
+                        description: e.target.value,
+                      }))
+                    }
                     placeholder="Descreva quando e como este alerta deve ser acionado..."
                     rows={3}
                   />
@@ -627,28 +648,28 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
                   <Switch
                     id="rule_enabled"
                     checked={alertRuleForm.enabled}
-                    onCheckedChange={(checked) => 
-                      setAlertRuleForm(prev => ({ ...prev, enabled: checked }))
+                    onCheckedChange={(checked) =>
+                      setAlertRuleForm((prev) => ({ ...prev, enabled: checked }))
                     }
                   />
                 </div>
 
                 <div className="flex gap-2">
                   <Button onClick={handleSaveAlertRule} className="flex-1">
-                    {isEditingRule ? 'Atualizar Regra' : 'Criar Regra'}
+                    {isEditingRule ? "Atualizar Regra" : "Criar Regra"}
                   </Button>
                   {isEditingRule && (
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       onClick={() => {
                         setIsEditingRule(null);
                         setAlertRuleForm({
-                          name: '',
-                          type: 'stock_low',
+                          name: "",
+                          type: "stock_low",
                           threshold: 10,
-                          severity: 'media',
+                          severity: "media",
                           enabled: true,
-                          description: ''
+                          description: "",
                         });
                       }}
                     >
@@ -663,9 +684,7 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
             <Card>
               <CardHeader>
                 <CardTitle>Regras Ativas</CardTitle>
-                <CardDescription>
-                  {alertRules.length} regra(s) configurada(s)
-                </CardDescription>
+                <CardDescription>{alertRules.length} regra(s) configurada(s)</CardDescription>
               </CardHeader>
               <CardContent>
                 {alertRules.length === 0 ? (
@@ -748,9 +767,7 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
             <CardContent>
               <div className="text-center py-8">
                 <Icons.Zap className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  Em Desenvolvimento
-                </h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Em Desenvolvimento</h3>
                 <p className="text-gray-500">
                   Funcionalidades de automação serão implementadas em breve.
                 </p>
@@ -764,16 +781,12 @@ export function InventoryConfiguration({ onRefresh, className }: InventoryConfig
           <Card>
             <CardHeader>
               <CardTitle>Integrações Externas</CardTitle>
-              <CardDescription>
-                Configure integrações com sistemas externos
-              </CardDescription>
+              <CardDescription>Configure integrações com sistemas externos</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8">
                 <Icons.Globe className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  Em Desenvolvimento
-                </h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Em Desenvolvimento</h3>
                 <p className="text-gray-500">
                   Integrações com fornecedores e sistemas ERP serão implementadas em breve.
                 </p>

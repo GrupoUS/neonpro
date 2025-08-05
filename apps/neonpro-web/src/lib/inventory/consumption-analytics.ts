@@ -3,8 +3,8 @@
  * Advanced analytics for consumption patterns and cost optimization
  */
 
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Database } from '@/types/database';
+import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import type { Database } from "@/types/database";
 
 export interface ConsumptionAnalytics {
   periodo: {
@@ -40,7 +40,7 @@ export interface ProductConsumption {
   numero_movimentacoes: number;
   custo_medio_unitario: number;
   percentual_consumo_total: number;
-  tendencia_mensal: 'crescente' | 'estavel' | 'decrescente';
+  tendencia_mensal: "crescente" | "estavel" | "decrescente";
   variacao_percentual: number;
 }
 
@@ -62,22 +62,26 @@ export interface CostEfficiency {
 }
 
 export interface EfficiencyOpportunity {
-  tipo: 'consolidacao_fornecedor' | 'otimizacao_lote' | 'reducao_desperdicio' | 'substituicao_produto';
+  tipo:
+    | "consolidacao_fornecedor"
+    | "otimizacao_lote"
+    | "reducao_desperdicio"
+    | "substituicao_produto";
   descricao: string;
   economia_estimada: number;
-  complexidade: 'baixa' | 'media' | 'alta';
+  complexidade: "baixa" | "media" | "alta";
   prazo_implementacao: number; // dias
-  impacto_operacional: 'minimo' | 'moderado' | 'significativo';
+  impacto_operacional: "minimo" | "moderado" | "significativo";
 }
 
 export interface ConsumptionAlert {
   id: string;
-  tipo: 'consumo_anomalo' | 'custo_elevado' | 'desperdicio_detectado' | 'eficiencia_baixa';
+  tipo: "consumo_anomalo" | "custo_elevado" | "desperdicio_detectado" | "eficiencia_baixa";
   produto_id?: string;
   nome_produto?: string;
   descricao: string;
   valor_impacto: number;
-  gravidade: 'baixa' | 'media' | 'alta' | 'critica';
+  gravidade: "baixa" | "media" | "alta" | "critica";
   acao_recomendada: string;
   data_detectado: Date;
 }
@@ -104,7 +108,7 @@ export interface PurchaseRecommendation {
 export interface ConsumptionPattern {
   centro_custo_id: string;
   produto_id: string;
-  padrao_identificado: 'regular' | 'sazonal' | 'irregular' | 'crescente' | 'decrescente';
+  padrao_identificado: "regular" | "sazonal" | "irregular" | "crescente" | "decrescente";
   frequencia_uso: number; // vezes por mês
   quantidade_media_uso: number;
   horarios_pico: string[];
@@ -116,7 +120,7 @@ export interface ProductCorrelation {
   produto_relacionado_id: string;
   nome_produto_relacionado: string;
   correlacao_score: number; // 0-100
-  tipo_relacao: 'substituto' | 'complementar' | 'concorrente';
+  tipo_relacao: "substituto" | "complementar" | "concorrente";
 }
 
 /**
@@ -124,7 +128,7 @@ export interface ProductCorrelation {
  * Advanced analytics for consumption patterns and cost optimization
  */
 export class ConsumptionAnalyzer {
-  private const supabase = createClient(ComponentClient<Database>();
+  private supabase = createClient<Database>();
 
   /**
    * Get comprehensive consumption analytics for cost center
@@ -132,39 +136,41 @@ export class ConsumptionAnalyzer {
   async getConsumptionAnalytics(
     centroCustoId: string,
     dataInicio: Date,
-    dataFim: Date
-  ): Promise<{ 
-    data: ConsumptionAnalytics | null; 
-    error: string | null 
+    dataFim: Date,
+  ): Promise<{
+    data: ConsumptionAnalytics | null;
+    error: string | null;
   }> {
     try {
       // 1. Get consumption data
       const { data: consumptions, error: consumptionError } = await this.supabase
-        .from('saidas_estoque')
+        .from("saidas_estoque")
         .select(`
           *,
           produto:produtos_estoque(nome, categoria, preco_custo),
           centro_custo:centros_custo(nome)
         `)
-        .eq('centro_custo_id', centroCustoId)
-        .gte('data_saida', dataInicio.toISOString())
-        .lte('data_saida', dataFim.toISOString())
-        .eq('status', 'confirmada');
+        .eq("centro_custo_id", centroCustoId)
+        .gte("data_saida", dataInicio.toISOString())
+        .lte("data_saida", dataFim.toISOString())
+        .eq("status", "confirmada");
 
       if (consumptionError) throw consumptionError;
 
       if (!consumptions || consumptions.length === 0) {
         return {
           data: null,
-          error: 'Nenhum consumo encontrado para o período'
+          error: "Nenhum consumo encontrado para o período",
         };
       }
 
       // 2. Calculate totals
       const totalQuantity = consumptions.reduce((sum, c) => sum + c.quantidade, 0);
       const totalValue = consumptions.reduce((sum, c) => sum + c.valor_total, 0);
-      const uniqueProducts = new Set(consumptions.map(c => c.produto_id)).size;
-      const totalDays = Math.ceil((dataFim.getTime() - dataInicio.getTime()) / (1000 * 60 * 60 * 24));
+      const uniqueProducts = new Set(consumptions.map((c) => c.produto_id)).size;
+      const totalDays = Math.ceil(
+        (dataFim.getTime() - dataInicio.getTime()) / (1000 * 60 * 60 * 24),
+      );
 
       // 3. Get product consumption details
       const productConsumptions = await this.calculateProductConsumptions(consumptions, totalValue);
@@ -182,37 +188,36 @@ export class ConsumptionAnalyzer {
         periodo: {
           data_inicio: dataInicio,
           data_fim: dataFim,
-          total_dias: totalDays
+          total_dias: totalDays,
         },
         centro_custo_id: centroCustoId,
-        nome_centro_custo: consumptions[0]?.centro_custo?.nome || 'Centro de Custo',
+        nome_centro_custo: consumptions[0]?.centro_custo?.nome || "Centro de Custo",
         consumo_total: {
           quantidade: totalQuantity,
           valor_total: totalValue,
           numero_produtos: uniqueProducts,
-          numero_movimentacoes: consumptions.length
+          numero_movimentacoes: consumptions.length,
         },
         media_diaria: {
           quantidade: totalQuantity / totalDays,
           valor: totalValue / totalDays,
-          movimentacoes: consumptions.length / totalDays
+          movimentacoes: consumptions.length / totalDays,
         },
         produtos_mais_consumidos: productConsumptions,
         tendencias: trends,
         eficiencia_custos: costEfficiency,
-        alertas: alerts
+        alertas: alerts,
       };
 
       return {
         data: analytics,
-        error: null
+        error: null,
       };
-
     } catch (error) {
-      console.error('Error getting consumption analytics:', error);
+      console.error("Error getting consumption analytics:", error);
       return {
         data: null,
-        error: 'Erro ao analisar consumo'
+        error: "Erro ao analisar consumo",
       };
     }
   }
@@ -223,10 +228,10 @@ export class ConsumptionAnalyzer {
   async getConsumptionForecast(
     centroCustoId: string,
     produtoIds?: string[],
-    diasPrevisao: number = 30
-  ): Promise<{ 
-    data: ConsumptionForecast[] | null; 
-    error: string | null 
+    diasPrevisao: number = 30,
+  ): Promise<{
+    data: ConsumptionForecast[] | null;
+    error: string | null;
   }> {
     try {
       // Get historical consumption data (last 6 months)
@@ -234,17 +239,17 @@ export class ConsumptionAnalyzer {
       sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
       let query = this.supabase
-        .from('saidas_estoque')
+        .from("saidas_estoque")
         .select(`
           *,
           produto:produtos_estoque(nome, categoria)
         `)
-        .eq('centro_custo_id', centroCustoId)
-        .gte('data_saida', sixMonthsAgo.toISOString())
-        .eq('status', 'confirmada');
+        .eq("centro_custo_id", centroCustoId)
+        .gte("data_saida", sixMonthsAgo.toISOString())
+        .eq("status", "confirmada");
 
       if (produtoIds && produtoIds.length > 0) {
-        query = query.in('produto_id', produtoIds);
+        query = query.in("produto_id", produtoIds);
       }
 
       const { data: historicalData, error } = await query;
@@ -254,19 +259,22 @@ export class ConsumptionAnalyzer {
       if (!historicalData || historicalData.length === 0) {
         return {
           data: [],
-          error: 'Dados históricos insuficientes para previsão'
+          error: "Dados históricos insuficientes para previsão",
         };
       }
 
       // Group by product and calculate forecasts
-      const productGroups = historicalData.reduce((acc, consumption) => {
-        const productId = consumption.produto_id;
-        if (!acc[productId]) {
-          acc[productId] = [];
-        }
-        acc[productId].push(consumption);
-        return acc;
-      }, {} as Record<string, any[]>);
+      const productGroups = historicalData.reduce(
+        (acc, consumption) => {
+          const productId = consumption.produto_id;
+          if (!acc[productId]) {
+            acc[productId] = [];
+          }
+          acc[productId].push(consumption);
+          return acc;
+        },
+        {} as Record<string, any[]>,
+      );
 
       const forecasts = Object.entries(productGroups).map(([productId, consumptions]) => {
         return this.calculateProductForecast(productId, consumptions, diasPrevisao);
@@ -276,14 +284,13 @@ export class ConsumptionAnalyzer {
 
       return {
         data: resolvedForecasts,
-        error: null
+        error: null,
       };
-
     } catch (error) {
-      console.error('Error getting consumption forecast:', error);
+      console.error("Error getting consumption forecast:", error);
       return {
         data: null,
-        error: 'Erro ao calcular previsão de consumo'
+        error: "Erro ao calcular previsão de consumo",
       };
     }
   }
@@ -293,44 +300,47 @@ export class ConsumptionAnalyzer {
    */
   async identifyConsumptionPatterns(
     centroCustoId: string,
-    mesesAnalise: number = 6
-  ): Promise<{ 
-    data: ConsumptionPattern[] | null; 
-    error: string | null 
+    mesesAnalise: number = 6,
+  ): Promise<{
+    data: ConsumptionPattern[] | null;
+    error: string | null;
   }> {
     try {
       const startDate = new Date();
       startDate.setMonth(startDate.getMonth() - mesesAnalise);
 
       const { data: consumptions, error } = await this.supabase
-        .from('saidas_estoque')
+        .from("saidas_estoque")
         .select(`
           *,
           produto:produtos_estoque(nome, categoria)
         `)
-        .eq('centro_custo_id', centroCustoId)
-        .gte('data_saida', startDate.toISOString())
-        .eq('status', 'confirmada')
-        .order('data_saida', { ascending: true });
+        .eq("centro_custo_id", centroCustoId)
+        .gte("data_saida", startDate.toISOString())
+        .eq("status", "confirmada")
+        .order("data_saida", { ascending: true });
 
       if (error) throw error;
 
       if (!consumptions || consumptions.length === 0) {
         return {
           data: [],
-          error: 'Dados insuficientes para análise de padrões'
+          error: "Dados insuficientes para análise de padrões",
         };
       }
 
       // Group by product
-      const productGroups = consumptions.reduce((acc, consumption) => {
-        const productId = consumption.produto_id;
-        if (!acc[productId]) {
-          acc[productId] = [];
-        }
-        acc[productId].push(consumption);
-        return acc;
-      }, {} as Record<string, any[]>);
+      const productGroups = consumptions.reduce(
+        (acc, consumption) => {
+          const productId = consumption.produto_id;
+          if (!acc[productId]) {
+            acc[productId] = [];
+          }
+          acc[productId].push(consumption);
+          return acc;
+        },
+        {} as Record<string, any[]>,
+      );
 
       const patterns = Object.entries(productGroups).map(([productId, productConsumptions]) => {
         return this.analyzeProductPattern(centroCustoId, productId, productConsumptions);
@@ -340,14 +350,13 @@ export class ConsumptionAnalyzer {
 
       return {
         data: resolvedPatterns,
-        error: null
+        error: null,
       };
-
     } catch (error) {
-      console.error('Error identifying consumption patterns:', error);
+      console.error("Error identifying consumption patterns:", error);
       return {
         data: null,
-        error: 'Erro ao identificar padrões de consumo'
+        error: "Erro ao identificar padrões de consumo",
       };
     }
   }
@@ -358,38 +367,52 @@ export class ConsumptionAnalyzer {
   async generateCostOptimizationRecommendations(
     centroCustoId: string,
     dataInicio: Date,
-    dataFim: Date
-  ): Promise<{ 
-    data: EfficiencyOpportunity[] | null; 
-    error: string | null 
+    dataFim: Date,
+  ): Promise<{
+    data: EfficiencyOpportunity[] | null;
+    error: string | null;
   }> {
     try {
       // Get consumption analytics first
-      const { data: analytics } = await this.getConsumptionAnalytics(centroCustoId, dataInicio, dataFim);
+      const { data: analytics } = await this.getConsumptionAnalytics(
+        centroCustoId,
+        dataInicio,
+        dataFim,
+      );
 
       if (!analytics) {
         return {
           data: [],
-          error: 'Dados insuficientes para recomendações'
+          error: "Dados insuficientes para recomendações",
         };
       }
 
       const opportunities: EfficiencyOpportunity[] = [];
 
       // 1. Analyze supplier consolidation opportunities
-      const supplierOpportunities = await this.analyzeSupplierConsolidation(analytics.produtos_mais_consumidos);
+      const supplierOpportunities = await this.analyzeSupplierConsolidation(
+        analytics.produtos_mais_consumidos,
+      );
       opportunities.push(...supplierOpportunities);
 
       // 2. Analyze batch optimization opportunities
-      const batchOpportunities = await this.analyzeBatchOptimization(analytics.produtos_mais_consumidos);
+      const batchOpportunities = await this.analyzeBatchOptimization(
+        analytics.produtos_mais_consumidos,
+      );
       opportunities.push(...batchOpportunities);
 
       // 3. Analyze waste reduction opportunities
-      const wasteOpportunities = await this.analyzeWasteReduction(centroCustoId, dataInicio, dataFim);
+      const wasteOpportunities = await this.analyzeWasteReduction(
+        centroCustoId,
+        dataInicio,
+        dataFim,
+      );
       opportunities.push(...wasteOpportunities);
 
       // 4. Analyze product substitution opportunities
-      const substitutionOpportunities = await this.analyzeProductSubstitution(analytics.produtos_mais_consumidos);
+      const substitutionOpportunities = await this.analyzeProductSubstitution(
+        analytics.produtos_mais_consumidos,
+      );
       opportunities.push(...substitutionOpportunities);
 
       // Sort by potential savings
@@ -397,14 +420,13 @@ export class ConsumptionAnalyzer {
 
       return {
         data: opportunities,
-        error: null
+        error: null,
       };
-
     } catch (error) {
-      console.error('Error generating cost optimization recommendations:', error);
+      console.error("Error generating cost optimization recommendations:", error);
       return {
         data: null,
-        error: 'Erro ao gerar recomendações de otimização'
+        error: "Erro ao gerar recomendações de otimização",
       };
     }
   }
@@ -412,52 +434,66 @@ export class ConsumptionAnalyzer {
   /**
    * Calculate product consumptions
    */
-  private async calculateProductConsumptions(consumptions: any[], totalValue: number): Promise<ProductConsumption[]> {
-    const productGroups = consumptions.reduce((acc, consumption) => {
-      const productId = consumption.produto_id;
-      if (!acc[productId]) {
-        acc[productId] = {
-          produto_id: productId,
-          nome_produto: consumption.produto?.nome || 'Produto não identificado',
-          categoria: consumption.produto?.categoria || 'Sem categoria',
-          quantidade_consumida: 0,
-          valor_consumido: 0,
-          numero_movimentacoes: 0,
-          valores_unitarios: []
+  private async calculateProductConsumptions(
+    consumptions: any[],
+    totalValue: number,
+  ): Promise<ProductConsumption[]> {
+    const productGroups = consumptions.reduce(
+      (acc, consumption) => {
+        const productId = consumption.produto_id;
+        if (!acc[productId]) {
+          acc[productId] = {
+            produto_id: productId,
+            nome_produto: consumption.produto?.nome || "Produto não identificado",
+            categoria: consumption.produto?.categoria || "Sem categoria",
+            quantidade_consumida: 0,
+            valor_consumido: 0,
+            numero_movimentacoes: 0,
+            valores_unitarios: [],
+          };
+        }
+
+        acc[productId].quantidade_consumida += consumption.quantidade;
+        acc[productId].valor_consumido += consumption.valor_total;
+        acc[productId].numero_movimentacoes += 1;
+        acc[productId].valores_unitarios.push(consumption.valor_unitario || 0);
+
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
+
+    return Object.values(productGroups)
+      .map((group: any) => {
+        const custoMedio =
+          group.valores_unitarios.reduce((sum: number, val: number) => sum + val, 0) /
+          group.valores_unitarios.length;
+        const percentualConsumo = (group.valor_consumido / totalValue) * 100;
+
+        return {
+          produto_id: group.produto_id,
+          nome_produto: group.nome_produto,
+          categoria: group.categoria,
+          quantidade_consumida: group.quantidade_consumida,
+          valor_consumido: group.valor_consumido,
+          numero_movimentacoes: group.numero_movimentacoes,
+          custo_medio_unitario: custoMedio,
+          percentual_consumo_total: percentualConsumo,
+          tendencia_mensal: "estavel" as const, // Would be calculated with historical data
+          variacao_percentual: 0, // Would be calculated with historical data
         };
-      }
-
-      acc[productId].quantidade_consumida += consumption.quantidade;
-      acc[productId].valor_consumido += consumption.valor_total;
-      acc[productId].numero_movimentacoes += 1;
-      acc[productId].valores_unitarios.push(consumption.valor_unitario || 0);
-
-      return acc;
-    }, {} as Record<string, any>);
-
-    return Object.values(productGroups).map((group: any) => {
-      const custoMedio = group.valores_unitarios.reduce((sum: number, val: number) => sum + val, 0) / group.valores_unitarios.length;
-      const percentualConsumo = (group.valor_consumido / totalValue) * 100;
-
-      return {
-        produto_id: group.produto_id,
-        nome_produto: group.nome_produto,
-        categoria: group.categoria,
-        quantidade_consumida: group.quantidade_consumida,
-        valor_consumido: group.valor_consumido,
-        numero_movimentacoes: group.numero_movimentacoes,
-        custo_medio_unitario: custoMedio,
-        percentual_consumo_total: percentualConsumo,
-        tendencia_mensal: 'estavel' as const, // Would be calculated with historical data
-        variacao_percentual: 0 // Would be calculated with historical data
-      };
-    }).sort((a, b) => b.valor_consumido - a.valor_consumido);
+      })
+      .sort((a, b) => b.valor_consumido - a.valor_consumido);
   }
 
   /**
    * Calculate consumption trends
    */
-  private async calculateConsumptionTrends(centroCustoId: string, dataInicio: Date, dataFim: Date): Promise<ConsumptionTrend[]> {
+  private async calculateConsumptionTrends(
+    centroCustoId: string,
+    dataInicio: Date,
+    dataFim: Date,
+  ): Promise<ConsumptionTrend[]> {
     // This would implement sophisticated trend analysis
     // For now, returning simplified trends
     const trends: ConsumptionTrend[] = [];
@@ -467,19 +503,19 @@ export class ConsumptionAnalyzer {
 
     for (let week = 0; week < weekCount; week++) {
       const weekStart = new Date(dataInicio);
-      weekStart.setDate(weekStart.getDate() + (week * 7));
-      
+      weekStart.setDate(weekStart.getDate() + week * 7);
+
       const weekEnd = new Date(weekStart);
       weekEnd.setDate(weekEnd.getDate() + 6);
 
       // Get week consumption data
       const { data: weekConsumptions } = await this.supabase
-        .from('saidas_estoque')
-        .select('quantidade, valor_total')
-        .eq('centro_custo_id', centroCustoId)
-        .gte('data_saida', weekStart.toISOString())
-        .lte('data_saida', weekEnd.toISOString())
-        .eq('status', 'confirmada');
+        .from("saidas_estoque")
+        .select("quantidade, valor_total")
+        .eq("centro_custo_id", centroCustoId)
+        .gte("data_saida", weekStart.toISOString())
+        .lte("data_saida", weekEnd.toISOString())
+        .eq("status", "confirmada");
 
       if (weekConsumptions) {
         const totalQuantity = weekConsumptions.reduce((sum, c) => sum + c.quantidade, 0);
@@ -489,9 +525,19 @@ export class ConsumptionAnalyzer {
           periodo: `Semana ${week + 1}`,
           quantidade_consumida: totalQuantity,
           valor_consumido: totalValue,
-          variacao_quantidade: week > 0 ? ((totalQuantity - trends[week - 1].quantidade_consumida) / trends[week - 1].quantidade_consumida) * 100 : 0,
-          variacao_valor: week > 0 ? ((totalValue - trends[week - 1].valor_consumido) / trends[week - 1].valor_consumido) * 100 : 0,
-          eficiencia_score: this.calculateEfficiencyScore(totalQuantity, totalValue)
+          variacao_quantidade:
+            week > 0
+              ? ((totalQuantity - trends[week - 1].quantidade_consumida) /
+                  trends[week - 1].quantidade_consumida) *
+                100
+              : 0,
+          variacao_valor:
+            week > 0
+              ? ((totalValue - trends[week - 1].valor_consumido) /
+                  trends[week - 1].valor_consumido) *
+                100
+              : 0,
+          eficiencia_score: this.calculateEfficiencyScore(totalQuantity, totalValue),
         });
       }
     }
@@ -502,7 +548,10 @@ export class ConsumptionAnalyzer {
   /**
    * Calculate cost efficiency
    */
-  private async calculateCostEfficiency(consumptions: any[], centroCustoId: string): Promise<CostEfficiency> {
+  private async calculateCostEfficiency(
+    consumptions: any[],
+    centroCustoId: string,
+  ): Promise<CostEfficiency> {
     const totalValue = consumptions.reduce((sum, c) => sum + c.valor_total, 0);
     const totalQuantity = consumptions.reduce((sum, c) => sum + c.quantidade, 0);
     const avgCostPerUnit = totalValue / totalQuantity;
@@ -517,29 +566,29 @@ export class ConsumptionAnalyzer {
     // Generate opportunities
     const opportunities: EfficiencyOpportunity[] = [
       {
-        tipo: 'consolidacao_fornecedor',
-        descricao: 'Consolidar compras com fornecedores preferenciais',
+        tipo: "consolidacao_fornecedor",
+        descricao: "Consolidar compras com fornecedores preferenciais",
         economia_estimada: potentialSavings * 0.4,
-        complexidade: 'media',
+        complexidade: "media",
         prazo_implementacao: 30,
-        impacto_operacional: 'moderado'
+        impacto_operacional: "moderado",
       },
       {
-        tipo: 'otimizacao_lote',
-        descricao: 'Otimizar tamanhos de lote de compra',
+        tipo: "otimizacao_lote",
+        descricao: "Otimizar tamanhos de lote de compra",
         economia_estimada: potentialSavings * 0.3,
-        complexidade: 'baixa',
+        complexidade: "baixa",
         prazo_implementacao: 15,
-        impacto_operacional: 'minimo'
+        impacto_operacional: "minimo",
       },
       {
-        tipo: 'reducao_desperdicio',
-        descricao: 'Implementar controles de desperdício',
+        tipo: "reducao_desperdicio",
+        descricao: "Implementar controles de desperdício",
         economia_estimada: identifiedWaste,
-        complexidade: 'alta',
+        complexidade: "alta",
         prazo_implementacao: 60,
-        impacto_operacional: 'significativo'
-      }
+        impacto_operacional: "significativo",
+      },
     ];
 
     return {
@@ -547,14 +596,17 @@ export class ConsumptionAnalyzer {
       custo_por_unidade_media: avgCostPerUnit,
       economia_potencial: potentialSavings,
       desperdicioIdentificado: identifiedWaste,
-      oportunidades_melhoria: opportunities
+      oportunidades_melhoria: opportunities,
     };
   }
 
   /**
    * Generate consumption alerts
    */
-  private async generateConsumptionAlerts(consumptions: any[], productConsumptions: ProductConsumption[]): Promise<ConsumptionAlert[]> {
+  private async generateConsumptionAlerts(
+    consumptions: any[],
+    productConsumptions: ProductConsumption[],
+  ): Promise<ConsumptionAlert[]> {
     const alerts: ConsumptionAlert[] = [];
 
     // Alert for high-cost products
@@ -562,28 +614,28 @@ export class ConsumptionAnalyzer {
       if (product.percentual_consumo_total > 20) {
         alerts.push({
           id: `alert-high-cost-${index}`,
-          tipo: 'custo_elevado',
+          tipo: "custo_elevado",
           produto_id: product.produto_id,
           nome_produto: product.nome_produto,
           descricao: `Produto representa ${product.percentual_consumo_total.toFixed(1)}% do consumo total`,
           valor_impacto: product.valor_consumido,
-          gravidade: product.percentual_consumo_total > 30 ? 'alta' : 'media',
-          acao_recomendada: 'Revisar fornecedores e preços para este produto',
-          data_detectado: new Date()
+          gravidade: product.percentual_consumo_total > 30 ? "alta" : "media",
+          acao_recomendada: "Revisar fornecedores e preços para este produto",
+          data_detectado: new Date(),
         });
       }
 
       if (product.custo_medio_unitario > 100) {
         alerts.push({
           id: `alert-expensive-${index}`,
-          tipo: 'custo_elevado',
+          tipo: "custo_elevado",
           produto_id: product.produto_id,
           nome_produto: product.nome_produto,
           descricao: `Produto com custo unitário elevado: R$ ${product.custo_medio_unitario.toFixed(2)}`,
           valor_impacto: product.valor_consumido,
-          gravidade: 'media',
-          acao_recomendada: 'Buscar alternativas ou negociar preços',
-          data_detectado: new Date()
+          gravidade: "media",
+          acao_recomendada: "Buscar alternativas ou negociar preços",
+          data_detectado: new Date(),
         });
       }
     });
@@ -594,7 +646,11 @@ export class ConsumptionAnalyzer {
   /**
    * Calculate product forecast
    */
-  private async calculateProductForecast(productId: string, consumptions: any[], diasPrevisao: number): Promise<ConsumptionForecast> {
+  private async calculateProductForecast(
+    productId: string,
+    consumptions: any[],
+    diasPrevisao: number,
+  ): Promise<ConsumptionForecast> {
     // Simplified forecast calculation
     const totalQuantity = consumptions.reduce((sum, c) => sum + c.quantidade, 0);
     const totalValue = consumptions.reduce((sum, c) => sum + c.valor_total, 0);
@@ -606,40 +662,45 @@ export class ConsumptionAnalyzer {
 
     return {
       produto_id: productId,
-      nome_produto: consumptions[0]?.produto?.nome || 'Produto não identificado',
+      nome_produto: consumptions[0]?.produto?.nome || "Produto não identificado",
       previsao_quantidade: forecastQuantity,
       previsao_valor: forecastValue,
       confianca_previsao: 75, // Simplified confidence
       sazonalidade_detectada: false, // Would implement seasonality detection
-      fatores_influencia: ['Histórico de consumo', 'Tendência linear'],
+      fatores_influencia: ["Histórico de consumo", "Tendência linear"],
       recomendacao_compra: {
         quantidade_recomendada: forecastQuantity * 1.1, // 10% safety margin
         prazo_compra_ideal: Math.max(7, diasPrevisao - 14),
-        justificativa: 'Baseado em consumo histórico com margem de segurança',
-        economia_esperada: forecastValue * 0.05 // 5% expected savings
-      }
+        justificativa: "Baseado em consumo histórico com margem de segurança",
+        economia_esperada: forecastValue * 0.05, // 5% expected savings
+      },
     };
   }
 
   /**
    * Analyze product consumption pattern
    */
-  private async analyzeProductPattern(centroCustoId: string, productId: string, consumptions: any[]): Promise<ConsumptionPattern> {
+  private async analyzeProductPattern(
+    centroCustoId: string,
+    productId: string,
+    consumptions: any[],
+  ): Promise<ConsumptionPattern> {
     // Analyze consumption frequency and patterns
     const monthlyConsumption = consumptions.length / 6; // 6 months of data
-    const avgQuantity = consumptions.reduce((sum, c) => sum + c.quantidade, 0) / consumptions.length;
+    const avgQuantity =
+      consumptions.reduce((sum, c) => sum + c.quantidade, 0) / consumptions.length;
 
     // Analyze time patterns
-    const hourPatterns = consumptions.map(c => new Date(c.data_saida).getHours());
-    const dayPatterns = consumptions.map(c => new Date(c.data_saida).getDay());
+    const hourPatterns = consumptions.map((c) => new Date(c.data_saida).getHours());
+    const dayPatterns = consumptions.map((c) => new Date(c.data_saida).getDay());
 
     const peakHours = this.findPeakHours(hourPatterns);
     const peakDays = this.findPeakDays(dayPatterns);
 
     // Determine pattern type
-    let patternType: 'regular' | 'sazonal' | 'irregular' | 'crescente' | 'decrescente' = 'regular';
-    if (monthlyConsumption < 1) patternType = 'irregular';
-    else if (monthlyConsumption > 4) patternType = 'regular';
+    let patternType: "regular" | "sazonal" | "irregular" | "crescente" | "decrescente" = "regular";
+    if (monthlyConsumption < 1) patternType = "irregular";
+    else if (monthlyConsumption > 4) patternType = "regular";
 
     return {
       centro_custo_id: centroCustoId,
@@ -649,7 +710,7 @@ export class ConsumptionAnalyzer {
       quantidade_media_uso: avgQuantity,
       horarios_pico: peakHours,
       dias_semana_pico: peakDays,
-      correlacoes: [] // Would implement correlation analysis
+      correlacoes: [], // Would implement correlation analysis
     };
   }
 
@@ -657,13 +718,16 @@ export class ConsumptionAnalyzer {
    * Find peak hours from hour patterns
    */
   private findPeakHours(hours: number[]): string[] {
-    const hourCounts = hours.reduce((acc, hour) => {
-      acc[hour] = (acc[hour] || 0) + 1;
-      return acc;
-    }, {} as Record<number, number>);
+    const hourCounts = hours.reduce(
+      (acc, hour) => {
+        acc[hour] = (acc[hour] || 0) + 1;
+        return acc;
+      },
+      {} as Record<number, number>,
+    );
 
     const sortedHours = Object.entries(hourCounts)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 3)
       .map(([hour]) => `${hour}:00`);
 
@@ -674,13 +738,16 @@ export class ConsumptionAnalyzer {
    * Find peak days from day patterns
    */
   private findPeakDays(days: number[]): number[] {
-    const dayCounts = days.reduce((acc, day) => {
-      acc[day] = (acc[day] || 0) + 1;
-      return acc;
-    }, {} as Record<number, number>);
+    const dayCounts = days.reduce(
+      (acc, day) => {
+        acc[day] = (acc[day] || 0) + 1;
+        return acc;
+      },
+      {} as Record<number, number>,
+    );
 
     return Object.entries(dayCounts)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 3)
       .map(([day]) => parseInt(day));
   }
@@ -692,26 +759,34 @@ export class ConsumptionAnalyzer {
     // Simplified efficiency calculation
     const costPerUnit = value / quantity;
     const benchmarkCost = 10; // Benchmark cost per unit
-    const efficiency = Math.max(0, Math.min(100, 100 - ((costPerUnit - benchmarkCost) / benchmarkCost) * 100));
+    const efficiency = Math.max(
+      0,
+      Math.min(100, 100 - ((costPerUnit - benchmarkCost) / benchmarkCost) * 100),
+    );
     return Math.round(efficiency);
   }
 
   /**
    * Analyze supplier consolidation opportunities
    */
-  private async analyzeSupplierConsolidation(products: ProductConsumption[]): Promise<EfficiencyOpportunity[]> {
+  private async analyzeSupplierConsolidation(
+    products: ProductConsumption[],
+  ): Promise<EfficiencyOpportunity[]> {
     // Simplified analysis - would involve complex supplier analysis
-    const highValueProducts = products.filter(p => p.valor_consumido > 1000);
-    
+    const highValueProducts = products.filter((p) => p.valor_consumido > 1000);
+
     if (highValueProducts.length > 5) {
-      return [{
-        tipo: 'consolidacao_fornecedor',
-        descricao: `Consolidar ${highValueProducts.length} produtos de alto valor com fornecedores preferenciais`,
-        economia_estimada: highValueProducts.reduce((sum, p) => sum + p.valor_consumido, 0) * 0.08,
-        complexidade: 'media',
-        prazo_implementacao: 45,
-        impacto_operacional: 'moderado'
-      }];
+      return [
+        {
+          tipo: "consolidacao_fornecedor",
+          descricao: `Consolidar ${highValueProducts.length} produtos de alto valor com fornecedores preferenciais`,
+          economia_estimada:
+            highValueProducts.reduce((sum, p) => sum + p.valor_consumido, 0) * 0.08,
+          complexidade: "media",
+          prazo_implementacao: 45,
+          impacto_operacional: "moderado",
+        },
+      ];
     }
 
     return [];
@@ -720,18 +795,20 @@ export class ConsumptionAnalyzer {
   /**
    * Analyze batch optimization opportunities
    */
-  private async analyzeBatchOptimization(products: ProductConsumption[]): Promise<EfficiencyOpportunity[]> {
+  private async analyzeBatchOptimization(
+    products: ProductConsumption[],
+  ): Promise<EfficiencyOpportunity[]> {
     const opportunities: EfficiencyOpportunity[] = [];
-    
-    products.forEach(product => {
+
+    products.forEach((product) => {
       if (product.numero_movimentacoes > 10 && product.valor_consumido > 500) {
         opportunities.push({
-          tipo: 'otimizacao_lote',
+          tipo: "otimizacao_lote",
           descricao: `Otimizar lotes de compra para ${product.nome_produto} (${product.numero_movimentacoes} movimentações)`,
           economia_estimada: product.valor_consumido * 0.05,
-          complexidade: 'baixa',
+          complexidade: "baixa",
           prazo_implementacao: 15,
-          impacto_operacional: 'minimo'
+          impacto_operacional: "minimo",
         });
       }
     });
@@ -742,31 +819,39 @@ export class ConsumptionAnalyzer {
   /**
    * Analyze waste reduction opportunities
    */
-  private async analyzeWasteReduction(centroCustoId: string, dataInicio: Date, dataFim: Date): Promise<EfficiencyOpportunity[]> {
+  private async analyzeWasteReduction(
+    centroCustoId: string,
+    dataInicio: Date,
+    dataFim: Date,
+  ): Promise<EfficiencyOpportunity[]> {
     // Simplified waste analysis - would involve complex waste detection
-    return [{
-      tipo: 'reducao_desperdicio',
-      descricao: 'Implementar controles FIFO e monitoramento de vencimentos',
-      economia_estimada: 2500,
-      complexidade: 'alta',
-      prazo_implementacao: 60,
-      impacto_operacional: 'significativo'
-    }];
+    return [
+      {
+        tipo: "reducao_desperdicio",
+        descricao: "Implementar controles FIFO e monitoramento de vencimentos",
+        economia_estimada: 2500,
+        complexidade: "alta",
+        prazo_implementacao: 60,
+        impacto_operacional: "significativo",
+      },
+    ];
   }
 
   /**
    * Analyze product substitution opportunities
    */
-  private async analyzeProductSubstitution(products: ProductConsumption[]): Promise<EfficiencyOpportunity[]> {
-    const expensiveProducts = products.filter(p => p.custo_medio_unitario > 50);
-    
-    return expensiveProducts.slice(0, 3).map(product => ({
-      tipo: 'substituicao_produto' as const,
+  private async analyzeProductSubstitution(
+    products: ProductConsumption[],
+  ): Promise<EfficiencyOpportunity[]> {
+    const expensiveProducts = products.filter((p) => p.custo_medio_unitario > 50);
+
+    return expensiveProducts.slice(0, 3).map((product) => ({
+      tipo: "substituicao_produto" as const,
       descricao: `Avaliar substitutos para ${product.nome_produto} (R$ ${product.custo_medio_unitario.toFixed(2)}/unidade)`,
       economia_estimada: product.valor_consumido * 0.15,
-      complexidade: 'alta',
+      complexidade: "alta",
       prazo_implementacao: 90,
-      impacto_operacional: 'significativo'
+      impacto_operacional: "significativo",
     }));
   }
 }

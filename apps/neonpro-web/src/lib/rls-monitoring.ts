@@ -4,7 +4,7 @@
  * LGPD/ANVISA/CFM validated implementation
  */
 
-import { createClient } from '@supabase/supabase-js';
+import type { createClient } from "@supabase/supabase-js";
 
 export interface RLSPerformanceMetrics {
   table_name: string;
@@ -39,11 +39,10 @@ export class RLSPerformanceMonitor {
    * Healthcare compliance: Does not expose patient data
    */
   async getPerformanceMetrics(): Promise<RLSPerformanceMetrics[]> {
-    const { data, error } = await this.supabase
-      .rpc('benchmark_rls_performance');
+    const { data, error } = await this.supabase.rpc("benchmark_rls_performance");
 
     if (error) {
-      console.error('RLS Performance Metrics Error:', error);
+      console.error("RLS Performance Metrics Error:", error);
       throw new Error(`Performance monitoring failed: ${error.message}`);
     }
 
@@ -55,11 +54,10 @@ export class RLSPerformanceMonitor {
    * LGPD/ANVISA/CFM compliance validation included
    */
   async validateOptimization(): Promise<HealthCheckResult[]> {
-    const { data, error } = await this.supabase
-      .rpc('validate_rls_optimization');
+    const { data, error } = await this.supabase.rpc("validate_rls_optimization");
 
     if (error) {
-      console.error('RLS Validation Error:', error);
+      console.error("RLS Validation Error:", error);
       throw new Error(`Health check failed: ${error.message}`);
     }
 
@@ -71,11 +69,10 @@ export class RLSPerformanceMonitor {
    * Session-level monitoring for optimization validation
    */
   async getCacheStatistics(): Promise<CacheStats[]> {
-    const { data, error } = await this.supabase
-      .rpc('get_cache_stats');
+    const { data, error } = await this.supabase.rpc("get_cache_stats");
 
     if (error) {
-      console.error('Cache Stats Error:', error);
+      console.error("Cache Stats Error:", error);
       throw new Error(`Cache monitoring failed: ${error.message}`);
     }
 
@@ -87,11 +84,10 @@ export class RLSPerformanceMonitor {
    * Healthcare compliance: Secure cache management
    */
   async clearCache(): Promise<void> {
-    const { error } = await this.supabase
-      .rpc('clear_clinic_cache');
+    const { error } = await this.supabase.rpc("clear_clinic_cache");
 
     if (error) {
-      console.error('Cache Clear Error:', error);
+      console.error("Cache Clear Error:", error);
       throw new Error(`Cache clear failed: ${error.message}`);
     }
   }
@@ -102,22 +98,22 @@ export class RLSPerformanceMonitor {
    */
   async monitorPatientDataAccess(): Promise<number> {
     const startTime = performance.now();
-    
+
     const { count, error } = await this.supabase
-      .from('patients')
-      .select('*', { count: 'exact', head: true });
-      
+      .from("patients")
+      .select("*", { count: "exact", head: true });
+
     const endTime = performance.now();
     const responseTime = endTime - startTime;
 
     if (error) {
-      console.error('Patient Data Access Error:', error);
+      console.error("Patient Data Access Error:", error);
       throw new Error(`Patient access monitoring failed: ${error.message}`);
     }
 
     // Log performance metrics (no patient data exposed)
     console.log(`Patient Data Access: ${responseTime.toFixed(2)}ms (Target: <100ms)`);
-    
+
     return responseTime;
   }
 
@@ -126,16 +122,11 @@ export class RLSPerformanceMonitor {
    * Healthcare-safe aggregated metrics
    */
   async getDashboardMetrics() {
-    const [
-      performanceMetrics,
-      healthCheck,
-      cacheStats,
-      patientAccessTime
-    ] = await Promise.all([
+    const [performanceMetrics, healthCheck, cacheStats, patientAccessTime] = await Promise.all([
       this.getPerformanceMetrics(),
       this.validateOptimization(),
       this.getCacheStatistics(),
-      this.monitorPatientDataAccess()
+      this.monitorPatientDataAccess(),
     ]);
 
     return {
@@ -145,14 +136,14 @@ export class RLSPerformanceMonitor {
       critical_metrics: {
         patient_access_time_ms: patientAccessTime,
         target_achieved: patientAccessTime < 100,
-        improvement_from_baseline: ((200 - patientAccessTime) / 200) * 100
+        improvement_from_baseline: ((200 - patientAccessTime) / 200) * 100,
       },
       compliance_status: {
         lgpd_validated: true,
         anvisa_compliant: true,
         cfm_standards_met: true,
-        multi_tenant_isolation: true
-      }
+        multi_tenant_isolation: true,
+      },
     };
   }
 
@@ -162,17 +153,19 @@ export class RLSPerformanceMonitor {
    */
   async checkPerformanceAlerts(): Promise<string[]> {
     const alerts: string[] = [];
-    
+
     try {
       const patientAccessTime = await this.monitorPatientDataAccess();
-      
+
       if (patientAccessTime > 100) {
-        alerts.push(`CRITICAL: Patient data access time ${patientAccessTime.toFixed(2)}ms exceeds 100ms target`);
+        alerts.push(
+          `CRITICAL: Patient data access time ${patientAccessTime.toFixed(2)}ms exceeds 100ms target`,
+        );
       }
 
       const healthStatus = await this.validateOptimization();
-      const failedSystems = healthStatus.filter(system => 
-        system.status !== 'OPTIMIZED' && system.status !== 'VALIDATED'
+      const failedSystems = healthStatus.filter(
+        (system) => system.status !== "OPTIMIZED" && system.status !== "VALIDATED",
       );
 
       if (failedSystems.length > 0) {
@@ -181,12 +174,11 @@ export class RLSPerformanceMonitor {
 
       // Cache efficiency check
       const cacheStats = await this.getCacheStatistics();
-      const invalidCache = cacheStats.filter(stat => !stat.cache_valid);
-      
+      const invalidCache = cacheStats.filter((stat) => !stat.cache_valid);
+
       if (invalidCache.length > 0) {
         alerts.push(`INFO: Cache efficiency may be suboptimal`);
       }
-
     } catch (error) {
       alerts.push(`ERROR: Performance monitoring system failure - ${error}`);
     }
@@ -201,12 +193,12 @@ export class RLSPerformanceMonitor {
  */
 export function useRLSPerformanceMonitoring(supabaseClient: ReturnType<typeof createClient>) {
   const monitor = new RLSPerformanceMonitor(supabaseClient);
-  
+
   return {
     getMetrics: () => monitor.getDashboardMetrics(),
     checkAlerts: () => monitor.checkPerformanceAlerts(),
     clearCache: () => monitor.clearCache(),
-    validateOptimization: () => monitor.validateOptimization()
+    validateOptimization: () => monitor.validateOptimization(),
   };
 }
 

@@ -1,29 +1,46 @@
 ﻿/**
  * Vision Analytics Engine
  * Epic 10 - Story 10.5: Vision Analytics Dashboard (Real-time Insights)
- * 
+ *
  * Comprehensive analytics engine for computer vision systems
  * Real-time data processing, correlation analysis, and insights generation
- * 
+ *
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 
-import { z } from 'zod';
-import { logger } from '@/lib/utils/logger';
-import { createClient } from '@/lib/supabase/client';
+import { z } from "zod";
+import { logger } from "@/lib/utils/logger";
+import { createClient } from "@/lib/supabase/client";
 
 // Core Types
-export type AnalyticsTimeframe = 'realtime' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly';
-export type MetricType = 'accuracy' | 'performance' | 'outcome' | 'efficiency' | 'compliance' | 'financial';
-export type TrendDirection = 'up' | 'down' | 'stable' | 'volatile';
-export type AlertSeverity = 'info' | 'warning' | 'critical' | 'emergency';
+export type AnalyticsTimeframe =
+  | "realtime"
+  | "hourly"
+  | "daily"
+  | "weekly"
+  | "monthly"
+  | "quarterly"
+  | "yearly";
+export type MetricType =
+  | "accuracy"
+  | "performance"
+  | "outcome"
+  | "efficiency"
+  | "compliance"
+  | "financial";
+export type TrendDirection = "up" | "down" | "stable" | "volatile";
+export type AlertSeverity = "info" | "warning" | "critical" | "emergency";
 
 // Analytics Interfaces
 export interface VisionMetric {
   id: string;
   timestamp: string;
   metricType: MetricType;
-  component: 'face_detection' | 'aesthetic_analysis' | 'complication_detection' | 'compliance_monitoring';
+  component:
+    | "face_detection"
+    | "aesthetic_analysis"
+    | "complication_detection"
+    | "compliance_monitoring";
   value: number;
   unit: string;
   target?: number;
@@ -62,7 +79,11 @@ export interface PatientOutcome {
   timestamp: string;
   treatmentType: string;
   visionAnalysisId: string;
-  outcomeType: 'aesthetic_result' | 'complication_status' | 'satisfaction_score' | 'healing_progress';
+  outcomeType:
+    | "aesthetic_result"
+    | "complication_status"
+    | "satisfaction_score"
+    | "healing_progress";
   beforeScore?: number;
   afterScore?: number;
   improvementRate: number;
@@ -90,7 +111,7 @@ export interface AnalyticsDashboard {
 
 export interface DashboardWidget {
   id: string;
-  type: 'metric' | 'chart' | 'table' | 'alert' | 'kpi' | 'trend' | 'heatmap' | 'gauge';
+  type: "metric" | "chart" | "table" | "alert" | "kpi" | "trend" | "heatmap" | "gauge";
   title: string;
   description?: string;
   position: WidgetPosition;
@@ -116,18 +137,18 @@ export interface WidgetSize {
 }
 
 export interface WidgetConfiguration {
-  chartType?: 'line' | 'bar' | 'pie' | 'doughnut' | 'area' | 'scatter' | 'heatmap';
+  chartType?: "line" | "bar" | "pie" | "doughnut" | "area" | "scatter" | "heatmap";
   colors?: string[];
   showLegend?: boolean;
   showGrid?: boolean;
   timeRange?: AnalyticsTimeframe;
-  aggregation?: 'sum' | 'avg' | 'min' | 'max' | 'count';
+  aggregation?: "sum" | "avg" | "min" | "max" | "count";
   groupBy?: string[];
   filterBy?: Record<string, any>;
 }
 
 export interface DataSource {
-  type: 'metric' | 'query' | 'api' | 'realtime';
+  type: "metric" | "query" | "api" | "realtime";
   source: string;
   parameters: Record<string, any>;
   cacheTTL?: number; // seconds
@@ -145,9 +166,9 @@ export interface DashboardLayout {
 export interface AnalyticsFilter {
   id: string;
   name: string;
-  type: 'date' | 'clinic' | 'patient' | 'component' | 'metric' | 'custom';
+  type: "date" | "clinic" | "patient" | "component" | "metric" | "custom";
   value: any;
-  operator: 'eq' | 'ne' | 'gt' | 'gte' | 'lt' | 'lte' | 'in' | 'nin' | 'contains';
+  operator: "eq" | "ne" | "gt" | "gte" | "lt" | "lte" | "in" | "nin" | "contains";
   required: boolean;
 }
 
@@ -156,7 +177,7 @@ export interface AlertRule {
   name: string;
   condition: string;
   threshold: number;
-  operator: 'gt' | 'gte' | 'lt' | 'lte' | 'eq' | 'ne';
+  operator: "gt" | "gte" | "lt" | "lte" | "eq" | "ne";
   severity: AlertSeverity;
   enabled: boolean;
   notification: NotificationConfig;
@@ -173,12 +194,12 @@ export interface NotificationConfig {
 export interface AnalyticsInsight {
   id: string;
   timestamp: string;
-  type: 'trend' | 'anomaly' | 'correlation' | 'prediction' | 'recommendation';
+  type: "trend" | "anomaly" | "correlation" | "prediction" | "recommendation";
   title: string;
   description: string;
   confidence: number;
-  impact: 'low' | 'medium' | 'high' | 'critical';
-  category: 'performance' | 'quality' | 'outcome' | 'efficiency' | 'cost';
+  impact: "low" | "medium" | "high" | "critical";
+  category: "performance" | "quality" | "outcome" | "efficiency" | "cost";
   metrics: string[];
   recommendations?: string[];
   actionItems?: ActionItem[];
@@ -189,10 +210,10 @@ export interface ActionItem {
   id: string;
   title: string;
   description: string;
-  priority: 'low' | 'medium' | 'high' | 'urgent';
+  priority: "low" | "medium" | "high" | "urgent";
   assignedTo?: string;
   dueDate?: string;
-  status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
+  status: "pending" | "in_progress" | "completed" | "cancelled";
   estimatedImpact?: string;
 }
 
@@ -210,7 +231,7 @@ export interface TrendAnalysis {
 }
 
 export interface SeasonalPattern {
-  type: 'daily' | 'weekly' | 'monthly' | 'quarterly';
+  type: "daily" | "weekly" | "monthly" | "quarterly";
   strength: number;
   peaks: number[];
   troughs: number[];
@@ -229,7 +250,7 @@ export interface CorrelationAnalysis {
   metric2: string;
   correlation: number;
   pValue: number;
-  significance: 'not_significant' | 'weak' | 'moderate' | 'strong' | 'very_strong';
+  significance: "not_significant" | "weak" | "moderate" | "strong" | "very_strong";
   timeframe: AnalyticsTimeframe;
   sampleSize: number;
   confidence: number;
@@ -243,7 +264,7 @@ export interface AnomalyDetection {
   expectedValue: number;
   deviation: number;
   severity: AlertSeverity;
-  anomalyType: 'spike' | 'drop' | 'trend_change' | 'pattern_break';
+  anomalyType: "spike" | "drop" | "trend_change" | "pattern_break";
   confidence: number;
   context: Record<string, any>;
 }
@@ -258,7 +279,7 @@ export interface PerformanceBenchmark {
   percentile: number;
   industryAverage?: number;
   bestPractice?: number;
-  category: 'accuracy' | 'speed' | 'efficiency' | 'quality' | 'cost';
+  category: "accuracy" | "speed" | "efficiency" | "quality" | "cost";
 }
 
 // Main Analytics Engine Class
@@ -280,22 +301,22 @@ export class createvisionAnalyticsEngine {
    */
   private async initializeAnalyticsEngine(): Promise<void> {
     try {
-      logger.info('Initializing Vision Analytics Engine...');
-      
+      logger.info("Initializing Vision Analytics Engine...");
+
       // Load benchmarks
       await this.loadPerformanceBenchmarks();
-      
+
       // Load alert rules
       await this.loadAlertRules();
-      
+
       // Start real-time processing
       if (this.isRealTimeEnabled) {
         this.startRealTimeProcessing();
       }
-      
-      logger.info('Vision Analytics Engine initialized successfully');
+
+      logger.info("Vision Analytics Engine initialized successfully");
     } catch (error) {
-      logger.error('Failed to initialize Vision Analytics Engine:', error);
+      logger.error("Failed to initialize Vision Analytics Engine:", error);
       throw error;
     }
   }
@@ -303,12 +324,12 @@ export class createvisionAnalyticsEngine {
   /**
    * Record vision metric
    */
-  async recordMetric(metric: Omit<VisionMetric, 'id' | 'timestamp'>): Promise<VisionMetric> {
+  async recordMetric(metric: Omit<VisionMetric, "id" | "timestamp">): Promise<VisionMetric> {
     try {
       const visionMetric: VisionMetric = {
         id: `metric_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         timestamp: new Date().toISOString(),
-        ...metric
+        ...metric,
       };
 
       // Add to buffer for real-time processing
@@ -322,9 +343,8 @@ export class createvisionAnalyticsEngine {
 
       logger.info(`Vision metric recorded: ${visionMetric.id}`);
       return visionMetric;
-
     } catch (error) {
-      logger.error('Failed to record vision metric:', error);
+      logger.error("Failed to record vision metric:", error);
       throw error;
     }
   }
@@ -335,11 +355,11 @@ export class createvisionAnalyticsEngine {
   async getDashboardData(
     dashboardId: string,
     filters: AnalyticsFilter[] = [],
-    timeRange: AnalyticsTimeframe = 'daily'
+    timeRange: AnalyticsTimeframe = "daily",
   ): Promise<DashboardData> {
     try {
       const dashboard = await this.getDashboard(dashboardId);
-      
+
       if (!dashboard) {
         throw new Error(`Dashboard not found: ${dashboardId}`);
       }
@@ -350,13 +370,12 @@ export class createvisionAnalyticsEngine {
         insights: await this.generateRealtimeInsights(filters, timeRange),
         alerts: await this.getActiveAlerts(filters),
         summary: await this.getDashboardSummary(filters, timeRange),
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       };
 
       return dashboardData;
-
     } catch (error) {
-      logger.error('Failed to get dashboard data:', error);
+      logger.error("Failed to get dashboard data:", error);
       throw error;
     }
   }
@@ -365,8 +384,8 @@ export class createvisionAnalyticsEngine {
    * Generate analytics insights
    */
   async generateInsights(
-    timeframe: AnalyticsTimeframe = 'daily',
-    categories: string[] = ['performance', 'outcome', 'efficiency']
+    timeframe: AnalyticsTimeframe = "daily",
+    categories: string[] = ["performance", "outcome", "efficiency"],
   ): Promise<AnalyticsInsight[]> {
     try {
       const insights: AnalyticsInsight[] = [];
@@ -395,9 +414,8 @@ export class createvisionAnalyticsEngine {
 
       logger.info(`Generated ${insights.length} analytics insights`);
       return insights;
-
     } catch (error) {
-      logger.error('Failed to generate insights:', error);
+      logger.error("Failed to generate insights:", error);
       throw error;
     }
   }
@@ -407,24 +425,23 @@ export class createvisionAnalyticsEngine {
    */
   async getPerformanceMetrics(
     component?: string,
-    timeRange: AnalyticsTimeframe = 'daily'
+    timeRange: AnalyticsTimeframe = "daily",
   ): Promise<PerformanceMetrics[]> {
     try {
       const { data, error } = await this.supabase
-        .from('vision_performance_metrics')
-        .select('*')
-        .gte('timestamp', this.getTimeRangeStart(timeRange))
-        .eq(component ? 'component' : 'component', component || 'all')
-        .order('timestamp', { ascending: false });
+        .from("vision_performance_metrics")
+        .select("*")
+        .gte("timestamp", this.getTimeRangeStart(timeRange))
+        .eq(component ? "component" : "component", component || "all")
+        .order("timestamp", { ascending: false });
 
       if (error) {
         throw error;
       }
 
       return data || [];
-
     } catch (error) {
-      logger.error('Failed to get performance metrics:', error);
+      logger.error("Failed to get performance metrics:", error);
       throw error;
     }
   }
@@ -434,17 +451,17 @@ export class createvisionAnalyticsEngine {
    */
   async getPatientOutcomes(
     patientId?: string,
-    timeRange: AnalyticsTimeframe = 'monthly'
+    timeRange: AnalyticsTimeframe = "monthly",
   ): Promise<PatientOutcome[]> {
     try {
       let query = this.supabase
-        .from('patient_outcomes')
-        .select('*')
-        .gte('timestamp', this.getTimeRangeStart(timeRange))
-        .order('timestamp', { ascending: false });
+        .from("patient_outcomes")
+        .select("*")
+        .gte("timestamp", this.getTimeRangeStart(timeRange))
+        .order("timestamp", { ascending: false });
 
       if (patientId) {
-        query = query.eq('patient_id', patientId);
+        query = query.eq("patient_id", patientId);
       }
 
       const { data, error } = await query;
@@ -454,9 +471,8 @@ export class createvisionAnalyticsEngine {
       }
 
       return data || [];
-
     } catch (error) {
-      logger.error('Failed to get patient outcomes:', error);
+      logger.error("Failed to get patient outcomes:", error);
       throw error;
     }
   }
@@ -466,17 +482,17 @@ export class createvisionAnalyticsEngine {
    */
   async analyzeTreatmentEffectiveness(
     treatmentType?: string,
-    timeRange: AnalyticsTimeframe = 'quarterly'
+    timeRange: AnalyticsTimeframe = "quarterly",
   ): Promise<TreatmentEffectivenessAnalysis> {
     try {
       const outcomes = await this.getPatientOutcomes(undefined, timeRange);
-      
-      const filteredOutcomes = treatmentType 
-        ? outcomes.filter(o => o.treatmentType === treatmentType)
+
+      const filteredOutcomes = treatmentType
+        ? outcomes.filter((o) => o.treatmentType === treatmentType)
         : outcomes;
 
       const analysis: TreatmentEffectivenessAnalysis = {
-        treatmentType: treatmentType || 'all',
+        treatmentType: treatmentType || "all",
         timeRange,
         totalPatients: filteredOutcomes.length,
         successRate: this.calculateSuccessRate(filteredOutcomes),
@@ -485,13 +501,12 @@ export class createvisionAnalyticsEngine {
         complicationRate: this.calculateComplicationRate(filteredOutcomes),
         outcomesByType: this.groupOutcomesByType(filteredOutcomes),
         trends: await this.analyzeTreatmentTrends(filteredOutcomes),
-        recommendations: this.generateTreatmentRecommendations(filteredOutcomes)
+        recommendations: this.generateTreatmentRecommendations(filteredOutcomes),
       };
 
       return analysis;
-
     } catch (error) {
-      logger.error('Failed to analyze treatment effectiveness:', error);
+      logger.error("Failed to analyze treatment effectiveness:", error);
       throw error;
     }
   }
@@ -501,15 +516,15 @@ export class createvisionAnalyticsEngine {
    */
   async generatePredictiveInsights(
     patientId: string,
-    treatmentType: string
+    treatmentType: string,
   ): Promise<PredictiveInsights> {
     try {
       // Get historical data for similar cases
       const similarCases = await this.findSimilarCases(patientId, treatmentType);
-      
+
       // Analyze patterns
       const patterns = await this.analyzePatterns(similarCases);
-      
+
       // Generate predictions
       const predictions: PredictiveInsights = {
         patientId,
@@ -521,13 +536,12 @@ export class createvisionAnalyticsEngine {
         recommendedActions: this.generateRecommendedActions(patterns),
         confidence: this.calculatePredictionConfidence(patterns),
         factors: this.identifyInfluencingFactors(patterns),
-        generatedAt: new Date().toISOString()
+        generatedAt: new Date().toISOString(),
       };
 
       return predictions;
-
     } catch (error) {
-      logger.error('Failed to generate predictive insights:', error);
+      logger.error("Failed to generate predictive insights:", error);
       throw error;
     }
   }
@@ -537,17 +551,17 @@ export class createvisionAnalyticsEngine {
    */
   async getClinicAnalytics(
     clinicId: string,
-    timeRange: AnalyticsTimeframe = 'monthly'
+    timeRange: AnalyticsTimeframe = "monthly",
   ): Promise<ClinicAnalytics> {
     try {
       const startDate = this.getTimeRangeStart(timeRange);
 
       // Get all metrics for the clinic
       const { data: metrics } = await this.supabase
-        .from('vision_metrics')
-        .select('*')
-        .eq('clinic_id', clinicId)
-        .gte('timestamp', startDate);
+        .from("vision_metrics")
+        .select("*")
+        .eq("clinic_id", clinicId)
+        .gte("timestamp", startDate);
 
       // Get patient outcomes
       const outcomes = await this.getPatientOutcomes(undefined, timeRange);
@@ -565,13 +579,12 @@ export class createvisionAnalyticsEngine {
         efficiency: this.calculateEfficiencyMetrics(metrics || [], outcomes),
         roi: await this.calculateROI(clinicId, timeRange),
         trends: this.identifyTrends(metrics || []),
-        recommendations: this.generateClinicRecommendations(metrics || [], outcomes)
+        recommendations: this.generateClinicRecommendations(metrics || [], outcomes),
       };
 
       return analytics;
-
     } catch (error) {
-      logger.error('Failed to get clinic analytics:', error);
+      logger.error("Failed to get clinic analytics:", error);
       throw error;
     }
   }
@@ -580,50 +593,47 @@ export class createvisionAnalyticsEngine {
   private async loadPerformanceBenchmarks(): Promise<void> {
     const defaultBenchmarks: PerformanceBenchmark[] = [
       {
-        id: 'face_detection_accuracy',
-        component: 'face_detection',
-        metricType: 'accuracy',
+        id: "face_detection_accuracy",
+        component: "face_detection",
+        metricType: "accuracy",
         benchmarkValue: 95,
         currentValue: 0,
         variance: 0,
         percentile: 0,
-        category: 'accuracy'
+        category: "accuracy",
       },
       {
-        id: 'aesthetic_analysis_accuracy',
-        component: 'aesthetic_analysis',
-        metricType: 'accuracy',
+        id: "aesthetic_analysis_accuracy",
+        component: "aesthetic_analysis",
+        metricType: "accuracy",
         benchmarkValue: 90,
         currentValue: 0,
         variance: 0,
         percentile: 0,
-        category: 'accuracy'
+        category: "accuracy",
       },
       {
-        id: 'complication_detection_accuracy',
-        component: 'complication_detection',
-        metricType: 'accuracy',
+        id: "complication_detection_accuracy",
+        component: "complication_detection",
+        metricType: "accuracy",
         benchmarkValue: 95,
         currentValue: 0,
         variance: 0,
         percentile: 0,
-        category: 'accuracy'
-      }
+        category: "accuracy",
+      },
     ];
 
-    defaultBenchmarks.forEach(benchmark => {
+    defaultBenchmarks.forEach((benchmark) => {
       this.benchmarks.set(benchmark.id, benchmark);
     });
   }
 
   private async loadAlertRules(): Promise<void> {
-    const { data } = await this.supabase
-      .from('alert_rules')
-      .select('*')
-      .eq('enabled', true);
+    const { data } = await this.supabase.from("alert_rules").select("*").eq("enabled", true);
 
     if (data) {
-      data.forEach(rule => {
+      data.forEach((rule) => {
         this.alertRules.set(rule.id, rule);
       });
     }
@@ -636,7 +646,7 @@ export class createvisionAnalyticsEngine {
         await this.generateRealtimeInsights();
         await this.updateDashboards();
       } catch (error) {
-        logger.error('Real-time processing error:', error);
+        logger.error("Real-time processing error:", error);
       }
     }, this.refreshInterval);
   }
@@ -658,37 +668,40 @@ export class createvisionAnalyticsEngine {
   private async processBatch(metrics: VisionMetric[]): Promise<void> {
     // Aggregate metrics
     const aggregated = this.aggregateMetrics(metrics);
-    
+
     // Update performance metrics
     await this.updatePerformanceMetrics(aggregated);
-    
+
     // Check for anomalies
     await this.checkAnomalies(aggregated);
-    
+
     // Update trends
     await this.updateTrends(aggregated);
   }
 
   private aggregateMetrics(metrics: VisionMetric[]): Record<string, any> {
-    const grouped = metrics.reduce((acc, metric) => {
-      const key = `${metric.component}_${metric.metricType}`;
-      if (!acc[key]) {
-        acc[key] = [];
-      }
-      acc[key].push(metric);
-      return acc;
-    }, {} as Record<string, VisionMetric[]>);
+    const grouped = metrics.reduce(
+      (acc, metric) => {
+        const key = `${metric.component}_${metric.metricType}`;
+        if (!acc[key]) {
+          acc[key] = [];
+        }
+        acc[key].push(metric);
+        return acc;
+      },
+      {} as Record<string, VisionMetric[]>,
+    );
 
     const aggregated: Record<string, any> = {};
-    
+
     Object.entries(grouped).forEach(([key, metricGroup]) => {
       aggregated[key] = {
         count: metricGroup.length,
         avg: metricGroup.reduce((sum, m) => sum + m.value, 0) / metricGroup.length,
-        min: Math.min(...metricGroup.map(m => m.value)),
-        max: Math.max(...metricGroup.map(m => m.value)),
+        min: Math.min(...metricGroup.map((m) => m.value)),
+        max: Math.max(...metricGroup.map((m) => m.value)),
         sum: metricGroup.reduce((sum, m) => sum + m.value, 0),
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     });
 
@@ -698,38 +711,36 @@ export class createvisionAnalyticsEngine {
   private getTimeRangeStart(timeRange: AnalyticsTimeframe): string {
     const now = new Date();
     const ranges: Record<AnalyticsTimeframe, number> = {
-      realtime: 5 * 60 * 1000,     // 5 minutes
-      hourly: 60 * 60 * 1000,      // 1 hour
-      daily: 24 * 60 * 60 * 1000,  // 1 day
-      weekly: 7 * 24 * 60 * 60 * 1000,    // 1 week
-      monthly: 30 * 24 * 60 * 60 * 1000,  // 30 days
+      realtime: 5 * 60 * 1000, // 5 minutes
+      hourly: 60 * 60 * 1000, // 1 hour
+      daily: 24 * 60 * 60 * 1000, // 1 day
+      weekly: 7 * 24 * 60 * 60 * 1000, // 1 week
+      monthly: 30 * 24 * 60 * 60 * 1000, // 30 days
       quarterly: 90 * 24 * 60 * 60 * 1000, // 90 days
-      yearly: 365 * 24 * 60 * 60 * 1000    // 365 days
+      yearly: 365 * 24 * 60 * 60 * 1000, // 365 days
     };
 
     return new Date(now.getTime() - ranges[timeRange]).toISOString();
   }
 
   private async saveMetric(metric: VisionMetric): Promise<void> {
-    const { error } = await this.supabase
-      .from('vision_metrics')
-      .insert({
-        id: metric.id,
-        timestamp: metric.timestamp,
-        metric_type: metric.metricType,
-        component: metric.component,
-        value: metric.value,
-        unit: metric.unit,
-        target: metric.target,
-        threshold: metric.threshold,
-        metadata: metric.metadata,
-        patient_id: metric.patientId,
-        clinic_id: metric.clinicId,
-        user_id: metric.userId
-      });
+    const { error } = await this.supabase.from("vision_metrics").insert({
+      id: metric.id,
+      timestamp: metric.timestamp,
+      metric_type: metric.metricType,
+      component: metric.component,
+      value: metric.value,
+      unit: metric.unit,
+      target: metric.target,
+      threshold: metric.threshold,
+      metadata: metric.metadata,
+      patient_id: metric.patientId,
+      clinic_id: metric.clinicId,
+      user_id: metric.userId,
+    });
 
     if (error) {
-      logger.error('Failed to save metric:', error);
+      logger.error("Failed to save metric:", error);
     }
   }
 
@@ -746,13 +757,20 @@ export class createvisionAnalyticsEngine {
     const threshold = rule.threshold;
 
     switch (rule.operator) {
-      case 'gt': return value > threshold;
-      case 'gte': return value >= threshold;
-      case 'lt': return value < threshold;
-      case 'lte': return value <= threshold;
-      case 'eq': return value === threshold;
-      case 'ne': return value !== threshold;
-      default: return false;
+      case "gt":
+        return value > threshold;
+      case "gte":
+        return value >= threshold;
+      case "lt":
+        return value < threshold;
+      case "lte":
+        return value <= threshold;
+      case "eq":
+        return value === threshold;
+      case "ne":
+        return value !== threshold;
+      default:
+        return false;
     }
   }
 
@@ -764,31 +782,34 @@ export class createvisionAnalyticsEngine {
   // Additional helper methods would be implemented here...
   private calculateSuccessRate(outcomes: PatientOutcome[]): number {
     if (outcomes.length === 0) return 0;
-    const successful = outcomes.filter(o => o.treatmentSuccess).length;
+    const successful = outcomes.filter((o) => o.treatmentSuccess).length;
     return (successful / outcomes.length) * 100;
   }
 
   private calculateAverageImprovement(outcomes: PatientOutcome[]): number {
-    const improvementRates = outcomes.map(o => o.improvementRate);
+    const improvementRates = outcomes.map((o) => o.improvementRate);
     return improvementRates.reduce((sum, rate) => sum + rate, 0) / improvementRates.length;
   }
 
   private calculateAverageSatisfaction(outcomes: PatientOutcome[]): number {
-    const scores = outcomes.map(o => o.satisfactionScore);
+    const scores = outcomes.map((o) => o.satisfactionScore);
     return scores.reduce((sum, score) => sum + score, 0) / scores.length;
   }
 
   private calculateComplicationRate(outcomes: PatientOutcome[]): number {
     if (outcomes.length === 0) return 0;
-    const complications = outcomes.filter(o => o.complicationDetected).length;
+    const complications = outcomes.filter((o) => o.complicationDetected).length;
     return (complications / outcomes.length) * 100;
   }
 
   private groupOutcomesByType(outcomes: PatientOutcome[]): Record<string, number> {
-    return outcomes.reduce((acc, outcome) => {
-      acc[outcome.outcomeType] = (acc[outcome.outcomeType] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    return outcomes.reduce(
+      (acc, outcome) => {
+        acc[outcome.outcomeType] = (acc[outcome.outcomeType] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
   }
 
   // Placeholder methods that would be fully implemented
@@ -797,12 +818,19 @@ export class createvisionAnalyticsEngine {
     return null;
   }
 
-  private async getWidgetData(widgets: DashboardWidget[], filters: AnalyticsFilter[], timeRange: AnalyticsTimeframe): Promise<any[]> {
+  private async getWidgetData(
+    widgets: DashboardWidget[],
+    filters: AnalyticsFilter[],
+    timeRange: AnalyticsTimeframe,
+  ): Promise<any[]> {
     // Implementation would fetch data for each widget
     return [];
   }
 
-  private async generateRealtimeInsights(filters?: AnalyticsFilter[], timeRange?: AnalyticsTimeframe): Promise<AnalyticsInsight[]> {
+  private async generateRealtimeInsights(
+    filters?: AnalyticsFilter[],
+    timeRange?: AnalyticsTimeframe,
+  ): Promise<AnalyticsInsight[]> {
     // Implementation would generate real-time insights
     return [];
   }
@@ -812,7 +840,10 @@ export class createvisionAnalyticsEngine {
     return [];
   }
 
-  private async getDashboardSummary(filters: AnalyticsFilter[], timeRange: AnalyticsTimeframe): Promise<any> {
+  private async getDashboardSummary(
+    filters: AnalyticsFilter[],
+    timeRange: AnalyticsTimeframe,
+  ): Promise<any> {
     // Implementation would generate dashboard summary
     return {};
   }
@@ -821,7 +852,10 @@ export class createvisionAnalyticsEngine {
     // Implementation would save insight to database
   }
 
-  private async analyzeTrends(timeframe: AnalyticsTimeframe, categories: string[]): Promise<TrendAnalysis[]> {
+  private async analyzeTrends(
+    timeframe: AnalyticsTimeframe,
+    categories: string[],
+  ): Promise<TrendAnalysis[]> {
     // Implementation would analyze trends
     return [];
   }
@@ -831,7 +865,10 @@ export class createvisionAnalyticsEngine {
     return [];
   }
 
-  private async detectAnomalies(timeframe: AnalyticsTimeframe, categories: string[]): Promise<AnomalyDetection[]> {
+  private async detectAnomalies(
+    timeframe: AnalyticsTimeframe,
+    categories: string[],
+  ): Promise<AnomalyDetection[]> {
     // Implementation would detect anomalies
     return [];
   }
@@ -841,7 +878,10 @@ export class createvisionAnalyticsEngine {
     return [];
   }
 
-  private async analyzeCorrelations(timeframe: AnalyticsTimeframe, categories: string[]): Promise<CorrelationAnalysis[]> {
+  private async analyzeCorrelations(
+    timeframe: AnalyticsTimeframe,
+    categories: string[],
+  ): Promise<CorrelationAnalysis[]> {
     // Implementation would analyze correlations
     return [];
   }
@@ -871,7 +911,10 @@ export class createvisionAnalyticsEngine {
     return [];
   }
 
-  private async findSimilarCases(patientId: string, treatmentType: string): Promise<PatientOutcome[]> {
+  private async findSimilarCases(
+    patientId: string,
+    treatmentType: string,
+  ): Promise<PatientOutcome[]> {
     // Implementation would find similar cases
     return [];
   }
@@ -883,7 +926,7 @@ export class createvisionAnalyticsEngine {
 
   private predictOutcome(patterns: any): string {
     // Implementation would predict outcome
-    return 'positive';
+    return "positive";
   }
 
   private calculateSuccessProbability(patterns: any): number {
@@ -893,7 +936,7 @@ export class createvisionAnalyticsEngine {
 
   private assessComplicationRisk(patterns: any): string {
     // Implementation would assess complication risk
-    return 'low';
+    return "low";
   }
 
   private estimateRecoveryTime(patterns: any): number {
@@ -946,7 +989,10 @@ export class createvisionAnalyticsEngine {
     return {};
   }
 
-  private generateClinicRecommendations(metrics: VisionMetric[], outcomes: PatientOutcome[]): string[] {
+  private generateClinicRecommendations(
+    metrics: VisionMetric[],
+    outcomes: PatientOutcome[],
+  ): string[] {
     // Implementation would generate clinic recommendations
     return [];
   }
@@ -1019,8 +1065,20 @@ export interface ClinicAnalytics {
 
 // Validation schemas
 export const VisionMetricSchema = z.object({
-  metricType: z.enum(['accuracy', 'performance', 'outcome', 'efficiency', 'compliance', 'financial']),
-  component: z.enum(['face_detection', 'aesthetic_analysis', 'complication_detection', 'compliance_monitoring']),
+  metricType: z.enum([
+    "accuracy",
+    "performance",
+    "outcome",
+    "efficiency",
+    "compliance",
+    "financial",
+  ]),
+  component: z.enum([
+    "face_detection",
+    "aesthetic_analysis",
+    "complication_detection",
+    "compliance_monitoring",
+  ]),
   value: z.number().min(0),
   unit: z.string().min(1),
   target: z.number().min(0).optional(),
@@ -1028,7 +1086,7 @@ export const VisionMetricSchema = z.object({
   metadata: z.record(z.any()),
   patientId: z.string().optional(),
   clinicId: z.string().min(1),
-  userId: z.string().optional()
+  userId: z.string().optional(),
 });
 
 // Export singleton instance

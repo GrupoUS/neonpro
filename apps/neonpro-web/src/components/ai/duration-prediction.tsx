@@ -1,24 +1,37 @@
 /**
  * AI Duration Prediction Component
- * 
+ *
  * Provides intelligent appointment duration suggestions with confidence indicators
  * and manual override capabilities. Integrates with A/B testing framework.
  */
 
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { Brain, Clock, TrendingUp, AlertTriangle, CheckCircle, Info } from 'lucide-react';
-import { toast } from 'sonner';
+import React, { useState, useEffect } from "react";
+import type { Button } from "@/components/ui/button";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Badge } from "@/components/ui/badge";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Switch } from "@/components/ui/switch";
+import type { Brain, Clock, TrendingUp, AlertTriangle, CheckCircle, Info } from "lucide-react";
+import type { toast } from "sonner";
 
 // Types
 interface PredictionRequest {
@@ -27,9 +40,9 @@ interface PredictionRequest {
   professionalId: string;
   patientAge?: number;
   isFirstVisit: boolean;
-  patientAnxietyLevel?: 'low' | 'medium' | 'high';
-  treatmentComplexity?: 'simple' | 'standard' | 'complex';
-  timeOfDay: 'morning' | 'afternoon' | 'evening';
+  patientAnxietyLevel?: "low" | "medium" | "high";
+  treatmentComplexity?: "simple" | "standard" | "complex";
+  timeOfDay: "morning" | "afternoon" | "evening";
   dayOfWeek: number;
   historicalDuration?: number;
   specialRequirements?: string[];
@@ -46,7 +59,7 @@ interface PredictionResponse {
       max: number;
     };
     isAIPrediction: boolean;
-    testGroup: 'control' | 'ai_prediction';
+    testGroup: "control" | "ai_prediction";
   };
   fallbackDuration?: number;
   error?: string;
@@ -73,25 +86,27 @@ export default function AIDurationPrediction({
   historicalDuration,
   onDurationSelected,
   onOverride,
-  className = ''
+  className = "",
 }: AIDurationPredictionProps) {
   // State
-  const [prediction, setPrediction] = useState<PredictionResponse['prediction'] | null>(null);
+  const [prediction, setPrediction] = useState<PredictionResponse["prediction"] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [manualDuration, setManualDuration] = useState<number>(0);
-  const [overrideReason, setOverrideReason] = useState('');
+  const [overrideReason, setOverrideReason] = useState("");
   const [useManualOverride, setUseManualOverride] = useState(false);
   const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
-  
+
   // Advanced options state
-  const [anxietyLevel, setAnxietyLevel] = useState<'low' | 'medium' | 'high'>('medium');
-  const [treatmentComplexity, setTreatmentComplexity] = useState<'simple' | 'standard' | 'complex'>('standard');
-  const [specialRequirements, setSpecialRequirements] = useState<string>('');
+  const [anxietyLevel, setAnxietyLevel] = useState<"low" | "medium" | "high">("medium");
+  const [treatmentComplexity, setTreatmentComplexity] = useState<"simple" | "standard" | "complex">(
+    "standard",
+  );
+  const [specialRequirements, setSpecialRequirements] = useState<string>("");
 
   // Get current time info
   const now = new Date();
-  const timeOfDay = now.getHours() < 12 ? 'morning' : now.getHours() < 17 ? 'afternoon' : 'evening';
+  const timeOfDay = now.getHours() < 12 ? "morning" : now.getHours() < 17 ? "afternoon" : "evening";
   const dayOfWeek = now.getDay();
 
   // Generate prediction on component mount and when key props change
@@ -117,39 +132,40 @@ export default function AIDurationPrediction({
         isFirstVisit,
         patientAnxietyLevel: anxietyLevel,
         treatmentComplexity,
-        timeOfDay: timeOfDay as 'morning' | 'afternoon' | 'evening',
+        timeOfDay: timeOfDay as "morning" | "afternoon" | "evening",
         dayOfWeek,
         historicalDuration,
-        specialRequirements: specialRequirements ? specialRequirements.split(',').map(s => s.trim()) : []
+        specialRequirements: specialRequirements
+          ? specialRequirements.split(",").map((s) => s.trim())
+          : [],
       };
 
-      const response = await fetch('/api/ai/predict-duration', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestData)
+      const response = await fetch("/api/ai/predict-duration", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestData),
       });
 
       const data: PredictionResponse = await response.json();
 
       if (!data.success) {
-        throw new Error(data.error || 'Failed to generate prediction');
+        throw new Error(data.error || "Failed to generate prediction");
       }
 
       setPrediction(data.prediction || null);
-      
+
       if (data.prediction) {
         setManualDuration(data.prediction.predictedDuration);
-        
+
         // Auto-select AI prediction if confidence is high enough
         if (data.prediction.confidenceScore >= 0.8 && !useManualOverride) {
           onDurationSelected(data.prediction.predictedDuration, data.prediction.isAIPrediction);
         }
       }
-
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+      const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
       setError(errorMessage);
-      toast.error('Prediction failed', { description: errorMessage });
+      toast.error("Prediction failed", { description: errorMessage });
     } finally {
       setLoading(false);
     }
@@ -159,17 +175,19 @@ export default function AIDurationPrediction({
    * Handle duration selection
    */
   const handleDurationSelect = () => {
-    const selectedDuration = useManualOverride ? manualDuration : prediction?.predictedDuration || 30;
+    const selectedDuration = useManualOverride
+      ? manualDuration
+      : prediction?.predictedDuration || 30;
     const isAI = !useManualOverride && prediction?.isAIPrediction;
-    
+
     onDurationSelected(selectedDuration, isAI || false);
-    
+
     if (useManualOverride && overrideReason && onOverride) {
       onOverride(overrideReason);
     }
-    
-    toast.success('Duration selected', {
-      description: `${selectedDuration} minutes ${isAI ? '(AI prediction)' : '(manual)'}`
+
+    toast.success("Duration selected", {
+      description: `${selectedDuration} minutes ${isAI ? "(AI prediction)" : "(manual)"}`,
     });
   };
 
@@ -177,9 +195,11 @@ export default function AIDurationPrediction({
    * Get confidence badge variant
    */
   const getConfidenceBadge = (confidence: number) => {
-    if (confidence >= 0.8) return { variant: 'default' as const, icon: CheckCircle, color: 'text-green-600' };
-    if (confidence >= 0.6) return { variant: 'secondary' as const, icon: Info, color: 'text-blue-600' };
-    return { variant: 'destructive' as const, icon: AlertTriangle, color: 'text-orange-600' };
+    if (confidence >= 0.8)
+      return { variant: "default" as const, icon: CheckCircle, color: "text-green-600" };
+    if (confidence >= 0.6)
+      return { variant: "secondary" as const, icon: Info, color: "text-blue-600" };
+    return { variant: "destructive" as const, icon: AlertTriangle, color: "text-orange-600" };
   };
 
   /**
@@ -232,10 +252,14 @@ export default function AIDurationPrediction({
                   </div>
                 </div>
               </div>
-              
+
               <div className="text-right">
                 {(() => {
-                  const { variant, icon: Icon, color } = getConfidenceBadge(prediction.confidenceScore);
+                  const {
+                    variant,
+                    icon: Icon,
+                    color,
+                  } = getConfidenceBadge(prediction.confidenceScore);
                   return (
                     <Badge variant={variant} className="flex items-center gap-1">
                       <Icon className={`h-3 w-3 ${color}`} />
@@ -244,13 +268,13 @@ export default function AIDurationPrediction({
                   );
                 })()}
                 <div className="text-xs text-gray-500 mt-1">
-                  {prediction.isAIPrediction ? 'AI Model' : 'Baseline'} • {prediction.testGroup}
+                  {prediction.isAIPrediction ? "AI Model" : "Baseline"} • {prediction.testGroup}
                 </div>
               </div>
             </div>
 
             {/* Test group info */}
-            {prediction.testGroup === 'ai_prediction' && (
+            {prediction.testGroup === "ai_prediction" && (
               <Alert>
                 <TrendingUp className="h-4 w-4" />
                 <AlertDescription>
@@ -314,7 +338,7 @@ export default function AIDurationPrediction({
                 onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}
                 className="w-full"
               >
-                {showAdvancedOptions ? 'Hide' : 'Show'} Advanced Options
+                {showAdvancedOptions ? "Hide" : "Show"} Advanced Options
               </Button>
 
               {showAdvancedOptions && (
@@ -324,7 +348,10 @@ export default function AIDurationPrediction({
                       <Label htmlFor="anxiety-level" className="text-sm font-medium">
                         Patient Anxiety Level
                       </Label>
-                      <Select value={anxietyLevel} onValueChange={(value: 'low' | 'medium' | 'high') => setAnxietyLevel(value)}>
+                      <Select
+                        value={anxietyLevel}
+                        onValueChange={(value: "low" | "medium" | "high") => setAnxietyLevel(value)}
+                      >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
@@ -340,7 +367,12 @@ export default function AIDurationPrediction({
                       <Label htmlFor="treatment-complexity" className="text-sm font-medium">
                         Treatment Complexity
                       </Label>
-                      <Select value={treatmentComplexity} onValueChange={(value: 'simple' | 'standard' | 'complex') => setTreatmentComplexity(value)}>
+                      <Select
+                        value={treatmentComplexity}
+                        onValueChange={(value: "simple" | "standard" | "complex") =>
+                          setTreatmentComplexity(value)
+                        }
+                      >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
@@ -388,7 +420,9 @@ export default function AIDurationPrediction({
           disabled={loading || !prediction || (useManualOverride && manualDuration <= 0)}
           className="w-full"
         >
-          {loading ? 'Generating...' : `Select ${useManualOverride ? manualDuration : prediction?.predictedDuration || 0} minutes`}
+          {loading
+            ? "Generating..."
+            : `Select ${useManualOverride ? manualDuration : prediction?.predictedDuration || 0} minutes`}
         </Button>
       </CardFooter>
     </Card>

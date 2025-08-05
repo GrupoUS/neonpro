@@ -1,22 +1,28 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table'
-import { 
+import React, { useState } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Badge } from "@/components/ui/badge";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -24,27 +30,27 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { 
+} from "@/components/ui/dialog";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
-import { 
-  Search, 
-  Filter, 
-  Plus, 
-  Eye, 
-  Edit, 
-  AlertTriangle, 
-  Shield, 
-  Clock, 
-  CheckCircle, 
-  XCircle, 
-  Download, 
+} from "@/components/ui/select";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
+  Search,
+  Filter,
+  Plus,
+  Eye,
+  Edit,
+  AlertTriangle,
+  Shield,
+  Clock,
+  CheckCircle,
+  XCircle,
+  Download,
   RefreshCw,
   Bell,
   Users,
@@ -52,13 +58,13 @@ import {
   FileText,
   ExternalLink,
   Mail,
-  Phone
-} from 'lucide-react'
-import { useBreachManagement } from '@/hooks/useLGPD'
-import { BreachIncident } from '@/types/lgpd'
+  Phone,
+} from "lucide-react";
+import type { useBreachManagement } from "@/hooks/useLGPD";
+import type { BreachIncident } from "@/types/lgpd";
 
 interface BreachManagementPanelProps {
-  className?: string
+  className?: string;
 }
 
 export function BreachManagementPanel({ className }: BreachManagementPanelProps) {
@@ -69,120 +75,167 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
     reportIncident,
     updateIncident,
     exportIncidents,
-    refreshData
-  } = useBreachManagement()
+    refreshData,
+  } = useBreachManagement();
 
-  const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState<string>('all')
-  const [severityFilter, setSeverityFilter] = useState<string>('all')
-  const [selectedIncident, setSelectedIncident] = useState<BreachIncident | null>(null)
-  const [isCreateOpen, setIsCreateOpen] = useState(false)
-  const [isEditOpen, setIsEditOpen] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [severityFilter, setSeverityFilter] = useState<string>("all");
+  const [selectedIncident, setSelectedIncident] = useState<BreachIncident | null>(null);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const [newIncident, setNewIncident] = useState({
-    title: '',
-    description: '',
-    severity: 'medium' as 'low' | 'medium' | 'high' | 'critical',
+    title: "",
+    description: "",
+    severity: "medium" as "low" | "medium" | "high" | "critical",
     affected_data_types: [] as string[],
     affected_individuals_count: 0,
-    discovery_method: '',
-    containment_actions: '',
-    notification_required: false
-  })
+    discovery_method: "",
+    containment_actions: "",
+    notification_required: false,
+  });
 
   // Filtrar incidentes
-  const filteredIncidents = incidents?.filter(incident => {
-    const matchesSearch = 
-      incident.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      incident.description?.toLowerCase().includes(searchTerm.toLowerCase())
-    
-    const matchesStatus = statusFilter === 'all' || incident.status === statusFilter
-    const matchesSeverity = severityFilter === 'all' || incident.severity === severityFilter
-    
-    return matchesSearch && matchesStatus && matchesSeverity
-  }) || []
+  const filteredIncidents =
+    incidents?.filter((incident) => {
+      const matchesSearch =
+        incident.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        incident.description?.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesStatus = statusFilter === "all" || incident.status === statusFilter;
+      const matchesSeverity = severityFilter === "all" || incident.severity === severityFilter;
+
+      return matchesSearch && matchesStatus && matchesSeverity;
+    }) || [];
 
   const getSeverityBadge = (severity: string) => {
     switch (severity) {
-      case 'low':
-        return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">Baixa</Badge>
-      case 'medium':
-        return <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">Média</Badge>
-      case 'high':
-        return <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">Alta</Badge>
-      case 'critical':
-        return <Badge variant="destructive">Crítica</Badge>
+      case "low":
+        return (
+          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+            Baixa
+          </Badge>
+        );
+      case "medium":
+        return (
+          <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
+            Média
+          </Badge>
+        );
+      case "high":
+        return (
+          <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
+            Alta
+          </Badge>
+        );
+      case "critical":
+        return <Badge variant="destructive">Crítica</Badge>;
       default:
-        return <Badge variant="secondary">{severity}</Badge>
+        return <Badge variant="secondary">{severity}</Badge>;
     }
-  }
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'reported':
-        return <Badge variant="secondary"><Bell className="h-3 w-3 mr-1" />Reportado</Badge>
-      case 'investigating':
-        return <Badge variant="default"><Search className="h-3 w-3 mr-1" />Investigando</Badge>
-      case 'contained':
-        return <Badge variant="outline"><Shield className="h-3 w-3 mr-1" />Contido</Badge>
-      case 'resolved':
-        return <Badge variant="outline" className="bg-green-50 text-green-700"><CheckCircle className="h-3 w-3 mr-1" />Resolvido</Badge>
-      case 'closed':
-        return <Badge variant="outline"><XCircle className="h-3 w-3 mr-1" />Fechado</Badge>
+      case "reported":
+        return (
+          <Badge variant="secondary">
+            <Bell className="h-3 w-3 mr-1" />
+            Reportado
+          </Badge>
+        );
+      case "investigating":
+        return (
+          <Badge variant="default">
+            <Search className="h-3 w-3 mr-1" />
+            Investigando
+          </Badge>
+        );
+      case "contained":
+        return (
+          <Badge variant="outline">
+            <Shield className="h-3 w-3 mr-1" />
+            Contido
+          </Badge>
+        );
+      case "resolved":
+        return (
+          <Badge variant="outline" className="bg-green-50 text-green-700">
+            <CheckCircle className="h-3 w-3 mr-1" />
+            Resolvido
+          </Badge>
+        );
+      case "closed":
+        return (
+          <Badge variant="outline">
+            <XCircle className="h-3 w-3 mr-1" />
+            Fechado
+          </Badge>
+        );
       default:
-        return <Badge variant="secondary">{status}</Badge>
+        return <Badge variant="secondary">{status}</Badge>;
     }
-  }
+  };
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'low': return 'text-green-600'
-      case 'medium': return 'text-yellow-600'
-      case 'high': return 'text-orange-600'
-      case 'critical': return 'text-red-600'
-      default: return 'text-gray-600'
+      case "low":
+        return "text-green-600";
+      case "medium":
+        return "text-yellow-600";
+      case "high":
+        return "text-orange-600";
+      case "critical":
+        return "text-red-600";
+      default:
+        return "text-gray-600";
     }
-  }
+  };
 
   const handleCreateIncident = async () => {
     try {
-      await reportIncident(newIncident)
-      setIsCreateOpen(false)
+      await reportIncident(newIncident);
+      setIsCreateOpen(false);
       setNewIncident({
-        title: '',
-        description: '',
-        severity: 'medium',
+        title: "",
+        description: "",
+        severity: "medium",
         affected_data_types: [],
         affected_individuals_count: 0,
-        discovery_method: '',
-        containment_actions: '',
-        notification_required: false
-      })
+        discovery_method: "",
+        containment_actions: "",
+        notification_required: false,
+      });
     } catch (error) {
-      console.error('Erro ao reportar incidente:', error)
+      console.error("Erro ao reportar incidente:", error);
     }
-  }
+  };
 
   const handleUpdateIncident = async (id: string, updates: Partial<BreachIncident>) => {
     try {
-      await updateIncident(id, updates)
-      setIsEditOpen(false)
-      setSelectedIncident(null)
+      await updateIncident(id, updates);
+      setIsEditOpen(false);
+      setSelectedIncident(null);
     } catch (error) {
-      console.error('Erro ao atualizar incidente:', error)
+      console.error("Erro ao atualizar incidente:", error);
     }
-  }
+  };
 
   // Calcular estatísticas
   const stats = {
     total: incidents?.length || 0,
-    active: incidents?.filter(i => !['resolved', 'closed'].includes(i.status)).length || 0,
-    critical: incidents?.filter(i => i.severity === 'critical').length || 0,
-    thisMonth: incidents?.filter(i => {
-      const incidentDate = new Date(i.created_at)
-      const now = new Date()
-      return incidentDate.getMonth() === now.getMonth() && incidentDate.getFullYear() === now.getFullYear()
-    }).length || 0
-  }
+    active: incidents?.filter((i) => !["resolved", "closed"].includes(i.status)).length || 0,
+    critical: incidents?.filter((i) => i.severity === "critical").length || 0,
+    thisMonth:
+      incidents?.filter((i) => {
+        const incidentDate = new Date(i.created_at);
+        const now = new Date();
+        return (
+          incidentDate.getMonth() === now.getMonth() &&
+          incidentDate.getFullYear() === now.getFullYear()
+        );
+      }).length || 0,
+  };
 
   if (isLoading) {
     return (
@@ -190,18 +243,16 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
         <RefreshCw className="h-8 w-8 animate-spin" />
         <span className="ml-2">Carregando incidentes...</span>
       </div>
-    )
+    );
   }
 
   if (error) {
     return (
       <Alert variant="destructive">
         <AlertTriangle className="h-4 w-4" />
-        <AlertDescription>
-          Erro ao carregar incidentes: {error}
-        </AlertDescription>
+        <AlertDescription>Erro ao carregar incidentes: {error}</AlertDescription>
       </Alert>
-    )
+    );
   }
 
   return (
@@ -247,24 +298,26 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
                     placeholder="Ex: Acesso não autorizado ao banco de dados"
                   />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="description">Descrição</Label>
                   <Textarea
                     id="description"
                     value={newIncident.description}
-                    onChange={(e) => setNewIncident({ ...newIncident, description: e.target.value })}
+                    onChange={(e) =>
+                      setNewIncident({ ...newIncident, description: e.target.value })
+                    }
                     placeholder="Descreva detalhadamente o incidente..."
                     rows={3}
                   />
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="severity">Severidade</Label>
-                    <Select 
-                      value={newIncident.severity} 
-                      onValueChange={(value: 'low' | 'medium' | 'high' | 'critical') => 
+                    <Select
+                      value={newIncident.severity}
+                      onValueChange={(value: "low" | "medium" | "high" | "critical") =>
                         setNewIncident({ ...newIncident, severity: value })
                       }
                     >
@@ -279,38 +332,44 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="count">Indivíduos Afetados</Label>
                     <Input
                       id="count"
                       type="number"
                       value={newIncident.affected_individuals_count}
-                      onChange={(e) => setNewIncident({ 
-                        ...newIncident, 
-                        affected_individuals_count: parseInt(e.target.value) || 0 
-                      })}
+                      onChange={(e) =>
+                        setNewIncident({
+                          ...newIncident,
+                          affected_individuals_count: parseInt(e.target.value) || 0,
+                        })
+                      }
                       placeholder="0"
                     />
                   </div>
                 </div>
-                
+
                 <div>
                   <Label htmlFor="discovery">Método de Descoberta</Label>
                   <Input
                     id="discovery"
                     value={newIncident.discovery_method}
-                    onChange={(e) => setNewIncident({ ...newIncident, discovery_method: e.target.value })}
+                    onChange={(e) =>
+                      setNewIncident({ ...newIncident, discovery_method: e.target.value })
+                    }
                     placeholder="Ex: Monitoramento de segurança, relatório de usuário"
                   />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="containment">Ações de Contenção</Label>
                   <Textarea
                     id="containment"
                     value={newIncident.containment_actions}
-                    onChange={(e) => setNewIncident({ ...newIncident, containment_actions: e.target.value })}
+                    onChange={(e) =>
+                      setNewIncident({ ...newIncident, containment_actions: e.target.value })
+                    }
                     placeholder="Descreva as ações tomadas para conter o incidente..."
                     rows={2}
                   />
@@ -320,9 +379,7 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
                 <Button variant="outline" onClick={() => setIsCreateOpen(false)}>
                   Cancelar
                 </Button>
-                <Button onClick={handleCreateIncident}>
-                  Reportar Incidente
-                </Button>
+                <Button onClick={handleCreateIncident}>Reportar Incidente</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -342,7 +399,7 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -354,7 +411,7 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -366,7 +423,7 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -381,11 +438,19 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
       </div>
 
       {/* Alertas para incidentes críticos */}
-      {incidents?.filter(i => i.severity === 'critical' && !['resolved', 'closed'].includes(i.status)).length > 0 && (
+      {incidents?.filter(
+        (i) => i.severity === "critical" && !["resolved", "closed"].includes(i.status),
+      ).length > 0 && (
         <Alert variant="destructive" className="mb-6">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            <strong>Atenção:</strong> Existem {incidents.filter(i => i.severity === 'critical' && !['resolved', 'closed'].includes(i.status)).length} incidente(s) crítico(s) que requerem atenção imediata.
+            <strong>Atenção:</strong> Existem{" "}
+            {
+              incidents.filter(
+                (i) => i.severity === "critical" && !["resolved", "closed"].includes(i.status),
+              ).length
+            }{" "}
+            incidente(s) crítico(s) que requerem atenção imediata.
           </AlertDescription>
         </Alert>
       )}
@@ -417,7 +482,7 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
                     />
                   </div>
                 </div>
-                
+
                 <div>
                   <Label htmlFor="status">Status</Label>
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -434,7 +499,7 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div>
                   <Label htmlFor="severity">Severidade</Label>
                   <Select value={severityFilter} onValueChange={setSeverityFilter}>
@@ -450,14 +515,14 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div className="flex items-end">
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => {
-                      setSearchTerm('')
-                      setStatusFilter('all')
-                      setSeverityFilter('all')
+                      setSearchTerm("");
+                      setStatusFilter("all");
+                      setSeverityFilter("all");
                     }}
                   >
                     <Filter className="h-4 w-4 mr-2" />
@@ -505,7 +570,7 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
                         </div>
                       </TableCell>
                       <TableCell>
-                        {new Date(incident.created_at).toLocaleDateString('pt-BR')}
+                        {new Date(incident.created_at).toLocaleDateString("pt-BR")}
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-2">
@@ -523,7 +588,8 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
                                   {incident.title}
                                 </DialogTitle>
                                 <DialogDescription>
-                                  Incidente reportado em {new Date(incident.created_at).toLocaleDateString('pt-BR')}
+                                  Incidente reportado em{" "}
+                                  {new Date(incident.created_at).toLocaleDateString("pt-BR")}
                                 </DialogDescription>
                               </DialogHeader>
                               <div className="space-y-6">
@@ -535,20 +601,24 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
                                   </div>
                                   <div>
                                     <Label>Severidade</Label>
-                                    <div className="mt-1">{getSeverityBadge(incident.severity)}</div>
+                                    <div className="mt-1">
+                                      {getSeverityBadge(incident.severity)}
+                                    </div>
                                   </div>
                                   <div>
                                     <Label>Indivíduos Afetados</Label>
-                                    <p className="text-sm font-medium">{incident.affected_individuals_count || 0}</p>
+                                    <p className="text-sm font-medium">
+                                      {incident.affected_individuals_count || 0}
+                                    </p>
                                   </div>
                                   <div>
                                     <Label>Notificação Requerida</Label>
                                     <p className="text-sm">
-                                      {incident.notification_required ? 'Sim' : 'Não'}
+                                      {incident.notification_required ? "Sim" : "Não"}
                                     </p>
                                   </div>
                                 </div>
-                                
+
                                 {/* Descrição */}
                                 <div>
                                   <Label>Descrição do Incidente</Label>
@@ -556,19 +626,22 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
                                     {incident.description}
                                   </p>
                                 </div>
-                                
+
                                 {/* Tipos de dados afetados */}
-                                {incident.affected_data_types && incident.affected_data_types.length > 0 && (
-                                  <div>
-                                    <Label>Tipos de Dados Afetados</Label>
-                                    <div className="flex flex-wrap gap-2 mt-1">
-                                      {incident.affected_data_types.map((type, index) => (
-                                        <Badge key={index} variant="outline">{type}</Badge>
-                                      ))}
+                                {incident.affected_data_types &&
+                                  incident.affected_data_types.length > 0 && (
+                                    <div>
+                                      <Label>Tipos de Dados Afetados</Label>
+                                      <div className="flex flex-wrap gap-2 mt-1">
+                                        {incident.affected_data_types.map((type, index) => (
+                                          <Badge key={index} variant="outline">
+                                            {type}
+                                          </Badge>
+                                        ))}
+                                      </div>
                                     </div>
-                                  </div>
-                                )}
-                                
+                                  )}
+
                                 {/* Método de descoberta */}
                                 {incident.discovery_method && (
                                   <div>
@@ -576,7 +649,7 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
                                     <p className="text-sm mt-1">{incident.discovery_method}</p>
                                   </div>
                                 )}
-                                
+
                                 {/* Ações de contenção */}
                                 {incident.containment_actions && (
                                   <div>
@@ -586,16 +659,30 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
                                     </p>
                                   </div>
                                 )}
-                                
+
                                 {/* Notificações */}
                                 {incident.notifications && incident.notifications.length > 0 && (
                                   <div>
                                     <Label>Notificações Enviadas</Label>
                                     <div className="space-y-2 mt-1">
                                       {incident.notifications.map((notification, index) => (
-                                        <div key={index} className="text-sm bg-muted p-2 rounded flex items-center gap-2">
-                                          {notification.type === 'email' ? <Mail className="h-4 w-4" /> : <Bell className="h-4 w-4" />}
-                                          <span>{notification.recipient} - {notification.sent_at ? new Date(notification.sent_at).toLocaleString('pt-BR') : 'Pendente'}</span>
+                                        <div
+                                          key={index}
+                                          className="text-sm bg-muted p-2 rounded flex items-center gap-2"
+                                        >
+                                          {notification.type === "email" ? (
+                                            <Mail className="h-4 w-4" />
+                                          ) : (
+                                            <Bell className="h-4 w-4" />
+                                          )}
+                                          <span>
+                                            {notification.recipient} -{" "}
+                                            {notification.sent_at
+                                              ? new Date(notification.sent_at).toLocaleString(
+                                                  "pt-BR",
+                                                )
+                                              : "Pendente"}
+                                          </span>
                                         </div>
                                       ))}
                                     </div>
@@ -603,11 +690,11 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
                                 )}
                               </div>
                               <DialogFooter>
-                                <Button 
-                                  variant="outline" 
+                                <Button
+                                  variant="outline"
                                   onClick={() => {
-                                    setSelectedIncident(incident)
-                                    setIsEditOpen(true)
+                                    setSelectedIncident(incident);
+                                    setIsEditOpen(true);
                                   }}
                                 >
                                   <Edit className="h-4 w-4 mr-2" />
@@ -622,7 +709,7 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
                   ))}
                 </TableBody>
               </Table>
-              
+
               {filteredIncidents.length === 0 && (
                 <div className="text-center py-8 text-muted-foreground">
                   Nenhum incidente encontrado
@@ -636,20 +723,27 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
           <Card>
             <CardHeader>
               <CardTitle>Linha do Tempo dos Incidentes</CardTitle>
-              <CardDescription>
-                Visualização cronológica dos incidentes de violação
-              </CardDescription>
+              <CardDescription>Visualização cronológica dos incidentes de violação</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {incidents?.slice(0, 10).map((incident, index) => (
-                  <div key={incident.id} className="flex items-start gap-4 pb-4 border-b last:border-b-0">
+                  <div
+                    key={incident.id}
+                    className="flex items-start gap-4 pb-4 border-b last:border-b-0"
+                  >
                     <div className="flex-shrink-0">
-                      <div className={`w-3 h-3 rounded-full mt-2 ${
-                        incident.severity === 'critical' ? 'bg-red-500' :
-                        incident.severity === 'high' ? 'bg-orange-500' :
-                        incident.severity === 'medium' ? 'bg-yellow-500' : 'bg-green-500'
-                      }`} />
+                      <div
+                        className={`w-3 h-3 rounded-full mt-2 ${
+                          incident.severity === "critical"
+                            ? "bg-red-500"
+                            : incident.severity === "high"
+                              ? "bg-orange-500"
+                              : incident.severity === "medium"
+                                ? "bg-yellow-500"
+                                : "bg-green-500"
+                        }`}
+                      />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
@@ -657,13 +751,11 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
                         {getSeverityBadge(incident.severity)}
                         {getStatusBadge(incident.status)}
                       </div>
-                      <p className="text-sm text-muted-foreground mb-2">
-                        {incident.description}
-                      </p>
+                      <p className="text-sm text-muted-foreground mb-2">{incident.description}</p>
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
-                          {new Date(incident.created_at).toLocaleDateString('pt-BR')}
+                          {new Date(incident.created_at).toLocaleDateString("pt-BR")}
                         </span>
                         <span className="flex items-center gap-1">
                           <Users className="h-3 w-3" />
@@ -673,7 +765,7 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
                     </div>
                   </div>
                 ))}
-                
+
                 {incidents?.length === 0 && (
                   <div className="text-center py-8 text-muted-foreground">
                     Nenhum incidente registrado
@@ -690,17 +782,15 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Atualizar Status do Incidente</DialogTitle>
-            <DialogDescription>
-              {selectedIncident?.title}
-            </DialogDescription>
+            <DialogDescription>{selectedIncident?.title}</DialogDescription>
           </DialogHeader>
           {selectedIncident && (
             <div className="space-y-4">
               <div>
                 <Label htmlFor="status">Novo Status</Label>
-                <Select 
-                  value={selectedIncident.status} 
-                  onValueChange={(value) => 
+                <Select
+                  value={selectedIncident.status}
+                  onValueChange={(value) =>
                     setSelectedIncident({ ...selectedIncident, status: value })
                   }
                 >
@@ -722,10 +812,13 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
             <Button variant="outline" onClick={() => setIsEditOpen(false)}>
               Cancelar
             </Button>
-            <Button 
-              onClick={() => selectedIncident && handleUpdateIncident(selectedIncident.id, {
-                status: selectedIncident.status
-              })}
+            <Button
+              onClick={() =>
+                selectedIncident &&
+                handleUpdateIncident(selectedIncident.id, {
+                  status: selectedIncident.status,
+                })
+              }
             >
               Atualizar
             </Button>
@@ -733,5 +826,5 @@ export function BreachManagementPanel({ className }: BreachManagementPanelProps)
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

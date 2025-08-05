@@ -1,16 +1,16 @@
-'use client'
+"use client";
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -18,20 +18,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
-import {
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import {
+import type { Switch } from "@/components/ui/switch";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
   AlertCircle,
   BarChart3,
   Brain,
@@ -98,9 +98,7 @@ interface SegmentationRule {
 
 const SegmentationDashboard: React.FC = () => {
   const [segments, setSegments] = useState<PatientSegment[]>([]);
-  const [performance, setPerformance] = useState<
-    Record<string, SegmentPerformance>
-  >({});
+  const [performance, setPerformance] = useState<Record<string, SegmentPerformance>>({});
   const [rules, setRules] = useState<SegmentationRule[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -137,18 +135,13 @@ const SegmentationDashboard: React.FC = () => {
       const performanceData: Record<string, SegmentPerformance> = {};
       for (const segment of segmentsData.data || []) {
         try {
-          const perfResponse = await fetch(
-            `/api/segmentation/segments/${segment.id}/performance`
-          );
+          const perfResponse = await fetch(`/api/segmentation/segments/${segment.id}/performance`);
           if (perfResponse.ok) {
             const perfData = await perfResponse.json();
             performanceData[segment.id] = perfData.data;
           }
         } catch (error) {
-          console.warn(
-            `Failed to load performance for segment ${segment.id}:`,
-            error
-          );
+          console.warn(`Failed to load performance for segment ${segment.id}:`, error);
         }
       }
       setPerformance(performanceData);
@@ -161,11 +154,7 @@ const SegmentationDashboard: React.FC = () => {
       }
     } catch (error) {
       console.error("Error loading segmentation data:", error);
-      setError(
-        error instanceof Error
-          ? error.message
-          : "Failed to load segmentation data"
-      );
+      setError(error instanceof Error ? error.message : "Failed to load segmentation data");
     } finally {
       setLoading(false);
     }
@@ -199,9 +188,7 @@ const SegmentationDashboard: React.FC = () => {
       await loadSegmentationData();
     } catch (error) {
       console.error("Error creating segment:", error);
-      setError(
-        error instanceof Error ? error.message : "Failed to create segment"
-      );
+      setError(error instanceof Error ? error.message : "Failed to create segment");
     }
   };
 
@@ -223,14 +210,9 @@ const SegmentationDashboard: React.FC = () => {
     `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
 
   const filteredSegments =
-    selectedSegment === "all"
-      ? segments
-      : segments.filter((s) => s.id === selectedSegment);
+    selectedSegment === "all" ? segments : segments.filter((s) => s.id === selectedSegment);
 
-  const totalPatients = segments.reduce(
-    (sum, segment) => sum + segment.member_count,
-    0
-  );
+  const totalPatients = segments.reduce((sum, segment) => sum + segment.member_count, 0);
   const aiGeneratedCount = segments.filter((s) => s.ai_generated).length;
   const activeSegmentsCount = segments.filter((s) => s.is_active).length;
 
@@ -247,9 +229,7 @@ const SegmentationDashboard: React.FC = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Segmentação de Pacientes
-          </h1>
+          <h1 className="text-3xl font-bold tracking-tight">Segmentação de Pacientes</h1>
           <p className="text-muted-foreground">
             Análise inteligente e segmentação automatizada de pacientes
           </p>
@@ -265,9 +245,7 @@ const SegmentationDashboard: React.FC = () => {
             <DialogContent className="max-w-md">
               <DialogHeader>
                 <DialogTitle>Criar Novo Segmento</DialogTitle>
-                <DialogDescription>
-                  Configure um novo segmento de pacientes
-                </DialogDescription>
+                <DialogDescription>Configure um novo segmento de pacientes</DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
@@ -275,9 +253,7 @@ const SegmentationDashboard: React.FC = () => {
                   <Input
                     id="segment-name"
                     value={newSegment.name}
-                    onChange={(e) =>
-                      setNewSegment({ ...newSegment, name: e.target.value })
-                    }
+                    onChange={(e) => setNewSegment({ ...newSegment, name: e.target.value })}
                     placeholder="Ex: Pacientes Premium"
                   />
                 </div>
@@ -327,10 +303,7 @@ const SegmentationDashboard: React.FC = () => {
                   <Label htmlFor="auto-update">Atualização Automática</Label>
                 </div>
                 <div className="flex space-x-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowCreateDialog(false)}
-                  >
+                  <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
                     Cancelar
                   </Button>
                   <Button onClick={createSegment} disabled={!newSegment.name}>
@@ -359,26 +332,18 @@ const SegmentationDashboard: React.FC = () => {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total de Pacientes
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Total de Pacientes</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {totalPatients.toLocaleString()}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Em {segments.length} segmentos ativos
-            </p>
+            <div className="text-2xl font-bold">{totalPatients.toLocaleString()}</div>
+            <p className="text-xs text-muted-foreground">Em {segments.length} segmentos ativos</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Segmentos Ativos
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Segmentos Ativos</CardTitle>
             <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -396,9 +361,7 @@ const SegmentationDashboard: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{aiGeneratedCount}</div>
-            <p className="text-xs text-muted-foreground">
-              Segmentos gerados por IA
-            </p>
+            <p className="text-xs text-muted-foreground">Segmentos gerados por IA</p>
           </CardContent>
         </Card>
 
@@ -408,22 +371,14 @@ const SegmentationDashboard: React.FC = () => {
             <Zap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {rules.filter((r) => r.is_active).length}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {rules.length} regras totais
-            </p>
+            <div className="text-2xl font-bold">{rules.filter((r) => r.is_active).length}</div>
+            <p className="text-xs text-muted-foreground">{rules.length} regras totais</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Main Content */}
-      <Tabs
-        value={activeTab}
-        onValueChange={setActiveTab}
-        className="space-y-4"
-      >
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <div className="flex items-center justify-between">
           <TabsList>
             <TabsTrigger value="overview">Visão Geral</TabsTrigger>
@@ -463,11 +418,7 @@ const SegmentationDashboard: React.FC = () => {
                       <div>
                         <CardTitle className="flex items-center gap-2">
                           {segment.name}
-                          <Badge
-                            className={getSegmentTypeColor(
-                              segment.segment_type
-                            )}
-                          >
+                          <Badge className={getSegmentTypeColor(segment.segment_type)}>
                             {segment.segment_type}
                           </Badge>
                           {segment.ai_generated && (
@@ -491,12 +442,8 @@ const SegmentationDashboard: React.FC = () => {
                         <CardDescription>{segment.description}</CardDescription>
                       </div>
                       <div className="text-right">
-                        <div className="text-2xl font-bold">
-                          {segment.member_count}
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          pacientes
-                        </div>
+                        <div className="text-2xl font-bold">{segment.member_count}</div>
+                        <div className="text-sm text-muted-foreground">pacientes</div>
                       </div>
                     </div>
                   </CardHeader>
@@ -506,26 +453,18 @@ const SegmentationDashboard: React.FC = () => {
                         <div>
                           <div className="text-sm font-medium">Retenção</div>
                           <div className="text-lg">
-                            {formatPercentage(
-                              segmentPerf.member_retention_rate
-                            )}
+                            {formatPercentage(segmentPerf.member_retention_rate)}
                           </div>
                         </div>
                         <div>
                           <div className="text-sm font-medium">Engajamento</div>
                           <div className="text-lg">
-                            {formatPercentage(
-                              segmentPerf.average_engagement_score
-                            )}
+                            {formatPercentage(segmentPerf.average_engagement_score)}
                           </div>
                         </div>
                         <div>
-                          <div className="text-sm font-medium">
-                            Receita Total
-                          </div>
-                          <div className="text-lg">
-                            {formatCurrency(segmentPerf.total_revenue)}
-                          </div>
+                          <div className="text-sm font-medium">Receita Total</div>
+                          <div className="text-lg">{formatCurrency(segmentPerf.total_revenue)}</div>
                         </div>
                         <div>
                           <div className="text-sm font-medium">ROI</div>
@@ -553,10 +492,7 @@ const SegmentationDashboard: React.FC = () => {
                     <div>
                       <CardTitle>{segment.name}</CardTitle>
                       <CardDescription>
-                        Criado em{" "}
-                        {new Date(segment.created_at).toLocaleDateString(
-                          "pt-BR"
-                        )}
+                        Criado em {new Date(segment.created_at).toLocaleDateString("pt-BR")}
                       </CardDescription>
                     </div>
                     <div className="flex space-x-2">
@@ -575,23 +511,17 @@ const SegmentationDashboard: React.FC = () => {
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span>Membros:</span>
-                      <span className="font-medium">
-                        {segment.member_count}
-                      </span>
+                      <span className="font-medium">{segment.member_count}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Tipo:</span>
-                      <Badge
-                        className={getSegmentTypeColor(segment.segment_type)}
-                      >
+                      <Badge className={getSegmentTypeColor(segment.segment_type)}>
                         {segment.segment_type}
                       </Badge>
                     </div>
                     <div className="flex justify-between">
                       <span>Status:</span>
-                      <Badge
-                        variant={segment.is_active ? "default" : "secondary"}
-                      >
+                      <Badge variant={segment.is_active ? "default" : "secondary"}>
                         {segment.is_active ? "Ativo" : "Inativo"}
                       </Badge>
                     </div>
@@ -612,48 +542,34 @@ const SegmentationDashboard: React.FC = () => {
                 <Card key={segment.id}>
                   <CardHeader>
                     <CardTitle>{segment.name} - Performance</CardTitle>
-                    <CardDescription>
-                      Métricas de performance do segmento
-                    </CardDescription>
+                    <CardDescription>Métricas de performance do segmento</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       <div>
                         <Label>Taxa de Retenção</Label>
                         <div className="mt-2">
-                          <Progress
-                            value={segmentPerf.member_retention_rate * 100}
-                          />
+                          <Progress value={segmentPerf.member_retention_rate * 100} />
                           <div className="text-sm text-muted-foreground mt-1">
-                            {formatPercentage(
-                              segmentPerf.member_retention_rate
-                            )}
+                            {formatPercentage(segmentPerf.member_retention_rate)}
                           </div>
                         </div>
                       </div>
                       <div>
                         <Label>Engajamento Médio</Label>
                         <div className="mt-2">
-                          <Progress
-                            value={segmentPerf.average_engagement_score * 100}
-                          />
+                          <Progress value={segmentPerf.average_engagement_score * 100} />
                           <div className="text-sm text-muted-foreground mt-1">
-                            {formatPercentage(
-                              segmentPerf.average_engagement_score
-                            )}
+                            {formatPercentage(segmentPerf.average_engagement_score)}
                           </div>
                         </div>
                       </div>
                       <div>
                         <Label>Taxa de Sucesso</Label>
                         <div className="mt-2">
-                          <Progress
-                            value={segmentPerf.treatment_success_rate * 100}
-                          />
+                          <Progress value={segmentPerf.treatment_success_rate * 100} />
                           <div className="text-sm text-muted-foreground mt-1">
-                            {formatPercentage(
-                              segmentPerf.treatment_success_rate
-                            )}
+                            {formatPercentage(segmentPerf.treatment_success_rate)}
                           </div>
                         </div>
                       </div>
@@ -712,24 +628,18 @@ const SegmentationDashboard: React.FC = () => {
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                       <Label>Correspondências</Label>
-                      <div className="text-lg font-semibold">
-                        {rule.matches_count}
-                      </div>
+                      <div className="text-lg font-semibold">{rule.matches_count}</div>
                     </div>
                     <div>
                       <Label>Precisão</Label>
                       <div className="text-lg font-semibold">
-                        {rule.accuracy_rate
-                          ? formatPercentage(rule.accuracy_rate)
-                          : "N/A"}
+                        {rule.accuracy_rate ? formatPercentage(rule.accuracy_rate) : "N/A"}
                       </div>
                     </div>
                     <div>
                       <Label>Última Avaliação</Label>
                       <div className="text-sm text-muted-foreground">
-                        {new Date(rule.last_evaluated).toLocaleDateString(
-                          "pt-BR"
-                        )}
+                        {new Date(rule.last_evaluated).toLocaleDateString("pt-BR")}
                       </div>
                     </div>
                     <div>

@@ -6,12 +6,12 @@
 export interface FinancialKPI {
   id: string;
   kpi_name: string;
-  kpi_category: 'revenue' | 'profitability' | 'operational' | 'financial_health';
+  kpi_category: "revenue" | "profitability" | "operational" | "financial_health";
   current_value: number;
   target_value?: number;
   previous_value?: number;
   variance_percent?: number;
-  trend_direction: 'increasing' | 'decreasing' | 'stable';
+  trend_direction: "increasing" | "decreasing" | "stable";
   calculation_formula?: string;
   data_sources?: Record<string, any>;
   last_updated: string;
@@ -22,9 +22,9 @@ export interface FinancialKPI {
 export interface KPIThreshold {
   id: string;
   kpi_id: string;
-  threshold_type: 'warning' | 'critical' | 'target';
+  threshold_type: "warning" | "critical" | "target";
   threshold_value: number;
-  comparison_operator: 'gt' | 'lt' | 'eq' | 'gte' | 'lte';
+  comparison_operator: "gt" | "lt" | "eq" | "gte" | "lte";
   notification_enabled: boolean;
   notification_settings: {
     email?: boolean;
@@ -41,7 +41,7 @@ export interface DashboardLayout {
   id: string;
   user_id: string;
   layout_name: string;
-  layout_type: 'kpi_dashboard' | 'executive_summary' | 'detailed_analysis';
+  layout_type: "kpi_dashboard" | "executive_summary" | "detailed_analysis";
   widget_configuration: DashboardWidget[];
   grid_layout: GridLayout;
   filters: DashboardFilters;
@@ -53,17 +53,17 @@ export interface DashboardLayout {
 
 export interface DashboardWidget {
   id: string;
-  type: 'kpi_card' | 'chart' | 'table' | 'alert_panel' | 'summary_stats';
+  type: "kpi_card" | "chart" | "table" | "alert_panel" | "summary_stats";
   kpi_ids?: string[];
   position: { x: number; y: number; w: number; h: number };
   configuration: {
     title?: string;
-    chart_type?: 'line' | 'bar' | 'pie' | 'gauge' | 'sparkline';
+    chart_type?: "line" | "bar" | "pie" | "gauge" | "sparkline";
     time_range?: string;
     comparison_enabled?: boolean;
     drill_down_enabled?: boolean;
     color_scheme?: string;
-    display_format?: 'currency' | 'percentage' | 'number' | 'ratio';
+    display_format?: "currency" | "percentage" | "number" | "ratio";
   };
   style?: {
     background_color?: string;
@@ -86,14 +86,14 @@ export interface DashboardFilters {
   time_period?: {
     start_date: string;
     end_date: string;
-    preset?: 'today' | 'week' | 'month' | 'quarter' | 'year' | 'custom';
+    preset?: "today" | "week" | "month" | "quarter" | "year" | "custom";
   };
   service_types?: string[];
   providers?: string[];
   locations?: string[];
   patient_segments?: string[];
   comparison_period?: {
-    type: 'previous_period' | 'year_over_year' | 'custom';
+    type: "previous_period" | "year_over_year" | "custom";
     start_date?: string;
     end_date?: string;
   };
@@ -107,12 +107,12 @@ export interface KPIDrillPath {
   dimension_filters: Record<string, any>;
   aggregation_rules: {
     group_by: string[];
-    aggregation_type: 'sum' | 'avg' | 'count' | 'min' | 'max';
+    aggregation_type: "sum" | "avg" | "count" | "min" | "max";
     having_conditions?: Record<string, any>;
   };
   display_config: {
     chart_type?: string;
-    sort_order?: 'asc' | 'desc';
+    sort_order?: "asc" | "desc";
     limit?: number;
     show_variance?: boolean;
   };
@@ -133,7 +133,7 @@ export interface KPIAlert {
   id: string;
   kpi_id: string;
   threshold_id?: string;
-  alert_type: 'warning' | 'critical' | 'improvement' | 'target_achieved';
+  alert_type: "warning" | "critical" | "improvement" | "target_achieved";
   alert_message: string;
   alert_value?: number;
   threshold_value?: number;
@@ -173,7 +173,7 @@ export interface KPICalculationResult {
   calculated_value: number;
   previous_value?: number;
   variance_percent?: number;
-  trend_direction: 'increasing' | 'decreasing' | 'stable';
+  trend_direction: "increasing" | "decreasing" | "stable";
   calculation_timestamp: string;
   data_points_used: number;
   confidence_score?: number;
@@ -189,10 +189,10 @@ export interface DrillDownRequest {
   kpi_id: string;
   dimension: string;
   filters?: Record<string, any>;
-  aggregation_level: 'day' | 'week' | 'month' | 'quarter' | 'year';
+  aggregation_level: "day" | "week" | "month" | "quarter" | "year";
   limit?: number;
   sort_by?: string;
-  sort_order?: 'asc' | 'desc';
+  sort_order?: "asc" | "desc";
 }
 
 export interface DrillDownResult {
@@ -200,7 +200,7 @@ export interface DrillDownResult {
   value: number;
   percentage_of_total: number;
   variance_from_previous?: number;
-  trend_direction?: 'increasing' | 'decreasing' | 'stable';
+  trend_direction?: "increasing" | "decreasing" | "stable";
   sub_dimensions?: DrillDownResult[];
   transaction_count?: number;
   metadata?: Record<string, any>;
@@ -211,7 +211,7 @@ export interface DashboardTemplate {
   id: string;
   name: string;
   description: string;
-  category: 'executive' | 'operational' | 'financial' | 'custom';
+  category: "executive" | "operational" | "financial" | "custom";
   default_widgets: DashboardWidget[];
   default_filters: DashboardFilters;
   recommended_for: string[];
@@ -229,7 +229,7 @@ export interface KPIBenchmark {
 
 // Real-time Updates
 export interface KPIUpdateEvent {
-  type: 'kpi_update' | 'alert_triggered' | 'threshold_breach' | 'dashboard_refresh';
+  type: "kpi_update" | "alert_triggered" | "threshold_breach" | "dashboard_refresh";
   kpi_id?: string;
   dashboard_id?: string;
   alert_id?: string;
@@ -242,7 +242,7 @@ export interface OfflineKPIData {
   kpis: FinancialKPI[];
   alerts: KPIAlert[];
   last_sync: string;
-  sync_status: 'synced' | 'pending' | 'error';
+  sync_status: "synced" | "pending" | "error";
   offline_capability: boolean;
 }
 
@@ -250,10 +250,10 @@ export interface OfflineKPIData {
 export interface KPIInsight {
   id: string;
   kpi_id: string;
-  insight_type: 'trend_change' | 'anomaly_detected' | 'target_achievement' | 'correlation_found';
+  insight_type: "trend_change" | "anomaly_detected" | "target_achievement" | "correlation_found";
   title: string;
   description: string;
-  severity: 'info' | 'warning' | 'critical';
+  severity: "info" | "warning" | "critical";
   confidence_score: number;
   recommended_actions?: string[];
   created_at: string;
@@ -269,7 +269,7 @@ export interface ExecutiveSummary {
       current: number;
       target: number;
       variance: number;
-      trend: 'increasing' | 'decreasing' | 'stable';
+      trend: "increasing" | "decreasing" | "stable";
     };
     profitability: {
       margin: number;
@@ -289,7 +289,7 @@ export interface ExecutiveSummary {
     resolved: number;
   };
   recommendations: Array<{
-    priority: 'high' | 'medium' | 'low';
+    priority: "high" | "medium" | "low";
     category: string;
     action: string;
     estimated_impact: string;

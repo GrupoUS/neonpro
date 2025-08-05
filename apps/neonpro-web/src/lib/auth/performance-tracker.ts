@@ -10,7 +10,7 @@ export interface PerformanceMetrics {
 
 export class PerformanceTracker {
   private static instance: PerformanceTracker;
-  
+
   static getInstance(): PerformanceTracker {
     if (!PerformanceTracker.instance) {
       PerformanceTracker.instance = new PerformanceTracker();
@@ -18,11 +18,14 @@ export class PerformanceTracker {
     return PerformanceTracker.instance;
   }
 
-  track(operation: string, metadata?: Record<string, any>): {
+  track(
+    operation: string,
+    metadata?: Record<string, any>,
+  ): {
     end: (success?: boolean) => void;
   } {
     const startTime = Date.now();
-    
+
     return {
       end: (success = true) => {
         const duration = Date.now() - startTime;
@@ -33,17 +36,17 @@ export class PerformanceTracker {
           success,
           metadata,
         };
-        
+
         this.logMetrics(metrics);
       },
     };
   }
 
   private logMetrics(metrics: PerformanceMetrics): void {
-    console.log('[PERFORMANCE]', metrics);
-    
+    console.log("[PERFORMANCE]", metrics);
+
     // Em produção, enviar para sistema de monitoramento
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === "production") {
       // Implementar envio para sistema de monitoramento
     }
   }
@@ -54,28 +57,37 @@ export const performanceTracker = PerformanceTracker.getInstance();
 
 // Funções utilitárias específicas
 export const trackMFAVerification = (data: any) => {
-  console.log('[MFA PERFORMANCE]', data);
+  console.log("[MFA PERFORMANCE]", data);
 };
 
 export const trackPerformance = (metric: string, value: number) => {
-  console.log('[PERFORMANCE]', metric, value);
+  console.log("[PERFORMANCE]", metric, value);
 };
 
 export const trackLoginPerformance = (data: any) => {
-  console.log('[LOGIN PERFORMANCE]', data);
+  console.log("[LOGIN PERFORMANCE]", data);
 };
 
-export const trackAuthPerformance = (operation: string, duration: number, success: boolean = true) => {
+export const trackAuthPerformance = (
+  operation: string,
+  duration: number,
+  success: boolean = true,
+) => {
   const metrics: PerformanceMetrics = {
     duration,
     timestamp: Date.now(),
     operation: `auth.${operation}`,
     success,
   };
-  console.log('[AUTH PERFORMANCE]', metrics);
+  console.log("[AUTH PERFORMANCE]", metrics);
 };
 
-export const trackAPIPerformance = (endpoint: string, method: string, duration: number, statusCode: number) => {
+export const trackAPIPerformance = (
+  endpoint: string,
+  method: string,
+  duration: number,
+  statusCode: number,
+) => {
   const metrics: PerformanceMetrics = {
     duration,
     timestamp: Date.now(),
@@ -83,7 +95,7 @@ export const trackAPIPerformance = (endpoint: string, method: string, duration: 
     success: statusCode >= 200 && statusCode < 400,
     metadata: { statusCode, method, endpoint },
   };
-  console.log('[API PERFORMANCE]', metrics);
+  console.log("[API PERFORMANCE]", metrics);
 };
 
 // Decorator para tracking automático
@@ -93,7 +105,7 @@ export function trackOperation(operationName: string) {
 
     descriptor.value = async function (...args: any[]) {
       const tracker = performanceTracker.track(operationName);
-      
+
       try {
         const result = await originalMethod.apply(this, args);
         tracker.end(true);

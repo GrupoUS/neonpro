@@ -1,39 +1,39 @@
-'use client'
+"use client";
 
-import { lazy, Suspense } from 'react'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import type { lazy, Suspense } from "react";
+import type { Skeleton } from "@/components/ui/skeleton";
+import type { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 // Lazy load heavy dashboard components
-export const LazyAppointmentCalendar = lazy(() => 
-  import('./appointments/calendar/calendar-view').then(module => ({
-    default: module.CalendarView
-  }))
-)
+export const LazyAppointmentCalendar = lazy(() =>
+  import("./appointments/calendar/calendar-view").then((module) => ({
+    default: module.CalendarView,
+  })),
+);
 
 export const LazyFinancialDashboard = lazy(() =>
-  import('./financial/financial-overview').then(module => ({
-    default: module.FinancialOverview
-  }))
-)
+  import("./financial/financial-overview").then((module) => ({
+    default: module.FinancialOverview,
+  })),
+);
 
 export const LazyPatientManagement = lazy(() =>
-  import('./patients/patient-management').then(module => ({
-    default: module.PatientManagement  
-  }))
-)
+  import("./patients/patient-management").then((module) => ({
+    default: module.PatientManagement,
+  })),
+);
 
 export const LazyStockDashboard = lazy(() =>
-  import('./stock/stock-dashboard').then(module => ({
-    default: module.StockDashboard
-  }))
-)
+  import("./stock/stock-dashboard").then((module) => ({
+    default: module.StockDashboard,
+  })),
+);
 
 export const LazyReportsAnalytics = lazy(() =>
-  import('./reports/analytics-dashboard').then(module => ({
-    default: module.AnalyticsDashboard
-  }))
-)
+  import("./reports/analytics-dashboard").then((module) => ({
+    default: module.AnalyticsDashboard,
+  })),
+);
 
 // Loading components with skeleton UI
 export const AppointmentCalendarSkeleton = () => (
@@ -50,7 +50,7 @@ export const AppointmentCalendarSkeleton = () => (
       </div>
     </CardContent>
   </Card>
-)
+);
 
 export const FinancialDashboardSkeleton = () => (
   <div className="space-y-6">
@@ -73,7 +73,7 @@ export const FinancialDashboardSkeleton = () => (
       </CardContent>
     </Card>
   </div>
-)
+);
 
 export const PatientManagementSkeleton = () => (
   <div className="space-y-4">
@@ -98,7 +98,7 @@ export const PatientManagementSkeleton = () => (
       </CardContent>
     </Card>
   </div>
-)
+);
 
 export const StockDashboardSkeleton = () => (
   <div className="space-y-6">
@@ -125,7 +125,7 @@ export const StockDashboardSkeleton = () => (
       ))}
     </div>
   </div>
-)
+);
 
 export const ReportsAnalyticsSkeleton = () => (
   <div className="space-y-6">
@@ -148,36 +148,36 @@ export const ReportsAnalyticsSkeleton = () => (
       </CardContent>
     </Card>
   </div>
-)
+);
 
 // Higher-order component for lazy loading with error boundary
 export function withLazyLoading<T extends object>(
   LazyComponent: React.LazyExoticComponent<React.ComponentType<T>>,
   LoadingSkeleton: React.ComponentType,
-  componentName: string
+  componentName: string,
 ) {
   return function LazyWrapper(props: T) {
     return (
       <Suspense fallback={<LoadingSkeleton />}>
         <LazyComponent {...props} />
       </Suspense>
-    )
-  }
+    );
+  };
 }
 
 // Preload functions for critical routes
 export const preloadComponents = {
-  appointments: () => import('./appointments/calendar/calendar-view'),
-  financial: () => import('./financial/financial-overview'),
-  patients: () => import('./patients/patient-management'),
-  stock: () => import('./stock/stock-dashboard'),
-  reports: () => import('./reports/analytics-dashboard'),
-}
+  appointments: () => import("./appointments/calendar/calendar-view"),
+  financial: () => import("./financial/financial-overview"),
+  patients: () => import("./patients/patient-management"),
+  stock: () => import("./stock/stock-dashboard"),
+  reports: () => import("./reports/analytics-dashboard"),
+};
 
 // Preload based on user interaction
 export const preloadOnHover = (componentKey: keyof typeof preloadComponents) => {
   return {
     onMouseEnter: () => preloadComponents[componentKey](),
     onFocus: () => preloadComponents[componentKey](),
-  }
-}
+  };
+};

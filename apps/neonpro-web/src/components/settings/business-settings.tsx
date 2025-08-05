@@ -1,32 +1,52 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import type { useState, useEffect } from "react";
+import type { useForm, useFieldArray } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { 
-  Clock, 
-  Calendar, 
-  Plus, 
-  Trash2, 
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Switch } from "@/components/ui/switch";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type {
+  Clock,
+  Calendar,
+  Plus,
+  Trash2,
   AlertCircle,
   Save,
   CheckCircle2,
   Loader2,
   Coffee,
   Pause,
-  Settings
+  Settings,
 } from "lucide-react";
-import { toast } from "sonner";
+import type { toast } from "sonner";
 
 const daysOfWeek = [
   { value: "monday", label: "Segunda-feira", short: "SEG" },
@@ -41,49 +61,51 @@ const daysOfWeek = [
 const timeSlots = Array.from({ length: 24 * 4 }, (_, i) => {
   const hour = Math.floor(i / 4);
   const minute = (i % 4) * 15;
-  const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+  const time = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
   return { value: time, label: time };
 });
 
-const workingHoursSchema = z.object({
-  day: z.string(),
-  isOpen: z.boolean(),
-  openTime: z.string().optional(),
-  closeTime: z.string().optional(),
-  breakStart: z.string().optional(),
-  breakEnd: z.string().optional(),
-}).superRefine((data, ctx) => {
-  if (data.isOpen) {
-    if (!data.openTime) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Horário de abertura é obrigatório",
-        path: ["openTime"],
-      });
+const workingHoursSchema = z
+  .object({
+    day: z.string(),
+    isOpen: z.boolean(),
+    openTime: z.string().optional(),
+    closeTime: z.string().optional(),
+    breakStart: z.string().optional(),
+    breakEnd: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.isOpen) {
+      if (!data.openTime) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Horário de abertura é obrigatório",
+          path: ["openTime"],
+        });
+      }
+      if (!data.closeTime) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Horário de fechamento é obrigatório",
+          path: ["closeTime"],
+        });
+      }
+      if (data.openTime && data.closeTime && data.openTime >= data.closeTime) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Horário de fechamento deve ser após o de abertura",
+          path: ["closeTime"],
+        });
+      }
+      if (data.breakStart && data.breakEnd && data.breakStart >= data.breakEnd) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Fim do intervalo deve ser após o início",
+          path: ["breakEnd"],
+        });
+      }
     }
-    if (!data.closeTime) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Horário de fechamento é obrigatório",
-        path: ["closeTime"],
-      });
-    }
-    if (data.openTime && data.closeTime && data.openTime >= data.closeTime) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Horário de fechamento deve ser após o de abertura",
-        path: ["closeTime"],
-      });
-    }
-    if (data.breakStart && data.breakEnd && data.breakStart >= data.breakEnd) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Fim do intervalo deve ser após o início",
-        path: ["breakEnd"],
-      });
-    }
-  }
-});
+  });
 
 const holidaySchema = z.object({
   date: z.string(),
@@ -94,33 +116,33 @@ const holidaySchema = z.object({
 const businessSettingsSchema = z.object({
   // Working Hours
   workingHours: z.array(workingHoursSchema),
-  
+
   // Appointment Settings
   defaultAppointmentDuration: z.number().min(15, "Duração mínima é 15 minutos"),
   appointmentBuffer: z.number().min(0, "Buffer deve ser 0 ou maior"),
   maxAppointmentsPerDay: z.number().min(1, "Máximo deve ser pelo menos 1"),
-  
+
   // Booking Rules
   advanceBookingLimit: z.number().min(0, "Limite deve ser 0 ou maior"),
   cancellationDeadline: z.number().min(0, "Prazo deve ser 0 ou maior"),
   rescheduleLimit: z.number().min(0, "Limite deve ser 0 ou maior"),
-  
+
   // Automatic Confirmations
   autoConfirmBookings: z.boolean(),
   autoConfirmHours: z.number().min(0).max(168),
-  
+
   // Reminders
   enableReminders: z.boolean(),
   reminderHours: z.array(z.number()),
-  
+
   // No-show Policy
   noShowFee: z.number().min(0),
   noShowAfterMinutes: z.number().min(0),
   blacklistAfterNoShows: z.number().min(0),
-  
+
   // Special Schedules
   holidays: z.array(holidaySchema),
-  
+
   // Timezone
   timezone: z.string(),
 });
@@ -139,11 +161,11 @@ export default function BusinessSettings() {
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [activeTab, setActiveTab] = useState("hours");
-  
+
   const form = useForm<BusinessSettingsFormData>({
     resolver: zodResolver(businessSettingsSchema),
     defaultValues: {
-      workingHours: daysOfWeek.map(day => ({
+      workingHours: daysOfWeek.map((day) => ({
         day: day.value,
         isOpen: day.value !== "sunday",
         openTime: "08:00",
@@ -161,7 +183,7 @@ export default function BusinessSettings() {
       autoConfirmHours: 2,
       enableReminders: true,
       reminderHours: [24, 2],
-      noShowFee: 50.00,
+      noShowFee: 50.0,
       noShowAfterMinutes: 15,
       blacklistAfterNoShows: 3,
       holidays: [],
@@ -207,7 +229,7 @@ export default function BusinessSettings() {
       //   headers: { "Content-Type": "application/json" },
       //   body: JSON.stringify(data),
       // });
-      
+
       setLastSaved(new Date());
       toast.success("Configurações salvas com sucesso!");
     } catch (error) {
@@ -219,8 +241,10 @@ export default function BusinessSettings() {
   };
 
   const copyScheduleToAll = (sourceDay: string) => {
-    const sourceSchedule = form.getValues(`workingHours.${daysOfWeek.findIndex(d => d.value === sourceDay)}`);
-    
+    const sourceSchedule = form.getValues(
+      `workingHours.${daysOfWeek.findIndex((d) => d.value === sourceDay)}`,
+    );
+
     daysOfWeek.forEach((day, index) => {
       if (day.value !== sourceDay) {
         form.setValue(`workingHours.${index}`, {
@@ -229,7 +253,7 @@ export default function BusinessSettings() {
         });
       }
     });
-    
+
     toast.success("Horário copiado para todos os dias!");
   };
 
@@ -246,13 +270,13 @@ export default function BusinessSettings() {
       { date: `${currentYear}-12-25`, name: "Natal", isRecurring: true },
     ];
 
-    const existingDates = form.getValues("holidays").map(h => h.date);
-    const newHolidays = commonHolidays.filter(h => !existingDates.includes(h.date));
-    
-    newHolidays.forEach(holiday => {
+    const existingDates = form.getValues("holidays").map((h) => h.date);
+    const newHolidays = commonHolidays.filter((h) => !existingDates.includes(h.date));
+
+    newHolidays.forEach((holiday) => {
       appendHoliday(holiday);
     });
-    
+
     if (newHolidays.length > 0) {
       toast.success(`${newHolidays.length} feriados nacionais adicionados!`);
     } else {
@@ -327,10 +351,7 @@ export default function BusinessSettings() {
                               <FormItem className="flex items-center space-x-2">
                                 <FormLabel className="text-sm">Aberto</FormLabel>
                                 <FormControl>
-                                  <Switch
-                                    checked={field.value}
-                                    onCheckedChange={field.onChange}
-                                  />
+                                  <Switch checked={field.value} onCheckedChange={field.onChange} />
                                 </FormControl>
                               </FormItem>
                             )}
@@ -491,9 +512,7 @@ export default function BusinessSettings() {
               <Card>
                 <CardHeader>
                   <CardTitle>Configurações de Agendamento</CardTitle>
-                  <CardDescription>
-                    Defina regras para agendamentos e consultas
-                  </CardDescription>
+                  <CardDescription>Defina regras para agendamentos e consultas</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -512,9 +531,7 @@ export default function BusinessSettings() {
                               onChange={(e) => field.onChange(parseInt(e.target.value) || 60)}
                             />
                           </FormControl>
-                          <FormDescription>
-                            Duração padrão para novos agendamentos
-                          </FormDescription>
+                          <FormDescription>Duração padrão para novos agendamentos</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -535,9 +552,7 @@ export default function BusinessSettings() {
                               onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                             />
                           </FormControl>
-                          <FormDescription>
-                            Tempo livre entre consultas
-                          </FormDescription>
+                          <FormDescription>Tempo livre entre consultas</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -557,9 +572,7 @@ export default function BusinessSettings() {
                               onChange={(e) => field.onChange(parseInt(e.target.value) || 20)}
                             />
                           </FormControl>
-                          <FormDescription>
-                            Limite de agendamentos por dia
-                          </FormDescription>
+                          <FormDescription>Limite de agendamentos por dia</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -579,10 +592,7 @@ export default function BusinessSettings() {
                             </FormDescription>
                           </div>
                           <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -604,9 +614,7 @@ export default function BusinessSettings() {
                                 onChange={(e) => field.onChange(parseInt(e.target.value) || 2)}
                               />
                             </FormControl>
-                            <FormDescription>
-                              Horas para confirmação automática
-                            </FormDescription>
+                            <FormDescription>Horas para confirmação automática</FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -664,9 +672,7 @@ export default function BusinessSettings() {
                               onChange={(e) => field.onChange(parseInt(e.target.value) || 24)}
                             />
                           </FormControl>
-                          <FormDescription>
-                            Horas mínimas para cancelar sem taxa
-                          </FormDescription>
+                          <FormDescription>Horas mínimas para cancelar sem taxa</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -686,9 +692,7 @@ export default function BusinessSettings() {
                               onChange={(e) => field.onChange(parseInt(e.target.value) || 2)}
                             />
                           </FormControl>
-                          <FormDescription>
-                            Máximo reagendamentos por consulta
-                          </FormDescription>
+                          <FormDescription>Máximo reagendamentos por consulta</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -713,9 +717,7 @@ export default function BusinessSettings() {
                                 onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                               />
                             </FormControl>
-                            <FormDescription>
-                              Taxa cobrada por falta sem aviso
-                            </FormDescription>
+                            <FormDescription>Taxa cobrada por falta sem aviso</FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -780,10 +782,7 @@ export default function BusinessSettings() {
                             </FormDescription>
                           </div>
                           <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -803,14 +802,15 @@ export default function BusinessSettings() {
                                   if (e.target.checked) {
                                     form.setValue("reminderHours", [...current, hours]);
                                   } else {
-                                    form.setValue("reminderHours", current.filter(h => h !== hours));
+                                    form.setValue(
+                                      "reminderHours",
+                                      current.filter((h) => h !== hours),
+                                    );
                                   }
                                 }}
                                 className="rounded border-gray-300"
                               />
-                              <span className="text-sm">
-                                {hours}h antes
-                              </span>
+                              <span className="text-sm">{hours}h antes</span>
                             </label>
                           ))}
                         </div>
@@ -833,20 +833,18 @@ export default function BusinessSettings() {
                       </CardDescription>
                     </div>
                     <div className="flex gap-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={addBrazilianHoliday}
-                      >
+                      <Button type="button" variant="outline" onClick={addBrazilianHoliday}>
                         Adicionar Feriados Nacionais
                       </Button>
                       <Button
                         type="button"
-                        onClick={() => appendHoliday({
-                          date: "",
-                          name: "",
-                          isRecurring: false,
-                        })}
+                        onClick={() =>
+                          appendHoliday({
+                            date: "",
+                            name: "",
+                            isRecurring: false,
+                          })
+                        }
                       >
                         <Plus className="h-4 w-4 mr-2" />
                         Adicionar Feriado

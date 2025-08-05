@@ -1,10 +1,10 @@
-import { z } from 'zod';
+import type { z } from "zod";
 
 // =======================================
 // EMAIL PROVIDER TYPES & CONFIGURATIONS
 // =======================================
 
-export type EmailProvider = 'smtp' | 'ses' | 'sendgrid' | 'mailgun' | 'resend' | 'postmark';
+export type EmailProvider = "smtp" | "ses" | "sendgrid" | "mailgun" | "resend" | "postmark";
 
 export interface EmailProviderConfig {
   provider: EmailProvider;
@@ -49,7 +49,7 @@ export interface SendGridConfig {
 export interface MailgunConfig {
   apiKey: string;
   domain: string;
-  region: 'us' | 'eu';
+  region: "us" | "eu";
 }
 
 export interface ResendConfig {
@@ -68,7 +68,7 @@ export interface PostmarkConfig {
 export interface EmailRecipient {
   email: string;
   name?: string;
-  type: 'to' | 'cc' | 'bcc';
+  type: "to" | "cc" | "bcc";
 }
 
 export interface EmailAttachment {
@@ -86,7 +86,7 @@ export interface EmailTemplate {
   htmlContent: string;
   textContent?: string;
   variables: string[]; // Array of variable names like ['patientName', 'appointmentDate']
-  category: 'follow-up' | 'appointment' | 'marketing' | 'notification';
+  category: "follow-up" | "appointment" | "marketing" | "notification";
   isActive: boolean;
   clinicId: string;
   createdBy: string;
@@ -113,7 +113,7 @@ export interface EmailMessage {
   attachments?: EmailAttachment[];
   templateId?: string;
   templateVariables?: Record<string, any>;
-  priority: 'low' | 'normal' | 'high';
+  priority: "low" | "normal" | "high";
   scheduledAt?: Date;
   tags?: string[];
   metadata?: Record<string, any>;
@@ -123,17 +123,17 @@ export interface EmailMessage {
 // EMAIL TRACKING & ANALYTICS
 // =======================================
 
-export type EmailStatus = 
-  | 'queued'
-  | 'sent'
-  | 'delivered'
-  | 'bounced'
-  | 'rejected'
-  | 'opened'
-  | 'clicked'
-  | 'unsubscribed'
-  | 'complained'
-  | 'failed';
+export type EmailStatus =
+  | "queued"
+  | "sent"
+  | "delivered"
+  | "bounced"
+  | "rejected"
+  | "opened"
+  | "clicked"
+  | "unsubscribed"
+  | "complained"
+  | "failed";
 
 export interface EmailEvent {
   id: string;
@@ -158,21 +158,21 @@ export interface EmailAnalytics {
   unsubscribed: number;
   complained: number;
   failed: number;
-  
+
   deliveryRate: number;
   openRate: number;
   clickRate: number;
   bounceRate: number;
   complaintRate: number;
-  
+
   avgDeliveryTime?: number; // Minutes
   avgOpenTime?: number; // Hours
-  
+
   topLinks?: Array<{
     url: string;
     clicks: number;
   }>;
-  
+
   bounceReasons?: Array<{
     reason: string;
     count: number;
@@ -189,9 +189,9 @@ export interface EmailCampaign {
   templateId: string;
   recipients: EmailRecipient[];
   scheduledAt?: Date;
-  status: 'draft' | 'scheduled' | 'sending' | 'sent' | 'paused' | 'completed';
+  status: "draft" | "scheduled" | "sending" | "sent" | "paused" | "completed";
   segmentId?: string; // For patient segmentation
-  
+
   settings: {
     trackOpens: boolean;
     trackClicks: boolean;
@@ -199,9 +199,9 @@ export interface EmailCampaign {
     batchSize?: number;
     sendRate?: number; // emails per minute
   };
-  
+
   analytics?: EmailAnalytics;
-  
+
   clinicId: string;
   createdBy: string;
   createdAt: Date;
@@ -217,46 +217,46 @@ export interface EmailCampaign {
 export interface EmailSettings {
   id: string;
   clinicId: string;
-  
+
   defaultFrom: {
     email: string;
     name: string;
   };
-  
+
   defaultReplyTo?: {
     email: string;
     name: string;
   };
-  
+
   bounceHandling: {
     enabled: boolean;
     maxBounces: number;
     suppressAfterBounces: boolean;
   };
-  
+
   unsubscribeHandling: {
     enabled: boolean;
     redirectUrl?: string;
     confirmationRequired: boolean;
   };
-  
+
   deliveryOptimization: {
     sendingSchedule: {
       enabled: boolean;
       allowedHours: {
         start: string; // "09:00"
-        end: string;   // "18:00"
+        end: string; // "18:00"
       };
       allowedDays: number[]; // [1,2,3,4,5] for Mon-Fri
       timezone: string;
     };
-    
+
     rateLimit: {
       emailsPerMinute: number;
       emailsPerHour: number;
       emailsPerDay: number;
     };
-    
+
     suppressionList: {
       enabled: boolean;
       bounced: boolean;
@@ -264,14 +264,14 @@ export interface EmailSettings {
       unsubscribed: boolean;
     };
   };
-  
+
   dkimSigning: {
     enabled: boolean;
     domain?: string;
     selector?: string;
     privateKey?: string;
   };
-  
+
   webhookUrl?: string;
   webhookSecret?: string;
 }
@@ -281,13 +281,13 @@ export interface EmailSettings {
 // =======================================
 
 export const EmailRecipientSchema = z.object({
-  email: z.string().email('Email inválido'),
+  email: z.string().email("Email inválido"),
   name: z.string().optional(),
-  type: z.enum(['to', 'cc', 'bcc']).default('to'),
+  type: z.enum(["to", "cc", "bcc"]).default("to"),
 });
 
 export const EmailAttachmentSchema = z.object({
-  filename: z.string().min(1, 'Nome do arquivo é obrigatório'),
+  filename: z.string().min(1, "Nome do arquivo é obrigatório"),
   content: z.any(), // Buffer or string
   contentType: z.string().optional(),
   cid: z.string().optional(),
@@ -295,43 +295,45 @@ export const EmailAttachmentSchema = z.object({
 });
 
 export const EmailTemplateSchema = z.object({
-  name: z.string().min(1, 'Nome do template é obrigatório'),
-  subject: z.string().min(1, 'Assunto é obrigatório'),
-  htmlContent: z.string().min(1, 'Conteúdo HTML é obrigatório'),
+  name: z.string().min(1, "Nome do template é obrigatório"),
+  subject: z.string().min(1, "Assunto é obrigatório"),
+  htmlContent: z.string().min(1, "Conteúdo HTML é obrigatório"),
   textContent: z.string().optional(),
   variables: z.array(z.string()).default([]),
-  category: z.enum(['follow-up', 'appointment', 'marketing', 'notification']),
+  category: z.enum(["follow-up", "appointment", "marketing", "notification"]),
   isActive: z.boolean().default(true),
 });
 
 export const EmailMessageSchema = z.object({
-  to: z.array(EmailRecipientSchema).min(1, 'Pelo menos um destinatário é obrigatório'),
+  to: z.array(EmailRecipientSchema).min(1, "Pelo menos um destinatário é obrigatório"),
   cc: z.array(EmailRecipientSchema).optional(),
   bcc: z.array(EmailRecipientSchema).optional(),
   from: z.object({
-    email: z.string().email('Email do remetente inválido'),
+    email: z.string().email("Email do remetente inválido"),
     name: z.string().optional(),
   }),
-  replyTo: z.object({
-    email: z.string().email('Email de resposta inválido'),
-    name: z.string().optional(),
-  }).optional(),
-  subject: z.string().min(1, 'Assunto é obrigatório'),
-  htmlContent: z.string().min(1, 'Conteúdo HTML é obrigatório'),
+  replyTo: z
+    .object({
+      email: z.string().email("Email de resposta inválido"),
+      name: z.string().optional(),
+    })
+    .optional(),
+  subject: z.string().min(1, "Assunto é obrigatório"),
+  htmlContent: z.string().min(1, "Conteúdo HTML é obrigatório"),
   textContent: z.string().optional(),
   attachments: z.array(EmailAttachmentSchema).optional(),
   templateId: z.string().optional(),
   templateVariables: z.record(z.any()).optional(),
-  priority: z.enum(['low', 'normal', 'high']).default('normal'),
+  priority: z.enum(["low", "normal", "high"]).default("normal"),
   scheduledAt: z.date().optional(),
   tags: z.array(z.string()).optional(),
   metadata: z.record(z.any()).optional(),
 });
 
 export const EmailCampaignSchema = z.object({
-  name: z.string().min(1, 'Nome da campanha é obrigatório'),
-  templateId: z.string().min(1, 'Template é obrigatório'),
-  recipients: z.array(EmailRecipientSchema).min(1, 'Pelo menos um destinatário é obrigatório'),
+  name: z.string().min(1, "Nome da campanha é obrigatório"),
+  templateId: z.string().min(1, "Template é obrigatório"),
+  recipients: z.array(EmailRecipientSchema).min(1, "Pelo menos um destinatário é obrigatório"),
   scheduledAt: z.date().optional(),
   segmentId: z.string().optional(),
   settings: z.object({
@@ -344,28 +346,32 @@ export const EmailCampaignSchema = z.object({
 });
 
 export const EmailProviderConfigSchema = z.object({
-  provider: z.enum(['smtp', 'ses', 'sendgrid', 'mailgun', 'resend', 'postmark']),
-  name: z.string().min(1, 'Nome do provedor é obrigatório'),
+  provider: z.enum(["smtp", "ses", "sendgrid", "mailgun", "resend", "postmark"]),
+  name: z.string().min(1, "Nome do provedor é obrigatório"),
   settings: z.record(z.any()),
   isActive: z.boolean().default(true),
   priority: z.number().min(1).max(10).default(5),
   dailyLimit: z.number().positive().optional(),
   monthlyLimit: z.number().positive().optional(),
-  rateLimit: z.object({
-    requestsPerSecond: z.number().positive(),
-    requestsPerMinute: z.number().positive(),
-  }).optional(),
+  rateLimit: z
+    .object({
+      requestsPerSecond: z.number().positive(),
+      requestsPerMinute: z.number().positive(),
+    })
+    .optional(),
 });
 
 export const EmailSettingsSchema = z.object({
   defaultFrom: z.object({
-    email: z.string().email('Email padrão inválido'),
-    name: z.string().min(1, 'Nome padrão é obrigatório'),
+    email: z.string().email("Email padrão inválido"),
+    name: z.string().min(1, "Nome padrão é obrigatório"),
   }),
-  defaultReplyTo: z.object({
-    email: z.string().email('Email de resposta inválido'),
-    name: z.string().optional(),
-  }).optional(),
+  defaultReplyTo: z
+    .object({
+      email: z.string().email("Email de resposta inválido"),
+      name: z.string().optional(),
+    })
+    .optional(),
   bounceHandling: z.object({
     enabled: z.boolean().default(true),
     maxBounces: z.number().min(1).max(10).default(3),
@@ -380,11 +386,11 @@ export const EmailSettingsSchema = z.object({
     sendingSchedule: z.object({
       enabled: z.boolean().default(false),
       allowedHours: z.object({
-        start: z.string().regex(/^\d{2}:\d{2}$/, 'Formato de hora inválido (HH:MM)'),
-        end: z.string().regex(/^\d{2}:\d{2}$/, 'Formato de hora inválido (HH:MM)'),
+        start: z.string().regex(/^\d{2}:\d{2}$/, "Formato de hora inválido (HH:MM)"),
+        end: z.string().regex(/^\d{2}:\d{2}$/, "Formato de hora inválido (HH:MM)"),
       }),
       allowedDays: z.array(z.number().min(0).max(6)),
-      timezone: z.string().default('America/Sao_Paulo'),
+      timezone: z.string().default("America/Sao_Paulo"),
     }),
     rateLimit: z.object({
       emailsPerMinute: z.number().positive().default(60),

@@ -1,15 +1,21 @@
 /**
  * Pricing Optimization Panel Component
- * 
+ *
  * Displays pricing strategies and optimization recommendations
  */
 
-'use client';
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { DollarSign, TrendingUp, Settings, Lightbulb } from 'lucide-react';
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { DollarSign, TrendingUp, Settings, Lightbulb } from "lucide-react";
 
 interface PricingOptimizationPanelProps {
   pricingData: {
@@ -29,9 +35,7 @@ export function PricingOptimizationPanel({ pricingData, clinicId }: PricingOptim
             <DollarSign className="h-5 w-5" />
             Current Pricing Strategy
           </CardTitle>
-          <CardDescription>
-            Active pricing models and configurations
-          </CardDescription>
+          <CardDescription>Active pricing models and configurations</CardDescription>
         </CardHeader>
         <CardContent>
           {pricingData.currentStrategy ? (
@@ -46,7 +50,9 @@ export function PricingOptimizationPanel({ pricingData, clinicId }: PricingOptim
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Base Price</span>
-                <span className="text-sm font-mono">R$ {pricingData.currentStrategy.base_price}</span>
+                <span className="text-sm font-mono">
+                  R$ {pricingData.currentStrategy.base_price}
+                </span>
               </div>
             </div>
           ) : (
@@ -67,9 +73,7 @@ export function PricingOptimizationPanel({ pricingData, clinicId }: PricingOptim
             <TrendingUp className="h-5 w-5" />
             Optimization Recommendations
           </CardTitle>
-          <CardDescription>
-            AI-powered pricing improvement suggestions
-          </CardDescription>
+          <CardDescription>AI-powered pricing improvement suggestions</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -79,7 +83,7 @@ export function PricingOptimizationPanel({ pricingData, clinicId }: PricingOptim
                 +{pricingData.projectedIncrease.toFixed(1)}%
               </Badge>
             </div>
-            
+
             <div className="space-y-2">
               {pricingData.recommendations.map((recommendation, index) => (
                 <div key={index} className="flex items-start gap-2 p-2 bg-gray-50 rounded-lg">
@@ -105,9 +109,7 @@ export function ServiceMixChart({ serviceMixData, clinicId }: any) {
     <Card>
       <CardHeader>
         <CardTitle>Service Mix Optimization</CardTitle>
-        <CardDescription>
-          Optimize service allocation for maximum profitability
-        </CardDescription>
+        <CardDescription>Optimize service allocation for maximum profitability</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="text-center py-8">
@@ -132,9 +134,7 @@ export function CLVEnhancementPanel({ clvData, clinicId }: any) {
     <Card>
       <CardHeader>
         <CardTitle>Customer Lifetime Value Enhancement</CardTitle>
-        <CardDescription>
-          Strategies to increase customer value and retention
-        </CardDescription>
+        <CardDescription>Strategies to increase customer value and retention</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="text-center py-8">
@@ -159,9 +159,7 @@ export function CompetitiveAnalysisChart({ competitiveData, clinicId }: any) {
     <Card>
       <CardHeader>
         <CardTitle>Competitive Analysis</CardTitle>
-        <CardDescription>
-          Market positioning and competitive intelligence
-        </CardDescription>
+        <CardDescription>Market positioning and competitive intelligence</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="text-center py-8">
@@ -186,9 +184,7 @@ export function ROITrackingPanel({ performanceData, clinicId }: any) {
     <Card>
       <CardHeader>
         <CardTitle>ROI Performance Tracking</CardTitle>
-        <CardDescription>
-          Track return on investment for optimization initiatives
-        </CardDescription>
+        <CardDescription>Track return on investment for optimization initiatives</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -212,7 +208,7 @@ export function ROITrackingPanel({ performanceData, clinicId }: any) {
               <p className="text-sm text-muted-foreground">Stable</p>
             </div>
           </div>
-          
+
           <div className="space-y-2">
             {performanceData.recommendations.map((rec: string, index: number) => (
               <div key={index} className="text-sm p-2 bg-gray-50 rounded">

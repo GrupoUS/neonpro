@@ -1,6 +1,6 @@
-import { createClient } from '@/lib/supabase/server';
-import { SubscriptionService } from '@/lib/services/subscription-service';
-import { NextRequest, NextResponse } from 'next/server';
+import type { createClient } from "@/lib/supabase/server";
+import type { SubscriptionService } from "@/lib/services/subscription-service";
+import type { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
@@ -8,20 +8,20 @@ export async function POST(request: NextRequest) {
 
     if (!planId || !successUrl || !cancelUrl) {
       return NextResponse.json(
-        { error: 'Missing required fields: planId, successUrl, cancelUrl' },
-        { status: 400 }
+        { error: "Missing required fields: planId, successUrl, cancelUrl" },
+        { status: 400 },
       );
     }
 
     // Get user from Supabase
     const supabase = await createClient();
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
 
     if (userError || !user) {
-      return NextResponse.json(
-        { error: 'User not authenticated' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
     }
 
     // Create checkout session
@@ -31,23 +31,22 @@ export async function POST(request: NextRequest) {
       user.id,
       user.email!,
       successUrl,
-      cancelUrl
+      cancelUrl,
     );
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       sessionId: session.id,
-      url: session.url 
+      url: session.url,
     });
-
   } catch (error: any) {
-    console.error('Create checkout session error:', error);
-    
+    console.error("Create checkout session error:", error);
+
     return NextResponse.json(
-      { 
-        error: 'Failed to create checkout session',
-        message: error.message 
+      {
+        error: "Failed to create checkout session",
+        message: error.message,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

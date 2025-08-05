@@ -1,21 +1,24 @@
 // SMS Webhook Handler for NeonPro
 // Handles delivery reports and status updates from SMS providers
 
-import { NextRequest, NextResponse } from 'next/server';
-import { headers } from 'next/headers';
-import { smsService } from '@/app/lib/services/sms-service';
-import type { SMSProvider } from '@/app/types/sms';
+import type { NextRequest, NextResponse } from "next/server";
+import type { headers } from "next/headers";
+import type { smsService } from "@/app/lib/services/sms-service";
+import type { SMSProvider } from "@/app/types/sms";
 
 export async function POST(request: NextRequest) {
   try {
     // Get provider from URL search params or headers
     const { searchParams } = new URL(request.url);
-    const provider = searchParams.get('provider') as SMSProvider;
-    
+    const provider = searchParams.get("provider") as SMSProvider;
+
     if (!provider) {
       return NextResponse.json(
-        { success: false, error: { code: 'MISSING_PROVIDER', message: 'Provider parameter required' } },
-        { status: 400 }
+        {
+          success: false,
+          error: { code: "MISSING_PROVIDER", message: "Provider parameter required" },
+        },
+        { status: 400 },
       );
     }
 
@@ -28,8 +31,11 @@ export async function POST(request: NextRequest) {
     if (!isValid) {
       console.warn(`Invalid webhook signature for provider: ${provider}`);
       return NextResponse.json(
-        { success: false, error: { code: 'INVALID_SIGNATURE', message: 'Invalid webhook signature' } },
-        { status: 401 }
+        {
+          success: false,
+          error: { code: "INVALID_SIGNATURE", message: "Invalid webhook signature" },
+        },
+        { status: 401 },
       );
     }
 
@@ -38,35 +44,34 @@ export async function POST(request: NextRequest) {
 
     // Return success response
     return NextResponse.json(
-      { 
-        success: true, 
-        data: { message: 'Webhook processed successfully' },
+      {
+        success: true,
+        data: { message: "Webhook processed successfully" },
         metadata: {
           provider,
           timestamp: new Date().toISOString(),
-          request_id: `webhook_${Date.now()}`
-        }
+          request_id: `webhook_${Date.now()}`,
+        },
       },
-      { status: 200 }
+      { status: 200 },
     );
-
   } catch (error) {
-    console.error('SMS webhook error:', error);
-    
+    console.error("SMS webhook error:", error);
+
     return NextResponse.json(
       {
         success: false,
         error: {
-          code: 'WEBHOOK_ERROR',
-          message: error instanceof Error ? error.message : 'Internal webhook error',
-          details: process.env.NODE_ENV === 'development' ? error : undefined
+          code: "WEBHOOK_ERROR",
+          message: error instanceof Error ? error.message : "Internal webhook error",
+          details: process.env.NODE_ENV === "development" ? error : undefined,
         },
         metadata: {
           timestamp: new Date().toISOString(),
-          request_id: `webhook_error_${Date.now()}`
-        }
+          request_id: `webhook_error_${Date.now()}`,
+        },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -77,24 +82,24 @@ export async function POST(request: NextRequest) {
 async function verifyWebhookSignature(
   provider: SMSProvider,
   request: NextRequest,
-  payload: any
+  payload: any,
 ): Promise<boolean> {
   const headersList = headers();
-  
+
   try {
     switch (provider) {
-      case 'twilio':
+      case "twilio":
         return verifyTwilioSignature(request, payload);
-      
-      case 'sms_dev':
+
+      case "sms_dev":
         return verifySMSDevSignature(headersList, payload);
-      
-      case 'zenvia':
+
+      case "zenvia":
         return verifyZenviaSignature(headersList, payload);
-      
-      case 'movile':
+
+      case "movile":
         return verifyMovileSignature(headersList, payload);
-      
+
       default:
         console.warn(`Webhook signature verification not implemented for provider: ${provider}`);
         return true; // Allow for custom providers without verification
@@ -111,12 +116,12 @@ async function verifyWebhookSignature(
 function verifyTwilioSignature(request: NextRequest, payload: any): boolean {
   // Twilio webhook verification would be implemented here
   // This requires the Twilio SDK and auth token
-  
+
   // For development, we'll skip verification
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === "development") {
     return true;
   }
-  
+
   // In production, implement proper Twilio signature verification
   // const crypto = require('crypto');
   // const twilioSignature = request.headers.get('x-twilio-signature');
@@ -125,7 +130,7 @@ function verifyTwilioSignature(request: NextRequest, payload: any): boolean {
   //   .update(Buffer.from(url + Object.keys(payload).sort().map(key => key + payload[key]).join(''), 'utf-8'))
   //   .digest('base64');
   // return crypto.timingSafeEqual(Buffer.from(twilioSignature), Buffer.from(expectedSignature));
-  
+
   return true;
 }
 
@@ -134,12 +139,12 @@ function verifyTwilioSignature(request: NextRequest, payload: any): boolean {
  */
 function verifySMSDevSignature(headers: Headers, payload: any): boolean {
   // SMS Dev webhook verification
-  const signature = headers.get('x-smsdev-signature');
-  
+  const signature = headers.get("x-smsdev-signature");
+
   if (!signature) {
-    return process.env.NODE_ENV === 'development';
+    return process.env.NODE_ENV === "development";
   }
-  
+
   // Implement SMS Dev signature verification logic here
   return true;
 }
@@ -149,12 +154,12 @@ function verifySMSDevSignature(headers: Headers, payload: any): boolean {
  */
 function verifyZenviaSignature(headers: Headers, payload: any): boolean {
   // ZENVIA webhook verification
-  const signature = headers.get('x-zenvia-signature');
-  
+  const signature = headers.get("x-zenvia-signature");
+
   if (!signature) {
-    return process.env.NODE_ENV === 'development';
+    return process.env.NODE_ENV === "development";
   }
-  
+
   // Implement ZENVIA signature verification logic here
   return true;
 }
@@ -164,12 +169,12 @@ function verifyZenviaSignature(headers: Headers, payload: any): boolean {
  */
 function verifyMovileSignature(headers: Headers, payload: any): boolean {
   // Movile webhook verification
-  const signature = headers.get('x-movile-signature');
-  
+  const signature = headers.get("x-movile-signature");
+
   if (!signature) {
-    return process.env.NODE_ENV === 'development';
+    return process.env.NODE_ENV === "development";
   }
-  
+
   // Implement Movile signature verification logic here
   return true;
 }
@@ -177,39 +182,39 @@ function verifyMovileSignature(headers: Headers, payload: any): boolean {
 // Handle other HTTP methods
 export async function GET() {
   return NextResponse.json(
-    { 
-      success: false, 
-      error: { 
-        code: 'METHOD_NOT_ALLOWED', 
-        message: 'Only POST method is allowed for webhooks' 
-      } 
+    {
+      success: false,
+      error: {
+        code: "METHOD_NOT_ALLOWED",
+        message: "Only POST method is allowed for webhooks",
+      },
     },
-    { status: 405 }
+    { status: 405 },
   );
 }
 
 export async function PUT() {
   return NextResponse.json(
-    { 
-      success: false, 
-      error: { 
-        code: 'METHOD_NOT_ALLOWED', 
-        message: 'Only POST method is allowed for webhooks' 
-      } 
+    {
+      success: false,
+      error: {
+        code: "METHOD_NOT_ALLOWED",
+        message: "Only POST method is allowed for webhooks",
+      },
     },
-    { status: 405 }
+    { status: 405 },
   );
 }
 
 export async function DELETE() {
   return NextResponse.json(
-    { 
-      success: false, 
-      error: { 
-        code: 'METHOD_NOT_ALLOWED', 
-        message: 'Only POST method is allowed for webhooks' 
-      } 
+    {
+      success: false,
+      error: {
+        code: "METHOD_NOT_ALLOWED",
+        message: "Only POST method is allowed for webhooks",
+      },
     },
-    { status: 405 }
+    { status: 405 },
   );
 }

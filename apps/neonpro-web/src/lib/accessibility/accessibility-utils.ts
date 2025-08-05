@@ -1,7 +1,7 @@
 /**
  * NeonPro - Accessibility Utilities
  * WCAG 2.1 AA compliant utility functions for healthcare accessibility
- * 
+ *
  * Features:
  * - ARIA label management
  * - Keyboard navigation helpers
@@ -11,7 +11,7 @@
  * - Form accessibility patterns
  */
 
-import { RefObject } from 'react'
+import type { RefObject } from "react";
 
 // WCAG 2.1 AA Color Contrast Ratios
 export const WCAG_CONTRAST_RATIOS = {
@@ -19,34 +19,34 @@ export const WCAG_CONTRAST_RATIOS = {
   LARGE_TEXT: 3.0,
   NON_TEXT: 3.0,
   ENHANCED_AA: 7.0, // AAA level for critical healthcare content
-} as const
+} as const;
 
 // Screen Reader Announcement Priorities
-export type AnnouncementPriority = 'polite' | 'assertive' | 'off'
+export type AnnouncementPriority = "polite" | "assertive" | "off";
 
 // Keyboard Navigation Constants
 export const KEYBOARD_KEYS = {
-  ENTER: 'Enter',
-  SPACE: ' ',
-  ESCAPE: 'Escape',
-  TAB: 'Tab',
-  ARROW_UP: 'ArrowUp',
-  ARROW_DOWN: 'ArrowDown',
-  ARROW_LEFT: 'ArrowLeft',
-  ARROW_RIGHT: 'ArrowRight',
-  HOME: 'Home',
-  END: 'End',
-  PAGE_UP: 'PageUp',
-  PAGE_DOWN: 'PageDown',
-} as const
+  ENTER: "Enter",
+  SPACE: " ",
+  ESCAPE: "Escape",
+  TAB: "Tab",
+  ARROW_UP: "ArrowUp",
+  ARROW_DOWN: "ArrowDown",
+  ARROW_LEFT: "ArrowLeft",
+  ARROW_RIGHT: "ArrowRight",
+  HOME: "Home",
+  END: "End",
+  PAGE_UP: "PageUp",
+  PAGE_DOWN: "PageDown",
+} as const;
 
 /**
  * Generate unique ARIA IDs with optional prefix
  * Ensures unique IDs across components for ARIA relationships
  */
-let idCounter = 0
-export function generateAriaId(prefix: string = 'aria'): string {
-  return `${prefix}-${++idCounter}-${Date.now()}`
+let idCounter = 0;
+export function generateAriaId(prefix: string = "aria"): string {
+  return `${prefix}-${++idCounter}-${Date.now()}`;
 }
 
 /**
@@ -55,34 +55,34 @@ export function generateAriaId(prefix: string = 'aria'): string {
  */
 export function announceToScreenReader(
   message: string,
-  priority: AnnouncementPriority = 'polite'
+  priority: AnnouncementPriority = "polite",
 ): void {
   // Create or get existing live region
-  let liveRegion = document.getElementById('sr-live-region')
-  
+  let liveRegion = document.getElementById("sr-live-region");
+
   if (!liveRegion) {
-    liveRegion = document.createElement('div')
-    liveRegion.id = 'sr-live-region'
-    liveRegion.setAttribute('aria-live', priority)
-    liveRegion.setAttribute('aria-atomic', 'true')
-    liveRegion.style.position = 'absolute'
-    liveRegion.style.left = '-10000px'
-    liveRegion.style.width = '1px'
-    liveRegion.style.height = '1px'
-    liveRegion.style.overflow = 'hidden'
-    document.body.appendChild(liveRegion)
+    liveRegion = document.createElement("div");
+    liveRegion.id = "sr-live-region";
+    liveRegion.setAttribute("aria-live", priority);
+    liveRegion.setAttribute("aria-atomic", "true");
+    liveRegion.style.position = "absolute";
+    liveRegion.style.left = "-10000px";
+    liveRegion.style.width = "1px";
+    liveRegion.style.height = "1px";
+    liveRegion.style.overflow = "hidden";
+    document.body.appendChild(liveRegion);
   }
 
   // Update aria-live attribute if priority changed
-  if (liveRegion.getAttribute('aria-live') !== priority) {
-    liveRegion.setAttribute('aria-live', priority)
+  if (liveRegion.getAttribute("aria-live") !== priority) {
+    liveRegion.setAttribute("aria-live", priority);
   }
 
   // Clear and set new message
-  liveRegion.textContent = ''
+  liveRegion.textContent = "";
   setTimeout(() => {
-    liveRegion!.textContent = message
-  }, 100)
+    liveRegion!.textContent = message;
+  }, 100);
 }
 
 /**
@@ -90,75 +90,72 @@ export function announceToScreenReader(
  * Essential for healthcare forms and modal dialogs
  */
 export class FocusManager {
-  private static focusStack: HTMLElement[] = []
+  private static focusStack: HTMLElement[] = [];
 
   /**
    * Trap focus within a container element
    * Critical for modal dialogs and form wizards
    */
   static trapFocus(containerRef: RefObject<HTMLElement>) {
-    if (!containerRef.current) return
+    if (!containerRef.current) return;
 
-    const container = containerRef.current
+    const container = containerRef.current;
     const focusableElements = container.querySelectorAll(
-      'a[href], button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
-    )
+      'a[href], button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    );
 
-    const firstElement = focusableElements[0] as HTMLElement
-    const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement
+    const firstElement = focusableElements[0] as HTMLElement;
+    const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === KEYBOARD_KEYS.TAB) {
         if (e.shiftKey) {
           // Shift + Tab
           if (document.activeElement === firstElement) {
-            e.preventDefault()
-            lastElement?.focus()
+            e.preventDefault();
+            lastElement?.focus();
           }
         } else {
           // Tab
           if (document.activeElement === lastElement) {
-            e.preventDefault()
-            firstElement?.focus()
+            e.preventDefault();
+            firstElement?.focus();
           }
         }
       }
-    }
+    };
 
-    container.addEventListener('keydown', handleKeyDown)
-    
+    container.addEventListener("keydown", handleKeyDown);
+
     // Focus first element
-    firstElement?.focus()
+    firstElement?.focus();
 
     // Return cleanup function
     return () => {
-      container.removeEventListener('keydown', handleKeyDown)
-    }
+      container.removeEventListener("keydown", handleKeyDown);
+    };
   }
 
   /**
    * Save current focus and return restore function
    */
   static saveFocus(): () => void {
-    const activeElement = document.activeElement as HTMLElement
-    this.focusStack.push(activeElement)
+    const activeElement = document.activeElement as HTMLElement;
+    this.focusStack.push(activeElement);
 
     return () => {
-      const elementToFocus = this.focusStack.pop()
-      elementToFocus?.focus()
-    }
+      const elementToFocus = this.focusStack.pop();
+      elementToFocus?.focus();
+    };
   }
 
   /**
    * Set focus with announcement for screen readers
    */
-  static setFocusWithAnnouncement(
-    element: HTMLElement,
-    announcement?: string
-  ) {
-    element.focus()
+  static setFocusWithAnnouncement(element: HTMLElement, announcement?: string) {
+    element.focus();
     if (announcement) {
-      announceToScreenReader(announcement, 'assertive')
+      announceToScreenReader(announcement, "assertive");
     }
   }
 }
@@ -176,74 +173,69 @@ export const AriaAttributes = {
     labelId?: string,
     descriptionId?: string,
     errorId?: string,
-    required: boolean = false
+    required: boolean = false,
   ) => {
     const attributes: Record<string, string | boolean> = {
       id: fieldId,
-      'aria-required': required,
-    }
+      "aria-required": required,
+    };
 
     if (labelId) {
-      attributes['aria-labelledby'] = labelId
+      attributes["aria-labelledby"] = labelId;
     }
 
-    const describedBy: string[] = []
-    if (descriptionId) describedBy.push(descriptionId)
-    if (errorId) describedBy.push(errorId)
-    
+    const describedBy: string[] = [];
+    if (descriptionId) describedBy.push(descriptionId);
+    if (errorId) describedBy.push(errorId);
+
     if (describedBy.length > 0) {
-      attributes['aria-describedby'] = describedBy.join(' ')
+      attributes["aria-describedby"] = describedBy.join(" ");
     }
 
-    return attributes
+    return attributes;
   },
 
   /**
    * Generate button ARIA attributes
    */
-  button: (
-    expanded?: boolean,
-    controls?: string,
-    pressed?: boolean,
-    label?: string
-  ) => {
-    const attributes: Record<string, string | boolean | undefined> = {}
+  button: (expanded?: boolean, controls?: string, pressed?: boolean, label?: string) => {
+    const attributes: Record<string, string | boolean | undefined> = {};
 
     if (expanded !== undefined) {
-      attributes['aria-expanded'] = expanded
+      attributes["aria-expanded"] = expanded;
     }
     if (controls) {
-      attributes['aria-controls'] = controls
+      attributes["aria-controls"] = controls;
     }
     if (pressed !== undefined) {
-      attributes['aria-pressed'] = pressed
+      attributes["aria-pressed"] = pressed;
     }
     if (label) {
-      attributes['aria-label'] = label
+      attributes["aria-label"] = label;
     }
 
-    return attributes
+    return attributes;
   },
 
   /**
    * Generate modal/dialog ARIA attributes
    */
   modal: (titleId: string, descriptionId?: string) => ({
-    role: 'dialog',
-    'aria-modal': true,
-    'aria-labelledby': titleId,
-    ...(descriptionId && { 'aria-describedby': descriptionId }),
+    role: "dialog",
+    "aria-modal": true,
+    "aria-labelledby": titleId,
+    ...(descriptionId && { "aria-describedby": descriptionId }),
   }),
 
   /**
    * Generate status/live region attributes
    */
-  status: (priority: AnnouncementPriority = 'polite', atomic = true) => ({
-    role: 'status',
-    'aria-live': priority,
-    'aria-atomic': atomic,
+  status: (priority: AnnouncementPriority = "polite", atomic = true) => ({
+    role: "status",
+    "aria-live": priority,
+    "aria-atomic": atomic,
   }),
-}
+};
 
 /**
  * Keyboard Navigation Helpers
@@ -258,52 +250,49 @@ export const KeyboardNavigation = {
     items: HTMLElement[],
     currentIndex: number,
     onIndexChange: (newIndex: number) => void,
-    circular = true
+    circular = true,
   ) => {
-    let newIndex = currentIndex
+    let newIndex = currentIndex;
 
     switch (event.key) {
       case KEYBOARD_KEYS.ARROW_DOWN:
-        event.preventDefault()
-        newIndex = circular 
+        event.preventDefault();
+        newIndex = circular
           ? (currentIndex + 1) % items.length
-          : Math.min(currentIndex + 1, items.length - 1)
-        break
+          : Math.min(currentIndex + 1, items.length - 1);
+        break;
       case KEYBOARD_KEYS.ARROW_UP:
-        event.preventDefault()
+        event.preventDefault();
         newIndex = circular
           ? (currentIndex - 1 + items.length) % items.length
-          : Math.max(currentIndex - 1, 0)
-        break
+          : Math.max(currentIndex - 1, 0);
+        break;
       case KEYBOARD_KEYS.HOME:
-        event.preventDefault()
-        newIndex = 0
-        break
+        event.preventDefault();
+        newIndex = 0;
+        break;
       case KEYBOARD_KEYS.END:
-        event.preventDefault()
-        newIndex = items.length - 1
-        break
+        event.preventDefault();
+        newIndex = items.length - 1;
+        break;
     }
 
     if (newIndex !== currentIndex) {
-      onIndexChange(newIndex)
-      items[newIndex]?.focus()
+      onIndexChange(newIndex);
+      items[newIndex]?.focus();
     }
   },
 
   /**
    * Handle Enter/Space activation
    */
-  handleActivation: (
-    event: KeyboardEvent,
-    callback: () => void
-  ) => {
+  handleActivation: (event: KeyboardEvent, callback: () => void) => {
     if (event.key === KEYBOARD_KEYS.ENTER || event.key === KEYBOARD_KEYS.SPACE) {
-      event.preventDefault()
-      callback()
+      event.preventDefault();
+      callback();
     }
   },
-}
+};
 
 /**
  * Color Contrast Utilities
@@ -314,30 +303,30 @@ export const ColorContrast = {
    * Calculate relative luminance of a color
    */
   getRelativeLuminance: (hex: string): number => {
-    const rgb = parseInt(hex.slice(1), 16)
-    const r = (rgb >> 16) & 0xff
-    const g = (rgb >> 8) & 0xff
-    const b = (rgb >> 0) & 0xff
+    const rgb = parseInt(hex.slice(1), 16);
+    const r = (rgb >> 16) & 0xff;
+    const g = (rgb >> 8) & 0xff;
+    const b = (rgb >> 0) & 0xff;
 
-    const [rs, gs, bs] = [r, g, b].map(c => {
-      c = c / 255
-      return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)
-    })
+    const [rs, gs, bs] = [r, g, b].map((c) => {
+      c = c / 255;
+      return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    });
 
-    return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs
+    return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
   },
 
   /**
    * Calculate contrast ratio between two colors
    */
   getContrastRatio: (color1: string, color2: string): number => {
-    const lum1 = ColorContrast.getRelativeLuminance(color1)
-    const lum2 = ColorContrast.getRelativeLuminance(color2)
-    
-    const lighter = Math.max(lum1, lum2)
-    const darker = Math.min(lum1, lum2)
-    
-    return (lighter + 0.05) / (darker + 0.05)
+    const lum1 = ColorContrast.getRelativeLuminance(color1);
+    const lum2 = ColorContrast.getRelativeLuminance(color2);
+
+    const lighter = Math.max(lum1, lum2);
+    const darker = Math.min(lum1, lum2);
+
+    return (lighter + 0.05) / (darker + 0.05);
   },
 
   /**
@@ -346,12 +335,12 @@ export const ColorContrast = {
   meetsWCAG: (
     foreground: string,
     background: string,
-    level: keyof typeof WCAG_CONTRAST_RATIOS = 'NORMAL_TEXT'
+    level: keyof typeof WCAG_CONTRAST_RATIOS = "NORMAL_TEXT",
   ): boolean => {
-    const ratio = ColorContrast.getContrastRatio(foreground, background)
-    return ratio >= WCAG_CONTRAST_RATIOS[level]
+    const ratio = ColorContrast.getContrastRatio(foreground, background);
+    return ratio >= WCAG_CONTRAST_RATIOS[level];
   },
-}
+};
 
 /**
  * Healthcare-Specific Accessibility Patterns
@@ -360,25 +349,22 @@ export const HealthcareA11y = {
   /**
    * Announce appointment status changes
    */
-  announceAppointmentStatus: (
-    patientName: string,
-    appointmentTime: string,
-    status: string
-  ) => {
-    const message = `Compromiso de ${patientName} às ${appointmentTime} atualizado para ${status}`
-    announceToScreenReader(message, 'assertive')
+  announceAppointmentStatus: (patientName: string, appointmentTime: string, status: string) => {
+    const message = `Compromiso de ${patientName} às ${appointmentTime} atualizado para ${status}`;
+    announceToScreenReader(message, "assertive");
   },
 
   /**
    * Announce form validation errors for healthcare forms
    */
   announceFormErrors: (errors: Record<string, string>) => {
-    const errorCount = Object.keys(errors).length
-    const message = errorCount === 1 
-      ? '1 erro encontrado no formulário'
-      : `${errorCount} erros encontrados no formulário`
-    
-    announceToScreenReader(message, 'assertive')
+    const errorCount = Object.keys(errors).length;
+    const message =
+      errorCount === 1
+        ? "1 erro encontrado no formulário"
+        : `${errorCount} erros encontrados no formulário`;
+
+    announceToScreenReader(message, "assertive");
   },
 
   /**
@@ -389,26 +375,26 @@ export const HealthcareA11y = {
     service: string,
     date: string,
     time: string,
-    status: string
+    status: string,
   ) => {
-    return `Consulta de ${patientName}, ${service}, ${date} às ${time}, status ${status}`
+    return `Consulta de ${patientName}, ${service}, ${date} às ${time}, status ${status}`;
   },
 
   /**
    * Generate accessible date/time picker labels
    */
   dateTimePickerLabels: (selectedDate?: Date, selectedTime?: string) => {
-    const dateLabel = selectedDate 
-      ? `Data selecionada: ${selectedDate.toLocaleDateString('pt-BR')}`
-      : 'Selecione uma data'
-    
+    const dateLabel = selectedDate
+      ? `Data selecionada: ${selectedDate.toLocaleDateString("pt-BR")}`
+      : "Selecione uma data";
+
     const timeLabel = selectedTime
       ? `Horário selecionado: ${selectedTime}`
-      : 'Selecione um horário'
+      : "Selecione um horário";
 
-    return { dateLabel, timeLabel }
+    return { dateLabel, timeLabel };
   },
-}
+};
 
 /**
  * Form Accessibility Enhancer
@@ -420,77 +406,77 @@ export const FormA11y = {
    */
   enhanceForm: (formElement: HTMLFormElement) => {
     // Add form role if not present
-    if (!formElement.getAttribute('role')) {
-      formElement.setAttribute('role', 'form')
+    if (!formElement.getAttribute("role")) {
+      formElement.setAttribute("role", "form");
     }
 
     // Find and enhance form fields
-    const fields = formElement.querySelectorAll('input, select, textarea')
+    const fields = formElement.querySelectorAll("input, select, textarea");
     fields.forEach((field) => {
-      const htmlField = field as HTMLElement
-      
+      const htmlField = field as HTMLElement;
+
       // Add required aria-required attribute
-      if (htmlField.hasAttribute('required') && !htmlField.getAttribute('aria-required')) {
-        htmlField.setAttribute('aria-required', 'true')
+      if (htmlField.hasAttribute("required") && !htmlField.getAttribute("aria-required")) {
+        htmlField.setAttribute("aria-required", "true");
       }
 
       // Link labels and error messages
-      const fieldId = htmlField.id
+      const fieldId = htmlField.id;
       if (fieldId) {
-        const label = formElement.querySelector(`label[for="${fieldId}"]`)
-        const errorElement = formElement.querySelector(`[data-error-for="${fieldId}"]`)
-        
-        const describedBy: string[] = []
-        
+        const label = formElement.querySelector(`label[for="${fieldId}"]`);
+        const errorElement = formElement.querySelector(`[data-error-for="${fieldId}"]`);
+
+        const describedBy: string[] = [];
+
         if (errorElement && errorElement.textContent?.trim()) {
-          errorElement.id = errorElement.id || `${fieldId}-error`
-          describedBy.push(errorElement.id)
-          htmlField.setAttribute('aria-invalid', 'true')
+          errorElement.id = errorElement.id || `${fieldId}-error`;
+          describedBy.push(errorElement.id);
+          htmlField.setAttribute("aria-invalid", "true");
         } else {
-          htmlField.setAttribute('aria-invalid', 'false')
+          htmlField.setAttribute("aria-invalid", "false");
         }
 
         if (describedBy.length > 0) {
-          htmlField.setAttribute('aria-describedby', describedBy.join(' '))
+          htmlField.setAttribute("aria-describedby", describedBy.join(" "));
         }
       }
-    })
+    });
   },
 
   /**
    * Create accessible error summary
    */
   createErrorSummary: (errors: Record<string, string>): HTMLElement => {
-    const summary = document.createElement('div')
-    summary.className = 'error-summary'
-    summary.setAttribute('role', 'alert')
-    summary.setAttribute('aria-labelledby', 'error-summary-title')
-    summary.setAttribute('tabindex', '-1')
+    const summary = document.createElement("div");
+    summary.className = "error-summary";
+    summary.setAttribute("role", "alert");
+    summary.setAttribute("aria-labelledby", "error-summary-title");
+    summary.setAttribute("tabindex", "-1");
 
-    const title = document.createElement('h2')
-    title.id = 'error-summary-title'
-    title.textContent = 'Erro no formulário'
-    summary.appendChild(title)
+    const title = document.createElement("h2");
+    title.id = "error-summary-title";
+    title.textContent = "Erro no formulário";
+    summary.appendChild(title);
 
-    const list = document.createElement('ul')
+    const list = document.createElement("ul");
     Object.entries(errors).forEach(([field, message]) => {
-      const item = document.createElement('li')
-      const link = document.createElement('a')
-      link.href = `#${field}`
-      link.textContent = message
+      const item = document.createElement("li");
+      const link = document.createElement("a");
+      link.href = `#${field}`;
+      link.textContent = message;
       link.onclick = (e) => {
-        e.preventDefault()
-        const targetField = document.getElementById(field)
-        targetField?.focus()
-      }
-      item.appendChild(link)
-      list.appendChild(item)
-    })
-    summary.appendChild(list)
+        e.preventDefault();
+        const targetField = document.getElementById(field);
+        targetField?.focus();
+      };
+      item.appendChild(link);
+      list.appendChild(item);
+    });
+    summary.appendChild(list);
 
-    return summary
+    return summary;
   },
-}
+};
 
 /**
  * Skip Link Component Helper
@@ -501,22 +487,24 @@ export const SkipLinks = {
    * Create skip navigation links
    */
   createSkipLinks: (links: Array<{ href: string; text: string }>): HTMLElement => {
-    const container = document.createElement('div')
-    container.className = 'skip-links sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-50'
-    container.setAttribute('role', 'navigation')
-    container.setAttribute('aria-label', 'Links de navegação rápida')
+    const container = document.createElement("div");
+    container.className =
+      "skip-links sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-50";
+    container.setAttribute("role", "navigation");
+    container.setAttribute("aria-label", "Links de navegação rápida");
 
     links.forEach(({ href, text }) => {
-      const link = document.createElement('a')
-      link.href = href
-      link.textContent = text
-      link.className = 'bg-primary text-primary-foreground p-2 rounded focus:outline-none focus:ring-2 focus:ring-offset-2'
-      container.appendChild(link)
-    })
+      const link = document.createElement("a");
+      link.href = href;
+      link.textContent = text;
+      link.className =
+        "bg-primary text-primary-foreground p-2 rounded focus:outline-none focus:ring-2 focus:ring-offset-2";
+      container.appendChild(link);
+    });
 
-    return container
+    return container;
   },
-}
+};
 
 // Export all utilities as default
 export default {
@@ -531,4 +519,4 @@ export default {
   SkipLinks,
   WCAG_CONTRAST_RATIOS,
   KEYBOARD_KEYS,
-}
+};

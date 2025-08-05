@@ -1,9 +1,9 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
   AlertTriangle,
   Building,
   Calendar,
@@ -13,7 +13,7 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import type { useEffect, useState } from "react";
 
 interface SubscriptionData {
   id: string;
@@ -32,9 +32,7 @@ interface SubscriptionData {
 }
 
 export function SubscriptionInfo() {
-  const [subscription, setSubscription] = useState<SubscriptionData | null>(
-    null
-  );
+  const [subscription, setSubscription] = useState<SubscriptionData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -166,10 +164,7 @@ export function SubscriptionInfo() {
             Assinatura
           </CardTitle>
           <div className="flex items-center gap-2">
-            {getStatusBadge(
-              subscription.status,
-              subscription.cancel_at_period_end
-            )}
+            {getStatusBadge(subscription.status, subscription.cancel_at_period_end)}
             <Button variant="ghost" size="sm" asChild>
               <Link href="/dashboard/subscription/manage">
                 <Settings className="h-4 w-4" />
@@ -240,8 +235,7 @@ export function SubscriptionInfo() {
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-4 w-4 text-yellow-600" />
               <p className="text-sm text-yellow-800">
-                Sua assinatura será cancelada em{" "}
-                {formatDate(subscription.current_period_end)}.
+                Sua assinatura será cancelada em {formatDate(subscription.current_period_end)}.
               </p>
             </div>
           </div>
@@ -252,8 +246,7 @@ export function SubscriptionInfo() {
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4 text-blue-600" />
               <p className="text-sm text-blue-800">
-                Sua assinatura será renovada automaticamente em{" "}
-                {daysUntilRenewal} dias.
+                Sua assinatura será renovada automaticamente em {daysUntilRenewal} dias.
               </p>
             </div>
           </div>

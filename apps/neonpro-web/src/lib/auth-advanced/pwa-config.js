@@ -5,7 +5,15 @@ exports.enableOfflineSupport = enableOfflineSupport;
 exports.enableInstallPrompt = enableInstallPrompt;
 exports.generateClinicPWAConfig = generateClinicPWAConfig;
 // Auth advanced pwa-config
-function registerPortalServiceWorker() { return {}; }
-function enableOfflineSupport() { return {}; }
-function enableInstallPrompt() { return {}; }
-function generateClinicPWAConfig() { return {}; }
+function registerPortalServiceWorker() {
+  return {};
+}
+function enableOfflineSupport() {
+  return {};
+}
+function enableInstallPrompt() {
+  return {};
+}
+function generateClinicPWAConfig() {
+  return {};
+}

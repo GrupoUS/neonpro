@@ -1,18 +1,18 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent } from "@/components/ui/card";
+import type {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import type { ScrollArea } from "@/components/ui/scroll-area";
 import type { ErrorMessage } from "@/hooks/use-error-handling";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import {
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
   AlertCircle,
   AlertTriangle,
   CheckCircle2,
@@ -25,7 +25,7 @@ import {
   User,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import type { useState } from "react";
 
 // =============================================
 // NeonPro Error Messages Display
@@ -98,9 +98,7 @@ const MessageCard = ({
   isRetrying?: boolean;
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isExecutingAction, setIsExecutingAction] = useState<string | null>(
-    null
-  );
+  const [isExecutingAction, setIsExecutingAction] = useState<string | null>(null);
 
   const handleActionClick = async (actionIndex: number) => {
     const action = message.actions?.[actionIndex];
@@ -120,8 +118,7 @@ const MessageCard = ({
   const hasExpandableContent =
     message.details ||
     message.context ||
-    (showProgressiveDisclosure &&
-      (message.context?.metadata || message.context?.component));
+    (showProgressiveDisclosure && (message.context?.metadata || message.context?.component));
 
   return (
     <Card className={`mb-3 ${getMessageColors(message.type)}`}>
@@ -167,11 +164,7 @@ const MessageCard = ({
               {hasExpandableContent && showProgressiveDisclosure && (
                 <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
                   <CollapsibleTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-6 p-0 text-xs"
-                    >
+                    <Button variant="ghost" size="sm" className="h-6 p-0 text-xs">
                       {isExpanded ? (
                         <>
                           <ChevronUp className="h-3 w-3 mr-1" />
@@ -189,17 +182,13 @@ const MessageCard = ({
                     {message.details && (
                       <div className="mb-2">
                         <p className="text-xs font-medium mb-1">Detalhes:</p>
-                        <p className="text-xs text-gray-600">
-                          {message.details}
-                        </p>
+                        <p className="text-xs text-gray-600">{message.details}</p>
                       </div>
                     )}
 
                     {message.context?.metadata && (
                       <div className="mb-2">
-                        <p className="text-xs font-medium mb-1">
-                          Informações Técnicas:
-                        </p>
+                        <p className="text-xs font-medium mb-1">Informações Técnicas:</p>
                         <pre className="text-xs bg-black/5 p-2 rounded text-gray-600 overflow-x-auto">
                           {JSON.stringify(message.context.metadata, null, 2)}
                         </pre>
@@ -208,9 +197,7 @@ const MessageCard = ({
 
                     {message.context?.appointmentId && (
                       <div className="mb-2">
-                        <p className="text-xs font-medium mb-1">
-                          ID do Agendamento:
-                        </p>
+                        <p className="text-xs font-medium mb-1">ID do Agendamento:</p>
                         <code className="text-xs bg-black/5 px-1 py-0.5 rounded">
                           {message.context.appointmentId}
                         </code>
@@ -236,8 +223,8 @@ const MessageCard = ({
                           action.variant === "primary"
                             ? "default"
                             : action.variant === "destructive"
-                            ? "destructive"
-                            : "outline"
+                              ? "destructive"
+                              : "outline"
                         }
                         onClick={() => handleActionClick(index)}
                         disabled={isLoading || Boolean(isExecutingAction)}
@@ -294,9 +281,7 @@ export default function ErrorMessagesDisplay({
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <AlertCircle className="h-4 w-4 text-gray-600" />
-            <span className="font-medium text-sm text-gray-900">
-              Mensagens do Sistema
-            </span>
+            <span className="font-medium text-sm text-gray-900">Mensagens do Sistema</span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -324,12 +309,7 @@ export default function ErrorMessagesDisplay({
         </div>
 
         {messages.length > 1 && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onClearAll}
-            className="h-7 text-xs"
-          >
+          <Button variant="outline" size="sm" onClick={onClearAll} className="h-7 text-xs">
             Limpar Tudo
           </Button>
         )}
@@ -351,21 +331,20 @@ export default function ErrorMessagesDisplay({
       </ScrollArea>
 
       {/* Help Footer */}
-      {showProgressiveDisclosure &&
-        messages.some((m) => m.type === "error") && (
-          <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-            <div className="flex items-start gap-2">
-              <HelpCircle className="h-4 w-4 text-blue-600 mt-0.5" />
-              <div className="text-sm text-blue-800">
-                <p className="font-medium mb-1">Precisa de Ajuda?</p>
-                <p className="text-xs">
-                  Se os problemas persistirem, entre em contato com o suporte
-                  técnico ou consulte nossa documentação de ajuda.
-                </p>
-              </div>
+      {showProgressiveDisclosure && messages.some((m) => m.type === "error") && (
+        <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="flex items-start gap-2">
+            <HelpCircle className="h-4 w-4 text-blue-600 mt-0.5" />
+            <div className="text-sm text-blue-800">
+              <p className="font-medium mb-1">Precisa de Ajuda?</p>
+              <p className="text-xs">
+                Se os problemas persistirem, entre em contato com o suporte técnico ou consulte
+                nossa documentação de ajuda.
+              </p>
             </div>
           </div>
-        )}
+        </div>
+      )}
     </div>
   );
 }

@@ -1,20 +1,26 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Progress } from '@/components/ui/progress';
-import { 
-  Activity, 
-  AlertTriangle, 
-  CheckCircle, 
-  Clock, 
-  Settings, 
-  Shield, 
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Switch } from "@/components/ui/switch";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Progress } from "@/components/ui/progress";
+import type {
+  Activity,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Settings,
+  Shield,
   TrendingUp,
   Users,
   FileText,
@@ -22,9 +28,9 @@ import {
   Eye,
   Play,
   Pause,
-  RefreshCw
-} from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+  RefreshCw,
+} from "lucide-react";
+import type { useToast } from "@/components/ui/use-toast";
 
 interface AutomationMetrics {
   consent: {
@@ -49,9 +55,9 @@ interface AutomationAlert {
   id: string;
   title: string;
   description: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   category: string;
-  status: 'active' | 'resolved' | 'dismissed';
+  status: "active" | "resolved" | "dismissed";
   created_at: string;
 }
 
@@ -59,7 +65,7 @@ interface AutomationStatus {
   enabled: boolean;
   lastRun: string;
   nextRun: string;
-  status: 'running' | 'idle' | 'error';
+  status: "running" | "idle" | "error";
   features: {
     autoConsentManagement: boolean;
     autoDataSubjectRights: boolean;
@@ -81,9 +87,9 @@ export default function AutomationDashboard() {
   const loadDashboardData = async () => {
     try {
       setRefreshing(true);
-      
+
       // Carregar dados de monitoramento
-      const monitoringResponse = await fetch('/api/compliance/automation/monitoring');
+      const monitoringResponse = await fetch("/api/compliance/automation/monitoring");
       if (monitoringResponse.ok) {
         const monitoringData = await monitoringResponse.json();
         setMetrics(monitoringData.data.metrics);
@@ -91,25 +97,26 @@ export default function AutomationDashboard() {
       }
 
       // Carregar status da automação
-      const statusResponse = await fetch('/api/compliance/automation');
+      const statusResponse = await fetch("/api/compliance/automation");
       if (statusResponse.ok) {
         const statusData = await statusResponse.json();
         setAutomationStatus(statusData.data.status);
       }
 
       // Carregar alertas ativos
-      const alertsResponse = await fetch('/api/compliance/automation/alerts?status=active&limit=10');
+      const alertsResponse = await fetch(
+        "/api/compliance/automation/alerts?status=active&limit=10",
+      );
       if (alertsResponse.ok) {
         const alertsData = await alertsResponse.json();
         setAlerts(alertsData.data.alerts);
       }
-      
     } catch (error) {
-      console.error('Erro ao carregar dados do dashboard:', error);
+      console.error("Erro ao carregar dados do dashboard:", error);
       toast({
-        title: 'Erro',
-        description: 'Falha ao carregar dados do dashboard',
-        variant: 'destructive'
+        title: "Erro",
+        description: "Falha ao carregar dados do dashboard",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -119,7 +126,7 @@ export default function AutomationDashboard() {
 
   useEffect(() => {
     loadDashboardData();
-    
+
     // Atualizar dados a cada 30 segundos
     const interval = setInterval(loadDashboardData, 30000);
     return () => clearInterval(interval);
@@ -127,18 +134,23 @@ export default function AutomationDashboard() {
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'critical': return 'destructive';
-      case 'high': return 'destructive';
-      case 'medium': return 'default';
-      case 'low': return 'secondary';
-      default: return 'default';
+      case "critical":
+        return "destructive";
+      case "high":
+        return "destructive";
+      case "medium":
+        return "default";
+      case "low":
+        return "secondary";
+      default:
+        return "default";
     }
   };
 
   const getComplianceScoreColor = (score: number) => {
-    if (score >= 90) return 'text-green-600';
-    if (score >= 70) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 90) return "text-green-600";
+    if (score >= 70) return "text-yellow-600";
+    return "text-red-600";
   };
 
   if (loading) {
@@ -161,13 +173,8 @@ export default function AutomationDashboard() {
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={loadDashboardData}
-            disabled={refreshing}
-          >
-            <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+          <Button variant="outline" size="sm" onClick={loadDashboardData} disabled={refreshing}>
+            <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? "animate-spin" : ""}`} />
             Atualizar
           </Button>
           <Button variant="outline" size="sm">
@@ -191,8 +198,11 @@ export default function AutomationDashboard() {
             </div>
             <Progress value={complianceScore} className="mt-2" />
             <p className="text-xs text-muted-foreground mt-2">
-              {complianceScore >= 90 ? 'Excelente' : 
-               complianceScore >= 70 ? 'Bom' : 'Requer atenção'}
+              {complianceScore >= 90
+                ? "Excelente"
+                : complianceScore >= 70
+                  ? "Bom"
+                  : "Requer atenção"}
             </p>
           </CardContent>
         </Card>
@@ -204,9 +214,7 @@ export default function AutomationDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{metrics?.consent.active || 0}</div>
-            <p className="text-xs text-muted-foreground">
-              {metrics?.consent.total || 0} total
-            </p>
+            <p className="text-xs text-muted-foreground">{metrics?.consent.total || 0} total</p>
           </CardContent>
         </Card>
 
@@ -232,10 +240,10 @@ export default function AutomationDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">
-              {alerts.filter(a => a.status === 'active').length}
+              {alerts.filter((a) => a.status === "active").length}
             </div>
             <p className="text-xs text-muted-foreground">
-              {alerts.filter(a => a.severity === 'critical').length} críticos
+              {alerts.filter((a) => a.severity === "critical").length} críticos
             </p>
           </CardContent>
         </Card>
@@ -248,9 +256,7 @@ export default function AutomationDashboard() {
             <Activity className="h-5 w-5 mr-2" />
             Status da Automação
           </CardTitle>
-          <CardDescription>
-            Controle e monitoramento dos processos automatizados
-          </CardDescription>
+          <CardDescription>Controle e monitoramento dos processos automatizados</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2">
@@ -258,26 +264,37 @@ export default function AutomationDashboard() {
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Automação Geral</span>
                 <div className="flex items-center space-x-2">
-                  <Badge 
-                    variant={automationStatus?.status === 'running' ? 'default' : 
-                            automationStatus?.status === 'error' ? 'destructive' : 'secondary'}
+                  <Badge
+                    variant={
+                      automationStatus?.status === "running"
+                        ? "default"
+                        : automationStatus?.status === "error"
+                          ? "destructive"
+                          : "secondary"
+                    }
                   >
-                    {automationStatus?.status === 'running' ? 'Ativo' :
-                     automationStatus?.status === 'error' ? 'Erro' : 'Inativo'}
+                    {automationStatus?.status === "running"
+                      ? "Ativo"
+                      : automationStatus?.status === "error"
+                        ? "Erro"
+                        : "Inativo"}
                   </Badge>
-                  <Switch 
-                    checked={automationStatus?.enabled || false}
-                    disabled
-                  />
+                  <Switch checked={automationStatus?.enabled || false} disabled />
                 </div>
               </div>
-              
+
               <div className="text-sm text-muted-foreground">
-                <p>Última execução: {automationStatus?.lastRun ? 
-                  new Date(automationStatus.lastRun).toLocaleString('pt-BR') : 'Nunca'}
+                <p>
+                  Última execução:{" "}
+                  {automationStatus?.lastRun
+                    ? new Date(automationStatus.lastRun).toLocaleString("pt-BR")
+                    : "Nunca"}
                 </p>
-                <p>Próxima execução: {automationStatus?.nextRun ? 
-                  new Date(automationStatus.nextRun).toLocaleString('pt-BR') : 'Não agendada'}
+                <p>
+                  Próxima execução:{" "}
+                  {automationStatus?.nextRun
+                    ? new Date(automationStatus.nextRun).toLocaleString("pt-BR")
+                    : "Não agendada"}
                 </p>
               </div>
             </div>
@@ -287,35 +304,35 @@ export default function AutomationDashboard() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Gestão de Consentimentos</span>
-                  <Switch 
+                  <Switch
                     checked={automationStatus?.features.autoConsentManagement || false}
                     disabled
                   />
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Direitos dos Titulares</span>
-                  <Switch 
+                  <Switch
                     checked={automationStatus?.features.autoDataSubjectRights || false}
                     disabled
                   />
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Relatórios de Auditoria</span>
-                  <Switch 
+                  <Switch
                     checked={automationStatus?.features.autoAuditReporting || false}
                     disabled
                   />
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Anonimização</span>
-                  <Switch 
+                  <Switch
                     checked={automationStatus?.features.autoAnonymization || false}
                     disabled
                   />
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Monitoramento em Tempo Real</span>
-                  <Switch 
+                  <Switch
                     checked={automationStatus?.features.realTimeMonitoring || false}
                     disabled
                   />
@@ -337,9 +354,7 @@ export default function AutomationDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Alertas de Conformidade</CardTitle>
-              <CardDescription>
-                Alertas ativos que requerem atenção
-              </CardDescription>
+              <CardDescription>Alertas ativos que requerem atenção</CardDescription>
             </CardHeader>
             <CardContent>
               {alerts.length === 0 ? (
@@ -354,15 +369,13 @@ export default function AutomationDashboard() {
                       <AlertTriangle className="h-4 w-4" />
                       <AlertTitle className="flex items-center justify-between">
                         <span>{alert.title}</span>
-                        <Badge variant={getSeverityColor(alert.severity)}>
-                          {alert.severity}
-                        </Badge>
+                        <Badge variant={getSeverityColor(alert.severity)}>{alert.severity}</Badge>
                       </AlertTitle>
                       <AlertDescription>
                         <p className="mb-2">{alert.description}</p>
                         <div className="flex items-center justify-between text-xs text-muted-foreground">
                           <span>Categoria: {alert.category}</span>
-                          <span>{new Date(alert.created_at).toLocaleString('pt-BR')}</span>
+                          <span>{new Date(alert.created_at).toLocaleString("pt-BR")}</span>
                         </div>
                       </AlertDescription>
                     </Alert>
@@ -377,9 +390,7 @@ export default function AutomationDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Ações de Automação</CardTitle>
-              <CardDescription>
-                Execute ações manuais de conformidade
-              </CardDescription>
+              <CardDescription>Execute ações manuais de conformidade</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 md:grid-cols-2">
@@ -387,27 +398,27 @@ export default function AutomationDashboard() {
                   <Play className="h-6 w-6 mb-2" />
                   <span>Executar Automação Completa</span>
                 </Button>
-                
+
                 <Button variant="outline" className="h-20 flex-col">
                   <Users className="h-6 w-6 mb-2" />
                   <span>Processar Consentimentos</span>
                 </Button>
-                
+
                 <Button variant="outline" className="h-20 flex-col">
                   <FileText className="h-6 w-6 mb-2" />
                   <span>Processar Solicitações</span>
                 </Button>
-                
+
                 <Button variant="outline" className="h-20 flex-col">
                   <Database className="h-6 w-6 mb-2" />
                   <span>Executar Anonimização</span>
                 </Button>
-                
+
                 <Button variant="outline" className="h-20 flex-col">
                   <Eye className="h-6 w-6 mb-2" />
                   <span>Auditoria Manual</span>
                 </Button>
-                
+
                 <Button variant="outline" className="h-20 flex-col">
                   <TrendingUp className="h-6 w-6 mb-2" />
                   <span>Gerar Relatórios</span>
@@ -431,15 +442,21 @@ export default function AutomationDashboard() {
                   </div>
                   <div className="flex justify-between">
                     <span>Ativos:</span>
-                    <span className="font-medium text-green-600">{metrics?.consent.active || 0}</span>
+                    <span className="font-medium text-green-600">
+                      {metrics?.consent.active || 0}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span>Revogados:</span>
-                    <span className="font-medium text-red-600">{metrics?.consent.revoked || 0}</span>
+                    <span className="font-medium text-red-600">
+                      {metrics?.consent.revoked || 0}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span>Expirados:</span>
-                    <span className="font-medium text-yellow-600">{metrics?.consent.expired || 0}</span>
+                    <span className="font-medium text-yellow-600">
+                      {metrics?.consent.expired || 0}
+                    </span>
                   </div>
                 </div>
               </CardContent>
@@ -455,12 +472,13 @@ export default function AutomationDashboard() {
                     <span>Total de Eventos:</span>
                     <span className="font-medium">{metrics?.audit.total || 0}</span>
                   </div>
-                  {metrics?.audit.bySeverity && Object.entries(metrics.audit.bySeverity).map(([severity, count]) => (
-                    <div key={severity} className="flex justify-between">
-                      <span className="capitalize">{severity}:</span>
-                      <span className="font-medium">{count}</span>
-                    </div>
-                  ))}
+                  {metrics?.audit.bySeverity &&
+                    Object.entries(metrics.audit.bySeverity).map(([severity, count]) => (
+                      <div key={severity} className="flex justify-between">
+                        <span className="capitalize">{severity}:</span>
+                        <span className="font-medium">{count}</span>
+                      </div>
+                    ))}
                 </div>
               </CardContent>
             </Card>

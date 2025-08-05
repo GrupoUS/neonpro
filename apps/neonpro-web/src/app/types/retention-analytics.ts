@@ -2,50 +2,50 @@
 // Generated for NeonPro - FASE 4
 
 export enum ChurnRiskLevel {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high'
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
 }
 
 export enum ChurnModelType {
-  BASIC = 'basic',
-  ADVANCED = 'advanced',
-  ML_ENHANCED = 'ml_enhanced'
+  BASIC = "basic",
+  ADVANCED = "advanced",
+  ML_ENHANCED = "ml_enhanced",
 }
 
 export enum RetentionStrategyType {
-  PROACTIVE = 'proactive',
-  REACTIVE = 'reactive',
-  PREDICTIVE = 'predictive'
+  PROACTIVE = "proactive",
+  REACTIVE = "reactive",
+  PREDICTIVE = "predictive",
 }
 
 export enum RetentionActionType {
-  EMAIL = 'email',
-  CALL = 'call',
-  SMS = 'sms',
-  PUSH_NOTIFICATION = 'push_notification'
+  EMAIL = "email",
+  CALL = "call",
+  SMS = "sms",
+  PUSH_NOTIFICATION = "push_notification",
 }
 
 export enum CommunicationChannel {
-  EMAIL = 'email',
-  PHONE = 'phone',
-  SMS = 'sms',
-  WHATSAPP = 'whatsapp',
-  IN_APP = 'in_app'
+  EMAIL = "email",
+  PHONE = "phone",
+  SMS = "sms",
+  WHATSAPP = "whatsapp",
+  IN_APP = "in_app",
 }
 
 export enum InterventionPriority {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  CRITICAL = 'critical'
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
+  CRITICAL = "critical",
 }
 
 export enum RetentionOutcome {
-  SUCCESS = 'success',
-  FAILED = 'failed',
-  PENDING = 'pending',
-  PARTIAL = 'partial'
+  SUCCESS = "success",
+  FAILED = "failed",
+  PENDING = "pending",
+  PARTIAL = "partial",
 }
 
 export interface ChurnPrediction {
@@ -63,9 +63,9 @@ export interface RetentionMetrics {
   churnRate: number;
 }
 export enum RetentionStrategyStatus {
-  DRAFT = 'draft',
-  ACTIVE = 'active',
-  PAUSED = 'paused',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled'
+  DRAFT = "draft",
+  ACTIVE = "active",
+  PAUSED = "paused",
+  COMPLETED = "completed",
+  CANCELLED = "cancelled",
 }

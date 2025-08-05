@@ -1,53 +1,46 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import EmailService from '@/app/lib/services/email-service';
+import type { NextRequest, NextResponse } from "next/server";
+import type { createClient } from "@/lib/supabase/server";
+import EmailService from "@/app/lib/services/email-service";
 
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
+
     if (authError || !session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { data: profile } = await supabase
-      .from('profiles')
-      .select('clinic_id')
-      .eq('id', session.user.id)
+      .from("profiles")
+      .select("clinic_id")
+      .eq("id", session.user.id)
       .single();
 
     if (!profile?.clinic_id) {
-      return NextResponse.json(
-        { error: 'Clinic not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Clinic not found" }, { status: 404 });
     }
 
     const { searchParams } = new URL(request.url);
-    const startDate = searchParams.get('startDate');
-    const endDate = searchParams.get('endDate');
-    const templateId = searchParams.get('templateId');
-    const provider = searchParams.get('provider');
+    const startDate = searchParams.get("startDate");
+    const endDate = searchParams.get("endDate");
+    const templateId = searchParams.get("templateId");
+    const provider = searchParams.get("provider");
 
     const emailService = new EmailService(supabase, profile.clinic_id);
     const analytics = await emailService.getAnalytics({
       startDate: startDate || undefined,
       endDate: endDate || undefined,
       templateId: templateId || undefined,
-      provider: provider || undefined
+      provider: provider || undefined,
     });
 
     return NextResponse.json(analytics);
-
   } catch (error) {
-    console.error('Get email analytics error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    console.error("Get email analytics error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

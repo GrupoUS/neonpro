@@ -2,14 +2,14 @@
  * Vision Analysis System React Hooks
  * Custom hooks for NeonPro Computer Vision System
  * Epic 10 - Story 10.1: Automated Before/After Analysis
- * 
+ *
  * VOIDBEAST V4.0 APEX ENHANCED - Quality ≥9.5/10
  */
 
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { toast } from 'sonner';
-import { VISION_CONFIG } from './config';
-import {
+import type { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import type { toast } from "sonner";
+import type { VISION_CONFIG } from "./config";
+import type {
   AnalysisResult,
   AnalysisRequest,
   AnalysisProgress,
@@ -21,9 +21,9 @@ import {
   AnalysisStatus,
   ValidationResult,
   AnnotationData,
-  MeasurementData
-} from './types';
-import { VisionUtils } from './utils';
+  MeasurementData,
+} from "./types";
+import type { VisionUtils } from "./utils";
 
 /**
  * Hook for managing vision analysis operations
@@ -35,65 +35,67 @@ export function useVisionAnalysis() {
   const [error, setError] = useState<string | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  const startAnalysis = useCallback(async (request: AnalysisRequest): Promise<AnalysisResult | null> => {
-    try {
-      setIsAnalyzing(true);
-      setError(null);
-      setProgress({ stage: 'initializing', percentage: 0 });
+  const startAnalysis = useCallback(
+    async (request: AnalysisRequest): Promise<AnalysisResult | null> => {
+      try {
+        setIsAnalyzing(true);
+        setError(null);
+        setProgress({ stage: "initializing", percentage: 0 });
 
-      // Create abort controller for cancellation
-      abortControllerRef.current = new AbortController();
+        // Create abort controller for cancellation
+        abortControllerRef.current = new AbortController();
 
-      // Validate request
-      const validation = validateAnalysisRequest(request);
-      if (!validation.valid) {
-        throw new Error(validation.errors[0]?.message || 'Invalid analysis request');
+        // Validate request
+        const validation = validateAnalysisRequest(request);
+        if (!validation.valid) {
+          throw new Error(validation.errors[0]?.message || "Invalid analysis request");
+        }
+
+        // Start analysis
+        const response = await fetch("/api/vision/analyze", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(request),
+          signal: abortControllerRef.current.signal,
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Analysis failed");
+        }
+
+        const analysisResult: AnalysisResult = await response.json();
+
+        // Validate result quality
+        const resultValidation = VisionUtils.Analysis.validateAnalysisResult(analysisResult);
+        if (!resultValidation.valid) {
+          console.warn("Analysis result validation warnings:", resultValidation.warnings);
+        }
+
+        setResult(analysisResult);
+        setProgress({ stage: "completed", percentage: 100 });
+
+        toast.success("Análise concluída com sucesso!");
+        return analysisResult;
+      } catch (err: any) {
+        if (err.name === "AbortError") {
+          setError("Análise cancelada");
+          toast.info("Análise cancelada");
+        } else {
+          const errorMessage = VisionUtils.Error.getUserFriendlyMessage(err);
+          setError(errorMessage);
+          toast.error(`Erro na análise: ${errorMessage}`);
+        }
+        return null;
+      } finally {
+        setIsAnalyzing(false);
+        abortControllerRef.current = null;
       }
-
-      // Start analysis
-      const response = await fetch('/api/vision/analyze', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(request),
-        signal: abortControllerRef.current.signal,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Analysis failed');
-      }
-
-      const analysisResult: AnalysisResult = await response.json();
-      
-      // Validate result quality
-      const resultValidation = VisionUtils.Analysis.validateAnalysisResult(analysisResult);
-      if (!resultValidation.valid) {
-        console.warn('Analysis result validation warnings:', resultValidation.warnings);
-      }
-
-      setResult(analysisResult);
-      setProgress({ stage: 'completed', percentage: 100 });
-      
-      toast.success('Análise concluída com sucesso!');
-      return analysisResult;
-
-    } catch (err: any) {
-      if (err.name === 'AbortError') {
-        setError('Análise cancelada');
-        toast.info('Análise cancelada');
-      } else {
-        const errorMessage = VisionUtils.Error.getUserFriendlyMessage(err);
-        setError(errorMessage);
-        toast.error(`Erro na análise: ${errorMessage}`);
-      }
-      return null;
-    } finally {
-      setIsAnalyzing(false);
-      abortControllerRef.current = null;
-    }
-  }, []);
+    },
+    [],
+  );
 
   const cancelAnalysis = useCallback(() => {
     if (abortControllerRef.current) {
@@ -115,7 +117,7 @@ export function useVisionAnalysis() {
     error,
     startAnalysis,
     cancelAnalysis,
-    resetAnalysis
+    resetAnalysis,
   };
 }
 
@@ -128,74 +130,78 @@ export function useImageUpload() {
   const [uploadedImages, setUploadedImages] = useState<ImageData[]>([]);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
-  const uploadImage = useCallback(async (file: File, type: 'before' | 'after'): Promise<ImageData | null> => {
-    try {
-      setIsUploading(true);
-      setValidationErrors([]);
-      setUploadProgress(0);
+  const uploadImage = useCallback(
+    async (file: File, type: "before" | "after"): Promise<ImageData | null> => {
+      try {
+        setIsUploading(true);
+        setValidationErrors([]);
+        setUploadProgress(0);
 
-      // Validate image file
-      const validation = VisionUtils.Image.validateImageFile(file);
-      if (!validation.valid) {
-        const errors = validation.errors.map(e => e.message);
-        setValidationErrors(errors);
-        errors.forEach(error => toast.error(error));
+        // Validate image file
+        const validation = VisionUtils.Image.validateImageFile(file);
+        if (!validation.valid) {
+          const errors = validation.errors.map((e) => e.message);
+          setValidationErrors(errors);
+          errors.forEach((error) => toast.error(error));
+          return null;
+        }
+
+        // Show warnings if any
+        validation.warnings.forEach((warning) => {
+          toast.warning(warning.message);
+        });
+
+        // Extract metadata
+        const metadata = await VisionUtils.Image.extractImageMetadata(file);
+
+        // Create FormData for upload
+        const formData = new FormData();
+        formData.append("image", file);
+        formData.append("type", type);
+        formData.append("metadata", JSON.stringify(metadata));
+
+        // Upload with progress tracking
+        const response = await fetch("/api/vision/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Upload failed");
+        }
+
+        const imageData: ImageData = await response.json();
+
+        setUploadedImages((prev) => [...prev, imageData]);
+        setUploadProgress(100);
+
+        toast.success(
+          `Imagem ${type === "before" ? "anterior" : "posterior"} carregada com sucesso!`,
+        );
+        return imageData;
+      } catch (err: any) {
+        const errorMessage = VisionUtils.Error.getUserFriendlyMessage(err);
+        setValidationErrors([errorMessage]);
+        toast.error(`Erro no upload: ${errorMessage}`);
         return null;
+      } finally {
+        setIsUploading(false);
+        setTimeout(() => setUploadProgress(0), 1000);
       }
-
-      // Show warnings if any
-      validation.warnings.forEach(warning => {
-        toast.warning(warning.message);
-      });
-
-      // Extract metadata
-      const metadata = await VisionUtils.Image.extractImageMetadata(file);
-
-      // Create FormData for upload
-      const formData = new FormData();
-      formData.append('image', file);
-      formData.append('type', type);
-      formData.append('metadata', JSON.stringify(metadata));
-
-      // Upload with progress tracking
-      const response = await fetch('/api/vision/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Upload failed');
-      }
-
-      const imageData: ImageData = await response.json();
-      
-      setUploadedImages(prev => [...prev, imageData]);
-      setUploadProgress(100);
-      
-      toast.success(`Imagem ${type === 'before' ? 'anterior' : 'posterior'} carregada com sucesso!`);
-      return imageData;
-
-    } catch (err: any) {
-      const errorMessage = VisionUtils.Error.getUserFriendlyMessage(err);
-      setValidationErrors([errorMessage]);
-      toast.error(`Erro no upload: ${errorMessage}`);
-      return null;
-    } finally {
-      setIsUploading(false);
-      setTimeout(() => setUploadProgress(0), 1000);
-    }
-  }, []);
+    },
+    [],
+  );
 
   const removeImage = useCallback((imageId: string) => {
-    setUploadedImages(prev => prev.filter(img => img.id !== imageId));
-    toast.info('Imagem removida');
+    setUploadedImages((prev) => prev.filter((img) => img.id !== imageId));
+    toast.info("Imagem removida");
   }, []);
 
   const clearImages = useCallback(() => {
     setUploadedImages([]);
     setValidationErrors([]);
-    toast.info('Todas as imagens foram removidas');
+    toast.info("Todas as imagens foram removidas");
   }, []);
 
   return {
@@ -205,7 +211,7 @@ export function useImageUpload() {
     validationErrors,
     uploadImage,
     removeImage,
-    clearImages
+    clearImages,
   };
 }
 
@@ -217,76 +223,75 @@ export function useAnalysisExport() {
   const [exportProgress, setExportProgress] = useState(0);
   const [exportHistory, setExportHistory] = useState<ExportResult[]>([]);
 
-  const exportAnalysis = useCallback(async (
-    analysisId: string,
-    options: ExportOptions
-  ): Promise<ExportResult | null> => {
-    try {
-      setIsExporting(true);
-      setExportProgress(0);
+  const exportAnalysis = useCallback(
+    async (analysisId: string, options: ExportOptions): Promise<ExportResult | null> => {
+      try {
+        setIsExporting(true);
+        setExportProgress(0);
 
-      // Validate export options
-      const validation = VisionUtils.Export.validateExportOptions(options);
-      if (!validation.valid) {
-        throw new Error(validation.errors[0]?.message || 'Invalid export options');
+        // Validate export options
+        const validation = VisionUtils.Export.validateExportOptions(options);
+        if (!validation.valid) {
+          throw new Error(validation.errors[0]?.message || "Invalid export options");
+        }
+
+        const response = await fetch("/api/vision/export", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            analysisId,
+            ...options,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Export failed");
+        }
+
+        const exportResult: ExportResult = await response.json();
+
+        setExportHistory((prev) => [exportResult, ...prev]);
+        setExportProgress(100);
+
+        toast.success(`Análise exportada como ${options.format.toUpperCase()}`);
+        return exportResult;
+      } catch (err: any) {
+        const errorMessage = VisionUtils.Error.getUserFriendlyMessage(err);
+        toast.error(`Erro na exportação: ${errorMessage}`);
+        return null;
+      } finally {
+        setIsExporting(false);
+        setTimeout(() => setExportProgress(0), 1000);
       }
-
-      const response = await fetch('/api/vision/export', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          analysisId,
-          ...options
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Export failed');
-      }
-
-      const exportResult: ExportResult = await response.json();
-      
-      setExportHistory(prev => [exportResult, ...prev]);
-      setExportProgress(100);
-      
-      toast.success(`Análise exportada como ${options.format.toUpperCase()}`);
-      return exportResult;
-
-    } catch (err: any) {
-      const errorMessage = VisionUtils.Error.getUserFriendlyMessage(err);
-      toast.error(`Erro na exportação: ${errorMessage}`);
-      return null;
-    } finally {
-      setIsExporting(false);
-      setTimeout(() => setExportProgress(0), 1000);
-    }
-  }, []);
+    },
+    [],
+  );
 
   const downloadExport = useCallback((exportResult: ExportResult) => {
     if (exportResult.downloadUrl) {
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = exportResult.downloadUrl;
       link.download = exportResult.filename;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
-      toast.success('Download iniciado');
+
+      toast.success("Download iniciado");
     }
   }, []);
 
   const loadExportHistory = useCallback(async () => {
     try {
-      const response = await fetch('/api/vision/export');
+      const response = await fetch("/api/vision/export");
       if (response.ok) {
         const history: ExportResult[] = await response.json();
         setExportHistory(history);
       }
     } catch (err) {
-      console.error('Failed to load export history:', err);
+      console.error("Failed to load export history:", err);
     }
   }, []);
 
@@ -300,7 +305,7 @@ export function useAnalysisExport() {
     exportHistory,
     exportAnalysis,
     downloadExport,
-    loadExportHistory
+    loadExportHistory,
   };
 }
 
@@ -312,43 +317,46 @@ export function useAnnotations(imageId?: string) {
   const [selectedAnnotation, setSelectedAnnotation] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  const addAnnotation = useCallback((annotation: Omit<AnnotationData, 'id' | 'createdAt'>) => {
+  const addAnnotation = useCallback((annotation: Omit<AnnotationData, "id" | "createdAt">) => {
     const newAnnotation: AnnotationData = {
       ...annotation,
       id: VisionUtils.Annotation.generateAnnotationId(),
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
-    
-    setAnnotations(prev => [...prev, newAnnotation]);
+
+    setAnnotations((prev) => [...prev, newAnnotation]);
     setSelectedAnnotation(newAnnotation.id);
-    
-    toast.success('Anotação adicionada');
+
+    toast.success("Anotação adicionada");
   }, []);
 
   const updateAnnotation = useCallback((id: string, updates: Partial<AnnotationData>) => {
-    setAnnotations(prev => prev.map(annotation => 
-      annotation.id === id ? { ...annotation, ...updates } : annotation
-    ));
-    
-    toast.success('Anotação atualizada');
+    setAnnotations((prev) =>
+      prev.map((annotation) => (annotation.id === id ? { ...annotation, ...updates } : annotation)),
+    );
+
+    toast.success("Anotação atualizada");
   }, []);
 
-  const removeAnnotation = useCallback((id: string) => {
-    setAnnotations(prev => prev.filter(annotation => annotation.id !== id));
-    
-    if (selectedAnnotation === id) {
-      setSelectedAnnotation(null);
-    }
-    
-    toast.success('Anotação removida');
-  }, [selectedAnnotation]);
+  const removeAnnotation = useCallback(
+    (id: string) => {
+      setAnnotations((prev) => prev.filter((annotation) => annotation.id !== id));
+
+      if (selectedAnnotation === id) {
+        setSelectedAnnotation(null);
+      }
+
+      toast.success("Anotação removida");
+    },
+    [selectedAnnotation],
+  );
 
   const clearAnnotations = useCallback(() => {
     setAnnotations([]);
     setSelectedAnnotation(null);
     setIsEditing(false);
-    
-    toast.info('Todas as anotações foram removidas');
+
+    toast.info("Todas as anotações foram removidas");
   }, []);
 
   const selectAnnotation = useCallback((id: string | null) => {
@@ -375,7 +383,7 @@ export function useAnnotations(imageId?: string) {
     clearAnnotations,
     selectAnnotation,
     startEditing,
-    stopEditing
+    stopEditing,
   };
 }
 
@@ -387,54 +395,61 @@ export function useMeasurements(imageId?: string) {
   const [selectedMeasurement, setSelectedMeasurement] = useState<string | null>(null);
   const [calibration, setCalibration] = useState<{ pixelToMmRatio: number } | null>(null);
 
-  const addMeasurement = useCallback((measurement: Omit<MeasurementData, 'id' | 'createdAt'>) => {
+  const addMeasurement = useCallback((measurement: Omit<MeasurementData, "id" | "createdAt">) => {
     const newMeasurement: MeasurementData = {
       ...measurement,
       id: `measurement_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
-    
-    setMeasurements(prev => [...prev, newMeasurement]);
+
+    setMeasurements((prev) => [...prev, newMeasurement]);
     setSelectedMeasurement(newMeasurement.id);
-    
-    toast.success('Medição adicionada');
+
+    toast.success("Medição adicionada");
   }, []);
 
   const updateMeasurement = useCallback((id: string, updates: Partial<MeasurementData>) => {
-    setMeasurements(prev => prev.map(measurement => 
-      measurement.id === id ? { ...measurement, ...updates } : measurement
-    ));
-    
-    toast.success('Medição atualizada');
+    setMeasurements((prev) =>
+      prev.map((measurement) =>
+        measurement.id === id ? { ...measurement, ...updates } : measurement,
+      ),
+    );
+
+    toast.success("Medição atualizada");
   }, []);
 
-  const removeMeasurement = useCallback((id: string) => {
-    setMeasurements(prev => prev.filter(measurement => measurement.id !== id));
-    
-    if (selectedMeasurement === id) {
-      setSelectedMeasurement(null);
-    }
-    
-    toast.success('Medição removida');
-  }, [selectedMeasurement]);
+  const removeMeasurement = useCallback(
+    (id: string) => {
+      setMeasurements((prev) => prev.filter((measurement) => measurement.id !== id));
+
+      if (selectedMeasurement === id) {
+        setSelectedMeasurement(null);
+      }
+
+      toast.success("Medição removida");
+    },
+    [selectedMeasurement],
+  );
 
   const clearMeasurements = useCallback(() => {
     setMeasurements([]);
     setSelectedMeasurement(null);
-    
-    toast.info('Todas as medições foram removidas');
+
+    toast.info("Todas as medições foram removidas");
   }, []);
 
   const setCalibrationRatio = useCallback((pixelToMmRatio: number) => {
     setCalibration({ pixelToMmRatio });
-    
+
     // Recalculate all measurements with new calibration
-    setMeasurements(prev => prev.map(measurement => ({
-      ...measurement,
-      // Recalculate real-world values if needed
-    })));
-    
-    toast.success('Calibração atualizada');
+    setMeasurements((prev) =>
+      prev.map((measurement) => ({
+        ...measurement,
+        // Recalculate real-world values if needed
+      })),
+    );
+
+    toast.success("Calibração atualizada");
   }, []);
 
   return {
@@ -446,7 +461,7 @@ export function useMeasurements(imageId?: string) {
     removeMeasurement,
     clearMeasurements,
     setSelectedMeasurement,
-    setCalibrationRatio
+    setCalibrationRatio,
   };
 }
 
@@ -459,33 +474,36 @@ export function useAnalysisHistory() {
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
 
-  const loadHistory = useCallback(async (reset = false) => {
-    try {
-      setIsLoading(true);
-      
-      const currentPage = reset ? 1 : page;
-      const response = await fetch(`/api/vision/history?page=${currentPage}&limit=10`);
-      
-      if (response.ok) {
-        const data = await response.json();
-        
-        if (reset) {
-          setHistory(data.results);
-          setPage(2);
-        } else {
-          setHistory(prev => [...prev, ...data.results]);
-          setPage(prev => prev + 1);
+  const loadHistory = useCallback(
+    async (reset = false) => {
+      try {
+        setIsLoading(true);
+
+        const currentPage = reset ? 1 : page;
+        const response = await fetch(`/api/vision/history?page=${currentPage}&limit=10`);
+
+        if (response.ok) {
+          const data = await response.json();
+
+          if (reset) {
+            setHistory(data.results);
+            setPage(2);
+          } else {
+            setHistory((prev) => [...prev, ...data.results]);
+            setPage((prev) => prev + 1);
+          }
+
+          setHasMore(data.hasMore);
         }
-        
-        setHasMore(data.hasMore);
+      } catch (err) {
+        console.error("Failed to load analysis history:", err);
+        toast.error("Erro ao carregar histórico");
+      } finally {
+        setIsLoading(false);
       }
-    } catch (err) {
-      console.error('Failed to load analysis history:', err);
-      toast.error('Erro ao carregar histórico');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [page]);
+    },
+    [page],
+  );
 
   const refreshHistory = useCallback(() => {
     loadHistory(true);
@@ -506,7 +524,7 @@ export function useAnalysisHistory() {
     isLoading,
     hasMore,
     refreshHistory,
-    loadMore
+    loadMore,
   };
 }
 
@@ -528,20 +546,20 @@ export function usePerformanceMonitoring() {
     if (timerRef.current && isMonitoring) {
       const processingTime = timerRef.current.stop();
       const memoryUsage = VisionUtils.Performance.getMemoryUsage();
-      
+
       const newMetrics: ProcessingMetrics = {
         processingTimeMs: processingTime,
         memoryUsageMB: memoryUsage?.used || 0,
         cpuUsagePercent: 0, // Would need additional implementation
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-      
+
       setMetrics(newMetrics);
       setIsMonitoring(false);
-      
+
       // Log performance if below thresholds
       if (processingTime > VISION_CONFIG.PERFORMANCE.MAX_PROCESSING_TIME_MS) {
-        console.warn('Processing time exceeded threshold:', processingTime);
+        console.warn("Processing time exceeded threshold:", processingTime);
       }
     }
   }, [isMonitoring]);
@@ -557,7 +575,7 @@ export function usePerformanceMonitoring() {
     isMonitoring,
     startMonitoring,
     stopMonitoring,
-    resetMetrics
+    resetMetrics,
   };
 }
 
@@ -566,23 +584,23 @@ export function usePerformanceMonitoring() {
  */
 function validateAnalysisRequest(request: AnalysisRequest): ValidationResult {
   const errors: any[] = [];
-  
+
   if (!request.beforeImageId) {
-    errors.push({ message: 'Imagem anterior é obrigatória' });
+    errors.push({ message: "Imagem anterior é obrigatória" });
   }
-  
+
   if (!request.afterImageId) {
-    errors.push({ message: 'Imagem posterior é obrigatória' });
+    errors.push({ message: "Imagem posterior é obrigatória" });
   }
-  
+
   if (!request.treatmentType) {
-    errors.push({ message: 'Tipo de tratamento é obrigatório' });
+    errors.push({ message: "Tipo de tratamento é obrigatório" });
   }
-  
+
   return {
     valid: errors.length === 0,
     errors,
-    warnings: []
+    warnings: [],
   };
 }
 
@@ -600,15 +618,18 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
     }
   });
 
-  const setValue = useCallback((value: T | ((val: T) => T)) => {
-    try {
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
-      setStoredValue(valueToStore);
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
-    } catch (error) {
-      console.error(`Error setting localStorage key "${key}":`, error);
-    }
-  }, [key, storedValue]);
+  const setValue = useCallback(
+    (value: T | ((val: T) => T)) => {
+      try {
+        const valueToStore = value instanceof Function ? value(storedValue) : value;
+        setStoredValue(valueToStore);
+        window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      } catch (error) {
+        console.error(`Error setting localStorage key "${key}":`, error);
+      }
+    },
+    [key, storedValue],
+  );
 
   return [storedValue, setValue] as const;
 }
@@ -637,7 +658,7 @@ export function useDebounce<T>(value: T, delay: number): T {
  */
 export function useIntersectionObserver(
   elementRef: React.RefObject<Element>,
-  options?: IntersectionObserverInit
+  options?: IntersectionObserverInit,
 ) {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -645,12 +666,9 @@ export function useIntersectionObserver(
     const element = elementRef.current;
     if (!element) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsVisible(entry.isIntersecting);
-      },
-      options
-    );
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsVisible(entry.isIntersecting);
+    }, options);
 
     observer.observe(element);
 
@@ -672,5 +690,5 @@ export default {
   usePerformanceMonitoring,
   useLocalStorage,
   useDebounce,
-  useIntersectionObserver
+  useIntersectionObserver,
 };

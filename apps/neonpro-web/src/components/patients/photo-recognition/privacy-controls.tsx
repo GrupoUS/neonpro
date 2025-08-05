@@ -1,160 +1,189 @@
-'use client'
+"use client";
 
 /**
  * Privacy Controls Component for Patient Photo Management
  * Manages LGPD compliance and privacy settings for patient photos
- * 
+ *
  * @author APEX Master Developer
  */
 
-import React, { useState, useEffect } from 'react'
-import { Shield, Eye, EyeOff, Clock, Users, Lock, AlertTriangle, Check, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Switch } from '@/components/ui/switch'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Badge } from '@/components/ui/badge'
-import { useToast } from '@/components/ui/use-toast'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
+import React, { useState, useEffect } from "react";
+import type {
+  Shield,
+  Eye,
+  EyeOff,
+  Clock,
+  Users,
+  Lock,
+  AlertTriangle,
+  Check,
+  X,
+} from "lucide-react";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Switch } from "@/components/ui/switch";
+import type { Label } from "@/components/ui/label";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Input } from "@/components/ui/input";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Badge } from "@/components/ui/badge";
+import type { useToast } from "@/components/ui/use-toast";
+import type {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface PrivacyControlsProps {
-  patientId: string
-  patientName: string
-  onPrivacyUpdated?: (controls: PrivacyControls) => void
-  readOnly?: boolean
+  patientId: string;
+  patientName: string;
+  onPrivacyUpdated?: (controls: PrivacyControls) => void;
+  readOnly?: boolean;
 }
 
 interface PrivacyControls {
-  allowFacialRecognition: boolean
-  allowPhotoSharing: boolean
-  dataRetentionPeriod: number
-  accessLevel: 'public' | 'restricted' | 'private'
-  consentGiven: boolean
-  consentDate: string
-  consentVersion: string
-  allowDataProcessing: boolean
-  allowThirdPartyAccess: boolean
+  allowFacialRecognition: boolean;
+  allowPhotoSharing: boolean;
+  dataRetentionPeriod: number;
+  accessLevel: "public" | "restricted" | "private";
+  consentGiven: boolean;
+  consentDate: string;
+  consentVersion: string;
+  allowDataProcessing: boolean;
+  allowThirdPartyAccess: boolean;
   notificationPreferences: {
-    emailNotifications: boolean
-    smsNotifications: boolean
-    dataProcessingAlerts: boolean
-  }
-  dataExportRequests: DataExportRequest[]
-  deletionRequests: DeletionRequest[]
+    emailNotifications: boolean;
+    smsNotifications: boolean;
+    dataProcessingAlerts: boolean;
+  };
+  dataExportRequests: DataExportRequest[];
+  deletionRequests: DeletionRequest[];
 }
 
 interface DataExportRequest {
-  id: string
-  requestDate: string
-  status: 'pending' | 'processing' | 'completed' | 'failed'
-  downloadUrl?: string
-  expiresAt?: string
+  id: string;
+  requestDate: string;
+  status: "pending" | "processing" | "completed" | "failed";
+  downloadUrl?: string;
+  expiresAt?: string;
 }
 
 interface DeletionRequest {
-  id: string
-  requestDate: string
-  reason: string
-  status: 'pending' | 'approved' | 'completed' | 'rejected'
-  scheduledDate?: string
-  completedDate?: string
+  id: string;
+  requestDate: string;
+  reason: string;
+  status: "pending" | "approved" | "completed" | "rejected";
+  scheduledDate?: string;
+  completedDate?: string;
 }
 
 interface ConsentHistory {
-  id: string
-  version: string
-  givenAt: string
-  revokedAt?: string
-  changes: string[]
+  id: string;
+  version: string;
+  givenAt: string;
+  revokedAt?: string;
+  changes: string[];
 }
 
 const ACCESS_LEVEL_DESCRIPTIONS = {
-  public: 'Fotos podem ser acessadas por toda a equipe médica',
-  restricted: 'Acesso limitado apenas aos profissionais envolvidos no tratamento',
-  private: 'Acesso restrito apenas ao médico responsável'
-}
+  public: "Fotos podem ser acessadas por toda a equipe médica",
+  restricted: "Acesso limitado apenas aos profissionais envolvidos no tratamento",
+  private: "Acesso restrito apenas ao médico responsável",
+};
 
 const RETENTION_PERIODS = [
-  { value: 365, label: '1 ano' },
-  { value: 730, label: '2 anos' },
-  { value: 1095, label: '3 anos' },
-  { value: 1825, label: '5 anos' },
-  { value: 3650, label: '10 anos' },
-  { value: -1, label: 'Indefinido (conforme legislação)' }
-]
+  { value: 365, label: "1 ano" },
+  { value: 730, label: "2 anos" },
+  { value: 1095, label: "3 anos" },
+  { value: 1825, label: "5 anos" },
+  { value: 3650, label: "10 anos" },
+  { value: -1, label: "Indefinido (conforme legislação)" },
+];
 
 export function PrivacyControls({
   patientId,
   patientName,
   onPrivacyUpdated,
-  readOnly = false
+  readOnly = false,
 }: PrivacyControlsProps) {
-  const [privacyControls, setPrivacyControls] = useState<PrivacyControls | null>(null)
-  const [consentHistory, setConsentHistory] = useState<ConsentHistory[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [isSaving, setIsSaving] = useState(false)
-  const [showConsentDialog, setShowConsentDialog] = useState(false)
-  const [showExportDialog, setShowExportDialog] = useState(false)
-  const [showDeletionDialog, setShowDeletionDialog] = useState(false)
-  const [deletionReason, setDeletionReason] = useState('')
-  
-  const { toast } = useToast()
+  const [privacyControls, setPrivacyControls] = useState<PrivacyControls | null>(null);
+  const [consentHistory, setConsentHistory] = useState<ConsentHistory[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [showConsentDialog, setShowConsentDialog] = useState(false);
+  const [showExportDialog, setShowExportDialog] = useState(false);
+  const [showDeletionDialog, setShowDeletionDialog] = useState(false);
+  const [deletionReason, setDeletionReason] = useState("");
+
+  const { toast } = useToast();
 
   useEffect(() => {
-    loadPrivacyControls()
-    loadConsentHistory()
-  }, [patientId])
+    loadPrivacyControls();
+    loadConsentHistory();
+  }, [patientId]);
 
   const loadPrivacyControls = async () => {
     try {
-      const response = await fetch(
-        `/api/patients/photos/privacy?patientId=${patientId}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`
-          }
-        }
-      )
+      const response = await fetch(`/api/patients/photos/privacy?patientId=${patientId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("supabase_token")}`,
+        },
+      });
 
       if (response.ok) {
-        const result = await response.json()
-        setPrivacyControls(result.data)
+        const result = await response.json();
+        setPrivacyControls(result.data);
       } else {
         // Initialize default privacy controls if none exist
         const defaultControls: PrivacyControls = {
           allowFacialRecognition: false,
           allowPhotoSharing: false,
           dataRetentionPeriod: 1825, // 5 years default
-          accessLevel: 'restricted',
+          accessLevel: "restricted",
           consentGiven: false,
           consentDate: new Date().toISOString(),
-          consentVersion: '1.0',
+          consentVersion: "1.0",
           allowDataProcessing: false,
           allowThirdPartyAccess: false,
           notificationPreferences: {
             emailNotifications: true,
             smsNotifications: false,
-            dataProcessingAlerts: true
+            dataProcessingAlerts: true,
           },
           dataExportRequests: [],
-          deletionRequests: []
-        }
-        setPrivacyControls(defaultControls)
+          deletionRequests: [],
+        };
+        setPrivacyControls(defaultControls);
       }
     } catch (error) {
       toast({
-        title: 'Erro ao carregar configurações',
-        description: 'Não foi possível carregar as configurações de privacidade.',
-        variant: 'destructive'
-      })
+        title: "Erro ao carregar configurações",
+        description: "Não foi possível carregar as configurações de privacidade.",
+        variant: "destructive",
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const loadConsentHistory = async () => {
     try {
@@ -162,160 +191,161 @@ export function PrivacyControls({
         `/api/patients/photos/privacy/consent-history?patientId=${patientId}`,
         {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`
-          }
-        }
-      )
+            Authorization: `Bearer ${localStorage.getItem("supabase_token")}`,
+          },
+        },
+      );
 
       if (response.ok) {
-        const result = await response.json()
-        setConsentHistory(result.data || [])
+        const result = await response.json();
+        setConsentHistory(result.data || []);
       }
     } catch (error) {
-      console.error('Error loading consent history:', error)
+      console.error("Error loading consent history:", error);
     }
-  }
+  };
 
   const updatePrivacyControls = async (updates: Partial<PrivacyControls>) => {
-    if (readOnly) return
-    
-    setIsSaving(true)
+    if (readOnly) return;
+
+    setIsSaving(true);
     try {
-      const updatedControls = { ...privacyControls, ...updates }
-      
-      const response = await fetch('/api/patients/photos/privacy', {
-        method: 'PUT',
+      const updatedControls = { ...privacyControls, ...updates };
+
+      const response = await fetch("/api/patients/photos/privacy", {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("supabase_token")}`,
         },
         body: JSON.stringify({
           patientId,
-          privacyControls: updatedControls
-        })
-      })
+          privacyControls: updatedControls,
+        }),
+      });
 
       if (!response.ok) {
-        throw new Error('Failed to update privacy controls')
+        throw new Error("Failed to update privacy controls");
       }
 
-      const result = await response.json()
-      setPrivacyControls(result.data)
-      onPrivacyUpdated?.(result.data)
-      
+      const result = await response.json();
+      setPrivacyControls(result.data);
+      onPrivacyUpdated?.(result.data);
+
       toast({
-        title: 'Configurações atualizadas',
-        description: 'As configurações de privacidade foram atualizadas com sucesso.'
-      })
+        title: "Configurações atualizadas",
+        description: "As configurações de privacidade foram atualizadas com sucesso.",
+      });
     } catch (error) {
       toast({
-        title: 'Erro ao atualizar configurações',
-        description: 'Não foi possível atualizar as configurações de privacidade.',
-        variant: 'destructive'
-      })
+        title: "Erro ao atualizar configurações",
+        description: "Não foi possível atualizar as configurações de privacidade.",
+        variant: "destructive",
+      });
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   const requestDataExport = async () => {
     try {
-      const response = await fetch('/api/patients/photos/privacy/export', {
-        method: 'POST',
+      const response = await fetch("/api/patients/photos/privacy/export", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("supabase_token")}`,
         },
-        body: JSON.stringify({ patientId })
-      })
+        body: JSON.stringify({ patientId }),
+      });
 
       if (!response.ok) {
-        throw new Error('Failed to request data export')
+        throw new Error("Failed to request data export");
       }
 
       toast({
-        title: 'Solicitação enviada',
-        description: 'Sua solicitação de exportação de dados foi enviada. Você receberá um email quando estiver pronta.'
-      })
-      
-      setShowExportDialog(false)
-      loadPrivacyControls() // Reload to get updated export requests
+        title: "Solicitação enviada",
+        description:
+          "Sua solicitação de exportação de dados foi enviada. Você receberá um email quando estiver pronta.",
+      });
+
+      setShowExportDialog(false);
+      loadPrivacyControls(); // Reload to get updated export requests
     } catch (error) {
       toast({
-        title: 'Erro na solicitação',
-        description: 'Não foi possível processar sua solicitação de exportação.',
-        variant: 'destructive'
-      })
+        title: "Erro na solicitação",
+        description: "Não foi possível processar sua solicitação de exportação.",
+        variant: "destructive",
+      });
     }
-  }
+  };
 
   const requestDataDeletion = async () => {
     if (!deletionReason.trim()) {
       toast({
-        title: 'Motivo obrigatório',
-        description: 'Por favor, informe o motivo da solicitação de exclusão.',
-        variant: 'destructive'
-      })
-      return
+        title: "Motivo obrigatório",
+        description: "Por favor, informe o motivo da solicitação de exclusão.",
+        variant: "destructive",
+      });
+      return;
     }
 
     try {
-      const response = await fetch('/api/patients/photos/privacy/deletion', {
-        method: 'POST',
+      const response = await fetch("/api/patients/photos/privacy/deletion", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("supabase_token")}`,
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           patientId,
-          reason: deletionReason
-        })
-      })
+          reason: deletionReason,
+        }),
+      });
 
       if (!response.ok) {
-        throw new Error('Failed to request data deletion')
+        throw new Error("Failed to request data deletion");
       }
 
       toast({
-        title: 'Solicitação enviada',
-        description: 'Sua solicitação de exclusão de dados foi enviada para análise.'
-      })
-      
-      setShowDeletionDialog(false)
-      setDeletionReason('')
-      loadPrivacyControls() // Reload to get updated deletion requests
+        title: "Solicitação enviada",
+        description: "Sua solicitação de exclusão de dados foi enviada para análise.",
+      });
+
+      setShowDeletionDialog(false);
+      setDeletionReason("");
+      loadPrivacyControls(); // Reload to get updated deletion requests
     } catch (error) {
       toast({
-        title: 'Erro na solicitação',
-        description: 'Não foi possível processar sua solicitação de exclusão.',
-        variant: 'destructive'
-      })
+        title: "Erro na solicitação",
+        description: "Não foi possível processar sua solicitação de exclusão.",
+        variant: "destructive",
+      });
     }
-  }
+  };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  }
+    return new Date(dateString).toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      pending: { color: 'bg-yellow-100 text-yellow-800', label: 'Pendente' },
-      processing: { color: 'bg-blue-100 text-blue-800', label: 'Processando' },
-      completed: { color: 'bg-green-100 text-green-800', label: 'Concluído' },
-      failed: { color: 'bg-red-100 text-red-800', label: 'Falhou' },
-      approved: { color: 'bg-green-100 text-green-800', label: 'Aprovado' },
-      rejected: { color: 'bg-red-100 text-red-800', label: 'Rejeitado' }
-    }
-    
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending
-    return <Badge className={config.color}>{config.label}</Badge>
-  }
+      pending: { color: "bg-yellow-100 text-yellow-800", label: "Pendente" },
+      processing: { color: "bg-blue-100 text-blue-800", label: "Processando" },
+      completed: { color: "bg-green-100 text-green-800", label: "Concluído" },
+      failed: { color: "bg-red-100 text-red-800", label: "Falhou" },
+      approved: { color: "bg-green-100 text-green-800", label: "Aprovado" },
+      rejected: { color: "bg-red-100 text-red-800", label: "Rejeitado" },
+    };
+
+    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
+    return <Badge className={config.color}>{config.label}</Badge>;
+  };
 
   if (isLoading) {
     return (
@@ -326,7 +356,7 @@ export function PrivacyControls({
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   if (!privacyControls) {
@@ -338,7 +368,7 @@ export function PrivacyControls({
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -370,22 +400,22 @@ export function PrivacyControls({
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium">
-                  {privacyControls.consentGiven ? 'Consentimento concedido' : 'Consentimento pendente'}
+                  {privacyControls.consentGiven
+                    ? "Consentimento concedido"
+                    : "Consentimento pendente"}
                 </p>
                 <p className="text-sm text-gray-500">
-                  Versão: {privacyControls.consentVersion} • {formatDate(privacyControls.consentDate)}
+                  Versão: {privacyControls.consentVersion} •{" "}
+                  {formatDate(privacyControls.consentDate)}
                 </p>
               </div>
               {!readOnly && (
-                <Button
-                  variant="outline"
-                  onClick={() => setShowConsentDialog(true)}
-                >
-                  {privacyControls.consentGiven ? 'Revogar' : 'Conceder'} Consentimento
+                <Button variant="outline" onClick={() => setShowConsentDialog(true)}>
+                  {privacyControls.consentGiven ? "Revogar" : "Conceder"} Consentimento
                 </Button>
               )}
             </div>
-            
+
             {!privacyControls.consentGiven && (
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                 <div className="flex items-start gap-2">
@@ -393,7 +423,8 @@ export function PrivacyControls({
                   <div>
                     <p className="font-medium text-yellow-800">Consentimento necessário</p>
                     <p className="text-sm text-yellow-700">
-                      O consentimento é obrigatório para o processamento de fotos e dados pessoais conforme a LGPD.
+                      O consentimento é obrigatório para o processamento de fotos e dados pessoais
+                      conforme a LGPD.
                     </p>
                   </div>
                 </div>
@@ -423,7 +454,7 @@ export function PrivacyControls({
               <Switch
                 id="facial-recognition"
                 checked={privacyControls.allowFacialRecognition}
-                onCheckedChange={(checked) => 
+                onCheckedChange={(checked) =>
                   updatePrivacyControls({ allowFacialRecognition: checked })
                 }
                 disabled={readOnly || isSaving}
@@ -443,9 +474,7 @@ export function PrivacyControls({
               <Switch
                 id="photo-sharing"
                 checked={privacyControls.allowPhotoSharing}
-                onCheckedChange={(checked) => 
-                  updatePrivacyControls({ allowPhotoSharing: checked })
-                }
+                onCheckedChange={(checked) => updatePrivacyControls({ allowPhotoSharing: checked })}
                 disabled={readOnly || isSaving}
               />
             </div>
@@ -463,7 +492,7 @@ export function PrivacyControls({
               <Switch
                 id="data-processing"
                 checked={privacyControls.allowDataProcessing}
-                onCheckedChange={(checked) => 
+                onCheckedChange={(checked) =>
                   updatePrivacyControls({ allowDataProcessing: checked })
                 }
                 disabled={readOnly || isSaving}
@@ -483,7 +512,7 @@ export function PrivacyControls({
               <Switch
                 id="third-party"
                 checked={privacyControls.allowThirdPartyAccess}
-                onCheckedChange={(checked) => 
+                onCheckedChange={(checked) =>
                   updatePrivacyControls({ allowThirdPartyAccess: checked })
                 }
                 disabled={readOnly || isSaving}
@@ -493,11 +522,9 @@ export function PrivacyControls({
             {/* Access Level */}
             <div className="space-y-2">
               <Label className="text-base font-medium">Nível de Acesso</Label>
-              <Select 
-                value={privacyControls.accessLevel} 
-                onValueChange={(value) => 
-                  updatePrivacyControls({ accessLevel: value as any })
-                }
+              <Select
+                value={privacyControls.accessLevel}
+                onValueChange={(value) => updatePrivacyControls({ accessLevel: value as any })}
                 disabled={readOnly || isSaving}
               >
                 <SelectTrigger>
@@ -517,9 +544,9 @@ export function PrivacyControls({
             {/* Data Retention */}
             <div className="space-y-2">
               <Label className="text-base font-medium">Período de Retenção</Label>
-              <Select 
-                value={privacyControls.dataRetentionPeriod.toString()} 
-                onValueChange={(value) => 
+              <Select
+                value={privacyControls.dataRetentionPeriod.toString()}
+                onValueChange={(value) =>
                   updatePrivacyControls({ dataRetentionPeriod: parseInt(value) })
                 }
                 disabled={readOnly || isSaving}
@@ -535,9 +562,7 @@ export function PrivacyControls({
                   ))}
                 </SelectContent>
               </Select>
-              <p className="text-sm text-gray-500">
-                Tempo que os dados serão mantidos no sistema
-              </p>
+              <p className="text-sm text-gray-500">Tempo que os dados serão mantidos no sistema</p>
             </div>
           </div>
         </CardContent>
@@ -555,12 +580,12 @@ export function PrivacyControls({
               <Switch
                 id="email-notifications"
                 checked={privacyControls.notificationPreferences.emailNotifications}
-                onCheckedChange={(checked) => 
-                  updatePrivacyControls({ 
+                onCheckedChange={(checked) =>
+                  updatePrivacyControls({
                     notificationPreferences: {
                       ...privacyControls.notificationPreferences,
-                      emailNotifications: checked
-                    }
+                      emailNotifications: checked,
+                    },
                   })
                 }
                 disabled={readOnly || isSaving}
@@ -571,12 +596,12 @@ export function PrivacyControls({
               <Switch
                 id="sms-notifications"
                 checked={privacyControls.notificationPreferences.smsNotifications}
-                onCheckedChange={(checked) => 
-                  updatePrivacyControls({ 
+                onCheckedChange={(checked) =>
+                  updatePrivacyControls({
                     notificationPreferences: {
                       ...privacyControls.notificationPreferences,
-                      smsNotifications: checked
-                    }
+                      smsNotifications: checked,
+                    },
                   })
                 }
                 disabled={readOnly || isSaving}
@@ -587,12 +612,12 @@ export function PrivacyControls({
               <Switch
                 id="processing-alerts"
                 checked={privacyControls.notificationPreferences.dataProcessingAlerts}
-                onCheckedChange={(checked) => 
-                  updatePrivacyControls({ 
+                onCheckedChange={(checked) =>
+                  updatePrivacyControls({
                     notificationPreferences: {
                       ...privacyControls.notificationPreferences,
-                      dataProcessingAlerts: checked
-                    }
+                      dataProcessingAlerts: checked,
+                    },
                   })
                 }
                 disabled={readOnly || isSaving}
@@ -621,7 +646,7 @@ export function PrivacyControls({
                   <p className="text-sm text-gray-500">Solicitar cópia dos seus dados</p>
                 </div>
               </Button>
-              
+
               <Button
                 variant="outline"
                 onClick={() => setShowDeletionDialog(true)}
@@ -640,11 +665,17 @@ export function PrivacyControls({
               <div className="space-y-2">
                 <h4 className="font-medium">Solicitações de Exportação</h4>
                 {privacyControls.dataExportRequests.map((request) => (
-                  <div key={request.id} className="flex items-center justify-between p-3 border rounded">
+                  <div
+                    key={request.id}
+                    className="flex items-center justify-between p-3 border rounded"
+                  >
                     <div>
                       <p className="text-sm font-medium">{formatDate(request.requestDate)}</p>
                       {request.downloadUrl && (
-                        <a href={request.downloadUrl} className="text-sm text-blue-600 hover:underline">
+                        <a
+                          href={request.downloadUrl}
+                          className="text-sm text-blue-600 hover:underline"
+                        >
                           Download disponível
                         </a>
                       )}
@@ -660,7 +691,10 @@ export function PrivacyControls({
               <div className="space-y-2">
                 <h4 className="font-medium">Solicitações de Exclusão</h4>
                 {privacyControls.deletionRequests.map((request) => (
-                  <div key={request.id} className="flex items-center justify-between p-3 border rounded">
+                  <div
+                    key={request.id}
+                    className="flex items-center justify-between p-3 border rounded"
+                  >
                     <div>
                       <p className="text-sm font-medium">{formatDate(request.requestDate)}</p>
                       <p className="text-sm text-gray-500">{request.reason}</p>
@@ -715,33 +749,29 @@ export function PrivacyControls({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {privacyControls.consentGiven ? 'Revogar' : 'Conceder'} Consentimento
+              {privacyControls.consentGiven ? "Revogar" : "Conceder"} Consentimento
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <p className="text-sm text-gray-600">
-              {privacyControls.consentGiven 
-                ? 'Ao revogar o consentimento, o processamento de suas fotos e dados será interrompido.'
-                : 'Ao conceder o consentimento, você autoriza o processamento de suas fotos e dados conforme nossa política de privacidade.'
-              }
+              {privacyControls.consentGiven
+                ? "Ao revogar o consentimento, o processamento de suas fotos e dados será interrompido."
+                : "Ao conceder o consentimento, você autoriza o processamento de suas fotos e dados conforme nossa política de privacidade."}
             </p>
             <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setShowConsentDialog(false)}
-              >
+              <Button variant="outline" onClick={() => setShowConsentDialog(false)}>
                 Cancelar
               </Button>
               <Button
                 onClick={() => {
-                  updatePrivacyControls({ 
+                  updatePrivacyControls({
                     consentGiven: !privacyControls.consentGiven,
-                    consentDate: new Date().toISOString()
-                  })
-                  setShowConsentDialog(false)
+                    consentDate: new Date().toISOString(),
+                  });
+                  setShowConsentDialog(false);
                 }}
               >
-                {privacyControls.consentGiven ? 'Revogar' : 'Conceder'}
+                {privacyControls.consentGiven ? "Revogar" : "Conceder"}
               </Button>
             </div>
           </div>
@@ -756,19 +786,14 @@ export function PrivacyControls({
           </DialogHeader>
           <div className="space-y-4">
             <p className="text-sm text-gray-600">
-              Você receberá um arquivo com todos os seus dados pessoais e fotos armazenados no sistema.
-              O download estará disponível por 7 dias após o processamento.
+              Você receberá um arquivo com todos os seus dados pessoais e fotos armazenados no
+              sistema. O download estará disponível por 7 dias após o processamento.
             </p>
             <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setShowExportDialog(false)}
-              >
+              <Button variant="outline" onClick={() => setShowExportDialog(false)}>
                 Cancelar
               </Button>
-              <Button onClick={requestDataExport}>
-                Solicitar Exportação
-              </Button>
+              <Button onClick={requestDataExport}>Solicitar Exportação</Button>
             </div>
           </div>
         </DialogContent>
@@ -782,8 +807,8 @@ export function PrivacyControls({
           </DialogHeader>
           <div className="space-y-4">
             <p className="text-sm text-gray-600">
-              Esta solicitação será analisada conforme os requisitos legais. 
-              Alguns dados podem ser mantidos por obrigações regulatórias.
+              Esta solicitação será analisada conforme os requisitos legais. Alguns dados podem ser
+              mantidos por obrigações regulatórias.
             </p>
             <div className="space-y-2">
               <Label htmlFor="deletion-reason">Motivo da solicitação</Label>
@@ -799,19 +824,17 @@ export function PrivacyControls({
               <Button
                 variant="outline"
                 onClick={() => {
-                  setShowDeletionDialog(false)
-                  setDeletionReason('')
+                  setShowDeletionDialog(false);
+                  setDeletionReason("");
                 }}
               >
                 Cancelar
               </Button>
-              <Button onClick={requestDataDeletion}>
-                Enviar Solicitação
-              </Button>
+              <Button onClick={requestDataDeletion}>Enviar Solicitação</Button>
             </div>
           </div>
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

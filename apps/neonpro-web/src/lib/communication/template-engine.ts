@@ -10,7 +10,7 @@ export class TemplateEngine {
 
   async renderTemplate(templateId: string, variables: Record<string, any>): Promise<string> {
     // Mock implementation for testing
-    return `Template ${templateId} rendered with variables: ${JSON.stringify(variables)}`
+    return `Template ${templateId} rendered with variables: ${JSON.stringify(variables)}`;
   }
 
   async getTemplate(templateId: string): Promise<{
@@ -21,8 +21,8 @@ export class TemplateEngine {
     // Mock implementation
     return {
       id: templateId,
-      content: 'Mock template content',
-      variables: ['patientName', 'appointmentTime']
-    }
+      content: "Mock template content",
+      variables: ["patientName", "appointmentTime"],
+    };
   }
 }

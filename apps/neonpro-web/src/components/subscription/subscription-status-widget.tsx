@@ -10,30 +10,17 @@
 
 "use client";
 
-import { cn } from "@/lib/utils";
-import {
-  Calendar,
-  CreditCard,
-  Crown,
-  TrendingUp,
-  Users,
-  Zap,
-} from "lucide-react";
-import { useState } from "react";
-import { useSubscriptionStatus } from "../../hooks/use-subscription-status";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
-import { Progress } from "../ui/progress";
-import { Separator } from "../ui/separator";
-import { SubscriptionStatusIndicator } from "./subscription-status-indicator";
-import { UpgradePrompt } from "./upgrade-prompt";
+import type { cn } from "@/lib/utils";
+import type { Calendar, CreditCard, Crown, TrendingUp, Users, Zap } from "lucide-react";
+import type { useState } from "react";
+import type { useSubscriptionStatus } from "../../hooks/use-subscription-status";
+import type { Badge } from "../ui/badge";
+import type { Button } from "../ui/button";
+import type { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import type { Progress } from "../ui/progress";
+import type { Separator } from "../ui/separator";
+import type { SubscriptionStatusIndicator } from "./subscription-status-indicator";
+import type { UpgradePrompt } from "./upgrade-prompt";
 
 export interface SubscriptionStatusWidgetProps {
   className?: string;
@@ -54,16 +41,8 @@ export function SubscriptionStatusWidget({
 }: SubscriptionStatusWidgetProps) {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
-  const {
-    status,
-    tier,
-    features,
-    nextBilling,
-    gracePeriodEnd,
-    isLoading,
-    error,
-    refresh,
-  } = useSubscriptionStatus();
+  const { status, tier, features, nextBilling, gracePeriodEnd, isLoading, error, refresh } =
+    useSubscriptionStatus();
 
   const getStatusColor = () => {
     switch (status) {
@@ -123,10 +102,7 @@ export function SubscriptionStatusWidget({
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <SubscriptionStatusIndicator
-                variant="minimal"
-                className="scale-75"
-              />
+              <SubscriptionStatusIndicator variant="minimal" className="scale-75" />
               <div>
                 <p className="font-medium">{tier || "Free"} Plan</p>
                 <p className={cn("text-sm", getStatusColor())}>
@@ -156,9 +132,7 @@ export function SubscriptionStatusWidget({
                 <Crown className="h-5 w-5 text-primary" />
                 <span>Subscription Status</span>
               </CardTitle>
-              <CardDescription>
-                Manage your subscription and usage
-              </CardDescription>
+              <CardDescription>Manage your subscription and usage</CardDescription>
             </div>
             <SubscriptionStatusIndicator variant="minimal" />
           </div>
@@ -188,14 +162,10 @@ export function SubscriptionStatusWidget({
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">
-                    {getActionDateLabel()}
-                  </span>
+                  <span className="text-sm text-muted-foreground">{getActionDateLabel()}</span>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium">
-                    {formatDate(getNextActionDate()!)}
-                  </p>
+                  <p className="font-medium">{formatDate(getNextActionDate()!)}</p>
                   <p className="text-xs text-muted-foreground">
                     {getDaysUntil(getNextActionDate()!)} days
                   </p>
@@ -211,9 +181,7 @@ export function SubscriptionStatusWidget({
               <div className="space-y-3">
                 {usageMetrics.map((metric, index) => {
                   const Icon = metric.icon;
-                  const percentage = Math.round(
-                    (metric.current / metric.limit) * 100
-                  );
+                  const percentage = Math.round((metric.current / metric.limit) * 100);
 
                   return (
                     <div key={index} className="space-y-2">
@@ -229,9 +197,7 @@ export function SubscriptionStatusWidget({
                         </span>
                       </div>
                       <Progress value={percentage} className="h-2" />
-                      <p className="text-xs text-muted-foreground">
-                        {percentage}% used
-                      </p>
+                      <p className="text-xs text-muted-foreground">{percentage}% used</p>
                     </div>
                   );
                 })}
@@ -264,30 +230,19 @@ export function SubscriptionStatusWidget({
               <Separator />
               <div className="flex flex-col gap-2">
                 {status !== "active" && (
-                  <Button
-                    onClick={() => setShowUpgradeModal(true)}
-                    className="w-full"
-                  >
+                  <Button onClick={() => setShowUpgradeModal(true)} className="w-full">
                     <Crown className="h-4 w-4 mr-2" />
                     Upgrade Plan
                   </Button>
                 )}
 
                 <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={onManageBilling}
-                    className="flex-1"
-                  >
+                  <Button variant="outline" onClick={onManageBilling} className="flex-1">
                     <CreditCard className="h-4 w-4 mr-2" />
                     Billing
                   </Button>
 
-                  <Button
-                    variant="outline"
-                    onClick={refresh}
-                    className="flex-1"
-                  >
+                  <Button variant="outline" onClick={refresh} className="flex-1">
                     <Zap className="h-4 w-4 mr-2" />
                     Refresh
                   </Button>

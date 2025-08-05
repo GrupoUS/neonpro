@@ -1,9 +1,9 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import {
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Button } from "@/components/ui/button";
+import type { cn } from "@/lib/utils";
+import type {
   Activity,
   BarChart3,
   Bell,
@@ -22,7 +22,7 @@ import {
   Wrench,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import type { usePathname } from "next/navigation";
 
 interface DashboardSidebarProps {
   open: boolean;
@@ -156,11 +156,7 @@ const secondaryItems = [
   },
 ];
 
-export function DashboardSidebar({
-  open,
-  onOpenChange,
-  user,
-}: DashboardSidebarProps) {
+export function DashboardSidebar({ open, onOpenChange, user }: DashboardSidebarProps) {
   const pathname = usePathname();
 
   const NavItem = ({ item }: { item: (typeof navigationItems)[0] }) => {
@@ -172,9 +168,7 @@ export function DashboardSidebar({
         href={item.href}
         className={cn(
           "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all hover:bg-accent",
-          isActive
-            ? "bg-accent text-accent-foreground"
-            : "text-muted-foreground"
+          isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground",
         )}
         onClick={() => onOpenChange(false)}
       >
@@ -196,12 +190,8 @@ export function DashboardSidebar({
                 <Activity className="h-4 w-4 text-primary-foreground" />
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-semibold text-foreground">
-                  NeonPro
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  Gestão Clínica
-                </span>
+                <span className="text-sm font-semibold text-foreground">NeonPro</span>
+                <span className="text-xs text-muted-foreground">Gestão Clínica</span>
               </div>
             </div>
           </div>
@@ -242,17 +232,13 @@ export function DashboardSidebar({
             <div className="flex items-center gap-3 px-3 py-2">
               <Avatar className="h-8 w-8">
                 <AvatarImage src={user?.user_metadata?.avatar_url} />
-                <AvatarFallback>
-                  {user?.email?.charAt(0).toUpperCase()}
-                </AvatarFallback>
+                <AvatarFallback>{user?.email?.charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground truncate">
                   {user?.user_metadata?.full_name || user?.email}
                 </p>
-                <p className="text-xs text-muted-foreground truncate">
-                  {user?.email}
-                </p>
+                <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
               </div>
             </div>
 
@@ -275,7 +261,7 @@ export function DashboardSidebar({
       <div
         className={cn(
           "fixed inset-y-0 z-50 flex w-64 flex-col transition-transform duration-300 ease-in-out lg:hidden",
-          open ? "translate-x-0" : "-translate-x-full"
+          open ? "translate-x-0" : "-translate-x-full",
         )}
       >
         <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-border bg-card px-6 pb-4">
@@ -286,12 +272,8 @@ export function DashboardSidebar({
                 <Activity className="h-4 w-4 text-primary-foreground" />
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-semibold text-foreground">
-                  NeonPro
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  Gestão Clínica
-                </span>
+                <span className="text-sm font-semibold text-foreground">NeonPro</span>
+                <span className="text-xs text-muted-foreground">Gestão Clínica</span>
               </div>
             </div>
           </div>
@@ -330,17 +312,13 @@ export function DashboardSidebar({
             <div className="flex items-center gap-3 px-3 py-2">
               <Avatar className="h-8 w-8">
                 <AvatarImage src={user?.user_metadata?.avatar_url} />
-                <AvatarFallback>
-                  {user?.email?.charAt(0).toUpperCase()}
-                </AvatarFallback>
+                <AvatarFallback>{user?.email?.charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground truncate">
                   {user?.user_metadata?.full_name || user?.email}
                 </p>
-                <p className="text-xs text-muted-foreground truncate">
-                  {user?.email}
-                </p>
+                <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
               </div>
             </div>
 

@@ -1,5 +1,5 @@
 /**
- * WhatsApp Provider - Mock implementation for testing  
+ * WhatsApp Provider - Mock implementation for testing
  * Story 2.3: Automated Communication System
  */
 
@@ -15,30 +15,34 @@ export class WhatsAppProvider {
     // Mock implementation
   }
 
-  async sendMessage(to: string, message: string, options?: {
-    templateName?: string;
-    templateParams?: Record<string, string>;
-    mediaUrl?: string;
-    priority?: 'low' | 'medium' | 'high' | 'urgent';
-  }): Promise<WhatsAppResult> {
+  async sendMessage(
+    to: string,
+    message: string,
+    options?: {
+      templateName?: string;
+      templateParams?: Record<string, string>;
+      mediaUrl?: string;
+      priority?: "low" | "medium" | "high" | "urgent";
+    },
+  ): Promise<WhatsAppResult> {
     // Mock implementation for testing
     return {
       success: true,
-      messageId: 'whatsapp-' + Date.now(),
-      cost: 0.01
-    }
+      messageId: "whatsapp-" + Date.now(),
+      cost: 0.01,
+    };
   }
 
   async getDeliveryStatus(messageId: string): Promise<{
-    status: 'pending' | 'sent' | 'delivered' | 'read' | 'failed';
+    status: "pending" | "sent" | "delivered" | "read" | "failed";
     deliveredAt?: Date;
     readAt?: Date;
     error?: string;
   }> {
     // Mock implementation
     return {
-      status: 'delivered',
-      deliveredAt: new Date()
-    }
+      status: "delivered",
+      deliveredAt: new Date(),
+    };
   }
 }

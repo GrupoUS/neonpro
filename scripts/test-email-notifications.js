@@ -27,20 +27,15 @@ async function testEmailNotificationService() {
       supportEmail: "suporte@neonpro.com",
     });
 
-    console.log(
-      "✅ Service initialized with config:",
-      notificationService.getConfig()
-    );
+    console.log("✅ Service initialized with config:", notificationService.getConfig());
 
     console.log("\n2️⃣ Testing connection...");
     const connectionTest = await notificationService.testConnection();
-    console.log(
-      `Connection test: ${connectionTest ? "✅ PASSED" : "❌ FAILED"}`
-    );
+    console.log(`Connection test: ${connectionTest ? "✅ PASSED" : "❌ FAILED"}`);
 
     if (!connectionTest) {
       console.log(
-        "\n⚠️ Email service not properly configured. Check RESEND_API_KEY environment variable."
+        "\n⚠️ Email service not properly configured. Check RESEND_API_KEY environment variable.",
       );
       console.log("📝 Add this to your .env.local file:");
       console.log("RESEND_API_KEY=your_resend_api_key_here");
@@ -54,13 +49,9 @@ async function testEmailNotificationService() {
     console.log('📅 Testing "due soon" notification...');
     const dueSoonData = {
       ...sampleNotificationData,
-      dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
-        .toISOString()
-        .split("T")[0], // 3 days from now
+      dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split("T")[0], // 3 days from now
     };
-    const dueSoonResult = await notificationService.sendDueSoonNotification(
-      dueSoonData
-    );
+    const dueSoonResult = await notificationService.sendDueSoonNotification(dueSoonData);
     console.log(`Result: ${dueSoonResult ? "✅ SENT" : "❌ FAILED"}`);
 
     await new Promise((resolve) => setTimeout(resolve, 1000)); // Delay between sends
@@ -71,9 +62,7 @@ async function testEmailNotificationService() {
       ...sampleNotificationData,
       dueDate: new Date().toISOString().split("T")[0], // Today
     };
-    const dueTodayResult = await notificationService.sendDueTodayNotification(
-      dueTodayData
-    );
+    const dueTodayResult = await notificationService.sendDueTodayNotification(dueTodayData);
     console.log(`Result: ${dueTodayResult ? "✅ SENT" : "❌ FAILED"}`);
 
     await new Promise((resolve) => setTimeout(resolve, 1000)); // Delay between sends
@@ -82,12 +71,9 @@ async function testEmailNotificationService() {
     console.log('\n🚨 Testing "overdue payment" notification...');
     const overdueData = {
       ...sampleNotificationData,
-      dueDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
-        .toISOString()
-        .split("T")[0], // 2 days ago
+      dueDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString().split("T")[0], // 2 days ago
     };
-    const overdueResult =
-      await notificationService.sendOverduePaymentNotification(overdueData);
+    const overdueResult = await notificationService.sendOverduePaymentNotification(overdueData);
     console.log(`Result: ${overdueResult ? "✅ SENT" : "❌ FAILED"}`);
 
     await new Promise((resolve) => setTimeout(resolve, 1000)); // Delay between sends
@@ -123,19 +109,11 @@ async function testEmailNotificationService() {
       },
     ];
 
-    const batchResults = await notificationService.sendBatchNotifications(
-      batchNotifications
-    );
-    console.log(
-      `Batch results: ${
-        batchResults.every((r) => r) ? "✅ ALL SENT" : "⚠️ SOME FAILED"
-      }`
-    );
+    const batchResults = await notificationService.sendBatchNotifications(batchNotifications);
+    console.log(`Batch results: ${batchResults.every((r) => r) ? "✅ ALL SENT" : "⚠️ SOME FAILED"}`);
     console.log(
       "Individual results:",
-      batchResults
-        .map((result, i) => `${i + 1}: ${result ? "✅" : "❌"}`)
-        .join(", ")
+      batchResults.map((result, i) => `${i + 1}: ${result ? "✅" : "❌"}`).join(", "),
     );
 
     // Summary
@@ -154,14 +132,10 @@ async function testEmailNotificationService() {
     console.log(`Total notifications tested: ${totalCount}`);
     console.log(`Successful: ${successCount}`);
     console.log(`Failed: ${totalCount - successCount}`);
-    console.log(
-      `Success rate: ${((successCount / totalCount) * 100).toFixed(1)}%`
-    );
+    console.log(`Success rate: ${((successCount / totalCount) * 100).toFixed(1)}%`);
 
     if (successCount === totalCount) {
-      console.log(
-        "\n🎉 All tests passed! Email notification service is working correctly."
-      );
+      console.log("\n🎉 All tests passed! Email notification service is working correctly.");
     } else {
       console.log("\n⚠️ Some tests failed. Check the logs above for details.");
     }
@@ -180,7 +154,7 @@ async function testEmailNotificationService() {
     const helperData = EmailNotificationService.createNotificationData(
       mockAccountsPayable,
       "test@example.com",
-      "+5511999999999"
+      "+5511999999999",
     );
 
     console.log("Helper data created:", helperData);
@@ -193,9 +167,7 @@ async function testEmailNotificationService() {
 
 // Check environment
 console.log("🔍 Environment Check:");
-console.log(
-  `RESEND_API_KEY: ${process.env.RESEND_API_KEY ? "✅ SET" : "❌ NOT SET"}`
-);
+console.log(`RESEND_API_KEY: ${process.env.RESEND_API_KEY ? "✅ SET" : "❌ NOT SET"}`);
 console.log(`NODE_ENV: ${process.env.NODE_ENV || "development"}`);
 console.log("");
 

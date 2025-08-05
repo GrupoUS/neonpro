@@ -4,33 +4,33 @@
 // =====================================================================================
 
 import {
-    ContractRenewalAlert,
-    ContractStatus,
-    CreateContractRequest,
-    CreateEvaluationRequest,
-    CreateQualityIssueRequest,
-    CreateSupplierRequest,
-    EvaluationType,
-    IssueStatus,
-    PerformanceGrade,
-    QualityIssuesSummary,
-    Supplier,
-    SupplierAnalytics,
-    SupplierCommunication,
-    SupplierComparison,
-    SupplierContact,
-    SupplierContract,
-    SupplierDashboardData,
-    SupplierEvaluation,
-    SupplierFilters,
-    SupplierListResponse,
-    SupplierPerformance,
-    SupplierQualityIssue,
-    SupplierRating,
-    SupplierStatus,
-    UpdateSupplierRequest
-} from '@/app/types/suppliers';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+  ContractRenewalAlert,
+  ContractStatus,
+  CreateContractRequest,
+  CreateEvaluationRequest,
+  CreateQualityIssueRequest,
+  CreateSupplierRequest,
+  EvaluationType,
+  IssueStatus,
+  PerformanceGrade,
+  QualityIssuesSummary,
+  Supplier,
+  SupplierAnalytics,
+  SupplierCommunication,
+  SupplierComparison,
+  SupplierContact,
+  SupplierContract,
+  SupplierDashboardData,
+  SupplierEvaluation,
+  SupplierFilters,
+  SupplierListResponse,
+  SupplierPerformance,
+  SupplierQualityIssue,
+  SupplierRating,
+  SupplierStatus,
+  UpdateSupplierRequest,
+} from "@/app/types/suppliers";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 export class SupplierManagementService {
   private supabase: SupabaseClient;
@@ -38,7 +38,7 @@ export class SupplierManagementService {
   constructor(supabaseUrl?: string, supabaseKey?: string) {
     this.supabase = createClient(
       supabaseUrl || process.env.SUPABASE_URL!,
-      supabaseKey || process.env.SUPABASE_ANON_KEY!
+      supabaseKey || process.env.SUPABASE_ANON_KEY!,
     );
   }
 
@@ -51,15 +51,14 @@ export class SupplierManagementService {
   // =====================================================================================
 
   async createSupplier(clinicId: string, supplierData: CreateSupplierRequest): Promise<Supplier> {
-
     // Generate unique supplier code if not provided or verify uniqueness
     const supplierCode = supplierData.supplier_code;
     const supabase = await createClient();
     const { data: existingCode } = await supabase
-      .from('suppliers')
-      .select('id')
-      .eq('clinic_id', clinicId)
-      .eq('supplier_code', supplierCode)
+      .from("suppliers")
+      .select("id")
+      .eq("clinic_id", clinicId)
+      .eq("supplier_code", supplierCode)
       .single();
 
     if (existingCode) {
@@ -70,15 +69,15 @@ export class SupplierManagementService {
       ...supplierData,
       clinic_id: clinicId,
       supplier_code: supplierCode,
-      status: 'active' as SupplierStatus,
+      status: "active" as SupplierStatus,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     const { data, error } = await supabase
-      .from('suppliers')
+      .from("suppliers")
       .insert([supplierToCreate])
-      .select('*')
+      .select("*")
       .single();
 
     if (error) {
@@ -92,13 +91,13 @@ export class SupplierManagementService {
     const supabase = await createClient();
 
     const { data, error } = await supabase
-      .from('suppliers')
-      .select('*')
-      .eq('clinic_id', clinicId)
-      .eq('id', supplierId)
+      .from("suppliers")
+      .select("*")
+      .eq("clinic_id", clinicId)
+      .eq("id", supplierId)
       .single();
 
-    if (error && error.code !== 'PGRST116') {
+    if (error && error.code !== "PGRST116") {
       throw new Error(`Erro ao buscar fornecedor: ${error.message}`);
     }
 
@@ -106,22 +105,21 @@ export class SupplierManagementService {
   }
 
   async updateSupplier(
-    clinicId: string, 
-    supplierId: string, 
-    updates: UpdateSupplierRequest
+    clinicId: string,
+    supplierId: string,
+    updates: UpdateSupplierRequest,
   ): Promise<Supplier> {
-
     const updateData = {
       ...updates,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     const { data, error } = await supabase
-      .from('suppliers')
+      .from("suppliers")
       .update(updateData)
-      .eq('clinic_id', clinicId)
-      .eq('id', supplierId)
-      .select('*')
+      .eq("clinic_id", clinicId)
+      .eq("id", supplierId)
+      .select("*")
       .single();
 
     if (error) {
@@ -132,25 +130,24 @@ export class SupplierManagementService {
   }
 
   async deleteSupplier(clinicId: string, supplierId: string): Promise<void> {
-
     // Check for dependencies
     const supabase = await createClient();
     const { data: contracts } = await supabase
-      .from('supplier_contracts')
-      .select('id')
-      .eq('supplier_id', supplierId)
-      .eq('status', 'active')
+      .from("supplier_contracts")
+      .select("id")
+      .eq("supplier_id", supplierId)
+      .eq("status", "active")
       .limit(1);
 
     if (contracts && contracts.length > 0) {
-      throw new Error('Não é possível excluir fornecedor com contratos ativos');
+      throw new Error("Não é possível excluir fornecedor com contratos ativos");
     }
 
     const { error } = await supabase
-      .from('suppliers')
+      .from("suppliers")
       .delete()
-      .eq('clinic_id', clinicId)
-      .eq('id', supplierId);
+      .eq("clinic_id", clinicId)
+      .eq("id", supplierId);
 
     if (error) {
       throw new Error(`Erro ao excluir fornecedor: ${error.message}`);
@@ -158,46 +155,45 @@ export class SupplierManagementService {
   }
 
   async listSuppliers(
-    clinicId: string, 
+    clinicId: string,
     filters?: SupplierFilters,
     page = 1,
-    limit = 50
+    limit = 50,
   ): Promise<SupplierListResponse> {
-
     let query = supabase
-      .from('suppliers')
-      .select('*', { count: 'exact' })
-      .eq('clinic_id', clinicId);
+      .from("suppliers")
+      .select("*", { count: "exact" })
+      .eq("clinic_id", clinicId);
 
     // Apply filters
     if (filters) {
       if (filters.supplier_type && filters.supplier_type.length > 0) {
-        query = query.in('supplier_type', filters.supplier_type);
+        query = query.in("supplier_type", filters.supplier_type);
       }
-      
+
       if (filters.status && filters.status.length > 0) {
-        query = query.in('status', filters.status);
+        query = query.in("status", filters.status);
       }
-      
+
       if (filters.is_preferred !== undefined) {
-        query = query.eq('is_preferred', filters.is_preferred);
+        query = query.eq("is_preferred", filters.is_preferred);
       }
-      
+
       if (filters.is_critical !== undefined) {
-        query = query.eq('is_critical', filters.is_critical);
+        query = query.eq("is_critical", filters.is_critical);
       }
-      
+
       if (filters.performance_score_min !== undefined) {
-        query = query.gte('performance_score', filters.performance_score_min);
+        query = query.gte("performance_score", filters.performance_score_min);
       }
-      
+
       if (filters.performance_score_max !== undefined) {
-        query = query.lte('performance_score', filters.performance_score_max);
+        query = query.lte("performance_score", filters.performance_score_max);
       }
-      
+
       if (filters.search) {
         query = query.or(
-          `supplier_name.ilike.%${filters.search}%,supplier_code.ilike.%${filters.search}%`
+          `supplier_name.ilike.%${filters.search}%,supplier_code.ilike.%${filters.search}%`,
         );
       }
     }
@@ -207,7 +203,7 @@ export class SupplierManagementService {
     query = query.range(offset, offset + limit - 1);
 
     // Order by name
-    query = query.order('supplier_name');
+    query = query.order("supplier_name");
 
     const { data, error, count } = await query;
 
@@ -220,7 +216,7 @@ export class SupplierManagementService {
       total: count || 0,
       page,
       limit,
-      filters
+      filters,
     };
   }
 
@@ -229,29 +225,30 @@ export class SupplierManagementService {
   // =====================================================================================
 
   async createContract(contractData: CreateContractRequest): Promise<SupplierContract> {
-
     // Check if contract number is unique for the supplier
     const supabase = await createClient();
     const { data: existingContract } = await supabase
-      .from('supplier_contracts')
-      .select('id')
-      .eq('supplier_id', contractData.supplier_id)
-      .eq('contract_number', contractData.contract_number)
+      .from("supplier_contracts")
+      .select("id")
+      .eq("supplier_id", contractData.supplier_id)
+      .eq("contract_number", contractData.contract_number)
       .single();
 
     if (existingContract) {
-      throw new Error(`Número de contrato '${contractData.contract_number}' já existe para este fornecedor`);
+      throw new Error(
+        `Número de contrato '${contractData.contract_number}' já existe para este fornecedor`,
+      );
     }
 
     const contractToCreate = {
       ...contractData,
-      status: 'draft' as ContractStatus,
+      status: "draft" as ContractStatus,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     const { data, error } = await supabase
-      .from('supplier_contracts')
+      .from("supplier_contracts")
       .insert([contractToCreate])
       .select(`
         *,
@@ -270,15 +267,15 @@ export class SupplierManagementService {
     const supabase = await createClient();
 
     const { data, error } = await supabase
-      .from('supplier_contracts')
+      .from("supplier_contracts")
       .select(`
         *,
         supplier:suppliers(*)
       `)
-      .eq('id', contractId)
+      .eq("id", contractId)
       .single();
 
-    if (error && error.code !== 'PGRST116') {
+    if (error && error.code !== "PGRST116") {
       throw new Error(`Erro ao buscar contrato: ${error.message}`);
     }
 
@@ -286,19 +283,18 @@ export class SupplierManagementService {
   }
 
   async updateContract(
-    contractId: string, 
-    updates: Partial<CreateContractRequest>
+    contractId: string,
+    updates: Partial<CreateContractRequest>,
   ): Promise<SupplierContract> {
-
     const updateData = {
       ...updates,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     const { data, error } = await supabase
-      .from('supplier_contracts')
+      .from("supplier_contracts")
       .update(updateData)
-      .eq('id', contractId)
+      .eq("id", contractId)
       .select(`
         *,
         supplier:suppliers(*)
@@ -316,13 +312,13 @@ export class SupplierManagementService {
     const supabase = await createClient();
 
     const { data, error } = await supabase
-      .from('supplier_contracts')
+      .from("supplier_contracts")
       .select(`
         *,
         supplier:suppliers(*)
       `)
-      .eq('supplier_id', supplierId)
-      .order('created_at', { ascending: false });
+      .eq("supplier_id", supplierId)
+      .order("created_at", { ascending: false });
 
     if (error) {
       throw new Error(`Erro ao buscar contratos: ${error.message}`);
@@ -331,18 +327,20 @@ export class SupplierManagementService {
     return data as SupplierContract[];
   }
 
-  async getContractRenewalAlerts(clinicId: string, daysAhead = 90): Promise<ContractRenewalAlert[]> {
-
+  async getContractRenewalAlerts(
+    clinicId: string,
+    daysAhead = 90,
+  ): Promise<ContractRenewalAlert[]> {
     const alertDate = new Date();
     alertDate.setDate(alertDate.getDate() + daysAhead);
     const supabase = await createClient();
 
     const { data, error } = await supabase
-      .from('contract_renewal_alerts')
-      .select('*')
-      .eq('clinic_id', clinicId)
-      .lte('end_date', alertDate.toISOString())
-      .order('days_until_expiration');
+      .from("contract_renewal_alerts")
+      .select("*")
+      .eq("clinic_id", clinicId)
+      .lte("end_date", alertDate.toISOString())
+      .order("days_until_expiration");
 
     if (error) {
       throw new Error(`Erro ao buscar alertas de renovação: ${error.message}`);
@@ -356,15 +354,14 @@ export class SupplierManagementService {
   // =====================================================================================
 
   async createContact(contactData: any): Promise<SupplierContact> {
-
     const contactToCreate = {
       ...contactData,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     const { data, error } = await supabase
-      .from('supplier_contacts')
+      .from("supplier_contacts")
       .insert([contactToCreate])
       .select(`
         *,
@@ -383,15 +380,15 @@ export class SupplierManagementService {
     const supabase = await createClient();
 
     const { data, error } = await supabase
-      .from('supplier_contacts')
+      .from("supplier_contacts")
       .select(`
         *,
         supplier:suppliers(*)
       `)
-      .eq('supplier_id', supplierId)
-      .eq('is_active', true)
-      .order('is_primary', { ascending: false })
-      .order('contact_name');
+      .eq("supplier_id", supplierId)
+      .eq("is_active", true)
+      .order("is_primary", { ascending: false })
+      .order("contact_name");
 
     if (error) {
       throw new Error(`Erro ao buscar contatos: ${error.message}`);
@@ -400,20 +397,16 @@ export class SupplierManagementService {
     return data as SupplierContact[];
   }
 
-  async updateContact(
-    contactId: string, 
-    updates: Partial<any>
-  ): Promise<SupplierContact> {
-
+  async updateContact(contactId: string, updates: Partial<any>): Promise<SupplierContact> {
     const updateData = {
       ...updates,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     const { data, error } = await supabase
-      .from('supplier_contacts')
+      .from("supplier_contacts")
       .update(updateData)
-      .eq('id', contactId)
+      .eq("id", contactId)
       .select(`
         *,
         supplier:suppliers(*)
@@ -435,14 +428,13 @@ export class SupplierManagementService {
     supplierId: string,
     periodStart: string,
     periodEnd: string,
-    evaluationType: EvaluationType
+    evaluationType: EvaluationType,
   ): Promise<SupplierPerformance> {
-
     // Get performance data from various sources
     const [ordersData, qualityData, financialData] = await Promise.all([
       this.getDeliveryPerformanceData(supplierId, periodStart, periodEnd),
       this.getQualityPerformanceData(supplierId, periodStart, periodEnd),
-      this.getFinancialPerformanceData(supplierId, periodStart, periodEnd)
+      this.getFinancialPerformanceData(supplierId, periodStart, periodEnd),
     ]);
 
     // Calculate performance scores
@@ -455,36 +447,36 @@ export class SupplierManagementService {
       period_start: periodStart,
       period_end: periodEnd,
       evaluation_type: evaluationType,
-      
+
       // Delivery Performance
       total_orders: ordersData.totalOrders,
       on_time_deliveries: ordersData.onTimeDeliveries,
       late_deliveries: ordersData.lateDeliveries,
       avg_delivery_days: ordersData.avgDeliveryDays,
       delivery_performance_score: deliveryScore,
-      
+
       // Quality Performance
       total_items_received: qualityData.totalItems,
       defective_items: qualityData.defectiveItems,
       returned_items: qualityData.returnedItems,
       quality_score: qualityScore,
-      
+
       // Financial Performance
       total_order_value: financialData.totalOrderValue,
       total_invoiced: financialData.totalInvoiced,
       total_paid: financialData.totalPaid,
       avg_payment_delay_days: financialData.avgPaymentDelay,
       cost_savings: financialData.costSavings,
-      
+
       // Overall Performance
       overall_score: overallScore,
       performance_grade: this.calculatePerformanceGrade(overallScore),
-      
-      calculated_at: new Date().toISOString()
+
+      calculated_at: new Date().toISOString(),
     };
 
     const { data, error } = await supabase
-      .from('supplier_performance')
+      .from("supplier_performance")
       .insert([performanceData])
       .select(`
         *,
@@ -500,18 +492,17 @@ export class SupplierManagementService {
   }
 
   async createEvaluation(evaluationData: CreateEvaluationRequest): Promise<SupplierEvaluation> {
-
     // Calculate weighted score and grade
     const weights = {
       delivery_reliability: 0.25,
       product_quality: 0.25,
       customer_service: 0.15,
       pricing_competitiveness: 0.15,
-      technical_support: 0.10,
-      documentation_quality: 0.10
+      technical_support: 0.1,
+      documentation_quality: 0.1,
     };
 
-    const weightedScore = 
+    const weightedScore =
       evaluationData.delivery_reliability * weights.delivery_reliability +
       evaluationData.product_quality * weights.product_quality +
       evaluationData.customer_service * weights.customer_service +
@@ -527,11 +518,11 @@ export class SupplierManagementService {
       weighted_score: Number(weightedScore.toFixed(2)),
       final_grade: finalGrade,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     const { data, error } = await supabase
-      .from('supplier_evaluations')
+      .from("supplier_evaluations")
       .insert([evaluationToCreate])
       .select(`
         *,
@@ -550,13 +541,13 @@ export class SupplierManagementService {
     const supabase = await createClient();
 
     const { data, error } = await supabase
-      .from('supplier_evaluations')
+      .from("supplier_evaluations")
       .select(`
         *,
         supplier:suppliers(*)
       `)
-      .eq('supplier_id', supplierId)
-      .order('evaluation_date', { ascending: false });
+      .eq("supplier_id", supplierId)
+      .order("evaluation_date", { ascending: false });
 
     if (error) {
       throw new Error(`Erro ao buscar avaliações: ${error.message}`);
@@ -570,17 +561,16 @@ export class SupplierManagementService {
   // =====================================================================================
 
   async createQualityIssue(issueData: CreateQualityIssueRequest): Promise<SupplierQualityIssue> {
-
     const issueToCreate = {
       ...issueData,
       issue_date: new Date().toISOString(),
-      status: 'open' as IssueStatus,
+      status: "open" as IssueStatus,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     const { data, error } = await supabase
-      .from('supplier_quality_issues')
+      .from("supplier_quality_issues")
       .insert([issueToCreate])
       .select(`
         *,
@@ -596,19 +586,18 @@ export class SupplierManagementService {
   }
 
   async updateQualityIssue(
-    issueId: string, 
-    updates: Partial<CreateQualityIssueRequest & { status: IssueStatus }>
+    issueId: string,
+    updates: Partial<CreateQualityIssueRequest & { status: IssueStatus }>,
   ): Promise<SupplierQualityIssue> {
-
     const updateData = {
       ...updates,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     const { data, error } = await supabase
-      .from('supplier_quality_issues')
+      .from("supplier_quality_issues")
       .update(updateData)
-      .eq('id', issueId)
+      .eq("id", issueId)
       .select(`
         *,
         supplier:suppliers(*)
@@ -626,10 +615,10 @@ export class SupplierManagementService {
     const supabase = await createClient();
 
     const { data, error } = await supabase
-      .from('quality_issues_summary')
-      .select('*')
-      .eq('clinic_id', clinicId)
-      .order('open_issues', { ascending: false });
+      .from("quality_issues_summary")
+      .select("*")
+      .eq("clinic_id", clinicId)
+      .order("open_issues", { ascending: false });
 
     if (error) {
       throw new Error(`Erro ao buscar resumo de issues: ${error.message}`);
@@ -643,17 +632,16 @@ export class SupplierManagementService {
   // =====================================================================================
 
   async createCommunication(communicationData: any): Promise<SupplierCommunication> {
-
     const communicationToCreate = {
       ...communicationData,
       communication_date: new Date().toISOString(),
-      status: 'sent' as any,
+      status: "sent" as any,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     const { data, error } = await supabase
-      .from('supplier_communications')
+      .from("supplier_communications")
       .insert([communicationToCreate])
       .select(`
         *,
@@ -673,14 +661,14 @@ export class SupplierManagementService {
     const supabase = await createClient();
 
     const { data, error } = await supabase
-      .from('supplier_communications')
+      .from("supplier_communications")
       .select(`
         *,
         supplier:suppliers(*),
         contact:supplier_contacts(*)
       `)
-      .eq('supplier_id', supplierId)
-      .order('communication_date', { ascending: false });
+      .eq("supplier_id", supplierId)
+      .order("communication_date", { ascending: false });
 
     if (error) {
       throw new Error(`Erro ao buscar comunicações: ${error.message}`);
@@ -694,50 +682,50 @@ export class SupplierManagementService {
   // =====================================================================================
 
   async getDashboardData(clinicId: string): Promise<SupplierDashboardData> {
-
     // Get basic supplier counts
     const supabase = await createClient();
     const { data: suppliers } = await supabase
-      .from('suppliers')
-      .select('id, supplier_type, status, is_preferred, is_critical, performance_score')
-      .eq('clinic_id', clinicId);
+      .from("suppliers")
+      .select("id, supplier_type, status, is_preferred, is_critical, performance_score")
+      .eq("clinic_id", clinicId);
 
     const totalSuppliers = suppliers?.length || 0;
-    const activeSuppliers = suppliers?.filter(s => s.status === 'active').length || 0;
-    const preferredSuppliers = suppliers?.filter(s => s.is_preferred).length || 0;
-    const criticalSuppliers = suppliers?.filter(s => s.is_critical).length || 0;
-    
-    const avgPerformanceScore = suppliers?.length 
+    const activeSuppliers = suppliers?.filter((s) => s.status === "active").length || 0;
+    const preferredSuppliers = suppliers?.filter((s) => s.is_preferred).length || 0;
+    const criticalSuppliers = suppliers?.filter((s) => s.is_critical).length || 0;
+
+    const avgPerformanceScore = suppliers?.length
       ? suppliers.reduce((sum, s) => sum + (s.performance_score || 0), 0) / suppliers.length
       : 0;
 
     // Get suppliers by type
-    const suppliersByType = suppliers?.reduce((acc: any, supplier: any) => {
-      acc[supplier.supplier_type] = (acc[supplier.supplier_type] || 0) + 1;
-      return acc;
-    }, {} as any) || {} as any;
+    const suppliersByType =
+      suppliers?.reduce((acc: any, supplier: any) => {
+        acc[supplier.supplier_type] = (acc[supplier.supplier_type] || 0) + 1;
+        return acc;
+      }, {} as any) || ({} as any);
 
     // Get contract renewal alerts
     const contractAlerts = await this.getContractRenewalAlerts(clinicId);
 
     // Get recent communications
     const { data: recentCommunications } = await supabase
-      .from('supplier_communications')
+      .from("supplier_communications")
       .select(`
         *,
         supplier:suppliers(*),
         contact:supplier_contacts(*)
       `)
-      .eq('supplier.clinic_id', clinicId)
-      .order('communication_date', { ascending: false })
+      .eq("supplier.clinic_id", clinicId)
+      .order("communication_date", { ascending: false })
       .limit(10);
 
     // Get quality issues count
     const { data: qualityIssues, count: openQualityIssues } = await supabase
-      .from('supplier_quality_issues')
-      .select('*', { count: 'exact' })
-      .eq('supplier.clinic_id', clinicId)
-      .eq('status', 'open');
+      .from("supplier_quality_issues")
+      .select("*", { count: "exact" })
+      .eq("supplier.clinic_id", clinicId)
+      .eq("status", "open");
 
     return {
       total_suppliers: totalSuppliers,
@@ -749,18 +737,17 @@ export class SupplierManagementService {
       suppliers_by_rating: {} as Record<SupplierRating, number>,
       contract_renewals_due: contractAlerts.length,
       open_quality_issues: openQualityIssues || 0,
-      recent_communications: recentCommunications as SupplierCommunication[] || [],
+      recent_communications: (recentCommunications as SupplierCommunication[]) || [],
       top_performing_suppliers: [],
-      contract_alerts: contractAlerts
+      contract_alerts: contractAlerts,
     };
   }
 
   async getSupplierAnalytics(
     clinicId: string,
     periodStart: string,
-    periodEnd: string
+    periodEnd: string,
   ): Promise<SupplierAnalytics> {
-
     // This would require complex queries joining with orders, invoices, etc.
     // For now, return basic structure
     return {
@@ -776,8 +763,8 @@ export class SupplierManagementService {
         total_issues: 0,
         critical_issues: 0,
         avg_resolution_time: 0,
-        issue_trends: []
-      }
+        issue_trends: [],
+      },
     };
   }
 
@@ -785,9 +772,9 @@ export class SupplierManagementService {
     const supabase = await createClient();
 
     const { data: suppliers, error } = await supabase
-      .from('suppliers')
-      .select('*')
-      .in('id', supplierIds);
+      .from("suppliers")
+      .select("*")
+      .in("id", supplierIds);
 
     if (error) {
       throw new Error(`Erro ao buscar fornecedores para comparação: ${error.message}`);
@@ -798,7 +785,7 @@ export class SupplierManagementService {
       suppliers: suppliers as Supplier[],
       comparison_criteria: [],
       performance_metrics: {},
-      recommendations: []
+      recommendations: [],
     };
   }
 
@@ -809,42 +796,42 @@ export class SupplierManagementService {
   private async getDeliveryPerformanceData(
     supplierId: string,
     periodStart: string,
-    periodEnd: string
+    periodEnd: string,
   ): Promise<any> {
     // This would query actual orders/deliveries data
     return {
       totalOrders: 0,
       onTimeDeliveries: 0,
       lateDeliveries: 0,
-      avgDeliveryDays: 0
+      avgDeliveryDays: 0,
     };
   }
 
   private async getQualityPerformanceData(
     supplierId: string,
     periodStart: string,
-    periodEnd: string
+    periodEnd: string,
   ): Promise<any> {
     const supabase = await createClient();
 
     const { data: qualityIssues } = await supabase
-      .from('supplier_quality_issues')
-      .select('*')
-      .eq('supplier_id', supplierId)
-      .gte('issue_date', periodStart)
-      .lte('issue_date', periodEnd);
+      .from("supplier_quality_issues")
+      .select("*")
+      .eq("supplier_id", supplierId)
+      .gte("issue_date", periodStart)
+      .lte("issue_date", periodEnd);
 
     return {
       totalItems: 1000, // This would come from actual orders
       defectiveItems: qualityIssues?.length || 0,
-      returnedItems: qualityIssues?.filter(i => i.issue_type === 'defective_product').length || 0
+      returnedItems: qualityIssues?.filter((i) => i.issue_type === "defective_product").length || 0,
     };
   }
 
   private async getFinancialPerformanceData(
     supplierId: string,
     periodStart: string,
-    periodEnd: string
+    periodEnd: string,
   ): Promise<any> {
     // This would query actual financial data
     return {
@@ -852,7 +839,7 @@ export class SupplierManagementService {
       totalInvoiced: 0,
       totalPaid: 0,
       avgPaymentDelay: 0,
-      costSavings: 0
+      costSavings: 0,
     };
   }
 
@@ -869,15 +856,13 @@ export class SupplierManagementService {
   }
 
   private calculatePerformanceGrade(score: number): PerformanceGrade {
-    if (score >= 9.5) return 'A+';
-    if (score >= 9.0) return 'A';
-    if (score >= 8.5) return 'B+';
-    if (score >= 8.0) return 'B';
-    if (score >= 7.5) return 'C+';
-    if (score >= 7.0) return 'C';
-    if (score >= 6.0) return 'D';
-    return 'F';
+    if (score >= 9.5) return "A+";
+    if (score >= 9.0) return "A";
+    if (score >= 8.5) return "B+";
+    if (score >= 8.0) return "B";
+    if (score >= 7.5) return "C+";
+    if (score >= 7.0) return "C";
+    if (score >= 6.0) return "D";
+    return "F";
   }
 }
-
-

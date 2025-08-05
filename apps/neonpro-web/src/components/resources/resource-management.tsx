@@ -3,44 +3,56 @@
 // Story 2.4: Smart Resource Management - Frontend
 // =====================================================
 
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogTrigger 
-} from '@/components/ui/dialog';
-import { 
-  CalendarIcon, 
-  ClockIcon, 
-  UserIcon, 
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Badge } from "@/components/ui/badge";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type {
+  CalendarIcon,
+  ClockIcon,
+  UserIcon,
   WrenchIcon,
   MapPinIcon,
   AlertTriangleIcon,
   CheckCircleIcon,
   XCircleIcon,
   PlusIcon,
-  SettingsIcon
-} from '@heroicons/react/24/outline';
-import { toast } from 'sonner';
+  SettingsIcon,
+} from "@heroicons/react/24/outline";
+import type { toast } from "sonner";
 
 // =====================================================
 // Types
 // =====================================================
 
-type ResourceType = 'room' | 'equipment' | 'staff';
-type ResourceStatus = 'available' | 'occupied' | 'maintenance' | 'cleaning' | 'reserved';
+type ResourceType = "room" | "equipment" | "staff";
+type ResourceStatus = "available" | "occupied" | "maintenance" | "cleaning" | "reserved";
 
 interface Resource {
   id: string;
@@ -85,9 +97,9 @@ export default function ResourceManagement({ clinicId, userRole }: ResourceManag
   const [allocations, setAllocations] = useState<ResourceAllocation[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
-    type: 'all',
-    status: 'all',
-    category: 'all'
+    type: "all",
+    status: "all",
+    category: "all",
   });
 
   // =====================================================
@@ -103,9 +115,9 @@ export default function ResourceManagement({ clinicId, userRole }: ResourceManag
       setLoading(true);
       const params = new URLSearchParams({
         clinic_id: clinicId,
-        ...(filters.type !== 'all' && { type: filters.type }),
-        ...(filters.status !== 'all' && { status: filters.status }),
-        ...(filters.category !== 'all' && { category: filters.category })
+        ...(filters.type !== "all" && { type: filters.type }),
+        ...(filters.status !== "all" && { status: filters.status }),
+        ...(filters.category !== "all" && { category: filters.category }),
       });
 
       const response = await fetch(`/api/resources?${params}`);
@@ -114,11 +126,11 @@ export default function ResourceManagement({ clinicId, userRole }: ResourceManag
       if (data.success) {
         setResources(data.data);
       } else {
-        toast.error('Failed to fetch resources');
+        toast.error("Failed to fetch resources");
       }
     } catch (error) {
-      console.error('Error fetching resources:', error);
-      toast.error('Error loading resources');
+      console.error("Error fetching resources:", error);
+      toast.error("Error loading resources");
     } finally {
       setLoading(false);
     }
@@ -126,11 +138,11 @@ export default function ResourceManagement({ clinicId, userRole }: ResourceManag
 
   const fetchAllocations = async (resourceId: string) => {
     try {
-      const today = new Date().toISOString().split('T')[0];
+      const today = new Date().toISOString().split("T")[0];
       const params = new URLSearchParams({
         resource_id: resourceId,
         start_date: `${today}T00:00:00Z`,
-        end_date: `${today}T23:59:59Z`
+        end_date: `${today}T23:59:59Z`,
       });
 
       const response = await fetch(`/api/resources/allocations?${params}`);
@@ -140,7 +152,7 @@ export default function ResourceManagement({ clinicId, userRole }: ResourceManag
         setAllocations(data.data);
       }
     } catch (error) {
-      console.error('Error fetching allocations:', error);
+      console.error("Error fetching allocations:", error);
     }
   };
 
@@ -150,23 +162,23 @@ export default function ResourceManagement({ clinicId, userRole }: ResourceManag
 
   const updateResourceStatus = async (resourceId: string, newStatus: ResourceStatus) => {
     try {
-      const response = await fetch('/api/resources', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: resourceId, status: newStatus })
+      const response = await fetch("/api/resources", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: resourceId, status: newStatus }),
       });
 
       const data = await response.json();
 
       if (data.success) {
-        toast.success('Resource status updated');
+        toast.success("Resource status updated");
         fetchResources();
       } else {
-        toast.error('Failed to update resource status');
+        toast.error("Failed to update resource status");
       }
     } catch (error) {
-      console.error('Error updating resource status:', error);
-      toast.error('Error updating resource status');
+      console.error("Error updating resource status:", error);
+      toast.error("Error updating resource status");
     }
   };
 
@@ -176,26 +188,36 @@ export default function ResourceManagement({ clinicId, userRole }: ResourceManag
 
   const getStatusColor = (status: ResourceStatus) => {
     switch (status) {
-      case 'available': return 'bg-green-100 text-green-800';
-      case 'occupied': return 'bg-blue-100 text-blue-800';
-      case 'maintenance': return 'bg-yellow-100 text-yellow-800';
-      case 'cleaning': return 'bg-purple-100 text-purple-800';
-      case 'reserved': return 'bg-orange-100 text-orange-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "available":
+        return "bg-green-100 text-green-800";
+      case "occupied":
+        return "bg-blue-100 text-blue-800";
+      case "maintenance":
+        return "bg-yellow-100 text-yellow-800";
+      case "cleaning":
+        return "bg-purple-100 text-purple-800";
+      case "reserved":
+        return "bg-orange-100 text-orange-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getResourceIcon = (type: ResourceType) => {
     switch (type) {
-      case 'room': return <MapPinIcon className="h-5 w-5" />;
-      case 'equipment': return <WrenchIcon className="h-5 w-5" />;
-      case 'staff': return <UserIcon className="h-5 w-5" />;
-      default: return <SettingsIcon className="h-5 w-5" />;
+      case "room":
+        return <MapPinIcon className="h-5 w-5" />;
+      case "equipment":
+        return <WrenchIcon className="h-5 w-5" />;
+      case "staff":
+        return <UserIcon className="h-5 w-5" />;
+      default:
+        return <SettingsIcon className="h-5 w-5" />;
     }
   };
 
   const formatTime = (dateString: string) => {
-    return new Date(dateString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return new Date(dateString).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
   // =====================================================
@@ -203,7 +225,7 @@ export default function ResourceManagement({ clinicId, userRole }: ResourceManag
   // =====================================================
 
   const ResourceCard = ({ resource }: { resource: Resource }) => (
-    <Card 
+    <Card
       className="cursor-pointer hover:shadow-md transition-shadow"
       onClick={() => {
         setSelectedResource(resource);
@@ -216,12 +238,10 @@ export default function ResourceManagement({ clinicId, userRole }: ResourceManag
             {getResourceIcon(resource.type)}
             <CardTitle className="text-lg">{resource.name}</CardTitle>
           </div>
-          <Badge className={getStatusColor(resource.status)}>
-            {resource.status}
-          </Badge>
+          <Badge className={getStatusColor(resource.status)}>{resource.status}</Badge>
         </div>
         <CardDescription>
-          {resource.type} • {resource.category || 'General'}
+          {resource.type} • {resource.category || "General"}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -240,8 +260,7 @@ export default function ResourceManagement({ clinicId, userRole }: ResourceManag
           )}
           {resource.cost_per_hour && (
             <div className="flex items-center text-gray-600">
-              <ClockIcon className="h-4 w-4 mr-1" />
-              ${resource.cost_per_hour}/hour
+              <ClockIcon className="h-4 w-4 mr-1" />${resource.cost_per_hour}/hour
             </div>
           )}
           {resource.next_maintenance && (
@@ -251,18 +270,21 @@ export default function ResourceManagement({ clinicId, userRole }: ResourceManag
             </div>
           )}
         </div>
-        
-        {userRole !== 'patient' && (
+
+        {userRole !== "patient" && (
           <div className="mt-4 flex space-x-2">
             <Button
               size="sm"
               variant="outline"
               onClick={(e) => {
                 e.stopPropagation();
-                updateResourceStatus(resource.id, resource.status === 'available' ? 'maintenance' : 'available');
+                updateResourceStatus(
+                  resource.id,
+                  resource.status === "available" ? "maintenance" : "available",
+                );
               }}
             >
-              {resource.status === 'available' ? 'Set Maintenance' : 'Set Available'}
+              {resource.status === "available" ? "Set Maintenance" : "Set Available"}
             </Button>
           </div>
         )}
@@ -283,18 +305,23 @@ export default function ResourceManagement({ clinicId, userRole }: ResourceManag
                   {formatTime(allocation.start_time)} - {formatTime(allocation.end_time)}
                 </div>
                 <div className="text-sm text-gray-600">
-                  {allocation.allocation_type} {allocation.appointment_id && '• Appointment'}
+                  {allocation.allocation_type} {allocation.appointment_id && "• Appointment"}
                 </div>
                 {allocation.notes && (
                   <div className="text-sm text-gray-500 mt-1">{allocation.notes}</div>
                 )}
               </div>
-              <Badge className={
-                allocation.status === 'confirmed' ? 'bg-green-100 text-green-800' :
-                allocation.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                allocation.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                'bg-gray-100 text-gray-800'
-              }>
+              <Badge
+                className={
+                  allocation.status === "confirmed"
+                    ? "bg-green-100 text-green-800"
+                    : allocation.status === "pending"
+                      ? "bg-yellow-100 text-yellow-800"
+                      : allocation.status === "cancelled"
+                        ? "bg-red-100 text-red-800"
+                        : "bg-gray-100 text-gray-800"
+                }
+              >
                 {allocation.status}
               </Badge>
             </div>
@@ -318,7 +345,7 @@ export default function ResourceManagement({ clinicId, userRole }: ResourceManag
             Manage clinic resources, allocations, and optimize utilization
           </p>
         </div>
-        {userRole !== 'patient' && (
+        {userRole !== "patient" && (
           <Dialog>
             <DialogTrigger asChild>
               <Button>
@@ -329,9 +356,7 @@ export default function ResourceManagement({ clinicId, userRole }: ResourceManag
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Add New Resource</DialogTitle>
-                <DialogDescription>
-                  Create a new resource for your clinic
-                </DialogDescription>
+                <DialogDescription>Create a new resource for your clinic</DialogDescription>
               </DialogHeader>
               {/* Add Resource Form would go here */}
               <div className="text-center py-4 text-gray-500">
@@ -351,7 +376,10 @@ export default function ResourceManagement({ clinicId, userRole }: ResourceManag
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <Label htmlFor="type-filter">Resource Type</Label>
-              <Select value={filters.type} onValueChange={(value) => setFilters(prev => ({ ...prev, type: value }))}>
+              <Select
+                value={filters.type}
+                onValueChange={(value) => setFilters((prev) => ({ ...prev, type: value }))}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="All Types" />
                 </SelectTrigger>
@@ -365,7 +393,10 @@ export default function ResourceManagement({ clinicId, userRole }: ResourceManag
             </div>
             <div>
               <Label htmlFor="status-filter">Status</Label>
-              <Select value={filters.status} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value }))}>
+              <Select
+                value={filters.status}
+                onValueChange={(value) => setFilters((prev) => ({ ...prev, status: value }))}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="All Statuses" />
                 </SelectTrigger>
@@ -381,7 +412,10 @@ export default function ResourceManagement({ clinicId, userRole }: ResourceManag
             </div>
             <div>
               <Label htmlFor="category-filter">Category</Label>
-              <Select value={filters.category} onValueChange={(value) => setFilters(prev => ({ ...prev, category: value }))}>
+              <Select
+                value={filters.category}
+                onValueChange={(value) => setFilters((prev) => ({ ...prev, category: value }))}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
@@ -427,11 +461,11 @@ export default function ResourceManagement({ clinicId, userRole }: ResourceManag
         <div>
           <Card>
             <CardHeader>
-              <CardTitle>
-                {selectedResource ? selectedResource.name : 'Resource Details'}
-              </CardTitle>
+              <CardTitle>{selectedResource ? selectedResource.name : "Resource Details"}</CardTitle>
               <CardDescription>
-                {selectedResource ? 'Current allocations and status' : 'Select a resource to view details'}
+                {selectedResource
+                  ? "Current allocations and status"
+                  : "Select a resource to view details"}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -450,10 +484,10 @@ export default function ResourceManagement({ clinicId, userRole }: ResourceManag
                         <strong>Type:</strong> {selectedResource.type}
                       </div>
                       <div>
-                        <strong>Category:</strong> {selectedResource.category || 'General'}
+                        <strong>Category:</strong> {selectedResource.category || "General"}
                       </div>
                       <div>
-                        <strong>Status:</strong> 
+                        <strong>Status:</strong>
                         <Badge className={`ml-2 ${getStatusColor(selectedResource.status)}`}>
                           {selectedResource.status}
                         </Badge>

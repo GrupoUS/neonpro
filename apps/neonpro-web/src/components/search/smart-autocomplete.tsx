@@ -4,16 +4,23 @@
  * Intelligent autocomplete with learning capabilities and contextual suggestions
  */
 
-'use client';
+"use client";
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import {
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import type {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Separator } from "@/components/ui/separator";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type {
   Search,
   Clock,
   TrendingUp,
@@ -26,17 +33,17 @@ import {
   Target,
   History,
   Star,
-  ChevronRight
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useDebounce } from '@/hooks/use-debounce';
-import {
+  ChevronRight,
+} from "lucide-react";
+import type { cn } from "@/lib/utils";
+import type { useDebounce } from "@/hooks/use-debounce";
+import type {
   searchSuggestions,
   type SearchSuggestion,
   type SuggestionContext,
   type SuggestionOptions,
-  type LearningData
-} from '@/lib/search/search-suggestions';
+  type LearningData,
+} from "@/lib/search/search-suggestions";
 
 interface SmartAutocompleteProps {
   value: string;
@@ -65,7 +72,7 @@ export function SmartAutocomplete({
   maxSuggestions = 8,
   showCategories = true,
   showIcons = true,
-  enableLearning = true
+  enableLearning = true,
 }: SmartAutocompleteProps) {
   // State
   const [open, setOpen] = useState(false);
@@ -73,14 +80,14 @@ export function SmartAutocomplete({
   const [isLoading, setIsLoading] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [interactionStartTime, setInteractionStartTime] = useState<number>(0);
-  
+
   // Refs
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
-  
+
   // Debounced value for API calls
   const debouncedValue = useDebounce(value, 300);
-  
+
   // Load suggestions when debounced value changes
   useEffect(() => {
     if (debouncedValue.length >= 2) {
@@ -90,35 +97,38 @@ export function SmartAutocomplete({
       setOpen(false);
     }
   }, [debouncedValue]);
-  
+
   // Load suggestions from API
-  const loadSuggestions = useCallback(async (query: string) => {
-    if (!query.trim()) return;
-    
-    setIsLoading(true);
-    try {
-      const options: SuggestionOptions = {
-        maxSuggestions,
-        includeHistory: true,
-        includePopular: true,
-        includePersonalized: context.userPreferences.personalizedSuggestions,
-        includeContextual: true,
-        minConfidence: 0.3,
-        language: context.userPreferences.language
-      };
-      
-      const results = await searchSuggestions.getSuggestions(query, context, options);
-      setSuggestions(results);
-      setOpen(results.length > 0);
-      setSelectedIndex(-1);
-    } catch (error) {
-      console.error('Error loading suggestions:', error);
-      setSuggestions([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [maxSuggestions, context]);
-  
+  const loadSuggestions = useCallback(
+    async (query: string) => {
+      if (!query.trim()) return;
+
+      setIsLoading(true);
+      try {
+        const options: SuggestionOptions = {
+          maxSuggestions,
+          includeHistory: true,
+          includePopular: true,
+          includePersonalized: context.userPreferences.personalizedSuggestions,
+          includeContextual: true,
+          minConfidence: 0.3,
+          language: context.userPreferences.language,
+        };
+
+        const results = await searchSuggestions.getSuggestions(query, context, options);
+        setSuggestions(results);
+        setOpen(results.length > 0);
+        setSelectedIndex(-1);
+      } catch (error) {
+        console.error("Error loading suggestions:", error);
+        setSuggestions([]);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [maxSuggestions, context],
+  );
+
   // Handle input change
   const handleInputChange = (newValue: string) => {
     onValueChange(newValue);
@@ -126,25 +136,25 @@ export function SmartAutocomplete({
       setInteractionStartTime(Date.now());
     }
   };
-  
+
   // Handle suggestion selection
   const handleSuggestionSelect = async (suggestion: SearchSuggestion) => {
     const timeToSelect = interactionStartTime ? Date.now() - interactionStartTime : 0;
-    
+
     onValueChange(suggestion.text);
     setOpen(false);
     setSelectedIndex(-1);
-    
+
     // Trigger search if callback provided
     if (onSearch) {
       onSearch(suggestion.text);
     }
-    
+
     // Notify parent component
     if (onSuggestionSelect) {
       onSuggestionSelect(suggestion);
     }
-    
+
     // Learn from interaction
     if (enableLearning) {
       const learningData: LearningData = {
@@ -153,35 +163,31 @@ export function SmartAutocomplete({
         resultClicked: true,
         timeToSelect,
         refinements: [],
-        success: true
+        success: true,
       };
-      
+
       await searchSuggestions.learnFromInteraction(learningData);
     }
-    
+
     setInteractionStartTime(0);
   };
-  
+
   // Handle keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!open || suggestions.length === 0) return;
-    
+
     switch (e.key) {
-      case 'ArrowDown':
+      case "ArrowDown":
         e.preventDefault();
-        setSelectedIndex(prev => 
-          prev < suggestions.length - 1 ? prev + 1 : 0
-        );
+        setSelectedIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0));
         break;
-        
-      case 'ArrowUp':
+
+      case "ArrowUp":
         e.preventDefault();
-        setSelectedIndex(prev => 
-          prev > 0 ? prev - 1 : suggestions.length - 1
-        );
+        setSelectedIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
         break;
-        
-      case 'Enter':
+
+      case "Enter":
         e.preventDefault();
         if (selectedIndex >= 0 && selectedIndex < suggestions.length) {
           handleSuggestionSelect(suggestions[selectedIndex]);
@@ -193,22 +199,22 @@ export function SmartAutocomplete({
           }
         }
         break;
-        
-      case 'Escape':
+
+      case "Escape":
         setOpen(false);
         setSelectedIndex(-1);
         inputRef.current?.blur();
         break;
     }
   };
-  
+
   // Handle input focus
   const handleFocus = () => {
     if (value.length >= 2 && suggestions.length > 0) {
       setOpen(true);
     }
   };
-  
+
   // Handle input blur
   const handleBlur = () => {
     // Delay closing to allow for suggestion clicks
@@ -217,58 +223,61 @@ export function SmartAutocomplete({
       setSelectedIndex(-1);
     }, 200);
   };
-  
+
   // Get suggestion icon
   const getSuggestionIcon = (suggestion: SearchSuggestion) => {
     if (!showIcons) return null;
-    
+
     const iconMap = {
-      'query_completion': <Sparkles className="h-4 w-4 text-blue-500" />,
-      'entity_suggestion': <Target className="h-4 w-4 text-green-500" />,
-      'historical': <History className="h-4 w-4 text-gray-500" />,
-      'popular': <TrendingUp className="h-4 w-4 text-orange-500" />,
-      'contextual': <Brain className="h-4 w-4 text-purple-500" />,
-      'personalized': <User className="h-4 w-4 text-pink-500" />,
-      'semantic': <Zap className="h-4 w-4 text-yellow-500" />,
-      'filter_suggestion': <Filter className="h-4 w-4 text-indigo-500" />
+      query_completion: <Sparkles className="h-4 w-4 text-blue-500" />,
+      entity_suggestion: <Target className="h-4 w-4 text-green-500" />,
+      historical: <History className="h-4 w-4 text-gray-500" />,
+      popular: <TrendingUp className="h-4 w-4 text-orange-500" />,
+      contextual: <Brain className="h-4 w-4 text-purple-500" />,
+      personalized: <User className="h-4 w-4 text-pink-500" />,
+      semantic: <Zap className="h-4 w-4 text-yellow-500" />,
+      filter_suggestion: <Filter className="h-4 w-4 text-indigo-500" />,
     };
-    
+
     return iconMap[suggestion.type] || <Search className="h-4 w-4 text-gray-400" />;
   };
-  
+
   // Get suggestion category label
   const getCategoryLabel = (category: string) => {
     const labelMap = {
-      'completion': 'Completar',
-      'history': 'Histórico',
-      'trending': 'Popular',
-      'context': 'Contextual',
-      'preferences': 'Personalizado',
-      'patterns': 'Padrões',
-      'similar': 'Similares',
-      'session': 'Sessão'
+      completion: "Completar",
+      history: "Histórico",
+      trending: "Popular",
+      context: "Contextual",
+      preferences: "Personalizado",
+      patterns: "Padrões",
+      similar: "Similares",
+      session: "Sessão",
     };
-    
+
     return labelMap[category] || category;
   };
-  
+
   // Group suggestions by category
-  const groupedSuggestions = suggestions.reduce((groups, suggestion) => {
-    const category = suggestion.category;
-    if (!groups[category]) {
-      groups[category] = [];
-    }
-    groups[category].push(suggestion);
-    return groups;
-  }, {} as Record<string, SearchSuggestion[]>);
-  
+  const groupedSuggestions = suggestions.reduce(
+    (groups, suggestion) => {
+      const category = suggestion.category;
+      if (!groups[category]) {
+        groups[category] = [];
+      }
+      groups[category].push(suggestion);
+      return groups;
+    },
+    {} as Record<string, SearchSuggestion[]>,
+  );
+
   // Get confidence color
   const getConfidenceColor = (confidence: number) => {
-    if (confidence >= 0.8) return 'text-green-600';
-    if (confidence >= 0.6) return 'text-yellow-600';
-    return 'text-gray-500';
+    if (confidence >= 0.8) return "text-green-600";
+    if (confidence >= 0.6) return "text-yellow-600";
+    return "text-gray-500";
   };
-  
+
   return (
     <div className={cn("relative", className)}>
       <Popover open={open} onOpenChange={setOpen}>
@@ -289,7 +298,7 @@ export function SmartAutocomplete({
                 "flex h-10 w-full rounded-md border border-input bg-background px-10 py-2 text-sm ring-offset-background",
                 "file:border-0 file:bg-transparent file:text-sm file:font-medium",
                 "placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2",
-                "focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                "focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
               )}
             />
             {isLoading && (
@@ -299,9 +308,9 @@ export function SmartAutocomplete({
             )}
           </div>
         </PopoverTrigger>
-        
-        <PopoverContent 
-          className="w-[--radix-popover-trigger-width] p-0" 
+
+        <PopoverContent
+          className="w-[--radix-popover-trigger-width] p-0"
           align="start"
           side="bottom"
         >
@@ -312,12 +321,16 @@ export function SmartAutocomplete({
                   {isLoading ? (
                     <div className="flex items-center justify-center py-6">
                       <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full" />
-                      <span className="ml-2 text-sm text-muted-foreground">Carregando sugestões...</span>
+                      <span className="ml-2 text-sm text-muted-foreground">
+                        Carregando sugestões...
+                      </span>
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center py-6">
                       <Search className="h-8 w-8 text-muted-foreground mb-2" />
-                      <span className="text-sm text-muted-foreground">Nenhuma sugestão encontrada</span>
+                      <span className="text-sm text-muted-foreground">
+                        Nenhuma sugestão encontrada
+                      </span>
                     </div>
                   )}
                 </CommandEmpty>
@@ -325,73 +338,79 @@ export function SmartAutocomplete({
                 <ScrollArea className="max-h-80">
                   {showCategories ? (
                     // Grouped by category
-                    Object.entries(groupedSuggestions).map(([category, categorySuggestions], categoryIndex) => (
-                      <div key={category}>
-                        {categoryIndex > 0 && <Separator className="my-1" />}
-                        
-                        <CommandGroup heading={getCategoryLabel(category)}>
-                          {categorySuggestions.map((suggestion, index) => {
-                            const globalIndex = suggestions.findIndex(s => s.id === suggestion.id);
-                            const isSelected = selectedIndex === globalIndex;
-                            
-                            return (
-                              <CommandItem
-                                key={suggestion.id}
-                                value={suggestion.text}
-                                onSelect={() => handleSuggestionSelect(suggestion)}
-                                className={cn(
-                                  "flex items-center justify-between px-3 py-2 cursor-pointer",
-                                  "hover:bg-accent hover:text-accent-foreground",
-                                  isSelected && "bg-accent text-accent-foreground"
-                                )}
-                              >
-                                <div className="flex items-center flex-1 min-w-0">
-                                  {getSuggestionIcon(suggestion)}
-                                  
-                                  <div className="ml-3 flex-1 min-w-0">
-                                    <div 
-                                      className="text-sm font-medium truncate"
-                                      dangerouslySetInnerHTML={{ 
-                                        __html: suggestion.highlighted || suggestion.text 
-                                      }}
-                                    />
-                                    
-                                    {suggestion.metadata?.context && (
-                                      <div className="text-xs text-muted-foreground mt-1">
-                                        {suggestion.metadata.context}
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                                
-                                <div className="flex items-center gap-2 ml-2">
-                                  {suggestion.frequency > 0 && (
-                                    <Badge variant="secondary" className="text-xs">
-                                      {suggestion.frequency}
-                                    </Badge>
+                    Object.entries(groupedSuggestions).map(
+                      ([category, categorySuggestions], categoryIndex) => (
+                        <div key={category}>
+                          {categoryIndex > 0 && <Separator className="my-1" />}
+
+                          <CommandGroup heading={getCategoryLabel(category)}>
+                            {categorySuggestions.map((suggestion, index) => {
+                              const globalIndex = suggestions.findIndex(
+                                (s) => s.id === suggestion.id,
+                              );
+                              const isSelected = selectedIndex === globalIndex;
+
+                              return (
+                                <CommandItem
+                                  key={suggestion.id}
+                                  value={suggestion.text}
+                                  onSelect={() => handleSuggestionSelect(suggestion)}
+                                  className={cn(
+                                    "flex items-center justify-between px-3 py-2 cursor-pointer",
+                                    "hover:bg-accent hover:text-accent-foreground",
+                                    isSelected && "bg-accent text-accent-foreground",
                                   )}
-                                  
-                                  <div className={cn(
-                                    "text-xs font-medium",
-                                    getConfidenceColor(suggestion.confidence)
-                                  )}>
-                                    {Math.round(suggestion.confidence * 100)}%
+                                >
+                                  <div className="flex items-center flex-1 min-w-0">
+                                    {getSuggestionIcon(suggestion)}
+
+                                    <div className="ml-3 flex-1 min-w-0">
+                                      <div
+                                        className="text-sm font-medium truncate"
+                                        dangerouslySetInnerHTML={{
+                                          __html: suggestion.highlighted || suggestion.text,
+                                        }}
+                                      />
+
+                                      {suggestion.metadata?.context && (
+                                        <div className="text-xs text-muted-foreground mt-1">
+                                          {suggestion.metadata.context}
+                                        </div>
+                                      )}
+                                    </div>
                                   </div>
-                                  
-                                  <ChevronRight className="h-3 w-3 text-muted-foreground" />
-                                </div>
-                              </CommandItem>
-                            );
-                          })}
-                        </CommandGroup>
-                      </div>
-                    ))
+
+                                  <div className="flex items-center gap-2 ml-2">
+                                    {suggestion.frequency > 0 && (
+                                      <Badge variant="secondary" className="text-xs">
+                                        {suggestion.frequency}
+                                      </Badge>
+                                    )}
+
+                                    <div
+                                      className={cn(
+                                        "text-xs font-medium",
+                                        getConfidenceColor(suggestion.confidence),
+                                      )}
+                                    >
+                                      {Math.round(suggestion.confidence * 100)}%
+                                    </div>
+
+                                    <ChevronRight className="h-3 w-3 text-muted-foreground" />
+                                  </div>
+                                </CommandItem>
+                              );
+                            })}
+                          </CommandGroup>
+                        </div>
+                      ),
+                    )
                   ) : (
                     // Flat list
                     <CommandGroup>
                       {suggestions.map((suggestion, index) => {
                         const isSelected = selectedIndex === index;
-                        
+
                         return (
                           <CommandItem
                             key={suggestion.id}
@@ -400,25 +419,25 @@ export function SmartAutocomplete({
                             className={cn(
                               "flex items-center justify-between px-3 py-2 cursor-pointer",
                               "hover:bg-accent hover:text-accent-foreground",
-                              isSelected && "bg-accent text-accent-foreground"
+                              isSelected && "bg-accent text-accent-foreground",
                             )}
                           >
                             <div className="flex items-center flex-1 min-w-0">
                               {getSuggestionIcon(suggestion)}
-                              
+
                               <div className="ml-3 flex-1 min-w-0">
-                                <div 
+                                <div
                                   className="text-sm font-medium truncate"
-                                  dangerouslySetInnerHTML={{ 
-                                    __html: suggestion.highlighted || suggestion.text 
+                                  dangerouslySetInnerHTML={{
+                                    __html: suggestion.highlighted || suggestion.text,
                                   }}
                                 />
-                                
+
                                 <div className="flex items-center gap-2 mt-1">
                                   <Badge variant="outline" className="text-xs">
                                     {getCategoryLabel(suggestion.category)}
                                   </Badge>
-                                  
+
                                   {suggestion.metadata?.context && (
                                     <span className="text-xs text-muted-foreground">
                                       {suggestion.metadata.context}
@@ -427,21 +446,23 @@ export function SmartAutocomplete({
                                 </div>
                               </div>
                             </div>
-                            
+
                             <div className="flex items-center gap-2 ml-2">
                               {suggestion.frequency > 0 && (
                                 <Badge variant="secondary" className="text-xs">
                                   {suggestion.frequency}
                                 </Badge>
                               )}
-                              
-                              <div className={cn(
-                                "text-xs font-medium",
-                                getConfidenceColor(suggestion.confidence)
-                              )}>
+
+                              <div
+                                className={cn(
+                                  "text-xs font-medium",
+                                  getConfidenceColor(suggestion.confidence),
+                                )}
+                              >
                                 {Math.round(suggestion.confidence * 100)}%
                               </div>
-                              
+
                               <ChevronRight className="h-3 w-3 text-muted-foreground" />
                             </div>
                           </CommandItem>
@@ -453,7 +474,7 @@ export function SmartAutocomplete({
               )}
             </CommandList>
           </Command>
-          
+
           {/* Footer with tips */}
           {suggestions.length > 0 && (
             <>
@@ -486,7 +507,7 @@ export function EnhancedSmartAutocomplete({
 }: SmartAutocompleteProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [filters, setFilters] = useState<Record<string, any>>({});
-  
+
   return (
     <div className="space-y-2">
       <SmartAutocomplete
@@ -497,18 +518,14 @@ export function EnhancedSmartAutocomplete({
         context={context}
         {...props}
       />
-      
+
       {/* Advanced options */}
       {showAdvanced && (
         <div className="flex items-center gap-2 p-2 bg-muted/50 rounded-md">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowAdvanced(false)}
-          >
+          <Button variant="outline" size="sm" onClick={() => setShowAdvanced(false)}>
             Ocultar Filtros
           </Button>
-          
+
           {/* Add filter controls here */}
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Filter className="h-4 w-4" />
@@ -516,7 +533,7 @@ export function EnhancedSmartAutocomplete({
           </div>
         </div>
       )}
-      
+
       {!showAdvanced && (
         <Button
           variant="ghost"

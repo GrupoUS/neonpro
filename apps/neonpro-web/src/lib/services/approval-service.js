@@ -1,60 +1,160 @@
 "use strict";
 // Approval Service
 // Handles approval workflow operations for accounts payable
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
+var __assign =
+  (this && this.__assign) ||
+  function () {
+    __assign =
+      Object.assign ||
+      function (t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
+          s = arguments[i];
+          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
         }
         return t;
-    };
+      };
     return __assign.apply(this, arguments);
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
-    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (g && (g = 0, op[0] && (_ = 0)), _) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+  };
+var __awaiter =
+  (this && this.__awaiter) ||
+  function (thisArg, _arguments, P, generator) {
+    function adopt(value) {
+      return value instanceof P
+        ? value
+        : new P(function (resolve) {
+            resolve(value);
+          });
     }
-};
+    return new (P || (P = Promise))(function (resolve, reject) {
+      function fulfilled(value) {
+        try {
+          step(generator.next(value));
+        } catch (e) {
+          reject(e);
+        }
+      }
+      function rejected(value) {
+        try {
+          step(generator["throw"](value));
+        } catch (e) {
+          reject(e);
+        }
+      }
+      function step(result) {
+        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+      }
+      step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+  };
+var __generator =
+  (this && this.__generator) ||
+  function (thisArg, body) {
+    var _ = {
+        label: 0,
+        sent: function () {
+          if (t[0] & 1) throw t[1];
+          return t[1];
+        },
+        trys: [],
+        ops: [],
+      },
+      f,
+      y,
+      t,
+      g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
+    return (
+      (g.next = verb(0)),
+      (g["throw"] = verb(1)),
+      (g["return"] = verb(2)),
+      typeof Symbol === "function" &&
+        (g[Symbol.iterator] = function () {
+          return this;
+        }),
+      g
+    );
+    function verb(n) {
+      return function (v) {
+        return step([n, v]);
+      };
+    }
+    function step(op) {
+      if (f) throw new TypeError("Generator is already executing.");
+      while ((g && ((g = 0), op[0] && (_ = 0)), _))
+        try {
+          if (
+            ((f = 1),
+            y &&
+              (t =
+                op[0] & 2
+                  ? y["return"]
+                  : op[0]
+                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    : y.next) &&
+              !(t = t.call(y, op[1])).done)
+          )
+            return t;
+          if (((y = 0), t)) op = [op[0] & 2, t.value];
+          switch (op[0]) {
+            case 0:
+            case 1:
+              t = op;
+              break;
+            case 4:
+              _.label++;
+              return { value: op[1], done: false };
+            case 5:
+              _.label++;
+              y = op[1];
+              op = [0];
+              continue;
+            case 7:
+              op = _.ops.pop();
+              _.trys.pop();
+              continue;
+            default:
+              if (
+                !((t = _.trys), (t = t.length > 0 && t[t.length - 1])) &&
+                (op[0] === 6 || op[0] === 2)
+              ) {
+                _ = 0;
+                continue;
+              }
+              if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) {
+                _.label = op[1];
+                break;
+              }
+              if (op[0] === 6 && _.label < t[1]) {
+                _.label = t[1];
+                t = op;
+                break;
+              }
+              if (t && _.label < t[2]) {
+                _.label = t[2];
+                _.ops.push(op);
+                break;
+              }
+              if (t[2]) _.ops.pop();
+              _.trys.pop();
+              continue;
+          }
+          op = body.call(thisArg, _);
+        } catch (e) {
+          op = [6, e];
+          y = 0;
+        } finally {
+          f = t = 0;
+        }
+      if (op[0] & 5) throw op[1];
+      return { value: op[0] ? op[1] : void 0, done: true };
+    }
+  };
 var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.approvalService = void 0;
 var ApprovalService = /** @class */ (function () {
-    function ApprovalService() {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
-        this.supabase = createClient(ComponentClient()
+  function ApprovalService() {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+    this.supabase = createClient(ComponentClient()
         // Approval Levels Management
         , 
         // Approval Levels Management
@@ -209,60 +309,62 @@ var ApprovalService = /** @class */ (function () {
                 : .length === 0
             }
         });
-    }
-    return ApprovalService;
-}());
+  }
+  return ApprovalService;
+})();
 {
-    throw new Error('Nenhum nível de aprovação configurado para este valor');
+  throw new Error("Nenhum nível de aprovação configurado para este valor");
 }
 // Check for auto-approval
 var firstLevel = applicableLevels[0];
-var isAutoApproved = firstLevel.auto_approve_below !== null &&
-    requestData.amount <= firstLevel.auto_approve_below;
+var isAutoApproved =
+  firstLevel.auto_approve_below !== null && requestData.amount <= firstLevel.auto_approve_below;
 // Create approval request
 var _r = await this.supabase
-    .from('approval_requests')
-    .insert([{
+    .from("approval_requests")
+    .insert([
+      {
         accounts_payable_id: requestData.accounts_payable_id,
         requester_id: user.id,
-        requester_name: user.email || 'Usuário',
+        requester_name: user.email || "Usuário",
         request_date: new Date().toISOString(),
         amount: requestData.amount,
         current_level: isAutoApproved ? applicableLevels.length + 1 : 1,
-        status: isAutoApproved ? 'approved' : 'pending',
-        priority: requestData.priority || 'normal',
+        status: isAutoApproved ? "approved" : "pending",
+        priority: requestData.priority || "normal",
         reason: requestData.reason,
         justification: requestData.justification,
         due_date: requestData.due_date,
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-    }])
+        updated_at: new Date().toISOString(),
+      },
+    ])
     .select()
-    .single(), request = _r.data, requestError = _r.error;
-if (requestError)
-    throw requestError;
+    .single(),
+  request = _r.data,
+  requestError = _r.error;
+if (requestError) throw requestError;
 // Create approval steps
-var steps = applicableLevels.map(function (level, index) { return ({
+var steps = applicableLevels.map(function (level, index) {
+  return {
     approval_request_id: request.id,
     level_order: level.level_order,
     level_name: level.level_name,
     required_approvers: level.required_approvers,
     approved_count: isAutoApproved && index === 0 ? level.required_approvers : 0,
-    status: isAutoApproved && index === 0 ? 'approved' : 'pending',
+    status: isAutoApproved && index === 0 ? "approved" : "pending",
     deadline: new Date(Date.now() + level.approval_timeout_hours * 60 * 60 * 1000).toISOString(),
     created_at: new Date().toISOString(),
-    completed_at: isAutoApproved && index === 0 ? new Date().toISOString() : undefined
-}); });
-var stepsError = (await this.supabase
-    .from('approval_steps')
-    .insert(steps)).error;
-if (stepsError)
-    throw stepsError;
+    completed_at: isAutoApproved && index === 0 ? new Date().toISOString() : undefined,
+  };
+});
+var stepsError = (await this.supabase.from("approval_steps").insert(steps)).error;
+if (stepsError) throw stepsError;
 return request;
-try { }
-catch (error) {
-    console.error('Error creating approval request:', error);
-    throw new Error('Falha ao criar solicitação de aprovação');
+try {
+} catch (error) {
+  console.error("Error creating approval request:", error);
+  throw new Error("Falha ao criar solicitação de aprovação");
 }
 async;
 getApprovalRequest(id, string);
@@ -355,23 +457,28 @@ Promise < ApprovalRequest[] > {
     } || userPermissions.length === 0
 };
 {
-    return [];
+  return [];
 }
-var levelIds = userPermissions.map(function (p) { return p.approval_level_id; });
+var levelIds = userPermissions.map(function (p) {
+  return p.approval_level_id;
+});
 // Find requests where user can approve
 var _s = await this.supabase
-    .from('approval_requests')
-    .select("\n          *,\n          accounts_payable (\n            invoice_number,\n            vendor_name,\n            category\n          ),\n          approval_steps!inner (\n            id,\n            level_order,\n            level_name,\n            status,\n            deadline\n          )\n        ")
-    .eq('status', 'pending')
-    .in('approval_steps.level_order', levelIds) // This would need proper join logic
-    .order('created_at', { ascending: false }), data = _s.data, error = _s.error;
-if (error)
-    throw error;
+    .from("approval_requests")
+    .select(
+      "\n          *,\n          accounts_payable (\n            invoice_number,\n            vendor_name,\n            category\n          ),\n          approval_steps!inner (\n            id,\n            level_order,\n            level_name,\n            status,\n            deadline\n          )\n        ",
+    )
+    .eq("status", "pending")
+    .in("approval_steps.level_order", levelIds) // This would need proper join logic
+    .order("created_at", { ascending: false }),
+  data = _s.data,
+  error = _s.error;
+if (error) throw error;
 return data || [];
-try { }
-catch (error) {
-    console.error('Error fetching pending approvals:', error);
-    throw new Error('Falha ao carregar aprovações pendentes');
+try {
+} catch (error) {
+  console.error("Error fetching pending approvals:", error);
+  throw new Error("Falha ao carregar aprovações pendentes");
 }
 // Approval Actions
 async;
@@ -450,29 +557,32 @@ Promise < void  > {
     } === 'approved' || stepStatus === 'rejected'
 };
 {
-    var updateRequestError = (await this.supabase
-        .from('approval_requests')
-        .update({
-        current_level: stepStatus === 'approved' && step.approval_requests.current_level < 3
+  var updateRequestError = (
+    await this.supabase
+      .from("approval_requests")
+      .update({
+        current_level:
+          stepStatus === "approved" && step.approval_requests.current_level < 3
             ? step.approval_requests.current_level + 1
             : step.approval_requests.current_level,
-        status: stepStatus === 'rejected'
-            ? 'rejected'
-            : stepStatus === 'approved' && step.level_order === 3
-                ? 'approved'
-                : 'pending',
-        updated_at: new Date().toISOString()
-    })
-        .eq('id', step.approval_request_id)).error;
-    if (updateRequestError)
-        throw updateRequestError;
+        status:
+          stepStatus === "rejected"
+            ? "rejected"
+            : stepStatus === "approved" && step.level_order === 3
+              ? "approved"
+              : "pending",
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", step.approval_request_id)
+  ).error;
+  if (updateRequestError) throw updateRequestError;
 }
 // Send notifications (would be implemented with notification service)
 await this.sendApprovalNotification(step.approval_request_id, action, userPermission.user_name);
-try { }
-catch (error) {
-    console.error('Error processing approval action:', error);
-    throw new Error('Falha ao processar ação de aprovação');
+try {
+} catch (error) {
+  console.error("Error processing approval action:", error);
+  throw new Error("Falha ao processar ação de aprovação");
 }
 async;
 cancelApprovalRequest(requestId, string);
@@ -493,29 +603,28 @@ Promise < void  > {
     } || request.requester_id !== user.id
 };
 {
-    // Check if user is admin
-    var userPermission = (await this.supabase
-        .from('approval_users')
-        .select('role')
-        .eq('user_id', user.id)
-        .single()).data;
-    if (!userPermission || !['admin', 'super_admin'].includes(userPermission.role)) {
-        throw new Error('Não autorizado a cancelar esta solicitação');
-    }
+  // Check if user is admin
+  var userPermission = (
+    await this.supabase.from("approval_users").select("role").eq("user_id", user.id).single()
+  ).data;
+  if (!userPermission || !["admin", "super_admin"].includes(userPermission.role)) {
+    throw new Error("Não autorizado a cancelar esta solicitação");
+  }
 }
-var error = (await this.supabase
-    .from('approval_requests')
+var error = (
+  await this.supabase
+    .from("approval_requests")
     .update({
-    status: 'cancelled',
-    updated_at: new Date().toISOString()
-})
-    .eq('id', requestId)).error;
-if (error)
-    throw error;
-try { }
-catch (error) {
-    console.error('Error cancelling approval request:', error);
-    throw new Error('Falha ao cancelar solicitação de aprovação');
+      status: "cancelled",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", requestId)
+).error;
+if (error) throw error;
+try {
+} catch (error) {
+  console.error("Error cancelling approval request:", error);
+  throw new Error("Falha ao cancelar solicitação de aprovação");
 }
 async;
 sendApprovalNotification(requestId, string, action, string, approverName, string);
@@ -540,37 +649,42 @@ Promise < void  > {
 // Utility Methods
 async;
 getApprovalStats();
-Promise < {
+Promise <
+  {
     pending: number,
     approved: number,
     rejected: number,
     escalated: number,
-    overdue: number
-} > {
+    overdue: number,
+  } >
+  {
     try: {
-        const: (_p = await this.supabase
-            .rpc('get_approval_stats'), data = _p.data, error = _p.error, _p),
-        if: function (error) { },
-        throw: error,
-        return: data || {
-            pending: 0,
-            approved: 0,
-            rejected: 0,
-            escalated: 0,
-            overdue: 0
-        }
+      const:
+        ((_p = await this.supabase.rpc("get_approval_stats")),
+        (data = _p.data),
+        (error = _p.error),
+        _p),
+      if: function (error) {},
+      throw: error,
+      return: data || {
+        pending: 0,
+        approved: 0,
+        rejected: 0,
+        escalated: 0,
+        overdue: 0,
+      },
     },
     catch: function (error) {
-        console.error('Error fetching approval stats:', error);
-        return {
-            pending: 0,
-            approved: 0,
-            rejected: 0,
-            escalated: 0,
-            overdue: 0
-        };
-    }
-};
+      console.error("Error fetching approval stats:", error);
+      return {
+        pending: 0,
+        approved: 0,
+        rejected: 0,
+        escalated: 0,
+        overdue: 0,
+      };
+    },
+  };
 async;
 validateApprovalHierarchy();
 Promise < {
@@ -585,51 +699,69 @@ Promise < {
         },
         _q[] =  = [],
         // Check if levels have gaps in order
-        _q.const = orders = levels.map(function (l) { return l.level_order; }).sort(function (a, b) { return a - b; }),
-        _q.for = function (let, i, i) {
+        _q.const = orders = levels.map(function (l) { return l.level_order;
+}).sort(
+function (a, b) { return a - b; }
+),
+        _q.
+for
+=
+function (let, i, i) {
             if (i === void 0) { i = 1; }
-        },
+        }
+,
         _q) <= orders.length,
     i: i
-}++;
+}++
 {
-    if (!orders.includes(i)) {
-        issues.push("N\u00EDvel ".concat(i, " n\u00E3o existe na hierarquia"));
-    }
+  if (!orders.includes(i)) {
+    issues.push("N\u00EDvel ".concat(i, " n\u00E3o existe na hierarquia"));
+  }
 }
 var _loop_1 = function (level) {
-    var levelUsers = users.filter(function (u) { return u.approval_level_id === level.id; });
-    if (levelUsers.length < level.required_approvers) {
-        issues.push("N\u00EDvel ".concat(level.level_name, " requer ").concat(level.required_approvers, " aprovadores mas s\u00F3 tem ").concat(levelUsers.length));
-    }
+  var levelUsers = users.filter(function (u) {
+    return u.approval_level_id === level.id;
+  });
+  if (levelUsers.length < level.required_approvers) {
+    issues.push(
+      "N\u00EDvel "
+        .concat(level.level_name, " requer ")
+        .concat(level.required_approvers, " aprovadores mas s\u00F3 tem ")
+        .concat(levelUsers.length),
+    );
+  }
 };
 // Check if levels have sufficient approvers
 for (var _i = 0, levels_1 = levels; _i < levels_1.length; _i++) {
-    var level = levels_1[_i];
-    _loop_1(level);
+  var level = levels_1[_i];
+  _loop_1(level);
 }
 // Check for overlapping amount ranges
 for (var i = 0; i < levels.length; i++) {
-    for (var j = i + 1; j < levels.length; j++) {
-        var level1 = levels[i];
-        var level2 = levels[j];
-        var l1Min = level1.min_amount;
-        var l1Max = level1.max_amount || Infinity;
-        var l2Min = level2.min_amount;
-        var l2Max = level2.max_amount || Infinity;
-        if ((l1Min <= l2Max && l1Max >= l2Min)) {
-            issues.push("N\u00EDveis ".concat(level1.level_name, " e ").concat(level2.level_name, " t\u00EAm faixas de valores sobrepostas"));
-        }
+  for (var j = i + 1; j < levels.length; j++) {
+    var level1 = levels[i];
+    var level2 = levels[j];
+    var l1Min = level1.min_amount;
+    var l1Max = level1.max_amount || Infinity;
+    var l2Min = level2.min_amount;
+    var l2Max = level2.max_amount || Infinity;
+    if (l1Min <= l2Max && l1Max >= l2Min) {
+      issues.push(
+        "N\u00EDveis "
+          .concat(level1.level_name, " e ")
+          .concat(level2.level_name, " t\u00EAm faixas de valores sobrepostas"),
+      );
     }
+  }
 }
 return {
     isValid: issues.length === 0,
     issues: issues
 };
-try { }
-catch (error) {
-    console.error('Error validating approval hierarchy:', error);
-    return {
+try {
+} catch (error) {
+  console.error("Error validating approval hierarchy:", error);
+  return {
         isValid: false,
         issues: ['Erro ao validar hierarquia de aprovação']
     };

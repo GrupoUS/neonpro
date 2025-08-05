@@ -5,7 +5,7 @@ export interface ProgressTracking {
   id: string;
   patient_id: string;
   session_id?: string;
-  tracking_type: 'healing' | 'aesthetic' | 'treatment_response' | 'maintenance';
+  tracking_type: "healing" | "aesthetic" | "treatment_response" | "maintenance";
   progress_score: number; // 0-100
   measurement_data: Record<string, any>; // Vision analysis measurements
   comparison_baseline?: string; // Reference to baseline measurement
@@ -15,7 +15,7 @@ export interface ProgressTracking {
   visual_annotations?: Record<string, any>; // Visual markings from CV
   confidence_score: number; // 0-100
   validated_by?: string;
-  validation_status: 'pending' | 'validated' | 'rejected' | 'manual_review';
+  validation_status: "pending" | "validated" | "rejected" | "manual_review";
   validation_notes?: string;
   created_at: string;
   updated_at: string;
@@ -27,13 +27,17 @@ export interface ProgressMilestone {
   id: string;
   patient_id: string;
   tracking_id?: string;
-  milestone_type: 'significant_improvement' | 'target_achieved' | 'concern_detected' | 'treatment_complete';
+  milestone_type:
+    | "significant_improvement"
+    | "target_achieved"
+    | "concern_detected"
+    | "treatment_complete";
   milestone_name: string;
   achievement_date: string;
   progress_data: Record<string, any>; // Milestone-specific data
   threshold_criteria: Record<string, any>; // Criteria that triggered milestone
   achievement_score: number; // 0-100
-  validation_status: 'detected' | 'confirmed' | 'false_positive' | 'manually_added';
+  validation_status: "detected" | "confirmed" | "false_positive" | "manually_added";
   validated_by?: string;
   validation_notes?: string;
   alert_sent: boolean;
@@ -48,7 +52,7 @@ export interface ProgressPrediction {
   id: string;
   patient_id: string;
   tracking_id?: string;
-  prediction_type: 'outcome_forecast' | 'timeline_prediction' | 'risk_assessment';
+  prediction_type: "outcome_forecast" | "timeline_prediction" | "risk_assessment";
   predicted_outcome: Record<string, any>; // Predicted results and timeline
   confidence_level: number; // 0-100
   prediction_date: string;
@@ -69,8 +73,8 @@ export interface TrackingMetric {
   id: string;
   treatment_type: string;
   metric_name: string;
-  metric_category: 'measurement' | 'scoring' | 'threshold' | 'visualization';
-  measurement_method: 'cv_analysis' | 'manual_measurement' | 'hybrid';
+  metric_category: "measurement" | "scoring" | "threshold" | "visualization";
+  measurement_method: "cv_analysis" | "manual_measurement" | "hybrid";
   normal_ranges: Record<string, any>; // Normal value ranges
   improvement_thresholds: Record<string, any>; // Improvement thresholds
   calculation_formula?: string;
@@ -89,10 +93,10 @@ export interface MultiSessionAnalysis {
   analysis_name: string;
   session_ids: string[]; // Array of session IDs being compared
   tracking_ids: string[]; // Array of progress tracking IDs
-  comparison_type: 'timeline_progression' | 'treatment_effectiveness' | 'side_by_side';
+  comparison_type: "timeline_progression" | "treatment_effectiveness" | "side_by_side";
   analysis_period: string; // PostgreSQL interval as string
   progression_score: number; // 0-100
-  trend_direction: 'improving' | 'stable' | 'declining' | 'mixed';
+  trend_direction: "improving" | "stable" | "declining" | "mixed";
   statistical_significance?: number; // 0-100
   analysis_data: Record<string, any>; // Detailed analysis results
   visualization_config?: Record<string, any>; // Chart configuration
@@ -107,12 +111,16 @@ export interface ProgressAlert {
   patient_id: string;
   tracking_id?: string;
   milestone_id?: string;
-  alert_type: 'milestone_achieved' | 'concern_detected' | 'threshold_exceeded' | 'prediction_update';
-  alert_priority: 'low' | 'medium' | 'high' | 'urgent';
+  alert_type:
+    | "milestone_achieved"
+    | "concern_detected"
+    | "threshold_exceeded"
+    | "prediction_update";
+  alert_priority: "low" | "medium" | "high" | "urgent";
   alert_title: string;
   alert_message: string;
   alert_data?: Record<string, any>; // Additional alert-specific data
-  recipient_type: 'patient' | 'provider' | 'both';
+  recipient_type: "patient" | "provider" | "both";
   is_read: boolean;
   read_at?: string;
   read_by?: string;
@@ -163,7 +171,7 @@ export interface ProgressTrendData {
     score: number;
     confidence: number;
   }[];
-  trend_direction: 'improving' | 'stable' | 'declining' | 'mixed';
+  trend_direction: "improving" | "stable" | "declining" | "mixed";
   prediction?: {
     expected_score: number;
     target_date: string;
@@ -182,7 +190,7 @@ export interface MilestoneAchievement {
 export interface CreateProgressTrackingRequest {
   patient_id: string;
   session_id?: string;
-  tracking_type: ProgressTracking['tracking_type'];
+  tracking_type: ProgressTracking["tracking_type"];
   progress_score: number;
   measurement_data: Record<string, any>;
   comparison_baseline?: string;
@@ -197,14 +205,14 @@ export interface UpdateProgressTrackingRequest {
   measurement_data?: Record<string, any>;
   visual_annotations?: Record<string, any>;
   confidence_score?: number;
-  validation_status?: ProgressTracking['validation_status'];
+  validation_status?: ProgressTracking["validation_status"];
   validation_notes?: string;
 }
 
 export interface CreateProgressMilestoneRequest {
   patient_id: string;
   tracking_id?: string;
-  milestone_type: ProgressMilestone['milestone_type'];
+  milestone_type: ProgressMilestone["milestone_type"];
   milestone_name: string;
   progress_data: Record<string, any>;
   threshold_criteria: Record<string, any>;
@@ -214,7 +222,7 @@ export interface CreateProgressMilestoneRequest {
 export interface CreateProgressPredictionRequest {
   patient_id: string;
   tracking_id?: string;
-  prediction_type: ProgressPrediction['prediction_type'];
+  prediction_type: ProgressPrediction["prediction_type"];
   predicted_outcome: Record<string, any>;
   confidence_level: number;
   target_date?: string;
@@ -227,7 +235,7 @@ export interface CreateMultiSessionAnalysisRequest {
   analysis_name: string;
   session_ids: string[];
   tracking_ids: string[];
-  comparison_type: MultiSessionAnalysis['comparison_type'];
+  comparison_type: MultiSessionAnalysis["comparison_type"];
   analysis_period: string;
 }
 
@@ -235,12 +243,12 @@ export interface CreateProgressAlertRequest {
   patient_id: string;
   tracking_id?: string;
   milestone_id?: string;
-  alert_type: ProgressAlert['alert_type'];
-  alert_priority: ProgressAlert['alert_priority'];
+  alert_type: ProgressAlert["alert_type"];
+  alert_priority: ProgressAlert["alert_priority"];
   alert_title: string;
   alert_message: string;
   alert_data?: Record<string, any>;
-  recipient_type: ProgressAlert['recipient_type'];
+  recipient_type: ProgressAlert["recipient_type"];
   action_required?: boolean;
   expires_at?: string;
 }
@@ -248,8 +256,8 @@ export interface CreateProgressAlertRequest {
 export interface TrackingMetricRequest {
   treatment_type: string;
   metric_name: string;
-  metric_category: TrackingMetric['metric_category'];
-  measurement_method: TrackingMetric['measurement_method'];
+  metric_category: TrackingMetric["metric_category"];
+  measurement_method: TrackingMetric["measurement_method"];
   normal_ranges: Record<string, any>;
   improvement_thresholds: Record<string, any>;
   calculation_formula?: string;
@@ -260,10 +268,10 @@ export interface TrackingMetricRequest {
 // Progress tracking filter and query types
 export interface ProgressTrackingFilters {
   patient_id?: string;
-  tracking_type?: ProgressTracking['tracking_type'];
+  tracking_type?: ProgressTracking["tracking_type"];
   treatment_type?: string;
   treatment_area?: string;
-  validation_status?: ProgressTracking['validation_status'];
+  validation_status?: ProgressTracking["validation_status"];
   date_from?: string;
   date_to?: string;
   min_progress_score?: number;
@@ -277,8 +285,8 @@ export interface ProgressTrackingFilters {
 
 export interface ProgressMilestoneFilters {
   patient_id?: string;
-  milestone_type?: ProgressMilestone['milestone_type'];
-  validation_status?: ProgressMilestone['validation_status'];
+  milestone_type?: ProgressMilestone["milestone_type"];
+  validation_status?: ProgressMilestone["validation_status"];
   date_from?: string;
   date_to?: string;
   alert_sent?: boolean;
@@ -289,9 +297,9 @@ export interface ProgressMilestoneFilters {
 
 export interface ProgressAlertFilters {
   patient_id?: string;
-  alert_type?: ProgressAlert['alert_type'];
-  alert_priority?: ProgressAlert['alert_priority'];
-  recipient_type?: ProgressAlert['recipient_type'];
+  alert_type?: ProgressAlert["alert_type"];
+  alert_priority?: ProgressAlert["alert_priority"];
+  recipient_type?: ProgressAlert["recipient_type"];
   is_read?: boolean;
   action_required?: boolean;
   action_taken?: boolean;
@@ -304,7 +312,7 @@ export interface ProgressAlertFilters {
 // Computer vision analysis types
 export interface CVProgressAnalysis {
   measurement_id: string;
-  analysis_type: 'healing' | 'aesthetic' | 'treatment_response' | 'maintenance';
+  analysis_type: "healing" | "aesthetic" | "treatment_response" | "maintenance";
   regions_of_interest: {
     id: string;
     coordinates: { x: number; y: number; width: number; height: number };
@@ -325,20 +333,20 @@ export interface CVProgressAnalysis {
     focus_score: number;
   };
   annotations: {
-    type: 'measurement' | 'highlight' | 'annotation';
+    type: "measurement" | "highlight" | "annotation";
     coordinates: { x: number; y: number };
     data: Record<string, any>;
   }[];
 }
 
 export interface ProgressVisualizationConfig {
-  chart_type: 'line' | 'bar' | 'area' | 'scatter' | 'heatmap';
-  time_range: 'week' | 'month' | 'quarter' | 'year' | 'all';
+  chart_type: "line" | "bar" | "area" | "scatter" | "heatmap";
+  time_range: "week" | "month" | "quarter" | "year" | "all";
   metrics: string[];
   show_predictions: boolean;
   show_milestones: boolean;
   show_confidence_intervals: boolean;
-  group_by?: 'treatment_type' | 'treatment_area' | 'tracking_type';
+  group_by?: "treatment_type" | "treatment_area" | "tracking_type";
   colors?: Record<string, string>;
 }
 
@@ -364,7 +372,7 @@ export interface MultiSessionAnalysisResponse {
   analysis: MultiSessionAnalysis;
   tracking_data: ProgressTracking[];
   trend_analysis: {
-    overall_trend: 'improving' | 'stable' | 'declining' | 'mixed';
+    overall_trend: "improving" | "stable" | "declining" | "mixed";
     progress_velocity: number; // Progress per time unit
     milestone_density: number; // Milestones per time unit
     prediction_accuracy: number;
@@ -374,7 +382,13 @@ export interface MultiSessionAnalysisResponse {
 
 // Error types
 export interface ProgressTrackingError {
-  code: 'INVALID_PROGRESS_SCORE' | 'INVALID_CONFIDENCE' | 'INVALID_MEASUREMENT_DATA' | 'BASELINE_NOT_FOUND' | 'INSUFFICIENT_DATA' | 'VALIDATION_FAILED';
+  code:
+    | "INVALID_PROGRESS_SCORE"
+    | "INVALID_CONFIDENCE"
+    | "INVALID_MEASUREMENT_DATA"
+    | "BASELINE_NOT_FOUND"
+    | "INSUFFICIENT_DATA"
+    | "VALIDATION_FAILED";
   message: string;
   field?: string;
   details?: Record<string, any>;

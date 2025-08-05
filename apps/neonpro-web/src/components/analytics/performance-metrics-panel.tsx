@@ -1,26 +1,32 @@
 /**
  * Performance Metrics Panel Component
  * Epic 10 - Story 10.5: Vision Analytics Dashboard (Real-time Insights)
- * 
+ *
  * Displays comprehensive system and application performance metrics including:
  * - Real-time system resource monitoring (CPU, Memory, Disk, Network)
  * - Application performance metrics (Response times, Throughput, Error rates)
  * - Database performance tracking (Query times, Connection pools)
  * - AI model performance and inference metrics
  * - Performance trends and historical analysis
- * 
+ *
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect, useMemo } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
+import type { useState, useEffect, useMemo } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Progress } from "@/components/ui/progress";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
   ResponsiveContainer,
   LineChart,
   Line,
@@ -35,9 +41,9 @@ import {
   Legend,
   PieChart,
   Pie,
-  Cell
-} from 'recharts';
-import {
+  Cell,
+} from "recharts";
+import type {
   Activity,
   Cpu,
   HardDrive,
@@ -51,17 +57,17 @@ import {
   Zap,
   Server,
   Monitor,
-  RefreshCw
-} from 'lucide-react';
+  RefreshCw,
+} from "lucide-react";
 
 // Analytics Engine
-import {
+import type {
   performanceMonitoringEngine,
   type RealtimePerformanceData,
   type PerformanceCategory,
   type AnalyticsTimeframe,
-  AnalyticsUtils
-} from '@/lib/analytics';
+  AnalyticsUtils,
+} from "@/lib/analytics";
 
 // Types
 interface PerformanceMetricsPanelProps {
@@ -76,7 +82,7 @@ interface MetricCardProps {
   value: number;
   unit: string;
   icon: React.ReactNode;
-  status: 'optimal' | 'good' | 'warning' | 'critical';
+  status: "optimal" | "good" | "warning" | "critical";
   trend?: number;
   description?: string;
 }
@@ -96,9 +102,10 @@ export function PerformanceMetricsPanel({
   data,
   isLoading,
   timeframe,
-  clinicId
+  clinicId,
 }: PerformanceMetricsPanelProps) {
-  const [selectedCategory, setSelectedCategory] = useState<keyof RealtimePerformanceData['categories']>('system');
+  const [selectedCategory, setSelectedCategory] =
+    useState<keyof RealtimePerformanceData["categories"]>("system");
   const [historicalData, setHistoricalData] = useState<PerformanceChartData[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
 
@@ -110,16 +117,16 @@ export function PerformanceMetricsPanel({
 
     try {
       setIsLoadingHistory(true);
-      
+
       const history = await performanceMonitoringEngine.getHistoricalData(
         clinicId,
         AnalyticsUtils.getTimeRangeStart(timeframe),
-        new Date()
+        new Date(),
       );
 
       setHistoricalData(history);
     } catch (error) {
-      console.error('Failed to load historical performance data:', error);
+      console.error("Failed to load historical performance data:", error);
     } finally {
       setIsLoadingHistory(false);
     }
@@ -139,13 +146,13 @@ export function PerformanceMetricsPanel({
     icon,
     status,
     trend,
-    description
+    description,
   }) => {
     const statusColors = {
-      optimal: 'text-green-600 bg-green-50 border-green-200',
-      good: 'text-lime-600 bg-lime-50 border-lime-200',
-      warning: 'text-amber-600 bg-amber-50 border-amber-200',
-      critical: 'text-red-600 bg-red-50 border-red-200'
+      optimal: "text-green-600 bg-green-50 border-green-200",
+      good: "text-lime-600 bg-lime-50 border-lime-200",
+      warning: "text-amber-600 bg-amber-50 border-amber-200",
+      critical: "text-red-600 bg-red-50 border-red-200",
     };
 
     return (
@@ -156,7 +163,8 @@ export function PerformanceMetricsPanel({
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
-            {value.toFixed(1)}{unit}
+            {value.toFixed(1)}
+            {unit}
           </div>
           {trend !== undefined && (
             <div className="flex items-center text-xs text-muted-foreground mt-1">
@@ -168,9 +176,7 @@ export function PerformanceMetricsPanel({
               {Math.abs(trend).toFixed(1)}% vs last period
             </div>
           )}
-          {description && (
-            <p className="text-xs text-muted-foreground mt-1">{description}</p>
-          )}
+          {description && <p className="text-xs text-muted-foreground mt-1">{description}</p>}
         </CardContent>
       </Card>
     );
@@ -187,41 +193,56 @@ export function PerformanceMetricsPanel({
 
     return [
       {
-        title: 'Health Score',
+        title: "Health Score",
         value: data.healthScore,
-        unit: '%',
+        unit: "%",
         icon: <Activity className="h-4 w-4" />,
         status: AnalyticsUtils.getStatusFromScore(data.healthScore) as any,
         trend: data.trends?.healthScore || 0,
-        description: 'Overall system health'
+        description: "Overall system health",
       },
       {
-        title: 'Availability',
+        title: "Availability",
         value: data.summary.availability,
-        unit: '%',
+        unit: "%",
         icon: <Server className="h-4 w-4" />,
-        status: data.summary.availability > 99.5 ? 'optimal' : data.summary.availability > 99 ? 'good' : 'warning' as any,
+        status:
+          data.summary.availability > 99.5
+            ? "optimal"
+            : data.summary.availability > 99
+              ? "good"
+              : ("warning" as any),
         trend: data.trends?.availability || 0,
-        description: 'System uptime'
+        description: "System uptime",
       },
       {
-        title: 'Efficiency',
+        title: "Efficiency",
         value: data.summary.efficiency,
-        unit: '%',
+        unit: "%",
         icon: <Zap className="h-4 w-4" />,
-        status: data.summary.efficiency > 90 ? 'optimal' : data.summary.efficiency > 80 ? 'good' : 'warning' as any,
+        status:
+          data.summary.efficiency > 90
+            ? "optimal"
+            : data.summary.efficiency > 80
+              ? "good"
+              : ("warning" as any),
         trend: data.trends?.efficiency || 0,
-        description: 'Resource utilization efficiency'
+        description: "Resource utilization efficiency",
       },
       {
-        title: 'Security Score',
+        title: "Security Score",
         value: data.summary.securityScore,
-        unit: '%',
+        unit: "%",
         icon: <Monitor className="h-4 w-4" />,
-        status: data.summary.securityScore > 95 ? 'optimal' : data.summary.securityScore > 90 ? 'good' : 'warning' as any,
+        status:
+          data.summary.securityScore > 95
+            ? "optimal"
+            : data.summary.securityScore > 90
+              ? "good"
+              : ("warning" as any),
         trend: data.trends?.securityScore || 0,
-        description: 'Security compliance score'
-      }
+        description: "Security compliance score",
+      },
     ];
   }, [data]);
 
@@ -230,91 +251,106 @@ export function PerformanceMetricsPanel({
 
     const metrics = Object.entries(categoryData.metrics).map(([key, value]) => {
       let title, unit, icon, threshold;
-      
+
       switch (key) {
-        case 'cpu_usage':
-          title = 'CPU Usage';
-          unit = '%';
+        case "cpu_usage":
+          title = "CPU Usage";
+          unit = "%";
           icon = <Cpu className="h-4 w-4" />;
           threshold = { optimal: 30, good: 50, warning: 70 };
           break;
-        case 'memory_usage':
-          title = 'Memory Usage';
-          unit = '%';
+        case "memory_usage":
+          title = "Memory Usage";
+          unit = "%";
           icon = <HardDrive className="h-4 w-4" />;
           threshold = { optimal: 40, good: 60, warning: 80 };
           break;
-        case 'disk_usage':
-          title = 'Disk Usage';
-          unit = '%';
+        case "disk_usage":
+          title = "Disk Usage";
+          unit = "%";
           icon = <HardDrive className="h-4 w-4" />;
           threshold = { optimal: 50, good: 70, warning: 85 };
           break;
-        case 'network_latency':
-          title = 'Network Latency';
-          unit = 'ms';
+        case "network_latency":
+          title = "Network Latency";
+          unit = "ms";
           icon = <Wifi className="h-4 w-4" />;
           threshold = { optimal: 50, good: 100, warning: 200 };
           break;
-        case 'avg_response_time':
-          title = 'Response Time';
-          unit = 'ms';
+        case "avg_response_time":
+          title = "Response Time";
+          unit = "ms";
           icon = <Clock className="h-4 w-4" />;
           threshold = { optimal: 200, good: 500, warning: 1000 };
           break;
-        case 'throughput':
-          title = 'Throughput';
-          unit = ' req/s';
+        case "throughput":
+          title = "Throughput";
+          unit = " req/s";
           icon = <TrendingUp className="h-4 w-4" />;
           threshold = { optimal: 100, good: 50, warning: 20 };
           break;
-        case 'error_rate':
-          title = 'Error Rate';
-          unit = '%';
+        case "error_rate":
+          title = "Error Rate";
+          unit = "%";
           icon = <AlertTriangle className="h-4 w-4" />;
           threshold = { optimal: 0.1, good: 0.5, warning: 1 };
           break;
-        case 'query_time':
-          title = 'Query Time';
-          unit = 'ms';
+        case "query_time":
+          title = "Query Time";
+          unit = "ms";
           icon = <Database className="h-4 w-4" />;
           threshold = { optimal: 50, good: 100, warning: 200 };
           break;
-        case 'inference_time':
-          title = 'AI Inference';
-          unit = 'ms';
+        case "inference_time":
+          title = "AI Inference";
+          unit = "ms";
           icon = <Brain className="h-4 w-4" />;
           threshold = { optimal: 300, good: 500, warning: 1000 };
           break;
         default:
-          title = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-          unit = '';
+          title = key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+          unit = "";
           icon = <Activity className="h-4 w-4" />;
           threshold = { optimal: 80, good: 60, warning: 40 };
       }
 
-      let status: 'optimal' | 'good' | 'warning' | 'critical';
-      if (key === 'error_rate') {
-        status = value <= threshold.optimal ? 'optimal' : 
-                value <= threshold.good ? 'good' : 
-                value <= threshold.warning ? 'warning' : 'critical';
-      } else if (key === 'throughput') {
-        status = value >= threshold.optimal ? 'optimal' : 
-                value >= threshold.good ? 'good' : 
-                value >= threshold.warning ? 'warning' : 'critical';
+      let status: "optimal" | "good" | "warning" | "critical";
+      if (key === "error_rate") {
+        status =
+          value <= threshold.optimal
+            ? "optimal"
+            : value <= threshold.good
+              ? "good"
+              : value <= threshold.warning
+                ? "warning"
+                : "critical";
+      } else if (key === "throughput") {
+        status =
+          value >= threshold.optimal
+            ? "optimal"
+            : value >= threshold.good
+              ? "good"
+              : value >= threshold.warning
+                ? "warning"
+                : "critical";
       } else {
-        status = value <= threshold.optimal ? 'optimal' : 
-                value <= threshold.good ? 'good' : 
-                value <= threshold.warning ? 'warning' : 'critical';
+        status =
+          value <= threshold.optimal
+            ? "optimal"
+            : value <= threshold.good
+              ? "good"
+              : value <= threshold.warning
+                ? "warning"
+                : "critical";
       }
 
       return {
         title,
-        value: typeof value === 'number' ? value : 0,
+        value: typeof value === "number" ? value : 0,
         unit,
         icon,
         status,
-        trend: data?.trends?.[key] || 0
+        trend: data?.trends?.[key] || 0,
       };
     });
 
@@ -323,11 +359,11 @@ export function PerformanceMetricsPanel({
 
   // Chart colors
   const chartColors = {
-    primary: '#3b82f6',
-    secondary: '#10b981',
-    accent: '#f59e0b',
-    danger: '#ef4444',
-    muted: '#6b7280'
+    primary: "#3b82f6",
+    secondary: "#10b981",
+    accent: "#f59e0b",
+    danger: "#ef4444",
+    muted: "#6b7280",
   };
 
   if (isLoading) {
@@ -383,12 +419,13 @@ export function PerformanceMetricsPanel({
             <Activity className="w-5 h-5 text-blue-600" />
             Detailed Performance Metrics
           </CardTitle>
-          <CardDescription>
-            Category-specific performance monitoring and analysis
-          </CardDescription>
+          <CardDescription>Category-specific performance monitoring and analysis</CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs value={selectedCategory} onValueChange={(value) => setSelectedCategory(value as any)}>
+          <Tabs
+            value={selectedCategory}
+            onValueChange={(value) => setSelectedCategory(value as any)}
+          >
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="system">System</TabsTrigger>
               <TabsTrigger value="application">Application</TabsTrigger>
@@ -410,11 +447,16 @@ export function PerformanceMetricsPanel({
                     </span>
                   </div>
                 </div>
-                <Badge variant={
-                  (categoryData?.healthScore || 0) > 90 ? 'default' : 
-                  (categoryData?.healthScore || 0) > 70 ? 'secondary' : 'destructive'
-                }>
-                  {categoryData?.status || 'Unknown'}
+                <Badge
+                  variant={
+                    (categoryData?.healthScore || 0) > 90
+                      ? "default"
+                      : (categoryData?.healthScore || 0) > 70
+                        ? "secondary"
+                        : "destructive"
+                  }
+                >
+                  {categoryData?.status || "Unknown"}
                 </Badge>
               </div>
 
@@ -446,44 +488,44 @@ export function PerformanceMetricsPanel({
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={historicalData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="timestamp" 
+                  <XAxis
+                    dataKey="timestamp"
                     tickFormatter={(value) => new Date(value).toLocaleTimeString()}
                   />
                   <YAxis />
-                  <Tooltip 
+                  <Tooltip
                     labelFormatter={(value) => new Date(value).toLocaleString()}
                     formatter={(value: number, name: string) => [
-                      `${value.toFixed(1)}${name.includes('time') ? 'ms' : name.includes('rate') ? '%' : name.includes('usage') ? '%' : ''}`,
-                      name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+                      `${value.toFixed(1)}${name.includes("time") ? "ms" : name.includes("rate") ? "%" : name.includes("usage") ? "%" : ""}`,
+                      name.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
                     ]}
                   />
                   <Legend />
-                  <Line 
-                    type="monotone" 
-                    dataKey="cpu" 
-                    stroke={chartColors.primary} 
+                  <Line
+                    type="monotone"
+                    dataKey="cpu"
+                    stroke={chartColors.primary}
                     strokeWidth={2}
                     name="CPU Usage"
                   />
-                  <Line 
-                    type="monotone" 
-                    dataKey="memory" 
-                    stroke={chartColors.secondary} 
+                  <Line
+                    type="monotone"
+                    dataKey="memory"
+                    stroke={chartColors.secondary}
                     strokeWidth={2}
                     name="Memory Usage"
                   />
-                  <Line 
-                    type="monotone" 
-                    dataKey="response_time" 
-                    stroke={chartColors.accent} 
+                  <Line
+                    type="monotone"
+                    dataKey="response_time"
+                    stroke={chartColors.accent}
                     strokeWidth={2}
                     name="Response Time"
                   />
-                  <Line 
-                    type="monotone" 
-                    dataKey="error_rate" 
-                    stroke={chartColors.danger} 
+                  <Line
+                    type="monotone"
+                    dataKey="error_rate"
+                    stroke={chartColors.danger}
                     strokeWidth={2}
                     name="Error Rate"
                   />
@@ -502,26 +544,33 @@ export function PerformanceMetricsPanel({
               <AlertTriangle className="w-5 h-5 text-amber-600" />
               Active Performance Alerts
             </CardTitle>
-            <CardDescription>
-              Current performance issues requiring attention
-            </CardDescription>
+            <CardDescription>Current performance issues requiring attention</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               {data.alerts.map((alert, index) => (
                 <div key={index} className="flex items-start gap-3 p-3 border rounded-lg">
-                  <AlertTriangle className={`w-5 h-5 mt-0.5 ${
-                    alert.severity === 'critical' ? 'text-red-600' :
-                    alert.severity === 'warning' ? 'text-amber-600' :
-                    'text-blue-600'
-                  }`} />
+                  <AlertTriangle
+                    className={`w-5 h-5 mt-0.5 ${
+                      alert.severity === "critical"
+                        ? "text-red-600"
+                        : alert.severity === "warning"
+                          ? "text-amber-600"
+                          : "text-blue-600"
+                    }`}
+                  />
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <h4 className="font-medium text-gray-900">{alert.title}</h4>
-                      <Badge variant={
-                        alert.severity === 'critical' ? 'destructive' :
-                        alert.severity === 'warning' ? 'secondary' : 'default'
-                      }>
+                      <Badge
+                        variant={
+                          alert.severity === "critical"
+                            ? "destructive"
+                            : alert.severity === "warning"
+                              ? "secondary"
+                              : "default"
+                        }
+                      >
                         {alert.severity}
                       </Badge>
                     </div>

@@ -7,8 +7,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IOAuthHandler = void 0;
 var IOAuthHandler = /** @class */ (function () {
-    function IOAuthHandler() {
-    }
-    return IOAuthHandler;
-}());
+  function IOAuthHandler() {}
+  return IOAuthHandler;
+})();
 exports.IOAuthHandler = IOAuthHandler;

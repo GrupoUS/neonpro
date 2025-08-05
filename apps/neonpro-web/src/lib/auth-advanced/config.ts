@@ -1,7 +1,7 @@
 // Session Management Configuration
 // Story 1.4: Session Management & Security Implementation
 
-import { SessionConfig, SessionPolicy } from './types';
+import type { SessionConfig, SessionPolicy } from "./types";
 
 // Default Session Configuration
 export const DEFAULT_SESSION_CONFIG: SessionConfig = {
@@ -10,22 +10,22 @@ export const DEFAULT_SESSION_CONFIG: SessionConfig = {
   maxSessionDuration: 720, // 12 hours
   idleTimeout: 30, // 30 minutes
   warningBeforeTimeout: 5, // 5 minutes warning
-  
+
   // Concurrent Sessions
   maxConcurrentSessions: 3,
   allowMultipleDevices: true,
-  
+
   // Security Settings
   enableDeviceFingerprinting: true,
   enableLocationTracking: true,
   enableSuspiciousActivityDetection: true,
   riskScoreThreshold: 70, // 0-100 scale
-  
+
   // Cleanup Settings (in minutes/days)
   cleanupInterval: 60, // 1 hour
   retainAuditLogs: 90, // 90 days
   retainSecurityEvents: 365, // 1 year
-  
+
   // Real-time Settings (in seconds)
   enableRealTimeMonitoring: true,
   websocketHeartbeat: 30, // 30 seconds
@@ -35,8 +35,8 @@ export const DEFAULT_SESSION_CONFIG: SessionConfig = {
 // Role-based Session Policies
 export const SESSION_POLICIES: Record<string, Partial<SessionPolicy>> = {
   owner: {
-    name: 'Owner Policy',
-    description: 'Maximum security policy for clinic owners',
+    name: "Owner Policy",
+    description: "Maximum security policy for clinic owners",
     settings: {
       max_session_duration: 720, // 12 hours
       idle_timeout: 60, // 1 hour
@@ -50,7 +50,7 @@ export const SESSION_POLICIES: Record<string, Partial<SessionPolicy>> = {
       force_logout_on_policy_change: true,
     },
     security_rules: {
-      min_security_level: 'critical',
+      min_security_level: "critical",
       require_mfa_for_sensitive_actions: true,
       block_concurrent_different_locations: true,
       max_failed_attempts: 3,
@@ -58,10 +58,10 @@ export const SESSION_POLICIES: Record<string, Partial<SessionPolicy>> = {
       risk_score_threshold: 50,
     },
   },
-  
+
   manager: {
-    name: 'Manager Policy',
-    description: 'High security policy for clinic managers',
+    name: "Manager Policy",
+    description: "High security policy for clinic managers",
     settings: {
       max_session_duration: 600, // 10 hours
       idle_timeout: 45, // 45 minutes
@@ -75,7 +75,7 @@ export const SESSION_POLICIES: Record<string, Partial<SessionPolicy>> = {
       force_logout_on_policy_change: true,
     },
     security_rules: {
-      min_security_level: 'high',
+      min_security_level: "high",
       require_mfa_for_sensitive_actions: true,
       block_concurrent_different_locations: true,
       max_failed_attempts: 5,
@@ -83,10 +83,10 @@ export const SESSION_POLICIES: Record<string, Partial<SessionPolicy>> = {
       risk_score_threshold: 60,
     },
   },
-  
+
   staff: {
-    name: 'Staff Policy',
-    description: 'Standard security policy for clinic staff',
+    name: "Staff Policy",
+    description: "Standard security policy for clinic staff",
     settings: {
       max_session_duration: 480, // 8 hours
       idle_timeout: 30, // 30 minutes
@@ -100,7 +100,7 @@ export const SESSION_POLICIES: Record<string, Partial<SessionPolicy>> = {
       force_logout_on_policy_change: false,
     },
     security_rules: {
-      min_security_level: 'medium',
+      min_security_level: "medium",
       require_mfa_for_sensitive_actions: false,
       block_concurrent_different_locations: false,
       max_failed_attempts: 5,
@@ -108,10 +108,10 @@ export const SESSION_POLICIES: Record<string, Partial<SessionPolicy>> = {
       risk_score_threshold: 70,
     },
   },
-  
+
   patient: {
-    name: 'Patient Policy',
-    description: 'Basic security policy for patient portal',
+    name: "Patient Policy",
+    description: "Basic security policy for patient portal",
     settings: {
       max_session_duration: 240, // 4 hours
       idle_timeout: 15, // 15 minutes
@@ -125,7 +125,7 @@ export const SESSION_POLICIES: Record<string, Partial<SessionPolicy>> = {
       force_logout_on_policy_change: false,
     },
     security_rules: {
-      min_security_level: 'low',
+      min_security_level: "low",
       require_mfa_for_sensitive_actions: false,
       block_concurrent_different_locations: false,
       max_failed_attempts: 10,
@@ -165,7 +165,7 @@ export const DEVICE_TRUST_FACTORS = {
   LONG_HISTORY: 25,
   NO_SECURITY_EVENTS: 10,
   MFA_ENABLED: 15,
-  
+
   // Negative factors (decrease trust)
   NEW_DEVICE: -30,
   RARE_USE: -10,
@@ -178,15 +178,11 @@ export const DEVICE_TRUST_FACTORS = {
 // Location Risk Factors
 export const LOCATION_RISK_FACTORS = {
   // High-risk countries/regions
-  HIGH_RISK_COUNTRIES: [
-    'CN', 'RU', 'KP', 'IR', 'SY', 'AF', 'IQ', 'LY', 'SO', 'YE'
-  ],
-  
+  HIGH_RISK_COUNTRIES: ["CN", "RU", "KP", "IR", "SY", "AF", "IQ", "LY", "SO", "YE"],
+
   // VPN/Proxy indicators
-  VPN_PROVIDERS: [
-    'NordVPN', 'ExpressVPN', 'Surfshark', 'CyberGhost', 'ProtonVPN'
-  ],
-  
+  VPN_PROVIDERS: ["NordVPN", "ExpressVPN", "Surfshark", "CyberGhost", "ProtonVPN"],
+
   // Risk scores by location type
   LOCATION_SCORES: {
     home_country: 0,
@@ -207,27 +203,27 @@ export const SUSPICIOUS_ACTIVITY_PATTERNS = {
     business_hours: { start: 6, end: 22 }, // 6 AM to 10 PM
     risk_multiplier: 1.5,
   },
-  
+
   // Frequency patterns
   RAPID_REQUESTS: {
     enabled: true,
     max_requests_per_minute: 60,
     risk_score: 30,
   },
-  
+
   // Geographic patterns
   IMPOSSIBLE_TRAVEL: {
     enabled: true,
     max_speed_kmh: 1000, // Commercial flight speed
     risk_score: 70,
   },
-  
+
   // Behavioral patterns
   UNUSUAL_USER_AGENT: {
     enabled: true,
     risk_score: 20,
   },
-  
+
   MULTIPLE_FAILED_LOGINS: {
     enabled: true,
     threshold: 5,
@@ -242,15 +238,15 @@ export const WEBSOCKET_CONFIG = {
   reconnectAttempts: 5,
   reconnectDelay: 1000, // 1 second
   maxReconnectDelay: 30000, // 30 seconds
-  
+
   // Heartbeat settings
   heartbeatInterval: 30000, // 30 seconds
   heartbeatTimeout: 10000, // 10 seconds
-  
+
   // Message settings
   maxMessageSize: 1024 * 1024, // 1MB
   messageQueueSize: 100,
-  
+
   // Security settings
   enableCompression: true,
   enableEncryption: true,
@@ -260,22 +256,22 @@ export const WEBSOCKET_CONFIG = {
 // Redis Configuration for Session Storage
 export const REDIS_CONFIG = {
   // Connection settings
-  host: process.env.REDIS_HOST || 'localhost',
-  port: parseInt(process.env.REDIS_PORT || '6379'),
+  host: process.env.REDIS_HOST || "localhost",
+  port: parseInt(process.env.REDIS_PORT || "6379"),
   password: process.env.REDIS_PASSWORD,
-  db: parseInt(process.env.REDIS_DB || '0'),
-  
+  db: parseInt(process.env.REDIS_DB || "0"),
+
   // Session storage settings
-  keyPrefix: 'session:',
+  keyPrefix: "session:",
   ttl: 86400, // 24 hours in seconds
-  
+
   // Performance settings
   maxRetriesPerRequest: 3,
   retryDelayOnFailover: 100,
   enableOfflineQueue: false,
-  
+
   // Security settings
-  enableTLS: process.env.NODE_ENV === 'production',
+  enableTLS: process.env.NODE_ENV === "production",
   family: 4, // IPv4
 };
 
@@ -288,13 +284,13 @@ export const ENV_CONFIGS = {
     riskScoreThreshold: 90,
     cleanupInterval: 5, // 5 minutes for testing
   },
-  
+
   staging: {
     ...DEFAULT_SESSION_CONFIG,
     riskScoreThreshold: 80,
     cleanupInterval: 30, // 30 minutes
   },
-  
+
   production: {
     ...DEFAULT_SESSION_CONFIG,
     // Production uses default config
@@ -303,7 +299,7 @@ export const ENV_CONFIGS = {
 
 // Get configuration based on environment
 export function getSessionConfig(): SessionConfig {
-  const env = process.env.NODE_ENV || 'development';
+  const env = process.env.NODE_ENV || "development";
   return ENV_CONFIGS[env as keyof typeof ENV_CONFIGS] || DEFAULT_SESSION_CONFIG;
 }
 
@@ -324,5 +320,9 @@ export function isHighRiskLocation(countryCode: string): boolean {
 
 // Get location risk score
 export function getLocationRiskScore(locationType: string): number {
-  return LOCATION_RISK_FACTORS.LOCATION_SCORES[locationType as keyof typeof LOCATION_RISK_FACTORS.LOCATION_SCORES] || 30;
+  return (
+    LOCATION_RISK_FACTORS.LOCATION_SCORES[
+      locationType as keyof typeof LOCATION_RISK_FACTORS.LOCATION_SCORES
+    ] || 30
+  );
 }

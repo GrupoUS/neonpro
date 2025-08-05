@@ -4,23 +4,29 @@
 // Author: VoidBeast V4.0 (BMad Method Implementation)
 // =====================================================================================
 
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import {
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Progress } from "@/components/ui/progress";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import {
+} from "@/components/ui/select";
+import type {
   AlertTriangle,
   TrendingUp,
   TrendingDown,
@@ -31,9 +37,9 @@ import {
   Truck,
   Building,
   RefreshCw,
-  Download
-} from 'lucide-react';
-import { ExpenseBudgetEngine } from '@/lib/financial/expense-budget-engine';
+  Download,
+} from "lucide-react";
+import type { ExpenseBudgetEngine } from "@/lib/financial/expense-budget-engine";
 
 interface ExpenseCategory {
   categoryId: string;
@@ -51,7 +57,7 @@ interface BudgetAlert {
   alertId: string;
   categoryId: string;
   categoryName: string;
-  alertType: 'warning' | 'critical' | 'exceeded';
+  alertType: "warning" | "critical" | "exceeded";
   threshold: number;
   currentAmount: number;
   message: string;
@@ -74,7 +80,7 @@ interface VendorExpenseData {
 
 export default function ExpenseBudgetDashboard() {
   const [loading, setLoading] = useState(true);
-  const [period, setPeriod] = useState('current_month');
+  const [period, setPeriod] = useState("current_month");
   const [categories, setCategories] = useState<ExpenseCategory[]>([]);
   const [alerts, setAlerts] = useState<BudgetAlert[]>([]);
   const [vendors, setVendors] = useState<VendorExpenseData[]>([]);
@@ -91,22 +97,17 @@ export default function ExpenseBudgetDashboard() {
   const loadExpenseData = async () => {
     setLoading(true);
     try {
-      const clinicId = 'clinic-1'; // Get from context
+      const clinicId = "clinic-1"; // Get from context
       const dateRange = parsePeriodToDates(period);
-      
-      const [
-        budgetReport,
-        vendorData,
-        trendData,
-        optimizationInsights,
-        costCenterData
-      ] = await Promise.all([
-        expenseEngine.generateBudgetVarianceReport(clinicId, period),
-        expenseEngine.analyzeVendorExpenses(clinicId, dateRange),
-        expenseEngine.analyzeExpenseTrends(clinicId, dateRange),
-        expenseEngine.generateCostOptimizationInsights(clinicId, dateRange),
-        expenseEngine.allocateCostsByCenter(clinicId, dateRange)
-      ]);
+
+      const [budgetReport, vendorData, trendData, optimizationInsights, costCenterData] =
+        await Promise.all([
+          expenseEngine.generateBudgetVarianceReport(clinicId, period),
+          expenseEngine.analyzeVendorExpenses(clinicId, dateRange),
+          expenseEngine.analyzeExpenseTrends(clinicId, dateRange),
+          expenseEngine.generateCostOptimizationInsights(clinicId, dateRange),
+          expenseEngine.allocateCostsByCenter(clinicId, dateRange),
+        ]);
 
       setCategories(budgetReport.categories);
       setAlerts(budgetReport.alerts);
@@ -115,7 +116,7 @@ export default function ExpenseBudgetDashboard() {
       setInsights(optimizationInsights);
       setCostCenters(costCenterData);
     } catch (error) {
-      console.error('Failed to load expense data:', error);
+      console.error("Failed to load expense data:", error);
     } finally {
       setLoading(false);
     }
@@ -124,34 +125,34 @@ export default function ExpenseBudgetDashboard() {
   const parsePeriodToDates = (period: string) => {
     const now = new Date();
     switch (period) {
-      case 'current_month':
+      case "current_month":
         return {
           start: new Date(now.getFullYear(), now.getMonth(), 1),
-          end: new Date(now.getFullYear(), now.getMonth() + 1, 0)
+          end: new Date(now.getFullYear(), now.getMonth() + 1, 0),
         };
-      case 'current_quarter':
+      case "current_quarter":
         const quarterStart = Math.floor(now.getMonth() / 3) * 3;
         return {
           start: new Date(now.getFullYear(), quarterStart, 1),
-          end: new Date(now.getFullYear(), quarterStart + 3, 0)
+          end: new Date(now.getFullYear(), quarterStart + 3, 0),
         };
-      case 'current_year':
+      case "current_year":
         return {
           start: new Date(now.getFullYear(), 0, 1),
-          end: new Date(now.getFullYear(), 11, 31)
+          end: new Date(now.getFullYear(), 11, 31),
         };
       default:
         return {
           start: new Date(now.getFullYear(), now.getMonth(), 1),
-          end: new Date(now.getFullYear(), now.getMonth() + 1, 0)
+          end: new Date(now.getFullYear(), now.getMonth() + 1, 0),
         };
     }
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(amount);
   };
 
@@ -161,10 +162,14 @@ export default function ExpenseBudgetDashboard() {
 
   const getAlertColor = (alertType: string) => {
     switch (alertType) {
-      case 'warning': return 'bg-yellow-100 border-yellow-200 text-yellow-800';
-      case 'critical': return 'bg-orange-100 border-orange-200 text-orange-800';
-      case 'exceeded': return 'bg-red-100 border-red-200 text-red-800';
-      default: return 'bg-gray-100 border-gray-200 text-gray-800';
+      case "warning":
+        return "bg-yellow-100 border-yellow-200 text-yellow-800";
+      case "critical":
+        return "bg-orange-100 border-orange-200 text-orange-800";
+      case "exceeded":
+        return "bg-red-100 border-red-200 text-red-800";
+      default:
+        return "bg-gray-100 border-gray-200 text-gray-800";
     }
   };
 
@@ -215,19 +220,25 @@ export default function ExpenseBudgetDashboard() {
       </div>
 
       {/* Budget Alerts */}
-      {alerts.filter(alert => !alert.isResolved).length > 0 && (
+      {alerts.filter((alert) => !alert.isResolved).length > 0 && (
         <div className="space-y-2">
-          {alerts.filter(alert => !alert.isResolved).slice(0, 3).map((alert) => (
-            <Alert key={alert.alertId} className={getAlertColor(alert.alertType)}>
-              <AlertTriangle className="h-4 w-4" />
-              <AlertTitle>
-                {alert.alertType === 'warning' ? 'Atenção' : 
-                 alert.alertType === 'critical' ? 'Crítico' : 'Orçamento Excedido'}
-                : {alert.categoryName}
-              </AlertTitle>
-              <AlertDescription>{alert.message}</AlertDescription>
-            </Alert>
-          ))}
+          {alerts
+            .filter((alert) => !alert.isResolved)
+            .slice(0, 3)
+            .map((alert) => (
+              <Alert key={alert.alertId} className={getAlertColor(alert.alertType)}>
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>
+                  {alert.alertType === "warning"
+                    ? "Atenção"
+                    : alert.alertType === "critical"
+                      ? "Crítico"
+                      : "Orçamento Excedido"}
+                  : {alert.categoryName}
+                </AlertTitle>
+                <AlertDescription>{alert.message}</AlertDescription>
+              </Alert>
+            ))}
         </div>
       )}
 
@@ -240,9 +251,7 @@ export default function ExpenseBudgetDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalBudget)}</div>
-            <p className="text-xs text-muted-foreground">
-              Alocação total do período
-            </p>
+            <p className="text-xs text-muted-foreground">Alocação total do período</p>
           </CardContent>
         </Card>
         <Card>
@@ -252,22 +261,24 @@ export default function ExpenseBudgetDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalActual)}</div>
-            <p className="text-xs text-muted-foreground">
-              Execução orçamentária
-            </p>
+            <p className="text-xs text-muted-foreground">Execução orçamentária</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Variação</CardTitle>
-            {totalVariance > 0 ? 
-              <TrendingUp className="h-4 w-4 text-red-500" /> : 
+            {totalVariance > 0 ? (
+              <TrendingUp className="h-4 w-4 text-red-500" />
+            ) : (
               <TrendingDown className="h-4 w-4 text-green-500" />
-            }
+            )}
           </CardHeader>
           <CardContent>
-            <div className={`text-2xl font-bold ${totalVariance > 0 ? 'text-red-600' : 'text-green-600'}`}>
-              {totalVariance > 0 ? '+' : ''}{formatCurrency(totalVariance)}
+            <div
+              className={`text-2xl font-bold ${totalVariance > 0 ? "text-red-600" : "text-green-600"}`}
+            >
+              {totalVariance > 0 ? "+" : ""}
+              {formatCurrency(totalVariance)}
             </div>
             <p className="text-xs text-muted-foreground">
               {formatPercent(Math.abs(variancePercent))} do orçamento
@@ -280,10 +291,10 @@ export default function ExpenseBudgetDashboard() {
             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{alerts.filter(alert => !alert.isResolved).length}</div>
-            <p className="text-xs text-muted-foreground">
-              Requerem atenção
-            </p>
+            <div className="text-2xl font-bold">
+              {alerts.filter((alert) => !alert.isResolved).length}
+            </div>
+            <p className="text-xs text-muted-foreground">Requerem atenção</p>
           </CardContent>
         </Card>
       </div>
@@ -311,11 +322,16 @@ export default function ExpenseBudgetDashboard() {
                     <div className="flex items-center justify-between">
                       <h4 className="font-semibold">{category.categoryName}</h4>
                       <div className="flex items-center space-x-2">
-                        {category.isOverBudget && (
-                          <Badge variant="destructive">Excedido</Badge>
-                        )}
-                        <Badge variant={Math.abs(category.variancePercent) < 5 ? 'default' : 
-                                      Math.abs(category.variancePercent) < 10 ? 'secondary' : 'destructive'}>
+                        {category.isOverBudget && <Badge variant="destructive">Excedido</Badge>}
+                        <Badge
+                          variant={
+                            Math.abs(category.variancePercent) < 5
+                              ? "default"
+                              : Math.abs(category.variancePercent) < 10
+                                ? "secondary"
+                                : "destructive"
+                          }
+                        >
                           {formatPercent(category.variancePercent)} variação
                         </Badge>
                       </div>
@@ -325,12 +341,16 @@ export default function ExpenseBudgetDashboard() {
                         <span>Orçado: {formatCurrency(category.budgetAllocation)}</span>
                         <span>Realizado: {formatCurrency(category.actualSpending)}</span>
                       </div>
-                      <Progress 
-                        value={Math.min(100, (category.actualSpending / category.budgetAllocation) * 100)} 
+                      <Progress
+                        value={Math.min(
+                          100,
+                          (category.actualSpending / category.budgetAllocation) * 100,
+                        )}
                         className="h-2"
                       />
                       <div className="text-xs text-muted-foreground">
-                        Variação: {category.variance > 0 ? '+' : ''}{formatCurrency(category.variance)}
+                        Variação: {category.variance > 0 ? "+" : ""}
+                        {formatCurrency(category.variance)}
                       </div>
                     </div>
                   </div>
@@ -349,14 +369,24 @@ export default function ExpenseBudgetDashboard() {
             <CardContent>
               <div className="space-y-4">
                 {vendors.map((vendor) => (
-                  <div key={vendor.vendorId} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div
+                    key={vendor.vendorId}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-2">
                         <h4 className="font-semibold">{vendor.vendorName}</h4>
                         <div className="flex items-center space-x-2">
                           <Badge variant="outline">{vendor.category}</Badge>
-                          <Badge variant={vendor.performanceScore > 8 ? 'default' : 
-                                        vendor.performanceScore > 6 ? 'secondary' : 'destructive'}>
+                          <Badge
+                            variant={
+                              vendor.performanceScore > 8
+                                ? "default"
+                                : vendor.performanceScore > 6
+                                  ? "secondary"
+                                  : "destructive"
+                            }
+                          >
                             {vendor.performanceScore.toFixed(1)} score
                           </Badge>
                         </div>
@@ -380,7 +410,9 @@ export default function ExpenseBudgetDashboard() {
                         </div>
                         <div>
                           <p className="text-muted-foreground">Último Pagamento</p>
-                          <p className="font-medium">{vendor.lastPayment.toLocaleDateString('pt-BR')}</p>
+                          <p className="font-medium">
+                            {vendor.lastPayment.toLocaleDateString("pt-BR")}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -400,13 +432,21 @@ export default function ExpenseBudgetDashboard() {
             <CardContent>
               <div className="space-y-4">
                 {trends.map((trend, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-2">
                         <h4 className="font-semibold">{trend.period}</h4>
-                        <Badge variant={trend.growthRate > 0 ? 'destructive' : 'default'}>
-                          {trend.growthRate > 0 ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
-                          {trend.growthRate > 0 ? '+' : ''}{formatPercent(trend.growthRate)}
+                        <Badge variant={trend.growthRate > 0 ? "destructive" : "default"}>
+                          {trend.growthRate > 0 ? (
+                            <TrendingUp className="h-3 w-3 mr-1" />
+                          ) : (
+                            <TrendingDown className="h-3 w-3 mr-1" />
+                          )}
+                          {trend.growthRate > 0 ? "+" : ""}
+                          {formatPercent(trend.growthRate)}
                         </Badge>
                       </div>
                       <div className="grid grid-cols-3 gap-4 text-sm">
@@ -420,7 +460,9 @@ export default function ExpenseBudgetDashboard() {
                         </div>
                         <div>
                           <p className="text-muted-foreground">Economia Potencial</p>
-                          <p className="font-medium text-green-600">{formatCurrency(trend.costSavingPotential)}</p>
+                          <p className="font-medium text-green-600">
+                            {formatCurrency(trend.costSavingPotential)}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -435,7 +477,9 @@ export default function ExpenseBudgetDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Oportunidades de Otimização</CardTitle>
-              <CardDescription>Insights para redução de custos e melhoria de eficiência</CardDescription>
+              <CardDescription>
+                Insights para redução de custos e melhoria de eficiência
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -444,8 +488,15 @@ export default function ExpenseBudgetDashboard() {
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-semibold">{insight.category}</h4>
                       <div className="flex items-center space-x-2">
-                        <Badge variant={insight.priority === 'high' ? 'destructive' : 
-                                      insight.priority === 'medium' ? 'default' : 'secondary'}>
+                        <Badge
+                          variant={
+                            insight.priority === "high"
+                              ? "destructive"
+                              : insight.priority === "medium"
+                                ? "default"
+                                : "secondary"
+                          }
+                        >
                           {insight.priority}
                         </Badge>
                         <Badge variant="outline">
@@ -493,7 +544,10 @@ export default function ExpenseBudgetDashboard() {
             <CardContent>
               <div className="space-y-4">
                 {costCenters.map((center) => (
-                  <div key={center.costCenterId} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div
+                    key={center.costCenterId}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-2">
                         <h4 className="font-semibold">{center.costCenterName}</h4>

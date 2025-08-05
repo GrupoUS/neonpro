@@ -1,41 +1,75 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import type { useState, useEffect } from "react";
+import type { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { 
-  Users, 
-  UserPlus, 
-  Edit, 
-  Trash2, 
-  FileCheck, 
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type {
+  Users,
+  UserPlus,
+  Edit,
+  Trash2,
+  FileCheck,
   AlertCircle,
   CheckCircle2,
   Loader2,
   Search,
   Filter,
   Download,
-  Shield
+  Shield,
 } from "lucide-react";
-import { toast } from "sonner";
+import type { toast } from "sonner";
 
 // CRM validation function for different states
 const validateCRM = (crm: string, state: string): boolean => {
   const cleanCRM = crm.replace(/[^\d]/g, "");
-  
+
   // Basic validation - CRM numbers typically have 4-6 digits
   if (cleanCRM.length < 4 || cleanCRM.length > 6) return false;
-  
+
   // State-specific validation could be added here
   return true;
 };
@@ -43,10 +77,10 @@ const validateCRM = (crm: string, state: string): boolean => {
 // CPF validation function
 const validateCPF = (cpf: string): boolean => {
   const cleanCPF = cpf.replace(/[^\d]/g, "");
-  
+
   if (cleanCPF.length !== 11) return false;
   if (/^(\d)\1{10}$/.test(cleanCPF)) return false;
-  
+
   let sum = 0;
   for (let i = 0; i < 9; i++) {
     sum += parseInt(cleanCPF.charAt(i)) * (10 - i);
@@ -54,14 +88,14 @@ const validateCPF = (cpf: string): boolean => {
   let remainder = (sum * 10) % 11;
   if (remainder === 10 || remainder === 11) remainder = 0;
   if (remainder !== parseInt(cleanCPF.charAt(9))) return false;
-  
+
   sum = 0;
   for (let i = 0; i < 10; i++) {
     sum += parseInt(cleanCPF.charAt(i)) * (11 - i);
   }
   remainder = (sum * 10) % 11;
   if (remainder === 10 || remainder === 11) remainder = 0;
-  
+
   return remainder === parseInt(cleanCPF.charAt(10));
 };
 
@@ -77,52 +111,78 @@ const professionalTypes = [
 ];
 
 const brazilianStates = [
-  "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA",
-  "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN",
-  "RS", "RO", "RR", "SC", "SP", "SE", "TO"
+  "AC",
+  "AL",
+  "AP",
+  "AM",
+  "BA",
+  "CE",
+  "DF",
+  "ES",
+  "GO",
+  "MA",
+  "MT",
+  "MS",
+  "MG",
+  "PA",
+  "PB",
+  "PR",
+  "PE",
+  "PI",
+  "RJ",
+  "RN",
+  "RS",
+  "RO",
+  "RR",
+  "SC",
+  "SP",
+  "SE",
+  "TO",
 ];
 
-const staffMemberSchema = z.object({
-  name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
-  email: z.string().email("Email inválido"),
-  phone: z.string().min(10, "Telefone deve ter pelo menos 10 dígitos"),
-  cpf: z.string().refine(validateCPF, "CPF inválido"),
-  professionalType: z.string().min(1, "Tipo profissional é obrigatório"),
-  crm: z.string().optional(),
-  crmState: z.string().optional(),
-  specialty: z.string().optional(),
-  active: z.boolean().default(true),
-  canPerformProcedures: z.boolean().default(false),
-  canAccessFinancial: z.boolean().default(false),
-  canManageSchedule: z.boolean().default(false),
-  isAdmin: z.boolean().default(false),
-}).superRefine((data, ctx) => {
-  const professionalType = professionalTypes.find(pt => pt.value === data.professionalType);
-  
-  if (professionalType?.requiresCRM) {
-    if (!data.crm || data.crm.trim() === "") {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "CRM é obrigatório para este tipo profissional",
-        path: ["crm"],
-      });
-    } else if (!validateCRM(data.crm, data.crmState || "")) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "CRM inválido",
-        path: ["crm"],
-      });
+const staffMemberSchema = z
+  .object({
+    name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
+    email: z.string().email("Email inválido"),
+    phone: z.string().min(10, "Telefone deve ter pelo menos 10 dígitos"),
+    cpf: z.string().refine(validateCPF, "CPF inválido"),
+    professionalType: z.string().min(1, "Tipo profissional é obrigatório"),
+    crm: z.string().optional(),
+    crmState: z.string().optional(),
+    specialty: z.string().optional(),
+    active: z.boolean().default(true),
+    canPerformProcedures: z.boolean().default(false),
+    canAccessFinancial: z.boolean().default(false),
+    canManageSchedule: z.boolean().default(false),
+    isAdmin: z.boolean().default(false),
+  })
+  .superRefine((data, ctx) => {
+    const professionalType = professionalTypes.find((pt) => pt.value === data.professionalType);
+
+    if (professionalType?.requiresCRM) {
+      if (!data.crm || data.crm.trim() === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "CRM é obrigatório para este tipo profissional",
+          path: ["crm"],
+        });
+      } else if (!validateCRM(data.crm, data.crmState || "")) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "CRM inválido",
+          path: ["crm"],
+        });
+      }
+
+      if (!data.crmState || data.crmState.trim() === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Estado do CRM é obrigatório",
+          path: ["crmState"],
+        });
+      }
     }
-    
-    if (!data.crmState || data.crmState.trim() === "") {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Estado do CRM é obrigatório",
-        path: ["crmState"],
-      });
-    }
-  }
-});
+  });
 
 type StaffMemberFormData = z.infer<typeof staffMemberSchema>;
 
@@ -139,7 +199,7 @@ export default function StaffManagement() {
   const [editingMember, setEditingMember] = useState<StaffMember | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState<string>("all");
-  
+
   const form = useForm<StaffMemberFormData>({
     resolver: zodResolver(staffMemberSchema),
     defaultValues: {
@@ -160,7 +220,8 @@ export default function StaffManagement() {
   });
 
   const watchedProfessionalType = form.watch("professionalType");
-  const requiresCRM = professionalTypes.find(pt => pt.value === watchedProfessionalType)?.requiresCRM || false;
+  const requiresCRM =
+    professionalTypes.find((pt) => pt.value === watchedProfessionalType)?.requiresCRM || false;
 
   // Format CPF input
   const formatCPF = (value: string) => {
@@ -177,7 +238,7 @@ export default function StaffManagement() {
         // const response = await fetch("/api/settings/staff");
         // const data = await response.json();
         // setStaffMembers(data);
-        
+
         // Mock data for demonstration
         setStaffMembers([
           {
@@ -218,9 +279,9 @@ export default function StaffManagement() {
           ...editingMember,
           ...data,
         };
-        setStaffMembers(prev => prev.map(member => 
-          member.id === editingMember.id ? updatedMember : member
-        ));
+        setStaffMembers((prev) =>
+          prev.map((member) => (member.id === editingMember.id ? updatedMember : member)),
+        );
         toast.success("Profissional atualizado com sucesso!");
       } else {
         // Add new member
@@ -229,10 +290,10 @@ export default function StaffManagement() {
           id: Date.now().toString(),
           createdAt: new Date(),
         };
-        setStaffMembers(prev => [...prev, newMember]);
+        setStaffMembers((prev) => [...prev, newMember]);
         toast.success("Profissional adicionado com sucesso!");
       }
-      
+
       setIsDialogOpen(false);
       setEditingMember(null);
       form.reset();
@@ -251,7 +312,7 @@ export default function StaffManagement() {
   const handleDelete = async (memberId: string) => {
     if (confirm("Tem certeza que deseja remover este profissional?")) {
       try {
-        setStaffMembers(prev => prev.filter(member => member.id !== memberId));
+        setStaffMembers((prev) => prev.filter((member) => member.id !== memberId));
         toast.success("Profissional removido com sucesso!");
       } catch (error) {
         console.error("Erro ao remover profissional:", error);
@@ -262,9 +323,11 @@ export default function StaffManagement() {
 
   const handleToggleActive = async (memberId: string) => {
     try {
-      setStaffMembers(prev => prev.map(member => 
-        member.id === memberId ? { ...member, active: !member.active } : member
-      ));
+      setStaffMembers((prev) =>
+        prev.map((member) =>
+          member.id === memberId ? { ...member, active: !member.active } : member,
+        ),
+      );
       toast.success("Status atualizado com sucesso!");
     } catch (error) {
       console.error("Erro ao atualizar status:", error);
@@ -272,29 +335,36 @@ export default function StaffManagement() {
     }
   };
 
-  const filteredMembers = staffMembers.filter(member => {
-    const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         member.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         (member.crm && member.crm.includes(searchTerm));
-    
+  const filteredMembers = staffMembers.filter((member) => {
+    const matchesSearch =
+      member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      member.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (member.crm && member.crm.includes(searchTerm));
+
     const matchesFilter = filterType === "all" || member.professionalType === filterType;
-    
+
     return matchesSearch && matchesFilter;
   });
 
   const exportStaffData = () => {
-    const csvContent = "data:text/csv;charset=utf-8," +
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
       "Nome,Email,Telefone,Tipo,CRM,Estado CRM,Especialidade,Ativo\n" +
-      staffMembers.map(member => [
-        member.name,
-        member.email,
-        member.phone,
-        professionalTypes.find(pt => pt.value === member.professionalType)?.label || member.professionalType,
-        member.crm || "",
-        member.crmState || "",
-        member.specialty || "",
-        member.active ? "Sim" : "Não"
-      ].join(",")).join("\n");
+      staffMembers
+        .map((member) =>
+          [
+            member.name,
+            member.email,
+            member.phone,
+            professionalTypes.find((pt) => pt.value === member.professionalType)?.label ||
+              member.professionalType,
+            member.crm || "",
+            member.crmState || "",
+            member.specialty || "",
+            member.active ? "Sim" : "Não",
+          ].join(","),
+        )
+        .join("\n");
 
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
@@ -322,11 +392,9 @@ export default function StaffManagement() {
           <h2 className="text-2xl font-semibold text-gray-900">
             Equipe Médica ({staffMembers.length})
           </h2>
-          <p className="text-gray-600">
-            Gerenciar profissionais e permissões de acesso
-          </p>
+          <p className="text-gray-600">Gerenciar profissionais e permissões de acesso</p>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={exportStaffData}>
             <Download className="h-4 w-4 mr-2" />
@@ -334,7 +402,7 @@ export default function StaffManagement() {
           </Button>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button 
+              <Button
                 onClick={() => {
                   setEditingMember(null);
                   form.reset();
@@ -353,7 +421,7 @@ export default function StaffManagement() {
                   Preencha as informações do profissional. Campos com * são obrigatórios.
                 </DialogDescription>
               </DialogHeader>
-              
+
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                   {/* Basic Information */}
@@ -467,9 +535,7 @@ export default function StaffManagement() {
                             <FormControl>
                               <Input placeholder="123456" {...field} />
                             </FormControl>
-                            <FormDescription>
-                              Conselho Regional de Medicina
-                            </FormDescription>
+                            <FormDescription>Conselho Regional de Medicina</FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -556,9 +622,7 @@ export default function StaffManagement() {
                             </FormControl>
                             <div className="space-y-1 leading-none">
                               <FormLabel>Gerenciar Agenda</FormLabel>
-                              <FormDescription>
-                                Pode criar e modificar agendamentos
-                              </FormDescription>
+                              <FormDescription>Pode criar e modificar agendamentos</FormDescription>
                             </div>
                           </FormItem>
                         )}
@@ -600,9 +664,7 @@ export default function StaffManagement() {
                             </FormControl>
                             <div className="space-y-1 leading-none">
                               <FormLabel>Administrador</FormLabel>
-                              <FormDescription>
-                                Acesso completo ao sistema
-                              </FormDescription>
+                              <FormDescription>Acesso completo ao sistema</FormDescription>
                             </div>
                           </FormItem>
                         )}
@@ -671,9 +733,7 @@ export default function StaffManagement() {
       <Card>
         <CardHeader>
           <CardTitle>Profissionais Cadastrados</CardTitle>
-          <CardDescription>
-            Lista completa da equipe médica e administrativa
-          </CardDescription>
+          <CardDescription>Lista completa da equipe médica e administrativa</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -687,8 +747,8 @@ export default function StaffManagement() {
                 Nenhum profissional encontrado
               </h3>
               <p className="text-gray-600 mb-4">
-                {searchTerm || filterType !== "all" 
-                  ? "Tente ajustar os filtros de busca" 
+                {searchTerm || filterType !== "all"
+                  ? "Tente ajustar os filtros de busca"
                   : "Adicione o primeiro profissional à equipe"}
               </p>
             </div>
@@ -708,12 +768,14 @@ export default function StaffManagement() {
                 </TableHeader>
                 <TableBody>
                   {filteredMembers.map((member) => {
-                    const professionalType = professionalTypes.find(pt => pt.value === member.professionalType);
+                    const professionalType = professionalTypes.find(
+                      (pt) => pt.value === member.professionalType,
+                    );
                     const permissions = [
                       member.canPerformProcedures && "Procedimentos",
                       member.canManageSchedule && "Agenda",
                       member.canAccessFinancial && "Financeiro",
-                      member.isAdmin && "Admin"
+                      member.isAdmin && "Admin",
                     ].filter(Boolean);
 
                     return (
@@ -767,11 +829,7 @@ export default function StaffManagement() {
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-1">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEdit(member)}
-                            >
+                            <Button variant="ghost" size="sm" onClick={() => handleEdit(member)}>
                               <Edit className="h-4 w-4" />
                             </Button>
                             <Button

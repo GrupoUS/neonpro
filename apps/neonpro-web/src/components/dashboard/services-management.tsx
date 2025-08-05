@@ -1,6 +1,6 @@
 "use client";
 
-import {
+import type {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -11,52 +11,40 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
-import { useBilling } from "@/hooks/use-billing";
-import type {
-  CreateServiceData,
-  Service,
-  ServiceFilters,
-} from "@/types/billing";
-import { SERVICE_TYPES } from "@/types/billing";
-import {
-  Clock,
-  DollarSign,
-  Edit,
-  Package,
-  Plus,
-  Search,
-  Trash2,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import type { Separator } from "@/components/ui/separator";
+import type { Switch } from "@/components/ui/switch";
+import type { Textarea } from "@/components/ui/textarea";
+import type { useBilling } from "@/hooks/use-billing";
+import type { CreateServiceData, Service, ServiceFilters } from "@/types/billing";
+import type { SERVICE_TYPES } from "@/types/billing";
+import type { Clock, DollarSign, Edit, Package, Plus, Search, Trash2 } from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 
 interface ServiceFormData {
   name: string;
@@ -70,14 +58,8 @@ interface ServiceFormData {
 }
 
 export function ServicesManagement() {
-  const {
-    loading,
-    services,
-    fetchServices,
-    createService,
-    updateService,
-    deleteService,
-  } = useBilling();
+  const { loading, services, fetchServices, createService, updateService, deleteService } =
+    useBilling();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState<ServiceFilters>({});
@@ -104,7 +86,7 @@ export function ServicesManagement() {
     (service) =>
       service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       service.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      service.category?.toLowerCase().includes(searchTerm.toLowerCase())
+      service.category?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const resetForm = () => {
@@ -159,14 +141,10 @@ export function ServicesManagement() {
       description: formData.description.trim() || undefined,
       type: formData.type as any,
       base_price: parseFloat(formData.base_price),
-      duration_minutes: formData.duration_minutes
-        ? parseInt(formData.duration_minutes)
-        : undefined,
+      duration_minutes: formData.duration_minutes ? parseInt(formData.duration_minutes) : undefined,
       category: formData.category.trim() || undefined,
       requires_appointment: formData.requires_appointment,
-      max_sessions: formData.max_sessions
-        ? parseInt(formData.max_sessions)
-        : undefined,
+      max_sessions: formData.max_sessions ? parseInt(formData.max_sessions) : undefined,
     };
 
     let success = false;
@@ -214,9 +192,7 @@ export function ServicesManagement() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold">Gerenciar Serviços</h2>
-          <p className="text-muted-foreground">
-            Configure os serviços oferecidos pela clínica
-          </p>
+          <p className="text-muted-foreground">Configure os serviços oferecidos pela clínica</p>
         </div>
 
         <Button onClick={openCreateDialog} className="w-full sm:w-auto">
@@ -268,11 +244,7 @@ export function ServicesManagement() {
               </Select>
 
               <Select
-                value={
-                  filters.is_active === undefined
-                    ? "all"
-                    : filters.is_active.toString()
-                }
+                value={filters.is_active === undefined ? "all" : filters.is_active.toString()}
                 onValueChange={(value) =>
                   setFilters((prev) => ({
                     ...prev,
@@ -316,9 +288,7 @@ export function ServicesManagement() {
         ) : filteredServices.length === 0 ? (
           <div className="col-span-full text-center py-12">
             <Package className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium mb-2">
-              Nenhum serviço encontrado
-            </h3>
+            <h3 className="text-lg font-medium mb-2">Nenhum serviço encontrado</h3>
             <p className="text-muted-foreground mb-4">
               {searchTerm
                 ? "Tente ajustar os filtros de busca"
@@ -333,25 +303,16 @@ export function ServicesManagement() {
           </div>
         ) : (
           filteredServices.map((service) => (
-            <Card
-              key={service.id}
-              className={!service.is_active ? "opacity-60" : ""}
-            >
+            <Card key={service.id} className={!service.is_active ? "opacity-60" : ""}>
               <CardHeader className="pb-3">
                 <div className="flex justify-between items-start">
                   <div className="space-y-1">
                     <CardTitle className="text-lg">{service.name}</CardTitle>
-                    {service.category && (
-                      <CardDescription>{service.category}</CardDescription>
-                    )}
+                    {service.category && <CardDescription>{service.category}</CardDescription>}
                   </div>
 
                   <div className="flex gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => openEditDialog(service)}
-                    >
+                    <Button variant="ghost" size="sm" onClick={() => openEditDialog(service)}>
                       <Edit className="h-4 w-4" />
                     </Button>
 
@@ -365,8 +326,8 @@ export function ServicesManagement() {
                         <AlertDialogHeader>
                           <AlertDialogTitle>Excluir Serviço</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Tem certeza que deseja excluir o serviço "
-                            {service.name}"? Esta ação não pode ser desfeita.
+                            Tem certeza que deseja excluir o serviço "{service.name}"? Esta ação não
+                            pode ser desfeita.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
@@ -396,9 +357,7 @@ export function ServicesManagement() {
                     {getServiceTypeLabel(service.type)}
                   </Badge>
 
-                  {!service.is_active && (
-                    <Badge variant="secondary">Inativo</Badge>
-                  )}
+                  {!service.is_active && <Badge variant="secondary">Inativo</Badge>}
                 </div>
 
                 <Separator />
@@ -406,9 +365,7 @@ export function ServicesManagement() {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="flex items-center gap-2">
                     <DollarSign className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">
-                      R$ {service.base_price.toFixed(2)}
-                    </span>
+                    <span className="font-medium">R$ {service.base_price.toFixed(2)}</span>
                   </div>
 
                   {service.duration_minutes && (
@@ -434,9 +391,7 @@ export function ServicesManagement() {
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>
-              {editingService ? "Editar Serviço" : "Novo Serviço"}
-            </DialogTitle>
+            <DialogTitle>{editingService ? "Editar Serviço" : "Novo Serviço"}</DialogTitle>
             <DialogDescription>
               {editingService
                 ? "Altere as informações do serviço abaixo"
@@ -451,9 +406,7 @@ export function ServicesManagement() {
                 <Input
                   id="name"
                   value={formData.name}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, name: e.target.value }))
-                  }
+                  onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
                   placeholder="Ex: Consulta Dermatológica"
                   required
                 />
@@ -463,9 +416,7 @@ export function ServicesManagement() {
                 <Label htmlFor="type">Tipo de Serviço *</Label>
                 <Select
                   value={formData.type}
-                  onValueChange={(value) =>
-                    setFormData((prev) => ({ ...prev, type: value }))
-                  }
+                  onValueChange={(value) => setFormData((prev) => ({ ...prev, type: value }))}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -557,9 +508,7 @@ export function ServicesManagement() {
               <Input
                 id="category"
                 value={formData.category}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, category: e.target.value }))
-                }
+                onChange={(e) => setFormData((prev) => ({ ...prev, category: e.target.value }))}
                 placeholder="Ex: Dermatologia, Estética"
               />
             </div>
@@ -579,11 +528,7 @@ export function ServicesManagement() {
             </div>
 
             <div className="flex justify-end gap-2 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setIsCreateDialogOpen(false)}
-              >
+              <Button type="button" variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
                 Cancelar
               </Button>
               <Button type="submit" disabled={loading}>

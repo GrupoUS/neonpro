@@ -1,10 +1,10 @@
-﻿// lib/ai/insights-engine.ts
-import { createClient } from "@/lib/supabase/server";
+// lib/ai/insights-engine.ts
+import type { createClient } from "@/lib/supabase/server";
 
 export interface InsightData {
   patientId: string;
-  type: 'clinical' | 'behavioral' | 'predictive' | 'risk';
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  type: "clinical" | "behavioral" | "predictive" | "risk";
+  priority: "low" | "medium" | "high" | "critical";
   title: string;
   description: string;
   confidence: number;
@@ -31,8 +31,8 @@ export interface PatientRiskAssessment {
 
 export interface ClinicalRecommendation {
   id: string;
-  type: 'medication' | 'lifestyle' | 'followup' | 'specialist';
-  urgency: 'routine' | 'soon' | 'urgent' | 'immediate';
+  type: "medication" | "lifestyle" | "followup" | "specialist";
+  urgency: "routine" | "soon" | "urgent" | "immediate";
   title: string;
   description: string;
   rationale: string;
@@ -52,58 +52,61 @@ export class AIInsightsEngine {
       const insights: InsightData[] = [
         {
           patientId,
-          type: 'clinical',
-          priority: 'high',
-          title: 'Risco Cardiovascular Elevado',
-          description: 'Análise dos dados clínicos indica risco aumentado para eventos cardiovasculares nos próximos 5 anos.',
+          type: "clinical",
+          priority: "high",
+          title: "Risco Cardiovascular Elevado",
+          description:
+            "Análise dos dados clínicos indica risco aumentado para eventos cardiovasculares nos próximos 5 anos.",
           confidence: 0.87,
-          sources: ['historical_data', 'vitals', 'lab_results'],
+          sources: ["historical_data", "vitals", "lab_results"],
           recommendations: [
-            'Iniciar estatina de alta intensidade',
-            'Implementar programa de exercícios supervisionado',
-            'Monitoramento mensal da pressão arterial'
+            "Iniciar estatina de alta intensidade",
+            "Implementar programa de exercícios supervisionado",
+            "Monitoramento mensal da pressão arterial",
           ],
           createdAt: new Date(),
-          updatedAt: new Date()
+          updatedAt: new Date(),
         },
         {
           patientId,
-          type: 'behavioral',
-          priority: 'medium',
-          title: 'Padrão de Não Aderência a Medicamentos',
-          description: 'IA detectou padrões sugestivos de baixa aderência medicamentosa baseado em refis e consultas.',
+          type: "behavioral",
+          priority: "medium",
+          title: "Padrão de Não Aderência a Medicamentos",
+          description:
+            "IA detectou padrões sugestivos de baixa aderência medicamentosa baseado em refis e consultas.",
           confidence: 0.73,
-          sources: ['prescription_history', 'appointment_frequency'],
+          sources: ["prescription_history", "appointment_frequency"],
           recommendations: [
-            'Implementar sistema de lembrete de medicação',
-            'Considerar formulações de liberação prolongada',
-            'Consulta com farmacêutico clínico'
+            "Implementar sistema de lembrete de medicação",
+            "Considerar formulações de liberação prolongada",
+            "Consulta com farmacêutico clínico",
           ],
           createdAt: new Date(),
-          updatedAt: new Date()
+          updatedAt: new Date(),
         },
         {
           patientId,
-          type: 'predictive',
-          priority: 'medium',
-          title: 'Risco de Diabetes Tipo 2',
-          description: 'Modelo preditivo indica 68% de probabilidade de desenvolvimento de diabetes nos próximos 3 anos.',
+          type: "predictive",
+          priority: "medium",
+          title: "Risco de Diabetes Tipo 2",
+          description:
+            "Modelo preditivo indica 68% de probabilidade de desenvolvimento de diabetes nos próximos 3 anos.",
           confidence: 0.91,
-          sources: ['lab_trends', 'bmi_progression', 'family_history'],
+          sources: ["lab_trends", "bmi_progression", "family_history"],
           recommendations: [
-            'Teste de tolerância à glicose trimestral',
-            'Programa de perda de peso supervisionado',
-            'Consulta nutricional especializada'
+            "Teste de tolerância à glicose trimestral",
+            "Programa de perda de peso supervisionado",
+            "Consulta nutricional especializada",
           ],
           createdAt: new Date(),
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       ];
 
       return insights;
     } catch (error) {
-      console.error('Erro ao gerar insights do paciente:', error);
-      throw new Error('Falha na geração de insights de IA');
+      console.error("Erro ao gerar insights do paciente:", error);
+      throw new Error("Falha na geração de insights de IA");
     }
   }
 
@@ -124,14 +127,14 @@ export class AIInsightsEngine {
           bmi: 0.67,
           lifestyle: 0.72,
           genetics: 0.58,
-          medication: 0.43
-        }
+          medication: 0.43,
+        },
       };
 
       return riskAssessment;
     } catch (error) {
-      console.error('Erro na avaliação de risco:', error);
-      throw new Error('Falha na avaliação de risco de IA');
+      console.error("Erro na avaliação de risco:", error);
+      throw new Error("Falha na avaliação de risco de IA");
     }
   }
 
@@ -143,95 +146,95 @@ export class AIInsightsEngine {
       const recommendations: ClinicalRecommendation[] = [
         {
           id: `rec_${Date.now()}_1`,
-          type: 'medication',
-          urgency: 'soon',
-          title: 'Ajuste da Medicação Anti-hipertensiva',
-          description: 'Considerar aumento da dose de IECA ou adição de diurético tiazídico',
-          rationale: 'Pressão arterial persistentemente elevada (>140/90) nas últimas 3 consultas',
-          expectedOutcome: 'Redução da PA para <130/80 em 4-6 semanas',
-          timeframe: '2-4 semanas'
+          type: "medication",
+          urgency: "soon",
+          title: "Ajuste da Medicação Anti-hipertensiva",
+          description: "Considerar aumento da dose de IECA ou adição de diurético tiazídico",
+          rationale: "Pressão arterial persistentemente elevada (>140/90) nas últimas 3 consultas",
+          expectedOutcome: "Redução da PA para <130/80 em 4-6 semanas",
+          timeframe: "2-4 semanas",
         },
         {
           id: `rec_${Date.now()}_2`,
-          type: 'lifestyle',
-          urgency: 'routine',
-          title: 'Programa de Atividade Física Estruturado',
-          description: 'Implementar regime de exercícios aeróbicos e resistência muscular',
-          rationale: 'Sedentarismo e IMC elevado contribuindo para riscos metabólicos',
-          expectedOutcome: 'Melhora da capacidade cardiorrespiratória e controle glicêmico',
-          timeframe: '3-6 meses'
+          type: "lifestyle",
+          urgency: "routine",
+          title: "Programa de Atividade Física Estruturado",
+          description: "Implementar regime de exercícios aeróbicos e resistência muscular",
+          rationale: "Sedentarismo e IMC elevado contribuindo para riscos metabólicos",
+          expectedOutcome: "Melhora da capacidade cardiorrespiratória e controle glicêmico",
+          timeframe: "3-6 meses",
         },
         {
           id: `rec_${Date.now()}_3`,
-          type: 'followup',
-          urgency: 'soon',
-          title: 'Consulta de Seguimento Cardiológico',
-          description: 'Encaminhamento para cardiologista para avaliação especializada',
-          rationale: 'Múltiplos fatores de risco cardiovascular e histórico familiar',
-          expectedOutcome: 'Estratificação de risco mais precisa e otimização terapêutica',
-          timeframe: '4-6 semanas'
-        }
+          type: "followup",
+          urgency: "soon",
+          title: "Consulta de Seguimento Cardiológico",
+          description: "Encaminhamento para cardiologista para avaliação especializada",
+          rationale: "Múltiplos fatores de risco cardiovascular e histórico familiar",
+          expectedOutcome: "Estratificação de risco mais precisa e otimização terapêutica",
+          timeframe: "4-6 semanas",
+        },
       ];
 
       return recommendations;
     } catch (error) {
-      console.error('Erro ao gerar recomendações clínicas:', error);
-      throw new Error('Falha na geração de recomendações de IA');
+      console.error("Erro ao gerar recomendações clínicas:", error);
+      throw new Error("Falha na geração de recomendações de IA");
     }
   }
 
   /**
    * Analisa tendências temporais nos dados do paciente
    */
-  async analyzeTrends(patientId: string, timeframe: string = '6months'): Promise<any> {
+  async analyzeTrends(patientId: string, timeframe: string = "6months"): Promise<any> {
     try {
       // Simular análise de tendências
       const trends = {
         vitals: {
           bloodPressure: {
-            trend: 'increasing',
+            trend: "increasing",
             rate: 2.3,
-            significance: 'moderate',
-            concern: 'Tendência de aumento da pressão sistólica'
+            significance: "moderate",
+            concern: "Tendência de aumento da pressão sistólica",
           },
           weight: {
-            trend: 'stable',
+            trend: "stable",
             rate: 0.1,
-            significance: 'low',
-            concern: null
+            significance: "low",
+            concern: null,
           },
           heartRate: {
-            trend: 'decreasing',
+            trend: "decreasing",
             rate: -1.8,
-            significance: 'low',
-            concern: null
-          }
+            significance: "low",
+            concern: null,
+          },
         },
         labs: {
           glucose: {
-            trend: 'increasing',
+            trend: "increasing",
             rate: 3.2,
-            significance: 'high',
-            concern: 'Progressão para pré-diabetes'
+            significance: "high",
+            concern: "Progressão para pré-diabetes",
           },
           cholesterol: {
-            trend: 'stable',
+            trend: "stable",
             rate: 0.5,
-            significance: 'low',
-            concern: null
-          }
+            significance: "low",
+            concern: null,
+          },
         },
         appointments: {
-          frequency: 'optimal',
+          frequency: "optimal",
           adherence: 0.87,
-          cancellations: 2
-        }
+          cancellations: 2,
+        },
       };
 
       return trends;
     } catch (error) {
-      console.error('Erro na análise de tendências:', error);
-      throw new Error('Falha na análise de tendências de IA');
+      console.error("Erro na análise de tendências:", error);
+      throw new Error("Falha na análise de tendências de IA");
     }
   }
 
@@ -242,29 +245,29 @@ export class AIInsightsEngine {
     try {
       const anomalies = [
         {
-          type: 'vital_sign',
-          severity: 'moderate',
-          parameter: 'blood_pressure',
-          value: '165/95',
-          threshold: '140/90',
+          type: "vital_sign",
+          severity: "moderate",
+          parameter: "blood_pressure",
+          value: "165/95",
+          threshold: "140/90",
           timestamp: new Date(),
-          description: 'Pressão arterial significativamente elevada'
+          description: "Pressão arterial significativamente elevada",
         },
         {
-          type: 'lab_result',
-          severity: 'low',
-          parameter: 'glucose_fasting',
-          value: '118 mg/dL',
-          threshold: '100 mg/dL',
+          type: "lab_result",
+          severity: "low",
+          parameter: "glucose_fasting",
+          value: "118 mg/dL",
+          threshold: "100 mg/dL",
           timestamp: new Date(),
-          description: 'Glicemia de jejum borderline elevada'
-        }
+          description: "Glicemia de jejum borderline elevada",
+        },
       ];
 
       return anomalies;
     } catch (error) {
-      console.error('Erro na detecção de anomalias:', error);
-      throw new Error('Falha na detecção de anomalias de IA');
+      console.error("Erro na detecção de anomalias:", error);
+      throw new Error("Falha na detecção de anomalias de IA");
     }
   }
 
@@ -278,7 +281,7 @@ export class AIInsightsEngine {
         this.assessPatientRisk(patientId),
         this.generateClinicalRecommendations(patientId),
         this.analyzeTrends(patientId),
-        this.detectAnomalies(patientId)
+        this.detectAnomalies(patientId),
       ]);
 
       return {
@@ -291,18 +294,22 @@ export class AIInsightsEngine {
         anomalies,
         summary: {
           totalInsights: insights.length,
-          highPriorityInsights: insights.filter(i => i.priority === 'high' || i.priority === 'critical').length,
-          overallRiskLevel: riskAssessment.overall > 0.7 ? 'high' : riskAssessment.overall > 0.4 ? 'medium' : 'low',
-          urgentRecommendations: recommendations.filter(r => r.urgency === 'urgent' || r.urgency === 'immediate').length,
-          activeAnomalies: anomalies.filter(a => a.severity !== 'low').length
-        }
+          highPriorityInsights: insights.filter(
+            (i) => i.priority === "high" || i.priority === "critical",
+          ).length,
+          overallRiskLevel:
+            riskAssessment.overall > 0.7 ? "high" : riskAssessment.overall > 0.4 ? "medium" : "low",
+          urgentRecommendations: recommendations.filter(
+            (r) => r.urgency === "urgent" || r.urgency === "immediate",
+          ).length,
+          activeAnomalies: anomalies.filter((a) => a.severity !== "low").length,
+        },
       };
     } catch (error) {
-      console.error('Erro ao gerar relatório de insights:', error);
-      throw new Error('Falha na geração do relatório de insights');
+      console.error("Erro ao gerar relatório de insights:", error);
+      throw new Error("Falha na geração do relatório de insights");
     }
   }
 }
 
 export const createaiInsightsEngine = () => new AIInsightsEngine();
-

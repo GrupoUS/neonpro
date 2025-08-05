@@ -3,48 +3,53 @@
 // Story 1.4: Session Management & Security
 // =====================================================
 
-import { useState, useEffect, useCallback, useRef } from 'react'
-import { useSupabase } from '@/hooks/useSupabase'
-import { DeviceManager, DeviceInfo, DeviceValidation, TrustedDevice } from '@/lib/auth/session'
-import { toast } from 'sonner'
+import type { useState, useEffect, useCallback, useRef } from "react";
+import type { useSupabase } from "@/hooks/useSupabase";
+import type {
+  DeviceManager,
+  DeviceInfo,
+  DeviceValidation,
+  TrustedDevice,
+} from "@/lib/auth/session";
+import type { toast } from "sonner";
 
 // =====================================================
 // TYPES & INTERFACES
 // =====================================================
 
 export interface DeviceState {
-  isLoading: boolean
-  currentDevice: DeviceInfo | null
-  trustedDevices: TrustedDevice[]
-  deviceValidation: DeviceValidation | null
-  error: string | null
+  isLoading: boolean;
+  currentDevice: DeviceInfo | null;
+  trustedDevices: TrustedDevice[];
+  deviceValidation: DeviceValidation | null;
+  error: string | null;
 }
 
 export interface DeviceActions {
-  registerDevice: (deviceName?: string) => Promise<boolean>
-  trustDevice: (deviceId: string) => Promise<boolean>
-  untrustDevice: (deviceId: string) => Promise<boolean>
-  removeDevice: (deviceId: string) => Promise<boolean>
-  refreshDevices: () => Promise<void>
-  validateCurrentDevice: () => Promise<DeviceValidation | null>
-  reportSuspiciousDevice: (deviceId: string, reason: string) => Promise<boolean>
+  registerDevice: (deviceName?: string) => Promise<boolean>;
+  trustDevice: (deviceId: string) => Promise<boolean>;
+  untrustDevice: (deviceId: string) => Promise<boolean>;
+  removeDevice: (deviceId: string) => Promise<boolean>;
+  refreshDevices: () => Promise<void>;
+  validateCurrentDevice: () => Promise<DeviceValidation | null>;
+  reportSuspiciousDevice: (deviceId: string, reason: string) => Promise<boolean>;
 }
 
 export interface UseDeviceManagementOptions {
-  autoRegister?: boolean
-  showNotifications?: boolean
-  trackDeviceChanges?: boolean
-  validateOnMount?: boolean
+  autoRegister?: boolean;
+  showNotifications?: boolean;
+  trackDeviceChanges?: boolean;
+  validateOnMount?: boolean;
 }
 
 export interface UseDeviceManagementReturn extends DeviceState, DeviceActions {
-  isCurrentDeviceTrusted: boolean
-  deviceRiskLevel: 'low' | 'medium' | 'high'
+  isCurrentDeviceTrusted: boolean;
+  deviceRiskLevel: "low" | "medium" | "high";
   deviceStats: {
-    totalDevices: number
-    trustedDevices: number
-    recentDevices: number
-  }
+    totalDevices: number;
+    trustedDevices: number;
+    recentDevices: number;
+  };
 }
 
 // =====================================================
@@ -53,52 +58,52 @@ export interface UseDeviceManagementReturn extends DeviceState, DeviceActions {
 
 export function useDeviceManagement(
   userId?: string,
-  options: UseDeviceManagementOptions = {}
+  options: UseDeviceManagementOptions = {},
 ): UseDeviceManagementReturn {
   const {
     autoRegister = true,
     showNotifications = true,
     trackDeviceChanges = true,
-    validateOnMount = true
-  } = options
+    validateOnMount = true,
+  } = options;
 
-  const { supabase } = useSupabase()
-  const deviceManagerRef = useRef<DeviceManager | null>(null)
-  
+  const { supabase } = useSupabase();
+  const deviceManagerRef = useRef<DeviceManager | null>(null);
+
   // State
   const [state, setState] = useState<DeviceState>({
     isLoading: true,
     currentDevice: null,
     trustedDevices: [],
     deviceValidation: null,
-    error: null
-  })
+    error: null,
+  });
 
   // =====================================================
   // INITIALIZATION
   // =====================================================
 
   useEffect(() => {
-    if (!supabase) return
+    if (!supabase) return;
 
-    deviceManagerRef.current = new DeviceManager(supabase)
-    
+    deviceManagerRef.current = new DeviceManager(supabase);
+
     if (userId && validateOnMount) {
-      initializeDeviceManagement()
+      initializeDeviceManagement();
     } else {
-      setState(prev => ({ ...prev, isLoading: false }))
+      setState((prev) => ({ ...prev, isLoading: false }));
     }
-  }, [supabase, userId, validateOnMount])
+  }, [supabase, userId, validateOnMount]);
 
   const initializeDeviceManagement = useCallback(async () => {
-    if (!userId || !deviceManagerRef.current) return
+    if (!userId || !deviceManagerRef.current) return;
 
     try {
-      setState(prev => ({ ...prev, isLoading: true, error: null }))
+      setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
       // Get current device info
-      const currentDevice = await getCurrentDeviceInfo()
-      
+      const currentDevice = await getCurrentDeviceInfo();
+
       // Validate current device
       const validation = await deviceManagerRef.current.validateDevice(
         userId,
@@ -106,235 +111,246 @@ export function useDeviceManagement(
         {
           userAgent: currentDevice.userAgent,
           ipAddress: currentDevice.ipAddress,
-          location: currentDevice.location
-        }
-      )
+          location: currentDevice.location,
+        },
+      );
 
       // Get trusted devices
-      const trustedDevices = await deviceManagerRef.current.getTrustedDevices(userId)
+      const trustedDevices = await deviceManagerRef.current.getTrustedDevices(userId);
 
       setState({
         isLoading: false,
         currentDevice,
         trustedDevices,
         deviceValidation: validation,
-        error: null
-      })
+        error: null,
+      });
 
       // Auto-register if enabled and device is new
       if (autoRegister && !validation.isRegistered) {
-        await registerDevice()
+        await registerDevice();
       }
 
       // Show notification for new device
       if (showNotifications && !validation.isTrusted) {
         toast.warning(
-          'New device detected. Consider marking it as trusted if this is your device.',
+          "New device detected. Consider marking it as trusted if this is your device.",
           {
             action: {
-              label: 'Trust Device',
-              onClick: () => trustCurrentDevice()
+              label: "Trust Device",
+              onClick: () => trustCurrentDevice(),
             },
-            duration: 10000
-          }
-        )
+            duration: 10000,
+          },
+        );
       }
-
     } catch (error) {
-      console.error('Device management initialization error:', error)
-      setState(prev => ({
+      console.error("Device management initialization error:", error);
+      setState((prev) => ({
         ...prev,
         isLoading: false,
-        error: error instanceof Error ? error.message : 'Initialization failed'
-      }))
+        error: error instanceof Error ? error.message : "Initialization failed",
+      }));
     }
-  }, [userId, autoRegister, showNotifications])
+  }, [userId, autoRegister, showNotifications]);
 
   // =====================================================
   // DEVICE ACTIONS
   // =====================================================
 
-  const registerDevice = useCallback(async (deviceName?: string): Promise<boolean> => {
-    if (!userId || !deviceManagerRef.current || !state.currentDevice) {
-      return false
-    }
+  const registerDevice = useCallback(
+    async (deviceName?: string): Promise<boolean> => {
+      if (!userId || !deviceManagerRef.current || !state.currentDevice) {
+        return false;
+      }
 
-    try {
-      setState(prev => ({ ...prev, isLoading: true, error: null }))
+      try {
+        setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
-      const result = await deviceManagerRef.current.registerDevice(
-        userId,
-        state.currentDevice.fingerprint,
-        {
-          deviceName: deviceName || generateDeviceName(),
-          userAgent: state.currentDevice.userAgent,
-          ipAddress: state.currentDevice.ipAddress,
-          location: state.currentDevice.location
-        }
-      )
-
-      if (result.success) {
-        // Refresh device validation
-        const validation = await deviceManagerRef.current.validateDevice(
+        const result = await deviceManagerRef.current.registerDevice(
           userId,
           state.currentDevice.fingerprint,
           {
+            deviceName: deviceName || generateDeviceName(),
             userAgent: state.currentDevice.userAgent,
             ipAddress: state.currentDevice.ipAddress,
-            location: state.currentDevice.location
+            location: state.currentDevice.location,
+          },
+        );
+
+        if (result.success) {
+          // Refresh device validation
+          const validation = await deviceManagerRef.current.validateDevice(
+            userId,
+            state.currentDevice.fingerprint,
+            {
+              userAgent: state.currentDevice.userAgent,
+              ipAddress: state.currentDevice.ipAddress,
+              location: state.currentDevice.location,
+            },
+          );
+
+          setState((prev) => ({
+            ...prev,
+            isLoading: false,
+            deviceValidation: validation,
+          }));
+
+          if (showNotifications) {
+            toast.success("Device registered successfully");
           }
-        )
 
-        setState(prev => ({
+          return true;
+        } else {
+          setState((prev) => ({
+            ...prev,
+            isLoading: false,
+            error: result.error || "Device registration failed",
+          }));
+
+          if (showNotifications) {
+            toast.error(result.error || "Device registration failed");
+          }
+
+          return false;
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Device registration failed";
+        setState((prev) => ({
           ...prev,
           isLoading: false,
-          deviceValidation: validation
-        }))
+          error: errorMessage,
+        }));
 
         if (showNotifications) {
-          toast.success('Device registered successfully')
+          toast.error(errorMessage);
         }
 
-        return true
-      } else {
-        setState(prev => ({
-          ...prev,
-          isLoading: false,
-          error: result.error || 'Device registration failed'
-        }))
+        return false;
+      }
+    },
+    [userId, state.currentDevice, showNotifications],
+  );
 
+  const trustDevice = useCallback(
+    async (deviceId: string): Promise<boolean> => {
+      if (!userId || !deviceManagerRef.current) {
+        return false;
+      }
+
+      try {
+        const result = await deviceManagerRef.current.trustDevice(userId, deviceId);
+
+        if (result.success) {
+          // Refresh trusted devices
+          await refreshDevices();
+
+          if (showNotifications) {
+            toast.success("Device marked as trusted");
+          }
+
+          return true;
+        } else {
+          if (showNotifications) {
+            toast.error(result.error || "Failed to trust device");
+          }
+          return false;
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Failed to trust device";
         if (showNotifications) {
-          toast.error(result.error || 'Device registration failed')
+          toast.error(errorMessage);
         }
-
-        return false
+        return false;
       }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Device registration failed'
-      setState(prev => ({
-        ...prev,
-        isLoading: false,
-        error: errorMessage
-      }))
+    },
+    [userId, showNotifications],
+  );
 
-      if (showNotifications) {
-        toast.error(errorMessage)
+  const untrustDevice = useCallback(
+    async (deviceId: string): Promise<boolean> => {
+      if (!userId || !deviceManagerRef.current) {
+        return false;
       }
 
-      return false
-    }
-  }, [userId, state.currentDevice, showNotifications])
+      try {
+        const result = await deviceManagerRef.current.untrustDevice(userId, deviceId);
 
-  const trustDevice = useCallback(async (deviceId: string): Promise<boolean> => {
-    if (!userId || !deviceManagerRef.current) {
-      return false
-    }
+        if (result.success) {
+          // Refresh trusted devices
+          await refreshDevices();
 
-    try {
-      const result = await deviceManagerRef.current.trustDevice(userId, deviceId)
+          if (showNotifications) {
+            toast.success("Device trust removed");
+          }
 
-      if (result.success) {
-        // Refresh trusted devices
-        await refreshDevices()
-
+          return true;
+        } else {
+          if (showNotifications) {
+            toast.error(result.error || "Failed to untrust device");
+          }
+          return false;
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Failed to untrust device";
         if (showNotifications) {
-          toast.success('Device marked as trusted')
+          toast.error(errorMessage);
         }
+        return false;
+      }
+    },
+    [userId, showNotifications],
+  );
 
-        return true
-      } else {
+  const removeDevice = useCallback(
+    async (deviceId: string): Promise<boolean> => {
+      if (!userId || !deviceManagerRef.current) {
+        return false;
+      }
+
+      try {
+        const result = await deviceManagerRef.current.removeDevice(userId, deviceId);
+
+        if (result.success) {
+          // Refresh trusted devices
+          await refreshDevices();
+
+          if (showNotifications) {
+            toast.success("Device removed successfully");
+          }
+
+          return true;
+        } else {
+          if (showNotifications) {
+            toast.error(result.error || "Failed to remove device");
+          }
+          return false;
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Failed to remove device";
         if (showNotifications) {
-          toast.error(result.error || 'Failed to trust device')
+          toast.error(errorMessage);
         }
-        return false
+        return false;
       }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to trust device'
-      if (showNotifications) {
-        toast.error(errorMessage)
-      }
-      return false
-    }
-  }, [userId, showNotifications])
-
-  const untrustDevice = useCallback(async (deviceId: string): Promise<boolean> => {
-    if (!userId || !deviceManagerRef.current) {
-      return false
-    }
-
-    try {
-      const result = await deviceManagerRef.current.untrustDevice(userId, deviceId)
-
-      if (result.success) {
-        // Refresh trusted devices
-        await refreshDevices()
-
-        if (showNotifications) {
-          toast.success('Device trust removed')
-        }
-
-        return true
-      } else {
-        if (showNotifications) {
-          toast.error(result.error || 'Failed to untrust device')
-        }
-        return false
-      }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to untrust device'
-      if (showNotifications) {
-        toast.error(errorMessage)
-      }
-      return false
-    }
-  }, [userId, showNotifications])
-
-  const removeDevice = useCallback(async (deviceId: string): Promise<boolean> => {
-    if (!userId || !deviceManagerRef.current) {
-      return false
-    }
-
-    try {
-      const result = await deviceManagerRef.current.removeDevice(userId, deviceId)
-
-      if (result.success) {
-        // Refresh trusted devices
-        await refreshDevices()
-
-        if (showNotifications) {
-          toast.success('Device removed successfully')
-        }
-
-        return true
-      } else {
-        if (showNotifications) {
-          toast.error(result.error || 'Failed to remove device')
-        }
-        return false
-      }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to remove device'
-      if (showNotifications) {
-        toast.error(errorMessage)
-      }
-      return false
-    }
-  }, [userId, showNotifications])
+    },
+    [userId, showNotifications],
+  );
 
   const refreshDevices = useCallback(async () => {
-    if (!userId || !deviceManagerRef.current) return
+    if (!userId || !deviceManagerRef.current) return;
 
     try {
-      const trustedDevices = await deviceManagerRef.current.getTrustedDevices(userId)
-      setState(prev => ({ ...prev, trustedDevices }))
+      const trustedDevices = await deviceManagerRef.current.getTrustedDevices(userId);
+      setState((prev) => ({ ...prev, trustedDevices }));
     } catch (error) {
-      console.error('Failed to refresh devices:', error)
+      console.error("Failed to refresh devices:", error);
     }
-  }, [userId])
+  }, [userId]);
 
   const validateCurrentDevice = useCallback(async (): Promise<DeviceValidation | null> => {
     if (!userId || !deviceManagerRef.current || !state.currentDevice) {
-      return null
+      return null;
     }
 
     try {
@@ -344,52 +360,52 @@ export function useDeviceManagement(
         {
           userAgent: state.currentDevice.userAgent,
           ipAddress: state.currentDevice.ipAddress,
-          location: state.currentDevice.location
-        }
-      )
+          location: state.currentDevice.location,
+        },
+      );
 
-      setState(prev => ({ ...prev, deviceValidation: validation }))
-      return validation
+      setState((prev) => ({ ...prev, deviceValidation: validation }));
+      return validation;
     } catch (error) {
-      console.error('Device validation error:', error)
-      return null
+      console.error("Device validation error:", error);
+      return null;
     }
-  }, [userId, state.currentDevice])
+  }, [userId, state.currentDevice]);
 
-  const reportSuspiciousDevice = useCallback(async (
-    deviceId: string,
-    reason: string
-  ): Promise<boolean> => {
-    if (!userId || !deviceManagerRef.current) {
-      return false
-    }
-
-    try {
-      const result = await deviceManagerRef.current.reportSuspiciousDevice(
-        userId,
-        deviceId,
-        reason
-      )
-
-      if (result.success) {
-        if (showNotifications) {
-          toast.success('Suspicious device reported')
-        }
-        return true
-      } else {
-        if (showNotifications) {
-          toast.error(result.error || 'Failed to report device')
-        }
-        return false
+  const reportSuspiciousDevice = useCallback(
+    async (deviceId: string, reason: string): Promise<boolean> => {
+      if (!userId || !deviceManagerRef.current) {
+        return false;
       }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to report device'
-      if (showNotifications) {
-        toast.error(errorMessage)
+
+      try {
+        const result = await deviceManagerRef.current.reportSuspiciousDevice(
+          userId,
+          deviceId,
+          reason,
+        );
+
+        if (result.success) {
+          if (showNotifications) {
+            toast.success("Suspicious device reported");
+          }
+          return true;
+        } else {
+          if (showNotifications) {
+            toast.error(result.error || "Failed to report device");
+          }
+          return false;
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Failed to report device";
+        if (showNotifications) {
+          toast.error(errorMessage);
+        }
+        return false;
       }
-      return false
-    }
-  }, [userId, showNotifications])
+    },
+    [userId, showNotifications],
+  );
 
   // =====================================================
   // HELPER FUNCTIONS
@@ -397,55 +413,53 @@ export function useDeviceManagement(
 
   const trustCurrentDevice = useCallback(async () => {
     if (state.deviceValidation?.deviceId) {
-      await trustDevice(state.deviceValidation.deviceId)
+      await trustDevice(state.deviceValidation.deviceId);
     }
-  }, [state.deviceValidation, trustDevice])
+  }, [state.deviceValidation, trustDevice]);
 
   // =====================================================
   // COMPUTED VALUES
   // =====================================================
 
-  const isCurrentDeviceTrusted = state.deviceValidation?.isTrusted || false
-  const deviceRiskLevel = state.deviceValidation?.riskLevel || 'medium'
-  
+  const isCurrentDeviceTrusted = state.deviceValidation?.isTrusted || false;
+  const deviceRiskLevel = state.deviceValidation?.riskLevel || "medium";
+
   const deviceStats = {
     totalDevices: state.trustedDevices.length,
-    trustedDevices: state.trustedDevices.filter(d => d.isTrusted).length,
-    recentDevices: state.trustedDevices.filter(d => {
-      const daysSinceLastUsed = (Date.now() - d.lastUsedAt.getTime()) / (1000 * 60 * 60 * 24)
-      return daysSinceLastUsed <= 7
-    }).length
-  }
+    trustedDevices: state.trustedDevices.filter((d) => d.isTrusted).length,
+    recentDevices: state.trustedDevices.filter((d) => {
+      const daysSinceLastUsed = (Date.now() - d.lastUsedAt.getTime()) / (1000 * 60 * 60 * 24);
+      return daysSinceLastUsed <= 7;
+    }).length,
+  };
 
   // =====================================================
   // DEVICE CHANGE TRACKING
   // =====================================================
 
   useEffect(() => {
-    if (!trackDeviceChanges || !state.currentDevice) return
+    if (!trackDeviceChanges || !state.currentDevice) return;
 
     const checkDeviceChanges = async () => {
-      const currentDevice = await getCurrentDeviceInfo()
-      
-      if (state.currentDevice && 
-          currentDevice.fingerprint !== state.currentDevice.fingerprint) {
-        
+      const currentDevice = await getCurrentDeviceInfo();
+
+      if (state.currentDevice && currentDevice.fingerprint !== state.currentDevice.fingerprint) {
         if (showNotifications) {
-          toast.warning('Device fingerprint changed. Please re-authenticate.')
+          toast.warning("Device fingerprint changed. Please re-authenticate.");
         }
-        
+
         // Re-validate device
         if (userId) {
-          await validateCurrentDevice()
+          await validateCurrentDevice();
         }
       }
-    }
+    };
 
     // Check device changes periodically
-    const interval = setInterval(checkDeviceChanges, 5 * 60 * 1000) // Every 5 minutes
+    const interval = setInterval(checkDeviceChanges, 5 * 60 * 1000); // Every 5 minutes
 
-    return () => clearInterval(interval)
-  }, [trackDeviceChanges, state.currentDevice, showNotifications, userId, validateCurrentDevice])
+    return () => clearInterval(interval);
+  }, [trackDeviceChanges, state.currentDevice, showNotifications, userId, validateCurrentDevice]);
 
   // =====================================================
   // RETURN HOOK INTERFACE
@@ -458,7 +472,7 @@ export function useDeviceManagement(
     trustedDevices: state.trustedDevices,
     deviceValidation: state.deviceValidation,
     error: state.error,
-    
+
     // Actions
     registerDevice,
     trustDevice,
@@ -467,12 +481,12 @@ export function useDeviceManagement(
     refreshDevices,
     validateCurrentDevice,
     reportSuspiciousDevice,
-    
+
     // Computed
     isCurrentDeviceTrusted,
     deviceRiskLevel,
-    deviceStats
-  }
+    deviceStats,
+  };
 }
 
 // =====================================================
@@ -483,51 +497,51 @@ export function useDeviceManagement(
  * Get current device information
  */
 async function getCurrentDeviceInfo(): Promise<DeviceInfo> {
-  const fingerprint = await generateDeviceFingerprint()
-  const ipAddress = await getClientIP()
-  const location = await getLocation()
-  
+  const fingerprint = await generateDeviceFingerprint();
+  const ipAddress = await getClientIP();
+  const location = await getLocation();
+
   return {
     fingerprint,
     userAgent: navigator.userAgent,
     ipAddress,
-    location
-  }
+    location,
+  };
 }
 
 /**
  * Generate device fingerprint
  */
 async function generateDeviceFingerprint(): Promise<string> {
-  const canvas = document.createElement('canvas')
-  const ctx = canvas.getContext('2d')
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
   if (ctx) {
-    ctx.textBaseline = 'top'
-    ctx.font = '14px Arial'
-    ctx.fillText('Device fingerprint', 2, 2)
+    ctx.textBaseline = "top";
+    ctx.font = "14px Arial";
+    ctx.fillText("Device fingerprint", 2, 2);
   }
-  
+
   const fingerprint = [
     navigator.userAgent,
     navigator.language,
-    navigator.languages?.join(',') || '',
-    screen.width + 'x' + screen.height,
+    navigator.languages?.join(",") || "",
+    screen.width + "x" + screen.height,
     screen.colorDepth,
     new Date().getTimezoneOffset(),
     navigator.hardwareConcurrency || 0,
     navigator.deviceMemory || 0,
-    canvas.toDataURL()
-  ].join('|')
-  
+    canvas.toDataURL(),
+  ].join("|");
+
   // Simple hash function
-  let hash = 0
+  let hash = 0;
   for (let i = 0; i < fingerprint.length; i++) {
-    const char = fingerprint.charCodeAt(i)
-    hash = ((hash << 5) - hash) + char
-    hash = hash & hash // Convert to 32-bit integer
+    const char = fingerprint.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash = hash & hash; // Convert to 32-bit integer
   }
-  
-  return Math.abs(hash).toString(36)
+
+  return Math.abs(hash).toString(36);
 }
 
 /**
@@ -535,11 +549,11 @@ async function generateDeviceFingerprint(): Promise<string> {
  */
 async function getClientIP(): Promise<string> {
   try {
-    const response = await fetch('https://api.ipify.org?format=json')
-    const data = await response.json()
-    return data.ip || '127.0.0.1'
+    const response = await fetch("https://api.ipify.org?format=json");
+    const data = await response.json();
+    return data.ip || "127.0.0.1";
   } catch {
-    return '127.0.0.1'
+    return "127.0.0.1";
   }
 }
 
@@ -548,11 +562,11 @@ async function getClientIP(): Promise<string> {
  */
 async function getLocation(): Promise<string | undefined> {
   try {
-    const response = await fetch('https://ipapi.co/json/')
-    const data = await response.json()
-    return `${data.city}, ${data.country_name}`
+    const response = await fetch("https://ipapi.co/json/");
+    const data = await response.json();
+    return `${data.city}, ${data.country_name}`;
   } catch {
-    return undefined
+    return undefined;
   }
 }
 
@@ -560,28 +574,28 @@ async function getLocation(): Promise<string | undefined> {
  * Generate a friendly device name
  */
 function generateDeviceName(): string {
-  const userAgent = navigator.userAgent
-  
+  const userAgent = navigator.userAgent;
+
   // Detect browser
-  let browser = 'Unknown Browser'
-  if (userAgent.includes('Chrome')) browser = 'Chrome'
-  else if (userAgent.includes('Firefox')) browser = 'Firefox'
-  else if (userAgent.includes('Safari')) browser = 'Safari'
-  else if (userAgent.includes('Edge')) browser = 'Edge'
-  
+  let browser = "Unknown Browser";
+  if (userAgent.includes("Chrome")) browser = "Chrome";
+  else if (userAgent.includes("Firefox")) browser = "Firefox";
+  else if (userAgent.includes("Safari")) browser = "Safari";
+  else if (userAgent.includes("Edge")) browser = "Edge";
+
   // Detect OS
-  let os = 'Unknown OS'
-  if (userAgent.includes('Windows')) os = 'Windows'
-  else if (userAgent.includes('Mac')) os = 'macOS'
-  else if (userAgent.includes('Linux')) os = 'Linux'
-  else if (userAgent.includes('Android')) os = 'Android'
-  else if (userAgent.includes('iOS')) os = 'iOS'
-  
-  return `${browser} on ${os}`
+  let os = "Unknown OS";
+  if (userAgent.includes("Windows")) os = "Windows";
+  else if (userAgent.includes("Mac")) os = "macOS";
+  else if (userAgent.includes("Linux")) os = "Linux";
+  else if (userAgent.includes("Android")) os = "Android";
+  else if (userAgent.includes("iOS")) os = "iOS";
+
+  return `${browser} on ${os}`;
 }
 
 // =====================================================
 // EXPORT DEFAULT
 // =====================================================
 
-export default useDeviceManagement
+export default useDeviceManagement;

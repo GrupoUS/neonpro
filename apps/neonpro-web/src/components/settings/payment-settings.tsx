@@ -1,24 +1,31 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import type { useState, useEffect } from "react";
+import type { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { 
-  CreditCard, 
-  Banknote, 
-  Smartphone,
-  Save,
-  Loader2,
-  CheckCircle2
-} from "lucide-react";
-import { toast } from "sonner";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
+import type { Button } from "@/components/ui/button";
+import type { Switch } from "@/components/ui/switch";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { CreditCard, Banknote, Smartphone, Save, Loader2, CheckCircle2 } from "lucide-react";
+import type { toast } from "sonner";
 
 const paymentSettingsSchema = z.object({
   // PIX Configuration
@@ -30,7 +37,7 @@ const paymentSettingsSchema = z.object({
     automaticConfirmation: z.boolean(),
     expirationMinutes: z.number().min(5).max(1440),
   }),
-  
+
   // Credit/Debit Cards
   cards: z.object({
     enabled: z.boolean(),
@@ -43,7 +50,7 @@ const paymentSettingsSchema = z.object({
       interestRate: z.number().min(0).max(10),
     }),
   }),
-  
+
   // Bank Transfer
   bankTransfer: z.object({
     enabled: z.boolean(),
@@ -54,7 +61,7 @@ const paymentSettingsSchema = z.object({
     accountHolder: z.string().optional(),
     cpfCnpj: z.string().optional(),
   }),
-  
+
   // Boleto
   boleto: z.object({
     enabled: z.boolean(),
@@ -63,13 +70,13 @@ const paymentSettingsSchema = z.object({
     fine: z.number().min(0).max(10),
     interest: z.number().min(0).max(1),
   }),
-  
+
   // Cash
   cash: z.object({
     enabled: z.boolean(),
     discountPercent: z.number().min(0).max(50),
   }),
-  
+
   // Payment Terms
   paymentTerms: z.object({
     requireUpfrontPayment: z.boolean(),
@@ -86,7 +93,7 @@ export default function PaymentSettings() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  
+
   const form = useForm<PaymentSettingsFormData>({
     resolver: zodResolver(paymentSettingsSchema),
     defaultValues: {
@@ -182,8 +189,8 @@ export default function PaymentSettings() {
       <Alert>
         <CreditCard className="h-4 w-4" />
         <AlertDescription>
-          <strong>Métodos de Pagamento:</strong> Configure as formas de pagamento aceitas 
-          pela clínica, incluindo PIX, cartões, transferência e dinheiro.
+          <strong>Métodos de Pagamento:</strong> Configure as formas de pagamento aceitas pela
+          clínica, incluindo PIX, cartões, transferência e dinheiro.
         </AlertDescription>
       </Alert>
 
@@ -196,9 +203,7 @@ export default function PaymentSettings() {
                 <Smartphone className="h-5 w-5" />
                 PIX
               </CardTitle>
-              <CardDescription>
-                Sistema de pagamentos instantâneos do Banco Central
-              </CardDescription>
+              <CardDescription>Sistema de pagamentos instantâneos do Banco Central</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField
@@ -208,15 +213,10 @@ export default function PaymentSettings() {
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
                       <FormLabel className="text-base">Aceitar PIX</FormLabel>
-                      <FormDescription>
-                        Habilitar pagamentos via PIX
-                      </FormDescription>
+                      <FormDescription>Habilitar pagamentos via PIX</FormDescription>
                     </div>
                     <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -253,9 +253,7 @@ export default function PaymentSettings() {
                             onChange={(e) => field.onChange(parseInt(e.target.value) || 30)}
                           />
                         </FormControl>
-                        <FormDescription>
-                          Tempo para expiração do QR Code
-                        </FormDescription>
+                        <FormDescription>Tempo para expiração do QR Code</FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -281,15 +279,10 @@ export default function PaymentSettings() {
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
                       <FormLabel className="text-base">Aceitar Cartões</FormLabel>
-                      <FormDescription>
-                        Habilitar pagamentos com cartão
-                      </FormDescription>
+                      <FormDescription>Habilitar pagamentos com cartão</FormDescription>
                     </div>
                     <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -305,15 +298,10 @@ export default function PaymentSettings() {
                         <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                           <div className="space-y-0.5">
                             <FormLabel>Cartão de Crédito</FormLabel>
-                            <FormDescription>
-                              Aceitar cartões de crédito
-                            </FormDescription>
+                            <FormDescription>Aceitar cartões de crédito</FormDescription>
                           </div>
                           <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -326,15 +314,10 @@ export default function PaymentSettings() {
                         <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                           <div className="space-y-0.5">
                             <FormLabel>Cartão de Débito</FormLabel>
-                            <FormDescription>
-                              Aceitar cartões de débito
-                            </FormDescription>
+                            <FormDescription>Aceitar cartões de débito</FormDescription>
                           </div>
                           <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -349,15 +332,10 @@ export default function PaymentSettings() {
                         <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 mb-4">
                           <div className="space-y-0.5">
                             <FormLabel className="text-base">Parcelamento</FormLabel>
-                            <FormDescription>
-                              Permitir pagamento parcelado
-                            </FormDescription>
+                            <FormDescription>Permitir pagamento parcelado</FormDescription>
                           </div>
                           <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -417,7 +395,9 @@ export default function PaymentSettings() {
                                   min="0"
                                   max="10"
                                   {...field}
-                                  onChange={(e) => field.onChange(parseFloat(e.target.value) || 2.99)}
+                                  onChange={(e) =>
+                                    field.onChange(parseFloat(e.target.value) || 2.99)
+                                  }
                                 />
                               </FormControl>
                               <FormMessage />
@@ -448,15 +428,10 @@ export default function PaymentSettings() {
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
                       <FormLabel className="text-base">Aceitar Transferência</FormLabel>
-                      <FormDescription>
-                        TED, DOC ou transferência via app
-                      </FormDescription>
+                      <FormDescription>TED, DOC ou transferência via app</FormDescription>
                     </div>
                     <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -485,7 +460,7 @@ export default function PaymentSettings() {
                       <FormItem>
                         <FormLabel>Tipo de Conta</FormLabel>
                         <FormControl>
-                          <select 
+                          <select
                             className="w-full p-2 border rounded-md"
                             value={field.value}
                             onChange={field.onChange}
@@ -544,15 +519,10 @@ export default function PaymentSettings() {
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
                       <FormLabel className="text-base">Aceitar Dinheiro</FormLabel>
-                      <FormDescription>
-                        Pagamento em espécie
-                      </FormDescription>
+                      <FormDescription>Pagamento em espécie</FormDescription>
                     </div>
                     <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -575,9 +545,7 @@ export default function PaymentSettings() {
                           onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                         />
                       </FormControl>
-                      <FormDescription>
-                        Desconto para pagamento em dinheiro
-                      </FormDescription>
+                      <FormDescription>Desconto para pagamento em dinheiro</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}

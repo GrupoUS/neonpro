@@ -1,22 +1,42 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import type { useState, useEffect } from "react";
+import type { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Progress } from "@/components/ui/progress";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { 
-  Download, 
-  Upload, 
-  Database, 
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Switch } from "@/components/ui/switch";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Progress } from "@/components/ui/progress";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type {
+  Download,
+  Upload,
+  Database,
   Shield,
   Calendar,
   FileText,
@@ -25,9 +45,9 @@ import {
   Loader2,
   CheckCircle2,
   AlertTriangle,
-  HardDrive
+  HardDrive,
 } from "lucide-react";
-import { toast } from "sonner";
+import type { toast } from "sonner";
 
 const backupExportSchema = z.object({
   // Automatic Backup Settings
@@ -40,7 +60,7 @@ const backupExportSchema = z.object({
     includeDatabase: z.boolean(),
     encryption: z.boolean(),
   }),
-  
+
   // Export Settings
   exportSettings: z.object({
     defaultFormat: z.enum(["json", "csv", "xml", "pdf"]),
@@ -50,7 +70,7 @@ const backupExportSchema = z.object({
     customStartDate: z.string().optional(),
     customEndDate: z.string().optional(),
   }),
-  
+
   // LGPD Compliance
   lgpdCompliance: z.object({
     automaticAnonymization: z.boolean(),
@@ -59,7 +79,7 @@ const backupExportSchema = z.object({
     rightToErasure: z.boolean(),
     consentWithdrawalDeletion: z.boolean(),
   }),
-  
+
   // Storage Settings
   storage: z.object({
     localPath: z.string().optional(),
@@ -89,7 +109,7 @@ export default function BackupExport() {
   const [backupHistory, setBackupHistory] = useState<BackupHistory[]>([]);
   const [exportProgress, setExportProgress] = useState(0);
   const [isExporting, setIsExporting] = useState(false);
-  
+
   const form = useForm<BackupExportFormData>({
     resolver: zodResolver(backupExportSchema),
     defaultValues: {
@@ -182,10 +202,10 @@ export default function BackupExport() {
     try {
       setIsExporting(true);
       setExportProgress(0);
-      
+
       // Simulate backup progress
       const interval = setInterval(() => {
-        setExportProgress(prev => {
+        setExportProgress((prev) => {
           if (prev >= 100) {
             clearInterval(interval);
             setIsExporting(false);
@@ -195,7 +215,6 @@ export default function BackupExport() {
           return prev + 10;
         });
       }, 500);
-      
     } catch (error) {
       console.error("Erro no backup:", error);
       toast.error("Erro ao realizar backup");
@@ -207,10 +226,10 @@ export default function BackupExport() {
     try {
       setIsExporting(true);
       setExportProgress(0);
-      
+
       // Simulate export progress
       const interval = setInterval(() => {
-        setExportProgress(prev => {
+        setExportProgress((prev) => {
           if (prev >= 100) {
             clearInterval(interval);
             setIsExporting(false);
@@ -220,7 +239,6 @@ export default function BackupExport() {
           return prev + 15;
         });
       }, 300);
-      
     } catch (error) {
       console.error("Erro na exportação:", error);
       toast.error("Erro ao exportar dados");
@@ -255,8 +273,8 @@ export default function BackupExport() {
       <Alert>
         <Shield className="h-4 w-4" />
         <AlertDescription>
-          <strong>Conformidade LGPD:</strong> Este módulo garante a conformidade com os direitos 
-          dos titulares de dados, incluindo portabilidade, anonimização e direito ao esquecimento.
+          <strong>Conformidade LGPD:</strong> Este módulo garante a conformidade com os direitos dos
+          titulares de dados, incluindo portabilidade, anonimização e direito ao esquecimento.
         </AlertDescription>
       </Alert>
 
@@ -281,15 +299,10 @@ export default function BackupExport() {
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
                       <FormLabel className="text-base">Habilitar Backup Automático</FormLabel>
-                      <FormDescription>
-                        Realizar backups automáticos dos dados
-                      </FormDescription>
+                      <FormDescription>Realizar backups automáticos dos dados</FormDescription>
                     </div>
                     <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -369,10 +382,7 @@ export default function BackupExport() {
                             <FormDescription>Backup completo do banco</FormDescription>
                           </div>
                           <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -388,10 +398,7 @@ export default function BackupExport() {
                             <FormDescription>Backup de documentos e imagens</FormDescription>
                           </div>
                           <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -407,10 +414,7 @@ export default function BackupExport() {
                             <FormDescription>Criptografar backups</FormDescription>
                           </div>
                           <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -428,9 +432,7 @@ export default function BackupExport() {
                 <Download className="h-5 w-5" />
                 Backup Manual e Exportação
               </CardTitle>
-              <CardDescription>
-                Realizar backups sob demanda e exportações LGPD
-              </CardDescription>
+              <CardDescription>Realizar backups sob demanda e exportações LGPD</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex flex-col sm:flex-row gap-4">
@@ -525,10 +527,7 @@ export default function BackupExport() {
                       </FormDescription>
                     </div>
                     <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -549,10 +548,7 @@ export default function BackupExport() {
                       </FormDescription>
                     </div>
                     <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -565,15 +561,10 @@ export default function BackupExport() {
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
                       <FormLabel className="text-base">Anonimização Automática</FormLabel>
-                      <FormDescription>
-                        Anonimizar dados após período de retenção
-                      </FormDescription>
+                      <FormDescription>Anonimizar dados após período de retenção</FormDescription>
                     </div>
                     <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -595,9 +586,7 @@ export default function BackupExport() {
                           onChange={(e) => field.onChange(parseInt(e.target.value) || 365)}
                         />
                       </FormControl>
-                      <FormDescription>
-                        Dias após inatividade para anonimizar dados
-                      </FormDescription>
+                      <FormDescription>Dias após inatividade para anonimizar dados</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -613,9 +602,7 @@ export default function BackupExport() {
                 <Clock className="h-5 w-5" />
                 Histórico de Backups
               </CardTitle>
-              <CardDescription>
-                Últimos backups realizados
-              </CardDescription>
+              <CardDescription>Últimos backups realizados</CardDescription>
             </CardHeader>
             <CardContent>
               {backupHistory.length === 0 ? (
@@ -624,19 +611,25 @@ export default function BackupExport() {
                   <h3 className="text-lg font-medium text-gray-900 mb-2">
                     Nenhum backup encontrado
                   </h3>
-                  <p className="text-gray-600 mb-4">
-                    Realize o primeiro backup da clínica
-                  </p>
+                  <p className="text-gray-600 mb-4">Realize o primeiro backup da clínica</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {backupHistory.map((backup) => (
-                    <div key={backup.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div
+                      key={backup.id}
+                      className="flex items-center justify-between p-4 border rounded-lg"
+                    >
                       <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-full ${
-                          backup.status === "success" ? "bg-green-100" :
-                          backup.status === "failed" ? "bg-red-100" : "bg-yellow-100"
-                        }`}>
+                        <div
+                          className={`p-2 rounded-full ${
+                            backup.status === "success"
+                              ? "bg-green-100"
+                              : backup.status === "failed"
+                                ? "bg-red-100"
+                                : "bg-yellow-100"
+                          }`}
+                        >
                           {backup.status === "success" ? (
                             <CheckCircle2 className="h-4 w-4 text-green-600" />
                           ) : backup.status === "failed" ? (
@@ -650,19 +643,26 @@ export default function BackupExport() {
                             Backup {backup.type === "automatic" ? "Automático" : "Manual"}
                           </div>
                           <div className="text-sm text-gray-600">
-                            {backup.date.toLocaleString("pt-BR")} • {formatBytes(backup.size)} • {formatDuration(backup.duration)}
+                            {backup.date.toLocaleString("pt-BR")} • {formatBytes(backup.size)} •{" "}
+                            {formatDuration(backup.duration)}
                           </div>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Badge 
+                        <Badge
                           className={
-                            backup.status === "success" ? "bg-green-100 text-green-800" :
-                            backup.status === "failed" ? "bg-red-100 text-red-800" : "bg-yellow-100 text-yellow-800"
+                            backup.status === "success"
+                              ? "bg-green-100 text-green-800"
+                              : backup.status === "failed"
+                                ? "bg-red-100 text-red-800"
+                                : "bg-yellow-100 text-yellow-800"
                           }
                         >
-                          {backup.status === "success" ? "Sucesso" :
-                           backup.status === "failed" ? "Falhou" : "Em andamento"}
+                          {backup.status === "success"
+                            ? "Sucesso"
+                            : backup.status === "failed"
+                              ? "Falhou"
+                              : "Em andamento"}
                         </Badge>
                         <Button variant="ghost" size="sm">
                           <Download className="h-4 w-4" />

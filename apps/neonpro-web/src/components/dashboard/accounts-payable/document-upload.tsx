@@ -1,21 +1,21 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { documentsService } from "@/lib/services/documents";
-import { Download, FileText, Trash2, Upload } from "lucide-react";
-import { useRef, useState } from "react";
-import { toast } from "sonner";
+import type { documentsService } from "@/lib/services/documents";
+import type { Download, FileText, Trash2, Upload } from "lucide-react";
+import type { useRef, useState } from "react";
+import type { toast } from "sonner";
 
 export interface DocumentUploadProps {
   entityType: "vendor" | "payable";
@@ -165,10 +165,7 @@ export default function DocumentUpload({
               <Label>Arquivos Selecionados:</Label>
               <div className="space-y-2">
                 {files.map((file, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-2 border rounded"
-                  >
+                  <div key={index} className="flex items-center justify-between p-2 border rounded">
                     <div className="flex items-center gap-2">
                       <FileText className="h-4 w-4" />
                       <span className="text-sm">{file.name}</span>
@@ -176,11 +173,7 @@ export default function DocumentUpload({
                         {formatFileSize(file.size)}
                       </Badge>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeFile(index)}
-                    >
+                    <Button variant="ghost" size="sm" onClick={() => removeFile(index)}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
@@ -211,26 +204,18 @@ export default function DocumentUpload({
           <CardContent>
             <div className="space-y-2">
               {existingDocuments.map((doc) => (
-                <div
-                  key={doc.id}
-                  className="flex items-center justify-between p-3 border rounded"
-                >
+                <div key={doc.id} className="flex items-center justify-between p-3 border rounded">
                   <div className="flex items-center gap-3">
                     <FileText className="h-5 w-5 text-muted-foreground" />
                     <div>
                       <p className="font-medium">{doc.file_name}</p>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Badge variant="outline">
-                          {documentTypes.find(
-                            (t) => t.value === doc.document_type
-                          )?.label || doc.document_type}
+                          {documentTypes.find((t) => t.value === doc.document_type)?.label ||
+                            doc.document_type}
                         </Badge>
-                        {doc.file_size && (
-                          <span>{formatFileSize(doc.file_size)}</span>
-                        )}
-                        <span>
-                          {new Date(doc.created_at).toLocaleDateString("pt-BR")}
-                        </span>
+                        {doc.file_size && <span>{formatFileSize(doc.file_size)}</span>}
+                        <span>{new Date(doc.created_at).toLocaleDateString("pt-BR")}</span>
                       </div>
                     </div>
                   </div>
@@ -243,11 +228,7 @@ export default function DocumentUpload({
                     >
                       <Download className="h-4 w-4" />
                     </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDelete(doc.id)}
-                    >
+                    <Button variant="ghost" size="sm" onClick={() => handleDelete(doc.id)}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>

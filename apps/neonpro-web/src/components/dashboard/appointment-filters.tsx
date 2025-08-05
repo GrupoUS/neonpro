@@ -1,35 +1,39 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Calendar } from '@/components/ui/calendar'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
-import { 
-  Filter, 
-  X, 
-  CalendarDays, 
-  Users, 
-  Clock,
-  Search,
-  RotateCcw
-} from 'lucide-react'
-import { format } from 'date-fns'
-import { pt } from 'date-fns/locale'
-import { cn } from '@/lib/utils'
-import type { AppointmentFilters, Appointment } from '@/hooks/use-appointments-manager'
+import type { useState } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type { Calendar } from "@/components/ui/calendar";
+import type { Badge } from "@/components/ui/badge";
+import type { Separator } from "@/components/ui/separator";
+import type { Filter, X, CalendarDays, Users, Clock, Search, RotateCcw } from "lucide-react";
+import type { format } from "date-fns";
+import type { pt } from "date-fns/locale";
+import type { cn } from "@/lib/utils";
+import type { AppointmentFilters, Appointment } from "@/hooks/use-appointments-manager";
 
 interface AppointmentFiltersProps {
-  filters: AppointmentFilters
-  onFiltersChange: (filters: Partial<AppointmentFilters>) => void
-  onClearFilters: () => void
-  professionals?: Array<{ id: string; name: string }>
-  className?: string
+  filters: AppointmentFilters;
+  onFiltersChange: (filters: Partial<AppointmentFilters>) => void;
+  onClearFilters: () => void;
+  professionals?: Array<{ id: string; name: string }>;
+  className?: string;
 }
 
 export function AppointmentFilters({
@@ -37,46 +41,46 @@ export function AppointmentFilters({
   onFiltersChange,
   onClearFilters,
   professionals = [],
-  className
+  className,
 }: AppointmentFiltersProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const [startDateOpen, setStartDateOpen] = useState(false)
-  const [endDateOpen, setEndDateOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
+  const [startDateOpen, setStartDateOpen] = useState(false);
+  const [endDateOpen, setEndDateOpen] = useState(false);
 
   // Count active filters
   const activeFiltersCount = [
     filters.professionalId,
     filters.status,
     filters.patientName,
-    filters.dateRange === 'custom' && (filters.startDate || filters.endDate)
-  ].filter(Boolean).length
+    filters.dateRange === "custom" && (filters.startDate || filters.endDate),
+  ].filter(Boolean).length;
 
-  const statusOptions: { value: Appointment['status']; label: string }[] = [
-    { value: 'pending', label: 'Pendente' },
-    { value: 'confirmed', label: 'Confirmado' },
-    { value: 'cancelled', label: 'Cancelado' },
-    { value: 'completed', label: 'Concluído' },
-    { value: 'no_show', label: 'Não Compareceu' },
-    { value: 'rescheduled', label: 'Reagendado' }
-  ]
+  const statusOptions: { value: Appointment["status"]; label: string }[] = [
+    { value: "pending", label: "Pendente" },
+    { value: "confirmed", label: "Confirmado" },
+    { value: "cancelled", label: "Cancelado" },
+    { value: "completed", label: "Concluído" },
+    { value: "no_show", label: "Não Compareceu" },
+    { value: "rescheduled", label: "Reagendado" },
+  ];
 
   const dateRangeOptions = [
-    { value: 'today', label: 'Hoje' },
-    { value: 'week', label: 'Esta Semana' },
-    { value: 'month', label: 'Este Mês' },
-    { value: 'custom', label: 'Período Personalizado' }
-  ]
+    { value: "today", label: "Hoje" },
+    { value: "week", label: "Esta Semana" },
+    { value: "month", label: "Este Mês" },
+    { value: "custom", label: "Período Personalizado" },
+  ];
 
   return (
-    <div className={cn('', className)}>
+    <div className={cn("", className)}>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
           <Button variant="outline" className="relative">
             <Filter className="h-4 w-4 mr-2" />
             Filtros
             {activeFiltersCount > 0 && (
-              <Badge 
-                variant="secondary" 
+              <Badge
+                variant="secondary"
                 className="ml-2 h-5 w-5 p-0 flex items-center justify-center text-xs"
               >
                 {activeFiltersCount}
@@ -84,22 +88,20 @@ export function AppointmentFilters({
             )}
           </Button>
         </PopoverTrigger>
-        
+
         <PopoverContent className="w-96 p-0" align="start">
           <Card className="border-0 shadow-none">
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="text-lg">Filtros</CardTitle>
-                  <CardDescription>
-                    Refine sua busca por agendamentos
-                  </CardDescription>
+                  <CardDescription>Refine sua busca por agendamentos</CardDescription>
                 </div>
-                
+
                 {activeFiltersCount > 0 && (
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={onClearFilters}
                     className="text-muted-foreground hover:text-foreground"
                   >
@@ -109,7 +111,7 @@ export function AppointmentFilters({
                 )}
               </div>
             </CardHeader>
-            
+
             <CardContent className="space-y-6">
               {/* Date Range Filter */}
               <div className="space-y-3">
@@ -117,16 +119,16 @@ export function AppointmentFilters({
                   <CalendarDays className="h-4 w-4" />
                   Período
                 </Label>
-                
-                <Select 
-                  value={filters.dateRange} 
+
+                <Select
+                  value={filters.dateRange}
                   onValueChange={(value: any) => onFiltersChange({ dateRange: value })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione o período" />
                   </SelectTrigger>
                   <SelectContent>
-                    {dateRangeOptions.map(option => (
+                    {dateRangeOptions.map((option) => (
                       <SelectItem key={option.value} value={option.value}>
                         {option.label}
                       </SelectItem>
@@ -135,7 +137,7 @@ export function AppointmentFilters({
                 </Select>
 
                 {/* Custom Date Range */}
-                {filters.dateRange === 'custom' && (
+                {filters.dateRange === "custom" && (
                   <div className="grid grid-cols-2 gap-2">
                     <div className="space-y-2">
                       <Label className="text-sm">Data Inicial</Label>
@@ -144,16 +146,14 @@ export function AppointmentFilters({
                           <Button
                             variant="outline"
                             className={cn(
-                              'w-full justify-start text-left font-normal',
-                              !filters.startDate && 'text-muted-foreground'
+                              "w-full justify-start text-left font-normal",
+                              !filters.startDate && "text-muted-foreground",
                             )}
                           >
                             <CalendarDays className="mr-2 h-4 w-4" />
-                            {filters.startDate ? (
-                              format(filters.startDate, 'dd/MM/yyyy', { locale: pt })
-                            ) : (
-                              'Selecionar'
-                            )}
+                            {filters.startDate
+                              ? format(filters.startDate, "dd/MM/yyyy", { locale: pt })
+                              : "Selecionar"}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
@@ -161,8 +161,8 @@ export function AppointmentFilters({
                             mode="single"
                             selected={filters.startDate}
                             onSelect={(date) => {
-                              onFiltersChange({ startDate: date })
-                              setStartDateOpen(false)
+                              onFiltersChange({ startDate: date });
+                              setStartDateOpen(false);
                             }}
                             locale={pt}
                           />
@@ -177,16 +177,14 @@ export function AppointmentFilters({
                           <Button
                             variant="outline"
                             className={cn(
-                              'w-full justify-start text-left font-normal',
-                              !filters.endDate && 'text-muted-foreground'
+                              "w-full justify-start text-left font-normal",
+                              !filters.endDate && "text-muted-foreground",
                             )}
                           >
                             <CalendarDays className="mr-2 h-4 w-4" />
-                            {filters.endDate ? (
-                              format(filters.endDate, 'dd/MM/yyyy', { locale: pt })
-                            ) : (
-                              'Selecionar'
-                            )}
+                            {filters.endDate
+                              ? format(filters.endDate, "dd/MM/yyyy", { locale: pt })
+                              : "Selecionar"}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
@@ -194,10 +192,10 @@ export function AppointmentFilters({
                             mode="single"
                             selected={filters.endDate}
                             onSelect={(date) => {
-                              onFiltersChange({ endDate: date })
-                              setEndDateOpen(false)
+                              onFiltersChange({ endDate: date });
+                              setEndDateOpen(false);
                             }}
-                            disabled={(date) => 
+                            disabled={(date) =>
                               filters.startDate ? date < filters.startDate : false
                             }
                             locale={pt}
@@ -218,10 +216,10 @@ export function AppointmentFilters({
                     <Users className="h-4 w-4" />
                     Profissional
                   </Label>
-                  
-                  <Select 
-                    value={filters.professionalId || ''} 
-                    onValueChange={(value) => 
+
+                  <Select
+                    value={filters.professionalId || ""}
+                    onValueChange={(value) =>
                       onFiltersChange({ professionalId: value || undefined })
                     }
                   >
@@ -230,7 +228,7 @@ export function AppointmentFilters({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="">Todos os profissionais</SelectItem>
-                      {professionals.map(prof => (
+                      {professionals.map((prof) => (
                         <SelectItem key={prof.id} value={prof.id}>
                           {prof.name}
                         </SelectItem>
@@ -246,19 +244,17 @@ export function AppointmentFilters({
                   <Clock className="h-4 w-4" />
                   Status
                 </Label>
-                
-                <Select 
-                  value={filters.status || ''} 
-                  onValueChange={(value: any) => 
-                    onFiltersChange({ status: value || undefined })
-                  }
+
+                <Select
+                  value={filters.status || ""}
+                  onValueChange={(value: any) => onFiltersChange({ status: value || undefined })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Todos os status" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">Todos os status</SelectItem>
-                    {statusOptions.map(option => (
+                    {statusOptions.map((option) => (
                       <SelectItem key={option.value} value={option.value}>
                         {option.label}
                       </SelectItem>
@@ -275,12 +271,12 @@ export function AppointmentFilters({
                   <Search className="h-4 w-4" />
                   Buscar Paciente
                 </Label>
-                
+
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder="Nome do paciente..."
-                    value={filters.patientName || ''}
+                    value={filters.patientName || ""}
                     onChange={(e) => onFiltersChange({ patientName: e.target.value || undefined })}
                     className="pl-10"
                   />
@@ -306,45 +302,49 @@ export function AppointmentFilters({
         <div className="flex flex-wrap gap-2 mt-2">
           {filters.professionalId && (
             <Badge variant="secondary" className="gap-1">
-              Profissional: {professionals.find(p => p.id === filters.professionalId)?.name || 'Selecionado'}
-              <X 
-                className="h-3 w-3 cursor-pointer" 
+              Profissional:{" "}
+              {professionals.find((p) => p.id === filters.professionalId)?.name || "Selecionado"}
+              <X
+                className="h-3 w-3 cursor-pointer"
                 onClick={() => onFiltersChange({ professionalId: undefined })}
               />
             </Badge>
           )}
-          
+
           {filters.status && (
             <Badge variant="secondary" className="gap-1">
-              Status: {statusOptions.find(s => s.value === filters.status)?.label}
-              <X 
-                className="h-3 w-3 cursor-pointer" 
+              Status: {statusOptions.find((s) => s.value === filters.status)?.label}
+              <X
+                className="h-3 w-3 cursor-pointer"
                 onClick={() => onFiltersChange({ status: undefined })}
               />
             </Badge>
           )}
-          
+
           {filters.patientName && (
             <Badge variant="secondary" className="gap-1">
               Paciente: {filters.patientName}
-              <X 
-                className="h-3 w-3 cursor-pointer" 
+              <X
+                className="h-3 w-3 cursor-pointer"
                 onClick={() => onFiltersChange({ patientName: undefined })}
               />
             </Badge>
           )}
-          
-          {filters.dateRange === 'custom' && (filters.startDate || filters.endDate) && (
+
+          {filters.dateRange === "custom" && (filters.startDate || filters.endDate) && (
             <Badge variant="secondary" className="gap-1">
-              Período: {filters.startDate && format(filters.startDate, 'dd/MM', { locale: pt })} - {filters.endDate && format(filters.endDate, 'dd/MM', { locale: pt })}
-              <X 
-                className="h-3 w-3 cursor-pointer" 
-                onClick={() => onFiltersChange({ startDate: undefined, endDate: undefined, dateRange: 'week' })}
+              Período: {filters.startDate && format(filters.startDate, "dd/MM", { locale: pt })} -{" "}
+              {filters.endDate && format(filters.endDate, "dd/MM", { locale: pt })}
+              <X
+                className="h-3 w-3 cursor-pointer"
+                onClick={() =>
+                  onFiltersChange({ startDate: undefined, endDate: undefined, dateRange: "week" })
+                }
               />
             </Badge>
           )}
         </div>
       )}
     </div>
-  )
+  );
 }

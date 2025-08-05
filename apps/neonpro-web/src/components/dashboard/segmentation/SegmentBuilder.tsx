@@ -2,13 +2,7 @@
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -33,7 +27,7 @@ const CreateSegmentSchema = z.object({
       operator: z.string(),
       value: z.string(),
       logicalOperator: z.enum(["AND", "OR"]).optional(),
-    })
+    }),
   ),
   ai_model_config: z.object({
     model_type: z.string(),
@@ -148,14 +142,8 @@ export default function SegmentBuilder() {
     setCriteria(criteria.filter((c) => c.id !== id));
   };
 
-  const updateCriteria = (
-    id: string,
-    field: keyof SegmentCriteria,
-    value: string
-  ) => {
-    setCriteria(
-      criteria.map((c) => (c.id === id ? { ...c, [field]: value } : c))
-    );
+  const updateCriteria = (id: string, field: keyof SegmentCriteria, value: string) => {
+    setCriteria(criteria.map((c) => (c.id === id ? { ...c, [field]: value } : c)));
   };
 
   const validateSegment = () => {
@@ -295,8 +283,7 @@ export default function SegmentBuilder() {
         <CardHeader>
           <CardTitle>Custom Segment Builder</CardTitle>
           <CardDescription>
-            Create targeted patient segments using drag-and-drop criteria
-            builder
+            Create targeted patient segments using drag-and-drop criteria builder
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -328,9 +315,7 @@ export default function SegmentBuilder() {
       <Card>
         <CardHeader>
           <CardTitle>Segment Criteria</CardTitle>
-          <CardDescription>
-            Define the conditions that determine segment membership
-          </CardDescription>
+          <CardDescription>Define the conditions that determine segment membership</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {criteria.map((criterion, index) => (
@@ -359,9 +344,7 @@ export default function SegmentBuilder() {
                   <Label>Field</Label>
                   <Select
                     value={criterion.field}
-                    onValueChange={(value) =>
-                      updateCriteria(criterion.id, "field", value)
-                    }
+                    onValueChange={(value) => updateCriteria(criterion.id, "field", value)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select field" />
@@ -380,9 +363,7 @@ export default function SegmentBuilder() {
                   <Label>Operator</Label>
                   <Select
                     value={criterion.operator}
-                    onValueChange={(value) =>
-                      updateCriteria(criterion.id, "operator", value)
-                    }
+                    onValueChange={(value) => updateCriteria(criterion.id, "operator", value)}
                     disabled={!criterion.field}
                   >
                     <SelectTrigger>
@@ -390,13 +371,13 @@ export default function SegmentBuilder() {
                     </SelectTrigger>
                     <SelectContent>
                       {criterion.field &&
-                        operatorOptions[
-                          criterion.field as keyof typeof operatorOptions
-                        ]?.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
+                        operatorOptions[criterion.field as keyof typeof operatorOptions]?.map(
+                          (option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ),
+                        )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -405,9 +386,7 @@ export default function SegmentBuilder() {
                   <Label>Value</Label>
                   <Input
                     value={criterion.value}
-                    onChange={(e) =>
-                      updateCriteria(criterion.id, "value", e.target.value)
-                    }
+                    onChange={(e) => updateCriteria(criterion.id, "value", e.target.value)}
                     placeholder="Enter value"
                   />
                 </div>
@@ -451,9 +430,7 @@ export default function SegmentBuilder() {
       <Card>
         <CardHeader>
           <CardTitle>Segment Preview</CardTitle>
-          <CardDescription>
-            Preview segment size and characteristics before saving
-          </CardDescription>
+          <CardDescription>Preview segment size and characteristics before saving</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex gap-2 mb-4">
@@ -468,43 +445,29 @@ export default function SegmentBuilder() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <Card>
                   <CardContent className="p-4">
-                    <div className="text-2xl font-bold">
-                      {preview.estimatedSize}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Estimated Patients
-                    </div>
+                    <div className="text-2xl font-bold">{preview.estimatedSize}</div>
+                    <div className="text-sm text-muted-foreground">Estimated Patients</div>
                   </CardContent>
                 </Card>
 
                 <Card>
                   <CardContent className="p-4">
-                    <div className="text-2xl font-bold">
-                      {preview.characteristics.averageAge}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Average Age
-                    </div>
+                    <div className="text-2xl font-bold">{preview.characteristics.averageAge}</div>
+                    <div className="text-sm text-muted-foreground">Average Age</div>
                   </CardContent>
                 </Card>
 
                 <Card>
                   <CardContent className="p-4">
-                    <div className="text-sm font-medium mb-2">
-                      Gender Distribution
-                    </div>
+                    <div className="text-sm font-medium mb-2">Gender Distribution</div>
                     <div className="space-y-1">
                       <div className="flex justify-between text-sm">
                         <span>Male</span>
-                        <span>
-                          {preview.characteristics.genderDistribution.male}%
-                        </span>
+                        <span>{preview.characteristics.genderDistribution.male}%</span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span>Female</span>
-                        <span>
-                          {preview.characteristics.genderDistribution.female}%
-                        </span>
+                        <span>{preview.characteristics.genderDistribution.female}%</span>
                       </div>
                     </div>
                   </CardContent>
@@ -514,15 +477,10 @@ export default function SegmentBuilder() {
                   <CardContent className="p-4">
                     <div className="text-sm font-medium mb-2">Top Services</div>
                     <div className="space-y-1">
-                      {Object.entries(
-                        preview.characteristics.servicePreferences
-                      )
+                      {Object.entries(preview.characteristics.servicePreferences)
                         .slice(0, 2)
                         .map(([service, percentage]) => (
-                          <div
-                            key={service}
-                            className="flex justify-between text-sm"
-                          >
+                          <div key={service} className="flex justify-between text-sm">
                             <span className="truncate">{service}</span>
                             <span>{percentage}%</span>
                           </div>

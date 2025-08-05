@@ -1,9 +1,9 @@
 // Report Schedules API Route
 // Story 8.2: Custom Report Builder (Drag-Drop Interface)
 
-import { ReportBuilderService } from '@/app/lib/services/report-builder';
-import { CreateReportScheduleRequest } from '@/app/lib/validations/report-builder';
-import { NextRequest, NextResponse } from 'next/server';
+import { ReportBuilderService } from "@/app/lib/services/report-builder";
+import { CreateReportScheduleRequest } from "@/app/lib/validations/report-builder";
+import { NextRequest, NextResponse } from "next/server";
 
 const reportService = new ReportBuilderService();
 
@@ -11,15 +11,15 @@ const reportService = new ReportBuilderService();
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const reportId = searchParams.get('report_id');
+    const reportId = searchParams.get("report_id");
 
     if (!reportId) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Report ID is required'
+          error: "Report ID is required",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -27,16 +27,16 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: result
+      data: result,
     });
   } catch (error) {
-    console.error('Error fetching report schedules:', error);
+    console.error("Error fetching report schedules:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to fetch report schedules'
+        error: error instanceof Error ? error.message : "Failed to fetch report schedules",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -52,27 +52,30 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid request data',
-          details: validationResult.error.errors
+          error: "Invalid request data",
+          details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const schedule = await reportService.createSchedule(validationResult.data);
 
-    return NextResponse.json({
-      success: true,
-      data: schedule
-    }, { status: 201 });
+    return NextResponse.json(
+      {
+        success: true,
+        data: schedule,
+      },
+      { status: 201 },
+    );
   } catch (error) {
-    console.error('Error creating report schedule:', error);
+    console.error("Error creating report schedule:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to create report schedule'
+        error: error instanceof Error ? error.message : "Failed to create report schedule",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

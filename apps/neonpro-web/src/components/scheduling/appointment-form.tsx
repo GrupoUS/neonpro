@@ -1,33 +1,54 @@
 /**
  * Intelligent Appointment Form Component
  * NeonPro Scheduling System
- * 
+ *
  * Smart appointment booking form with conflict detection,
  * auto-suggestions, and real-time validation
  */
 
-'use client';
+"use client";
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar } from "@/components/ui/calendar";
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Separator } from '@/components/ui/separator';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { 
-  CalendarIcon, 
-  Clock, 
-  User, 
-  Briefcase, 
-  AlertTriangle, 
-  CheckCircle, 
+import React, { useState, useEffect, useMemo } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Calendar } from "@/components/ui/calendar";
+import type { Badge } from "@/components/ui/badge";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Separator } from "@/components/ui/separator";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import type {
+  CalendarIcon,
+  Clock,
+  User,
+  Briefcase,
+  AlertTriangle,
+  CheckCircle,
   Loader2,
   Users,
   MapPin,
@@ -36,38 +57,40 @@ import {
   Calendar as CalendarSchedule,
   Plus,
   Search,
-  X
-} from 'lucide-react';
-import { format, addMinutes, isBefore, isAfter, startOfDay, endOfDay } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { cn } from '@/lib/utils';
-import ConflictDetection from './conflict-detection';
+  X,
+} from "lucide-react";
+import type { format, addMinutes, isBefore, isAfter, startOfDay, endOfDay } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import type { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import type { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type { z } from "zod";
+import type { cn } from "@/lib/utils";
+import ConflictDetection from "./conflict-detection";
 
 // Validation Schema
 const appointmentSchema = z.object({
-  patient_id: z.string().min(1, 'Selecione um paciente'),
-  professional_id: z.string().min(1, 'Selecione um profissional'),
-  service_type_id: z.string().min(1, 'Selecione um tipo de serviço'),
+  patient_id: z.string().min(1, "Selecione um paciente"),
+  professional_id: z.string().min(1, "Selecione um profissional"),
+  service_type_id: z.string().min(1, "Selecione um tipo de serviço"),
   date: z.date({
-    required_error: 'Selecione uma data',
+    required_error: "Selecione uma data",
   }),
-  time: z.string().min(1, 'Selecione um horário'),
-  duration_minutes: z.number().min(15, 'Duração mínima de 15 minutos'),
+  time: z.string().min(1, "Selecione um horário"),
+  duration_minutes: z.number().min(15, "Duração mínima de 15 minutos"),
   notes: z.string().optional(),
   internal_notes: z.string().optional(),
   priority: z.number().min(1).max(5).default(1),
   room_id: z.string().optional(),
-  reminder_preferences: z.object({
-    whatsapp: z.boolean().default(true),
-    sms: z.boolean().default(false),
-    email: z.boolean().default(true),
-    hours_before: z.number().default(24),
-  }).optional(),
+  reminder_preferences: z
+    .object({
+      whatsapp: z.boolean().default(true),
+      sms: z.boolean().default(false),
+      email: z.boolean().default(true),
+      hours_before: z.number().default(24),
+    })
+    .optional(),
 });
 
 type AppointmentFormData = z.infer<typeof appointmentSchema>;
@@ -141,29 +164,32 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
   patientId,
   onSuccess,
   onCancel,
-  editingAppointment
+  editingAppointment,
 }) => {
-  const [patientSearch, setPatientSearch] = useState('');
+  const [patientSearch, setPatientSearch] = useState("");
   const [showConflictDetection, setShowConflictDetection] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
-  
+
   const supabase = createClientComponentClient();
   const queryClient = useQueryClient();
 
   const form = useForm<AppointmentFormData>({
     resolver: zodResolver(appointmentSchema),
     defaultValues: {
-      patient_id: patientId || editingAppointment?.patient_id || '',
-      professional_id: selectedProfessional || editingAppointment?.professional_id || '',
-      service_type_id: editingAppointment?.service_type_id || '',
-      date: selectedDate || (editingAppointment ? new Date(editingAppointment.start_time) : new Date()),
-      time: selectedTime || (editingAppointment ? format(new Date(editingAppointment.start_time), 'HH:mm') : ''),
+      patient_id: patientId || editingAppointment?.patient_id || "",
+      professional_id: selectedProfessional || editingAppointment?.professional_id || "",
+      service_type_id: editingAppointment?.service_type_id || "",
+      date:
+        selectedDate || (editingAppointment ? new Date(editingAppointment.start_time) : new Date()),
+      time:
+        selectedTime ||
+        (editingAppointment ? format(new Date(editingAppointment.start_time), "HH:mm") : ""),
       duration_minutes: 30,
-      notes: editingAppointment?.notes || '',
-      internal_notes: editingAppointment?.internal_notes || '',
+      notes: editingAppointment?.notes || "",
+      internal_notes: editingAppointment?.internal_notes || "",
       priority: editingAppointment?.priority || 1,
-      room_id: editingAppointment?.room_id || '',
+      room_id: editingAppointment?.room_id || "",
       reminder_preferences: {
         whatsapp: true,
         sms: false,
@@ -179,7 +205,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
   // Calculate appointment end time
   const appointmentStartTime = useMemo(() => {
     if (!date || !time) return null;
-    const [hours, minutes] = time.split(':').map(Number);
+    const [hours, minutes] = time.split(":").map(Number);
     const startTime = new Date(date);
     startTime.setHours(hours, minutes, 0, 0);
     return startTime;
@@ -192,17 +218,19 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
 
   // Fetch patients with search
   const { data: patients = [], isLoading: patientsLoading } = useQuery({
-    queryKey: ['patients', patientSearch],
+    queryKey: ["patients", patientSearch],
     queryFn: async () => {
       if (patientSearch.length < 2) return [];
-      
+
       const { data, error } = await supabase
-        .from('patients')
-        .select('id, full_name, phone_primary, email, medical_record_number')
-        .or(`full_name.ilike.%${patientSearch}%,phone_primary.ilike.%${patientSearch}%,medical_record_number.ilike.%${patientSearch}%`)
-        .eq('is_active', true)
+        .from("patients")
+        .select("id, full_name, phone_primary, email, medical_record_number")
+        .or(
+          `full_name.ilike.%${patientSearch}%,phone_primary.ilike.%${patientSearch}%,medical_record_number.ilike.%${patientSearch}%`,
+        )
+        .eq("is_active", true)
         .limit(10);
-      
+
       if (error) throw error;
       return data as Patient[];
     },
@@ -211,14 +239,14 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
 
   // Fetch professionals
   const { data: professionals = [] } = useQuery({
-    queryKey: ['professionals'],
+    queryKey: ["professionals"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('professionals')
-        .select('*')
-        .eq('is_active', true)
-        .order('full_name');
-      
+        .from("professionals")
+        .select("*")
+        .eq("is_active", true)
+        .order("full_name");
+
       if (error) throw error;
       return data as Professional[];
     },
@@ -226,14 +254,14 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
 
   // Fetch service types
   const { data: serviceTypes = [] } = useQuery({
-    queryKey: ['service_types'],
+    queryKey: ["service_types"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('service_types')
-        .select('*')
-        .eq('is_active', true)
-        .order('name');
-      
+        .from("service_types")
+        .select("*")
+        .eq("is_active", true)
+        .order("name");
+
       if (error) throw error;
       return data as ServiceType[];
     },
@@ -241,14 +269,14 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
 
   // Fetch rooms (if needed)
   const { data: rooms = [] } = useQuery({
-    queryKey: ['rooms'],
+    queryKey: ["rooms"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('rooms')
-        .select('*')
-        .eq('is_active', true)
-        .order('name');
-      
+        .from("rooms")
+        .select("*")
+        .eq("is_active", true)
+        .order("name");
+
       if (error) throw error;
       return data as Room[];
     },
@@ -256,21 +284,21 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
 
   // Get available time slots
   const { data: availableSlots = [], isLoading: slotsLoading } = useQuery({
-    queryKey: ['available_slots', professional_id, date, duration_minutes],
+    queryKey: ["available_slots", professional_id, date, duration_minutes],
     queryFn: async () => {
       if (!professional_id || !date) return [];
-      
-      const response = await fetch('/api/appointments/available-slots', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+
+      const response = await fetch("/api/appointments/available-slots", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           professional_id,
-          date: format(date, 'yyyy-MM-dd'),
+          date: format(date, "yyyy-MM-dd"),
           duration_minutes: duration_minutes || 30,
         }),
       });
-      
-      if (!response.ok) throw new Error('Failed to fetch available slots');
+
+      if (!response.ok) throw new Error("Failed to fetch available slots");
       return response.json();
     },
     enabled: !!professional_id && !!date,
@@ -278,25 +306,28 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
 
   // Filter service types by professional
   const availableServiceTypes = useMemo(() => {
-    const selectedProfessional = professionals.find(p => p.id === professional_id);
+    const selectedProfessional = professionals.find((p) => p.id === professional_id);
     if (!selectedProfessional?.service_type_ids) return serviceTypes;
-    
-    return serviceTypes.filter(st => 
-      selectedProfessional.service_type_ids?.includes(st.id)
-    );
+
+    return serviceTypes.filter((st) => selectedProfessional.service_type_ids?.includes(st.id));
   }, [serviceTypes, professionals, professional_id]);
 
   // Update duration when service type changes
   useEffect(() => {
-    const selectedServiceType = serviceTypes.find(st => st.id === service_type_id);
+    const selectedServiceType = serviceTypes.find((st) => st.id === service_type_id);
     if (selectedServiceType) {
-      form.setValue('duration_minutes', selectedServiceType.duration_minutes);
+      form.setValue("duration_minutes", selectedServiceType.duration_minutes);
     }
   }, [service_type_id, serviceTypes, form]);
 
   // Show conflict detection when key fields are filled
   useEffect(() => {
-    const shouldShow = !!(appointmentStartTime && appointmentEndTime && professional_id && service_type_id);
+    const shouldShow = !!(
+      appointmentStartTime &&
+      appointmentEndTime &&
+      professional_id &&
+      service_type_id
+    );
     setShowConflictDetection(shouldShow);
   }, [appointmentStartTime, appointmentEndTime, professional_id, service_type_id]);
 
@@ -304,9 +335,9 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
   const createAppointmentMutation = useMutation({
     mutationFn: async (data: AppointmentFormData) => {
       const startDateTime = new Date(data.date);
-      const [hours, minutes] = data.time.split(':').map(Number);
+      const [hours, minutes] = data.time.split(":").map(Number);
       startDateTime.setHours(hours, minutes, 0, 0);
-      
+
       const endDateTime = addMinutes(startDateTime, data.duration_minutes);
 
       const appointmentData = {
@@ -321,9 +352,9 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
         room_id: data.room_id || null,
       };
 
-      const response = await fetch('/api/appointments', {
-        method: editingAppointment ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/appointments", {
+        method: editingAppointment ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...appointmentData,
           ...(editingAppointment && { id: editingAppointment.id }),
@@ -332,13 +363,13 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error_message || 'Failed to create appointment');
+        throw new Error(error.error_message || "Failed to create appointment");
       }
 
       return response.json();
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['appointments'] });
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
       onSuccess?.(data.appointment_id);
     },
   });
@@ -348,7 +379,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
     try {
       await createAppointmentMutation.mutateAsync(data);
     } catch (error) {
-      console.error('Error creating appointment:', error);
+      console.error("Error creating appointment:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -359,9 +390,9 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
     const slots = [];
     for (let hour = 8; hour <= 18; hour++) {
       for (let minute = 0; minute < 60; minute += 30) {
-        const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-        const isAvailable = availableSlots.some((slot: TimeSlot) => 
-          slot.time === timeString && slot.available
+        const timeString = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
+        const isAvailable = availableSlots.some(
+          (slot: TimeSlot) => slot.time === timeString && slot.available,
         );
         slots.push({ time: timeString, available: isAvailable });
       }
@@ -374,7 +405,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <CalendarSchedule className="w-5 h-5" />
-          {editingAppointment ? 'Editar Agendamento' : 'Novo Agendamento'}
+          {editingAppointment ? "Editar Agendamento" : "Novo Agendamento"}
         </CardTitle>
         <CardDescription>
           Preencha os dados para criar um novo agendamento com detecção automática de conflitos
@@ -384,14 +415,13 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <CardContent className="space-y-6">
-            
             {/* Patient Selection */}
             <div className="space-y-4">
               <Label className="text-base font-semibold flex items-center gap-2">
                 <User className="w-4 h-4" />
                 Paciente
               </Label>
-              
+
               <div className="space-y-2">
                 <div className="relative">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
@@ -412,22 +442,23 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
 
                 {patients.length > 0 && (
                   <div className="border rounded-md max-h-48 overflow-y-auto">
-                    {patients.map(patient => (
+                    {patients.map((patient) => (
                       <div
                         key={patient.id}
                         className={cn(
                           "p-3 cursor-pointer hover:bg-gray-50 border-b last:border-b-0",
-                          selectedPatient?.id === patient.id && "bg-blue-50 border-blue-200"
+                          selectedPatient?.id === patient.id && "bg-blue-50 border-blue-200",
                         )}
                         onClick={() => {
                           setSelectedPatient(patient);
-                          form.setValue('patient_id', patient.id);
+                          form.setValue("patient_id", patient.id);
                           setPatientSearch(patient.full_name);
                         }}
                       >
                         <div className="font-medium">{patient.full_name}</div>
                         <div className="text-sm text-gray-500">
-                          {patient.medical_record_number} • {patient.phone_primary} • {patient.email}
+                          {patient.medical_record_number} • {patient.phone_primary} •{" "}
+                          {patient.email}
                         </div>
                       </div>
                     ))}
@@ -469,11 +500,11 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {professionals.map(professional => (
+                        {professionals.map((professional) => (
                           <SelectItem key={professional.id} value={professional.id}>
                             <div className="flex items-center gap-2">
-                              <div 
-                                className="w-3 h-3 rounded-full" 
+                              <div
+                                className="w-3 h-3 rounded-full"
                                 style={{ backgroundColor: professional.color }}
                               />
                               <span>{professional.full_name}</span>
@@ -508,7 +539,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {availableServiceTypes.map(serviceType => (
+                        {availableServiceTypes.map((serviceType) => (
                           <SelectItem key={serviceType.id} value={serviceType.id}>
                             <div className="flex items-center justify-between w-full">
                               <span>{serviceType.name}</span>
@@ -528,7 +559,8 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
                       </SelectContent>
                     </Select>
                     <FormDescription>
-                      {service_type_id && availableServiceTypes.find(st => st.id === service_type_id)?.description}
+                      {service_type_id &&
+                        availableServiceTypes.find((st) => st.id === service_type_id)?.description}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -554,7 +586,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
                             variant="outline"
                             className={cn(
                               "pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
                             )}
                           >
                             {field.value ? (
@@ -605,11 +637,11 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
                           </div>
                         ) : (
                           timeSlots.map(({ time, available }) => (
-                            <SelectItem 
-                              key={time} 
+                            <SelectItem
+                              key={time}
                               value={time}
                               disabled={!available}
-                              className={available ? '' : 'opacity-50'}
+                              className={available ? "" : "opacity-50"}
                             >
                               <div className="flex items-center justify-between w-full">
                                 <span>{time}</span>
@@ -639,10 +671,10 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
                   <FormItem>
                     <FormLabel>Duração (minutos)</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
-                        min="15" 
-                        max="480" 
+                      <Input
+                        type="number"
+                        min="15"
+                        max="480"
                         step="15"
                         {...field}
                         onChange={(e) => field.onChange(Number(e.target.value))}
@@ -659,7 +691,10 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Prioridade</FormLabel>
-                    <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value.toString()}>
+                    <Select
+                      onValueChange={(value) => field.onChange(Number(value))}
+                      value={field.value.toString()}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue />
@@ -696,7 +731,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
                         </FormControl>
                         <SelectContent>
                           <SelectItem value="">Nenhuma sala específica</SelectItem>
-                          {rooms.map(room => (
+                          {rooms.map((room) => (
                             <SelectItem key={room.id} value={room.id}>
                               {room.name} (Cap: {room.capacity})
                             </SelectItem>
@@ -719,7 +754,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
                   <FormItem>
                     <FormLabel>Observações do Paciente</FormLabel>
                     <FormControl>
-                      <Textarea 
+                      <Textarea
                         placeholder="Observações visíveis para o paciente..."
                         className="resize-none"
                         rows={3}
@@ -738,7 +773,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
                   <FormItem>
                     <FormLabel>Observações Internas</FormLabel>
                     <FormControl>
-                      <Textarea 
+                      <Textarea
                         placeholder="Observações internas da equipe..."
                         className="resize-none"
                         rows={3}
@@ -768,21 +803,17 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
                 />
               </div>
             )}
-
           </CardContent>
 
           <CardFooter className="flex justify-between">
             <Button type="button" variant="outline" onClick={onCancel}>
               Cancelar
             </Button>
-            <Button 
-              type="submit" 
-              disabled={isSubmitting || createAppointmentMutation.isPending}
-            >
+            <Button type="submit" disabled={isSubmitting || createAppointmentMutation.isPending}>
               {(isSubmitting || createAppointmentMutation.isPending) && (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               )}
-              {editingAppointment ? 'Atualizar Agendamento' : 'Criar Agendamento'}
+              {editingAppointment ? "Atualizar Agendamento" : "Criar Agendamento"}
             </Button>
           </CardFooter>
         </form>
@@ -793,9 +824,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
         <Alert variant="destructive" className="mx-6 mb-6">
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Erro ao criar agendamento</AlertTitle>
-          <AlertDescription>
-            {createAppointmentMutation.error.message}
-          </AlertDescription>
+          <AlertDescription>{createAppointmentMutation.error.message}</AlertDescription>
         </Alert>
       )}
     </Card>

@@ -1,27 +1,27 @@
 /**
  * Data Cleanup Service - Automated Data Maintenance and Cleanup
- * 
+ *
  * Comprehensive data cleanup and maintenance service for the NeonPro
  * session management system, ensuring optimal performance and compliance.
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  * @created 2024
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { removeUndefined } from './utils';
+import type { createClient, SupabaseClient } from "@supabase/supabase-js";
+import type { removeUndefined } from "./utils";
 import type {
   CleanupConfig,
   CleanupResult,
   CleanupTask,
   CleanupSchedule,
-  AuthenticationResponse
-} from './types';
+  AuthenticationResponse,
+} from "./types";
 
 /**
  * Data Cleanup Service Class
- * 
+ *
  * Core cleanup operations:
  * - Expired session cleanup
  * - Inactive device removal
@@ -39,11 +39,8 @@ export class DataCleanupService {
 
   constructor(config: CleanupConfig) {
     this.config = config;
-    
-    this.supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_ANON_KEY!
-    );
+
+    this.supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
 
     this.initializeScheduledTasks();
   }
@@ -56,10 +53,10 @@ export class DataCleanupService {
       return {
         success: false,
         error: {
-          code: 'CLEANUP_IN_PROGRESS',
-          message: 'Cleanup is already in progress'
+          code: "CLEANUP_IN_PROGRESS",
+          message: "Cleanup is already in progress",
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
 
@@ -69,12 +66,12 @@ export class DataCleanupService {
 
     try {
       const tasksToRun = tasks || [
-        'expired_sessions',
-        'inactive_devices',
-        'old_security_events',
-        'old_notifications',
-        'expired_device_verifications',
-        'old_audit_logs'
+        "expired_sessions",
+        "inactive_devices",
+        "old_security_events",
+        "old_notifications",
+        "expired_device_verifications",
+        "old_audit_logs",
       ];
 
       for (const taskName of tasksToRun) {
@@ -88,10 +85,10 @@ export class DataCleanupService {
             success: false,
             itemsProcessed: 0,
             itemsDeleted: 0,
-            error: error instanceof Error ? error.message : 'Unknown error',
+            error: error instanceof Error ? error.message : "Unknown error",
             startTime: new Date().toISOString(),
             endTime: new Date().toISOString(),
-            duration: 0
+            duration: 0,
           };
           results.push(errorResult);
           this.lastCleanupResults.set(taskName, errorResult);
@@ -102,7 +99,7 @@ export class DataCleanupService {
       const totalDuration = endTime - startTime;
       const totalDeleted = results.reduce((sum, r) => sum + r.itemsDeleted, 0);
       const totalProcessed = results.reduce((sum, r) => sum + r.itemsProcessed, 0);
-      const successfulTasks = results.filter(r => r.success).length;
+      const successfulTasks = results.filter((r) => r.success).length;
 
       // Log cleanup summary
       await this.logCleanupSummary({
@@ -111,7 +108,7 @@ export class DataCleanupService {
         totalProcessed,
         totalDeleted,
         duration: totalDuration,
-        results
+        results,
       });
 
       return {
@@ -122,22 +119,21 @@ export class DataCleanupService {
             successfulTasks,
             totalProcessed,
             totalDeleted,
-            duration: totalDuration
+            duration: totalDuration,
           },
-          results
+          results,
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
-          code: 'CLEANUP_ERROR',
-          message: 'Error during cleanup process',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          code: "CLEANUP_ERROR",
+          message: "Error during cleanup process",
+          details: { error: error instanceof Error ? error.message : "Unknown error" },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } finally {
       this.isRunning = false;
@@ -153,12 +149,12 @@ export class DataCleanupService {
 
     try {
       const now = new Date().toISOString();
-      
+
       // Get expired sessions
       const { data: expiredSessions, error: selectError } = await this.supabase
-        .from('sessions')
-        .select('id')
-        .lt('expires_at', now);
+        .from("sessions")
+        .select("id")
+        .lt("expires_at", now);
 
       if (selectError) {
         throw new Error(`Failed to query expired sessions: ${selectError.message}`);
@@ -168,22 +164,22 @@ export class DataCleanupService {
 
       if (itemsProcessed === 0) {
         return {
-          task: 'expired_sessions',
+          task: "expired_sessions",
           success: true,
           itemsProcessed: 0,
           itemsDeleted: 0,
           startTime: taskStartTime,
           endTime: new Date().toISOString(),
-          duration: Date.now() - startTime
+          duration: Date.now() - startTime,
         };
       }
 
       // Delete expired sessions
       const { data: deletedSessions, error: deleteError } = await this.supabase
-        .from('sessions')
+        .from("sessions")
         .delete()
-        .lt('expires_at', now)
-        .select('id');
+        .lt("expires_at", now)
+        .select("id");
 
       if (deleteError) {
         throw new Error(`Failed to delete expired sessions: ${deleteError.message}`);
@@ -192,25 +188,24 @@ export class DataCleanupService {
       const itemsDeleted = deletedSessions?.length || 0;
 
       return {
-        task: 'expired_sessions',
+        task: "expired_sessions",
         success: true,
         itemsProcessed,
         itemsDeleted,
         startTime: taskStartTime,
         endTime: new Date().toISOString(),
-        duration: Date.now() - startTime
+        duration: Date.now() - startTime,
       };
-
     } catch (error) {
       return {
-        task: 'expired_sessions',
+        task: "expired_sessions",
         success: false,
         itemsProcessed: 0,
         itemsDeleted: 0,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
         startTime: taskStartTime,
         endTime: new Date().toISOString(),
-        duration: Date.now() - startTime
+        duration: Date.now() - startTime,
       };
     }
   }
@@ -226,12 +221,12 @@ export class DataCleanupService {
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - this.config.deviceRetentionDays);
       const cutoffDateString = cutoffDate.toISOString();
-      
+
       // Get inactive devices
       const { data: inactiveDevices, error: selectError } = await this.supabase
-        .from('devices')
-        .select('id')
-        .lt('last_seen', cutoffDateString);
+        .from("devices")
+        .select("id")
+        .lt("last_seen", cutoffDateString);
 
       if (selectError) {
         throw new Error(`Failed to query inactive devices: ${selectError.message}`);
@@ -241,22 +236,22 @@ export class DataCleanupService {
 
       if (itemsProcessed === 0) {
         return {
-          task: 'inactive_devices',
+          task: "inactive_devices",
           success: true,
           itemsProcessed: 0,
           itemsDeleted: 0,
           startTime: taskStartTime,
           endTime: new Date().toISOString(),
-          duration: Date.now() - startTime
+          duration: Date.now() - startTime,
         };
       }
 
       // Delete inactive devices
       const { data: deletedDevices, error: deleteError } = await this.supabase
-        .from('devices')
+        .from("devices")
         .delete()
-        .lt('last_seen', cutoffDateString)
-        .select('id');
+        .lt("last_seen", cutoffDateString)
+        .select("id");
 
       if (deleteError) {
         throw new Error(`Failed to delete inactive devices: ${deleteError.message}`);
@@ -265,25 +260,24 @@ export class DataCleanupService {
       const itemsDeleted = deletedDevices?.length || 0;
 
       return {
-        task: 'inactive_devices',
+        task: "inactive_devices",
         success: true,
         itemsProcessed,
         itemsDeleted,
         startTime: taskStartTime,
         endTime: new Date().toISOString(),
-        duration: Date.now() - startTime
+        duration: Date.now() - startTime,
       };
-
     } catch (error) {
       return {
-        task: 'inactive_devices',
+        task: "inactive_devices",
         success: false,
         itemsProcessed: 0,
         itemsDeleted: 0,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
         startTime: taskStartTime,
         endTime: new Date().toISOString(),
-        duration: Date.now() - startTime
+        duration: Date.now() - startTime,
       };
     }
   }
@@ -299,13 +293,13 @@ export class DataCleanupService {
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - this.config.securityEventRetentionDays);
       const cutoffDateString = cutoffDate.toISOString();
-      
+
       // Get old security events (excluding critical ones)
       const { data: oldEvents, error: selectError } = await this.supabase
-        .from('security_events')
-        .select('id')
-        .lt('created_at', cutoffDateString)
-        .neq('severity', 'critical'); // Keep critical events longer
+        .from("security_events")
+        .select("id")
+        .lt("created_at", cutoffDateString)
+        .neq("severity", "critical"); // Keep critical events longer
 
       if (selectError) {
         throw new Error(`Failed to query old security events: ${selectError.message}`);
@@ -315,13 +309,13 @@ export class DataCleanupService {
 
       if (itemsProcessed === 0) {
         return {
-          task: 'old_security_events',
+          task: "old_security_events",
           success: true,
           itemsProcessed: 0,
           itemsDeleted: 0,
           startTime: taskStartTime,
           endTime: new Date().toISOString(),
-          duration: Date.now() - startTime
+          duration: Date.now() - startTime,
         };
       }
 
@@ -332,11 +326,11 @@ export class DataCleanupService {
 
       // Delete old security events
       const { data: deletedEvents, error: deleteError } = await this.supabase
-        .from('security_events')
+        .from("security_events")
         .delete()
-        .lt('created_at', cutoffDateString)
-        .neq('severity', 'critical')
-        .select('id');
+        .lt("created_at", cutoffDateString)
+        .neq("severity", "critical")
+        .select("id");
 
       if (deleteError) {
         throw new Error(`Failed to delete old security events: ${deleteError.message}`);
@@ -345,25 +339,24 @@ export class DataCleanupService {
       const itemsDeleted = deletedEvents?.length || 0;
 
       return {
-        task: 'old_security_events',
+        task: "old_security_events",
         success: true,
         itemsProcessed,
         itemsDeleted,
         startTime: taskStartTime,
         endTime: new Date().toISOString(),
-        duration: Date.now() - startTime
+        duration: Date.now() - startTime,
       };
-
     } catch (error) {
       return {
-        task: 'old_security_events',
+        task: "old_security_events",
         success: false,
         itemsProcessed: 0,
         itemsDeleted: 0,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
         startTime: taskStartTime,
         endTime: new Date().toISOString(),
-        duration: Date.now() - startTime
+        duration: Date.now() - startTime,
       };
     }
   }
@@ -379,12 +372,12 @@ export class DataCleanupService {
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - this.config.notificationRetentionDays);
       const cutoffDateString = cutoffDate.toISOString();
-      
+
       // Get old notifications
       const { data: oldNotifications, error: selectError } = await this.supabase
-        .from('notifications')
-        .select('id')
-        .lt('created_at', cutoffDateString);
+        .from("notifications")
+        .select("id")
+        .lt("created_at", cutoffDateString);
 
       if (selectError) {
         throw new Error(`Failed to query old notifications: ${selectError.message}`);
@@ -394,22 +387,22 @@ export class DataCleanupService {
 
       if (itemsProcessed === 0) {
         return {
-          task: 'old_notifications',
+          task: "old_notifications",
           success: true,
           itemsProcessed: 0,
           itemsDeleted: 0,
           startTime: taskStartTime,
           endTime: new Date().toISOString(),
-          duration: Date.now() - startTime
+          duration: Date.now() - startTime,
         };
       }
 
       // Delete old notifications
       const { data: deletedNotifications, error: deleteError } = await this.supabase
-        .from('notifications')
+        .from("notifications")
         .delete()
-        .lt('created_at', cutoffDateString)
-        .select('id');
+        .lt("created_at", cutoffDateString)
+        .select("id");
 
       if (deleteError) {
         throw new Error(`Failed to delete old notifications: ${deleteError.message}`);
@@ -418,31 +411,27 @@ export class DataCleanupService {
       const itemsDeleted = deletedNotifications?.length || 0;
 
       // Also cleanup related in-app notifications
-      await this.supabase
-        .from('in_app_notifications')
-        .delete()
-        .lt('created_at', cutoffDateString);
+      await this.supabase.from("in_app_notifications").delete().lt("created_at", cutoffDateString);
 
       return {
-        task: 'old_notifications',
+        task: "old_notifications",
         success: true,
         itemsProcessed,
         itemsDeleted,
         startTime: taskStartTime,
         endTime: new Date().toISOString(),
-        duration: Date.now() - startTime
+        duration: Date.now() - startTime,
       };
-
     } catch (error) {
       return {
-        task: 'old_notifications',
+        task: "old_notifications",
         success: false,
         itemsProcessed: 0,
         itemsDeleted: 0,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
         startTime: taskStartTime,
         endTime: new Date().toISOString(),
-        duration: Date.now() - startTime
+        duration: Date.now() - startTime,
       };
     }
   }
@@ -456,12 +445,12 @@ export class DataCleanupService {
 
     try {
       const now = new Date().toISOString();
-      
+
       // Get expired verifications
       const { data: expiredVerifications, error: selectError } = await this.supabase
-        .from('device_verifications')
-        .select('id')
-        .lt('expires_at', now);
+        .from("device_verifications")
+        .select("id")
+        .lt("expires_at", now);
 
       if (selectError) {
         throw new Error(`Failed to query expired verifications: ${selectError.message}`);
@@ -471,22 +460,22 @@ export class DataCleanupService {
 
       if (itemsProcessed === 0) {
         return {
-          task: 'expired_device_verifications',
+          task: "expired_device_verifications",
           success: true,
           itemsProcessed: 0,
           itemsDeleted: 0,
           startTime: taskStartTime,
           endTime: new Date().toISOString(),
-          duration: Date.now() - startTime
+          duration: Date.now() - startTime,
         };
       }
 
       // Delete expired verifications
       const { data: deletedVerifications, error: deleteError } = await this.supabase
-        .from('device_verifications')
+        .from("device_verifications")
         .delete()
-        .lt('expires_at', now)
-        .select('id');
+        .lt("expires_at", now)
+        .select("id");
 
       if (deleteError) {
         throw new Error(`Failed to delete expired verifications: ${deleteError.message}`);
@@ -495,25 +484,24 @@ export class DataCleanupService {
       const itemsDeleted = deletedVerifications?.length || 0;
 
       return {
-        task: 'expired_device_verifications',
+        task: "expired_device_verifications",
         success: true,
         itemsProcessed,
         itemsDeleted,
         startTime: taskStartTime,
         endTime: new Date().toISOString(),
-        duration: Date.now() - startTime
+        duration: Date.now() - startTime,
       };
-
     } catch (error) {
       return {
-        task: 'expired_device_verifications',
+        task: "expired_device_verifications",
         success: false,
         itemsProcessed: 0,
         itemsDeleted: 0,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
         startTime: taskStartTime,
         endTime: new Date().toISOString(),
-        duration: Date.now() - startTime
+        duration: Date.now() - startTime,
       };
     }
   }
@@ -528,24 +516,23 @@ export class DataCleanupService {
         lastCleanupResults: Object.fromEntries(this.lastCleanupResults),
         scheduledTasks: Array.from(this.scheduledTasks.keys()),
         config: this.config,
-        nextScheduledRun: this.getNextScheduledRun()
+        nextScheduledRun: this.getNextScheduledRun(),
       };
 
       return {
         success: true,
         data: status,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       return {
         success: false,
         error: {
-          code: 'CLEANUP_STATUS_ERROR',
-          message: 'Error getting cleanup status',
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
+          code: "CLEANUP_STATUS_ERROR",
+          message: "Error getting cleanup status",
+          details: { error: error instanceof Error ? error.message : "Unknown error" },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -569,12 +556,12 @@ export class DataCleanupService {
     const timeout = setTimeout(async () => {
       try {
         await this.runCleanup(schedule.tasks);
-        
+
         // Reschedule for next run
         this.scheduleCleanup(schedule);
       } catch (error) {
         console.error(`Error running scheduled cleanup ${schedule.name}:`, error);
-        
+
         // Reschedule even if there was an error
         this.scheduleCleanup(schedule);
       }
@@ -587,7 +574,7 @@ export class DataCleanupService {
    * Stop all scheduled tasks
    */
   stopScheduledTasks(): void {
-    this.scheduledTasks.forEach(timeout => clearTimeout(timeout));
+    this.scheduledTasks.forEach((timeout) => clearTimeout(timeout));
     this.scheduledTasks.clear();
   }
 
@@ -598,40 +585,40 @@ export class DataCleanupService {
     if (this.config.enableScheduledCleanup) {
       // Daily cleanup at 2 AM
       this.scheduleCleanup({
-        name: 'daily_cleanup',
-        cron: '0 2 * * *',
-        tasks: ['expired_sessions', 'expired_device_verifications']
+        name: "daily_cleanup",
+        cron: "0 2 * * *",
+        tasks: ["expired_sessions", "expired_device_verifications"],
       });
 
       // Weekly cleanup on Sunday at 3 AM
       this.scheduleCleanup({
-        name: 'weekly_cleanup',
-        cron: '0 3 * * 0',
-        tasks: ['inactive_devices', 'old_notifications']
+        name: "weekly_cleanup",
+        cron: "0 3 * * 0",
+        tasks: ["inactive_devices", "old_notifications"],
       });
 
       // Monthly cleanup on 1st at 4 AM
       this.scheduleCleanup({
-        name: 'monthly_cleanup',
-        cron: '0 4 1 * *',
-        tasks: ['old_security_events', 'old_audit_logs']
+        name: "monthly_cleanup",
+        cron: "0 4 1 * *",
+        tasks: ["old_security_events", "old_audit_logs"],
       });
     }
   }
 
   private async runCleanupTask(taskName: string): Promise<CleanupResult> {
     switch (taskName) {
-      case 'expired_sessions':
+      case "expired_sessions":
         return this.cleanupExpiredSessions();
-      case 'inactive_devices':
+      case "inactive_devices":
         return this.cleanupInactiveDevices();
-      case 'old_security_events':
+      case "old_security_events":
         return this.cleanupOldSecurityEvents();
-      case 'old_notifications':
+      case "old_notifications":
         return this.cleanupOldNotifications();
-      case 'expired_device_verifications':
+      case "expired_device_verifications":
         return this.cleanupExpiredDeviceVerifications();
-      case 'old_audit_logs':
+      case "old_audit_logs":
         return this.cleanupOldAuditLogs();
       default:
         throw new Error(`Unknown cleanup task: ${taskName}`);
@@ -646,29 +633,28 @@ export class DataCleanupService {
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - this.config.auditLogRetentionDays);
       const cutoffDateString = cutoffDate.toISOString();
-      
+
       // This would cleanup audit logs if they exist
       // For now, return a placeholder result
       return {
-        task: 'old_audit_logs',
+        task: "old_audit_logs",
         success: true,
         itemsProcessed: 0,
         itemsDeleted: 0,
         startTime: taskStartTime,
         endTime: new Date().toISOString(),
-        duration: Date.now() - startTime
+        duration: Date.now() - startTime,
       };
-
     } catch (error) {
       return {
-        task: 'old_audit_logs',
+        task: "old_audit_logs",
         success: false,
         itemsProcessed: 0,
         itemsDeleted: 0,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
         startTime: taskStartTime,
         endTime: new Date().toISOString(),
-        duration: Date.now() - startTime
+        duration: Date.now() - startTime,
       };
     }
   }
@@ -677,10 +663,10 @@ export class DataCleanupService {
     try {
       // Get critical events to archive
       const { data: criticalEvents, error } = await this.supabase
-        .from('security_events')
-        .select('*')
-        .eq('severity', 'critical')
-        .lt('created_at', cutoffDate);
+        .from("security_events")
+        .select("*")
+        .eq("severity", "critical")
+        .lt("created_at", cutoffDate);
 
       if (error || !criticalEvents || criticalEvents.length === 0) {
         return;
@@ -689,40 +675,37 @@ export class DataCleanupService {
       // Archive to separate table or external storage
       // For now, we'll just log that archival would happen
       console.log(`Would archive ${criticalEvents.length} critical security events`);
-      
+
       // TODO: Implement actual archival logic
       // - Move to archive table
       // - Export to external storage
       // - Compress and store
-      
     } catch (error) {
-      console.error('Error archiving critical events:', error);
+      console.error("Error archiving critical events:", error);
     }
   }
 
   private async logCleanupSummary(summary: any): Promise<void> {
     try {
-      await this.supabase
-        .from('cleanup_logs')
-        .insert({
-          id: crypto.randomUUID(),
-          summary: JSON.stringify(summary),
-          created_at: new Date().toISOString()
-        });
+      await this.supabase.from("cleanup_logs").insert({
+        id: crypto.randomUUID(),
+        summary: JSON.stringify(summary),
+        created_at: new Date().toISOString(),
+      });
     } catch (error) {
-      console.error('Error logging cleanup summary:', error);
+      console.error("Error logging cleanup summary:", error);
     }
   }
 
   private calculateNextRun(cron: string, fromTime: number): number {
     // Simple cron parser for basic schedules
     // Format: "minute hour day month dayOfWeek"
-    const parts = cron.split(' ');
+    const parts = cron.split(" ");
     if (parts.length !== 5) {
-      throw new Error('Invalid cron format');
+      throw new Error("Invalid cron format");
     }
 
-    const [minute, hour, day, month, dayOfWeek] = parts.map(p => parseInt(p));
+    const [minute, hour, day, month, dayOfWeek] = parts.map((p) => parseInt(p));
     const now = new Date(fromTime);
     const next = new Date(now);
 
@@ -749,7 +732,7 @@ export class DataCleanupService {
 
   private getNextScheduledRun(): string | null {
     let nextRun: number | null = null;
-    
+
     this.scheduledTasks.forEach((timeout) => {
       // This is a simplified approach - in a real implementation,
       // you'd track the actual scheduled times
@@ -764,4 +747,3 @@ export class DataCleanupService {
 }
 
 export default DataCleanupService;
-

@@ -12,7 +12,7 @@ export class TreatmentSuccessService {
       successRate: 0,
       totalPatients: 0,
       successfulOutcomes: 0,
-      calculatedAt: new Date()
+      calculatedAt: new Date(),
     };
   }
 
@@ -23,7 +23,7 @@ export class TreatmentSuccessService {
       factors: [],
       correlations: [],
       recommendations: [],
-      analyzedAt: new Date()
+      analyzedAt: new Date(),
     };
   }
 
@@ -35,7 +35,7 @@ export class TreatmentSuccessService {
       overallSuccessRate: 0,
       treatmentBreakdown: [],
       trends: [],
-      generatedAt: new Date()
+      generatedAt: new Date(),
     };
   }
 }

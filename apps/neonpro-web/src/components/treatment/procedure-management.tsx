@@ -2,71 +2,77 @@
  * Procedure Management Component
  * FHIR R4 compliant component for documenting medical/aesthetic procedures
  * Follows Brazilian healthcare standards and LGPD compliance
- * 
+ *
  * Created: January 26, 2025
  * Story: 3.2 - Treatment & Procedure Documentation
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { 
-  Calendar, 
-  Clock, 
-  User, 
-  FileText, 
-  AlertTriangle, 
+import type { useState, useEffect } from "react";
+import type { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type {
+  Calendar,
+  Clock,
+  User,
+  FileText,
+  AlertTriangle,
   CheckCircle,
   Plus,
   Search,
   Filter,
   MoreHorizontal,
   Edit,
-  Trash
-} from 'lucide-react';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+  Trash,
+} from "lucide-react";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Badge } from "@/components/ui/badge";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import {
+} from "@/components/ui/table";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import {
+} from "@/components/ui/select";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import {
+} from "@/components/ui/dialog";
+import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
+} from "@/components/ui/dropdown-menu";
+import type {
   Form,
   FormControl,
   FormDescription,
@@ -74,24 +80,24 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { useToast } from '@/hooks/use-toast';
+} from "@/components/ui/form";
+import type { useToast } from "@/hooks/use-toast";
 
-import { 
-  Procedure, 
+import type {
+  Procedure,
   ProcedureStatus,
   ProcedureSearchFilters,
   CreateProcedureData,
-  createProcedureSchema
-} from '@/lib/types/treatment';
-import { Patient } from '@/lib/types/fhir';
-import { 
-  searchProcedures, 
-  createProcedure, 
-  updateProcedure, 
-  deleteProcedure 
-} from '@/lib/supabase/treatments';
-import { searchPatients } from '@/lib/supabase/patients';
+  createProcedureSchema,
+} from "@/lib/types/treatment";
+import type { Patient } from "@/lib/types/fhir";
+import type {
+  searchProcedures,
+  createProcedure,
+  updateProcedure,
+  deleteProcedure,
+} from "@/lib/supabase/treatments";
+import type { searchPatients } from "@/lib/supabase/patients";
 
 interface ProcedureManagementProps {
   treatmentPlanId?: string;
@@ -100,45 +106,45 @@ interface ProcedureManagementProps {
 }
 
 const statusOptions: { value: ProcedureStatus; label: string; color: string }[] = [
-  { value: 'preparation', label: 'Preparação', color: 'bg-blue-100 text-blue-800' },
-  { value: 'in-progress', label: 'Em Andamento', color: 'bg-yellow-100 text-yellow-800' },
-  { value: 'on-hold', label: 'Em Pausa', color: 'bg-orange-100 text-orange-800' },
-  { value: 'stopped', label: 'Interrompido', color: 'bg-red-100 text-red-800' },
-  { value: 'completed', label: 'Concluído', color: 'bg-green-100 text-green-800' },
-  { value: 'entered-in-error', label: 'Erro', color: 'bg-gray-100 text-gray-600' },
-  { value: 'unknown', label: 'Desconhecido', color: 'bg-gray-100 text-gray-600' },
+  { value: "preparation", label: "Preparação", color: "bg-blue-100 text-blue-800" },
+  { value: "in-progress", label: "Em Andamento", color: "bg-yellow-100 text-yellow-800" },
+  { value: "on-hold", label: "Em Pausa", color: "bg-orange-100 text-orange-800" },
+  { value: "stopped", label: "Interrompido", color: "bg-red-100 text-red-800" },
+  { value: "completed", label: "Concluído", color: "bg-green-100 text-green-800" },
+  { value: "entered-in-error", label: "Erro", color: "bg-gray-100 text-gray-600" },
+  { value: "unknown", label: "Desconhecido", color: "bg-gray-100 text-gray-600" },
 ];
 
 const commonProcedures = [
-  'Limpeza de pele profunda',
-  'Aplicação de toxina botulínica',
-  'Preenchimento com ácido hialurônico',
-  'Peeling químico superficial',
-  'Peeling químico médio',
-  'Microagulhamento',
-  'Laser CO2 fracionado',
-  'IPL (Luz Intensa Pulsada)',
-  'Radiofrequência facial',
-  'Drenagem linfática manual',
-  'Massagem relaxante',
-  'Hidrafacial',
-  'Criolipólise',
-  'Carboxiterapia',
-  'Mesoterapia facial',
+  "Limpeza de pele profunda",
+  "Aplicação de toxina botulínica",
+  "Preenchimento com ácido hialurônico",
+  "Peeling químico superficial",
+  "Peeling químico médio",
+  "Microagulhamento",
+  "Laser CO2 fracionado",
+  "IPL (Luz Intensa Pulsada)",
+  "Radiofrequência facial",
+  "Drenagem linfática manual",
+  "Massagem relaxante",
+  "Hidrafacial",
+  "Criolipólise",
+  "Carboxiterapia",
+  "Mesoterapia facial",
 ];
 
-export function ProcedureManagement({ 
-  treatmentPlanId, 
-  patientId, 
-  onSelectProcedure 
+export function ProcedureManagement({
+  treatmentPlanId,
+  patientId,
+  onSelectProcedure,
 }: ProcedureManagementProps) {
   const { toast } = useToast();
-  
+
   // State management
   const [procedures, setProcedures] = useState<Procedure[]>([]);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [filters, setFilters] = useState<ProcedureSearchFilters>({
     treatment_plan_id: treatmentPlanId,
     patient_id: patientId,
@@ -154,18 +160,18 @@ export function ProcedureManagement({
   const form = useForm<CreateProcedureData>({
     resolver: zodResolver(createProcedureSchema),
     defaultValues: {
-      treatment_plan_id: treatmentPlanId || '',
-      patient_id: patientId || '',
-      code: '',
-      display: '',
-      status: 'preparation',
-      performed_date_time: '',
-      performer_id: '',
-      location: '',
-      reason_code: '',
-      reason_display: '',
-      outcome: '',
-      notes: '',
+      treatment_plan_id: treatmentPlanId || "",
+      patient_id: patientId || "",
+      code: "",
+      display: "",
+      status: "preparation",
+      performed_date_time: "",
+      performer_id: "",
+      location: "",
+      reason_code: "",
+      reason_display: "",
+      outcome: "",
+      notes: "",
     },
   });
 
@@ -191,16 +197,16 @@ export function ProcedureManagement({
         ...filters,
         search_text: searchText || undefined,
       };
-      
+
       const response = await searchProcedures(searchFilters, currentPage, perPage);
       setProcedures(response.procedures);
       setTotalCount(response.total_count);
     } catch (error) {
-      console.error('Erro ao carregar procedimentos:', error);
+      console.error("Erro ao carregar procedimentos:", error);
       toast({
-        title: 'Erro',
-        description: 'Não foi possível carregar os procedimentos.',
-        variant: 'destructive',
+        title: "Erro",
+        description: "Não foi possível carregar os procedimentos.",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -212,7 +218,7 @@ export function ProcedureManagement({
       const response = await searchPatients({}, 1, 100);
       setPatients(response.patients);
     } catch (error) {
-      console.error('Erro ao carregar pacientes:', error);
+      console.error("Erro ao carregar pacientes:", error);
     }
   };
 
@@ -222,7 +228,7 @@ export function ProcedureManagement({
   };
 
   const handleFilterChange = (key: keyof ProcedureSearchFilters, value: any) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
       [key]: value,
     }));
@@ -232,18 +238,18 @@ export function ProcedureManagement({
   const openCreateDialog = () => {
     setEditingProcedure(null);
     form.reset({
-      treatment_plan_id: treatmentPlanId || '',
-      patient_id: patientId || '',
-      code: '',
-      display: '',
-      status: 'preparation',
-      performed_date_time: '',
-      performer_id: '',
-      location: '',
-      reason_code: '',
-      reason_display: '',
-      outcome: '',
-      notes: '',
+      treatment_plan_id: treatmentPlanId || "",
+      patient_id: patientId || "",
+      code: "",
+      display: "",
+      status: "preparation",
+      performed_date_time: "",
+      performer_id: "",
+      location: "",
+      reason_code: "",
+      reason_display: "",
+      outcome: "",
+      notes: "",
     });
     setIsDialogOpen(true);
   };
@@ -256,13 +262,13 @@ export function ProcedureManagement({
       code: procedure.code,
       display: procedure.display,
       status: procedure.status,
-      performed_date_time: procedure.performed_date_time || '',
-      performer_id: procedure.performer_id || '',
-      location: procedure.location || '',
-      reason_code: procedure.reason_code || '',
-      reason_display: procedure.reason_display || '',
-      outcome: procedure.outcome || '',
-      notes: procedure.notes || '',
+      performed_date_time: procedure.performed_date_time || "",
+      performer_id: procedure.performer_id || "",
+      location: procedure.location || "",
+      reason_code: procedure.reason_code || "",
+      reason_display: procedure.reason_display || "",
+      outcome: procedure.outcome || "",
+      notes: procedure.notes || "",
     });
     setIsDialogOpen(true);
   };
@@ -272,25 +278,25 @@ export function ProcedureManagement({
       if (editingProcedure) {
         await updateProcedure(editingProcedure.id, data);
         toast({
-          title: 'Sucesso',
-          description: 'Procedimento atualizado com sucesso.',
+          title: "Sucesso",
+          description: "Procedimento atualizado com sucesso.",
         });
       } else {
         await createProcedure(data);
         toast({
-          title: 'Sucesso',
-          description: 'Procedimento criado com sucesso.',
+          title: "Sucesso",
+          description: "Procedimento criado com sucesso.",
         });
       }
 
       setIsDialogOpen(false);
       loadProcedures();
     } catch (error) {
-      console.error('Erro ao salvar procedimento:', error);
+      console.error("Erro ao salvar procedimento:", error);
       toast({
-        title: 'Erro',
-        description: 'Não foi possível salvar o procedimento.',
-        variant: 'destructive',
+        title: "Erro",
+        description: "Não foi possível salvar o procedimento.",
+        variant: "destructive",
       });
     }
   };
@@ -299,23 +305,23 @@ export function ProcedureManagement({
     try {
       await deleteProcedure(procedure.id);
       toast({
-        title: 'Sucesso',
-        description: 'Procedimento excluído com sucesso.',
+        title: "Sucesso",
+        description: "Procedimento excluído com sucesso.",
       });
       loadProcedures();
     } catch (error) {
-      console.error('Erro ao excluir procedimento:', error);
+      console.error("Erro ao excluir procedimento:", error);
       toast({
-        title: 'Erro',
-        description: 'Não foi possível excluir o procedimento.',
-        variant: 'destructive',
+        title: "Erro",
+        description: "Não foi possível excluir o procedimento.",
+        variant: "destructive",
       });
     }
   };
 
   const selectCommonProcedure = (procedureName: string) => {
-    form.setValue('display', procedureName);
-    form.setValue('code', procedureName.toLowerCase().replace(/\s+/g, '-'));
+    form.setValue("display", procedureName);
+    form.setValue("code", procedureName.toLowerCase().replace(/\s+/g, "-"));
   };
 
   const formatDateTime = (dateString: string) => {
@@ -323,7 +329,7 @@ export function ProcedureManagement({
   };
 
   const getStatusOption = (status: ProcedureStatus) => {
-    return statusOptions.find(option => option.value === status);
+    return statusOptions.find((option) => option.value === status);
   };
 
   const totalPages = Math.ceil(totalCount / perPage);
@@ -338,13 +344,12 @@ export function ProcedureManagement({
             Documentação de procedimentos seguindo padrões HL7 FHIR R4
           </p>
         </div>
-        
+
         <Button onClick={openCreateDialog}>
           <Plus className="mr-2 h-4 w-4" />
           Novo Procedimento
         </Button>
       </div>
-
       {/* Search and Filters */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center">
         <div className="relative flex-1">
@@ -356,13 +361,13 @@ export function ProcedureManagement({
             className="pl-9"
           />
         </div>
-        
+
         <div className="flex gap-2">
           {!patientId && (
             <Select
-              value={filters.patient_id || 'all'}
-              onValueChange={(value) => 
-                handleFilterChange('patient_id', value === 'all' ? undefined : value)
+              value={filters.patient_id || "all"}
+              onValueChange={(value) =>
+                handleFilterChange("patient_id", value === "all" ? undefined : value)
               }
             >
               <SelectTrigger className="w-[200px]">
@@ -380,9 +385,9 @@ export function ProcedureManagement({
           )}
 
           <Select
-            value={filters.status?.[0] || 'all'}
-            onValueChange={(value) => 
-              handleFilterChange('status', value === 'all' ? undefined : [value as ProcedureStatus])
+            value={filters.status?.[0] || "all"}
+            onValueChange={(value) =>
+              handleFilterChange("status", value === "all" ? undefined : [value as ProcedureStatus])
             }
           >
             <SelectTrigger className="w-[150px]">
@@ -398,13 +403,12 @@ export function ProcedureManagement({
             </SelectContent>
           </Select>
         </div>
-      </div>      {/* Procedures Table */}
+      </div>{" "}
+      {/* Procedures Table */}
       <Card>
         <CardHeader>
           <CardTitle>Lista de Procedimentos</CardTitle>
-          <CardDescription>
-            Histórico de procedimentos realizados e agendados
-          </CardDescription>
+          <CardDescription>Histórico de procedimentos realizados e agendados</CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -416,9 +420,7 @@ export function ProcedureManagement({
               <div className="text-center">
                 <FileText className="mx-auto h-12 w-12 text-muted-foreground" />
                 <h3 className="mt-4 text-lg font-semibold">Nenhum procedimento encontrado</h3>
-                <p className="text-muted-foreground">
-                  Comece documentando um novo procedimento.
-                </p>
+                <p className="text-muted-foreground">Comece documentando um novo procedimento.</p>
               </div>
             </div>
           ) : (
@@ -437,7 +439,7 @@ export function ProcedureManagement({
                 {procedures.map((procedure) => {
                   const statusOption = getStatusOption(procedure.status);
                   return (
-                    <TableRow 
+                    <TableRow
                       key={procedure.id}
                       className="cursor-pointer hover:bg-muted/50"
                       onClick={() => onSelectProcedure?.(procedure)}
@@ -458,9 +460,7 @@ export function ProcedureManagement({
                       </TableCell>
                       <TableCell>
                         {statusOption && (
-                          <Badge className={statusOption.color}>
-                            {statusOption.label}
-                          </Badge>
+                          <Badge className={statusOption.color}>{statusOption.label}</Badge>
                         )}
                       </TableCell>
                       <TableCell>
@@ -471,9 +471,7 @@ export function ProcedureManagement({
                         )}
                       </TableCell>
                       <TableCell>
-                        {procedure.location || (
-                          <span className="text-muted-foreground">-</span>
-                        )}
+                        {procedure.location || <span className="text-muted-foreground">-</span>}
                       </TableCell>
                       <TableCell>
                         <DropdownMenu>
@@ -528,13 +526,14 @@ export function ProcedureManagement({
           {totalPages > 1 && (
             <div className="flex items-center justify-between px-2 py-4">
               <div className="text-sm text-muted-foreground">
-                Mostrando {((currentPage - 1) * perPage) + 1} a {Math.min(currentPage * perPage, totalCount)} de {totalCount} resultados
+                Mostrando {(currentPage - 1) * perPage + 1} a{" "}
+                {Math.min(currentPage * perPage, totalCount)} de {totalCount} resultados
               </div>
               <div className="flex items-center space-x-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                   disabled={currentPage === 1}
                 >
                   Anterior
@@ -545,7 +544,7 @@ export function ProcedureManagement({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                   disabled={currentPage === totalPages}
                 >
                   Próxima
@@ -555,13 +554,12 @@ export function ProcedureManagement({
           )}
         </CardContent>
       </Card>
-
       {/* Create/Edit Procedure Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {editingProcedure ? 'Editar Procedimento' : 'Novo Procedimento'}
+              {editingProcedure ? "Editar Procedimento" : "Novo Procedimento"}
             </DialogTitle>
             <DialogDescription>
               Documente um procedimento seguindo padrões HL7 FHIR R4
@@ -597,10 +595,7 @@ export function ProcedureManagement({
                     <FormItem>
                       <FormLabel>Nome do Procedimento *</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Ex: Limpeza de pele profunda"
-                          {...field}
-                        />
+                        <Input placeholder="Ex: Limpeza de pele profunda" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -614,14 +609,9 @@ export function ProcedureManagement({
                     <FormItem>
                       <FormLabel>Código do Procedimento</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Ex: limpeza-pele-profunda"
-                          {...field}
-                        />
+                        <Input placeholder="Ex: limpeza-pele-profunda" {...field} />
                       </FormControl>
-                      <FormDescription>
-                        Código interno para identificação
-                      </FormDescription>
+                      <FormDescription>Código interno para identificação</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -692,14 +682,9 @@ export function ProcedureManagement({
                     <FormItem>
                       <FormLabel>Data e Hora da Realização</FormLabel>
                       <FormControl>
-                        <Input
-                          type="datetime-local"
-                          {...field}
-                        />
+                        <Input type="datetime-local" {...field} />
                       </FormControl>
-                      <FormDescription>
-                        Quando o procedimento foi ou será realizado
-                      </FormDescription>
+                      <FormDescription>Quando o procedimento foi ou será realizado</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -712,10 +697,7 @@ export function ProcedureManagement({
                     <FormItem>
                       <FormLabel>Local</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Ex: Sala 1, Consultório principal"
-                          {...field}
-                        />
+                        <Input placeholder="Ex: Sala 1, Consultório principal" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -732,10 +714,7 @@ export function ProcedureManagement({
                     <FormItem>
                       <FormLabel>Motivo/Indicação</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Ex: Pele oleosa com cravos"
-                          {...field}
-                        />
+                        <Input placeholder="Ex: Pele oleosa com cravos" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -749,10 +728,7 @@ export function ProcedureManagement({
                     <FormItem>
                       <FormLabel>Resultado</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Ex: Procedimento realizado com sucesso"
-                          {...field}
-                        />
+                        <Input placeholder="Ex: Procedimento realizado com sucesso" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -784,15 +760,11 @@ export function ProcedureManagement({
 
               {/* Form Actions */}
               <div className="flex justify-end space-x-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsDialogOpen(false)}
-                >
+                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                   Cancelar
                 </Button>
                 <Button type="submit">
-                  {editingProcedure ? 'Atualizar' : 'Criar'} Procedimento
+                  {editingProcedure ? "Atualizar" : "Criar"} Procedimento
                 </Button>
               </div>
             </form>

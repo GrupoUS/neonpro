@@ -1,24 +1,24 @@
 "use client";
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import {
+import type { Input } from "@/components/ui/input";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
+import type {
   Table,
   TableBody,
   TableCell,
@@ -26,8 +26,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
+import type { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
   AlertTriangle,
   Barcode,
   Calendar,
@@ -41,7 +41,7 @@ import {
   Thermometer,
   Truck,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import type { useMemo, useState } from "react";
 
 interface Batch {
   id: string;
@@ -236,10 +236,8 @@ export function BatchTracking() {
         batch.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         batch.supplierName.toLowerCase().includes(searchTerm.toLowerCase());
 
-      const matchesStatus =
-        selectedStatus === "all" || batch.status === selectedStatus;
-      const matchesCategory =
-        selectedCategory === "all" || batch.category === selectedCategory;
+      const matchesStatus = selectedStatus === "all" || batch.status === selectedStatus;
+      const matchesCategory = selectedCategory === "all" || batch.category === selectedCategory;
 
       return matchesSearch && matchesStatus && matchesCategory;
     });
@@ -248,9 +246,7 @@ export function BatchTracking() {
   const getBatchAlert = (batch: Batch) => {
     const today = new Date();
     const expDate = new Date(batch.expirationDate);
-    const daysToExpiry = Math.ceil(
-      (expDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
-    );
+    const daysToExpiry = Math.ceil((expDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 
     if (daysToExpiry <= 0) {
       return {
@@ -322,9 +318,7 @@ export function BatchTracking() {
 
         <Tabs
           value={viewMode}
-          onValueChange={(value) =>
-            setViewMode(value as "summary" | "detailed")
-          }
+          onValueChange={(value) => setViewMode(value as "summary" | "detailed")}
         >
           <TabsList>
             <TabsTrigger value="summary">Resumo</TabsTrigger>
@@ -338,9 +332,7 @@ export function BatchTracking() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Lotes Ativos
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Lotes Ativos</p>
                 <p className="text-2xl font-bold">
                   {mockBatches.filter((b) => b.status === "available").length}
                 </p>
@@ -354,16 +346,13 @@ export function BatchTracking() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Vencendo (30 dias)
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Vencendo (30 dias)</p>
                 <p className="text-2xl font-bold text-amber-600">
                   {
                     mockBatches.filter((b) => {
                       const daysToExpiry = Math.ceil(
-                        (new Date(b.expirationDate).getTime() -
-                          new Date().getTime()) /
-                          (1000 * 60 * 60 * 24)
+                        (new Date(b.expirationDate).getTime() - new Date().getTime()) /
+                          (1000 * 60 * 60 * 24),
                       );
                       return daysToExpiry > 0 && daysToExpiry <= 30;
                     }).length
@@ -379,9 +368,7 @@ export function BatchTracking() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Controle Temp.
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Controle Temp.</p>
                 <p className="text-2xl font-bold text-blue-600">
                   {mockBatches.filter((b) => b.temperatureControlled).length}
                 </p>
@@ -395,9 +382,7 @@ export function BatchTracking() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  ANVISA Compliant
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">ANVISA Compliant</p>
                 <p className="text-2xl font-bold text-green-600">
                   {mockBatches.filter((b) => b.anvisaRegistration).length}
                 </p>
@@ -413,10 +398,7 @@ export function BatchTracking() {
           <CardTitle className="flex items-center justify-between">
             <span>Lotes Registrados ({filteredBatches.length})</span>
             <div className="flex items-center gap-2">
-              <Badge
-                variant="outline"
-                className="bg-blue-50 text-blue-700 border-blue-200"
-              >
+              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
                 <Shield className="w-3 h-3 mr-1" />
                 ANVISA Tracking
               </Badge>
@@ -426,9 +408,7 @@ export function BatchTracking() {
               </Button>
             </div>
           </CardTitle>
-          <CardDescription>
-            Rastreamento completo com compliance ANVISA e auditoria
-          </CardDescription>
+          <CardDescription>Rastreamento completo com compliance ANVISA e auditoria</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
@@ -442,9 +422,7 @@ export function BatchTracking() {
                   <TableHead>Localização</TableHead>
                   <TableHead>Compliance</TableHead>
                   <TableHead>Status</TableHead>
-                  {viewMode === "detailed" && (
-                    <TableHead>Rastreabilidade</TableHead>
-                  )}
+                  {viewMode === "detailed" && <TableHead>Rastreabilidade</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -459,9 +437,7 @@ export function BatchTracking() {
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
                             <Barcode className="w-4 h-4 text-muted-foreground" />
-                            <span className="font-mono font-medium">
-                              {batch.batchNumber}
-                            </span>
+                            <span className="font-mono font-medium">{batch.batchNumber}</span>
                           </div>
                           <div className="font-medium">{batch.productName}</div>
                           <div className="text-sm text-muted-foreground">
@@ -481,14 +457,12 @@ export function BatchTracking() {
                       <TableCell>
                         <div className="text-center">
                           <div className="font-medium">{batch.quantity}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {batch.unit}
-                          </div>
+                          <div className="text-sm text-muted-foreground">{batch.unit}</div>
                           {batch.utilizationTracking.length > 0 && (
                             <div className="text-xs text-blue-600">
                               {batch.utilizationTracking.reduce(
                                 (acc, util) => acc + util.quantityUsed,
-                                0
+                                0,
                               )}{" "}
                               utilizados
                             </div>
@@ -505,28 +479,24 @@ export function BatchTracking() {
                             </span>
                           </div>
                           <div className="text-xs text-muted-foreground">
-                            Fabricação:{" "}
-                            {formatBrazilianDate(batch.manufactureDate)}
+                            Fabricação: {formatBrazilianDate(batch.manufactureDate)}
                           </div>
                         </div>
                       </TableCell>
 
                       <TableCell>
                         <div className="space-y-1">
-                          <div className="font-medium text-sm">
-                            {batch.supplierName}
-                          </div>
+                          <div className="font-medium text-sm">{batch.supplierName}</div>
                           <div className="text-xs text-muted-foreground font-mono">
                             {batch.supplierCnpj.replace(
                               /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,
-                              "$1.$2.$3/$4-$5"
+                              "$1.$2.$3/$4-$5",
                             )}
                           </div>
                           <div className="flex items-center gap-1">
                             <Truck className="w-3 h-3 text-muted-foreground" />
                             <span className="text-xs text-muted-foreground">
-                              Recebido:{" "}
-                              {formatBrazilianDate(batch.receivedDate)}
+                              Recebido: {formatBrazilianDate(batch.receivedDate)}
                             </span>
                           </div>
                         </div>
@@ -536,9 +506,7 @@ export function BatchTracking() {
                         <div className="space-y-1">
                           <div className="flex items-center gap-1">
                             <Package className="w-3 h-3 text-muted-foreground" />
-                            <span className="text-sm">
-                              {batch.currentLocation}
-                            </span>
+                            <span className="text-sm">{batch.currentLocation}</span>
                           </div>
                           {batch.temperatureControlled && (
                             <Badge
@@ -585,10 +553,7 @@ export function BatchTracking() {
                       </TableCell>
 
                       <TableCell>
-                        <Badge
-                          variant="outline"
-                          className={statusConfig_.color}
-                        >
+                        <Badge variant="outline" className={statusConfig_.color}>
                           <StatusIcon className="w-3 h-3 mr-1" />
                           {statusConfig_.label}
                         </Badge>
@@ -597,18 +562,12 @@ export function BatchTracking() {
                       {viewMode === "detailed" && (
                         <TableCell>
                           <div className="space-y-1 max-w-[200px]">
-                            <div className="text-xs font-medium">
-                              Última Movimentação:
-                            </div>
+                            <div className="text-xs font-medium">Última Movimentação:</div>
                             {batch.traceabilityChain.slice(-1).map((entry) => (
-                              <div
-                                key={entry.id}
-                                className="text-xs text-muted-foreground"
-                              >
+                              <div key={entry.id} className="text-xs text-muted-foreground">
                                 <div>{entry.action}</div>
                                 <div>
-                                  {entry.user} •{" "}
-                                  {formatBrazilianDate(entry.date)}
+                                  {entry.user} • {formatBrazilianDate(entry.date)}
                                 </div>
                               </div>
                             ))}
@@ -645,14 +604,12 @@ export function BatchTracking() {
           <CardContent className="space-y-6">
             {filteredBatches.slice(0, 1).map(
               (
-                batch // Show details for first batch as example
+                batch, // Show details for first batch as example
               ) => (
                 <div key={batch.id} className="space-y-4">
                   <div className="flex items-center gap-2 pb-2 border-b">
                     <Barcode className="w-5 h-5" />
-                    <span className="font-mono font-medium">
-                      {batch.batchNumber}
-                    </span>
+                    <span className="font-mono font-medium">{batch.batchNumber}</span>
                     <span className="text-muted-foreground">•</span>
                     <span className="font-medium">{batch.productName}</span>
                   </div>
@@ -675,9 +632,7 @@ export function BatchTracking() {
                             </div>
                             <div className="flex-1 space-y-1">
                               <div className="flex items-center justify-between">
-                                <span className="font-medium text-sm">
-                                  {entry.action}
-                                </span>
+                                <span className="font-medium text-sm">{entry.action}</span>
                                 {entry.validated && (
                                   <Badge
                                     variant="outline"
@@ -700,9 +655,7 @@ export function BatchTracking() {
                                   {entry.temperature}°C
                                 </div>
                               )}
-                              <p className="text-xs text-muted-foreground">
-                                {entry.details}
-                              </p>
+                              <p className="text-xs text-muted-foreground">{entry.details}</p>
                             </div>
                           </div>
                         ))}
@@ -723,9 +676,7 @@ export function BatchTracking() {
                               className="p-3 bg-blue-50 border border-blue-200 rounded-lg"
                             >
                               <div className="flex items-center justify-between mb-2">
-                                <span className="font-medium text-sm">
-                                  {util.procedureType}
-                                </span>
+                                <span className="font-medium text-sm">{util.procedureType}</span>
                                 <Badge
                                   variant="outline"
                                   className="bg-blue-100 text-blue-800 border-blue-300"
@@ -735,15 +686,9 @@ export function BatchTracking() {
                               </div>
                               <div className="space-y-1 text-xs text-muted-foreground">
                                 <div>Profissional: {util.professionalName}</div>
-                                <div>
-                                  Data:{" "}
-                                  {new Date(util.date).toLocaleString("pt-BR")}
-                                </div>
+                                <div>Data: {new Date(util.date).toLocaleString("pt-BR")}</div>
                                 {util.patientId && (
-                                  <div>
-                                    Paciente ID: {util.patientId} (LGPD
-                                    Protected)
-                                  </div>
+                                  <div>Paciente ID: {util.patientId} (LGPD Protected)</div>
                                 )}
                                 {util.notes && <div>Obs: {util.notes}</div>}
                               </div>
@@ -758,7 +703,7 @@ export function BatchTracking() {
                     </div>
                   </div>
                 </div>
-              )
+              ),
             )}
           </CardContent>
         </Card>

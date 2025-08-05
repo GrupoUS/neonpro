@@ -1,46 +1,85 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Calendar, Clock, User, FileText, AlertTriangle, CheckCircle, XCircle } from 'lucide-react'
-import { PatientConsent } from '@/app/types/compliance'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { useToast } from '@/hooks/use-toast'
+import type { useState, useEffect } from "react";
+import type { Button } from "@/components/ui/button";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type {
+  Calendar,
+  Clock,
+  User,
+  FileText,
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
+import type { PatientConsent } from "@/app/types/compliance";
+import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import type { useToast } from "@/hooks/use-toast";
 
 interface ConsentWithdrawalManagerProps {
-  patientId?: string
-  clinicId: string
+  patientId?: string;
+  clinicId: string;
 }
 
-export default function ConsentWithdrawalManager({ patientId, clinicId }: ConsentWithdrawalManagerProps) {
-  const [consents, setConsents] = useState<PatientConsent[]>([])
-  const [loading, setLoading] = useState(true)
-  const [withdrawing, setWithdrawing] = useState<string | null>(null)
-  const [withdrawalReason, setWithdrawalReason] = useState('')
-  const [selectedConsentType, setSelectedConsentType] = useState<string>('all')
-  const [selectedStatus, setSelectedStatus] = useState<string>('active')
-  
-  const supabase = createClientComponentClient()
-  const { toast } = useToast()
+export default function ConsentWithdrawalManager({
+  patientId,
+  clinicId,
+}: ConsentWithdrawalManagerProps) {
+  const [consents, setConsents] = useState<PatientConsent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [withdrawing, setWithdrawing] = useState<string | null>(null);
+  const [withdrawalReason, setWithdrawalReason] = useState("");
+  const [selectedConsentType, setSelectedConsentType] = useState<string>("all");
+  const [selectedStatus, setSelectedStatus] = useState<string>("active");
+
+  const supabase = createClientComponentClient();
+  const { toast } = useToast();
 
   useEffect(() => {
-    fetchPatientConsents()
-  }, [patientId, clinicId, selectedConsentType, selectedStatus])
+    fetchPatientConsents();
+  }, [patientId, clinicId, selectedConsentType, selectedStatus]);
 
   const fetchPatientConsents = async () => {
     try {
-      setLoading(true)
-      
+      setLoading(true);
+
       let query = supabase
-        .from('patient_consent')
+        .from("patient_consent")
         .select(`
           *,
           consent_forms (
@@ -54,147 +93,146 @@ export default function ConsentWithdrawalManager({ patientId, clinicId }: Consen
             full_name
           )
         `)
-        .eq('clinic_id', clinicId)
+        .eq("clinic_id", clinicId);
 
       if (patientId) {
-        query = query.eq('patient_id', patientId)
+        query = query.eq("patient_id", patientId);
       }
 
-      if (selectedConsentType !== 'all') {
-        query = query.eq('consent_type', selectedConsentType)
+      if (selectedConsentType !== "all") {
+        query = query.eq("consent_type", selectedConsentType);
       }
 
-      if (selectedStatus === 'active') {
-        query = query.in('status', ['active', 'pending'])
-      } else if (selectedStatus !== 'all') {
-        query = query.eq('status', selectedStatus)
+      if (selectedStatus === "active") {
+        query = query.in("status", ["active", "pending"]);
+      } else if (selectedStatus !== "all") {
+        query = query.eq("status", selectedStatus);
       }
 
-      const { data, error } = await query.order('created_at', { ascending: false })
+      const { data, error } = await query.order("created_at", { ascending: false });
 
       if (error) {
-        console.error('Error fetching consents:', error)
+        console.error("Error fetching consents:", error);
         toast({
-          title: 'Error',
-          description: 'Failed to fetch patient consents',
-          variant: 'destructive'
-        })
-        return
+          title: "Error",
+          description: "Failed to fetch patient consents",
+          variant: "destructive",
+        });
+        return;
       }
 
-      setConsents(data || [])
+      setConsents(data || []);
     } catch (error) {
-      console.error('Error:', error)
+      console.error("Error:", error);
       toast({
-        title: 'Error',
-        description: 'An unexpected error occurred',
-        variant: 'destructive'
-      })
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleWithdrawConsent = async (consentId: string) => {
     if (!withdrawalReason.trim()) {
       toast({
-        title: 'Error',
-        description: 'Please provide a reason for withdrawal',
-        variant: 'destructive'
-      })
-      return
+        title: "Error",
+        description: "Please provide a reason for withdrawal",
+        variant: "destructive",
+      });
+      return;
     }
 
     try {
-      setWithdrawing(consentId)
+      setWithdrawing(consentId);
 
       const { data, error } = await supabase
-        .from('patient_consent')
+        .from("patient_consent")
         .update({
-          status: 'revoked',
+          status: "revoked",
           withdrawal_date: new Date().toISOString(),
-          withdrawal_reason: withdrawalReason.trim()
+          withdrawal_reason: withdrawalReason.trim(),
         })
-        .eq('id', consentId)
-        .select()
+        .eq("id", consentId)
+        .select();
 
       if (error) {
-        console.error('Error withdrawing consent:', error)
+        console.error("Error withdrawing consent:", error);
         toast({
-          title: 'Error',
-          description: 'Failed to withdraw consent',
-          variant: 'destructive'
-        })
-        return
+          title: "Error",
+          description: "Failed to withdraw consent",
+          variant: "destructive",
+        });
+        return;
       }
 
       toast({
-        title: 'Success',
-        description: 'Consent has been successfully withdrawn',
-        variant: 'default'
-      })
+        title: "Success",
+        description: "Consent has been successfully withdrawn",
+        variant: "default",
+      });
 
       // Refresh the list
-      await fetchPatientConsents()
-      setWithdrawalReason('')
-      setWithdrawing(null)
-      
+      await fetchPatientConsents();
+      setWithdrawalReason("");
+      setWithdrawing(null);
     } catch (error) {
-      console.error('Error:', error)
+      console.error("Error:", error);
       toast({
-        title: 'Error',
-        description: 'An unexpected error occurred',
-        variant: 'destructive'
-      })
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
     } finally {
-      setWithdrawing(null)
+      setWithdrawing(null);
     }
-  }
+  };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'active':
-        return <CheckCircle className="h-4 w-4 text-green-500" />
-      case 'pending':
-        return <Clock className="h-4 w-4 text-yellow-500" />
-      case 'withdrawn':
-        return <XCircle className="h-4 w-4 text-red-500" />
-      case 'expired':
-        return <AlertTriangle className="h-4 w-4 text-orange-500" />
+      case "active":
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
+      case "pending":
+        return <Clock className="h-4 w-4 text-yellow-500" />;
+      case "withdrawn":
+        return <XCircle className="h-4 w-4 text-red-500" />;
+      case "expired":
+        return <AlertTriangle className="h-4 w-4 text-orange-500" />;
       default:
-        return <FileText className="h-4 w-4 text-gray-500" />
+        return <FileText className="h-4 w-4 text-gray-500" />;
     }
-  }
+  };
 
   const getStatusBadge = (status: string) => {
     const variants = {
-      active: 'default',
-      pending: 'secondary',
-      withdrawn: 'destructive',
-      expired: 'outline'
-    } as const
+      active: "default",
+      pending: "secondary",
+      withdrawn: "destructive",
+      expired: "outline",
+    } as const;
 
     return (
-      <Badge variant={variants[status as keyof typeof variants] || 'outline'}>
+      <Badge variant={variants[status as keyof typeof variants] || "outline"}>
         {getStatusIcon(status)}
         <span className="ml-1 capitalize">{status}</span>
       </Badge>
-    )
-  }
+    );
+  };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  }
+    return new Date(dateString).toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
   const canWithdraw = (consent: PatientConsent) => {
-    return consent.status === 'active' || consent.status === 'pending'
-  }
+    return consent.status === "active" || consent.status === "pending";
+  };
 
   if (loading) {
     return (
@@ -208,7 +246,7 @@ export default function ConsentWithdrawalManager({ patientId, clinicId }: Consen
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -262,9 +300,7 @@ export default function ConsentWithdrawalManager({ patientId, clinicId }: Consen
           {consents.length === 0 ? (
             <Alert>
               <AlertTriangle className="h-4 w-4" />
-              <AlertDescription>
-                No consents found matching the selected criteria.
-              </AlertDescription>
+              <AlertDescription>No consents found matching the selected criteria.</AlertDescription>
             </Alert>
           ) : (
             <Table>
@@ -285,12 +321,12 @@ export default function ConsentWithdrawalManager({ patientId, clinicId }: Consen
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <User className="h-4 w-4" />
-                        {consent.patient?.full_name || 'Unknown Patient'}
+                        {consent.patient?.full_name || "Unknown Patient"}
                       </div>
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline" className="capitalize">
-                        {consent.consent_type?.replace('_', ' ')}
+                        {consent.consent_type?.replace("_", " ")}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -329,7 +365,11 @@ export default function ConsentWithdrawalManager({ patientId, clinicId }: Consen
                       {canWithdraw(consent) && (
                         <Dialog>
                           <DialogTrigger asChild>
-                            <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-red-600 hover:text-red-700"
+                            >
                               <XCircle className="h-4 w-4 mr-1" />
                               Withdraw
                             </Button>
@@ -338,7 +378,8 @@ export default function ConsentWithdrawalManager({ patientId, clinicId }: Consen
                             <DialogHeader>
                               <DialogTitle>Withdraw Consent</DialogTitle>
                               <DialogDescription>
-                                Are you sure you want to withdraw this consent? This action cannot be undone.
+                                Are you sure you want to withdraw this consent? This action cannot
+                                be undone.
                               </DialogDescription>
                             </DialogHeader>
                             <div className="space-y-4">
@@ -357,8 +398,8 @@ export default function ConsentWithdrawalManager({ patientId, clinicId }: Consen
                               <Button
                                 variant="outline"
                                 onClick={() => {
-                                  setWithdrawalReason('')
-                                  setWithdrawing(null)
+                                  setWithdrawalReason("");
+                                  setWithdrawing(null);
                                 }}
                               >
                                 Cancel
@@ -368,7 +409,7 @@ export default function ConsentWithdrawalManager({ patientId, clinicId }: Consen
                                 onClick={() => handleWithdrawConsent(consent.id)}
                                 disabled={withdrawing === consent.id || !withdrawalReason.trim()}
                               >
-                                {withdrawing === consent.id ? 'Withdrawing...' : 'Withdraw Consent'}
+                                {withdrawing === consent.id ? "Withdrawing..." : "Withdraw Consent"}
                               </Button>
                             </DialogFooter>
                           </DialogContent>
@@ -383,5 +424,5 @@ export default function ConsentWithdrawalManager({ patientId, clinicId }: Consen
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

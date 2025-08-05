@@ -1,10 +1,10 @@
-﻿// Expense & Budget Management Engine
+// Expense & Budget Management Engine
 // Epic 5, Story 5.1, Task 5: Expense & Budget Management
 // Created: 2025-01-27
 // Author: VoidBeast V4.0 (BMad Method Implementation)
 // =====================================================================================
 
-import { createClient } from '@/lib/supabase/client';
+import type { createClient } from "@/lib/supabase/client";
 
 export interface ExpenseCategory {
   categoryId: string;
@@ -32,7 +32,7 @@ export interface BudgetAlert {
   alertId: string;
   categoryId: string;
   categoryName: string;
-  alertType: 'warning' | 'critical' | 'exceeded';
+  alertType: "warning" | "critical" | "exceeded";
   threshold: number;
   currentAmount: number;
   message: string;
@@ -71,7 +71,7 @@ export interface ExpenseForecast {
     lower: number;
     upper: number;
   };
-  trend: 'increasing' | 'decreasing' | 'stable';
+  trend: "increasing" | "decreasing" | "stable";
   seasonalFactor: number;
   riskFactors: string[];
 }
@@ -88,19 +88,22 @@ export class ExpenseBudgetEngine {
    */
   async categorizeExpenses(
     clinicId: string,
-    expenseIds?: string[]
+    expenseIds?: string[],
   ): Promise<{ categorized: number; failed: number; suggestions: any[] }> {
-    const { data: categorizationResult, error } = await this.supabase.rpc('auto_categorize_expenses', {
-      p_clinic_id: clinicId,
-      p_expense_ids: expenseIds || null
-    });
+    const { data: categorizationResult, error } = await this.supabase.rpc(
+      "auto_categorize_expenses",
+      {
+        p_clinic_id: clinicId,
+        p_expense_ids: expenseIds || null,
+      },
+    );
 
     if (error) throw new Error(`Expense categorization failed: ${error.message}`);
 
     return {
       categorized: categorizationResult.categorized_count,
       failed: categorizationResult.failed_count,
-      suggestions: categorizationResult.suggestions || []
+      suggestions: categorizationResult.suggestions || [],
     };
   }
 
@@ -109,13 +112,16 @@ export class ExpenseBudgetEngine {
    */
   async getExpenseCategories(
     clinicId: string,
-    dateRange: { start: Date; end: Date }
+    dateRange: { start: Date; end: Date },
   ): Promise<ExpenseCategory[]> {
-    const { data: categoryData, error } = await this.supabase.rpc('get_expense_categories_with_budget', {
-      p_clinic_id: clinicId,
-      p_start_date: dateRange.start.toISOString(),
-      p_end_date: dateRange.end.toISOString()
-    });
+    const { data: categoryData, error } = await this.supabase.rpc(
+      "get_expense_categories_with_budget",
+      {
+        p_clinic_id: clinicId,
+        p_start_date: dateRange.start.toISOString(),
+        p_end_date: dateRange.end.toISOString(),
+      },
+    );
 
     if (error) throw new Error(`Failed to fetch expense categories: ${error.message}`);
 
@@ -128,7 +134,7 @@ export class ExpenseBudgetEngine {
       variance: parseFloat(category.variance),
       variancePercent: parseFloat(category.variance_percent),
       alertThreshold: parseFloat(category.alert_threshold),
-      isOverBudget: category.is_over_budget
+      isOverBudget: category.is_over_budget,
     }));
   }
 
@@ -142,13 +148,13 @@ export class ExpenseBudgetEngine {
   async generateBudgetVarianceReport(
     clinicId: string,
     period: string,
-    includeForecasting: boolean = true
+    includeForecasting: boolean = true,
   ): Promise<BudgetVarianceReport> {
     const dateRange = this.parsePeriodToDates(period);
-    
+
     const [categories, alerts] = await Promise.all([
       this.getExpenseCategories(clinicId, dateRange),
-      this.getBudgetAlerts(clinicId, dateRange)
+      this.getBudgetAlerts(clinicId, dateRange),
     ]);
 
     const totalBudget = categories.reduce((sum, cat) => sum + cat.budgetAllocation, 0);
@@ -163,7 +169,7 @@ export class ExpenseBudgetEngine {
       totalActual,
       totalVariance,
       variancePercent,
-      alerts
+      alerts,
     };
   }
 
@@ -172,15 +178,15 @@ export class ExpenseBudgetEngine {
    */
   async getBudgetAlerts(
     clinicId: string,
-    dateRange: { start: Date; end: Date }
+    dateRange: { start: Date; end: Date },
   ): Promise<BudgetAlert[]> {
     const { data: alertData, error } = await this.supabase
-      .from('budget_alerts')
-      .select('*')
-      .eq('clinic_id', clinicId)
-      .gte('created_at', dateRange.start.toISOString())
-      .lte('created_at', dateRange.end.toISOString())
-      .order('created_at', { ascending: false });
+      .from("budget_alerts")
+      .select("*")
+      .eq("clinic_id", clinicId)
+      .gte("created_at", dateRange.start.toISOString())
+      .lte("created_at", dateRange.end.toISOString())
+      .order("created_at", { ascending: false });
 
     if (error) throw new Error(`Failed to fetch budget alerts: ${error.message}`);
 
@@ -193,7 +199,7 @@ export class ExpenseBudgetEngine {
       currentAmount: parseFloat(alert.current_amount),
       message: alert.message,
       createdAt: new Date(alert.created_at),
-      isResolved: alert.is_resolved
+      isResolved: alert.is_resolved,
     }));
   }
 
@@ -203,14 +209,14 @@ export class ExpenseBudgetEngine {
   async createBudgetAlert(
     clinicId: string,
     categoryId: string,
-    alertType: 'warning' | 'critical' | 'exceeded',
+    alertType: "warning" | "critical" | "exceeded",
     currentAmount: number,
-    threshold: number
+    threshold: number,
   ): Promise<string> {
     const alertMessage = this.generateAlertMessage(alertType, currentAmount, threshold);
 
     const { data: alertData, error } = await this.supabase
-      .from('budget_alerts')
+      .from("budget_alerts")
       .insert({
         clinic_id: clinicId,
         category_id: categoryId,
@@ -218,9 +224,9 @@ export class ExpenseBudgetEngine {
         threshold,
         current_amount: currentAmount,
         message: alertMessage,
-        is_resolved: false
+        is_resolved: false,
       })
-      .select('id')
+      .select("id")
       .single();
 
     if (error) throw new Error(`Failed to create budget alert: ${error.message}`);
@@ -238,13 +244,13 @@ export class ExpenseBudgetEngine {
   async analyzeExpenseTrends(
     clinicId: string,
     dateRange: { start: Date; end: Date },
-    granularity: 'daily' | 'weekly' | 'monthly' = 'monthly'
+    granularity: "daily" | "weekly" | "monthly" = "monthly",
   ): Promise<any[]> {
-    const { data: trendData, error } = await this.supabase.rpc('analyze_expense_trends', {
+    const { data: trendData, error } = await this.supabase.rpc("analyze_expense_trends", {
       p_clinic_id: clinicId,
       p_start_date: dateRange.start.toISOString(),
       p_end_date: dateRange.end.toISOString(),
-      p_granularity: granularity
+      p_granularity: granularity,
     });
 
     if (error) throw new Error(`Expense trend analysis failed: ${error.message}`);
@@ -255,7 +261,7 @@ export class ExpenseBudgetEngine {
       growthRate: parseFloat(trend.growth_rate),
       volatility: parseFloat(trend.volatility),
       optimization_opportunities: trend.optimization_opportunities || [],
-      costSavingPotential: parseFloat(trend.cost_saving_potential || 0)
+      costSavingPotential: parseFloat(trend.cost_saving_potential || 0),
     }));
   }
 
@@ -264,13 +270,16 @@ export class ExpenseBudgetEngine {
    */
   async generateCostOptimizationInsights(
     clinicId: string,
-    dateRange: { start: Date; end: Date }
+    dateRange: { start: Date; end: Date },
   ): Promise<any[]> {
-    const { data: insights, error } = await this.supabase.rpc('generate_cost_optimization_insights', {
-      p_clinic_id: clinicId,
-      p_start_date: dateRange.start.toISOString(),
-      p_end_date: dateRange.end.toISOString()
-    });
+    const { data: insights, error } = await this.supabase.rpc(
+      "generate_cost_optimization_insights",
+      {
+        p_clinic_id: clinicId,
+        p_start_date: dateRange.start.toISOString(),
+        p_end_date: dateRange.end.toISOString(),
+      },
+    );
 
     if (error) throw new Error(`Cost optimization analysis failed: ${error.message}`);
 
@@ -281,7 +290,7 @@ export class ExpenseBudgetEngine {
       savingsPotential: parseFloat(insight.savings_potential),
       recommendations: insight.recommendations || [],
       priority: insight.priority,
-      implementationEffort: insight.implementation_effort
+      implementationEffort: insight.implementation_effort,
     }));
   }
 
@@ -294,12 +303,12 @@ export class ExpenseBudgetEngine {
    */
   async analyzeVendorExpenses(
     clinicId: string,
-    dateRange: { start: Date; end: Date }
+    dateRange: { start: Date; end: Date },
   ): Promise<VendorExpenseData[]> {
-    const { data: vendorData, error } = await this.supabase.rpc('analyze_vendor_expenses', {
+    const { data: vendorData, error } = await this.supabase.rpc("analyze_vendor_expenses", {
       p_clinic_id: clinicId,
       p_start_date: dateRange.start.toISOString(),
-      p_end_date: dateRange.end.toISOString()
+      p_end_date: dateRange.end.toISOString(),
     });
 
     if (error) throw new Error(`Vendor expense analysis failed: ${error.message}`);
@@ -314,12 +323,12 @@ export class ExpenseBudgetEngine {
       paymentTerms: vendor.payment_terms,
       lastPayment: new Date(vendor.last_payment),
       outstandingAmount: parseFloat(vendor.outstanding_amount),
-      performanceScore: parseFloat(vendor.performance_score)
+      performanceScore: parseFloat(vendor.performance_score),
     }));
   }
 
   // =====================================================================================
-  // COST CENTER ALLOCATION & DEPARTMENTAL REPORTING  
+  // COST CENTER ALLOCATION & DEPARTMENTAL REPORTING
   // =====================================================================================
 
   /**
@@ -327,12 +336,12 @@ export class ExpenseBudgetEngine {
    */
   async allocateCostsByCenter(
     clinicId: string,
-    dateRange: { start: Date; end: Date }
+    dateRange: { start: Date; end: Date },
   ): Promise<CostCenterAllocation[]> {
-    const { data: allocationData, error } = await this.supabase.rpc('allocate_costs_by_center', {
+    const { data: allocationData, error } = await this.supabase.rpc("allocate_costs_by_center", {
       p_clinic_id: clinicId,
       p_start_date: dateRange.start.toISOString(),
-      p_end_date: dateRange.end.toISOString()
+      p_end_date: dateRange.end.toISOString(),
     });
 
     if (error) throw new Error(`Cost center allocation failed: ${error.message}`);
@@ -345,7 +354,7 @@ export class ExpenseBudgetEngine {
       actualExpenses: parseFloat(center.actual_expenses),
       utilizationRate: parseFloat(center.utilization_rate),
       efficiency: parseFloat(center.efficiency),
-      profitContribution: parseFloat(center.profit_contribution)
+      profitContribution: parseFloat(center.profit_contribution),
     }));
   }
 
@@ -359,12 +368,12 @@ export class ExpenseBudgetEngine {
   async generateExpenseForecast(
     clinicId: string,
     categoryIds: string[],
-    forecastPeriods: number = 12
+    forecastPeriods: number = 12,
   ): Promise<ExpenseForecast[]> {
-    const { data: forecastData, error } = await this.supabase.rpc('generate_expense_forecast', {
+    const { data: forecastData, error } = await this.supabase.rpc("generate_expense_forecast", {
       p_clinic_id: clinicId,
       p_category_ids: categoryIds,
-      p_forecast_periods: forecastPeriods
+      p_forecast_periods: forecastPeriods,
     });
 
     if (error) throw new Error(`Expense forecasting failed: ${error.message}`);
@@ -374,11 +383,11 @@ export class ExpenseBudgetEngine {
       forecastedAmount: parseFloat(forecast.forecasted_amount),
       confidenceInterval: {
         lower: parseFloat(forecast.confidence_lower),
-        upper: parseFloat(forecast.confidence_upper)
+        upper: parseFloat(forecast.confidence_upper),
       },
       trend: forecast.trend,
       seasonalFactor: parseFloat(forecast.seasonal_factor),
-      riskFactors: forecast.risk_factors || []
+      riskFactors: forecast.risk_factors || [],
     }));
   }
 
@@ -388,12 +397,12 @@ export class ExpenseBudgetEngine {
   async createBudgetPlan(
     clinicId: string,
     planYear: number,
-    baselineType: 'historical' | 'zero_based' | 'growth_adjusted' = 'growth_adjusted'
+    baselineType: "historical" | "zero_based" | "growth_adjusted" = "growth_adjusted",
   ): Promise<any> {
-    const { data: budgetPlan, error } = await this.supabase.rpc('create_budget_plan', {
+    const { data: budgetPlan, error } = await this.supabase.rpc("create_budget_plan", {
       p_clinic_id: clinicId,
       p_plan_year: planYear,
-      p_baseline_type: baselineType
+      p_baseline_type: baselineType,
     });
 
     if (error) throw new Error(`Budget plan creation failed: ${error.message}`);
@@ -410,29 +419,29 @@ export class ExpenseBudgetEngine {
    */
   private parsePeriodToDates(period: string): { start: Date; end: Date } {
     const now = new Date();
-    
+
     switch (period) {
-      case 'current_month':
+      case "current_month":
         return {
           start: new Date(now.getFullYear(), now.getMonth(), 1),
-          end: new Date(now.getFullYear(), now.getMonth() + 1, 0)
+          end: new Date(now.getFullYear(), now.getMonth() + 1, 0),
         };
-      case 'current_quarter':
+      case "current_quarter":
         const quarterStart = Math.floor(now.getMonth() / 3) * 3;
         return {
           start: new Date(now.getFullYear(), quarterStart, 1),
-          end: new Date(now.getFullYear(), quarterStart + 3, 0)
+          end: new Date(now.getFullYear(), quarterStart + 3, 0),
         };
-      case 'current_year':
+      case "current_year":
         return {
           start: new Date(now.getFullYear(), 0, 1),
-          end: new Date(now.getFullYear(), 11, 31)
+          end: new Date(now.getFullYear(), 11, 31),
         };
       default:
         // Default to current month
         return {
           start: new Date(now.getFullYear(), now.getMonth(), 1),
-          end: new Date(now.getFullYear(), now.getMonth() + 1, 0)
+          end: new Date(now.getFullYear(), now.getMonth() + 1, 0),
         };
     }
   }
@@ -441,22 +450,21 @@ export class ExpenseBudgetEngine {
    * Generate alert message based on alert type and amounts
    */
   private generateAlertMessage(
-    alertType: 'warning' | 'critical' | 'exceeded',
+    alertType: "warning" | "critical" | "exceeded",
     currentAmount: number,
-    threshold: number
+    threshold: number,
   ): string {
     const percentage = ((currentAmount / threshold) * 100).toFixed(1);
-    
+
     switch (alertType) {
-      case 'warning':
+      case "warning":
         return `Budget utilization at ${percentage}% of allocated threshold`;
-      case 'critical':
+      case "critical":
         return `CRITICAL: Budget utilization at ${percentage}% - immediate attention required`;
-      case 'exceeded':
+      case "exceeded":
         return `EXCEEDED: Budget overrun by ${(currentAmount - threshold).toFixed(2)} (${percentage}% of threshold)`;
       default:
         return `Budget alert: Current spending ${currentAmount} vs threshold ${threshold}`;
     }
   }
 }
-

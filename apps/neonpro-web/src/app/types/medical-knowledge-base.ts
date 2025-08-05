@@ -5,12 +5,12 @@
 export interface KnowledgeSource {
   id: string;
   source_name: string;
-  source_type: 'database' | 'journal' | 'guideline' | 'drug_db' | 'classification' | 'research';
+  source_type: "database" | "journal" | "guideline" | "drug_db" | "classification" | "research";
   api_endpoint?: string;
   access_credentials?: Record<string, any>;
   last_sync?: string;
   sync_frequency: number; // Hours between syncs
-  status: 'active' | 'inactive' | 'error' | 'syncing';
+  status: "active" | "inactive" | "error" | "syncing";
   configuration?: Record<string, any>;
   created_at: string;
   updated_at: string;
@@ -19,13 +19,20 @@ export interface KnowledgeSource {
 
 export interface MedicalKnowledge {
   id: string;
-  knowledge_type: 'guideline' | 'research' | 'drug_info' | 'diagnosis' | 'treatment' | 'protocol' | 'reference';
+  knowledge_type:
+    | "guideline"
+    | "research"
+    | "drug_info"
+    | "diagnosis"
+    | "treatment"
+    | "protocol"
+    | "reference";
   title: string;
   content_data: Record<string, any>; // Structured medical content
   source_id?: string;
   external_id?: string;
   validity_date?: string;
-  evidence_level?: 'A' | 'B' | 'C' | 'D' | 'Expert Opinion' | 'Not Graded';
+  evidence_level?: "A" | "B" | "C" | "D" | "Expert Opinion" | "Not Graded";
   quality_score?: number; // 0.00 to 1.00
   medical_categories?: string[];
   keywords?: string[];
@@ -54,7 +61,7 @@ export interface ValidationResult {
   knowledge_source_id?: string;
   knowledge_reference_id?: string;
   evidence_level?: string;
-  validation_status: 'validated' | 'conflicted' | 'unsupported' | 'pending' | 'requires_review';
+  validation_status: "validated" | "conflicted" | "unsupported" | "pending" | "requires_review";
   confidence_score?: number;
   validation_notes?: string;
   validation_date: string;
@@ -85,7 +92,7 @@ export interface DrugInteraction {
   id: string;
   drug_1_id: string;
   drug_2_id: string;
-  interaction_type: 'major' | 'moderate' | 'minor' | 'contraindicated';
+  interaction_type: "major" | "moderate" | "minor" | "contraindicated";
   severity_level: number; // 1-10
   mechanism?: string;
   clinical_effects?: string;
@@ -108,13 +115,13 @@ export interface MedicalGuideline {
   evidence_grade?: string;
   implementation_notes?: string;
   source_id?: string;
-  status: 'current' | 'superseded' | 'withdrawn' | 'draft';
+  status: "current" | "superseded" | "withdrawn" | "draft";
 }
 
 export interface KnowledgeSearchIndex {
   id: string;
   content_id: string;
-  content_type: 'knowledge' | 'drug' | 'guideline';
+  content_type: "knowledge" | "drug" | "guideline";
   search_vector?: string;
   medical_terms?: string[];
   concepts?: string[];
@@ -125,7 +132,7 @@ export interface KnowledgeAuditLog {
   id: string;
   table_name: string;
   record_id: string;
-  operation: 'INSERT' | 'UPDATE' | 'DELETE';
+  operation: "INSERT" | "UPDATE" | "DELETE";
   old_values?: Record<string, any>;
   new_values?: Record<string, any>;
   changed_by?: string;
@@ -151,7 +158,7 @@ export interface MedicalSearchQuery {
   };
   sort?: {
     field: string;
-    direction: 'asc' | 'desc';
+    direction: "asc" | "desc";
   };
 }
 
@@ -197,7 +204,7 @@ export interface EvidenceValidationRequest {
 
 export interface EvidenceValidationResponse {
   validation_id: string;
-  overall_status: 'validated' | 'conflicted' | 'unsupported' | 'requires_review';
+  overall_status: "validated" | "conflicted" | "unsupported" | "requires_review";
   confidence_score: number;
   evidence_sources: {
     source_id: string;
@@ -208,7 +215,7 @@ export interface EvidenceValidationResponse {
     conflicting_evidence?: boolean;
   }[];
   recommendations: {
-    action: 'approve' | 'review' | 'reject' | 'modify';
+    action: "approve" | "review" | "reject" | "modify";
     reason: string;
     suggested_modifications?: string[];
   };
@@ -244,7 +251,7 @@ export interface KnowledgeIntegrationConfig {
 
 export interface SyncStatus {
   source_id: string;
-  status: 'idle' | 'syncing' | 'error' | 'completed';
+  status: "idle" | "syncing" | "error" | "completed";
   last_sync: string;
   next_sync: string;
   records_synced: number;
@@ -279,7 +286,7 @@ export interface KnowledgeBaseDashboard {
   validation_queue: {
     recommendation_id: string;
     type: string;
-    priority: 'high' | 'medium' | 'low';
+    priority: "high" | "medium" | "low";
     created_at: string;
   }[];
 }
@@ -308,7 +315,7 @@ export interface KnowledgeBaseSettings {
 // API request/response types
 export interface CreateKnowledgeSourceRequest {
   source_name: string;
-  source_type: KnowledgeSource['source_type'];
+  source_type: KnowledgeSource["source_type"];
   api_endpoint?: string;
   configuration?: Record<string, any>;
 }
@@ -317,18 +324,18 @@ export interface UpdateKnowledgeSourceRequest {
   source_name?: string;
   api_endpoint?: string;
   sync_frequency?: number;
-  status?: KnowledgeSource['status'];
+  status?: KnowledgeSource["status"];
   configuration?: Record<string, any>;
 }
 
 export interface CreateMedicalKnowledgeRequest {
-  knowledge_type: MedicalKnowledge['knowledge_type'];
+  knowledge_type: MedicalKnowledge["knowledge_type"];
   title: string;
   content_data: Record<string, any>;
   source_id?: string;
   external_id?: string;
   validity_date?: string;
-  evidence_level?: MedicalKnowledge['evidence_level'];
+  evidence_level?: MedicalKnowledge["evidence_level"];
   quality_score?: number;
   medical_categories?: string[];
   keywords?: string[];
@@ -356,15 +363,20 @@ export interface KnowledgeBaseError {
 }
 
 // Export types for external use
-export type KnowledgeSourceType = KnowledgeSource['source_type'];
-export type KnowledgeType = MedicalKnowledge['knowledge_type'];
-export type EvidenceLevel = MedicalKnowledge['evidence_level'];
-export type ValidationStatus = ValidationResult['validation_status'];
-export type InteractionType = DrugInteraction['interaction_type'];
-export type GuidelineStatus = MedicalGuideline['status'];
+export type KnowledgeSourceType = KnowledgeSource["source_type"];
+export type KnowledgeType = MedicalKnowledge["knowledge_type"];
+export type EvidenceLevel = MedicalKnowledge["evidence_level"];
+export type ValidationStatus = ValidationResult["validation_status"];
+export type InteractionType = DrugInteraction["interaction_type"];
+export type GuidelineStatus = MedicalGuideline["status"];
 
 // Utility types
-export type CreateKnowledgeSource = Omit<KnowledgeSource, 'id' | 'created_at' | 'updated_at'>;
-export type UpdateKnowledgeSource = Partial<Pick<KnowledgeSource, 'source_name' | 'api_endpoint' | 'sync_frequency' | 'status' | 'configuration'>>;
-export type CreateMedicalKnowledge = Omit<MedicalKnowledge, 'id' | 'created_at' | 'updated_at'>;
-export type CreateValidationResult = Omit<ValidationResult, 'id' | 'validation_date'>;
+export type CreateKnowledgeSource = Omit<KnowledgeSource, "id" | "created_at" | "updated_at">;
+export type UpdateKnowledgeSource = Partial<
+  Pick<
+    KnowledgeSource,
+    "source_name" | "api_endpoint" | "sync_frequency" | "status" | "configuration"
+  >
+>;
+export type CreateMedicalKnowledge = Omit<MedicalKnowledge, "id" | "created_at" | "updated_at">;
+export type CreateValidationResult = Omit<ValidationResult, "id" | "validation_date">;

@@ -6,35 +6,31 @@
 
 "use client";
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
-import {
+import type { Input } from "@/components/ui/input";
+import type { Progress } from "@/components/ui/progress";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useInventory } from "@/hooks/inventory/use-inventory";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { useInventory } from "@/hooks/inventory/use-inventory";
+import type { BarcodeResult, ConnectionStatus, InventoryItem } from "@/lib/types/inventory";
+import type { InventoryStatus } from "@/lib/types/inventory";
 import type {
-  BarcodeResult,
-  ConnectionStatus,
-  InventoryItem,
-} from "@/lib/types/inventory";
-import { InventoryStatus } from "@/lib/types/inventory";
-import {
   AlertTriangle,
   BarChart3,
   MapPin,
@@ -47,20 +43,16 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
-import { BarcodeScanner } from "./barcode-scanner";
+import type { BarcodeScanner } from "./barcode-scanner";
 
 interface InventoryDashboardProps {
   className?: string;
 }
 
-export function InventoryDashboard({
-  className = "",
-}: InventoryDashboardProps) {
+export function InventoryDashboard({ className = "" }: InventoryDashboardProps) {
   const [activeTab, setActiveTab] = useState("items");
   const [showScanner, setShowScanner] = useState(false);
-  const [scanMode, setScanMode] = useState<
-    "lookup" | "receive" | "ship" | "adjust"
-  >("lookup");
+  const [scanMode, setScanMode] = useState<"lookup" | "receive" | "ship" | "adjust">("lookup");
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
 
   const {
@@ -118,26 +110,20 @@ export function InventoryDashboard({
   const metrics = React.useMemo(() => {
     const totalItems = state.items.length;
     const lowStockItems = state.alerts.filter(
-      (alert) =>
-        alert.alert_type === "low_stock" || alert.alert_type === "out_of_stock"
+      (alert) => alert.alert_type === "low_stock" || alert.alert_type === "out_of_stock",
     ).length;
     const totalValue = state.items.reduce(
       (sum, item) => sum + item.unit_cost * item.current_stock,
-      0
+      0,
     );
-    const activeAlerts = state.alerts.filter(
-      (alert) => alert.status === "active"
-    ).length;
+    const activeAlerts = state.alerts.filter((alert) => alert.status === "active").length;
 
     return {
       totalItems,
       lowStockItems,
       totalValue,
       activeAlerts,
-      stockPercentage:
-        totalItems > 0
-          ? ((totalItems - lowStockItems) / totalItems) * 100
-          : 100,
+      stockPercentage: totalItems > 0 ? ((totalItems - lowStockItems) / totalItems) * 100 : 100,
     };
   }, [state.items, state.alerts]);
 
@@ -187,9 +173,7 @@ export function InventoryDashboard({
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Inventário</h1>
-          <p className="text-gray-500">
-            Gestão em tempo real do estoque e produtos
-          </p>
+          <p className="text-gray-500">Gestão em tempo real do estoque e produtos</p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -212,15 +196,8 @@ export function InventoryDashboard({
             {connectionStatus === "error" && "Erro de Conexão"}
           </div>
 
-          <Button
-            onClick={refreshData}
-            variant="outline"
-            size="sm"
-            disabled={isLoading}
-          >
-            <RefreshCw
-              className={`h-4 w-4 mr-2 ${isLoading ? "animate-spin" : ""}`}
-            />
+          <Button onClick={refreshData} variant="outline" size="sm" disabled={isLoading}>
+            <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? "animate-spin" : ""}`} />
             Atualizar
           </Button>
 
@@ -237,10 +214,7 @@ export function InventoryDashboard({
               </DialogHeader>
 
               <div className="space-y-4">
-                <Select
-                  value={scanMode}
-                  onValueChange={(value: any) => setScanMode(value)}
-                >
+                <Select value={scanMode} onValueChange={(value: any) => setScanMode(value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione o modo de escaneamento" />
                   </SelectTrigger>
@@ -270,9 +244,7 @@ export function InventoryDashboard({
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">
-                  Total de Itens
-                </p>
+                <p className="text-sm font-medium text-gray-600">Total de Itens</p>
                 <p className="text-2xl font-bold">{metrics.totalItems}</p>
               </div>
               <Package className="h-8 w-8 text-blue-600" />
@@ -284,12 +256,8 @@ export function InventoryDashboard({
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">
-                  Estoque Baixo
-                </p>
-                <p className="text-2xl font-bold text-yellow-600">
-                  {metrics.lowStockItems}
-                </p>
+                <p className="text-sm font-medium text-gray-600">Estoque Baixo</p>
+                <p className="text-2xl font-bold text-yellow-600">{metrics.lowStockItems}</p>
               </div>
               <AlertTriangle className="h-8 w-8 text-yellow-600" />
             </div>
@@ -314,12 +282,8 @@ export function InventoryDashboard({
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">
-                  Alertas Ativos
-                </p>
-                <p className="text-2xl font-bold text-red-600">
-                  {metrics.activeAlerts}
-                </p>
+                <p className="text-sm font-medium text-gray-600">Alertas Ativos</p>
+                <p className="text-2xl font-bold text-red-600">{metrics.activeAlerts}</p>
               </div>
               <AlertTriangle className="h-8 w-8 text-red-600" />
             </div>
@@ -332,18 +296,14 @@ export function InventoryDashboard({
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold">Saúde do Estoque</h3>
-            <Badge
-              variant={
-                metrics.stockPercentage >= 80 ? "default" : "destructive"
-              }
-            >
+            <Badge variant={metrics.stockPercentage >= 80 ? "default" : "destructive"}>
               {metrics.stockPercentage.toFixed(1)}%
             </Badge>
           </div>
           <Progress value={metrics.stockPercentage} className="h-2" />
           <p className="text-sm text-gray-600 mt-2">
-            {metrics.totalItems - metrics.lowStockItems} de {metrics.totalItems}{" "}
-            itens com estoque adequado
+            {metrics.totalItems - metrics.lowStockItems} de {metrics.totalItems} itens com estoque
+            adequado
           </p>
         </CardContent>
       </Card>
@@ -378,11 +338,7 @@ export function InventoryDashboard({
       )}
 
       {/* Main Content Tabs */}
-      <Tabs
-        value={activeTab}
-        onValueChange={setActiveTab}
-        className="space-y-4"
-      >
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="items">Itens</TabsTrigger>
           <TabsTrigger value="movements">Movimentações</TabsTrigger>
@@ -408,10 +364,7 @@ export function InventoryDashboard({
                   />
                 </div>
 
-                <Select
-                  value={state.selectedLocation || ""}
-                  onValueChange={setLocationFilter}
-                >
+                <Select value={state.selectedLocation || ""} onValueChange={setLocationFilter}>
                   <SelectTrigger className="w-48">
                     <SelectValue placeholder="Filtrar por local" />
                   </SelectTrigger>
@@ -425,10 +378,7 @@ export function InventoryDashboard({
                   </SelectContent>
                 </Select>
 
-                <Select
-                  value={state.selectedCategory || ""}
-                  onValueChange={setCategoryFilter}
-                >
+                <Select value={state.selectedCategory || ""} onValueChange={setCategoryFilter}>
                   <SelectTrigger className="w-48">
                     <SelectValue placeholder="Filtrar por categoria" />
                   </SelectTrigger>
@@ -458,23 +408,14 @@ export function InventoryDashboard({
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {state.items.map((item) => (
-                    <Card
-                      key={item.id}
-                      className="hover:shadow-md transition-shadow"
-                    >
+                    <Card key={item.id} className="hover:shadow-md transition-shadow">
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between mb-2">
-                          <h4 className="font-semibold truncate">
-                            {item.name}
-                          </h4>
-                          <div
-                            className={`w-3 h-3 rounded-full ${getStatusColor(item.status)}`}
-                          />
+                          <h4 className="font-semibold truncate">{item.name}</h4>
+                          <div className={`w-3 h-3 rounded-full ${getStatusColor(item.status)}`} />
                         </div>
 
-                        <p className="text-sm text-gray-600 mb-2">
-                          {item.description}
-                        </p>
+                        <p className="text-sm text-gray-600 mb-2">{item.description}</p>
 
                         <div className="flex items-center justify-between text-sm">
                           <span>
@@ -485,15 +426,11 @@ export function InventoryDashboard({
 
                         <div className="flex items-center justify-between text-sm mt-2">
                           <span>{formatCurrency(item.unit_cost)}</span>
-                          <Badge variant="outline">
-                            {item.unit_of_measure}
-                          </Badge>
+                          <Badge variant="outline">{item.unit_of_measure}</Badge>
                         </div>
 
                         {item.barcode && (
-                          <div className="mt-2 text-xs text-gray-500 font-mono">
-                            {item.barcode}
-                          </div>
+                          <div className="mt-2 text-xs text-gray-500 font-mono">{item.barcode}</div>
                         )}
                       </CardContent>
                     </Card>
@@ -511,9 +448,7 @@ export function InventoryDashboard({
               <CardTitle>Movimentações de Estoque</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-500">
-                Movimentações em desenvolvimento...
-              </p>
+              <p className="text-gray-500">Movimentações em desenvolvimento...</p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -529,9 +464,7 @@ export function InventoryDashboard({
                   <Card key={location.id}>
                     <CardContent className="p-4">
                       <h4 className="font-semibold">{location.name}</h4>
-                      <p className="text-sm text-gray-600">
-                        {location.description}
-                      </p>
+                      <p className="text-sm text-gray-600">{location.description}</p>
                       <div className="flex items-center gap-1 mt-2 text-sm text-gray-500">
                         <MapPin className="h-3 w-3" />
                         {location.location_type}
@@ -555,9 +488,7 @@ export function InventoryDashboard({
                   <Card key={category.id}>
                     <CardContent className="p-4">
                       <h4 className="font-semibold">{category.name}</h4>
-                      <p className="text-sm text-gray-600">
-                        {category.description}
-                      </p>
+                      <p className="text-sm text-gray-600">{category.description}</p>
                       <div className="flex items-center gap-1 mt-2 text-sm text-gray-500">
                         <Tags className="h-3 w-3" />
                         Categoria

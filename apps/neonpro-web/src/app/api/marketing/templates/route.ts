@@ -3,24 +3,26 @@
 // Epic 7 - Story 7.2: Automated marketing campaigns with personalization
 // =====================================================================================
 
-import { marketingCampaignsService } from '@/app/lib/services/marketing-campaigns-service';
-import type { CreateTemplateData } from '@/app/types/marketing-campaigns';
-import { NextRequest, NextResponse } from 'next/server';
+import type { marketingCampaignsService } from "@/app/lib/services/marketing-campaigns-service";
+import type { CreateTemplateData } from "@/app/types/marketing-campaigns";
+import type { NextRequest, NextResponse } from "next/server";
 
 // GET /api/marketing/templates - List campaign templates
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    
+
     const filters = {
-      category: searchParams.get('category') || undefined,
-      campaignType: searchParams.get('campaign_type') || undefined,
-      isActive: searchParams.get('is_active') ? searchParams.get('is_active') === 'true' : undefined,
-      clinicId: searchParams.get('clinic_id') || undefined,
+      category: searchParams.get("category") || undefined,
+      campaignType: searchParams.get("campaign_type") || undefined,
+      isActive: searchParams.get("is_active")
+        ? searchParams.get("is_active") === "true"
+        : undefined,
+      clinicId: searchParams.get("clinic_id") || undefined,
     };
 
     // Remove undefined values
-    Object.keys(filters).forEach(key => {
+    Object.keys(filters).forEach((key) => {
       if (filters[key as keyof typeof filters] === undefined) {
         delete filters[key as keyof typeof filters];
       }
@@ -32,18 +34,17 @@ export async function GET(request: NextRequest) {
       success: true,
       data: templates,
       total: templates.length,
-      filters: filters
+      filters: filters,
     });
-
   } catch (error) {
-    console.error('GET /api/marketing/templates error:', error);
+    console.error("GET /api/marketing/templates error:", error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to fetch templates',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      }, 
-      { status: 500 }
+      {
+        success: false,
+        error: "Failed to fetch templates",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 },
     );
   }
 }
@@ -52,48 +53,60 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     // Validate required fields
-    const requiredFields = [
-      'name', 'category', 'campaignType', 'contentTemplate', 'clinicId'
-    ];
-    
+    const requiredFields = ["name", "category", "campaignType", "contentTemplate", "clinicId"];
+
     for (const field of requiredFields) {
       if (!body[field]) {
         return NextResponse.json(
-          { 
-            success: false, 
-            error: `Missing required field: ${field}` 
-          }, 
-          { status: 400 }
+          {
+            success: false,
+            error: `Missing required field: ${field}`,
+          },
+          { status: 400 },
         );
       }
     }
 
     // Validate category
     const validCategories = [
-      'welcome', 'appointment_reminder', 'treatment_followup', 'promotional', 
-      'educational', 'birthday', 'retention', 'winback', 'testimonial_request'
+      "welcome",
+      "appointment_reminder",
+      "treatment_followup",
+      "promotional",
+      "educational",
+      "birthday",
+      "retention",
+      "winback",
+      "testimonial_request",
     ];
     if (!validCategories.includes(body.category)) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: `Invalid category. Must be one of: ${validCategories.join(', ')}` 
-        }, 
-        { status: 400 }
+        {
+          success: false,
+          error: `Invalid category. Must be one of: ${validCategories.join(", ")}`,
+        },
+        { status: 400 },
       );
     }
 
     // Validate campaign type
-    const validCampaignTypes = ['email', 'sms', 'whatsapp', 'push_notification', 'in_app', 'multi_channel'];
+    const validCampaignTypes = [
+      "email",
+      "sms",
+      "whatsapp",
+      "push_notification",
+      "in_app",
+      "multi_channel",
+    ];
     if (!validCampaignTypes.includes(body.campaignType)) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: `Invalid campaign type. Must be one of: ${validCampaignTypes.join(', ')}` 
-        }, 
-        { status: 400 }
+        {
+          success: false,
+          error: `Invalid campaign type. Must be one of: ${validCampaignTypes.join(", ")}`,
+        },
+        { status: 400 },
       );
     }
 
@@ -112,26 +125,28 @@ export async function POST(request: NextRequest) {
       designConfig: body.designConfig || {},
       variants: body.variants || [],
       isActive: body.isActive !== false, // Default to true
-      clinicId: body.clinicId
+      clinicId: body.clinicId,
     };
 
     const template = await marketingCampaignsService.createTemplate(templateData);
 
-    return NextResponse.json({
-      success: true,
-      data: template,
-      message: 'Template created successfully'
-    }, { status: 201 });
-
-  } catch (error) {
-    console.error('POST /api/marketing/templates error:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to create template',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      }, 
-      { status: 500 }
+      {
+        success: true,
+        data: template,
+        message: "Template created successfully",
+      },
+      { status: 201 },
+    );
+  } catch (error) {
+    console.error("POST /api/marketing/templates error:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Failed to create template",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 },
     );
   }
 }

@@ -1,15 +1,15 @@
-'use client'
+"use client";
 
 /**
  * Advanced Forecasting Charts Component for NeonPro
- * 
+ *
  * Interactive time series forecasting visualization using Recharts.
  * Displays revenue predictions, subscription growth forecasts, and confidence intervals
  * with scenario analysis and accuracy metrics.
  */
 
-import React, { useState, useMemo, useCallback } from 'react'
-import {
+import React, { useState, useMemo, useCallback } from "react";
+import type {
   ResponsiveContainer,
   LineChart,
   Line,
@@ -23,103 +23,115 @@ import {
   ComposedChart,
   Bar,
   ReferenceLine,
-  Brush
-} from 'recharts'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Progress } from '@/components/ui/progress'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  Target, 
-  DollarSign, 
-  Users, 
+  Brush,
+} from "recharts";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Progress } from "@/components/ui/progress";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type {
+  TrendingUp,
+  TrendingDown,
+  Target,
+  DollarSign,
+  Users,
   AlertTriangle,
   BarChart3,
   Activity,
-  Calendar
-} from 'lucide-react'
+  Calendar,
+} from "lucide-react";
 
 // Types for forecasting data
 interface ForecastData {
-  date: string
-  actual?: number
-  predicted: number
-  lower_bound: number
-  upper_bound: number
-  confidence: number
+  date: string;
+  actual?: number;
+  predicted: number;
+  lower_bound: number;
+  upper_bound: number;
+  confidence: number;
 }
 
 interface ScenarioForecast {
-  name: string
-  data: ForecastData[]
-  color: string
+  name: string;
+  data: ForecastData[];
+  color: string;
 }
 
 interface AccuracyMetrics {
-  mae: number
-  mape: number
-  rmse: number
-  accuracy_score: number
+  mae: number;
+  mape: number;
+  rmse: number;
+  accuracy_score: number;
   predictions: Array<{
-    actual: number
-    predicted: number
-    date: string
-  }>
+    actual: number;
+    predicted: number;
+    date: string;
+  }>;
 }
 
 interface ForecastingChartsProps {
-  metric: 'subscriptions' | 'revenue' | 'churn_rate' | 'mrr' | 'arr'
-  historicalData: Array<{ date: string; value: number }>
-  forecastData: ForecastData[]
-  scenarios?: ScenarioForecast[]
-  accuracyMetrics?: AccuracyMetrics
-  loading?: boolean
-  className?: string
-  onDateRangeChange?: (start: string, end: string) => void
-  onScenarioToggle?: (scenario: string, enabled: boolean) => void
+  metric: "subscriptions" | "revenue" | "churn_rate" | "mrr" | "arr";
+  historicalData: Array<{ date: string; value: number }>;
+  forecastData: ForecastData[];
+  scenarios?: ScenarioForecast[];
+  accuracyMetrics?: AccuracyMetrics;
+  loading?: boolean;
+  className?: string;
+  onDateRangeChange?: (start: string, end: string) => void;
+  onScenarioToggle?: (scenario: string, enabled: boolean) => void;
 }
 
 // Utility functions
 const formatValue = (value: number, metric: string) => {
-  if (metric === 'revenue' || metric === 'mrr' || metric === 'arr') {
-    return `$${value.toLocaleString()}`
+  if (metric === "revenue" || metric === "mrr" || metric === "arr") {
+    return `$${value.toLocaleString()}`;
   }
-  if (metric === 'churn_rate') {
-    return `${value.toFixed(1)}%`
+  if (metric === "churn_rate") {
+    return `${value.toFixed(1)}%`;
   }
-  return value.toLocaleString()
-}
+  return value.toLocaleString();
+};
 
 const getMetricLabel = (metric: string) => {
   const labels = {
-    subscriptions: 'Subscriptions',
-    revenue: 'Revenue',
-    churn_rate: 'Churn Rate',
-    mrr: 'Monthly Recurring Revenue',
-    arr: 'Annual Recurring Revenue'
-  }
-  return labels[metric as keyof typeof labels] || metric
-}
+    subscriptions: "Subscriptions",
+    revenue: "Revenue",
+    churn_rate: "Churn Rate",
+    mrr: "Monthly Recurring Revenue",
+    arr: "Annual Recurring Revenue",
+  };
+  return labels[metric as keyof typeof labels] || metric;
+};
 
 const getMetricIcon = (metric: string) => {
   switch (metric) {
-    case 'revenue':
-    case 'mrr':
-    case 'arr':
-      return DollarSign
-    case 'subscriptions':
-      return Users
-    case 'churn_rate':
-      return TrendingDown
+    case "revenue":
+    case "mrr":
+    case "arr":
+      return DollarSign;
+    case "subscriptions":
+      return Users;
+    case "churn_rate":
+      return TrendingDown;
     default:
-      return Activity
+      return Activity;
   }
-}
+};
 
 export function ForecastingCharts({
   metric,
@@ -128,114 +140,116 @@ export function ForecastingCharts({
   scenarios = [],
   accuracyMetrics,
   loading = false,
-  className = '',
+  className = "",
   onDateRangeChange,
-  onScenarioToggle
+  onScenarioToggle,
 }: ForecastingChartsProps) {
-  const [selectedView, setSelectedView] = useState<'forecast' | 'scenarios' | 'accuracy'>('forecast')
+  const [selectedView, setSelectedView] = useState<"forecast" | "scenarios" | "accuracy">(
+    "forecast",
+  );
   const [enabledScenarios, setEnabledScenarios] = useState<Set<string>>(
-    new Set(scenarios.map(s => s.name))
-  )
-  const [showConfidenceInterval, setShowConfidenceInterval] = useState(true)
-  const [zoomDomain, setZoomDomain] = useState<[string, string] | null>(null)
+    new Set(scenarios.map((s) => s.name)),
+  );
+  const [showConfidenceInterval, setShowConfidenceInterval] = useState(true);
+  const [zoomDomain, setZoomDomain] = useState<[string, string] | null>(null);
 
   // Combine historical and forecast data
   const combinedData = useMemo(() => {
-    const historical = historicalData.map(d => ({
+    const historical = historicalData.map((d) => ({
       ...d,
-      type: 'historical' as const
-    }))
+      type: "historical" as const,
+    }));
 
-    const forecast = forecastData.map(d => ({
+    const forecast = forecastData.map((d) => ({
       date: d.date,
       value: d.predicted,
       predicted: d.predicted,
       lower_bound: d.lower_bound,
       upper_bound: d.upper_bound,
       confidence: d.confidence,
-      type: 'forecast' as const
-    }))
+      type: "forecast" as const,
+    }));
 
-    return [...historical, ...forecast]
-  }, [historicalData, forecastData])
+    return [...historical, ...forecast];
+  }, [historicalData, forecastData]);
 
   // Calculate forecast insights
   const forecastInsights = useMemo(() => {
-    if (forecastData.length === 0) return null
+    if (forecastData.length === 0) return null;
 
-    const firstForecast = forecastData[0]
-    const lastForecast = forecastData[forecastData.length - 1]
-    const lastHistorical = historicalData[historicalData.length - 1]
+    const firstForecast = forecastData[0];
+    const lastForecast = forecastData[forecastData.length - 1];
+    const lastHistorical = historicalData[historicalData.length - 1];
 
-    const growth = lastHistorical 
+    const growth = lastHistorical
       ? ((lastForecast.predicted - lastHistorical.value) / lastHistorical.value) * 100
-      : 0
+      : 0;
 
-    const averageConfidence = forecastData.reduce((sum, f) => sum + f.confidence, 0) / forecastData.length
-    
-    const volatility = forecastData.reduce((sum, f) => {
-      const range = f.upper_bound - f.lower_bound
-      const midpoint = (f.upper_bound + f.lower_bound) / 2
-      return sum + (range / midpoint)
-    }, 0) / forecastData.length
+    const averageConfidence =
+      forecastData.reduce((sum, f) => sum + f.confidence, 0) / forecastData.length;
+
+    const volatility =
+      forecastData.reduce((sum, f) => {
+        const range = f.upper_bound - f.lower_bound;
+        const midpoint = (f.upper_bound + f.lower_bound) / 2;
+        return sum + range / midpoint;
+      }, 0) / forecastData.length;
 
     return {
       growth: Math.round(growth * 100) / 100,
       averageConfidence: Math.round(averageConfidence * 100) / 100,
       volatility: Math.round(volatility * 100) / 100,
-      trend: growth > 5 ? 'positive' : growth < -5 ? 'negative' : 'stable',
-      forecastPeriods: forecastData.length
-    }
-  }, [forecastData, historicalData])
+      trend: growth > 5 ? "positive" : growth < -5 ? "negative" : "stable",
+      forecastPeriods: forecastData.length,
+    };
+  }, [forecastData, historicalData]);
 
   // Handle scenario toggle
-  const handleScenarioToggle = useCallback((scenarioName: string) => {
-    const newEnabled = new Set(enabledScenarios)
-    if (newEnabled.has(scenarioName)) {
-      newEnabled.delete(scenarioName)
-    } else {
-      newEnabled.add(scenarioName)
-    }
-    setEnabledScenarios(newEnabled)
-    onScenarioToggle?.(scenarioName, newEnabled.has(scenarioName))
-  }, [enabledScenarios, onScenarioToggle])
+  const handleScenarioToggle = useCallback(
+    (scenarioName: string) => {
+      const newEnabled = new Set(enabledScenarios);
+      if (newEnabled.has(scenarioName)) {
+        newEnabled.delete(scenarioName);
+      } else {
+        newEnabled.add(scenarioName);
+      }
+      setEnabledScenarios(newEnabled);
+      onScenarioToggle?.(scenarioName, newEnabled.has(scenarioName));
+    },
+    [enabledScenarios, onScenarioToggle],
+  );
 
   // Custom tooltip for forecast chart
   const ForecastTooltip = ({ active, payload, label }: any) => {
-    if (!active || !payload || !payload.length) return null
+    if (!active || !payload || !payload.length) return null;
 
-    const data = payload[0].payload
-    const isHistorical = data.type === 'historical'
+    const data = payload[0].payload;
+    const isHistorical = data.type === "historical";
 
     return (
       <div className="bg-white p-4 border rounded-lg shadow-lg max-w-xs">
-        <p className="font-semibold text-gray-900 mb-2">
-          {new Date(label).toLocaleDateString()}
-        </p>
-        
+        <p className="font-semibold text-gray-900 mb-2">{new Date(label).toLocaleDateString()}</p>
+
         {isHistorical ? (
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded bg-blue-500" />
             <span className="text-sm text-gray-600">Actual:</span>
-            <span className="text-sm font-medium">
-              {formatValue(data.value, metric)}
-            </span>
+            <span className="text-sm font-medium">{formatValue(data.value, metric)}</span>
           </div>
         ) : (
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded bg-green-500" />
               <span className="text-sm text-gray-600">Predicted:</span>
-              <span className="text-sm font-medium">
-                {formatValue(data.predicted, metric)}
-              </span>
+              <span className="text-sm font-medium">{formatValue(data.predicted, metric)}</span>
             </div>
             {showConfidenceInterval && (
               <>
                 <div className="flex items-center gap-2 text-xs">
                   <span className="text-gray-500">Range:</span>
                   <span>
-                    {formatValue(data.lower_bound, metric)} - {formatValue(data.upper_bound, metric)}
+                    {formatValue(data.lower_bound, metric)} -{" "}
+                    {formatValue(data.upper_bound, metric)}
                   </span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
@@ -247,10 +261,10 @@ export function ForecastingCharts({
           </div>
         )}
       </div>
-    )
-  }
+    );
+  };
 
-  const MetricIcon = getMetricIcon(metric)
+  const MetricIcon = getMetricIcon(metric);
 
   if (loading) {
     return (
@@ -263,7 +277,7 @@ export function ForecastingCharts({
           <div className="h-96 bg-gray-50 rounded animate-pulse" />
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -309,19 +323,20 @@ export function ForecastingCharts({
                       <span className="text-sm font-medium text-blue-700">Growth</span>
                     </div>
                     <div className="flex items-center gap-1 mt-1">
-                      {forecastInsights.trend === 'positive' ? (
+                      {forecastInsights.trend === "positive" ? (
                         <TrendingUp className="h-4 w-4 text-green-600" />
-                      ) : forecastInsights.trend === 'negative' ? (
+                      ) : forecastInsights.trend === "negative" ? (
                         <TrendingDown className="h-4 w-4 text-red-600" />
                       ) : (
                         <Activity className="h-4 w-4 text-gray-600" />
                       )}
                       <span className="text-xl font-bold text-blue-900">
-                        {forecastInsights.growth > 0 ? '+' : ''}{forecastInsights.growth}%
+                        {forecastInsights.growth > 0 ? "+" : ""}
+                        {forecastInsights.growth}%
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className="bg-green-50 p-4 rounded-lg">
                     <div className="flex items-center gap-2">
                       <Target className="h-4 w-4 text-green-600" />
@@ -359,16 +374,16 @@ export function ForecastingCharts({
                 <ResponsiveContainer width="100%" height="100%">
                   <ComposedChart data={combinedData}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis 
-                      dataKey="date" 
-                      tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { 
-                        month: 'short', 
-                        day: 'numeric' 
-                      })}
+                    <XAxis
+                      dataKey="date"
+                      tickFormatter={(date) =>
+                        new Date(date).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                        })
+                      }
                     />
-                    <YAxis 
-                      tickFormatter={(value) => formatValue(value, metric)}
-                    />
+                    <YAxis tickFormatter={(value) => formatValue(value, metric)} />
                     <Tooltip content={<ForecastTooltip />} />
                     <Legend />
 
@@ -400,7 +415,11 @@ export function ForecastingCharts({
                       dataKey="value"
                       stroke="#3b82f6"
                       strokeWidth={2}
-                      dot={(props) => props.payload.type === 'historical' ? { ...props, fill: '#3b82f6', r: 3 } : false}
+                      dot={(props) =>
+                        props.payload.type === "historical"
+                          ? { ...props, fill: "#3b82f6", r: 3 }
+                          : false
+                      }
                       connectNulls={false}
                       name="Actual"
                     />
@@ -412,29 +431,37 @@ export function ForecastingCharts({
                       stroke="#22c55e"
                       strokeWidth={2}
                       strokeDasharray="5 5"
-                      dot={(props) => props.payload.type === 'forecast' ? { ...props, fill: '#22c55e', r: 3 } : false}
+                      dot={(props) =>
+                        props.payload.type === "forecast"
+                          ? { ...props, fill: "#22c55e", r: 3 }
+                          : false
+                      }
                       connectNulls={false}
                       name="Predicted"
                     />
 
                     {/* Current Date Reference Line */}
-                    <ReferenceLine 
-                      x={historicalData[historicalData.length - 1]?.date} 
-                      stroke="#6b7280" 
+                    <ReferenceLine
+                      x={historicalData[historicalData.length - 1]?.date}
+                      stroke="#6b7280"
                       strokeDasharray="2 2"
                       label={{ value: "Now", position: "topRight" }}
                     />
 
-                    <Brush 
-                      dataKey="date" 
+                    <Brush
+                      dataKey="date"
                       height={30}
                       onChange={(domain) => {
-                        if (domain && domain.startIndex !== undefined && domain.endIndex !== undefined) {
-                          const start = combinedData[domain.startIndex]?.date
-                          const end = combinedData[domain.endIndex]?.date
+                        if (
+                          domain &&
+                          domain.startIndex !== undefined &&
+                          domain.endIndex !== undefined
+                        ) {
+                          const start = combinedData[domain.startIndex]?.date;
+                          const end = combinedData[domain.endIndex]?.date;
                           if (start && end) {
-                            setZoomDomain([start, end])
-                            onDateRangeChange?.(start, end)
+                            setZoomDomain([start, end]);
+                            onDateRangeChange?.(start, end);
                           }
                         }
                       }}
@@ -448,12 +475,16 @@ export function ForecastingCharts({
                 <Alert>
                   <TrendingUp className="h-4 w-4" />
                   <AlertDescription>
-                    <strong>Forecast Summary:</strong> Based on historical trends, we predict{' '}
-                    <strong>{getMetricLabel(metric).toLowerCase()}</strong> will{' '}
-                    {forecastInsights?.trend === 'positive' ? 'increase' : 
-                     forecastInsights?.trend === 'negative' ? 'decrease' : 'remain stable'} by{' '}
-                    <strong>{Math.abs(forecastInsights?.growth || 0)}%</strong> over the next{' '}
-                    {forecastData.length} periods with {forecastInsights?.averageConfidence}% confidence.
+                    <strong>Forecast Summary:</strong> Based on historical trends, we predict{" "}
+                    <strong>{getMetricLabel(metric).toLowerCase()}</strong> will{" "}
+                    {forecastInsights?.trend === "positive"
+                      ? "increase"
+                      : forecastInsights?.trend === "negative"
+                        ? "decrease"
+                        : "remain stable"}{" "}
+                    by <strong>{Math.abs(forecastInsights?.growth || 0)}%</strong> over the next{" "}
+                    {forecastData.length} periods with {forecastInsights?.averageConfidence}%
+                    confidence.
                   </AlertDescription>
                 </Alert>
               )}
@@ -472,8 +503,8 @@ export function ForecastingCharts({
                     onClick={() => handleScenarioToggle(scenario.name)}
                     className="flex items-center gap-2"
                   >
-                    <div 
-                      className="w-3 h-3 rounded-full" 
+                    <div
+                      className="w-3 h-3 rounded-full"
                       style={{ backgroundColor: scenario.color }}
                     />
                     {scenario.name}
@@ -486,16 +517,18 @@ export function ForecastingCharts({
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis 
-                      dataKey="date" 
-                      tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { 
-                        month: 'short', 
-                        day: 'numeric' 
-                      })}
+                    <XAxis
+                      dataKey="date"
+                      tickFormatter={(date) =>
+                        new Date(date).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                        })
+                      }
                     />
                     <YAxis tickFormatter={(value) => formatValue(value, metric)} />
-                    <Tooltip 
-                      formatter={(value: number) => [formatValue(value, metric), 'Predicted']}
+                    <Tooltip
+                      formatter={(value: number) => [formatValue(value, metric), "Predicted"]}
                       labelFormatter={(date) => new Date(date).toLocaleDateString()}
                     />
                     <Legend />
@@ -512,7 +545,7 @@ export function ForecastingCharts({
 
                     {/* Scenario Lines */}
                     {scenarios
-                      .filter(scenario => enabledScenarios.has(scenario.name))
+                      .filter((scenario) => enabledScenarios.has(scenario.name))
                       .map((scenario) => (
                         <Line
                           key={scenario.name}
@@ -532,22 +565,24 @@ export function ForecastingCharts({
               {/* Scenario Summary Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {scenarios.map((scenario) => {
-                  const lastForecast = scenario.data[scenario.data.length - 1]
-                  const firstForecast = scenario.data[0]
-                  const growth = firstForecast 
-                    ? ((lastForecast.predicted - firstForecast.predicted) / firstForecast.predicted) * 100
-                    : 0
+                  const lastForecast = scenario.data[scenario.data.length - 1];
+                  const firstForecast = scenario.data[0];
+                  const growth = firstForecast
+                    ? ((lastForecast.predicted - firstForecast.predicted) /
+                        firstForecast.predicted) *
+                      100
+                    : 0;
 
                   return (
-                    <Card 
-                      key={scenario.name} 
-                      className={`border-l-4 ${enabledScenarios.has(scenario.name) ? 'opacity-100' : 'opacity-50'}`}
+                    <Card
+                      key={scenario.name}
+                      className={`border-l-4 ${enabledScenarios.has(scenario.name) ? "opacity-100" : "opacity-50"}`}
                       style={{ borderLeftColor: scenario.color }}
                     >
                       <CardHeader className="pb-2">
                         <CardTitle className="text-sm font-medium flex items-center gap-2">
-                          <div 
-                            className="w-3 h-3 rounded-full" 
+                          <div
+                            className="w-3 h-3 rounded-full"
                             style={{ backgroundColor: scenario.color }}
                           />
                           {scenario.name}
@@ -570,20 +605,19 @@ export function ForecastingCharts({
                                 <TrendingDown className="h-3 w-3 text-red-500" />
                               )}
                               <span className="text-sm font-medium">
-                                {growth > 0 ? '+' : ''}{growth.toFixed(1)}%
+                                {growth > 0 ? "+" : ""}
+                                {growth.toFixed(1)}%
                               </span>
                             </div>
                           </div>
                           <div className="flex justify-between items-center">
                             <span className="text-xs text-gray-600">Confidence</span>
-                            <Badge variant="secondary">
-                              {lastForecast.confidence}%
-                            </Badge>
+                            <Badge variant="secondary">{lastForecast.confidence}%</Badge>
                           </div>
                         </div>
                       </CardContent>
                     </Card>
-                  )
+                  );
                 })}
               </div>
             </div>
@@ -641,18 +675,20 @@ export function ForecastingCharts({
                   <ResponsiveContainer width="100%" height="100%">
                     <ComposedChart data={accuracyMetrics.predictions}>
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis 
+                      <XAxis
                         dataKey="date"
-                        tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { 
-                          month: 'short', 
-                          day: 'numeric' 
-                        })}
+                        tickFormatter={(date) =>
+                          new Date(date).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                          })
+                        }
                       />
                       <YAxis tickFormatter={(value) => formatValue(value, metric)} />
-                      <Tooltip 
+                      <Tooltip
                         formatter={(value: number, name: string) => [
-                          formatValue(value, metric), 
-                          name === 'actual' ? 'Actual' : 'Predicted'
+                          formatValue(value, metric),
+                          name === "actual" ? "Actual" : "Predicted",
                         ]}
                         labelFormatter={(date) => new Date(date).toLocaleDateString()}
                       />
@@ -689,18 +725,25 @@ export function ForecastingCharts({
                 <Alert>
                   <Target className="h-4 w-4" />
                   <AlertDescription>
-                    <strong>Model Performance:</strong> The forecasting model achieves{' '}
-                    <strong>{accuracyMetrics.accuracy_score.toFixed(1)}%</strong> accuracy with an average error of{' '}
-                    <strong>{formatValue(accuracyMetrics.mae, metric)}</strong>. The model is{' '}
-                    {accuracyMetrics.accuracy_score >= 80 ? 'highly reliable' : 
-                     accuracyMetrics.accuracy_score >= 60 ? 'moderately reliable' : 'needs improvement'} for business planning.
+                    <strong>Model Performance:</strong> The forecasting model achieves{" "}
+                    <strong>{accuracyMetrics.accuracy_score.toFixed(1)}%</strong> accuracy with an
+                    average error of <strong>{formatValue(accuracyMetrics.mae, metric)}</strong>.
+                    The model is{" "}
+                    {accuracyMetrics.accuracy_score >= 80
+                      ? "highly reliable"
+                      : accuracyMetrics.accuracy_score >= 60
+                        ? "moderately reliable"
+                        : "needs improvement"}{" "}
+                    for business planning.
                   </AlertDescription>
                 </Alert>
               </div>
             ) : (
               <div className="text-center py-12">
                 <AlertTriangle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No Accuracy Data Available</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  No Accuracy Data Available
+                </h3>
                 <p className="text-gray-600">
                   Run model validation to see accuracy metrics and performance analysis.
                 </p>
@@ -710,5 +753,5 @@ export function ForecastingCharts({
         </Tabs>
       </CardContent>
     </Card>
-  )
+  );
 }

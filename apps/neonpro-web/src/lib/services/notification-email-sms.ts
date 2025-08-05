@@ -1,13 +1,19 @@
 // Serviço de notificações por email e SMS
 // lib/services/notification-email-sms.ts
 
-import { Resend } from 'resend';
+import type { Resend } from "resend";
 
 // Configuração do Resend para emails
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Tipos de notificações
-export type NotificationType = 'overdue' | 'due_today' | 'due_soon' | 'approved' | 'rejected' | 'payment_complete';
+export type NotificationType =
+  | "overdue"
+  | "due_today"
+  | "due_soon"
+  | "approved"
+  | "rejected"
+  | "payment_complete";
 
 export interface EmailNotificationData {
   to: string;
@@ -30,13 +36,15 @@ export interface NotificationContext {
 }
 
 class NotificationService {
-  
   // Templates de email
-  private getEmailTemplate(type: NotificationType, context: NotificationContext): EmailNotificationData {
+  private getEmailTemplate(
+    type: NotificationType,
+    context: NotificationContext,
+  ): EmailNotificationData {
     const baseSubject = `[NeonPro] Contas a Pagar - `;
-    
+
     switch (type) {
-      case 'overdue':
+      case "overdue":
         return {
           to: context.vendorName,
           subject: `${baseSubject}Conta Vencida - ${context.invoiceNumber}`,
@@ -60,10 +68,10 @@ class NotificationService {
               </a>
             </div>
           `,
-          text: `Conta Vencida - ${context.invoiceNumber} - ${context.vendorName} - R$ ${context.amount.toFixed(2)} - ${context.daysPastDue} dias em atraso`
+          text: `Conta Vencida - ${context.invoiceNumber} - ${context.vendorName} - R$ ${context.amount.toFixed(2)} - ${context.daysPastDue} dias em atraso`,
         };
-      
-      case 'due_today':
+
+      case "due_today":
         return {
           to: context.vendorName,
           subject: `${baseSubject}Vencimento Hoje - ${context.invoiceNumber}`,
@@ -85,10 +93,10 @@ class NotificationService {
               </a>
             </div>
           `,
-          text: `Vencimento Hoje - ${context.invoiceNumber} - ${context.vendorName} - R$ ${context.amount.toFixed(2)}`
+          text: `Vencimento Hoje - ${context.invoiceNumber} - ${context.vendorName} - R$ ${context.amount.toFixed(2)}`,
         };
-      
-      case 'due_soon':
+
+      case "due_soon":
         return {
           to: context.vendorName,
           subject: `${baseSubject}Vencimento Próximo - ${context.invoiceNumber}`,
@@ -110,10 +118,10 @@ class NotificationService {
               </a>
             </div>
           `,
-          text: `Vencimento Próximo - ${context.invoiceNumber} - ${context.vendorName} - R$ ${context.amount.toFixed(2)} em ${context.dueDate}`
+          text: `Vencimento Próximo - ${context.invoiceNumber} - ${context.vendorName} - R$ ${context.amount.toFixed(2)} em ${context.dueDate}`,
         };
-      
-      case 'payment_complete':
+
+      case "payment_complete":
         return {
           to: context.vendorName,
           subject: `${baseSubject}Pagamento Realizado - ${context.invoiceNumber}`,
@@ -134,15 +142,15 @@ class NotificationService {
               </a>
             </div>
           `,
-          text: `Pagamento Realizado - ${context.invoiceNumber} - ${context.vendorName} - R$ ${context.amount.toFixed(2)}`
+          text: `Pagamento Realizado - ${context.invoiceNumber} - ${context.vendorName} - R$ ${context.amount.toFixed(2)}`,
         };
-      
+
       default:
         return {
           to: context.vendorName,
           subject: `${baseSubject}Notificação - ${context.invoiceNumber}`,
           html: `<p>Notificação sobre a fatura ${context.invoiceNumber} - ${context.vendorName}</p>`,
-          text: `Notificação sobre a fatura ${context.invoiceNumber} - ${context.vendorName}`
+          text: `Notificação sobre a fatura ${context.invoiceNumber} - ${context.vendorName}`,
         };
     }
   }
@@ -150,28 +158,35 @@ class NotificationService {
   // Templates de SMS
   private getSMSTemplate(type: NotificationType, context: NotificationContext): string {
     switch (type) {
-      case 'overdue':
+      case "overdue":
         return `[NeonPro] URGENTE: Conta ${context.invoiceNumber} vencida há ${context.daysPastDue} dias. Valor: R$ ${context.amount.toFixed(2)}. Acesse: http://127.0.0.1:8080/dashboard/accounts-payable`;
-      
-      case 'due_today':
+
+      case "due_today":
         return `[NeonPro] VENCE HOJE: ${context.invoiceNumber} - R$ ${context.amount.toFixed(2)}. Providencie pagamento. Acesse: http://127.0.0.1:8080/dashboard/accounts-payable`;
-      
-      case 'due_soon':
+
+      case "due_soon":
         return `[NeonPro] Vence ${context.dueDate}: ${context.invoiceNumber} - R$ ${context.amount.toFixed(2)}. Prepare-se para o pagamento.`;
-      
-      case 'payment_complete':
+
+      case "payment_complete":
         return `[NeonPro] ✅ Pagamento confirmado: ${context.invoiceNumber} - R$ ${context.amount.toFixed(2)}`;
-      
+
       default:
         return `[NeonPro] Notificação sobre ${context.invoiceNumber} - R$ ${context.amount.toFixed(2)}`;
     }
   }
 
   // Enviar email
-  async sendEmail(type: NotificationType, context: NotificationContext, recipientEmail: string): Promise<boolean> {
+  async sendEmail(
+    type: NotificationType,
+    context: NotificationContext,
+    recipientEmail: string,
+  ): Promise<boolean> {
     try {
-      if (!process.env.RESEND_API_KEY || process.env.RESEND_API_KEY === 'your_resend_api_key_here') {
-        console.log('⚠️ Email não configurado. Template que seria enviado:');
+      if (
+        !process.env.RESEND_API_KEY ||
+        process.env.RESEND_API_KEY === "your_resend_api_key_here"
+      ) {
+        console.log("⚠️ Email não configurado. Template que seria enviado:");
         const template = this.getEmailTemplate(type, context);
         console.log(`Para: ${recipientEmail}`);
         console.log(`Assunto: ${template.subject}`);
@@ -180,52 +195,56 @@ class NotificationService {
       }
 
       const template = this.getEmailTemplate(type, context);
-      
+
       const result = await resend.emails.send({
-        from: 'NeonPro <noreply@neonpro.app>',
+        from: "NeonPro <noreply@neonpro.app>",
         to: recipientEmail,
         subject: template.subject,
         html: template.html,
-        text: template.text
+        text: template.text,
       });
 
       console.log(`✅ Email enviado: ${template.subject} para ${recipientEmail}`);
       return true;
     } catch (error) {
-      console.error('❌ Erro ao enviar email:', error);
+      console.error("❌ Erro ao enviar email:", error);
       return false;
     }
   }
 
   // Enviar SMS (simulado - integraria com Twilio, etc.)
-  async sendSMS(type: NotificationType, context: NotificationContext, phoneNumber: string): Promise<boolean> {
+  async sendSMS(
+    type: NotificationType,
+    context: NotificationContext,
+    phoneNumber: string,
+  ): Promise<boolean> {
     try {
       const message = this.getSMSTemplate(type, context);
-      
+
       // Por enquanto apenas simula o envio
-      console.log('📱 SMS (SIMULADO):');
+      console.log("📱 SMS (SIMULADO):");
       console.log(`Para: ${phoneNumber}`);
       console.log(`Mensagem: ${message}`);
-      
+
       // Aqui integraria com Twilio, AWS SNS, ou outro provedor
       // const result = await twilioClient.messages.create({
       //   body: message,
       //   from: '+5511999999999',
       //   to: phoneNumber
       // });
-      
+
       return true;
     } catch (error) {
-      console.error('❌ Erro ao enviar SMS:', error);
+      console.error("❌ Erro ao enviar SMS:", error);
       return false;
     }
   }
 
   // Enviar notificação (email + SMS)
   async sendNotification(
-    type: NotificationType, 
-    context: NotificationContext, 
-    recipients: { email?: string; phone?: string }
+    type: NotificationType,
+    context: NotificationContext,
+    recipients: { email?: string; phone?: string },
   ): Promise<{ emailSent: boolean; smsSent: boolean }> {
     const results = { emailSent: false, smsSent: false };
 

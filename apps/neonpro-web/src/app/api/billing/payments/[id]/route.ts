@@ -3,19 +3,14 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 const UpdatePaymentSchema = z.object({
-  status: z
-    .enum(["pending", "processing", "completed", "failed", "cancelled"])
-    .optional(),
+  status: z.enum(["pending", "processing", "completed", "failed", "cancelled"]).optional(),
   notes: z.string().optional(),
   processed_at: z.string().optional(),
   external_id: z.string().optional(),
   gateway: z.string().optional(),
 });
 
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const resolvedParams = await params;
     const supabase = await createClient();
@@ -61,7 +56,7 @@ export async function GET(
           payment_date,
           notes
         )
-      `
+      `,
       )
       .eq("id", resolvedParams.id)
       .single();
@@ -73,17 +68,11 @@ export async function GET(
     return NextResponse.json({ payment });
   } catch (error) {
     console.error("API Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const resolvedParams = await params;
     const supabase = await createClient();
@@ -114,10 +103,7 @@ export async function PUT(
     const updateData: any = { ...validatedData };
 
     // If status is being changed to completed, set processed_at
-    if (
-      validatedData.status === "completed" &&
-      currentPayment.status !== "completed"
-    ) {
+    if (validatedData.status === "completed" && currentPayment.status !== "completed") {
       updateData.processed_at = new Date().toISOString();
     }
 
@@ -139,23 +125,17 @@ export async function PUT(
             email
           )
         )
-      `
+      `,
       )
       .single();
 
     if (error) {
       console.error("Error updating payment:", error);
-      return NextResponse.json(
-        { error: "Failed to update payment" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to update payment" }, { status: 500 });
     }
 
     // If payment status changed to completed, check if invoice should be marked as paid
-    if (
-      validatedData.status === "completed" &&
-      currentPayment.status !== "completed"
-    ) {
+    if (validatedData.status === "completed" && currentPayment.status !== "completed") {
       // Get all completed payments for this invoice
       const { data: completedPayments, error: paymentsError } = await supabase
         .from("payments")
@@ -164,10 +144,7 @@ export async function PUT(
         .eq("status", "completed");
 
       if (!paymentsError && completedPayments) {
-        const totalPaid = completedPayments.reduce(
-          (sum, p) => sum + p.amount,
-          0
-        );
+        const totalPaid = completedPayments.reduce((sum, p) => sum + p.amount, 0);
 
         if (totalPaid >= currentPayment.invoice.total_amount) {
           await supabase
@@ -183,22 +160,16 @@ export async function PUT(
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Validation failed", details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error("API Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const resolvedParams = await params;
     const supabase = await createClient();
@@ -224,10 +195,7 @@ export async function DELETE(
 
     // Don't allow deletion of completed payments
     if (payment.status === "completed") {
-      return NextResponse.json(
-        { error: "Cannot delete completed payments" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Cannot delete completed payments" }, { status: 400 });
     }
 
     // Delete related installment payments first
@@ -238,24 +206,15 @@ export async function DELETE(
 
     if (installmentsError) {
       console.error("Error deleting installments:", installmentsError);
-      return NextResponse.json(
-        { error: "Failed to delete payment installments" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to delete payment installments" }, { status: 500 });
     }
 
     // Delete payment
-    const { error } = await supabase
-      .from("payments")
-      .delete()
-      .eq("id", resolvedParams.id);
+    const { error } = await supabase.from("payments").delete().eq("id", resolvedParams.id);
 
     if (error) {
       console.error("Error deleting payment:", error);
-      return NextResponse.json(
-        { error: "Failed to delete payment" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to delete payment" }, { status: 500 });
     }
 
     // Update invoice status if needed
@@ -266,32 +225,22 @@ export async function DELETE(
       .eq("status", "completed");
 
     if (!remainingError) {
-      const totalPaid =
-        remainingPayments?.reduce((sum, p) => sum + p.amount, 0) || 0;
+      const totalPaid = remainingPayments?.reduce((sum, p) => sum + p.amount, 0) || 0;
 
       if (totalPaid < payment.invoice.total_amount) {
-        await supabase
-          .from("invoices")
-          .update({ status: "pending" })
-          .eq("id", payment.invoice_id);
+        await supabase.from("invoices").update({ status: "pending" }).eq("id", payment.invoice_id);
       }
     }
 
     return NextResponse.json({ message: "Payment deleted successfully" });
   } catch (error) {
     console.error("API Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
 // Refund payment
-export async function POST(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const resolvedParams = await params;
     const supabase = await createClient();
@@ -319,23 +268,17 @@ export async function POST(
         .single();
 
       if (paymentError || !payment) {
-        return NextResponse.json(
-          { error: "Payment not found" },
-          { status: 404 }
-        );
+        return NextResponse.json({ error: "Payment not found" }, { status: 404 });
       }
 
       if (payment.status !== "completed") {
-        return NextResponse.json(
-          { error: "Can only refund completed payments" },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "Can only refund completed payments" }, { status: 400 });
       }
 
       if (refundAmount > payment.amount) {
         return NextResponse.json(
           { error: "Refund amount cannot exceed payment amount" },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -364,10 +307,7 @@ export async function POST(
 
       if (refundError) {
         console.error("Error creating refund:", refundError);
-        return NextResponse.json(
-          { error: "Failed to create refund" },
-          { status: 500 }
-        );
+        return NextResponse.json({ error: "Failed to create refund" }, { status: 500 });
       }
 
       // Update invoice status if needed
@@ -388,8 +328,7 @@ export async function POST(
           .single();
 
         if (!invoiceError && invoice) {
-          const newStatus =
-            totalPaid >= invoice.total_amount ? "paid" : "pending";
+          const newStatus = totalPaid >= invoice.total_amount ? "paid" : "pending";
           await supabase
             .from("invoices")
             .update({ status: newStatus })
@@ -406,9 +345,6 @@ export async function POST(
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
   } catch (error) {
     console.error("API Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

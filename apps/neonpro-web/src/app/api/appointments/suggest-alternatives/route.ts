@@ -1,12 +1,12 @@
-// =============================================
+﻿// =============================================
 // NeonPro Alternative Time Slot Suggestion API
 // Story 1.2: Task 5 - Alternative time slot suggestion system
 // Route: /api/appointments/suggest-alternatives
 // =============================================
 
-import { createClient } from "@/lib/supabase/server";
+import type { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
+import type { z } from "zod";
 
 // Validation schema for alternative slot suggestion request
 const suggestAlternativesSchema = z.object({
@@ -31,7 +31,7 @@ interface AlternativeSlot {
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
-  
+
   try {
     const supabase = await createClient();
 
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     if (authError || !user?.id) {
       return NextResponse.json(
         { error: "Unauthorized", details: "Authentication required" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
           error: "Profile not found",
           details: "User profile or clinic not found",
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -70,8 +70,9 @@ export async function POST(request: NextRequest) {
     const validatedData = suggestAlternativesSchema.parse(body);
 
     // Call the alternative slot suggestion stored procedure
-    const { data: suggestionsResult, error: suggestionsError } =
-      await supabase.rpc("sp_suggest_alternative_slots", {
+    const { data: suggestionsResult, error: suggestionsError } = await supabase.rpc(
+      "sp_suggest_alternative_slots",
+      {
         p_clinic_id: profile.clinic_id,
         p_professional_id: validatedData.professional_id,
         p_service_type_id: validatedData.service_type_id,
@@ -81,7 +82,8 @@ export async function POST(request: NextRequest) {
         p_max_suggestions: validatedData.max_suggestions,
         p_preferred_times: validatedData.preferred_times || null,
         p_exclude_appointment_id: validatedData.exclude_appointment_id || null,
-      });
+      },
+    );
 
     if (suggestionsError) {
       console.error("Alternative suggestions procedure error:", suggestionsError);
@@ -91,39 +93,38 @@ export async function POST(request: NextRequest) {
           details: suggestionsError.message,
           code: "SUGGESTION_PROCEDURE_ERROR",
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     // Parse the result (stored procedure returns jsonb)
     const result =
-      typeof suggestionsResult === "string"
-        ? JSON.parse(suggestionsResult)
-        : suggestionsResult;
+      typeof suggestionsResult === "string" ? JSON.parse(suggestionsResult) : suggestionsResult;
 
     // Enhance suggestions with client-friendly formatting
     const enhancedSuggestions = (result.suggestions || []).map((slot: any) => ({
       ...slot,
-      formatted_start_time: new Date(slot.start_time).toLocaleString('pt-BR', {
-        dateStyle: 'short',
-        timeStyle: 'short',
+      formatted_start_time: new Date(slot.start_time).toLocaleString("pt-BR", {
+        dateStyle: "short",
+        timeStyle: "short",
       }),
-      formatted_date: new Date(slot.start_time).toLocaleDateString('pt-BR', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
+      formatted_date: new Date(slot.start_time).toLocaleDateString("pt-BR", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
       }),
-      formatted_time: new Date(slot.start_time).toLocaleTimeString('pt-BR', {
-        hour: '2-digit',
-        minute: '2-digit',
+      formatted_time: new Date(slot.start_time).toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
       }),
-      is_same_day: new Date(slot.start_time).toDateString() === 
-                   new Date(validatedData.preferred_start_time).toDateString(),
+      is_same_day:
+        new Date(slot.start_time).toDateString() ===
+        new Date(validatedData.preferred_start_time).toDateString(),
       days_from_preferred: Math.ceil(
-        (new Date(slot.start_time).getTime() - 
-         new Date(validatedData.preferred_start_time).getTime()) / 
-        (1000 * 60 * 60 * 24)
+        (new Date(slot.start_time).getTime() -
+          new Date(validatedData.preferred_start_time).getTime()) /
+          (1000 * 60 * 60 * 24),
       ),
     }));
 
@@ -144,8 +145,8 @@ export async function POST(request: NextRequest) {
       metadata: {
         total_suggestions: enhancedSuggestions.length,
         search_window_end: new Date(
-          new Date(validatedData.preferred_start_time).getTime() + 
-          (validatedData.search_window_days * 24 * 60 * 60 * 1000)
+          new Date(validatedData.preferred_start_time).getTime() +
+            validatedData.search_window_days * 24 * 60 * 60 * 1000,
         ).toISOString(),
         generated_at: new Date().toISOString(),
       },
@@ -155,7 +156,6 @@ export async function POST(request: NextRequest) {
     };
 
     return NextResponse.json(response, { status: 200 });
-    
   } catch (error) {
     console.error("Alternative slots API error:", error);
 
@@ -168,7 +168,7 @@ export async function POST(request: NextRequest) {
           validation_errors: error.errors,
           code: "INVALID_REQUEST_PARAMETERS",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -180,7 +180,7 @@ export async function POST(request: NextRequest) {
           details: "Request body contains invalid JSON",
           code: "INVALID_JSON",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -194,7 +194,7 @@ export async function POST(request: NextRequest) {
           generation_time_ms: Date.now() - startTime,
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -202,7 +202,7 @@ export async function POST(request: NextRequest) {
 // GET endpoint for quick alternative suggestions
 export async function GET(request: NextRequest) {
   const startTime = Date.now();
-  
+
   try {
     const supabase = await createClient();
 
@@ -244,7 +244,7 @@ export async function GET(request: NextRequest) {
           details:
             "professional_id, service_type_id, preferred_start_time, and duration_minutes are required",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -260,8 +260,9 @@ export async function GET(request: NextRequest) {
     const validatedData = suggestAlternativesSchema.parse(queryData);
 
     // Call suggestion function
-    const { data: suggestionsResult, error: suggestionsError } =
-      await supabase.rpc("sp_suggest_alternative_slots", {
+    const { data: suggestionsResult, error: suggestionsError } = await supabase.rpc(
+      "sp_suggest_alternative_slots",
+      {
         p_clinic_id: profile.clinic_id,
         p_professional_id: validatedData.professional_id,
         p_service_type_id: validatedData.service_type_id,
@@ -271,7 +272,8 @@ export async function GET(request: NextRequest) {
         p_max_suggestions: validatedData.max_suggestions,
         p_preferred_times: null,
         p_exclude_appointment_id: null,
-      });
+      },
+    );
 
     if (suggestionsError) {
       return NextResponse.json(
@@ -279,14 +281,12 @@ export async function GET(request: NextRequest) {
           error: "Suggestion generation failed",
           details: suggestionsError.message,
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     const result =
-      typeof suggestionsResult === "string"
-        ? JSON.parse(suggestionsResult)
-        : suggestionsResult;
+      typeof suggestionsResult === "string" ? JSON.parse(suggestionsResult) : suggestionsResult;
 
     return NextResponse.json({
       suggestions: result.suggestions || [],
@@ -298,7 +298,6 @@ export async function GET(request: NextRequest) {
         generation_time_ms: Date.now() - startTime,
       },
     });
-    
   } catch (error) {
     console.error("Alternative suggestions GET error:", error);
 
@@ -308,7 +307,7 @@ export async function GET(request: NextRequest) {
           error: "Invalid parameters",
           validation_errors: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -320,7 +319,7 @@ export async function GET(request: NextRequest) {
           generation_time_ms: Date.now() - startTime,
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

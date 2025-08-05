@@ -1,0 +1,70 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - "/etc/prometheus/rules/*.yml"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+scrape_configs:
+  # NeonPro main API
+  - job_name: 'neonpro-api'
+    static_configs:
+      - targets: ['host.docker.internal:3000']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    scrape_timeout: 5s
+    
+  # Node.js process metrics
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    scrape_interval: 15s
+    
+  # Redis metrics
+  - job_name: 'redis-exporter'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+    scrape_interval: 15s
+    
+  # PostgreSQL metrics
+  - job_name: 'postgres-exporter'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+    scrape_interval: 15s
+    
+  # Container metrics
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+    scrape_interval: 15s
+    
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+    scrape_interval: 15s
+    
+  # Healthcare-specific edge services
+  - job_name: 'neonpro-edge-analytics'
+    static_configs:
+      - targets: ['host.docker.internal:3010']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    
+  - job_name: 'neonpro-edge-files'
+    static_configs:
+      - targets: ['host.docker.internal:3011']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    
+  - job_name: 'neonpro-edge-monitoring'
+    static_configs:
+      - targets: ['host.docker.internal:3012']
+    metrics_path: '/metrics'
+    scrape_interval: 10s

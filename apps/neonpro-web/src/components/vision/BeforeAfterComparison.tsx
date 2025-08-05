@@ -1,27 +1,27 @@
-'use client';
+"use client";
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Slider } from '@/components/ui/slider';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  ZoomIn, 
-  ZoomOut, 
-  RotateCcw, 
-  Download, 
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Slider } from "@/components/ui/slider";
+import type { Badge } from "@/components/ui/badge";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  ZoomIn,
+  ZoomOut,
+  RotateCcw,
+  Download,
   Maximize2,
   Move,
   Eye,
   EyeOff,
   Grid3X3,
   Ruler,
-  MousePointer2
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { AnalysisResult, AnnotationData } from '@/lib/vision/analysis-engine';
-import { MeasurementResult, ObjectiveMeasurement } from '@/lib/vision/measurement-system';
+  MousePointer2,
+} from "lucide-react";
+import type { cn } from "@/lib/utils";
+import type { AnalysisResult, AnnotationData } from "@/lib/vision/analysis-engine";
+import type { MeasurementResult, ObjectiveMeasurement } from "@/lib/vision/measurement-system";
 
 interface BeforeAfterComparisonProps {
   beforeImageUrl: string;
@@ -32,8 +32,8 @@ interface BeforeAfterComparisonProps {
   className?: string;
 }
 
-type ViewMode = 'split' | 'overlay' | 'slider' | 'grid' | 'flicker';
-type AnnotationMode = 'view' | 'measure' | 'annotate';
+type ViewMode = "split" | "overlay" | "slider" | "grid" | "flicker";
+type AnnotationMode = "view" | "measure" | "annotate";
 
 export function BeforeAfterComparison({
   beforeImageUrl,
@@ -41,11 +41,11 @@ export function BeforeAfterComparison({
   analysisResult,
   measurementResult,
   onMeasurementClick,
-  className
+  className,
 }: BeforeAfterComparisonProps) {
   // State management
-  const [viewMode, setViewMode] = useState<ViewMode>('split');
-  const [annotationMode, setAnnotationMode] = useState<AnnotationMode>('view');
+  const [viewMode, setViewMode] = useState<ViewMode>("split");
+  const [annotationMode, setAnnotationMode] = useState<AnnotationMode>("view");
   const [sliderPosition, setSliderPosition] = useState([50]);
   const [zoom, setZoom] = useState(100);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -57,7 +57,7 @@ export function BeforeAfterComparison({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [flickerInterval, setFlickerInterval] = useState<NodeJS.Timeout | null>(null);
-  const [flickerState, setFlickerState] = useState<'before' | 'after'>('before');
+  const [flickerState, setFlickerState] = useState<"before" | "after">("before");
 
   // Refs
   const containerRef = useRef<HTMLDivElement>(null);
@@ -75,9 +75,9 @@ export function BeforeAfterComparison({
 
   // Handle view mode changes
   useEffect(() => {
-    if (viewMode === 'flicker') {
+    if (viewMode === "flicker") {
       const interval = setInterval(() => {
-        setFlickerState(prev => prev === 'before' ? 'after' : 'before');
+        setFlickerState((prev) => (prev === "before" ? "after" : "before"));
       }, 1000); // 1 second intervals
       setFlickerInterval(interval);
     } else {
@@ -89,39 +89,45 @@ export function BeforeAfterComparison({
   }, [viewMode]);
 
   // Mouse event handlers
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (annotationMode === 'measure' && onMeasurementClick) {
-      const rect = containerRef.current?.getBoundingClientRect();
-      if (rect) {
-        const x = ((e.clientX - rect.left - pan.x) / zoom) * 100;
-        const y = ((e.clientY - rect.top - pan.y) / zoom) * 100;
-        onMeasurementClick({ x, y });
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      if (annotationMode === "measure" && onMeasurementClick) {
+        const rect = containerRef.current?.getBoundingClientRect();
+        if (rect) {
+          const x = ((e.clientX - rect.left - pan.x) / zoom) * 100;
+          const y = ((e.clientY - rect.top - pan.y) / zoom) * 100;
+          onMeasurementClick({ x, y });
+        }
+        return;
       }
-      return;
-    }
 
-    if (annotationMode === 'view') {
-      setIsDragging(true);
-      setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
-    }
-  }, [annotationMode, onMeasurementClick, pan, zoom]);
+      if (annotationMode === "view") {
+        setIsDragging(true);
+        setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
+      }
+    },
+    [annotationMode, onMeasurementClick, pan, zoom],
+  );
 
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (isDragging) {
-      setPan({
-        x: e.clientX - dragStart.x,
-        y: e.clientY - dragStart.y
-      });
-    }
-  }, [isDragging, dragStart]);
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (isDragging) {
+        setPan({
+          x: e.clientX - dragStart.x,
+          y: e.clientY - dragStart.y,
+        });
+      }
+    },
+    [isDragging, dragStart],
+  );
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
   }, []);
 
   // Zoom controls
-  const handleZoomIn = () => setZoom(prev => Math.min(prev + 25, 400));
-  const handleZoomOut = () => setZoom(prev => Math.max(prev - 25, 25));
+  const handleZoomIn = () => setZoom((prev) => Math.min(prev + 25, 400));
+  const handleZoomOut = () => setZoom((prev) => Math.max(prev - 25, 25));
   const handleResetView = () => {
     setZoom(100);
     setPan({ x: 0, y: 0 });
@@ -141,8 +147,8 @@ export function BeforeAfterComparison({
   // Export functionality
   const handleExport = () => {
     // Create canvas for export
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     // Set canvas size
@@ -151,9 +157,9 @@ export function BeforeAfterComparison({
 
     // Draw comparison based on current view mode
     // This would be implemented based on the specific export requirements
-    
+
     // Download the canvas as image
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.download = `comparison-${Date.now()}.png`;
     link.href = canvas.toDataURL();
     link.click();
@@ -172,17 +178,17 @@ export function BeforeAfterComparison({
               "absolute border-2 rounded pointer-events-auto cursor-pointer transition-all",
               selectedAnnotation === annotation.id
                 ? "border-blue-500 bg-blue-500/20"
-                : "border-yellow-500 bg-yellow-500/10 hover:bg-yellow-500/20"
+                : "border-yellow-500 bg-yellow-500/10 hover:bg-yellow-500/20",
             )}
             style={{
-              left: `${annotation.coordinates.x * zoom / 100 + pan.x}px`,
-              top: `${annotation.coordinates.y * zoom / 100 + pan.y}px`,
-              width: `${annotation.coordinates.width * zoom / 100}px`,
-              height: `${annotation.coordinates.height * zoom / 100}px`,
+              left: `${(annotation.coordinates.x * zoom) / 100 + pan.x}px`,
+              top: `${(annotation.coordinates.y * zoom) / 100 + pan.y}px`,
+              width: `${(annotation.coordinates.width * zoom) / 100}px`,
+              height: `${(annotation.coordinates.height * zoom) / 100}px`,
             }}
-            onClick={() => setSelectedAnnotation(
-              selectedAnnotation === annotation.id ? null : annotation.id
-            )}
+            onClick={() =>
+              setSelectedAnnotation(selectedAnnotation === annotation.id ? null : annotation.id)
+            }
           >
             <div className="absolute -top-6 left-0 bg-yellow-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
               {annotation.description}
@@ -204,22 +210,26 @@ export function BeforeAfterComparison({
             key={measurement.id}
             className="absolute pointer-events-auto"
             style={{
-              left: `${measurement.coordinates.region.x * zoom / 100 + pan.x}px`,
-              top: `${measurement.coordinates.region.y * zoom / 100 + pan.y}px`,
+              left: `${(measurement.coordinates.region.x * zoom) / 100 + pan.x}px`,
+              top: `${(measurement.coordinates.region.y * zoom) / 100 + pan.y}px`,
             }}
           >
             {/* Measurement point */}
             <div className="w-3 h-3 bg-red-500 rounded-full border-2 border-white shadow-lg" />
-            
+
             {/* Measurement label */}
             <div className="absolute -top-8 left-4 bg-red-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
-              {measurement.type}: {measurement.afterValue.toFixed(1)}{measurement.unit}
+              {measurement.type}: {measurement.afterValue.toFixed(1)}
+              {measurement.unit}
               {measurement.changePercentage !== 0 && (
-                <span className={cn(
-                  "ml-1",
-                  measurement.changePercentage > 0 ? "text-green-200" : "text-red-200"
-                )}>
-                  ({measurement.changePercentage > 0 ? '+' : ''}{measurement.changePercentage.toFixed(1)}%)
+                <span
+                  className={cn(
+                    "ml-1",
+                    measurement.changePercentage > 0 ? "text-green-200" : "text-red-200",
+                  )}
+                >
+                  ({measurement.changePercentage > 0 ? "+" : ""}
+                  {measurement.changePercentage.toFixed(1)}%)
                 </span>
               )}
             </div>
@@ -237,12 +247,7 @@ export function BeforeAfterComparison({
       <div className="absolute inset-0 pointer-events-none">
         <svg className="w-full h-full">
           <defs>
-            <pattern
-              id="grid"
-              width="50"
-              height="50"
-              patternUnits="userSpaceOnUse"
-            >
+            <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
               <path
                 d="M 50 0 L 0 0 0 50"
                 fill="none"
@@ -261,11 +266,11 @@ export function BeforeAfterComparison({
   const renderComparison = () => {
     const imageStyle = {
       transform: `scale(${zoom / 100}) translate(${pan.x}px, ${pan.y}px)`,
-      transformOrigin: 'top left'
+      transformOrigin: "top left",
     };
 
     switch (viewMode) {
-      case 'split':
+      case "split":
         return (
           <div className="grid grid-cols-2 gap-2 h-full">
             <div className="relative overflow-hidden rounded-lg bg-gray-100">
@@ -295,7 +300,7 @@ export function BeforeAfterComparison({
           </div>
         );
 
-      case 'overlay':
+      case "overlay":
         return (
           <div className="relative h-full overflow-hidden rounded-lg bg-gray-100">
             <img
@@ -316,7 +321,7 @@ export function BeforeAfterComparison({
           </div>
         );
 
-      case 'slider':
+      case "slider":
         return (
           <div className="relative h-full overflow-hidden rounded-lg bg-gray-100">
             <img
@@ -325,7 +330,7 @@ export function BeforeAfterComparison({
               className="absolute inset-0 w-full h-full object-contain"
               style={imageStyle}
             />
-            <div 
+            <div
               className="absolute inset-0 overflow-hidden"
               style={{ clipPath: `inset(0 ${100 - sliderPosition[0]}% 0 0)` }}
             >
@@ -336,7 +341,7 @@ export function BeforeAfterComparison({
                 style={imageStyle}
               />
             </div>
-            <div 
+            <div
               className="absolute top-0 bottom-0 w-1 bg-white shadow-lg cursor-ew-resize"
               style={{ left: `${sliderPosition[0]}%` }}
             />
@@ -349,7 +354,7 @@ export function BeforeAfterComparison({
           </div>
         );
 
-      case 'grid':
+      case "grid":
         return (
           <div className="grid grid-cols-2 grid-rows-2 gap-2 h-full">
             <div className="relative overflow-hidden rounded-lg bg-gray-100">
@@ -401,17 +406,17 @@ export function BeforeAfterComparison({
           </div>
         );
 
-      case 'flicker':
+      case "flicker":
         return (
           <div className="relative h-full overflow-hidden rounded-lg bg-gray-100">
             <img
-              src={flickerState === 'before' ? beforeImageUrl : afterImageUrl}
-              alt={flickerState === 'before' ? 'Antes' : 'Depois'}
+              src={flickerState === "before" ? beforeImageUrl : afterImageUrl}
+              alt={flickerState === "before" ? "Antes" : "Depois"}
               className="w-full h-full object-contain transition-opacity duration-200"
               style={imageStyle}
             />
             <div className="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-sm">
-              {flickerState === 'before' ? 'Antes' : 'Depois'}
+              {flickerState === "before" ? "Antes" : "Depois"}
             </div>
             <div className="absolute bottom-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
               Alternância Automática
@@ -461,9 +466,7 @@ export function BeforeAfterComparison({
               <Button variant="outline" size="sm" onClick={handleZoomOut}>
                 <ZoomOut className="h-4 w-4" />
               </Button>
-              <span className="text-sm font-medium min-w-[60px] text-center">
-                {zoom}%
-              </span>
+              <span className="text-sm font-medium min-w-[60px] text-center">{zoom}%</span>
               <Button variant="outline" size="sm" onClick={handleZoomIn}>
                 <ZoomIn className="h-4 w-4" />
               </Button>
@@ -475,25 +478,25 @@ export function BeforeAfterComparison({
             {/* Annotation Mode */}
             <div className="flex items-center gap-2">
               <Button
-                variant={annotationMode === 'view' ? 'default' : 'outline'}
+                variant={annotationMode === "view" ? "default" : "outline"}
                 size="sm"
-                onClick={() => setAnnotationMode('view')}
+                onClick={() => setAnnotationMode("view")}
               >
                 <Move className="h-4 w-4 mr-2" />
                 Navegar
               </Button>
               <Button
-                variant={annotationMode === 'measure' ? 'default' : 'outline'}
+                variant={annotationMode === "measure" ? "default" : "outline"}
                 size="sm"
-                onClick={() => setAnnotationMode('measure')}
+                onClick={() => setAnnotationMode("measure")}
               >
                 <Ruler className="h-4 w-4 mr-2" />
                 Medir
               </Button>
               <Button
-                variant={annotationMode === 'annotate' ? 'default' : 'outline'}
+                variant={annotationMode === "annotate" ? "default" : "outline"}
                 size="sm"
-                onClick={() => setAnnotationMode('annotate')}
+                onClick={() => setAnnotationMode("annotate")}
               >
                 <MousePointer2 className="h-4 w-4 mr-2" />
                 Anotar
@@ -503,7 +506,7 @@ export function BeforeAfterComparison({
             {/* Overlay Toggles */}
             <div className="flex items-center gap-2">
               <Button
-                variant={showAnnotations ? 'default' : 'outline'}
+                variant={showAnnotations ? "default" : "outline"}
                 size="sm"
                 onClick={() => setShowAnnotations(!showAnnotations)}
               >
@@ -511,7 +514,7 @@ export function BeforeAfterComparison({
                 <span className="ml-2">Anotações</span>
               </Button>
               <Button
-                variant={showMeasurements ? 'default' : 'outline'}
+                variant={showMeasurements ? "default" : "outline"}
                 size="sm"
                 onClick={() => setShowMeasurements(!showMeasurements)}
               >
@@ -519,7 +522,7 @@ export function BeforeAfterComparison({
                 <span className="ml-2">Medições</span>
               </Button>
               <Button
-                variant={showGrid ? 'default' : 'outline'}
+                variant={showGrid ? "default" : "outline"}
                 size="sm"
                 onClick={() => setShowGrid(!showGrid)}
               >
@@ -529,7 +532,7 @@ export function BeforeAfterComparison({
           </div>
 
           {/* Slider Control for Slider Mode */}
-          {viewMode === 'slider' && (
+          {viewMode === "slider" && (
             <div className="space-y-2">
               <label className="text-sm font-medium">Posição do Divisor</label>
               <Slider
@@ -551,8 +554,8 @@ export function BeforeAfterComparison({
             ref={containerRef}
             className={cn(
               "relative h-[600px] cursor-grab active:cursor-grabbing",
-              annotationMode === 'measure' && "cursor-crosshair",
-              annotationMode === 'annotate' && "cursor-pointer"
+              annotationMode === "measure" && "cursor-crosshair",
+              annotationMode === "annotate" && "cursor-pointer",
             )}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
@@ -560,8 +563,8 @@ export function BeforeAfterComparison({
             onMouseLeave={handleMouseUp}
           >
             {renderComparison()}
-            {viewMode !== 'grid' && renderAnnotations()}
-            {viewMode !== 'grid' && renderMeasurements()}
+            {viewMode !== "grid" && renderAnnotations()}
+            {viewMode !== "grid" && renderMeasurements()}
             {renderGrid()}
           </div>
         </CardContent>

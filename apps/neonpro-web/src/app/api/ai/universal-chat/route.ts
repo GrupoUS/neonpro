@@ -1,13 +1,13 @@
-// Universal AI Chat Endpoint for NeonPro (Epic 4 - Story 4.1)
+﻿// Universal AI Chat Endpoint for NeonPro (Epic 4 - Story 4.1)
 // app/api/ai/universal-chat/route.ts
 
-import { UniversalChatContext } from "@/app/lib/ai/types";
+import type { UniversalChatContext } from "@/app/lib/ai/types";
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
 // Rate limiting and security imports (to be implemented)
-// import { rateLimit } from '@/app/lib/rate-limit'
-// import { validateAPIKey } from '@/app/lib/auth'
+// import type { rateLimit } from "@/app/lib/rate-limit"
+// import type { validateAPIKey } from "@/app/lib/auth"
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     if (!query || typeof query !== "string") {
       return NextResponse.json(
         { success: false, error: "Query is required and must be a string" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     if (sessionError || !session) {
       return NextResponse.json(
         { success: false, error: "Authentication required" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -46,10 +46,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (!profile?.clinic_id) {
-      return NextResponse.json(
-        { success: false, error: "User clinic not found" },
-        { status: 403 }
-      );
+      return NextResponse.json({ success: false, error: "User clinic not found" }, { status: 403 });
     }
 
     const clinicId = profile.clinic_id;
@@ -72,13 +69,13 @@ export async function POST(request: NextRequest) {
     // Initialize AI chat engine and process query
     // TODO: Implement NeonProAIChatEngine class
     // const chatEngine = new NeonProAIChatEngine();
-    const response = { 
-      chatResponse: "AI chat engine not implemented yet", 
-      suggestions: [], 
+    const response = {
+      chatResponse: "AI chat engine not implemented yet",
+      suggestions: [],
       predictions: {},
       automations: {},
       metadata: {},
-      confidence: 0 
+      confidence: 0,
     };
     /*
     const response = await chatEngine.processUniversalQuery(
@@ -90,9 +87,7 @@ export async function POST(request: NextRequest) {
     */
 
     // Log successful interaction
-    console.log(
-      `AI Chat - User: ${userId}, Clinic: ${clinicId}, Query length: ${query.length}`
-    );
+    console.log(`AI Chat - User: ${userId}, Clinic: ${clinicId}, Query length: ${query.length}`);
 
     return NextResponse.json({
       success: true,
@@ -106,13 +101,9 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Error in AI chat endpoint:", error);
 
-    const errorMessage =
-      error instanceof Error ? error.message : "Internal server error";
+    const errorMessage = error instanceof Error ? error.message : "Internal server error";
 
-    return NextResponse.json(
-      { success: false, error: errorMessage },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: errorMessage }, { status: 500 });
   }
 }
 
@@ -122,29 +113,32 @@ export async function POST(request: NextRequest) {
 async function buildUniversalContext(
   supabase: any,
   clinicId: string,
-  userId: string
+  userId: string,
 ): Promise<UniversalChatContext> {
   try {
-    const [appointmentsData, financialData, clinicalData, biData, clinicData] =
-      await Promise.all([
-        buildAppointmentsContext(supabase, clinicId),
-        buildFinancialContext(supabase, clinicId),
-        buildClinicalContext(supabase, clinicId),
-        buildBusinessIntelligenceContext(supabase, clinicId),
-        supabase.from("clinics").select("id, name, settings, business_hours").eq("id", clinicId).single(),
-      ]);
+    const [appointmentsData, financialData, clinicalData, biData, clinicData] = await Promise.all([
+      buildAppointmentsContext(supabase, clinicId),
+      buildFinancialContext(supabase, clinicId),
+      buildClinicalContext(supabase, clinicId),
+      buildBusinessIntelligenceContext(supabase, clinicId),
+      supabase
+        .from("clinics")
+        .select("id, name, settings, business_hours")
+        .eq("id", clinicId)
+        .single(),
+    ]);
 
     return {
       user: {
         id: userId,
-        name: 'Admin User', // TODO: Get actual user name from profiles
-        role: 'admin',
-        permissions: []
+        name: "Admin User", // TODO: Get actual user name from profiles
+        role: "admin",
+        permissions: [],
       },
       clinic: {
         id: clinicId,
-        name: clinicData?.data?.name || 'Clinic Name',
-        settings: clinicData?.data?.settings || {}
+        name: clinicData?.data?.name || "Clinic Name",
+        settings: clinicData?.data?.settings || {},
       },
       appointments: appointmentsData,
       financial: financialData,
@@ -157,14 +151,14 @@ async function buildUniversalContext(
     return {
       user: {
         id: userId,
-        name: 'Unknown User',
-        role: 'guest',
-        permissions: []
+        name: "Unknown User",
+        role: "guest",
+        permissions: [],
       },
       clinic: {
         id: clinicId,
-        name: 'Unknown Clinic',
-        settings: {}
+        name: "Unknown Clinic",
+        settings: {},
       },
       appointments: {
         upcoming: [],
@@ -263,7 +257,7 @@ async function buildUniversalContext(
             gender: "",
             clinic_id: clinicId,
             created_at: "",
-            updated_at: ""
+            updated_at: "",
           },
           medicalHistory: [],
           treatmentSessions: [],
@@ -364,10 +358,7 @@ async function buildFinancialContext(supabase: any, clinicId: string) {
     .from("financial_transactions")
     .select("*")
     .eq("clinic_id", clinicId)
-    .gte(
-      "created_at",
-      new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-    )
+    .gte("created_at", new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
     .limit(100);
 
   return {
@@ -456,7 +447,7 @@ async function buildClinicalContext(supabase: any, clinicId: string) {
         gender: "",
         clinic_id: clinicId,
         created_at: "",
-        updated_at: ""
+        updated_at: "",
       },
       medicalHistory: [],
       treatmentSessions: [],
@@ -490,10 +481,7 @@ async function buildClinicalContext(supabase: any, clinicId: string) {
   };
 }
 
-async function buildBusinessIntelligenceContext(
-  supabase: any,
-  clinicId: string
-) {
+async function buildBusinessIntelligenceContext(supabase: any, clinicId: string) {
   // Cross-epic analytics
   return {
     kpis: {

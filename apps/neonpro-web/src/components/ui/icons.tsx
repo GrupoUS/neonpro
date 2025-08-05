@@ -1,11 +1,11 @@
-import { 
-  User, 
-  Calendar, 
-  Phone, 
-  Mail, 
-  MapPin, 
-  FileText, 
-  Activity, 
+import type {
+  User,
+  Calendar,
+  Phone,
+  Mail,
+  MapPin,
+  FileText,
+  Activity,
   Clock,
   Search,
   Filter,
@@ -32,7 +32,7 @@ import {
   UserPlus,
   CalendarPlus,
   FileImage,
-  Zap
+  Zap,
 } from "lucide-react";
 
 // Re-export all icons
@@ -70,7 +70,7 @@ export {
   UserPlus,
   CalendarPlus,
   FileImage,
-  Zap
+  Zap,
 };
 
 // Default export with all icons
@@ -108,5 +108,5 @@ export default {
   UserPlus,
   CalendarPlus,
   FileImage,
-  Zap
+  Zap,
 };

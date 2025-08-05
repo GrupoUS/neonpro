@@ -4,11 +4,16 @@
  * Story 6.1: Real-time Stock Tracking + Barcode/QR Integration
  */
 
-import { ConnectionStatus, InventoryStatus, MovementType, SessionType } from '@/lib/types/inventory';
+import {
+  ConnectionStatus,
+  InventoryStatus,
+  MovementType,
+  SessionType,
+} from "@/lib/types/inventory";
 
 // Mock all dependencies upfront
-jest.mock('@/lib/supabase/client');
-jest.mock('react-hot-toast');
+jest.mock("@/lib/supabase/client");
+jest.mock("react-hot-toast");
 
 // Mock React hooks manually for this test file
 const mockSetState = jest.fn();
@@ -17,8 +22,8 @@ const mockUseEffect = jest.fn();
 const mockUseCallback = jest.fn((fn) => fn);
 const mockUseRef = jest.fn(() => ({ current: null }));
 
-jest.mock('react', () => ({
-  ...jest.requireActual('react'),
+jest.mock("react", () => ({
+  ...jest.requireActual("react"),
   useState: mockUseState,
   useEffect: mockUseEffect,
   useCallback: mockUseCallback,
@@ -29,34 +34,34 @@ jest.mock('react', () => ({
 const mockNavigator = {
   mediaDevices: {
     getUserMedia: jest.fn().mockResolvedValue(new MediaStream()),
-    enumerateDevices: jest.fn().mockResolvedValue([])
+    enumerateDevices: jest.fn().mockResolvedValue([]),
   },
   permissions: {
-    query: jest.fn().mockResolvedValue({ state: 'granted' })
+    query: jest.fn().mockResolvedValue({ state: "granted" }),
   },
-  vibrate: jest.fn()
+  vibrate: jest.fn(),
 };
 
-Object.defineProperty(global, 'navigator', {
+Object.defineProperty(global, "navigator", {
   value: mockNavigator,
-  writable: true
+  writable: true,
 });
 
 // Mock MediaStream
 global.MediaStream = jest.fn().mockImplementation(() => ({
   getTracks: jest.fn().mockReturnValue([]),
   getVideoTracks: jest.fn().mockReturnValue([]),
-  getAudioTracks: jest.fn().mockReturnValue([])
+  getAudioTracks: jest.fn().mockReturnValue([]),
 }));
 
 // Mock HTMLVideoElement
-Object.defineProperty(HTMLVideoElement.prototype, 'srcObject', {
+Object.defineProperty(HTMLVideoElement.prototype, "srcObject", {
   set: jest.fn(),
-  get: jest.fn()
+  get: jest.fn(),
 });
 
-Object.defineProperty(HTMLVideoElement.prototype, 'play', {
-  value: jest.fn().mockResolvedValue(undefined)
+Object.defineProperty(HTMLVideoElement.prototype, "play", {
+  value: jest.fn().mockResolvedValue(undefined),
 });
 
 // Mock AudioContext
@@ -65,16 +70,16 @@ global.AudioContext = jest.fn().mockImplementation(() => ({
     connect: jest.fn(),
     start: jest.fn(),
     stop: jest.fn(),
-    frequency: { value: 800 }
+    frequency: { value: 800 },
   })),
   createGain: jest.fn(() => ({
     connect: jest.fn(),
-    gain: { value: 0.1 }
+    gain: { value: 0.1 },
   })),
-  destination: {}
+  destination: {},
 }));
 
-describe('Inventory Management System', () => {
+describe("Inventory Management System", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseState.mockReturnValue([
@@ -89,27 +94,27 @@ describe('Inventory Management System', () => {
         error: null,
         lastUpdated: new Date().toISOString(),
         isRealTimeEnabled: true,
-        connectionStatus: ConnectionStatus.DISCONNECTED
+        connectionStatus: ConnectionStatus.DISCONNECTED,
       },
-      mockSetState
+      mockSetState,
     ]);
   });
 
-  describe('useInventory hook - Basic functionality', () => {
-    it('should be importable and have expected structure', async () => {
+  describe("useInventory hook - Basic functionality", () => {
+    it("should be importable and have expected structure", async () => {
       // Dynamic import to test the hook can be loaded
-      const { useInventory } = await import('@/hooks/inventory/use-inventory');
-      
+      const { useInventory } = await import("@/hooks/inventory/use-inventory");
+
       expect(useInventory).toBeDefined();
-      expect(typeof useInventory).toBe('function');
+      expect(typeof useInventory).toBe("function");
     });
 
-    it('should initialize useState with correct default state structure', async () => {
-      const { useInventory } = await import('@/hooks/inventory/use-inventory');
-      
+    it("should initialize useState with correct default state structure", async () => {
+      const { useInventory } = await import("@/hooks/inventory/use-inventory");
+
       // Call the hook
       useInventory();
-      
+
       // Verify useState was called with proper initial state
       expect(mockUseState).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -122,27 +127,27 @@ describe('Inventory Management System', () => {
           loading: false,
           error: null,
           isRealTimeEnabled: true,
-          connectionStatus: ConnectionStatus.DISCONNECTED
-        })
+          connectionStatus: ConnectionStatus.DISCONNECTED,
+        }),
       );
     });
 
-    it('should handle options parameter correctly', async () => {
-      const { useInventory } = await import('@/hooks/inventory/use-inventory');
-      
+    it("should handle options parameter correctly", async () => {
+      const { useInventory } = await import("@/hooks/inventory/use-inventory");
+
       // Call with options
-      useInventory({ 
-        enableRealTime: false, 
-        autoLoadData: false, 
-        alertRefreshInterval: 60000 
+      useInventory({
+        enableRealTime: false,
+        autoLoadData: false,
+        alertRefreshInterval: 60000,
       });
-      
+
       // Verify the hook was called and useState was initialized
       expect(mockUseState).toHaveBeenCalled();
     });
   });
 
-  describe('useBarcode hook - Basic functionality', () => {
+  describe("useBarcode hook - Basic functionality", () => {
     beforeEach(() => {
       mockUseState.mockReturnValue([
         {
@@ -153,25 +158,25 @@ describe('Inventory Management System', () => {
           lastResult: null,
           scanHistory: [],
           availableCameras: [],
-          currentCamera: null
+          currentCamera: null,
         },
-        mockSetState
+        mockSetState,
       ]);
     });
 
-    it('should be importable and have expected structure', async () => {
-      const { useBarcode } = await import('@/hooks/inventory/use-barcode');
-      
+    it("should be importable and have expected structure", async () => {
+      const { useBarcode } = await import("@/hooks/inventory/use-barcode");
+
       expect(useBarcode).toBeDefined();
-      expect(typeof useBarcode).toBe('function');
+      expect(typeof useBarcode).toBe("function");
     });
 
-    it('should initialize useState with correct scanner state', async () => {
-      const { useBarcode } = await import('@/hooks/inventory/use-barcode');
-      
+    it("should initialize useState with correct scanner state", async () => {
+      const { useBarcode } = await import("@/hooks/inventory/use-barcode");
+
       // Call the hook
       useBarcode();
-      
+
       // Verify useState was called with proper initial state
       expect(mockUseState).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -182,33 +187,33 @@ describe('Inventory Management System', () => {
           lastResult: null,
           scanHistory: [],
           availableCameras: [],
-          currentCamera: null
-        })
+          currentCamera: null,
+        }),
       );
     });
 
-    it('should handle barcode options parameter', async () => {
-      const { useBarcode } = await import('@/hooks/inventory/use-barcode');
-      
+    it("should handle barcode options parameter", async () => {
+      const { useBarcode } = await import("@/hooks/inventory/use-barcode");
+
       const onScan = jest.fn();
       const onError = jest.fn();
-      
+
       // Call with options
       useBarcode({
         enableContinuousScanning: false,
         onScanSuccess: onScan,
         onScanError: onError,
         beepOnScan: false,
-        vibrationOnScan: false
+        vibrationOnScan: false,
       });
-      
+
       // Verify the hook was called
       expect(mockUseState).toHaveBeenCalled();
     });
   });
 
-  describe('Type system validation', () => {
-    it('should have all required enum values', () => {
+  describe("Type system validation", () => {
+    it("should have all required enum values", () => {
       // Test ConnectionStatus enum
       expect(ConnectionStatus.CONNECTED).toBeDefined();
       expect(ConnectionStatus.DISCONNECTED).toBeDefined();
@@ -232,17 +237,17 @@ describe('Inventory Management System', () => {
     });
   });
 
-  describe('Integration capabilities', () => {
-    it('should support both hooks working together', async () => {
-      const { useInventory } = await import('@/hooks/inventory/use-inventory');
-      const { useBarcode } = await import('@/hooks/inventory/use-barcode');
-      
+  describe("Integration capabilities", () => {
+    it("should support both hooks working together", async () => {
+      const { useInventory } = await import("@/hooks/inventory/use-inventory");
+      const { useBarcode } = await import("@/hooks/inventory/use-barcode");
+
       // Both hooks should be callable
       expect(() => {
         useInventory();
         useBarcode();
       }).not.toThrow();
-      
+
       // Verify both hooks initialized their state
       // Note: Number of useState calls may vary depending on implementation
       expect(mockUseState).toHaveBeenCalled();

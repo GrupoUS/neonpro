@@ -1,6 +1,6 @@
 "use client";
 
-import {
+import type {
   Activity,
   AlertTriangle,
   BarChart3,
@@ -21,12 +21,12 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import type { usePathname } from "next/navigation";
 import * as React from "react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import {
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Button } from "@/components/ui/button";
+import type {
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -413,11 +413,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
             <SidebarMenu>
               {navigationData.navMain.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={pathname === item.url}
-                    tooltip={item.title}
-                  >
+                  <SidebarMenuButton asChild isActive={pathname === item.url} tooltip={item.title}>
                     <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
@@ -427,10 +423,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
                     <SidebarMenuSub>
                       {item.items.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.title}>
-                          <SidebarMenuSubButton
-                            asChild
-                            isActive={pathname === subItem.url}
-                          >
+                          <SidebarMenuSubButton asChild isActive={pathname === subItem.url}>
                             <Link href={subItem.url}>
                               <span>{subItem.title}</span>
                             </Link>
@@ -452,11 +445,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
             <SidebarMenu>
               {navigationData.navSecondary.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={pathname === item.url}
-                    tooltip={item.title}
-                  >
+                  <SidebarMenuButton asChild isActive={pathname === item.url} tooltip={item.title}>
                     <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
@@ -484,13 +473,9 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
-                  {user?.user_metadata?.full_name ||
-                    user?.email?.split("@")[0] ||
-                    "Usuário"}
+                  {user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Usuário"}
                 </span>
-                <span className="truncate text-xs">
-                  {user?.email || "email@exemplo.com"}
-                </span>
+                <span className="truncate text-xs">{user?.email || "email@exemplo.com"}</span>
               </div>
             </div>
           </SidebarMenuItem>

@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Activity, 
-  Users, 
-  Calendar, 
-  TrendingUp, 
-  Heart, 
+import React, { useState, useEffect, useRef } from "react";
+import type {
+  Activity,
+  Users,
+  Calendar,
+  TrendingUp,
+  Heart,
   Stethoscope,
   UserCheck,
   Clock,
@@ -20,12 +20,18 @@ import {
   Settings,
   LogOut,
   Star,
-  MessageCircle
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+  MessageCircle,
+} from "lucide-react";
+import type { Button } from "@/components/ui/button";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { cn } from "@/lib/utils";
 
 // NeonGradientCard Component
 interface NeonColorsProps {
@@ -70,22 +76,21 @@ const NeonGradientCard: React.FC<NeonGradientCardProps> = ({
   return (
     <div
       ref={containerRef}
-      style={{
-        "--border-size": `${borderSize}px`,
-        "--border-radius": `${borderRadius}px`,
-        "--neon-first-color": neonColors.firstColor,
-        "--neon-second-color": neonColors.secondColor,
-        "--card-width": `${dimensions.width}px`,
-        "--card-height": `${dimensions.height}px`,
-        "--card-content-radius": `${borderRadius - borderSize}px`,
-        "--pseudo-element-width": `${dimensions.width + borderSize * 2}px`,
-        "--pseudo-element-height": `${dimensions.height + borderSize * 2}px`,
-        "--after-blur": `${dimensions.width / 3}px`,
-      } as React.CSSProperties}
-      className={cn(
-        "relative z-10 size-full rounded-[var(--border-radius)]",
-        className,
-      )}
+      style={
+        {
+          "--border-size": `${borderSize}px`,
+          "--border-radius": `${borderRadius}px`,
+          "--neon-first-color": neonColors.firstColor,
+          "--neon-second-color": neonColors.secondColor,
+          "--card-width": `${dimensions.width}px`,
+          "--card-height": `${dimensions.height}px`,
+          "--card-content-radius": `${borderRadius - borderSize}px`,
+          "--pseudo-element-width": `${dimensions.width + borderSize * 2}px`,
+          "--pseudo-element-height": `${dimensions.height + borderSize * 2}px`,
+          "--after-blur": `${dimensions.width / 3}px`,
+        } as React.CSSProperties
+      }
+      className={cn("relative z-10 size-full rounded-[var(--border-radius)]", className)}
     >
       <div
         className={cn(
@@ -119,8 +124,8 @@ export default function ThemeDemoPage() {
       icon: Users,
       neonColors: {
         firstColor: "oklch(0.5854 0.2041 277.1173)",
-        secondColor: "oklch(0.5106 0.2301 276.9656)"
-      }
+        secondColor: "oklch(0.5106 0.2301 276.9656)",
+      },
     },
     {
       title: "Consultas Hoje",
@@ -130,8 +135,8 @@ export default function ThemeDemoPage() {
       icon: Calendar,
       neonColors: {
         firstColor: "oklch(0.4568 0.2146 277.0229)",
-        secondColor: "oklch(0.3984 0.1773 277.3662)"
-      }
+        secondColor: "oklch(0.3984 0.1773 277.3662)",
+      },
     },
     {
       title: "Taxa de Recuperação",
@@ -141,8 +146,8 @@ export default function ThemeDemoPage() {
       icon: Heart,
       neonColors: {
         firstColor: "oklch(0.3984 0.1773 277.3662)",
-        secondColor: "oklch(0.3588 0.1354 278.6973)"
-      }
+        secondColor: "oklch(0.3588 0.1354 278.6973)",
+      },
     },
     {
       title: "Emergências",
@@ -152,9 +157,9 @@ export default function ThemeDemoPage() {
       icon: Activity,
       neonColors: {
         firstColor: "oklch(0.6368 0.2078 25.3313)",
-        secondColor: "oklch(0.5854 0.2041 277.1173)"
-      }
-    }
+        secondColor: "oklch(0.5854 0.2041 277.1173)",
+      },
+    },
   ];
 
   return (
@@ -169,9 +174,7 @@ export default function ThemeDemoPage() {
       {/* Header */}
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-foreground mb-4">
-            NEONPROV1 Theme Demo
-          </h1>
+          <h1 className="text-4xl font-bold text-foreground mb-4">NEONPROV1 Theme Demo</h1>
           <p className="text-xl text-muted-foreground mb-6">
             Demonstração do tema NEONPROV1 do tweakcn.com aplicado ao sistema NeonPro
           </p>
@@ -199,27 +202,45 @@ export default function ThemeDemoPage() {
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
               <div className="text-center">
-                <div className="w-20 h-20 rounded-lg mx-auto mb-2" style={{ backgroundColor: "oklch(0.5854 0.2041 277.1173)" }}></div>
+                <div
+                  className="w-20 h-20 rounded-lg mx-auto mb-2"
+                  style={{ backgroundColor: "oklch(0.5854 0.2041 277.1173)" }}
+                ></div>
                 <p className="text-xs font-mono text-muted-foreground">Primary</p>
               </div>
               <div className="text-center">
-                <div className="w-20 h-20 rounded-lg mx-auto mb-2" style={{ backgroundColor: "oklch(0.8687 0.0043 56.3660)" }}></div>
+                <div
+                  className="w-20 h-20 rounded-lg mx-auto mb-2"
+                  style={{ backgroundColor: "oklch(0.8687 0.0043 56.3660)" }}
+                ></div>
                 <p className="text-xs font-mono text-muted-foreground">Secondary</p>
               </div>
               <div className="text-center">
-                <div className="w-20 h-20 rounded-lg mx-auto mb-2" style={{ backgroundColor: "oklch(0.9376 0.0260 321.9388)" }}></div>
+                <div
+                  className="w-20 h-20 rounded-lg mx-auto mb-2"
+                  style={{ backgroundColor: "oklch(0.9376 0.0260 321.9388)" }}
+                ></div>
                 <p className="text-xs font-mono text-muted-foreground">Accent</p>
               </div>
               <div className="text-center">
-                <div className="w-20 h-20 rounded-lg mx-auto mb-2" style={{ backgroundColor: "oklch(0.6368 0.2078 25.3313)" }}></div>
+                <div
+                  className="w-20 h-20 rounded-lg mx-auto mb-2"
+                  style={{ backgroundColor: "oklch(0.6368 0.2078 25.3313)" }}
+                ></div>
                 <p className="text-xs font-mono text-muted-foreground">Destructive</p>
               </div>
               <div className="text-center">
-                <div className="w-20 h-20 rounded-lg mx-auto mb-2" style={{ backgroundColor: "oklch(0.9232 0.0026 48.7171)" }}></div>
+                <div
+                  className="w-20 h-20 rounded-lg mx-auto mb-2"
+                  style={{ backgroundColor: "oklch(0.9232 0.0026 48.7171)" }}
+                ></div>
                 <p className="text-xs font-mono text-muted-foreground">Muted</p>
               </div>
               <div className="text-center">
-                <div className="w-20 h-20 rounded-lg mx-auto mb-2" style={{ backgroundColor: "oklch(0.9699 0.0013 106.4238)" }}></div>
+                <div
+                  className="w-20 h-20 rounded-lg mx-auto mb-2"
+                  style={{ backgroundColor: "oklch(0.9699 0.0013 106.4238)" }}
+                ></div>
                 <p className="text-xs font-mono text-muted-foreground">Card</p>
               </div>
             </div>
@@ -280,32 +301,24 @@ export default function ThemeDemoPage() {
                     onMouseLeave={() => setActiveMetric(null)}
                   >
                     <div className="flex items-center justify-between mb-4">
-                      <div
-                        className="p-3 rounded-xl bg-primary/10"
-                      >
+                      <div className="p-3 rounded-xl bg-primary/10">
                         <Icon className="w-6 h-6 text-primary" />
                       </div>
                       <Badge
-                        variant={metric.trend === 'up' ? 'default' : 'destructive'}
+                        variant={metric.trend === "up" ? "default" : "destructive"}
                         className="text-xs"
                       >
                         {metric.change}
                       </Badge>
                     </div>
                     <div>
-                      <h3 className="text-2xl font-bold text-foreground mb-1">
-                        {metric.value}
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        {metric.title}
-                      </p>
+                      <h3 className="text-2xl font-bold text-foreground mb-1">{metric.value}</h3>
+                      <p className="text-sm text-muted-foreground">{metric.title}</p>
                     </div>
                     {activeMetric === metric.title && (
                       <div className="mt-4 flex items-center gap-2">
                         <TrendingUp className="w-4 h-4 text-primary" />
-                        <span className="text-xs text-muted-foreground">
-                          Hover ativo
-                        </span>
+                        <span className="text-xs text-muted-foreground">Hover ativo</span>
                       </div>
                     )}
                   </div>
@@ -334,7 +347,7 @@ export default function ThemeDemoPage() {
                   <Badge className="status-cancelled">Cancelado</Badge>
                   <Badge className="status-completed">Concluído</Badge>
                 </div>
-                
+
                 <div className="space-y-3 mt-6">
                   <div className="flex items-center justify-between p-3 rounded-lg bg-accent/10 border border-border">
                     <div className="flex items-center gap-3">
@@ -348,7 +361,7 @@ export default function ThemeDemoPage() {
                     </div>
                     <Badge variant="default">Online</Badge>
                   </div>
-                  
+
                   <div className="flex items-center justify-between p-3 rounded-lg bg-accent/10 border border-border">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center">
@@ -370,9 +383,7 @@ export default function ThemeDemoPage() {
           <Card>
             <CardHeader>
               <CardTitle>Informações do Tema</CardTitle>
-              <CardDescription>
-                Especificações técnicas do tema NEONPROV1
-              </CardDescription>
+              <CardDescription>Especificações técnicas do tema NEONPROV1</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -394,7 +405,7 @@ export default function ThemeDemoPage() {
                     <p className="text-muted-foreground">1.25rem</p>
                   </div>
                 </div>
-                
+
                 <div className="border-t pt-4">
                   <p className="font-medium text-foreground mb-2">Cores Primárias (OKLCH)</p>
                   <div className="space-y-1 text-xs font-mono">
@@ -403,7 +414,7 @@ export default function ThemeDemoPage() {
                     <p className="text-muted-foreground">Accent: oklch(0.9376 0.0260 321.9388)</p>
                   </div>
                 </div>
-                
+
                 <div className="border-t pt-4">
                   <p className="font-medium text-foreground mb-2">Sistema de Sombras</p>
                   <div className="space-y-2">
@@ -425,7 +436,8 @@ export default function ThemeDemoPage() {
                 ✅ Tema NEONPROV1 Instalado com Sucesso!
               </h3>
               <p className="text-muted-foreground mb-4">
-                Todas as cores, componentes e estilos do tema tweakcn.com foram aplicados corretamente ao projeto NeonPro
+                Todas as cores, componentes e estilos do tema tweakcn.com foram aplicados
+                corretamente ao projeto NeonPro
               </p>
               <div className="flex flex-wrap gap-2 justify-center">
                 <Button variant="default">

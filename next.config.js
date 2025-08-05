@@ -2,11 +2,11 @@
 const nextConfig = {
   // Removed experimental.appDir as it's stable in Next.js 14+
   images: {
-    domains: ['localhost'],
+    domains: ["localhost"],
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: '**',
+        protocol: "https",
+        hostname: "**",
       },
     ],
   },
@@ -19,7 +19,7 @@ const nextConfig = {
     ignoreDuringBuilds: false,
   },
   // Optimize for Vercel deployment
-  output: 'standalone',
-}
+  output: "standalone",
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

@@ -2,10 +2,10 @@
 
 /**
  * 🧪 Test Script for NeonPro Background Jobs
- * 
+ *
  * Valida se os jobs do Trigger.dev estão funcionando corretamente
  * antes do deployment no Vercel.
- * 
+ *
  * Usage: npx tsx scripts/test-automation.ts
  */
 
@@ -30,13 +30,15 @@ async function testEmailAutomation() {
     };
 
     console.log("📧 Testing appointment confirmation...");
-    
+
     // Teste apenas em desenvolvimento ou com flag especial
     if (process.env.NODE_ENV === "development" && process.env.ENABLE_TEST_JOBS === "true") {
-      const confirmationResult = await NeonProAutomation.sendAppointmentConfirmation(testAppointmentData);
+      const confirmationResult =
+        await NeonProAutomation.sendAppointmentConfirmation(testAppointmentData);
       console.log("✅ Confirmation job triggered:", confirmationResult);
 
-      const reminderResult = await NeonProAutomation.scheduleAppointmentReminder(testAppointmentData);
+      const reminderResult =
+        await NeonProAutomation.scheduleAppointmentReminder(testAppointmentData);
       console.log("✅ Reminder job scheduled:", reminderResult);
 
       console.log("\n🎯 Full automation test...");
@@ -45,23 +47,18 @@ async function testEmailAutomation() {
         confirmationJobId: fullResult.confirmation?.jobId,
         reminderJobId: fullResult.reminder?.jobId,
       });
-
     } else {
       console.log("⚠️ Skipping live job triggers (set ENABLE_TEST_JOBS=true to test)");
       console.log("✅ Job classes and methods are properly structured");
     }
 
     console.log("\n🔧 Testing configuration...");
-    
-    // Verifica se as variáveis de ambiente estão definidas
-    const requiredEnvVars = [
-      'TRIGGER_SECRET_KEY',
-      'TRIGGER_PROJECT_ID',
-      'RESEND_API_KEY',
-    ];
 
-    const missingVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
-    
+    // Verifica se as variáveis de ambiente estão definidas
+    const requiredEnvVars = ["TRIGGER_SECRET_KEY", "TRIGGER_PROJECT_ID", "RESEND_API_KEY"];
+
+    const missingVars = requiredEnvVars.filter((envVar) => !process.env[envVar]);
+
     if (missingVars.length > 0) {
       console.log("⚠️ Missing environment variables:", missingVars);
       console.log("   Please check your .env.local file");
@@ -70,11 +67,11 @@ async function testEmailAutomation() {
     }
 
     console.log("\n🏗️ Testing Supabase integration...");
-    
+
     try {
       const supabase = await createClient();
-      const { data, error } = await supabase.from('appointments').select('count').limit(1);
-      
+      const { data, error } = await supabase.from("appointments").select("count").limit(1);
+
       if (error) {
         console.log("⚠️ Supabase connection issue:", error.message);
       } else {
@@ -85,21 +82,21 @@ async function testEmailAutomation() {
     }
 
     console.log("\n🚀 Deployment readiness check...");
-    
+
     const deploymentChecks = [
-      { name: "Trigger.dev config", status: existsFile('trigger.config.ts') },
-      { name: "Job definitions", status: existsFile('trigger/jobs/appointment-emails.ts') },
-      { name: "API route", status: existsFile('app/api/trigger/route.ts') },
-      { name: "Integration utils", status: existsFile('lib/automation/trigger-jobs.ts') },
-      { name: "Enhanced API", status: existsFile('app/api/appointments/enhanced/route.ts') },
+      { name: "Trigger.dev config", status: existsFile("trigger.config.ts") },
+      { name: "Job definitions", status: existsFile("trigger/jobs/appointment-emails.ts") },
+      { name: "API route", status: existsFile("app/api/trigger/route.ts") },
+      { name: "Integration utils", status: existsFile("lib/automation/trigger-jobs.ts") },
+      { name: "Enhanced API", status: existsFile("app/api/appointments/enhanced/route.ts") },
     ];
 
-    deploymentChecks.forEach(check => {
-      console.log(`${check.status ? '✅' : '❌'} ${check.name}`);
+    deploymentChecks.forEach((check) => {
+      console.log(`${check.status ? "✅" : "❌"} ${check.name}`);
     });
 
-    const allChecksPass = deploymentChecks.every(check => check.status);
-    
+    const allChecksPass = deploymentChecks.every((check) => check.status);
+
     if (allChecksPass) {
       console.log("\n🎉 All systems ready for Vercel deployment!");
       console.log("📋 Next steps:");
@@ -109,7 +106,6 @@ async function testEmailAutomation() {
     } else {
       console.log("\n❌ Some components are missing. Check the failed items above.");
     }
-
   } catch (error) {
     console.error("❌ Test failed:", error);
     process.exit(1);
@@ -118,8 +114,8 @@ async function testEmailAutomation() {
 
 function existsFile(relativePath: string): boolean {
   try {
-    const fs = require('fs');
-    const path = require('path');
+    const fs = require("fs");
+    const path = require("path");
     return fs.existsSync(path.join(process.cwd(), relativePath));
   } catch {
     return false;

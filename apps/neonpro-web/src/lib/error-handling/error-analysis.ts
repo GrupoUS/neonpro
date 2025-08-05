@@ -5,8 +5,8 @@
 
 export interface ErrorContext {
   errorId: string;
-  category: 'auth' | 'database' | 'api' | 'validation' | 'network' | 'unknown';
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  category: "auth" | "database" | "api" | "validation" | "network" | "unknown";
+  severity: "low" | "medium" | "high" | "critical";
   message: string;
   stack?: string;
   route?: string;
@@ -16,8 +16,8 @@ export interface ErrorContext {
 
 export interface ErrorPattern {
   pattern: RegExp;
-  category: ErrorContext['category'];
-  severity: ErrorContext['severity'];
+  category: ErrorContext["category"];
+  severity: ErrorContext["severity"];
   recoveryAction: string;
   description: string;
 }
@@ -26,46 +26,46 @@ export interface ErrorPattern {
 const KNOWN_ERROR_PATTERNS: ErrorPattern[] = [
   {
     pattern: /ECONNREFUSED|ETIMEDOUT|ENOTFOUND/i,
-    category: 'network',
-    severity: 'high',
-    recoveryAction: 'retry_with_backoff',
-    description: 'Network connection failure'
+    category: "network",
+    severity: "high",
+    recoveryAction: "retry_with_backoff",
+    description: "Network connection failure",
   },
   {
     pattern: /unauthorized|invalid.*token|expired.*token/i,
-    category: 'auth',
-    severity: 'medium',
-    recoveryAction: 'refresh_token',
-    description: 'Authentication token issue'
+    category: "auth",
+    severity: "medium",
+    recoveryAction: "refresh_token",
+    description: "Authentication token issue",
   },
   {
     pattern: /duplicate.*key|unique.*constraint/i,
-    category: 'database',
-    severity: 'low',
-    recoveryAction: 'handle_duplicate',
-    description: 'Database duplicate entry'
+    category: "database",
+    severity: "low",
+    recoveryAction: "handle_duplicate",
+    description: "Database duplicate entry",
   },
   {
     pattern: /validation.*failed|required.*field|invalid.*format/i,
-    category: 'validation',
-    severity: 'low',
-    recoveryAction: 'validate_input',
-    description: 'Input validation error'
+    category: "validation",
+    severity: "low",
+    recoveryAction: "validate_input",
+    description: "Input validation error",
   },
   {
     pattern: /session.*expired|login.*required/i,
-    category: 'auth',
-    severity: 'medium',
-    recoveryAction: 'redirect_login',
-    description: 'Session expiration'
+    category: "auth",
+    severity: "medium",
+    recoveryAction: "redirect_login",
+    description: "Session expiration",
   },
   {
     pattern: /rate.*limit|too.*many.*requests/i,
-    category: 'api',
-    severity: 'medium',
-    recoveryAction: 'retry_with_backoff',
-    description: 'Rate limiting'
-  }
+    category: "api",
+    severity: "medium",
+    recoveryAction: "retry_with_backoff",
+    description: "Rate limiting",
+  },
 ];
 
 // Cache for error pattern frequency tracking
@@ -94,7 +94,7 @@ export class ErrorAnalysisSystem {
   analyzeError(message: string, stack?: string, route?: string): ErrorContext {
     const analysis = this.performAnalysis(message, stack);
     const errorId = this.generateErrorId(message, route);
-    
+
     const errorContext: ErrorContext = {
       errorId,
       category: analysis.category,
@@ -105,9 +105,9 @@ export class ErrorAnalysisSystem {
       timestamp: Date.now(),
       metadata: {
         recoveryAction: analysis.recoveryAction,
-        analysisVersion: '1.0',
-        patternMatched: analysis.patternMatched
-      }
+        analysisVersion: "1.0",
+        patternMatched: analysis.patternMatched,
+      },
     };
 
     // Store in history for trend analysis
@@ -120,14 +120,17 @@ export class ErrorAnalysisSystem {
   /**
    * 🔍 Analyze error to determine category, severity and recovery action
    */
-  private performAnalysis(message: string, stack?: string): {
-    category: ErrorContext['category'];
-    severity: ErrorContext['severity'];
+  private performAnalysis(
+    message: string,
+    stack?: string,
+  ): {
+    category: ErrorContext["category"];
+    severity: ErrorContext["severity"];
     recoveryAction: string;
     patternMatched?: string;
   } {
-    const fullText = `${message} ${stack || ''}`;
-    
+    const fullText = `${message} ${stack || ""}`;
+
     // Check against known patterns
     for (const pattern of KNOWN_ERROR_PATTERNS) {
       if (pattern.pattern.test(fullText)) {
@@ -136,38 +139,38 @@ export class ErrorAnalysisSystem {
         const currentCount = errorPatternsCache.get(patternKey) || 0;
         errorPatternsCache.set(patternKey, currentCount + 1);
         this.patternStats.set(patternKey, currentCount + 1);
-        
+
         return {
           category: pattern.category,
           severity: pattern.severity,
           recoveryAction: pattern.recoveryAction,
-          patternMatched: pattern.description
+          patternMatched: pattern.description,
         };
       }
     }
 
     // Default fallback analysis
-    let category: ErrorContext['category'] = 'unknown';
-    let severity: ErrorContext['severity'] = 'medium';
-    
+    let category: ErrorContext["category"] = "unknown";
+    let severity: ErrorContext["severity"] = "medium";
+
     // Basic categorization based on keywords
     if (/database|sql|query|connection/i.test(fullText)) {
-      category = 'database';
+      category = "database";
     } else if (/auth|token|session|login/i.test(fullText)) {
-      category = 'auth';
+      category = "auth";
     } else if (/api|fetch|request|response/i.test(fullText)) {
-      category = 'api';
+      category = "api";
     } else if (/validation|invalid|required/i.test(fullText)) {
-      category = 'validation';
-      severity = 'low';
+      category = "validation";
+      severity = "low";
     } else if (/network|timeout|refused/i.test(fullText)) {
-      category = 'network';
+      category = "network";
     }
 
     return {
       category,
       severity,
-      recoveryAction: 'log_and_monitor',
+      recoveryAction: "log_and_monitor",
     };
   }
 
@@ -175,12 +178,12 @@ export class ErrorAnalysisSystem {
    * 🆔 Generate unique error ID for deduplication
    */
   private generateErrorId(message: string, route?: string): string {
-    const baseString = `${message}_${route || 'unknown'}`;
+    const baseString = `${message}_${route || "unknown"}`;
     // Simple hash function for error ID
     let hash = 0;
     for (let i = 0; i < baseString.length; i++) {
       const char = baseString.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return `err_${Math.abs(hash).toString(36)}_${Date.now()}`;
@@ -192,13 +195,11 @@ export class ErrorAnalysisSystem {
   getErrorTrends(): any {
     const now = Date.now();
     const oneHour = 60 * 60 * 1000;
-    const recentErrors = this.errorHistory.filter(error => 
-      now - error.timestamp < oneHour
-    );
+    const recentErrors = this.errorHistory.filter((error) => now - error.timestamp < oneHour);
 
     const categoryBreakdown = new Map<string, number>();
     const severityBreakdown = new Map<string, number>();
-    
+
     for (const error of recentErrors) {
       categoryBreakdown.set(error.category, (categoryBreakdown.get(error.category) || 0) + 1);
       severityBreakdown.set(error.severity, (severityBreakdown.get(error.severity) || 0) + 1);
@@ -209,7 +210,7 @@ export class ErrorAnalysisSystem {
       categoryBreakdown: Object.fromEntries(categoryBreakdown),
       severityBreakdown: Object.fromEntries(severityBreakdown),
       patternStats: Object.fromEntries(this.patternStats),
-      timeRange: 'Last 1 hour'
+      timeRange: "Last 1 hour",
     };
   }
 
@@ -218,24 +219,24 @@ export class ErrorAnalysisSystem {
    */
   generateAnalysisReport(): any {
     const trends = this.getErrorTrends();
-    const criticalErrors = this.errorHistory.filter(error => 
-      error.severity === 'critical' && Date.now() - error.timestamp < 3600000
+    const criticalErrors = this.errorHistory.filter(
+      (error) => error.severity === "critical" && Date.now() - error.timestamp < 3600000,
     );
-    
+
     const topPatterns = Array.from(this.patternStats.entries())
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 5);
 
     return {
       summary: {
         totalErrorsAnalyzed: this.errorHistory.length,
         recentCriticalErrors: criticalErrors.length,
-        topErrorPattern: topPatterns[0]?.[0] || 'None'
+        topErrorPattern: topPatterns[0]?.[0] || "None",
       },
       trends,
       criticalErrors: criticalErrors.slice(-10),
       topPatterns,
-      recommendations: this.generateRecommendations(trends)
+      recommendations: this.generateRecommendations(trends),
     };
   }
 
@@ -244,21 +245,21 @@ export class ErrorAnalysisSystem {
    */
   private generateRecommendations(trends: any): string[] {
     const recommendations: string[] = [];
-    
+
     if (trends.categoryBreakdown.network > 5) {
-      recommendations.push('Consider implementing circuit breaker pattern for network calls');
+      recommendations.push("Consider implementing circuit breaker pattern for network calls");
     }
-    
+
     if (trends.categoryBreakdown.auth > 3) {
-      recommendations.push('Review authentication token refresh mechanism');
+      recommendations.push("Review authentication token refresh mechanism");
     }
-    
+
     if (trends.severityBreakdown.critical > 0) {
-      recommendations.push('Immediate attention required for critical errors');
+      recommendations.push("Immediate attention required for critical errors");
     }
-    
+
     if (trends.totalErrors > 20) {
-      recommendations.push('High error rate detected - consider system health check');
+      recommendations.push("High error rate detected - consider system health check");
     }
 
     return recommendations;
@@ -270,17 +271,15 @@ export class ErrorAnalysisSystem {
   private cleanOldHistory(): void {
     const maxAge = 24 * 60 * 60 * 1000; // 24 hours
     const cutoff = Date.now() - maxAge;
-    
-    this.errorHistory = this.errorHistory.filter(error => 
-      error.timestamp > cutoff
-    );
+
+    this.errorHistory = this.errorHistory.filter((error) => error.timestamp > cutoff);
   }
 
   /**
    * Get error by ID
    */
   getErrorById(errorId: string): ErrorContext | undefined {
-    return this.errorHistory.find(error => error.errorId === errorId);
+    return this.errorHistory.find((error) => error.errorId === errorId);
   }
 
   /**

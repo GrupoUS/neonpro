@@ -1,13 +1,25 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Skeleton } from '@/components/ui/skeleton';
-import {
+import React, { useState, useEffect, useMemo } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Skeleton } from "@/components/ui/skeleton";
+import type {
   BarChart,
   Bar,
   LineChart,
@@ -23,9 +35,9 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  ReferenceLine
-} from 'recharts';
-import {
+  ReferenceLine,
+} from "recharts";
+import type {
   TrendingUp,
   TrendingDown,
   BarChart3,
@@ -36,13 +48,13 @@ import {
   Maximize2,
   Filter,
   Calendar,
-  DollarSign
-} from 'lucide-react';
+  DollarSign,
+} from "lucide-react";
 
 interface FinancialChartsProps {
   charts: any;
   analytics?: any;
-  timeframe: 'day' | 'week' | 'month' | 'quarter' | 'year';
+  timeframe: "day" | "week" | "month" | "quarter" | "year";
   loading?: boolean;
   detailed?: boolean;
   className?: string;
@@ -59,12 +71,12 @@ interface ChartData {
 interface ChartConfig {
   title: string;
   description: string;
-  type: 'bar' | 'line' | 'pie' | 'area';
+  type: "bar" | "line" | "pie" | "area";
   data: ChartData[];
   xKey: string;
   yKey: string;
   color: string;
-  format: 'currency' | 'percentage' | 'number';
+  format: "currency" | "percentage" | "number";
 }
 
 export function FinancialCharts({
@@ -73,31 +85,31 @@ export function FinancialCharts({
   timeframe,
   loading = false,
   detailed = false,
-  className = ''
+  className = "",
 }: FinancialChartsProps) {
-  const [selectedChart, setSelectedChart] = useState<string>('revenue');
-  const [chartView, setChartView] = useState<'overview' | 'detailed'>('overview');
-  const [dateRange, setDateRange] = useState<string>('30');
+  const [selectedChart, setSelectedChart] = useState<string>("revenue");
+  const [chartView, setChartView] = useState<"overview" | "detailed">("overview");
+  const [dateRange, setDateRange] = useState<string>("30");
 
   // Color palette for charts
   const colors = {
-    primary: '#3b82f6',
-    secondary: '#10b981',
-    accent: '#f59e0b',
-    danger: '#ef4444',
-    purple: '#8b5cf6',
-    pink: '#ec4899',
-    indigo: '#6366f1',
-    teal: '#14b8a6'
+    primary: "#3b82f6",
+    secondary: "#10b981",
+    accent: "#f59e0b",
+    danger: "#ef4444",
+    purple: "#8b5cf6",
+    pink: "#ec4899",
+    indigo: "#6366f1",
+    teal: "#14b8a6",
   };
 
   // Format currency values
   const formatCurrency = (value: number): string => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(value);
   };
 
@@ -110,106 +122,116 @@ export function FinancialCharts({
   const generateMockData = (type: string, days: number = 30): ChartData[] => {
     const data: ChartData[] = [];
     const now = new Date();
-    
+
     for (let i = days - 1; i >= 0; i--) {
       const date = new Date(now);
       date.setDate(date.getDate() - i);
-      
-      const baseValue = type === 'revenue' ? 15000 : 
-                       type === 'patients' ? 25 :
-                       type === 'treatments' ? 12 :
-                       type === 'satisfaction' ? 4.2 : 100;
-      
+
+      const baseValue =
+        type === "revenue"
+          ? 15000
+          : type === "patients"
+            ? 25
+            : type === "treatments"
+              ? 12
+              : type === "satisfaction"
+                ? 4.2
+                : 100;
+
       const variance = baseValue * 0.3;
       const value = baseValue + (Math.random() - 0.5) * variance;
-      
+
       data.push({
-        name: date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),
+        name: date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
         date: date.toISOString(),
         value: Math.max(0, value),
-        category: type
+        category: type,
       });
     }
-    
+
     return data;
   };
 
   // Chart configurations
-  const chartConfigs: Record<string, ChartConfig> = useMemo(() => ({
-    revenue: {
-      title: 'Receita Diária',
-      description: 'Evolução da receita ao longo do tempo',
-      type: 'area',
-      data: generateMockData('revenue', parseInt(dateRange)),
-      xKey: 'name',
-      yKey: 'value',
-      color: colors.primary,
-      format: 'currency'
-    },
-    patients: {
-      title: 'Pacientes por Dia',
-      description: 'Número de pacientes atendidos diariamente',
-      type: 'bar',
-      data: generateMockData('patients', parseInt(dateRange)),
-      xKey: 'name',
-      yKey: 'value',
-      color: colors.secondary,
-      format: 'number'
-    },
-    treatments: {
-      title: 'Tratamentos Realizados',
-      description: 'Quantidade de tratamentos por dia',
-      type: 'line',
-      data: generateMockData('treatments', parseInt(dateRange)),
-      xKey: 'name',
-      yKey: 'value',
-      color: colors.accent,
-      format: 'number'
-    },
-    satisfaction: {
-      title: 'Satisfação do Paciente',
-      description: 'Avaliação média diária dos pacientes',
-      type: 'line',
-      data: generateMockData('satisfaction', parseInt(dateRange)),
-      xKey: 'name',
-      yKey: 'value',
-      color: colors.purple,
-      format: 'number'
-    }
-  }), [dateRange]);
+  const chartConfigs: Record<string, ChartConfig> = useMemo(
+    () => ({
+      revenue: {
+        title: "Receita Diária",
+        description: "Evolução da receita ao longo do tempo",
+        type: "area",
+        data: generateMockData("revenue", parseInt(dateRange)),
+        xKey: "name",
+        yKey: "value",
+        color: colors.primary,
+        format: "currency",
+      },
+      patients: {
+        title: "Pacientes por Dia",
+        description: "Número de pacientes atendidos diariamente",
+        type: "bar",
+        data: generateMockData("patients", parseInt(dateRange)),
+        xKey: "name",
+        yKey: "value",
+        color: colors.secondary,
+        format: "number",
+      },
+      treatments: {
+        title: "Tratamentos Realizados",
+        description: "Quantidade de tratamentos por dia",
+        type: "line",
+        data: generateMockData("treatments", parseInt(dateRange)),
+        xKey: "name",
+        yKey: "value",
+        color: colors.accent,
+        format: "number",
+      },
+      satisfaction: {
+        title: "Satisfação do Paciente",
+        description: "Avaliação média diária dos pacientes",
+        type: "line",
+        data: generateMockData("satisfaction", parseInt(dateRange)),
+        xKey: "name",
+        yKey: "value",
+        color: colors.purple,
+        format: "number",
+      },
+    }),
+    [dateRange],
+  );
 
   // Treatment distribution data for pie chart
   const treatmentDistribution = [
-    { name: 'Limpeza', value: 35, color: colors.primary },
-    { name: 'Restauração', value: 25, color: colors.secondary },
-    { name: 'Ortodontia', value: 20, color: colors.accent },
-    { name: 'Endodontia', value: 12, color: colors.danger },
-    { name: 'Outros', value: 8, color: colors.purple }
+    { name: "Limpeza", value: 35, color: colors.primary },
+    { name: "Restauração", value: 25, color: colors.secondary },
+    { name: "Ortodontia", value: 20, color: colors.accent },
+    { name: "Endodontia", value: 12, color: colors.danger },
+    { name: "Outros", value: 8, color: colors.purple },
   ];
 
   // Revenue by treatment type
   const revenueByTreatment = [
-    { name: 'Ortodontia', value: 45000, percentage: 35 },
-    { name: 'Implantes', value: 32000, percentage: 25 },
-    { name: 'Restauração', value: 25000, percentage: 20 },
-    { name: 'Limpeza', value: 15000, percentage: 12 },
-    { name: 'Outros', value: 10000, percentage: 8 }
+    { name: "Ortodontia", value: 45000, percentage: 35 },
+    { name: "Implantes", value: 32000, percentage: 25 },
+    { name: "Restauração", value: 25000, percentage: 20 },
+    { name: "Limpeza", value: 15000, percentage: 12 },
+    { name: "Outros", value: 10000, percentage: 8 },
   ];
 
   // Custom tooltip component
   const CustomTooltip = ({ active, payload, label, format }: any) => {
     if (active && payload && payload.length) {
       const value = payload[0].value;
-      const formattedValue = format === 'currency' ? formatCurrency(value) :
-                            format === 'percentage' ? formatPercentage(value) :
-                            value.toLocaleString('pt-BR');
-      
+      const formattedValue =
+        format === "currency"
+          ? formatCurrency(value)
+          : format === "percentage"
+            ? formatPercentage(value)
+            : value.toLocaleString("pt-BR");
+
       return (
         <div className="bg-white p-3 border rounded-lg shadow-lg">
           <p className="font-medium">{label}</p>
-          <p className="text-blue-600">
-            {`${payload[0].name}: ${formattedValue}`}
-          </p>
+          <p className="text-blue-600">{`${payload[0].name}: ${formattedValue}`}</p>
         </div>
       );
     }
@@ -257,7 +279,7 @@ export function FinancialCharts({
               </SelectContent>
             </Select>
           </div>
-          
+
           {detailed && (
             <div className="flex items-center gap-2">
               <label className="text-sm font-medium">Visualização:</label>
@@ -273,7 +295,7 @@ export function FinancialCharts({
             </div>
           )}
         </div>
-        
+
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm">
             <Filter className="h-4 w-4 mr-2" />
@@ -304,9 +326,9 @@ export function FinancialCharts({
                 <XAxis dataKey={chartConfigs.revenue.xKey} />
                 <YAxis tickFormatter={(value) => formatCurrency(value)} />
                 <Tooltip content={<CustomTooltip format={chartConfigs.revenue.format} />} />
-                <Area 
-                  type="monotone" 
-                  dataKey={chartConfigs.revenue.yKey} 
+                <Area
+                  type="monotone"
+                  dataKey={chartConfigs.revenue.yKey}
                   stroke={chartConfigs.revenue.color}
                   fill={chartConfigs.revenue.color}
                   fillOpacity={0.3}
@@ -388,9 +410,9 @@ export function FinancialCharts({
                 <Tooltip content={<CustomTooltip format={chartConfigs.satisfaction.format} />} />
                 <ReferenceLine y={4.0} stroke="#ef4444" strokeDasharray="5 5" />
                 <ReferenceLine y={4.5} stroke="#10b981" strokeDasharray="5 5" />
-                <Line 
-                  type="monotone" 
-                  dataKey={chartConfigs.satisfaction.yKey} 
+                <Line
+                  type="monotone"
+                  dataKey={chartConfigs.satisfaction.yKey}
                   stroke={chartConfigs.satisfaction.color}
                   strokeWidth={2}
                   dot={{ fill: chartConfigs.satisfaction.color }}
@@ -402,10 +424,10 @@ export function FinancialCharts({
       </div>
 
       {/* Detailed Analytics Section */}
-      {detailed && chartView === 'detailed' && (
+      {detailed && chartView === "detailed" && (
         <div className="space-y-6">
           <h3 className="text-xl font-semibold">Análise Detalhada</h3>
-          
+
           {/* Revenue by Treatment Type */}
           <Card>
             <CardHeader>
@@ -418,9 +440,12 @@ export function FinancialCharts({
             <CardContent>
               <div className="space-y-4">
                 {revenueByTreatment.map((item, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 border rounded-lg"
+                  >
                     <div className="flex items-center gap-3">
-                      <div 
+                      <div
                         className="w-4 h-4 rounded-full"
                         style={{ backgroundColor: Object.values(colors)[index] }}
                       />
@@ -447,12 +472,10 @@ export function FinancialCharts({
                   <TrendingUp className="h-5 w-5 text-green-600" />
                   <span className="text-2xl font-bold text-green-600">+12.5%</span>
                 </div>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Comparado ao mês anterior
-                </p>
+                <p className="text-sm text-muted-foreground mt-2">Comparado ao mês anterior</p>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Eficiência Operacional</CardTitle>
@@ -462,12 +485,10 @@ export function FinancialCharts({
                   <Activity className="h-5 w-5 text-blue-600" />
                   <span className="text-2xl font-bold text-blue-600">87%</span>
                 </div>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Taxa de utilização da agenda
-                </p>
+                <p className="text-sm text-muted-foreground mt-2">Taxa de utilização da agenda</p>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Ticket Médio</CardTitle>
@@ -477,9 +498,7 @@ export function FinancialCharts({
                   <DollarSign className="h-5 w-5 text-purple-600" />
                   <span className="text-2xl font-bold text-purple-600">R$ 485</span>
                 </div>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Valor médio por consulta
-                </p>
+                <p className="text-sm text-muted-foreground mt-2">Valor médio por consulta</p>
               </CardContent>
             </Card>
           </div>

@@ -10,7 +10,7 @@ export class EquipmentMaintenanceService {
       equipmentId,
       maintenanceType,
       scheduledDate: new Date(),
-      status: 'scheduled'
+      status: "scheduled",
     };
   }
 
@@ -18,10 +18,10 @@ export class EquipmentMaintenanceService {
     // Implementar geração de alertas de manutenção
     return {
       equipmentId,
-      alertType: 'maintenance_due',
-      priority: 'medium',
+      alertType: "maintenance_due",
+      priority: "medium",
       dueDate: new Date(),
-      description: 'Maintenance required'
+      description: "Maintenance required",
     };
   }
 
@@ -31,7 +31,7 @@ export class EquipmentMaintenanceService {
       equipmentId,
       history: [],
       nextDueDate: new Date(),
-      averageInterval: 0
+      averageInterval: 0,
     };
   }
 }

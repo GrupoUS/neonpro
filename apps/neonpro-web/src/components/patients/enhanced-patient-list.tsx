@@ -1,48 +1,48 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { createClient } from '@/app/utils/supabase/client';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Checkbox } from '@/components/ui/checkbox';
-import { 
+import React, { useState, useEffect, useCallback } from "react";
+import type { createClient } from "@/app/utils/supabase/client";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Badge } from "@/components/ui/badge";
+import type { Progress } from "@/components/ui/progress";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import {
+} from "@/components/ui/table";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { 
+} from "@/components/ui/card";
+import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { 
-  Search, 
-  User, 
-  Phone, 
+} from "@/components/ui/dropdown-menu";
+import type {
+  Search,
+  User,
+  Phone,
   Mail,
   Activity,
   Eye,
@@ -60,9 +60,9 @@ import {
   AlertTriangle,
   Heart,
   Calendar,
-  Clock
-} from 'lucide-react';
-import { toast } from 'sonner';
+  Clock,
+} from "lucide-react";
+import type { toast } from "sonner";
 
 interface Patient {
   id: string;
@@ -77,7 +77,7 @@ interface Patient {
     profile_picture?: string;
   };
   patient_profiles_extended?: {
-    risk_level: 'low' | 'medium' | 'high' | 'critical';
+    risk_level: "low" | "medium" | "high" | "critical";
     risk_score: number;
     profile_completeness_score: number;
     chronic_conditions: string[];
@@ -100,33 +100,33 @@ interface EnhancedPatientListProps {
   compact?: boolean;
 }
 
-export default function EnhancedPatientList({ 
-  onPatientSelect, 
+export default function EnhancedPatientList({
+  onPatientSelect,
   onPatientCreate,
-  compact = false 
+  compact = false,
 }: EnhancedPatientListProps) {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Search and filter states
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchType, setSearchType] = useState<'name' | 'phone' | 'email' | 'cpf'>('name');
-  const [riskFilter, setRiskFilter] = useState<string>('all');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [ageRangeFilter, setAgeRangeFilter] = useState<string>('all');
-  
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchType, setSearchType] = useState<"name" | "phone" | "email" | "cpf">("name");
+  const [riskFilter, setRiskFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [ageRangeFilter, setAgeRangeFilter] = useState<string>("all");
+
   // View and pagination states
-  const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
+  const [viewMode, setViewMode] = useState<"table" | "grid">("table");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(compact ? 5 : 10);
   const [selectedPatients, setSelectedPatients] = useState<Set<string>>(new Set());
-  
+
   // Sort state
-  const [sortField, setSortField] = useState<string>('created_at');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-  
+  const [sortField, setSortField] = useState<string>("created_at");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+
   const supabase = createClient();
 
   // Load patients from Supabase
@@ -136,14 +136,14 @@ export default function EnhancedPatientList({
 
     try {
       const { data: patientsData, error: patientsError } = await supabase
-        .from('profiles')
+        .from("profiles")
         .select(`
           *,
           patient_profiles_extended(*),
           patient_photos!inner(photo_url, photo_type, is_primary)
         `)
-        .eq('role', 'patient')
-        .order('created_at', { ascending: false });
+        .eq("role", "patient")
+        .order("created_at", { ascending: false });
 
       if (patientsError) throw patientsError;
 
@@ -151,38 +151,38 @@ export default function EnhancedPatientList({
       const patientsWithAppointments = await Promise.all(
         (patientsData || []).map(async (patient) => {
           const { count } = await supabase
-            .from('appointments')
-            .select('*', { count: 'exact', head: true })
-            .eq('patient_id', patient.id)
-            .gte('appointment_date', new Date().toISOString())
+            .from("appointments")
+            .select("*", { count: "exact", head: true })
+            .eq("patient_id", patient.id)
+            .gte("appointment_date", new Date().toISOString())
             .limit(5);
 
           const { data: lastVisitData } = await supabase
-            .from('medical_timeline')
-            .select('event_date')
-            .eq('patient_id', patient.id)
-            .eq('event_type', 'appointment')
-            .order('event_date', { ascending: false })
+            .from("medical_timeline")
+            .select("event_date")
+            .eq("patient_id", patient.id)
+            .eq("event_type", "appointment")
+            .order("event_date", { ascending: false })
             .limit(1)
             .single();
 
           return {
             ...patient,
             upcoming_appointments: count || 0,
-            last_visit: lastVisitData?.event_date || null
+            last_visit: lastVisitData?.event_date || null,
           };
-        })
+        }),
       );
 
       setPatients(patientsWithAppointments);
       setFilteredPatients(patientsWithAppointments);
-      
+
       toast.success(`${patientsWithAppointments.length} pacientes carregados`);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao carregar pacientes';
+      const errorMessage = error instanceof Error ? error.message : "Erro ao carregar pacientes";
       setError(errorMessage);
       toast.error(`Erro: ${errorMessage}`);
-      console.error('Load patients error:', error);
+      console.error("Load patients error:", error);
     } finally {
       setLoading(false);
     }
@@ -194,16 +194,16 @@ export default function EnhancedPatientList({
 
     // Apply search filter
     if (searchQuery.trim()) {
-      filtered = filtered.filter(patient => {
+      filtered = filtered.filter((patient) => {
         const query = searchQuery.toLowerCase();
         switch (searchType) {
-          case 'name':
+          case "name":
             return patient.raw_user_meta_data?.full_name?.toLowerCase().includes(query);
-          case 'phone':
+          case "phone":
             return patient.phone?.toLowerCase().includes(query);
-          case 'email':
+          case "email":
             return patient.email?.toLowerCase().includes(query);
-          case 'cpf':
+          case "cpf":
             return patient.raw_user_meta_data?.cpf?.toLowerCase().includes(query);
           default:
             return false;
@@ -212,40 +212,48 @@ export default function EnhancedPatientList({
     }
 
     // Apply risk filter
-    if (riskFilter !== 'all') {
-      filtered = filtered.filter(patient => 
-        patient.patient_profiles_extended?.risk_level === riskFilter
+    if (riskFilter !== "all") {
+      filtered = filtered.filter(
+        (patient) => patient.patient_profiles_extended?.risk_level === riskFilter,
       );
     }
 
     // Apply age range filter
-    if (ageRangeFilter !== 'all') {
-      filtered = filtered.filter(patient => {
+    if (ageRangeFilter !== "all") {
+      filtered = filtered.filter((patient) => {
         if (!patient.raw_user_meta_data?.date_of_birth) return false;
-        
+
         const age = calculateAge(patient.raw_user_meta_data.date_of_birth);
         switch (ageRangeFilter) {
-          case 'child': return age < 18;
-          case 'adult': return age >= 18 && age < 65;
-          case 'senior': return age >= 65;
-          default: return true;
+          case "child":
+            return age < 18;
+          case "adult":
+            return age >= 18 && age < 65;
+          case "senior":
+            return age >= 65;
+          default:
+            return true;
         }
       });
     }
 
     // Apply status filter
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(patient => {
+    if (statusFilter !== "all") {
+      filtered = filtered.filter((patient) => {
         const lastVisit = patient.last_visit;
-        const daysSinceLastVisit = lastVisit 
+        const daysSinceLastVisit = lastVisit
           ? Math.floor((Date.now() - new Date(lastVisit).getTime()) / (1000 * 60 * 60 * 24))
           : 9999;
 
         switch (statusFilter) {
-          case 'active': return daysSinceLastVisit <= 30;
-          case 'inactive': return daysSinceLastVisit > 90;
-          case 'new': return daysSinceLastVisit <= 7;
-          default: return true;
+          case "active":
+            return daysSinceLastVisit <= 30;
+          case "inactive":
+            return daysSinceLastVisit > 90;
+          case "new":
+            return daysSinceLastVisit <= 7;
+          default:
+            return true;
         }
       });
     }
@@ -253,21 +261,21 @@ export default function EnhancedPatientList({
     // Apply sorting
     filtered.sort((a, b) => {
       let aValue: any, bValue: any;
-      
+
       switch (sortField) {
-        case 'name':
-          aValue = a.raw_user_meta_data?.full_name || '';
-          bValue = b.raw_user_meta_data?.full_name || '';
+        case "name":
+          aValue = a.raw_user_meta_data?.full_name || "";
+          bValue = b.raw_user_meta_data?.full_name || "";
           break;
-        case 'risk_score':
+        case "risk_score":
           aValue = a.patient_profiles_extended?.risk_score || 0;
           bValue = b.patient_profiles_extended?.risk_score || 0;
           break;
-        case 'completeness':
+        case "completeness":
           aValue = a.patient_profiles_extended?.profile_completeness_score || 0;
           bValue = b.patient_profiles_extended?.profile_completeness_score || 0;
           break;
-        case 'last_visit':
+        case "last_visit":
           aValue = a.last_visit ? new Date(a.last_visit).getTime() : 0;
           bValue = b.last_visit ? new Date(b.last_visit).getTime() : 0;
           break;
@@ -276,7 +284,7 @@ export default function EnhancedPatientList({
           bValue = new Date(b.created_at).getTime();
       }
 
-      if (sortDirection === 'asc') {
+      if (sortDirection === "asc") {
         return aValue > bValue ? 1 : -1;
       } else {
         return aValue < bValue ? 1 : -1;
@@ -285,7 +293,16 @@ export default function EnhancedPatientList({
 
     setFilteredPatients(filtered);
     setCurrentPage(1);
-  }, [patients, searchQuery, searchType, riskFilter, statusFilter, ageRangeFilter, sortField, sortDirection]);
+  }, [
+    patients,
+    searchQuery,
+    searchType,
+    riskFilter,
+    statusFilter,
+    ageRangeFilter,
+    sortField,
+    sortDirection,
+  ]);
 
   // Load patients on component mount
   useEffect(() => {
@@ -295,14 +312,11 @@ export default function EnhancedPatientList({
   // Real-time subscriptions for patient updates
   useEffect(() => {
     const channel = supabase
-      .channel('patients-changes')
-      .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'profiles' },
-        (payload) => {
-          console.log('Patient change received!', payload);
-          loadPatients(); // Reload patients on any change
-        }
-      )
+      .channel("patients-changes")
+      .on("postgres_changes", { event: "*", schema: "public", table: "profiles" }, (payload) => {
+        console.log("Patient change received!", payload);
+        loadPatients(); // Reload patients on any change
+      })
       .subscribe();
 
     return () => {
@@ -316,27 +330,32 @@ export default function EnhancedPatientList({
     const birthDate = new Date(dateOfBirth);
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-    
+
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
-    
+
     return age;
   };
 
   const getRiskColor = (level: string) => {
     switch (level) {
-      case 'low': return 'bg-green-100 text-green-800 border-green-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'high': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'critical': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case "low":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "high":
+        return "bg-orange-100 text-orange-800 border-orange-200";
+      case "critical":
+        return "bg-red-100 text-red-800 border-red-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
   const getStatusBadge = (patient: Patient) => {
     const lastVisit = patient.last_visit;
-    const daysSinceLastVisit = lastVisit 
+    const daysSinceLastVisit = lastVisit
       ? Math.floor((Date.now() - new Date(lastVisit).getTime()) / (1000 * 60 * 60 * 24))
       : 9999;
 
@@ -364,7 +383,7 @@ export default function EnhancedPatientList({
   const handleSelectAll = (selected: boolean) => {
     if (selected) {
       const pagePatients = getCurrentPagePatients();
-      setSelectedPatients(new Set(pagePatients.map(p => p.id)));
+      setSelectedPatients(new Set(pagePatients.map((p) => p.id)));
     } else {
       setSelectedPatients(new Set());
     }
@@ -386,18 +405,21 @@ export default function EnhancedPatientList({
           <TableRow>
             <TableHead className="w-12">
               <Checkbox
-                checked={getCurrentPagePatients().length > 0 && getCurrentPagePatients().every(p => selectedPatients.has(p.id))}
+                checked={
+                  getCurrentPagePatients().length > 0 &&
+                  getCurrentPagePatients().every((p) => selectedPatients.has(p.id))
+                }
                 onCheckedChange={handleSelectAll}
               />
             </TableHead>
-            <TableHead 
+            <TableHead
               className="cursor-pointer hover:bg-gray-50"
               onClick={() => {
-                if (sortField === 'name') {
-                  setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+                if (sortField === "name") {
+                  setSortDirection(sortDirection === "asc" ? "desc" : "asc");
                 } else {
-                  setSortField('name');
-                  setSortDirection('asc');
+                  setSortField("name");
+                  setSortDirection("asc");
                 }
               }}
             >
@@ -405,40 +427,40 @@ export default function EnhancedPatientList({
             </TableHead>
             <TableHead>Contato</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead 
+            <TableHead
               className="cursor-pointer hover:bg-gray-50"
               onClick={() => {
-                if (sortField === 'risk_score') {
-                  setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+                if (sortField === "risk_score") {
+                  setSortDirection(sortDirection === "asc" ? "desc" : "asc");
                 } else {
-                  setSortField('risk_score');
-                  setSortDirection('desc');
+                  setSortField("risk_score");
+                  setSortDirection("desc");
                 }
               }}
             >
               Risco
             </TableHead>
-            <TableHead 
+            <TableHead
               className="cursor-pointer hover:bg-gray-50"
               onClick={() => {
-                if (sortField === 'completeness') {
-                  setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+                if (sortField === "completeness") {
+                  setSortDirection(sortDirection === "asc" ? "desc" : "asc");
                 } else {
-                  setSortField('completeness');
-                  setSortDirection('desc');
+                  setSortField("completeness");
+                  setSortDirection("desc");
                 }
               }}
             >
               Perfil
             </TableHead>
-            <TableHead 
+            <TableHead
               className="cursor-pointer hover:bg-gray-50"
               onClick={() => {
-                if (sortField === 'last_visit') {
-                  setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+                if (sortField === "last_visit") {
+                  setSortDirection(sortDirection === "asc" ? "desc" : "asc");
                 } else {
-                  setSortField('last_visit');
-                  setSortDirection('desc');
+                  setSortField("last_visit");
+                  setSortDirection("desc");
                 }
               }}
             >
@@ -449,7 +471,7 @@ export default function EnhancedPatientList({
         </TableHeader>
         <TableBody>
           {getCurrentPagePatients().map((patient) => (
-            <TableRow 
+            <TableRow
               key={patient.id}
               className="cursor-pointer hover:bg-gray-50"
               onClick={() => onPatientSelect?.(patient)}
@@ -457,32 +479,34 @@ export default function EnhancedPatientList({
               <TableCell onClick={(e) => e.stopPropagation()}>
                 <Checkbox
                   checked={selectedPatients.has(patient.id)}
-                  onCheckedChange={(checked) => handlePatientSelection(patient.id, checked as boolean)}
+                  onCheckedChange={(checked) =>
+                    handlePatientSelection(patient.id, checked as boolean)
+                  }
                 />
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-3">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage 
-                      src={patient.raw_user_meta_data?.profile_picture || 
-                           patient.patient_photos?.find(p => p.is_primary)?.photo_url} 
+                    <AvatarImage
+                      src={
+                        patient.raw_user_meta_data?.profile_picture ||
+                        patient.patient_photos?.find((p) => p.is_primary)?.photo_url
+                      }
                     />
                     <AvatarFallback>
-                      {patient.raw_user_meta_data?.full_name?.charAt(0) || 'P'}
+                      {patient.raw_user_meta_data?.full_name?.charAt(0) || "P"}
                     </AvatarFallback>
                   </Avatar>
                   <div>
                     <div className="font-medium">
-                      {patient.raw_user_meta_data?.full_name || 'Nome não informado'}
+                      {patient.raw_user_meta_data?.full_name || "Nome não informado"}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      {patient.raw_user_meta_data?.date_of_birth 
+                      {patient.raw_user_meta_data?.date_of_birth
                         ? `${calculateAge(patient.raw_user_meta_data.date_of_birth)} anos`
-                        : 'Idade não informada'
-                      }
-                      {patient.raw_user_meta_data?.gender && 
-                        ` • ${patient.raw_user_meta_data.gender}`
-                      }
+                        : "Idade não informada"}
+                      {patient.raw_user_meta_data?.gender &&
+                        ` • ${patient.raw_user_meta_data.gender}`}
                     </div>
                   </div>
                 </div>
@@ -516,26 +540,29 @@ export default function EnhancedPatientList({
               </TableCell>
               <TableCell>
                 {patient.patient_profiles_extended?.risk_level && (
-                  <Badge 
+                  <Badge
                     className={getRiskColor(patient.patient_profiles_extended.risk_level)}
                     variant="outline"
                   >
-                    {patient.patient_profiles_extended.risk_level === 'low' && 'Baixo'}
-                    {patient.patient_profiles_extended.risk_level === 'medium' && 'Médio'}
-                    {patient.patient_profiles_extended.risk_level === 'high' && 'Alto'}
-                    {patient.patient_profiles_extended.risk_level === 'critical' && 'Crítico'}
+                    {patient.patient_profiles_extended.risk_level === "low" && "Baixo"}
+                    {patient.patient_profiles_extended.risk_level === "medium" && "Médio"}
+                    {patient.patient_profiles_extended.risk_level === "high" && "Alto"}
+                    {patient.patient_profiles_extended.risk_level === "critical" && "Crítico"}
                   </Badge>
                 )}
               </TableCell>
               <TableCell>
                 {patient.patient_profiles_extended?.profile_completeness_score && (
                   <div className="flex items-center gap-2">
-                    <Progress 
-                      value={patient.patient_profiles_extended.profile_completeness_score * 100} 
+                    <Progress
+                      value={patient.patient_profiles_extended.profile_completeness_score * 100}
                       className="w-16"
                     />
                     <span className="text-sm">
-                      {Math.round(patient.patient_profiles_extended.profile_completeness_score * 100)}%
+                      {Math.round(
+                        patient.patient_profiles_extended.profile_completeness_score * 100,
+                      )}
+                      %
                     </span>
                   </div>
                 )}
@@ -543,7 +570,7 @@ export default function EnhancedPatientList({
               <TableCell>
                 {patient.last_visit ? (
                   <div className="text-sm">
-                    {new Date(patient.last_visit).toLocaleDateString('pt-BR')}
+                    {new Date(patient.last_visit).toLocaleDateString("pt-BR")}
                   </div>
                 ) : (
                   <span className="text-sm text-muted-foreground">Nunca</span>
@@ -582,7 +609,7 @@ export default function EnhancedPatientList({
   );
 
   return (
-    <Card className={compact ? '' : 'h-full'}>
+    <Card className={compact ? "" : "h-full"}>
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <div>
@@ -603,20 +630,20 @@ export default function EnhancedPatientList({
               </Button>
             )}
             <Button variant="outline" size="sm" onClick={loadPatients} disabled={loading}>
-              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             </Button>
             <div className="flex items-center border rounded-md">
               <Button
-                variant={viewMode === 'table' ? 'default' : 'ghost'}
+                variant={viewMode === "table" ? "default" : "ghost"}
                 size="sm"
-                onClick={() => setViewMode('table')}
+                onClick={() => setViewMode("table")}
               >
                 <List className="h-4 w-4" />
               </Button>
               <Button
-                variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                variant={viewMode === "grid" ? "default" : "ghost"}
                 size="sm"
-                onClick={() => setViewMode('grid')}
+                onClick={() => setViewMode("grid")}
               >
                 <Grid className="h-4 w-4" />
               </Button>
@@ -642,7 +669,7 @@ export default function EnhancedPatientList({
               </Select>
               <Input
                 id="search"
-                placeholder={`Buscar por ${searchType === 'name' ? 'nome' : searchType}...`}
+                placeholder={`Buscar por ${searchType === "name" ? "nome" : searchType}...`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="flex-1"
@@ -718,8 +745,8 @@ export default function EnhancedPatientList({
           </div>
         ) : (
           <>
-            {viewMode === 'table' && renderTableView()}
-            
+            {viewMode === "table" && renderTableView()}
+
             {/* Pagination */}
             {totalPages > 1 && (
               <div className="flex items-center justify-between mt-4">

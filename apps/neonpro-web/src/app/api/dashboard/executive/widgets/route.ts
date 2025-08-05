@@ -1,32 +1,39 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server'
-import { cookies } from 'next/headers';
-import { z } from 'zod';
-import { WidgetService } from '@/lib/dashboard/executive/widget-service';
+import type { NextRequest, NextResponse } from "next/server";
+import type { createClient } from "@/lib/supabase/server";
+import type { cookies } from "next/headers";
+import type { z } from "zod";
+import type { WidgetService } from "@/lib/dashboard/executive/widget-service";
 
 // Schema for widget creation/update
 const CreateWidgetSchema = z.object({
   layoutId: z.string().uuid().optional(),
-  title: z.string().min(1, 'TÃ­tulo Ã© obrigatÃ³rio'),
+  title: z.string().min(1, "TÃ­tulo Ã© obrigatÃ³rio"),
   description: z.string().optional(),
   type: z.enum([
-    'kpi_card', 'line_chart', 'bar_chart', 'pie_chart',
-    'area_chart', 'table', 'metric', 'gauge', 'heatmap'
+    "kpi_card",
+    "line_chart",
+    "bar_chart",
+    "pie_chart",
+    "area_chart",
+    "table",
+    "metric",
+    "gauge",
+    "heatmap",
   ]),
-  category: z.enum(['financial', 'operational', 'patients', 'staff', 'general']),
+  category: z.enum(["financial", "operational", "patients", "staff", "general"]),
   dataSource: z.object({
-    type: z.enum(['kpi', 'query', 'api', 'static']),
-    config: z.record(z.any())
+    type: z.enum(["kpi", "query", "api", "static"]),
+    config: z.record(z.any()),
   }),
   configuration: z.record(z.any()).default({}),
   position: z.object({
     x: z.number(),
     y: z.number(),
     w: z.number(),
-    h: z.number()
+    h: z.number(),
   }),
   refreshInterval: z.number().min(30).default(300), // minimum 30 seconds
-  cacheDuration: z.number().min(10).default(60) // minimum 10 seconds
+  cacheDuration: z.number().min(10).default(60), // minimum 10 seconds
 });
 
 const UpdateWidgetSchema = CreateWidgetSchema.partial();
@@ -35,45 +42,45 @@ const UpdateWidgetSchema = CreateWidgetSchema.partial();
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'NÃ£o autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "NÃ£o autorizado" }, { status: 401 });
     }
 
     // Get user's clinic
     const { data: clinicUser } = await supabase
-      .from('clinic_users')
-      .select('clinic_id')
-      .eq('user_id', user.id)
+      .from("clinic_users")
+      .select("clinic_id")
+      .eq("user_id", user.id)
       .single();
 
     if (!clinicUser) {
       return NextResponse.json(
-        { error: 'UsuÃ¡rio nÃ£o associado a uma clÃ­nica' },
-        { status: 403 }
+        { error: "UsuÃ¡rio nÃ£o associado a uma clÃ­nica" },
+        { status: 403 },
       );
     }
 
     const { searchParams } = new URL(request.url);
-    const layoutId = searchParams.get('layoutId');
-    const category = searchParams.get('category');
-    const type = searchParams.get('type');
-    const active = searchParams.get('active');
-    const withData = searchParams.get('withData') === 'true';
+    const layoutId = searchParams.get("layoutId");
+    const category = searchParams.get("category");
+    const type = searchParams.get("type");
+    const active = searchParams.get("active");
+    const withData = searchParams.get("withData") === "true";
 
     const widgetService = new WidgetService(supabase, clinicUser.clinic_id);
-    
+
     // Build filter options
     const filters: any = {};
     if (layoutId) filters.layoutId = layoutId;
     if (category) filters.category = category;
     if (type) filters.type = type;
-    if (active !== null) filters.isActive = active === 'true';
+    if (active !== null) filters.isActive = active === "true";
 
     const widgets = await widgetService.getWidgets(filters);
 
@@ -86,20 +93,17 @@ export async function GET(request: NextRequest) {
             return { ...widget, data };
           } catch (error) {
             console.error(`Error fetching data for widget ${widget.id}:`, error);
-            return { ...widget, data: null, error: 'Erro ao carregar dados' };
+            return { ...widget, data: null, error: "Erro ao carregar dados" };
           }
-        })
+        }),
       );
       return NextResponse.json({ widgets: widgetsWithData });
     }
 
     return NextResponse.json({ widgets });
   } catch (error) {
-    console.error('Error fetching widgets:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    console.error("Error fetching widgets:", error);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
 }
 
@@ -107,27 +111,27 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'NÃ£o autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "NÃ£o autorizado" }, { status: 401 });
     }
 
     // Get user's clinic
     const { data: clinicUser } = await supabase
-      .from('clinic_users')
-      .select('clinic_id')
-      .eq('user_id', user.id)
+      .from("clinic_users")
+      .select("clinic_id")
+      .eq("user_id", user.id)
       .single();
 
     if (!clinicUser) {
       return NextResponse.json(
-        { error: 'UsuÃ¡rio nÃ£o associado a uma clÃ­nica' },
-        { status: 403 }
+        { error: "UsuÃ¡rio nÃ£o associado a uma clÃ­nica" },
+        { status: 403 },
       );
     }
 
@@ -142,16 +146,12 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Dados invÃ¡lidos', details: error.errors },
-        { status: 400 }
+        { error: "Dados invÃ¡lidos", details: error.errors },
+        { status: 400 },
       );
     }
 
-    console.error('Error creating widget:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    console.error("Error creating widget:", error);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
 }
-

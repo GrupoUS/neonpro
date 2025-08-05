@@ -1,10 +1,10 @@
-import { auth, currentUser } from '@clerk/nextjs/server'
-import { SignOutButton, SignInButton } from '@clerk/nextjs'
-import { redirect } from 'next/navigation'
+import type { auth, currentUser } from "@clerk/nextjs/server";
+import type { SignOutButton, SignInButton } from "@clerk/nextjs";
+import type { redirect } from "next/navigation";
 
 export default async function TesteAuthPage() {
-  const { userId } = auth()
-  const user = await currentUser()
+  const { userId } = auth();
+  const user = await currentUser();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-sky-50 py-8 px-4">
@@ -13,7 +13,7 @@ export default async function TesteAuthPage() {
           <h1 className="text-3xl font-bold text-slate-900 mb-6 text-center">
             🧪 Teste de Autenticação Clerk
           </h1>
-          
+
           {/* Authentication Status */}
           <div className="mb-8">
             {userId ? (
@@ -22,12 +22,21 @@ export default async function TesteAuthPage() {
                   ✅ Usuário Autenticado
                 </h2>
                 <div className="space-y-3 text-emerald-800">
-                  <p><strong>User ID:</strong> {userId}</p>
-                  <p><strong>Email:</strong> {user?.emailAddresses[0]?.emailAddress || 'N/A'}</p>
-                  <p><strong>Nome:</strong> {user?.firstName} {user?.lastName}</p>
-                  <p><strong>Criado em:</strong> {user?.createdAt ? new Date(user.createdAt).toLocaleDateString('pt-BR') : 'N/A'}</p>
+                  <p>
+                    <strong>User ID:</strong> {userId}
+                  </p>
+                  <p>
+                    <strong>Email:</strong> {user?.emailAddresses[0]?.emailAddress || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Nome:</strong> {user?.firstName} {user?.lastName}
+                  </p>
+                  <p>
+                    <strong>Criado em:</strong>{" "}
+                    {user?.createdAt ? new Date(user.createdAt).toLocaleDateString("pt-BR") : "N/A"}
+                  </p>
                 </div>
-                
+
                 <div className="mt-6">
                   <SignOutButton>
                     <button className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
@@ -44,16 +53,16 @@ export default async function TesteAuthPage() {
                 <p className="text-amber-800 mb-6">
                   Você precisa fazer login para acessar funcionalidades protegidas.
                 </p>
-                
+
                 <div className="space-x-4">
                   <SignInButton mode="redirect" redirectUrl="/teste-auth">
                     <button className="bg-sky-500 hover:bg-sky-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
                       🔑 Fazer Login
                     </button>
                   </SignInButton>
-                  
-                  <a 
-                    href="/auth/cadastrar" 
+
+                  <a
+                    href="/auth/cadastrar"
                     className="bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-2 px-4 rounded-lg transition-colors inline-block"
                   >
                     ➕ Criar Conta
@@ -66,24 +75,22 @@ export default async function TesteAuthPage() {
           {/* Middleware Tests */}
           <div className="grid md:grid-cols-2 gap-6 mb-8">
             <div className="bg-slate-50 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">
-                🛡️ Testes de Middleware
-              </h3>
+              <h3 className="text-lg font-semibold text-slate-900 mb-4">🛡️ Testes de Middleware</h3>
               <div className="space-y-3">
-                <a 
-                  href="/dashboard" 
+                <a
+                  href="/dashboard"
                   className="block bg-blue-100 hover:bg-blue-200 text-blue-800 p-3 rounded-lg transition-colors"
                 >
                   📊 Dashboard (Protegido)
                 </a>
-                <a 
-                  href="/admin" 
+                <a
+                  href="/admin"
                   className="block bg-purple-100 hover:bg-purple-200 text-purple-800 p-3 rounded-lg transition-colors"
                 >
                   👑 Admin (Admin Only)
                 </a>
-                <a 
-                  href="/patients" 
+                <a
+                  href="/patients"
                   className="block bg-green-100 hover:bg-green-200 text-green-800 p-3 rounded-lg transition-colors"
                 >
                   🏥 Pacientes (Healthcare)
@@ -96,20 +103,20 @@ export default async function TesteAuthPage() {
                 🔍 Testes de Páginas Públicas
               </h3>
               <div className="space-y-3">
-                <a 
-                  href="/" 
+                <a
+                  href="/"
                   className="block bg-gray-100 hover:bg-gray-200 text-gray-800 p-3 rounded-lg transition-colors"
                 >
                   🏠 Home (Público)
                 </a>
-                <a 
-                  href="/pricing" 
+                <a
+                  href="/pricing"
                   className="block bg-yellow-100 hover:bg-yellow-200 text-yellow-800 p-3 rounded-lg transition-colors"
                 >
                   💰 Pricing (Público)
                 </a>
-                <a 
-                  href="/demo" 
+                <a
+                  href="/demo"
                   className="block bg-cyan-100 hover:bg-cyan-200 text-cyan-800 p-3 rounded-lg transition-colors"
                 >
                   🎯 Demo (Público)
@@ -120,9 +127,7 @@ export default async function TesteAuthPage() {
 
           {/* Implementation Status */}
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-blue-900 mb-4">
-              📋 Status da Implementação
-            </h3>
+            <h3 className="text-lg font-semibold text-blue-900 mb-4">📋 Status da Implementação</h3>
             <div className="grid md:grid-cols-2 gap-4 text-sm">
               <div className="space-y-2">
                 <div className="flex items-center space-x-2">
@@ -165,11 +170,11 @@ export default async function TesteAuthPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export const metadata = {
-  title: 'Teste de Autenticação - NeonPro',
-  description: 'Página de teste para validar integração Clerk',
-  robots: 'noindex, nofollow',
-}
+  title: "Teste de Autenticação - NeonPro",
+  description: "Página de teste para validar integração Clerk",
+  robots: "noindex, nofollow",
+};

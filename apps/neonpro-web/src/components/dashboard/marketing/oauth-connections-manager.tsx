@@ -1,28 +1,34 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Separator } from '@/components/ui/separator';
-import { Progress } from '@/components/ui/progress';
-import {
+import type { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Switch } from "@/components/ui/switch";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Separator } from "@/components/ui/separator";
+import type { Progress } from "@/components/ui/progress";
+import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
+} from "@/components/ui/dropdown-menu";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog';
-import {
+} from "@/components/ui/dialog";
+import type {
   Instagram,
   Facebook,
   MessageCircle,
@@ -37,29 +43,29 @@ import {
   Trash2,
   Calendar,
   BarChart3,
-} from 'lucide-react';
-import { toast } from 'sonner';
+} from "lucide-react";
+import type { toast } from "sonner";
 
 /**
  * OAuth Connection Management Component - Research-Backed Implementation
- * 
+ *
  * Features:
  * - Platform connection status monitoring
  * - OAuth flow initiation and management
  * - Connection health analytics
  * - Token refresh management
  * - Account configuration and settings
- * 
+ *
  * Based on modern dashboard patterns and OAuth UX best practices
  */
 
 interface SocialMediaAccount {
   id: string;
-  platform: 'instagram' | 'facebook' | 'whatsapp' | 'hubspot';
+  platform: "instagram" | "facebook" | "whatsapp" | "hubspot";
   platform_account_id: string;
   account_name: string;
   account_username?: string;
-  status: 'active' | 'inactive' | 'needs_reauth' | 'error';
+  status: "active" | "inactive" | "needs_reauth" | "error";
   last_sync_at?: string;
   last_token_refresh?: string;
   token_expires_at?: string;
@@ -89,41 +95,41 @@ interface PlatformConfig {
 
 const PLATFORM_CONFIGS: PlatformConfig[] = [
   {
-    platform: 'instagram',
-    name: 'Instagram Business',
+    platform: "instagram",
+    name: "Instagram Business",
     icon: Instagram,
-    color: 'bg-gradient-to-r from-purple-500 to-pink-500',
-    description: 'Connect your Instagram Business account for posts and analytics',
-    features: ['Post Publishing', 'Stories', 'Analytics', 'Comments Management'],
-    requiredScopes: ['instagram_basic', 'instagram_content_publish', 'pages_show_list']
+    color: "bg-gradient-to-r from-purple-500 to-pink-500",
+    description: "Connect your Instagram Business account for posts and analytics",
+    features: ["Post Publishing", "Stories", "Analytics", "Comments Management"],
+    requiredScopes: ["instagram_basic", "instagram_content_publish", "pages_show_list"],
   },
   {
-    platform: 'facebook',
-    name: 'Facebook Pages',
+    platform: "facebook",
+    name: "Facebook Pages",
     icon: Facebook,
-    color: 'bg-blue-600',
-    description: 'Manage your Facebook business pages and engagement',
-    features: ['Page Management', 'Post Publishing', 'Messages', 'Insights'],
-    requiredScopes: ['pages_manage_posts', 'pages_read_engagement', 'pages_messaging']
+    color: "bg-blue-600",
+    description: "Manage your Facebook business pages and engagement",
+    features: ["Page Management", "Post Publishing", "Messages", "Insights"],
+    requiredScopes: ["pages_manage_posts", "pages_read_engagement", "pages_messaging"],
   },
   {
-    platform: 'whatsapp',
-    name: 'WhatsApp Business',
+    platform: "whatsapp",
+    name: "WhatsApp Business",
     icon: MessageCircle,
-    color: 'bg-green-600',
-    description: 'Customer communication through WhatsApp Business API',
-    features: ['Message Automation', 'Customer Support', 'Broadcast Lists', 'Templates'],
-    requiredScopes: ['whatsapp_business_management', 'whatsapp_business_messaging']
+    color: "bg-green-600",
+    description: "Customer communication through WhatsApp Business API",
+    features: ["Message Automation", "Customer Support", "Broadcast Lists", "Templates"],
+    requiredScopes: ["whatsapp_business_management", "whatsapp_business_messaging"],
   },
   {
-    platform: 'hubspot',
-    name: 'HubSpot CRM',
+    platform: "hubspot",
+    name: "HubSpot CRM",
     icon: Building2,
-    color: 'bg-orange-600',
-    description: 'Integrate with HubSpot for complete CRM synchronization',
-    features: ['Contact Sync', 'Deal Tracking', 'Email Marketing', 'Analytics'],
-    requiredScopes: ['contacts', 'content', 'timeline', 'automation']
-  }
+    color: "bg-orange-600",
+    description: "Integrate with HubSpot for complete CRM synchronization",
+    features: ["Contact Sync", "Deal Tracking", "Email Marketing", "Analytics"],
+    requiredScopes: ["contacts", "content", "timeline", "automation"],
+  },
 ];
 
 export function OAuthConnectionsManager() {
@@ -142,14 +148,14 @@ export function OAuthConnectionsManager() {
 
   const loadConnections = async () => {
     try {
-      const response = await fetch('/api/social-media/accounts');
+      const response = await fetch("/api/social-media/accounts");
       if (response.ok) {
         const data = await response.json();
         setConnections(data.accounts || []);
       }
     } catch (error) {
-      console.error('Failed to load connections:', error);
-      toast.error('Failed to load connection data');
+      console.error("Failed to load connections:", error);
+      toast.error("Failed to load connection data");
     } finally {
       setLoading(false);
     }
@@ -157,13 +163,13 @@ export function OAuthConnectionsManager() {
 
   const loadStats = async () => {
     try {
-      const response = await fetch('/api/social-media/accounts?stats=true');
+      const response = await fetch("/api/social-media/accounts?stats=true");
       if (response.ok) {
         const data = await response.json();
         setStats(data.stats);
       }
     } catch (error) {
-      console.error('Failed to load stats:', error);
+      console.error("Failed to load stats:", error);
     }
   };
 
@@ -171,17 +177,17 @@ export function OAuthConnectionsManager() {
     setConnectingPlatform(platform);
     try {
       const response = await fetch(`/api/oauth/${platform}/auth`, {
-        method: 'POST',
+        method: "POST",
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         window.location.href = data.authUrl;
       } else {
-        throw new Error('Failed to initiate OAuth flow');
+        throw new Error("Failed to initiate OAuth flow");
       }
     } catch (error) {
-      console.error('OAuth initiation failed:', error);
+      console.error("OAuth initiation failed:", error);
       toast.error(`Failed to connect to ${platform}`);
     } finally {
       setConnectingPlatform(null);
@@ -192,20 +198,20 @@ export function OAuthConnectionsManager() {
     setRefreshing(connectionId);
     try {
       const response = await fetch(`/api/oauth/${platform}/refresh`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ connectionId }),
       });
-      
+
       if (response.ok) {
-        toast.success('Connection refreshed successfully');
+        toast.success("Connection refreshed successfully");
         loadConnections();
       } else {
-        throw new Error('Failed to refresh connection');
+        throw new Error("Failed to refresh connection");
       }
     } catch (error) {
-      console.error('Connection refresh failed:', error);
-      toast.error('Failed to refresh connection');
+      console.error("Connection refresh failed:", error);
+      toast.error("Failed to refresh connection");
     } finally {
       setRefreshing(null);
     }
@@ -214,47 +220,48 @@ export function OAuthConnectionsManager() {
   const toggleSync = async (connectionId: string, enabled: boolean) => {
     try {
       const response = await fetch(`/api/social-media/accounts/${connectionId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sync_enabled: enabled }),
       });
-      
+
       if (response.ok) {
-        setConnections(prev => 
-          prev.map(conn => 
-            conn.id === connectionId 
-              ? { ...conn, sync_enabled: enabled }
-              : conn
-          )
+        setConnections((prev) =>
+          prev.map((conn) =>
+            conn.id === connectionId ? { ...conn, sync_enabled: enabled } : conn,
+          ),
         );
-        toast.success(`Sync ${enabled ? 'enabled' : 'disabled'} successfully`);
+        toast.success(`Sync ${enabled ? "enabled" : "disabled"} successfully`);
       } else {
-        throw new Error('Failed to update sync setting');
+        throw new Error("Failed to update sync setting");
       }
     } catch (error) {
-      console.error('Toggle sync failed:', error);
-      toast.error('Failed to update sync setting');
+      console.error("Toggle sync failed:", error);
+      toast.error("Failed to update sync setting");
     }
   };
 
   const deleteConnection = async () => {
     if (!selectedConnection) return;
-    
+
     try {
-      const response = await fetch(`/api/oauth/${selectedConnection.platform}/${selectedConnection.id}`, {
-        method: 'DELETE',
-      });
-      
+      const response = await fetch(
+        `/api/oauth/${selectedConnection.platform}/${selectedConnection.id}`,
+        {
+          method: "DELETE",
+        },
+      );
+
       if (response.ok) {
-        toast.success('Connection removed successfully');
+        toast.success("Connection removed successfully");
         loadConnections();
         loadStats();
       } else {
-        throw new Error('Failed to delete connection');
+        throw new Error("Failed to delete connection");
       }
     } catch (error) {
-      console.error('Delete connection failed:', error);
-      toast.error('Failed to remove connection');
+      console.error("Delete connection failed:", error);
+      toast.error("Failed to remove connection");
     } finally {
       setShowDeleteDialog(false);
       setSelectedConnection(null);
@@ -263,12 +270,27 @@ export function OAuthConnectionsManager() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'active':
-        return <Badge variant="default" className="bg-green-100 text-green-800"><CheckCircle className="w-3 h-3 mr-1" />Active</Badge>;
-      case 'needs_reauth':
-        return <Badge variant="destructive" className="bg-yellow-100 text-yellow-800"><AlertTriangle className="w-3 h-3 mr-1" />Needs Reauth</Badge>;
-      case 'error':
-        return <Badge variant="destructive"><XCircle className="w-3 h-3 mr-1" />Error</Badge>;
+      case "active":
+        return (
+          <Badge variant="default" className="bg-green-100 text-green-800">
+            <CheckCircle className="w-3 h-3 mr-1" />
+            Active
+          </Badge>
+        );
+      case "needs_reauth":
+        return (
+          <Badge variant="destructive" className="bg-yellow-100 text-yellow-800">
+            <AlertTriangle className="w-3 h-3 mr-1" />
+            Needs Reauth
+          </Badge>
+        );
+      case "error":
+        return (
+          <Badge variant="destructive">
+            <XCircle className="w-3 h-3 mr-1" />
+            Error
+          </Badge>
+        );
       default:
         return <Badge variant="secondary">Inactive</Badge>;
     }
@@ -276,11 +298,11 @@ export function OAuthConnectionsManager() {
 
   const getTokenExpirationStatus = (expiresAt?: string) => {
     if (!expiresAt) return null;
-    
+
     const now = new Date();
     const expiration = new Date(expiresAt);
     const hoursUntilExpiration = (expiration.getTime() - now.getTime()) / (1000 * 60 * 60);
-    
+
     if (hoursUntilExpiration < 24) {
       return (
         <div className="text-sm text-yellow-600">
@@ -289,17 +311,13 @@ export function OAuthConnectionsManager() {
         </div>
       );
     }
-    
+
     const daysUntilExpiration = Math.round(hoursUntilExpiration / 24);
-    return (
-      <div className="text-sm text-gray-500">
-        Expires in {daysUntilExpiration} days
-      </div>
-    );
+    return <div className="text-sm text-gray-500">Expires in {daysUntilExpiration} days</div>;
   };
 
-  const getPlatformConfig = (platform: string) => 
-    PLATFORM_CONFIGS.find(config => config.platform === platform);
+  const getPlatformConfig = (platform: string) =>
+    PLATFORM_CONFIGS.find((config) => config.platform === platform);
 
   if (loading) {
     return (
@@ -330,7 +348,7 @@ export function OAuthConnectionsManager() {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
@@ -342,7 +360,7 @@ export function OAuthConnectionsManager() {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
@@ -354,7 +372,7 @@ export function OAuthConnectionsManager() {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
@@ -380,20 +398,27 @@ export function OAuthConnectionsManager() {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {PLATFORM_CONFIGS.map((config) => {
-              const isConnected = connections.some(conn => conn.platform === config.platform);
+              const isConnected = connections.some((conn) => conn.platform === config.platform);
               const Icon = config.icon;
-              
+
               return (
-                <Card key={config.platform} className={`relative overflow-hidden ${isConnected ? 'opacity-50' : 'hover:shadow-md'}`}>
+                <Card
+                  key={config.platform}
+                  className={`relative overflow-hidden ${isConnected ? "opacity-50" : "hover:shadow-md"}`}
+                >
                   <CardContent className="p-4">
-                    <div className={`w-12 h-12 rounded-lg ${config.color} flex items-center justify-center mb-3`}>
+                    <div
+                      className={`w-12 h-12 rounded-lg ${config.color} flex items-center justify-center mb-3`}
+                    >
                       <Icon className="w-6 h-6 text-white" />
                     </div>
                     <h3 className="font-semibold text-sm mb-1">{config.name}</h3>
                     <p className="text-xs text-gray-600 mb-3">{config.description}</p>
-                    
+
                     {isConnected ? (
-                      <Badge variant="secondary" className="text-xs">Connected</Badge>
+                      <Badge variant="secondary" className="text-xs">
+                        Connected
+                      </Badge>
                     ) : (
                       <Button
                         size="sm"
@@ -431,26 +456,31 @@ export function OAuthConnectionsManager() {
               {connections.map((connection) => {
                 const config = getPlatformConfig(connection.platform);
                 if (!config) return null;
-                
+
                 const Icon = config.icon;
-                
+
                 return (
-                  <div key={connection.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div
+                    key={connection.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div className="flex items-center space-x-4">
-                      <div className={`w-10 h-10 rounded-lg ${config.color} flex items-center justify-center`}>
+                      <div
+                        className={`w-10 h-10 rounded-lg ${config.color} flex items-center justify-center`}
+                      >
                         <Icon className="w-5 h-5 text-white" />
                       </div>
-                      
+
                       <div className="space-y-1">
                         <div className="flex items-center space-x-2">
                           <h3 className="font-medium">{connection.account_name}</h3>
                           {getStatusBadge(connection.status)}
                         </div>
-                        
+
                         {connection.account_username && (
                           <p className="text-sm text-gray-600">@{connection.account_username}</p>
                         )}
-                        
+
                         <div className="flex items-center space-x-4 text-xs text-gray-500">
                           {connection.last_sync_at && (
                             <span className="flex items-center">
@@ -458,12 +488,12 @@ export function OAuthConnectionsManager() {
                               Last sync: {new Date(connection.last_sync_at).toLocaleDateString()}
                             </span>
                           )}
-                          
+
                           {getTokenExpirationStatus(connection.token_expires_at)}
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center space-x-2">
                         <span className="text-sm text-gray-600">Sync</span>
@@ -472,7 +502,7 @@ export function OAuthConnectionsManager() {
                           onCheckedChange={(enabled) => toggleSync(connection.id, enabled)}
                         />
                       </div>
-                      
+
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="sm">
@@ -484,7 +514,9 @@ export function OAuthConnectionsManager() {
                             onClick={() => refreshConnection(connection.id, connection.platform)}
                             disabled={refreshing === connection.id}
                           >
-                            <RefreshCw className={`w-4 h-4 mr-2 ${refreshing === connection.id ? 'animate-spin' : ''}`} />
+                            <RefreshCw
+                              className={`w-4 h-4 mr-2 ${refreshing === connection.id ? "animate-spin" : ""}`}
+                            />
                             Refresh Token
                           </DropdownMenuItem>
                           <DropdownMenuItem>
@@ -523,7 +555,7 @@ export function OAuthConnectionsManager() {
           <DialogHeader>
             <DialogTitle>Remove Connection</DialogTitle>
             <DialogDescription>
-              Are you sure you want to remove the connection to{' '}
+              Are you sure you want to remove the connection to{" "}
               <strong>{selectedConnection?.account_name}</strong>? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>

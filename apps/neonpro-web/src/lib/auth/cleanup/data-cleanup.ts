@@ -2,9 +2,9 @@
 // Automated cleanup of expired sessions, tokens, and sensitive data
 // LGPD compliance and data retention management
 
-import { UserSession, SecurityEvent } from '@/types/session';
-import { SessionConfig } from '@/lib/auth/config/session-config';
-import { SessionUtils } from '@/lib/auth/utils/session-utils';
+import type { UserSession, SecurityEvent } from "@/types/session";
+import type { SessionConfig } from "@/lib/auth/config/session-config";
+import type { SessionUtils } from "@/lib/auth/utils/session-utils";
 
 export interface CleanupTask {
   id: string;
@@ -26,66 +26,66 @@ export interface CleanupTask {
   metadata: TaskMetadata;
 }
 
-export type CleanupType = 
-  | 'session_cleanup'
-  | 'token_cleanup'
-  | 'cache_cleanup'
-  | 'log_cleanup'
-  | 'audit_cleanup'
-  | 'user_data_cleanup'
-  | 'temporary_data_cleanup'
-  | 'backup_cleanup'
-  | 'compliance_cleanup'
-  | 'security_cleanup';
+export type CleanupType =
+  | "session_cleanup"
+  | "token_cleanup"
+  | "cache_cleanup"
+  | "log_cleanup"
+  | "audit_cleanup"
+  | "user_data_cleanup"
+  | "temporary_data_cleanup"
+  | "backup_cleanup"
+  | "compliance_cleanup"
+  | "security_cleanup";
 
-export type CleanupCategory = 
-  | 'security'
-  | 'privacy'
-  | 'performance'
-  | 'compliance'
-  | 'storage'
-  | 'maintenance';
+export type CleanupCategory =
+  | "security"
+  | "privacy"
+  | "performance"
+  | "compliance"
+  | "storage"
+  | "maintenance";
 
-export type CleanupPriority = 
-  | 'critical'    // Immediate cleanup required
-  | 'high'        // Cleanup within hours
-  | 'medium'      // Cleanup within days
-  | 'low'         // Cleanup when convenient
-  | 'background'; // Continuous background cleanup
+export type CleanupPriority =
+  | "critical" // Immediate cleanup required
+  | "high" // Cleanup within hours
+  | "medium" // Cleanup within days
+  | "low" // Cleanup when convenient
+  | "background"; // Continuous background cleanup
 
 export interface CleanupSchedule {
   type: ScheduleType;
-  interval?: number;        // milliseconds
-  cron?: string;           // cron expression
+  interval?: number; // milliseconds
+  cron?: string; // cron expression
   triggers?: TriggerType[];
   timezone?: string;
   enabled: boolean;
-  maxDuration?: number;    // max execution time
+  maxDuration?: number; // max execution time
   retryAttempts?: number;
   retryDelay?: number;
 }
 
-export type ScheduleType = 
-  | 'interval'     // Fixed interval
-  | 'cron'         // Cron schedule
-  | 'trigger'      // Event-based
-  | 'manual'       // Manual execution only
-  | 'continuous';  // Continuous background
+export type ScheduleType =
+  | "interval" // Fixed interval
+  | "cron" // Cron schedule
+  | "trigger" // Event-based
+  | "manual" // Manual execution only
+  | "continuous"; // Continuous background
 
-export type TriggerType = 
-  | 'session_expired'
-  | 'user_logout'
-  | 'storage_threshold'
-  | 'compliance_deadline'
-  | 'security_incident'
-  | 'system_startup'
-  | 'system_shutdown'
-  | 'data_request';
+export type TriggerType =
+  | "session_expired"
+  | "user_logout"
+  | "storage_threshold"
+  | "compliance_deadline"
+  | "security_incident"
+  | "system_startup"
+  | "system_shutdown"
+  | "data_request";
 
 export interface RetentionPolicy {
-  maxAge: number;           // milliseconds
-  maxCount?: number;        // maximum number of items
-  maxSize?: number;         // maximum size in bytes
+  maxAge: number; // milliseconds
+  maxCount?: number; // maximum number of items
+  maxSize?: number; // maximum size in bytes
   conditions: RetentionCondition[];
   exceptions: RetentionException[];
   archiveBeforeDelete: boolean;
@@ -96,9 +96,9 @@ export interface RetentionPolicy {
 
 export interface RetentionCondition {
   field: string;
-  operator: 'eq' | 'ne' | 'gt' | 'gte' | 'lt' | 'lte' | 'in' | 'nin' | 'exists' | 'regex';
+  operator: "eq" | "ne" | "gt" | "gte" | "lt" | "lte" | "in" | "nin" | "exists" | "regex";
   value: any;
-  logicalOperator?: 'and' | 'or';
+  logicalOperator?: "and" | "or";
 }
 
 export interface RetentionException {
@@ -120,20 +120,20 @@ export interface CleanupTarget {
   estimatedSize?: number;
 }
 
-export type TargetType = 
-  | 'sessions'
-  | 'tokens'
-  | 'cache_entries'
-  | 'log_entries'
-  | 'audit_events'
-  | 'user_data'
-  | 'temporary_files'
-  | 'backup_files'
-  | 'expired_data'
-  | 'orphaned_data';
+export type TargetType =
+  | "sessions"
+  | "tokens"
+  | "cache_entries"
+  | "log_entries"
+  | "audit_events"
+  | "user_data"
+  | "temporary_files"
+  | "backup_files"
+  | "expired_data"
+  | "orphaned_data";
 
 export interface DataSource {
-  type: 'database' | 'cache' | 'filesystem' | 'storage' | 'api';
+  type: "database" | "cache" | "filesystem" | "storage" | "api";
   connection: string;
   table?: string;
   collection?: string;
@@ -145,7 +145,7 @@ export interface DataFilter {
   field: string;
   operator: string;
   value: any;
-  type?: 'string' | 'number' | 'date' | 'boolean' | 'array';
+  type?: "string" | "number" | "date" | "boolean" | "array";
 }
 
 export interface CleanupCondition {
@@ -157,14 +157,14 @@ export interface CleanupCondition {
   required: boolean;
 }
 
-export type ConditionType = 
-  | 'age_based'        // Based on creation/modification time
-  | 'usage_based'      // Based on last access time
-  | 'size_based'       // Based on data size
-  | 'count_based'      // Based on number of items
-  | 'status_based'     // Based on status/state
-  | 'compliance_based' // Based on compliance requirements
-  | 'custom';          // Custom condition
+export type ConditionType =
+  | "age_based" // Based on creation/modification time
+  | "usage_based" // Based on last access time
+  | "size_based" // Based on data size
+  | "count_based" // Based on number of items
+  | "status_based" // Based on status/state
+  | "compliance_based" // Based on compliance requirements
+  | "custom"; // Custom condition
 
 export interface CleanupAction {
   id: string;
@@ -176,26 +176,26 @@ export interface CleanupAction {
   rollbackable: boolean;
 }
 
-export type ActionType = 
-  | 'delete'           // Permanently delete
-  | 'archive'          // Move to archive
-  | 'anonymize'        // Remove PII
-  | 'encrypt'          // Encrypt data
-  | 'compress'         // Compress data
-  | 'backup'           // Create backup
-  | 'notify'           // Send notification
-  | 'log'              // Log action
-  | 'validate'         // Validate before cleanup
-  | 'custom';          // Custom action
+export type ActionType =
+  | "delete" // Permanently delete
+  | "archive" // Move to archive
+  | "anonymize" // Remove PII
+  | "encrypt" // Encrypt data
+  | "compress" // Compress data
+  | "backup" // Create backup
+  | "notify" // Send notification
+  | "log" // Log action
+  | "validate" // Validate before cleanup
+  | "custom"; // Custom action
 
-export type TaskStatus = 
-  | 'scheduled'
-  | 'running'
-  | 'completed'
-  | 'failed'
-  | 'cancelled'
-  | 'paused'
-  | 'disabled';
+export type TaskStatus =
+  | "scheduled"
+  | "running"
+  | "completed"
+  | "failed"
+  | "cancelled"
+  | "paused"
+  | "disabled";
 
 export interface TaskStatistics {
   totalRuns: number;
@@ -221,10 +221,10 @@ export interface PerformanceMetrics {
 }
 
 export interface ComplianceInfo {
-  frameworks: string[];        // LGPD, GDPR, etc.
-  requirements: string[];      // Specific requirements
-  dataCategories: string[];    // Types of data being cleaned
-  legalBasis: string;         // Legal basis for processing
+  frameworks: string[]; // LGPD, GDPR, etc.
+  requirements: string[]; // Specific requirements
+  dataCategories: string[]; // Types of data being cleaned
+  legalBasis: string; // Legal basis for processing
   retentionJustification: string;
   dataSubjectRights: string[]; // Rights being respected
   auditRequired: boolean;
@@ -239,8 +239,8 @@ export interface TaskMetadata {
   modifiedBy: string;
   version: string;
   tags: string[];
-  dependencies: string[];      // Other tasks this depends on
-  conflicts: string[];         // Tasks that conflict with this
+  dependencies: string[]; // Other tasks this depends on
+  conflicts: string[]; // Tasks that conflict with this
   environment: string;
   region: string;
 }
@@ -251,7 +251,7 @@ export interface CleanupResult {
   startTime: number;
   endTime: number;
   duration: number;
-  status: 'success' | 'failure' | 'partial';
+  status: "success" | "failure" | "partial";
   summary: CleanupSummary;
   details: CleanupDetails;
   errors: CleanupError[];
@@ -283,7 +283,7 @@ export interface TargetResult {
   itemsProcessed: number;
   sizeProcessed: number;
   duration: number;
-  status: 'success' | 'failure' | 'partial';
+  status: "success" | "failure" | "partial";
   error?: string;
 }
 
@@ -291,7 +291,7 @@ export interface ActionResult {
   action: CleanupAction;
   itemsAffected: number;
   duration: number;
-  status: 'success' | 'failure' | 'skipped';
+  status: "success" | "failure" | "skipped";
   result?: any;
   error?: string;
 }
@@ -309,14 +309,14 @@ export interface BatchResult {
   batchSize: number;
   itemsProcessed: number;
   duration: number;
-  status: 'success' | 'failure' | 'partial';
+  status: "success" | "failure" | "partial";
   errors: string[];
 }
 
 export interface CleanupError {
   id: string;
-  type: 'validation' | 'execution' | 'rollback' | 'system';
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  type: "validation" | "execution" | "rollback" | "system";
+  severity: "low" | "medium" | "high" | "critical";
   message: string;
   details: string;
   timestamp: number;
@@ -326,7 +326,7 @@ export interface CleanupError {
 
 export interface CleanupWarning {
   id: string;
-  type: 'performance' | 'compliance' | 'data' | 'system';
+  type: "performance" | "compliance" | "data" | "system";
   message: string;
   details: string;
   timestamp: number;
@@ -359,7 +359,7 @@ export interface RequirementResult {
 export interface ComplianceViolation {
   requirement: string;
   description: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   remediation: string;
 }
 
@@ -428,27 +428,27 @@ export class DataCleanupManager {
       await this.auditLogger.initialize();
       await this.complianceEngine.initialize();
       await this.notificationService.initialize();
-      
+
       // Load default cleanup tasks
       await this.loadDefaultTasks();
-      
+
       // Schedule tasks
       await this.scheduleAllTasks();
-      
+
       this.isInitialized = true;
-      
+
       // Log initialization
       await this.auditLogger.logEvent({
-        type: 'system_event',
-        category: 'system',
-        severity: 'info',
-        action: 'cleanup_manager_initialized',
-        description: 'Data cleanup manager initialized successfully',
-        actor: { type: 'system', id: 'cleanup_manager' },
-        target: { type: 'system', id: 'cleanup_system' }
+        type: "system_event",
+        category: "system",
+        severity: "info",
+        action: "cleanup_manager_initialized",
+        description: "Data cleanup manager initialized successfully",
+        actor: { type: "system", id: "cleanup_manager" },
+        target: { type: "system", id: "cleanup_system" },
       });
     } catch (error) {
-      console.error('Error initializing cleanup manager:', error);
+      console.error("Error initializing cleanup manager:", error);
       throw error;
     }
   }
@@ -459,334 +459,346 @@ export class DataCleanupManager {
   private async loadDefaultTasks(): Promise<void> {
     const defaultTasks: Partial<CleanupTask>[] = [
       {
-        name: 'expired_sessions_cleanup',
-        description: 'Remove expired user sessions',
-        type: 'session_cleanup',
-        category: 'security',
-        priority: 'high',
+        name: "expired_sessions_cleanup",
+        description: "Remove expired user sessions",
+        type: "session_cleanup",
+        category: "security",
+        priority: "high",
         schedule: {
-          type: 'interval',
+          type: "interval",
           interval: 60 * 60 * 1000, // 1 hour
           enabled: true,
           maxDuration: 30 * 60 * 1000, // 30 minutes
           retryAttempts: 3,
-          retryDelay: 5 * 60 * 1000 // 5 minutes
+          retryDelay: 5 * 60 * 1000, // 5 minutes
         },
         retention: {
           maxAge: 24 * 60 * 60 * 1000, // 24 hours
           conditions: [
-            { field: 'status', operator: 'eq', value: 'expired' },
-            { field: 'lastActivity', operator: 'lt', value: Date.now() - 24 * 60 * 60 * 1000 }
+            { field: "status", operator: "eq", value: "expired" },
+            { field: "lastActivity", operator: "lt", value: Date.now() - 24 * 60 * 60 * 1000 },
           ],
           exceptions: [],
           archiveBeforeDelete: true,
-          complianceFramework: ['LGPD'],
-          legalHold: false
+          complianceFramework: ["LGPD"],
+          legalHold: false,
         },
-        targets: [{
-          type: 'sessions',
-          source: {
-            type: 'database',
-            connection: 'main',
-            table: 'user_sessions'
+        targets: [
+          {
+            type: "sessions",
+            source: {
+              type: "database",
+              connection: "main",
+              table: "user_sessions",
+            },
+            filters: [
+              { field: "expires_at", operator: "lt", value: "NOW()", type: "date" },
+              { field: "status", operator: "eq", value: "expired", type: "string" },
+            ],
+            batchSize: 100,
           },
-          filters: [
-            { field: 'expires_at', operator: 'lt', value: 'NOW()', type: 'date' },
-            { field: 'status', operator: 'eq', value: 'expired', type: 'string' }
-          ],
-          batchSize: 100
-        }],
+        ],
         conditions: [
           {
-            id: 'session_expired',
-            description: 'Session has expired',
-            type: 'age_based',
-            expression: 'expires_at < NOW()',
+            id: "session_expired",
+            description: "Session has expired",
+            type: "age_based",
+            expression: "expires_at < NOW()",
             parameters: {},
-            required: true
-          }
+            required: true,
+          },
         ],
         actions: [
           {
-            id: 'archive_session',
-            type: 'archive',
-            description: 'Archive session data before deletion',
-            parameters: { location: 'session_archive' },
+            id: "archive_session",
+            type: "archive",
+            description: "Archive session data before deletion",
+            parameters: { location: "session_archive" },
             order: 1,
             required: true,
-            rollbackable: true
+            rollbackable: true,
           },
           {
-            id: 'delete_session',
-            type: 'delete',
-            description: 'Delete expired session',
+            id: "delete_session",
+            type: "delete",
+            description: "Delete expired session",
             parameters: {},
             order: 2,
             required: true,
-            rollbackable: false
+            rollbackable: false,
           },
           {
-            id: 'log_cleanup',
-            type: 'log',
-            description: 'Log cleanup action',
-            parameters: { level: 'info' },
+            id: "log_cleanup",
+            type: "log",
+            description: "Log cleanup action",
+            parameters: { level: "info" },
             order: 3,
             required: true,
-            rollbackable: false
-          }
+            rollbackable: false,
+          },
         ],
         compliance: {
-          frameworks: ['LGPD'],
-          requirements: ['data_minimization', 'storage_limitation'],
-          dataCategories: ['session_data', 'authentication_data'],
-          legalBasis: 'legitimate_interest',
-          retentionJustification: 'Security and performance optimization',
-          dataSubjectRights: ['right_to_erasure'],
+          frameworks: ["LGPD"],
+          requirements: ["data_minimization", "storage_limitation"],
+          dataCategories: ["session_data", "authentication_data"],
+          legalBasis: "legitimate_interest",
+          retentionJustification: "Security and performance optimization",
+          dataSubjectRights: ["right_to_erasure"],
           auditRequired: true,
           approvalRequired: false,
-          notificationRequired: false
-        }
+          notificationRequired: false,
+        },
       },
       {
-        name: 'expired_tokens_cleanup',
-        description: 'Remove expired authentication tokens',
-        type: 'token_cleanup',
-        category: 'security',
-        priority: 'high',
+        name: "expired_tokens_cleanup",
+        description: "Remove expired authentication tokens",
+        type: "token_cleanup",
+        category: "security",
+        priority: "high",
         schedule: {
-          type: 'interval',
+          type: "interval",
           interval: 30 * 60 * 1000, // 30 minutes
           enabled: true,
           maxDuration: 15 * 60 * 1000, // 15 minutes
           retryAttempts: 3,
-          retryDelay: 2 * 60 * 1000 // 2 minutes
+          retryDelay: 2 * 60 * 1000, // 2 minutes
         },
         retention: {
           maxAge: 60 * 60 * 1000, // 1 hour after expiration
-          conditions: [
-            { field: 'expires_at', operator: 'lt', value: Date.now() }
-          ],
+          conditions: [{ field: "expires_at", operator: "lt", value: Date.now() }],
           exceptions: [],
           archiveBeforeDelete: false,
-          complianceFramework: ['LGPD'],
-          legalHold: false
+          complianceFramework: ["LGPD"],
+          legalHold: false,
         },
-        targets: [{
-          type: 'tokens',
-          source: {
-            type: 'database',
-            connection: 'main',
-            table: 'auth_tokens'
+        targets: [
+          {
+            type: "tokens",
+            source: {
+              type: "database",
+              connection: "main",
+              table: "auth_tokens",
+            },
+            filters: [
+              {
+                field: "expires_at",
+                operator: "lt",
+                value: "NOW() - INTERVAL 1 HOUR",
+                type: "date",
+              },
+            ],
+            batchSize: 500,
           },
-          filters: [
-            { field: 'expires_at', operator: 'lt', value: 'NOW() - INTERVAL 1 HOUR', type: 'date' }
-          ],
-          batchSize: 500
-        }],
+        ],
         conditions: [
           {
-            id: 'token_expired',
-            description: 'Token has been expired for more than 1 hour',
-            type: 'age_based',
-            expression: 'expires_at < NOW() - INTERVAL 1 HOUR',
+            id: "token_expired",
+            description: "Token has been expired for more than 1 hour",
+            type: "age_based",
+            expression: "expires_at < NOW() - INTERVAL 1 HOUR",
             parameters: {},
-            required: true
-          }
+            required: true,
+          },
         ],
         actions: [
           {
-            id: 'delete_token',
-            type: 'delete',
-            description: 'Delete expired token',
+            id: "delete_token",
+            type: "delete",
+            description: "Delete expired token",
             parameters: {},
             order: 1,
             required: true,
-            rollbackable: false
-          }
+            rollbackable: false,
+          },
         ],
         compliance: {
-          frameworks: ['LGPD'],
-          requirements: ['data_minimization', 'security'],
-          dataCategories: ['authentication_tokens'],
-          legalBasis: 'legitimate_interest',
-          retentionJustification: 'Security requirement',
-          dataSubjectRights: ['right_to_erasure'],
+          frameworks: ["LGPD"],
+          requirements: ["data_minimization", "security"],
+          dataCategories: ["authentication_tokens"],
+          legalBasis: "legitimate_interest",
+          retentionJustification: "Security requirement",
+          dataSubjectRights: ["right_to_erasure"],
           auditRequired: true,
           approvalRequired: false,
-          notificationRequired: false
-        }
+          notificationRequired: false,
+        },
       },
       {
-        name: 'old_audit_logs_cleanup',
-        description: 'Archive old audit logs according to retention policy',
-        type: 'audit_cleanup',
-        category: 'compliance',
-        priority: 'medium',
+        name: "old_audit_logs_cleanup",
+        description: "Archive old audit logs according to retention policy",
+        type: "audit_cleanup",
+        category: "compliance",
+        priority: "medium",
         schedule: {
-          type: 'cron',
-          cron: '0 2 * * 0', // Weekly on Sunday at 2 AM
+          type: "cron",
+          cron: "0 2 * * 0", // Weekly on Sunday at 2 AM
           enabled: true,
           maxDuration: 2 * 60 * 60 * 1000, // 2 hours
           retryAttempts: 2,
-          retryDelay: 30 * 60 * 1000 // 30 minutes
+          retryDelay: 30 * 60 * 1000, // 30 minutes
         },
         retention: {
           maxAge: 365 * 24 * 60 * 60 * 1000, // 1 year active
           conditions: [
-            { field: 'timestamp', operator: 'lt', value: Date.now() - 365 * 24 * 60 * 60 * 1000 }
+            { field: "timestamp", operator: "lt", value: Date.now() - 365 * 24 * 60 * 60 * 1000 },
           ],
           exceptions: [
             {
-              id: 'security_incidents',
-              description: 'Security incidents require extended retention',
+              id: "security_incidents",
+              description: "Security incidents require extended retention",
               conditions: [
-                { field: 'category', operator: 'eq', value: 'security' },
-                { field: 'severity', operator: 'in', value: ['high', 'critical'] }
+                { field: "category", operator: "eq", value: "security" },
+                { field: "severity", operator: "in", value: ["high", "critical"] },
               ],
               extendedRetention: 7 * 365 * 24 * 60 * 60 * 1000, // 7 years
-              reason: 'Security compliance requirement',
-              approvedBy: 'security_team'
-            }
+              reason: "Security compliance requirement",
+              approvedBy: "security_team",
+            },
           ],
           archiveBeforeDelete: true,
-          archiveLocation: 'audit_archive',
-          complianceFramework: ['LGPD', 'ISO27001'],
-          legalHold: false
+          archiveLocation: "audit_archive",
+          complianceFramework: ["LGPD", "ISO27001"],
+          legalHold: false,
         },
-        targets: [{
-          type: 'audit_events',
-          source: {
-            type: 'database',
-            connection: 'audit',
-            table: 'audit_events'
+        targets: [
+          {
+            type: "audit_events",
+            source: {
+              type: "database",
+              connection: "audit",
+              table: "audit_events",
+            },
+            filters: [
+              {
+                field: "timestamp",
+                operator: "lt",
+                value: "NOW() - INTERVAL 1 YEAR",
+                type: "date",
+              },
+            ],
+            batchSize: 1000,
           },
-          filters: [
-            { field: 'timestamp', operator: 'lt', value: 'NOW() - INTERVAL 1 YEAR', type: 'date' }
-          ],
-          batchSize: 1000
-        }],
+        ],
         conditions: [
           {
-            id: 'audit_age',
-            description: 'Audit event is older than retention period',
-            type: 'age_based',
-            expression: 'timestamp < NOW() - INTERVAL 1 YEAR',
+            id: "audit_age",
+            description: "Audit event is older than retention period",
+            type: "age_based",
+            expression: "timestamp < NOW() - INTERVAL 1 YEAR",
             parameters: {},
-            required: true
+            required: true,
           },
           {
-            id: 'not_security_critical',
-            description: 'Not a critical security event requiring extended retention',
-            type: 'custom',
+            id: "not_security_critical",
+            description: "Not a critical security event requiring extended retention",
+            type: "custom",
             expression: 'NOT (category = "security" AND severity IN ("high", "critical"))',
             parameters: {},
-            required: true
-          }
+            required: true,
+          },
         ],
         actions: [
           {
-            id: 'archive_audit',
-            type: 'archive',
-            description: 'Archive audit events to long-term storage',
-            parameters: { 
-              location: 'audit_archive',
+            id: "archive_audit",
+            type: "archive",
+            description: "Archive audit events to long-term storage",
+            parameters: {
+              location: "audit_archive",
               compression: true,
-              encryption: true
+              encryption: true,
             },
             order: 1,
             required: true,
-            rollbackable: true
+            rollbackable: true,
           },
           {
-            id: 'delete_audit',
-            type: 'delete',
-            description: 'Delete archived audit events from active storage',
+            id: "delete_audit",
+            type: "delete",
+            description: "Delete archived audit events from active storage",
             parameters: {},
             order: 2,
             required: true,
-            rollbackable: false
-          }
+            rollbackable: false,
+          },
         ],
         compliance: {
-          frameworks: ['LGPD', 'ISO27001'],
-          requirements: ['audit_retention', 'data_minimization'],
-          dataCategories: ['audit_logs', 'system_logs'],
-          legalBasis: 'legal_obligation',
-          retentionJustification: 'Regulatory compliance and security monitoring',
-          dataSubjectRights: ['right_to_information'],
+          frameworks: ["LGPD", "ISO27001"],
+          requirements: ["audit_retention", "data_minimization"],
+          dataCategories: ["audit_logs", "system_logs"],
+          legalBasis: "legal_obligation",
+          retentionJustification: "Regulatory compliance and security monitoring",
+          dataSubjectRights: ["right_to_information"],
           auditRequired: true,
           approvalRequired: true,
-          notificationRequired: false
-        }
+          notificationRequired: false,
+        },
       },
       {
-        name: 'cache_cleanup',
-        description: 'Clean expired cache entries',
-        type: 'cache_cleanup',
-        category: 'performance',
-        priority: 'low',
+        name: "cache_cleanup",
+        description: "Clean expired cache entries",
+        type: "cache_cleanup",
+        category: "performance",
+        priority: "low",
         schedule: {
-          type: 'interval',
+          type: "interval",
           interval: 15 * 60 * 1000, // 15 minutes
           enabled: true,
           maxDuration: 5 * 60 * 1000, // 5 minutes
           retryAttempts: 2,
-          retryDelay: 60 * 1000 // 1 minute
+          retryDelay: 60 * 1000, // 1 minute
         },
         retention: {
           maxAge: 0, // Immediate cleanup of expired items
-          conditions: [
-            { field: 'expires_at', operator: 'lt', value: Date.now() }
-          ],
+          conditions: [{ field: "expires_at", operator: "lt", value: Date.now() }],
           exceptions: [],
           archiveBeforeDelete: false,
           complianceFramework: [],
-          legalHold: false
+          legalHold: false,
         },
-        targets: [{
-          type: 'cache_entries',
-          source: {
-            type: 'cache',
-            connection: 'redis'
+        targets: [
+          {
+            type: "cache_entries",
+            source: {
+              type: "cache",
+              connection: "redis",
+            },
+            filters: [{ field: "ttl", operator: "lt", value: "0", type: "number" }],
+            batchSize: 1000,
           },
-          filters: [
-            { field: 'ttl', operator: 'lt', value: '0', type: 'number' }
-          ],
-          batchSize: 1000
-        }],
+        ],
         conditions: [
           {
-            id: 'cache_expired',
-            description: 'Cache entry has expired',
-            type: 'age_based',
-            expression: 'TTL < 0',
+            id: "cache_expired",
+            description: "Cache entry has expired",
+            type: "age_based",
+            expression: "TTL < 0",
             parameters: {},
-            required: true
-          }
+            required: true,
+          },
         ],
         actions: [
           {
-            id: 'delete_cache',
-            type: 'delete',
-            description: 'Delete expired cache entry',
+            id: "delete_cache",
+            type: "delete",
+            description: "Delete expired cache entry",
             parameters: {},
             order: 1,
             required: true,
-            rollbackable: false
-          }
+            rollbackable: false,
+          },
         ],
         compliance: {
           frameworks: [],
           requirements: [],
-          dataCategories: ['cache_data'],
-          legalBasis: 'legitimate_interest',
-          retentionJustification: 'Performance optimization',
+          dataCategories: ["cache_data"],
+          legalBasis: "legitimate_interest",
+          retentionJustification: "Performance optimization",
           dataSubjectRights: [],
           auditRequired: false,
           approvalRequired: false,
-          notificationRequired: false
-        }
-      }
+          notificationRequired: false,
+        },
+      },
     ];
 
     for (const taskData of defaultTasks) {
@@ -801,15 +813,15 @@ export class DataCleanupManager {
   public async createTask(taskData: Partial<CleanupTask>): Promise<CleanupTask> {
     const task: CleanupTask = {
       id: this.utils.generateSessionToken(),
-      name: taskData.name || 'unnamed_task',
-      description: taskData.description || '',
-      type: taskData.type || 'session_cleanup',
-      category: taskData.category || 'maintenance',
-      priority: taskData.priority || 'medium',
+      name: taskData.name || "unnamed_task",
+      description: taskData.description || "",
+      type: taskData.type || "session_cleanup",
+      category: taskData.category || "maintenance",
+      priority: taskData.priority || "medium",
       schedule: {
-        type: 'manual',
+        type: "manual",
         enabled: false,
-        ...taskData.schedule
+        ...taskData.schedule,
       },
       retention: {
         maxAge: 24 * 60 * 60 * 1000, // 24 hours default
@@ -818,12 +830,12 @@ export class DataCleanupManager {
         archiveBeforeDelete: false,
         complianceFramework: [],
         legalHold: false,
-        ...taskData.retention
+        ...taskData.retention,
       },
       targets: taskData.targets || [],
       conditions: taskData.conditions || [],
       actions: taskData.actions || [],
-      status: 'scheduled',
+      status: "scheduled",
       statistics: {
         totalRuns: 0,
         successfulRuns: 0,
@@ -840,34 +852,34 @@ export class DataCleanupManager {
           cpuUsage: 0,
           memoryUsage: 0,
           diskIO: 0,
-          networkIO: 0
-        }
+          networkIO: 0,
+        },
       },
       compliance: {
         frameworks: [],
         requirements: [],
         dataCategories: [],
-        legalBasis: 'legitimate_interest',
-        retentionJustification: '',
+        legalBasis: "legitimate_interest",
+        retentionJustification: "",
         dataSubjectRights: [],
         auditRequired: false,
         approvalRequired: false,
         notificationRequired: false,
-        ...taskData.compliance
+        ...taskData.compliance,
       },
       metadata: {
         createdAt: Date.now(),
-        createdBy: 'system',
+        createdBy: "system",
         modifiedAt: Date.now(),
-        modifiedBy: 'system',
-        version: '1.0.0',
+        modifiedBy: "system",
+        version: "1.0.0",
         tags: [],
         dependencies: [],
         conflicts: [],
-        environment: process.env.NODE_ENV || 'development',
-        region: process.env.AWS_REGION || 'local',
-        ...taskData.metadata
-      }
+        environment: process.env.NODE_ENV || "development",
+        region: process.env.AWS_REGION || "local",
+        ...taskData.metadata,
+      },
     };
 
     // Validate task
@@ -883,32 +895,32 @@ export class DataCleanupManager {
     const errors: string[] = [];
 
     // Validate basic fields
-    if (!task.name) errors.push('Task name is required');
-    if (!task.targets.length) errors.push('At least one target is required');
-    if (!task.actions.length) errors.push('At least one action is required');
+    if (!task.name) errors.push("Task name is required");
+    if (!task.targets.length) errors.push("At least one target is required");
+    if (!task.actions.length) errors.push("At least one action is required");
 
     // Validate schedule
     if (task.schedule.enabled) {
-      if (task.schedule.type === 'interval' && !task.schedule.interval) {
-        errors.push('Interval is required for interval-based schedule');
+      if (task.schedule.type === "interval" && !task.schedule.interval) {
+        errors.push("Interval is required for interval-based schedule");
       }
-      if (task.schedule.type === 'cron' && !task.schedule.cron) {
-        errors.push('Cron expression is required for cron-based schedule');
+      if (task.schedule.type === "cron" && !task.schedule.cron) {
+        errors.push("Cron expression is required for cron-based schedule");
       }
     }
 
     // Validate retention policy
     if (task.retention.maxAge <= 0) {
-      errors.push('Retention max age must be positive');
+      errors.push("Retention max age must be positive");
     }
 
     // Validate compliance requirements
     if (task.compliance.approvalRequired && !task.compliance.frameworks.length) {
-      errors.push('Compliance framework required when approval is needed');
+      errors.push("Compliance framework required when approval is needed");
     }
 
     if (errors.length > 0) {
-      throw new Error(`Task validation failed: ${errors.join(', ')}`);
+      throw new Error(`Task validation failed: ${errors.join(", ")}`);
     }
   }
 
@@ -941,7 +953,7 @@ export class DataCleanupManager {
 
     try {
       switch (task.schedule.type) {
-        case 'interval':
+        case "interval":
           if (task.schedule.interval) {
             const timer = setInterval(async () => {
               try {
@@ -954,7 +966,7 @@ export class DataCleanupManager {
           }
           break;
 
-        case 'cron':
+        case "cron":
           // For cron scheduling, you would typically use a library like node-cron
           // This is a simplified implementation
           if (task.schedule.cron) {
@@ -962,7 +974,7 @@ export class DataCleanupManager {
           }
           break;
 
-        case 'continuous':
+        case "continuous":
           // Start continuous background task
           this.startContinuousTask(taskId);
           break;
@@ -971,7 +983,7 @@ export class DataCleanupManager {
       // Update next run time
       task.nextRun = this.calculateNextRun(task);
 
-      this.emit('task_scheduled', { taskId, task });
+      this.emit("task_scheduled", { taskId, task });
     } catch (error) {
       console.error(`Error scheduling task ${taskId}:`, error);
       throw error;
@@ -992,11 +1004,14 @@ export class DataCleanupManager {
   /**
    * Execute cleanup task
    */
-  public async executeTask(taskId: string, options?: {
-    dryRun?: boolean;
-    batchSize?: number;
-    maxItems?: number;
-  }): Promise<CleanupResult> {
+  public async executeTask(
+    taskId: string,
+    options?: {
+      dryRun?: boolean;
+      batchSize?: number;
+      maxItems?: number;
+    },
+  ): Promise<CleanupResult> {
     const task = this.tasks.get(taskId);
     if (!task) {
       throw new Error(`Task ${taskId} not found`);
@@ -1012,7 +1027,7 @@ export class DataCleanupManager {
 
     try {
       // Update task status
-      task.status = 'running';
+      task.status = "running";
       task.lastRun = startTime;
 
       // Create execution promise
@@ -1029,9 +1044,9 @@ export class DataCleanupManager {
       this.addToHistory(result);
 
       // Update task status
-      task.status = result.status === 'success' ? 'completed' : 'failed';
+      task.status = result.status === "success" ? "completed" : "failed";
 
-      this.emit('task_completed', { taskId, task, result });
+      this.emit("task_completed", { taskId, task, result });
 
       return result;
     } catch (error) {
@@ -1041,7 +1056,7 @@ export class DataCleanupManager {
         startTime,
         endTime: Date.now(),
         duration: Date.now() - startTime,
-        status: 'failure',
+        status: "failure",
         summary: {
           itemsProcessed: 0,
           itemsDeleted: 0,
@@ -1049,31 +1064,33 @@ export class DataCleanupManager {
           itemsAnonymized: 0,
           sizeFreed: 0,
           errorsEncountered: 1,
-          warningsGenerated: 0
+          warningsGenerated: 0,
         },
         details: {
           targetResults: [],
           actionResults: [],
           conditionResults: [],
-          batchResults: []
+          batchResults: [],
         },
-        errors: [{
-          id: this.utils.generateSessionToken(),
-          type: 'execution',
-          severity: 'critical',
-          message: error.message,
-          details: error.stack || '',
-          timestamp: Date.now(),
-          context: { taskId, executionId },
-          recoverable: false
-        }],
+        errors: [
+          {
+            id: this.utils.generateSessionToken(),
+            type: "execution",
+            severity: "critical",
+            message: error.message,
+            details: error.stack || "",
+            timestamp: Date.now(),
+            context: { taskId, executionId },
+            recoverable: false,
+          },
+        ],
         warnings: [],
         compliance: {
           frameworkResults: [],
           dataSubjectRights: [],
           auditTrail: [],
           notifications: [],
-          approvals: []
+          approvals: [],
         },
         performance: {
           itemsPerSecond: 0,
@@ -1081,8 +1098,8 @@ export class DataCleanupManager {
           cpuUsage: 0,
           memoryUsage: 0,
           diskIO: 0,
-          networkIO: 0
-        }
+          networkIO: 0,
+        },
       };
 
       // Update task statistics
@@ -1092,9 +1109,9 @@ export class DataCleanupManager {
       this.addToHistory(result);
 
       // Update task status
-      task.status = 'failed';
+      task.status = "failed";
 
-      this.emit('task_failed', { taskId, task, result, error });
+      this.emit("task_failed", { taskId, task, result, error });
 
       throw error;
     } finally {
@@ -1108,7 +1125,7 @@ export class DataCleanupManager {
   private async performTaskExecution(
     task: CleanupTask,
     executionId: string,
-    options?: any
+    options?: any,
   ): Promise<CleanupResult> {
     const startTime = Date.now();
     const result: CleanupResult = {
@@ -1117,7 +1134,7 @@ export class DataCleanupManager {
       startTime,
       endTime: 0,
       duration: 0,
-      status: 'success',
+      status: "success",
       summary: {
         itemsProcessed: 0,
         itemsDeleted: 0,
@@ -1125,13 +1142,13 @@ export class DataCleanupManager {
         itemsAnonymized: 0,
         sizeFreed: 0,
         errorsEncountered: 0,
-        warningsGenerated: 0
+        warningsGenerated: 0,
       },
       details: {
         targetResults: [],
         actionResults: [],
         conditionResults: [],
-        batchResults: []
+        batchResults: [],
       },
       errors: [],
       warnings: [],
@@ -1140,7 +1157,7 @@ export class DataCleanupManager {
         dataSubjectRights: [],
         auditTrail: [],
         notifications: [],
-        approvals: []
+        approvals: [],
       },
       performance: {
         itemsPerSecond: 0,
@@ -1148,28 +1165,28 @@ export class DataCleanupManager {
         cpuUsage: 0,
         memoryUsage: 0,
         diskIO: 0,
-        networkIO: 0
-      }
+        networkIO: 0,
+      },
     };
 
     try {
       // Log task execution start
       await this.auditLogger.logEvent({
-        type: 'system_event',
-        category: 'maintenance',
-        severity: 'info',
-        action: 'cleanup_task_started',
+        type: "system_event",
+        category: "maintenance",
+        severity: "info",
+        action: "cleanup_task_started",
         description: `Cleanup task '${task.name}' execution started`,
-        actor: { type: 'system', id: 'cleanup_manager' },
-        target: { type: 'system', id: task.id },
-        context: { taskId: task.id, executionId }
+        actor: { type: "system", id: "cleanup_manager" },
+        target: { type: "system", id: task.id },
+        context: { taskId: task.id, executionId },
       });
 
       // Check compliance requirements
       if (task.compliance.approvalRequired) {
         const approved = await this.checkApproval(task);
         if (!approved) {
-          throw new Error('Task execution not approved');
+          throw new Error("Task execution not approved");
         }
       }
 
@@ -1177,7 +1194,7 @@ export class DataCleanupManager {
       for (const condition of task.conditions) {
         const conditionResult = await this.evaluateCondition(condition, task);
         result.details.conditionResults.push(conditionResult);
-        
+
         if (condition.required && !conditionResult.result) {
           throw new Error(`Required condition '${condition.id}' not met`);
         }
@@ -1187,7 +1204,7 @@ export class DataCleanupManager {
       for (const target of task.targets) {
         const targetResult = await this.processTarget(target, task, options);
         result.details.targetResults.push(targetResult);
-        
+
         // Update summary
         result.summary.itemsProcessed += targetResult.itemsProcessed;
       }
@@ -1196,8 +1213,8 @@ export class DataCleanupManager {
       for (const action of task.actions.sort((a, b) => a.order - b.order)) {
         const actionResult = await this.executeAction(action, task, result);
         result.details.actionResults.push(actionResult);
-        
-        if (action.required && actionResult.status === 'failure') {
+
+        if (action.required && actionResult.status === "failure") {
           throw new Error(`Required action '${action.id}' failed: ${actionResult.error}`);
         }
       }
@@ -1213,42 +1230,42 @@ export class DataCleanupManager {
 
       // Log task execution completion
       await this.auditLogger.logEvent({
-        type: 'system_event',
-        category: 'maintenance',
-        severity: 'info',
-        action: 'cleanup_task_completed',
+        type: "system_event",
+        category: "maintenance",
+        severity: "info",
+        action: "cleanup_task_completed",
         description: `Cleanup task '${task.name}' execution completed successfully`,
-        actor: { type: 'system', id: 'cleanup_manager' },
-        target: { type: 'system', id: task.id },
-        context: { taskId: task.id, executionId, summary: result.summary }
+        actor: { type: "system", id: "cleanup_manager" },
+        target: { type: "system", id: task.id },
+        context: { taskId: task.id, executionId, summary: result.summary },
       });
 
       return result;
     } catch (error) {
-      result.status = 'failure';
+      result.status = "failure";
       result.endTime = Date.now();
       result.duration = result.endTime - result.startTime;
       result.errors.push({
         id: this.utils.generateSessionToken(),
-        type: 'execution',
-        severity: 'critical',
+        type: "execution",
+        severity: "critical",
         message: error.message,
-        details: error.stack || '',
+        details: error.stack || "",
         timestamp: Date.now(),
         context: { taskId: task.id, executionId },
-        recoverable: false
+        recoverable: false,
       });
 
       // Log task execution failure
       await this.auditLogger.logEvent({
-        type: 'system_event',
-        category: 'maintenance',
-        severity: 'high',
-        action: 'cleanup_task_failed',
+        type: "system_event",
+        category: "maintenance",
+        severity: "high",
+        action: "cleanup_task_failed",
         description: `Cleanup task '${task.name}' execution failed: ${error.message}`,
-        actor: { type: 'system', id: 'cleanup_manager' },
-        target: { type: 'system', id: task.id },
-        context: { taskId: task.id, executionId, error: error.message }
+        actor: { type: "system", id: "cleanup_manager" },
+        target: { type: "system", id: task.id },
+        context: { taskId: task.id, executionId, error: error.message },
       });
 
       throw error;
@@ -1261,7 +1278,7 @@ export class DataCleanupManager {
   private async processTarget(
     target: CleanupTarget,
     task: CleanupTask,
-    options?: any
+    options?: any,
   ): Promise<TargetResult> {
     const startTime = Date.now();
     const targetResult: TargetResult = {
@@ -1270,7 +1287,7 @@ export class DataCleanupManager {
       itemsProcessed: 0,
       sizeProcessed: 0,
       duration: 0,
-      status: 'success'
+      status: "success",
     };
 
     try {
@@ -1281,16 +1298,16 @@ export class DataCleanupManager {
       // Process items in batches
       const batchSize = options?.batchSize || target.batchSize;
       const maxItems = options?.maxItems;
-      
+
       let processedCount = 0;
       for (let i = 0; i < items.length; i += batchSize) {
         if (maxItems && processedCount >= maxItems) {
           break;
         }
-        
+
         const batch = items.slice(i, i + batchSize);
         const batchResult = await this.processBatch(batch, target, task, options);
-        
+
         targetResult.itemsProcessed += batchResult.itemsProcessed;
         targetResult.sizeProcessed += batchResult.sizeProcessed || 0;
         processedCount += batchResult.itemsProcessed;
@@ -1299,7 +1316,7 @@ export class DataCleanupManager {
       targetResult.duration = Date.now() - startTime;
       return targetResult;
     } catch (error) {
-      targetResult.status = 'failure';
+      targetResult.status = "failure";
       targetResult.error = error.message;
       targetResult.duration = Date.now() - startTime;
       return targetResult;
@@ -1323,7 +1340,7 @@ export class DataCleanupManager {
     batch: any[],
     target: CleanupTarget,
     task: CleanupTask,
-    options?: any
+    options?: any,
   ): Promise<{ itemsProcessed: number; sizeProcessed?: number }> {
     // This would implement the actual batch processing logic
     console.log(`Processing batch of ${batch.length} items`);
@@ -1336,50 +1353,50 @@ export class DataCleanupManager {
   private async executeAction(
     action: CleanupAction,
     task: CleanupTask,
-    result: CleanupResult
+    result: CleanupResult,
   ): Promise<ActionResult> {
     const startTime = Date.now();
     const actionResult: ActionResult = {
       action,
       itemsAffected: 0,
       duration: 0,
-      status: 'success'
+      status: "success",
     };
 
     try {
       switch (action.type) {
-        case 'delete':
+        case "delete":
           actionResult.itemsAffected = result.summary.itemsProcessed;
           result.summary.itemsDeleted += actionResult.itemsAffected;
           break;
-          
-        case 'archive':
+
+        case "archive":
           actionResult.itemsAffected = result.summary.itemsProcessed;
           result.summary.itemsArchived += actionResult.itemsAffected;
           break;
-          
-        case 'anonymize':
+
+        case "anonymize":
           actionResult.itemsAffected = result.summary.itemsProcessed;
           result.summary.itemsAnonymized += actionResult.itemsAffected;
           break;
-          
-        case 'log':
+
+        case "log":
           await this.auditLogger.logEvent({
-            type: 'system_event',
-            category: 'maintenance',
-            severity: 'info',
-            action: 'cleanup_action_executed',
+            type: "system_event",
+            category: "maintenance",
+            severity: "info",
+            action: "cleanup_action_executed",
             description: `Cleanup action '${action.type}' executed for task '${task.name}'`,
-            actor: { type: 'system', id: 'cleanup_manager' },
-            target: { type: 'system', id: task.id }
+            actor: { type: "system", id: "cleanup_manager" },
+            target: { type: "system", id: task.id },
           });
           break;
-          
-        case 'notify':
+
+        case "notify":
           await this.notificationService.sendNotification({
-            type: 'cleanup_notification',
+            type: "cleanup_notification",
             message: `Cleanup task '${task.name}' executed`,
-            details: result.summary
+            details: result.summary,
           });
           break;
       }
@@ -1387,7 +1404,7 @@ export class DataCleanupManager {
       actionResult.duration = Date.now() - startTime;
       return actionResult;
     } catch (error) {
-      actionResult.status = 'failure';
+      actionResult.status = "failure";
       actionResult.error = error.message;
       actionResult.duration = Date.now() - startTime;
       return actionResult;
@@ -1399,14 +1416,14 @@ export class DataCleanupManager {
    */
   private async evaluateCondition(
     condition: CleanupCondition,
-    task: CleanupTask
+    task: CleanupTask,
   ): Promise<ConditionResult> {
     const startTime = Date.now();
     const conditionResult: ConditionResult = {
       condition,
       evaluated: true,
       result: false,
-      duration: 0
+      duration: 0,
     };
 
     try {
@@ -1427,14 +1444,14 @@ export class DataCleanupManager {
    */
   private async processCompliance(
     task: CleanupTask,
-    result: CleanupResult
+    result: CleanupResult,
   ): Promise<ComplianceResult> {
     return {
       frameworkResults: [],
       dataSubjectRights: [],
       auditTrail: [],
       notifications: [],
-      approvals: []
+      approvals: [],
     };
   }
 
@@ -1449,7 +1466,7 @@ export class DataCleanupManager {
       cpuUsage: 0,
       memoryUsage: 0,
       diskIO: 0,
-      networkIO: 0
+      networkIO: 0,
     };
   }
 
@@ -1458,19 +1475,19 @@ export class DataCleanupManager {
    */
   private updateTaskStatistics(task: CleanupTask, result: CleanupResult): void {
     task.statistics.totalRuns++;
-    
-    if (result.status === 'success') {
+
+    if (result.status === "success") {
       task.statistics.successfulRuns++;
     } else {
       task.statistics.failedRuns++;
       task.statistics.lastError = result.errors[0]?.message;
     }
-    
+
     task.statistics.lastRunDuration = result.duration;
-    task.statistics.averageRunDuration = 
-      (task.statistics.averageRunDuration * (task.statistics.totalRuns - 1) + result.duration) / 
+    task.statistics.averageRunDuration =
+      (task.statistics.averageRunDuration * (task.statistics.totalRuns - 1) + result.duration) /
       task.statistics.totalRuns;
-    
+
     task.statistics.totalItemsProcessed += result.summary.itemsProcessed;
     task.statistics.totalItemsDeleted += result.summary.itemsDeleted;
     task.statistics.totalItemsArchived += result.summary.itemsArchived;
@@ -1483,7 +1500,7 @@ export class DataCleanupManager {
    */
   private addToHistory(result: CleanupResult): void {
     this.cleanupHistory.push(result);
-    
+
     // Maintain history size limit
     if (this.cleanupHistory.length > this.maxHistorySize) {
       this.cleanupHistory = this.cleanupHistory.slice(-this.maxHistorySize);
@@ -1495,15 +1512,15 @@ export class DataCleanupManager {
    */
   private calculateNextRun(task: CleanupTask): number {
     const now = Date.now();
-    
+
     switch (task.schedule.type) {
-      case 'interval':
+      case "interval":
         return now + (task.schedule.interval || 0);
-        
-      case 'cron':
+
+      case "cron":
         // This would use a cron parser to calculate next run
         return now + 24 * 60 * 60 * 1000; // Default to 24 hours
-        
+
       default:
         return 0;
     }
@@ -1560,7 +1577,7 @@ export class DataCleanupManager {
       await this.scheduleTask(taskId);
     }
 
-    this.emit('task_updated', { taskId, task });
+    this.emit("task_updated", { taskId, task });
   }
 
   public async deleteTask(taskId: string): Promise<void> {
@@ -1575,7 +1592,7 @@ export class DataCleanupManager {
     // Remove from tasks
     this.tasks.delete(taskId);
 
-    this.emit('task_deleted', { taskId });
+    this.emit("task_deleted", { taskId });
   }
 
   /**
@@ -1601,7 +1618,7 @@ export class DataCleanupManager {
   private emit(event: string, data: any): void {
     const listeners = this.eventListeners.get(event);
     if (listeners) {
-      listeners.forEach(callback => {
+      listeners.forEach((callback) => {
         try {
           callback(data);
         } catch (error) {
@@ -1638,9 +1655,9 @@ export class DataCleanupManager {
       this.cleanupHistory = [];
       this.isInitialized = false;
 
-      console.log('Data cleanup manager shutdown completed');
+      console.log("Data cleanup manager shutdown completed");
     } catch (error) {
-      console.error('Error during cleanup manager shutdown:', error);
+      console.error("Error during cleanup manager shutdown:", error);
       throw error;
     }
   }
@@ -1658,21 +1675,21 @@ export class DataCleanupManager {
         historySize: this.cleanupHistory.length,
         auditLogger: await this.auditLogger.healthCheck(),
         complianceEngine: await this.complianceEngine.healthCheck(),
-        notificationService: await this.notificationService.healthCheck()
+        notificationService: await this.notificationService.healthCheck(),
       };
 
-      const allHealthy = Object.values(checks).every(check => 
-        typeof check === 'boolean' || typeof check === 'number' ? true : check.status === 'healthy'
+      const allHealthy = Object.values(checks).every((check) =>
+        typeof check === "boolean" || typeof check === "number" ? true : check.status === "healthy",
       );
 
       return {
-        status: allHealthy ? 'healthy' : 'unhealthy',
-        details: checks
+        status: allHealthy ? "healthy" : "unhealthy",
+        details: checks,
       };
     } catch (error) {
       return {
-        status: 'error',
-        details: { error: error.message }
+        status: "error",
+        details: { error: error.message },
       };
     }
   }
@@ -1684,10 +1701,10 @@ export class DataCleanupManager {
 class AuditLogger {
   async initialize(): Promise<void> {}
   async logEvent(event: any): Promise<void> {
-    console.log('Audit log:', event.action);
+    console.log("Audit log:", event.action);
   }
   async healthCheck(): Promise<{ status: string }> {
-    return { status: 'healthy' };
+    return { status: "healthy" };
   }
   async shutdown(): Promise<void> {}
 }
@@ -1695,7 +1712,7 @@ class AuditLogger {
 class ComplianceEngine {
   async initialize(): Promise<void> {}
   async healthCheck(): Promise<{ status: string }> {
-    return { status: 'healthy' };
+    return { status: "healthy" };
   }
   async shutdown(): Promise<void> {}
 }
@@ -1703,10 +1720,10 @@ class ComplianceEngine {
 class NotificationService {
   async initialize(): Promise<void> {}
   async sendNotification(notification: any): Promise<void> {
-    console.log('Notification sent:', notification.type);
+    console.log("Notification sent:", notification.type);
   }
   async healthCheck(): Promise<{ status: string }> {
-    return { status: 'healthy' };
+    return { status: "healthy" };
   }
   async shutdown(): Promise<void> {}
 }

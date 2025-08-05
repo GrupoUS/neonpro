@@ -3,11 +3,11 @@
 // Epic 7.3: React hooks for follow-up automation UI integration
 // =====================================================================================
 
-'use client';
+"use client";
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'react-hot-toast';
-import { treatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
+import type { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import type { toast } from "react-hot-toast";
+import type { treatmentFollowupService } from "@/app/lib/services/treatment-followup-service";
 import type {
   TreatmentFollowup,
   FollowupTemplate,
@@ -19,22 +19,27 @@ import type {
   TemplateFilters,
   ProtocolFilters,
   FollowupAnalytics,
-  FollowupDashboardSummary
-} from '@/app/types/treatment-followups';
+  FollowupDashboardSummary,
+} from "@/app/types/treatment-followups";
 
 // =====================================================================================
 // QUERY KEYS
 // =====================================================================================
 
 const QUERY_KEYS = {
-  followups: (filters?: FollowupFilters) => ['followups', filters],
-  followup: (id: string) => ['followups', id],
-  templates: (filters?: TemplateFilters) => ['followup-templates', filters],
-  template: (id: string) => ['followup-templates', id],
-  protocols: (filters?: ProtocolFilters) => ['treatment-protocols', filters],
-  protocol: (id: string) => ['treatment-protocols', id],
-  analytics: (clinicId: string, dateFrom?: string, dateTo?: string) => ['followup-analytics', clinicId, dateFrom, dateTo],
-  dashboardSummary: (clinicId: string) => ['followup-dashboard', clinicId]
+  followups: (filters?: FollowupFilters) => ["followups", filters],
+  followup: (id: string) => ["followups", id],
+  templates: (filters?: TemplateFilters) => ["followup-templates", filters],
+  template: (id: string) => ["followup-templates", id],
+  protocols: (filters?: ProtocolFilters) => ["treatment-protocols", filters],
+  protocol: (id: string) => ["treatment-protocols", id],
+  analytics: (clinicId: string, dateFrom?: string, dateTo?: string) => [
+    "followup-analytics",
+    clinicId,
+    dateFrom,
+    dateTo,
+  ],
+  dashboardSummary: (clinicId: string) => ["followup-dashboard", clinicId],
 } as const;
 
 // =====================================================================================
@@ -51,7 +56,7 @@ export function useFollowups(filters?: FollowupFilters) {
     staleTime: 1000 * 60 * 5, // 5 minutes
     cacheTime: 1000 * 60 * 10, // 10 minutes
     retry: 2,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
   });
 }
 
@@ -65,7 +70,7 @@ export function useFollowup(id: string) {
     enabled: !!id,
     staleTime: 1000 * 60 * 5,
     cacheTime: 1000 * 60 * 10,
-    retry: 2
+    retry: 2,
   });
 }
 
@@ -79,18 +84,18 @@ export function useCreateFollowup() {
     mutationFn: (data: CreateFollowupData) => treatmentFollowupService.createFollowup(data),
     onSuccess: (newFollowup) => {
       // Invalidate and refetch follow-ups list
-      queryClient.invalidateQueries({ queryKey: ['followups'] });
-      queryClient.invalidateQueries({ queryKey: ['followup-dashboard'] });
-      
+      queryClient.invalidateQueries({ queryKey: ["followups"] });
+      queryClient.invalidateQueries({ queryKey: ["followup-dashboard"] });
+
       // Add to cache
       queryClient.setQueryData(QUERY_KEYS.followup(newFollowup.id), newFollowup);
-      
-      toast.success('Follow-up criado com sucesso!');
+
+      toast.success("Follow-up criado com sucesso!");
     },
     onError: (error: Error) => {
-      console.error('Error creating follow-up:', error);
+      console.error("Error creating follow-up:", error);
       toast.error(`Erro ao criar follow-up: ${error.message}`);
-    }
+    },
   });
 }
 
@@ -106,17 +111,17 @@ export function useUpdateFollowup() {
     onSuccess: (updatedFollowup) => {
       // Update specific follow-up in cache
       queryClient.setQueryData(QUERY_KEYS.followup(updatedFollowup.id), updatedFollowup);
-      
+
       // Invalidate follow-ups list
-      queryClient.invalidateQueries({ queryKey: ['followups'] });
-      queryClient.invalidateQueries({ queryKey: ['followup-dashboard'] });
-      
-      toast.success('Follow-up atualizado com sucesso!');
+      queryClient.invalidateQueries({ queryKey: ["followups"] });
+      queryClient.invalidateQueries({ queryKey: ["followup-dashboard"] });
+
+      toast.success("Follow-up atualizado com sucesso!");
     },
     onError: (error: Error) => {
-      console.error('Error updating follow-up:', error);
+      console.error("Error updating follow-up:", error);
       toast.error(`Erro ao atualizar follow-up: ${error.message}`);
-    }
+    },
   });
 }
 
@@ -131,17 +136,17 @@ export function useDeleteFollowup() {
     onSuccess: (_, deletedId) => {
       // Remove from cache
       queryClient.removeQueries({ queryKey: QUERY_KEYS.followup(deletedId) });
-      
+
       // Invalidate follow-ups list
-      queryClient.invalidateQueries({ queryKey: ['followups'] });
-      queryClient.invalidateQueries({ queryKey: ['followup-dashboard'] });
-      
-      toast.success('Follow-up excluído com sucesso!');
+      queryClient.invalidateQueries({ queryKey: ["followups"] });
+      queryClient.invalidateQueries({ queryKey: ["followup-dashboard"] });
+
+      toast.success("Follow-up excluído com sucesso!");
     },
     onError: (error: Error) => {
-      console.error('Error deleting follow-up:', error);
+      console.error("Error deleting follow-up:", error);
       toast.error(`Erro ao excluir follow-up: ${error.message}`);
-    }
+    },
   });
 }
 
@@ -157,17 +162,17 @@ export function useCompleteFollowup() {
     onSuccess: (completedFollowup) => {
       // Update specific follow-up in cache
       queryClient.setQueryData(QUERY_KEYS.followup(completedFollowup.id), completedFollowup);
-      
+
       // Invalidate follow-ups list
-      queryClient.invalidateQueries({ queryKey: ['followups'] });
-      queryClient.invalidateQueries({ queryKey: ['followup-dashboard'] });
-      
-      toast.success('Follow-up marcado como concluído!');
+      queryClient.invalidateQueries({ queryKey: ["followups"] });
+      queryClient.invalidateQueries({ queryKey: ["followup-dashboard"] });
+
+      toast.success("Follow-up marcado como concluído!");
     },
     onError: (error: Error) => {
-      console.error('Error completing follow-up:', error);
+      console.error("Error completing follow-up:", error);
       toast.error(`Erro ao concluir follow-up: ${error.message}`);
-    }
+    },
   });
 }
 
@@ -185,7 +190,7 @@ export function useFollowupTemplates(filters?: TemplateFilters) {
     staleTime: 1000 * 60 * 10, // 10 minutes (templates change less frequently)
     cacheTime: 1000 * 60 * 30, // 30 minutes
     retry: 2,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
   });
 }
 
@@ -199,17 +204,17 @@ export function useCreateFollowupTemplate() {
     mutationFn: (data: CreateFollowupTemplateData) => treatmentFollowupService.createTemplate(data),
     onSuccess: (newTemplate) => {
       // Invalidate templates list
-      queryClient.invalidateQueries({ queryKey: ['followup-templates'] });
-      
+      queryClient.invalidateQueries({ queryKey: ["followup-templates"] });
+
       // Add to cache
       queryClient.setQueryData(QUERY_KEYS.template(newTemplate.id), newTemplate);
-      
-      toast.success('Template de follow-up criado com sucesso!');
+
+      toast.success("Template de follow-up criado com sucesso!");
     },
     onError: (error: Error) => {
-      console.error('Error creating follow-up template:', error);
+      console.error("Error creating follow-up template:", error);
       toast.error(`Erro ao criar template: ${error.message}`);
-    }
+    },
   });
 }
 
@@ -225,16 +230,16 @@ export function useUpdateFollowupTemplate() {
     onSuccess: (updatedTemplate) => {
       // Update specific template in cache
       queryClient.setQueryData(QUERY_KEYS.template(updatedTemplate.id), updatedTemplate);
-      
+
       // Invalidate templates list
-      queryClient.invalidateQueries({ queryKey: ['followup-templates'] });
-      
-      toast.success('Template atualizado com sucesso!');
+      queryClient.invalidateQueries({ queryKey: ["followup-templates"] });
+
+      toast.success("Template atualizado com sucesso!");
     },
     onError: (error: Error) => {
-      console.error('Error updating follow-up template:', error);
+      console.error("Error updating follow-up template:", error);
       toast.error(`Erro ao atualizar template: ${error.message}`);
-    }
+    },
   });
 }
 
@@ -252,7 +257,7 @@ export function useTreatmentProtocols(filters?: ProtocolFilters) {
     staleTime: 1000 * 60 * 15, // 15 minutes (protocols change rarely)
     cacheTime: 1000 * 60 * 60, // 1 hour
     retry: 2,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
   });
 }
 
@@ -263,20 +268,21 @@ export function useCreateTreatmentProtocol() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateTreatmentProtocolData) => treatmentFollowupService.createProtocol(data),
+    mutationFn: (data: CreateTreatmentProtocolData) =>
+      treatmentFollowupService.createProtocol(data),
     onSuccess: (newProtocol) => {
       // Invalidate protocols list
-      queryClient.invalidateQueries({ queryKey: ['treatment-protocols'] });
-      
+      queryClient.invalidateQueries({ queryKey: ["treatment-protocols"] });
+
       // Add to cache
       queryClient.setQueryData(QUERY_KEYS.protocol(newProtocol.id), newProtocol);
-      
-      toast.success('Protocolo de tratamento criado com sucesso!');
+
+      toast.success("Protocolo de tratamento criado com sucesso!");
     },
     onError: (error: Error) => {
-      console.error('Error creating treatment protocol:', error);
+      console.error("Error creating treatment protocol:", error);
       toast.error(`Erro ao criar protocolo: ${error.message}`);
-    }
+    },
   });
 }
 
@@ -295,7 +301,7 @@ export function useFollowupAnalytics(clinicId: string, dateFrom?: string, dateTo
     staleTime: 1000 * 60 * 5, // 5 minutes
     cacheTime: 1000 * 60 * 15, // 15 minutes
     retry: 2,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
   });
 }
 
@@ -311,7 +317,7 @@ export function useFollowupDashboardSummary(clinicId: string) {
     cacheTime: 1000 * 60 * 5, // 5 minutes
     retry: 2,
     refetchOnWindowFocus: true, // Refetch when returning to dashboard
-    refetchInterval: 1000 * 60 * 5 // Auto-refresh every 5 minutes
+    refetchInterval: 1000 * 60 * 5, // Auto-refresh every 5 minutes
   });
 }
 
@@ -331,7 +337,7 @@ export function useTodayFollowups(clinicId: string) {
     clinic_id: clinicId,
     date_from: todayStart.toISOString(),
     date_to: todayEnd.toISOString(),
-    limit: 50
+    limit: 50,
   });
 }
 
@@ -341,8 +347,8 @@ export function useTodayFollowups(clinicId: string) {
 export function usePendingFollowups(clinicId: string) {
   return useFollowups({
     clinic_id: clinicId,
-    status: ['pending'],
-    limit: 100
+    status: ["pending"],
+    limit: 100,
   });
 }
 
@@ -354,9 +360,9 @@ export function useOverdueFollowups(clinicId: string) {
 
   return useFollowups({
     clinic_id: clinicId,
-    status: ['pending'],
+    status: ["pending"],
     date_to: now,
-    limit: 50
+    limit: 50,
   });
 }
 
@@ -367,7 +373,7 @@ export function useActiveFollowupTemplates(clinicId: string) {
   return useFollowupTemplates({
     clinic_id: clinicId,
     active: true,
-    limit: 100
+    limit: 100,
   });
 }
 
@@ -378,6 +384,6 @@ export function useActiveTreatmentProtocols(clinicId: string) {
   return useTreatmentProtocols({
     clinic_id: clinicId,
     active: true,
-    limit: 100
+    limit: 100,
   });
 }

@@ -1,7 +1,7 @@
 "use client";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { ReactNode } from "react";
+import type { Card, CardContent, CardHeader } from "@/components/ui/card";
+import type { ReactNode } from "react";
 
 interface KPICardProps {
   title: string;
@@ -48,8 +48,7 @@ export function KPICard({
 
   const getTrendColor = () => {
     // Para métricas onde "down" é positivo (como tempo de espera, custo)
-    const isInverseTrend =
-      format === "time" || title.toLowerCase().includes("custo");
+    const isInverseTrend = format === "time" || title.toLowerCase().includes("custo");
 
     if (isInverseTrend) {
       switch (trend) {
@@ -73,9 +72,7 @@ export function KPICard({
   };
 
   return (
-    <Card
-      className={`hover:shadow-lg transition-shadow duration-200 ${className}`}
-    >
+    <Card className={`hover:shadow-lg transition-shadow duration-200 ${className}`}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
         {icon && (
@@ -88,9 +85,7 @@ export function KPICard({
         <div className="flex items-baseline justify-between">
           <div>
             <p className="text-2xl font-bold">{formatValue(value, format)}</p>
-            <div
-              className={`flex items-center space-x-1 text-xs ${getTrendColor()}`}
-            >
+            <div className={`flex items-center space-x-1 text-xs ${getTrendColor()}`}>
               {getTrendIcon()}
               <span>
                 {change > 0 ? "+" : ""}

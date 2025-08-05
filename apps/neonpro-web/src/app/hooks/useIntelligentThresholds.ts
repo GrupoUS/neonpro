@@ -1,8 +1,13 @@
 // Custom Hook for Intelligent Threshold Management
 // Story 6.2: Automated Reorder Alerts + Threshold Management
 
-import { DemandForecast, ReorderAlert, ReorderThreshold, ThresholdOptimization } from '@/app/types/reorder-alerts';
-import { useCallback, useEffect, useState } from 'react';
+import type {
+  DemandForecast,
+  ReorderAlert,
+  ReorderThreshold,
+  ThresholdOptimization,
+} from "@/app/types/reorder-alerts";
+import type { useCallback, useEffect, useState } from "react";
 
 interface ThresholdFilters {
   item_category?: string[];
@@ -34,20 +39,20 @@ export function useIntelligentThresholds({
   const fetchThresholds = useCallback(async () => {
     try {
       const params = new URLSearchParams({ clinic_id: clinicId });
-      
+
       if (filters?.item_category?.length) {
-        params.append('item_category', filters.item_category[0]); // API expects single category for now
+        params.append("item_category", filters.item_category[0]); // API expects single category for now
       }
       if (filters?.auto_reorder_enabled !== undefined) {
-        params.append('auto_reorder_enabled', filters.auto_reorder_enabled.toString());
+        params.append("auto_reorder_enabled", filters.auto_reorder_enabled.toString());
       }
       if (filters?.needs_optimization !== undefined) {
-        params.append('needs_optimization', filters.needs_optimization.toString());
+        params.append("needs_optimization", filters.needs_optimization.toString());
       }
 
       const response = await fetch(`/api/inventory/thresholds?${params}`);
-      if (!response.ok) throw new Error('Failed to fetch thresholds');
-      
+      if (!response.ok) throw new Error("Failed to fetch thresholds");
+
       const data = await response.json();
       setThresholds(data.data);
     } catch (err: any) {
@@ -59,8 +64,8 @@ export function useIntelligentThresholds({
   const fetchOptimizations = useCallback(async () => {
     try {
       const response = await fetch(`/api/inventory/thresholds/optimize?clinic_id=${clinicId}`);
-      if (!response.ok) throw new Error('Failed to fetch optimizations');
-      
+      if (!response.ok) throw new Error("Failed to fetch optimizations");
+
       const data = await response.json();
       setOptimizations(data.data);
     } catch (err: any) {
@@ -72,8 +77,8 @@ export function useIntelligentThresholds({
   const fetchAlertStats = useCallback(async () => {
     try {
       const response = await fetch(`/api/inventory/alerts/stats?clinic_id=${clinicId}`);
-      if (!response.ok) throw new Error('Failed to fetch alert stats');
-      
+      if (!response.ok) throw new Error("Failed to fetch alert stats");
+
       const data = await response.json();
       setAlertStats(data.data);
     } catch (err: any) {
@@ -85,13 +90,9 @@ export function useIntelligentThresholds({
   const loadData = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
-      await Promise.all([
-        fetchThresholds(),
-        fetchOptimizations(),
-        fetchAlertStats(),
-      ]);
+      await Promise.all([fetchThresholds(), fetchOptimizations(), fetchAlertStats()]);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -100,193 +101,220 @@ export function useIntelligentThresholds({
   }, [fetchThresholds, fetchOptimizations, fetchAlertStats]);
 
   // Create new threshold
-  const createThreshold = useCallback(async (thresholdData: Omit<ReorderThreshold, 'id' | 'created_at' | 'updated_at'>) => {
-    try {
-      const response = await fetch('/api/inventory/thresholds', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(thresholdData),
-      });
+  const createThreshold = useCallback(
+    async (thresholdData: Omit<ReorderThreshold, "id" | "created_at" | "updated_at">) => {
+      try {
+        const response = await fetch("/api/inventory/thresholds", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(thresholdData),
+        });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create threshold');
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to create threshold");
+        }
+
+        const data = await response.json();
+        await fetchThresholds(); // Refresh list
+        return data.data;
+      } catch (err: any) {
+        setError(err.message);
+        throw err;
       }
-
-      const data = await response.json();
-      await fetchThresholds(); // Refresh list
-      return data.data;
-    } catch (err: any) {
-      setError(err.message);
-      throw err;
-    }
-  }, [fetchThresholds]);
+    },
+    [fetchThresholds],
+  );
 
   // Update threshold
-  const updateThreshold = useCallback(async (id: string, updates: Partial<ReorderThreshold>) => {
-    try {
-      const response = await fetch(`/api/inventory/thresholds/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates),
-      });
+  const updateThreshold = useCallback(
+    async (id: string, updates: Partial<ReorderThreshold>) => {
+      try {
+        const response = await fetch(`/api/inventory/thresholds/${id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updates),
+        });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update threshold');
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to update threshold");
+        }
+
+        const data = await response.json();
+        await fetchThresholds(); // Refresh list
+        return data.data;
+      } catch (err: any) {
+        setError(err.message);
+        throw err;
       }
-
-      const data = await response.json();
-      await fetchThresholds(); // Refresh list
-      return data.data;
-    } catch (err: any) {
-      setError(err.message);
-      throw err;
-    }
-  }, [fetchThresholds]);
+    },
+    [fetchThresholds],
+  );
 
   // Delete threshold (soft delete)
-  const deleteThreshold = useCallback(async (id: string) => {
-    try {
-      const response = await fetch(`/api/inventory/thresholds/${id}`, {
-        method: 'DELETE',
-      });
+  const deleteThreshold = useCallback(
+    async (id: string) => {
+      try {
+        const response = await fetch(`/api/inventory/thresholds/${id}`, {
+          method: "DELETE",
+        });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to delete threshold');
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to delete threshold");
+        }
+
+        await fetchThresholds(); // Refresh list
+      } catch (err: any) {
+        setError(err.message);
+        throw err;
       }
-
-      await fetchThresholds(); // Refresh list
-    } catch (err: any) {
-      setError(err.message);
-      throw err;
-    }
-  }, [fetchThresholds]);
+    },
+    [fetchThresholds],
+  );
 
   // Generate demand forecast
-  const generateForecast = useCallback(async (
-    itemId: string,
-    forecastPeriod: 'daily' | 'weekly' | 'monthly' | 'quarterly',
-    forecastDate?: Date
-  ): Promise<DemandForecast> => {
-    try {
-      const response = await fetch('/api/inventory/forecasting', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          item_id: itemId,
-          clinic_id: clinicId,
-          forecast_period: forecastPeriod,
-          forecast_date: forecastDate?.toISOString() || new Date().toISOString(),
-        }),
-      });
+  const generateForecast = useCallback(
+    async (
+      itemId: string,
+      forecastPeriod: "daily" | "weekly" | "monthly" | "quarterly",
+      forecastDate?: Date,
+    ): Promise<DemandForecast> => {
+      try {
+        const response = await fetch("/api/inventory/forecasting", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            item_id: itemId,
+            clinic_id: clinicId,
+            forecast_period: forecastPeriod,
+            forecast_date: forecastDate?.toISOString() || new Date().toISOString(),
+          }),
+        });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to generate forecast');
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to generate forecast");
+        }
+
+        const data = await response.json();
+        return data.data;
+      } catch (err: any) {
+        setError(err.message);
+        throw err;
       }
-
-      const data = await response.json();
-      return data.data;
-    } catch (err: any) {
-      setError(err.message);
-      throw err;
-    }
-  }, [clinicId]);
+    },
+    [clinicId],
+  );
 
   // Bulk forecast generation
-  const generateBulkForecast = useCallback(async (
-    items: Array<{ item_id: string; forecast_period?: 'daily' | 'weekly' | 'monthly' | 'quarterly' }>,
-    forecastDate?: Date
-  ) => {
-    try {
-      const response = await fetch('/api/inventory/forecasting', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          items,
-          clinic_id: clinicId,
-          forecast_date: forecastDate?.toISOString() || new Date().toISOString(),
-        }),
-      });
+  const generateBulkForecast = useCallback(
+    async (
+      items: Array<{
+        item_id: string;
+        forecast_period?: "daily" | "weekly" | "monthly" | "quarterly";
+      }>,
+      forecastDate?: Date,
+    ) => {
+      try {
+        const response = await fetch("/api/inventory/forecasting", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            items,
+            clinic_id: clinicId,
+            forecast_date: forecastDate?.toISOString() || new Date().toISOString(),
+          }),
+        });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to generate bulk forecast');
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to generate bulk forecast");
+        }
+
+        const data = await response.json();
+        return data;
+      } catch (err: any) {
+        setError(err.message);
+        throw err;
       }
-
-      const data = await response.json();
-      return data;
-    } catch (err: any) {
-      setError(err.message);
-      throw err;
-    }
-  }, [clinicId]);
+    },
+    [clinicId],
+  );
 
   // Alert actions
-  const acknowledgeAlert = useCallback(async (alertId: string, userId: string, notes?: string) => {
-    try {
-      const response = await fetch(`/api/inventory/alerts/${alertId}/acknowledge`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: userId, notes }),
-      });
+  const acknowledgeAlert = useCallback(
+    async (alertId: string, userId: string, notes?: string) => {
+      try {
+        const response = await fetch(`/api/inventory/alerts/${alertId}/acknowledge`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: userId, notes }),
+        });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to acknowledge alert');
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to acknowledge alert");
+        }
+
+        await fetchAlertStats(); // Refresh stats
+        return response.json();
+      } catch (err: any) {
+        setError(err.message);
+        throw err;
       }
+    },
+    [fetchAlertStats],
+  );
 
-      await fetchAlertStats(); // Refresh stats
-      return response.json();
-    } catch (err: any) {
-      setError(err.message);
-      throw err;
-    }
-  }, [fetchAlertStats]);
+  const resolveAlert = useCallback(
+    async (alertId: string, userId: string, notes?: string) => {
+      try {
+        const response = await fetch(`/api/inventory/alerts/${alertId}/resolve`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: userId, notes }),
+        });
 
-  const resolveAlert = useCallback(async (alertId: string, userId: string, notes?: string) => {
-    try {
-      const response = await fetch(`/api/inventory/alerts/${alertId}/resolve`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: userId, notes }),
-      });
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to resolve alert");
+        }
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to resolve alert');
+        await fetchAlertStats(); // Refresh stats
+        return response.json();
+      } catch (err: any) {
+        setError(err.message);
+        throw err;
       }
+    },
+    [fetchAlertStats],
+  );
 
-      await fetchAlertStats(); // Refresh stats
-      return response.json();
-    } catch (err: any) {
-      setError(err.message);
-      throw err;
-    }
-  }, [fetchAlertStats]);
+  const escalateAlert = useCallback(
+    async (alertId: string, escalateTo: string, level: number) => {
+      try {
+        const response = await fetch(`/api/inventory/alerts/${alertId}/escalate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ escalate_to: escalateTo, level }),
+        });
 
-  const escalateAlert = useCallback(async (alertId: string, escalateTo: string, level: number) => {
-    try {
-      const response = await fetch(`/api/inventory/alerts/${alertId}/escalate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ escalate_to: escalateTo, level }),
-      });
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to escalate alert");
+        }
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to escalate alert');
+        await fetchAlertStats(); // Refresh stats
+        return response.json();
+      } catch (err: any) {
+        setError(err.message);
+        throw err;
       }
-
-      await fetchAlertStats(); // Refresh stats
-      return response.json();
-    } catch (err: any) {
-      setError(err.message);
-      throw err;
-    }
-  }, [fetchAlertStats]);
+    },
+    [fetchAlertStats],
+  );
 
   // Initial load
   useEffect(() => {
@@ -307,11 +335,11 @@ export function useIntelligentThresholds({
     optimizations,
     alerts,
     alertStats,
-    
+
     // State
     loading,
     error,
-    
+
     // Actions
     refresh: loadData,
     createThreshold,
@@ -322,11 +350,11 @@ export function useIntelligentThresholds({
     acknowledgeAlert,
     resolveAlert,
     escalateAlert,
-    
+
     // Computed values
     totalThresholds: thresholds.length,
-    activeThresholds: thresholds.filter(t => t.is_active).length,
-    autoReorderEnabled: thresholds.filter(t => t.auto_reorder_enabled).length,
+    activeThresholds: thresholds.filter((t) => t.is_active).length,
+    autoReorderEnabled: thresholds.filter((t) => t.auto_reorder_enabled).length,
     optimizationOpportunities: optimizations.length,
     totalPotentialSavings: optimizations.reduce((sum, opt) => sum + opt.potential_savings, 0),
   };

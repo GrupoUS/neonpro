@@ -1,65 +1,65 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server'
-import { cookies } from 'next/headers';
-import { z } from 'zod';
-import { createkpiCalculationService } from '@/lib/dashboard/executive/kpi-calculation-service';
+import type { NextRequest, NextResponse } from "next/server";
+import type { createClient } from "@/lib/supabase/server";
+import type { cookies } from "next/headers";
+import type { z } from "zod";
+import type { createkpiCalculationService } from "@/lib/dashboard/executive/kpi-calculation-service";
 
 // Schema for KPI calculation request
 const CalculateKPIsSchema = z.object({
   period: z.object({
     start: z.string().datetime(),
-    end: z.string().datetime()
+    end: z.string().datetime(),
   }),
-  categories: z.array(z.enum(['financial', 'operational', 'patients', 'staff'])).optional(),
+  categories: z.array(z.enum(["financial", "operational", "patients", "staff"])).optional(),
   kpiIds: z.array(z.string()).optional(),
-  forceRecalculation: z.boolean().default(false)
+  forceRecalculation: z.boolean().default(false),
 });
 
 // GET /api/dashboard/executive/kpis
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'NÃ£o autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "NÃ£o autorizado" }, { status: 401 });
     }
 
     // Get user's clinic
     const { data: clinicUser } = await supabase
-      .from('clinic_users')
-      .select('clinic_id')
-      .eq('user_id', user.id)
+      .from("clinic_users")
+      .select("clinic_id")
+      .eq("user_id", user.id)
       .single();
 
     if (!clinicUser) {
       return NextResponse.json(
-        { error: 'UsuÃ¡rio nÃ£o associado a uma clÃ­nica' },
-        { status: 403 }
+        { error: "UsuÃ¡rio nÃ£o associado a uma clÃ­nica" },
+        { status: 403 },
       );
     }
 
     const { searchParams } = new URL(request.url);
-    const category = searchParams.get('category');
-    const active = searchParams.get('active');
+    const category = searchParams.get("category");
+    const active = searchParams.get("active");
 
     // Get KPI definitions
     let query = supabase
-      .from('kpi_definitions')
-      .select('*')
-      .eq('clinic_id', clinicUser.clinic_id)
-      .order('display_order', { ascending: true });
+      .from("kpi_definitions")
+      .select("*")
+      .eq("clinic_id", clinicUser.clinic_id)
+      .order("display_order", { ascending: true });
 
     if (category) {
-      query = query.eq('category', category);
+      query = query.eq("category", category);
     }
 
     if (active !== null) {
-      query = query.eq('is_active', active === 'true');
+      query = query.eq("is_active", active === "true");
     }
 
     const { data: kpiDefinitions, error } = await query;
@@ -70,11 +70,8 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ kpiDefinitions });
   } catch (error) {
-    console.error('Error fetching KPI definitions:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    console.error("Error fetching KPI definitions:", error);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
 }
 
@@ -82,27 +79,27 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'NÃ£o autorizado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "NÃ£o autorizado" }, { status: 401 });
     }
 
     // Get user's clinic
     const { data: clinicUser } = await supabase
-      .from('clinic_users')
-      .select('clinic_id')
-      .eq('user_id', user.id)
+      .from("clinic_users")
+      .select("clinic_id")
+      .eq("user_id", user.id)
       .single();
 
     if (!clinicUser) {
       return NextResponse.json(
-        { error: 'UsuÃ¡rio nÃ£o associado a uma clÃ­nica' },
-        { status: 403 }
+        { error: "UsuÃ¡rio nÃ£o associado a uma clÃ­nica" },
+        { status: 403 },
       );
     }
 
@@ -111,7 +108,7 @@ export async function POST(request: NextRequest) {
     const validatedData = CalculateKPIsSchema.parse(body);
 
     const kpiService = new createkpiCalculationService(supabase, clinicUser.clinic_id);
-    
+
     // Calculate KPIs based on request
     const results = await kpiService.calculateKPIsForPeriod(
       new Date(validatedData.period.start),
@@ -119,24 +116,20 @@ export async function POST(request: NextRequest) {
       {
         categories: validatedData.categories,
         kpiIds: validatedData.kpiIds,
-        forceRecalculation: validatedData.forceRecalculation
-      }
+        forceRecalculation: validatedData.forceRecalculation,
+      },
     );
 
     return NextResponse.json({ results });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Dados invÃ¡lidos', details: error.errors },
-        { status: 400 }
+        { error: "Dados invÃ¡lidos", details: error.errors },
+        { status: 400 },
       );
     }
 
-    console.error('Error calculating KPIs:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    console.error("Error calculating KPIs:", error);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
 }
-

@@ -1,29 +1,48 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { 
-  Plus, 
-  Search, 
-  Filter, 
-  Calendar, 
-  Heart, 
-  Brain, 
-  Bone, 
-  Eye, 
-  Ear, 
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type { Badge } from "@/components/ui/badge";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Separator } from "@/components/ui/separator";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type {
+  Plus,
+  Search,
+  Filter,
+  Calendar,
+  Heart,
+  Brain,
+  Bone,
+  Eye,
+  Ear,
   Lungs,
   Activity,
   AlertTriangle,
@@ -39,10 +58,10 @@ import {
   Shield,
   TrendingUp,
   TrendingDown,
-  Minus
-} from 'lucide-react';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+  Minus,
+} from "lucide-react";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
 
 // Types
 interface MedicalHistory {
@@ -74,59 +93,173 @@ interface MedicalHistoryManagerProps {
 }
 
 const MEDICAL_CATEGORIES = [
-  { value: 'cardiovascular', label: 'Cardiovascular', icon: <Heart className="w-4 h-4" />, color: 'bg-red-100 text-red-800' },
-  { value: 'respiratory', label: 'Respiratório', icon: <Lungs className="w-4 h-4" />, color: 'bg-blue-100 text-blue-800' },
-  { value: 'neurological', label: 'Neurológico', icon: <Brain className="w-4 h-4" />, color: 'bg-purple-100 text-purple-800' },
-  { value: 'musculoskeletal', label: 'Musculoesquelético', icon: <Bone className="w-4 h-4" />, color: 'bg-gray-100 text-gray-800' },
-  { value: 'gastrointestinal', label: 'Gastrointestinal', icon: <Activity className="w-4 h-4" />, color: 'bg-green-100 text-green-800' },
-  { value: 'endocrine', label: 'Endócrino', icon: <Pill className="w-4 h-4" />, color: 'bg-yellow-100 text-yellow-800' },
-  { value: 'dermatological', label: 'Dermatológico', icon: <Shield className="w-4 h-4" />, color: 'bg-orange-100 text-orange-800' },
-  { value: 'ophthalmological', label: 'Oftalmológico', icon: <Eye className="w-4 h-4" />, color: 'bg-indigo-100 text-indigo-800' },
-  { value: 'otolaryngological', label: 'Otorrinolaringológico', icon: <Ear className="w-4 h-4" />, color: 'bg-pink-100 text-pink-800' },
-  { value: 'psychiatric', label: 'Psiquiátrico', icon: <Brain className="w-4 h-4" />, color: 'bg-teal-100 text-teal-800' },
-  { value: 'allergies', label: 'Alergias', icon: <AlertTriangle className="w-4 h-4" />, color: 'bg-red-100 text-red-800' },
-  { value: 'medications', label: 'Medicamentos', icon: <Pill className="w-4 h-4" />, color: 'bg-blue-100 text-blue-800' },
-  { value: 'surgeries', label: 'Cirurgias', icon: <Activity className="w-4 h-4" />, color: 'bg-purple-100 text-purple-800' },
-  { value: 'family_history', label: 'Histórico Familiar', icon: <History className="w-4 h-4" />, color: 'bg-green-100 text-green-800' },
-  { value: 'social_history', label: 'Histórico Social', icon: <FileText className="w-4 h-4" />, color: 'bg-gray-100 text-gray-800' },
-  { value: 'other', label: 'Outros', icon: <FileText className="w-4 h-4" />, color: 'bg-gray-100 text-gray-800' }
+  {
+    value: "cardiovascular",
+    label: "Cardiovascular",
+    icon: <Heart className="w-4 h-4" />,
+    color: "bg-red-100 text-red-800",
+  },
+  {
+    value: "respiratory",
+    label: "Respiratório",
+    icon: <Lungs className="w-4 h-4" />,
+    color: "bg-blue-100 text-blue-800",
+  },
+  {
+    value: "neurological",
+    label: "Neurológico",
+    icon: <Brain className="w-4 h-4" />,
+    color: "bg-purple-100 text-purple-800",
+  },
+  {
+    value: "musculoskeletal",
+    label: "Musculoesquelético",
+    icon: <Bone className="w-4 h-4" />,
+    color: "bg-gray-100 text-gray-800",
+  },
+  {
+    value: "gastrointestinal",
+    label: "Gastrointestinal",
+    icon: <Activity className="w-4 h-4" />,
+    color: "bg-green-100 text-green-800",
+  },
+  {
+    value: "endocrine",
+    label: "Endócrino",
+    icon: <Pill className="w-4 h-4" />,
+    color: "bg-yellow-100 text-yellow-800",
+  },
+  {
+    value: "dermatological",
+    label: "Dermatológico",
+    icon: <Shield className="w-4 h-4" />,
+    color: "bg-orange-100 text-orange-800",
+  },
+  {
+    value: "ophthalmological",
+    label: "Oftalmológico",
+    icon: <Eye className="w-4 h-4" />,
+    color: "bg-indigo-100 text-indigo-800",
+  },
+  {
+    value: "otolaryngological",
+    label: "Otorrinolaringológico",
+    icon: <Ear className="w-4 h-4" />,
+    color: "bg-pink-100 text-pink-800",
+  },
+  {
+    value: "psychiatric",
+    label: "Psiquiátrico",
+    icon: <Brain className="w-4 h-4" />,
+    color: "bg-teal-100 text-teal-800",
+  },
+  {
+    value: "allergies",
+    label: "Alergias",
+    icon: <AlertTriangle className="w-4 h-4" />,
+    color: "bg-red-100 text-red-800",
+  },
+  {
+    value: "medications",
+    label: "Medicamentos",
+    icon: <Pill className="w-4 h-4" />,
+    color: "bg-blue-100 text-blue-800",
+  },
+  {
+    value: "surgeries",
+    label: "Cirurgias",
+    icon: <Activity className="w-4 h-4" />,
+    color: "bg-purple-100 text-purple-800",
+  },
+  {
+    value: "family_history",
+    label: "Histórico Familiar",
+    icon: <History className="w-4 h-4" />,
+    color: "bg-green-100 text-green-800",
+  },
+  {
+    value: "social_history",
+    label: "Histórico Social",
+    icon: <FileText className="w-4 h-4" />,
+    color: "bg-gray-100 text-gray-800",
+  },
+  {
+    value: "other",
+    label: "Outros",
+    icon: <FileText className="w-4 h-4" />,
+    color: "bg-gray-100 text-gray-800",
+  },
 ];
 
 const SEVERITY_OPTIONS = [
-  { value: 'mild', label: 'Leve', color: 'bg-green-100 text-green-800' },
-  { value: 'moderate', label: 'Moderado', color: 'bg-yellow-100 text-yellow-800' },
-  { value: 'severe', label: 'Grave', color: 'bg-orange-100 text-orange-800' },
-  { value: 'critical', label: 'Crítico', color: 'bg-red-100 text-red-800' }
+  { value: "mild", label: "Leve", color: "bg-green-100 text-green-800" },
+  { value: "moderate", label: "Moderado", color: "bg-yellow-100 text-yellow-800" },
+  { value: "severe", label: "Grave", color: "bg-orange-100 text-orange-800" },
+  { value: "critical", label: "Crítico", color: "bg-red-100 text-red-800" },
 ];
 
 const STATUS_OPTIONS = [
-  { value: 'active', label: 'Ativo', color: 'bg-red-100 text-red-800', icon: <Activity className="w-3 h-3" /> },
-  { value: 'resolved', label: 'Resolvido', color: 'bg-green-100 text-green-800', icon: <CheckCircle className="w-3 h-3" /> },
-  { value: 'improving', label: 'Melhorando', color: 'bg-blue-100 text-blue-800', icon: <TrendingUp className="w-3 h-3" /> },
-  { value: 'worsening', label: 'Piorando', color: 'bg-orange-100 text-orange-800', icon: <TrendingDown className="w-3 h-3" /> },
-  { value: 'stable', label: 'Estável', color: 'bg-gray-100 text-gray-800', icon: <Minus className="w-3 h-3" /> },
-  { value: 'chronic', label: 'Crônico', color: 'bg-purple-100 text-purple-800', icon: <Clock className="w-3 h-3" /> }
+  {
+    value: "active",
+    label: "Ativo",
+    color: "bg-red-100 text-red-800",
+    icon: <Activity className="w-3 h-3" />,
+  },
+  {
+    value: "resolved",
+    label: "Resolvido",
+    color: "bg-green-100 text-green-800",
+    icon: <CheckCircle className="w-3 h-3" />,
+  },
+  {
+    value: "improving",
+    label: "Melhorando",
+    color: "bg-blue-100 text-blue-800",
+    icon: <TrendingUp className="w-3 h-3" />,
+  },
+  {
+    value: "worsening",
+    label: "Piorando",
+    color: "bg-orange-100 text-orange-800",
+    icon: <TrendingDown className="w-3 h-3" />,
+  },
+  {
+    value: "stable",
+    label: "Estável",
+    color: "bg-gray-100 text-gray-800",
+    icon: <Minus className="w-3 h-3" />,
+  },
+  {
+    value: "chronic",
+    label: "Crônico",
+    color: "bg-purple-100 text-purple-800",
+    icon: <Clock className="w-3 h-3" />,
+  },
 ];
 
-export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: MedicalHistoryManagerProps) {
+export function MedicalHistoryManager({
+  patientId,
+  clinicId,
+  onHistoryUpdate,
+}: MedicalHistoryManagerProps) {
   const [histories, setHistories] = useState<MedicalHistory[]>([]);
   const [filteredHistories, setFilteredHistories] = useState<MedicalHistory[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [editingHistory, setEditingHistory] = useState<MedicalHistory | null>(null);
   const [newHistory, setNewHistory] = useState<Partial<MedicalHistory>>({
     patientId,
     clinicId,
-    category: '',
-    conditionName: '',
-    status: 'active',
+    category: "",
+    conditionName: "",
+    status: "active",
     isChronic: false,
     isHereditary: false,
     relatedRecords: [],
-    metadata: {}
+    metadata: {},
   });
 
   // Load medical history
@@ -139,19 +272,20 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
     let filtered = histories;
 
     if (searchTerm) {
-      filtered = filtered.filter(history => 
-        history.conditionName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        history.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        history.category.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        (history) =>
+          history.conditionName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          history.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          history.category.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(history => history.category === selectedCategory);
+    if (selectedCategory !== "all") {
+      filtered = filtered.filter((history) => history.category === selectedCategory);
     }
 
-    if (selectedStatus !== 'all') {
-      filtered = filtered.filter(history => history.status === selectedStatus);
+    if (selectedStatus !== "all") {
+      filtered = filtered.filter((history) => history.status === selectedStatus);
     }
 
     setFilteredHistories(filtered);
@@ -163,69 +297,69 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
       // Mock data - replace with actual API call
       const mockHistories: MedicalHistory[] = [
         {
-          id: '1',
+          id: "1",
           patientId,
           clinicId,
-          category: 'cardiovascular',
-          conditionName: 'Hipertensão Arterial',
-          description: 'Hipertensão arterial sistêmica controlada com medicação',
-          severity: 'moderate',
-          status: 'active',
-          onsetDate: new Date('2020-01-15'),
+          category: "cardiovascular",
+          conditionName: "Hipertensão Arterial",
+          description: "Hipertensão arterial sistêmica controlada com medicação",
+          severity: "moderate",
+          status: "active",
+          onsetDate: new Date("2020-01-15"),
           isChronic: true,
           isHereditary: true,
-          notes: 'Paciente faz uso de Losartana 50mg 1x ao dia',
+          notes: "Paciente faz uso de Losartana 50mg 1x ao dia",
           relatedRecords: [],
-          metadata: { medications: ['Losartana 50mg'] },
-          createdBy: 'dr-silva',
-          createdAt: new Date('2020-01-15'),
-          updatedAt: new Date('2024-01-15')
+          metadata: { medications: ["Losartana 50mg"] },
+          createdBy: "dr-silva",
+          createdAt: new Date("2020-01-15"),
+          updatedAt: new Date("2024-01-15"),
         },
         {
-          id: '2',
+          id: "2",
           patientId,
           clinicId,
-          category: 'allergies',
-          conditionName: 'Alergia à Penicilina',
-          description: 'Reação alérgica grave à penicilina e derivados',
-          severity: 'severe',
-          status: 'active',
-          onsetDate: new Date('2015-06-10'),
+          category: "allergies",
+          conditionName: "Alergia à Penicilina",
+          description: "Reação alérgica grave à penicilina e derivados",
+          severity: "severe",
+          status: "active",
+          onsetDate: new Date("2015-06-10"),
           isChronic: false,
           isHereditary: false,
-          notes: 'Evitar prescrição de antibióticos beta-lactâmicos',
+          notes: "Evitar prescrição de antibióticos beta-lactâmicos",
           relatedRecords: [],
-          metadata: { allergens: ['Penicilina', 'Amoxicilina'] },
-          createdBy: 'dr-silva',
-          createdAt: new Date('2015-06-10'),
-          updatedAt: new Date('2023-06-10')
+          metadata: { allergens: ["Penicilina", "Amoxicilina"] },
+          createdBy: "dr-silva",
+          createdAt: new Date("2015-06-10"),
+          updatedAt: new Date("2023-06-10"),
         },
         {
-          id: '3',
+          id: "3",
           patientId,
           clinicId,
-          category: 'surgeries',
-          conditionName: 'Apendicectomia',
-          description: 'Cirurgia de remoção do apêndice por apendicite aguda',
-          severity: 'moderate',
-          status: 'resolved',
-          onsetDate: new Date('2018-03-22'),
-          resolutionDate: new Date('2018-04-15'),
+          category: "surgeries",
+          conditionName: "Apendicectomia",
+          description: "Cirurgia de remoção do apêndice por apendicite aguda",
+          severity: "moderate",
+          status: "resolved",
+          onsetDate: new Date("2018-03-22"),
+          resolutionDate: new Date("2018-04-15"),
           isChronic: false,
           isHereditary: false,
-          notes: 'Cirurgia realizada sem complicações. Recuperação completa.',
+          notes: "Cirurgia realizada sem complicações. Recuperação completa.",
           relatedRecords: [],
-          metadata: { surgeon: 'Dr. Santos', hospital: 'Hospital Central' },
-          createdBy: 'dr-santos',
-          createdAt: new Date('2018-03-22'),
-          updatedAt: new Date('2018-04-15')
-        }
+          metadata: { surgeon: "Dr. Santos", hospital: "Hospital Central" },
+          createdBy: "dr-santos",
+          createdAt: new Date("2018-03-22"),
+          updatedAt: new Date("2018-04-15"),
+        },
       ];
-      
+
       setHistories(mockHistories);
       onHistoryUpdate?.(mockHistories);
     } catch (error) {
-      console.error('Erro ao carregar histórico médico:', error);
+      console.error("Erro ao carregar histórico médico:", error);
     } finally {
       setIsLoading(false);
     }
@@ -250,15 +384,15 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
         notes: newHistory.notes,
         relatedRecords: newHistory.relatedRecords || [],
         metadata: newHistory.metadata || {},
-        createdBy: editingHistory?.createdBy || 'current-user',
+        createdBy: editingHistory?.createdBy || "current-user",
         createdAt: editingHistory?.createdAt || new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       if (editingHistory) {
-        setHistories(prev => prev.map(h => h.id === editingHistory.id ? historyData : h));
+        setHistories((prev) => prev.map((h) => (h.id === editingHistory.id ? historyData : h)));
       } else {
-        setHistories(prev => [...prev, historyData]);
+        setHistories((prev) => [...prev, historyData]);
       }
 
       setShowAddDialog(false);
@@ -266,16 +400,16 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
       setNewHistory({
         patientId,
         clinicId,
-        category: '',
-        conditionName: '',
-        status: 'active',
+        category: "",
+        conditionName: "",
+        status: "active",
         isChronic: false,
         isHereditary: false,
         relatedRecords: [],
-        metadata: {}
+        metadata: {},
       });
     } catch (error) {
-      console.error('Erro ao salvar histórico médico:', error);
+      console.error("Erro ao salvar histórico médico:", error);
     }
   };
 
@@ -286,27 +420,26 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
   };
 
   const handleDeleteHistory = async (historyId: string) => {
-    if (confirm('Tem certeza que deseja excluir este item do histórico médico?')) {
-      setHistories(prev => prev.filter(h => h.id !== historyId));
+    if (confirm("Tem certeza que deseja excluir este item do histórico médico?")) {
+      setHistories((prev) => prev.filter((h) => h.id !== historyId));
     }
   };
 
   const getCategoryInfo = (category: string) => {
-    return MEDICAL_CATEGORIES.find(cat => cat.value === category) || MEDICAL_CATEGORIES[MEDICAL_CATEGORIES.length - 1];
+    return (
+      MEDICAL_CATEGORIES.find((cat) => cat.value === category) ||
+      MEDICAL_CATEGORIES[MEDICAL_CATEGORIES.length - 1]
+    );
   };
 
   const getSeverityBadge = (severity?: string) => {
     if (!severity) return null;
-    const severityOption = SEVERITY_OPTIONS.find(opt => opt.value === severity);
-    return (
-      <Badge className={severityOption?.color}>
-        {severityOption?.label}
-      </Badge>
-    );
+    const severityOption = SEVERITY_OPTIONS.find((opt) => opt.value === severity);
+    return <Badge className={severityOption?.color}>{severityOption?.label}</Badge>;
   };
 
   const getStatusBadge = (status: string) => {
-    const statusOption = STATUS_OPTIONS.find(opt => opt.value === status);
+    const statusOption = STATUS_OPTIONS.find((opt) => opt.value === status);
     return (
       <Badge className={statusOption?.color}>
         <div className="flex items-center space-x-1">
@@ -318,25 +451,25 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
   };
 
   const getTimelineBadge = (history: MedicalHistory) => {
-    if (history.status === 'resolved' && history.resolutionDate) {
+    if (history.status === "resolved" && history.resolutionDate) {
       return (
         <Badge variant="outline" className="text-xs">
           <CheckCircle className="w-3 h-3 mr-1" />
-          Resolvido em {format(history.resolutionDate, 'MM/yyyy', { locale: ptBR })}
+          Resolvido em {format(history.resolutionDate, "MM/yyyy", { locale: ptBR })}
         </Badge>
       );
     }
-    
+
     if (history.onsetDate) {
       const years = new Date().getFullYear() - history.onsetDate.getFullYear();
       return (
         <Badge variant="outline" className="text-xs">
           <Clock className="w-3 h-3 mr-1" />
-          {years > 0 ? `${years} ano${years > 1 ? 's' : ''}` : 'Recente'}
+          {years > 0 ? `${years} ano${years > 1 ? "s" : ""}` : "Recente"}
         </Badge>
       );
     }
-    
+
     return null;
   };
 
@@ -357,26 +490,30 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
-                {editingHistory ? 'Editar Histórico Médico' : 'Novo Histórico Médico'}
+                {editingHistory ? "Editar Histórico Médico" : "Novo Histórico Médico"}
               </DialogTitle>
               <DialogDescription>
-                {editingHistory ? 'Edite as informações do histórico médico' : 'Adicione uma nova condição ao histórico médico do paciente'}
+                {editingHistory
+                  ? "Edite as informações do histórico médico"
+                  : "Adicione uma nova condição ao histórico médico do paciente"}
               </DialogDescription>
             </DialogHeader>
-            
+
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="category">Categoria *</Label>
                   <Select
                     value={newHistory.category}
-                    onValueChange={(value) => setNewHistory(prev => ({ ...prev, category: value }))}
+                    onValueChange={(value) =>
+                      setNewHistory((prev) => ({ ...prev, category: value }))
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione a categoria" />
                     </SelectTrigger>
                     <SelectContent>
-                      {MEDICAL_CATEGORIES.map(category => (
+                      {MEDICAL_CATEGORIES.map((category) => (
                         <SelectItem key={category.value} value={category.value}>
                           <div className="flex items-center space-x-2">
                             {category.icon}
@@ -392,13 +529,13 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
                   <Label htmlFor="status">Status *</Label>
                   <Select
                     value={newHistory.status}
-                    onValueChange={(value) => setNewHistory(prev => ({ ...prev, status: value }))}
+                    onValueChange={(value) => setNewHistory((prev) => ({ ...prev, status: value }))}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione o status" />
                     </SelectTrigger>
                     <SelectContent>
-                      {STATUS_OPTIONS.map(status => (
+                      {STATUS_OPTIONS.map((status) => (
                         <SelectItem key={status.value} value={status.value}>
                           <div className="flex items-center space-x-2">
                             {status.icon}
@@ -415,8 +552,10 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
                 <Label htmlFor="conditionName">Nome da Condição *</Label>
                 <Input
                   id="conditionName"
-                  value={newHistory.conditionName || ''}
-                  onChange={(e) => setNewHistory(prev => ({ ...prev, conditionName: e.target.value }))}
+                  value={newHistory.conditionName || ""}
+                  onChange={(e) =>
+                    setNewHistory((prev) => ({ ...prev, conditionName: e.target.value }))
+                  }
                   placeholder="Ex: Hipertensão Arterial, Diabetes Tipo 2"
                 />
               </div>
@@ -425,8 +564,10 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
                 <Label htmlFor="description">Descrição</Label>
                 <Textarea
                   id="description"
-                  value={newHistory.description || ''}
-                  onChange={(e) => setNewHistory(prev => ({ ...prev, description: e.target.value }))}
+                  value={newHistory.description || ""}
+                  onChange={(e) =>
+                    setNewHistory((prev) => ({ ...prev, description: e.target.value }))
+                  }
                   placeholder="Descrição detalhada da condição"
                   rows={3}
                 />
@@ -436,14 +577,16 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
                 <div className="space-y-2">
                   <Label htmlFor="severity">Gravidade</Label>
                   <Select
-                    value={newHistory.severity || ''}
-                    onValueChange={(value) => setNewHistory(prev => ({ ...prev, severity: value }))}
+                    value={newHistory.severity || ""}
+                    onValueChange={(value) =>
+                      setNewHistory((prev) => ({ ...prev, severity: value }))
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione a gravidade" />
                     </SelectTrigger>
                     <SelectContent>
-                      {SEVERITY_OPTIONS.map(severity => (
+                      {SEVERITY_OPTIONS.map((severity) => (
                         <SelectItem key={severity.value} value={severity.value}>
                           {severity.label}
                         </SelectItem>
@@ -456,8 +599,10 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
                   <Label htmlFor="subcategory">Subcategoria</Label>
                   <Input
                     id="subcategory"
-                    value={newHistory.subcategory || ''}
-                    onChange={(e) => setNewHistory(prev => ({ ...prev, subcategory: e.target.value }))}
+                    value={newHistory.subcategory || ""}
+                    onChange={(e) =>
+                      setNewHistory((prev) => ({ ...prev, subcategory: e.target.value }))
+                    }
                     placeholder="Subcategoria específica"
                   />
                 </div>
@@ -469,11 +614,13 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
                   <Input
                     id="onsetDate"
                     type="date"
-                    value={newHistory.onsetDate ? format(newHistory.onsetDate, 'yyyy-MM-dd') : ''}
-                    onChange={(e) => setNewHistory(prev => ({ 
-                      ...prev, 
-                      onsetDate: e.target.value ? new Date(e.target.value) : undefined 
-                    }))}
+                    value={newHistory.onsetDate ? format(newHistory.onsetDate, "yyyy-MM-dd") : ""}
+                    onChange={(e) =>
+                      setNewHistory((prev) => ({
+                        ...prev,
+                        onsetDate: e.target.value ? new Date(e.target.value) : undefined,
+                      }))
+                    }
                   />
                 </div>
 
@@ -482,12 +629,18 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
                   <Input
                     id="resolutionDate"
                     type="date"
-                    value={newHistory.resolutionDate ? format(newHistory.resolutionDate, 'yyyy-MM-dd') : ''}
-                    onChange={(e) => setNewHistory(prev => ({ 
-                      ...prev, 
-                      resolutionDate: e.target.value ? new Date(e.target.value) : undefined 
-                    }))}
-                    disabled={newHistory.status !== 'resolved'}
+                    value={
+                      newHistory.resolutionDate
+                        ? format(newHistory.resolutionDate, "yyyy-MM-dd")
+                        : ""
+                    }
+                    onChange={(e) =>
+                      setNewHistory((prev) => ({
+                        ...prev,
+                        resolutionDate: e.target.value ? new Date(e.target.value) : undefined,
+                      }))
+                    }
+                    disabled={newHistory.status !== "resolved"}
                   />
                 </div>
               </div>
@@ -497,7 +650,9 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
                   <Checkbox
                     id="isChronic"
                     checked={newHistory.isChronic}
-                    onCheckedChange={(checked) => setNewHistory(prev => ({ ...prev, isChronic: !!checked }))}
+                    onCheckedChange={(checked) =>
+                      setNewHistory((prev) => ({ ...prev, isChronic: !!checked }))
+                    }
                   />
                   <Label htmlFor="isChronic" className="flex items-center space-x-1">
                     <Clock className="w-4 h-4" />
@@ -509,7 +664,9 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
                   <Checkbox
                     id="isHereditary"
                     checked={newHistory.isHereditary}
-                    onCheckedChange={(checked) => setNewHistory(prev => ({ ...prev, isHereditary: !!checked }))}
+                    onCheckedChange={(checked) =>
+                      setNewHistory((prev) => ({ ...prev, isHereditary: !!checked }))
+                    }
                   />
                   <Label htmlFor="isHereditary" className="flex items-center space-x-1">
                     <History className="w-4 h-4" />
@@ -522,8 +679,8 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
                 <Label htmlFor="notes">Observações</Label>
                 <Textarea
                   id="notes"
-                  value={newHistory.notes || ''}
-                  onChange={(e) => setNewHistory(prev => ({ ...prev, notes: e.target.value }))}
+                  value={newHistory.notes || ""}
+                  onChange={(e) => setNewHistory((prev) => ({ ...prev, notes: e.target.value }))}
                   placeholder="Observações adicionais, medicamentos, tratamentos..."
                   rows={3}
                 />
@@ -539,13 +696,13 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
                     setNewHistory({
                       patientId,
                       clinicId,
-                      category: '',
-                      conditionName: '',
-                      status: 'active',
+                      category: "",
+                      conditionName: "",
+                      status: "active",
                       isChronic: false,
                       isHereditary: false,
                       relatedRecords: [],
-                      metadata: {}
+                      metadata: {},
                     });
                   }}
                 >
@@ -555,7 +712,7 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
                   onClick={handleSaveHistory}
                   disabled={!newHistory.category || !newHistory.conditionName || !newHistory.status}
                 >
-                  {editingHistory ? 'Atualizar' : 'Adicionar'}
+                  {editingHistory ? "Atualizar" : "Adicionar"}
                 </Button>
               </div>
             </div>
@@ -585,7 +742,7 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todas as categorias</SelectItem>
-                  {MEDICAL_CATEGORIES.map(category => (
+                  {MEDICAL_CATEGORIES.map((category) => (
                     <SelectItem key={category.value} value={category.value}>
                       <div className="flex items-center space-x-2">
                         {category.icon}
@@ -595,14 +752,14 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
                   ))}
                 </SelectContent>
               </Select>
-              
+
               <Select value={selectedStatus} onValueChange={setSelectedStatus}>
                 <SelectTrigger className="w-40">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos os status</SelectItem>
-                  {STATUS_OPTIONS.map(status => (
+                  {STATUS_OPTIONS.map((status) => (
                     <SelectItem key={status.value} value={status.value}>
                       <div className="flex items-center space-x-2">
                         {status.icon}
@@ -634,18 +791,16 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
               <div className="text-center py-8">
                 <Stethoscope className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  {searchTerm || selectedCategory !== 'all' || selectedStatus !== 'all' 
-                    ? 'Nenhum histórico encontrado' 
-                    : 'Nenhum histórico médico cadastrado'
-                  }
+                  {searchTerm || selectedCategory !== "all" || selectedStatus !== "all"
+                    ? "Nenhum histórico encontrado"
+                    : "Nenhum histórico médico cadastrado"}
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  {searchTerm || selectedCategory !== 'all' || selectedStatus !== 'all'
-                    ? 'Tente ajustar os filtros de busca'
-                    : 'Adicione condições médicas, alergias e outros itens do histórico'
-                  }
+                  {searchTerm || selectedCategory !== "all" || selectedStatus !== "all"
+                    ? "Tente ajustar os filtros de busca"
+                    : "Adicione condições médicas, alergias e outros itens do histórico"}
                 </p>
-                {!searchTerm && selectedCategory === 'all' && selectedStatus === 'all' && (
+                {!searchTerm && selectedCategory === "all" && selectedStatus === "all" && (
                   <Button onClick={() => setShowAddDialog(true)}>
                     <Plus className="w-4 h-4 mr-2" />
                     Adicionar Primeiro Histórico
@@ -673,26 +828,31 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
                         {getSeverityBadge(history.severity)}
                         {getTimelineBadge(history)}
                       </div>
-                      
+
                       <h3 className="text-lg font-semibold text-gray-900 mb-1">
                         {history.conditionName}
                       </h3>
-                      
+
                       {history.description && (
                         <p className="text-gray-600 mb-2">{history.description}</p>
                       )}
-                      
+
                       <div className="flex flex-wrap gap-4 text-sm text-gray-500">
                         {history.onsetDate && (
                           <span className="flex items-center space-x-1">
                             <Calendar className="w-4 h-4" />
-                            <span>Início: {format(history.onsetDate, 'dd/MM/yyyy', { locale: ptBR })}</span>
+                            <span>
+                              Início: {format(history.onsetDate, "dd/MM/yyyy", { locale: ptBR })}
+                            </span>
                           </span>
                         )}
                         {history.resolutionDate && (
                           <span className="flex items-center space-x-1">
                             <CheckCircle className="w-4 h-4" />
-                            <span>Resolução: {format(history.resolutionDate, 'dd/MM/yyyy', { locale: ptBR })}</span>
+                            <span>
+                              Resolução:{" "}
+                              {format(history.resolutionDate, "dd/MM/yyyy", { locale: ptBR })}
+                            </span>
                           </span>
                         )}
                         {history.isChronic && (
@@ -708,7 +868,7 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
                           </span>
                         )}
                       </div>
-                      
+
                       {history.notes && (
                         <div className="mt-3 p-3 bg-gray-50 rounded-lg">
                           <p className="text-sm text-gray-700">
@@ -717,7 +877,7 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
                         </div>
                       )}
                     </div>
-                    
+
                     <div className="flex items-center space-x-2 ml-4">
                       <Button
                         variant="outline"
@@ -755,26 +915,24 @@ export function MedicalHistoryManager({ patientId, clinicId, onHistoryUpdate }: 
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">
-                  {filteredHistories.length}
-                </div>
+                <div className="text-2xl font-bold text-blue-600">{filteredHistories.length}</div>
                 <div className="text-sm text-gray-600">Total de Condições</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-red-600">
-                  {filteredHistories.filter(h => h.status === 'active').length}
+                  {filteredHistories.filter((h) => h.status === "active").length}
                 </div>
                 <div className="text-sm text-gray-600">Condições Ativas</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-purple-600">
-                  {filteredHistories.filter(h => h.isChronic).length}
+                  {filteredHistories.filter((h) => h.isChronic).length}
                 </div>
                 <div className="text-sm text-gray-600">Condições Crônicas</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-orange-600">
-                  {filteredHistories.filter(h => h.category === 'allergies').length}
+                  {filteredHistories.filter((h) => h.category === "allergies").length}
                 </div>
                 <div className="text-sm text-gray-600">Alergias</div>
               </div>

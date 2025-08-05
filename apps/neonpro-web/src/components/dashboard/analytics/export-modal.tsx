@@ -1,9 +1,9 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -11,8 +11,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import type { Label } from "@/components/ui/label";
+import type { useState } from "react";
 
 interface ExportData {
   kpis: any;
@@ -28,10 +28,7 @@ interface ExportModalProps {
 
 export function ExportModal({ open, onClose, data }: ExportModalProps) {
   const [selectedFormats, setSelectedFormats] = useState<string[]>(["pdf"]);
-  const [selectedSections, setSelectedSections] = useState<string[]>([
-    "kpis",
-    "charts",
-  ]);
+  const [selectedSections, setSelectedSections] = useState<string[]>(["kpis", "charts"]);
   const [isExporting, setIsExporting] = useState(false);
 
   const exportOptions = [
@@ -76,9 +73,7 @@ export function ExportModal({ open, onClose, data }: ExportModalProps) {
 
       // Exportação real para CSV
       selectedFormats.forEach((format) => {
-        const fileName = `neonpro-analytics-${
-          new Date().toISOString().split("T")[0]
-        }.${format}`;
+        const fileName = `neonpro-analytics-${new Date().toISOString().split("T")[0]}.${format}`;
 
         if (format === "csv") {
           // Gerar e baixar CSV real
@@ -125,7 +120,7 @@ export function ExportModal({ open, onClose, data }: ExportModalProps) {
       csv += "=== KPIs FINANCEIROS ===\n";
       csv += "Métrica,Valor,Variação,Tendência\n";
       csv += `Receita Mensal,R$ ${data.kpis.financial.monthlyRevenue.value.toLocaleString(
-        "pt-BR"
+        "pt-BR",
       )},${data.kpis.financial.monthlyRevenue.change > 0 ? "+" : ""}${
         data.kpis.financial.monthlyRevenue.change
       }%,${data.kpis.financial.monthlyRevenue.trend}\n\n`;
@@ -134,8 +129,7 @@ export function ExportModal({ open, onClose, data }: ExportModalProps) {
     if (sections.includes("summary")) {
       csv += "=== RESUMO EXECUTIVO ===\n";
       csv += "Performance geral da clínica demonstra crescimento positivo.\n";
-      csv +=
-        "Pontos fortes: Satisfação do paciente e eficiência operacional.\n\n";
+      csv += "Pontos fortes: Satisfação do paciente e eficiência operacional.\n\n";
     }
 
     csv += "---\n";
@@ -163,9 +157,7 @@ export function ExportModal({ open, onClose, data }: ExportModalProps) {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            📥 Exportar Analytics
-          </DialogTitle>
+          <DialogTitle className="flex items-center gap-2">📥 Exportar Analytics</DialogTitle>
           <DialogDescription>
             Selecione o formato e as seções que deseja incluir no relatório
           </DialogDescription>
@@ -174,23 +166,16 @@ export function ExportModal({ open, onClose, data }: ExportModalProps) {
         <div className="space-y-6 py-4">
           {/* Format Selection */}
           <div className="space-y-3">
-            <Label className="text-sm font-semibold">
-              Formato de Exportação
-            </Label>
+            <Label className="text-sm font-semibold">Formato de Exportação</Label>
             <div className="space-y-2">
               {exportOptions.map((option) => (
                 <div key={option.id} className="flex items-center space-x-2">
                   <Checkbox
                     id={option.id}
                     checked={selectedFormats.includes(option.id)}
-                    onCheckedChange={(checked: boolean) =>
-                      handleFormatChange(option.id, checked)
-                    }
+                    onCheckedChange={(checked: boolean) => handleFormatChange(option.id, checked)}
                   />
-                  <Label
-                    htmlFor={option.id}
-                    className="flex items-center space-x-2 cursor-pointer"
-                  >
+                  <Label htmlFor={option.id} className="flex items-center space-x-2 cursor-pointer">
                     <span className="text-lg">{option.icon}</span>
                     <span>{option.label}</span>
                   </Label>
@@ -208,9 +193,7 @@ export function ExportModal({ open, onClose, data }: ExportModalProps) {
                   <Checkbox
                     id={option.id}
                     checked={selectedSections.includes(option.id)}
-                    onCheckedChange={(checked: boolean) =>
-                      handleSectionChange(option.id, checked)
-                    }
+                    onCheckedChange={(checked: boolean) => handleSectionChange(option.id, checked)}
                   />
                   <Label htmlFor={option.id} className="cursor-pointer">
                     {option.label}

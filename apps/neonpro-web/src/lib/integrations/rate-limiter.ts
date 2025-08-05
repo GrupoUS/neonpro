@@ -1,14 +1,14 @@
 /**
  * NeonPro - Integration Rate Limiter
  * Rate limiting implementation for third-party integrations
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  * @created 2025-01-27
  */
 
-import { RateLimiter, RateLimitConfig } from './types';
-import { createClient } from '@supabase/supabase-js';
+import type { RateLimiter, RateLimitConfig } from "./types";
+import type { createClient } from "@supabase/supabase-js";
 
 /**
  * Redis-like rate limiter implementation using Supabase
@@ -20,11 +20,14 @@ export class SupabaseRateLimiter implements RateLimiter {
 
   constructor(supabaseUrl: string, supabaseKey: string) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
-    
+
     // Cleanup expired entries every 5 minutes
-    this.cleanupInterval = setInterval(() => {
-      this.cleanupExpiredEntries();
-    }, 5 * 60 * 1000);
+    this.cleanupInterval = setInterval(
+      () => {
+        this.cleanupExpiredEntries();
+      },
+      5 * 60 * 1000,
+    );
   }
 
   /**
@@ -39,7 +42,7 @@ export class SupabaseRateLimiter implements RateLimiter {
 
       const now = Date.now();
       const key = `${integrationId}:${endpoint}`;
-      
+
       // Check minute limit
       const minuteKey = `${key}:minute:${Math.floor(now / 60000)}`;
       const minuteCount = await this.getCount(minuteKey);
@@ -73,7 +76,7 @@ export class SupabaseRateLimiter implements RateLimiter {
 
       return true;
     } catch (error) {
-      console.error('Rate limit check failed:', error);
+      console.error("Rate limit check failed:", error);
       return true; // Fail open
     }
   }
@@ -90,7 +93,7 @@ export class SupabaseRateLimiter implements RateLimiter {
 
       const now = Date.now();
       const key = `${integrationId}:${endpoint}`;
-      
+
       // Increment minute counter
       const minuteKey = `${key}:minute:${Math.floor(now / 60000)}`;
       await this.incrementCount(minuteKey, 60);
@@ -106,17 +109,17 @@ export class SupabaseRateLimiter implements RateLimiter {
       // Update burst counter
       const burstKey = `${key}:burst`;
       const burstEntry = this.cache.get(burstKey);
-      if (burstEntry && (now - burstEntry.timestamp) < config.windowSize) {
+      if (burstEntry && now - burstEntry.timestamp < config.windowSize) {
         burstEntry.count++;
       } else {
         this.cache.set(burstKey, {
           count: 1,
           timestamp: now,
-          expiresAt: now + config.windowSize
+          expiresAt: now + config.windowSize,
         });
       }
     } catch (error) {
-      console.error('Failed to increment counter:', error);
+      console.error("Failed to increment counter:", error);
     }
   }
 
@@ -132,7 +135,7 @@ export class SupabaseRateLimiter implements RateLimiter {
 
       const now = Date.now();
       const key = `${integrationId}:${endpoint}`;
-      
+
       // Check minute limit (most restrictive)
       const minuteKey = `${key}:minute:${Math.floor(now / 60000)}`;
       const minuteCount = await this.getCount(minuteKey);
@@ -151,7 +154,7 @@ export class SupabaseRateLimiter implements RateLimiter {
       // Return the most restrictive limit
       return Math.min(minuteRemaining, hourRemaining, dayRemaining);
     } catch (error) {
-      console.error('Failed to get remaining requests:', error);
+      console.error("Failed to get remaining requests:", error);
       return 0;
     }
   }
@@ -162,10 +165,7 @@ export class SupabaseRateLimiter implements RateLimiter {
   async resetLimits(integrationId: string): Promise<void> {
     try {
       // Clear from database
-      await this.supabase
-        .from('rate_limit_counters')
-        .delete()
-        .like('key', `${integrationId}:%`);
+      await this.supabase.from("rate_limit_counters").delete().like("key", `${integrationId}:%`);
 
       // Clear from cache
       for (const [key] of this.cache) {
@@ -174,7 +174,7 @@ export class SupabaseRateLimiter implements RateLimiter {
         }
       }
     } catch (error) {
-      console.error('Failed to reset limits:', error);
+      console.error("Failed to reset limits:", error);
     }
   }
 
@@ -184,9 +184,9 @@ export class SupabaseRateLimiter implements RateLimiter {
   async getUsageStats(integrationId: string): Promise<Record<string, number>> {
     try {
       const { data, error } = await this.supabase
-        .from('rate_limit_counters')
-        .select('key, count')
-        .like('key', `${integrationId}:%`);
+        .from("rate_limit_counters")
+        .select("key, count")
+        .like("key", `${integrationId}:%`);
 
       if (error) {
         throw error;
@@ -194,7 +194,7 @@ export class SupabaseRateLimiter implements RateLimiter {
 
       const stats: Record<string, number> = {};
       for (const item of data || []) {
-        const parts = item.key.split(':');
+        const parts = item.key.split(":");
         if (parts.length >= 3) {
           const endpoint = parts[1];
           const period = parts[2];
@@ -205,7 +205,7 @@ export class SupabaseRateLimiter implements RateLimiter {
 
       return stats;
     } catch (error) {
-      console.error('Failed to get usage stats:', error);
+      console.error("Failed to get usage stats:", error);
       return {};
     }
   }
@@ -216,9 +216,9 @@ export class SupabaseRateLimiter implements RateLimiter {
   private async getRateLimitConfig(integrationId: string): Promise<RateLimitConfig | null> {
     try {
       const { data, error } = await this.supabase
-        .from('integrations')
-        .select('rate_limits')
-        .eq('id', integrationId)
+        .from("integrations")
+        .select("rate_limits")
+        .eq("id", integrationId)
         .single();
 
       if (error || !data) {
@@ -227,7 +227,7 @@ export class SupabaseRateLimiter implements RateLimiter {
 
       return data.rate_limits;
     } catch (error) {
-      console.error('Failed to get rate limit config:', error);
+      console.error("Failed to get rate limit config:", error);
       return null;
     }
   }
@@ -245,9 +245,9 @@ export class SupabaseRateLimiter implements RateLimiter {
 
       // Check database
       const { data, error } = await this.supabase
-        .from('rate_limit_counters')
-        .select('count, expires_at')
-        .eq('key', key)
+        .from("rate_limit_counters")
+        .select("count, expires_at")
+        .eq("key", key)
         .single();
 
       if (error || !data) {
@@ -257,10 +257,7 @@ export class SupabaseRateLimiter implements RateLimiter {
       const expiresAt = new Date(data.expires_at).getTime();
       if (expiresAt <= Date.now()) {
         // Expired, delete it
-        await this.supabase
-          .from('rate_limit_counters')
-          .delete()
-          .eq('key', key);
+        await this.supabase.from("rate_limit_counters").delete().eq("key", key);
         return 0;
       }
 
@@ -268,12 +265,12 @@ export class SupabaseRateLimiter implements RateLimiter {
       this.cache.set(key, {
         count: data.count,
         timestamp: Date.now(),
-        expiresAt
+        expiresAt,
       });
 
       return data.count;
     } catch (error) {
-      console.error('Failed to get count:', error);
+      console.error("Failed to get count:", error);
       return 0;
     }
   }
@@ -284,24 +281,24 @@ export class SupabaseRateLimiter implements RateLimiter {
   private async incrementCount(key: string, ttlSeconds: number): Promise<void> {
     try {
       const now = Date.now();
-      const expiresAt = new Date(now + (ttlSeconds * 1000));
+      const expiresAt = new Date(now + ttlSeconds * 1000);
 
       // Try to increment existing record
       const { data: existing } = await this.supabase
-        .from('rate_limit_counters')
-        .select('count')
-        .eq('key', key)
+        .from("rate_limit_counters")
+        .select("count")
+        .eq("key", key)
         .single();
 
       if (existing) {
         // Update existing
         await this.supabase
-          .from('rate_limit_counters')
-          .update({ 
+          .from("rate_limit_counters")
+          .update({
             count: existing.count + 1,
-            updated_at: new Date()
+            updated_at: new Date(),
           })
-          .eq('key', key);
+          .eq("key", key);
 
         // Update cache
         const cached = this.cache.get(key);
@@ -310,25 +307,23 @@ export class SupabaseRateLimiter implements RateLimiter {
         }
       } else {
         // Create new
-        await this.supabase
-          .from('rate_limit_counters')
-          .insert({
-            key,
-            count: 1,
-            expires_at: expiresAt,
-            created_at: new Date(),
-            updated_at: new Date()
-          });
+        await this.supabase.from("rate_limit_counters").insert({
+          key,
+          count: 1,
+          expires_at: expiresAt,
+          created_at: new Date(),
+          updated_at: new Date(),
+        });
 
         // Add to cache
         this.cache.set(key, {
           count: 1,
           timestamp: now,
-          expiresAt: expiresAt.getTime()
+          expiresAt: expiresAt.getTime(),
         });
       }
     } catch (error) {
-      console.error('Failed to increment count:', error);
+      console.error("Failed to increment count:", error);
     }
   }
 
@@ -385,7 +380,7 @@ export class MemoryRateLimiter implements RateLimiter {
 
     const now = Date.now();
     const key = `${integrationId}:${endpoint}`;
-    
+
     // Check minute limit
     const minuteKey = `${key}:minute:${Math.floor(now / 60000)}`;
     if (this.getCount(minuteKey) >= config.requestsPerMinute) {
@@ -425,7 +420,7 @@ export class MemoryRateLimiter implements RateLimiter {
 
     const now = Date.now();
     const key = `${integrationId}:${endpoint}`;
-    
+
     // Increment minute counter
     const minuteKey = `${key}:minute:${Math.floor(now / 60000)}`;
     this.incrementCount(minuteKey, now + 60000);
@@ -441,13 +436,13 @@ export class MemoryRateLimiter implements RateLimiter {
     // Update burst counter
     const burstKey = `${key}:burst`;
     const burstEntry = this.counters.get(burstKey);
-    if (burstEntry && (now - burstEntry.timestamp) < config.windowSize) {
+    if (burstEntry && now - burstEntry.timestamp < config.windowSize) {
       burstEntry.count++;
     } else {
       this.counters.set(burstKey, {
         count: 1,
         timestamp: now,
-        expiresAt: now + config.windowSize
+        expiresAt: now + config.windowSize,
       });
     }
   }
@@ -460,7 +455,7 @@ export class MemoryRateLimiter implements RateLimiter {
 
     const now = Date.now();
     const key = `${integrationId}:${endpoint}`;
-    
+
     const minuteKey = `${key}:minute:${Math.floor(now / 60000)}`;
     const minuteRemaining = Math.max(0, config.requestsPerMinute - this.getCount(minuteKey));
 
@@ -485,7 +480,7 @@ export class MemoryRateLimiter implements RateLimiter {
     const stats: Record<string, number> = {};
     for (const [key, entry] of this.counters) {
       if (key.startsWith(`${integrationId}:`) && entry.expiresAt > Date.now()) {
-        const parts = key.split(':');
+        const parts = key.split(":");
         if (parts.length >= 3) {
           const endpoint = parts[1];
           const period = parts[2];
@@ -513,7 +508,7 @@ export class MemoryRateLimiter implements RateLimiter {
       this.counters.set(key, {
         count: 1,
         timestamp: Date.now(),
-        expiresAt
+        expiresAt,
       });
     }
   }

@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { FacebookOAuthHandler } from '@/lib/oauth/platforms/facebook-handler';
-import { TokenEncryptionService } from '@/lib/oauth/token-encryption';
+import type { NextRequest, NextResponse } from "next/server";
+import type { createClient } from "@/lib/supabase/server";
+import type { FacebookOAuthHandler } from "@/lib/oauth/platforms/facebook-handler";
+import type { TokenEncryptionService } from "@/lib/oauth/token-encryption";
 
 /**
  * Facebook OAuth Token Refresh Endpoint
  * Refreshes Facebook access tokens using fb_exchange_token
- * 
+ *
  * Features:
  * - Long-lived token exchange (60-day tokens)
  * - Automatic token encryption and storage
@@ -17,40 +17,39 @@ import { TokenEncryptionService } from '@/lib/oauth/token-encryption';
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Verify user authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session?.user) {
       return NextResponse.json(
-        { error: 'Unauthorized - Please log in to refresh tokens' },
-        { status: 401 }
+        { error: "Unauthorized - Please log in to refresh tokens" },
+        { status: 401 },
       );
     }
 
     // Parse request body
     const { accountId } = await request.json();
-    
+
     if (!accountId) {
-      return NextResponse.json(
-        { error: 'Account ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Account ID is required" }, { status: 400 });
     }
 
     // Get social media account
     const { data: account, error: accountError } = await supabase
-      .from('social_media_accounts')
-      .select('*')
-      .eq('id', accountId)
-      .eq('user_id', session.user.id)
-      .eq('platform_id', 'facebook')
-      .eq('is_active', true)
+      .from("social_media_accounts")
+      .select("*")
+      .eq("id", accountId)
+      .eq("user_id", session.user.id)
+      .eq("platform_id", "facebook")
+      .eq("is_active", true)
       .single();
 
     if (accountError || !account) {
       return NextResponse.json(
-        { error: 'Facebook account not found or access denied' },
-        { status: 404 }
+        { error: "Facebook account not found or access denied" },
+        { status: 404 },
       );
     }
 
@@ -69,63 +68,67 @@ export async function POST(request: NextRequest) {
 
     // Update account with new tokens
     const { error: updateError } = await supabase
-      .from('social_media_accounts')
+      .from("social_media_accounts")
       .update({
         encrypted_access_token: JSON.stringify(newEncryptedAccessToken),
         token_expires_at: newTokens.expiresAt.toISOString(),
-        token_scopes: newTokens.scope ? newTokens.scope.split(' ') : account.token_scopes,
-        last_sync_at: new Date().toISOString()
+        token_scopes: newTokens.scope ? newTokens.scope.split(" ") : account.token_scopes,
+        last_sync_at: new Date().toISOString(),
       })
-      .eq('id', accountId);
+      .eq("id", accountId);
 
     if (updateError) {
       throw new Error(`Failed to update tokens: ${updateError.message}`);
     }
 
     // Log successful token refresh
-    console.log(`Facebook tokens refreshed successfully for account ${accountId}, user ${session.user.id}`);
+    console.log(
+      `Facebook tokens refreshed successfully for account ${accountId}, user ${session.user.id}`,
+    );
 
     // Update platform last activity
-    await supabase
-      .from('social_media_platforms')
-      .upsert({
-        platform: 'facebook',
-        last_token_refresh: new Date().toISOString()
-      }, { onConflict: 'platform' });
+    await supabase.from("social_media_platforms").upsert(
+      {
+        platform: "facebook",
+        last_token_refresh: new Date().toISOString(),
+      },
+      { onConflict: "platform" },
+    );
 
     return NextResponse.json({
       success: true,
-      message: 'Facebook tokens refreshed successfully',
+      message: "Facebook tokens refreshed successfully",
       expiresAt: newTokens.expiresAt.toISOString(),
-      expiresIn: newTokens.expiresIn
+      expiresIn: newTokens.expiresIn,
     });
-
   } catch (error) {
-    console.error('Facebook token refresh error:', error);
-    
+    console.error("Facebook token refresh error:", error);
+
     // Log error for debugging
     try {
       const supabase = await createClient();
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (session?.user) {
-        await supabase.from('oauth_errors').insert({
+        await supabase.from("oauth_errors").insert({
           user_id: session.user.id,
-          platform: 'facebook',
-          error_type: 'token_refresh_error',
-          error_message: error instanceof Error ? error.message : 'Unknown error',
-          occurred_at: new Date().toISOString()
+          platform: "facebook",
+          error_type: "token_refresh_error",
+          error_message: error instanceof Error ? error.message : "Unknown error",
+          occurred_at: new Date().toISOString(),
         });
       }
     } catch (logError) {
-      console.error('Failed to log token refresh error:', logError);
+      console.error("Failed to log token refresh error:", logError);
     }
 
     return NextResponse.json(
-      { 
-        error: 'Failed to refresh Facebook tokens',
-        details: error instanceof Error ? error.message : 'Unknown error'
+      {
+        error: "Failed to refresh Facebook tokens",
+        details: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

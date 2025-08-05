@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { LGPDComplianceManager } from '@/lib/lgpd/LGPDComplianceManager';
-import { ConsentPurpose, ConsentRecord } from '@/types/lgpd';
-import { useToast } from '@/hooks/use-toast';
+import type { useState, useEffect, useCallback } from "react";
+import type { LGPDComplianceManager } from "@/lib/lgpd/LGPDComplianceManager";
+import type { ConsentPurpose, ConsentRecord } from "@/types/lgpd";
+import type { useToast } from "@/hooks/use-toast";
 
 interface ConsentPreferences {
   [purposeId: string]: boolean;
@@ -14,37 +14,37 @@ interface UseConsentBannerReturn {
   purposes: ConsentPurpose[];
   consentHistory: ConsentRecord[];
   preferences: ConsentPreferences;
-  
+
   // Banner state
   showBanner: boolean;
   showPreferences: boolean;
-  
+
   // Loading states
   isLoading: boolean;
   isSaving: boolean;
-  
+
   // Actions
   acceptAll: () => Promise<void>;
   rejectAll: () => Promise<void>;
   savePreferences: (preferences: ConsentPreferences) => Promise<void>;
   updatePreference: (purposeId: string, granted: boolean) => void;
-  
+
   // Banner control
   showBannerDialog: () => void;
   hideBanner: () => void;
   showPreferencesDialog: () => void;
   hidePreferences: () => void;
-  
+
   // Utility
   loadConsentHistory: () => Promise<void>;
   hasConsent: (purposeId: string) => boolean;
-  
+
   // Error handling
   error: string | null;
 }
 
-const CONSENT_STORAGE_KEY = 'lgpd_consent_preferences';
-const BANNER_SHOWN_KEY = 'lgpd_banner_shown';
+const CONSENT_STORAGE_KEY = "lgpd_consent_preferences";
+const BANNER_SHOWN_KEY = "lgpd_banner_shown";
 
 export function useConsentBanner(): UseConsentBannerReturn {
   const [purposes, setPurposes] = useState<ConsentPurpose[]>([]);
@@ -55,7 +55,7 @@ export function useConsentBanner(): UseConsentBannerReturn {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const { toast } = useToast();
   const complianceManager = new LGPDComplianceManager();
 
@@ -69,7 +69,7 @@ export function useConsentBanner(): UseConsentBannerReturn {
         return parsedPreferences;
       }
     } catch (err) {
-      console.warn('Failed to load stored consent preferences:', err);
+      console.warn("Failed to load stored consent preferences:", err);
     }
     return {};
   }, []);
@@ -78,9 +78,9 @@ export function useConsentBanner(): UseConsentBannerReturn {
   const saveToStorage = useCallback((prefs: ConsentPreferences) => {
     try {
       localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(prefs));
-      localStorage.setItem(BANNER_SHOWN_KEY, 'true');
+      localStorage.setItem(BANNER_SHOWN_KEY, "true");
     } catch (err) {
-      console.warn('Failed to save consent preferences:', err);
+      console.warn("Failed to save consent preferences:", err);
     }
   }, []);
 
@@ -101,28 +101,29 @@ export function useConsentBanner(): UseConsentBannerReturn {
       setError(null);
       const response = await complianceManager.getConsentPurposes();
       setPurposes(response.data);
-      
+
       // Initialize preferences for new purposes
       const storedPrefs = loadStoredPreferences();
       const newPrefs = { ...storedPrefs };
-      
-      response.data.forEach(purpose => {
+
+      response.data.forEach((purpose) => {
         if (!(purpose.id in newPrefs)) {
           // Default to false for optional purposes, true for essential
           newPrefs[purpose.id] = purpose.required || false;
         }
       });
-      
+
       setPreferences(newPrefs);
-      
+
       // Show banner if needed
       if (shouldShowBanner()) {
         setShowBanner(true);
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao carregar finalidades de consentimento';
+      const errorMessage =
+        err instanceof Error ? err.message : "Erro ao carregar finalidades de consentimento";
       setError(errorMessage);
-      console.error('Failed to load consent purposes:', err);
+      console.error("Failed to load consent purposes:", err);
     }
   }, [complianceManager, loadStoredPreferences, shouldShowBanner]);
 
@@ -132,14 +133,15 @@ export function useConsentBanner(): UseConsentBannerReturn {
       setError(null);
       const response = await complianceManager.getConsentRecords({
         limit: 50,
-        sortBy: 'created_at',
-        sortOrder: 'desc'
+        sortBy: "created_at",
+        sortOrder: "desc",
       });
       setConsentHistory(response.data);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao carregar histórico de consentimentos';
+      const errorMessage =
+        err instanceof Error ? err.message : "Erro ao carregar histórico de consentimentos";
       setError(errorMessage);
-      console.error('Failed to load consent history:', err);
+      console.error("Failed to load consent history:", err);
     }
   }, [complianceManager]);
 
@@ -148,40 +150,40 @@ export function useConsentBanner(): UseConsentBannerReturn {
     try {
       setIsSaving(true);
       setError(null);
-      
+
       const allAccepted: ConsentPreferences = {};
-      purposes.forEach(purpose => {
+      purposes.forEach((purpose) => {
         allAccepted[purpose.id] = true;
       });
-      
+
       // Save to backend
       await Promise.all(
-        purposes.map(purpose =>
+        purposes.map((purpose) =>
           complianceManager.recordConsent({
             purpose_id: purpose.id,
             granted: true,
-            user_id: 'anonymous', // Will be replaced with actual user ID when available
-            ip_address: '', // Will be filled by backend
-            user_agent: navigator.userAgent
-          })
-        )
+            user_id: "anonymous", // Will be replaced with actual user ID when available
+            ip_address: "", // Will be filled by backend
+            user_agent: navigator.userAgent,
+          }),
+        ),
       );
-      
+
       setPreferences(allAccepted);
       saveToStorage(allAccepted);
       setShowBanner(false);
-      
+
       toast({
-        title: 'Consentimentos salvos',
-        description: 'Todos os consentimentos foram aceitos com sucesso.'
+        title: "Consentimentos salvos",
+        description: "Todos os consentimentos foram aceitos com sucesso.",
       });
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao salvar consentimentos';
+      const errorMessage = err instanceof Error ? err.message : "Erro ao salvar consentimentos";
       setError(errorMessage);
       toast({
-        title: 'Erro',
+        title: "Erro",
         description: errorMessage,
-        variant: 'destructive'
+        variant: "destructive",
       });
     } finally {
       setIsSaving(false);
@@ -193,40 +195,40 @@ export function useConsentBanner(): UseConsentBannerReturn {
     try {
       setIsSaving(true);
       setError(null);
-      
+
       const onlyRequired: ConsentPreferences = {};
-      purposes.forEach(purpose => {
+      purposes.forEach((purpose) => {
         onlyRequired[purpose.id] = purpose.required || false;
       });
-      
+
       // Save to backend
       await Promise.all(
-        purposes.map(purpose =>
+        purposes.map((purpose) =>
           complianceManager.recordConsent({
             purpose_id: purpose.id,
             granted: purpose.required || false,
-            user_id: 'anonymous', // Will be replaced with actual user ID when available
-            ip_address: '', // Will be filled by backend
-            user_agent: navigator.userAgent
-          })
-        )
+            user_id: "anonymous", // Will be replaced with actual user ID when available
+            ip_address: "", // Will be filled by backend
+            user_agent: navigator.userAgent,
+          }),
+        ),
       );
-      
+
       setPreferences(onlyRequired);
       saveToStorage(onlyRequired);
       setShowBanner(false);
-      
+
       toast({
-        title: 'Consentimentos salvos',
-        description: 'Apenas consentimentos essenciais foram mantidos.'
+        title: "Consentimentos salvos",
+        description: "Apenas consentimentos essenciais foram mantidos.",
       });
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao salvar consentimentos';
+      const errorMessage = err instanceof Error ? err.message : "Erro ao salvar consentimentos";
       setError(errorMessage);
       toast({
-        title: 'Erro',
+        title: "Erro",
         description: errorMessage,
-        variant: 'destructive'
+        variant: "destructive",
       });
     } finally {
       setIsSaving(false);
@@ -234,71 +236,77 @@ export function useConsentBanner(): UseConsentBannerReturn {
   }, [purposes, complianceManager, saveToStorage, toast]);
 
   // Save custom preferences
-  const savePreferences = useCallback(async (newPreferences: ConsentPreferences) => {
-    try {
-      setIsSaving(true);
-      setError(null);
-      
-      // Ensure required purposes are always true
-      const validatedPreferences = { ...newPreferences };
-      purposes.forEach(purpose => {
-        if (purpose.required) {
-          validatedPreferences[purpose.id] = true;
-        }
-      });
-      
-      // Save to backend
-      await Promise.all(
-        Object.entries(validatedPreferences).map(([purposeId, granted]) =>
-          complianceManager.recordConsent({
-            purpose_id: purposeId,
-            granted,
-            user_id: 'anonymous', // Will be replaced with actual user ID when available
-            ip_address: '', // Will be filled by backend
-            user_agent: navigator.userAgent
-          })
-        )
-      );
-      
-      setPreferences(validatedPreferences);
-      saveToStorage(validatedPreferences);
-      setShowBanner(false);
-      setShowPreferences(false);
-      
-      toast({
-        title: 'Preferências salvas',
-        description: 'Suas preferências de consentimento foram atualizadas.'
-      });
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao salvar preferências';
-      setError(errorMessage);
-      toast({
-        title: 'Erro',
-        description: errorMessage,
-        variant: 'destructive'
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  }, [purposes, complianceManager, saveToStorage, toast]);
+  const savePreferences = useCallback(
+    async (newPreferences: ConsentPreferences) => {
+      try {
+        setIsSaving(true);
+        setError(null);
+
+        // Ensure required purposes are always true
+        const validatedPreferences = { ...newPreferences };
+        purposes.forEach((purpose) => {
+          if (purpose.required) {
+            validatedPreferences[purpose.id] = true;
+          }
+        });
+
+        // Save to backend
+        await Promise.all(
+          Object.entries(validatedPreferences).map(([purposeId, granted]) =>
+            complianceManager.recordConsent({
+              purpose_id: purposeId,
+              granted,
+              user_id: "anonymous", // Will be replaced with actual user ID when available
+              ip_address: "", // Will be filled by backend
+              user_agent: navigator.userAgent,
+            }),
+          ),
+        );
+
+        setPreferences(validatedPreferences);
+        saveToStorage(validatedPreferences);
+        setShowBanner(false);
+        setShowPreferences(false);
+
+        toast({
+          title: "Preferências salvas",
+          description: "Suas preferências de consentimento foram atualizadas.",
+        });
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Erro ao salvar preferências";
+        setError(errorMessage);
+        toast({
+          title: "Erro",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      } finally {
+        setIsSaving(false);
+      }
+    },
+    [purposes, complianceManager, saveToStorage, toast],
+  );
 
   // Update single preference
-  const updatePreference = useCallback((purposeId: string, granted: boolean) => {
-    const purpose = purposes.find(p => p.id === purposeId);
-    if (purpose?.required && !granted) {
-      toast({
-        title: 'Consentimento obrigatório',
-        description: 'Este consentimento é obrigatório e não pode ser desabilitado.',
-        variant: 'destructive'
-      });
-      return;
-    }
-    
-    setPreferences(prev => ({
-      ...prev,
-      [purposeId]: granted
-    }));
-  }, [purposes, toast]);
+  const updatePreference = useCallback(
+    (purposeId: string, granted: boolean) => {
+      const purpose = purposes.find((p) => p.id === purposeId);
+      if (purpose?.required && !granted) {
+        toast({
+          title: "Consentimento obrigatório",
+          description: "Este consentimento é obrigatório e não pode ser desabilitado.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setPreferences((prev) => ({
+        ...prev,
+        [purposeId]: granted,
+      }));
+    },
+    [purposes, toast],
+  );
 
   // Banner control functions
   const showBannerDialog = useCallback(() => setShowBanner(true), []);
@@ -307,9 +315,12 @@ export function useConsentBanner(): UseConsentBannerReturn {
   const hidePreferences = useCallback(() => setShowPreferences(false), []);
 
   // Check if user has consent for a specific purpose
-  const hasConsent = useCallback((purposeId: string) => {
-    return preferences[purposeId] === true;
-  }, [preferences]);
+  const hasConsent = useCallback(
+    (purposeId: string) => {
+      return preferences[purposeId] === true;
+    },
+    [preferences],
+  );
 
   // Load data on mount
   useEffect(() => {
@@ -318,7 +329,7 @@ export function useConsentBanner(): UseConsentBannerReturn {
       await Promise.all([loadPurposes(), loadConsentHistory()]);
       setIsLoading(false);
     };
-    
+
     loadData();
   }, [loadPurposes, loadConsentHistory]);
 
@@ -327,32 +338,32 @@ export function useConsentBanner(): UseConsentBannerReturn {
     purposes,
     consentHistory,
     preferences,
-    
+
     // Banner state
     showBanner,
     showPreferences,
-    
+
     // Loading states
     isLoading,
     isSaving,
-    
+
     // Actions
     acceptAll,
     rejectAll,
     savePreferences,
     updatePreference,
-    
+
     // Banner control
     showBannerDialog,
     hideBanner,
     showPreferencesDialog,
     hidePreferences,
-    
+
     // Utility
     loadConsentHistory,
     hasConsent,
-    
+
     // Error handling
-    error
+    error,
   };
 }

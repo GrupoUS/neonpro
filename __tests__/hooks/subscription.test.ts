@@ -1,104 +1,104 @@
 /**
  * Subscription Hooks Unit Tests
  * Tests React hooks for subscription management
- * 
+ *
  * @description Comprehensive tests for subscription-related React hooks,
  *              covering state management, caching, and real-time updates
  * @version 1.0.0
  * @created 2025-07-22
  */
 
-import { describe, it, expect, jest, beforeEach } from '@jest/globals'
-import { renderHook, waitFor, act } from '@testing-library/react'
-import { QueryClient } from '@tanstack/react-query'
+import { describe, it, expect, jest, beforeEach } from "@jest/globals";
+import { renderHook, waitFor, act } from "@testing-library/react";
+import { QueryClient } from "@tanstack/react-query";
 import {
   AllTheProviders,
   createTestQueryClient,
   createMockSubscription,
   createMockSubscriptionHook,
-} from '../utils/testUtils'
+} from "../utils/testUtils";
 
 // Mock the subscription hooks (to be imported when they exist)
-const mockUseSubscriptionStatus = () => createMockSubscriptionHook()
+const mockUseSubscriptionStatus = () => createMockSubscriptionHook();
 
 // ============================================================================
 // Hook Tests
 // ============================================================================
 
-describe('Subscription Hooks', () => {
-  let queryClient: QueryClient
+describe("Subscription Hooks", () => {
+  let queryClient: QueryClient;
 
   beforeEach(() => {
-    queryClient = createTestQueryClient()
-    jest.clearAllMocks()
-  })
+    queryClient = createTestQueryClient();
+    jest.clearAllMocks();
+  });
 
   // ============================================================================
   // useSubscriptionStatus Tests
   // ============================================================================
 
-  describe('useSubscriptionStatus', () => {
-    it('should return subscription data correctly', () => {
+  describe("useSubscriptionStatus", () => {
+    it("should return subscription data correctly", () => {
       const { result } = renderHook(() => mockUseSubscriptionStatus(), {
-        wrapper: ({ children }: { children: React.ReactNode }) => 
-          AllTheProviders({ queryClient, children })
-      })
-      
-      expect(result.current.data).toBeDefined()
-      expect(result.current.isLoading).toBe(false)
-      expect(result.current.isError).toBe(false)
-    })
+        wrapper: ({ children }: { children: React.ReactNode }) =>
+          AllTheProviders({ queryClient, children }),
+      });
 
-    it('should handle loading state correctly', () => {
-      const mockHook = createMockSubscriptionHook({ isLoading: true })
-      
-      expect(mockHook.isLoading).toBe(true)
-      expect(mockHook.data).toBeDefined()
-    })
+      expect(result.current.data).toBeDefined();
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isError).toBe(false);
+    });
 
-    it('should handle error states correctly', () => {
-      const mockError = new Error('Failed to fetch subscription')
-      const mockHook = createMockSubscriptionHook({ 
-        isError: true, 
-        error: mockError 
-      })
-      
-      expect(mockHook.isError).toBe(true)
-      expect(mockHook.error).toBe(mockError)
-    })
+    it("should handle loading state correctly", () => {
+      const mockHook = createMockSubscriptionHook({ isLoading: true });
 
-    it('should support refetching subscription data', async () => {
-      const mockRefetch = jest.fn().mockResolvedValue({ 
-        data: createMockSubscription() 
-      })
-      
-      const mockHook = createMockSubscriptionHook({ refetch: mockRefetch })
-      
+      expect(mockHook.isLoading).toBe(true);
+      expect(mockHook.data).toBeDefined();
+    });
+
+    it("should handle error states correctly", () => {
+      const mockError = new Error("Failed to fetch subscription");
+      const mockHook = createMockSubscriptionHook({
+        isError: true,
+        error: mockError,
+      });
+
+      expect(mockHook.isError).toBe(true);
+      expect(mockHook.error).toBe(mockError);
+    });
+
+    it("should support refetching subscription data", async () => {
+      const mockRefetch = jest.fn().mockResolvedValue({
+        data: createMockSubscription(),
+      });
+
+      const mockHook = createMockSubscriptionHook({ refetch: mockRefetch });
+
       await act(async () => {
-        await mockHook.refetch()
-      })
-      
-      expect(mockRefetch).toHaveBeenCalledTimes(1)
-    })
-  })
+        await mockHook.refetch();
+      });
+
+      expect(mockRefetch).toHaveBeenCalledTimes(1);
+    });
+  });
 
   // ============================================================================
   // Real-time Updates Tests
   // ============================================================================
 
-  describe('useSubscriptionEvents', () => {
-    it('should handle subscription change events', () => {
-      const mockEventHandler = jest.fn()
-      const mockEvent = { 
-        type: 'subscription_updated', 
-        data: createMockSubscription() 
-      }
-      
+  describe("useSubscriptionEvents", () => {
+    it("should handle subscription change events", () => {
+      const mockEventHandler = jest.fn();
+      const mockEvent = {
+        type: "subscription_updated",
+        data: createMockSubscription(),
+      };
+
       // Simulate event handling
-      mockEventHandler(mockEvent)
-      
-      expect(mockEventHandler).toHaveBeenCalledWith(mockEvent)
-      expect(mockEventHandler).toHaveBeenCalledTimes(1)
-    })
-  })
-})
+      mockEventHandler(mockEvent);
+
+      expect(mockEventHandler).toHaveBeenCalledWith(mockEvent);
+      expect(mockEventHandler).toHaveBeenCalledTimes(1);
+    });
+  });
+});

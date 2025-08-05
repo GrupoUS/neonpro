@@ -1,7 +1,7 @@
 /**
  * NeonPro Healthcare RBAC Middleware
  * AUTH-02 Implementation - API Route Protection with Healthcare Context
- * 
+ *
  * Features:
  * - API route protection with permission validation
  * - Healthcare-specific access control
@@ -12,17 +12,10 @@
  * - Performance optimized with caching
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
-import { 
-  HealthcareRBACEngine, 
-  PermissionCheckResult, 
-  UserRoleContext 
-} from '@/lib/auth/rbac';
-import { 
-  HealthcareRole, 
-  MedicalSpecialty 
-} from '@/lib/auth/permissions';
+import { NextRequest, NextResponse } from "next/server";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { HealthcareRBACEngine, PermissionCheckResult, UserRoleContext } from "@/lib/auth/rbac";
+import { HealthcareRole, MedicalSpecialty } from "@/lib/auth/permissions";
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -31,35 +24,32 @@ import {
 interface RBACMiddlewareOptions {
   /** Required permissions (all must be satisfied) */
   permissions: string[];
-  
+
   /** Alternative permissions (any can be satisfied) */
   alternativePermissions?: string[];
-  
+
   /** Allow emergency override for clinical staff */
   allowEmergencyOverride?: boolean;
-  
+
   /** Require specific medical specialty */
   requiredSpecialty?: MedicalSpecialty;
-  
+
   /** Require active medical license */
   requireMedicalLicense?: boolean;
-  
+
   /** Require CFM registration */
   requireCFMRegistration?: boolean;
-  
+
   /** Custom context extractor */
   contextExtractor?: (request: NextRequest) => Promise<{
     clinicId?: string;
     patientId?: string;
     resourceId?: string;
   }>;
-  
+
   /** Custom error handler */
-  errorHandler?: (
-    error: RBACError,
-    request: NextRequest
-  ) => Promise<NextResponse>;
-  
+  errorHandler?: (error: RBACError, request: NextRequest) => Promise<NextResponse>;
+
   /** Audit log additional data */
   auditMetadata?: Record<string, any>;
 }
@@ -104,9 +94,9 @@ export class HealthcareRBACMiddleware {
         cookies: {
           get: (name: string) => undefined,
           set: (name: string, value: string, options: CookieOptions) => {},
-          remove: (name: string, options: CookieOptions) => {}
-        }
-      }
+          remove: (name: string, options: CookieOptions) => {},
+        },
+      },
     );
 
     this.rbacEngine = new HealthcareRBACEngine(this.supabase);
@@ -129,16 +119,19 @@ export class HealthcareRBACMiddleware {
         // Get user role context
         const userContext = await this.getUserRoleContext(user.id);
         if (!userContext) {
-          return this.createErrorResponse({
-            code: 'USER_CONTEXT_NOT_FOUND',
-            message: 'User role context not found',
-            statusCode: 403,
-            details: { userId: user.id }
-          }, request);
+          return this.createErrorResponse(
+            {
+              code: "USER_CONTEXT_NOT_FOUND",
+              message: "User role context not found",
+              statusCode: 403,
+              details: { userId: user.id },
+            },
+            request,
+          );
         }
 
         // Extract request context
-        const requestContext = options.contextExtractor 
+        const requestContext = options.contextExtractor
           ? await options.contextExtractor(request)
           : await this.extractDefaultContext(request);
 
@@ -151,48 +144,49 @@ export class HealthcareRBACMiddleware {
         // Validate healthcare requirements
         const healthcareValidation = await this.validateHealthcareRequirements(
           userContext,
-          options
+          options,
         );
         if (!healthcareValidation.valid) {
           return this.createErrorResponse(healthcareValidation.error!, request);
         }
 
         // Check permissions
-        const permissionResults = await this.checkPermissions(
-          user.id,
-          options,
-          { ...requestContext, emergencyOverride }
-        );
+        const permissionResults = await this.checkPermissions(user.id, options, {
+          ...requestContext,
+          emergencyOverride,
+        });
 
-        const hasRequiredPermissions = permissionResults.every(result => result.granted);
+        const hasRequiredPermissions = permissionResults.every((result) => result.granted);
         const hasAlternativePermissions = options.alternativePermissions
-          ? await this.checkAlternativePermissions(
-              user.id,
-              options.alternativePermissions,
-              { ...requestContext, emergencyOverride }
-            )
+          ? await this.checkAlternativePermissions(user.id, options.alternativePermissions, {
+              ...requestContext,
+              emergencyOverride,
+            })
           : false;
 
         if (!hasRequiredPermissions && !hasAlternativePermissions) {
           const failedPermissions = permissionResults
-            .filter(result => !result.granted)
-            .map(result => result.permission);
+            .filter((result) => !result.granted)
+            .map((result) => result.permission);
 
-          return this.createErrorResponse({
-            code: 'INSUFFICIENT_PERMISSIONS',
-            message: 'Insufficient permissions for this operation',
-            statusCode: 403,
-            userRole: userContext.role,
-            requiredPermissions: options.permissions,
-            failedChecks: failedPermissions,
-            details: {
-              userId: user.id,
+          return this.createErrorResponse(
+            {
+              code: "INSUFFICIENT_PERMISSIONS",
+              message: "Insufficient permissions for this operation",
+              statusCode: 403,
               userRole: userContext.role,
               requiredPermissions: options.permissions,
-              failedPermissions,
-              context: requestContext
-            }
-          }, request);
+              failedChecks: failedPermissions,
+              details: {
+                userId: user.id,
+                userRole: userContext.role,
+                requiredPermissions: options.permissions,
+                failedPermissions,
+                context: requestContext,
+              },
+            },
+            request,
+          );
         }
 
         // Log successful access
@@ -201,7 +195,7 @@ export class HealthcareRBACMiddleware {
           options.permissions,
           requestContext,
           request,
-          options.auditMetadata
+          options.auditMetadata,
         );
 
         // Add RBAC context to request headers for downstream use
@@ -210,30 +204,32 @@ export class HealthcareRBACMiddleware {
           userContext,
           permissions: permissionResults,
           ...requestContext,
-          emergencyOverride
+          emergencyOverride,
         };
 
         const requestWithContext = new NextRequest(request.url, {
           ...request,
-          headers: new Headers(request.headers)
+          headers: new Headers(request.headers),
         });
-        
+
         requestWithContext.headers.set(
-          'x-rbac-context',
-          Buffer.from(JSON.stringify(rbacContext)).toString('base64')
+          "x-rbac-context",
+          Buffer.from(JSON.stringify(rbacContext)).toString("base64"),
         );
 
         return;
-
       } catch (error) {
-        console.error('RBAC Middleware error:', error);
-        
-        return this.createErrorResponse({
-          code: 'RBAC_MIDDLEWARE_ERROR',
-          message: 'Internal error during permission validation',
-          statusCode: 500,
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
-        }, request);
+        console.error("RBAC Middleware error:", error);
+
+        return this.createErrorResponse(
+          {
+            code: "RBAC_MIDDLEWARE_ERROR",
+            message: "Internal error during permission validation",
+            statusCode: 500,
+            details: { error: error instanceof Error ? error.message : "Unknown error" },
+          },
+          request,
+        );
       }
     };
   }
@@ -252,61 +248,66 @@ export class HealthcareRBACMiddleware {
   }> {
     try {
       // Extract token from Authorization header or cookie
-      const authHeader = request.headers.get('authorization');
-      const cookieHeader = request.headers.get('cookie');
-      
+      const authHeader = request.headers.get("authorization");
+      const cookieHeader = request.headers.get("cookie");
+
       let token: string | null = null;
-      
-      if (authHeader?.startsWith('Bearer ')) {
+
+      if (authHeader?.startsWith("Bearer ")) {
         token = authHeader.substring(7);
       } else if (cookieHeader) {
         // Extract from supabase session cookie
-        const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
-          const [name, value] = cookie.trim().split('=');
-          acc[name] = value;
-          return acc;
-        }, {} as Record<string, string>);
-        
-        token = cookies['sb-access-token'] || cookies['supabase-auth-token'];
+        const cookies = cookieHeader.split(";").reduce(
+          (acc, cookie) => {
+            const [name, value] = cookie.trim().split("=");
+            acc[name] = value;
+            return acc;
+          },
+          {} as Record<string, string>,
+        );
+
+        token = cookies["sb-access-token"] || cookies["supabase-auth-token"];
       }
 
       if (!token) {
         return {
           success: false,
           error: {
-            code: 'NO_AUTH_TOKEN',
-            message: 'No authentication token provided',
-            statusCode: 401
-          }
+            code: "NO_AUTH_TOKEN",
+            message: "No authentication token provided",
+            statusCode: 401,
+          },
         };
       }
 
       // Verify token with Supabase
-      const { data: { user }, error } = await this.supabase.auth.getUser(token);
-      
+      const {
+        data: { user },
+        error,
+      } = await this.supabase.auth.getUser(token);
+
       if (error || !user) {
         return {
           success: false,
           error: {
-            code: 'INVALID_AUTH_TOKEN',
-            message: 'Invalid or expired authentication token',
+            code: "INVALID_AUTH_TOKEN",
+            message: "Invalid or expired authentication token",
             statusCode: 401,
-            details: { error: error?.message }
-          }
+            details: { error: error?.message },
+          },
         };
       }
 
       return { success: true, user };
-
     } catch (error) {
       return {
         success: false,
         error: {
-          code: 'AUTH_EXTRACTION_ERROR',
-          message: 'Error extracting authentication',
+          code: "AUTH_EXTRACTION_ERROR",
+          message: "Error extracting authentication",
           statusCode: 500,
-          details: { error: error instanceof Error ? error.message : 'Unknown error' }
-        }
+          details: { error: error instanceof Error ? error.message : "Unknown error" },
+        },
       };
     }
   }
@@ -317,7 +318,7 @@ export class HealthcareRBACMiddleware {
   private async getUserRoleContext(userId: string): Promise<UserRoleContext | null> {
     try {
       const { data, error } = await this.supabase
-        .from('user_roles')
+        .from("user_roles")
         .select(`
           *,
           medical_licenses (
@@ -329,8 +330,8 @@ export class HealthcareRBACMiddleware {
             expires_at
           )
         `)
-        .eq('user_id', userId)
-        .eq('active', true)
+        .eq("user_id", userId)
+        .eq("active", true)
         .single();
 
       if (error || !data) {
@@ -344,8 +345,10 @@ export class HealthcareRBACMiddleware {
         franchise_id: data.franchise_id,
         medical_license: data.medical_licenses?.license_number || null,
         cfm_number: data.medical_licenses?.cfm_number || null,
-        medical_specialty: data.medical_licenses?.specialty as MedicalSpecialty || null,
-        license_expiry: data.medical_licenses?.expires_at ? new Date(data.medical_licenses.expires_at) : null,
+        medical_specialty: (data.medical_licenses?.specialty as MedicalSpecialty) || null,
+        license_expiry: data.medical_licenses?.expires_at
+          ? new Date(data.medical_licenses.expires_at)
+          : null,
         license_active: data.medical_licenses?.active || false,
         additional_specialties: data.medical_licenses?.additional_specialties || [],
         certifications: data.certifications || [],
@@ -358,10 +361,10 @@ export class HealthcareRBACMiddleware {
         last_validated: new Date(data.last_validated),
         validation_required: data.validation_required || false,
         created_at: new Date(data.created_at),
-        updated_at: new Date(data.updated_at)
+        updated_at: new Date(data.updated_at),
       };
     } catch (error) {
-      console.error('Get user role context error:', error);
+      console.error("Get user role context error:", error);
       return null;
     }
   }
@@ -378,19 +381,22 @@ export class HealthcareRBACMiddleware {
     const { searchParams, pathname } = url;
 
     // Extract from query parameters
-    const clinicId = searchParams.get('clinicId') || request.headers.get('x-clinic-id') || undefined;
-    const patientId = searchParams.get('patientId') || request.headers.get('x-patient-id') || undefined;
-    const resourceId = searchParams.get('resourceId') || request.headers.get('x-resource-id') || undefined;
+    const clinicId =
+      searchParams.get("clinicId") || request.headers.get("x-clinic-id") || undefined;
+    const patientId =
+      searchParams.get("patientId") || request.headers.get("x-patient-id") || undefined;
+    const resourceId =
+      searchParams.get("resourceId") || request.headers.get("x-resource-id") || undefined;
 
     // Extract from URL path parameters
-    const pathParts = pathname.split('/');
-    const clinicIndex = pathParts.indexOf('clinics');
-    const patientIndex = pathParts.indexOf('patients');
+    const pathParts = pathname.split("/");
+    const clinicIndex = pathParts.indexOf("clinics");
+    const patientIndex = pathParts.indexOf("patients");
 
     return {
       clinicId: clinicId || (clinicIndex > -1 && pathParts[clinicIndex + 1]) || undefined,
       patientId: patientId || (patientIndex > -1 && pathParts[patientIndex + 1]) || undefined,
-      resourceId
+      resourceId,
     };
   }
 
@@ -398,8 +404,10 @@ export class HealthcareRBACMiddleware {
    * Check for emergency override flag
    */
   private checkEmergencyOverride(request: NextRequest): boolean {
-    return request.headers.get('x-emergency-override') === 'true' ||
-           new URL(request.url).searchParams.get('emergencyOverride') === 'true';
+    return (
+      request.headers.get("x-emergency-override") === "true" ||
+      new URL(request.url).searchParams.get("emergencyOverride") === "true"
+    );
   }
 
   /**
@@ -407,19 +415,19 @@ export class HealthcareRBACMiddleware {
    */
   private async validateHealthcareRequirements(
     userContext: UserRoleContext,
-    options: RBACMiddlewareOptions
+    options: RBACMiddlewareOptions,
   ): Promise<{ valid: boolean; error?: RBACError }> {
     // Check medical license requirement
     if (options.requireMedicalLicense && !userContext.medical_license) {
       return {
         valid: false,
         error: {
-          code: 'MEDICAL_LICENSE_REQUIRED',
-          message: 'Active medical license required for this operation',
+          code: "MEDICAL_LICENSE_REQUIRED",
+          message: "Active medical license required for this operation",
           statusCode: 403,
           userRole: userContext.role,
-          details: { userId: userContext.user_id }
-        }
+          details: { userId: userContext.user_id },
+        },
       };
     }
 
@@ -428,15 +436,15 @@ export class HealthcareRBACMiddleware {
       return {
         valid: false,
         error: {
-          code: 'MEDICAL_LICENSE_INACTIVE',
-          message: 'Medical license is not active',
+          code: "MEDICAL_LICENSE_INACTIVE",
+          message: "Medical license is not active",
           statusCode: 403,
           userRole: userContext.role,
-          details: { 
+          details: {
             userId: userContext.user_id,
-            licenseNumber: userContext.medical_license
-          }
-        }
+            licenseNumber: userContext.medical_license,
+          },
+        },
       };
     }
 
@@ -445,16 +453,16 @@ export class HealthcareRBACMiddleware {
       return {
         valid: false,
         error: {
-          code: 'MEDICAL_LICENSE_EXPIRED',
-          message: 'Medical license has expired',
+          code: "MEDICAL_LICENSE_EXPIRED",
+          message: "Medical license has expired",
           statusCode: 403,
           userRole: userContext.role,
-          details: { 
+          details: {
             userId: userContext.user_id,
             licenseNumber: userContext.medical_license,
-            expiryDate: userContext.license_expiry
-          }
-        }
+            expiryDate: userContext.license_expiry,
+          },
+        },
       };
     }
 
@@ -463,12 +471,12 @@ export class HealthcareRBACMiddleware {
       return {
         valid: false,
         error: {
-          code: 'CFM_REGISTRATION_REQUIRED',
-          message: 'CFM registration required for this operation',
+          code: "CFM_REGISTRATION_REQUIRED",
+          message: "CFM registration required for this operation",
           statusCode: 403,
           userRole: userContext.role,
-          details: { userId: userContext.user_id }
-        }
+          details: { userId: userContext.user_id },
+        },
       };
     }
 
@@ -476,23 +484,23 @@ export class HealthcareRBACMiddleware {
     if (options.requiredSpecialty) {
       const userSpecialties = [
         ...(userContext.medical_specialty ? [userContext.medical_specialty] : []),
-        ...userContext.additional_specialties
+        ...userContext.additional_specialties,
       ];
 
       if (!userSpecialties.includes(options.requiredSpecialty)) {
         return {
           valid: false,
           error: {
-            code: 'MEDICAL_SPECIALTY_REQUIRED',
+            code: "MEDICAL_SPECIALTY_REQUIRED",
             message: `Medical specialty '${options.requiredSpecialty}' required for this operation`,
             statusCode: 403,
             userRole: userContext.role,
-            details: { 
+            details: {
               userId: userContext.user_id,
               requiredSpecialty: options.requiredSpecialty,
-              userSpecialties
-            }
-          }
+              userSpecialties,
+            },
+          },
         };
       }
     }
@@ -506,12 +514,17 @@ export class HealthcareRBACMiddleware {
   private async checkPermissions(
     userId: string,
     options: RBACMiddlewareOptions,
-    context: { clinicId?: string; patientId?: string; resourceId?: string; emergencyOverride?: boolean }
+    context: {
+      clinicId?: string;
+      patientId?: string;
+      resourceId?: string;
+      emergencyOverride?: boolean;
+    },
   ): Promise<PermissionCheckResult[]> {
     const results = await Promise.all(
-      options.permissions.map(permission => 
-        this.rbacEngine.checkPermission(userId, permission, context)
-      )
+      options.permissions.map((permission) =>
+        this.rbacEngine.checkPermission(userId, permission, context),
+      ),
     );
     return results;
   }
@@ -522,14 +535,17 @@ export class HealthcareRBACMiddleware {
   private async checkAlternativePermissions(
     userId: string,
     permissions: string[],
-    context: { clinicId?: string; patientId?: string; resourceId?: string; emergencyOverride?: boolean }
+    context: {
+      clinicId?: string;
+      patientId?: string;
+      resourceId?: string;
+      emergencyOverride?: boolean;
+    },
   ): Promise<boolean> {
     const results = await Promise.all(
-      permissions.map(permission => 
-        this.rbacEngine.checkPermission(userId, permission, context)
-      )
+      permissions.map((permission) => this.rbacEngine.checkPermission(userId, permission, context)),
     );
-    return results.some(result => result.granted);
+    return results.some((result) => result.granted);
   }
 
   /**
@@ -539,27 +555,27 @@ export class HealthcareRBACMiddleware {
     userId: string,
     permissions: string[],
     context: any,
-    request: NextRequest
+    request: NextRequest,
   ): Promise<void> {
     try {
-      await this.supabase.from('audit_logs').insert({
+      await this.supabase.from("audit_logs").insert({
         user_id: userId,
-        action: 'emergency_override',
-        resource: permissions.join(','),
+        action: "emergency_override",
+        resource: permissions.join(","),
         context: {
           ...context,
           url: request.url,
           method: request.method,
-          userAgent: request.headers.get('user-agent'),
-          ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip')
+          userAgent: request.headers.get("user-agent"),
+          ip: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip"),
         },
-        result: 'granted',
-        reason: 'Emergency override activated',
+        result: "granted",
+        reason: "Emergency override activated",
         emergency_override: true,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     } catch (error) {
-      console.error('Emergency override logging error:', error);
+      console.error("Emergency override logging error:", error);
     }
   }
 
@@ -571,56 +587,53 @@ export class HealthcareRBACMiddleware {
     permissions: string[],
     context: any,
     request: NextRequest,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<void> {
     try {
-      await this.supabase.from('audit_logs').insert({
+      await this.supabase.from("audit_logs").insert({
         user_id: userId,
-        action: 'api_access',
-        resource: permissions.join(','),
+        action: "api_access",
+        resource: permissions.join(","),
         context: {
           ...context,
           url: request.url,
           method: request.method,
-          userAgent: request.headers.get('user-agent'),
-          ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip'),
-          ...metadata
+          userAgent: request.headers.get("user-agent"),
+          ip: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip"),
+          ...metadata,
         },
-        result: 'granted',
-        reason: 'Permission validation successful',
-        timestamp: new Date().toISOString()
+        result: "granted",
+        reason: "Permission validation successful",
+        timestamp: new Date().toISOString(),
       });
     } catch (error) {
-      console.error('Successful access logging error:', error);
+      console.error("Successful access logging error:", error);
     }
   }
 
   /**
    * Create error response
    */
-  private async createErrorResponse(
-    error: RBACError,
-    request: NextRequest
-  ): Promise<NextResponse> {
+  private async createErrorResponse(error: RBACError, request: NextRequest): Promise<NextResponse> {
     // Log access denial
     try {
-      await this.supabase.from('audit_logs').insert({
-        action: 'api_access_denied',
-        resource: error.requiredPermissions?.join(',') || 'unknown',
+      await this.supabase.from("audit_logs").insert({
+        action: "api_access_denied",
+        resource: error.requiredPermissions?.join(",") || "unknown",
         context: {
           url: request.url,
           method: request.method,
-          userAgent: request.headers.get('user-agent'),
-          ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip'),
+          userAgent: request.headers.get("user-agent"),
+          ip: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip"),
           errorCode: error.code,
-          errorMessage: error.message
+          errorMessage: error.message,
         },
-        result: 'denied',
+        result: "denied",
         reason: error.message,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     } catch (logError) {
-      console.error('Access denial logging error:', logError);
+      console.error("Access denial logging error:", logError);
     }
 
     return NextResponse.json(
@@ -630,9 +643,9 @@ export class HealthcareRBACMiddleware {
         message: error.message,
         details: error.details,
         statusCode: error.statusCode,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       },
-      { status: error.statusCode }
+      { status: error.statusCode },
     );
   }
 }
@@ -649,52 +662,57 @@ const rbacMiddleware = new HealthcareRBACMiddleware();
 /**
  * Protect API route with specific permissions
  */
-export function requirePermissions(permissions: string[], options: Omit<RBACMiddlewareOptions, 'permissions'> = {}) {
+export function requirePermissions(
+  permissions: string[],
+  options: Omit<RBACMiddlewareOptions, "permissions"> = {},
+) {
   return rbacMiddleware.protect({ permissions, ...options });
 }
 
 /**
  * Protect clinical API routes
  */
-export function requireClinicalAccess(options: Omit<RBACMiddlewareOptions, 'permissions'> = {}) {
+export function requireClinicalAccess(options: Omit<RBACMiddlewareOptions, "permissions"> = {}) {
   return rbacMiddleware.protect({
-    permissions: ['patient.read.own', 'procedure.perform.general'],
+    permissions: ["patient.read.own", "procedure.perform.general"],
     requireMedicalLicense: true,
     allowEmergencyOverride: true,
-    ...options
+    ...options,
   });
 }
 
 /**
  * Protect administrative API routes
  */
-export function requireAdministrativeAccess(options: Omit<RBACMiddlewareOptions, 'permissions'> = {}) {
+export function requireAdministrativeAccess(
+  options: Omit<RBACMiddlewareOptions, "permissions"> = {},
+) {
   return rbacMiddleware.protect({
-    permissions: ['scheduling.manage.clinic', 'billing.process.standard'],
+    permissions: ["scheduling.manage.clinic", "billing.process.standard"],
     allowEmergencyOverride: false,
-    ...options
+    ...options,
   });
 }
 
 /**
  * Protect compliance API routes
  */
-export function requireComplianceAccess(options: Omit<RBACMiddlewareOptions, 'permissions'> = {}) {
+export function requireComplianceAccess(options: Omit<RBACMiddlewareOptions, "permissions"> = {}) {
   return rbacMiddleware.protect({
-    permissions: ['audit.access.clinic', 'compliance.report.cfm'],
+    permissions: ["audit.access.clinic", "compliance.report.cfm"],
     allowEmergencyOverride: false,
-    ...options
+    ...options,
   });
 }
 
 /**
  * Protect system administration routes
  */
-export function requireSystemAdminAccess(options: Omit<RBACMiddlewareOptions, 'permissions'> = {}) {
+export function requireSystemAdminAccess(options: Omit<RBACMiddlewareOptions, "permissions"> = {}) {
   return rbacMiddleware.protect({
-    permissions: ['system.manage.users', 'system.configure.clinic'],
+    permissions: ["system.manage.users", "system.configure.clinic"],
     allowEmergencyOverride: false,
-    ...options
+    ...options,
   });
 }
 
@@ -703,13 +721,13 @@ export function requireSystemAdminAccess(options: Omit<RBACMiddlewareOptions, 'p
  */
 export function extractRBACContext(request: NextRequest): RBACContext | null {
   try {
-    const contextHeader = request.headers.get('x-rbac-context');
+    const contextHeader = request.headers.get("x-rbac-context");
     if (!contextHeader) return null;
 
-    const contextData = JSON.parse(Buffer.from(contextHeader, 'base64').toString());
+    const contextData = JSON.parse(Buffer.from(contextHeader, "base64").toString());
     return contextData as RBACContext;
   } catch (error) {
-    console.error('Extract RBAC context error:', error);
+    console.error("Extract RBAC context error:", error);
     return null;
   }
 }

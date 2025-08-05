@@ -1,320 +1,351 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Switch } from '@/components/ui/switch'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { 
-  Bell, 
-  BellRing, 
-  AlertTriangle, 
-  Clock, 
-  Shield, 
-  FileText, 
-  Users, 
+import type { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type { Switch } from "@/components/ui/switch";
+import type { Label } from "@/components/ui/label";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type {
+  Bell,
+  BellRing,
+  AlertTriangle,
+  Clock,
+  Shield,
+  FileText,
+  Users,
   CheckCircle,
   XCircle,
   Settings,
   Calendar,
   Trash2,
   Eye,
-  Filter
-} from 'lucide-react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { useToast } from '@/hooks/use-toast'
+  Filter,
+} from "lucide-react";
+import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import type { useToast } from "@/hooks/use-toast";
 
 interface ComplianceAlert {
-  id: string
-  clinic_id: string
-  alert_type: 'consent_expiring' | 'consent_pending' | 'audit_required' | 'regulatory_deadline' | 'privacy_breach' | 'system_security'
-  severity: 'low' | 'medium' | 'high' | 'critical'
-  title: string
-  description: string
-  resource_type: string
-  resource_id: string
-  created_at: string
-  resolved_at: string | null
-  resolved_by: string | null
-  is_read: boolean
-  metadata: Record<string, any>
+  id: string;
+  clinic_id: string;
+  alert_type:
+    | "consent_expiring"
+    | "consent_pending"
+    | "audit_required"
+    | "regulatory_deadline"
+    | "privacy_breach"
+    | "system_security";
+  severity: "low" | "medium" | "high" | "critical";
+  title: string;
+  description: string;
+  resource_type: string;
+  resource_id: string;
+  created_at: string;
+  resolved_at: string | null;
+  resolved_by: string | null;
+  is_read: boolean;
+  metadata: Record<string, any>;
 }
 
 interface NotificationSettings {
-  email_enabled: boolean
-  push_enabled: boolean
-  sms_enabled: boolean
-  real_time_enabled: boolean
-  severity_threshold: string
-  alert_types: string[]
+  email_enabled: boolean;
+  push_enabled: boolean;
+  sms_enabled: boolean;
+  real_time_enabled: boolean;
+  severity_threshold: string;
+  alert_types: string[];
 }
 
 interface ComplianceAlertsSystemProps {
-  clinicId: string
-  userId: string
+  clinicId: string;
+  userId: string;
 }
 
 export default function ComplianceAlertsSystem({ clinicId, userId }: ComplianceAlertsSystemProps) {
-  const [alerts, setAlerts] = useState<ComplianceAlert[]>([])
+  const [alerts, setAlerts] = useState<ComplianceAlert[]>([]);
   const [settings, setSettings] = useState<NotificationSettings>({
     email_enabled: true,
     push_enabled: true,
     sms_enabled: false,
     real_time_enabled: true,
-    severity_threshold: 'medium',
-    alert_types: ['consent_expiring', 'consent_pending', 'audit_required']
-  })
-  const [loading, setLoading] = useState(true)
-  const [selectedSeverity, setSelectedSeverity] = useState('all')
-  const [selectedType, setSelectedType] = useState('all')
-  const [showResolved, setShowResolved] = useState(false)
-  
-  const supabase = createClientComponentClient()
-  const { toast } = useToast()
+    severity_threshold: "medium",
+    alert_types: ["consent_expiring", "consent_pending", "audit_required"],
+  });
+  const [loading, setLoading] = useState(true);
+  const [selectedSeverity, setSelectedSeverity] = useState("all");
+  const [selectedType, setSelectedType] = useState("all");
+  const [showResolved, setShowResolved] = useState(false);
+
+  const supabase = createClientComponentClient();
+  const { toast } = useToast();
 
   useEffect(() => {
-    fetchAlerts()
-    loadSettings()
-    
+    fetchAlerts();
+    loadSettings();
+
     // Set up real-time subscription for new alerts
     const channel = supabase
-      .channel('compliance_alerts')
+      .channel("compliance_alerts")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'compliance_alerts',
-          filter: `clinic_id=eq.${clinicId}`
+          event: "INSERT",
+          schema: "public",
+          table: "compliance_alerts",
+          filter: `clinic_id=eq.${clinicId}`,
         },
         (payload) => {
-          const newAlert = payload.new as ComplianceAlert
-          setAlerts(prev => [newAlert, ...prev])
-          
+          const newAlert = payload.new as ComplianceAlert;
+          setAlerts((prev) => [newAlert, ...prev]);
+
           // Show toast notification for high/critical alerts
-          if (newAlert.severity === 'high' || newAlert.severity === 'critical') {
+          if (newAlert.severity === "high" || newAlert.severity === "critical") {
             toast({
-              title: '🚨 Critical Compliance Alert',
+              title: "🚨 Critical Compliance Alert",
               description: newAlert.title,
-              variant: 'destructive'
-            })
+              variant: "destructive",
+            });
           }
-        }
+        },
       )
-      .subscribe()
+      .subscribe();
 
     return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [clinicId, selectedSeverity, selectedType, showResolved])
+      supabase.removeChannel(channel);
+    };
+  }, [clinicId, selectedSeverity, selectedType, showResolved]);
 
   const fetchAlerts = async () => {
     try {
-      setLoading(true)
-      
+      setLoading(true);
+
       let query = supabase
-        .from('compliance_alerts')
-        .select('*')
-        .eq('clinic_id', clinicId)
-        .order('created_at', { ascending: false })
+        .from("compliance_alerts")
+        .select("*")
+        .eq("clinic_id", clinicId)
+        .order("created_at", { ascending: false });
 
       if (!showResolved) {
-        query = query.is('resolved_at', null)
+        query = query.is("resolved_at", null);
       }
 
-      if (selectedSeverity !== 'all') {
-        query = query.eq('severity', selectedSeverity)
+      if (selectedSeverity !== "all") {
+        query = query.eq("severity", selectedSeverity);
       }
 
-      if (selectedType !== 'all') {
-        query = query.eq('alert_type', selectedType)
+      if (selectedType !== "all") {
+        query = query.eq("alert_type", selectedType);
       }
 
-      const { data, error } = await query.limit(100)
+      const { data, error } = await query.limit(100);
 
       if (error) {
-        console.error('Error fetching alerts:', error)
+        console.error("Error fetching alerts:", error);
         toast({
-          title: 'Error',
-          description: 'Failed to fetch compliance alerts',
-          variant: 'destructive'
-        })
-        return
+          title: "Error",
+          description: "Failed to fetch compliance alerts",
+          variant: "destructive",
+        });
+        return;
       }
 
-      setAlerts(data || [])
+      setAlerts(data || []);
     } catch (error) {
-      console.error('Error:', error)
+      console.error("Error:", error);
       toast({
-        title: 'Error',
-        description: 'An unexpected error occurred',
-        variant: 'destructive'
-      })
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const loadSettings = () => {
     // Load from localStorage or API
-    const saved = localStorage.getItem(`compliance_notifications_${clinicId}`)
+    const saved = localStorage.getItem(`compliance_notifications_${clinicId}`);
     if (saved) {
-      setSettings(JSON.parse(saved))
+      setSettings(JSON.parse(saved));
     }
-  }
+  };
 
   const saveSettings = (newSettings: NotificationSettings) => {
-    setSettings(newSettings)
-    localStorage.setItem(`compliance_notifications_${clinicId}`, JSON.stringify(newSettings))
+    setSettings(newSettings);
+    localStorage.setItem(`compliance_notifications_${clinicId}`, JSON.stringify(newSettings));
     toast({
-      title: 'Settings Saved',
-      description: 'Notification preferences updated successfully',
-      variant: 'default'
-    })
-  }
+      title: "Settings Saved",
+      description: "Notification preferences updated successfully",
+      variant: "default",
+    });
+  };
 
   const markAsRead = async (alertId: string) => {
     try {
       const { error } = await supabase
-        .from('compliance_alerts')
+        .from("compliance_alerts")
         .update({ is_read: true })
-        .eq('id', alertId)
+        .eq("id", alertId);
 
       if (error) {
-        console.error('Error marking alert as read:', error)
-        return
+        console.error("Error marking alert as read:", error);
+        return;
       }
 
-      setAlerts(prev => 
-        prev.map(alert => 
-          alert.id === alertId 
-            ? { ...alert, is_read: true }
-            : alert
-        )
-      )
+      setAlerts((prev) =>
+        prev.map((alert) => (alert.id === alertId ? { ...alert, is_read: true } : alert)),
+      );
     } catch (error) {
-      console.error('Error:', error)
+      console.error("Error:", error);
     }
-  }
+  };
 
   const resolveAlert = async (alertId: string) => {
     try {
       const { error } = await supabase
-        .from('compliance_alerts')
-        .update({ 
+        .from("compliance_alerts")
+        .update({
           resolved_at: new Date().toISOString(),
-          resolved_by: userId
+          resolved_by: userId,
         })
-        .eq('id', alertId)
+        .eq("id", alertId);
 
       if (error) {
-        console.error('Error resolving alert:', error)
+        console.error("Error resolving alert:", error);
         toast({
-          title: 'Error',
-          description: 'Failed to resolve alert',
-          variant: 'destructive'
-        })
-        return
+          title: "Error",
+          description: "Failed to resolve alert",
+          variant: "destructive",
+        });
+        return;
       }
 
-      setAlerts(prev => prev.filter(alert => alert.id !== alertId))
-      
+      setAlerts((prev) => prev.filter((alert) => alert.id !== alertId));
+
       toast({
-        title: 'Alert Resolved',
-        description: 'The alert has been marked as resolved',
-        variant: 'default'
-      })
+        title: "Alert Resolved",
+        description: "The alert has been marked as resolved",
+        variant: "default",
+      });
     } catch (error) {
-      console.error('Error:', error)
+      console.error("Error:", error);
     }
-  }
+  };
 
   const deleteAlert = async (alertId: string) => {
     try {
-      const { error } = await supabase
-        .from('compliance_alerts')
-        .delete()
-        .eq('id', alertId)
+      const { error } = await supabase.from("compliance_alerts").delete().eq("id", alertId);
 
       if (error) {
-        console.error('Error deleting alert:', error)
+        console.error("Error deleting alert:", error);
         toast({
-          title: 'Error',
-          description: 'Failed to delete alert',
-          variant: 'destructive'
-        })
-        return
+          title: "Error",
+          description: "Failed to delete alert",
+          variant: "destructive",
+        });
+        return;
       }
 
-      setAlerts(prev => prev.filter(alert => alert.id !== alertId))
-      
+      setAlerts((prev) => prev.filter((alert) => alert.id !== alertId));
+
       toast({
-        title: 'Alert Deleted',
-        description: 'The alert has been permanently deleted',
-        variant: 'default'
-      })
+        title: "Alert Deleted",
+        description: "The alert has been permanently deleted",
+        variant: "default",
+      });
     } catch (error) {
-      console.error('Error:', error)
+      console.error("Error:", error);
     }
-  }
+  };
 
   const getSeverityBadge = (severity: string) => {
     const variants = {
-      low: 'default',
-      medium: 'secondary',
-      high: 'destructive',
-      critical: 'destructive'
-    } as const
+      low: "default",
+      medium: "secondary",
+      high: "destructive",
+      critical: "destructive",
+    } as const;
 
     const colors = {
-      low: 'bg-green-100 text-green-800',
-      medium: 'bg-yellow-100 text-yellow-800',
-      high: 'bg-orange-100 text-orange-800',
-      critical: 'bg-red-100 text-red-800'
-    }
+      low: "bg-green-100 text-green-800",
+      medium: "bg-yellow-100 text-yellow-800",
+      high: "bg-orange-100 text-orange-800",
+      critical: "bg-red-100 text-red-800",
+    };
 
     return (
-      <Badge variant={variants[severity as keyof typeof variants]} className={colors[severity as keyof typeof colors]}>
+      <Badge
+        variant={variants[severity as keyof typeof variants]}
+        className={colors[severity as keyof typeof colors]}
+      >
         {severity.charAt(0).toUpperCase() + severity.slice(1)}
       </Badge>
-    )
-  }
+    );
+  };
 
   const getAlertIcon = (alertType: string) => {
     switch (alertType) {
-      case 'consent_expiring':
-      case 'consent_pending':
-        return <FileText className="h-4 w-4" />
-      case 'audit_required':
-        return <Shield className="h-4 w-4" />
-      case 'regulatory_deadline':
-        return <Calendar className="h-4 w-4" />
-      case 'privacy_breach':
-        return <AlertTriangle className="h-4 w-4" />
-      case 'system_security':
-        return <Shield className="h-4 w-4" />
+      case "consent_expiring":
+      case "consent_pending":
+        return <FileText className="h-4 w-4" />;
+      case "audit_required":
+        return <Shield className="h-4 w-4" />;
+      case "regulatory_deadline":
+        return <Calendar className="h-4 w-4" />;
+      case "privacy_breach":
+        return <AlertTriangle className="h-4 w-4" />;
+      case "system_security":
+        return <Shield className="h-4 w-4" />;
       default:
-        return <Bell className="h-4 w-4" />
+        return <Bell className="h-4 w-4" />;
     }
-  }
+  };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  }
+    return new Date(dateString).toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
-  const unreadCount = alerts.filter(alert => !alert.is_read).length
-  const criticalCount = alerts.filter(alert => alert.severity === 'critical' && !alert.resolved_at).length
+  const unreadCount = alerts.filter((alert) => !alert.is_read).length;
+  const criticalCount = alerts.filter(
+    (alert) => alert.severity === "critical" && !alert.resolved_at,
+  ).length;
 
   if (loading) {
     return (
@@ -328,7 +359,7 @@ export default function ComplianceAlertsSystem({ clinicId, userId }: ComplianceA
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -342,22 +373,20 @@ export default function ComplianceAlertsSystem({ clinicId, userId }: ComplianceA
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{unreadCount}</div>
-            <p className="text-xs text-muted-foreground">
-              Require attention
-            </p>
+            <p className="text-xs text-muted-foreground">Require attention</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Critical Alerts</CardTitle>
-            <AlertTriangle className={`h-4 w-4 ${criticalCount > 0 ? 'text-red-500' : 'text-green-500'}`} />
+            <AlertTriangle
+              className={`h-4 w-4 ${criticalCount > 0 ? "text-red-500" : "text-green-500"}`}
+            />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{criticalCount}</div>
-            <p className="text-xs text-muted-foreground">
-              Need immediate action
-            </p>
+            <p className="text-xs text-muted-foreground">Need immediate action</p>
           </CardContent>
         </Card>
 
@@ -368,9 +397,7 @@ export default function ComplianceAlertsSystem({ clinicId, userId }: ComplianceA
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{alerts.length}</div>
-            <p className="text-xs text-muted-foreground">
-              In current filter
-            </p>
+            <p className="text-xs text-muted-foreground">In current filter</p>
           </CardContent>
         </Card>
       </div>
@@ -421,14 +448,10 @@ export default function ComplianceAlertsSystem({ clinicId, userId }: ComplianceA
               </Select>
             </div>
             <div className="flex items-center space-x-2">
-              <Switch
-                id="show-resolved"
-                checked={showResolved}
-                onCheckedChange={setShowResolved}
-              />
+              <Switch id="show-resolved" checked={showResolved} onCheckedChange={setShowResolved} />
               <Label htmlFor="show-resolved">Show Resolved</Label>
             </div>
-            
+
             {/* Settings Dialog */}
             <Dialog>
               <DialogTrigger asChild>
@@ -451,7 +474,7 @@ export default function ComplianceAlertsSystem({ clinicId, userId }: ComplianceA
                       <Switch
                         id="email-notifications"
                         checked={settings.email_enabled}
-                        onCheckedChange={(checked) => 
+                        onCheckedChange={(checked) =>
                           saveSettings({ ...settings, email_enabled: checked })
                         }
                       />
@@ -461,7 +484,7 @@ export default function ComplianceAlertsSystem({ clinicId, userId }: ComplianceA
                       <Switch
                         id="push-notifications"
                         checked={settings.push_enabled}
-                        onCheckedChange={(checked) => 
+                        onCheckedChange={(checked) =>
                           saveSettings({ ...settings, push_enabled: checked })
                         }
                       />
@@ -471,7 +494,7 @@ export default function ComplianceAlertsSystem({ clinicId, userId }: ComplianceA
                       <Switch
                         id="sms-notifications"
                         checked={settings.sms_enabled}
-                        onCheckedChange={(checked) => 
+                        onCheckedChange={(checked) =>
                           saveSettings({ ...settings, sms_enabled: checked })
                         }
                       />
@@ -481,7 +504,7 @@ export default function ComplianceAlertsSystem({ clinicId, userId }: ComplianceA
                       <Switch
                         id="real-time"
                         checked={settings.real_time_enabled}
-                        onCheckedChange={(checked) => 
+                        onCheckedChange={(checked) =>
                           saveSettings({ ...settings, real_time_enabled: checked })
                         }
                       />
@@ -489,9 +512,9 @@ export default function ComplianceAlertsSystem({ clinicId, userId }: ComplianceA
                   </div>
                   <div>
                     <Label htmlFor="severity-threshold">Minimum Severity</Label>
-                    <Select 
-                      value={settings.severity_threshold} 
-                      onValueChange={(value) => 
+                    <Select
+                      value={settings.severity_threshold}
+                      onValueChange={(value) =>
                         saveSettings({ ...settings, severity_threshold: value })
                       }
                     >
@@ -546,24 +569,22 @@ export default function ComplianceAlertsSystem({ clinicId, userId }: ComplianceA
               </TableHeader>
               <TableBody>
                 {alerts.map((alert) => (
-                  <TableRow 
+                  <TableRow
                     key={alert.id}
-                    className={!alert.is_read ? 'bg-blue-50 dark:bg-blue-950/20' : ''}
+                    className={!alert.is_read ? "bg-blue-50 dark:bg-blue-950/20" : ""}
                   >
                     <TableCell>
                       <div className="flex items-start gap-3">
                         {getAlertIcon(alert.alert_type)}
                         <div>
                           <div className="font-medium">{alert.title}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {alert.description}
-                          </div>
+                          <div className="text-sm text-muted-foreground">{alert.description}</div>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline" className="capitalize">
-                        {alert.alert_type.replace('_', ' ')}
+                        {alert.alert_type.replace("_", " ")}
                       </Badge>
                     </TableCell>
                     <TableCell>{getSeverityBadge(alert.severity)}</TableCell>
@@ -590,20 +611,12 @@ export default function ComplianceAlertsSystem({ clinicId, userId }: ComplianceA
                     <TableCell>
                       <div className="flex items-center gap-2">
                         {!alert.is_read && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => markAsRead(alert.id)}
-                          >
+                          <Button variant="ghost" size="sm" onClick={() => markAsRead(alert.id)}>
                             <Eye className="h-4 w-4" />
                           </Button>
                         )}
                         {!alert.resolved_at && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => resolveAlert(alert.id)}
-                          >
+                          <Button variant="ghost" size="sm" onClick={() => resolveAlert(alert.id)}>
                             <CheckCircle className="h-4 w-4" />
                           </Button>
                         )}
@@ -625,5 +638,5 @@ export default function ComplianceAlertsSystem({ clinicId, userId }: ComplianceA
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

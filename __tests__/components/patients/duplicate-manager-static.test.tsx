@@ -5,9 +5,7 @@ describe("DuplicateManagerStatic", () => {
   it("renders duplicate detection UI", () => {
     render(<DuplicateManagerStatic />);
 
-    expect(
-      screen.getByText("Possíveis Duplicatas Detectadas")
-    ).toBeInTheDocument();
+    expect(screen.getByText("Possíveis Duplicatas Detectadas")).toBeInTheDocument();
     expect(screen.getByText("Possível Duplicata")).toBeInTheDocument();
     expect(screen.getByText("João Silva")).toBeInTheDocument();
     expect(screen.getByText("João da Silva")).toBeInTheDocument();

@@ -5,22 +5,15 @@
 // Author: VoidBeast V4.0 (BMad Method Implementation)
 // =====================================================================================
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { 
-  FinancialReportingEngine 
-} from '@/lib/financial/reporting-engine';
-import { 
-  FinancialAnalyticsCore 
-} from '@/lib/financial/analytics-core';
-import {
+import type { NextRequest, NextResponse } from "next/server";
+import type { createClient } from "@/lib/supabase/server";
+import type { FinancialReportingEngine } from "@/lib/financial/reporting-engine";
+import type { FinancialAnalyticsCore } from "@/lib/financial/analytics-core";
+import type {
   reportParametersSchema,
-  exportOptionsSchema
-} from '@/lib/validations/financial-reporting';
-import { 
-  REPORT_TYPES,
-  FINANCIAL_CONSTANTS 
-} from '@/lib/types/financial-reporting';
+  exportOptionsSchema,
+} from "@/lib/validations/financial-reporting";
+import type { REPORT_TYPES, FINANCIAL_CONSTANTS } from "@/lib/types/financial-reporting";
 
 // Initialize services
 const reportingEngine = new FinancialReportingEngine();
@@ -34,57 +27,48 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
     const { searchParams } = new URL(request.url);
-    
+
     // Extract and validate parameters
-    const clinicId = searchParams.get('clinic_id');
-    const reportType = searchParams.get('report_type');
-    const action = searchParams.get('action') || 'dashboard';
-    
+    const clinicId = searchParams.get("clinic_id");
+    const reportType = searchParams.get("report_type");
+    const action = searchParams.get("action") || "dashboard";
+
     if (!clinicId) {
-      return NextResponse.json(
-        { error: 'clinic_id é obrigatório' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "clinic_id é obrigatório" }, { status: 400 });
     }
 
     // Verify user has access to clinic
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Usuário não autenticado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Usuário não autenticado" }, { status: 401 });
     }
 
     // Route to specific action
     switch (action) {
-      case 'dashboard':
+      case "dashboard":
         return await handleDashboardRequest(clinicId);
-        
-      case 'kpis':
+
+      case "kpis":
         return await handleKPIRequest(clinicId, searchParams);
-        
-      case 'reports':
+
+      case "reports":
         return await handleReportsListRequest(clinicId, searchParams);
-        
-      case 'generate-report':
+
+      case "generate-report":
         return await handleReportGenerationRequest(clinicId, reportType, searchParams);
-        
-      case 'performance':
+
+      case "performance":
         return await handlePerformanceRequest(clinicId, searchParams);
-        
+
       default:
-        return NextResponse.json(
-          { error: `Ação '${action}' não reconhecida` },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: `Ação '${action}' não reconhecida` }, { status: 400 });
     }
   } catch (error) {
-    console.error('GET /api/financial/reporting error:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    console.error("GET /api/financial/reporting error:", error);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
 }
 
@@ -99,50 +83,41 @@ export async function POST(request: NextRequest) {
     const { action, clinic_id, parameters, options } = body;
 
     if (!clinic_id) {
-      return NextResponse.json(
-        { error: 'clinic_id é obrigatório' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "clinic_id é obrigatório" }, { status: 400 });
     }
 
     // Verify user authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Usuário não autenticado' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Usuário não autenticado" }, { status: 401 });
     }
 
     // Route to specific action
     switch (action) {
-      case 'generate-profit-loss':
+      case "generate-profit-loss":
         return await handleProfitLossGeneration(clinic_id, parameters);
-        
-      case 'generate-balance-sheet':
+
+      case "generate-balance-sheet":
         return await handleBalanceSheetGeneration(clinic_id, parameters);
-        
-      case 'generate-cash-flow':
+
+      case "generate-cash-flow":
         return await handleCashFlowGeneration(clinic_id, parameters);
-        
-      case 'export-report':
+
+      case "export-report":
         return await handleReportExport(clinic_id, parameters, options);
-        
-      case 'schedule-report':
+
+      case "schedule-report":
         return await handleReportScheduling(clinic_id, parameters, options);
-        
+
       default:
-        return NextResponse.json(
-          { error: `Ação '${action}' não reconhecida` },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: `Ação '${action}' não reconhecida` }, { status: 400 });
     }
   } catch (error) {
-    console.error('POST /api/financial/reporting error:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    console.error("POST /api/financial/reporting error:", error);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
 }
 
@@ -156,18 +131,15 @@ export async function POST(request: NextRequest) {
 async function handleDashboardRequest(clinicId: string) {
   try {
     const dashboardData = await analyticsCore.generateDashboardData(clinicId);
-    
+
     return NextResponse.json({
       success: true,
       data: dashboardData,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Dashboard request error:', error);
-    return NextResponse.json(
-      { error: 'Erro ao gerar dados do dashboard' },
-      { status: 500 }
-    );
+    console.error("Dashboard request error:", error);
+    return NextResponse.json({ error: "Erro ao gerar dados do dashboard" }, { status: 500 });
   }
 }
 
@@ -176,49 +148,46 @@ async function handleDashboardRequest(clinicId: string) {
  */
 async function handleKPIRequest(clinicId: string, searchParams: URLSearchParams) {
   try {
-    const periodStart = searchParams.get('period_start');
-    const periodEnd = searchParams.get('period_end');
-    
+    const periodStart = searchParams.get("period_start");
+    const periodEnd = searchParams.get("period_end");
+
     if (!periodStart || !periodEnd) {
       // Default to current month
       const now = new Date();
       const parameters = {
-        period_start: new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0],
-        period_end: now.toISOString().split('T')[0]
+        period_start: new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split("T")[0],
+        period_end: now.toISOString().split("T")[0],
       };
-      
+
       const kpis = await analyticsCore.calculateFinancialKPIs(clinicId, parameters);
-      
+
       return NextResponse.json({
         success: true,
         data: kpis,
-        parameters
+        parameters,
       });
     }
 
     const parameters = { period_start: periodStart, period_end: periodEnd };
     const validation = reportParametersSchema.safeParse(parameters);
-    
+
     if (!validation.success) {
       return NextResponse.json(
-        { error: 'Parâmetros inválidos', details: validation.error.errors },
-        { status: 400 }
+        { error: "Parâmetros inválidos", details: validation.error.errors },
+        { status: 400 },
       );
     }
 
     const kpis = await analyticsCore.calculateFinancialKPIs(clinicId, parameters);
-    
+
     return NextResponse.json({
       success: true,
       data: kpis,
-      parameters
+      parameters,
     });
   } catch (error) {
-    console.error('KPI request error:', error);
-    return NextResponse.json(
-      { error: 'Erro ao calcular KPIs' },
-      { status: 500 }
-    );
+    console.error("KPI request error:", error);
+    return NextResponse.json({ error: "Erro ao calcular KPIs" }, { status: 500 });
   }
 }
 
@@ -227,20 +196,20 @@ async function handleKPIRequest(clinicId: string, searchParams: URLSearchParams)
  */
 async function handleReportsListRequest(clinicId: string, searchParams: URLSearchParams) {
   try {
-    const reportType = searchParams.get('report_type');
-    const status = searchParams.get('status');
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
-    
+    const reportType = searchParams.get("report_type");
+    const status = searchParams.get("status");
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
+
     const filters = {
       report_type: reportType || undefined,
       status: status || undefined,
       page,
-      limit
+      limit,
     };
 
     const reports = await reportingEngine.getFinancialReports(clinicId, filters);
-    
+
     return NextResponse.json({
       success: true,
       data: reports.reports,
@@ -248,15 +217,12 @@ async function handleReportsListRequest(clinicId: string, searchParams: URLSearc
         page,
         limit,
         total: reports.total,
-        pages: Math.ceil(reports.total / limit)
-      }
+        pages: Math.ceil(reports.total / limit),
+      },
     });
   } catch (error) {
-    console.error('Reports list request error:', error);
-    return NextResponse.json(
-      { error: 'Erro ao buscar relatórios' },
-      { status: 500 }
-    );
+    console.error("Reports list request error:", error);
+    return NextResponse.json({ error: "Erro ao buscar relatórios" }, { status: 500 });
   }
 }
 
@@ -264,40 +230,37 @@ async function handleReportsListRequest(clinicId: string, searchParams: URLSearc
  * Handle report generation request
  */
 async function handleReportGenerationRequest(
-  clinicId: string, 
-  reportType: string | null, 
-  searchParams: URLSearchParams
+  clinicId: string,
+  reportType: string | null,
+  searchParams: URLSearchParams,
 ) {
   try {
     if (!reportType || !Object.values(REPORT_TYPES).includes(reportType as any)) {
-      return NextResponse.json(
-        { error: 'Tipo de relatório inválido' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Tipo de relatório inválido" }, { status: 400 });
     }
 
-    const periodStart = searchParams.get('period_start');
-    const periodEnd = searchParams.get('period_end');
-    
+    const periodStart = searchParams.get("period_start");
+    const periodEnd = searchParams.get("period_end");
+
     if (!periodStart || !periodEnd) {
       return NextResponse.json(
-        { error: 'period_start e period_end são obrigatórios' },
-        { status: 400 }
+        { error: "period_start e period_end são obrigatórios" },
+        { status: 400 },
       );
     }
 
     const parameters = { period_start: periodStart, period_end: periodEnd };
     const validation = reportParametersSchema.safeParse(parameters);
-    
+
     if (!validation.success) {
       return NextResponse.json(
-        { error: 'Parâmetros inválidos', details: validation.error.errors },
-        { status: 400 }
+        { error: "Parâmetros inválidos", details: validation.error.errors },
+        { status: 400 },
       );
     }
 
     let reportData;
-    
+
     switch (reportType) {
       case REPORT_TYPES.PROFIT_LOSS:
         reportData = await reportingEngine.generateProfitLossStatement(clinicId, parameters);
@@ -309,34 +272,31 @@ async function handleReportGenerationRequest(
         reportData = await reportingEngine.generateCashFlowStatement(clinicId, parameters);
         break;
       default:
-        return NextResponse.json(
-          { error: 'Tipo de relatório não implementado' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "Tipo de relatório não implementado" }, { status: 400 });
     }
 
     // Save report to database
-    const savedReport = await reportingEngine.saveFinancialReport({
-      clinic_id: clinicId,
-      report_type: reportType,
-      period_start: periodStart,
-      period_end: periodEnd,
-      generated_by: 'system' // TODO: Get user ID
-    }, reportData);
+    const savedReport = await reportingEngine.saveFinancialReport(
+      {
+        clinic_id: clinicId,
+        report_type: reportType,
+        period_start: periodStart,
+        period_end: periodEnd,
+        generated_by: "system", // TODO: Get user ID
+      },
+      reportData,
+    );
 
     return NextResponse.json({
       success: true,
       data: {
         report: savedReport,
-        content: reportData
-      }
+        content: reportData,
+      },
     });
   } catch (error) {
-    console.error('Report generation error:', error);
-    return NextResponse.json(
-      { error: 'Erro ao gerar relatório' },
-      { status: 500 }
-    );
+    console.error("Report generation error:", error);
+    return NextResponse.json({ error: "Erro ao gerar relatório" }, { status: 500 });
   }
 }
 
@@ -345,38 +305,38 @@ async function handleReportGenerationRequest(
  */
 async function handlePerformanceRequest(clinicId: string, searchParams: URLSearchParams) {
   try {
-    const periodStart = searchParams.get('period_start');
-    const periodEnd = searchParams.get('period_end');
-    
+    const periodStart = searchParams.get("period_start");
+    const periodEnd = searchParams.get("period_end");
+
     if (!periodStart || !periodEnd) {
       return NextResponse.json(
-        { error: 'period_start e period_end são obrigatórios' },
-        { status: 400 }
+        { error: "period_start e period_end são obrigatórios" },
+        { status: 400 },
       );
     }
 
     const parameters = { period_start: periodStart, period_end: periodEnd };
     const validation = reportParametersSchema.safeParse(parameters);
-    
+
     if (!validation.success) {
       return NextResponse.json(
-        { error: 'Parâmetros inválidos', details: validation.error.errors },
-        { status: 400 }
+        { error: "Parâmetros inválidos", details: validation.error.errors },
+        { status: 400 },
       );
     }
 
     const performance = await analyticsCore.calculatePerformanceMetrics(clinicId, parameters);
-    
+
     return NextResponse.json({
       success: true,
       data: performance,
-      parameters
+      parameters,
     });
   } catch (error) {
-    console.error('Performance request error:', error);
+    console.error("Performance request error:", error);
     return NextResponse.json(
-      { error: 'Erro ao calcular métricas de performance' },
-      { status: 500 }
+      { error: "Erro ao calcular métricas de performance" },
+      { status: 500 },
     );
   }
 }
@@ -387,40 +347,37 @@ async function handlePerformanceRequest(clinicId: string, searchParams: URLSearc
 async function handleProfitLossGeneration(clinicId: string, parameters: any) {
   try {
     const validation = reportParametersSchema.safeParse(parameters);
-    
+
     if (!validation.success) {
       return NextResponse.json(
-        { error: 'Parâmetros inválidos', details: validation.error.errors },
-        { status: 400 }
+        { error: "Parâmetros inválidos", details: validation.error.errors },
+        { status: 400 },
       );
     }
 
-    const profitLoss = await reportingEngine.generateProfitLossStatement(
-      clinicId, 
-      validation.data
-    );
+    const profitLoss = await reportingEngine.generateProfitLossStatement(clinicId, validation.data);
 
-    const savedReport = await reportingEngine.saveFinancialReport({
-      clinic_id: clinicId,
-      report_type: REPORT_TYPES.PROFIT_LOSS,
-      period_start: parameters.period_start,
-      period_end: parameters.period_end,
-      generated_by: 'system'
-    }, profitLoss);
+    const savedReport = await reportingEngine.saveFinancialReport(
+      {
+        clinic_id: clinicId,
+        report_type: REPORT_TYPES.PROFIT_LOSS,
+        period_start: parameters.period_start,
+        period_end: parameters.period_end,
+        generated_by: "system",
+      },
+      profitLoss,
+    );
 
     return NextResponse.json({
       success: true,
       data: {
         report: savedReport,
-        content: profitLoss
-      }
+        content: profitLoss,
+      },
     });
   } catch (error) {
-    console.error('P&L generation error:', error);
-    return NextResponse.json(
-      { error: 'Erro ao gerar DRE' },
-      { status: 500 }
-    );
+    console.error("P&L generation error:", error);
+    return NextResponse.json({ error: "Erro ao gerar DRE" }, { status: 500 });
   }
 }
 
@@ -431,37 +388,37 @@ async function handleBalanceSheetGeneration(clinicId: string, parameters: any) {
   try {
     if (!parameters.as_of_date) {
       return NextResponse.json(
-        { error: 'as_of_date é obrigatório para balanço patrimonial' },
-        { status: 400 }
+        { error: "as_of_date é obrigatório para balanço patrimonial" },
+        { status: 400 },
       );
     }
 
     const balanceSheet = await reportingEngine.generateBalanceSheet(
-      clinicId, 
-      parameters.as_of_date
+      clinicId,
+      parameters.as_of_date,
     );
 
-    const savedReport = await reportingEngine.saveFinancialReport({
-      clinic_id: clinicId,
-      report_type: REPORT_TYPES.BALANCE_SHEET,
-      period_start: parameters.as_of_date,
-      period_end: parameters.as_of_date,
-      generated_by: 'system'
-    }, balanceSheet);
+    const savedReport = await reportingEngine.saveFinancialReport(
+      {
+        clinic_id: clinicId,
+        report_type: REPORT_TYPES.BALANCE_SHEET,
+        period_start: parameters.as_of_date,
+        period_end: parameters.as_of_date,
+        generated_by: "system",
+      },
+      balanceSheet,
+    );
 
     return NextResponse.json({
       success: true,
       data: {
         report: savedReport,
-        content: balanceSheet
-      }
+        content: balanceSheet,
+      },
     });
   } catch (error) {
-    console.error('Balance sheet generation error:', error);
-    return NextResponse.json(
-      { error: 'Erro ao gerar balanço patrimonial' },
-      { status: 500 }
-    );
+    console.error("Balance sheet generation error:", error);
+    return NextResponse.json({ error: "Erro ao gerar balanço patrimonial" }, { status: 500 });
   }
 }
 
@@ -471,40 +428,37 @@ async function handleBalanceSheetGeneration(clinicId: string, parameters: any) {
 async function handleCashFlowGeneration(clinicId: string, parameters: any) {
   try {
     const validation = reportParametersSchema.safeParse(parameters);
-    
+
     if (!validation.success) {
       return NextResponse.json(
-        { error: 'Parâmetros inválidos', details: validation.error.errors },
-        { status: 400 }
+        { error: "Parâmetros inválidos", details: validation.error.errors },
+        { status: 400 },
       );
     }
 
-    const cashFlow = await reportingEngine.generateCashFlowStatement(
-      clinicId, 
-      validation.data
-    );
+    const cashFlow = await reportingEngine.generateCashFlowStatement(clinicId, validation.data);
 
-    const savedReport = await reportingEngine.saveFinancialReport({
-      clinic_id: clinicId,
-      report_type: REPORT_TYPES.CASH_FLOW,
-      period_start: parameters.period_start,
-      period_end: parameters.period_end,
-      generated_by: 'system'
-    }, cashFlow);
+    const savedReport = await reportingEngine.saveFinancialReport(
+      {
+        clinic_id: clinicId,
+        report_type: REPORT_TYPES.CASH_FLOW,
+        period_start: parameters.period_start,
+        period_end: parameters.period_end,
+        generated_by: "system",
+      },
+      cashFlow,
+    );
 
     return NextResponse.json({
       success: true,
       data: {
         report: savedReport,
-        content: cashFlow
-      }
+        content: cashFlow,
+      },
     });
   } catch (error) {
-    console.error('Cash flow generation error:', error);
-    return NextResponse.json(
-      { error: 'Erro ao gerar fluxo de caixa' },
-      { status: 500 }
-    );
+    console.error("Cash flow generation error:", error);
+    return NextResponse.json({ error: "Erro ao gerar fluxo de caixa" }, { status: 500 });
   }
 }
 
@@ -516,19 +470,16 @@ async function handleReportExport(clinicId: string, parameters: any, options: an
     // TODO: Implement report export functionality (PDF, Excel, CSV)
     return NextResponse.json({
       success: true,
-      message: 'Exportação de relatórios será implementada em breve',
+      message: "Exportação de relatórios será implementada em breve",
       data: {
         clinic_id: clinicId,
         parameters,
-        options
-      }
+        options,
+      },
     });
   } catch (error) {
-    console.error('Report export error:', error);
-    return NextResponse.json(
-      { error: 'Erro ao exportar relatório' },
-      { status: 500 }
-    );
+    console.error("Report export error:", error);
+    return NextResponse.json({ error: "Erro ao exportar relatório" }, { status: 500 });
   }
 }
 
@@ -540,18 +491,15 @@ async function handleReportScheduling(clinicId: string, parameters: any, options
     // TODO: Implement report scheduling functionality
     return NextResponse.json({
       success: true,
-      message: 'Agendamento de relatórios será implementado em breve',
+      message: "Agendamento de relatórios será implementado em breve",
       data: {
         clinic_id: clinicId,
         parameters,
-        options
-      }
+        options,
+      },
     });
   } catch (error) {
-    console.error('Report scheduling error:', error);
-    return NextResponse.json(
-      { error: 'Erro ao agendar relatório' },
-      { status: 500 }
-    );
+    console.error("Report scheduling error:", error);
+    return NextResponse.json({ error: "Erro ao agendar relatório" }, { status: 500 });
   }
 }

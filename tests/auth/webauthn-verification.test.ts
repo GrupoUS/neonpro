@@ -1,40 +1,40 @@
 /**
  * WebAuthn API Integration Tests
  * TASK-002: Authentication & Security Enhancement
- * 
+ *
  * Tests for WebAuthn/FIDO2 authentication implementation
  */
 
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect } from "@jest/globals";
 
-describe('WebAuthn Implementation Verification', () => {
-  it('should have WebAuthn service utilities', () => {
+describe("WebAuthn Implementation Verification", () => {
+  it("should have WebAuthn service utilities", () => {
     // Test that all required modules exist and can be imported
     expect(() => {
-      require('../../lib/auth/webauthn-service');
+      require("../../lib/auth/webauthn-service");
     }).not.toThrow();
-    
+
     expect(() => {
-      require('../../lib/auth/webauthn-client');
+      require("../../lib/auth/webauthn-client");
     }).not.toThrow();
-    
+
     expect(() => {
-      require('../../lib/auth/performance-tracker');
+      require("../../lib/auth/performance-tracker");
     }).not.toThrow();
   });
 
-  it('should have WebAuthn API endpoints', async () => {
+  it("should have WebAuthn API endpoints", async () => {
     // Test that API route files exist
-    const fs = require('fs');
-    const path = require('path');
-    
+    const fs = require("fs");
+    const path = require("path");
+
     const apiPaths = [
-      'app/api/auth/webauthn/register/options/route.ts',
-      'app/api/auth/webauthn/register/verify/route.ts',
-      'app/api/auth/webauthn/authenticate/options/route.ts',
-      'app/api/auth/webauthn/authenticate/verify/route.ts',
-      'app/api/auth/webauthn/credentials/route.ts',
-      'app/api/auth/webauthn/credentials/[credentialId]/route.ts',
+      "app/api/auth/webauthn/register/options/route.ts",
+      "app/api/auth/webauthn/register/verify/route.ts",
+      "app/api/auth/webauthn/authenticate/options/route.ts",
+      "app/api/auth/webauthn/authenticate/verify/route.ts",
+      "app/api/auth/webauthn/credentials/route.ts",
+      "app/api/auth/webauthn/credentials/[credentialId]/route.ts",
     ];
 
     for (const apiPath of apiPaths) {
@@ -43,32 +43,32 @@ describe('WebAuthn Implementation Verification', () => {
     }
   });
 
-  it('should have WebAuthn React component', () => {
-    const fs = require('fs');
-    const path = require('path');
-    
-    const componentPath = path.join(process.cwd(), 'components/auth/webauthn-manager.tsx');
+  it("should have WebAuthn React component", () => {
+    const fs = require("fs");
+    const path = require("path");
+
+    const componentPath = path.join(process.cwd(), "components/auth/webauthn-manager.tsx");
     expect(fs.existsSync(componentPath)).toBe(true);
   });
 
-  it('should have WebAuthn dependencies installed', () => {
+  it("should have WebAuthn dependencies installed", () => {
     // Test that WebAuthn dependencies are available
     expect(() => {
-      require('@simplewebauthn/server');
+      require("@simplewebauthn/server");
     }).not.toThrow();
-    
+
     expect(() => {
-      require('@simplewebauthn/browser');
+      require("@simplewebauthn/browser");
     }).not.toThrow();
   });
 
-  it('should have performance tracking integration', () => {
-    const { authPerformanceTracker } = require('../../lib/auth/performance-tracker');
-    
+  it("should have performance tracking integration", () => {
+    const { authPerformanceTracker } = require("../../lib/auth/performance-tracker");
+
     // Test that performance tracker is properly initialized
     expect(authPerformanceTracker).toBeDefined();
-    expect(typeof authPerformanceTracker.getPerformanceThresholds).toBe('function');
-    
+    expect(typeof authPerformanceTracker.getPerformanceThresholds).toBe("function");
+
     // Test that performance thresholds match TASK-002 requirements
     const thresholds = authPerformanceTracker.getPerformanceThresholds();
     expect(thresholds.login).toBe(350); // ≤350ms requirement from TASK-002
@@ -76,18 +76,18 @@ describe('WebAuthn Implementation Verification', () => {
     expect(thresholds.mfa_verification).toBe(500);
   });
 
-  it('should have proper WebAuthn configuration', () => {
+  it("should have proper WebAuthn configuration", () => {
     // Test environment variables and configuration
-    const { webAuthnService } = require('../../lib/auth/webauthn-service');
+    const { webAuthnService } = require("../../lib/auth/webauthn-service");
     expect(webAuthnService).toBeDefined();
   });
 });
 
-describe('TASK-002 Authentication Performance Requirements', () => {
-  it('should meet performance targets', () => {
-    const { authPerformanceTracker } = require('../../lib/auth/performance-tracker');
+describe("TASK-002 Authentication Performance Requirements", () => {
+  it("should meet performance targets", () => {
+    const { authPerformanceTracker } = require("../../lib/auth/performance-tracker");
     const thresholds = authPerformanceTracker.getPerformanceThresholds();
-    
+
     // TASK-002 Story 1.1 Performance Requirements
     expect(thresholds.login).toBeLessThanOrEqual(350); // ≤350ms target
     expect(thresholds.logout).toBeLessThanOrEqual(200);
@@ -96,52 +96,58 @@ describe('TASK-002 Authentication Performance Requirements', () => {
     expect(thresholds.mfa_verification).toBeLessThanOrEqual(500);
   });
 
-  it('should integrate with TASK-001 monitoring infrastructure', () => {
+  it("should integrate with TASK-001 monitoring infrastructure", () => {
     // Verify integration with monitoring infrastructure from TASK-001
     expect(() => {
-      require('../../lib/monitoring/performance');
+      require("../../lib/monitoring/performance");
     }).not.toThrow();
-    
+
     expect(() => {
-      require('../../lib/monitoring/analytics');
+      require("../../lib/monitoring/analytics");
     }).not.toThrow();
   });
 });
 
-describe('WebAuthn Security Features', () => {
-  it('should have comprehensive security audit preparation', () => {
-    const fs = require('fs');
-    const path = require('path');
-    
+describe("WebAuthn Security Features", () => {
+  it("should have comprehensive security audit preparation", () => {
+    const fs = require("fs");
+    const path = require("path");
+
     // Check that security audit schema is prepared
-    const migrationPath = path.join(process.cwd(), 'supabase/migrations/20250124_webauthn_schema.sql');
+    const migrationPath = path.join(
+      process.cwd(),
+      "supabase/migrations/20250124_webauthn_schema.sql",
+    );
     expect(fs.existsSync(migrationPath)).toBe(true);
-    
+
     // Verify migration contains security audit table
-    const migrationContent = fs.readFileSync(migrationPath, 'utf8');
-    expect(migrationContent).toContain('security_audit_log');
-    expect(migrationContent).toContain('webauthn_credentials');
-    expect(migrationContent).toContain('trusted_devices');
-    expect(migrationContent).toContain('mfa_backup_codes');
+    const migrationContent = fs.readFileSync(migrationPath, "utf8");
+    expect(migrationContent).toContain("security_audit_log");
+    expect(migrationContent).toContain("webauthn_credentials");
+    expect(migrationContent).toContain("trusted_devices");
+    expect(migrationContent).toContain("mfa_backup_codes");
   });
 
-  it('should have proper database schema for WebAuthn', () => {
-    const fs = require('fs');
-    const path = require('path');
-    
-    const migrationPath = path.join(process.cwd(), 'supabase/migrations/20250124_webauthn_schema.sql');
-    const content = fs.readFileSync(migrationPath, 'utf8');
-    
+  it("should have proper database schema for WebAuthn", () => {
+    const fs = require("fs");
+    const path = require("path");
+
+    const migrationPath = path.join(
+      process.cwd(),
+      "supabase/migrations/20250124_webauthn_schema.sql",
+    );
+    const content = fs.readFileSync(migrationPath, "utf8");
+
     // Verify essential WebAuthn fields are present
-    expect(content).toContain('credential_id');
-    expect(content).toContain('public_key');
-    expect(content).toContain('counter');
-    expect(content).toContain('device_type');
-    expect(content).toContain('RLS');
+    expect(content).toContain("credential_id");
+    expect(content).toContain("public_key");
+    expect(content).toContain("counter");
+    expect(content).toContain("device_type");
+    expect(content).toContain("RLS");
   });
 });
 
-console.log('✅ TASK-002 WebAuthn/FIDO2 Implementation Verification Complete');
-console.log('🔐 Multi-factor authentication foundation ready');
-console.log('📊 Performance monitoring integrated');
-console.log('🛡️ Security audit framework prepared');
+console.log("✅ TASK-002 WebAuthn/FIDO2 Implementation Verification Complete");
+console.log("🔐 Multi-factor authentication foundation ready");
+console.log("📊 Performance monitoring integrated");
+console.log("🛡️ Security audit framework prepared");

@@ -3,10 +3,10 @@
  * Story 1.8: Sistema de Backup e Recovery
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { BackupManager } from '@/lib/backup/backup-manager';
-import { createClient } from '@/lib/supabase/server';
-import { z } from 'zod';
+import type { NextRequest, NextResponse } from "next/server";
+import type { BackupManager } from "@/lib/backup/backup-manager";
+import type { createClient } from "@/lib/supabase/server";
+import type { z } from "zod";
 
 // Initialize BackupManager only if Supabase is configured
 let backupManager: BackupManager | null = null;
@@ -15,13 +15,13 @@ try {
     backupManager = new BackupManager();
   }
 } catch (error) {
-  console.warn('BackupManager initialization failed:', error);
+  console.warn("BackupManager initialization failed:", error);
 }
 
 // Schema para iniciar backup manual
 const startBackupSchema = z.object({
-  config_id: z.string().uuid('ID de configuração inválido'),
-  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).optional(),
+  config_id: z.string().uuid("ID de configuração inválido"),
+  priority: z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL"]).optional(),
   description: z.string().optional(),
 });
 
@@ -32,25 +32,24 @@ const startBackupSchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     if (!backupManager) {
-      return NextResponse.json(
-        { error: 'Backup service not configured' },
-        { status: 503 }
-      );
+      return NextResponse.json({ error: "Backup service not configured" }, { status: 503 });
     }
 
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
-    const status = searchParams.get('status');
-    const type = searchParams.get('type');
-    const config_id = searchParams.get('config_id');
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
+    const status = searchParams.get("status");
+    const type = searchParams.get("type");
+    const config_id = searchParams.get("config_id");
 
     const filters = {
       ...(status && { status }),
@@ -65,11 +64,8 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error('Erro ao buscar jobs de backup:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    console.error("Erro ao buscar jobs de backup:", error);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
 }
 
@@ -80,17 +76,16 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     if (!backupManager) {
-      return NextResponse.json(
-        { error: 'Backup service not configured' },
-        { status: 503 }
-      );
+      return NextResponse.json({ error: "Backup service not configured" }, { status: 503 });
     }
 
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     const body = await request.json();
@@ -102,23 +97,20 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(result, {
-      status: result.success ? 201 : 400
+      status: result.success ? 201 : 400,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
-          error: 'Dados inválidos', 
-          details: error.errors 
+        {
+          error: "Dados inválidos",
+          details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    console.error('Erro ao iniciar backup:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    console.error("Erro ao iniciar backup:", error);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
 }

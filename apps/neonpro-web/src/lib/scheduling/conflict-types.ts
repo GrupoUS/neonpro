@@ -21,23 +21,23 @@ export interface SchedulingConflict {
   updatedAt: Date;
 }
 
-export type ConflictType = 
-  | 'time_overlap'
-  | 'resource_conflict' 
-  | 'capacity_limit'
-  | 'staff_unavailable'
-  | 'room_conflict'
-  | 'equipment_conflict';
+export type ConflictType =
+  | "time_overlap"
+  | "resource_conflict"
+  | "capacity_limit"
+  | "staff_unavailable"
+  | "room_conflict"
+  | "equipment_conflict";
 
 export type SeverityLevel = 1 | 2 | 3 | 4 | 5;
 
 export type ResolutionMethod =
-  | 'automatic_reschedule'
-  | 'manual_override'
-  | 'resource_reallocation'
-  | 'capacity_expansion'
-  | 'staff_reassignment'
-  | 'escalation';
+  | "automatic_reschedule"
+  | "manual_override"
+  | "resource_reallocation"
+  | "capacity_expansion"
+  | "staff_reassignment"
+  | "escalation";
 
 // Resolution strategy types
 export interface ConflictResolutionStrategy {
@@ -53,12 +53,12 @@ export interface ConflictResolutionStrategy {
 }
 
 export type StrategyType =
-  | 'mip_optimization'
-  | 'constraint_programming'
-  | 'genetic_algorithm'
-  | 'reinforcement_learning'
-  | 'rule_based'
-  | 'hybrid';
+  | "mip_optimization"
+  | "constraint_programming"
+  | "genetic_algorithm"
+  | "reinforcement_learning"
+  | "rule_based"
+  | "hybrid";
 
 // Professional availability types
 export interface ProfessionalAvailabilityPattern {
@@ -66,7 +66,7 @@ export interface ProfessionalAvailabilityPattern {
   professionalId: string;
   dayOfWeek: number; // 0-6 (Sunday-Saturday)
   timeSlotStart: string; // HH:MM format
-  timeSlotEnd: string;   // HH:MM format
+  timeSlotEnd: string; // HH:MM format
   availabilityType: AvailabilityType;
   capacityPercentage: number; // 0-200
   preferences: Record<string, any>;
@@ -76,11 +76,7 @@ export interface ProfessionalAvailabilityPattern {
   updatedAt: Date;
 }
 
-export type AvailabilityType = 
-  | 'available'
-  | 'preferred'
-  | 'limited'
-  | 'unavailable';
+export type AvailabilityType = "available" | "preferred" | "limited" | "unavailable";
 
 // ML prediction types
 export interface SchedulingMLPrediction {
@@ -98,11 +94,11 @@ export interface SchedulingMLPrediction {
 }
 
 export type PredictionType =
-  | 'no_show_probability'
-  | 'duration_estimate'
-  | 'conflict_likelihood'
-  | 'optimal_scheduling_time'
-  | 'resource_demand_forecast';
+  | "no_show_probability"
+  | "duration_estimate"
+  | "conflict_likelihood"
+  | "optimal_scheduling_time"
+  | "resource_demand_forecast";
 
 // System metrics types
 export interface ConflictSystemMetric {
@@ -115,12 +111,12 @@ export interface ConflictSystemMetric {
 }
 
 export type MetricType =
-  | 'detection_latency'
-  | 'resolution_time'
-  | 'system_load'
-  | 'accuracy_rate'
-  | 'user_satisfaction'
-  | 'conflict_prevention_rate';
+  | "detection_latency"
+  | "resolution_time"
+  | "system_load"
+  | "accuracy_rate"
+  | "user_satisfaction"
+  | "conflict_prevention_rate";
 
 // Enhanced appointment type with conflict resolution data
 export interface EnhancedAppointment {
@@ -140,8 +136,8 @@ export interface EnhancedAppointment {
   updatedAt: Date;
 }
 
-export type ConflictStatus = 'none' | 'detected' | 'resolving' | 'resolved';
-export type AppointmentStatus = 'scheduled' | 'confirmed' | 'completed' | 'cancelled';
+export type ConflictStatus = "none" | "detected" | "resolving" | "resolved";
+export type AppointmentStatus = "scheduled" | "confirmed" | "completed" | "cancelled";
 
 // Conflict detection engine configuration
 export interface ConflictDetectionConfig {
@@ -154,7 +150,7 @@ export interface ConflictDetectionConfig {
 }
 
 export interface NotificationChannel {
-  type: 'email' | 'sms' | 'push' | 'realtime';
+  type: "email" | "sms" | "push" | "realtime";
   enabled: boolean;
   configuration: Record<string, any>;
 }
@@ -197,24 +193,24 @@ export interface ResolutionResult {
 
 export interface AppointmentChange {
   appointmentId: string;
-  changeType: 'reschedule' | 'reassign' | 'cancel' | 'modify';
+  changeType: "reschedule" | "reassign" | "cancel" | "modify";
   originalValue: any;
   proposedValue: any;
   impact: ChangeImpact;
 }
 
 export interface ChangeImpact {
-  stakeholder: 'patient' | 'professional' | 'clinic';
+  stakeholder: "patient" | "professional" | "clinic";
   severity: SeverityLevel;
   description: string;
   compensationRequired?: string;
 }
 
 export interface StakeholderSatisfaction {
-  patient: number;   // 0-1
+  patient: number; // 0-1
   professional: number; // 0-1
-  clinic: number;    // 0-1
-  overall: number;   // 0-1
+  clinic: number; // 0-1
+  overall: number; // 0-1
 }
 
 export interface SystemConstraints {
@@ -227,13 +223,13 @@ export interface SystemConstraints {
 
 export interface TimeRange {
   start: string; // HH:MM format
-  end: string;   // HH:MM format
+  end: string; // HH:MM format
   dayOfWeek?: number; // 0-6, optional for recurring patterns
 }
 
 export interface ResourceCapacity {
   resourceId: string;
-  resourceType: 'room' | 'equipment' | 'professional';
+  resourceType: "room" | "equipment" | "professional";
   maxConcurrentUsage: number;
   availabilitySchedule: TimeRange[];
 }
@@ -266,7 +262,7 @@ export interface ClinicPolicy {
   policyType: string;
   rules: PolicyRule[];
   priority: number;
-  enforcement: 'strict' | 'flexible' | 'advisory';
+  enforcement: "strict" | "flexible" | "advisory";
 }
 
 export interface PolicyRule {
@@ -293,7 +289,7 @@ export interface ResolutionFeedback {
 
 // Real-time event types
 export interface ConflictDetectionEvent {
-  type: 'conflict_detected' | 'conflict_resolved' | 'resolution_failed';
+  type: "conflict_detected" | "conflict_resolved" | "resolution_failed";
   conflictId: string;
   appointmentIds: string[];
   timestamp: Date;
@@ -314,16 +310,16 @@ export interface RealtimeNotification {
 }
 
 export type NotificationType =
-  | 'conflict_alert'
-  | 'resolution_suggestion'
-  | 'escalation_required'
-  | 'system_performance'
-  | 'maintenance_notice';
+  | "conflict_alert"
+  | "resolution_suggestion"
+  | "escalation_required"
+  | "system_performance"
+  | "maintenance_notice";
 
 export interface NotificationAction {
   id: string;
   label: string;
-  actionType: 'approve' | 'reject' | 'modify' | 'escalate' | 'view_details';
+  actionType: "approve" | "reject" | "modify" | "escalate" | "view_details";
   parameters?: Record<string, any>;
 }
 
@@ -360,10 +356,10 @@ export class ConflictDetectionError extends Error {
     message: string,
     public readonly conflictId?: string,
     public readonly errorCode?: string,
-    public readonly details?: Record<string, any>
+    public readonly details?: Record<string, any>,
   ) {
     super(message);
-    this.name = 'ConflictDetectionError';
+    this.name = "ConflictDetectionError";
   }
 }
 
@@ -373,30 +369,30 @@ export class ResolutionExecutionError extends Error {
     public readonly strategyType: StrategyType,
     public readonly conflictId: string,
     public readonly executionTimeMs?: number,
-    public readonly details?: Record<string, any>
+    public readonly details?: Record<string, any>,
   ) {
     super(message);
-    this.name = 'ResolutionExecutionError';
+    this.name = "ResolutionExecutionError";
   }
 }
 
 // Validation schemas (for runtime type checking)
 export const ConflictTypeSchema = [
-  'time_overlap',
-  'resource_conflict', 
-  'capacity_limit',
-  'staff_unavailable',
-  'room_conflict',
-  'equipment_conflict'
+  "time_overlap",
+  "resource_conflict",
+  "capacity_limit",
+  "staff_unavailable",
+  "room_conflict",
+  "equipment_conflict",
 ] as const;
 
 export const StrategyTypeSchema = [
-  'mip_optimization',
-  'constraint_programming',
-  'genetic_algorithm',
-  'reinforcement_learning',
-  'rule_based',
-  'hybrid'
+  "mip_optimization",
+  "constraint_programming",
+  "genetic_algorithm",
+  "reinforcement_learning",
+  "rule_based",
+  "hybrid",
 ] as const;
 
 export const SeverityLevelSchema = [1, 2, 3, 4, 5] as const;
@@ -411,7 +407,7 @@ export type WithTimestamps<T> = T & {
   updatedAt: Date;
 };
 
-export type WithOptionalId<T> = Omit<T, 'id'> & {
+export type WithOptionalId<T> = Omit<T, "id"> & {
   id?: string;
 };
 

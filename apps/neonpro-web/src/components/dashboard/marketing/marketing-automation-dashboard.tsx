@@ -1,22 +1,28 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import {
+import type { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Badge } from "@/components/ui/badge";
+import type { Switch } from "@/components/ui/switch";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import {
+} from "@/components/ui/select";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -24,22 +30,22 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-} from '@/components/ui/dialog';
-import {
+} from "@/components/ui/dialog";
+import type {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import {
+} from "@/components/ui/table";
+import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
+} from "@/components/ui/dropdown-menu";
+import type {
   Calendar,
   Clock,
   Play,
@@ -56,19 +62,19 @@ import {
   CheckCircle,
   XCircle,
   AlertTriangle,
-} from 'lucide-react';
-import { toast } from 'sonner';
+} from "lucide-react";
+import type { toast } from "sonner";
 
 /**
  * Marketing Automation Dashboard Component - Research-Backed Implementation
- * 
+ *
  * Features:
  * - Campaign creation and management
  * - Automated workflow configuration
  * - Performance tracking and analytics
  * - Multi-platform campaign orchestration
  * - A/B testing and optimization
- * 
+ *
  * Based on modern marketing automation platforms and best practices
  */
 
@@ -76,8 +82,8 @@ interface MarketingCampaign {
   id: string;
   name: string;
   description?: string;
-  type: 'email' | 'social_post' | 'whatsapp_broadcast' | 'lead_nurture' | 'abandoned_cart';
-  status: 'draft' | 'active' | 'paused' | 'completed' | 'archived';
+  type: "email" | "social_post" | "whatsapp_broadcast" | "lead_nurture" | "abandoned_cart";
+  status: "draft" | "active" | "paused" | "completed" | "archived";
   target_platforms: string[];
   audience_filters: any;
   automation_rules: any;
@@ -99,7 +105,7 @@ interface MarketingCampaign {
 interface AutomationTrigger {
   id: string;
   name: string;
-  type: 'event' | 'schedule' | 'condition';
+  type: "event" | "schedule" | "condition";
   configuration: any;
   active: boolean;
   campaigns: string[];
@@ -116,33 +122,33 @@ interface CampaignTemplate {
 
 const CAMPAIGN_TYPES = [
   {
-    value: 'email',
-    label: 'Email Campaign',
-    description: 'Send targeted email campaigns to your audience',
+    value: "email",
+    label: "Email Campaign",
+    description: "Send targeted email campaigns to your audience",
     icon: Send,
   },
   {
-    value: 'social_post',
-    label: 'Social Media Post',
-    description: 'Schedule and publish content across social platforms',
+    value: "social_post",
+    label: "Social Media Post",
+    description: "Schedule and publish content across social platforms",
     icon: Target,
   },
   {
-    value: 'whatsapp_broadcast',
-    label: 'WhatsApp Broadcast',
-    description: 'Send bulk messages via WhatsApp Business',
+    value: "whatsapp_broadcast",
+    label: "WhatsApp Broadcast",
+    description: "Send bulk messages via WhatsApp Business",
     icon: Send,
   },
   {
-    value: 'lead_nurture',
-    label: 'Lead Nurturing',
-    description: 'Automated sequence to convert leads to customers',
+    value: "lead_nurture",
+    label: "Lead Nurturing",
+    description: "Automated sequence to convert leads to customers",
     icon: Users,
   },
   {
-    value: 'abandoned_cart',
-    label: 'Abandoned Cart Recovery',
-    description: 'Re-engage customers who left items in their cart',
+    value: "abandoned_cart",
+    label: "Abandoned Cart Recovery",
+    description: "Re-engage customers who left items in their cart",
     icon: AlertTriangle,
   },
 ];
@@ -164,14 +170,14 @@ export function MarketingAutomationDashboard() {
 
   const loadCampaigns = async () => {
     try {
-      const response = await fetch('/api/marketing/campaigns');
+      const response = await fetch("/api/marketing/campaigns");
       if (response.ok) {
         const data = await response.json();
         setCampaigns(data.campaigns || []);
       }
     } catch (error) {
-      console.error('Failed to load campaigns:', error);
-      toast.error('Failed to load campaign data');
+      console.error("Failed to load campaigns:", error);
+      toast.error("Failed to load campaign data");
     } finally {
       setLoading(false);
     }
@@ -179,133 +185,148 @@ export function MarketingAutomationDashboard() {
 
   const loadTemplates = async () => {
     try {
-      const response = await fetch('/api/marketing/campaigns/templates');
+      const response = await fetch("/api/marketing/campaigns/templates");
       if (response.ok) {
         const data = await response.json();
         setTemplates(data.templates || []);
       }
     } catch (error) {
-      console.error('Failed to load templates:', error);
+      console.error("Failed to load templates:", error);
     }
   };
 
   const loadTriggers = async () => {
     try {
-      const response = await fetch('/api/marketing/automation/triggers');
+      const response = await fetch("/api/marketing/automation/triggers");
       if (response.ok) {
         const data = await response.json();
         setTriggers(data.triggers || []);
       }
     } catch (error) {
-      console.error('Failed to load triggers:', error);
+      console.error("Failed to load triggers:", error);
     }
   };
 
   const createCampaign = async () => {
     try {
-      const response = await fetch('/api/marketing/campaigns', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/marketing/campaigns", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(editingCampaign),
       });
-      
+
       if (response.ok) {
-        toast.success('Campaign created successfully');
+        toast.success("Campaign created successfully");
         loadCampaigns();
         setShowCreateDialog(false);
         setEditingCampaign({});
       } else {
-        throw new Error('Failed to create campaign');
+        throw new Error("Failed to create campaign");
       }
     } catch (error) {
-      console.error('Create campaign failed:', error);
-      toast.error('Failed to create campaign');
+      console.error("Create campaign failed:", error);
+      toast.error("Failed to create campaign");
     }
   };
 
   const updateCampaign = async (campaignId: string, updates: Partial<MarketingCampaign>) => {
     try {
       const response = await fetch(`/api/marketing/campaigns/${campaignId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updates),
       });
-      
+
       if (response.ok) {
-        toast.success('Campaign updated successfully');
+        toast.success("Campaign updated successfully");
         loadCampaigns();
       } else {
-        throw new Error('Failed to update campaign');
+        throw new Error("Failed to update campaign");
       }
     } catch (error) {
-      console.error('Update campaign failed:', error);
-      toast.error('Failed to update campaign');
+      console.error("Update campaign failed:", error);
+      toast.error("Failed to update campaign");
     }
   };
 
   const deleteCampaign = async (campaignId: string) => {
     try {
       const response = await fetch(`/api/marketing/campaigns/${campaignId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
-      
+
       if (response.ok) {
-        toast.success('Campaign deleted successfully');
+        toast.success("Campaign deleted successfully");
         loadCampaigns();
       } else {
-        throw new Error('Failed to delete campaign');
+        throw new Error("Failed to delete campaign");
       }
     } catch (error) {
-      console.error('Delete campaign failed:', error);
-      toast.error('Failed to delete campaign');
+      console.error("Delete campaign failed:", error);
+      toast.error("Failed to delete campaign");
     }
   };
 
   const runCampaign = async (campaignId: string) => {
     try {
       const response = await fetch(`/api/marketing/campaigns/${campaignId}/run`, {
-        method: 'POST',
+        method: "POST",
       });
-      
+
       if (response.ok) {
-        toast.success('Campaign started successfully');
+        toast.success("Campaign started successfully");
         loadCampaigns();
       } else {
-        throw new Error('Failed to start campaign');
+        throw new Error("Failed to start campaign");
       }
     } catch (error) {
-      console.error('Run campaign failed:', error);
-      toast.error('Failed to start campaign');
+      console.error("Run campaign failed:", error);
+      toast.error("Failed to start campaign");
     }
   };
 
   const pauseCampaign = async (campaignId: string) => {
     try {
       const response = await fetch(`/api/marketing/campaigns/${campaignId}/pause`, {
-        method: 'POST',
+        method: "POST",
       });
-      
+
       if (response.ok) {
-        toast.success('Campaign paused successfully');
+        toast.success("Campaign paused successfully");
         loadCampaigns();
       } else {
-        throw new Error('Failed to pause campaign');
+        throw new Error("Failed to pause campaign");
       }
     } catch (error) {
-      console.error('Pause campaign failed:', error);
-      toast.error('Failed to pause campaign');
+      console.error("Pause campaign failed:", error);
+      toast.error("Failed to pause campaign");
     }
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'active':
-        return <Badge className="bg-green-100 text-green-800"><Play className="w-3 h-3 mr-1" />Active</Badge>;
-      case 'paused':
-        return <Badge className="bg-yellow-100 text-yellow-800"><Pause className="w-3 h-3 mr-1" />Paused</Badge>;
-      case 'completed':
-        return <Badge className="bg-blue-100 text-blue-800"><CheckCircle className="w-3 h-3 mr-1" />Completed</Badge>;
-      case 'archived':
+      case "active":
+        return (
+          <Badge className="bg-green-100 text-green-800">
+            <Play className="w-3 h-3 mr-1" />
+            Active
+          </Badge>
+        );
+      case "paused":
+        return (
+          <Badge className="bg-yellow-100 text-yellow-800">
+            <Pause className="w-3 h-3 mr-1" />
+            Paused
+          </Badge>
+        );
+      case "completed":
+        return (
+          <Badge className="bg-blue-100 text-blue-800">
+            <CheckCircle className="w-3 h-3 mr-1" />
+            Completed
+          </Badge>
+        );
+      case "archived":
         return <Badge variant="secondary">Archived</Badge>;
       default:
         return <Badge variant="outline">Draft</Badge>;
@@ -313,7 +334,7 @@ export function MarketingAutomationDashboard() {
   };
 
   const getCampaignTypeIcon = (type: string) => {
-    const campaignType = CAMPAIGN_TYPES.find(t => t.value === type);
+    const campaignType = CAMPAIGN_TYPES.find((t) => t.value === type);
     if (campaignType) {
       const Icon = campaignType.icon;
       return <Icon className="w-4 h-4" />;
@@ -322,24 +343,27 @@ export function MarketingAutomationDashboard() {
   };
 
   const getCampaignTypeName = (type: string) => {
-    const campaignType = CAMPAIGN_TYPES.find(t => t.value === type);
+    const campaignType = CAMPAIGN_TYPES.find((t) => t.value === type);
     return campaignType?.label || type;
   };
 
-  const formatMetrics = (metrics?: MarketingCampaign['performance_metrics']) => {
-    if (!metrics) return 'No data';
-    
-    const openRate = metrics.total_sent > 0 ? (metrics.opened / metrics.total_sent * 100).toFixed(1) : '0';
-    const clickRate = metrics.opened > 0 ? (metrics.clicked / metrics.opened * 100).toFixed(1) : '0';
-    const conversionRate = metrics.total_sent > 0 ? (metrics.converted / metrics.total_sent * 100).toFixed(1) : '0';
-    
+  const formatMetrics = (metrics?: MarketingCampaign["performance_metrics"]) => {
+    if (!metrics) return "No data";
+
+    const openRate =
+      metrics.total_sent > 0 ? ((metrics.opened / metrics.total_sent) * 100).toFixed(1) : "0";
+    const clickRate =
+      metrics.opened > 0 ? ((metrics.clicked / metrics.opened) * 100).toFixed(1) : "0";
+    const conversionRate =
+      metrics.total_sent > 0 ? ((metrics.converted / metrics.total_sent) * 100).toFixed(1) : "0";
+
     return `${openRate}% open, ${clickRate}% click, ${conversionRate}% conversion`;
   };
 
   const formatRevenue = (revenue: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(revenue);
   };
 
@@ -371,21 +395,21 @@ export function MarketingAutomationDashboard() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Active</p>
                 <p className="text-2xl font-bold text-green-600">
-                  {campaigns.filter(c => c.status === 'active').length}
+                  {campaigns.filter((c) => c.status === "active").length}
                 </p>
               </div>
               <Play className="w-8 h-8 text-green-400" />
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -393,7 +417,7 @@ export function MarketingAutomationDashboard() {
                 <p className="text-sm font-medium text-gray-600">This Month Revenue</p>
                 <p className="text-2xl font-bold text-blue-600">
                   {formatRevenue(
-                    campaigns.reduce((sum, c) => sum + (c.performance_metrics?.revenue || 0), 0)
+                    campaigns.reduce((sum, c) => sum + (c.performance_metrics?.revenue || 0), 0),
                   )}
                 </p>
               </div>
@@ -401,20 +425,23 @@ export function MarketingAutomationDashboard() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Avg. Conversion</p>
                 <p className="text-2xl font-bold">
-                  {campaigns.length > 0 ? (
-                    campaigns.reduce((sum, c) => {
-                      const metrics = c.performance_metrics;
-                      if (!metrics || metrics.total_sent === 0) return sum;
-                      return sum + (metrics.converted / metrics.total_sent * 100);
-                    }, 0) / campaigns.filter(c => c.performance_metrics?.total_sent).length
-                  ).toFixed(1) : '0'}%
+                  {campaigns.length > 0
+                    ? (
+                        campaigns.reduce((sum, c) => {
+                          const metrics = c.performance_metrics;
+                          if (!metrics || metrics.total_sent === 0) return sum;
+                          return sum + (metrics.converted / metrics.total_sent) * 100;
+                        }, 0) / campaigns.filter((c) => c.performance_metrics?.total_sent).length
+                      ).toFixed(1)
+                    : "0"}
+                  %
                 </p>
               </div>
               <Users className="w-8 h-8 text-purple-400" />
@@ -429,11 +456,9 @@ export function MarketingAutomationDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>Marketing Campaigns</CardTitle>
-              <CardDescription>
-                Create and manage automated marketing campaigns
-              </CardDescription>
+              <CardDescription>Create and manage automated marketing campaigns</CardDescription>
             </div>
-            
+
             <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
               <DialogTrigger asChild>
                 <Button>
@@ -444,28 +469,30 @@ export function MarketingAutomationDashboard() {
               <DialogContent className="max-w-2xl">
                 <DialogHeader>
                   <DialogTitle>Create New Campaign</DialogTitle>
-                  <DialogDescription>
-                    Set up a new automated marketing campaign
-                  </DialogDescription>
+                  <DialogDescription>Set up a new automated marketing campaign</DialogDescription>
                 </DialogHeader>
-                
+
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="name">Campaign Name</Label>
                       <Input
                         id="name"
-                        value={editingCampaign.name || ''}
-                        onChange={(e) => setEditingCampaign(prev => ({ ...prev, name: e.target.value }))}
+                        value={editingCampaign.name || ""}
+                        onChange={(e) =>
+                          setEditingCampaign((prev) => ({ ...prev, name: e.target.value }))
+                        }
                         placeholder="Enter campaign name"
                       />
                     </div>
-                    
+
                     <div>
                       <Label htmlFor="type">Campaign Type</Label>
                       <Select
-                        value={editingCampaign.type || ''}
-                        onValueChange={(value) => setEditingCampaign(prev => ({ ...prev, type: value as any }))}
+                        value={editingCampaign.type || ""}
+                        onValueChange={(value) =>
+                          setEditingCampaign((prev) => ({ ...prev, type: value as any }))
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select campaign type" />
@@ -483,33 +510,38 @@ export function MarketingAutomationDashboard() {
                       </Select>
                     </div>
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="description">Description</Label>
                     <Textarea
                       id="description"
-                      value={editingCampaign.description || ''}
-                      onChange={(e) => setEditingCampaign(prev => ({ ...prev, description: e.target.value }))}
+                      value={editingCampaign.description || ""}
+                      onChange={(e) =>
+                        setEditingCampaign((prev) => ({ ...prev, description: e.target.value }))
+                      }
                       placeholder="Describe the campaign goals and strategy"
                       rows={3}
                     />
                   </div>
-                  
+
                   {editingCampaign.type && (
                     <Alert>
                       <AlertTriangle className="w-4 h-4" />
                       <AlertDescription>
-                        {CAMPAIGN_TYPES.find(t => t.value === editingCampaign.type)?.description}
+                        {CAMPAIGN_TYPES.find((t) => t.value === editingCampaign.type)?.description}
                       </AlertDescription>
                     </Alert>
                   )}
                 </div>
-                
+
                 <DialogFooter>
                   <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
                     Cancel
                   </Button>
-                  <Button onClick={createCampaign} disabled={!editingCampaign.name || !editingCampaign.type}>
+                  <Button
+                    onClick={createCampaign}
+                    disabled={!editingCampaign.name || !editingCampaign.type}
+                  >
                     Create Campaign
                   </Button>
                 </DialogFooter>
@@ -517,7 +549,7 @@ export function MarketingAutomationDashboard() {
             </Dialog>
           </div>
         </CardHeader>
-        
+
         <CardContent>
           <Table>
             <TableHeader>
@@ -544,46 +576,48 @@ export function MarketingAutomationDashboard() {
                       )}
                     </div>
                   </TableCell>
-                  
+
                   <TableCell>
                     <div className="flex items-center space-x-2">
                       {getCampaignTypeIcon(campaign.type)}
                       <span className="text-sm">{getCampaignTypeName(campaign.type)}</span>
                     </div>
                   </TableCell>
-                  
+
                   <TableCell>{getStatusBadge(campaign.status)}</TableCell>
-                  
+
                   <TableCell className="text-sm">
                     {formatMetrics(campaign.performance_metrics)}
                   </TableCell>
-                  
+
                   <TableCell className="text-sm font-medium">
-                    {campaign.performance_metrics?.revenue 
+                    {campaign.performance_metrics?.revenue
                       ? formatRevenue(campaign.performance_metrics.revenue)
-                      : '-'
-                    }
+                      : "-"}
                   </TableCell>
-                  
+
                   <TableCell className="text-sm">
-                    {campaign.last_run_at 
+                    {campaign.last_run_at
                       ? new Date(campaign.last_run_at).toLocaleDateString()
-                      : 'Never'
-                    }
+                      : "Never"}
                   </TableCell>
-                  
+
                   <TableCell>
                     <div className="flex items-center space-x-2">
-                      {campaign.status === 'draft' || campaign.status === 'paused' ? (
+                      {campaign.status === "draft" || campaign.status === "paused" ? (
                         <Button variant="ghost" size="sm" onClick={() => runCampaign(campaign.id)}>
                           <Play className="w-4 h-4" />
                         </Button>
-                      ) : campaign.status === 'active' ? (
-                        <Button variant="ghost" size="sm" onClick={() => pauseCampaign(campaign.id)}>
+                      ) : campaign.status === "active" ? (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => pauseCampaign(campaign.id)}
+                        >
                           <Pause className="w-4 h-4" />
                         </Button>
                       ) : null}
-                      
+
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="sm">
@@ -618,12 +652,14 @@ export function MarketingAutomationDashboard() {
               ))}
             </TableBody>
           </Table>
-          
+
           {campaigns.length === 0 && (
             <div className="text-center py-8">
               <Target className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-600">No campaigns created yet</p>
-              <p className="text-sm text-gray-500">Create your first marketing campaign to get started</p>
+              <p className="text-sm text-gray-500">
+                Create your first marketing campaign to get started
+              </p>
               <Button className="mt-4" onClick={() => setShowCreateDialog(true)}>
                 <Plus className="w-4 h-4 mr-2" />
                 Create Your First Campaign

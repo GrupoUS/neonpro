@@ -3,8 +3,8 @@
 // Author: Dev Agent
 // Date: 2025-01-26
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/app/utils/supabase/server";
 
 interface RouteParams {
   params: {
@@ -15,7 +15,7 @@ interface RouteParams {
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
     const supabase = createClient();
-    
+
     // Get current user
     const {
       data: { user },
@@ -24,26 +24,23 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     if (userError || !user) {
       return NextResponse.json(
-        { success: false, error: 'Authentication required' },
-        { status: 401 }
+        { success: false, error: "Authentication required" },
+        { status: 401 },
       );
     }
 
     const { data: alert, error } = await supabase
-      .from('kpi_alerts')
+      .from("kpi_alerts")
       .select(`
         *,
         financial_kpis(kpi_name, kpi_category)
       `)
-      .eq('id', params.id)
+      .eq("id", params.id)
       .single();
 
     if (error) {
-      if (error.code === 'PGRST116') {
-        return NextResponse.json(
-          { success: false, error: 'Alert not found' },
-          { status: 404 }
-        );
+      if (error.code === "PGRST116") {
+        return NextResponse.json({ success: false, error: "Alert not found" }, { status: 404 });
       }
       throw new Error(`Database error: ${error.message}`);
     }
@@ -67,16 +64,15 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         metadata: alert.metadata,
       },
     });
-
   } catch (error) {
-    console.error('Error retrieving alert:', error);
+    console.error("Error retrieving alert:", error);
     return NextResponse.json(
       {
         success: false,
-        error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Internal server error",
+        message: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -84,7 +80,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
   try {
     const supabase = createClient();
-    
+
     // Get current user
     const {
       data: { user },
@@ -93,8 +89,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
     if (userError || !user) {
       return NextResponse.json(
-        { success: false, error: 'Authentication required' },
-        { status: 401 }
+        { success: false, error: "Authentication required" },
+        { status: 401 },
       );
     }
 
@@ -103,13 +99,13 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
     let updateData: any = {};
 
-    if (action === 'acknowledge') {
+    if (action === "acknowledge") {
       updateData = {
         is_acknowledged: true,
         acknowledged_at: new Date().toISOString(),
         acknowledged_by: user.id,
       };
-    } else if (action === 'unacknowledge') {
+    } else if (action === "unacknowledge") {
       updateData = {
         is_acknowledged: false,
         acknowledged_at: null,
@@ -118,7 +114,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     } else {
       return NextResponse.json(
         { success: false, error: 'Invalid action. Use "acknowledge" or "unacknowledge"' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -127,9 +123,9 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
 
     const { data: updatedAlert, error } = await supabase
-      .from('kpi_alerts')
+      .from("kpi_alerts")
       .update(updateData)
-      .eq('id', params.id)
+      .eq("id", params.id)
       .select(`
         *,
         financial_kpis(kpi_name, kpi_category)
@@ -137,11 +133,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       .single();
 
     if (error) {
-      if (error.code === 'PGRST116') {
-        return NextResponse.json(
-          { success: false, error: 'Alert not found' },
-          { status: 404 }
-        );
+      if (error.code === "PGRST116") {
+        return NextResponse.json({ success: false, error: "Alert not found" }, { status: 404 });
       }
       throw new Error(`Database error: ${error.message}`);
     }
@@ -166,16 +159,15 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       },
       message: `Alert ${action}d successfully`,
     });
-
   } catch (error) {
-    console.error('Error updating alert:', error);
+    console.error("Error updating alert:", error);
     return NextResponse.json(
       {
         success: false,
-        error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Internal server error",
+        message: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -183,7 +175,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
     const supabase = createClient();
-    
+
     // Get current user
     const {
       data: { user },
@@ -192,15 +184,12 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     if (userError || !user) {
       return NextResponse.json(
-        { success: false, error: 'Authentication required' },
-        { status: 401 }
+        { success: false, error: "Authentication required" },
+        { status: 401 },
       );
     }
 
-    const { error } = await supabase
-      .from('kpi_alerts')
-      .delete()
-      .eq('id', params.id);
+    const { error } = await supabase.from("kpi_alerts").delete().eq("id", params.id);
 
     if (error) {
       throw new Error(`Database error: ${error.message}`);
@@ -208,18 +197,17 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json({
       success: true,
-      message: 'Alert deleted successfully',
+      message: "Alert deleted successfully",
     });
-
   } catch (error) {
-    console.error('Error deleting alert:', error);
+    console.error("Error deleting alert:", error);
     return NextResponse.json(
       {
         success: false,
-        error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Internal server error",
+        message: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

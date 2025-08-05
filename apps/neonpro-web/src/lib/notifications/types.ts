@@ -2,37 +2,37 @@
 // Generated for NeonPro - FASE 4
 
 export enum NotificationType {
-  ALERT = 'alert',
-  REMINDER = 'reminder',
-  SYSTEM = 'system',
-  APPOINTMENT = 'appointment',
-  MARKETING = 'marketing',
-  COMPLIANCE = 'compliance',
-  SECURITY = 'security'
+  ALERT = "alert",
+  REMINDER = "reminder",
+  SYSTEM = "system",
+  APPOINTMENT = "appointment",
+  MARKETING = "marketing",
+  COMPLIANCE = "compliance",
+  SECURITY = "security",
 }
 
 export enum NotificationChannel {
-  EMAIL = 'email',
-  SMS = 'sms',
-  PUSH = 'push',
-  IN_APP = 'in_app',
-  WHATSAPP = 'whatsapp',
-  PHONE = 'phone'
+  EMAIL = "email",
+  SMS = "sms",
+  PUSH = "push",
+  IN_APP = "in_app",
+  WHATSAPP = "whatsapp",
+  PHONE = "phone",
 }
 
 export enum NotificationPriority {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  URGENT = 'urgent'
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
+  URGENT = "urgent",
 }
 
 export enum NotificationStatus {
-  PENDING = 'pending',
-  SENT = 'sent',
-  DELIVERED = 'delivered',
-  FAILED = 'failed',
-  READ = 'read'
+  PENDING = "pending",
+  SENT = "sent",
+  DELIVERED = "delivered",
+  FAILED = "failed",
+  READ = "read",
 }
 
 export interface NotificationTemplate {
@@ -53,11 +53,11 @@ export interface NotificationRequest {
   data?: Record<string, any>;
 }
 export enum DeliveryStatus {
-  PENDING = 'pending',
-  SENT = 'sent',
-  DELIVERED = 'delivered',
-  FAILED = 'failed',
-  BOUNCED = 'bounced',
-  OPENED = 'opened',
-  CLICKED = 'clicked'
+  PENDING = "pending",
+  SENT = "sent",
+  DELIVERED = "delivered",
+  FAILED = "failed",
+  BOUNCED = "bounced",
+  OPENED = "opened",
+  CLICKED = "clicked",
 }

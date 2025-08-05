@@ -1,14 +1,26 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
-import { Badge } from '@/components/ui/badge'
-import { 
+import type { useState } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Label } from "@/components/ui/label";
+import type { Switch } from "@/components/ui/switch";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Separator } from "@/components/ui/separator";
+import type { Badge } from "@/components/ui/badge";
+import type {
   Bell,
   Mail,
   Smartphone,
@@ -19,158 +31,153 @@ import {
   VolumeX,
   Settings,
   Save,
-  RefreshCw
-} from 'lucide-react'
-import { toast } from 'sonner'
-import { useNotificationContext } from '@/contexts/notification-context'
-import type { NotificationPreferences } from '@/hooks/use-notifications'
+  RefreshCw,
+} from "lucide-react";
+import type { toast } from "sonner";
+import type { useNotificationContext } from "@/contexts/notification-context";
+import type { NotificationPreferences } from "@/hooks/use-notifications";
 
 interface NotificationSettingsProps {
-  className?: string
+  className?: string;
 }
 
 interface SettingsSection {
-  title: string
-  description: string
-  icon: React.ElementType
+  title: string;
+  description: string;
+  icon: React.ElementType;
   settings: {
-    key: keyof NotificationPreferences
-    label: string
-    description: string
-    type: 'switch' | 'select' | 'time'
-    options?: { value: string | number; label: string }[]
-  }[]
+    key: keyof NotificationPreferences;
+    label: string;
+    description: string;
+    type: "switch" | "select" | "time";
+    options?: { value: string | number; label: string }[];
+  }[];
 }
 
 export function NotificationSettings({ className }: NotificationSettingsProps) {
-  const {
-    preferences,
-    updatePreferences,
-    requestPermission,
-    isLoading
-  } = useNotificationContext()
+  const { preferences, updatePreferences, requestPermission, isLoading } = useNotificationContext();
 
-  const [saving, setSaving] = useState(false)
+  const [saving, setSaving] = useState(false);
   const [permissionStatus, setPermissionStatus] = useState<NotificationPermission>(
-    typeof window !== 'undefined' && 'Notification' in window ? Notification.permission : 'denied'
-  )
+    typeof window !== "undefined" && "Notification" in window ? Notification.permission : "denied",
+  );
 
   const handlePreferenceChange = async (key: keyof NotificationPreferences, value: any) => {
     try {
-      await updatePreferences({ [key]: value })
-      toast.success('Configuração atualizada!')
+      await updatePreferences({ [key]: value });
+      toast.success("Configuração atualizada!");
     } catch (error) {
-      toast.error('Erro ao atualizar configuração')
-      console.error('Error updating preference:', error)
+      toast.error("Erro ao atualizar configuração");
+      console.error("Error updating preference:", error);
     }
-  }
+  };
 
   const handleRequestPermission = async () => {
     try {
-      const permission = await requestPermission()
-      setPermissionStatus(permission)
-      
-      if (permission === 'granted') {
+      const permission = await requestPermission();
+      setPermissionStatus(permission);
+
+      if (permission === "granted") {
         // Enable push notifications when permission is granted
-        await handlePreferenceChange('push_enabled', true)
+        await handlePreferenceChange("push_enabled", true);
       }
     } catch (error) {
-      toast.error('Erro ao solicitar permissão')
+      toast.error("Erro ao solicitar permissão");
     }
-  }
+  };
 
   const settingsSections: SettingsSection[] = [
     {
-      title: 'Notificações por Email',
-      description: 'Receba notificações importantes por email',
+      title: "Notificações por Email",
+      description: "Receba notificações importantes por email",
       icon: Mail,
       settings: [
         {
-          key: 'email_enabled',
-          label: 'Ativar notificações por email',
-          description: 'Receber emails sobre agendamentos e lembretes',
-          type: 'switch'
-        }
-      ]
+          key: "email_enabled",
+          label: "Ativar notificações por email",
+          description: "Receber emails sobre agendamentos e lembretes",
+          type: "switch",
+        },
+      ],
     },
     {
-      title: 'Notificações Push',
-      description: 'Notificações instantâneas no navegador e dispositivo',
+      title: "Notificações Push",
+      description: "Notificações instantâneas no navegador e dispositivo",
       icon: Smartphone,
       settings: [
         {
-          key: 'push_enabled',
-          label: 'Ativar notificações push',
-          description: 'Receber notificações em tempo real',
-          type: 'switch'
-        }
-      ]
+          key: "push_enabled",
+          label: "Ativar notificações push",
+          description: "Receber notificações em tempo real",
+          type: "switch",
+        },
+      ],
     },
     {
-      title: 'Tipos de Notificação',
-      description: 'Escolha que tipos de notificação deseja receber',
+      title: "Tipos de Notificação",
+      description: "Escolha que tipos de notificação deseja receber",
       icon: Bell,
       settings: [
         {
-          key: 'appointment_reminders',
-          label: 'Lembretes de agendamento',
-          description: 'Receber lembretes antes dos agendamentos',
-          type: 'switch'
+          key: "appointment_reminders",
+          label: "Lembretes de agendamento",
+          description: "Receber lembretes antes dos agendamentos",
+          type: "switch",
         },
         {
-          key: 'status_changes',
-          label: 'Mudanças de status',
-          description: 'Notificações sobre confirmações, cancelamentos, etc.',
-          type: 'switch'
+          key: "status_changes",
+          label: "Mudanças de status",
+          description: "Notificações sobre confirmações, cancelamentos, etc.",
+          type: "switch",
         },
         {
-          key: 'marketing_emails',
-          label: 'Emails promocionais',
-          description: 'Receber ofertas especiais e novidades',
-          type: 'switch'
-        }
-      ]
+          key: "marketing_emails",
+          label: "Emails promocionais",
+          description: "Receber ofertas especiais e novidades",
+          type: "switch",
+        },
+      ],
     },
     {
-      title: 'Configurações de Lembrete',
-      description: 'Quando receber lembretes de agendamentos',
+      title: "Configurações de Lembrete",
+      description: "Quando receber lembretes de agendamentos",
       icon: Clock,
       settings: [
         {
-          key: 'reminder_timing',
-          label: 'Enviar lembrete',
-          description: 'Tempo antes do agendamento para enviar lembrete',
-          type: 'select',
+          key: "reminder_timing",
+          label: "Enviar lembrete",
+          description: "Tempo antes do agendamento para enviar lembrete",
+          type: "select",
           options: [
-            { value: 60, label: '1 hora antes' },
-            { value: 120, label: '2 horas antes' },
-            { value: 240, label: '4 horas antes' },
-            { value: 1440, label: '1 dia antes' },
-            { value: 2880, label: '2 dias antes' }
-          ]
-        }
-      ]
+            { value: 60, label: "1 hora antes" },
+            { value: 120, label: "2 horas antes" },
+            { value: 240, label: "4 horas antes" },
+            { value: 1440, label: "1 dia antes" },
+            { value: 2880, label: "2 dias antes" },
+          ],
+        },
+      ],
     },
     {
-      title: 'Horário Silencioso',
-      description: 'Não receber notificações em horários específicos',
+      title: "Horário Silencioso",
+      description: "Não receber notificações em horários específicos",
       icon: VolumeX,
       settings: [
         {
-          key: 'quiet_hours_start',
-          label: 'Início do horário silencioso',
-          description: 'Hora de início (ex: 22:00)',
-          type: 'time'
+          key: "quiet_hours_start",
+          label: "Início do horário silencioso",
+          description: "Hora de início (ex: 22:00)",
+          type: "time",
         },
         {
-          key: 'quiet_hours_end',
-          label: 'Fim do horário silencioso',
-          description: 'Hora de fim (ex: 08:00)',
-          type: 'time'
-        }
-      ]
-    }
-  ]
+          key: "quiet_hours_end",
+          label: "Fim do horário silencioso",
+          description: "Hora de fim (ex: 08:00)",
+          type: "time",
+        },
+      ],
+    },
+  ];
 
   if (isLoading || !preferences) {
     return (
@@ -179,46 +186,42 @@ export function NotificationSettings({ className }: NotificationSettingsProps) {
           <RefreshCw className="h-6 w-6 animate-spin" />
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Browser Permission Status */}
-      {typeof window !== 'undefined' && 'Notification' in window && (
+      {typeof window !== "undefined" && "Notification" in window && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Settings className="h-5 w-5" />
               Status das Permissões
             </CardTitle>
-            <CardDescription>
-              Status das permissões do navegador para notificações
-            </CardDescription>
+            <CardDescription>Status das permissões do navegador para notificações</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium">Notificações do Navegador</p>
                 <p className="text-sm text-muted-foreground">
-                  {permissionStatus === 'granted' && 'Permitidas - você receberá notificações'}
-                  {permissionStatus === 'denied' && 'Negadas - você não receberá notificações'}
-                  {permissionStatus === 'default' && 'Não configuradas - clique para permitir'}
+                  {permissionStatus === "granted" && "Permitidas - você receberá notificações"}
+                  {permissionStatus === "denied" && "Negadas - você não receberá notificações"}
+                  {permissionStatus === "default" && "Não configuradas - clique para permitir"}
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <Badge 
-                  variant={permissionStatus === 'granted' ? 'default' : 'destructive'}
-                >
-                  {permissionStatus === 'granted' && 'Ativado'}
-                  {permissionStatus === 'denied' && 'Bloqueado'}
-                  {permissionStatus === 'default' && 'Pendente'}
+                <Badge variant={permissionStatus === "granted" ? "default" : "destructive"}>
+                  {permissionStatus === "granted" && "Ativado"}
+                  {permissionStatus === "denied" && "Bloqueado"}
+                  {permissionStatus === "default" && "Pendente"}
                 </Badge>
-                {permissionStatus !== 'granted' && (
-                  <Button 
-                    size="sm" 
+                {permissionStatus !== "granted" && (
+                  <Button
+                    size="sm"
                     onClick={handleRequestPermission}
-                    disabled={permissionStatus === 'denied'}
+                    disabled={permissionStatus === "denied"}
                   >
                     Permitir
                   </Button>
@@ -245,13 +248,11 @@ export function NotificationSettings({ className }: NotificationSettingsProps) {
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
                     <Label htmlFor={setting.key}>{setting.label}</Label>
-                    <p className="text-sm text-muted-foreground">
-                      {setting.description}
-                    </p>
+                    <p className="text-sm text-muted-foreground">{setting.description}</p>
                   </div>
-                  
+
                   <div className="flex items-center">
-                    {setting.type === 'switch' && (
+                    {setting.type === "switch" && (
                       <Switch
                         id={setting.key}
                         checked={preferences[setting.key] as boolean}
@@ -259,17 +260,19 @@ export function NotificationSettings({ className }: NotificationSettingsProps) {
                         disabled={saving}
                       />
                     )}
-                    
-                    {setting.type === 'select' && setting.options && (
+
+                    {setting.type === "select" && setting.options && (
                       <Select
-                        value={String(preferences[setting.key] || '')}
-                        onValueChange={(value) => handlePreferenceChange(setting.key, parseInt(value))}
+                        value={String(preferences[setting.key] || "")}
+                        onValueChange={(value) =>
+                          handlePreferenceChange(setting.key, parseInt(value))
+                        }
                       >
                         <SelectTrigger className="w-48">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {setting.options.map(option => (
+                          {setting.options.map((option) => (
                             <SelectItem key={option.value} value={String(option.value)}>
                               {option.label}
                             </SelectItem>
@@ -277,12 +280,12 @@ export function NotificationSettings({ className }: NotificationSettingsProps) {
                         </SelectContent>
                       </Select>
                     )}
-                    
-                    {setting.type === 'time' && (
+
+                    {setting.type === "time" && (
                       <input
                         type="time"
                         id={setting.key}
-                        value={preferences[setting.key] as string || ''}
+                        value={(preferences[setting.key] as string) || ""}
                         onChange={(e) => handlePreferenceChange(setting.key, e.target.value)}
                         className="px-3 py-2 border border-input bg-background rounded-md text-sm"
                         disabled={saving}
@@ -290,10 +293,8 @@ export function NotificationSettings({ className }: NotificationSettingsProps) {
                     )}
                   </div>
                 </div>
-                
-                {settingIndex < section.settings.length - 1 && (
-                  <Separator className="mt-6" />
-                )}
+
+                {settingIndex < section.settings.length - 1 && <Separator className="mt-6" />}
               </div>
             ))}
           </CardContent>
@@ -314,17 +315,17 @@ export function NotificationSettings({ className }: NotificationSettingsProps) {
         <CardContent>
           <Button
             onClick={() => {
-              toast.success('Teste de notificação!', {
-                description: 'Suas configurações de notificação estão funcionando corretamente.',
+              toast.success("Teste de notificação!", {
+                description: "Suas configurações de notificação estão funcionando corretamente.",
                 duration: 5000,
-              })
-              
+              });
+
               // Also send browser notification if enabled
-              if (preferences.push_enabled && Notification.permission === 'granted') {
-                new Notification('NeonPro - Teste de Notificação', {
-                  body: 'Suas configurações de notificação estão funcionando corretamente.',
-                  icon: '/icon-192x192.png'
-                })
+              if (preferences.push_enabled && Notification.permission === "granted") {
+                new Notification("NeonPro - Teste de Notificação", {
+                  body: "Suas configurações de notificação estão funcionando corretamente.",
+                  icon: "/icon-192x192.png",
+                });
               }
             }}
             disabled={saving}
@@ -334,5 +335,5 @@ export function NotificationSettings({ className }: NotificationSettingsProps) {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

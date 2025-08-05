@@ -1,33 +1,39 @@
 /**
  * TASK-001: Foundation Setup & Baseline
  * System Health Widget Component
- * 
+ *
  * Real-time system health monitoring widget with uptime tracking,
  * error rates, and resource monitoring for all epic functionality.
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Button } from '@/components/ui/button';
-import { 
-  CheckCircle, 
-  AlertTriangle, 
-  XCircle, 
-  RefreshCw, 
-  Activity, 
-  Database, 
-  Zap, 
+import type { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Progress } from "@/components/ui/progress";
+import type { Button } from "@/components/ui/button";
+import type {
+  CheckCircle,
+  AlertTriangle,
+  XCircle,
+  RefreshCw,
+  Activity,
+  Database,
+  Zap,
   Server,
-  Wifi
-} from 'lucide-react';
-import { toast } from 'sonner';
+  Wifi,
+} from "lucide-react";
+import type { toast } from "sonner";
 
 interface SystemHealthData {
-  overall_status: 'healthy' | 'degraded' | 'unhealthy';
+  overall_status: "healthy" | "degraded" | "unhealthy";
   uptime_percentage: number;
   response_time_avg: number;
   error_rate: number;
@@ -47,7 +53,7 @@ interface SystemHealthData {
 }
 
 interface ComponentHealth {
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status: "healthy" | "degraded" | "unhealthy";
   response_time: number;
   error_rate: number;
   last_error?: string;
@@ -61,7 +67,7 @@ export function SystemHealthWidget() {
 
   useEffect(() => {
     loadHealthData();
-    
+
     // Auto-refresh every 30 seconds
     const interval = setInterval(loadHealthData, 30000);
     return () => clearInterval(interval);
@@ -69,17 +75,17 @@ export function SystemHealthWidget() {
 
   const loadHealthData = async () => {
     try {
-      const response = await fetch('/api/monitoring/health');
+      const response = await fetch("/api/monitoring/health");
       if (response.ok) {
         const data = await response.json();
         setHealthData(data.health);
         setLastRefresh(new Date());
       } else {
-        throw new Error('Failed to fetch health data');
+        throw new Error("Failed to fetch health data");
       }
     } catch (error) {
-      console.error('Error loading health data:', error);
-      toast.error('Failed to load system health data');
+      console.error("Error loading health data:", error);
+      toast.error("Failed to load system health data");
     } finally {
       setLoading(false);
     }
@@ -92,11 +98,11 @@ export function SystemHealthWidget() {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'healthy':
+      case "healthy":
         return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case 'degraded':
+      case "degraded":
         return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
-      case 'unhealthy':
+      case "unhealthy":
         return <XCircle className="h-4 w-4 text-red-500" />;
       default:
         return <AlertTriangle className="h-4 w-4 text-gray-500" />;
@@ -109,9 +115,9 @@ export function SystemHealthWidget() {
       degraded: { variant: "secondary" as const, text: "Degraded", color: "text-yellow-500" },
       unhealthy: { variant: "destructive" as const, text: "Unhealthy", color: "text-red-500" },
     };
-    
+
     const config = variants[status as keyof typeof variants] || variants.unhealthy;
-    
+
     return (
       <Badge variant={config.variant} className="flex items-center gap-1">
         {getStatusIcon(status)}
@@ -165,7 +171,7 @@ export function SystemHealthWidget() {
           <div className="flex items-center gap-2">
             {getStatusBadge(healthData.overall_status)}
             <Button size="sm" variant="outline" onClick={refreshHealth} disabled={loading}>
-              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             </Button>
           </div>
         </div>
@@ -180,22 +186,26 @@ export function SystemHealthWidget() {
             <div className="text-xs text-muted-foreground">Uptime</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold">
-              {healthData.response_time_avg}ms
-            </div>
+            <div className="text-2xl font-bold">{healthData.response_time_avg}ms</div>
             <div className="text-xs text-muted-foreground">Avg Response</div>
           </div>
           <div className="text-center">
-            <div className={`text-2xl font-bold ${healthData.error_rate > 1 ? 'text-red-600' : 'text-green-600'}`}>
+            <div
+              className={`text-2xl font-bold ${healthData.error_rate > 1 ? "text-red-600" : "text-green-600"}`}
+            >
               {healthData.error_rate.toFixed(2)}%
             </div>
             <div className="text-xs text-muted-foreground">Error Rate</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold">
-              {Math.round((healthData.resource_usage.cpu_percentage + 
-                         healthData.resource_usage.memory_percentage + 
-                         healthData.resource_usage.storage_percentage) / 3)}%
+              {Math.round(
+                (healthData.resource_usage.cpu_percentage +
+                  healthData.resource_usage.memory_percentage +
+                  healthData.resource_usage.storage_percentage) /
+                  3,
+              )}
+              %
             </div>
             <div className="text-xs text-muted-foreground">Resources</div>
           </div>
@@ -208,17 +218,15 @@ export function SystemHealthWidget() {
             {Object.entries(healthData.components).map(([name, component]) => (
               <div key={name} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  {name === 'database' && <Database className="h-4 w-4" />}
-                  {name === 'api' && <Server className="h-4 w-4" />}
-                  {name === 'frontend' && <Wifi className="h-4 w-4" />}
-                  {name === 'authentication' && <Zap className="h-4 w-4" />}
-                  {name === 'monitoring' && <Activity className="h-4 w-4" />}
+                  {name === "database" && <Database className="h-4 w-4" />}
+                  {name === "api" && <Server className="h-4 w-4" />}
+                  {name === "frontend" && <Wifi className="h-4 w-4" />}
+                  {name === "authentication" && <Zap className="h-4 w-4" />}
+                  {name === "monitoring" && <Activity className="h-4 w-4" />}
                   <span className="text-sm capitalize">{name}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">
-                    {component.response_time}ms
-                  </span>
+                  <span className="text-xs text-muted-foreground">{component.response_time}ms</span>
                   {getStatusIcon(component.status)}
                 </div>
               </div>
@@ -256,10 +264,18 @@ export function SystemHealthWidget() {
 
         {/* Quick Actions */}
         <div className="flex gap-2 pt-2 border-t">
-          <Button size="sm" variant="outline" onClick={() => window.open('/dashboard/monitoring', '_blank')}>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => window.open("/dashboard/monitoring", "_blank")}
+          >
             Full Dashboard
           </Button>
-          <Button size="sm" variant="outline" onClick={() => window.open('/api/monitoring/logs', '_blank')}>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => window.open("/api/monitoring/logs", "_blank")}
+          >
             View Logs
           </Button>
         </div>

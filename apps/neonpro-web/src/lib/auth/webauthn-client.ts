@@ -1,6 +1,6 @@
 /**
  * WebAuthn Client Utilities for TASK-002: Multi-Factor Authentication Enhancement
- * 
+ *
  * Provides client-side WebAuthn/FIDO2 functionality including:
  * - Registration flow
  * - Authentication flow
@@ -8,14 +8,14 @@
  * - Error handling
  */
 
-import {
+import type {
   startRegistration,
   startAuthentication,
   browserSupportsWebAuthn,
   platformAuthenticatorIsAvailable,
   type RegistrationResponseJSON,
   type AuthenticationResponseJSON,
-} from '@simplewebauthn/browser';
+} from "@simplewebauthn/browser";
 
 export interface WebAuthnRegistrationResult {
   success: boolean;
@@ -42,12 +42,12 @@ class WebAuthnClient {
   async checkCapabilities(): Promise<WebAuthnCapabilities> {
     const supported = browserSupportsWebAuthn();
     let platformAuthenticatorAvailable = false;
-    
+
     if (supported) {
       try {
         platformAuthenticatorAvailable = await platformAuthenticatorIsAvailable();
       } catch (error) {
-        console.warn('Could not check platform authenticator availability:', error);
+        console.warn("Could not check platform authenticator availability:", error);
       }
     }
 
@@ -68,15 +68,15 @@ class WebAuthnClient {
       if (!capabilities.supported) {
         return {
           success: false,
-          error: 'WebAuthn is not supported in this browser',
+          error: "WebAuthn is not supported in this browser",
         };
       }
 
       // Get registration options from server
-      const optionsResponse = await fetch('/api/auth/webauthn/register/options', {
-        method: 'POST',
+      const optionsResponse = await fetch("/api/auth/webauthn/register/options", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ deviceName }),
       });
@@ -95,10 +95,10 @@ class WebAuthnClient {
       const registrationResponse = await startRegistration(options);
 
       // Verify registration with server
-      const verificationResponse = await fetch('/api/auth/webauthn/register/verify', {
-        method: 'POST',
+      const verificationResponse = await fetch("/api/auth/webauthn/register/verify", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           response: registrationResponse,
@@ -118,22 +118,21 @@ class WebAuthnClient {
         success: true,
         response: registrationResponse,
       };
-
     } catch (error) {
-      console.error('WebAuthn registration error:', error);
-      
-      let errorMessage = 'Unknown error occurred';
-      
+      console.error("WebAuthn registration error:", error);
+
+      let errorMessage = "Unknown error occurred";
+
       if (error instanceof Error) {
         // Handle common WebAuthn errors
-        if (error.name === 'NotAllowedError') {
-          errorMessage = 'Operation was cancelled or timed out';
-        } else if (error.name === 'SecurityError') {
-          errorMessage = 'Security error - ensure you are on a secure connection';
-        } else if (error.name === 'NotSupportedError') {
-          errorMessage = 'This authenticator is not supported';
-        } else if (error.name === 'InvalidStateError') {
-          errorMessage = 'Authenticator already registered for this account';
+        if (error.name === "NotAllowedError") {
+          errorMessage = "Operation was cancelled or timed out";
+        } else if (error.name === "SecurityError") {
+          errorMessage = "Security error - ensure you are on a secure connection";
+        } else if (error.name === "NotSupportedError") {
+          errorMessage = "This authenticator is not supported";
+        } else if (error.name === "InvalidStateError") {
+          errorMessage = "Authenticator already registered for this account";
         } else {
           errorMessage = error.message;
         }
@@ -156,15 +155,15 @@ class WebAuthnClient {
       if (!capabilities.supported) {
         return {
           success: false,
-          error: 'WebAuthn is not supported in this browser',
+          error: "WebAuthn is not supported in this browser",
         };
       }
 
       // Get authentication options from server
-      const optionsResponse = await fetch('/api/auth/webauthn/authenticate/options', {
-        method: 'POST',
+      const optionsResponse = await fetch("/api/auth/webauthn/authenticate/options", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ userIdentifier }),
       });
@@ -183,10 +182,10 @@ class WebAuthnClient {
       const authenticationResponse = await startAuthentication(options);
 
       // Verify authentication with server
-      const verificationResponse = await fetch('/api/auth/webauthn/authenticate/verify', {
-        method: 'POST',
+      const verificationResponse = await fetch("/api/auth/webauthn/authenticate/verify", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           response: authenticationResponse,
@@ -206,22 +205,21 @@ class WebAuthnClient {
         success: true,
         response: authenticationResponse,
       };
-
     } catch (error) {
-      console.error('WebAuthn authentication error:', error);
-      
-      let errorMessage = 'Unknown error occurred';
-      
+      console.error("WebAuthn authentication error:", error);
+
+      let errorMessage = "Unknown error occurred";
+
       if (error instanceof Error) {
         // Handle common WebAuthn errors
-        if (error.name === 'NotAllowedError') {
-          errorMessage = 'Operation was cancelled or timed out';
-        } else if (error.name === 'SecurityError') {
-          errorMessage = 'Security error - ensure you are on a secure connection';
-        } else if (error.name === 'InvalidStateError') {
-          errorMessage = 'No valid authenticator found';
-        } else if (error.name === 'UnknownError') {
-          errorMessage = 'Authentication failed - please try again';
+        if (error.name === "NotAllowedError") {
+          errorMessage = "Operation was cancelled or timed out";
+        } else if (error.name === "SecurityError") {
+          errorMessage = "Security error - ensure you are on a secure connection";
+        } else if (error.name === "InvalidStateError") {
+          errorMessage = "No valid authenticator found";
+        } else if (error.name === "UnknownError") {
+          errorMessage = "Authentication failed - please try again";
         } else {
           errorMessage = error.message;
         }
@@ -238,26 +236,26 @@ class WebAuthnClient {
    * Check if WebAuthn is available and suggest best flow
    */
   async getSuggestedAuthFlow(): Promise<{
-    recommended: 'webauthn' | 'password' | 'hybrid';
+    recommended: "webauthn" | "password" | "hybrid";
     capabilities: WebAuthnCapabilities;
     reasons: string[];
   }> {
     const capabilities = await this.checkCapabilities();
     const reasons: string[] = [];
-    
+
     if (!capabilities.supported) {
-      reasons.push('WebAuthn not supported in this browser');
+      reasons.push("WebAuthn not supported in this browser");
       return {
-        recommended: 'password',
+        recommended: "password",
         capabilities,
         reasons,
       };
     }
 
     if (capabilities.platformAuthenticatorAvailable) {
-      reasons.push('Platform authenticator (Touch ID, Face ID, Windows Hello) available');
+      reasons.push("Platform authenticator (Touch ID, Face ID, Windows Hello) available");
       return {
-        recommended: 'webauthn',
+        recommended: "webauthn",
         capabilities,
         reasons,
       };
@@ -267,16 +265,16 @@ class WebAuthnClient {
     try {
       // This is a rough check - in a real implementation you might want to check
       // for registered credentials or use conditional mediation
-      reasons.push('WebAuthn supported but no platform authenticator detected');
+      reasons.push("WebAuthn supported but no platform authenticator detected");
       return {
-        recommended: 'hybrid',
+        recommended: "hybrid",
         capabilities,
         reasons,
       };
     } catch (error) {
-      reasons.push('WebAuthn available but limited support detected');
+      reasons.push("WebAuthn available but limited support detected");
       return {
-        recommended: 'password',
+        recommended: "password",
         capabilities,
         reasons,
       };
@@ -294,10 +292,10 @@ class WebAuthnClient {
     errors: string[];
   }> {
     const errors: string[] = [];
-    
+
     const browserSupport = browserSupportsWebAuthn();
     if (!browserSupport) {
-      errors.push('Browser does not support WebAuthn');
+      errors.push("Browser does not support WebAuthn");
     }
 
     let platformAuthenticator = false;
@@ -335,12 +333,12 @@ export const useWebAuthnCapabilities = async () => {
 // Helper function to get user-friendly error messages
 export const getWebAuthnErrorMessage = (error: string): string => {
   const errorMap: Record<string, string> = {
-    'NotAllowedError': 'Authentication was cancelled or timed out. Please try again.',
-    'SecurityError': 'Security error occurred. Make sure you are on a secure connection (HTTPS).',
-    'NotSupportedError': 'This authenticator is not supported. Try a different device or method.',
-    'InvalidStateError': 'Invalid state. The authenticator may already be registered or not found.',
-    'UnknownError': 'An unexpected error occurred. Please try again.',
-    'AbortError': 'Operation was aborted. Please try again.',
+    NotAllowedError: "Authentication was cancelled or timed out. Please try again.",
+    SecurityError: "Security error occurred. Make sure you are on a secure connection (HTTPS).",
+    NotSupportedError: "This authenticator is not supported. Try a different device or method.",
+    InvalidStateError: "Invalid state. The authenticator may already be registered or not found.",
+    UnknownError: "An unexpected error occurred. Please try again.",
+    AbortError: "Operation was aborted. Please try again.",
   };
 
   // Check if error starts with any known error type
@@ -350,5 +348,5 @@ export const getWebAuthnErrorMessage = (error: string): string => {
     }
   }
 
-  return error || 'An unknown error occurred. Please try again.';
+  return error || "An unknown error occurred. Please try again.";
 };

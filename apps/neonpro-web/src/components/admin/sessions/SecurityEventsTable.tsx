@@ -1,45 +1,51 @@
 /**
  * Security Events Table Component
  * Story 1.4: Session Management & Security
- * 
+ *
  * Comprehensive table for viewing and managing security events
  * with filtering, sorting, and resolution capabilities.
  */
 
-'use client';
+"use client";
 
-import React, { useState, useMemo } from 'react';
-import {
+import React, { useState, useMemo } from "react";
+import type {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import {
+} from "@/components/ui/table";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import {
+} from "@/components/ui/select";
+import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { 
-  AlertTriangle, 
-  CheckCircle, 
-  XCircle, 
+} from "@/components/ui/dropdown-menu";
+import type {
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
   MoreHorizontal,
   Search,
   Filter,
@@ -48,16 +54,12 @@ import {
   Shield,
   Clock,
   MapPin,
-  Monitor
-} from 'lucide-react';
-import { 
-  SessionSecurityEvent, 
-  SecurityEventType, 
-  SecuritySeverity 
-} from '@/types/session';
-import { useSecurityEvents } from '@/hooks/useSession';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+  Monitor,
+} from "lucide-react";
+import type { SessionSecurityEvent, SecurityEventType, SecuritySeverity } from "@/types/session";
+import type { useSecurityEvents } from "@/hooks/useSession";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
 
 // ============================================================================
 // INTERFACES
@@ -70,27 +72,27 @@ interface SecurityEventsTableProps {
 
 interface EventFilters {
   search: string;
-  severity: SecuritySeverity | 'all';
-  eventType: SecurityEventType | 'all';
-  resolved: 'all' | 'resolved' | 'unresolved';
-  dateRange: 'all' | '24h' | '7d' | '30d';
+  severity: SecuritySeverity | "all";
+  eventType: SecurityEventType | "all";
+  resolved: "all" | "resolved" | "unresolved";
+  dateRange: "all" | "24h" | "7d" | "30d";
 }
 
 // ============================================================================
 // MAIN COMPONENT
 // ============================================================================
 
-export default function SecurityEventsTable({ 
-  events, 
-  onReportActivity 
+export default function SecurityEventsTable({
+  events,
+  onReportActivity,
 }: SecurityEventsTableProps) {
   const { resolveEvent, dismissEvent } = useSecurityEvents();
   const [filters, setFilters] = useState<EventFilters>({
-    search: '',
-    severity: 'all',
-    eventType: 'all',
-    resolved: 'all',
-    dateRange: 'all'
+    search: "",
+    severity: "all",
+    eventType: "all",
+    resolved: "all",
+    dateRange: "all",
   });
   const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
 
@@ -104,55 +106,54 @@ export default function SecurityEventsTable({
     // Search filter
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
-      filtered = filtered.filter(event => 
-        event.event_type.toLowerCase().includes(searchLower) ||
-        event.ip_address.toLowerCase().includes(searchLower) ||
-        (event.details && JSON.stringify(event.details).toLowerCase().includes(searchLower))
+      filtered = filtered.filter(
+        (event) =>
+          event.event_type.toLowerCase().includes(searchLower) ||
+          event.ip_address.toLowerCase().includes(searchLower) ||
+          (event.details && JSON.stringify(event.details).toLowerCase().includes(searchLower)),
       );
     }
 
     // Severity filter
-    if (filters.severity !== 'all') {
-      filtered = filtered.filter(event => event.severity === filters.severity);
+    if (filters.severity !== "all") {
+      filtered = filtered.filter((event) => event.severity === filters.severity);
     }
 
     // Event type filter
-    if (filters.eventType !== 'all') {
-      filtered = filtered.filter(event => event.event_type === filters.eventType);
+    if (filters.eventType !== "all") {
+      filtered = filtered.filter((event) => event.event_type === filters.eventType);
     }
 
     // Resolved filter
-    if (filters.resolved !== 'all') {
-      filtered = filtered.filter(event => 
-        filters.resolved === 'resolved' ? event.resolved : !event.resolved
+    if (filters.resolved !== "all") {
+      filtered = filtered.filter((event) =>
+        filters.resolved === "resolved" ? event.resolved : !event.resolved,
       );
     }
 
     // Date range filter
-    if (filters.dateRange !== 'all') {
+    if (filters.dateRange !== "all") {
       const now = new Date();
       const cutoff = new Date();
-      
+
       switch (filters.dateRange) {
-        case '24h':
+        case "24h":
           cutoff.setHours(now.getHours() - 24);
           break;
-        case '7d':
+        case "7d":
           cutoff.setDate(now.getDate() - 7);
           break;
-        case '30d':
+        case "30d":
           cutoff.setDate(now.getDate() - 30);
           break;
       }
-      
-      filtered = filtered.filter(event => 
-        new Date(event.timestamp) >= cutoff
-      );
+
+      filtered = filtered.filter((event) => new Date(event.timestamp) >= cutoff);
     }
 
     // Sort by timestamp (newest first)
-    return filtered.sort((a, b) => 
-      new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    return filtered.sort(
+      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
     );
   }, [events, filters]);
 
@@ -164,7 +165,7 @@ export default function SecurityEventsTable({
     try {
       await resolveEvent(eventId);
     } catch (error) {
-      console.error('Failed to resolve event:', error);
+      console.error("Failed to resolve event:", error);
     }
   };
 
@@ -172,37 +173,39 @@ export default function SecurityEventsTable({
     try {
       await dismissEvent(eventId);
     } catch (error) {
-      console.error('Failed to dismiss event:', error);
+      console.error("Failed to dismiss event:", error);
     }
   };
 
   const handleBulkResolve = async () => {
     try {
-      await Promise.all(selectedEvents.map(eventId => resolveEvent(eventId)));
+      await Promise.all(selectedEvents.map((eventId) => resolveEvent(eventId)));
       setSelectedEvents([]);
     } catch (error) {
-      console.error('Failed to bulk resolve events:', error);
+      console.error("Failed to bulk resolve events:", error);
     }
   };
 
   const handleExportEvents = () => {
     const csvContent = [
-      ['Timestamp', 'Event Type', 'Severity', 'IP Address', 'Resolved', 'Details'].join(','),
-      ...filteredEvents.map(event => [
-        format(new Date(event.timestamp), 'yyyy-MM-dd HH:mm:ss'),
-        event.event_type,
-        event.severity,
-        event.ip_address,
-        event.resolved ? 'Yes' : 'No',
-        JSON.stringify(event.details || {})
-      ].join(','))
-    ].join('\n');
+      ["Timestamp", "Event Type", "Severity", "IP Address", "Resolved", "Details"].join(","),
+      ...filteredEvents.map((event) =>
+        [
+          format(new Date(event.timestamp), "yyyy-MM-dd HH:mm:ss"),
+          event.event_type,
+          event.severity,
+          event.ip_address,
+          event.resolved ? "Yes" : "No",
+          JSON.stringify(event.details || {}),
+        ].join(","),
+      ),
+    ].join("\n");
 
-    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = `security-events-${format(new Date(), 'yyyy-MM-dd')}.csv`;
+    a.download = `security-events-${format(new Date(), "yyyy-MM-dd")}.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -215,10 +218,10 @@ export default function SecurityEventsTable({
 
   const getSeverityBadge = (severity: SecuritySeverity) => {
     const config = {
-      low: { variant: 'secondary' as const, color: 'text-blue-600' },
-      medium: { variant: 'default' as const, color: 'text-yellow-600' },
-      high: { variant: 'destructive' as const, color: 'text-orange-600' },
-      critical: { variant: 'destructive' as const, color: 'text-red-600' }
+      low: { variant: "secondary" as const, color: "text-blue-600" },
+      medium: { variant: "default" as const, color: "text-yellow-600" },
+      high: { variant: "destructive" as const, color: "text-orange-600" },
+      critical: { variant: "destructive" as const, color: "text-red-600" },
     };
 
     const { variant, color } = config[severity] || config.medium;
@@ -232,14 +235,14 @@ export default function SecurityEventsTable({
 
   const getEventTypeLabel = (eventType: SecurityEventType) => {
     const labels = {
-      [SecurityEventType.UNUSUAL_LOCATION]: 'Localização Incomum',
-      [SecurityEventType.DEVICE_CHANGE]: 'Mudança de Dispositivo',
-      [SecurityEventType.RAPID_REQUESTS]: 'Requisições Rápidas',
-      [SecurityEventType.SESSION_HIJACK_ATTEMPT]: 'Tentativa de Sequestro',
-      [SecurityEventType.SUSPICIOUS_USER_AGENT]: 'User Agent Suspeito',
-      [SecurityEventType.CONCURRENT_SESSION_LIMIT]: 'Limite de Sessões',
-      [SecurityEventType.FAILED_AUTHENTICATION]: 'Falha na Autenticação',
-      [SecurityEventType.PRIVILEGE_ESCALATION]: 'Escalação de Privilégios'
+      [SecurityEventType.UNUSUAL_LOCATION]: "Localização Incomum",
+      [SecurityEventType.DEVICE_CHANGE]: "Mudança de Dispositivo",
+      [SecurityEventType.RAPID_REQUESTS]: "Requisições Rápidas",
+      [SecurityEventType.SESSION_HIJACK_ATTEMPT]: "Tentativa de Sequestro",
+      [SecurityEventType.SUSPICIOUS_USER_AGENT]: "User Agent Suspeito",
+      [SecurityEventType.CONCURRENT_SESSION_LIMIT]: "Limite de Sessões",
+      [SecurityEventType.FAILED_AUTHENTICATION]: "Falha na Autenticação",
+      [SecurityEventType.PRIVILEGE_ESCALATION]: "Escalação de Privilégios",
     };
 
     return labels[eventType] || eventType;
@@ -254,7 +257,7 @@ export default function SecurityEventsTable({
       [SecurityEventType.SUSPICIOUS_USER_AGENT]: <Eye className="h-4 w-4" />,
       [SecurityEventType.CONCURRENT_SESSION_LIMIT]: <AlertTriangle className="h-4 w-4" />,
       [SecurityEventType.FAILED_AUTHENTICATION]: <XCircle className="h-4 w-4" />,
-      [SecurityEventType.PRIVILEGE_ESCALATION]: <Shield className="h-4 w-4" />
+      [SecurityEventType.PRIVILEGE_ESCALATION]: <Shield className="h-4 w-4" />,
     };
 
     return icons[eventType] || <AlertTriangle className="h-4 w-4" />;
@@ -270,36 +273,28 @@ export default function SecurityEventsTable({
         <div className="flex items-center justify-between">
           <div>
             <CardTitle>Eventos de Segurança</CardTitle>
-            <CardDescription>
-              Monitore e gerencie eventos de segurança da sessão
-            </CardDescription>
+            <CardDescription>Monitore e gerencie eventos de segurança da sessão</CardDescription>
           </div>
           <div className="flex items-center space-x-2">
             {selectedEvents.length > 0 && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleBulkResolve}
-              >
+              <Button variant="outline" size="sm" onClick={handleBulkResolve}>
                 <CheckCircle className="h-4 w-4 mr-2" />
                 Resolver Selecionados ({selectedEvents.length})
               </Button>
             )}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleExportEvents}
-            >
+            <Button variant="outline" size="sm" onClick={handleExportEvents}>
               <Download className="h-4 w-4 mr-2" />
               Exportar
             </Button>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onReportActivity(SecurityEventType.SUSPICIOUS_USER_AGENT, {
-                manual_report: true,
-                description: 'Atividade suspeita reportada pelo usuário'
-              })}
+              onClick={() =>
+                onReportActivity(SecurityEventType.SUSPICIOUS_USER_AGENT, {
+                  manual_report: true,
+                  description: "Atividade suspeita reportada pelo usuário",
+                })
+              }
             >
               <AlertTriangle className="h-4 w-4 mr-2" />
               Reportar Atividade
@@ -316,18 +311,20 @@ export default function SecurityEventsTable({
               <Input
                 placeholder="Buscar eventos..."
                 value={filters.search}
-                onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                onChange={(e) => setFilters((prev) => ({ ...prev, search: e.target.value }))}
                 className="pl-8"
               />
             </div>
           </div>
-          
+
           <Select
             value={filters.severity}
-            onValueChange={(value) => setFilters(prev => ({ 
-              ...prev, 
-              severity: value as SecuritySeverity | 'all' 
-            }))}
+            onValueChange={(value) =>
+              setFilters((prev) => ({
+                ...prev,
+                severity: value as SecuritySeverity | "all",
+              }))
+            }
           >
             <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Severidade" />
@@ -343,17 +340,19 @@ export default function SecurityEventsTable({
 
           <Select
             value={filters.eventType}
-            onValueChange={(value) => setFilters(prev => ({ 
-              ...prev, 
-              eventType: value as SecurityEventType | 'all' 
-            }))}
+            onValueChange={(value) =>
+              setFilters((prev) => ({
+                ...prev,
+                eventType: value as SecurityEventType | "all",
+              }))
+            }
           >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Tipo de Evento" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos</SelectItem>
-              {Object.values(SecurityEventType).map(type => (
+              {Object.values(SecurityEventType).map((type) => (
                 <SelectItem key={type} value={type}>
                   {getEventTypeLabel(type)}
                 </SelectItem>
@@ -363,10 +362,12 @@ export default function SecurityEventsTable({
 
           <Select
             value={filters.resolved}
-            onValueChange={(value) => setFilters(prev => ({ 
-              ...prev, 
-              resolved: value as 'all' | 'resolved' | 'unresolved' 
-            }))}
+            onValueChange={(value) =>
+              setFilters((prev) => ({
+                ...prev,
+                resolved: value as "all" | "resolved" | "unresolved",
+              }))
+            }
           >
             <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Status" />
@@ -380,10 +381,12 @@ export default function SecurityEventsTable({
 
           <Select
             value={filters.dateRange}
-            onValueChange={(value) => setFilters(prev => ({ 
-              ...prev, 
-              dateRange: value as EventFilters['dateRange'] 
-            }))}
+            onValueChange={(value) =>
+              setFilters((prev) => ({
+                ...prev,
+                dateRange: value as EventFilters["dateRange"],
+              }))
+            }
           >
             <SelectTrigger className="w-[120px]">
               <SelectValue placeholder="Período" />
@@ -405,10 +408,12 @@ export default function SecurityEventsTable({
                 <TableHead className="w-[50px]">
                   <input
                     type="checkbox"
-                    checked={selectedEvents.length === filteredEvents.length && filteredEvents.length > 0}
+                    checked={
+                      selectedEvents.length === filteredEvents.length && filteredEvents.length > 0
+                    }
                     onChange={(e) => {
                       if (e.target.checked) {
-                        setSelectedEvents(filteredEvents.map(event => event.id));
+                        setSelectedEvents(filteredEvents.map((event) => event.id));
                       } else {
                         setSelectedEvents([]);
                       }
@@ -439,9 +444,9 @@ export default function SecurityEventsTable({
                         checked={selectedEvents.includes(event.id)}
                         onChange={(e) => {
                           if (e.target.checked) {
-                            setSelectedEvents(prev => [...prev, event.id]);
+                            setSelectedEvents((prev) => [...prev, event.id]);
                           } else {
-                            setSelectedEvents(prev => prev.filter(id => id !== event.id));
+                            setSelectedEvents((prev) => prev.filter((id) => id !== event.id));
                           }
                         }}
                       />
@@ -449,19 +454,13 @@ export default function SecurityEventsTable({
                     <TableCell>
                       <div className="flex items-center space-x-2">
                         {getEventTypeIcon(event.event_type)}
-                        <span className="font-medium">
-                          {getEventTypeLabel(event.event_type)}
-                        </span>
+                        <span className="font-medium">{getEventTypeLabel(event.event_type)}</span>
                       </div>
                     </TableCell>
+                    <TableCell>{getSeverityBadge(event.severity)}</TableCell>
+                    <TableCell className="font-mono text-sm">{event.ip_address}</TableCell>
                     <TableCell>
-                      {getSeverityBadge(event.severity)}
-                    </TableCell>
-                    <TableCell className="font-mono text-sm">
-                      {event.ip_address}
-                    </TableCell>
-                    <TableCell>
-                      {format(new Date(event.timestamp), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+                      {format(new Date(event.timestamp), "dd/MM/yyyy HH:mm", { locale: ptBR })}
                     </TableCell>
                     <TableCell>
                       {event.resolved ? (
@@ -498,9 +497,11 @@ export default function SecurityEventsTable({
                               </DropdownMenuItem>
                             </>
                           )}
-                          <DropdownMenuItem onClick={() => {
-                            navigator.clipboard.writeText(JSON.stringify(event, null, 2));
-                          }}>
+                          <DropdownMenuItem
+                            onClick={() => {
+                              navigator.clipboard.writeText(JSON.stringify(event, null, 2));
+                            }}
+                          >
                             <Eye className="h-4 w-4 mr-2" />
                             Ver Detalhes
                           </DropdownMenuItem>
@@ -520,8 +521,8 @@ export default function SecurityEventsTable({
             Mostrando {filteredEvents.length} de {events.length} eventos
           </span>
           <span>
-            {filteredEvents.filter(e => !e.resolved).length} pendentes, {' '}
-            {filteredEvents.filter(e => e.resolved).length} resolvidos
+            {filteredEvents.filter((e) => !e.resolved).length} pendentes,{" "}
+            {filteredEvents.filter((e) => e.resolved).length} resolvidos
           </span>
         </div>
       </CardContent>

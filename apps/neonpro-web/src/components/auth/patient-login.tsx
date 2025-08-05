@@ -1,16 +1,16 @@
 // components/auth/patient-login.tsx
 "use client";
 
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
+import type { useState } from "react";
+import type { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type { Badge } from "@/components/ui/badge";
+import type { Separator } from "@/components/ui/separator";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
   Heart,
   CreditCard,
   Smartphone,
@@ -22,7 +22,7 @@ import {
   CheckCircle,
   ExternalLink,
   User,
-  Calendar
+  Calendar,
 } from "lucide-react";
 
 interface PatientLoginModalProps {
@@ -31,36 +31,36 @@ interface PatientLoginModalProps {
 }
 
 export function PatientLoginModal({ open, onOpenChange }: PatientLoginModalProps) {
-  const [loginMethod, setLoginMethod] = useState<'cpf' | 'email'>('cpf');
+  const [loginMethod, setLoginMethod] = useState<"cpf" | "email">("cpf");
   const [formData, setFormData] = useState({
     cpf: "",
     email: "",
     phone: "",
     password: "",
     birthDate: "",
-    rememberMe: false
+    rememberMe: false,
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (error) setError("");
   };
 
   const formatCPF = (value: string) => {
-    const numbers = value.replace(/\D/g, '');
+    const numbers = value.replace(/\D/g, "");
     if (numbers.length <= 11) {
-      return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+      return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
     }
     return value;
   };
 
   const formatPhone = (value: string) => {
-    const numbers = value.replace(/\D/g, '');
+    const numbers = value.replace(/\D/g, "");
     if (numbers.length <= 11) {
-      return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+      return numbers.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
     }
     return value;
   };
@@ -72,15 +72,16 @@ export function PatientLoginModal({ open, onOpenChange }: PatientLoginModalProps
 
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       // Mock authentication logic
-      const hasRequiredFields = loginMethod === 'cpf' 
-        ? formData.cpf && formData.phone
-        : formData.email && formData.password;
+      const hasRequiredFields =
+        loginMethod === "cpf"
+          ? formData.cpf && formData.phone
+          : formData.email && formData.password;
 
       if (hasRequiredFields) {
-        window.location.href = '/patient-portal';
+        window.location.href = "/patient-portal";
       } else {
         setError("Por favor, preencha todos os campos obrigatórios");
       }
@@ -97,7 +98,7 @@ export function PatientLoginModal({ open, onOpenChange }: PatientLoginModalProps
     "Agendamento online",
     "Lembretes automáticos",
     "Chat com a clínica",
-    "Dados sempre seguros"
+    "Dados sempre seguros",
   ];
 
   return (
@@ -109,9 +110,7 @@ export function PatientLoginModal({ open, onOpenChange }: PatientLoginModalProps
               <Heart className="h-4 w-4 text-white" />
             </div>
             <span>Portal do Paciente</span>
-            <Badge className="bg-pink-100 text-pink-700 text-xs">
-              Bem-estar
-            </Badge>
+            <Badge className="bg-pink-100 text-pink-700 text-xs">Bem-estar</Badge>
           </DialogTitle>
         </DialogHeader>
 
@@ -125,12 +124,16 @@ export function PatientLoginModal({ open, onOpenChange }: PatientLoginModalProps
               </span>
             </div>
             <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              Acompanhe seus tratamentos, veja seu progresso e mantenha-se conectado com sua clínica.
+              Acompanhe seus tratamentos, veja seu progresso e mantenha-se conectado com sua
+              clínica.
             </p>
           </div>
 
           {/* Login Method Tabs */}
-          <Tabs value={loginMethod} onValueChange={(value) => setLoginMethod(value as 'cpf' | 'email')}>
+          <Tabs
+            value={loginMethod}
+            onValueChange={(value) => setLoginMethod(value as "cpf" | "email")}
+          >
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="cpf" className="flex items-center space-x-2">
                 <CreditCard className="h-4 w-4" />
@@ -160,7 +163,7 @@ export function PatientLoginModal({ open, onOpenChange }: PatientLoginModalProps
                         id="cpf"
                         type="text"
                         value={formData.cpf}
-                        onChange={(e) => handleInputChange('cpf', formatCPF(e.target.value))}
+                        onChange={(e) => handleInputChange("cpf", formatCPF(e.target.value))}
                         className="pl-10"
                         placeholder="000.000.000-00"
                         maxLength={14}
@@ -177,7 +180,7 @@ export function PatientLoginModal({ open, onOpenChange }: PatientLoginModalProps
                         id="phone"
                         type="tel"
                         value={formData.phone}
-                        onChange={(e) => handleInputChange('phone', formatPhone(e.target.value))}
+                        onChange={(e) => handleInputChange("phone", formatPhone(e.target.value))}
                         className="pl-10"
                         placeholder="(11) 99999-0000"
                         maxLength={15}
@@ -194,7 +197,7 @@ export function PatientLoginModal({ open, onOpenChange }: PatientLoginModalProps
                         id="birthDate"
                         type="date"
                         value={formData.birthDate}
-                        onChange={(e) => handleInputChange('birthDate', e.target.value)}
+                        onChange={(e) => handleInputChange("birthDate", e.target.value)}
                         className="pl-10"
                       />
                     </div>
@@ -234,7 +237,7 @@ export function PatientLoginModal({ open, onOpenChange }: PatientLoginModalProps
                         id="email"
                         type="email"
                         value={formData.email}
-                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        onChange={(e) => handleInputChange("email", e.target.value)}
                         className="pl-10"
                         placeholder="seu@email.com"
                         required
@@ -250,7 +253,7 @@ export function PatientLoginModal({ open, onOpenChange }: PatientLoginModalProps
                         id="password"
                         type={showPassword ? "text" : "password"}
                         value={formData.password}
-                        onChange={(e) => handleInputChange('password', e.target.value)}
+                        onChange={(e) => handleInputChange("password", e.target.value)}
                         className="pl-10 pr-10"
                         placeholder="Digite sua senha"
                         required
@@ -274,14 +277,16 @@ export function PatientLoginModal({ open, onOpenChange }: PatientLoginModalProps
                       <Checkbox
                         id="rememberMe"
                         checked={formData.rememberMe}
-                        onCheckedChange={(checked) => handleInputChange('rememberMe', checked as boolean)}
+                        onCheckedChange={(checked) =>
+                          handleInputChange("rememberMe", checked as boolean)
+                        }
                       />
                       <Label htmlFor="rememberMe" className="text-sm">
                         Lembrar-me
                       </Label>
                     </div>
-                    <a 
-                      href="/patient-password-reset" 
+                    <a
+                      href="/patient-password-reset"
                       className="text-sm text-pink-600 hover:text-pink-700 hover:underline"
                     >
                       Esqueci minha senha
@@ -339,10 +344,10 @@ export function PatientLoginModal({ open, onOpenChange }: PatientLoginModalProps
               Entre em contato com sua clínica ou use o CPF e celular informados na consulta.
             </p>
             <div className="flex flex-col space-y-2">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => window.open('/patient-support', '_blank')}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => window.open("/patient-support", "_blank")}
               >
                 Central de Ajuda
                 <ExternalLink className="ml-1 h-3 w-3" />
@@ -354,9 +359,7 @@ export function PatientLoginModal({ open, onOpenChange }: PatientLoginModalProps
           <div className="text-center">
             <div className="flex items-center justify-center space-x-1 mb-2">
               <Shield className="h-3 w-3 text-green-600" />
-              <span className="text-xs text-slate-500">
-                Seus dados são protegidos pela LGPD
-              </span>
+              <span className="text-xs text-slate-500">Seus dados são protegidos pela LGPD</span>
             </div>
             <p className="text-xs text-slate-400">
               Criptografia bancária • Privacidade garantida • Acesso controlado

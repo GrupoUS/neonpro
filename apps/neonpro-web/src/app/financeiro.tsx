@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  DollarSign, 
-  TrendingUp, 
+import React, { useState } from "react";
+import type { motion, AnimatePresence } from "framer-motion";
+import type {
+  DollarSign,
+  TrendingUp,
   TrendingDown,
   Calendar,
   CreditCard,
@@ -17,132 +17,132 @@ import {
   CheckCircle,
   Clock,
   XCircle,
-  AlertTriangle
-} from 'lucide-react';
-import { NeonGradientCard } from '@/components/ui/NeonGradientCard';
-import { CosmicGlowButton } from '@/components/ui/CosmicGlowButton';
-import { formatCurrency, formatDate } from '@/lib/utils';
+  AlertTriangle,
+} from "lucide-react";
+import type { NeonGradientCard } from "@/components/ui/NeonGradientCard";
+import type { CosmicGlowButton } from "@/components/ui/CosmicGlowButton";
+import type { formatCurrency, formatDate } from "@/lib/utils";
 
 // Dados mock para financeiro
 const financeiroData = {
   summary: {
-    totalReceita: 127500.00,
-    receitaMensal: 45200.00,
-    contasReceber: 23800.00,
-    contasPagar: 8900.00,
+    totalReceita: 127500.0,
+    receitaMensal: 45200.0,
+    contasReceber: 23800.0,
+    contasPagar: 8900.0,
     margemLucro: 68.5,
-    crescimentoMensal: 12.3
+    crescimentoMensal: 12.3,
   },
   transactions: [
     {
       id: 1,
-      type: 'receita',
-      description: 'Consulta - Maria Silva',
-      amount: 150.00,
-      date: new Date('2024-01-15'),
-      status: 'pago',
-      category: 'Consultas',
-      paymentMethod: 'Cartão de Crédito'
+      type: "receita",
+      description: "Consulta - Maria Silva",
+      amount: 150.0,
+      date: new Date("2024-01-15"),
+      status: "pago",
+      category: "Consultas",
+      paymentMethod: "Cartão de Crédito",
     },
     {
       id: 2,
-      type: 'receita',
-      description: 'Exame - João Santos',
-      amount: 300.00,
-      date: new Date('2024-01-14'),
-      status: 'pendente',
-      category: 'Exames',
-      paymentMethod: 'PIX'
+      type: "receita",
+      description: "Exame - João Santos",
+      amount: 300.0,
+      date: new Date("2024-01-14"),
+      status: "pendente",
+      category: "Exames",
+      paymentMethod: "PIX",
     },
     {
       id: 3,
-      type: 'despesa',
-      description: 'Equipamento Médico',
-      amount: 2500.00,
-      date: new Date('2024-01-13'),
-      status: 'pago',
-      category: 'Equipamentos',
-      paymentMethod: 'Transferência'
+      type: "despesa",
+      description: "Equipamento Médico",
+      amount: 2500.0,
+      date: new Date("2024-01-13"),
+      status: "pago",
+      category: "Equipamentos",
+      paymentMethod: "Transferência",
     },
     {
       id: 4,
-      type: 'receita',
-      description: 'Cirurgia - Ana Costa',
-      amount: 1200.00,
-      date: new Date('2024-01-12'),
-      status: 'pago',
-      category: 'Cirurgias',
-      paymentMethod: 'Dinheiro'
+      type: "receita",
+      description: "Cirurgia - Ana Costa",
+      amount: 1200.0,
+      date: new Date("2024-01-12"),
+      status: "pago",
+      category: "Cirurgias",
+      paymentMethod: "Dinheiro",
     },
     {
       id: 5,
-      type: 'despesa',
-      description: 'Aluguel Clínica',
-      amount: 3500.00,
-      date: new Date('2024-01-10'),
-      status: 'vencido',
-      category: 'Operacionais',
-      paymentMethod: 'Boleto'
-    }
+      type: "despesa",
+      description: "Aluguel Clínica",
+      amount: 3500.0,
+      date: new Date("2024-01-10"),
+      status: "vencido",
+      category: "Operacionais",
+      paymentMethod: "Boleto",
+    },
   ],
   monthlyData: [
-    { month: 'Jan', receita: 45200, despesa: 18500 },
-    { month: 'Fev', receita: 42800, despesa: 16200 },
-    { month: 'Mar', receita: 48600, despesa: 19800 },
-    { month: 'Abr', receita: 51200, despesa: 21000 },
-    { month: 'Mai', receita: 49800, despesa: 20200 },
-    { month: 'Jun', receita: 53400, despesa: 22100 }
-  ]
+    { month: "Jan", receita: 45200, despesa: 18500 },
+    { month: "Fev", receita: 42800, despesa: 16200 },
+    { month: "Mar", receita: 48600, despesa: 19800 },
+    { month: "Abr", receita: 51200, despesa: 21000 },
+    { month: "Mai", receita: 49800, despesa: 20200 },
+    { month: "Jun", receita: 53400, despesa: 22100 },
+  ],
 };
 
 const statusConfig = {
   pago: {
-    color: 'success',
+    color: "success",
     icon: CheckCircle,
-    label: 'Pago',
-    bgColor: 'bg-success/10',
-    borderColor: 'border-success/30',
-    textColor: 'text-success'
+    label: "Pago",
+    bgColor: "bg-success/10",
+    borderColor: "border-success/30",
+    textColor: "text-success",
   },
   pendente: {
-    color: 'warning',
+    color: "warning",
     icon: Clock,
-    label: 'Pendente',
-    bgColor: 'bg-warning/10',
-    borderColor: 'border-warning/30',
-    textColor: 'text-warning'
+    label: "Pendente",
+    bgColor: "bg-warning/10",
+    borderColor: "border-warning/30",
+    textColor: "text-warning",
   },
   vencido: {
-    color: 'danger',
+    color: "danger",
     icon: XCircle,
-    label: 'Vencido',
-    bgColor: 'bg-danger/10',
-    borderColor: 'border-danger/30',
-    textColor: 'text-danger'
+    label: "Vencido",
+    bgColor: "bg-danger/10",
+    borderColor: "border-danger/30",
+    textColor: "text-danger",
   },
   cancelado: {
-    color: 'danger',
+    color: "danger",
     icon: AlertTriangle,
-    label: 'Cancelado',
-    bgColor: 'bg-danger/10',
-    borderColor: 'border-danger/30',
-    textColor: 'text-danger'
-  }
+    label: "Cancelado",
+    bgColor: "bg-danger/10",
+    borderColor: "border-danger/30",
+    textColor: "text-danger",
+  },
 };
 
 const typeConfig = {
   receita: {
-    color: 'success',
-    gradient: 'success',
+    color: "success",
+    gradient: "success",
     icon: TrendingUp,
-    label: 'Receita'
+    label: "Receita",
   },
   despesa: {
-    color: 'danger',
-    gradient: 'danger',
+    color: "danger",
+    gradient: "danger",
     icon: TrendingDown,
-    label: 'Despesa'
-  }
+    label: "Despesa",
+  },
 };
 
 const TransactionCard = ({ transaction, index }) => {
@@ -156,21 +156,23 @@ const TransactionCard = ({ transaction, index }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
-      whileHover={{ 
-        scale: 1.02, 
+      whileHover={{
+        scale: 1.02,
         y: -5,
-        transition: { 
-          duration: 0.2, 
-          type: 'spring', 
-          stiffness: 400, 
-          damping: 17 
-        }
+        transition: {
+          duration: 0.2,
+          type: "spring",
+          stiffness: 400,
+          damping: 17,
+        },
       }}
     >
       <NeonGradientCard gradient={typeInfo.gradient} className="group">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center space-x-3">
-            <div className={`w-12 h-12 rounded-full bg-${typeInfo.color}/20 flex items-center justify-center`}>
+            <div
+              className={`w-12 h-12 rounded-full bg-${typeInfo.color}/20 flex items-center justify-center`}
+            >
               <TypeIcon className={`h-6 w-6 text-${typeInfo.color}`} />
             </div>
             <div>
@@ -179,10 +181,15 @@ const TransactionCard = ({ transaction, index }) => {
             </div>
           </div>
           <div className="text-right">
-            <p className={`text-2xl font-bold ${transaction.type === 'receita' ? 'text-success' : 'text-danger'}`}>
-              {transaction.type === 'receita' ? '+' : '-'}{formatCurrency(transaction.amount)}
+            <p
+              className={`text-2xl font-bold ${transaction.type === "receita" ? "text-success" : "text-danger"}`}
+            >
+              {transaction.type === "receita" ? "+" : "-"}
+              {formatCurrency(transaction.amount)}
             </p>
-            <div className={`inline-flex px-2 py-1 rounded-full text-xs font-medium mt-1 ${statusInfo.bgColor} ${statusInfo.borderColor} border`}>
+            <div
+              className={`inline-flex px-2 py-1 rounded-full text-xs font-medium mt-1 ${statusInfo.bgColor} ${statusInfo.borderColor} border`}
+            >
               <StatusIcon className={`h-3 w-3 mr-1 ${statusInfo.textColor}`} />
               <span className={statusInfo.textColor}>{statusInfo.label}</span>
             </div>
@@ -211,7 +218,7 @@ const TransactionCard = ({ transaction, index }) => {
           <CosmicGlowButton variant="secondary" size="sm" className="flex-1">
             Editar
           </CosmicGlowButton>
-          {transaction.status === 'pendente' && (
+          {transaction.status === "pendente" && (
             <CosmicGlowButton variant="success" size="sm" className="flex-1">
               Confirmar
             </CosmicGlowButton>
@@ -227,26 +234,25 @@ const FinancialCard = ({ icon: Icon, title, value, change, gradient, subtitle })
     <div className="flex items-center justify-between">
       <div className="space-y-2">
         <p className="text-gray-400 text-sm font-medium">{title}</p>
-        <motion.p 
+        <motion.p
           className="text-3xl font-bold text-white"
           initial={{ scale: 0.8 }}
           animate={{ scale: 1 }}
           transition={{ delay: 0.2 }}
         >
-          {typeof value === 'number' ? formatCurrency(value) : `${value}%`}
+          {typeof value === "number" ? formatCurrency(value) : `${value}%`}
         </motion.p>
         {change && (
           <div className="flex items-center space-x-1">
-            <TrendingUp className={`h-4 w-4 ${change > 0 ? 'text-success' : 'text-danger'}`} />
-            <span className={`text-sm font-medium ${change > 0 ? 'text-success' : 'text-danger'}`}>
-              {change > 0 ? '+' : ''}{change}%
+            <TrendingUp className={`h-4 w-4 ${change > 0 ? "text-success" : "text-danger"}`} />
+            <span className={`text-sm font-medium ${change > 0 ? "text-success" : "text-danger"}`}>
+              {change > 0 ? "+" : ""}
+              {change}%
             </span>
             <span className="text-gray-400 text-xs">este mês</span>
           </div>
         )}
-        {subtitle && (
-          <p className="text-gray-400 text-xs">{subtitle}</p>
-        )}
+        {subtitle && <p className="text-gray-400 text-xs">{subtitle}</p>}
       </div>
       <div className="p-3 rounded-lg bg-white/10 backdrop-blur-sm">
         <Icon className="h-8 w-8 text-accent" />
@@ -256,22 +262,22 @@ const FinancialCard = ({ icon: Icon, title, value, change, gradient, subtitle })
 );
 
 export default function Financeiro() {
-  const [filterType, setFilterType] = useState('todos');
-  const [filterStatus, setFilterStatus] = useState('todos');
-  const [filterPeriod, setFilterPeriod] = useState('mes');
+  const [filterType, setFilterType] = useState("todos");
+  const [filterStatus, setFilterStatus] = useState("todos");
+  const [filterPeriod, setFilterPeriod] = useState("mes");
 
-  const filteredTransactions = financeiroData.transactions.filter(transaction => {
-    const matchesType = filterType === 'todos' || transaction.type === filterType;
-    const matchesStatus = filterStatus === 'todos' || transaction.status === filterStatus;
+  const filteredTransactions = financeiroData.transactions.filter((transaction) => {
+    const matchesType = filterType === "todos" || transaction.type === filterType;
+    const matchesStatus = filterStatus === "todos" || transaction.status === filterStatus;
     return matchesType && matchesStatus;
   });
 
   const totalReceitas = filteredTransactions
-    .filter(t => t.type === 'receita' && t.status === 'pago')
+    .filter((t) => t.type === "receita" && t.status === "pago")
     .reduce((sum, t) => sum + t.amount, 0);
 
   const totalDespesas = filteredTransactions
-    .filter(t => t.type === 'despesa' && t.status === 'pago')
+    .filter((t) => t.type === "despesa" && t.status === "pago")
     .reduce((sum, t) => sum + t.amount, 0);
 
   const saldoLiquido = totalReceitas - totalDespesas;
@@ -284,12 +290,8 @@ export default function Financeiro() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-4xl font-bold text-white mb-2">
-            Financeiro NEONPROV1
-          </h1>
-          <p className="text-gray-400">
-            Controle financeiro completo da clínica
-          </p>
+          <h1 className="text-4xl font-bold text-white mb-2">Financeiro NEONPROV1</h1>
+          <p className="text-gray-400">Controle financeiro completo da clínica</p>
         </motion.div>
 
         {/* Resumo Financeiro */}
@@ -326,15 +328,18 @@ export default function Financeiro() {
 
         {/* Saldo Líquido */}
         <div className="mb-8">
-          <NeonGradientCard gradient={saldoLiquido >= 0 ? 'success' : 'danger'} className="text-center">
+          <NeonGradientCard
+            gradient={saldoLiquido >= 0 ? "success" : "danger"}
+            className="text-center"
+          >
             <div className="flex items-center justify-center space-x-4">
               <div className="p-4 rounded-full bg-white/10">
                 <PieChart className="h-12 w-12 text-accent" />
               </div>
               <div>
                 <p className="text-gray-400 text-sm mb-1">Saldo Líquido (Período Filtrado)</p>
-                <motion.p 
-                  className={`text-4xl font-bold ${saldoLiquido >= 0 ? 'text-success' : 'text-danger'}`}
+                <motion.p
+                  className={`text-4xl font-bold ${saldoLiquido >= 0 ? "text-success" : "text-danger"}`}
                   initial={{ scale: 0.8 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.3 }}
@@ -342,7 +347,8 @@ export default function Financeiro() {
                   {formatCurrency(saldoLiquido)}
                 </motion.p>
                 <p className="text-gray-400 text-sm">
-                  Receitas: {formatCurrency(totalReceitas)} | Despesas: {formatCurrency(totalDespesas)}
+                  Receitas: {formatCurrency(totalReceitas)} | Despesas:{" "}
+                  {formatCurrency(totalDespesas)}
                 </p>
               </div>
             </div>
@@ -413,11 +419,7 @@ export default function Financeiro() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <AnimatePresence>
             {filteredTransactions.map((transaction, index) => (
-              <TransactionCard
-                key={transaction.id}
-                transaction={transaction}
-                index={index}
-              />
+              <TransactionCard key={transaction.id} transaction={transaction} index={index} />
             ))}
           </AnimatePresence>
         </div>
@@ -436,9 +438,7 @@ export default function Financeiro() {
               <p className="text-gray-400 mb-4">
                 Não há transações que correspondam aos filtros selecionados.
               </p>
-              <CosmicGlowButton variant="primary">
-                Adicionar Transação
-              </CosmicGlowButton>
+              <CosmicGlowButton variant="primary">Adicionar Transação</CosmicGlowButton>
             </NeonGradientCard>
           </motion.div>
         )}

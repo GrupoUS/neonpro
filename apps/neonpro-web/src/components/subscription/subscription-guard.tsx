@@ -1,18 +1,18 @@
 "use client";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import {
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useSubscriptionStatus } from "@/hooks/use-subscription-status";
-import { AlertCircle, Clock, Lock, Zap } from "lucide-react";
+import type { useSubscriptionStatus } from "@/hooks/use-subscription-status";
+import type { AlertCircle, Clock, Lock, Zap } from "lucide-react";
 import Link from "next/link";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 interface SubscriptionGuardProps {
   children: ReactNode;
@@ -31,16 +31,8 @@ export function SubscriptionGuard({
   feature = "this feature",
   className,
 }: SubscriptionGuardProps) {
-  const {
-    hasAccess,
-    isActive,
-    isTrialing,
-    inGracePeriod,
-    isLoading,
-    status,
-    message,
-    error,
-  } = useSubscriptionStatus();
+  const { hasAccess, isActive, isTrialing, inGracePeriod, isLoading, status, message, error } =
+    useSubscriptionStatus();
 
   // Show loading state
   if (isLoading) {
@@ -49,9 +41,7 @@ export function SubscriptionGuard({
         <CardContent className="flex items-center justify-center py-8">
           <div className="flex items-center gap-2">
             <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-            <span className="text-muted-foreground">
-              Checking subscription...
-            </span>
+            <span className="text-muted-foreground">Checking subscription...</span>
           </div>
         </CardContent>
       </Card>
@@ -119,9 +109,7 @@ export function SubscriptionGuard({
           <Lock className="h-6 w-6 text-primary" />
         </div>
         <CardTitle className="text-xl">
-          {requireActive
-            ? "Active Subscription Required"
-            : "Subscription Required"}
+          {requireActive ? "Active Subscription Required" : "Subscription Required"}
         </CardTitle>
         <CardDescription>
           {requireActive
@@ -135,8 +123,8 @@ export function SubscriptionGuard({
             <Zap className="h-4 w-4" />
             <AlertTitle>Trial Limitation</AlertTitle>
             <AlertDescription>
-              This feature is not available during the trial period. Upgrade to
-              a paid plan to access all features.
+              This feature is not available during the trial period. Upgrade to a paid plan to
+              access all features.
             </AlertDescription>
           </Alert>
         )}
@@ -208,8 +196,7 @@ export function ActiveSubscriptionGuard({
 
 // Hook for conditional rendering based on subscription
 export function useSubscriptionAccess() {
-  const { hasAccess, isActive, isTrialing, isLoading } =
-    useSubscriptionStatus();
+  const { hasAccess, isActive, isTrialing, isLoading } = useSubscriptionStatus();
 
   return {
     canAccessPremium: hasAccess,

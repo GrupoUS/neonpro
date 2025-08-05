@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertTriangle, RefreshCw, Home, Bug } from 'lucide-react';
+import React, { Component, ErrorInfo, ReactNode } from "react";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { AlertTriangle, RefreshCw, Home, Bug } from "lucide-react";
 
 // =====================================================================================
 // ERROR BOUNDARY COMPONENT
@@ -29,7 +29,7 @@ export class ErrorBoundary extends Component<Props, State> {
     this.state = {
       hasError: false,
       error: null,
-      errorInfo: null
+      errorInfo: null,
     };
   }
 
@@ -38,18 +38,18 @@ export class ErrorBoundary extends Component<Props, State> {
     return {
       hasError: true,
       error,
-      errorInfo: null
+      errorInfo: null,
     };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log error details
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
-    
+    console.error("ErrorBoundary caught an error:", error, errorInfo);
+
     // Update state with error info
     this.setState({
       error,
-      errorInfo
+      errorInfo,
     });
 
     // Call custom error handler if provided
@@ -63,12 +63,12 @@ export class ErrorBoundary extends Component<Props, State> {
     this.setState({
       hasError: false,
       error: null,
-      errorInfo: null
+      errorInfo: null,
     });
   };
 
   handleGoHome = () => {
-    window.location.href = '/dashboard';
+    window.location.href = "/dashboard";
   };
 
   render() {
@@ -92,12 +92,13 @@ export class ErrorBoundary extends Component<Props, State> {
               <Alert>
                 <Bug className="h-4 w-4" />
                 <AlertDescription>
-                  Ocorreu um erro inesperado. Nossa equipe foi notificada e está trabalhando para resolver o problema.
+                  Ocorreu um erro inesperado. Nossa equipe foi notificada e está trabalhando para
+                  resolver o problema.
                 </AlertDescription>
               </Alert>
 
               {/* Error Details (only in development) */}
-              {process.env.NODE_ENV === 'development' && this.state.error && (
+              {process.env.NODE_ENV === "development" && this.state.error && (
                 <div className="bg-gray-100 p-4 rounded-lg">
                   <h4 className="font-semibold mb-2">Detalhes do Erro (Desenvolvimento):</h4>
                   <pre className="text-sm text-red-600 whitespace-pre-wrap">
@@ -140,11 +141,11 @@ export class ErrorBoundary extends Component<Props, State> {
 
 export function useErrorHandler() {
   return (error: Error, errorInfo?: ErrorInfo) => {
-    console.error('Error caught by useErrorHandler:', error, errorInfo);
-    
+    console.error("Error caught by useErrorHandler:", error, errorInfo);
+
     // Report to error tracking service
     // reportError(error, errorInfo);
-    
+
     // You could also trigger a toast notification here
     // toast.error('Ocorreu um erro inesperado');
   };
@@ -169,7 +170,7 @@ export function DashboardErrorBoundary({ children }: { children: ReactNode }) {
         </div>
       }
       onError={(error, errorInfo) => {
-        console.error('Dashboard Error:', error, errorInfo);
+        console.error("Dashboard Error:", error, errorInfo);
       }}
     >
       {children}
@@ -190,7 +191,7 @@ export function FormErrorBoundary({ children }: { children: ReactNode }) {
         </Alert>
       }
       onError={(error, errorInfo) => {
-        console.error('Form Error:', error, errorInfo);
+        console.error("Form Error:", error, errorInfo);
       }}
     >
       {children}
@@ -211,7 +212,7 @@ export function APIErrorBoundary({ children }: { children: ReactNode }) {
         </Alert>
       }
       onError={(error, errorInfo) => {
-        console.error('API Error:', error, errorInfo);
+        console.error("API Error:", error, errorInfo);
       }}
     >
       {children}

@@ -1,17 +1,36 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Skeleton } from '@/components/ui/skeleton';
-import {
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type { Skeleton } from "@/components/ui/skeleton";
+import type {
   FileText,
   Download,
   Calendar,
@@ -29,8 +48,8 @@ import {
   TrendingUp,
   DollarSign,
   Users,
-  Activity
-} from 'lucide-react';
+  Activity,
+} from "lucide-react";
 
 interface FinancialReportsProps {
   reports?: any[];
@@ -46,9 +65,9 @@ interface ReportTemplate {
   id: string;
   name: string;
   description: string;
-  type: 'revenue' | 'expenses' | 'profit' | 'cash_flow' | 'custom';
-  format: 'pdf' | 'excel' | 'csv' | 'html';
-  frequency: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly' | 'custom';
+  type: "revenue" | "expenses" | "profit" | "cash_flow" | "custom";
+  format: "pdf" | "excel" | "csv" | "html";
+  frequency: "daily" | "weekly" | "monthly" | "quarterly" | "yearly" | "custom";
   sections: string[];
   parameters: Record<string, any>;
   createdAt: string;
@@ -61,7 +80,7 @@ interface GeneratedReport {
   name: string;
   type: string;
   format: string;
-  status: 'generating' | 'completed' | 'failed' | 'scheduled';
+  status: "generating" | "completed" | "failed" | "scheduled";
   size: string;
   generatedAt: string;
   downloadUrl?: string;
@@ -75,12 +94,12 @@ export function FinancialReports({
   onGenerateReport,
   onScheduleReport,
   onDeleteReport,
-  className = ''
+  className = "",
 }: FinancialReportsProps) {
-  const [activeTab, setActiveTab] = useState<'reports' | 'templates' | 'scheduled'>('reports');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState<string>('all');
-  const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [activeTab, setActiveTab] = useState<"reports" | "templates" | "scheduled">("reports");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState<string>("all");
+  const [filterStatus, setFilterStatus] = useState<string>("all");
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showScheduleDialog, setShowScheduleDialog] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<ReportTemplate | null>(null);
@@ -88,111 +107,112 @@ export function FinancialReports({
   // Mock data for demonstration
   const mockTemplates: ReportTemplate[] = [
     {
-      id: '1',
-      name: 'Relatório de Receita Mensal',
-      description: 'Análise completa da receita mensal com comparativos',
-      type: 'revenue',
-      format: 'pdf',
-      frequency: 'monthly',
-      sections: ['summary', 'trends', 'breakdown', 'comparisons'],
+      id: "1",
+      name: "Relatório de Receita Mensal",
+      description: "Análise completa da receita mensal com comparativos",
+      type: "revenue",
+      format: "pdf",
+      frequency: "monthly",
+      sections: ["summary", "trends", "breakdown", "comparisons"],
       parameters: { includeCharts: true, includeTrends: true },
-      createdAt: '2024-01-15T10:00:00Z',
-      updatedAt: '2024-01-20T14:30:00Z'
+      createdAt: "2024-01-15T10:00:00Z",
+      updatedAt: "2024-01-20T14:30:00Z",
     },
     {
-      id: '2',
-      name: 'Análise de Despesas Detalhada',
-      description: 'Relatório detalhado de todas as despesas operacionais',
-      type: 'expenses',
-      format: 'excel',
-      frequency: 'weekly',
-      sections: ['categories', 'trends', 'budget_comparison'],
+      id: "2",
+      name: "Análise de Despesas Detalhada",
+      description: "Relatório detalhado de todas as despesas operacionais",
+      type: "expenses",
+      format: "excel",
+      frequency: "weekly",
+      sections: ["categories", "trends", "budget_comparison"],
       parameters: { includeSubcategories: true, showBudgetVariance: true },
-      createdAt: '2024-01-10T09:00:00Z',
-      updatedAt: '2024-01-18T16:45:00Z'
+      createdAt: "2024-01-10T09:00:00Z",
+      updatedAt: "2024-01-18T16:45:00Z",
     },
     {
-      id: '3',
-      name: 'Dashboard Executivo',
-      description: 'Visão executiva com KPIs principais e tendências',
-      type: 'custom',
-      format: 'html',
-      frequency: 'daily',
-      sections: ['kpis', 'alerts', 'forecasts', 'recommendations'],
+      id: "3",
+      name: "Dashboard Executivo",
+      description: "Visão executiva com KPIs principais e tendências",
+      type: "custom",
+      format: "html",
+      frequency: "daily",
+      sections: ["kpis", "alerts", "forecasts", "recommendations"],
       parameters: { executiveSummary: true, includeForecasts: true },
-      createdAt: '2024-01-05T08:00:00Z',
-      updatedAt: '2024-01-22T11:20:00Z'
-    }
+      createdAt: "2024-01-05T08:00:00Z",
+      updatedAt: "2024-01-22T11:20:00Z",
+    },
   ];
 
   const mockReports: GeneratedReport[] = [
     {
-      id: '1',
-      templateId: '1',
-      name: 'Receita Janeiro 2024',
-      type: 'revenue',
-      format: 'pdf',
-      status: 'completed',
-      size: '2.4 MB',
-      generatedAt: '2024-01-25T10:30:00Z',
-      downloadUrl: '/reports/revenue-jan-2024.pdf'
+      id: "1",
+      templateId: "1",
+      name: "Receita Janeiro 2024",
+      type: "revenue",
+      format: "pdf",
+      status: "completed",
+      size: "2.4 MB",
+      generatedAt: "2024-01-25T10:30:00Z",
+      downloadUrl: "/reports/revenue-jan-2024.pdf",
     },
     {
-      id: '2',
-      templateId: '2',
-      name: 'Despesas Semana 3 - Janeiro',
-      type: 'expenses',
-      format: 'excel',
-      status: 'completed',
-      size: '1.8 MB',
-      generatedAt: '2024-01-22T15:45:00Z',
-      downloadUrl: '/reports/expenses-week3-jan.xlsx'
+      id: "2",
+      templateId: "2",
+      name: "Despesas Semana 3 - Janeiro",
+      type: "expenses",
+      format: "excel",
+      status: "completed",
+      size: "1.8 MB",
+      generatedAt: "2024-01-22T15:45:00Z",
+      downloadUrl: "/reports/expenses-week3-jan.xlsx",
     },
     {
-      id: '3',
-      templateId: '3',
-      name: 'Dashboard Executivo - 25/01',
-      type: 'custom',
-      format: 'html',
-      status: 'generating',
-      size: '-',
-      generatedAt: '2024-01-25T16:00:00Z'
-    }
+      id: "3",
+      templateId: "3",
+      name: "Dashboard Executivo - 25/01",
+      type: "custom",
+      format: "html",
+      status: "generating",
+      size: "-",
+      generatedAt: "2024-01-25T16:00:00Z",
+    },
   ];
 
   // Filter functions
-  const filteredReports = mockReports.filter(report => {
+  const filteredReports = mockReports.filter((report) => {
     const matchesSearch = report.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = filterType === 'all' || report.type === filterType;
-    const matchesStatus = filterStatus === 'all' || report.status === filterStatus;
+    const matchesType = filterType === "all" || report.type === filterType;
+    const matchesStatus = filterStatus === "all" || report.status === filterStatus;
     return matchesSearch && matchesType && matchesStatus;
   });
 
-  const filteredTemplates = mockTemplates.filter(template => {
-    const matchesSearch = template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         template.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = filterType === 'all' || template.type === filterType;
+  const filteredTemplates = mockTemplates.filter((template) => {
+    const matchesSearch =
+      template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      template.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = filterType === "all" || template.type === filterType;
     return matchesSearch && matchesType;
   });
 
   // Format date
   const formatDate = (dateString: string): string => {
-    return new Date(dateString).toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(dateString).toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   // Get status badge
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      completed: { label: 'Concluído', variant: 'default' as const, icon: CheckCircle },
-      generating: { label: 'Gerando', variant: 'secondary' as const, icon: Clock },
-      failed: { label: 'Falhou', variant: 'destructive' as const, icon: AlertCircle },
-      scheduled: { label: 'Agendado', variant: 'outline' as const, icon: Calendar }
+      completed: { label: "Concluído", variant: "default" as const, icon: CheckCircle },
+      generating: { label: "Gerando", variant: "secondary" as const, icon: Clock },
+      failed: { label: "Falhou", variant: "destructive" as const, icon: AlertCircle },
+      scheduled: { label: "Agendado", variant: "outline" as const, icon: Calendar },
     };
 
     const config = statusConfig[status as keyof typeof statusConfig];
@@ -214,19 +234,19 @@ export function FinancialReports({
       expenses: TrendingUp,
       profit: BarChart3,
       cash_flow: Activity,
-      custom: FileText
+      custom: FileText,
     };
     return icons[type as keyof typeof icons] || FileText;
   };
 
   // Handle report generation
   const handleGenerateReport = (templateId: string) => {
-    const template = mockTemplates.find(t => t.id === templateId);
+    const template = mockTemplates.find((t) => t.id === templateId);
     if (template && onGenerateReport) {
       onGenerateReport({
         templateId,
         parameters: template.parameters,
-        format: template.format
+        format: template.format,
       });
     }
   };
@@ -266,12 +286,9 @@ export function FinancialReports({
             Gerencie e visualize relatórios financeiros personalizados
           </p>
         </div>
-        
+
         <div className="flex items-center gap-2">
-          <Button 
-            onClick={() => setShowScheduleDialog(true)}
-            variant="outline"
-          >
+          <Button onClick={() => setShowScheduleDialog(true)} variant="outline">
             <Calendar className="h-4 w-4 mr-2" />
             Agendar
           </Button>
@@ -295,7 +312,7 @@ export function FinancialReports({
             />
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <Select value={filterType} onValueChange={setFilterType}>
             <SelectTrigger className="w-40">
@@ -310,8 +327,8 @@ export function FinancialReports({
               <SelectItem value="custom">Personalizado</SelectItem>
             </SelectContent>
           </Select>
-          
-          {activeTab === 'reports' && (
+
+          {activeTab === "reports" && (
             <Select value={filterStatus} onValueChange={setFilterStatus}>
               <SelectTrigger className="w-40">
                 <SelectValue placeholder="Status" />
@@ -344,9 +361,9 @@ export function FinancialReports({
                 <FileText className="h-12 w-12 text-muted-foreground mb-4" />
                 <h3 className="text-lg font-semibold mb-2">Nenhum relatório encontrado</h3>
                 <p className="text-muted-foreground text-center mb-4">
-                  {searchTerm || filterType !== 'all' || filterStatus !== 'all'
-                    ? 'Tente ajustar os filtros de busca'
-                    : 'Comece criando seu primeiro relatório'}
+                  {searchTerm || filterType !== "all" || filterStatus !== "all"
+                    ? "Tente ajustar os filtros de busca"
+                    : "Comece criando seu primeiro relatório"}
                 </p>
                 <Button onClick={() => setShowCreateDialog(true)}>
                   <Plus className="h-4 w-4 mr-2" />
@@ -377,9 +394,9 @@ export function FinancialReports({
                         <div className="text-sm text-muted-foreground">
                           Gerado em: {formatDate(report.generatedAt)}
                         </div>
-                        
+
                         <div className="flex items-center gap-2">
-                          {report.status === 'completed' && report.downloadUrl && (
+                          {report.status === "completed" && report.downloadUrl && (
                             <Button size="sm" variant="outline">
                               <Download className="h-4 w-4 mr-2" />
                               Download
@@ -411,9 +428,9 @@ export function FinancialReports({
                 <FileText className="h-12 w-12 text-muted-foreground mb-4" />
                 <h3 className="text-lg font-semibold mb-2">Nenhum template encontrado</h3>
                 <p className="text-muted-foreground text-center mb-4">
-                  {searchTerm || filterType !== 'all'
-                    ? 'Tente ajustar os filtros de busca'
-                    : 'Comece criando seu primeiro template'}
+                  {searchTerm || filterType !== "all"
+                    ? "Tente ajustar os filtros de busca"
+                    : "Comece criando seu primeiro template"}
                 </p>
                 <Button onClick={() => setShowCreateDialog(true)}>
                   <Plus className="h-4 w-4 mr-2" />
@@ -433,9 +450,7 @@ export function FinancialReports({
                           <TypeIcon className="h-5 w-5 text-muted-foreground" />
                           <CardTitle className="text-lg">{template.name}</CardTitle>
                         </div>
-                        <Badge variant="outline">
-                          {template.frequency}
-                        </Badge>
+                        <Badge variant="outline">{template.frequency}</Badge>
                       </div>
                       <CardDescription>{template.description}</CardDescription>
                     </CardHeader>
@@ -446,16 +461,13 @@ export function FinancialReports({
                           <span>•</span>
                           <span>{template.sections.length} seções</span>
                         </div>
-                        
+
                         <div className="text-sm text-muted-foreground">
                           Atualizado: {formatDate(template.updatedAt)}
                         </div>
-                        
+
                         <div className="flex items-center gap-2">
-                          <Button 
-                            size="sm" 
-                            onClick={() => handleGenerateReport(template.id)}
-                          >
+                          <Button size="sm" onClick={() => handleGenerateReport(template.id)}>
                             <FileText className="h-4 w-4 mr-2" />
                             Gerar
                           </Button>
@@ -463,8 +475,8 @@ export function FinancialReports({
                             <Edit className="h-4 w-4 mr-2" />
                             Editar
                           </Button>
-                          <Button 
-                            size="sm" 
+                          <Button
+                            size="sm"
                             variant="outline"
                             onClick={() => {
                               setSelectedTemplate(template);
@@ -511,7 +523,7 @@ export function FinancialReports({
               Configure um novo relatório financeiro personalizado
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -534,16 +546,16 @@ export function FinancialReports({
                 </Select>
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="report-description">Descrição</Label>
-              <Textarea 
-                id="report-description" 
+              <Textarea
+                id="report-description"
                 placeholder="Descreva o objetivo e conteúdo do relatório"
                 rows={3}
               />
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="report-format">Formato</Label>
@@ -576,14 +588,12 @@ export function FinancialReports({
                 </Select>
               </div>
             </div>
-            
+
             <div className="flex justify-end gap-2 pt-4">
               <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
                 Cancelar
               </Button>
-              <Button onClick={() => setShowCreateDialog(false)}>
-                Criar Relatório
-              </Button>
+              <Button onClick={() => setShowCreateDialog(false)}>Criar Relatório</Button>
             </div>
           </div>
         </DialogContent>
@@ -594,11 +604,9 @@ export function FinancialReports({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Agendar Relatório</DialogTitle>
-            <DialogDescription>
-              Configure a geração automática de relatórios
-            </DialogDescription>
+            <DialogDescription>Configure a geração automática de relatórios</DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="schedule-template">Template</Label>
@@ -615,7 +623,7 @@ export function FinancialReports({
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="schedule-frequency">Frequência</Label>
@@ -636,14 +644,12 @@ export function FinancialReports({
                 <Input id="schedule-time" type="time" defaultValue="09:00" />
               </div>
             </div>
-            
+
             <div className="flex justify-end gap-2 pt-4">
               <Button variant="outline" onClick={() => setShowScheduleDialog(false)}>
                 Cancelar
               </Button>
-              <Button onClick={() => setShowScheduleDialog(false)}>
-                Agendar
-              </Button>
+              <Button onClick={() => setShowScheduleDialog(false)}>Agendar</Button>
             </div>
           </div>
         </DialogContent>

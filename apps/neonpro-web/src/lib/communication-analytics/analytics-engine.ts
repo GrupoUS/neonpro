@@ -1,10 +1,10 @@
-﻿/**
+/**
  * Communication Analytics Engine
- * 
+ *
  * Sistema avançado de análise de comunicação para NeonPro Healthcare System
  * Fornece métricas detalhadas, ROI tracking, e insights de performance para
  * todas as comunicações com pacientes (SMS, Email, WhatsApp, Push).
- * 
+ *
  * Features:
  * - Multi-channel analytics com métricas unificadas
  * - ROI calculation com attribution modeling
@@ -12,16 +12,16 @@
  * - Análise de tendências temporais e sazonais
  * - Real-time metrics com alertas automáticos
  * - LGPD compliance para analytics de comunicação
- * 
+ *
  * @author NeonPro Development Team
  * @version 1.0.0
  * @since 2025-01-30
  */
 
-import { createClient } from '@/lib/supabase/server';
-import { 
-  AnalyticsMetrics, 
-  CommunicationEvent, 
+import type { createClient } from "@/lib/supabase/server";
+import type {
+  AnalyticsMetrics,
+  CommunicationEvent,
   ChannelPerformance,
   ROICalculation,
   TrendAnalysis,
@@ -32,12 +32,12 @@ import {
   AttributionModel,
   TimeSeriesData,
   SegmentAnalysis,
-  DateRange
-} from './types/analytics';
+  DateRange,
+} from "./types/analytics";
 
 export class CommunicationAnalyticsEngine {
   private supabase = createClient();
-  
+
   /**
    * Coleta e processa eventos de comunicação para análise
    */
@@ -58,21 +58,18 @@ export class CommunicationAnalyticsEngine {
         revenue_attributed: event.revenueAttributed,
         metadata: event.metadata,
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       };
 
-      await this.supabase
-        .from('communication_events')
-        .insert(eventData);
+      await this.supabase.from("communication_events").insert(eventData);
 
       // Atualizar métricas em tempo real
       await this.updateRealTimeMetrics(event);
-      
+
       // Verificar alertas
       await this.checkAlerts(event);
-      
     } catch (error) {
-      console.error('Error collecting communication event:', error);
+      console.error("Error collecting communication event:", error);
       throw new Error(`Failed to collect communication event: ${error.message}`);
     }
   }
@@ -90,7 +87,7 @@ export class CommunicationAnalyticsEngine {
         benchmarks,
         totalMessages,
         totalCost,
-        totalRevenue
+        totalRevenue,
       ] = await Promise.all([
         this.getChannelPerformance(filter),
         this.getEngagementMetrics(filter),
@@ -99,7 +96,7 @@ export class CommunicationAnalyticsEngine {
         this.getBenchmarkData(filter),
         this.getTotalMessages(filter),
         this.getTotalCost(filter),
-        this.getTotalRevenue(filter)
+        this.getTotalRevenue(filter),
       ]);
 
       return {
@@ -116,13 +113,13 @@ export class CommunicationAnalyticsEngine {
         totalRevenue,
         lastUpdated: new Date(),
         metadata: {
-          analysisVersion: '1.0',
+          analysisVersion: "1.0",
           dataQuality: await this.assessDataQuality(filter),
-          confidence: await this.calculateConfidence(filter)
-        }
+          confidence: await this.calculateConfidence(filter),
+        },
       };
     } catch (error) {
-      console.error('Error calculating analytics metrics:', error);
+      console.error("Error calculating analytics metrics:", error);
       throw new Error(`Failed to calculate analytics metrics: ${error.message}`);
     }
   }
@@ -133,7 +130,7 @@ export class CommunicationAnalyticsEngine {
   private async getChannelPerformance(filter: AnalyticsFilter): Promise<ChannelPerformance[]> {
     try {
       const query = this.supabase
-        .from('communication_events')
+        .from("communication_events")
         .select(`
           channel_type,
           COUNT(*) as total_sent,
@@ -144,62 +141,64 @@ export class CommunicationAnalyticsEngine {
           SUM(cost) as total_cost,
           SUM(revenue_attributed) as total_revenue
         `)
-        .gte('sent_at', filter.dateRange.start.toISOString())
-        .lte('sent_at', filter.dateRange.end.toISOString())
-        .eq('clinic_id', filter.clinicId)
-        .not('channel_type', 'is', null);
+        .gte("sent_at", filter.dateRange.start.toISOString())
+        .lte("sent_at", filter.dateRange.end.toISOString())
+        .eq("clinic_id", filter.clinicId)
+        .not("channel_type", "is", null);
 
       // Aplicar filtros opcionais
       if (filter.channels?.length) {
-        query.in('channel_type', filter.channels);
+        query.in("channel_type", filter.channels);
       }
-      
+
       if (filter.messageTypes?.length) {
-        query.in('message_type', filter.messageTypes);
+        query.in("message_type", filter.messageTypes);
       }
 
       const { data, error } = await query;
 
       if (error) throw error;
 
-      const results = await Promise.all((data || []).map(async (channel) => {
-        const totalSent = parseInt(channel.total_sent) || 0;
-        const delivered = parseInt(channel.delivered) || 0;
-        const opened = parseInt(channel.opened) || 0;
-        const clicked = parseInt(channel.clicked) || 0;
-        const responded = parseInt(channel.responded) || 0;
-        const totalCost = parseFloat(channel.total_cost) || 0;
-        const totalRevenue = parseFloat(channel.total_revenue) || 0;
+      const results = await Promise.all(
+        (data || []).map(async (channel) => {
+          const totalSent = parseInt(channel.total_sent) || 0;
+          const delivered = parseInt(channel.delivered) || 0;
+          const opened = parseInt(channel.opened) || 0;
+          const clicked = parseInt(channel.clicked) || 0;
+          const responded = parseInt(channel.responded) || 0;
+          const totalCost = parseFloat(channel.total_cost) || 0;
+          const totalRevenue = parseFloat(channel.total_revenue) || 0;
 
-        // Cálculos de timing
-        const timingData = await this.getChannelTimingData(channel.channel_type, filter);
+          // Cálculos de timing
+          const timingData = await this.getChannelTimingData(channel.channel_type, filter);
 
-        return {
-          channel: channel.channel_type,
-          totalSent,
-          delivered,
-          opened,
-          clicked,
-          responded,
-          deliveryRate: totalSent > 0 ? (delivered / totalSent) * 100 : 0,
-          openRate: delivered > 0 ? (opened / delivered) * 100 : 0,
-          clickRate: opened > 0 ? (clicked / opened) * 100 : 0,
-          responseRate: totalSent > 0 ? (responded / totalSent) * 100 : 0,
-          conversionRate: await this.calculateConversionRate(channel.channel_type, filter),
-          totalCost,
-          totalRevenue,
-          roi: this.calculateROI(totalRevenue, totalCost),
-          avgDeliveryTime: timingData.avgDeliveryTime,
-          avgOpenTime: timingData.avgOpenTime,
-          avgClickTime: timingData.avgClickTime,
-          costPerMessage: totalSent > 0 ? totalCost / totalSent : 0,
-          revenuePerMessage: totalSent > 0 ? totalRevenue / totalSent : 0
-        };
-      }));
+          return {
+            channel: channel.channel_type,
+            totalSent,
+            delivered,
+            opened,
+            clicked,
+            responded,
+            deliveryRate: totalSent > 0 ? (delivered / totalSent) * 100 : 0,
+            openRate: delivered > 0 ? (opened / delivered) * 100 : 0,
+            clickRate: opened > 0 ? (clicked / opened) * 100 : 0,
+            responseRate: totalSent > 0 ? (responded / totalSent) * 100 : 0,
+            conversionRate: await this.calculateConversionRate(channel.channel_type, filter),
+            totalCost,
+            totalRevenue,
+            roi: this.calculateROI(totalRevenue, totalCost),
+            avgDeliveryTime: timingData.avgDeliveryTime,
+            avgOpenTime: timingData.avgOpenTime,
+            avgClickTime: timingData.avgClickTime,
+            costPerMessage: totalSent > 0 ? totalCost / totalSent : 0,
+            revenuePerMessage: totalSent > 0 ? totalRevenue / totalSent : 0,
+          };
+        }),
+      );
 
       return results;
     } catch (error) {
-      console.error('Error getting channel performance:', error);
+      console.error("Error getting channel performance:", error);
       return [];
     }
   }
@@ -210,18 +209,18 @@ export class CommunicationAnalyticsEngine {
   private async getChannelTimingData(channel: string, filter: AnalyticsFilter) {
     try {
       const { data } = await this.supabase
-        .from('communication_events')
+        .from("communication_events")
         .select(`
           sent_at,
           delivered_at,
           opened_at,
           clicked_at
         `)
-        .eq('channel_type', channel)
-        .gte('sent_at', filter.dateRange.start.toISOString())
-        .lte('sent_at', filter.dateRange.end.toISOString())
-        .eq('clinic_id', filter.clinicId)
-        .not('delivered_at', 'is', null);
+        .eq("channel_type", channel)
+        .gte("sent_at", filter.dateRange.start.toISOString())
+        .lte("sent_at", filter.dateRange.end.toISOString())
+        .eq("clinic_id", filter.clinicId)
+        .not("delivered_at", "is", null);
 
       if (!data?.length) {
         return { avgDeliveryTime: 0, avgOpenTime: 0, avgClickTime: 0 };
@@ -236,19 +235,22 @@ export class CommunicationAnalyticsEngine {
 
       for (const event of data) {
         if (event.delivered_at && event.sent_at) {
-          const deliveryTime = new Date(event.delivered_at).getTime() - new Date(event.sent_at).getTime();
+          const deliveryTime =
+            new Date(event.delivered_at).getTime() - new Date(event.sent_at).getTime();
           totalDeliveryTime += deliveryTime / 1000; // segundos
           deliveryCount++;
         }
 
         if (event.opened_at && event.delivered_at) {
-          const openTime = new Date(event.opened_at).getTime() - new Date(event.delivered_at).getTime();
+          const openTime =
+            new Date(event.opened_at).getTime() - new Date(event.delivered_at).getTime();
           totalOpenTime += openTime / 1000;
           openCount++;
         }
 
         if (event.clicked_at && event.opened_at) {
-          const clickTime = new Date(event.clicked_at).getTime() - new Date(event.opened_at).getTime();
+          const clickTime =
+            new Date(event.clicked_at).getTime() - new Date(event.opened_at).getTime();
           totalClickTime += clickTime / 1000;
           clickCount++;
         }
@@ -257,7 +259,7 @@ export class CommunicationAnalyticsEngine {
       return {
         avgDeliveryTime: deliveryCount > 0 ? totalDeliveryTime / deliveryCount : 0,
         avgOpenTime: openCount > 0 ? totalOpenTime / openCount : 0,
-        avgClickTime: clickCount > 0 ? totalClickTime / clickCount : 0
+        avgClickTime: clickCount > 0 ? totalClickTime / clickCount : 0,
       };
     } catch (error) {
       return { avgDeliveryTime: 0, avgOpenTime: 0, avgClickTime: 0 };
@@ -270,7 +272,7 @@ export class CommunicationAnalyticsEngine {
   private async getEngagementMetrics(filter: AnalyticsFilter): Promise<EngagementMetrics> {
     try {
       const { data, error } = await this.supabase
-        .from('communication_events')
+        .from("communication_events")
         .select(`
           COUNT(*) as total_messages,
           COUNT(DISTINCT patient_id) as unique_patients,
@@ -279,9 +281,9 @@ export class CommunicationAnalyticsEngine {
           COUNT(clicked_at) as clicked,
           COUNT(responded_at) as responded
         `)
-        .gte('sent_at', filter.dateRange.start.toISOString())
-        .lte('sent_at', filter.dateRange.end.toISOString())
-        .eq('clinic_id', filter.clinicId)
+        .gte("sent_at", filter.dateRange.start.toISOString())
+        .lte("sent_at", filter.dateRange.end.toISOString())
+        .eq("clinic_id", filter.clinicId)
         .single();
 
       if (error) throw error;
@@ -299,14 +301,14 @@ export class CommunicationAnalyticsEngine {
         reachRate,
         frequencyRate,
         retentionRate,
-        satisfactionScore
+        satisfactionScore,
       ] = await Promise.all([
         this.calculateEngagementScore(filter),
         this.calculateAvgResponseTime(filter),
         this.calculateReachRate(filter),
         this.calculateFrequencyRate(filter),
         this.calculateRetentionRate(filter),
-        this.calculateSatisfactionScore(filter)
+        this.calculateSatisfactionScore(filter),
       ]);
 
       return {
@@ -321,10 +323,10 @@ export class CommunicationAnalyticsEngine {
         reachRate,
         frequencyRate,
         retentionRate,
-        satisfactionScore
+        satisfactionScore,
       };
     } catch (error) {
-      console.error('Error getting engagement metrics:', error);
+      console.error("Error getting engagement metrics:", error);
       return {
         totalMessages: 0,
         uniquePatients: 0,
@@ -337,7 +339,7 @@ export class CommunicationAnalyticsEngine {
         reachRate: 0,
         frequencyRate: 0,
         retentionRate: 0,
-        satisfactionScore: 0
+        satisfactionScore: 0,
       };
     }
   }
@@ -348,12 +350,12 @@ export class CommunicationAnalyticsEngine {
   private async calculateAvgResponseTime(filter: AnalyticsFilter): Promise<number> {
     try {
       const { data } = await this.supabase
-        .from('communication_events')
-        .select('sent_at, responded_at')
-        .gte('sent_at', filter.dateRange.start.toISOString())
-        .lte('sent_at', filter.dateRange.end.toISOString())
-        .eq('clinic_id', filter.clinicId)
-        .not('responded_at', 'is', null);
+        .from("communication_events")
+        .select("sent_at, responded_at")
+        .gte("sent_at", filter.dateRange.start.toISOString())
+        .lte("sent_at", filter.dateRange.end.toISOString())
+        .eq("clinic_id", filter.clinicId)
+        .not("responded_at", "is", null);
 
       if (!data?.length) return 0;
 
@@ -362,7 +364,8 @@ export class CommunicationAnalyticsEngine {
 
       for (const event of data) {
         if (event.responded_at && event.sent_at) {
-          const responseTime = new Date(event.responded_at).getTime() - new Date(event.sent_at).getTime();
+          const responseTime =
+            new Date(event.responded_at).getTime() - new Date(event.sent_at).getTime();
           totalResponseTime += responseTime / 1000; // segundos
           count++;
         }
@@ -380,16 +383,16 @@ export class CommunicationAnalyticsEngine {
   private async getROIMetrics(filter: AnalyticsFilter): Promise<ROICalculation> {
     try {
       const { data, error } = await this.supabase
-        .from('communication_events')
+        .from("communication_events")
         .select(`
           SUM(cost) as total_cost,
           SUM(revenue_attributed) as total_revenue,
           COUNT(*) as total_messages,
           COUNT(DISTINCT patient_id) as unique_patients
         `)
-        .gte('sent_at', filter.dateRange.start.toISOString())
-        .lte('sent_at', filter.dateRange.end.toISOString())
-        .eq('clinic_id', filter.clinicId)
+        .gte("sent_at", filter.dateRange.start.toISOString())
+        .lte("sent_at", filter.dateRange.end.toISOString())
+        .eq("clinic_id", filter.clinicId)
         .single();
 
       if (error) throw error;
@@ -400,19 +403,14 @@ export class CommunicationAnalyticsEngine {
       const uniquePatients = parseInt(data.unique_patients) || 0;
 
       // Cálculos adicionais
-      const [
-        breakEvenPoint,
-        paybackPeriod,
-        attribution,
-        conversionValue,
-        lifetimeValue
-      ] = await Promise.all([
-        this.calculateBreakEvenPoint(filter),
-        this.calculatePaybackPeriod(filter),
-        this.getAttributionModel(filter),
-        this.calculateConversionValue(filter),
-        this.calculateLifetimeValue(filter)
-      ]);
+      const [breakEvenPoint, paybackPeriod, attribution, conversionValue, lifetimeValue] =
+        await Promise.all([
+          this.calculateBreakEvenPoint(filter),
+          this.calculatePaybackPeriod(filter),
+          this.getAttributionModel(filter),
+          this.calculateConversionValue(filter),
+          this.calculateLifetimeValue(filter),
+        ]);
 
       return {
         totalInvestment: totalCost,
@@ -428,10 +426,10 @@ export class CommunicationAnalyticsEngine {
         attribution,
         profitMargin: totalRevenue > 0 ? ((totalRevenue - totalCost) / totalRevenue) * 100 : 0,
         conversionValue,
-        lifetimeValue
+        lifetimeValue,
       };
     } catch (error) {
-      console.error('Error calculating ROI metrics:', error);
+      console.error("Error calculating ROI metrics:", error);
       return {
         totalInvestment: 0,
         totalRevenue: 0,
@@ -446,7 +444,7 @@ export class CommunicationAnalyticsEngine {
         attribution: { firstTouch: 0, lastTouch: 0, linear: 0, timeDecay: 0 },
         profitMargin: 0,
         conversionValue: 0,
-        lifetimeValue: 0
+        lifetimeValue: 0,
       };
     }
   }
@@ -457,27 +455,31 @@ export class CommunicationAnalyticsEngine {
   private async getTrendAnalysis(filter: AnalyticsFilter): Promise<TrendAnalysis> {
     try {
       // Período anterior para comparação (mesmo número de dias)
-      const daysDiff = Math.ceil((filter.dateRange.end.getTime() - filter.dateRange.start.getTime()) / (1000 * 60 * 60 * 24));
-      const previousStart = new Date(filter.dateRange.start.getTime() - (daysDiff * 24 * 60 * 60 * 1000));
+      const daysDiff = Math.ceil(
+        (filter.dateRange.end.getTime() - filter.dateRange.start.getTime()) / (1000 * 60 * 60 * 24),
+      );
+      const previousStart = new Date(
+        filter.dateRange.start.getTime() - daysDiff * 24 * 60 * 60 * 1000,
+      );
       const previousEnd = new Date(filter.dateRange.start.getTime() - 1);
 
       const previousFilter = {
         ...filter,
-        dateRange: { start: previousStart, end: previousEnd }
+        dateRange: { start: previousStart, end: previousEnd },
       };
 
       // Dados históricos e atuais
       const [historicalMetrics, currentMetrics] = await Promise.all([
         this.getCurrentPeriodMetrics(previousFilter),
-        this.getCurrentPeriodMetrics(filter)
+        this.getCurrentPeriodMetrics(filter),
       ]);
 
       // Série temporal por dia
       const timeSeriesData = await this.getTimeSeriesData(filter);
-      
+
       // Análise sazonal
       const seasonalAnalysis = await this.getSeasonalAnalysis(filter);
-      
+
       // Previsões simples baseadas em tendência
       const forecasting = await this.getForecastingData(filter, timeSeriesData);
 
@@ -488,20 +490,29 @@ export class CommunicationAnalyticsEngine {
         seasonal: seasonalAnalysis,
         forecasting,
         growth: {
-          messagesGrowth: this.calculateGrowthRate(historicalMetrics.totalMessages, currentMetrics.totalMessages),
-          revenueGrowth: this.calculateGrowthRate(historicalMetrics.totalRevenue, currentMetrics.totalRevenue),
-          engagementGrowth: this.calculateGrowthRate(historicalMetrics.engagementScore, currentMetrics.engagementScore),
-          roiGrowth: this.calculateGrowthRate(historicalMetrics.roi, currentMetrics.roi)
+          messagesGrowth: this.calculateGrowthRate(
+            historicalMetrics.totalMessages,
+            currentMetrics.totalMessages,
+          ),
+          revenueGrowth: this.calculateGrowthRate(
+            historicalMetrics.totalRevenue,
+            currentMetrics.totalRevenue,
+          ),
+          engagementGrowth: this.calculateGrowthRate(
+            historicalMetrics.engagementScore,
+            currentMetrics.engagementScore,
+          ),
+          roiGrowth: this.calculateGrowthRate(historicalMetrics.roi, currentMetrics.roi),
         },
         trends: {
-          messageVolume: await this.detectTrend(timeSeriesData.map(d => d.totalMessages)),
-          engagement: await this.detectTrend(timeSeriesData.map(d => d.engagementScore)),
-          revenue: await this.detectTrend(timeSeriesData.map(d => d.revenue)),
-          cost: await this.detectTrend(timeSeriesData.map(d => d.cost))
-        }
+          messageVolume: await this.detectTrend(timeSeriesData.map((d) => d.totalMessages)),
+          engagement: await this.detectTrend(timeSeriesData.map((d) => d.engagementScore)),
+          revenue: await this.detectTrend(timeSeriesData.map((d) => d.revenue)),
+          cost: await this.detectTrend(timeSeriesData.map((d) => d.cost)),
+        },
       };
     } catch (error) {
-      console.error('Error getting trend analysis:', error);
+      console.error("Error getting trend analysis:", error);
       return {
         historical: { totalMessages: 0, totalRevenue: 0, engagementScore: 0, roi: 0 },
         current: { totalMessages: 0, totalRevenue: 0, engagementScore: 0, roi: 0 },
@@ -509,7 +520,12 @@ export class CommunicationAnalyticsEngine {
         seasonal: { monthlyPatterns: [], weeklyPatterns: [], hourlyPatterns: [] },
         forecasting: { nextMonth: [], nextQuarter: [], nextYear: [] },
         growth: { messagesGrowth: 0, revenueGrowth: 0, engagementGrowth: 0, roiGrowth: 0 },
-        trends: { messageVolume: 'stable', engagement: 'stable', revenue: 'stable', cost: 'stable' }
+        trends: {
+          messageVolume: "stable",
+          engagement: "stable",
+          revenue: "stable",
+          cost: "stable",
+        },
       };
     }
   }
@@ -524,23 +540,23 @@ export class CommunicationAnalyticsEngine {
         sms: { deliveryRate: 98, openRate: 90, responseRate: 45 },
         email: { deliveryRate: 95, openRate: 25, responseRate: 3 },
         whatsapp: { deliveryRate: 99, openRate: 95, responseRate: 60 },
-        push: { deliveryRate: 95, openRate: 15, responseRate: 2 }
+        push: { deliveryRate: 95, openRate: 15, responseRate: 2 },
       };
 
       // Métricas atuais da clínica
       const clinicMetrics = await this.getChannelPerformance(filter);
-      
+
       // Comparação com benchmarks
-      const comparisons = clinicMetrics.map(metric => {
+      const comparisons = clinicMetrics.map((metric) => {
         const benchmark = industryBenchmarks[metric.channel as keyof typeof industryBenchmarks];
-        
+
         if (!benchmark) {
           return {
             channel: metric.channel,
             deliveryRateDiff: 0,
             openRateDiff: 0,
             responseRateDiff: 0,
-            performanceScore: 0
+            performanceScore: 0,
           };
         }
 
@@ -549,7 +565,7 @@ export class CommunicationAnalyticsEngine {
           deliveryRateDiff: metric.deliveryRate - benchmark.deliveryRate,
           openRateDiff: metric.openRate - benchmark.openRate,
           responseRateDiff: metric.responseRate - benchmark.responseRate,
-          performanceScore: this.calculatePerformanceScore(metric, benchmark)
+          performanceScore: this.calculatePerformanceScore(metric, benchmark),
         };
       });
 
@@ -563,24 +579,24 @@ export class CommunicationAnalyticsEngine {
           acc[metric.channel] = {
             deliveryRate: metric.deliveryRate,
             openRate: metric.openRate,
-            responseRate: metric.responseRate
+            responseRate: metric.responseRate,
           };
           return acc;
         }, {} as any),
         comparisons,
         overallScore,
         recommendations,
-        ranking
+        ranking,
       };
     } catch (error) {
-      console.error('Error getting benchmark data:', error);
+      console.error("Error getting benchmark data:", error);
       return {
         industry: {},
         clinic: {},
         comparisons: [],
         overallScore: 0,
         recommendations: [],
-        ranking: 'unknown'
+        ranking: "unknown",
       };
     }
   }
@@ -601,18 +617,20 @@ export class CommunicationAnalyticsEngine {
   private async calculateConversionRate(channel: string, filter: AnalyticsFilter): Promise<number> {
     try {
       const { data } = await this.supabase
-        .from('communication_events')
-        .select('*')
-        .eq('channel_type', channel)
-        .gte('sent_at', filter.dateRange.start.toISOString())
-        .lte('sent_at', filter.dateRange.end.toISOString())
-        .eq('clinic_id', filter.clinicId);
+        .from("communication_events")
+        .select("*")
+        .eq("channel_type", channel)
+        .gte("sent_at", filter.dateRange.start.toISOString())
+        .lte("sent_at", filter.dateRange.end.toISOString())
+        .eq("clinic_id", filter.clinicId);
 
       if (!data?.length) return 0;
 
       const total = data.length;
-      const conversions = data.filter(event => event.revenue_attributed && event.revenue_attributed > 0).length;
-      
+      const conversions = data.filter(
+        (event) => event.revenue_attributed && event.revenue_attributed > 0,
+      ).length;
+
       return total > 0 ? (conversions / total) * 100 : 0;
     } catch (error) {
       return 0;
@@ -622,7 +640,7 @@ export class CommunicationAnalyticsEngine {
   private async calculateEngagementScore(filter: AnalyticsFilter): Promise<number> {
     try {
       const channelPerformance = await this.getChannelPerformance(filter);
-      
+
       if (!channelPerformance.length) return 0;
 
       // Weighted engagement score baseado em múltiplos fatores
@@ -630,20 +648,19 @@ export class CommunicationAnalyticsEngine {
         deliveryRate: 0.2,
         openRate: 0.3,
         clickRate: 0.25,
-        responseRate: 0.25
+        responseRate: 0.25,
       };
 
       let totalScore = 0;
       let totalWeight = 0;
 
       for (const channel of channelPerformance) {
-        const channelScore = (
+        const channelScore =
           channel.deliveryRate * weights.deliveryRate +
           channel.openRate * weights.openRate +
           channel.clickRate * weights.clickRate +
-          channel.responseRate * weights.responseRate
-        );
-        
+          channel.responseRate * weights.responseRate;
+
         const channelWeight = channel.totalSent;
         totalScore += channelScore * channelWeight;
         totalWeight += channelWeight;
@@ -655,18 +672,18 @@ export class CommunicationAnalyticsEngine {
     }
   }
 
-  // Continuar na próxima parte devido ao limite de tamanho...  /**
+  /**
    * Métodos auxiliares para análises complexas
    */
   private async getTotalMessages(filter: AnalyticsFilter): Promise<number> {
     try {
       const { data } = await this.supabase
-        .from('communication_events')
-        .select('COUNT(*)', { count: 'exact' })
-        .gte('sent_at', filter.dateRange.start.toISOString())
-        .lte('sent_at', filter.dateRange.end.toISOString())
-        .eq('clinic_id', filter.clinicId);
-    
+        .from("communication_events")
+        .select("COUNT(*)", { count: "exact" })
+        .gte("sent_at", filter.dateRange.start.toISOString())
+        .lte("sent_at", filter.dateRange.end.toISOString())
+        .eq("clinic_id", filter.clinicId);
+
       return data?.[0]?.count || 0;
     } catch (error) {
       return 0;
@@ -676,13 +693,13 @@ export class CommunicationAnalyticsEngine {
   private async getTotalCost(filter: AnalyticsFilter): Promise<number> {
     try {
       const { data } = await this.supabase
-        .from('communication_events')
-        .select('SUM(cost)')
-        .gte('sent_at', filter.dateRange.start.toISOString())
-        .lte('sent_at', filter.dateRange.end.toISOString())
-        .eq('clinic_id', filter.clinicId)
+        .from("communication_events")
+        .select("SUM(cost)")
+        .gte("sent_at", filter.dateRange.start.toISOString())
+        .lte("sent_at", filter.dateRange.end.toISOString())
+        .eq("clinic_id", filter.clinicId)
         .single();
-    
+
       return parseFloat(data?.sum) || 0;
     } catch (error) {
       return 0;
@@ -692,13 +709,13 @@ export class CommunicationAnalyticsEngine {
   private async getTotalRevenue(filter: AnalyticsFilter): Promise<number> {
     try {
       const { data } = await this.supabase
-        .from('communication_events')
-        .select('SUM(revenue_attributed)')
-        .gte('sent_at', filter.dateRange.start.toISOString())
-        .lte('sent_at', filter.dateRange.end.toISOString())
-        .eq('clinic_id', filter.clinicId)
+        .from("communication_events")
+        .select("SUM(revenue_attributed)")
+        .gte("sent_at", filter.dateRange.start.toISOString())
+        .lte("sent_at", filter.dateRange.end.toISOString())
+        .eq("clinic_id", filter.clinicId)
         .single();
-    
+
       return parseFloat(data?.sum) || 0;
     } catch (error) {
       return 0;
@@ -708,16 +725,16 @@ export class CommunicationAnalyticsEngine {
   private async assessDataQuality(filter: AnalyticsFilter): Promise<number> {
     try {
       const { data } = await this.supabase
-        .from('communication_events')
+        .from("communication_events")
         .select(`
           COUNT(*) as total,
           COUNT(delivered_at) as with_delivery,
           COUNT(patient_id) as with_patient,
           COUNT(cost) as with_cost
         `)
-        .gte('sent_at', filter.dateRange.start.toISOString())
-        .lte('sent_at', filter.dateRange.end.toISOString())
-        .eq('clinic_id', filter.clinicId)
+        .gte("sent_at", filter.dateRange.start.toISOString())
+        .lte("sent_at", filter.dateRange.end.toISOString())
+        .eq("clinic_id", filter.clinicId)
         .single();
 
       const total = parseInt(data?.total) || 0;
@@ -741,20 +758,22 @@ export class CommunicationAnalyticsEngine {
   private async calculateConfidence(filter: AnalyticsFilter): Promise<number> {
     try {
       const totalMessages = await this.getTotalMessages(filter);
-      const daysDiff = Math.ceil((filter.dateRange.end.getTime() - filter.dateRange.start.getTime()) / (1000 * 60 * 60 * 24));
-      
+      const daysDiff = Math.ceil(
+        (filter.dateRange.end.getTime() - filter.dateRange.start.getTime()) / (1000 * 60 * 60 * 24),
+      );
+
       // Confidence baseado no volume de dados e período de análise
       let confidence = 50; // Base confidence
-      
+
       // Mais mensagens = maior confiança
       if (totalMessages > 1000) confidence += 30;
       else if (totalMessages > 100) confidence += 20;
       else if (totalMessages > 10) confidence += 10;
-      
+
       // Período maior = maior confiança
       if (daysDiff >= 30) confidence += 20;
       else if (daysDiff >= 7) confidence += 10;
-      
+
       return Math.min(confidence, 98); // Cap at 98%
     } catch (error) {
       return 85; // Default confidence
@@ -766,7 +785,7 @@ export class CommunicationAnalyticsEngine {
       const [totalMessages, totalRevenue, engagementScore] = await Promise.all([
         this.getTotalMessages(filter),
         this.getTotalRevenue(filter),
-        this.calculateEngagementScore(filter)
+        this.calculateEngagementScore(filter),
       ]);
 
       const totalCost = await this.getTotalCost(filter);
@@ -776,7 +795,7 @@ export class CommunicationAnalyticsEngine {
         totalMessages,
         totalRevenue,
         engagementScore,
-        roi
+        roi,
       };
     } catch (error) {
       return { totalMessages: 0, totalRevenue: 0, engagementScore: 0, roi: 0 };
@@ -785,23 +804,25 @@ export class CommunicationAnalyticsEngine {
 
   private async getTimeSeriesData(filter: AnalyticsFilter): Promise<TimeSeriesData[]> {
     try {
-      const daysDiff = Math.ceil((filter.dateRange.end.getTime() - filter.dateRange.start.getTime()) / (1000 * 60 * 60 * 24));
+      const daysDiff = Math.ceil(
+        (filter.dateRange.end.getTime() - filter.dateRange.start.getTime()) / (1000 * 60 * 60 * 24),
+      );
       const timeSeriesData: TimeSeriesData[] = [];
 
       for (let i = 0; i < daysDiff; i++) {
-        const currentDate = new Date(filter.dateRange.start.getTime() + (i * 24 * 60 * 60 * 1000));
-        const nextDate = new Date(currentDate.getTime() + (24 * 60 * 60 * 1000));
+        const currentDate = new Date(filter.dateRange.start.getTime() + i * 24 * 60 * 60 * 1000);
+        const nextDate = new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
 
         const dayFilter = {
           ...filter,
-          dateRange: { start: currentDate, end: nextDate }
+          dateRange: { start: currentDate, end: nextDate },
         };
 
         const [totalMessages, revenue, cost, engagementScore] = await Promise.all([
           this.getTotalMessages(dayFilter),
           this.getTotalRevenue(dayFilter),
           this.getTotalCost(dayFilter),
-          this.calculateEngagementScore(dayFilter)
+          this.calculateEngagementScore(dayFilter),
         ]);
 
         const conversions = await this.getConversionsCount(dayFilter);
@@ -814,7 +835,7 @@ export class CommunicationAnalyticsEngine {
           revenue,
           cost,
           roi,
-          conversions
+          conversions,
         });
       }
 
@@ -827,12 +848,12 @@ export class CommunicationAnalyticsEngine {
   private async getConversionsCount(filter: AnalyticsFilter): Promise<number> {
     try {
       const { data } = await this.supabase
-        .from('communication_events')
-        .select('COUNT(*)', { count: 'exact' })
-        .gte('sent_at', filter.dateRange.start.toISOString())
-        .lte('sent_at', filter.dateRange.end.toISOString())
-        .eq('clinic_id', filter.clinicId)
-        .gt('revenue_attributed', 0);
+        .from("communication_events")
+        .select("COUNT(*)", { count: "exact" })
+        .gte("sent_at", filter.dateRange.start.toISOString())
+        .lte("sent_at", filter.dateRange.end.toISOString())
+        .eq("clinic_id", filter.clinicId)
+        .gt("revenue_attributed", 0);
 
       return data?.[0]?.count || 0;
     } catch (error) {
@@ -844,17 +865,17 @@ export class CommunicationAnalyticsEngine {
     try {
       // Análise mensal (últimos 12 meses se disponível)
       const monthlyPatterns = await this.getMonthlyPatterns(filter);
-      
+
       // Análise semanal (por dia da semana)
       const weeklyPatterns = await this.getWeeklyPatterns(filter);
-      
+
       // Análise por hora do dia
       const hourlyPatterns = await this.getHourlyPatterns(filter);
 
       return {
         monthlyPatterns,
         weeklyPatterns,
-        hourlyPatterns
+        hourlyPatterns,
       };
     } catch (error) {
       return { monthlyPatterns: [], weeklyPatterns: [], hourlyPatterns: [] };
@@ -864,21 +885,21 @@ export class CommunicationAnalyticsEngine {
   private async getMonthlyPatterns(filter: AnalyticsFilter) {
     try {
       const { data } = await this.supabase
-        .from('communication_events')
+        .from("communication_events")
         .select(`
           EXTRACT(MONTH FROM sent_at) as month,
           COUNT(*) as total_messages,
           AVG(CASE WHEN opened_at IS NOT NULL THEN 1 ELSE 0 END) * 100 as avg_engagement,
           SUM(revenue_attributed) as avg_revenue
         `)
-        .gte('sent_at', filter.dateRange.start.toISOString())
-        .lte('sent_at', filter.dateRange.end.toISOString())
-        .eq('clinic_id', filter.clinicId);
+        .gte("sent_at", filter.dateRange.start.toISOString())
+        .lte("sent_at", filter.dateRange.end.toISOString())
+        .eq("clinic_id", filter.clinicId);
 
-      return (data || []).map(row => ({
+      return (data || []).map((row) => ({
         month: parseInt(row.month),
         avgEngagement: parseFloat(row.avg_engagement) || 0,
-        avgRevenue: parseFloat(row.avg_revenue) || 0
+        avgRevenue: parseFloat(row.avg_revenue) || 0,
       }));
     } catch (error) {
       return [];
@@ -888,21 +909,21 @@ export class CommunicationAnalyticsEngine {
   private async getWeeklyPatterns(filter: AnalyticsFilter) {
     try {
       const { data } = await this.supabase
-        .from('communication_events')
+        .from("communication_events")
         .select(`
           EXTRACT(DOW FROM sent_at) as day_of_week,
           COUNT(*) as total_messages,
           AVG(CASE WHEN opened_at IS NOT NULL THEN 1 ELSE 0 END) * 100 as avg_engagement,
           SUM(revenue_attributed) as avg_revenue
         `)
-        .gte('sent_at', filter.dateRange.start.toISOString())
-        .lte('sent_at', filter.dateRange.end.toISOString())
-        .eq('clinic_id', filter.clinicId);
+        .gte("sent_at", filter.dateRange.start.toISOString())
+        .lte("sent_at", filter.dateRange.end.toISOString())
+        .eq("clinic_id", filter.clinicId);
 
-      return (data || []).map(row => ({
+      return (data || []).map((row) => ({
         dayOfWeek: parseInt(row.day_of_week),
         avgEngagement: parseFloat(row.avg_engagement) || 0,
-        avgRevenue: parseFloat(row.avg_revenue) || 0
+        avgRevenue: parseFloat(row.avg_revenue) || 0,
       }));
     } catch (error) {
       return [];
@@ -912,21 +933,21 @@ export class CommunicationAnalyticsEngine {
   private async getHourlyPatterns(filter: AnalyticsFilter) {
     try {
       const { data } = await this.supabase
-        .from('communication_events')
+        .from("communication_events")
         .select(`
           EXTRACT(HOUR FROM sent_at) as hour,
           COUNT(*) as total_messages,
           AVG(CASE WHEN opened_at IS NOT NULL THEN 1 ELSE 0 END) * 100 as avg_engagement,
           SUM(revenue_attributed) as avg_revenue
         `)
-        .gte('sent_at', filter.dateRange.start.toISOString())
-        .lte('sent_at', filter.dateRange.end.toISOString())
-        .eq('clinic_id', filter.clinicId);
+        .gte("sent_at", filter.dateRange.start.toISOString())
+        .lte("sent_at", filter.dateRange.end.toISOString())
+        .eq("clinic_id", filter.clinicId);
 
-      return (data || []).map(row => ({
+      return (data || []).map((row) => ({
         hour: parseInt(row.hour),
         avgEngagement: parseFloat(row.avg_engagement) || 0,
-        avgRevenue: parseFloat(row.avg_revenue) || 0
+        avgRevenue: parseFloat(row.avg_revenue) || 0,
       }));
     } catch (error) {
       return [];
@@ -941,39 +962,40 @@ export class CommunicationAnalyticsEngine {
 
       // Previsão simples baseada em média móvel e tendência linear
       const recentData = timeSeriesData.slice(-7); // Últimos 7 dias
-      
-      const avgMessages = recentData.reduce((sum, d) => sum + d.totalMessages, 0) / recentData.length;
+
+      const avgMessages =
+        recentData.reduce((sum, d) => sum + d.totalMessages, 0) / recentData.length;
       const avgRevenue = recentData.reduce((sum, d) => sum + d.revenue, 0) / recentData.length;
-      
+
       // Tendência (slope)
-      const messagesTrend = this.calculateLinearTrend(recentData.map(d => d.totalMessages));
-      const revenueTrend = this.calculateLinearTrend(recentData.map(d => d.revenue));
+      const messagesTrend = this.calculateLinearTrend(recentData.map((d) => d.totalMessages));
+      const revenueTrend = this.calculateLinearTrend(recentData.map((d) => d.revenue));
 
       // Próximo mês (30 dias)
       const nextMonth = [];
       for (let i = 1; i <= 30; i++) {
-        const predictedMessages = Math.max(0, avgMessages + (messagesTrend * i));
-        const predictedRevenue = Math.max(0, avgRevenue + (revenueTrend * i));
-        
+        const predictedMessages = Math.max(0, avgMessages + messagesTrend * i);
+        const predictedRevenue = Math.max(0, avgRevenue + revenueTrend * i);
+
         nextMonth.push({
-          date: new Date(filter.dateRange.end.getTime() + (i * 24 * 60 * 60 * 1000)),
+          date: new Date(filter.dateRange.end.getTime() + i * 24 * 60 * 60 * 1000),
           predictedMessages: Math.round(predictedMessages),
-          predictedRevenue: Math.round(predictedRevenue * 100) / 100
+          predictedRevenue: Math.round(predictedRevenue * 100) / 100,
         });
       }
 
       // Próximo trimestre (agregado por mês)
-      const nextQuarter = [1, 2, 3].map(month => ({
+      const nextQuarter = [1, 2, 3].map((month) => ({
         month,
-        predictedMessages: Math.round((avgMessages + (messagesTrend * month * 30)) * 30),
-        predictedRevenue: Math.round((avgRevenue + (revenueTrend * month * 30)) * 30 * 100) / 100
+        predictedMessages: Math.round((avgMessages + messagesTrend * month * 30) * 30),
+        predictedRevenue: Math.round((avgRevenue + revenueTrend * month * 30) * 30 * 100) / 100,
       }));
 
       // Próximo ano (agregado por trimestre)
-      const nextYear = [1, 2, 3, 4].map(quarter => ({
+      const nextYear = [1, 2, 3, 4].map((quarter) => ({
         quarter,
-        predictedMessages: Math.round((avgMessages + (messagesTrend * quarter * 90)) * 90),
-        predictedRevenue: Math.round((avgRevenue + (revenueTrend * quarter * 90)) * 90 * 100) / 100
+        predictedMessages: Math.round((avgMessages + messagesTrend * quarter * 90) * 90),
+        predictedRevenue: Math.round((avgRevenue + revenueTrend * quarter * 90) * 90 * 100) / 100,
       }));
 
       return { nextMonth, nextQuarter, nextYear };
@@ -984,73 +1006,81 @@ export class CommunicationAnalyticsEngine {
 
   private calculateLinearTrend(data: number[]): number {
     if (data.length < 2) return 0;
-    
+
     const n = data.length;
     const sumX = (n * (n - 1)) / 2; // 0 + 1 + 2 + ... + (n-1)
     const sumY = data.reduce((sum, val) => sum + val, 0);
-    const sumXY = data.reduce((sum, val, index) => sum + (val * index), 0);
-    const sumX2 = data.reduce((sum, _, index) => sum + (index * index), 0);
-    
+    const sumXY = data.reduce((sum, val, index) => sum + val * index, 0);
+    const sumX2 = data.reduce((sum, _, index) => sum + index * index, 0);
+
     return (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
   }
 
-  private async detectTrend(data: number[]): Promise<'increasing' | 'decreasing' | 'stable'> {
-    if (data.length < 3) return 'stable';
-    
+  private async detectTrend(data: number[]): Promise<"increasing" | "decreasing" | "stable"> {
+    if (data.length < 3) return "stable";
+
     const trend = this.calculateLinearTrend(data);
     const threshold = Math.abs(data.reduce((sum, val) => sum + val, 0) / data.length) * 0.05; // 5% threshold
-    
-    if (trend > threshold) return 'increasing';
-    if (trend < -threshold) return 'decreasing';
-    return 'stable';
+
+    if (trend > threshold) return "increasing";
+    if (trend < -threshold) return "decreasing";
+    return "stable";
   }
 
   private calculatePerformanceScore(metric: ChannelPerformance, benchmark: any): number {
     if (!benchmark) return 0;
-    
+
     const deliveryScore = Math.min((metric.deliveryRate / benchmark.deliveryRate) * 100, 150);
     const openScore = Math.min((metric.openRate / benchmark.openRate) * 100, 150);
     const responseScore = Math.min((metric.responseRate / benchmark.responseRate) * 100, 150);
-    
+
     return (deliveryScore + openScore + responseScore) / 3;
   }
 
   private calculateOverallBenchmarkScore(comparisons: any[]): number {
     if (!comparisons.length) return 0;
-    
+
     const totalScore = comparisons.reduce((sum, comp) => sum + comp.performanceScore, 0);
     return totalScore / comparisons.length;
   }
 
   private async generateBenchmarkRecommendations(comparisons: any[]): Promise<string[]> {
     const recommendations: string[] = [];
-    
+
     for (const comp of comparisons) {
       if (comp.deliveryRateDiff < -5) {
-        recommendations.push(`Melhorar taxa de entrega do canal ${comp.channel} - considere validar listas e horários`);
+        recommendations.push(
+          `Melhorar taxa de entrega do canal ${comp.channel} - considere validar listas e horários`,
+        );
       }
       if (comp.openRateDiff < -10) {
-        recommendations.push(`Otimizar taxa de abertura do canal ${comp.channel} - revisar títulos e timing`);
+        recommendations.push(
+          `Otimizar taxa de abertura do canal ${comp.channel} - revisar títulos e timing`,
+        );
       }
       if (comp.responseRateDiff < -15) {
-        recommendations.push(`Aumentar engajamento do canal ${comp.channel} - melhorar call-to-actions e personalização`);
+        recommendations.push(
+          `Aumentar engajamento do canal ${comp.channel} - melhorar call-to-actions e personalização`,
+        );
       }
     }
-    
+
     if (!recommendations.length) {
-      recommendations.push('Performance geral acima dos benchmarks da indústria - continue mantendo as boas práticas');
+      recommendations.push(
+        "Performance geral acima dos benchmarks da indústria - continue mantendo as boas práticas",
+      );
     }
-    
+
     return recommendations;
   }
 
   private async calculateIndustryRanking(overallScore: number): Promise<string> {
-    if (overallScore >= 120) return 'excellent';
-    if (overallScore >= 110) return 'good';
-    if (overallScore >= 90) return 'average';
-    if (overallScore >= 70) return 'below_average';
-    if (overallScore > 0) return 'poor';
-    return 'unknown';
+    if (overallScore >= 120) return "excellent";
+    if (overallScore >= 110) return "good";
+    if (overallScore >= 90) return "average";
+    if (overallScore >= 70) return "below_average";
+    if (overallScore > 0) return "poor";
+    return "unknown";
   }
 
   /**
@@ -1058,12 +1088,11 @@ export class CommunicationAnalyticsEngine {
    */
   private async updateRealTimeMetrics(event: CommunicationEvent): Promise<void> {
     try {
-      const today = new Date().toISOString().split('T')[0];
-      
+      const today = new Date().toISOString().split("T")[0];
+
       // Upsert daily metrics
-      await this.supabase
-        .from('communication_metrics_daily')
-        .upsert({
+      await this.supabase.from("communication_metrics_daily").upsert(
+        {
           clinic_id: event.clinicId,
           date: today,
           channel_type: event.channel,
@@ -1074,34 +1103,35 @@ export class CommunicationAnalyticsEngine {
           responded: event.respondedAt ? 1 : 0,
           total_cost: event.cost,
           total_revenue: event.revenueAttributed || 0,
-          updated_at: new Date().toISOString()
-        }, {
-          onConflict: 'clinic_id,date,channel_type',
-          ignoreDuplicates: false
-        });
-      
+          updated_at: new Date().toISOString(),
+        },
+        {
+          onConflict: "clinic_id,date,channel_type",
+          ignoreDuplicates: false,
+        },
+      );
     } catch (error) {
-      console.error('Error updating real-time metrics:', error);
+      console.error("Error updating real-time metrics:", error);
     }
   }
 
   private async checkAlerts(event: CommunicationEvent): Promise<void> {
     try {
       const { data: alerts } = await this.supabase
-        .from('communication_alerts')
-        .select('*')
-        .eq('clinic_id', event.clinicId)
-        .eq('is_active', true);
+        .from("communication_alerts")
+        .select("*")
+        .eq("clinic_id", event.clinicId)
+        .eq("is_active", true);
 
       for (const alert of alerts || []) {
         const shouldTrigger = await this.evaluateAlertCondition(alert, event);
-        
+
         if (shouldTrigger) {
           await this.triggerAlert(alert, event);
         }
       }
     } catch (error) {
-      console.error('Error checking alerts:', error);
+      console.error("Error checking alerts:", error);
     }
   }
 
@@ -1109,20 +1139,26 @@ export class CommunicationAnalyticsEngine {
     try {
       // Implementar lógica de avaliação de condições
       // Exemplo: verificar se taxa de entrega caiu abaixo do threshold
-      
+
       for (const condition of alert.conditions) {
         const currentValue = await this.getMetricValue(condition.metric, event.clinicId);
-        
+
         switch (condition.operator) {
-          case 'gt': return currentValue > condition.threshold;
-          case 'lt': return currentValue < condition.threshold;
-          case 'eq': return currentValue === condition.threshold;
-          case 'gte': return currentValue >= condition.threshold;
-          case 'lte': return currentValue <= condition.threshold;
-          default: return false;
+          case "gt":
+            return currentValue > condition.threshold;
+          case "lt":
+            return currentValue < condition.threshold;
+          case "eq":
+            return currentValue === condition.threshold;
+          case "gte":
+            return currentValue >= condition.threshold;
+          case "lte":
+            return currentValue <= condition.threshold;
+          default:
+            return false;
         }
       }
-      
+
       return false;
     } catch (error) {
       return false;
@@ -1133,21 +1169,21 @@ export class CommunicationAnalyticsEngine {
     try {
       // Implementar busca de métricas baseado no tipo
       const today = new Date();
-      const yesterday = new Date(today.getTime() - (24 * 60 * 60 * 1000));
-      
+      const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+
       const filter: AnalyticsFilter = {
         clinicId,
-        dateRange: { start: yesterday, end: today }
+        dateRange: { start: yesterday, end: today },
       };
 
       switch (metric) {
-        case 'delivery_rate':
+        case "delivery_rate":
           const engagement = await this.getEngagementMetrics(filter);
           return engagement.deliveryRate;
-        case 'open_rate':
+        case "open_rate":
           const openMetrics = await this.getEngagementMetrics(filter);
           return openMetrics.openRate;
-        case 'response_rate':
+        case "response_rate":
           const responseMetrics = await this.getEngagementMetrics(filter);
           return responseMetrics.responseRate;
         default:
@@ -1162,22 +1198,22 @@ export class CommunicationAnalyticsEngine {
     try {
       for (const action of alert.actions) {
         switch (action.type) {
-          case 'email':
+          case "email":
             // Implementar envio de email
             console.log(`Email alert triggered: ${alert.name}`);
             break;
-          case 'webhook':
+          case "webhook":
             // Implementar webhook
             console.log(`Webhook alert triggered: ${alert.name}`);
             break;
-          case 'dashboard':
+          case "dashboard":
             // Implementar notificação no dashboard
             console.log(`Dashboard alert triggered: ${alert.name}`);
             break;
         }
       }
     } catch (error) {
-      console.error('Error triggering alert:', error);
+      console.error("Error triggering alert:", error);
     }
   }
 
@@ -1185,22 +1221,22 @@ export class CommunicationAnalyticsEngine {
   private async calculateReachRate(filter: AnalyticsFilter): Promise<number> {
     try {
       const { data } = await this.supabase
-        .from('communication_events')
+        .from("communication_events")
         .select(`
           COUNT(DISTINCT patient_id) as reached_patients
         `)
-        .gte('sent_at', filter.dateRange.start.toISOString())
-        .lte('sent_at', filter.dateRange.end.toISOString())
-        .eq('clinic_id', filter.clinicId)
-        .not('delivered_at', 'is', null)
+        .gte("sent_at", filter.dateRange.start.toISOString())
+        .lte("sent_at", filter.dateRange.end.toISOString())
+        .eq("clinic_id", filter.clinicId)
+        .not("delivered_at", "is", null)
         .single();
 
       // Calcular contra total de pacientes ativos
       const { data: totalPatients } = await this.supabase
-        .from('patients')
-        .select('COUNT(*)', { count: 'exact' })
-        .eq('clinic_id', filter.clinicId)
-        .eq('status', 'active');
+        .from("patients")
+        .select("COUNT(*)", { count: "exact" })
+        .eq("clinic_id", filter.clinicId)
+        .eq("status", "active");
 
       const reachedPatients = parseInt(data?.reached_patients) || 0;
       const total = totalPatients?.[0]?.count || 0;
@@ -1214,14 +1250,14 @@ export class CommunicationAnalyticsEngine {
   private async calculateFrequencyRate(filter: AnalyticsFilter): Promise<number> {
     try {
       const { data } = await this.supabase
-        .from('communication_events')
+        .from("communication_events")
         .select(`
           patient_id,
           COUNT(*) as message_count
         `)
-        .gte('sent_at', filter.dateRange.start.toISOString())
-        .lte('sent_at', filter.dateRange.end.toISOString())
-        .eq('clinic_id', filter.clinicId);
+        .gte("sent_at", filter.dateRange.start.toISOString())
+        .lte("sent_at", filter.dateRange.end.toISOString())
+        .eq("clinic_id", filter.clinicId);
 
       if (!data?.length) return 0;
 
@@ -1238,28 +1274,32 @@ export class CommunicationAnalyticsEngine {
     try {
       // Calcular pacientes que receberam mensagens no período atual
       const { data: currentPeriod } = await this.supabase
-        .from('communication_events')
-        .select('DISTINCT patient_id')
-        .gte('sent_at', filter.dateRange.start.toISOString())
-        .lte('sent_at', filter.dateRange.end.toISOString())
-        .eq('clinic_id', filter.clinicId);
+        .from("communication_events")
+        .select("DISTINCT patient_id")
+        .gte("sent_at", filter.dateRange.start.toISOString())
+        .lte("sent_at", filter.dateRange.end.toISOString())
+        .eq("clinic_id", filter.clinicId);
 
       // Calcular pacientes que também receberam no período anterior
-      const daysDiff = Math.ceil((filter.dateRange.end.getTime() - filter.dateRange.start.getTime()) / (1000 * 60 * 60 * 24));
-      const previousStart = new Date(filter.dateRange.start.getTime() - (daysDiff * 24 * 60 * 60 * 1000));
-      
-      const { data: previousPeriod } = await this.supabase
-        .from('communication_events')
-        .select('DISTINCT patient_id')
-        .gte('sent_at', previousStart.toISOString())
-        .lt('sent_at', filter.dateRange.start.toISOString())
-        .eq('clinic_id', filter.clinicId);
+      const daysDiff = Math.ceil(
+        (filter.dateRange.end.getTime() - filter.dateRange.start.getTime()) / (1000 * 60 * 60 * 24),
+      );
+      const previousStart = new Date(
+        filter.dateRange.start.getTime() - daysDiff * 24 * 60 * 60 * 1000,
+      );
 
-      const currentPatients = new Set((currentPeriod || []).map(p => p.patient_id));
-      const previousPatients = new Set((previousPeriod || []).map(p => p.patient_id));
-      
-      const retainedPatients = [...currentPatients].filter(id => previousPatients.has(id)).length;
-      
+      const { data: previousPeriod } = await this.supabase
+        .from("communication_events")
+        .select("DISTINCT patient_id")
+        .gte("sent_at", previousStart.toISOString())
+        .lt("sent_at", filter.dateRange.start.toISOString())
+        .eq("clinic_id", filter.clinicId);
+
+      const currentPatients = new Set((currentPeriod || []).map((p) => p.patient_id));
+      const previousPatients = new Set((previousPeriod || []).map((p) => p.patient_id));
+
+      const retainedPatients = [...currentPatients].filter((id) => previousPatients.has(id)).length;
+
       return previousPatients.size > 0 ? (retainedPatients / previousPatients.size) * 100 : 0;
     } catch (error) {
       return 0;
@@ -1271,15 +1311,14 @@ export class CommunicationAnalyticsEngine {
       // Satisfaction baseado em feedback responses (se disponível)
       // Por enquanto, usar proxy metrics
       const engagement = await this.getEngagementMetrics(filter);
-      
+
       // Score composto baseado em engagement metrics
-      const satisfactionProxy = (
+      const satisfactionProxy =
         engagement.responseRate * 0.4 +
         engagement.openRate * 0.3 +
         engagement.deliveryRate * 0.2 +
-        Math.min(engagement.clickThroughRate * 2, 100) * 0.1
-      );
-      
+        Math.min(engagement.clickThroughRate * 2, 100) * 0.1;
+
       return Math.min(satisfactionProxy, 100);
     } catch (error) {
       return 0;
@@ -1291,14 +1330,14 @@ export class CommunicationAnalyticsEngine {
       const totalCost = await this.getTotalCost(filter);
       const totalRevenue = await this.getTotalRevenue(filter);
       const totalMessages = await this.getTotalMessages(filter);
-      
+
       if (totalMessages === 0 || totalRevenue <= totalCost) return 0;
-      
+
       const revenuePerMessage = totalRevenue / totalMessages;
       const costPerMessage = totalCost / totalMessages;
-      
+
       if (revenuePerMessage <= costPerMessage) return 0;
-      
+
       // Mensagens necessárias para cobrir custos fixos
       return Math.ceil(totalCost / (revenuePerMessage - costPerMessage));
     } catch (error) {
@@ -1310,12 +1349,14 @@ export class CommunicationAnalyticsEngine {
     try {
       const totalCost = await this.getTotalCost(filter);
       const totalRevenue = await this.getTotalRevenue(filter);
-      const daysDiff = Math.ceil((filter.dateRange.end.getTime() - filter.dateRange.start.getTime()) / (1000 * 60 * 60 * 24));
-      
+      const daysDiff = Math.ceil(
+        (filter.dateRange.end.getTime() - filter.dateRange.start.getTime()) / (1000 * 60 * 60 * 24),
+      );
+
       if (totalRevenue <= totalCost || daysDiff === 0) return 0;
-      
+
       const dailyProfit = (totalRevenue - totalCost) / daysDiff;
-      
+
       return dailyProfit > 0 ? Math.ceil(totalCost / dailyProfit) : 0;
     } catch (error) {
       return 0;
@@ -1326,13 +1367,13 @@ export class CommunicationAnalyticsEngine {
     try {
       // Implementar modelos de atribuição simples
       const { data } = await this.supabase
-        .from('communication_events')
-        .select('patient_id, sent_at, revenue_attributed, channel_type')
-        .gte('sent_at', filter.dateRange.start.toISOString())
-        .lte('sent_at', filter.dateRange.end.toISOString())
-        .eq('clinic_id', filter.clinicId)
-        .gt('revenue_attributed', 0)
-        .order('sent_at');
+        .from("communication_events")
+        .select("patient_id, sent_at, revenue_attributed, channel_type")
+        .gte("sent_at", filter.dateRange.start.toISOString())
+        .lte("sent_at", filter.dateRange.end.toISOString())
+        .eq("clinic_id", filter.clinicId)
+        .gt("revenue_attributed", 0)
+        .order("sent_at");
 
       if (!data?.length) {
         return { firstTouch: 0, lastTouch: 0, linear: 0, timeDecay: 0 };
@@ -1351,21 +1392,27 @@ export class CommunicationAnalyticsEngine {
       let timeDecay = 0;
 
       for (const journey of Object.values(patientJourneys) as any[]) {
-        const totalRevenue = journey.reduce((sum: number, event: any) => sum + event.revenue_attributed, 0);
-        
+        const totalRevenue = journey.reduce(
+          (sum: number, event: any) => sum + event.revenue_attributed,
+          0,
+        );
+
         // First touch
         firstTouch += totalRevenue;
-        
+
         // Last touch
         lastTouch += totalRevenue;
-        
+
         // Linear
         linear += totalRevenue / journey.length;
-        
+
         // Time decay (mais recente tem mais peso)
-        const totalWeight = journey.reduce((sum: number, _: any, index: number) => sum + (index + 1), 0);
+        const totalWeight = journey.reduce(
+          (sum: number, _: any, index: number) => sum + (index + 1),
+          0,
+        );
         timeDecay += journey.reduce((sum: number, event: any, index: number) => {
-          return sum + (event.revenue_attributed * (index + 1) / totalWeight);
+          return sum + (event.revenue_attributed * (index + 1)) / totalWeight;
         }, 0);
       }
 
@@ -1379,7 +1426,7 @@ export class CommunicationAnalyticsEngine {
     try {
       const conversions = await this.getConversionsCount(filter);
       const totalRevenue = await this.getTotalRevenue(filter);
-      
+
       return conversions > 0 ? totalRevenue / conversions : 0;
     } catch (error) {
       return 0;
@@ -1390,19 +1437,22 @@ export class CommunicationAnalyticsEngine {
     try {
       // CLV simplificado baseado em histórico de receita por paciente
       const { data } = await this.supabase
-        .from('communication_events')
+        .from("communication_events")
         .select(`
           patient_id,
           SUM(revenue_attributed) as total_revenue
         `)
-        .gte('sent_at', filter.dateRange.start.toISOString())
-        .lte('sent_at', filter.dateRange.end.toISOString())
-        .eq('clinic_id', filter.clinicId)
-        .gt('revenue_attributed', 0);
+        .gte("sent_at", filter.dateRange.start.toISOString())
+        .lte("sent_at", filter.dateRange.end.toISOString())
+        .eq("clinic_id", filter.clinicId)
+        .gt("revenue_attributed", 0);
 
       if (!data?.length) return 0;
 
-      const totalRevenue = data.reduce((sum, patient) => sum + parseFloat(patient.total_revenue), 0);
+      const totalRevenue = data.reduce(
+        (sum, patient) => sum + parseFloat(patient.total_revenue),
+        0,
+      );
       const uniquePatients = data.length;
 
       return uniquePatients > 0 ? totalRevenue / uniquePatients : 0;
@@ -1413,5 +1463,4 @@ export class CommunicationAnalyticsEngine {
 }
 
 // Export singleton instance
-export const createcommunicationAnalytics = () => new CommunicationAnalyticsEngine();
-
+export const createCommunicationAnalytics = () => new CommunicationAnalyticsEngine();

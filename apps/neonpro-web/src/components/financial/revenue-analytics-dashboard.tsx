@@ -4,22 +4,28 @@
 // Author: VoidBeast V4.0 (BMad Method Implementation)
 // =====================================================================================
 
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import {
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Progress } from "@/components/ui/progress";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import {
+} from "@/components/ui/select";
+import type {
   TrendingUp,
   TrendingDown,
   DollarSign,
@@ -28,9 +34,9 @@ import {
   Target,
   AlertTriangle,
   Download,
-  RefreshCw
-} from 'lucide-react';
-import { RevenueAnalyticsEngine } from '@/lib/financial/revenue-analytics-engine';
+  RefreshCw,
+} from "lucide-react";
+import type { RevenueAnalyticsEngine } from "@/lib/financial/revenue-analytics-engine";
 
 interface ServiceRevenueData {
   serviceId: string;
@@ -70,7 +76,7 @@ interface PatientLTVData {
 
 export default function RevenueAnalyticsDashboard() {
   const [loading, setLoading] = useState(true);
-  const [dateRange, setDateRange] = useState('current_month');
+  const [dateRange, setDateRange] = useState("current_month");
   const [serviceData, setServiceData] = useState<ServiceRevenueData[]>([]);
   const [providerData, setProviderData] = useState<ProviderRevenueData[]>([]);
   const [patientLTVData, setPatientLTVData] = useState<PatientLTVData[]>([]);
@@ -87,30 +93,24 @@ export default function RevenueAnalyticsDashboard() {
   const loadRevenueAnalytics = async () => {
     setLoading(true);
     try {
-      const clinicId = 'clinic-1'; // Get from context
+      const clinicId = "clinic-1"; // Get from context
       const dateRanges = parseDateRange(dateRange);
-      
-      const [
-        serviceRevenue,
-        providerPerformance,
-        timeSeries,
-        patientLTV,
-        forecast,
-        dashboardData
-      ] = await Promise.all([
-        revenueEngine.analyzeRevenueByService({
-          clinicId,
-          dateRange: dateRanges
-        }),
-        revenueEngine.analyzeProviderPerformance({
-          clinicId,
-          dateRange: dateRanges
-        }),
-        revenueEngine.generateTimePeriodAnalysis(clinicId, dateRanges, 'previous_period'),
-        revenueEngine.calculatePatientLifetimeValue(clinicId),
-        revenueEngine.generateRevenueForecast(clinicId, 6),
-        revenueEngine.getRevenueAnalyticsDashboard(clinicId, dateRanges)
-      ]);
+
+      const [serviceRevenue, providerPerformance, timeSeries, patientLTV, forecast, dashboardData] =
+        await Promise.all([
+          revenueEngine.analyzeRevenueByService({
+            clinicId,
+            dateRange: dateRanges,
+          }),
+          revenueEngine.analyzeProviderPerformance({
+            clinicId,
+            dateRange: dateRanges,
+          }),
+          revenueEngine.generateTimePeriodAnalysis(clinicId, dateRanges, "previous_period"),
+          revenueEngine.calculatePatientLifetimeValue(clinicId),
+          revenueEngine.generateRevenueForecast(clinicId, 6),
+          revenueEngine.getRevenueAnalyticsDashboard(clinicId, dateRanges),
+        ]);
 
       setServiceData(serviceRevenue);
       setProviderData(providerPerformance);
@@ -119,7 +119,7 @@ export default function RevenueAnalyticsDashboard() {
       setForecastData(forecast);
       setSummaryMetrics(dashboardData.summary);
     } catch (error) {
-      console.error('Failed to load revenue analytics:', error);
+      console.error("Failed to load revenue analytics:", error);
     } finally {
       setLoading(false);
     }
@@ -128,34 +128,34 @@ export default function RevenueAnalyticsDashboard() {
   const parseDateRange = (range: string) => {
     const now = new Date();
     switch (range) {
-      case 'current_month':
+      case "current_month":
         return {
           start: new Date(now.getFullYear(), now.getMonth(), 1),
-          end: new Date(now.getFullYear(), now.getMonth() + 1, 0)
+          end: new Date(now.getFullYear(), now.getMonth() + 1, 0),
         };
-      case 'last_quarter':
+      case "last_quarter":
         const quarterStart = Math.floor(now.getMonth() / 3) * 3 - 3;
         return {
           start: new Date(now.getFullYear(), quarterStart, 1),
-          end: new Date(now.getFullYear(), quarterStart + 3, 0)
+          end: new Date(now.getFullYear(), quarterStart + 3, 0),
         };
-      case 'current_year':
+      case "current_year":
         return {
           start: new Date(now.getFullYear(), 0, 1),
-          end: new Date(now.getFullYear(), 11, 31)
+          end: new Date(now.getFullYear(), 11, 31),
         };
       default:
         return {
           start: new Date(now.getFullYear(), now.getMonth(), 1),
-          end: new Date(now.getFullYear(), now.getMonth() + 1, 0)
+          end: new Date(now.getFullYear(), now.getMonth() + 1, 0),
         };
     }
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(amount);
   };
 
@@ -212,12 +212,15 @@ export default function RevenueAnalyticsDashboard() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(summaryMetrics.totalRevenue || 0)}</div>
+            <div className="text-2xl font-bold">
+              {formatCurrency(summaryMetrics.totalRevenue || 0)}
+            </div>
             <p className="text-xs text-muted-foreground">
-              <span className={summaryMetrics.growthRate > 0 ? 'text-green-600' : 'text-red-600'}>
-                {summaryMetrics.growthRate > 0 ? '+' : ''}{formatPercent(summaryMetrics.growthRate || 0)}
-              </span>
-              {' '}vs período anterior
+              <span className={summaryMetrics.growthRate > 0 ? "text-green-600" : "text-red-600"}>
+                {summaryMetrics.growthRate > 0 ? "+" : ""}
+                {formatPercent(summaryMetrics.growthRate || 0)}
+              </span>{" "}
+              vs período anterior
             </p>
           </CardContent>
         </Card>
@@ -227,10 +230,10 @@ export default function RevenueAnalyticsDashboard() {
             <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatPercent(summaryMetrics.averageProfitMargin || 0)}</div>
-            <p className="text-xs text-muted-foreground">
-              Meta: 35%
-            </p>
+            <div className="text-2xl font-bold">
+              {formatPercent(summaryMetrics.averageProfitMargin || 0)}
+            </div>
+            <p className="text-xs text-muted-foreground">Meta: 35%</p>
           </CardContent>
         </Card>
         <Card>
@@ -239,10 +242,10 @@ export default function RevenueAnalyticsDashboard() {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(summaryMetrics.topServiceRevenue || 0)}</div>
-            <p className="text-xs text-muted-foreground">
-              {serviceData[0]?.serviceName || 'N/A'}
-            </p>
+            <div className="text-2xl font-bold">
+              {formatCurrency(summaryMetrics.topServiceRevenue || 0)}
+            </div>
+            <p className="text-xs text-muted-foreground">{serviceData[0]?.serviceName || "N/A"}</p>
           </CardContent>
         </Card>
         <Card>
@@ -251,9 +254,11 @@ export default function RevenueAnalyticsDashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(summaryMetrics.topProviderRevenue || 0)}</div>
+            <div className="text-2xl font-bold">
+              {formatCurrency(summaryMetrics.topProviderRevenue || 0)}
+            </div>
             <p className="text-xs text-muted-foreground">
-              {providerData[0]?.providerName || 'N/A'}
+              {providerData[0]?.providerName || "N/A"}
             </p>
           </CardContent>
         </Card>
@@ -272,16 +277,29 @@ export default function RevenueAnalyticsDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Receita por Serviço</CardTitle>
-              <CardDescription>Análise de rentabilidade e performance por tipo de serviço</CardDescription>
+              <CardDescription>
+                Análise de rentabilidade e performance por tipo de serviço
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {serviceData.map((service) => (
-                  <div key={service.serviceId} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div
+                    key={service.serviceId}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-2">
                         <h4 className="font-semibold">{service.serviceName}</h4>
-                        <Badge variant={service.profitMargin > 30 ? 'default' : service.profitMargin > 15 ? 'secondary' : 'destructive'}>
+                        <Badge
+                          variant={
+                            service.profitMargin > 30
+                              ? "default"
+                              : service.profitMargin > 15
+                                ? "secondary"
+                                : "destructive"
+                          }
+                        >
                           {formatPercent(service.profitMargin)} margem
                         </Badge>
                       </div>
@@ -300,8 +318,11 @@ export default function RevenueAnalyticsDashboard() {
                         </div>
                         <div>
                           <p className="text-muted-foreground">Crescimento</p>
-                          <p className={`font-medium ${service.growthRate > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                            {service.growthRate > 0 ? '+' : ''}{formatPercent(service.growthRate)}
+                          <p
+                            className={`font-medium ${service.growthRate > 0 ? "text-green-600" : "text-red-600"}`}
+                          >
+                            {service.growthRate > 0 ? "+" : ""}
+                            {formatPercent(service.growthRate)}
                           </p>
                         </div>
                       </div>
@@ -322,7 +343,10 @@ export default function RevenueAnalyticsDashboard() {
             <CardContent>
               <div className="space-y-4">
                 {providerData.map((provider) => (
-                  <div key={provider.providerId} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div
+                    key={provider.providerId}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-2">
                         <h4 className="font-semibold">{provider.providerName}</h4>
@@ -339,13 +363,17 @@ export default function RevenueAnalyticsDashboard() {
                         </div>
                         <div>
                           <p className="text-muted-foreground">Receita/Paciente</p>
-                          <p className="font-medium">{formatCurrency(provider.averageRevenuePerPatient)}</p>
+                          <p className="font-medium">
+                            {formatCurrency(provider.averageRevenuePerPatient)}
+                          </p>
                         </div>
                         <div>
                           <p className="text-muted-foreground">Utilização</p>
                           <div className="flex items-center space-x-2">
                             <Progress value={provider.utilizationRate} className="flex-1" />
-                            <span className="text-xs">{formatPercent(provider.utilizationRate)}</span>
+                            <span className="text-xs">
+                              {formatPercent(provider.utilizationRate)}
+                            </span>
                           </div>
                         </div>
                         <div>
@@ -370,7 +398,10 @@ export default function RevenueAnalyticsDashboard() {
             <CardContent>
               <div className="space-y-4">
                 {patientLTVData.slice(0, 10).map((patient) => (
-                  <div key={patient.patientId} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div
+                    key={patient.patientId}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-2">
                         <h4 className="font-semibold">Paciente {patient.patientId.slice(-8)}</h4>
@@ -381,7 +412,9 @@ export default function RevenueAnalyticsDashboard() {
                               Alto Risco
                             </Badge>
                           )}
-                          <Badge variant={patient.totalLifetimeValue > 5000 ? 'default' : 'secondary'}>
+                          <Badge
+                            variant={patient.totalLifetimeValue > 5000 ? "default" : "secondary"}
+                          >
                             {formatCurrency(patient.totalLifetimeValue)} LTV
                           </Badge>
                         </div>
@@ -393,7 +426,9 @@ export default function RevenueAnalyticsDashboard() {
                         </div>
                         <div>
                           <p className="text-muted-foreground">Frequência</p>
-                          <p className="font-medium">{patient.visitFrequency.toFixed(1)} visitas/ano</p>
+                          <p className="font-medium">
+                            {patient.visitFrequency.toFixed(1)} visitas/ano
+                          </p>
                         </div>
                         <div>
                           <p className="text-muted-foreground">Retenção</p>
@@ -401,7 +436,9 @@ export default function RevenueAnalyticsDashboard() {
                         </div>
                         <div>
                           <p className="text-muted-foreground">Próxima Visita</p>
-                          <p className="font-medium">{formatPercent(patient.nextVisitProbability)}</p>
+                          <p className="font-medium">
+                            {formatPercent(patient.nextVisitProbability)}
+                          </p>
                         </div>
                       </div>
                       {patient.recommendedActions.length > 0 && (
@@ -433,31 +470,51 @@ export default function RevenueAnalyticsDashboard() {
             <CardContent>
               <div className="space-y-4">
                 {forecastData.map((forecast, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-2">
                         <h4 className="font-semibold">{forecast.period}</h4>
-                        <Badge variant={forecast.trend === 'increasing' ? 'default' : forecast.trend === 'decreasing' ? 'destructive' : 'secondary'}>
-                          {forecast.trend === 'increasing' ? <TrendingUp className="h-3 w-3 mr-1" /> : 
-                           forecast.trend === 'decreasing' ? <TrendingDown className="h-3 w-3 mr-1" /> : null}
+                        <Badge
+                          variant={
+                            forecast.trend === "increasing"
+                              ? "default"
+                              : forecast.trend === "decreasing"
+                                ? "destructive"
+                                : "secondary"
+                          }
+                        >
+                          {forecast.trend === "increasing" ? (
+                            <TrendingUp className="h-3 w-3 mr-1" />
+                          ) : forecast.trend === "decreasing" ? (
+                            <TrendingDown className="h-3 w-3 mr-1" />
+                          ) : null}
                           {forecast.trend}
                         </Badge>
                       </div>
                       <div className="grid grid-cols-3 gap-4 text-sm">
                         <div>
                           <p className="text-muted-foreground">Receita Prevista</p>
-                          <p className="font-medium">{formatCurrency(forecast.forecastedRevenue)}</p>
+                          <p className="font-medium">
+                            {formatCurrency(forecast.forecastedRevenue)}
+                          </p>
                         </div>
                         <div>
                           <p className="text-muted-foreground">Intervalo de Confiança</p>
                           <p className="font-medium">
-                            {formatCurrency(forecast.confidenceInterval.lower)} - {formatCurrency(forecast.confidenceInterval.upper)}
+                            {formatCurrency(forecast.confidenceInterval.lower)} -{" "}
+                            {formatCurrency(forecast.confidenceInterval.upper)}
                           </p>
                         </div>
                         <div>
                           <p className="text-muted-foreground">Taxa de Crescimento</p>
-                          <p className={`font-medium ${forecast.growthRate > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                            {forecast.growthRate > 0 ? '+' : ''}{formatPercent(forecast.growthRate)}
+                          <p
+                            className={`font-medium ${forecast.growthRate > 0 ? "text-green-600" : "text-red-600"}`}
+                          >
+                            {forecast.growthRate > 0 ? "+" : ""}
+                            {formatPercent(forecast.growthRate)}
                           </p>
                         </div>
                       </div>

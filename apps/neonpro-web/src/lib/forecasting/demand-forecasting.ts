@@ -1,7 +1,7 @@
 /**
  * Demand Forecasting Engine
  * Epic 11 - Story 11.1: Demand Forecasting Engine (≥80% Accuracy)
- * 
+ *
  * Advanced machine learning-based demand forecasting system providing:
  * - ≥80% accuracy for service and appointment demand prediction
  * - Multi-factor analysis including seasonality, trends, external factors
@@ -9,12 +9,20 @@
  * - Real-time monitoring and forecast adjustment capabilities
  * - Resource allocation recommendations and capacity planning
  * - Integration with scheduling system for optimization
- * 
+ *
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 
-import { supabase } from '@/lib/supabase';
-import { addDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth, format, parseISO } from 'date-fns';
+import type { supabase } from "@/lib/supabase";
+import type {
+  addDays,
+  startOfWeek,
+  endOfWeek,
+  startOfMonth,
+  endOfMonth,
+  format,
+  parseISO,
+} from "date-fns";
 
 // Types
 export interface DemandForecast {
@@ -25,7 +33,7 @@ export interface DemandForecast {
   period_end: string;
   predicted_demand: number;
   confidence_level: number;
-  forecast_type: 'appointments' | 'service_demand' | 'equipment_usage' | 'staff_workload';
+  forecast_type: "appointments" | "service_demand" | "equipment_usage" | "staff_workload";
   model_version: string;
   external_factors: ExternalFactor[];
   created_at: string;
@@ -33,7 +41,7 @@ export interface DemandForecast {
 }
 
 export interface ExternalFactor {
-  type: 'holiday' | 'weather' | 'event' | 'season' | 'economic' | 'health_trends';
+  type: "holiday" | "weather" | "event" | "season" | "economic" | "health_trends";
   name: string;
   impact_weight: number;
   start_date: string;
@@ -43,45 +51,45 @@ export interface ExternalFactor {
 
 export interface ForecastModel {
   id: string;
-  model_type: 'arima' | 'lstm' | 'prophet' | 'ensemble' | 'linear_regression';
+  model_type: "arima" | "lstm" | "prophet" | "ensemble" | "linear_regression";
   service_type?: string;
   parameters: Record<string, any>;
   accuracy_score: number;
   training_date: string;
   validation_metrics: ForecastValidationMetrics;
-  status: 'active' | 'training' | 'deprecated';
+  status: "active" | "training" | "deprecated";
 }
 
 export interface ForecastValidationMetrics {
   mape: number; // Mean Absolute Percentage Error
-  mae: number;  // Mean Absolute Error
+  mae: number; // Mean Absolute Error
   rmse: number; // Root Mean Square Error
   r2_score: number; // R-squared
   accuracy_percentage: number;
 }
 
 export interface DemandPattern {
-  period_type: 'hourly' | 'daily' | 'weekly' | 'monthly' | 'seasonal';
+  period_type: "hourly" | "daily" | "weekly" | "monthly" | "seasonal";
   pattern_data: Record<string, number>;
   confidence: number;
-  trend_direction: 'increasing' | 'decreasing' | 'stable';
+  trend_direction: "increasing" | "decreasing" | "stable";
   seasonality_strength: number;
 }
 
 export interface ResourceAllocation {
-  resource_type: 'staff' | 'equipment' | 'room' | 'inventory';
+  resource_type: "staff" | "equipment" | "room" | "inventory";
   resource_id: string;
   recommended_allocation: number;
   current_allocation: number;
   utilization_forecast: number;
   cost_impact: number;
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  priority: "low" | "medium" | "high" | "critical";
 }
 
 export interface ForecastAlert {
   id: string;
-  alert_type: 'demand_spike' | 'capacity_shortage' | 'resource_constraint' | 'accuracy_degradation';
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  alert_type: "demand_spike" | "capacity_shortage" | "resource_constraint" | "accuracy_degradation";
+  severity: "low" | "medium" | "high" | "critical";
   message: string;
   forecast_id: string;
   affected_resources: string[];
@@ -120,7 +128,7 @@ export interface ForecastingOptions {
 export class DemandForecastingEngine {
   private models: Map<string, ForecastModel> = new Map();
   private externalFactors: ExternalFactor[] = [];
-  private readonly ACCURACY_THRESHOLD = 0.80; // 80% minimum accuracy requirement
+  private readonly ACCURACY_THRESHOLD = 0.8; // 80% minimum accuracy requirement
 
   /**
    * Initialize the forecasting engine
@@ -129,16 +137,15 @@ export class DemandForecastingEngine {
     try {
       // Load trained models
       await this.loadModels(clinicId);
-      
+
       // Load external factors
       await this.loadExternalFactors();
-      
+
       // Validate model performance
       await this.validateModelAccuracy();
-      
     } catch (error) {
-      console.error('Failed to initialize demand forecasting engine:', error);
-      throw new Error('Forecasting engine initialization failed');
+      console.error("Failed to initialize demand forecasting engine:", error);
+      throw new Error("Forecasting engine initialization failed");
     }
   }
 
@@ -148,10 +155,10 @@ export class DemandForecastingEngine {
   async generateForecast(
     clinicId: string,
     serviceId: string | null,
-    forecastType: DemandForecast['forecast_type'],
+    forecastType: DemandForecast["forecast_type"],
     startDate: Date,
     endDate: Date,
-    options: Partial<ForecastingOptions> = {}
+    options: Partial<ForecastingOptions> = {},
   ): Promise<DemandForecast> {
     const defaultOptions: ForecastingOptions = {
       forecast_horizon_days: 30,
@@ -159,7 +166,7 @@ export class DemandForecastingEngine {
       include_external_factors: true,
       model_ensemble: true,
       real_time_adjustment: true,
-      min_accuracy_threshold: this.ACCURACY_THRESHOLD
+      min_accuracy_threshold: this.ACCURACY_THRESHOLD,
     };
 
     const opts = { ...defaultOptions, ...options };
@@ -171,27 +178,19 @@ export class DemandForecastingEngine {
         serviceId,
         forecastType,
         startDate,
-        endDate
+        endDate,
       );
 
       // 2. Detect patterns and seasonality
       const patterns = await this.analyzePatterns(historicalData);
 
       // 3. Select best model for this forecast type
-      const selectedModel = await this.selectOptimalModel(
-        forecastType,
-        serviceId,
-        patterns
-      );
+      const selectedModel = await this.selectOptimalModel(forecastType, serviceId, patterns);
 
       // 4. Apply external factors if enabled
       let adjustedData = historicalData;
       if (opts.include_external_factors) {
-        adjustedData = await this.applyExternalFactors(
-          historicalData,
-          startDate,
-          endDate
-        );
+        adjustedData = await this.applyExternalFactors(historicalData, startDate, endDate);
       }
 
       // 5. Generate base forecast
@@ -199,7 +198,7 @@ export class DemandForecastingEngine {
         selectedModel,
         adjustedData,
         startDate,
-        endDate
+        endDate,
       );
 
       // 6. Apply ensemble if enabled
@@ -210,21 +209,17 @@ export class DemandForecastingEngine {
           serviceId,
           adjustedData,
           startDate,
-          endDate
+          endDate,
         );
       }
 
       // 7. Calculate confidence levels
-      const confidenceLevel = await this.calculateConfidence(
-        selectedModel,
-        patterns,
-        forecast
-      );
+      const confidenceLevel = await this.calculateConfidence(selectedModel, patterns, forecast);
 
       // 8. Validate accuracy threshold
       if (confidenceLevel < opts.min_accuracy_threshold) {
         console.warn(
-          `Forecast confidence ${confidenceLevel} below threshold ${opts.min_accuracy_threshold}`
+          `Forecast confidence ${confidenceLevel} below threshold ${opts.min_accuracy_threshold}`,
         );
       }
 
@@ -241,7 +236,7 @@ export class DemandForecastingEngine {
         model_version: selectedModel.id,
         external_factors: this.getApplicableExternalFactors(startDate, endDate),
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       };
 
       // 10. Store forecast
@@ -251,10 +246,9 @@ export class DemandForecastingEngine {
       await this.checkForecastAlerts(demandForecast, historicalData);
 
       return demandForecast;
-
     } catch (error) {
-      console.error('Failed to generate demand forecast:', error);
-      throw new Error('Demand forecast generation failed');
+      console.error("Failed to generate demand forecast:", error);
+      throw new Error("Demand forecast generation failed");
     }
   }
 
@@ -264,15 +258,15 @@ export class DemandForecastingEngine {
   async generateServiceForecasts(
     clinicId: string,
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<DemandForecast[]> {
     try {
       // Get all active services
       const { data: services, error } = await supabase
-        .from('services')
-        .select('id, name, category')
-        .eq('clinic_id', clinicId)
-        .eq('status', 'active');
+        .from("services")
+        .select("id, name, category")
+        .eq("clinic_id", clinicId)
+        .eq("status", "active");
 
       if (error) throw error;
 
@@ -284,9 +278,9 @@ export class DemandForecastingEngine {
           const forecast = await this.generateForecast(
             clinicId,
             service.id,
-            'service_demand',
+            "service_demand",
             startDate,
-            endDate
+            endDate,
           );
           forecasts.push(forecast);
         } catch (error) {
@@ -298,70 +292,59 @@ export class DemandForecastingEngine {
       const appointmentForecast = await this.generateForecast(
         clinicId,
         null,
-        'appointments',
+        "appointments",
         startDate,
-        endDate
+        endDate,
       );
       forecasts.push(appointmentForecast);
 
       return forecasts;
-
     } catch (error) {
-      console.error('Failed to generate service forecasts:', error);
-      throw new Error('Service forecasting failed');
+      console.error("Failed to generate service forecasts:", error);
+      throw new Error("Service forecasting failed");
     }
   }
 
   /**
    * Real-time forecast adjustment based on current data
    */
-  async adjustForecastRealTime(
-    forecastId: string,
-    currentData: any[]
-  ): Promise<DemandForecast> {
+  async adjustForecastRealTime(forecastId: string, currentData: any[]): Promise<DemandForecast> {
     try {
       // Load existing forecast
       const { data: existingForecast, error } = await supabase
-        .from('demand_forecasts')
-        .select('*')
-        .eq('id', forecastId)
+        .from("demand_forecasts")
+        .select("*")
+        .eq("id", forecastId)
         .single();
 
       if (error) throw error;
 
       // Calculate adjustment factor based on recent trends
-      const adjustmentFactor = await this.calculateAdjustmentFactor(
-        existingForecast,
-        currentData
-      );
+      const adjustmentFactor = await this.calculateAdjustmentFactor(existingForecast, currentData);
 
       // Apply adjustment
       const adjustedDemand = existingForecast.predicted_demand * adjustmentFactor;
-      
+
       // Recalculate confidence
-      const newConfidence = await this.recalculateConfidence(
-        existingForecast,
-        adjustmentFactor
-      );
+      const newConfidence = await this.recalculateConfidence(existingForecast, adjustmentFactor);
 
       // Update forecast
       const { data: updatedForecast, error: updateError } = await supabase
-        .from('demand_forecasts')
+        .from("demand_forecasts")
         .update({
           predicted_demand: adjustedDemand,
           confidence_level: newConfidence,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
-        .eq('id', forecastId)
+        .eq("id", forecastId)
         .select()
         .single();
 
       if (updateError) throw updateError;
 
       return updatedForecast;
-
     } catch (error) {
-      console.error('Failed to adjust forecast in real-time:', error);
+      console.error("Failed to adjust forecast in real-time:", error);
       throw error;
     }
   }
@@ -371,36 +354,26 @@ export class DemandForecastingEngine {
    */
   async generateResourceAllocations(
     clinicId: string,
-    forecasts: DemandForecast[]
+    forecasts: DemandForecast[],
   ): Promise<ResourceAllocation[]> {
     try {
       const allocations: ResourceAllocation[] = [];
 
       // Staff allocation recommendations
-      const staffAllocations = await this.calculateStaffAllocations(
-        clinicId,
-        forecasts
-      );
+      const staffAllocations = await this.calculateStaffAllocations(clinicId, forecasts);
       allocations.push(...staffAllocations);
 
       // Equipment allocation recommendations
-      const equipmentAllocations = await this.calculateEquipmentAllocations(
-        clinicId,
-        forecasts
-      );
+      const equipmentAllocations = await this.calculateEquipmentAllocations(clinicId, forecasts);
       allocations.push(...equipmentAllocations);
 
       // Room allocation recommendations
-      const roomAllocations = await this.calculateRoomAllocations(
-        clinicId,
-        forecasts
-      );
+      const roomAllocations = await this.calculateRoomAllocations(clinicId, forecasts);
       allocations.push(...roomAllocations);
 
       return allocations;
-
     } catch (error) {
-      console.error('Failed to generate resource allocations:', error);
+      console.error("Failed to generate resource allocations:", error);
       throw error;
     }
   }
@@ -411,12 +384,12 @@ export class DemandForecastingEngine {
   private async loadHistoricalData(
     clinicId: string,
     serviceId: string | null,
-    forecastType: DemandForecast['forecast_type'],
+    forecastType: DemandForecast["forecast_type"],
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<any[]> {
     try {
-      let query = supabase.from('appointments').select(`
+      let query = supabase.from("appointments").select(`
         id,
         scheduled_at,
         duration_minutes,
@@ -426,21 +399,20 @@ export class DemandForecastingEngine {
       `);
 
       query = query
-        .eq('clinic_id', clinicId)
-        .gte('scheduled_at', startDate.toISOString())
-        .lte('scheduled_at', endDate.toISOString());
+        .eq("clinic_id", clinicId)
+        .gte("scheduled_at", startDate.toISOString())
+        .lte("scheduled_at", endDate.toISOString());
 
       if (serviceId) {
-        query = query.eq('service_id', serviceId);
+        query = query.eq("service_id", serviceId);
       }
 
       const { data, error } = await query;
       if (error) throw error;
 
       return data || [];
-
     } catch (error) {
-      console.error('Failed to load historical data:', error);
+      console.error("Failed to load historical data:", error);
       throw error;
     }
   }
@@ -469,9 +441,8 @@ export class DemandForecastingEngine {
       patterns.push(seasonalPattern);
 
       return patterns;
-
     } catch (error) {
-      console.error('Failed to analyze patterns:', error);
+      console.error("Failed to analyze patterns:", error);
       return [];
     }
   }
@@ -481,14 +452,14 @@ export class DemandForecastingEngine {
    */
   private calculateDailyPattern(data: any[]): DemandPattern {
     const hourlyCount: Record<string, number> = {};
-    
+
     // Initialize hours
     for (let hour = 0; hour < 24; hour++) {
       hourlyCount[hour.toString()] = 0;
     }
 
     // Count appointments by hour
-    data.forEach(appointment => {
+    data.forEach((appointment) => {
       const hour = new Date(appointment.scheduled_at).getHours();
       hourlyCount[hour.toString()]++;
     });
@@ -498,11 +469,11 @@ export class DemandForecastingEngine {
     const confidence = Math.min(totalAppointments / 100, 1); // Max confidence at 100+ appointments
 
     return {
-      period_type: 'hourly',
+      period_type: "hourly",
       pattern_data: hourlyCount,
       confidence,
-      trend_direction: 'stable',
-      seasonality_strength: 0.3
+      trend_direction: "stable",
+      seasonality_strength: 0.3,
     };
   }
 
@@ -511,10 +482,16 @@ export class DemandForecastingEngine {
    */
   private calculateWeeklyPattern(data: any[]): DemandPattern {
     const weekdayCount: Record<string, number> = {
-      '0': 0, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
     };
 
-    data.forEach(appointment => {
+    data.forEach((appointment) => {
       const weekday = new Date(appointment.scheduled_at).getDay();
       weekdayCount[weekday.toString()]++;
     });
@@ -522,11 +499,11 @@ export class DemandForecastingEngine {
     const confidence = Math.min(data.length / 500, 1);
 
     return {
-      period_type: 'weekly',
+      period_type: "weekly",
       pattern_data: weekdayCount,
       confidence,
-      trend_direction: 'stable',
-      seasonality_strength: 0.5
+      trend_direction: "stable",
+      seasonality_strength: 0.5,
     };
   }
 
@@ -535,12 +512,12 @@ export class DemandForecastingEngine {
    */
   private calculateMonthlyPattern(data: any[]): DemandPattern {
     const monthlyCount: Record<string, number> = {};
-    
+
     for (let month = 1; month <= 12; month++) {
       monthlyCount[month.toString()] = 0;
     }
 
-    data.forEach(appointment => {
+    data.forEach((appointment) => {
       const month = new Date(appointment.scheduled_at).getMonth() + 1;
       monthlyCount[month.toString()]++;
     });
@@ -548,11 +525,11 @@ export class DemandForecastingEngine {
     const confidence = Math.min(data.length / 1000, 1);
 
     return {
-      period_type: 'monthly',
+      period_type: "monthly",
       pattern_data: monthlyCount,
       confidence,
-      trend_direction: 'stable',
-      seasonality_strength: 0.4
+      trend_direction: "stable",
+      seasonality_strength: 0.4,
     };
   }
 
@@ -564,29 +541,29 @@ export class DemandForecastingEngine {
       spring: 0,
       summer: 0,
       autumn: 0,
-      winter: 0
+      winter: 0,
     };
 
-    data.forEach(appointment => {
+    data.forEach((appointment) => {
       const month = new Date(appointment.scheduled_at).getMonth() + 1;
       let season: string;
-      
-      if (month >= 3 && month <= 5) season = 'spring';
-      else if (month >= 6 && month <= 8) season = 'summer';
-      else if (month >= 9 && month <= 11) season = 'autumn';
-      else season = 'winter';
-      
+
+      if (month >= 3 && month <= 5) season = "spring";
+      else if (month >= 6 && month <= 8) season = "summer";
+      else if (month >= 9 && month <= 11) season = "autumn";
+      else season = "winter";
+
       seasonalCount[season]++;
     });
 
     const confidence = Math.min(data.length / 2000, 1);
 
     return {
-      period_type: 'seasonal',
+      period_type: "seasonal",
       pattern_data: seasonalCount,
       confidence,
-      trend_direction: 'stable',
-      seasonality_strength: 0.6
+      trend_direction: "stable",
+      seasonality_strength: 0.6,
     };
   }
 
@@ -594,13 +571,13 @@ export class DemandForecastingEngine {
    * Select optimal forecasting model
    */
   private async selectOptimalModel(
-    forecastType: DemandForecast['forecast_type'],
+    forecastType: DemandForecast["forecast_type"],
     serviceId: string | null,
-    patterns: DemandPattern[]
+    patterns: DemandPattern[],
   ): Promise<ForecastModel> {
     // Get available models for this forecast type
     const availableModels = Array.from(this.models.values()).filter(
-      model => model.status === 'active'
+      (model) => model.status === "active",
     );
 
     if (availableModels.length === 0) {
@@ -623,33 +600,33 @@ export class DemandForecastingEngine {
     model: ForecastModel,
     data: any[],
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<{ value: number; confidence: number }> {
     try {
       // This is a simplified implementation
       // In production, this would call actual ML models
-      
-      const dailyAverage = data.length / Math.max(1, 
-        Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
-      );
-      
+
+      const dailyAverage =
+        data.length /
+        Math.max(1, Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
+
       const forecastDays = Math.ceil(
-        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
       );
-      
+
       // Apply model-specific adjustments
       let adjustment = 1.0;
       switch (model.model_type) {
-        case 'arima':
+        case "arima":
           adjustment = 1.05; // Slight trend adjustment
           break;
-        case 'lstm':
+        case "lstm":
           adjustment = 1.02; // Neural network adjustment
           break;
-        case 'prophet':
+        case "prophet":
           adjustment = 1.03; // Prophet model adjustment
           break;
-        case 'ensemble':
+        case "ensemble":
           adjustment = 1.01; // Ensemble average
           break;
         default:
@@ -661,11 +638,10 @@ export class DemandForecastingEngine {
 
       return {
         value: predictedValue,
-        confidence
+        confidence,
       };
-
     } catch (error) {
-      console.error('Model prediction failed:', error);
+      console.error("Model prediction failed:", error);
       throw error;
     }
   }
@@ -673,19 +649,15 @@ export class DemandForecastingEngine {
   /**
    * Apply external factors to forecast
    */
-  private async applyExternalFactors(
-    data: any[],
-    startDate: Date,
-    endDate: Date
-  ): Promise<any[]> {
+  private async applyExternalFactors(data: any[], startDate: Date, endDate: Date): Promise<any[]> {
     // Get applicable external factors for the period
     const applicableFactors = this.getApplicableExternalFactors(startDate, endDate);
-    
+
     // Apply factor adjustments to data
     const adjustedData = [...data];
-    
-    applicableFactors.forEach(factor => {
-      const impactMultiplier = 1 + (factor.impact_weight * 0.1);
+
+    applicableFactors.forEach((factor) => {
+      const impactMultiplier = 1 + factor.impact_weight * 0.1;
       // This is simplified - in production would apply sophisticated factor modeling
     });
 
@@ -695,15 +667,12 @@ export class DemandForecastingEngine {
   /**
    * Get applicable external factors for period
    */
-  private getApplicableExternalFactors(
-    startDate: Date,
-    endDate: Date
-  ): ExternalFactor[] {
-    return this.externalFactors.filter(factor => {
+  private getApplicableExternalFactors(startDate: Date, endDate: Date): ExternalFactor[] {
+    return this.externalFactors.filter((factor) => {
       const factorStart = new Date(factor.start_date);
       const factorEnd = factor.end_date ? new Date(factor.end_date) : factorStart;
-      
-      return (factorStart <= endDate && factorEnd >= startDate);
+
+      return factorStart <= endDate && factorEnd >= startDate;
     });
   }
 
@@ -712,15 +681,15 @@ export class DemandForecastingEngine {
    */
   private async applyEnsembleMethod(
     baseForecast: { value: number; confidence: number },
-    forecastType: DemandForecast['forecast_type'],
+    forecastType: DemandForecast["forecast_type"],
     serviceId: string | null,
     data: any[],
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<{ value: number; confidence: number }> {
     // Get multiple model predictions
     const activeModels = Array.from(this.models.values())
-      .filter(model => model.status === 'active')
+      .filter((model) => model.status === "active")
       .slice(0, 3); // Use top 3 models
 
     if (activeModels.length <= 1) {
@@ -728,15 +697,10 @@ export class DemandForecastingEngine {
     }
 
     const predictions: Array<{ value: number; confidence: number }> = [];
-    
+
     for (const model of activeModels) {
       try {
-        const prediction = await this.executeModelPrediction(
-          model,
-          data,
-          startDate,
-          endDate
-        );
+        const prediction = await this.executeModelPrediction(model, data, startDate, endDate);
         predictions.push(prediction);
       } catch (error) {
         console.error(`Ensemble model ${model.id} failed:`, error);
@@ -751,21 +715,18 @@ export class DemandForecastingEngine {
     let totalWeight = 0;
     let weightedSum = 0;
 
-    predictions.forEach(pred => {
+    predictions.forEach((pred) => {
       const weight = pred.confidence;
       totalWeight += weight;
       weightedSum += pred.value * weight;
     });
 
     const ensembleValue = Math.round(weightedSum / totalWeight);
-    const ensembleConfidence = Math.min(
-      totalWeight / predictions.length,
-      1.0
-    );
+    const ensembleConfidence = Math.min(totalWeight / predictions.length, 1.0);
 
     return {
       value: ensembleValue,
-      confidence: ensembleConfidence
+      confidence: ensembleConfidence,
     };
   }
 
@@ -775,16 +736,14 @@ export class DemandForecastingEngine {
   private async calculateConfidence(
     model: ForecastModel,
     patterns: DemandPattern[],
-    forecast: { value: number; confidence: number }
+    forecast: { value: number; confidence: number },
   ): Promise<number> {
     // Base confidence from model accuracy
     let confidence = model.accuracy_score;
 
     // Adjust based on pattern strength
-    const avgPatternConfidence = patterns.reduce(
-      (sum, pattern) => sum + pattern.confidence,
-      0
-    ) / patterns.length;
+    const avgPatternConfidence =
+      patterns.reduce((sum, pattern) => sum + pattern.confidence, 0) / patterns.length;
 
     confidence = (confidence + avgPatternConfidence) / 2;
 
@@ -796,12 +755,10 @@ export class DemandForecastingEngine {
    * Store forecast in database
    */
   private async storeForecast(forecast: DemandForecast): Promise<void> {
-    const { error } = await supabase
-      .from('demand_forecasts')
-      .insert(forecast);
+    const { error } = await supabase.from("demand_forecasts").insert(forecast);
 
     if (error) {
-      console.error('Failed to store forecast:', error);
+      console.error("Failed to store forecast:", error);
       throw error;
     }
   }
@@ -811,7 +768,7 @@ export class DemandForecastingEngine {
    */
   private async checkForecastAlerts(
     forecast: DemandForecast,
-    historicalData: any[]
+    historicalData: any[],
   ): Promise<void> {
     const alerts: ForecastAlert[] = [];
 
@@ -822,18 +779,18 @@ export class DemandForecastingEngine {
     if (forecastDaily > averageHistorical * 1.5) {
       alerts.push({
         id: crypto.randomUUID(),
-        alert_type: 'demand_spike',
-        severity: 'high',
+        alert_type: "demand_spike",
+        severity: "high",
         message: `Predicted demand spike: ${forecastDaily.toFixed(0)} vs historical ${averageHistorical.toFixed(0)}`,
         forecast_id: forecast.id,
         affected_resources: [],
         recommended_actions: [
-          'Increase staff scheduling',
-          'Optimize appointment slots',
-          'Prepare additional resources'
+          "Increase staff scheduling",
+          "Optimize appointment slots",
+          "Prepare additional resources",
         ],
         created_at: new Date().toISOString(),
-        acknowledged: false
+        acknowledged: false,
       });
     }
 
@@ -841,29 +798,27 @@ export class DemandForecastingEngine {
     if (forecast.confidence_level < this.ACCURACY_THRESHOLD) {
       alerts.push({
         id: crypto.randomUUID(),
-        alert_type: 'accuracy_degradation',
-        severity: 'medium',
+        alert_type: "accuracy_degradation",
+        severity: "medium",
         message: `Low forecast confidence: ${(forecast.confidence_level * 100).toFixed(1)}%`,
         forecast_id: forecast.id,
         affected_resources: [],
         recommended_actions: [
-          'Review model performance',
-          'Update training data',
-          'Consider manual adjustments'
+          "Review model performance",
+          "Update training data",
+          "Consider manual adjustments",
         ],
         created_at: new Date().toISOString(),
-        acknowledged: false
+        acknowledged: false,
       });
     }
 
     // Store alerts
     if (alerts.length > 0) {
-      const { error } = await supabase
-        .from('forecast_alerts')
-        .insert(alerts);
+      const { error } = await supabase.from("forecast_alerts").insert(alerts);
 
       if (error) {
-        console.error('Failed to store forecast alerts:', error);
+        console.error("Failed to store forecast alerts:", error);
       }
     }
   }
@@ -874,15 +829,15 @@ export class DemandForecastingEngine {
   private async loadModels(clinicId: string): Promise<void> {
     try {
       const { data: models, error } = await supabase
-        .from('forecast_models')
-        .select('*')
-        .eq('clinic_id', clinicId)
-        .eq('status', 'active');
+        .from("forecast_models")
+        .select("*")
+        .eq("clinic_id", clinicId)
+        .eq("status", "active");
 
       if (error) throw error;
 
       this.models.clear();
-      models?.forEach(model => {
+      models?.forEach((model) => {
         this.models.set(model.id, model);
       });
 
@@ -890,9 +845,8 @@ export class DemandForecastingEngine {
       if (this.models.size === 0) {
         await this.createDefaultModels(clinicId);
       }
-
     } catch (error) {
-      console.error('Failed to load models:', error);
+      console.error("Failed to load models:", error);
       // Create default models on error
       await this.createDefaultModels(clinicId);
     }
@@ -904,16 +858,15 @@ export class DemandForecastingEngine {
   private async loadExternalFactors(): Promise<void> {
     try {
       const { data: factors, error } = await supabase
-        .from('demand_factors')
-        .select('*')
-        .gte('end_date', new Date().toISOString());
+        .from("demand_factors")
+        .select("*")
+        .gte("end_date", new Date().toISOString());
 
       if (error) throw error;
 
       this.externalFactors = factors || [];
-
     } catch (error) {
-      console.error('Failed to load external factors:', error);
+      console.error("Failed to load external factors:", error);
       this.externalFactors = [];
     }
   }
@@ -925,9 +878,9 @@ export class DemandForecastingEngine {
     for (const [modelId, model] of this.models) {
       if (model.accuracy_score < this.ACCURACY_THRESHOLD) {
         console.warn(
-          `Model ${modelId} accuracy ${model.accuracy_score} below threshold ${this.ACCURACY_THRESHOLD}`
+          `Model ${modelId} accuracy ${model.accuracy_score} below threshold ${this.ACCURACY_THRESHOLD}`,
         );
-        
+
         // Mark model for retraining
         await this.scheduleModelRetraining(modelId);
       }
@@ -940,7 +893,7 @@ export class DemandForecastingEngine {
   private async createDefaultModels(clinicId: string): Promise<void> {
     const defaultModels: Partial<ForecastModel>[] = [
       {
-        model_type: 'linear_regression',
+        model_type: "linear_regression",
         service_type: null,
         parameters: { trend: true, seasonal: true },
         accuracy_score: 0.85,
@@ -950,14 +903,14 @@ export class DemandForecastingEngine {
           mae: 2.5,
           rmse: 3.2,
           r2_score: 0.85,
-          accuracy_percentage: 85
+          accuracy_percentage: 85,
         },
-        status: 'active'
+        status: "active",
       },
       {
-        model_type: 'ensemble',
+        model_type: "ensemble",
         service_type: null,
-        parameters: { models: ['linear_regression', 'arima'], weights: [0.6, 0.4] },
+        parameters: { models: ["linear_regression", "arima"], weights: [0.6, 0.4] },
         accuracy_score: 0.88,
         training_date: new Date().toISOString(),
         validation_metrics: {
@@ -965,24 +918,24 @@ export class DemandForecastingEngine {
           mae: 2.1,
           rmse: 2.8,
           r2_score: 0.88,
-          accuracy_percentage: 88
+          accuracy_percentage: 88,
         },
-        status: 'active'
-      }
+        status: "active",
+      },
     ];
 
     for (const modelData of defaultModels) {
       const model: ForecastModel = {
         id: crypto.randomUUID(),
-        ...modelData as ForecastModel
+        ...(modelData as ForecastModel),
       };
 
       this.models.set(model.id, model);
 
       // Store in database
-      await supabase.from('forecast_models').insert({
+      await supabase.from("forecast_models").insert({
         ...model,
-        clinic_id: clinicId
+        clinic_id: clinicId,
       });
     }
   }
@@ -990,10 +943,10 @@ export class DemandForecastingEngine {
   /**
    * Get default model for forecast type
    */
-  private getDefaultModel(forecastType: DemandForecast['forecast_type']): ForecastModel {
+  private getDefaultModel(forecastType: DemandForecast["forecast_type"]): ForecastModel {
     return {
-      id: 'default-model',
-      model_type: 'linear_regression',
+      id: "default-model",
+      model_type: "linear_regression",
       parameters: {},
       accuracy_score: this.ACCURACY_THRESHOLD,
       training_date: new Date().toISOString(),
@@ -1001,23 +954,20 @@ export class DemandForecastingEngine {
         mape: 20,
         mae: 3.0,
         rmse: 4.0,
-        r2_score: 0.80,
-        accuracy_percentage: 80
+        r2_score: 0.8,
+        accuracy_percentage: 80,
       },
-      status: 'active'
+      status: "active",
     };
   }
 
   /**
    * Calculate adjustment factor for real-time updates
    */
-  private async calculateAdjustmentFactor(
-    forecast: any,
-    currentData: any[]
-  ): Promise<number> {
+  private async calculateAdjustmentFactor(forecast: any, currentData: any[]): Promise<number> {
     // Simplified adjustment calculation
     // In production, this would use sophisticated trend analysis
-    
+
     const recentTrend = currentData.length > 0 ? 1.02 : 0.98;
     return Math.max(0.5, Math.min(2.0, recentTrend));
   }
@@ -1025,16 +975,10 @@ export class DemandForecastingEngine {
   /**
    * Recalculate confidence after adjustment
    */
-  private async recalculateConfidence(
-    forecast: any,
-    adjustmentFactor: number
-  ): Promise<number> {
+  private async recalculateConfidence(forecast: any, adjustmentFactor: number): Promise<number> {
     // Reduce confidence based on deviation from original forecast
     const deviationPenalty = Math.abs(adjustmentFactor - 1.0) * 0.1;
-    return Math.max(
-      this.ACCURACY_THRESHOLD,
-      forecast.confidence_level - deviationPenalty
-    );
+    return Math.max(this.ACCURACY_THRESHOLD, forecast.confidence_level - deviationPenalty);
   }
 
   /**
@@ -1042,24 +986,21 @@ export class DemandForecastingEngine {
    */
   private async calculateStaffAllocations(
     clinicId: string,
-    forecasts: DemandForecast[]
+    forecasts: DemandForecast[],
   ): Promise<ResourceAllocation[]> {
     const allocations: ResourceAllocation[] = [];
 
     // This is simplified - production would use complex optimization
-    const totalDemand = forecasts.reduce(
-      (sum, forecast) => sum + forecast.predicted_demand,
-      0
-    );
+    const totalDemand = forecasts.reduce((sum, forecast) => sum + forecast.predicted_demand, 0);
 
     allocations.push({
-      resource_type: 'staff',
-      resource_id: 'general-staff',
+      resource_type: "staff",
+      resource_id: "general-staff",
       recommended_allocation: Math.ceil(totalDemand / 20), // 20 appointments per staff
       current_allocation: 10, // This would come from database
       utilization_forecast: totalDemand * 0.8,
       cost_impact: totalDemand * 50, // $50 per appointment
-      priority: totalDemand > 100 ? 'high' : 'medium'
+      priority: totalDemand > 100 ? "high" : "medium",
     });
 
     return allocations;
@@ -1070,7 +1011,7 @@ export class DemandForecastingEngine {
    */
   private async calculateEquipmentAllocations(
     clinicId: string,
-    forecasts: DemandForecast[]
+    forecasts: DemandForecast[],
   ): Promise<ResourceAllocation[]> {
     // Simplified implementation
     return [];
@@ -1081,7 +1022,7 @@ export class DemandForecastingEngine {
    */
   private async calculateRoomAllocations(
     clinicId: string,
-    forecasts: DemandForecast[]
+    forecasts: DemandForecast[],
   ): Promise<ResourceAllocation[]> {
     // Simplified implementation
     return [];
@@ -1103,7 +1044,7 @@ export const ForecastingUtils = {
    */
   calculateAccuracyMetrics: (predicted: number[], actual: number[]): ForecastValidationMetrics => {
     if (predicted.length !== actual.length) {
-      throw new Error('Predicted and actual arrays must have same length');
+      throw new Error("Predicted and actual arrays must have same length");
     }
 
     const n = predicted.length;
@@ -1116,7 +1057,7 @@ export const ForecastingUtils = {
     for (let i = 0; i < n; i++) {
       const error = Math.abs(actual[i] - predicted[i]);
       const percentError = actual[i] !== 0 ? (error / Math.abs(actual[i])) * 100 : 0;
-      
+
       mapeSum += percentError;
       maeSum += error;
       mseSum += Math.pow(error, 2);
@@ -1127,7 +1068,7 @@ export const ForecastingUtils = {
     const mape = mapeSum / n;
     const mae = maeSum / n;
     const rmse = Math.sqrt(mseSum / n);
-    
+
     // Calculate R-squared
     const actualMean = totalActual / n;
     let totalSumSquares = 0;
@@ -1138,7 +1079,7 @@ export const ForecastingUtils = {
       residualSumSquares += Math.pow(actual[i] - predicted[i], 2);
     }
 
-    const r2Score = 1 - (residualSumSquares / totalSumSquares);
+    const r2Score = 1 - residualSumSquares / totalSumSquares;
     const accuracyPercentage = Math.max(0, 100 - mape);
 
     return {
@@ -1146,7 +1087,7 @@ export const ForecastingUtils = {
       mae,
       rmse,
       r2_score: r2Score,
-      accuracy_percentage: accuracyPercentage
+      accuracy_percentage: accuracyPercentage,
     };
   },
 
@@ -1156,33 +1097,33 @@ export const ForecastingUtils = {
   formatForecastPeriod: (startDate: string, endDate: string): string => {
     const start = new Date(startDate);
     const end = new Date(endDate);
-    
-    return `${format(start, 'MMM dd')} - ${format(end, 'MMM dd, yyyy')}`;
+
+    return `${format(start, "MMM dd")} - ${format(end, "MMM dd, yyyy")}`;
   },
 
   /**
    * Get confidence level description
    */
   getConfidenceDescription: (confidence: number): string => {
-    if (confidence >= 0.95) return 'Very High';
-    if (confidence >= 0.85) return 'High';
-    if (confidence >= 0.75) return 'Medium';
-    if (confidence >= 0.65) return 'Low';
-    return 'Very Low';
+    if (confidence >= 0.95) return "Very High";
+    if (confidence >= 0.85) return "High";
+    if (confidence >= 0.75) return "Medium";
+    if (confidence >= 0.65) return "Low";
+    return "Very Low";
   },
 
   /**
    * Calculate forecast horizon options
    */
   getForecastHorizons: (): Array<{ value: number; label: string }> => [
-    { value: 7, label: '1 Week' },
-    { value: 14, label: '2 Weeks' },
-    { value: 30, label: '1 Month' },
-    { value: 60, label: '2 Months' },
-    { value: 90, label: '3 Months' },
-    { value: 180, label: '6 Months' },
-    { value: 365, label: '1 Year' }
-  ]
+    { value: 7, label: "1 Week" },
+    { value: 14, label: "2 Weeks" },
+    { value: 30, label: "1 Month" },
+    { value: 60, label: "2 Months" },
+    { value: 90, label: "3 Months" },
+    { value: 180, label: "6 Months" },
+    { value: 365, label: "1 Year" },
+  ],
 };
 
 // Export singleton instance

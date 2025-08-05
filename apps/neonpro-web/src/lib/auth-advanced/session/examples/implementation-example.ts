@@ -3,16 +3,11 @@
 // NeonPro - Session Management & Security
 // ============================================================================
 
-import { SessionSystem } from '../index';
-import { createClient } from '@supabase/supabase-js';
-import Redis from 'ioredis';
-import { NextRequest, NextResponse } from 'next/server';
-import type {
-  UserSession,
-  SessionConfig,
-  DeviceFingerprint,
-  SessionLocation,
-} from '../types';
+import type { SessionSystem } from "../index";
+import type { createClient } from "@supabase/supabase-js";
+import Redis from "ioredis";
+import type { NextRequest, NextResponse } from "next/server";
+import type { UserSession, SessionConfig, DeviceFingerprint, SessionLocation } from "../types";
 
 // ============================================================================
 // CONFIGURATION SETUP
@@ -21,7 +16,7 @@ import type {
 /**
  * Configuração do sistema de sessões para diferentes ambientes
  */
-const getSessionConfig = (environment: 'development' | 'production'): SessionConfig => {
+const getSessionConfig = (environment: "development" | "production"): SessionConfig => {
   const baseConfig: SessionConfig = {
     sessionTimeout: 30 * 60 * 1000, // 30 minutes
     renewalThreshold: 0.25,
@@ -36,7 +31,7 @@ const getSessionConfig = (environment: 'development' | 'production'): SessionCon
     retainExpiredSessions: 24 * 60 * 60 * 1000,
     redis: {
       enabled: true,
-      keyPrefix: 'neonpro:session:',
+      keyPrefix: "neonpro:session:",
       ttl: 1800,
     },
     lgpd: {
@@ -47,7 +42,7 @@ const getSessionConfig = (environment: 'development' | 'production'): SessionCon
     },
   };
 
-  if (environment === 'production') {
+  if (environment === "production") {
     return {
       ...baseConfig,
       sessionTimeout: 15 * 60 * 1000, // 15 minutes in production
@@ -86,7 +81,7 @@ export class SessionService {
           autoRefreshToken: false,
           persistSession: false,
         },
-      }
+      },
     );
 
     // Configurar Redis (opcional)
@@ -99,7 +94,7 @@ export class SessionService {
 
     // Configuração baseada no ambiente
     const config = getSessionConfig(
-      process.env.NODE_ENV === 'production' ? 'production' : 'development'
+      process.env.NODE_ENV === "production" ? "production" : "development",
     );
 
     await this.sessionSystem.initialize({
@@ -116,31 +111,28 @@ export class SessionService {
 
   private setupEventListeners() {
     // Eventos de segurança
-    this.sessionSystem.on('security_event', (event) => {
-      console.log('🚨 Security Event:', event);
-      
-      if (event.threatLevel === 'high') {
+    this.sessionSystem.on("security_event", (event) => {
+      console.log("🚨 Security Event:", event);
+
+      if (event.threatLevel === "high") {
         // Notificar equipe de segurança
         this.notifySecurityTeam(event);
       }
     });
 
     // Atividade suspeita
-    this.sessionSystem.on('suspicious_activity', (activity) => {
-      console.log('⚠️ Suspicious Activity:', activity);
-      
+    this.sessionSystem.on("suspicious_activity", (activity) => {
+      console.log("⚠️ Suspicious Activity:", activity);
+
       if (activity.riskScore > 80) {
         // Terminar sessão automaticamente
-        this.sessionSystem.terminateSession(
-          activity.sessionId,
-          'high_risk_activity'
-        );
+        this.sessionSystem.terminateSession(activity.sessionId, "high_risk_activity");
       }
     });
 
     // Criação de sessão
-    this.sessionSystem.on('session_created', (session) => {
-      console.log('✅ Session Created:', {
+    this.sessionSystem.on("session_created", (session) => {
+      console.log("✅ Session Created:", {
         sessionId: session.id,
         userId: session.userId,
         deviceType: session.deviceFingerprint?.platform,
@@ -148,8 +140,8 @@ export class SessionService {
     });
 
     // Término de sessão
-    this.sessionSystem.on('session_terminated', (data) => {
-      console.log('🔚 Session Terminated:', {
+    this.sessionSystem.on("session_terminated", (data) => {
+      console.log("🔚 Session Terminated:", {
         sessionId: data.sessionId,
         reason: data.reason,
       });
@@ -158,12 +150,12 @@ export class SessionService {
 
   private async notifySecurityTeam(event: any) {
     // Implementar notificação (email, Slack, etc.)
-    console.log('📧 Notifying security team about:', event);
+    console.log("📧 Notifying security team about:", event);
   }
 
   getSessionSystem() {
     if (!this.initialized) {
-      throw new Error('SessionService not initialized. Call initialize() first.');
+      throw new Error("SessionService not initialized. Call initialize() first.");
     }
     return this.sessionSystem;
   }
@@ -181,12 +173,12 @@ export { sessionService };
  * Middleware para autenticação de sessões em Next.js
  */
 export async function authMiddleware(request: NextRequest) {
-  const sessionToken = request.cookies.get('session_token')?.value;
+  const sessionToken = request.cookies.get("session_token")?.value;
   const pathname = request.nextUrl.pathname;
 
   // Rotas públicas que não precisam de autenticação
-  const publicRoutes = ['/login', '/register', '/forgot-password', '/api/auth'];
-  const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
+  const publicRoutes = ["/login", "/register", "/forgot-password", "/api/auth"];
+  const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route));
 
   if (isPublicRoute) {
     return NextResponse.next();
@@ -194,7 +186,7 @@ export async function authMiddleware(request: NextRequest) {
 
   // Verificar se há token de sessão
   if (!sessionToken) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   try {
@@ -207,14 +199,14 @@ export async function authMiddleware(request: NextRequest) {
 
     if (!validation.valid) {
       // Sessão inválida - redirecionar para login
-      const response = NextResponse.redirect(new URL('/login', request.url));
-      response.cookies.delete('session_token');
+      const response = NextResponse.redirect(new URL("/login", request.url));
+      response.cookies.delete("session_token");
       return response;
     }
 
     // Atualizar atividade da sessão
-    const clientIP = request.ip || request.headers.get('x-forwarded-for') || 'unknown';
-    const userAgent = request.headers.get('user-agent') || 'unknown';
+    const clientIP = request.ip || request.headers.get("x-forwarded-for") || "unknown";
+    const userAgent = request.headers.get("user-agent") || "unknown";
 
     await sessionSystem.updateActivity(sessionToken, {
       ipAddress: clientIP,
@@ -227,10 +219,10 @@ export async function authMiddleware(request: NextRequest) {
       if (renewal.success && renewal.session) {
         // Atualizar cookie com novo token
         const response = NextResponse.next();
-        response.cookies.set('session_token', renewal.session.sessionToken, {
+        response.cookies.set("session_token", renewal.session.sessionToken, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
           maxAge: 30 * 60, // 30 minutes
         });
         return response;
@@ -239,9 +231,9 @@ export async function authMiddleware(request: NextRequest) {
 
     // Adicionar dados da sessão aos headers para uso nas páginas
     const requestHeaders = new Headers(request.headers);
-    requestHeaders.set('x-user-id', validation.session!.userId);
-    requestHeaders.set('x-clinic-id', validation.session!.clinicId);
-    requestHeaders.set('x-session-id', validation.session!.id);
+    requestHeaders.set("x-user-id", validation.session!.userId);
+    requestHeaders.set("x-clinic-id", validation.session!.clinicId);
+    requestHeaders.set("x-session-id", validation.session!.id);
 
     return NextResponse.next({
       request: {
@@ -249,8 +241,8 @@ export async function authMiddleware(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Auth middleware error:', error);
-    return NextResponse.redirect(new URL('/login', request.url));
+    console.error("Auth middleware error:", error);
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 }
 
@@ -261,28 +253,24 @@ export async function authMiddleware(request: NextRequest) {
 /**
  * Helper para criar sessão em API routes
  */
-export async function createUserSession(
-  userId: string,
-  clinicId: string,
-  request: NextRequest
-) {
+export async function createUserSession(userId: string, clinicId: string, request: NextRequest) {
   await sessionService.initialize();
   const sessionSystem = sessionService.getSessionSystem();
 
   // Extrair informações do request
-  const clientIP = request.ip || request.headers.get('x-forwarded-for') || 'unknown';
-  const userAgent = request.headers.get('user-agent') || 'unknown';
+  const clientIP = request.ip || request.headers.get("x-forwarded-for") || "unknown";
+  const userAgent = request.headers.get("user-agent") || "unknown";
 
   // Gerar fingerprint do dispositivo (simplificado)
   const deviceFingerprint: DeviceFingerprint = {
     userAgent,
     screen: { width: 1920, height: 1080 }, // Valores padrão
-    timezone: 'America/Sao_Paulo',
-    language: 'pt-BR',
-    platform: 'Web',
+    timezone: "America/Sao_Paulo",
+    language: "pt-BR",
+    platform: "Web",
     plugins: [],
-    canvas: '',
-    webgl: '',
+    canvas: "",
+    webgl: "",
   };
 
   // Criar sessão
@@ -312,10 +300,7 @@ export async function createUserSession(
 /**
  * Helper para terminar sessão em API routes
  */
-export async function terminateUserSession(
-  sessionToken: string,
-  reason: string = 'user_logout'
-) {
+export async function terminateUserSession(sessionToken: string, reason: string = "user_logout") {
   await sessionService.initialize();
   const sessionSystem = sessionService.getSessionSystem();
 
@@ -326,8 +311,8 @@ export async function terminateUserSession(
  * Helper para obter dados da sessão atual
  */
 export async function getCurrentSession(request: NextRequest) {
-  const sessionToken = request.cookies.get('session_token')?.value;
-  
+  const sessionToken = request.cookies.get("session_token")?.value;
+
   if (!sessionToken) {
     return null;
   }
@@ -336,7 +321,7 @@ export async function getCurrentSession(request: NextRequest) {
   const sessionSystem = sessionService.getSessionSystem();
 
   const validation = await sessionSystem.validateSession(sessionToken);
-  
+
   return validation.valid ? validation.session : null;
 }
 
@@ -358,7 +343,7 @@ export function useSession() {
 
   const checkSession = async () => {
     try {
-      const response = await fetch('/api/auth/session');
+      const response = await fetch("/api/auth/session");
       const data = await response.json();
 
       if (data.success) {
@@ -367,7 +352,7 @@ export function useSession() {
         setSession(null);
       }
     } catch (err) {
-      setError('Failed to check session');
+      setError("Failed to check session");
       setSession(null);
     } finally {
       setLoading(false);
@@ -377,9 +362,9 @@ export function useSession() {
   const login = async (email: string, password: string) => {
     try {
       setLoading(true);
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
@@ -393,7 +378,7 @@ export function useSession() {
         return { success: false, error: data.error };
       }
     } catch (err) {
-      const error = 'Login failed';
+      const error = "Login failed";
       setError(error);
       return { success: false, error };
     } finally {
@@ -403,12 +388,12 @@ export function useSession() {
 
   const logout = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' });
+      await fetch("/api/auth/logout", { method: "POST" });
     } catch (err) {
-      console.error('Logout error:', err);
+      console.error("Logout error:", err);
     } finally {
       setSession(null);
-      window.location.href = '/login';
+      window.location.href = "/login";
     }
   };
 
@@ -436,25 +421,18 @@ export async function loginApiExample(request: NextRequest) {
 
     // Validar credenciais (implementar sua lógica)
     const user = await validateUserCredentials(email, password);
-    
+
     if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'Invalid credentials' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: "Invalid credentials" }, { status: 401 });
     }
 
     // Criar sessão
-    const sessionResult = await createUserSession(
-      user.id,
-      user.clinicId,
-      request
-    );
+    const sessionResult = await createUserSession(user.id, user.clinicId, request);
 
     if (!sessionResult.success) {
       return NextResponse.json(
-        { success: false, error: 'Failed to create session' },
-        { status: 500 }
+        { success: false, error: "Failed to create session" },
+        { status: 500 },
       );
     }
 
@@ -469,20 +447,17 @@ export async function loginApiExample(request: NextRequest) {
       },
     });
 
-    response.cookies.set('session_token', sessionResult.sessionToken, {
+    response.cookies.set("session_token", sessionResult.sessionToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
       maxAge: 30 * 60, // 30 minutes
     });
 
     return response;
   } catch (error) {
-    console.error('Login API error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
-    );
+    console.error("Login API error:", error);
+    return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -492,22 +467,19 @@ export async function loginApiExample(request: NextRequest) {
  */
 export async function logoutApiExample(request: NextRequest) {
   try {
-    const sessionToken = request.cookies.get('session_token')?.value;
+    const sessionToken = request.cookies.get("session_token")?.value;
 
     if (sessionToken) {
-      await terminateUserSession(sessionToken, 'user_logout');
+      await terminateUserSession(sessionToken, "user_logout");
     }
 
     const response = NextResponse.json({ success: true });
-    response.cookies.delete('session_token');
-    
+    response.cookies.delete("session_token");
+
     return response;
   } catch (error) {
-    console.error('Logout API error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
-    );
+    console.error("Logout API error:", error);
+    return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -531,17 +503,11 @@ export async function sessionApiExample(request: NextRequest) {
         },
       });
     } else {
-      return NextResponse.json(
-        { success: false, error: 'No valid session' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: "No valid session" }, { status: 401 });
     }
   } catch (error) {
-    console.error('Session API error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
-    );
+    console.error("Session API error:", error);
+    return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -578,7 +544,7 @@ async function getLocationFromIP(ipAddress: string): Promise<SessionLocation | u
       };
     }
   } catch (error) {
-    console.error('Failed to get location from IP:', error);
+    console.error("Failed to get location from IP:", error);
   }
 
   return undefined;
@@ -588,24 +554,24 @@ async function getLocationFromIP(ipAddress: string): Promise<SessionLocation | u
  * Função para gerar fingerprint mais detalhado no cliente
  */
 export function generateClientFingerprint(): DeviceFingerprint {
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     // Server-side fallback
     return {
-      userAgent: 'server',
+      userAgent: "server",
       screen: { width: 0, height: 0 },
-      timezone: 'UTC',
-      language: 'en',
-      platform: 'server',
+      timezone: "UTC",
+      language: "en",
+      platform: "server",
       plugins: [],
-      canvas: '',
-      webgl: '',
+      canvas: "",
+      webgl: "",
     };
   }
 
   // Client-side fingerprinting
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-  ctx?.fillText('fingerprint', 10, 10);
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  ctx?.fillText("fingerprint", 10, 10);
   const canvasFingerprint = canvas.toDataURL();
 
   return {
@@ -617,7 +583,7 @@ export function generateClientFingerprint(): DeviceFingerprint {
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     language: navigator.language,
     platform: navigator.platform,
-    plugins: Array.from(navigator.plugins).map(p => p.name),
+    plugins: Array.from(navigator.plugins).map((p) => p.name),
     canvas: canvasFingerprint,
     webgl: getWebGLFingerprint(),
   };
@@ -625,22 +591,21 @@ export function generateClientFingerprint(): DeviceFingerprint {
 
 function getWebGLFingerprint(): string {
   try {
-    const canvas = document.createElement('canvas');
-    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-    
-    if (!gl) return '';
-    
-    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-    if (!debugInfo) return '';
-    
+    const canvas = document.createElement("canvas");
+    const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+
+    if (!gl) return "";
+
+    const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
+    if (!debugInfo) return "";
+
     const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
     const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-    
+
     return `${vendor}~${renderer}`;
   } catch (error) {
-    return '';
+    return "";
   }
 }
 
 export default sessionService;
-

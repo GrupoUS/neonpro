@@ -1,61 +1,61 @@
-'use client'
+"use client";
 
 /**
  * Photo Recognition System - Main Integration Component
  * Combines all photo recognition features into a unified interface
- * 
+ *
  * @author APEX Master Developer
  */
 
-import React, { useState, useEffect } from 'react'
-import { Camera, Upload, Eye, Shield, BarChart3, Settings } from 'lucide-react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { useToast } from '@/components/ui/use-toast'
+import React, { useState, useEffect } from "react";
+import type { Camera, Upload, Eye, Shield, BarChart3, Settings } from "lucide-react";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { useToast } from "@/components/ui/use-toast";
 
 // Import photo recognition components
-import { PhotoUpload } from './photo-upload'
-import { IdentityVerification } from './identity-verification'
-import { PhotoGallery } from './photo-gallery'
-import { PrivacyControls } from './privacy-controls'
+import type { PhotoUpload } from "./photo-upload";
+import type { IdentityVerification } from "./identity-verification";
+import type { PhotoGallery } from "./photo-gallery";
+import type { PrivacyControls } from "./privacy-controls";
 
 interface PhotoRecognitionSystemProps {
-  patientId: string
-  patientName: string
-  patientEmail?: string
-  onSystemUpdate?: (data: any) => void
-  defaultTab?: string
+  patientId: string;
+  patientName: string;
+  patientEmail?: string;
+  onSystemUpdate?: (data: any) => void;
+  defaultTab?: string;
   permissions?: {
-    canUpload: boolean
-    canVerify: boolean
-    canManagePrivacy: boolean
-    canViewStats: boolean
-    canDelete: boolean
-  }
+    canUpload: boolean;
+    canVerify: boolean;
+    canManagePrivacy: boolean;
+    canViewStats: boolean;
+    canDelete: boolean;
+  };
 }
 
 interface SystemStats {
-  totalPhotos: number
-  photosByType: Record<string, number>
-  verificationAttempts: number
-  successfulVerifications: number
-  averageConfidence: number
+  totalPhotos: number;
+  photosByType: Record<string, number>;
+  verificationAttempts: number;
+  successfulVerifications: number;
+  averageConfidence: number;
   privacyCompliance: {
-    consentGiven: boolean
-    lgpdCompliant: boolean
-    dataRetentionDays: number
-  }
+    consentGiven: boolean;
+    lgpdCompliant: boolean;
+    dataRetentionDays: number;
+  };
   storageUsage: {
-    totalSize: number
-    averageFileSize: number
-  }
+    totalSize: number;
+    averageFileSize: number;
+  };
   recentActivity: {
-    lastUpload?: string
-    lastVerification?: string
-    lastPrivacyUpdate?: string
-  }
+    lastUpload?: string;
+    lastVerification?: string;
+    lastPrivacyUpdate?: string;
+  };
 }
 
 const DEFAULT_PERMISSIONS = {
@@ -63,134 +63,131 @@ const DEFAULT_PERMISSIONS = {
   canVerify: true,
   canManagePrivacy: true,
   canViewStats: true,
-  canDelete: false
-}
+  canDelete: false,
+};
 
 const PHOTO_TYPE_LABELS = {
-  profile: 'Perfil',
-  before: 'Antes',
-  after: 'Depois',
-  progress: 'Progresso',
-  document: 'Documento',
-  other: 'Outro'
-}
+  profile: "Perfil",
+  before: "Antes",
+  after: "Depois",
+  progress: "Progresso",
+  document: "Documento",
+  other: "Outro",
+};
 
 export function PhotoRecognitionSystem({
   patientId,
   patientName,
   patientEmail,
   onSystemUpdate,
-  defaultTab = 'gallery',
-  permissions = DEFAULT_PERMISSIONS
+  defaultTab = "gallery",
+  permissions = DEFAULT_PERMISSIONS,
 }: PhotoRecognitionSystemProps) {
-  const [activeTab, setActiveTab] = useState(defaultTab)
-  const [systemStats, setSystemStats] = useState<SystemStats | null>(null)
-  const [isLoadingStats, setIsLoadingStats] = useState(true)
-  const [refreshKey, setRefreshKey] = useState(0)
-  
-  const { toast } = useToast()
+  const [activeTab, setActiveTab] = useState(defaultTab);
+  const [systemStats, setSystemStats] = useState<SystemStats | null>(null);
+  const [isLoadingStats, setIsLoadingStats] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const { toast } = useToast();
 
   useEffect(() => {
-    loadSystemStats()
-  }, [patientId, refreshKey])
+    loadSystemStats();
+  }, [patientId, refreshKey]);
 
   const loadSystemStats = async () => {
     if (!permissions.canViewStats) {
-      setIsLoadingStats(false)
-      return
+      setIsLoadingStats(false);
+      return;
     }
 
     try {
-      const response = await fetch(
-        `/api/patients/photos/stats?patientId=${patientId}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`
-          }
-        }
-      )
+      const response = await fetch(`/api/patients/photos/stats?patientId=${patientId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("supabase_token")}`,
+        },
+      });
 
       if (response.ok) {
-        const result = await response.json()
-        setSystemStats(result.data)
+        const result = await response.json();
+        setSystemStats(result.data);
       }
     } catch (error) {
-      console.error('Error loading system stats:', error)
+      console.error("Error loading system stats:", error);
     } finally {
-      setIsLoadingStats(false)
+      setIsLoadingStats(false);
     }
-  }
+  };
 
   const handleSystemUpdate = (updateData: any) => {
     // Refresh stats when system is updated
-    setRefreshKey(prev => prev + 1)
-    onSystemUpdate?.(updateData)
-  }
+    setRefreshKey((prev) => prev + 1);
+    onSystemUpdate?.(updateData);
+  };
 
   const handlePhotoUploaded = (photoData: any) => {
     toast({
-      title: 'Foto enviada com sucesso',
-      description: `A foto ${photoData.fileName} foi processada e armazenada.`
-    })
-    handleSystemUpdate({ type: 'photo_uploaded', data: photoData })
-  }
+      title: "Foto enviada com sucesso",
+      description: `A foto ${photoData.fileName} foi processada e armazenada.`,
+    });
+    handleSystemUpdate({ type: "photo_uploaded", data: photoData });
+  };
 
   const handleVerificationCompleted = (verificationData: any) => {
     toast({
-      title: 'Verificação concluída',
-      description: `Identidade verificada com ${Math.round(verificationData.confidence * 100)}% de confiança.`
-    })
-    handleSystemUpdate({ type: 'verification_completed', data: verificationData })
-  }
+      title: "Verificação concluída",
+      description: `Identidade verificada com ${Math.round(verificationData.confidence * 100)}% de confiança.`,
+    });
+    handleSystemUpdate({ type: "verification_completed", data: verificationData });
+  };
 
   const handlePrivacyUpdated = (privacyData: any) => {
     toast({
-      title: 'Configurações atualizadas',
-      description: 'As configurações de privacidade foram atualizadas com sucesso.'
-    })
-    handleSystemUpdate({ type: 'privacy_updated', data: privacyData })
-  }
+      title: "Configurações atualizadas",
+      description: "As configurações de privacidade foram atualizadas com sucesso.",
+    });
+    handleSystemUpdate({ type: "privacy_updated", data: privacyData });
+  };
 
   const handlePhotoDeleted = (photoId: string) => {
     toast({
-      title: 'Foto excluída',
-      description: 'A foto foi removida do sistema com sucesso.'
-    })
-    handleSystemUpdate({ type: 'photo_deleted', data: { photoId } })
-  }
+      title: "Foto excluída",
+      description: "A foto foi removida do sistema com sucesso.",
+    });
+    handleSystemUpdate({ type: "photo_deleted", data: { photoId } });
+  };
 
   const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes'
-    const k = 1024
-    const sizes = ['Bytes', 'KB', 'MB', 'GB']
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
-  }
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  };
 
   const formatDate = (dateString: string) => {
-    if (!dateString) return 'Nunca'
-    return new Date(dateString).toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  }
+    if (!dateString) return "Nunca";
+    return new Date(dateString).toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
   const getComplianceStatus = () => {
-    if (!systemStats?.privacyCompliance) return null
-    
-    const { consentGiven, lgpdCompliant } = systemStats.privacyCompliance
-    
+    if (!systemStats?.privacyCompliance) return null;
+
+    const { consentGiven, lgpdCompliant } = systemStats.privacyCompliance;
+
     if (consentGiven && lgpdCompliant) {
-      return { status: 'compliant', label: 'Conforme', color: 'bg-green-100 text-green-800' }
+      return { status: "compliant", label: "Conforme", color: "bg-green-100 text-green-800" };
     } else if (consentGiven && !lgpdCompliant) {
-      return { status: 'partial', label: 'Parcial', color: 'bg-yellow-100 text-yellow-800' }
+      return { status: "partial", label: "Parcial", color: "bg-yellow-100 text-yellow-800" };
     } else {
-      return { status: 'non-compliant', label: 'Não conforme', color: 'bg-red-100 text-red-800' }
+      return { status: "non-compliant", label: "Não conforme", color: "bg-red-100 text-red-800" };
     }
-  }
+  };
 
   const renderStatsOverview = () => {
     if (isLoadingStats) {
@@ -202,14 +199,14 @@ export function PhotoRecognitionSystem({
             </div>
           </CardContent>
         </Card>
-      )
+      );
     }
 
     if (!systemStats || !permissions.canViewStats) {
-      return null
+      return null;
     }
 
-    const complianceStatus = getComplianceStatus()
+    const complianceStatus = getComplianceStatus();
 
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -233,10 +230,13 @@ export function PhotoRecognitionSystem({
               <div>
                 <p className="text-sm font-medium text-gray-600">Taxa de Sucesso</p>
                 <p className="text-2xl font-bold">
-                  {systemStats.verificationAttempts > 0 
-                    ? Math.round((systemStats.successfulVerifications / systemStats.verificationAttempts) * 100)
-                    : 0
-                  }%
+                  {systemStats.verificationAttempts > 0
+                    ? Math.round(
+                        (systemStats.successfulVerifications / systemStats.verificationAttempts) *
+                          100,
+                      )
+                    : 0}
+                  %
                 </p>
               </div>
               <BarChart3 className="h-8 w-8 text-green-600" />
@@ -266,9 +266,7 @@ export function PhotoRecognitionSystem({
               <div>
                 <p className="text-sm font-medium text-gray-600">Conformidade LGPD</p>
                 {complianceStatus && (
-                  <Badge className={complianceStatus.color}>
-                    {complianceStatus.label}
-                  </Badge>
+                  <Badge className={complianceStatus.color}>{complianceStatus.label}</Badge>
                 )}
               </div>
               <Shield className="h-8 w-8 text-orange-600" />
@@ -276,11 +274,11 @@ export function PhotoRecognitionSystem({
           </CardContent>
         </Card>
       </div>
-    )
-  }
+    );
+  };
 
   const renderPhotoTypeBreakdown = () => {
-    if (!systemStats?.photosByType || !permissions.canViewStats) return null
+    if (!systemStats?.photosByType || !permissions.canViewStats) return null;
 
     return (
       <Card className="mb-6">
@@ -300,11 +298,11 @@ export function PhotoRecognitionSystem({
           </div>
         </CardContent>
       </Card>
-    )
-  }
+    );
+  };
 
   const renderRecentActivity = () => {
-    if (!systemStats?.recentActivity || !permissions.canViewStats) return null
+    if (!systemStats?.recentActivity || !permissions.canViewStats) return null;
 
     return (
       <Card className="mb-6">
@@ -334,8 +332,8 @@ export function PhotoRecognitionSystem({
           </div>
         </CardContent>
       </Card>
-    )
-  }
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -348,14 +346,8 @@ export function PhotoRecognitionSystem({
               Sistema de Reconhecimento Facial - {patientName}
             </CardTitle>
             <div className="flex items-center gap-2">
-              {patientEmail && (
-                <Badge variant="outline">{patientEmail}</Badge>
-              )}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setRefreshKey(prev => prev + 1)}
-              >
+              {patientEmail && <Badge variant="outline">{patientEmail}</Badge>}
+              <Button variant="outline" size="sm" onClick={() => setRefreshKey((prev) => prev + 1)}>
                 <Settings className="h-4 w-4 mr-2" />
                 Atualizar
               </Button>
@@ -376,21 +368,21 @@ export function PhotoRecognitionSystem({
             <Eye className="h-4 w-4" />
             Galeria
           </TabsTrigger>
-          
+
           {permissions.canUpload && (
             <TabsTrigger value="upload" className="flex items-center gap-2">
               <Upload className="h-4 w-4" />
               Upload
             </TabsTrigger>
           )}
-          
+
           {permissions.canVerify && (
             <TabsTrigger value="verify" className="flex items-center gap-2">
               <Camera className="h-4 w-4" />
               Verificar
             </TabsTrigger>
           )}
-          
+
           {permissions.canManagePrivacy && (
             <TabsTrigger value="privacy" className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
@@ -418,7 +410,7 @@ export function PhotoRecognitionSystem({
               patientName={patientName}
               onPhotoUploaded={handlePhotoUploaded}
               maxFileSize={10 * 1024 * 1024} // 10MB
-              allowedTypes={['image/jpeg', 'image/png', 'image/webp']}
+              allowedTypes={["image/jpeg", "image/png", "image/webp"]}
               enableFacialRecognition={true}
             />
           </TabsContent>
@@ -450,18 +442,11 @@ export function PhotoRecognitionSystem({
         )}
       </Tabs>
     </div>
-  )
+  );
 }
 
 // Export individual components for standalone use
-export {
-  PhotoUpload,
-  IdentityVerification,
-  PhotoGallery,
-  PrivacyControls
-}
+export { PhotoUpload, IdentityVerification, PhotoGallery, PrivacyControls };
 
 // Export types for external use
-export type {
-  PhotoRecognitionSystemProps
-}
+export type { PhotoRecognitionSystemProps };

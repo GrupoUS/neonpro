@@ -3,8 +3,8 @@
  * Utility functions for mobile API optimization, data compression, and performance
  */
 
-import { createHash, createCipheriv, createDecipheriv, randomBytes } from 'crypto';
-import {
+import type { createHash, createCipheriv, createDecipheriv, randomBytes } from "crypto";
+import type {
   MobileApiRequest,
   MobileApiResponse,
   CompressionConfig,
@@ -17,8 +17,8 @@ import {
   OptimizationStrategy,
   ValidationResult,
   CompressionResult,
-  EncryptionResult
-} from './types';
+  EncryptionResult,
+} from "./types";
 
 /**
  * Data Compression Utilities
@@ -27,10 +27,7 @@ export class CompressionUtils {
   /**
    * Compress data using various algorithms
    */
-  static async compressData(
-    data: any,
-    config: CompressionConfig
-  ): Promise<CompressionResult> {
+  static async compressData(data: any, config: CompressionConfig): Promise<CompressionResult> {
     const startTime = Date.now();
     const originalSize = JSON.stringify(data).length;
 
@@ -39,21 +36,21 @@ export class CompressionUtils {
       let algorithm: string;
 
       switch (config.algorithm) {
-        case 'gzip':
+        case "gzip":
           compressedData = await this.gzipCompress(data);
-          algorithm = 'gzip';
+          algorithm = "gzip";
           break;
-        case 'brotli':
+        case "brotli":
           compressedData = await this.brotliCompress(data);
-          algorithm = 'brotli';
+          algorithm = "brotli";
           break;
-        case 'lz4':
+        case "lz4":
           compressedData = await this.lz4Compress(data);
-          algorithm = 'lz4';
+          algorithm = "lz4";
           break;
         default:
           compressedData = await this.defaultCompress(data);
-          algorithm = 'default';
+          algorithm = "default";
       }
 
       const compressedSize = compressedData.length;
@@ -70,13 +67,13 @@ export class CompressionUtils {
         compressionTime,
         metadata: {
           timestamp: new Date(),
-          version: '1.0'
-        }
+          version: "1.0",
+        },
       };
     } catch (error) {
       return {
         success: false,
-        data: '',
+        data: "",
         algorithm: config.algorithm,
         originalSize,
         compressedSize: 0,
@@ -85,8 +82,8 @@ export class CompressionUtils {
         error: error.message,
         metadata: {
           timestamp: new Date(),
-          version: '1.0'
-        }
+          version: "1.0",
+        },
       };
     }
   }
@@ -94,17 +91,14 @@ export class CompressionUtils {
   /**
    * Decompress data
    */
-  static async decompressData(
-    compressedData: string,
-    algorithm: string
-  ): Promise<any> {
+  static async decompressData(compressedData: string, algorithm: string): Promise<any> {
     try {
       switch (algorithm) {
-        case 'gzip':
+        case "gzip":
           return await this.gzipDecompress(compressedData);
-        case 'brotli':
+        case "brotli":
           return await this.brotliDecompress(compressedData);
-        case 'lz4':
+        case "lz4":
           return await this.lz4Decompress(compressedData);
         default:
           return await this.defaultDecompress(compressedData);
@@ -120,14 +114,14 @@ export class CompressionUtils {
   private static async gzipCompress(data: any): Promise<string> {
     // Simulate gzip compression
     const jsonString = JSON.stringify(data);
-    return Buffer.from(jsonString).toString('base64');
+    return Buffer.from(jsonString).toString("base64");
   }
 
   /**
    * GZIP decompression
    */
   private static async gzipDecompress(compressedData: string): Promise<any> {
-    const jsonString = Buffer.from(compressedData, 'base64').toString();
+    const jsonString = Buffer.from(compressedData, "base64").toString();
     return JSON.parse(jsonString);
   }
 
@@ -137,7 +131,7 @@ export class CompressionUtils {
   private static async brotliCompress(data: any): Promise<string> {
     // Simulate brotli compression (better compression ratio)
     const jsonString = JSON.stringify(data);
-    const compressed = Buffer.from(jsonString).toString('base64');
+    const compressed = Buffer.from(jsonString).toString("base64");
     return compressed.substring(0, Math.floor(compressed.length * 0.7)); // Simulate better compression
   }
 
@@ -146,7 +140,7 @@ export class CompressionUtils {
    */
   private static async brotliDecompress(compressedData: string): Promise<any> {
     // Simulate brotli decompression
-    const jsonString = Buffer.from(compressedData, 'base64').toString();
+    const jsonString = Buffer.from(compressedData, "base64").toString();
     return JSON.parse(jsonString);
   }
 
@@ -156,14 +150,14 @@ export class CompressionUtils {
   private static async lz4Compress(data: any): Promise<string> {
     // Simulate LZ4 compression (faster but less compression)
     const jsonString = JSON.stringify(data);
-    return Buffer.from(jsonString).toString('base64');
+    return Buffer.from(jsonString).toString("base64");
   }
 
   /**
    * LZ4 decompression
    */
   private static async lz4Decompress(compressedData: string): Promise<any> {
-    const jsonString = Buffer.from(compressedData, 'base64').toString();
+    const jsonString = Buffer.from(compressedData, "base64").toString();
     return JSON.parse(jsonString);
   }
 
@@ -171,14 +165,14 @@ export class CompressionUtils {
    * Default compression
    */
   private static async defaultCompress(data: any): Promise<string> {
-    return Buffer.from(JSON.stringify(data)).toString('base64');
+    return Buffer.from(JSON.stringify(data)).toString("base64");
   }
 
   /**
    * Default decompression
    */
   private static async defaultDecompress(compressedData: string): Promise<any> {
-    const jsonString = Buffer.from(compressedData, 'base64').toString();
+    const jsonString = Buffer.from(compressedData, "base64").toString();
     return JSON.parse(jsonString);
   }
 
@@ -188,27 +182,27 @@ export class CompressionUtils {
   static chooseOptimalCompression(
     data: any,
     networkCondition: NetworkCondition,
-    deviceCapabilities: DeviceCapabilities
+    deviceCapabilities: DeviceCapabilities,
   ): string {
     const dataSize = JSON.stringify(data).length;
-    
+
     // For small data, compression overhead might not be worth it
     if (dataSize < 1024) {
-      return 'none';
+      return "none";
     }
-    
+
     // For slow networks, prioritize compression ratio
-    if (networkCondition.speed === 'slow') {
-      return 'brotli';
+    if (networkCondition.speed === "slow") {
+      return "brotli";
     }
-    
+
     // For fast networks and low-end devices, prioritize speed
-    if (networkCondition.speed === 'fast' && deviceCapabilities.cpu === 'low') {
-      return 'lz4';
+    if (networkCondition.speed === "fast" && deviceCapabilities.cpu === "low") {
+      return "lz4";
     }
-    
+
     // Default to gzip for balanced performance
-    return 'gzip';
+    return "gzip";
   }
 }
 
@@ -219,38 +213,35 @@ export class SecurityUtils {
   /**
    * Encrypt sensitive data
    */
-  static encryptData(
-    data: any,
-    config: SecurityConfig
-  ): EncryptionResult {
+  static encryptData(data: any, config: SecurityConfig): EncryptionResult {
     try {
-      const algorithm = 'aes-256-gcm';
-      const key = Buffer.from(config.encryptionKey, 'hex');
+      const algorithm = "aes-256-gcm";
+      const key = Buffer.from(config.encryptionKey, "hex");
       const iv = randomBytes(16);
-      
+
       const cipher = createCipheriv(algorithm, key, iv);
-      
+
       const jsonString = JSON.stringify(data);
-      let encrypted = cipher.update(jsonString, 'utf8', 'hex');
-      encrypted += cipher.final('hex');
-      
+      let encrypted = cipher.update(jsonString, "utf8", "hex");
+      encrypted += cipher.final("hex");
+
       const authTag = cipher.getAuthTag();
-      
+
       return {
         success: true,
         encryptedData: encrypted,
-        iv: iv.toString('hex'),
-        authTag: authTag.toString('hex'),
-        algorithm
+        iv: iv.toString("hex"),
+        authTag: authTag.toString("hex"),
+        algorithm,
       };
     } catch (error) {
       return {
         success: false,
-        encryptedData: '',
-        iv: '',
-        authTag: '',
-        algorithm: '',
-        error: error.message
+        encryptedData: "",
+        iv: "",
+        authTag: "",
+        algorithm: "",
+        error: error.message,
       };
     }
   }
@@ -262,18 +253,18 @@ export class SecurityUtils {
     encryptedData: string,
     iv: string,
     authTag: string,
-    config: SecurityConfig
+    config: SecurityConfig,
   ): any {
     try {
-      const algorithm = 'aes-256-gcm';
-      const key = Buffer.from(config.encryptionKey, 'hex');
-      
-      const decipher = createDecipheriv(algorithm, key, Buffer.from(iv, 'hex'));
-      decipher.setAuthTag(Buffer.from(authTag, 'hex'));
-      
-      let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
-      decrypted += decipher.final('utf8');
-      
+      const algorithm = "aes-256-gcm";
+      const key = Buffer.from(config.encryptionKey, "hex");
+
+      const decipher = createDecipheriv(algorithm, key, Buffer.from(iv, "hex"));
+      decipher.setAuthTag(Buffer.from(authTag, "hex"));
+
+      let decrypted = decipher.update(encryptedData, "hex", "utf8");
+      decrypted += decipher.final("utf8");
+
       return JSON.parse(decrypted);
     } catch (error) {
       throw new Error(`Decryption failed: ${error.message}`);
@@ -283,8 +274,8 @@ export class SecurityUtils {
   /**
    * Generate secure hash
    */
-  static generateHash(data: string, algorithm: string = 'sha256'): string {
-    return createHash(algorithm).update(data).digest('hex');
+  static generateHash(data: string, algorithm: string = "sha256"): string {
+    return createHash(algorithm).update(data).digest("hex");
   }
 
   /**
@@ -295,10 +286,12 @@ export class SecurityUtils {
     url: string,
     body: string,
     timestamp: number,
-    secretKey: string
+    secretKey: string,
   ): string {
     const message = `${method}\n${url}\n${body}\n${timestamp}`;
-    return createHash('sha256').update(message + secretKey).digest('hex');
+    return createHash("sha256")
+      .update(message + secretKey)
+      .digest("hex");
   }
 
   /**
@@ -311,7 +304,7 @@ export class SecurityUtils {
     body: string,
     timestamp: number,
     secretKey: string,
-    tolerance: number = 300000 // 5 minutes
+    tolerance: number = 300000, // 5 minutes
   ): boolean {
     // Check timestamp tolerance
     const now = Date.now();
@@ -320,13 +313,7 @@ export class SecurityUtils {
     }
 
     // Generate expected signature
-    const expectedSignature = this.generateSignature(
-      method,
-      url,
-      body,
-      timestamp,
-      secretKey
-    );
+    const expectedSignature = this.generateSignature(method, url, body, timestamp, secretKey);
 
     return signature === expectedSignature;
   }
@@ -335,25 +322,25 @@ export class SecurityUtils {
    * Sanitize user input
    */
   static sanitizeInput(input: any): any {
-    if (typeof input === 'string') {
+    if (typeof input === "string") {
       return input
-        .replace(/<script[^>]*>.*?<\/script>/gi, '')
-        .replace(/<[^>]+>/g, '')
+        .replace(/<script[^>]*>.*?<\/script>/gi, "")
+        .replace(/<[^>]+>/g, "")
         .trim();
     }
-    
+
     if (Array.isArray(input)) {
-      return input.map(item => this.sanitizeInput(item));
+      return input.map((item) => this.sanitizeInput(item));
     }
-    
-    if (typeof input === 'object' && input !== null) {
+
+    if (typeof input === "object" && input !== null) {
       const sanitized: any = {};
       for (const [key, value] of Object.entries(input)) {
         sanitized[key] = this.sanitizeInput(value);
       }
       return sanitized;
     }
-    
+
     return input;
   }
 }
@@ -377,7 +364,7 @@ export class PerformanceUtils {
       networkLatency: 0,
       cacheHitRate: 0,
       errorRate: 0,
-      throughput: 0
+      throughput: 0,
     });
   }
 
@@ -400,7 +387,7 @@ export class PerformanceUtils {
    * Get current memory usage
    */
   static getMemoryUsage(): number {
-    if (typeof process !== 'undefined' && process.memoryUsage) {
+    if (typeof process !== "undefined" && process.memoryUsage) {
       return process.memoryUsage().heapUsed;
     }
     return 0;
@@ -412,7 +399,7 @@ export class PerformanceUtils {
   static async measureNetworkLatency(url: string): Promise<number> {
     const startTime = Date.now();
     try {
-      await fetch(url, { method: 'HEAD' });
+      await fetch(url, { method: "HEAD" });
       return Date.now() - startTime;
     } catch (error) {
       return -1; // Error indicator
@@ -436,30 +423,27 @@ export class PerformanceUtils {
   /**
    * Get performance recommendations
    */
-  static getPerformanceRecommendations(
-    metrics: PerformanceMetrics,
-    thresholds: any
-  ): string[] {
+  static getPerformanceRecommendations(metrics: PerformanceMetrics, thresholds: any): string[] {
     const recommendations: string[] = [];
 
     if (metrics.duration > thresholds.maxDuration) {
-      recommendations.push('Consider optimizing slow operations or implementing caching');
+      recommendations.push("Consider optimizing slow operations or implementing caching");
     }
 
     if (metrics.memoryUsage > thresholds.maxMemory) {
-      recommendations.push('High memory usage detected, consider data pagination or cleanup');
+      recommendations.push("High memory usage detected, consider data pagination or cleanup");
     }
 
     if (metrics.networkLatency > thresholds.maxLatency) {
-      recommendations.push('High network latency, consider request batching or local caching');
+      recommendations.push("High network latency, consider request batching or local caching");
     }
 
     if (metrics.cacheHitRate < thresholds.minCacheHitRate) {
-      recommendations.push('Low cache hit rate, review caching strategy');
+      recommendations.push("Low cache hit rate, review caching strategy");
     }
 
     if (metrics.errorRate > thresholds.maxErrorRate) {
-      recommendations.push('High error rate detected, implement better error handling');
+      recommendations.push("High error rate detected, implement better error handling");
     }
 
     return recommendations;
@@ -476,37 +460,37 @@ export class NetworkUtils {
   static detectNetworkCondition(): NetworkCondition {
     // In a real implementation, this would use navigator.connection API
     // For now, we'll simulate based on available information
-    
+
     const connection = (navigator as any)?.connection;
     if (connection) {
       const effectiveType = connection.effectiveType;
       const downlink = connection.downlink;
-      
-      let speed: 'slow' | 'medium' | 'fast';
-      if (effectiveType === '4g' && downlink > 10) {
-        speed = 'fast';
-      } else if (effectiveType === '3g' || (effectiveType === '4g' && downlink <= 10)) {
-        speed = 'medium';
+
+      let speed: "slow" | "medium" | "fast";
+      if (effectiveType === "4g" && downlink > 10) {
+        speed = "fast";
+      } else if (effectiveType === "3g" || (effectiveType === "4g" && downlink <= 10)) {
+        speed = "medium";
       } else {
-        speed = 'slow';
+        speed = "slow";
       }
-      
+
       return {
         type: effectiveType,
         speed,
         downlink,
         rtt: connection.rtt,
-        saveData: connection.saveData
+        saveData: connection.saveData,
       };
     }
-    
+
     // Default fallback
     return {
-      type: '4g',
-      speed: 'medium',
+      type: "4g",
+      speed: "medium",
       downlink: 5,
       rtt: 100,
-      saveData: false
+      saveData: false,
     };
   }
 
@@ -515,41 +499,41 @@ export class NetworkUtils {
    */
   static optimizeRequest(
     request: MobileApiRequest,
-    networkCondition: NetworkCondition
+    networkCondition: NetworkCondition,
   ): MobileApiRequest {
     const optimizedRequest = { ...request };
-    
+
     // Adjust based on network speed
-    if (networkCondition.speed === 'slow') {
+    if (networkCondition.speed === "slow") {
       // Reduce data size for slow networks
       optimizedRequest.compression = {
         enabled: true,
-        algorithm: 'brotli',
-        level: 9
+        algorithm: "brotli",
+        level: 9,
       };
-      
+
       // Enable aggressive caching
       optimizedRequest.cache = {
         enabled: true,
-        strategy: 'cache-first',
+        strategy: "cache-first",
         ttl: 3600000, // 1 hour
-        maxSize: 50 * 1024 * 1024 // 50MB
+        maxSize: 50 * 1024 * 1024, // 50MB
       };
-    } else if (networkCondition.speed === 'fast') {
+    } else if (networkCondition.speed === "fast") {
       // Optimize for speed on fast networks
       optimizedRequest.compression = {
         enabled: true,
-        algorithm: 'lz4',
-        level: 1
+        algorithm: "lz4",
+        level: 1,
       };
     }
-    
+
     // Handle save data mode
     if (networkCondition.saveData) {
       optimizedRequest.dataReduction = true;
-      optimizedRequest.imageQuality = 'low';
+      optimizedRequest.imageQuality = "low";
     }
-    
+
     return optimizedRequest;
   }
 
@@ -558,14 +542,14 @@ export class NetworkUtils {
    */
   static batchRequests(
     requests: MobileApiRequest[],
-    maxBatchSize: number = 10
+    maxBatchSize: number = 10,
   ): MobileApiRequest[][] {
     const batches: MobileApiRequest[][] = [];
-    
+
     for (let i = 0; i < requests.length; i += maxBatchSize) {
       batches.push(requests.slice(i, i + maxBatchSize));
     }
-    
+
     return batches;
   }
 
@@ -575,25 +559,25 @@ export class NetworkUtils {
   static async retryWithBackoff<T>(
     operation: () => Promise<T>,
     maxRetries: number = 3,
-    baseDelay: number = 1000
+    baseDelay: number = 1000,
   ): Promise<T> {
     let lastError: Error;
-    
+
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
         return await operation();
       } catch (error) {
         lastError = error as Error;
-        
+
         if (attempt === maxRetries) {
           throw lastError;
         }
-        
+
         const delay = baseDelay * Math.pow(2, attempt) + Math.random() * 1000;
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
-    
+
     throw lastError!;
   }
 }
@@ -607,40 +591,40 @@ export class ValidationUtils {
    */
   static validateRequest(request: MobileApiRequest): ValidationResult {
     const errors: string[] = [];
-    
+
     // Validate required fields
     if (!request.endpoint) {
-      errors.push('Endpoint is required');
+      errors.push("Endpoint is required");
     }
-    
+
     if (!request.method) {
-      errors.push('HTTP method is required');
+      errors.push("HTTP method is required");
     }
-    
+
     // Validate method
-    const validMethods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
+    const validMethods = ["GET", "POST", "PUT", "DELETE", "PATCH"];
     if (request.method && !validMethods.includes(request.method)) {
-      errors.push('Invalid HTTP method');
+      errors.push("Invalid HTTP method");
     }
-    
+
     // Validate headers
     if (request.headers) {
       for (const [key, value] of Object.entries(request.headers)) {
-        if (typeof key !== 'string' || typeof value !== 'string') {
+        if (typeof key !== "string" || typeof value !== "string") {
           errors.push(`Invalid header: ${key}`);
         }
       }
     }
-    
+
     // Validate timeout
     if (request.timeout && (request.timeout < 0 || request.timeout > 300000)) {
-      errors.push('Timeout must be between 0 and 300000ms');
+      errors.push("Timeout must be between 0 and 300000ms");
     }
-    
+
     return {
       isValid: errors.length === 0,
       errors,
-      warnings: []
+      warnings: [],
     };
   }
 
@@ -650,29 +634,30 @@ export class ValidationUtils {
   static validateResponse(response: MobileApiResponse): ValidationResult {
     const errors: string[] = [];
     const warnings: string[] = [];
-    
+
     // Validate status code
     if (!response.status || response.status < 100 || response.status > 599) {
-      errors.push('Invalid HTTP status code');
+      errors.push("Invalid HTTP status code");
     }
-    
+
     // Validate response time
     if (response.responseTime && response.responseTime > 10000) {
-      warnings.push('Response time is very high (>10s)');
+      warnings.push("Response time is very high (>10s)");
     }
-    
+
     // Validate data size
     if (response.data) {
       const dataSize = JSON.stringify(response.data).length;
-      if (dataSize > 10 * 1024 * 1024) { // 10MB
-        warnings.push('Response data is very large (>10MB)');
+      if (dataSize > 10 * 1024 * 1024) {
+        // 10MB
+        warnings.push("Response data is very large (>10MB)");
       }
     }
-    
+
     return {
       isValid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     };
   }
 
@@ -681,27 +666,27 @@ export class ValidationUtils {
    */
   static validateDeviceCapabilities(capabilities: DeviceCapabilities): ValidationResult {
     const errors: string[] = [];
-    
+
     // Validate CPU level
-    const validCpuLevels = ['low', 'medium', 'high'];
+    const validCpuLevels = ["low", "medium", "high"];
     if (!validCpuLevels.includes(capabilities.cpu)) {
-      errors.push('Invalid CPU level');
+      errors.push("Invalid CPU level");
     }
-    
+
     // Validate memory
     if (capabilities.memory <= 0) {
-      errors.push('Memory must be positive');
+      errors.push("Memory must be positive");
     }
-    
+
     // Validate storage
     if (capabilities.storage <= 0) {
-      errors.push('Storage must be positive');
+      errors.push("Storage must be positive");
     }
-    
+
     return {
       isValid: errors.length === 0,
       errors,
-      warnings: []
+      warnings: [],
     };
   }
 }
@@ -716,69 +701,70 @@ export class OptimizationUtils {
   static determineStrategy(
     networkCondition: NetworkCondition,
     deviceCapabilities: DeviceCapabilities,
-    dataSize: number
+    dataSize: number,
   ): OptimizationStrategy {
     const strategy: OptimizationStrategy = {
       compression: {
         enabled: false,
-        algorithm: 'gzip',
-        level: 6
+        algorithm: "gzip",
+        level: 6,
       },
       caching: {
         enabled: true,
-        strategy: 'cache-first',
+        strategy: "cache-first",
         ttl: 3600000,
-        maxSize: 100 * 1024 * 1024
+        maxSize: 100 * 1024 * 1024,
       },
       batching: {
         enabled: false,
         maxBatchSize: 10,
-        batchTimeout: 1000
+        batchTimeout: 1000,
       },
       prefetching: {
         enabled: false,
         maxPrefetchSize: 5 * 1024 * 1024,
-        prefetchThreshold: 0.8
+        prefetchThreshold: 0.8,
       },
       dataReduction: {
         enabled: false,
-        imageQuality: 'medium',
-        removeMetadata: true
-      }
+        imageQuality: "medium",
+        removeMetadata: true,
+      },
     };
-    
+
     // Enable compression for large data or slow networks
-    if (dataSize > 10 * 1024 || networkCondition.speed === 'slow') {
+    if (dataSize > 10 * 1024 || networkCondition.speed === "slow") {
       strategy.compression.enabled = true;
-      
-      if (networkCondition.speed === 'slow') {
-        strategy.compression.algorithm = 'brotli';
+
+      if (networkCondition.speed === "slow") {
+        strategy.compression.algorithm = "brotli";
         strategy.compression.level = 9;
-      } else if (deviceCapabilities.cpu === 'low') {
-        strategy.compression.algorithm = 'lz4';
+      } else if (deviceCapabilities.cpu === "low") {
+        strategy.compression.algorithm = "lz4";
         strategy.compression.level = 1;
       }
     }
-    
+
     // Adjust caching based on device capabilities
-    if (deviceCapabilities.storage < 1024 * 1024 * 1024) { // Less than 1GB
+    if (deviceCapabilities.storage < 1024 * 1024 * 1024) {
+      // Less than 1GB
       strategy.caching.maxSize = 50 * 1024 * 1024; // 50MB
     }
-    
+
     // Enable batching for multiple requests
     strategy.batching.enabled = true;
-    
+
     // Enable prefetching for fast networks and high-end devices
-    if (networkCondition.speed === 'fast' && deviceCapabilities.cpu === 'high') {
+    if (networkCondition.speed === "fast" && deviceCapabilities.cpu === "high") {
       strategy.prefetching.enabled = true;
     }
-    
+
     // Enable data reduction for slow networks or save data mode
-    if (networkCondition.speed === 'slow' || networkCondition.saveData) {
+    if (networkCondition.speed === "slow" || networkCondition.saveData) {
       strategy.dataReduction.enabled = true;
-      strategy.dataReduction.imageQuality = 'low';
+      strategy.dataReduction.imageQuality = "low";
     }
-    
+
     return strategy;
   }
 
@@ -787,26 +773,26 @@ export class OptimizationUtils {
    */
   static applyOptimization(
     request: MobileApiRequest,
-    strategy: OptimizationStrategy
+    strategy: OptimizationStrategy,
   ): MobileApiRequest {
     const optimizedRequest = { ...request };
-    
+
     // Apply compression settings
     if (strategy.compression.enabled) {
       optimizedRequest.compression = strategy.compression;
     }
-    
+
     // Apply caching settings
     if (strategy.caching.enabled) {
       optimizedRequest.cache = strategy.caching;
     }
-    
+
     // Apply data reduction settings
     if (strategy.dataReduction.enabled) {
       optimizedRequest.dataReduction = strategy.dataReduction.enabled;
       optimizedRequest.imageQuality = strategy.dataReduction.imageQuality;
     }
-    
+
     return optimizedRequest;
   }
 }
@@ -820,7 +806,7 @@ export const MobileApiUtils = {
   PerformanceUtils,
   NetworkUtils,
   ValidationUtils,
-  OptimizationUtils
+  OptimizationUtils,
 };
 
 export default MobileApiUtils;

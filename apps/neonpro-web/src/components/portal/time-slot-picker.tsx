@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Clock, Calendar as CalendarIcon, AlertCircle } from 'lucide-react';
-import { useTranslation } from '@/app/lib/i18n/use-translation';
-import type { AvailableTimeSlot } from '@/app/types/appointments';
-import { RealTimeAvailability } from '@/components/dashboard/real-time-availability';
-import { BookingConflictPrevention } from '@/components/dashboard/booking-conflict-prevention';
-import { useAvailabilityManager } from '@/hooks/use-availability-manager';
-import type { TimeSlot } from '@/hooks/use-realtime-availability';
-import { format } from 'date-fns';
+import React, { useState, useEffect, useMemo } from "react";
+import type { motion } from "framer-motion";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Calendar } from "@/components/ui/calendar";
+import type { Badge } from "@/components/ui/badge";
+import type { Skeleton } from "@/components/ui/skeleton";
+import type { Clock, Calendar as CalendarIcon, AlertCircle } from "lucide-react";
+import type { useTranslation } from "@/app/lib/i18n/use-translation";
+import type { AvailableTimeSlot } from "@/app/types/appointments";
+import type { RealTimeAvailability } from "@/components/dashboard/real-time-availability";
+import type { BookingConflictPrevention } from "@/components/dashboard/booking-conflict-prevention";
+import type { useAvailabilityManager } from "@/hooks/use-availability-manager";
+import type { TimeSlot } from "@/hooks/use-realtime-availability";
+import type { format } from "date-fns";
 
 interface TimeSlotPickerProps {
   serviceId?: string;
@@ -31,7 +31,7 @@ export default function TimeSlotPicker({
   selectedTimeSlot,
   onTimeSlotSelect,
   isLoading,
-  patientId
+  patientId,
 }: TimeSlotPickerProps) {
   const { t } = useTranslation();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
@@ -46,7 +46,7 @@ export default function TimeSlotPicker({
       professionalId,
       serviceId,
       date: selectedDate,
-      onlyAvailable: true
+      onlyAvailable: true,
     });
   }, [professionalId, serviceId, selectedDate, availabilityManager]);
 
@@ -55,11 +55,11 @@ export default function TimeSlotPicker({
     return {
       id: slot.id,
       professional_id: slot.professional_id,
-      professional_name: 'Professional', // Will be populated from relations
-      specialty: 'specialist',
+      professional_name: "Professional", // Will be populated from relations
+      specialty: "specialist",
       start_time: `${slot.date}T${slot.start_time}Z`,
       end_time: `${slot.date}T${slot.end_time}Z`,
-      duration_minutes: 60 // Default duration
+      duration_minutes: 60, // Default duration
     };
   };
 
@@ -73,7 +73,7 @@ export default function TimeSlotPicker({
   // Format time for display
   const formatTime = (time: string) => {
     try {
-      return format(new Date(`2000-01-01T${time}`), 'HH:mm');
+      return format(new Date(`2000-01-01T${time}`), "HH:mm");
     } catch {
       return time;
     }
@@ -85,7 +85,7 @@ export default function TimeSlotPicker({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="h-5 w-5" />
-            {t('booking.steps.time.title')}
+            {t("booking.steps.time.title")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -95,7 +95,7 @@ export default function TimeSlotPicker({
               <Skeleton className="h-6 w-32" />
               <Skeleton className="h-64 w-full" />
             </div>
-            
+
             {/* Time slots skeleton */}
             <div className="space-y-4">
               <Skeleton className="h-6 w-40" />
@@ -116,19 +116,19 @@ export default function TimeSlotPicker({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Clock className="h-5 w-5" />
-          {t('booking.steps.time.title')}
+          {t("booking.steps.time.title")}
         </CardTitle>
       </CardHeader>
-      
+
       <CardContent className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Date Selection */}
           <div className="space-y-4">
             <h3 className="text-sm font-medium flex items-center gap-2">
               <CalendarIcon className="h-4 w-4" />
-              {t('booking.date.title')}
+              {t("booking.date.title")}
             </h3>
-            
+
             <Calendar
               mode="single"
               selected={selectedDate}
@@ -136,20 +136,18 @@ export default function TimeSlotPicker({
               disabled={(date) => date < new Date() || date.getDay() === 0} // Disable past dates and Sundays
               className="rounded-md border"
             />
-            
+
             {selectedDate && (
               <Badge variant="outline" className="mt-2">
-                {format(selectedDate, 'EEEE, dd/MM/yyyy')}
+                {format(selectedDate, "EEEE, dd/MM/yyyy")}
               </Badge>
             )}
           </div>
 
           {/* Real-time Availability Display */}
           <div className="space-y-4">
-            <h3 className="text-sm font-medium">
-              {t('booking.availability.title')}
-            </h3>
-            
+            <h3 className="text-sm font-medium">{t("booking.availability.title")}</h3>
+
             <RealTimeAvailability
               professionalId={professionalId}
               serviceId={serviceId}
@@ -177,14 +175,15 @@ export default function TimeSlotPicker({
             className="p-4 bg-primary/10 border border-primary/20 rounded-lg"
           >
             <h4 className="font-medium text-primary mb-2">
-              {t('booking.steps.time.selected_slot')}
+              {t("booking.steps.time.selected_slot")}
             </h4>
             <div className="flex items-center gap-4 text-sm">
               <Badge variant="default">
-                {format(new Date(selectedTimeSlot.start_time), 'dd/MM/yyyy')}
+                {format(new Date(selectedTimeSlot.start_time), "dd/MM/yyyy")}
               </Badge>
               <span>
-                {format(new Date(selectedTimeSlot.start_time), 'HH:mm')} às {format(new Date(selectedTimeSlot.end_time), 'HH:mm')}
+                {format(new Date(selectedTimeSlot.start_time), "HH:mm")} às{" "}
+                {format(new Date(selectedTimeSlot.end_time), "HH:mm")}
               </span>
             </div>
           </motion.div>
@@ -198,7 +197,11 @@ export default function TimeSlotPicker({
               <span className="font-medium">
                 {availabilityManager.availability.availabilityRate}%
               </span>
-              <Badge variant={availabilityManager.availability.availabilityRate > 50 ? 'default' : 'secondary'}>
+              <Badge
+                variant={
+                  availabilityManager.availability.availabilityRate > 50 ? "default" : "secondary"
+                }
+              >
                 {availabilityManager.availability.available} disponíveis
               </Badge>
             </div>
@@ -206,19 +209,15 @@ export default function TimeSlotPicker({
         )}
 
         {/* No slots available message */}
-        {!availabilityManager.isLoading && 
-         availabilityManager.timeSlots.length === 0 && 
-         selectedDate && (
-          <div className="text-center py-8 text-muted-foreground">
-            <AlertCircle className="h-8 w-8 mx-auto mb-2" />
-            <p className="text-sm">
-              {t('booking.time.no_slots_available')}
-            </p>
-            <p className="text-xs mt-1">
-              Tente selecionar outra data ou profissional
-            </p>
-          </div>
-        )}
+        {!availabilityManager.isLoading &&
+          availabilityManager.timeSlots.length === 0 &&
+          selectedDate && (
+            <div className="text-center py-8 text-muted-foreground">
+              <AlertCircle className="h-8 w-8 mx-auto mb-2" />
+              <p className="text-sm">{t("booking.time.no_slots_available")}</p>
+              <p className="text-xs mt-1">Tente selecionar outra data ou profissional</p>
+            </div>
+          )}
       </CardContent>
     </Card>
   );

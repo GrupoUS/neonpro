@@ -4,5 +4,5 @@ exports.default = TestOAuthPage;
 // app/test-oauth/page.tsx
 var test_page_1 = require("@/app/login/test-page");
 function TestOAuthPage() {
-    return <test_page_1.default />;
+  return <test_page_1.default />;
 }

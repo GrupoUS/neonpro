@@ -7,10 +7,10 @@ export class MarketingCampaignsService {
   static async createCampaign(campaignData: any) {
     // Implementar criação de campanha
     return {
-      id: 'campaign-id',
+      id: "campaign-id",
       name: campaignData.name,
-      status: 'draft',
-      createdAt: new Date()
+      status: "draft",
+      createdAt: new Date(),
     };
   }
 
@@ -18,9 +18,9 @@ export class MarketingCampaignsService {
     // Implementar execução de campanha
     return {
       campaignId,
-      status: 'running',
+      status: "running",
       startedAt: new Date(),
-      estimatedReach: 0
+      estimatedReach: 0,
     };
   }
 
@@ -32,9 +32,9 @@ export class MarketingCampaignsService {
         impressions: 0,
         clicks: 0,
         conversions: 0,
-        roi: 0
+        roi: 0,
       },
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
   }
 }

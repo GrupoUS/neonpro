@@ -1,24 +1,24 @@
-import { BackupManager } from './core/backup-manager';
-import { RecoveryManager } from './recovery/recovery-manager';
-import { StorageManager } from './storage/storage-providers';
-import { BackupStrategyManager } from './strategies/backup-strategies';
-import { AuditLogger } from '../auth/audit/audit-logger';
-import { EncryptionService } from '../security/encryption-service';
-import { LGPDManager } from '../lgpd/lgpd-manager';
+import type { BackupManager } from "./core/backup-manager";
+import type { RecoveryManager } from "./recovery/recovery-manager";
+import type { StorageManager } from "./storage/storage-providers";
+import type { BackupStrategyManager } from "./strategies/backup-strategies";
+import type { AuditLogger } from "../auth/audit/audit-logger";
+import type { EncryptionService } from "../security/encryption-service";
+import type { LGPDManager } from "../lgpd/lgpd-manager";
 
 // Re-export all types and interfaces
-export * from './core/backup-manager';
-export * from './recovery/recovery-manager';
-export * from './storage/storage-providers';
-export * from './strategies/backup-strategies';
+export * from "./core/backup-manager";
+export * from "./recovery/recovery-manager";
+export * from "./storage/storage-providers";
+export * from "./strategies/backup-strategies";
 
 /**
  * Sistema Unificado de Backup e Recovery
- * 
+ *
  * Este sistema fornece uma solução completa para backup e recuperação de dados,
  * incluindo múltiplas estratégias de backup, provedores de armazenamento,
  * planos de recuperação e monitoramento em tempo real.
- * 
+ *
  * Características principais:
  * - Backup automático e manual
  * - Múltiplos provedores de armazenamento (Local, S3, Azure, GCP)
@@ -61,7 +61,7 @@ export class BackupRecoverySystem {
   }): Promise<void> {
     try {
       if (this.isInitialized) {
-        throw new Error('Sistema já foi inicializado');
+        throw new Error("Sistema já foi inicializado");
       }
 
       // Configurar provedores de armazenamento padrão
@@ -78,17 +78,17 @@ export class BackupRecoverySystem {
       this.isInitialized = true;
 
       await this.auditLogger.log({
-        action: 'backup_system_initialized',
-        resource_type: 'backup_system',
-        resource_id: 'main',
+        action: "backup_system_initialized",
+        resource_type: "backup_system",
+        resource_id: "main",
         details: {
           auto_start_backup: config?.auto_start_backup,
           encryption_enabled: config?.encryption_enabled,
-          compression_enabled: config?.compression_enabled
-        }
+          compression_enabled: config?.compression_enabled,
+        },
       });
 
-      console.log('✅ Sistema de Backup e Recovery inicializado com sucesso');
+      console.log("✅ Sistema de Backup e Recovery inicializado com sucesso");
     } catch (error) {
       throw new Error(`Erro ao inicializar sistema: ${error}`);
     }
@@ -107,12 +107,12 @@ export class BackupRecoverySystem {
       this.isInitialized = false;
 
       await this.auditLogger.log({
-        action: 'backup_system_shutdown',
-        resource_type: 'backup_system',
-        resource_id: 'main'
+        action: "backup_system_shutdown",
+        resource_type: "backup_system",
+        resource_id: "main",
       });
 
-      console.log('✅ Sistema de Backup e Recovery finalizado');
+      console.log("✅ Sistema de Backup e Recovery finalizado");
     } catch (error) {
       throw new Error(`Erro ao finalizar sistema: ${error}`);
     }
@@ -131,31 +131,31 @@ export class BackupRecoverySystem {
       compression_enabled?: boolean;
       retention_days?: number;
     },
-    userId: string
+    userId: string,
   ): Promise<string> {
     try {
       this.ensureInitialized();
 
       const backupConfig = {
-        backup_type: 'manual' as const,
+        backup_type: "manual" as const,
         schedule: null,
         data_sources: config.data_sources,
         storage_config: {
-          provider: config.storage_provider || 'local',
+          provider: config.storage_provider || "local",
           encryption_enabled: config.encryption_enabled ?? true,
           compression_enabled: config.compression_enabled ?? true,
-          retention_days: config.retention_days ?? 30
+          retention_days: config.retention_days ?? 30,
         },
         notification_config: {
           on_success: true,
           on_failure: true,
-          recipients: [userId]
+          recipients: [userId],
         },
         metadata: {
           name: config.name,
           description: config.description,
-          created_by: userId
-        }
+          created_by: userId,
+        },
       };
 
       return await this.backupManager.createBackup(backupConfig, userId);
@@ -178,31 +178,31 @@ export class BackupRecoverySystem {
       compression_enabled?: boolean;
       retention_days?: number;
     },
-    userId: string
+    userId: string,
   ): Promise<string> {
     try {
       this.ensureInitialized();
 
       const backupConfig = {
-        backup_type: 'scheduled' as const,
+        backup_type: "scheduled" as const,
         schedule: config.schedule,
         data_sources: config.data_sources,
         storage_config: {
-          provider: config.storage_provider || 'local',
+          provider: config.storage_provider || "local",
           encryption_enabled: config.encryption_enabled ?? true,
           compression_enabled: config.compression_enabled ?? true,
-          retention_days: config.retention_days ?? 30
+          retention_days: config.retention_days ?? 30,
         },
         notification_config: {
           on_success: true,
           on_failure: true,
-          recipients: [userId]
+          recipients: [userId],
         },
         metadata: {
           name: config.name,
           description: config.description,
-          created_by: userId
-        }
+          created_by: userId,
+        },
       };
 
       return await this.backupManager.createBackup(backupConfig, userId);
@@ -218,7 +218,7 @@ export class BackupRecoverySystem {
     config: {
       name: string;
       description?: string;
-      recovery_type: 'full_restore' | 'partial_restore' | 'point_in_time' | 'selective_restore';
+      recovery_type: "full_restore" | "partial_restore" | "point_in_time" | "selective_restore";
       target_timestamp: Date;
       data_sources: string[];
       recovery_steps: any[];
@@ -227,14 +227,14 @@ export class BackupRecoverySystem {
       rollback_plan?: any[];
       validation_checks?: any[];
     },
-    userId: string
+    userId: string,
   ): Promise<string> {
     try {
       this.ensureInitialized();
 
       const planData = {
         name: config.name,
-        description: config.description || '',
+        description: config.description || "",
         recovery_type: config.recovery_type,
         target_timestamp: config.target_timestamp,
         data_sources: config.data_sources,
@@ -244,8 +244,8 @@ export class BackupRecoverySystem {
         rollback_plan: config.rollback_plan || [],
         validation_checks: config.validation_checks || [],
         metadata: {
-          created_by: userId
-        }
+          created_by: userId,
+        },
       };
 
       return await this.recoveryManager.createRecoveryPlan(planData, userId);
@@ -265,7 +265,7 @@ export class BackupRecoverySystem {
       skip_validation?: boolean;
       force_execution?: boolean;
       custom_parameters?: Record<string, any>;
-    }
+    },
   ): Promise<string> {
     try {
       this.ensureInitialized();
@@ -314,7 +314,7 @@ export class BackupRecoverySystem {
     pagination?: {
       page: number;
       limit: number;
-    }
+    },
   ): Promise<any> {
     try {
       this.ensureInitialized();
@@ -336,7 +336,7 @@ export class BackupRecoverySystem {
     pagination?: {
       page: number;
       limit: number;
-    }
+    },
   ): Promise<any> {
     try {
       this.ensureInitialized();
@@ -360,7 +360,7 @@ export class BackupRecoverySystem {
     pagination?: {
       page: number;
       limit: number;
-    }
+    },
   ): Promise<any> {
     try {
       this.ensureInitialized();
@@ -373,7 +373,7 @@ export class BackupRecoverySystem {
   /**
    * Obtém métricas de backup
    */
-  async getBackupMetrics(period: 'day' | 'week' | 'month' = 'month'): Promise<any> {
+  async getBackupMetrics(period: "day" | "week" | "month" = "month"): Promise<any> {
     try {
       this.ensureInitialized();
       return await this.backupManager.getBackupMetrics(period);
@@ -385,7 +385,7 @@ export class BackupRecoverySystem {
   /**
    * Obtém métricas de recuperação
    */
-  async getRecoveryMetrics(period: 'day' | 'week' | 'month' = 'month'): Promise<any> {
+  async getRecoveryMetrics(period: "day" | "week" | "month" = "month"): Promise<any> {
     try {
       this.ensureInitialized();
       return await this.recoveryManager.getRecoveryMetrics(period);
@@ -427,15 +427,15 @@ export class BackupRecoverySystem {
   }> {
     try {
       this.ensureInitialized();
-      
+
       const [storageCleanup, backupCleanup] = await Promise.all([
         this.storageManager.cleanupAll(olderThanDays),
-        this.backupManager.cleanupExpiredBackups()
+        this.backupManager.cleanupExpiredBackups(),
       ]);
-      
+
       return {
         storage_cleanup: storageCleanup,
-        backup_cleanup: backupCleanup
+        backup_cleanup: backupCleanup,
       };
     } catch (error) {
       throw new Error(`Erro na limpeza: ${error}`);
@@ -451,42 +451,42 @@ export class BackupRecoverySystem {
       deep_verification?: boolean;
       check_encryption?: boolean;
       validate_checksums?: boolean;
-    }
+    },
   ): Promise<any> {
     try {
       this.ensureInitialized();
-      
+
       if (jobId) {
         return await this.backupManager.verifyBackup(jobId, options);
       } else {
         // Verificar todos os backups recentes
         const backups = await this.backupManager.listBackups({
-          status: ['completed'],
-          date_from: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) // Últimos 7 dias
+          status: ["completed"],
+          date_from: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // Últimos 7 dias
         });
-        
+
         const verificationResults = [];
         for (const backup of backups.jobs) {
           try {
             const result = await this.backupManager.verifyBackup(backup.id, options);
             verificationResults.push({
               job_id: backup.id,
-              ...result
+              ...result,
             });
           } catch (error) {
             verificationResults.push({
               job_id: backup.id,
               valid: false,
-              error: error.toString()
+              error: error.toString(),
             });
           }
         }
-        
+
         return {
           total_verified: verificationResults.length,
-          valid_backups: verificationResults.filter(r => r.valid).length,
-          invalid_backups: verificationResults.filter(r => !r.valid).length,
-          results: verificationResults
+          valid_backups: verificationResults.filter((r) => r.valid).length,
+          invalid_backups: verificationResults.filter((r) => !r.valid).length,
+          results: verificationResults,
         };
       }
     } catch (error) {
@@ -497,10 +497,7 @@ export class BackupRecoverySystem {
   /**
    * Testa um plano de recuperação (dry run)
    */
-  async testRecoveryPlan(
-    planId: string,
-    userId: string
-  ): Promise<any> {
+  async testRecoveryPlan(planId: string, userId: string): Promise<any> {
     try {
       this.ensureInitialized();
       return await this.recoveryManager.testRecoveryPlan(planId, userId);
@@ -573,7 +570,7 @@ export class BackupRecoverySystem {
    * Obtém relatório completo do sistema
    */
   async getSystemReport(): Promise<{
-    system_status: 'healthy' | 'warning' | 'error';
+    system_status: "healthy" | "warning" | "error";
     backup_metrics: any;
     recovery_metrics: any;
     storage_metrics: any[];
@@ -583,63 +580,78 @@ export class BackupRecoverySystem {
   }> {
     try {
       this.ensureInitialized();
-      
-      const [backupMetrics, recoveryMetrics, storageMetrics, storageConnections] = await Promise.all([
-        this.getBackupMetrics(),
-        this.getRecoveryMetrics(),
-        this.getStorageMetrics(),
-        this.testStorageConnections()
-      ]);
-      
+
+      const [backupMetrics, recoveryMetrics, storageMetrics, storageConnections] =
+        await Promise.all([
+          this.getBackupMetrics(),
+          this.getRecoveryMetrics(),
+          this.getStorageMetrics(),
+          this.testStorageConnections(),
+        ]);
+
       // Determinar status do sistema
-      const allConnectionsHealthy = Object.values(storageConnections).every(connected => connected);
+      const allConnectionsHealthy = Object.values(storageConnections).every(
+        (connected) => connected,
+      );
       const backupSuccessRate = backupMetrics.success_rate || 0;
       const recoverySuccessRate = recoveryMetrics.success_rate || 0;
-      
-      let systemStatus: 'healthy' | 'warning' | 'error' = 'healthy';
-      
+
+      let systemStatus: "healthy" | "warning" | "error" = "healthy";
+
       if (!allConnectionsHealthy || backupSuccessRate < 80 || recoverySuccessRate < 80) {
-        systemStatus = 'error';
+        systemStatus = "error";
       } else if (backupSuccessRate < 95 || recoverySuccessRate < 95) {
-        systemStatus = 'warning';
+        systemStatus = "warning";
       }
-      
+
       // Gerar recomendações
       const recommendations: string[] = [];
-      
+
       if (backupSuccessRate < 95) {
-        recommendations.push('Taxa de sucesso de backup abaixo do ideal. Verificar configurações e conectividade.');
+        recommendations.push(
+          "Taxa de sucesso de backup abaixo do ideal. Verificar configurações e conectividade.",
+        );
       }
-      
+
       if (recoverySuccessRate < 95) {
-        recommendations.push('Taxa de sucesso de recuperação abaixo do ideal. Revisar planos de recuperação.');
+        recommendations.push(
+          "Taxa de sucesso de recuperação abaixo do ideal. Revisar planos de recuperação.",
+        );
       }
-      
+
       if (!allConnectionsHealthy) {
-        recommendations.push('Alguns provedores de armazenamento estão inacessíveis. Verificar conectividade.');
+        recommendations.push(
+          "Alguns provedores de armazenamento estão inacessíveis. Verificar conectividade.",
+        );
       }
-      
-      const totalStorageUsed = storageMetrics.reduce((sum, metric) => sum + metric.used_storage_gb, 0);
-      const totalStorageAvailable = storageMetrics.reduce((sum, metric) => sum + metric.total_storage_gb, 0);
-      
+
+      const totalStorageUsed = storageMetrics.reduce(
+        (sum, metric) => sum + metric.used_storage_gb,
+        0,
+      );
+      const totalStorageAvailable = storageMetrics.reduce(
+        (sum, metric) => sum + metric.total_storage_gb,
+        0,
+      );
+
       if (totalStorageUsed / totalStorageAvailable > 0.8) {
-        recommendations.push('Uso de armazenamento acima de 80%. Considerar limpeza ou expansão.');
+        recommendations.push("Uso de armazenamento acima de 80%. Considerar limpeza ou expansão.");
       }
-      
+
       // Atividades recentes (simulado)
       const recentActivities = [
         {
-          type: 'backup_completed',
+          type: "backup_completed",
           timestamp: new Date(),
-          description: 'Backup automático concluído com sucesso'
+          description: "Backup automático concluído com sucesso",
         },
         {
-          type: 'recovery_planned',
+          type: "recovery_planned",
           timestamp: new Date(Date.now() - 60 * 60 * 1000),
-          description: 'Novo plano de recuperação criado'
-        }
+          description: "Novo plano de recuperação criado",
+        },
       ];
-      
+
       return {
         system_status: systemStatus,
         backup_metrics: backupMetrics,
@@ -647,7 +659,7 @@ export class BackupRecoverySystem {
         storage_metrics: storageMetrics,
         storage_connections: storageConnections,
         recent_activities: recentActivities,
-        recommendations
+        recommendations,
       };
     } catch (error) {
       throw new Error(`Erro ao gerar relatório: ${error}`);
@@ -657,19 +669,19 @@ export class BackupRecoverySystem {
   // Métodos privados
   private ensureInitialized(): void {
     if (!this.isInitialized) {
-      throw new Error('Sistema não foi inicializado. Chame initialize() primeiro.');
+      throw new Error("Sistema não foi inicializado. Chame initialize() primeiro.");
     }
   }
 
   private async setupDefaultStorageProviders(): Promise<void> {
     // Configurar provedor local padrão
     await this.storageManager.registerProvider({
-      provider: 'local',
-      name: 'local_default',
+      provider: "local",
+      name: "local_default",
       enabled: true,
       priority: 1,
       connection_config: {
-        base_path: './backups'
+        base_path: "./backups",
       },
       encryption_enabled: true,
       compression_enabled: true,
@@ -677,16 +689,16 @@ export class BackupRecoverySystem {
       max_storage_gb: 100,
       cost_per_gb: 0,
       metadata: {
-        description: 'Provedor de armazenamento local padrão'
-      }
+        description: "Provedor de armazenamento local padrão",
+      },
     });
 
-    console.log('✅ Provedores de armazenamento padrão configurados');
+    console.log("✅ Provedores de armazenamento padrão configurados");
   }
 
   private async setupDefaultBackupStrategies(): Promise<void> {
     // As estratégias são configuradas automaticamente no BackupStrategyManager
-    console.log('✅ Estratégias de backup padrão configuradas');
+    console.log("✅ Estratégias de backup padrão configuradas");
   }
 }
 

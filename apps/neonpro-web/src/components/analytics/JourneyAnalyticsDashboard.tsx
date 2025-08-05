@@ -1,28 +1,45 @@
-'use client'
+"use client";
 
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Calendar } from '@/components/ui/calendar'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { 
-  Activity, 
-  Users, 
-  TrendingUp, 
-  TrendingDown, 
-  AlertTriangle, 
-  CheckCircle, 
-  Clock, 
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Progress } from "@/components/ui/progress";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Calendar } from "@/components/ui/calendar";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type {
+  Activity,
+  Users,
+  TrendingUp,
+  TrendingDown,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
   Target,
   Filter,
   Download,
@@ -51,234 +68,262 @@ import {
   Globe,
   Smartphone,
   Monitor,
-  TabletSmartphone
-} from 'lucide-react'
-import { format, subDays, subMonths, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
-import { cn } from '@/lib/utils'
+  TabletSmartphone,
+} from "lucide-react";
+import type {
+  format,
+  subDays,
+  subMonths,
+  startOfMonth,
+  endOfMonth,
+  isWithinInterval,
+} from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { cn } from "@/lib/utils";
 
 // Type Definitions
 interface MetricsData {
-  totalPatients: number
-  totalTouchpoints: number
-  averageSatisfaction: number
-  conversionRate: number
-  churnRate: number
-  averageJourneyTime: number
-  npsScore: number
-  optimizationOpportunities: number
+  totalPatients: number;
+  totalTouchpoints: number;
+  averageSatisfaction: number;
+  conversionRate: number;
+  churnRate: number;
+  averageJourneyTime: number;
+  npsScore: number;
+  optimizationOpportunities: number;
   trends: {
-    patients: number
-    satisfaction: number
-    conversion: number
-    churn: number
-  }
+    patients: number;
+    satisfaction: number;
+    conversion: number;
+    churn: number;
+  };
 }
 
 interface JourneyStage {
-  id: string
-  name: string
-  order: number
-  totalPatients: number
-  conversionRate: number
-  averageTime: number
-  satisfactionScore: number
-  dropOffRate: number
-  touchpoints: TouchpointData[]
+  id: string;
+  name: string;
+  order: number;
+  totalPatients: number;
+  conversionRate: number;
+  averageTime: number;
+  satisfactionScore: number;
+  dropOffRate: number;
+  touchpoints: TouchpointData[];
 }
 
 interface TouchpointData {
-  id: string
-  name: string
-  type: string
-  channel: string
-  interactions: number
-  satisfaction: number
-  conversionRate: number
-  issues: number
-  optimization: number
+  id: string;
+  name: string;
+  type: string;
+  channel: string;
+  interactions: number;
+  satisfaction: number;
+  conversionRate: number;
+  issues: number;
+  optimization: number;
   trends: {
-    interactions: number
-    satisfaction: number
-    conversion: number
-  }
+    interactions: number;
+    satisfaction: number;
+    conversion: number;
+  };
 }
 
 interface PatientFlow {
-  stage: string
-  patients: number
-  percentage: number
-  trend: number
-  color: string
+  stage: string;
+  patients: number;
+  percentage: number;
+  trend: number;
+  color: string;
 }
 
 interface ChurnRisk {
-  patientId: string
-  patientName: string
-  riskScore: number
-  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
-  factors: string[]
-  lastActivity: Date
-  predictedChurnDate: Date
-  recommendedActions: string[]
+  patientId: string;
+  patientName: string;
+  riskScore: number;
+  riskLevel: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  factors: string[];
+  lastActivity: Date;
+  predictedChurnDate: Date;
+  recommendedActions: string[];
 }
 
 interface ExperienceRecommendation {
-  id: string
-  type: 'IMPROVEMENT' | 'OPTIMIZATION' | 'PREVENTION'
-  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
-  title: string
-  description: string
-  impact: string
-  effort: string
-  roi: number
-  touchpoints: string[]
-  implementation: string[]
-  metrics: string[]
+  id: string;
+  type: "IMPROVEMENT" | "OPTIMIZATION" | "PREVENTION";
+  priority: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  title: string;
+  description: string;
+  impact: string;
+  effort: string;
+  roi: number;
+  touchpoints: string[];
+  implementation: string[];
+  metrics: string[];
 }
 
 interface SatisfactionMetric {
-  category: string
-  score: number
-  trend: number
-  target: number
-  responses: number
+  category: string;
+  score: number;
+  trend: number;
+  target: number;
+  responses: number;
   breakdown: {
-    excellent: number
-    good: number
-    average: number
-    poor: number
-    terrible: number
-  }
+    excellent: number;
+    good: number;
+    average: number;
+    poor: number;
+    terrible: number;
+  };
 }
 
 interface ChannelPerformance {
-  channel: string
-  icon: React.ReactNode
-  interactions: number
-  satisfaction: number
-  conversion: number
-  trend: number
-  color: string
+  channel: string;
+  icon: React.ReactNode;
+  interactions: number;
+  satisfaction: number;
+  conversion: number;
+  trend: number;
+  color: string;
 }
 
 interface RealTimeEvent {
-  id: string
-  type: string
-  patientName: string
-  touchpoint: string
-  timestamp: Date
-  severity: 'INFO' | 'WARNING' | 'ERROR'
-  message: string
+  id: string;
+  type: string;
+  patientName: string;
+  touchpoint: string;
+  timestamp: Date;
+  severity: "INFO" | "WARNING" | "ERROR";
+  message: string;
 }
 
 const JourneyAnalyticsDashboard: React.FC = () => {
   // State Management
-  const [metrics, setMetrics] = useState<MetricsData | null>(null)
-  const [journeyStages, setJourneyStages] = useState<JourneyStage[]>([])
-  const [patientFlow, setPatientFlow] = useState<PatientFlow[]>([])
-  const [churnRisks, setChurnRisks] = useState<ChurnRisk[]>([])
-  const [recommendations, setRecommendations] = useState<ExperienceRecommendation[]>([])
-  const [satisfactionMetrics, setSatisfactionMetrics] = useState<SatisfactionMetric[]>([])
-  const [channelPerformance, setChannelPerformance] = useState<ChannelPerformance[]>([])
-  const [realTimeEvents, setRealTimeEvents] = useState<RealTimeEvent[]>([])
-  
-  const [loading, setLoading] = useState(true)
-  const [refreshing, setRefreshing] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  
-  const [selectedTimeRange, setSelectedTimeRange] = useState('30d')
-  const [selectedStage, setSelectedStage] = useState<string>('all')
-  const [selectedChannel, setSelectedChannel] = useState<string>('all')
+  const [metrics, setMetrics] = useState<MetricsData | null>(null);
+  const [journeyStages, setJourneyStages] = useState<JourneyStage[]>([]);
+  const [patientFlow, setPatientFlow] = useState<PatientFlow[]>([]);
+  const [churnRisks, setChurnRisks] = useState<ChurnRisk[]>([]);
+  const [recommendations, setRecommendations] = useState<ExperienceRecommendation[]>([]);
+  const [satisfactionMetrics, setSatisfactionMetrics] = useState<SatisfactionMetric[]>([]);
+  const [channelPerformance, setChannelPerformance] = useState<ChannelPerformance[]>([]);
+  const [realTimeEvents, setRealTimeEvents] = useState<RealTimeEvent[]>([]);
+
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const [selectedTimeRange, setSelectedTimeRange] = useState("30d");
+  const [selectedStage, setSelectedStage] = useState<string>("all");
+  const [selectedChannel, setSelectedChannel] = useState<string>("all");
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
     from: subDays(new Date(), 30),
-    to: new Date()
-  })
-  
-  const [activeTab, setActiveTab] = useState('overview')
-  const [searchTerm, setSearchTerm] = useState('')
+    to: new Date(),
+  });
+
+  const [activeTab, setActiveTab] = useState("overview");
+  const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
-    riskLevel: 'all',
-    priority: 'all',
-    satisfaction: 'all'
-  })
+    riskLevel: "all",
+    priority: "all",
+    satisfaction: "all",
+  });
 
   // Refs for real-time updates
-  const eventSourceRef = useRef<EventSource | null>(null)
-  const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const eventSourceRef = useRef<EventSource | null>(null);
+  const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Memoized filtered data
   const filteredChurnRisks = useMemo(() => {
-    return churnRisks.filter(risk => {
-      const matchesSearch = risk.patientName.toLowerCase().includes(searchTerm.toLowerCase())
-      const matchesRisk = filters.riskLevel === 'all' || risk.riskLevel === filters.riskLevel
-      return matchesSearch && matchesRisk
-    })
-  }, [churnRisks, searchTerm, filters.riskLevel])
+    return churnRisks.filter((risk) => {
+      const matchesSearch = risk.patientName.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesRisk = filters.riskLevel === "all" || risk.riskLevel === filters.riskLevel;
+      return matchesSearch && matchesRisk;
+    });
+  }, [churnRisks, searchTerm, filters.riskLevel]);
 
   const filteredRecommendations = useMemo(() => {
-    return recommendations.filter(rec => {
-      const matchesSearch = rec.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           rec.description.toLowerCase().includes(searchTerm.toLowerCase())
-      const matchesPriority = filters.priority === 'all' || rec.priority === filters.priority
-      return matchesSearch && matchesPriority
-    })
-  }, [recommendations, searchTerm, filters.priority])
+    return recommendations.filter((rec) => {
+      const matchesSearch =
+        rec.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        rec.description.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesPriority = filters.priority === "all" || rec.priority === filters.priority;
+      return matchesSearch && matchesPriority;
+    });
+  }, [recommendations, searchTerm, filters.priority]);
 
   // Channel performance icons mapping
   const channelIcons = {
-    'whatsapp': <MessageSquare className="h-4 w-4" />,
-    'phone': <Phone className="h-4 w-4" />,
-    'email': <Mail className="h-4 w-4" />,
-    'website': <Globe className="h-4 w-4" />,
-    'mobile': <Smartphone className="h-4 w-4" />,
-    'desktop': <Monitor className="h-4 w-4" />,
-    'tablet': <TabletSmartphone className="h-4 w-4" />,
-    'in-person': <MapPin className="h-4 w-4" />
-  }
+    whatsapp: <MessageSquare className="h-4 w-4" />,
+    phone: <Phone className="h-4 w-4" />,
+    email: <Mail className="h-4 w-4" />,
+    website: <Globe className="h-4 w-4" />,
+    mobile: <Smartphone className="h-4 w-4" />,
+    desktop: <Monitor className="h-4 w-4" />,
+    tablet: <TabletSmartphone className="h-4 w-4" />,
+    "in-person": <MapPin className="h-4 w-4" />,
+  };
 
   // Risk level colors and icons
   const getRiskBadge = (level: string) => {
     switch (level) {
-      case 'LOW':
-        return <Badge variant="secondary" className="bg-green-100 text-green-800">Baixo</Badge>
-      case 'MEDIUM':
-        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Médio</Badge>
-      case 'HIGH':
-        return <Badge variant="secondary" className="bg-orange-100 text-orange-800">Alto</Badge>
-      case 'CRITICAL':
-        return <Badge variant="destructive">Crítico</Badge>
+      case "LOW":
+        return (
+          <Badge variant="secondary" className="bg-green-100 text-green-800">
+            Baixo
+          </Badge>
+        );
+      case "MEDIUM":
+        return (
+          <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+            Médio
+          </Badge>
+        );
+      case "HIGH":
+        return (
+          <Badge variant="secondary" className="bg-orange-100 text-orange-800">
+            Alto
+          </Badge>
+        );
+      case "CRITICAL":
+        return <Badge variant="destructive">Crítico</Badge>;
       default:
-        return <Badge variant="outline">Desconhecido</Badge>
+        return <Badge variant="outline">Desconhecido</Badge>;
     }
-  }
+  };
 
   const getPriorityBadge = (priority: string) => {
     switch (priority) {
-      case 'LOW':
-        return <Badge variant="secondary">Baixa</Badge>
-      case 'MEDIUM':
-        return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Média</Badge>
-      case 'HIGH':
-        return <Badge variant="secondary" className="bg-orange-100 text-orange-800">Alta</Badge>
-      case 'CRITICAL':
-        return <Badge variant="destructive">Crítica</Badge>
+      case "LOW":
+        return <Badge variant="secondary">Baixa</Badge>;
+      case "MEDIUM":
+        return (
+          <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+            Média
+          </Badge>
+        );
+      case "HIGH":
+        return (
+          <Badge variant="secondary" className="bg-orange-100 text-orange-800">
+            Alta
+          </Badge>
+        );
+      case "CRITICAL":
+        return <Badge variant="destructive">Crítica</Badge>;
       default:
-        return <Badge variant="outline">Normal</Badge>
+        return <Badge variant="outline">Normal</Badge>;
     }
-  }
+  };
 
   // Data fetching functions
   const fetchDashboardData = useCallback(async () => {
     try {
-      setError(null)
+      setError(null);
       const params = new URLSearchParams({
         timeRange: selectedTimeRange,
         from: dateRange.from.toISOString(),
         to: dateRange.to.toISOString(),
         stage: selectedStage,
-        channel: selectedChannel
-      })
+        channel: selectedChannel,
+      });
 
       const [
         metricsRes,
@@ -287,7 +332,7 @@ const JourneyAnalyticsDashboard: React.FC = () => {
         churnRes,
         recommendationsRes,
         satisfactionRes,
-        channelsRes
+        channelsRes,
       ] = await Promise.all([
         fetch(`/api/analytics/journey/metrics?${params}`),
         fetch(`/api/analytics/journey/stages?${params}`),
@@ -295,11 +340,11 @@ const JourneyAnalyticsDashboard: React.FC = () => {
         fetch(`/api/analytics/journey/churn-risks?${params}`),
         fetch(`/api/analytics/journey/recommendations?${params}`),
         fetch(`/api/analytics/journey/satisfaction?${params}`),
-        fetch(`/api/analytics/journey/channels?${params}`)
-      ])
+        fetch(`/api/analytics/journey/channels?${params}`),
+      ]);
 
-      if (!metricsRes.ok) throw new Error('Failed to fetch metrics')
-      
+      if (!metricsRes.ok) throw new Error("Failed to fetch metrics");
+
       const [
         metricsData,
         stagesData,
@@ -307,7 +352,7 @@ const JourneyAnalyticsDashboard: React.FC = () => {
         churnData,
         recommendationsData,
         satisfactionData,
-        channelsData
+        channelsData,
       ] = await Promise.all([
         metricsRes.json(),
         stagesRes.json(),
@@ -315,129 +360,132 @@ const JourneyAnalyticsDashboard: React.FC = () => {
         churnRes.json(),
         recommendationsRes.json(),
         satisfactionRes.json(),
-        channelsRes.json()
-      ])
+        channelsRes.json(),
+      ]);
 
-      setMetrics(metricsData)
-      setJourneyStages(stagesData)
-      setPatientFlow(flowData)
-      setChurnRisks(churnData)
-      setRecommendations(recommendationsData)
-      setSatisfactionMetrics(satisfactionData)
-      setChannelPerformance(channelsData.map((channel: any) => ({
-        ...channel,
-        icon: channelIcons[channel.channel as keyof typeof channelIcons] || <Globe className="h-4 w-4" />
-      })))
-
+      setMetrics(metricsData);
+      setJourneyStages(stagesData);
+      setPatientFlow(flowData);
+      setChurnRisks(churnData);
+      setRecommendations(recommendationsData);
+      setSatisfactionMetrics(satisfactionData);
+      setChannelPerformance(
+        channelsData.map((channel: any) => ({
+          ...channel,
+          icon: channelIcons[channel.channel as keyof typeof channelIcons] || (
+            <Globe className="h-4 w-4" />
+          ),
+        })),
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao carregar dados')
+      setError(err instanceof Error ? err.message : "Erro ao carregar dados");
     }
-  }, [selectedTimeRange, dateRange, selectedStage, selectedChannel])
+  }, [selectedTimeRange, dateRange, selectedStage, selectedChannel]);
 
   const refreshData = useCallback(async () => {
-    setRefreshing(true)
-    await fetchDashboardData()
-    setRefreshing(false)
-  }, [fetchDashboardData])
+    setRefreshing(true);
+    await fetchDashboardData();
+    setRefreshing(false);
+  }, [fetchDashboardData]);
 
   // Real-time events setup
   const setupRealTimeUpdates = useCallback(() => {
     if (eventSourceRef.current) {
-      eventSourceRef.current.close()
+      eventSourceRef.current.close();
     }
 
-    eventSourceRef.current = new EventSource('/api/analytics/journey/events/stream')
-    
+    eventSourceRef.current = new EventSource("/api/analytics/journey/events/stream");
+
     eventSourceRef.current.onmessage = (event) => {
-      const newEvent: RealTimeEvent = JSON.parse(event.data)
-      setRealTimeEvents(prev => [newEvent, ...prev.slice(0, 49)])
-    }
+      const newEvent: RealTimeEvent = JSON.parse(event.data);
+      setRealTimeEvents((prev) => [newEvent, ...prev.slice(0, 49)]);
+    };
 
     eventSourceRef.current.onerror = () => {
-      console.warn('Real-time connection lost, attempting to reconnect...')
-      setTimeout(setupRealTimeUpdates, 5000)
-    }
-  }, [])
+      console.warn("Real-time connection lost, attempting to reconnect...");
+      setTimeout(setupRealTimeUpdates, 5000);
+    };
+  }, []);
 
   // Effects
   useEffect(() => {
-    setLoading(true)
-    fetchDashboardData().finally(() => setLoading(false))
-  }, [fetchDashboardData])
+    setLoading(true);
+    fetchDashboardData().finally(() => setLoading(false));
+  }, [fetchDashboardData]);
 
   useEffect(() => {
-    setupRealTimeUpdates()
-    
+    setupRealTimeUpdates();
+
     // Auto-refresh every 5 minutes
-    refreshIntervalRef.current = setInterval(refreshData, 5 * 60 * 1000)
+    refreshIntervalRef.current = setInterval(refreshData, 5 * 60 * 1000);
 
     return () => {
       if (eventSourceRef.current) {
-        eventSourceRef.current.close()
+        eventSourceRef.current.close();
       }
       if (refreshIntervalRef.current) {
-        clearInterval(refreshIntervalRef.current)
+        clearInterval(refreshIntervalRef.current);
       }
-    }
-  }, [setupRealTimeUpdates, refreshData])
+    };
+  }, [setupRealTimeUpdates, refreshData]);
 
   // Event handlers
   const handleTimeRangeChange = (range: string) => {
-    setSelectedTimeRange(range)
-    const now = new Date()
-    let from: Date
+    setSelectedTimeRange(range);
+    const now = new Date();
+    let from: Date;
 
     switch (range) {
-      case '7d':
-        from = subDays(now, 7)
-        break
-      case '30d':
-        from = subDays(now, 30)
-        break
-      case '90d':
-        from = subDays(now, 90)
-        break
-      case '6m':
-        from = subMonths(now, 6)
-        break
-      case '1y':
-        from = subMonths(now, 12)
-        break
+      case "7d":
+        from = subDays(now, 7);
+        break;
+      case "30d":
+        from = subDays(now, 30);
+        break;
+      case "90d":
+        from = subDays(now, 90);
+        break;
+      case "6m":
+        from = subMonths(now, 6);
+        break;
+      case "1y":
+        from = subMonths(now, 12);
+        break;
       default:
-        from = subDays(now, 30)
+        from = subDays(now, 30);
     }
 
-    setDateRange({ from, to: now })
-  }
+    setDateRange({ from, to: now });
+  };
 
-  const handleExport = async (format: 'pdf' | 'excel' | 'png') => {
+  const handleExport = async (format: "pdf" | "excel" | "png") => {
     try {
-      const response = await fetch('/api/analytics/journey/export', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/analytics/journey/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           format,
           timeRange: selectedTimeRange,
           dateRange,
-          filters: { stage: selectedStage, channel: selectedChannel }
-        })
-      })
+          filters: { stage: selectedStage, channel: selectedChannel },
+        }),
+      });
 
-      if (!response.ok) throw new Error('Export failed')
+      if (!response.ok) throw new Error("Export failed");
 
-      const blob = await response.blob()
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `journey-analytics-${format}.${format === 'excel' ? 'xlsx' : format}`
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      window.URL.revokeObjectURL(url)
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `journey-analytics-${format}.${format === "excel" ? "xlsx" : format}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
     } catch (err) {
-      setError('Erro ao exportar dados')
+      setError("Erro ao exportar dados");
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -447,7 +495,7 @@ const JourneyAnalyticsDashboard: React.FC = () => {
           <p className="text-muted-foreground">Carregando analytics da jornada...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -459,7 +507,7 @@ const JourneyAnalyticsDashboard: React.FC = () => {
           Tentar novamente
         </Button>
       </Alert>
-    )
+    );
   }
 
   return (
@@ -472,7 +520,7 @@ const JourneyAnalyticsDashboard: React.FC = () => {
             Análise completa da experiência e jornada dos pacientes
           </p>
         </div>
-        
+
         <div className="flex items-center space-x-2">
           <Select value={selectedTimeRange} onValueChange={handleTimeRangeChange}>
             <SelectTrigger className="w-32">
@@ -487,12 +535,7 @@ const JourneyAnalyticsDashboard: React.FC = () => {
             </SelectContent>
           </Select>
 
-          <Button
-            onClick={refreshData}
-            disabled={refreshing}
-            variant="outline"
-            size="sm"
-          >
+          <Button onClick={refreshData} disabled={refreshing} variant="outline" size="sm">
             <RefreshCw className={cn("h-4 w-4", refreshing && "animate-spin")} />
           </Button>
 
@@ -506,13 +549,13 @@ const JourneyAnalyticsDashboard: React.FC = () => {
               <div className="space-y-2">
                 <p className="font-medium">Exportar Relatório</p>
                 <div className="flex flex-col space-y-1">
-                  <Button onClick={() => handleExport('pdf')} variant="ghost" size="sm">
+                  <Button onClick={() => handleExport("pdf")} variant="ghost" size="sm">
                     Exportar PDF
                   </Button>
-                  <Button onClick={() => handleExport('excel')} variant="ghost" size="sm">
+                  <Button onClick={() => handleExport("excel")} variant="ghost" size="sm">
                     Exportar Excel
                   </Button>
-                  <Button onClick={() => handleExport('png')} variant="ghost" size="sm">
+                  <Button onClick={() => handleExport("png")} variant="ghost" size="sm">
                     Exportar Imagem
                   </Button>
                 </div>
@@ -533,18 +576,20 @@ const JourneyAnalyticsDashboard: React.FC = () => {
             <CardContent>
               <div className="text-2xl font-bold">{metrics.totalPatients.toLocaleString()}</div>
               <p className="text-xs text-muted-foreground">
-                <span className={cn(
-                  "inline-flex items-center",
-                  metrics.trends.patients >= 0 ? "text-green-600" : "text-red-600"
-                )}>
+                <span
+                  className={cn(
+                    "inline-flex items-center",
+                    metrics.trends.patients >= 0 ? "text-green-600" : "text-red-600",
+                  )}
+                >
                   {metrics.trends.patients >= 0 ? (
                     <ArrowUpRight className="h-3 w-3 mr-1" />
                   ) : (
                     <ArrowDownRight className="h-3 w-3 mr-1" />
                   )}
                   {Math.abs(metrics.trends.patients)}%
-                </span>
-                {' '}vs período anterior
+                </span>{" "}
+                vs período anterior
               </p>
             </CardContent>
           </Card>
@@ -557,18 +602,20 @@ const JourneyAnalyticsDashboard: React.FC = () => {
             <CardContent>
               <div className="text-2xl font-bold">{metrics.averageSatisfaction.toFixed(1)}/5</div>
               <p className="text-xs text-muted-foreground">
-                <span className={cn(
-                  "inline-flex items-center",
-                  metrics.trends.satisfaction >= 0 ? "text-green-600" : "text-red-600"
-                )}>
+                <span
+                  className={cn(
+                    "inline-flex items-center",
+                    metrics.trends.satisfaction >= 0 ? "text-green-600" : "text-red-600",
+                  )}
+                >
                   {metrics.trends.satisfaction >= 0 ? (
                     <ArrowUpRight className="h-3 w-3 mr-1" />
                   ) : (
                     <ArrowDownRight className="h-3 w-3 mr-1" />
                   )}
                   {Math.abs(metrics.trends.satisfaction).toFixed(1)}%
-                </span>
-                {' '}vs período anterior
+                </span>{" "}
+                vs período anterior
               </p>
             </CardContent>
           </Card>
@@ -581,18 +628,20 @@ const JourneyAnalyticsDashboard: React.FC = () => {
             <CardContent>
               <div className="text-2xl font-bold">{metrics.conversionRate.toFixed(1)}%</div>
               <p className="text-xs text-muted-foreground">
-                <span className={cn(
-                  "inline-flex items-center",
-                  metrics.trends.conversion >= 0 ? "text-green-600" : "text-red-600"
-                )}>
+                <span
+                  className={cn(
+                    "inline-flex items-center",
+                    metrics.trends.conversion >= 0 ? "text-green-600" : "text-red-600",
+                  )}
+                >
                   {metrics.trends.conversion >= 0 ? (
                     <ArrowUpRight className="h-3 w-3 mr-1" />
                   ) : (
                     <ArrowDownRight className="h-3 w-3 mr-1" />
                   )}
                   {Math.abs(metrics.trends.conversion).toFixed(1)}%
-                </span>
-                {' '}vs período anterior
+                </span>{" "}
+                vs período anterior
               </p>
             </CardContent>
           </Card>
@@ -605,18 +654,20 @@ const JourneyAnalyticsDashboard: React.FC = () => {
             <CardContent>
               <div className="text-2xl font-bold">{metrics.churnRate.toFixed(1)}%</div>
               <p className="text-xs text-muted-foreground">
-                <span className={cn(
-                  "inline-flex items-center",
-                  metrics.trends.churn <= 0 ? "text-green-600" : "text-red-600"
-                )}>
+                <span
+                  className={cn(
+                    "inline-flex items-center",
+                    metrics.trends.churn <= 0 ? "text-green-600" : "text-red-600",
+                  )}
+                >
                   {metrics.trends.churn <= 0 ? (
                     <ArrowDownRight className="h-3 w-3 mr-1" />
                   ) : (
                     <ArrowUpRight className="h-3 w-3 mr-1" />
                   )}
                   {Math.abs(metrics.trends.churn).toFixed(1)}%
-                </span>
-                {' '}vs período anterior
+                </span>{" "}
+                vs período anterior
               </p>
             </CardContent>
           </Card>
@@ -655,11 +706,14 @@ const JourneyAnalyticsDashboard: React.FC = () => {
                         </div>
                         <Progress value={stage.percentage} className="h-2" />
                       </div>
-                      <div className={cn(
-                        "text-xs",
-                        stage.trend >= 0 ? "text-green-600" : "text-red-600"
-                      )}>
-                        {stage.trend >= 0 ? "+" : ""}{stage.trend.toFixed(1)}%
+                      <div
+                        className={cn(
+                          "text-xs",
+                          stage.trend >= 0 ? "text-green-600" : "text-red-600",
+                        )}
+                      >
+                        {stage.trend >= 0 ? "+" : ""}
+                        {stage.trend.toFixed(1)}%
                       </div>
                     </div>
                   ))}
@@ -676,7 +730,10 @@ const JourneyAnalyticsDashboard: React.FC = () => {
               <CardContent>
                 <div className="space-y-4">
                   {channelPerformance.map((channel, index) => (
-                    <div key={index} className="flex items-center space-x-4 p-3 rounded-lg bg-muted/50">
+                    <div
+                      key={index}
+                      className="flex items-center space-x-4 p-3 rounded-lg bg-muted/50"
+                    >
                       <div className="flex items-center space-x-2 flex-1">
                         {channel.icon}
                         <span className="font-medium capitalize">{channel.channel}</span>
@@ -693,11 +750,14 @@ const JourneyAnalyticsDashboard: React.FC = () => {
                         <div className="font-medium">{channel.conversion.toFixed(1)}%</div>
                         <div className="text-muted-foreground">conversão</div>
                       </div>
-                      <div className={cn(
-                        "text-xs",
-                        channel.trend >= 0 ? "text-green-600" : "text-red-600"
-                      )}>
-                        {channel.trend >= 0 ? "+" : ""}{channel.trend.toFixed(1)}%
+                      <div
+                        className={cn(
+                          "text-xs",
+                          channel.trend >= 0 ? "text-green-600" : "text-red-600",
+                        )}
+                      >
+                        {channel.trend >= 0 ? "+" : ""}
+                        {channel.trend.toFixed(1)}%
                       </div>
                     </div>
                   ))}
@@ -722,17 +782,24 @@ const JourneyAnalyticsDashboard: React.FC = () => {
               <ScrollArea className="h-64">
                 <div className="space-y-2">
                   {realTimeEvents.map((event, index) => (
-                    <div key={event.id} className="flex items-start space-x-3 p-2 rounded-lg hover:bg-muted/50">
-                      <div className={cn(
-                        "w-2 h-2 rounded-full mt-2",
-                        event.severity === 'ERROR' && "bg-red-500",
-                        event.severity === 'WARNING' && "bg-yellow-500",
-                        event.severity === 'INFO' && "bg-blue-500"
-                      )} />
+                    <div
+                      key={event.id}
+                      className="flex items-start space-x-3 p-2 rounded-lg hover:bg-muted/50"
+                    >
+                      <div
+                        className={cn(
+                          "w-2 h-2 rounded-full mt-2",
+                          event.severity === "ERROR" && "bg-red-500",
+                          event.severity === "WARNING" && "bg-yellow-500",
+                          event.severity === "INFO" && "bg-blue-500",
+                        )}
+                      />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center space-x-2">
                           <span className="font-medium text-sm">{event.patientName}</span>
-                          <Badge variant="outline" className="text-xs">{event.touchpoint}</Badge>
+                          <Badge variant="outline" className="text-xs">
+                            {event.touchpoint}
+                          </Badge>
                         </div>
                         <p className="text-sm text-muted-foreground">{event.message}</p>
                         <p className="text-xs text-muted-foreground">
@@ -761,12 +828,12 @@ const JourneyAnalyticsDashboard: React.FC = () => {
                     {index < journeyStages.length - 1 && (
                       <div className="absolute left-6 top-12 w-px h-12 bg-border" />
                     )}
-                    
+
                     <div className="flex items-start space-x-4">
                       <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary text-primary-foreground font-bold">
                         {stage.order}
                       </div>
-                      
+
                       <div className="flex-1 space-y-3">
                         <div className="flex items-center justify-between">
                           <h3 className="text-lg font-semibold">{stage.name}</h3>
@@ -776,15 +843,19 @@ const JourneyAnalyticsDashboard: React.FC = () => {
                             <span>{stage.satisfactionScore.toFixed(1)} satisfação</span>
                           </div>
                         </div>
-                        
+
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div className="p-3 rounded-lg bg-muted/50">
                             <div className="text-sm text-muted-foreground">Tempo Médio</div>
-                            <div className="font-medium">{Math.round(stage.averageTime / 60)} min</div>
+                            <div className="font-medium">
+                              {Math.round(stage.averageTime / 60)} min
+                            </div>
                           </div>
                           <div className="p-3 rounded-lg bg-muted/50">
                             <div className="text-sm text-muted-foreground">Taxa de Abandono</div>
-                            <div className="font-medium text-red-600">{stage.dropOffRate.toFixed(1)}%</div>
+                            <div className="font-medium text-red-600">
+                              {stage.dropOffRate.toFixed(1)}%
+                            </div>
                           </div>
                           <div className="p-3 rounded-lg bg-muted/50">
                             <div className="text-sm text-muted-foreground">Touchpoints</div>
@@ -798,7 +869,9 @@ const JourneyAnalyticsDashboard: React.FC = () => {
                             <div key={touchpoint.id} className="p-3 border rounded-lg">
                               <div className="flex items-center justify-between mb-2">
                                 <span className="font-medium text-sm">{touchpoint.name}</span>
-                                <Badge variant="outline" className="text-xs">{touchpoint.channel}</Badge>
+                                <Badge variant="outline" className="text-xs">
+                                  {touchpoint.channel}
+                                </Badge>
                               </div>
                               <div className="space-y-1">
                                 <div className="flex justify-between text-xs">
@@ -807,11 +880,15 @@ const JourneyAnalyticsDashboard: React.FC = () => {
                                 </div>
                                 <div className="flex justify-between text-xs">
                                   <span>Satisfação:</span>
-                                  <span className="font-medium">{touchpoint.satisfaction.toFixed(1)}</span>
+                                  <span className="font-medium">
+                                    {touchpoint.satisfaction.toFixed(1)}
+                                  </span>
                                 </div>
                                 <div className="flex justify-between text-xs">
                                   <span>Conversão:</span>
-                                  <span className="font-medium">{touchpoint.conversionRate.toFixed(1)}%</span>
+                                  <span className="font-medium">
+                                    {touchpoint.conversionRate.toFixed(1)}%
+                                  </span>
                                 </div>
                               </div>
                             </div>
@@ -841,49 +918,62 @@ const JourneyAnalyticsDashboard: React.FC = () => {
                       </Badge>
                     </div>
                   </CardTitle>
-                  <CardDescription>
-                    {metric.responses} respostas coletadas
-                  </CardDescription>
+                  <CardDescription>{metric.responses} respostas coletadas</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     <Progress value={(metric.score / 5) * 100} className="h-2" />
-                    
+
                     <div className="grid grid-cols-5 gap-2 text-center">
                       <div className="space-y-1">
                         <div className="text-xs text-muted-foreground">Péssimo</div>
                         <div className="font-medium">{metric.breakdown.terrible}</div>
-                        <div className="w-full h-2 bg-red-500 rounded" style={{
-                          height: `${Math.max(4, (metric.breakdown.terrible / metric.responses) * 40)}px`
-                        }} />
+                        <div
+                          className="w-full h-2 bg-red-500 rounded"
+                          style={{
+                            height: `${Math.max(4, (metric.breakdown.terrible / metric.responses) * 40)}px`,
+                          }}
+                        />
                       </div>
                       <div className="space-y-1">
                         <div className="text-xs text-muted-foreground">Ruim</div>
                         <div className="font-medium">{metric.breakdown.poor}</div>
-                        <div className="w-full h-2 bg-orange-500 rounded" style={{
-                          height: `${Math.max(4, (metric.breakdown.poor / metric.responses) * 40)}px`
-                        }} />
+                        <div
+                          className="w-full h-2 bg-orange-500 rounded"
+                          style={{
+                            height: `${Math.max(4, (metric.breakdown.poor / metric.responses) * 40)}px`,
+                          }}
+                        />
                       </div>
                       <div className="space-y-1">
                         <div className="text-xs text-muted-foreground">Regular</div>
                         <div className="font-medium">{metric.breakdown.average}</div>
-                        <div className="w-full h-2 bg-yellow-500 rounded" style={{
-                          height: `${Math.max(4, (metric.breakdown.average / metric.responses) * 40)}px`
-                        }} />
+                        <div
+                          className="w-full h-2 bg-yellow-500 rounded"
+                          style={{
+                            height: `${Math.max(4, (metric.breakdown.average / metric.responses) * 40)}px`,
+                          }}
+                        />
                       </div>
                       <div className="space-y-1">
                         <div className="text-xs text-muted-foreground">Bom</div>
                         <div className="font-medium">{metric.breakdown.good}</div>
-                        <div className="w-full h-2 bg-blue-500 rounded" style={{
-                          height: `${Math.max(4, (metric.breakdown.good / metric.responses) * 40)}px`
-                        }} />
+                        <div
+                          className="w-full h-2 bg-blue-500 rounded"
+                          style={{
+                            height: `${Math.max(4, (metric.breakdown.good / metric.responses) * 40)}px`,
+                          }}
+                        />
                       </div>
                       <div className="space-y-1">
                         <div className="text-xs text-muted-foreground">Excelente</div>
                         <div className="font-medium">{metric.breakdown.excellent}</div>
-                        <div className="w-full h-2 bg-green-500 rounded" style={{
-                          height: `${Math.max(4, (metric.breakdown.excellent / metric.responses) * 40)}px`
-                        }} />
+                        <div
+                          className="w-full h-2 bg-green-500 rounded"
+                          style={{
+                            height: `${Math.max(4, (metric.breakdown.excellent / metric.responses) * 40)}px`,
+                          }}
+                        />
                       </div>
                     </div>
                   </div>
@@ -907,7 +997,10 @@ const JourneyAnalyticsDashboard: React.FC = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-64"
               />
-              <Select value={filters.riskLevel} onValueChange={(value) => setFilters(prev => ({ ...prev, riskLevel: value }))}>
+              <Select
+                value={filters.riskLevel}
+                onValueChange={(value) => setFilters((prev) => ({ ...prev, riskLevel: value }))}
+              >
                 <SelectTrigger className="w-32">
                   <SelectValue placeholder="Risco" />
                 </SelectTrigger>
@@ -932,7 +1025,9 @@ const JourneyAnalyticsDashboard: React.FC = () => {
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className="text-sm text-muted-foreground">Score de Risco:</span>
-                    <span className="font-bold text-red-600">{(risk.riskScore * 100).toFixed(0)}%</span>
+                    <span className="font-bold text-red-600">
+                      {(risk.riskScore * 100).toFixed(0)}%
+                    </span>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-3">
@@ -946,26 +1041,29 @@ const JourneyAnalyticsDashboard: React.FC = () => {
                       ))}
                     </div>
                   </div>
-                  
+
                   <div>
                     <div className="text-sm text-muted-foreground">Última Atividade:</div>
                     <div className="text-sm font-medium">
                       {format(risk.lastActivity, "dd/MM/yyyy HH:mm", { locale: ptBR })}
                     </div>
                   </div>
-                  
+
                   <div>
                     <div className="text-sm text-muted-foreground">Previsão de Churn:</div>
                     <div className="text-sm font-medium text-red-600">
                       {format(risk.predictedChurnDate, "dd/MM/yyyy", { locale: ptBR })}
                     </div>
                   </div>
-                  
+
                   <div>
                     <div className="text-sm text-muted-foreground">Ações Recomendadas:</div>
                     <div className="space-y-1 mt-1">
                       {risk.recommendedActions.slice(0, 2).map((action, index) => (
-                        <div key={index} className="text-xs p-2 bg-muted rounded text-muted-foreground">
+                        <div
+                          key={index}
+                          className="text-xs p-2 bg-muted rounded text-muted-foreground"
+                        >
                           • {action}
                         </div>
                       ))}
@@ -991,7 +1089,10 @@ const JourneyAnalyticsDashboard: React.FC = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-64"
               />
-              <Select value={filters.priority} onValueChange={(value) => setFilters(prev => ({ ...prev, priority: value }))}>
+              <Select
+                value={filters.priority}
+                onValueChange={(value) => setFilters((prev) => ({ ...prev, priority: value }))}
+              >
                 <SelectTrigger className="w-32">
                   <SelectValue placeholder="Prioridade" />
                 </SelectTrigger>
@@ -1036,7 +1137,7 @@ const JourneyAnalyticsDashboard: React.FC = () => {
                       <div className="text-sm text-muted-foreground">{rec.effort}</div>
                     </div>
                   </div>
-                  
+
                   <div>
                     <div className="text-sm font-medium mb-2">Touchpoints Afetados:</div>
                     <div className="flex flex-wrap gap-1">
@@ -1047,7 +1148,7 @@ const JourneyAnalyticsDashboard: React.FC = () => {
                       ))}
                     </div>
                   </div>
-                  
+
                   <div>
                     <div className="text-sm font-medium mb-2">Passos de Implementação:</div>
                     <div className="space-y-1">
@@ -1061,7 +1162,7 @@ const JourneyAnalyticsDashboard: React.FC = () => {
                       ))}
                     </div>
                   </div>
-                  
+
                   <div>
                     <div className="text-sm font-medium mb-2">Métricas de Sucesso:</div>
                     <div className="flex flex-wrap gap-1">
@@ -1079,7 +1180,7 @@ const JourneyAnalyticsDashboard: React.FC = () => {
         </TabsContent>
       </Tabs>
     </div>
-  )
-}
+  );
+};
 
-export default JourneyAnalyticsDashboard
+export default JourneyAnalyticsDashboard;

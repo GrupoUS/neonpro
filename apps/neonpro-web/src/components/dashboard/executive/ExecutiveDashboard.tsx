@@ -1,13 +1,19 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import {
+import React, { useState, useEffect, useCallback } from "react";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Badge } from "@/components/ui/badge";
+import type { Separator } from "@/components/ui/separator";
+import type {
   LayoutDashboard,
   Settings,
   RefreshCw,
@@ -33,23 +39,23 @@ import {
   Target,
   AlertTriangle,
   CheckCircle,
-  Brain
-} from 'lucide-react';
-import { format, subDays, startOfMonth, endOfMonth, startOfWeek, endOfWeek } from 'date-fns';
+  Brain,
+} from "lucide-react";
+import type { format, subDays, startOfMonth, endOfMonth, startOfWeek, endOfWeek } from "date-fns";
 
 // Import dashboard components
-import { ExecutiveSummary } from './ExecutiveSummary';
-import { PerformanceMetrics } from './PerformanceMetrics';
-import { DashboardGrid } from './DashboardGrid';
-import { MetricWidget } from './MetricWidget';
-import { ChartWidget } from './ChartWidget';
-import { AlertPanel } from './AlertPanel';
-import { FilterPanel } from './FilterPanel';
-import { ExecutiveReportGenerator } from './ExecutiveReportGenerator';
-import { KPICard } from './KPICard';
+import type { ExecutiveSummary } from "./ExecutiveSummary";
+import type { PerformanceMetrics } from "./PerformanceMetrics";
+import type { DashboardGrid } from "./DashboardGrid";
+import type { MetricWidget } from "./MetricWidget";
+import type { ChartWidget } from "./ChartWidget";
+import type { AlertPanel } from "./AlertPanel";
+import type { FilterPanel } from "./FilterPanel";
+import type { ExecutiveReportGenerator } from "./ExecutiveReportGenerator";
+import type { KPICard } from "./KPICard";
 
 // Import dashboard engine
-import { ExecutiveDashboardEngine } from '@/lib/dashboard/executive-dashboard-engine';
+import type { ExecutiveDashboardEngine } from "@/lib/dashboard/executive-dashboard-engine";
 
 // Types
 interface DashboardState {
@@ -79,15 +85,15 @@ interface DashboardUI {
   isFullscreen: boolean;
   showFilters: boolean;
   showAlerts: boolean;
-  viewMode: 'grid' | 'list' | 'summary';
-  gridLayout: 'compact' | 'comfortable' | 'spacious';
+  viewMode: "grid" | "list" | "summary";
+  gridLayout: "compact" | "comfortable" | "spacious";
   autoRefresh: boolean;
   refreshInterval: number;
 }
 
 interface DashboardWidget {
   id: string;
-  type: 'metric' | 'chart' | 'kpi' | 'alert' | 'summary';
+  type: "metric" | "chart" | "kpi" | "alert" | "summary";
   title: string;
   position: {
     x: number;
@@ -107,8 +113,8 @@ interface KPIMetric {
   target: number;
   previousValue: number;
   unit: string;
-  trend: 'up' | 'down' | 'stable';
-  status: 'excellent' | 'good' | 'warning' | 'critical';
+  trend: "up" | "down" | "stable";
+  status: "excellent" | "good" | "warning" | "critical";
   category: string;
 }
 
@@ -116,7 +122,7 @@ interface Alert {
   id: string;
   title: string;
   message: string;
-  severity: 'critical' | 'warning' | 'info';
+  severity: "critical" | "warning" | "info";
   category: string;
   timestamp: Date;
   acknowledged: boolean;
@@ -135,62 +141,62 @@ interface ExecutiveDashboardProps {
 
 const DATE_PRESETS = [
   {
-    label: 'Today',
-    value: 'today',
-    getRange: () => ({ from: new Date(), to: new Date() })
+    label: "Today",
+    value: "today",
+    getRange: () => ({ from: new Date(), to: new Date() }),
   },
   {
-    label: 'Yesterday',
-    value: 'yesterday',
+    label: "Yesterday",
+    value: "yesterday",
     getRange: () => {
       const yesterday = subDays(new Date(), 1);
       return { from: yesterday, to: yesterday };
-    }
+    },
   },
   {
-    label: 'This Week',
-    value: 'thisWeek',
-    getRange: () => ({ from: startOfWeek(new Date()), to: endOfWeek(new Date()) })
+    label: "This Week",
+    value: "thisWeek",
+    getRange: () => ({ from: startOfWeek(new Date()), to: endOfWeek(new Date()) }),
   },
   {
-    label: 'This Month',
-    value: 'thisMonth',
-    getRange: () => ({ from: startOfMonth(new Date()), to: endOfMonth(new Date()) })
+    label: "This Month",
+    value: "thisMonth",
+    getRange: () => ({ from: startOfMonth(new Date()), to: endOfMonth(new Date()) }),
   },
   {
-    label: 'Last 7 Days',
-    value: 'last7Days',
-    getRange: () => ({ from: subDays(new Date(), 7), to: new Date() })
+    label: "Last 7 Days",
+    value: "last7Days",
+    getRange: () => ({ from: subDays(new Date(), 7), to: new Date() }),
   },
   {
-    label: 'Last 30 Days',
-    value: 'last30Days',
-    getRange: () => ({ from: subDays(new Date(), 30), to: new Date() })
+    label: "Last 30 Days",
+    value: "last30Days",
+    getRange: () => ({ from: subDays(new Date(), 30), to: new Date() }),
   },
   {
-    label: 'Last 90 Days',
-    value: 'last90Days',
-    getRange: () => ({ from: subDays(new Date(), 90), to: new Date() })
-  }
+    label: "Last 90 Days",
+    value: "last90Days",
+    getRange: () => ({ from: subDays(new Date(), 90), to: new Date() }),
+  },
 ];
 
 const DASHBOARD_TABS = [
-  { id: 'overview', label: 'Overview', icon: LayoutDashboard },
-  { id: 'metrics', label: 'Metrics', icon: BarChart3 },
-  { id: 'analytics', label: 'Analytics', icon: TrendingUp },
-  { id: 'reports', label: 'Reports', icon: FileText },
-  { id: 'alerts', label: 'Alerts', icon: AlertTriangle }
+  { id: "overview", label: "Overview", icon: LayoutDashboard },
+  { id: "metrics", label: "Metrics", icon: BarChart3 },
+  { id: "analytics", label: "Analytics", icon: TrendingUp },
+  { id: "reports", label: "Reports", icon: FileText },
+  { id: "alerts", label: "Alerts", icon: AlertTriangle },
 ];
 
 export function ExecutiveDashboard({
   clinicId,
   userId,
-  className = '',
-  defaultTab = 'overview',
+  className = "",
+  defaultTab = "overview",
   showHeader = true,
   showFilters = true,
   autoRefresh = true,
-  refreshInterval = 300000 // 5 minutes
+  refreshInterval = 300000, // 5 minutes
 }: ExecutiveDashboardProps) {
   // Dashboard state
   const [state, setState] = useState<DashboardState>({
@@ -200,20 +206,20 @@ export function ExecutiveDashboard({
     alerts: [],
     isLoading: true,
     error: null,
-    lastUpdated: null
+    lastUpdated: null,
   });
 
   // Dashboard filters
   const [filters, setFilters] = useState<DashboardFilters>({
     dateRange: {
       from: subDays(new Date(), 30),
-      to: new Date()
+      to: new Date(),
     },
     categories: [],
     departments: [],
     providers: [],
     patientTypes: [],
-    compareWithPrevious: false
+    compareWithPrevious: false,
   });
 
   // Dashboard UI state
@@ -222,10 +228,10 @@ export function ExecutiveDashboard({
     isFullscreen: false,
     showFilters: showFilters,
     showAlerts: true,
-    viewMode: 'grid',
-    gridLayout: 'comfortable',
+    viewMode: "grid",
+    gridLayout: "comfortable",
     autoRefresh,
-    refreshInterval
+    refreshInterval,
   });
 
   // Dashboard engine instance
@@ -236,8 +242,8 @@ export function ExecutiveDashboard({
 
   // Load dashboard data
   const loadDashboardData = useCallback(async () => {
-    setState(prev => ({ ...prev, isLoading: true, error: null }));
-    
+    setState((prev) => ({ ...prev, isLoading: true, error: null }));
+
     try {
       // Initialize dashboard engine
       await dashboardEngine.initialize({
@@ -248,10 +254,10 @@ export function ExecutiveDashboard({
           categories: filters.categories,
           departments: filters.departments,
           providers: filters.providers,
-          patientTypes: filters.patientTypes
+          patientTypes: filters.patientTypes,
         },
         realTimeEnabled: ui.autoRefresh,
-        refreshInterval: ui.refreshInterval
+        refreshInterval: ui.refreshInterval,
       });
 
       // Load dashboard data
@@ -267,32 +273,31 @@ export function ExecutiveDashboard({
         alerts,
         isLoading: false,
         error: null,
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
       });
 
       // Setup real-time updates if enabled
       if (ui.autoRefresh) {
         const subscription = await dashboardEngine.setupRealTimeUpdates({
           onUpdate: (updatedData) => {
-            setState(prev => ({
+            setState((prev) => ({
               ...prev,
               data: { ...prev.data, ...updatedData },
-              lastUpdated: new Date()
+              lastUpdated: new Date(),
             }));
           },
           onError: (error) => {
-            console.error('Real-time update error:', error);
-          }
+            console.error("Real-time update error:", error);
+          },
         });
         setRealtimeSubscription(subscription);
       }
-
     } catch (error) {
-      console.error('Failed to load dashboard data:', error);
-      setState(prev => ({
+      console.error("Failed to load dashboard data:", error);
+      setState((prev) => ({
         ...prev,
         isLoading: false,
-        error: error instanceof Error ? error.message : 'Failed to load dashboard data'
+        error: error instanceof Error ? error.message : "Failed to load dashboard data",
       }));
     }
   }, [clinicId, userId, filters, ui.autoRefresh, ui.refreshInterval, dashboardEngine]);
@@ -322,12 +327,12 @@ export function ExecutiveDashboard({
 
   // Handle filter changes
   const handleFilterChange = useCallback((newFilters: Partial<DashboardFilters>) => {
-    setFilters(prev => ({ ...prev, ...newFilters }));
+    setFilters((prev) => ({ ...prev, ...newFilters }));
   }, []);
 
   // Handle UI changes
   const handleUIChange = useCallback((newUI: Partial<DashboardUI>) => {
-    setUI(prev => ({ ...prev, ...newUI }));
+    setUI((prev) => ({ ...prev, ...newUI }));
   }, []);
 
   // Handle manual refresh
@@ -336,13 +341,16 @@ export function ExecutiveDashboard({
   }, [loadDashboardData]);
 
   // Handle date preset selection
-  const handleDatePresetChange = useCallback((presetValue: string) => {
-    const preset = DATE_PRESETS.find(p => p.value === presetValue);
-    if (preset) {
-      const range = preset.getRange();
-      handleFilterChange({ dateRange: range });
-    }
-  }, [handleFilterChange]);
+  const handleDatePresetChange = useCallback(
+    (presetValue: string) => {
+      const preset = DATE_PRESETS.find((p) => p.value === presetValue);
+      if (preset) {
+        const range = preset.getRange();
+        handleFilterChange({ dateRange: range });
+      }
+    },
+    [handleFilterChange],
+  );
 
   // Handle export
   const handleExport = useCallback(async () => {
@@ -355,19 +363,19 @@ export function ExecutiveDashboard({
         period: filters.dateRange,
         exportedAt: new Date().toISOString(),
         clinicId,
-        userId
+        userId,
       };
-      
+
       const dataStr = JSON.stringify(exportData, null, 2);
-      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const dataBlob = new Blob([dataStr], { type: "application/json" });
       const url = URL.createObjectURL(dataBlob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.download = `executive-dashboard-${format(new Date(), 'yyyy-MM-dd-HHmm')}.json`;
+      link.download = `executive-dashboard-${format(new Date(), "yyyy-MM-dd-HHmm")}.json`;
       link.click();
       URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Failed to export dashboard:', error);
+      console.error("Failed to export dashboard:", error);
     }
   }, [state, filters, clinicId, userId]);
 
@@ -383,11 +391,11 @@ export function ExecutiveDashboard({
   }, [handleUIChange]);
 
   // Get active alerts count
-  const activeAlertsCount = state.alerts.filter(alert => !alert.acknowledged).length;
+  const activeAlertsCount = state.alerts.filter((alert) => !alert.acknowledged).length;
 
   // Get critical alerts count
   const criticalAlertsCount = state.alerts.filter(
-    alert => alert.severity === 'critical' && !alert.acknowledged
+    (alert) => alert.severity === "critical" && !alert.acknowledged,
   ).length;
 
   if (state.isLoading && !state.data) {
@@ -436,7 +444,7 @@ export function ExecutiveDashboard({
                   Executive Dashboard
                 </h1>
                 <p className="text-sm text-muted-foreground">
-                  Last updated: {state.lastUpdated ? format(state.lastUpdated, 'PPp') : 'Never'}
+                  Last updated: {state.lastUpdated ? format(state.lastUpdated, "PPp") : "Never"}
                   {state.isLoading && (
                     <span className="ml-2 inline-flex items-center gap-1">
                       <RefreshCw className="h-3 w-3 animate-spin" />
@@ -445,7 +453,7 @@ export function ExecutiveDashboard({
                   )}
                 </p>
               </div>
-              
+
               {/* Date Range Selector */}
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
@@ -463,15 +471,19 @@ export function ExecutiveDashboard({
                 </Select>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-2">
               {/* Alerts Badge */}
               {activeAlertsCount > 0 && (
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => handleUIChange({ activeTab: 'alerts' })}
-                  className={criticalAlertsCount > 0 ? 'border-red-200 text-red-600' : 'border-yellow-200 text-yellow-600'}
+                  onClick={() => handleUIChange({ activeTab: "alerts" })}
+                  className={
+                    criticalAlertsCount > 0
+                      ? "border-red-200 text-red-600"
+                      : "border-yellow-200 text-yellow-600"
+                  }
                 >
                   <Bell className="h-4 w-4 mr-1" />
                   {activeAlertsCount}
@@ -482,32 +494,32 @@ export function ExecutiveDashboard({
                   )}
                 </Button>
               )}
-              
+
               {/* Auto-refresh toggle */}
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => handleUIChange({ autoRefresh: !ui.autoRefresh })}
-                className={ui.autoRefresh ? 'bg-green-50 border-green-200 text-green-700' : ''}
+                className={ui.autoRefresh ? "bg-green-50 border-green-200 text-green-700" : ""}
               >
-                <RefreshCw className={`h-4 w-4 ${ui.autoRefresh ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`h-4 w-4 ${ui.autoRefresh ? "animate-spin" : ""}`} />
               </Button>
-              
+
               {/* Filters toggle */}
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => handleUIChange({ showFilters: !ui.showFilters })}
-                className={ui.showFilters ? 'bg-blue-50 border-blue-200 text-blue-700' : ''}
+                className={ui.showFilters ? "bg-blue-50 border-blue-200 text-blue-700" : ""}
               >
                 <Filter className="h-4 w-4" />
               </Button>
-              
+
               {/* Export */}
               <Button variant="outline" size="sm" onClick={handleExport}>
                 <Download className="h-4 w-4" />
               </Button>
-              
+
               {/* Fullscreen toggle */}
               <Button variant="outline" size="sm" onClick={toggleFullscreen}>
                 {ui.isFullscreen ? (
@@ -524,11 +536,7 @@ export function ExecutiveDashboard({
       {/* Filters Panel */}
       {ui.showFilters && (
         <div className="bg-white border-b border-gray-200 px-6 py-4">
-          <FilterPanel
-            filters={filters}
-            onFiltersChange={handleFilterChange}
-            className=""
-          />
+          <FilterPanel filters={filters} onFiltersChange={handleFilterChange} className="" />
         </div>
       )}
 
@@ -542,7 +550,7 @@ export function ExecutiveDashboard({
                 <TabsTrigger key={tab.id} value={tab.id} className="flex items-center gap-2">
                   <Icon className="h-4 w-4" />
                   {tab.label}
-                  {tab.id === 'alerts' && activeAlertsCount > 0 && (
+                  {tab.id === "alerts" && activeAlertsCount > 0 && (
                     <Badge variant="destructive" className="ml-1 text-xs">
                       {activeAlertsCount}
                     </Badge>
@@ -551,7 +559,7 @@ export function ExecutiveDashboard({
               );
             })}
           </TabsList>
-          
+
           {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-6">
             {/* Executive Summary */}
@@ -561,7 +569,7 @@ export function ExecutiveDashboard({
               autoRefresh={ui.autoRefresh}
               refreshInterval={ui.refreshInterval}
             />
-            
+
             {/* Key KPIs */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {state.kpis.slice(0, 4).map((kpi) => (
@@ -574,17 +582,17 @@ export function ExecutiveDashboard({
                 />
               ))}
             </div>
-            
+
             {/* Dashboard Grid */}
             <DashboardGrid
               widgets={state.widgets}
-              onWidgetsChange={(widgets) => setState(prev => ({ ...prev, widgets }))}
+              onWidgetsChange={(widgets) => setState((prev) => ({ ...prev, widgets }))}
               layout={ui.gridLayout}
               editable={true}
               className=""
             />
           </TabsContent>
-          
+
           {/* Metrics Tab */}
           <TabsContent value="metrics" className="space-y-6">
             <PerformanceMetrics
@@ -597,7 +605,7 @@ export function ExecutiveDashboard({
               refreshInterval={ui.refreshInterval}
             />
           </TabsContent>
-          
+
           {/* Analytics Tab */}
           <TabsContent value="analytics" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -610,14 +618,14 @@ export function ExecutiveDashboard({
                   showGrid: true,
                   showLegend: true,
                   showTooltip: true,
-                  colors: ['#3b82f6', '#10b981'],
+                  colors: ["#3b82f6", "#10b981"],
                   height: 300,
                   animated: true,
-                  responsive: true
+                  responsive: true,
                 }}
                 refreshInterval={ui.refreshInterval}
               />
-              
+
               <ChartWidget
                 id="patient-distribution"
                 title="Patient Distribution"
@@ -626,16 +634,16 @@ export function ExecutiveDashboard({
                 config={{
                   showLegend: true,
                   showTooltip: true,
-                  colors: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'],
+                  colors: ["#3b82f6", "#10b981", "#f59e0b", "#ef4444"],
                   height: 300,
                   animated: true,
-                  responsive: true
+                  responsive: true,
                 }}
                 refreshInterval={ui.refreshInterval}
               />
             </div>
           </TabsContent>
-          
+
           {/* Reports Tab */}
           <TabsContent value="reports" className="space-y-6">
             <ExecutiveReportGenerator
@@ -644,12 +652,12 @@ export function ExecutiveDashboard({
               className=""
             />
           </TabsContent>
-          
+
           {/* Alerts Tab */}
           <TabsContent value="alerts" className="space-y-6">
             <AlertPanel
               alerts={state.alerts}
-              onAlertsChange={(alerts) => setState(prev => ({ ...prev, alerts }))}
+              onAlertsChange={(alerts) => setState((prev) => ({ ...prev, alerts }))}
               autoRefresh={ui.autoRefresh}
               refreshInterval={ui.refreshInterval}
               className=""
@@ -665,73 +673,73 @@ export function ExecutiveDashboard({
 function generateDefaultWidgets(): DashboardWidget[] {
   return [
     {
-      id: 'revenue-metric',
-      type: 'metric',
-      title: 'Monthly Revenue',
+      id: "revenue-metric",
+      type: "metric",
+      title: "Monthly Revenue",
       position: { x: 0, y: 0, w: 3, h: 2 },
       config: {
-        metric: 'revenue',
-        format: 'currency',
+        metric: "revenue",
+        format: "currency",
         showTrend: true,
-        showTarget: true
+        showTarget: true,
       },
       visible: true,
-      locked: false
+      locked: false,
     },
     {
-      id: 'patient-satisfaction',
-      type: 'metric',
-      title: 'Patient Satisfaction',
+      id: "patient-satisfaction",
+      type: "metric",
+      title: "Patient Satisfaction",
       position: { x: 3, y: 0, w: 3, h: 2 },
       config: {
-        metric: 'satisfaction',
-        format: 'number',
+        metric: "satisfaction",
+        format: "number",
         showTrend: true,
-        showTarget: true
+        showTarget: true,
       },
       visible: true,
-      locked: false
+      locked: false,
     },
     {
-      id: 'appointments-chart',
-      type: 'chart',
-      title: 'Appointments Trend',
+      id: "appointments-chart",
+      type: "chart",
+      title: "Appointments Trend",
       position: { x: 6, y: 0, w: 6, h: 4 },
       config: {
-        type: 'line',
-        dataSource: 'appointments',
-        timeRange: '30d'
+        type: "line",
+        dataSource: "appointments",
+        timeRange: "30d",
       },
       visible: true,
-      locked: false
+      locked: false,
     },
     {
-      id: 'efficiency-metric',
-      type: 'metric',
-      title: 'Operational Efficiency',
+      id: "efficiency-metric",
+      type: "metric",
+      title: "Operational Efficiency",
       position: { x: 0, y: 2, w: 3, h: 2 },
       config: {
-        metric: 'efficiency',
-        format: 'percentage',
+        metric: "efficiency",
+        format: "percentage",
         showTrend: true,
-        showTarget: true
+        showTarget: true,
       },
       visible: true,
-      locked: false
+      locked: false,
     },
     {
-      id: 'wait-time-metric',
-      type: 'metric',
-      title: 'Average Wait Time',
+      id: "wait-time-metric",
+      type: "metric",
+      title: "Average Wait Time",
       position: { x: 3, y: 2, w: 3, h: 2 },
       config: {
-        metric: 'waitTime',
-        format: 'duration',
+        metric: "waitTime",
+        format: "duration",
         showTrend: true,
-        showTarget: true
+        showTarget: true,
       },
       visible: true,
-      locked: false
-    }
+      locked: false,
+    },
   ];
 }

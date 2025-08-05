@@ -8,11 +8,11 @@ import type {
   TopProduct,
   WasteAnalysis,
 } from "@/app/lib/types/stock-alerts";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -21,15 +21,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import {
+import type { Label } from "@/components/ui/label";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
+import type {
   Table,
   TableBody,
   TableCell,
@@ -37,11 +37,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/hooks/use-toast";
-import { format } from "date-fns";
-import { pt } from "date-fns/locale";
-import {
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { useToast } from "@/hooks/use-toast";
+import type { format } from "date-fns";
+import type { pt } from "date-fns/locale";
+import type {
   AlertTriangle,
   BarChart3,
   Calendar,
@@ -59,7 +59,7 @@ import {
   TrendingDown,
   TrendingUp,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import type { useEffect, useState } from "react";
 
 interface StockReportsProps {
   className?: string;
@@ -86,15 +86,11 @@ const reportTypeLabels = {
 export function StockReports({ className }: StockReportsProps) {
   const [reports, setReports] = useState<CustomStockReport[]>([]);
   const [kpis, setKpis] = useState<StockKPIs | null>(null);
-  const [consumptionTrend, setConsumptionTrend] = useState<ConsumptionTrend[]>(
-    []
-  );
+  const [consumptionTrend, setConsumptionTrend] = useState<ConsumptionTrend[]>([]);
   const [topProducts, setTopProducts] = useState<TopProduct[]>([]);
   const [wasteAnalysis, setWasteAnalysis] = useState<WasteAnalysis[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedTab, setSelectedTab] = useState<"dashboard" | "reports">(
-    "dashboard"
-  );
+  const [selectedTab, setSelectedTab] = useState<"dashboard" | "reports">("dashboard");
   const [filterType, setFilterType] = useState<ReportType | "all">("all");
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const { toast } = useToast();
@@ -123,8 +119,7 @@ export function StockReports({ className }: StockReportsProps) {
     } catch (error) {
       toast({
         title: "Erro ao carregar dados",
-        description:
-          "Não foi possível carregar os dados do dashboard e relatórios.",
+        description: "Não foi possível carregar os dados do dashboard e relatórios.",
         variant: "destructive",
       });
     } finally {
@@ -203,10 +198,7 @@ export function StockReports({ className }: StockReportsProps) {
         </div>
       </CardHeader>
       <CardContent>
-        <Tabs
-          value={selectedTab}
-          onValueChange={(value) => setSelectedTab(value as any)}
-        >
+        <Tabs value={selectedTab} onValueChange={(value) => setSelectedTab(value as any)}>
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="dashboard" className="flex items-center gap-2">
               <PieChart className="h-4 w-4" />
@@ -226,9 +218,7 @@ export function StockReports({ className }: StockReportsProps) {
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-muted-foreground">
-                          Valor Total
-                        </p>
+                        <p className="text-sm font-medium text-muted-foreground">Valor Total</p>
                         <p className="text-2xl font-bold">
                           R$ {kpis.totalValue.toLocaleString("pt-BR")}
                         </p>
@@ -242,12 +232,8 @@ export function StockReports({ className }: StockReportsProps) {
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-muted-foreground">
-                          Taxa de Giro
-                        </p>
-                        <p className="text-2xl font-bold">
-                          {kpis.turnoverRate.toFixed(1)}x
-                        </p>
+                        <p className="text-sm font-medium text-muted-foreground">Taxa de Giro</p>
+                        <p className="text-2xl font-bold">{kpis.turnoverRate.toFixed(1)}x</p>
                       </div>
                       <TrendingUp className="h-8 w-8 text-blue-600" />
                     </div>
@@ -261,9 +247,7 @@ export function StockReports({ className }: StockReportsProps) {
                         <p className="text-sm font-medium text-muted-foreground">
                           Cobertura (Dias)
                         </p>
-                        <p className="text-2xl font-bold">
-                          {kpis.daysCoverage}
-                        </p>
+                        <p className="text-2xl font-bold">{kpis.daysCoverage}</p>
                       </div>
                       <Calendar className="h-8 w-8 text-orange-600" />
                     </div>
@@ -274,12 +258,8 @@ export function StockReports({ className }: StockReportsProps) {
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-muted-foreground">
-                          Alertas Ativos
-                        </p>
-                        <p className="text-2xl font-bold text-red-600">
-                          {kpis.activeAlerts}
-                        </p>
+                        <p className="text-sm font-medium text-muted-foreground">Alertas Ativos</p>
+                        <p className="text-2xl font-bold text-red-600">{kpis.activeAlerts}</p>
                       </div>
                       <AlertTriangle className="h-8 w-8 text-red-600" />
                     </div>
@@ -293,25 +273,18 @@ export function StockReports({ className }: StockReportsProps) {
               {/* Top Products */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">
-                    Produtos Mais Consumidos
-                  </CardTitle>
+                  <CardTitle className="text-lg">Produtos Mais Consumidos</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {topProducts.length === 0 ? (
                     <Alert>
                       <Package className="h-4 w-4" />
-                      <AlertDescription>
-                        Nenhum dado de consumo disponível.
-                      </AlertDescription>
+                      <AlertDescription>Nenhum dado de consumo disponível.</AlertDescription>
                     </Alert>
                   ) : (
                     <div className="space-y-3">
                       {topProducts.slice(0, 5).map((product, index) => (
-                        <div
-                          key={product.productId}
-                          className="flex items-center justify-between"
-                        >
+                        <div key={product.productId} className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold">
                               {index + 1}
@@ -319,9 +292,7 @@ export function StockReports({ className }: StockReportsProps) {
                             <div>
                               <p className="font-medium">{product.name}</p>
                               {product.sku && (
-                                <p className="text-sm text-muted-foreground">
-                                  {product.sku}
-                                </p>
+                                <p className="text-sm text-muted-foreground">{product.sku}</p>
                               )}
                             </div>
                           </div>
@@ -341,17 +312,13 @@ export function StockReports({ className }: StockReportsProps) {
               {/* Waste Analysis */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">
-                    Análise de Desperdício
-                  </CardTitle>
+                  <CardTitle className="text-lg">Análise de Desperdício</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {wasteAnalysis.length === 0 ? (
                     <Alert>
                       <TrendingDown className="h-4 w-4" />
-                      <AlertDescription>
-                        Nenhum dado de desperdício disponível.
-                      </AlertDescription>
+                      <AlertDescription>Nenhum dado de desperdício disponível.</AlertDescription>
                     </Alert>
                   ) : (
                     <div className="space-y-3">
@@ -378,9 +345,7 @@ export function StockReports({ className }: StockReportsProps) {
                                 {waste.trend === "worsening" && (
                                   <TrendingUp className="h-4 w-4 text-red-600" />
                                 )}
-                                <span className="text-sm capitalize">
-                                  {waste.trend}
-                                </span>
+                                <span className="text-sm capitalize">{waste.trend}</span>
                               </div>
                             )}
                           </div>
@@ -401,10 +366,7 @@ export function StockReports({ className }: StockReportsProps) {
                   <Label>Filtrar por tipo:</Label>
                 </div>
 
-                <Select
-                  value={filterType}
-                  onValueChange={(value) => setFilterType(value as any)}
-                >
+                <Select value={filterType} onValueChange={(value) => setFilterType(value as any)}>
                   <SelectTrigger className="w-48">
                     <SelectValue placeholder="Tipo de relatório" />
                   </SelectTrigger>
@@ -420,10 +382,7 @@ export function StockReports({ className }: StockReportsProps) {
                 </Select>
               </div>
 
-              <Dialog
-                open={showCreateDialog}
-                onOpenChange={setShowCreateDialog}
-              >
+              <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
                 <DialogTrigger asChild>
                   <Button>
                     <Plus className="h-4 w-4 mr-2" />
@@ -434,8 +393,7 @@ export function StockReports({ className }: StockReportsProps) {
                   <DialogHeader>
                     <DialogTitle>Novo Relatório Personalizado</DialogTitle>
                     <DialogDescription>
-                      Configure um novo relatório personalizado para análise de
-                      estoque.
+                      Configure um novo relatório personalizado para análise de estoque.
                     </DialogDescription>
                   </DialogHeader>
                   <ReportForm
@@ -453,8 +411,7 @@ export function StockReports({ className }: StockReportsProps) {
               <Alert>
                 <FileText className="h-4 w-4" />
                 <AlertDescription>
-                  Nenhum relatório encontrado. Crie um novo relatório para
-                  começar.
+                  Nenhum relatório encontrado. Crie um novo relatório para começar.
                 </AlertDescription>
               </Alert>
             ) : (
@@ -470,10 +427,7 @@ export function StockReports({ className }: StockReportsProps) {
                 </TableHeader>
                 <TableBody>
                   {filteredReports.map((report) => {
-                    const Icon =
-                      reportTypeIcons[
-                        report.reportType as keyof typeof reportTypeIcons
-                      ];
+                    const Icon = reportTypeIcons[report.reportType as keyof typeof reportTypeIcons];
 
                     return (
                       <TableRow key={report.id}>
@@ -490,26 +444,18 @@ export function StockReports({ className }: StockReportsProps) {
                         </TableCell>
                         <TableCell>
                           <Badge variant="secondary" className="text-xs">
-                            {
-                              reportTypeLabels[
-                                report.reportType as keyof typeof reportTypeLabels
-                              ]
-                            }
+                            {reportTypeLabels[report.reportType as keyof typeof reportTypeLabels]}
                           </Badge>
                         </TableCell>
                         <TableCell>
                           {report.lastExecutedAt ? (
                             <span className="text-sm">
-                              {format(
-                                new Date(report.lastExecutedAt),
-                                "dd/MM/yy HH:mm",
-                                { locale: pt }
-                              )}
+                              {format(new Date(report.lastExecutedAt), "dd/MM/yy HH:mm", {
+                                locale: pt,
+                              })}
                             </span>
                           ) : (
-                            <span className="text-sm text-muted-foreground">
-                              Nunca executado
-                            </span>
+                            <span className="text-sm text-muted-foreground">Nunca executado</span>
                           )}
                         </TableCell>
                         <TableCell>
@@ -551,18 +497,11 @@ export function StockReports({ className }: StockReportsProps) {
 }
 
 // Report Form Component (placeholder)
-function ReportForm({
-  onSave,
-  onCancel,
-}: {
-  onSave: (report: any) => void;
-  onCancel: () => void;
-}) {
+function ReportForm({ onSave, onCancel }: { onSave: (report: any) => void; onCancel: () => void }) {
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        Formulário de criação de relatório será implementado na próxima
-        iteração.
+        Formulário de criação de relatório será implementado na próxima iteração.
       </p>
       <DialogFooter>
         <Button variant="outline" onClick={onCancel}>

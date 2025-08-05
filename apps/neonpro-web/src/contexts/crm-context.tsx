@@ -1,14 +1,8 @@
 "use client";
 
-import { createClient } from "@/app/utils/supabase/client";
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useReducer,
-} from "react";
-import { toast } from "sonner";
+import type { createClient } from "@/app/utils/supabase/client";
+import type { createContext, ReactNode, useContext, useEffect, useReducer } from "react";
+import type { toast } from "sonner";
 
 // Types
 export interface Customer {
@@ -139,15 +133,13 @@ const crmReducer = (state: CRMState, action: CRMAction): CRMState => {
       return {
         ...state,
         customers: state.customers.map((customer) =>
-          customer.id === action.payload.id ? action.payload : customer
+          customer.id === action.payload.id ? action.payload : customer,
         ),
       };
     case "DELETE_CUSTOMER":
       return {
         ...state,
-        customers: state.customers.filter(
-          (customer) => customer.id !== action.payload
-        ),
+        customers: state.customers.filter((customer) => customer.id !== action.payload),
       };
     case "SET_SEGMENTS":
       return { ...state, segments: action.payload };
@@ -157,15 +149,13 @@ const crmReducer = (state: CRMState, action: CRMAction): CRMState => {
       return {
         ...state,
         segments: state.segments.map((segment) =>
-          segment.id === action.payload.id ? action.payload : segment
+          segment.id === action.payload.id ? action.payload : segment,
         ),
       };
     case "DELETE_SEGMENT":
       return {
         ...state,
-        segments: state.segments.filter(
-          (segment) => segment.id !== action.payload
-        ),
+        segments: state.segments.filter((segment) => segment.id !== action.payload),
       };
     case "SET_CAMPAIGNS":
       return { ...state, campaigns: action.payload };
@@ -175,15 +165,13 @@ const crmReducer = (state: CRMState, action: CRMAction): CRMState => {
       return {
         ...state,
         campaigns: state.campaigns.map((campaign) =>
-          campaign.id === action.payload.id ? action.payload : campaign
+          campaign.id === action.payload.id ? action.payload : campaign,
         ),
       };
     case "DELETE_CAMPAIGN":
       return {
         ...state,
-        campaigns: state.campaigns.filter(
-          (campaign) => campaign.id !== action.payload
-        ),
+        campaigns: state.campaigns.filter((campaign) => campaign.id !== action.payload),
       };
     case "SET_FILTER":
       return {
@@ -222,16 +210,14 @@ interface CRMContextType {
 
   // Customer actions
   loadCustomers: () => Promise<void>;
-  createCustomer: (
-    customer: Omit<Customer, "id" | "created_at" | "updated_at">
-  ) => Promise<void>;
+  createCustomer: (customer: Omit<Customer, "id" | "created_at" | "updated_at">) => Promise<void>;
   updateCustomer: (customer: Customer) => Promise<void>;
   deleteCustomer: (customerId: string) => Promise<void>;
 
   // Segment actions
   loadSegments: () => Promise<void>;
   createSegment: (
-    segment: Omit<CustomerSegment, "id" | "created_at" | "updated_at">
+    segment: Omit<CustomerSegment, "id" | "created_at" | "updated_at">,
   ) => Promise<void>;
   updateSegment: (segment: CustomerSegment) => Promise<void>;
   deleteSegment: (segmentId: string) => Promise<void>;
@@ -239,7 +225,7 @@ interface CRMContextType {
   // Campaign actions
   loadCampaigns: () => Promise<void>;
   createCampaign: (
-    campaign: Omit<MarketingCampaign, "id" | "created_at" | "updated_at">
+    campaign: Omit<MarketingCampaign, "id" | "created_at" | "updated_at">,
   ) => Promise<void>;
   updateCampaign: (campaign: MarketingCampaign) => Promise<void>;
   deleteCampaign: (campaignId: string) => Promise<void>;
@@ -282,7 +268,7 @@ export function CRMProvider({ children }: { children: ReactNode }) {
             email,
             phone
           )
-        `
+        `,
         )
         .order("created_at", { ascending: false });
 
@@ -305,7 +291,7 @@ export function CRMProvider({ children }: { children: ReactNode }) {
   };
 
   const createCustomer = async (
-    customerData: Omit<Customer, "id" | "created_at" | "updated_at">
+    customerData: Omit<Customer, "id" | "created_at" | "updated_at">,
   ) => {
     try {
       const { data, error } = await supabase
@@ -347,10 +333,7 @@ export function CRMProvider({ children }: { children: ReactNode }) {
 
   const deleteCustomer = async (customerId: string) => {
     try {
-      const { error } = await supabase
-        .from("customers")
-        .delete()
-        .eq("id", customerId);
+      const { error } = await supabase.from("customers").delete().eq("id", customerId);
 
       if (error) throw error;
 
@@ -399,7 +382,7 @@ export function CRMProvider({ children }: { children: ReactNode }) {
   };
 
   const createSegment = async (
-    segmentData: Omit<CustomerSegment, "id" | "created_at" | "updated_at">
+    segmentData: Omit<CustomerSegment, "id" | "created_at" | "updated_at">,
   ) => {
     try {
       const { data, error } = await supabase
@@ -441,10 +424,7 @@ export function CRMProvider({ children }: { children: ReactNode }) {
 
   const deleteSegment = async (segmentId: string) => {
     try {
-      const { error } = await supabase
-        .from("customer_segments")
-        .delete()
-        .eq("id", segmentId);
+      const { error } = await supabase.from("customer_segments").delete().eq("id", segmentId);
 
       if (error) throw error;
 
@@ -493,7 +473,7 @@ export function CRMProvider({ children }: { children: ReactNode }) {
   };
 
   const createCampaign = async (
-    campaignData: Omit<MarketingCampaign, "id" | "created_at" | "updated_at">
+    campaignData: Omit<MarketingCampaign, "id" | "created_at" | "updated_at">,
   ) => {
     try {
       const { data, error } = await supabase
@@ -535,10 +515,7 @@ export function CRMProvider({ children }: { children: ReactNode }) {
 
   const deleteCampaign = async (campaignId: string) => {
     try {
-      const { error } = await supabase
-        .from("marketing_campaigns")
-        .delete()
-        .eq("id", campaignId);
+      const { error } = await supabase.from("marketing_campaigns").delete().eq("id", campaignId);
 
       if (error) throw error;
 
@@ -585,10 +562,7 @@ export function CRMProvider({ children }: { children: ReactNode }) {
     }
 
     // Status filter
-    if (
-      state.filters.customer_status &&
-      customer.status !== state.filters.customer_status
-    ) {
+    if (state.filters.customer_status && customer.status !== state.filters.customer_status) {
       return false;
     }
 
@@ -631,9 +605,7 @@ export function CRMProvider({ children }: { children: ReactNode }) {
     filteredCustomers,
   };
 
-  return (
-    <CRMContext.Provider value={contextValue}>{children}</CRMContext.Provider>
-  );
+  return <CRMContext.Provider value={contextValue}>{children}</CRMContext.Provider>;
 }
 
 // Custom hook

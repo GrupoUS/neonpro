@@ -1,15 +1,23 @@
 // Types for Patient Retention Analytics + Predictions
 // Story 7.4: Advanced patient retention analytics with predictive modeling
 
-export type ChurnRiskLevel = 'low' | 'medium' | 'high' | 'critical';
-export type InterventionChannel = 'email' | 'sms' | 'whatsapp' | 'phone' | 'in_person' | 'push';
-export type InterventionStatus = 'planned' | 'scheduled' | 'sent' | 'delivered' | 'opened' | 'clicked' | 'responded' | 'failed';
+export type ChurnRiskLevel = "low" | "medium" | "high" | "critical";
+export type InterventionChannel = "email" | "sms" | "whatsapp" | "phone" | "in_person" | "push";
+export type InterventionStatus =
+  | "planned"
+  | "scheduled"
+  | "sent"
+  | "delivered"
+  | "opened"
+  | "clicked"
+  | "responded"
+  | "failed";
 
 export interface PatientRetentionAnalytics {
   id: string;
   patient_id: string;
   retention_score: number;
-  churn_risk_level: 'low' | 'medium' | 'high' | 'critical';
+  churn_risk_level: "low" | "medium" | "high" | "critical";
   churn_probability: number;
   lifetime_value: number;
   predicted_ltv: number;
@@ -71,7 +79,7 @@ export interface PatientChurnPrediction {
   prediction_date: string;
   churn_probability: number;
   risk_score: number;
-  risk_level: 'low' | 'medium' | 'high' | 'critical';
+  risk_level: "low" | "medium" | "high" | "critical";
   predicted_churn_date?: string;
   contributing_factors: ChurnFactor[];
   intervention_recommendations: InterventionRecommendation[];
@@ -79,8 +87,8 @@ export interface PatientChurnPrediction {
   model_version: string;
   confidence_score: number;
   is_active: boolean;
-  validation_status: 'pending' | 'validated' | 'disputed';
-  actual_outcome?: 'retained' | 'churned' | 'unknown';
+  validation_status: "pending" | "validated" | "disputed";
+  actual_outcome?: "retained" | "churned" | "unknown";
   outcome_date?: string;
   prediction_accuracy?: number;
   created_at: string;
@@ -93,12 +101,20 @@ export interface RetentionIntervention {
   prediction_id?: string;
   intervention_type: string;
   intervention_description: string;
-  channel: 'email' | 'sms' | 'whatsapp' | 'phone' | 'in_person' | 'push';
+  channel: "email" | "sms" | "whatsapp" | "phone" | "in_person" | "push";
   personalization_data: Record<string, any>;
   trigger_conditions: Record<string, any>;
   scheduled_date?: string;
   executed_date?: string;
-  status: 'planned' | 'scheduled' | 'sent' | 'delivered' | 'opened' | 'clicked' | 'responded' | 'failed';
+  status:
+    | "planned"
+    | "scheduled"
+    | "sent"
+    | "delivered"
+    | "opened"
+    | "clicked"
+    | "responded"
+    | "failed";
   response_data: Record<string, any>;
   effectiveness_score?: number;
   cost: number;
@@ -165,7 +181,7 @@ export interface RetentionModelPerformance {
   id: string;
   model_name: string;
   model_version: string;
-  model_type: 'churn_prediction' | 'ltv_prediction' | 'retention_scoring';
+  model_type: "churn_prediction" | "ltv_prediction" | "retention_scoring";
   training_date: string;
   validation_date?: string;
   accuracy_score: number;
@@ -180,7 +196,7 @@ export interface RetentionModelPerformance {
   cross_validation_scores: number[];
   performance_trends: Record<string, any>;
   is_active: boolean;
-  deployment_status: 'development' | 'testing' | 'production' | 'deprecated';
+  deployment_status: "development" | "testing" | "production" | "deprecated";
   performance_threshold: number;
   monitoring_alerts: Alert[];
   created_at: string;
@@ -190,13 +206,13 @@ export interface RetentionModelPerformance {
 export interface RetentionBenchmark {
   id: string;
   industry_segment: string;
-  benchmark_type: 'retention_rate' | 'churn_rate' | 'ltv' | 'intervention_effectiveness';
+  benchmark_type: "retention_rate" | "churn_rate" | "ltv" | "intervention_effectiveness";
   benchmark_value: number;
   percentile_rank: number;
   data_source: string;
   sample_size?: number;
   geographic_region: string;
-  clinic_size_category?: 'small' | 'medium' | 'large' | 'enterprise';
+  clinic_size_category?: "small" | "medium" | "large" | "enterprise";
   specialty_focus?: string;
   benchmark_period: string;
   confidence_interval: Record<string, any>;
@@ -211,13 +227,13 @@ export interface ChurnFactor {
   factor_name: string;
   factor_value: number;
   weight: number;
-  category: 'behavioral' | 'financial' | 'clinical' | 'satisfaction' | 'demographic';
+  category: "behavioral" | "financial" | "clinical" | "satisfaction" | "demographic";
   description: string;
 }
 
 export interface InterventionRecommendation {
   intervention_type: string;
-  priority: 'low' | 'medium' | 'high' | 'urgent';
+  priority: "low" | "medium" | "high" | "urgent";
   expected_effectiveness: number;
   estimated_cost: number;
   channel_preference: string[];
@@ -232,12 +248,12 @@ export interface InterventionRecord {
   executed_date: string;
   effectiveness_score?: number;
   roi?: number;
-  outcome: 'positive' | 'neutral' | 'negative' | 'unknown';
+  outcome: "positive" | "neutral" | "negative" | "unknown";
 }
 
 export interface Alert {
   alert_type: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   message: string;
   created_at: string;
   resolved: boolean;
@@ -274,7 +290,7 @@ export interface RetentionInterventionRequest {
 
 export interface RetentionMetricsRequest {
   clinic_id?: string;
-  period_type: 'monthly' | 'quarterly' | 'yearly';
+  period_type: "monthly" | "quarterly" | "yearly";
   start_date: string;
   end_date: string;
   include_benchmarks?: boolean;
@@ -283,7 +299,7 @@ export interface RetentionMetricsRequest {
 
 export interface LTVCalculationRequest {
   patient_ids?: string[];
-  calculation_method?: 'historical' | 'predictive' | 'hybrid';
+  calculation_method?: "historical" | "predictive" | "hybrid";
   force_recalculation?: boolean;
   include_risk_adjustment?: boolean;
 }
@@ -370,4 +386,3 @@ export interface BenchmarkConfigurationForm {
   geographic_region: string;
   clinic_size_category?: string;
 }
-

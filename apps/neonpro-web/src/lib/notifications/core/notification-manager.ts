@@ -1,11 +1,11 @@
-import { createClient } from '@supabase/supabase-js';
-import { AuditLogger } from '../../auth/audit/audit-logger';
-import { LGPDAutomation } from '../../compliance/lgpd-automation';
-import { EncryptionService } from '../../compliance/encryption';
-import { TemplateEngine } from '../templates/template-engine';
-import { ChannelProvider } from './channel-providers';
-import { NotificationScheduler } from './notification-scheduler';
-import { NotificationAnalytics } from './notification-analytics';
+import { createClient } from "@supabase/supabase-js";
+import { AuditLogger } from "../../auth/audit/audit-logger";
+import { LGPDAutomation } from "../../compliance/lgpd-automation";
+import { EncryptionService } from "../../compliance/encryption";
+import { TemplateEngine } from "../templates/template-engine";
+import { ChannelProvider } from "./channel-providers";
+import { NotificationScheduler } from "./notification-scheduler";
+import { NotificationAnalytics } from "./notification-analytics";
 
 export interface NotificationConfig {
   id: string;
@@ -14,7 +14,7 @@ export interface NotificationConfig {
   priority: NotificationPriorityEnum;
   template_id: string;
   recipient_id: string;
-  recipient_type: 'patient' | 'staff' | 'admin';
+  recipient_type: "patient" | "staff" | "admin";
   data: Record<string, any>;
   scheduled_at?: Date;
   expires_at?: Date;
@@ -53,7 +53,7 @@ export interface NotificationPreferences {
 
 export interface NotificationResult {
   id: string;
-  status: 'sent' | 'failed' | 'pending' | 'scheduled';
+  status: "sent" | "failed" | "pending" | "scheduled";
   channel: NotificationChannelEnum;
   sent_at?: Date;
   delivered_at?: Date;
@@ -71,34 +71,34 @@ export interface NotificationResult {
 }
 
 export enum NotificationTypeEnum {
-  APPOINTMENT_REMINDER = 'appointment_reminder',
-  APPOINTMENT_CONFIRMATION = 'appointment_confirmation',
-  APPOINTMENT_CANCELLATION = 'appointment_cancellation',
-  TREATMENT_UPDATE = 'treatment_update',
-  PAYMENT_REMINDER = 'payment_reminder',
-  PAYMENT_CONFIRMATION = 'payment_confirmation',
-  SECURITY_ALERT = 'security_alert',
-  SYSTEM_MAINTENANCE = 'system_maintenance',
-  MARKETING_CAMPAIGN = 'marketing_campaign',
-  BIRTHDAY_GREETING = 'birthday_greeting',
-  FOLLOW_UP = 'follow_up',
-  EMERGENCY_ALERT = 'emergency_alert'
+  APPOINTMENT_REMINDER = "appointment_reminder",
+  APPOINTMENT_CONFIRMATION = "appointment_confirmation",
+  APPOINTMENT_CANCELLATION = "appointment_cancellation",
+  TREATMENT_UPDATE = "treatment_update",
+  PAYMENT_REMINDER = "payment_reminder",
+  PAYMENT_CONFIRMATION = "payment_confirmation",
+  SECURITY_ALERT = "security_alert",
+  SYSTEM_MAINTENANCE = "system_maintenance",
+  MARKETING_CAMPAIGN = "marketing_campaign",
+  BIRTHDAY_GREETING = "birthday_greeting",
+  FOLLOW_UP = "follow_up",
+  EMERGENCY_ALERT = "emergency_alert",
 }
 
 export enum NotificationChannelEnum {
-  EMAIL = 'email',
-  SMS = 'sms',
-  PUSH = 'push',
-  WHATSAPP = 'whatsapp',
-  IN_APP = 'in_app'
+  EMAIL = "email",
+  SMS = "sms",
+  PUSH = "push",
+  WHATSAPP = "whatsapp",
+  IN_APP = "in_app",
 }
 
 export enum NotificationPriorityEnum {
-  LOW = 'low',
-  NORMAL = 'normal',
-  HIGH = 'high',
-  URGENT = 'urgent',
-  EMERGENCY = 'emergency'
+  LOW = "low",
+  NORMAL = "normal",
+  HIGH = "high",
+  URGENT = "urgent",
+  EMERGENCY = "emergency",
 }
 
 export class NotificationManager {
@@ -114,7 +114,7 @@ export class NotificationManager {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
     this.auditLogger = new AuditLogger();
     this.lgpdManager = new LGPDManager();
@@ -137,27 +137,24 @@ export class NotificationManager {
       const hasConsent = await this.lgpdManager.checkConsentForNotification(
         config.recipient_id,
         config.channel,
-        config.type
+        config.type,
       );
 
       if (!hasConsent) {
-        throw new Error('Usuário não possui consentimento para este tipo de notificação');
+        throw new Error("Usuário não possui consentimento para este tipo de notificação");
       }
 
       // Verificar preferências do usuário
       const preferences = await this.getUserPreferences(config.recipient_id);
       if (!this.isChannelEnabled(preferences, config.channel)) {
-        throw new Error('Canal de notificação desabilitado pelo usuário');
+        throw new Error("Canal de notificação desabilitado pelo usuário");
       }
 
       // Verificar rate limiting
       await this.checkRateLimit(config.recipient_id, config.channel);
 
       // Renderizar template
-      const renderedContent = await this.templateEngine.render(
-        config.template_id,
-        config.data
-      );
+      const renderedContent = await this.templateEngine.render(config.template_id, config.data);
 
       // Criptografar dados sensíveis se necessário
       const encryptedData = await this.encryptSensitiveData(config, renderedContent);
@@ -166,7 +163,7 @@ export class NotificationManager {
       const result = await this.channelProvider.send({
         ...config,
         content: encryptedData.content,
-        subject: encryptedData.subject
+        subject: encryptedData.subject,
       });
 
       // Salvar no banco de dados
@@ -174,15 +171,15 @@ export class NotificationManager {
 
       // Log de auditoria
       await this.auditLogger.log({
-        action: 'notification_sent',
-        resource_type: 'notification',
+        action: "notification_sent",
+        resource_type: "notification",
         resource_id: notification.id,
         user_id: config.recipient_id,
         details: {
           type: config.type,
           channel: config.channel,
-          status: result.status
-        }
+          status: result.status,
+        },
       });
 
       // Atualizar analytics
@@ -190,7 +187,7 @@ export class NotificationManager {
         type: config.type,
         channel: config.channel,
         recipient_type: config.recipient_type,
-        status: result.status
+        status: result.status,
       });
 
       return result;
@@ -203,24 +200,21 @@ export class NotificationManager {
   /**
    * Agenda uma notificação para envio futuro
    */
-  async scheduleNotification(
-    config: NotificationConfig,
-    scheduledAt: Date
-  ): Promise<string> {
+  async scheduleNotification(config: NotificationConfig, scheduledAt: Date): Promise<string> {
     try {
       // Validar data de agendamento
       if (scheduledAt <= new Date()) {
-        throw new Error('Data de agendamento deve ser no futuro');
+        throw new Error("Data de agendamento deve ser no futuro");
       }
 
       // Salvar notificação agendada
       const { data, error } = await this.supabase
-        .from('notifications')
+        .from("notifications")
         .insert({
           ...config,
-          status: 'scheduled',
+          status: "scheduled",
           scheduled_at: scheduledAt.toISOString(),
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -231,15 +225,15 @@ export class NotificationManager {
       await this.scheduler.schedule(data.id, scheduledAt);
 
       await this.auditLogger.log({
-        action: 'notification_scheduled',
-        resource_type: 'notification',
+        action: "notification_scheduled",
+        resource_type: "notification",
         resource_id: data.id,
         user_id: config.recipient_id,
         details: {
           type: config.type,
           channel: config.channel,
-          scheduled_at: scheduledAt
-        }
+          scheduled_at: scheduledAt,
+        },
       });
 
       return data.id;
@@ -251,22 +245,20 @@ export class NotificationManager {
   /**
    * Envia notificações em lote
    */
-  async sendBulkNotifications(
-    configs: NotificationConfig[]
-  ): Promise<NotificationResult[]> {
+  async sendBulkNotifications(configs: NotificationConfig[]): Promise<NotificationResult[]> {
     const results: NotificationResult[] = [];
     const batchSize = 100; // Processar em lotes de 100
 
     for (let i = 0; i < configs.length; i += batchSize) {
       const batch = configs.slice(i, i + batchSize);
-      const batchPromises = batch.map(config => 
-        this.sendNotification(config).catch(error => ({
-          id: '',
-          status: 'failed' as const,
+      const batchPromises = batch.map((config) =>
+        this.sendNotification(config).catch((error) => ({
+          id: "",
+          status: "failed" as const,
           channel: config.channel,
           error_message: error.message,
-          retry_count: 0
-        }))
+          retry_count: 0,
+        })),
       );
 
       const batchResults = await Promise.all(batchPromises);
@@ -274,7 +266,7 @@ export class NotificationManager {
 
       // Pequena pausa entre lotes para evitar sobrecarga
       if (i + batchSize < configs.length) {
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
     }
 
@@ -286,12 +278,12 @@ export class NotificationManager {
    */
   async getUserPreferences(userId: string): Promise<NotificationPreferences> {
     const { data, error } = await this.supabase
-      .from('notification_preferences')
-      .select('*')
-      .eq('user_id', userId)
+      .from("notification_preferences")
+      .select("*")
+      .eq("user_id", userId)
       .single();
 
-    if (error && error.code !== 'PGRST116') {
+    if (error && error.code !== "PGRST116") {
       throw new Error(`Erro ao buscar preferências: ${error.message}`);
     }
 
@@ -303,11 +295,11 @@ export class NotificationManager {
         sms_enabled: true,
         push_enabled: true,
         whatsapp_enabled: false,
-        timezone: 'America/Sao_Paulo',
-        language: 'pt-BR',
+        timezone: "America/Sao_Paulo",
+        language: "pt-BR",
         frequency_limit: 10,
         created_at: new Date(),
-        updated_at: new Date()
+        updated_at: new Date(),
       };
     }
 
@@ -319,25 +311,23 @@ export class NotificationManager {
    */
   async updateUserPreferences(
     userId: string,
-    preferences: Partial<NotificationPreferences>
+    preferences: Partial<NotificationPreferences>,
   ): Promise<void> {
     try {
-      const { error } = await this.supabase
-        .from('notification_preferences')
-        .upsert({
-          user_id: userId,
-          ...preferences,
-          updated_at: new Date().toISOString()
-        });
+      const { error } = await this.supabase.from("notification_preferences").upsert({
+        user_id: userId,
+        ...preferences,
+        updated_at: new Date().toISOString(),
+      });
 
       if (error) throw error;
 
       await this.auditLogger.log({
-        action: 'notification_preferences_updated',
-        resource_type: 'notification_preferences',
+        action: "notification_preferences_updated",
+        resource_type: "notification_preferences",
         resource_id: userId,
         user_id: userId,
-        details: preferences
+        details: preferences,
       });
     } catch (error) {
       throw new Error(`Erro ao atualizar preferências: ${error}`);
@@ -351,13 +341,13 @@ export class NotificationManager {
     try {
       // Atualizar status no banco
       const { error } = await this.supabase
-        .from('notifications')
-        .update({ 
-          status: 'cancelled',
-          updated_at: new Date().toISOString()
+        .from("notifications")
+        .update({
+          status: "cancelled",
+          updated_at: new Date().toISOString(),
         })
-        .eq('id', notificationId)
-        .eq('status', 'scheduled');
+        .eq("id", notificationId)
+        .eq("status", "scheduled");
 
       if (error) throw error;
 
@@ -365,10 +355,10 @@ export class NotificationManager {
       await this.scheduler.cancel(notificationId);
 
       await this.auditLogger.log({
-        action: 'notification_cancelled',
-        resource_type: 'notification',
+        action: "notification_cancelled",
+        resource_type: "notification",
         resource_id: notificationId,
-        details: { reason: 'user_request' }
+        details: { reason: "user_request" },
       });
     } catch (error) {
       throw new Error(`Erro ao cancelar notificação: ${error}`);
@@ -388,33 +378,33 @@ export class NotificationManager {
       endDate?: Date;
       limit?: number;
       offset?: number;
-    }
+    },
   ) {
     try {
       let query = this.supabase
-        .from('notifications')
-        .select('*')
-        .eq('recipient_id', userId)
-        .order('created_at', { ascending: false });
+        .from("notifications")
+        .select("*")
+        .eq("recipient_id", userId)
+        .order("created_at", { ascending: false });
 
       if (filters?.type) {
-        query = query.eq('type', filters.type);
+        query = query.eq("type", filters.type);
       }
 
       if (filters?.channel) {
-        query = query.eq('channel', filters.channel);
+        query = query.eq("channel", filters.channel);
       }
 
       if (filters?.status) {
-        query = query.eq('status', filters.status);
+        query = query.eq("status", filters.status);
       }
 
       if (filters?.startDate) {
-        query = query.gte('created_at', filters.startDate.toISOString());
+        query = query.gte("created_at", filters.startDate.toISOString());
       }
 
       if (filters?.endDate) {
-        query = query.lte('created_at', filters.endDate.toISOString());
+        query = query.lte("created_at", filters.endDate.toISOString());
       }
 
       if (filters?.limit) {
@@ -441,18 +431,18 @@ export class NotificationManager {
   async markAsRead(notificationId: string, userId: string): Promise<void> {
     try {
       const { error } = await this.supabase
-        .from('notifications')
-        .update({ 
+        .from("notifications")
+        .update({
           read_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
-        .eq('id', notificationId)
-        .eq('recipient_id', userId);
+        .eq("id", notificationId)
+        .eq("recipient_id", userId);
 
       if (error) throw error;
 
       // Atualizar analytics
-      await this.analytics.recordNotificationEngagement(notificationId, 'opened');
+      await this.analytics.recordNotificationEngagement(notificationId, "opened");
     } catch (error) {
       throw new Error(`Erro ao marcar como lida: ${error}`);
     }
@@ -461,31 +451,31 @@ export class NotificationManager {
   // Métodos privados
   private async validateNotificationConfig(config: NotificationConfig): Promise<void> {
     if (!config.recipient_id) {
-      throw new Error('recipient_id é obrigatório');
+      throw new Error("recipient_id é obrigatório");
     }
 
     if (!config.template_id) {
-      throw new Error('template_id é obrigatório');
+      throw new Error("template_id é obrigatório");
     }
 
     if (!Object.values(NotificationTypeEnum).includes(config.type)) {
-      throw new Error('Tipo de notificação inválido');
+      throw new Error("Tipo de notificação inválido");
     }
 
     if (!Object.values(NotificationChannelEnum).includes(config.channel)) {
-      throw new Error('Canal de notificação inválido');
+      throw new Error("Canal de notificação inválido");
     }
 
     // Verificar se template existe
     const template = await this.templateEngine.getTemplate(config.template_id);
     if (!template) {
-      throw new Error('Template não encontrado');
+      throw new Error("Template não encontrado");
     }
   }
 
   private isChannelEnabled(
     preferences: NotificationPreferences,
-    channel: NotificationChannelEnum
+    channel: NotificationChannelEnum,
   ): boolean {
     switch (channel) {
       case NotificationChannelEnum.EMAIL:
@@ -507,45 +497,43 @@ export class NotificationManager {
     const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
     const { count } = await this.supabase
-      .from('notifications')
-      .select('*', { count: 'exact', head: true })
-      .eq('recipient_id', userId)
-      .eq('channel', channel)
-      .gte('created_at', oneDayAgo.toISOString());
+      .from("notifications")
+      .select("*", { count: "exact", head: true })
+      .eq("recipient_id", userId)
+      .eq("channel", channel)
+      .gte("created_at", oneDayAgo.toISOString());
 
     if (count && count >= preferences.frequency_limit) {
-      throw new Error('Limite de frequência de notificações excedido');
+      throw new Error("Limite de frequência de notificações excedido");
     }
   }
 
   private async encryptSensitiveData(
     config: NotificationConfig,
-    renderedContent: { subject?: string; content: string }
+    renderedContent: { subject?: string; content: string },
   ) {
     // Criptografar dados sensíveis baseado no tipo de notificação
     const sensitiveTypes = [
       NotificationTypeEnum.SECURITY_ALERT,
       NotificationTypeEnum.PAYMENT_CONFIRMATION,
-      NotificationTypeEnum.TREATMENT_UPDATE
+      NotificationTypeEnum.TREATMENT_UPDATE,
     ];
 
     if (sensitiveTypes.includes(config.type)) {
       return {
-        subject: renderedContent.subject ? 
-          await this.encryptionService.encrypt(renderedContent.subject) : undefined,
-        content: await this.encryptionService.encrypt(renderedContent.content)
+        subject: renderedContent.subject
+          ? await this.encryptionService.encrypt(renderedContent.subject)
+          : undefined,
+        content: await this.encryptionService.encrypt(renderedContent.content),
       };
     }
 
     return renderedContent;
   }
 
-  private async saveNotification(
-    config: NotificationConfig,
-    result: NotificationResult
-  ) {
+  private async saveNotification(config: NotificationConfig, result: NotificationResult) {
     const { data, error } = await this.supabase
-      .from('notifications')
+      .from("notifications")
       .insert({
         ...config,
         status: result.status,
@@ -554,7 +542,7 @@ export class NotificationManager {
         error_message: result.error_message,
         retry_count: result.retry_count,
         cost: result.cost,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       })
       .select()
       .single();
@@ -563,20 +551,17 @@ export class NotificationManager {
     return data;
   }
 
-  private async handleNotificationError(
-    config: NotificationConfig,
-    error: Error
-  ): Promise<void> {
+  private async handleNotificationError(config: NotificationConfig, error: Error): Promise<void> {
     await this.auditLogger.log({
-      action: 'notification_error',
-      resource_type: 'notification',
+      action: "notification_error",
+      resource_type: "notification",
       resource_id: config.id,
       user_id: config.recipient_id,
       details: {
         error: error.message,
         type: config.type,
-        channel: config.channel
-      }
+        channel: config.channel,
+      },
     });
 
     // Implementar retry logic se necessário
@@ -588,15 +573,10 @@ export class NotificationManager {
 
   private shouldRetry(error: Error): boolean {
     // Implementar lógica de retry baseada no tipo de erro
-    const retryableErrors = [
-      'network_error',
-      'timeout',
-      'rate_limit',
-      'temporary_failure'
-    ];
+    const retryableErrors = ["network_error", "timeout", "rate_limit", "temporary_failure"];
 
-    return retryableErrors.some(retryableError => 
-      error.message.toLowerCase().includes(retryableError)
+    return retryableErrors.some((retryableError) =>
+      error.message.toLowerCase().includes(retryableError),
     );
   }
 
@@ -605,14 +585,17 @@ export class NotificationManager {
     const retryDelay = Math.min(1000 * Math.pow(2, config.metadata?.retry_count || 0), 300000);
     const retryAt = new Date(Date.now() + retryDelay);
 
-    await this.scheduleNotification({
-      ...config,
-      metadata: {
-        ...config.metadata,
-        retry_count: (config.metadata?.retry_count || 0) + 1,
-        original_attempt: config.metadata?.original_attempt || new Date()
-      }
-    }, retryAt);
+    await this.scheduleNotification(
+      {
+        ...config,
+        metadata: {
+          ...config.metadata,
+          retry_count: (config.metadata?.retry_count || 0) + 1,
+          original_attempt: config.metadata?.original_attempt || new Date(),
+        },
+      },
+      retryAt,
+    );
   }
 }
 

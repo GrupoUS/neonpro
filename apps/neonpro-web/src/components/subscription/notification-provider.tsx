@@ -1,1 +1,3 @@
-﻿export default function SubscriptionNotificationProvider() { return <div>Notification Provider</div>; }
+﻿export default function SubscriptionNotificationProvider() {
+  return <div>Notification Provider</div>;
+}

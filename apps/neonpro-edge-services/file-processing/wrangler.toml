@@ -1,0 +1,105 @@
+name = "neonpro-file-processing"
+main = "src/index.ts"
+compatibility_date = "2024-01-15"
+node_compat = true
+
+# Development configuration
+[env.development]
+name = "neonpro-file-processing-dev"
+
+# Production configuration  
+[env.production]
+name = "neonpro-file-processing-prod"
+
+# R2 Buckets for file storage
+[[r2_buckets]]
+binding = "MEDICAL_DOCUMENTS"
+bucket_name = "neonpro-medical-documents"
+preview_bucket_name = "neonpro-medical-documents-preview"
+
+[[r2_buckets]]
+binding = "PROCESSED_FILES" 
+bucket_name = "neonpro-processed-files"
+preview_bucket_name = "neonpro-processed-files-preview"
+
+# KV Namespaces for caching and metadata
+[[kv_namespaces]]
+binding = "FILE_PROCESSING_CACHE"
+id = "file_processing_cache_prod"
+preview_id = "file_processing_cache_preview"
+
+[[kv_namespaces]]
+binding = "FILE_METADATA"
+id = "file_metadata_prod" 
+preview_id = "file_metadata_preview"
+
+# D1 Database for structured data
+[[d1_databases]]
+binding = "NEONPRO_DB"
+database_name = "neonpro-db"
+database_id = "neonpro-db-prod"
+
+# Durable Objects for stateful processing
+[[durable_objects.bindings]]
+name = "FILE_PROCESSOR"
+class_name = "FileProcessor"
+script_name = "neonpro-file-processing"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["FileProcessor"]
+
+# Environment variables (secrets managed separately)
+[vars]
+ENVIRONMENT = "production"
+MAX_FILE_SIZE = "100000000"  # 100MB
+ALLOWED_FILE_TYPES = "image/jpeg,image/png,image/tiff,application/pdf,text/plain,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+OCR_ENABLED = "true"
+AI_ANALYSIS_ENABLED = "true" 
+VIRUS_SCAN_ENABLED = "true"
+THUMBNAIL_GENERATION_ENABLED = "true"
+
+# Rate limiting configuration
+RATE_LIMIT_REQUESTS_PER_MINUTE = "60"
+RATE_LIMIT_BURST_SIZE = "10"
+
+# Healthcare compliance settings
+LGPD_COMPLIANCE_ENABLED = "true"
+ANVISA_COMPLIANCE_ENABLED = "true"
+AUDIT_TRAIL_ENABLED = "true"
+DATA_RETENTION_DAYS = "2555"  # 7 years for medical records in Brazil
+
+# File processing settings
+OCR_TIMEOUT_MS = "30000"
+AI_ANALYSIS_TIMEOUT_MS = "45000"
+VIRUS_SCAN_TIMEOUT_MS = "15000"
+THUMBNAIL_TIMEOUT_MS = "10000"
+
+# Cache settings
+CACHE_TTL_SECONDS = "86400"  # 24 hours
+METADATA_CACHE_TTL_SECONDS = "3600"  # 1 hour
+
+# Development environment overrides
+[env.development.vars]
+ENVIRONMENT = "development"
+MAX_FILE_SIZE = "50000000"  # 50MB for dev
+RATE_LIMIT_REQUESTS_PER_MINUTE = "120"  # More lenient for dev
+OCR_ENABLED = "false"  # Disable OCR in dev to save costs
+AI_ANALYSIS_ENABLED = "false"  # Disable AI in dev
+VIRUS_SCAN_ENABLED = "false"  # Disable virus scan in dev
+
+# Limits and quotas
+[limits]
+cpu_ms = 30000  # 30 seconds max execution time for file processing
+memory_mb = 512  # 512MB memory limit
+
+# Custom domains (configure after deployment)
+# [env.production]
+# routes = [
+#   { pattern = "files.neonpro.com.br/*", zone_name = "neonpro.com.br" }
+# ]
+
+# [env.development] 
+# routes = [
+#   { pattern = "files-dev.neonpro.com.br/*", zone_name = "neonpro.com.br" }
+# ]

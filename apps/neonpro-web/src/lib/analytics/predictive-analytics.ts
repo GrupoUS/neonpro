@@ -1,23 +1,29 @@
-﻿/**
+/**
  * Predictive Analytics Engine
  * Epic 10 - Story 10.5: Vision Analytics Dashboard (Real-time Insights)
- * 
+ *
  * Advanced predictive analytics for healthcare outcomes and treatment optimization
  * Machine learning-based forecasting, risk assessment, and recommendation system
- * 
+ *
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 
-import { z } from 'zod';
-import { logger } from '@/lib/utils/logger';
-import { createClient } from '@/lib/supabase/client';
+import type { z } from "zod";
+import type { logger } from "@/lib/utils/logger";
+import type { createClient } from "@/lib/supabase/client";
 
 // Core Predictive Types
-export type PredictionType = 'outcome' | 'complication' | 'satisfaction' | 'recovery' | 'cost' | 'efficiency';
-export type ModelConfidence = 'very_low' | 'low' | 'medium' | 'high' | 'very_high';
-export type RiskLevel = 'very_low' | 'low' | 'moderate' | 'high' | 'very_high';
-export type TrendDirection = 'increasing' | 'decreasing' | 'stable' | 'volatile';
-export type SeasonalityType = 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly' | 'none';
+export type PredictionType =
+  | "outcome"
+  | "complication"
+  | "satisfaction"
+  | "recovery"
+  | "cost"
+  | "efficiency";
+export type ModelConfidence = "very_low" | "low" | "medium" | "high" | "very_high";
+export type RiskLevel = "very_low" | "low" | "moderate" | "high" | "very_high";
+export type TrendDirection = "increasing" | "decreasing" | "stable" | "volatile";
+export type SeasonalityType = "daily" | "weekly" | "monthly" | "quarterly" | "yearly" | "none";
 
 // Core Interfaces
 export interface PredictiveModel {
@@ -26,7 +32,7 @@ export interface PredictiveModel {
   type: PredictionType;
   description: string;
   version: string;
-  algorithm: 'linear_regression' | 'random_forest' | 'neural_network' | 'svm' | 'ensemble';
+  algorithm: "linear_regression" | "random_forest" | "neural_network" | "svm" | "ensemble";
   features: ModelFeature[];
   accuracy: number;
   precision: number;
@@ -42,7 +48,7 @@ export interface PredictiveModel {
 
 export interface ModelFeature {
   name: string;
-  type: 'numeric' | 'categorical' | 'boolean' | 'date' | 'text';
+  type: "numeric" | "categorical" | "boolean" | "date" | "text";
   importance: number; // 0-1
   description: string;
   preprocessing: PreprocessingStep[];
@@ -50,13 +56,13 @@ export interface ModelFeature {
 }
 
 export interface PreprocessingStep {
-  type: 'normalize' | 'standardize' | 'encode' | 'impute' | 'transform';
+  type: "normalize" | "standardize" | "encode" | "impute" | "transform";
   parameters: Record<string, any>;
   order: number;
 }
 
 export interface ValidationRule {
-  type: 'range' | 'required' | 'format' | 'custom';
+  type: "range" | "required" | "format" | "custom";
   parameters: Record<string, any>;
   message: string;
 }
@@ -113,7 +119,7 @@ export interface FeatureStats {
 }
 
 export interface DistributionStats {
-  type: 'normal' | 'skewed' | 'uniform' | 'bimodal' | 'unknown';
+  type: "normal" | "skewed" | "uniform" | "bimodal" | "unknown";
   skewness: number;
   kurtosis: number;
   quartiles: [number, number, number];
@@ -193,7 +199,7 @@ export interface RiskFactor {
   impact: number; // 0-1
   confidence: number; // 0-1
   description: string;
-  category: 'patient' | 'procedure' | 'environment' | 'provider' | 'equipment';
+  category: "patient" | "procedure" | "environment" | "provider" | "equipment";
   modifiable: boolean;
 }
 
@@ -202,7 +208,7 @@ export interface MitigationStrategy {
   title: string;
   description: string;
   actions: Action[];
-  priority: 'low' | 'medium' | 'high' | 'urgent';
+  priority: "low" | "medium" | "high" | "urgent";
   timeline: string;
   resources: string[];
   expectedImpact: string;
@@ -212,7 +218,7 @@ export interface Action {
   id: string;
   title: string;
   description: string;
-  type: 'immediate' | 'short_term' | 'long_term';
+  type: "immediate" | "short_term" | "long_term";
   responsible: string;
   deadline?: string;
   completed: boolean;
@@ -220,7 +226,7 @@ export interface Action {
 
 export interface MonitoringPlan {
   metric: string;
-  frequency: 'continuous' | 'hourly' | 'daily' | 'weekly' | 'monthly';
+  frequency: "continuous" | "hourly" | "daily" | "weekly" | "monthly";
   threshold: number;
   action: string;
   automated: boolean;
@@ -236,12 +242,12 @@ export interface PredictionExplanation {
 
 export interface Recommendation {
   id: string;
-  type: 'preventive' | 'corrective' | 'optimization' | 'monitoring';
+  type: "preventive" | "corrective" | "optimization" | "monitoring";
   title: string;
   description: string;
   rationale: string;
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  category: 'clinical' | 'operational' | 'financial' | 'quality';
+  priority: "low" | "medium" | "high" | "urgent";
+  category: "clinical" | "operational" | "financial" | "quality";
   actions: string[];
   expectedOutcome: string;
   evidence: Evidence[];
@@ -249,9 +255,9 @@ export interface Recommendation {
 }
 
 export interface Evidence {
-  type: 'research' | 'clinical_trial' | 'best_practice' | 'expert_opinion' | 'data_analysis';
+  type: "research" | "clinical_trial" | "best_practice" | "expert_opinion" | "data_analysis";
   source: string;
-  strength: 'weak' | 'moderate' | 'strong';
+  strength: "weak" | "moderate" | "strong";
   relevance: number; // 0-1
   description: string;
   url?: string;
@@ -281,7 +287,7 @@ export interface PredictionFeedback {
 export interface ForecastRequest {
   type: PredictionType;
   horizon: number; // days
-  granularity: 'hour' | 'day' | 'week' | 'month';
+  granularity: "hour" | "day" | "week" | "month";
   features: Record<string, any>;
   clinicId: string;
   confidence?: number;
@@ -321,7 +327,7 @@ export interface TrendAnalysis {
 export interface InflectionPoint {
   timestamp: string;
   value: number;
-  type: 'peak' | 'trough' | 'change';
+  type: "peak" | "trough" | "change";
   significance: number;
   description: string;
 }
@@ -330,7 +336,7 @@ export interface TrendProjection {
   horizon: number; // days
   value: number;
   confidence: number;
-  scenario: 'optimistic' | 'realistic' | 'pessimistic';
+  scenario: "optimistic" | "realistic" | "pessimistic";
 }
 
 export interface SeasonalityAnalysis {
@@ -389,7 +395,7 @@ export interface ModelTrainingRequest {
 }
 
 export interface TrainingDataRequest {
-  source: 'database' | 'file' | 'api';
+  source: "database" | "file" | "api";
   query?: string;
   filters: Record<string, any>;
   dateRange: {
@@ -401,7 +407,7 @@ export interface TrainingDataRequest {
 }
 
 export interface ValidationConfig {
-  method: 'holdout' | 'cross_validation' | 'time_series_split';
+  method: "holdout" | "cross_validation" | "time_series_split";
   testSize: number;
   folds?: number;
   metrics: string[];
@@ -415,7 +421,7 @@ export interface ModelTrainingResult {
   model: PredictiveModel;
   performance: ModelPerformance;
   artifacts: TrainingArtifacts;
-  status: 'training' | 'completed' | 'failed' | 'cancelled';
+  status: "training" | "completed" | "failed" | "cancelled";
   error?: string;
 }
 
@@ -452,7 +458,7 @@ export interface BenchmarkResult {
   name: string;
   value: number;
   target: number;
-  status: 'above' | 'at' | 'below';
+  status: "above" | "at" | "below";
   percentile: number;
 }
 
@@ -466,7 +472,12 @@ export interface TrainingArtifacts {
 }
 
 export interface PlotArtifact {
-  type: 'roc_curve' | 'precision_recall' | 'feature_importance' | 'confusion_matrix' | 'learning_curve';
+  type:
+    | "roc_curve"
+    | "precision_recall"
+    | "feature_importance"
+    | "confusion_matrix"
+    | "learning_curve";
   path: string;
   description: string;
 }
@@ -490,20 +501,20 @@ export class createpredictiveAnalyticsEngine {
    */
   private async initializeEngine(): Promise<void> {
     try {
-      logger.info('Initializing Predictive Analytics Engine...');
-      
+      logger.info("Initializing Predictive Analytics Engine...");
+
       // Load trained models
       await this.loadModels();
-      
+
       // Initialize default models if none exist
       await this.initializeDefaultModels();
-      
+
       // Start background tasks
       this.startBackgroundTasks();
-      
-      logger.info('Predictive Analytics Engine initialized successfully');
+
+      logger.info("Predictive Analytics Engine initialized successfully");
     } catch (error) {
-      logger.error('Failed to initialize Predictive Analytics Engine:', error);
+      logger.error("Failed to initialize Predictive Analytics Engine:", error);
       throw error;
     }
   }
@@ -516,7 +527,7 @@ export class createpredictiveAnalyticsEngine {
       // Check cache first
       const cacheKey = this.generateCacheKey(request);
       const cached = this.predictionCache.get(cacheKey);
-      
+
       if (cached && Date.now() - new Date(cached.timestamp).getTime() < this.cacheTTL) {
         logger.info(`Returning cached prediction: ${cached.id}`);
         return cached;
@@ -524,7 +535,7 @@ export class createpredictiveAnalyticsEngine {
 
       // Get model
       const model = this.models.get(request.modelId);
-      
+
       if (!model || !model.isActive) {
         throw new Error(`Model not found or inactive: ${request.modelId}`);
       }
@@ -556,23 +567,22 @@ export class createpredictiveAnalyticsEngine {
           context: request.context || {},
           processingTime: Date.now() - new Date().getTime(),
           modelVersion: model.version,
-          dataVersion: '1.0',
-          validUntil: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours
-        }
+          dataVersion: "1.0",
+          validUntil: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
+        },
       };
 
       // Cache prediction
       this.predictionCache.set(cacheKey, result);
-      
+
       // Store prediction
       this.predictions.set(result.id, result);
       await this.savePrediction(result);
 
       logger.info(`Prediction made: ${result.id}`);
       return result;
-
     } catch (error) {
-      logger.error('Failed to make prediction:', error);
+      logger.error("Failed to make prediction:", error);
       throw error;
     }
   }
@@ -584,7 +594,7 @@ export class createpredictiveAnalyticsEngine {
     try {
       // Find appropriate forecasting model
       const model = await this.findForecastingModel(request.type);
-      
+
       if (!model) {
         throw new Error(`No forecasting model available for type: ${request.type}`);
       }
@@ -615,13 +625,13 @@ export class createpredictiveAnalyticsEngine {
           modelUsed: model.id,
           dataPoints: timeSeriesData.length,
           trainingPeriod: {
-            start: timeSeriesData[0]?.timestamp || '',
-            end: timeSeriesData[timeSeriesData.length - 1]?.timestamp || ''
+            start: timeSeriesData[0]?.timestamp || "",
+            end: timeSeriesData[timeSeriesData.length - 1]?.timestamp || "",
           },
           processingTime: Date.now() - new Date().getTime(),
           qualityScore: this.calculateDataQuality(timeSeriesData),
-          warnings: this.generateForecastWarnings(timeSeriesData, forecastPoints)
-        }
+          warnings: this.generateForecastWarnings(timeSeriesData, forecastPoints),
+        },
       };
 
       // Store forecast
@@ -630,9 +640,8 @@ export class createpredictiveAnalyticsEngine {
 
       logger.info(`Forecast generated: ${result.id}`);
       return result;
-
     } catch (error) {
-      logger.error('Failed to generate forecast:', error);
+      logger.error("Failed to generate forecast:", error);
       throw error;
     }
   }
@@ -643,11 +652,11 @@ export class createpredictiveAnalyticsEngine {
   async trainModel(request: ModelTrainingRequest): Promise<ModelTrainingResult> {
     try {
       if (this.isTraining) {
-        throw new Error('Model training already in progress');
+        throw new Error("Model training already in progress");
       }
 
       this.isTraining = true;
-      logger.info('Starting model training...');
+      logger.info("Starting model training...");
 
       // Prepare training data
       const trainingData = await this.prepareTrainingData(request.trainingData);
@@ -675,7 +684,7 @@ export class createpredictiveAnalyticsEngine {
         model,
         performance,
         artifacts,
-        status: 'completed'
+        status: "completed",
       };
 
       // Save model if performance is acceptable
@@ -687,10 +696,9 @@ export class createpredictiveAnalyticsEngine {
       this.isTraining = false;
       logger.info(`Model training completed: ${result.id}`);
       return result;
-
     } catch (error) {
       this.isTraining = false;
-      logger.error('Failed to train model:', error);
+      logger.error("Failed to train model:", error);
       throw error;
     }
   }
@@ -702,7 +710,7 @@ export class createpredictiveAnalyticsEngine {
     clinicId: string,
     type?: PredictionType,
     startDate?: string,
-    endDate?: string
+    endDate?: string,
   ): Promise<PredictionInsights> {
     try {
       const insights: PredictionInsights = {
@@ -711,16 +719,20 @@ export class createpredictiveAnalyticsEngine {
         modelPerformance: await this.getModelPerformanceInsights(clinicId, type),
         predictionTrends: await this.analyzePredictionTrends(clinicId, type, startDate, endDate),
         riskDistribution: await this.analyzeRiskDistribution(clinicId, type, startDate, endDate),
-        recommendationImpact: await this.analyzeRecommendationImpact(clinicId, type, startDate, endDate),
+        recommendationImpact: await this.analyzeRecommendationImpact(
+          clinicId,
+          type,
+          startDate,
+          endDate,
+        ),
         topFeatures: await this.getTopFeatures(clinicId, type),
         modelDrift: await this.detectModelDrift(clinicId, type),
-        businessImpact: await this.calculateBusinessImpact(clinicId, type, startDate, endDate)
+        businessImpact: await this.calculateBusinessImpact(clinicId, type, startDate, endDate),
       };
 
       return insights;
-
     } catch (error) {
-      logger.error('Failed to get prediction insights:', error);
+      logger.error("Failed to get prediction insights:", error);
       throw error;
     }
   }
@@ -728,13 +740,10 @@ export class createpredictiveAnalyticsEngine {
   /**
    * Update model with feedback
    */
-  async updateModelWithFeedback(
-    predictionId: string,
-    feedback: PredictionFeedback
-  ): Promise<void> {
+  async updateModelWithFeedback(predictionId: string, feedback: PredictionFeedback): Promise<void> {
     try {
       const prediction = this.predictions.get(predictionId);
-      
+
       if (!prediction) {
         throw new Error(`Prediction not found: ${predictionId}`);
       }
@@ -745,7 +754,7 @@ export class createpredictiveAnalyticsEngine {
 
       // Update model performance if feedback indicates accuracy
       const model = this.models.get(prediction.modelId);
-      
+
       if (model && feedback.actualOutcome !== undefined) {
         await this.updateModelAccuracy(model, prediction, feedback);
       }
@@ -756,9 +765,8 @@ export class createpredictiveAnalyticsEngine {
       }
 
       logger.info(`Model feedback updated for prediction: ${predictionId}`);
-
     } catch (error) {
-      logger.error('Failed to update model with feedback:', error);
+      logger.error("Failed to update model with feedback:", error);
       throw error;
     }
   }
@@ -767,25 +775,24 @@ export class createpredictiveAnalyticsEngine {
   private async loadModels(): Promise<void> {
     try {
       const { data, error } = await this.supabase
-        .from('predictive_models')
-        .select('*')
-        .eq('is_active', true);
+        .from("predictive_models")
+        .select("*")
+        .eq("is_active", true);
 
       if (error) {
         throw error;
       }
 
       if (data) {
-        data.forEach(modelData => {
+        data.forEach((modelData) => {
           const model = this.deserializeModel(modelData);
           this.models.set(model.id, model);
         });
       }
 
       logger.info(`Loaded ${this.models.size} predictive models`);
-
     } catch (error) {
-      logger.error('Failed to load models:', error);
+      logger.error("Failed to load models:", error);
     }
   }
 
@@ -795,69 +802,69 @@ export class createpredictiveAnalyticsEngine {
     // Create default models for each prediction type
     const defaultModels: Partial<PredictiveModel>[] = [
       {
-        name: 'Treatment Outcome Predictor',
-        type: 'outcome',
-        description: 'Predicts treatment outcomes based on patient characteristics',
-        algorithm: 'random_forest',
+        name: "Treatment Outcome Predictor",
+        type: "outcome",
+        description: "Predicts treatment outcomes based on patient characteristics",
+        algorithm: "random_forest",
         features: [
           {
-            name: 'patient_age',
-            type: 'numeric',
+            name: "patient_age",
+            type: "numeric",
             importance: 0.3,
-            description: 'Patient age in years',
+            description: "Patient age in years",
             preprocessing: [],
-            validationRules: []
+            validationRules: [],
           },
           {
-            name: 'treatment_type',
-            type: 'categorical',
+            name: "treatment_type",
+            type: "categorical",
             importance: 0.4,
-            description: 'Type of aesthetic treatment',
+            description: "Type of aesthetic treatment",
             preprocessing: [],
-            validationRules: []
+            validationRules: [],
           },
           {
-            name: 'skin_condition',
-            type: 'categorical',
+            name: "skin_condition",
+            type: "categorical",
             importance: 0.3,
-            description: 'Patient skin condition assessment',
+            description: "Patient skin condition assessment",
             preprocessing: [],
-            validationRules: []
-          }
-        ]
+            validationRules: [],
+          },
+        ],
       },
       {
-        name: 'Complication Risk Assessor',
-        type: 'complication',
-        description: 'Assesses risk of complications for treatments',
-        algorithm: 'neural_network',
+        name: "Complication Risk Assessor",
+        type: "complication",
+        description: "Assesses risk of complications for treatments",
+        algorithm: "neural_network",
         features: [
           {
-            name: 'medical_history',
-            type: 'categorical',
+            name: "medical_history",
+            type: "categorical",
             importance: 0.35,
-            description: 'Patient medical history',
+            description: "Patient medical history",
             preprocessing: [],
-            validationRules: []
+            validationRules: [],
           },
           {
-            name: 'procedure_complexity',
-            type: 'numeric',
+            name: "procedure_complexity",
+            type: "numeric",
             importance: 0.25,
-            description: 'Complexity score of the procedure',
+            description: "Complexity score of the procedure",
             preprocessing: [],
-            validationRules: []
+            validationRules: [],
           },
           {
-            name: 'provider_experience',
-            type: 'numeric',
+            name: "provider_experience",
+            type: "numeric",
             importance: 0.4,
-            description: 'Provider experience level',
+            description: "Provider experience level",
             preprocessing: [],
-            validationRules: []
-          }
-        ]
-      }
+            validationRules: [],
+          },
+        ],
+      },
     ];
 
     // Initialize each default model
@@ -872,11 +879,11 @@ export class createpredictiveAnalyticsEngine {
   private async createDefaultModel(modelData: Partial<PredictiveModel>): Promise<PredictiveModel> {
     const model: PredictiveModel = {
       id: `model_${modelData.type}_${Date.now()}`,
-      name: modelData.name || 'Default Model',
+      name: modelData.name || "Default Model",
       type: modelData.type as PredictionType,
-      description: modelData.description || 'Default predictive model',
-      version: '1.0.0',
-      algorithm: modelData.algorithm as any || 'random_forest',
+      description: modelData.description || "Default predictive model",
+      version: "1.0.0",
+      algorithm: (modelData.algorithm as any) || "random_forest",
       features: modelData.features || [],
       accuracy: 0.85, // Default accuracy
       precision: 0.85,
@@ -890,7 +897,7 @@ export class createpredictiveAnalyticsEngine {
         testSamples: 150,
         dateRange: {
           start: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString(),
-          end: new Date().toISOString()
+          end: new Date().toISOString(),
         },
         dataQuality: {
           completeness: 95,
@@ -901,9 +908,9 @@ export class createpredictiveAnalyticsEngine {
           uniqueness: 99,
           missingValues: 50,
           outliers: 25,
-          duplicates: 5
+          duplicates: 5,
         },
-        featureDistribution: {}
+        featureDistribution: {},
       },
       lastTrained: new Date().toISOString(),
       isActive: true,
@@ -911,7 +918,7 @@ export class createpredictiveAnalyticsEngine {
         crossValidationFolds: 5,
         testSize: 0.2,
         randomState: 42,
-        customParameters: {}
+        customParameters: {},
       },
       validationResults: {
         accuracy: 0.85,
@@ -919,13 +926,16 @@ export class createpredictiveAnalyticsEngine {
         recall: 0.85,
         f1Score: 0.85,
         auc: 0.85,
-        confusionMatrix: [[80, 10], [15, 85]],
+        confusionMatrix: [
+          [80, 10],
+          [15, 85],
+        ],
         rocCurve: [],
         precisionRecallCurve: [],
         featureImportance: {},
         crossValidationScores: [0.83, 0.87, 0.84, 0.86, 0.85],
-        validationDate: new Date().toISOString()
-      }
+        validationDate: new Date().toISOString(),
+      },
     };
 
     return model;
@@ -933,43 +943,55 @@ export class createpredictiveAnalyticsEngine {
 
   private startBackgroundTasks(): void {
     // Model performance monitoring
-    setInterval(async () => {
-      await this.monitorModelPerformance();
-    }, 60 * 60 * 1000); // 1 hour
+    setInterval(
+      async () => {
+        await this.monitorModelPerformance();
+      },
+      60 * 60 * 1000,
+    ); // 1 hour
 
     // Cache cleanup
-    setInterval(() => {
-      this.cleanupCache();
-    }, 10 * 60 * 1000); // 10 minutes
+    setInterval(
+      () => {
+        this.cleanupCache();
+      },
+      10 * 60 * 1000,
+    ); // 10 minutes
 
     // Model drift detection
-    setInterval(async () => {
-      await this.detectModelDriftForAllModels();
-    }, 24 * 60 * 60 * 1000); // 24 hours
+    setInterval(
+      async () => {
+        await this.detectModelDriftForAllModels();
+      },
+      24 * 60 * 60 * 1000,
+    ); // 24 hours
   }
 
   private generateCacheKey(request: PredictionRequest): string {
     const features = JSON.stringify(request.features);
-    return `${request.modelId}_${features}_${request.patientId || 'anonymous'}`;
+    return `${request.modelId}_${features}_${request.patientId || "anonymous"}`;
   }
 
-  private async validateFeatures(model: PredictiveModel, features: Record<string, any>): Promise<void> {
+  private async validateFeatures(
+    model: PredictiveModel,
+    features: Record<string, any>,
+  ): Promise<void> {
     for (const feature of model.features) {
       const value = features[feature.name];
-      
+
       if (value === undefined || value === null) {
-        if (feature.validationRules.some(rule => rule.type === 'required')) {
+        if (feature.validationRules.some((rule) => rule.type === "required")) {
           throw new Error(`Required feature missing: ${feature.name}`);
         }
         continue;
       }
 
       // Type validation
-      if (feature.type === 'numeric' && typeof value !== 'number') {
+      if (feature.type === "numeric" && typeof value !== "number") {
         throw new Error(`Feature ${feature.name} must be numeric`);
       }
 
-      if (feature.type === 'boolean' && typeof value !== 'boolean') {
+      if (feature.type === "boolean" && typeof value !== "boolean") {
         throw new Error(`Feature ${feature.name} must be boolean`);
       }
 
@@ -984,21 +1006,24 @@ export class createpredictiveAnalyticsEngine {
 
   private validateRule(value: any, rule: ValidationRule): boolean {
     switch (rule.type) {
-      case 'range':
+      case "range":
         return value >= rule.parameters.min && value <= rule.parameters.max;
-      case 'format':
+      case "format":
         return new RegExp(rule.parameters.pattern).test(value);
       default:
         return true;
     }
   }
 
-  private async preprocessFeatures(model: PredictiveModel, features: Record<string, any>): Promise<Record<string, any>> {
+  private async preprocessFeatures(
+    model: PredictiveModel,
+    features: Record<string, any>,
+  ): Promise<Record<string, any>> {
     const processed = { ...features };
 
     for (const feature of model.features) {
       const value = processed[feature.name];
-      
+
       if (value === undefined || value === null) continue;
 
       for (const step of feature.preprocessing) {
@@ -1011,170 +1036,199 @@ export class createpredictiveAnalyticsEngine {
 
   private applyPreprocessingStep(value: any, step: PreprocessingStep): any {
     switch (step.type) {
-      case 'normalize':
+      case "normalize":
         return (value - step.parameters.min) / (step.parameters.max - step.parameters.min);
-      case 'standardize':
+      case "standardize":
         return (value - step.parameters.mean) / step.parameters.std;
-      case 'encode':
+      case "encode":
         return step.parameters.mapping[value] || 0;
       default:
         return value;
     }
   }
 
-  private async makePrediction(model: PredictiveModel, features: Record<string, any>): Promise<any> {
+  private async makePrediction(
+    model: PredictiveModel,
+    features: Record<string, any>,
+  ): Promise<any> {
     // Simulate prediction based on model algorithm
     switch (model.algorithm) {
-      case 'random_forest':
+      case "random_forest":
         return this.simulateRandomForestPrediction(model, features);
-      case 'neural_network':
+      case "neural_network":
         return this.simulateNeuralNetworkPrediction(model, features);
-      case 'linear_regression':
+      case "linear_regression":
         return this.simulateLinearRegressionPrediction(model, features);
       default:
         return this.simulateDefaultPrediction(model, features);
     }
   }
 
-  private simulateRandomForestPrediction(model: PredictiveModel, features: Record<string, any>): any {
+  private simulateRandomForestPrediction(
+    model: PredictiveModel,
+    features: Record<string, any>,
+  ): any {
     // Simulate random forest prediction
     const probability = 0.7 + Math.random() * 0.25; // 0.7-0.95
-    const value = probability > 0.8 ? 'positive' : 'negative';
-    
+    const value = probability > 0.8 ? "positive" : "negative";
+
     return {
       value,
       probability,
       confidence: probability,
-      contributions: model.features.reduce((acc, feature) => {
-        acc[feature.name] = (Math.random() - 0.5) * feature.importance;
-        return acc;
-      }, {} as Record<string, number>)
+      contributions: model.features.reduce(
+        (acc, feature) => {
+          acc[feature.name] = (Math.random() - 0.5) * feature.importance;
+          return acc;
+        },
+        {} as Record<string, number>,
+      ),
     };
   }
 
-  private simulateNeuralNetworkPrediction(model: PredictiveModel, features: Record<string, any>): any {
+  private simulateNeuralNetworkPrediction(
+    model: PredictiveModel,
+    features: Record<string, any>,
+  ): any {
     // Simulate neural network prediction
     const probability = 0.75 + Math.random() * 0.2; // 0.75-0.95
-    const value = model.type === 'complication' ? 'low_risk' : 'favorable';
-    
+    const value = model.type === "complication" ? "low_risk" : "favorable";
+
     return {
       value,
       probability,
       confidence: probability,
-      contributions: model.features.reduce((acc, feature) => {
-        acc[feature.name] = Math.random() * feature.importance;
-        return acc;
-      }, {} as Record<string, number>)
+      contributions: model.features.reduce(
+        (acc, feature) => {
+          acc[feature.name] = Math.random() * feature.importance;
+          return acc;
+        },
+        {} as Record<string, number>,
+      ),
     };
   }
 
-  private simulateLinearRegressionPrediction(model: PredictiveModel, features: Record<string, any>): any {
+  private simulateLinearRegressionPrediction(
+    model: PredictiveModel,
+    features: Record<string, any>,
+  ): any {
     // Simulate linear regression prediction
     const value = 7.5 + Math.random() * 2; // 7.5-9.5 score
     const probability = value / 10;
-    
+
     return {
       value,
       probability,
       confidence: 0.8 + Math.random() * 0.15,
-      contributions: model.features.reduce((acc, feature) => {
-        acc[feature.name] = (Math.random() - 0.5) * feature.importance;
-        return acc;
-      }, {} as Record<string, number>)
+      contributions: model.features.reduce(
+        (acc, feature) => {
+          acc[feature.name] = (Math.random() - 0.5) * feature.importance;
+          return acc;
+        },
+        {} as Record<string, number>,
+      ),
     };
   }
 
   private simulateDefaultPrediction(model: PredictiveModel, features: Record<string, any>): any {
     // Default simulation
     const probability = 0.6 + Math.random() * 0.3;
-    
+
     return {
-      value: 'predicted',
+      value: "predicted",
       probability,
       confidence: probability,
-      contributions: {}
+      contributions: {},
     };
   }
 
   private formatPrediction(type: PredictionType, rawPrediction: any): PredictionValue {
     switch (type) {
-      case 'outcome':
+      case "outcome":
         return {
-          type: 'outcome',
+          type: "outcome",
           value: rawPrediction.value,
           classification: rawPrediction.value,
-          score: rawPrediction.probability
+          score: rawPrediction.probability,
         };
-      case 'complication':
+      case "complication":
         return {
-          type: 'complication',
+          type: "complication",
           value: rawPrediction.value,
           classification: rawPrediction.value,
-          score: rawPrediction.probability
+          score: rawPrediction.probability,
         };
-      case 'satisfaction':
+      case "satisfaction":
         return {
-          type: 'satisfaction',
+          type: "satisfaction",
           value: rawPrediction.value,
-          unit: 'score',
+          unit: "score",
           range: { min: 0, max: 10 },
-          score: rawPrediction.value
+          score: rawPrediction.value,
         };
       default:
         return {
           type,
           value: rawPrediction.value,
-          score: rawPrediction.probability
+          score: rawPrediction.probability,
         };
     }
   }
 
   private calculateConfidence(rawPrediction: any): ModelConfidence {
     const confidence = rawPrediction.confidence || rawPrediction.probability || 0;
-    
-    if (confidence >= 0.9) return 'very_high';
-    if (confidence >= 0.8) return 'high';
-    if (confidence >= 0.6) return 'medium';
-    if (confidence >= 0.4) return 'low';
-    return 'very_low';
+
+    if (confidence >= 0.9) return "very_high";
+    if (confidence >= 0.8) return "high";
+    if (confidence >= 0.6) return "medium";
+    if (confidence >= 0.4) return "low";
+    return "very_low";
   }
 
   // Additional helper methods would be implemented here...
-  private async assessRisk(model: PredictiveModel, rawPrediction: any, features: Record<string, any>): Promise<RiskAssessment> {
+  private async assessRisk(
+    model: PredictiveModel,
+    rawPrediction: any,
+    features: Record<string, any>,
+  ): Promise<RiskAssessment> {
     // Simulate risk assessment
     const riskScore = Math.random() * 0.3 + 0.1; // 0.1-0.4
-    
+
     return {
-      level: riskScore > 0.3 ? 'moderate' : 'low',
+      level: riskScore > 0.3 ? "moderate" : "low",
       score: riskScore,
       factors: [
         {
-          name: 'Patient age',
+          name: "Patient age",
           impact: 0.3,
           confidence: 0.8,
-          description: 'Age-related risk factors',
-          category: 'patient',
-          modifiable: false
-        }
+          description: "Age-related risk factors",
+          category: "patient",
+          modifiable: false,
+        },
       ],
       mitigation: [],
-      monitoring: []
+      monitoring: [],
     };
   }
 
-  private async generateExplanations(model: PredictiveModel, rawPrediction: any, features: Record<string, any>): Promise<PredictionExplanation[]> {
+  private async generateExplanations(
+    model: PredictiveModel,
+    rawPrediction: any,
+    features: Record<string, any>,
+  ): Promise<PredictionExplanation[]> {
     const explanations: PredictionExplanation[] = [];
-    
+
     Object.entries(rawPrediction.contributions || {}).forEach(([feature, contribution]) => {
       explanations.push({
         feature,
         contribution: contribution as number,
         value: features[feature],
         interpretation: this.interpretContribution(feature, contribution as number),
-        confidence: 0.8
+        confidence: 0.8,
       });
     });
-    
+
     return explanations;
   }
 
@@ -1186,65 +1240,76 @@ export class createpredictiveAnalyticsEngine {
     return `${feature} has minimal impact on the prediction`;
   }
 
-  private async generateRecommendations(model: PredictiveModel, rawPrediction: any, features: Record<string, any>): Promise<Recommendation[]> {
+  private async generateRecommendations(
+    model: PredictiveModel,
+    rawPrediction: any,
+    features: Record<string, any>,
+  ): Promise<Recommendation[]> {
     const recommendations: Recommendation[] = [];
-    
-    if (model.type === 'complication' && rawPrediction.probability > 0.3) {
+
+    if (model.type === "complication" && rawPrediction.probability > 0.3) {
       recommendations.push({
-        id: 'rec_1',
-        type: 'preventive',
-        title: 'Enhanced Monitoring Recommended',
-        description: 'Increase monitoring frequency due to elevated complication risk',
-        rationale: 'Risk score indicates need for closer observation',
-        priority: 'high',
-        category: 'clinical',
-        actions: ['Schedule follow-up in 24 hours', 'Document risk factors'],
-        expectedOutcome: 'Reduced complication severity if detected early',
+        id: "rec_1",
+        type: "preventive",
+        title: "Enhanced Monitoring Recommended",
+        description: "Increase monitoring frequency due to elevated complication risk",
+        rationale: "Risk score indicates need for closer observation",
+        priority: "high",
+        category: "clinical",
+        actions: ["Schedule follow-up in 24 hours", "Document risk factors"],
+        expectedOutcome: "Reduced complication severity if detected early",
         evidence: [],
-        applicability: 0.9
+        applicability: 0.9,
       });
     }
-    
+
     return recommendations;
   }
 
   // Placeholder methods for comprehensive functionality
   private async findForecastingModel(type: PredictionType): Promise<PredictiveModel | null> {
-    return Array.from(this.models.values()).find(m => m.type === type) || null;
+    return Array.from(this.models.values()).find((m) => m.type === type) || null;
   }
 
   private async prepareTimeSeriesData(request: ForecastRequest): Promise<any[]> {
     return []; // Implementation would prepare time series data
   }
 
-  private async generateForecast(model: PredictiveModel, data: any[], request: ForecastRequest): Promise<ForecastPoint[]> {
+  private async generateForecast(
+    model: PredictiveModel,
+    data: any[],
+    request: ForecastRequest,
+  ): Promise<ForecastPoint[]> {
     return []; // Implementation would generate forecast points
   }
 
   private async analyzeTrend(points: ForecastPoint[]): Promise<TrendAnalysis> {
     return {
-      direction: 'stable',
+      direction: "stable",
       strength: 0.5,
       changeRate: 0,
       significance: 0.5,
       inflectionPoints: [],
-      projections: []
+      projections: [],
     };
   }
 
-  private async analyzeSeasonality(data: any[], points: ForecastPoint[]): Promise<SeasonalityAnalysis> {
+  private async analyzeSeasonality(
+    data: any[],
+    points: ForecastPoint[],
+  ): Promise<SeasonalityAnalysis> {
     return {
-      type: 'none',
+      type: "none",
       strength: 0,
       period: 0,
       patterns: [],
       peaks: [],
-      troughs: []
+      troughs: [],
     };
   }
 
   private calculateForecastConfidence(points: ForecastPoint[]): ModelConfidence {
-    return 'medium';
+    return "medium";
   }
 
   private async calculateForecastAccuracy(model: PredictiveModel, data: any[]): Promise<number> {
@@ -1314,16 +1379,16 @@ export const PredictionRequestSchema = z.object({
   patientId: z.string().optional(),
   clinicId: z.string().min(1),
   userId: z.string().optional(),
-  context: z.record(z.any()).optional()
+  context: z.record(z.any()).optional(),
 });
 
 export const ForecastRequestSchema = z.object({
-  type: z.enum(['outcome', 'complication', 'satisfaction', 'recovery', 'cost', 'efficiency']),
+  type: z.enum(["outcome", "complication", "satisfaction", "recovery", "cost", "efficiency"]),
   horizon: z.number().min(1).max(365),
-  granularity: z.enum(['hour', 'day', 'week', 'month']),
+  granularity: z.enum(["hour", "day", "week", "month"]),
   features: z.record(z.any()),
   clinicId: z.string().min(1),
-  confidence: z.number().min(0).max(1).optional()
+  confidence: z.number().min(0).max(1).optional(),
 });
 
 // Export singleton instance

@@ -1,14 +1,14 @@
 /**
  * 🔧 NeonPro Intelligent Error Handler
- * 
+ *
  * Sistema adaptativo que captura, categoriza e resolve erros automaticamente
  * com recuperação inteligente e prevenção proativa
  */
 
-import React from 'react';
-import { LRUCache } from 'lru-cache';
-import { performanceMonitor } from '@/lib/monitoring/performance-monitor';
-import { KNOWN_ERROR_PATTERNS } from './error-patterns';
+import React from "react";
+import type { LRUCache } from "lru-cache";
+import type { performanceMonitor } from "@/lib/monitoring/performance-monitor";
+import type { KNOWN_ERROR_PATTERNS } from "./error-patterns";
 
 interface ErrorContext {
   errorId: string;
@@ -20,8 +20,8 @@ interface ErrorContext {
   clinicId?: string;
   userAgent?: string;
   timestamp: number;
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  category: 'database' | 'api' | 'auth' | 'validation' | 'network' | 'unknown';
+  severity: "low" | "medium" | "high" | "critical";
+  category: "database" | "api" | "auth" | "validation" | "network" | "unknown";
   metadata?: Record<string, any>;
   recoveryAction?: string;
   resolved: boolean;
@@ -29,8 +29,8 @@ interface ErrorContext {
 
 interface ErrorPattern {
   pattern: RegExp;
-  category: ErrorContext['category'];
-  severity: ErrorContext['severity'];
+  category: ErrorContext["category"];
+  severity: ErrorContext["severity"];
   recoveryAction: string;
   description: string;
 }
@@ -62,15 +62,12 @@ export class IntelligentErrorHandler {
   /**
    * 🚨 Capture and process error with intelligent analysis
    */
-  captureError(
-    error: Error | string,
-    context: Partial<ErrorContext> = {}
-  ): ErrorContext {
-    const errorMessage = typeof error === 'string' ? error : error.message;
-    const errorStack = typeof error === 'object' ? error.stack : undefined;
-    
+  captureError(error: Error | string, context: Partial<ErrorContext> = {}): ErrorContext {
+    const errorMessage = typeof error === "string" ? error : error.message;
+    const errorStack = typeof error === "object" ? error.stack : undefined;
+
     const errorId = this.generateErrorId(errorMessage, context.route);
-    
+
     // Check for deduplication
     const existingError = errorDeduplicationCache.get(errorId);
     if (existingError) {
@@ -80,7 +77,7 @@ export class IntelligentErrorHandler {
 
     // Analyze error pattern
     const analysis = this.analyzeError(errorMessage, errorStack);
-    
+
     const errorContext: ErrorContext = {
       errorId,
       message: errorMessage,
@@ -95,16 +92,16 @@ export class IntelligentErrorHandler {
 
     // Cache for deduplication
     errorDeduplicationCache.set(errorId, errorContext);
-    
+
     // Add to history
     this.addToHistory(errorContext);
-    
+
     // Record performance impact
     this.recordErrorMetrics(errorContext);
-    
+
     // Auto-recovery attempt
     this.attemptAutoRecovery(errorContext);
-    
+
     return errorContext;
   }
 
@@ -120,7 +117,7 @@ export class IntelligentErrorHandler {
         route: errorContext.route,
         recoveryAction: errorContext.recoveryAction,
         timestamp: errorContext.timestamp,
-      }
+      },
     );
   }
 
@@ -129,7 +126,7 @@ export class IntelligentErrorHandler {
    */
   private addToHistory(errorContext: ErrorContext): void {
     this.errorHistory.push(errorContext);
-    
+
     // Clean old errors to prevent memory leaks
     if (this.errorHistory.length > this.maxErrors) {
       this.errorHistory = this.errorHistory.slice(-Math.floor(this.maxErrors * 0.8));
@@ -147,12 +144,12 @@ export class IntelligentErrorHandler {
     recentErrors: ErrorContext[];
   } {
     const now = Date.now();
-    const recentErrors = this.errorHistory.filter(e => now - e.timestamp <= timeWindow);
-    
+    const recentErrors = this.errorHistory.filter((e) => now - e.timestamp <= timeWindow);
+
     const byCategory: Record<string, number> = {};
     const bySeverity: Record<string, number> = {};
-    
-    recentErrors.forEach(error => {
+
+    recentErrors.forEach((error) => {
       byCategory[error.category] = (byCategory[error.category] || 0) + 1;
       bySeverity[error.severity] = (bySeverity[error.severity] || 0) + 1;
     });
@@ -177,8 +174,9 @@ export class IntelligentErrorHandler {
    * 🔍 Get specific error details
    */
   getError(errorId: string): ErrorContext | undefined {
-    return this.errorHistory.find(e => e.errorId === errorId) || 
-           errorDeduplicationCache.get(errorId);
+    return (
+      this.errorHistory.find((e) => e.errorId === errorId) || errorDeduplicationCache.get(errorId)
+    );
   }
 
   /**
@@ -201,13 +199,16 @@ export class IntelligentErrorHandler {
   /**
    * 🔍 Analyze error to determine category, severity and recovery action
    */
-  private analyzeError(message: string, stack?: string): {
-    category: ErrorContext['category'];
-    severity: ErrorContext['severity'];
+  private analyzeError(
+    message: string,
+    stack?: string,
+  ): {
+    category: ErrorContext["category"];
+    severity: ErrorContext["severity"];
     recoveryAction: string;
   } {
-    const fullText = `${message} ${stack || ''}`;
-    
+    const fullText = `${message} ${stack || ""}`;
+
     // Check against known patterns
     for (const pattern of KNOWN_ERROR_PATTERNS) {
       if (pattern.pattern.test(fullText)) {
@@ -215,7 +216,7 @@ export class IntelligentErrorHandler {
         const patternKey = pattern.description;
         const currentCount = errorPatternsCache.get(patternKey) || 0;
         errorPatternsCache.set(patternKey, currentCount + 1);
-        
+
         return {
           category: pattern.category,
           severity: pattern.severity,
@@ -225,27 +226,27 @@ export class IntelligentErrorHandler {
     }
 
     // Default fallback analysis
-    let category: ErrorContext['category'] = 'unknown';
-    let severity: ErrorContext['severity'] = 'medium';
-    
+    let category: ErrorContext["category"] = "unknown";
+    let severity: ErrorContext["severity"] = "medium";
+
     // Basic categorization based on keywords
     if (/database|sql|query|connection/i.test(fullText)) {
-      category = 'database';
+      category = "database";
     } else if (/auth|token|session|login/i.test(fullText)) {
-      category = 'auth';
+      category = "auth";
     } else if (/api|fetch|request|response/i.test(fullText)) {
-      category = 'api';
+      category = "api";
     } else if (/validation|invalid|required/i.test(fullText)) {
-      category = 'validation';
-      severity = 'low';
+      category = "validation";
+      severity = "low";
     } else if (/network|timeout|refused/i.test(fullText)) {
-      category = 'network';
+      category = "network";
     }
 
     return {
       category,
       severity,
-      recoveryAction: 'log_and_monitor',
+      recoveryAction: "log_and_monitor",
     };
   }
 
@@ -253,12 +254,12 @@ export class IntelligentErrorHandler {
    * 🆔 Generate unique error ID for deduplication
    */
   private generateErrorId(message: string, route?: string): string {
-    const baseString = `${message}_${route || 'unknown'}`;
+    const baseString = `${message}_${route || "unknown"}`;
     // Simple hash function for error ID
     let hash = 0;
     for (let i = 0; i < baseString.length; i++) {
       const char = baseString.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return `err_${Math.abs(hash).toString(36)}_${Date.now()}`;
@@ -269,28 +270,28 @@ export class IntelligentErrorHandler {
    */
   private attemptAutoRecovery(errorContext: ErrorContext): void {
     switch (errorContext.recoveryAction) {
-      case 'retry_with_backoff':
+      case "retry_with_backoff":
         this.scheduleRetry(errorContext);
         break;
-        
-      case 'refresh_token':
-        this.logRecoveryAction(errorContext, 'Token refresh recommended');
+
+      case "refresh_token":
+        this.logRecoveryAction(errorContext, "Token refresh recommended");
         break;
-        
-      case 'redirect_login':
-        this.logRecoveryAction(errorContext, 'Login redirect recommended');
+
+      case "redirect_login":
+        this.logRecoveryAction(errorContext, "Login redirect recommended");
         break;
-        
-      case 'handle_duplicate':
-        this.logRecoveryAction(errorContext, 'Duplicate data handling needed');
+
+      case "handle_duplicate":
+        this.logRecoveryAction(errorContext, "Duplicate data handling needed");
         break;
-        
-      case 'validate_input':
-        this.logRecoveryAction(errorContext, 'Input validation required');
+
+      case "validate_input":
+        this.logRecoveryAction(errorContext, "Input validation required");
         break;
-        
+
       default:
-        this.logRecoveryAction(errorContext, 'Manual investigation required');
+        this.logRecoveryAction(errorContext, "Manual investigation required");
     }
   }
 
@@ -300,10 +301,10 @@ export class IntelligentErrorHandler {
   private scheduleRetry(errorContext: ErrorContext): void {
     const retryCount = errorContext.metadata?.retryCount || 0;
     const maxRetries = 3;
-    
+
     if (retryCount < maxRetries) {
       const backoffMs = Math.pow(2, retryCount) * 1000; // 1s, 2s, 4s
-      
+
       setTimeout(() => {
         console.log(`🔄 Auto-retry attempt ${retryCount + 1} for error ${errorContext.errorId}`);
         // Mark as recovery attempted
@@ -340,7 +341,7 @@ export const intelligentErrorHandler = IntelligentErrorHandler.getInstance();
  */
 export function withErrorHandling<T extends any[], R>(
   fn: (...args: T) => Promise<R>,
-  context?: Partial<ErrorContext>
+  context?: Partial<ErrorContext>,
 ): (...args: T) => Promise<R | null> {
   return async (...args: T): Promise<R | null> => {
     try {
@@ -357,7 +358,7 @@ export function withErrorHandling<T extends any[], R>(
  */
 export function withErrorBoundary(
   Component: React.ComponentType<any>,
-  fallback?: React.ComponentType<{ error: Error; errorId: string }>
+  fallback?: React.ComponentType<{ error: Error; errorId: string }>,
 ) {
   return class ErrorBoundaryWrapper extends React.Component<
     any,
@@ -389,25 +390,45 @@ export function withErrorBoundary(
       if (this.state.hasError) {
         if (fallback && this.state.error && this.state.errorId) {
           const FallbackComponent = fallback;
-          return React.createElement(FallbackComponent, { error: this.state.error, errorId: this.state.errorId });
+          return React.createElement(FallbackComponent, {
+            error: this.state.error,
+            errorId: this.state.errorId,
+          });
         }
-        
-        return React.createElement('div', {
-          className: 'error-boundary p-4 border border-red-200 bg-red-50 rounded-lg'
-        }, [
-          React.createElement('h2', {
-            key: 'title',
-            className: 'text-red-800 font-medium mb-2'
-          }, 'Algo deu errado'),
-          React.createElement('p', {
-            key: 'message',
-            className: 'text-red-600 text-sm'
-          }, 'Um erro inesperado ocorreu. Nossa equipe foi notificada.'),
-          this.state.errorId && React.createElement('p', {
-            key: 'errorId',
-            className: 'text-red-500 text-xs mt-2 font-mono'
-          }, `ID: ${this.state.errorId}`)
-        ].filter(Boolean));
+
+        return React.createElement(
+          "div",
+          {
+            className: "error-boundary p-4 border border-red-200 bg-red-50 rounded-lg",
+          },
+          [
+            React.createElement(
+              "h2",
+              {
+                key: "title",
+                className: "text-red-800 font-medium mb-2",
+              },
+              "Algo deu errado",
+            ),
+            React.createElement(
+              "p",
+              {
+                key: "message",
+                className: "text-red-600 text-sm",
+              },
+              "Um erro inesperado ocorreu. Nossa equipe foi notificada.",
+            ),
+            this.state.errorId &&
+              React.createElement(
+                "p",
+                {
+                  key: "errorId",
+                  className: "text-red-500 text-xs mt-2 font-mono",
+                },
+                `ID: ${this.state.errorId}`,
+              ),
+          ].filter(Boolean),
+        );
       }
 
       return React.createElement(Component, this.props);

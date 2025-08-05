@@ -1,11 +1,11 @@
 import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
-import { LRUCache } from 'lru-cache';
-import { performanceMonitor } from '@/lib/monitoring/performance-monitor';
+import type { NextResponse } from "next/server";
+import type { LRUCache } from "lru-cache";
+import type { performanceMonitor } from "@/lib/monitoring/performance-monitor";
 
 /**
  * 🛡️ NeonPro Intelligent Security Middleware
- * 
+ *
  * Sistema adaptativo de segurança que aprende e protege automaticamente
  * contra ameaças sem impactar usuários legítimos
  */
@@ -43,7 +43,7 @@ const securityCache = new LRUCache<string, SecurityEvent[]>({
 const trustedIPsCache = new LRUCache<string, boolean>({
   max: 1000,
   ttl: 24 * 60 * 60 * 1000, // 24 hours TTL
-});/**
+}); /**
  * Rate limiting inteligente baseado em comportamento
  */
 export class IntelligentRateLimit {
@@ -61,13 +61,13 @@ export class IntelligentRateLimit {
       requests: number;
       windowMs: number;
       blockDurationMs?: number;
-    }
+    },
   ): { allowed: boolean; remaining: number; resetTime: number; reason?: string } {
     const key = this.getKey(ip, route);
     const now = Date.now();
-    
+
     let entry = rateLimitCache.get(key);
-    
+
     if (!entry) {
       entry = {
         count: 1,
@@ -75,7 +75,7 @@ export class IntelligentRateLimit {
         blocked: false,
       };
       rateLimitCache.set(key, entry);
-      
+
       return {
         allowed: true,
         remaining: limits.requests - 1,
@@ -107,7 +107,7 @@ export class IntelligentRateLimit {
       entry.count = 1;
       entry.firstRequest = now;
       rateLimitCache.set(key, entry);
-      
+
       return {
         allowed: true,
         remaining: limits.requests - 1,
@@ -117,13 +117,13 @@ export class IntelligentRateLimit {
 
     // Increment count
     entry.count++;
-    
+
     // Check if limit exceeded
     if (entry.count > limits.requests) {
       entry.blocked = true;
       entry.blockUntil = now + (limits.blockDurationMs || 60000); // Default 1 minute block
       rateLimitCache.set(key, entry);
-      
+
       return {
         allowed: false,
         remaining: 0,
@@ -131,9 +131,9 @@ export class IntelligentRateLimit {
         reason: "Rate limit exceeded",
       };
     }
-    
+
     rateLimitCache.set(key, entry);
-    
+
     return {
       allowed: true,
       remaining: limits.requests - entry.count,
@@ -153,7 +153,7 @@ export class ThreatDetection {
     ip: string,
     userAgent: string,
     route: string,
-    method: string
+    method: string,
   ): { suspicious: boolean; reason?: string; riskScore: number } {
     let riskScore = 0;
     const reasons: string[] = [];
@@ -172,17 +172,17 @@ export class ThreatDetection {
 
     // Check for suspicious request frequency
     const recentEvents = securityCache.get(ip) || [];
-    const recentRequests = recentEvents.filter(e => 
-      Date.now() - e.timestamp < 10 * 1000 // last 10 seconds
+    const recentRequests = recentEvents.filter(
+      (e) => Date.now() - e.timestamp < 10 * 1000, // last 10 seconds
     );
-    
+
     if (recentRequests.length > 20) {
       riskScore += 5;
       reasons.push("High request frequency");
     }
 
     // Check for diverse route access (potential reconnaissance)
-    const uniqueRoutes = new Set(recentEvents.map(e => e.route));
+    const uniqueRoutes = new Set(recentEvents.map((e) => e.route));
     if (uniqueRoutes.size > 10) {
       riskScore += 3;
       reasons.push("Accessing many different routes");
@@ -204,8 +204,8 @@ export class ThreatDetection {
       /curl|wget|python-requests|go-http-client/i,
       /postman|insomnia|httpie/i,
     ];
-    
-    return botPatterns.some(pattern => pattern.test(userAgent));
+
+    return botPatterns.some((pattern) => pattern.test(userAgent));
   }
 
   /**
@@ -218,8 +218,8 @@ export class ThreatDetection {
       /\.env|\.git|backup|config\./i,
       /\/api\/[^\/]+\/[^\/]+\/[^\/]+/, // Deep API exploration
     ];
-    
-    return scanningPatterns.some(pattern => pattern.test(route));
+
+    return scanningPatterns.some((pattern) => pattern.test(route));
   }
 
   /**
@@ -228,9 +228,9 @@ export class ThreatDetection {
   static recordEvent(event: SecurityEvent): void {
     const events = securityCache.get(event.ip) || [];
     events.push(event);
-    
+
     // Keep only recent events to prevent memory bloat
-    const recent = events.filter(e => Date.now() - e.timestamp < 15 * 60 * 1000);
+    const recent = events.filter((e) => Date.now() - e.timestamp < 15 * 60 * 1000);
     securityCache.set(event.ip, recent);
   }
 }

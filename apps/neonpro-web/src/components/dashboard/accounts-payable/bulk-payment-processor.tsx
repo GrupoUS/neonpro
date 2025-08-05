@@ -1,10 +1,10 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -12,18 +12,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
-import {
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import {
+import type { Separator } from "@/components/ui/separator";
+import type {
   Table,
   TableBody,
   TableCell,
@@ -31,10 +31,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import {
+import type { cn } from "@/lib/utils";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
   AlertCircle,
   Calculator,
   CheckCircle,
@@ -46,8 +46,8 @@ import {
   Receipt,
   Search,
 } from "lucide-react";
-import { useMemo, useState } from "react";
-import { toast } from "sonner";
+import type { useMemo, useState } from "react";
+import type { toast } from "sonner";
 
 export interface BulkPayableItem {
   id: string;
@@ -174,11 +174,9 @@ export default function BulkPaymentProcessor({
     if (searchTerm) {
       items = items.filter(
         (item) =>
-          item.invoice_number
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
+          item.invoice_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
           item.vendor_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.category.toLowerCase().includes(searchTerm.toLowerCase())
+          item.category.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
@@ -189,9 +187,7 @@ export default function BulkPaymentProcessor({
         break;
       case "due_today":
         const today = new Date().toDateString();
-        items = items.filter(
-          (item) => new Date(item.due_date).toDateString() === today
-        );
+        items = items.filter((item) => new Date(item.due_date).toDateString() === today);
         break;
       case "due_week":
         const weekFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
@@ -210,10 +206,7 @@ export default function BulkPaymentProcessor({
 
   // Selected items calculations
   const selectedItems = filteredItems.filter((item) => item.selected);
-  const totalSelectedAmount = selectedItems.reduce(
-    (sum, item) => sum + item.suggested_payment,
-    0
-  );
+  const totalSelectedAmount = selectedItems.reduce((sum, item) => sum + item.suggested_payment, 0);
   const selectedCount = selectedItems.length;
 
   const formatCurrency = (amount: number) => {
@@ -254,15 +247,13 @@ export default function BulkPaymentProcessor({
       items.map((item) => {
         const isVisible = filteredItems.some((fi) => fi.id === item.id);
         return isVisible ? { ...item, selected: checked } : item;
-      })
+      }),
     );
   };
 
   const handleSelectItem = (itemId: string, checked: boolean) => {
     setPayableItems((items) =>
-      items.map((item) =>
-        item.id === itemId ? { ...item, selected: checked } : item
-      )
+      items.map((item) => (item.id === itemId ? { ...item, selected: checked } : item)),
     );
   };
 
@@ -274,8 +265,8 @@ export default function BulkPaymentProcessor({
               ...item,
               suggested_payment: Math.min(amount, item.remaining_balance),
             }
-          : item
-      )
+          : item,
+      ),
     );
   };
 
@@ -289,8 +280,7 @@ export default function BulkPaymentProcessor({
       if (b.status === "overdue" && a.status !== "overdue") return 1;
 
       const priorityOrder = { high: 3, medium: 2, low: 1 };
-      const priorityDiff =
-        priorityOrder[b.priority] - priorityOrder[a.priority];
+      const priorityDiff = priorityOrder[b.priority] - priorityOrder[a.priority];
       if (priorityDiff !== 0) return priorityDiff;
 
       return b.remaining_balance - a.remaining_balance;
@@ -300,14 +290,11 @@ export default function BulkPaymentProcessor({
       items.map((item) => {
         if (!selectedItems.some((si) => si.id === item.id)) return item;
 
-        const suggestedAmount = Math.min(
-          item.remaining_balance,
-          remainingBudget
-        );
+        const suggestedAmount = Math.min(item.remaining_balance, remainingBudget);
         remainingBudget = Math.max(0, remainingBudget - suggestedAmount);
 
         return { ...item, suggested_payment: suggestedAmount };
-      })
+      }),
     );
   };
 
@@ -344,16 +331,12 @@ export default function BulkPaymentProcessor({
         setProcessedCount(i + 1);
       }
 
-      toast.success(
-        `${selectedItems.length} pagamentos processados com sucesso`
-      );
+      toast.success(`${selectedItems.length} pagamentos processados com sucesso`);
       onSuccess();
       onOpenChange(false);
 
       // Reset selections
-      setPayableItems((items) =>
-        items.map((item) => ({ ...item, selected: false }))
-      );
+      setPayableItems((items) => items.map((item) => ({ ...item, selected: false })));
     } catch (error) {
       console.error("Error processing bulk payments:", error);
       toast.error("Erro ao processar pagamentos em lote");
@@ -376,7 +359,7 @@ export default function BulkPaymentProcessor({
           item.suggested_payment.toFixed(2),
           item.priority,
           item.status,
-        ].join(",")
+        ].join(","),
       ),
     ].join("\n");
 
@@ -410,9 +393,7 @@ export default function BulkPaymentProcessor({
                 <FileText className="h-8 w-8 text-blue-600 mr-3" />
                 <div>
                   <p className="text-2xl font-bold">{filteredItems.length}</p>
-                  <p className="text-xs text-muted-foreground">
-                    Itens Disponíveis
-                  </p>
+                  <p className="text-xs text-muted-foreground">Itens Disponíveis</p>
                 </div>
               </CardContent>
             </Card>
@@ -431,9 +412,7 @@ export default function BulkPaymentProcessor({
               <CardContent className="flex items-center p-4">
                 <DollarSign className="h-8 w-8 text-green-600 mr-3" />
                 <div>
-                  <p className="text-2xl font-bold">
-                    {formatCurrency(totalSelectedAmount)}
-                  </p>
+                  <p className="text-2xl font-bold">{formatCurrency(totalSelectedAmount)}</p>
                   <p className="text-xs text-muted-foreground">Valor Total</p>
                 </div>
               </CardContent>
@@ -490,10 +469,7 @@ export default function BulkPaymentProcessor({
 
                 <div className="space-y-2">
                   <Label>Método de Pagamento</Label>
-                  <Select
-                    value={selectedPaymentMethod}
-                    onValueChange={setSelectedPaymentMethod}
-                  >
+                  <Select value={selectedPaymentMethod} onValueChange={setSelectedPaymentMethod}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -522,9 +498,7 @@ export default function BulkPaymentProcessor({
                       type="number"
                       step="0.01"
                       value={maxPaymentAmount || ""}
-                      onChange={(e) =>
-                        setMaxPaymentAmount(parseFloat(e.target.value) || 0)
-                      }
+                      onChange={(e) => setMaxPaymentAmount(parseFloat(e.target.value) || 0)}
                       placeholder="Valor máximo para distribuir"
                     />
                   </div>
@@ -540,8 +514,7 @@ export default function BulkPaymentProcessor({
                 </div>
                 {maxPaymentAmount > 0 && (
                   <p className="text-xs text-muted-foreground">
-                    O valor será distribuído priorizando contas em atraso e de
-                    alta prioridade
+                    O valor será distribuído priorizando contas em atraso e de alta prioridade
                   </p>
                 )}
               </div>
@@ -555,10 +528,7 @@ export default function BulkPaymentProcessor({
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="select-all"
-                    checked={
-                      selectedCount === filteredItems.length &&
-                      filteredItems.length > 0
-                    }
+                    checked={selectedCount === filteredItems.length && filteredItems.length > 0}
                     onCheckedChange={handleSelectAll}
                   />
                   <Label htmlFor="select-all" className="text-sm">
@@ -605,10 +575,7 @@ export default function BulkPaymentProcessor({
                       </TableRow>
                     ) : (
                       filteredItems.map((item) => (
-                        <TableRow
-                          key={item.id}
-                          className={cn(item.selected && "bg-muted/50")}
-                        >
+                        <TableRow key={item.id} className={cn(item.selected && "bg-muted/50")}>
                           <TableCell>
                             <Checkbox
                               checked={item.selected}
@@ -631,9 +598,7 @@ export default function BulkPaymentProcessor({
                               locale: ptBR,
                             })}
                           </TableCell>
-                          <TableCell>
-                            {formatCurrency(item.net_amount)}
-                          </TableCell>
+                          <TableCell>{formatCurrency(item.net_amount)}</TableCell>
                           <TableCell className="font-semibold">
                             {formatCurrency(item.remaining_balance)}
                           </TableCell>
@@ -645,7 +610,7 @@ export default function BulkPaymentProcessor({
                               onChange={(e) =>
                                 handleUpdateSuggestedPayment(
                                   item.id,
-                                  parseFloat(e.target.value) || 0
+                                  parseFloat(e.target.value) || 0,
                                 )
                               }
                               className="w-24"
@@ -654,27 +619,17 @@ export default function BulkPaymentProcessor({
                             />
                           </TableCell>
                           <TableCell>
-                            <Badge
-                              className={cn(
-                                "text-xs",
-                                getPriorityColor(item.priority)
-                              )}
-                            >
+                            <Badge className={cn("text-xs", getPriorityColor(item.priority))}>
                               {item.priority.toUpperCase()}
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            <Badge
-                              className={cn(
-                                "text-xs",
-                                getStatusColor(item.status)
-                              )}
-                            >
+                            <Badge className={cn("text-xs", getStatusColor(item.status))}>
                               {item.status === "overdue"
                                 ? "Em Atraso"
                                 : item.status === "partial"
-                                ? "Parcial"
-                                : "Pendente"}
+                                  ? "Parcial"
+                                  : "Pendente"}
                             </Badge>
                           </TableCell>
                         </TableRow>
@@ -692,17 +647,12 @@ export default function BulkPaymentProcessor({
               <CardContent className="p-4">
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">
-                      Processando pagamentos...
-                    </span>
+                    <span className="text-sm font-medium">Processando pagamentos...</span>
                     <span className="text-sm text-muted-foreground">
                       {processedCount}/{selectedCount}
                     </span>
                   </div>
-                  <Progress
-                    value={(processedCount / selectedCount) * 100}
-                    className="w-full"
-                  />
+                  <Progress value={(processedCount / selectedCount) * 100} className="w-full" />
                 </div>
               </CardContent>
             </Card>
@@ -714,8 +664,7 @@ export default function BulkPaymentProcessor({
             <div className="text-sm text-muted-foreground">
               {selectedCount > 0 && (
                 <>
-                  {selectedCount} itens selecionados • Total:{" "}
-                  {formatCurrency(totalSelectedAmount)}
+                  {selectedCount} itens selecionados • Total: {formatCurrency(totalSelectedAmount)}
                 </>
               )}
             </div>
@@ -728,10 +677,7 @@ export default function BulkPaymentProcessor({
               >
                 Cancelar
               </Button>
-              <Button
-                onClick={handleProcessPayments}
-                disabled={selectedCount === 0 || processing}
-              >
+              <Button onClick={handleProcessPayments} disabled={selectedCount === 0 || processing}>
                 {processing ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

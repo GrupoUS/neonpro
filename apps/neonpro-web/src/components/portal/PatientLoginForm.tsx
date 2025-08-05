@@ -1,137 +1,152 @@
-'use client'
+"use client";
 
 // ===============================================
 // Patient Portal Login Form Component
 // Story 4.3: Patient Portal & Self-Service
 // ===============================================
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { PatientPortalAuthService } from '@/lib/auth-advanced/patient-portal-auth'
-import { registerPortalServiceWorker, enableOfflineSupport, enableInstallPrompt } from '@/lib/auth-advanced/pwa-config'
-import type { PatientLoginForm as LoginFormData } from '@/types/patient-portal'
+import type { useState, useEffect } from "react";
+import type { useRouter } from "next/navigation";
+import type { useForm } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type { z } from "zod";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Switch } from "@/components/ui/switch";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { PatientPortalAuthService } from "@/lib/auth-advanced/patient-portal-auth";
+import type {
+  registerPortalServiceWorker,
+  enableOfflineSupport,
+  enableInstallPrompt,
+} from "@/lib/auth-advanced/pwa-config";
+import type { PatientLoginForm as LoginFormData } from "@/types/patient-portal";
 
-const loginSchema = z.object({
-  login_type: z.enum(['email', 'phone', 'document']),
-  email: z.string().email('Email inválido').optional(),
-  phone: z.string().min(10, 'Telefone inválido').optional(),
-  document_number: z.string().min(11, 'Documento inválido').optional(),
-  clinic_code: z.string().min(3, 'Código da clínica é obrigatório'),
-  remember_me: z.boolean().default(false)
-}).refine((data) => {
-  if (data.login_type === 'email' && !data.email) {
-    return false
-  }
-  if (data.login_type === 'phone' && !data.phone) {
-    return false
-  }
-  if (data.login_type === 'document' && !data.document_number) {
-    return false
-  }
-  return true
-}, {
-  message: 'Campo de identificação é obrigatório'
-})
+const loginSchema = z
+  .object({
+    login_type: z.enum(["email", "phone", "document"]),
+    email: z.string().email("Email inválido").optional(),
+    phone: z.string().min(10, "Telefone inválido").optional(),
+    document_number: z.string().min(11, "Documento inválido").optional(),
+    clinic_code: z.string().min(3, "Código da clínica é obrigatório"),
+    remember_me: z.boolean().default(false),
+  })
+  .refine(
+    (data) => {
+      if (data.login_type === "email" && !data.email) {
+        return false;
+      }
+      if (data.login_type === "phone" && !data.phone) {
+        return false;
+      }
+      if (data.login_type === "document" && !data.document_number) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Campo de identificação é obrigatório",
+    },
+  );
 
 interface PatientLoginFormProps {
-  initialClinicCode?: string
-  redirectUrl?: string
+  initialClinicCode?: string;
+  redirectUrl?: string;
 }
 
-export default function PatientLoginForm({ 
-  initialClinicCode, 
-  redirectUrl 
+export default function PatientLoginForm({
+  initialClinicCode,
+  redirectUrl,
 }: PatientLoginFormProps) {
-  const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false)
-  const [loginError, setLoginError] = useState<string | null>(null)
-  const [showPWAFeatures, setShowPWAFeatures] = useState(false)
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [showPWAFeatures, setShowPWAFeatures] = useState(false);
 
   const {
     register,
     handleSubmit,
     watch,
     setValue,
-    formState: { errors }
+    formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      login_type: 'email',
-      clinic_code: initialClinicCode || '',
-      remember_me: false
-    }
-  })
+      login_type: "email",
+      clinic_code: initialClinicCode || "",
+      remember_me: false,
+    },
+  });
 
-  const loginType = watch('login_type')
+  const loginType = watch("login_type");
 
   useEffect(() => {
     // Initialize PWA features
-    registerPortalServiceWorker()
-    enableOfflineSupport()
-    const { showInstallDialog } = enableInstallPrompt()
-    
+    registerPortalServiceWorker();
+    enableOfflineSupport();
+    const { showInstallDialog } = enableInstallPrompt();
+
     // Check if PWA features should be shown
-    setShowPWAFeatures(true)
-    
+    setShowPWAFeatures(true);
+
     // Listen for install events
     const handleInstallEvent = () => {
-      showInstallDialog()
-    }
-    
-    window.addEventListener('install-portal', handleInstallEvent)
-    
+      showInstallDialog();
+    };
+
+    window.addEventListener("install-portal", handleInstallEvent);
+
     return () => {
-      window.removeEventListener('install-portal', handleInstallEvent)
-    }
-  }, [])
+      window.removeEventListener("install-portal", handleInstallEvent);
+    };
+  }, []);
 
   const onSubmit = async (data: LoginFormData) => {
-    setIsLoading(true)
-    setLoginError(null)
+    setIsLoading(true);
+    setLoginError(null);
 
     try {
-      const response = await PatientPortalAuthService.authenticatePatient(data)
-      
+      const response = await PatientPortalAuthService.authenticatePatient(data);
+
       if (response.success && response.data) {
         // Authentication successful
-        const redirectTo = redirectUrl || '/portal/dashboard'
-        router.push(redirectTo)
+        const redirectTo = redirectUrl || "/portal/dashboard";
+        router.push(redirectTo);
       } else {
-        setLoginError(response.error?.message || 'Erro ao fazer login')
+        setLoginError(response.error?.message || "Erro ao fazer login");
       }
     } catch (error) {
-      setLoginError('Erro interno. Tente novamente.')
-      console.error('Login error:', error)
+      setLoginError("Erro interno. Tente novamente.");
+      console.error("Login error:", error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const formatPhone = (value: string) => {
     // Simple phone formatting for Brazilian numbers
-    const numbers = value.replace(/\D/g, '')
+    const numbers = value.replace(/\D/g, "");
     if (numbers.length <= 11) {
-      return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3')
+      return numbers.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
     }
-    return value
-  }
+    return value;
+  };
 
   const formatDocument = (value: string) => {
     // Simple CPF formatting
-    const numbers = value.replace(/\D/g, '')
+    const numbers = value.replace(/\D/g, "");
     if (numbers.length <= 11) {
-      return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
+      return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
     }
-    return value
-  }
+    return value;
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -145,24 +160,20 @@ export default function PatientLoginForm({
           type="text"
           placeholder="Ex: CLINIC123"
           className="text-center font-mono uppercase"
-          {...register('clinic_code')}
+          {...register("clinic_code")}
           onChange={(e) => {
-            setValue('clinic_code', e.target.value.toUpperCase())
+            setValue("clinic_code", e.target.value.toUpperCase());
           }}
         />
-        {errors.clinic_code && (
-          <p className="text-sm text-red-600">{errors.clinic_code.message}</p>
-        )}
+        {errors.clinic_code && <p className="text-sm text-red-600">{errors.clinic_code.message}</p>}
       </div>
 
       {/* Login Type Selector */}
       <div className="space-y-2">
-        <Label className="text-sm font-medium text-gray-700">
-          Como deseja entrar?
-        </Label>
-        <Select 
-          value={loginType} 
-          onValueChange={(value: 'email' | 'phone' | 'document') => setValue('login_type', value)}
+        <Label className="text-sm font-medium text-gray-700">Como deseja entrar?</Label>
+        <Select
+          value={loginType}
+          onValueChange={(value: "email" | "phone" | "document") => setValue("login_type", value)}
         >
           <SelectTrigger>
             <SelectValue />
@@ -177,24 +188,17 @@ export default function PatientLoginForm({
 
       {/* Dynamic Input Field */}
       <div className="space-y-2">
-        {loginType === 'email' && (
+        {loginType === "email" && (
           <>
             <Label htmlFor="email" className="text-sm font-medium text-gray-700">
               Email
             </Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="seu@email.com"
-              {...register('email')}
-            />
-            {errors.email && (
-              <p className="text-sm text-red-600">{errors.email.message}</p>
-            )}
+            <Input id="email" type="email" placeholder="seu@email.com" {...register("email")} />
+            {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
           </>
         )}
 
-        {loginType === 'phone' && (
+        {loginType === "phone" && (
           <>
             <Label htmlFor="phone" className="text-sm font-medium text-gray-700">
               Telefone
@@ -203,19 +207,17 @@ export default function PatientLoginForm({
               id="phone"
               type="tel"
               placeholder="(11) 99999-9999"
-              {...register('phone')}
+              {...register("phone")}
               onChange={(e) => {
-                const formatted = formatPhone(e.target.value)
-                setValue('phone', formatted)
+                const formatted = formatPhone(e.target.value);
+                setValue("phone", formatted);
               }}
             />
-            {errors.phone && (
-              <p className="text-sm text-red-600">{errors.phone.message}</p>
-            )}
+            {errors.phone && <p className="text-sm text-red-600">{errors.phone.message}</p>}
           </>
         )}
 
-        {loginType === 'document' && (
+        {loginType === "document" && (
           <>
             <Label htmlFor="document_number" className="text-sm font-medium text-gray-700">
               CPF
@@ -224,10 +226,10 @@ export default function PatientLoginForm({
               id="document_number"
               type="text"
               placeholder="000.000.000-00"
-              {...register('document_number')}
+              {...register("document_number")}
               onChange={(e) => {
-                const formatted = formatDocument(e.target.value)
-                setValue('document_number', formatted)
+                const formatted = formatDocument(e.target.value);
+                setValue("document_number", formatted);
               }}
             />
             {errors.document_number && (
@@ -241,8 +243,8 @@ export default function PatientLoginForm({
       <div className="flex items-center space-x-3">
         <Switch
           id="remember_me"
-          {...register('remember_me')}
-          onCheckedChange={(checked) => setValue('remember_me', checked)}
+          {...register("remember_me")}
+          onCheckedChange={(checked) => setValue("remember_me", checked)}
         />
         <Label htmlFor="remember_me" className="text-sm text-gray-700">
           Manter conectado por 7 dias
@@ -268,7 +270,7 @@ export default function PatientLoginForm({
             <span>Entrando...</span>
           </div>
         ) : (
-          'Entrar no Portal'
+          "Entrar no Portal"
         )}
       </Button>
 
@@ -287,5 +289,5 @@ export default function PatientLoginForm({
         <p className="text-xs">Email, telefone ou CPF cadastrado</p>
       </div>
     </form>
-  )
+  );
 }

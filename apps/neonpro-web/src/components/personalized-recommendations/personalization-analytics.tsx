@@ -1,55 +1,96 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Separator } from "@/components/ui/separator"
-import { Progress } from "@/components/ui/progress"
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts'
-import { TrendingUp, Users, Target, Zap, Calendar, DollarSign, Star, Eye } from "lucide-react"
+import type { useState } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Separator } from "@/components/ui/separator";
+import type { Progress } from "@/components/ui/progress";
+import type {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
+import type { TrendingUp, Users, Target, Zap, Calendar, DollarSign, Star, Eye } from "lucide-react";
 
 // Mock data para analytics
 const performanceData = [
-  { month: 'Jan', accuracy: 85, engagement: 78, conversions: 12 },
-  { month: 'Fev', accuracy: 87, engagement: 82, conversions: 15 },
-  { month: 'Mar', accuracy: 89, engagement: 85, conversions: 18 },
-  { month: 'Abr', accuracy: 91, engagement: 88, conversions: 22 },
-  { month: 'Mai', accuracy: 93, engagement: 91, conversions: 25 },
-  { month: 'Jun', accuracy: 95, engagement: 94, conversions: 28 }
-]
+  { month: "Jan", accuracy: 85, engagement: 78, conversions: 12 },
+  { month: "Fev", accuracy: 87, engagement: 82, conversions: 15 },
+  { month: "Mar", accuracy: 89, engagement: 85, conversions: 18 },
+  { month: "Abr", accuracy: 91, engagement: 88, conversions: 22 },
+  { month: "Mai", accuracy: 93, engagement: 91, conversions: 25 },
+  { month: "Jun", accuracy: 95, engagement: 94, conversions: 28 },
+];
 
 const segmentPerformance = [
-  { segment: 'Cliente Premium', recommendations: 145, clicks: 128, conversions: 35, revenue: 85000 },
-  { segment: 'Cliente Jovem', recommendations: 230, clicks: 195, conversions: 48, revenue: 32000 },
-  { segment: 'Cliente Executiva', recommendations: 88, clicks: 76, conversions: 22, revenue: 45000 },
-  { segment: 'Cliente VIP', recommendations: 67, clicks: 61, conversions: 18, revenue: 67000 }
-]
+  {
+    segment: "Cliente Premium",
+    recommendations: 145,
+    clicks: 128,
+    conversions: 35,
+    revenue: 85000,
+  },
+  { segment: "Cliente Jovem", recommendations: 230, clicks: 195, conversions: 48, revenue: 32000 },
+  {
+    segment: "Cliente Executiva",
+    recommendations: 88,
+    clicks: 76,
+    conversions: 22,
+    revenue: 45000,
+  },
+  { segment: "Cliente VIP", recommendations: 67, clicks: 61, conversions: 18, revenue: 67000 },
+];
 
 const treatmentRecommendations = [
-  { name: 'Botox', value: 35, color: '#8884d8' },
-  { name: 'Harmonização', value: 28, color: '#82ca9d' },
-  { name: 'Peeling', value: 18, color: '#ffc658' },
-  { name: 'Limpeza', value: 12, color: '#ff7300' },
-  { name: 'Outros', value: 7, color: '#8dd1e1' }
-]
+  { name: "Botox", value: 35, color: "#8884d8" },
+  { name: "Harmonização", value: 28, color: "#82ca9d" },
+  { name: "Peeling", value: 18, color: "#ffc658" },
+  { name: "Limpeza", value: 12, color: "#ff7300" },
+  { name: "Outros", value: 7, color: "#8dd1e1" },
+];
 
 interface MetricCardProps {
-  title: string
-  value: string | number
-  change: string
-  changeType: 'positive' | 'negative' | 'neutral'
-  icon: React.ReactNode
+  title: string;
+  value: string | number;
+  change: string;
+  changeType: "positive" | "negative" | "neutral";
+  icon: React.ReactNode;
 }
 
 function MetricCard({ title, value, change, changeType, icon }: MetricCardProps) {
-  const changeColor = changeType === 'positive' ? 'text-green-600' : 
-                     changeType === 'negative' ? 'text-red-600' : 'text-gray-600'
-  
+  const changeColor =
+    changeType === "positive"
+      ? "text-green-600"
+      : changeType === "negative"
+        ? "text-red-600"
+        : "text-gray-600";
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -58,17 +99,15 @@ function MetricCard({ title, value, change, changeType, icon }: MetricCardProps)
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{value}</div>
-        <p className={`text-xs ${changeColor}`}>
-          {change} vs. mês anterior
-        </p>
+        <p className={`text-xs ${changeColor}`}>{change} vs. mês anterior</p>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 export default function PersonalizationAnalytics() {
-  const [timeRange, setTimeRange] = useState('6m')
-  const [selectedSegment, setSelectedSegment] = useState('all')
+  const [timeRange, setTimeRange] = useState("6m");
+  const [selectedSegment, setSelectedSegment] = useState("all");
 
   return (
     <div className="space-y-6">
@@ -161,24 +200,24 @@ export default function PersonalizationAnalytics() {
                   <XAxis dataKey="month" />
                   <YAxis />
                   <Tooltip />
-                  <Line 
-                    type="monotone" 
-                    dataKey="accuracy" 
-                    stroke="#8884d8" 
+                  <Line
+                    type="monotone"
+                    dataKey="accuracy"
+                    stroke="#8884d8"
                     strokeWidth={2}
                     name="Precisão (%)"
                   />
-                  <Line 
-                    type="monotone" 
-                    dataKey="engagement" 
-                    stroke="#82ca9d" 
+                  <Line
+                    type="monotone"
+                    dataKey="engagement"
+                    stroke="#82ca9d"
                     strokeWidth={2}
                     name="Engajamento (%)"
                   />
-                  <Line 
-                    type="monotone" 
-                    dataKey="conversions" 
-                    stroke="#ffc658" 
+                  <Line
+                    type="monotone"
+                    dataKey="conversions"
+                    stroke="#ffc658"
                     strokeWidth={2}
                     name="Conversões"
                   />
@@ -195,7 +234,7 @@ export default function PersonalizationAnalytics() {
               <CardContent>
                 <div className="space-y-4">
                   {segmentPerformance.map((segment) => {
-                    const clickRate = (segment.clicks / segment.recommendations * 100).toFixed(1)
+                    const clickRate = ((segment.clicks / segment.recommendations) * 100).toFixed(1);
                     return (
                       <div key={segment.segment} className="space-y-2">
                         <div className="flex justify-between text-sm">
@@ -204,7 +243,7 @@ export default function PersonalizationAnalytics() {
                         </div>
                         <Progress value={parseFloat(clickRate)} className="h-2" />
                       </div>
-                    )
+                    );
                   })}
                 </div>
               </CardContent>
@@ -217,7 +256,7 @@ export default function PersonalizationAnalytics() {
               <CardContent>
                 <div className="space-y-4">
                   {segmentPerformance.map((segment) => {
-                    const roi = (segment.revenue / (segment.recommendations * 10)).toFixed(1) // Assumindo custo de R$10 por recomendação
+                    const roi = (segment.revenue / (segment.recommendations * 10)).toFixed(1); // Assumindo custo de R$10 por recomendação
                     return (
                       <div key={segment.segment} className="flex justify-between items-center">
                         <span className="text-sm">{segment.segment}</span>
@@ -228,7 +267,7 @@ export default function PersonalizationAnalytics() {
                           </div>
                         </div>
                       </div>
-                    )
+                    );
                   })}
                 </div>
               </CardContent>
@@ -273,13 +312,13 @@ export default function PersonalizationAnalytics() {
                   <div className="flex justify-between text-sm">
                     <span>Taxa de Cliques:</span>
                     <span className="font-medium">
-                      {(segment.clicks / segment.recommendations * 100).toFixed(1)}%
+                      {((segment.clicks / segment.recommendations) * 100).toFixed(1)}%
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Taxa de Conversão:</span>
                     <span className="font-medium">
-                      {(segment.conversions / segment.clicks * 100).toFixed(1)}%
+                      {((segment.conversions / segment.clicks) * 100).toFixed(1)}%
                     </span>
                   </div>
                   <Separator />
@@ -300,9 +339,7 @@ export default function PersonalizationAnalytics() {
             <Card>
               <CardHeader>
                 <CardTitle>Distribuição de Recomendações</CardTitle>
-                <CardDescription>
-                  Tratamentos mais recomendados pelo sistema
-                </CardDescription>
+                <CardDescription>Tratamentos mais recomendados pelo sistema</CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={250}>
@@ -329,9 +366,7 @@ export default function PersonalizationAnalytics() {
             <Card>
               <CardHeader>
                 <CardTitle>Top Tratamentos</CardTitle>
-                <CardDescription>
-                  Ranking dos tratamentos mais efetivos
-                </CardDescription>
+                <CardDescription>Ranking dos tratamentos mais efetivos</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -345,9 +380,7 @@ export default function PersonalizationAnalytics() {
                       </div>
                       <div className="text-right">
                         <div className="font-bold">{treatment.value}%</div>
-                        <div className="text-xs text-muted-foreground">
-                          das recomendações
-                        </div>
+                        <div className="text-xs text-muted-foreground">das recomendações</div>
                       </div>
                     </div>
                   ))}
@@ -393,7 +426,8 @@ export default function PersonalizationAnalytics() {
                     Oportunidade
                   </div>
                   <p className="text-sm text-orange-700">
-                    Segmento Jovem tem alta interação mas baixa conversão - potencial para otimização
+                    Segmento Jovem tem alta interação mas baixa conversão - potencial para
+                    otimização
                   </p>
                 </div>
               </CardContent>
@@ -449,5 +483,5 @@ export default function PersonalizationAnalytics() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }

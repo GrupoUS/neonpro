@@ -19,17 +19,17 @@ export const appointmentConfirmationEmail = task({
     maxTimeoutInMs: 10000,
   },
   run: async (payload: AppointmentJobPayload) => {
-    logger.info("🏥 Sending appointment confirmation", { 
+    logger.info("🏥 Sending appointment confirmation", {
       appointmentId: payload.appointmentId,
-      recipientEmail: payload.recipientEmail 
+      recipientEmail: payload.recipientEmail,
     });
 
     try {
       // Buscar detalhes completos da consulta via Supabase (usando sistema existente)
       const supabase = await createClient();
-      
+
       const { data: appointment, error } = await supabase
-        .from('appointments')
+        .from("appointments")
         .select(`
           id,
           appointment_date,
@@ -51,7 +51,7 @@ export const appointmentConfirmationEmail = task({
             price
           )
         `)
-        .eq('id', payload.appointmentId)
+        .eq("id", payload.appointmentId)
         .single();
 
       if (error || !appointment) {
@@ -78,17 +78,19 @@ export const appointmentConfirmationEmail = task({
               <p>Sua consulta foi confirmada com sucesso. Aqui estão os detalhes:</p>
               
               <div style="background: white; padding: 15px; border-radius: 6px; border-left: 4px solid #10b981;">
-                <p><strong>📅 Data:</strong> ${new Date(appointment.appointment_date).toLocaleDateString('pt-BR', { 
-                  weekday: 'long', 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
+                <p><strong>📅 Data:</strong> ${new Date(
+                  appointment.appointment_date,
+                ).toLocaleDateString("pt-BR", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
                 })}</p>
                 <p><strong>🕐 Horário:</strong> ${appointment.appointment_time}</p>
                 <p><strong>👨‍⚕️ Profissional:</strong> ${Array.isArray(appointment.professionals) ? appointment.professionals[0]?.name : appointment.professionals?.name}</p>
                 <p><strong>💅 Serviço:</strong> ${Array.isArray(appointment.service_types) ? appointment.service_types[0]?.name : appointment.service_types?.name}</p>
                 <p><strong>⏱️ Duração:</strong> ${Array.isArray(appointment.service_types) ? appointment.service_types[0]?.duration_minutes : appointment.service_types?.duration_minutes} minutos</p>
-                ${(Array.isArray(appointment.service_types) ? appointment.service_types[0]?.price : appointment.service_types?.price) ? `<p><strong>💰 Valor:</strong> R$ ${(Array.isArray(appointment.service_types) ? appointment.service_types[0]?.price : appointment.service_types?.price)?.toFixed(2)}</p>` : ''}
+                ${(Array.isArray(appointment.service_types) ? appointment.service_types[0]?.price : appointment.service_types?.price) ? `<p><strong>💰 Valor:</strong> R$ ${(Array.isArray(appointment.service_types) ? appointment.service_types[0]?.price : appointment.service_types?.price)?.toFixed(2)}</p>` : ""}
               </div>
             </div>
             
@@ -98,7 +100,7 @@ export const appointmentConfirmationEmail = task({
                 <li>Chegue 10 minutos antes do horário marcado</li>
                 <li>Traga um documento de identidade</li>
                 <li>Para reagendamentos, entre em contato conosco</li>
-                ${appointment.notes ? `<li>Observação especial: ${appointment.notes}</li>` : ''}
+                ${appointment.notes ? `<li>Observação especial: ${appointment.notes}</li>` : ""}
               </ul>
             </div>
             
@@ -127,8 +129,8 @@ export const appointmentConfirmationEmail = task({
         subject: `✨ Consulta Confirmada - ${payload.appointmentDate} às ${payload.appointmentTime}`,
         html: emailHtml,
         headers: {
-          'X-Appointment-ID': payload.appointmentId,
-          'X-Clinic-ID': payload.clinicId,
+          "X-Appointment-ID": payload.appointmentId,
+          "X-Clinic-ID": payload.clinicId,
         },
       });
 
@@ -140,17 +142,17 @@ export const appointmentConfirmationEmail = task({
 
       // Atualizar appointment para marcar que confirmação foi enviada
       const { error: updateError } = await supabase
-        .from('appointments')
-        .update({ 
+        .from("appointments")
+        .update({
           confirmation_sent_at: new Date().toISOString(),
-          status: appointment.status === 'pending' ? 'confirmed' : appointment.status
+          status: appointment.status === "pending" ? "confirmed" : appointment.status,
         })
-        .eq('id', payload.appointmentId);
+        .eq("id", payload.appointmentId);
 
       if (updateError) {
-        logger.warn("⚠️ Failed to update appointment confirmation status", { 
+        logger.warn("⚠️ Failed to update appointment confirmation status", {
           error: updateError,
-          appointmentId: payload.appointmentId 
+          appointmentId: payload.appointmentId,
         });
       }
 
@@ -160,21 +162,20 @@ export const appointmentConfirmationEmail = task({
         appointmentId: payload.appointmentId,
         sentAt: new Date().toISOString(),
       };
-
     } catch (error) {
-      logger.error("❌ Failed to send appointment confirmation", { 
+      logger.error("❌ Failed to send appointment confirmation", {
         error: error instanceof Error ? error.message : error,
         appointmentId: payload.appointmentId,
         recipientEmail: payload.recipientEmail,
       });
-      
+
       throw error;
     }
   },
 });
 
 /**
- * 📱 APPOINTMENT REMINDER EMAIL (24h antes)  
+ * 📱 APPOINTMENT REMINDER EMAIL (24h antes)
  * Reduz no-shows automaticamente
  */
 export const appointmentReminderEmail = task({
@@ -186,32 +187,32 @@ export const appointmentReminderEmail = task({
     maxTimeoutInMs: 10000,
   },
   run: async (payload: AppointmentJobPayload) => {
-    logger.info("⏰ Sending appointment reminder", { 
-      appointmentId: payload.appointmentId 
+    logger.info("⏰ Sending appointment reminder", {
+      appointmentId: payload.appointmentId,
     });
 
     try {
       const supabase = await createClient();
-      
+
       // Verificar se lembrete já foi enviado
       const { data: appointment } = await supabase
-        .from('appointments')
-        .select('reminder_sent_at, status, appointment_date, appointment_time')
-        .eq('id', payload.appointmentId)
+        .from("appointments")
+        .select("reminder_sent_at, status, appointment_date, appointment_time")
+        .eq("id", payload.appointmentId)
         .single();
 
       if (appointment?.reminder_sent_at) {
-        logger.info("⚠️ Reminder already sent, skipping", { 
-          appointmentId: payload.appointmentId 
+        logger.info("⚠️ Reminder already sent, skipping", {
+          appointmentId: payload.appointmentId,
         });
-        return { success: true, skipped: true, reason: 'already_sent' };
+        return { success: true, skipped: true, reason: "already_sent" };
       }
 
-      if (appointment?.status === 'cancelled') {
-        logger.info("⚠️ Appointment cancelled, skipping reminder", { 
-          appointmentId: payload.appointmentId 
+      if (appointment?.status === "cancelled") {
+        logger.info("⚠️ Appointment cancelled, skipping reminder", {
+          appointmentId: payload.appointmentId,
         });
-        return { success: true, skipped: true, reason: 'cancelled' };
+        return { success: true, skipped: true, reason: "cancelled" };
       }
 
       // Template de lembrete mais direto e amigável
@@ -264,17 +265,17 @@ export const appointmentReminderEmail = task({
         subject: `⏰ Lembrete: Sua consulta é amanhã - ${payload.appointmentTime}`,
         html: reminderHtml,
         headers: {
-          'X-Appointment-ID': payload.appointmentId,
-          'X-Clinic-ID': payload.clinicId,
-          'X-Email-Type': 'reminder',
+          "X-Appointment-ID": payload.appointmentId,
+          "X-Clinic-ID": payload.clinicId,
+          "X-Email-Type": "reminder",
         },
       });
 
       // Marcar lembrete como enviado
       await supabase
-        .from('appointments')
+        .from("appointments")
         .update({ reminder_sent_at: new Date().toISOString() })
-        .eq('id', payload.appointmentId);
+        .eq("id", payload.appointmentId);
 
       logger.info("✅ Appointment reminder sent successfully", {
         emailId: emailResult.data?.id,
@@ -287,13 +288,12 @@ export const appointmentReminderEmail = task({
         appointmentId: payload.appointmentId,
         sentAt: new Date().toISOString(),
       };
-
     } catch (error) {
-      logger.error("❌ Failed to send appointment reminder", { 
+      logger.error("❌ Failed to send appointment reminder", {
         error: error instanceof Error ? error.message : error,
         appointmentId: payload.appointmentId,
       });
-      
+
       throw error;
     }
   },

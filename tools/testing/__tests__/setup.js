@@ -17,8 +17,8 @@ var util_1 = require("util");
 // ============================================================================
 // Configure Testing Library behavior
 (0, react_1.configure)({
-    throwSuggestions: true,
-    testIdAttribute: 'data-testid',
+  throwSuggestions: true,
+  testIdAttribute: "data-testid",
 });
 // ============================================================================
 // Global Polyfills for Node.js Environment
@@ -29,14 +29,18 @@ global.TextDecoder = util_1.TextDecoder;
 // Mock fetch for testing environment
 global.fetch = jest.fn();
 // Mock ResizeObserver for UI components
-global.ResizeObserver = jest.fn().mockImplementation(function () { return ({
+global.ResizeObserver = jest.fn().mockImplementation(function () {
+  return {
     observe: jest.fn(),
     unobserve: jest.fn(),
     disconnect: jest.fn(),
-}); });
+  };
+});
 // Mock IntersectionObserver for UI components
-global.IntersectionObserver = jest.fn().mockImplementation(function () { return ({
+global.IntersectionObserver = jest.fn().mockImplementation(function () {
+  return {
     observe: jest.fn(),
     unobserve: jest.fn(),
     disconnect: jest.fn(),
-}); });
+  };
+});

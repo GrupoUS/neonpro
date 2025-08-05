@@ -4,8 +4,8 @@ exports.validateCNPJ = validateCNPJ;
 exports.formatCNPJ = formatCNPJ;
 // CNPJ validator placeholder
 function validateCNPJ(cnpj) {
-    return true; // Placeholder implementation
+  return true; // Placeholder implementation
 }
 function formatCNPJ(cnpj) {
-    return cnpj; // Placeholder implementation
+  return cnpj; // Placeholder implementation
 }

@@ -1,17 +1,17 @@
-import type { AvailableSlotsResponse } from "@/app/lib/types/appointments";
-import { createClient } from "@/lib/supabase/server";
+﻿import type { AvailableSlotsResponse } from "@/app/lib/types/appointments";
+import type { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
-// 🚀 Edge Runtime para busca ultra-rápida de horários disponíveis
-export const runtime = 'edge';
+// ðŸš€ Edge Runtime para busca ultra-rÃ¡pida de horÃ¡rios disponÃ­veis
+export const runtime = "edge";
 
 /**
- * 📅 Available Slots API - Edge Runtime Optimized
- * 
- * ⚡ Ultra-fast slot availability com Edge Runtime
- * 📊 Critical performance: <100ms para agenda em tempo real
- * 🌐 Global edge deployment: Resposta instantânea mundial
- * 🔄 Real-time conflict detection sem latency
+ * ðŸ“… Available Slots API - Edge Runtime Optimized
+ *
+ * âš¡ Ultra-fast slot availability com Edge Runtime
+ * ðŸ“Š Critical performance: <100ms para agenda em tempo real
+ * ðŸŒ Global edge deployment: Resposta instantÃ¢nea mundial
+ * ðŸ”„ Real-time conflict detection sem latency
  */
 
 export async function GET(request: NextRequest) {
@@ -32,10 +32,7 @@ export async function GET(request: NextRequest) {
     const date = searchParams.get("date");
 
     if (!professionalId || !date) {
-      return NextResponse.json(
-        { error: "Missing required parameters" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Missing required parameters" }, { status: 400 });
     }
 
     // Get clinic_id from user's profile
@@ -79,15 +76,14 @@ export async function GET(request: NextRequest) {
     const startOfDay = new Date(date + "T00:00:00.000Z");
     const endOfDay = new Date(date + "T23:59:59.999Z");
 
-    const { data: existingAppointments, error: appointmentsError } =
-      await supabase
-        .from("appointments")
-        .select("start_time, end_time")
-        .eq("clinic_id", profile.clinic_id)
-        .eq("professional_id", professionalId)
-        .not("status", "eq", "cancelled")
-        .gte("start_time", startOfDay.toISOString())
-        .lte("start_time", endOfDay.toISOString());
+    const { data: existingAppointments, error: appointmentsError } = await supabase
+      .from("appointments")
+      .select("start_time, end_time")
+      .eq("clinic_id", profile.clinic_id)
+      .eq("professional_id", professionalId)
+      .not("status", "eq", "cancelled")
+      .gte("start_time", startOfDay.toISOString())
+      .lte("start_time", endOfDay.toISOString());
 
     if (appointmentsError) {
       console.error("Error fetching appointments:", appointmentsError);
@@ -97,7 +93,7 @@ export async function GET(request: NextRequest) {
           data: [],
           error_message: appointmentsError.message,
         } as AvailableSlotsResponse,
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -138,7 +134,7 @@ export async function GET(request: NextRequest) {
         data: [],
         error_message: "Internal Server Error",
       } as AvailableSlotsResponse,
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

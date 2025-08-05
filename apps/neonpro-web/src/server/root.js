@@ -15,12 +15,12 @@ var doctors_1 = require("./routers/doctors");
  * Add new routers here as you migrate from REST APIs
  */
 exports.appRouter = (0, trpc_1.createTRPCRouter)({
-    patients: patients_1.patientsRouter,
-    appointments: appointments_1.appointmentsRouter,
-    doctors: doctors_1.doctorsRouter,
-    // TODO: Add more routers as you migrate
-    // communication: communicationRouter,
-    // forecasting: forecastingRouter,
-    // reports: reportsRouter,
-    // audit: auditRouter,
+  patients: patients_1.patientsRouter,
+  appointments: appointments_1.appointmentsRouter,
+  doctors: doctors_1.doctorsRouter,
+  // TODO: Add more routers as you migrate
+  // communication: communicationRouter,
+  // forecasting: forecastingRouter,
+  // reports: reportsRouter,
+  // audit: auditRouter,
 });

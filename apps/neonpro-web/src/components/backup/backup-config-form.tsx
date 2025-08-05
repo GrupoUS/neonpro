@@ -1,12 +1,18 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
+import React, { useState, useEffect } from "react";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type { useForm } from "react-hook-form";
+import * as z from "zod";
+import type { Button } from "@/components/ui/button";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type {
   Form,
   FormControl,
   FormDescription,
@@ -14,27 +20,27 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import {
+} from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Switch } from "@/components/ui/switch";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import {
+} from "@/components/ui/select";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Badge } from "@/components/ui/badge";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion';
-import {
+} from "@/components/ui/accordion";
+import type {
   Calendar,
   Clock,
   Database,
@@ -46,58 +52,58 @@ import {
   Settings,
   Shield,
   TestTube,
-} from 'lucide-react';
+} from "lucide-react";
 
 // Validation schema
 const backupConfigSchema = z.object({
   // Basic Configuration
-  name: z.string().min(1, 'Name is required').max(100, 'Name too long'),
+  name: z.string().min(1, "Name is required").max(100, "Name too long"),
   description: z.string().optional(),
   enabled: z.boolean().default(true),
-  
+
   // Backup Type & Source
-  type: z.enum(['FULL', 'INCREMENTAL', 'DIFFERENTIAL', 'DATABASE', 'FILES']),
-  source_type: z.enum(['DATABASE', 'DIRECTORY', 'FILES']),
+  type: z.enum(["FULL", "INCREMENTAL", "DIFFERENTIAL", "DATABASE", "FILES"]),
+  source_type: z.enum(["DATABASE", "DIRECTORY", "FILES"]),
   source_config: z.object({
     database_url: z.string().optional(),
     directory_path: z.string().optional(),
     file_patterns: z.array(z.string()).optional(),
     exclude_patterns: z.array(z.string()).optional(),
   }),
-  
+
   // Schedule Configuration
-  schedule_frequency: z.enum(['HOURLY', 'DAILY', 'WEEKLY', 'MONTHLY', 'CUSTOM']),
+  schedule_frequency: z.enum(["HOURLY", "DAILY", "WEEKLY", "MONTHLY", "CUSTOM"]),
   schedule_config: z.object({
     cron_expression: z.string().optional(),
     time_of_day: z.string().optional(),
     day_of_week: z.number().optional(),
     day_of_month: z.number().optional(),
-    timezone: z.string().default('UTC'),
+    timezone: z.string().default("UTC"),
   }),
-  
+
   // Storage Configuration
-  storage_provider: z.enum(['LOCAL', 'S3', 'GCS', 'AZURE']),
+  storage_provider: z.enum(["LOCAL", "S3", "GCS", "AZURE"]),
   storage_config: z.object({
     // Local
     local_path: z.string().optional(),
-    
+
     // AWS S3
     s3_bucket: z.string().optional(),
     s3_region: z.string().optional(),
     s3_access_key: z.string().optional(),
     s3_secret_key: z.string().optional(),
-    
+
     // Google Cloud
     gcs_bucket: z.string().optional(),
     gcs_project_id: z.string().optional(),
     gcs_key_file: z.string().optional(),
-    
+
     // Azure
     azure_container: z.string().optional(),
     azure_account: z.string().optional(),
     azure_key: z.string().optional(),
   }),
-  
+
   // Retention Policy
   retention_policy: z.object({
     daily: z.number().min(1).max(365).default(7),
@@ -105,13 +111,13 @@ const backupConfigSchema = z.object({
     monthly: z.number().min(0).max(12).default(3),
     yearly: z.number().min(0).max(10).default(1),
   }),
-  
+
   // Compression & Encryption
   compression_enabled: z.boolean().default(true),
   compression_level: z.number().min(1).max(9).default(6),
   encryption_enabled: z.boolean().default(true),
   encryption_key: z.string().optional(),
-  
+
   // Notifications
   notification_config: z.object({
     on_success: z.boolean().default(false),
@@ -119,7 +125,7 @@ const backupConfigSchema = z.object({
     email_recipients: z.array(z.string().email()).optional(),
     webhook_url: z.string().url().optional(),
   }),
-  
+
   // Advanced Options
   parallel_uploads: z.number().min(1).max(10).default(3),
   chunk_size_mb: z.number().min(1).max(1024).default(64),
@@ -143,17 +149,19 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
   isEditing = false,
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [testConnection, setTestConnection] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
-  const [activeTab, setActiveTab] = useState('basic');
+  const [testConnection, setTestConnection] = useState<"idle" | "testing" | "success" | "error">(
+    "idle",
+  );
+  const [activeTab, setActiveTab] = useState("basic");
 
   const form = useForm<BackupConfigFormData>({
     resolver: zodResolver(backupConfigSchema),
     defaultValues: {
       enabled: true,
-      type: 'FULL',
-      source_type: 'DATABASE',
-      schedule_frequency: 'DAILY',
-      storage_provider: 'LOCAL',
+      type: "FULL",
+      source_type: "DATABASE",
+      schedule_frequency: "DAILY",
+      storage_provider: "LOCAL",
       compression_enabled: true,
       compression_level: 6,
       encryption_enabled: true,
@@ -163,7 +171,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
       test_restore: false,
       source_config: {},
       schedule_config: {
-        timezone: 'UTC',
+        timezone: "UTC",
       },
       storage_config: {},
       retention_policy: {
@@ -188,7 +196,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
       setIsSubmitting(true);
       await onSubmit(data);
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error("Error submitting form:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -196,36 +204,42 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
 
   // Test storage connection
   const handleTestConnection = async () => {
-    setTestConnection('testing');
+    setTestConnection("testing");
     try {
       // Simulate connection test
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setTestConnection('success');
-      setTimeout(() => setTestConnection('idle'), 3000);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      setTestConnection("success");
+      setTimeout(() => setTestConnection("idle"), 3000);
     } catch (error) {
-      setTestConnection('error');
-      setTimeout(() => setTestConnection('idle'), 3000);
+      setTestConnection("error");
+      setTimeout(() => setTestConnection("idle"), 3000);
     }
   };
 
   // Generate cron expression based on frequency
   const generateCronExpression = (frequency: string, config: any) => {
     switch (frequency) {
-      case 'HOURLY':
-        return '0 * * * *';
-      case 'DAILY':
-        const hour = config.time_of_day ? new Date(`2000-01-01T${config.time_of_day}`).getHours() : 2;
+      case "HOURLY":
+        return "0 * * * *";
+      case "DAILY":
+        const hour = config.time_of_day
+          ? new Date(`2000-01-01T${config.time_of_day}`).getHours()
+          : 2;
         return `0 ${hour} * * *`;
-      case 'WEEKLY':
-        const weekHour = config.time_of_day ? new Date(`2000-01-01T${config.time_of_day}`).getHours() : 2;
+      case "WEEKLY":
+        const weekHour = config.time_of_day
+          ? new Date(`2000-01-01T${config.time_of_day}`).getHours()
+          : 2;
         const dayOfWeek = config.day_of_week || 0;
         return `0 ${weekHour} * * ${dayOfWeek}`;
-      case 'MONTHLY':
-        const monthHour = config.time_of_day ? new Date(`2000-01-01T${config.time_of_day}`).getHours() : 2;
+      case "MONTHLY":
+        const monthHour = config.time_of_day
+          ? new Date(`2000-01-01T${config.time_of_day}`).getHours()
+          : 2;
         const dayOfMonth = config.day_of_month || 1;
         return `0 ${monthHour} ${dayOfMonth} * *`;
       default:
-        return config.cron_expression || '0 2 * * *';
+        return config.cron_expression || "0 2 * * *";
     }
   };
 
@@ -234,22 +248,17 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">
-            {isEditing ? 'Edit Backup Configuration' : 'Create Backup Configuration'}
+            {isEditing ? "Edit Backup Configuration" : "Create Backup Configuration"}
           </h2>
-          <p className="text-muted-foreground">
-            Configure your backup settings and schedule
-          </p>
+          <p className="text-muted-foreground">Configure your backup settings and schedule</p>
         </div>
         <div className="flex items-center space-x-2">
           <Button variant="outline" onClick={onCancel}>
             Cancel
           </Button>
-          <Button
-            onClick={form.handleSubmit(handleSubmit)}
-            disabled={isSubmitting}
-          >
+          <Button onClick={form.handleSubmit(handleSubmit)} disabled={isSubmitting}>
             <Save className="h-4 w-4 mr-2" />
-            {isSubmitting ? 'Saving...' : 'Save Configuration'}
+            {isSubmitting ? "Saving..." : "Save Configuration"}
           </Button>
         </div>
       </div>
@@ -274,9 +283,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                     <Settings className="h-5 w-5" />
                     <span>Basic Configuration</span>
                   </CardTitle>
-                  <CardDescription>
-                    Configure the basic settings for your backup
-                  </CardDescription>
+                  <CardDescription>Configure the basic settings for your backup</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -317,9 +324,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                               <SelectItem value="FILES">Files Only</SelectItem>
                             </SelectContent>
                           </Select>
-                          <FormDescription>
-                            Type of backup to perform
-                          </FormDescription>
+                          <FormDescription>Type of backup to perform</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -358,10 +363,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                           </FormDescription>
                         </div>
                         <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
                       </FormItem>
                     )}
@@ -378,9 +380,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                     <Database className="h-5 w-5" />
                     <span>Source Configuration</span>
                   </CardTitle>
-                  <CardDescription>
-                    Configure what data to backup
-                  </CardDescription>
+                  <CardDescription>Configure what data to backup</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <FormField
@@ -401,15 +401,13 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                             <SelectItem value="FILES">Specific Files</SelectItem>
                           </SelectContent>
                         </Select>
-                        <FormDescription>
-                          What type of data source to backup
-                        </FormDescription>
+                        <FormDescription>What type of data source to backup</FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
 
-                  {watchedValues.source_type === 'DATABASE' && (
+                  {watchedValues.source_type === "DATABASE" && (
                     <FormField
                       control={form.control}
                       name="source_config.database_url"
@@ -423,16 +421,14 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                               {...field}
                             />
                           </FormControl>
-                          <FormDescription>
-                            Connection string for the database
-                          </FormDescription>
+                          <FormDescription>Connection string for the database</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
                   )}
 
-                  {watchedValues.source_type === 'DIRECTORY' && (
+                  {watchedValues.source_type === "DIRECTORY" && (
                     <FormField
                       control={form.control}
                       name="source_config.directory_path"
@@ -440,14 +436,9 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                         <FormItem>
                           <FormLabel>Directory Path</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="/path/to/directory"
-                              {...field}
-                            />
+                            <Input placeholder="/path/to/directory" {...field} />
                           </FormControl>
-                          <FormDescription>
-                            Path to the directory to backup
-                          </FormDescription>
+                          <FormDescription>Path to the directory to backup</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -461,20 +452,14 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <FormLabel>Include Patterns</FormLabel>
-                            <Textarea
-                              placeholder="*.sql\n*.json\n*.txt"
-                              className="mt-2"
-                            />
+                            <Textarea placeholder="*.sql\n*.json\n*.txt" className="mt-2" />
                             <FormDescription>
                               File patterns to include (one per line)
                             </FormDescription>
                           </div>
                           <div>
                             <FormLabel>Exclude Patterns</FormLabel>
-                            <Textarea
-                              placeholder="*.log\n*.tmp\n*.cache"
-                              className="mt-2"
-                            />
+                            <Textarea placeholder="*.log\n*.tmp\n*.cache" className="mt-2" />
                             <FormDescription>
                               File patterns to exclude (one per line)
                             </FormDescription>
@@ -495,9 +480,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                     <Calendar className="h-5 w-5" />
                     <span>Schedule Configuration</span>
                   </CardTitle>
-                  <CardDescription>
-                    Configure when backups should run
-                  </CardDescription>
+                  <CardDescription>Configure when backups should run</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <FormField
@@ -525,33 +508,35 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                     )}
                   />
 
-                  {watchedValues.schedule_frequency !== 'HOURLY' && watchedValues.schedule_frequency !== 'CUSTOM' && (
-                    <FormField
-                      control={form.control}
-                      name="schedule_config.time_of_day"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Time of Day</FormLabel>
-                          <FormControl>
-                            <Input type="time" {...field} />
-                          </FormControl>
-                          <FormDescription>
-                            What time to run the backup
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  )}
+                  {watchedValues.schedule_frequency !== "HOURLY" &&
+                    watchedValues.schedule_frequency !== "CUSTOM" && (
+                      <FormField
+                        control={form.control}
+                        name="schedule_config.time_of_day"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Time of Day</FormLabel>
+                            <FormControl>
+                              <Input type="time" {...field} />
+                            </FormControl>
+                            <FormDescription>What time to run the backup</FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
 
-                  {watchedValues.schedule_frequency === 'WEEKLY' && (
+                  {watchedValues.schedule_frequency === "WEEKLY" && (
                     <FormField
                       control={form.control}
                       name="schedule_config.day_of_week"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Day of Week</FormLabel>
-                          <Select onValueChange={(value) => field.onChange(parseInt(value))} defaultValue={field.value?.toString()}>
+                          <Select
+                            onValueChange={(value) => field.onChange(parseInt(value))}
+                            defaultValue={field.value?.toString()}
+                          >
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select day" />
@@ -573,7 +558,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                     />
                   )}
 
-                  {watchedValues.schedule_frequency === 'MONTHLY' && (
+                  {watchedValues.schedule_frequency === "MONTHLY" && (
                     <FormField
                       control={form.control}
                       name="schedule_config.day_of_month"
@@ -589,16 +574,14 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                               onChange={(e) => field.onChange(parseInt(e.target.value))}
                             />
                           </FormControl>
-                          <FormDescription>
-                            Which day of the month (1-31)
-                          </FormDescription>
+                          <FormDescription>Which day of the month (1-31)</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
                   )}
 
-                  {watchedValues.schedule_frequency === 'CUSTOM' && (
+                  {watchedValues.schedule_frequency === "CUSTOM" && (
                     <FormField
                       control={form.control}
                       name="schedule_config.cron_expression"
@@ -649,10 +632,10 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                   <Alert>
                     <Info className="h-4 w-4" />
                     <AlertDescription>
-                      <strong>Schedule Preview:</strong>{' '}
+                      <strong>Schedule Preview:</strong>{" "}
                       {generateCronExpression(
                         watchedValues.schedule_frequency,
-                        watchedValues.schedule_config
+                        watchedValues.schedule_config,
                       )}
                     </AlertDescription>
                   </Alert>
@@ -668,9 +651,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                     <HardDrive className="h-5 w-5" />
                     <span>Storage Configuration</span>
                   </CardTitle>
-                  <CardDescription>
-                    Configure where backups are stored
-                  </CardDescription>
+                  <CardDescription>Configure where backups are stored</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <FormField
@@ -698,7 +679,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                   />
 
                   {/* Local Storage */}
-                  {watchedValues.storage_provider === 'LOCAL' && (
+                  {watchedValues.storage_provider === "LOCAL" && (
                     <FormField
                       control={form.control}
                       name="storage_config.local_path"
@@ -708,9 +689,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                           <FormControl>
                             <Input placeholder="/path/to/backups" {...field} />
                           </FormControl>
-                          <FormDescription>
-                            Directory where backups will be stored
-                          </FormDescription>
+                          <FormDescription>Directory where backups will be stored</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -718,7 +697,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                   )}
 
                   {/* AWS S3 */}
-                  {watchedValues.storage_provider === 'S3' && (
+                  {watchedValues.storage_provider === "S3" && (
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <FormField
@@ -780,7 +759,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                   )}
 
                   {/* Google Cloud Storage */}
-                  {watchedValues.storage_provider === 'GCS' && (
+                  {watchedValues.storage_provider === "GCS" && (
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <FormField
@@ -827,7 +806,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                   )}
 
                   {/* Azure Blob Storage */}
-                  {watchedValues.storage_provider === 'AZURE' && (
+                  {watchedValues.storage_provider === "AZURE" && (
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <FormField
@@ -879,20 +858,18 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                       type="button"
                       variant="outline"
                       onClick={handleTestConnection}
-                      disabled={testConnection === 'testing'}
+                      disabled={testConnection === "testing"}
                     >
                       <TestTube className="h-4 w-4 mr-2" />
-                      {testConnection === 'testing' ? 'Testing...' : 'Test Connection'}
+                      {testConnection === "testing" ? "Testing..." : "Test Connection"}
                     </Button>
-                    {testConnection === 'success' && (
+                    {testConnection === "success" && (
                       <Badge variant="default" className="bg-green-500">
                         Connection successful
                       </Badge>
                     )}
-                    {testConnection === 'error' && (
-                      <Badge variant="destructive">
-                        Connection failed
-                      </Badge>
+                    {testConnection === "error" && (
+                      <Badge variant="destructive">Connection failed</Badge>
                     )}
                   </div>
                 </CardContent>
@@ -907,9 +884,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                     <Clock className="h-5 w-5" />
                     <span>Retention Policy</span>
                   </CardTitle>
-                  <CardDescription>
-                    Configure how long to keep backups
-                  </CardDescription>
+                  <CardDescription>Configure how long to keep backups</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -928,9 +903,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                               onChange={(e) => field.onChange(parseInt(e.target.value))}
                             />
                           </FormControl>
-                          <FormDescription>
-                            Keep daily backups for this many days
-                          </FormDescription>
+                          <FormDescription>Keep daily backups for this many days</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -950,9 +923,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                               onChange={(e) => field.onChange(parseInt(e.target.value))}
                             />
                           </FormControl>
-                          <FormDescription>
-                            Keep weekly backups for this many weeks
-                          </FormDescription>
+                          <FormDescription>Keep weekly backups for this many weeks</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -996,9 +967,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                               onChange={(e) => field.onChange(parseInt(e.target.value))}
                             />
                           </FormControl>
-                          <FormDescription>
-                            Keep yearly backups for this many years
-                          </FormDescription>
+                          <FormDescription>Keep yearly backups for this many years</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -1016,9 +985,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                     <Shield className="h-5 w-5" />
                     <span>Advanced Options</span>
                   </CardTitle>
-                  <CardDescription>
-                    Configure advanced backup settings
-                  </CardDescription>
+                  <CardDescription>Configure advanced backup settings</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {/* Compression & Encryption */}
@@ -1032,15 +999,10 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                           <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                             <div className="space-y-0.5">
                               <FormLabel className="text-base">Enable Compression</FormLabel>
-                              <FormDescription>
-                                Compress backups to save space
-                              </FormDescription>
+                              <FormDescription>Compress backups to save space</FormDescription>
                             </div>
                             <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
+                              <Switch checked={field.value} onCheckedChange={field.onChange} />
                             </FormControl>
                           </FormItem>
                         )}
@@ -1052,15 +1014,10 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                           <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                             <div className="space-y-0.5">
                               <FormLabel className="text-base">Enable Encryption</FormLabel>
-                              <FormDescription>
-                                Encrypt backups for security
-                              </FormDescription>
+                              <FormDescription>Encrypt backups for security</FormDescription>
                             </div>
                             <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
+                              <Switch checked={field.value} onCheckedChange={field.onChange} />
                             </FormControl>
                           </FormItem>
                         )}
@@ -1133,9 +1090,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                                 onChange={(e) => field.onChange(parseInt(e.target.value))}
                               />
                             </FormControl>
-                            <FormDescription>
-                              Number of parallel upload threads
-                            </FormDescription>
+                            <FormDescription>Number of parallel upload threads</FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -1155,9 +1110,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                                 onChange={(e) => field.onChange(parseInt(e.target.value))}
                               />
                             </FormControl>
-                            <FormDescription>
-                              Size of upload chunks in megabytes
-                            </FormDescription>
+                            <FormDescription>Size of upload chunks in megabytes</FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -1181,10 +1134,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                               </FormDescription>
                             </div>
                             <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
+                              <Switch checked={field.value} onCheckedChange={field.onChange} />
                             </FormControl>
                           </FormItem>
                         )}
@@ -1201,10 +1151,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                               </FormDescription>
                             </div>
                             <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
+                              <Switch checked={field.value} onCheckedChange={field.onChange} />
                             </FormControl>
                           </FormItem>
                         )}
@@ -1228,10 +1175,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                               </FormDescription>
                             </div>
                             <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
+                              <Switch checked={field.value} onCheckedChange={field.onChange} />
                             </FormControl>
                           </FormItem>
                         )}
@@ -1243,15 +1187,10 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                           <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                             <div className="space-y-0.5">
                               <FormLabel className="text-base">Notify on Failure</FormLabel>
-                              <FormDescription>
-                                Send notification when backup fails
-                              </FormDescription>
+                              <FormDescription>Send notification when backup fails</FormDescription>
                             </div>
                             <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
+                              <Switch checked={field.value} onCheckedChange={field.onChange} />
                             </FormControl>
                           </FormItem>
                         )}

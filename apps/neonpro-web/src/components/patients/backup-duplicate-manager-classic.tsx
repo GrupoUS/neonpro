@@ -1,9 +1,9 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertTriangle, ArrowRight, Users } from "lucide-react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { AlertTriangle, ArrowRight, Users } from "lucide-react";
 import React from "react";
 
 interface Patient {
@@ -27,11 +27,7 @@ interface Props {
   onDismiss: (groupId: string) => void;
 }
 
-export default function DuplicateManagerClassic({
-  duplicates,
-  onMerge,
-  onDismiss,
-}: Props) {
+export default function DuplicateManagerClassic({ duplicates, onMerge, onDismiss }: Props) {
   // Using React.useState with tuple access instead of destructuring
   const selectedGroupState = React.useState<string | null>(null);
   const selectedGroup = selectedGroupState[0];
@@ -69,12 +65,8 @@ export default function DuplicateManagerClassic({
       <Card>
         <CardContent className="p-6 text-center">
           <Users className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
-            No duplicates found
-          </h3>
-          <p className="text-gray-500">
-            Great! Your patient records are clean.
-          </p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">No duplicates found</h3>
+          <p className="text-gray-500">Great! Your patient records are clean.</p>
         </CardContent>
       </Card>
     );
@@ -94,13 +86,8 @@ export default function DuplicateManagerClassic({
         <Card key={group.id} className="border-amber-200">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="text-base">
-                Potential Duplicate Group
-              </CardTitle>
-              <Badge
-                variant="secondary"
-                className="bg-amber-100 text-amber-800"
-              >
+              <CardTitle className="text-base">Potential Duplicate Group</CardTitle>
+              <Badge variant="secondary" className="bg-amber-100 text-amber-800">
                 {Math.round(group.confidence * 100)}% confidence
               </Badge>
             </div>
@@ -135,11 +122,7 @@ export default function DuplicateManagerClassic({
             </div>
 
             <div className="flex items-center justify-between pt-4 border-t">
-              <Button
-                variant="outline"
-                onClick={() => onDismiss(group.id)}
-                disabled={processing}
-              >
+              <Button variant="outline" onClick={() => onDismiss(group.id)} disabled={processing}>
                 Not a duplicate
               </Button>
 

@@ -1,7 +1,7 @@
 /**
  * NeonPro - Clinical Form Enhanced (FASE 2)
  * Formulários otimizados para fluxos clínicos médicos
- * 
+ *
  * Melhorias Fase 2:
  * - Validação em tempo real com feedback visual
  * - Auto-complete inteligente para dados médicos
@@ -11,226 +11,253 @@
  * - Compliance LGPD/ANVISA embarcado
  */
 
-'use client'
+"use client";
 
-import { useState, useEffect, useCallback } from 'react'
-import { useForm, Controller } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Badge } from '@/components/ui/badge'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Progress } from '@/components/ui/progress'
-import { 
-  Save, 
-  AlertCircle, 
-  CheckCircle2, 
-  User, 
-  Phone, 
-  Mail, 
+import type { useState, useEffect, useCallback } from "react";
+import type { useForm, Controller } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type { Badge } from "@/components/ui/badge";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Progress } from "@/components/ui/progress";
+import type {
+  Save,
+  AlertCircle,
+  CheckCircle2,
+  User,
+  Phone,
+  Mail,
   Calendar,
   Stethoscope,
   Shield,
   Brain,
   Clock,
-  FileText
-} from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { useAccessibility } from '@/contexts/accessibility-context'
+  FileText,
+} from "lucide-react";
+import type { cn } from "@/lib/utils";
+import type { useAccessibility } from "@/contexts/accessibility-context";
 
 // Schema de validação com regras médicas específicas
 const clinicalFormSchema = z.object({
   // Dados pessoais
-  fullName: z.string()
-    .min(2, 'Nome deve ter pelo menos 2 caracteres')
-    .max(100, 'Nome muito longo')
-    .regex(/^[A-Za-zÀ-ÿ\s]+$/, 'Nome deve conter apenas letras e espaços'),
-  
-  cpf: z.string()
-    .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, 'CPF deve estar no formato XXX.XXX.XXX-XX')
-    .refine((cpf) => validateCPF(cpf), 'CPF inválido'),
-  
-  birthDate: z.string()
-    .min(1, 'Data de nascimento é obrigatória')
+  fullName: z
+    .string()
+    .min(2, "Nome deve ter pelo menos 2 caracteres")
+    .max(100, "Nome muito longo")
+    .regex(/^[A-Za-zÀ-ÿ\s]+$/, "Nome deve conter apenas letras e espaços"),
+
+  cpf: z
+    .string()
+    .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF deve estar no formato XXX.XXX.XXX-XX")
+    .refine((cpf) => validateCPF(cpf), "CPF inválido"),
+
+  birthDate: z
+    .string()
+    .min(1, "Data de nascimento é obrigatória")
     .refine((date) => {
-      const birth = new Date(date)
-      const today = new Date()
-      const age = today.getFullYear() - birth.getFullYear()
-      return age >= 16 && age <= 120
-    }, 'Idade deve estar entre 16 e 120 anos'),
-  
-  phone: z.string()
-    .regex(/^\(\d{2}\)\s\d{4,5}-\d{4}$/, 'Telefone deve estar no formato (XX) XXXXX-XXXX'),
-  
-  email: z.string()
-    .email('Email inválido')
-    .toLowerCase(),
-  
+      const birth = new Date(date);
+      const today = new Date();
+      const age = today.getFullYear() - birth.getFullYear();
+      return age >= 16 && age <= 120;
+    }, "Idade deve estar entre 16 e 120 anos"),
+
+  phone: z
+    .string()
+    .regex(/^\(\d{2}\)\s\d{4,5}-\d{4}$/, "Telefone deve estar no formato (XX) XXXXX-XXXX"),
+
+  email: z.string().email("Email inválido").toLowerCase(),
+
   // Dados médicos
   allergies: z.string().optional(),
   medications: z.string().optional(),
   medicalHistory: z.string().optional(),
-  
-  // Dados do tratamento
-  treatmentType: z.string().min(1, 'Tipo de tratamento é obrigatório'),
-  treatmentGoals: z.string().min(10, 'Objetivos devem ter pelo menos 10 caracteres'),
-  
-  // Consentimentos LGPD
-  dataConsent: z.boolean().refine(val => val === true, 'Consentimento para uso de dados é obrigatório'),
-  marketingConsent: z.boolean().optional(),
-  
-  // Campos específicos estéticos
-  skinType: z.enum(['oleosa', 'seca', 'mista', 'sensivel', 'normal']).optional(),
-  previousTreatments: z.string().optional(),
-  expectations: z.string().min(20, 'Descreva suas expectativas com pelo menos 20 caracteres')
-})
 
-type ClinicalFormData = z.infer<typeof clinicalFormSchema>
+  // Dados do tratamento
+  treatmentType: z.string().min(1, "Tipo de tratamento é obrigatório"),
+  treatmentGoals: z.string().min(10, "Objetivos devem ter pelo menos 10 caracteres"),
+
+  // Consentimentos LGPD
+  dataConsent: z
+    .boolean()
+    .refine((val) => val === true, "Consentimento para uso de dados é obrigatório"),
+  marketingConsent: z.boolean().optional(),
+
+  // Campos específicos estéticos
+  skinType: z.enum(["oleosa", "seca", "mista", "sensivel", "normal"]).optional(),
+  previousTreatments: z.string().optional(),
+  expectations: z.string().min(20, "Descreva suas expectativas com pelo menos 20 caracteres"),
+});
+
+type ClinicalFormData = z.infer<typeof clinicalFormSchema>;
 
 // Função para validar CPF
 function validateCPF(cpf: string): boolean {
-  cpf = cpf.replace(/[^\d]/g, '')
-  if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false
-  
-  let sum = 0
+  cpf = cpf.replace(/[^\d]/g, "");
+  if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+
+  let sum = 0;
   for (let i = 0; i < 9; i++) {
-    sum += parseInt(cpf.charAt(i)) * (10 - i)
+    sum += parseInt(cpf.charAt(i)) * (10 - i);
   }
-  let digit = 11 - (sum % 11)
-  if (digit === 10 || digit === 11) digit = 0
-  if (digit !== parseInt(cpf.charAt(9))) return false
-  
-  sum = 0
+  let digit = 11 - (sum % 11);
+  if (digit === 10 || digit === 11) digit = 0;
+  if (digit !== parseInt(cpf.charAt(9))) return false;
+
+  sum = 0;
   for (let i = 0; i < 10; i++) {
-    sum += parseInt(cpf.charAt(i)) * (11 - i)
+    sum += parseInt(cpf.charAt(i)) * (11 - i);
   }
-  digit = 11 - (sum % 11)
-  if (digit === 10 || digit === 11) digit = 0
-  
-  return digit === parseInt(cpf.charAt(10))
+  digit = 11 - (sum % 11);
+  if (digit === 10 || digit === 11) digit = 0;
+
+  return digit === parseInt(cpf.charAt(10));
 }
 
 interface ClinicalFormEnhancedProps {
-  className?: string
-  onSubmit: (data: ClinicalFormData) => Promise<void>
-  initialData?: Partial<ClinicalFormData>
-  mode: 'create' | 'edit'
-  patientId?: string
+  className?: string;
+  onSubmit: (data: ClinicalFormData) => Promise<void>;
+  initialData?: Partial<ClinicalFormData>;
+  mode: "create" | "edit";
+  patientId?: string;
 }
 
-export function ClinicalFormEnhanced({ 
-  className, 
-  onSubmit, 
-  initialData, 
+export function ClinicalFormEnhanced({
+  className,
+  onSubmit,
+  initialData,
   mode,
-  patientId 
+  patientId,
 }: ClinicalFormEnhancedProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [formProgress, setFormProgress] = useState(0)
-  const [aiSuggestions, setAiSuggestions] = useState<string[]>([])
-  const { announceToScreenReader } = useAccessibility()
-  
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formProgress, setFormProgress] = useState(0);
+  const [aiSuggestions, setAiSuggestions] = useState<string[]>([]);
+  const { announceToScreenReader } = useAccessibility();
+
   const form = useForm<ClinicalFormData>({
     resolver: zodResolver(clinicalFormSchema),
     defaultValues: initialData || {
       dataConsent: false,
       marketingConsent: false,
     },
-    mode: 'onChange'
-  })
+    mode: "onChange",
+  });
 
-  const { watch, formState: { errors, isValid, dirtyFields } } = form
+  const {
+    watch,
+    formState: { errors, isValid, dirtyFields },
+  } = form;
 
   // Calcular progresso do formulário
   useEffect(() => {
-    const totalFields = Object.keys(clinicalFormSchema.shape).length
-    const filledFields = Object.keys(dirtyFields).length
-    const progress = Math.round((filledFields / totalFields) * 100)
-    setFormProgress(progress)
-  }, [dirtyFields])
+    const totalFields = Object.keys(clinicalFormSchema.shape).length;
+    const filledFields = Object.keys(dirtyFields).length;
+    const progress = Math.round((filledFields / totalFields) * 100);
+    setFormProgress(progress);
+  }, [dirtyFields]);
 
   // IA Suggestions baseado em dados inseridos
-  const generateAISuggestions = useCallback(async (treatmentType: string, skinType: string) => {
-    if (!treatmentType) return
-    
-    // Mock AI suggestions - em produção seria uma chamada à API de IA
-    const suggestions = {
-      'botox': [
-        'Considere aplicação preventiva em áreas de expressão',
-        'Avalie rugas dinâmicas vs estáticas',
-        'Protocolo de hidratação pré-procedimento recomendado'
-      ],
-      'preenchimento': [
-        'Análise facial harmônica essencial',
-        'Considere técnica multi-camadas',
-        'Protocolo anti-inflamatório pós-procedimento'
-      ],
-      'peeling': [
-        'Avalie fototipo e sensibilidade',
-        'Prepare a pele 2 semanas antes',
-        'Fotoproteção rigorosa no pós'
-      ]
-    }
-    
-    const typeSuggestions = suggestions[treatmentType as keyof typeof suggestions] || []
-    setAiSuggestions(typeSuggestions)
-    
-    if (typeSuggestions.length > 0) {
-      announceToScreenReader(`IA gerou ${typeSuggestions.length} sugestões para este tratamento`, 'polite')
-    }
-  }, [announceToScreenReader])
+  const generateAISuggestions = useCallback(
+    async (treatmentType: string, skinType: string) => {
+      if (!treatmentType) return;
+
+      // Mock AI suggestions - em produção seria uma chamada à API de IA
+      const suggestions = {
+        botox: [
+          "Considere aplicação preventiva em áreas de expressão",
+          "Avalie rugas dinâmicas vs estáticas",
+          "Protocolo de hidratação pré-procedimento recomendado",
+        ],
+        preenchimento: [
+          "Análise facial harmônica essencial",
+          "Considere técnica multi-camadas",
+          "Protocolo anti-inflamatório pós-procedimento",
+        ],
+        peeling: [
+          "Avalie fototipo e sensibilidade",
+          "Prepare a pele 2 semanas antes",
+          "Fotoproteção rigorosa no pós",
+        ],
+      };
+
+      const typeSuggestions = suggestions[treatmentType as keyof typeof suggestions] || [];
+      setAiSuggestions(typeSuggestions);
+
+      if (typeSuggestions.length > 0) {
+        announceToScreenReader(
+          `IA gerou ${typeSuggestions.length} sugestões para este tratamento`,
+          "polite",
+        );
+      }
+    },
+    [announceToScreenReader],
+  );
 
   // Watch para ativar AI suggestions
-  const treatmentType = watch('treatmentType')
-  const skinType = watch('skinType')
-  
+  const treatmentType = watch("treatmentType");
+  const skinType = watch("skinType");
+
   useEffect(() => {
     if (treatmentType && skinType) {
-      generateAISuggestions(treatmentType, skinType)
+      generateAISuggestions(treatmentType, skinType);
     }
-  }, [treatmentType, skinType, generateAISuggestions])
+  }, [treatmentType, skinType, generateAISuggestions]);
 
   const handleSubmit = async (data: ClinicalFormData) => {
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     try {
-      await onSubmit(data)
-      announceToScreenReader('Formulário enviado com sucesso', 'assertive')
+      await onSubmit(data);
+      announceToScreenReader("Formulário enviado com sucesso", "assertive");
     } catch (error) {
-      announceToScreenReader('Erro ao enviar formulário. Verifique os dados e tente novamente', 'assertive')
+      announceToScreenReader(
+        "Erro ao enviar formulário. Verifique os dados e tente novamente",
+        "assertive",
+      );
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   // Máscara para CPF
   const formatCPF = (value: string) => {
     return value
-      .replace(/\D/g, '')
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d{1,2})/, '$1-$2')
-      .replace(/(-\d{2})\d+?$/, '$1')
-  }
+      .replace(/\D/g, "")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d{1,2})/, "$1-$2")
+      .replace(/(-\d{2})\d+?$/, "$1");
+  };
 
   // Máscara para telefone
   const formatPhone = (value: string) => {
     return value
-      .replace(/\D/g, '')
-      .replace(/(\d{2})(\d)/, '($1) $2')
-      .replace(/(\d{4})(\d)/, '$1-$2')
-      .replace(/(\d{4})-(\d)(\d{4})/, '$1$2-$3')
-      .replace(/(-\d{4})\d+?$/, '$1')
-  }
+      .replace(/\D/g, "")
+      .replace(/(\d{2})(\d)/, "($1) $2")
+      .replace(/(\d{4})(\d)/, "$1-$2")
+      .replace(/(\d{4})-(\d)(\d{4})/, "$1$2-$3")
+      .replace(/(-\d{4})\d+?$/, "$1");
+  };
 
   return (
-    <div className={cn('max-w-4xl mx-auto space-y-6', className)}>
-      
+    <div className={cn("max-w-4xl mx-auto space-y-6", className)}>
       {/* Header com progresso */}
       <Card>
         <CardHeader>
@@ -238,10 +265,12 @@ export function ClinicalFormEnhanced({
             <div>
               <CardTitle className="flex items-center">
                 <User className="h-5 w-5 mr-2" />
-                {mode === 'create' ? 'Novo Paciente' : 'Editar Paciente'}
+                {mode === "create" ? "Novo Paciente" : "Editar Paciente"}
               </CardTitle>
               <CardDescription>
-                {mode === 'create' ? 'Cadastro completo com validação médica' : 'Atualização de dados do paciente'}
+                {mode === "create"
+                  ? "Cadastro completo com validação médica"
+                  : "Atualização de dados do paciente"}
               </CardDescription>
             </div>
             <div className="text-right">
@@ -253,7 +282,6 @@ export function ClinicalFormEnhanced({
       </Card>
 
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        
         {/* Dados Pessoais */}
         <Card>
           <CardHeader>
@@ -263,15 +291,14 @@ export function ClinicalFormEnhanced({
             </CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-2">
-            
             {/* Nome completo */}
             <div className="md:col-span-2">
               <Label htmlFor="fullName">Nome Completo *</Label>
               <Input
                 id="fullName"
-                {...form.register('fullName')}
+                {...form.register("fullName")}
                 placeholder="Nome completo do paciente"
-                className={errors.fullName ? 'border-red-500' : ''}
+                className={errors.fullName ? "border-red-500" : ""}
                 aria-describedby="fullName-error"
               />
               {errors.fullName && (
@@ -292,9 +319,9 @@ export function ClinicalFormEnhanced({
                   <Input
                     id="cpf"
                     placeholder="000.000.000-00"
-                    value={field.value || ''}
+                    value={field.value || ""}
                     onChange={(e) => field.onChange(formatCPF(e.target.value))}
-                    className={errors.cpf ? 'border-red-500' : ''}
+                    className={errors.cpf ? "border-red-500" : ""}
                     maxLength={14}
                     aria-describedby="cpf-error"
                   />
@@ -314,8 +341,8 @@ export function ClinicalFormEnhanced({
               <Input
                 id="birthDate"
                 type="date"
-                {...form.register('birthDate')}
-                className={errors.birthDate ? 'border-red-500' : ''}
+                {...form.register("birthDate")}
+                className={errors.birthDate ? "border-red-500" : ""}
                 aria-describedby="birthDate-error"
               />
               {errors.birthDate && (
@@ -336,9 +363,9 @@ export function ClinicalFormEnhanced({
                   <Input
                     id="phone"
                     placeholder="(00) 00000-0000"
-                    value={field.value || ''}
+                    value={field.value || ""}
                     onChange={(e) => field.onChange(formatPhone(e.target.value))}
-                    className={errors.phone ? 'border-red-500' : ''}
+                    className={errors.phone ? "border-red-500" : ""}
                     maxLength={15}
                     aria-describedby="phone-error"
                   />
@@ -358,9 +385,9 @@ export function ClinicalFormEnhanced({
               <Input
                 id="email"
                 type="email"
-                {...form.register('email')}
+                {...form.register("email")}
                 placeholder="email@exemplo.com"
-                className={errors.email ? 'border-red-500' : ''}
+                className={errors.email ? "border-red-500" : ""}
                 aria-describedby="email-error"
               />
               {errors.email && (
@@ -370,7 +397,6 @@ export function ClinicalFormEnhanced({
                 </p>
               )}
             </div>
-
           </CardContent>
         </Card>
 
@@ -383,12 +409,11 @@ export function ClinicalFormEnhanced({
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            
             <div>
               <Label htmlFor="allergies">Alergias Conhecidas</Label>
               <Textarea
                 id="allergies"
-                {...form.register('allergies')}
+                {...form.register("allergies")}
                 placeholder="Descreva alergias conhecidas (medicamentos, substâncias, alimentos...)"
                 rows={3}
               />
@@ -398,7 +423,7 @@ export function ClinicalFormEnhanced({
               <Label htmlFor="medications">Medicamentos em Uso</Label>
               <Textarea
                 id="medications"
-                {...form.register('medications')}
+                {...form.register("medications")}
                 placeholder="Liste medicamentos em uso contínuo ou recente"
                 rows={3}
               />
@@ -408,12 +433,11 @@ export function ClinicalFormEnhanced({
               <Label htmlFor="medicalHistory">Histórico Médico Relevante</Label>
               <Textarea
                 id="medicalHistory"
-                {...form.register('medicalHistory')}
+                {...form.register("medicalHistory")}
                 placeholder="Cirurgias anteriores, condições médicas, tratamentos estéticos prévios..."
                 rows={4}
               />
             </div>
-
           </CardContent>
         </Card>
 
@@ -426,7 +450,6 @@ export function ClinicalFormEnhanced({
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            
             <div className="grid gap-4 md:grid-cols-2">
               <div>
                 <Label htmlFor="treatmentType">Tipo de Tratamento *</Label>
@@ -435,7 +458,7 @@ export function ClinicalFormEnhanced({
                   control={form.control}
                   render={({ field }) => (
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <SelectTrigger className={errors.treatmentType ? 'border-red-500' : ''}>
+                      <SelectTrigger className={errors.treatmentType ? "border-red-500" : ""}>
                         <SelectValue placeholder="Selecione o tratamento" />
                       </SelectTrigger>
                       <SelectContent>
@@ -484,10 +507,10 @@ export function ClinicalFormEnhanced({
               <Label htmlFor="treatmentGoals">Objetivos do Tratamento *</Label>
               <Textarea
                 id="treatmentGoals"
-                {...form.register('treatmentGoals')}
+                {...form.register("treatmentGoals")}
                 placeholder="Descreva os objetivos e resultados esperados com o tratamento"
                 rows={4}
-                className={errors.treatmentGoals ? 'border-red-500' : ''}
+                className={errors.treatmentGoals ? "border-red-500" : ""}
               />
               {errors.treatmentGoals && (
                 <p className="text-sm text-red-600 mt-1 flex items-center">
@@ -501,10 +524,10 @@ export function ClinicalFormEnhanced({
               <Label htmlFor="expectations">Expectativas *</Label>
               <Textarea
                 id="expectations"
-                {...form.register('expectations')}
+                {...form.register("expectations")}
                 placeholder="Descreva suas expectativas detalhadamente sobre o tratamento"
                 rows={3}
-                className={errors.expectations ? 'border-red-500' : ''}
+                className={errors.expectations ? "border-red-500" : ""}
               />
               {errors.expectations && (
                 <p className="text-sm text-red-600 mt-1 flex items-center">
@@ -513,7 +536,6 @@ export function ClinicalFormEnhanced({
                 </p>
               )}
             </div>
-
           </CardContent>
         </Card>
 
@@ -549,12 +571,9 @@ export function ClinicalFormEnhanced({
               <Shield className="h-4 w-4 mr-2" />
               Consentimentos LGPD
             </CardTitle>
-            <CardDescription>
-              Conforme Lei Geral de Proteção de Dados
-            </CardDescription>
+            <CardDescription>Conforme Lei Geral de Proteção de Dados</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            
             <div className="flex items-start space-x-2">
               <Controller
                 name="dataConsent"
@@ -564,7 +583,7 @@ export function ClinicalFormEnhanced({
                     id="dataConsent"
                     checked={field.value}
                     onCheckedChange={field.onChange}
-                    className={errors.dataConsent ? 'border-red-500' : ''}
+                    className={errors.dataConsent ? "border-red-500" : ""}
                   />
                 )}
               />
@@ -573,7 +592,7 @@ export function ClinicalFormEnhanced({
                   Consentimento para tratamento de dados *
                 </Label>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Autorizo o uso dos meus dados pessoais para fins médicos, agendamento de consultas 
+                  Autorizo o uso dos meus dados pessoais para fins médicos, agendamento de consultas
                   e acompanhamento do tratamento, conforme Política de Privacidade.
                 </p>
                 {errors.dataConsent && (
@@ -602,12 +621,11 @@ export function ClinicalFormEnhanced({
                   Consentimento para comunicações de marketing (opcional)
                 </Label>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Autorizo o recebimento de comunicações sobre promoções, novos tratamentos 
-                  e conteúdo educativo sobre estética.
+                  Autorizo o recebimento de comunicações sobre promoções, novos tratamentos e
+                  conteúdo educativo sobre estética.
                 </p>
               </div>
             </div>
-
           </CardContent>
         </Card>
 
@@ -617,16 +635,12 @@ export function ClinicalFormEnhanced({
             <Clock className="h-4 w-4 mr-2" />
             Salvar Rascunho
           </Button>
-          
+
           <div className="flex space-x-2">
             <Button type="button" variant="outline">
               Cancelar
             </Button>
-            <Button 
-              type="submit" 
-              disabled={!isValid || isSubmitting}
-              className="min-w-[120px]"
-            >
+            <Button type="submit" disabled={!isValid || isSubmitting} className="min-w-[120px]">
               {isSubmitting ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
@@ -635,14 +649,13 @@ export function ClinicalFormEnhanced({
               ) : (
                 <>
                   <Save className="h-4 w-4 mr-2" />
-                  {mode === 'create' ? 'Cadastrar Paciente' : 'Atualizar Dados'}
+                  {mode === "create" ? "Cadastrar Paciente" : "Atualizar Dados"}
                 </>
               )}
             </Button>
           </div>
         </div>
-
       </form>
     </div>
-  )
+  );
 }

@@ -1,11 +1,11 @@
-﻿// Patient Communication Service
+// Patient Communication Service
 // NeonPro - Epic 6 Story 6.2 Task 1: Patient Communication Center
 // Comprehensive service for healthcare communication management
 
-import { 
-  Message, 
-  MessageThread, 
-  MessageTemplate, 
+import type {
+  Message,
+  MessageThread,
+  MessageTemplate,
   CommunicationCampaign,
   CommunicationConsent,
   QuickResponse,
@@ -25,10 +25,10 @@ import {
   MessageType,
   MessageStatus,
   CampaignStatus,
-  TemplateCategory
-} from '@/lib/types/communication';
+  TemplateCategory,
+} from "@/lib/types/communication";
 
-import { createClient } from '@/utils/supabase/client';
+import type { createClient } from "@/utils/supabase/client";
 
 export class CommunicationService {
   // Supabase client created per method for proper request context
@@ -48,8 +48,8 @@ export class CommunicationService {
         if (!hasConsent) {
           return {
             success: false,
-            status: 'failed',
-            error: 'Patient consent required for this communication channel'
+            status: "failed",
+            error: "Patient consent required for this communication channel",
           };
         }
       }
@@ -67,8 +67,14 @@ export class CommunicationService {
       if (request.template_id && request.template_variables) {
         const template = await this.getMessageTemplate(request.template_id);
         if (template) {
-          processedContent = this.processTemplate(template.content_template, request.template_variables);
-          processedSubject = this.processTemplate(template.subject_template, request.template_variables);
+          processedContent = this.processTemplate(
+            template.content_template,
+            request.template_variables,
+          );
+          processedSubject = this.processTemplate(
+            template.subject_template,
+            request.template_variables,
+          );
         }
       }
 
@@ -76,14 +82,14 @@ export class CommunicationService {
       const messageData = {
         thread_id: threadId,
         sender_id: request.patient_id, // This would be current user in real implementation
-        sender_type: 'staff',
+        sender_type: "staff",
         recipient_ids: [request.patient_id],
         type: request.type,
         channel: request.channel,
         subject: processedSubject,
         content: processedContent,
-        priority: request.priority || 'normal',
-        status: request.scheduled_at ? 'draft' : 'sent',
+        priority: request.priority || "normal",
+        status: request.scheduled_at ? "draft" : "sent",
         template_id: request.template_id,
         metadata: {
           template_variables: request.template_variables,
@@ -93,7 +99,7 @@ export class CommunicationService {
       };
 
       const { data: message, error } = await supabase
-        .from('communication_messages')
+        .from("communication_messages")
         .insert(messageData)
         .select()
         .single();
@@ -115,15 +121,14 @@ export class CommunicationService {
         status: message.status,
         scheduled_at: request.scheduled_at,
         estimated_delivery: this.calculateDeliveryTime(request.channel),
-        cost: this.calculateMessageCost(request.channel, processedContent.length)
+        cost: this.calculateMessageCost(request.channel, processedContent.length),
       };
-
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error("Error sending message:", error);
       return {
         success: false,
-        status: 'failed',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        status: "failed",
+        error: error instanceof Error ? error.message : "Unknown error",
       };
     }
   }
@@ -133,9 +138,7 @@ export class CommunicationService {
    */
   async getMessages(request: GetMessagesRequest): Promise<GetMessagesResponse> {
     try {
-      let query = supabase
-        .from('communication_messages')
-        .select(`
+      let query = supabase.from("communication_messages").select(`
           *,
           thread:communication_threads(*),
           attachments:communication_attachments(*)
@@ -143,40 +146,40 @@ export class CommunicationService {
 
       // Apply filters
       if (request.thread_id) {
-        query = query.eq('thread_id', request.thread_id);
+        query = query.eq("thread_id", request.thread_id);
       }
       if (request.patient_id) {
-        query = query.contains('recipient_ids', [request.patient_id]);
+        query = query.contains("recipient_ids", [request.patient_id]);
       }
       if (request.channel) {
-        query = query.eq('channel', request.channel);
+        query = query.eq("channel", request.channel);
       }
       if (request.status) {
-        query = query.eq('status', request.status);
+        query = query.eq("status", request.status);
       }
       if (request.type) {
-        query = query.eq('type', request.type);
+        query = query.eq("type", request.type);
       }
       if (request.date_from) {
-        query = query.gte('created_at', request.date_from);
+        query = query.gte("created_at", request.date_from);
       }
       if (request.date_to) {
-        query = query.lte('created_at', request.date_to);
+        query = query.lte("created_at", request.date_to);
       }
       if (request.search) {
         query = query.or(`content.ilike.%${request.search}%,subject.ilike.%${request.search}%`);
       }
 
       // Apply sorting
-      const sortBy = request.sort_by || 'created_at';
-      const sortOrder = request.sort_order || 'desc';
-      query = query.order(sortBy, { ascending: sortOrder === 'asc' });
+      const sortBy = request.sort_by || "created_at";
+      const sortOrder = request.sort_order || "desc";
+      query = query.order(sortBy, { ascending: sortOrder === "asc" });
 
       // Apply pagination
       const page = request.page || 1;
       const limit = Math.min(request.limit || 50, 100); // Max 100 items per page
       const offset = (page - 1) * limit;
-      
+
       query = query.range(offset, offset + limit - 1);
 
       const { data: messages, error, count } = await query;
@@ -188,11 +191,10 @@ export class CommunicationService {
         total: count || 0,
         page,
         limit,
-        has_more: (count || 0) > offset + limit
+        has_more: (count || 0) > offset + limit,
       };
-
     } catch (error) {
-      console.error('Error getting messages:', error);
+      console.error("Error getting messages:", error);
       throw error;
     }
   }
@@ -200,10 +202,13 @@ export class CommunicationService {
   /**
    * Get message threads for a patient or all patients
    */
-  async getMessageThreads(patientId?: string, includeArchived: boolean = false): Promise<MessageThreadWithLastMessage[]> {
+  async getMessageThreads(
+    patientId?: string,
+    includeArchived: boolean = false,
+  ): Promise<MessageThreadWithLastMessage[]> {
     try {
       let query = supabase
-        .from('communication_threads')
+        .from("communication_threads")
         .select(`
           *,
           last_message:communication_messages(
@@ -213,14 +218,14 @@ export class CommunicationService {
             user_id, role, name, avatar, joined_at, last_read_at
           )
         `)
-        .order('last_message_at', { ascending: false });
+        .order("last_message_at", { ascending: false });
 
       if (patientId) {
-        query = query.eq('patient_id', patientId);
+        query = query.eq("patient_id", patientId);
       }
 
       if (!includeArchived) {
-        query = query.neq('status', 'archived');
+        query = query.neq("status", "archived");
       }
 
       const { data: threads, error } = await query;
@@ -233,15 +238,14 @@ export class CommunicationService {
           const unreadCount = await this.getUnreadMessageCount(thread.id);
           return {
             ...thread,
-            unread_count: unreadCount
+            unread_count: unreadCount,
           };
-        })
+        }),
       );
 
       return threadsWithUnread;
-
     } catch (error) {
-      console.error('Error getting message threads:', error);
+      console.error("Error getting message threads:", error);
       throw error;
     }
   }
@@ -253,20 +257,23 @@ export class CommunicationService {
   /**
    * Get all message templates
    */
-  async getMessageTemplates(category?: TemplateCategory, channel?: CommunicationChannel): Promise<MessageTemplate[]> {
+  async getMessageTemplates(
+    category?: TemplateCategory,
+    channel?: CommunicationChannel,
+  ): Promise<MessageTemplate[]> {
     try {
       let query = supabase
-        .from('communication_templates')
-        .select('*')
-        .eq('is_active', true)
-        .order('name');
+        .from("communication_templates")
+        .select("*")
+        .eq("is_active", true)
+        .order("name");
 
       if (category) {
-        query = query.eq('category', category);
+        query = query.eq("category", category);
       }
 
       if (channel) {
-        query = query.contains('channel', [channel]);
+        query = query.contains("channel", [channel]);
       }
 
       const { data: templates, error } = await query;
@@ -274,9 +281,8 @@ export class CommunicationService {
       if (error) throw error;
 
       return templates || [];
-
     } catch (error) {
-      console.error('Error getting message templates:', error);
+      console.error("Error getting message templates:", error);
       throw error;
     }
   }
@@ -284,14 +290,19 @@ export class CommunicationService {
   /**
    * Create a new message template
    */
-  async createMessageTemplate(template: Omit<MessageTemplate, 'id' | 'created_at' | 'updated_at' | 'usage_count' | 'last_used_at'>): Promise<MessageTemplate> {
+  async createMessageTemplate(
+    template: Omit<
+      MessageTemplate,
+      "id" | "created_at" | "updated_at" | "usage_count" | "last_used_at"
+    >,
+  ): Promise<MessageTemplate> {
     try {
-    const supabase = await createClient();
+      const supabase = await createClient();
       const { data, error } = await supabase
-        .from('communication_templates')
+        .from("communication_templates")
         .insert({
           ...template,
-          usage_count: 0
+          usage_count: 0,
         })
         .select()
         .single();
@@ -299,9 +310,8 @@ export class CommunicationService {
       if (error) throw error;
 
       return data;
-
     } catch (error) {
-      console.error('Error creating message template:', error);
+      console.error("Error creating message template:", error);
       throw error;
     }
   }
@@ -309,22 +319,24 @@ export class CommunicationService {
   /**
    * Update message template
    */
-  async updateMessageTemplate(id: string, updates: Partial<MessageTemplate>): Promise<MessageTemplate> {
+  async updateMessageTemplate(
+    id: string,
+    updates: Partial<MessageTemplate>,
+  ): Promise<MessageTemplate> {
     try {
-    const supabase = await createClient();
+      const supabase = await createClient();
       const { data, error } = await supabase
-        .from('communication_templates')
+        .from("communication_templates")
         .update(updates)
-        .eq('id', id)
+        .eq("id", id)
         .select()
         .single();
 
       if (error) throw error;
 
       return data;
-
     } catch (error) {
-      console.error('Error updating message template:', error);
+      console.error("Error updating message template:", error);
       throw error;
     }
   }
@@ -339,15 +351,15 @@ export class CommunicationService {
   async getCommunicationCampaigns(status?: CampaignStatus): Promise<CommunicationCampaign[]> {
     try {
       let query = supabase
-        .from('communication_campaigns')
+        .from("communication_campaigns")
         .select(`
           *,
           template:communication_templates(name, subject_template, content_template)
         `)
-        .order('created_at', { ascending: false });
+        .order("created_at", { ascending: false });
 
       if (status) {
-        query = query.eq('status', status);
+        query = query.eq("status", status);
       }
 
       const { data: campaigns, error } = await query;
@@ -355,9 +367,8 @@ export class CommunicationService {
       if (error) throw error;
 
       return campaigns || [];
-
     } catch (error) {
-      console.error('Error getting communication campaigns:', error);
+      console.error("Error getting communication campaigns:", error);
       throw error;
     }
   }
@@ -365,14 +376,28 @@ export class CommunicationService {
   /**
    * Create a new communication campaign
    */
-  async createCommunicationCampaign(campaign: Omit<CommunicationCampaign, 'id' | 'created_at' | 'updated_at' | 'metrics' | 'sent_count' | 'delivered_count' | 'read_count' | 'failed_count' | 'response_count' | 'unsubscribe_count'>): Promise<CommunicationCampaign> {
+  async createCommunicationCampaign(
+    campaign: Omit<
+      CommunicationCampaign,
+      | "id"
+      | "created_at"
+      | "updated_at"
+      | "metrics"
+      | "sent_count"
+      | "delivered_count"
+      | "read_count"
+      | "failed_count"
+      | "response_count"
+      | "unsubscribe_count"
+    >,
+  ): Promise<CommunicationCampaign> {
     try {
       // Estimate audience size
       const estimatedSize = await this.estimateAudienceSize(campaign.target_audience);
-    const supabase = await createClient();
+      const supabase = await createClient();
 
       const { data, error } = await supabase
-        .from('communication_campaigns')
+        .from("communication_campaigns")
         .insert({
           ...campaign,
           total_recipients: estimatedSize,
@@ -382,7 +407,7 @@ export class CommunicationService {
           failed_count: 0,
           response_count: 0,
           unsubscribe_count: 0,
-          metrics: {}
+          metrics: {},
         })
         .select()
         .single();
@@ -390,9 +415,8 @@ export class CommunicationService {
       if (error) throw error;
 
       return data;
-
     } catch (error) {
-      console.error('Error creating communication campaign:', error);
+      console.error("Error creating communication campaign:", error);
       throw error;
     }
   }
@@ -404,26 +428,22 @@ export class CommunicationService {
     try {
       const campaign = await this.getCampaign(request.campaign_id);
       if (!campaign) {
-        throw new Error('Campaign not found');
+        throw new Error("Campaign not found");
       }
 
       // Get target audience
-      const recipients = request.test_mode 
+      const recipients = request.test_mode
         ? await this.getTestRecipients(request.test_recipients || [])
         : await this.getCampaignRecipients(campaign.target_audience);
 
       // Update campaign status
-      await this.updateCampaignStatus(request.campaign_id, 'running');
+      await this.updateCampaignStatus(request.campaign_id, "running");
 
       // Create execution record
       const executionId = `exec_${Date.now()}`;
 
       // Queue messages for sending
-      const queuedMessages = await this.queueCampaignMessages(
-        campaign, 
-        recipients, 
-        executionId
-      );
+      const queuedMessages = await this.queueCampaignMessages(campaign, recipients, executionId);
 
       const estimatedCost = this.calculateCampaignCost(campaign.channel, queuedMessages.length);
 
@@ -432,17 +452,16 @@ export class CommunicationService {
         execution_id: executionId,
         estimated_recipients: recipients.length,
         estimated_cost: estimatedCost,
-        scheduled_at: campaign.scheduled_at
+        scheduled_at: campaign.scheduled_at,
       };
-
     } catch (error) {
-      console.error('Error executing campaign:', error);
+      console.error("Error executing campaign:", error);
       return {
         success: false,
-        execution_id: '',
+        execution_id: "",
         estimated_recipients: 0,
         estimated_cost: 0,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : "Unknown error",
       };
     }
   }
@@ -456,16 +475,16 @@ export class CommunicationService {
    */
   async checkPatientConsent(patientId: string, channel: CommunicationChannel): Promise<boolean> {
     try {
-    const supabase = await createClient();
+      const supabase = await createClient();
       const { data: consent, error } = await supabase
-        .from('communication_consent')
-        .select('*')
-        .eq('patient_id', patientId)
-        .eq('channel', channel)
-        .eq('consent_given', true)
+        .from("communication_consent")
+        .select("*")
+        .eq("patient_id", patientId)
+        .eq("channel", channel)
+        .eq("consent_given", true)
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows returned
+      if (error && error.code !== "PGRST116") throw error; // PGRST116 = no rows returned
 
       if (!consent) return false;
 
@@ -475,9 +494,8 @@ export class CommunicationService {
       }
 
       return true;
-
     } catch (error) {
-      console.error('Error checking patient consent:', error);
+      console.error("Error checking patient consent:", error);
       return false;
     }
   }
@@ -485,14 +503,16 @@ export class CommunicationService {
   /**
    * Update patient communication consent
    */
-  async updatePatientConsent(consent: Omit<CommunicationConsent, 'id' | 'created_at' | 'updated_at'>): Promise<CommunicationConsent> {
+  async updatePatientConsent(
+    consent: Omit<CommunicationConsent, "id" | "created_at" | "updated_at">,
+  ): Promise<CommunicationConsent> {
     try {
-    const supabase = await createClient();
+      const supabase = await createClient();
       const { data, error } = await supabase
-        .from('communication_consent')
-        .upsert(consent, { 
-          onConflict: 'patient_id,channel',
-          ignoreDuplicates: false 
+        .from("communication_consent")
+        .upsert(consent, {
+          onConflict: "patient_id,channel",
+          ignoreDuplicates: false,
         })
         .select()
         .single();
@@ -500,9 +520,8 @@ export class CommunicationService {
       if (error) throw error;
 
       return data;
-
     } catch (error) {
-      console.error('Error updating patient consent:', error);
+      console.error("Error updating patient consent:", error);
       throw error;
     }
   }
@@ -512,19 +531,18 @@ export class CommunicationService {
    */
   async getPatientPreferences(patientId: string): Promise<CommunicationPreferences | null> {
     try {
-    const supabase = await createClient();
+      const supabase = await createClient();
       const { data: preferences, error } = await supabase
-        .from('communication_preferences')
-        .select('*')
-        .eq('patient_id', patientId)
+        .from("communication_preferences")
+        .select("*")
+        .eq("patient_id", patientId)
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error && error.code !== "PGRST116") throw error;
 
       return preferences;
-
     } catch (error) {
-      console.error('Error getting patient preferences:', error);
+      console.error("Error getting patient preferences:", error);
       return null;
     }
   }
@@ -536,17 +554,19 @@ export class CommunicationService {
   /**
    * Get communication statistics
    */
-  async getCommunicationStats(period: 'today' | 'week' | 'month' | 'quarter' | 'year'): Promise<CommunicationStats> {
+  async getCommunicationStats(
+    period: "today" | "week" | "month" | "quarter" | "year",
+  ): Promise<CommunicationStats> {
     try {
       const dateRange = this.getDateRange(period);
 
       // Get basic message counts
-    const supabase = await createClient();
+      const supabase = await createClient();
       const { data: messageStats, error: statsError } = await supabase
-        .from('communication_messages')
-        .select('channel, type, status, created_at')
-        .gte('created_at', dateRange.from)
-        .lte('created_at', dateRange.to);
+        .from("communication_messages")
+        .select("channel, type, status, created_at")
+        .gte("created_at", dateRange.from)
+        .lte("created_at", dateRange.to);
 
       if (statsError) throw statsError;
 
@@ -560,13 +580,12 @@ export class CommunicationService {
         automation_success_rate: await this.calculateAutomationSuccessRate(dateRange),
         top_templates: await this.getTopTemplates(dateRange),
         peak_hours: await this.getPeakHours(dateRange),
-        staff_performance: await this.getStaffPerformance(dateRange)
+        staff_performance: await this.getStaffPerformance(dateRange),
       };
 
       return stats;
-
     } catch (error) {
-      console.error('Error getting communication stats:', error);
+      console.error("Error getting communication stats:", error);
       throw error;
     }
   }
@@ -582,14 +601,14 @@ export class CommunicationService {
         activeCampaigns,
         pendingApprovals,
         failedMessages,
-        topPerformers
+        topPerformers,
       ] = await Promise.all([
-        this.getCommunicationStats('today'),
+        this.getCommunicationStats("today"),
         this.getRecentMessages(10),
-        this.getCommunicationCampaigns('running'),
+        this.getCommunicationCampaigns("running"),
         this.getPendingApprovals(),
         this.getFailedMessages(),
-        this.getTopPerformers()
+        this.getTopPerformers(),
       ]);
 
       return {
@@ -598,11 +617,10 @@ export class CommunicationService {
         active_campaigns: activeCampaigns,
         pending_approvals: pendingApprovals,
         failed_messages: failedMessages,
-        top_performers: topPerformers
+        top_performers: topPerformers,
       };
-
     } catch (error) {
-      console.error('Error getting communication dashboard:', error);
+      console.error("Error getting communication dashboard:", error);
       throw error;
     }
   }
@@ -613,24 +631,24 @@ export class CommunicationService {
 
   private requiresConsent(channel: CommunicationChannel, type: MessageType): boolean {
     // Marketing messages always require consent
-    if (type === 'alert' && channel !== 'portal') return true;
-    
+    if (type === "alert" && channel !== "portal") return true;
+
     // SMS and WhatsApp require consent for non-emergency communications
-    if ((channel === 'sms' || channel === 'whatsapp') && type !== 'alert') return true;
-    
+    if ((channel === "sms" || channel === "whatsapp") && type !== "alert") return true;
+
     return false;
   }
 
   private async createMessageThread(patientId: string, subject?: string): Promise<string> {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from('communication_threads')
+      .from("communication_threads")
       .insert({
         patient_id: patientId,
-        subject: subject || 'New Conversation',
-        status: 'active',
-        priority: 'normal',
-        participants: []
+        subject: subject || "New Conversation",
+        status: "active",
+        priority: "normal",
+        participants: [],
       })
       .select()
       .single();
@@ -642,20 +660,20 @@ export class CommunicationService {
   private async getMessageTemplate(templateId: string): Promise<MessageTemplate | null> {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from('communication_templates')
-      .select('*')
-      .eq('id', templateId)
+      .from("communication_templates")
+      .select("*")
+      .eq("id", templateId)
       .single();
 
-    if (error && error.code !== 'PGRST116') throw error;
+    if (error && error.code !== "PGRST116") throw error;
     return data;
   }
 
   private processTemplate(template: string, variables: Record<string, any>): string {
     let processed = template;
-    
+
     Object.entries(variables).forEach(([key, value]) => {
-      const regex = new RegExp(`{{\\s*${key}\\s*}}`, 'g');
+      const regex = new RegExp(`{{\\s*${key}\\s*}}`, "g");
       processed = processed.replace(regex, String(value));
     });
 
@@ -667,36 +685,36 @@ export class CommunicationService {
     // For now, we'll just update the message status
     const supabase = await createClient();
     await supabase
-      .from('communication_messages')
+      .from("communication_messages")
       .update({
-        status: 'delivered',
-        delivered_at: new Date().toISOString()
+        status: "delivered",
+        delivered_at: new Date().toISOString(),
       })
-      .eq('id', messageId);
+      .eq("id", messageId);
   }
 
   private async updateThreadLastMessage(threadId: string): Promise<void> {
     const supabase = await createClient();
     await supabase
-      .from('communication_threads')
+      .from("communication_threads")
       .update({
-        last_message_at: new Date().toISOString()
+        last_message_at: new Date().toISOString(),
       })
-      .eq('id', threadId);
+      .eq("id", threadId);
   }
 
   private calculateDeliveryTime(channel: CommunicationChannel): string {
     const baseTime = new Date();
-    
+
     switch (channel) {
-      case 'sms':
-      case 'whatsapp':
+      case "sms":
+      case "whatsapp":
         baseTime.setMinutes(baseTime.getMinutes() + 1);
         break;
-      case 'email':
+      case "email":
         baseTime.setMinutes(baseTime.getMinutes() + 5);
         break;
-      case 'portal':
+      case "portal":
         baseTime.setSeconds(baseTime.getSeconds() + 30);
         break;
       default:
@@ -713,7 +731,7 @@ export class CommunicationService {
       whatsapp: 0.03,
       email: 0.01,
       portal: 0,
-      internal: 0
+      internal: 0,
     };
 
     const segmentMultiplier = Math.ceil(contentLength / 160); // SMS segment size
@@ -722,10 +740,10 @@ export class CommunicationService {
 
   private async getUnreadMessageCount(threadId: string): Promise<number> {
     const { count, error } = await supabase
-      .from('communication_messages')
-      .select('id', { count: 'exact' })
-      .eq('thread_id', threadId)
-      .is('read_at', null);
+      .from("communication_messages")
+      .select("id", { count: "exact" })
+      .eq("thread_id", threadId)
+      .is("read_at", null);
 
     if (error) throw error;
     return count || 0;
@@ -739,12 +757,12 @@ export class CommunicationService {
   private async getCampaign(campaignId: string): Promise<CommunicationCampaign | null> {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from('communication_campaigns')
-      .select('*')
-      .eq('id', campaignId)
+      .from("communication_campaigns")
+      .select("*")
+      .eq("id", campaignId)
       .single();
 
-    if (error && error.code !== 'PGRST116') throw error;
+    if (error && error.code !== "PGRST116") throw error;
     return data;
   }
 
@@ -759,13 +777,14 @@ export class CommunicationService {
 
   private async updateCampaignStatus(campaignId: string, status: CampaignStatus): Promise<void> {
     const supabase = await createClient();
-    await supabase
-      .from('communication_campaigns')
-      .update({ status })
-      .eq('id', campaignId);
+    await supabase.from("communication_campaigns").update({ status }).eq("id", campaignId);
   }
 
-  private async queueCampaignMessages(campaign: CommunicationCampaign, recipients: string[], executionId: string): Promise<any[]> {
+  private async queueCampaignMessages(
+    campaign: CommunicationCampaign,
+    recipients: string[],
+    executionId: string,
+  ): Promise<any[]> {
     // In real implementation, would queue messages for batch processing
     return [];
   }
@@ -779,26 +798,26 @@ export class CommunicationService {
     const from = new Date();
 
     switch (period) {
-      case 'today':
+      case "today":
         from.setHours(0, 0, 0, 0);
         break;
-      case 'week':
+      case "week":
         from.setDate(now.getDate() - 7);
         break;
-      case 'month':
+      case "month":
         from.setMonth(now.getMonth() - 1);
         break;
-      case 'quarter':
+      case "quarter":
         from.setMonth(now.getMonth() - 3);
         break;
-      case 'year':
+      case "year":
         from.setFullYear(now.getFullYear() - 1);
         break;
     }
 
     return {
       from: from.toISOString(),
-      to: now.toISOString()
+      to: now.toISOString(),
     };
   }
 
@@ -808,10 +827,10 @@ export class CommunicationService {
       email: 0,
       portal: 0,
       whatsapp: 0,
-      internal: 0
+      internal: 0,
     };
 
-    messages.forEach(message => {
+    messages.forEach((message) => {
       groups[message.channel] = (groups[message.channel] || 0) + 1;
     });
 
@@ -826,10 +845,10 @@ export class CommunicationService {
       alert: 0,
       document: 0,
       image: 0,
-      form: 0
+      form: 0,
     };
 
-    messages.forEach(message => {
+    messages.forEach((message) => {
       groups[message.type] = (groups[message.type] || 0) + 1;
     });
 
@@ -867,9 +886,9 @@ export class CommunicationService {
   private async getRecentMessages(limit: number): Promise<Message[]> {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from('communication_messages')
-      .select('*')
-      .order('created_at', { ascending: false })
+      .from("communication_messages")
+      .select("*")
+      .order("created_at", { ascending: false })
       .limit(limit);
 
     if (error) throw error;
@@ -879,10 +898,10 @@ export class CommunicationService {
   private async getPendingApprovals(): Promise<Message[]> {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from('communication_messages')
-      .select('*')
-      .eq('status', 'draft')
-      .order('created_at', { ascending: false });
+      .from("communication_messages")
+      .select("*")
+      .eq("status", "draft")
+      .order("created_at", { ascending: false });
 
     if (error) throw error;
     return data || [];
@@ -891,10 +910,10 @@ export class CommunicationService {
   private async getFailedMessages(): Promise<Message[]> {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from('communication_messages')
-      .select('*')
-      .eq('status', 'failed')
-      .order('created_at', { ascending: false })
+      .from("communication_messages")
+      .select("*")
+      .eq("status", "failed")
+      .order("created_at", { ascending: false })
       .limit(10);
 
     if (error) throw error;
@@ -910,4 +929,3 @@ export class CommunicationService {
 
 // Export singleton instance
 export const createcommunicationService = () => new CommunicationService();
-

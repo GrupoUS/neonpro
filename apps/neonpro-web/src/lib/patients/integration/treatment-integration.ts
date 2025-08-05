@@ -4,9 +4,9 @@
  * Part of Story 3.1 - Task 6: System Integration & Search
  */
 
-import { Patient } from '@/types/patient';
-import { supabase } from '@/lib/supabase/client';
-import { logger } from '@/lib/logger';
+import type { Patient } from "@/types/patient";
+import type { supabase } from "@/lib/supabase/client";
+import type { logger } from "@/lib/logger";
 
 export interface TreatmentHistory {
   id: string;
@@ -16,7 +16,7 @@ export interface TreatmentHistory {
   provider_name: string;
   start_date: string;
   end_date?: string;
-  status: 'active' | 'completed' | 'cancelled' | 'paused';
+  status: "active" | "completed" | "cancelled" | "paused";
   progress_percentage: number;
   total_sessions: number;
   completed_sessions: number;
@@ -55,13 +55,13 @@ export interface TreatmentInsights {
 export interface MedicalRecord {
   id: string;
   patient_id: string;
-  record_type: 'diagnosis' | 'prescription' | 'lab_result' | 'imaging' | 'procedure';
+  record_type: "diagnosis" | "prescription" | "lab_result" | "imaging" | "procedure";
   title: string;
   description: string;
   provider_name: string;
   date_recorded: string;
-  severity?: 'low' | 'medium' | 'high' | 'critical';
-  status: 'active' | 'resolved' | 'chronic' | 'monitoring';
+  severity?: "low" | "medium" | "high" | "critical";
+  status: "active" | "resolved" | "chronic" | "monitoring";
   attachments?: string[];
   related_treatments?: string[];
   follow_up_required: boolean;
@@ -76,42 +76,44 @@ export class PatientTreatmentIntegration {
   static async getPatientTreatmentHistory(patientId: string): Promise<TreatmentHistory[]> {
     try {
       const { data: treatments, error } = await supabase
-        .from('patient_treatments')
+        .from("patient_treatments")
         .select(`
           *,
           services(name),
           staff(name),
           treatment_sessions(count)
         `)
-        .eq('patient_id', patientId)
-        .order('start_date', { ascending: false });
+        .eq("patient_id", patientId)
+        .order("start_date", { ascending: false });
 
       if (error) throw error;
 
-      return treatments?.map(treatment => ({
-        id: treatment.id,
-        patient_id: treatment.patient_id,
-        treatment_type: treatment.treatment_type,
-        service_name: treatment.services?.name || 'Unknown Service',
-        provider_name: treatment.staff?.name || 'Unknown Provider',
-        start_date: treatment.start_date,
-        end_date: treatment.end_date,
-        status: treatment.status,
-        progress_percentage: treatment.progress_percentage || 0,
-        total_sessions: treatment.total_sessions || 0,
-        completed_sessions: treatment.completed_sessions || 0,
-        next_session_date: treatment.next_session_date,
-        notes: treatment.notes || '',
-        cost_total: treatment.cost_total || 0,
-        cost_paid: treatment.cost_paid || 0,
-        insurance_covered: treatment.insurance_covered || 0,
-        satisfaction_score: treatment.satisfaction_score,
-        outcome_rating: treatment.outcome_rating,
-        side_effects: treatment.side_effects || [],
-        medications: treatment.medications || []
-      })) || [];
+      return (
+        treatments?.map((treatment) => ({
+          id: treatment.id,
+          patient_id: treatment.patient_id,
+          treatment_type: treatment.treatment_type,
+          service_name: treatment.services?.name || "Unknown Service",
+          provider_name: treatment.staff?.name || "Unknown Provider",
+          start_date: treatment.start_date,
+          end_date: treatment.end_date,
+          status: treatment.status,
+          progress_percentage: treatment.progress_percentage || 0,
+          total_sessions: treatment.total_sessions || 0,
+          completed_sessions: treatment.completed_sessions || 0,
+          next_session_date: treatment.next_session_date,
+          notes: treatment.notes || "",
+          cost_total: treatment.cost_total || 0,
+          cost_paid: treatment.cost_paid || 0,
+          insurance_covered: treatment.insurance_covered || 0,
+          satisfaction_score: treatment.satisfaction_score,
+          outcome_rating: treatment.outcome_rating,
+          side_effects: treatment.side_effects || [],
+          medications: treatment.medications || [],
+        })) || []
+      );
     } catch (error) {
-      logger.error('Error fetching patient treatment history:', error);
+      logger.error("Error fetching patient treatment history:", error);
       return [];
     }
   }
@@ -122,33 +124,33 @@ export class PatientTreatmentIntegration {
   static async generateTreatmentInsights(patientId: string): Promise<TreatmentInsights> {
     try {
       const treatments = await this.getPatientTreatmentHistory(patientId);
-      
-      const activeTreatments = treatments.filter(t => t.status === 'active');
-      const completedTreatments = treatments.filter(t => t.status === 'completed');
-      
+
+      const activeTreatments = treatments.filter((t) => t.status === "active");
+      const completedTreatments = treatments.filter((t) => t.status === "completed");
+
       // Calculate averages
       const avgSatisfaction = this.calculateAverage(
-        treatments.filter(t => t.satisfaction_score).map(t => t.satisfaction_score!)
+        treatments.filter((t) => t.satisfaction_score).map((t) => t.satisfaction_score!),
       );
-      
+
       const avgOutcome = this.calculateAverage(
-        treatments.filter(t => t.outcome_rating).map(t => t.outcome_rating!)
+        treatments.filter((t) => t.outcome_rating).map((t) => t.outcome_rating!),
       );
-      
+
       // Calculate total investment
       const totalInvestment = treatments.reduce((sum, t) => sum + t.cost_total, 0);
-      
+
       // Find preferred providers and services
-      const providerCounts = this.countOccurrences(treatments.map(t => t.provider_name));
-      const serviceCounts = this.countOccurrences(treatments.map(t => t.service_name));
-      
+      const providerCounts = this.countOccurrences(treatments.map((t) => t.provider_name));
+      const serviceCounts = this.countOccurrences(treatments.map((t) => t.service_name));
+
       // Calculate adherence score
       const adherenceScore = this.calculateAdherenceScore(treatments);
-      
+
       // Generate risk factors and recommendations
       const riskFactors = this.identifyRiskFactors(treatments);
       const recommendations = this.generateRecommendations(treatments, riskFactors);
-      
+
       return {
         patient_id: patientId,
         total_treatments: treatments.length,
@@ -163,11 +165,11 @@ export class PatientTreatmentIntegration {
         adherence_score: adherenceScore,
         risk_factors: riskFactors,
         recommendations: recommendations,
-        next_recommended_treatments: await this.getRecommendedTreatments(patientId, treatments)
+        next_recommended_treatments: await this.getRecommendedTreatments(patientId, treatments),
       };
     } catch (error) {
-      logger.error('Error generating treatment insights:', error);
-      throw new Error('Failed to generate treatment insights');
+      logger.error("Error generating treatment insights:", error);
+      throw new Error("Failed to generate treatment insights");
     }
   }
 
@@ -177,16 +179,16 @@ export class PatientTreatmentIntegration {
   static async getPatientMedicalRecords(patientId: string): Promise<MedicalRecord[]> {
     try {
       const { data: records, error } = await supabase
-        .from('patient_medical_records')
-        .select('*')
-        .eq('patient_id', patientId)
-        .order('date_recorded', { ascending: false });
+        .from("patient_medical_records")
+        .select("*")
+        .eq("patient_id", patientId)
+        .order("date_recorded", { ascending: false });
 
       if (error) throw error;
 
       return records || [];
     } catch (error) {
-      logger.error('Error fetching medical records:', error);
+      logger.error("Error fetching medical records:", error);
       return [];
     }
   }
@@ -196,18 +198,18 @@ export class PatientTreatmentIntegration {
    */
   static async linkPatientToTreatment(
     patientId: string,
-    treatmentData: Partial<TreatmentHistory>
+    treatmentData: Partial<TreatmentHistory>,
   ): Promise<string> {
     try {
       const { data: treatment, error } = await supabase
-        .from('patient_treatments')
+        .from("patient_treatments")
         .insert({
           patient_id: patientId,
           ...treatmentData,
           created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
-        .select('id')
+        .select("id")
         .single();
 
       if (error) throw error;
@@ -215,8 +217,8 @@ export class PatientTreatmentIntegration {
       logger.info(`Linked patient ${patientId} to treatment ${treatment.id}`);
       return treatment.id;
     } catch (error) {
-      logger.error('Error linking patient to treatment:', error);
-      throw new Error('Failed to link patient to treatment');
+      logger.error("Error linking patient to treatment:", error);
+      throw new Error("Failed to link patient to treatment");
     }
   }
 
@@ -231,23 +233,23 @@ export class PatientTreatmentIntegration {
       notes?: string;
       satisfaction_score?: number;
       outcome_rating?: number;
-    }
+    },
   ): Promise<void> {
     try {
       const { error } = await supabase
-        .from('patient_treatments')
+        .from("patient_treatments")
         .update({
           ...progressData,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
-        .eq('id', treatmentId);
+        .eq("id", treatmentId);
 
       if (error) throw error;
 
       logger.info(`Updated treatment progress for ${treatmentId}`);
     } catch (error) {
-      logger.error('Error updating treatment progress:', error);
-      throw new Error('Failed to update treatment progress');
+      logger.error("Error updating treatment progress:", error);
+      throw new Error("Failed to update treatment progress");
     }
   }
 
@@ -263,10 +265,13 @@ export class PatientTreatmentIntegration {
    * Count occurrences of items in array
    */
   private static countOccurrences(items: string[]): Record<string, number> {
-    return items.reduce((counts, item) => {
-      counts[item] = (counts[item] || 0) + 1;
-      return counts;
-    }, {} as Record<string, number>);
+    return items.reduce(
+      (counts, item) => {
+        counts[item] = (counts[item] || 0) + 1;
+        return counts;
+      },
+      {} as Record<string, number>,
+    );
   }
 
   /**
@@ -274,12 +279,12 @@ export class PatientTreatmentIntegration {
    */
   private static calculateAdherenceScore(treatments: TreatmentHistory[]): number {
     if (treatments.length === 0) return 0;
-    
-    const adherenceScores = treatments.map(treatment => {
+
+    const adherenceScores = treatments.map((treatment) => {
       if (treatment.total_sessions === 0) return 1;
       return treatment.completed_sessions / treatment.total_sessions;
     });
-    
+
     return this.calculateAverage(adherenceScores) * 100;
   }
 
@@ -291,11 +296,11 @@ export class PatientTreatmentIntegration {
     const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     const threeMonthsAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
-    
+
     return {
-      weekly: treatments.filter(t => new Date(t.start_date) >= oneWeekAgo).length,
-      monthly: treatments.filter(t => new Date(t.start_date) >= oneMonthAgo).length,
-      quarterly: treatments.filter(t => new Date(t.start_date) >= threeMonthsAgo).length
+      weekly: treatments.filter((t) => new Date(t.start_date) >= oneWeekAgo).length,
+      monthly: treatments.filter((t) => new Date(t.start_date) >= oneMonthAgo).length,
+      quarterly: treatments.filter((t) => new Date(t.start_date) >= threeMonthsAgo).length,
     };
   }
 
@@ -304,39 +309,41 @@ export class PatientTreatmentIntegration {
    */
   private static identifyRiskFactors(treatments: TreatmentHistory[]): string[] {
     const riskFactors: string[] = [];
-    
+
     // Low adherence
     const adherenceScore = this.calculateAdherenceScore(treatments);
     if (adherenceScore < 70) {
-      riskFactors.push('Low treatment adherence');
+      riskFactors.push("Low treatment adherence");
     }
-    
+
     // Multiple cancelled treatments
-    const cancelledCount = treatments.filter(t => t.status === 'cancelled').length;
+    const cancelledCount = treatments.filter((t) => t.status === "cancelled").length;
     if (cancelledCount > 2) {
-      riskFactors.push('High treatment cancellation rate');
+      riskFactors.push("High treatment cancellation rate");
     }
-    
+
     // Low satisfaction scores
-    const satisfactionScores = treatments.filter(t => t.satisfaction_score).map(t => t.satisfaction_score!);
+    const satisfactionScores = treatments
+      .filter((t) => t.satisfaction_score)
+      .map((t) => t.satisfaction_score!);
     const avgSatisfaction = this.calculateAverage(satisfactionScores);
     if (avgSatisfaction < 3) {
-      riskFactors.push('Low treatment satisfaction');
+      riskFactors.push("Low treatment satisfaction");
     }
-    
+
     // Side effects reported
-    const hasSideEffects = treatments.some(t => t.side_effects && t.side_effects.length > 0);
+    const hasSideEffects = treatments.some((t) => t.side_effects && t.side_effects.length > 0);
     if (hasSideEffects) {
-      riskFactors.push('Reported side effects');
+      riskFactors.push("Reported side effects");
     }
-    
+
     // High cost burden
     const totalCost = treatments.reduce((sum, t) => sum + t.cost_total, 0);
     const totalPaid = treatments.reduce((sum, t) => sum + t.cost_paid, 0);
-    if (totalCost > 0 && (totalPaid / totalCost) < 0.5) {
-      riskFactors.push('High unpaid treatment costs');
+    if (totalCost > 0 && totalPaid / totalCost < 0.5) {
+      riskFactors.push("High unpaid treatment costs");
     }
-    
+
     return riskFactors;
   }
 
@@ -345,45 +352,45 @@ export class PatientTreatmentIntegration {
    */
   private static generateRecommendations(
     treatments: TreatmentHistory[],
-    riskFactors: string[]
+    riskFactors: string[],
   ): string[] {
     const recommendations: string[] = [];
-    
+
     // Adherence recommendations
-    if (riskFactors.includes('Low treatment adherence')) {
-      recommendations.push('Schedule regular follow-up appointments');
-      recommendations.push('Consider reminder system for appointments');
-      recommendations.push('Discuss treatment barriers with patient');
+    if (riskFactors.includes("Low treatment adherence")) {
+      recommendations.push("Schedule regular follow-up appointments");
+      recommendations.push("Consider reminder system for appointments");
+      recommendations.push("Discuss treatment barriers with patient");
     }
-    
+
     // Satisfaction recommendations
-    if (riskFactors.includes('Low treatment satisfaction')) {
-      recommendations.push('Review treatment approach with patient');
-      recommendations.push('Consider alternative treatment options');
-      recommendations.push('Gather detailed feedback on treatment experience');
+    if (riskFactors.includes("Low treatment satisfaction")) {
+      recommendations.push("Review treatment approach with patient");
+      recommendations.push("Consider alternative treatment options");
+      recommendations.push("Gather detailed feedback on treatment experience");
     }
-    
+
     // Cost recommendations
-    if (riskFactors.includes('High unpaid treatment costs')) {
-      recommendations.push('Discuss payment plan options');
-      recommendations.push('Review insurance coverage options');
-      recommendations.push('Consider cost-effective treatment alternatives');
+    if (riskFactors.includes("High unpaid treatment costs")) {
+      recommendations.push("Discuss payment plan options");
+      recommendations.push("Review insurance coverage options");
+      recommendations.push("Consider cost-effective treatment alternatives");
     }
-    
+
     // Side effects recommendations
-    if (riskFactors.includes('Reported side effects')) {
-      recommendations.push('Monitor side effects closely');
-      recommendations.push('Consider dosage adjustments');
-      recommendations.push('Evaluate alternative treatment methods');
+    if (riskFactors.includes("Reported side effects")) {
+      recommendations.push("Monitor side effects closely");
+      recommendations.push("Consider dosage adjustments");
+      recommendations.push("Evaluate alternative treatment methods");
     }
-    
+
     // General recommendations
-    const completedTreatments = treatments.filter(t => t.status === 'completed');
+    const completedTreatments = treatments.filter((t) => t.status === "completed");
     if (completedTreatments.length > 0) {
-      recommendations.push('Schedule preventive care appointments');
-      recommendations.push('Consider maintenance treatments');
+      recommendations.push("Schedule preventive care appointments");
+      recommendations.push("Consider maintenance treatments");
     }
-    
+
     return recommendations;
   }
 
@@ -392,57 +399,57 @@ export class PatientTreatmentIntegration {
    */
   private static async getRecommendedTreatments(
     patientId: string,
-    treatments: TreatmentHistory[]
+    treatments: TreatmentHistory[],
   ): Promise<string[]> {
     try {
       // Get patient profile for personalized recommendations
       const { data: patient } = await supabase
-        .from('patients')
+        .from("patients")
         .select(`
           *,
           patient_profiles_extended(*)
         `)
-        .eq('id', patientId)
+        .eq("id", patientId)
         .single();
-      
+
       if (!patient) return [];
-      
+
       const recommendations: string[] = [];
-      
+
       // Based on successful past treatments
       const successfulTreatments = treatments.filter(
-        t => t.status === 'completed' && (t.satisfaction_score || 0) >= 4
+        (t) => t.status === "completed" && (t.satisfaction_score || 0) >= 4,
       );
-      
+
       if (successfulTreatments.length > 0) {
         const preferredServices = this.countOccurrences(
-          successfulTreatments.map(t => t.service_name)
+          successfulTreatments.map((t) => t.service_name),
         );
-        
+
         Object.keys(preferredServices)
           .slice(0, 2)
-          .forEach(service => {
+          .forEach((service) => {
             recommendations.push(`Follow-up ${service} treatment`);
           });
       }
-      
+
       // Based on risk profile
       const riskScore = patient.patient_profiles_extended?.risk_score || 0;
       if (riskScore > 7) {
-        recommendations.push('Preventive health screening');
-        recommendations.push('Stress management therapy');
+        recommendations.push("Preventive health screening");
+        recommendations.push("Stress management therapy");
       }
-      
+
       // Based on age and demographics
       const age = this.calculateAge(patient.date_of_birth);
       if (age > 50) {
-        recommendations.push('Annual health check-up');
-        recommendations.push('Cardiovascular screening');
+        recommendations.push("Annual health check-up");
+        recommendations.push("Cardiovascular screening");
       }
-      
+
       return recommendations.slice(0, 5); // Limit to top 5 recommendations
     } catch (error) {
-      logger.error('Error getting recommended treatments:', error);
+      logger.error("Error getting recommended treatments:", error);
       return [];
     }
   }
@@ -455,11 +462,11 @@ export class PatientTreatmentIntegration {
     const birthDate = new Date(dateOfBirth);
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-    
+
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
-    
+
     return age;
   }
 
@@ -470,27 +477,27 @@ export class PatientTreatmentIntegration {
     try {
       const treatments = await this.getPatientTreatmentHistory(patientId);
       const insights = await this.generateTreatmentInsights(patientId);
-      
+
       return {
         summary: {
           total_treatments: treatments.length,
           active_treatments: insights.active_treatments,
-          completion_rate: treatments.length > 0 ? 
-            (insights.completed_treatments / treatments.length) * 100 : 0,
+          completion_rate:
+            treatments.length > 0 ? (insights.completed_treatments / treatments.length) * 100 : 0,
           avg_satisfaction: insights.avg_satisfaction,
-          total_investment: insights.total_investment
+          total_investment: insights.total_investment,
         },
         trends: {
           monthly_treatments: this.getMonthlyTreatmentTrend(treatments),
           satisfaction_trend: this.getSatisfactionTrend(treatments),
-          cost_trend: this.getCostTrend(treatments)
+          cost_trend: this.getCostTrend(treatments),
         },
         insights,
-        recent_treatments: treatments.slice(0, 5)
+        recent_treatments: treatments.slice(0, 5),
       };
     } catch (error) {
-      logger.error('Error getting treatment analytics:', error);
-      throw new Error('Failed to get treatment analytics');
+      logger.error("Error getting treatment analytics:", error);
+      throw new Error("Failed to get treatment analytics");
     }
   }
 
@@ -499,12 +506,12 @@ export class PatientTreatmentIntegration {
    */
   private static getMonthlyTreatmentTrend(treatments: TreatmentHistory[]) {
     const monthlyData: Record<string, number> = {};
-    
-    treatments.forEach(treatment => {
+
+    treatments.forEach((treatment) => {
       const month = new Date(treatment.start_date).toISOString().slice(0, 7);
       monthlyData[month] = (monthlyData[month] || 0) + 1;
     });
-    
+
     return Object.entries(monthlyData)
       .sort(([a], [b]) => a.localeCompare(b))
       .slice(-12); // Last 12 months
@@ -515,11 +522,11 @@ export class PatientTreatmentIntegration {
    */
   private static getSatisfactionTrend(treatments: TreatmentHistory[]) {
     return treatments
-      .filter(t => t.satisfaction_score)
-      .map(t => ({
+      .filter((t) => t.satisfaction_score)
+      .map((t) => ({
         date: t.start_date,
         score: t.satisfaction_score!,
-        treatment: t.service_name
+        treatment: t.service_name,
       }))
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
       .slice(-10); // Last 10 treatments with scores
@@ -530,8 +537,8 @@ export class PatientTreatmentIntegration {
    */
   private static getCostTrend(treatments: TreatmentHistory[]) {
     const monthlyData: Record<string, { total: number; paid: number }> = {};
-    
-    treatments.forEach(treatment => {
+
+    treatments.forEach((treatment) => {
       const month = new Date(treatment.start_date).toISOString().slice(0, 7);
       if (!monthlyData[month]) {
         monthlyData[month] = { total: 0, paid: 0 };
@@ -539,7 +546,7 @@ export class PatientTreatmentIntegration {
       monthlyData[month].total += treatment.cost_total;
       monthlyData[month].paid += treatment.cost_paid;
     });
-    
+
     return Object.entries(monthlyData)
       .sort(([a], [b]) => a.localeCompare(b))
       .slice(-12) // Last 12 months
@@ -547,7 +554,7 @@ export class PatientTreatmentIntegration {
         month,
         total_cost: data.total,
         paid_amount: data.paid,
-        outstanding: data.total - data.paid
+        outstanding: data.total - data.paid,
       }));
   }
 }

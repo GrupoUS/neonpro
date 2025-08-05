@@ -1,15 +1,15 @@
 /**
  * NeonPro Notification System - Dashboard Component
  * Story 1.7: Sistema de Notificações
- * 
+ *
  * Dashboard React para gerenciamento de notificações
  * Suporte a visualização, configuração e monitoramento
  */
 
-'use client';
+"use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
-import {
+import React, { useState, useEffect, useCallback } from "react";
+import type {
   Bell,
   Settings,
   Send,
@@ -31,30 +31,49 @@ import {
   Pause,
   BarChart3,
   Eye,
-  Download
-} from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
-import {
+  Download,
+} from "lucide-react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Badge } from "@/components/ui/badge";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Switch } from "@/components/ui/switch";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Progress } from "@/components/ui/progress";
+import type { Separator } from "@/components/ui/separator";
+import type {
   NotificationChannel,
   NotificationType,
   NotificationPriority,
   DeliveryStatus,
   NotificationTemplate,
   NotificationDelivery,
-  AutomationRule
-} from '@/lib/notifications/types';
+  AutomationRule,
+} from "@/lib/notifications/types";
 
 // ============================================================================
 // INTERFACES
@@ -97,16 +116,16 @@ interface ChannelStatus {
 
 export function NotificationDashboard() {
   // Estados
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
   const [stats, setStats] = useState<NotificationStats | null>(null);
   const [channelStatus, setChannelStatus] = useState<ChannelStatus[]>([]);
   const [templates, setTemplates] = useState<NotificationTemplate[]>([]);
   const [deliveries, setDeliveries] = useState<NotificationDelivery[]>([]);
   const [automationRules, setAutomationRules] = useState<AutomationRule[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterChannel, setFilterChannel] = useState<string>('all');
-  const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterChannel, setFilterChannel] = useState<string>("all");
+  const [filterStatus, setFilterStatus] = useState<string>("all");
 
   // ============================================================================
   // EFFECTS
@@ -124,8 +143,8 @@ export function NotificationDashboard() {
     setLoading(true);
     try {
       // Simular carregamento de dados
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       // Mock data
       setStats({
         total: 15420,
@@ -137,7 +156,7 @@ export function NotificationDashboard() {
           email: 8450,
           sms: 3210,
           push: 2890,
-          inApp: 870
+          inApp: 870,
         },
         types: {
           appointment: 6780,
@@ -145,10 +164,10 @@ export function NotificationDashboard() {
           reminder: 3450,
           alert: 890,
           marketing: 1560,
-          system: 400
-        }
+          system: 400,
+        },
       });
-      
+
       setChannelStatus([
         {
           channel: NotificationChannel.EMAIL,
@@ -156,7 +175,7 @@ export function NotificationDashboard() {
           healthy: true,
           lastCheck: new Date(),
           errorCount: 12,
-          successRate: 98.5
+          successRate: 98.5,
         },
         {
           channel: NotificationChannel.SMS,
@@ -164,7 +183,7 @@ export function NotificationDashboard() {
           healthy: true,
           lastCheck: new Date(),
           errorCount: 5,
-          successRate: 99.2
+          successRate: 99.2,
         },
         {
           channel: NotificationChannel.PUSH,
@@ -172,7 +191,7 @@ export function NotificationDashboard() {
           healthy: false,
           lastCheck: new Date(Date.now() - 300000),
           errorCount: 45,
-          successRate: 94.8
+          successRate: 94.8,
         },
         {
           channel: NotificationChannel.IN_APP,
@@ -180,42 +199,42 @@ export function NotificationDashboard() {
           healthy: true,
           lastCheck: new Date(),
           errorCount: 2,
-          successRate: 99.8
-        }
+          successRate: 99.8,
+        },
       ]);
-      
+
       // Mock templates
       setTemplates([
         {
-          id: 'welcome',
-          name: 'Boas-vindas',
-          description: 'Template de boas-vindas para novos usuários',
+          id: "welcome",
+          name: "Boas-vindas",
+          description: "Template de boas-vindas para novos usuários",
           type: NotificationType.SYSTEM,
           channels: [NotificationChannel.EMAIL, NotificationChannel.IN_APP],
-          subject: 'Bem-vindo ao NeonPro!',
-          content: 'Olá {{user.firstName}}, bem-vindo ao NeonPro!',
-          variables: ['user.firstName', 'user.email'],
+          subject: "Bem-vindo ao NeonPro!",
+          content: "Olá {{user.firstName}}, bem-vindo ao NeonPro!",
+          variables: ["user.firstName", "user.email"],
           isActive: true,
           createdAt: new Date(),
-          updatedAt: new Date()
+          updatedAt: new Date(),
         },
         {
-          id: 'appointment-reminder',
-          name: 'Lembrete de Consulta',
-          description: 'Lembrete de consulta agendada',
+          id: "appointment-reminder",
+          name: "Lembrete de Consulta",
+          description: "Lembrete de consulta agendada",
           type: NotificationType.APPOINTMENT,
           channels: [NotificationChannel.SMS, NotificationChannel.PUSH],
-          subject: 'Lembrete: Consulta amanhã',
-          content: 'Olá {{patient.firstName}}, lembre-se da sua consulta amanhã às {{appointment.time}}.',
-          variables: ['patient.firstName', 'appointment.time', 'appointment.date'],
+          subject: "Lembrete: Consulta amanhã",
+          content:
+            "Olá {{patient.firstName}}, lembre-se da sua consulta amanhã às {{appointment.time}}.",
+          variables: ["patient.firstName", "appointment.time", "appointment.date"],
           isActive: true,
           createdAt: new Date(),
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       ]);
-      
     } catch (error) {
-      console.error('Erro ao carregar dados do dashboard:', error);
+      console.error("Erro ao carregar dados do dashboard:", error);
     } finally {
       setLoading(false);
     }
@@ -243,24 +262,32 @@ export function NotificationDashboard() {
   const getChannelName = (channel: NotificationChannel) => {
     switch (channel) {
       case NotificationChannel.EMAIL:
-        return 'Email';
+        return "Email";
       case NotificationChannel.SMS:
-        return 'SMS';
+        return "SMS";
       case NotificationChannel.PUSH:
-        return 'Push';
+        return "Push";
       case NotificationChannel.IN_APP:
-        return 'In-App';
+        return "In-App";
       default:
-        return 'Desconhecido';
+        return "Desconhecido";
     }
   };
 
   const getStatusBadge = (status: DeliveryStatus) => {
     switch (status) {
       case DeliveryStatus.SENT:
-        return <Badge variant="outline" className="text-blue-600">Enviado</Badge>;
+        return (
+          <Badge variant="outline" className="text-blue-600">
+            Enviado
+          </Badge>
+        );
       case DeliveryStatus.DELIVERED:
-        return <Badge variant="outline" className="text-green-600">Entregue</Badge>;
+        return (
+          <Badge variant="outline" className="text-green-600">
+            Entregue
+          </Badge>
+        );
       case DeliveryStatus.FAILED:
         return <Badge variant="destructive">Falhou</Badge>;
       case DeliveryStatus.PENDING:
@@ -303,7 +330,7 @@ export function NotificationDashboard() {
             <p className="text-xs text-muted-foreground">+12% em relação ao mês anterior</p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Taxa de Entrega</CardTitle>
@@ -316,7 +343,7 @@ export function NotificationDashboard() {
             <p className="text-xs text-muted-foreground">+2.1% em relação ao mês anterior</p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Falhas</CardTitle>
@@ -327,7 +354,7 @@ export function NotificationDashboard() {
             <p className="text-xs text-muted-foreground">-5% em relação ao mês anterior</p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Pendentes</CardTitle>
@@ -349,7 +376,10 @@ export function NotificationDashboard() {
         <CardContent>
           <div className="space-y-4">
             {channelStatus.map((channel) => (
-              <div key={channel.channel} className="flex items-center justify-between p-4 border rounded-lg">
+              <div
+                key={channel.channel}
+                className="flex items-center justify-between p-4 border rounded-lg"
+              >
                 <div className="flex items-center space-x-3">
                   {getChannelIcon(channel.channel)}
                   <div>
@@ -359,18 +389,20 @@ export function NotificationDashboard() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center space-x-4">
                   <div className="text-right">
                     <div className="text-sm font-medium">{channel.successRate}% sucesso</div>
                     <div className="text-xs text-muted-foreground">{channel.errorCount} erros</div>
                   </div>
-                  
+
                   <div className="flex items-center space-x-2">
                     <Switch checked={channel.enabled} />
-                    <div className={`w-3 h-3 rounded-full ${
-                      channel.healthy ? 'bg-green-500' : 'bg-red-500'
-                    }`} />
+                    <div
+                      className={`w-3 h-3 rounded-full ${
+                        channel.healthy ? "bg-green-500" : "bg-red-500"
+                      }`}
+                    />
                   </div>
                 </div>
               </div>
@@ -387,40 +419,46 @@ export function NotificationDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {stats && Object.entries(stats.channels).map(([channel, count]) => {
-                const percentage = (count / stats.total) * 100;
-                return (
-                  <div key={channel} className="space-y-1">
-                    <div className="flex justify-between text-sm">
-                      <span className="capitalize">{channel}</span>
-                      <span>{count.toLocaleString()} ({percentage.toFixed(1)}%)</span>
+              {stats &&
+                Object.entries(stats.channels).map(([channel, count]) => {
+                  const percentage = (count / stats.total) * 100;
+                  return (
+                    <div key={channel} className="space-y-1">
+                      <div className="flex justify-between text-sm">
+                        <span className="capitalize">{channel}</span>
+                        <span>
+                          {count.toLocaleString()} ({percentage.toFixed(1)}%)
+                        </span>
+                      </div>
+                      <Progress value={percentage} className="h-2" />
                     </div>
-                    <Progress value={percentage} className="h-2" />
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader>
             <CardTitle>Distribuição por Tipo</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {stats && Object.entries(stats.types).map(([type, count]) => {
-                const percentage = (count / stats.total) * 100;
-                return (
-                  <div key={type} className="space-y-1">
-                    <div className="flex justify-between text-sm">
-                      <span className="capitalize">{type}</span>
-                      <span>{count.toLocaleString()} ({percentage.toFixed(1)}%)</span>
+              {stats &&
+                Object.entries(stats.types).map(([type, count]) => {
+                  const percentage = (count / stats.total) * 100;
+                  return (
+                    <div key={type} className="space-y-1">
+                      <div className="flex justify-between text-sm">
+                        <span className="capitalize">{type}</span>
+                        <span>
+                          {count.toLocaleString()} ({percentage.toFixed(1)}%)
+                        </span>
+                      </div>
+                      <Progress value={percentage} className="h-2" />
                     </div>
-                    <Progress value={percentage} className="h-2" />
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
           </CardContent>
         </Card>
@@ -433,14 +471,16 @@ export function NotificationDashboard() {
       <div className="flex justify-between items-center">
         <div>
           <h3 className="text-lg font-medium">Templates de Notificação</h3>
-          <p className="text-sm text-muted-foreground">Gerencie templates para diferentes tipos de notificação</p>
+          <p className="text-sm text-muted-foreground">
+            Gerencie templates para diferentes tipos de notificação
+          </p>
         </div>
         <Button>
           <Plus className="h-4 w-4 mr-2" />
           Novo Template
         </Button>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {templates.map((template) => (
           <Card key={template.id}>
@@ -472,19 +512,19 @@ export function NotificationDashboard() {
                     ))}
                   </div>
                 </div>
-                
+
                 <div>
                   <Label className="text-xs text-muted-foreground">ASSUNTO</Label>
                   <p className="text-sm mt-1 truncate">{template.subject}</p>
                 </div>
-                
+
                 <div>
                   <Label className="text-xs text-muted-foreground">VARIÁVEIS</Label>
                   <p className="text-xs text-muted-foreground mt-1">
                     {template.variables.length} variáveis disponíveis
                   </p>
                 </div>
-                
+
                 <div className="flex justify-between items-center pt-2">
                   <Switch checked={template.isActive} />
                   <Button variant="outline" size="sm">
@@ -505,7 +545,9 @@ export function NotificationDashboard() {
       <div className="flex justify-between items-center">
         <div>
           <h3 className="text-lg font-medium">Histórico de Entregas</h3>
-          <p className="text-sm text-muted-foreground">Acompanhe o status das notificações enviadas</p>
+          <p className="text-sm text-muted-foreground">
+            Acompanhe o status das notificações enviadas
+          </p>
         </div>
         <div className="flex space-x-2">
           <Button variant="outline">
@@ -518,7 +560,7 @@ export function NotificationDashboard() {
           </Button>
         </div>
       </div>
-      
+
       <div className="flex space-x-4">
         <Input
           placeholder="Buscar por destinatário..."
@@ -551,7 +593,7 @@ export function NotificationDashboard() {
           </SelectContent>
         </Select>
       </div>
-      
+
       <Card>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
@@ -584,13 +626,14 @@ export function NotificationDashboard() {
                   <td className="p-4">
                     <Badge variant="outline">Lembrete</Badge>
                   </td>
-                  <td className="p-4">
-                    {getStatusBadge(DeliveryStatus.DELIVERED)}
-                  </td>
+                  <td className="p-4">{getStatusBadge(DeliveryStatus.DELIVERED)}</td>
                   <td className="p-4">
                     <div className="text-sm">
-                      {new Date().toLocaleDateString()}<br />
-                      <span className="text-muted-foreground">{new Date().toLocaleTimeString()}</span>
+                      {new Date().toLocaleDateString()}
+                      <br />
+                      <span className="text-muted-foreground">
+                        {new Date().toLocaleTimeString()}
+                      </span>
                     </div>
                   </td>
                   <td className="p-4">
@@ -612,19 +655,21 @@ export function NotificationDashboard() {
       <div className="flex justify-between items-center">
         <div>
           <h3 className="text-lg font-medium">Automação</h3>
-          <p className="text-sm text-muted-foreground">Configure regras automáticas para notificações</p>
+          <p className="text-sm text-muted-foreground">
+            Configure regras automáticas para notificações
+          </p>
         </div>
         <Button>
           <Plus className="h-4 w-4 mr-2" />
           Nova Regra
         </Button>
       </div>
-      
+
       <Alert>
         <AlertTriangle className="h-4 w-4" />
         <AlertDescription>
-          O sistema de automação está em desenvolvimento. Em breve você poderá criar regras automáticas
-          baseadas em eventos do sistema.
+          O sistema de automação está em desenvolvimento. Em breve você poderá criar regras
+          automáticas baseadas em eventos do sistema.
         </AlertDescription>
       </Alert>
     </div>
@@ -650,7 +695,9 @@ export function NotificationDashboard() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">Sistema de Notificações</h1>
-          <p className="text-muted-foreground">Gerencie e monitore todas as notificações do sistema</p>
+          <p className="text-muted-foreground">
+            Gerencie e monitore todas as notificações do sistema
+          </p>
         </div>
         <div className="flex space-x-2">
           <Button variant="outline">
@@ -681,7 +728,9 @@ export function NotificationDashboard() {
           <div className="text-center py-12">
             <BarChart3 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-medium mb-2">Analytics em Desenvolvimento</h3>
-            <p className="text-muted-foreground">Relatórios detalhados e métricas avançadas estarão disponíveis em breve.</p>
+            <p className="text-muted-foreground">
+              Relatórios detalhados e métricas avançadas estarão disponíveis em breve.
+            </p>
           </div>
         </TabsContent>
       </Tabs>

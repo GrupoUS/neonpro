@@ -1,9 +1,9 @@
 // Session Synchronization System
 // Real-time session state synchronization across multiple devices
 
-import { UserSession, UserDevice, SessionSync } from '@/types/session';
-import { SessionConfig } from '@/lib/auth/config/session-config';
-import { SessionUtils } from '@/lib/auth/utils/session-utils';
+import type { UserSession, UserDevice, SessionSync } from "@/types/session";
+import type { SessionConfig } from "@/lib/auth/config/session-config";
+import type { SessionUtils } from "@/lib/auth/utils/session-utils";
 
 export interface SyncEvent {
   id: string;
@@ -17,19 +17,19 @@ export interface SyncEvent {
   checksum: string;
 }
 
-export type SyncEventType = 
-  | 'session_created'
-  | 'session_updated'
-  | 'session_terminated'
-  | 'device_registered'
-  | 'device_updated'
-  | 'device_removed'
-  | 'preferences_updated'
-  | 'security_event'
-  | 'heartbeat'
-  | 'sync_request'
-  | 'conflict_detected'
-  | 'conflict_resolved';
+export type SyncEventType =
+  | "session_created"
+  | "session_updated"
+  | "session_terminated"
+  | "device_registered"
+  | "device_updated"
+  | "device_removed"
+  | "preferences_updated"
+  | "security_event"
+  | "heartbeat"
+  | "sync_request"
+  | "conflict_detected"
+  | "conflict_resolved";
 
 export interface SyncConflict {
   id: string;
@@ -45,21 +45,21 @@ export interface SyncConflict {
   resolution?: SyncEvent;
 }
 
-export type ConflictType = 
-  | 'concurrent_update'
-  | 'version_mismatch'
-  | 'device_desync'
-  | 'session_collision'
-  | 'data_corruption'
-  | 'timestamp_skew';
+export type ConflictType =
+  | "concurrent_update"
+  | "version_mismatch"
+  | "device_desync"
+  | "session_collision"
+  | "data_corruption"
+  | "timestamp_skew";
 
-export type ConflictResolutionStrategy = 
-  | 'last_write_wins'
-  | 'first_write_wins'
-  | 'merge_changes'
-  | 'manual_resolution'
-  | 'rollback_changes'
-  | 'device_priority';
+export type ConflictResolutionStrategy =
+  | "last_write_wins"
+  | "first_write_wins"
+  | "merge_changes"
+  | "manual_resolution"
+  | "rollback_changes"
+  | "device_priority";
 
 export interface SyncState {
   userId: string;
@@ -89,15 +89,15 @@ export interface SyncMessage {
   targetId?: string;
 }
 
-export type SyncMessageType = 
-  | 'sync_event'
-  | 'sync_request'
-  | 'sync_response'
-  | 'heartbeat'
-  | 'conflict_notification'
-  | 'resolution_request'
-  | 'ack'
-  | 'nack';
+export type SyncMessageType =
+  | "sync_event"
+  | "sync_request"
+  | "sync_response"
+  | "heartbeat"
+  | "conflict_notification"
+  | "resolution_request"
+  | "ack"
+  | "nack";
 
 export class SessionSyncManager {
   private config: SessionConfig;
@@ -125,23 +125,23 @@ export class SessionSyncManager {
   public async initialize(userId: string): Promise<void> {
     try {
       this.userId = userId;
-      
+
       // Initialize sync state
       await this.initializeSyncState(userId);
-      
+
       // Connect to sync server
       await this.connectToSyncServer();
-      
+
       // Start periodic sync
       this.startPeriodicSync();
-      
+
       // Start heartbeat
       this.startHeartbeat();
-      
+
       console.log(`Session sync initialized for user ${userId}`);
-      this.emit('sync_initialized', { userId, deviceId: this.deviceId });
+      this.emit("sync_initialized", { userId, deviceId: this.deviceId });
     } catch (error) {
-      console.error('Error initializing session sync:', error);
+      console.error("Error initializing session sync:", error);
       throw error;
     }
   }
@@ -151,7 +151,7 @@ export class SessionSyncManager {
    */
   private async initializeSyncState(userId: string): Promise<void> {
     const existingState = this.syncStates.get(userId);
-    
+
     if (!existingState) {
       const syncState: SyncState = {
         userId,
@@ -160,12 +160,12 @@ export class SessionSyncManager {
         pendingEvents: [],
         conflictQueue: [],
         syncVersion: 1,
-        isOnline: false
+        isOnline: false,
       };
-      
+
       this.syncStates.set(userId, syncState);
     }
-    
+
     // Load existing sync data from storage
     await this.loadSyncDataFromStorage(userId);
   }
@@ -178,51 +178,50 @@ export class SessionSyncManager {
       try {
         const wsUrl = this.config.getWebSocketUrl();
         this.webSocket = new WebSocket(wsUrl);
-        
+
         this.webSocket.onopen = () => {
-          console.log('Connected to sync server');
+          console.log("Connected to sync server");
           this.isConnected = true;
           this.reconnectAttempts = 0;
-          
+
           // Send authentication
           this.sendAuthMessage();
-          
+
           // Update sync state
           const syncState = this.syncStates.get(this.userId!);
           if (syncState) {
             syncState.isOnline = true;
           }
-          
-          this.emit('sync_connected', { deviceId: this.deviceId });
+
+          this.emit("sync_connected", { deviceId: this.deviceId });
           resolve();
         };
-        
+
         this.webSocket.onmessage = (event) => {
           this.handleSyncMessage(JSON.parse(event.data));
         };
-        
+
         this.webSocket.onclose = () => {
-          console.log('Disconnected from sync server');
+          console.log("Disconnected from sync server");
           this.isConnected = false;
-          
+
           // Update sync state
           const syncState = this.syncStates.get(this.userId!);
           if (syncState) {
             syncState.isOnline = false;
           }
-          
-          this.emit('sync_disconnected', { deviceId: this.deviceId });
-          
+
+          this.emit("sync_disconnected", { deviceId: this.deviceId });
+
           // Attempt reconnection
           this.attemptReconnection();
         };
-        
+
         this.webSocket.onerror = (error) => {
-          console.error('WebSocket error:', error);
-          this.emit('sync_error', { error, deviceId: this.deviceId });
+          console.error("WebSocket error:", error);
+          this.emit("sync_error", { error, deviceId: this.deviceId });
           reject(error);
         };
-        
       } catch (error) {
         reject(error);
       }
@@ -235,18 +234,18 @@ export class SessionSyncManager {
   private sendAuthMessage(): void {
     if (this.webSocket && this.userId) {
       const authMessage: SyncMessage = {
-        type: 'sync_request',
+        type: "sync_request",
         payload: {
-          action: 'authenticate',
+          action: "authenticate",
           userId: this.userId,
           deviceId: this.deviceId,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
         timestamp: Date.now(),
         messageId: this.utils.generateSessionToken(),
-        senderId: this.deviceId
+        senderId: this.deviceId,
       };
-      
+
       this.webSocket.send(JSON.stringify(authMessage));
     }
   }
@@ -257,43 +256,43 @@ export class SessionSyncManager {
   private handleSyncMessage(message: SyncMessage): void {
     try {
       switch (message.type) {
-        case 'sync_event':
+        case "sync_event":
           this.handleSyncEvent(message.payload);
           break;
-          
-        case 'sync_request':
+
+        case "sync_request":
           this.handleSyncRequest(message);
           break;
-          
-        case 'sync_response':
+
+        case "sync_response":
           this.handleSyncResponse(message);
           break;
-          
-        case 'heartbeat':
+
+        case "heartbeat":
           this.handleHeartbeat(message);
           break;
-          
-        case 'conflict_notification':
+
+        case "conflict_notification":
           this.handleConflictNotification(message.payload);
           break;
-          
-        case 'resolution_request':
+
+        case "resolution_request":
           this.handleResolutionRequest(message.payload);
           break;
-          
-        case 'ack':
+
+        case "ack":
           this.handleAcknowledgment(message);
           break;
-          
-        case 'nack':
+
+        case "nack":
           this.handleNegativeAcknowledgment(message);
           break;
-          
+
         default:
-          console.warn('Unknown sync message type:', message.type);
+          console.warn("Unknown sync message type:", message.type);
       }
     } catch (error) {
-      console.error('Error handling sync message:', error);
+      console.error("Error handling sync message:", error);
     }
   }
 
@@ -302,69 +301,71 @@ export class SessionSyncManager {
    */
   private async handleSyncEvent(event: SyncEvent): Promise<void> {
     if (!this.userId) return;
-    
+
     const syncState = this.syncStates.get(this.userId);
     if (!syncState) return;
-    
+
     // Check for conflicts
     const conflict = await this.detectConflict(event, syncState);
     if (conflict) {
       await this.handleConflict(conflict);
       return;
     }
-    
+
     // Apply event
     await this.applySyncEvent(event);
-    
+
     // Update sync state
     syncState.lastSyncTimestamp = Math.max(syncState.lastSyncTimestamp, event.timestamp);
     syncState.syncVersion++;
-    
+
     // Send acknowledgment
     this.sendAcknowledgment(event.id);
-    
+
     // Emit event
-    this.emit('sync_event_applied', event);
+    this.emit("sync_event_applied", event);
   }
 
   /**
    * Detect sync conflicts
    */
-  private async detectConflict(event: SyncEvent, syncState: SyncState): Promise<SyncConflict | null> {
+  private async detectConflict(
+    event: SyncEvent,
+    syncState: SyncState,
+  ): Promise<SyncConflict | null> {
     // Check version conflicts
     const deviceState = syncState.deviceStates.get(event.deviceId);
     if (deviceState && event.version <= deviceState.version) {
       return {
         id: this.utils.generateSessionToken(),
-        type: 'version_mismatch',
+        type: "version_mismatch",
         userId: event.userId,
         sessionId: event.sessionId,
         conflictingDevices: [event.deviceId, this.deviceId],
         localVersion: event,
         remoteVersions: [],
-        resolutionStrategy: 'last_write_wins'
+        resolutionStrategy: "last_write_wins",
       };
     }
-    
+
     // Check for concurrent updates
     const recentEvents = syncState.pendingEvents.filter(
-      e => e.sessionId === event.sessionId && 
-           Math.abs(e.timestamp - event.timestamp) < 5000 // 5 seconds
+      (e) => e.sessionId === event.sessionId && Math.abs(e.timestamp - event.timestamp) < 5000, // 5 seconds
     );
-    
+
     if (recentEvents.length > 0) {
       return {
         id: this.utils.generateSessionToken(),
-        type: 'concurrent_update',
+        type: "concurrent_update",
         userId: event.userId,
         sessionId: event.sessionId,
         conflictingDevices: [event.deviceId, this.deviceId],
         localVersion: event,
         remoteVersions: recentEvents,
-        resolutionStrategy: 'merge_changes'
+        resolutionStrategy: "merge_changes",
       };
     }
-    
+
     return null;
   }
 
@@ -373,20 +374,20 @@ export class SessionSyncManager {
    */
   private async handleConflict(conflict: SyncConflict): Promise<void> {
     if (!this.userId) return;
-    
+
     const syncState = this.syncStates.get(this.userId);
     if (!syncState) return;
-    
+
     // Add to conflict queue
     syncState.conflictQueue.push(conflict);
-    
+
     // Attempt automatic resolution
     const resolution = await this.resolveConflict(conflict);
     if (resolution) {
       await this.applyConflictResolution(conflict, resolution);
     } else {
       // Notify about manual resolution needed
-      this.emit('conflict_detected', conflict);
+      this.emit("conflict_detected", conflict);
     }
   }
 
@@ -395,21 +396,21 @@ export class SessionSyncManager {
    */
   private async resolveConflict(conflict: SyncConflict): Promise<SyncEvent | null> {
     switch (conflict.resolutionStrategy) {
-      case 'last_write_wins':
+      case "last_write_wins":
         return this.resolveLastWriteWins(conflict);
-        
-      case 'first_write_wins':
+
+      case "first_write_wins":
         return this.resolveFirstWriteWins(conflict);
-        
-      case 'merge_changes':
+
+      case "merge_changes":
         return await this.resolveMergeChanges(conflict);
-        
-      case 'device_priority':
+
+      case "device_priority":
         return this.resolveDevicePriority(conflict);
-        
-      case 'rollback_changes':
+
+      case "rollback_changes":
         return this.resolveRollback(conflict);
-        
+
       default:
         return null; // Manual resolution required
     }
@@ -420,15 +421,15 @@ export class SessionSyncManager {
    */
   private resolveLastWriteWins(conflict: SyncConflict): SyncEvent {
     const allEvents = [conflict.localVersion, ...conflict.remoteVersions];
-    return allEvents.reduce((latest, current) => 
-      current.timestamp > latest.timestamp ? current : latest
+    return allEvents.reduce((latest, current) =>
+      current.timestamp > latest.timestamp ? current : latest,
     );
   }
 
   private resolveFirstWriteWins(conflict: SyncConflict): SyncEvent {
     const allEvents = [conflict.localVersion, ...conflict.remoteVersions];
-    return allEvents.reduce((earliest, current) => 
-      current.timestamp < earliest.timestamp ? current : earliest
+    return allEvents.reduce((earliest, current) =>
+      current.timestamp < earliest.timestamp ? current : earliest,
     );
   }
 
@@ -437,9 +438,9 @@ export class SessionSyncManager {
       // Merge data from conflicting events
       const mergedData = this.mergeEventData(
         conflict.localVersion.data,
-        conflict.remoteVersions.map(e => e.data)
+        conflict.remoteVersions.map((e) => e.data),
       );
-      
+
       // Create merged event
       const mergedEvent: SyncEvent = {
         id: this.utils.generateSessionToken(),
@@ -449,16 +450,17 @@ export class SessionSyncManager {
         deviceId: this.deviceId,
         data: mergedData,
         timestamp: Date.now(),
-        version: Math.max(
-          conflict.localVersion.version,
-          ...conflict.remoteVersions.map(e => e.version)
-        ) + 1,
-        checksum: this.calculateChecksum(mergedData)
+        version:
+          Math.max(
+            conflict.localVersion.version,
+            ...conflict.remoteVersions.map((e) => e.version),
+          ) + 1,
+        checksum: this.calculateChecksum(mergedData),
       };
-      
+
       return mergedEvent;
     } catch (error) {
-      console.error('Error merging changes:', error);
+      console.error("Error merging changes:", error);
       return null;
     }
   }
@@ -467,7 +469,7 @@ export class SessionSyncManager {
     // Use device priority order (could be configured)
     const devicePriority = this.getDevicePriority();
     const allEvents = [conflict.localVersion, ...conflict.remoteVersions];
-    
+
     return allEvents.reduce((highest, current) => {
       const currentPriority = devicePriority[current.deviceId] || 0;
       const highestPriority = devicePriority[highest.deviceId] || 0;
@@ -479,14 +481,14 @@ export class SessionSyncManager {
     // Create rollback event
     return {
       id: this.utils.generateSessionToken(),
-      type: 'session_updated',
+      type: "session_updated",
       userId: conflict.userId,
       sessionId: conflict.sessionId,
       deviceId: this.deviceId,
-      data: { action: 'rollback', conflictId: conflict.id },
+      data: { action: "rollback", conflictId: conflict.id },
       timestamp: Date.now(),
       version: conflict.localVersion.version + 1,
-      checksum: ''
+      checksum: "",
     };
   }
 
@@ -496,43 +498,43 @@ export class SessionSyncManager {
   private async applySyncEvent(event: SyncEvent): Promise<void> {
     try {
       switch (event.type) {
-        case 'session_created':
+        case "session_created":
           await this.applySessionCreated(event);
           break;
-          
-        case 'session_updated':
+
+        case "session_updated":
           await this.applySessionUpdated(event);
           break;
-          
-        case 'session_terminated':
+
+        case "session_terminated":
           await this.applySessionTerminated(event);
           break;
-          
-        case 'device_registered':
+
+        case "device_registered":
           await this.applyDeviceRegistered(event);
           break;
-          
-        case 'device_updated':
+
+        case "device_updated":
           await this.applyDeviceUpdated(event);
           break;
-          
-        case 'device_removed':
+
+        case "device_removed":
           await this.applyDeviceRemoved(event);
           break;
-          
-        case 'preferences_updated':
+
+        case "preferences_updated":
           await this.applyPreferencesUpdated(event);
           break;
-          
-        case 'security_event':
+
+        case "security_event":
           await this.applySecurityEvent(event);
           break;
-          
+
         default:
-          console.warn('Unknown sync event type:', event.type);
+          console.warn("Unknown sync event type:", event.type);
       }
     } catch (error) {
-      console.error('Error applying sync event:', error);
+      console.error("Error applying sync event:", error);
       throw error;
     }
   }
@@ -542,87 +544,87 @@ export class SessionSyncManager {
    */
   private async applySessionCreated(event: SyncEvent): Promise<void> {
     // Apply session creation to local state
-    await fetch('/api/session/sync/create', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(event.data)
+    await fetch("/api/session/sync/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(event.data),
     });
   }
 
   private async applySessionUpdated(event: SyncEvent): Promise<void> {
     // Apply session update to local state
-    await fetch('/api/session/sync/update', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+    await fetch("/api/session/sync/update", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         sessionId: event.sessionId,
-        updates: event.data
-      })
+        updates: event.data,
+      }),
     });
   }
 
   private async applySessionTerminated(event: SyncEvent): Promise<void> {
     // Apply session termination to local state
-    await fetch('/api/session/sync/terminate', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
+    await fetch("/api/session/sync/terminate", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         sessionId: event.sessionId,
-        reason: event.data.reason
-      })
+        reason: event.data.reason,
+      }),
     });
   }
 
   private async applyDeviceRegistered(event: SyncEvent): Promise<void> {
     // Apply device registration to local state
-    await fetch('/api/devices/sync/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(event.data)
+    await fetch("/api/devices/sync/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(event.data),
     });
   }
 
   private async applyDeviceUpdated(event: SyncEvent): Promise<void> {
     // Apply device update to local state
-    await fetch('/api/devices/sync/update', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+    await fetch("/api/devices/sync/update", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         deviceId: event.data.deviceId,
-        updates: event.data.updates
-      })
+        updates: event.data.updates,
+      }),
     });
   }
 
   private async applyDeviceRemoved(event: SyncEvent): Promise<void> {
     // Apply device removal to local state
-    await fetch('/api/devices/sync/remove', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
+    await fetch("/api/devices/sync/remove", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        deviceId: event.data.deviceId
-      })
+        deviceId: event.data.deviceId,
+      }),
     });
   }
 
   private async applyPreferencesUpdated(event: SyncEvent): Promise<void> {
     // Apply preferences update to local state
-    await fetch('/api/users/sync/preferences', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+    await fetch("/api/users/sync/preferences", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         userId: event.userId,
-        preferences: event.data.preferences
-      })
+        preferences: event.data.preferences,
+      }),
     });
   }
 
   private async applySecurityEvent(event: SyncEvent): Promise<void> {
     // Apply security event to local state
-    await fetch('/api/security/sync/event', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(event.data)
+    await fetch("/api/security/sync/event", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(event.data),
     });
   }
 
@@ -632,13 +634,13 @@ export class SessionSyncManager {
   public async broadcastSyncEvent(
     type: SyncEventType,
     sessionId: string,
-    data: any
+    data: any,
   ): Promise<void> {
     if (!this.userId || !this.isConnected) return;
-    
+
     const syncState = this.syncStates.get(this.userId);
     if (!syncState) return;
-    
+
     const event: SyncEvent = {
       id: this.utils.generateSessionToken(),
       type,
@@ -648,25 +650,25 @@ export class SessionSyncManager {
       data,
       timestamp: Date.now(),
       version: syncState.syncVersion + 1,
-      checksum: this.calculateChecksum(data)
+      checksum: this.calculateChecksum(data),
     };
-    
+
     // Add to pending events
     syncState.pendingEvents.push(event);
-    
+
     // Send via WebSocket
     if (this.webSocket) {
       const message: SyncMessage = {
-        type: 'sync_event',
+        type: "sync_event",
         payload: event,
         timestamp: Date.now(),
         messageId: this.utils.generateSessionToken(),
-        senderId: this.deviceId
+        senderId: this.deviceId,
       };
-      
+
       this.webSocket.send(JSON.stringify(message));
     }
-    
+
     // Update sync version
     syncState.syncVersion++;
   }
@@ -676,20 +678,20 @@ export class SessionSyncManager {
    */
   public async requestFullSync(): Promise<void> {
     if (!this.userId || !this.isConnected || !this.webSocket) return;
-    
+
     const message: SyncMessage = {
-      type: 'sync_request',
+      type: "sync_request",
       payload: {
-        action: 'full_sync',
+        action: "full_sync",
         userId: this.userId,
         deviceId: this.deviceId,
-        lastSyncTimestamp: this.syncStates.get(this.userId)?.lastSyncTimestamp || 0
+        lastSyncTimestamp: this.syncStates.get(this.userId)?.lastSyncTimestamp || 0,
       },
       timestamp: Date.now(),
       messageId: this.utils.generateSessionToken(),
-      senderId: this.deviceId
+      senderId: this.deviceId,
     };
-    
+
     this.webSocket.send(JSON.stringify(message));
   }
 
@@ -699,11 +701,11 @@ export class SessionSyncManager {
   private mergeEventData(localData: any, remoteDataArray: any[]): any {
     // Simple merge strategy - in production, implement proper conflict resolution
     let merged = { ...localData };
-    
-    remoteDataArray.forEach(remoteData => {
+
+    remoteDataArray.forEach((remoteData) => {
       merged = { ...merged, ...remoteData };
     });
-    
+
     return merged;
   }
 
@@ -713,7 +715,7 @@ export class SessionSyncManager {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return hash.toString(16);
@@ -722,10 +724,10 @@ export class SessionSyncManager {
   private getDevicePriority(): Record<string, number> {
     // Device priority configuration
     return {
-      'desktop': 3,
-      'laptop': 2,
-      'tablet': 1,
-      'mobile': 0
+      desktop: 3,
+      laptop: 2,
+      tablet: 1,
+      mobile: 0,
     };
   }
 
@@ -738,7 +740,7 @@ export class SessionSyncManager {
         // Implementation depends on storage format
       }
     } catch (error) {
-      console.error('Error loading sync data from storage:', error);
+      console.error("Error loading sync data from storage:", error);
     }
   }
 
@@ -754,16 +756,16 @@ export class SessionSyncManager {
     this.heartbeatInterval = setInterval(() => {
       if (this.isConnected && this.webSocket) {
         const heartbeat: SyncMessage = {
-          type: 'heartbeat',
+          type: "heartbeat",
           payload: {
             deviceId: this.deviceId,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           },
           timestamp: Date.now(),
           messageId: this.utils.generateSessionToken(),
-          senderId: this.deviceId
+          senderId: this.deviceId,
         };
-        
+
         this.webSocket.send(JSON.stringify(heartbeat));
       }
     }, 15000); // Heartbeat every 15 seconds
@@ -771,29 +773,29 @@ export class SessionSyncManager {
 
   private attemptReconnection(): void {
     if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-      console.error('Max reconnection attempts reached');
+      console.error("Max reconnection attempts reached");
       return;
     }
-    
+
     this.reconnectAttempts++;
     const delay = Math.pow(2, this.reconnectAttempts) * 1000; // Exponential backoff
-    
+
     setTimeout(() => {
       console.log(`Attempting reconnection ${this.reconnectAttempts}/${this.maxReconnectAttempts}`);
-      this.connectToSyncServer().catch(error => {
-        console.error('Reconnection failed:', error);
+      this.connectToSyncServer().catch((error) => {
+        console.error("Reconnection failed:", error);
       });
     }, delay);
   }
 
   private handleSyncRequest(message: SyncMessage): void {
     // Handle sync requests from other devices
-    console.log('Received sync request:', message);
+    console.log("Received sync request:", message);
   }
 
   private handleSyncResponse(message: SyncMessage): void {
     // Handle sync responses
-    console.log('Received sync response:', message);
+    console.log("Received sync response:", message);
   }
 
   private handleHeartbeat(message: SyncMessage): void {
@@ -811,11 +813,11 @@ export class SessionSyncManager {
   }
 
   private handleConflictNotification(conflict: SyncConflict): void {
-    this.emit('conflict_notification', conflict);
+    this.emit("conflict_notification", conflict);
   }
 
   private handleResolutionRequest(request: any): void {
-    this.emit('resolution_request', request);
+    this.emit("resolution_request", request);
   }
 
   private handleAcknowledgment(message: SyncMessage): void {
@@ -824,7 +826,7 @@ export class SessionSyncManager {
       const syncState = this.syncStates.get(this.userId);
       if (syncState) {
         syncState.pendingEvents = syncState.pendingEvents.filter(
-          e => e.id !== message.payload.eventId
+          (e) => e.id !== message.payload.eventId,
         );
       }
     }
@@ -832,44 +834,47 @@ export class SessionSyncManager {
 
   private handleNegativeAcknowledgment(message: SyncMessage): void {
     // Handle failed sync events
-    console.error('Sync event failed:', message.payload);
+    console.error("Sync event failed:", message.payload);
   }
 
   private sendAcknowledgment(eventId: string): void {
     if (this.webSocket) {
       const ack: SyncMessage = {
-        type: 'ack',
+        type: "ack",
         payload: { eventId },
         timestamp: Date.now(),
         messageId: this.utils.generateSessionToken(),
-        senderId: this.deviceId
+        senderId: this.deviceId,
       };
-      
+
       this.webSocket.send(JSON.stringify(ack));
     }
   }
 
-  private async applyConflictResolution(conflict: SyncConflict, resolution: SyncEvent): Promise<void> {
+  private async applyConflictResolution(
+    conflict: SyncConflict,
+    resolution: SyncEvent,
+  ): Promise<void> {
     try {
       // Apply resolution
       await this.applySyncEvent(resolution);
-      
+
       // Mark conflict as resolved
       conflict.resolvedAt = Date.now();
       conflict.resolvedBy = this.deviceId;
       conflict.resolution = resolution;
-      
+
       // Remove from conflict queue
       if (this.userId) {
         const syncState = this.syncStates.get(this.userId);
         if (syncState) {
-          syncState.conflictQueue = syncState.conflictQueue.filter(c => c.id !== conflict.id);
+          syncState.conflictQueue = syncState.conflictQueue.filter((c) => c.id !== conflict.id);
         }
       }
-      
-      this.emit('conflict_resolved', conflict);
+
+      this.emit("conflict_resolved", conflict);
     } catch (error) {
-      console.error('Error applying conflict resolution:', error);
+      console.error("Error applying conflict resolution:", error);
     }
   }
 
@@ -896,7 +901,7 @@ export class SessionSyncManager {
   private emit(event: string, data: any): void {
     const listeners = this.eventListeners.get(event);
     if (listeners) {
-      listeners.forEach(callback => {
+      listeners.forEach((callback) => {
         try {
           callback(data);
         } catch (error) {
@@ -922,15 +927,18 @@ export class SessionSyncManager {
     return syncState ? syncState.conflictQueue : [];
   }
 
-  public async resolveConflictManually(conflictId: string, resolution: SyncEvent): Promise<boolean> {
+  public async resolveConflictManually(
+    conflictId: string,
+    resolution: SyncEvent,
+  ): Promise<boolean> {
     if (!this.userId) return false;
-    
+
     const syncState = this.syncStates.get(this.userId);
     if (!syncState) return false;
-    
-    const conflict = syncState.conflictQueue.find(c => c.id === conflictId);
+
+    const conflict = syncState.conflictQueue.find((c) => c.id === conflictId);
     if (!conflict) return false;
-    
+
     await this.applyConflictResolution(conflict, resolution);
     return true;
   }
@@ -938,17 +946,15 @@ export class SessionSyncManager {
   public cleanup(): void {
     const now = Date.now();
     const maxAge = 24 * 60 * 60 * 1000; // 24 hours
-    
+
     // Clean up old sync states
     for (const [userId, syncState] of this.syncStates.entries()) {
       // Clean up old pending events
-      syncState.pendingEvents = syncState.pendingEvents.filter(
-        e => now - e.timestamp < maxAge
-      );
-      
+      syncState.pendingEvents = syncState.pendingEvents.filter((e) => now - e.timestamp < maxAge);
+
       // Clean up resolved conflicts
       syncState.conflictQueue = syncState.conflictQueue.filter(
-        c => !c.resolvedAt || now - c.resolvedAt < maxAge
+        (c) => !c.resolvedAt || now - c.resolvedAt < maxAge,
       );
     }
   }
@@ -959,18 +965,18 @@ export class SessionSyncManager {
       clearInterval(this.heartbeatInterval);
       this.heartbeatInterval = null;
     }
-    
+
     if (this.syncInterval) {
       clearInterval(this.syncInterval);
       this.syncInterval = null;
     }
-    
+
     // Close WebSocket
     if (this.webSocket) {
       this.webSocket.close();
       this.webSocket = null;
     }
-    
+
     // Clear state
     this.syncStates.clear();
     this.eventListeners.clear();

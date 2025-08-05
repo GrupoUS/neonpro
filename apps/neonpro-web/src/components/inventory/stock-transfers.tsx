@@ -1,34 +1,40 @@
-'use client';
+"use client";
 
 /**
  * Story 11.3: Stock Transfers Component
  * Internal stock transfer management interface
  */
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Icons } from '@/components/ui/icons';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import {
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Icons } from "@/components/ui/icons";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { 
+} from "@/components/ui/select";
+import type {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import {
+} from "@/components/ui/table";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -36,13 +42,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { 
-  StockOutputManager,
-  type StockTransfer,
-  type TransferRequest
-} from '@/lib/inventory';
-import { useToast } from '@/hooks/use-toast';
+} from "@/components/ui/dialog";
+import type { StockOutputManager, type StockTransfer, type TransferRequest } from "@/lib/inventory";
+import type { useToast } from "@/hooks/use-toast";
 
 interface StockTransfersProps {
   onRefresh: () => void;
@@ -55,7 +57,7 @@ interface TransferFormData {
   centro_custo_destino: string;
   quantidade: number;
   observacoes: string;
-  prioridade: 'baixa' | 'media' | 'alta';
+  prioridade: "baixa" | "media" | "alta";
 }
 
 export function StockTransfers({ onRefresh, className }: StockTransfersProps) {
@@ -66,14 +68,14 @@ export function StockTransfers({ onRefresh, className }: StockTransfersProps) {
   const [isApproving, setIsApproving] = useState<string | null>(null);
   const [isRejecting, setIsRejecting] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState<string>('pendente');
+  const [selectedStatus, setSelectedStatus] = useState<string>("pendente");
   const [formData, setFormData] = useState<TransferFormData>({
-    produto_id: '',
-    centro_custo_origem: '',
-    centro_custo_destino: '',
+    produto_id: "",
+    centro_custo_origem: "",
+    centro_custo_destino: "",
     quantidade: 1,
-    observacoes: '',
-    prioridade: 'media'
+    observacoes: "",
+    prioridade: "media",
   });
   const { toast } = useToast();
 
@@ -88,28 +90,27 @@ export function StockTransfers({ onRefresh, className }: StockTransfersProps) {
       setIsLoading(true);
 
       // Get transfers by status
-      const { data: transfersData, error: transfersError } = await stockOutputManager.getTransfersByStatus(
-        selectedStatus as any
-      );
+      const { data: transfersData, error: transfersError } =
+        await stockOutputManager.getTransfersByStatus(selectedStatus as any);
 
       if (transfersError) {
         throw new Error(transfersError);
       }
 
-      if (selectedStatus === 'pendente') {
+      if (selectedStatus === "pendente") {
         setPendingTransfers(transfersData || []);
         setTransfers([]);
       } else {
         setTransfers(transfersData || []);
         setPendingTransfers([]);
       }
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao carregar transferências';
+      const errorMessage =
+        error instanceof Error ? error.message : "Erro ao carregar transferências";
       toast({
-        title: 'Erro',
+        title: "Erro",
         description: errorMessage,
-        variant: 'destructive',
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -118,21 +119,21 @@ export function StockTransfers({ onRefresh, className }: StockTransfersProps) {
 
   const handleSubmitTransfer = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.produto_id || !formData.centro_custo_origem || !formData.centro_custo_destino) {
       toast({
-        title: 'Erro',
-        description: 'Preencha todos os campos obrigatórios',
-        variant: 'destructive',
+        title: "Erro",
+        description: "Preencha todos os campos obrigatórios",
+        variant: "destructive",
       });
       return;
     }
 
     if (formData.centro_custo_origem === formData.centro_custo_destino) {
       toast({
-        title: 'Erro',
-        description: 'Centro de custo origem deve ser diferente do destino',
-        variant: 'destructive',
+        title: "Erro",
+        description: "Centro de custo origem deve ser diferente do destino",
+        variant: "destructive",
       });
       return;
     }
@@ -146,7 +147,7 @@ export function StockTransfers({ onRefresh, className }: StockTransfersProps) {
         centro_custo_destino: formData.centro_custo_destino,
         quantidade: formData.quantidade,
         observacoes: formData.observacoes || null,
-        prioridade: formData.prioridade
+        prioridade: formData.prioridade,
       };
 
       const { data, error } = await stockOutputManager.createTransferRequest(transferRequest);
@@ -156,29 +157,28 @@ export function StockTransfers({ onRefresh, className }: StockTransfersProps) {
       }
 
       toast({
-        title: 'Sucesso',
-        description: 'Solicitação de transferência criada com sucesso',
+        title: "Sucesso",
+        description: "Solicitação de transferência criada com sucesso",
       });
 
       setFormData({
-        produto_id: '',
-        centro_custo_origem: '',
-        centro_custo_destino: '',
+        produto_id: "",
+        centro_custo_origem: "",
+        centro_custo_destino: "",
         quantidade: 1,
-        observacoes: '',
-        prioridade: 'media'
+        observacoes: "",
+        prioridade: "media",
       });
 
       setIsDialogOpen(false);
       loadTransfers();
       onRefresh();
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao criar transferência';
+      const errorMessage = error instanceof Error ? error.message : "Erro ao criar transferência";
       toast({
-        title: 'Erro',
+        title: "Erro",
         description: errorMessage,
-        variant: 'destructive',
+        variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
@@ -189,26 +189,25 @@ export function StockTransfers({ onRefresh, className }: StockTransfersProps) {
     try {
       setIsApproving(transferId);
 
-      const { error } = await stockOutputManager.approveTransfer(transferId, 'user-123');
+      const { error } = await stockOutputManager.approveTransfer(transferId, "user-123");
 
       if (error) {
         throw new Error(error);
       }
 
       toast({
-        title: 'Sucesso',
-        description: 'Transferência aprovada com sucesso',
+        title: "Sucesso",
+        description: "Transferência aprovada com sucesso",
       });
 
       loadTransfers();
       onRefresh();
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao aprovar transferência';
+      const errorMessage = error instanceof Error ? error.message : "Erro ao aprovar transferência";
       toast({
-        title: 'Erro',
+        title: "Erro",
         description: errorMessage,
-        variant: 'destructive',
+        variant: "destructive",
       });
     } finally {
       setIsApproving(null);
@@ -220,9 +219,9 @@ export function StockTransfers({ onRefresh, className }: StockTransfersProps) {
       setIsRejecting(transferId);
 
       const { error } = await stockOutputManager.rejectTransfer(
-        transferId, 
-        'user-123', 
-        'Rejeitado via interface'
+        transferId,
+        "user-123",
+        "Rejeitado via interface",
       );
 
       if (error) {
@@ -230,19 +229,19 @@ export function StockTransfers({ onRefresh, className }: StockTransfersProps) {
       }
 
       toast({
-        title: 'Sucesso',
-        description: 'Transferência rejeitada',
+        title: "Sucesso",
+        description: "Transferência rejeitada",
       });
 
       loadTransfers();
       onRefresh();
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao rejeitar transferência';
+      const errorMessage =
+        error instanceof Error ? error.message : "Erro ao rejeitar transferência";
       toast({
-        title: 'Erro',
+        title: "Erro",
         description: errorMessage,
-        variant: 'destructive',
+        variant: "destructive",
       });
     } finally {
       setIsRejecting(null);
@@ -251,25 +250,25 @@ export function StockTransfers({ onRefresh, className }: StockTransfersProps) {
 
   const getStatusColor = (status: string) => {
     const colors = {
-      'pendente': 'bg-yellow-100 text-yellow-800',
-      'aprovado': 'bg-green-100 text-green-800',
-      'rejeitado': 'bg-red-100 text-red-800',
-      'concluido': 'bg-blue-100 text-blue-800'
+      pendente: "bg-yellow-100 text-yellow-800",
+      aprovado: "bg-green-100 text-green-800",
+      rejeitado: "bg-red-100 text-red-800",
+      concluido: "bg-blue-100 text-blue-800",
     };
-    return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return colors[status as keyof typeof colors] || "bg-gray-100 text-gray-800";
   };
 
   const getPriorityColor = (priority: string) => {
     const colors = {
-      'baixa': 'bg-gray-100 text-gray-800',
-      'media': 'bg-orange-100 text-orange-800',
-      'alta': 'bg-red-100 text-red-800'
+      baixa: "bg-gray-100 text-gray-800",
+      media: "bg-orange-100 text-orange-800",
+      alta: "bg-red-100 text-red-800",
     };
-    return colors[priority as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return colors[priority as keyof typeof colors] || "bg-gray-100 text-gray-800";
   };
 
   const formatDateTime = (dateString: string) => {
-    return new Date(dateString).toLocaleString('pt-BR');
+    return new Date(dateString).toLocaleString("pt-BR");
   };
 
   if (isLoading) {
@@ -281,7 +280,7 @@ export function StockTransfers({ onRefresh, className }: StockTransfersProps) {
             <p className="text-muted-foreground">Gestão de transferências internas</p>
           </div>
         </div>
-        
+
         <Card>
           <CardContent className="p-6">
             <div className="h-48 bg-gray-200 rounded animate-pulse" />
@@ -291,7 +290,7 @@ export function StockTransfers({ onRefresh, className }: StockTransfersProps) {
     );
   }
 
-  const displayTransfers = selectedStatus === 'pendente' ? pendingTransfers : transfers;
+  const displayTransfers = selectedStatus === "pendente" ? pendingTransfers : transfers;
 
   return (
     <div className={`space-y-6 ${className}`}>
@@ -323,13 +322,16 @@ export function StockTransfers({ onRefresh, className }: StockTransfersProps) {
                     Crie uma nova solicitação de transferência entre centros de custo
                   </DialogDescription>
                 </DialogHeader>
-                
+
                 <div className="space-y-4 py-4">
                   <div className="space-y-2">
                     <Label htmlFor="produto_id">Produto *</Label>
-                    <Select value={formData.produto_id} onValueChange={(value) => 
-                      setFormData(prev => ({ ...prev, produto_id: value }))
-                    }>
+                    <Select
+                      value={formData.produto_id}
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({ ...prev, produto_id: value }))
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione o produto" />
                       </SelectTrigger>
@@ -344,9 +346,12 @@ export function StockTransfers({ onRefresh, className }: StockTransfersProps) {
 
                   <div className="space-y-2">
                     <Label htmlFor="centro_custo_origem">Centro de Custo Origem *</Label>
-                    <Select value={formData.centro_custo_origem} onValueChange={(value) => 
-                      setFormData(prev => ({ ...prev, centro_custo_origem: value }))
-                    }>
+                    <Select
+                      value={formData.centro_custo_origem}
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({ ...prev, centro_custo_origem: value }))
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione a origem" />
                       </SelectTrigger>
@@ -362,9 +367,12 @@ export function StockTransfers({ onRefresh, className }: StockTransfersProps) {
 
                   <div className="space-y-2">
                     <Label htmlFor="centro_custo_destino">Centro de Custo Destino *</Label>
-                    <Select value={formData.centro_custo_destino} onValueChange={(value) => 
-                      setFormData(prev => ({ ...prev, centro_custo_destino: value }))
-                    }>
+                    <Select
+                      value={formData.centro_custo_destino}
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({ ...prev, centro_custo_destino: value }))
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione o destino" />
                       </SelectTrigger>
@@ -385,19 +393,24 @@ export function StockTransfers({ onRefresh, className }: StockTransfersProps) {
                       type="number"
                       min="1"
                       value={formData.quantidade}
-                      onChange={(e) => setFormData(prev => ({ 
-                        ...prev, 
-                        quantidade: parseInt(e.target.value) || 1 
-                      }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          quantidade: parseInt(e.target.value) || 1,
+                        }))
+                      }
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="prioridade">Prioridade</Label>
-                    <Select value={formData.prioridade} onValueChange={(value) => 
-                      setFormData(prev => ({ ...prev, prioridade: value as any }))
-                    }>
+                    <Select
+                      value={formData.prioridade}
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({ ...prev, prioridade: value as any }))
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -414,10 +427,12 @@ export function StockTransfers({ onRefresh, className }: StockTransfersProps) {
                     <Textarea
                       id="observacoes"
                       value={formData.observacoes}
-                      onChange={(e) => setFormData(prev => ({ 
-                        ...prev, 
-                        observacoes: e.target.value 
-                      }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          observacoes: e.target.value,
+                        }))
+                      }
                       placeholder="Observações adicionais..."
                       rows={3}
                     />
@@ -435,7 +450,7 @@ export function StockTransfers({ onRefresh, className }: StockTransfersProps) {
                         Criando...
                       </>
                     ) : (
-                      'Criar Solicitação'
+                      "Criar Solicitação"
                     )}
                   </Button>
                 </DialogFooter>
@@ -510,15 +525,11 @@ export function StockTransfers({ onRefresh, className }: StockTransfersProps) {
               <TableBody>
                 {displayTransfers.map((transfer) => (
                   <TableRow key={transfer.id}>
-                    <TableCell className="font-mono text-sm">
-                      {transfer.id.slice(-8)}
-                    </TableCell>
+                    <TableCell className="font-mono text-sm">{transfer.id.slice(-8)}</TableCell>
                     <TableCell className="font-medium">
                       {transfer.nome_produto}
                       {transfer.observacoes && (
-                        <p className="text-sm text-muted-foreground">
-                          {transfer.observacoes}
-                        </p>
+                        <p className="text-sm text-muted-foreground">{transfer.observacoes}</p>
                       )}
                     </TableCell>
                     <TableCell>{transfer.centro_custo_origem}</TableCell>
@@ -530,9 +541,7 @@ export function StockTransfers({ onRefresh, className }: StockTransfersProps) {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge className={getStatusColor(transfer.status)}>
-                        {transfer.status}
-                      </Badge>
+                      <Badge className={getStatusColor(transfer.status)}>{transfer.status}</Badge>
                     </TableCell>
                     <TableCell className="text-sm">
                       {formatDateTime(transfer.data_solicitacao)}
@@ -543,7 +552,7 @@ export function StockTransfers({ onRefresh, className }: StockTransfersProps) {
                       )}
                     </TableCell>
                     <TableCell>
-                      {transfer.status === 'pendente' && (
+                      {transfer.status === "pendente" && (
                         <div className="flex gap-2">
                           <Button
                             size="sm"
@@ -573,10 +582,10 @@ export function StockTransfers({ onRefresh, className }: StockTransfersProps) {
                           </Button>
                         </div>
                       )}
-                      {transfer.status === 'aprovado' && (
+                      {transfer.status === "aprovado" && (
                         <Badge variant="outline">Aguardando execução</Badge>
                       )}
-                      {transfer.status === 'concluido' && (
+                      {transfer.status === "concluido" && (
                         <Badge variant="secondary">Concluído</Badge>
                       )}
                     </TableCell>

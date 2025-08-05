@@ -1,15 +1,15 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Brain, Calendar, TrendingUp, Users } from "lucide-react";
+import type { Brain, Calendar, TrendingUp, Users } from "lucide-react";
 
 interface Recommendation {
   id: string;
@@ -25,8 +25,7 @@ const mockRecommendations: Recommendation[] = [
   {
     id: "1",
     title: "Otimizar agendamentos para tarde",
-    description:
-      "Análise mostra 40% mais conversões em agendamentos para período da tarde",
+    description: "Análise mostra 40% mais conversões em agendamentos para período da tarde",
     type: "operation",
     priority: "high",
     impact: "Aumento de 25% na receita",
@@ -35,8 +34,7 @@ const mockRecommendations: Recommendation[] = [
   {
     id: "2",
     title: "Programa de fidelidade para clientes VIP",
-    description:
-      "Clientes com 5+ procedimentos têm 60% mais probabilidade de indicar",
+    description: "Clientes com 5+ procedimentos têm 60% mais probabilidade de indicar",
     type: "marketing",
     priority: "medium",
     impact: "Redução de 15% no CAC",
@@ -72,9 +70,7 @@ export function PersonalizedRecommendationsOverview() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Recomendações Ativas
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Recomendações Ativas</CardTitle>
             <Brain className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -85,16 +81,12 @@ export function PersonalizedRecommendationsOverview() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Taxa de Implementação
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Taxa de Implementação</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">78%</div>
-            <p className="text-xs text-muted-foreground">
-              +12% vs mês anterior
-            </p>
+            <p className="text-xs text-muted-foreground">+12% vs mês anterior</p>
           </CardContent>
         </Card>
 
@@ -105,17 +97,13 @@ export function PersonalizedRecommendationsOverview() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">+23%</div>
-            <p className="text-xs text-muted-foreground">
-              Aumento na conversão
-            </p>
+            <p className="text-xs text-muted-foreground">Aumento na conversão</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Próxima Análise
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Próxima Análise</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -128,17 +116,12 @@ export function PersonalizedRecommendationsOverview() {
       <Card>
         <CardHeader>
           <CardTitle>Recomendações Prioritárias</CardTitle>
-          <CardDescription>
-            Insights baseados em IA para otimizar sua clínica
-          </CardDescription>
+          <CardDescription>Insights baseados em IA para otimizar sua clínica</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {mockRecommendations.map((rec) => (
-              <div
-                key={rec.id}
-                className="flex items-start justify-between p-4 border rounded-lg"
-              >
+              <div key={rec.id} className="flex items-start justify-between p-4 border rounded-lg">
                 <div className="space-y-2 flex-1">
                   <div className="flex items-center gap-2">
                     <h3 className="font-semibold">{rec.title}</h3>
@@ -146,20 +129,13 @@ export function PersonalizedRecommendationsOverview() {
                       {rec.type.charAt(0).toUpperCase() + rec.type.slice(1)}
                     </Badge>
                     <Badge className={priorityColors[rec.priority]}>
-                      {rec.priority.charAt(0).toUpperCase() +
-                        rec.priority.slice(1)}
+                      {rec.priority.charAt(0).toUpperCase() + rec.priority.slice(1)}
                     </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    {rec.description}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{rec.description}</p>
                   <div className="flex items-center gap-4 text-sm">
-                    <span className="font-medium text-green-600">
-                      {rec.impact}
-                    </span>
-                    <span className="text-muted-foreground">
-                      Confiança: {rec.confidence}%
-                    </span>
+                    <span className="font-medium text-green-600">{rec.impact}</span>
+                    <span className="text-muted-foreground">Confiança: {rec.confidence}%</span>
                   </div>
                 </div>
                 <div className="space-x-2">

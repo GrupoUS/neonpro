@@ -1,7 +1,7 @@
 /**
  * Row Level Security (RLS) Policies for NeonPro RBAC
  * Story 1.2: Role-Based Access Control Implementation
- * 
+ *
  * This module contains SQL policies for Supabase RLS integration
  */
 
@@ -24,7 +24,7 @@ export const RLS_POLICIES = {
         )
       );
     `,
-    
+
     // Only owners and managers can insert new users
     insert: `
       CREATE POLICY "users_insert_policy" ON users
@@ -33,7 +33,7 @@ export const RLS_POLICIES = {
         clinic_id = (auth.jwt() ->> 'clinic_id')::uuid
       );
     `,
-    
+
     // Users can update their own profile, managers can update clinic users
     update: `
       CREATE POLICY "users_update_policy" ON users
@@ -45,7 +45,7 @@ export const RLS_POLICIES = {
         )
       );
     `,
-    
+
     // Only owners can delete users
     delete: `
       CREATE POLICY "users_delete_policy" ON users
@@ -53,7 +53,7 @@ export const RLS_POLICIES = {
         auth.jwt() ->> 'role' = 'owner' AND
         clinic_id = (auth.jwt() ->> 'clinic_id')::uuid
       );
-    `
+    `,
   },
 
   // Patients table policies
@@ -66,7 +66,7 @@ export const RLS_POLICIES = {
         clinic_id = (auth.jwt() ->> 'clinic_id')::uuid
       );
     `,
-    
+
     // Staff+ can create patients in their clinic
     insert: `
       CREATE POLICY "patients_insert_policy" ON patients
@@ -75,7 +75,7 @@ export const RLS_POLICIES = {
         clinic_id = (auth.jwt() ->> 'clinic_id')::uuid
       );
     `,
-    
+
     // Staff+ can update patients in their clinic
     update: `
       CREATE POLICY "patients_update_policy" ON patients
@@ -84,7 +84,7 @@ export const RLS_POLICIES = {
         clinic_id = (auth.jwt() ->> 'clinic_id')::uuid
       );
     `,
-    
+
     // Only managers+ can delete patients
     delete: `
       CREATE POLICY "patients_delete_policy" ON patients
@@ -92,7 +92,7 @@ export const RLS_POLICIES = {
         auth.jwt() ->> 'role' IN ('owner', 'manager', 'admin') AND
         clinic_id = (auth.jwt() ->> 'clinic_id')::uuid
       );
-    `
+    `,
   },
 
   // Appointments table policies
@@ -111,7 +111,7 @@ export const RLS_POLICIES = {
         )
       );
     `,
-    
+
     // Staff+ can create appointments in their clinic
     insert: `
       CREATE POLICY "appointments_insert_policy" ON appointments
@@ -120,7 +120,7 @@ export const RLS_POLICIES = {
         clinic_id = (auth.jwt() ->> 'clinic_id')::uuid
       );
     `,
-    
+
     // Staff can update their own appointments, managers+ can update all
     update: `
       CREATE POLICY "appointments_update_policy" ON appointments
@@ -135,7 +135,7 @@ export const RLS_POLICIES = {
         )
       );
     `,
-    
+
     // Managers+ can delete appointments
     delete: `
       CREATE POLICY "appointments_delete_policy" ON appointments
@@ -143,7 +143,7 @@ export const RLS_POLICIES = {
         auth.jwt() ->> 'role' IN ('owner', 'manager', 'admin') AND
         clinic_id = (auth.jwt() ->> 'clinic_id')::uuid
       );
-    `
+    `,
   },
 
   // Billing table policies (financial data)
@@ -156,7 +156,7 @@ export const RLS_POLICIES = {
         clinic_id = (auth.jwt() ->> 'clinic_id')::uuid
       );
     `,
-    
+
     insert: `
       CREATE POLICY "billing_insert_policy" ON billing
       FOR INSERT WITH CHECK (
@@ -164,7 +164,7 @@ export const RLS_POLICIES = {
         clinic_id = (auth.jwt() ->> 'clinic_id')::uuid
       );
     `,
-    
+
     update: `
       CREATE POLICY "billing_update_policy" ON billing
       FOR UPDATE USING (
@@ -172,7 +172,7 @@ export const RLS_POLICIES = {
         clinic_id = (auth.jwt() ->> 'clinic_id')::uuid
       );
     `,
-    
+
     // Only owners can delete billing records
     delete: `
       CREATE POLICY "billing_delete_policy" ON billing
@@ -180,7 +180,7 @@ export const RLS_POLICIES = {
         auth.jwt() ->> 'role' = 'owner' AND
         clinic_id = (auth.jwt() ->> 'clinic_id')::uuid
       );
-    `
+    `,
   },
 
   // Payments table policies
@@ -193,7 +193,7 @@ export const RLS_POLICIES = {
         clinic_id = (auth.jwt() ->> 'clinic_id')::uuid
       );
     `,
-    
+
     insert: `
       CREATE POLICY "payments_insert_policy" ON payments
       FOR INSERT WITH CHECK (
@@ -201,7 +201,7 @@ export const RLS_POLICIES = {
         clinic_id = (auth.jwt() ->> 'clinic_id')::uuid
       );
     `,
-    
+
     update: `
       CREATE POLICY "payments_update_policy" ON payments
       FOR UPDATE USING (
@@ -209,14 +209,14 @@ export const RLS_POLICIES = {
         clinic_id = (auth.jwt() ->> 'clinic_id')::uuid
       );
     `,
-    
+
     delete: `
       CREATE POLICY "payments_delete_policy" ON payments
       FOR DELETE USING (
         auth.jwt() ->> 'role' = 'owner' AND
         clinic_id = (auth.jwt() ->> 'clinic_id')::uuid
       );
-    `
+    `,
   },
 
   // Clinics table policies
@@ -229,7 +229,7 @@ export const RLS_POLICIES = {
         auth.jwt() ->> 'role' = 'admin'
       );
     `,
-    
+
     // Only admins can create new clinics
     insert: `
       CREATE POLICY "clinics_insert_policy" ON clinics
@@ -237,7 +237,7 @@ export const RLS_POLICIES = {
         auth.jwt() ->> 'role' = 'admin'
       );
     `,
-    
+
     // Only owners and admins can update clinic info
     update: `
       CREATE POLICY "clinics_update_policy" ON clinics
@@ -249,14 +249,14 @@ export const RLS_POLICIES = {
         auth.jwt() ->> 'role' = 'admin'
       );
     `,
-    
+
     // Only admins can delete clinics
     delete: `
       CREATE POLICY "clinics_delete_policy" ON clinics
       FOR DELETE USING (
         auth.jwt() ->> 'role' = 'admin'
       );
-    `
+    `,
   },
 
   // Permission audit log policies
@@ -272,40 +272,40 @@ export const RLS_POLICIES = {
         )
       );
     `,
-    
+
     // System can insert audit logs
     insert: `
       CREATE POLICY "audit_log_insert_policy" ON permission_audit_log
       FOR INSERT WITH CHECK (true);
     `,
-    
+
     // No updates allowed on audit logs
     update: `
       CREATE POLICY "audit_log_update_policy" ON permission_audit_log
       FOR UPDATE USING (false);
     `,
-    
+
     // Only admins can delete audit logs (for cleanup)
     delete: `
       CREATE POLICY "audit_log_delete_policy" ON permission_audit_log
       FOR DELETE USING (
         auth.jwt() ->> 'role' = 'admin'
       );
-    `
-  }
+    `,
+  },
 };
 
 /**
  * Function to enable RLS on all tables
  */
 export const ENABLE_RLS_COMMANDS = [
-  'ALTER TABLE users ENABLE ROW LEVEL SECURITY;',
-  'ALTER TABLE patients ENABLE ROW LEVEL SECURITY;',
-  'ALTER TABLE appointments ENABLE ROW LEVEL SECURITY;',
-  'ALTER TABLE billing ENABLE ROW LEVEL SECURITY;',
-  'ALTER TABLE payments ENABLE ROW LEVEL SECURITY;',
-  'ALTER TABLE clinics ENABLE ROW LEVEL SECURITY;',
-  'ALTER TABLE permission_audit_log ENABLE ROW LEVEL SECURITY;'
+  "ALTER TABLE users ENABLE ROW LEVEL SECURITY;",
+  "ALTER TABLE patients ENABLE ROW LEVEL SECURITY;",
+  "ALTER TABLE appointments ENABLE ROW LEVEL SECURITY;",
+  "ALTER TABLE billing ENABLE ROW LEVEL SECURITY;",
+  "ALTER TABLE payments ENABLE ROW LEVEL SECURITY;",
+  "ALTER TABLE clinics ENABLE ROW LEVEL SECURITY;",
+  "ALTER TABLE permission_audit_log ENABLE ROW LEVEL SECURITY;",
 ];
 
 /**
@@ -313,17 +313,17 @@ export const ENABLE_RLS_COMMANDS = [
  */
 export function generateAllPolicies(): string[] {
   const policies: string[] = [];
-  
+
   // Add enable RLS commands
   policies.push(...ENABLE_RLS_COMMANDS);
-  
+
   // Add all table policies
   Object.entries(RLS_POLICIES).forEach(([table, tablePolicies]) => {
     Object.entries(tablePolicies).forEach(([operation, policy]) => {
       policies.push(policy);
     });
   });
-  
+
   return policies;
 }
 
@@ -336,42 +336,42 @@ export const DROP_POLICIES_COMMANDS = [
   'DROP POLICY IF EXISTS "users_insert_policy" ON users;',
   'DROP POLICY IF EXISTS "users_update_policy" ON users;',
   'DROP POLICY IF EXISTS "users_delete_policy" ON users;',
-  
+
   // Patients policies
   'DROP POLICY IF EXISTS "patients_select_policy" ON patients;',
   'DROP POLICY IF EXISTS "patients_insert_policy" ON patients;',
   'DROP POLICY IF EXISTS "patients_update_policy" ON patients;',
   'DROP POLICY IF EXISTS "patients_delete_policy" ON patients;',
-  
+
   // Appointments policies
   'DROP POLICY IF EXISTS "appointments_select_policy" ON appointments;',
   'DROP POLICY IF EXISTS "appointments_insert_policy" ON appointments;',
   'DROP POLICY IF EXISTS "appointments_update_policy" ON appointments;',
   'DROP POLICY IF EXISTS "appointments_delete_policy" ON appointments;',
-  
+
   // Billing policies
   'DROP POLICY IF EXISTS "billing_select_policy" ON billing;',
   'DROP POLICY IF EXISTS "billing_insert_policy" ON billing;',
   'DROP POLICY IF EXISTS "billing_update_policy" ON billing;',
   'DROP POLICY IF EXISTS "billing_delete_policy" ON billing;',
-  
+
   // Payments policies
   'DROP POLICY IF EXISTS "payments_select_policy" ON payments;',
   'DROP POLICY IF EXISTS "payments_insert_policy" ON payments;',
   'DROP POLICY IF EXISTS "payments_update_policy" ON payments;',
   'DROP POLICY IF EXISTS "payments_delete_policy" ON payments;',
-  
+
   // Clinics policies
   'DROP POLICY IF EXISTS "clinics_select_policy" ON clinics;',
   'DROP POLICY IF EXISTS "clinics_insert_policy" ON clinics;',
   'DROP POLICY IF EXISTS "clinics_update_policy" ON clinics;',
   'DROP POLICY IF EXISTS "clinics_delete_policy" ON clinics;',
-  
+
   // Audit log policies
   'DROP POLICY IF EXISTS "audit_log_select_policy" ON permission_audit_log;',
   'DROP POLICY IF EXISTS "audit_log_insert_policy" ON permission_audit_log;',
   'DROP POLICY IF EXISTS "audit_log_update_policy" ON permission_audit_log;',
-  'DROP POLICY IF EXISTS "audit_log_delete_policy" ON permission_audit_log;'
+  'DROP POLICY IF EXISTS "audit_log_delete_policy" ON permission_audit_log;',
 ];
 
 /**
@@ -379,24 +379,24 @@ export const DROP_POLICIES_COMMANDS = [
  */
 export function createRLSSetupScript(): string {
   const script = [
-    '-- NeonPro RBAC Row Level Security Setup',
-    '-- Generated automatically - do not edit manually',
-    '',
-    '-- Drop existing policies',
+    "-- NeonPro RBAC Row Level Security Setup",
+    "-- Generated automatically - do not edit manually",
+    "",
+    "-- Drop existing policies",
     ...DROP_POLICIES_COMMANDS,
-    '',
-    '-- Enable RLS on all tables',
+    "",
+    "-- Enable RLS on all tables",
     ...ENABLE_RLS_COMMANDS,
-    '',
-    '-- Create new policies',
+    "",
+    "-- Create new policies",
     ...generateAllPolicies().slice(ENABLE_RLS_COMMANDS.length), // Skip enable commands as they're already added
-    '',
-    '-- Grant necessary permissions',
-    'GRANT USAGE ON SCHEMA public TO authenticated;',
-    'GRANT ALL ON ALL TABLES IN SCHEMA public TO authenticated;',
-    'GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO authenticated;',
-    ''
+    "",
+    "-- Grant necessary permissions",
+    "GRANT USAGE ON SCHEMA public TO authenticated;",
+    "GRANT ALL ON ALL TABLES IN SCHEMA public TO authenticated;",
+    "GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO authenticated;",
+    "",
   ];
-  
-  return script.join('\n');
+
+  return script.join("\n");
 }

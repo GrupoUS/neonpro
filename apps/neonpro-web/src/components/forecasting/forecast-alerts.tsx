@@ -1,36 +1,48 @@
 /**
  * Forecast Alerts Component
  * Epic 11 - Story 11.1: Intelligent forecast alert management and monitoring
- * 
+ *
  * Features:
  * - Real-time forecast alert display and categorization
  * - Alert acknowledgment and action tracking
  * - Priority-based alert organization and filtering
  * - Automated recommendation system for alert resolution
  * - Alert history and trend analysis
- * 
+ *
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 
-'use client';
+"use client";
 
-import React, { useState, useMemo } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { 
-  AlertTriangle, 
-  AlertCircle, 
-  CheckCircle, 
-  Clock, 
-  TrendingUp, 
+import React, { useState, useMemo } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Separator } from "@/components/ui/separator";
+import type { Input } from "@/components/ui/input";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type {
+  AlertTriangle,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  TrendingUp,
   TrendingDown,
   Users,
   Calendar,
@@ -41,12 +53,12 @@ import {
   Bell,
   BellOff,
   MoreHorizontal,
-  ExternalLink
-} from 'lucide-react';
-import { format, formatDistanceToNow, isToday, isYesterday } from 'date-fns';
-import { toast } from 'sonner';
+  ExternalLink,
+} from "lucide-react";
+import type { format, formatDistanceToNow, isToday, isYesterday } from "date-fns";
+import type { toast } from "sonner";
 
-import type { ForecastAlert } from '@/lib/forecasting';
+import type { ForecastAlert } from "@/lib/forecasting";
 
 interface ForecastAlertsProps {
   alerts: ForecastAlert[];
@@ -55,9 +67,9 @@ interface ForecastAlertsProps {
 }
 
 interface AlertFilters {
-  severity: 'all' | 'critical' | 'high' | 'medium' | 'low';
-  status: 'all' | 'active' | 'acknowledged' | 'resolved';
-  type: 'all' | 'demand_spike' | 'resource_shortage' | 'model_drift' | 'capacity_warning';
+  severity: "all" | "critical" | "high" | "medium" | "low";
+  status: "all" | "active" | "acknowledged" | "resolved";
+  type: "all" | "demand_spike" | "resource_shortage" | "model_drift" | "capacity_warning";
   search: string;
 }
 
@@ -72,44 +84,44 @@ interface AlertStats {
 
 const ALERT_SEVERITY_CONFIG = {
   critical: {
-    color: 'bg-red-100 text-red-800 border-red-200',
+    color: "bg-red-100 text-red-800 border-red-200",
     icon: AlertTriangle,
-    bgColor: 'bg-red-50',
-    borderColor: 'border-red-200'
+    bgColor: "bg-red-50",
+    borderColor: "border-red-200",
   },
   high: {
-    color: 'bg-orange-100 text-orange-800 border-orange-200',
+    color: "bg-orange-100 text-orange-800 border-orange-200",
     icon: AlertCircle,
-    bgColor: 'bg-orange-50',
-    borderColor: 'border-orange-200'
+    bgColor: "bg-orange-50",
+    borderColor: "border-orange-200",
   },
   medium: {
-    color: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+    color: "bg-yellow-100 text-yellow-800 border-yellow-200",
     icon: AlertCircle,
-    bgColor: 'bg-yellow-50',
-    borderColor: 'border-yellow-200'
+    bgColor: "bg-yellow-50",
+    borderColor: "border-yellow-200",
   },
   low: {
-    color: 'bg-blue-100 text-blue-800 border-blue-200',
+    color: "bg-blue-100 text-blue-800 border-blue-200",
     icon: AlertCircle,
-    bgColor: 'bg-blue-50',
-    borderColor: 'border-blue-200'
-  }
+    bgColor: "bg-blue-50",
+    borderColor: "border-blue-200",
+  },
 };
 
 const ALERT_TYPE_CONFIG = {
-  demand_spike: { label: 'Demand Spike', icon: TrendingUp, color: 'text-red-600' },
-  resource_shortage: { label: 'Resource Shortage', icon: Users, color: 'text-orange-600' },
-  model_drift: { label: 'Model Drift', icon: TrendingDown, color: 'text-purple-600' },
-  capacity_warning: { label: 'Capacity Warning', icon: Monitor, color: 'text-yellow-600' }
+  demand_spike: { label: "Demand Spike", icon: TrendingUp, color: "text-red-600" },
+  resource_shortage: { label: "Resource Shortage", icon: Users, color: "text-orange-600" },
+  model_drift: { label: "Model Drift", icon: TrendingDown, color: "text-purple-600" },
+  capacity_warning: { label: "Capacity Warning", icon: Monitor, color: "text-yellow-600" },
 };
 
 export function ForecastAlerts({ alerts, onAcknowledge, className = "" }: ForecastAlertsProps) {
   const [filters, setFilters] = useState<AlertFilters>({
-    severity: 'all',
-    status: 'all',
-    type: 'all',
-    search: ''
+    severity: "all",
+    status: "all",
+    type: "all",
+    search: "",
   });
   const [selectedAlerts, setSelectedAlerts] = useState<Set<string>>(new Set());
   const [showDetails, setShowDetails] = useState<string | null>(null);
@@ -117,42 +129,49 @@ export function ForecastAlerts({ alerts, onAcknowledge, className = "" }: Foreca
   // Calculate alert statistics
   const stats = useMemo((): AlertStats => {
     const total = alerts.length;
-    const active = alerts.filter(a => !a.acknowledged).length;
-    const critical = alerts.filter(a => a.severity === 'critical').length;
-    const acknowledged = alerts.filter(a => a.acknowledged).length;
+    const active = alerts.filter((a) => !a.acknowledged).length;
+    const critical = alerts.filter((a) => a.severity === "critical").length;
+    const acknowledged = alerts.filter((a) => a.acknowledged).length;
 
-    const byType = alerts.reduce((acc, alert) => {
-      acc[alert.alert_type] = (acc[alert.alert_type] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const byType = alerts.reduce(
+      (acc, alert) => {
+        acc[alert.alert_type] = (acc[alert.alert_type] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
-    const bySeverity = alerts.reduce((acc, alert) => {
-      acc[alert.severity] = (acc[alert.severity] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const bySeverity = alerts.reduce(
+      (acc, alert) => {
+        acc[alert.severity] = (acc[alert.severity] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
     return { total, active, critical, acknowledged, byType, bySeverity };
   }, [alerts]);
 
   // Filter alerts based on current filters
   const filteredAlerts = useMemo(() => {
-    return alerts.filter(alert => {
+    return alerts.filter((alert) => {
       // Severity filter
-      if (filters.severity !== 'all' && alert.severity !== filters.severity) return false;
-      
+      if (filters.severity !== "all" && alert.severity !== filters.severity) return false;
+
       // Status filter
-      if (filters.status !== 'all') {
-        if (filters.status === 'active' && alert.acknowledged) return false;
-        if (filters.status === 'acknowledged' && !alert.acknowledged) return false;
+      if (filters.status !== "all") {
+        if (filters.status === "active" && alert.acknowledged) return false;
+        if (filters.status === "acknowledged" && !alert.acknowledged) return false;
         // Note: 'resolved' would require additional status field in production
       }
-      
+
       // Type filter
-      if (filters.type !== 'all' && alert.alert_type !== filters.type) return false;
-      
+      if (filters.type !== "all" && alert.alert_type !== filters.type) return false;
+
       // Search filter
-      if (filters.search && !alert.message.toLowerCase().includes(filters.search.toLowerCase())) return false;
-      
+      if (filters.search && !alert.message.toLowerCase().includes(filters.search.toLowerCase()))
+        return false;
+
       return true;
     });
   }, [alerts, filters]);
@@ -160,44 +179,46 @@ export function ForecastAlerts({ alerts, onAcknowledge, className = "" }: Foreca
   // Group alerts by date
   const groupedAlerts = useMemo(() => {
     const groups: Record<string, ForecastAlert[]> = {};
-    
-    filteredAlerts.forEach(alert => {
+
+    filteredAlerts.forEach((alert) => {
       const alertDate = new Date(alert.created_at);
       let groupKey: string;
-      
+
       if (isToday(alertDate)) {
-        groupKey = 'Today';
+        groupKey = "Today";
       } else if (isYesterday(alertDate)) {
-        groupKey = 'Yesterday';
+        groupKey = "Yesterday";
       } else {
-        groupKey = format(alertDate, 'MMMM dd, yyyy');
+        groupKey = format(alertDate, "MMMM dd, yyyy");
       }
-      
+
       if (!groups[groupKey]) groups[groupKey] = [];
       groups[groupKey].push(alert);
     });
-    
+
     // Sort each group by creation time (newest first)
-    Object.keys(groups).forEach(key => {
-      groups[key].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    Object.keys(groups).forEach((key) => {
+      groups[key].sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+      );
     });
-    
+
     return groups;
   }, [filteredAlerts]);
 
   // Handle bulk acknowledgment
   const handleBulkAcknowledge = async () => {
     try {
-      const acknowledgePromises = Array.from(selectedAlerts).map(alertId => 
-        onAcknowledge(alertId)
+      const acknowledgePromises = Array.from(selectedAlerts).map((alertId) =>
+        onAcknowledge(alertId),
       );
-      
+
       await Promise.all(acknowledgePromises);
       setSelectedAlerts(new Set());
       toast.success(`Acknowledged ${selectedAlerts.size} alerts`);
     } catch (error) {
-      console.error('Failed to acknowledge alerts:', error);
-      toast.error('Failed to acknowledge alerts');
+      console.error("Failed to acknowledge alerts:", error);
+      toast.error("Failed to acknowledge alerts");
     }
   };
 
@@ -219,10 +240,10 @@ export function ForecastAlerts({ alerts, onAcknowledge, className = "" }: Foreca
   };
 
   // Render alert severity badge
-  const renderSeverityBadge = (severity: ForecastAlert['severity']) => {
+  const renderSeverityBadge = (severity: ForecastAlert["severity"]) => {
     const config = ALERT_SEVERITY_CONFIG[severity];
     const Icon = config.icon;
-    
+
     return (
       <Badge className={config.color}>
         <Icon className="w-3 h-3 mr-1" />
@@ -232,10 +253,10 @@ export function ForecastAlerts({ alerts, onAcknowledge, className = "" }: Foreca
   };
 
   // Render alert type badge
-  const renderTypeBadge = (type: ForecastAlert['alert_type']) => {
+  const renderTypeBadge = (type: ForecastAlert["alert_type"]) => {
     const config = ALERT_TYPE_CONFIG[type];
     const Icon = config.icon;
-    
+
     return (
       <div className={`flex items-center space-x-1 text-sm ${config.color}`}>
         <Icon className="w-4 h-4" />
@@ -249,16 +270,19 @@ export function ForecastAlerts({ alerts, onAcknowledge, className = "" }: Foreca
     const severityConfig = ALERT_SEVERITY_CONFIG[alert.severity];
     const isSelected = selectedAlerts.has(alert.id);
     const isExpanded = showDetails === alert.id;
-    
+
     return (
-      <div key={alert.id} className={`border rounded-lg p-4 ${severityConfig.bgColor} ${severityConfig.borderColor} ${alert.acknowledged ? 'opacity-60' : ''}`}>
+      <div
+        key={alert.id}
+        className={`border rounded-lg p-4 ${severityConfig.bgColor} ${severityConfig.borderColor} ${alert.acknowledged ? "opacity-60" : ""}`}
+      >
         <div className="flex items-start space-x-3">
           <Checkbox
             checked={isSelected}
             onCheckedChange={() => toggleAlertSelection(alert.id)}
             className="mt-1"
           />
-          
+
           <div className="flex-1 space-y-2">
             <div className="flex items-start justify-between">
               <div className="space-y-1">
@@ -272,15 +296,15 @@ export function ForecastAlerts({ alerts, onAcknowledge, className = "" }: Foreca
                     </Badge>
                   )}
                 </div>
-                
+
                 <p className="text-sm font-medium">{alert.message}</p>
-                
+
                 <div className="flex items-center space-x-4 text-xs text-muted-foreground">
                   <span className="flex items-center space-x-1">
                     <Clock className="w-3 h-3" />
                     <span>{formatAlertTime(alert.created_at)}</span>
                   </span>
-                  
+
                   {alert.forecast_id && (
                     <span className="flex items-center space-x-1">
                       <ExternalLink className="w-3 h-3" />
@@ -289,18 +313,14 @@ export function ForecastAlerts({ alerts, onAcknowledge, className = "" }: Foreca
                   )}
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 {!alert.acknowledged && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => onAcknowledge(alert.id)}
-                  >
+                  <Button size="sm" variant="outline" onClick={() => onAcknowledge(alert.id)}>
                     Acknowledge
                   </Button>
                 )}
-                
+
                 <Button
                   size="sm"
                   variant="ghost"
@@ -310,15 +330,15 @@ export function ForecastAlerts({ alerts, onAcknowledge, className = "" }: Foreca
                 </Button>
               </div>
             </div>
-            
+
             {/* Affected Resources */}
             {alert.affected_resources && alert.affected_resources.length > 0 && (
               <div className="text-xs">
                 <span className="text-muted-foreground">Affected resources: </span>
-                <span className="font-medium">{alert.affected_resources.join(', ')}</span>
+                <span className="font-medium">{alert.affected_resources.join(", ")}</span>
               </div>
             )}
-            
+
             {/* Expanded Details */}
             {isExpanded && (
               <div className="mt-4 pt-4 border-t space-y-3">
@@ -335,10 +355,10 @@ export function ForecastAlerts({ alerts, onAcknowledge, className = "" }: Foreca
                     </ul>
                   </div>
                 )}
-                
+
                 <div className="text-xs text-muted-foreground">
                   <p>Alert ID: {alert.id}</p>
-                  <p>Created: {format(new Date(alert.created_at), 'PPpp')}</p>
+                  <p>Created: {format(new Date(alert.created_at), "PPpp")}</p>
                   {alert.forecast_id && <p>Related Forecast: {alert.forecast_id}</p>}
                 </div>
               </div>
@@ -378,12 +398,10 @@ export function ForecastAlerts({ alerts, onAcknowledge, className = "" }: Foreca
               Monitor and manage forecasting alerts and recommendations
             </CardDescription>
           </div>
-          
+
           {selectedAlerts.size > 0 && (
             <div className="flex items-center space-x-2">
-              <span className="text-sm text-muted-foreground">
-                {selectedAlerts.size} selected
-              </span>
+              <span className="text-sm text-muted-foreground">{selectedAlerts.size} selected</span>
               <Button size="sm" onClick={handleBulkAcknowledge}>
                 Acknowledge Selected
               </Button>
@@ -397,17 +415,17 @@ export function ForecastAlerts({ alerts, onAcknowledge, className = "" }: Foreca
             <div className="text-2xl font-bold">{stats.total}</div>
             <div className="text-sm text-muted-foreground">Total Alerts</div>
           </div>
-          
+
           <div className="text-center">
             <div className="text-2xl font-bold text-orange-600">{stats.active}</div>
             <div className="text-sm text-muted-foreground">Active</div>
           </div>
-          
+
           <div className="text-center">
             <div className="text-2xl font-bold text-red-600">{stats.critical}</div>
             <div className="text-sm text-muted-foreground">Critical</div>
           </div>
-          
+
           <div className="text-center">
             <div className="text-2xl font-bold text-green-600">{stats.acknowledged}</div>
             <div className="text-sm text-muted-foreground">Acknowledged</div>
@@ -433,17 +451,19 @@ export function ForecastAlerts({ alerts, onAcknowledge, className = "" }: Foreca
                   <Input
                     placeholder="Search alerts..."
                     value={filters.search}
-                    onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                    onChange={(e) => setFilters((prev) => ({ ...prev, search: e.target.value }))}
                     className="pl-8"
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <label className="text-sm font-medium">Severity</label>
                 <Select
                   value={filters.severity}
-                  onValueChange={(value: any) => setFilters(prev => ({ ...prev, severity: value }))}
+                  onValueChange={(value: any) =>
+                    setFilters((prev) => ({ ...prev, severity: value }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -457,12 +477,12 @@ export function ForecastAlerts({ alerts, onAcknowledge, className = "" }: Foreca
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div className="space-y-2">
                 <label className="text-sm font-medium">Status</label>
                 <Select
                   value={filters.status}
-                  onValueChange={(value: any) => setFilters(prev => ({ ...prev, status: value }))}
+                  onValueChange={(value: any) => setFilters((prev) => ({ ...prev, status: value }))}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -474,12 +494,12 @@ export function ForecastAlerts({ alerts, onAcknowledge, className = "" }: Foreca
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div className="space-y-2">
                 <label className="text-sm font-medium">Type</label>
                 <Select
                   value={filters.type}
-                  onValueChange={(value: any) => setFilters(prev => ({ ...prev, type: value }))}
+                  onValueChange={(value: any) => setFilters((prev) => ({ ...prev, type: value }))}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -493,13 +513,15 @@ export function ForecastAlerts({ alerts, onAcknowledge, className = "" }: Foreca
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div className="space-y-2">
                 <label className="text-sm font-medium">Actions</label>
                 <Button
                   variant="outline"
                   className="w-full"
-                  onClick={() => setFilters({ severity: 'all', status: 'all', type: 'all', search: '' })}
+                  onClick={() =>
+                    setFilters({ severity: "all", status: "all", type: "all", search: "" })
+                  }
                 >
                   Clear Filters
                 </Button>
@@ -519,9 +541,7 @@ export function ForecastAlerts({ alerts, onAcknowledge, className = "" }: Foreca
             Object.entries(groupedAlerts).map(([dateGroup, groupAlerts]) => (
               <div key={dateGroup} className="space-y-4">
                 <h3 className="text-lg font-medium">{dateGroup}</h3>
-                <div className="space-y-3">
-                  {groupAlerts.map(renderAlertCard)}
-                </div>
+                <div className="space-y-3">{groupAlerts.map(renderAlertCard)}</div>
               </div>
             ))
           )}

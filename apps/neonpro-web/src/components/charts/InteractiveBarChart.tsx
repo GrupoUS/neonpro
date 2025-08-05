@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import type {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
-  Legend
-} from 'recharts';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+  Legend,
+} from "recharts";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export interface BarChartData {
   name: string;
@@ -41,26 +41,26 @@ export function InteractiveBarChart({
   bars,
   height = 350,
   className,
-  xAxisDataKey = 'name',
+  xAxisDataKey = "name",
   showGrid = true,
   showLegend = true,
   formatTooltip,
   formatXAxisLabel,
-  formatYAxisLabel
+  formatYAxisLabel,
 }: InteractiveBarChartProps) {
   const defaultTooltipFormatter = (value: any, name: string) => {
     if (formatTooltip) {
       return formatTooltip(value, name);
     }
-    
+
     // Default formatting for common cases
-    if (typeof value === 'number') {
-      if (name.toLowerCase().includes('revenue') || name.toLowerCase().includes('receita')) {
-        return [`R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, name];
+    if (typeof value === "number") {
+      if (name.toLowerCase().includes("revenue") || name.toLowerCase().includes("receita")) {
+        return [`R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`, name];
       }
-      return [value.toLocaleString('pt-BR'), name];
+      return [value.toLocaleString("pt-BR"), name];
     }
-    
+
     return [value, name];
   };
 
@@ -73,24 +73,24 @@ export function InteractiveBarChart({
         <ResponsiveContainer width="100%" height={height}>
           <BarChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             {showGrid && <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />}
-            <XAxis 
+            <XAxis
               dataKey={xAxisDataKey}
               tick={{ fontSize: 12 }}
               tickFormatter={formatXAxisLabel}
               className="text-muted-foreground"
             />
-            <YAxis 
+            <YAxis
               tick={{ fontSize: 12 }}
               tickFormatter={formatYAxisLabel}
               className="text-muted-foreground"
             />
-            <Tooltip 
+            <Tooltip
               formatter={defaultTooltipFormatter}
               labelClassName="font-medium"
               contentStyle={{
-                backgroundColor: 'hsl(var(--card))',
-                border: '1px solid hsl(var(--border))',
-                borderRadius: '6px'
+                backgroundColor: "hsl(var(--card))",
+                border: "1px solid hsl(var(--border))",
+                borderRadius: "6px",
               }}
             />
             {showLegend && <Legend />}

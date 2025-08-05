@@ -1,9 +1,10 @@
 const fs = require("fs");
 const https = require("https");
-require('dotenv').config({ path: '../.env.local' });
+require("dotenv").config({ path: "../.env.local" });
 
 // Configurações do Supabase - USAR VARIÁVEIS DE AMBIENTE
-const projectRef = process.env.NEXT_PUBLIC_SUPABASE_URL?.split('//')[1]?.split('.')[0] || "gfkskrkbnawkuppazkpt";
+const projectRef =
+  process.env.NEXT_PUBLIC_SUPABASE_URL?.split("//")[1]?.split(".")[0] || "gfkskrkbnawkuppazkpt";
 const accessToken = process.env.SUPABASE_ACCESS_TOKEN;
 
 console.log("🚀 Executando Schema CRM no Supabase...");
@@ -11,9 +12,7 @@ console.log("🔑 Project:", projectRef);
 
 // Ler o arquivo SQL
 const sqlContent = fs.readFileSync("15-insert-single-customer.sql", "utf8");
-console.log(
-  `📝 SQL Schema carregado. Tamanho: ${sqlContent.length} caracteres`
-);
+console.log(`📝 SQL Schema carregado. Tamanho: ${sqlContent.length} caracteres`);
 
 // Configurar requisição
 const postData = JSON.stringify({

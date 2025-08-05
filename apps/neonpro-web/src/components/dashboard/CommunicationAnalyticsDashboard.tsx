@@ -1,69 +1,123 @@
-"use client"
+"use client";
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { DatePickerWithRange } from '@/components/ui/date-picker-with-range';
-import { Icons } from '@/components/ui/icons';
-import { Separator } from '@/components/ui/separator';
-import { 
-  BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, 
-  Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
-  AreaChart, Area, ScatterChart, Scatter
-} from 'recharts';
-import { format, subDays } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import {
-  TrendingUp, TrendingDown, DollarSign, MessageCircle, 
-  Users, Target, BarChart3, PieChart as PieChartIcon,
-  AlertTriangle, CheckCircle, Clock, Zap,
-  ArrowUpRight, ArrowDownRight, Minus,
-  Mail, Phone, MessageSquare, Send,
-  Eye, MousePointer, Reply, Star
-} from 'lucide-react';
-import { communicationAnalytics } from '@/lib/communication-analytics/analytics-engine';
-import type { 
-  AnalyticsFilter, AnalyticsDashboard, ChannelPerformance,
-  ROIMetrics, BenchmarkComparison, TrendAnalysis
-} from '@/lib/communication-analytics/types/analytics';
+import React, { useState, useEffect, useMemo } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Progress } from "@/components/ui/progress";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { DatePickerWithRange } from "@/components/ui/date-picker-with-range";
+import type { Icons } from "@/components/ui/icons";
+import type { Separator } from "@/components/ui/separator";
+import type {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  AreaChart,
+  Area,
+  ScatterChart,
+  Scatter,
+} from "recharts";
+import type { format, subDays } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  MessageCircle,
+  Users,
+  Target,
+  BarChart3,
+  PieChart as PieChartIcon,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Zap,
+  ArrowUpRight,
+  ArrowDownRight,
+  Minus,
+  Mail,
+  Phone,
+  MessageSquare,
+  Send,
+  Eye,
+  MousePointer,
+  Reply,
+  Star,
+} from "lucide-react";
+import type { communicationAnalytics } from "@/lib/communication-analytics/analytics-engine";
+import type {
+  AnalyticsFilter,
+  AnalyticsDashboard,
+  ChannelPerformance,
+  ROIMetrics,
+  BenchmarkComparison,
+  TrendAnalysis,
+} from "@/lib/communication-analytics/types/analytics";
 
 interface CommunicationAnalyticsDashboardProps {
   clinicId: string;
-  userRole: 'admin' | 'manager' | 'staff';
+  userRole: "admin" | "manager" | "staff";
 }
 
 const CHANNEL_COLORS = {
-  email: '#3B82F6', // blue-500
-  sms: '#10B981', // emerald-500
-  whatsapp: '#059669', // emerald-600
-  push: '#8B5CF6', // violet-500
-  voice: '#F59E0B', // amber-500
+  email: "#3B82F6", // blue-500
+  sms: "#10B981", // emerald-500
+  whatsapp: "#059669", // emerald-600
+  push: "#8B5CF6", // violet-500
+  voice: "#F59E0B", // amber-500
 };
 
 const CHART_COLORS = [
-  '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6',
-  '#06B6D4', '#84CC16', '#F97316', '#EC4899', '#6366F1'
+  "#3B82F6",
+  "#10B981",
+  "#F59E0B",
+  "#EF4444",
+  "#8B5CF6",
+  "#06B6D4",
+  "#84CC16",
+  "#F97316",
+  "#EC4899",
+  "#6366F1",
 ];
 
-export function CommunicationAnalyticsDashboard({ 
-  clinicId, 
-  userRole 
+export function CommunicationAnalyticsDashboard({
+  clinicId,
+  userRole,
 }: CommunicationAnalyticsDashboardProps) {
   // Estado do dashboard
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dashboardData, setDashboardData] = useState<AnalyticsDashboard | null>(null);
-  const [selectedTimeframe, setSelectedTimeframe] = useState('30d');
+  const [selectedTimeframe, setSelectedTimeframe] = useState("30d");
   const [dateRange, setDateRange] = useState({
     from: subDays(new Date(), 30),
-    to: new Date()
+    to: new Date(),
   });
-  const [selectedChannels, setSelectedChannels] = useState<string[]>(['all']);
-  const [viewMode, setViewMode] = useState<'overview' | 'detailed' | 'comparison'>('overview');
+  const [selectedChannels, setSelectedChannels] = useState<string[]>(["all"]);
+  const [viewMode, setViewMode] = useState<"overview" | "detailed" | "comparison">("overview");
 
   // Função para carregar dados do dashboard
   const loadDashboardData = async () => {
@@ -75,15 +129,15 @@ export function CommunicationAnalyticsDashboard({
         clinicId,
         dateRange: {
           start: dateRange.from,
-          end: dateRange.to
+          end: dateRange.to,
         },
-        channels: selectedChannels.includes('all') ? undefined : selectedChannels
+        channels: selectedChannels.includes("all") ? undefined : selectedChannels,
       };
 
       const data = await communicationAnalytics.getDashboardData(filter);
       setDashboardData(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao carregar dados');
+      setError(err instanceof Error ? err.message : "Erro ao carregar dados");
     } finally {
       setLoading(false);
     }
@@ -97,27 +151,27 @@ export function CommunicationAnalyticsDashboard({
   // Função para atualizar timeframe predefinido
   const handleTimeframeChange = (timeframe: string) => {
     setSelectedTimeframe(timeframe);
-    
+
     const now = new Date();
     let from: Date;
-    
+
     switch (timeframe) {
-      case '7d':
+      case "7d":
         from = subDays(now, 7);
         break;
-      case '30d':
+      case "30d":
         from = subDays(now, 30);
         break;
-      case '90d':
+      case "90d":
         from = subDays(now, 90);
         break;
-      case '1y':
+      case "1y":
         from = subDays(now, 365);
         break;
       default:
         from = subDays(now, 30);
     }
-    
+
     setDateRange({ from, to: now });
   };
 
@@ -126,20 +180,20 @@ export function CommunicationAnalyticsDashboard({
     if (!dashboardData) return null;
 
     const { overview, channelPerformance, roiMetrics, trends } = dashboardData;
-    
+
     return {
       totalRevenue: roiMetrics.totalRevenue,
       totalCost: roiMetrics.totalCost,
       profit: roiMetrics.totalRevenue - roiMetrics.totalCost,
       avgROI: roiMetrics.roi,
-      bestChannel: channelPerformance.reduce((best, current) => 
-        current.roi > best.roi ? current : best
+      bestChannel: channelPerformance.reduce((best, current) =>
+        current.roi > best.roi ? current : best,
       ),
-      worstChannel: channelPerformance.reduce((worst, current) => 
-        current.roi < worst.roi ? current : worst
+      worstChannel: channelPerformance.reduce((worst, current) =>
+        current.roi < worst.roi ? current : worst,
       ),
       totalMessages: overview.totalMessages,
-      avgEngagement: overview.engagementScore
+      avgEngagement: overview.engagementScore,
     };
   }, [dashboardData]);
 
@@ -164,12 +218,7 @@ export function CommunicationAnalyticsDashboard({
             <AlertTriangle className="w-4 h-4" />
             <span>Erro ao carregar analytics: {error}</span>
           </div>
-          <Button 
-            onClick={loadDashboardData} 
-            variant="outline" 
-            size="sm" 
-            className="mt-4"
-          >
+          <Button onClick={loadDashboardData} variant="outline" size="sm" className="mt-4">
             Tentar novamente
           </Button>
         </CardContent>
@@ -181,7 +230,9 @@ export function CommunicationAnalyticsDashboard({
     return (
       <Card>
         <CardContent className="pt-6">
-          <p className="text-muted-foreground">Nenhum dado disponível para o período selecionado.</p>
+          <p className="text-muted-foreground">
+            Nenhum dado disponível para o período selecionado.
+          </p>
         </CardContent>
       </Card>
     );
@@ -213,10 +264,7 @@ export function CommunicationAnalyticsDashboard({
           </Select>
 
           {/* Date range picker */}
-          <DatePickerWithRange
-            date={dateRange}
-            onDateChange={setDateRange}
-          />
+          <DatePickerWithRange date={dateRange} onDateChange={setDateRange} />
 
           {/* Botão de atualização */}
           <Button onClick={loadDashboardData} variant="outline" size="sm">
@@ -236,7 +284,7 @@ export function CommunicationAnalyticsDashboard({
           icon={<DollarSign className="w-4 h-4" />}
           color="text-green-600"
         />
-        
+
         <MetricCard
           title="Custo Total"
           value={calculatedMetrics.totalCost}
@@ -245,7 +293,7 @@ export function CommunicationAnalyticsDashboard({
           icon={<Target className="w-4 h-4" />}
           color="text-red-600"
         />
-        
+
         <MetricCard
           title="ROI Médio"
           value={calculatedMetrics.avgROI}
@@ -254,7 +302,7 @@ export function CommunicationAnalyticsDashboard({
           icon={<TrendingUp className="w-4 h-4" />}
           color="text-blue-600"
         />
-        
+
         <MetricCard
           title="Mensagens Enviadas"
           value={calculatedMetrics.totalMessages}
@@ -288,21 +336,23 @@ export function CommunicationAnalyticsDashboard({
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={dashboardData.timeSeriesData}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis 
-                      dataKey="date" 
-                      tickFormatter={(date) => format(new Date(date), 'dd/MM', { locale: ptBR })}
+                    <XAxis
+                      dataKey="date"
+                      tickFormatter={(date) => format(new Date(date), "dd/MM", { locale: ptBR })}
                     />
                     <YAxis tickFormatter={(value) => `R$ ${value.toLocaleString()}`} />
-                    <Tooltip 
-                      labelFormatter={(date) => format(new Date(date), 'dd/MM/yyyy', { locale: ptBR })}
-                      formatter={(value: any) => [`R$ ${value.toLocaleString()}`, 'Receita']}
+                    <Tooltip
+                      labelFormatter={(date) =>
+                        format(new Date(date), "dd/MM/yyyy", { locale: ptBR })
+                      }
+                      formatter={(value: any) => [`R$ ${value.toLocaleString()}`, "Receita"]}
                     />
-                    <Line 
-                      type="monotone" 
-                      dataKey="revenue" 
-                      stroke="#3B82F6" 
+                    <Line
+                      type="monotone"
+                      dataKey="revenue"
+                      stroke="#3B82F6"
                       strokeWidth={2}
-                      dot={{ fill: '#3B82F6' }}
+                      dot={{ fill: "#3B82F6" }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -331,13 +381,16 @@ export function CommunicationAnalyticsDashboard({
                       dataKey="totalMessages"
                     >
                       {dashboardData.channelPerformance.map((entry, index) => (
-                        <Cell 
-                          key={`cell-${index}`} 
-                          fill={CHANNEL_COLORS[entry.channel as keyof typeof CHANNEL_COLORS] || CHART_COLORS[index % CHART_COLORS.length]} 
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={
+                            CHANNEL_COLORS[entry.channel as keyof typeof CHANNEL_COLORS] ||
+                            CHART_COLORS[index % CHART_COLORS.length]
+                          }
                         />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(value: any) => [value.toLocaleString(), 'Mensagens']} />
+                    <Tooltip formatter={(value: any) => [value.toLocaleString(), "Mensagens"]} />
                   </PieChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -348,17 +401,12 @@ export function CommunicationAnalyticsDashboard({
           <Card>
             <CardHeader>
               <CardTitle>Performance por Canal</CardTitle>
-              <CardDescription>
-                Métricas detalhadas de engajamento e conversão
-              </CardDescription>
+              <CardDescription>Métricas detalhadas de engajamento e conversão</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {dashboardData.channelPerformance.map((channel) => (
-                  <ChannelPerformanceCard 
-                    key={channel.channel} 
-                    performance={channel}
-                  />
+                  <ChannelPerformanceCard key={channel.channel} performance={channel} />
                 ))}
               </div>
             </CardContent>
@@ -419,9 +467,7 @@ export function CommunicationAnalyticsDashboard({
             <Card>
               <CardHeader>
                 <CardTitle>Comparação com Benchmarks</CardTitle>
-                <CardDescription>
-                  Performance versus médias da indústria
-                </CardDescription>
+                <CardDescription>Performance versus médias da indústria</CardDescription>
               </CardHeader>
               <CardContent>
                 <BenchmarkComparisonDisplay comparison={dashboardData.benchmarkComparison} />
@@ -434,33 +480,33 @@ export function CommunicationAnalyticsDashboard({
             <Card>
               <CardHeader>
                 <CardTitle>Projeções</CardTitle>
-                <CardDescription>
-                  Previsões baseadas em tendências históricas
-                </CardDescription>
+                <CardDescription>Previsões baseadas em tendências históricas</CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={dashboardData.forecasting.nextMonth}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis 
-                      dataKey="date" 
-                      tickFormatter={(date) => format(new Date(date), 'dd/MM', { locale: ptBR })}
+                    <XAxis
+                      dataKey="date"
+                      tickFormatter={(date) => format(new Date(date), "dd/MM", { locale: ptBR })}
                     />
                     <YAxis />
-                    <Tooltip 
-                      labelFormatter={(date) => format(new Date(date), 'dd/MM/yyyy', { locale: ptBR })}
+                    <Tooltip
+                      labelFormatter={(date) =>
+                        format(new Date(date), "dd/MM/yyyy", { locale: ptBR })
+                      }
                     />
-                    <Line 
-                      type="monotone" 
-                      dataKey="predictedRevenue" 
-                      stroke="#8B5CF6" 
+                    <Line
+                      type="monotone"
+                      dataKey="predictedRevenue"
+                      stroke="#8B5CF6"
                       strokeDasharray="5 5"
                       name="Receita Projetada"
                     />
-                    <Line 
-                      type="monotone" 
-                      dataKey="predictedMessages" 
-                      stroke="#10B981" 
+                    <Line
+                      type="monotone"
+                      dataKey="predictedMessages"
+                      stroke="#10B981"
                       strokeDasharray="5 5"
                       name="Mensagens Projetadas"
                     />
@@ -485,9 +531,14 @@ export function CommunicationAnalyticsDashboard({
             <div className="flex-1">
               <Progress value={dashboardData.overview.dataQualityScore} className="h-2" />
             </div>
-            <Badge 
-              variant={dashboardData.overview.dataQualityScore >= 90 ? "default" : 
-                      dashboardData.overview.dataQualityScore >= 70 ? "secondary" : "destructive"}
+            <Badge
+              variant={
+                dashboardData.overview.dataQualityScore >= 90
+                  ? "default"
+                  : dashboardData.overview.dataQualityScore >= 70
+                    ? "secondary"
+                    : "destructive"
+              }
               className="ml-4"
             >
               {dashboardData.overview.dataQualityScore.toFixed(1)}%
@@ -506,7 +557,7 @@ export function CommunicationAnalyticsDashboard({
 interface MetricCardProps {
   title: string;
   value: number;
-  format: 'currency' | 'percentage' | 'number';
+  format: "currency" | "percentage" | "number";
   trend?: number;
   icon: React.ReactNode;
   color: string;
@@ -515,12 +566,12 @@ interface MetricCardProps {
 function MetricCard({ title, value, format, trend, icon, color }: MetricCardProps) {
   const formatValue = (val: number, fmt: string) => {
     switch (fmt) {
-      case 'currency':
-        return `R$ ${val.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
-      case 'percentage':
+      case "currency":
+        return `R$ ${val.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
+      case "percentage":
         return `${val.toFixed(1)}%`;
-      case 'number':
-        return val.toLocaleString('pt-BR');
+      case "number":
+        return val.toLocaleString("pt-BR");
       default:
         return val.toString();
     }
@@ -545,7 +596,8 @@ function MetricCard({ title, value, format, trend, icon, color }: MetricCardProp
           <p className="text-xs text-muted-foreground flex items-center mt-1">
             {getTrendIcon(trend)}
             <span className="ml-1">
-              {trend > 0 ? '+' : ''}{trend.toFixed(1)}% vs período anterior
+              {trend > 0 ? "+" : ""}
+              {trend.toFixed(1)}% vs período anterior
             </span>
           </p>
         )}
@@ -558,21 +610,28 @@ function MetricCard({ title, value, format, trend, icon, color }: MetricCardProp
 function ChannelPerformanceCard({ performance }: { performance: ChannelPerformance }) {
   const getChannelIcon = (channel: string) => {
     switch (channel) {
-      case 'email': return <Mail className="w-4 h-4" />;
-      case 'sms': return <MessageSquare className="w-4 h-4" />;
-      case 'whatsapp': return <MessageCircle className="w-4 h-4" />;
-      case 'push': return <Send className="w-4 h-4" />;
-      case 'voice': return <Phone className="w-4 h-4" />;
-      default: return <MessageCircle className="w-4 h-4" />;
+      case "email":
+        return <Mail className="w-4 h-4" />;
+      case "sms":
+        return <MessageSquare className="w-4 h-4" />;
+      case "whatsapp":
+        return <MessageCircle className="w-4 h-4" />;
+      case "push":
+        return <Send className="w-4 h-4" />;
+      case "voice":
+        return <Phone className="w-4 h-4" />;
+      default:
+        return <MessageCircle className="w-4 h-4" />;
     }
   };
 
-  const channelColor = CHANNEL_COLORS[performance.channel as keyof typeof CHANNEL_COLORS] || '#6B7280';
+  const channelColor =
+    CHANNEL_COLORS[performance.channel as keyof typeof CHANNEL_COLORS] || "#6B7280";
 
   return (
     <div className="flex items-center justify-between p-4 border rounded-lg">
       <div className="flex items-center gap-3">
-        <div 
+        <div
           className="p-2 rounded-lg"
           style={{ backgroundColor: `${channelColor}20`, color: channelColor }}
         >
@@ -615,13 +674,13 @@ function ROIMetricsDisplay({ metrics }: { metrics: ROIMetrics }) {
       <div className="grid grid-cols-2 gap-4">
         <div className="text-center p-4 bg-green-50 rounded-lg">
           <div className="text-2xl font-bold text-green-600">
-            R$ {metrics.totalRevenue.toLocaleString('pt-BR')}
+            R$ {metrics.totalRevenue.toLocaleString("pt-BR")}
           </div>
           <div className="text-sm text-green-600">Receita Total</div>
         </div>
         <div className="text-center p-4 bg-red-50 rounded-lg">
           <div className="text-2xl font-bold text-red-600">
-            R$ {metrics.totalCost.toLocaleString('pt-BR')}
+            R$ {metrics.totalCost.toLocaleString("pt-BR")}
           </div>
           <div className="text-sm text-red-600">Custo Total</div>
         </div>
@@ -646,7 +705,7 @@ function ROIMetricsDisplay({ metrics }: { metrics: ROIMetrics }) {
         </div>
         <div className="flex justify-between">
           <span>Valor por Conversão</span>
-          <span>R$ {metrics.conversionValue.toLocaleString('pt-BR')}</span>
+          <span>R$ {metrics.conversionValue.toLocaleString("pt-BR")}</span>
         </div>
       </div>
     </div>
@@ -657,16 +716,22 @@ function ROIMetricsDisplay({ metrics }: { metrics: ROIMetrics }) {
 function TrendsAnalysisDisplay({ trends }: { trends: TrendAnalysis }) {
   const getTrendBadge = (value: number, label: string) => {
     const variant = value > 5 ? "default" : value < -5 ? "destructive" : "secondary";
-    const icon = value > 0 ? <TrendingUp className="w-3 h-3" /> : 
-                 value < 0 ? <TrendingDown className="w-3 h-3" /> : 
-                 <Minus className="w-3 h-3" />;
+    const icon =
+      value > 0 ? (
+        <TrendingUp className="w-3 h-3" />
+      ) : value < 0 ? (
+        <TrendingDown className="w-3 h-3" />
+      ) : (
+        <Minus className="w-3 h-3" />
+      );
 
     return (
       <div className="flex items-center justify-between p-3 border rounded-lg">
         <span className="text-sm">{label}</span>
         <Badge variant={variant} className="flex items-center gap-1">
           {icon}
-          {value > 0 ? '+' : ''}{value.toFixed(1)}%
+          {value > 0 ? "+" : ""}
+          {value.toFixed(1)}%
         </Badge>
       </div>
     );
@@ -674,11 +739,11 @@ function TrendsAnalysisDisplay({ trends }: { trends: TrendAnalysis }) {
 
   return (
     <div className="space-y-3">
-      {getTrendBadge(trends.volumeGrowth, 'Crescimento de Volume')}
-      {getTrendBadge(trends.engagementGrowth, 'Crescimento de Engajement')}
-      {getTrendBadge(trends.revenueGrowth, 'Crescimento de Receita')}
-      {getTrendBadge(trends.costGrowth, 'Crescimento de Custo')}
-      {getTrendBadge(trends.roiGrowth, 'Crescimento de ROI')}
+      {getTrendBadge(trends.volumeGrowth, "Crescimento de Volume")}
+      {getTrendBadge(trends.engagementGrowth, "Crescimento de Engajement")}
+      {getTrendBadge(trends.revenueGrowth, "Crescimento de Receita")}
+      {getTrendBadge(trends.costGrowth, "Crescimento de Custo")}
+      {getTrendBadge(trends.roiGrowth, "Crescimento de ROI")}
     </div>
   );
 }
@@ -688,19 +753,27 @@ function BenchmarkComparisonDisplay({ comparison }: { comparison: BenchmarkCompa
   return (
     <div className="space-y-4">
       <div className="text-center p-4 bg-blue-50 rounded-lg">
-        <div className="text-2xl font-bold text-blue-600">
-          {comparison.overallScore.toFixed(1)}
-        </div>
+        <div className="text-2xl font-bold text-blue-600">{comparison.overallScore.toFixed(1)}</div>
         <div className="text-sm text-blue-600">Score vs Benchmarks</div>
-        <Badge 
-          variant={comparison.industryRanking === 'excellent' ? "default" : 
-                  comparison.industryRanking === 'good' ? "secondary" : "destructive"}
+        <Badge
+          variant={
+            comparison.industryRanking === "excellent"
+              ? "default"
+              : comparison.industryRanking === "good"
+                ? "secondary"
+                : "destructive"
+          }
           className="mt-2"
         >
-          {comparison.industryRanking === 'excellent' ? 'Excelente' :
-           comparison.industryRanking === 'good' ? 'Bom' :
-           comparison.industryRanking === 'average' ? 'Médio' :
-           comparison.industryRanking === 'below_average' ? 'Abaixo da Média' : 'Ruim'}
+          {comparison.industryRanking === "excellent"
+            ? "Excelente"
+            : comparison.industryRanking === "good"
+              ? "Bom"
+              : comparison.industryRanking === "average"
+                ? "Médio"
+                : comparison.industryRanking === "below_average"
+                  ? "Abaixo da Média"
+                  : "Ruim"}
         </Badge>
       </div>
 

@@ -1,17 +1,17 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Input } from "@/components/ui/input";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
+import type {
   Table,
   TableBody,
   TableCell,
@@ -19,11 +19,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import {
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { cn } from "@/lib/utils";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
   AlertTriangle,
   CheckCircle,
   Clock,
@@ -36,8 +36,8 @@ import {
   User,
   XCircle,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 import ApprovalHierarchyConfig from "./approval-hierarchy-config";
 import ApprovalRequestTracker from "./approval-request-tracker";
 
@@ -108,9 +108,7 @@ const priorityConfig = {
   urgent: { label: "Urgente", color: "bg-red-100 text-red-800" },
 };
 
-export default function ApprovalDashboard({
-  onRequestApproval,
-}: ApprovalDashboardProps) {
+export default function ApprovalDashboard({ onRequestApproval }: ApprovalDashboardProps) {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<ApprovalDashboardStats>({
     pending: 0,
@@ -123,9 +121,7 @@ export default function ApprovalDashboard({
     totalAmount: 0,
   });
 
-  const [pendingApprovals, setPendingApprovals] = useState<
-    ApprovalRequestSummary[]
-  >([]);
+  const [pendingApprovals, setPendingApprovals] = useState<ApprovalRequestSummary[]>([]);
   const [myRequests, setMyRequests] = useState<ApprovalRequestSummary[]>([]);
   const [allRequests, setAllRequests] = useState<ApprovalRequestSummary[]>([]);
 
@@ -163,16 +159,12 @@ export default function ApprovalDashboard({
           id: "req_001",
           accounts_payable_id: "ap_001",
           requester_name: "Ana Silva",
-          request_date: new Date(
-            Date.now() - 2 * 24 * 60 * 60 * 1000
-          ).toISOString(),
+          request_date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
           amount: 15000,
           current_level: 2,
           status: "pending",
           priority: "high",
-          due_date: new Date(
-            Date.now() + 1 * 24 * 60 * 60 * 1000
-          ).toISOString(),
+          due_date: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(),
           vendor_name: "MedEquip Ltda",
           invoice_number: "INV-2024-001",
           category: "Equipamentos",
@@ -183,16 +175,12 @@ export default function ApprovalDashboard({
           id: "req_002",
           accounts_payable_id: "ap_002",
           requester_name: "Carlos Santos",
-          request_date: new Date(
-            Date.now() - 1 * 24 * 60 * 60 * 1000
-          ).toISOString(),
+          request_date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
           amount: 3500,
           current_level: 1,
           status: "pending",
           priority: "normal",
-          due_date: new Date(
-            Date.now() + 2 * 24 * 60 * 60 * 1000
-          ).toISOString(),
+          due_date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
           vendor_name: "Office Solutions",
           invoice_number: "INV-2024-002",
           category: "Material de Escritório",
@@ -203,9 +191,7 @@ export default function ApprovalDashboard({
           id: "req_003",
           accounts_payable_id: "ap_003",
           requester_name: "Marina Costa",
-          request_date: new Date(
-            Date.now() - 3 * 24 * 60 * 60 * 1000
-          ).toISOString(),
+          request_date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
           amount: 25000,
           current_level: 3,
           status: "pending",
@@ -224,16 +210,12 @@ export default function ApprovalDashboard({
           id: "req_004",
           accounts_payable_id: "ap_004",
           requester_name: "Eu mesmo",
-          request_date: new Date(
-            Date.now() - 1 * 24 * 60 * 60 * 1000
-          ).toISOString(),
+          request_date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
           amount: 5000,
           current_level: 2,
           status: "pending",
           priority: "normal",
-          due_date: new Date(
-            Date.now() + 1 * 24 * 60 * 60 * 1000
-          ).toISOString(),
+          due_date: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(),
           vendor_name: "Supplies Inc",
           invoice_number: "INV-2024-004",
           category: "Suprimentos",
@@ -249,16 +231,12 @@ export default function ApprovalDashboard({
           id: "req_005",
           accounts_payable_id: "ap_005",
           requester_name: "João Oliveira",
-          request_date: new Date(
-            Date.now() - 5 * 24 * 60 * 60 * 1000
-          ).toISOString(),
+          request_date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
           amount: 8000,
           current_level: 3,
           status: "approved" as const,
           priority: "normal" as const,
-          due_date: new Date(
-            Date.now() - 2 * 24 * 60 * 60 * 1000
-          ).toISOString(),
+          due_date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
           vendor_name: "Service Pro",
           invoice_number: "INV-2024-005",
           category: "Serviços",
@@ -310,18 +288,12 @@ export default function ApprovalDashboard({
     return requests.filter((request) => {
       const matchesSearch =
         searchTerm === "" ||
-        request.requester_name
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase()) ||
+        request.requester_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         request.vendor_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        request.invoice_number
-          ?.toLowerCase()
-          .includes(searchTerm.toLowerCase());
+        request.invoice_number?.toLowerCase().includes(searchTerm.toLowerCase());
 
-      const matchesStatus =
-        statusFilter === "all" || request.status === statusFilter;
-      const matchesPriority =
-        priorityFilter === "all" || request.priority === priorityFilter;
+      const matchesStatus = statusFilter === "all" || request.status === statusFilter;
+      const matchesPriority = priorityFilter === "all" || request.priority === priorityFilter;
 
       return matchesSearch && matchesStatus && matchesPriority;
     });
@@ -334,9 +306,7 @@ export default function ApprovalDashboard({
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4 text-yellow-600" />
             <div>
-              <p className="text-2xl font-bold text-yellow-600">
-                {stats.pending}
-              </p>
+              <p className="text-2xl font-bold text-yellow-600">{stats.pending}</p>
               <p className="text-xs text-muted-foreground">Pendentes</p>
             </div>
           </div>
@@ -348,9 +318,7 @@ export default function ApprovalDashboard({
           <div className="flex items-center gap-2">
             <CheckCircle className="h-4 w-4 text-green-600" />
             <div>
-              <p className="text-2xl font-bold text-green-600">
-                {stats.approved}
-              </p>
+              <p className="text-2xl font-bold text-green-600">{stats.approved}</p>
               <p className="text-xs text-muted-foreground">Aprovadas</p>
             </div>
           </div>
@@ -362,9 +330,7 @@ export default function ApprovalDashboard({
           <div className="flex items-center gap-2">
             <XCircle className="h-4 w-4 text-red-600" />
             <div>
-              <p className="text-2xl font-bold text-red-600">
-                {stats.rejected}
-              </p>
+              <p className="text-2xl font-bold text-red-600">{stats.rejected}</p>
               <p className="text-xs text-muted-foreground">Rejeitadas</p>
             </div>
           </div>
@@ -376,9 +342,7 @@ export default function ApprovalDashboard({
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-4 w-4 text-orange-600" />
             <div>
-              <p className="text-2xl font-bold text-orange-600">
-                {stats.escalated}
-              </p>
+              <p className="text-2xl font-bold text-orange-600">{stats.escalated}</p>
               <p className="text-xs text-muted-foreground">Escaladas</p>
             </div>
           </div>
@@ -402,9 +366,7 @@ export default function ApprovalDashboard({
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-blue-600" />
             <div>
-              <p className="text-2xl font-bold text-blue-600">
-                {stats.myPending}
-              </p>
+              <p className="text-2xl font-bold text-blue-600">{stats.myPending}</p>
               <p className="text-xs text-muted-foreground">Minhas</p>
             </div>
           </div>
@@ -416,9 +378,7 @@ export default function ApprovalDashboard({
           <div className="flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-purple-600" />
             <div>
-              <p className="text-2xl font-bold text-purple-600">
-                {stats.avgApprovalTime}h
-              </p>
+              <p className="text-2xl font-bold text-purple-600">{stats.avgApprovalTime}h</p>
               <p className="text-xs text-muted-foreground">Tempo Médio</p>
             </div>
           </div>
@@ -431,10 +391,7 @@ export default function ApprovalDashboard({
             <DollarSign className="h-4 w-4 text-green-600" />
             <div>
               <p className="text-lg font-bold text-green-600">
-                {formatCurrency(stats.totalAmount)
-                  .replace("R$", "R$")
-                  .slice(0, 6)}
-                k
+                {formatCurrency(stats.totalAmount).replace("R$", "R$").slice(0, 6)}k
               </p>
               <p className="text-xs text-muted-foreground">Volume</p>
             </div>
@@ -515,24 +472,15 @@ export default function ApprovalDashboard({
                         {request.invoice_number} • {request.requester_name}
                       </p>
                       <div className="flex items-center gap-2 mt-1">
-                        <Badge
-                          className={cn(
-                            "text-xs",
-                            priorityConfig[request.priority].color
-                          )}
-                        >
+                        <Badge className={cn("text-xs", priorityConfig[request.priority].color)}>
                           {priorityConfig[request.priority].label}
                         </Badge>
-                        <span className="text-xs text-muted-foreground">
-                          {request.category}
-                        </span>
+                        <span className="text-xs text-muted-foreground">{request.category}</span>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <p className="font-medium">
-                      {formatCurrency(request.amount)}
-                    </p>
+                    <p className="font-medium">{formatCurrency(request.amount)}</p>
                     <p className="text-xs text-muted-foreground">
                       {format(new Date(request.request_date), "dd/MM/yyyy", {
                         locale: ptBR,
@@ -550,18 +498,12 @@ export default function ApprovalDashboard({
                   <TableCell>
                     <div>
                       <p className="text-sm">
-                        {format(
-                          new Date(request.due_date),
-                          "dd/MM/yyyy HH:mm",
-                          { locale: ptBR }
-                        )}
+                        {format(new Date(request.due_date), "dd/MM/yyyy HH:mm", { locale: ptBR })}
                       </p>
                       <p
                         className={cn(
                           "text-xs",
-                          timeInfo.isOverdue
-                            ? "text-red-600"
-                            : "text-muted-foreground"
+                          timeInfo.isOverdue ? "text-red-600" : "text-muted-foreground",
                         )}
                       >
                         {timeInfo.text}
@@ -569,22 +511,13 @@ export default function ApprovalDashboard({
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge
-                      className={cn(
-                        "text-xs",
-                        statusConfig[request.status].color
-                      )}
-                    >
+                    <Badge className={cn("text-xs", statusConfig[request.status].color)}>
                       <StatusIcon className="h-3 w-3 mr-1" />
                       {statusConfig[request.status].label}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleViewRequest(request.id)}
-                    >
+                    <Button variant="ghost" size="sm" onClick={() => handleViewRequest(request.id)}>
                       <Eye className="h-3 w-3" />
                     </Button>
                   </TableCell>
@@ -636,29 +569,17 @@ export default function ApprovalDashboard({
       {/* Tabs */}
       <Tabs defaultValue="pending" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="pending">
-            Pendentes para Mim ({stats.myPending})
-          </TabsTrigger>
-          <TabsTrigger value="my-requests">
-            Minhas Solicitações ({myRequests.length})
-          </TabsTrigger>
-          <TabsTrigger value="all">
-            Todas as Solicitações ({allRequests.length})
-          </TabsTrigger>
+          <TabsTrigger value="pending">Pendentes para Mim ({stats.myPending})</TabsTrigger>
+          <TabsTrigger value="my-requests">Minhas Solicitações ({myRequests.length})</TabsTrigger>
+          <TabsTrigger value="all">Todas as Solicitações ({allRequests.length})</TabsTrigger>
         </TabsList>
 
         <TabsContent value="pending">
-          <RequestTable
-            requests={pendingApprovals}
-            title="Aprovações Pendentes"
-          />
+          <RequestTable requests={pendingApprovals} title="Aprovações Pendentes" />
         </TabsContent>
 
         <TabsContent value="my-requests">
-          <RequestTable
-            requests={myRequests}
-            title="Minhas Solicitações de Aprovação"
-          />
+          <RequestTable requests={myRequests} title="Minhas Solicitações de Aprovação" />
         </TabsContent>
 
         <TabsContent value="all">

@@ -1,6 +1,6 @@
 "use client";
 
-import {
+import type {
   Activity,
   BarChart3,
   Bell,
@@ -21,13 +21,13 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import type { usePathname } from "next/navigation";
+import type { useState } from "react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -121,10 +121,7 @@ const navigationItems = [
   },
 ];
 
-export function DashboardLayout({
-  children,
-  currentUser,
-}: DashboardLayoutProps) {
+export function DashboardLayout({ children, currentUser }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
 
@@ -163,12 +160,8 @@ export function DashboardLayout({
                 <Stethoscope className="w-5 h-5 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-lg font-semibold text-foreground">
-                  NeonPro
-                </h1>
-                <p className="text-xs text-muted-foreground">
-                  Clínica Estética
-                </p>
+                <h1 className="text-lg font-semibold text-foreground">NeonPro</h1>
+                <p className="text-xs text-muted-foreground">Clínica Estética</p>
               </div>
             </div>
             <Button
@@ -230,12 +223,8 @@ export function DashboardLayout({
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 text-left">
-                      <p className="text-sm font-medium text-foreground">
-                        {user.name}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {user.role}
-                      </p>
+                      <p className="text-sm font-medium text-foreground">{user.name}</p>
+                      <p className="text-xs text-muted-foreground">{user.role}</p>
                     </div>
                     <ChevronDown className="w-4 h-4 text-muted-foreground" />
                   </div>
@@ -279,8 +268,7 @@ export function DashboardLayout({
 
             <div>
               <h2 className="text-lg font-semibold text-foreground">
-                {navigationItems.find((item) => item.href === pathname)
-                  ?.title || "Dashboard"}
+                {navigationItems.find((item) => item.href === pathname)?.title || "Dashboard"}
               </h2>
               <p className="text-sm text-muted-foreground">
                 Bem-vinda, {user.name.split(" ")[1] || user.name}
@@ -293,9 +281,7 @@ export function DashboardLayout({
             <Button variant="ghost" size="sm" className="relative">
               <Bell className="w-4 h-4" />
               <span className="absolute -top-1 -right-1 w-3 h-3 bg-destructive rounded-full flex items-center justify-center">
-                <span className="text-xs text-destructive-foreground font-bold">
-                  2
-                </span>
+                <span className="text-xs text-destructive-foreground font-bold">2</span>
               </span>
             </Button>
 

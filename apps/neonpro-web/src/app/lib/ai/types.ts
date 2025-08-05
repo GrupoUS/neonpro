@@ -1,7 +1,7 @@
 // AI System Types for Epic 4 Implementation
 // Based on technical architecture in docs/ai/neonpro-ai-technical-deep-dive.md
 
-import { Database } from "@/types/supabase";
+import type { Database } from "@/types/supabase";
 
 // Core AI System Types
 export interface AISystemArchitecture {
@@ -120,10 +120,7 @@ export interface AIResponse {
 // Cross-Functional Suggestions (Story 4.2)
 export interface CrossFunctionalSuggestion {
   id: string;
-  category:
-    | "financial_optimization"
-    | "clinical_excellence"
-    | "operational_efficiency";
+  category: "financial_optimization" | "clinical_excellence" | "operational_efficiency";
   title: string;
   description: string;
   affectedEpics: string[];
@@ -150,11 +147,7 @@ export interface ImplementationStep {
 
 // Predictive Analytics Types (Story 4.3)
 export interface PredictiveInsight {
-  type:
-    | "outcome_prediction"
-    | "financial_forecast"
-    | "demand_forecast"
-    | "risk_assessment";
+  type: "outcome_prediction" | "financial_forecast" | "demand_forecast" | "risk_assessment";
   title: string;
   prediction: string;
   confidence: number;
@@ -218,8 +211,7 @@ export interface OperationalContext {
 export type Appointment = Database["public"]["Tables"]["appointments"]["Row"];
 export type Patient = Database["public"]["Tables"]["patients"]["Row"];
 export type Professional = Database["public"]["Tables"]["professionals"]["Row"];
-export type TreatmentSession =
-  Database["public"]["Tables"]["treatment_sessions"]["Row"];
+export type TreatmentSession = Database["public"]["Tables"]["treatment_sessions"]["Row"];
 
 // Supporting Types
 export interface ConflictAnalysis {

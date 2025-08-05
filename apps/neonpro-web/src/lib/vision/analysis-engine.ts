@@ -1,6 +1,6 @@
-import { createClient } from '@supabase/supabase-js';
-import * as tf from '@tensorflow/tfjs';
-import cv from 'opencv-ts';
+import type { createClient } from "@supabase/supabase-js";
+import * as tf from "@tensorflow/tfjs";
+import cv from "opencv-ts";
 
 // Types for computer vision analysis
 export interface AnalysisResult {
@@ -30,7 +30,7 @@ export interface ChangeMetrics {
 
 export interface AnnotationData {
   id: string;
-  type: 'measurement' | 'highlight' | 'comparison' | 'annotation';
+  type: "measurement" | "highlight" | "comparison" | "annotation";
   coordinates: { x: number; y: number; width?: number; height?: number }[];
   value?: number;
   unit?: string;
@@ -53,9 +53,9 @@ export interface ImageProcessingOptions {
 export class VisionAnalysisEngine {
   private supabase = createClient(
     process.env.SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
   );
-  
+
   private model: tf.LayersModel | null = null;
   private isModelLoaded = false;
 
@@ -70,11 +70,11 @@ export class VisionAnalysisEngine {
     try {
       // Load pre-trained model for medical image analysis
       // In production, this would be a custom trained model
-      this.model = await tf.loadLayersModel('/models/medical-analysis-model.json');
+      this.model = await tf.loadLayersModel("/models/medical-analysis-model.json");
       this.isModelLoaded = true;
-      console.log('Vision analysis model loaded successfully');
+      console.log("Vision analysis model loaded successfully");
     } catch (error) {
-      console.error('Failed to load vision analysis model:', error);
+      console.error("Failed to load vision analysis model:", error);
       // Fallback to basic analysis without ML model
       this.isModelLoaded = false;
     }
@@ -88,46 +88,42 @@ export class VisionAnalysisEngine {
     beforeImageUrl: string,
     afterImageUrl: string,
     patientId: string,
-    treatmentType: string
+    treatmentType: string,
   ): Promise<AnalysisResult> {
     const startTime = Date.now();
-    
+
     try {
       // Load and preprocess images
       const beforeImage = await this.loadAndPreprocessImage(beforeImageUrl);
       const afterImage = await this.loadAndPreprocessImage(afterImageUrl);
-      
+
       // Perform computer vision analysis
       const changeMetrics = await this.calculateChangeMetrics(
-        beforeImage, 
-        afterImage, 
-        treatmentType
+        beforeImage,
+        afterImage,
+        treatmentType,
       );
-      
+
       // Generate annotations and measurements
-      const annotations = await this.generateAnnotations(
-        beforeImage, 
-        afterImage, 
-        changeMetrics
-      );
-      
+      const annotations = await this.generateAnnotations(beforeImage, afterImage, changeMetrics);
+
       // Calculate overall improvement percentage
       const improvementPercentage = this.calculateOverallImprovement(changeMetrics);
-      
+
       // Calculate accuracy score based on model confidence
       const accuracyScore = await this.calculateAccuracyScore(
-        beforeImage, 
-        afterImage, 
-        changeMetrics
+        beforeImage,
+        afterImage,
+        changeMetrics,
       );
-      
+
       const processingTime = Date.now() - startTime;
-      
+
       // Ensure processing time is under 30 seconds
       if (processingTime > 30000) {
         console.warn(`Processing time exceeded 30s: ${processingTime}ms`);
       }
-      
+
       const result: AnalysisResult = {
         id: crypto.randomUUID(),
         patientId,
@@ -139,17 +135,18 @@ export class VisionAnalysisEngine {
         changeMetrics,
         annotations,
         confidence: accuracyScore,
-        analysisDate: new Date()
+        analysisDate: new Date(),
       };
-      
+
       // Save analysis result to database
       await this.saveAnalysisResult(result);
-      
+
       return result;
-      
     } catch (error) {
-      console.error('Vision analysis failed:', error);
-      throw new Error(`Analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error("Vision analysis failed:", error);
+      throw new Error(
+        `Analysis failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }
 
@@ -158,44 +155,38 @@ export class VisionAnalysisEngine {
    */
   private async loadAndPreprocessImage(
     imageUrl: string,
-    options: ImageProcessingOptions = {}
+    options: ImageProcessingOptions = {},
   ): Promise<tf.Tensor3D> {
     try {
       // Load image as tensor
-      const image = await tf.browser.fromPixels(
-        await this.loadImageElement(imageUrl)
-      );
-      
+      const image = await tf.browser.fromPixels(await this.loadImageElement(imageUrl));
+
       // Standardize image size
       const targetSize = options.targetSize || { width: 512, height: 512 };
-      let processedImage = tf.image.resizeBilinear(
-        image, 
-        [targetSize.height, targetSize.width]
-      );
-      
+      let processedImage = tf.image.resizeBilinear(image, [targetSize.height, targetSize.width]);
+
       // Normalize pixel values to [0, 1]
       processedImage = processedImage.div(255.0);
-      
+
       // Apply preprocessing options
       if (options.enhanceContrast) {
         processedImage = this.enhanceContrast(processedImage);
       }
-      
+
       if (options.normalizeColors) {
         processedImage = this.normalizeColors(processedImage);
       }
-      
+
       if (options.removeNoise) {
         processedImage = this.removeNoise(processedImage);
       }
-      
+
       image.dispose();
-      
+
       return processedImage as tf.Tensor3D;
-      
     } catch (error) {
-      console.error('Image preprocessing failed:', error);
-      throw new Error('Failed to preprocess image');
+      console.error("Image preprocessing failed:", error);
+      throw new Error("Failed to preprocess image");
     }
   }
 
@@ -205,67 +196,51 @@ export class VisionAnalysisEngine {
   private async calculateChangeMetrics(
     beforeImage: tf.Tensor3D,
     afterImage: tf.Tensor3D,
-    treatmentType: string
+    treatmentType: string,
   ): Promise<ChangeMetrics> {
     try {
       // Calculate pixel-level differences
       const difference = tf.sub(afterImage, beforeImage);
       const absoluteDifference = tf.abs(difference);
-      
+
       // Calculate various metrics based on treatment type
       const metrics: ChangeMetrics = {
-        overallImprovement: 0
+        overallImprovement: 0,
       };
-      
-      if (treatmentType.includes('skin') || treatmentType.includes('aesthetic')) {
-        metrics.skinTexture = await this.calculateSkinTextureImprovement(
-          beforeImage, 
-          afterImage
-        );
-        metrics.wrinkleReduction = await this.calculateWrinkleReduction(
-          beforeImage, 
-          afterImage
-        );
+
+      if (treatmentType.includes("skin") || treatmentType.includes("aesthetic")) {
+        metrics.skinTexture = await this.calculateSkinTextureImprovement(beforeImage, afterImage);
+        metrics.wrinkleReduction = await this.calculateWrinkleReduction(beforeImage, afterImage);
         metrics.pigmentationImprovement = await this.calculatePigmentationImprovement(
-          beforeImage, 
-          afterImage
+          beforeImage,
+          afterImage,
         );
       }
-      
-      if (treatmentType.includes('medical') || treatmentType.includes('healing')) {
-        metrics.lesionHealing = await this.calculateLesionHealing(
-          beforeImage, 
-          afterImage
-        );
-        metrics.scarReduction = await this.calculateScarReduction(
-          beforeImage, 
-          afterImage
-        );
+
+      if (treatmentType.includes("medical") || treatmentType.includes("healing")) {
+        metrics.lesionHealing = await this.calculateLesionHealing(beforeImage, afterImage);
+        metrics.scarReduction = await this.calculateScarReduction(beforeImage, afterImage);
       }
-      
-      if (treatmentType.includes('body') || treatmentType.includes('contouring')) {
-        metrics.volumeChange = await this.calculateVolumeChange(
-          beforeImage, 
-          afterImage
-        );
+
+      if (treatmentType.includes("body") || treatmentType.includes("contouring")) {
+        metrics.volumeChange = await this.calculateVolumeChange(beforeImage, afterImage);
         metrics.symmetryImprovement = await this.calculateSymmetryImprovement(
-          beforeImage, 
-          afterImage
+          beforeImage,
+          afterImage,
         );
       }
-      
+
       // Calculate overall improvement
       metrics.overallImprovement = this.calculateOverallImprovement(metrics);
-      
+
       // Cleanup tensors
       difference.dispose();
       absoluteDifference.dispose();
-      
+
       return metrics;
-      
     } catch (error) {
-      console.error('Change metrics calculation failed:', error);
-      throw new Error('Failed to calculate change metrics');
+      console.error("Change metrics calculation failed:", error);
+      throw new Error("Failed to calculate change metrics");
     }
   }
 
@@ -275,51 +250,50 @@ export class VisionAnalysisEngine {
   private async generateAnnotations(
     beforeImage: tf.Tensor3D,
     afterImage: tf.Tensor3D,
-    changeMetrics: ChangeMetrics
+    changeMetrics: ChangeMetrics,
   ): Promise<AnnotationData[]> {
     const annotations: AnnotationData[] = [];
-    
+
     try {
       // Generate measurement annotations
       if (changeMetrics.skinTexture !== undefined) {
         annotations.push({
           id: crypto.randomUUID(),
-          type: 'measurement',
+          type: "measurement",
           coordinates: [{ x: 100, y: 100, width: 50, height: 50 }],
           value: changeMetrics.skinTexture,
-          unit: '%',
-          description: 'Skin texture improvement',
-          confidence: 0.95
+          unit: "%",
+          description: "Skin texture improvement",
+          confidence: 0.95,
         });
       }
-      
+
       if (changeMetrics.wrinkleReduction !== undefined) {
         annotations.push({
           id: crypto.randomUUID(),
-          type: 'highlight',
+          type: "highlight",
           coordinates: [{ x: 150, y: 80, width: 30, height: 20 }],
           value: changeMetrics.wrinkleReduction,
-          unit: '%',
-          description: 'Wrinkle reduction area',
-          confidence: 0.92
+          unit: "%",
+          description: "Wrinkle reduction area",
+          confidence: 0.92,
         });
       }
-      
+
       // Add overall improvement annotation
       annotations.push({
         id: crypto.randomUUID(),
-        type: 'annotation',
+        type: "annotation",
         coordinates: [{ x: 10, y: 10 }],
         value: changeMetrics.overallImprovement,
-        unit: '%',
-        description: 'Overall treatment improvement',
-        confidence: 0.96
+        unit: "%",
+        description: "Overall treatment improvement",
+        confidence: 0.96,
       });
-      
+
       return annotations;
-      
     } catch (error) {
-      console.error('Annotation generation failed:', error);
+      console.error("Annotation generation failed:", error);
       return [];
     }
   }
@@ -329,11 +303,11 @@ export class VisionAnalysisEngine {
    */
   private calculateOverallImprovement(metrics: ChangeMetrics): number {
     const values = Object.values(metrics).filter(
-      (value): value is number => typeof value === 'number' && value !== metrics.overallImprovement
+      (value): value is number => typeof value === "number" && value !== metrics.overallImprovement,
     );
-    
+
     if (values.length === 0) return 0;
-    
+
     const average = values.reduce((sum, value) => sum + value, 0) / values.length;
     return Math.round(average * 100) / 100;
   }
@@ -344,7 +318,7 @@ export class VisionAnalysisEngine {
   private async calculateAccuracyScore(
     beforeImage: tf.Tensor3D,
     afterImage: tf.Tensor3D,
-    changeMetrics: ChangeMetrics
+    changeMetrics: ChangeMetrics,
   ): Promise<number> {
     try {
       if (this.isModelLoaded && this.model) {
@@ -352,21 +326,21 @@ export class VisionAnalysisEngine {
         const combinedInput = tf.concat([beforeImage, afterImage], 2);
         const prediction = this.model.predict(combinedInput.expandDims(0)) as tf.Tensor;
         const accuracy = await prediction.data();
-        
+
         combinedInput.dispose();
         prediction.dispose();
-        
+
         return Math.max(0.95, accuracy[0]); // Ensure minimum 95% accuracy
       } else {
         // Fallback accuracy calculation based on metrics confidence
         const metricsCount = Object.keys(changeMetrics).length;
         const baseAccuracy = 0.95;
         const confidenceBonus = metricsCount > 3 ? 0.02 : 0.01;
-        
+
         return Math.min(0.99, baseAccuracy + confidenceBonus);
       }
     } catch (error) {
-      console.error('Accuracy calculation failed:', error);
+      console.error("Accuracy calculation failed:", error);
       return 0.95; // Default to minimum required accuracy
     }
   }
@@ -374,7 +348,7 @@ export class VisionAnalysisEngine {
   // Helper methods for specific analysis types
   private async calculateSkinTextureImprovement(
     beforeImage: tf.Tensor3D,
-    afterImage: tf.Tensor3D
+    afterImage: tf.Tensor3D,
   ): Promise<number> {
     // Implement skin texture analysis using computer vision
     // This would use advanced algorithms to detect texture changes
@@ -383,7 +357,7 @@ export class VisionAnalysisEngine {
 
   private async calculateWrinkleReduction(
     beforeImage: tf.Tensor3D,
-    afterImage: tf.Tensor3D
+    afterImage: tf.Tensor3D,
   ): Promise<number> {
     // Implement wrinkle detection and comparison
     return Math.random() * 25 + 15; // Placeholder: 15-40% reduction
@@ -391,7 +365,7 @@ export class VisionAnalysisEngine {
 
   private async calculatePigmentationImprovement(
     beforeImage: tf.Tensor3D,
-    afterImage: tf.Tensor3D
+    afterImage: tf.Tensor3D,
   ): Promise<number> {
     // Implement pigmentation analysis
     return Math.random() * 20 + 20; // Placeholder: 20-40% improvement
@@ -399,7 +373,7 @@ export class VisionAnalysisEngine {
 
   private async calculateLesionHealing(
     beforeImage: tf.Tensor3D,
-    afterImage: tf.Tensor3D
+    afterImage: tf.Tensor3D,
   ): Promise<number> {
     // Implement lesion detection and healing analysis
     return Math.random() * 35 + 25; // Placeholder: 25-60% healing
@@ -407,7 +381,7 @@ export class VisionAnalysisEngine {
 
   private async calculateScarReduction(
     beforeImage: tf.Tensor3D,
-    afterImage: tf.Tensor3D
+    afterImage: tf.Tensor3D,
   ): Promise<number> {
     // Implement scar analysis
     return Math.random() * 30 + 20; // Placeholder: 20-50% reduction
@@ -415,7 +389,7 @@ export class VisionAnalysisEngine {
 
   private async calculateVolumeChange(
     beforeImage: tf.Tensor3D,
-    afterImage: tf.Tensor3D
+    afterImage: tf.Tensor3D,
   ): Promise<number> {
     // Implement volume measurement and comparison
     return Math.random() * 15 + 5; // Placeholder: 5-20% change
@@ -423,7 +397,7 @@ export class VisionAnalysisEngine {
 
   private async calculateSymmetryImprovement(
     beforeImage: tf.Tensor3D,
-    afterImage: tf.Tensor3D
+    afterImage: tf.Tensor3D,
   ): Promise<number> {
     // Implement symmetry analysis
     return Math.random() * 25 + 10; // Placeholder: 10-35% improvement
@@ -440,22 +414,22 @@ export class VisionAnalysisEngine {
     const mean = tf.mean(image, [0, 1], true);
     const std = tf.moments(image, [0, 1]).variance.sqrt();
     const normalized = tf.div(tf.sub(image, mean), std.add(1e-8));
-    
+
     mean.dispose();
     std.dispose();
-    
+
     return normalized as tf.Tensor3D;
   }
 
   private removeNoise(image: tf.Tensor3D): tf.Tensor3D {
     // Implement noise reduction (simplified)
-    return tf.avgPool(image, 3, 1, 'same') as tf.Tensor3D;
+    return tf.avgPool(image, 3, 1, "same") as tf.Tensor3D;
   }
 
   private async loadImageElement(imageUrl: string): Promise<HTMLImageElement> {
     return new Promise((resolve, reject) => {
       const img = new Image();
-      img.crossOrigin = 'anonymous';
+      img.crossOrigin = "anonymous";
       img.onload = () => resolve(img);
       img.onerror = reject;
       img.src = imageUrl;
@@ -467,28 +441,26 @@ export class VisionAnalysisEngine {
    */
   private async saveAnalysisResult(result: AnalysisResult): Promise<void> {
     try {
-      const { error } = await this.supabase
-        .from('image_analysis')
-        .insert({
-          id: result.id,
-          patient_id: result.patientId,
-          before_image_id: result.beforeImageId,
-          after_image_id: result.afterImageId,
-          accuracy_score: result.accuracyScore,
-          processing_time: result.processingTime,
-          improvement_percentage: result.improvementPercentage,
-          change_metrics: result.changeMetrics,
-          annotations: result.annotations,
-          confidence: result.confidence,
-          analysis_date: result.analysisDate.toISOString()
-        });
+      const { error } = await this.supabase.from("image_analysis").insert({
+        id: result.id,
+        patient_id: result.patientId,
+        before_image_id: result.beforeImageId,
+        after_image_id: result.afterImageId,
+        accuracy_score: result.accuracyScore,
+        processing_time: result.processingTime,
+        improvement_percentage: result.improvementPercentage,
+        change_metrics: result.changeMetrics,
+        annotations: result.annotations,
+        confidence: result.confidence,
+        analysis_date: result.analysisDate.toISOString(),
+      });
 
       if (error) {
-        console.error('Failed to save analysis result:', error);
-        throw new Error('Database save failed');
+        console.error("Failed to save analysis result:", error);
+        throw new Error("Database save failed");
       }
     } catch (error) {
-      console.error('Save analysis result failed:', error);
+      console.error("Save analysis result failed:", error);
       throw error;
     }
   }
@@ -499,17 +471,17 @@ export class VisionAnalysisEngine {
   async getPatientAnalysisHistory(patientId: string): Promise<AnalysisResult[]> {
     try {
       const { data, error } = await this.supabase
-        .from('image_analysis')
-        .select('*')
-        .eq('patient_id', patientId)
-        .order('analysis_date', { ascending: false });
+        .from("image_analysis")
+        .select("*")
+        .eq("patient_id", patientId)
+        .order("analysis_date", { ascending: false });
 
       if (error) {
-        console.error('Failed to fetch analysis history:', error);
-        throw new Error('Database fetch failed');
+        console.error("Failed to fetch analysis history:", error);
+        throw new Error("Database fetch failed");
       }
 
-      return data.map(row => ({
+      return data.map((row) => ({
         id: row.id,
         patientId: row.patient_id,
         beforeImageId: row.before_image_id,
@@ -520,10 +492,10 @@ export class VisionAnalysisEngine {
         changeMetrics: row.change_metrics,
         annotations: row.annotations,
         confidence: row.confidence,
-        analysisDate: new Date(row.analysis_date)
+        analysisDate: new Date(row.analysis_date),
       }));
     } catch (error) {
-      console.error('Get analysis history failed:', error);
+      console.error("Get analysis history failed:", error);
       throw error;
     }
   }
@@ -531,4 +503,3 @@ export class VisionAnalysisEngine {
 
 // Export singleton instance
 export const visionAnalysisEngine = new VisionAnalysisEngine();
-

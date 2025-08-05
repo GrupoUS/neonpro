@@ -4,21 +4,33 @@
  * Created: January 24, 2025
  */
 
-'use client';
+"use client";
 
-import { useState, useMemo } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { 
-  TrendingUp, 
-  Target, 
-  Users, 
+import type { useState, useMemo } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Progress } from "@/components/ui/progress";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
+  TrendingUp,
+  Target,
+  Users,
   DollarSign,
   AlertCircle,
   CheckCircle,
@@ -26,9 +38,9 @@ import {
   Star,
   ArrowRight,
   Filter,
-  Search
-} from 'lucide-react';
-import {
+  Search,
+} from "lucide-react";
+import type {
   Customer,
   Appointment,
   LeadScore,
@@ -37,8 +49,8 @@ import {
   determineCustomerLifecycle,
   predictChurnRisk,
   calculateCustomerLifetimeValue,
-  rankCustomersByValue
-} from './utils';
+  rankCustomersByValue,
+} from "./utils";
 
 interface LeadTrackingProps {
   customers?: Customer[];
@@ -51,57 +63,59 @@ export function LeadTracking({
   customers = [],
   appointments = [],
   onLeadAction,
-  className = ''
+  className = "",
 }: LeadTrackingProps) {
-  const [selectedPriority, setSelectedPriority] = useState<string>('all');
-  const [selectedLifecycle, setSelectedLifecycle] = useState<string>('all');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState<string>('score');
+  const [selectedPriority, setSelectedPriority] = useState<string>("all");
+  const [selectedLifecycle, setSelectedLifecycle] = useState<string>("all");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState<string>("score");
 
   // Calculate lead scores for all customers
   const customerLeadScores = useMemo(() => {
-    return customers.map(customer => {
-      const customerAppointments = appointments.filter(apt => apt.customerId === customer.id);
+    return customers.map((customer) => {
+      const customerAppointments = appointments.filter((apt) => apt.customerId === customer.id);
       const leadScore = calculateLeadScore(customer, customerAppointments);
       const lifecycle = determineCustomerLifecycle(customer);
       const churnRisk = predictChurnRisk(customer);
       const lifetimeValue = calculateCustomerLifetimeValue(customerAppointments);
-      
+
       return {
         customer,
         leadScore,
         lifecycle,
         churnRisk,
         lifetimeValue,
-        appointments: customerAppointments
+        appointments: customerAppointments,
       };
     });
   }, [customers, appointments]);
 
   // Filter and sort leads
   const filteredLeads = useMemo(() => {
-    const filtered = customerLeadScores.filter(lead => {
-      const matchesSearch = lead.customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           lead.customer.email.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesPriority = selectedPriority === 'all' || lead.leadScore.priority === selectedPriority;
-      const matchesLifecycle = selectedLifecycle === 'all' || lead.lifecycle === selectedLifecycle;
-      
+    const filtered = customerLeadScores.filter((lead) => {
+      const matchesSearch =
+        lead.customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        lead.customer.email.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesPriority =
+        selectedPriority === "all" || lead.leadScore.priority === selectedPriority;
+      const matchesLifecycle = selectedLifecycle === "all" || lead.lifecycle === selectedLifecycle;
+
       return matchesSearch && matchesPriority && matchesLifecycle;
     });
 
     // Sort leads
     switch (sortBy) {
-      case 'score':
+      case "score":
         filtered.sort((a, b) => b.leadScore.score - a.leadScore.score);
         break;
-      case 'value':
+      case "value":
         filtered.sort((a, b) => b.lifetimeValue - a.lifetimeValue);
         break;
-      case 'risk':
+      case "risk":
         filtered.sort((a, b) => b.churnRisk - a.churnRisk);
         break;
-      case 'name':
+      case "name":
         filtered.sort((a, b) => a.customer.name.localeCompare(b.customer.name));
         break;
       default:
@@ -114,20 +128,27 @@ export function LeadTracking({
   // Calculate pipeline analytics
   const pipelineAnalytics = useMemo(() => {
     const totalLeads = customerLeadScores.length;
-    const highPriorityLeads = customerLeadScores.filter(lead => lead.leadScore.priority === 'high').length;
-    const mediumPriorityLeads = customerLeadScores.filter(lead => lead.leadScore.priority === 'medium').length;
-    const lowPriorityLeads = customerLeadScores.filter(lead => lead.leadScore.priority === 'low').length;
-    
-    const averageScore = totalLeads > 0 
-      ? customerLeadScores.reduce((sum, lead) => sum + lead.leadScore.score, 0) / totalLeads 
-      : 0;
-    
-    const conversionOpportunities = customerLeadScores.filter(lead => 
-      lead.leadScore.score >= 60 && lead.lifecycle === 'new'
+    const highPriorityLeads = customerLeadScores.filter(
+      (lead) => lead.leadScore.priority === "high",
     ).length;
-    
-    const atRiskHighValue = customerLeadScores.filter(lead => 
-      lead.churnRisk > 50 && lead.lifetimeValue > 500
+    const mediumPriorityLeads = customerLeadScores.filter(
+      (lead) => lead.leadScore.priority === "medium",
+    ).length;
+    const lowPriorityLeads = customerLeadScores.filter(
+      (lead) => lead.leadScore.priority === "low",
+    ).length;
+
+    const averageScore =
+      totalLeads > 0
+        ? customerLeadScores.reduce((sum, lead) => sum + lead.leadScore.score, 0) / totalLeads
+        : 0;
+
+    const conversionOpportunities = customerLeadScores.filter(
+      (lead) => lead.leadScore.score >= 60 && lead.lifecycle === "new",
+    ).length;
+
+    const atRiskHighValue = customerLeadScores.filter(
+      (lead) => lead.churnRisk > 50 && lead.lifetimeValue > 500,
     ).length;
 
     return {
@@ -137,28 +158,37 @@ export function LeadTracking({
       lowPriorityLeads,
       averageScore,
       conversionOpportunities,
-      atRiskHighValue
+      atRiskHighValue,
     };
   }, [customerLeadScores]);
 
   // Get priority color
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'high': return 'bg-red-100 text-red-800 border-red-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'low': return 'bg-green-100 text-green-800 border-green-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case "high":
+        return "bg-red-100 text-red-800 border-red-200";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "low":
+        return "bg-green-100 text-green-800 border-green-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
   // Get lifecycle color
   const getLifecycleColor = (lifecycle: string) => {
     switch (lifecycle) {
-      case 'new': return 'bg-blue-100 text-blue-800';
-      case 'active': return 'bg-green-100 text-green-800';
-      case 'at-risk': return 'bg-yellow-100 text-yellow-800';
-      case 'churned': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "new":
+        return "bg-blue-100 text-blue-800";
+      case "active":
+        return "bg-green-100 text-green-800";
+      case "at-risk":
+        return "bg-yellow-100 text-yellow-800";
+      case "churned":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -170,7 +200,7 @@ export function LeadTracking({
   // Render lead card
   const renderLeadCard = (leadData: any) => {
     const { customer, leadScore, lifecycle, churnRisk, lifetimeValue } = leadData;
-    
+
     return (
       <Card key={customer.id} className="hover:shadow-md transition-shadow">
         <CardHeader className="pb-3">
@@ -183,9 +213,7 @@ export function LeadTracking({
               <Badge className={getPriorityColor(leadScore.priority)}>
                 {leadScore.priority} priority
               </Badge>
-              <Badge className={getLifecycleColor(lifecycle)}>
-                {lifecycle}
-              </Badge>
+              <Badge className={getLifecycleColor(lifecycle)}>{lifecycle}</Badge>
             </div>
           </div>
         </CardHeader>
@@ -211,7 +239,9 @@ export function LeadTracking({
             </div>
             <div className="flex items-center justify-between">
               <span className="text-gray-600">Churn Risk:</span>
-              <span className={`font-medium ${churnRisk > 60 ? 'text-red-600' : churnRisk > 30 ? 'text-yellow-600' : 'text-green-600'}`}>
+              <span
+                className={`font-medium ${churnRisk > 60 ? "text-red-600" : churnRisk > 30 ? "text-yellow-600" : "text-green-600"}`}
+              >
                 {churnRisk.toFixed(0)}%
               </span>
             </div>
@@ -246,18 +276,18 @@ export function LeadTracking({
 
           {/* Action Buttons */}
           <div className="flex space-x-2 pt-2">
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               variant="default"
-              onClick={() => handleLeadAction(customer.id, 'contact')}
+              onClick={() => handleLeadAction(customer.id, "contact")}
               className="flex-1"
             >
               Contact
             </Button>
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               variant="outline"
-              onClick={() => handleLeadAction(customer.id, 'schedule')}
+              onClick={() => handleLeadAction(customer.id, "schedule")}
               className="flex-1"
             >
               Schedule
@@ -293,7 +323,9 @@ export function LeadTracking({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">{pipelineAnalytics.highPriorityLeads}</div>
+            <div className="text-2xl font-bold text-red-600">
+              {pipelineAnalytics.highPriorityLeads}
+            </div>
             <p className="text-xs text-gray-500">Immediate attention</p>
           </CardContent>
         </Card>
@@ -319,7 +351,9 @@ export function LeadTracking({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">{pipelineAnalytics.atRiskHighValue}</div>
+            <div className="text-2xl font-bold text-orange-600">
+              {pipelineAnalytics.atRiskHighValue}
+            </div>
             <p className="text-xs text-gray-500">Needs retention effort</p>
           </CardContent>
         </Card>
@@ -334,7 +368,8 @@ export function LeadTracking({
               Conversion Opportunities
             </CardTitle>
             <CardDescription className="text-green-700">
-              {pipelineAnalytics.conversionOpportunities} high-scoring new customers ready for conversion
+              {pipelineAnalytics.conversionOpportunities} high-scoring new customers ready for
+              conversion
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -446,28 +481,40 @@ export function LeadTracking({
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm">High Priority</span>
-                    <span className="text-sm font-medium">{pipelineAnalytics.highPriorityLeads}</span>
+                    <span className="text-sm font-medium">
+                      {pipelineAnalytics.highPriorityLeads}
+                    </span>
                   </div>
-                  <Progress 
-                    value={(pipelineAnalytics.highPriorityLeads / pipelineAnalytics.totalLeads) * 100} 
+                  <Progress
+                    value={
+                      (pipelineAnalytics.highPriorityLeads / pipelineAnalytics.totalLeads) * 100
+                    }
                     className="h-2"
                   />
-                  
+
                   <div className="flex items-center justify-between">
                     <span className="text-sm">Medium Priority</span>
-                    <span className="text-sm font-medium">{pipelineAnalytics.mediumPriorityLeads}</span>
+                    <span className="text-sm font-medium">
+                      {pipelineAnalytics.mediumPriorityLeads}
+                    </span>
                   </div>
-                  <Progress 
-                    value={(pipelineAnalytics.mediumPriorityLeads / pipelineAnalytics.totalLeads) * 100} 
+                  <Progress
+                    value={
+                      (pipelineAnalytics.mediumPriorityLeads / pipelineAnalytics.totalLeads) * 100
+                    }
                     className="h-2"
                   />
-                  
+
                   <div className="flex items-center justify-between">
                     <span className="text-sm">Low Priority</span>
-                    <span className="text-sm font-medium">{pipelineAnalytics.lowPriorityLeads}</span>
+                    <span className="text-sm font-medium">
+                      {pipelineAnalytics.lowPriorityLeads}
+                    </span>
                   </div>
-                  <Progress 
-                    value={(pipelineAnalytics.lowPriorityLeads / pipelineAnalytics.totalLeads) * 100} 
+                  <Progress
+                    value={
+                      (pipelineAnalytics.lowPriorityLeads / pipelineAnalytics.totalLeads) * 100
+                    }
                     className="h-2"
                   />
                 </div>
@@ -483,7 +530,10 @@ export function LeadTracking({
               <CardContent>
                 <div className="space-y-3">
                   {filteredLeads.slice(0, 5).map((lead, index) => (
-                    <div key={lead.customer.id} className="flex items-center justify-between p-2 rounded bg-gray-50">
+                    <div
+                      key={lead.customer.id}
+                      className="flex items-center justify-between p-2 rounded bg-gray-50"
+                    >
                       <div className="flex items-center space-x-3">
                         <Badge variant="outline">{index + 1}</Badge>
                         <div>
@@ -493,7 +543,10 @@ export function LeadTracking({
                       </div>
                       <div className="text-right">
                         <div className="font-bold text-sm">{lead.leadScore.score}</div>
-                        <Badge className={getPriorityColor(lead.leadScore.priority)} variant="outline">
+                        <Badge
+                          className={getPriorityColor(lead.leadScore.priority)}
+                          variant="outline"
+                        >
                           {lead.leadScore.priority}
                         </Badge>
                       </div>
@@ -518,13 +571,14 @@ export function LeadTracking({
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {filteredLeads
-                  .filter(lead => lead.leadScore.priority === 'high')
+                  .filter((lead) => lead.leadScore.priority === "high")
                   .slice(0, 6)
-                  .map(renderLeadCard)
-                }
+                  .map(renderLeadCard)}
               </div>
-              {filteredLeads.filter(lead => lead.leadScore.priority === 'high').length === 0 && (
-                <p className="text-center text-gray-500 py-4">No high priority leads at this time</p>
+              {filteredLeads.filter((lead) => lead.leadScore.priority === "high").length === 0 && (
+                <p className="text-center text-gray-500 py-4">
+                  No high priority leads at this time
+                </p>
               )}
             </CardContent>
           </Card>
@@ -542,10 +596,9 @@ export function LeadTracking({
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {filteredLeads
-                    .filter(lead => lead.churnRisk > 50 && lead.lifetimeValue > 500)
+                    .filter((lead) => lead.churnRisk > 50 && lead.lifetimeValue > 500)
                     .slice(0, 4)
-                    .map(renderLeadCard)
-                  }
+                    .map(renderLeadCard)}
                 </div>
               </CardContent>
             </Card>

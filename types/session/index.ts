@@ -16,8 +16,8 @@ export interface UserSession {
   updatedAt: string;
   metadata?: Record<string, any>;
   refreshToken?: string;
-  sessionType: 'web' | 'mobile' | 'api' | 'admin';
-  securityLevel: 'standard' | 'elevated' | 'high_security';
+  sessionType: "web" | "mobile" | "api" | "admin";
+  securityLevel: "standard" | "elevated" | "high_security";
 }
 
 export interface UserDevice {
@@ -25,7 +25,7 @@ export interface UserDevice {
   userId: string;
   fingerprint: string;
   deviceName: string;
-  deviceType: 'desktop' | 'mobile' | 'tablet' | 'unknown';
+  deviceType: "desktop" | "mobile" | "tablet" | "unknown";
   operatingSystem?: string;
   browser?: string;
   ipAddress: string;
@@ -59,31 +59,31 @@ export interface SecurityEvent {
   dismissed?: boolean;
 }
 
-export type SecurityEventType = 
-  | 'login_success'
-  | 'login_failed'
-  | 'logout'
-  | 'session_created'
-  | 'session_extended'
-  | 'session_terminated'
-  | 'session_expired'
-  | 'device_registered'
-  | 'device_trusted'
-  | 'device_untrusted'
-  | 'device_removed'
-  | 'suspicious_login'
-  | 'unusual_location'
-  | 'multiple_devices'
-  | 'session_hijack_attempt'
-  | 'brute_force_attempt'
-  | 'account_locked'
-  | 'password_changed'
-  | 'security_settings_changed'
-  | 'data_export'
-  | 'admin_action'
-  | 'system_alert';
+export type SecurityEventType =
+  | "login_success"
+  | "login_failed"
+  | "logout"
+  | "session_created"
+  | "session_extended"
+  | "session_terminated"
+  | "session_expired"
+  | "device_registered"
+  | "device_trusted"
+  | "device_untrusted"
+  | "device_removed"
+  | "suspicious_login"
+  | "unusual_location"
+  | "multiple_devices"
+  | "session_hijack_attempt"
+  | "brute_force_attempt"
+  | "account_locked"
+  | "password_changed"
+  | "security_settings_changed"
+  | "data_export"
+  | "admin_action"
+  | "system_alert";
 
-export type SecuritySeverity = 'low' | 'medium' | 'high' | 'critical';
+export type SecuritySeverity = "low" | "medium" | "high" | "critical";
 
 export interface SessionPolicy {
   id: string;
@@ -103,13 +103,13 @@ export interface SessionPolicy {
   blockedIpRanges?: string[];
   allowedCountries?: string[];
   blockedCountries?: string[];
-  securityLevel: 'standard' | 'elevated' | 'high_security';
+  securityLevel: "standard" | "elevated" | "high_security";
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
 }
 
-export type UserRole = 'patient' | 'doctor' | 'nurse' | 'admin' | 'super_admin' | 'guest';
+export type UserRole = "patient" | "doctor" | "nurse" | "admin" | "super_admin" | "guest";
 
 export interface SuspiciousActivity {
   id: string;
@@ -130,27 +130,27 @@ export interface SuspiciousActivity {
   autoResolved?: boolean;
 }
 
-export type SuspiciousActivityType = 
-  | 'unusual_login_time'
-  | 'unusual_location'
-  | 'rapid_location_change'
-  | 'multiple_failed_attempts'
-  | 'new_device_login'
-  | 'concurrent_sessions'
-  | 'unusual_user_agent'
-  | 'suspicious_ip'
-  | 'bot_detection'
-  | 'session_anomaly'
-  | 'data_access_pattern'
-  | 'privilege_escalation_attempt';
+export type SuspiciousActivityType =
+  | "unusual_login_time"
+  | "unusual_location"
+  | "rapid_location_change"
+  | "multiple_failed_attempts"
+  | "new_device_login"
+  | "concurrent_sessions"
+  | "unusual_user_agent"
+  | "suspicious_ip"
+  | "bot_detection"
+  | "session_anomaly"
+  | "data_access_pattern"
+  | "privilege_escalation_attempt";
 
 export interface SessionSync {
   id: string;
   userId: string;
   sessionId: string;
-  syncType: 'create' | 'update' | 'delete' | 'extend' | 'terminate';
+  syncType: "create" | "update" | "delete" | "extend" | "terminate";
   syncData: Record<string, any>;
-  syncStatus: 'pending' | 'completed' | 'failed';
+  syncStatus: "pending" | "completed" | "failed";
   retryCount: number;
   lastRetry?: string;
   createdAt: string;
@@ -206,7 +206,7 @@ export interface SecurityEventSummary {
   count: number;
   severity: SecuritySeverity;
   lastOccurrence: string;
-  trend: 'increasing' | 'decreasing' | 'stable';
+  trend: "increasing" | "decreasing" | "stable";
 }
 
 export interface SessionTrend {
@@ -223,7 +223,7 @@ export interface SessionTrend {
 export interface CreateSessionRequest {
   deviceInfo?: Partial<UserDevice>;
   location?: string;
-  sessionType?: 'web' | 'mobile' | 'api' | 'admin';
+  sessionType?: "web" | "mobile" | "api" | "admin";
   rememberDevice?: boolean;
 }
 
@@ -396,7 +396,7 @@ export interface SessionConfiguration {
     deviceCookieName: string;
     secure: boolean;
     httpOnly: boolean;
-    sameSite: 'strict' | 'lax' | 'none';
+    sameSite: "strict" | "lax" | "none";
     domain?: string;
     path: string;
   };
@@ -469,10 +469,10 @@ export class SessionError extends Error {
     message: string,
     public code: string,
     public statusCode: number = 500,
-    public metadata?: Record<string, any>
+    public metadata?: Record<string, any>,
   ) {
     super(message);
-    this.name = 'SessionError';
+    this.name = "SessionError";
   }
 }
 
@@ -480,11 +480,11 @@ export class SecurityError extends SessionError {
   constructor(
     message: string,
     public securityCode: string,
-    public severity: SecuritySeverity = 'medium',
-    metadata?: Record<string, any>
+    public severity: SecuritySeverity = "medium",
+    metadata?: Record<string, any>,
   ) {
     super(message, `SECURITY_${securityCode}`, 403, metadata);
-    this.name = 'SecurityError';
+    this.name = "SecurityError";
   }
 }
 
@@ -492,56 +492,56 @@ export class ValidationError extends SessionError {
   constructor(
     message: string,
     public field: string,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ) {
-    super(message, 'VALIDATION_ERROR', 400, metadata);
-    this.name = 'ValidationError';
+    super(message, "VALIDATION_ERROR", 400, metadata);
+    this.name = "ValidationError";
   }
 }
 
 // Constants
 export const SESSION_EVENTS = {
-  CREATED: 'session_created',
-  REFRESHED: 'session_refreshed',
-  EXTENDED: 'session_extended',
-  TERMINATED: 'session_terminated',
-  EXPIRED: 'session_expired',
-  VALIDATED: 'session_validated'
+  CREATED: "session_created",
+  REFRESHED: "session_refreshed",
+  EXTENDED: "session_extended",
+  TERMINATED: "session_terminated",
+  EXPIRED: "session_expired",
+  VALIDATED: "session_validated",
 } as const;
 
 export const DEVICE_EVENTS = {
-  REGISTERED: 'device_registered',
-  TRUSTED: 'device_trusted',
-  UNTRUSTED: 'device_untrusted',
-  REMOVED: 'device_removed',
-  UPDATED: 'device_updated'
+  REGISTERED: "device_registered",
+  TRUSTED: "device_trusted",
+  UNTRUSTED: "device_untrusted",
+  REMOVED: "device_removed",
+  UPDATED: "device_updated",
 } as const;
 
 export const SECURITY_LEVELS = {
-  STANDARD: 'standard',
-  ELEVATED: 'elevated',
-  HIGH_SECURITY: 'high_security'
+  STANDARD: "standard",
+  ELEVATED: "elevated",
+  HIGH_SECURITY: "high_security",
 } as const;
 
 export const USER_ROLES = {
-  PATIENT: 'patient',
-  DOCTOR: 'doctor',
-  NURSE: 'nurse',
-  ADMIN: 'admin',
-  SUPER_ADMIN: 'super_admin',
-  GUEST: 'guest'
+  PATIENT: "patient",
+  DOCTOR: "doctor",
+  NURSE: "nurse",
+  ADMIN: "admin",
+  SUPER_ADMIN: "super_admin",
+  GUEST: "guest",
 } as const;
 
 export const DEVICE_TYPES = {
-  DESKTOP: 'desktop',
-  MOBILE: 'mobile',
-  TABLET: 'tablet',
-  UNKNOWN: 'unknown'
+  DESKTOP: "desktop",
+  MOBILE: "mobile",
+  TABLET: "tablet",
+  UNKNOWN: "unknown",
 } as const;
 
 export const SESSION_TYPES = {
-  WEB: 'web',
-  MOBILE: 'mobile',
-  API: 'api',
-  ADMIN: 'admin'
+  WEB: "web",
+  MOBILE: "mobile",
+  API: "api",
+  ADMIN: "admin",
 } as const;

@@ -1,39 +1,42 @@
-// app/api/profile/sync/route.ts  
+// app/api/profile/sync/route.ts
 // VIBECODE V1.0 - Google Profile Synchronization API
 // Story 1.4 - OAuth Google Integration Enhancement
 // Created: 2025-07-23
 
-import { createClient } from '@/lib/supabase/server'
-import { NextRequest, NextResponse } from 'next/server'
+import type { createClient } from "@/lib/supabase/server";
+import type { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient()
-    
+    const supabase = await createClient();
+
     // Get the current user
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
     if (userError || !user) {
       return NextResponse.json(
-        { error: 'Unauthorized', message: 'User not authenticated' },
-        { status: 401 }
-      )
+        { error: "Unauthorized", message: "User not authenticated" },
+        { status: 401 },
+      );
     }
 
     // Get user metadata for Google profile sync
-    const googleData = user.user_metadata || {}
-    const appData = user.app_metadata || {}
+    const googleData = user.user_metadata || {};
+    const appData = user.app_metadata || {};
 
     // Check if user has Google provider
     const hasGoogleProvider = user.identities?.some(
-      (identity: any) => identity.provider === 'google'
-    )
+      (identity: any) => identity.provider === "google",
+    );
 
     if (!hasGoogleProvider) {
       return NextResponse.json(
-        { error: 'No Google provider', message: 'User is not authenticated with Google' },
-        { status: 400 }
-      )
+        { error: "No Google provider", message: "User is not authenticated with Google" },
+        { status: 400 },
+      );
     }
 
     // Extract Google profile data
@@ -46,134 +49,132 @@ export async function POST(request: NextRequest) {
       google_provider_id: googleData.provider_id || googleData.sub,
       google_picture: googleData.picture,
       google_verified_email: user.email_confirmed_at ? true : false,
-      profile_sync_status: 'synced',
+      profile_sync_status: "synced",
       google_sync_enabled: true,
       last_google_sync: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    }
+      updated_at: new Date().toISOString(),
+    };
 
     // Update profile with Google data
     const { data: profile, error: updateError } = await supabase
-      .from('profiles')
+      .from("profiles")
       .update(profileData)
-      .eq('id', user.id)
+      .eq("id", user.id)
       .select()
-      .single()
+      .single();
 
     if (updateError) {
-      console.error('Profile sync error:', updateError)
-      
+      console.error("Profile sync error:", updateError);
+
       // Try to insert if update failed (profile doesn't exist)
-      if (updateError.code === 'PGRST116') {
+      if (updateError.code === "PGRST116") {
         const { data: newProfile, error: insertError } = await supabase
-          .from('profiles')
+          .from("profiles")
           .insert({
             id: user.id,
             ...profileData,
-            role: 'professional',
+            role: "professional",
             data_consent_given: false,
-            created_at: new Date().toISOString()
+            created_at: new Date().toISOString(),
           })
           .select()
-          .single()
+          .single();
 
         if (insertError) {
-          console.error('Profile creation error:', insertError)
+          console.error("Profile creation error:", insertError);
           return NextResponse.json(
-            { error: 'Sync failed', message: 'Could not create or update profile' },
-            { status: 500 }
-          )
+            { error: "Sync failed", message: "Could not create or update profile" },
+            { status: 500 },
+          );
         }
 
         return NextResponse.json({
           success: true,
-          message: 'Profile created and synced with Google',
-          profile: newProfile
-        })
+          message: "Profile created and synced with Google",
+          profile: newProfile,
+        });
       }
 
       return NextResponse.json(
-        { error: 'Sync failed', message: updateError.message },
-        { status: 500 }
-      )
+        { error: "Sync failed", message: updateError.message },
+        { status: 500 },
+      );
     }
 
     // Update profile sync status
-    await supabase
-      .from('profile_sync_status')
-      .upsert({
-        user_id: user.id,
-        sync_status: 'synced',
-        google_sync_enabled: true,
-        last_sync: new Date().toISOString(),
-        google_verified: profileData.google_verified_email,
-        has_conflicts: false,
-        updated_at: new Date().toISOString()
-      })
+    await supabase.from("profile_sync_status").upsert({
+      user_id: user.id,
+      sync_status: "synced",
+      google_sync_enabled: true,
+      last_sync: new Date().toISOString(),
+      google_verified: profileData.google_verified_email,
+      has_conflicts: false,
+      updated_at: new Date().toISOString(),
+    });
 
     return NextResponse.json({
       success: true,
-      message: 'Profile successfully synced with Google',
+      message: "Profile successfully synced with Google",
       profile,
-      sync_timestamp: new Date().toISOString()
-    })
-
+      sync_timestamp: new Date().toISOString(),
+    });
   } catch (error) {
-    console.error('Profile sync API error:', error)
+    console.error("Profile sync API error:", error);
     return NextResponse.json(
-      { error: 'Internal server error', message: 'Profile sync failed' },
-      { status: 500 }
-    )
+      { error: "Internal server error", message: "Profile sync failed" },
+      { status: 500 },
+    );
   }
 }
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient()
-    
+    const supabase = await createClient();
+
     // Get the current user
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
     if (userError || !user) {
       return NextResponse.json(
-        { error: 'Unauthorized', message: 'User not authenticated' },
-        { status: 401 }
-      )
+        { error: "Unauthorized", message: "User not authenticated" },
+        { status: 401 },
+      );
     }
 
     // Get current profile and sync status
     const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single()
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .single();
 
     if (profileError) {
       return NextResponse.json(
-        { error: 'Profile not found', message: profileError.message },
-        { status: 404 }
-      )
+        { error: "Profile not found", message: profileError.message },
+        { status: 404 },
+      );
     }
 
     const { data: syncStatus, error: syncError } = await supabase
-      .from('profile_sync_status')
-      .select('*')
-      .eq('user_id', user.id)
-      .single()
+      .from("profile_sync_status")
+      .select("*")
+      .eq("user_id", user.id)
+      .single();
 
     return NextResponse.json({
       profile,
       sync_status: syncStatus,
-      google_connected: user.identities?.some(
-        (identity: any) => identity.provider === 'google'
-      ) || false
-    })
-
+      google_connected:
+        user.identities?.some((identity: any) => identity.provider === "google") || false,
+    });
   } catch (error) {
-    console.error('Profile sync GET error:', error)
+    console.error("Profile sync GET error:", error);
     return NextResponse.json(
-      { error: 'Internal server error', message: 'Could not fetch profile sync data' },
-      { status: 500 }
-    )
+      { error: "Internal server error", message: "Could not fetch profile sync data" },
+      { status: 500 },
+    );
   }
 }

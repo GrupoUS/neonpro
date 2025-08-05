@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Search, Zap, BarChart3, Users, Clock, Star } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { AdvancedSearch } from './advanced-search';
-import { QuickAccess } from './quick-access';
-import { toast } from 'sonner';
+import React, { useState, useEffect } from "react";
+import type { Search, Zap, BarChart3, Users, Clock, Star } from "lucide-react";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { AdvancedSearch } from "./advanced-search";
+import type { QuickAccess } from "./quick-access";
+import type { toast } from "sonner";
 
 interface SystemStats {
   totalPatients: number;
@@ -33,7 +33,7 @@ interface Patient {
   cpf: string;
   gender: string;
   age: number;
-  riskLevel: 'low' | 'medium' | 'high';
+  riskLevel: "low" | "medium" | "high";
   lastVisit: string;
   appointmentStatus: string;
   treatmentType: string;
@@ -54,17 +54,17 @@ interface PatientSegment {
 
 interface SystemIntegrationProps {
   onPatientSelect?: (patient: Patient) => void;
-  userRole?: 'admin' | 'manager' | 'staff';
+  userRole?: "admin" | "manager" | "staff";
 }
 
-export function SystemIntegration({ onPatientSelect, userRole = 'staff' }: SystemIntegrationProps) {
-  const [activeTab, setActiveTab] = useState('quick-access');
+export function SystemIntegration({ onPatientSelect, userRole = "staff" }: SystemIntegrationProps) {
+  const [activeTab, setActiveTab] = useState("quick-access");
   const [stats, setStats] = useState<SystemStats | null>(null);
   const [isLoadingStats, setIsLoadingStats] = useState(true);
   const [selectedPatients, setSelectedPatients] = useState<Patient[]>([]);
   const [showSegmentDialog, setShowSegmentDialog] = useState(false);
-  const [segmentName, setSegmentName] = useState('');
-  const [segmentDescription, setSegmentDescription] = useState('');
+  const [segmentName, setSegmentName] = useState("");
+  const [segmentDescription, setSegmentDescription] = useState("");
 
   // Load system statistics
   const loadSystemStats = async () => {
@@ -82,14 +82,14 @@ export function SystemIntegration({ onPatientSelect, userRole = 'staff' }: Syste
         systemPerformance: {
           responseTime: 180,
           uptime: 99.8,
-          accuracy: 97.5
-        }
+          accuracy: 97.5,
+        },
       };
-      
+
       setStats(mockStats);
     } catch (error) {
-      console.error('Error loading system stats:', error);
-      toast.error('Erro ao carregar estatísticas do sistema');
+      console.error("Error loading system stats:", error);
+      toast.error("Erro ao carregar estatísticas do sistema");
     } finally {
       setIsLoadingStats(false);
     }
@@ -98,34 +98,34 @@ export function SystemIntegration({ onPatientSelect, userRole = 'staff' }: Syste
   // Create patient segment
   const createPatientSegment = async (patients: Patient[]) => {
     if (!segmentName.trim() || !segmentDescription.trim()) {
-      toast.error('Nome e descrição são obrigatórios');
+      toast.error("Nome e descrição são obrigatórios");
       return;
     }
 
     try {
       const criteria = {
-        patientIds: patients.map(p => p.id),
+        patientIds: patients.map((p) => p.id),
         filters: {
           // Extract common characteristics
-          riskLevels: [...new Set(patients.map(p => p.riskLevel))],
-          treatmentTypes: [...new Set(patients.map(p => p.treatmentType))],
+          riskLevels: [...new Set(patients.map((p) => p.riskLevel))],
+          treatmentTypes: [...new Set(patients.map((p) => p.treatmentType))],
           ageRange: {
-            min: Math.min(...patients.map(p => p.age)),
-            max: Math.max(...patients.map(p => p.age))
-          }
-        }
+            min: Math.min(...patients.map((p) => p.age)),
+            max: Math.max(...patients.map((p) => p.age)),
+          },
+        },
       };
 
-      const response = await fetch('/api/patients/integration/search', {
-        method: 'POST',
+      const response = await fetch("/api/patients/integration/search", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           name: segmentName,
           description: segmentDescription,
-          criteria
-        })
+          criteria,
+        }),
       });
 
       const result = await response.json();
@@ -133,15 +133,15 @@ export function SystemIntegration({ onPatientSelect, userRole = 'staff' }: Syste
       if (result.success) {
         toast.success(`Segmento "${segmentName}" criado com ${patients.length} pacientes`);
         setShowSegmentDialog(false);
-        setSegmentName('');
-        setSegmentDescription('');
+        setSegmentName("");
+        setSegmentDescription("");
         setSelectedPatients([]);
       } else {
-        toast.error(result.error || 'Erro ao criar segmento');
+        toast.error(result.error || "Erro ao criar segmento");
       }
     } catch (error) {
-      console.error('Error creating segment:', error);
-      toast.error('Erro ao criar segmento de pacientes');
+      console.error("Error creating segment:", error);
+      toast.error("Erro ao criar segmento de pacientes");
     }
   };
 
@@ -156,13 +156,13 @@ export function SystemIntegration({ onPatientSelect, userRole = 'staff' }: Syste
   }, []);
 
   const formatNumber = (num: number) => {
-    return new Intl.NumberFormat('pt-BR').format(num);
+    return new Intl.NumberFormat("pt-BR").format(num);
   };
 
   const getPerformanceColor = (value: number, threshold: { good: number; warning: number }) => {
-    if (value >= threshold.good) return 'text-green-600';
-    if (value >= threshold.warning) return 'text-yellow-600';
-    return 'text-red-600';
+    if (value >= threshold.good) return "text-green-600";
+    if (value >= threshold.warning) return "text-yellow-600";
+    return "text-red-600";
   };
 
   return (
@@ -187,11 +187,9 @@ export function SystemIntegration({ onPatientSelect, userRole = 'staff' }: Syste
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {isLoadingStats ? '...' : formatNumber(stats?.totalPatients || 0)}
+              {isLoadingStats ? "..." : formatNumber(stats?.totalPatients || 0)}
             </div>
-            <p className="text-xs text-muted-foreground">
-              Sistema integrado completo
-            </p>
+            <p className="text-xs text-muted-foreground">Sistema integrado completo</p>
           </CardContent>
         </Card>
 
@@ -202,7 +200,7 @@ export function SystemIntegration({ onPatientSelect, userRole = 'staff' }: Syste
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {isLoadingStats ? '...' : formatNumber(stats?.searchesPerformed || 0)}
+              {isLoadingStats ? "..." : formatNumber(stats?.searchesPerformed || 0)}
             </div>
             <p className="text-xs text-muted-foreground">
               Tempo médio: {stats?.averageSearchTime || 0}ms
@@ -217,11 +215,9 @@ export function SystemIntegration({ onPatientSelect, userRole = 'staff' }: Syste
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">
-              {isLoadingStats ? '...' : formatNumber(stats?.highRiskPatients || 0)}
+              {isLoadingStats ? "..." : formatNumber(stats?.highRiskPatients || 0)}
             </div>
-            <p className="text-xs text-muted-foreground">
-              Requer atenção especial
-            </p>
+            <p className="text-xs text-muted-foreground">Requer atenção especial</p>
           </CardContent>
         </Card>
 
@@ -232,13 +228,16 @@ export function SystemIntegration({ onPatientSelect, userRole = 'staff' }: Syste
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              <span className={getPerformanceColor(stats?.systemPerformance.uptime || 0, { good: 99, warning: 95 })}>
+              <span
+                className={getPerformanceColor(stats?.systemPerformance.uptime || 0, {
+                  good: 99,
+                  warning: 95,
+                })}
+              >
                 {stats?.systemPerformance.uptime || 0}%
               </span>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Uptime do sistema
-            </p>
+            <p className="text-xs text-muted-foreground">Uptime do sistema</p>
           </CardContent>
         </Card>
       </div>
@@ -253,22 +252,32 @@ export function SystemIntegration({ onPatientSelect, userRole = 'staff' }: Syste
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="text-center">
                 <div className="text-2xl font-bold">
-                  <span className={getPerformanceColor(stats.systemPerformance.responseTime, { good: 200, warning: 500 })}>
+                  <span
+                    className={getPerformanceColor(stats.systemPerformance.responseTime, {
+                      good: 200,
+                      warning: 500,
+                    })}
+                  >
                     {stats.systemPerformance.responseTime}ms
                   </span>
                 </div>
                 <p className="text-sm text-gray-500">Tempo de Resposta</p>
               </div>
-              
+
               <div className="text-center">
                 <div className="text-2xl font-bold">
-                  <span className={getPerformanceColor(stats.systemPerformance.accuracy, { good: 95, warning: 90 })}>
+                  <span
+                    className={getPerformanceColor(stats.systemPerformance.accuracy, {
+                      good: 95,
+                      warning: 90,
+                    })}
+                  >
                     {stats.systemPerformance.accuracy}%
                   </span>
                 </div>
                 <p className="text-sm text-gray-500">Precisão da Busca</p>
               </div>
-              
+
               <div className="text-center">
                 <div className="text-2xl font-bold text-blue-600">
                   {formatNumber(stats.favoritePatients)}
@@ -306,9 +315,9 @@ export function SystemIntegration({ onPatientSelect, userRole = 'staff' }: Syste
             </TabsContent>
 
             <TabsContent value="advanced-search" className="mt-6">
-              <AdvancedSearch 
+              <AdvancedSearch
                 onPatientSelect={onPatientSelect}
-                onCreateSegment={userRole !== 'staff' ? handleCreateSegment : undefined}
+                onCreateSegment={userRole !== "staff" ? handleCreateSegment : undefined}
               />
             </TabsContent>
           </Tabs>
@@ -333,7 +342,7 @@ export function SystemIntegration({ onPatientSelect, userRole = 'staff' }: Syste
                   onChange={(e) => setSegmentName(e.target.value)}
                 />
               </div>
-              
+
               <div>
                 <label className="text-sm font-medium">Descrição</label>
                 <textarea
@@ -344,18 +353,18 @@ export function SystemIntegration({ onPatientSelect, userRole = 'staff' }: Syste
                   onChange={(e) => setSegmentDescription(e.target.value)}
                 />
               </div>
-              
+
               <div className="text-sm text-gray-500">
                 <strong>{selectedPatients.length}</strong> pacientes selecionados
               </div>
-              
+
               <div className="flex space-x-2">
                 <Button
                   variant="outline"
                   onClick={() => {
                     setShowSegmentDialog(false);
-                    setSegmentName('');
-                    setSegmentDescription('');
+                    setSegmentName("");
+                    setSegmentDescription("");
                   }}
                   className="flex-1"
                 >
@@ -382,21 +391,21 @@ export function SystemIntegration({ onPatientSelect, userRole = 'staff' }: Syste
           </div>
           <div className="text-xs text-gray-500">Verificações Pendentes</div>
         </div>
-        
+
         <div>
           <div className="text-lg font-semibold text-green-600">
             {formatNumber(stats?.upcomingAppointments || 0)}
           </div>
           <div className="text-xs text-gray-500">Próximas Consultas</div>
         </div>
-        
+
         <div>
           <div className="text-lg font-semibold text-purple-600">
             {formatNumber(stats?.favoritePatients || 0)}
           </div>
           <div className="text-xs text-gray-500">Favoritos</div>
         </div>
-        
+
         <div>
           <div className="text-lg font-semibold text-orange-600">
             {stats?.averageSearchTime || 0}ms

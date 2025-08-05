@@ -1,20 +1,20 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { useProfileSync } from "@/hooks/use-profile-sync";
-import {
+import type { Switch } from "@/components/ui/switch";
+import type { useProfileSync } from "@/hooks/use-profile-sync";
+import type {
   AlertCircle,
   CheckCircle,
   Clock,
@@ -25,16 +25,14 @@ import {
   Stethoscope,
   User,
 } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
+import type { useState } from "react";
+import type { toast } from "sonner";
 
 interface ProfileSyncManagerProps {
   className?: string;
 }
 
-export function ProfileSyncManager({
-  className = "",
-}: ProfileSyncManagerProps) {
+export function ProfileSyncManager({ className = "" }: ProfileSyncManagerProps) {
   const {
     profile,
     syncStatus,
@@ -55,12 +53,7 @@ export function ProfileSyncManager({
     medical_license: "",
     department: "",
     phone: "",
-    role: "professional" as
-      | "admin"
-      | "doctor"
-      | "nurse"
-      | "staff"
-      | "professional",
+    role: "professional" as "admin" | "doctor" | "nurse" | "staff" | "professional",
   });
 
   const [isFormInitialized, setIsFormInitialized] = useState(false);
@@ -109,11 +102,7 @@ export function ProfileSyncManager({
   const handleToggleGoogleSync = async (enabled: boolean) => {
     const success = await toggleGoogleSync(enabled);
     if (success) {
-      toast.success(
-        enabled
-          ? "Sincronização Google ativada"
-          : "Sincronização Google desativada"
-      );
+      toast.success(enabled ? "Sincronização Google ativada" : "Sincronização Google desativada");
     }
   };
 
@@ -223,8 +212,7 @@ export function ProfileSyncManager({
 
           {syncStatus?.last_sync && (
             <p className="text-sm text-gray-600">
-              Última sincronização:{" "}
-              {new Date(syncStatus.last_sync).toLocaleString("pt-BR")}
+              Última sincronização: {new Date(syncStatus.last_sync).toLocaleString("pt-BR")}
             </p>
           )}
 
@@ -282,12 +270,7 @@ export function ProfileSyncManager({
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="flex items-center gap-2">
-                <Input
-                  id="email"
-                  value={profile?.email || ""}
-                  disabled
-                  className="bg-gray-50"
-                />
+                <Input id="email" value={profile?.email || ""} disabled className="bg-gray-50" />
                 <Mail className="h-4 w-4 text-gray-400" />
               </div>
             </div>
@@ -297,9 +280,7 @@ export function ProfileSyncManager({
               <Input
                 id="first_name"
                 value={formData.first_name}
-                onChange={(e) =>
-                  handleInputChange("first_name", e.target.value)
-                }
+                onChange={(e) => handleInputChange("first_name", e.target.value)}
                 placeholder="Primeiro nome"
                 disabled={isUpdating}
               />
@@ -334,9 +315,7 @@ export function ProfileSyncManager({
               <Input
                 id="professional_title"
                 value={formData.professional_title}
-                onChange={(e) =>
-                  handleInputChange("professional_title", e.target.value)
-                }
+                onChange={(e) => handleInputChange("professional_title", e.target.value)}
                 placeholder="Ex: Médico Cardiologista"
                 disabled={isUpdating}
               />
@@ -347,9 +326,7 @@ export function ProfileSyncManager({
               <Input
                 id="medical_license"
                 value={formData.medical_license}
-                onChange={(e) =>
-                  handleInputChange("medical_license", e.target.value)
-                }
+                onChange={(e) => handleInputChange("medical_license", e.target.value)}
                 placeholder="Ex: CRM 12345"
                 disabled={isUpdating}
               />
@@ -360,9 +337,7 @@ export function ProfileSyncManager({
               <Input
                 id="department"
                 value={formData.department}
-                onChange={(e) =>
-                  handleInputChange("department", e.target.value)
-                }
+                onChange={(e) => handleInputChange("department", e.target.value)}
                 placeholder="Ex: Cardiologia"
                 disabled={isUpdating}
               />

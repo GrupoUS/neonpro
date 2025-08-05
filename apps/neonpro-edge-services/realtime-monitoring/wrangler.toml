@@ -1,0 +1,150 @@
+name = "neonpro-realtime-monitoring"
+main = "src/index.ts"
+compatibility_date = "2024-01-15"
+node_compat = true
+
+# Development configuration
+[env.development]
+name = "neonpro-realtime-monitoring-dev"
+
+# Production configuration
+[env.production]
+name = "neonpro-realtime-monitoring-prod"
+
+# KV Namespaces for caching and session management
+[[kv_namespaces]]
+binding = "MONITORING_CACHE"
+id = "monitoring_cache_prod"
+preview_id = "monitoring_cache_preview"
+
+[[kv_namespaces]]
+binding = "SESSION_STORAGE"
+id = "session_storage_prod"
+preview_id = "session_storage_preview"
+
+[[kv_namespaces]]
+binding = "ALERT_STORAGE"
+id = "alert_storage_prod"
+preview_id = "alert_storage_preview"
+
+[[kv_namespaces]]
+binding = "NOTIFICATION_QUEUE"
+id = "notification_queue_prod"
+preview_id = "notification_queue_preview"
+
+[[kv_namespaces]]
+binding = "AUDIT_LOGS"
+id = "audit_logs_prod"
+preview_id = "audit_logs_preview"
+
+# D1 Database for structured data
+[[d1_databases]]
+binding = "NEONPRO_DB"
+database_name = "neonpro-db"
+database_id = "neonpro-db-prod"
+
+# Durable Objects for stateful real-time connections
+[[durable_objects.bindings]]
+name = "MONITORING_SESSION"
+class_name = "MonitoringSessionManager"
+script_name = "neonpro-realtime-monitoring"
+
+[[durable_objects.bindings]]
+name = "ALERT_PROCESSOR"
+class_name = "AlertProcessor"
+script_name = "neonpro-realtime-monitoring"
+
+[[durable_objects.bindings]]
+name = "NOTIFICATION_MANAGER"
+class_name = "NotificationManager"
+script_name = "neonpro-realtime-monitoring"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["MonitoringSessionManager", "AlertProcessor", "NotificationManager"]
+
+# Environment variables (secrets managed separately)
+[vars]
+ENVIRONMENT = "production"
+MAX_CONNECTIONS_PER_TENANT = "1000"
+MAX_SUBSCRIPTIONS_PER_CONNECTION = "10"
+HEARTBEAT_INTERVAL_MS = "30000"
+CONNECTION_TIMEOUT_MS = "300000"  # 5 minutes
+
+# WebSocket configuration
+WEBSOCKET_PING_INTERVAL = "30000"
+WEBSOCKET_PONG_TIMEOUT = "5000"
+WEBSOCKET_MAX_MESSAGE_SIZE = "65536"  # 64KB
+
+# SSE configuration
+SSE_HEARTBEAT_INTERVAL = "30000"
+SSE_CONNECTION_TIMEOUT = "600000"  # 10 minutes
+SSE_MAX_EVENTS_PER_STREAM = "1000"
+
+# Alert processing settings
+VITAL_SIGNS_ALERT_DEBOUNCE_MS = "30000"  # 30 seconds
+CRITICAL_ALERT_ESCALATION_MS = "300000"  # 5 minutes
+ALERT_BATCH_SIZE = "50"
+ALERT_PROCESSING_INTERVAL_MS = "5000"
+
+# Notification settings
+NOTIFICATION_RETRY_ATTEMPTS = "3"
+NOTIFICATION_RETRY_DELAY_MS = "5000"
+NOTIFICATION_BATCH_SIZE = "100"
+NOTIFICATION_RATE_LIMIT_PER_USER = "10"  # per minute
+
+# Brazilian healthcare compliance
+LGPD_AUDIT_ENABLED = "true"
+ANVISA_REPORTING_ENABLED = "true"
+DATA_RETENTION_DAYS = "2555"  # 7 years for medical records
+AUDIT_LOG_RETENTION_DAYS = "2555"
+
+# Performance and monitoring
+METRICS_COLLECTION_INTERVAL_MS = "60000"  # 1 minute
+PERFORMANCE_MONITORING_ENABLED = "true"
+ERROR_REPORTING_ENABLED = "true"
+SLOW_QUERY_THRESHOLD_MS = "1000"
+
+# Rate limiting for healthcare APIs
+RATE_LIMIT_VITAL_SIGNS_PER_MINUTE = "60"
+RATE_LIMIT_ALERTS_PER_MINUTE = "30"
+RATE_LIMIT_NOTIFICATIONS_PER_MINUTE = "120"
+RATE_LIMIT_WEBSOCKET_MESSAGES_PER_MINUTE = "300"
+
+# Emergency override settings
+EMERGENCY_OVERRIDE_ENABLED = "true"
+EMERGENCY_RATE_LIMIT_MULTIPLIER = "5"
+EMERGENCY_NOTIFICATION_PRIORITY = "true"
+
+# Development environment overrides
+[env.development.vars]
+ENVIRONMENT = "development"
+MAX_CONNECTIONS_PER_TENANT = "100"
+HEARTBEAT_INTERVAL_MS = "15000"  # More frequent for testing
+VITAL_SIGNS_ALERT_DEBOUNCE_MS = "10000"  # Faster testing
+LGPD_AUDIT_ENABLED = "false"  # Disable auditing in dev
+ANVISA_REPORTING_ENABLED = "false"  # Disable reporting in dev
+RATE_LIMIT_VITAL_SIGNS_PER_MINUTE = "120"  # More lenient for dev
+RATE_LIMIT_WEBSOCKET_MESSAGES_PER_MINUTE = "600"  # More lenient for dev
+
+# Limits and quotas
+[limits]
+cpu_ms = 30000  # 30 seconds max execution time
+memory_mb = 256  # 256MB memory limit for real-time processing
+
+# Custom domains (configure after deployment)
+# [env.production]
+# routes = [
+#   { pattern = "monitoring.neonpro.com.br/*", zone_name = "neonpro.com.br" },
+#   { pattern = "ws.neonpro.com.br/*", zone_name = "neonpro.com.br" }
+# ]
+
+# [env.development]
+# routes = [
+#   { pattern = "monitoring-dev.neonpro.com.br/*", zone_name = "neonpro.com.br" },
+#   { pattern = "ws-dev.neonpro.com.br/*", zone_name = "neonpro.com.br" }
+# ]
+
+# WebSocket-specific configuration
+# Note: WebSocket support in Cloudflare Workers is currently in beta
+# Ensure your account has WebSocket support enabled

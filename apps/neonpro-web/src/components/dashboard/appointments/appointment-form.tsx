@@ -7,9 +7,9 @@ import type {
   Professional,
   ServiceType,
 } from "@/app/lib/types/appointments";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
+import type { Button } from "@/components/ui/button";
+import type { Calendar } from "@/components/ui/calendar";
+import type {
   Form,
   FormControl,
   FormDescription,
@@ -18,35 +18,25 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import {
-  AlertCircle,
-  CalendarIcon,
-  CheckCircle2,
-  Clock,
-  User,
-} from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
+import type { Textarea } from "@/components/ui/textarea";
+import type { cn } from "@/lib/utils";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { AlertCircle, CalendarIcon, CheckCircle2, Clock, User } from "lucide-react";
+import type { useRouter } from "next/navigation";
+import type { useEffect, useState } from "react";
+import type { useForm } from "react-hook-form";
+import type { toast } from "sonner";
+import type { z } from "zod";
 
 // Form validation schema
 const appointmentFormSchema = z.object({
@@ -117,7 +107,7 @@ export function AppointmentForm({
     professionalId: string,
     date: Date,
     startTime: string,
-    durationMinutes: number
+    durationMinutes: number,
   ) => {
     try {
       const [hour, minute] = startTime.split(":").map(Number);
@@ -158,18 +148,15 @@ export function AppointmentForm({
       const response = await fetch(
         `/api/appointments/available-slots?professional_id=${professionalId}&date=${format(
           date,
-          "yyyy-MM-dd"
-        )}`
+          "yyyy-MM-dd",
+        )}`,
       );
       const result = await response.json();
 
       if (result.success) {
         const slots = result.data
           .map((slot: any) => format(new Date(slot.slot_start), "HH:mm"))
-          .filter(
-            (slot: any, index: number, arr: any[]) =>
-              result.data[index].is_available
-          );
+          .filter((slot: any, index: number, arr: any[]) => result.data[index].is_available);
         setAvailableSlots(slots);
       }
     } catch (error) {
@@ -189,12 +176,7 @@ export function AppointmentForm({
       loadAvailableSlots(watchedProfessional, watchedDate);
 
       if (watchedTime && watchedDuration) {
-        checkConflicts(
-          watchedProfessional,
-          watchedDate,
-          watchedTime,
-          watchedDuration
-        );
+        checkConflicts(watchedProfessional, watchedDate, watchedTime, watchedDuration);
       }
     }
   }, [watchedProfessional, watchedDate, watchedTime, watchedDuration]);
@@ -208,13 +190,11 @@ export function AppointmentForm({
         data.professional_id,
         data.appointment_date,
         data.start_time,
-        data.duration_minutes
+        data.duration_minutes,
       );
 
       if (hasConflict) {
-        toast.error(
-          "Conflito de horário detectado. Por favor, escolha outro horário."
-        );
+        toast.error("Conflito de horário detectado. Por favor, escolha outro horário.");
         setIsSubmitting(false);
         return;
       }
@@ -281,10 +261,7 @@ export function AppointmentForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Selecionar Paciente</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Escolha um paciente" />
@@ -294,13 +271,9 @@ export function AppointmentForm({
                       {patients.map((patient) => (
                         <SelectItem key={patient.id} value={patient.id}>
                           <div className="flex flex-col">
-                            <span className="font-medium">
-                              {patient.full_name}
-                            </span>
+                            <span className="font-medium">{patient.full_name}</span>
                             {patient.phone && (
-                              <span className="text-sm text-muted-foreground">
-                                {patient.phone}
-                              </span>
+                              <span className="text-sm text-muted-foreground">{patient.phone}</span>
                             )}
                           </div>
                         </SelectItem>
@@ -331,10 +304,7 @@ export function AppointmentForm({
                       field.onChange(value);
                       const service = serviceTypes.find((s) => s.id === value);
                       if (service) {
-                        form.setValue(
-                          "duration_minutes",
-                          service.duration_minutes
-                        );
+                        form.setValue("duration_minutes", service.duration_minutes);
                       }
                     }}
                     defaultValue={field.value}
@@ -368,10 +338,7 @@ export function AppointmentForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Profissional</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Escolha um profissional" />
@@ -379,14 +346,9 @@ export function AppointmentForm({
                     </FormControl>
                     <SelectContent>
                       {professionals.map((professional) => (
-                        <SelectItem
-                          key={professional.id}
-                          value={professional.id}
-                        >
+                        <SelectItem key={professional.id} value={professional.id}>
                           <div className="flex flex-col">
-                            <span className="font-medium">
-                              {professional.full_name}
-                            </span>
+                            <span className="font-medium">{professional.full_name}</span>
                             {professional.specialization && (
                               <span className="text-sm text-muted-foreground">
                                 {professional.specialization}
@@ -419,7 +381,7 @@ export function AppointmentForm({
                         variant="outline"
                         className={cn(
                           "pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground"
+                          !field.value && "text-muted-foreground",
                         )}
                       >
                         {field.value ? (
@@ -436,9 +398,7 @@ export function AppointmentForm({
                       mode="single"
                       selected={field.value}
                       onSelect={field.onChange}
-                      disabled={(date) =>
-                        date < new Date() || date < new Date("1900-01-01")
-                      }
+                      disabled={(date) => date < new Date() || date < new Date("1900-01-01")}
                       initialFocus
                     />
                   </PopoverContent>
@@ -454,10 +414,7 @@ export function AppointmentForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Horário</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Escolha um horário" />
@@ -471,9 +428,7 @@ export function AppointmentForm({
                           key={time}
                           value={time}
                           disabled={!isAvailable}
-                          className={cn(
-                            !isAvailable && "opacity-50 cursor-not-allowed"
-                          )}
+                          className={cn(!isAvailable && "opacity-50 cursor-not-allowed")}
                         >
                           <div className="flex items-center gap-2">
                             {isAvailable ? (
@@ -507,8 +462,8 @@ export function AppointmentForm({
               <h4 className="font-medium">Conflito de Horário Detectado</h4>
             </div>
             <p className="text-red-600 text-sm mt-1">
-              O profissional já possui agendamento neste horário. Por favor,
-              escolha outro horário disponível.
+              O profissional já possui agendamento neste horário. Por favor, escolha outro horário
+              disponível.
             </p>
           </div>
         )}
@@ -522,11 +477,7 @@ export function AppointmentForm({
               <FormItem>
                 <FormLabel>Observações do Paciente</FormLabel>
                 <FormControl>
-                  <Textarea
-                    placeholder="Observações visíveis ao paciente..."
-                    {...field}
-                    rows={3}
-                  />
+                  <Textarea placeholder="Observações visíveis ao paciente..." {...field} rows={3} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -540,11 +491,7 @@ export function AppointmentForm({
               <FormItem>
                 <FormLabel>Observações Internas</FormLabel>
                 <FormControl>
-                  <Textarea
-                    placeholder="Observações internas da equipe..."
-                    {...field}
-                    rows={3}
-                  />
+                  <Textarea placeholder="Observações internas da equipe..." {...field} rows={3} />
                 </FormControl>
                 <FormDescription>Visível apenas para a equipe</FormDescription>
                 <FormMessage />

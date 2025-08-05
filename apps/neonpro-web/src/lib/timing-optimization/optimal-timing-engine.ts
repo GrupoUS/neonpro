@@ -1,18 +1,32 @@
-﻿/**
+/**
  * Optimal Timing Analysis Engine
  * NeonPro - Machine Learning para análise de horários ótimos de comunicação
  */
 
-import { createClient } from '@/lib/supabase/client';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { createClient } from "@/lib/supabase/client";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import type {
-  TimingPattern, OptimalTime, TimingRecommendation, PatientTimingProfile,
-  TimingAnalysisRequest, TimingAnalysisResult, BehaviorPattern, 
-  MachineLearningModel, TimingOptimizationConfig, PredictiveModel,
-  EngagementWindow, TimeZoneMapping, DemographicPattern, 
-  RealTimeFactors, SendTimeOptimization, PerformanceMetrics,
-  TimingQueryFilter, TimingQueryResult, WeatherFactor, HolidayFactor
-} from './types/timing';
+  TimingPattern,
+  OptimalTime,
+  TimingRecommendation,
+  PatientTimingProfile,
+  TimingAnalysisRequest,
+  TimingAnalysisResult,
+  BehaviorPattern,
+  MachineLearningModel,
+  TimingOptimizationConfig,
+  PredictiveModel,
+  EngagementWindow,
+  TimeZoneMapping,
+  DemographicPattern,
+  RealTimeFactors,
+  SendTimeOptimization,
+  PerformanceMetrics,
+  TimingQueryFilter,
+  TimingQueryResult,
+  WeatherFactor,
+  HolidayFactor,
+} from "./types/timing";
 
 export class OptimalTimingEngine {
   private supabase: SupabaseClient;
@@ -37,12 +51,12 @@ export class OptimalTimingEngine {
     try {
       // Carregar modelos ML salvos do banco
       const { data: models } = await this.supabase
-        .from('ml_timing_models')
-        .select('*')
-        .eq('status', 'active');
+        .from("ml_timing_models")
+        .select("*")
+        .eq("status", "active");
 
       if (models) {
-        models.forEach(model => {
+        models.forEach((model) => {
           this.mlModels.set(model.id, {
             id: model.id,
             name: model.name,
@@ -52,7 +66,7 @@ export class OptimalTimingEngine {
             features: model.features,
             lastTrained: new Date(model.last_trained),
             dataPoints: model.data_points,
-            predictions: model.predictions
+            predictions: model.predictions,
           });
         });
       }
@@ -62,7 +76,7 @@ export class OptimalTimingEngine {
         await this.initializeDefaultModels();
       }
     } catch (error) {
-      console.error('Error initializing ML models:', error);
+      console.error("Error initializing ML models:", error);
       await this.initializeDefaultModels();
     }
   }
@@ -70,65 +84,62 @@ export class OptimalTimingEngine {
   private async initializeDefaultModels(): Promise<void> {
     const defaultModels: MachineLearningModel[] = [
       {
-        id: 'timing-gb-v1',
-        name: 'Gradient Boosting Timing Predictor',
-        type: 'gradient_boosting',
-        version: '1.0',
+        id: "timing-gb-v1",
+        name: "Gradient Boosting Timing Predictor",
+        type: "gradient_boosting",
+        version: "1.0",
         accuracy: 0.78,
-        features: ['hour', 'day_of_week', 'patient_age', 'communication_type', 'season'],
+        features: ["hour", "day_of_week", "patient_age", "communication_type", "season"],
         lastTrained: new Date(),
         dataPoints: 0,
-        predictions: { responseRate: 0, openRate: 0, clickRate: 0, conversionRate: 0 }
+        predictions: { responseRate: 0, openRate: 0, clickRate: 0, conversionRate: 0 },
       },
       {
-        id: 'timing-rf-v1',
-        name: 'Random Forest Engagement Predictor',
-        type: 'random_forest',
-        version: '1.0',
+        id: "timing-rf-v1",
+        name: "Random Forest Engagement Predictor",
+        type: "random_forest",
+        version: "1.0",
         accuracy: 0.75,
-        features: ['hour', 'day_of_week', 'previous_engagements', 'time_since_last'],
+        features: ["hour", "day_of_week", "previous_engagements", "time_since_last"],
         lastTrained: new Date(),
         dataPoints: 0,
-        predictions: { responseRate: 0, openRate: 0, clickRate: 0, conversionRate: 0 }
-      }
+        predictions: { responseRate: 0, openRate: 0, clickRate: 0, conversionRate: 0 },
+      },
     ];
 
-    defaultModels.forEach(model => {
+    defaultModels.forEach((model) => {
       this.mlModels.set(model.id, model);
     });
   }
 
   private async loadConfiguration(): Promise<void> {
     try {
-      const { data } = await this.supabase
-        .from('timing_optimization_config')
-        .select('*')
-        .single();
+      const { data } = await this.supabase.from("timing_optimization_config").select("*").single();
 
       if (data) {
         this.config = {
           clinicId: data.clinic_id,
           globalSettings: data.global_settings,
           channelSettings: data.channel_settings,
-          audienceSegments: data.audience_segments
+          audienceSegments: data.audience_segments,
         };
       }
     } catch (error) {
-      console.error('Error loading configuration:', error);
+      console.error("Error loading configuration:", error);
       this.config = this.getDefaultConfig();
     }
   }
 
   private getDefaultConfig(): TimingOptimizationConfig {
     return {
-      clinicId: '',
+      clinicId: "",
       globalSettings: {
-        defaultTimezone: 'America/Sao_Paulo',
+        defaultTimezone: "America/Sao_Paulo",
         businessHours: {
           startHour: 8,
           startMinute: 0,
           endHour: 18,
-          endMinute: 0
+          endMinute: 0,
         },
         blackoutPeriods: [],
         minimumSampleSize: 30,
@@ -136,7 +147,7 @@ export class OptimalTimingEngine {
         enableMLPredictions: true,
         enableSeasonalAdjustments: true,
         enableWeatherFactors: false,
-        enableHolidayFactors: true
+        enableHolidayFactors: true,
       },
       channelSettings: {
         email: {
@@ -144,24 +155,24 @@ export class OptimalTimingEngine {
           priority: 1,
           optimalFrequency: { daily: 2, weekly: 10, monthly: 30 },
           cooldownPeriod: 240,
-          retryLogic: { maxAttempts: 3, backoffMultiplier: 2 }
+          retryLogic: { maxAttempts: 3, backoffMultiplier: 2 },
         },
         sms: {
           enabled: true,
           priority: 2,
           optimalFrequency: { daily: 1, weekly: 5, monthly: 15 },
           cooldownPeriod: 480,
-          retryLogic: { maxAttempts: 2, backoffMultiplier: 3 }
+          retryLogic: { maxAttempts: 2, backoffMultiplier: 3 },
         },
         whatsapp: {
           enabled: true,
           priority: 3,
           optimalFrequency: { daily: 1, weekly: 7, monthly: 20 },
           cooldownPeriod: 360,
-          retryLogic: { maxAttempts: 2, backoffMultiplier: 2 }
-        }
+          retryLogic: { maxAttempts: 2, backoffMultiplier: 2 },
+        },
       },
-      audienceSegments: []
+      audienceSegments: [],
     };
   }
 
@@ -177,30 +188,30 @@ export class OptimalTimingEngine {
   async analyzeTimingPatterns(request: TimingAnalysisRequest): Promise<TimingAnalysisResult> {
     try {
       const requestId = this.generateId();
-      
+
       // Buscar dados históricos de comunicação
       const communicationData = await this.fetchCommunicationData(request);
-      
+
       // Analisar padrões globais
       const globalPatterns = await this.analyzeGlobalPatterns(communicationData, request);
-      
+
       // Analisar padrões segmentados
       const segmentedPatterns = await this.analyzeSegmentedPatterns(communicationData, request);
-      
+
       // Gerar recomendações usando ML
       const recommendations = await this.generateMLRecommendations(
-        globalPatterns, 
-        segmentedPatterns, 
-        request
+        globalPatterns,
+        segmentedPatterns,
+        request,
       );
-      
+
       // Gerar insights
       const insights = await this.generateTimingInsights(
-        globalPatterns, 
-        segmentedPatterns, 
-        communicationData
+        globalPatterns,
+        segmentedPatterns,
+        communicationData,
       );
-      
+
       // Calcular métricas de performance
       const performanceMetrics = this.calculatePerformanceMetrics(communicationData);
 
@@ -213,15 +224,15 @@ export class OptimalTimingEngine {
         segmentedPatterns,
         recommendations,
         insights,
-        performanceMetrics
+        performanceMetrics,
       };
 
       // Salvar resultado para cache
       await this.saveAnalysisResult(result);
-      
+
       return result;
     } catch (error) {
-      console.error('Error analyzing timing patterns:', error);
+      console.error("Error analyzing timing patterns:", error);
       throw error;
     }
   }
@@ -231,22 +242,22 @@ export class OptimalTimingEngine {
    */
   private async fetchCommunicationData(request: TimingAnalysisRequest): Promise<any[]> {
     let query = this.supabase
-      .from('communications_log')
+      .from("communications_log")
       .select(`
         *,
         patient:patients(id, birth_date, gender, timezone),
         communication_events(type, timestamp, device_info)
       `)
-      .eq('clinic_id', request.clinicId)
-      .gte('sent_at', request.dateRange.start.toISOString())
-      .lte('sent_at', request.dateRange.end.toISOString());
+      .eq("clinic_id", request.clinicId)
+      .gte("sent_at", request.dateRange.start.toISOString())
+      .lte("sent_at", request.dateRange.end.toISOString());
 
     if (request.patientIds?.length) {
-      query = query.in('patient_id', request.patientIds);
+      query = query.in("patient_id", request.patientIds);
     }
 
     if (request.communicationType) {
-      query = query.eq('type', request.communicationType);
+      query = query.eq("type", request.communicationType);
     }
 
     const { data, error } = await query;
@@ -259,8 +270,8 @@ export class OptimalTimingEngine {
    * Analisar padrões globais de timing
    */
   private async analyzeGlobalPatterns(
-    data: any[], 
-    request: TimingAnalysisRequest
+    data: any[],
+    request: TimingAnalysisRequest,
   ): Promise<TimingPattern[]> {
     const patterns: Map<string, TimingPattern> = new Map();
 
@@ -268,9 +279,9 @@ export class OptimalTimingEngine {
       const sentDate = new Date(communication.sent_at);
       const dayOfWeek = sentDate.getDay();
       const hour = sentDate.getHours();
-      
+
       const key = `${communication.type}-${dayOfWeek}-${hour}`;
-      
+
       if (!patterns.has(key)) {
         patterns.set(key, {
           id: key,
@@ -285,7 +296,7 @@ export class OptimalTimingEngine {
           sampleSize: 0,
           confidence: 0,
           lastUpdated: new Date(),
-          timezone: this.config?.globalSettings.defaultTimezone || 'America/Sao_Paulo'
+          timezone: this.config?.globalSettings.defaultTimezone || "America/Sao_Paulo",
         });
       }
 
@@ -294,22 +305,26 @@ export class OptimalTimingEngine {
 
       // Calcular métricas baseadas nos eventos
       const events = communication.communication_events || [];
-      const hasOpen = events.some((e: any) => e.type === 'open');
-      const hasClick = events.some((e: any) => e.type === 'click');
-      const hasResponse = events.some((e: any) => e.type === 'response');
+      const hasOpen = events.some((e: any) => e.type === "open");
+      const hasClick = events.some((e: any) => e.type === "click");
+      const hasResponse = events.some((e: any) => e.type === "response");
 
-      if (hasOpen) pattern.openRate = (pattern.openRate * (pattern.sampleSize - 1) + 1) / pattern.sampleSize;
-      if (hasClick) pattern.clickRate = (pattern.clickRate * (pattern.sampleSize - 1) + 1) / pattern.sampleSize;
-      if (hasResponse) pattern.responseRate = (pattern.responseRate * (pattern.sampleSize - 1) + 1) / pattern.sampleSize;
+      if (hasOpen)
+        pattern.openRate = (pattern.openRate * (pattern.sampleSize - 1) + 1) / pattern.sampleSize;
+      if (hasClick)
+        pattern.clickRate = (pattern.clickRate * (pattern.sampleSize - 1) + 1) / pattern.sampleSize;
+      if (hasResponse)
+        pattern.responseRate =
+          (pattern.responseRate * (pattern.sampleSize - 1) + 1) / pattern.sampleSize;
     }
 
     // Converter para array e calcular confiança
-    return Array.from(patterns.values()).map(pattern => ({
+    return Array.from(patterns.values()).map((pattern) => ({
       ...pattern,
       confidence: this.calculatePatternConfidence(pattern.sampleSize),
       responseRate: pattern.responseRate * 100,
       openRate: (pattern.openRate || 0) * 100,
-      clickRate: (pattern.clickRate || 0) * 100
+      clickRate: (pattern.clickRate || 0) * 100,
     }));
   }
 
@@ -317,8 +332,8 @@ export class OptimalTimingEngine {
    * Analisar padrões segmentados
    */
   private async analyzeSegmentedPatterns(
-    data: any[], 
-    request: TimingAnalysisRequest
+    data: any[],
+    request: TimingAnalysisRequest,
   ): Promise<Record<string, TimingPattern[]>> {
     const segmentedPatterns: Record<string, TimingPattern[]> = {};
 
@@ -331,7 +346,10 @@ export class OptimalTimingEngine {
     // Segmentar por gênero
     const genderSegments = this.segmentByGender(data);
     for (const [segment, segmentData] of Object.entries(genderSegments)) {
-      segmentedPatterns[`gender_${segment}`] = await this.analyzeGlobalPatterns(segmentData, request);
+      segmentedPatterns[`gender_${segment}`] = await this.analyzeGlobalPatterns(
+        segmentData,
+        request,
+      );
     }
 
     // Segmentar por tipo de comunicação
@@ -355,7 +373,7 @@ export class OptimalTimingEngine {
   private async generateMLRecommendations(
     globalPatterns: TimingPattern[],
     segmentedPatterns: Record<string, TimingPattern[]>,
-    request: TimingAnalysisRequest
+    request: TimingAnalysisRequest,
   ): Promise<TimingRecommendation[]> {
     const recommendations: TimingRecommendation[] = [];
 
@@ -366,7 +384,7 @@ export class OptimalTimingEngine {
           patientId,
           request.communicationType,
           globalPatterns,
-          segmentedPatterns
+          segmentedPatterns,
         );
         if (recommendation) {
           recommendations.push(recommendation);
@@ -377,7 +395,7 @@ export class OptimalTimingEngine {
       const generalRecommendations = await this.generateGeneralRecommendations(
         globalPatterns,
         segmentedPatterns,
-        request
+        request,
       );
       recommendations.push(...generalRecommendations);
     }
@@ -392,14 +410,14 @@ export class OptimalTimingEngine {
     patientId: string,
     communicationType?: string,
     globalPatterns: TimingPattern[] = [],
-    segmentedPatterns: Record<string, TimingPattern[]> = {}
+    segmentedPatterns: Record<string, TimingPattern[]> = {},
   ): Promise<TimingRecommendation | null> {
     try {
       // Buscar perfil do paciente
       const { data: patient } = await this.supabase
-        .from('patients')
-        .select('*')
-        .eq('id', patientId)
+        .from("patients")
+        .select("*")
+        .eq("id", patientId)
         .single();
 
       if (!patient) return null;
@@ -413,17 +431,17 @@ export class OptimalTimingEngine {
       // Usar ML para predizer horário ótimo
       const optimalTime = await this.predictOptimalTime(
         patient,
-        communicationType || 'email',
+        communicationType || "email",
         patientPatterns,
         globalPatterns,
-        segmentedPatterns
+        segmentedPatterns,
       );
 
       // Gerar tempos alternativos
       const alternativeTimes = await this.generateAlternativeTimes(
         optimalTime,
         patientPatterns,
-        globalPatterns
+        globalPatterns,
       );
 
       // Determinar horários a evitar
@@ -434,22 +452,22 @@ export class OptimalTimingEngine {
         optimalTime,
         patientPatterns,
         segments,
-        globalPatterns
+        globalPatterns,
       );
 
       return {
         patientId,
-        communicationType: communicationType || 'email',
+        communicationType: communicationType || "email",
         optimalTime,
         reasoning,
         confidence: optimalTime.confidence,
         basedOnSegments: segments,
         fallbackTimes: alternativeTimes,
         avoidTimes,
-        seasonalAdjustments: this.calculateSeasonalAdjustments()
+        seasonalAdjustments: this.calculateSeasonalAdjustments(),
       };
     } catch (error) {
-      console.error('Error generating personalized recommendation:', error);
+      console.error("Error generating personalized recommendation:", error);
       return null;
     }
   }
@@ -462,11 +480,11 @@ export class OptimalTimingEngine {
     communicationType: string,
     patientPatterns: TimingPattern[],
     globalPatterns: TimingPattern[],
-    segmentedPatterns: Record<string, TimingPattern[]>
+    segmentedPatterns: Record<string, TimingPattern[]>,
   ): Promise<OptimalTime> {
     // Usar modelo de gradient boosting se disponível
-    const model = this.mlModels.get('timing-gb-v1');
-    
+    const model = this.mlModels.get("timing-gb-v1");
+
     if (!model || patientPatterns.length === 0) {
       // Fallback para análise estatística simples
       return this.generateStatisticalOptimalTime(patient, communicationType, globalPatterns);
@@ -479,63 +497,61 @@ export class OptimalTimingEngine {
     const predictions = await this.simulateMLPrediction(features, model);
 
     // Encontrar horário com maior probabilidade de resposta
-    const bestPrediction = predictions.reduce((best, current) => 
-      current.probability > best.probability ? current : best
+    const bestPrediction = predictions.reduce((best, current) =>
+      current.probability > best.probability ? current : best,
     );
 
     return {
       hour: bestPrediction.hour,
       minute: 0,
       dayOfWeek: bestPrediction.dayOfWeek,
-      timezone: patient.timezone || this.config?.globalSettings.defaultTimezone || 'America/Sao_Paulo',
+      timezone:
+        patient.timezone || this.config?.globalSettings.defaultTimezone || "America/Sao_Paulo",
       confidence: bestPrediction.probability,
-      expectedResponseRate: bestPrediction.expectedResponseRate
+      expectedResponseRate: bestPrediction.expectedResponseRate,
     };
   }
 
   /**
    * Simular predição de ML (placeholder para integração real)
    */
-  private async simulateMLPrediction(
-    features: any,
-    model: MachineLearningModel
-  ): Promise<any[]> {
+  private async simulateMLPrediction(features: any, model: MachineLearningModel): Promise<any[]> {
     // Em produção, aqui seria feita a chamada para o modelo treinado
     const predictions = [];
-    
+
     for (let hour = 6; hour <= 22; hour++) {
       for (let day = 0; day <= 6; day++) {
         // Simular cálculo baseado em heurísticas
         let probability = 0.1; // Base probability
-        
+
         // Boost para horários comerciais
         if (hour >= 9 && hour <= 17 && day >= 1 && day <= 5) {
           probability += 0.3;
         }
-        
+
         // Boost para horários de pico (manhã e fim da tarde)
         if ((hour >= 8 && hour <= 10) || (hour >= 16 && hour <= 18)) {
           probability += 0.2;
         }
-        
+
         // Penalidade para fins de semana (exceto para alguns tipos)
         if (day === 0 || day === 6) {
           probability -= 0.1;
         }
-        
+
         // Adicionar alguma variação baseada no paciente
         probability += (features.patientEngagement || 0) * 0.1;
         probability += (features.historicalResponseRate || 0) * 0.2;
-        
+
         predictions.push({
           hour,
           dayOfWeek: day,
           probability: Math.max(0.01, Math.min(0.99, probability)),
-          expectedResponseRate: probability * 100
+          expectedResponseRate: probability * 100,
         });
       }
     }
-    
+
     return predictions.sort((a, b) => b.probability - a.probability);
   }
 
@@ -545,16 +561,17 @@ export class OptimalTimingEngine {
   private prepareMLFeatures(
     patient: any,
     communicationType: string,
-    patterns: TimingPattern[]
+    patterns: TimingPattern[],
   ): any {
     const age = this.calculateAge(new Date(patient.birth_date));
-    const avgResponseRate = patterns.length > 0 
-      ? patterns.reduce((sum, p) => sum + p.responseRate, 0) / patterns.length 
-      : 0;
+    const avgResponseRate =
+      patterns.length > 0
+        ? patterns.reduce((sum, p) => sum + p.responseRate, 0) / patterns.length
+        : 0;
 
-    const recentEngagement = patterns
-      .filter(p => p.lastUpdated > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000))
-      .length;
+    const recentEngagement = patterns.filter(
+      (p) => p.lastUpdated > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+    ).length;
 
     return {
       patientAge: age,
@@ -564,7 +581,7 @@ export class OptimalTimingEngine {
       recentEngagementCount: recentEngagement,
       patientEngagement: recentEngagement / Math.max(1, patterns.length),
       daysSinceLastCommunication: this.calculateDaysSinceLastCommunication(patient.id),
-      totalCommunications: patterns.length
+      totalCommunications: patterns.length,
     };
   }
 
@@ -580,30 +597,36 @@ export class OptimalTimingEngine {
   async analyzeBehaviorPattern(patientId: string): Promise<BehaviorPattern | null> {
     try {
       const patterns = await this.getPatientEngagementHistory(patientId);
-      
+
       if (patterns.length < 5) {
         return null; // Dados insuficientes
       }
 
       // Analisar horários preferidos
-      const hourCounts = patterns.reduce((acc, pattern) => {
-        acc[pattern.hour] = (acc[pattern.hour] || 0) + pattern.responseRate;
-        return acc;
-      }, {} as Record<number, number>);
+      const hourCounts = patterns.reduce(
+        (acc, pattern) => {
+          acc[pattern.hour] = (acc[pattern.hour] || 0) + pattern.responseRate;
+          return acc;
+        },
+        {} as Record<number, number>,
+      );
 
       const preferredHours = Object.entries(hourCounts)
-        .sort(([,a], [,b]) => b - a)
+        .sort(([, a], [, b]) => b - a)
         .slice(0, 4)
         .map(([hour]) => parseInt(hour));
 
       // Analisar dias preferidos
-      const dayCounts = patterns.reduce((acc, pattern) => {
-        acc[pattern.dayOfWeek] = (acc[pattern.dayOfWeek] || 0) + pattern.responseRate;
-        return acc;
-      }, {} as Record<number, number>);
+      const dayCounts = patterns.reduce(
+        (acc, pattern) => {
+          acc[pattern.dayOfWeek] = (acc[pattern.dayOfWeek] || 0) + pattern.responseRate;
+          return acc;
+        },
+        {} as Record<number, number>,
+      );
 
       const preferredDays = Object.entries(dayCounts)
-        .sort(([,a], [,b]) => b - a)
+        .sort(([, a], [, b]) => b - a)
         .slice(0, 3)
         .map(([day]) => parseInt(day));
 
@@ -625,12 +648,12 @@ export class OptimalTimingEngine {
           preferredHours,
           preferredDays,
           responseLatency: await avgResponseLatency,
-          engagementWindow
+          engagementWindow,
         },
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
       };
     } catch (error) {
-      console.error('Error analyzing behavior pattern:', error);
+      console.error("Error analyzing behavior pattern:", error);
       return null;
     }
   }
@@ -639,20 +662,20 @@ export class OptimalTimingEngine {
    * Classificar padrão de comportamento
    */
   private classifyBehaviorPattern(
-    preferredHours: number[], 
-    preferredDays: number[]
-  ): BehaviorPattern['pattern'] {
-    const morningHours = preferredHours.filter(h => h >= 6 && h <= 10).length;
-    const eveningHours = preferredHours.filter(h => h >= 18 && h <= 22).length;
-    const businessHours = preferredHours.filter(h => h >= 9 && h <= 17).length;
-    const weekendDays = preferredDays.filter(d => d === 0 || d === 6).length;
+    preferredHours: number[],
+    preferredDays: number[],
+  ): BehaviorPattern["pattern"] {
+    const morningHours = preferredHours.filter((h) => h >= 6 && h <= 10).length;
+    const eveningHours = preferredHours.filter((h) => h >= 18 && h <= 22).length;
+    const businessHours = preferredHours.filter((h) => h >= 9 && h <= 17).length;
+    const weekendDays = preferredDays.filter((d) => d === 0 || d === 6).length;
 
-    if (morningHours >= 2) return 'early_bird';
-    if (eveningHours >= 2) return 'night_owl';
-    if (businessHours >= 2) return 'business_hours';
-    if (weekendDays >= 1) return 'weekend_warrior';
-    
-    return 'irregular';
+    if (morningHours >= 2) return "early_bird";
+    if (eveningHours >= 2) return "night_owl";
+    if (businessHours >= 2) return "business_hours";
+    if (weekendDays >= 1) return "weekend_warrior";
+
+    return "irregular";
   }
 
   /**
@@ -668,27 +691,27 @@ export class OptimalTimingEngine {
     communicationId: string,
     patientId: string,
     scheduledTime: Date,
-    communicationType: string
+    communicationType: string,
   ): Promise<SendTimeOptimization> {
     try {
       // Buscar recomendação existente para o paciente
       const recommendation = await this.getPatientRecommendation(patientId, communicationType);
-      
+
       // Buscar fatores em tempo real
       const realTimeFactors = await this.getRealTimeFactors(patientId);
-      
+
       // Aplicar regras de otimização
       const optimizedTime = await this.applyOptimizationRules(
         scheduledTime,
         recommendation,
-        realTimeFactors
+        realTimeFactors,
       );
 
       // Calcular melhoria esperada
       const expectedImprovement = this.calculateExpectedImprovement(
         scheduledTime,
         optimizedTime,
-        recommendation
+        recommendation,
       );
 
       return {
@@ -699,23 +722,23 @@ export class OptimalTimingEngine {
         confidence: recommendation?.confidence || 0.5,
         factors: this.extractOptimizationFactors(realTimeFactors, recommendation),
         expectedImprovement,
-        algorithm: 'real_time_optimization_v1',
-        version: '1.0'
+        algorithm: "real_time_optimization_v1",
+        version: "1.0",
       };
     } catch (error) {
-      console.error('Error optimizing send time:', error);
-      
+      console.error("Error optimizing send time:", error);
+
       // Retornar sem otimização em caso de erro
       return {
         communicationId,
         originalScheduledTime: scheduledTime,
         optimizedTime: scheduledTime,
-        reason: 'Optimization failed, using original time',
+        reason: "Optimization failed, using original time",
         confidence: 0,
         factors: [],
         expectedImprovement: 0,
-        algorithm: 'fallback',
-        version: '1.0'
+        algorithm: "fallback",
+        version: "1.0",
       };
     }
   }
@@ -726,7 +749,7 @@ export class OptimalTimingEngine {
   private async applyOptimizationRules(
     scheduledTime: Date,
     recommendation: TimingRecommendation | null,
-    realTimeFactors: RealTimeFactors | null
+    realTimeFactors: RealTimeFactors | null,
   ): Promise<Date> {
     let optimizedTime = new Date(scheduledTime);
 
@@ -734,7 +757,7 @@ export class OptimalTimingEngine {
     if (recommendation?.optimalTime) {
       const optimalHour = recommendation.optimalTime.hour;
       const optimalDay = recommendation.optimalTime.dayOfWeek;
-      
+
       // Se o dia está correto, ajustar apenas a hora
       if (scheduledTime.getDay() === optimalDay) {
         optimizedTime.setHours(optimalHour, recommendation.optimalTime.minute || 0, 0, 0);
@@ -769,7 +792,7 @@ export class OptimalTimingEngine {
     if (this.config?.globalSettings.businessHours) {
       const businessHours = this.config.globalSettings.businessHours;
       const hour = optimizedTime.getHours();
-      
+
       if (hour < businessHours.startHour || hour > businessHours.endHour) {
         // Mover para o início do próximo horário comercial
         if (hour < businessHours.startHour) {
@@ -795,28 +818,28 @@ export class OptimalTimingEngine {
    */
   async calculateOptimizationPerformance(
     clinicId: string,
-    period: { start: Date; end: Date }
+    period: { start: Date; end: Date },
   ): Promise<PerformanceMetrics> {
     try {
       // Buscar comunicações do período
       const { data: communications } = await this.supabase
-        .from('communications_log')
+        .from("communications_log")
         .select(`
           *,
           communication_events(type, timestamp),
           send_time_optimization(*)
         `)
-        .eq('clinic_id', clinicId)
-        .gte('sent_at', period.start.toISOString())
-        .lte('sent_at', period.end.toISOString());
+        .eq("clinic_id", clinicId)
+        .gte("sent_at", period.start.toISOString())
+        .lte("sent_at", period.end.toISOString());
 
       if (!communications?.length) {
         return this.getEmptyPerformanceMetrics(period);
       }
 
       // Separar comunicações otimizadas e não otimizadas
-      const optimized = communications.filter(c => c.send_time_optimization?.length > 0);
-      const baseline = communications.filter(c => !c.send_time_optimization?.length);
+      const optimized = communications.filter((c) => c.send_time_optimization?.length > 0);
+      const baseline = communications.filter((c) => !c.send_time_optimization?.length);
 
       // Calcular métricas para cada grupo
       const baselineMetrics = this.calculateGroupMetrics(baseline);
@@ -827,7 +850,8 @@ export class OptimalTimingEngine {
         responseRate: optimizedMetrics.averageResponseRate - baselineMetrics.averageResponseRate,
         openRate: optimizedMetrics.averageOpenRate - baselineMetrics.averageOpenRate,
         clickRate: optimizedMetrics.averageClickRate - baselineMetrics.averageClickRate,
-        conversionRate: optimizedMetrics.averageConversionRate - baselineMetrics.averageConversionRate
+        conversionRate:
+          optimizedMetrics.averageConversionRate - baselineMetrics.averageConversionRate,
       };
 
       return {
@@ -835,10 +859,10 @@ export class OptimalTimingEngine {
         baseline: baselineMetrics,
         optimized: optimizedMetrics,
         improvement,
-        segments: {} // Implementar segmentação se necessário
+        segments: {}, // Implementar segmentação se necessário
       };
     } catch (error) {
-      console.error('Error calculating optimization performance:', error);
+      console.error("Error calculating optimization performance:", error);
       return this.getEmptyPerformanceMetrics(period);
     }
   }
@@ -854,10 +878,10 @@ export class OptimalTimingEngine {
    */
   private async getPatientEngagementHistory(patientId: string): Promise<TimingPattern[]> {
     const { data } = await this.supabase
-      .from('patient_timing_patterns')
-      .select('*')
-      .eq('patient_id', patientId)
-      .gte('last_updated', new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString()); // Últimos 90 dias
+      .from("patient_timing_patterns")
+      .select("*")
+      .eq("patient_id", patientId)
+      .gte("last_updated", new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString()); // Últimos 90 dias
 
     return (data || []).map(this.mapTimingPatternFromDB);
   }
@@ -877,48 +901,57 @@ export class OptimalTimingEngine {
    * Segmentar dados por idade
    */
   private segmentByAge(data: any[]): Record<string, any[]> {
-    return data.reduce((acc, item) => {
-      if (!item.patient?.birth_date) return acc;
-      
-      const age = this.calculateAge(new Date(item.patient.birth_date));
-      let segment = 'unknown';
-      
-      if (age < 25) segment = '18-24';
-      else if (age < 35) segment = '25-34';
-      else if (age < 45) segment = '35-44';
-      else if (age < 55) segment = '45-54';
-      else if (age < 65) segment = '55-64';
-      else segment = '65+';
-      
-      if (!acc[segment]) acc[segment] = [];
-      acc[segment].push(item);
-      
-      return acc;
-    }, {} as Record<string, any[]>);
+    return data.reduce(
+      (acc, item) => {
+        if (!item.patient?.birth_date) return acc;
+
+        const age = this.calculateAge(new Date(item.patient.birth_date));
+        let segment = "unknown";
+
+        if (age < 25) segment = "18-24";
+        else if (age < 35) segment = "25-34";
+        else if (age < 45) segment = "35-44";
+        else if (age < 55) segment = "45-54";
+        else if (age < 65) segment = "55-64";
+        else segment = "65+";
+
+        if (!acc[segment]) acc[segment] = [];
+        acc[segment].push(item);
+
+        return acc;
+      },
+      {} as Record<string, any[]>,
+    );
   }
 
   /**
    * Segmentar dados por gênero
    */
   private segmentByGender(data: any[]): Record<string, any[]> {
-    return data.reduce((acc, item) => {
-      const gender = item.patient?.gender || 'unknown';
-      if (!acc[gender]) acc[gender] = [];
-      acc[gender].push(item);
-      return acc;
-    }, {} as Record<string, any[]>);
+    return data.reduce(
+      (acc, item) => {
+        const gender = item.patient?.gender || "unknown";
+        if (!acc[gender]) acc[gender] = [];
+        acc[gender].push(item);
+        return acc;
+      },
+      {} as Record<string, any[]>,
+    );
   }
 
   /**
    * Segmentar dados por tipo de comunicação
    */
   private segmentByType(data: any[]): Record<string, any[]> {
-    return data.reduce((acc, item) => {
-      const type = item.type || 'unknown';
-      if (!acc[type]) acc[type] = [];
-      acc[type].push(item);
-      return acc;
-    }, {} as Record<string, any[]>);
+    return data.reduce(
+      (acc, item) => {
+        const type = item.type || "unknown";
+        if (!acc[type]) acc[type] = [];
+        acc[type].push(item);
+        return acc;
+      },
+      {} as Record<string, any[]>,
+    );
   }
 
   /**
@@ -928,11 +961,11 @@ export class OptimalTimingEngine {
     const today = new Date();
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-    
+
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
-    
+
     return age;
   }
 
@@ -954,7 +987,7 @@ export class OptimalTimingEngine {
       sampleSize: data.sample_size,
       confidence: data.confidence,
       lastUpdated: new Date(data.last_updated),
-      timezone: data.timezone
+      timezone: data.timezone,
     };
   }
 
@@ -969,7 +1002,7 @@ export class OptimalTimingEngine {
   private async generateGeneralRecommendations(
     globalPatterns: TimingPattern[],
     segmentedPatterns: Record<string, TimingPattern[]>,
-    request: TimingAnalysisRequest
+    request: TimingAnalysisRequest,
   ): Promise<TimingRecommendation[]> {
     return [];
   }
@@ -977,7 +1010,7 @@ export class OptimalTimingEngine {
   private async generateTimingInsights(
     globalPatterns: TimingPattern[],
     segmentedPatterns: Record<string, TimingPattern[]>,
-    data: any[]
+    data: any[],
   ): Promise<any[]> {
     return [];
   }
@@ -987,7 +1020,7 @@ export class OptimalTimingEngine {
       totalCommunications: data.length,
       averageResponseRate: 0,
       optimizedCommunications: 0,
-      improvementRate: 0
+      improvementRate: 0,
     };
   }
 
@@ -998,20 +1031,20 @@ export class OptimalTimingEngine {
   private determinePatientSegments(patient: any): string[] {
     const segments = [];
     const age = this.calculateAge(new Date(patient.birth_date));
-    
-    if (age < 25) segments.push('young_adult');
-    else if (age < 45) segments.push('middle_age');
-    else segments.push('senior');
-    
-    segments.push(patient.gender || 'unknown');
-    
+
+    if (age < 25) segments.push("young_adult");
+    else if (age < 45) segments.push("middle_age");
+    else segments.push("senior");
+
+    segments.push(patient.gender || "unknown");
+
     return segments;
   }
 
   private async generateAlternativeTimes(
     optimalTime: OptimalTime,
     patientPatterns: TimingPattern[],
-    globalPatterns: TimingPattern[]
+    globalPatterns: TimingPattern[],
   ): Promise<OptimalTime[]> {
     return [];
   }
@@ -1024,9 +1057,9 @@ export class OptimalTimingEngine {
     optimalTime: OptimalTime,
     patterns: TimingPattern[],
     segments: string[],
-    globalPatterns: TimingPattern[]
+    globalPatterns: TimingPattern[],
   ): string[] {
-    return ['Based on historical engagement patterns'];
+    return ["Based on historical engagement patterns"];
   }
 
   private calculateSeasonalAdjustments(): any[] {
@@ -1036,11 +1069,11 @@ export class OptimalTimingEngine {
   private generateStatisticalOptimalTime(
     patient: any,
     communicationType: string,
-    patterns: TimingPattern[]
+    patterns: TimingPattern[],
   ): OptimalTime {
     // Fallback simples baseado em padrões estatísticos
     const bestPattern = patterns
-      .filter(p => p.communicationType === communicationType)
+      .filter((p) => p.communicationType === communicationType)
       .sort((a, b) => b.responseRate - a.responseRate)[0];
 
     if (bestPattern) {
@@ -1050,7 +1083,7 @@ export class OptimalTimingEngine {
         dayOfWeek: bestPattern.dayOfWeek,
         timezone: bestPattern.timezone,
         confidence: bestPattern.confidence,
-        expectedResponseRate: bestPattern.responseRate
+        expectedResponseRate: bestPattern.responseRate,
       };
     }
 
@@ -1059,9 +1092,9 @@ export class OptimalTimingEngine {
       hour: 10,
       minute: 0,
       dayOfWeek: 2, // Terça-feira
-      timezone: this.config?.globalSettings.defaultTimezone || 'America/Sao_Paulo',
+      timezone: this.config?.globalSettings.defaultTimezone || "America/Sao_Paulo",
       confidence: 0.3,
-      expectedResponseRate: 15
+      expectedResponseRate: 15,
     };
   }
 
@@ -1082,7 +1115,7 @@ export class OptimalTimingEngine {
 
   private async getPatientRecommendation(
     patientId: string,
-    communicationType: string
+    communicationType: string,
   ): Promise<TimingRecommendation | null> {
     // Buscar recomendação existente no cache ou banco
     return null;
@@ -1096,7 +1129,7 @@ export class OptimalTimingEngine {
   private calculateExpectedImprovement(
     originalTime: Date,
     optimizedTime: Date,
-    recommendation: TimingRecommendation | null
+    recommendation: TimingRecommendation | null,
   ): number {
     // Calcular melhoria esperada em %
     return 0;
@@ -1105,14 +1138,14 @@ export class OptimalTimingEngine {
   private generateOptimizationReason(
     originalTime: Date,
     optimizedTime: Date,
-    recommendation: TimingRecommendation | null
+    recommendation: TimingRecommendation | null,
   ): string {
-    return 'Optimized based on timing analysis';
+    return "Optimized based on timing analysis";
   }
 
   private extractOptimizationFactors(
     realTimeFactors: RealTimeFactors | null,
-    recommendation: TimingRecommendation | null
+    recommendation: TimingRecommendation | null,
   ): string[] {
     return [];
   }
@@ -1123,7 +1156,7 @@ export class OptimalTimingEngine {
     const totalMinutes = hour * 60 + minute;
     const startMinutes = window.startHour * 60 + (window.startMinute || 0);
     const endMinutes = window.endHour * 60 + (window.endMinute || 0);
-    
+
     return totalMinutes >= startMinutes && totalMinutes <= endMinutes;
   }
 
@@ -1135,22 +1168,22 @@ export class OptimalTimingEngine {
         averageResponseRate: 0,
         averageOpenRate: 0,
         averageClickRate: 0,
-        averageConversionRate: 0
+        averageConversionRate: 0,
       },
       optimized: {
         totalCommunications: 0,
         averageResponseRate: 0,
         averageOpenRate: 0,
         averageClickRate: 0,
-        averageConversionRate: 0
+        averageConversionRate: 0,
       },
       improvement: {
         responseRate: 0,
         openRate: 0,
         clickRate: 0,
-        conversionRate: 0
+        conversionRate: 0,
       },
-      segments: {}
+      segments: {},
     };
   }
 
@@ -1161,7 +1194,7 @@ export class OptimalTimingEngine {
         averageResponseRate: 0,
         averageOpenRate: 0,
         averageClickRate: 0,
-        averageConversionRate: 0
+        averageConversionRate: 0,
       };
     }
 
@@ -1170,12 +1203,12 @@ export class OptimalTimingEngine {
     let totalClicks = 0;
     let totalConversions = 0;
 
-    communications.forEach(comm => {
+    communications.forEach((comm) => {
       const events = comm.communication_events || [];
-      if (events.some((e: any) => e.type === 'response')) totalResponses++;
-      if (events.some((e: any) => e.type === 'open')) totalOpens++;
-      if (events.some((e: any) => e.type === 'click')) totalClicks++;
-      if (events.some((e: any) => e.type === 'conversion')) totalConversions++;
+      if (events.some((e: any) => e.type === "response")) totalResponses++;
+      if (events.some((e: any) => e.type === "open")) totalOpens++;
+      if (events.some((e: any) => e.type === "click")) totalClicks++;
+      if (events.some((e: any) => e.type === "conversion")) totalConversions++;
     });
 
     return {
@@ -1183,11 +1216,10 @@ export class OptimalTimingEngine {
       averageResponseRate: (totalResponses / communications.length) * 100,
       averageOpenRate: (totalOpens / communications.length) * 100,
       averageClickRate: (totalClicks / communications.length) * 100,
-      averageConversionRate: (totalConversions / communications.length) * 100
+      averageConversionRate: (totalConversions / communications.length) * 100,
     };
   }
 }
 
 // Export singleton instance
 export const createoptimalTimingEngine = () => new OptimalTimingEngine();
-

@@ -2,55 +2,49 @@
 // Story 7.1: Executive Dashboard Implementation
 // GET/POST /api/executive-dashboard/kpis
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { executiveDashboardService } from '@/lib/services/executive-dashboard';
+import type { NextRequest, NextResponse } from "next/server";
+import type { createClient } from "@/lib/supabase/server";
+import type { executiveDashboardService } from "@/lib/services/executive-dashboard";
 
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Authentication required' }, 
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
 
     // Get query parameters
     const { searchParams } = new URL(request.url);
-    const clinicId = searchParams.get('clinic_id');
-    const periodType = searchParams.get('period_type') || 'monthly';
-    const kpiNames = searchParams.get('kpi_names')?.split(',');
-    const customStart = searchParams.get('custom_start') 
-      ? new Date(searchParams.get('custom_start')!) 
+    const clinicId = searchParams.get("clinic_id");
+    const periodType = searchParams.get("period_type") || "monthly";
+    const kpiNames = searchParams.get("kpi_names")?.split(",");
+    const customStart = searchParams.get("custom_start")
+      ? new Date(searchParams.get("custom_start")!)
       : undefined;
-    const customEnd = searchParams.get('custom_end') 
-      ? new Date(searchParams.get('custom_end')!) 
+    const customEnd = searchParams.get("custom_end")
+      ? new Date(searchParams.get("custom_end")!)
       : undefined;
 
     if (!clinicId) {
-      return NextResponse.json(
-        { error: 'clinic_id parameter is required' }, 
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "clinic_id parameter is required" }, { status: 400 });
     }
 
     // Verify user has access to this clinic
     const { data: professional } = await supabase
-      .from('professionals')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('clinic_id', clinicId)
+      .from("professionals")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("clinic_id", clinicId)
       .single();
 
     if (!professional) {
-      return NextResponse.json(
-        { error: 'Access denied to this clinic' }, 
-        { status: 403 }
-      );
+      return NextResponse.json({ error: "Access denied to this clinic" }, { status: 403 });
     }
 
     // Get KPI values
@@ -59,7 +53,7 @@ export async function GET(request: NextRequest) {
       periodType,
       kpiNames,
       customStart,
-      customEnd
+      customEnd,
     );
 
     return NextResponse.json({
@@ -70,18 +64,17 @@ export async function GET(request: NextRequest) {
         period_type: periodType,
         kpi_names: kpiNames,
         custom_period: !!customStart && !!customEnd,
-        count: kpis.length
-      }
+        count: kpis.length,
+      },
     });
-
   } catch (error) {
-    console.error('KPI API error:', error);
+    console.error("KPI API error:", error);
     return NextResponse.json(
-      { 
-        error: 'Failed to fetch KPI data',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      }, 
-      { status: 500 }
+      {
+        error: "Failed to fetch KPI data",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 },
     );
   }
 }
@@ -89,14 +82,14 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Authentication required' }, 
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
 
     // Parse request body
@@ -105,24 +98,21 @@ export async function POST(request: NextRequest) {
     // Validate required fields
     if (!kpiData.clinic_id || !kpiData.kpi_name || !kpiData.kpi_value || !kpiData.period_type) {
       return NextResponse.json(
-        { error: 'Missing required fields: clinic_id, kpi_name, kpi_value, period_type' }, 
-        { status: 400 }
+        { error: "Missing required fields: clinic_id, kpi_name, kpi_value, period_type" },
+        { status: 400 },
       );
     }
 
     // Verify user has access to this clinic
     const { data: professional } = await supabase
-      .from('professionals')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('clinic_id', kpiData.clinic_id)
+      .from("professionals")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("clinic_id", kpiData.clinic_id)
       .single();
 
     if (!professional) {
-      return NextResponse.json(
-        { error: 'Access denied to this clinic' }, 
-        { status: 403 }
-      );
+      return NextResponse.json({ error: "Access denied to this clinic" }, { status: 403 });
     }
 
     // Create or update KPI value
@@ -131,17 +121,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: kpi,
-      message: 'KPI value saved successfully'
+      message: "KPI value saved successfully",
     });
-
   } catch (error) {
-    console.error('KPI create/update API error:', error);
+    console.error("KPI create/update API error:", error);
     return NextResponse.json(
-      { 
-        error: 'Failed to save KPI data',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      }, 
-      { status: 500 }
+      {
+        error: "Failed to save KPI data",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 },
     );
   }
 }

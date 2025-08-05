@@ -20,12 +20,12 @@ console.log(`✅ Supabase URL: ${currentConfig.supabaseUrl}`);
 console.log(
   `${currentConfig.hasAnonKey ? "✅" : "❌"} Anon Key: ${
     currentConfig.hasAnonKey ? "Configurada" : "Faltando"
-  }`
+  }`,
 );
 console.log(
   `${currentConfig.hasServiceKey ? "✅" : "❌"} Service Key: ${
     currentConfig.hasServiceKey ? "Configurada" : "Faltando"
-  }`
+  }`,
 );
 console.log(`📱 App URL: ${currentConfig.appUrl}`);
 console.log(
@@ -33,18 +33,18 @@ console.log(
     currentConfig.googleClientId === "your_google_client_id_here"
       ? "❌ Não configurado"
       : currentConfig.googleClientId
-      ? "✅ Configurado"
-      : "❌ Faltando"
-  }`
+        ? "✅ Configurado"
+        : "❌ Faltando"
+  }`,
 );
 console.log(
   `🔒 Google Client Secret: ${
     currentConfig.googleClientSecret === "your_google_client_secret_here"
       ? "❌ Não configurado"
       : currentConfig.googleClientSecret
-      ? "✅ Configurado"
-      : "❌ Faltando"
-  }`
+        ? "✅ Configurado"
+        : "❌ Faltando"
+  }`,
 );
 
 console.log("\n🔧 CONFIGURAÇÃO NECESSÁRIA:");
@@ -65,9 +65,7 @@ if (currentConfig.googleClientId === "your_google_client_id_here") {
   console.log(`     • ${currentConfig.appUrl}/auth/callback`);
   console.log("");
   console.log("3. Configure no Supabase:");
-  console.log(
-    `   https://supabase.com/dashboard/project/gfkskrkbnawkuppazkpt/auth/providers`
-  );
+  console.log(`   https://supabase.com/dashboard/project/gfkskrkbnawkuppazkpt/auth/providers`);
   console.log("");
   console.log("4. Atualize .env.local com as chaves reais");
 } else {
@@ -75,11 +73,9 @@ if (currentConfig.googleClientId === "your_google_client_id_here") {
 }
 
 console.log("\n🌐 URLS IMPORTANTES:");
+console.log(`📋 Supabase Dashboard: https://supabase.com/dashboard/project/gfkskrkbnawkuppazkpt`);
 console.log(
-  `📋 Supabase Dashboard: https://supabase.com/dashboard/project/gfkskrkbnawkuppazkpt`
-);
-console.log(
-  `🔐 Auth Providers: https://supabase.com/dashboard/project/gfkskrkbnawkuppazkpt/auth/providers`
+  `🔐 Auth Providers: https://supabase.com/dashboard/project/gfkskrkbnawkuppazkpt/auth/providers`,
 );
 console.log(`🌍 Google Cloud Console: https://console.cloud.google.com`);
 

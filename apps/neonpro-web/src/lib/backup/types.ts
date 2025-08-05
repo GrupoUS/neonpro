@@ -1,7 +1,7 @@
 /**
  * NeonPro Backup & Recovery System Types
  * Story 1.8: Sistema de Backup e Recovery
- * 
+ *
  * Tipos e interfaces para o sistema completo de backup automático,
  * backup incremental, disaster recovery e monitoramento.
  */
@@ -14,99 +14,99 @@
  * Tipos de backup disponíveis
  */
 export enum BackupType {
-  FULL = 'FULL',           // Backup completo
-  INCREMENTAL = 'INCREMENTAL', // Backup incremental
-  DIFFERENTIAL = 'DIFFERENTIAL', // Backup diferencial
-  SNAPSHOT = 'SNAPSHOT'     // Snapshot do sistema
+  FULL = "FULL", // Backup completo
+  INCREMENTAL = "INCREMENTAL", // Backup incremental
+  DIFFERENTIAL = "DIFFERENTIAL", // Backup diferencial
+  SNAPSHOT = "SNAPSHOT", // Snapshot do sistema
 }
 
 /**
  * Status do backup
  */
 export enum BackupStatus {
-  PENDING = 'PENDING',     // Aguardando execução
-  RUNNING = 'RUNNING',     // Em execução
-  COMPLETED = 'COMPLETED', // Concluído com sucesso
-  FAILED = 'FAILED',       // Falhou
-  CANCELLED = 'CANCELLED', // Cancelado
-  EXPIRED = 'EXPIRED'      // Expirado
+  PENDING = "PENDING", // Aguardando execução
+  RUNNING = "RUNNING", // Em execução
+  COMPLETED = "COMPLETED", // Concluído com sucesso
+  FAILED = "FAILED", // Falhou
+  CANCELLED = "CANCELLED", // Cancelado
+  EXPIRED = "EXPIRED", // Expirado
 }
 
 /**
  * Prioridade do backup
  */
 export enum BackupPriority {
-  LOW = 'LOW',
-  MEDIUM = 'MEDIUM',
-  HIGH = 'HIGH',
-  CRITICAL = 'CRITICAL'
+  LOW = "LOW",
+  MEDIUM = "MEDIUM",
+  HIGH = "HIGH",
+  CRITICAL = "CRITICAL",
 }
 
 /**
  * Tipos de storage para backup
  */
 export enum StorageType {
-  LOCAL = 'LOCAL',         // Armazenamento local
-  S3 = 'S3',              // Amazon S3
-  AZURE = 'AZURE',         // Azure Blob Storage
-  GCS = 'GCS',            // Google Cloud Storage
-  FTP = 'FTP',            // FTP Server
-  SFTP = 'SFTP'           // SFTP Server
+  LOCAL = "LOCAL", // Armazenamento local
+  S3 = "S3", // Amazon S3
+  AZURE = "AZURE", // Azure Blob Storage
+  GCS = "GCS", // Google Cloud Storage
+  FTP = "FTP", // FTP Server
+  SFTP = "SFTP", // SFTP Server
 }
 
 /**
  * Status de recuperação
  */
 export enum RecoveryStatus {
-  NOT_STARTED = 'NOT_STARTED',
-  IN_PROGRESS = 'IN_PROGRESS',
-  COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED',
-  PARTIAL = 'PARTIAL'
+  NOT_STARTED = "NOT_STARTED",
+  IN_PROGRESS = "IN_PROGRESS",
+  COMPLETED = "COMPLETED",
+  FAILED = "FAILED",
+  PARTIAL = "PARTIAL",
 }
 
 /**
  * Tipos de dados para backup
  */
 export enum DataType {
-  DATABASE = 'DATABASE',   // Dados do banco
-  FILES = 'FILES',         // Arquivos do sistema
-  LOGS = 'LOGS',          // Logs da aplicação
-  CONFIG = 'CONFIG',       // Configurações
-  MEDIA = 'MEDIA',        // Arquivos de mídia
-  DOCUMENTS = 'DOCUMENTS'  // Documentos
+  DATABASE = "DATABASE", // Dados do banco
+  FILES = "FILES", // Arquivos do sistema
+  LOGS = "LOGS", // Logs da aplicação
+  CONFIG = "CONFIG", // Configurações
+  MEDIA = "MEDIA", // Arquivos de mídia
+  DOCUMENTS = "DOCUMENTS", // Documentos
 }
 
 // Adicionar os tipos que estavam faltando
 export enum AlertType {
-  BACKUP_FAILURE = 'BACKUP_FAILURE',
-  STORAGE_FULL = 'STORAGE_FULL',
-  PERFORMANCE_DEGRADATION = 'PERFORMANCE_DEGRADATION',
-  SECURITY_BREACH = 'SECURITY_BREACH',
-  SYSTEM_ERROR = 'SYSTEM_ERROR'
+  BACKUP_FAILURE = "BACKUP_FAILURE",
+  STORAGE_FULL = "STORAGE_FULL",
+  PERFORMANCE_DEGRADATION = "PERFORMANCE_DEGRADATION",
+  SECURITY_BREACH = "SECURITY_BREACH",
+  SYSTEM_ERROR = "SYSTEM_ERROR",
 }
 
 export enum AlertSeverity {
-  LOW = 'LOW',
-  MEDIUM = 'MEDIUM',
-  HIGH = 'HIGH',
-  CRITICAL = 'CRITICAL'
+  LOW = "LOW",
+  MEDIUM = "MEDIUM",
+  HIGH = "HIGH",
+  CRITICAL = "CRITICAL",
 }
 
 export enum TaskStatus {
-  PENDING = 'PENDING',
-  RUNNING = 'RUNNING',
-  COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED',
-  CANCELLED = 'CANCELLED'
+  PENDING = "PENDING",
+  RUNNING = "RUNNING",
+  COMPLETED = "COMPLETED",
+  FAILED = "FAILED",
+  CANCELLED = "CANCELLED",
 }
 
 export enum ScheduleFrequency {
-  HOURLY = 'HOURLY',
-  DAILY = 'DAILY',
-  WEEKLY = 'WEEKLY',
-  MONTHLY = 'MONTHLY',
-  CUSTOM = 'CUSTOM'
+  HOURLY = "HOURLY",
+  DAILY = "DAILY",
+  WEEKLY = "WEEKLY",
+  MONTHLY = "MONTHLY",
+  CUSTOM = "CUSTOM",
 }
 
 // ============================================================================
@@ -139,10 +139,10 @@ export interface BackupConfig {
  */
 export interface BackupSchedule {
   frequency: ScheduleFrequency;
-  interval?: number;        // Para frequência customizada
-  time?: string;           // Horário específico (HH:mm)
-  daysOfWeek?: number[];   // Dias da semana (0-6)
-  daysOfMonth?: number[];  // Dias do mês (1-31)
+  interval?: number; // Para frequência customizada
+  time?: string; // Horário específico (HH:mm)
+  daysOfWeek?: number[]; // Dias da semana (0-6)
+  daysOfMonth?: number[]; // Dias do mês (1-31)
   timezone: string;
   enabled: boolean;
 }
@@ -151,13 +151,13 @@ export interface BackupSchedule {
  * Política de retenção
  */
 export interface RetentionPolicy {
-  keepDaily: number;       // Quantos backups diários manter
-  keepWeekly: number;      // Quantos backups semanais manter
-  keepMonthly: number;     // Quantos backups mensais manter
-  keepYearly: number;      // Quantos backups anuais manter
-  maxAge: number;          // Idade máxima em dias
-  maxSize: number;         // Tamanho máximo em bytes
-  autoCleanup: boolean;    // Limpeza automática
+  keepDaily: number; // Quantos backups diários manter
+  keepWeekly: number; // Quantos backups semanais manter
+  keepMonthly: number; // Quantos backups mensais manter
+  keepYearly: number; // Quantos backups anuais manter
+  maxAge: number; // Idade máxima em dias
+  maxSize: number; // Tamanho máximo em bytes
+  autoCleanup: boolean; // Limpeza automática
 }
 
 /**
@@ -192,8 +192,8 @@ export interface StorageCredentials {
  */
 export interface CompressionConfig {
   enabled: boolean;
-  algorithm: 'gzip' | 'bzip2' | 'lz4' | 'zstd';
-  level: number;           // Nível de compressão (1-9)
+  algorithm: "gzip" | "bzip2" | "lz4" | "zstd";
+  level: number; // Nível de compressão (1-9)
 }
 
 /**
@@ -201,8 +201,8 @@ export interface CompressionConfig {
  */
 export interface EncryptionConfig {
   enabled: boolean;
-  algorithm: 'AES-256' | 'AES-128' | 'ChaCha20';
-  keyDerivation: 'PBKDF2' | 'Argon2';
+  algorithm: "AES-256" | "AES-128" | "ChaCha20";
+  keyDerivation: "PBKDF2" | "Argon2";
   keySize: number;
 }
 
@@ -220,8 +220,8 @@ export interface BackupRecord {
   status: BackupStatus;
   startTime: Date;
   endTime?: Date;
-  duration?: number;       // Duração em segundos
-  size: number;           // Tamanho em bytes
+  duration?: number; // Duração em segundos
+  size: number; // Tamanho em bytes
   compressedSize?: number; // Tamanho comprimido
   filesCount: number;
   checksum: string;
@@ -240,7 +240,7 @@ export interface BackupMetadata {
   version: string;
   source: string;
   dataTypes: DataType[];
-  tables?: string[];       // Tabelas incluídas (para DB)
+  tables?: string[]; // Tabelas incluídas (para DB)
   excludedPaths?: string[]; // Caminhos excluídos
   environment: string;
   hostname: string;
@@ -261,8 +261,8 @@ export interface BackupProgress {
   totalFiles: number;
   bytesProcessed: number;
   totalBytes: number;
-  speed: number;          // Bytes por segundo
-  eta: number;           // Tempo estimado em segundos
+  speed: number; // Bytes por segundo
+  eta: number; // Tempo estimado em segundos
   startTime: Date;
   lastUpdate: Date;
 }
@@ -277,8 +277,8 @@ export interface BackupProgress {
 export interface RecoveryRequest {
   id: string;
   backupId: string;
-  type: 'FULL' | 'PARTIAL' | 'POINT_IN_TIME';
-  targetTime?: Date;       // Para point-in-time recovery
+  type: "FULL" | "PARTIAL" | "POINT_IN_TIME";
+  targetTime?: Date; // Para point-in-time recovery
   targetPath: string;
   options: RecoveryOptions;
   requestedBy: string;
@@ -357,11 +357,11 @@ export interface StorageUsage {
  * Métricas de performance
  */
 export interface PerformanceMetrics {
-  averageSpeed: number;    // MB/s
+  averageSpeed: number; // MB/s
   compressionRatio: number; // Ratio de compressão
   deduplicationRatio: number; // Ratio de deduplicação
   networkUtilization: number; // % de utilização da rede
-  cpuUtilization: number;  // % de utilização da CPU
+  cpuUtilization: number; // % de utilização da CPU
   memoryUtilization: number; // % de utilização da memória
 }
 
@@ -396,7 +396,7 @@ export interface RecoveryTest {
   name: string;
   description?: string;
   backupId: string;
-  testType: 'INTEGRITY' | 'PERFORMANCE' | 'FULL_RESTORE' | 'PARTIAL_RESTORE';
+  testType: "INTEGRITY" | "PERFORMANCE" | "FULL_RESTORE" | "PARTIAL_RESTORE";
   schedule: BackupSchedule;
   lastRun?: Date;
   nextRun?: Date;
@@ -415,8 +415,8 @@ export interface TestResults {
   startTime: Date;
   endTime: Date;
   duration: number;
-  status: 'PASSED' | 'FAILED' | 'WARNING';
-  score: number;          // Score de 0-100
+  status: "PASSED" | "FAILED" | "WARNING";
+  score: number; // Score de 0-100
   details: TestDetail[];
   performance: TestPerformance;
   recommendations: string[];
@@ -428,7 +428,7 @@ export interface TestResults {
 export interface TestDetail {
   category: string;
   test: string;
-  status: 'PASSED' | 'FAILED' | 'WARNING' | 'SKIPPED';
+  status: "PASSED" | "FAILED" | "WARNING" | "SKIPPED";
   message: string;
   expected?: any;
   actual?: any;
@@ -439,11 +439,11 @@ export interface TestDetail {
  * Performance do teste
  */
 export interface TestPerformance {
-  restoreSpeed: number;    // MB/s
+  restoreSpeed: number; // MB/s
   integrityCheckTime: number; // segundos
-  memoryUsage: number;     // MB
-  cpuUsage: number;        // %
-  networkUsage: number;    // MB
+  memoryUsage: number; // MB
+  cpuUsage: number; // %
+  networkUsage: number; // MB
 }
 
 // ============================================================================
@@ -472,7 +472,7 @@ export interface GeneralConfig {
   defaultCompression: CompressionConfig;
   defaultEncryption: EncryptionConfig;
   tempDirectory: string;
-  logLevel: 'DEBUG' | 'INFO' | 'WARN' | 'ERROR';
+  logLevel: "DEBUG" | "INFO" | "WARN" | "ERROR";
   enableMetrics: boolean;
 }
 
@@ -481,7 +481,7 @@ export interface GeneralConfig {
  */
 export interface NotificationConfig {
   enabled: boolean;
-  channels: ('EMAIL' | 'SMS' | 'SLACK' | 'WEBHOOK')[];
+  channels: ("EMAIL" | "SMS" | "SLACK" | "WEBHOOK")[];
   onSuccess: boolean;
   onFailure: boolean;
   onWarning: boolean;
@@ -507,13 +507,13 @@ export interface SecurityConfig {
  * Configuração de performance
  */
 export interface PerformanceConfig {
-  maxBandwidth: number;    // MB/s
+  maxBandwidth: number; // MB/s
   compressionThreads: number;
   encryptionThreads: number;
-  networkTimeout: number;  // segundos
+  networkTimeout: number; // segundos
   retryAttempts: number;
-  retryDelay: number;      // segundos
-  chunkSize: number;       // bytes
+  retryDelay: number; // segundos
+  chunkSize: number; // bytes
 }
 
 /**
@@ -531,11 +531,11 @@ export interface MonitoringConfig {
  * Limites para alertas
  */
 export interface AlertThresholds {
-  failureRate: number;     // %
-  storageUsage: number;    // %
-  backupDuration: number;  // horas
-  missedBackups: number;   // quantidade
-  recoveryTime: number;    // horas
+  failureRate: number; // %
+  storageUsage: number; // %
+  backupDuration: number; // horas
+  missedBackups: number; // quantidade
+  recoveryTime: number; // horas
 }
 
 /**
@@ -543,9 +543,9 @@ export interface AlertThresholds {
  */
 export interface HealthCheckConfig {
   enabled: boolean;
-  interval: number;        // minutos
-  timeout: number;         // segundos
-  checks: ('STORAGE' | 'DATABASE' | 'NETWORK' | 'DISK_SPACE')[];
+  interval: number; // minutos
+  timeout: number; // segundos
+  checks: ("STORAGE" | "DATABASE" | "NETWORK" | "DISK_SPACE")[];
 }
 
 /**
@@ -553,11 +553,11 @@ export interface HealthCheckConfig {
  */
 export interface ReportingConfig {
   enabled: boolean;
-  frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY';
+  frequency: "DAILY" | "WEEKLY" | "MONTHLY";
   recipients: string[];
   includeMetrics: boolean;
   includeRecommendations: boolean;
-  format: 'PDF' | 'HTML' | 'JSON';
+  format: "PDF" | "HTML" | "JSON";
 }
 
 // ============================================================================
@@ -586,7 +586,7 @@ export interface PaginationOptions {
   page: number;
   limit: number;
   sortBy?: string;
-  sortOrder?: 'ASC' | 'DESC';
+  sortOrder?: "ASC" | "DESC";
 }
 
 /**
@@ -619,9 +619,17 @@ export interface ApiResponse<T = any> {
  */
 export interface BackupEvent {
   id: string;
-  type: 'BACKUP_STARTED' | 'BACKUP_COMPLETED' | 'BACKUP_FAILED' | 'RECOVERY_STARTED' | 'RECOVERY_COMPLETED' | 'RECOVERY_FAILED' | 'ALERT_CREATED' | 'CONFIG_CHANGED';
+  type:
+    | "BACKUP_STARTED"
+    | "BACKUP_COMPLETED"
+    | "BACKUP_FAILED"
+    | "RECOVERY_STARTED"
+    | "RECOVERY_COMPLETED"
+    | "RECOVERY_FAILED"
+    | "ALERT_CREATED"
+    | "CONFIG_CHANGED";
   entityId: string;
-  entityType: 'BACKUP' | 'RECOVERY' | 'CONFIG' | 'ALERT';
+  entityType: "BACKUP" | "RECOVERY" | "CONFIG" | "ALERT";
   data: Record<string, any>;
   userId?: string;
   timestamp: Date;

@@ -1,7 +1,7 @@
 // GET/POST /api/treatment-prediction/patient-factors/[patientId] - Patient factors management
-import { TreatmentPredictionService } from '@/app/lib/services/treatment-prediction';
-import { createServerClient } from '@/app/utils/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { TreatmentPredictionService } from "@/app/lib/services/treatment-prediction";
+import { createServerClient } from "@/app/utils/supabase/server";
+import { NextRequest, NextResponse } from "next/server";
 
 interface RouteParams {
   params: { patientId: string };
@@ -11,24 +11,23 @@ interface RouteParams {
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
     const supabase = await createServerClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Verify patient exists and user has access
     const { data: patient } = await supabase
-      .from('patients')
-      .select('id')
-      .eq('id', params.patientId)
+      .from("patients")
+      .select("id")
+      .eq("id", params.patientId)
       .single();
 
     if (!patient) {
-      return NextResponse.json(
-        { error: 'Patient not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Patient not found" }, { status: 404 });
     }
 
     const predictionService = new TreatmentPredictionService();
@@ -36,19 +35,15 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     if (!factors) {
       return NextResponse.json(
-        { error: 'Patient factors not found. Please complete patient assessment first.' },
-        { status: 404 }
+        { error: "Patient factors not found. Please complete patient assessment first." },
+        { status: 404 },
       );
     }
 
     return NextResponse.json({ factors });
-
   } catch (error) {
-    console.error('Error fetching patient factors:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch patient factors' },
-      { status: 500 }
-    );
+    console.error("Error fetching patient factors:", error);
+    return NextResponse.json({ error: "Failed to fetch patient factors" }, { status: 500 });
   }
 }
 
@@ -56,40 +51,36 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
     const supabase = await createServerClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Verify patient exists and user has access
     const { data: patient } = await supabase
-      .from('patients')
-      .select('id')
-      .eq('id', params.patientId)
+      .from("patients")
+      .select("id")
+      .eq("id", params.patientId)
       .single();
 
     if (!patient) {
-      return NextResponse.json(
-        { error: 'Patient not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Patient not found" }, { status: 404 });
     }
 
     const body = await request.json();
 
     // Validate required fields
     if (!body.age || !body.gender) {
-      return NextResponse.json(
-        { error: 'Missing required fields: age, gender' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Missing required fields: age, gender" }, { status: 400 });
     }
 
     // Prepare factors data
     const factorsData = {
       ...body,
-      patient_id: params.patientId
+      patient_id: params.patientId,
     };
 
     const predictionService = new TreatmentPredictionService();
@@ -97,14 +88,10 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json({
       factors,
-      message: 'Patient factors updated successfully'
+      message: "Patient factors updated successfully",
     });
-
   } catch (error) {
-    console.error('Error updating patient factors:', error);
-    return NextResponse.json(
-      { error: 'Failed to update patient factors' },
-      { status: 500 }
-    );
+    console.error("Error updating patient factors:", error);
+    return NextResponse.json({ error: "Failed to update patient factors" }, { status: 500 });
   }
 }

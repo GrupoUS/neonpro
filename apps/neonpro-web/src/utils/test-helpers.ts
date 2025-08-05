@@ -19,36 +19,36 @@ export const createMockSupabaseClient = () => ({
     getSession: jest.fn(),
     signOut: jest.fn(),
     signInWithPassword: jest.fn(),
-    signUp: jest.fn()
+    signUp: jest.fn(),
   },
   storage: {
     from: jest.fn().mockReturnThis(),
     upload: jest.fn(),
     download: jest.fn(),
-    remove: jest.fn()
-  }
-})
+    remove: jest.fn(),
+  },
+});
 
 export const mockUser = {
-  id: 'test-user-id',
-  email: 'test@example.com',
+  id: "test-user-id",
+  email: "test@example.com",
   user_metadata: {
-    full_name: 'Test User'
-  }
-}
+    full_name: "Test User",
+  },
+};
 
 export const mockSession = {
   user: mockUser,
-  access_token: 'mock-access-token',
-  refresh_token: 'mock-refresh-token'
-}
+  access_token: "mock-access-token",
+  refresh_token: "mock-refresh-token",
+};
 
 export const createMockFetch = (responses: Record<string, any> = {}) => {
   return jest.fn().mockImplementation((url: string) => {
-    const response = responses[url] || { success: true, data: [] }
+    const response = responses[url] || { success: true, data: [] };
     return Promise.resolve({
       ok: true,
-      json: () => Promise.resolve(response)
-    })
-  })
-}
+      json: () => Promise.resolve(response),
+    });
+  });
+};

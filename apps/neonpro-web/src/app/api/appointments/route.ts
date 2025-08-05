@@ -1,9 +1,6 @@
-import type {
-    BookingResponse,
-    CreateAppointmentFormData,
-} from "@/app/lib/types/appointments";
-import { createClient } from "@/lib/supabase/server";
-import { NextResponse } from "next/server";
+import type { BookingResponse, CreateAppointmentFormData } from "@/app/lib/types/appointments";
+import type { createClient } from "@/lib/supabase/server";
+import type { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
@@ -15,10 +12,7 @@ export async function POST(request: Request) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json(
-        { success: false, error_message: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error_message: "Unauthorized" }, { status: 401 });
     }
 
     // Get the appointment data from request body
@@ -37,7 +31,7 @@ export async function POST(request: Request) {
           success: false,
           error_message: "Dados obrigatórios não fornecidos",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -54,25 +48,22 @@ export async function POST(request: Request) {
           success: false,
           error_message: "Perfil de usuário não encontrado",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Call the stored procedure to book the appointment
-    const { data: bookingResult, error: bookingError } = await supabase.rpc(
-      "book_appointment",
-      {
-        p_clinic_id: profile.clinic_id,
-        p_patient_id: body.patient_id,
-        p_professional_id: body.professional_id,
-        p_service_type_id: body.service_type_id,
-        p_start_time: body.start_time.toISOString(),
-        p_end_time: body.end_time.toISOString(),
-        p_notes: body.notes || null,
-        p_internal_notes: body.internal_notes || null,
-        p_created_by: user.id,
-      }
-    );
+    const { data: bookingResult, error: bookingError } = await supabase.rpc("book_appointment", {
+      p_clinic_id: profile.clinic_id,
+      p_patient_id: body.patient_id,
+      p_professional_id: body.professional_id,
+      p_service_type_id: body.service_type_id,
+      p_start_time: body.start_time.toISOString(),
+      p_end_time: body.end_time.toISOString(),
+      p_notes: body.notes || null,
+      p_internal_notes: body.internal_notes || null,
+      p_created_by: user.id,
+    });
 
     if (bookingError) {
       console.error("Booking error:", bookingError);
@@ -85,7 +76,7 @@ export async function POST(request: Request) {
             error_message: "Conflito de horário detectado",
             error_details: bookingError.message,
           },
-          { status: 409 }
+          { status: 409 },
         );
       }
 
@@ -95,7 +86,7 @@ export async function POST(request: Request) {
           error_message: "Erro ao agendar",
           error_details: bookingError.message,
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -103,10 +94,9 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           success: false,
-          error_message:
-            bookingResult?.error_message || "Erro desconhecido ao agendar",
+          error_message: bookingResult?.error_message || "Erro desconhecido ao agendar",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -125,7 +115,7 @@ export async function POST(request: Request) {
         success: false,
         error_message: "Erro interno do servidor",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -156,12 +146,12 @@ export async function GET(request: Request) {
 
     // Parse query parameters for filters
     const { searchParams } = new URL(request.url);
-    const search = searchParams.get('search');
-    const status = searchParams.get('status');
-    const professional_id = searchParams.get('professional_id');
-    const service_type_id = searchParams.get('service_type_id');
-    const date_from = searchParams.get('date_from');
-    const date_to = searchParams.get('date_to');
+    const search = searchParams.get("search");
+    const status = searchParams.get("status");
+    const professional_id = searchParams.get("professional_id");
+    const service_type_id = searchParams.get("service_type_id");
+    const date_from = searchParams.get("date_from");
+    const date_to = searchParams.get("date_to");
 
     // Build base query
     let query = supabase
@@ -194,32 +184,32 @@ export async function GET(request: Request) {
           duration_minutes,
           price
         )
-      `
+      `,
       )
       .eq("clinic_id", profile.clinic_id);
 
     // Apply filters
-    if (status && status !== 'all') {
-      query = query.eq('status', status);
+    if (status && status !== "all") {
+      query = query.eq("status", status);
     }
 
     if (professional_id) {
-      query = query.eq('professional_id', professional_id);
+      query = query.eq("professional_id", professional_id);
     }
 
     if (service_type_id) {
-      query = query.eq('service_type_id', service_type_id);
+      query = query.eq("service_type_id", service_type_id);
     }
 
     if (date_from) {
-      query = query.gte('start_time', date_from);
+      query = query.gte("start_time", date_from);
     }
 
     if (date_to) {
       // Add one day to include the entire day
       const endDate = new Date(date_to);
       endDate.setDate(endDate.getDate() + 1);
-      query = query.lt('start_time', endDate.toISOString());
+      query = query.lt("start_time", endDate.toISOString());
     }
 
     // For search, we need to use text search on patient name
@@ -234,12 +224,13 @@ export async function GET(request: Request) {
     let appointments = appointmentsData;
     if (search && appointments) {
       const searchLower = search.toLowerCase();
-      appointments = appointments.filter(appointment => {
-        const patientName = (appointment.patients as any)?.[0]?.full_name?.toLowerCase() || '';
-        const notes = appointment.notes?.toLowerCase() || '';
-        const professionalName = (appointment.professionals as any)?.[0]?.full_name?.toLowerCase() || '';
-        const serviceName = (appointment.service_types as any)?.[0]?.name?.toLowerCase() || '';
-        
+      appointments = appointments.filter((appointment) => {
+        const patientName = (appointment.patients as any)?.[0]?.full_name?.toLowerCase() || "";
+        const notes = appointment.notes?.toLowerCase() || "";
+        const professionalName =
+          (appointment.professionals as any)?.[0]?.full_name?.toLowerCase() || "";
+        const serviceName = (appointment.service_types as any)?.[0]?.name?.toLowerCase() || "";
+
         return (
           patientName.includes(searchLower) ||
           notes.includes(searchLower) ||
@@ -252,9 +243,6 @@ export async function GET(request: Request) {
     return NextResponse.json(appointments);
   } catch (error) {
     console.error("API Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

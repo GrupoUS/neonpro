@@ -4,9 +4,9 @@ exports.cn = cn;
 var clsx_1 = require("clsx");
 // Simple implementation without tailwind-merge dependency
 function cn() {
-    var inputs = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        inputs[_i] = arguments[_i];
-    }
-    return (0, clsx_1.clsx)(inputs);
+  var inputs = [];
+  for (var _i = 0; _i < arguments.length; _i++) {
+    inputs[_i] = arguments[_i];
+  }
+  return (0, clsx_1.clsx)(inputs);
 }

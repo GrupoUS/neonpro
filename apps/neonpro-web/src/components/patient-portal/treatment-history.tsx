@@ -1,92 +1,96 @@
-"use client"
+"use client";
 
-import React, { useState } from 'react'
-import { format, parseISO } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
-import { 
-  Activity, 
-  Calendar, 
-  Star, 
-  Image, 
-  FileText, 
+import React, { useState } from "react";
+import { format, parseISO } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import {
+  Activity,
+  Calendar,
+  Star,
+  Image,
+  FileText,
   Heart,
   TrendingUp,
   Clock,
   User,
   ChevronRight,
   Download,
-  Eye
-} from 'lucide-react'
+  Eye,
+} from "lucide-react";
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Separator } from '@/components/ui/separator'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Progress } from '@/components/ui/progress'
-import { usePatientData } from '@/lib/hooks/use-patient-data'
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Progress } from "@/components/ui/progress";
+import { usePatientData } from "@/lib/hooks/use-patient-data";
 
 interface TreatmentPhotoGallery {
-  id: string
-  treatment_id: string
-  type: 'before' | 'after' | 'during'
-  photo_url: string
-  caption?: string
-  taken_at: string
+  id: string;
+  treatment_id: string;
+  type: "before" | "after" | "during";
+  photo_url: string;
+  caption?: string;
+  taken_at: string;
 }
 
 export function TreatmentHistory() {
-  const { treatmentHistory, isLoading } = usePatientData()
-  const [selectedTreatment, setSelectedTreatment] = useState<string | null>(null)
+  const { treatmentHistory, isLoading } = usePatientData();
+  const [selectedTreatment, setSelectedTreatment] = useState<string | null>(null);
 
   // Sample enhanced data - in production, this would come from API
-  const enhancedTreatments = treatmentHistory.map(treatment => ({
+  const enhancedTreatments = treatmentHistory.map((treatment) => ({
     ...treatment,
-    service_name: 'Harmonização Facial',
-    professional_name: 'Dra. Marina Silva',
+    service_name: "Harmonização Facial",
+    professional_name: "Dra. Marina Silva",
     progress_percentage: 85,
-    next_session_date: '2025-02-15',
+    next_session_date: "2025-02-15",
     photos: [
       {
-        id: '1',
+        id: "1",
         treatment_id: treatment.id,
-        type: 'before' as const,
-        photo_url: '/placeholder-before.jpg',
-        caption: 'Antes do tratamento',
-        taken_at: treatment.created_at
+        type: "before" as const,
+        photo_url: "/placeholder-before.jpg",
+        caption: "Antes do tratamento",
+        taken_at: treatment.created_at,
       },
       {
-        id: '2',
+        id: "2",
         treatment_id: treatment.id,
-        type: 'after' as const,
-        photo_url: '/placeholder-after.jpg',
-        caption: 'Após 1ª sessão',
-        taken_at: new Date().toISOString()
-      }
-    ]
-  }))
+        type: "after" as const,
+        photo_url: "/placeholder-after.jpg",
+        caption: "Após 1ª sessão",
+        taken_at: new Date().toISOString(),
+      },
+    ],
+  }));
 
   const getStatusBadge = (status: string) => {
     const badges = {
-      in_progress: { label: 'Em Andamento', color: 'bg-blue-100 text-blue-800' },
-      completed: { label: 'Concluído', color: 'bg-green-100 text-green-800' },
-      paused: { label: 'Pausado', color: 'bg-yellow-100 text-yellow-800' },
-      cancelled: { label: 'Cancelado', color: 'bg-red-100 text-red-800' }
-    }
-    return badges[status as keyof typeof badges] || badges.in_progress
-  }
+      in_progress: { label: "Em Andamento", color: "bg-blue-100 text-blue-800" },
+      completed: { label: "Concluído", color: "bg-green-100 text-green-800" },
+      paused: { label: "Pausado", color: "bg-yellow-100 text-yellow-800" },
+      cancelled: { label: "Cancelado", color: "bg-red-100 text-red-800" },
+    };
+    return badges[status as keyof typeof badges] || badges.in_progress;
+  };
 
   const getSatisfactionStars = (score: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
         key={i}
-        className={`w-4 h-4 ${
-          i < score ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
-        }`}
+        className={`w-4 h-4 ${i < score ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
       />
-    ))
-  }
+    ));
+  };
 
   if (isLoading) {
     return (
@@ -108,7 +112,7 @@ export function TreatmentHistory() {
           ))}
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -155,8 +159,8 @@ export function TreatmentHistory() {
       <div className="space-y-6">
         {enhancedTreatments.length > 0 ? (
           enhancedTreatments.map((treatment, index) => {
-            const badge = getStatusBadge('in_progress')
-            
+            const badge = getStatusBadge("in_progress");
+
             return (
               <Card key={treatment.id} className="medical-card">
                 <CardContent className="p-6">
@@ -179,9 +183,7 @@ export function TreatmentHistory() {
                             <h3 className="text-lg font-semibold">{treatment.service_name}</h3>
                             <Badge className={badge.color}>{badge.label}</Badge>
                           </div>
-                          <p className="text-muted-foreground mb-2">
-                            {treatment.description}
-                          </p>
+                          <p className="text-muted-foreground mb-2">{treatment.description}</p>
                           <div className="flex items-center gap-4 text-sm text-muted-foreground">
                             <div className="flex items-center gap-1">
                               <User className="w-4 h-4" />
@@ -190,12 +192,14 @@ export function TreatmentHistory() {
                             <div className="flex items-center gap-1">
                               <Calendar className="w-4 h-4" />
                               <span>
-                                {format(parseISO(treatment.created_at), "d 'de' MMMM, yyyy", { locale: ptBR })}
+                                {format(parseISO(treatment.created_at), "d 'de' MMMM, yyyy", {
+                                  locale: ptBR,
+                                })}
                               </span>
                             </div>
                           </div>
                         </div>
-                        
+
                         <Dialog>
                           <DialogTrigger asChild>
                             <Button variant="outline" size="sm">
@@ -209,19 +213,24 @@ export function TreatmentHistory() {
                                 {treatment.service_name} - Detalhes do Tratamento
                               </DialogTitle>
                             </DialogHeader>
-                            
+
                             <div className="space-y-6">
                               {/* Treatment Progress */}
                               <div className="space-y-3">
                                 <div className="flex items-center justify-between">
-                                  <span className="text-sm font-medium">Progresso do Tratamento</span>
+                                  <span className="text-sm font-medium">
+                                    Progresso do Tratamento
+                                  </span>
                                   <span className="text-sm font-semibold text-primary">
                                     {treatment.progress_percentage}%
                                   </span>
                                 </div>
                                 <Progress value={treatment.progress_percentage} className="h-2" />
                                 <p className="text-xs text-muted-foreground">
-                                  Próxima sessão agendada para {format(parseISO(treatment.next_session_date), "d 'de' MMMM", { locale: ptBR })}
+                                  Próxima sessão agendada para{" "}
+                                  {format(parseISO(treatment.next_session_date), "d 'de' MMMM", {
+                                    locale: ptBR,
+                                  })}
                                 </p>
                               </div>
 
@@ -237,7 +246,9 @@ export function TreatmentHistory() {
                                       <div className="text-center">
                                         <p className="text-sm font-medium">{photo.caption}</p>
                                         <p className="text-xs text-muted-foreground">
-                                          {format(parseISO(photo.taken_at), "d 'de' MMM", { locale: ptBR })}
+                                          {format(parseISO(photo.taken_at), "d 'de' MMM", {
+                                            locale: ptBR,
+                                          })}
                                         </p>
                                       </div>
                                     </div>
@@ -278,7 +289,12 @@ export function TreatmentHistory() {
                                         Acompanhamento Necessário
                                       </h4>
                                       <p className="text-blue-800 text-sm">
-                                        Retorno agendado para {format(parseISO(treatment.follow_up_date!), "d 'de' MMMM", { locale: ptBR })}
+                                        Retorno agendado para{" "}
+                                        {format(
+                                          parseISO(treatment.follow_up_date!),
+                                          "d 'de' MMMM",
+                                          { locale: ptBR },
+                                        )}
                                         para avaliação da evolução do tratamento.
                                       </p>
                                     </div>
@@ -333,7 +349,7 @@ export function TreatmentHistory() {
                   </div>
                 </CardContent>
               </Card>
-            )
+            );
           })
         ) : (
           <Card className="medical-card">
@@ -344,9 +360,7 @@ export function TreatmentHistory() {
                 Você ainda não possui histórico de tratamentos realizados.
               </p>
               <Button asChild>
-                <a href="/patient-portal/appointments/new">
-                  Agendar Primeira Consulta
-                </a>
+                <a href="/patient-portal/appointments/new">Agendar Primeira Consulta</a>
               </Button>
             </CardContent>
           </Card>
@@ -375,5 +389,5 @@ export function TreatmentHistory() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

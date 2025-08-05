@@ -1,9 +1,9 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent } from "@/components/ui/card";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -11,17 +11,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import {
+import type { Switch } from "@/components/ui/switch";
+import type {
   Table,
   TableBody,
   TableCell,
@@ -29,9 +29,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
-import {
+import type { Textarea } from "@/components/ui/textarea";
+import type { cn } from "@/lib/utils";
+import type {
   Clock,
   Crown,
   Edit,
@@ -43,8 +43,8 @@ import {
   UserCheck,
   Users,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 
 export interface ApprovalLevel {
   id: string;
@@ -155,7 +155,7 @@ export default function ApprovalHierarchyConfig({
             is_active: true,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
-          } as ApprovalLevel)
+          }) as ApprovalLevel,
       );
 
       const mockUsers: ApprovalUser[] = [
@@ -225,8 +225,8 @@ export default function ApprovalHierarchyConfig({
           levels.map((level) =>
             level.id === editingLevel.id
               ? { ...level, ...levelData, updated_at: new Date().toISOString() }
-              : level
-          )
+              : level,
+          ),
         );
         toast.success("Nível de aprovação atualizado");
       } else {
@@ -259,9 +259,7 @@ export default function ApprovalHierarchyConfig({
       if (editingUser) {
         // Update existing user
         setApprovalUsers((users) =>
-          users.map((user) =>
-            user.id === editingUser.id ? { ...user, ...userData } : user
-          )
+          users.map((user) => (user.id === editingUser.id ? { ...user, ...userData } : user)),
         );
         toast.success("Usuário aprovador atualizado");
       } else {
@@ -288,13 +286,10 @@ export default function ApprovalHierarchyConfig({
   };
 
   const handleDeleteLevel = async (levelId: string) => {
-    if (!confirm("Tem certeza que deseja excluir este nível de aprovação?"))
-      return;
+    if (!confirm("Tem certeza que deseja excluir este nível de aprovação?")) return;
 
     try {
-      setApprovalLevels((levels) =>
-        levels.filter((level) => level.id !== levelId)
-      );
+      setApprovalLevels((levels) => levels.filter((level) => level.id !== levelId));
       toast.success("Nível de aprovação excluído");
     } catch (error) {
       console.error("Error deleting level:", error);
@@ -303,8 +298,7 @@ export default function ApprovalHierarchyConfig({
   };
 
   const handleDeleteUser = async (userId: string) => {
-    if (!confirm("Tem certeza que deseja remover este usuário aprovador?"))
-      return;
+    if (!confirm("Tem certeza que deseja remover este usuário aprovador?")) return;
 
     try {
       setApprovalUsers((users) => users.filter((user) => user.id !== userId));
@@ -376,8 +370,7 @@ export default function ApprovalHierarchyConfig({
             Configuração da Hierarquia de Aprovação
           </DialogTitle>
           <DialogDescription>
-            Configure níveis de aprovação e usuários responsáveis pela aprovação
-            de contas a pagar
+            Configure níveis de aprovação e usuários responsáveis pela aprovação de contas a pagar
           </DialogDescription>
         </DialogHeader>
 
@@ -389,7 +382,7 @@ export default function ApprovalHierarchyConfig({
               "px-4 py-2 text-sm font-medium rounded-t-lg transition-colors",
               activeTab === "levels"
                 ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-foreground"
+                : "text-muted-foreground hover:text-foreground",
             )}
           >
             Níveis de Aprovação
@@ -400,7 +393,7 @@ export default function ApprovalHierarchyConfig({
               "px-4 py-2 text-sm font-medium rounded-t-lg transition-colors",
               activeTab === "users"
                 ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-foreground"
+                : "text-muted-foreground hover:text-foreground",
             )}
           >
             Usuários Aprovadores
@@ -415,8 +408,7 @@ export default function ApprovalHierarchyConfig({
                 <div>
                   <h3 className="text-lg font-semibold">Níveis de Aprovação</h3>
                   <p className="text-sm text-muted-foreground">
-                    Configure os diferentes níveis de aprovação baseados em
-                    valores
+                    Configure os diferentes níveis de aprovação baseados em valores
                   </p>
                 </div>
                 <Button
@@ -461,10 +453,7 @@ export default function ApprovalHierarchyConfig({
                                     {level.level_order}
                                   </div>
                                   {!level.is_active && (
-                                    <Badge
-                                      variant="secondary"
-                                      className="text-xs"
-                                    >
+                                    <Badge variant="secondary" className="text-xs">
                                       Inativo
                                     </Badge>
                                   )}
@@ -472,9 +461,7 @@ export default function ApprovalHierarchyConfig({
                               </TableCell>
                               <TableCell>
                                 <div>
-                                  <p className="font-medium">
-                                    {level.level_name}
-                                  </p>
+                                  <p className="font-medium">{level.level_name}</p>
                                   {level.description && (
                                     <p className="text-xs text-muted-foreground">
                                       {level.description}
@@ -484,9 +471,7 @@ export default function ApprovalHierarchyConfig({
                               </TableCell>
                               <TableCell>
                                 <div className="text-sm">
-                                  <div>
-                                    {formatCurrency(level.min_amount)} +
-                                  </div>
+                                  <div>{formatCurrency(level.min_amount)} +</div>
                                   {level.max_amount && (
                                     <div className="text-muted-foreground">
                                       até {formatCurrency(level.max_amount)}
@@ -507,9 +492,7 @@ export default function ApprovalHierarchyConfig({
                                 </div>
                               </TableCell>
                               <TableCell>
-                                <Badge
-                                  className={cn("text-xs", statusInfo.color)}
-                                >
+                                <Badge className={cn("text-xs", statusInfo.color)}>
                                   {statusInfo.label}
                                 </Badge>
                               </TableCell>
@@ -556,9 +539,7 @@ export default function ApprovalHierarchyConfig({
               {/* Users Header */}
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold">
-                    Usuários Aprovadores
-                  </h3>
+                  <h3 className="text-lg font-semibold">Usuários Aprovadores</h3>
                   <p className="text-sm text-muted-foreground">
                     Gerencie usuários que podem aprovar contas a pagar
                   </p>
@@ -591,9 +572,7 @@ export default function ApprovalHierarchyConfig({
                     </TableHeader>
                     <TableBody>
                       {approvalUsers.map((user) => {
-                        const level = approvalLevels.find(
-                          (l) => l.id === user.approval_level_id
-                        );
+                        const level = approvalLevels.find((l) => l.id === user.approval_level_id);
                         const RoleIcon = getRoleIcon(user.role);
 
                         return (
@@ -601,13 +580,9 @@ export default function ApprovalHierarchyConfig({
                             <TableCell>
                               <div>
                                 <p className="font-medium">{user.user_name}</p>
-                                <p className="text-xs text-muted-foreground">
-                                  {user.user_email}
-                                </p>
+                                <p className="text-xs text-muted-foreground">{user.user_email}</p>
                                 {user.department && (
-                                  <p className="text-xs text-blue-600">
-                                    {user.department}
-                                  </p>
+                                  <p className="text-xs text-blue-600">{user.department}</p>
                                 )}
                               </div>
                             </TableCell>
@@ -622,18 +597,13 @@ export default function ApprovalHierarchyConfig({
                               </div>
                             </TableCell>
                             <TableCell>
-                              <span className="text-sm">
-                                {formatCurrency(user.spending_limit)}
-                              </span>
+                              <span className="text-sm">{formatCurrency(user.spending_limit)}</span>
                             </TableCell>
                             <TableCell>
                               <div className="flex items-center gap-2">
                                 <RoleIcon className="h-3 w-3" />
                                 <span className="text-sm capitalize">
-                                  {
-                                    userRoles.find((r) => r.value === user.role)
-                                      ?.label
-                                  }
+                                  {userRoles.find((r) => r.value === user.role)?.label}
                                 </span>
                                 {user.can_override && (
                                   <Badge variant="outline" className="text-xs">
@@ -648,7 +618,7 @@ export default function ApprovalHierarchyConfig({
                                   "text-xs",
                                   user.is_active
                                     ? "bg-green-100 text-green-800"
-                                    : "bg-gray-100 text-gray-800"
+                                    : "bg-gray-100 text-gray-800",
                                 )}
                               >
                                 {user.is_active ? "Ativo" : "Inativo"}
@@ -694,11 +664,7 @@ export default function ApprovalHierarchyConfig({
         </div>
 
         <DialogFooter>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-          >
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
           <Button onClick={handleSaveHierarchy} disabled={loading}>
@@ -739,13 +705,7 @@ interface LevelFormModalProps {
   loading: boolean;
 }
 
-function LevelFormModal({
-  open,
-  onOpenChange,
-  level,
-  onSave,
-  loading,
-}: LevelFormModalProps) {
+function LevelFormModal({ open, onOpenChange, level, onSave, loading }: LevelFormModalProps) {
   const [formData, setFormData] = useState<Partial<ApprovalLevel>>({
     level_order: 1,
     level_name: "",
@@ -792,9 +752,7 @@ function LevelFormModal({
           <DialogTitle>
             {level ? "Editar Nível de Aprovação" : "Novo Nível de Aprovação"}
           </DialogTitle>
-          <DialogDescription>
-            Configure os parâmetros deste nível de aprovação
-          </DialogDescription>
+          <DialogDescription>Configure os parâmetros deste nível de aprovação</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -806,9 +764,7 @@ function LevelFormModal({
                 type="number"
                 min="1"
                 value={formData.level_order || ""}
-                onChange={(e) =>
-                  updateField("level_order", parseInt(e.target.value) || 1)
-                }
+                onChange={(e) => updateField("level_order", parseInt(e.target.value) || 1)}
                 required
               />
             </div>
@@ -834,9 +790,7 @@ function LevelFormModal({
                 step="0.01"
                 min="0"
                 value={formData.min_amount || ""}
-                onChange={(e) =>
-                  updateField("min_amount", parseFloat(e.target.value) || 0)
-                }
+                onChange={(e) => updateField("min_amount", parseFloat(e.target.value) || 0)}
                 required
               />
             </div>
@@ -850,10 +804,7 @@ function LevelFormModal({
                 min="0"
                 value={formData.max_amount || ""}
                 onChange={(e) =>
-                  updateField(
-                    "max_amount",
-                    e.target.value ? parseFloat(e.target.value) : null
-                  )
+                  updateField("max_amount", e.target.value ? parseFloat(e.target.value) : null)
                 }
                 placeholder="Deixe vazio para sem limite"
               />
@@ -862,20 +813,13 @@ function LevelFormModal({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="required_approvers">
-                Aprovadores Necessários *
-              </Label>
+              <Label htmlFor="required_approvers">Aprovadores Necessários *</Label>
               <Input
                 id="required_approvers"
                 type="number"
                 min="1"
                 value={formData.required_approvers || ""}
-                onChange={(e) =>
-                  updateField(
-                    "required_approvers",
-                    parseInt(e.target.value) || 1
-                  )
-                }
+                onChange={(e) => updateField("required_approvers", parseInt(e.target.value) || 1)}
                 required
               />
             </div>
@@ -888,10 +832,7 @@ function LevelFormModal({
                 min="1"
                 value={formData.approval_timeout_hours || ""}
                 onChange={(e) =>
-                  updateField(
-                    "approval_timeout_hours",
-                    parseInt(e.target.value) || 24
-                  )
+                  updateField("approval_timeout_hours", parseInt(e.target.value) || 24)
                 }
                 required
               />
@@ -899,9 +840,7 @@ function LevelFormModal({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="auto_approve_below">
-              Auto-aprovar abaixo de (R$)
-            </Label>
+            <Label htmlFor="auto_approve_below">Auto-aprovar abaixo de (R$)</Label>
             <Input
               id="auto_approve_below"
               type="number"
@@ -911,7 +850,7 @@ function LevelFormModal({
               onChange={(e) =>
                 updateField(
                   "auto_approve_below",
-                  e.target.value ? parseFloat(e.target.value) : null
+                  e.target.value ? parseFloat(e.target.value) : null,
                 )
               }
               placeholder="Deixe vazio para desabilitar"
@@ -933,9 +872,7 @@ function LevelFormModal({
             <Switch
               id="can_be_skipped"
               checked={formData.can_be_skipped || false}
-              onCheckedChange={(checked) =>
-                updateField("can_be_skipped", checked)
-              }
+              onCheckedChange={(checked) => updateField("can_be_skipped", checked)}
             />
             <Label htmlFor="can_be_skipped">
               Este nível pode ser pulado em situações especiais
@@ -943,11 +880,7 @@ function LevelFormModal({
           </div>
 
           <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar
             </Button>
             <Button type="submit" disabled={loading}>
@@ -1021,12 +954,8 @@ function UserFormModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>
-            {user ? "Editar Usuário Aprovador" : "Novo Usuário Aprovador"}
-          </DialogTitle>
-          <DialogDescription>
-            Configure os dados e permissões deste usuário
-          </DialogDescription>
+          <DialogTitle>{user ? "Editar Usuário Aprovador" : "Novo Usuário Aprovador"}</DialogTitle>
+          <DialogDescription>Configure os dados e permissões deste usuário</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -1058,9 +987,7 @@ function UserFormModal({
               <Label htmlFor="approval_level_id">Nível de Aprovação *</Label>
               <Select
                 value={formData.approval_level_id || ""}
-                onValueChange={(value) =>
-                  updateField("approval_level_id", value)
-                }
+                onValueChange={(value) => updateField("approval_level_id", value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione um nível" />
@@ -1108,10 +1035,7 @@ function UserFormModal({
                 min="0"
                 value={formData.spending_limit || ""}
                 onChange={(e) =>
-                  updateField(
-                    "spending_limit",
-                    e.target.value ? parseFloat(e.target.value) : null
-                  )
+                  updateField("spending_limit", e.target.value ? parseFloat(e.target.value) : null)
                 }
                 placeholder="Deixe vazio para sem limite"
               />
@@ -1132,9 +1056,7 @@ function UserFormModal({
             <Switch
               id="can_override"
               checked={formData.can_override || false}
-              onCheckedChange={(checked) =>
-                updateField("can_override", checked)
-              }
+              onCheckedChange={(checked) => updateField("can_override", checked)}
             />
             <Label htmlFor="can_override">
               Pode substituir/anular aprovações de outros usuários
@@ -1142,11 +1064,7 @@ function UserFormModal({
           </div>
 
           <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar
             </Button>
             <Button type="submit" disabled={loading}>

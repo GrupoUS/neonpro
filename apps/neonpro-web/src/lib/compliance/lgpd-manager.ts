@@ -1,5 +1,5 @@
 // LGPD Manager - Centralized LGPD compliance management
-import { LGPDCore } from './lgpd-core';
+import type { LGPDCore } from "./lgpd-core";
 
 export class LGPDManager {
   private static instance: LGPDManager;
@@ -20,7 +20,7 @@ export class LGPDManager {
     try {
       return await this.lgpdCore.hasValidConsent(userId, purpose);
     } catch (error) {
-      console.error('Error validating consent:', error);
+      console.error("Error validating consent:", error);
       return false;
     }
   }
@@ -29,7 +29,7 @@ export class LGPDManager {
     try {
       await this.lgpdCore.logDataAccess(userId, dataType);
     } catch (error) {
-      console.error('Error recording data access:', error);
+      console.error("Error recording data access:", error);
     }
   }
 
@@ -37,7 +37,7 @@ export class LGPDManager {
     try {
       return await this.lgpdCore.handleDataSubjectRequest(request);
     } catch (error) {
-      console.error('Error processing data subject request:', error);
+      console.error("Error processing data subject request:", error);
       throw error;
     }
   }

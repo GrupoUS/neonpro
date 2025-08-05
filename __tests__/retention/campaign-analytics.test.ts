@@ -3,23 +3,26 @@
 // Test suite for campaign analytics and A/B testing functionality
 // =====================================================================================
 
-import { createMocks } from 'node-mocks-http';
-import { GET as getAnalytics, POST as getABResults } from '@/app/api/retention-analytics/campaigns/analytics/route';
+import { createMocks } from "node-mocks-http";
+import {
+  GET as getAnalytics,
+  POST as getABResults,
+} from "@/app/api/retention-analytics/campaigns/analytics/route";
 
 // =====================================================================================
 // ANALYTICS TESTS
 // =====================================================================================
 
-describe('/api/retention-analytics/campaigns/analytics', () => {
+describe("/api/retention-analytics/campaigns/analytics", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe('GET - Campaign Analytics', () => {
-    it('should return campaign analytics with performance metrics', async () => {
+  describe("GET - Campaign Analytics", () => {
+    it("should return campaign analytics with performance metrics", async () => {
       const { req, res } = createMocks({
-        method: 'GET',
-        url: '/api/retention-analytics/campaigns/analytics?clinic_id=22222222-2222-2222-2222-222222222222',
+        method: "GET",
+        url: "/api/retention-analytics/campaigns/analytics?clinic_id=22222222-2222-2222-2222-222222222222",
       });
 
       await getAnalytics(req);
@@ -32,10 +35,11 @@ describe('/api/retention-analytics/campaigns/analytics', () => {
       expect(responseData.data.summary.totalCampaigns).toBeGreaterThan(0);
     });
 
-    it('should filter analytics by campaign IDs', async () => {
-      const campaignIds = '11111111-1111-1111-1111-111111111111,55555555-5555-5555-5555-555555555555';
+    it("should filter analytics by campaign IDs", async () => {
+      const campaignIds =
+        "11111111-1111-1111-1111-111111111111,55555555-5555-5555-5555-555555555555";
       const { req, res } = createMocks({
-        method: 'GET',
+        method: "GET",
         url: `/api/retention-analytics/campaigns/analytics?clinic_id=22222222-2222-2222-2222-222222222222&campaign_ids=${campaignIds}`,
       });
 
@@ -43,15 +47,15 @@ describe('/api/retention-analytics/campaigns/analytics', () => {
 
       const responseData = JSON.parse(res._getData());
       expect(responseData.data.analytics).toHaveLength(2);
-      expect(responseData.data.analytics.every(a => 
-        campaignIds.includes(a.campaignId)
-      )).toBe(true);
+      expect(responseData.data.analytics.every((a) => campaignIds.includes(a.campaignId))).toBe(
+        true,
+      );
     });
 
-    it('should group analytics by intervention type', async () => {
+    it("should group analytics by intervention type", async () => {
       const { req, res } = createMocks({
-        method: 'GET',
-        url: '/api/retention-analytics/campaigns/analytics?clinic_id=22222222-2222-2222-2222-222222222222&group_by=intervention_type',
+        method: "GET",
+        url: "/api/retention-analytics/campaigns/analytics?clinic_id=22222222-2222-2222-2222-222222222222&group_by=intervention_type",
       });
 
       await getAnalytics(req);
@@ -62,10 +66,10 @@ describe('/api/retention-analytics/campaigns/analytics', () => {
       expect(responseData.data.analytics[0].aggregated.totalCampaigns).toBeGreaterThan(0);
     });
 
-    it('should include industry benchmarks when comparison is requested', async () => {
+    it("should include industry benchmarks when comparison is requested", async () => {
       const { req, res } = createMocks({
-        method: 'GET',
-        url: '/api/retention-analytics/campaigns/analytics?clinic_id=22222222-2222-2222-2222-222222222222&include_comparison=true',
+        method: "GET",
+        url: "/api/retention-analytics/campaigns/analytics?clinic_id=22222222-2222-2222-2222-222222222222&include_comparison=true",
       });
 
       await getAnalytics(req);
@@ -77,11 +81,11 @@ describe('/api/retention-analytics/campaigns/analytics', () => {
       expect(responseData.data.comparison.performanceVsBenchmark).toBeDefined();
     });
 
-    it('should filter analytics by date range', async () => {
-      const startDate = '2024-01-01T00:00:00Z';
-      const endDate = '2024-01-31T23:59:59Z';
+    it("should filter analytics by date range", async () => {
+      const startDate = "2024-01-01T00:00:00Z";
+      const endDate = "2024-01-31T23:59:59Z";
       const { req, res } = createMocks({
-        method: 'GET',
+        method: "GET",
         url: `/api/retention-analytics/campaigns/analytics?clinic_id=22222222-2222-2222-2222-222222222222&start_date=${startDate}&end_date=${endDate}`,
       });
 
@@ -93,30 +97,30 @@ describe('/api/retention-analytics/campaigns/analytics', () => {
       expect(responseData.data.dateRange.endDate).toBe(endDate);
     });
 
-    it('should validate required clinic_id parameter', async () => {
+    it("should validate required clinic_id parameter", async () => {
       const { req, res } = createMocks({
-        method: 'GET',
-        url: '/api/retention-analytics/campaigns/analytics',
+        method: "GET",
+        url: "/api/retention-analytics/campaigns/analytics",
       });
 
       await getAnalytics(req);
 
       expect(res._getStatusCode()).toBe(400);
       const responseData = JSON.parse(res._getData());
-      expect(responseData.error).toBe('Invalid analytics query');
+      expect(responseData.error).toBe("Invalid analytics query");
     });
 
-    it('should calculate correct performance metrics', async () => {
+    it("should calculate correct performance metrics", async () => {
       const { req, res } = createMocks({
-        method: 'GET',
-        url: '/api/retention-analytics/campaigns/analytics?clinic_id=22222222-2222-2222-2222-222222222222',
+        method: "GET",
+        url: "/api/retention-analytics/campaigns/analytics?clinic_id=22222222-2222-2222-2222-222222222222",
       });
 
       await getAnalytics(req);
 
       const responseData = JSON.parse(res._getData());
       const analytics = responseData.data.analytics[0];
-      
+
       // Validate performance calculations
       expect(analytics.performance.deliveryRate).toBeCloseTo(95.0, 1); // 950/1000 * 100
       expect(analytics.performance.openRate).toBeCloseTo(40.0, 1); // 380/950 * 100
@@ -126,16 +130,16 @@ describe('/api/retention-analytics/campaigns/analytics', () => {
     });
   });
 
-  describe('POST - A/B Test Results', () => {
-    it('should generate A/B test results for enabled campaigns', async () => {
+  describe("POST - A/B Test Results", () => {
+    it("should generate A/B test results for enabled campaigns", async () => {
       const abTestData = {
-        campaignId: '11111111-1111-1111-1111-111111111111',
+        campaignId: "11111111-1111-1111-1111-111111111111",
         testDurationDays: 30,
-        confidenceLevel: 0.95
+        confidenceLevel: 0.95,
       };
 
       const { req, res } = createMocks({
-        method: 'POST',
+        method: "POST",
         body: abTestData,
       });
 
@@ -150,15 +154,15 @@ describe('/api/retention-analytics/campaigns/analytics', () => {
       expect(responseData.data.results.conclusion).toBeDefined();
     });
 
-    it('should calculate statistical significance correctly', async () => {
+    it("should calculate statistical significance correctly", async () => {
       const abTestData = {
-        campaignId: '11111111-1111-1111-1111-111111111111',
+        campaignId: "11111111-1111-1111-1111-111111111111",
         testDurationDays: 30,
-        confidenceLevel: 0.95
+        confidenceLevel: 0.95,
       };
 
       const { req, res } = createMocks({
-        method: 'POST',
+        method: "POST",
         body: abTestData,
       });
 
@@ -166,22 +170,22 @@ describe('/api/retention-analytics/campaigns/analytics', () => {
 
       const responseData = JSON.parse(res._getData());
       const analysis = responseData.data.results.statisticalAnalysis;
-      
+
       expect(analysis.zScore).toBeGreaterThan(0);
       expect(analysis.criticalValue).toBe(1.96); // For 95% confidence
       expect(analysis.confidenceLevel).toBe(95);
-      expect(typeof analysis.isStatisticallySignificant).toBe('boolean');
+      expect(typeof analysis.isStatisticallySignificant).toBe("boolean");
     });
 
-    it('should provide actionable recommendations', async () => {
+    it("should provide actionable recommendations", async () => {
       const abTestData = {
-        campaignId: '11111111-1111-1111-1111-111111111111',
+        campaignId: "11111111-1111-1111-1111-111111111111",
         testDurationDays: 60,
-        confidenceLevel: 0.99
+        confidenceLevel: 0.99,
       };
 
       const { req, res } = createMocks({
-        method: 'POST',
+        method: "POST",
         body: abTestData,
       });
 
@@ -189,35 +193,39 @@ describe('/api/retention-analytics/campaigns/analytics', () => {
 
       const responseData = JSON.parse(res._getData());
       const conclusion = responseData.data.results.conclusion;
-      
+
       expect(conclusion.winner).toMatch(/^[AB]$/);
-      expect(typeof conclusion.improvement).toBe('string');
+      expect(typeof conclusion.improvement).toBe("string");
       expect(conclusion.recommendation).toBeDefined();
       expect(conclusion.recommendation.length).toBeGreaterThan(0);
     });
 
-    it('should handle campaigns without A/B testing enabled', async () => {
+    it("should handle campaigns without A/B testing enabled", async () => {
       // Mock campaign without A/B testing
-      const mockSupabase = require('@/app/utils/supabase/server').createClient();
-      mockSupabase.from().select().eq().single.mockReturnValueOnce({
-        data: {
-          ...mockCampaigns[1], // Second campaign has abtest_enabled: false
-          measurement_criteria: {
-            ...mockCampaigns[1].measurement_criteria,
-            abtest_enabled: false
-          }
-        },
-        error: null
-      });
+      const mockSupabase = require("@/app/utils/supabase/server").createClient();
+      mockSupabase
+        .from()
+        .select()
+        .eq()
+        .single.mockReturnValueOnce({
+          data: {
+            ...mockCampaigns[1], // Second campaign has abtest_enabled: false
+            measurement_criteria: {
+              ...mockCampaigns[1].measurement_criteria,
+              abtest_enabled: false,
+            },
+          },
+          error: null,
+        });
 
       const abTestData = {
-        campaignId: '55555555-5555-5555-5555-555555555555',
+        campaignId: "55555555-5555-5555-5555-555555555555",
         testDurationDays: 30,
-        confidenceLevel: 0.95
+        confidenceLevel: 0.95,
       };
 
       const { req, res } = createMocks({
-        method: 'POST',
+        method: "POST",
         body: abTestData,
       });
 
@@ -225,25 +233,29 @@ describe('/api/retention-analytics/campaigns/analytics', () => {
 
       expect(res._getStatusCode()).toBe(400);
       const responseData = JSON.parse(res._getData());
-      expect(responseData.error).toBe('A/B testing is not enabled for this campaign');
+      expect(responseData.error).toBe("A/B testing is not enabled for this campaign");
     });
 
-    it('should validate campaign existence', async () => {
+    it("should validate campaign existence", async () => {
       // Mock non-existent campaign
-      const mockSupabase = require('@/app/utils/supabase/server').createClient();
-      mockSupabase.from().select().eq().single.mockReturnValueOnce({
-        data: null,
-        error: { message: 'Campaign not found' }
-      });
+      const mockSupabase = require("@/app/utils/supabase/server").createClient();
+      mockSupabase
+        .from()
+        .select()
+        .eq()
+        .single.mockReturnValueOnce({
+          data: null,
+          error: { message: "Campaign not found" },
+        });
 
       const abTestData = {
-        campaignId: '99999999-9999-9999-9999-999999999999',
+        campaignId: "99999999-9999-9999-9999-999999999999",
         testDurationDays: 30,
-        confidenceLevel: 0.95
+        confidenceLevel: 0.95,
       };
 
       const { req, res } = createMocks({
-        method: 'POST',
+        method: "POST",
         body: abTestData,
       });
 
@@ -251,18 +263,18 @@ describe('/api/retention-analytics/campaigns/analytics', () => {
 
       expect(res._getStatusCode()).toBe(404);
       const responseData = JSON.parse(res._getData());
-      expect(responseData.error).toBe('Campaign not found');
+      expect(responseData.error).toBe("Campaign not found");
     });
 
-    it('should validate input parameters', async () => {
+    it("should validate input parameters", async () => {
       const invalidData = {
-        campaignId: 'invalid-uuid',
+        campaignId: "invalid-uuid",
         testDurationDays: 0,
-        confidenceLevel: 1.5
+        confidenceLevel: 1.5,
       };
 
       const { req, res } = createMocks({
-        method: 'POST',
+        method: "POST",
         body: invalidData,
       });
 
@@ -270,35 +282,49 @@ describe('/api/retention-analytics/campaigns/analytics', () => {
 
       expect(res._getStatusCode()).toBe(400);
       const responseData = JSON.parse(res._getData());
-      expect(responseData.error).toBe('Invalid A/B test query');
+      expect(responseData.error).toBe("Invalid A/B test query");
     });
   });
 
-  describe('Analytics Edge Cases', () => {
-    it('should handle campaigns with zero metrics gracefully', async () => {
+  describe("Analytics Edge Cases", () => {
+    it("should handle campaigns with zero metrics gracefully", async () => {
       // Mock campaign with zero metrics
-      const mockSupabase = require('@/app/utils/supabase/server').createClient();
-      mockSupabase.from().select().eq().order.mockReturnValueOnce({
-        data: [{
-          ...mockCampaigns[0],
-          campaign_metrics: [{
-            sent: 0, delivered: 0, opened: 0, clicked: 0, conversions: 0, revenue: 0, costs: 0
-          }],
-          executions: []
-        }],
-        error: null
-      });
+      const mockSupabase = require("@/app/utils/supabase/server").createClient();
+      mockSupabase
+        .from()
+        .select()
+        .eq()
+        .order.mockReturnValueOnce({
+          data: [
+            {
+              ...mockCampaigns[0],
+              campaign_metrics: [
+                {
+                  sent: 0,
+                  delivered: 0,
+                  opened: 0,
+                  clicked: 0,
+                  conversions: 0,
+                  revenue: 0,
+                  costs: 0,
+                },
+              ],
+              executions: [],
+            },
+          ],
+          error: null,
+        });
 
       const { req, res } = createMocks({
-        method: 'GET',
-        url: '/api/retention-analytics/campaigns/analytics?clinic_id=22222222-2222-2222-2222-222222222222',
+        method: "GET",
+        url: "/api/retention-analytics/campaigns/analytics?clinic_id=22222222-2222-2222-2222-222222222222",
       });
 
       await getAnalytics(req);
 
       const responseData = JSON.parse(res._getData());
       const analytics = responseData.data.analytics[0];
-      
+
       expect(analytics.performance.deliveryRate).toBe(0);
       expect(analytics.performance.openRate).toBe(0);
       expect(analytics.performance.clickRate).toBe(0);
@@ -306,37 +332,43 @@ describe('/api/retention-analytics/campaigns/analytics', () => {
       expect(analytics.performance.roi).toBe(0);
     });
 
-    it('should calculate aggregated metrics correctly for grouped analytics', async () => {
+    it("should calculate aggregated metrics correctly for grouped analytics", async () => {
       const { req, res } = createMocks({
-        method: 'GET',
-        url: '/api/retention-analytics/campaigns/analytics?clinic_id=22222222-2222-2222-2222-222222222222&group_by=campaign',
+        method: "GET",
+        url: "/api/retention-analytics/campaigns/analytics?clinic_id=22222222-2222-2222-2222-222222222222&group_by=campaign",
       });
 
       await getAnalytics(req);
 
       const responseData = JSON.parse(res._getData());
       const groupedAnalytics = responseData.data.analytics[0];
-      
+
       expect(groupedAnalytics.aggregated.totalCampaigns).toBeGreaterThan(0);
       expect(groupedAnalytics.aggregated.aggregatedMetrics.sent).toBeGreaterThanOrEqual(0);
       expect(groupedAnalytics.aggregated.averagePerformance).toBeDefined();
     });
 
-    it('should handle missing campaign metrics', async () => {
+    it("should handle missing campaign metrics", async () => {
       // Mock campaign without metrics
-      const mockSupabase = require('@/app/utils/supabase/server').createClient();
-      mockSupabase.from().select().eq().order.mockReturnValueOnce({
-        data: [{
-          ...mockCampaigns[0],
-          campaign_metrics: [], // No metrics
-          executions: []
-        }],
-        error: null
-      });
+      const mockSupabase = require("@/app/utils/supabase/server").createClient();
+      mockSupabase
+        .from()
+        .select()
+        .eq()
+        .order.mockReturnValueOnce({
+          data: [
+            {
+              ...mockCampaigns[0],
+              campaign_metrics: [], // No metrics
+              executions: [],
+            },
+          ],
+          error: null,
+        });
 
       const { req, res } = createMocks({
-        method: 'GET',
-        url: '/api/retention-analytics/campaigns/analytics?clinic_id=22222222-2222-2222-2222-222222222222',
+        method: "GET",
+        url: "/api/retention-analytics/campaigns/analytics?clinic_id=22222222-2222-2222-2222-222222222222",
       });
 
       await getAnalytics(req);

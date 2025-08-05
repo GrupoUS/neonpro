@@ -3,9 +3,9 @@
  * Story 1.8: Sistema de Backup e Recovery
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { BackupManager } from '@/lib/backup/backup-manager';
-import { createClient } from '@/lib/supabase/server';
+import type { NextRequest, NextResponse } from "next/server";
+import type { BackupManager } from "@/lib/backup/backup-manager";
+import type { createClient } from "@/lib/supabase/server";
 
 const backupManager = new BackupManager();
 
@@ -16,17 +16,19 @@ const backupManager = new BackupManager();
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const period = searchParams.get('period') || '7d'; // 1d, 7d, 30d, 90d
-    const includeStorage = searchParams.get('storage') === 'true';
-    const includePerformance = searchParams.get('performance') === 'true';
-    const includeCompliance = searchParams.get('compliance') === 'true';
+    const period = searchParams.get("period") || "7d"; // 1d, 7d, 30d, 90d
+    const includeStorage = searchParams.get("storage") === "true";
+    const includePerformance = searchParams.get("performance") === "true";
+    const includeCompliance = searchParams.get("compliance") === "true";
 
     const metricsData: any = {
       timestamp: new Date(),
@@ -54,14 +56,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: metricsData,
-      message: 'Métricas obtidas com sucesso',
+      message: "Métricas obtidas com sucesso",
       timestamp: new Date(),
     });
   } catch (error) {
-    console.error('Erro ao obter métricas:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    console.error("Erro ao obter métricas:", error);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
 }

@@ -10,7 +10,7 @@ export interface ProtocolVersion {
   description?: string;
   optimization_data: Record<string, any>;
   protocol_content: Record<string, any>;
-  approval_status: 'draft' | 'pending' | 'approved' | 'rejected' | 'deprecated';
+  approval_status: "draft" | "pending" | "approved" | "rejected" | "deprecated";
   approved_by?: string;
   effective_date?: string;
   expiry_date?: string;
@@ -46,12 +46,12 @@ export interface ProtocolFeedback {
   id: string;
   protocol_id: string;
   provider_id: string;
-  feedback_type: 'improvement' | 'issue' | 'suggestion' | 'rating' | 'complaint';
+  feedback_type: "improvement" | "issue" | "suggestion" | "rating" | "complaint";
   feedback_data: Record<string, any>;
   improvement_suggestions?: string;
   rating?: number;
-  priority_level: 'low' | 'medium' | 'high' | 'critical';
-  status: 'open' | 'reviewed' | 'implemented' | 'rejected';
+  priority_level: "low" | "medium" | "high" | "critical";
+  status: "open" | "reviewed" | "implemented" | "rejected";
   reviewed_by?: string;
   reviewed_at?: string;
   implementation_notes?: string;
@@ -69,7 +69,7 @@ export interface OptimizationResult {
   confidence_score?: number;
   statistical_significance?: number;
   recommendation_data: Record<string, any>;
-  implementation_status: 'pending' | 'approved' | 'implemented' | 'rejected';
+  implementation_status: "pending" | "approved" | "implemented" | "rejected";
   automated_analysis: Record<string, any>;
   human_review_required: boolean;
   created_at: string;
@@ -83,8 +83,8 @@ export interface ProtocolExperiment {
   description?: string;
   control_protocol_id?: string;
   test_protocol_id?: string;
-  experiment_type: 'ab_test' | 'multivariate' | 'sequential';
-  status: 'setup' | 'running' | 'paused' | 'completed' | 'cancelled';
+  experiment_type: "ab_test" | "multivariate" | "sequential";
+  status: "setup" | "running" | "paused" | "completed" | "cancelled";
   start_date?: string;
   end_date?: string;
   target_sample_size: number;
@@ -104,14 +104,14 @@ export interface ProtocolExperiment {
 export interface ProtocolEvidence {
   id: string;
   protocol_id: string;
-  evidence_type: 'literature' | 'guideline' | 'regulation' | 'study' | 'best_practice';
+  evidence_type: "literature" | "guideline" | "regulation" | "study" | "best_practice";
   source_reference: string;
-  evidence_level?: 'A' | 'B' | 'C' | 'D' | 'expert_opinion';
+  evidence_level?: "A" | "B" | "C" | "D" | "expert_opinion";
   evidence_data: Record<string, any>;
   relevance_score?: number;
   last_verified: string;
-  verification_status: 'current' | 'outdated' | 'conflicting' | 'superseded';
-  compliance_status: 'compliant' | 'partial' | 'non_compliant' | 'unknown';
+  verification_status: "current" | "outdated" | "conflicting" | "superseded";
+  compliance_status: "compliant" | "partial" | "non_compliant" | "unknown";
   notes?: string;
   created_by?: string;
   created_at: string;
@@ -122,15 +122,15 @@ export interface ProtocolEvidence {
 export interface ProtocolImplementation {
   id: string;
   protocol_version_id: string;
-  implementation_scope: 'clinic_wide' | 'department' | 'provider' | 'pilot';
+  implementation_scope: "clinic_wide" | "department" | "provider" | "pilot";
   target_providers: string[];
   implementation_date?: string;
-  rollout_strategy: 'immediate' | 'gradual' | 'pilot' | 'scheduled';
+  rollout_strategy: "immediate" | "gradual" | "pilot" | "scheduled";
   training_required: boolean;
   training_completion_rate?: number;
   adherence_rate?: number;
   implementation_notes?: string;
-  status: 'planned' | 'in_progress' | 'completed' | 'failed' | 'rolled_back';
+  status: "planned" | "in_progress" | "completed" | "failed" | "rolled_back";
   success_metrics: Record<string, any>;
   rollback_reason?: string;
   implemented_by?: string;
@@ -142,7 +142,7 @@ export interface ProtocolImplementation {
 export interface ProtocolAnalytics {
   id: string;
   protocol_version_id: string;
-  analytics_period: 'daily' | 'weekly' | 'monthly' | 'quarterly';
+  analytics_period: "daily" | "weekly" | "monthly" | "quarterly";
   period_start: string;
   period_end: string;
   usage_count: number;
@@ -178,7 +178,7 @@ export interface UpdateProtocolVersionRequest {
   description?: string;
   protocol_content?: Record<string, any>;
   optimization_data?: Record<string, any>;
-  approval_status?: 'draft' | 'pending' | 'approved' | 'rejected' | 'deprecated';
+  approval_status?: "draft" | "pending" | "approved" | "rejected" | "deprecated";
   effective_date?: string;
   expiry_date?: string;
   is_active?: boolean;
@@ -202,19 +202,19 @@ export interface CreateProtocolOutcomeRequest {
 // Protocol feedback requests
 export interface CreateProtocolFeedbackRequest {
   protocol_id: string;
-  feedback_type: 'improvement' | 'issue' | 'suggestion' | 'rating' | 'complaint';
+  feedback_type: "improvement" | "issue" | "suggestion" | "rating" | "complaint";
   feedback_data: Record<string, any>;
   improvement_suggestions?: string;
   rating?: number;
-  priority_level?: 'low' | 'medium' | 'high' | 'critical';
+  priority_level?: "low" | "medium" | "high" | "critical";
 }
 
 export interface UpdateProtocolFeedbackRequest {
   feedback_data?: Record<string, any>;
   improvement_suggestions?: string;
   rating?: number;
-  priority_level?: 'low' | 'medium' | 'high' | 'critical';
-  status?: 'open' | 'reviewed' | 'implemented' | 'rejected';
+  priority_level?: "low" | "medium" | "high" | "critical";
+  status?: "open" | "reviewed" | "implemented" | "rejected";
   implementation_notes?: string;
 }
 
@@ -224,7 +224,7 @@ export interface CreateProtocolExperimentRequest {
   description?: string;
   control_protocol_id?: string;
   test_protocol_id?: string;
-  experiment_type: 'ab_test' | 'multivariate' | 'sequential';
+  experiment_type: "ab_test" | "multivariate" | "sequential";
   target_sample_size?: number;
   statistical_power?: number;
   significance_level?: number;
@@ -235,7 +235,7 @@ export interface CreateProtocolExperimentRequest {
 export interface UpdateProtocolExperimentRequest {
   experiment_name?: string;
   description?: string;
-  status?: 'setup' | 'running' | 'paused' | 'completed' | 'cancelled';
+  status?: "setup" | "running" | "paused" | "completed" | "cancelled";
   start_date?: string;
   end_date?: string;
   target_sample_size?: number;
@@ -247,35 +247,35 @@ export interface UpdateProtocolExperimentRequest {
 // Protocol evidence requests
 export interface CreateProtocolEvidenceRequest {
   protocol_id: string;
-  evidence_type: 'literature' | 'guideline' | 'regulation' | 'study' | 'best_practice';
+  evidence_type: "literature" | "guideline" | "regulation" | "study" | "best_practice";
   source_reference: string;
-  evidence_level?: 'A' | 'B' | 'C' | 'D' | 'expert_opinion';
+  evidence_level?: "A" | "B" | "C" | "D" | "expert_opinion";
   evidence_data?: Record<string, any>;
   relevance_score?: number;
-  compliance_status?: 'compliant' | 'partial' | 'non_compliant' | 'unknown';
+  compliance_status?: "compliant" | "partial" | "non_compliant" | "unknown";
   notes?: string;
 }
 
 // Protocol implementation requests
 export interface CreateProtocolImplementationRequest {
   protocol_version_id: string;
-  implementation_scope: 'clinic_wide' | 'department' | 'provider' | 'pilot';
+  implementation_scope: "clinic_wide" | "department" | "provider" | "pilot";
   target_providers?: string[];
   implementation_date?: string;
-  rollout_strategy?: 'immediate' | 'gradual' | 'pilot' | 'scheduled';
+  rollout_strategy?: "immediate" | "gradual" | "pilot" | "scheduled";
   training_required?: boolean;
   implementation_notes?: string;
 }
 
 export interface UpdateProtocolImplementationRequest {
-  implementation_scope?: 'clinic_wide' | 'department' | 'provider' | 'pilot';
+  implementation_scope?: "clinic_wide" | "department" | "provider" | "pilot";
   target_providers?: string[];
   implementation_date?: string;
-  rollout_strategy?: 'immediate' | 'gradual' | 'pilot' | 'scheduled';
+  rollout_strategy?: "immediate" | "gradual" | "pilot" | "scheduled";
   training_completion_rate?: number;
   adherence_rate?: number;
   implementation_notes?: string;
-  status?: 'planned' | 'in_progress' | 'completed' | 'failed' | 'rolled_back';
+  status?: "planned" | "in_progress" | "completed" | "failed" | "rolled_back";
   success_metrics?: Record<string, any>;
   rollback_reason?: string;
 }
@@ -283,7 +283,7 @@ export interface UpdateProtocolImplementationRequest {
 // Analytics and reporting types
 export interface ProtocolAnalyticsRequest {
   protocol_version_id?: string;
-  analytics_period?: 'daily' | 'weekly' | 'monthly' | 'quarterly';
+  analytics_period?: "daily" | "weekly" | "monthly" | "quarterly";
   period_start?: string;
   period_end?: string;
 }
@@ -336,7 +336,7 @@ export interface ProtocolExperimentResults {
     statistical_power: number;
   };
   recommendations: {
-    winner?: 'control' | 'test';
+    winner?: "control" | "test";
     significance: boolean;
     next_steps: string[];
   };

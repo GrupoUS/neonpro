@@ -1,5 +1,6 @@
 packages:
   - "apps/neonpro-web"
+  - "apps/neonpro-api"
   - "packages/*"
   - "tools/*"
 
@@ -56,3 +57,26 @@ catalog:
   "@testing-library/jest-dom": "^6.4.0"
   cypress: "^13.8.0"
   "@playwright/test": "^1.43.0"
+  vitest: "^1.1.3"
+  "@vitest/coverage-v8": "^1.1.3"
+  
+  # Fastify ecosystem
+  fastify: "^4.24.3"
+  "@fastify/type-provider-typebox": "^4.0.0"
+  "@fastify/jwt": "^8.0.0"
+  "@fastify/cors": "^9.0.1"
+  "@fastify/helmet": "^11.1.1"
+  "@fastify/rate-limit": "^9.1.0"
+  "@fastify/cookie": "^9.2.0"
+  "@fastify/session": "^10.7.0"
+  "@psteinroe/fastify-supabase": "^0.4.0"
+  "@sinclair/typebox": "^0.32.5"
+  "fastify-plugin": "^4.5.1"
+  
+  # Development tools
+  tsx: "^4.7.0"
+  pino: "^8.17.2"
+  "pino-pretty": "^10.3.1"
+  dotenv: "^16.3.1"
+  bcryptjs: "^2.4.3"
+  "@types/bcryptjs": "^2.4.6"

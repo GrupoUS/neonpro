@@ -7,7 +7,7 @@ export interface Patient {
   phone: string;
   cpf: string;
   dateOfBirth: Date;
-  gender: 'M' | 'F' | 'Other';
+  gender: "M" | "F" | "Other";
   address: Address;
   emergencyContact: EmergencyContact;
   lgpdConsent: boolean;

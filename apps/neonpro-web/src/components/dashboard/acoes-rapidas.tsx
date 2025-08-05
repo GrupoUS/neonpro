@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Banknote, CalendarPlusIcon, CreditCardIcon } from "lucide-react";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Banknote, CalendarPlusIcon, CreditCardIcon } from "lucide-react";
 
 export function AcoesRapidas() {
   return (

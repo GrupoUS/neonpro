@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+﻿import type { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
 // =============================================
@@ -68,28 +68,22 @@ export async function POST(request: NextRequest) {
       !override_reason ||
       !conflicts.length
     ) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
     // Check if user has manager permissions for this clinic
-    const hasManagerPermission = await checkManagerPermissions(
-      supabase,
-      user.id,
-      clinic_id
-    );
+    const hasManagerPermission = await checkManagerPermissions(supabase, user.id, clinic_id);
     if (!hasManagerPermission) {
       return NextResponse.json(
         { error: "Insufficient permissions. Manager access required." },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     // Start database transaction
-    const { data: transactionResult, error: transactionError } =
-      await supabase.rpc("handle_conflict_override", {
+    const { data: transactionResult, error: transactionError } = await supabase.rpc(
+      "handle_conflict_override",
+      {
         p_appointment_id: appointment_id,
         p_professional_id: professional_id,
         p_clinic_id: clinic_id,
@@ -101,14 +95,12 @@ export async function POST(request: NextRequest) {
         p_conflicts: JSON.stringify(conflicts),
         p_manager_id: user.id,
         p_manager_email: user.email,
-      });
+      },
+    );
 
     if (transactionError) {
       console.error("Error handling conflict override:", transactionError);
-      return NextResponse.json(
-        { error: "Failed to process override request" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to process override request" }, { status: 500 });
     }
 
     // Send notifications
@@ -119,7 +111,7 @@ export async function POST(request: NextRequest) {
       patient_id,
       user.email || "Unknown Manager",
       override_reason,
-      conflicts
+      conflicts,
     );
 
     const response: ConflictOverrideResponse = {
@@ -132,10 +124,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(response);
   } catch (error) {
     console.error("Error in conflict-override API:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -149,7 +138,7 @@ export async function GET(request: NextRequest) {
     if (!appointmentId || !clinicId) {
       return NextResponse.json(
         { error: "Missing appointment_id or clinic_id parameter" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -184,33 +173,27 @@ export async function GET(request: NextRequest) {
         profiles!manager_id (
           full_name
         )
-      `
+      `,
       )
       .eq("appointment_id", appointmentId)
       .order("override_timestamp", { ascending: false });
 
     if (error) {
       console.error("Error fetching override history:", error);
-      return NextResponse.json(
-        { error: "Failed to fetch override history" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to fetch override history" }, { status: 500 });
     }
 
     return NextResponse.json({ overrides: overrides || [] });
   } catch (error) {
     console.error("Error in conflict-override GET API:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
 async function checkManagerPermissions(
   supabase: any,
   userId: string,
-  clinicId: string
+  clinicId: string,
 ): Promise<boolean> {
   const { data, error } = await supabase
     .from("clinic_users")
@@ -230,7 +213,7 @@ async function checkManagerPermissions(
 async function checkClinicAccess(
   supabase: any,
   userId: string,
-  clinicId: string
+  clinicId: string,
 ): Promise<boolean> {
   const { data, error } = await supabase
     .from("clinic_users")
@@ -250,7 +233,7 @@ async function sendOverrideNotifications(
   patientId: string,
   managerEmail: string,
   overrideReason: string,
-  conflicts: any[]
+  conflicts: any[],
 ) {
   try {
     // Get appointment details for notification
@@ -269,7 +252,7 @@ async function sendOverrideNotifications(
           full_name,
           email
         )
-      `
+      `,
       )
       .eq("id", appointmentId)
       .single();
@@ -295,8 +278,8 @@ async function sendOverrideNotifications(
         recipient_id: patientId,
         recipient_email: appointment.profiles.email,
         type: "conflict_override_patient",
-        title: "Agendamento Confirmado com Exceção",
-        message: `Seu agendamento foi confirmado mesmo com restrições. Profissional: ${appointment.profiles.full_name}`,
+        title: "Agendamento Confirmado com ExceÃ§Ã£o",
+        message: `Seu agendamento foi confirmado mesmo com restriÃ§Ãµes. Profissional: ${appointment.profiles.full_name}`,
         data: {
           appointment_id: appointmentId,
           start_time: appointment.start_time,

@@ -1,20 +1,39 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Label } from '@/components/ui/label'
-import { Progress } from '@/components/ui/progress'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { 
-  FileText, 
-  Users, 
-  CheckCircle, 
-  XCircle, 
-  Clock, 
+import type { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type {
+  FileText,
+  Users,
+  CheckCircle,
+  XCircle,
+  Clock,
   AlertTriangle,
   TrendingUp,
   TrendingDown,
@@ -22,113 +41,128 @@ import {
   Download,
   BarChart3,
   PieChart,
-  Shield
-} from 'lucide-react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { useToast } from '@/hooks/use-toast'
+  Shield,
+} from "lucide-react";
+import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import type { useToast } from "@/hooks/use-toast";
 
 interface ComplianceAnalytic {
-  totalConsents: number
-  signedConsents: number
-  pendingConsents: number
-  revokedConsents: number
-  expiredConsents: number
-  complianceRate: number
-  consentsByType: Record<string, number>
-  consentsByMonth: Record<string, number>
-  withdrawalReasons: Record<string, number>
-  averageSigningTime: number
-  criticalAlerts: number
+  totalConsents: number;
+  signedConsents: number;
+  pendingConsents: number;
+  revokedConsents: number;
+  expiredConsents: number;
+  complianceRate: number;
+  consentsByType: Record<string, number>;
+  consentsByMonth: Record<string, number>;
+  withdrawalReasons: Record<string, number>;
+  averageSigningTime: number;
+  criticalAlerts: number;
 }
 
 interface ComplianceReportingDashboardProps {
-  clinicId: string
+  clinicId: string;
 }
 
-export default function ComplianceReportingDashboard({ clinicId }: ComplianceReportingDashboardProps) {
-  const [analytics, setAnalytics] = useState<ComplianceAnalytic | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [timeRange, setTimeRange] = useState('30') // days
-  const [reportType, setReportType] = useState('summary')
-  const [generatingReport, setGeneratingReport] = useState(false)
-  
-  const supabase = createClientComponentClient()
-  const { toast } = useToast()
+export default function ComplianceReportingDashboard({
+  clinicId,
+}: ComplianceReportingDashboardProps) {
+  const [analytics, setAnalytics] = useState<ComplianceAnalytic | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [timeRange, setTimeRange] = useState("30"); // days
+  const [reportType, setReportType] = useState("summary");
+  const [generatingReport, setGeneratingReport] = useState(false);
+
+  const supabase = createClientComponentClient();
+  const { toast } = useToast();
 
   useEffect(() => {
-    fetchAnalytics()
-  }, [clinicId, timeRange])
+    fetchAnalytics();
+  }, [clinicId, timeRange]);
 
   const fetchAnalytics = async () => {
     try {
-      setLoading(true)
-      
-      const cutoffDate = new Date()
-      cutoffDate.setDate(cutoffDate.getDate() - parseInt(timeRange))
-      
+      setLoading(true);
+
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - parseInt(timeRange));
+
       // Fetch consent statistics
       const { data: consents, error: consentsError } = await supabase
-        .from('patient_consent')
-        .select('*')
-        .eq('clinic_id', clinicId)
-        .gte('consent_date', cutoffDate.toISOString())
+        .from("patient_consent")
+        .select("*")
+        .eq("clinic_id", clinicId)
+        .gte("consent_date", cutoffDate.toISOString());
 
       if (consentsError) {
-        console.error('Error fetching consents:', consentsError)
+        console.error("Error fetching consents:", consentsError);
         toast({
-          title: 'Error',
-          description: 'Failed to fetch consent analytics',
-          variant: 'destructive'
-        })
-        return
+          title: "Error",
+          description: "Failed to fetch consent analytics",
+          variant: "destructive",
+        });
+        return;
       }
 
-      const totalConsents = consents?.length || 0
-      const signedConsents = consents?.filter(c => c.status === 'signed').length || 0
-      const pendingConsents = consents?.filter(c => c.status === 'pending').length || 0
-      const revokedConsents = consents?.filter(c => c.status === 'revoked').length || 0
-      const expiredConsents = consents?.filter(c => c.status === 'expired').length || 0
-      
-      const complianceRate = totalConsents > 0 ? (signedConsents / totalConsents) * 100 : 0
+      const totalConsents = consents?.length || 0;
+      const signedConsents = consents?.filter((c) => c.status === "signed").length || 0;
+      const pendingConsents = consents?.filter((c) => c.status === "pending").length || 0;
+      const revokedConsents = consents?.filter((c) => c.status === "revoked").length || 0;
+      const expiredConsents = consents?.filter((c) => c.status === "expired").length || 0;
+
+      const complianceRate = totalConsents > 0 ? (signedConsents / totalConsents) * 100 : 0;
 
       // Group by consent type
-      const consentsByType = consents?.reduce((acc, consent) => {
-        const type = consent.consent_type || 'unknown'
-        acc[type] = (acc[type] || 0) + 1
-        return acc
-      }, {} as Record<string, number>) || {}
+      const consentsByType =
+        consents?.reduce(
+          (acc, consent) => {
+            const type = consent.consent_type || "unknown";
+            acc[type] = (acc[type] || 0) + 1;
+            return acc;
+          },
+          {} as Record<string, number>,
+        ) || {};
 
       // Group by month
-      const consentsByMonth = consents?.reduce((acc, consent) => {
-        const month = new Date(consent.consent_date).toLocaleDateString('pt-BR', { 
-          year: 'numeric', 
-          month: 'short' 
-        })
-        acc[month] = (acc[month] || 0) + 1
-        return acc
-      }, {} as Record<string, number>) || {}
+      const consentsByMonth =
+        consents?.reduce(
+          (acc, consent) => {
+            const month = new Date(consent.consent_date).toLocaleDateString("pt-BR", {
+              year: "numeric",
+              month: "short",
+            });
+            acc[month] = (acc[month] || 0) + 1;
+            return acc;
+          },
+          {} as Record<string, number>,
+        ) || {};
 
       // Withdrawal reasons
-      const withdrawalReasons = consents?.reduce((acc, consent) => {
-        if (consent.withdrawal_reason) {
-          acc[consent.withdrawal_reason] = (acc[consent.withdrawal_reason] || 0) + 1
-        }
-        return acc
-      }, {} as Record<string, number>) || {}
+      const withdrawalReasons =
+        consents?.reduce(
+          (acc, consent) => {
+            if (consent.withdrawal_reason) {
+              acc[consent.withdrawal_reason] = (acc[consent.withdrawal_reason] || 0) + 1;
+            }
+            return acc;
+          },
+          {} as Record<string, number>,
+        ) || {};
 
       // Calculate average signing time (mock calculation)
-      const averageSigningTime = Math.random() * 10 + 5 // 5-15 minutes mock
+      const averageSigningTime = Math.random() * 10 + 5; // 5-15 minutes mock
 
       // Critical alerts (consents expiring soon, pending too long, etc.)
-      const now = new Date()
-      const criticalAlerts = consents?.filter(consent => {
-        if (consent.status === 'pending') {
-          const consentDate = new Date(consent.consent_date)
-          const daysDiff = (now.getTime() - consentDate.getTime()) / (1000 * 3600 * 24)
-          return daysDiff > 7 // Pending for more than 7 days
-        }
-        return false
-      }).length || 0
+      const now = new Date();
+      const criticalAlerts =
+        consents?.filter((consent) => {
+          if (consent.status === "pending") {
+            const consentDate = new Date(consent.consent_date);
+            const daysDiff = (now.getTime() - consentDate.getTime()) / (1000 * 3600 * 24);
+            return daysDiff > 7; // Pending for more than 7 days
+          }
+          return false;
+        }).length || 0;
 
       setAnalytics({
         totalConsents,
@@ -141,52 +175,51 @@ export default function ComplianceReportingDashboard({ clinicId }: ComplianceRep
         consentsByMonth,
         withdrawalReasons,
         averageSigningTime,
-        criticalAlerts
-      })
-
+        criticalAlerts,
+      });
     } catch (error) {
-      console.error('Error:', error)
+      console.error("Error:", error);
       toast({
-        title: 'Error',
-        description: 'An unexpected error occurred',
-        variant: 'destructive'
-      })
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const generateReport = async () => {
     try {
-      setGeneratingReport(true)
-      
+      setGeneratingReport(true);
+
       // Simulate report generation
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       toast({
-        title: 'Success',
+        title: "Success",
         description: `${reportType} report generated successfully`,
-        variant: 'default'
-      })
-      
+        variant: "default",
+      });
     } catch (error) {
-      console.error('Error:', error)
+      console.error("Error:", error);
       toast({
-        title: 'Error',
-        description: 'Failed to generate report',
-        variant: 'destructive'
-      })
+        title: "Error",
+        description: "Failed to generate report",
+        variant: "destructive",
+      });
     } finally {
-      setGeneratingReport(false)
+      setGeneratingReport(false);
     }
-  }
+  };
 
   const getComplianceStatus = (rate: number) => {
-    if (rate >= 95) return { color: 'text-green-600', label: 'Excellent', icon: CheckCircle }
-    if (rate >= 85) return { color: 'text-blue-600', label: 'Good', icon: TrendingUp }
-    if (rate >= 70) return { color: 'text-yellow-600', label: 'Needs Attention', icon: AlertTriangle }
-    return { color: 'text-red-600', label: 'Critical', icon: XCircle }
-  }
+    if (rate >= 95) return { color: "text-green-600", label: "Excellent", icon: CheckCircle };
+    if (rate >= 85) return { color: "text-blue-600", label: "Good", icon: TrendingUp };
+    if (rate >= 70)
+      return { color: "text-yellow-600", label: "Needs Attention", icon: AlertTriangle };
+    return { color: "text-red-600", label: "Critical", icon: XCircle };
+  };
 
   if (loading) {
     return (
@@ -200,7 +233,7 @@ export default function ComplianceReportingDashboard({ clinicId }: ComplianceRep
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   if (!analytics) {
@@ -218,11 +251,11 @@ export default function ComplianceReportingDashboard({ clinicId }: ComplianceRep
           </Alert>
         </CardContent>
       </Card>
-    )
+    );
   }
 
-  const complianceStatus = getComplianceStatus(analytics.complianceRate)
-  const ComplianceIcon = complianceStatus.icon
+  const complianceStatus = getComplianceStatus(analytics.complianceRate);
+  const ComplianceIcon = complianceStatus.icon;
 
   return (
     <div className="space-y-6">
@@ -270,7 +303,7 @@ export default function ComplianceReportingDashboard({ clinicId }: ComplianceRep
             </div>
             <Button onClick={generateReport} disabled={generatingReport}>
               <Download className="h-4 w-4 mr-2" />
-              {generatingReport ? 'Generating...' : 'Generate Report'}
+              {generatingReport ? "Generating..." : "Generate Report"}
             </Button>
           </div>
         </CardContent>
@@ -285,9 +318,7 @@ export default function ComplianceReportingDashboard({ clinicId }: ComplianceRep
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{analytics.totalConsents}</div>
-            <p className="text-xs text-muted-foreground">
-              In the last {timeRange} days
-            </p>
+            <p className="text-xs text-muted-foreground">In the last {timeRange} days</p>
           </CardContent>
         </Card>
 
@@ -298,9 +329,7 @@ export default function ComplianceReportingDashboard({ clinicId }: ComplianceRep
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{analytics.complianceRate.toFixed(1)}%</div>
-            <p className={`text-xs ${complianceStatus.color}`}>
-              {complianceStatus.label}
-            </p>
+            <p className={`text-xs ${complianceStatus.color}`}>{complianceStatus.label}</p>
             <Progress value={analytics.complianceRate} className="mt-2" />
           </CardContent>
         </Card>
@@ -312,22 +341,20 @@ export default function ComplianceReportingDashboard({ clinicId }: ComplianceRep
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{analytics.pendingConsents}</div>
-            <p className="text-xs text-muted-foreground">
-              Awaiting signature
-            </p>
+            <p className="text-xs text-muted-foreground">Awaiting signature</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Critical Alerts</CardTitle>
-            <AlertTriangle className={`h-4 w-4 ${analytics.criticalAlerts > 0 ? 'text-red-500' : 'text-green-500'}`} />
+            <AlertTriangle
+              className={`h-4 w-4 ${analytics.criticalAlerts > 0 ? "text-red-500" : "text-green-500"}`}
+            />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{analytics.criticalAlerts}</div>
-            <p className="text-xs text-muted-foreground">
-              Require attention
-            </p>
+            <p className="text-xs text-muted-foreground">Require attention</p>
           </CardContent>
         </Card>
       </div>
@@ -351,7 +378,10 @@ export default function ComplianceReportingDashboard({ clinicId }: ComplianceRep
                 <div className="flex items-center gap-2">
                   <span className="font-medium">{analytics.signedConsents}</span>
                   <Badge variant="default">
-                    {analytics.totalConsents > 0 ? ((analytics.signedConsents / analytics.totalConsents) * 100).toFixed(1) : 0}%
+                    {analytics.totalConsents > 0
+                      ? ((analytics.signedConsents / analytics.totalConsents) * 100).toFixed(1)
+                      : 0}
+                    %
                   </Badge>
                 </div>
               </div>
@@ -363,7 +393,10 @@ export default function ComplianceReportingDashboard({ clinicId }: ComplianceRep
                 <div className="flex items-center gap-2">
                   <span className="font-medium">{analytics.pendingConsents}</span>
                   <Badge variant="secondary">
-                    {analytics.totalConsents > 0 ? ((analytics.pendingConsents / analytics.totalConsents) * 100).toFixed(1) : 0}%
+                    {analytics.totalConsents > 0
+                      ? ((analytics.pendingConsents / analytics.totalConsents) * 100).toFixed(1)
+                      : 0}
+                    %
                   </Badge>
                 </div>
               </div>
@@ -375,7 +408,10 @@ export default function ComplianceReportingDashboard({ clinicId }: ComplianceRep
                 <div className="flex items-center gap-2">
                   <span className="font-medium">{analytics.revokedConsents}</span>
                   <Badge variant="destructive">
-                    {analytics.totalConsents > 0 ? ((analytics.revokedConsents / analytics.totalConsents) * 100).toFixed(1) : 0}%
+                    {analytics.totalConsents > 0
+                      ? ((analytics.revokedConsents / analytics.totalConsents) * 100).toFixed(1)
+                      : 0}
+                    %
                   </Badge>
                 </div>
               </div>
@@ -387,7 +423,10 @@ export default function ComplianceReportingDashboard({ clinicId }: ComplianceRep
                 <div className="flex items-center gap-2">
                   <span className="font-medium">{analytics.expiredConsents}</span>
                   <Badge variant="outline">
-                    {analytics.totalConsents > 0 ? ((analytics.expiredConsents / analytics.totalConsents) * 100).toFixed(1) : 0}%
+                    {analytics.totalConsents > 0
+                      ? ((analytics.expiredConsents / analytics.totalConsents) * 100).toFixed(1)
+                      : 0}
+                    %
                   </Badge>
                 </div>
               </div>
@@ -406,11 +445,13 @@ export default function ComplianceReportingDashboard({ clinicId }: ComplianceRep
             <div className="space-y-3">
               {Object.entries(analytics.consentsByType).map(([type, count]) => (
                 <div key={type} className="flex items-center justify-between">
-                  <span className="capitalize">{type.replace('_', ' ')}</span>
+                  <span className="capitalize">{type.replace("_", " ")}</span>
                   <div className="flex items-center gap-2">
-                    <Progress 
-                      value={analytics.totalConsents > 0 ? (count / analytics.totalConsents) * 100 : 0} 
-                      className="w-20" 
+                    <Progress
+                      value={
+                        analytics.totalConsents > 0 ? (count / analytics.totalConsents) * 100 : 0
+                      }
+                      className="w-20"
                     />
                     <span className="font-medium w-8 text-right">{count}</span>
                   </div>
@@ -473,15 +514,16 @@ export default function ComplianceReportingDashboard({ clinicId }: ComplianceRep
               </TableHeader>
               <TableBody>
                 {Object.entries(analytics.withdrawalReasons)
-                  .sort(([,a], [,b]) => b - a)
+                  .sort(([, a], [, b]) => b - a)
                   .map(([reason, count]) => (
                     <TableRow key={reason}>
                       <TableCell>{reason}</TableCell>
                       <TableCell>{count}</TableCell>
                       <TableCell>
-                        {analytics.revokedConsents > 0 
+                        {analytics.revokedConsents > 0
                           ? ((count / analytics.revokedConsents) * 100).toFixed(1)
-                          : 0}%
+                          : 0}
+                        %
                       </TableCell>
                     </TableRow>
                   ))}
@@ -491,5 +533,5 @@ export default function ComplianceReportingDashboard({ clinicId }: ComplianceRep
         </Card>
       )}
     </div>
-  )
+  );
 }

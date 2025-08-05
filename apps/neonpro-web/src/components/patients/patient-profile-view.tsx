@@ -1,25 +1,31 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { 
-  Heart, 
-  Activity, 
-  Users, 
-  FileText, 
-  AlertTriangle, 
-  TrendingUp, 
-  TrendingDown, 
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type {
+  Heart,
+  Activity,
+  Users,
+  FileText,
+  AlertTriangle,
+  TrendingUp,
+  TrendingDown,
   Minus,
   Phone,
   Mail,
   Calendar,
-  MapPin
-} from 'lucide-react';
+  MapPin,
+} from "lucide-react";
 
 interface PatientProfile {
   patient_id: string;
@@ -41,7 +47,7 @@ interface PatientProfile {
   blood_type?: string;
   profile_completeness_score: number;
   risk_score?: number;
-  risk_level?: 'low' | 'medium' | 'high' | 'critical';
+  risk_level?: "low" | "medium" | "high" | "critical";
   ai_insights?: any;
   last_assessment_date?: string;
   emergency_contacts?: Array<{
@@ -62,7 +68,10 @@ interface PatientProfileViewProps {
   onProfileUpdate?: (profile: PatientProfile) => void;
 }
 
-export default function PatientProfileView({ patientId, onProfileUpdate }: PatientProfileViewProps) {
+export default function PatientProfileView({
+  patientId,
+  onProfileUpdate,
+}: PatientProfileViewProps) {
   const [profile, setProfile] = useState<PatientProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -75,16 +84,16 @@ export default function PatientProfileView({ patientId, onProfileUpdate }: Patie
     try {
       setLoading(true);
       const response = await fetch(`/api/patients/${patientId}`);
-      
+
       if (!response.ok) {
-        throw new Error('Failed to fetch patient profile');
+        throw new Error("Failed to fetch patient profile");
       }
 
       const data = await response.json();
       setProfile(data.profile);
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
     }
@@ -92,11 +101,16 @@ export default function PatientProfileView({ patientId, onProfileUpdate }: Patie
 
   const getRiskBadgeColor = (riskLevel?: string) => {
     switch (riskLevel) {
-      case 'low': return 'bg-green-100 text-green-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'high': return 'bg-orange-100 text-orange-800';
-      case 'critical': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "low":
+        return "bg-green-100 text-green-800";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800";
+      case "high":
+        return "bg-orange-100 text-orange-800";
+      case "critical":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -105,11 +119,11 @@ export default function PatientProfileView({ patientId, onProfileUpdate }: Patie
     const birthDate = new Date(dateOfBirth);
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-    
+
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
-    
+
     return age;
   };
 
@@ -157,16 +171,17 @@ export default function PatientProfileView({ patientId, onProfileUpdate }: Patie
                 <AvatarImage src="" alt={profile.demographics.name} />
                 <AvatarFallback className="text-lg">
                   {profile.demographics.name
-                    .split(' ')
-                    .map(n => n[0])
-                    .join('')
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")
                     .toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div>
                 <CardTitle className="text-2xl">{profile.demographics.name}</CardTitle>
                 <CardDescription className="text-lg">
-                  {calculateAge(profile.demographics.date_of_birth)} years old • {profile.demographics.gender}
+                  {calculateAge(profile.demographics.date_of_birth)} years old •{" "}
+                  {profile.demographics.gender}
                 </CardDescription>
                 <div className="flex items-center space-x-4 mt-2 text-sm text-gray-600">
                   <div className="flex items-center space-x-1">
@@ -230,7 +245,7 @@ export default function PatientProfileView({ patientId, onProfileUpdate }: Patie
                   <div className="flex justify-between">
                     <span>Risk Score:</span>
                     <span className="font-medium">
-                      {profile.risk_score ? `${Math.round(profile.risk_score * 100)}%` : 'N/A'}
+                      {profile.risk_score ? `${Math.round(profile.risk_score * 100)}%` : "N/A"}
                     </span>
                   </div>
                 </div>
@@ -315,10 +330,15 @@ export default function PatientProfileView({ patientId, onProfileUpdate }: Patie
               <div className="space-y-3">
                 {profile.current_medications.length > 0 ? (
                   profile.current_medications.map((medication, index) => (
-                    <div key={index} className="flex justify-between items-center p-3 border rounded-lg">
+                    <div
+                      key={index}
+                      className="flex justify-between items-center p-3 border rounded-lg"
+                    >
                       <div>
                         <p className="font-medium">{medication.name}</p>
-                        <p className="text-sm text-gray-600">{medication.dosage} • {medication.frequency}</p>
+                        <p className="text-sm text-gray-600">
+                          {medication.dosage} • {medication.frequency}
+                        </p>
                       </div>
                     </div>
                   ))
@@ -375,7 +395,9 @@ export default function PatientProfileView({ patientId, onProfileUpdate }: Patie
               {profile.ai_insights ? (
                 <div className="space-y-4">
                   <div className="text-center">
-                    <Button onClick={() => window.location.href = `/patients/${patientId}/insights`}>
+                    <Button
+                      onClick={() => (window.location.href = `/patients/${patientId}/insights`)}
+                    >
                       View Full AI Analysis
                     </Button>
                   </div>
@@ -384,11 +406,15 @@ export default function PatientProfileView({ patientId, onProfileUpdate }: Patie
                 <div className="text-center text-gray-500">
                   <TrendingUp className="h-8 w-8 mx-auto mb-2" />
                   <p>AI insights not yet generated</p>
-                  <Button className="mt-4" onClick={() => {
-                    // Generate insights
-                    fetch(`/api/patients/${patientId}/insights`)
-                      .then(() => fetchPatientProfile());
-                  }}>
+                  <Button
+                    className="mt-4"
+                    onClick={() => {
+                      // Generate insights
+                      fetch(`/api/patients/${patientId}/insights`).then(() =>
+                        fetchPatientProfile(),
+                      );
+                    }}
+                  >
                     Generate AI Insights
                   </Button>
                 </div>

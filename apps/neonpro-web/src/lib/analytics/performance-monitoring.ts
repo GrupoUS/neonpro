@@ -1,23 +1,29 @@
-﻿/**
+/**
  * Performance Monitoring Engine
  * Epic 10 - Story 10.5: Vision Analytics Dashboard (Real-time Insights)
- * 
+ *
  * Comprehensive performance monitoring and optimization engine
  * Real-time system health, resource utilization, and optimization suggestions
- * 
+ *
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 
-import { z } from 'zod';
-import { logger } from '@/lib/utils/logger';
-import { createClient } from '@/lib/supabase/client';
+import type { z } from "zod";
+import type { logger } from "@/lib/utils/logger";
+import type { createClient } from "@/lib/supabase/client";
 
 // Core Performance Types
-export type PerformanceCategory = 'system' | 'application' | 'database' | 'network' | 'user_experience' | 'ai_models';
-export type MetricSeverity = 'normal' | 'warning' | 'critical' | 'emergency';
-export type OptimizationPriority = 'low' | 'medium' | 'high' | 'urgent';
-export type ResourceType = 'cpu' | 'memory' | 'storage' | 'network' | 'gpu' | 'database';
-export type PerformanceStatus = 'optimal' | 'good' | 'degraded' | 'critical' | 'failed';
+export type PerformanceCategory =
+  | "system"
+  | "application"
+  | "database"
+  | "network"
+  | "user_experience"
+  | "ai_models";
+export type MetricSeverity = "normal" | "warning" | "critical" | "emergency";
+export type OptimizationPriority = "low" | "medium" | "high" | "urgent";
+export type ResourceType = "cpu" | "memory" | "storage" | "network" | "gpu" | "database";
+export type PerformanceStatus = "optimal" | "good" | "degraded" | "critical" | "failed";
 
 // Core Interfaces
 export interface SystemMetrics {
@@ -37,7 +43,7 @@ export interface SystemMetrics {
   status: PerformanceStatus;
   alerts: PerformanceAlert[];
   clinicId: string;
-  environment: 'development' | 'staging' | 'production';
+  environment: "development" | "staging" | "production";
 }
 
 export interface CPUMetrics {
@@ -55,7 +61,7 @@ export interface ProcessMetrics {
   name: string;
   cpuUsage: number;
   memoryUsage: number;
-  status: 'running' | 'sleeping' | 'stopped' | 'zombie';
+  status: "running" | "sleeping" | "stopped" | "zombie";
   priority: number;
   threads: number;
 }
@@ -96,7 +102,7 @@ export interface StorageMetrics {
 
 export interface StorageDevice {
   name: string;
-  type: 'ssd' | 'hdd' | 'nvme' | 'cloud';
+  type: "ssd" | "hdd" | "nvme" | "cloud";
   size: number; // bytes
   used: number; // bytes
   health: number; // 0-100
@@ -125,7 +131,7 @@ export interface NetworkMetrics {
 
 export interface NetworkInterface {
   name: string;
-  type: 'ethernet' | 'wifi' | 'loopback';
+  type: "ethernet" | "wifi" | "loopback";
   speed: number; // Mbps
   bytesReceived: number;
   bytesSent: number;
@@ -161,7 +167,7 @@ export interface DatabaseMetrics {
   };
   replication: {
     lag: number; // ms
-    status: 'healthy' | 'warning' | 'error';
+    status: "healthy" | "warning" | "error";
   };
   storage: {
     size: number; // bytes
@@ -238,7 +244,7 @@ export interface PerformanceThreshold {
   critical: number;
   emergency: number;
   unit: string;
-  operator: 'gt' | 'gte' | 'lt' | 'lte' | 'eq' | 'ne';
+  operator: "gt" | "gte" | "lt" | "lte" | "eq" | "ne";
   enabled: boolean;
   autoResolve: boolean;
   cooldown: number; // minutes
@@ -252,14 +258,14 @@ export interface OptimizationSuggestion {
   priority: OptimizationPriority;
   title: string;
   description: string;
-  impact: 'low' | 'medium' | 'high' | 'critical';
-  effort: 'low' | 'medium' | 'high';
+  impact: "low" | "medium" | "high" | "critical";
+  effort: "low" | "medium" | "high";
   recommendation: string;
   steps: OptimizationStep[];
   expectedImprovement: string;
   estimatedTime: number; // minutes
-  cost: 'none' | 'low' | 'medium' | 'high';
-  risk: 'low' | 'medium' | 'high';
+  cost: "none" | "low" | "medium" | "high";
+  risk: "low" | "medium" | "high";
   dependencies: string[];
   tags: string[];
 }
@@ -287,7 +293,7 @@ export interface PerformanceBenchmark {
   best: number;
   industry: number;
   unit: string;
-  trend: 'improving' | 'degrading' | 'stable';
+  trend: "improving" | "degrading" | "stable";
   variance: number;
   confidence: number;
   lastUpdated: string;
@@ -327,7 +333,7 @@ export interface CategoryReport {
   score: number; // 0-100
   status: PerformanceStatus;
   metrics: Record<string, number>;
-  trends: Record<string, 'up' | 'down' | 'stable'>;
+  trends: Record<string, "up" | "down" | "stable">;
   alerts: number;
   recommendations: number;
   improvement: number; // percentage change
@@ -337,10 +343,10 @@ export interface TrendReport {
   metric: string;
   category: PerformanceCategory;
   component: string;
-  direction: 'up' | 'down' | 'stable' | 'volatile';
+  direction: "up" | "down" | "stable" | "volatile";
   magnitude: number; // percentage change
   period: string;
-  significance: 'low' | 'medium' | 'high';
+  significance: "low" | "medium" | "high";
   forecast: ForecastPoint[];
 }
 
@@ -397,22 +403,22 @@ export class createperformanceMonitoringEngine {
    */
   private async initializeEngine(): Promise<void> {
     try {
-      logger.info('Initializing Performance Monitoring Engine...');
-      
+      logger.info("Initializing Performance Monitoring Engine...");
+
       // Load thresholds
       await this.loadThresholds();
-      
+
       // Load baselines
       await this.loadBaselines();
-      
+
       // Start monitoring
       if (this.isMonitoring) {
         this.startMonitoring();
       }
-      
-      logger.info('Performance Monitoring Engine initialized successfully');
+
+      logger.info("Performance Monitoring Engine initialized successfully");
     } catch (error) {
-      logger.error('Failed to initialize Performance Monitoring Engine:', error);
+      logger.error("Failed to initialize Performance Monitoring Engine:", error);
       throw error;
     }
   }
@@ -425,47 +431,46 @@ export class createperformanceMonitoringEngine {
       const metrics: SystemMetrics = {
         id: `metrics_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         timestamp: new Date().toISOString(),
-        category: 'system',
-        component: 'neonpro_system',
+        category: "system",
+        component: "neonpro_system",
         metrics: {
           cpu: await this.collectCPUMetrics(),
           memory: await this.collectMemoryMetrics(),
           storage: await this.collectStorageMetrics(),
           network: await this.collectNetworkMetrics(),
           database: await this.collectDatabaseMetrics(),
-          application: await this.collectApplicationMetrics()
+          application: await this.collectApplicationMetrics(),
         },
         healthScore: 0,
-        status: 'optimal',
+        status: "optimal",
         alerts: [],
         clinicId,
-        environment: process.env.NODE_ENV as any || 'development'
+        environment: (process.env.NODE_ENV as any) || "development",
       };
 
       // Calculate health score
       metrics.healthScore = this.calculateHealthScore(metrics);
-      
+
       // Determine status
       metrics.status = this.determineStatus(metrics.healthScore);
-      
+
       // Check for alerts
       metrics.alerts = await this.checkThresholds(metrics);
-      
+
       // Store metrics
       this.metrics.set(metrics.id, metrics);
       await this.saveMetrics(metrics);
-      
+
       // Process alerts
       await this.processAlerts(metrics.alerts);
-      
+
       // Generate optimizations
       await this.generateOptimizations(metrics);
-      
+
       logger.info(`System metrics collected: ${metrics.id}`);
       return metrics;
-
     } catch (error) {
-      logger.error('Failed to collect metrics:', error);
+      logger.error("Failed to collect metrics:", error);
       throw error;
     }
   }
@@ -475,7 +480,7 @@ export class createperformanceMonitoringEngine {
    */
   async getRealtimeData(
     clinicId: string,
-    categories: PerformanceCategory[] = ['system', 'application', 'database']
+    categories: PerformanceCategory[] = ["system", "application", "database"],
   ): Promise<RealtimePerformanceData> {
     try {
       const data: RealtimePerformanceData = {
@@ -485,7 +490,7 @@ export class createperformanceMonitoringEngine {
         alerts: await this.getActiveAlerts(clinicId),
         optimizations: await this.getActiveOptimizations(clinicId),
         summary: await this.getPerformanceSummary(clinicId),
-        healthScore: 0
+        healthScore: 0,
       };
 
       // Collect data for each category
@@ -497,9 +502,8 @@ export class createperformanceMonitoringEngine {
       data.healthScore = this.calculateOverallHealth(data.categories);
 
       return data;
-
     } catch (error) {
-      logger.error('Failed to get realtime data:', error);
+      logger.error("Failed to get realtime data:", error);
       throw error;
     }
   }
@@ -510,7 +514,7 @@ export class createperformanceMonitoringEngine {
   async generateReport(
     clinicId: string,
     startDate: string,
-    endDate: string
+    endDate: string,
   ): Promise<PerformanceReport> {
     try {
       const report: PerformanceReport = {
@@ -524,7 +528,7 @@ export class createperformanceMonitoringEngine {
         optimizations: await this.getOptimizationsInPeriod(clinicId, startDate, endDate),
         benchmarks: await this.getBenchmarks(clinicId),
         recommendations: await this.generateRecommendations(clinicId, startDate, endDate),
-        score: 0
+        score: 0,
       };
 
       // Calculate overall score
@@ -535,9 +539,8 @@ export class createperformanceMonitoringEngine {
 
       logger.info(`Performance report generated: ${report.id}`);
       return report;
-
     } catch (error) {
-      logger.error('Failed to generate report:', error);
+      logger.error("Failed to generate report:", error);
       throw error;
     }
   }
@@ -547,17 +550,14 @@ export class createperformanceMonitoringEngine {
    */
   async optimizeResources(
     clinicId: string,
-    resourceTypes: ResourceType[] = ['cpu', 'memory', 'storage']
+    resourceTypes: ResourceType[] = ["cpu", "memory", "storage"],
   ): Promise<ResourceOptimization[]> {
     try {
       const optimizations: ResourceOptimization[] = [];
 
       for (const resourceType of resourceTypes) {
-        const optimization = await this.analyzeResourceOptimization(
-          clinicId,
-          resourceType
-        );
-        
+        const optimization = await this.analyzeResourceOptimization(clinicId, resourceType);
+
         if (optimization) {
           optimizations.push(optimization);
         }
@@ -568,9 +568,8 @@ export class createperformanceMonitoringEngine {
 
       logger.info(`Generated ${optimizations.length} resource optimizations`);
       return optimizations;
-
     } catch (error) {
-      logger.error('Failed to optimize resources:', error);
+      logger.error("Failed to optimize resources:", error);
       throw error;
     }
   }
@@ -584,26 +583,26 @@ export class createperformanceMonitoringEngine {
         timestamp: new Date().toISOString(),
         clinicId,
         models: {
-          faceDetection: await this.getModelMetrics('face_detection'),
-          aestheticAnalysis: await this.getModelMetrics('aesthetic_analysis'),
-          complicationDetection: await this.getModelMetrics('complication_detection'),
-          complianceMonitoring: await this.getModelMetrics('compliance_monitoring')
+          faceDetection: await this.getModelMetrics("face_detection"),
+          aestheticAnalysis: await this.getModelMetrics("aesthetic_analysis"),
+          complicationDetection: await this.getModelMetrics("complication_detection"),
+          complianceMonitoring: await this.getModelMetrics("compliance_monitoring"),
         },
         overallHealth: 0,
-        recommendations: []
+        recommendations: [],
       };
 
       // Calculate overall health
-      const modelScores = Object.values(performance.models).map(m => m.healthScore);
-      performance.overallHealth = modelScores.reduce((sum, score) => sum + score, 0) / modelScores.length;
+      const modelScores = Object.values(performance.models).map((m) => m.healthScore);
+      performance.overallHealth =
+        modelScores.reduce((sum, score) => sum + score, 0) / modelScores.length;
 
       // Generate recommendations
       performance.recommendations = await this.generateAIRecommendations(performance);
 
       return performance;
-
     } catch (error) {
-      logger.error('Failed to monitor AI models:', error);
+      logger.error("Failed to monitor AI models:", error);
       throw error;
     }
   }
@@ -611,11 +610,11 @@ export class createperformanceMonitoringEngine {
   /**
    * Set performance threshold
    */
-  async setThreshold(threshold: Omit<PerformanceThreshold, 'id'>): Promise<PerformanceThreshold> {
+  async setThreshold(threshold: Omit<PerformanceThreshold, "id">): Promise<PerformanceThreshold> {
     try {
       const performanceThreshold: PerformanceThreshold = {
         id: `threshold_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        ...threshold
+        ...threshold,
       };
 
       this.thresholds.set(performanceThreshold.id, performanceThreshold);
@@ -623,9 +622,8 @@ export class createperformanceMonitoringEngine {
 
       logger.info(`Performance threshold set: ${performanceThreshold.id}`);
       return performanceThreshold;
-
     } catch (error) {
-      logger.error('Failed to set threshold:', error);
+      logger.error("Failed to set threshold:", error);
       throw error;
     }
   }
@@ -639,18 +637,18 @@ export class createperformanceMonitoringEngine {
     component: string,
     startDate: string,
     endDate: string,
-    aggregation: 'minute' | 'hour' | 'day' = 'hour'
+    aggregation: "minute" | "hour" | "day" = "hour",
   ): Promise<HistoricalMetrics[]> {
     try {
       const { data, error } = await this.supabase
-        .from('system_metrics')
-        .select('*')
-        .eq('clinic_id', clinicId)
-        .eq('category', category)
-        .eq('component', component)
-        .gte('timestamp', startDate)
-        .lte('timestamp', endDate)
-        .order('timestamp', { ascending: true });
+        .from("system_metrics")
+        .select("*")
+        .eq("clinic_id", clinicId)
+        .eq("category", category)
+        .eq("component", component)
+        .gte("timestamp", startDate)
+        .lte("timestamp", endDate)
+        .order("timestamp", { ascending: true });
 
       if (error) {
         throw error;
@@ -660,9 +658,8 @@ export class createperformanceMonitoringEngine {
       const aggregated = this.aggregateMetrics(data || [], aggregation);
 
       return aggregated;
-
     } catch (error) {
-      logger.error('Failed to get historical metrics:', error);
+      logger.error("Failed to get historical metrics:", error);
       throw error;
     }
   }
@@ -670,59 +667,59 @@ export class createperformanceMonitoringEngine {
   // Private Helper Methods
   private async loadThresholds(): Promise<void> {
     // Load default thresholds
-    const defaultThresholds: Omit<PerformanceThreshold, 'id'>[] = [
+    const defaultThresholds: Omit<PerformanceThreshold, "id">[] = [
       {
-        category: 'system',
-        component: 'cpu',
-        metric: 'usage',
+        category: "system",
+        component: "cpu",
+        metric: "usage",
         warning: 70,
         critical: 85,
         emergency: 95,
-        unit: '%',
-        operator: 'gte',
+        unit: "%",
+        operator: "gte",
         enabled: true,
         autoResolve: true,
-        cooldown: 5
+        cooldown: 5,
       },
       {
-        category: 'system',
-        component: 'memory',
-        metric: 'usage',
+        category: "system",
+        component: "memory",
+        metric: "usage",
         warning: 75,
         critical: 90,
         emergency: 98,
-        unit: '%',
-        operator: 'gte',
+        unit: "%",
+        operator: "gte",
         enabled: true,
         autoResolve: true,
-        cooldown: 5
+        cooldown: 5,
       },
       {
-        category: 'database',
-        component: 'queries',
-        metric: 'avg_duration',
+        category: "database",
+        component: "queries",
+        metric: "avg_duration",
         warning: 1000,
         critical: 5000,
         emergency: 10000,
-        unit: 'ms',
-        operator: 'gte',
+        unit: "ms",
+        operator: "gte",
         enabled: true,
         autoResolve: true,
-        cooldown: 3
+        cooldown: 3,
       },
       {
-        category: 'application',
-        component: 'requests',
-        metric: 'avg_response_time',
+        category: "application",
+        component: "requests",
+        metric: "avg_response_time",
         warning: 2000,
         critical: 5000,
         emergency: 10000,
-        unit: 'ms',
-        operator: 'gte',
+        unit: "ms",
+        operator: "gte",
         enabled: true,
         autoResolve: true,
-        cooldown: 3
-      }
+        cooldown: 3,
+      },
     ];
 
     // Set default thresholds
@@ -742,17 +739,16 @@ export class createperformanceMonitoringEngine {
       try {
         // Get all active clinics
         const clinics = await this.getActiveClinics();
-        
+
         // Collect metrics for each clinic
         for (const clinicId of clinics) {
           await this.collectMetrics(clinicId);
         }
-        
+
         // Clean up old data
         await this.cleanupOldData();
-        
       } catch (error) {
-        logger.error('Monitoring cycle error:', error);
+        logger.error("Monitoring cycle error:", error);
       }
     }, this.monitoringInterval);
   }
@@ -764,7 +760,7 @@ export class createperformanceMonitoringEngine {
       cores: 4,
       loadAverage: [1.2, 1.5, 1.8],
       processes: [],
-      throttling: false
+      throttling: false,
     };
   }
 
@@ -772,7 +768,7 @@ export class createperformanceMonitoringEngine {
     // Simulate memory metrics collection
     const total = 8 * 1024 * 1024 * 1024; // 8GB
     const used = total * (0.3 + Math.random() * 0.4);
-    
+
     return {
       total,
       used,
@@ -782,10 +778,10 @@ export class createperformanceMonitoringEngine {
       swap: {
         total: 2 * 1024 * 1024 * 1024,
         used: 0,
-        free: 2 * 1024 * 1024 * 1024
+        free: 2 * 1024 * 1024 * 1024,
       },
       fragmentation: Math.random() * 20,
-      pressure: Math.random() * 30
+      pressure: Math.random() * 30,
     };
   }
 
@@ -793,32 +789,32 @@ export class createperformanceMonitoringEngine {
     // Simulate storage metrics collection
     const totalSpace = 500 * 1024 * 1024 * 1024; // 500GB
     const usedSpace = totalSpace * (0.2 + Math.random() * 0.3);
-    
+
     return {
       devices: [
         {
-          name: '/dev/sda1',
-          type: 'ssd',
+          name: "/dev/sda1",
+          type: "ssd",
           size: totalSpace,
           used: usedSpace,
-          health: 95
-        }
+          health: 95,
+        },
       ],
       totalSpace,
       usedSpace,
       freeSpace: totalSpace - usedSpace,
       iops: {
         read: 1000 + Math.random() * 500,
-        write: 800 + Math.random() * 400
+        write: 800 + Math.random() * 400,
       },
       latency: {
         read: 1 + Math.random() * 2,
-        write: 2 + Math.random() * 3
+        write: 2 + Math.random() * 3,
       },
       throughput: {
         read: 100 + Math.random() * 50,
-        write: 80 + Math.random() * 40
-      }
+        write: 80 + Math.random() * 40,
+      },
     };
   }
 
@@ -827,16 +823,16 @@ export class createperformanceMonitoringEngine {
     return {
       interfaces: [
         {
-          name: 'eth0',
-          type: 'ethernet',
+          name: "eth0",
+          type: "ethernet",
           speed: 1000,
           bytesReceived: Math.random() * 1000000,
           bytesSent: Math.random() * 1000000,
           packetsReceived: Math.random() * 10000,
           packetsSent: Math.random() * 10000,
           errors: 0,
-          drops: 0
-        }
+          drops: 0,
+        },
       ],
       totalBandwidth: 1000,
       usedBandwidth: Math.random() * 100,
@@ -845,14 +841,14 @@ export class createperformanceMonitoringEngine {
       connections: {
         active: Math.floor(Math.random() * 100),
         waiting: Math.floor(Math.random() * 10),
-        established: Math.floor(Math.random() * 80)
+        established: Math.floor(Math.random() * 80),
       },
       requests: {
         total: Math.floor(1000 + Math.random() * 500),
         successful: Math.floor(950 + Math.random() * 50),
         failed: Math.floor(Math.random() * 10),
-        avgResponseTime: 100 + Math.random() * 200
-      }
+        avgResponseTime: 100 + Math.random() * 200,
+      },
     };
   }
 
@@ -863,34 +859,34 @@ export class createperformanceMonitoringEngine {
         active: Math.floor(Math.random() * 20),
         idle: Math.floor(Math.random() * 10),
         max: 100,
-        waiting: Math.floor(Math.random() * 3)
+        waiting: Math.floor(Math.random() * 3),
       },
       queries: {
         total: Math.floor(1000 + Math.random() * 500),
         slow: Math.floor(Math.random() * 10),
         failed: Math.floor(Math.random() * 5),
         avgDuration: 50 + Math.random() * 100,
-        qps: 10 + Math.random() * 20
+        qps: 10 + Math.random() * 20,
       },
       cache: {
         hitRate: 85 + Math.random() * 10,
         size: 100 * 1024 * 1024,
-        used: 80 * 1024 * 1024
+        used: 80 * 1024 * 1024,
       },
       locks: {
         waiting: Math.floor(Math.random() * 3),
         blocked: Math.floor(Math.random() * 2),
-        deadlocks: 0
+        deadlocks: 0,
       },
       replication: {
         lag: Math.random() * 100,
-        status: 'healthy'
+        status: "healthy",
       },
       storage: {
         size: 1024 * 1024 * 1024,
         growth: 10 * 1024 * 1024,
-        fragmentation: Math.random() * 10
-      }
+        fragmentation: Math.random() * 10,
+      },
     };
   }
 
@@ -902,21 +898,21 @@ export class createperformanceMonitoringEngine {
         successful: Math.floor(950 + Math.random() * 50),
         failed: Math.floor(Math.random() * 10),
         avgResponseTime: 200 + Math.random() * 300,
-        rps: 5 + Math.random() * 10
+        rps: 5 + Math.random() * 10,
       },
       errors: {
         total: Math.floor(Math.random() * 10),
         rate: Math.random() * 2,
         types: {
-          '500': Math.floor(Math.random() * 5),
-          '404': Math.floor(Math.random() * 3),
-          'timeout': Math.floor(Math.random() * 2)
-        }
+          "500": Math.floor(Math.random() * 5),
+          "404": Math.floor(Math.random() * 3),
+          timeout: Math.floor(Math.random() * 2),
+        },
       },
       users: {
         active: Math.floor(50 + Math.random() * 100),
         concurrent: Math.floor(10 + Math.random() * 30),
-        peak: Math.floor(80 + Math.random() * 50)
+        peak: Math.floor(80 + Math.random() * 50),
       },
       features: {
         faceDetection: {
@@ -926,7 +922,7 @@ export class createperformanceMonitoringEngine {
           successRate: 98 + Math.random() * 2,
           errorRate: Math.random() * 2,
           confidence: 0.9 + Math.random() * 0.08,
-          throughput: Math.floor(50 + Math.random() * 50)
+          throughput: Math.floor(50 + Math.random() * 50),
         },
         aestheticAnalysis: {
           usage: Math.floor(80 + Math.random() * 150),
@@ -935,7 +931,7 @@ export class createperformanceMonitoringEngine {
           successRate: 95 + Math.random() * 3,
           errorRate: Math.random() * 3,
           confidence: 0.85 + Math.random() * 0.1,
-          throughput: Math.floor(30 + Math.random() * 40)
+          throughput: Math.floor(30 + Math.random() * 40),
         },
         complicationDetection: {
           usage: Math.floor(60 + Math.random() * 100),
@@ -944,7 +940,7 @@ export class createperformanceMonitoringEngine {
           successRate: 97 + Math.random() * 2,
           errorRate: Math.random() * 2,
           confidence: 0.88 + Math.random() * 0.09,
-          throughput: Math.floor(40 + Math.random() * 30)
+          throughput: Math.floor(40 + Math.random() * 30),
         },
         compliance: {
           usage: Math.floor(200 + Math.random() * 300),
@@ -953,14 +949,14 @@ export class createperformanceMonitoringEngine {
           successRate: 99.5 + Math.random() * 0.5,
           errorRate: Math.random() * 0.5,
           confidence: 0.95 + Math.random() * 0.04,
-          throughput: Math.floor(100 + Math.random() * 80)
-        }
+          throughput: Math.floor(100 + Math.random() * 80),
+        },
       },
       caching: {
         hitRate: 80 + Math.random() * 15,
         size: 50 * 1024 * 1024,
-        evictions: Math.floor(Math.random() * 100)
-      }
+        evictions: Math.floor(Math.random() * 100),
+      },
     };
   }
 
@@ -971,14 +967,21 @@ export class createperformanceMonitoringEngine {
       storage: this.calculateStorageScore(metrics.metrics.storage),
       network: this.calculateNetworkScore(metrics.metrics.network),
       database: this.calculateDatabaseScore(metrics.metrics.database),
-      application: this.calculateApplicationScore(metrics.metrics.application)
+      application: this.calculateApplicationScore(metrics.metrics.application),
     };
 
     // Weighted average
-    const weights = { cpu: 0.2, memory: 0.2, storage: 0.15, network: 0.15, database: 0.15, application: 0.15 };
-    
+    const weights = {
+      cpu: 0.2,
+      memory: 0.2,
+      storage: 0.15,
+      network: 0.15,
+      database: 0.15,
+      application: 0.15,
+    };
+
     return Object.entries(scores).reduce((total, [key, score]) => {
-      return total + (score * weights[key as keyof typeof weights]);
+      return total + score * weights[key as keyof typeof weights];
     }, 0);
   }
 
@@ -1011,38 +1014,38 @@ export class createperformanceMonitoringEngine {
   private calculateNetworkScore(network: NetworkMetrics): number {
     const usage = (network.usedBandwidth / network.totalBandwidth) * 100;
     let score = 100;
-    
+
     if (usage > 80) score -= 20;
     if (network.latency > 100) score -= 20;
     if (network.packetLoss > 1) score -= 30;
     if (network.requests.failed / network.requests.total > 0.05) score -= 30;
-    
+
     return Math.max(0, score);
   }
 
   private calculateDatabaseScore(database: DatabaseMetrics): number {
     let score = 100;
-    
+
     if (database.connections.active / database.connections.max > 0.8) score -= 20;
     if (database.queries.avgDuration > 1000) score -= 20;
     if (database.cache.hitRate < 80) score -= 15;
     if (database.locks.waiting > 0) score -= 15;
     if (database.replication.lag > 1000) score -= 15;
     if (database.queries.failed / database.queries.total > 0.01) score -= 15;
-    
+
     return Math.max(0, score);
   }
 
   private calculateApplicationScore(application: ApplicationMetrics): number {
     let score = 100;
-    
+
     if (application.requests.avgResponseTime > 2000) score -= 20;
     if (application.requests.failed / application.requests.total > 0.05) score -= 20;
     if (application.errors.rate > 5) score -= 20;
     if (application.caching.hitRate < 70) score -= 15;
-    
+
     // Check feature performance
-    const featureScores = Object.values(application.features).map(feature => {
+    const featureScores = Object.values(application.features).map((feature) => {
       let featureScore = 100;
       if (feature.accuracy < 90) featureScore -= 30;
       if (feature.avgProcessingTime > 1000) featureScore -= 20;
@@ -1050,77 +1053,92 @@ export class createperformanceMonitoringEngine {
       if (feature.confidence < 0.8) featureScore -= 25;
       return Math.max(0, featureScore);
     });
-    
+
     const avgFeatureScore = featureScores.reduce((sum, s) => sum + s, 0) / featureScores.length;
-    score = (score * 0.7) + (avgFeatureScore * 0.3);
-    
+    score = score * 0.7 + avgFeatureScore * 0.3;
+
     return Math.max(0, score);
   }
 
   private determineStatus(healthScore: number): PerformanceStatus {
-    if (healthScore >= 90) return 'optimal';
-    if (healthScore >= 75) return 'good';
-    if (healthScore >= 50) return 'degraded';
-    if (healthScore >= 25) return 'critical';
-    return 'failed';
+    if (healthScore >= 90) return "optimal";
+    if (healthScore >= 75) return "good";
+    if (healthScore >= 50) return "degraded";
+    if (healthScore >= 25) return "critical";
+    return "failed";
   }
 
   // Additional helper methods would be implemented here...
   private async checkThresholds(metrics: SystemMetrics): Promise<PerformanceAlert[]> {
     const alerts: PerformanceAlert[] = [];
-    
+
     // Check CPU thresholds
     const cpuUsage = metrics.metrics.cpu.usage;
-    const cpuThreshold = this.findThreshold('system', 'cpu', 'usage');
+    const cpuThreshold = this.findThreshold("system", "cpu", "usage");
     if (cpuThreshold && this.shouldAlert(cpuThreshold, cpuUsage)) {
-      alerts.push(this.createAlert(cpuThreshold, cpuUsage, 'CPU usage high'));
+      alerts.push(this.createAlert(cpuThreshold, cpuUsage, "CPU usage high"));
     }
-    
+
     // Check memory thresholds
     const memoryUsage = (metrics.metrics.memory.used / metrics.metrics.memory.total) * 100;
-    const memoryThreshold = this.findThreshold('system', 'memory', 'usage');
+    const memoryThreshold = this.findThreshold("system", "memory", "usage");
     if (memoryThreshold && this.shouldAlert(memoryThreshold, memoryUsage)) {
-      alerts.push(this.createAlert(memoryThreshold, memoryUsage, 'Memory usage high'));
+      alerts.push(this.createAlert(memoryThreshold, memoryUsage, "Memory usage high"));
     }
-    
+
     // Add more threshold checks...
-    
+
     return alerts;
   }
 
-  private findThreshold(category: PerformanceCategory, component: string, metric: string): PerformanceThreshold | undefined {
+  private findThreshold(
+    category: PerformanceCategory,
+    component: string,
+    metric: string,
+  ): PerformanceThreshold | undefined {
     const key = `threshold_${category}_${component}_${metric}`;
     return this.thresholds.get(key);
   }
 
   private shouldAlert(threshold: PerformanceThreshold, value: number): boolean {
     if (!threshold.enabled) return false;
-    
+
     const key = `${threshold.category}_${threshold.component}_${threshold.metric}`;
     const lastAlert = this.alertCooldowns.get(key);
-    
+
     if (lastAlert && Date.now() - lastAlert < threshold.cooldown * 60 * 1000) {
       return false;
     }
-    
+
     switch (threshold.operator) {
-      case 'gte': return value >= threshold.critical;
-      case 'gt': return value > threshold.critical;
-      case 'lte': return value <= threshold.critical;
-      case 'lt': return value < threshold.critical;
-      case 'eq': return value === threshold.critical;
-      case 'ne': return value !== threshold.critical;
-      default: return false;
+      case "gte":
+        return value >= threshold.critical;
+      case "gt":
+        return value > threshold.critical;
+      case "lte":
+        return value <= threshold.critical;
+      case "lt":
+        return value < threshold.critical;
+      case "eq":
+        return value === threshold.critical;
+      case "ne":
+        return value !== threshold.critical;
+      default:
+        return false;
     }
   }
 
-  private createAlert(threshold: PerformanceThreshold, value: number, message: string): PerformanceAlert {
-    let severity: MetricSeverity = 'normal';
-    
-    if (value >= threshold.emergency) severity = 'emergency';
-    else if (value >= threshold.critical) severity = 'critical';
-    else if (value >= threshold.warning) severity = 'warning';
-    
+  private createAlert(
+    threshold: PerformanceThreshold,
+    value: number,
+    message: string,
+  ): PerformanceAlert {
+    let severity: MetricSeverity = "normal";
+
+    if (value >= threshold.emergency) severity = "emergency";
+    else if (value >= threshold.critical) severity = "critical";
+    else if (value >= threshold.warning) severity = "warning";
+
     return {
       id: `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       timestamp: new Date().toISOString(),
@@ -1134,25 +1152,25 @@ export class createperformanceMonitoringEngine {
       description: `${threshold.metric} for ${threshold.component} is ${value}${threshold.unit}, exceeding threshold of ${threshold.critical}${threshold.unit}`,
       recommendations: this.generateAlertRecommendations(threshold, value),
       acknowledged: false,
-      resolved: false
+      resolved: false,
     };
   }
 
   private generateAlertRecommendations(threshold: PerformanceThreshold, value: number): string[] {
     const recommendations: string[] = [];
-    
-    if (threshold.component === 'cpu' && threshold.metric === 'usage') {
-      recommendations.push('Check for high CPU processes and optimize or scale resources');
-      recommendations.push('Consider implementing CPU throttling or load balancing');
+
+    if (threshold.component === "cpu" && threshold.metric === "usage") {
+      recommendations.push("Check for high CPU processes and optimize or scale resources");
+      recommendations.push("Consider implementing CPU throttling or load balancing");
     }
-    
-    if (threshold.component === 'memory' && threshold.metric === 'usage') {
-      recommendations.push('Check for memory leaks in applications');
-      recommendations.push('Consider increasing available memory or optimizing memory usage');
+
+    if (threshold.component === "memory" && threshold.metric === "usage") {
+      recommendations.push("Check for memory leaks in applications");
+      recommendations.push("Consider increasing available memory or optimizing memory usage");
     }
-    
+
     // Add more recommendations...
-    
+
     return recommendations;
   }
 
@@ -1171,7 +1189,7 @@ export class createperformanceMonitoringEngine {
 
   private async getActiveClinics(): Promise<string[]> {
     // Implementation would fetch active clinic IDs
-    return ['clinic_1', 'clinic_2'];
+    return ["clinic_1", "clinic_2"];
   }
 
   private async cleanupOldData(): Promise<void> {
@@ -1198,8 +1216,8 @@ export class createperformanceMonitoringEngine {
       userSatisfaction: 92,
       costOptimization: 78,
       securityScore: 94,
-      improvementAreas: ['Memory optimization', 'Database query performance'],
-      achievements: ['Improved response time by 15%', 'Reduced error rate to <1%']
+      improvementAreas: ["Memory optimization", "Database query performance"],
+      achievements: ["Improved response time by 15%", "Reduced error rate to <1%"],
     };
   }
 
@@ -1260,10 +1278,17 @@ export interface HistoricalMetrics {
 
 // Validation schemas
 export const SystemMetricsSchema = z.object({
-  category: z.enum(['system', 'application', 'database', 'network', 'user_experience', 'ai_models']),
+  category: z.enum([
+    "system",
+    "application",
+    "database",
+    "network",
+    "user_experience",
+    "ai_models",
+  ]),
   component: z.string().min(1),
   clinicId: z.string().min(1),
-  environment: z.enum(['development', 'staging', 'production'])
+  environment: z.enum(["development", "staging", "production"]),
 });
 
 // Export singleton instance

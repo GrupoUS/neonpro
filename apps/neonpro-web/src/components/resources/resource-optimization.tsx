@@ -3,39 +3,45 @@
 // Story 2.4: Smart Resource Management - Frontend
 // =====================================================
 
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Progress } from "@/components/ui/progress";
+import type {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   LineChart,
   Line,
   PieChart,
   Pie,
-  Cell
-} from 'recharts';
-import { 
-  TrendingUpIcon, 
+  Cell,
+} from "recharts";
+import type {
+  TrendingUpIcon,
   TrendingDownIcon,
   ClockIcon,
   CurrencyDollarIcon,
   ChartBarIcon,
   LightBulbIcon,
   CalendarIcon,
-  WrenchIcon
-} from '@heroicons/react/24/outline';
-import { toast } from 'sonner';
+  WrenchIcon,
+} from "@heroicons/react/24/outline";
+import type { toast } from "sonner";
 
 // =====================================================
 // Types
@@ -47,9 +53,9 @@ interface OptimizationMetrics {
   cost_effectiveness: number;
   maintenance_compliance: number;
   trend_analysis: {
-    utilization_trend: 'up' | 'down' | 'stable';
-    efficiency_trend: 'up' | 'down' | 'stable';
-    cost_trend: 'up' | 'down' | 'stable';
+    utilization_trend: "up" | "down" | "stable";
+    efficiency_trend: "up" | "down" | "stable";
+    cost_trend: "up" | "down" | "stable";
   };
 }
 
@@ -69,12 +75,16 @@ interface OptimizationSuggestion {
   id: string;
   resource_id: string;
   resource_name: string;
-  suggestion_type: 'schedule_optimization' | 'capacity_adjustment' | 'maintenance_planning' | 'cost_reduction';
+  suggestion_type:
+    | "schedule_optimization"
+    | "capacity_adjustment"
+    | "maintenance_planning"
+    | "cost_reduction";
   description: string;
   potential_impact: string;
   confidence_score: number;
-  implementation_effort: 'low' | 'medium' | 'high';
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  implementation_effort: "low" | "medium" | "high";
+  priority: "low" | "medium" | "high" | "critical";
 }
 
 interface TimeSeriesData {
@@ -100,7 +110,7 @@ export default function ResourceOptimization({ clinicId, userRole }: ResourceOpt
   const [timeSeriesData, setTimeSeriesData] = useState<TimeSeriesData[]>([]);
   const [loading, setLoading] = useState(true);
   const [optimizing, setOptimizing] = useState(false);
-  const [selectedPeriod, setSelectedPeriod] = useState('7d');
+  const [selectedPeriod, setSelectedPeriod] = useState("7d");
 
   // =====================================================
   // Data Fetching
@@ -116,13 +126,13 @@ export default function ResourceOptimization({ clinicId, userRole }: ResourceOpt
       const [metricsRes, utilizationRes, suggestionsRes] = await Promise.all([
         fetch(`/api/resources/optimize/metrics?clinic_id=${clinicId}&period=${selectedPeriod}`),
         fetch(`/api/resources/optimize/utilization?clinic_id=${clinicId}&period=${selectedPeriod}`),
-        fetch(`/api/resources/optimize/suggestions?clinic_id=${clinicId}`)
+        fetch(`/api/resources/optimize/suggestions?clinic_id=${clinicId}`),
       ]);
 
       const [metricsData, utilizationData, suggestionsData] = await Promise.all([
         metricsRes.json(),
         utilizationRes.json(),
-        suggestionsRes.json()
+        suggestionsRes.json(),
       ]);
 
       if (metricsData.success) setMetrics(metricsData.data);
@@ -132,8 +142,8 @@ export default function ResourceOptimization({ clinicId, userRole }: ResourceOpt
       // Generate mock time series data for charts
       generateTimeSeriesData();
     } catch (error) {
-      console.error('Error fetching optimization data:', error);
-      toast.error('Error loading optimization data');
+      console.error("Error fetching optimization data:", error);
+      toast.error("Error loading optimization data");
     } finally {
       setLoading(false);
     }
@@ -147,12 +157,12 @@ export default function ResourceOptimization({ clinicId, userRole }: ResourceOpt
     for (let i = days - 1; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(date.getDate() - i);
-      
+
       data.push({
         date: date.toLocaleDateString(),
         utilization: Math.random() * 40 + 60, // 60-100%
-        efficiency: Math.random() * 30 + 70,  // 70-100%
-        revenue: Math.random() * 2000 + 1000  // $1000-3000
+        efficiency: Math.random() * 30 + 70, // 70-100%
+        revenue: Math.random() * 2000 + 1000, // $1000-3000
       });
     }
 
@@ -166,27 +176,27 @@ export default function ResourceOptimization({ clinicId, userRole }: ResourceOpt
   const runOptimization = async () => {
     try {
       setOptimizing(true);
-      const response = await fetch('/api/resources/optimize', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+      const response = await fetch("/api/resources/optimize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           clinic_id: clinicId,
-          optimization_type: 'full',
-          period: selectedPeriod
-        })
+          optimization_type: "full",
+          period: selectedPeriod,
+        }),
       });
 
       const data = await response.json();
 
       if (data.success) {
-        toast.success('Optimization completed successfully');
+        toast.success("Optimization completed successfully");
         fetchOptimizationData();
       } else {
-        toast.error('Optimization failed');
+        toast.error("Optimization failed");
       }
     } catch (error) {
-      console.error('Error running optimization:', error);
-      toast.error('Error running optimization');
+      console.error("Error running optimization:", error);
+      toast.error("Error running optimization");
     } finally {
       setOptimizing(false);
     }
@@ -196,40 +206,57 @@ export default function ResourceOptimization({ clinicId, userRole }: ResourceOpt
   // UI Helpers
   // =====================================================
 
-  const getTrendIcon = (trend: 'up' | 'down' | 'stable') => {
+  const getTrendIcon = (trend: "up" | "down" | "stable") => {
     switch (trend) {
-      case 'up': return <TrendingUpIcon className="h-4 w-4 text-green-500" />;
-      case 'down': return <TrendingDownIcon className="h-4 w-4 text-red-500" />;
-      default: return <div className="h-4 w-4 bg-gray-400 rounded-full" />;
+      case "up":
+        return <TrendingUpIcon className="h-4 w-4 text-green-500" />;
+      case "down":
+        return <TrendingDownIcon className="h-4 w-4 text-red-500" />;
+      default:
+        return <div className="h-4 w-4 bg-gray-400 rounded-full" />;
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'critical': return 'bg-red-100 text-red-800';
-      case 'high': return 'bg-orange-100 text-orange-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'low': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "critical":
+        return "bg-red-100 text-red-800";
+      case "high":
+        return "bg-orange-100 text-orange-800";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800";
+      case "low":
+        return "bg-blue-100 text-blue-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getEffortColor = (effort: string) => {
     switch (effort) {
-      case 'high': return 'bg-red-100 text-red-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'low': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "high":
+        return "bg-red-100 text-red-800";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800";
+      case "low":
+        return "bg-green-100 text-green-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getSuggestionIcon = (type: string) => {
     switch (type) {
-      case 'schedule_optimization': return <CalendarIcon className="h-5 w-5" />;
-      case 'capacity_adjustment': return <ChartBarIcon className="h-5 w-5" />;
-      case 'maintenance_planning': return <WrenchIcon className="h-5 w-5" />;
-      case 'cost_reduction': return <CurrencyDollarIcon className="h-5 w-5" />;
-      default: return <LightBulbIcon className="h-5 w-5" />;
+      case "schedule_optimization":
+        return <CalendarIcon className="h-5 w-5" />;
+      case "capacity_adjustment":
+        return <ChartBarIcon className="h-5 w-5" />;
+      case "maintenance_planning":
+        return <WrenchIcon className="h-5 w-5" />;
+      case "cost_reduction":
+        return <CurrencyDollarIcon className="h-5 w-5" />;
+      default:
+        return <LightBulbIcon className="h-5 w-5" />;
     }
   };
 
@@ -237,7 +264,7 @@ export default function ResourceOptimization({ clinicId, userRole }: ResourceOpt
   // Chart Colors
   // =====================================================
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"];
 
   // =====================================================
   // Render Components
@@ -251,11 +278,12 @@ export default function ResourceOptimization({ clinicId, userRole }: ResourceOpt
             <div>
               <p className="text-sm font-medium text-gray-600">Utilization Rate</p>
               <p className="text-2xl font-bold">
-                {metrics?.utilization_rate ? `${Math.round(metrics.utilization_rate)}%` : 'N/A'}
+                {metrics?.utilization_rate ? `${Math.round(metrics.utilization_rate)}%` : "N/A"}
               </p>
             </div>
             <div className="flex items-center">
-              {metrics?.trend_analysis?.utilization_trend && getTrendIcon(metrics.trend_analysis.utilization_trend)}
+              {metrics?.trend_analysis?.utilization_trend &&
+                getTrendIcon(metrics.trend_analysis.utilization_trend)}
             </div>
           </div>
           {metrics?.utilization_rate && (
@@ -270,11 +298,12 @@ export default function ResourceOptimization({ clinicId, userRole }: ResourceOpt
             <div>
               <p className="text-sm font-medium text-gray-600">Efficiency Score</p>
               <p className="text-2xl font-bold">
-                {metrics?.efficiency_score ? `${Math.round(metrics.efficiency_score)}%` : 'N/A'}
+                {metrics?.efficiency_score ? `${Math.round(metrics.efficiency_score)}%` : "N/A"}
               </p>
             </div>
             <div className="flex items-center">
-              {metrics?.trend_analysis?.efficiency_trend && getTrendIcon(metrics.trend_analysis.efficiency_trend)}
+              {metrics?.trend_analysis?.efficiency_trend &&
+                getTrendIcon(metrics.trend_analysis.efficiency_trend)}
             </div>
           </div>
           {metrics?.efficiency_score && (
@@ -289,11 +318,12 @@ export default function ResourceOptimization({ clinicId, userRole }: ResourceOpt
             <div>
               <p className="text-sm font-medium text-gray-600">Cost Effectiveness</p>
               <p className="text-2xl font-bold">
-                {metrics?.cost_effectiveness ? `${Math.round(metrics.cost_effectiveness)}%` : 'N/A'}
+                {metrics?.cost_effectiveness ? `${Math.round(metrics.cost_effectiveness)}%` : "N/A"}
               </p>
             </div>
             <div className="flex items-center">
-              {metrics?.trend_analysis?.cost_trend && getTrendIcon(metrics.trend_analysis.cost_trend)}
+              {metrics?.trend_analysis?.cost_trend &&
+                getTrendIcon(metrics.trend_analysis.cost_trend)}
             </div>
           </div>
           {metrics?.cost_effectiveness && (
@@ -308,7 +338,9 @@ export default function ResourceOptimization({ clinicId, userRole }: ResourceOpt
             <div>
               <p className="text-sm font-medium text-gray-600">Maintenance Compliance</p>
               <p className="text-2xl font-bold">
-                {metrics?.maintenance_compliance ? `${Math.round(metrics.maintenance_compliance)}%` : 'N/A'}
+                {metrics?.maintenance_compliance
+                  ? `${Math.round(metrics.maintenance_compliance)}%`
+                  : "N/A"}
               </p>
             </div>
             <WrenchIcon className="h-6 w-6 text-gray-400" />
@@ -333,15 +365,10 @@ export default function ResourceOptimization({ clinicId, userRole }: ResourceOpt
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={utilization}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis 
-              dataKey="resource_name" 
-              angle={-45}
-              textAnchor="end"
-              height={100}
-            />
+            <XAxis dataKey="resource_name" angle={-45} textAnchor="end" height={100} />
             <YAxis />
-            <Tooltip 
-              formatter={(value, name) => [`${value}%`, 'Utilization']}
+            <Tooltip
+              formatter={(value, name) => [`${value}%`, "Utilization"]}
               labelFormatter={(label) => `Resource: ${label}`}
             />
             <Bar dataKey="utilization_percentage" fill="#8884d8" />
@@ -355,9 +382,7 @@ export default function ResourceOptimization({ clinicId, userRole }: ResourceOpt
     <Card>
       <CardHeader>
         <CardTitle>Trends Over Time</CardTitle>
-        <CardDescription>
-          Key metrics trends over the selected period
-        </CardDescription>
+        <CardDescription>Key metrics trends over the selected period</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
@@ -378,9 +403,7 @@ export default function ResourceOptimization({ clinicId, userRole }: ResourceOpt
     <Card>
       <CardHeader>
         <CardTitle>Optimization Suggestions</CardTitle>
-        <CardDescription>
-          AI-powered recommendations to improve resource efficiency
-        </CardDescription>
+        <CardDescription>AI-powered recommendations to improve resource efficiency</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -391,14 +414,10 @@ export default function ResourceOptimization({ clinicId, userRole }: ResourceOpt
               <div key={suggestion.id} className="border rounded-lg p-4">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start space-x-3">
-                    <div className="mt-1">
-                      {getSuggestionIcon(suggestion.suggestion_type)}
-                    </div>
+                    <div className="mt-1">{getSuggestionIcon(suggestion.suggestion_type)}</div>
                     <div className="flex-1">
                       <div className="font-medium">{suggestion.resource_name}</div>
-                      <div className="text-sm text-gray-600 mt-1">
-                        {suggestion.description}
-                      </div>
+                      <div className="text-sm text-gray-600 mt-1">{suggestion.description}</div>
                       <div className="text-sm text-blue-600 mt-1">
                         <strong>Potential Impact:</strong> {suggestion.potential_impact}
                       </div>
@@ -447,8 +466,8 @@ export default function ResourceOptimization({ clinicId, userRole }: ResourceOpt
           </p>
         </div>
         <div className="flex space-x-3">
-          <select 
-            value={selectedPeriod} 
+          <select
+            value={selectedPeriod}
             onChange={(e) => setSelectedPeriod(e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-md"
           >
@@ -456,9 +475,9 @@ export default function ResourceOptimization({ clinicId, userRole }: ResourceOpt
             <option value="30">Last 30 days</option>
             <option value="90">Last 90 days</option>
           </select>
-          {userRole !== 'patient' && (
+          {userRole !== "patient" && (
             <Button onClick={runOptimization} disabled={optimizing}>
-              {optimizing ? 'Optimizing...' : 'Run Optimization'}
+              {optimizing ? "Optimizing..." : "Run Optimization"}
             </Button>
           )}
         </div>

@@ -1,31 +1,28 @@
-import { PredictiveAnalyticsService } from '@/app/lib/services/predictive-analytics';
-import { createAlertSchema } from '@/app/lib/validations/predictive-analytics';
-import { NextRequest, NextResponse } from 'next/server';
+import type { PredictiveAnalyticsService } from "@/app/lib/services/predictive-analytics";
+import type { createAlertSchema } from "@/app/lib/validations/predictive-analytics";
+import type { NextRequest, NextResponse } from "next/server";
 
 const service = new PredictiveAnalyticsService();
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const skip = parseInt(searchParams.get('skip') || '0');
-    const limit = parseInt(searchParams.get('limit') || '10');
-    const status = searchParams.get('status') || undefined;
-    const severity = searchParams.get('severity') || undefined;
+    const skip = parseInt(searchParams.get("skip") || "0");
+    const limit = parseInt(searchParams.get("limit") || "10");
+    const status = searchParams.get("status") || undefined;
+    const severity = searchParams.get("severity") || undefined;
 
     const result = await service.getAlerts({
       skip,
       limit,
       status,
-      severity
+      severity,
     });
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error('Erro ao buscar alertas:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    console.error("Erro ao buscar alertas:", error);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
 }
 
@@ -38,10 +35,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(alert, { status: 201 });
   } catch (error) {
-    console.error('Erro ao criar alerta:', error);
-    return NextResponse.json(
-      { error: 'Erro ao criar alerta' },
-      { status: 400 }
-    );
+    console.error("Erro ao criar alerta:", error);
+    return NextResponse.json({ error: "Erro ao criar alerta" }, { status: 400 });
   }
 }

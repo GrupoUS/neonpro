@@ -3,36 +3,64 @@
  * Interface completa para gerenciamento de alertas financeiros
  */
 
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { AlertTriangle, CheckCircle, Clock, Bell, BellOff, Settings, Plus, Filter } from 'lucide-react';
-import { 
-  useFinancialAlerts, 
-  useAlertResolution, 
+import React, { useState } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Switch } from "@/components/ui/switch";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type {
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Bell,
+  BellOff,
+  Settings,
+  Plus,
+  Filter,
+} from "lucide-react";
+import type {
+  useFinancialAlerts,
+  useAlertResolution,
   useAlertRuleCreation,
   useAlertStatistics,
   useRealTimeAlerts,
   useAlertChannelConfig,
-  useAlertRuleTemplates
-} from '@/lib/financial/hooks/use-alert-system';
-import { AlertSeverity, AlertType, AlertChannel } from '@/lib/financial/types/cash-flow';
+  useAlertRuleTemplates,
+} from "@/lib/financial/hooks/use-alert-system";
+import type { AlertSeverity, AlertType, AlertChannel } from "@/lib/financial/types/cash-flow";
 
 interface AlertManagerProps {
   userId: string;
 }
 
 export function AlertManager({ userId }: AlertManagerProps) {
-  const [selectedTab, setSelectedTab] = useState('active');
+  const [selectedTab, setSelectedTab] = useState("active");
   const [filterSeverity, setFilterSeverity] = useState<AlertSeverity | undefined>();
   const [filterType, setFilterType] = useState<AlertType | undefined>();
 
@@ -41,24 +69,32 @@ export function AlertManager({ userId }: AlertManagerProps) {
   const { statistics } = useAlertStatistics(30);
   const { alerts: realTimeAlerts, unreadCount, markAsRead } = useRealTimeAlerts();
 
-  const activeAlerts = alerts.filter(alert => !alert.is_resolved);
-  const resolvedAlerts = alerts.filter(alert => alert.is_resolved);
+  const activeAlerts = alerts.filter((alert) => !alert.is_resolved);
+  const resolvedAlerts = alerts.filter((alert) => alert.is_resolved);
 
   const getSeverityColor = (severity: AlertSeverity) => {
     switch (severity) {
-      case 'critical': return 'bg-red-100 text-red-800 border-red-300';
-      case 'warning': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-      case 'info': return 'bg-blue-100 text-blue-800 border-blue-300';
-      default: return 'bg-gray-100 text-gray-800 border-gray-300';
+      case "critical":
+        return "bg-red-100 text-red-800 border-red-300";
+      case "warning":
+        return "bg-yellow-100 text-yellow-800 border-yellow-300";
+      case "info":
+        return "bg-blue-100 text-blue-800 border-blue-300";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-300";
     }
   };
 
   const getSeverityIcon = (severity: AlertSeverity) => {
     switch (severity) {
-      case 'critical': return <AlertTriangle className="h-4 w-4 text-red-600" />;
-      case 'warning': return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
-      case 'info': return <Bell className="h-4 w-4 text-blue-600" />;
-      default: return <Bell className="h-4 w-4 text-gray-600" />;
+      case "critical":
+        return <AlertTriangle className="h-4 w-4 text-red-600" />;
+      case "warning":
+        return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
+      case "info":
+        return <Bell className="h-4 w-4 text-blue-600" />;
+      default:
+        return <Bell className="h-4 w-4 text-gray-600" />;
     }
   };
 
@@ -112,10 +148,9 @@ export function AlertManager({ userId }: AlertManagerProps) {
               <Clock className="h-5 w-5 text-blue-600" />
               <div>
                 <p className="text-2xl font-bold">
-                  {statistics?.average_resolution_time ? 
-                    `${Math.round(statistics.average_resolution_time / 60)}h` : 
-                    '0h'
-                  }
+                  {statistics?.average_resolution_time
+                    ? `${Math.round(statistics.average_resolution_time / 60)}h`
+                    : "0h"}
                 </p>
                 <p className="text-sm text-muted-foreground">Tempo Médio</p>
               </div>
@@ -159,7 +194,10 @@ export function AlertManager({ userId }: AlertManagerProps) {
               <Filter className="h-4 w-4" />
               <Label>Filtros:</Label>
             </div>
-            <Select value={filterSeverity} onValueChange={(value) => setFilterSeverity(value as AlertSeverity)}>
+            <Select
+              value={filterSeverity}
+              onValueChange={(value) => setFilterSeverity(value as AlertSeverity)}
+            >
               <SelectTrigger className="w-[120px]">
                 <SelectValue placeholder="Severidade" />
               </SelectTrigger>
@@ -180,8 +218,8 @@ export function AlertManager({ userId }: AlertManagerProps) {
                 <SelectItem value="budget_exceeded">Orçamento Excedido</SelectItem>
               </SelectContent>
             </Select>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="sm"
               onClick={() => {
                 setFilterSeverity(undefined);
@@ -195,12 +233,8 @@ export function AlertManager({ userId }: AlertManagerProps) {
           {/* Tabs de Alertas */}
           <Tabs value={selectedTab} onValueChange={setSelectedTab}>
             <TabsList>
-              <TabsTrigger value="active">
-                Ativos ({activeAlerts.length})
-              </TabsTrigger>
-              <TabsTrigger value="resolved">
-                Resolvidos ({resolvedAlerts.length})
-              </TabsTrigger>
+              <TabsTrigger value="active">Ativos ({activeAlerts.length})</TabsTrigger>
+              <TabsTrigger value="resolved">Resolvidos ({resolvedAlerts.length})</TabsTrigger>
             </TabsList>
 
             <TabsContent value="active" className="space-y-4">
@@ -215,9 +249,9 @@ export function AlertManager({ userId }: AlertManagerProps) {
               ) : (
                 <div className="grid gap-4">
                   {activeAlerts.map((alert) => (
-                    <AlertCard 
-                      key={alert.id} 
-                      alert={alert} 
+                    <AlertCard
+                      key={alert.id}
+                      alert={alert}
                       onResolve={handleResolveAlert}
                       isResolving={isResolving}
                     />
@@ -238,11 +272,7 @@ export function AlertManager({ userId }: AlertManagerProps) {
               ) : (
                 <div className="grid gap-4">
                   {resolvedAlerts.map((alert) => (
-                    <AlertCard 
-                      key={alert.id} 
-                      alert={alert} 
-                      isResolved 
-                    />
+                    <AlertCard key={alert.id} alert={alert} isResolved />
                   ))}
                 </div>
               )}
@@ -263,20 +293,24 @@ interface AlertCardProps {
 }
 
 function AlertCard({ alert, onResolve, isResolving, isResolved }: AlertCardProps) {
-  const [resolution, setResolution] = useState('');
+  const [resolution, setResolution] = useState("");
   const [showResolveDialog, setShowResolveDialog] = useState(false);
 
   const getSeverityColor = (severity: AlertSeverity) => {
     switch (severity) {
-      case 'critical': return 'bg-red-100 text-red-800 border-red-300';
-      case 'warning': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-      case 'info': return 'bg-blue-100 text-blue-800 border-blue-300';
-      default: return 'bg-gray-100 text-gray-800 border-gray-300';
+      case "critical":
+        return "bg-red-100 text-red-800 border-red-300";
+      case "warning":
+        return "bg-yellow-100 text-yellow-800 border-yellow-300";
+      case "info":
+        return "bg-blue-100 text-blue-800 border-blue-300";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-300";
     }
   };
 
   return (
-    <Card className={`${isResolved ? 'opacity-60' : ''}`}>
+    <Card className={`${isResolved ? "opacity-60" : ""}`}>
       <CardContent className="p-6">
         <div className="flex items-start justify-between">
           <div className="flex-1">
@@ -284,23 +318,19 @@ function AlertCard({ alert, onResolve, isResolving, isResolved }: AlertCardProps
               <Badge className={getSeverityColor(alert.severity)}>
                 {alert.severity.toUpperCase()}
               </Badge>
-              <Badge variant="outline">
-                {alert.type.replace('_', ' ').toUpperCase()}
-              </Badge>
+              <Badge variant="outline">{alert.type.replace("_", " ").toUpperCase()}</Badge>
               {isResolved && (
-                <Badge className="bg-green-100 text-green-800 border-green-300">
-                  RESOLVIDO
-                </Badge>
+                <Badge className="bg-green-100 text-green-800 border-green-300">RESOLVIDO</Badge>
               )}
             </div>
-            
+
             <h3 className="font-semibold text-lg mb-2">{alert.title}</h3>
             <p className="text-muted-foreground mb-4">{alert.message}</p>
-            
+
             <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-              <span>Criado: {new Date(alert.created_at).toLocaleString('pt-BR')}</span>
+              <span>Criado: {new Date(alert.created_at).toLocaleString("pt-BR")}</span>
               {alert.resolved_at && (
-                <span>Resolvido: {new Date(alert.resolved_at).toLocaleString('pt-BR')}</span>
+                <span>Resolvido: {new Date(alert.resolved_at).toLocaleString("pt-BR")}</span>
               )}
             </div>
 
@@ -316,9 +346,7 @@ function AlertCard({ alert, onResolve, isResolving, isResolved }: AlertCardProps
           {!isResolved && onResolve && (
             <Dialog open={showResolveDialog} onOpenChange={setShowResolveDialog}>
               <DialogTrigger asChild>
-                <Button size="sm">
-                  Resolver
-                </Button>
+                <Button size="sm">Resolver</Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
@@ -338,21 +366,18 @@ function AlertCard({ alert, onResolve, isResolving, isResolved }: AlertCardProps
                     />
                   </div>
                   <div className="flex justify-end space-x-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => setShowResolveDialog(false)}
-                    >
+                    <Button variant="outline" onClick={() => setShowResolveDialog(false)}>
                       Cancelar
                     </Button>
                     <Button
                       onClick={() => {
                         onResolve(alert.id, resolution);
                         setShowResolveDialog(false);
-                        setResolution('');
+                        setResolution("");
                       }}
                       disabled={!resolution.trim() || isResolving}
                     >
-                      {isResolving ? 'Resolvendo...' : 'Confirmar'}
+                      {isResolving ? "Resolvendo..." : "Confirmar"}
                     </Button>
                   </div>
                 </div>
@@ -370,10 +395,10 @@ function CreateAlertRuleDialog({ userId }: { userId: string }) {
   const [open, setOpen] = useState(false);
   const { createRule, isCreating } = useAlertRuleCreation();
   const { templates, createFromTemplate } = useAlertRuleTemplates();
-  
-  const [selectedTemplate, setSelectedTemplate] = useState('');
-  const [ruleName, setRuleName] = useState('');
-  const [threshold, setThreshold] = useState('');
+
+  const [selectedTemplate, setSelectedTemplate] = useState("");
+  const [ruleName, setRuleName] = useState("");
+  const [threshold, setThreshold] = useState("");
 
   const handleCreateRule = () => {
     if (!selectedTemplate || !ruleName || !threshold) return;
@@ -381,17 +406,17 @@ function CreateAlertRuleDialog({ userId }: { userId: string }) {
     const template = createFromTemplate(selectedTemplate, {
       name: ruleName,
       condition: {
-        ...templates.find(t => t.id === selectedTemplate)?.template.condition,
-        threshold: parseFloat(threshold)
-      }
+        ...templates.find((t) => t.id === selectedTemplate)?.template.condition,
+        threshold: parseFloat(threshold),
+      },
     });
 
     if (template) {
       createRule(template);
       setOpen(false);
-      setSelectedTemplate('');
-      setRuleName('');
-      setThreshold('');
+      setSelectedTemplate("");
+      setRuleName("");
+      setThreshold("");
     }
   };
 
@@ -426,7 +451,7 @@ function CreateAlertRuleDialog({ userId }: { userId: string }) {
               </SelectContent>
             </Select>
           </div>
-          
+
           <div>
             <Label htmlFor="ruleName">Nome da Regra</Label>
             <Input
@@ -452,11 +477,11 @@ function CreateAlertRuleDialog({ userId }: { userId: string }) {
             <Button variant="outline" onClick={() => setOpen(false)}>
               Cancelar
             </Button>
-            <Button 
+            <Button
               onClick={handleCreateRule}
               disabled={!selectedTemplate || !ruleName || !threshold || isCreating}
             >
-              {isCreating ? 'Criando...' : 'Criar Regra'}
+              {isCreating ? "Criando..." : "Criar Regra"}
             </Button>
           </div>
         </div>
@@ -481,11 +506,9 @@ function AlertSettingsDialog() {
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Configurações de Alerta</DialogTitle>
-          <DialogDescription>
-            Configure como e quando receber notificações
-          </DialogDescription>
+          <DialogDescription>Configure como e quando receber notificações</DialogDescription>
         </DialogHeader>
-        
+
         <div className="space-y-6">
           {/* Email */}
           <div className="space-y-4">
@@ -494,17 +517,15 @@ function AlertSettingsDialog() {
               <Switch
                 id="email-enabled"
                 checked={config.email.enabled}
-                onCheckedChange={(enabled) => 
-                  updateChannelConfig('email', { enabled })
-                }
+                onCheckedChange={(enabled) => updateChannelConfig("email", { enabled })}
               />
             </div>
             {config.email.enabled && (
               <div className="ml-4 space-y-2">
-                <Select 
+                <Select
                   value={config.email.severityThreshold}
-                  onValueChange={(value) => 
-                    updateChannelConfig('email', { severityThreshold: value as AlertSeverity })
+                  onValueChange={(value) =>
+                    updateChannelConfig("email", { severityThreshold: value as AlertSeverity })
                   }
                 >
                   <SelectTrigger className="w-[200px]">
@@ -527,9 +548,7 @@ function AlertSettingsDialog() {
               <Switch
                 id="dashboard-enabled"
                 checked={config.dashboard.enabled}
-                onCheckedChange={(enabled) => 
-                  updateChannelConfig('dashboard', { enabled })
-                }
+                onCheckedChange={(enabled) => updateChannelConfig("dashboard", { enabled })}
               />
             </div>
             {config.dashboard.enabled && (
@@ -539,8 +558,8 @@ function AlertSettingsDialog() {
                   <Switch
                     id="auto-refresh"
                     checked={config.dashboard.autoRefresh}
-                    onCheckedChange={(autoRefresh) => 
-                      updateChannelConfig('dashboard', { autoRefresh })
+                    onCheckedChange={(autoRefresh) =>
+                      updateChannelConfig("dashboard", { autoRefresh })
                     }
                   />
                 </div>
@@ -549,8 +568,8 @@ function AlertSettingsDialog() {
                   <Switch
                     id="sound-alerts"
                     checked={config.dashboard.soundAlerts}
-                    onCheckedChange={(soundAlerts) => 
-                      updateChannelConfig('dashboard', { soundAlerts })
+                    onCheckedChange={(soundAlerts) =>
+                      updateChannelConfig("dashboard", { soundAlerts })
                     }
                   />
                 </div>

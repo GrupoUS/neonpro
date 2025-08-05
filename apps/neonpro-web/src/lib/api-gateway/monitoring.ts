@@ -1,20 +1,20 @@
 /**
  * NeonPro - API Gateway Monitoring System
  * Comprehensive monitoring, metrics and health checking system
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  * @created 2025-01-27
  */
 
-import { 
-  ApiGatewayMetrics, 
-  ApiGatewayHealthCheck, 
+import type {
+  ApiGatewayMetrics,
+  ApiGatewayHealthCheck,
   ApiGatewayLogger,
   ApiGatewayEvent,
   ApiGatewayRequestContext,
-  ApiGatewayResponseContext
-} from './types';
+  ApiGatewayResponseContext,
+} from "./types";
 
 /**
  * Metrics Collector
@@ -32,10 +32,10 @@ export class ApiGatewayMetricsCollector implements ApiGatewayMetrics {
   constructor(logger?: ApiGatewayLogger) {
     this.logger = logger;
     this.startTime = Date.now();
-    
+
     // Initialize default metrics
     this.initializeDefaultMetrics();
-    
+
     // Collect system metrics every 30 seconds
     setInterval(() => this.collectSystemMetrics(), 30000);
   }
@@ -47,18 +47,18 @@ export class ApiGatewayMetricsCollector implements ApiGatewayMetrics {
     const labels = {
       method: context.method,
       path: context.path,
-      clientId: context.clientId || 'anonymous',
-      version: context.version || 'v1'
+      clientId: context.clientId || "anonymous",
+      version: context.version || "v1",
     };
-    
-    this.incrementCounter('requests_total', labels);
+
+    this.incrementCounter("requests_total", labels);
     this.incrementCounter(`requests_by_method_${context.method.toLowerCase()}`);
-    this.incrementCounter(`requests_by_client_${context.clientId || 'anonymous'}`);
-    
+    this.incrementCounter(`requests_by_client_${context.clientId || "anonymous"}`);
+
     // Start request timer
     this.startTimer(`request_${context.requestId}`);
-    
-    this.logger?.debug('Request metrics recorded', { requestId: context.requestId, labels });
+
+    this.logger?.debug("Request metrics recorded", { requestId: context.requestId, labels });
   }
 
   /**
@@ -67,34 +67,34 @@ export class ApiGatewayMetricsCollector implements ApiGatewayMetrics {
   recordResponse(context: ApiGatewayResponseContext): void {
     const statusCode = context.statusCode || 200;
     const statusClass = Math.floor(statusCode / 100);
-    
+
     const labels = {
       method: context.method,
       path: context.path,
       statusCode: statusCode.toString(),
-      statusClass: `${statusClass}xx`
+      statusClass: `${statusClass}xx`,
     };
-    
-    this.incrementCounter('responses_total', labels);
+
+    this.incrementCounter("responses_total", labels);
     this.incrementCounter(`responses_${statusClass}xx`);
     this.incrementCounter(`responses_status_${statusCode}`);
-    
+
     // Record response time
     const duration = this.endTimer(`request_${context.requestId}`);
     if (duration !== null) {
-      this.recordHistogram('request_duration_ms', duration, labels);
+      this.recordHistogram("request_duration_ms", duration, labels);
       this.recordHistogram(`request_duration_${context.method.toLowerCase()}`, duration);
     }
-    
+
     // Record response size if available
     if (context.responseSize) {
-      this.recordHistogram('response_size_bytes', context.responseSize, labels);
+      this.recordHistogram("response_size_bytes", context.responseSize, labels);
     }
-    
-    this.logger?.debug('Response metrics recorded', { 
-      requestId: context.requestId, 
-      statusCode, 
-      duration 
+
+    this.logger?.debug("Response metrics recorded", {
+      requestId: context.requestId,
+      statusCode,
+      duration,
     });
   }
 
@@ -105,14 +105,14 @@ export class ApiGatewayMetricsCollector implements ApiGatewayMetrics {
     const labels = {
       errorType: error.constructor.name,
       errorMessage: error.message,
-      method: context?.method || 'unknown',
-      path: context?.path || 'unknown'
+      method: context?.method || "unknown",
+      path: context?.path || "unknown",
     };
-    
-    this.incrementCounter('errors_total', labels);
+
+    this.incrementCounter("errors_total", labels);
     this.incrementCounter(`errors_by_type_${error.constructor.name}`);
-    
-    this.logger?.error('Error metrics recorded', error, labels);
+
+    this.logger?.error("Error metrics recorded", error, labels);
   }
 
   /**
@@ -120,14 +120,14 @@ export class ApiGatewayMetricsCollector implements ApiGatewayMetrics {
    */
   recordRateLimit(clientId: string, limit: number, remaining: number, resetTime: number): void {
     const labels = { clientId };
-    
-    this.incrementCounter('rate_limit_checks_total', labels);
+
+    this.incrementCounter("rate_limit_checks_total", labels);
     this.setGauge(`rate_limit_remaining_${clientId}`, remaining);
     this.setGauge(`rate_limit_limit_${clientId}`, limit);
     this.setGauge(`rate_limit_reset_${clientId}`, resetTime);
-    
+
     if (remaining === 0) {
-      this.incrementCounter('rate_limit_exceeded_total', labels);
+      this.incrementCounter("rate_limit_exceeded_total", labels);
     }
   }
 
@@ -135,17 +135,17 @@ export class ApiGatewayMetricsCollector implements ApiGatewayMetrics {
    * Record cache metrics
    */
   recordCacheHit(key: string, ttl?: number): void {
-    this.incrementCounter('cache_hits_total');
-    this.incrementCounter('cache_operations_total', { operation: 'hit' });
-    
+    this.incrementCounter("cache_hits_total");
+    this.incrementCounter("cache_operations_total", { operation: "hit" });
+
     if (ttl) {
-      this.recordHistogram('cache_ttl_seconds', ttl / 1000);
+      this.recordHistogram("cache_ttl_seconds", ttl / 1000);
     }
   }
 
   recordCacheMiss(key: string): void {
-    this.incrementCounter('cache_misses_total');
-    this.incrementCounter('cache_operations_total', { operation: 'miss' });
+    this.incrementCounter("cache_misses_total");
+    this.incrementCounter("cache_operations_total", { operation: "miss" });
   }
 
   /**
@@ -153,17 +153,17 @@ export class ApiGatewayMetricsCollector implements ApiGatewayMetrics {
    */
   getMetrics(): Record<string, any> {
     const metrics: Record<string, any> = {};
-    
+
     // Add counters
     for (const [key, value] of this.counters.entries()) {
       metrics[key] = value;
     }
-    
+
     // Add gauges
     for (const [key, value] of this.gauges.entries()) {
       metrics[key] = value;
     }
-    
+
     // Add histogram statistics
     for (const [key, values] of this.histograms.entries()) {
       if (values.length > 0) {
@@ -178,11 +178,11 @@ export class ApiGatewayMetricsCollector implements ApiGatewayMetrics {
         metrics[`${key}_p99`] = this.percentile(sorted, 0.99);
       }
     }
-    
+
     // Add system metrics
     metrics.uptime_seconds = (Date.now() - this.startTime) / 1000;
     metrics.timestamp = Date.now();
-    
+
     return metrics;
   }
 
@@ -192,15 +192,15 @@ export class ApiGatewayMetricsCollector implements ApiGatewayMetrics {
   getPrometheusMetrics(): string {
     const metrics = this.getMetrics();
     const lines: string[] = [];
-    
+
     for (const [key, value] of Object.entries(metrics)) {
-      if (typeof value === 'number') {
+      if (typeof value === "number") {
         lines.push(`# TYPE ${key} gauge`);
         lines.push(`${key} ${value}`);
       }
     }
-    
-    return lines.join('\n');
+
+    return lines.join("\n");
   }
 
   /**
@@ -212,10 +212,10 @@ export class ApiGatewayMetricsCollector implements ApiGatewayMetrics {
     this.gauges.clear();
     this.timers.clear();
     this.startTime = Date.now();
-    
+
     this.initializeDefaultMetrics();
-    
-    this.logger?.info('Metrics reset');
+
+    this.logger?.info("Metrics reset");
   }
 
   /**
@@ -242,12 +242,12 @@ export class ApiGatewayMetricsCollector implements ApiGatewayMetrics {
     const key = labels ? `${name}{${this.labelsToString(labels)}}` : name;
     const values = this.histograms.get(key) || [];
     values.push(value);
-    
+
     // Keep only last 1000 values to prevent memory issues
     if (values.length > 1000) {
       values.splice(0, values.length - 1000);
     }
-    
+
     this.histograms.set(key, values);
   }
 
@@ -268,20 +268,20 @@ export class ApiGatewayMetricsCollector implements ApiGatewayMetrics {
     if (!timers || timers.length === 0) {
       return null;
     }
-    
+
     const timer = timers[timers.length - 1];
     if (timer.end) {
       return null; // Already ended
     }
-    
+
     timer.end = Date.now();
     const duration = timer.end - timer.start;
-    
+
     // Clean up old timers
     if (timers.length > 100) {
       timers.splice(0, timers.length - 100);
     }
-    
+
     return duration;
   }
 
@@ -291,7 +291,7 @@ export class ApiGatewayMetricsCollector implements ApiGatewayMetrics {
   private labelsToString(labels: Record<string, string>): string {
     return Object.entries(labels)
       .map(([key, value]) => `${key}="${value}"`)
-      .join(',');
+      .join(",");
   }
 
   /**
@@ -302,11 +302,11 @@ export class ApiGatewayMetricsCollector implements ApiGatewayMetrics {
     const lower = Math.floor(index);
     const upper = Math.ceil(index);
     const weight = index % 1;
-    
+
     if (upper >= sortedArray.length) {
       return sortedArray[sortedArray.length - 1];
     }
-    
+
     return sortedArray[lower] * (1 - weight) + sortedArray[upper] * weight;
   }
 
@@ -314,9 +314,9 @@ export class ApiGatewayMetricsCollector implements ApiGatewayMetrics {
    * Initialize default metrics
    */
   private initializeDefaultMetrics(): void {
-    this.setGauge('gateway_info', 1, {
-      version: '1.0.0',
-      environment: process.env.NODE_ENV || 'development'
+    this.setGauge("gateway_info", 1, {
+      version: "1.0.0",
+      environment: process.env.NODE_ENV || "development",
     });
   }
 
@@ -326,22 +326,22 @@ export class ApiGatewayMetricsCollector implements ApiGatewayMetrics {
   private collectSystemMetrics(): void {
     try {
       // Memory usage
-      if (typeof process !== 'undefined' && process.memoryUsage) {
+      if (typeof process !== "undefined" && process.memoryUsage) {
         const memory = process.memoryUsage();
-        this.setGauge('process_memory_rss_bytes', memory.rss);
-        this.setGauge('process_memory_heap_used_bytes', memory.heapUsed);
-        this.setGauge('process_memory_heap_total_bytes', memory.heapTotal);
-        this.setGauge('process_memory_external_bytes', memory.external);
+        this.setGauge("process_memory_rss_bytes", memory.rss);
+        this.setGauge("process_memory_heap_used_bytes", memory.heapUsed);
+        this.setGauge("process_memory_heap_total_bytes", memory.heapTotal);
+        this.setGauge("process_memory_external_bytes", memory.external);
       }
-      
+
       // CPU usage (if available)
-      if (typeof process !== 'undefined' && process.cpuUsage) {
+      if (typeof process !== "undefined" && process.cpuUsage) {
         const cpu = process.cpuUsage();
-        this.setGauge('process_cpu_user_seconds_total', cpu.user / 1000000);
-        this.setGauge('process_cpu_system_seconds_total', cpu.system / 1000000);
+        this.setGauge("process_cpu_user_seconds_total", cpu.user / 1000000);
+        this.setGauge("process_cpu_system_seconds_total", cpu.system / 1000000);
       }
     } catch (error) {
-      this.logger?.error('System metrics collection error', error as Error);
+      this.logger?.error("System metrics collection error", error as Error);
     }
   }
 }
@@ -351,19 +351,23 @@ export class ApiGatewayMetricsCollector implements ApiGatewayMetrics {
  * Manages health checks for API Gateway components
  */
 export class ApiGatewayHealthCheckManager implements ApiGatewayHealthCheck {
-  private checks: Map<string, () => Promise<{ status: 'healthy' | 'unhealthy'; details?: any }>> = new Map();
+  private checks: Map<string, () => Promise<{ status: "healthy" | "unhealthy"; details?: any }>> =
+    new Map();
   private logger?: ApiGatewayLogger;
-  private lastResults: Map<string, { status: 'healthy' | 'unhealthy'; details?: any; timestamp: number }> = new Map();
+  private lastResults: Map<
+    string,
+    { status: "healthy" | "unhealthy"; details?: any; timestamp: number }
+  > = new Map();
   private checkInterval: number;
   private intervalId?: NodeJS.Timeout;
 
   constructor(checkInterval: number = 30000, logger?: ApiGatewayLogger) {
     this.checkInterval = checkInterval;
     this.logger = logger;
-    
+
     // Register default health checks
     this.registerDefaultChecks();
-    
+
     // Start periodic health checks
     this.startPeriodicChecks();
   }
@@ -372,11 +376,11 @@ export class ApiGatewayHealthCheckManager implements ApiGatewayHealthCheck {
    * Register a health check
    */
   registerCheck(
-    name: string, 
-    check: () => Promise<{ status: 'healthy' | 'unhealthy'; details?: any }>
+    name: string,
+    check: () => Promise<{ status: "healthy" | "unhealthy"; details?: any }>,
   ): void {
     this.checks.set(name, check);
-    this.logger?.info('Health check registered', { name });
+    this.logger?.info("Health check registered", { name });
   }
 
   /**
@@ -385,66 +389,69 @@ export class ApiGatewayHealthCheckManager implements ApiGatewayHealthCheck {
   unregisterCheck(name: string): void {
     this.checks.delete(name);
     this.lastResults.delete(name);
-    this.logger?.info('Health check unregistered', { name });
+    this.logger?.info("Health check unregistered", { name });
   }
 
   /**
    * Run all health checks
    */
   async runChecks(): Promise<{
-    status: 'healthy' | 'unhealthy';
-    checks: Record<string, { status: 'healthy' | 'unhealthy'; details?: any; timestamp: number }>;
+    status: "healthy" | "unhealthy";
+    checks: Record<string, { status: "healthy" | "unhealthy"; details?: any; timestamp: number }>;
     timestamp: number;
   }> {
-    const results: Record<string, { status: 'healthy' | 'unhealthy'; details?: any; timestamp: number }> = {};
-    let overallStatus: 'healthy' | 'unhealthy' = 'healthy';
-    
+    const results: Record<
+      string,
+      { status: "healthy" | "unhealthy"; details?: any; timestamp: number }
+    > = {};
+    let overallStatus: "healthy" | "unhealthy" = "healthy";
+
     for (const [name, check] of this.checks.entries()) {
       try {
         const result = await Promise.race([
           check(),
-          new Promise<{ status: 'unhealthy'; details: any }>((_, reject) => 
-            setTimeout(() => reject(new Error('Health check timeout')), 5000)
-          )
+          new Promise<{ status: "unhealthy"; details: any }>((_, reject) =>
+            setTimeout(() => reject(new Error("Health check timeout")), 5000),
+          ),
         ]);
-        
+
         const resultWithTimestamp = {
           ...result,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         };
-        
+
         results[name] = resultWithTimestamp;
         this.lastResults.set(name, resultWithTimestamp);
-        
-        if (result.status === 'unhealthy') {
-          overallStatus = 'unhealthy';
+
+        if (result.status === "unhealthy") {
+          overallStatus = "unhealthy";
         }
       } catch (error) {
         const errorResult = {
-          status: 'unhealthy' as const,
+          status: "unhealthy" as const,
           details: { error: (error as Error).message },
-          timestamp: Date.now()
+          timestamp: Date.now(),
         };
-        
+
         results[name] = errorResult;
         this.lastResults.set(name, errorResult);
-        overallStatus = 'unhealthy';
-        
-        this.logger?.error('Health check failed', error as Error, { checkName: name });
+        overallStatus = "unhealthy";
+
+        this.logger?.error("Health check failed", error as Error, { checkName: name });
       }
     }
-    
+
     const healthStatus = {
       status: overallStatus,
       checks: results,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
-    
-    this.logger?.debug('Health checks completed', { 
-      status: overallStatus, 
-      checkCount: Object.keys(results).length 
+
+    this.logger?.debug("Health checks completed", {
+      status: overallStatus,
+      checkCount: Object.keys(results).length,
     });
-    
+
     return healthStatus;
   }
 
@@ -452,30 +459,33 @@ export class ApiGatewayHealthCheckManager implements ApiGatewayHealthCheck {
    * Get last health check results
    */
   getLastResults(): {
-    status: 'healthy' | 'unhealthy';
-    checks: Record<string, { status: 'healthy' | 'unhealthy'; details?: any; timestamp: number }>;
+    status: "healthy" | "unhealthy";
+    checks: Record<string, { status: "healthy" | "unhealthy"; details?: any; timestamp: number }>;
     timestamp: number;
   } {
-    const results: Record<string, { status: 'healthy' | 'unhealthy'; details?: any; timestamp: number }> = {};
-    let overallStatus: 'healthy' | 'unhealthy' = 'healthy';
+    const results: Record<
+      string,
+      { status: "healthy" | "unhealthy"; details?: any; timestamp: number }
+    > = {};
+    let overallStatus: "healthy" | "unhealthy" = "healthy";
     let latestTimestamp = 0;
-    
+
     for (const [name, result] of this.lastResults.entries()) {
       results[name] = result;
-      
-      if (result.status === 'unhealthy') {
-        overallStatus = 'unhealthy';
+
+      if (result.status === "unhealthy") {
+        overallStatus = "unhealthy";
       }
-      
+
       if (result.timestamp > latestTimestamp) {
         latestTimestamp = result.timestamp;
       }
     }
-    
+
     return {
       status: overallStatus,
       checks: results,
-      timestamp: latestTimestamp || Date.now()
+      timestamp: latestTimestamp || Date.now(),
     };
   }
 
@@ -486,16 +496,16 @@ export class ApiGatewayHealthCheckManager implements ApiGatewayHealthCheck {
     if (this.intervalId) {
       clearInterval(this.intervalId);
     }
-    
+
     this.intervalId = setInterval(async () => {
       try {
         await this.runChecks();
       } catch (error) {
-        this.logger?.error('Periodic health check error', error as Error);
+        this.logger?.error("Periodic health check error", error as Error);
       }
     }, this.checkInterval);
-    
-    this.logger?.info('Periodic health checks started', { interval: this.checkInterval });
+
+    this.logger?.info("Periodic health checks started", { interval: this.checkInterval });
   }
 
   /**
@@ -505,7 +515,7 @@ export class ApiGatewayHealthCheckManager implements ApiGatewayHealthCheck {
     if (this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = undefined;
-      this.logger?.info('Periodic health checks stopped');
+      this.logger?.info("Periodic health checks stopped");
     }
   }
 
@@ -514,60 +524,61 @@ export class ApiGatewayHealthCheckManager implements ApiGatewayHealthCheck {
    */
   private registerDefaultChecks(): void {
     // Memory usage check
-    this.registerCheck('memory', async () => {
-      if (typeof process === 'undefined' || !process.memoryUsage) {
-        return { status: 'healthy', details: { message: 'Memory monitoring not available' } };
+    this.registerCheck("memory", async () => {
+      if (typeof process === "undefined" || !process.memoryUsage) {
+        return { status: "healthy", details: { message: "Memory monitoring not available" } };
       }
-      
+
       const memory = process.memoryUsage();
       const heapUsedMB = memory.heapUsed / 1024 / 1024;
       const heapTotalMB = memory.heapTotal / 1024 / 1024;
       const heapUsagePercent = (heapUsedMB / heapTotalMB) * 100;
-      
-      const status = heapUsagePercent > 90 ? 'unhealthy' : 'healthy';
-      
+
+      const status = heapUsagePercent > 90 ? "unhealthy" : "healthy";
+
       return {
         status,
         details: {
           heapUsedMB: Math.round(heapUsedMB),
           heapTotalMB: Math.round(heapTotalMB),
           heapUsagePercent: Math.round(heapUsagePercent),
-          rssMB: Math.round(memory.rss / 1024 / 1024)
-        }
+          rssMB: Math.round(memory.rss / 1024 / 1024),
+        },
       };
     });
-    
+
     // Event loop lag check
-    this.registerCheck('event_loop', async () => {
+    this.registerCheck("event_loop", async () => {
       return new Promise((resolve) => {
         const start = Date.now();
         setImmediate(() => {
           const lag = Date.now() - start;
-          const status = lag > 100 ? 'unhealthy' : 'healthy';
-          
+          const status = lag > 100 ? "unhealthy" : "healthy";
+
           resolve({
             status,
             details: {
               lagMs: lag,
-              threshold: 100
-            }
+              threshold: 100,
+            },
           });
         });
       });
     });
-    
+
     // Uptime check
-    this.registerCheck('uptime', async () => {
-      const uptimeSeconds = typeof process !== 'undefined' && process.uptime 
-        ? process.uptime() 
-        : (Date.now() - this.lastResults.get('uptime')?.timestamp || Date.now()) / 1000;
-      
+    this.registerCheck("uptime", async () => {
+      const uptimeSeconds =
+        typeof process !== "undefined" && process.uptime
+          ? process.uptime()
+          : (Date.now() - this.lastResults.get("uptime")?.timestamp || Date.now()) / 1000;
+
       return {
-        status: 'healthy',
+        status: "healthy",
         details: {
           uptimeSeconds: Math.round(uptimeSeconds),
-          uptimeHours: Math.round(uptimeSeconds / 3600 * 100) / 100
-        }
+          uptimeHours: Math.round((uptimeSeconds / 3600) * 100) / 100,
+        },
       };
     });
   }
@@ -586,40 +597,40 @@ export class MonitoringMiddleware {
     excludePaths?: string[];
   }): any {
     return {
-      name: 'monitoring',
+      name: "monitoring",
       order: 1, // Run early to capture all requests
       enabled: true,
       config,
       handler: async (context: any, next: () => Promise<void>) => {
         const startTime = Date.now();
-        
+
         // Skip monitoring for excluded paths
         if (config.excludePaths?.includes(context.path)) {
           await next();
           return;
         }
-        
+
         // Record request metrics
         config.metrics.recordRequest(context);
-        
+
         try {
           // Execute request
           await next();
-          
+
           // Record response metrics
           const responseContext = {
             ...context,
             statusCode: context.statusCode || 200,
-            responseSize: context.responseSize || 0
+            responseSize: context.responseSize || 0,
           };
-          
+
           config.metrics.recordResponse(responseContext);
         } catch (error) {
           // Record error metrics
           config.metrics.recordError(error as Error, context);
           throw error;
         }
-      }
+      },
     };
   }
 }
@@ -640,16 +651,16 @@ export class ApiGatewayPerformanceMonitor {
     metrics: ApiGatewayMetricsCollector,
     healthCheck: ApiGatewayHealthCheckManager,
     monitorInterval: number = 60000,
-    logger?: ApiGatewayLogger
+    logger?: ApiGatewayLogger,
   ) {
     this.metrics = metrics;
     this.healthCheck = healthCheck;
     this.monitorInterval = monitorInterval;
     this.logger = logger;
-    
+
     // Register default alerts
     this.registerDefaultAlerts();
-    
+
     // Start monitoring
     this.startMonitoring();
   }
@@ -657,13 +668,9 @@ export class ApiGatewayPerformanceMonitor {
   /**
    * Register performance alert
    */
-  registerAlert(
-    name: string,
-    threshold: number,
-    callback: (value: number) => void
-  ): void {
+  registerAlert(name: string, threshold: number, callback: (value: number) => void): void {
     this.alerts.set(name, { threshold, callback });
-    this.logger?.info('Performance alert registered', { name, threshold });
+    this.logger?.info("Performance alert registered", { name, threshold });
   }
 
   /**
@@ -673,12 +680,12 @@ export class ApiGatewayPerformanceMonitor {
     if (this.intervalId) {
       clearInterval(this.intervalId);
     }
-    
+
     this.intervalId = setInterval(() => {
       this.checkPerformance();
     }, this.monitorInterval);
-    
-    this.logger?.info('Performance monitoring started', { interval: this.monitorInterval });
+
+    this.logger?.info("Performance monitoring started", { interval: this.monitorInterval });
   }
 
   /**
@@ -688,7 +695,7 @@ export class ApiGatewayPerformanceMonitor {
     if (this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = undefined;
-      this.logger?.info('Performance monitoring stopped');
+      this.logger?.info("Performance monitoring stopped");
     }
   }
 
@@ -698,27 +705,27 @@ export class ApiGatewayPerformanceMonitor {
   private checkPerformance(): void {
     try {
       const metrics = this.metrics.getMetrics();
-      
+
       // Check each alert
       for (const [name, alert] of this.alerts.entries()) {
         const value = metrics[name];
-        
-        if (typeof value === 'number' && value > alert.threshold) {
-          this.logger?.warn('Performance alert triggered', { 
-            alert: name, 
-            value, 
-            threshold: alert.threshold 
+
+        if (typeof value === "number" && value > alert.threshold) {
+          this.logger?.warn("Performance alert triggered", {
+            alert: name,
+            value,
+            threshold: alert.threshold,
           });
-          
+
           try {
             alert.callback(value);
           } catch (error) {
-            this.logger?.error('Performance alert callback error', error as Error, { alert: name });
+            this.logger?.error("Performance alert callback error", error as Error, { alert: name });
           }
         }
       }
     } catch (error) {
-      this.logger?.error('Performance monitoring error', error as Error);
+      this.logger?.error("Performance monitoring error", error as Error);
     }
   }
 
@@ -727,18 +734,20 @@ export class ApiGatewayPerformanceMonitor {
    */
   private registerDefaultAlerts(): void {
     // High response time alert
-    this.registerAlert('request_duration_ms_p95', 1000, (value) => {
-      this.logger?.warn('High response time detected', { p95ResponseTime: value });
+    this.registerAlert("request_duration_ms_p95", 1000, (value) => {
+      this.logger?.warn("High response time detected", { p95ResponseTime: value });
     });
-    
+
     // High error rate alert
-    this.registerAlert('errors_total', 100, (value) => {
-      this.logger?.warn('High error rate detected', { totalErrors: value });
+    this.registerAlert("errors_total", 100, (value) => {
+      this.logger?.warn("High error rate detected", { totalErrors: value });
     });
-    
+
     // Memory usage alert
-    this.registerAlert('process_memory_heap_used_bytes', 500 * 1024 * 1024, (value) => {
-      this.logger?.warn('High memory usage detected', { heapUsedMB: Math.round(value / 1024 / 1024) });
+    this.registerAlert("process_memory_heap_used_bytes", 500 * 1024 * 1024, (value) => {
+      this.logger?.warn("High memory usage detected", {
+        heapUsedMB: Math.round(value / 1024 / 1024),
+      });
     });
   }
 }

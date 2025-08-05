@@ -3,33 +3,30 @@
 // Story 1.4: Session Management & Security
 // =====================================================
 
-'use client'
+"use client";
 
-import React, { useState, useEffect } from 'react'
-import { useDeviceManagement } from '@/hooks/auth'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle 
-} from '@/components/ui/dialog'
-import { 
-  Alert, 
-  AlertDescription 
-} from '@/components/ui/alert'
-import { Separator } from '@/components/ui/separator'
-import { 
-  Smartphone, 
-  Monitor, 
-  Tablet, 
+import React, { useState, useEffect } from "react";
+import type { useDeviceManagement } from "@/hooks/auth";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Separator } from "@/components/ui/separator";
+import type {
+  Smartphone,
+  Monitor,
+  Tablet,
   Laptop,
-  Shield, 
-  ShieldCheck, 
+  Shield,
+  ShieldCheck,
   ShieldAlert,
   Trash2,
   Plus,
@@ -37,34 +34,34 @@ import {
   CheckCircle,
   Clock,
   MapPin,
-  Wifi
-} from 'lucide-react'
-import { cn } from '@/lib/utils'
+  Wifi,
+} from "lucide-react";
+import type { cn } from "@/lib/utils";
 
 // =====================================================
 // TYPES & INTERFACES
 // =====================================================
 
 export interface DeviceManagementProps {
-  className?: string
-  showAddDevice?: boolean
-  showRemoveDevice?: boolean
-  maxDevices?: number
+  className?: string;
+  showAddDevice?: boolean;
+  showRemoveDevice?: boolean;
+  maxDevices?: number;
 }
 
 interface Device {
-  id: string
-  name: string
-  type: 'desktop' | 'mobile' | 'tablet' | 'unknown'
-  fingerprint: string
-  isTrusted: boolean
-  riskLevel: 'low' | 'medium' | 'high'
-  lastSeen: string
-  location?: string
-  ipAddress: string
-  userAgent: string
-  isCurrentDevice: boolean
-  createdAt: string
+  id: string;
+  name: string;
+  type: "desktop" | "mobile" | "tablet" | "unknown";
+  fingerprint: string;
+  isTrusted: boolean;
+  riskLevel: "low" | "medium" | "high";
+  lastSeen: string;
+  location?: string;
+  ipAddress: string;
+  userAgent: string;
+  isCurrentDevice: boolean;
+  createdAt: string;
 }
 
 // =====================================================
@@ -75,7 +72,7 @@ export function DeviceManagement({
   className,
   showAddDevice = true,
   showRemoveDevice = true,
-  maxDevices = 5
+  maxDevices = 5,
 }: DeviceManagementProps) {
   const {
     devices,
@@ -86,114 +83,127 @@ export function DeviceManagement({
     untrustDevice,
     removeDevice,
     reportSuspiciousDevice,
-    refreshDevices
-  } = useDeviceManagement()
+    refreshDevices,
+  } = useDeviceManagement();
 
-  const [selectedDevice, setSelectedDevice] = useState<Device | null>(null)
-  const [showRemoveDialog, setShowRemoveDialog] = useState(false)
-  const [showTrustDialog, setShowTrustDialog] = useState(false)
-  const [isRegistering, setIsRegistering] = useState(false)
+  const [selectedDevice, setSelectedDevice] = useState<Device | null>(null);
+  const [showRemoveDialog, setShowRemoveDialog] = useState(false);
+  const [showTrustDialog, setShowTrustDialog] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
 
   useEffect(() => {
-    refreshDevices()
-  }, [])
+    refreshDevices();
+  }, []);
 
   // Device type icon mapping
   const getDeviceIcon = (type: string) => {
     switch (type) {
-      case 'desktop': return Monitor
-      case 'mobile': return Smartphone
-      case 'tablet': return Tablet
-      case 'laptop': return Laptop
-      default: return Monitor
+      case "desktop":
+        return Monitor;
+      case "mobile":
+        return Smartphone;
+      case "tablet":
+        return Tablet;
+      case "laptop":
+        return Laptop;
+      default:
+        return Monitor;
     }
-  }
+  };
 
   // Risk level colors
   const getRiskColor = (level: string) => {
     switch (level) {
-      case 'low': return 'text-green-600'
-      case 'medium': return 'text-yellow-600'
-      case 'high': return 'text-red-600'
-      default: return 'text-gray-600'
+      case "low":
+        return "text-green-600";
+      case "medium":
+        return "text-yellow-600";
+      case "high":
+        return "text-red-600";
+      default:
+        return "text-gray-600";
     }
-  }
+  };
 
   // Risk level badge variant
   const getRiskBadgeVariant = (level: string) => {
     switch (level) {
-      case 'low': return 'default'
-      case 'medium': return 'secondary'
-      case 'high': return 'destructive'
-      default: return 'outline'
+      case "low":
+        return "default";
+      case "medium":
+        return "secondary";
+      case "high":
+        return "destructive";
+      default:
+        return "outline";
     }
-  }
+  };
 
   // Handle device registration
   const handleRegisterDevice = async () => {
-    setIsRegistering(true)
+    setIsRegistering(true);
     try {
-      await registerDevice()
-      await refreshDevices()
+      await registerDevice();
+      await refreshDevices();
     } catch (error) {
-      console.error('Failed to register device:', error)
+      console.error("Failed to register device:", error);
     } finally {
-      setIsRegistering(false)
+      setIsRegistering(false);
     }
-  }
+  };
 
   // Handle device trust toggle
   const handleTrustToggle = async (device: Device) => {
     try {
       if (device.isTrusted) {
-        await untrustDevice(device.id)
+        await untrustDevice(device.id);
       } else {
-        await trustDevice(device.id)
+        await trustDevice(device.id);
       }
-      await refreshDevices()
-      setShowTrustDialog(false)
+      await refreshDevices();
+      setShowTrustDialog(false);
     } catch (error) {
-      console.error('Failed to toggle device trust:', error)
+      console.error("Failed to toggle device trust:", error);
     }
-  }
+  };
 
   // Handle device removal
   const handleRemoveDevice = async (device: Device) => {
     try {
-      await removeDevice(device.id)
-      await refreshDevices()
-      setShowRemoveDialog(false)
-      setSelectedDevice(null)
+      await removeDevice(device.id);
+      await refreshDevices();
+      setShowRemoveDialog(false);
+      setSelectedDevice(null);
     } catch (error) {
-      console.error('Failed to remove device:', error)
+      console.error("Failed to remove device:", error);
     }
-  }
+  };
 
   // Handle suspicious device report
   const handleReportSuspicious = async (device: Device) => {
     try {
-      await reportSuspiciousDevice(device.id, 'User reported as suspicious')
-      await refreshDevices()
+      await reportSuspiciousDevice(device.id, "User reported as suspicious");
+      await refreshDevices();
     } catch (error) {
-      console.error('Failed to report device:', error)
+      console.error("Failed to report device:", error);
     }
-  }
+  };
 
   if (isLoading) {
     return (
-      <Card className={cn('w-full', className)}>
+      <Card className={cn("w-full", className)}>
         <CardContent className="p-6">
           <div className="flex items-center justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
     <>
-      <Card className={cn('w-full', className)}>
+      <Card className={cn("w-full", className)}>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -205,50 +215,46 @@ export function DeviceManagement({
             </Badge>
           </CardTitle>
         </CardHeader>
-        
+
         <CardContent className="space-y-4">
           {/* Current Device Alert */}
           {currentDevice && (
             <Alert>
               <CheckCircle className="h-4 w-4" />
               <AlertDescription>
-                Current device: <strong>{currentDevice.name}</strong> 
-                {currentDevice.isTrusted ? ' (Trusted)' : ' (Not trusted)'}
+                Current device: <strong>{currentDevice.name}</strong>
+                {currentDevice.isTrusted ? " (Trusted)" : " (Not trusted)"}
               </AlertDescription>
             </Alert>
           )}
 
           {/* Add Device Button */}
           {showAddDevice && devices.length < maxDevices && (
-            <Button
-              onClick={handleRegisterDevice}
-              disabled={isRegistering}
-              className="w-full"
-            >
+            <Button onClick={handleRegisterDevice} disabled={isRegistering} className="w-full">
               <Plus className="h-4 w-4 mr-2" />
-              {isRegistering ? 'Registering...' : 'Register This Device'}
+              {isRegistering ? "Registering..." : "Register This Device"}
             </Button>
           )}
 
           {/* Device List */}
           <div className="space-y-3">
             {devices.map((device) => {
-              const DeviceIcon = getDeviceIcon(device.type)
-              
+              const DeviceIcon = getDeviceIcon(device.type);
+
               return (
                 <div
                   key={device.id}
                   className={cn(
-                    'p-4 rounded-lg border transition-colors',
-                    device.isCurrentDevice 
-                      ? 'bg-primary/5 border-primary/20' 
-                      : 'bg-card hover:bg-muted/50'
+                    "p-4 rounded-lg border transition-colors",
+                    device.isCurrentDevice
+                      ? "bg-primary/5 border-primary/20"
+                      : "bg-card hover:bg-muted/50",
                   )}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-3">
                       <DeviceIcon className="h-5 w-5 mt-0.5 text-muted-foreground" />
-                      
+
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
                           <span className="font-medium">{device.name}</span>
@@ -258,28 +264,26 @@ export function DeviceManagement({
                             </Badge>
                           )}
                         </div>
-                        
+
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
                           <div className="flex items-center gap-1">
                             <MapPin className="h-3 w-3" />
-                            <span>{device.location || 'Unknown location'}</span>
+                            <span>{device.location || "Unknown location"}</span>
                           </div>
-                          
+
                           <div className="flex items-center gap-1">
                             <Wifi className="h-3 w-3" />
                             <span>{device.ipAddress}</span>
                           </div>
-                          
+
                           <div className="flex items-center gap-1">
                             <Clock className="h-3 w-3" />
-                            <span>
-                              {new Date(device.lastSeen).toLocaleDateString()}
-                            </span>
+                            <span>{new Date(device.lastSeen).toLocaleDateString()}</span>
                           </div>
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center gap-2">
                       {/* Trust Status */}
                       <div className="flex items-center gap-1">
@@ -288,37 +292,36 @@ export function DeviceManagement({
                         ) : (
                           <ShieldAlert className="h-4 w-4 text-orange-600" />
                         )}
-                        <span className={cn(
-                          'text-xs font-medium',
-                          device.isTrusted ? 'text-green-600' : 'text-orange-600'
-                        )}>
-                          {device.isTrusted ? 'Trusted' : 'Untrusted'}
+                        <span
+                          className={cn(
+                            "text-xs font-medium",
+                            device.isTrusted ? "text-green-600" : "text-orange-600",
+                          )}
+                        >
+                          {device.isTrusted ? "Trusted" : "Untrusted"}
                         </span>
                       </div>
-                      
+
                       {/* Risk Level */}
-                      <Badge 
-                        variant={getRiskBadgeVariant(device.riskLevel)}
-                        className="text-xs"
-                      >
+                      <Badge variant={getRiskBadgeVariant(device.riskLevel)} className="text-xs">
                         {device.riskLevel.toUpperCase()}
                       </Badge>
                     </div>
                   </div>
-                  
+
                   {/* Device Actions */}
                   <div className="flex items-center gap-2 mt-3 pt-3 border-t">
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => {
-                        setSelectedDevice(device)
-                        setShowTrustDialog(true)
+                        setSelectedDevice(device);
+                        setShowTrustDialog(true);
                       }}
                     >
-                      {device.isTrusted ? 'Untrust' : 'Trust'}
+                      {device.isTrusted ? "Untrust" : "Trust"}
                     </Button>
-                    
+
                     {!device.isCurrentDevice && (
                       <>
                         <Button
@@ -329,14 +332,14 @@ export function DeviceManagement({
                           <AlertTriangle className="h-3 w-3 mr-1" />
                           Report
                         </Button>
-                        
+
                         {showRemoveDevice && (
                           <Button
                             size="sm"
                             variant="destructive"
                             onClick={() => {
-                              setSelectedDevice(device)
-                              setShowRemoveDialog(true)
+                              setSelectedDevice(device);
+                              setShowRemoveDialog(true);
                             }}
                           >
                             <Trash2 className="h-3 w-3 mr-1" />
@@ -347,10 +350,10 @@ export function DeviceManagement({
                     )}
                   </div>
                 </div>
-              )
+              );
             })}
           </div>
-          
+
           {devices.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
               <Shield className="h-12 w-12 mx-auto mb-4 opacity-50" />
@@ -366,26 +369,20 @@ export function DeviceManagement({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {selectedDevice?.isTrusted ? 'Untrust Device' : 'Trust Device'}
+              {selectedDevice?.isTrusted ? "Untrust Device" : "Trust Device"}
             </DialogTitle>
             <DialogDescription>
-              {selectedDevice?.isTrusted 
+              {selectedDevice?.isTrusted
                 ? `Are you sure you want to untrust "${selectedDevice?.name}"? This device will require additional verification for future logins.`
-                : `Are you sure you want to trust "${selectedDevice?.name}"? This device will be allowed to access your account with reduced security checks.`
-              }
+                : `Are you sure you want to trust "${selectedDevice?.name}"? This device will be allowed to access your account with reduced security checks.`}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setShowTrustDialog(false)}
-            >
+            <Button variant="outline" onClick={() => setShowTrustDialog(false)}>
               Cancel
             </Button>
-            <Button
-              onClick={() => selectedDevice && handleTrustToggle(selectedDevice)}
-            >
-              {selectedDevice?.isTrusted ? 'Untrust' : 'Trust'}
+            <Button onClick={() => selectedDevice && handleTrustToggle(selectedDevice)}>
+              {selectedDevice?.isTrusted ? "Untrust" : "Trust"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -397,15 +394,12 @@ export function DeviceManagement({
           <DialogHeader>
             <DialogTitle>Remove Device</DialogTitle>
             <DialogDescription>
-              Are you sure you want to remove "<strong>{selectedDevice?.name}</strong>"? 
-              This action cannot be undone and the device will need to be re-registered.
+              Are you sure you want to remove "<strong>{selectedDevice?.name}</strong>"? This action
+              cannot be undone and the device will need to be re-registered.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setShowRemoveDialog(false)}
-            >
+            <Button variant="outline" onClick={() => setShowRemoveDialog(false)}>
               Cancel
             </Button>
             <Button
@@ -418,11 +412,11 @@ export function DeviceManagement({
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }
 
 // =====================================================
 // EXPORT DEFAULT
 // =====================================================
 
-export default DeviceManagement
+export default DeviceManagement;

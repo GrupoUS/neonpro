@@ -1,7 +1,7 @@
-﻿import { createClient } from '@/lib/supabase/client';
-import type { 
-  InventoryItem, 
-  CreateInventoryItem, 
+import type { createClient } from "@/lib/supabase/client";
+import type {
+  InventoryItem,
+  CreateInventoryItem,
   UpdateInventoryItem,
   InventoryStock,
   CreateInventoryStock,
@@ -15,30 +15,27 @@ import type {
   StockTransferFilters,
   StockTransactionFilters,
   LocationStockSummary,
-  InventoryMovementSummary
-} from '@/app/lib/types/inventory';
+  InventoryMovementSummary,
+} from "@/app/lib/types/inventory";
 
 export class MultiLocationInventoryService {
   // Supabase client created per method for proper request context
 
   // ===== INVENTORY ITEMS =====
-  
+
   async getInventoryItems(filters: InventoryFilters = {}): Promise<InventoryItem[]> {
-    let query = supabase
-      .from('inventory_items')
-      .select('*')
-      .order('name');
+    let query = supabase.from("inventory_items").select("*").order("name");
 
     if (filters.clinic_id) {
-      query = query.eq('clinic_id', filters.clinic_id);
+      query = query.eq("clinic_id", filters.clinic_id);
     }
-    
+
     if (filters.category) {
-      query = query.eq('category', filters.category);
+      query = query.eq("category", filters.category);
     }
-    
+
     if (filters.active_only !== false) {
-      query = query.eq('is_active', true);
+      query = query.eq("is_active", true);
     }
 
     const { data, error } = await query;
@@ -49,23 +46,19 @@ export class MultiLocationInventoryService {
   async getInventoryItem(id: string): Promise<InventoryItem | null> {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from('inventory_items')
-      .select('*')
-      .eq('id', id)
+      .from("inventory_items")
+      .select("*")
+      .eq("id", id)
       .single();
-    
+
     if (error) throw error;
     return data;
   }
 
   async createInventoryItem(item: CreateInventoryItem): Promise<InventoryItem> {
     const supabase = await createClient();
-    const { data, error } = await supabase
-      .from('inventory_items')
-      .insert(item)
-      .select()
-      .single();
-    
+    const { data, error } = await supabase.from("inventory_items").insert(item).select().single();
+
     if (error) throw error;
     return data;
   }
@@ -73,58 +66,55 @@ export class MultiLocationInventoryService {
   async updateInventoryItem(item: UpdateInventoryItem): Promise<InventoryItem> {
     const { id, ...updates } = item;
     const { data, error } = await supabase
-      .from('inventory_items')
+      .from("inventory_items")
       .update(updates)
-      .eq('id', id)
+      .eq("id", id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   }
 
   async deleteInventoryItem(id: string): Promise<void> {
-    const { error } = await supabase
-      .from('inventory_items')
-      .delete()
-      .eq('id', id);
-    
+    const { error } = await supabase.from("inventory_items").delete().eq("id", id);
+
     if (error) throw error;
   }
 
   // ===== INVENTORY STOCK =====
-  
+
   async getInventoryStock(filters: InventoryFilters = {}): Promise<InventoryStock[]> {
     let query = supabase
-      .from('inventory_stock')
+      .from("inventory_stock")
       .select(`
         *,
         inventory_item:inventory_items(*),
         clinic:clinics(id, clinic_name, clinic_code),
         room:rooms(id, name, description)
       `)
-      .order('updated_at', { ascending: false });
+      .order("updated_at", { ascending: false });
 
     if (filters.clinic_id) {
-      query = query.eq('clinic_id', filters.clinic_id);
+      query = query.eq("clinic_id", filters.clinic_id);
     }
-    
+
     if (filters.room_id) {
-      query = query.eq('room_id', filters.room_id);
+      query = query.eq("room_id", filters.room_id);
     }
-    
+
     if (filters.low_stock) {
-      query = query.lt('available_quantity', 'inventory_items.minimum_stock_alert');
+      query = query.lt("available_quantity", "inventory_items.minimum_stock_alert");
     }
-    
+
     if (filters.expiring_soon) {
       const nextMonth = new Date();
       nextMonth.setMonth(nextMonth.getMonth() + 1);
-      query = query.lte('expiry_date', nextMonth.toISOString().split('T')[0]);
+      query = query.lte("expiry_date", nextMonth.toISOString().split("T")[0]);
     }
-    
+
     if (filters.batch_number) {
-      query = query.eq('batch_number', filters.batch_number);
+      query = query.eq("batch_number", filters.batch_number);
     }
 
     const { data, error } = await query;
@@ -139,12 +129,12 @@ export class MultiLocationInventoryService {
   async updateStock(stock: UpdateInventoryStock): Promise<InventoryStock> {
     const { id, ...updates } = stock;
     const { data, error } = await supabase
-      .from('inventory_stock')
+      .from("inventory_stock")
       .update({
         ...updates,
         last_counted_at: new Date().toISOString(),
       })
-      .eq('id', id)
+      .eq("id", id)
       .select(`
         *,
         inventory_item:inventory_items(*),
@@ -152,7 +142,7 @@ export class MultiLocationInventoryService {
         room:rooms(id, name, description)
       `)
       .single();
-    
+
     if (error) throw error;
     return data;
   }
@@ -160,7 +150,7 @@ export class MultiLocationInventoryService {
   async createOrUpdateStock(stock: CreateInventoryStock): Promise<InventoryStock> {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from('inventory_stock')
+      .from("inventory_stock")
       .upsert(stock)
       .select(`
         *,
@@ -169,14 +159,14 @@ export class MultiLocationInventoryService {
         room:rooms(id, name, description)
       `)
       .single();
-    
+
     if (error) throw error;
     return data;
-  }  // ===== STOCK TRANSFERS =====
-  
+  } // ===== STOCK TRANSFERS =====
+
   async getStockTransfers(filters: StockTransferFilters = {}): Promise<StockTransfer[]> {
     let query = supabase
-      .from('stock_transfers')
+      .from("stock_transfers")
       .select(`
         *,
         inventory_item:inventory_items(id, name, sku, category),
@@ -186,26 +176,28 @@ export class MultiLocationInventoryService {
         to_room:to_room_id(id, name),
         requester:requested_by(id, full_name)
       `)
-      .order('created_at', { ascending: false });
+      .order("created_at", { ascending: false });
 
     if (filters.clinic_id) {
-      query = query.or(`from_clinic_id.eq.${filters.clinic_id},to_clinic_id.eq.${filters.clinic_id}`);
+      query = query.or(
+        `from_clinic_id.eq.${filters.clinic_id},to_clinic_id.eq.${filters.clinic_id}`,
+      );
     }
-    
+
     if (filters.status) {
-      query = query.eq('status', filters.status);
+      query = query.eq("status", filters.status);
     }
-    
+
     if (filters.transfer_type) {
-      query = query.eq('transfer_type', filters.transfer_type);
+      query = query.eq("transfer_type", filters.transfer_type);
     }
-    
+
     if (filters.date_from) {
-      query = query.gte('created_at', filters.date_from);
+      query = query.gte("created_at", filters.date_from);
     }
-    
+
     if (filters.date_to) {
-      query = query.lte('created_at', filters.date_to);
+      query = query.lte("created_at", filters.date_to);
     }
 
     const { data, error } = await query;
@@ -216,7 +208,7 @@ export class MultiLocationInventoryService {
   async createStockTransfer(transfer: CreateStockTransfer): Promise<StockTransfer> {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from('stock_transfers')
+      .from("stock_transfers")
       .insert({
         ...transfer,
         requested_at: new Date().toISOString(),
@@ -230,29 +222,29 @@ export class MultiLocationInventoryService {
         to_room:to_room_id(id, name)
       `)
       .single();
-    
+
     if (error) throw error;
     return data;
   }
 
   async updateStockTransfer(transfer: UpdateStockTransfer): Promise<StockTransfer> {
     const { id, ...updates } = transfer;
-    
+
     // Add timestamps based on status changes
-    if (updates.status === 'approved' && !updates.approved_at) {
+    if (updates.status === "approved" && !updates.approved_at) {
       updates.approved_at = new Date().toISOString();
     }
-    if (updates.status === 'in_transit' && !updates.sent_at) {
+    if (updates.status === "in_transit" && !updates.sent_at) {
       updates.sent_at = new Date().toISOString();
     }
-    if (updates.status === 'completed' && !updates.received_at) {
+    if (updates.status === "completed" && !updates.received_at) {
       updates.received_at = new Date().toISOString();
     }
 
     const { data, error } = await supabase
-      .from('stock_transfers')
+      .from("stock_transfers")
       .update(updates)
-      .eq('id', id)
+      .eq("id", id)
       .select(`
         *,
         inventory_item:inventory_items(id, name, sku, category),
@@ -262,16 +254,16 @@ export class MultiLocationInventoryService {
         to_room:to_room_id(id, name)
       `)
       .single();
-    
+
     if (error) throw error;
     return data;
   }
 
   // ===== STOCK TRANSACTIONS =====
-  
+
   async getStockTransactions(filters: StockTransactionFilters = {}): Promise<StockTransaction[]> {
     let query = supabase
-      .from('stock_transactions')
+      .from("stock_transactions")
       .select(`
         *,
         inventory_item:inventory_items(id, name, sku, category),
@@ -279,30 +271,30 @@ export class MultiLocationInventoryService {
         room:rooms(id, name),
         performer:performed_by(id, full_name)
       `)
-      .order('created_at', { ascending: false });
+      .order("created_at", { ascending: false });
 
     if (filters.clinic_id) {
-      query = query.eq('clinic_id', filters.clinic_id);
+      query = query.eq("clinic_id", filters.clinic_id);
     }
-    
+
     if (filters.room_id) {
-      query = query.eq('room_id', filters.room_id);
+      query = query.eq("room_id", filters.room_id);
     }
-    
+
     if (filters.transaction_type) {
-      query = query.eq('transaction_type', filters.transaction_type);
+      query = query.eq("transaction_type", filters.transaction_type);
     }
-    
+
     if (filters.inventory_item_id) {
-      query = query.eq('inventory_item_id', filters.inventory_item_id);
+      query = query.eq("inventory_item_id", filters.inventory_item_id);
     }
-    
+
     if (filters.date_from) {
-      query = query.gte('created_at', filters.date_from);
+      query = query.gte("created_at", filters.date_from);
     }
-    
+
     if (filters.date_to) {
-      query = query.lte('created_at', filters.date_to);
+      query = query.lte("created_at", filters.date_to);
     }
 
     const { data, error } = await query;
@@ -313,7 +305,7 @@ export class MultiLocationInventoryService {
   async createStockTransaction(transaction: CreateStockTransaction): Promise<StockTransaction> {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from('stock_transactions')
+      .from("stock_transactions")
       .insert(transaction)
       .select(`
         *,
@@ -322,19 +314,18 @@ export class MultiLocationInventoryService {
         room:rooms(id, name)
       `)
       .single();
-    
+
     if (error) throw error;
     return data;
   }
 
   // ===== DASHBOARD & ANALYTICS =====
-  
+
   async getLocationStockSummary(clinic_id?: string): Promise<LocationStockSummary[]> {
-    let query = supabase
-      .rpc('get_location_stock_summary');
-    
+    let query = supabase.rpc("get_location_stock_summary");
+
     if (clinic_id) {
-      query = query.eq('clinic_id', clinic_id);
+      query = query.eq("clinic_id", clinic_id);
     }
 
     const { data, error } = await query;
@@ -343,55 +334,56 @@ export class MultiLocationInventoryService {
   }
 
   async getInventoryMovementSummary(
-    clinic_id?: string, 
-    days: number = 30
+    clinic_id?: string,
+    days: number = 30,
   ): Promise<InventoryMovementSummary[]> {
     const fromDate = new Date();
     fromDate.setDate(fromDate.getDate() - days);
     const supabase = await createClient();
 
-    const { data, error } = await supabase
-      .rpc('get_inventory_movement_summary', {
-        clinic_filter: clinic_id,
-        from_date: fromDate.toISOString(),
-        to_date: new Date().toISOString()
-      });
+    const { data, error } = await supabase.rpc("get_inventory_movement_summary", {
+      clinic_filter: clinic_id,
+      from_date: fromDate.toISOString(),
+      to_date: new Date().toISOString(),
+    });
 
     if (error) throw error;
     return data || [];
   }
 
   async getLowStockAlerts(clinic_id?: string): Promise<InventoryStock[]> {
-    return this.getInventoryStock({ 
-      clinic_id, 
-      low_stock: true 
+    return this.getInventoryStock({
+      clinic_id,
+      low_stock: true,
     });
   }
 
   async getExpiringItems(clinic_id?: string, days: number = 30): Promise<InventoryStock[]> {
-    return this.getInventoryStock({ 
-      clinic_id, 
-      expiring_soon: true 
+    return this.getInventoryStock({
+      clinic_id,
+      expiring_soon: true,
     });
   }
 
   // ===== BULK OPERATIONS =====
-  
+
   async bulkUpdateStock(updates: UpdateInventoryStock[]): Promise<InventoryStock[]> {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from('inventory_stock')
-      .upsert(updates.map(update => ({
-        ...update,
-        last_counted_at: new Date().toISOString(),
-      })))
+      .from("inventory_stock")
+      .upsert(
+        updates.map((update) => ({
+          ...update,
+          last_counted_at: new Date().toISOString(),
+        })),
+      )
       .select(`
         *,
         inventory_item:inventory_items(*),
         clinic:clinics(id, clinic_name, clinic_code),
         room:rooms(id, name, description)
       `);
-    
+
     if (error) throw error;
     return data || [];
   }
@@ -403,7 +395,7 @@ export class MultiLocationInventoryService {
     quantity: number,
     from_room_id?: string,
     to_room_id?: string,
-    notes?: string
+    notes?: string,
   ): Promise<StockTransfer> {
     const transfer: CreateStockTransfer = {
       inventory_item_id,
@@ -412,12 +404,11 @@ export class MultiLocationInventoryService {
       from_room_id,
       to_room_id,
       quantity,
-      transfer_type: from_clinic_id === to_clinic_id ? 'internal' : 'inter_clinic',
+      transfer_type: from_clinic_id === to_clinic_id ? "internal" : "inter_clinic",
       notes,
-      requested_by: '',
+      requested_by: "",
     };
 
     return this.createStockTransfer(transfer);
   }
 }
-

@@ -1,39 +1,45 @@
-// Main Dashboard Layout - STORY-SUB-002 Task 4  
+// Main Dashboard Layout - STORY-SUB-002 Task 4
 // Integrates analytics overview, conversion charts, and trial management
 // Based on research: SaaS dashboard best practices + shadcn/ui patterns
 // Created: 2025-01-22
 
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { 
-  BarChart3, 
-  Users, 
-  TrendingUp, 
-  Settings, 
+import type { useState } from "react";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type {
+  BarChart3,
+  Users,
+  TrendingUp,
+  Settings,
   RefreshCw,
   Bell,
   Download,
-  Filter
-} from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { AnalyticsOverview } from './analytics/analytics-overview'
-import { ConversionCharts } from './analytics/conversion-charts'
-import { TrialManagement } from './trial-management/trial-management'
+  Filter,
+} from "lucide-react";
+import type { cn } from "@/lib/utils";
+import type { AnalyticsOverview } from "./analytics/analytics-overview";
+import type { ConversionCharts } from "./analytics/conversion-charts";
+import type { TrialManagement } from "./trial-management/trial-management";
 
 interface DashboardProps {
-  className?: string
+  className?: string;
 }
 
 export function Dashboard({ className }: DashboardProps) {
-  const [activeTab, setActiveTab] = useState('overview')
+  const [activeTab, setActiveTab] = useState("overview");
 
   return (
-    <div className={cn('flex-1 space-y-4 p-4 md:p-8 pt-6', className)}>
+    <div className={cn("flex-1 space-y-4 p-4 md:p-8 pt-6", className)}>
       {/* Dashboard Header */}
       <div className="flex items-center justify-between space-y-2">
         <div>
@@ -60,7 +66,8 @@ export function Dashboard({ className }: DashboardProps) {
             Settings
           </Button>
         </div>
-      </div>      {/* Main Dashboard Tabs */}
+      </div>{" "}
+      {/* Main Dashboard Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="overview" className="flex items-center space-x-2">
@@ -92,7 +99,6 @@ export function Dashboard({ className }: DashboardProps) {
           <TrialManagement />
         </TabsContent>
       </Tabs>
-
       {/* Quick Stats Cards - Always Visible */}
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
@@ -107,7 +113,7 @@ export function Dashboard({ className }: DashboardProps) {
             </p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Conversion Rate</CardTitle>
@@ -120,7 +126,7 @@ export function Dashboard({ className }: DashboardProps) {
             </p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">High Risk Trials</CardTitle>
@@ -133,7 +139,7 @@ export function Dashboard({ className }: DashboardProps) {
             </p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Revenue This Month</CardTitle>
@@ -148,5 +154,5 @@ export function Dashboard({ className }: DashboardProps) {
         </Card>
       </div>
     </div>
-  )
+  );
 }

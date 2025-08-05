@@ -2,7 +2,7 @@
  * Financial Dashboard Component - Real-time Analytics Interface
  * Story 4.2: Financial Analytics & Business Intelligence
  * Phase 1: Real-time Cash Flow Dashboard
- * 
+ *
  * This component provides a comprehensive financial dashboard with:
  * - Real-time financial metrics and KPIs
  * - Interactive charts and visualizations
@@ -12,23 +12,29 @@
  * - Actionable recommendations
  */
 
-'use client'
+"use client";
 
-import React, { useState, useEffect, useCallback } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Progress } from '@/components/ui/progress'
-import { Separator } from '@/components/ui/separator'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  DollarSign, 
-  AlertTriangle, 
-  Target, 
+import React, { useState, useEffect, useCallback } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Progress } from "@/components/ui/progress";
+import type { Separator } from "@/components/ui/separator";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type {
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  AlertTriangle,
+  Target,
   BarChart3,
   PieChart,
   LineChart,
@@ -42,135 +48,148 @@ import {
   Clock,
   ArrowUp,
   ArrowDown,
-  Minus
-} from 'lucide-react'
-import { 
-  FinancialDashboardEngine, 
+  Minus,
+} from "lucide-react";
+import type {
+  FinancialDashboardEngine,
   type FinancialDashboardData,
   type FinancialMetrics,
   type DashboardForecast,
   type PerformanceIndicators,
   type Recommendation,
-  type FinancialAlert
-} from '@/lib/financial/financial-dashboard-engine'
-import { formatCurrency, formatPercentage, formatNumber } from '@/lib/utils/formatters'
-import { cn } from '@/lib/utils'
+  type FinancialAlert,
+} from "@/lib/financial/financial-dashboard-engine";
+import type { formatCurrency, formatPercentage, formatNumber } from "@/lib/utils/formatters";
+import type { cn } from "@/lib/utils";
 
 // Chart components (simplified for now)
-const LineChartComponent = ({ data, className }: { data: any[], className?: string }) => (
-  <div className={cn('h-64 bg-muted/20 rounded-lg flex items-center justify-center', className)}>
+const LineChartComponent = ({ data, className }: { data: any[]; className?: string }) => (
+  <div className={cn("h-64 bg-muted/20 rounded-lg flex items-center justify-center", className)}>
     <LineChart className="h-8 w-8 text-muted-foreground" />
     <span className="ml-2 text-sm text-muted-foreground">Chart: {data.length} data points</span>
   </div>
-)
+);
 
-const BarChartComponent = ({ data, className }: { data: any[], className?: string }) => (
-  <div className={cn('h-64 bg-muted/20 rounded-lg flex items-center justify-center', className)}>
+const BarChartComponent = ({ data, className }: { data: any[]; className?: string }) => (
+  <div className={cn("h-64 bg-muted/20 rounded-lg flex items-center justify-center", className)}>
     <BarChart3 className="h-8 w-8 text-muted-foreground" />
     <span className="ml-2 text-sm text-muted-foreground">Chart: {data.length} data points</span>
   </div>
-)
+);
 
-const PieChartComponent = ({ data, className }: { data: any[], className?: string }) => (
-  <div className={cn('h-64 bg-muted/20 rounded-lg flex items-center justify-center', className)}>
+const PieChartComponent = ({ data, className }: { data: any[]; className?: string }) => (
+  <div className={cn("h-64 bg-muted/20 rounded-lg flex items-center justify-center", className)}>
     <PieChart className="h-8 w-8 text-muted-foreground" />
     <span className="ml-2 text-sm text-muted-foreground">Chart: {data.length} segments</span>
   </div>
-)
+);
 
 interface FinancialDashboardProps {
-  clinicId: string
-  refreshInterval?: number // seconds
-  className?: string
+  clinicId: string;
+  refreshInterval?: number; // seconds
+  className?: string;
 }
 
-export function FinancialDashboard({ 
-  clinicId, 
+export function FinancialDashboard({
+  clinicId,
   refreshInterval = 300, // 5 minutes default
-  className 
+  className,
 }: FinancialDashboardProps) {
-  const [dashboardData, setDashboardData] = useState<FinancialDashboardData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
-  const [autoRefresh, setAutoRefresh] = useState(true)
-  const [selectedTimeframe, setSelectedTimeframe] = useState<'7d' | '30d' | '90d' | '1y'>('30d')
+  const [dashboardData, setDashboardData] = useState<FinancialDashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [autoRefresh, setAutoRefresh] = useState(true);
+  const [selectedTimeframe, setSelectedTimeframe] = useState<"7d" | "30d" | "90d" | "1y">("30d");
 
-  const dashboardEngine = new FinancialDashboardEngine()
+  const dashboardEngine = new FinancialDashboardEngine();
 
   const fetchDashboardData = useCallback(async () => {
     try {
-      setLoading(true)
-      setError(null)
-      
+      setLoading(true);
+      setError(null);
+
       const data = await dashboardEngine.getDashboardData(clinicId, {
         refresh_interval: refreshInterval,
         cache_duration: refreshInterval,
         alert_thresholds: {},
         display_preferences: {
-          currency: 'BRL',
-          date_format: 'DD/MM/YYYY',
-          number_format: 'pt-BR',
-          timezone: 'America/Sao_Paulo'
+          currency: "BRL",
+          date_format: "DD/MM/YYYY",
+          number_format: "pt-BR",
+          timezone: "America/Sao_Paulo",
         },
-        widgets_enabled: ['cash_flow', 'metrics', 'alerts', 'forecasts', 'recommendations'],
-        custom_metrics: []
-      })
-      
-      setDashboardData(data)
-      setLastUpdated(new Date())
+        widgets_enabled: ["cash_flow", "metrics", "alerts", "forecasts", "recommendations"],
+        custom_metrics: [],
+      });
+
+      setDashboardData(data);
+      setLastUpdated(new Date());
     } catch (err) {
-      console.error('Error fetching dashboard data:', err)
-      setError(err instanceof Error ? err.message : 'Failed to load dashboard data')
+      console.error("Error fetching dashboard data:", err);
+      setError(err instanceof Error ? err.message : "Failed to load dashboard data");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [clinicId, refreshInterval])
+  }, [clinicId, refreshInterval]);
 
   // Initial load
   useEffect(() => {
-    fetchDashboardData()
-  }, [fetchDashboardData])
+    fetchDashboardData();
+  }, [fetchDashboardData]);
 
   // Auto-refresh
   useEffect(() => {
-    if (!autoRefresh) return
-    
-    const interval = setInterval(fetchDashboardData, refreshInterval * 1000)
-    return () => clearInterval(interval)
-  }, [autoRefresh, refreshInterval, fetchDashboardData])
+    if (!autoRefresh) return;
 
-  const getTrendIcon = (trend: 'up' | 'down' | 'stable') => {
+    const interval = setInterval(fetchDashboardData, refreshInterval * 1000);
+    return () => clearInterval(interval);
+  }, [autoRefresh, refreshInterval, fetchDashboardData]);
+
+  const getTrendIcon = (trend: "up" | "down" | "stable") => {
     switch (trend) {
-      case 'up': return <ArrowUp className="h-4 w-4 text-green-500" />
-      case 'down': return <ArrowDown className="h-4 w-4 text-red-500" />
-      case 'stable': return <Minus className="h-4 w-4 text-yellow-500" />
+      case "up":
+        return <ArrowUp className="h-4 w-4 text-green-500" />;
+      case "down":
+        return <ArrowDown className="h-4 w-4 text-red-500" />;
+      case "stable":
+        return <Minus className="h-4 w-4 text-yellow-500" />;
     }
-  }
+  };
 
   const getAlertIcon = (severity: string) => {
     switch (severity) {
-      case 'critical': return <XCircle className="h-4 w-4 text-red-500" />
-      case 'high': return <AlertTriangle className="h-4 w-4 text-orange-500" />
-      case 'medium': return <Clock className="h-4 w-4 text-yellow-500" />
-      case 'low': return <CheckCircle className="h-4 w-4 text-green-500" />
-      default: return <Bell className="h-4 w-4 text-blue-500" />
+      case "critical":
+        return <XCircle className="h-4 w-4 text-red-500" />;
+      case "high":
+        return <AlertTriangle className="h-4 w-4 text-orange-500" />;
+      case "medium":
+        return <Clock className="h-4 w-4 text-yellow-500" />;
+      case "low":
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
+      default:
+        return <Bell className="h-4 w-4 text-blue-500" />;
     }
-  }
+  };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'critical': return 'destructive'
-      case 'high': return 'destructive'
-      case 'medium': return 'default'
-      case 'low': return 'secondary'
-      default: return 'outline'
+      case "critical":
+        return "destructive";
+      case "high":
+        return "destructive";
+      case "medium":
+        return "default";
+      case "low":
+        return "secondary";
+      default:
+        return "outline";
     }
-  }
+  };
 
   if (loading && !dashboardData) {
     return (
-      <div className={cn('space-y-6', className)}>
+      <div className={cn("space-y-6", className)}>
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <h2 className="text-2xl font-semibold tracking-tight">Dashboard Financeiro</h2>
@@ -192,12 +211,12 @@ export function FinancialDashboard({
           ))}
         </div>
       </div>
-    )
+    );
   }
 
   if (error) {
     return (
-      <div className={cn('space-y-6', className)}>
+      <div className={cn("space-y-6", className)}>
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Erro ao carregar dashboard</AlertTitle>
@@ -208,31 +227,27 @@ export function FinancialDashboard({
           Tentar novamente
         </Button>
       </div>
-    )
+    );
   }
 
   if (!dashboardData) {
-    return null
+    return null;
   }
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn("space-y-6", className)}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <h2 className="text-2xl font-semibold tracking-tight">Dashboard Financeiro</h2>
           <p className="text-sm text-muted-foreground">
-            Última atualização: {lastUpdated?.toLocaleString('pt-BR')}
+            Última atualização: {lastUpdated?.toLocaleString("pt-BR")}
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setAutoRefresh(!autoRefresh)}
-          >
-            <RefreshCw className={cn('mr-2 h-4 w-4', autoRefresh && 'animate-spin')} />
-            {autoRefresh ? 'Auto' : 'Manual'}
+          <Button variant="outline" size="sm" onClick={() => setAutoRefresh(!autoRefresh)}>
+            <RefreshCw className={cn("mr-2 h-4 w-4", autoRefresh && "animate-spin")} />
+            {autoRefresh ? "Auto" : "Manual"}
           </Button>
           <Button variant="outline" size="sm" onClick={fetchDashboardData}>
             <RefreshCw className="mr-2 h-4 w-4" />
@@ -250,12 +265,13 @@ export function FinancialDashboard({
       </div>
 
       {/* Critical Alerts */}
-      {dashboardData.alerts.filter(alert => alert.severity === 'critical').length > 0 && (
+      {dashboardData.alerts.filter((alert) => alert.severity === "critical").length > 0 && (
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Alertas Críticos</AlertTitle>
           <AlertDescription>
-            {dashboardData.alerts.filter(alert => alert.severity === 'critical').length} alertas críticos requerem atenção imediata.
+            {dashboardData.alerts.filter((alert) => alert.severity === "critical").length} alertas
+            críticos requerem atenção imediata.
           </AlertDescription>
         </Alert>
       )}
@@ -272,9 +288,10 @@ export function FinancialDashboard({
               {formatCurrency(dashboardData.metrics.total_revenue)}
             </div>
             <div className="flex items-center text-xs text-muted-foreground">
-              {getTrendIcon(dashboardData.metrics.revenue_growth.monthly > 0 ? 'up' : 'down')}
+              {getTrendIcon(dashboardData.metrics.revenue_growth.monthly > 0 ? "up" : "down")}
               <span className="ml-1">
-                {formatPercentage(Math.abs(dashboardData.metrics.revenue_growth.monthly))} vs mês anterior
+                {formatPercentage(Math.abs(dashboardData.metrics.revenue_growth.monthly))} vs mês
+                anterior
               </span>
             </div>
           </CardContent>
@@ -305,7 +322,7 @@ export function FinancialDashboard({
               {formatCurrency(dashboardData.cash_flow.current_balance)}
             </div>
             <div className="flex items-center text-xs text-muted-foreground">
-              {getTrendIcon(dashboardData.cash_flow.net_cash_flow > 0 ? 'up' : 'down')}
+              {getTrendIcon(dashboardData.cash_flow.net_cash_flow > 0 ? "up" : "down")}
               <span className="ml-1">
                 {formatCurrency(Math.abs(dashboardData.cash_flow.net_cash_flow))} hoje
               </span>
@@ -322,10 +339,7 @@ export function FinancialDashboard({
             <div className="text-2xl font-bold">
               {Math.round(dashboardData.performance_indicators.overall_score)}/100
             </div>
-            <Progress 
-              value={dashboardData.performance_indicators.overall_score} 
-              className="mt-2" 
-            />
+            <Progress value={dashboardData.performance_indicators.overall_score} className="mt-2" />
           </CardContent>
         </Card>
       </div>
@@ -357,7 +371,7 @@ export function FinancialDashboard({
                   </div>
                   <Progress value={dashboardData.performance_indicators.financial_health_score} />
                 </div>
-                
+
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-sm">Crescimento</span>
@@ -367,7 +381,7 @@ export function FinancialDashboard({
                   </div>
                   <Progress value={dashboardData.performance_indicators.growth_score} />
                 </div>
-                
+
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-sm">Eficiência</span>
@@ -377,7 +391,7 @@ export function FinancialDashboard({
                   </div>
                   <Progress value={dashboardData.performance_indicators.efficiency_score} />
                 </div>
-                
+
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-sm">Risco</span>
@@ -385,8 +399,8 @@ export function FinancialDashboard({
                       {Math.round(dashboardData.performance_indicators.risk_score)}/100
                     </span>
                   </div>
-                  <Progress 
-                    value={dashboardData.performance_indicators.risk_score} 
+                  <Progress
+                    value={dashboardData.performance_indicators.risk_score}
                     className="[&>div]:bg-red-500"
                   />
                 </div>
@@ -418,9 +432,7 @@ export function FinancialDashboard({
           <Card>
             <CardHeader>
               <CardTitle>Tendências Financeiras</CardTitle>
-              <CardDescription>
-                Análise de tendências de receita, despesas e lucro
-              </CardDescription>
+              <CardDescription>Análise de tendências de receita, despesas e lucro</CardDescription>
             </CardHeader>
             <CardContent>
               <LineChartComponent data={[]} />
@@ -438,7 +450,7 @@ export function FinancialDashboard({
                 <BarChartComponent data={[]} />
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader>
                 <CardTitle>Resumo do Fluxo de Caixa</CardTitle>
@@ -471,11 +483,13 @@ export function FinancialDashboard({
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm">Fluxo Líquido</span>
-                  <span className={cn(
-                    'font-medium',
-                    dashboardData.cash_flow.net_cash_flow > 0 ? 'text-green-600' : 'text-red-600'
-                  )}>
-                    {dashboardData.cash_flow.net_cash_flow > 0 ? '+' : ''}
+                  <span
+                    className={cn(
+                      "font-medium",
+                      dashboardData.cash_flow.net_cash_flow > 0 ? "text-green-600" : "text-red-600",
+                    )}
+                  >
+                    {dashboardData.cash_flow.net_cash_flow > 0 ? "+" : ""}
                     {formatCurrency(dashboardData.cash_flow.net_cash_flow)}
                   </span>
                 </div>
@@ -490,7 +504,7 @@ export function FinancialDashboard({
               <Card key={index}>
                 <CardHeader>
                   <CardTitle className="capitalize">
-                    Previsão de {forecast.type.replace('_', ' ')}
+                    Previsão de {forecast.type.replace("_", " ")}
                   </CardTitle>
                   <CardDescription>
                     Próximos {forecast.period} - Confiança: {formatPercentage(forecast.confidence)}
@@ -499,25 +513,23 @@ export function FinancialDashboard({
                 <CardContent className="space-y-4">
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Valor Atual</span>
-                    <span className="font-medium">
-                      {formatCurrency(forecast.current_value)}
-                    </span>
+                    <span className="font-medium">{formatCurrency(forecast.current_value)}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Valor Previsto</span>
-                    <span className="font-medium">
-                      {formatCurrency(forecast.predicted_value)}
-                    </span>
+                    <span className="font-medium">{formatCurrency(forecast.predicted_value)}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Variação</span>
                     <div className="flex items-center">
                       {getTrendIcon(forecast.trend)}
-                      <span className={cn(
-                        'ml-1 font-medium',
-                        forecast.change_percentage > 0 ? 'text-green-600' : 'text-red-600'
-                      )}>
-                        {forecast.change_percentage > 0 ? '+' : ''}
+                      <span
+                        className={cn(
+                          "ml-1 font-medium",
+                          forecast.change_percentage > 0 ? "text-green-600" : "text-red-600",
+                        )}
+                      >
+                        {forecast.change_percentage > 0 ? "+" : ""}
                         {formatPercentage(forecast.change_percentage / 100)}
                       </span>
                     </div>
@@ -545,18 +557,19 @@ export function FinancialDashboard({
                 </Card>
               ) : (
                 dashboardData.alerts.map((alert, index) => (
-                  <Alert key={index} variant={alert.severity === 'critical' ? 'destructive' : 'default'}>
+                  <Alert
+                    key={index}
+                    variant={alert.severity === "critical" ? "destructive" : "default"}
+                  >
                     {getAlertIcon(alert.severity)}
                     <AlertTitle className="flex items-center justify-between">
                       <span>{alert.title}</span>
-                      <Badge variant={getPriorityColor(alert.severity)}>
-                        {alert.severity}
-                      </Badge>
+                      <Badge variant={getPriorityColor(alert.severity)}>{alert.severity}</Badge>
                     </AlertTitle>
                     <AlertDescription>
                       <p className="mb-2">{alert.description}</p>
                       <div className="text-xs text-muted-foreground">
-                        {new Date(alert.created_at).toLocaleString('pt-BR')}
+                        {new Date(alert.created_at).toLocaleString("pt-BR")}
                       </div>
                     </AlertDescription>
                   </Alert>
@@ -599,7 +612,7 @@ export function FinancialDashboard({
                         </p>
                       </div>
                     </div>
-                    
+
                     <div>
                       <span className="text-xs text-muted-foreground">Próximos Passos</span>
                       <ul className="mt-1 text-sm space-y-1">
@@ -611,10 +624,10 @@ export function FinancialDashboard({
                         ))}
                       </ul>
                     </div>
-                    
+
                     <div className="flex justify-between items-center pt-2">
                       <span className="text-xs text-muted-foreground">
-                        Prazo: {new Date(recommendation.deadline).toLocaleDateString('pt-BR')}
+                        Prazo: {new Date(recommendation.deadline).toLocaleDateString("pt-BR")}
                       </span>
                       <Button size="sm" variant="outline">
                         Ver Detalhes
@@ -628,7 +641,7 @@ export function FinancialDashboard({
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
 
-export default FinancialDashboard
+export default FinancialDashboard;

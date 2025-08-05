@@ -1,22 +1,22 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
+import type {
   addMonths,
   eachDayOfInterval,
   endOfMonth,
@@ -28,8 +28,8 @@ import {
   startOfMonth,
   subMonths,
 } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import {
+import type { ptBR } from "date-fns/locale";
+import type {
   AlertTriangle,
   Calendar,
   ChevronLeft,
@@ -38,7 +38,7 @@ import {
   Eye,
   Filter,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import type { useEffect, useMemo, useState } from "react";
 
 // Mock data - substituir por dados reais do Supabase
 const mockPaymentCalendar = [
@@ -172,9 +172,7 @@ export function PaymentCalendar({ clinicId }: PaymentCalendarProps) {
     }
 
     if (priorityFilter !== "all") {
-      filtered = filtered.filter(
-        (payment) => payment.priority === priorityFilter
-      );
+      filtered = filtered.filter((payment) => payment.priority === priorityFilter);
     }
 
     return filtered;
@@ -198,7 +196,8 @@ export function PaymentCalendar({ clinicId }: PaymentCalendarProps) {
   // Dias do mês atual
   const monthStart = currentDate ? startOfMonth(currentDate) : null;
   const monthEnd = currentDate ? endOfMonth(currentDate) : null;
-  const calendarDays = monthStart && monthEnd ? eachDayOfInterval({ start: monthStart, end: monthEnd }) : [];
+  const calendarDays =
+    monthStart && monthEnd ? eachDayOfInterval({ start: monthStart, end: monthEnd }) : [];
 
   const navigateMonth = (direction: "prev" | "next") => {
     setCurrentDate((prev) => {
@@ -367,11 +366,7 @@ export function PaymentCalendar({ clinicId }: PaymentCalendarProps) {
         <CardContent>
           {/* Navegação do Calendário */}
           <div className="flex items-center justify-between mb-6">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigateMonth("prev")}
-            >
+            <Button variant="outline" size="sm" onClick={() => navigateMonth("prev")}>
               <ChevronLeft className="h-4 w-4" />
             </Button>
 
@@ -379,11 +374,7 @@ export function PaymentCalendar({ clinicId }: PaymentCalendarProps) {
               {format(currentDate, "MMMM yyyy", { locale: ptBR })}
             </h3>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigateMonth("next")}
-            >
+            <Button variant="outline" size="sm" onClick={() => navigateMonth("next")}>
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
@@ -391,10 +382,7 @@ export function PaymentCalendar({ clinicId }: PaymentCalendarProps) {
           {/* Cabeçalho dos dias da semana */}
           <div className="grid grid-cols-7 gap-2 mb-2">
             {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"].map((day) => (
-              <div
-                key={day}
-                className="text-center text-sm font-medium text-muted-foreground py-2"
-              >
+              <div key={day} className="text-center text-sm font-medium text-muted-foreground py-2">
                 {day}
               </div>
             ))}
@@ -413,40 +401,20 @@ export function PaymentCalendar({ clinicId }: PaymentCalendarProps) {
                   onClick={() => setSelectedDate(day)}
                   className={`
                     relative min-h-[80px] p-2 rounded-lg border text-left transition-colors
-                    ${
-                      isSelected
-                        ? "ring-2 ring-primary bg-primary/10"
-                        : "hover:bg-muted/50"
-                    }
-                    ${
-                      !isSameMonth(day, currentDate)
-                        ? "text-muted-foreground bg-muted/20"
-                        : ""
-                    }
-                    ${
-                      isToday(day)
-                        ? "font-bold border-primary"
-                        : "border-border"
-                    }
+                    ${isSelected ? "ring-2 ring-primary bg-primary/10" : "hover:bg-muted/50"}
+                    ${!isSameMonth(day, currentDate) ? "text-muted-foreground bg-muted/20" : ""}
+                    ${isToday(day) ? "font-bold border-primary" : "border-border"}
                     ${isWeekend(day) ? "bg-muted/10" : ""}
                   `}
                 >
                   <div className="flex items-start justify-between">
-                    <span
-                      className={`text-sm ${
-                        isToday(day) ? "text-primary" : ""
-                      }`}
-                    >
+                    <span className={`text-sm ${isToday(day) ? "text-primary" : ""}`}>
                       {format(day, "d")}
                     </span>
 
                     {dayPayments.length > 0 && (
                       <div className="flex gap-1">
-                        <span
-                          className={`w-2 h-2 rounded-full ${getDayBadgeColor(
-                            dayStatus
-                          )}`}
-                        />
+                        <span className={`w-2 h-2 rounded-full ${getDayBadgeColor(dayStatus)}`} />
                         {dayPayments.length > 1 && (
                           <span className="text-xs text-muted-foreground">
                             +{dayPayments.length - 1}
@@ -463,9 +431,7 @@ export function PaymentCalendar({ clinicId }: PaymentCalendarProps) {
                           key={payment.id}
                           className="text-xs p-1 rounded bg-background/80 border truncate"
                         >
-                          <div className="font-medium truncate">
-                            {payment.vendor_name}
-                          </div>
+                          <div className="font-medium truncate">{payment.vendor_name}</div>
                           <div className="text-muted-foreground">
                             {formatCurrency(payment.amount)}
                           </div>
@@ -491,8 +457,7 @@ export function PaymentCalendar({ clinicId }: PaymentCalendarProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Clock className="h-5 w-5" />
-              Pagamentos para{" "}
-              {format(selectedDate, "dd 'de' MMMM", { locale: ptBR })}
+              Pagamentos para {format(selectedDate, "dd 'de' MMMM", { locale: ptBR })}
             </CardTitle>
             <CardDescription>
               {selectedDatePayments.length === 0
@@ -518,39 +483,32 @@ export function PaymentCalendar({ clinicId }: PaymentCalendarProps) {
                           </Badge>
                         )}
                       </div>
-                      <p className="text-sm text-muted-foreground mb-2">
-                        {payment.description}
-                      </p>
+                      <p className="text-sm text-muted-foreground mb-2">{payment.description}</p>
                       <div className="flex items-center gap-2">
                         <Badge variant={getStatusBadgeColor(payment.status)}>
                           {getStatusLabel(payment.status)}
                         </Badge>
-                        <Badge
-                          variant={getPriorityBadgeColor(payment.priority)}
-                        >
+                        <Badge variant={getPriorityBadgeColor(payment.priority)}>
                           {payment.priority === "urgent"
                             ? "Urgente"
                             : payment.priority === "high"
-                            ? "Alta"
-                            : payment.priority === "medium"
-                            ? "Média"
-                            : "Baixa"}
+                              ? "Alta"
+                              : payment.priority === "medium"
+                                ? "Média"
+                                : "Baixa"}
                         </Badge>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-3">
                       <div className="text-right">
-                        <div className="font-semibold">
-                          {formatCurrency(payment.amount)}
-                        </div>
-                        {new Date(payment.due_date) < new Date() &&
-                          payment.status !== "paid" && (
-                            <div className="flex items-center gap-1 text-red-600 text-sm">
-                              <AlertTriangle className="h-3 w-3" />
-                              Em atraso
-                            </div>
-                          )}
+                        <div className="font-semibold">{formatCurrency(payment.amount)}</div>
+                        {new Date(payment.due_date) < new Date() && payment.status !== "paid" && (
+                          <div className="flex items-center gap-1 text-red-600 text-sm">
+                            <AlertTriangle className="h-3 w-3" />
+                            Em atraso
+                          </div>
+                        )}
                       </div>
                       <Button size="sm" variant="outline">
                         <Eye className="h-4 w-4" />

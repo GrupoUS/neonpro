@@ -3,42 +3,97 @@
  * NeonPro - Interface completa para gestão de testes A/B e otimização de conteúdo
  */
 
-'use client';
+"use client";
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { 
-  Play, Pause, Square, Eye, BarChart3, Settings, Users, Target, 
-  TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Clock,
-  Copy, Edit, Trash2, Download, Upload, RefreshCw, Filter,
-  Calendar as CalendarIcon, PieChart, LineChart, Activity,
-  Zap, Trophy, Star, Flag, Mail, MessageSquare, Bell
-} from 'lucide-react';
-import { toast } from 'sonner';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { cn } from '@/lib/utils';
-import { abTestingEngine } from '@/lib/ab-testing/ab-testing-engine';
-import type { 
-  ABTestConfig, TestVariation, TestResults, TestTemplate,
-  AudienceFilter, ConversionGoal, TestQueryFilter 
-} from '@/lib/ab-testing/types/ab-testing';
+import React, { useState, useEffect, useMemo } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Switch } from "@/components/ui/switch";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Progress } from "@/components/ui/progress";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type { Separator } from "@/components/ui/separator";
+import type {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import type { Calendar } from "@/components/ui/calendar";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type {
+  Play,
+  Pause,
+  Square,
+  Eye,
+  BarChart3,
+  Settings,
+  Users,
+  Target,
+  TrendingUp,
+  TrendingDown,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Copy,
+  Edit,
+  Trash2,
+  Download,
+  Upload,
+  RefreshCw,
+  Filter,
+  Calendar as CalendarIcon,
+  PieChart,
+  LineChart,
+  Activity,
+  Zap,
+  Trophy,
+  Star,
+  Flag,
+  Mail,
+  MessageSquare,
+  Bell,
+} from "lucide-react";
+import type { toast } from "sonner";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { cn } from "@/lib/utils";
+import type { abTestingEngine } from "@/lib/ab-testing/ab-testing-engine";
+import type {
+  ABTestConfig,
+  TestVariation,
+  TestResults,
+  TestTemplate,
+  AudienceFilter,
+  ConversionGoal,
+  TestQueryFilter,
+} from "@/lib/ab-testing/types/ab-testing";
 
 interface ContentOptimizationProps {
   clinicId: string;
@@ -48,7 +103,7 @@ interface ContentOptimizationProps {
 interface TestCreationState {
   name: string;
   description: string;
-  type: 'email' | 'sms' | 'whatsapp' | 'notification';
+  type: "email" | "sms" | "whatsapp" | "notification";
   audienceFilter: AudienceFilter;
   primaryGoal: ConversionGoal;
   secondaryGoals: ConversionGoal[];
@@ -61,46 +116,49 @@ interface TestCreationState {
   variations: Partial<TestVariation>[];
 }
 
-export default function ContentOptimizationInterface({ clinicId, userId }: ContentOptimizationProps) {
+export default function ContentOptimizationInterface({
+  clinicId,
+  userId,
+}: ContentOptimizationProps) {
   // State Management
   const [tests, setTests] = useState<ABTestConfig[]>([]);
   const [templates, setTemplates] = useState<TestTemplate[]>([]);
   const [selectedTest, setSelectedTest] = useState<ABTestConfig | null>(null);
   const [testResults, setTestResults] = useState<TestResults | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
   const [filter, setFilter] = useState<TestQueryFilter>({
     clinicId,
     page: 1,
-    limit: 20
+    limit: 20,
   });
 
   // Test Creation State
   const [isCreating, setIsCreating] = useState(false);
   const [creationStep, setCreationStep] = useState(1);
   const [testCreationState, setTestCreationState] = useState<TestCreationState>({
-    name: '',
-    description: '',
-    type: 'email',
+    name: "",
+    description: "",
+    type: "email",
     audienceFilter: {
       includeAll: true,
       ageRange: { min: 18, max: 80 },
-      gender: 'all'
+      gender: "all",
     },
     primaryGoal: {
-      id: 'conversion',
-      name: 'Conversão',
-      type: 'conversion',
-      description: 'Taxa de conversão geral'
+      id: "conversion",
+      name: "Conversão",
+      type: "conversion",
+      description: "Taxa de conversão geral",
     },
     secondaryGoals: [],
     trafficAllocation: 100,
     confidenceLevel: 95,
     minimumDetectableEffect: 5,
     variations: [
-      { name: 'Controle', trafficPercentage: 50, content: {} },
-      { name: 'Variação A', trafficPercentage: 50, content: {} }
-    ]
+      { name: "Controle", trafficPercentage: 50, content: {} },
+      { name: "Variação A", trafficPercentage: 50, content: {} },
+    ],
   });
 
   // Load initial data
@@ -112,7 +170,7 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
   // Auto-refresh active tests
   useEffect(() => {
     const interval = setInterval(() => {
-      if (selectedTest?.status === 'active') {
+      if (selectedTest?.status === "active") {
         loadTestResults(selectedTest.id);
       }
     }, 30000); // 30 seconds
@@ -132,8 +190,8 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
       const result = await abTestingEngine.getTests(filter);
       setTests(result.tests);
     } catch (error) {
-      console.error('Error loading tests:', error);
-      toast.error('Erro ao carregar testes A/B');
+      console.error("Error loading tests:", error);
+      toast.error("Erro ao carregar testes A/B");
     } finally {
       setIsLoading(false);
     }
@@ -145,25 +203,25 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
       // Por enquanto, usando dados mock
       setTemplates([
         {
-          id: 'email-1',
-          name: 'Confirmação de Consulta',
-          type: 'email',
-          category: 'appointment',
-          description: 'Template para confirmação de consultas',
+          id: "email-1",
+          name: "Confirmação de Consulta",
+          type: "email",
+          category: "appointment",
+          description: "Template para confirmação de consultas",
           content: {
-            subject: 'Confirmação de Consulta - {clinic_name}',
-            body: 'Olá {patient_name}, sua consulta está confirmada para {appointment_date}.'
+            subject: "Confirmação de Consulta - {clinic_name}",
+            body: "Olá {patient_name}, sua consulta está confirmada para {appointment_date}.",
           },
-          tags: ['consulta', 'confirmação'],
+          tags: ["consulta", "confirmação"],
           usage: 245,
           performance: { conversionRate: 85.5, openRate: 92.3 },
           lastUsed: new Date(),
           createdAt: new Date(),
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       ]);
     } catch (error) {
-      console.error('Error loading templates:', error);
+      console.error("Error loading templates:", error);
     }
   };
 
@@ -172,7 +230,7 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
       const results = await abTestingEngine.calculateTestResults(testId);
       setTestResults(results);
     } catch (error) {
-      console.error('Error loading test results:', error);
+      console.error("Error loading test results:", error);
     }
   };
 
@@ -185,7 +243,7 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
   const createTest = async () => {
     try {
       setIsLoading(true);
-      
+
       const testConfig: Partial<ABTestConfig> = {
         clinicId,
         name: testCreationState.name,
@@ -201,18 +259,18 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
         confidenceLevel: testCreationState.confidenceLevel,
         minimumDetectableEffect: testCreationState.minimumDetectableEffect,
         variations: testCreationState.variations,
-        createdBy: userId
+        createdBy: userId,
       };
 
       const newTest = await abTestingEngine.createTest(testConfig);
-      setTests(prev => [newTest, ...prev]);
+      setTests((prev) => [newTest, ...prev]);
       setIsCreating(false);
       setCreationStep(1);
-      
-      toast.success('Teste A/B criado com sucesso!');
+
+      toast.success("Teste A/B criado com sucesso!");
     } catch (error) {
-      console.error('Error creating test:', error);
-      toast.error('Erro ao criar teste A/B');
+      console.error("Error creating test:", error);
+      toast.error("Erro ao criar teste A/B");
     } finally {
       setIsLoading(false);
     }
@@ -222,33 +280,33 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
     try {
       await abTestingEngine.startTest(testId);
       await loadTests();
-      toast.success('Teste iniciado com sucesso!');
+      toast.success("Teste iniciado com sucesso!");
     } catch (error) {
-      console.error('Error starting test:', error);
-      toast.error('Erro ao iniciar teste');
+      console.error("Error starting test:", error);
+      toast.error("Erro ao iniciar teste");
     }
   };
 
   const pauseTest = async (testId: string) => {
     try {
-      await abTestingEngine.pauseTest(testId, 'Pausado pelo usuário');
+      await abTestingEngine.pauseTest(testId, "Pausado pelo usuário");
       await loadTests();
-      toast.success('Teste pausado');
+      toast.success("Teste pausado");
     } catch (error) {
-      console.error('Error pausing test:', error);
-      toast.error('Erro ao pausar teste');
+      console.error("Error pausing test:", error);
+      toast.error("Erro ao pausar teste");
     }
   };
 
   const completeTest = async (testId: string) => {
     try {
-      const results = await abTestingEngine.completeTest(testId, 'Finalizado pelo usuário');
+      const results = await abTestingEngine.completeTest(testId, "Finalizado pelo usuário");
       setTestResults(results);
       await loadTests();
-      toast.success('Teste finalizado');
+      toast.success("Teste finalizado");
     } catch (error) {
-      console.error('Error completing test:', error);
-      toast.error('Erro ao finalizar teste');
+      console.error("Error completing test:", error);
+      toast.error("Erro ao finalizar teste");
     }
   };
 
@@ -262,28 +320,26 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
     const newVariation: Partial<TestVariation> = {
       name: `Baseado em ${template.name}`,
       content: template.content,
-      trafficPercentage: 50
+      trafficPercentage: 50,
     };
 
-    setTestCreationState(prev => ({
+    setTestCreationState((prev) => ({
       ...prev,
-      variations: [...prev.variations, newVariation]
+      variations: [...prev.variations, newVariation],
     }));
 
-    toast.success('Template adicionado como variação');
+    toast.success("Template adicionado como variação");
   };
 
   const applyTemplate = (template: TestTemplate, variationIndex: number) => {
-    setTestCreationState(prev => ({
+    setTestCreationState((prev) => ({
       ...prev,
-      variations: prev.variations.map((variation, index) => 
-        index === variationIndex 
-          ? { ...variation, content: template.content }
-          : variation
-      )
+      variations: prev.variations.map((variation, index) =>
+        index === variationIndex ? { ...variation, content: template.content } : variation,
+      ),
     }));
 
-    toast.success('Template aplicado à variação');
+    toast.success("Template aplicado à variação");
   };
 
   /**
@@ -294,21 +350,22 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
 
   const validateTestCreation = (): boolean => {
     if (!testCreationState.name.trim()) {
-      toast.error('Nome do teste é obrigatório');
+      toast.error("Nome do teste é obrigatório");
       return false;
     }
 
     if (testCreationState.variations.length < 2) {
-      toast.error('É necessário pelo menos 2 variações');
+      toast.error("É necessário pelo menos 2 variações");
       return false;
     }
 
     const totalTraffic = testCreationState.variations.reduce(
-      (sum, v) => sum + (v.trafficPercentage || 0), 0
+      (sum, v) => sum + (v.trafficPercentage || 0),
+      0,
     );
 
     if (Math.abs(totalTraffic - 100) > 0.01) {
-      toast.error('A soma das porcentagens de tráfego deve ser 100%');
+      toast.error("A soma das porcentagens de tráfego deve ser 100%");
       return false;
     }
 
@@ -323,10 +380,10 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
 
   const getStatusBadge = (status: string) => {
     const variants = {
-      draft: { variant: 'secondary' as const, icon: Edit },
-      active: { variant: 'default' as const, icon: Play },
-      paused: { variant: 'outline' as const, icon: Pause },
-      completed: { variant: 'success' as const, icon: CheckCircle }
+      draft: { variant: "secondary" as const, icon: Edit },
+      active: { variant: "default" as const, icon: Play },
+      paused: { variant: "outline" as const, icon: Pause },
+      completed: { variant: "success" as const, icon: CheckCircle },
     };
 
     const config = variants[status as keyof typeof variants] || variants.draft;
@@ -351,10 +408,14 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
 
   const getSignificanceColor = (significance: string) => {
     switch (significance) {
-      case 'highly_significant': return 'text-green-600';
-      case 'significant': return 'text-blue-600';
-      case 'marginally_significant': return 'text-yellow-600';
-      default: return 'text-gray-600';
+      case "highly_significant":
+        return "text-green-600";
+      case "significant":
+        return "text-blue-600";
+      case "marginally_significant":
+        return "text-yellow-600";
+      default:
+        return "text-gray-600";
     }
   };
 
@@ -371,17 +432,19 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
         <div className="flex-1">
           <Input
             placeholder="Buscar testes..."
-            value={filter.searchTerm || ''}
-            onChange={(e) => setFilter(prev => ({ ...prev, searchTerm: e.target.value }))}
+            value={filter.searchTerm || ""}
+            onChange={(e) => setFilter((prev) => ({ ...prev, searchTerm: e.target.value }))}
             className="w-full"
           />
         </div>
         <Select
-          value={filter.status?.[0] || 'all'}
-          onValueChange={(value) => setFilter(prev => ({ 
-            ...prev, 
-            status: value === 'all' ? undefined : [value as any]
-          }))}
+          value={filter.status?.[0] || "all"}
+          onValueChange={(value) =>
+            setFilter((prev) => ({
+              ...prev,
+              status: value === "all" ? undefined : [value as any],
+            }))
+          }
         >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Status" />
@@ -403,15 +466,16 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
       {/* Tests Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {tests.map((test) => (
-          <Card key={test.id} className="cursor-pointer hover:shadow-md transition-shadow"
-                onClick={() => setSelectedTest(test)}>
+          <Card
+            key={test.id}
+            className="cursor-pointer hover:shadow-md transition-shadow"
+            onClick={() => setSelectedTest(test)}
+          >
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
                 <div className="space-y-1">
                   <CardTitle className="text-lg">{test.name}</CardTitle>
-                  <CardDescription className="text-sm">
-                    {test.description}
-                  </CardDescription>
+                  <CardDescription className="text-sm">{test.description}</CardDescription>
                 </div>
                 {getStatusBadge(test.status)}
               </div>
@@ -429,9 +493,9 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
                   </span>
                 </div>
 
-                {test.status === 'active' && (
-                  <Progress 
-                    value={(test.currentSampleSize / test.sampleSize) * 100} 
+                {test.status === "active" && (
+                  <Progress
+                    value={(test.currentSampleSize / test.sampleSize) * 100}
                     className="h-2"
                   />
                 )}
@@ -441,9 +505,9 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
                     {test.variations.length} variações
                   </span>
                   <div className="flex gap-1">
-                    {test.status === 'draft' && (
-                      <Button 
-                        size="sm" 
+                    {test.status === "draft" && (
+                      <Button
+                        size="sm"
                         variant="outline"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -453,9 +517,9 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
                         <Play className="h-3 w-3" />
                       </Button>
                     )}
-                    {test.status === 'active' && (
-                      <Button 
-                        size="sm" 
+                    {test.status === "active" && (
+                      <Button
+                        size="sm"
                         variant="outline"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -465,8 +529,8 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
                         <Pause className="h-3 w-3" />
                       </Button>
                     )}
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       variant="outline"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -492,9 +556,7 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
             <p className="text-muted-foreground mb-4">
               Comece criando seu primeiro teste A/B para otimizar suas comunicações.
             </p>
-            <Button onClick={() => setIsCreating(true)}>
-              Criar Primeiro Teste
-            </Button>
+            <Button onClick={() => setIsCreating(true)}>Criar Primeiro Teste</Button>
           </CardContent>
         </Card>
       )}
@@ -505,21 +567,22 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
     <Card>
       <CardHeader>
         <CardTitle>Criar Novo Teste A/B</CardTitle>
-        <CardDescription>
-          Configure um teste para otimizar suas comunicações
-        </CardDescription>
+        <CardDescription>Configure um teste para otimizar suas comunicações</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
           {/* Progress Indicator */}
           <div className="flex items-center justify-between">
             {[1, 2, 3, 4].map((step) => (
-              <div key={step} className={cn(
-                "flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium",
-                step <= creationStep 
-                  ? "bg-primary text-primary-foreground" 
-                  : "bg-muted text-muted-foreground"
-              )}>
+              <div
+                key={step}
+                className={cn(
+                  "flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium",
+                  step <= creationStep
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground",
+                )}
+              >
                 {step}
               </div>
             ))}
@@ -529,16 +592,19 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
           {creationStep === 1 && (
             <div className="space-y-4">
               <h3 className="text-lg font-medium">Configuração Básica</h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="test-name">Nome do Teste</Label>
                   <Input
                     id="test-name"
                     value={testCreationState.name}
-                    onChange={(e) => setTestCreationState(prev => ({ 
-                      ...prev, name: e.target.value 
-                    }))}
+                    onChange={(e) =>
+                      setTestCreationState((prev) => ({
+                        ...prev,
+                        name: e.target.value,
+                      }))
+                    }
                     placeholder="Ex: Teste de Subject Line - Janeiro 2025"
                   />
                 </div>
@@ -547,9 +613,12 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
                   <Label htmlFor="test-type">Tipo de Comunicação</Label>
                   <Select
                     value={testCreationState.type}
-                    onValueChange={(value: any) => setTestCreationState(prev => ({ 
-                      ...prev, type: value 
-                    }))}
+                    onValueChange={(value: any) =>
+                      setTestCreationState((prev) => ({
+                        ...prev,
+                        type: value,
+                      }))
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -589,9 +658,12 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
                 <Textarea
                   id="test-description"
                   value={testCreationState.description}
-                  onChange={(e) => setTestCreationState(prev => ({ 
-                    ...prev, description: e.target.value 
-                  }))}
+                  onChange={(e) =>
+                    setTestCreationState((prev) => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
+                  }
                   placeholder="Descreva o objetivo e hipótese do teste..."
                   rows={3}
                 />
@@ -601,34 +673,25 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
 
           {/* Navigation */}
           <div className="flex justify-between">
-            <Button 
-              variant="outline" 
-              onClick={() => setIsCreating(false)}
-            >
+            <Button variant="outline" onClick={() => setIsCreating(false)}>
               Cancelar
             </Button>
             <div className="flex gap-2">
               {creationStep > 1 && (
-                <Button 
-                  variant="outline"
-                  onClick={() => setCreationStep(prev => prev - 1)}
-                >
+                <Button variant="outline" onClick={() => setCreationStep((prev) => prev - 1)}>
                   Voltar
                 </Button>
               )}
               {creationStep < 4 ? (
-                <Button 
-                  onClick={() => setCreationStep(prev => prev + 1)}
+                <Button
+                  onClick={() => setCreationStep((prev) => prev + 1)}
                   disabled={creationStep === 1 && !testCreationState.name.trim()}
                 >
                   Próximo
                 </Button>
               ) : (
-                <Button 
-                  onClick={createTest}
-                  disabled={!validateTestCreation() || isLoading}
-                >
-                  {isLoading ? 'Criando...' : 'Criar Teste'}
+                <Button onClick={createTest} disabled={!validateTestCreation() || isLoading}>
+                  {isLoading ? "Criando..." : "Criar Teste"}
                 </Button>
               )}
             </div>
@@ -651,10 +714,7 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
           </div>
           <div className="flex items-center gap-2">
             {getStatusBadge(selectedTest.status)}
-            <Button
-              variant="outline"
-              onClick={() => setSelectedTest(null)}
-            >
+            <Button variant="outline" onClick={() => setSelectedTest(null)}>
               Voltar
             </Button>
           </div>
@@ -667,7 +727,9 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Impressões</p>
-                  <p className="text-2xl font-bold">{testResults.totalImpressions.toLocaleString()}</p>
+                  <p className="text-2xl font-bold">
+                    {testResults.totalImpressions.toLocaleString()}
+                  </p>
                 </div>
                 <Eye className="h-8 w-8 text-blue-500" />
               </div>
@@ -679,7 +741,9 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Conversões</p>
-                  <p className="text-2xl font-bold">{testResults.totalConversions.toLocaleString()}</p>
+                  <p className="text-2xl font-bold">
+                    {testResults.totalConversions.toLocaleString()}
+                  </p>
                 </div>
                 <Target className="h-8 w-8 text-green-500" />
               </div>
@@ -691,7 +755,9 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Taxa de Conversão</p>
-                  <p className="text-2xl font-bold">{testResults.overallConversionRate.toFixed(2)}%</p>
+                  <p className="text-2xl font-bold">
+                    {testResults.overallConversionRate.toFixed(2)}%
+                  </p>
                 </div>
                 <PieChart className="h-8 w-8 text-purple-500" />
               </div>
@@ -703,10 +769,19 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Significância</p>
-                  <p className={cn("text-2xl font-bold", getSignificanceColor(testResults.statisticalSignificance))}>
-                    {testResults.statisticalSignificance === 'highly_significant' ? 'Alta' :
-                     testResults.statisticalSignificance === 'significant' ? 'Média' :
-                     testResults.statisticalSignificance === 'marginally_significant' ? 'Baixa' : 'N/A'}
+                  <p
+                    className={cn(
+                      "text-2xl font-bold",
+                      getSignificanceColor(testResults.statisticalSignificance),
+                    )}
+                  >
+                    {testResults.statisticalSignificance === "highly_significant"
+                      ? "Alta"
+                      : testResults.statisticalSignificance === "significant"
+                        ? "Média"
+                        : testResults.statisticalSignificance === "marginally_significant"
+                          ? "Baixa"
+                          : "N/A"}
                   </p>
                 </div>
                 <BarChart3 className="h-8 w-8 text-orange-500" />
@@ -733,14 +808,13 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
                           Vencedor
                         </Badge>
                       )}
-                      {index === 0 && (
-                        <Badge variant="outline">Controle</Badge>
-                      )}
+                      {index === 0 && <Badge variant="outline">Controle</Badge>}
                     </div>
                     <div className="flex items-center gap-2">
                       {getPerformanceIndicator(result.conversionRate)}
                       <span className="text-sm text-muted-foreground">
-                        {result.liftPercentage > 0 ? '+' : ''}{result.liftPercentage.toFixed(1)}%
+                        {result.liftPercentage > 0 ? "+" : ""}
+                        {result.liftPercentage.toFixed(1)}%
                       </span>
                     </div>
                   </div>
@@ -760,13 +834,15 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
                     </div>
                   </div>
 
-                  {result.significance !== 'not_significant' && (
+                  {result.significance !== "not_significant" && (
                     <div className="mt-3 p-2 bg-muted rounded">
                       <p className="text-sm">
-                        <span className={cn("font-medium", getSignificanceColor(result.significance))}>
+                        <span
+                          className={cn("font-medium", getSignificanceColor(result.significance))}
+                        >
                           Significância: {result.significance}
-                        </span>
-                        {' '}(p-value: {result.pValue?.toFixed(4)})
+                        </span>{" "}
+                        (p-value: {result.pValue?.toFixed(4)})
                       </p>
                     </div>
                   )}
@@ -791,13 +867,15 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
                     <AlertDescription>{insight}</AlertDescription>
                   </Alert>
                 ))}
-                
+
                 {testResults.recommendations.length > 0 && (
                   <div className="mt-4">
                     <h4 className="font-medium mb-2">Recomendações:</h4>
                     <ul className="list-disc list-inside space-y-1">
                       {testResults.recommendations.map((rec, index) => (
-                        <li key={index} className="text-sm text-muted-foreground">{rec}</li>
+                        <li key={index} className="text-sm text-muted-foreground">
+                          {rec}
+                        </li>
                       ))}
                     </ul>
                   </div>
@@ -822,9 +900,7 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">Otimização de Conteúdo</h1>
-            <p className="text-muted-foreground">
-              Testes A/B e otimização de comunicações
-            </p>
+            <p className="text-muted-foreground">Testes A/B e otimização de comunicações</p>
           </div>
           <Button onClick={loadTests} variant="outline" disabled={isLoading}>
             <RefreshCw className={cn("h-4 w-4 mr-2", isLoading && "animate-spin")} />
@@ -861,7 +937,9 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
                           <div className="flex items-start justify-between">
                             <div>
                               <h4 className="font-medium">{template.name}</h4>
-                              <p className="text-sm text-muted-foreground">{template.description}</p>
+                              <p className="text-sm text-muted-foreground">
+                                {template.description}
+                              </p>
                             </div>
                             <Badge variant="outline">{template.type}</Badge>
                           </div>
@@ -872,8 +950,8 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
                           </div>
 
                           <div className="flex gap-2">
-                            <Button 
-                              size="sm" 
+                            <Button
+                              size="sm"
                               variant="outline"
                               onClick={() => duplicateTemplate(template)}
                             >
@@ -895,7 +973,9 @@ export default function ContentOptimizationInterface({ clinicId, userId }: Conte
           </TabsContent>
 
           <TabsContent value="results" className="space-y-6">
-            {selectedTest ? renderTestResults() : (
+            {selectedTest ? (
+              renderTestResults()
+            ) : (
               <Card>
                 <CardContent className="text-center py-8">
                   <BarChart3 className="h-12 w-12 mx-auto text-muted-foreground mb-4" />

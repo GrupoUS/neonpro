@@ -1,39 +1,45 @@
-'use client';
+"use client";
 
 /**
  * Story 11.3: Inventory Metrics Component
  * Real-time inventory metrics and KPI dashboard
  */
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Icons } from '@/components/ui/icons';
-import { Progress } from '@/components/ui/progress';
-import {
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Icons } from "@/components/ui/icons";
+import type { Progress } from "@/components/ui/progress";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { 
+} from "@/components/ui/select";
+import type {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { 
+} from "@/components/ui/table";
+import type {
   StockOutputManager,
   ConsumptionAnalyzer,
   FIFOManager,
   type InventoryMetrics,
-  type StockAlert
-} from '@/lib/inventory';
-import { useToast } from '@/hooks/use-toast';
+  type StockAlert,
+} from "@/lib/inventory";
+import type { useToast } from "@/hooks/use-toast";
 
 interface InventoryMetricsProps {
   onRefresh: () => void;
@@ -42,7 +48,7 @@ interface InventoryMetricsProps {
 
 interface MetricsFilters {
   centro_custo: string;
-  periodo: 'today' | 'week' | 'month' | 'quarter';
+  periodo: "today" | "week" | "month" | "quarter";
 }
 
 export function InventoryMetrics({ onRefresh, className }: InventoryMetricsProps) {
@@ -50,8 +56,8 @@ export function InventoryMetrics({ onRefresh, className }: InventoryMetricsProps
   const [alerts, setAlerts] = useState<StockAlert[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filters, setFilters] = useState<MetricsFilters>({
-    centro_custo: 'all',
-    periodo: 'month'
+    centro_custo: "all",
+    periodo: "month",
   });
   const { toast } = useToast();
 
@@ -70,36 +76,37 @@ export function InventoryMetrics({ onRefresh, className }: InventoryMetricsProps
       // Calculate date range based on period
       const endDate = new Date();
       const startDate = new Date();
-      
+
       switch (filters.periodo) {
-        case 'today':
+        case "today":
           startDate.setHours(0, 0, 0, 0);
           break;
-        case 'week':
+        case "week":
           startDate.setDate(endDate.getDate() - 7);
           break;
-        case 'month':
+        case "month":
           startDate.setMonth(endDate.getMonth() - 1);
           break;
-        case 'quarter':
+        case "quarter":
           startDate.setMonth(endDate.getMonth() - 3);
           break;
       }
 
       // Get consumption analytics for metrics calculation
-      const { data: analyticsData, error: analyticsError } = await consumptionAnalyzer.getConsumptionAnalytics(
-        filters.centro_custo === 'all' ? undefined : filters.centro_custo,
-        startDate,
-        endDate
-      );
+      const { data: analyticsData, error: analyticsError } =
+        await consumptionAnalyzer.getConsumptionAnalytics(
+          filters.centro_custo === "all" ? undefined : filters.centro_custo,
+          startDate,
+          endDate,
+        );
 
       if (analyticsError) {
-        console.warn('Analytics error:', analyticsError);
+        console.warn("Analytics error:", analyticsError);
       }
 
       // Get FIFO status for aging metrics
       const { data: fifoStatus } = await fifoManager.getFIFOStatusByCostCenter(
-        filters.centro_custo === 'all' ? undefined : filters.centro_custo
+        filters.centro_custo === "all" ? undefined : filters.centro_custo,
       );
 
       // Calculate derived metrics
@@ -109,38 +116,42 @@ export function InventoryMetrics({ onRefresh, className }: InventoryMetricsProps
         consumption_rate: analyticsData?.media_diaria?.valor || 0,
         efficiency_score: analyticsData?.eficiencia_custos?.score_eficiencia || 0,
         cost_savings: analyticsData?.eficiencia_custos?.economia_potencial || 0,
-        expiry_alerts: fifoStatus?.filter(item => 
-          item.status_validade === 'proximoVencimento' || item.status_validade === 'vencido'
-        )?.length || 0,
-        low_stock_alerts: fifoStatus?.filter(item => 
-          item.quantidade_atual <= (item.estoque_minimo || 0)
-        )?.length || 0,
+        expiry_alerts:
+          fifoStatus?.filter(
+            (item) =>
+              item.status_validade === "proximoVencimento" || item.status_validade === "vencido",
+          )?.length || 0,
+        low_stock_alerts:
+          fifoStatus?.filter((item) => item.quantidade_atual <= (item.estoque_minimo || 0))
+            ?.length || 0,
         transfer_requests: 0, // Will be calculated separately
         aging_analysis: {
-          items_30_days: fifoStatus?.filter(item => {
-            const daysToExpiry = Math.ceil(
-              (new Date(item.data_validade).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-            );
-            return daysToExpiry <= 30 && daysToExpiry > 0;
-          })?.length || 0,
-          items_60_days: fifoStatus?.filter(item => {
-            const daysToExpiry = Math.ceil(
-              (new Date(item.data_validade).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-            );
-            return daysToExpiry <= 60 && daysToExpiry > 30;
-          })?.length || 0,
-          items_90_days: fifoStatus?.filter(item => {
-            const daysToExpiry = Math.ceil(
-              (new Date(item.data_validade).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-            );
-            return daysToExpiry <= 90 && daysToExpiry > 60;
-          })?.length || 0,
-          expired_items: fifoStatus?.filter(item => 
-            new Date(item.data_validade) < new Date()
-          )?.length || 0
+          items_30_days:
+            fifoStatus?.filter((item) => {
+              const daysToExpiry = Math.ceil(
+                (new Date(item.data_validade).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+              );
+              return daysToExpiry <= 30 && daysToExpiry > 0;
+            })?.length || 0,
+          items_60_days:
+            fifoStatus?.filter((item) => {
+              const daysToExpiry = Math.ceil(
+                (new Date(item.data_validade).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+              );
+              return daysToExpiry <= 60 && daysToExpiry > 30;
+            })?.length || 0,
+          items_90_days:
+            fifoStatus?.filter((item) => {
+              const daysToExpiry = Math.ceil(
+                (new Date(item.data_validade).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+              );
+              return daysToExpiry <= 90 && daysToExpiry > 60;
+            })?.length || 0,
+          expired_items:
+            fifoStatus?.filter((item) => new Date(item.data_validade) < new Date())?.length || 0,
         },
         top_consumers: analyticsData?.produtos_mais_consumidos?.slice(0, 5) || [],
-        trends: analyticsData?.tendencias || []
+        trends: analyticsData?.tendencias || [],
       };
 
       setMetrics(calculatedMetrics);
@@ -151,56 +162,55 @@ export function InventoryMetrics({ onRefresh, className }: InventoryMetricsProps
       // Low stock alerts
       if (calculatedMetrics.low_stock_alerts > 0) {
         generatedAlerts.push({
-          id: 'low-stock-alert',
-          type: 'stock_baixo',
-          severity: 'alta',
-          title: 'Estoque Baixo',
+          id: "low-stock-alert",
+          type: "stock_baixo",
+          severity: "alta",
+          title: "Estoque Baixo",
           message: `${calculatedMetrics.low_stock_alerts} produto(s) com estoque abaixo do mínimo`,
-          product_id: 'multiple',
+          product_id: "multiple",
           threshold_value: 0,
           current_value: calculatedMetrics.low_stock_alerts,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         });
       }
 
       // Expiry alerts
       if (calculatedMetrics.expiry_alerts > 0) {
         generatedAlerts.push({
-          id: 'expiry-alert',
-          type: 'vencimento_proximo',
-          severity: 'media',
-          title: 'Vencimento Próximo',
+          id: "expiry-alert",
+          type: "vencimento_proximo",
+          severity: "media",
+          title: "Vencimento Próximo",
           message: `${calculatedMetrics.expiry_alerts} produto(s) próximo(s) ao vencimento`,
-          product_id: 'multiple',
+          product_id: "multiple",
           threshold_value: 30,
           current_value: calculatedMetrics.expiry_alerts,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         });
       }
 
       // Efficiency alerts
       if (calculatedMetrics.efficiency_score < 70) {
         generatedAlerts.push({
-          id: 'efficiency-alert',
-          type: 'eficiencia_baixa',
-          severity: 'media',
-          title: 'Eficiência Baixa',
+          id: "efficiency-alert",
+          type: "eficiencia_baixa",
+          severity: "media",
+          title: "Eficiência Baixa",
           message: `Score de eficiência atual: ${calculatedMetrics.efficiency_score}%`,
-          product_id: 'general',
+          product_id: "general",
           threshold_value: 70,
           current_value: calculatedMetrics.efficiency_score,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         });
       }
 
       setAlerts(generatedAlerts);
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao carregar métricas';
+      const errorMessage = error instanceof Error ? error.message : "Erro ao carregar métricas";
       toast({
-        title: 'Erro',
+        title: "Erro",
         description: errorMessage,
-        variant: 'destructive',
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -208,9 +218,9 @@ export function InventoryMetrics({ onRefresh, className }: InventoryMetricsProps
   };
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(value);
   };
 
@@ -220,22 +230,22 @@ export function InventoryMetrics({ onRefresh, className }: InventoryMetricsProps
 
   const getSeverityColor = (severity: string) => {
     const colors = {
-      'baixa': 'bg-blue-100 text-blue-800',
-      'media': 'bg-yellow-100 text-yellow-800',
-      'alta': 'bg-red-100 text-red-800'
+      baixa: "bg-blue-100 text-blue-800",
+      media: "bg-yellow-100 text-yellow-800",
+      alta: "bg-red-100 text-red-800",
     };
-    return colors[severity as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return colors[severity as keyof typeof colors] || "bg-gray-100 text-gray-800";
   };
 
   const getEfficiencyColor = (score: number) => {
-    if (score >= 90) return 'text-green-600';
-    if (score >= 70) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 90) return "text-green-600";
+    if (score >= 70) return "text-yellow-600";
+    return "text-red-600";
   };
 
   const getTrendIcon = (trend: any) => {
     if (!trend?.variacao_valor) return <Icons.Minus className="h-4 w-4 text-gray-500" />;
-    
+
     return trend.variacao_valor >= 0 ? (
       <Icons.TrendingUp className="h-4 w-4 text-green-500" />
     ) : (
@@ -252,7 +262,7 @@ export function InventoryMetrics({ onRefresh, className }: InventoryMetricsProps
             <p className="text-muted-foreground">Dashboard de indicadores</p>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {[1, 2, 3, 4].map((i) => (
             <Card key={i}>
@@ -272,9 +282,7 @@ export function InventoryMetrics({ onRefresh, className }: InventoryMetricsProps
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">Métricas de Inventário</h2>
-          <p className="text-muted-foreground">
-            Dashboard de indicadores e KPIs em tempo real
-          </p>
+          <p className="text-muted-foreground">Dashboard de indicadores e KPIs em tempo real</p>
         </div>
         <Button variant="outline" onClick={loadMetrics}>
           <Icons.RefreshCw className="w-4 h-4 mr-2" />
@@ -291,9 +299,9 @@ export function InventoryMetrics({ onRefresh, className }: InventoryMetricsProps
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Centro de Custo</label>
-              <Select 
-                value={filters.centro_custo} 
-                onValueChange={(value) => setFilters(prev => ({ ...prev, centro_custo: value }))}
+              <Select
+                value={filters.centro_custo}
+                onValueChange={(value) => setFilters((prev) => ({ ...prev, centro_custo: value }))}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -311,9 +319,11 @@ export function InventoryMetrics({ onRefresh, className }: InventoryMetricsProps
 
             <div className="space-y-2">
               <label className="text-sm font-medium">Período</label>
-              <Select 
-                value={filters.periodo} 
-                onValueChange={(value) => setFilters(prev => ({ ...prev, periodo: value as any }))}
+              <Select
+                value={filters.periodo}
+                onValueChange={(value) =>
+                  setFilters((prev) => ({ ...prev, periodo: value as any }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -409,9 +419,7 @@ export function InventoryMetrics({ onRefresh, className }: InventoryMetricsProps
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-yellow-600">
-                {metrics.expiry_alerts}
-              </div>
+              <div className="text-2xl font-bold text-yellow-600">{metrics.expiry_alerts}</div>
               <p className="text-sm text-muted-foreground">produtos próximos ao vencimento</p>
             </CardContent>
           </Card>
@@ -423,9 +431,7 @@ export function InventoryMetrics({ onRefresh, className }: InventoryMetricsProps
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-red-600">
-                {metrics.low_stock_alerts}
-              </div>
+              <div className="text-2xl font-bold text-red-600">{metrics.low_stock_alerts}</div>
               <p className="text-sm text-muted-foreground">abaixo do estoque mínimo</p>
             </CardContent>
           </Card>
@@ -440,9 +446,7 @@ export function InventoryMetrics({ onRefresh, className }: InventoryMetricsProps
               <Icons.Clock className="h-5 w-5" />
               Análise de Aging (Vencimento)
             </CardTitle>
-            <CardDescription>
-              Distribuição de produtos por prazo de vencimento
-            </CardDescription>
+            <CardDescription>Distribuição de produtos por prazo de vencimento</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -490,9 +494,7 @@ export function InventoryMetrics({ onRefresh, className }: InventoryMetricsProps
               <Icons.BarChart3 className="h-5 w-5" />
               Top Produtos Consumidos
             </CardTitle>
-            <CardDescription>
-              Produtos com maior consumo no período selecionado
-            </CardDescription>
+            <CardDescription>Produtos com maior consumo no período selecionado</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -542,14 +544,12 @@ export function InventoryMetrics({ onRefresh, className }: InventoryMetricsProps
               <Icons.AlertTriangle className="h-5 w-5" />
               Alertas Ativos
             </CardTitle>
-            <CardDescription>
-              Alertas e notificações que requerem atenção
-            </CardDescription>
+            <CardDescription>Alertas e notificações que requerem atenção</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               {alerts.map((alert) => (
-                <div 
+                <div
                   key={alert.id}
                   className="flex items-center justify-between p-3 border rounded-lg"
                 >
@@ -561,9 +561,7 @@ export function InventoryMetrics({ onRefresh, className }: InventoryMetricsProps
                     </div>
                   </div>
                   <div className="text-right">
-                    <Badge className={getSeverityColor(alert.severity)}>
-                      {alert.severity}
-                    </Badge>
+                    <Badge className={getSeverityColor(alert.severity)}>{alert.severity}</Badge>
                     {alert.threshold_value && (
                       <p className="text-sm text-muted-foreground mt-1">
                         Limite: {alert.threshold_value}

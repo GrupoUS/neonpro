@@ -1,32 +1,38 @@
-'use client'
+"use client";
 
-import React, { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import {
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import {
+} from "@/components/ui/select";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { Progress } from '@/components/ui/progress'
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  Award, 
-  Calendar, 
-  Users, 
+} from "@/components/ui/table";
+import type { Progress } from "@/components/ui/progress";
+import type {
+  TrendingUp,
+  TrendingDown,
+  Award,
+  Calendar,
+  Users,
   Star,
   Target,
   Clock,
@@ -36,184 +42,185 @@ import {
   AlertTriangle,
   BarChart3,
   PieChart,
-  LineChart
-} from 'lucide-react'
-import { Professional, PerformanceMetric, MetricType } from '@/lib/types/professional'
-import { 
-  getProfessionals, 
+  LineChart,
+} from "lucide-react";
+import type { Professional, PerformanceMetric, MetricType } from "@/lib/types/professional";
+import type {
+  getProfessionals,
   getProfessionalMetrics,
-  getAggregatedMetrics
-} from '@/lib/supabase/professionals'
+  getAggregatedMetrics,
+} from "@/lib/supabase/professionals";
 
 interface ProfessionalPerformanceDashboardProps {
-  professionalId?: string
+  professionalId?: string;
 }
 
 interface MetricCard {
-  id: string
-  title: string
-  value: string | number
-  previousValue?: string | number
-  change?: number
-  changeType?: 'increase' | 'decrease' | 'neutral'
-  icon: React.ReactNode
-  description: string
+  id: string;
+  title: string;
+  value: string | number;
+  previousValue?: string | number;
+  change?: number;
+  changeType?: "increase" | "decrease" | "neutral";
+  icon: React.ReactNode;
+  description: string;
 }
 
 interface TeamPerformance {
-  professional: Professional
+  professional: Professional;
   metrics: {
-    satisfaction: number
-    consultations: number
-    revenue: number
-    efficiency: number
-  }
+    satisfaction: number;
+    consultations: number;
+    revenue: number;
+    efficiency: number;
+  };
 }
 
 const metricTypeLabels = {
-  quality: 'Qualidade',
-  safety: 'Segurança',
-  efficiency: 'Eficiência',
-  patient_satisfaction: 'Satisfação do Paciente',
-  productivity: 'Produtividade',
-  compliance: 'Conformidade',
-  availability: 'Disponibilidade'
-}
+  quality: "Qualidade",
+  safety: "Segurança",
+  efficiency: "Eficiência",
+  patient_satisfaction: "Satisfação do Paciente",
+  productivity: "Produtividade",
+  compliance: "Conformidade",
+  availability: "Disponibilidade",
+};
 
 const getMetricIcon = (type: MetricType) => {
   switch (type) {
-    case 'quality':
-      return <Award className="h-4 w-4" />
-    case 'safety':
-      return <CheckCircle className="h-4 w-4" />
-    case 'efficiency':
-      return <Clock className="h-4 w-4" />
-    case 'patient_satisfaction':
-      return <Star className="h-4 w-4" />
-    case 'productivity':
-      return <TrendingUp className="h-4 w-4" />
-    case 'compliance':
-      return <Target className="h-4 w-4" />
-    case 'availability':
-      return <Calendar className="h-4 w-4" />
+    case "quality":
+      return <Award className="h-4 w-4" />;
+    case "safety":
+      return <CheckCircle className="h-4 w-4" />;
+    case "efficiency":
+      return <Clock className="h-4 w-4" />;
+    case "patient_satisfaction":
+      return <Star className="h-4 w-4" />;
+    case "productivity":
+      return <TrendingUp className="h-4 w-4" />;
+    case "compliance":
+      return <Target className="h-4 w-4" />;
+    case "availability":
+      return <Calendar className="h-4 w-4" />;
     default:
-      return <Activity className="h-4 w-4" />
+      return <Activity className="h-4 w-4" />;
   }
-}
+};
 
 const getChangeIcon = (changeType: string) => {
   switch (changeType) {
-    case 'increase':
-      return <TrendingUp className="h-4 w-4 text-green-600" />
-    case 'decrease':
-      return <TrendingDown className="h-4 w-4 text-red-600" />
+    case "increase":
+      return <TrendingUp className="h-4 w-4 text-green-600" />;
+    case "decrease":
+      return <TrendingDown className="h-4 w-4 text-red-600" />;
     default:
-      return <Activity className="h-4 w-4 text-gray-600" />
+      return <Activity className="h-4 w-4 text-gray-600" />;
   }
-}
+};
 
 const getPerformanceColor = (value: number, max: number = 100) => {
-  const percentage = (value / max) * 100
-  if (percentage >= 90) return 'text-green-600'
-  if (percentage >= 70) return 'text-yellow-600'
-  return 'text-red-600'
-}
+  const percentage = (value / max) * 100;
+  if (percentage >= 90) return "text-green-600";
+  if (percentage >= 70) return "text-yellow-600";
+  return "text-red-600";
+};
 
-export default function ProfessionalPerformanceDashboard({ professionalId }: ProfessionalPerformanceDashboardProps) {
-  const [professionals, setProfessionals] = useState<Professional[]>([])
-  const [selectedProfessional, setSelectedProfessional] = useState<string>(professionalId || 'all')
-  const [metrics, setMetrics] = useState<PerformanceMetric[]>([])
-  const [teamPerformance, setTeamPerformance] = useState<TeamPerformance[]>([])
-  const [period, setPeriod] = useState<'week' | 'month' | 'quarter' | 'year'>('month')
-  const [loading, setLoading] = useState(false)
+export default function ProfessionalPerformanceDashboard({
+  professionalId,
+}: ProfessionalPerformanceDashboardProps) {
+  const [professionals, setProfessionals] = useState<Professional[]>([]);
+  const [selectedProfessional, setSelectedProfessional] = useState<string>(professionalId || "all");
+  const [metrics, setMetrics] = useState<PerformanceMetric[]>([]);
+  const [teamPerformance, setTeamPerformance] = useState<TeamPerformance[]>([]);
+  const [period, setPeriod] = useState<"week" | "month" | "quarter" | "year">("month");
+  const [loading, setLoading] = useState(false);
 
   // Mock data for demonstration
   const overviewMetrics: MetricCard[] = [
     {
-      id: 'satisfaction',
-      title: 'Satisfação do Paciente',
-      value: '4.8',
-      previousValue: '4.6',
+      id: "satisfaction",
+      title: "Satisfação do Paciente",
+      value: "4.8",
+      previousValue: "4.6",
       change: 4.3,
-      changeType: 'increase',
+      changeType: "increase",
       icon: <Star className="h-4 w-4" />,
-      description: 'Média de avaliações dos pacientes'
+      description: "Média de avaliações dos pacientes",
     },
     {
-      id: 'consultations',
-      title: 'Consultas Realizadas',
+      id: "consultations",
+      title: "Consultas Realizadas",
       value: 142,
       previousValue: 128,
       change: 10.9,
-      changeType: 'increase',
+      changeType: "increase",
       icon: <Calendar className="h-4 w-4" />,
-      description: 'Total de consultas no período'
+      description: "Total de consultas no período",
     },
     {
-      id: 'revenue',
-      title: 'Receita Gerada',
-      value: 'R$ 28.400',
-      previousValue: 'R$ 24.800',
+      id: "revenue",
+      title: "Receita Gerada",
+      value: "R$ 28.400",
+      previousValue: "R$ 24.800",
       change: 14.5,
-      changeType: 'increase',
+      changeType: "increase",
       icon: <DollarSign className="h-4 w-4" />,
-      description: 'Receita total no período'
+      description: "Receita total no período",
     },
     {
-      id: 'efficiency',
-      title: 'Eficiência Operacional',
-      value: '92%',
-      previousValue: '89%',
+      id: "efficiency",
+      title: "Eficiência Operacional",
+      value: "92%",
+      previousValue: "89%",
       change: 3.4,
-      changeType: 'increase',
+      changeType: "increase",
       icon: <Clock className="h-4 w-4" />,
-      description: 'Pontualidade e duração adequada'
-    }
-  ]
+      description: "Pontualidade e duração adequada",
+    },
+  ];
 
   useEffect(() => {
-    loadData()
-  }, [selectedProfessional, period])
+    loadData();
+  }, [selectedProfessional, period]);
 
   const loadData = async () => {
     try {
-      setLoading(true)
-      
+      setLoading(true);
+
       // Load professionals
-      const professionalsData = await getProfessionals()
-      setProfessionals(professionalsData)
+      const professionalsData = await getProfessionals();
+      setProfessionals(professionalsData);
 
       // Load metrics for selected professional or aggregated
-      if (selectedProfessional !== 'all') {
-        const metricsData = await getProfessionalMetrics(selectedProfessional, period)
-        setMetrics(metricsData)
+      if (selectedProfessional !== "all") {
+        const metricsData = await getProfessionalMetrics(selectedProfessional, period);
+        setMetrics(metricsData);
       } else {
-        const aggregatedData = await getAggregatedMetrics(period)
+        const aggregatedData = await getAggregatedMetrics(period);
         // Handle aggregated metrics
       }
 
       // Generate mock team performance data
-      generateTeamPerformanceData(professionalsData)
-
+      generateTeamPerformanceData(professionalsData);
     } catch (error) {
-      console.error('Error loading performance data:', error)
+      console.error("Error loading performance data:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const generateTeamPerformanceData = (professionalsData: Professional[]) => {
-    const teamData = professionalsData.slice(0, 10).map(professional => ({
+    const teamData = professionalsData.slice(0, 10).map((professional) => ({
       professional,
       metrics: {
         satisfaction: Math.random() * 2 + 3, // 3-5 range
         consultations: Math.floor(Math.random() * 100) + 50, // 50-150 range
         revenue: Math.floor(Math.random() * 20000) + 10000, // 10k-30k range
-        efficiency: Math.floor(Math.random() * 30) + 70 // 70-100% range
-      }
-    }))
-    setTeamPerformance(teamData)
-  }
+        efficiency: Math.floor(Math.random() * 30) + 70, // 70-100% range
+      },
+    }));
+    setTeamPerformance(teamData);
+  };
 
   return (
     <div className="flex-1 space-y-6">
@@ -221,9 +228,7 @@ export default function ProfessionalPerformanceDashboard({ professionalId }: Pro
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Performance Dashboard</h2>
-          <p className="text-muted-foreground">
-            Acompanhe métricas de performance e qualidade
-          </p>
+          <p className="text-muted-foreground">Acompanhe métricas de performance e qualidade</p>
         </div>
         <div className="flex items-center gap-4">
           <Select value={period} onValueChange={(value: any) => setPeriod(value)}>
@@ -268,22 +273,18 @@ export default function ProfessionalPerformanceDashboard({ professionalId }: Pro
             {overviewMetrics.map((metric) => (
               <Card key={metric.id}>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    {metric.title}
-                  </CardTitle>
+                  <CardTitle className="text-sm font-medium">{metric.title}</CardTitle>
                   {metric.icon}
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{metric.value}</div>
                   <div className="flex items-center text-xs text-muted-foreground">
-                    {getChangeIcon(metric.changeType || 'neutral')}
+                    {getChangeIcon(metric.changeType || "neutral")}
                     <span className="ml-1">
                       {metric.change?.toFixed(1)}% em relação ao período anterior
                     </span>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {metric.description}
-                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">{metric.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -297,9 +298,7 @@ export default function ProfessionalPerformanceDashboard({ professionalId }: Pro
                   <LineChart className="h-5 w-5" />
                   Satisfação do Paciente
                 </CardTitle>
-                <CardDescription>
-                  Evolução da satisfação ao longo do tempo
-                </CardDescription>
+                <CardDescription>Evolução da satisfação ao longo do tempo</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="h-[200px] flex items-center justify-center text-muted-foreground">
@@ -314,9 +313,7 @@ export default function ProfessionalPerformanceDashboard({ professionalId }: Pro
                   <BarChart3 className="h-5 w-5" />
                   Produtividade por Especialidade
                 </CardTitle>
-                <CardDescription>
-                  Comparativo de consultas por área
-                </CardDescription>
+                <CardDescription>Comparativo de consultas por área</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="h-[200px] flex items-center justify-center text-muted-foreground">
@@ -333,14 +330,15 @@ export default function ProfessionalPerformanceDashboard({ professionalId }: Pro
                 <Award className="h-5 w-5" />
                 Melhores Performers do Mês
               </CardTitle>
-              <CardDescription>
-                Profissionais com melhor desempenho no período
-              </CardDescription>
+              <CardDescription>Profissionais com melhor desempenho no período</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {teamPerformance.slice(0, 5).map((performer, index) => (
-                  <div key={performer.professional.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div
+                    key={performer.professional.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div className="flex items-center gap-4">
                       <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
                         <span className="text-sm font-bold text-primary">#{index + 1}</span>
@@ -356,7 +354,9 @@ export default function ProfessionalPerformanceDashboard({ professionalId }: Pro
                     </div>
                     <div className="flex items-center gap-4 text-sm">
                       <div className="text-center">
-                        <div className="font-medium">{performer.metrics.satisfaction.toFixed(1)}</div>
+                        <div className="font-medium">
+                          {performer.metrics.satisfaction.toFixed(1)}
+                        </div>
                         <div className="text-muted-foreground">Satisfação</div>
                       </div>
                       <div className="text-center">
@@ -377,7 +377,7 @@ export default function ProfessionalPerformanceDashboard({ professionalId }: Pro
 
         {/* Individual Performance Tab */}
         <TabsContent value="individual" className="space-y-6">
-          {selectedProfessional === 'all' ? (
+          {selectedProfessional === "all" ? (
             <Card>
               <CardContent className="pt-6">
                 <div className="text-center">
@@ -402,10 +402,7 @@ export default function ProfessionalPerformanceDashboard({ professionalId }: Pro
                       <div className="text-2xl font-bold">
                         {Math.floor(Math.random() * 30) + 70}%
                       </div>
-                      <Progress 
-                        value={Math.floor(Math.random() * 30) + 70} 
-                        className="mt-2"
-                      />
+                      <Progress value={Math.floor(Math.random() * 30) + 70} className="mt-2" />
                     </CardContent>
                   </Card>
                 ))}
@@ -416,9 +413,7 @@ export default function ProfessionalPerformanceDashboard({ professionalId }: Pro
                 <Card>
                   <CardHeader>
                     <CardTitle>Histórico de Performance</CardTitle>
-                    <CardDescription>
-                      Evolução das métricas nos últimos 6 meses
-                    </CardDescription>
+                    <CardDescription>Evolução das métricas nos últimos 6 meses</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="h-[300px] flex items-center justify-center text-muted-foreground">
@@ -430,9 +425,7 @@ export default function ProfessionalPerformanceDashboard({ professionalId }: Pro
                 <Card>
                   <CardHeader>
                     <CardTitle>Feedback dos Pacientes</CardTitle>
-                    <CardDescription>
-                      Resumo das avaliações recebidas
-                    </CardDescription>
+                    <CardDescription>Resumo das avaliações recebidas</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
@@ -469,9 +462,7 @@ export default function ProfessionalPerformanceDashboard({ professionalId }: Pro
                     <AlertTriangle className="h-5 w-5" />
                     Áreas de Melhoria
                   </CardTitle>
-                  <CardDescription>
-                    Sugestões baseadas nos dados coletados
-                  </CardDescription>
+                  <CardDescription>Sugestões baseadas nos dados coletados</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
@@ -527,11 +518,13 @@ export default function ProfessionalPerformanceDashboard({ professionalId }: Pro
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-sm">
-                            {performer.professional.given_name[0]}{performer.professional.family_name[0]}
+                            {performer.professional.given_name[0]}
+                            {performer.professional.family_name[0]}
                           </div>
                           <div>
                             <div className="font-medium">
-                              {performer.professional.given_name} {performer.professional.family_name}
+                              {performer.professional.given_name}{" "}
+                              {performer.professional.family_name}
                             </div>
                             <div className="text-sm text-muted-foreground">
                               {performer.professional.qualification}
@@ -559,22 +552,27 @@ export default function ProfessionalPerformanceDashboard({ professionalId }: Pro
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Progress 
-                            value={performer.metrics.efficiency} 
-                            className="w-16"
-                          />
+                          <Progress value={performer.metrics.efficiency} className="w-16" />
                           <span className={getPerformanceColor(performer.metrics.efficiency)}>
                             {performer.metrics.efficiency}%
                           </span>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge 
-                          variant={performer.metrics.efficiency >= 90 ? 'default' : 
-                                   performer.metrics.efficiency >= 70 ? 'secondary' : 'destructive'}
+                        <Badge
+                          variant={
+                            performer.metrics.efficiency >= 90
+                              ? "default"
+                              : performer.metrics.efficiency >= 70
+                                ? "secondary"
+                                : "destructive"
+                          }
                         >
-                          {performer.metrics.efficiency >= 90 ? 'Excelente' : 
-                           performer.metrics.efficiency >= 70 ? 'Bom' : 'Precisa Melhorar'}
+                          {performer.metrics.efficiency >= 90
+                            ? "Excelente"
+                            : performer.metrics.efficiency >= 70
+                              ? "Bom"
+                              : "Precisa Melhorar"}
                         </Badge>
                       </TableCell>
                     </TableRow>
@@ -594,9 +592,7 @@ export default function ProfessionalPerformanceDashboard({ professionalId }: Pro
                   <Target className="h-5 w-5" />
                   Metas Individuais
                 </CardTitle>
-                <CardDescription>
-                  Progresso das metas do profissional selecionado
-                </CardDescription>
+                <CardDescription>Progresso das metas do profissional selecionado</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -631,9 +627,7 @@ export default function ProfessionalPerformanceDashboard({ professionalId }: Pro
                   <Activity className="h-5 w-5" />
                   Metas da Equipe
                 </CardTitle>
-                <CardDescription>
-                  Objetivos coletivos da clínica
-                </CardDescription>
+                <CardDescription>Objetivos coletivos da clínica</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -667,9 +661,7 @@ export default function ProfessionalPerformanceDashboard({ professionalId }: Pro
           <Card>
             <CardHeader>
               <CardTitle>Cronograma de Metas</CardTitle>
-              <CardDescription>
-                Próximas avaliações e marcos importantes
-              </CardDescription>
+              <CardDescription>Próximas avaliações e marcos importantes</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -677,7 +669,9 @@ export default function ProfessionalPerformanceDashboard({ professionalId }: Pro
                   <div className="h-2 w-2 rounded-full bg-blue-600"></div>
                   <div className="flex-1">
                     <div className="font-medium">Avaliação Trimestral</div>
-                    <div className="text-sm text-muted-foreground">Revisão completa de performance - 15 de Março</div>
+                    <div className="text-sm text-muted-foreground">
+                      Revisão completa de performance - 15 de Março
+                    </div>
                   </div>
                   <Badge variant="outline">Em 2 semanas</Badge>
                 </div>
@@ -685,7 +679,9 @@ export default function ProfessionalPerformanceDashboard({ professionalId }: Pro
                   <div className="h-2 w-2 rounded-full bg-green-600"></div>
                   <div className="flex-1">
                     <div className="font-medium">Meta de Satisfação</div>
-                    <div className="text-sm text-muted-foreground">Objetivo: manter acima de 4.5 estrelas</div>
+                    <div className="text-sm text-muted-foreground">
+                      Objetivo: manter acima de 4.5 estrelas
+                    </div>
                   </div>
                   <Badge variant="default">Atingida</Badge>
                 </div>
@@ -693,7 +689,9 @@ export default function ProfessionalPerformanceDashboard({ professionalId }: Pro
                   <div className="h-2 w-2 rounded-full bg-yellow-600"></div>
                   <div className="flex-1">
                     <div className="font-medium">Treinamento Obrigatório</div>
-                    <div className="text-sm text-muted-foreground">Atualização em protocolos de segurança - 30 de Março</div>
+                    <div className="text-sm text-muted-foreground">
+                      Atualização em protocolos de segurança - 30 de Março
+                    </div>
                   </div>
                   <Badge variant="secondary">Agendado</Badge>
                 </div>
@@ -703,5 +701,5 @@ export default function ProfessionalPerformanceDashboard({ professionalId }: Pro
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }

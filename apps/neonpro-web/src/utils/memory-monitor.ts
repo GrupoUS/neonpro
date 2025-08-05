@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useCallback, useRef, useState } from 'react';
+import type { useEffect, useCallback, useRef, useState } from "react";
 
 // =====================================================================================
 // MEMORY MONITORING SYSTEM
@@ -12,7 +12,7 @@ interface MemoryMetrics {
   totalJSHeapSize: number;
   jsHeapSizeLimit: number;
   memoryUsagePercent: number;
-  trend: 'increasing' | 'decreasing' | 'stable';
+  trend: "increasing" | "decreasing" | "stable";
   leakSuspected: boolean;
   timestamp: number;
 }
@@ -28,7 +28,7 @@ interface MemorySnapshot {
 
 interface MemoryAlert {
   id: string;
-  type: 'warning' | 'critical' | 'leak';
+  type: "warning" | "critical" | "leak";
   message: string;
   timestamp: number;
   metrics: MemoryMetrics;
@@ -68,7 +68,7 @@ export class MemoryMonitor {
       maxSnapshots: 100,
       enableAutoCleanup: true,
       enableDetailedTracking: true,
-      ...config
+      ...config,
     };
 
     this.snapshots = [];
@@ -80,7 +80,7 @@ export class MemoryMonitor {
   }
 
   private setupMemoryTracking() {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
     // Track component mounts/unmounts
     if (this.config.enableDetailedTracking) {
@@ -90,16 +90,16 @@ export class MemoryMonitor {
     }
 
     // Setup cleanup on page unload
-    window.addEventListener('beforeunload', () => {
+    window.addEventListener("beforeunload", () => {
       this.cleanup();
     });
   }
 
   private setupComponentTracking() {
     // Monkey patch React DevTools if available
-    if (typeof window !== 'undefined' && (window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__) {
+    if (typeof window !== "undefined" && (window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__) {
       const hook = (window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__;
-      
+
       const originalOnCommitFiberRoot = hook.onCommitFiberRoot;
       hook.onCommitFiberRoot = (...args: any[]) => {
         this.trackComponentMount();
@@ -112,7 +112,7 @@ export class MemoryMonitor {
     const originalAddEventListener = EventTarget.prototype.addEventListener;
     const originalRemoveEventListener = EventTarget.prototype.removeEventListener;
 
-    EventTarget.prototype.addEventListener = function(type: string, listener: any, options?: any) {
+    EventTarget.prototype.addEventListener = function (type: string, listener: any, options?: any) {
       if (!this.listenerRegistry.has(this)) {
         this.listenerRegistry.set(this, new Set());
       }
@@ -120,7 +120,11 @@ export class MemoryMonitor {
       return originalAddEventListener.call(this, type, listener, options);
     }.bind(this);
 
-    EventTarget.prototype.removeEventListener = function(type: string, listener: any, options?: any) {
+    EventTarget.prototype.removeEventListener = function (
+      type: string,
+      listener: any,
+      options?: any,
+    ) {
       const listeners = this.listenerRegistry.get(this);
       if (listeners) {
         listeners.delete(type);
@@ -134,10 +138,10 @@ export class MemoryMonitor {
 
   private setupDOMNodeTracking() {
     // Track DOM mutations
-    if ('MutationObserver' in window) {
+    if ("MutationObserver" in window) {
       const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
-          if (mutation.type === 'childList') {
+          if (mutation.type === "childList") {
             // Track added/removed nodes
             this.trackDOMChanges(mutation.addedNodes.length, mutation.removedNodes.length);
           }
@@ -146,7 +150,7 @@ export class MemoryMonitor {
 
       observer.observe(document.body, {
         childList: true,
-        subtree: true
+        subtree: true,
       });
 
       this.cleanupTasks.add(() => observer.disconnect());
@@ -154,17 +158,17 @@ export class MemoryMonitor {
   }
 
   private trackComponentMount() {
-    const count = this.componentRegistry.get('total') || 0;
-    this.componentRegistry.set('total', count + 1);
+    const count = this.componentRegistry.get("total") || 0;
+    this.componentRegistry.set("total", count + 1);
   }
 
   private trackDOMChanges(added: number, removed: number) {
-    const current = this.componentRegistry.get('domNodes') || 0;
-    this.componentRegistry.set('domNodes', current + added - removed);
+    const current = this.componentRegistry.get("domNodes") || 0;
+    this.componentRegistry.set("domNodes", current + added - removed);
   }
 
   private getCurrentMemoryMetrics(): MemoryMetrics | null {
-    if (typeof window === 'undefined' || !(performance as any).memory) {
+    if (typeof window === "undefined" || !(performance as any).memory) {
       return null;
     }
 
@@ -172,7 +176,7 @@ export class MemoryMonitor {
     const usedJSHeapSize = memory.usedJSHeapSize;
     const totalJSHeapSize = memory.totalJSHeapSize;
     const jsHeapSizeLimit = memory.jsHeapSizeLimit;
-    
+
     const memoryUsagePercent = (usedJSHeapSize / jsHeapSizeLimit) * 100;
     const trend = this.calculateTrend(usedJSHeapSize);
     const leakSuspected = this.detectMemoryLeak(usedJSHeapSize);
@@ -184,54 +188,54 @@ export class MemoryMonitor {
       memoryUsagePercent,
       trend,
       leakSuspected,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
   }
 
-  private calculateTrend(currentUsage: number): 'increasing' | 'decreasing' | 'stable' {
-    if (this.snapshots.length < 3) return 'stable';
+  private calculateTrend(currentUsage: number): "increasing" | "decreasing" | "stable" {
+    if (this.snapshots.length < 3) return "stable";
 
-    const recent = this.snapshots.slice(-3).map(s => s.metrics.usedJSHeapSize);
+    const recent = this.snapshots.slice(-3).map((s) => s.metrics.usedJSHeapSize);
     const avgRecent = recent.reduce((sum, val) => sum + val, 0) / recent.length;
-    
+
     const threshold = currentUsage * 0.05; // 5% threshold
-    
-    if (currentUsage > avgRecent + threshold) return 'increasing';
-    if (currentUsage < avgRecent - threshold) return 'decreasing';
-    return 'stable';
+
+    if (currentUsage > avgRecent + threshold) return "increasing";
+    if (currentUsage < avgRecent - threshold) return "decreasing";
+    return "stable";
   }
 
   private detectMemoryLeak(currentUsage: number): boolean {
     if (this.snapshots.length < 5) return false;
 
     const windowStart = Date.now() - this.config.leakDetectionWindow;
-    const recentSnapshots = this.snapshots.filter(s => s.timestamp > windowStart);
-    
+    const recentSnapshots = this.snapshots.filter((s) => s.timestamp > windowStart);
+
     if (recentSnapshots.length < 3) return false;
 
     // Check for consistent memory growth
-    const usages = recentSnapshots.map(s => s.metrics.usedJSHeapSize);
+    const usages = recentSnapshots.map((s) => s.metrics.usedJSHeapSize);
     const growthRate = (usages[usages.length - 1] - usages[0]) / usages[0];
-    
+
     // Leak suspected if memory grew by more than 50% in the detection window
     return growthRate > 0.5;
   }
 
-  private createSnapshot(context: string = 'automatic'): MemorySnapshot | null {
+  private createSnapshot(context: string = "automatic"): MemorySnapshot | null {
     const metrics = this.getCurrentMemoryMetrics();
     if (!metrics) return null;
 
     const snapshot: MemorySnapshot = {
       timestamp: Date.now(),
       metrics,
-      activeComponents: this.componentRegistry.get('total') || 0,
+      activeComponents: this.componentRegistry.get("total") || 0,
       eventListeners: this.getTotalEventListeners(),
-      domNodes: document.querySelectorAll('*').length,
-      context
+      domNodes: document.querySelectorAll("*").length,
+      context,
     };
 
     this.snapshots.push(snapshot);
-    
+
     // Limit snapshots to prevent memory issues
     if (this.snapshots.length > this.config.maxSnapshots) {
       this.snapshots.shift();
@@ -253,16 +257,16 @@ export class MemoryMonitor {
     if (metrics.memoryUsagePercent > this.config.alertThreshold) {
       alerts.push({
         id: `high-memory-${Date.now()}`,
-        type: metrics.memoryUsagePercent > 95 ? 'critical' : 'warning',
+        type: metrics.memoryUsagePercent > 95 ? "critical" : "warning",
         message: `High memory usage: ${metrics.memoryUsagePercent.toFixed(1)}%`,
         timestamp: Date.now(),
         metrics,
         suggestions: [
-          'Consider implementing component cleanup',
-          'Check for memory leaks in event listeners',
-          'Optimize large data structures',
-          'Implement virtual scrolling for large lists'
-        ]
+          "Consider implementing component cleanup",
+          "Check for memory leaks in event listeners",
+          "Optimize large data structures",
+          "Implement virtual scrolling for large lists",
+        ],
       });
     }
 
@@ -270,43 +274,46 @@ export class MemoryMonitor {
     if (metrics.leakSuspected) {
       alerts.push({
         id: `memory-leak-${Date.now()}`,
-        type: 'leak',
-        message: 'Potential memory leak detected',
+        type: "leak",
+        message: "Potential memory leak detected",
         timestamp: Date.now(),
         metrics,
         suggestions: [
-          'Check for uncleaned event listeners',
-          'Verify component cleanup in useEffect',
-          'Look for circular references',
-          'Check for retained DOM references'
-        ]
+          "Check for uncleaned event listeners",
+          "Verify component cleanup in useEffect",
+          "Look for circular references",
+          "Check for retained DOM references",
+        ],
       });
     }
 
     // Rapid growth alert
-    if (metrics.trend === 'increasing' && this.snapshots.length > 1) {
+    if (metrics.trend === "increasing" && this.snapshots.length > 1) {
       const lastSnapshot = this.snapshots[this.snapshots.length - 1];
-      const growthRate = (metrics.usedJSHeapSize - lastSnapshot.metrics.usedJSHeapSize) / lastSnapshot.metrics.usedJSHeapSize;
-      
-      if (growthRate > 0.1) { // 10% growth
+      const growthRate =
+        (metrics.usedJSHeapSize - lastSnapshot.metrics.usedJSHeapSize) /
+        lastSnapshot.metrics.usedJSHeapSize;
+
+      if (growthRate > 0.1) {
+        // 10% growth
         alerts.push({
           id: `rapid-growth-${Date.now()}`,
-          type: 'warning',
+          type: "warning",
           message: `Rapid memory growth detected: ${(growthRate * 100).toFixed(1)}%`,
           timestamp: Date.now(),
           metrics,
           suggestions: [
-            'Check recent component changes',
-            'Look for new data loading patterns',
-            'Verify cleanup in recent code changes'
-          ]
+            "Check recent component changes",
+            "Look for new data loading patterns",
+            "Verify cleanup in recent code changes",
+          ],
         });
       }
     }
 
-    alerts.forEach(alert => {
+    alerts.forEach((alert) => {
       this.alerts.push(alert);
-      this.alertObservers.forEach(observer => observer(alert));
+      this.alertObservers.forEach((observer) => observer(alert));
     });
 
     // Limit alerts to prevent memory issues
@@ -327,8 +334,8 @@ export class MemoryMonitor {
       const snapshot = this.createSnapshot();
       if (snapshot) {
         this.checkForAlerts(snapshot.metrics);
-        this.observers.forEach(observer => observer(snapshot.metrics));
-        
+        this.observers.forEach((observer) => observer(snapshot.metrics));
+
         if (this.config.enableAutoCleanup) {
           this.performAutoCleanup(snapshot.metrics);
         }
@@ -391,7 +398,7 @@ export class MemoryMonitor {
       history: recentSnapshots,
       alerts: recentAlerts,
       analysis: this.analyzeMemoryPatterns(),
-      recommendations: this.generateRecommendations()
+      recommendations: this.generateRecommendations(),
     };
   }
 
@@ -399,7 +406,7 @@ export class MemoryMonitor {
     if (metrics.memoryUsagePercent > 90) {
       // Trigger cleanup for high memory usage
       this.cleanupUnusedReferences();
-      
+
       // Force garbage collection if available
       this.forceGarbageCollection();
     }
@@ -420,35 +427,36 @@ export class MemoryMonitor {
   private analyzeMemoryPatterns(): MemoryAnalysis {
     if (this.snapshots.length < 3) {
       return {
-        trend: 'insufficient_data',
+        trend: "insufficient_data",
         averageUsage: 0,
         peakUsage: 0,
         growthRate: 0,
-        stability: 'unknown'
+        stability: "unknown",
       };
     }
 
-    const usages = this.snapshots.map(s => s.metrics.usedJSHeapSize);
+    const usages = this.snapshots.map((s) => s.metrics.usedJSHeapSize);
     const averageUsage = usages.reduce((sum, val) => sum + val, 0) / usages.length;
     const peakUsage = Math.max(...usages);
     const growthRate = (usages[usages.length - 1] - usages[0]) / usages[0];
-    
+
     // Calculate stability (coefficient of variation)
-    const variance = usages.reduce((sum, val) => sum + Math.pow(val - averageUsage, 2), 0) / usages.length;
+    const variance =
+      usages.reduce((sum, val) => sum + Math.pow(val - averageUsage, 2), 0) / usages.length;
     const standardDeviation = Math.sqrt(variance);
     const coefficientOfVariation = standardDeviation / averageUsage;
-    
-    let stability: 'stable' | 'moderate' | 'unstable';
-    if (coefficientOfVariation < 0.1) stability = 'stable';
-    else if (coefficientOfVariation < 0.3) stability = 'moderate';
-    else stability = 'unstable';
+
+    let stability: "stable" | "moderate" | "unstable";
+    if (coefficientOfVariation < 0.1) stability = "stable";
+    else if (coefficientOfVariation < 0.3) stability = "moderate";
+    else stability = "unstable";
 
     return {
-      trend: growthRate > 0.1 ? 'increasing' : growthRate < -0.1 ? 'decreasing' : 'stable',
+      trend: growthRate > 0.1 ? "increasing" : growthRate < -0.1 ? "decreasing" : "stable",
       averageUsage,
       peakUsage,
       growthRate,
-      stability
+      stability,
     };
   }
 
@@ -460,23 +468,25 @@ export class MemoryMonitor {
     if (!currentMetrics) return recommendations;
 
     if (currentMetrics.memoryUsagePercent > 80) {
-      recommendations.push('Memory usage is high. Consider implementing cleanup strategies.');
+      recommendations.push("Memory usage is high. Consider implementing cleanup strategies.");
     }
 
-    if (analysis.trend === 'increasing') {
-      recommendations.push('Memory usage is consistently increasing. Check for memory leaks.');
+    if (analysis.trend === "increasing") {
+      recommendations.push("Memory usage is consistently increasing. Check for memory leaks.");
     }
 
-    if (analysis.stability === 'unstable') {
-      recommendations.push('Memory usage is unstable. Review component lifecycle management.');
+    if (analysis.stability === "unstable") {
+      recommendations.push("Memory usage is unstable. Review component lifecycle management.");
     }
 
     if (currentMetrics.leakSuspected) {
-      recommendations.push('Potential memory leak detected. Review event listeners and component cleanup.');
+      recommendations.push(
+        "Potential memory leak detected. Review event listeners and component cleanup.",
+      );
     }
 
-    if (this.alerts.filter(a => a.type === 'critical').length > 0) {
-      recommendations.push('Critical memory alerts detected. Immediate action required.');
+    if (this.alerts.filter((a) => a.type === "critical").length > 0) {
+      recommendations.push("Critical memory alerts detected. Immediate action required.");
     }
 
     return recommendations;
@@ -484,7 +494,7 @@ export class MemoryMonitor {
 
   public cleanup(): void {
     this.stopMonitoring();
-    this.cleanupTasks.forEach(task => task());
+    this.cleanupTasks.forEach((task) => task());
     this.cleanupTasks.clear();
     this.observers.clear();
     this.alertObservers.clear();
@@ -507,11 +517,11 @@ interface MemoryReport {
 }
 
 interface MemoryAnalysis {
-  trend: 'increasing' | 'decreasing' | 'stable' | 'insufficient_data';
+  trend: "increasing" | "decreasing" | "stable" | "insufficient_data";
   averageUsage: number;
   peakUsage: number;
   growthRate: number;
-  stability: 'stable' | 'moderate' | 'unstable' | 'unknown';
+  stability: "stable" | "moderate" | "unstable" | "unknown";
 }
 
 // =====================================================================================
@@ -527,7 +537,7 @@ export function useMemoryMonitor(config?: Partial<MemoryConfig>) {
   useEffect(() => {
     const unsubscribeMetrics = monitor.subscribe(setMetrics);
     const unsubscribeAlerts = monitor.subscribeToAlerts((alert) => {
-      setAlerts(prev => [...prev, alert].slice(-10)); // Keep last 10 alerts
+      setAlerts((prev) => [...prev, alert].slice(-10)); // Keep last 10 alerts
     });
 
     return () => {
@@ -547,9 +557,12 @@ export function useMemoryMonitor(config?: Partial<MemoryConfig>) {
     setIsMonitoring(false);
   }, [monitor]);
 
-  const takeSnapshot = useCallback((context?: string) => {
-    return monitor.takeSnapshot(context);
-  }, [monitor]);
+  const takeSnapshot = useCallback(
+    (context?: string) => {
+      return monitor.takeSnapshot(context);
+    },
+    [monitor],
+  );
 
   const generateReport = useCallback(() => {
     return monitor.generateReport();
@@ -568,7 +581,7 @@ export function useMemoryMonitor(config?: Partial<MemoryConfig>) {
     takeSnapshot,
     generateReport,
     forceGC,
-    snapshots: monitor.getSnapshots()
+    snapshots: monitor.getSnapshots(),
   };
 }
 
@@ -578,7 +591,7 @@ export function useMemoryAlert(threshold: number = 80) {
 
   useEffect(() => {
     monitor.current = new MemoryMonitor({ alertThreshold: threshold });
-    
+
     const unsubscribe = monitor.current.subscribeToAlerts(setAlert);
     monitor.current.startMonitoring();
 
@@ -596,28 +609,28 @@ export function useMemoryAlert(threshold: number = 80) {
 // =====================================================================================
 
 export function formatBytes(bytes: number): string {
-  if (bytes === 0) return '0 B';
+  if (bytes === 0) return "0 B";
   const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const sizes = ["B", "KB", "MB", "GB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
 }
 
 export function createMemoryProfiler() {
   const profiles: Array<{ name: string; start: number; end?: number; memory?: any }> = [];
-  
+
   return {
     start: (name: string) => {
       const memory = (performance as any).memory;
       profiles.push({
         name,
         start: performance.now(),
-        memory: memory ? { ...memory } : null
+        memory: memory ? { ...memory } : null,
       });
     },
-    
+
     end: (name: string) => {
-      const profile = profiles.find(p => p.name === name && !p.end);
+      const profile = profiles.find((p) => p.name === name && !p.end);
       if (profile) {
         profile.end = performance.now();
         const currentMemory = (performance as any).memory;
@@ -626,13 +639,13 @@ export function createMemoryProfiler() {
           console.log(`Memory Profile [${name}]:`, {
             duration: `${(profile.end - profile.start).toFixed(2)}ms`,
             memoryDelta: formatBytes(memoryDelta),
-            finalMemory: formatBytes(currentMemory.usedJSHeapSize)
+            finalMemory: formatBytes(currentMemory.usedJSHeapSize),
           });
         }
       }
     },
-    
-    getProfiles: () => [...profiles]
+
+    getProfiles: () => [...profiles],
   };
 }
 

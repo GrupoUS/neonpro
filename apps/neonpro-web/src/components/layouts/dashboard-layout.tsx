@@ -1,46 +1,59 @@
-'use client'
+"use client";
 
-import { ReactNode } from 'react'
-import { User } from '@supabase/supabase-js'
-import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
-import { Bell, Settings, LogOut, Menu, Home } from "lucide-react"
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/app/utils/supabase/client'
+import type { ReactNode } from "react";
+import type { User } from "@supabase/supabase-js";
+import type {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from "@/components/ui/breadcrumb";
+import type { Button } from "@/components/ui/button";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import type { Bell, Settings, LogOut, Menu, Home } from "lucide-react";
+import type { useRouter } from "next/navigation";
+import type { createClient } from "@/app/utils/supabase/client";
 
 interface BreadcrumbItem {
-  title: string
-  href?: string
+  title: string;
+  href?: string;
 }
 
 interface DashboardLayoutProps {
-  children: ReactNode
-  user: User
-  breadcrumbs?: BreadcrumbItem[]
-  title?: string
-  subtitle?: string
+  children: ReactNode;
+  user: User;
+  breadcrumbs?: BreadcrumbItem[];
+  title?: string;
+  subtitle?: string;
 }
 
-export default function DashboardLayout({ 
-  children, 
-  user, 
+export default function DashboardLayout({
+  children,
+  user,
   breadcrumbs = [],
   title,
-  subtitle 
+  subtitle,
 }: DashboardLayoutProps) {
-  const router = useRouter()
-  const supabase = createClient()
+  const router = useRouter();
+  const supabase = createClient();
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
-    router.push('/login')
-  }
+    await supabase.auth.signOut();
+    router.push("/login");
+  };
 
   const getUserInitials = (email: string) => {
-    return email.slice(0, 2).toUpperCase()
-  }
+    return email.slice(0, 2).toUpperCase();
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -51,7 +64,7 @@ export default function DashboardLayout({
             <Button variant="ghost" size="sm" className="lg:hidden">
               <Menu className="h-5 w-5" />
             </Button>
-            
+
             {/* Logo/Brand */}
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
@@ -72,13 +85,15 @@ export default function DashboardLayout({
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={user.user_metadata?.avatar_url} alt={user.email} />
-                    <AvatarFallback>{getUserInitials(user.email || '')}</AvatarFallback>
+                    <AvatarFallback>{getUserInitials(user.email || "")}</AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <div className="flex flex-col space-y-1 p-2">
-                  <p className="text-sm font-medium leading-none">{user.user_metadata?.full_name || user.email}</p>
+                  <p className="text-sm font-medium leading-none">
+                    {user.user_metadata?.full_name || user.email}
+                  </p>
                   <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
                 </div>
                 <DropdownMenuSeparator />
@@ -115,9 +130,7 @@ export default function DashboardLayout({
                       <BreadcrumbSeparator />
                       <BreadcrumbItem>
                         {crumb.href && index < breadcrumbs.length - 1 ? (
-                          <BreadcrumbLink href={crumb.href}>
-                            {crumb.title}
-                          </BreadcrumbLink>
+                          <BreadcrumbLink href={crumb.href}>{crumb.title}</BreadcrumbLink>
                         ) : (
                           <BreadcrumbPage>{crumb.title}</BreadcrumbPage>
                         )}
@@ -142,5 +155,5 @@ export default function DashboardLayout({
         </div>
       </main>
     </div>
-  )
+  );
 }

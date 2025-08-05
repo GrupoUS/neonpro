@@ -1,9 +1,9 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent } from "@/components/ui/card";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -11,21 +11,21 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
+import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import {
+import type { Input } from "@/components/ui/input";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
+import type {
   Table,
   TableBody,
   TableCell,
@@ -33,9 +33,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { VendorService } from "@/lib/services/vendors";
-import { Vendor, VendorFilters } from "@/lib/types/accounts-payable";
-import {
+import type { VendorService } from "@/lib/services/vendors";
+import type { Vendor, VendorFilters } from "@/lib/types/accounts-payable";
+import type {
   Building,
   Loader2,
   Mail,
@@ -48,9 +48,9 @@ import {
   ToggleRight,
   Trash2,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { VendorForm } from "./vendor-form";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
+import type { VendorForm } from "./vendor-form";
 
 export function VendorList() {
   const [vendors, setVendors] = useState<Vendor[]>([]);
@@ -82,11 +82,7 @@ export function VendorList() {
   const loadVendors = async () => {
     try {
       setLoading(true);
-      const response = await VendorService.getVendors(
-        filters,
-        currentPage,
-        pageSize
-      );
+      const response = await VendorService.getVendors(filters, currentPage, pageSize);
       setVendors(response.vendors);
       setTotalVendors(response.total);
     } catch (error: any) {
@@ -117,10 +113,7 @@ export function VendorList() {
 
     setDeleteLoading(true);
     try {
-      await VendorService.deleteVendor(
-        vendorToDelete.id,
-        "Deletado pelo usuário"
-      );
+      await VendorService.deleteVendor(vendorToDelete.id, "Deletado pelo usuário");
       toast.success("Fornecedor deletado com sucesso!");
       loadVendors();
     } catch (error: any) {
@@ -136,11 +129,7 @@ export function VendorList() {
   const handleToggleStatus = async (vendor: Vendor) => {
     try {
       await VendorService.toggleVendorStatus(vendor.id, !vendor.is_active);
-      toast.success(
-        `Fornecedor ${
-          !vendor.is_active ? "ativado" : "desativado"
-        } com sucesso!`
-      );
+      toast.success(`Fornecedor ${!vendor.is_active ? "ativado" : "desativado"} com sucesso!`);
       loadVendors();
     } catch (error: any) {
       console.error("Error toggling vendor status:", error);
@@ -200,9 +189,7 @@ export function VendorList() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Fornecedores</h2>
-          <p className="text-muted-foreground">
-            Gerencie os fornecedores do sistema
-          </p>
+          <p className="text-muted-foreground">Gerencie os fornecedores do sistema</p>
         </div>
         <Button onClick={() => setShowForm(true)}>
           <Plus className="mr-2 h-4 w-4" />
@@ -229,10 +216,7 @@ export function VendorList() {
             <Select
               value={filters.vendor_type || "all"}
               onValueChange={(value) =>
-                handleFilterChange(
-                  "vendor_type",
-                  value === "all" ? undefined : value
-                )
+                handleFilterChange("vendor_type", value === "all" ? undefined : value)
               }
             >
               <SelectTrigger className="w-[180px]">
@@ -249,16 +233,9 @@ export function VendorList() {
             </Select>
 
             <Select
-              value={
-                filters.is_active === undefined
-                  ? "all"
-                  : filters.is_active.toString()
-              }
+              value={filters.is_active === undefined ? "all" : filters.is_active.toString()}
               onValueChange={(value) =>
-                handleFilterChange(
-                  "is_active",
-                  value === "all" ? undefined : value === "true"
-                )
+                handleFilterChange("is_active", value === "all" ? undefined : value === "true")
               }
             >
               <SelectTrigger className="w-[120px]">
@@ -274,10 +251,7 @@ export function VendorList() {
             <Select
               value={filters.payment_method || "all"}
               onValueChange={(value) =>
-                handleFilterChange(
-                  "payment_method",
-                  value === "all" ? undefined : value
-                )
+                handleFilterChange("payment_method", value === "all" ? undefined : value)
               }
             >
               <SelectTrigger className="w-[140px]">
@@ -316,9 +290,7 @@ export function VendorList() {
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-8">
                     <Loader2 className="h-6 w-6 animate-spin mx-auto" />
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      Carregando fornecedores...
-                    </p>
+                    <p className="mt-2 text-sm text-muted-foreground">Carregando fornecedores...</p>
                   </TableCell>
                 </TableRow>
               ) : vendors.length === 0 ? (
@@ -326,9 +298,7 @@ export function VendorList() {
                   <TableCell colSpan={7} className="text-center py-8">
                     <Building className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                     <p className="text-sm text-muted-foreground">
-                      {filters.search ||
-                      filters.vendor_type ||
-                      filters.is_active !== undefined
+                      {filters.search || filters.vendor_type || filters.is_active !== undefined
                         ? "Nenhum fornecedor encontrado com os filtros aplicados"
                         : "Nenhum fornecedor cadastrado"}
                     </p>
@@ -340,9 +310,7 @@ export function VendorList() {
                     <TableCell>
                       <div>
                         <div className="font-medium">{vendor.company_name}</div>
-                        <div className="text-sm text-muted-foreground">
-                          {vendor.vendor_code}
-                        </div>
+                        <div className="text-sm text-muted-foreground">{vendor.vendor_code}</div>
                       </div>
                     </TableCell>
 
@@ -366,27 +334,19 @@ export function VendorList() {
                       </div>
                     </TableCell>
 
+                    <TableCell>{getVendorTypeBadge(vendor.vendor_type)}</TableCell>
+
                     <TableCell>
-                      {getVendorTypeBadge(vendor.vendor_type)}
+                      <div className="text-sm">{getPaymentMethodBadge(vendor.payment_method)}</div>
                     </TableCell>
 
                     <TableCell>
-                      <div className="text-sm">
-                        {getPaymentMethodBadge(vendor.payment_method)}
-                      </div>
-                    </TableCell>
-
-                    <TableCell>
-                      <div className="text-sm">
-                        {vendor.payment_terms_days} dias
-                      </div>
+                      <div className="text-sm">{vendor.payment_terms_days} dias</div>
                     </TableCell>
 
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Badge
-                          variant={vendor.is_active ? "default" : "secondary"}
-                        >
+                        <Badge variant={vendor.is_active ? "default" : "secondary"}>
                           {vendor.is_active ? "Ativo" : "Inativo"}
                         </Badge>
                         {vendor.requires_approval && (
@@ -409,9 +369,7 @@ export function VendorList() {
                             <Pencil className="mr-2 h-4 w-4" />
                             Editar
                           </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => handleToggleStatus(vendor)}
-                          >
+                          <DropdownMenuItem onClick={() => handleToggleStatus(vendor)}>
                             {vendor.is_active ? (
                               <ToggleLeft className="mr-2 h-4 w-4" />
                             ) : (
@@ -445,8 +403,7 @@ export function VendorList() {
         <div className="flex items-center justify-between">
           <div className="text-sm text-muted-foreground">
             Mostrando {(currentPage - 1) * pageSize + 1} a{" "}
-            {Math.min(currentPage * pageSize, totalVendors)} de {totalVendors}{" "}
-            fornecedores
+            {Math.min(currentPage * pageSize, totalVendors)} de {totalVendors} fornecedores
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -459,10 +416,7 @@ export function VendorList() {
             </Button>
             <div className="flex items-center gap-1">
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                const pageNum = Math.max(
-                  1,
-                  Math.min(totalPages, currentPage - 2 + i)
-                );
+                const pageNum = Math.max(1, Math.min(totalPages, currentPage - 2 + i));
                 return (
                   <Button
                     key={pageNum}
@@ -478,9 +432,7 @@ export function VendorList() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(totalPages, prev + 1))
-              }
+              onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
               disabled={currentPage === totalPages}
             >
               Próximo
@@ -506,25 +458,16 @@ export function VendorList() {
           <DialogHeader>
             <DialogTitle>Confirmar Exclusão</DialogTitle>
             <DialogDescription>
-              Tem certeza de que deseja deletar o fornecedor "
-              {vendorToDelete?.company_name}"? Esta ação não pode ser desfeita.
+              Tem certeza de que deseja deletar o fornecedor "{vendorToDelete?.company_name}"? Esta
+              ação não pode ser desfeita.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setShowDeleteDialog(false)}
-            >
+            <Button variant="outline" onClick={() => setShowDeleteDialog(false)}>
               Cancelar
             </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDelete}
-              disabled={deleteLoading}
-            >
-              {deleteLoading && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
+            <Button variant="destructive" onClick={handleDelete} disabled={deleteLoading}>
+              {deleteLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Deletar
             </Button>
           </DialogFooter>

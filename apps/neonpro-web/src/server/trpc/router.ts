@@ -1,9 +1,9 @@
-import { createTRPCRouter } from './trpc';
-import { authRouter } from './routers/auth';
+import type { createTRPCRouter } from "./trpc";
+import type { authRouter } from "./routers/auth";
 
 /**
  * Main tRPC router for NeonPro Healthcare
- * 
+ *
  * Healthcare-compliant API with:
  * - LGPD compliance validation
  * - Medical role-based access control

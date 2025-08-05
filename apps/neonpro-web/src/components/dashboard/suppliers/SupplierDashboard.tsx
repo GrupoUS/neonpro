@@ -5,19 +5,19 @@
 
 "use client";
 
-import { useSupplierManagement } from "@/app/hooks/useSupplierManagement";
-import { SupplierStatus, SupplierType } from "@/app/types/suppliers";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { useSupplierManagement } from "@/app/hooks/useSupplierManagement";
+import type { SupplierStatus, SupplierType } from "@/app/types/suppliers";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import {
+import type { Progress } from "@/components/ui/progress";
+import type {
   Table,
   TableBody,
   TableCell,
@@ -25,8 +25,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
   AlertCircle,
   AlertTriangle,
   BarChart3,
@@ -41,7 +41,7 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import type { useEffect, useState } from "react";
 
 interface SupplierDashboardProps {
   clinicId: string;
@@ -81,16 +81,8 @@ export function SupplierDashboard({ clinicId }: SupplierDashboardProps) {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - 30);
 
-    loadAnalytics(
-      startDate.toISOString().split("T")[0],
-      endDate.toISOString().split("T")[0]
-    );
-  }, [
-    loadSuppliers,
-    loadContractAlerts,
-    loadQualityIssuesSummary,
-    loadAnalytics,
-  ]);
+    loadAnalytics(startDate.toISOString().split("T")[0], endDate.toISOString().split("T")[0]);
+  }, [loadSuppliers, loadContractAlerts, loadQualityIssuesSummary, loadAnalytics]);
 
   // Render loading state
   if (isLoading && !dashboardData) {
@@ -98,9 +90,7 @@ export function SupplierDashboard({ clinicId }: SupplierDashboardProps) {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-          <p className="mt-4 text-muted-foreground">
-            Carregando dashboard de fornecedores...
-          </p>
+          <p className="mt-4 text-muted-foreground">Carregando dashboard de fornecedores...</p>
         </div>
       </div>
     );
@@ -208,15 +198,11 @@ export function SupplierDashboard({ clinicId }: SupplierDashboardProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total de Fornecedores
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Total de Fornecedores</CardTitle>
             <Building2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {dashboardData?.totalSuppliers || 0}
-            </div>
+            <div className="text-2xl font-bold">{dashboardData?.totalSuppliers || 0}</div>
             <p className="text-xs text-muted-foreground">
               {dashboardData?.activeSuppliers || 0} ativos
             </p>
@@ -225,9 +211,7 @@ export function SupplierDashboard({ clinicId }: SupplierDashboardProps) {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Performance Média
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Performance Média</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -240,32 +224,23 @@ export function SupplierDashboard({ clinicId }: SupplierDashboardProps) {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Contratos Vencendo
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Contratos Vencendo</CardTitle>
             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {contractAlerts?.length || 0}
-            </div>
+            <div className="text-2xl font-bold">{contractAlerts?.length || 0}</div>
             <p className="text-xs text-muted-foreground">Próximos 90 dias</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Issues de Qualidade
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Issues de Qualidade</CardTitle>
             <AlertCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {qualityIssuesSummary?.reduce(
-                (acc, item) => acc + item.openIssues,
-                0
-              ) || 0}
+              {qualityIssuesSummary?.reduce((acc, item) => acc + item.openIssues, 0) || 0}
             </div>
             <p className="text-xs text-muted-foreground">Em aberto</p>
           </CardContent>
@@ -273,11 +248,7 @@ export function SupplierDashboard({ clinicId }: SupplierDashboardProps) {
       </div>
 
       {/* Main Content Tabs */}
-      <Tabs
-        value={selectedTab}
-        onValueChange={setSelectedTab}
-        className="space-y-4"
-      >
+      <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-4">
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">Visão Geral</TabsTrigger>
           <TabsTrigger value="suppliers">Fornecedores</TabsTrigger>
@@ -293,17 +264,12 @@ export function SupplierDashboard({ clinicId }: SupplierDashboardProps) {
             <Card>
               <CardHeader>
                 <CardTitle>Melhores Fornecedores</CardTitle>
-                <CardDescription>
-                  Baseado na performance dos últimos 30 dias
-                </CardDescription>
+                <CardDescription>Baseado na performance dos últimos 30 dias</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {dashboardData?.topSuppliers?.slice(0, 5).map((supplier) => (
-                    <div
-                      key={supplier.id}
-                      className="flex items-center justify-between"
-                    >
+                    <div key={supplier.id} className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <div className="flex items-center space-x-2">
                           {getSupplierTypeIcon(supplier.supplier_type)}
@@ -320,8 +286,7 @@ export function SupplierDashboard({ clinicId }: SupplierDashboardProps) {
                           {supplier.performance_score?.toFixed(1) || "0.0"}%
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          {supplier.delivery_reliability?.toFixed(0) || "0"}%
-                          entrega
+                          {supplier.delivery_reliability?.toFixed(0) || "0"}% entrega
                         </div>
                       </div>
                     </div>
@@ -334,38 +299,23 @@ export function SupplierDashboard({ clinicId }: SupplierDashboardProps) {
             <Card>
               <CardHeader>
                 <CardTitle>Alertas de Contrato</CardTitle>
-                <CardDescription>
-                  Contratos que requerem atenção
-                </CardDescription>
+                <CardDescription>Contratos que requerem atenção</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {contractAlerts?.slice(0, 5).map((alert) => (
-                    <div
-                      key={alert.contractId}
-                      className="flex items-center justify-between"
-                    >
+                    <div key={alert.contractId} className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <Calendar className="h-4 w-4 text-muted-foreground" />
                         <div>
-                          <div className="font-medium">
-                            {alert.supplierName}
-                          </div>
+                          <div className="font-medium">{alert.supplierName}</div>
                           <div className="text-sm text-muted-foreground">
                             Vence em {alert.daysUntilExpiry} dias
                           </div>
                         </div>
                       </div>
-                      <Badge
-                        variant={
-                          alert.daysUntilExpiry <= 30
-                            ? "destructive"
-                            : "outline"
-                        }
-                      >
-                        {alert.alertType === "renewal"
-                          ? "Renovação"
-                          : "Atenção"}
+                      <Badge variant={alert.daysUntilExpiry <= 30 ? "destructive" : "outline"}>
+                        {alert.alertType === "renewal" ? "Renovação" : "Atenção"}
                       </Badge>
                     </div>
                   ))}
@@ -378,9 +328,7 @@ export function SupplierDashboard({ clinicId }: SupplierDashboardProps) {
           <Card>
             <CardHeader>
               <CardTitle>Tendências de Performance</CardTitle>
-              <CardDescription>
-                Evolução da performance por categoria
-              </CardDescription>
+              <CardDescription>Evolução da performance por categoria</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -391,9 +339,7 @@ export function SupplierDashboard({ clinicId }: SupplierDashboardProps) {
                         {getSupplierTypeIcon(category.type)}
                         {category.type.replace("_", " ").toUpperCase()}
                       </span>
-                      <span
-                        className={getPerformanceColor(category.averageScore)}
-                      >
+                      <span className={getPerformanceColor(category.averageScore)}>
                         {category.averageScore.toFixed(1)}%
                       </span>
                     </div>
@@ -410,9 +356,7 @@ export function SupplierDashboard({ clinicId }: SupplierDashboardProps) {
           <Card>
             <CardHeader>
               <CardTitle>Lista de Fornecedores</CardTitle>
-              <CardDescription>
-                Todos os fornecedores cadastrados no sistema
-              </CardDescription>
+              <CardDescription>Todos os fornecedores cadastrados no sistema</CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
@@ -439,27 +383,19 @@ export function SupplierDashboard({ clinicId }: SupplierDashboardProps) {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline">
-                          {supplier.supplier_type.replace("_", " ")}
-                        </Badge>
+                        <Badge variant="outline">{supplier.supplier_type.replace("_", " ")}</Badge>
                       </TableCell>
                       <TableCell>{getStatusBadge(supplier.status)}</TableCell>
                       <TableCell>
                         <div className="flex items-center space-x-2">
-                          <span
-                            className={getPerformanceColor(
-                              supplier.performance_score || 0
-                            )}
-                          >
+                          <span className={getPerformanceColor(supplier.performance_score || 0)}>
                             {supplier.performance_score?.toFixed(1) || "0.0"}%
                           </span>
                         </div>
                       </TableCell>
                       <TableCell>
                         {supplier.last_order_date
-                          ? new Date(
-                              supplier.last_order_date
-                            ).toLocaleDateString("pt-BR")
+                          ? new Date(supplier.last_order_date).toLocaleDateString("pt-BR")
                           : "Nunca"}
                       </TableCell>
                       <TableCell>
@@ -480,9 +416,7 @@ export function SupplierDashboard({ clinicId }: SupplierDashboardProps) {
           <Card>
             <CardHeader>
               <CardTitle>Gestão de Contratos</CardTitle>
-              <CardDescription>
-                Contratos ativos e alertas de renovação
-              </CardDescription>
+              <CardDescription>Contratos ativos e alertas de renovação</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -495,26 +429,15 @@ export function SupplierDashboard({ clinicId }: SupplierDashboardProps) {
                           Contrato: {alert.contractType}
                         </p>
                         <p className="text-sm">
-                          Valor: R${" "}
-                          {alert.contractValue?.toLocaleString("pt-BR") ||
-                            "N/A"}
+                          Valor: R$ {alert.contractValue?.toLocaleString("pt-BR") || "N/A"}
                         </p>
                       </div>
                       <div className="text-right">
-                        <Badge
-                          variant={
-                            alert.daysUntilExpiry <= 30
-                              ? "destructive"
-                              : "outline"
-                          }
-                        >
+                        <Badge variant={alert.daysUntilExpiry <= 30 ? "destructive" : "outline"}>
                           {alert.daysUntilExpiry} dias
                         </Badge>
                         <p className="text-xs text-muted-foreground mt-1">
-                          Vence:{" "}
-                          {new Date(alert.expiryDate).toLocaleDateString(
-                            "pt-BR"
-                          )}
+                          Vence: {new Date(alert.expiryDate).toLocaleDateString("pt-BR")}
                         </p>
                       </div>
                     </div>
@@ -536,32 +459,21 @@ export function SupplierDashboard({ clinicId }: SupplierDashboardProps) {
           <Card>
             <CardHeader>
               <CardTitle>Issues de Qualidade</CardTitle>
-              <CardDescription>
-                Resumo dos problemas de qualidade por fornecedor
-              </CardDescription>
+              <CardDescription>Resumo dos problemas de qualidade por fornecedor</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {qualityIssuesSummary?.map((summary) => (
-                  <div
-                    key={summary.supplierId}
-                    className="border rounded-lg p-4"
-                  >
+                  <div key={summary.supplierId} className="border rounded-lg p-4">
                     <div className="flex justify-between items-start">
                       <div className="space-y-1">
-                        <h4 className="font-semibold">
-                          {summary.supplierName}
-                        </h4>
+                        <h4 className="font-semibold">{summary.supplierName}</h4>
                         <div className="flex gap-4 text-sm">
-                          <span className="text-red-600">
-                            {summary.openIssues} em aberto
-                          </span>
+                          <span className="text-red-600">{summary.openIssues} em aberto</span>
                           <span className="text-green-600">
                             {summary.resolvedIssues} resolvidos
                           </span>
-                          <span className="text-muted-foreground">
-                            {summary.totalIssues} total
-                          </span>
+                          <span className="text-muted-foreground">{summary.totalIssues} total</span>
                         </div>
                       </div>
                       <div className="text-right">
@@ -570,9 +482,7 @@ export function SupplierDashboard({ clinicId }: SupplierDashboardProps) {
                         >
                           {summary.averageResolutionTime.toFixed(1)} dias
                         </div>
-                        <p className="text-xs text-muted-foreground">
-                          Tempo médio de resolução
-                        </p>
+                        <p className="text-xs text-muted-foreground">Tempo médio de resolução</p>
                       </div>
                     </div>
                     {summary.openIssues > 0 && (
@@ -594,9 +504,7 @@ export function SupplierDashboard({ clinicId }: SupplierDashboardProps) {
           <Card>
             <CardHeader>
               <CardTitle>Analytics de Fornecedores</CardTitle>
-              <CardDescription>
-                Análise detalhada de performance e custos
-              </CardDescription>
+              <CardDescription>Análise detalhada de performance e custos</CardDescription>
             </CardHeader>
             <CardContent>
               {analytics ? (
@@ -607,27 +515,19 @@ export function SupplierDashboard({ clinicId }: SupplierDashboardProps) {
                       <div className="flex justify-between">
                         <span>Entregas no Prazo:</span>
                         <span className="font-semibold">
-                          {analytics.deliveryMetrics?.onTimeDeliveryRate?.toFixed(
-                            1
-                          ) || "0.0"}
-                          %
+                          {analytics.deliveryMetrics?.onTimeDeliveryRate?.toFixed(1) || "0.0"}%
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span>Qualidade Média:</span>
                         <span className="font-semibold">
-                          {analytics.qualityMetrics?.averageQualityRating?.toFixed(
-                            1
-                          ) || "0.0"}
+                          {analytics.qualityMetrics?.averageQualityRating?.toFixed(1) || "0.0"}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span>Tempo de Resposta:</span>
                         <span className="font-semibold">
-                          {analytics.responseMetrics?.averageResponseTime?.toFixed(
-                            1
-                          ) || "0.0"}
-                          h
+                          {analytics.responseMetrics?.averageResponseTime?.toFixed(1) || "0.0"}h
                         </span>
                       </div>
                     </div>
@@ -639,27 +539,20 @@ export function SupplierDashboard({ clinicId }: SupplierDashboardProps) {
                       <div className="flex justify-between">
                         <span>Gastos Totais:</span>
                         <span className="font-semibold">
-                          R${" "}
-                          {analytics.costMetrics?.totalSpent?.toLocaleString(
-                            "pt-BR"
-                          ) || "0"}
+                          R$ {analytics.costMetrics?.totalSpent?.toLocaleString("pt-BR") || "0"}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span>Economia Obtida:</span>
                         <span className="font-semibold text-green-600">
                           R${" "}
-                          {analytics.costMetrics?.savingsAchieved?.toLocaleString(
-                            "pt-BR"
-                          ) || "0"}
+                          {analytics.costMetrics?.savingsAchieved?.toLocaleString("pt-BR") || "0"}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span>ROI Médio:</span>
                         <span className="font-semibold">
-                          {analytics.costMetrics?.averageROI?.toFixed(1) ||
-                            "0.0"}
-                          %
+                          {analytics.costMetrics?.averageROI?.toFixed(1) || "0.0"}%
                         </span>
                       </div>
                     </div>
@@ -667,9 +560,7 @@ export function SupplierDashboard({ clinicId }: SupplierDashboardProps) {
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <p className="text-muted-foreground">
-                    Carregando analytics...
-                  </p>
+                  <p className="text-muted-foreground">Carregando analytics...</p>
                 </div>
               )}
             </CardContent>

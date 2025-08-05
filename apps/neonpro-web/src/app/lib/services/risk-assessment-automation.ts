@@ -1,30 +1,30 @@
-﻿/**
+/**
  * Risk Assessment Automation Service
  * Story 9.4: Comprehensive automated risk assessment with medical validation
- * 
+ *
  * This service provides comprehensive risk assessment automation with medical validation,
  * including automated risk scoring, human-in-the-loop medical oversight, risk mitigation
  * strategies, and real-time alert management.
  */
 
 import type {
-    AssessmentContext,
-    CreateAlertRequest,
-    CreateMitigationRequest,
-    CreateRiskAssessmentRequest,
-    CreateValidationRequest,
-    RiskAlert,
-    RiskAssessment,
-    RiskCategories,
-    RiskDashboardData,
-    RiskFactors,
-    RiskLevel,
-    RiskMitigation,
-    RiskThreshold,
-    RiskValidation,
-    UpdateRiskAssessmentRequest
-} from '@/app/types/risk-assessment-automation';
-import { createClient } from '@/lib/supabase/server';
+  AssessmentContext,
+  CreateAlertRequest,
+  CreateMitigationRequest,
+  CreateRiskAssessmentRequest,
+  CreateValidationRequest,
+  RiskAlert,
+  RiskAssessment,
+  RiskCategories,
+  RiskDashboardData,
+  RiskFactors,
+  RiskLevel,
+  RiskMitigation,
+  RiskThreshold,
+  RiskValidation,
+  UpdateRiskAssessmentRequest,
+} from "@/app/types/risk-assessment-automation";
+import type { createClient } from "@/lib/supabase/server";
 
 export class RiskAssessmentService {
   private async getSupabase() {
@@ -130,26 +130,26 @@ export class RiskAssessmentService {
 
   // Determine risk level from score
   determineRiskLevel(score: number): RiskLevel {
-    if (score >= 80) return 'critical';
-    if (score >= 60) return 'high';
-    if (score >= 30) return 'moderate';
-    return 'low';
+    if (score >= 80) return "critical";
+    if (score >= 60) return "high";
+    if (score >= 30) return "moderate";
+    return "low";
   }
 
   // Generate risk categories breakdown
   generateRiskCategories(factors: Partial<RiskFactors>): RiskCategories {
     const categories: RiskCategories = {
-      medical: { score: 0, factors: [], severity: 'low' },
-      procedural: { score: 0, factors: [], severity: 'low' },
-      patient_specific: { score: 0, factors: [], severity: 'low' },
-      environmental: { score: 0, factors: [], severity: 'low' },
+      medical: { score: 0, factors: [], severity: "low" },
+      procedural: { score: 0, factors: [], severity: "low" },
+      patient_specific: { score: 0, factors: [], severity: "low" },
+      environmental: { score: 0, factors: [], severity: "low" },
     };
 
     // Medical category
     if (factors.medical) {
       let score = 0;
       const medicalFactors: string[] = [];
-      
+
       if (factors.medical.chronic_conditions?.length) {
         score += factors.medical.chronic_conditions.length * 10;
         medicalFactors.push(`${factors.medical.chronic_conditions.length} chronic conditions`);
@@ -162,7 +162,7 @@ export class RiskAssessmentService {
         score += factors.medical.contraindications.length * 15;
         medicalFactors.push(`${factors.medical.contraindications.length} contraindications`);
       }
-      
+
       categories.medical = {
         score: Math.min(score, 100),
         factors: medicalFactors,
@@ -176,10 +176,10 @@ export class RiskAssessmentService {
   // Check if validation is required
   requiresValidation(assessment: Partial<RiskAssessment>): boolean {
     return (
-      assessment.risk_level === 'critical' ||
-      assessment.risk_level === 'high' ||
+      assessment.risk_level === "critical" ||
+      assessment.risk_level === "high" ||
       (assessment.risk_score && assessment.risk_score > 70) ||
-      assessment.assessment_type === 'emergency'
+      assessment.assessment_type === "emergency"
     );
   }
 
@@ -188,8 +188,10 @@ export class RiskAssessmentService {
    */
 
   async createRiskAssessment(data: CreateRiskAssessmentRequest): Promise<RiskAssessment> {
-    
-    const riskScore = this.calculateRiskScore(data.risk_factors || {}, data.assessment_context || {});
+    const riskScore = this.calculateRiskScore(
+      data.risk_factors || {},
+      data.assessment_context || {},
+    );
     const riskLevel = this.determineRiskLevel(riskScore);
     const riskCategories = this.generateRiskCategories(data.risk_factors || {});
 
@@ -200,7 +202,7 @@ export class RiskAssessmentService {
       risk_level: riskLevel,
       risk_categories: riskCategories,
       assessment_type: data.assessment_type,
-      assessment_method: data.assessment_method || 'automated',
+      assessment_method: data.assessment_method || "automated",
       assessment_context: data.assessment_context || {},
       medical_history_factors: data.medical_history_factors || {},
       current_conditions: data.current_conditions || {},
@@ -208,7 +210,7 @@ export class RiskAssessmentService {
       risk_multipliers: {},
       assessment_date: new Date().toISOString(),
       last_updated: new Date().toISOString(),
-      validation_status: 'pending' as const,
+      validation_status: "pending" as const,
       validation_required: this.requiresValidation({
         risk_level: riskLevel,
         risk_score: riskScore,
@@ -217,7 +219,7 @@ export class RiskAssessmentService {
     };
 
     const { data: assessment, error } = await supabase
-      .from('risk_assessments')
+      .from("risk_assessments")
       .insert(assessmentData)
       .select()
       .single();
@@ -225,18 +227,21 @@ export class RiskAssessmentService {
     if (error) throw new Error(`Failed to create risk assessment: ${error.message}`);
 
     // Generate automatic alerts if high risk
-    if (riskLevel === 'critical' || riskLevel === 'high') {
+    if (riskLevel === "critical" || riskLevel === "high") {
       await this.createAlert({
         patient_id: data.patient_id,
         assessment_id: assessment.id,
-        alert_type: riskLevel === 'critical' ? 'immediate' : 'warning',
-        risk_category: 'medical',
-        severity_level: riskLevel === 'critical' ? 'critical' : 'high',
+        alert_type: riskLevel === "critical" ? "immediate" : "warning",
+        risk_category: "medical",
+        severity_level: riskLevel === "critical" ? "critical" : "high",
         alert_title: `${riskLevel.toUpperCase()} Risk Assessment Alert`,
         alert_message: `Patient has been assessed with ${riskLevel} risk (score: ${riskScore}). Medical validation required.`,
         alert_details: { risk_score: riskScore, risk_categories: riskCategories },
         recommended_actions: {
-          immediate: riskLevel === 'critical' ? ['Immediate medical review', 'Emergency protocols'] : ['Medical review', 'Risk mitigation planning'],
+          immediate:
+            riskLevel === "critical"
+              ? ["Immediate medical review", "Emergency protocols"]
+              : ["Medical review", "Risk mitigation planning"],
         },
       });
     }
@@ -246,11 +251,11 @@ export class RiskAssessmentService {
 
   async getRiskAssessment(id: string): Promise<RiskAssessment | null> {
     const supabase = await createClient();
-    
+
     const { data, error } = await supabase
-      .from('risk_assessments')
-      .select('*')
-      .eq('id', id)
+      .from("risk_assessments")
+      .select("*")
+      .eq("id", id)
       .single();
 
     if (error) return null;
@@ -260,13 +265,12 @@ export class RiskAssessmentService {
   async getAllRiskAssessments(
     filters: Record<string, any> = {},
     limit: number = 50,
-    offset: number = 0
+    offset: number = 0,
   ): Promise<RiskAssessment[]> {
-    
     let query = supabase
-      .from('risk_assessments')
-      .select('*')
-      .order('created_at', { ascending: false })
+      .from("risk_assessments")
+      .select("*")
+      .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
     // Apply filters
@@ -283,19 +287,18 @@ export class RiskAssessmentService {
   }
 
   async createAlert(data: CreateAlertRequest): Promise<RiskAlert> {
-    
     const alertData = {
       ...data,
       alert_details: data.alert_details || {},
       recommended_actions: data.recommended_actions || {},
-      alert_status: 'active' as const,
+      alert_status: "active" as const,
       escalation_level: 0,
       escalation_path: {},
       emergency_protocol_triggered: false,
     };
 
     const { data: alert, error } = await supabase
-      .from('risk_alerts')
+      .from("risk_alerts")
       .insert(alertData)
       .select()
       .single();
@@ -307,13 +310,12 @@ export class RiskAssessmentService {
   async getAllValidations(
     filters: Record<string, any> = {},
     limit: number = 50,
-    offset: number = 0
+    offset: number = 0,
   ): Promise<RiskValidation[]> {
-    
     let query = supabase
-      .from('risk_validations')
-      .select('*')
-      .order('created_at', { ascending: false })
+      .from("risk_validations")
+      .select("*")
+      .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
     // Apply filters
@@ -332,13 +334,12 @@ export class RiskAssessmentService {
   async getAllAlerts(
     filters: Record<string, any> = {},
     limit: number = 50,
-    offset: number = 0
+    offset: number = 0,
   ): Promise<RiskAlert[]> {
-    
     let query = supabase
-      .from('risk_alerts')
-      .select('*')
-      .order('created_at', { ascending: false })
+      .from("risk_alerts")
+      .select("*")
+      .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
     // Apply filters
@@ -354,15 +355,20 @@ export class RiskAssessmentService {
     return data || [];
   }
 
-  async updateRiskAssessment(id: string, updates: UpdateRiskAssessmentRequest): Promise<RiskAssessment> {
-    
+  async updateRiskAssessment(
+    id: string,
+    updates: UpdateRiskAssessmentRequest,
+  ): Promise<RiskAssessment> {
     const updateData: any = { ...updates };
-    
+
     // Recalculate risk if factors changed
     if (updates.risk_factors) {
       const currentAssessment = await this.getRiskAssessment(id);
       if (currentAssessment) {
-        const newScore = this.calculateRiskScore(updates.risk_factors, currentAssessment.assessment_context);
+        const newScore = this.calculateRiskScore(
+          updates.risk_factors,
+          currentAssessment.assessment_context,
+        );
         const newLevel = this.determineRiskLevel(newScore);
         updateData.risk_score = newScore;
         updateData.risk_level = newLevel;
@@ -378,9 +384,9 @@ export class RiskAssessmentService {
     updateData.last_updated = new Date().toISOString();
 
     const { data, error } = await supabase
-      .from('risk_assessments')
+      .from("risk_assessments")
       .update(updateData)
-      .eq('id', id)
+      .eq("id", id)
       .select()
       .single();
 
@@ -389,23 +395,19 @@ export class RiskAssessmentService {
   }
 
   async deleteRiskAssessment(id: string): Promise<void> {
-    
-    const { error } = await supabase
-      .from('risk_assessments')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from("risk_assessments").delete().eq("id", id);
 
     if (error) throw new Error(`Failed to delete risk assessment: ${error.message}`);
   }
 
   async getPatientRiskAssessments(patientId: string, limit = 10): Promise<RiskAssessment[]> {
     const supabase = await createClient();
-    
+
     const { data, error } = await supabase
-      .from('risk_assessments')
-      .select('*')
-      .eq('patient_id', patientId)
-      .order('assessment_date', { ascending: false })
+      .from("risk_assessments")
+      .select("*")
+      .eq("patient_id", patientId)
+      .order("assessment_date", { ascending: false })
       .limit(limit);
 
     if (error) throw new Error(`Failed to get patient risk assessments: ${error.message}`);
@@ -417,7 +419,6 @@ export class RiskAssessmentService {
    */
 
   async createValidation(data: CreateValidationRequest): Promise<RiskValidation> {
-    
     const validationData = {
       ...data,
       validation_date: new Date().toISOString(),
@@ -426,7 +427,7 @@ export class RiskAssessmentService {
     };
 
     const { data: validation, error } = await supabase
-      .from('risk_validations')
+      .from("risk_validations")
       .insert(validationData)
       .select()
       .single();
@@ -435,8 +436,12 @@ export class RiskAssessmentService {
 
     // Update assessment validation status
     await this.updateRiskAssessment(data.assessment_id, {
-      validation_status: data.validation_decision === 'approved' ? 'validated' : 
-                        data.validation_decision === 'rejected' ? 'rejected' : 'requires_review',
+      validation_status:
+        data.validation_decision === "approved"
+          ? "validated"
+          : data.validation_decision === "rejected"
+            ? "rejected"
+            : "requires_review",
     });
 
     return validation;
@@ -444,12 +449,12 @@ export class RiskAssessmentService {
 
   async getValidationsForAssessment(assessmentId: string): Promise<RiskValidation[]> {
     const supabase = await createClient();
-    
+
     const { data, error } = await supabase
-      .from('risk_validations')
-      .select('*')
-      .eq('assessment_id', assessmentId)
-      .order('validation_date', { ascending: false });
+      .from("risk_validations")
+      .select("*")
+      .eq("assessment_id", assessmentId)
+      .order("validation_date", { ascending: false });
 
     if (error) throw new Error(`Failed to get validations: ${error.message}`);
     return data || [];
@@ -460,15 +465,14 @@ export class RiskAssessmentService {
    */
 
   async createMitigation(data: CreateMitigationRequest): Promise<RiskMitigation> {
-    
     const mitigationData = {
       ...data,
       mitigation_details: data.mitigation_details || {},
-      implementation_status: 'planned' as const,
+      implementation_status: "planned" as const,
     };
 
     const { data: mitigation, error } = await supabase
-      .from('risk_mitigations')
+      .from("risk_mitigations")
       .insert(mitigationData)
       .select()
       .single();
@@ -477,15 +481,17 @@ export class RiskAssessmentService {
     return mitigation;
   }
 
-  async updateMitigationStatus(id: string, status: 'planned' | 'active' | 'completed' | 'cancelled'): Promise<void> {
-    
+  async updateMitigationStatus(
+    id: string,
+    status: "planned" | "active" | "completed" | "cancelled",
+  ): Promise<void> {
     const { error } = await supabase
-      .from('risk_mitigations')
-      .update({ 
+      .from("risk_mitigations")
+      .update({
         implementation_status: status,
-        implementation_date: status === 'active' ? new Date().toISOString() : undefined,
+        implementation_date: status === "active" ? new Date().toISOString() : undefined,
       })
-      .eq('id', id);
+      .eq("id", id);
 
     if (error) throw new Error(`Failed to update mitigation status: ${error.message}`);
   }
@@ -495,41 +501,39 @@ export class RiskAssessmentService {
    */
 
   async acknowledgeAlert(id: string, userId: string): Promise<void> {
-    
     const { error } = await supabase
-      .from('risk_alerts')
+      .from("risk_alerts")
       .update({
-        alert_status: 'acknowledged',
+        alert_status: "acknowledged",
         acknowledged_by: userId,
         acknowledged_at: new Date().toISOString(),
       })
-      .eq('id', id);
+      .eq("id", id);
 
     if (error) throw new Error(`Failed to acknowledge alert: ${error.message}`);
   }
 
   async resolveAlert(id: string, userId: string, notes?: string): Promise<void> {
-    
     const { error } = await supabase
-      .from('risk_alerts')
+      .from("risk_alerts")
       .update({
-        alert_status: 'resolved',
+        alert_status: "resolved",
         resolved_by: userId,
         resolved_at: new Date().toISOString(),
         resolution_notes: notes,
       })
-      .eq('id', id);
+      .eq("id", id);
 
     if (error) throw new Error(`Failed to resolve alert: ${error.message}`);
   }
 
   async escalateAlert(id: string): Promise<void> {
     const supabase = await createClient();
-    
+
     const { data: alert, error: fetchError } = await supabase
-      .from('risk_alerts')
-      .select('escalation_level')
-      .eq('id', id)
+      .from("risk_alerts")
+      .select("escalation_level")
+      .eq("id", id)
       .single();
 
     if (fetchError) throw new Error(`Failed to fetch alert: ${fetchError.message}`);
@@ -537,24 +541,24 @@ export class RiskAssessmentService {
     const newEscalationLevel = Math.min((alert.escalation_level || 0) + 1, 5);
 
     const { error } = await supabase
-      .from('risk_alerts')
+      .from("risk_alerts")
       .update({
-        alert_status: 'escalated',
+        alert_status: "escalated",
         escalation_level: newEscalationLevel,
       })
-      .eq('id', id);
+      .eq("id", id);
 
     if (error) throw new Error(`Failed to escalate alert: ${error.message}`);
   }
 
   async getActiveAlerts(limit = 50): Promise<RiskAlert[]> {
     const supabase = await createClient();
-    
+
     const { data, error } = await supabase
-      .from('risk_alerts')
-      .select('*')
-      .eq('alert_status', 'active')
-      .order('created_at', { ascending: false })
+      .from("risk_alerts")
+      .select("*")
+      .eq("alert_status", "active")
+      .order("created_at", { ascending: false })
       .limit(limit);
 
     if (error) throw new Error(`Failed to get active alerts: ${error.message}`);
@@ -566,35 +570,34 @@ export class RiskAssessmentService {
    */
 
   async getDashboardData(): Promise<RiskDashboardData> {
-
     // Get total assessments
     const { count: totalAssessments } = await supabase
-      .from('risk_assessments')
-      .select('*', { count: 'exact', head: true });
+      .from("risk_assessments")
+      .select("*", { count: "exact", head: true });
 
     // Get high risk patients
     const { count: highRiskPatients } = await supabase
-      .from('risk_assessments')
-      .select('*', { count: 'exact', head: true })
-      .in('risk_level', ['high', 'critical']);
+      .from("risk_assessments")
+      .select("*", { count: "exact", head: true })
+      .in("risk_level", ["high", "critical"]);
 
     // Get pending validations
     const { count: pendingValidations } = await supabase
-      .from('risk_assessments')
-      .select('*', { count: 'exact', head: true })
-      .eq('validation_status', 'pending');
+      .from("risk_assessments")
+      .select("*", { count: "exact", head: true })
+      .eq("validation_status", "pending");
 
     // Get active alerts
     const { count: activeAlerts } = await supabase
-      .from('risk_alerts')
-      .select('*', { count: 'exact', head: true })
-      .eq('alert_status', 'active');
+      .from("risk_alerts")
+      .select("*", { count: "exact", head: true })
+      .eq("alert_status", "active");
 
     // Get recent assessments
     const { data: recentAssessments } = await supabase
-      .from('risk_assessments')
-      .select('*')
-      .order('assessment_date', { ascending: false })
+      .from("risk_assessments")
+      .select("*")
+      .order("assessment_date", { ascending: false })
       .limit(10);
 
     return {
@@ -623,19 +626,15 @@ export class RiskAssessmentService {
    */
 
   async getRiskThresholds(clinicId?: string): Promise<RiskThreshold[]> {
-    
-    let query = supabase
-      .from('risk_thresholds')
-      .select('*')
-      .eq('is_active', true);
+    let query = supabase.from("risk_thresholds").select("*").eq("is_active", true);
 
     if (clinicId) {
       query = query.or(`clinic_id.eq.${clinicId},clinic_id.is.null`);
     } else {
-      query = query.is('clinic_id', null);
+      query = query.is("clinic_id", null);
     }
 
-    const { data, error } = await query.order('risk_category');
+    const { data, error } = await query.order("risk_category");
 
     if (error) throw new Error(`Failed to get risk thresholds: ${error.message}`);
     return data || [];
@@ -643,11 +642,11 @@ export class RiskAssessmentService {
 
   async updateRiskThreshold(id: string, updates: Partial<RiskThreshold>): Promise<RiskThreshold> {
     const supabase = await createClient();
-    
+
     const { data, error } = await supabase
-      .from('risk_thresholds')
+      .from("risk_thresholds")
       .update(updates)
-      .eq('id', id)
+      .eq("id", id)
       .select()
       .single();
 
@@ -655,4 +654,3 @@ export class RiskAssessmentService {
     return data;
   }
 }
-

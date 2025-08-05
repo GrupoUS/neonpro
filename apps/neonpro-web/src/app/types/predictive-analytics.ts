@@ -3,7 +3,7 @@
 
 export interface ForecastingModel {
   id: string;
-  model_type: 'appointment_demand' | 'treatment_demand' | 'seasonal' | 'resource_utilization';
+  model_type: "appointment_demand" | "treatment_demand" | "seasonal" | "resource_utilization";
   model_name: string;
   model_config: Record<string, any>;
   accuracy_score?: number; // 0.0000 to 1.0000 (≥0.8500 required)
@@ -12,7 +12,7 @@ export interface ForecastingModel {
   last_trained: string;
   last_prediction?: string;
   model_version: string;
-  status: 'active' | 'training' | 'deprecated' | 'failed';
+  status: "active" | "training" | "deprecated" | "failed";
   metadata: Record<string, any>;
   clinic_id: string;
   created_at: string;
@@ -23,8 +23,8 @@ export interface DemandPrediction {
   id: string;
   model_id: string;
   prediction_date: string; // Date being predicted for
-  forecast_period: 'daily' | 'weekly' | 'monthly' | 'quarterly';
-  category: 'appointments' | 'specific_treatment' | 'staff_hours' | 'equipment_usage';
+  forecast_period: "daily" | "weekly" | "monthly" | "quarterly";
+  category: "appointments" | "specific_treatment" | "staff_hours" | "equipment_usage";
   subcategory?: string; // Treatment type, equipment type, etc.
   forecast_value: number;
   confidence_interval_lower?: number;
@@ -58,8 +58,8 @@ export interface ForecastAccuracy {
 
 export interface DemandAlert {
   id: string;
-  alert_type: 'demand_spike' | 'capacity_constraint' | 'anomaly_detected' | 'low_accuracy';
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  alert_type: "demand_spike" | "capacity_constraint" | "anomaly_detected" | "low_accuracy";
+  severity: "low" | "medium" | "high" | "critical";
   title: string;
   description: string;
   prediction_data: Record<string, any>;
@@ -71,7 +71,7 @@ export interface DemandAlert {
   acknowledged: boolean;
   acknowledged_by?: string;
   acknowledged_at?: string;
-  resolution_status: 'open' | 'in_progress' | 'resolved' | 'dismissed';
+  resolution_status: "open" | "in_progress" | "resolved" | "dismissed";
   resolution_notes?: string;
   resolved_at?: string;
   clinic_id: string;
@@ -100,7 +100,7 @@ export interface ModelTrainingHistory {
   model_id: string;
   training_start: string;
   training_end?: string;
-  training_status: 'in_progress' | 'completed' | 'failed';
+  training_status: "in_progress" | "completed" | "failed";
   training_accuracy?: number; // Accuracy achieved during training
   validation_accuracy?: number; // Accuracy on validation set
   training_data_size?: number; // Number of data points used
@@ -116,15 +116,15 @@ export interface ModelTrainingHistory {
 
 export interface ResourceOptimizationRecommendation {
   id: string;
-  recommendation_type: 'staff_scheduling' | 'equipment_allocation' | 'capacity_planning';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
+  recommendation_type: "staff_scheduling" | "equipment_allocation" | "capacity_planning";
+  priority: "low" | "medium" | "high" | "urgent";
   title: string;
   description: string;
   prediction_basis: Record<string, any>; // Which predictions this is based on
   recommended_changes: Record<string, any>; // Specific recommendations
   estimated_impact: Record<string, any>; // Cost savings, efficiency gains
   implementation_timeline?: string;
-  implementation_status: 'pending' | 'approved' | 'implemented' | 'rejected';
+  implementation_status: "pending" | "approved" | "implemented" | "rejected";
   cost_benefit_analysis: Record<string, any>;
   implementation_notes?: string;
   created_by?: string;
@@ -138,7 +138,7 @@ export interface ResourceOptimizationRecommendation {
 // API Request/Response Types
 
 export interface CreateForecastingModelRequest {
-  model_type: ForecastingModel['model_type'];
+  model_type: ForecastingModel["model_type"];
   model_name: string;
   model_config: Record<string, any>;
   training_data_start_date?: string;
@@ -154,15 +154,15 @@ export interface UpdateForecastingModelRequest {
   last_trained?: string;
   last_prediction?: string;
   model_version?: string;
-  status?: ForecastingModel['status'];
+  status?: ForecastingModel["status"];
   metadata?: Record<string, any>;
 }
 
 export interface CreateDemandPredictionRequest {
   model_id: string;
   prediction_date: string;
-  forecast_period: DemandPrediction['forecast_period'];
-  category: DemandPrediction['category'];
+  forecast_period: DemandPrediction["forecast_period"];
+  category: DemandPrediction["category"];
   subcategory?: string;
   forecast_value: number;
   confidence_interval_lower?: number;
@@ -190,8 +190,8 @@ export interface CreateForecastAccuracyRequest {
 }
 
 export interface CreateDemandAlertRequest {
-  alert_type: DemandAlert['alert_type'];
-  severity: DemandAlert['severity'];
+  alert_type: DemandAlert["alert_type"];
+  severity: DemandAlert["severity"];
   title: string;
   description: string;
   prediction_data: Record<string, any>;
@@ -202,7 +202,7 @@ export interface CreateDemandAlertRequest {
 export interface UpdateDemandAlertRequest {
   acknowledged?: boolean;
   acknowledged_by?: string;
-  resolution_status?: DemandAlert['resolution_status'];
+  resolution_status?: DemandAlert["resolution_status"];
   resolution_notes?: string;
 }
 
@@ -226,7 +226,7 @@ export interface CreateModelTrainingRequest {
 
 export interface UpdateModelTrainingRequest {
   training_end?: string;
-  training_status?: ModelTrainingHistory['training_status'];
+  training_status?: ModelTrainingHistory["training_status"];
   training_accuracy?: number;
   validation_accuracy?: number;
   training_data_size?: number;
@@ -236,8 +236,8 @@ export interface UpdateModelTrainingRequest {
 }
 
 export interface CreateResourceOptimizationRequest {
-  recommendation_type: ResourceOptimizationRecommendation['recommendation_type'];
-  priority: ResourceOptimizationRecommendation['priority'];
+  recommendation_type: ResourceOptimizationRecommendation["recommendation_type"];
+  priority: ResourceOptimizationRecommendation["priority"];
   title: string;
   description: string;
   prediction_basis: Record<string, any>;
@@ -248,13 +248,13 @@ export interface CreateResourceOptimizationRequest {
 }
 
 export interface UpdateResourceOptimizationRequest {
-  priority?: ResourceOptimizationRecommendation['priority'];
+  priority?: ResourceOptimizationRecommendation["priority"];
   title?: string;
   description?: string;
   recommended_changes?: Record<string, any>;
   estimated_impact?: Record<string, any>;
   implementation_timeline?: string;
-  implementation_status?: ResourceOptimizationRecommendation['implementation_status'];
+  implementation_status?: ResourceOptimizationRecommendation["implementation_status"];
   cost_benefit_analysis?: Record<string, any>;
   implementation_notes?: string;
   approved_by?: string;
@@ -330,23 +330,23 @@ export interface ResourceOptimizationAnalytics {
 // Filter and Search Types
 
 export interface ForecastingFilters {
-  model_type?: ForecastingModel['model_type'];
-  status?: ForecastingModel['status'];
+  model_type?: ForecastingModel["model_type"];
+  status?: ForecastingModel["status"];
   accuracy_min?: number;
   accuracy_max?: number;
   date_from?: string;
   date_to?: string;
-  category?: DemandPrediction['category'];
-  forecast_period?: DemandPrediction['forecast_period'];
-  alert_type?: DemandAlert['alert_type'];
-  severity?: DemandAlert['severity'];
-  resolution_status?: DemandAlert['resolution_status'];
+  category?: DemandPrediction["category"];
+  forecast_period?: DemandPrediction["forecast_period"];
+  alert_type?: DemandAlert["alert_type"];
+  severity?: DemandAlert["severity"];
+  resolution_status?: DemandAlert["resolution_status"];
 }
 
 export interface PredictionFilters {
   model_id?: string;
-  category?: DemandPrediction['category'];
-  forecast_period?: DemandPrediction['forecast_period'];
+  category?: DemandPrediction["category"];
+  forecast_period?: DemandPrediction["forecast_period"];
   date_from?: string;
   date_to?: string;
   confidence_min?: number;
@@ -388,5 +388,7 @@ export type DemandAlertsResponse = ForecastingApiResponse<DemandAlert[]>;
 export type DemandAlertResponse = ForecastingApiResponse<DemandAlert>;
 export type ForecastingSettingsResponse = ForecastingApiResponse<ForecastingSettings>;
 export type ModelTrainingHistoryResponse = ForecastingApiResponse<ModelTrainingHistory[]>;
-export type ResourceOptimizationResponse = ForecastingApiResponse<ResourceOptimizationRecommendation[]>;
+export type ResourceOptimizationResponse = ForecastingApiResponse<
+  ResourceOptimizationRecommendation[]
+>;
 export type ForecastingDashboardResponse = ForecastingApiResponse<ForecastingDashboardData>;

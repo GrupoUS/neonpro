@@ -5,9 +5,9 @@
  */
 
 // Main Components
-export { CustomerManagement } from './CustomerManagement';
-export { LeadTracking } from './LeadTracking';
-export { CustomerAnalytics } from './CustomerAnalytics';
+export { CustomerManagement } from "./CustomerManagement";
+export { LeadTracking } from "./LeadTracking";
+export { CustomerAnalytics } from "./CustomerAnalytics";
 
 // Utility Functions and Types
 export {
@@ -18,29 +18,24 @@ export {
   type CustomerSegment,
   type SegmentCriteria,
   type RetentionAnalysis,
-  
   // Lead Scoring Functions
   calculateLeadScore,
   categorizeLeadPriority,
-  
   // Customer Lifecycle Functions
   determineCustomerLifecycle,
   calculateDaysSinceLastVisit,
   predictChurnRisk,
-  
   // Customer Value Functions
   calculateCustomerLifetimeValue,
   calculateAverageAppointmentValue,
   rankCustomersByValue,
-  
   // Follow-up Management Functions
   determineNextFollowUpDate,
   generateFollowUpMessage,
-  
   // Analytics and Segmentation Functions
   segmentCustomers,
-  calculateRetentionRate
-} from './utils';
+  calculateRetentionRate,
+} from "./utils";
 
 // Export default object for convenience
 export default {
@@ -59,5 +54,5 @@ export default {
   determineNextFollowUpDate,
   generateFollowUpMessage,
   segmentCustomers,
-  calculateRetentionRate
+  calculateRetentionRate,
 };

@@ -1,19 +1,31 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Progress } from '@/components/ui/progress';
-import { Switch } from '@/components/ui/switch';
-import {
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Separator } from "@/components/ui/separator";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Progress } from "@/components/ui/progress";
+import type { Switch } from "@/components/ui/switch";
+import type {
   TrendingUp,
   TrendingDown,
   DollarSign,
@@ -35,10 +47,10 @@ import {
   Activity,
   Users,
   Clock,
-  Zap
-} from 'lucide-react';
-import { format, subDays, startOfMonth, endOfMonth, startOfYear, endOfYear } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+  Zap,
+} from "lucide-react";
+import type { format, subDays, startOfMonth, endOfMonth, startOfYear, endOfYear } from "date-fns";
+import type { ptBR } from "date-fns/locale";
 
 // Types for Financial KPI Dashboard
 interface FinancialKPI {
@@ -47,10 +59,10 @@ interface FinancialKPI {
   value: number;
   previousValue: number;
   target?: number;
-  unit: 'currency' | 'percentage' | 'number';
-  trend: 'up' | 'down' | 'stable';
+  unit: "currency" | "percentage" | "number";
+  trend: "up" | "down" | "stable";
   changePercentage: number;
-  category: 'revenue' | 'profitability' | 'efficiency' | 'liquidity';
+  category: "revenue" | "profitability" | "efficiency" | "liquidity";
   description: string;
   drillDownData?: DrillDownData[];
   alerts?: KPIAlert[];
@@ -62,14 +74,14 @@ interface DrillDownData {
   label: string;
   value: number;
   percentage: number;
-  trend: 'up' | 'down' | 'stable';
+  trend: "up" | "down" | "stable";
   subCategories?: DrillDownData[];
   metadata?: Record<string, any>;
 }
 
 interface KPIAlert {
   id: string;
-  type: 'warning' | 'critical' | 'info' | 'success';
+  type: "warning" | "critical" | "info" | "success";
   message: string;
   threshold: number;
   currentValue: number;
@@ -98,9 +110,9 @@ interface DashboardFilter {
 
 interface DashboardWidget {
   id: string;
-  type: 'kpi' | 'chart' | 'table' | 'alert';
+  type: "kpi" | "chart" | "table" | "alert";
   title: string;
-  size: 'small' | 'medium' | 'large';
+  size: "small" | "medium" | "large";
   position: { x: number; y: number };
   visible: boolean;
   config: Record<string, any>;
@@ -111,153 +123,219 @@ interface FinancialKPIDashboardProps {
   userId: string;
   userRole: string;
   onKPIClick?: (kpi: FinancialKPI) => void;
-  onExport?: (format: 'pdf' | 'excel' | 'csv') => void;
+  onExport?: (format: "pdf" | "excel" | "csv") => void;
   className?: string;
 }
 
 // Mock data generator for demonstration
 const generateMockKPIs = (): FinancialKPI[] => {
   const baseDate = new Date();
-  
+
   return [
     {
-      id: 'revenue-total',
-      name: 'Receita Total',
+      id: "revenue-total",
+      name: "Receita Total",
       value: 125000,
       previousValue: 118000,
       target: 130000,
-      unit: 'currency',
-      trend: 'up',
+      unit: "currency",
+      trend: "up",
       changePercentage: 5.93,
-      category: 'revenue',
-      description: 'Receita total do período selecionado',
+      category: "revenue",
+      description: "Receita total do período selecionado",
       drillDownData: [
-        { id: 'facial', label: 'Tratamentos Faciais', value: 45000, percentage: 36, trend: 'up' },
-        { id: 'body', label: 'Tratamentos Corporais', value: 38000, percentage: 30.4, trend: 'up' },
-        { id: 'laser', label: 'Laser e Luz', value: 25000, percentage: 20, trend: 'stable' },
-        { id: 'products', label: 'Produtos', value: 17000, percentage: 13.6, trend: 'down' }
+        { id: "facial", label: "Tratamentos Faciais", value: 45000, percentage: 36, trend: "up" },
+        { id: "body", label: "Tratamentos Corporais", value: 38000, percentage: 30.4, trend: "up" },
+        { id: "laser", label: "Laser e Luz", value: 25000, percentage: 20, trend: "stable" },
+        { id: "products", label: "Produtos", value: 17000, percentage: 13.6, trend: "down" },
       ],
       alerts: [
         {
-          id: 'revenue-target',
-          type: 'info',
-          message: 'Receita 3.8% abaixo da meta mensal',
+          id: "revenue-target",
+          type: "info",
+          message: "Receita 3.8% abaixo da meta mensal",
           threshold: 130000,
           currentValue: 125000,
           createdAt: new Date(),
-          acknowledged: false
-        }
+          acknowledged: false,
+        },
       ],
       benchmarkData: {
         industryAverage: 110000,
         topPerformers: 150000,
         clinicRanking: 15,
-        totalClinics: 100
-      }
+        totalClinics: 100,
+      },
     },
     {
-      id: 'profit-margin',
-      name: 'Margem de Lucro',
+      id: "profit-margin",
+      name: "Margem de Lucro",
       value: 32.5,
       previousValue: 28.3,
       target: 35,
-      unit: 'percentage',
-      trend: 'up',
+      unit: "percentage",
+      trend: "up",
       changePercentage: 14.84,
-      category: 'profitability',
-      description: 'Margem de lucro líquido sobre receita',
+      category: "profitability",
+      description: "Margem de lucro líquido sobre receita",
       drillDownData: [
-        { id: 'gross-margin', label: 'Margem Bruta', value: 65.2, percentage: 100, trend: 'up' },
-        { id: 'operating-margin', label: 'Margem Operacional', value: 42.1, percentage: 64.6, trend: 'up' },
-        { id: 'net-margin', label: 'Margem Líquida', value: 32.5, percentage: 49.8, trend: 'up' }
+        { id: "gross-margin", label: "Margem Bruta", value: 65.2, percentage: 100, trend: "up" },
+        {
+          id: "operating-margin",
+          label: "Margem Operacional",
+          value: 42.1,
+          percentage: 64.6,
+          trend: "up",
+        },
+        { id: "net-margin", label: "Margem Líquida", value: 32.5, percentage: 49.8, trend: "up" },
       ],
       benchmarkData: {
         industryAverage: 25.8,
         topPerformers: 40.2,
         clinicRanking: 8,
-        totalClinics: 100
-      }
+        totalClinics: 100,
+      },
     },
     {
-      id: 'ebitda',
-      name: 'EBITDA',
+      id: "ebitda",
+      name: "EBITDA",
       value: 48500,
       previousValue: 42300,
       target: 52000,
-      unit: 'currency',
-      trend: 'up',
+      unit: "currency",
+      trend: "up",
       changePercentage: 14.66,
-      category: 'profitability',
-      description: 'Lucro antes de juros, impostos, depreciação e amortização',
+      category: "profitability",
+      description: "Lucro antes de juros, impostos, depreciação e amortização",
       drillDownData: [
-        { id: 'operating-income', label: 'Receita Operacional', value: 125000, percentage: 100, trend: 'up' },
-        { id: 'operating-expenses', label: 'Despesas Operacionais', value: -76500, percentage: -61.2, trend: 'down' },
-        { id: 'ebitda-result', label: 'EBITDA', value: 48500, percentage: 38.8, trend: 'up' }
-      ]
+        {
+          id: "operating-income",
+          label: "Receita Operacional",
+          value: 125000,
+          percentage: 100,
+          trend: "up",
+        },
+        {
+          id: "operating-expenses",
+          label: "Despesas Operacionais",
+          value: -76500,
+          percentage: -61.2,
+          trend: "down",
+        },
+        { id: "ebitda-result", label: "EBITDA", value: 48500, percentage: 38.8, trend: "up" },
+      ],
     },
     {
-      id: 'cash-flow',
-      name: 'Fluxo de Caixa',
+      id: "cash-flow",
+      name: "Fluxo de Caixa",
       value: 35200,
       previousValue: 28900,
       target: 40000,
-      unit: 'currency',
-      trend: 'up',
+      unit: "currency",
+      trend: "up",
       changePercentage: 21.8,
-      category: 'liquidity',
-      description: 'Fluxo de caixa operacional do período',
+      category: "liquidity",
+      description: "Fluxo de caixa operacional do período",
       alerts: [
         {
-          id: 'cash-flow-warning',
-          type: 'warning',
-          message: 'Fluxo de caixa projetado para próxima semana abaixo do ideal',
+          id: "cash-flow-warning",
+          type: "warning",
+          message: "Fluxo de caixa projetado para próxima semana abaixo do ideal",
           threshold: 40000,
           currentValue: 35200,
           createdAt: new Date(),
-          acknowledged: false
-        }
-      ]
+          acknowledged: false,
+        },
+      ],
     },
     {
-      id: 'roi',
-      name: 'ROI',
+      id: "roi",
+      name: "ROI",
       value: 18.7,
       previousValue: 16.2,
       target: 20,
-      unit: 'percentage',
-      trend: 'up',
+      unit: "percentage",
+      trend: "up",
       changePercentage: 15.43,
-      category: 'efficiency',
-      description: 'Retorno sobre investimento',
+      category: "efficiency",
+      description: "Retorno sobre investimento",
       benchmarkData: {
         industryAverage: 14.5,
         topPerformers: 25.3,
         clinicRanking: 12,
-        totalClinics: 100
-      }
+        totalClinics: 100,
+      },
     },
     {
-      id: 'patient-ltv',
-      name: 'LTV do Paciente',
+      id: "patient-ltv",
+      name: "LTV do Paciente",
       value: 2850,
       previousValue: 2650,
       target: 3000,
-      unit: 'currency',
-      trend: 'up',
+      unit: "currency",
+      trend: "up",
       changePercentage: 7.55,
-      category: 'efficiency',
-      description: 'Valor vitalício médio do paciente'
-    }
+      category: "efficiency",
+      description: "Valor vitalício médio do paciente",
+    },
   ];
 };
 
 const generateMockWidgets = (): DashboardWidget[] => [
-  { id: 'revenue-kpi', type: 'kpi', title: 'Receita Total', size: 'medium', position: { x: 0, y: 0 }, visible: true, config: {} },
-  { id: 'profit-kpi', type: 'kpi', title: 'Margem de Lucro', size: 'medium', position: { x: 1, y: 0 }, visible: true, config: {} },
-  { id: 'ebitda-kpi', type: 'kpi', title: 'EBITDA', size: 'medium', position: { x: 2, y: 0 }, visible: true, config: {} },
-  { id: 'cash-flow-kpi', type: 'kpi', title: 'Fluxo de Caixa', size: 'medium', position: { x: 0, y: 1 }, visible: true, config: {} },
-  { id: 'roi-kpi', type: 'kpi', title: 'ROI', size: 'medium', position: { x: 1, y: 1 }, visible: true, config: {} },
-  { id: 'ltv-kpi', type: 'kpi', title: 'LTV Paciente', size: 'medium', position: { x: 2, y: 1 }, visible: true, config: {} }
+  {
+    id: "revenue-kpi",
+    type: "kpi",
+    title: "Receita Total",
+    size: "medium",
+    position: { x: 0, y: 0 },
+    visible: true,
+    config: {},
+  },
+  {
+    id: "profit-kpi",
+    type: "kpi",
+    title: "Margem de Lucro",
+    size: "medium",
+    position: { x: 1, y: 0 },
+    visible: true,
+    config: {},
+  },
+  {
+    id: "ebitda-kpi",
+    type: "kpi",
+    title: "EBITDA",
+    size: "medium",
+    position: { x: 2, y: 0 },
+    visible: true,
+    config: {},
+  },
+  {
+    id: "cash-flow-kpi",
+    type: "kpi",
+    title: "Fluxo de Caixa",
+    size: "medium",
+    position: { x: 0, y: 1 },
+    visible: true,
+    config: {},
+  },
+  {
+    id: "roi-kpi",
+    type: "kpi",
+    title: "ROI",
+    size: "medium",
+    position: { x: 1, y: 1 },
+    visible: true,
+    config: {},
+  },
+  {
+    id: "ltv-kpi",
+    type: "kpi",
+    title: "LTV Paciente",
+    size: "medium",
+    position: { x: 2, y: 1 },
+    visible: true,
+    config: {},
+  },
 ];
 
 export default function FinancialKPIDashboard({
@@ -266,7 +344,7 @@ export default function FinancialKPIDashboard({
   userRole,
   onKPIClick,
   onExport,
-  className = ''
+  className = "",
 }: FinancialKPIDashboardProps) {
   // State management
   const [kpis, setKpis] = useState<FinancialKPI[]>([]);
@@ -277,19 +355,19 @@ export default function FinancialKPIDashboard({
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [refreshInterval, setRefreshInterval] = useState(30); // seconds
   const [isCustomizing, setIsCustomizing] = useState(false);
-  const [activeTab, setActiveTab] = useState('overview');
-  
+  const [activeTab, setActiveTab] = useState("overview");
+
   // Filter state
   const [filters, setFilters] = useState<DashboardFilter>({
     dateRange: {
       start: startOfMonth(new Date()),
       end: endOfMonth(new Date()),
-      preset: 'current-month'
+      preset: "current-month",
     },
     services: [],
     providers: [],
     locations: [],
-    patientSegments: []
+    patientSegments: [],
   });
 
   // Load dashboard data
@@ -297,16 +375,16 @@ export default function FinancialKPIDashboard({
     setIsLoading(true);
     try {
       // Simulate API call with realistic delay
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
+      await new Promise((resolve) => setTimeout(resolve, 800));
+
       const mockKPIs = generateMockKPIs();
       const mockWidgets = generateMockWidgets();
-      
+
       setKpis(mockKPIs);
       setWidgets(mockWidgets);
       setLastUpdated(new Date());
     } catch (error) {
-      console.error('Error loading dashboard data:', error);
+      console.error("Error loading dashboard data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -315,7 +393,7 @@ export default function FinancialKPIDashboard({
   // Auto-refresh effect
   useEffect(() => {
     loadDashboardData();
-    
+
     if (autoRefresh) {
       const interval = setInterval(loadDashboardData, refreshInterval * 1000);
       return () => clearInterval(interval);
@@ -324,9 +402,9 @@ export default function FinancialKPIDashboard({
 
   // Format currency
   const formatCurrency = (value: number): string => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(value);
   };
 
@@ -337,17 +415,17 @@ export default function FinancialKPIDashboard({
 
   // Format number
   const formatNumber = (value: number): string => {
-    return new Intl.NumberFormat('pt-BR').format(value);
+    return new Intl.NumberFormat("pt-BR").format(value);
   };
 
   // Get formatted value based on unit
   const getFormattedValue = (kpi: FinancialKPI): string => {
     switch (kpi.unit) {
-      case 'currency':
+      case "currency":
         return formatCurrency(kpi.value);
-      case 'percentage':
+      case "percentage":
         return formatPercentage(kpi.value);
-      case 'number':
+      case "number":
         return formatNumber(kpi.value);
       default:
         return kpi.value.toString();
@@ -355,13 +433,13 @@ export default function FinancialKPIDashboard({
   };
 
   // Get trend icon
-  const getTrendIcon = (trend: 'up' | 'down' | 'stable') => {
+  const getTrendIcon = (trend: "up" | "down" | "stable") => {
     switch (trend) {
-      case 'up':
+      case "up":
         return <TrendingUp className="h-4 w-4 text-green-500" />;
-      case 'down':
+      case "down":
         return <TrendingDown className="h-4 w-4 text-red-500" />;
-      case 'stable':
+      case "stable":
         return <Activity className="h-4 w-4 text-yellow-500" />;
     }
   };
@@ -369,13 +447,13 @@ export default function FinancialKPIDashboard({
   // Get category icon
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case 'revenue':
+      case "revenue":
         return <DollarSign className="h-5 w-5" />;
-      case 'profitability':
+      case "profitability":
         return <PieChart className="h-5 w-5" />;
-      case 'efficiency':
+      case "efficiency":
         return <Target className="h-5 w-5" />;
-      case 'liquidity':
+      case "liquidity":
         return <Activity className="h-5 w-5" />;
       default:
         return <BarChart3 className="h-5 w-5" />;
@@ -389,18 +467,18 @@ export default function FinancialKPIDashboard({
   };
 
   // Handle export
-  const handleExport = (format: 'pdf' | 'excel' | 'csv') => {
+  const handleExport = (format: "pdf" | "excel" | "csv") => {
     onExport?.(format);
   };
 
   // Filter KPIs by category
   const getKPIsByCategory = (category: string) => {
-    return kpis.filter(kpi => kpi.category === category);
+    return kpis.filter((kpi) => kpi.category === category);
   };
 
   // Get active alerts
   const activeAlerts = useMemo(() => {
-    return kpis.flatMap(kpi => kpi.alerts || []).filter(alert => !alert.acknowledged);
+    return kpis.flatMap((kpi) => kpi.alerts || []).filter((alert) => !alert.acknowledged);
   }, [kpis]);
 
   if (isLoading) {
@@ -426,43 +504,30 @@ export default function FinancialKPIDashboard({
             Última atualização: {format(lastUpdated, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
           </p>
         </div>
-        
+
         <div className="flex items-center space-x-2">
           {/* Auto-refresh toggle */}
           <div className="flex items-center space-x-2">
-            <Switch
-              checked={autoRefresh}
-              onCheckedChange={setAutoRefresh}
-              id="auto-refresh"
-            />
+            <Switch checked={autoRefresh} onCheckedChange={setAutoRefresh} id="auto-refresh" />
             <Label htmlFor="auto-refresh" className="text-sm">
               Auto-refresh
             </Label>
           </div>
-          
+
           {/* Refresh button */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={loadDashboardData}
-            disabled={isLoading}
-          >
-            <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+          <Button variant="outline" size="sm" onClick={loadDashboardData} disabled={isLoading}>
+            <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? "animate-spin" : ""}`} />
             Atualizar
           </Button>
-          
+
           {/* Customize button */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsCustomizing(!isCustomizing)}
-          >
+          <Button variant="outline" size="sm" onClick={() => setIsCustomizing(!isCustomizing)}>
             <Settings className="h-4 w-4 mr-2" />
             Personalizar
           </Button>
-          
+
           {/* Export dropdown */}
-          <Select onValueChange={(value) => handleExport(value as 'pdf' | 'excel' | 'csv')}>
+          <Select onValueChange={(value) => handleExport(value as "pdf" | "excel" | "csv")}>
             <SelectTrigger className="w-32">
               <Download className="h-4 w-4 mr-2" />
               <SelectValue placeholder="Exportar" />
@@ -480,12 +545,18 @@ export default function FinancialKPIDashboard({
       {activeAlerts.length > 0 && (
         <div className="space-y-2">
           {activeAlerts.map((alert) => (
-            <Alert key={alert.id} className={`border-l-4 ${
-              alert.type === 'critical' ? 'border-red-500 bg-red-50' :
-              alert.type === 'warning' ? 'border-yellow-500 bg-yellow-50' :
-              alert.type === 'info' ? 'border-blue-500 bg-blue-50' :
-              'border-green-500 bg-green-50'
-            }`}>
+            <Alert
+              key={alert.id}
+              className={`border-l-4 ${
+                alert.type === "critical"
+                  ? "border-red-500 bg-red-50"
+                  : alert.type === "warning"
+                    ? "border-yellow-500 bg-yellow-50"
+                    : alert.type === "info"
+                      ? "border-blue-500 bg-blue-50"
+                      : "border-green-500 bg-green-50"
+              }`}
+            >
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>{alert.message}</AlertDescription>
             </Alert>
@@ -506,8 +577,8 @@ export default function FinancialKPIDashboard({
         <TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {kpis.map((kpi) => (
-              <Card 
-                key={kpi.id} 
+              <Card
+                key={kpi.id}
                 className="cursor-pointer hover:shadow-lg transition-shadow"
                 onClick={() => handleKPIClick(kpi)}
               >
@@ -519,35 +590,41 @@ export default function FinancialKPIDashboard({
                   <div className="text-2xl font-bold">{getFormattedValue(kpi)}</div>
                   <div className="flex items-center space-x-2 text-xs text-muted-foreground">
                     {getTrendIcon(kpi.trend)}
-                    <span className={`${
-                      kpi.trend === 'up' ? 'text-green-600' :
-                      kpi.trend === 'down' ? 'text-red-600' :
-                      'text-yellow-600'
-                    }`}>
-                      {kpi.changePercentage > 0 ? '+' : ''}{kpi.changePercentage.toFixed(1)}%
+                    <span
+                      className={`${
+                        kpi.trend === "up"
+                          ? "text-green-600"
+                          : kpi.trend === "down"
+                            ? "text-red-600"
+                            : "text-yellow-600"
+                      }`}
+                    >
+                      {kpi.changePercentage > 0 ? "+" : ""}
+                      {kpi.changePercentage.toFixed(1)}%
                     </span>
                     <span>vs período anterior</span>
                   </div>
-                  
+
                   {kpi.target && (
                     <div className="mt-2">
                       <div className="flex justify-between text-xs text-muted-foreground mb-1">
                         <span>Meta</span>
-                        <span>{kpi.unit === 'currency' ? formatCurrency(kpi.target) : 
-                               kpi.unit === 'percentage' ? formatPercentage(kpi.target) :
-                               formatNumber(kpi.target)}</span>
+                        <span>
+                          {kpi.unit === "currency"
+                            ? formatCurrency(kpi.target)
+                            : kpi.unit === "percentage"
+                              ? formatPercentage(kpi.target)
+                              : formatNumber(kpi.target)}
+                        </span>
                       </div>
-                      <Progress 
-                        value={(kpi.value / kpi.target) * 100} 
-                        className="h-2"
-                      />
+                      <Progress value={(kpi.value / kpi.target) * 100} className="h-2" />
                     </div>
                   )}
-                  
+
                   {kpi.alerts && kpi.alerts.length > 0 && (
                     <div className="mt-2">
                       <Badge variant="outline" className="text-xs">
-                        {kpi.alerts.length} alerta{kpi.alerts.length > 1 ? 's' : ''}
+                        {kpi.alerts.length} alerta{kpi.alerts.length > 1 ? "s" : ""}
                       </Badge>
                     </div>
                   )}
@@ -560,7 +637,7 @@ export default function FinancialKPIDashboard({
         {/* Revenue Tab */}
         <TabsContent value="revenue" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {getKPIsByCategory('revenue').map((kpi) => (
+            {getKPIsByCategory("revenue").map((kpi) => (
               <Card key={kpi.id} className="cursor-pointer" onClick={() => handleKPIClick(kpi)}>
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
@@ -571,7 +648,7 @@ export default function FinancialKPIDashboard({
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-bold mb-4">{getFormattedValue(kpi)}</div>
-                  
+
                   {kpi.drillDownData && (
                     <div className="space-y-2">
                       <h4 className="font-medium text-sm">Detalhamento:</h4>
@@ -590,14 +667,19 @@ export default function FinancialKPIDashboard({
                       ))}
                     </div>
                   )}
-                  
+
                   {kpi.benchmarkData && (
                     <div className="mt-4 pt-4 border-t">
                       <h4 className="font-medium text-sm mb-2">Benchmark:</h4>
                       <div className="text-xs text-muted-foreground space-y-1">
-                        <div>Média do setor: {formatCurrency(kpi.benchmarkData.industryAverage)}</div>
+                        <div>
+                          Média do setor: {formatCurrency(kpi.benchmarkData.industryAverage)}
+                        </div>
                         <div>Top performers: {formatCurrency(kpi.benchmarkData.topPerformers)}</div>
-                        <div>Ranking: {kpi.benchmarkData.clinicRanking}º de {kpi.benchmarkData.totalClinics}</div>
+                        <div>
+                          Ranking: {kpi.benchmarkData.clinicRanking}º de{" "}
+                          {kpi.benchmarkData.totalClinics}
+                        </div>
                       </div>
                     </div>
                   )}
@@ -610,7 +692,7 @@ export default function FinancialKPIDashboard({
         {/* Profitability Tab */}
         <TabsContent value="profitability" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {getKPIsByCategory('profitability').map((kpi) => (
+            {getKPIsByCategory("profitability").map((kpi) => (
               <Card key={kpi.id} className="cursor-pointer" onClick={() => handleKPIClick(kpi)}>
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
@@ -621,7 +703,7 @@ export default function FinancialKPIDashboard({
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-bold mb-4">{getFormattedValue(kpi)}</div>
-                  
+
                   {kpi.drillDownData && (
                     <div className="space-y-2">
                       <h4 className="font-medium text-sm">Análise:</h4>
@@ -630,7 +712,9 @@ export default function FinancialKPIDashboard({
                           <span className="text-sm">{item.label}</span>
                           <div className="flex items-center space-x-2">
                             <span className="text-sm font-medium">
-                              {kpi.unit === 'percentage' ? formatPercentage(item.value) : formatCurrency(item.value)}
+                              {kpi.unit === "percentage"
+                                ? formatPercentage(item.value)
+                                : formatCurrency(item.value)}
                             </span>
                             {getTrendIcon(item.trend)}
                           </div>
@@ -647,7 +731,7 @@ export default function FinancialKPIDashboard({
         {/* Efficiency Tab */}
         <TabsContent value="efficiency" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {getKPIsByCategory('efficiency').map((kpi) => (
+            {getKPIsByCategory("efficiency").map((kpi) => (
               <Card key={kpi.id} className="cursor-pointer" onClick={() => handleKPIClick(kpi)}>
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
@@ -658,7 +742,7 @@ export default function FinancialKPIDashboard({
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-bold mb-4">{getFormattedValue(kpi)}</div>
-                  
+
                   {kpi.benchmarkData && (
                     <div className="space-y-2">
                       <h4 className="font-medium text-sm mb-2">Performance vs Mercado:</h4>
@@ -669,18 +753,22 @@ export default function FinancialKPIDashboard({
                         </div>
                         <div className="flex justify-between text-sm text-muted-foreground">
                           <span>Média do setor</span>
-                          <span>{kpi.unit === 'percentage' ? 
-                            formatPercentage(kpi.benchmarkData.industryAverage) :
-                            formatCurrency(kpi.benchmarkData.industryAverage)}</span>
+                          <span>
+                            {kpi.unit === "percentage"
+                              ? formatPercentage(kpi.benchmarkData.industryAverage)
+                              : formatCurrency(kpi.benchmarkData.industryAverage)}
+                          </span>
                         </div>
                         <div className="flex justify-between text-sm text-muted-foreground">
                           <span>Top 10%</span>
-                          <span>{kpi.unit === 'percentage' ? 
-                            formatPercentage(kpi.benchmarkData.topPerformers) :
-                            formatCurrency(kpi.benchmarkData.topPerformers)}</span>
+                          <span>
+                            {kpi.unit === "percentage"
+                              ? formatPercentage(kpi.benchmarkData.topPerformers)
+                              : formatCurrency(kpi.benchmarkData.topPerformers)}
+                          </span>
                         </div>
-                        <Progress 
-                          value={(kpi.value / kpi.benchmarkData.topPerformers) * 100} 
+                        <Progress
+                          value={(kpi.value / kpi.benchmarkData.topPerformers) * 100}
                           className="h-2 mt-2"
                         />
                       </div>
@@ -704,11 +792,7 @@ export default function FinancialKPIDashboard({
               </CardTitle>
               <CardDescription>{selectedKPI.description}</CardDescription>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSelectedKPI(null)}
-            >
+            <Button variant="ghost" size="sm" onClick={() => setSelectedKPI(null)}>
               <Minimize2 className="h-4 w-4" />
             </Button>
           </CardHeader>
@@ -724,22 +808,30 @@ export default function FinancialKPIDashboard({
                   <div className="text-center">
                     <div className="text-2xl font-bold flex items-center justify-center space-x-1">
                       {getTrendIcon(selectedKPI.trend)}
-                      <span className={`${
-                        selectedKPI.trend === 'up' ? 'text-green-600' :
-                        selectedKPI.trend === 'down' ? 'text-red-600' :
-                        'text-yellow-600'
-                      }`}>
-                        {selectedKPI.changePercentage > 0 ? '+' : ''}{selectedKPI.changePercentage.toFixed(1)}%
+                      <span
+                        className={`${
+                          selectedKPI.trend === "up"
+                            ? "text-green-600"
+                            : selectedKPI.trend === "down"
+                              ? "text-red-600"
+                              : "text-yellow-600"
+                        }`}
+                      >
+                        {selectedKPI.changePercentage > 0 ? "+" : ""}
+                        {selectedKPI.changePercentage.toFixed(1)}%
                       </span>
                     </div>
                     <div className="text-sm text-muted-foreground">Variação</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold">
-                      {selectedKPI.target ? 
-                        (selectedKPI.unit === 'currency' ? formatCurrency(selectedKPI.target) :
-                         selectedKPI.unit === 'percentage' ? formatPercentage(selectedKPI.target) :
-                         formatNumber(selectedKPI.target)) : 'N/A'}
+                      {selectedKPI.target
+                        ? selectedKPI.unit === "currency"
+                          ? formatCurrency(selectedKPI.target)
+                          : selectedKPI.unit === "percentage"
+                            ? formatPercentage(selectedKPI.target)
+                            : formatNumber(selectedKPI.target)
+                        : "N/A"}
                     </div>
                     <div className="text-sm text-muted-foreground">Meta</div>
                   </div>
@@ -751,7 +843,10 @@ export default function FinancialKPIDashboard({
                     <h3 className="font-semibold mb-4">Detalhamento por Categoria</h3>
                     <div className="space-y-3">
                       {selectedKPI.drillDownData.map((item) => (
-                        <div key={item.id} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                        <div
+                          key={item.id}
+                          className="flex items-center justify-between p-3 bg-muted rounded-lg"
+                        >
                           <div className="flex items-center space-x-3">
                             <div>
                               <div className="font-medium">{item.label}</div>
@@ -762,9 +857,11 @@ export default function FinancialKPIDashboard({
                           </div>
                           <div className="flex items-center space-x-2">
                             <span className="font-semibold">
-                              {selectedKPI.unit === 'currency' ? formatCurrency(item.value) :
-                               selectedKPI.unit === 'percentage' ? formatPercentage(item.value) :
-                               formatNumber(item.value)}
+                              {selectedKPI.unit === "currency"
+                                ? formatCurrency(item.value)
+                                : selectedKPI.unit === "percentage"
+                                  ? formatPercentage(item.value)
+                                  : formatNumber(item.value)}
                             </span>
                             {getTrendIcon(item.trend)}
                           </div>
@@ -782,26 +879,37 @@ export default function FinancialKPIDashboard({
                       <div className="p-3 bg-muted rounded-lg">
                         <div className="text-sm text-muted-foreground">Média do Setor</div>
                         <div className="font-semibold">
-                          {selectedKPI.unit === 'currency' ? formatCurrency(selectedKPI.benchmarkData.industryAverage) :
-                           selectedKPI.unit === 'percentage' ? formatPercentage(selectedKPI.benchmarkData.industryAverage) :
-                           formatNumber(selectedKPI.benchmarkData.industryAverage)}
+                          {selectedKPI.unit === "currency"
+                            ? formatCurrency(selectedKPI.benchmarkData.industryAverage)
+                            : selectedKPI.unit === "percentage"
+                              ? formatPercentage(selectedKPI.benchmarkData.industryAverage)
+                              : formatNumber(selectedKPI.benchmarkData.industryAverage)}
                         </div>
                       </div>
                       <div className="p-3 bg-muted rounded-lg">
                         <div className="text-sm text-muted-foreground">Top Performers</div>
                         <div className="font-semibold">
-                          {selectedKPI.unit === 'currency' ? formatCurrency(selectedKPI.benchmarkData.topPerformers) :
-                           selectedKPI.unit === 'percentage' ? formatPercentage(selectedKPI.benchmarkData.topPerformers) :
-                           formatNumber(selectedKPI.benchmarkData.topPerformers)}
+                          {selectedKPI.unit === "currency"
+                            ? formatCurrency(selectedKPI.benchmarkData.topPerformers)
+                            : selectedKPI.unit === "percentage"
+                              ? formatPercentage(selectedKPI.benchmarkData.topPerformers)
+                              : formatNumber(selectedKPI.benchmarkData.topPerformers)}
                         </div>
                       </div>
                       <div className="p-3 bg-muted rounded-lg col-span-2">
                         <div className="text-sm text-muted-foreground">Posição no Ranking</div>
                         <div className="font-semibold">
-                          {selectedKPI.benchmarkData.clinicRanking}º lugar de {selectedKPI.benchmarkData.totalClinics} clínicas
+                          {selectedKPI.benchmarkData.clinicRanking}º lugar de{" "}
+                          {selectedKPI.benchmarkData.totalClinics} clínicas
                         </div>
-                        <Progress 
-                          value={((selectedKPI.benchmarkData.totalClinics - selectedKPI.benchmarkData.clinicRanking + 1) / selectedKPI.benchmarkData.totalClinics) * 100}
+                        <Progress
+                          value={
+                            ((selectedKPI.benchmarkData.totalClinics -
+                              selectedKPI.benchmarkData.clinicRanking +
+                              1) /
+                              selectedKPI.benchmarkData.totalClinics) *
+                            100
+                          }
                           className="h-2 mt-2"
                         />
                       </div>
@@ -815,12 +923,18 @@ export default function FinancialKPIDashboard({
                     <h3 className="font-semibold mb-4">Alertas Ativos</h3>
                     <div className="space-y-2">
                       {selectedKPI.alerts.map((alert) => (
-                        <Alert key={alert.id} className={`${
-                          alert.type === 'critical' ? 'border-red-500' :
-                          alert.type === 'warning' ? 'border-yellow-500' :
-                          alert.type === 'info' ? 'border-blue-500' :
-                          'border-green-500'
-                        }`}>
+                        <Alert
+                          key={alert.id}
+                          className={`${
+                            alert.type === "critical"
+                              ? "border-red-500"
+                              : alert.type === "warning"
+                                ? "border-yellow-500"
+                                : alert.type === "info"
+                                  ? "border-blue-500"
+                                  : "border-green-500"
+                          }`}
+                        >
                           <AlertTriangle className="h-4 w-4" />
                           <AlertDescription>
                             <div className="flex justify-between items-start">

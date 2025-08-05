@@ -32,7 +32,7 @@ export const FORECASTING_CONSTANTS = {
   SEASONALITY_PERIOD: 7, // Weekly seasonality
   TREND_SMOOTHING: 0.3,
   SEASONAL_SMOOTHING: 0.1,
-  ERROR_SMOOTHING: 0.1
+  ERROR_SMOOTHING: 0.1,
 } as const;
 
 export class DemandForecastingEngine {
@@ -48,20 +48,22 @@ export class DemandForecastingEngine {
       confidence_level = FORECASTING_CONSTANTS.DEFAULT_CONFIDENCE,
       include_seasonality = true,
       specialty,
-      location
+      location,
     } = options;
 
     // Filter data by specialty and location if provided
     let data = this.historicalData;
     if (specialty) {
-      data = data.filter(d => d.specialty === specialty);
+      data = data.filter((d) => d.specialty === specialty);
     }
     if (location) {
-      data = data.filter(d => d.location === location);
+      data = data.filter((d) => d.location === location);
     }
 
     if (data.length < FORECASTING_CONSTANTS.MIN_HISTORICAL_DATA) {
-      throw new Error(`Insufficient historical data. Need at least ${FORECASTING_CONSTANTS.MIN_HISTORICAL_DATA} data points.`);
+      throw new Error(
+        `Insufficient historical data. Need at least ${FORECASTING_CONSTANTS.MIN_HISTORICAL_DATA} data points.`,
+      );
     }
 
     // Sort data by date
@@ -70,22 +72,22 @@ export class DemandForecastingEngine {
     // For now, return mock forecast data
     const forecasts: DemandForecast[] = [];
     const lastDate = new Date();
-    
+
     for (let i = 1; i <= periods; i++) {
       const forecastDate = new Date(lastDate);
       forecastDate.setDate(forecastDate.getDate() + i);
-      
+
       const baseDemand = 50 + Math.random() * 20;
       const variation = baseDemand * 0.2;
-      
+
       forecasts.push({
-        period: forecastDate.toISOString().split('T')[0],
+        period: forecastDate.toISOString().split("T")[0],
         predicted_demand: Math.round(baseDemand),
         confidence_interval: [
-          Math.round(baseDemand - variation), 
-          Math.round(baseDemand + variation)
+          Math.round(baseDemand - variation),
+          Math.round(baseDemand + variation),
         ],
-        factors: ['weekday_pattern', 'stable_trend']
+        factors: ["weekday_pattern", "stable_trend"],
       });
     }
 

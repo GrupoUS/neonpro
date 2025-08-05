@@ -1,18 +1,25 @@
-﻿/**
+/**
  * RBAC Permission Manager Class
  * Story 1.2: Role-Based Access Control Implementation
- * 
+ *
  * This class provides a manager interface for the RBAC system,
  * wrapping the functional permissions API in a class-based interface.
  */
 
-import { UserRole, Permission, PermissionCheck, PermissionResult, RoleDefinition, UserRoleAssignment } from '@/types/rbac';
-import { createClient } from '@/lib/supabase/client';
-import { AuthUser } from '@/lib/middleware/auth';
+import type {
+  UserRole,
+  Permission,
+  PermissionCheck,
+  PermissionResult,
+  RoleDefinition,
+  UserRoleAssignment,
+} from "@/types/rbac";
+import type { createClient } from "@/lib/supabase/client";
+import type { AuthUser } from "@/lib/middleware/auth";
 
 export class RBACPermissionManager {
   private supabase: any;
-  private permissionCache: Map<string, { data: any, timestamp: number }> = new Map();
+  private permissionCache: Map<string, { data: any; timestamp: number }> = new Map();
   private cacheTimeout = 5 * 60 * 1000; // 5 minutes
 
   constructor(supabaseClient?: any) {
@@ -26,24 +33,24 @@ export class RBACPermissionManager {
     try {
       const cacheKey = `getUserRole:${userId}:${clinicId}`;
       const cached = this.permissionCache.get(cacheKey);
-      
+
       if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
         return cached.data;
       }
 
       const { data: userRole, error } = await this.supabase
-        .from('user_roles')
+        .from("user_roles")
         .select(`
           *,
           role:roles(*)
         `)
-        .eq('user_id', userId)
-        .eq('clinic_id', clinicId)
-        .eq('is_active', true)
+        .eq("user_id", userId)
+        .eq("clinic_id", clinicId)
+        .eq("is_active", true)
         .single();
 
       if (error) {
-        console.error('Error fetching user role:', error);
+        console.error("Error fetching user role:", error);
         // Throw error to propagate it up to hasPermission
         throw error;
       }
@@ -52,7 +59,7 @@ export class RBACPermissionManager {
       this.permissionCache.set(cacheKey, { data: result, timestamp: Date.now() });
       return result;
     } catch (error) {
-      console.error('Error in getUserRole:', error);
+      console.error("Error in getUserRole:", error);
       // Re-throw the error to be handled by calling function
       throw error;
     }
@@ -65,18 +72,18 @@ export class RBACPermissionManager {
     userId: string,
     permission: Permission,
     clinicId: string,
-    resourceId?: string
+    resourceId?: string,
   ): Promise<PermissionResult> {
     try {
-      const cacheKey = `hasPermission:${userId}:${permission}:${clinicId}:${resourceId || ''}`;
+      const cacheKey = `hasPermission:${userId}:${permission}:${clinicId}:${resourceId || ""}`;
       const cached = this.permissionCache.get(cacheKey);
-      
+
       if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
         return cached.data;
       }
 
       const roleAssignment = await this.getUserRole(userId, clinicId);
-      
+
       if (!roleAssignment || !roleAssignment.role) {
         const result = { granted: false };
         this.permissionCache.set(cacheKey, { data: result, timestamp: Date.now() });
@@ -84,13 +91,13 @@ export class RBACPermissionManager {
       }
 
       const role = roleAssignment.role;
-      
+
       // Check if role has wildcard permission
-      if (role.permissions.includes('*')) {
-        const result = { 
-          granted: true, 
+      if (role.permissions.includes("*")) {
+        const result = {
+          granted: true,
           role: role.name,
-          resourceId 
+          resourceId,
         };
         this.permissionCache.set(cacheKey, { data: result, timestamp: Date.now() });
         return result;
@@ -98,17 +105,17 @@ export class RBACPermissionManager {
 
       // Check if role has specific permission
       const hasPermission = role.permissions.includes(permission);
-      
+
       const result = {
         granted: hasPermission,
         role: role.name,
-        resourceId
+        resourceId,
       };
-      
+
       this.permissionCache.set(cacheKey, { data: result, timestamp: Date.now() });
       return result;
     } catch (error) {
-      console.error('Error in hasPermission:', error);
+      console.error("Error in hasPermission:", error);
       return { granted: false, error: error.message };
     }
   }
@@ -131,7 +138,7 @@ export class RBACPermissionManager {
       // Lower hierarchy number = higher privilege (1 = owner, 2 = manager, 3 = staff)
       return managerHierarchy < targetHierarchy;
     } catch (error) {
-      console.error('Error in canManageUser:', error);
+      console.error("Error in canManageUser:", error);
       return false;
     }
   }
@@ -139,23 +146,26 @@ export class RBACPermissionManager {
   /**
    * Assign role to user
    */
-  async assignRole(userId: string, roleId: string, clinicId: string, assignedBy: string): Promise<boolean> {
+  async assignRole(
+    userId: string,
+    roleId: string,
+    clinicId: string,
+    assignedBy: string,
+  ): Promise<boolean> {
     try {
-      const { error } = await this.supabase
-        .from('user_roles')
-        .insert({
-          user_id: userId,
-          role_id: roleId,
-          clinic_id: clinicId,
-          assigned_by: assignedBy,
-          is_active: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        });
+      const { error } = await this.supabase.from("user_roles").insert({
+        user_id: userId,
+        role_id: roleId,
+        clinic_id: clinicId,
+        assigned_by: assignedBy,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
 
       return !error;
     } catch (error) {
-      console.error('Error in assignRole:', error);
+      console.error("Error in assignRole:", error);
       return false;
     }
   }
@@ -166,19 +176,19 @@ export class RBACPermissionManager {
   async removeRole(userId: string, clinicId: string, removedBy: string): Promise<boolean> {
     try {
       const { error } = await this.supabase
-        .from('user_roles')
+        .from("user_roles")
         .update({
           is_active: false,
           updated_at: new Date().toISOString(),
-          updated_by: removedBy
+          updated_by: removedBy,
         })
-        .eq('user_id', userId)
-        .eq('clinic_id', clinicId)
-        .eq('is_active', true);
+        .eq("user_id", userId)
+        .eq("clinic_id", clinicId)
+        .eq("is_active", true);
 
       return !error;
     } catch (error) {
-      console.error('Error in removeRole:', error);
+      console.error("Error in removeRole:", error);
       return false;
     }
   }
@@ -196,7 +206,6 @@ export class RBACPermissionManager {
    */
   clearAllCaches(): void {
     // Implementation depends on caching strategy
-    console.log('Clearing all permission caches');
+    console.log("Clearing all permission caches");
   }
 }
-

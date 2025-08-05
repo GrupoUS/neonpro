@@ -1,25 +1,25 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { 
-  Mail, 
-  MessageSquare, 
-  Smartphone, 
-  Plus, 
-  Edit, 
-  Trash2, 
+import React, { useState } from "react";
+import type {
+  Mail,
+  MessageSquare,
+  Smartphone,
+  Plus,
+  Edit,
+  Trash2,
   Copy,
   Eye,
   Save,
-  X
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import {
+  X,
+} from "lucide-react";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Badge } from "@/components/ui/badge";
+import type { Separator } from "@/components/ui/separator";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -27,19 +27,19 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import {
+} from "@/components/ui/dialog";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Label } from '@/components/ui/label';
-import { CommunicationTemplate } from '@/types/communication';
-import { createClient } from '@/lib/supabase/client';
-import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
+} from "@/components/ui/select";
+import type { Label } from "@/components/ui/label";
+import type { CommunicationTemplate } from "@/types/communication";
+import type { createClient } from "@/lib/supabase/client";
+import type { useToast } from "@/hooks/use-toast";
+import type { cn } from "@/lib/utils";
 
 export interface TemplateManagerProps {
   templates: CommunicationTemplate[];
@@ -50,7 +50,7 @@ export interface TemplateManagerProps {
 
 interface TemplateFormData {
   name: string;
-  type: 'email' | 'sms' | 'push';
+  type: "email" | "sms" | "push";
   category: string;
   subject?: string;
   content: string;
@@ -59,56 +59,56 @@ interface TemplateFormData {
 }
 
 const TEMPLATE_TYPES = [
-  { value: 'email', label: 'Email', icon: <Mail className="w-4 h-4" /> },
-  { value: 'sms', label: 'SMS', icon: <Smartphone className="w-4 h-4" /> },
-  { value: 'push', label: 'Push', icon: <MessageSquare className="w-4 h-4" /> }
+  { value: "email", label: "Email", icon: <Mail className="w-4 h-4" /> },
+  { value: "sms", label: "SMS", icon: <Smartphone className="w-4 h-4" /> },
+  { value: "push", label: "Push", icon: <MessageSquare className="w-4 h-4" /> },
 ];
 
 const TEMPLATE_CATEGORIES = [
-  'appointment_reminder',
-  'appointment_confirmation', 
-  'treatment_followup',
-  'payment_reminder',
-  'results_available',
-  'welcome',
-  'birthday',
-  'marketing',
-  'emergency'
+  "appointment_reminder",
+  "appointment_confirmation",
+  "treatment_followup",
+  "payment_reminder",
+  "results_available",
+  "welcome",
+  "birthday",
+  "marketing",
+  "emergency",
 ];
 
 const AVAILABLE_VARIABLES = [
-  '{{patient_name}}',
-  '{{appointment_date}}',
-  '{{appointment_time}}',
-  '{{doctor_name}}',
-  '{{clinic_name}}',
-  '{{treatment_name}}',
-  '{{payment_amount}}',
-  '{{payment_due_date}}',
-  '{{result_type}}',
-  '{{emergency_contact}}'
+  "{{patient_name}}",
+  "{{appointment_date}}",
+  "{{appointment_time}}",
+  "{{doctor_name}}",
+  "{{clinic_name}}",
+  "{{treatment_name}}",
+  "{{payment_amount}}",
+  "{{payment_due_date}}",
+  "{{result_type}}",
+  "{{emergency_contact}}",
 ];
 
-export function TemplateManager({ 
-  templates, 
-  onTemplateUpdate, 
+export function TemplateManager({
+  templates,
+  onTemplateUpdate,
   onTemplateDelete,
-  className 
+  className,
 }: TemplateManagerProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<CommunicationTemplate | null>(null);
   const [previewTemplate, setPreviewTemplate] = useState<CommunicationTemplate | null>(null);
   const [formData, setFormData] = useState<TemplateFormData>({
-    name: '',
-    type: 'email',
-    category: 'appointment_reminder',
-    subject: '',
-    content: '',
+    name: "",
+    type: "email",
+    category: "appointment_reminder",
+    subject: "",
+    content: "",
     variables: [],
-    is_active: true
+    is_active: true,
   });
   const [loading, setLoading] = useState(false);
-  
+
   const { toast } = useToast();
   const supabase = createClient();
 
@@ -118,23 +118,23 @@ export function TemplateManager({
       setSelectedTemplate(template);
       setFormData({
         name: template.name,
-        type: template.type as 'email' | 'sms' | 'push',
+        type: template.type as "email" | "sms" | "push",
         category: template.category,
-        subject: template.subject || '',
+        subject: template.subject || "",
         content: template.content,
         variables: template.variables || [],
-        is_active: template.is_active
+        is_active: template.is_active,
       });
     } else {
       setSelectedTemplate(null);
       setFormData({
-        name: '',
-        type: 'email',
-        category: 'appointment_reminder',
-        subject: '',
-        content: '',
+        name: "",
+        type: "email",
+        category: "appointment_reminder",
+        subject: "",
+        content: "",
         variables: [],
-        is_active: true
+        is_active: true,
       });
     }
     setIsEditing(true);
@@ -145,20 +145,20 @@ export function TemplateManager({
     setIsEditing(false);
     setSelectedTemplate(null);
     setFormData({
-      name: '',
-      type: 'email',
-      category: 'appointment_reminder',
-      subject: '',
-      content: '',
+      name: "",
+      type: "email",
+      category: "appointment_reminder",
+      subject: "",
+      content: "",
       variables: [],
-      is_active: true
+      is_active: true,
     });
   };
 
   // Salvar template
   const saveTemplate = async () => {
     setLoading(true);
-    
+
     try {
       // Extrair variáveis do conteúdo
       const variableMatches = formData.content.match(/\{\{[^}]+\}\}/g) || [];
@@ -167,27 +167,27 @@ export function TemplateManager({
       const templateData = {
         ...formData,
         variables: extractedVariables,
-        clinic_id: 'clinic-id', // TODO: Obter do contexto
-        updated_at: new Date().toISOString()
+        clinic_id: "clinic-id", // TODO: Obter do contexto
+        updated_at: new Date().toISOString(),
       };
 
       let response;
-      
+
       if (selectedTemplate) {
         // Atualizar template existente
         response = await supabase
-          .from('communication_templates')
+          .from("communication_templates")
           .update(templateData)
-          .eq('id', selectedTemplate.id)
+          .eq("id", selectedTemplate.id)
           .select()
           .single();
       } else {
         // Criar novo template
         response = await supabase
-          .from('communication_templates')
+          .from("communication_templates")
           .insert({
             ...templateData,
-            created_at: new Date().toISOString()
+            created_at: new Date().toISOString(),
           })
           .select()
           .single();
@@ -197,17 +197,16 @@ export function TemplateManager({
 
       onTemplateUpdate(response.data);
       closeEditor();
-      
-      toast({
-        title: selectedTemplate ? 'Template atualizado' : 'Template criado',
-        description: 'Template salvo com sucesso.',
-      });
 
+      toast({
+        title: selectedTemplate ? "Template atualizado" : "Template criado",
+        description: "Template salvo com sucesso.",
+      });
     } catch (error) {
       toast({
-        title: 'Erro ao salvar template',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
-        variant: 'destructive'
+        title: "Erro ao salvar template",
+        description: error instanceof Error ? error.message : "Erro desconhecido",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -217,27 +216,26 @@ export function TemplateManager({
   // Deletar template
   const deleteTemplate = async (templateId: string) => {
     setLoading(true);
-    
+
     try {
       const { error } = await supabase
-        .from('communication_templates')
+        .from("communication_templates")
         .delete()
-        .eq('id', templateId);
+        .eq("id", templateId);
 
       if (error) throw error;
 
       onTemplateDelete(templateId);
-      
-      toast({
-        title: 'Template deletado',
-        description: 'Template removido com sucesso.',
-      });
 
+      toast({
+        title: "Template deletado",
+        description: "Template removido com sucesso.",
+      });
     } catch (error) {
       toast({
-        title: 'Erro ao deletar template',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
-        variant: 'destructive'
+        title: "Erro ao deletar template",
+        description: error instanceof Error ? error.message : "Erro desconhecido",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -248,31 +246,31 @@ export function TemplateManager({
   const duplicateTemplate = (template: CommunicationTemplate) => {
     openEditor({
       ...template,
-      id: '',
+      id: "",
       name: `${template.name} (Cópia)`,
-      created_at: '',
-      updated_at: ''
+      created_at: "",
+      updated_at: "",
     } as CommunicationTemplate);
   };
 
   // Renderizar preview do template
   const renderPreview = (template: CommunicationTemplate) => {
     const sampleData = {
-      '{{patient_name}}': 'João Silva',
-      '{{appointment_date}}': '15/03/2024',
-      '{{appointment_time}}': '14:30',
-      '{{doctor_name}}': 'Dra. Maria Santos',
-      '{{clinic_name}}': 'NeonPro Clinic',
-      '{{treatment_name}}': 'Limpeza de Pele',
-      '{{payment_amount}}': 'R$ 250,00',
-      '{{payment_due_date}}': '20/03/2024',
-      '{{result_type}}': 'Exame de Sangue',
-      '{{emergency_contact}}': '(11) 99999-9999'
+      "{{patient_name}}": "João Silva",
+      "{{appointment_date}}": "15/03/2024",
+      "{{appointment_time}}": "14:30",
+      "{{doctor_name}}": "Dra. Maria Santos",
+      "{{clinic_name}}": "NeonPro Clinic",
+      "{{treatment_name}}": "Limpeza de Pele",
+      "{{payment_amount}}": "R$ 250,00",
+      "{{payment_due_date}}": "20/03/2024",
+      "{{result_type}}": "Exame de Sangue",
+      "{{emergency_contact}}": "(11) 99999-9999",
     };
 
     let previewContent = template.content;
     Object.entries(sampleData).forEach(([variable, value]) => {
-      previewContent = previewContent.replace(new RegExp(variable, 'g'), value);
+      previewContent = previewContent.replace(new RegExp(variable, "g"), value);
     });
 
     return previewContent;
@@ -280,13 +278,14 @@ export function TemplateManager({
 
   // Inserir variável no conteúdo
   const insertVariable = (variable: string) => {
-    const textarea = document.getElementById('template-content') as HTMLTextAreaElement;
+    const textarea = document.getElementById("template-content") as HTMLTextAreaElement;
     if (textarea) {
       const start = textarea.selectionStart;
       const end = textarea.selectionEnd;
-      const newContent = formData.content.substring(0, start) + variable + formData.content.substring(end);
-      setFormData(prev => ({ ...prev, content: newContent }));
-      
+      const newContent =
+        formData.content.substring(0, start) + variable + formData.content.substring(end);
+      setFormData((prev) => ({ ...prev, content: newContent }));
+
       // Refocar e posicionar cursor
       setTimeout(() => {
         textarea.focus();
@@ -296,7 +295,7 @@ export function TemplateManager({
   };
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn("space-y-6", className)}>
       {/* Cabeçalho */}
       <div className="flex items-center justify-between">
         <div>
@@ -320,12 +319,12 @@ export function TemplateManager({
                 <div>
                   <CardTitle className="text-lg">{template.name}</CardTitle>
                   <div className="flex items-center gap-2 mt-1">
-                    {TEMPLATE_TYPES.find(t => t.value === template.type)?.icon}
+                    {TEMPLATE_TYPES.find((t) => t.value === template.type)?.icon}
                     <Badge variant="outline">
-                      {TEMPLATE_TYPES.find(t => t.value === template.type)?.label}
+                      {TEMPLATE_TYPES.find((t) => t.value === template.type)?.label}
                     </Badge>
-                    <Badge variant={template.is_active ? 'default' : 'secondary'}>
-                      {template.is_active ? 'Ativo' : 'Inativo'}
+                    <Badge variant={template.is_active ? "default" : "secondary"}>
+                      {template.is_active ? "Ativo" : "Inativo"}
                     </Badge>
                   </div>
                 </div>
@@ -335,21 +334,19 @@ export function TemplateManager({
             <CardContent className="space-y-3">
               <div>
                 <p className="text-sm text-muted-foreground mb-2">
-                  Categoria: {template.category.replace('_', ' ')}
+                  Categoria: {template.category.replace("_", " ")}
                 </p>
-                
+
                 {template.subject && (
                   <div>
                     <Label className="text-xs">Assunto:</Label>
                     <p className="text-sm truncate">{template.subject}</p>
                   </div>
                 )}
-                
+
                 <div>
                   <Label className="text-xs">Conteúdo:</Label>
-                  <p className="text-sm text-muted-foreground line-clamp-3">
-                    {template.content}
-                  </p>
+                  <p className="text-sm text-muted-foreground line-clamp-3">{template.content}</p>
                 </div>
               </div>
 
@@ -358,20 +355,14 @@ export function TemplateManager({
               <div className="flex items-center gap-2">
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={() => setPreviewTemplate(template)}
-                    >
+                    <Button variant="ghost" size="sm" onClick={() => setPreviewTemplate(template)}>
                       <Eye className="w-3 h-3" />
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="max-w-2xl">
                     <DialogHeader>
                       <DialogTitle>Preview - {template.name}</DialogTitle>
-                      <DialogDescription>
-                        Visualização com dados de exemplo
-                      </DialogDescription>
+                      <DialogDescription>Visualização com dados de exemplo</DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4">
                       {template.subject && (
@@ -390,24 +381,16 @@ export function TemplateManager({
                   </DialogContent>
                 </Dialog>
 
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => openEditor(template)}
-                >
+                <Button variant="ghost" size="sm" onClick={() => openEditor(template)}>
                   <Edit className="w-3 h-3" />
                 </Button>
 
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => duplicateTemplate(template)}
-                >
+                <Button variant="ghost" size="sm" onClick={() => duplicateTemplate(template)}>
                   <Copy className="w-3 h-3" />
                 </Button>
 
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   size="sm"
                   onClick={() => deleteTemplate(template.id)}
                   disabled={loading}
@@ -424,9 +407,7 @@ export function TemplateManager({
       <Dialog open={isEditing} onOpenChange={setIsEditing}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>
-              {selectedTemplate ? 'Editar Template' : 'Novo Template'}
-            </DialogTitle>
+            <DialogTitle>{selectedTemplate ? "Editar Template" : "Novo Template"}</DialogTitle>
           </DialogHeader>
 
           <div className="grid grid-cols-2 gap-6">
@@ -437,7 +418,7 @@ export function TemplateManager({
                 <Input
                   id="template-name"
                   value={formData.name}
-                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
                   placeholder="Ex: Lembrete de Consulta"
                 />
               </div>
@@ -447,8 +428,8 @@ export function TemplateManager({
                   <Label htmlFor="template-type">Tipo</Label>
                   <Select
                     value={formData.type}
-                    onValueChange={(value: 'email' | 'sms' | 'push') => 
-                      setFormData(prev => ({ ...prev, type: value }))
+                    onValueChange={(value: "email" | "sms" | "push") =>
+                      setFormData((prev) => ({ ...prev, type: value }))
                     }
                   >
                     <SelectTrigger>
@@ -471,9 +452,7 @@ export function TemplateManager({
                   <Label htmlFor="template-category">Categoria</Label>
                   <Select
                     value={formData.category}
-                    onValueChange={(value) => 
-                      setFormData(prev => ({ ...prev, category: value }))
-                    }
+                    onValueChange={(value) => setFormData((prev) => ({ ...prev, category: value }))}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -481,7 +460,7 @@ export function TemplateManager({
                     <SelectContent>
                       {TEMPLATE_CATEGORIES.map((category) => (
                         <SelectItem key={category} value={category}>
-                          {category.replace('_', ' ')}
+                          {category.replace("_", " ")}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -489,13 +468,13 @@ export function TemplateManager({
                 </div>
               </div>
 
-              {formData.type === 'email' && (
+              {formData.type === "email" && (
                 <div>
                   <Label htmlFor="template-subject">Assunto</Label>
                   <Input
                     id="template-subject"
                     value={formData.subject}
-                    onChange={(e) => setFormData(prev => ({ ...prev, subject: e.target.value }))}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, subject: e.target.value }))}
                     placeholder="Ex: Lembrete: Consulta agendada para {{appointment_date}}"
                   />
                 </div>
@@ -506,7 +485,7 @@ export function TemplateManager({
                 <Textarea
                   id="template-content"
                   value={formData.content}
-                  onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, content: e.target.value }))}
                   placeholder="Digite o conteúdo do template..."
                   rows={8}
                 />
@@ -544,7 +523,7 @@ export function TemplateManager({
                   <div>
                     <strong>Conteúdo:</strong>
                     <div className="mt-2 whitespace-pre-wrap">
-                      {formData.content || 'Digite o conteúdo para ver o preview...'}
+                      {formData.content || "Digite o conteúdo para ver o preview..."}
                     </div>
                   </div>
                 </div>
@@ -557,9 +536,12 @@ export function TemplateManager({
               <X className="w-4 h-4 mr-2" />
               Cancelar
             </Button>
-            <Button onClick={saveTemplate} disabled={loading || !formData.name || !formData.content}>
+            <Button
+              onClick={saveTemplate}
+              disabled={loading || !formData.name || !formData.content}
+            >
               <Save className="w-4 h-4 mr-2" />
-              {loading ? 'Salvando...' : 'Salvar Template'}
+              {loading ? "Salvando..." : "Salvar Template"}
             </Button>
           </DialogFooter>
         </DialogContent>

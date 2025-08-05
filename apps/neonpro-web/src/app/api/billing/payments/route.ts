@@ -1,6 +1,6 @@
-import { createClient } from "@/lib/supabase/server";
-import { NextResponse } from "next/server";
-import { z } from "zod";
+import type { createClient } from "@/lib/supabase/server";
+import type { NextResponse } from "next/server";
+import type { z } from "zod";
 
 // Validation schemas
 const CreatePaymentSchema = z.object({
@@ -15,9 +15,7 @@ const CreatePaymentSchema = z.object({
 });
 
 const UpdatePaymentSchema = z.object({
-  status: z
-    .enum(["pending", "processing", "completed", "failed", "cancelled"])
-    .optional(),
+  status: z.enum(["pending", "processing", "completed", "failed", "cancelled"]).optional(),
   notes: z.string().optional(),
   processed_at: z.string().optional(),
 });
@@ -68,7 +66,7 @@ export async function GET(request: Request) {
           status,
           payment_date
         )
-      `
+      `,
       )
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
@@ -98,27 +96,21 @@ export async function GET(request: Request) {
 
     if (error) {
       console.error("Error fetching payments:", error);
-      return NextResponse.json(
-        { error: "Failed to fetch payments" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to fetch payments" }, { status: 500 });
     }
 
     // Calculate summary statistics
     const totalAmount =
       payments?.reduce(
-        (sum, payment) =>
-          payment.status === "completed" ? sum + payment.amount : sum,
-        0
+        (sum, payment) => (payment.status === "completed" ? sum + payment.amount : sum),
+        0,
       ) || 0;
 
     const pendingAmount =
       payments?.reduce(
         (sum, payment) =>
-          ["pending", "processing"].includes(payment.status)
-            ? sum + payment.amount
-            : sum,
-        0
+          ["pending", "processing"].includes(payment.status) ? sum + payment.amount : sum,
+        0,
       ) || 0;
 
     return NextResponse.json({
@@ -126,8 +118,7 @@ export async function GET(request: Request) {
       summary: {
         total_amount: totalAmount,
         pending_amount: pendingAmount,
-        completed_count:
-          payments?.filter((p) => p.status === "completed").length || 0,
+        completed_count: payments?.filter((p) => p.status === "completed").length || 0,
         total_count: count || 0,
       },
       pagination: {
@@ -139,10 +130,7 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     console.error("API Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
@@ -181,14 +169,10 @@ export async function POST(request: Request) {
 
     if (paymentsError) {
       console.error("Error checking existing payments:", paymentsError);
-      return NextResponse.json(
-        { error: "Failed to check existing payments" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to check existing payments" }, { status: 500 });
     }
 
-    const paidAmount =
-      existingPayments?.reduce((sum, p) => sum + p.amount, 0) || 0;
+    const paidAmount = existingPayments?.reduce((sum, p) => sum + p.amount, 0) || 0;
     const remainingBalance = invoice.total_amount - paidAmount;
 
     if (validatedData.amount > remainingBalance) {
@@ -197,7 +181,7 @@ export async function POST(request: Request) {
           error: "Payment amount exceeds remaining balance",
           remaining_balance: remainingBalance,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -217,14 +201,12 @@ export async function POST(request: Request) {
         status: validatedData.method === "cash" ? "completed" : "pending",
         installments: validatedData.installments,
         installment_number: 1,
-        fees:
-          validatedData.gateway === "stripe" ? validatedData.amount * 0.029 : 0,
+        fees: validatedData.gateway === "stripe" ? validatedData.amount * 0.029 : 0,
         net_amount: netAmount,
         notes: validatedData.notes,
         external_id: validatedData.external_id,
         gateway: validatedData.gateway,
-        processed_at:
-          validatedData.method === "cash" ? new Date().toISOString() : null,
+        processed_at: validatedData.method === "cash" ? new Date().toISOString() : null,
         created_by: user.id,
         clinic_id: user.id,
       })
@@ -241,16 +223,13 @@ export async function POST(request: Request) {
             email
           )
         )
-      `
+      `,
       )
       .single();
 
     if (paymentError) {
       console.error("Error creating payment:", paymentError);
-      return NextResponse.json(
-        { error: "Failed to create payment" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to create payment" }, { status: 500 });
     }
 
     // If payment is completed and covers full invoice amount, update invoice status
@@ -266,8 +245,7 @@ export async function POST(request: Request) {
 
     // Create installment payments if needed
     if (validatedData.installments > 1) {
-      const installmentAmount =
-        validatedData.amount / validatedData.installments;
+      const installmentAmount = validatedData.amount / validatedData.installments;
       const installments = [];
 
       for (let i = 2; i <= validatedData.installments; i++) {
@@ -301,14 +279,11 @@ export async function POST(request: Request) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Validation failed", details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error("API Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

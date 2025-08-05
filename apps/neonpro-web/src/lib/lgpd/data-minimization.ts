@@ -1,7 +1,7 @@
 /**
  * LGPD Data Minimization System
  * Implements data minimization principles to ensure only necessary data is collected and processed
- * 
+ *
  * Features:
  * - Data collection validation and filtering
  * - Purpose-based data processing controls
@@ -10,12 +10,12 @@
  * - Collection impact assessment
  * - Compliance monitoring and reporting
  * - Integration with consent management
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  */
 
-import { EventEmitter } from 'events';
+import type { EventEmitter } from "events";
 
 // ============================================================================
 // DATA MINIMIZATION TYPES & INTERFACES
@@ -25,57 +25,57 @@ import { EventEmitter } from 'events';
  * Data Categories for Minimization
  */
 export enum DataCategory {
-  PERSONAL_IDENTIFIERS = 'personal_identifiers',
-  CONTACT_INFORMATION = 'contact_information',
-  DEMOGRAPHIC_DATA = 'demographic_data',
-  BEHAVIORAL_DATA = 'behavioral_data',
-  TRANSACTIONAL_DATA = 'transactional_data',
-  TECHNICAL_DATA = 'technical_data',
-  LOCATION_DATA = 'location_data',
-  BIOMETRIC_DATA = 'biometric_data',
-  HEALTH_DATA = 'health_data',
-  FINANCIAL_DATA = 'financial_data',
-  SENSITIVE_PERSONAL = 'sensitive_personal',
-  CHILDREN_DATA = 'children_data'
+  PERSONAL_IDENTIFIERS = "personal_identifiers",
+  CONTACT_INFORMATION = "contact_information",
+  DEMOGRAPHIC_DATA = "demographic_data",
+  BEHAVIORAL_DATA = "behavioral_data",
+  TRANSACTIONAL_DATA = "transactional_data",
+  TECHNICAL_DATA = "technical_data",
+  LOCATION_DATA = "location_data",
+  BIOMETRIC_DATA = "biometric_data",
+  HEALTH_DATA = "health_data",
+  FINANCIAL_DATA = "financial_data",
+  SENSITIVE_PERSONAL = "sensitive_personal",
+  CHILDREN_DATA = "children_data",
 }
 
 /**
  * Processing Purposes
  */
 export enum ProcessingPurpose {
-  SERVICE_PROVISION = 'service_provision',
-  ACCOUNT_MANAGEMENT = 'account_management',
-  PAYMENT_PROCESSING = 'payment_processing',
-  CUSTOMER_SUPPORT = 'customer_support',
-  MARKETING = 'marketing',
-  ANALYTICS = 'analytics',
-  SECURITY = 'security',
-  COMPLIANCE = 'compliance',
-  RESEARCH = 'research',
-  PERSONALIZATION = 'personalization'
+  SERVICE_PROVISION = "service_provision",
+  ACCOUNT_MANAGEMENT = "account_management",
+  PAYMENT_PROCESSING = "payment_processing",
+  CUSTOMER_SUPPORT = "customer_support",
+  MARKETING = "marketing",
+  ANALYTICS = "analytics",
+  SECURITY = "security",
+  COMPLIANCE = "compliance",
+  RESEARCH = "research",
+  PERSONALIZATION = "personalization",
 }
 
 /**
  * Data Necessity Levels
  */
 export enum DataNecessity {
-  ESSENTIAL = 'essential',        // Required for core service
-  FUNCTIONAL = 'functional',      // Enhances service functionality
-  ANALYTICAL = 'analytical',      // For analysis and improvement
-  MARKETING = 'marketing',        // For marketing purposes
-  OPTIONAL = 'optional'           // Nice to have but not necessary
+  ESSENTIAL = "essential", // Required for core service
+  FUNCTIONAL = "functional", // Enhances service functionality
+  ANALYTICAL = "analytical", // For analysis and improvement
+  MARKETING = "marketing", // For marketing purposes
+  OPTIONAL = "optional", // Nice to have but not necessary
 }
 
 /**
  * Minimization Actions
  */
 export enum MinimizationAction {
-  COLLECT = 'collect',           // Allow collection
-  FILTER = 'filter',             // Remove specific fields
-  ANONYMIZE = 'anonymize',       // Remove identifying information
-  PSEUDONYMIZE = 'pseudonymize', // Replace with pseudonyms
-  AGGREGATE = 'aggregate',       // Combine into aggregated data
-  REJECT = 'reject'              // Reject collection entirely
+  COLLECT = "collect", // Allow collection
+  FILTER = "filter", // Remove specific fields
+  ANONYMIZE = "anonymize", // Remove identifying information
+  PSEUDONYMIZE = "pseudonymize", // Replace with pseudonyms
+  AGGREGATE = "aggregate", // Combine into aggregated data
+  REJECT = "reject", // Reject collection entirely
 }
 
 /**
@@ -89,7 +89,7 @@ export interface DataField {
   sensitive: boolean;
   retention: {
     period: number;
-    unit: 'days' | 'months' | 'years';
+    unit: "days" | "months" | "years";
   };
   minimizationRules: {
     action: MinimizationAction;
@@ -110,7 +110,7 @@ export interface DataCollectionSchema {
   fields: DataField[];
   minimizationEnabled: boolean;
   consentRequired: boolean;
-  
+
   // Validation rules
   validation: {
     required: string[];
@@ -121,7 +121,7 @@ export interface DataCollectionSchema {
       requiredFields: string[];
     }[];
   };
-  
+
   // Minimization configuration
   minimization: {
     autoApply: boolean;
@@ -129,7 +129,7 @@ export interface DataCollectionSchema {
     allowOverrides: boolean;
     reviewRequired: boolean;
   };
-  
+
   createdBy: string;
   createdAt: Date;
   updatedAt: Date;
@@ -155,10 +155,10 @@ export interface DataCollectionRequest {
     userAgent: string;
     source: string;
   };
-  
+
   // Processing results
   processing: {
-    status: 'pending' | 'processed' | 'rejected' | 'error';
+    status: "pending" | "processed" | "rejected" | "error";
     processedAt?: Date;
     minimizedData?: Record<string, any>;
     appliedActions: {
@@ -172,7 +172,7 @@ export interface DataCollectionRequest {
     }[];
     warnings: string[];
   };
-  
+
   createdAt: Date;
 }
 
@@ -186,7 +186,7 @@ export interface MinimizationRule {
   category: DataCategory;
   priority: number;
   enabled: boolean;
-  
+
   // Rule conditions
   conditions: {
     field?: string;
@@ -194,19 +194,19 @@ export interface MinimizationRule {
     userType?: string;
     consentStatus?: string;
     dataVolume?: {
-      operator: '>=' | '>' | '<=' | '<' | '==';
+      operator: ">=" | ">" | "<=" | "<" | "==";
       value: number;
     };
     customConditions?: Record<string, any>;
   };
-  
+
   // Actions to apply
   actions: {
     primary: MinimizationAction;
     fallback?: MinimizationAction;
     parameters?: Record<string, any>;
   };
-  
+
   // Effectiveness tracking
   metrics: {
     applicationsCount: number;
@@ -214,7 +214,7 @@ export interface MinimizationRule {
     lastApplied?: Date;
     averageReduction: number;
   };
-  
+
   createdBy: string;
   createdAt: Date;
   updatedAt: Date;
@@ -229,7 +229,7 @@ export interface MinimizationReport {
     start: Date;
     end: Date;
   };
-  
+
   // Collection statistics
   collections: {
     total: number;
@@ -237,24 +237,30 @@ export interface MinimizationReport {
     rejected: number;
     minimized: number;
   };
-  
+
   // Data reduction metrics
   reduction: {
     totalFieldsRequested: number;
     totalFieldsCollected: number;
     reductionPercentage: number;
-    byCategory: Record<DataCategory, {
-      requested: number;
-      collected: number;
-      reduction: number;
-    }>;
-    byPurpose: Record<ProcessingPurpose, {
-      requested: number;
-      collected: number;
-      reduction: number;
-    }>;
+    byCategory: Record<
+      DataCategory,
+      {
+        requested: number;
+        collected: number;
+        reduction: number;
+      }
+    >;
+    byPurpose: Record<
+      ProcessingPurpose,
+      {
+        requested: number;
+        collected: number;
+        reduction: number;
+      }
+    >;
   };
-  
+
   // Compliance metrics
   compliance: {
     schemaCompliance: number;
@@ -262,22 +268,22 @@ export interface MinimizationReport {
     purposeLimitation: number;
     dataAccuracy: number;
   };
-  
+
   // Top minimization actions
   topActions: {
     action: MinimizationAction;
     count: number;
     percentage: number;
   }[];
-  
+
   // Recommendations
   recommendations: {
-    type: 'schema_optimization' | 'rule_adjustment' | 'process_improvement';
-    priority: 'high' | 'medium' | 'low';
+    type: "schema_optimization" | "rule_adjustment" | "process_improvement";
+    priority: "high" | "medium" | "low";
     description: string;
     impact: string;
   }[];
-  
+
   generatedAt: Date;
   generatedBy: string;
 }
@@ -286,12 +292,12 @@ export interface MinimizationReport {
  * Data Minimization Events
  */
 export interface DataMinimizationEvents {
-  'collection:processed': { request: DataCollectionRequest };
-  'collection:rejected': { request: DataCollectionRequest; reason: string };
-  'data:minimized': { request: DataCollectionRequest; reductionPercentage: number };
-  'rule:triggered': { rule: MinimizationRule; request: DataCollectionRequest };
-  'compliance:violation': { violation: string; request: DataCollectionRequest };
-  'schema:updated': { schema: DataCollectionSchema };
+  "collection:processed": { request: DataCollectionRequest };
+  "collection:rejected": { request: DataCollectionRequest; reason: string };
+  "data:minimized": { request: DataCollectionRequest; reductionPercentage: number };
+  "rule:triggered": { rule: MinimizationRule; request: DataCollectionRequest };
+  "compliance:violation": { violation: string; request: DataCollectionRequest };
+  "schema:updated": { schema: DataCollectionSchema };
 }
 
 // ============================================================================
@@ -300,7 +306,7 @@ export interface DataMinimizationEvents {
 
 /**
  * Data Minimization Manager
- * 
+ *
  * Implements LGPD data minimization principles including:
  * - Purpose-based data collection validation
  * - Automated data filtering and reduction
@@ -330,8 +336,8 @@ export class DataMinimizationManager extends EventEmitter {
       retentionEnforcement: true,
       monitoringIntervalMinutes: 60,
       maxRequestsPerHour: 1000,
-      defaultRetentionDays: 365
-    }
+      defaultRetentionDays: 365,
+    },
   ) {
     super();
     this.setMaxListeners(50);
@@ -349,20 +355,19 @@ export class DataMinimizationManager extends EventEmitter {
       // Load schemas and rules
       await this.loadSchemas();
       await this.loadRules();
-      
+
       // Load existing requests
       await this.loadRequests();
-      
+
       // Start monitoring
       this.startMonitoring();
-      
+
       this.isInitialized = true;
-      this.logActivity('system', 'minimization_initialized', {
+      this.logActivity("system", "minimization_initialized", {
         schemasLoaded: this.schemas.size,
         rulesLoaded: this.rules.size,
-        requestsLoaded: this.requests.size
+        requestsLoaded: this.requests.size,
       });
-      
     } catch (error) {
       throw new Error(`Failed to initialize data minimization system: ${error}`);
     }
@@ -372,7 +377,7 @@ export class DataMinimizationManager extends EventEmitter {
    * Create data collection schema
    */
   async createSchema(
-    schemaData: Omit<DataCollectionSchema, 'id' | 'createdAt' | 'updatedAt'>
+    schemaData: Omit<DataCollectionSchema, "id" | "createdAt" | "updatedAt">,
   ): Promise<DataCollectionSchema> {
     if (!this.isInitialized) {
       await this.initialize();
@@ -380,9 +385,9 @@ export class DataMinimizationManager extends EventEmitter {
 
     const schema: DataCollectionSchema = {
       ...schemaData,
-      id: this.generateId('schema'),
+      id: this.generateId("schema"),
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     // Validate schema
@@ -391,14 +396,14 @@ export class DataMinimizationManager extends EventEmitter {
     this.schemas.set(schema.id, schema);
     await this.saveSchema(schema);
 
-    this.emit('schema:updated', { schema });
+    this.emit("schema:updated", { schema });
 
-    this.logActivity('user', 'schema_created', {
+    this.logActivity("user", "schema_created", {
       schemaId: schema.id,
       name: schema.name,
       purpose: schema.purpose,
       fieldsCount: schema.fields.length,
-      createdBy: schema.createdBy
+      createdBy: schema.createdBy,
     });
 
     return schema;
@@ -408,7 +413,7 @@ export class DataMinimizationManager extends EventEmitter {
    * Process data collection request
    */
   async processCollectionRequest(
-    requestData: Omit<DataCollectionRequest, 'id' | 'processing' | 'createdAt'>
+    requestData: Omit<DataCollectionRequest, "id" | "processing" | "createdAt">,
   ): Promise<DataCollectionRequest> {
     if (!this.isInitialized) {
       await this.initialize();
@@ -416,21 +421,21 @@ export class DataMinimizationManager extends EventEmitter {
 
     const request: DataCollectionRequest = {
       ...requestData,
-      id: this.generateId('request'),
+      id: this.generateId("request"),
       processing: {
-        status: 'pending',
+        status: "pending",
         appliedActions: [],
         rejectedFields: [],
-        warnings: []
+        warnings: [],
       },
-      createdAt: new Date()
+      createdAt: new Date(),
     };
 
     try {
       // Get schema
       const schema = this.schemas.get(request.schemaId);
       if (!schema) {
-        throw new Error('Schema not found');
+        throw new Error("Schema not found");
       }
 
       // Validate consent if required
@@ -446,37 +451,36 @@ export class DataMinimizationManager extends EventEmitter {
         request.processing.minimizedData = request.requestedData;
       }
 
-      request.processing.status = 'processed';
+      request.processing.status = "processed";
       request.processing.processedAt = new Date();
 
-      this.emit('collection:processed', { request });
+      this.emit("collection:processed", { request });
 
       // Calculate reduction percentage
       const originalFields = Object.keys(request.requestedData).length;
       const minimizedFields = Object.keys(request.processing.minimizedData || {}).length;
-      const reductionPercentage = originalFields > 0 ? 
-        ((originalFields - minimizedFields) / originalFields) * 100 : 0;
+      const reductionPercentage =
+        originalFields > 0 ? ((originalFields - minimizedFields) / originalFields) * 100 : 0;
 
       if (reductionPercentage > 0) {
-        this.emit('data:minimized', { request, reductionPercentage });
+        this.emit("data:minimized", { request, reductionPercentage });
       }
-
     } catch (error) {
-      request.processing.status = 'error';
+      request.processing.status = "error";
       request.processing.warnings.push(String(error));
-      
-      this.emit('collection:rejected', { request, reason: String(error) });
+
+      this.emit("collection:rejected", { request, reason: String(error) });
     }
 
     this.requests.set(request.id, request);
     await this.saveRequest(request);
 
-    this.logActivity('system', 'collection_processed', {
+    this.logActivity("system", "collection_processed", {
       requestId: request.id,
       schemaId: request.schemaId,
       status: request.processing.status,
       fieldsRequested: Object.keys(request.requestedData).length,
-      fieldsCollected: Object.keys(request.processing.minimizedData || {}).length
+      fieldsCollected: Object.keys(request.processing.minimizedData || {}).length,
     });
 
     return request;
@@ -486,7 +490,7 @@ export class DataMinimizationManager extends EventEmitter {
    * Create minimization rule
    */
   async createRule(
-    ruleData: Omit<MinimizationRule, 'id' | 'metrics' | 'createdAt' | 'updatedAt'>
+    ruleData: Omit<MinimizationRule, "id" | "metrics" | "createdAt" | "updatedAt">,
   ): Promise<MinimizationRule> {
     if (!this.isInitialized) {
       await this.initialize();
@@ -494,25 +498,25 @@ export class DataMinimizationManager extends EventEmitter {
 
     const rule: MinimizationRule = {
       ...ruleData,
-      id: this.generateId('rule'),
+      id: this.generateId("rule"),
       metrics: {
         applicationsCount: 0,
         successRate: 0,
-        averageReduction: 0
+        averageReduction: 0,
       },
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     this.rules.set(rule.id, rule);
     await this.saveRule(rule);
 
-    this.logActivity('user', 'rule_created', {
+    this.logActivity("user", "rule_created", {
       ruleId: rule.id,
       name: rule.name,
       category: rule.category,
       priority: rule.priority,
-      createdBy: rule.createdBy
+      createdBy: rule.createdBy,
     });
 
     return rule;
@@ -523,13 +527,13 @@ export class DataMinimizationManager extends EventEmitter {
    */
   private async applyMinimization(
     request: DataCollectionRequest,
-    schema: DataCollectionSchema
+    schema: DataCollectionSchema,
   ): Promise<void> {
     const minimizedData: Record<string, any> = {};
     const requestedFields = Object.keys(request.requestedData);
 
     for (const fieldName of requestedFields) {
-      const fieldDef = schema.fields.find(f => f.name === fieldName);
+      const fieldDef = schema.fields.find((f) => f.name === fieldName);
       const fieldValue = request.requestedData[fieldName];
 
       if (!fieldDef) {
@@ -537,7 +541,7 @@ export class DataMinimizationManager extends EventEmitter {
         if (this.config.strictMode) {
           request.processing.rejectedFields.push({
             field: fieldName,
-            reason: 'Field not defined in schema'
+            reason: "Field not defined in schema",
           });
           continue;
         } else {
@@ -551,60 +555,60 @@ export class DataMinimizationManager extends EventEmitter {
       if (!fieldDef.purposes.includes(request.purpose)) {
         request.processing.rejectedFields.push({
           field: fieldName,
-          reason: `Field not necessary for purpose: ${request.purpose}`
+          reason: `Field not necessary for purpose: ${request.purpose}`,
         });
         continue;
       }
 
       // Apply field-specific minimization rules
       const action = await this.determineMinimizationAction(fieldDef, request);
-      
+
       switch (action.action) {
         case MinimizationAction.COLLECT:
           minimizedData[fieldName] = fieldValue;
           break;
-          
+
         case MinimizationAction.FILTER:
           // Field is filtered out
           request.processing.appliedActions.push({
             field: fieldName,
             action: MinimizationAction.FILTER,
-            reason: action.reason || 'Field filtered by minimization rule'
+            reason: action.reason || "Field filtered by minimization rule",
           });
           break;
-          
+
         case MinimizationAction.ANONYMIZE:
           minimizedData[fieldName] = this.anonymizeValue(fieldValue, fieldDef);
           request.processing.appliedActions.push({
             field: fieldName,
             action: MinimizationAction.ANONYMIZE,
-            reason: action.reason || 'Field anonymized'
+            reason: action.reason || "Field anonymized",
           });
           break;
-          
+
         case MinimizationAction.PSEUDONYMIZE:
           minimizedData[fieldName] = this.pseudonymizeValue(fieldValue, fieldDef);
           request.processing.appliedActions.push({
             field: fieldName,
             action: MinimizationAction.PSEUDONYMIZE,
-            reason: action.reason || 'Field pseudonymized'
+            reason: action.reason || "Field pseudonymized",
           });
           break;
-          
+
         case MinimizationAction.AGGREGATE:
           // For aggregation, we might need to collect multiple values
           minimizedData[fieldName] = this.aggregateValue(fieldValue, fieldDef);
           request.processing.appliedActions.push({
             field: fieldName,
             action: MinimizationAction.AGGREGATE,
-            reason: action.reason || 'Field aggregated'
+            reason: action.reason || "Field aggregated",
           });
           break;
-          
+
         case MinimizationAction.REJECT:
           request.processing.rejectedFields.push({
             field: fieldName,
-            reason: action.reason || 'Field rejected by minimization rule'
+            reason: action.reason || "Field rejected by minimization rule",
           });
           break;
       }
@@ -618,21 +622,21 @@ export class DataMinimizationManager extends EventEmitter {
    */
   private async determineMinimizationAction(
     fieldDef: DataField,
-    request: DataCollectionRequest
+    request: DataCollectionRequest,
   ): Promise<{ action: MinimizationAction; reason?: string }> {
     // Check field-specific rules first
     for (const rule of fieldDef.minimizationRules) {
       if (this.evaluateRuleConditions(rule.conditions || {}, request, fieldDef)) {
         return {
           action: rule.action,
-          reason: `Applied field rule: ${rule.action}`
+          reason: `Applied field rule: ${rule.action}`,
         };
       }
     }
 
     // Check global minimization rules
     const applicableRules = Array.from(this.rules.values())
-      .filter(rule => rule.enabled && rule.category === fieldDef.category)
+      .filter((rule) => rule.enabled && rule.category === fieldDef.category)
       .sort((a, b) => b.priority - a.priority);
 
     for (const rule of applicableRules) {
@@ -642,11 +646,11 @@ export class DataMinimizationManager extends EventEmitter {
         rule.metrics.lastApplied = new Date();
         await this.saveRule(rule);
 
-        this.emit('rule:triggered', { rule, request });
+        this.emit("rule:triggered", { rule, request });
 
         return {
           action: rule.actions.primary,
-          reason: `Applied global rule: ${rule.name}`
+          reason: `Applied global rule: ${rule.name}`,
         };
       }
     }
@@ -655,15 +659,18 @@ export class DataMinimizationManager extends EventEmitter {
     switch (fieldDef.necessity) {
       case DataNecessity.ESSENTIAL:
       case DataNecessity.FUNCTIONAL:
-        return { action: MinimizationAction.COLLECT, reason: 'Essential/functional field' };
+        return { action: MinimizationAction.COLLECT, reason: "Essential/functional field" };
       case DataNecessity.ANALYTICAL:
-        return { action: MinimizationAction.PSEUDONYMIZE, reason: 'Analytical field - pseudonymized' };
+        return {
+          action: MinimizationAction.PSEUDONYMIZE,
+          reason: "Analytical field - pseudonymized",
+        };
       case DataNecessity.MARKETING:
-        return { action: MinimizationAction.ANONYMIZE, reason: 'Marketing field - anonymized' };
+        return { action: MinimizationAction.ANONYMIZE, reason: "Marketing field - anonymized" };
       case DataNecessity.OPTIONAL:
-        return { action: MinimizationAction.FILTER, reason: 'Optional field - filtered' };
+        return { action: MinimizationAction.FILTER, reason: "Optional field - filtered" };
       default:
-        return { action: MinimizationAction.COLLECT, reason: 'Default action' };
+        return { action: MinimizationAction.COLLECT, reason: "Default action" };
     }
   }
 
@@ -673,21 +680,21 @@ export class DataMinimizationManager extends EventEmitter {
   private evaluateRuleConditions(
     conditions: Record<string, any>,
     request: DataCollectionRequest,
-    fieldDef: DataField
+    fieldDef: DataField,
   ): boolean {
     // Simple condition evaluation - in a real implementation this would be more sophisticated
     if (conditions.purpose && conditions.purpose !== request.purpose) {
       return false;
     }
-    
+
     if (conditions.necessity && conditions.necessity !== fieldDef.necessity) {
       return false;
     }
-    
+
     if (conditions.sensitive !== undefined && conditions.sensitive !== fieldDef.sensitive) {
       return false;
     }
-    
+
     return true;
   }
 
@@ -695,22 +702,22 @@ export class DataMinimizationManager extends EventEmitter {
    * Evaluate global rule conditions
    */
   private evaluateGlobalRuleConditions(
-    conditions: MinimizationRule['conditions'],
+    conditions: MinimizationRule["conditions"],
     request: DataCollectionRequest,
-    fieldDef: DataField
+    fieldDef: DataField,
   ): boolean {
     if (conditions.purpose && conditions.purpose !== request.purpose) {
       return false;
     }
-    
+
     if (conditions.field && conditions.field !== fieldDef.name) {
       return false;
     }
-    
+
     if (conditions.consentStatus && request.userConsent) {
       // Check consent status logic here
     }
-    
+
     return true;
   }
 
@@ -724,50 +731,50 @@ export class DataMinimizationManager extends EventEmitter {
 
     switch (fieldDef.category) {
       case DataCategory.PERSONAL_IDENTIFIERS:
-        if (typeof value === 'string') {
+        if (typeof value === "string") {
           // Replace with hash or generic identifier
           return `anon_${this.generateHash(value).substring(0, 8)}`;
         }
         break;
-        
+
       case DataCategory.CONTACT_INFORMATION:
-        if (typeof value === 'string' && value.includes('@')) {
+        if (typeof value === "string" && value.includes("@")) {
           // Email anonymization
-          return 'anonymous@example.com';
+          return "anonymous@example.com";
         }
-        if (typeof value === 'string' && /\d{10,}/.test(value)) {
+        if (typeof value === "string" && /\d{10,}/.test(value)) {
           // Phone number anonymization
-          return 'xxx-xxx-xxxx';
+          return "xxx-xxx-xxxx";
         }
         break;
-        
+
       case DataCategory.LOCATION_DATA:
         // Reduce precision for location data
-        if (typeof value === 'object' && value.lat && value.lng) {
+        if (typeof value === "object" && value.lat && value.lng) {
           return {
             lat: Math.round(value.lat * 10) / 10,
-            lng: Math.round(value.lng * 10) / 10
+            lng: Math.round(value.lng * 10) / 10,
           };
         }
         break;
-        
+
       case DataCategory.DEMOGRAPHIC_DATA:
-        if (typeof value === 'number') {
+        if (typeof value === "number") {
           // Age ranges instead of exact age
           const age = value;
-          if (age < 18) return '0-17';
-          if (age < 25) return '18-24';
-          if (age < 35) return '25-34';
-          if (age < 45) return '35-44';
-          if (age < 55) return '45-54';
-          if (age < 65) return '55-64';
-          return '65+';
+          if (age < 18) return "0-17";
+          if (age < 25) return "18-24";
+          if (age < 35) return "25-34";
+          if (age < 45) return "35-44";
+          if (age < 55) return "45-54";
+          if (age < 65) return "55-64";
+          return "65+";
         }
         break;
     }
 
     // Default anonymization
-    return '[ANONYMIZED]';
+    return "[ANONYMIZED]";
   }
 
   /**
@@ -780,12 +787,12 @@ export class DataMinimizationManager extends EventEmitter {
 
     // Generate consistent pseudonym based on value
     const hash = this.generateHash(String(value));
-    
+
     switch (fieldDef.category) {
       case DataCategory.PERSONAL_IDENTIFIERS:
         return `user_${hash.substring(0, 12)}`;
       case DataCategory.CONTACT_INFORMATION:
-        if (typeof value === 'string' && value.includes('@')) {
+        if (typeof value === "string" && value.includes("@")) {
           return `user${hash.substring(0, 8)}@example.com`;
         }
         return `contact_${hash.substring(0, 10)}`;
@@ -800,16 +807,16 @@ export class DataMinimizationManager extends EventEmitter {
   private aggregateValue(value: any, fieldDef: DataField): any {
     // For aggregation, we typically need multiple values
     // This is a simplified implementation
-    if (typeof value === 'number') {
+    if (typeof value === "number") {
       // Round to nearest 10 for numeric values
       return Math.round(value / 10) * 10;
     }
-    
-    if (typeof value === 'string') {
+
+    if (typeof value === "string") {
       // Return category instead of specific value
       return `category_${this.generateHash(value).substring(0, 4)}`;
     }
-    
+
     return value;
   }
 
@@ -818,10 +825,10 @@ export class DataMinimizationManager extends EventEmitter {
    */
   private async validateConsent(
     request: DataCollectionRequest,
-    schema: DataCollectionSchema
+    schema: DataCollectionSchema,
   ): Promise<void> {
     if (!request.userConsent) {
-      throw new Error('Consent required but not provided');
+      throw new Error("Consent required but not provided");
     }
 
     // Check if consent covers the requested purpose
@@ -832,9 +839,9 @@ export class DataMinimizationManager extends EventEmitter {
     // Check consent freshness (example: 1 year)
     const consentAge = Date.now() - request.userConsent.timestamp.getTime();
     const maxAge = 365 * 24 * 60 * 60 * 1000; // 1 year
-    
+
     if (consentAge > maxAge) {
-      throw new Error('Consent has expired');
+      throw new Error("Consent has expired");
     }
   }
 
@@ -843,15 +850,16 @@ export class DataMinimizationManager extends EventEmitter {
    */
   async generateReport(
     period: { start: Date; end: Date },
-    generatedBy: string
+    generatedBy: string,
   ): Promise<MinimizationReport> {
-    const requests = Array.from(this.requests.values())
-      .filter(r => r.createdAt >= period.start && r.createdAt <= period.end);
+    const requests = Array.from(this.requests.values()).filter(
+      (r) => r.createdAt >= period.start && r.createdAt <= period.end,
+    );
 
     const totalRequests = requests.length;
-    const processedRequests = requests.filter(r => r.processing.status === 'processed').length;
-    const rejectedRequests = requests.filter(r => r.processing.status === 'rejected').length;
-    const minimizedRequests = requests.filter(r => r.processing.appliedActions.length > 0).length;
+    const processedRequests = requests.filter((r) => r.processing.status === "processed").length;
+    const rejectedRequests = requests.filter((r) => r.processing.status === "rejected").length;
+    const minimizedRequests = requests.filter((r) => r.processing.appliedActions.length > 0).length;
 
     // Calculate reduction metrics
     let totalFieldsRequested = 0;
@@ -862,7 +870,7 @@ export class DataMinimizationManager extends EventEmitter {
     for (const request of requests) {
       const requestedCount = Object.keys(request.requestedData).length;
       const collectedCount = Object.keys(request.processing.minimizedData || {}).length;
-      
+
       totalFieldsRequested += requestedCount;
       totalFieldsCollected += collectedCount;
 
@@ -874,8 +882,10 @@ export class DataMinimizationManager extends EventEmitter {
       purposeStats[request.purpose].collected += collectedCount;
     }
 
-    const reductionPercentage = totalFieldsRequested > 0 ? 
-      ((totalFieldsRequested - totalFieldsCollected) / totalFieldsRequested) * 100 : 0;
+    const reductionPercentage =
+      totalFieldsRequested > 0
+        ? ((totalFieldsRequested - totalFieldsCollected) / totalFieldsRequested) * 100
+        : 0;
 
     // Calculate compliance metrics
     const schemaCompliance = totalRequests > 0 ? (processedRequests / totalRequests) * 100 : 100;
@@ -895,7 +905,7 @@ export class DataMinimizationManager extends EventEmitter {
       .map(([action, count]) => ({
         action: action as MinimizationAction,
         count,
-        percentage: totalRequests > 0 ? (count / totalRequests) * 100 : 0
+        percentage: totalRequests > 0 ? (count / totalRequests) * 100 : 0,
       }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
@@ -905,45 +915,45 @@ export class DataMinimizationManager extends EventEmitter {
       reductionPercentage,
       schemaCompliance,
       consentCompliance,
-      topActions
+      topActions,
     });
 
     const report: MinimizationReport = {
-      id: this.generateId('report'),
+      id: this.generateId("report"),
       period,
       collections: {
         total: totalRequests,
         processed: processedRequests,
         rejected: rejectedRequests,
-        minimized: minimizedRequests
+        minimized: minimizedRequests,
       },
       reduction: {
         totalFieldsRequested,
         totalFieldsCollected,
         reductionPercentage,
         byCategory: this.convertToReductionStats(categoryStats),
-        byPurpose: this.convertToReductionStats(purposeStats)
+        byPurpose: this.convertToReductionStats(purposeStats),
       },
       compliance: {
         schemaCompliance,
         consentCompliance,
         purposeLimitation,
-        dataAccuracy
+        dataAccuracy,
       },
       topActions,
       recommendations,
       generatedAt: new Date(),
-      generatedBy
+      generatedBy,
     };
 
     await this.saveReport(report);
 
-    this.logActivity('user', 'report_generated', {
+    this.logActivity("user", "report_generated", {
       reportId: report.id,
       period,
       totalRequests,
       reductionPercentage,
-      generatedBy
+      generatedBy,
     });
 
     return report;
@@ -962,18 +972,17 @@ export class DataMinimizationManager extends EventEmitter {
 
     if (filters) {
       if (filters.schemaId) {
-        requests = requests.filter(r => r.schemaId === filters.schemaId);
+        requests = requests.filter((r) => r.schemaId === filters.schemaId);
       }
       if (filters.purpose) {
-        requests = requests.filter(r => r.purpose === filters.purpose);
+        requests = requests.filter((r) => r.purpose === filters.purpose);
       }
       if (filters.status) {
-        requests = requests.filter(r => r.processing.status === filters.status);
+        requests = requests.filter((r) => r.processing.status === filters.status);
       }
       if (filters.dateRange) {
-        requests = requests.filter(r => 
-          r.createdAt >= filters.dateRange!.start && 
-          r.createdAt <= filters.dateRange!.end
+        requests = requests.filter(
+          (r) => r.createdAt >= filters.dateRange!.start && r.createdAt <= filters.dateRange!.end,
         );
       }
     }
@@ -985,30 +994,30 @@ export class DataMinimizationManager extends EventEmitter {
    * Get schemas
    */
   getSchemas(): DataCollectionSchema[] {
-    return Array.from(this.schemas.values())
-      .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+    return Array.from(this.schemas.values()).sort(
+      (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime(),
+    );
   }
 
   /**
    * Get minimization rules
    */
   getRules(): MinimizationRule[] {
-    return Array.from(this.rules.values())
-      .sort((a, b) => b.priority - a.priority);
+    return Array.from(this.rules.values()).sort((a, b) => b.priority - a.priority);
   }
 
   /**
    * Calculate consent compliance
    */
   private calculateConsentCompliance(requests: DataCollectionRequest[]): number {
-    const consentRequiredRequests = requests.filter(r => {
+    const consentRequiredRequests = requests.filter((r) => {
       const schema = this.schemas.get(r.schemaId);
       return schema?.consentRequired;
     });
-    
+
     if (consentRequiredRequests.length === 0) return 100;
-    
-    const validConsentRequests = consentRequiredRequests.filter(r => r.userConsent);
+
+    const validConsentRequests = consentRequiredRequests.filter((r) => r.userConsent);
     return (validConsentRequests.length / consentRequiredRequests.length) * 100;
   }
 
@@ -1017,14 +1026,14 @@ export class DataMinimizationManager extends EventEmitter {
    */
   private calculatePurposeLimitation(requests: DataCollectionRequest[]): number {
     let compliantRequests = 0;
-    
+
     for (const request of requests) {
       const schema = this.schemas.get(request.schemaId);
       if (schema && schema.purpose === request.purpose) {
         compliantRequests++;
       }
     }
-    
+
     return requests.length > 0 ? (compliantRequests / requests.length) * 100 : 100;
   }
 
@@ -1033,9 +1042,9 @@ export class DataMinimizationManager extends EventEmitter {
    */
   private calculateDataAccuracy(requests: DataCollectionRequest[]): number {
     // Simplified calculation - in a real implementation this would be more sophisticated
-    const processedRequests = requests.filter(r => r.processing.status === 'processed');
-    const errorRequests = requests.filter(r => r.processing.status === 'error');
-    
+    const processedRequests = requests.filter((r) => r.processing.status === "processed");
+    const errorRequests = requests.filter((r) => r.processing.status === "error");
+
     if (requests.length === 0) return 100;
     return ((requests.length - errorRequests.length) / requests.length) * 100;
   }
@@ -1044,18 +1053,18 @@ export class DataMinimizationManager extends EventEmitter {
    * Convert stats to reduction format
    */
   private convertToReductionStats(
-    stats: Record<string, { requested: number; collected: number }>
+    stats: Record<string, { requested: number; collected: number }>,
   ): Record<string, { requested: number; collected: number; reduction: number }> {
     const result: Record<string, { requested: number; collected: number; reduction: number }> = {};
-    
+
     for (const [key, value] of Object.entries(stats)) {
       result[key] = {
         ...value,
-        reduction: value.requested > 0 ? 
-          ((value.requested - value.collected) / value.requested) * 100 : 0
+        reduction:
+          value.requested > 0 ? ((value.requested - value.collected) / value.requested) * 100 : 0,
       };
     }
-    
+
     return result;
   }
 
@@ -1067,42 +1076,45 @@ export class DataMinimizationManager extends EventEmitter {
     schemaCompliance: number;
     consentCompliance: number;
     topActions: any[];
-  }): MinimizationReport['recommendations'] {
-    const recommendations: MinimizationReport['recommendations'] = [];
+  }): MinimizationReport["recommendations"] {
+    const recommendations: MinimizationReport["recommendations"] = [];
 
     if (metrics.reductionPercentage < 20) {
       recommendations.push({
-        type: 'schema_optimization',
-        priority: 'high',
-        description: 'Low data reduction rate detected. Consider reviewing data collection schemas to identify unnecessary fields.',
-        impact: 'Improved privacy compliance and reduced data storage costs'
+        type: "schema_optimization",
+        priority: "high",
+        description:
+          "Low data reduction rate detected. Consider reviewing data collection schemas to identify unnecessary fields.",
+        impact: "Improved privacy compliance and reduced data storage costs",
       });
     }
 
     if (metrics.schemaCompliance < 95) {
       recommendations.push({
-        type: 'process_improvement',
-        priority: 'high',
-        description: 'Schema compliance is below optimal levels. Review data collection processes.',
-        impact: 'Better data governance and compliance'
+        type: "process_improvement",
+        priority: "high",
+        description: "Schema compliance is below optimal levels. Review data collection processes.",
+        impact: "Better data governance and compliance",
       });
     }
 
     if (metrics.consentCompliance < 90) {
       recommendations.push({
-        type: 'process_improvement',
-        priority: 'high',
-        description: 'Consent compliance needs improvement. Ensure proper consent collection mechanisms.',
-        impact: 'Enhanced LGPD compliance and user trust'
+        type: "process_improvement",
+        priority: "high",
+        description:
+          "Consent compliance needs improvement. Ensure proper consent collection mechanisms.",
+        impact: "Enhanced LGPD compliance and user trust",
       });
     }
 
     if (metrics.reductionPercentage > 80) {
       recommendations.push({
-        type: 'rule_adjustment',
-        priority: 'medium',
-        description: 'Very high data reduction rate. Review if essential data is being filtered out.',
-        impact: 'Balanced privacy protection and service functionality'
+        type: "rule_adjustment",
+        priority: "medium",
+        description:
+          "Very high data reduction rate. Review if essential data is being filtered out.",
+        impact: "Balanced privacy protection and service functionality",
       });
     }
 
@@ -1114,19 +1126,19 @@ export class DataMinimizationManager extends EventEmitter {
    */
   private validateSchema(schema: DataCollectionSchema): void {
     if (!schema.name || schema.name.trim().length === 0) {
-      throw new Error('Schema name is required');
+      throw new Error("Schema name is required");
     }
-    
+
     if (!schema.fields || schema.fields.length === 0) {
-      throw new Error('Schema must have at least one field');
+      throw new Error("Schema must have at least one field");
     }
-    
+
     // Validate field definitions
     for (const field of schema.fields) {
       if (!field.name || field.name.trim().length === 0) {
-        throw new Error('Field name is required');
+        throw new Error("Field name is required");
       }
-      
+
       if (!field.purposes || field.purposes.length === 0) {
         throw new Error(`Field ${field.name} must have at least one purpose`);
       }
@@ -1137,9 +1149,12 @@ export class DataMinimizationManager extends EventEmitter {
    * Start monitoring
    */
   private startMonitoring(): void {
-    this.monitoringInterval = setInterval(async () => {
-      await this.performMonitoringCheck();
-    }, this.config.monitoringIntervalMinutes * 60 * 1000);
+    this.monitoringInterval = setInterval(
+      async () => {
+        await this.performMonitoringCheck();
+      },
+      this.config.monitoringIntervalMinutes * 60 * 1000,
+    );
   }
 
   /**
@@ -1148,33 +1163,34 @@ export class DataMinimizationManager extends EventEmitter {
   private async performMonitoringCheck(): Promise<void> {
     try {
       // Check for high request volume
-      const oneHourAgo = new Date(Date.now() - (60 * 60 * 1000));
-      const recentRequests = Array.from(this.requests.values())
-        .filter(r => r.createdAt >= oneHourAgo);
-      
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+      const recentRequests = Array.from(this.requests.values()).filter(
+        (r) => r.createdAt >= oneHourAgo,
+      );
+
       if (recentRequests.length > this.config.maxRequestsPerHour) {
-        this.logActivity('system', 'high_request_volume', {
+        this.logActivity("system", "high_request_volume", {
           requestsLastHour: recentRequests.length,
-          threshold: this.config.maxRequestsPerHour
+          threshold: this.config.maxRequestsPerHour,
         });
       }
-      
+
       // Check for compliance violations
-      const violations = recentRequests.filter(r => 
-        r.processing.status === 'error' || r.processing.rejectedFields.length > 0
+      const violations = recentRequests.filter(
+        (r) => r.processing.status === "error" || r.processing.rejectedFields.length > 0,
       );
-      
-      if (violations.length > recentRequests.length * 0.1) { // More than 10% violations
-        this.logActivity('system', 'high_violation_rate', {
+
+      if (violations.length > recentRequests.length * 0.1) {
+        // More than 10% violations
+        this.logActivity("system", "high_violation_rate", {
           violations: violations.length,
           total: recentRequests.length,
-          rate: (violations.length / recentRequests.length) * 100
+          rate: (violations.length / recentRequests.length) * 100,
         });
       }
-      
     } catch (error) {
-      this.logActivity('system', 'monitoring_error', {
-        error: String(error)
+      this.logActivity("system", "monitoring_error", {
+        error: String(error),
       });
     }
   }
@@ -1187,7 +1203,7 @@ export class DataMinimizationManager extends EventEmitter {
     let hash = 0;
     for (let i = 0; i < input.length; i++) {
       const char = input.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return Math.abs(hash).toString(16);
@@ -1265,12 +1281,12 @@ export class DataMinimizationManager extends EventEmitter {
       clearInterval(this.monitoringInterval);
       this.monitoringInterval = null;
     }
-    
+
     this.removeAllListeners();
     this.isInitialized = false;
-    
-    this.logActivity('system', 'minimization_shutdown', {
-      timestamp: new Date()
+
+    this.logActivity("system", "minimization_shutdown", {
+      timestamp: new Date(),
     });
   }
 
@@ -1278,31 +1294,30 @@ export class DataMinimizationManager extends EventEmitter {
    * Health check
    */
   getHealthStatus(): {
-    status: 'healthy' | 'degraded' | 'unhealthy';
+    status: "healthy" | "degraded" | "unhealthy";
     details: Record<string, any>;
   } {
     const issues: string[] = [];
-    
+
     if (!this.isInitialized) {
-      issues.push('Data minimization system not initialized');
+      issues.push("Data minimization system not initialized");
     }
-    
+
     if (!this.monitoringInterval) {
-      issues.push('Monitoring not running');
+      issues.push("Monitoring not running");
     }
-    
+
     if (this.schemas.size === 0) {
-      issues.push('No data collection schemas defined');
+      issues.push("No data collection schemas defined");
     }
-    
-    const enabledRules = Array.from(this.rules.values()).filter(r => r.enabled);
+
+    const enabledRules = Array.from(this.rules.values()).filter((r) => r.enabled);
     if (enabledRules.length === 0) {
-      issues.push('No enabled minimization rules');
+      issues.push("No enabled minimization rules");
     }
-    
-    const status = issues.length === 0 ? 'healthy' : 
-                  issues.length <= 2 ? 'degraded' : 'unhealthy';
-    
+
+    const status = issues.length === 0 ? "healthy" : issues.length <= 2 ? "degraded" : "unhealthy";
+
     return {
       status,
       details: {
@@ -1313,8 +1328,8 @@ export class DataMinimizationManager extends EventEmitter {
         requestsCount: this.requests.size,
         strictMode: this.config.strictMode,
         autoMinimization: this.config.autoMinimization,
-        issues
-      }
+        issues,
+      },
     };
   }
 }
@@ -1332,5 +1347,5 @@ export type {
   DataCollectionRequest,
   MinimizationRule,
   MinimizationReport,
-  DataMinimizationEvents
+  DataMinimizationEvents,
 };

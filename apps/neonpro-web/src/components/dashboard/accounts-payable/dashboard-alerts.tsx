@@ -1,15 +1,15 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
+import type {
   AlertTriangle,
   Bell,
   Check,
@@ -21,7 +21,7 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import type { useEffect, useState } from "react";
 
 // Mock data - substituir por dados reais do Supabase
 const mockDashboardAlerts = [
@@ -91,12 +91,7 @@ interface DashboardAlert {
   id: string;
   title: string;
   message: string;
-  alert_type:
-    | "due_soon"
-    | "overdue"
-    | "approval_needed"
-    | "high_priority"
-    | "due_today";
+  alert_type: "due_soon" | "overdue" | "approval_needed" | "high_priority" | "due_today";
   priority: "low" | "medium" | "high" | "urgent";
   is_read: boolean;
   is_dismissed: boolean;
@@ -111,11 +106,7 @@ interface DashboardAlertsProps {
   showTitle?: boolean;
 }
 
-export function DashboardAlerts({
-  clinicId,
-  limit = 5,
-  showTitle = true,
-}: DashboardAlertsProps) {
+export function DashboardAlerts({ clinicId, limit = 5, showTitle = true }: DashboardAlertsProps) {
   const [alerts, setAlerts] = useState<DashboardAlert[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -149,9 +140,7 @@ export function DashboardAlerts({
       // await notificationService.markAlertAsRead(alertId)
 
       setAlerts((prev) =>
-        prev.map((alert) =>
-          alert.id === alertId ? { ...alert, is_read: true } : alert
-        )
+        prev.map((alert) => (alert.id === alertId ? { ...alert, is_read: true } : alert)),
       );
     } catch (error) {
       console.error("Error marking alert as read:", error);
@@ -232,9 +221,7 @@ export function DashboardAlerts({
   const formatTimeAgo = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
-    const diffInMinutes = Math.floor(
-      (now.getTime() - date.getTime()) / (1000 * 60)
-    );
+    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
 
     if (diffInMinutes < 60) {
       return `${diffInMinutes}m atrás`;
@@ -290,9 +277,7 @@ export function DashboardAlerts({
         <CardContent>
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <Bell className="h-8 w-8 text-muted-foreground mb-2" />
-            <p className="text-sm text-muted-foreground">
-              Nenhum alerta no momento
-            </p>
+            <p className="text-sm text-muted-foreground">Nenhum alerta no momento</p>
             <p className="text-xs text-muted-foreground mt-1">
               Você será notificado sobre pagamentos importantes
             </p>
@@ -323,9 +308,7 @@ export function DashboardAlerts({
               </Button>
             </Link>
           </div>
-          <CardDescription>
-            Notificações importantes sobre contas a pagar
-          </CardDescription>
+          <CardDescription>Notificações importantes sobre contas a pagar</CardDescription>
         </CardHeader>
       )}
       <CardContent className="space-y-3">
@@ -333,9 +316,7 @@ export function DashboardAlerts({
           <div
             key={alert.id}
             className={`flex items-start gap-3 p-3 rounded-lg border ${
-              alert.is_read
-                ? "bg-muted/20 border-muted"
-                : "bg-background border-border"
+              alert.is_read ? "bg-muted/20 border-muted" : "bg-background border-border"
             } hover:bg-muted/30 transition-colors`}
           >
             <div className="mt-0.5">{getPriorityIcon(alert.priority)}</div>
@@ -345,36 +326,26 @@ export function DashboardAlerts({
                 <div className="flex-1 min-w-0">
                   <h4
                     className={`text-sm font-medium leading-none ${
-                      alert.is_read
-                        ? "text-muted-foreground"
-                        : "text-foreground"
+                      alert.is_read ? "text-muted-foreground" : "text-foreground"
                     }`}
                   >
                     {alert.title}
                   </h4>
-                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                    {alert.message}
-                  </p>
+                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{alert.message}</p>
                 </div>
 
                 <div className="flex items-center gap-1">
-                  <Badge
-                    variant={getAlertTypeBadgeColor(alert.alert_type)}
-                    className="text-xs"
-                  >
+                  <Badge variant={getAlertTypeBadgeColor(alert.alert_type)} className="text-xs">
                     {getAlertTypeLabel(alert.alert_type)}
                   </Badge>
-                  <Badge
-                    variant={getPriorityBadgeColor(alert.priority)}
-                    className="text-xs"
-                  >
+                  <Badge variant={getPriorityBadgeColor(alert.priority)} className="text-xs">
                     {alert.priority === "urgent"
                       ? "Urgente"
                       : alert.priority === "high"
-                      ? "Alta"
-                      : alert.priority === "medium"
-                      ? "Média"
-                      : "Baixa"}
+                        ? "Alta"
+                        : alert.priority === "medium"
+                          ? "Média"
+                          : "Baixa"}
                   </Badge>
                 </div>
               </div>

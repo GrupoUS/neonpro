@@ -1,55 +1,36 @@
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
-import { useChat } from 'ai/react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { 
-  Send, 
-  Bot, 
-  User, 
-  Loader2, 
-  Settings,
-  MessageSquare,
-  Trash2,
-  Plus
-} from 'lucide-react';
-import { toast } from 'sonner';
+import type { useState, useRef, useEffect } from "react";
+import type { useChat } from "ai/react";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Badge } from "@/components/ui/badge";
+import type { Separator } from "@/components/ui/separator";
+import type { Send, Bot, User, Loader2, Settings, MessageSquare, Trash2, Plus } from "lucide-react";
+import type { toast } from "sonner";
 
 interface AssistantChatProps {
   conversationId?: string;
   onConversationChange?: (conversationId: string) => void;
 }
 
-export function AssistantChat({ 
-  conversationId, 
-  onConversationChange 
-}: AssistantChatProps) {
+export function AssistantChat({ conversationId, onConversationChange }: AssistantChatProps) {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-  const [selectedModel, setSelectedModel] = useState<'gpt4' | 'claude' | 'gpt35'>('gpt4');
+  const [selectedModel, setSelectedModel] = useState<"gpt4" | "claude" | "gpt35">("gpt4");
 
-  const {
-    messages,
-    input,
-    handleInputChange,
-    handleSubmit,
-    isLoading,
-    setMessages
-  } = useChat({
-    api: '/api/assistant/chat',
+  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages } = useChat({
+    api: "/api/assistant/chat",
     body: {
       conversationId,
-      model: selectedModel
+      model: selectedModel,
     },
     onResponse: async (response) => {
       if (!response.ok) {
         const error = await response.text();
-        toast.error('Erro ao enviar mensagem: ' + error);
+        toast.error("Erro ao enviar mensagem: " + error);
       }
     },
     onFinish: (message) => {
@@ -59,7 +40,7 @@ export function AssistantChat({
           scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
         }
       }, 100);
-    }
+    },
   });
 
   // Auto-scroll to bottom when new messages arrive
@@ -85,31 +66,39 @@ export function AssistantChat({
           id: msg.id,
           role: msg.role,
           content: msg.content,
-          createdAt: new Date(msg.created_at)
+          createdAt: new Date(msg.created_at),
         }));
         setMessages(formattedMessages);
       }
     } catch (error) {
-      console.error('Error loading conversation:', error);
-      toast.error('Erro ao carregar conversa');
+      console.error("Error loading conversation:", error);
+      toast.error("Erro ao carregar conversa");
     }
   };
 
   const getModelBadgeColor = (model: string) => {
     switch (model) {
-      case 'gpt4': return 'bg-green-100 text-green-800';
-      case 'claude': return 'bg-purple-100 text-purple-800';
-      case 'gpt35': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "gpt4":
+        return "bg-green-100 text-green-800";
+      case "claude":
+        return "bg-purple-100 text-purple-800";
+      case "gpt35":
+        return "bg-blue-100 text-blue-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getModelName = (model: string) => {
     switch (model) {
-      case 'gpt4': return 'GPT-4';
-      case 'claude': return 'Claude 3.5 Sonnet';
-      case 'gpt35': return 'GPT-3.5 Turbo';
-      default: return model;
+      case "gpt4":
+        return "GPT-4";
+      case "claude":
+        return "Claude 3.5 Sonnet";
+      case "gpt35":
+        return "GPT-3.5 Turbo";
+      default:
+        return model;
     }
   };
 
@@ -122,16 +111,10 @@ export function AssistantChat({
             <CardTitle className="text-lg">Assistente Virtual NeonPro</CardTitle>
           </div>
           <div className="flex items-center gap-2">
-            <Badge 
-              className={getModelBadgeColor(selectedModel)}
-            >
+            <Badge className={getModelBadgeColor(selectedModel)}>
               {getModelName(selectedModel)}
             </Badge>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-8 w-8 p-0"
-            >
+            <Button variant="outline" size="sm" className="h-8 w-8 p-0">
               <Settings className="h-4 w-4" />
             </Button>
           </div>
@@ -141,10 +124,7 @@ export function AssistantChat({
 
       <CardContent className="flex-1 flex flex-col p-0">
         {/* Messages Area */}
-        <ScrollArea 
-          ref={scrollAreaRef}
-          className="flex-1 px-4"
-        >
+        <ScrollArea ref={scrollAreaRef} className="flex-1 px-4">
           <div className="space-y-4 py-4">
             {messages.length === 0 ? (
               <div className="text-center text-muted-foreground py-8">
@@ -153,8 +133,8 @@ export function AssistantChat({
                   Olá! Sou seu assistente virtual do NeonPro
                 </h3>
                 <p className="text-sm">
-                  Estou aqui para ajudar com gestão da sua clínica, agendamentos, 
-                  pacientes e muito mais. Como posso ajudar hoje?
+                  Estou aqui para ajudar com gestão da sua clínica, agendamentos, pacientes e muito
+                  mais. Como posso ajudar hoje?
                 </p>
               </div>
             ) : (
@@ -162,30 +142,28 @@ export function AssistantChat({
                 <div
                   key={message.id}
                   className={`flex gap-3 ${
-                    message.role === 'user' ? 'justify-end' : 'justify-start'
+                    message.role === "user" ? "justify-end" : "justify-start"
                   }`}
                 >
-                  {message.role === 'assistant' && (
+                  {message.role === "assistant" && (
                     <Avatar className="h-8 w-8 mt-1">
                       <AvatarFallback className="bg-blue-100 text-blue-600">
                         <Bot className="h-4 w-4" />
                       </AvatarFallback>
                     </Avatar>
                   )}
-                  
+
                   <div
                     className={`max-w-[80%] rounded-lg px-4 py-2 ${
-                      message.role === 'user'
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-900'
+                      message.role === "user"
+                        ? "bg-blue-600 text-white"
+                        : "bg-gray-100 text-gray-900"
                     }`}
                   >
-                    <div className="text-sm whitespace-pre-wrap">
-                      {message.content}
-                    </div>
+                    <div className="text-sm whitespace-pre-wrap">{message.content}</div>
                   </div>
 
-                  {message.role === 'user' && (
+                  {message.role === "user" && (
                     <Avatar className="h-8 w-8 mt-1">
                       <AvatarFallback className="bg-gray-100 text-gray-600">
                         <User className="h-4 w-4" />
@@ -195,7 +173,7 @@ export function AssistantChat({
                 </div>
               ))
             )}
-            
+
             {isLoading && (
               <div className="flex gap-3 justify-start">
                 <Avatar className="h-8 w-8 mt-1">
@@ -216,10 +194,7 @@ export function AssistantChat({
 
         {/* Input Area */}
         <div className="border-t p-4">
-          <form
-            onSubmit={handleSubmit}
-            className="flex gap-2"
-          >
+          <form onSubmit={handleSubmit} className="flex gap-2">
             <Input
               value={input}
               onChange={handleInputChange}
@@ -228,12 +203,7 @@ export function AssistantChat({
               className="flex-1"
               autoFocus
             />
-            <Button
-              type="submit"
-              disabled={isLoading || !input.trim()}
-              size="sm"
-              className="px-3"
-            >
+            <Button type="submit" disabled={isLoading || !input.trim()} size="sm" className="px-3">
               {isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (

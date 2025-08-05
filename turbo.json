@@ -91,6 +91,12 @@
     "SUPABASE_SERVICE_ROLE_KEY",
     "DATABASE_URL",
     "DIRECT_URL",
-    "VERCEL_URL"
+    "VERCEL_URL",
+    "JWT_SECRET",
+    "PORT",
+    "HOST",
+    "FRONTEND_URL",
+    "REDIS_URL",
+    "LOG_LEVEL"
   ]
 }

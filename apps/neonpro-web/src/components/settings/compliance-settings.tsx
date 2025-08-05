@@ -1,26 +1,46 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import type { useState, useEffect } from "react";
+import type { useForm, useFieldArray } from "react-hook-form";
+import type { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Progress } from "@/components/ui/progress";
-import { 
-  ShieldCheck, 
-  FileCheck, 
-  AlertTriangle, 
-  Plus, 
-  Trash2, 
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
+import type { Textarea } from "@/components/ui/textarea";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Switch } from "@/components/ui/switch";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Progress } from "@/components/ui/progress";
+import type {
+  ShieldCheck,
+  FileCheck,
+  AlertTriangle,
+  Plus,
+  Trash2,
   Calendar,
   ExternalLink,
   CheckCircle2,
@@ -30,17 +50,25 @@ import {
   Loader2,
   Eye,
   Download,
-  Upload
+  Upload,
 } from "lucide-react";
-import { toast } from "sonner";
+import type { toast } from "sonner";
 
 const licenseTypes = [
-  { value: "anvisa_estabelecimento", label: "ANVISA - Licença de Funcionamento", authority: "ANVISA" },
+  {
+    value: "anvisa_estabelecimento",
+    label: "ANVISA - Licença de Funcionamento",
+    authority: "ANVISA",
+  },
   { value: "anvisa_responsavel", label: "ANVISA - Responsável Técnico", authority: "ANVISA" },
   { value: "anvisa_equipamentos", label: "ANVISA - Registro de Equipamentos", authority: "ANVISA" },
   { value: "crm_clinica", label: "CRM - Registro da Clínica", authority: "CRM" },
   { value: "cfm_telemedicina", label: "CFM - Certificação Telemedicina", authority: "CFM" },
-  { value: "vigilancia_sanitaria", label: "Vigilância Sanitária Municipal", authority: "Vigilância Sanitária" },
+  {
+    value: "vigilancia_sanitaria",
+    label: "Vigilância Sanitária Municipal",
+    authority: "Vigilância Sanitária",
+  },
   { value: "bombeiros", label: "Corpo de Bombeiros - AVCB", authority: "Corpo de Bombeiros" },
   { value: "prefeitura", label: "Prefeitura - Alvará de Funcionamento", authority: "Prefeitura" },
   { value: "inmetro", label: "INMETRO - Equipamentos", authority: "INMETRO" },
@@ -49,7 +77,11 @@ const licenseTypes = [
 const complianceCategories = [
   { value: "medical_devices", label: "Dispositivos Médicos", regulation: "RDC 185/2001" },
   { value: "data_protection", label: "Proteção de Dados", regulation: "LGPD Lei 13.709/2018" },
-  { value: "professional_ethics", label: "Ética Profissional", regulation: "Resolução CFM 2.314/2022" },
+  {
+    value: "professional_ethics",
+    label: "Ética Profissional",
+    regulation: "Resolução CFM 2.314/2022",
+  },
   { value: "telemedicine", label: "Telemedicina", regulation: "Resolução CFM 2.314/2022" },
   { value: "waste_management", label: "Gerenciamento de Resíduos", regulation: "RDC 222/2018" },
   { value: "building_safety", label: "Segurança Predial", regulation: "NBR 9050" },
@@ -79,7 +111,7 @@ const auditLogSchema = z.object({
 const complianceSettingsSchema = z.object({
   // Licenses
   licenses: z.array(licenseSchema),
-  
+
   // LGPD Compliance
   lgpdCompliance: z.object({
     dataProtectionOfficer: z.string().optional(),
@@ -90,7 +122,7 @@ const complianceSettingsSchema = z.object({
     breachNotificationProcess: z.boolean(),
     thirdPartyAgreements: z.boolean(),
   }),
-  
+
   // ANVISA Compliance
   anvisaCompliance: z.object({
     medicalDeviceRegistry: z.boolean(),
@@ -99,7 +131,7 @@ const complianceSettingsSchema = z.object({
     technicalResponsible: z.string().optional(),
     technicalResponsibleCrm: z.string().optional(),
   }),
-  
+
   // CFM Compliance
   cfmCompliance: z.object({
     professionalEthics: z.boolean(),
@@ -108,10 +140,10 @@ const complianceSettingsSchema = z.object({
     patientPrivacy: z.boolean(),
     informedConsent: z.boolean(),
   }),
-  
+
   // Audit Logs
   auditLogs: z.array(auditLogSchema),
-  
+
   // Notifications
   enableExpiryAlerts: z.boolean(),
   alertDaysBefore: z.number().min(1).max(365),
@@ -137,7 +169,7 @@ export default function ComplianceSettings() {
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [activeTab, setActiveTab] = useState("licenses");
   const [complianceScores, setComplianceScores] = useState<ComplianceScore[]>([]);
-  
+
   const form = useForm<ComplianceSettingsFormData>({
     resolver: zodResolver(complianceSettingsSchema),
     defaultValues: {
@@ -196,44 +228,80 @@ export default function ComplianceSettings() {
       const lgpdData = form.watch("lgpdCompliance");
       const anvisaData = form.watch("anvisaCompliance");
       const cfmData = form.watch("cfmCompliance");
-      
+
       const scores: ComplianceScore[] = [
         {
           category: "LGPD",
-          score: Object.values(lgpdData).filter(v => v === true).length,
+          score: Object.values(lgpdData).filter((v) => v === true).length,
           maxScore: 5,
           items: [
-            { name: "Avaliação de Impacto", compliant: lgpdData.privacyImpactAssessment, required: true },
-            { name: "Gestão de Consentimento", compliant: lgpdData.consentManagement, required: true },
-            { name: "Política de Retenção", compliant: lgpdData.dataRetentionPolicy, required: true },
-            { name: "Processo de Vazamento", compliant: lgpdData.breachNotificationProcess, required: true },
-            { name: "Acordos com Terceiros", compliant: lgpdData.thirdPartyAgreements, required: false },
+            {
+              name: "Avaliação de Impacto",
+              compliant: lgpdData.privacyImpactAssessment,
+              required: true,
+            },
+            {
+              name: "Gestão de Consentimento",
+              compliant: lgpdData.consentManagement,
+              required: true,
+            },
+            {
+              name: "Política de Retenção",
+              compliant: lgpdData.dataRetentionPolicy,
+              required: true,
+            },
+            {
+              name: "Processo de Vazamento",
+              compliant: lgpdData.breachNotificationProcess,
+              required: true,
+            },
+            {
+              name: "Acordos com Terceiros",
+              compliant: lgpdData.thirdPartyAgreements,
+              required: false,
+            },
           ],
         },
         {
           category: "ANVISA",
-          score: Object.values(anvisaData).filter(v => v === true).length,
+          score: Object.values(anvisaData).filter((v) => v === true).length,
           maxScore: 3,
           items: [
-            { name: "Registro de Dispositivos", compliant: anvisaData.medicalDeviceRegistry, required: true },
-            { name: "Notificação de Eventos", compliant: anvisaData.adverseEventReporting, required: true },
-            { name: "Sistema de Qualidade", compliant: anvisaData.qualityManagementSystem, required: true },
+            {
+              name: "Registro de Dispositivos",
+              compliant: anvisaData.medicalDeviceRegistry,
+              required: true,
+            },
+            {
+              name: "Notificação de Eventos",
+              compliant: anvisaData.adverseEventReporting,
+              required: true,
+            },
+            {
+              name: "Sistema de Qualidade",
+              compliant: anvisaData.qualityManagementSystem,
+              required: true,
+            },
           ],
         },
         {
           category: "CFM",
-          score: Object.values(cfmData).filter(v => v === true).length,
+          score: Object.values(cfmData).filter((v) => v === true).length,
           maxScore: 5,
           items: [
             { name: "Ética Profissional", compliant: cfmData.professionalEthics, required: true },
             { name: "Telemedicina", compliant: cfmData.telemedicineCompliance, required: false },
-            { name: "Segurança Prontuários", compliant: cfmData.medicalRecordsSecurity, required: true },
+            {
+              name: "Segurança Prontuários",
+              compliant: cfmData.medicalRecordsSecurity,
+              required: true,
+            },
             { name: "Privacidade Paciente", compliant: cfmData.patientPrivacy, required: true },
             { name: "Consentimento Informado", compliant: cfmData.informedConsent, required: true },
           ],
         },
       ];
-      
+
       setComplianceScores(scores);
     };
 
@@ -269,7 +337,7 @@ export default function ComplianceSettings() {
       //   headers: { "Content-Type": "application/json" },
       //   body: JSON.stringify(data),
       // });
-      
+
       setLastSaved(new Date());
       toast.success("Configurações de conformidade salvas com sucesso!");
     } catch (error) {
@@ -284,9 +352,11 @@ export default function ComplianceSettings() {
     const expiry = new Date(expiryDate);
     const today = new Date();
     const diffDays = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 3600 * 24));
-    
-    if (diffDays < 0) return { status: "expired", label: "Vencida", color: "bg-red-100 text-red-800" };
-    if (diffDays <= 30) return { status: "expiring", label: "Vencendo", color: "bg-yellow-100 text-yellow-800" };
+
+    if (diffDays < 0)
+      return { status: "expired", label: "Vencida", color: "bg-red-100 text-red-800" };
+    if (diffDays <= 30)
+      return { status: "expiring", label: "Vencendo", color: "bg-yellow-100 text-yellow-800" };
     return { status: "valid", label: "Válida", color: "bg-green-100 text-green-800" };
   };
 
@@ -313,28 +383,31 @@ export default function ComplianceSettings() {
             <ShieldCheck className="h-5 w-5" />
             Índice de Conformidade Geral
           </CardTitle>
-          <CardDescription>
-            Status consolidado da conformidade regulatória
-          </CardDescription>
+          <CardDescription>Status consolidado da conformidade regulatória</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-2xl font-bold">
-                {getCompliancePercentage()}% Conforme
-              </span>
-              <Badge 
-                className={getCompliancePercentage() >= 80 ? "bg-green-100 text-green-800" : 
-                          getCompliancePercentage() >= 60 ? "bg-yellow-100 text-yellow-800" : 
-                          "bg-red-100 text-red-800"}
+              <span className="text-2xl font-bold">{getCompliancePercentage()}% Conforme</span>
+              <Badge
+                className={
+                  getCompliancePercentage() >= 80
+                    ? "bg-green-100 text-green-800"
+                    : getCompliancePercentage() >= 60
+                      ? "bg-yellow-100 text-yellow-800"
+                      : "bg-red-100 text-red-800"
+                }
               >
-                {getCompliancePercentage() >= 80 ? "Excelente" : 
-                 getCompliancePercentage() >= 60 ? "Boa" : "Crítica"}
+                {getCompliancePercentage() >= 80
+                  ? "Excelente"
+                  : getCompliancePercentage() >= 60
+                    ? "Boa"
+                    : "Crítica"}
               </Badge>
             </div>
-            
+
             <Progress value={getCompliancePercentage()} className="h-3" />
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
               {complianceScores.map((score) => (
                 <div key={score.category} className="border rounded-lg p-4">
@@ -344,10 +417,7 @@ export default function ComplianceSettings() {
                       {score.score}/{score.maxScore}
                     </Badge>
                   </div>
-                  <Progress 
-                    value={(score.score / score.maxScore) * 100} 
-                    className="h-2 mb-3" 
-                  />
+                  <Progress value={(score.score / score.maxScore) * 100} className="h-2 mb-3" />
                   <div className="space-y-1">
                     {score.items.map((item, index) => (
                       <div key={index} className="flex items-center gap-2 text-sm">
@@ -393,17 +463,19 @@ export default function ComplianceSettings() {
                     </div>
                     <Button
                       type="button"
-                      onClick={() => appendLicense({
-                        type: "",
-                        number: "",
-                        authority: "",
-                        issueDate: "",
-                        expiryDate: "",
-                        status: "active",
-                        notes: "",
-                        documentUrl: "",
-                        reminderDays: 30,
-                      })}
+                      onClick={() =>
+                        appendLicense({
+                          type: "",
+                          number: "",
+                          authority: "",
+                          issueDate: "",
+                          expiryDate: "",
+                          status: "active",
+                          notes: "",
+                          documentUrl: "",
+                          reminderDays: 30,
+                        })
+                      }
                     >
                       <Plus className="h-4 w-4 mr-2" />
                       Adicionar Licença
@@ -437,7 +509,7 @@ export default function ComplianceSettings() {
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
-                          
+
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormField
                               control={form.control}
@@ -560,18 +632,14 @@ export default function ComplianceSettings() {
                                 <FormItem>
                                   <FormLabel>URL do Documento</FormLabel>
                                   <FormControl>
-                                    <Input 
-                                      placeholder="https://..." 
-                                      {...field}
-                                      className="pr-10"
-                                    />
+                                    <Input placeholder="https://..." {...field} className="pr-10" />
                                   </FormControl>
                                   {field.value && (
                                     <Button
                                       type="button"
                                       variant="ghost"
                                       size="sm"
-                                      onClick={() => window.open(field.value, '_blank')}
+                                      onClick={() => window.open(field.value, "_blank")}
                                       className="absolute right-2 top-8"
                                     >
                                       <ExternalLink className="h-4 w-4" />
@@ -614,8 +682,8 @@ export default function ComplianceSettings() {
               <Alert>
                 <ShieldCheck className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>LGPD (Lei 13.709/2018):</strong> A Lei Geral de Proteção de Dados 
-                  exige conformidade obrigatória para clínicas que processam dados pessoais de pacientes.
+                  <strong>LGPD (Lei 13.709/2018):</strong> A Lei Geral de Proteção de Dados exige
+                  conformidade obrigatória para clínicas que processam dados pessoais de pacientes.
                 </AlertDescription>
               </Alert>
 
@@ -654,9 +722,7 @@ export default function ComplianceSettings() {
                           <FormControl>
                             <Input type="email" placeholder="dpo@clinica.com.br" {...field} />
                           </FormControl>
-                          <FormDescription>
-                            Email para contato sobre dados pessoais
-                          </FormDescription>
+                          <FormDescription>Email para contato sobre dados pessoais</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -665,7 +731,7 @@ export default function ComplianceSettings() {
 
                   <div className="space-y-4">
                     <h4 className="font-medium">Requisitos de Conformidade</h4>
-                    
+
                     <FormField
                       control={form.control}
                       name="lgpdCompliance.privacyImpactAssessment"
@@ -681,10 +747,7 @@ export default function ComplianceSettings() {
                             </FormDescription>
                           </div>
                           <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -705,10 +768,7 @@ export default function ComplianceSettings() {
                             </FormDescription>
                           </div>
                           <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -729,10 +789,7 @@ export default function ComplianceSettings() {
                             </FormDescription>
                           </div>
                           <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -753,10 +810,7 @@ export default function ComplianceSettings() {
                             </FormDescription>
                           </div>
                           <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -774,10 +828,7 @@ export default function ComplianceSettings() {
                             </FormDescription>
                           </div>
                           <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -792,7 +843,7 @@ export default function ComplianceSettings() {
               <Alert>
                 <FileCheck className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>ANVISA:</strong> Agência Nacional de Vigilância Sanitária regula 
+                  <strong>ANVISA:</strong> Agência Nacional de Vigilância Sanitária regula
                   dispositivos médicos e estabelecimentos de saúde no Brasil.
                 </AlertDescription>
               </Alert>
@@ -832,9 +883,7 @@ export default function ComplianceSettings() {
                           <FormControl>
                             <Input placeholder="123456/SP" {...field} />
                           </FormControl>
-                          <FormDescription>
-                            Número do CRM do responsável técnico
-                          </FormDescription>
+                          <FormDescription>Número do CRM do responsável técnico</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -843,7 +892,7 @@ export default function ComplianceSettings() {
 
                   <div className="space-y-4">
                     <h4 className="font-medium">Requisitos Obrigatórios</h4>
-                    
+
                     <FormField
                       control={form.control}
                       name="anvisaCompliance.medicalDeviceRegistry"
@@ -859,10 +908,7 @@ export default function ComplianceSettings() {
                             </FormDescription>
                           </div>
                           <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -883,10 +929,7 @@ export default function ComplianceSettings() {
                             </FormDescription>
                           </div>
                           <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -902,15 +945,10 @@ export default function ComplianceSettings() {
                               Sistema de Gestão da Qualidade
                               <span className="text-red-500 ml-1">*</span>
                             </FormLabel>
-                            <FormDescription>
-                              SGQ implementado conforme RDC 16/2013
-                            </FormDescription>
+                            <FormDescription>SGQ implementado conforme RDC 16/2013</FormDescription>
                           </div>
                           <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -925,8 +963,8 @@ export default function ComplianceSettings() {
               <Alert>
                 <ShieldCheck className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>CFM:</strong> Conselho Federal de Medicina regula o exercício 
-                  da medicina e a telemedicina no Brasil.
+                  <strong>CFM:</strong> Conselho Federal de Medicina regula o exercício da medicina
+                  e a telemedicina no Brasil.
                 </AlertDescription>
               </Alert>
 
@@ -953,10 +991,7 @@ export default function ComplianceSettings() {
                           </FormDescription>
                         </div>
                         <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
                       </FormItem>
                     )}
@@ -974,10 +1009,7 @@ export default function ComplianceSettings() {
                           </FormDescription>
                         </div>
                         <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
                       </FormItem>
                     )}
@@ -998,10 +1030,7 @@ export default function ComplianceSettings() {
                           </FormDescription>
                         </div>
                         <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
                       </FormItem>
                     )}
@@ -1017,15 +1046,10 @@ export default function ComplianceSettings() {
                             Privacidade do Paciente
                             <span className="text-red-500 ml-1">*</span>
                           </FormLabel>
-                          <FormDescription>
-                            Sigilo médico e proteção da privacidade
-                          </FormDescription>
+                          <FormDescription>Sigilo médico e proteção da privacidade</FormDescription>
                         </div>
                         <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
                       </FormItem>
                     )}
@@ -1046,10 +1070,7 @@ export default function ComplianceSettings() {
                           </FormDescription>
                         </div>
                         <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
                       </FormItem>
                     )}

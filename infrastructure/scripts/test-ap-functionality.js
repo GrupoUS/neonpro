@@ -60,7 +60,7 @@ async function testAPFunctionality() {
         *,
         vendors:vendor_id(company_name),
         expense_categories:expense_category_id(category_name)
-      `
+      `,
       )
       .limit(5);
 
@@ -70,15 +70,13 @@ async function testAPFunctionality() {
       console.log(`✅ Contas a pagar encontradas: ${payables.length}`);
       payables.forEach((payable) => {
         console.log(
-          `   • ${payable.invoice_number} - ${payable.vendors?.company_name} - R$ ${payable.net_amount} (${payable.status})`
+          `   • ${payable.invoice_number} - ${payable.vendors?.company_name} - R$ ${payable.net_amount} (${payable.status})`,
         );
       });
     }
 
     console.log("\n💸 4. TESTANDO PAGAMENTOS...");
-    const { data: payments, error: paymentsError } = await supabase.from(
-      "ap_payments"
-    ).select(`
+    const { data: payments, error: paymentsError } = await supabase.from("ap_payments").select(`
         *,
         vendors:vendor_id(company_name),
         accounts_payable:accounts_payable_id(invoice_number)
@@ -90,15 +88,15 @@ async function testAPFunctionality() {
       console.log(`✅ Pagamentos registrados: ${payments.length}`);
       payments.forEach((payment) => {
         console.log(
-          `   • ${payment.accounts_payable?.invoice_number} - R$ ${payment.payment_amount} (${payment.status})`
+          `   • ${payment.accounts_payable?.invoice_number} - R$ ${payment.payment_amount} (${payment.status})`,
         );
       });
     }
 
     console.log("\n📅 5. TESTANDO CRONOGRAMAS DE PAGAMENTO...");
-    const { data: schedules, error: schedulesError } = await supabase.from(
-      "payment_schedules"
-    ).select(`
+    const { data: schedules, error: schedulesError } = await supabase
+      .from("payment_schedules")
+      .select(`
         *,
         vendors:vendor_id(company_name),
         expense_categories:expense_category_id(category_name)
@@ -110,7 +108,7 @@ async function testAPFunctionality() {
       console.log(`✅ Cronogramas de pagamento: ${schedules.length}`);
       schedules.forEach((schedule) => {
         console.log(
-          `   • ${schedule.schedule_name} - ${schedule.vendors?.company_name} - R$ ${schedule.amount} (${schedule.frequency})`
+          `   • ${schedule.schedule_name} - ${schedule.vendors?.company_name} - R$ ${schedule.amount} (${schedule.frequency})`,
         );
       });
     }
@@ -124,8 +122,7 @@ async function testAPFunctionality() {
       .select("net_amount")
       .in("status", ["pending", "approved", "overdue"]);
 
-    const totalOpen =
-      openPayables?.reduce((sum, p) => sum + parseFloat(p.net_amount), 0) || 0;
+    const totalOpen = openPayables?.reduce((sum, p) => sum + parseFloat(p.net_amount), 0) || 0;
     console.log(`✅ Total em aberto: R$ ${totalOpen.toFixed(2)}`);
 
     // Contas vencidas
@@ -146,9 +143,7 @@ async function testAPFunctionality() {
       .lte("due_date", thirtyDaysFromNow.toISOString().split("T")[0])
       .in("status", ["pending", "approved"]);
 
-    console.log(
-      `📅 Vencimentos próximos (30 dias): ${upcomingPayables?.length || 0}`
-    );
+    console.log(`📅 Vencimentos próximos (30 dias): ${upcomingPayables?.length || 0}`);
 
     console.log("\n🎯 RESUMO DOS TESTES:");
     console.log("✅ Conexão com Supabase Online: OK");

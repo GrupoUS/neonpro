@@ -3,39 +3,33 @@
 // Epic 7 - Story 7.2: Automated marketing campaigns with personalization
 // =====================================================================================
 
-import { marketingCampaignsService } from '@/app/lib/services/marketing-campaigns-service';
-import { NextRequest, NextResponse } from 'next/server';
+import { marketingCampaignsService } from "@/app/lib/services/marketing-campaigns-service";
+import { NextRequest, NextResponse } from "next/server";
 
 // GET /api/marketing/campaigns/[id]/analytics - Get campaign analytics
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { id } = params;
     const { searchParams } = new URL(request.url);
 
     if (!id) {
       return NextResponse.json(
-        { success: false, error: 'Campaign ID is required' },
-        { status: 400 }
+        { success: false, error: "Campaign ID is required" },
+        { status: 400 },
       );
     }
 
     // Check if campaign exists
     const campaign = await marketingCampaignsService.getCampaignById(id);
     if (!campaign) {
-      return NextResponse.json(
-        { success: false, error: 'Campaign not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: "Campaign not found" }, { status: 404 });
     }
 
     // Get analytics with optional date range
-    const startDate = searchParams.get('start_date');
-    const endDate = searchParams.get('end_date');
-    const includeSegments = searchParams.get('include_segments') === 'true';
-    const includeDevices = searchParams.get('include_devices') === 'true';
+    const startDate = searchParams.get("start_date");
+    const endDate = searchParams.get("end_date");
+    const includeSegments = searchParams.get("include_segments") === "true";
+    const includeDevices = searchParams.get("include_devices") === "true";
 
     const analytics = await marketingCampaignsService.getCampaignAnalytics(id);
 
@@ -74,20 +68,19 @@ export async function GET(
           start_date: startDate,
           end_date: endDate,
           include_segments: includeSegments,
-          include_devices: includeDevices
-        }
-      }
+          include_devices: includeDevices,
+        },
+      },
     });
-
   } catch (error) {
     console.error(`GET /api/marketing/campaigns/${params.id}/analytics error:`, error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to fetch campaign analytics',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      }, 
-      { status: 500 }
+      {
+        success: false,
+        error: "Failed to fetch campaign analytics",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 },
     );
   }
 }

@@ -1,6 +1,6 @@
-import { createClient } from "@/lib/supabase/server";
-import { NextResponse } from "next/server";
-import { z } from "zod";
+import type { createClient } from "@/lib/supabase/server";
+import type { NextResponse } from "next/server";
+import type { z } from "zod";
 
 // Validation schemas
 const CreateInvoiceSchema = z.object({
@@ -18,15 +18,13 @@ const CreateInvoiceSchema = z.object({
         unit_price: z.number().min(0, "Preço unitário deve ser positivo"),
         discount_type: z.enum(["percentage", "fixed"]).optional(),
         discount_value: z.number().min(0).optional(),
-      })
+      }),
     )
     .min(1, "Pelo menos um item é obrigatório"),
 });
 
 const UpdateInvoiceSchema = z.object({
-  status: z
-    .enum(["draft", "pending", "paid", "overdue", "cancelled"])
-    .optional(),
+  status: z.enum(["draft", "pending", "paid", "overdue", "cancelled"]).optional(),
   due_date: z.string().optional(),
   notes: z.string().optional(),
   payment_terms: z.string().optional(),
@@ -81,7 +79,7 @@ export async function GET(request: Request) {
           status,
           payment_date
         )
-      `
+      `,
       )
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
@@ -98,10 +96,7 @@ export async function GET(request: Request) {
 
     if (error) {
       console.error("Error fetching invoices:", error);
-      return NextResponse.json(
-        { error: "Failed to fetch invoices" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to fetch invoices" }, { status: 500 });
     }
 
     return NextResponse.json({
@@ -115,10 +110,7 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     console.error("API Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
@@ -146,8 +138,7 @@ export async function POST(request: Request) {
         status: "draft",
         issue_date: new Date().toISOString(),
         due_date:
-          validatedData.due_date ||
-          new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          validatedData.due_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
         notes: validatedData.notes,
         payment_terms: validatedData.payment_terms,
         subtotal_amount: 0, // Will be calculated by trigger
@@ -161,10 +152,7 @@ export async function POST(request: Request) {
 
     if (invoiceError) {
       console.error("Error creating invoice:", invoiceError);
-      return NextResponse.json(
-        { error: "Failed to create invoice" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to create invoice" }, { status: 500 });
     }
 
     // Add invoice items
@@ -177,22 +165,16 @@ export async function POST(request: Request) {
       discount_type: item.discount_type,
       discount_value: item.discount_value || 0,
       // total_amount will be calculated by trigger
-      total_amount:
-        item.unit_price * item.quantity - (item.discount_value || 0),
+      total_amount: item.unit_price * item.quantity - (item.discount_value || 0),
     }));
 
-    const { error: itemsError } = await supabase
-      .from("invoice_items")
-      .insert(items);
+    const { error: itemsError } = await supabase.from("invoice_items").insert(items);
 
     if (itemsError) {
       console.error("Error creating invoice items:", itemsError);
       // Rollback - delete the invoice
       await supabase.from("invoices").delete().eq("id", invoice.id);
-      return NextResponse.json(
-        { error: "Failed to create invoice items" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to create invoice items" }, { status: 500 });
     }
 
     // Fetch the complete invoice with items
@@ -218,7 +200,7 @@ export async function POST(request: Request) {
           total_amount,
           service:services(name)
         )
-      `
+      `,
       )
       .eq("id", invoice.id)
       .single();
@@ -227,7 +209,7 @@ export async function POST(request: Request) {
       console.error("Error fetching complete invoice:", fetchError);
       return NextResponse.json(
         { error: "Invoice created but failed to fetch complete data" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -236,14 +218,11 @@ export async function POST(request: Request) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Validation failed", details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error("API Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

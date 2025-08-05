@@ -1,13 +1,13 @@
-﻿import { type CreateNextContextOptions } from '@trpc/server/adapters/next';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
-import { type Database } from '@/types/supabase';
+﻿import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
+import { type Database } from "@/types/supabase";
 
 // Healthcare user context with medical role validation
 export interface HealthcareUser {
   id: string;
   email: string;
-  role: 'admin' | 'healthcare_professional' | 'patient' | 'staff';
+  role: "admin" | "healthcare_professional" | "patient" | "staff";
   tenant_id: string;
   medical_license?: string;
   lgpd_consent: boolean;
@@ -27,14 +27,14 @@ export interface Context {
 
 export async function createTRPCContext(opts: CreateNextContextOptions): Promise<Context> {
   const { req } = opts;
-  
+
   // Generate unique request ID for audit trail
   const requestId = `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  
+
   // Extract request metadata for healthcare audit
-  const userAgent = req.headers['user-agent'] || 'unknown';
-  const ipAddress = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || 'unknown';
-  
+  const userAgent = req.headers["user-agent"] || "unknown";
+  const ipAddress = req.headers["x-forwarded-for"] || req.headers["x-real-ip"] || "unknown";
+
   // Create Supabase server client with cookies
   const cookieStore = await cookies();
   const supabase = createServerClient<Database>(
@@ -46,19 +46,22 @@ export async function createTRPCContext(opts: CreateNextContextOptions): Promise
           return cookieStore.get(name)?.value;
         },
       },
-    }
+    },
   );
 
   // Get authenticated user with healthcare profile
   let user: HealthcareUser | null = null;
-  
+
   try {
-    const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user: authUser },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authUser && !authError) {
       // Fetch healthcare profile with role and compliance data
       const { data: profile, error: profileError } = await supabase
-        .from('user_profiles')
+        .from("user_profiles")
         .select(`
           id,
           email,
@@ -69,14 +72,14 @@ export async function createTRPCContext(opts: CreateNextContextOptions): Promise
           data_consent_given,
           data_consent_date
         `)
-        .eq('id', authUser.id)
+        .eq("id", authUser.id)
         .single();
 
       if (profile && !profileError) {
         user = {
           id: profile.id,
           email: profile.email,
-          role: profile.role as HealthcareUser['role'],
+          role: profile.role as HealthcareUser["role"],
           tenant_id: profile.tenant_id,
           medical_license: profile.medical_license || undefined,
           lgpd_consent: profile.lgpd_consent,
@@ -86,7 +89,7 @@ export async function createTRPCContext(opts: CreateNextContextOptions): Promise
       }
     }
   } catch (error) {
-    console.error('Error fetching user context:', error);
+    console.error("Error fetching user context:", error);
     // User remains null for unauthenticated requests
   }
 
@@ -99,5 +102,3 @@ export async function createTRPCContext(opts: CreateNextContextOptions): Promise
     timestamp: new Date(),
   };
 }
-
-

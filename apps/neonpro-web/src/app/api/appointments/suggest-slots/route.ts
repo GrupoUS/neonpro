@@ -1,5 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
-import { addDays, addMinutes, format, parseISO } from "date-fns";
+﻿import type { createClient } from "@/lib/supabase/server";
+import type { addDays, addMinutes, format, parseISO } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
 
 // =============================================
@@ -53,16 +53,9 @@ export async function GET(request: NextRequest) {
       service_type_id: searchParams.get("service_type_id") || "",
       preferred_start_time: searchParams.get("preferred_start_time") || "",
       duration_minutes: parseInt(searchParams.get("duration_minutes") || "60"),
-      exclude_appointment_id:
-        searchParams.get("exclude_appointment_id") || undefined,
-      max_suggestions: Math.min(
-        parseInt(searchParams.get("max_suggestions") || "6"),
-        20
-      ),
-      search_window_days: Math.min(
-        parseInt(searchParams.get("search_window_days") || "14"),
-        30
-      ),
+      exclude_appointment_id: searchParams.get("exclude_appointment_id") || undefined,
+      max_suggestions: Math.min(parseInt(searchParams.get("max_suggestions") || "6"), 20),
+      search_window_days: Math.min(parseInt(searchParams.get("search_window_days") || "14"), 30),
       clinic_id: searchParams.get("clinic_id") || "",
     };
 
@@ -73,38 +66,30 @@ export async function GET(request: NextRequest) {
       !params.preferred_start_time ||
       !params.clinic_id
     ) {
-      return NextResponse.json(
-        { error: "Missing required parameters" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Missing required parameters" }, { status: 400 });
     }
 
     const supabase = await createClient();
 
     // Get professional schedule and service rules
-    const [professionalSchedule, serviceRules, existingAppointments] =
-      await Promise.all([
-        getProfessionalSchedule(
-          supabase,
-          params.professional_id,
-          params.clinic_id
-        ),
-        getServiceRules(supabase, params.service_type_id, params.clinic_id),
-        getExistingAppointments(
-          supabase,
-          params.professional_id,
-          params.clinic_id,
-          params.search_window_days,
-          params.exclude_appointment_id
-        ),
-      ]);
+    const [professionalSchedule, serviceRules, existingAppointments] = await Promise.all([
+      getProfessionalSchedule(supabase, params.professional_id, params.clinic_id),
+      getServiceRules(supabase, params.service_type_id, params.clinic_id),
+      getExistingAppointments(
+        supabase,
+        params.professional_id,
+        params.clinic_id,
+        params.search_window_days,
+        params.exclude_appointment_id,
+      ),
+    ]);
 
     // Generate suggestions
     const suggestions = await generateSlotSuggestions(
       params,
       professionalSchedule,
       serviceRules,
-      existingAppointments
+      existingAppointments,
     );
 
     // Calculate search info
@@ -114,10 +99,7 @@ export async function GET(request: NextRequest) {
       available_slots_found: suggestions.length,
       search_period: {
         start_date: format(preferredDate, "yyyy-MM-dd"),
-        end_date: format(
-          addDays(preferredDate, params.search_window_days),
-          "yyyy-MM-dd"
-        ),
+        end_date: format(addDays(preferredDate, params.search_window_days), "yyyy-MM-dd"),
       },
     };
 
@@ -129,18 +111,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(response);
   } catch (error) {
     console.error("Error in suggest-slots API:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
-async function getProfessionalSchedule(
-  supabase: any,
-  professionalId: string,
-  clinicId: string
-) {
+async function getProfessionalSchedule(supabase: any, professionalId: string, clinicId: string) {
   const { data, error } = await supabase
     .from("professional_schedules")
     .select("*")
@@ -156,11 +131,7 @@ async function getProfessionalSchedule(
   return data || [];
 }
 
-async function getServiceRules(
-  supabase: any,
-  serviceTypeId: string,
-  clinicId: string
-) {
+async function getServiceRules(supabase: any, serviceTypeId: string, clinicId: string) {
   const { data, error } = await supabase
     .from("service_type_rules")
     .select("*")
@@ -182,7 +153,7 @@ async function getExistingAppointments(
   professionalId: string,
   clinicId: string,
   searchWindowDays: number,
-  excludeId?: string
+  excludeId?: string,
 ) {
   const startDate = new Date();
   const endDate = addDays(startDate, searchWindowDays);
@@ -214,7 +185,7 @@ async function generateSlotSuggestions(
   params: SlotSuggestionParams,
   schedule: any[],
   serviceRules: any,
-  existingAppointments: any[]
+  existingAppointments: any[],
 ): Promise<AlternativeSlot[]> {
   const suggestions: AlternativeSlot[] = [];
   const preferredDate = parseISO(params.preferred_start_time);
@@ -248,7 +219,7 @@ async function generateSlotSuggestions(
       appointments,
       params,
       preferredTime,
-      dayOffset
+      dayOffset,
     );
 
     suggestions.push(...daySlots);
@@ -265,7 +236,7 @@ function generateDaySuggestions(
   appointments: any[],
   params: SlotSuggestionParams,
   preferredTime: string,
-  dayOffset: number
+  dayOffset: number,
 ): AlternativeSlot[] {
   const slots: AlternativeSlot[] = [];
   const startTime = parseTime(schedule.start_time);
@@ -290,17 +261,12 @@ function generateDaySuggestions(
       appointments,
       schedule,
       bufferBefore,
-      bufferAfter
+      bufferAfter,
     );
     const hasErrors = conflicts.some((c) => c.severity === "error");
 
     if (!hasErrors) {
-      const score = calculateSlotScore(
-        slotStart,
-        preferredTime,
-        dayOffset,
-        conflicts.length
-      );
+      const score = calculateSlotScore(slotStart, preferredTime, dayOffset, conflicts.length);
 
       slots.push({
         start_time: slotStart.toISOString(),
@@ -329,7 +295,7 @@ function checkSlotConflicts(
   appointments: any[],
   schedule: any,
   bufferBefore: number,
-  bufferAfter: number
+  bufferAfter: number,
 ): Array<{
   type: string;
   message: string;
@@ -369,7 +335,7 @@ function checkSlotConflicts(
     ) {
       conflicts.push({
         type: "break_time",
-        message: "Conflito com horário de intervalo",
+        message: "Conflito com horÃ¡rio de intervalo",
         severity: "error" as const,
       });
     }
@@ -381,13 +347,13 @@ function checkSlotConflicts(
   const hourEnd = addMinutes(hourStart, 60);
 
   const appointmentsInHour = appointments.filter(
-    (apt) => apt.start >= hourStart && apt.start < hourEnd
+    (apt) => apt.start >= hourStart && apt.start < hourEnd,
   ).length;
 
   if (appointmentsInHour >= (schedule.max_appointments_per_hour || 4)) {
     conflicts.push({
       type: "capacity_exceeded",
-      message: `Capacidade máxima da hora (${schedule.max_appointments_per_hour}) atingida`,
+      message: `Capacidade mÃ¡xima da hora (${schedule.max_appointments_per_hour}) atingida`,
       severity: "warning" as const,
     });
   }
@@ -399,7 +365,7 @@ function calculateSlotScore(
   slotStart: Date,
   preferredTime: string,
   dayOffset: number,
-  conflictCount: number
+  conflictCount: number,
 ): number {
   let score = 100;
 
@@ -425,26 +391,22 @@ function calculateSlotScore(
   return Math.max(score, 0);
 }
 
-function generateSlotReason(
-  slotStart: Date,
-  preferredTime: string,
-  dayOffset: number
-): string {
+function generateSlotReason(slotStart: Date, preferredTime: string, dayOffset: number): string {
   if (dayOffset === 0) {
     const slotTime = format(slotStart, "HH:mm");
     if (slotTime === preferredTime) {
-      return "Horário exato solicitado";
+      return "HorÃ¡rio exato solicitado";
     }
-    return "Mesmo dia, horário próximo";
+    return "Mesmo dia, horÃ¡rio prÃ³ximo";
   }
 
   if (dayOffset === 1) {
-    return "Próximo dia útil disponível";
+    return "PrÃ³ximo dia Ãºtil disponÃ­vel";
   }
 
   if (dayOffset <= 3) {
-    return "Horário próximo disponível";
+    return "HorÃ¡rio prÃ³ximo disponÃ­vel";
   }
 
-  return "Próxima disponibilidade";
+  return "PrÃ³xima disponibilidade";
 }

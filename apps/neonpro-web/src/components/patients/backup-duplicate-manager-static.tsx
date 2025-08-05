@@ -1,9 +1,9 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
   AlertTriangle,
   Calendar,
   Check,
@@ -20,9 +20,7 @@ export interface DuplicateManagerProps {
 }
 
 // Static component to demonstrate UI without React hooks
-export default function DuplicateManagerStatic({
-  onMergeComplete,
-}: DuplicateManagerProps) {
+export default function DuplicateManagerStatic({ onMergeComplete }: DuplicateManagerProps) {
   // Mock data for demonstration
   const duplicates = [
     {
@@ -67,9 +65,7 @@ export default function DuplicateManagerStatic({
     <div className="space-y-6">
       <div className="flex items-center gap-2">
         <AlertTriangle className="h-5 w-5 text-orange-500" />
-        <h2 className="text-xl font-semibold">
-          Possíveis Duplicatas Detectadas
-        </h2>
+        <h2 className="text-xl font-semibold">Possíveis Duplicatas Detectadas</h2>
         <Badge variant="secondary">{duplicates.length}</Badge>
       </div>
 
@@ -77,9 +73,7 @@ export default function DuplicateManagerStatic({
         <Card>
           <CardContent className="text-center py-8">
             <Check className="h-12 w-12 text-green-500 mx-auto mb-4" />
-            <p className="text-muted-foreground">
-              Nenhuma duplicata encontrada
-            </p>
+            <p className="text-muted-foreground">Nenhuma duplicata encontrada</p>
           </CardContent>
         </Card>
       ) : (
@@ -103,9 +97,7 @@ export default function DuplicateManagerStatic({
                     <div key={patient.id} className="border rounded-lg p-4">
                       <div className="flex items-center gap-2 mb-2">
                         <User className="h-4 w-4" />
-                        <span className="font-medium">
-                          Paciente {index + 1}
-                        </span>
+                        <span className="font-medium">Paciente {index + 1}</span>
                         <Badge variant="outline" className="text-xs">
                           ID: {patient.id}
                         </Badge>
@@ -128,11 +120,7 @@ export default function DuplicateManagerStatic({
 
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <Calendar className="h-3 w-3" />
-                          <span>
-                            {new Date(patient.birthDate).toLocaleDateString(
-                              "pt-BR"
-                            )}
-                          </span>
+                          <span>{new Date(patient.birthDate).toLocaleDateString("pt-BR")}</span>
                         </div>
 
                         <div className="flex items-center gap-2 text-muted-foreground">
@@ -143,10 +131,7 @@ export default function DuplicateManagerStatic({
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <FileText className="h-3 w-3" />
                           <span>
-                            Criado em{" "}
-                            {new Date(patient.createdAt).toLocaleDateString(
-                              "pt-BR"
-                            )}
+                            Criado em {new Date(patient.createdAt).toLocaleDateString("pt-BR")}
                           </span>
                         </div>
                       </div>
@@ -163,10 +148,7 @@ export default function DuplicateManagerStatic({
                     <X className="h-4 w-4" />
                     Não é duplicata
                   </Button>
-                  <Button
-                    onClick={() => handleMerge(duplicate.id)}
-                    className="gap-2"
-                  >
+                  <Button onClick={() => handleMerge(duplicate.id)} className="gap-2">
                     <Check className="h-4 w-4" />
                     Unificar pacientes
                   </Button>

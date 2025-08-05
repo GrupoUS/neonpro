@@ -1,37 +1,35 @@
-﻿// GET/POST /api/treatment-prediction/feedback - Prediction feedback management
-import { TreatmentPredictionService } from '@/app/lib/services/treatment-prediction';
-import { createServerClient } from '@/lib/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
+// GET/POST /api/treatment-prediction/feedback - Prediction feedback management
+import type { TreatmentPredictionService } from "@/app/lib/services/treatment-prediction";
+import type { createServerClient } from "@/lib/supabase/server";
+import type { NextRequest, NextResponse } from "next/server";
 
 // GET /api/treatment-prediction/feedback - Get prediction feedback
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    
+
     // Validate authentication
     const supabase = await createServerClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const predictionId = searchParams.get('prediction_id');
+    const predictionId = searchParams.get("prediction_id");
 
     const predictionService = new TreatmentPredictionService();
     const feedback = await predictionService.getFeedback(predictionId || undefined);
 
     return NextResponse.json({
       feedback,
-      total: feedback.length
+      total: feedback.length,
     });
-
   } catch (error) {
-    console.error('Error fetching prediction feedback:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch prediction feedback' },
-      { status: 500 }
-    );
+    console.error("Error fetching prediction feedback:", error);
+    return NextResponse.json({ error: "Failed to fetch prediction feedback" }, { status: 500 });
   }
 }
 
@@ -39,10 +37,12 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createServerClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
@@ -50,52 +50,45 @@ export async function POST(request: NextRequest) {
     // Validate required fields
     if (!body.prediction_id || !body.feedback_type || body.rating === undefined) {
       return NextResponse.json(
-        { error: 'Missing required fields: prediction_id, feedback_type, rating' },
-        { status: 400 }
+        { error: "Missing required fields: prediction_id, feedback_type, rating" },
+        { status: 400 },
       );
     }
 
     // Validate rating range
     if (body.rating < 1 || body.rating > 5) {
-      return NextResponse.json(
-        { error: 'Rating must be between 1 and 5' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Rating must be between 1 and 5" }, { status: 400 });
     }
 
     // Verify prediction exists
     const { data: prediction } = await supabase
-      .from('treatment_predictions')
-      .select('id')
-      .eq('id', body.prediction_id)
+      .from("treatment_predictions")
+      .select("id")
+      .eq("id", body.prediction_id)
       .single();
 
     if (!prediction) {
-      return NextResponse.json(
-        { error: 'Prediction not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Prediction not found" }, { status: 404 });
     }
 
     // Prepare feedback data
     const feedbackData = {
       ...body,
-      provider_id: session.user.id
+      provider_id: session.user.id,
     };
 
     const predictionService = new TreatmentPredictionService();
     const feedback = await predictionService.createFeedback(feedbackData);
 
-    return NextResponse.json({
-      feedback,
-      message: 'Prediction feedback created successfully'
-    }, { status: 201 });
-
-  } catch (error) {
-    console.error('Error creating prediction feedback:', error);
     return NextResponse.json(
-      { error: 'Failed to create prediction feedback' },
-      { status: 500 }
+      {
+        feedback,
+        message: "Prediction feedback created successfully",
+      },
+      { status: 201 },
     );
+  } catch (error) {
+    console.error("Error creating prediction feedback:", error);
+    return NextResponse.json({ error: "Failed to create prediction feedback" }, { status: 500 });
   }
 }

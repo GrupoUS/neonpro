@@ -3,8 +3,8 @@
  * Handles push notification delivery, device management, and notification analytics
  */
 
-import { createClient } from '@supabase/supabase-js';
-import {
+import type { createClient } from "@supabase/supabase-js";
+import type {
   PushNotificationConfig,
   PushNotificationPayload,
   DeviceRegistration,
@@ -17,8 +17,8 @@ import {
   NotificationBatch,
   NotificationSchedule,
   DevicePreferences,
-  NotificationMetrics
-} from './types';
+  NotificationMetrics,
+} from "./types";
 
 /**
  * Push Notifications Manager
@@ -36,10 +36,7 @@ export class PushNotificationsManager {
 
   constructor(config: PushNotificationConfig) {
     this.config = config;
-    this.supabase = createClient(
-      config.supabaseUrl,
-      config.supabaseKey
-    );
+    this.supabase = createClient(config.supabaseUrl, config.supabaseKey);
     this.fcmServerKey = config.fcmServerKey;
     this.apnsConfig = config.apnsConfig;
     this.analytics = {
@@ -50,7 +47,7 @@ export class PushNotificationsManager {
       averageDeliveryTime: 0,
       deviceMetrics: new Map(),
       categoryMetrics: new Map(),
-      hourlyMetrics: []
+      hourlyMetrics: [],
     };
   }
 
@@ -61,21 +58,21 @@ export class PushNotificationsManager {
     try {
       // Load device registrations
       await this.loadDeviceRegistrations();
-      
+
       // Initialize notification templates
       await this.loadNotificationTemplates();
-      
+
       // Setup analytics
       await this.initializeAnalytics();
-      
+
       // Start background processes
       this.startNotificationProcessor();
       this.startAnalyticsCollector();
-      
+
       this.isInitialized = true;
-      console.log('Push notifications system initialized successfully');
+      console.log("Push notifications system initialized successfully");
     } catch (error) {
-      console.error('Failed to initialize push notifications:', error);
+      console.error("Failed to initialize push notifications:", error);
       throw error;
     }
   }
@@ -87,26 +84,24 @@ export class PushNotificationsManager {
     try {
       // Validate device token
       if (!this.validateDeviceToken(registration.deviceToken, registration.platform)) {
-        throw new Error('Invalid device token format');
+        throw new Error("Invalid device token format");
       }
 
       // Store in database
-      const { error } = await this.supabase
-        .from('device_registrations')
-        .upsert({
-          device_id: registration.deviceId,
-          user_id: registration.userId,
-          device_token: registration.deviceToken,
-          platform: registration.platform,
-          app_version: registration.appVersion,
-          os_version: registration.osVersion,
-          preferences: registration.preferences,
-          timezone: registration.timezone,
-          language: registration.language,
-          is_active: true,
-          registered_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        });
+      const { error } = await this.supabase.from("device_registrations").upsert({
+        device_id: registration.deviceId,
+        user_id: registration.userId,
+        device_token: registration.deviceToken,
+        platform: registration.platform,
+        app_version: registration.appVersion,
+        os_version: registration.osVersion,
+        preferences: registration.preferences,
+        timezone: registration.timezone,
+        language: registration.language,
+        is_active: true,
+        registered_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
 
       if (error) throw error;
 
@@ -116,7 +111,7 @@ export class PushNotificationsManager {
       console.log(`Device registered: ${registration.deviceId}`);
       return true;
     } catch (error) {
-      console.error('Device registration failed:', error);
+      console.error("Device registration failed:", error);
       return false;
     }
   }
@@ -126,7 +121,7 @@ export class PushNotificationsManager {
    */
   async sendNotification(
     deviceId: string,
-    payload: PushNotificationPayload
+    payload: PushNotificationPayload,
   ): Promise<PushNotificationResult> {
     try {
       const device = this.deviceRegistry.get(deviceId);
@@ -138,15 +133,15 @@ export class PushNotificationsManager {
       if (!this.shouldSendNotification(device, payload)) {
         return {
           success: false,
-          messageId: '',
-          error: 'Notification blocked by user preferences',
-          deliveredAt: new Date()
+          messageId: "",
+          error: "Notification blocked by user preferences",
+          deliveredAt: new Date(),
         };
       }
 
       // Send based on platform
       let result: PushNotificationResult;
-      if (device.platform === 'ios') {
+      if (device.platform === "ios") {
         result = await this.sendAPNSNotification(device, payload);
       } else {
         result = await this.sendFCMNotification(device, payload);
@@ -160,12 +155,12 @@ export class PushNotificationsManager {
 
       return result;
     } catch (error) {
-      console.error('Send notification failed:', error);
+      console.error("Send notification failed:", error);
       return {
         success: false,
-        messageId: '',
+        messageId: "",
         error: error.message,
-        deliveredAt: new Date()
+        deliveredAt: new Date(),
       };
     }
   }
@@ -173,9 +168,7 @@ export class PushNotificationsManager {
   /**
    * Send batch notifications
    */
-  async sendBatchNotifications(
-    batch: NotificationBatch
-  ): Promise<PushNotificationResult[]> {
+  async sendBatchNotifications(batch: NotificationBatch): Promise<PushNotificationResult[]> {
     const results: PushNotificationResult[] = [];
     const batchSize = this.config.batchSize || 100;
 
@@ -183,21 +176,21 @@ export class PushNotificationsManager {
       // Process in chunks
       for (let i = 0; i < batch.deviceIds.length; i += batchSize) {
         const chunk = batch.deviceIds.slice(i, i + batchSize);
-        const chunkPromises = chunk.map(deviceId => 
-          this.sendNotification(deviceId, batch.payload)
+        const chunkPromises = chunk.map((deviceId) =>
+          this.sendNotification(deviceId, batch.payload),
         );
 
         const chunkResults = await Promise.allSettled(chunkPromises);
-        
-        chunkResults.forEach(result => {
-          if (result.status === 'fulfilled') {
+
+        chunkResults.forEach((result) => {
+          if (result.status === "fulfilled") {
             results.push(result.value);
           } else {
             results.push({
               success: false,
-              messageId: '',
+              messageId: "",
               error: result.reason.message,
-              deliveredAt: new Date()
+              deliveredAt: new Date(),
             });
           }
         });
@@ -210,7 +203,7 @@ export class PushNotificationsManager {
 
       return results;
     } catch (error) {
-      console.error('Batch notification failed:', error);
+      console.error("Batch notification failed:", error);
       throw error;
     }
   }
@@ -218,31 +211,27 @@ export class PushNotificationsManager {
   /**
    * Schedule notification for later delivery
    */
-  async scheduleNotification(
-    schedule: NotificationSchedule
-  ): Promise<string> {
+  async scheduleNotification(schedule: NotificationSchedule): Promise<string> {
     try {
       const scheduleId = `schedule_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-      const { error } = await this.supabase
-        .from('notification_schedules')
-        .insert({
-          schedule_id: scheduleId,
-          device_ids: schedule.deviceIds,
-          payload: schedule.payload,
-          scheduled_for: schedule.scheduledFor.toISOString(),
-          timezone: schedule.timezone,
-          repeat_pattern: schedule.repeatPattern,
-          is_active: true,
-          created_at: new Date().toISOString()
-        });
+      const { error } = await this.supabase.from("notification_schedules").insert({
+        schedule_id: scheduleId,
+        device_ids: schedule.deviceIds,
+        payload: schedule.payload,
+        scheduled_for: schedule.scheduledFor.toISOString(),
+        timezone: schedule.timezone,
+        repeat_pattern: schedule.repeatPattern,
+        is_active: true,
+        created_at: new Date().toISOString(),
+      });
 
       if (error) throw error;
 
       console.log(`Notification scheduled: ${scheduleId}`);
       return scheduleId;
     } catch (error) {
-      console.error('Schedule notification failed:', error);
+      console.error("Schedule notification failed:", error);
       throw error;
     }
   }
@@ -252,16 +241,16 @@ export class PushNotificationsManager {
    */
   async updateDevicePreferences(
     deviceId: string,
-    preferences: DevicePreferences
+    preferences: DevicePreferences,
   ): Promise<boolean> {
     try {
       const { error } = await this.supabase
-        .from('device_registrations')
+        .from("device_registrations")
         .update({
           preferences,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
-        .eq('device_id', deviceId);
+        .eq("device_id", deviceId);
 
       if (error) throw error;
 
@@ -274,7 +263,7 @@ export class PushNotificationsManager {
 
       return true;
     } catch (error) {
-      console.error('Update preferences failed:', error);
+      console.error("Update preferences failed:", error);
       return false;
     }
   }
@@ -292,17 +281,17 @@ export class PushNotificationsManager {
   async getDeviceMetrics(deviceId: string): Promise<NotificationMetrics | null> {
     try {
       const { data, error } = await this.supabase
-        .from('notification_analytics')
-        .select('*')
-        .eq('device_id', deviceId)
-        .order('created_at', { ascending: false })
+        .from("notification_analytics")
+        .select("*")
+        .eq("device_id", deviceId)
+        .order("created_at", { ascending: false })
         .limit(1)
         .single();
 
       if (error) throw error;
       return data;
     } catch (error) {
-      console.error('Get device metrics failed:', error);
+      console.error("Get device metrics failed:", error);
       return null;
     }
   }
@@ -312,7 +301,7 @@ export class PushNotificationsManager {
    */
   private async sendFCMNotification(
     device: DeviceRegistration,
-    payload: PushNotificationPayload
+    payload: PushNotificationPayload,
   ): Promise<PushNotificationResult> {
     try {
       const fcmPayload = {
@@ -321,24 +310,24 @@ export class PushNotificationsManager {
           title: payload.title,
           body: payload.body,
           icon: payload.icon,
-          sound: payload.sound || 'default'
+          sound: payload.sound || "default",
         },
         data: {
           ...payload.data,
           category: payload.category,
-          priority: payload.priority.toString()
+          priority: payload.priority.toString(),
         },
-        priority: payload.priority === NotificationPriority.HIGH ? 'high' : 'normal',
-        time_to_live: payload.ttl || 3600
+        priority: payload.priority === NotificationPriority.HIGH ? "high" : "normal",
+        time_to_live: payload.ttl || 3600,
       };
 
-      const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-        method: 'POST',
+      const response = await fetch("https://fcm.googleapis.com/fcm/send", {
+        method: "POST",
         headers: {
-          'Authorization': `key=${this.fcmServerKey}`,
-          'Content-Type': 'application/json'
+          Authorization: `key=${this.fcmServerKey}`,
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(fcmPayload)
+        body: JSON.stringify(fcmPayload),
       });
 
       const result = await response.json();
@@ -347,10 +336,10 @@ export class PushNotificationsManager {
         return {
           success: true,
           messageId: result.results[0].message_id,
-          deliveredAt: new Date()
+          deliveredAt: new Date(),
         };
       } else {
-        throw new Error(result.results[0].error || 'FCM delivery failed');
+        throw new Error(result.results[0].error || "FCM delivery failed");
       }
     } catch (error) {
       throw new Error(`FCM notification failed: ${error.message}`);
@@ -362,7 +351,7 @@ export class PushNotificationsManager {
    */
   private async sendAPNSNotification(
     device: DeviceRegistration,
-    payload: PushNotificationPayload
+    payload: PushNotificationPayload,
   ): Promise<PushNotificationResult> {
     try {
       // This would integrate with APNS library
@@ -371,14 +360,14 @@ export class PushNotificationsManager {
         aps: {
           alert: {
             title: payload.title,
-            body: payload.body
+            body: payload.body,
           },
-          sound: payload.sound || 'default',
+          sound: payload.sound || "default",
           badge: payload.badge,
-          'content-available': 1
+          "content-available": 1,
         },
         data: payload.data,
-        category: payload.category
+        category: payload.category,
       };
 
       // Simulate APNS call
@@ -387,7 +376,7 @@ export class PushNotificationsManager {
       return {
         success: true,
         messageId: `apns_${Date.now()}`,
-        deliveredAt: new Date()
+        deliveredAt: new Date(),
       };
     } catch (error) {
       throw new Error(`APNS notification failed: ${error.message}`);
@@ -398,7 +387,7 @@ export class PushNotificationsManager {
    * Validate device token format
    */
   private validateDeviceToken(token: string, platform: string): boolean {
-    if (platform === 'ios') {
+    if (platform === "ios") {
       // APNS token validation (64 hex characters)
       return /^[a-fA-F0-9]{64}$/.test(token);
     } else {
@@ -412,19 +401,19 @@ export class PushNotificationsManager {
    */
   private shouldSendNotification(
     device: DeviceRegistration,
-    payload: PushNotificationPayload
+    payload: PushNotificationPayload,
   ): boolean {
     const prefs = device.preferences;
-    
+
     // Check if notifications are enabled
     if (!prefs.notificationsEnabled) return false;
-    
+
     // Check category preferences
     if (prefs.categoryPreferences) {
       const categoryEnabled = prefs.categoryPreferences[payload.category];
       if (categoryEnabled === false) return false;
     }
-    
+
     // Check quiet hours
     if (prefs.quietHours) {
       const now = new Date();
@@ -434,7 +423,7 @@ export class PushNotificationsManager {
         return payload.priority === NotificationPriority.HIGH;
       }
     }
-    
+
     return true;
   }
 
@@ -444,9 +433,9 @@ export class PushNotificationsManager {
   private async loadDeviceRegistrations(): Promise<void> {
     try {
       const { data, error } = await this.supabase
-        .from('device_registrations')
-        .select('*')
-        .eq('is_active', true);
+        .from("device_registrations")
+        .select("*")
+        .eq("is_active", true);
 
       if (error) throw error;
 
@@ -461,13 +450,13 @@ export class PushNotificationsManager {
           preferences: device.preferences,
           timezone: device.timezone,
           language: device.language,
-          registeredAt: new Date(device.registered_at)
+          registeredAt: new Date(device.registered_at),
         });
       });
 
       console.log(`Loaded ${this.deviceRegistry.size} device registrations`);
     } catch (error) {
-      console.error('Failed to load device registrations:', error);
+      console.error("Failed to load device registrations:", error);
     }
   }
 
@@ -477,15 +466,15 @@ export class PushNotificationsManager {
   private async loadNotificationTemplates(): Promise<void> {
     try {
       const { data, error } = await this.supabase
-        .from('notification_templates')
-        .select('*')
-        .eq('is_active', true);
+        .from("notification_templates")
+        .select("*")
+        .eq("is_active", true);
 
       if (error) throw error;
 
       console.log(`Loaded ${data?.length || 0} notification templates`);
     } catch (error) {
-      console.error('Failed to load notification templates:', error);
+      console.error("Failed to load notification templates:", error);
     }
   }
 
@@ -496,9 +485,9 @@ export class PushNotificationsManager {
     try {
       // Load recent analytics data
       const { data, error } = await this.supabase
-        .from('notification_analytics')
-        .select('*')
-        .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
+        .from("notification_analytics")
+        .select("*")
+        .gte("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
 
       if (error) throw error;
 
@@ -507,9 +496,9 @@ export class PushNotificationsManager {
         this.processAnalyticsData(data);
       }
 
-      console.log('Analytics system initialized');
+      console.log("Analytics system initialized");
     } catch (error) {
-      console.error('Failed to initialize analytics:', error);
+      console.error("Failed to initialize analytics:", error);
     }
   }
 
@@ -523,11 +512,11 @@ export class PushNotificationsManager {
     let totalDeliveryTime = 0;
     let deliveryCount = 0;
 
-    data.forEach(record => {
+    data.forEach((record) => {
       totalSent += record.sent_count || 0;
       totalDelivered += record.delivered_count || 0;
       totalFailed += record.failed_count || 0;
-      
+
       if (record.average_delivery_time) {
         totalDeliveryTime += record.average_delivery_time;
         deliveryCount++;
@@ -547,25 +536,23 @@ export class PushNotificationsManager {
   private async storeNotificationRecord(
     deviceId: string,
     payload: PushNotificationPayload,
-    result: PushNotificationResult
+    result: PushNotificationResult,
   ): Promise<void> {
     try {
-      await this.supabase
-        .from('notification_logs')
-        .insert({
-          device_id: deviceId,
-          title: payload.title,
-          body: payload.body,
-          category: payload.category,
-          priority: payload.priority,
-          success: result.success,
-          message_id: result.messageId,
-          error_message: result.error,
-          delivered_at: result.deliveredAt.toISOString(),
-          created_at: new Date().toISOString()
-        });
+      await this.supabase.from("notification_logs").insert({
+        device_id: deviceId,
+        title: payload.title,
+        body: payload.body,
+        category: payload.category,
+        priority: payload.priority,
+        success: result.success,
+        message_id: result.messageId,
+        error_message: result.error,
+        delivered_at: result.deliveredAt.toISOString(),
+        created_at: new Date().toISOString(),
+      });
     } catch (error) {
-      console.error('Failed to store notification record:', error);
+      console.error("Failed to store notification record:", error);
     }
   }
 
@@ -574,17 +561,21 @@ export class PushNotificationsManager {
    */
   private updateAnalytics(result: PushNotificationResult, category: NotificationCategory): void {
     this.analytics.totalSent++;
-    
+
     if (result.success) {
       this.analytics.totalDelivered++;
     } else {
       this.analytics.totalFailed++;
     }
-    
+
     this.analytics.deliveryRate = (this.analytics.totalDelivered / this.analytics.totalSent) * 100;
-    
+
     // Update category metrics
-    const categoryStats = this.analytics.categoryMetrics.get(category) || { sent: 0, delivered: 0, failed: 0 };
+    const categoryStats = this.analytics.categoryMetrics.get(category) || {
+      sent: 0,
+      delivered: 0,
+      failed: 0,
+    };
     categoryStats.sent++;
     if (result.success) {
       categoryStats.delivered++;
@@ -605,7 +596,7 @@ export class PushNotificationsManager {
           try {
             await this.sendBatchNotifications(batch);
           } catch (error) {
-            console.error('Batch processing failed:', error);
+            console.error("Batch processing failed:", error);
           }
         }
       }
@@ -620,7 +611,7 @@ export class PushNotificationsManager {
       try {
         await this.collectAndStoreAnalytics();
       } catch (error) {
-        console.error('Analytics collection failed:', error);
+        console.error("Analytics collection failed:", error);
       }
     }, this.config.analyticsInterval || 60000);
   }
@@ -631,20 +622,18 @@ export class PushNotificationsManager {
   private async collectAndStoreAnalytics(): Promise<void> {
     try {
       const analytics = this.getAnalytics();
-      
-      await this.supabase
-        .from('notification_analytics')
-        .insert({
-          total_sent: analytics.totalSent,
-          total_delivered: analytics.totalDelivered,
-          total_failed: analytics.totalFailed,
-          delivery_rate: analytics.deliveryRate,
-          average_delivery_time: analytics.averageDeliveryTime,
-          device_count: this.deviceRegistry.size,
-          created_at: new Date().toISOString()
-        });
+
+      await this.supabase.from("notification_analytics").insert({
+        total_sent: analytics.totalSent,
+        total_delivered: analytics.totalDelivered,
+        total_failed: analytics.totalFailed,
+        delivery_rate: analytics.deliveryRate,
+        average_delivery_time: analytics.averageDeliveryTime,
+        device_count: this.deviceRegistry.size,
+        created_at: new Date().toISOString(),
+      });
     } catch (error) {
-      console.error('Failed to store analytics:', error);
+      console.error("Failed to store analytics:", error);
     }
   }
 
@@ -652,7 +641,7 @@ export class PushNotificationsManager {
    * Utility delay function
    */
   private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
 
@@ -660,7 +649,7 @@ export class PushNotificationsManager {
  * Create push notifications manager instance
  */
 export function createPushNotificationsManager(
-  config: PushNotificationConfig
+  config: PushNotificationConfig,
 ): PushNotificationsManager {
   return new PushNotificationsManager(config);
 }
@@ -670,57 +659,57 @@ export function createPushNotificationsManager(
  */
 export const defaultNotificationTemplates: Record<NotificationCategory, NotificationTemplate> = {
   [NotificationCategory.APPOINTMENT]: {
-    id: 'appointment_reminder',
+    id: "appointment_reminder",
     category: NotificationCategory.APPOINTMENT,
-    title: 'Lembrete de Consulta',
-    body: 'Você tem uma consulta agendada para {{time}} com {{doctor}}',
-    icon: 'appointment',
-    sound: 'default',
+    title: "Lembrete de Consulta",
+    body: "Você tem uma consulta agendada para {{time}} com {{doctor}}",
+    icon: "appointment",
+    sound: "default",
     priority: NotificationPriority.HIGH,
     data: {
-      type: 'appointment_reminder',
-      action: 'view_appointment'
-    }
+      type: "appointment_reminder",
+      action: "view_appointment",
+    },
   },
   [NotificationCategory.MEDICATION]: {
-    id: 'medication_reminder',
+    id: "medication_reminder",
     category: NotificationCategory.MEDICATION,
-    title: 'Hora do Medicamento',
-    body: 'Está na hora de tomar {{medication}}',
-    icon: 'medication',
-    sound: 'medication',
+    title: "Hora do Medicamento",
+    body: "Está na hora de tomar {{medication}}",
+    icon: "medication",
+    sound: "medication",
     priority: NotificationPriority.HIGH,
     data: {
-      type: 'medication_reminder',
-      action: 'mark_taken'
-    }
+      type: "medication_reminder",
+      action: "mark_taken",
+    },
   },
   [NotificationCategory.RESULTS]: {
-    id: 'results_available',
+    id: "results_available",
     category: NotificationCategory.RESULTS,
-    title: 'Resultados Disponíveis',
-    body: 'Seus resultados de exame estão prontos',
-    icon: 'results',
-    sound: 'default',
+    title: "Resultados Disponíveis",
+    body: "Seus resultados de exame estão prontos",
+    icon: "results",
+    sound: "default",
     priority: NotificationPriority.MEDIUM,
     data: {
-      type: 'results_available',
-      action: 'view_results'
-    }
+      type: "results_available",
+      action: "view_results",
+    },
   },
   [NotificationCategory.SYSTEM]: {
-    id: 'system_update',
+    id: "system_update",
     category: NotificationCategory.SYSTEM,
-    title: 'Atualização do Sistema',
-    body: '{{message}}',
-    icon: 'system',
-    sound: 'default',
+    title: "Atualização do Sistema",
+    body: "{{message}}",
+    icon: "system",
+    sound: "default",
     priority: NotificationPriority.LOW,
     data: {
-      type: 'system_update',
-      action: 'update_app'
-    }
-  }
+      type: "system_update",
+      action: "update_app",
+    },
+  },
 };
 
 export default PushNotificationsManager;

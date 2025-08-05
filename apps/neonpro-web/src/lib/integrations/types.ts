@@ -1,7 +1,7 @@
 /**
  * NeonPro - Third-party Integrations Framework
  * Types and interfaces for integration system
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  * @created 2025-01-27
@@ -25,7 +25,7 @@ export interface IntegrationConfig {
 }
 
 export interface IntegrationCredentials {
-  type: 'api_key' | 'oauth2' | 'basic_auth' | 'bearer_token' | 'custom';
+  type: "api_key" | "oauth2" | "basic_auth" | "bearer_token" | "custom";
   apiKey?: string;
   clientId?: string;
   clientSecret?: string;
@@ -40,7 +40,7 @@ export interface IntegrationCredentials {
 export interface IntegrationEndpoint {
   id: string;
   name: string;
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   url: string;
   headers?: Record<string, string>;
   timeout: number;
@@ -68,7 +68,7 @@ export interface RateLimitConfig {
 
 export interface RetryPolicy {
   maxRetries: number;
-  backoffStrategy: 'linear' | 'exponential' | 'fixed';
+  backoffStrategy: "linear" | "exponential" | "fixed";
   initialDelay: number;
   maxDelay: number;
   retryableErrors: string[];
@@ -76,28 +76,28 @@ export interface RetryPolicy {
 
 export interface MonitoringConfig {
   enabled: boolean;
-  logLevel: 'debug' | 'info' | 'warn' | 'error';
+  logLevel: "debug" | "info" | "warn" | "error";
   metricsEnabled: boolean;
   alertsEnabled: boolean;
   healthCheckInterval: number;
 }
 
 export enum IntegrationType {
-  ERP = 'erp',
-  CRM = 'crm',
-  PAYMENT = 'payment',
-  EMAIL = 'email',
-  SMS = 'sms',
-  CALENDAR = 'calendar',
-  STORAGE = 'storage',
-  ANALYTICS = 'analytics',
-  SOCIAL_MEDIA = 'social_media',
-  TELEMEDICINE = 'telemedicine',
-  LAB_SYSTEM = 'lab_system',
-  IMAGING = 'imaging',
-  PHARMACY = 'pharmacy',
-  INSURANCE = 'insurance',
-  CUSTOM = 'custom'
+  ERP = "erp",
+  CRM = "crm",
+  PAYMENT = "payment",
+  EMAIL = "email",
+  SMS = "sms",
+  CALENDAR = "calendar",
+  STORAGE = "storage",
+  ANALYTICS = "analytics",
+  SOCIAL_MEDIA = "social_media",
+  TELEMEDICINE = "telemedicine",
+  LAB_SYSTEM = "lab_system",
+  IMAGING = "imaging",
+  PHARMACY = "pharmacy",
+  INSURANCE = "insurance",
+  CUSTOM = "custom",
 }
 
 export interface IntegrationRequest {
@@ -115,7 +115,7 @@ export interface IntegrationRequest {
 export interface IntegrationResponse {
   id: string;
   requestId: string;
-  status: 'success' | 'error' | 'timeout' | 'rate_limited';
+  status: "success" | "error" | "timeout" | "rate_limited";
   statusCode: number;
   headers: Record<string, string>;
   body?: any;
@@ -127,7 +127,7 @@ export interface IntegrationResponse {
 export interface IntegrationLog {
   id: string;
   integrationId: string;
-  level: 'debug' | 'info' | 'warn' | 'error';
+  level: "debug" | "info" | "warn" | "error";
   message: string;
   metadata?: Record<string, any>;
   timestamp: Date;
@@ -143,16 +143,16 @@ export interface IntegrationMetrics {
   errorRate: number;
   lastRequestAt?: Date;
   uptime: number;
-  period: 'hour' | 'day' | 'week' | 'month';
+  period: "hour" | "day" | "week" | "month";
   timestamp: Date;
 }
 
 export interface SyncOperation {
   id: string;
   integrationId: string;
-  type: 'import' | 'export' | 'sync';
+  type: "import" | "export" | "sync";
   entity: string;
-  status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
+  status: "pending" | "running" | "completed" | "failed" | "cancelled";
   progress: number;
   totalRecords: number;
   processedRecords: number;
@@ -169,7 +169,7 @@ export interface IntegrationEvent {
   integrationId: string;
   type: string;
   data: any;
-  source: 'internal' | 'external';
+  source: "internal" | "external";
   timestamp: Date;
   processed: boolean;
   retryCount: number;
@@ -178,7 +178,7 @@ export interface IntegrationEvent {
 
 export interface IntegrationHealth {
   integrationId: string;
-  status: 'healthy' | 'degraded' | 'unhealthy' | 'unknown';
+  status: "healthy" | "degraded" | "unhealthy" | "unknown";
   lastCheck: Date;
   responseTime: number;
   errorRate: number;
@@ -266,14 +266,14 @@ export interface IntegrationQueue {
 
 export interface IntegrationJob {
   id: string;
-  type: 'request' | 'sync' | 'webhook' | 'cleanup';
+  type: "request" | "sync" | "webhook" | "cleanup";
   integrationId: string;
   payload: any;
   priority: number;
   attempts: number;
   maxAttempts: number;
   delay: number;
-  status: 'pending' | 'processing' | 'completed' | 'failed';
+  status: "pending" | "processing" | "completed" | "failed";
   createdAt: Date;
   processedAt?: Date;
   error?: string;
@@ -360,7 +360,7 @@ export interface ScheduledJob {
   id: string;
   name: string;
   integrationId: string;
-  type: 'sync' | 'health_check' | 'cleanup' | 'custom';
+  type: "sync" | "health_check" | "cleanup" | "custom";
   schedule: string; // cron expression
   payload: any;
   enabled: boolean;

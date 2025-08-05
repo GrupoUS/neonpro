@@ -1,39 +1,45 @@
-'use client';
+"use client";
 
 /**
  * Story 11.3: Consumption Analytics Component
  * Advanced consumption analytics and cost control interface
  */
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Icons } from '@/components/ui/icons';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type { Icons } from "@/components/ui/icons";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { 
+} from "@/components/ui/select";
+import type {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { 
+} from "@/components/ui/table";
+import type {
   ConsumptionAnalyzer,
   type ConsumptionAnalytics,
   type ConsumptionForecast,
-  type EfficiencyOpportunity
-} from '@/lib/inventory';
-import { useToast } from '@/hooks/use-toast';
+  type EfficiencyOpportunity,
+} from "@/lib/inventory";
+import type { useToast } from "@/hooks/use-toast";
 
 interface ConsumptionAnalyticsProps {
   onRefresh: () => void;
@@ -44,7 +50,7 @@ interface AnalyticsFilters {
   centroCustoId: string;
   dataInicio: string;
   dataFim: string;
-  periodo: 'week' | 'month' | 'quarter' | 'year';
+  periodo: "week" | "month" | "quarter" | "year";
 }
 
 export function ConsumptionAnalytics({ onRefresh, className }: ConsumptionAnalyticsProps) {
@@ -54,10 +60,10 @@ export function ConsumptionAnalytics({ onRefresh, className }: ConsumptionAnalyt
   const [isLoading, setIsLoading] = useState(true);
   const [isGeneratingRecommendations, setIsGeneratingRecommendations] = useState(false);
   const [filters, setFilters] = useState<AnalyticsFilters>({
-    centroCustoId: 'cc001',
-    dataInicio: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    dataFim: new Date().toISOString().split('T')[0],
-    periodo: 'month'
+    centroCustoId: "cc001",
+    dataInicio: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+    dataFim: new Date().toISOString().split("T")[0],
+    periodo: "month",
   });
   const { toast } = useToast();
 
@@ -75,11 +81,12 @@ export function ConsumptionAnalytics({ onRefresh, className }: ConsumptionAnalyt
       const endDate = new Date(filters.dataFim);
 
       // Get consumption analytics
-      const { data: analyticsData, error: analyticsError } = await consumptionAnalyzer.getConsumptionAnalytics(
-        filters.centroCustoId,
-        startDate,
-        endDate
-      );
+      const { data: analyticsData, error: analyticsError } =
+        await consumptionAnalyzer.getConsumptionAnalytics(
+          filters.centroCustoId,
+          startDate,
+          endDate,
+        );
 
       if (analyticsError) {
         throw new Error(analyticsError);
@@ -88,24 +95,21 @@ export function ConsumptionAnalytics({ onRefresh, className }: ConsumptionAnalyt
       setAnalytics(analyticsData);
 
       // Get consumption forecasts
-      const { data: forecastData, error: forecastError } = await consumptionAnalyzer.getConsumptionForecast(
-        filters.centroCustoId,
-        undefined,
-        30
-      );
+      const { data: forecastData, error: forecastError } =
+        await consumptionAnalyzer.getConsumptionForecast(filters.centroCustoId, undefined, 30);
 
       if (forecastError) {
-        console.warn('Forecast error:', forecastError);
+        console.warn("Forecast error:", forecastError);
       } else {
         setForecasts(forecastData || []);
       }
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao carregar dados de analytics';
+      const errorMessage =
+        error instanceof Error ? error.message : "Erro ao carregar dados de analytics";
       toast({
-        title: 'Erro',
+        title: "Erro",
         description: errorMessage,
-        variant: 'destructive',
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -119,11 +123,12 @@ export function ConsumptionAnalytics({ onRefresh, className }: ConsumptionAnalyt
       const startDate = new Date(filters.dataInicio);
       const endDate = new Date(filters.dataFim);
 
-      const { data: recommendationsData, error } = await consumptionAnalyzer.generateCostOptimizationRecommendations(
-        filters.centroCustoId,
-        startDate,
-        endDate
-      );
+      const { data: recommendationsData, error } =
+        await consumptionAnalyzer.generateCostOptimizationRecommendations(
+          filters.centroCustoId,
+          startDate,
+          endDate,
+        );
 
       if (error) {
         throw new Error(error);
@@ -132,16 +137,15 @@ export function ConsumptionAnalytics({ onRefresh, className }: ConsumptionAnalyt
       setOpportunities(recommendationsData || []);
 
       toast({
-        title: 'Sucesso',
+        title: "Sucesso",
         description: `${recommendationsData?.length || 0} oportunidades de otimização identificadas`,
       });
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao gerar recomendações';
+      const errorMessage = error instanceof Error ? error.message : "Erro ao gerar recomendações";
       toast({
-        title: 'Erro',
+        title: "Erro",
         description: errorMessage,
-        variant: 'destructive',
+        variant: "destructive",
       });
     } finally {
       setIsGeneratingRecommendations(false);
@@ -149,30 +153,33 @@ export function ConsumptionAnalytics({ onRefresh, className }: ConsumptionAnalyt
   };
 
   const handleFilterChange = (field: keyof AnalyticsFilters, value: string) => {
-    setFilters(prev => ({ ...prev, [field]: value }));
+    setFilters((prev) => ({ ...prev, [field]: value }));
   };
 
   const getComplexityColor = (complexity: string) => {
     const colors = {
-      'baixa': 'bg-green-100 text-green-800',
-      'media': 'bg-yellow-100 text-yellow-800',
-      'alta': 'bg-red-100 text-red-800'
+      baixa: "bg-green-100 text-green-800",
+      media: "bg-yellow-100 text-yellow-800",
+      alta: "bg-red-100 text-red-800",
     };
-    return colors[complexity as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return colors[complexity as keyof typeof colors] || "bg-gray-100 text-gray-800";
   };
 
   const getTrendIcon = (trend: string) => {
     switch (trend) {
-      case 'crescente': return <Icons.TrendingUp className="h-4 w-4 text-green-500" />;
-      case 'decrescente': return <Icons.TrendingDown className="h-4 w-4 text-red-500" />;
-      default: return <Icons.Minus className="h-4 w-4 text-gray-500" />;
+      case "crescente":
+        return <Icons.TrendingUp className="h-4 w-4 text-green-500" />;
+      case "decrescente":
+        return <Icons.TrendingDown className="h-4 w-4 text-red-500" />;
+      default:
+        return <Icons.Minus className="h-4 w-4 text-gray-500" />;
     }
   };
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(value);
   };
 
@@ -189,7 +196,7 @@ export function ConsumptionAnalytics({ onRefresh, className }: ConsumptionAnalyt
             <p className="text-muted-foreground">Análise e controle de custos</p>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {[1, 2].map((i) => (
             <Card key={i}>
@@ -209,16 +216,14 @@ export function ConsumptionAnalytics({ onRefresh, className }: ConsumptionAnalyt
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">Analytics de Consumo</h2>
-          <p className="text-muted-foreground">
-            Análise avançada de consumo e controle de custos
-          </p>
+          <p className="text-muted-foreground">Análise avançada de consumo e controle de custos</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={loadAnalyticsData}>
             <Icons.RefreshCw className="w-4 h-4 mr-2" />
             Atualizar
           </Button>
-          <Button 
+          <Button
             onClick={generateOptimizationRecommendations}
             disabled={isGeneratingRecommendations}
           >
@@ -246,9 +251,9 @@ export function ConsumptionAnalytics({ onRefresh, className }: ConsumptionAnalyt
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="space-y-2">
               <Label>Centro de Custo</Label>
-              <Select 
-                value={filters.centroCustoId} 
-                onValueChange={(value) => handleFilterChange('centroCustoId', value)}
+              <Select
+                value={filters.centroCustoId}
+                onValueChange={(value) => handleFilterChange("centroCustoId", value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione" />
@@ -267,7 +272,7 @@ export function ConsumptionAnalytics({ onRefresh, className }: ConsumptionAnalyt
               <Input
                 type="date"
                 value={filters.dataInicio}
-                onChange={(e) => handleFilterChange('dataInicio', e.target.value)}
+                onChange={(e) => handleFilterChange("dataInicio", e.target.value)}
               />
             </div>
 
@@ -276,15 +281,15 @@ export function ConsumptionAnalytics({ onRefresh, className }: ConsumptionAnalyt
               <Input
                 type="date"
                 value={filters.dataFim}
-                onChange={(e) => handleFilterChange('dataFim', e.target.value)}
+                onChange={(e) => handleFilterChange("dataFim", e.target.value)}
               />
             </div>
 
             <div className="space-y-2">
               <Label>Período</Label>
-              <Select 
-                value={filters.periodo} 
-                onValueChange={(value) => handleFilterChange('periodo', value as any)}
+              <Select
+                value={filters.periodo}
+                onValueChange={(value) => handleFilterChange("periodo", value as any)}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -433,18 +438,20 @@ export function ConsumptionAnalytics({ onRefresh, className }: ConsumptionAnalyt
               <Icons.TrendingUp className="h-5 w-5" />
               Tendências de Consumo
             </CardTitle>
-            <CardDescription>
-              Evolução do consumo ao longo do tempo
-            </CardDescription>
+            <CardDescription>Evolução do consumo ao longo do tempo</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {analytics.tendencias.map((trend, index) => (
-                <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-4 border rounded-lg"
+                >
                   <div>
                     <h4 className="font-medium">{trend.periodo}</h4>
                     <p className="text-sm text-muted-foreground">
-                      {formatCurrency(trend.valor_consumido)} • {trend.quantidade_consumida} unidades
+                      {formatCurrency(trend.valor_consumido)} • {trend.quantidade_consumida}{" "}
+                      unidades
                     </p>
                   </div>
                   <div className="text-right">
@@ -454,15 +461,15 @@ export function ConsumptionAnalytics({ onRefresh, className }: ConsumptionAnalyt
                       ) : (
                         <Icons.TrendingDown className="h-4 w-4 text-red-500" />
                       )}
-                      <span className={`text-sm font-medium ${
-                        trend.variacao_valor >= 0 ? 'text-green-600' : 'text-red-600'
-                      }`}>
+                      <span
+                        className={`text-sm font-medium ${
+                          trend.variacao_valor >= 0 ? "text-green-600" : "text-red-600"
+                        }`}
+                      >
                         {formatPercentage(Math.abs(trend.variacao_valor))}
                       </span>
                     </div>
-                    <Badge variant="secondary">
-                      Score: {trend.eficiencia_score}
-                    </Badge>
+                    <Badge variant="secondary">Score: {trend.eficiencia_score}</Badge>
                   </div>
                 </div>
               ))}
@@ -494,9 +501,7 @@ export function ConsumptionAnalytics({ onRefresh, className }: ConsumptionAnalyt
                         <Badge className={getComplexityColor(opportunity.complexidade)}>
                           {opportunity.complexidade} complexidade
                         </Badge>
-                        <Badge variant="outline">
-                          {opportunity.prazo_implementacao} dias
-                        </Badge>
+                        <Badge variant="outline">{opportunity.prazo_implementacao} dias</Badge>
                       </div>
                       <p className="text-sm text-muted-foreground">
                         Impacto: {opportunity.impacto_operacional}
@@ -509,7 +514,7 @@ export function ConsumptionAnalytics({ onRefresh, className }: ConsumptionAnalyt
                       <p className="text-sm text-muted-foreground">Economia estimada</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex justify-end">
                     <Button size="sm" variant="outline">
                       <Icons.ArrowRight className="w-4 h-4 mr-1" />
@@ -531,9 +536,7 @@ export function ConsumptionAnalytics({ onRefresh, className }: ConsumptionAnalyt
               <Icons.Crystal className="h-5 w-5" />
               Previsão de Consumo
             </CardTitle>
-            <CardDescription>
-              Previsões de consumo para os próximos 30 dias
-            </CardDescription>
+            <CardDescription>Previsões de consumo para os próximos 30 dias</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -554,7 +557,7 @@ export function ConsumptionAnalytics({ onRefresh, className }: ConsumptionAnalyt
                     <TableCell>{forecast.previsao_quantidade.toFixed(0)}</TableCell>
                     <TableCell>{formatCurrency(forecast.previsao_valor)}</TableCell>
                     <TableCell>
-                      <Badge variant={forecast.confianca_previsao >= 75 ? 'default' : 'secondary'}>
+                      <Badge variant={forecast.confianca_previsao >= 75 ? "default" : "secondary"}>
                         {forecast.confianca_previsao}%
                       </Badge>
                     </TableCell>
@@ -565,7 +568,9 @@ export function ConsumptionAnalytics({ onRefresh, className }: ConsumptionAnalyt
                         em {forecast.recomendacao_compra.prazo_compra_ideal} dias
                       </span>
                     </TableCell>
-                    <TableCell>{formatCurrency(forecast.recomendacao_compra.economia_esperada)}</TableCell>
+                    <TableCell>
+                      {formatCurrency(forecast.recomendacao_compra.economia_esperada)}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -582,14 +587,12 @@ export function ConsumptionAnalytics({ onRefresh, className }: ConsumptionAnalyt
               <Icons.AlertTriangle className="h-5 w-5" />
               Alertas de Consumo
             </CardTitle>
-            <CardDescription>
-              Alertas e anomalias detectadas no consumo
-            </CardDescription>
+            <CardDescription>Alertas e anomalias detectadas no consumo</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               {analytics.alertas.map((alert) => (
-                <div 
+                <div
                   key={alert.id}
                   className="flex items-center justify-between p-3 border rounded-lg"
                 >
@@ -601,7 +604,7 @@ export function ConsumptionAnalytics({ onRefresh, className }: ConsumptionAnalyt
                     </div>
                   </div>
                   <div className="text-right">
-                    <Badge variant={alert.gravidade === 'alta' ? 'destructive' : 'secondary'}>
+                    <Badge variant={alert.gravidade === "alta" ? "destructive" : "secondary"}>
                       {alert.gravidade}
                     </Badge>
                     <p className="text-sm text-muted-foreground mt-1">

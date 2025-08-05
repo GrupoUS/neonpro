@@ -1,10 +1,10 @@
 "use client";
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -12,38 +12,25 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Progress } from "@/components/ui/progress";
-import {
+import type { Progress } from "@/components/ui/progress";
+import type {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  DuplicateMatch,
-  duplicateDetectionSystem,
-} from "@/lib/patients/duplicate-detection";
-import {
-  AlertTriangle,
-  BarChart3,
-  CheckCircle,
-  Eye,
-  GitMerge,
-  Users,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+import type { DuplicateMatch, duplicateDetectionSystem } from "@/lib/patients/duplicate-detection";
+import type { AlertTriangle, BarChart3, CheckCircle, Eye, GitMerge, Users } from "lucide-react";
+import type { useEffect, useState } from "react";
 
 interface DuplicateManagerProps {
   onMergeComplete?: (result: any) => void;
 }
 
-export default function DuplicateManager({
-  onMergeComplete,
-}: DuplicateManagerProps) {
+export default function DuplicateManager({ onMergeComplete }: DuplicateManagerProps) {
   const [duplicates, setDuplicates] = useState<DuplicateMatch[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedDuplicate, setSelectedDuplicate] =
-    useState<DuplicateMatch | null>(null);
+  const [selectedDuplicate, setSelectedDuplicate] = useState<DuplicateMatch | null>(null);
   const [compareDialogOpen, setCompareDialogOpen] = useState(false);
   const [mergeDialogOpen, setMergeDialogOpen] = useState(false);
   const [fieldComparisons, setFieldComparisons] = useState<any[]>([]);
@@ -71,7 +58,7 @@ export default function DuplicateManager({
       setSelectedDuplicate(duplicate);
       const comparisons = await duplicateDetectionSystem.comparePatients(
         duplicate.primaryPatientId,
-        duplicate.duplicatePatientId
+        duplicate.duplicatePatientId,
       );
       setFieldComparisons(comparisons);
       setCompareDialogOpen(true);
@@ -83,10 +70,7 @@ export default function DuplicateManager({
   const handleConfirmDuplicate = async (duplicate: DuplicateMatch) => {
     try {
       setProcessing(true);
-      await duplicateDetectionSystem.confirmDuplicate(
-        duplicate.id,
-        "current_user"
-      );
+      await duplicateDetectionSystem.confirmDuplicate(duplicate.id, "current_user");
       await loadDuplicates();
     } catch (error) {
       console.error("Erro ao confirmar duplicata:", error);
@@ -101,7 +85,7 @@ export default function DuplicateManager({
       await duplicateDetectionSystem.rejectDuplicate(
         duplicate.id,
         "current_user",
-        "Não são o mesmo paciente"
+        "Não são o mesmo paciente",
       );
       await loadDuplicates();
     } catch (error) {
@@ -123,7 +107,7 @@ export default function DuplicateManager({
           appointments: "combine",
           documents: "combine",
           financialData: "keep_primary",
-        }
+        },
       );
       setMergePreview(preview);
       setMergeDialogOpen(true);
@@ -147,7 +131,7 @@ export default function DuplicateManager({
           documents: "combine",
           financialData: "keep_primary",
         },
-        "current_user"
+        "current_user",
       );
 
       setMergeDialogOpen(false);
@@ -182,9 +166,7 @@ export default function DuplicateManager({
   };
 
   const pendingDuplicates = duplicates.filter((d) => d.status === "pending");
-  const confirmedDuplicates = duplicates.filter(
-    (d) => d.status === "confirmed"
-  );
+  const confirmedDuplicates = duplicates.filter((d) => d.status === "confirmed");
 
   if (loading) {
     return (
@@ -220,9 +202,7 @@ export default function DuplicateManager({
             <div className="flex items-center">
               <CheckCircle className="h-4 w-4 text-red-500 mr-2" />
               <div>
-                <p className="text-2xl font-bold">
-                  {confirmedDuplicates.length}
-                </p>
+                <p className="text-2xl font-bold">{confirmedDuplicates.length}</p>
                 <p className="text-sm text-muted-foreground">Confirmadas</p>
               </div>
             </div>
@@ -251,12 +231,9 @@ export default function DuplicateManager({
                 <p className="text-2xl font-bold">
                   {duplicates.length > 0
                     ? Math.round(
-                        (duplicates.reduce(
-                          (acc, d) => acc + d.confidenceScore,
-                          0
-                        ) /
+                        (duplicates.reduce((acc, d) => acc + d.confidenceScore, 0) /
                           duplicates.length) *
-                          100
+                          100,
                       )
                     : 0}
                   %
@@ -280,9 +257,7 @@ export default function DuplicateManager({
           {pendingDuplicates.length === 0 ? (
             <Alert>
               <CheckCircle className="h-4 w-4" />
-              <AlertDescription>
-                Nenhuma duplicata pendente encontrada!
-              </AlertDescription>
+              <AlertDescription>Nenhuma duplicata pendente encontrada!</AlertDescription>
             </Alert>
           ) : (
             <div className="space-y-4">
@@ -291,31 +266,21 @@ export default function DuplicateManager({
                   <div className="flex items-center justify-between">
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-medium">
-                          Possível Duplicata #{duplicate.id}
-                        </h3>
-                        <Badge
-                          variant={getConfidenceBadgeVariant(
-                            duplicate.confidenceScore
-                          )}
-                        >
+                        <h3 className="font-medium">Possível Duplicata #{duplicate.id}</h3>
+                        <Badge variant={getConfidenceBadgeVariant(duplicate.confidenceScore)}>
                           {Math.round(duplicate.confidenceScore * 100)}%
                         </Badge>
-                        <Badge
-                          variant={getStatusBadgeVariant(duplicate.status)}
-                        >
+                        <Badge variant={getStatusBadgeVariant(duplicate.status)}>
                           {duplicate.status}
                         </Badge>
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">
-                          Campos similares:{" "}
-                          {duplicate.matchingFields.join(", ")}
+                          Campos similares: {duplicate.matchingFields.join(", ")}
                         </p>
                         {duplicate.potentialIssues.length > 0 && (
                           <p className="text-sm text-yellow-600">
-                            Possíveis problemas:{" "}
-                            {duplicate.potentialIssues.join(", ")}
+                            Possíveis problemas: {duplicate.potentialIssues.join(", ")}
                           </p>
                         )}
                       </div>
@@ -407,10 +372,7 @@ export default function DuplicateManager({
                   </div>
                 </div>
                 <div>
-                  <Progress
-                    value={comparison.similarity * 100}
-                    className="h-2"
-                  />
+                  <Progress value={comparison.similarity * 100} className="h-2" />
                   <p className="text-sm text-muted-foreground mt-1">
                     Similaridade: {Math.round(comparison.similarity * 100)}%
                   </p>
@@ -451,24 +413,13 @@ export default function DuplicateManager({
               </div>
 
               <div>
-                <h4 className="font-medium mb-2">
-                  Transferência de Dados Estimada
-                </h4>
+                <h4 className="font-medium mb-2">Transferência de Dados Estimada</h4>
                 <div className="grid grid-cols-2 gap-4">
+                  <div>Agendamentos: {mergePreview.estimatedDataTransfer.appointments}</div>
+                  <div>Documentos: {mergePreview.estimatedDataTransfer.documents}</div>
+                  <div>Registros Médicos: {mergePreview.estimatedDataTransfer.medicalRecords}</div>
                   <div>
-                    Agendamentos:{" "}
-                    {mergePreview.estimatedDataTransfer.appointments}
-                  </div>
-                  <div>
-                    Documentos: {mergePreview.estimatedDataTransfer.documents}
-                  </div>
-                  <div>
-                    Registros Médicos:{" "}
-                    {mergePreview.estimatedDataTransfer.medicalRecords}
-                  </div>
-                  <div>
-                    Dados Financeiros:{" "}
-                    {mergePreview.estimatedDataTransfer.financialRecords}
+                    Dados Financeiros: {mergePreview.estimatedDataTransfer.financialRecords}
                   </div>
                 </div>
               </div>
@@ -477,14 +428,12 @@ export default function DuplicateManager({
                 <div>
                   <h4 className="font-medium mb-2">Conflitos Potenciais</h4>
                   <div className="space-y-2">
-                    {mergePreview.potentialConflicts.map(
-                      (conflict: string, index: number) => (
-                        <div key={index} className="flex items-center">
-                          <AlertTriangle className="h-4 w-4 text-yellow-500 mr-2" />
-                          <span>{conflict}</span>
-                        </div>
-                      )
-                    )}
+                    {mergePreview.potentialConflicts.map((conflict: string, index: number) => (
+                      <div key={index} className="flex items-center">
+                        <AlertTriangle className="h-4 w-4 text-yellow-500 mr-2" />
+                        <span>{conflict}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
@@ -493,14 +442,12 @@ export default function DuplicateManager({
                 <div>
                   <h4 className="font-medium mb-2">Recomendações</h4>
                   <div className="space-y-2">
-                    {mergePreview.recommendations.map(
-                      (recommendation: string, index: number) => (
-                        <div key={index} className="flex items-center">
-                          <CheckCircle className="h-4 w-4 text-blue-500 mr-2" />
-                          <span>{recommendation}</span>
-                        </div>
-                      )
-                    )}
+                    {mergePreview.recommendations.map((recommendation: string, index: number) => (
+                      <div key={index} className="flex items-center">
+                        <CheckCircle className="h-4 w-4 text-blue-500 mr-2" />
+                        <span>{recommendation}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}

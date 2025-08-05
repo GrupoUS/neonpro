@@ -1,11 +1,11 @@
-import { useAccessibility } from '@/contexts/accessibility-context'
-import { cn } from '@/lib/utils'
-import React from 'react'
+import type { useAccessibility } from "@/contexts/accessibility-context";
+import type { cn } from "@/lib/utils";
+import React from "react";
 
 interface SkipLinkProps {
-  href: string
-  children: React.ReactNode
-  className?: string
+  href: string;
+  children: React.ReactNode;
+  className?: string;
 }
 
 export function SkipLink({ href, children, className }: SkipLinkProps) {
@@ -16,46 +16,46 @@ export function SkipLink({ href, children, className }: SkipLinkProps) {
         "skip-link",
         "absolute -top-10 left-6 z-50 bg-primary text-primary-foreground px-4 py-2 rounded-md font-medium",
         "focus:top-6 transition-[top] duration-300",
-        className
+        className,
       )}
     >
       {children}
     </a>
-  )
+  );
 }
 
 interface AccessibleButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link'
-  size?: 'default' | 'sm' | 'lg' | 'icon'
-  children: React.ReactNode
-  loading?: boolean
-  loadingText?: string
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+  size?: "default" | "sm" | "lg" | "icon";
+  children: React.ReactNode;
+  loading?: boolean;
+  loadingText?: string;
 }
 
 export function AccessibleButton({
-  variant = 'default',
-  size = 'default',
+  variant = "default",
+  size = "default",
   children,
   loading = false,
-  loadingText = 'Carregando...',
+  loadingText = "Carregando...",
   className,
   disabled,
   onClick,
   ...props
 }: AccessibleButtonProps) {
-  const { announceToScreenReader } = useAccessibility()
+  const { announceToScreenReader } = useAccessibility();
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (loading || disabled) return
-    
+    if (loading || disabled) return;
+
     if (onClick) {
-      onClick(e)
+      onClick(e);
       // Announce action for screen readers
-      if (props['aria-label']) {
-        announceToScreenReader(`${props['aria-label']} acionado`)
+      if (props["aria-label"]) {
+        announceToScreenReader(`${props["aria-label"]} acionado`);
       }
     }
-  }
+  };
 
   return (
     <button
@@ -64,18 +64,20 @@ export function AccessibleButton({
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
         "disabled:pointer-events-none disabled:opacity-50",
         {
-          'bg-primary text-primary-foreground hover:bg-primary/90': variant === 'default',
-          'bg-destructive text-destructive-foreground hover:bg-destructive/90': variant === 'destructive',
-          'border border-input bg-background hover:bg-accent hover:text-accent-foreground': variant === 'outline',
-          'bg-secondary text-secondary-foreground hover:bg-secondary/80': variant === 'secondary',
-          'hover:bg-accent hover:text-accent-foreground': variant === 'ghost',
-          'text-primary underline-offset-4 hover:underline': variant === 'link',
-          'h-10 px-4 py-2': size === 'default',
-          'h-9 rounded-md px-3': size === 'sm',
-          'h-11 rounded-md px-8': size === 'lg',
-          'h-10 w-10': size === 'icon'
+          "bg-primary text-primary-foreground hover:bg-primary/90": variant === "default",
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90":
+            variant === "destructive",
+          "border border-input bg-background hover:bg-accent hover:text-accent-foreground":
+            variant === "outline",
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80": variant === "secondary",
+          "hover:bg-accent hover:text-accent-foreground": variant === "ghost",
+          "text-primary underline-offset-4 hover:underline": variant === "link",
+          "h-10 px-4 py-2": size === "default",
+          "h-9 rounded-md px-3": size === "sm",
+          "h-11 rounded-md px-8": size === "lg",
+          "h-10 w-10": size === "icon",
         },
-        className
+        className,
       )}
       disabled={disabled || loading}
       onClick={handleClick}
@@ -92,14 +94,14 @@ export function AccessibleButton({
         children
       )}
     </button>
-  )
+  );
 }
 
 interface AccessibleInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label: string
-  description?: string
-  error?: string
-  required?: boolean
+  label: string;
+  description?: string;
+  error?: string;
+  required?: boolean;
 }
 
 export function AccessibleInput({
@@ -111,41 +113,34 @@ export function AccessibleInput({
   className,
   ...props
 }: AccessibleInputProps) {
-  const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`
-  const descriptionId = description ? `${inputId}-description` : undefined
-  const errorId = error ? `${inputId}-error` : undefined
+  const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
+  const descriptionId = description ? `${inputId}-description` : undefined;
+  const errorId = error ? `${inputId}-error` : undefined;
 
-  const describedBy = [descriptionId, errorId].filter(Boolean).join(' ')
+  const describedBy = [descriptionId, errorId].filter(Boolean).join(" ");
 
   return (
     <div className="form-field">
-      <label 
-        htmlFor={inputId} 
-        className={cn("form-label", { required })}
-      >
+      <label htmlFor={inputId} className={cn("form-label", { required })}>
         {label}
         {required && <span className="sr-only"> (obrigatório)</span>}
       </label>
-      
+
       {description && (
         <p id={descriptionId} className="form-description">
           {description}
         </p>
       )}
-      
+
       <input
         id={inputId}
         aria-describedby={describedBy || undefined}
         aria-invalid={!!error}
         aria-required={required}
-        className={cn(
-          "form-input",
-          { error: !!error },
-          className
-        )}
+        className={cn("form-input", { error: !!error }, className)}
         {...props}
       />
-      
+
       {error && (
         <p id={errorId} className="form-error" role="alert">
           <span aria-hidden="true">⚠️</span>
@@ -153,16 +148,16 @@ export function AccessibleInput({
         </p>
       )}
     </div>
-  )
+  );
 }
 
 interface AccessibleSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
-  label: string
-  description?: string
-  error?: string
-  required?: boolean
-  options: Array<{ value: string; label: string }>
-  placeholder?: string
+  label: string;
+  description?: string;
+  error?: string;
+  required?: boolean;
+  options: Array<{ value: string; label: string }>;
+  placeholder?: string;
 }
 
 export function AccessibleSelect({
@@ -171,43 +166,36 @@ export function AccessibleSelect({
   error,
   required = false,
   options,
-  placeholder = 'Selecione uma opção',
+  placeholder = "Selecione uma opção",
   id,
   className,
   ...props
 }: AccessibleSelectProps) {
-  const selectId = id || `select-${Math.random().toString(36).substr(2, 9)}`
-  const descriptionId = description ? `${selectId}-description` : undefined
-  const errorId = error ? `${selectId}-error` : undefined
+  const selectId = id || `select-${Math.random().toString(36).substr(2, 9)}`;
+  const descriptionId = description ? `${selectId}-description` : undefined;
+  const errorId = error ? `${selectId}-error` : undefined;
 
-  const describedBy = [descriptionId, errorId].filter(Boolean).join(' ')
+  const describedBy = [descriptionId, errorId].filter(Boolean).join(" ");
 
   return (
     <div className="form-field">
-      <label 
-        htmlFor={selectId} 
-        className={cn("form-label", { required })}
-      >
+      <label htmlFor={selectId} className={cn("form-label", { required })}>
         {label}
         {required && <span className="sr-only"> (obrigatório)</span>}
       </label>
-      
+
       {description && (
         <p id={descriptionId} className="form-description">
           {description}
         </p>
       )}
-      
+
       <select
         id={selectId}
         aria-describedby={describedBy || undefined}
         aria-invalid={!!error}
         aria-required={required}
-        className={cn(
-          "form-input",
-          { error: !!error },
-          className
-        )}
+        className={cn("form-input", { error: !!error }, className)}
         {...props}
       >
         <option value="" disabled>
@@ -219,7 +207,7 @@ export function AccessibleSelect({
           </option>
         ))}
       </select>
-      
+
       {error && (
         <p id={errorId} className="form-error" role="alert">
           <span aria-hidden="true">⚠️</span>
@@ -227,21 +215,21 @@ export function AccessibleSelect({
         </p>
       )}
     </div>
-  )
+  );
 }
 
 interface LiveRegionProps {
-  children: React.ReactNode
-  politeness?: 'polite' | 'assertive' | 'off'
-  atomic?: boolean
-  className?: string
+  children: React.ReactNode;
+  politeness?: "polite" | "assertive" | "off";
+  atomic?: boolean;
+  className?: string;
 }
 
 export function LiveRegion({
   children,
-  politeness = 'polite',
+  politeness = "polite",
   atomic = true,
-  className
+  className,
 }: LiveRegionProps) {
   return (
     <div
@@ -252,40 +240,40 @@ export function LiveRegion({
     >
       {children}
     </div>
-  )
+  );
 }
 
 interface FocusTrapProps {
-  children: React.ReactNode
-  active?: boolean
-  className?: string
+  children: React.ReactNode;
+  active?: boolean;
+  className?: string;
 }
 
 export function FocusTrap({ children, active = true, className }: FocusTrapProps) {
-  const containerRef = React.useRef<HTMLDivElement>(null)
-  const { trapFocus } = useAccessibility()
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const { trapFocus } = useAccessibility();
 
   React.useEffect(() => {
-    if (!active || !containerRef.current) return
+    if (!active || !containerRef.current) return;
 
-    const cleanup = trapFocus(containerRef.current)
-    return cleanup
-  }, [active, trapFocus])
+    const cleanup = trapFocus(containerRef.current);
+    return cleanup;
+  }, [active, trapFocus]);
 
   return (
     <div ref={containerRef} className={className}>
       {children}
     </div>
-  )
+  );
 }
 
 interface DialogProps {
-  open: boolean
-  onClose: () => void
-  title: string
-  description?: string
-  children: React.ReactNode
-  className?: string
+  open: boolean;
+  onClose: () => void;
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+  className?: string;
 }
 
 export function AccessibleDialog({
@@ -294,27 +282,27 @@ export function AccessibleDialog({
   title,
   description,
   children,
-  className
+  className,
 }: DialogProps) {
-  const { announceToScreenReader } = useAccessibility()
-  const titleId = `dialog-title-${Math.random().toString(36).substr(2, 9)}`
-  const descriptionId = description ? `dialog-description-${titleId}` : undefined
+  const { announceToScreenReader } = useAccessibility();
+  const titleId = `dialog-title-${Math.random().toString(36).substr(2, 9)}`;
+  const descriptionId = description ? `dialog-description-${titleId}` : undefined;
 
   React.useEffect(() => {
     if (open) {
-      announceToScreenReader(`Diálogo aberto: ${title}`, 'assertive')
+      announceToScreenReader(`Diálogo aberto: ${title}`, "assertive");
       // Prevent body scroll
-      document.body.style.overflow = 'hidden'
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset'
+      document.body.style.overflow = "unset";
     }
 
     return () => {
-      document.body.style.overflow = 'unset'
-    }
-  }, [open, title, announceToScreenReader])
+      document.body.style.overflow = "unset";
+    };
+  }, [open, title, announceToScreenReader]);
 
-  if (!open) return null
+  if (!open) return null;
 
   return (
     <div className="dialog-overlay" onClick={onClose}>
@@ -335,20 +323,20 @@ export function AccessibleDialog({
           >
             ×
           </button>
-          
+
           <h2 id={titleId} className="dialog-title">
             {title}
           </h2>
-          
+
           {description && (
             <p id={descriptionId} className="text-muted-foreground mb-4">
               {description}
             </p>
           )}
-          
+
           {children}
         </div>
       </FocusTrap>
     </div>
-  )
+  );
 }

@@ -7,64 +7,64 @@
 
 // Core reporting enums and constants
 export const REPORT_TYPES = {
-  PROFIT_LOSS: 'profit_loss',
-  BALANCE_SHEET: 'balance_sheet', 
-  CASH_FLOW: 'cash_flow',
-  REVENUE_ANALYSIS: 'revenue_analysis',
-  EXPENSE_ANALYSIS: 'expense_analysis',
-  EXECUTIVE_SUMMARY: 'executive_summary',
-  SERVICE_PROFITABILITY: 'service_profitability',
-  PROVIDER_PERFORMANCE: 'provider_performance'
+  PROFIT_LOSS: "profit_loss",
+  BALANCE_SHEET: "balance_sheet",
+  CASH_FLOW: "cash_flow",
+  REVENUE_ANALYSIS: "revenue_analysis",
+  EXPENSE_ANALYSIS: "expense_analysis",
+  EXECUTIVE_SUMMARY: "executive_summary",
+  SERVICE_PROFITABILITY: "service_profitability",
+  PROVIDER_PERFORMANCE: "provider_performance",
 } as const;
 
 export const REPORT_FORMATS = {
-  PDF: 'pdf',
-  EXCEL: 'excel', 
-  CSV: 'csv',
-  JSON: 'json'
+  PDF: "pdf",
+  EXCEL: "excel",
+  CSV: "csv",
+  JSON: "json",
 } as const;
 
 export const REPORT_STATUS = {
-  GENERATING: 'generating',
-  GENERATED: 'generated',
-  FAILED: 'failed',
-  ARCHIVED: 'archived'
+  GENERATING: "generating",
+  GENERATED: "generated",
+  FAILED: "failed",
+  ARCHIVED: "archived",
 } as const;
 
 export const KPI_UNIT_TYPES = {
-  CURRENCY: 'currency',
-  PERCENTAGE: 'percentage',
-  NUMBER: 'number',
-  RATIO: 'ratio'
+  CURRENCY: "currency",
+  PERCENTAGE: "percentage",
+  NUMBER: "number",
+  RATIO: "ratio",
 } as const;
 
 export const PERIOD_TYPES = {
-  DAILY: 'daily',
-  WEEKLY: 'weekly',
-  MONTHLY: 'monthly',
-  QUARTERLY: 'quarterly',
-  YEARLY: 'yearly'
+  DAILY: "daily",
+  WEEKLY: "weekly",
+  MONTHLY: "monthly",
+  QUARTERLY: "quarterly",
+  YEARLY: "yearly",
 } as const;
 
 export const ALERT_STATUS = {
-  NORMAL: 'normal',
-  WARNING: 'warning', 
-  CRITICAL: 'critical'
+  NORMAL: "normal",
+  WARNING: "warning",
+  CRITICAL: "critical",
 } as const;
 
 export const FREQUENCY_TYPES = {
-  DAILY: 'daily',
-  WEEKLY: 'weekly',
-  MONTHLY: 'monthly',
-  QUARTERLY: 'quarterly'
+  DAILY: "daily",
+  WEEKLY: "weekly",
+  MONTHLY: "monthly",
+  QUARTERLY: "quarterly",
 } as const;
 
 export const DASHBOARD_REFRESH_INTERVALS = {
-  REAL_TIME: 5000,      // 5 seconds
-  FREQUENT: 30000,      // 30 seconds  
-  NORMAL: 60000,        // 1 minute
-  SLOW: 300000,         // 5 minutes
-  MANUAL: 0             // No auto refresh
+  REAL_TIME: 5000, // 5 seconds
+  FREQUENT: 30000, // 30 seconds
+  NORMAL: 60000, // 1 minute
+  SLOW: 300000, // 5 minutes
+  MANUAL: 0, // No auto refresh
 } as const;
 
 // Base financial report interface
@@ -192,7 +192,7 @@ export interface BudgetItem {
   id: string;
   budget_plan_id: string;
   category_name: string;
-  category_type: 'revenue' | 'expense';
+  category_type: "revenue" | "expense";
   budgeted_amount: number;
   actual_amount: number;
   variance_amount: number;
@@ -383,7 +383,7 @@ export interface KPICalculation {
   period_end: string;
   variance_from_target?: number;
   variance_from_previous?: number;
-  trend_direction: 'up' | 'down' | 'stable';
+  trend_direction: "up" | "down" | "stable";
   alert_status: keyof typeof ALERT_STATUS;
 }
 
@@ -440,7 +440,7 @@ export interface FinancialDashboardData {
   cash_flow_summary: {
     current_cash: number;
     cash_flow_this_month: number;
-    cash_flow_trend: 'positive' | 'negative' | 'stable';
+    cash_flow_trend: "positive" | "negative" | "stable";
     projected_cash_next_month: number;
   };
   alerts: Array<{
@@ -455,7 +455,7 @@ export interface FinancialDashboardData {
     clinic_value: number;
     benchmark_value: number;
     variance_percentage: number;
-    performance_rating: 'above' | 'at' | 'below';
+    performance_rating: "above" | "at" | "below";
   }>;
 }
 
@@ -542,19 +542,19 @@ export type FinancialReportingTypes = {
 export const FINANCIAL_CONSTANTS = {
   BRAZILIAN_TAX_RATES: {
     ISS: 0.05, // 5% typical ISS rate
-    PIS: 0.0165, // 1.65% PIS rate  
+    PIS: 0.0165, // 1.65% PIS rate
     COFINS: 0.076, // 7.6% COFINS rate
     IRPJ: 0.15, // 15% IRPJ base rate
-    CSLL: 0.09 // 9% CSLL rate
+    CSLL: 0.09, // 9% CSLL rate
   },
   CURRENCY: {
-    DEFAULT: 'BRL',
-    SYMBOL: 'R$',
-    DECIMAL_PLACES: 2
+    DEFAULT: "BRL",
+    SYMBOL: "R$",
+    DECIMAL_PLACES: 2,
   },
   PERFORMANCE_THRESHOLDS: {
     DASHBOARD_LOAD_TIME_MS: 1000, // <1s load time requirement
     REPORT_GENERATION_TIME_MS: 3000, // <3s for standard reports
-    REAL_TIME_UPDATE_INTERVAL_MS: 30000 // 30s real-time updates
-  }
+    REAL_TIME_UPDATE_INTERVAL_MS: 30000, // 30s real-time updates
+  },
 } as const;

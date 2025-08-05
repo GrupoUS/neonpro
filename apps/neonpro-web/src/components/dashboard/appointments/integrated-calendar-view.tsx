@@ -4,24 +4,40 @@
 // Research-based implementation with react-big-calendar + alternative slots
 // =============================================
 
-'use client';
+"use client";
 
-import React, { useState, useCallback, useMemo } from 'react';
-import { Calendar, dayjsLocalizer, View, NavigateAction } from 'react-big-calendar';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar as CalendarIcon, Clock, Star, Zap, TrendingUp } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
+import React, { useState, useCallback, useMemo } from "react";
+import type { Calendar, dayjsLocalizer, View, NavigateAction } from "react-big-calendar";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Button } from "@/components/ui/button";
+import type { Badge } from "@/components/ui/badge";
+import type {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Calendar as CalendarIcon, Clock, Star, Zap, TrendingUp } from "lucide-react";
+import type { cn } from "@/lib/utils";
+import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 
 // Import our enhanced alternative slots system
-import { useAlternativeSlots, AlternativeSlot, AlternativeSlotsRequest } from '@/hooks/appointments/use-alternative-slots';
-import AlternativeSlotsDisplay from './alternative-slots-display';
+import type {
+  useAlternativeSlots,
+  AlternativeSlot,
+  AlternativeSlotsRequest,
+} from "@/hooks/appointments/use-alternative-slots";
+import AlternativeSlotsDisplay from "./alternative-slots-display";
 
 // Initialize dayjs plugins for performance (research-based)
 dayjs.extend(duration);
@@ -54,7 +70,7 @@ interface EnhancedSlotInfo {
   start: Date;
   end: Date;
   slots: Date[];
-  action: 'select' | 'click' | 'doubleClick';
+  action: "select" | "click" | "doubleClick";
   resourceId?: string;
   bounds?: {
     x: number;
@@ -67,22 +83,23 @@ interface EnhancedSlotInfo {
   // Research-based enhancements
   suggested?: boolean;
   alternativeScore?: number;
-}interface IntegratedCalendarViewProps {
+}
+interface IntegratedCalendarViewProps {
   // Core calendar props
   events: CalendarEvent[];
   onEventClick?: (event: CalendarEvent) => void;
   onSlotSelect?: (slotInfo: EnhancedSlotInfo) => void;
   view?: View;
   date?: Date;
-  
+
   // Professional and service context
   selectedProfessionalId?: string;
   selectedServiceId?: string;
-  
+
   // Alternative slots integration
   enableAlternativeSlots?: boolean;
   conflictDetection?: boolean;
-  
+
   // Research-based UI enhancements
   showPerformanceMetrics?: boolean;
   mobileOptimized?: boolean;
@@ -93,7 +110,7 @@ export default function IntegratedCalendarView({
   events,
   onEventClick,
   onSlotSelect,
-  view = 'week',
+  view = "week",
   date = new Date(),
   selectedProfessionalId,
   selectedServiceId,
@@ -115,106 +132,129 @@ export default function IntegratedCalendarView({
 
   // Performance-optimized event processing (research-based)
   const processedEvents = useMemo(() => {
-    return events.map(event => ({
+    return events.map((event) => ({
       ...event,
       // Enhanced rendering for alternative slots
-      style: event.isAlternativeSlot ? {
-        backgroundColor: '#10b981', // Green for alternatives
-        borderColor: '#059669',
-        opacity: 0.8,
-      } : undefined,
+      style: event.isAlternativeSlot
+        ? {
+            backgroundColor: "#10b981", // Green for alternatives
+            borderColor: "#059669",
+            opacity: 0.8,
+          }
+        : undefined,
     }));
   }, [events]);
 
   // Conflict detection with real-time validation
-  const detectConflict = useCallback((slotInfo: EnhancedSlotInfo): CalendarEvent | null => {
-    if (!conflictDetection) return null;
-    
-    const { start, end } = slotInfo;
-    
-    return events.find(event => {
-      const eventStart = dayjs(event.start);
-      const eventEnd = dayjs(event.end);
-      const slotStart = dayjs(start);
-      const slotEnd = dayjs(end);
-      
-      // Check for overlap using dayjs optimization
-      return (slotStart.isBefore(eventEnd) && slotEnd.isAfter(eventStart)) ||
-             (slotStart.isSameOrAfter(eventStart) && slotStart.isBefore(eventEnd)) ||
-             (slotEnd.isAfter(eventStart) && slotEnd.isSameOrBefore(eventEnd));
-    }) || null;
-  }, [events, conflictDetection]);  // Enhanced slot selection with conflict handling
-  const handleSlotSelect = useCallback(async (slotInfo: any) => {
-    const enhancedSlotInfo: EnhancedSlotInfo = {
-      ...slotInfo,
-      suggested: false,
-      alternativeScore: 0,
-    };
+  const detectConflict = useCallback(
+    (slotInfo: EnhancedSlotInfo): CalendarEvent | null => {
+      if (!conflictDetection) return null;
 
-    // Detect conflicts immediately
-    const conflict = detectConflict(enhancedSlotInfo);
-    
-    if (conflict) {
-      // Handle conflict - show alternative suggestions
-      setConflictingEvent(conflict);
-      setSelectedSlot(enhancedSlotInfo);
-      
-      if (enableAlternativeSlots && selectedProfessionalId && selectedServiceId) {
-        // Request alternative slots using our enhanced system
-        const alternativeRequest: AlternativeSlotsRequest = {
-          professional_id: selectedProfessionalId,
-          service_type_id: selectedServiceId,
-          preferred_start_time: dayjs(slotInfo.start).format('YYYY-MM-DD HH:mm:ss'),
-          duration_minutes: dayjs(slotInfo.end).diff(dayjs(slotInfo.start), 'minutes'),
-          search_window_days: 7,
-          max_suggestions: 5,
-        };
-        
-        await alternativeSlots.getSuggestions(alternativeRequest);
-        setShowAlternativesDialog(true);
+      const { start, end } = slotInfo;
+
+      return (
+        events.find((event) => {
+          const eventStart = dayjs(event.start);
+          const eventEnd = dayjs(event.end);
+          const slotStart = dayjs(start);
+          const slotEnd = dayjs(end);
+
+          // Check for overlap using dayjs optimization
+          return (
+            (slotStart.isBefore(eventEnd) && slotEnd.isAfter(eventStart)) ||
+            (slotStart.isSameOrAfter(eventStart) && slotStart.isBefore(eventEnd)) ||
+            (slotEnd.isAfter(eventStart) && slotEnd.isSameOrBefore(eventEnd))
+          );
+        }) || null
+      );
+    },
+    [events, conflictDetection],
+  ); // Enhanced slot selection with conflict handling
+  const handleSlotSelect = useCallback(
+    async (slotInfo: any) => {
+      const enhancedSlotInfo: EnhancedSlotInfo = {
+        ...slotInfo,
+        suggested: false,
+        alternativeScore: 0,
+      };
+
+      // Detect conflicts immediately
+      const conflict = detectConflict(enhancedSlotInfo);
+
+      if (conflict) {
+        // Handle conflict - show alternative suggestions
+        setConflictingEvent(conflict);
+        setSelectedSlot(enhancedSlotInfo);
+
+        if (enableAlternativeSlots && selectedProfessionalId && selectedServiceId) {
+          // Request alternative slots using our enhanced system
+          const alternativeRequest: AlternativeSlotsRequest = {
+            professional_id: selectedProfessionalId,
+            service_type_id: selectedServiceId,
+            preferred_start_time: dayjs(slotInfo.start).format("YYYY-MM-DD HH:mm:ss"),
+            duration_minutes: dayjs(slotInfo.end).diff(dayjs(slotInfo.start), "minutes"),
+            search_window_days: 7,
+            max_suggestions: 5,
+          };
+
+          await alternativeSlots.getSuggestions(alternativeRequest);
+          setShowAlternativesDialog(true);
+        }
+      } else {
+        // No conflict - proceed with selection
+        setSelectedSlot(enhancedSlotInfo);
+        onSlotSelect?.(enhancedSlotInfo);
       }
-    } else {
-      // No conflict - proceed with selection
-      setSelectedSlot(enhancedSlotInfo);
-      onSlotSelect?.(enhancedSlotInfo);
-    }
-  }, [detectConflict, enableAlternativeSlots, selectedProfessionalId, selectedServiceId, alternativeSlots, onSlotSelect]);
+    },
+    [
+      detectConflict,
+      enableAlternativeSlots,
+      selectedProfessionalId,
+      selectedServiceId,
+      alternativeSlots,
+      onSlotSelect,
+    ],
+  );
 
   // Enhanced event styling with research-based visual indicators
-  const eventStyleGetter = useCallback((event: CalendarEvent) => {
-    let backgroundColor = '#3174ad'; // Default blue
-    let borderColor = '#265985';
-    const color = 'white';
-    
-    if (event.isAlternativeSlot) {
-      // Alternative slot styling (research-based colors)
-      backgroundColor = event.alternativeScore && event.alternativeScore > 80 ? '#10b981' : '#f59e0b';
-      borderColor = event.alternativeScore && event.alternativeScore > 80 ? '#059669' : '#d97706';
-    }
-    
-    if (event.resource?.professionalId === selectedProfessionalId) {
-      // Highlight selected professional's events
-      backgroundColor = '#8b5cf6';
-      borderColor = '#7c3aed';
-    }
-    
-    return {
-      style: {
-        backgroundColor,
-        borderColor,
-        color,
-        border: `2px solid ${borderColor}`,
-        borderRadius: '6px',
-        fontSize: '0.875rem',
-        fontWeight: '500',
+  const eventStyleGetter = useCallback(
+    (event: CalendarEvent) => {
+      let backgroundColor = "#3174ad"; // Default blue
+      let borderColor = "#265985";
+      const color = "white";
+
+      if (event.isAlternativeSlot) {
+        // Alternative slot styling (research-based colors)
+        backgroundColor =
+          event.alternativeScore && event.alternativeScore > 80 ? "#10b981" : "#f59e0b";
+        borderColor = event.alternativeScore && event.alternativeScore > 80 ? "#059669" : "#d97706";
       }
-    };
-  }, [selectedProfessionalId]);
+
+      if (event.resource?.professionalId === selectedProfessionalId) {
+        // Highlight selected professional's events
+        backgroundColor = "#8b5cf6";
+        borderColor = "#7c3aed";
+      }
+
+      return {
+        style: {
+          backgroundColor,
+          borderColor,
+          color,
+          border: `2px solid ${borderColor}`,
+          borderRadius: "6px",
+          fontSize: "0.875rem",
+          fontWeight: "500",
+        },
+      };
+    },
+    [selectedProfessionalId],
+  );
 
   // Research-based mobile optimization
   const mobileProps = useMemo(() => {
     if (!mobileOptimized) return {};
-    
+
     return {
       popup: true,
       popupOffset: { x: 10, y: 10 },
@@ -225,23 +265,24 @@ export default function IntegratedCalendarView({
   }, [mobileOptimized]);
 
   // Custom components for enhanced UX
-  const components = useMemo(() => ({
-    // Custom event component with alternative slot indicators
-    event: ({ event }: { event: CalendarEvent }) => (
-      <div className="flex items-center gap-1 truncate">
-        {event.isAlternativeSlot && (
-          <Star className="h-3 w-3 text-yellow-400 flex-shrink-0" />
-        )}
-        <span className="truncate text-sm">{event.title}</span>
-        {event.alternativeScore && event.alternativeScore > 80 && (
-          <Zap className="h-3 w-3 text-green-400 flex-shrink-0" />
-        )}
-      </div>
-    ),
-  }), []);
+  const components = useMemo(
+    () => ({
+      // Custom event component with alternative slot indicators
+      event: ({ event }: { event: CalendarEvent }) => (
+        <div className="flex items-center gap-1 truncate">
+          {event.isAlternativeSlot && <Star className="h-3 w-3 text-yellow-400 flex-shrink-0" />}
+          <span className="truncate text-sm">{event.title}</span>
+          {event.alternativeScore && event.alternativeScore > 80 && (
+            <Zap className="h-3 w-3 text-green-400 flex-shrink-0" />
+          )}
+        </div>
+      ),
+    }),
+    [],
+  );
 
   return (
-    <div className={cn('space-y-4', className)}>
+    <div className={cn("space-y-4", className)}>
       {/* Performance metrics display (research-based) */}
       {showPerformanceMetrics && alternativeSlots.performanceMetrics && (
         <Card className="border-blue-200 bg-blue-50/30">
@@ -255,7 +296,9 @@ export default function IntegratedCalendarView({
             <div className="grid grid-cols-3 gap-4 text-sm">
               <div>
                 <p className="text-muted-foreground">Load Time</p>
-                <p className="font-medium">{alternativeSlots.performanceMetrics.searchTime.toFixed(0)}ms</p>
+                <p className="font-medium">
+                  {alternativeSlots.performanceMetrics.searchTime.toFixed(0)}ms
+                </p>
               </div>
               <div>
                 <p className="text-muted-foreground">Algorithm Efficiency</p>
@@ -270,7 +313,8 @@ export default function IntegratedCalendarView({
             </div>
           </CardContent>
         </Card>
-      )}      {/* Main Calendar with Enhanced Integration */}
+      )}{" "}
+      {/* Main Calendar with Enhanced Integration */}
       <Card className="overflow-hidden">
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2">
@@ -306,28 +350,28 @@ export default function IntegratedCalendarView({
               popup
               step={15}
               timeslots={4}
-              min={dayjs().hour(6).minute(0).toDate()}  // 6:00 AM
+              min={dayjs().hour(6).minute(0).toDate()} // 6:00 AM
               max={dayjs().hour(22).minute(0).toDate()} // 10:00 PM
               formats={{
-                timeGutterFormat: 'HH:mm',
-                eventTimeRangeFormat: ({ start, end }) => 
-                  `${dayjs(start).format('HH:mm')} - ${dayjs(end).format('HH:mm')}`,
-                agendaTimeFormat: 'HH:mm',
-                agendaDateFormat: 'DD/MM/YYYY',
+                timeGutterFormat: "HH:mm",
+                eventTimeRangeFormat: ({ start, end }) =>
+                  `${dayjs(start).format("HH:mm")} - ${dayjs(end).format("HH:mm")}`,
+                agendaTimeFormat: "HH:mm",
+                agendaDateFormat: "DD/MM/YYYY",
               }}
               messages={{
-                allDay: 'Dia Todo',
-                previous: 'Anterior',
-                next: 'Próximo',
-                today: 'Hoje',
-                month: 'Mês',
-                week: 'Semana', 
-                day: 'Dia',
-                agenda: 'Agenda',
-                date: 'Data',
-                time: 'Hora',
-                event: 'Agendamento',
-                noEventsInRange: 'Nenhum agendamento neste período.',
+                allDay: "Dia Todo",
+                previous: "Anterior",
+                next: "Próximo",
+                today: "Hoje",
+                month: "Mês",
+                week: "Semana",
+                day: "Dia",
+                agenda: "Agenda",
+                date: "Data",
+                time: "Hora",
+                event: "Agendamento",
+                noEventsInRange: "Nenhum agendamento neste período.",
                 showMore: (total) => `+${total} mais`,
               }}
               {...mobileProps}
@@ -335,7 +379,6 @@ export default function IntegratedCalendarView({
           </div>
         </CardContent>
       </Card>
-
       {/* Alternative Slots Dialog with Enhanced Integration */}
       <Dialog open={showAlternativesDialog} onOpenChange={setShowAlternativesDialog}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -345,13 +388,13 @@ export default function IntegratedCalendarView({
               Conflito Detectado - Horários Alternativos
             </DialogTitle>
           </DialogHeader>
-          
+
           <Tabs defaultValue="alternatives" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="conflict">Detalhes do Conflito</TabsTrigger>
               <TabsTrigger value="alternatives">Sugestões Alternativas</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="conflict" className="space-y-4">
               {conflictingEvent && (
                 <Card className="border-red-200 bg-red-50/50">
@@ -367,8 +410,8 @@ export default function IntegratedCalendarView({
                       <div className="flex items-center gap-2">
                         <Clock className="h-4 w-4 text-red-600" />
                         <span>
-                          {dayjs(conflictingEvent.start).format('DD/MM/YYYY HH:mm')} - 
-                          {dayjs(conflictingEvent.end).format('HH:mm')}
+                          {dayjs(conflictingEvent.start).format("DD/MM/YYYY HH:mm")} -
+                          {dayjs(conflictingEvent.end).format("HH:mm")}
                         </span>
                       </div>
                       {conflictingEvent.resource && (
@@ -387,7 +430,7 @@ export default function IntegratedCalendarView({
                   </CardContent>
                 </Card>
               )}
-              
+
               {selectedSlot && (
                 <Card className="border-blue-200 bg-blue-50/50">
                   <CardHeader>
@@ -397,15 +440,15 @@ export default function IntegratedCalendarView({
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4 text-blue-600" />
                       <span>
-                        {dayjs(selectedSlot.start).format('DD/MM/YYYY HH:mm')} - 
-                        {dayjs(selectedSlot.end).format('HH:mm')}
+                        {dayjs(selectedSlot.start).format("DD/MM/YYYY HH:mm")} -
+                        {dayjs(selectedSlot.end).format("HH:mm")}
                       </span>
                     </div>
                   </CardContent>
                 </Card>
               )}
             </TabsContent>
-            
+
             <TabsContent value="alternatives">
               <AlternativeSlotsDisplay
                 alternativeSlots={alternativeSlots}
@@ -420,7 +463,7 @@ export default function IntegratedCalendarView({
                     alternativeScore: slot.score,
                     alternativeReasons: slot.reasons,
                   };
-                  
+
                   onEventClick?.(alternativeEvent);
                   setShowAlternativesDialog(false);
                 }}
@@ -430,21 +473,20 @@ export default function IntegratedCalendarView({
               />
             </TabsContent>
           </Tabs>
-          
+
           <div className="flex justify-end gap-2 pt-4 border-t">
-            <Button 
-              variant="outline" 
-              onClick={() => setShowAlternativesDialog(false)}
-            >
+            <Button variant="outline" onClick={() => setShowAlternativesDialog(false)}>
               Cancelar
             </Button>
-            <Button onClick={() => {
-              // Handle force booking despite conflict
-              if (selectedSlot) {
-                onSlotSelect?.(selectedSlot);
-                setShowAlternativesDialog(false);
-              }
-            }}>
+            <Button
+              onClick={() => {
+                // Handle force booking despite conflict
+                if (selectedSlot) {
+                  onSlotSelect?.(selectedSlot);
+                  setShowAlternativesDialog(false);
+                }
+              }}
+            >
               Forçar Agendamento
             </Button>
           </div>

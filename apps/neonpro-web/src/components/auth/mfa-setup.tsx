@@ -1,9 +1,9 @@
 /**
  * Multi-Factor Authentication Setup Component
- * 
+ *
  * Comprehensive MFA setup interface for NeonPro Healthcare Platform
  * with TOTP, SMS, backup codes, and healthcare compliance features.
- * 
+ *
  * Features:
  * - TOTP setup with QR code display
  * - SMS verification setup
@@ -13,35 +13,45 @@
  * - Multi-language support (PT/EN)
  * - Device trust management
  * - Progressive setup flow
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Development Team
  */
 
-'use client';
+"use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { QRCodeSVG } from 'qrcode.react';
-import { Eye, EyeOff, Smartphone, Shield, AlertTriangle, CheckCircle, Copy, Download } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Progress } from '@/components/ui/progress';
-import { toast } from '@/components/ui/use-toast';
-import { useMFA } from '@/hooks/use-mfa';
-import { 
-  MFASetupProps, 
-  MFASetupResult, 
-  MFAMethodType,
-  MFAError 
-} from '@/types/auth';
-import { cn } from '@/lib/utils';
+import React, { useState, useEffect, useCallback } from "react";
+import type { QRCodeSVG } from "qrcode.react";
+import type {
+  Eye,
+  EyeOff,
+  Smartphone,
+  Shield,
+  AlertTriangle,
+  CheckCircle,
+  Copy,
+  Download,
+} from "lucide-react";
+import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Badge } from "@/components/ui/badge";
+import type { Separator } from "@/components/ui/separator";
+import type { Progress } from "@/components/ui/progress";
+import type { toast } from "@/components/ui/use-toast";
+import type { useMFA } from "@/hooks/use-mfa";
+import type { MFASetupProps, MFASetupResult, MFAMethodType, MFAError } from "@/types/auth";
+import type { cn } from "@/lib/utils";
 
 // Setup step configuration
 interface SetupStep {
@@ -77,26 +87,26 @@ export function MFASetup({
   onSetupComplete,
   onSetupError,
   className,
-  theme = 'light',
-  locale = 'pt-BR',
+  theme = "light",
+  locale = "pt-BR",
 }: MFASetupProps) {
   // Translations
   const t = useTranslations(locale);
-  
+
   // MFA hook
   const { setupMFA, verifyMFA, isLoading, error } = useMFA({ userId });
 
   // Component state
   const [state, setState] = useState<MFASetupState>({
     currentStep: 0,
-    selectedMethod: 'totp',
-    deviceName: '',
-    phoneNumber: '',
-    qrCodeUri: '',
-    secret: '',
+    selectedMethod: "totp",
+    deviceName: "",
+    phoneNumber: "",
+    qrCodeUri: "",
+    secret: "",
     backupCodes: [],
-    recoveryToken: '',
-    verificationToken: '',
+    recoveryToken: "",
+    verificationToken: "",
     lgpdConsent: false,
     isVerifying: false,
     showSecret: false,
@@ -106,28 +116,28 @@ export function MFASetup({
   // Setup steps configuration
   const setupSteps: SetupStep[] = [
     {
-      id: 'method',
+      id: "method",
       title: t.steps.method.title,
       description: t.steps.method.description,
       isComplete: state.selectedMethod !== null,
       isActive: state.currentStep === 0,
     },
     {
-      id: 'configure',
+      id: "configure",
       title: t.steps.configure.title,
       description: t.steps.configure.description,
-      isComplete: state.qrCodeUri !== '' || state.phoneNumber !== '',
+      isComplete: state.qrCodeUri !== "" || state.phoneNumber !== "",
       isActive: state.currentStep === 1,
     },
     {
-      id: 'verify',
+      id: "verify",
       title: t.steps.verify.title,
       description: t.steps.verify.description,
       isComplete: false,
       isActive: state.currentStep === 2,
     },
     {
-      id: 'backup',
+      id: "backup",
       title: t.steps.backup.title,
       description: t.steps.backup.description,
       isComplete: state.backupCodes.length > 0,
@@ -139,28 +149,28 @@ export function MFASetup({
    * Handle method selection
    */
   const handleMethodSelect = useCallback((method: MFAMethodType) => {
-    setState(prev => ({ ...prev, selectedMethod: method }));
+    setState((prev) => ({ ...prev, selectedMethod: method }));
   }, []);
 
   /**
    * Handle device name change
    */
   const handleDeviceNameChange = useCallback((name: string) => {
-    setState(prev => ({ ...prev, deviceName: name }));
+    setState((prev) => ({ ...prev, deviceName: name }));
   }, []);
 
   /**
    * Handle phone number change
    */
   const handlePhoneNumberChange = useCallback((phone: string) => {
-    setState(prev => ({ ...prev, phoneNumber: phone }));
+    setState((prev) => ({ ...prev, phoneNumber: phone }));
   }, []);
 
   /**
    * Handle LGPD consent change
    */
   const handleLGPDConsentChange = useCallback((consent: boolean) => {
-    setState(prev => ({ ...prev, lgpdConsent: consent }));
+    setState((prev) => ({ ...prev, lgpdConsent: consent }));
   }, []);
 
   /**
@@ -171,7 +181,7 @@ export function MFASetup({
       toast({
         title: t.errors.lgpdRequired,
         description: t.errors.lgpdRequiredDescription,
-        variant: 'destructive',
+        variant: "destructive",
       });
       return;
     }
@@ -180,16 +190,16 @@ export function MFASetup({
       toast({
         title: t.errors.deviceNameRequired,
         description: t.errors.deviceNameRequiredDescription,
-        variant: 'destructive',
+        variant: "destructive",
       });
       return;
     }
 
-    if (state.selectedMethod === 'sms' && !state.phoneNumber.trim()) {
+    if (state.selectedMethod === "sms" && !state.phoneNumber.trim()) {
       toast({
         title: t.errors.phoneRequired,
         description: t.errors.phoneRequiredDescription,
-        variant: 'destructive',
+        variant: "destructive",
       });
       return;
     }
@@ -198,14 +208,14 @@ export function MFASetup({
       const result = await setupMFA({
         userId,
         method: state.selectedMethod,
-        phoneNumber: state.selectedMethod === 'sms' ? state.phoneNumber : undefined,
+        phoneNumber: state.selectedMethod === "sms" ? state.phoneNumber : undefined,
         deviceName: state.deviceName,
         lgpdConsent: state.lgpdConsent,
         userAgent: navigator.userAgent,
         ipAddress: await getUserIpAddress(),
       });
 
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         qrCodeUri: result.qrCodeUri,
         secret: result.secret,
@@ -218,15 +228,14 @@ export function MFASetup({
         title: t.success.setupInitiated,
         description: t.success.setupInitiatedDescription,
       });
-
     } catch (err) {
       const error = err instanceof MFAError ? err : new Error(t.errors.setupFailed);
       onSetupError(error);
-      
+
       toast({
         title: t.errors.setupFailed,
         description: error.message,
-        variant: 'destructive',
+        variant: "destructive",
       });
     }
   }, [
@@ -248,12 +257,12 @@ export function MFASetup({
       toast({
         title: t.errors.tokenRequired,
         description: t.errors.tokenRequiredDescription,
-        variant: 'destructive',
+        variant: "destructive",
       });
       return;
     }
 
-    setState(prev => ({ ...prev, isVerifying: true }));
+    setState((prev) => ({ ...prev, isVerifying: true }));
 
     try {
       const result = await verifyMFA({
@@ -265,8 +274,8 @@ export function MFASetup({
       });
 
       if (result.isValid) {
-        setState(prev => ({ ...prev, currentStep: 3 })); // Move to backup codes step
-        
+        setState((prev) => ({ ...prev, currentStep: 3 })); // Move to backup codes step
+
         toast({
           title: t.success.verificationSuccess,
           description: t.success.verificationSuccessDescription,
@@ -275,20 +284,19 @@ export function MFASetup({
         toast({
           title: t.errors.verificationFailed,
           description: t.errors.verificationFailedDescription,
-          variant: 'destructive',
+          variant: "destructive",
         });
       }
-
     } catch (err) {
       const error = err instanceof MFAError ? err : new Error(t.errors.verificationFailed);
-      
+
       toast({
         title: t.errors.verificationFailed,
         description: error.message,
-        variant: 'destructive',
+        variant: "destructive",
       });
     } finally {
-      setState(prev => ({ ...prev, isVerifying: false }));
+      setState((prev) => ({ ...prev, isVerifying: false }));
     }
   }, [state.verificationToken, state.selectedMethod, userId, verifyMFA, t]);
 
@@ -314,21 +322,24 @@ export function MFASetup({
   /**
    * Copy text to clipboard
    */
-  const copyToClipboard = useCallback(async (text: string, label: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      toast({
-        title: t.success.copied,
-        description: t.success.copiedDescription.replace('{item}', label),
-      });
-    } catch (err) {
-      toast({
-        title: t.errors.copyFailed,
-        description: t.errors.copyFailedDescription,
-        variant: 'destructive',
-      });
-    }
-  }, [t]);
+  const copyToClipboard = useCallback(
+    async (text: string, label: string) => {
+      try {
+        await navigator.clipboard.writeText(text);
+        toast({
+          title: t.success.copied,
+          description: t.success.copiedDescription.replace("{item}", label),
+        });
+      } catch (err) {
+        toast({
+          title: t.errors.copyFailed,
+          description: t.errors.copyFailedDescription,
+          variant: "destructive",
+        });
+      }
+    },
+    [t],
+  );
 
   /**
    * Download backup codes as text file
@@ -337,18 +348,18 @@ export function MFASetup({
     const content = [
       t.backupCodes.fileHeader,
       t.backupCodes.fileWarning,
-      '',
+      "",
       ...state.backupCodes.map((code, index) => `${index + 1}. ${code}`),
-      '',
+      "",
       t.backupCodes.fileFooter,
       `Generated: ${new Date().toLocaleString(locale)}`,
-    ].join('\n');
+    ].join("\n");
 
-    const blob = new Blob([content], { type: 'text/plain' });
+    const blob = new Blob([content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = `neonpro-backup-codes-${new Date().toISOString().split('T')[0]}.txt`;
+    a.download = `neonpro-backup-codes-${new Date().toISOString().split("T")[0]}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -361,21 +372,20 @@ export function MFASetup({
   }, [state.backupCodes, locale, t]);
 
   // Calculate setup progress
-  const progress = (state.currentStep + 1) / setupSteps.length * 100;  return (
-    <div className={cn('w-full max-w-2xl mx-auto', className)}>
+  const progress = ((state.currentStep + 1) / setupSteps.length) * 100;
+  return (
+    <div className={cn("w-full max-w-2xl mx-auto", className)}>
       {/* Progress Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {t.title}
-          </h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t.title}</h1>
           <Badge variant="outline" className="text-sm">
             {t.step} {state.currentStep + 1} {t.of} {setupSteps.length}
           </Badge>
         </div>
-        
+
         <Progress value={progress} className="mb-4" />
-        
+
         <p className="text-gray-600 dark:text-gray-400">
           {setupSteps[state.currentStep]?.description}
         </p>
@@ -421,9 +431,7 @@ export function MFASetup({
                         <Smartphone className="h-5 w-5" />
                         {t.methods.totp.title}
                       </CardTitle>
-                      <CardDescription>
-                        {t.methods.totp.description}
-                      </CardDescription>
+                      <CardDescription>{t.methods.totp.description}</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
@@ -447,17 +455,13 @@ export function MFASetup({
                         <Shield className="h-5 w-5" />
                         {t.methods.sms.title}
                       </CardTitle>
-                      <CardDescription>
-                        {t.methods.sms.description}
-                      </CardDescription>
+                      <CardDescription>{t.methods.sms.description}</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
                         <Alert>
                           <AlertTriangle className="h-4 w-4" />
-                          <AlertDescription>
-                            {t.methods.sms.warning}
-                          </AlertDescription>
+                          <AlertDescription>{t.methods.sms.warning}</AlertDescription>
                         </Alert>
                       </div>
                     </CardContent>
@@ -478,13 +482,11 @@ export function MFASetup({
                   onChange={(e) => handleDeviceNameChange(e.target.value)}
                   maxLength={50}
                 />
-                <p className="text-sm text-gray-500">
-                  {t.deviceName.help}
-                </p>
+                <p className="text-sm text-gray-500">{t.deviceName.help}</p>
               </div>
 
               {/* Phone Number Input (SMS only) */}
-              {state.selectedMethod === 'sms' && (
+              {state.selectedMethod === "sms" && (
                 <div className="space-y-2">
                   <Label htmlFor="phoneNumber">{t.phoneNumber.label}</Label>
                   <Input
@@ -494,9 +496,7 @@ export function MFASetup({
                     value={state.phoneNumber}
                     onChange={(e) => handlePhoneNumberChange(e.target.value)}
                   />
-                  <p className="text-sm text-gray-500">
-                    {t.phoneNumber.help}
-                  </p>
+                  <p className="text-sm text-gray-500">{t.phoneNumber.help}</p>
                 </div>
               )}
 
@@ -513,9 +513,7 @@ export function MFASetup({
                     <Label htmlFor="lgpdConsent" className="text-sm font-medium">
                       {t.lgpd.consent}
                     </Label>
-                    <p className="text-sm text-gray-500">
-                      {t.lgpd.description}
-                    </p>
+                    <p className="text-sm text-gray-500">{t.lgpd.description}</p>
                   </div>
                 </div>
               </div>
@@ -523,16 +521,18 @@ export function MFASetup({
               {/* Continue Button */}
               <div className="flex justify-end">
                 <Button
-                  onClick={() => setState(prev => ({ ...prev, currentStep: 1 }))}
-                  disabled={!state.deviceName.trim() || !state.lgpdConsent || 
-                           (state.selectedMethod === 'sms' && !state.phoneNumber.trim())}
+                  onClick={() => setState((prev) => ({ ...prev, currentStep: 1 }))}
+                  disabled={
+                    !state.deviceName.trim() ||
+                    !state.lgpdConsent ||
+                    (state.selectedMethod === "sms" && !state.phoneNumber.trim())
+                  }
                 >
                   {t.buttons.continue}
                 </Button>
               </div>
             </div>
           )}
-
           {/* Step 1: Configuration */}
           {state.currentStep === 1 && (
             <div className="space-y-6">
@@ -551,14 +551,16 @@ export function MFASetup({
                     <div className="flex justify-between">
                       <span>{t.configuration.method}:</span>
                       <Badge variant="outline">
-                        {state.selectedMethod === 'totp' ? t.methods.totp.title : t.methods.sms.title}
+                        {state.selectedMethod === "totp"
+                          ? t.methods.totp.title
+                          : t.methods.sms.title}
                       </Badge>
                     </div>
                     <div className="flex justify-between">
                       <span>{t.configuration.device}:</span>
                       <span className="font-medium">{state.deviceName}</span>
                     </div>
-                    {state.selectedMethod === 'sms' && (
+                    {state.selectedMethod === "sms" && (
                       <div className="flex justify-between">
                         <span>{t.configuration.phone}:</span>
                         <span className="font-medium">{state.phoneNumber}</span>
@@ -572,7 +574,7 @@ export function MFASetup({
               <div className="flex justify-between">
                 <Button
                   variant="outline"
-                  onClick={() => setState(prev => ({ ...prev, currentStep: 0 }))}
+                  onClick={() => setState((prev) => ({ ...prev, currentStep: 0 }))}
                 >
                   {t.buttons.back}
                 </Button>
@@ -582,7 +584,6 @@ export function MFASetup({
               </div>
             </div>
           )}
-
           {/* Step 2: Verification */}
           {state.currentStep === 2 && (
             <div className="space-y-6">
@@ -594,15 +595,13 @@ export function MFASetup({
               </div>
 
               {/* TOTP Setup */}
-              {state.selectedMethod === 'totp' && (
+              {state.selectedMethod === "totp" && (
                 <div className="space-y-6">
                   {/* QR Code */}
                   <Card>
                     <CardHeader>
                       <CardTitle>{t.verification.totp.qrTitle}</CardTitle>
-                      <CardDescription>
-                        {t.verification.totp.qrDescription}
-                      </CardDescription>
+                      <CardDescription>{t.verification.totp.qrDescription}</CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col items-center space-y-4">
                       {state.qrCodeUri && (
@@ -610,13 +609,13 @@ export function MFASetup({
                           <QRCodeSVG value={state.qrCodeUri} size={200} />
                         </div>
                       )}
-                      
+
                       {/* Manual Entry */}
                       <div className="w-full">
                         <Label>{t.verification.totp.manualEntry}</Label>
                         <div className="flex items-center space-x-2 mt-2">
                           <Input
-                            type={state.showSecret ? 'text' : 'password'}
+                            type={state.showSecret ? "text" : "password"}
                             value={state.secret}
                             readOnly
                             className="font-mono text-sm"
@@ -624,14 +623,22 @@ export function MFASetup({
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => setState(prev => ({ ...prev, showSecret: !prev.showSecret }))}
+                            onClick={() =>
+                              setState((prev) => ({ ...prev, showSecret: !prev.showSecret }))
+                            }
                           >
-                            {state.showSecret ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            {state.showSecret ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
                           </Button>
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => copyToClipboard(state.secret, t.verification.totp.secret)}
+                            onClick={() =>
+                              copyToClipboard(state.secret, t.verification.totp.secret)
+                            }
                           >
                             <Copy className="h-4 w-4" />
                           </Button>
@@ -643,11 +650,11 @@ export function MFASetup({
               )}
 
               {/* SMS Setup */}
-              {state.selectedMethod === 'sms' && (
+              {state.selectedMethod === "sms" && (
                 <Alert>
                   <Smartphone className="h-4 w-4" />
                   <AlertDescription>
-                    {t.verification.sms.sent.replace('{phone}', state.phoneNumber)}
+                    {t.verification.sms.sent.replace("{phone}", state.phoneNumber)}
                   </AlertDescription>
                 </Alert>
               )}
@@ -657,8 +664,8 @@ export function MFASetup({
                 <CardHeader>
                   <CardTitle>{t.verification.tokenTitle}</CardTitle>
                   <CardDescription>
-                    {state.selectedMethod === 'totp' 
-                      ? t.verification.tokenDescriptionTOTP 
+                    {state.selectedMethod === "totp"
+                      ? t.verification.tokenDescriptionTOTP
                       : t.verification.tokenDescriptionSMS}
                   </CardDescription>
                 </CardHeader>
@@ -671,24 +678,26 @@ export function MFASetup({
                         type="text"
                         placeholder="123456"
                         value={state.verificationToken}
-                        onChange={(e) => setState(prev => ({ 
-                          ...prev, 
-                          verificationToken: e.target.value.replace(/\D/g, '').slice(0, 6) 
-                        }))}
+                        onChange={(e) =>
+                          setState((prev) => ({
+                            ...prev,
+                            verificationToken: e.target.value.replace(/\D/g, "").slice(0, 6),
+                          }))
+                        }
                         maxLength={6}
                         className="text-center text-2xl font-mono"
                       />
                     </div>
-                    
+
                     <div className="flex justify-between">
                       <Button
                         variant="outline"
-                        onClick={() => setState(prev => ({ ...prev, currentStep: 1 }))}
+                        onClick={() => setState((prev) => ({ ...prev, currentStep: 1 }))}
                       >
                         {t.buttons.back}
                       </Button>
-                      <Button 
-                        onClick={verifyToken} 
+                      <Button
+                        onClick={verifyToken}
                         disabled={state.verificationToken.length !== 6 || state.isVerifying}
                       >
                         {state.isVerifying ? t.buttons.verifying : t.buttons.verify}
@@ -698,22 +707,19 @@ export function MFASetup({
                 </CardContent>
               </Card>
             </div>
-          )}          {/* Step 3: Backup Codes */}
+          )}{" "}
+          {/* Step 3: Backup Codes */}
           {state.currentStep === 3 && (
             <div className="space-y-6">
               <div>
                 <h3 className="text-lg font-semibold mb-4">{t.backupCodes.title}</h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  {t.backupCodes.description}
-                </p>
+                <p className="text-gray-600 dark:text-gray-400 mb-6">{t.backupCodes.description}</p>
               </div>
 
               {/* Important Warning */}
               <Alert variant="destructive">
                 <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>
-                  {t.backupCodes.warning}
-                </AlertDescription>
+                <AlertDescription>{t.backupCodes.warning}</AlertDescription>
               </Alert>
 
               {/* Backup Codes Display */}
@@ -725,32 +731,34 @@ export function MFASetup({
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => setState(prev => ({ ...prev, showBackupCodes: !prev.showBackupCodes }))}
+                        onClick={() =>
+                          setState((prev) => ({ ...prev, showBackupCodes: !prev.showBackupCodes }))
+                        }
                       >
-                        {state.showBackupCodes ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {state.showBackupCodes ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
                         {state.showBackupCodes ? t.buttons.hide : t.buttons.show}
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => copyToClipboard(state.backupCodes.join('\n'), t.backupCodes.title)}
+                        onClick={() =>
+                          copyToClipboard(state.backupCodes.join("\n"), t.backupCodes.title)
+                        }
                       >
                         <Copy className="h-4 w-4" />
                         {t.buttons.copy}
                       </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={downloadBackupCodes}
-                      >
+                      <Button variant="outline" size="sm" onClick={downloadBackupCodes}>
                         <Download className="h-4 w-4" />
                         {t.buttons.download}
                       </Button>
                     </div>
                   </div>
-                  <CardDescription>
-                    {t.backupCodes.codesDescription}
-                  </CardDescription>
+                  <CardDescription>{t.backupCodes.codesDescription}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {state.showBackupCodes ? (
@@ -764,7 +772,9 @@ export function MFASetup({
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => copyToClipboard(code, `${t.backupCodes.code} ${index + 1}`)}
+                            onClick={() =>
+                              copyToClipboard(code, `${t.backupCodes.code} ${index + 1}`)
+                            }
                           >
                             <Copy className="h-3 w-3" />
                           </Button>
@@ -784,9 +794,7 @@ export function MFASetup({
               <Card>
                 <CardHeader>
                   <CardTitle>{t.recoveryToken.title}</CardTitle>
-                  <CardDescription>
-                    {t.recoveryToken.description}
-                  </CardDescription>
+                  <CardDescription>{t.recoveryToken.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center space-x-2">
@@ -841,11 +849,15 @@ export function MFASetup({
               <div className="flex justify-between">
                 <Button
                   variant="outline"
-                  onClick={() => setState(prev => ({ ...prev, currentStep: 2 }))}
+                  onClick={() => setState((prev) => ({ ...prev, currentStep: 2 }))}
                 >
                   {t.buttons.back}
                 </Button>
-                <Button onClick={completeSetup} size="lg" className="bg-green-600 hover:bg-green-700">
+                <Button
+                  onClick={completeSetup}
+                  size="lg"
+                  className="bg-green-600 hover:bg-green-700"
+                >
                   <CheckCircle className="h-4 w-4 mr-2" />
                   {t.buttons.complete}
                 </Button>
@@ -863,9 +875,7 @@ export function MFASetup({
             <h4 className="font-medium text-blue-800 dark:text-blue-200 mb-1">
               {t.compliance.title}
             </h4>
-            <p className="text-blue-700 dark:text-blue-300">
-              {t.compliance.description}
-            </p>
+            <p className="text-blue-700 dark:text-blue-300">{t.compliance.description}</p>
           </div>
         </div>
       </div>
@@ -879,171 +889,175 @@ export function MFASetup({
 async function getUserIpAddress(): Promise<string> {
   try {
     // In production, this would call your backend to get the real IP
-    return '0.0.0.0';
+    return "0.0.0.0";
   } catch {
-    return '0.0.0.0';
+    return "0.0.0.0";
   }
 }
 
 /**
  * Translations hook (mock implementation)
  */
-function useTranslations(locale: 'pt-BR' | 'en-US') {
+function useTranslations(locale: "pt-BR" | "en-US") {
   const translations = {
-    'pt-BR': {
-      title: 'Configurar Autenticação Multifator',
-      step: 'Passo',
-      of: 'de',
+    "pt-BR": {
+      title: "Configurar Autenticação Multifator",
+      step: "Passo",
+      of: "de",
       steps: {
         method: {
-          title: 'Escolher Método',
-          description: 'Selecione seu método preferido de autenticação multifator.',
+          title: "Escolher Método",
+          description: "Selecione seu método preferido de autenticação multifator.",
         },
         configure: {
-          title: 'Configurar',
-          description: 'Configure seu método de MFA selecionado.',
+          title: "Configurar",
+          description: "Configure seu método de MFA selecionado.",
         },
         verify: {
-          title: 'Verificar',
-          description: 'Teste sua configuração com um código de verificação.',
+          title: "Verificar",
+          description: "Teste sua configuração com um código de verificação.",
         },
         backup: {
-          title: 'Códigos de Backup',
-          description: 'Salve seus códigos de recuperação em local seguro.',
+          title: "Códigos de Backup",
+          description: "Salve seus códigos de recuperação em local seguro.",
         },
       },
       methodSelection: {
-        title: 'Selecione o Método de Autenticação',
-        description: 'Escolha como você deseja receber seus códigos de verificação.',
+        title: "Selecione o Método de Autenticação",
+        description: "Escolha como você deseja receber seus códigos de verificação.",
       },
       methods: {
         totp: {
-          title: 'App Autenticador',
-          description: 'Use um aplicativo como Google Authenticator ou Authy.',
-          recommended: 'Recomendado para Profissionais de Saúde',
+          title: "App Autenticador",
+          description: "Use um aplicativo como Google Authenticator ou Authy.",
+          recommended: "Recomendado para Profissionais de Saúde",
           benefits: {
-            security: 'Maior segurança e privacidade',
-            offline: 'Funciona sem conexão com internet',
-            apps: 'Compatível com apps populares',
+            security: "Maior segurança e privacidade",
+            offline: "Funciona sem conexão com internet",
+            apps: "Compatível com apps populares",
           },
         },
         sms: {
-          title: 'SMS',
-          description: 'Receba códigos por mensagem de texto.',
-          warning: 'SMS é menos seguro que aplicativos autenticadores.',
+          title: "SMS",
+          description: "Receba códigos por mensagem de texto.",
+          warning: "SMS é menos seguro que aplicativos autenticadores.",
         },
       },
       deviceName: {
-        label: 'Nome do Dispositivo',
-        placeholder: 'Ex: iPhone do João, Computador do Consultório',
-        help: 'Este nome ajudará você a identificar este dispositivo.',
+        label: "Nome do Dispositivo",
+        placeholder: "Ex: iPhone do João, Computador do Consultório",
+        help: "Este nome ajudará você a identificar este dispositivo.",
       },
       phoneNumber: {
-        label: 'Número de Telefone',
-        placeholder: '+55 11 99999-9999',
-        help: 'Digite seu número completo com código do país.',
+        label: "Número de Telefone",
+        placeholder: "+55 11 99999-9999",
+        help: "Digite seu número completo com código do país.",
       },
       lgpd: {
-        consent: 'Concordo com o processamento dos meus dados para MFA',
-        description: 'Seus dados serão processados de acordo com a LGPD para fins de segurança médica.',
+        consent: "Concordo com o processamento dos meus dados para MFA",
+        description:
+          "Seus dados serão processados de acordo com a LGPD para fins de segurança médica.",
       },
       configuration: {
-        title: 'Confirmar Configuração',
-        description: 'Revise as configurações antes de prosseguir.',
-        summary: 'Resumo da Configuração',
-        method: 'Método',
-        device: 'Dispositivo',
-        phone: 'Telefone',
+        title: "Confirmar Configuração",
+        description: "Revise as configurações antes de prosseguir.",
+        summary: "Resumo da Configuração",
+        method: "Método",
+        device: "Dispositivo",
+        phone: "Telefone",
       },
       verification: {
-        title: 'Verificar Configuração',
-        description: 'Digite o código gerado para confirmar a configuração.',
-        tokenTitle: 'Digite o Código de Verificação',
-        tokenLabel: 'Código',
-        tokenDescriptionTOTP: 'Digite o código de 6 dígitos do seu app autenticador.',
-        tokenDescriptionSMS: 'Digite o código de 6 dígitos enviado por SMS.',
+        title: "Verificar Configuração",
+        description: "Digite o código gerado para confirmar a configuração.",
+        tokenTitle: "Digite o Código de Verificação",
+        tokenLabel: "Código",
+        tokenDescriptionTOTP: "Digite o código de 6 dígitos do seu app autenticador.",
+        tokenDescriptionSMS: "Digite o código de 6 dígitos enviado por SMS.",
         totp: {
-          qrTitle: 'Escaneie o Código QR',
-          qrDescription: 'Use seu app autenticador para escanear este código QR.',
-          manualEntry: 'Ou digite manualmente:',
-          secret: 'chave secreta',
+          qrTitle: "Escaneie o Código QR",
+          qrDescription: "Use seu app autenticador para escanear este código QR.",
+          manualEntry: "Ou digite manualmente:",
+          secret: "chave secreta",
         },
         sms: {
-          sent: 'Código SMS enviado para {phone}',
+          sent: "Código SMS enviado para {phone}",
         },
       },
       backupCodes: {
-        title: 'Códigos de Recuperação',
-        description: 'Use estes códigos se perder acesso ao seu método principal de MFA.',
-        warning: 'IMPORTANTE: Salve estes códigos em local seguro. Cada código só pode ser usado uma vez.',
-        codesTitle: 'Seus Códigos de Backup',
-        codesDescription: 'Cada código pode ser usado apenas uma vez para acessar sua conta.',
-        hidden: 'Códigos ocultos por segurança',
-        code: 'Código',
-        fileHeader: 'NeonPro Healthcare - Códigos de Recuperação MFA',
-        fileWarning: 'MANTENHA ESTES CÓDIGOS EM LOCAL SEGURO! Cada código só pode ser usado uma vez.',
-        fileFooter: 'Para suporte, entre em contato: suporte@neonpro.com.br',
+        title: "Códigos de Recuperação",
+        description: "Use estes códigos se perder acesso ao seu método principal de MFA.",
+        warning:
+          "IMPORTANTE: Salve estes códigos em local seguro. Cada código só pode ser usado uma vez.",
+        codesTitle: "Seus Códigos de Backup",
+        codesDescription: "Cada código pode ser usado apenas uma vez para acessar sua conta.",
+        hidden: "Códigos ocultos por segurança",
+        code: "Código",
+        fileHeader: "NeonPro Healthcare - Códigos de Recuperação MFA",
+        fileWarning:
+          "MANTENHA ESTES CÓDIGOS EM LOCAL SEGURO! Cada código só pode ser usado uma vez.",
+        fileFooter: "Para suporte, entre em contato: suporte@neonpro.com.br",
       },
       recoveryToken: {
-        title: 'Token de Recuperação Master',
-        description: 'Use este token para recuperar sua conta em emergências extremas.',
+        title: "Token de Recuperação Master",
+        description: "Use este token para recuperar sua conta em emergências extremas.",
       },
       securityChecklist: {
-        title: 'Lista de Segurança',
-        saved: 'Códigos salvos em local seguro',
-        secure: 'Armazenamento offline protegido',
-        offline: 'Cópia impressa em cofre',
-        tested: 'Configuração testada e funcionando',
+        title: "Lista de Segurança",
+        saved: "Códigos salvos em local seguro",
+        secure: "Armazenamento offline protegido",
+        offline: "Cópia impressa em cofre",
+        tested: "Configuração testada e funcionando",
       },
       compliance: {
-        title: 'Conformidade LGPD e Regulamentações de Saúde',
-        description: 'Esta configuração está em conformidade com LGPD, ANVISA e CFM para proteção de dados médicos.',
+        title: "Conformidade LGPD e Regulamentações de Saúde",
+        description:
+          "Esta configuração está em conformidade com LGPD, ANVISA e CFM para proteção de dados médicos.",
       },
       buttons: {
-        continue: 'Continuar',
-        back: 'Voltar',
-        setup: 'Configurar MFA',
-        setting_up: 'Configurando...',
-        verify: 'Verificar',
-        verifying: 'Verificando...',
-        complete: 'Concluir Configuração',
-        show: 'Mostrar',
-        hide: 'Ocultar',
-        copy: 'Copiar',
-        download: 'Baixar',
+        continue: "Continuar",
+        back: "Voltar",
+        setup: "Configurar MFA",
+        setting_up: "Configurando...",
+        verify: "Verificar",
+        verifying: "Verificando...",
+        complete: "Concluir Configuração",
+        show: "Mostrar",
+        hide: "Ocultar",
+        copy: "Copiar",
+        download: "Baixar",
       },
       success: {
-        setupInitiated: 'Configuração iniciada',
-        setupInitiatedDescription: 'MFA configurado com sucesso. Agora verifique com um código.',
-        verificationSuccess: 'Verificação bem-sucedida',
-        verificationSuccessDescription: 'Seu MFA foi verificado e está funcionando.',
-        setupComplete: 'MFA Configurado!',
-        setupCompleteDescription: 'Sua conta agora está protegida com autenticação multifator.',
-        copied: 'Copiado!',
-        copiedDescription: '{item} copiado para a área de transferência.',
-        downloaded: 'Download concluído',
-        downloadedDescription: 'Códigos de backup salvos em arquivo.',
+        setupInitiated: "Configuração iniciada",
+        setupInitiatedDescription: "MFA configurado com sucesso. Agora verifique com um código.",
+        verificationSuccess: "Verificação bem-sucedida",
+        verificationSuccessDescription: "Seu MFA foi verificado e está funcionando.",
+        setupComplete: "MFA Configurado!",
+        setupCompleteDescription: "Sua conta agora está protegida com autenticação multifator.",
+        copied: "Copiado!",
+        copiedDescription: "{item} copiado para a área de transferência.",
+        downloaded: "Download concluído",
+        downloadedDescription: "Códigos de backup salvos em arquivo.",
       },
       errors: {
-        lgpdRequired: 'Consentimento LGPD obrigatório',
-        lgpdRequiredDescription: 'Você deve concordar com o tratamento de dados para usar MFA.',
-        deviceNameRequired: 'Nome do dispositivo obrigatório',
-        deviceNameRequiredDescription: 'Digite um nome para identificar este dispositivo.',
-        phoneRequired: 'Telefone obrigatório',
-        phoneRequiredDescription: 'Digite seu número de telefone para SMS.',
-        setupFailed: 'Erro na configuração',
-        tokenRequired: 'Código obrigatório',
-        tokenRequiredDescription: 'Digite o código de 6 dígitos.',
-        verificationFailed: 'Verificação falhou',
-        verificationFailedDescription: 'Código inválido. Tente novamente.',
-        copyFailed: 'Erro ao copiar',
-        copyFailedDescription: 'Não foi possível copiar para área de transferência.',
+        lgpdRequired: "Consentimento LGPD obrigatório",
+        lgpdRequiredDescription: "Você deve concordar com o tratamento de dados para usar MFA.",
+        deviceNameRequired: "Nome do dispositivo obrigatório",
+        deviceNameRequiredDescription: "Digite um nome para identificar este dispositivo.",
+        phoneRequired: "Telefone obrigatório",
+        phoneRequiredDescription: "Digite seu número de telefone para SMS.",
+        setupFailed: "Erro na configuração",
+        tokenRequired: "Código obrigatório",
+        tokenRequiredDescription: "Digite o código de 6 dígitos.",
+        verificationFailed: "Verificação falhou",
+        verificationFailedDescription: "Código inválido. Tente novamente.",
+        copyFailed: "Erro ao copiar",
+        copyFailedDescription: "Não foi possível copiar para área de transferência.",
       },
     },
-    'en-US': {
+    "en-US": {
       // English translations would go here
       // For brevity, using Portuguese for now
-      ...{} as any,
+      ...({} as any),
     },
   };
 

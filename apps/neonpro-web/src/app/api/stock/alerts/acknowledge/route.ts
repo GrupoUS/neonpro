@@ -2,13 +2,10 @@
 // Implementation of Story 11.4: Alert Acknowledgment with Service Layer
 // Following Senior Developer patterns and audit trail
 
-import { NextRequest, NextResponse } from 'next/server'
-import { createStockAlertService } from '@/app/lib/services/stock-alert.service'
-import {
-  StockAlertError,
-  AcknowledgeAlertRequest,
-} from '@/app/lib/types/stock'
-import { z } from 'zod'
+import { NextRequest, NextResponse } from "next/server";
+import { createStockAlertService } from "@/app/lib/services/stock-alert.service";
+import { StockAlertError, AcknowledgeAlertRequest } from "@/app/lib/types/stock";
+import { z } from "zod";
 
 // ============================================================================
 // VALIDATION SCHEMAS (QA Enhancement)
@@ -17,53 +14,54 @@ import { z } from 'zod'
 const AcknowledgeAlertRequestSchema = z.object({
   alertId: z.string().uuid(),
   note: z.string().optional(),
-})
+});
 
 // ============================================================================
 // UTILITY FUNCTIONS (DRY Principle - Imported from main alerts route)
 // ============================================================================
 
 async function getClinicIdFromSession(): Promise<{ clinicId: string; userId: string }> {
-  const { createClient } = await import('@/lib/supabase/server')
-  const supabase = await createClient()
-  
-  const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+  const { createClient } = await import("@/lib/supabase/server");
+  const supabase = await createClient();
+
+  const {
+    data: { session },
+    error: sessionError,
+  } = await supabase.auth.getSession();
   if (sessionError || !session) {
-    throw new StockAlertError(
-      'Authentication required',
-      'UNAUTHORIZED',
-      { sessionError: sessionError?.message }
-    )
+    throw new StockAlertError("Authentication required", "UNAUTHORIZED", {
+      sessionError: sessionError?.message,
+    });
   }
 
-  const userId = session.user.id
+  const userId = session.user.id;
 
   const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('clinic_id')
-    .eq('id', userId)
-    .single()
+    .from("profiles")
+    .select("clinic_id")
+    .eq("id", userId)
+    .single();
 
   if (profileError || !profile?.clinic_id) {
     throw new StockAlertError(
-      'User profile not found or no clinic associated',
-      'PROFILE_NOT_FOUND',
-      { userId, profileError: profileError?.message }
-    )
+      "User profile not found or no clinic associated",
+      "PROFILE_NOT_FOUND",
+      { userId, profileError: profileError?.message },
+    );
   }
 
-  return { clinicId: profile.clinic_id, userId }
+  return { clinicId: profile.clinic_id, userId };
 }
 
 function handleError(error: unknown): NextResponse {
-  console.error('Stock Alerts Acknowledge API Error:', {
-    error: error instanceof Error ? error.message : 'Unknown error',
+  console.error("Stock Alerts Acknowledge API Error:", {
+    error: error instanceof Error ? error.message : "Unknown error",
     stack: error instanceof Error ? error.stack : undefined,
     timestamp: new Date().toISOString(),
-  })
+  });
 
   if (error instanceof StockAlertError) {
-    const statusCode = getStatusCodeForError(error.code)
+    const statusCode = getStatusCodeForError(error.code);
     return NextResponse.json(
       {
         success: false,
@@ -74,8 +72,8 @@ function handleError(error: unknown): NextResponse {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: statusCode }
-    )
+      { status: statusCode },
+    );
   }
 
   if (error instanceof z.ZodError) {
@@ -83,39 +81,39 @@ function handleError(error: unknown): NextResponse {
       {
         success: false,
         error: {
-          code: 'VALIDATION_ERROR',
-          message: 'Invalid request data',
+          code: "VALIDATION_ERROR",
+          message: "Invalid request data",
           details: error.errors,
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 400 }
-    )
+      { status: 400 },
+    );
   }
 
   return NextResponse.json(
     {
       success: false,
       error: {
-        code: 'INTERNAL_ERROR',
-        message: 'An unexpected error occurred',
+        code: "INTERNAL_ERROR",
+        message: "An unexpected error occurred",
         timestamp: new Date().toISOString(),
       },
     },
-    { status: 500 }
-  )
+    { status: 500 },
+  );
 }
 
 function getStatusCodeForError(errorCode: string): number {
   const statusMap: Record<string, number> = {
-    'UNAUTHORIZED': 401,
-    'PROFILE_NOT_FOUND': 401,
-    'VALIDATION_ERROR': 400,
-    'ALERT_NOT_FOUND': 404,
-    'ACKNOWLEDGE_FAILED': 500,
-    'INTERNAL_ERROR': 500,
-  }
-  return statusMap[errorCode] || 500
+    UNAUTHORIZED: 401,
+    PROFILE_NOT_FOUND: 401,
+    VALIDATION_ERROR: 400,
+    ALERT_NOT_FOUND: 404,
+    ACKNOWLEDGE_FAILED: 500,
+    INTERNAL_ERROR: 500,
+  };
+  return statusMap[errorCode] || 500;
 }
 
 // ============================================================================
@@ -128,37 +126,37 @@ function getStatusCodeForError(errorCode: string): number {
  * Enhanced with performance monitoring and event sourcing
  */
 export async function POST(request: NextRequest) {
-  const startTime = Date.now()
+  const startTime = Date.now();
 
   try {
     // Parse and validate request body with comprehensive validation
-    const body = await request.json()
-    const validatedRequest = AcknowledgeAlertRequestSchema.parse(body)
+    const body = await request.json();
+    const validatedRequest = AcknowledgeAlertRequestSchema.parse(body);
 
     // Get authentication context
-    const { clinicId, userId } = await getClinicIdFromSession()
+    const { clinicId, userId } = await getClinicIdFromSession();
 
     // Create service instance (using dependency injection pattern)
-    const alertService = await createStockAlertService(clinicId)
+    const alertService = await createStockAlertService(clinicId);
 
     // Acknowledge alert using service layer (QA Best Practice)
-    const acknowledgedAlert = await alertService.acknowledgeAlert(validatedRequest, userId)
+    const acknowledgedAlert = await alertService.acknowledgeAlert(validatedRequest, userId);
 
     // Performance monitoring
-    const duration = Date.now() - startTime
+    const duration = Date.now() - startTime;
     console.log(`POST /api/stock/alerts/acknowledge completed in ${duration}ms`, {
       alertId: validatedRequest.alertId,
       userId,
       clinicId,
-    })
+    });
 
     return NextResponse.json({
       success: true,
       data: {
         alert: acknowledgedAlert,
-        message: 'Alert acknowledged successfully',
+        message: "Alert acknowledged successfully",
         action: {
-          type: 'acknowledged',
+          type: "acknowledged",
           performedBy: userId,
           performedAt: new Date().toISOString(),
           note: validatedRequest.note,
@@ -168,10 +166,9 @@ export async function POST(request: NextRequest) {
           timestamp: new Date().toISOString(),
         },
       },
-    })
-
+    });
   } catch (error) {
-    return handleError(error)
+    return handleError(error);
   }
 }
 
@@ -183,12 +180,11 @@ export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
     headers: {
-      'Access-Control-Allow-Origin': process.env.NODE_ENV === 'production' 
-        ? 'https://neonpro.app' 
-        : '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Max-Age': '86400',
+      "Access-Control-Allow-Origin":
+        process.env.NODE_ENV === "production" ? "https://neonpro.app" : "*",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Max-Age": "86400",
     },
-  })
+  });
 }

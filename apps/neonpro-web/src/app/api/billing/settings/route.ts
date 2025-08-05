@@ -1,6 +1,6 @@
-import { createClient } from "@/lib/supabase/server";
-import { NextResponse } from "next/server";
-import { z } from "zod";
+import type { createClient } from "@/lib/supabase/server";
+import type { NextResponse } from "next/server";
+import type { z } from "zod";
 
 // Validation schema for financial settings
 const UpdateFinancialSettingsSchema = z.object({
@@ -10,19 +10,13 @@ const UpdateFinancialSettingsSchema = z.object({
   email: z.string().email("Email inválido").optional(),
   tax_rate: z.number().min(0).max(100, "Taxa não pode exceder 100%").optional(),
   default_payment_terms: z.string().optional(),
-  invoice_prefix: z
-    .string()
-    .min(1, "Prefixo da fatura é obrigatório")
-    .optional(),
+  invoice_prefix: z.string().min(1, "Prefixo da fatura é obrigatório").optional(),
   next_invoice_number: z
     .number()
     .int()
     .min(1, "Número da próxima fatura deve ser positivo")
     .optional(),
-  payment_prefix: z
-    .string()
-    .min(1, "Prefixo do pagamento é obrigatório")
-    .optional(),
+  payment_prefix: z.string().min(1, "Prefixo do pagamento é obrigatório").optional(),
   next_payment_number: z
     .number()
     .int()
@@ -90,19 +84,13 @@ export async function GET(request: Request) {
 
     if (error) {
       console.error("Error fetching financial settings:", error);
-      return NextResponse.json(
-        { error: "Failed to fetch financial settings" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to fetch financial settings" }, { status: 500 });
     }
 
     return NextResponse.json({ settings });
   } catch (error) {
     console.error("API Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
@@ -130,10 +118,7 @@ export async function PUT(request: Request) {
 
     if (checkError && checkError.code !== "PGRST116") {
       console.error("Error checking financial settings:", checkError);
-      return NextResponse.json(
-        { error: "Failed to check existing settings" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to check existing settings" }, { status: 500 });
     }
 
     let settings;
@@ -185,10 +170,7 @@ export async function PUT(request: Request) {
 
     if (error) {
       console.error("Error updating financial settings:", error);
-      return NextResponse.json(
-        { error: "Failed to update financial settings" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to update financial settings" }, { status: 500 });
     }
 
     return NextResponse.json({ settings });
@@ -196,15 +178,12 @@ export async function PUT(request: Request) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Validation failed", details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error("API Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
@@ -237,10 +216,7 @@ export async function POST(request: Request) {
 
     if (settingsError) {
       console.error("Error fetching financial settings:", settingsError);
-      return NextResponse.json(
-        { error: "Failed to fetch financial settings" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to fetch financial settings" }, { status: 500 });
     }
 
     // Increment the appropriate counter
@@ -262,10 +238,7 @@ export async function POST(request: Request) {
 
     if (updateError) {
       console.error("Error updating financial settings:", updateError);
-      return NextResponse.json(
-        { error: "Failed to update settings" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to update settings" }, { status: 500 });
     }
 
     return NextResponse.json({
@@ -274,9 +247,6 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("API Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

@@ -1,27 +1,33 @@
 /**
  * NotificationDashboard Component
- * 
+ *
  * Dashboard principal para gerenciamento de notificações
  * com analytics, envios e configurações.
- * 
+ *
  * @author APEX UI/UX Team
  * @version 1.0.0
  * @compliance WCAG 2.1 AA, LGPD
  */
 
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Icons } from '@/components/ui/icons';
-import { useToast } from '@/hooks/use-toast';
-import { NotificationSender } from './notification-sender';
-import { NotificationHistory } from './notification-history';
-import { NotificationAnalytics } from './notification-analytics';
-import { NotificationSettings } from './notification-settings';
+import React, { useState, useEffect } from "react";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Icons } from "@/components/ui/icons";
+import type { useToast } from "@/hooks/use-toast";
+import type { NotificationSender } from "./notification-sender";
+import type { NotificationHistory } from "./notification-history";
+import type { NotificationAnalytics } from "./notification-analytics";
+import type { NotificationSettings } from "./notification-settings";
 
 // ================================================================================
 // TYPES & INTERFACES
@@ -40,7 +46,7 @@ interface RecentNotification {
   id: string;
   title: string;
   type: string;
-  status: 'sent' | 'pending' | 'failed' | 'delivered';
+  status: "sent" | "pending" | "failed" | "delivered";
   sentAt: string;
   channels: string[];
   recipientCount: number;
@@ -51,7 +57,7 @@ interface RecentNotification {
 // ================================================================================
 
 export function NotificationDashboard() {
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
   const [stats, setStats] = useState<NotificationStats | null>(null);
   const [recentNotifications, setRecentNotifications] = useState<RecentNotification[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,11 +78,11 @@ export function NotificationDashboard() {
   const loadDashboardData = async () => {
     try {
       setLoading(true);
-      
+
       // Carregar estatísticas
       const [statsResponse, historyResponse] = await Promise.all([
-        fetch('/api/notifications/analytics?metric=overview&period=week'),
-        fetch('/api/notifications/status?limit=5')
+        fetch("/api/notifications/analytics?metric=overview&period=week"),
+        fetch("/api/notifications/status?limit=5"),
       ]);
 
       if (statsResponse.ok) {
@@ -88,13 +94,12 @@ export function NotificationDashboard() {
         const historyData = await historyResponse.json();
         setRecentNotifications(historyData.notifications || []);
       }
-
     } catch (error) {
-      console.error('Erro ao carregar dashboard:', error);
+      console.error("Erro ao carregar dashboard:", error);
       toast({
-        title: 'Erro',
-        description: 'Falha ao carregar dados do dashboard',
-        variant: 'destructive',
+        title: "Erro",
+        description: "Falha ao carregar dados do dashboard",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -114,9 +119,7 @@ export function NotificationDashboard() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{stats?.total || 0}</div>
-          <p className="text-xs text-muted-foreground">
-            +12% em relação ao período anterior
-          </p>
+          <p className="text-xs text-muted-foreground">+12% em relação ao período anterior</p>
         </CardContent>
       </Card>
 
@@ -127,9 +130,7 @@ export function NotificationDashboard() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{stats?.deliveryRate || 0}%</div>
-          <p className="text-xs text-muted-foreground">
-            +2.1% em relação ao período anterior
-          </p>
+          <p className="text-xs text-muted-foreground">+2.1% em relação ao período anterior</p>
         </CardContent>
       </Card>
 
@@ -140,9 +141,7 @@ export function NotificationDashboard() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{stats?.engagementRate || 0}%</div>
-          <p className="text-xs text-muted-foreground">
-            +5.4% em relação ao período anterior
-          </p>
+          <p className="text-xs text-muted-foreground">+5.4% em relação ao período anterior</p>
         </CardContent>
       </Card>
 
@@ -153,9 +152,7 @@ export function NotificationDashboard() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{stats?.pending || 0}</div>
-          <p className="text-xs text-muted-foreground">
-            {stats?.failed || 0} falharam
-          </p>
+          <p className="text-xs text-muted-foreground">{stats?.failed || 0} falharam</p>
         </CardContent>
       </Card>
     </div>
@@ -165,21 +162,14 @@ export function NotificationDashboard() {
     <Card>
       <CardHeader>
         <CardTitle>Notificações Recentes</CardTitle>
-        <CardDescription>
-          Últimas 5 notificações enviadas
-        </CardDescription>
+        <CardDescription>Últimas 5 notificações enviadas</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           {recentNotifications.map((notification) => (
-            <div
-              key={notification.id}
-              className="flex items-center justify-between space-x-4"
-            >
+            <div key={notification.id} className="flex items-center justify-between space-x-4">
               <div className="flex-1 space-y-1">
-                <p className="text-sm font-medium leading-none">
-                  {notification.title}
-                </p>
+                <p className="text-sm font-medium leading-none">{notification.title}</p>
                 <p className="text-sm text-muted-foreground">
                   {notification.type} • {notification.recipientCount} destinatários
                 </p>
@@ -194,9 +184,13 @@ export function NotificationDashboard() {
                 </div>
                 <Badge
                   variant={
-                    notification.status === 'delivered' ? 'default' :
-                    notification.status === 'sent' ? 'secondary' :
-                    notification.status === 'pending' ? 'outline' : 'destructive'
+                    notification.status === "delivered"
+                      ? "default"
+                      : notification.status === "sent"
+                        ? "secondary"
+                        : notification.status === "pending"
+                          ? "outline"
+                          : "destructive"
                   }
                 >
                   {notification.status}
@@ -213,33 +207,31 @@ export function NotificationDashboard() {
     <Card>
       <CardHeader>
         <CardTitle>Ações Rápidas</CardTitle>
-        <CardDescription>
-          Ações comuns para gerenciamento de notificações
-        </CardDescription>
+        <CardDescription>Ações comuns para gerenciamento de notificações</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <Button 
-          className="w-full justify-start" 
+        <Button
+          className="w-full justify-start"
           variant="outline"
-          onClick={() => setActiveTab('send')}
+          onClick={() => setActiveTab("send")}
         >
           <Icons.Send className="mr-2 h-4 w-4" />
           Enviar Notificação
         </Button>
-        
-        <Button 
-          className="w-full justify-start" 
+
+        <Button
+          className="w-full justify-start"
           variant="outline"
-          onClick={() => setActiveTab('analytics')}
+          onClick={() => setActiveTab("analytics")}
         >
           <Icons.BarChart className="mr-2 h-4 w-4" />
           Ver Analytics
         </Button>
-        
-        <Button 
-          className="w-full justify-start" 
+
+        <Button
+          className="w-full justify-start"
           variant="outline"
-          onClick={() => setActiveTab('settings')}
+          onClick={() => setActiveTab("settings")}
         >
           <Icons.Settings className="mr-2 h-4 w-4" />
           Configurações
@@ -288,14 +280,10 @@ export function NotificationDashboard() {
 
         <TabsContent value="overview" className="space-y-4">
           {renderOverviewCards()}
-          
+
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <div className="col-span-4">
-              {renderRecentNotifications()}
-            </div>
-            <div className="col-span-3">
-              {renderQuickActions()}
-            </div>
+            <div className="col-span-4">{renderRecentNotifications()}</div>
+            <div className="col-span-3">{renderQuickActions()}</div>
           </div>
         </TabsContent>
 

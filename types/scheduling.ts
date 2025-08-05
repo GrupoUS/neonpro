@@ -1,7 +1,7 @@
 /**
  * TypeScript Type Definitions
  * NeonPro Intelligent Scheduling System
- * 
+ *
  * Complete type definitions for the scheduling system
  * with strict typing for database entities and API responses
  */
@@ -31,10 +31,10 @@ export interface Patient {
   is_active: boolean;
   deceased_indicator: boolean;
   deceased_date?: string;
-  data_consent_status: 'granted' | 'denied' | 'pending' | 'withdrawn';
+  data_consent_status: "granted" | "denied" | "pending" | "withdrawn";
   data_consent_date?: string;
   data_retention_until?: string;
-  data_source: 'manual' | 'import' | 'api' | 'migration';
+  data_source: "manual" | "import" | "api" | "migration";
   created_at: string;
   updated_at: string;
   created_by?: string;
@@ -98,14 +98,14 @@ export interface ProfessionalAvailability {
   updated_at: string;
 }
 
-export type AppointmentStatus = 
-  | 'scheduled' 
-  | 'confirmed' 
-  | 'in_progress' 
-  | 'completed' 
-  | 'cancelled' 
-  | 'no_show' 
-  | 'rescheduled';
+export type AppointmentStatus =
+  | "scheduled"
+  | "confirmed"
+  | "in_progress"
+  | "completed"
+  | "cancelled"
+  | "no_show"
+  | "rescheduled";
 
 export interface Appointment {
   id: string;
@@ -141,16 +141,16 @@ export interface AppointmentWithRelations extends Appointment {
   rooms?: Room;
 }
 
-export type ConflictType = 
-  | 'time_overlap' 
-  | 'professional_unavailable' 
-  | 'room_conflict' 
-  | 'equipment_conflict' 
-  | 'business_rule';
+export type ConflictType =
+  | "time_overlap"
+  | "professional_unavailable"
+  | "room_conflict"
+  | "equipment_conflict"
+  | "business_rule";
 
-export type ConflictSeverity = 'low' | 'medium' | 'high' | 'critical';
+export type ConflictSeverity = "low" | "medium" | "high" | "critical";
 
-export type ConflictResolutionStatus = 'unresolved' | 'resolved' | 'ignored';
+export type ConflictResolutionStatus = "unresolved" | "resolved" | "ignored";
 
 export interface AppointmentConflict {
   id: string;
@@ -166,13 +166,13 @@ export interface AppointmentConflict {
   resolved_by?: string;
 }
 
-export type WaitingListStatus = 
-  | 'waiting' 
-  | 'offered' 
-  | 'accepted' 
-  | 'declined' 
-  | 'expired' 
-  | 'cancelled';
+export type WaitingListStatus =
+  | "waiting"
+  | "offered"
+  | "accepted"
+  | "declined"
+  | "expired"
+  | "cancelled";
 
 export interface WaitingListEntry {
   id: string;
@@ -195,9 +195,9 @@ export interface WaitingListEntry {
   created_by: string;
 }
 
-export type ReminderType = 'sms' | 'whatsapp' | 'email' | 'call';
+export type ReminderType = "sms" | "whatsapp" | "email" | "call";
 
-export type ReminderStatus = 'pending' | 'sent' | 'failed' | 'cancelled';
+export type ReminderStatus = "pending" | "sent" | "failed" | "cancelled";
 
 export interface AppointmentReminder {
   id: string;
@@ -265,7 +265,7 @@ export interface SchedulingConflict {
   type: ConflictType;
   severity: ConflictSeverity;
   resourceId?: string;
-  resourceType?: 'room' | 'equipment' | 'service' | 'staff';
+  resourceType?: "room" | "equipment" | "service" | "staff";
   conflictDescription: string;
   affectedAppointments: string[];
   suggestedActions: string[];
@@ -273,10 +273,10 @@ export interface SchedulingConflict {
 
 export interface ResolutionOption {
   id: string;
-  type: 'reschedule' | 'reassign' | 'waitlist' | 'split' | 'escalate';
+  type: "reschedule" | "reassign" | "waitlist" | "split" | "escalate";
   confidence: number; // 0-1
   description: string;
-  impact: 'minimal' | 'low' | 'medium' | 'high' | 'significant';
+  impact: "minimal" | "low" | "medium" | "high" | "significant";
   alternativeSlots?: AvailableSlot[];
   resourceAlternatives?: any[];
   estimatedResolutionTime: number; // minutes
@@ -359,7 +359,7 @@ export interface CalendarViewProps {
   onTimeSlotClick?: (date: Date, time: string, professionalId?: string) => void;
   onCreateAppointment?: () => void;
   selectedProfessional?: string;
-  viewMode?: 'month' | 'week' | 'day';
+  viewMode?: "month" | "week" | "day";
 }
 
 export interface AppointmentFormProps {
@@ -439,7 +439,7 @@ export interface SchedulingMetrics {
   seasonal_trends: Array<{
     period: string;
     booking_volume: number;
-    trend: 'up' | 'down' | 'stable';
+    trend: "up" | "down" | "stable";
   }>;
 }
 
@@ -466,7 +466,7 @@ export interface WhatsAppMessage {
   phone_number: string;
   message_content: string;
   template_used?: string;
-  status: 'pending' | 'sent' | 'delivered' | 'read' | 'failed';
+  status: "pending" | "sent" | "delivered" | "read" | "failed";
   sent_at?: string;
   delivered_at?: string;
   read_at?: string;
@@ -482,7 +482,7 @@ export interface WaitingRoomEntry {
   check_in_time: string;
   estimated_wait_time: number; // minutes
   position_in_queue: number;
-  status: 'waiting' | 'ready' | 'in_progress' | 'completed' | 'left';
+  status: "waiting" | "ready" | "in_progress" | "completed" | "left";
   notification_preferences: {
     sms: boolean;
     whatsapp: boolean;
@@ -508,7 +508,7 @@ export interface WaitingRoomStatus {
 export interface DataProcessingConsent {
   id: string;
   patient_id: string;
-  consent_type: 'scheduling' | 'reminders' | 'analytics' | 'marketing';
+  consent_type: "scheduling" | "reminders" | "analytics" | "marketing";
   granted: boolean;
   granted_at?: string;
   withdrawn_at?: string;
@@ -522,12 +522,12 @@ export interface DataProcessingConsent {
 }
 
 export interface DataRetentionPolicy {
-  entity_type: 'appointment' | 'patient' | 'professional' | 'conflict';
+  entity_type: "appointment" | "patient" | "professional" | "conflict";
   retention_period_days: number;
   auto_delete: boolean;
   anonymization_rules: Array<{
     field: string;
-    method: 'hash' | 'mask' | 'remove' | 'generalize';
+    method: "hash" | "mask" | "remove" | "generalize";
   }>;
   legal_basis: string;
   exceptions: string[];

@@ -1,24 +1,24 @@
-﻿/**
+/**
  * Sistema de Otimização Inteligente com ML - NeonPro
- * 
+ *
  * Engine de Machine Learning para otimização de notificações utilizando
  * algoritmos de aprendizado para personalização, timing e segmentação.
- * 
+ *
  * Features:
  * - Personalização de conteúdo com NLP
  * - Otimização de timing com temporal analysis
  * - Segmentação automática de usuários
  * - Predição de engajamento
  * - A/B testing automatizado
- * 
- * @author APEX Architecture Team  
+ *
+ * @author APEX Architecture Team
  * @version 1.0.0
  * @compliance LGPD, ANVISA, CFM
  */
 
-import { z } from 'zod';
-import { createClient } from '@/lib/supabase/server';
-import { NotificationChannel, NotificationType } from '../types';
+import type { z } from "zod";
+import type { createClient } from "@/lib/supabase/server";
+import type { NotificationChannel, NotificationType } from "../types";
 
 // ================================================================================
 // SCHEMAS & TYPES
@@ -29,21 +29,21 @@ const UserProfileSchema = z.object({
   clinicId: z.string().uuid(),
   demographics: z.object({
     age: z.number().optional(),
-    gender: z.enum(['M', 'F', 'O']).optional(),
+    gender: z.enum(["M", "F", "O"]).optional(),
     location: z.string().optional(),
-    timezone: z.string().default('America/Sao_Paulo'),
+    timezone: z.string().default("America/Sao_Paulo"),
   }),
   behavior: z.object({
     engagementScore: z.number().min(0).max(1),
     preferredChannels: z.array(z.nativeEnum(NotificationChannel)),
     bestHours: z.array(z.number().min(0).max(23)),
-    responsePattern: z.enum(['immediate', 'delayed', 'weekend', 'weekday']),
+    responsePattern: z.enum(["immediate", "delayed", "weekend", "weekday"]),
     churnRisk: z.number().min(0).max(1),
   }),
   preferences: z.object({
-    frequency: z.enum(['high', 'medium', 'low']),
+    frequency: z.enum(["high", "medium", "low"]),
     contentTypes: z.array(z.string()),
-    languages: z.array(z.string()).default(['pt-BR']),
+    languages: z.array(z.string()).default(["pt-BR"]),
   }),
   history: z.object({
     totalNotifications: z.number(),
@@ -59,7 +59,7 @@ const OptimizationConfigSchema = z.object({
   learningRate: z.number().min(0).max(1).default(0.1),
   minDataPoints: z.number().min(10).default(50),
   confidenceThreshold: z.number().min(0).max(1).default(0.7),
-  
+
   features: z.object({
     contentPersonalization: z.boolean().default(true),
     timingOptimization: z.boolean().default(true),
@@ -67,11 +67,11 @@ const OptimizationConfigSchema = z.object({
     segmentation: z.boolean().default(true),
     abTesting: z.boolean().default(false),
   }),
-  
+
   models: z.object({
-    engagementModel: z.enum(['logistic', 'random_forest', 'neural_network']).default('logistic'),
-    timingModel: z.enum(['time_series', 'clustering', 'regression']).default('clustering'),
-    segmentationModel: z.enum(['kmeans', 'hierarchical', 'dbscan']).default('kmeans'),
+    engagementModel: z.enum(["logistic", "random_forest", "neural_network"]).default("logistic"),
+    timingModel: z.enum(["time_series", "clustering", "regression"]).default("clustering"),
+    segmentationModel: z.enum(["kmeans", "hierarchical", "dbscan"]).default("kmeans"),
   }),
 });
 
@@ -173,7 +173,7 @@ export class NotificationMLEngine {
    */
   private initializeModels(): void {
     // Modelo de engajamento (regressão logística simplificada)
-    this.models.set('engagement', {
+    this.models.set("engagement", {
       weights: {
         hour: new Array(24).fill(0),
         channel: new Map<NotificationChannel, number>(),
@@ -182,23 +182,23 @@ export class NotificationMLEngine {
         frequency: 0,
       },
       bias: 0,
-      version: '1.0.0',
+      version: "1.0.0",
     });
 
     // Modelo de timing (clustering por perfil)
-    this.models.set('timing', {
+    this.models.set("timing", {
       clusters: new Map<string, { hours: number[]; confidence: number }>(),
-      version: '1.0.0',
+      version: "1.0.0",
     });
 
     // Modelo de segmentação (K-means simplificado)
-    this.models.set('segmentation', {
+    this.models.set("segmentation", {
       centroids: [],
       segments: new Map<string, any>(),
-      version: '1.0.0',
+      version: "1.0.0",
     });
 
-    console.log('🤖 Modelos de ML inicializados');
+    console.log("🤖 Modelos de ML inicializados");
   }
 
   // ================================================================================
@@ -212,37 +212,37 @@ export class NotificationMLEngine {
     try {
       // Buscar dados básicos do usuário
       const { data: user, error: userError } = await this.supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
         .single();
 
       if (userError) throw new Error(`Erro ao buscar usuário: ${userError.message}`);
 
       // Buscar histórico de notificações
       const { data: notifications, error: notificationError } = await this.supabase
-        .from('notifications')
-        .select('*')
-        .eq('user_id', userId)
-        .order('sent_at', { ascending: false })
+        .from("notifications")
+        .select("*")
+        .eq("user_id", userId)
+        .order("sent_at", { ascending: false })
         .limit(500);
 
       if (notificationError) {
-        console.error('Erro ao buscar histórico:', notificationError);
+        console.error("Erro ao buscar histórico:", notificationError);
       }
 
       const notificationHistory = notifications || [];
 
       // Calcular métricas comportamentais
       const totalNotifications = notificationHistory.length;
-      const totalOpened = notificationHistory.filter(n => n.opened_at).length;
-      const totalClicked = notificationHistory.filter(n => n.clicked_at).length;
+      const totalOpened = notificationHistory.filter((n) => n.opened_at).length;
+      const totalClicked = notificationHistory.filter((n) => n.clicked_at).length;
 
       const engagementScore = totalNotifications > 0 ? totalOpened / totalNotifications : 0.5;
 
       // Análise de canais preferidos
       const channelStats = new Map<NotificationChannel, { sent: number; opened: number }>();
-      notificationHistory.forEach(n => {
+      notificationHistory.forEach((n) => {
         const current = channelStats.get(n.channel) || { sent: 0, opened: 0 };
         current.sent++;
         if (n.opened_at) current.opened++;
@@ -256,11 +256,11 @@ export class NotificationMLEngine {
         }))
         .sort((a, b) => b.rate - a.rate)
         .slice(0, 3)
-        .map(c => c.channel);
+        .map((c) => c.channel);
 
       // Análise de horários preferenciais
       const hourlyEngagement = new Array(24).fill(0).map(() => ({ sent: 0, opened: 0 }));
-      notificationHistory.forEach(n => {
+      notificationHistory.forEach((n) => {
         const hour = new Date(n.sent_at).getHours();
         hourlyEngagement[hour].sent++;
         if (n.opened_at) hourlyEngagement[hour].opened++;
@@ -272,49 +272,51 @@ export class NotificationMLEngine {
           rate: stats.sent > 0 ? stats.opened / stats.sent : 0,
           count: stats.sent,
         }))
-        .filter(h => h.count >= 3) // Mínimo de dados
+        .filter((h) => h.count >= 3) // Mínimo de dados
         .sort((a, b) => b.rate - a.rate)
         .slice(0, 5)
-        .map(h => h.hour);
+        .map((h) => h.hour);
 
       // Padrão de resposta
       const responseTimes = notificationHistory
-        .filter(n => n.opened_at)
-        .map(n => {
+        .filter((n) => n.opened_at)
+        .map((n) => {
           const sent = new Date(n.sent_at).getTime();
           const opened = new Date(n.opened_at!).getTime();
           return (opened - sent) / (1000 * 60); // minutos
         });
 
-      const avgResponseTime = responseTimes.length > 0
-        ? responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length
-        : 60;
+      const avgResponseTime =
+        responseTimes.length > 0
+          ? responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length
+          : 60;
 
-      let responsePattern: 'immediate' | 'delayed' | 'weekend' | 'weekday' = 'immediate';
-      if (avgResponseTime > 60) responsePattern = 'delayed';
+      let responsePattern: "immediate" | "delayed" | "weekend" | "weekday" = "immediate";
+      if (avgResponseTime > 60) responsePattern = "delayed";
 
       // Análise de fim de semana vs dias úteis
-      const weekendEngagement = notificationHistory.filter(n => {
+      const weekendEngagement = notificationHistory.filter((n) => {
         const day = new Date(n.sent_at).getDay();
         return (day === 0 || day === 6) && n.opened_at;
       }).length;
 
       const weekdayEngagement = totalOpened - weekendEngagement;
-      const weekendSent = notificationHistory.filter(n => {
+      const weekendSent = notificationHistory.filter((n) => {
         const day = new Date(n.sent_at).getDay();
         return day === 0 || day === 6;
       }).length;
 
-      const weekdayRate = (totalNotifications - weekendSent) > 0 
-        ? weekdayEngagement / (totalNotifications - weekendSent) 
-        : 0;
+      const weekdayRate =
+        totalNotifications - weekendSent > 0
+          ? weekdayEngagement / (totalNotifications - weekendSent)
+          : 0;
       const weekendRate = weekendSent > 0 ? weekendEngagement / weekendSent : 0;
 
-      if (weekendRate > weekdayRate * 1.2) responsePattern = 'weekend';
-      else if (weekdayRate > weekendRate * 1.2) responsePattern = 'weekday';
+      if (weekendRate > weekdayRate * 1.2) responsePattern = "weekend";
+      else if (weekdayRate > weekendRate * 1.2) responsePattern = "weekday";
 
       // Risco de churn
-      const lastEngagement = notificationHistory.find(n => n.opened_at || n.clicked_at);
+      const lastEngagement = notificationHistory.find((n) => n.opened_at || n.clicked_at);
       const daysSinceLastEngagement = lastEngagement
         ? (Date.now() - new Date(lastEngagement.sent_at).getTime()) / (1000 * 60 * 60 * 24)
         : 30;
@@ -328,19 +330,20 @@ export class NotificationMLEngine {
           age: user.age,
           gender: user.gender,
           location: user.city,
-          timezone: user.timezone || 'America/Sao_Paulo',
+          timezone: user.timezone || "America/Sao_Paulo",
         },
         behavior: {
           engagementScore,
-          preferredChannels: preferredChannels.length > 0 ? preferredChannels : [NotificationChannel.EMAIL],
+          preferredChannels:
+            preferredChannels.length > 0 ? preferredChannels : [NotificationChannel.EMAIL],
           bestHours: bestHours.length > 0 ? bestHours : [10, 14, 16],
           responsePattern,
           churnRisk,
         },
         preferences: {
-          frequency: engagementScore > 0.7 ? 'high' : engagementScore > 0.3 ? 'medium' : 'low',
-          contentTypes: ['appointment', 'reminder', 'promotion'],
-          languages: ['pt-BR'],
+          frequency: engagementScore > 0.7 ? "high" : engagementScore > 0.3 ? "medium" : "low",
+          contentTypes: ["appointment", "reminder", "promotion"],
+          languages: ["pt-BR"],
         },
         history: {
           totalNotifications,
@@ -356,7 +359,7 @@ export class NotificationMLEngine {
 
       return profile;
     } catch (error) {
-      console.error('Erro ao construir perfil do usuário:', error);
+      console.error("Erro ao construir perfil do usuário:", error);
       throw error;
     }
   }
@@ -366,23 +369,21 @@ export class NotificationMLEngine {
    */
   private async saveUserProfile(profile: UserProfile): Promise<void> {
     try {
-      const { error } = await this.supabase
-        .from('user_ml_profiles')
-        .upsert({
-          user_id: profile.userId,
-          clinic_id: profile.clinicId,
-          demographics: profile.demographics,
-          behavior: profile.behavior,
-          preferences: profile.preferences,
-          history: profile.history,
-          updated_at: new Date().toISOString(),
-        });
+      const { error } = await this.supabase.from("user_ml_profiles").upsert({
+        user_id: profile.userId,
+        clinic_id: profile.clinicId,
+        demographics: profile.demographics,
+        behavior: profile.behavior,
+        preferences: profile.preferences,
+        history: profile.history,
+        updated_at: new Date().toISOString(),
+      });
 
       if (error) {
-        console.error('Erro ao salvar perfil:', error);
+        console.error("Erro ao salvar perfil:", error);
       }
     } catch (error) {
-      console.error('Erro ao salvar perfil:', error);
+      console.error("Erro ao salvar perfil:", error);
     }
   }
 
@@ -401,7 +402,7 @@ export class NotificationMLEngine {
       type: NotificationType;
       scheduledFor?: Date;
       channels?: NotificationChannel[];
-    }
+    },
   ): Promise<OptimizationResult> {
     try {
       // Obter perfil do usuário
@@ -413,7 +414,7 @@ export class NotificationMLEngine {
       // Otimização de timing
       const timingOptimization = await this.optimizeTiming(
         profile,
-        baseNotification.scheduledFor || new Date()
+        baseNotification.scheduledFor || new Date(),
       );
 
       // Personalização de conteúdo
@@ -431,14 +432,14 @@ export class NotificationMLEngine {
           frequency: frequencyOptimization,
         },
         modelVersions: {
-          engagement: this.models.get('engagement')?.version || '1.0.0',
-          timing: this.models.get('timing')?.version || '1.0.0',
-          content: '1.0.0',
+          engagement: this.models.get("engagement")?.version || "1.0.0",
+          timing: this.models.get("timing")?.version || "1.0.0",
+          content: "1.0.0",
         },
         generatedAt: new Date(),
       };
     } catch (error) {
-      console.error('Erro na otimização:', error);
+      console.error("Erro na otimização:", error);
       throw error;
     }
   }
@@ -448,34 +449,42 @@ export class NotificationMLEngine {
    */
   private async optimizeChannel(
     profile: UserProfile,
-    availableChannels?: NotificationChannel[]
-  ): Promise<OptimizationResult['optimizations']['channel']> {
+    availableChannels?: NotificationChannel[],
+  ): Promise<OptimizationResult["optimizations"]["channel"]> {
     const channels = availableChannels || Object.values(NotificationChannel);
-    const engagementModel = this.models.get('engagement');
+    const engagementModel = this.models.get("engagement");
 
     // Calcular score para cada canal
-    const channelScores = channels.map(channel => {
-      let score = 0.5; // Base score
+    const channelScores = channels
+      .map((channel) => {
+        let score = 0.5; // Base score
 
-      // Score baseado no histórico do usuário
-      if (profile.behavior.preferredChannels.includes(channel)) {
-        const index = profile.behavior.preferredChannels.indexOf(channel);
-        score += (3 - index) * 0.2; // Primeira preferência +0.6, segunda +0.4, terceira +0.2
-      }
+        // Score baseado no histórico do usuário
+        if (profile.behavior.preferredChannels.includes(channel)) {
+          const index = profile.behavior.preferredChannels.indexOf(channel);
+          score += (3 - index) * 0.2; // Primeira preferência +0.6, segunda +0.4, terceira +0.2
+        }
 
-      // Ajuste baseado no engagement score geral
-      score *= (0.5 + profile.behavior.engagementScore * 0.5);
+        // Ajuste baseado no engagement score geral
+        score *= 0.5 + profile.behavior.engagementScore * 0.5;
 
-      // Ajuste baseado no padrão de resposta
-      if (channel === NotificationChannel.PUSH && profile.behavior.responsePattern === 'immediate') {
-        score += 0.15;
-      }
-      if (channel === NotificationChannel.EMAIL && profile.behavior.responsePattern === 'delayed') {
-        score += 0.1;
-      }
+        // Ajuste baseado no padrão de resposta
+        if (
+          channel === NotificationChannel.PUSH &&
+          profile.behavior.responsePattern === "immediate"
+        ) {
+          score += 0.15;
+        }
+        if (
+          channel === NotificationChannel.EMAIL &&
+          profile.behavior.responsePattern === "delayed"
+        ) {
+          score += 0.1;
+        }
 
-      return { channel, score: Math.min(score, 1) };
-    }).sort((a, b) => b.score - a.score);
+        return { channel, score: Math.min(score, 1) };
+      })
+      .sort((a, b) => b.score - a.score);
 
     const recommended = channelScores[0];
     const alternatives = channelScores.slice(1, 4);
@@ -492,8 +501,8 @@ export class NotificationMLEngine {
    */
   private async optimizeTiming(
     profile: UserProfile,
-    baseTime: Date
-  ): Promise<OptimizationResult['optimizations']['timing']> {
+    baseTime: Date,
+  ): Promise<OptimizationResult["optimizations"]["timing"]> {
     const optimizedTime = new Date(baseTime);
     const factors: string[] = [];
 
@@ -501,7 +510,7 @@ export class NotificationMLEngine {
     if (profile.behavior.bestHours.length > 0) {
       const currentHour = baseTime.getHours();
       const bestHour = profile.behavior.bestHours[0];
-      
+
       if (Math.abs(currentHour - bestHour) > 2) {
         optimizedTime.setHours(bestHour, 0, 0, 0);
         factors.push(`Ajustado para melhor horário: ${bestHour}:00`);
@@ -510,7 +519,7 @@ export class NotificationMLEngine {
 
     // Ajustar para timezone do usuário
     const userTimezone = profile.demographics.timezone;
-    if (userTimezone !== 'America/Sao_Paulo') {
+    if (userTimezone !== "America/Sao_Paulo") {
       factors.push(`Ajustado para timezone: ${userTimezone}`);
     }
 
@@ -518,30 +527,27 @@ export class NotificationMLEngine {
     const hour = optimizedTime.getHours();
     if (hour < 7 || hour > 22) {
       optimizedTime.setHours(hour < 7 ? 9 : 18, 0, 0, 0);
-      factors.push('Evitado horário de baixo engajamento');
+      factors.push("Evitado horário de baixo engajamento");
     }
 
     // Ajustar baseado no padrão de resposta
-    if (profile.behavior.responsePattern === 'weekend') {
+    if (profile.behavior.responsePattern === "weekend") {
       const dayOfWeek = optimizedTime.getDay();
       if (dayOfWeek !== 0 && dayOfWeek !== 6) {
         // Mover para o próximo fim de semana
         const daysToWeekend = 6 - dayOfWeek;
         optimizedTime.setDate(optimizedTime.getDate() + daysToWeekend);
-        factors.push('Ajustado para padrão de fim de semana');
+        factors.push("Ajustado para padrão de fim de semana");
       }
     }
 
     // Se o horário otimizado é no passado, mover para o próximo dia
     if (optimizedTime < new Date()) {
       optimizedTime.setDate(optimizedTime.getDate() + 1);
-      factors.push('Reagendado para próximo dia disponível');
+      factors.push("Reagendado para próximo dia disponível");
     }
 
-    const confidence = Math.min(
-      0.6 + (profile.history.totalNotifications / 100) * 0.4,
-      0.95
-    );
+    const confidence = Math.min(0.6 + (profile.history.totalNotifications / 100) * 0.4, 0.95);
 
     return {
       recommended: optimizedTime,
@@ -555,36 +561,36 @@ export class NotificationMLEngine {
    */
   private async personalizeContent(
     profile: UserProfile,
-    baseContent: string
-  ): Promise<OptimizationResult['optimizations']['content']> {
+    baseContent: string,
+  ): Promise<OptimizationResult["optimizations"]["content"]> {
     let personalizedContent = baseContent;
     const adjustments: string[] = [];
 
     // Ajuste de tom baseado no engagement
     if (profile.behavior.engagementScore < 0.3) {
       // Usuário com baixo engajamento - tom mais direto e objetivo
-      adjustments.push('Tom mais direto para baixo engajamento');
+      adjustments.push("Tom mais direto para baixo engajamento");
     } else if (profile.behavior.engagementScore > 0.7) {
       // Usuário engajado - tom mais conversacional
-      adjustments.push('Tom conversacional para alto engajamento');
+      adjustments.push("Tom conversacional para alto engajamento");
     }
 
     // Ajuste de frequência de linguagem baseado na idade
     if (profile.demographics.age && profile.demographics.age < 30) {
-      adjustments.push('Linguagem adaptada para público jovem');
+      adjustments.push("Linguagem adaptada para público jovem");
     } else if (profile.demographics.age && profile.demographics.age > 50) {
-      adjustments.push('Linguagem formal para público maduro');
+      adjustments.push("Linguagem formal para público maduro");
     }
 
     // Personalização baseada no risco de churn
     if (profile.behavior.churnRisk > 0.6) {
       personalizedContent = `[IMPORTANTE] ${personalizedContent}`;
-      adjustments.push('Adicionado urgência para alto risco de churn');
+      adjustments.push("Adicionado urgência para alto risco de churn");
     }
 
     // Personalização baseada no padrão de resposta
-    if (profile.behavior.responsePattern === 'immediate') {
-      adjustments.push('Call-to-action direto para resposta imediata');
+    if (profile.behavior.responsePattern === "immediate") {
+      adjustments.push("Call-to-action direto para resposta imediata");
     }
 
     const confidence = adjustments.length > 0 ? 0.7 : 0.5;
@@ -600,18 +606,18 @@ export class NotificationMLEngine {
    * Otimiza frequência de mensagens
    */
   private async optimizeFrequency(
-    profile: UserProfile
-  ): Promise<OptimizationResult['optimizations']['frequency']> {
+    profile: UserProfile,
+  ): Promise<OptimizationResult["optimizations"]["frequency"]> {
     let recommendedFrequency: number;
 
     switch (profile.preferences.frequency) {
-      case 'high':
+      case "high":
         recommendedFrequency = profile.behavior.engagementScore > 0.7 ? 5 : 3;
         break;
-      case 'medium':
+      case "medium":
         recommendedFrequency = profile.behavior.engagementScore > 0.5 ? 3 : 2;
         break;
-      case 'low':
+      case "low":
         recommendedFrequency = profile.behavior.engagementScore > 0.3 ? 2 : 1;
         break;
       default:
@@ -625,10 +631,7 @@ export class NotificationMLEngine {
       recommendedFrequency = Math.min(7, recommendedFrequency + 1);
     }
 
-    const confidence = Math.min(
-      0.5 + (profile.history.totalNotifications / 50) * 0.4,
-      0.9
-    );
+    const confidence = Math.min(0.5 + (profile.history.totalNotifications / 50) * 0.4, 0.9);
 
     return {
       recommended: recommendedFrequency,
@@ -647,16 +650,16 @@ export class NotificationMLEngine {
     try {
       // Buscar todos os perfis da clínica
       const { data: profiles, error } = await this.supabase
-        .from('user_ml_profiles')
-        .select('*')
-        .eq('clinic_id', clinicId);
+        .from("user_ml_profiles")
+        .select("*")
+        .eq("clinic_id", clinicId);
 
       if (error || !profiles || profiles.length < 10) {
-        throw new Error('Dados insuficientes para segmentação');
+        throw new Error("Dados insuficientes para segmentação");
       }
 
       // Extrair features para clustering
-      const features = profiles.map(profile => [
+      const features = profiles.map((profile) => [
         profile.behavior.engagementScore,
         profile.behavior.churnRisk,
         profile.history.avgResponseTime / 1440, // Normalizar para dias
@@ -674,7 +677,7 @@ export class NotificationMLEngine {
         generatedAt: new Date(),
       };
     } catch (error) {
-      console.error('Erro na segmentação:', error);
+      console.error("Erro na segmentação:", error);
       throw error;
     }
   }
@@ -685,11 +688,11 @@ export class NotificationMLEngine {
   private performKMeans(
     features: number[][],
     profiles: any[],
-    k: number
-  ): SegmentationResult['segments'] {
+    k: number,
+  ): SegmentationResult["segments"] {
     // Inicializar centroids aleatoriamente
     const centroids = Array.from({ length: k }, () =>
-      features[Math.floor(Math.random() * features.length)].slice()
+      features[Math.floor(Math.random() * features.length)].slice(),
     );
 
     let assignments = new Array(features.length).fill(0);
@@ -724,7 +727,8 @@ export class NotificationMLEngine {
         const clusterPoints = features.filter((_, i) => assignments[i] === j);
         if (clusterPoints.length > 0) {
           for (let d = 0; d < centroids[j].length; d++) {
-            centroids[j][d] = clusterPoints.reduce((sum, point) => sum + point[d], 0) / clusterPoints.length;
+            centroids[j][d] =
+              clusterPoints.reduce((sum, point) => sum + point[d], 0) / clusterPoints.length;
           }
         }
       }
@@ -738,55 +742,58 @@ export class NotificationMLEngine {
       const segmentUsers = profiles.filter((_, idx) => assignments[idx] === i);
       if (segmentUsers.length === 0) continue;
 
-      const avgEngagement = segmentUsers.reduce((sum, user) => sum + user.behavior.engagementScore, 0) / segmentUsers.length;
-      const avgChurnRisk = segmentUsers.reduce((sum, user) => sum + user.behavior.churnRisk, 0) / segmentUsers.length;
+      const avgEngagement =
+        segmentUsers.reduce((sum, user) => sum + user.behavior.engagementScore, 0) /
+        segmentUsers.length;
+      const avgChurnRisk =
+        segmentUsers.reduce((sum, user) => sum + user.behavior.churnRisk, 0) / segmentUsers.length;
 
-      let name = '';
-      let description = '';
+      let name = "";
+      let description = "";
       let strategy = {
         channels: [NotificationChannel.EMAIL],
-        timing: ['10:00', '14:00'],
+        timing: ["10:00", "14:00"],
         frequency: 2,
-        contentStyle: 'standard',
+        contentStyle: "standard",
       };
 
       if (avgEngagement > 0.7 && avgChurnRisk < 0.3) {
-        name = 'Usuários Engajados';
-        description = 'Usuários altamente ativos com baixo risco de churn';
+        name = "Usuários Engajados";
+        description = "Usuários altamente ativos com baixo risco de churn";
         strategy = {
           channels: [NotificationChannel.PUSH, NotificationChannel.EMAIL],
-          timing: ['09:00', '14:00', '18:00'],
+          timing: ["09:00", "14:00", "18:00"],
           frequency: 4,
-          contentStyle: 'conversational',
+          contentStyle: "conversational",
         };
       } else if (avgEngagement < 0.3 || avgChurnRisk > 0.7) {
-        name = 'Usuários em Risco';
-        description = 'Usuários com baixo engajamento ou alto risco de churn';
+        name = "Usuários em Risco";
+        description = "Usuários com baixo engajamento ou alto risco de churn";
         strategy = {
           channels: [NotificationChannel.EMAIL, NotificationChannel.WHATSAPP],
-          timing: ['10:00'],
+          timing: ["10:00"],
           frequency: 1,
-          contentStyle: 'urgente',
+          contentStyle: "urgente",
         };
       } else if (avgEngagement > 0.4 && avgChurnRisk < 0.5) {
-        name = 'Usuários Moderados';
-        description = 'Usuários com engajamento médio e risco controlado';
+        name = "Usuários Moderados";
+        description = "Usuários com engajamento médio e risco controlado";
         strategy = {
           channels: [NotificationChannel.EMAIL, NotificationChannel.SMS],
-          timing: ['10:00', '16:00'],
+          timing: ["10:00", "16:00"],
           frequency: 2,
-          contentStyle: 'informatico',
+          contentStyle: "informatico",
         };
       } else {
-        name = 'Usuários Diversos';
-        description = 'Segmento com características variadas';
+        name = "Usuários Diversos";
+        description = "Segmento com características variadas";
       }
 
       segments.push({
         id: `segment_${i}`,
         name,
         description,
-        userIds: segmentUsers.map(user => user.user_id),
+        userIds: segmentUsers.map((user) => user.user_id),
         characteristics: {
           avgEngagement,
           avgChurnRisk,
@@ -818,22 +825,22 @@ export class NotificationMLEngine {
     if (!this.config.enabled) return;
 
     try {
-      console.log('🤖 Iniciando treinamento de modelos...');
+      console.log("🤖 Iniciando treinamento de modelos...");
 
       // Buscar dados de treinamento
       const { data: trainingData, error } = await this.supabase
-        .from('notifications')
+        .from("notifications")
         .select(`
           *,
           profiles!inner(*)
         `)
-        .eq('profiles.clinic_id', clinicId)
-        .not('opened_at', 'is', null)
-        .order('sent_at', { ascending: false })
+        .eq("profiles.clinic_id", clinicId)
+        .not("opened_at", "is", null)
+        .order("sent_at", { ascending: false })
         .limit(5000);
 
       if (error || !trainingData || trainingData.length < this.config.minDataPoints) {
-        console.log('Dados insuficientes para treinamento');
+        console.log("Dados insuficientes para treinamento");
         return;
       }
 
@@ -843,9 +850,9 @@ export class NotificationMLEngine {
       // Treinar modelo de timing
       await this.trainTimingModel(trainingData);
 
-      console.log('🤖 Modelos treinados com sucesso');
+      console.log("🤖 Modelos treinados com sucesso");
     } catch (error) {
-      console.error('Erro no treinamento:', error);
+      console.error("Erro no treinamento:", error);
     }
   }
 
@@ -853,7 +860,7 @@ export class NotificationMLEngine {
    * Treina modelo de predição de engajamento
    */
   private async trainEngagementModel(data: any[]): Promise<void> {
-    const model = this.models.get('engagement');
+    const model = this.models.get("engagement");
     if (!model) return;
 
     // Reset weights
@@ -862,7 +869,7 @@ export class NotificationMLEngine {
     model.weights.dayOfWeek.fill(0);
 
     // Treinar com dados
-    data.forEach(notification => {
+    data.forEach((notification) => {
       const engaged = notification.opened_at || notification.clicked_at;
       const hour = new Date(notification.sent_at).getHours();
       const dayOfWeek = new Date(notification.sent_at).getDay();
@@ -873,36 +880,39 @@ export class NotificationMLEngine {
       // Atualizar pesos (gradiente descendente simplificado)
       model.weights.hour[hour] += this.config.learningRate * (label - 0.5);
       model.weights.dayOfWeek[dayOfWeek] += this.config.learningRate * (label - 0.5);
-      
+
       const currentChannelWeight = model.weights.channel.get(channel) || 0;
-      model.weights.channel.set(channel, currentChannelWeight + this.config.learningRate * (label - 0.5));
+      model.weights.channel.set(
+        channel,
+        currentChannelWeight + this.config.learningRate * (label - 0.5),
+      );
     });
 
     // Normalizar pesos
     const hourSum = model.weights.hour.reduce((a, b) => a + Math.abs(b), 0);
     if (hourSum > 0) {
-      model.weights.hour = model.weights.hour.map(w => w / hourSum);
+      model.weights.hour = model.weights.hour.map((w) => w / hourSum);
     }
 
     model.version = `1.${Date.now().toString().slice(-6)}`;
-    console.log('📊 Modelo de engajamento atualizado');
+    console.log("📊 Modelo de engajamento atualizado");
   }
 
   /**
    * Treina modelo de otimização de timing
    */
   private async trainTimingModel(data: any[]): Promise<void> {
-    const model = this.models.get('timing');
+    const model = this.models.get("timing");
     if (!model) return;
 
     // Agrupar por usuário e encontrar melhores horários
     const userHours = new Map<string, number[]>();
-    
-    data.forEach(notification => {
+
+    data.forEach((notification) => {
       if (notification.opened_at) {
         const userId = notification.user_id;
         const hour = new Date(notification.sent_at).getHours();
-        
+
         if (!userHours.has(userId)) {
           userHours.set(userId, []);
         }
@@ -916,22 +926,22 @@ export class NotificationMLEngine {
       if (hours.length >= 3) {
         // Encontrar horários mais frequentes
         const hourCounts = new Map<number, number>();
-        hours.forEach(hour => {
+        hours.forEach((hour) => {
           hourCounts.set(hour, (hourCounts.get(hour) || 0) + 1);
         });
-        
+
         const bestHours = Array.from(hourCounts.entries())
           .sort((a, b) => b[1] - a[1])
           .slice(0, 3)
           .map(([hour]) => hour);
-        
+
         const confidence = Math.min(hours.length / 20, 1);
         model.clusters.set(userId, { hours: bestHours, confidence });
       }
     });
 
     model.version = `1.${Date.now().toString().slice(-6)}`;
-    console.log('⏰ Modelo de timing atualizado');
+    console.log("⏰ Modelo de timing atualizado");
   }
 }
 
@@ -948,10 +958,9 @@ export const notificationMLEngine = new NotificationMLEngine({
     abTesting: false,
   },
   models: {
-    engagementModel: 'logistic',
-    timingModel: 'clustering',
-    segmentationModel: 'kmeans',
+    engagementModel: "logistic",
+    timingModel: "clustering",
+    segmentationModel: "kmeans",
   },
 });
 export type { UserProfile, OptimizationResult, SegmentationResult, ABTestResult };
-

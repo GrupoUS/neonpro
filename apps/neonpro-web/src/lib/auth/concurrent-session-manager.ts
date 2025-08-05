@@ -1,7 +1,7 @@
 /**
  * Concurrent Session Manager
  * Story 1.4 - Task 2: Concurrent session control and management
- * 
+ *
  * Features:
  * - Session limit enforcement per user role
  * - Active session tracking and monitoring
@@ -11,16 +11,16 @@
  * - Security event logging
  */
 
-import { createClient } from '@supabase/supabase-js';
-import { UserRole } from '@/types/auth';
-import { SecurityAuditLogger } from './security-audit-logger';
+import type { createClient } from "@supabase/supabase-js";
+import type { UserRole } from "@/types/auth";
+import type { SecurityAuditLogger } from "./security-audit-logger";
 
 export interface SessionInfo {
   sessionId: string;
   userId: string;
   deviceId: string;
   deviceName: string;
-  deviceType: 'desktop' | 'mobile' | 'tablet' | 'unknown';
+  deviceType: "desktop" | "mobile" | "tablet" | "unknown";
   ipAddress: string;
   userAgent: string;
   location?: {
@@ -44,44 +44,50 @@ export interface ConcurrentSessionLimits {
 }
 
 export interface SessionTerminationReason {
-  type: 'limit_exceeded' | 'security_violation' | 'admin_action' | 'user_request' | 'timeout' | 'device_change';
+  type:
+    | "limit_exceeded"
+    | "security_violation"
+    | "admin_action"
+    | "user_request"
+    | "timeout"
+    | "device_change";
   message: string;
   metadata?: Record<string, any>;
 }
 
 const DEFAULT_SESSION_LIMITS: Record<UserRole, ConcurrentSessionLimits> = {
   owner: {
-    role: 'owner',
+    role: "owner",
     maxSessions: 10,
     maxSessionsPerDevice: 3,
     allowMultipleDevices: true,
     forceLogoutOldest: true,
-    notifyOnNewSession: true
+    notifyOnNewSession: true,
   },
   manager: {
-    role: 'manager',
+    role: "manager",
     maxSessions: 5,
     maxSessionsPerDevice: 2,
     allowMultipleDevices: true,
     forceLogoutOldest: true,
-    notifyOnNewSession: true
+    notifyOnNewSession: true,
   },
   staff: {
-    role: 'staff',
+    role: "staff",
     maxSessions: 3,
     maxSessionsPerDevice: 2,
     allowMultipleDevices: true,
     forceLogoutOldest: true,
-    notifyOnNewSession: false
+    notifyOnNewSession: false,
   },
   patient: {
-    role: 'patient',
+    role: "patient",
     maxSessions: 2,
     maxSessionsPerDevice: 1,
     allowMultipleDevices: false,
     forceLogoutOldest: true,
-    notifyOnNewSession: false
-  }
+    notifyOnNewSession: false,
+  },
 };
 
 export class ConcurrentSessionManager {
@@ -93,12 +99,12 @@ export class ConcurrentSessionManager {
   constructor(
     supabaseUrl: string,
     supabaseKey: string,
-    customLimits?: Partial<Record<UserRole, ConcurrentSessionLimits>>
+    customLimits?: Partial<Record<UserRole, ConcurrentSessionLimits>>,
   ) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.auditLogger = new SecurityAuditLogger(supabaseUrl, supabaseKey);
     this.sessionLimits = { ...DEFAULT_SESSION_LIMITS, ...customLimits };
-    
+
     // Start cleanup interval (every 5 minutes)
     this.startCleanupInterval();
   }
@@ -112,32 +118,32 @@ export class ConcurrentSessionManager {
     deviceInfo: {
       deviceId: string;
       deviceName: string;
-      deviceType: SessionInfo['deviceType'];
+      deviceType: SessionInfo["deviceType"];
       ipAddress: string;
       userAgent: string;
-      location?: SessionInfo['location'];
+      location?: SessionInfo["location"];
     },
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<{ sessionId: string; terminatedSessions?: string[] }> {
     try {
       const sessionId = this.generateSessionId();
       const now = new Date();
-      
+
       // Get current active sessions
       const activeSessions = await this.getActiveSessions(userId);
       const limits = this.sessionLimits[userRole];
-      
+
       // Check session limits and handle violations
       const terminatedSessions = await this.enforceSessionLimits(
         userId,
         userRole,
         deviceInfo.deviceId,
         activeSessions,
-        limits
+        limits,
       );
 
       // Create new session record
-      const sessionInfo: Omit<SessionInfo, 'sessionId'> = {
+      const sessionInfo: Omit<SessionInfo, "sessionId"> = {
         userId,
         deviceId: deviceInfo.deviceId,
         deviceName: deviceInfo.deviceName,
@@ -148,25 +154,23 @@ export class ConcurrentSessionManager {
         createdAt: now,
         lastActivity: now,
         isActive: true,
-        metadata
+        metadata,
       };
 
-      const { error } = await this.supabase
-        .from('user_sessions')
-        .insert({
-          session_id: sessionId,
-          user_id: userId,
-          device_id: deviceInfo.deviceId,
-          device_name: deviceInfo.deviceName,
-          device_type: deviceInfo.deviceType,
-          ip_address: deviceInfo.ipAddress,
-          user_agent: deviceInfo.userAgent,
-          location: deviceInfo.location,
-          created_at: now.toISOString(),
-          last_activity: now.toISOString(),
-          is_active: true,
-          metadata
-        });
+      const { error } = await this.supabase.from("user_sessions").insert({
+        session_id: sessionId,
+        user_id: userId,
+        device_id: deviceInfo.deviceId,
+        device_name: deviceInfo.deviceName,
+        device_type: deviceInfo.deviceType,
+        ip_address: deviceInfo.ipAddress,
+        user_agent: deviceInfo.userAgent,
+        location: deviceInfo.location,
+        created_at: now.toISOString(),
+        last_activity: now.toISOString(),
+        is_active: true,
+        metadata,
+      });
 
       if (error) {
         throw new Error(`Failed to create session: ${error.message}`);
@@ -174,7 +178,7 @@ export class ConcurrentSessionManager {
 
       // Log session creation
       await this.auditLogger.logSecurityEvent({
-        eventType: 'session_created',
+        eventType: "session_created",
         userId,
         sessionId,
         deviceId: deviceInfo.deviceId,
@@ -184,8 +188,8 @@ export class ConcurrentSessionManager {
           userRole,
           deviceInfo,
           terminatedSessionsCount: terminatedSessions.length,
-          activeSessions: activeSessions.length + 1 - terminatedSessions.length
-        }
+          activeSessions: activeSessions.length + 1 - terminatedSessions.length,
+        },
       });
 
       // Notify user if configured
@@ -195,11 +199,10 @@ export class ConcurrentSessionManager {
 
       return {
         sessionId,
-        terminatedSessions: terminatedSessions.length > 0 ? terminatedSessions : undefined
+        terminatedSessions: terminatedSessions.length > 0 ? terminatedSessions : undefined,
       };
-
     } catch (error) {
-      console.error('Failed to create session:', error);
+      console.error("Failed to create session:", error);
       throw error;
     }
   }
@@ -207,28 +210,24 @@ export class ConcurrentSessionManager {
   /**
    * Update session activity timestamp
    */
-  async updateSessionActivity(
-    sessionId: string,
-    metadata?: Record<string, any>
-  ): Promise<void> {
+  async updateSessionActivity(sessionId: string, metadata?: Record<string, any>): Promise<void> {
     try {
       const now = new Date();
-      
+
       const { error } = await this.supabase
-        .from('user_sessions')
+        .from("user_sessions")
         .update({
           last_activity: now.toISOString(),
-          metadata: metadata
+          metadata: metadata,
         })
-        .eq('session_id', sessionId)
-        .eq('is_active', true);
+        .eq("session_id", sessionId)
+        .eq("is_active", true);
 
       if (error) {
         throw new Error(`Failed to update session activity: ${error.message}`);
       }
-
     } catch (error) {
-      console.error('Failed to update session activity:', error);
+      console.error("Failed to update session activity:", error);
       throw error;
     }
   }
@@ -239,26 +238,26 @@ export class ConcurrentSessionManager {
   async terminateSession(
     sessionId: string,
     reason: SessionTerminationReason,
-    terminatedBy?: string
+    terminatedBy?: string,
   ): Promise<void> {
     try {
       // Get session info before termination
       const session = await this.getSessionInfo(sessionId);
       if (!session) {
-        throw new Error('Session not found');
+        throw new Error("Session not found");
       }
 
       // Mark session as inactive
       const { error } = await this.supabase
-        .from('user_sessions')
+        .from("user_sessions")
         .update({
           is_active: false,
           terminated_at: new Date().toISOString(),
           termination_reason: reason.type,
           termination_message: reason.message,
-          terminated_by: terminatedBy
+          terminated_by: terminatedBy,
         })
-        .eq('session_id', sessionId);
+        .eq("session_id", sessionId);
 
       if (error) {
         throw new Error(`Failed to terminate session: ${error.message}`);
@@ -266,7 +265,7 @@ export class ConcurrentSessionManager {
 
       // Log session termination
       await this.auditLogger.logSecurityEvent({
-        eventType: 'session_terminated',
+        eventType: "session_terminated",
         userId: session.userId,
         sessionId,
         deviceId: session.deviceId,
@@ -276,15 +275,14 @@ export class ConcurrentSessionManager {
           message: reason.message,
           terminatedBy,
           sessionDuration: Date.now() - session.createdAt.getTime(),
-          ...reason.metadata
-        }
+          ...reason.metadata,
+        },
       });
 
       // Notify user about session termination
       await this.notifySessionTermination(session, reason);
-
     } catch (error) {
-      console.error('Failed to terminate session:', error);
+      console.error("Failed to terminate session:", error);
       throw error;
     }
   }
@@ -296,12 +294,12 @@ export class ConcurrentSessionManager {
     userId: string,
     reason: SessionTerminationReason,
     excludeSessionId?: string,
-    terminatedBy?: string
+    terminatedBy?: string,
   ): Promise<string[]> {
     try {
       const activeSessions = await this.getActiveSessions(userId);
       const sessionsToTerminate = excludeSessionId
-        ? activeSessions.filter(s => s.sessionId !== excludeSessionId)
+        ? activeSessions.filter((s) => s.sessionId !== excludeSessionId)
         : activeSessions;
 
       const terminatedSessionIds: string[] = [];
@@ -312,9 +310,8 @@ export class ConcurrentSessionManager {
       }
 
       return terminatedSessionIds;
-
     } catch (error) {
-      console.error('Failed to terminate all user sessions:', error);
+      console.error("Failed to terminate all user sessions:", error);
       throw error;
     }
   }
@@ -325,20 +322,19 @@ export class ConcurrentSessionManager {
   async getActiveSessions(userId: string): Promise<SessionInfo[]> {
     try {
       const { data, error } = await this.supabase
-        .from('user_sessions')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('is_active', true)
-        .order('last_activity', { ascending: false });
+        .from("user_sessions")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("is_active", true)
+        .order("last_activity", { ascending: false });
 
       if (error) {
         throw new Error(`Failed to get active sessions: ${error.message}`);
       }
 
       return (data || []).map(this.mapDatabaseToSessionInfo);
-
     } catch (error) {
-      console.error('Failed to get active sessions:', error);
+      console.error("Failed to get active sessions:", error);
       throw error;
     }
   }
@@ -349,22 +345,21 @@ export class ConcurrentSessionManager {
   async getSessionInfo(sessionId: string): Promise<SessionInfo | null> {
     try {
       const { data, error } = await this.supabase
-        .from('user_sessions')
-        .select('*')
-        .eq('session_id', sessionId)
+        .from("user_sessions")
+        .select("*")
+        .eq("session_id", sessionId)
         .single();
 
       if (error) {
-        if (error.code === 'PGRST116') {
+        if (error.code === "PGRST116") {
           return null; // Session not found
         }
         throw new Error(`Failed to get session info: ${error.message}`);
       }
 
       return this.mapDatabaseToSessionInfo(data);
-
     } catch (error) {
-      console.error('Failed to get session info:', error);
+      console.error("Failed to get session info:", error);
       throw error;
     }
   }
@@ -381,13 +376,10 @@ export class ConcurrentSessionManager {
   }> {
     try {
       // Get active sessions
-      let query = this.supabase
-        .from('user_sessions')
-        .select('*')
-        .eq('is_active', true);
+      let query = this.supabase.from("user_sessions").select("*").eq("is_active", true);
 
       if (userId) {
-        query = query.eq('user_id', userId);
+        query = query.eq("user_id", userId);
       }
 
       const { data: activeSessions, error: activeError } = await query;
@@ -399,13 +391,13 @@ export class ConcurrentSessionManager {
       // Get recent terminations (last 24 hours)
       const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
       let terminationQuery = this.supabase
-        .from('user_sessions')
-        .select('terminated_at')
-        .eq('is_active', false)
-        .gte('terminated_at', yesterday.toISOString());
+        .from("user_sessions")
+        .select("terminated_at")
+        .eq("is_active", false)
+        .gte("terminated_at", yesterday.toISOString());
 
       if (userId) {
-        terminationQuery = terminationQuery.eq('user_id', userId);
+        terminationQuery = terminationQuery.eq("user_id", userId);
       }
 
       const { data: recentTerminations, error: terminationError } = await terminationQuery;
@@ -419,7 +411,7 @@ export class ConcurrentSessionManager {
         owner: 0,
         manager: 0,
         staff: 0,
-        patient: 0
+        patient: 0,
       };
 
       const sessionsByDevice: Record<string, number> = {};
@@ -428,9 +420,9 @@ export class ConcurrentSessionManager {
       for (const session of activeSessions || []) {
         // Note: We'd need to join with user table to get role
         // For now, we'll estimate based on session patterns
-        const deviceType = session.device_type || 'unknown';
+        const deviceType = session.device_type || "unknown";
         sessionsByDevice[deviceType] = (sessionsByDevice[deviceType] || 0) + 1;
-        
+
         const duration = Date.now() - new Date(session.created_at).getTime();
         totalDuration += duration;
       }
@@ -444,11 +436,10 @@ export class ConcurrentSessionManager {
         sessionsByRole,
         sessionsByDevice,
         averageSessionDuration,
-        recentTerminations: recentTerminations?.length || 0
+        recentTerminations: recentTerminations?.length || 0,
       };
-
     } catch (error) {
-      console.error('Failed to get session statistics:', error);
+      console.error("Failed to get session statistics:", error);
       throw error;
     }
   }
@@ -460,7 +451,7 @@ export class ConcurrentSessionManager {
     this.sessionLimits[role] = {
       ...this.sessionLimits[role],
       ...limits,
-      role
+      role,
     };
   }
 
@@ -478,12 +469,12 @@ export class ConcurrentSessionManager {
     try {
       // Sessions inactive for more than 24 hours are considered expired
       const expiredThreshold = new Date(Date.now() - 24 * 60 * 60 * 1000);
-      
+
       const { data: expiredSessions, error: selectError } = await this.supabase
-        .from('user_sessions')
-        .select('session_id, user_id, device_id')
-        .eq('is_active', true)
-        .lt('last_activity', expiredThreshold.toISOString());
+        .from("user_sessions")
+        .select("session_id, user_id, device_id")
+        .eq("is_active", true)
+        .lt("last_activity", expiredThreshold.toISOString());
 
       if (selectError) {
         throw new Error(`Failed to find expired sessions: ${selectError.message}`);
@@ -495,14 +486,17 @@ export class ConcurrentSessionManager {
 
       // Mark expired sessions as inactive
       const { error: updateError } = await this.supabase
-        .from('user_sessions')
+        .from("user_sessions")
         .update({
           is_active: false,
           terminated_at: new Date().toISOString(),
-          termination_reason: 'timeout',
-          termination_message: 'Session expired due to inactivity'
+          termination_reason: "timeout",
+          termination_message: "Session expired due to inactivity",
         })
-        .in('session_id', expiredSessions.map(s => s.session_id));
+        .in(
+          "session_id",
+          expiredSessions.map((s) => s.session_id),
+        );
 
       if (updateError) {
         throw new Error(`Failed to cleanup expired sessions: ${updateError.message}`);
@@ -510,17 +504,16 @@ export class ConcurrentSessionManager {
 
       // Log cleanup event
       await this.auditLogger.logSecurityEvent({
-        eventType: 'session_cleanup',
+        eventType: "session_cleanup",
         metadata: {
           expiredSessionsCount: expiredSessions.length,
-          expiredThreshold: expiredThreshold.toISOString()
-        }
+          expiredThreshold: expiredThreshold.toISOString(),
+        },
       });
 
       return expiredSessions.length;
-
     } catch (error) {
-      console.error('Failed to cleanup expired sessions:', error);
+      console.error("Failed to cleanup expired sessions:", error);
       throw error;
     }
   }
@@ -546,24 +539,24 @@ export class ConcurrentSessionManager {
     userRole: UserRole,
     deviceId: string,
     activeSessions: SessionInfo[],
-    limits: ConcurrentSessionLimits
+    limits: ConcurrentSessionLimits,
   ): Promise<string[]> {
     const terminatedSessions: string[] = [];
 
     // Check device-specific limits
     if (!limits.allowMultipleDevices) {
-      const otherDeviceSessions = activeSessions.filter(s => s.deviceId !== deviceId);
+      const otherDeviceSessions = activeSessions.filter((s) => s.deviceId !== deviceId);
       for (const session of otherDeviceSessions) {
         await this.terminateSession(session.sessionId, {
-          type: 'device_change',
-          message: 'Session terminated due to login from different device'
+          type: "device_change",
+          message: "Session terminated due to login from different device",
         });
         terminatedSessions.push(session.sessionId);
       }
     }
 
     // Check sessions per device limit
-    const deviceSessions = activeSessions.filter(s => s.deviceId === deviceId);
+    const deviceSessions = activeSessions.filter((s) => s.deviceId === deviceId);
     if (deviceSessions.length >= limits.maxSessionsPerDevice) {
       const sessionsToTerminate = deviceSessions
         .sort((a, b) => a.lastActivity.getTime() - b.lastActivity.getTime())
@@ -571,8 +564,8 @@ export class ConcurrentSessionManager {
 
       for (const session of sessionsToTerminate) {
         await this.terminateSession(session.sessionId, {
-          type: 'limit_exceeded',
-          message: 'Session terminated due to device session limit exceeded'
+          type: "limit_exceeded",
+          message: "Session terminated due to device session limit exceeded",
         });
         terminatedSessions.push(session.sessionId);
       }
@@ -580,9 +573,9 @@ export class ConcurrentSessionManager {
 
     // Check total session limit
     const remainingSessions = activeSessions.filter(
-      s => !terminatedSessions.includes(s.sessionId)
+      (s) => !terminatedSessions.includes(s.sessionId),
     );
-    
+
     if (remainingSessions.length >= limits.maxSessions) {
       const sessionsToTerminate = limits.forceLogoutOldest
         ? remainingSessions
@@ -592,8 +585,8 @@ export class ConcurrentSessionManager {
 
       for (const session of sessionsToTerminate) {
         await this.terminateSession(session.sessionId, {
-          type: 'limit_exceeded',
-          message: 'Session terminated due to maximum session limit exceeded'
+          type: "limit_exceeded",
+          message: "Session terminated due to maximum session limit exceeded",
         });
         terminatedSessions.push(session.sessionId);
       }
@@ -615,18 +608,21 @@ export class ConcurrentSessionManager {
       createdAt: new Date(data.created_at),
       lastActivity: new Date(data.last_activity),
       isActive: data.is_active,
-      metadata: data.metadata
+      metadata: data.metadata,
     };
   }
 
   private startCleanupInterval(): void {
-    this.cleanupInterval = setInterval(async () => {
-      try {
-        await this.cleanupExpiredSessions();
-      } catch (error) {
-        console.error('Session cleanup failed:', error);
-      }
-    }, 5 * 60 * 1000); // Every 5 minutes
+    this.cleanupInterval = setInterval(
+      async () => {
+        try {
+          await this.cleanupExpiredSessions();
+        } catch (error) {
+          console.error("Session cleanup failed:", error);
+        }
+      },
+      5 * 60 * 1000,
+    ); // Every 5 minutes
   }
 
   private async notifyNewSession(userId: string, session: SessionInfo): Promise<void> {
@@ -634,7 +630,7 @@ export class ConcurrentSessionManager {
       // This would integrate with your notification system
       // For now, we'll just log the event
       await this.auditLogger.logSecurityEvent({
-        eventType: 'new_session_notification',
+        eventType: "new_session_notification",
         userId,
         sessionId: session.sessionId,
         deviceId: session.deviceId,
@@ -642,22 +638,22 @@ export class ConcurrentSessionManager {
         metadata: {
           deviceName: session.deviceName,
           deviceType: session.deviceType,
-          location: session.location
-        }
+          location: session.location,
+        },
       });
     } catch (error) {
-      console.error('Failed to notify new session:', error);
+      console.error("Failed to notify new session:", error);
     }
   }
 
   private async notifySessionTermination(
     session: SessionInfo,
-    reason: SessionTerminationReason
+    reason: SessionTerminationReason,
   ): Promise<void> {
     try {
       // This would integrate with your notification system
       await this.auditLogger.logSecurityEvent({
-        eventType: 'session_termination_notification',
+        eventType: "session_termination_notification",
         userId: session.userId,
         sessionId: session.sessionId,
         deviceId: session.deviceId,
@@ -666,11 +662,11 @@ export class ConcurrentSessionManager {
           reason: reason.type,
           message: reason.message,
           deviceName: session.deviceName,
-          sessionDuration: Date.now() - session.createdAt.getTime()
-        }
+          sessionDuration: Date.now() - session.createdAt.getTime(),
+        },
       });
     } catch (error) {
-      console.error('Failed to notify session termination:', error);
+      console.error("Failed to notify session termination:", error);
     }
   }
 }

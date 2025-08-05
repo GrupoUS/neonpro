@@ -1,10 +1,10 @@
 // NeonProAIChatEngine - Core AI Chat Processing Engine
 // Implementation of Story 4.1: Universal AI Chat Assistant
 
-import { createClient } from "@/lib/supabase/server";
+import type { createClient } from "@/lib/supabase/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import OpenAI from "openai";
-import {
+import type {
   AIRequest,
   AIResponse,
   EnrichedContext,
@@ -44,23 +44,13 @@ export class NeonProAIChatEngine {
       }
 
       // Step 2: Classify query
-      const classification = await this.classifyQuery(
-        request.query,
-        request.context
-      );
+      const classification = await this.classifyQuery(request.query, request.context);
 
       // Step 3: Enrich context with relevant data
-      const enrichedContext = await this.enrichContext(
-        classification,
-        request.context
-      );
+      const enrichedContext = await this.enrichContext(classification, request.context);
 
       // Step 4: Generate AI response
-      const response = await this.generateResponse(
-        request.query,
-        enrichedContext,
-        classification
-      );
+      const response = await this.generateResponse(request.query, enrichedContext, classification);
 
       console.log("[NeonProAI] Chat processed successfully");
       return response;
@@ -74,9 +64,7 @@ export class NeonProAIChatEngine {
    * Security validation for AI requests
    * Ensures LGPD compliance and proper authorization
    */
-  private async validateSecurity(
-    request: AIRequest
-  ): Promise<SecurityValidation> {
+  private async validateSecurity(request: AIRequest): Promise<SecurityValidation> {
     try {
       // Validate user session
       if (!request.sessionId) {
@@ -84,10 +72,7 @@ export class NeonProAIChatEngine {
       }
 
       // Check user permissions based on query type
-      const hasPermission = await this.checkUserPermissions(
-        request.sessionId,
-        request.clinicId
-      );
+      const hasPermission = await this.checkUserPermissions(request.sessionId, request.clinicId);
 
       if (!hasPermission) {
         return { isValid: false, reason: "Insufficient permissions" };
@@ -110,14 +95,11 @@ export class NeonProAIChatEngine {
    */
   private async classifyQuery(
     message: string,
-    context: UniversalChatContext
+    context: UniversalChatContext,
   ): Promise<QueryClassification> {
     try {
       // Use OpenAI to classify the query
-      const classificationPrompt = this.buildClassificationPrompt(
-        message,
-        context
-      );
+      const classificationPrompt = this.buildClassificationPrompt(message, context);
 
       const completion = await openai.chat.completions.create({
         model: "gpt-4",
@@ -158,7 +140,7 @@ export class NeonProAIChatEngine {
    */
   private async enrichContext(
     classification: QueryClassification,
-    baseContext: UniversalChatContext
+    baseContext: UniversalChatContext,
   ): Promise<EnrichedContext> {
     const enriched: EnrichedContext = {
       ...baseContext,
@@ -175,31 +157,33 @@ export class NeonProAIChatEngine {
       switch (classification.category) {
         case "appointment_query":
           if (enriched.relevantData) {
-            enriched.relevantData.recentAppointments =
-              await this.getRecentAppointments(baseContext.clinic.id, 10);
+            enriched.relevantData.recentAppointments = await this.getRecentAppointments(
+              baseContext.clinic.id,
+              10,
+            );
           }
           break;
 
         case "financial_query":
           if (enriched.relevantData) {
-            enriched.relevantData.financialSummary =
-              await this.getFinancialSummary(baseContext.clinic.id);
+            enriched.relevantData.financialSummary = await this.getFinancialSummary(
+              baseContext.clinic.id,
+            );
           }
           break;
 
         case "patient_query":
           // LGPD-compliant patient data (anonymized)
           if (enriched.relevantData) {
-            enriched.relevantData.patientStats =
-              await this.getPatientStatistics(baseContext.clinic.id);
+            enriched.relevantData.patientStats = await this.getPatientStatistics(
+              baseContext.clinic.id,
+            );
           }
           break;
 
         case "analytics_query":
           if (enriched.relevantData) {
-            enriched.relevantData.analytics = await this.getAnalyticsSummary(
-              baseContext.clinic.id
-            );
+            enriched.relevantData.analytics = await this.getAnalyticsSummary(baseContext.clinic.id);
           }
           break;
       }
@@ -217,7 +201,7 @@ export class NeonProAIChatEngine {
   private async generateResponse(
     message: string,
     context: EnrichedContext,
-    classification: QueryClassification
+    classification: QueryClassification,
   ): Promise<AIResponse> {
     try {
       const systemPrompt = this.buildSystemPrompt(context, classification);
@@ -251,10 +235,7 @@ export class NeonProAIChatEngine {
   /**
    * Build classification prompt for OpenAI
    */
-  private buildClassificationPrompt(
-    message: string,
-    context: UniversalChatContext
-  ): string {
+  private buildClassificationPrompt(message: string, context: UniversalChatContext): string {
     return `You are a clinical management AI assistant. Classify the following user query and respond with JSON.
 
 Context:
@@ -284,17 +265,12 @@ Required JSON format:
   /**
    * Build system prompt for response generation
    */
-  private buildSystemPrompt(
-    context: EnrichedContext,
-    classification: QueryClassification
-  ): string {
+  private buildSystemPrompt(context: EnrichedContext, classification: QueryClassification): string {
     const clinicInfo = `Clinic: ${context.clinic.name} (${context.clinic.id})`;
     const userInfo = `User: ${context.user.name} (${context.user.role})`;
     const systemsInfo = `Systems: ${classification.affectedSystems.join(", ")}`;
 
-    return `You are NeonPro AI, an intelligent assistant for ${
-      context.clinic.name
-    }.
+    return `You are NeonPro AI, an intelligent assistant for ${context.clinic.name}.
 
 Context:
 ${clinicInfo}
@@ -331,20 +307,13 @@ Available Data: ${JSON.stringify(context.relevantData, null, 2)}`;
       .from("financial_transactions")
       .select("amount, type, created_at")
       .eq("clinic_id", clinicId)
-      .gte(
-        "created_at",
-        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-      );
+      .gte("created_at", new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
 
     return {
       totalRevenue:
-        data
-          ?.filter((t) => t.type === "income")
-          .reduce((sum, t) => sum + t.amount, 0) || 0,
+        data?.filter((t) => t.type === "income").reduce((sum, t) => sum + t.amount, 0) || 0,
       totalExpenses:
-        data
-          ?.filter((t) => t.type === "expense")
-          .reduce((sum, t) => sum + t.amount, 0) || 0,
+        data?.filter((t) => t.type === "expense").reduce((sum, t) => sum + t.amount, 0) || 0,
       transactionCount: data?.length || 0,
     };
   }
@@ -359,9 +328,7 @@ Available Data: ${JSON.stringify(context.relevantData, null, 2)}`;
       totalPatients: data?.length || 0,
       newPatientsThisMonth:
         data?.filter(
-          (p) =>
-            new Date(p.created_at) >
-            new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+          (p) => new Date(p.created_at) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
         ).length || 0,
     };
   }
@@ -378,10 +345,7 @@ Available Data: ${JSON.stringify(context.relevantData, null, 2)}`;
   /**
    * Security and compliance helpers
    */
-  private async checkUserPermissions(
-    sessionId: string,
-    clinicId: string
-  ): Promise<boolean> {
+  private async checkUserPermissions(sessionId: string, clinicId: string): Promise<boolean> {
     try {
       const { data: session } = await this.supabase.auth.getSession();
       return session.session?.user?.id ? true : false;
@@ -404,10 +368,8 @@ Available Data: ${JSON.stringify(context.relevantData, null, 2)}`;
   private extractSources(context: EnrichedContext): string[] {
     const sources = ["neonpro_database"];
 
-    if (context.relevantData?.recentAppointments)
-      sources.push("appointments_system");
-    if (context.relevantData?.financialSummary)
-      sources.push("financial_system");
+    if (context.relevantData?.recentAppointments) sources.push("appointments_system");
+    if (context.relevantData?.financialSummary) sources.push("financial_system");
     if (context.relevantData?.patientStats) sources.push("patient_management");
     if (context.relevantData?.analytics) sources.push("business_intelligence");
 
